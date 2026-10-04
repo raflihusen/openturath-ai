@@ -1,0 +1,2716 @@
+{
+  "scope": "Source inventory, not an assertion that every string is active. Fixed original research transcripts are archival content and excluded from rewriting.",
+  "copy": {
+    "id": {
+      "skip": "Lewati ke isi",
+      "home": "Beranda",
+      "library": "Khazanah",
+      "research": "Pengujian",
+      "how": "Cara kerja",
+      "about": "Tentang",
+      "download": "Unduh aplikasi",
+      "language": "Bahasa",
+      "menu": "Menu",
+      "close": "Tutup",
+      "theme": "Ubah tema",
+      "hero": "Ilmu. Lebih dekat.",
+      "heroSub": "Menelaah ribuan karya klasik dan kontemporer dengan verifikasi teks Arab, jilid, dan halaman secara presisi.",
+      "seeResults": "Lihat hasil pengujian",
+      "scroll": "Mulai menelaah",
+      "opening": "Setiap pertanyaan, sebuah jalan menuju sumber.",
+      "openingSub": "OpenTurath membantu Anda menemukan pembahasan dalam kitab-kitab Islam. Sumber tetap terbuka untuk dibaca, ditelaah, dan diperiksa.",
+      "example": "Contoh telaah",
+      "originalQuery": "Pertanyaan asli · Indonesia",
+      "sourceText": "Kutipan dalam jawaban",
+      "sourceNote": "Kutipan dari arsip Q001. Pemeriksaan edisi ditampilkan terpisah.",
+      "openSource": "Buka rujukan",
+      "readFull": "Baca jawaban lengkap",
+      "fieldTitle": "Khazanah para ulama.\nRuang bagi setiap telaah.",
+      "fieldSub": "Dua puluh disiplin keilmuan, dari fikih mazhab hingga tahqiq naskah. Temukan khadim yang memahami bidang telaah Anda.",
+      "allLibrary": "Jelajahi seluruh pustaka",
+      "compareTitle": "Pertanyaan yang sama.\nPeriksa hasilnya.",
+      "compareSub": "Enam jawaban, ditampilkan sebagaimana tersimpan dalam bahan pengujian. Baca teksnya. Telusuri rujukannya. Nilai perbedaannya.",
+      "compareCta": "Buka perbandingan",
+      "caseLabel": "Studi kasus",
+      "topic": "Sentuhan dan wudhu dalam mazhab Syafi’i",
+      "methodTitle": "Ibarahnya terbaca.\nRujukannya dapat ditelaah.",
+      "methodSub": "Teks kitab, penjelasan aplikasi, dan keterangan bibliografi memiliki tempatnya masing-masing. Agar Anda tahu apa yang sedang dibaca.",
+      "sourceLayer": "Teks sumber",
+      "explanationLayer": "Penjelasan aplikasi",
+      "referenceLayer": "Keterangan rujukan",
+      "special": "Koleksi khusus",
+      "tahawwulat": "Fikih Tahawwulat",
+      "tahaTitle": "Membaca perubahan.\nMenelaah tuntunan.",
+      "tahaSub": "Telaah karya dan pelajaran Habib Abu Bakar al-Adni al-Masyhur dalam koleksi khusus Fikih Tahawwulat.",
+      "exploreCollection": "Kenali koleksi",
+      "access": "Keanggotaan",
+      "billing": "Pembayaran dan Pengembalian Dana",
+      "aiGuidelines": "Panduan Penggunaan AI & Rujukan",
+      "accessTitle": "Akses Penuh Khazanah Keilmuan",
+      "accessSub": "Pilih khadim spesialis disiplin ilmu yang ingin Anda telaah. Akses dan aktivasi diproses resmi di aplikasi melalui DOKU, tanpa perpanjangan otomatis.",
+      "downloadTitle": "Lanjutkan telaah\ndi OpenTurath.",
+      "downloadSub": "Pilih platform Anda untuk melanjutkan telaah. Ketersediaan rilis dan panduan pemasangan tercantum di bawah.",
+      "faq": "Pertanyaan yang sering diajukan",
+      "help": "Bantuan",
+      "contact": "Bantuan dan Kontak",
+      "report": "Laporkan masalah",
+      "releases": "Catatan rilis",
+      "methods": "Metode pengujian",
+      "corrections": "Catatan koreksi",
+      "privacy": "Kebijakan Privasi",
+      "terms": "Ketentuan Layanan",
+      "rights": "Sumber & hak penggunaan",
+      "accessibility": "Aksesibilitas",
+      "deletion": "Penghapusan akun",
+      "security": "Pelaporan keamanan",
+      "product": "Produk",
+      "scholarship": "Riset",
+      "information": "Informasi",
+      "search": "Cari judul kitab, pengarang, atau bidang…",
+      "searchCollections": "Cari koleksi atau bidang ilmu",
+      "all": "Semua",
+      "collections": "Koleksi",
+      "books": "Kitab dalam contoh",
+      "fiqh": "Fikih",
+      "hadith": "Hadis",
+      "quran": "Al-Qur’an",
+      "languageGroup": "Bahasa & bibliografi",
+      "history": "Sejarah & biografi",
+      "spirituality": "Tazkiyah",
+      "theology": "Akidah",
+      "specialGroup": "Koleksi khusus",
+      "noResults": "Tidak ada hasil. Ubah kata kunci atau hapus filter.",
+      "clear": "Hapus filter",
+      "results": "hasil",
+      "catalogNote": "Angka khazanah bersumber dari metadata modul aplikasi. Status ketersediaan ditampilkan pada setiap koleksi.",
+      "contents": "Cakupan kajian",
+      "bibliography": "Bibliografi",
+      "author": "Pengarang",
+      "edition": "Edisi",
+      "locator": "Rujukan dalam jawaban",
+      "unknown": "Belum tersedia",
+      "recorded": "Tercatat dalam arsip jawaban",
+      "unverified": "Belum diperiksa",
+      "verifyNote": "Data ini merekam rujukan yang diberikan dalam jawaban asli. Kesesuaian teks dan edisi belum diverifikasi ulang pada situs ini.",
+      "linkedCase": "Lihat dalam studi kasus",
+      "researchTitle": "Bukti yang bisa Anda baca.",
+      "researchSub": "Pertanyaan, jawaban asli, dan catatan pemeriksaan disajikan bersama. Kesimpulan mengikuti bukti yang tersedia.",
+      "archive": "Arsip perbandingan",
+      "scopeNote": "Satu pertanyaan. Enam produk. Hasil ini tidak mewakili seluruh kemampuan setiap produk.",
+      "date": "Tanggal pengujian",
+      "notRecorded": "Tidak tercatat",
+      "reviewStatus": "Status pemeriksaan",
+      "original": "Jawaban asli",
+      "compareWith": "Bandingkan dengan",
+      "sourceConversation": "Percakapan sumber",
+      "sourceAccess": "Tautan sumber mungkin memerlukan akun.",
+      "archiveDownload": "Unduh arsip asli",
+      "notes": "Catatan",
+      "references": "Rujukan yang disebut",
+      "reviewDetail": "Arsip ini memuat kutipan dan rujukan bibliografi. Penilaian terdahulu menyebut kecocokan sepuluh kutipan dengan Syamilah, tetapi berkas pemeriksaan per kutipan belum disertakan. Karena itu, tidak ada skor akurasi yang ditetapkan di sini.",
+      "issuesDetail": "Catatan evaluasi terdahulu juga menyoroti elaborasi di luar teks, ketidakjelasan penisbahan, perluasan kesimpulan, dan pembahasan di luar pertanyaan. Temuan tersebut tetap menjadi bagian dari pembacaan kasus ini.",
+      "focus": "Mode baca",
+      "exitFocus": "Keluar dari mode baca",
+      "copy": "Salin teks & rujukan",
+      "copied": "Teks dan rujukan disalin.",
+      "copyFailed": "Belum tersalin. Pilih teks untuk menyalin manual.",
+      "installGuide": "Panduan pemasangan",
+      "releasePending": "Tautan unduhan resmi belum diterbitkan.",
+      "releasePendingSub": "Panduan penggunaan dan contoh hasil tetap dapat Anda baca di situs ini.",
+      "version": "Versi",
+      "minimumOS": "Sistem minimum",
+      "size": "Ukuran",
+      "releaseDate": "Tanggal rilis",
+      "downloadPlatform": "Unduh untuk",
+      "noReleases": "Belum ada rilis aplikasi yang dicantumkan.",
+      "noPlans": "Rincian akses dan biaya belum diterbitkan.",
+      "noPlansSub": "Informasi akan mencantumkan koleksi, masa akses, harga, dan ketentuan perpanjangannya.",
+      "helpTitle": "Ada yang ingin Anda ketahui?",
+      "helpSearch": "Cari panduan",
+      "contactTitle": "Sampaikan pertanyaan Anda.",
+      "contactSub": "Tentang aplikasi, koleksi, atau rujukan yang perlu ditelaah kembali.",
+      "email": "Email",
+      "subject": "Topik",
+      "message": "Uraian",
+      "emailHint": "Opsional, jika Anda menginginkan balasan.",
+      "reportSource": "Koreksi rujukan",
+      "reportTechnical": "Masalah teknis",
+      "reportAccess": "Akses & pembayaran",
+      "reportOther": "Pertanyaan lain",
+      "reportHint": "Sertakan judul kitab, edisi, halaman, atau langkah yang memunculkan masalah. Jangan sertakan kata sandi atau data pribadi yang tidak diperlukan.",
+      "consent": "Saya menyetujui penggunaan informasi ini untuk menindaklanjuti laporan.",
+      "submit": "Kirim laporan",
+      "sending": "Mengirim…",
+      "sent": "Laporan telah disimpan. Nomor laporan:",
+      "failed": "Laporan belum terkirim. Coba kembali, atau unduh salinannya.",
+      "saveReport": "Unduh salinan laporan",
+      "contactPending": "Alamat kontak resmi belum dicantumkan.",
+      "formRetention": "Laporan disimpan selama 30 hari pada layanan formulir situs.",
+      "noCorrections": "Belum ada koreksi yang diterbitkan.",
+      "notFound": "Halaman ini tidak ditemukan.",
+      "backHome": "Kembali ke beranda",
+      "back": "Kembali",
+      "readGuide": "Baca panduan",
+      "policyNotice": "Informasi operasional belum lengkap. Kebijakan final akan memuat identitas pengelola dan praktik layanan yang berlaku.",
+      "updated": "Terakhir diperbarui",
+      "export": "Unduh",
+      "chooseLanguage": "Pilih bahasa",
+      "chooseLanguageSub": "Khazanah yang sama. Bahasa pilihan Anda.",
+      "privacyShort": "Tanpa pelacak analitik eksternal.",
+      "unavailable": "Belum tersedia",
+      "textSize": "Ukuran teks",
+      "increaseText": "Perbesar teks",
+      "decreaseText": "Perkecil teks",
+      "originalLanguage": "Keluaran asli dipertahankan dalam bahasa Indonesia.",
+      "bookshelf": "Jejak rujukan",
+      "goMethod": "Baca metode pemeriksaan",
+      "noFullBooks": "Halaman ini menyajikan metadata dan rujukan contoh. Pembacaan koleksi berlangsung di aplikasi.",
+      "publicAccess": "Dapat dibaca tanpa akun",
+      "publicAccessBody": "Katalog, panduan, dan arsip pengujian di situs ini tersedia untuk dibaca.",
+      "appAccess": "Akses dalam aplikasi",
+      "chars": "karakter",
+      "share": "Salin tautan",
+      "linkCopied": "Tautan disalin.",
+      "heroTagline": "Khazanah para ulama. Dalam jangkauan Anda.",
+      "heroCta": "Jelajahi khazanah",
+      "heroSecondary": "Pelajari metodenya",
+      "heroFoot": "Berpijak pada sumber. Bertumbuh bersama bimbingan guru.",
+      "booksAlt": "Kitab klasik dengan halaman terbuka",
+      "verifyEyebrow": "METODE TELAAH",
+      "verifyTitle": "Dari mas’alah,\nkembali ke sumber.",
+      "verifySub": "Empat langkah sistematis untuk menelaah naskah asli: pertanyaan terarah, penelusuran teks primer, pencocokan koordinat cetakan, dan telaah bersama guru.",
+      "step1": "Ajukan pertanyaan",
+      "step1Body": "Pilih khadim sesuai disiplin ilmu, lalu uraikan masalah dan konteks yang ingin Anda dalami.",
+      "step2": "Telusuri teks primer",
+      "step2Body": "Telusuri ibarah Arab dalam kitab rujukan. Baca kutipan beserta pembahasan yang mengitarinya.",
+      "step3": "Kenali koordinat cetakan",
+      "step3Body": "Judul kitab, edisi, jilid, dan halaman menjadi panduan untuk mencocokkan ibarah dengan naskah sumber.",
+      "step4": "Telaah bersama guru",
+      "step4Body": "Bawa ibarah beserta rujukannya ke majelis ilmu. Perdalam makna, timbang konteks, dan susun kesimpulan dengan bimbingan guru.",
+      "verifyLimit": "AI dapat keliru. Verifikasi merupakan proses pemeriksaan, bukan jaminan bahwa setiap keluaran bebas kesalahan.",
+      "catalogEyebrow": "DISIPLIN KEILMUAN",
+      "available": "Tersedia di aplikasi",
+      "preparing": "Dalam persiapan",
+      "preparingBody": "Koleksi ini sedang dikurasi dan ditata sebelum dibuka untuk umum. Perkembangan ketersediaannya akan diumumkan melalui catatan rilis.",
+      "archiveEyebrow": "JEJAK RUJUKAN",
+      "archiveTitle": "Ibarah terbuka.\nTelaah yang transparan.",
+      "archiveBody": "Baca bagaimana OpenTurath menyajikan ibarah Al-Umm beserta nomor jilid dan halaman dalam arsip Q001. Bandingkan keluaran asli enam model dan telusuri catatan pemeriksaan sumbernya.",
+      "memberEyebrow": "AKSES KEILMUAN",
+      "chooseMembership": "Buka Akses di Aplikasi",
+      "memberManual": "Perpanjangan manual. Tanpa auto-debit.",
+      "memberPayment": "DOKU · QRIS · Virtual Account · E-Wallet",
+      "memberMethods": "Rincian paket, metode pembayaran, dan total biaya ditampilkan sebelum transaksi.",
+      "memberRefund": "Permohonan refund ditinjau paling lambat 7 hari kerja setelah data lengkap. Jika disetujui, pemrosesan paling lambat 7 hari kerja berikutnya, mengikuti penyedia pembayaran.",
+      "memberNotice": "Aktivasi keanggotaan melalui aplikasi OpenTurath.",
+      "featuredPlan": "Cakupan terluas",
+      "adabTitle": "Ilmu yang luas.\nAdab yang mendalam.",
+      "adabBody": "Kemudahan menemukan ibarah adalah awal perjalanan. Maknanya tumbuh melalui bacaan yang utuh, kejujuran dalam menukil, dan bimbingan guru.",
+      "legalVersion": "Ringkasan kebijakan aplikasi · v1.0 · 13 September 2026",
+      "legalCanonical": "Baca naskah resmi bahasa Indonesia",
+      "policySummary": "Halaman ini merangkum naskah resmi aplikasi. Rincian penawaran terbaru dan ketentuan khusus website dijelaskan terpisah di bawah.",
+      "downloadIntegrity": "SHA-256 dihitung dari berkas APK yang disertakan dalam rilis website ini.",
+      "studySpace": "Ruang Telaah",
+      "referenceBooks": "Pustaka Marja' Mu'tamad",
+      "archiveSample": "Kutipan arsip Q001",
+      "memberFrom": "Mulai dari",
+      "memberPerMonth": "/ bulan",
+      "memberReview": "Tinjauan refund hingga 7 hari kerja",
+      "faqIntro": "Bekal sebelum memulai telaah.",
+      "navAdab": "Adab",
+      "navDownload": "Unduh",
+      "awaitingArtifact": "Berkas rilis sedang disiapkan",
+      "statsEyebrow": "SKALA KHAZANAH",
+      "statsTitle": "Khazanah besar.\nRuang telaah tanpa batas.",
+      "statsSource": "Akumulasi metadata 20 modul aplikasi · 21 profil khadim, termasuk 1 dalam persiapan.",
+      "metricDisciplines": "Disiplin ilmu aktif",
+      "metricBooks": "Kitab turats",
+      "metricVolumes": "Jilid naskah",
+      "metricPages": "Halaman",
+      "metricWords": "Kata teks turats",
+      "metricPartitions": "Partisi terindeks",
+      "metaBooks": "Kitab",
+      "metaVolumes": "Jilid",
+      "metaPages": "Halaman",
+      "metaWords": "Kata",
+      "metaLectures": "Muhadharah",
+      "metaMillion": "Juta",
+      "metaBillion": "Miliar",
+      "collectionMetrics": "Metadata khazanah",
+      "statsEra": "Dari masa pra-Hijrah hingga era modern.",
+      "paymentVA": "Rekening virtual",
+      "paymentWallet": "Dompet digital",
+      "statsIntro": "Berabad-abad pemikiran ulama. Kini lebih dekat untuk Anda telaah.",
+      "faqTitle": "Ada yang ingin\nAnda ketahui?",
+      "adabSourceTitle": "Tentang panduan ini",
+      "adabSourceNote": "Panduan ini merupakan rumusan editorial OpenTurath dari bahan adab yang disampaikan kepada tim, terinspirasi oleh gagasan Al-Habib Abu Bakar Al-Adni bin Ali Al-Masyhur tentang pembaruan sarana dengan menjaga landasan keilmuan. Rumusan tentang AI di halaman ini adalah penerapan prinsip tersebut oleh OpenTurath; bukan kutipan langsung atau fatwa beliau mengenai AI.",
+      "motionControl": "Kurangi gerak",
+      "methodSample": "Contoh telaah · Arsip Q001",
+      "methodBook": "Kitab",
+      "methodVolume": "Jilid",
+      "methodPage": "Halaman",
+      "methodQuestion": "Apakah menyentuh melalui kain membatalkan wudu?",
+      "methodNote": "Kutipan arsip sebagai contoh alur telaah. Buka sumber untuk konteks lengkap."
+    },
+    "en": {
+      "skip": "Skip to content",
+      "home": "Home",
+      "library": "Library",
+      "research": "Evaluation",
+      "how": "How it works",
+      "about": "About",
+      "download": "Download the app",
+      "language": "Language",
+      "menu": "Menu",
+      "close": "Close",
+      "theme": "Change theme",
+      "hero": "Knowledge. Within reach.",
+      "heroSub": "Explore thousands of classical and contemporary works through careful verification of Arabic text, volumes, and pages.",
+      "seeResults": "Examine the results",
+      "scroll": "Begin exploring",
+      "opening": "Every question, a way back to the source.",
+      "openingSub": "OpenTurath helps you find discussions across Islamic texts. The sources remain there to be read, studied, and checked.",
+      "example": "A research example",
+      "originalQuery": "Original question · Indonesian",
+      "sourceText": "Passage in the answer",
+      "sourceNote": "Passage from the Q001 archive. Edition review is documented separately.",
+      "openSource": "Open reference",
+      "readFull": "Read the full answer",
+      "fieldTitle": "A scholarly heritage.\nA place for every enquiry.",
+      "fieldSub": "Twenty scholarly disciplines, from the schools of fiqh to manuscript study. Find an assistant dedicated to your field.",
+      "allLibrary": "Explore the library",
+      "compareTitle": "The same question.\nExamine the answers.",
+      "compareSub": "Six answers, preserved as supplied in the evaluation archive. Read the text. Follow the references. Consider the differences.",
+      "compareCta": "Open the comparison",
+      "caseLabel": "Case study",
+      "topic": "Touch and ablution in Shāfiʿī fiqh",
+      "methodTitle": "Read the passage.\nExamine the reference.",
+      "methodSub": "Source text, the app’s explanation, and bibliographic details each have their place. So you know what you are reading.",
+      "sourceLayer": "Source text",
+      "explanationLayer": "App explanation",
+      "referenceLayer": "Reference details",
+      "special": "A dedicated collection",
+      "tahawwulat": "Fiqh al-Tahawwulat",
+      "tahaTitle": "Study change.\nConsider its guidance.",
+      "tahaSub": "Explore the works and lessons of Habib Abu Bakr al-Adani al-Mashhur in a dedicated Fiqh al-Tahawwulat collection.",
+      "exploreCollection": "Explore the collection",
+      "access": "Membership",
+      "billing": "Payment & Refunds",
+      "aiGuidelines": "AI Use & Reference Verification",
+      "accessTitle": "A home for deeper scholarship",
+      "accessSub": "Choose a specialist assistant for the discipline you wish to study. Access and activation are handled in the app through DOKU, with manual renewal.",
+      "downloadTitle": "Continue your research\nin OpenTurath.",
+      "downloadSub": "Choose your platform to continue studying. Release availability and installation guidance are listed below.",
+      "faq": "Frequently asked questions",
+      "help": "Help",
+      "contact": "Support & Contact",
+      "report": "Report an issue",
+      "releases": "Release notes",
+      "methods": "Methodology",
+      "corrections": "Corrections",
+      "privacy": "Privacy Policy",
+      "terms": "Terms of Service",
+      "rights": "Sources & usage rights",
+      "accessibility": "Accessibility",
+      "deletion": "Account deletion",
+      "security": "Security reporting",
+      "product": "Product",
+      "scholarship": "Research",
+      "information": "Information",
+      "search": "Search titles, authors, or disciplines…",
+      "searchCollections": "Search collections or fields",
+      "all": "All",
+      "collections": "Collections",
+      "books": "Books in the example",
+      "fiqh": "Fiqh",
+      "hadith": "Hadith",
+      "quran": "Qur’an",
+      "languageGroup": "Language & bibliography",
+      "history": "History & biography",
+      "spirituality": "Spirituality",
+      "theology": "Theology",
+      "specialGroup": "Special collection",
+      "noResults": "No results. Try another term or clear the filters.",
+      "clear": "Clear filters",
+      "results": "results",
+      "catalogNote": "Collection figures come from the app’s module metadata. Each collection displays its availability.",
+      "contents": "Scope of study",
+      "bibliography": "Bibliography",
+      "author": "Author",
+      "edition": "Edition",
+      "locator": "Reference in the answer",
+      "unknown": "Not yet available",
+      "recorded": "Recorded in the answer archive",
+      "unverified": "Not yet reviewed",
+      "verifyNote": "This record preserves the reference given in the original answer. Text and edition correspondence have not been reverified for this site.",
+      "linkedCase": "View in the case study",
+      "researchTitle": "Evidence you can read.",
+      "researchSub": "Questions, original answers, and review notes are presented together. Conclusions follow the available evidence.",
+      "archive": "Comparison archive",
+      "scopeNote": "One question. Six products. These results do not represent each product’s full capabilities.",
+      "date": "Test date",
+      "notRecorded": "Not recorded",
+      "reviewStatus": "Review status",
+      "original": "Original answer",
+      "compareWith": "Compare with",
+      "sourceConversation": "Source conversation",
+      "sourceAccess": "The source link may require an account.",
+      "archiveDownload": "Download original archive",
+      "notes": "Notes",
+      "references": "References cited",
+      "reviewDetail": "The archive contains quotations and bibliographic references. An earlier assessment reported ten matches against Shamela, but its individual verification records were not supplied. No accuracy score is therefore assigned here.",
+      "issuesDetail": "Earlier review notes also flagged elaboration beyond the text, unclear attribution, extended inferences, and discussion outside the question. These observations remain part of the case record.",
+      "focus": "Reading mode",
+      "exitFocus": "Exit reading mode",
+      "copy": "Copy text & reference",
+      "copied": "Text and reference copied.",
+      "copyFailed": "Could not copy. Select the text to copy manually.",
+      "installGuide": "Installation guide",
+      "releasePending": "The official download link has not been published yet.",
+      "releasePendingSub": "You can still explore the guides and research examples on this site.",
+      "version": "Version",
+      "minimumOS": "Minimum system",
+      "size": "Size",
+      "releaseDate": "Release date",
+      "downloadPlatform": "Download for",
+      "noReleases": "No app releases have been listed yet.",
+      "noPlans": "Access and pricing details have not been published yet.",
+      "noPlansSub": "The details will identify included collections, access periods, prices, and renewal terms.",
+      "helpTitle": "What would you like to know?",
+      "helpSearch": "Search the guides",
+      "contactTitle": "Get in touch.",
+      "contactSub": "About the app, a collection, or a reference that needs another look.",
+      "email": "Email",
+      "subject": "Topic",
+      "message": "Details",
+      "emailHint": "Optional, if you would like a reply.",
+      "reportSource": "Reference correction",
+      "reportTechnical": "Technical issue",
+      "reportAccess": "Access & payment",
+      "reportOther": "Other question",
+      "reportHint": "Include the book, edition, page, or steps that led to the issue. Do not include passwords or unnecessary personal information.",
+      "consent": "I agree to the use of this information to address my report.",
+      "submit": "Submit report",
+      "sending": "Sending…",
+      "sent": "Your report has been saved. Reference:",
+      "failed": "Your report was not sent. Try again, or download a copy.",
+      "saveReport": "Download report copy",
+      "contactPending": "An official contact address has not been listed yet.",
+      "formRetention": "Reports are stored for 30 days by the site’s form service.",
+      "noCorrections": "No corrections have been published.",
+      "notFound": "This page could not be found.",
+      "backHome": "Return home",
+      "back": "Back",
+      "readGuide": "Read the guide",
+      "policyNotice": "Operational information is incomplete. The final policy will identify the operator and applicable service practices.",
+      "updated": "Last updated",
+      "export": "Download",
+      "chooseLanguage": "Choose your language",
+      "chooseLanguageSub": "The same scholarship. Your preferred language.",
+      "privacyShort": "No external analytics trackers.",
+      "unavailable": "Not available yet",
+      "textSize": "Text size",
+      "increaseText": "Increase text size",
+      "decreaseText": "Decrease text size",
+      "originalLanguage": "Original outputs are preserved in Indonesian.",
+      "bookshelf": "A trail of references",
+      "goMethod": "Read the review method",
+      "noFullBooks": "This page presents metadata and sample references. Collection research takes place in the app.",
+      "publicAccess": "Read without an account",
+      "publicAccessBody": "The catalogue, guides, and evaluation archive on this site are available to read.",
+      "appAccess": "Access in the app",
+      "chars": "characters",
+      "share": "Copy link",
+      "linkCopied": "Link copied.",
+      "heroTagline": "The scholarship of generations. Within your reach.",
+      "heroCta": "Explore the library",
+      "heroSecondary": "Discover the method",
+      "heroFoot": "Rooted in sources. Guided by teachers.",
+      "booksAlt": "Classical books with open pages",
+      "verifyEyebrow": "THE STUDY METHOD",
+      "verifyTitle": "From enquiry,\nback to the source.",
+      "verifySub": "Four considered steps through the original sources: a focused question, primary-text search, edition matching, and study with a teacher.",
+      "step1": "Ask a question",
+      "step1Body": "Choose the assistant for your discipline and describe the question and its context.",
+      "step2": "Locate primary texts",
+      "step2Body": "Trace the Arabic passage in the reference works. Read the quotation alongside its surrounding discussion.",
+      "step3": "Locate the printed edition",
+      "step3Body": "Title, edition, volume, and page guide you to match the passage against its source.",
+      "step4": "Study with a teacher",
+      "step4Body": "Bring the passage and its reference to your teacher. Explore its meaning, weigh the context, and develop your conclusions together.",
+      "verifyLimit": "AI can make mistakes. Verification is a review process, not a guarantee that every output is error-free.",
+      "catalogEyebrow": "FIELDS OF SCHOLARSHIP",
+      "available": "Available in the app",
+      "preparing": "In preparation",
+      "preparingBody": "This collection is being curated and organised for public access. Availability updates will appear in the release notes.",
+      "archiveEyebrow": "A TRACEABLE REFERENCE",
+      "archiveTitle": "Open passages.\nTransparent enquiry.",
+      "archiveBody": "Explore how OpenTurath presents passages from Al-Umm with volume and page references in the Q001 archive. Compare six original model responses and examine the source-review records.",
+      "memberEyebrow": "MEMBERSHIP",
+      "chooseMembership": "Access in the app",
+      "memberManual": "Manual renewal. No automatic debit.",
+      "memberPayment": "DOKU · QRIS · Virtual Account · E-Wallet",
+      "memberMethods": "Plan details, payment methods, and the total are shown before you pay.",
+      "memberRefund": "Refund requests are reviewed within 7 business days of complete information. Approved refunds are processed within a further 7 business days, subject to the payment provider.",
+      "memberNotice": "Membership is activated in the OpenTurath app.",
+      "featuredPlan": "Broadest scope",
+      "adabTitle": "Deeper knowledge.\nThoughtful scholarship.",
+      "adabBody": "Finding a passage is the beginning. Understanding grows through attentive reading, honest attribution, and a teacher’s guidance.",
+      "legalVersion": "App policy summary · v1.0 · 13 September 2026",
+      "legalCanonical": "Read the official Indonesian text",
+      "policySummary": "This page summarizes the official app policy. Current offer details and website-specific terms are explained separately below.",
+      "downloadIntegrity": "SHA-256 is calculated from the APK file included in this website release.",
+      "studySpace": "Study Room",
+      "referenceBooks": "Authoritative References",
+      "archiveSample": "Q001 archive excerpt",
+      "memberFrom": "From",
+      "memberPerMonth": "/ month",
+      "memberReview": "Refund review within 7 business days",
+      "faqIntro": "A few things to help you begin.",
+      "navAdab": "Adab",
+      "navDownload": "Download",
+      "awaitingArtifact": "Release file in preparation",
+      "statsEyebrow": "THE COLLECTION IN NUMBERS",
+      "statsTitle": "A vast heritage.\nRoom for discovery.",
+      "statsSource": "Combined metadata from 20 app modules · 21 assistant profiles, including 1 in preparation.",
+      "metricDisciplines": "Active disciplines",
+      "metricBooks": "Scholarly works",
+      "metricVolumes": "Volumes",
+      "metricPages": "Pages",
+      "metricWords": "Words of turath",
+      "metricPartitions": "Indexed partitions",
+      "metaBooks": "Works",
+      "metaVolumes": "Volumes",
+      "metaPages": "Pages",
+      "metaWords": "Words",
+      "metaLectures": "Lectures",
+      "metaMillion": "Million",
+      "metaBillion": "Billion",
+      "collectionMetrics": "Collection metadata",
+      "statsEra": "From the pre-Hijra era to modern scholarship.",
+      "paymentVA": "Virtual Account",
+      "paymentWallet": "E-Wallet",
+      "statsIntro": "Centuries of scholarly thought. Now closer to your own study.",
+      "faqTitle": "What would you\nlike to know?",
+      "adabSourceTitle": "About this guide",
+      "adabSourceNote": "This OpenTurath editorial guide draws on the adab material supplied to the team, inspired by Al-Habib Abu Bakr Al-Adni bin Ali Al-Mashhur’s approach to renewing tools while preserving scholarly foundations. Its application to AI is OpenTurath’s synthesis, rather than a direct quotation or an AI ruling attributed to him.",
+      "motionControl": "Reduce motion",
+      "methodSample": "Study example · Q001 archive",
+      "methodBook": "Book",
+      "methodVolume": "Volume",
+      "methodPage": "Page",
+      "methodQuestion": "Does touching through clothing invalidate wudu?",
+      "methodNote": "An archived passage illustrates the study process. Open the source for full context."
+    },
+    "ar": {
+      "skip": "انتقل إلى المحتوى",
+      "home": "الرئيسية",
+      "library": "الخزانة",
+      "research": "الاختبارات",
+      "how": "طريقة الاستخدام",
+      "about": "عن المشروع",
+      "download": "تنزيل التطبيق",
+      "language": "اللغة",
+      "menu": "القائمة",
+      "close": "إغلاق",
+      "theme": "تغيير المظهر",
+      "hero": "العلم. أقرب إليك.",
+      "heroSub": "تأمّل آلاف المؤلفات التراثية والمعاصرة مع العناية بالتحقّق من النص العربي والجزء والصفحة.",
+      "seeResults": "اطّلع على النتائج",
+      "scroll": "ابدأ التصفّح",
+      "opening": "كل سؤال طريق إلى مصدره.",
+      "openingSub": "يعينك OpenTurath على العثور على مباحث المسائل في كتب التراث، لتظل المصادر بين يديك قراءةً ودراسةً وتحقّقًا.",
+      "example": "نموذج بحث",
+      "originalQuery": "السؤال الأصلي · الإندونيسية",
+      "sourceText": "النص المنقول في الإجابة",
+      "sourceNote": "نص من أرشيف Q001. تُبيَّن مراجعة الطبعة على حدة.",
+      "openSource": "افتح المرجع",
+      "readFull": "اقرأ الإجابة كاملة",
+      "fieldTitle": "تراث العلماء.\nوآفاق لكل بحث.",
+      "fieldSub": "عشرون تخصصًا علميًّا، من فقه المذاهب إلى تحقيق النصوص. اختر المساعد المختص بمجال بحثك.",
+      "allLibrary": "تصفّح المكتبة كاملة",
+      "compareTitle": "السؤال واحد.\nتأمّل الإجابات.",
+      "compareSub": "ست إجابات محفوظة كما وردت في مواد الاختبار. اقرأ النصوص، وتتبع الإحالات، وانظر في الفروق.",
+      "compareCta": "افتح المقارنة",
+      "caseLabel": "دراسة حالة",
+      "topic": "اللمس والوضوء في المذهب الشافعي",
+      "methodTitle": "اقرأ العبارة.\nوانظر في مرجعها.",
+      "methodSub": "لنص الكتاب وشرح التطبيق وبيانات المرجع موضعٌ يميّز كلًّا منها، لتعرف ما تقرأه.",
+      "sourceLayer": "نص المصدر",
+      "explanationLayer": "شرح التطبيق",
+      "referenceLayer": "بيانات المرجع",
+      "special": "مجموعة خاصة",
+      "tahawwulat": "فقه التحولات",
+      "tahaTitle": "قراءة التحولات.\nوالنظر في هديها.",
+      "tahaSub": "طالع مؤلفات الحبيب أبي بكر العدني المشهور ودروسه في مجموعة خاصة بفقه التحولات.",
+      "exploreCollection": "تعرّف إلى المجموعة",
+      "access": "العضوية",
+      "billing": "الدفع والاسترداد",
+      "aiGuidelines": "استخدام الذكاء الاصطناعي والتحقق من المراجع",
+      "accessTitle": "آفاق أرحب لمطالعة التراث",
+      "accessSub": "اختر المساعد المختص بالعلم الذي تريد دراسته. يُفعّل الوصول رسميًّا داخل التطبيق عبر DOKU، مع تجديد يدوي.",
+      "downloadTitle": "واصل بحثك\nفي OpenTurath.",
+      "downloadSub": "اختر منصتك لمواصلة المطالعة. تجد أدناه حالة الإصدارات وإرشادات التثبيت.",
+      "faq": "الأسئلة الشائعة",
+      "help": "المساعدة",
+      "contact": "المساعدة والتواصل",
+      "report": "أبلغ عن مشكلة",
+      "releases": "سجل الإصدارات",
+      "methods": "منهجية الاختبار",
+      "corrections": "سجل التصحيحات",
+      "privacy": "سياسة الخصوصية",
+      "terms": "شروط الخدمة",
+      "rights": "المصادر وحقوق الاستخدام",
+      "accessibility": "إمكانية الوصول",
+      "deletion": "حذف الحساب",
+      "security": "الإبلاغ عن الثغرات",
+      "product": "المنتج",
+      "scholarship": "البحث",
+      "information": "معلومات",
+      "search": "ابحث عن عنوان أو مؤلف أو مجال…",
+      "searchCollections": "ابحث عن مجموعة أو علم",
+      "all": "الكل",
+      "collections": "المجموعات",
+      "books": "كتب النموذج",
+      "fiqh": "الفقه",
+      "hadith": "الحديث",
+      "quran": "القرآن",
+      "languageGroup": "اللغة والفهارس",
+      "history": "التاريخ والتراجم",
+      "spirituality": "التزكية",
+      "theology": "العقيدة",
+      "specialGroup": "مجموعة خاصة",
+      "noResults": "لا نتائج. جرّب عبارة أخرى أو أزل المرشّحات.",
+      "clear": "إزالة المرشّحات",
+      "results": "نتائج",
+      "catalogNote": "أعداد الخزانة مأخوذة من بيانات وحدات التطبيق، وتُبيّن كل مجموعة حالة إتاحتها.",
+      "contents": "نطاق البحث",
+      "bibliography": "بيانات الكتاب",
+      "author": "المؤلف",
+      "edition": "الطبعة",
+      "locator": "الإحالة في الإجابة",
+      "unknown": "غير متاح بعد",
+      "recorded": "مسجّل في أرشيف الإجابة",
+      "unverified": "لم يُراجع بعد",
+      "verifyNote": "يحفظ هذا السجل الإحالة الواردة في الإجابة الأصلية. لم تُراجع مطابقة النص والطبعة من جديد لهذا الموقع.",
+      "linkedCase": "اعرض في دراسة الحالة",
+      "researchTitle": "شواهد يمكنك قراءتها.",
+      "researchSub": "تُعرض الأسئلة والإجابات الأصلية وملاحظات المراجعة معًا، وتُبنى النتائج على الشواهد المتاحة.",
+      "archive": "أرشيف المقارنة",
+      "scopeNote": "سؤال واحد وستة منتجات. لا تمثل هذه النتائج جميع قدرات كل منتج.",
+      "date": "تاريخ الاختبار",
+      "notRecorded": "غير مسجّل",
+      "reviewStatus": "حالة المراجعة",
+      "original": "الإجابة الأصلية",
+      "compareWith": "قارن مع",
+      "sourceConversation": "المحادثة الأصلية",
+      "sourceAccess": "قد يتطلب رابط المصدر حسابًا.",
+      "archiveDownload": "نزّل الأرشيف الأصلي",
+      "notes": "الملاحظات",
+      "references": "المراجع المذكورة",
+      "reviewDetail": "يتضمن الأرشيف نصوصًا منقولة وإحالات ببليوغرافية. ذكرت مراجعة سابقة مطابقة عشرة نصوص للمكتبة الشاملة، لكن سجلات التحقّق المفردة لم تُرفق؛ لذا لا تُمنح هنا نسبة للدقة.",
+      "issuesDetail": "أشارت ملاحظات سابقة أيضًا إلى زيادات على النص، وغموض في العزو، وتوسّع في الاستنتاج، وخروج عن السؤال. وتظل هذه الملاحظات جزءًا من سجل الحالة.",
+      "focus": "وضع القراءة",
+      "exitFocus": "الخروج من وضع القراءة",
+      "copy": "انسخ النص والمرجع",
+      "copied": "نُسخ النص ومرجعه.",
+      "copyFailed": "تعذّر النسخ. حدّد النص لنسخه يدويًّا.",
+      "installGuide": "دليل التثبيت",
+      "releasePending": "لم يُنشر رابط التنزيل الرسمي بعد.",
+      "releasePendingSub": "يمكنك الآن الاطّلاع على الأدلة ونماذج البحث في هذا الموقع.",
+      "version": "الإصدار",
+      "minimumOS": "النظام المطلوب",
+      "size": "الحجم",
+      "releaseDate": "تاريخ الإصدار",
+      "downloadPlatform": "تنزيل لنظام",
+      "noReleases": "لم تُدرج إصدارات التطبيق بعد.",
+      "noPlans": "لم تُنشر تفاصيل الإتاحة والأسعار بعد.",
+      "noPlansSub": "ستبيّن التفاصيل المجموعات المشمولة ومدد الإتاحة والأسعار وشروط التجديد.",
+      "helpTitle": "ما الذي تودّ معرفته؟",
+      "helpSearch": "ابحث في الأدلة",
+      "contactTitle": "تواصل معنا.",
+      "contactSub": "بشأن التطبيق أو المجموعات أو إحالة تحتاج إلى مراجعة.",
+      "email": "البريد الإلكتروني",
+      "subject": "الموضوع",
+      "message": "التفاصيل",
+      "emailHint": "اختياري، إذا رغبت في تلقّي رد.",
+      "reportSource": "تصحيح إحالة",
+      "reportTechnical": "مشكلة تقنية",
+      "reportAccess": "الإتاحة والدفع",
+      "reportOther": "سؤال آخر",
+      "reportHint": "أرفق اسم الكتاب والطبعة والصفحة، أو الخطوات التي ظهرت عندها المشكلة. لا تذكر كلمات المرور أو بيانات شخصية غير لازمة.",
+      "consent": "أوافق على استخدام هذه المعلومات لمتابعة بلاغي.",
+      "submit": "أرسل البلاغ",
+      "sending": "جارٍ الإرسال…",
+      "sent": "حُفظ بلاغك. رقم البلاغ:",
+      "failed": "لم يُرسل البلاغ. حاول مرة أخرى، أو نزّل نسخة منه.",
+      "saveReport": "نزّل نسخة من البلاغ",
+      "contactPending": "لم يُدرج عنوان التواصل الرسمي بعد.",
+      "formRetention": "تُحفظ البلاغات مدة ٣٠ يومًا في خدمة النماذج بالموقع.",
+      "noCorrections": "لم تُنشر تصحيحات بعد.",
+      "notFound": "لم يُعثر على هذه الصفحة.",
+      "backHome": "العودة إلى الرئيسية",
+      "back": "عودة",
+      "readGuide": "اقرأ الدليل",
+      "policyNotice": "المعلومات التشغيلية غير مكتملة. ستبيّن السياسة النهائية هوية القائم على الخدمة وممارساتها المعتمدة.",
+      "updated": "آخر تحديث",
+      "export": "تنزيل",
+      "chooseLanguage": "اختر لغتك",
+      "chooseLanguageSub": "التراث نفسه، باللغة التي تختارها.",
+      "privacyShort": "دون متتبّعات تحليلية خارجية.",
+      "unavailable": "غير متاح بعد",
+      "textSize": "حجم النص",
+      "increaseText": "تكبير النص",
+      "decreaseText": "تصغير النص",
+      "originalLanguage": "حُفظت الإجابات بلغتها الأصلية، الإندونيسية.",
+      "bookshelf": "مسار الإحالات",
+      "goMethod": "اقرأ منهج المراجعة",
+      "noFullBooks": "تعرض هذه الصفحة البيانات وإحالات النموذج. ويجري البحث في المجموعات داخل التطبيق.",
+      "publicAccess": "متاح للقراءة دون حساب",
+      "publicAccessBody": "الفهرس والأدلة وأرشيف الاختبارات في هذا الموقع متاحة للقراءة.",
+      "appAccess": "الإتاحة داخل التطبيق",
+      "chars": "حرفًا",
+      "share": "انسخ الرابط",
+      "linkCopied": "نُسخ الرابط.",
+      "heroTagline": "تراث العلماء. بين يديك.",
+      "heroCta": "استكشف الخزانة",
+      "heroSecondary": "تعرّف على المنهج",
+      "heroFoot": "على أصول المصادر، وبإرشاد أهل العلم.",
+      "booksAlt": "كتب تراثية مفتوحة الصفحات",
+      "verifyEyebrow": "منهج المطالعة",
+      "verifyTitle": "من المسألة،\nإلى المصدر.",
+      "verifySub": "أربع خطوات منهجية لمطالعة الأصول: سؤال محدد، وتتبع للنص، ومقابلة بيانات الطبعة، ومدارسة مع أهل العلم.",
+      "step1": "اطرح السؤال",
+      "step1Body": "اختر المساعد المختص، ثم بيّن المسألة وسياقها الذي تريد دراسته.",
+      "step2": "تتبّع النص الأصلي",
+      "step2Body": "تتبّع العبارة العربية في كتب المصادر، واقرأ النص مع سياقه وما يتصل به.",
+      "step3": "حدّد موضع النص في الطبعة",
+      "step3Body": "يهديك عنوان الكتاب وبيانات الطبعة والجزء والصفحة إلى مقابلة العبارة بالمصدر.",
+      "step4": "دارس النص مع أهل العلم",
+      "step4Body": "اعرض العبارة ومرجعها على أهل العلم، وتعمّق في معناها وسياقها، وابنِ النتائج بإرشادهم.",
+      "verifyLimit": "قد يخطئ الذكاء الاصطناعي. التحقّق عملية مراجعة، ولا يضمن خلوّ كل مخرج من الخطأ.",
+      "catalogEyebrow": "حقول المعرفة",
+      "available": "متاح في التطبيق",
+      "preparing": "قيد الإعداد",
+      "preparingBody": "تخضع هذه المجموعة للمراجعة والتنظيم تمهيدًا لإتاحتها. وتُعلن مستجداتها في ملاحظات الإصدار.",
+      "archiveEyebrow": "أثر الإحالة",
+      "archiveTitle": "نصوص بين يديك.\nوبحث واضح المعالم.",
+      "archiveBody": "اقرأ كيف يعرض OpenTurath عبارات الأم مع أرقام الأجزاء والصفحات في أرشيف Q001. قارن الإجابات الأصلية لستة نماذج واطّلع على سجلات مراجعة المصادر.",
+      "memberEyebrow": "عضوية المطالعة",
+      "chooseMembership": "ابدأ الوصول عبر التطبيق",
+      "memberManual": "تجديد يدوي. دون خصم تلقائي.",
+      "memberPayment": "DOKU · QRIS · حساب افتراضي · محفظة إلكترونية",
+      "memberMethods": "تُعرض تفاصيل الباقة ووسائل الدفع والمبلغ الإجمالي قبل إتمام المعاملة.",
+      "memberRefund": "تُراجع طلبات الاسترداد خلال ٧ أيام عمل من اكتمال البيانات. وبعد الموافقة تُعالج خلال ٧ أيام عمل أخرى، وفق مزود الدفع.",
+      "memberNotice": "تُفعّل العضوية داخل تطبيق OpenTurath.",
+      "featuredPlan": "النطاق الأوسع",
+      "adabTitle": "علم واسع.\nوأدب راسخ.",
+      "adabBody": "الوصول إلى العبارة بداية الطريق. وينمو الفهم بالقراءة المتأنية، وأمانة النقل، وإرشاد أهل العلم.",
+      "legalVersion": "ملخص سياسات التطبيق · الإصدار 1.0 · ١٣ سبتمبر ٢٠٢٦",
+      "legalCanonical": "اقرأ النص الرسمي بالإندونيسية",
+      "policySummary": "تلخّص هذه الصفحة سياسة التطبيق الرسمية. وتُبيّن تفاصيل العرض الحالي وأحكام الموقع الخاصة بصورة منفصلة أدناه.",
+      "downloadIntegrity": "تُحسب قيمة SHA-256 من ملف APK المرفق بإصدار الموقع هذا.",
+      "studySpace": "مجلس المطالعة",
+      "referenceBooks": "المراجع المعتمدة",
+      "archiveSample": "مقتطف من أرشيف Q001",
+      "memberFrom": "ابتداءً من",
+      "memberPerMonth": "/ شهر",
+      "memberReview": "مراجعة الاسترداد خلال ٧ أيام عمل",
+      "faqIntro": "ما يعينك على بدء المطالعة.",
+      "navAdab": "آداب الطلب",
+      "navDownload": "تنزيل",
+      "awaitingArtifact": "ملف الإصدار قيد الإعداد",
+      "statsEyebrow": "الخزانة بالأرقام",
+      "statsTitle": "تراث واسع.\nوآفاق رحبة للبحث.",
+      "statsSource": "مجموع بيانات ٢٠ وحدة في التطبيق · ٢١ ملف مساعد، منها ملف واحد قيد الإعداد.",
+      "metricDisciplines": "تخصصات متاحة",
+      "metricBooks": "كتب تراثية",
+      "metricVolumes": "مجلدات",
+      "metricPages": "صفحات",
+      "metricWords": "كلمات تراثية",
+      "metricPartitions": "أقسام مفهرسة",
+      "metaBooks": "كتاب",
+      "metaVolumes": "مجلد",
+      "metaPages": "صفحة",
+      "metaWords": "كلمة",
+      "metaLectures": "محاضرة",
+      "metaMillion": "مليون",
+      "metaBillion": "مليار",
+      "collectionMetrics": "بيانات الخزانة",
+      "statsEra": "من عصر ما قبل الهجرة إلى العصر الحديث.",
+      "paymentVA": "الحساب الافتراضي",
+      "paymentWallet": "المحفظة الإلكترونية",
+      "statsIntro": "قرون من نتاج العلماء، أقرب إليك اليوم للدرس والبحث.",
+      "faqTitle": "ما الذي تودّ\nمعرفته؟",
+      "adabSourceTitle": "عن هذا الدليل",
+      "adabSourceNote": "هذا الدليل صياغة تحريرية من OpenTurath للمادة المقدّمة إلى الفريق، مستلهمة من منهج الحبيب أبي بكر العدني بن علي المشهور في تحديث الوسائل مع حفظ أصول العلم. وتطبيق هذه المبادئ على الذكاء الاصطناعي اجتهاد تحريري من OpenTurath، وليس نقلًا مباشرًا عنه أو فتوى منسوبة إليه في شأنه.",
+      "motionControl": "تقليل الحركة",
+      "methodSample": "مثال للدراسة · أرشيف Q001",
+      "methodBook": "الكتاب",
+      "methodVolume": "الجزء",
+      "methodPage": "الصفحة",
+      "methodQuestion": "هل ينقض اللمس من وراء الثوب الوضوء؟",
+      "methodNote": "نص من الأرشيف لتوضيح مسار الدراسة. افتح المصدر للاطلاع على السياق الكامل."
+    }
+  },
+  "faq": [
+    {
+      "id": "teacher",
+      "q": [
+        "Apakah OpenTurath menggantikan peran guru atau ulama?",
+        "Does OpenTurath replace a teacher or scholar?",
+        "هل يحل OpenTurath محلّ المعلم أو العالم؟"
+      ],
+      "a": [
+        "OpenTurath membantu Anda menemukan ibarah, menata bacaan, dan menyiapkan pertanyaan. Bawalah hasil telaah itu kepada guru agar istilah, konteks, dan kesimpulannya dipahami dengan tepat. Talaqqi juga menumbuhkan adab dan kebijaksanaan yang menyertai ilmu.",
+        "Use OpenTurath to find passages, organise reading, and prepare questions. Bring that work to your teacher to explore its terms, context, and conclusions. Talaqqi also nurtures the conduct and judgement that accompany knowledge.",
+        "يساعدك OpenTurath على الوصول إلى العبارات وتنظيم القراءة وإعداد الأسئلة. اعرض ما تتوصل إليه على معلمك لضبط المصطلحات وفهم السياق والنتائج. فالتلقّي ينمّي الأدب والحكمة المصاحبة للعلم."
+      ]
+    },
+    {
+      "id": "verification",
+      "q": [
+        "Bagaimana cara kerja verifikasi teks Arab dan rujukan kitab?",
+        "How are Arabic passages and book references verified?",
+        "كيف تُراجع النصوص العربية وإحالات الكتب؟"
+      ],
+      "a": [
+        "Penelusuran dimulai dari korpus kitab pada asisten yang Anda pilih. Kutipan Arab, judul kitab, jilid, dan halaman menjadi titik temu dengan naskah sumber. Verifikasi dilengkapi dengan mencocokkan ibarah serta edisi cetakannya, sehingga kutipan dapat ditelaah dalam konteks yang utuh.",
+        "Research starts with the book corpus of your chosen assistant. Arabic quotations, titles, volumes, and pages point you back to the source. Verification is completed by matching the passage and its edition, so the quotation can be studied in its full context.",
+        "يبدأ البحث من مجموعة مصادر المساعد الذي تختاره. وتدلّك العبارة العربية وعنوان الكتاب والجزء والصفحة على موضع النص. وتكتمل المراجعة بمقابلة العبارة وطبعتها، لقراءة النقل في سياقه التام."
+      ]
+    },
+    {
+      "id": "edition",
+      "q": [
+        "Mengapa halaman rujukan bisa berbeda dengan kitab cetakan saya?",
+        "Why might a reference differ from the page in my printed book?",
+        "لماذا قد يختلف رقم الصفحة عن نسختي المطبوعة؟"
+      ],
+      "a": [
+        "Tiap penerbit dan edisi dapat memakai tata letak serta pembagian jilid yang berbeda. Cocokkan nama penerbit, tahun cetak, dan nomor jilid terlebih dahulu, lalu telusuri bab atau awal ibarahnya. Nomor halaman cetak juga dapat berbeda dari penghitung halaman PDF.",
+        "Publishers and editions can use different layouts and volume divisions. First compare the publisher, publication year, and volume, then find the chapter or opening words of the passage. Printed page numbers may also differ from a PDF viewer’s page counter.",
+        "تختلف الطبعات في تنسيق الصفحات وتقسيم المجلدات. قابل اسم الناشر وسنة الطبع والجزء أولًا، ثم تتبّع الباب أو مطلع العبارة. وقد يختلف رقم الصفحة المطبوعة عن عدّاد صفحات PDF."
+      ]
+    },
+    {
+      "id": "sources",
+      "q": [
+        "Kitab apa saja yang menjadi rujukan setiap disiplin?",
+        "Which works are used in each discipline?",
+        "ما الكتب المعتمدة في كل تخصص؟"
+      ],
+      "a": [
+        "Setiap khadim memiliki cakupan tersendiri. Fikih Syafi’i menelaah antara lain Al-Umm, Minhajuth Thalibin, dan Tuhfatul Muhtaj; hadits menelusuri Kutubus Sittah; ushul fikih mengkaji Al-Mustashfa, Al-Luma’, dan Al-Burhan. Buka kartu khazanah untuk mengenali fokus, cakupan, dan metadata bidangnya.",
+        "Each assistant has a distinct scope. Shafi‘i fiqh studies works such as Al-Umm, Minhaj al-Talibin, and Tuhfat al-Muhtaj; hadith searches the Six Books; usul al-fiqh studies Al-Mustasfa, Al-Luma‘, and Al-Burhan. Open a collection card to explore its focus, scope, and metadata.",
+        "لكل مساعد نطاق خاص. فمن مصادر الفقه الشافعي الأم ومنهاج الطالبين وتحفة المحتاج، ومن مصادر الحديث الكتب الستة، ومن أصول الفقه المستصفى واللمع والبرهان. افتح بطاقة الخزانة للتعرّف على موضوعها ونطاقها وبياناتها."
+      ]
+    },
+    {
+      "id": "payment",
+      "q": [
+        "Berapa biaya keanggotaan dan bagaimana cara membayarnya?",
+        "How much does membership cost, and how do I pay?",
+        "ما تكلفة العضوية وكيف أسدّدها؟"
+      ],
+      "a": [
+        "Akses khadim spesialis dimulai dari Rp 49.000 per bulan. Pilih paket dan lakukan aktivasi di aplikasi melalui DOKU. QRIS, Virtual Account, dan E-Wallet tersedia sesuai pilihan pada halaman pembayaran. Perpanjangan dilakukan manual, tanpa auto-debit; total biaya serta masa akses ditampilkan sebelum transaksi.",
+        "Specialist access starts at IDR 49,000 per month. Choose a plan and activate it in the app through DOKU. QRIS, Virtual Account, and E-Wallet options depend on the payment screen. Renewal is manual with no automatic debit; the total and access period are shown before payment.",
+        "يبدأ الوصول إلى المساعد المختص من ٤٩٬٠٠٠ روبية إندونيسية شهريًّا. اختر الباقة وفعّلها داخل التطبيق عبر DOKU، باستخدام QRIS أو الحساب الافتراضي أو المحفظة الإلكترونية بحسب الخيارات المعروضة. التجديد يدوي دون خصم تلقائي، ويظهر المبلغ ومدة الوصول قبل الدفع."
+      ]
+    },
+    {
+      "id": "notes",
+      "q": [
+        "Di mana catatan telaah saya disimpan?",
+        "Where are my study notes stored?",
+        "أين تُحفظ ملاحظات المطالعة؟"
+      ],
+      "a": [
+        "Catatan yang Anda simpan melalui fitur Catatan berada secara lokal di perangkat Anda. Gunakan fitur ekspor atau pencadangan yang tersedia sebelum mengganti perangkat atau menghapus data aplikasi. Percakapan pada Google NotebookLM dikelola oleh layanan tersebut dan terpisah dari Catatan lokal.",
+        "Notes saved through the Notes feature are stored locally on your device. Use the available export or backup features before changing devices or clearing app data. Google NotebookLM conversations are managed by that service, separately from local Notes.",
+        "تُحفظ الملاحظات التي تسجّلها في ميزة الملاحظات محليًّا على جهازك. استخدم خيارات التصدير أو النسخ الاحتياطي المتاحة قبل تغيير الجهاز أو مسح بيانات التطبيق. أمّا محادثات Google NotebookLM فتديرها تلك الخدمة بصورة منفصلة."
+      ]
+    },
+    {
+      "id": "availability",
+      "q": [
+        "Mengapa Khazanah Habib Umar berstatus “Dalam persiapan”?",
+        "Why is the Habib Umar collection marked “In preparation”?",
+        "لماذا تُعرض خزانة الحبيب عمر بوصفها «قيد الإعداد»؟"
+      ],
+      "a": [
+        "Koleksi karya, dars, dan risalah Al-Habib Umar bin Hafidz sedang dikurasi dan ditata sebelum dibuka. Situs menampilkan 20 disiplin aktif dan satu profil dalam persiapan. Perkembangan koleksi ini diumumkan melalui catatan rilis; aksesnya dibuka setelah tersedia di aplikasi.",
+        "The works, lessons, and writings of Al-Habib Umar bin Hafiz are being curated and organised for access. The site presents 20 active disciplines and one profile in preparation. Release notes will announce availability, with access opening when the collection is ready in the app.",
+        "تُراجع مؤلفات الحبيب عمر بن حفيظ ودروسه ورسائله وتُنظّم تمهيدًا لإتاحتها. يعرض الموقع ٢٠ تخصصًا متاحًا وملفًا واحدًا قيد الإعداد. تُعلن الإتاحة في ملاحظات الإصدار، ويُفتح الوصول عند جاهزية المجموعة في التطبيق."
+      ]
+    },
+    {
+      "id": "platforms",
+      "q": [
+        "Apakah OpenTurath dapat digunakan selain di Android?",
+        "Can I use OpenTurath on a platform other than Android?",
+        "هل يمكن استخدام OpenTurath على غير Android؟"
+      ],
+      "a": [
+        "Android adalah platform distribusi APK OpenTurath. Halaman Unduh menampilkan versi, status berkas, dan persyaratan perangkat terbaru. Versi macOS, Windows, dan iOS sedang dipersiapkan; ketersediaannya akan diumumkan melalui saluran resmi.",
+        "Android is the platform for OpenTurath APK distribution. Downloads shows the version, file availability, and current device requirements. macOS, Windows, and iOS versions are in preparation; availability will be announced through official channels.",
+        "Android هو منصة توزيع APK الخاصة بـ OpenTurath. تُبيّن صفحة التنزيل الإصدار وحالة الملف ومتطلبات الجهاز. إصدارات macOS وWindows وiOS قيد الإعداد، وتُعلن إتاحتها عبر القنوات الرسمية."
+      ]
+    },
+    {
+      "id": "refund",
+      "q": [
+        "Bagaimana mengajukan pengembalian dana?",
+        "How can I request a refund?",
+        "كيف أطلب استرداد المبلغ؟"
+      ],
+      "a": [
+        "Kirim nomor transaksi, bukti pembayaran, dan uraian kendala ke openturath@gmail.com. Permohonan ditinjau paling lambat 7 hari kerja setelah data lengkap. Jika disetujui, pengembalian diproses paling lambat 7 hari kerja berikutnya, mengikuti bank atau dompet asal. Ketentuan lengkap tersedia pada halaman Pembayaran dan Pengembalian Dana.",
+        "Send your transaction number, payment evidence, and a description of the issue to openturath@gmail.com. Requests are reviewed within 7 business days of complete information. Approved refunds are processed within a further 7 business days, subject to the original bank or wallet. See Payments and Refunds for the full terms.",
+        "أرسل رقم المعاملة وإثبات الدفع ووصف المشكلة إلى openturath@gmail.com. يُراجع الطلب خلال ٧ أيام عمل من اكتمال البيانات. وبعد الموافقة يُعالج الاسترداد خلال ٧ أيام عمل أخرى وفق البنك أو المحفظة الأصلية. راجع صفحة الدفع والاسترداد للتفاصيل."
+      ]
+    },
+    {
+      "id": "account",
+      "q": [
+        "Apakah percakapan memerlukan akun Google?",
+        "Do conversations require a Google account?",
+        "هل تتطلب المحادثات حساب Google؟"
+      ],
+      "a": [
+        "Percakapan dengan khadim berlangsung melalui Google NotebookLM. Masuklah dengan akun Google yang memenuhi persyaratan layanan tersebut. Keanggotaan OpenTurath mengatur akses koleksi, sementara batas penggunaan dan pemrosesan percakapan mengikuti ketentuan NotebookLM.",
+        "Conversations with assistants take place through Google NotebookLM. Sign in with a Google account that meets its service requirements. OpenTurath membership controls collection access; conversation processing and usage limits follow NotebookLM’s terms.",
+        "تجري المحادثات مع المساعدين عبر Google NotebookLM. سجّل الدخول بحساب Google يستوفي متطلبات الخدمة. تنظّم عضوية OpenTurath الوصول إلى المجموعات، وتخضع معالجة المحادثات وحدود استخدامها لشروط NotebookLM."
+      ]
+    }
+  ],
+  "articles": {
+    "how-it-works": {
+      "key": "how",
+      "intro": [
+        "Dari pertanyaan menuju rujukan.",
+        "From question to source.",
+        "من السؤال إلى المصدر."
+      ],
+      "blocks": [
+        {
+          "heading": [
+            "Ajukan pertanyaan",
+            "Ask a question",
+            "اطرح السؤال"
+          ],
+          "body": [
+            "Pilih khadim sesuai disiplin ilmu, lalu uraikan masalah dan konteks yang ingin Anda dalami.",
+            "Choose the assistant for your discipline and describe the question and its context.",
+            "اختر المساعد المختص، ثم بيّن المسألة وسياقها الذي تريد دراسته."
+          ]
+        },
+        {
+          "heading": [
+            "Telusuri teks primer",
+            "Locate primary texts",
+            "تتبّع النص الأصلي"
+          ],
+          "body": [
+            "Telusuri ibarah Arab dalam kitab rujukan. Baca kutipan beserta pembahasan yang mengitarinya.",
+            "Trace the Arabic passage in the reference works. Read the quotation alongside its surrounding discussion.",
+            "تتبّع العبارة العربية في كتب المصادر، واقرأ النص مع سياقه وما يتصل به."
+          ]
+        },
+        {
+          "heading": [
+            "Kenali koordinat cetakan",
+            "Locate the printed edition",
+            "حدّد موضع النص في الطبعة"
+          ],
+          "body": [
+            "Judul kitab, edisi, jilid, dan halaman menjadi panduan untuk mencocokkan ibarah dengan naskah sumber.",
+            "Title, edition, volume, and page guide you to match the passage against its source.",
+            "يهديك عنوان الكتاب وبيانات الطبعة والجزء والصفحة إلى مقابلة العبارة بالمصدر."
+          ]
+        },
+        {
+          "heading": [
+            "Telaah bersama guru",
+            "Study with a teacher",
+            "دارس النص مع أهل العلم"
+          ],
+          "body": [
+            "Bawa ibarah beserta rujukannya ke majelis ilmu. Perdalam makna, timbang konteks, dan susun kesimpulan dengan bimbingan guru.",
+            "Bring the passage and its reference to your teacher. Explore its meaning, weigh the context, and develop your conclusions together.",
+            "اعرض العبارة ومرجعها على أهل العلم، وتعمّق في معناها وسياقها، وابنِ النتائج بإرشادهم."
+          ]
+        },
+        {
+          "heading": [
+            "Mengapa halaman rujukan bisa berbeda dengan kitab cetakan saya?",
+            "Why might a reference differ from the page in my printed book?",
+            "لماذا قد يختلف رقم الصفحة عن نسختي المطبوعة؟"
+          ],
+          "body": [
+            "Tiap penerbit dan edisi dapat memakai tata letak serta pembagian jilid yang berbeda. Cocokkan nama penerbit, tahun cetak, dan nomor jilid terlebih dahulu, lalu telusuri bab atau awal ibarahnya. Nomor halaman cetak juga dapat berbeda dari penghitung halaman PDF.",
+            "Publishers and editions can use different layouts and volume divisions. First compare the publisher, publication year, and volume, then find the chapter or opening words of the passage. Printed page numbers may also differ from a PDF viewer’s page counter.",
+            "تختلف الطبعات في تنسيق الصفحات وتقسيم المجلدات. قابل اسم الناشر وسنة الطبع والجزء أولًا، ثم تتبّع الباب أو مطلع العبارة. وقد يختلف رقم الصفحة المطبوعة عن عدّاد صفحات PDF."
+          ]
+        },
+        {
+          "heading": [
+            "Mendokumentasikan hasil telaah",
+            "Documenting your review",
+            "توثيق نتائج المطالعة"
+          ],
+          "body": [
+            "Catat teks, edisi, penelaah, dan tanggal pencocokan sebelum menandai rujukan sebagai terverifikasi. Jejak pemeriksaan inilah yang membuat hasil telaah dapat ditelusuri ulang.",
+            "Record the text, edition, reviewer, and review date before marking a reference as verified. This record makes your findings reproducible.",
+            "دوّن النص والطبعة واسم المراجع وتاريخ المقابلة قبل إثبات التحقّق من الإحالة. بهذا السجل يمكن إعادة تتبّع نتائج البحث."
+          ]
+        }
+      ]
+    },
+    "about": {
+      "key": "about",
+      "intro": [
+        "Ilmu lebih dekat. Adab tetap dijaga.",
+        "Knowledge within reach. Adab preserved.",
+        "العلم أقرب. والأدب محفوظ."
+      ],
+      "blocks": [
+        {
+          "heading": [
+            "Ruang telaah turats",
+            "A space for turath study",
+            "مساحة لمطالعة التراث"
+          ],
+          "body": [
+            "OpenTurath membantu penelusuran literatur Islam, pembacaan ibarah, dan penyimpanan Catatan lokal. AI membantu persiapan belajar, sedangkan pemahaman mendalam tetap membutuhkan guru dan sumber asli.",
+            "OpenTurath supports Islamic literature research, close reading, and local Notes. AI assists study preparation, while deeper understanding still requires teachers and original sources.",
+            "يعين OpenTurath على البحث في الكتب الإسلامية وقراءة العبارات وحفظ الملاحظات محليًا. ويساعد الذكاء الاصطناعي في الإعداد للدراسة مع بقاء الحاجة إلى أهل العلم والمصادر الأصلية."
+          ]
+        },
+        {
+          "heading": [
+            "Katalog dan ketersediaan",
+            "Catalogue and availability",
+            "الفهرس والإتاحة"
+          ],
+          "body": [
+            "Dua puluh disiplin keilmuan, dari fikih mazhab hingga tahqiq naskah. Temukan khadim yang memahami bidang telaah Anda. Akumulasi metadata 20 modul aplikasi · 21 profil khadim, termasuk 1 dalam persiapan.",
+            "Twenty scholarly disciplines, from the schools of fiqh to manuscript study. Find an assistant dedicated to your field. Combined metadata from 20 app modules · 21 assistant profiles, including 1 in preparation.",
+            "عشرون تخصصًا علميًّا، من فقه المذاهب إلى تحقيق النصوص. اختر المساعد المختص بمجال بحثك. مجموع بيانات ٢٠ وحدة في التطبيق · ٢١ ملف مساعد، منها ملف واحد قيد الإعداد."
+          ]
+        },
+        {
+          "heading": [
+            "Pengelola dan bantuan",
+            "Operator and support",
+            "الجهة المشغلة والدعم"
+          ],
+          "body": [
+            "Pengelola OpenTurath, Indonesia. Kontak resmi openturath@gmail.com. Jam layanan Senin sampai Jumat, 09.00 sampai 17.00 WIB. Tanggapan awal diupayakan dalam 2 hari kerja.",
+            "Pengelola OpenTurath, Indonesia. Official contact: openturath@gmail.com. Service hours are Monday to Friday, 09:00 to 17:00 WIB (UTC+7). Initial support response is targeted within 2 business days.",
+            "الجهة المشغلة: Pengelola OpenTurath، إندونيسيا. التواصل: openturath@gmail.com. ساعات الخدمة من الاثنين إلى الجمعة، من ٠٩:٠٠ إلى ١٧:٠٠ بتوقيت جاكرتا (UTC+7). الرد الأولي خلال يومي عمل."
+          ]
+        }
+      ]
+    },
+    "terms": {
+      "key": "terms",
+      "intro": [
+        "Ketentuan Layanan",
+        "Terms of Service",
+        "شروط الخدمة"
+      ],
+      "blocks": [
+        {
+          "heading": [
+            "Pengelola, persetujuan, dan akun",
+            "Operator, consent, and accounts",
+            "الجهة المشغلة والموافقة والحسابات"
+          ],
+          "body": [
+            "Layanan dikelola Pengelola OpenTurath di Indonesia. Pendaftaran mandiri untuk pengguna berusia 18 tahun ke atas yang berwenang membuat perjanjian. Akun bersifat pribadi. Pembelian individu tidak otomatis memberikan hak akses lembaga.",
+            "The service is operated by Pengelola OpenTurath in Indonesia. Self-registration is for people aged 18 or older who can enter an agreement. Accounts are personal. Individual purchases do not automatically grant institutional access.",
+            "تدير الخدمة Pengelola OpenTurath في إندونيسيا. التسجيل الذاتي لمن بلغ ١٨ عامًا وكان مؤهلًا للتعاقد. الحساب شخصي، ولا يمنح الشراء الفردي وصولًا مؤسسيًا تلقائيًا."
+          ]
+        },
+        {
+          "heading": [
+            "Fungsi layanan dan hak pengguna",
+            "Service purpose and user rights",
+            "وظيفة الخدمة وحقوق المستخدم"
+          ],
+          "body": [
+            "AI membantu penelusuran, bukan fatwa resmi atau pengganti guru. Periksa teks, atribusi, terjemahan, dan edisi sebelum menggunakannya. Keterbatasan AI tidak menghapus tanggung jawab pengelola atau hak konsumen yang dilindungi hukum.",
+            "AI assists research and is not an official fatwa or a replacement for teachers. Check text, attribution, translation, and edition before using it. AI limitations do not remove the operator’s responsibilities or legally protected consumer rights.",
+            "يساعد الذكاء الاصطناعي في البحث، وليس فتوى رسمية ولا بديلًا عن المعلم. راجع النص والنسبة والترجمة والطبعة قبل الاستعمال. ولا تُسقط حدود التقنية مسؤولية المشغّل أو حقوق المستهلك المحمية قانونًا."
+          ]
+        },
+        {
+          "heading": [
+            "Paket dan pihak ketiga",
+            "Plans and third parties",
+            "الباقات والجهات الخارجية"
+          ],
+          "body": [
+            "Harga total, cakupan, batas penggunaan, dan tanggal akhir akses perlu dibaca sebelum pembayaran. Perpanjangan manual tanpa auto-debit. DOKU memproses pembayaran. Percakapan memakai Google NotebookLM dengan ketentuannya sendiri. Pembelian OpenTurath tidak menaikkan paket Google Anda.",
+            "Read the total price, scope, usage limits, and expiry before payment. Renewal is manual with no automatic debit. DOKU processes payments. Conversations use Google NotebookLM under its own terms. Buying OpenTurath does not upgrade your Google plan.",
+            "اقرأ السعر الإجمالي والنطاق وحدود الاستخدام وانتهاء الوصول قبل الدفع. التجديد يدوي دون خصم تلقائي. تعالج DOKU المدفوعات، وتستخدم المحادثات Google NotebookLM بشروطه. لا يرقّي شراء OpenTurath باقة Google."
+          ]
+        },
+        {
+          "heading": [
+            "Penggunaan dan hak cipta",
+            "Use and copyright",
+            "الاستخدام وحقوق النشر"
+          ],
+          "body": [
+            "Dilarang mengambil alih akun, menghindari kontrol akses, menjual kembali akses tanpa izin, atau memalsukan kutipan. Hak atas Catatan tetap milik penulisnya. Catatan disimpan lokal. Hak kitab, tahkik, dan terjemahan mengikuti pemegang hak masing-masing.",
+            "Account takeover, bypassing access controls, unauthorized resale, and fabricated quotations are prohibited. Authors retain rights to their Notes, which are stored locally. Books, edited editions, and translations retain their respective rights.",
+            "يُحظر الاستيلاء على الحسابات وتجاوز ضوابط الوصول وإعادة البيع دون إذن وتزوير النقول. تبقى حقوق الملاحظات لأصحابها وتُحفظ محليًا. وتتبع الكتب والتحقيقات والترجمات حقوق أصحابها."
+          ]
+        },
+        {
+          "heading": [
+            "Perubahan, pembatasan, dan pemulihan",
+            "Changes, restrictions, and remedies",
+            "التغييرات والقيود والمعالجة"
+          ],
+          "body": [
+            "Pemeliharaan dapat memengaruhi layanan. Pengurangan manfaat berbayar yang material memerlukan penyelesaian yang wajar. Pembatasan akun harus proporsional dengan masalah. Jika memungkinkan, alasan dan kesempatan klarifikasi diberikan. Perubahan kebijakan tidak menghapus hak pembelian yang telah timbul.",
+            "Maintenance may affect service. Material reductions in paid benefits require a reasonable remedy. Account restrictions should be proportionate, with reasons and an opportunity to clarify where possible. Policy changes do not remove accrued purchase rights.",
+            "قد تؤثر الصيانة في الخدمة. ويستلزم النقص الجوهري في المنافع المدفوعة معالجة معقولة. تكون قيود الحساب متناسبة، مع بيان الأسباب وإتاحة التوضيح متى أمكن. ولا تُسقط التغييرات الحقوق الناشئة عن الشراء."
+          ]
+        },
+        {
+          "heading": [
+            "Pengaduan dan hukum yang berlaku",
+            "Complaints and governing law",
+            "الشكاوى والقانون المطبق"
+          ],
+          "body": [
+            "Hubungi openturath@gmail.com untuk pengaduan dan klarifikasi. Perkembangan awal penanganan disampaikan dalam 2 hari kerja sesuai naskah resmi. Ketentuan aplikasi tunduk pada hukum Republik Indonesia.",
+            "Contact openturath@gmail.com for complaints and clarification. An initial handling update is provided within 2 business days under the official policy. The app terms are governed by Indonesian law.",
+            "تواصل عبر openturath@gmail.com للشكاوى والتوضيح. يُقدّم تحديث أولي خلال يومي عمل وفق السياسة الرسمية. تخضع شروط التطبيق لقانون جمهورية إندونيسيا."
+          ]
+        }
+      ],
+      "policy": true
+    },
+    "privacy": {
+      "key": "privacy",
+      "intro": [
+        "Kebijakan Privasi",
+        "Privacy Policy",
+        "سياسة الخصوصية"
+      ],
+      "blocks": [
+        {
+          "heading": [
+            "Data aplikasi dan tujuannya",
+            "App data and purposes",
+            "بيانات التطبيق وأغراضها"
+          ],
+          "body": [
+            "Aplikasi memproses identitas Google, status akses, data transaksi DOKU, kontak transaksi, sesi percakapan, serta data bantuan sesuai fitur yang dipakai. Data diperlukan untuk autentikasi, penyediaan layanan, pembayaran, dan kewajiban pencatatan. Pengelola menyatakan tidak menjual data pribadi atau menggunakan percakapan untuk iklan bertarget.",
+            "The app processes Google identity, access status, DOKU transaction data, transaction contacts, conversation sessions, and support data as needed by each feature. Purposes include authentication, service delivery, payment, and required records. The operator states that personal data is not sold and conversations are not used for targeted advertising.",
+            "يعالج التطبيق هوية Google وحالة الوصول وبيانات معاملات DOKU وجهات اتصال المعاملات والمحادثات والدعم بحسب الميزة. تشمل الأغراض المصادقة وتقديم الخدمة والدفع والسجلات المطلوبة. ويصرّح المشغّل بعدم بيع البيانات أو استخدام المحادثات للإعلانات الموجّهة."
+          ]
+        },
+        {
+          "heading": [
+            "Catatan lokal dan layanan eksternal",
+            "Local Notes and external services",
+            "الملاحظات المحلية والخدمات الخارجية"
+          ],
+          "body": [
+            "Catatan disimpan pada perangkat dan dapat hilang saat data aplikasi dihapus. Cadangkan melalui salin atau bagikan. Google menangani autentikasi dan NotebookLM, DOKU menangani pembayaran, dan Firebase/Google Cloud menangani data transaksi serta akses. Pemrosesan penyedia dapat berlangsung lintas negara.",
+            "Notes are stored on your device and may be lost when app data is deleted. Back up using copy or share. Google handles authentication and NotebookLM, DOKU handles payments, and Firebase/Google Cloud handles transaction and access data. Provider processing may cross borders.",
+            "تُحفظ الملاحظات على جهازك وقد تُفقد عند حذف بيانات التطبيق. انسخها أو شاركها للاحتفاظ بها. تتولى Google المصادقة وNotebookLM، وDOKU الدفع، وFirebase/Google Cloud بيانات المعاملات والوصول. قد تجري معالجة المزوّدين عبر الحدود."
+          ]
+        },
+        {
+          "heading": [
+            "Data pada website",
+            "Data on this website",
+            "البيانات في هذا الموقع"
+          ],
+          "body": [
+            "Website menyimpan pilihan bahasa, tema, gerak, dan ukuran baca di localStorage. Tidak ada analitik eksternal yang diaktifkan. Formulir menyimpan topik, email opsional, isi pesan, persetujuan, bahasa, halaman, ID permintaan, dan waktu laporan. Hindari mengirim kata sandi, OTP, data kartu, atau data sensitif.",
+            "The website stores language, theme, motion, and reading-size preferences in localStorage. No external analytics are enabled. The form stores topic, optional email, message, consent, language, page, request ID, and report time. Do not submit passwords, OTPs, card data, or sensitive information.",
+            "يحفظ الموقع تفضيلات اللغة والمظهر والحركة وحجم القراءة في localStorage. لا تحليلات خارجية مفعّلة. يحفظ النموذج الموضوع والبريد الاختياري والرسالة والموافقة واللغة والصفحة ومعرّف الطلب ووقته. لا ترسل كلمات المرور أو رموز التحقّق أو بيانات البطاقات أو المعلومات الحساسة."
+          ]
+        },
+        {
+          "heading": [
+            "Retensi dan penghapusan",
+            "Retention and deletion",
+            "الاحتفاظ والحذف"
+          ],
+          "body": [
+            "Data akun mengikuti masa aktif dan permohonan penghapusan. Catatan lokal berada dalam kendali perangkat Anda. Transaksi dapat dipertahankan untuk kewajiban hukum. Laporan website dijadwalkan untuk dihapus setelah 30 hari. Cadangan dan log infrastruktur mengikuti pengaturan operasional pengelola.",
+            "Account data follows account lifetime and deletion requests. Local Notes remain under your device’s control. Transactions may be retained for legal obligations. Website reports are scheduled for deletion after 30 days. Backups and infrastructure logs follow the operator’s operational settings.",
+            "ترتبط بيانات الحساب بمدة نشاطه وطلبات الحذف. وتبقى الملاحظات المحلية تحت تحكم جهازك. قد تُحفظ المعاملات للالتزامات القانونية. يُجدول حذف بلاغات الموقع بعد ٣٠ يومًا، وتتبع النسخ الاحتياطية وسجلات البنية إعدادات المشغّل."
+          ]
+        },
+        {
+          "heading": [
+            "Hak privasi dan pengguna di bawah umur",
+            "Privacy rights and minors",
+            "حقوق الخصوصية والقاصرون"
+          ],
+          "body": [
+            "Ajukan akses, koreksi, atau penghapusan data melalui openturath@gmail.com. Pendaftaran mandiri dibatasi untuk usia 18 tahun ke atas. Hubungi pengelola jika ditemukan akun anak yang tidak memenuhi ketentuan. Naskah resmi menjelaskan ruang lingkup dan tanggung jawab data aplikasi.",
+            "Request access, correction, or deletion through openturath@gmail.com. Self-registration is restricted to ages 18 and above. Contact the operator about an ineligible child account. The official policy explains the scope and responsibilities for app data.",
+            "اطلب الاطلاع أو التصحيح أو الحذف عبر openturath@gmail.com. التسجيل الذاتي لمن بلغ ١٨ عامًا. تواصل مع المشغّل عند العثور على حساب طفل غير مستوفٍ للشروط. توضح السياسة الرسمية نطاق بيانات التطبيق والمسؤوليات."
+          ]
+        }
+      ],
+      "policy": true
+    },
+    "billing": {
+      "key": "billing",
+      "intro": [
+        "Pembayaran dan Pengembalian Dana",
+        "Payments and Refunds",
+        "الدفع والاسترداد"
+      ],
+      "blocks": [
+        {
+          "heading": [
+            "Penawaran dan durasi",
+            "Offers and duration",
+            "العروض والمدة"
+          ],
+          "body": [
+            "Akses khadim spesialis dimulai dari Rp 49.000 per bulan. Pilih khadim spesialis disiplin ilmu yang ingin Anda telaah. Akses dan aktivasi diproses resmi di aplikasi melalui DOKU, tanpa perpanjangan otomatis. Rincian paket, metode pembayaran, dan total biaya ditampilkan sebelum transaksi.",
+            "Specialist access starts at IDR 49,000 per month. Choose a specialist assistant for the discipline you wish to study. Access and activation are handled in the app through DOKU, with manual renewal. Plan details, payment methods, and the total are shown before you pay.",
+            "يبدأ الوصول إلى المساعد المختص من ٤٩٬٠٠٠ روبية إندونيسية شهريًّا. اختر المساعد المختص بالعلم الذي تريد دراسته. يُفعّل الوصول رسميًّا داخل التطبيق عبر DOKU، مع تجديد يدوي. تُعرض تفاصيل الباقة ووسائل الدفع والمبلغ الإجمالي قبل إتمام المعاملة."
+          ]
+        },
+        {
+          "heading": [
+            "DOKU dan aktivasi",
+            "DOKU and activation",
+            "DOKU والتفعيل"
+          ],
+          "body": [
+            "Pembayaran memakai DOKU melalui QRIS, Virtual Account, atau E-Wallet yang tersedia pada checkout. Status dibayar dan status akses aktif perlu dikonfirmasi terpisah. Jika dana terpotong tetapi akses belum aktif, hubungi bantuan dengan nomor transaksi sebelum membayar ulang.",
+            "Payments use available DOKU methods such as QRIS, Virtual Account, or E-Wallet. Payment status and active access must be confirmed separately. If funds are deducted but access is inactive, contact support with the transaction number before paying again.",
+            "تتم المدفوعات عبر وسائل DOKU المتاحة مثل QRIS والحساب الافتراضي والمحفظة الإلكترونية. تُراجع حالة الدفع وتفعيل الوصول كلٌّ على حدة. إذا خُصم المبلغ دون تفعيل، تواصل مع الدعم برقم المعاملة قبل إعادة الدفع."
+          ]
+        },
+        {
+          "heading": [
+            "Perpanjangan dan voucher",
+            "Renewal and vouchers",
+            "التجديد والقسائم"
+          ],
+          "body": [
+            "Semua perpanjangan dilakukan manual tanpa auto-debit. Akses berakhir sesuai tanggal pada akun. Voucher mengikuti cakupan, masa berlaku, dan batas penukaran yang diterbitkan. Voucher tidak dapat diuangkan.",
+            "All renewals are manual with no automatic debit. Access expires on the date shown in your account. Vouchers follow their published scope, validity, and redemption limits. Vouchers cannot be exchanged for cash.",
+            "كل تجديد يدوي دون خصم تلقائي. ينتهي الوصول في التاريخ المبيّن في الحساب. تتبع القسائم نطاقها وصلاحيتها وحدود استخدامها المنشورة، ولا تُستبدل نقدًا."
+          ]
+        },
+        {
+          "heading": [
+            "Dasar refund",
+            "Grounds for a refund",
+            "أسباب الاسترداد"
+          ],
+          "body": [
+            "Pengembalian dana dapat diminta untuk pembayaran ganda, akses yang tidak aktif setelah verifikasi, atau gangguan inti berbayar berkepanjangan yang tidak dapat dipulihkan. Penyelesaian dapat berupa pemulihan, penyesuaian masa akses dengan persetujuan Anda, atau pengembalian dana penuh.",
+            "A refund can be requested for duplicate payment, access not activated after verification, or prolonged unrecoverable failure of a core paid service. Remedies may include restored access, an agreed extension, or a full refund.",
+            "يمكن طلب الاسترداد للدفع المكرر أو عدم التفعيل بعد التحقّق أو عطل طويل غير قابل للإصلاح في خدمة مدفوعة أساسية. وقد تكون المعالجة باستعادة الوصول أو تمديد متفق عليه أو استرداد كامل."
+          ]
+        },
+        {
+          "heading": [
+            "Prosedur dan SLA",
+            "Process and service targets",
+            "الإجراء ومواعيد المعالجة"
+          ],
+          "body": [
+            "Kirim email akun, nomor transaksi, bukti bayar, dan penjelasan kendala ke openturath@gmail.com. Konfirmasi penerimaan paling lambat 2 hari kerja. Pemeriksaan dan keputusan paling lambat 7 hari kerja setelah informasi lengkap. Jika disetujui, pemrosesan pengembalian dana paling lambat 7 hari kerja berikutnya mengikuti bank atau dompet asal.",
+            "Send your account email, transaction number, payment evidence, and issue description to openturath@gmail.com. Receipt is acknowledged within 2 business days. Review and decision take up to 7 business days after complete information. Approved refunds are processed within a further 7 business days subject to the original bank or wallet.",
+            "أرسل بريد الحساب ورقم المعاملة وإثبات الدفع ووصف المشكلة إلى openturath@gmail.com. يُؤكّد الاستلام خلال يومي عمل، وتتم المراجعة والقرار خلال ٧ أيام عمل بعد اكتمال البيانات. ثم يُعالج الاسترداد الموافق عليه خلال ٧ أيام عمل أخرى وفق البنك أو المحفظة الأصلية."
+          ]
+        }
+      ],
+      "policy": true
+    },
+    "ai-guidelines": {
+      "key": "aiGuidelines",
+      "intro": [
+        "Ilmu yang luas. Adab yang mendalam.",
+        "Deeper knowledge. Thoughtful scholarship.",
+        "علم واسع. وأدب راسخ."
+      ],
+      "blocks": [
+        {
+          "heading": [
+            "Gunakan alatnya. Rawat hubungan dengan guru.",
+            "Use the tool. Keep learning with teachers.",
+            "استعن بالأداة، والزم أهل العلم."
+          ],
+          "body": [
+            "OpenTurath membantu Anda menemukan ibarah, menata bacaan, dan menyiapkan pertanyaan. Bawalah hasil telaah itu kepada guru agar istilah, konteks, dan kesimpulannya dipahami dengan tepat. Talaqqi juga menumbuhkan adab dan kebijaksanaan yang menyertai ilmu.",
+            "Use OpenTurath to find passages, organise reading, and prepare questions. Bring that work to your teacher to explore its terms, context, and conclusions. Talaqqi also nurtures the conduct and judgement that accompany knowledge.",
+            "يساعدك OpenTurath على الوصول إلى العبارات وتنظيم القراءة وإعداد الأسئلة. اعرض ما تتوصل إليه على معلمك لضبط المصطلحات وفهم السياق والنتائج. فالتلقّي ينمّي الأدب والحكمة المصاحبة للعلم."
+          ]
+        },
+        {
+          "heading": [
+            "Telusuri sumbernya. Baca konteksnya.",
+            "Trace the source. Read the context.",
+            "تتبّع المصدر، واقرأ السياق."
+          ],
+          "body": [
+            "Mulailah dari teks Arab, lalu periksa pembahasan sebelum dan sesudahnya. Cocokkan judul kitab, edisi, jilid, dan halaman. Tandai dengan jelas mana ibarah asli, terjemahan, dan ringkasan AI agar catatan Anda mudah ditelaah kembali.",
+            "Start with the Arabic text and read the discussion around it. Check the title, edition, volume, and page. Clearly distinguish original passages, translations, and AI summaries so your notes remain easy to review.",
+            "ابدأ بالنص العربي، واقرأ ما قبله وما بعده. قابل عنوان الكتاب والطبعة والجزء والصفحة، وميّز في ملاحظاتك بين العبارة الأصلية والترجمة وتلخيص الذكاء الاصطناعي، ليسهل الرجوع إليها."
+          ]
+        },
+        {
+          "heading": [
+            "Hormati mazhab dan keluasan ikhtilaf.",
+            "Respect schools and scholarly differences.",
+            "احترم المذاهب وسعة الخلاف العلمي."
+          ],
+          "body": [
+            "Setiap disiplin memiliki istilah, urutan rujukan, dan cara menimbang pendapat. Pelajari perbedaan untuk memperdalam pemahaman. Untuk fatwa atau penerapan hukum pada keadaan tertentu, mintalah penjelasan ulama yang memahami persoalannya.",
+            "Each discipline has its terminology, reference hierarchy, and methods for weighing opinions. Study differences to deepen understanding. For a fatwa or the application of a ruling to a particular situation, consult a qualified scholar familiar with the circumstances.",
+            "لكل فن مصطلحاته ومراتب مصادره ومناهجه في الترجيح. ادرس الخلاف لتوسيع الفهم، وارجع في الفتوى وتنزيل الأحكام على الوقائع إلى عالم مؤهل يدرك ملابسات المسألة."
+          ]
+        },
+        {
+          "heading": [
+            "Jaga amanah dalam menukil.",
+            "Keep attribution honest.",
+            "احفظ أمانة النقل."
+          ],
+          "body": [
+            "Nisbahkan pendapat kepada pemiliknya dan cantumkan sumber yang sudah Anda periksa. Jika baru membaca ringkasan, jelaskan sebatas itu. Saat menemukan kesalahan, sertakan ibarah dan rujukan yang membantu koreksi, lalu sampaikan dengan santun.",
+            "Attribute opinions to their authors and cite sources you have checked. Be clear when you have only read a summary. When you find an error, share the passage and reference that support a correction, and do so courteously.",
+            "انسب الأقوال إلى أصحابها، واذكر المصادر التي راجعتها. وإن اكتفيت بملخص فبيّن ذلك. وإذا وجدت خطأً، فاذكر العبارة ومرجعها بما يعين على تصحيحه، والتزم حسن الخطاب."
+          ]
+        },
+        {
+          "heading": [
+            "Timbang jawabannya, bukan kefasihannya.",
+            "Weigh the evidence behind the answer.",
+            "زِن الجواب بدليله."
+          ],
+          "body": [
+            "Jawaban yang lancar tetap perlu ditimbang dengan dalil dan konteks. Periksa alasan yang digunakan, kenali bagian yang belum jelas, dan simpan pertanyaan lanjutan. Sikap teliti membuat bantuan teknologi lebih bermanfaat bagi telaah Anda.",
+            "A fluent answer still needs evidence and context. Examine its reasoning, identify what remains unclear, and keep follow-up questions. Careful judgement makes technology a more useful part of your study.",
+            "يبقى الجواب الفصيح محتاجًا إلى الدليل والسياق. افحص وجه الاستدلال، وحدّد ما لم يتضح لك، ودوّن أسئلتك التالية. بهذه العناية تكون التقنية أعون لك على البحث."
+          ]
+        },
+        {
+          "heading": [
+            "Sambungkan bacaan dengan tradisi ilmu.",
+            "Connect reading with living scholarship.",
+            "صِل القراءة بتقاليد العلم."
+          ],
+          "body": [
+            "Jadikan kemudahan akses sebagai bekal menghadiri majelis, membaca kitab secara bertahap, dan mengenal para ulama beserta jalur keilmuannya. Sanad dan pendampingan guru membantu menempatkan pengetahuan dalam tradisi yang hidup.",
+            "Let easier access support attending lessons, reading books progressively, and learning about scholars and their intellectual lineages. Sanad and a teacher’s guidance place knowledge within a living tradition.",
+            "اجعل تيسير الوصول إلى المصادر زادًا لحضور المجالس والتدرّج في قراءة الكتب ومعرفة العلماء وطرق تلقيهم. فالسند وصحبة المعلم يصلان المعرفة بتقليد علمي حي."
+          ]
+        },
+        {
+          "heading": [
+            "Arahkan ilmu untuk membawa manfaat.",
+            "Let knowledge serve others.",
+            "اجعل العلم سبيلًا إلى النفع."
+          ],
+          "body": [
+            "Gunakan hasil telaah untuk menjernihkan persoalan, membantu sesama, dan menjaga kehormatan manusia. Hindari penyebaran tuduhan atau kutipan yang melepaskan ucapan dari konteksnya. Semangat manhaj salamah mengajak kita menempuh jalan ilmu dengan tenang, bertanggung jawab, dan membawa kedamaian.",
+            "Use your study to clarify questions, help others, and preserve human dignity. Avoid spreading accusations or quotations stripped of context. The spirit of manhaj salamah calls for a calm, responsible pursuit of knowledge that contributes to peace.",
+            "اجعل ثمرة البحث إيضاح المسائل ونفع الناس وصون كرامتهم. واجتنب نشر الاتهامات أو اقتطاع الأقوال من سياقها. وتدعونا روح منهج السلامة إلى طلب العلم بسكينة ومسؤولية وإصلاح."
+          ]
+        },
+        {
+          "heading": [
+            "Tentang panduan ini",
+            "About this guide",
+            "عن هذا الدليل"
+          ],
+          "body": [
+            "Panduan ini merupakan rumusan editorial OpenTurath dari bahan adab yang disampaikan kepada tim, terinspirasi oleh gagasan Al-Habib Abu Bakar Al-Adni bin Ali Al-Masyhur tentang pembaruan sarana dengan menjaga landasan keilmuan. Rumusan tentang AI di halaman ini adalah penerapan prinsip tersebut oleh OpenTurath; bukan kutipan langsung atau fatwa beliau mengenai AI.",
+            "This OpenTurath editorial guide draws on the adab material supplied to the team, inspired by Al-Habib Abu Bakr Al-Adni bin Ali Al-Mashhur’s approach to renewing tools while preserving scholarly foundations. Its application to AI is OpenTurath’s synthesis, rather than a direct quotation or an AI ruling attributed to him.",
+            "هذا الدليل صياغة تحريرية من OpenTurath للمادة المقدّمة إلى الفريق، مستلهمة من منهج الحبيب أبي بكر العدني بن علي المشهور في تحديث الوسائل مع حفظ أصول العلم. وتطبيق هذه المبادئ على الذكاء الاصطناعي اجتهاد تحريري من OpenTurath، وليس نقلًا مباشرًا عنه أو فتوى منسوبة إليه في شأنه."
+          ]
+        }
+      ],
+      "policy": true
+    },
+    "tahawwulat": {
+      "key": "tahawwulat",
+      "intro": [
+        "Fikih Tahawwulat. Lima ruang telaah.",
+        "Fiqh Tahawwulat. Five study spaces.",
+        "فقه التحولات. خمس مساحات للدراسة."
+      ],
+      "blocks": [
+        {
+          "heading": [
+            "Al-Muhaqqiq dan Al-Bayan",
+            "Al-Muhaqqiq and Al-Bayan",
+            "المحقق والبيان"
+          ],
+          "body": [
+            "Al-Muhaqqiq membantu telaah matan dan ibarah. Al-Bayan membantu penyederhanaan konsep dan istilah. Tetap cocokkan penjelasan dengan sumber dan pengajaran guru.",
+            "Al-Muhaqqiq supports close reading of texts and passages. Al-Bayan supports explanations of concepts and terms. Check both against sources and a teacher’s instruction.",
+            "يساعد المحقق في مطالعة المتون والعبارات، والبيان في شرح المفاهيم والمصطلحات. قابل الشرح بالمصادر وتعليم أهل العلم."
+          ]
+        },
+        {
+          "heading": [
+            "Al-Mukhtabir",
+            "Al-Mukhtabir",
+            "المختبر"
+          ],
+          "body": [
+            "Latihan pemahaman untuk meninjau kembali materi yang dipelajari. Hasil latihan bukan sertifikasi keilmuan.",
+            "Comprehension exercises to revisit what you have studied. Exercise results are not scholarly certification.",
+            "تدريبات للفهم ومراجعة ما دُرس. لا تُعد نتائجها شهادة علمية."
+          ]
+        },
+        {
+          "heading": [
+            "Al-Habib dan Al-Khatib",
+            "Al-Habib and Al-Khatib",
+            "الحبيب والخطيب"
+          ],
+          "body": [
+            "Al-Habib menelaah arsip muhadharah Habib Abu Bakar Al-Masyhur. Al-Khatib membantu penyusunan bahan dakwah dan khutbah. Asisten bukan percakapan langsung dengan tokoh yang namanya disebut.",
+            "Al-Habib studies the lecture archive of Habib Abu Bakar Al-Masyhur. Al-Khatib helps prepare teaching and sermon material. An assistant is not a live conversation with the named scholar.",
+            "يتناول الحبيب أرشيف محاضرات الحبيب أبي بكر المشهور، ويساعد الخطيب في إعداد مواد الدعوة والخطب. والمساعد ليس محادثة مباشرة مع العالم المذكور."
+          ]
+        }
+      ]
+    },
+    "research/methodology": {
+      "key": "methods",
+      "intro": [
+        "Bukti yang dapat ditelaah.",
+        "Evidence open to examination.",
+        "أدلة قابلة للمراجعة."
+      ],
+      "blocks": [
+        {
+          "heading": [
+            "Arsip terbatas",
+            "A limited archive",
+            "أرشيف محدود"
+          ],
+          "body": [
+            "Q001 menyimpan satu pertanyaan dan enam jawaban asli. Tanggal uji, versi model, paket, dan kondisi lengkap tidak tercatat. Arsip ini tidak membuktikan keunggulan menyeluruh suatu layanan.",
+            "Q001 preserves one question and six original answers. Test date, model versions, plans, and full conditions were not recorded. This archive does not prove a service’s overall superiority.",
+            "يحفظ Q001 سؤالًا واحدًا وست إجابات أصلية. لم تُسجّل تواريخ الاختبار وإصدارات النماذج والباقات والظروف الكاملة. لا يثبت الأرشيف تفوق خدمة بصورة عامة."
+          ]
+        },
+        {
+          "heading": [
+            "Status sepuluh kutipan",
+            "Status of ten quotations",
+            "حالة النقول العشرة"
+          ],
+          "body": [
+            "Sepuluh kutipan memiliki status belum ditelaah. Teks pembanding edisi, nomor halaman cetak, penelaah, dan tanggal verifikasi belum tersedia. Hash arsip menjaga integritas teks tersimpan, bukan membuktikan kebenarannya.",
+            "Ten quotations remain not reviewed. Edition comparison text, verified print pages, reviewer, and verification date are not available. Archive hashes protect saved-text integrity, not factual accuracy.",
+            "النقول العشرة لم تُراجع بعد. ولا تتوفر نصوص المقابلة والصفحات المحققة والمراجع وتاريخ التحقّق. تحمي البصمات سلامة النص المحفوظ ولا تثبت صحته العلمية."
+          ]
+        },
+        {
+          "heading": [
+            "Koreksi yang terdokumentasi",
+            "Documented corrections",
+            "التصحيحات الموثقة"
+          ],
+          "body": [
+            "Koreksi perlu menyertakan sumber edisi dan alasan perubahan. Teks jawaban asli dipertahankan agar riwayat dapat diperiksa. Gunakan formulir laporan untuk mengirim temuan.",
+            "Corrections need an edition source and a reason for the change. Original answers are preserved for an inspectable history. Use the report form to submit findings.",
+            "يلزم للتصحيح مصدر الطبعة وسبب التغيير. تُحفظ الإجابات الأصلية لإتاحة مراجعة التاريخ. أرسل الملاحظات عبر نموذج البلاغ."
+          ]
+        }
+      ]
+    },
+    "help/install": {
+      "key": "help",
+      "intro": [
+        "Memasang aplikasi.",
+        "Install the app.",
+        "تثبيت التطبيق."
+      ],
+      "blocks": [
+        {
+          "heading": [
+            "Saluran resmi",
+            "Official channels",
+            "القنوات الرسمية"
+          ],
+          "body": [
+            "Buka halaman Unduh aplikasi dan pilih platform yang tersedia. Platform dalam persiapan belum memiliki tombol unduh aktif. Persyaratan versi tercantum pada tiap kartu.",
+            "Open Downloads and choose an available platform. Platforms in preparation have no active download button. Version requirements are listed on each card.",
+            "افتح صفحة التنزيل واختر منصة متاحة. لا يوجد زر تنزيل نشط للمنصات قيد الإعداد. تُعرض متطلبات الإصدار في كل بطاقة."
+          ]
+        },
+        {
+          "heading": [
+            "Integritas berkas",
+            "File integrity",
+            "سلامة الملف"
+          ],
+          "body": [
+            "Cocokkan SHA-256 berkas Android dengan nilai pada halaman unduhan. Jangan menonaktifkan perlindungan perangkat secara menyeluruh. Hubungi bantuan jika berkas tidak tersedia atau tanda tangan pemasangan berbeda.",
+            "Compare the Android file’s SHA-256 with the download page. Do not disable device protection globally. Contact support if the file is unavailable or its installation signature differs.",
+            "قارن SHA-256 لملف Android بالقيمة المنشورة. لا تعطّل حماية الجهاز بصورة شاملة. تواصل مع الدعم إذا تعذر الملف أو اختلف توقيع التثبيت."
+          ]
+        }
+      ]
+    },
+    "help/references": {
+      "key": "help",
+      "intro": [
+        "Memeriksa rujukan.",
+        "Check a reference.",
+        "فحص الإحالة."
+      ],
+      "blocks": [
+        {
+          "heading": [
+            "02 · Teks primer",
+            "02 · Primary text",
+            "٠٢ · النص الأصلي"
+          ],
+          "body": [
+            "Telusuri ibarah dalam korpus rujukan. Bedakan kutipan asli, terjemahan, dan penjelasan AI. Tidak ditemukannya teks bukan bukti bahwa pembahasannya tidak ada.",
+            "Find passages in the reference corpus. Distinguish original quotations, translations, and AI explanations. A missing search result does not prove that a discussion does not exist.",
+            "تتبّع العبارة في المصادر. ميّز النص الأصلي والترجمة وشرح الذكاء الاصطناعي. عدم العثور على نص لا يثبت عدم وجود المسألة."
+          ]
+        },
+        {
+          "heading": [
+            "03 · Koordinat edisi",
+            "03 · Edition coordinates",
+            "٠٣ · بيانات الطبعة"
+          ],
+          "body": [
+            "Cocokkan judul, pengarang, penerbit, edisi, jilid, dan halaman cetak. Nomor halaman PDF dapat berbeda. Jangan menganggap koordinat yang disebut AI telah dicocokkan dengan naskah fisik.",
+            "Match title, author, publisher, edition, volume, and printed page. PDF pagination may differ. Coordinates supplied by AI do not by themselves prove a match to a physical edition.",
+            "قابل العنوان والمؤلف والناشر والطبعة والجزء والصفحة المطبوعة. قد يختلف ترقيم PDF. ذكر الإحداثيات لا يثبت مقابلتها بالنسخة المادية."
+          ]
+        },
+        {
+          "heading": [
+            "04 · Pemeriksaan sebelum kesimpulan",
+            "04 · Review before concluding",
+            "٠٤ · المراجعة قبل الاستنتاج"
+          ],
+          "body": [
+            "Baca konteks dan minta bimbingan guru. Tandai rujukan sebagai telah dicocokkan hanya setelah teks sumber, edisi, penelaah, dan tanggal pemeriksaan tercatat. Sistem ini tidak menjanjikan nol halusinasi.",
+            "Read the context and seek a teacher’s guidance. Mark a reference as matched only after recording the source text, edition, reviewer, and review date. This system does not promise zero hallucinations.",
+            "اقرأ السياق واستعن بأهل العلم. لا تُثبت المقابلة إلا بعد توثيق النص والطبعة والمراجع وتاريخ المراجعة. لا يضمن النظام انعدام الأخطاء."
+          ]
+        }
+      ]
+    },
+    "help/account": {
+      "key": "help",
+      "intro": [
+        "Akun dan Catatan.",
+        "Accounts and Notes.",
+        "الحسابات والملاحظات."
+      ],
+      "blocks": [
+        {
+          "heading": [
+            "Akses akun",
+            "Account access",
+            "الوصول إلى الحساب"
+          ],
+          "body": [
+            "Gunakan akun Google yang sama dengan akun pembelian. Jangan membagikan kode masuk. Jika akses tidak sesuai, sertakan nomor transaksi saat menghubungi bantuan.",
+            "Use the same Google account used for purchase. Do not share sign-in codes. If access is incorrect, include your transaction number when contacting support.",
+            "استخدم حساب Google نفسه المستخدم للشراء. لا تشارك رموز الدخول. إذا اختلف الوصول، أرفق رقم المعاملة عند التواصل مع الدعم."
+          ]
+        },
+        {
+          "heading": [
+            "Cadangkan Catatan",
+            "Back up Notes",
+            "نسخ الملاحظات احتياطيًا"
+          ],
+          "body": [
+            "Catatan disimpan lokal, bukan sinkronisasi cloud lintas perangkat. Salin atau bagikan materi penting sebelum menghapus data atau mencopot aplikasi.",
+            "Notes are stored locally, not synchronized through the cloud across devices. Copy or share important material before clearing data or uninstalling.",
+            "تُحفظ الملاحظات محليًا ولا تتزامن سحابيًا بين الأجهزة. انسخ المواد المهمة أو شاركها قبل حذف البيانات أو إزالة التطبيق."
+          ]
+        }
+      ]
+    },
+    "help/access": {
+      "key": "help",
+      "intro": [
+        "Mengelola keanggotaan.",
+        "Manage membership.",
+        "إدارة العضوية."
+      ],
+      "blocks": [
+        {
+          "heading": [
+            "Penawaran dan durasi",
+            "Offers and duration",
+            "العروض والمدة"
+          ],
+          "body": [
+            "Penawaran website terbaru adalah Tholib Rp49.000 untuk 1 bulan, Tematik Rp149.000 untuk 3 bulan, dan Sultan All-Access Rp499.000 untuk 1 tahun. Pastikan cakupan, durasi kalender, jumlah akhir, dan tanggal berakhir yang sama ditampilkan pada aplikasi sebelum membayar. Jangan melanjutkan jika penawarannya berbeda.",
+            "Current website offers are Tholib at IDR49,000 for 1 month, Thematic at IDR149,000 for 3 months, and Sultan All-Access at IDR499,000 for 1 year. Confirm the same scope, calendar duration, final total, and expiry in the app before paying. Do not proceed if the offer differs.",
+            "عروض الموقع الحالية: الطالب بسعر ٤٩٬٠٠٠ روبية لشهر، والموضوعية بسعر ١٤٩٬٠٠٠ لثلاثة أشهر، وسلطان بسعر ٤٩٩٬٠٠٠ لسنة. تأكّد من مطابقة النطاق والمدة التقويمية والمبلغ النهائي والانتهاء في التطبيق قبل الدفع. لا تتابع عند الاختلاف."
+          ]
+        },
+        {
+          "heading": [
+            "DOKU dan aktivasi",
+            "DOKU and activation",
+            "DOKU والتفعيل"
+          ],
+          "body": [
+            "Pembayaran memakai DOKU melalui QRIS, Virtual Account, atau E-Wallet yang tersedia pada checkout. Status dibayar dan status akses aktif perlu dikonfirmasi terpisah. Jika dana terpotong tetapi akses belum aktif, hubungi bantuan dengan nomor transaksi sebelum membayar ulang.",
+            "Payments use available DOKU methods such as QRIS, Virtual Account, or E-Wallet. Payment status and active access must be confirmed separately. If funds are deducted but access is inactive, contact support with the transaction number before paying again.",
+            "تتم المدفوعات عبر وسائل DOKU المتاحة مثل QRIS والحساب الافتراضي والمحفظة الإلكترونية. تُراجع حالة الدفع وتفعيل الوصول كلٌّ على حدة. إذا خُصم المبلغ دون تفعيل، تواصل مع الدعم برقم المعاملة قبل إعادة الدفع."
+          ]
+        },
+        {
+          "heading": [
+            "Perpanjangan dan voucher",
+            "Renewal and vouchers",
+            "التجديد والقسائم"
+          ],
+          "body": [
+            "Semua perpanjangan dilakukan manual tanpa auto-debit. Akses berakhir sesuai tanggal pada akun. Voucher mengikuti cakupan, masa berlaku, dan batas penukaran yang diterbitkan. Voucher tidak dapat diuangkan.",
+            "All renewals are manual with no automatic debit. Access expires on the date shown in your account. Vouchers follow their published scope, validity, and redemption limits. Vouchers cannot be exchanged for cash.",
+            "كل تجديد يدوي دون خصم تلقائي. ينتهي الوصول في التاريخ المبيّن في الحساب. تتبع القسائم نطاقها وصلاحيتها وحدود استخدامها المنشورة، ولا تُستبدل نقدًا."
+          ]
+        }
+      ]
+    },
+    "sources-and-rights": {
+      "key": "rights",
+      "intro": [
+        "Sumber dan hak penggunaan.",
+        "Sources and usage rights.",
+        "المصادر وحقوق الاستخدام."
+      ],
+      "blocks": [
+        {
+          "heading": [
+            "Hak setiap edisi",
+            "Rights in each edition",
+            "حقوق كل طبعة"
+          ],
+          "body": [
+            "Karya klasik tidak otomatis membuat semua tahkik, terjemahan, atau reproduksi modern bebas hak cipta. Akses aplikasi tidak memberikan izin umum untuk menyalin atau menjual isi kitab.",
+            "A classical work does not automatically place modern editions, translations, or reproductions in the public domain. App access does not grant blanket permission to copy or sell book contents.",
+            "لا يجعل قِدم المؤلف كل تحقيق أو ترجمة أو تصوير حديث مباح الحقوق. ولا يمنح الوصول إلى التطبيق إذنًا عامًا بنسخ الكتب أو بيعها."
+          ]
+        },
+        {
+          "heading": [
+            "Atribusi dan permohonan koreksi",
+            "Attribution and correction requests",
+            "النسبة وطلبات التصحيح"
+          ],
+          "body": [
+            "Cantumkan karya, pengarang, dan edisi yang digunakan. Pemegang hak dapat menghubungi openturath@gmail.com dengan identitas karya, lokasi materi, bukti hak, dan permintaan yang jelas.",
+            "Credit the work, author, and edition used. Rights holders can contact openturath@gmail.com with the work’s identity, material location, rights evidence, and a clear request.",
+            "اذكر العمل والمؤلف والطبعة المستخدمة. يمكن لأصحاب الحقوق التواصل عبر openturath@gmail.com مع هوية العمل وموقع المادة وإثبات الحق وطلب واضح."
+          ]
+        }
+      ]
+    },
+    "accessibility": {
+      "key": "accessibility",
+      "intro": [
+        "Dapat dibaca, dapat digunakan.",
+        "Readable and usable.",
+        "قابل للقراءة والاستخدام."
+      ],
+      "blocks": [
+        {
+          "heading": [
+            "Navigasi dan preferensi",
+            "Navigation and preferences",
+            "التنقل والتفضيلات"
+          ],
+          "body": [
+            "Gunakan tautan lewati ke isi, navigasi papan ketik, dan kontrol ukuran teks pada arsip telaah. Dialog dapat ditutup dengan Escape. Tema dan bahasa disimpan pada perangkat jika penyimpanan diizinkan.",
+            "Use the skip link, keyboard navigation, and reading-size controls in the study archive. Close dialogs with Escape. Theme and language preferences are stored on your device when storage is allowed.",
+            "استخدم رابط تجاوز التنقل ولوحة المفاتيح وضوابط حجم النص في الأرشيف. أغلق الحوارات بزر Escape. تُحفظ تفضيلات المظهر واللغة على الجهاز عند السماح بالتخزين."
+          ]
+        },
+        {
+          "heading": [
+            "Arab dan pengurangan gerak",
+            "Arabic and reduced motion",
+            "العربية وتقليل الحركة"
+          ],
+          "body": [
+            "Halaman Arab menggunakan RTL dan font Arab lokal. Efek paralaks mengikuti preferensi pengurangan gerak. Konten utama tetap tersedia tanpa JavaScript. Laporkan hambatan akses melalui halaman kontak.",
+            "Arabic pages use RTL and locally served Arabic fonts. Parallax respects reduced-motion preferences. Core content remains available without JavaScript. Report accessibility barriers through Contact.",
+            "تستخدم الصفحات العربية اتجاه RTL وخطوطًا عربية محلية. تراعي الحركة تفضيل تقليلها. يبقى المحتوى الأساسي متاحًا دون JavaScript. أبلغ عن عوائق الاستخدام عبر التواصل."
+          ]
+        }
+      ]
+    },
+    "account-deletion": {
+      "key": "deletion",
+      "intro": [
+        "Penghapusan akun dan data.",
+        "Delete your account and data.",
+        "حذف الحساب والبيانات."
+      ],
+      "blocks": [
+        {
+          "heading": [
+            "Mengajukan permohonan",
+            "Make a request",
+            "تقديم طلب"
+          ],
+          "body": [
+            "Gunakan fitur penghapusan akun dalam aplikasi atau hubungi openturath@gmail.com dari email akun. Pengelola dapat meminta verifikasi kepemilikan yang proporsional. Jangan mengirim kata sandi atau OTP.",
+            "Use account deletion in the app or contact openturath@gmail.com from your account email. The operator may request proportionate ownership verification. Never send a password or OTP.",
+            "استخدم حذف الحساب داخل التطبيق أو راسل openturath@gmail.com من بريد الحساب. قد يُطلب تحقّق متناسب من الملكية. لا ترسل كلمة مرور أو رمز تحقّق."
+          ]
+        },
+        {
+          "heading": [
+            "Data yang berbeda tempat penyimpanan",
+            "Data stored in different places",
+            "البيانات في مواضع مختلفة"
+          ],
+          "body": [
+            "Cadangkan Catatan lokal sebelum menghapus data aplikasi. Penghapusan akun OpenTurath tidak otomatis menghapus data pada akun Google/NotebookLM. Data transaksi yang wajib disimpan secara hukum dapat dikecualikan dari penghapusan langsung.",
+            "Back up local Notes before deleting app data. Deleting OpenTurath does not automatically delete data in your Google/NotebookLM account. Transaction records legally required for retention may be exempt from immediate deletion.",
+            "انسخ الملاحظات المحلية قبل حذف بيانات التطبيق. لا يحذف حذف حساب OpenTurath بيانات Google/NotebookLM تلقائيًا. وقد تُستثنى سجلات المعاملات الواجب حفظها قانونًا من الحذف الفوري."
+          ]
+        }
+      ],
+      "policy": true
+    },
+    "security": {
+      "key": "security",
+      "intro": [
+        "Keamanan dan pelaporan.",
+        "Security and reporting.",
+        "الأمن والإبلاغ."
+      ],
+      "blocks": [
+        {
+          "heading": [
+            "Melindungi akses",
+            "Protecting access",
+            "حماية الوصول"
+          ],
+          "body": [
+            "Jangan membagikan kata sandi, kode sekali pakai, atau tautan akun pribadi. Gunakan perangkat yang tepercaya dan periksa alamat resmi sebelum masuk atau membayar.",
+            "Do not share passwords, one-time codes, or private account links. Use trusted devices and check official addresses before signing in or paying.",
+            "لا تشارك كلمات المرور أو الرموز المؤقتة أو روابط الحساب الخاصة. استخدم أجهزة موثوقة وتحقّق من العنوان الرسمي قبل الدخول أو الدفع."
+          ]
+        },
+        {
+          "heading": [
+            "Laporan kerentanan",
+            "Vulnerability reports",
+            "بلاغات الثغرات"
+          ],
+          "body": [
+            "Kirim deskripsi kerentanan dan langkah reproduksi minimum ke openturath@gmail.com. Hindari mengambil data pengguna lain atau mengganggu layanan. Pengamanan operasional, cadangan, dan pemantauan tetap menjadi tanggung jawab pengelola deployment.",
+            "Send a vulnerability description and minimal reproduction steps to openturath@gmail.com. Avoid accessing other users’ data or disrupting service. Operational security, backups, and monitoring remain the deployment operator’s responsibility.",
+            "أرسل وصف الثغرة وخطوات إعادة إنتاج محدودة إلى openturath@gmail.com. تجنّب الوصول إلى بيانات الآخرين أو تعطيل الخدمة. تبقى الحماية التشغيلية والنسخ الاحتياطية والمراقبة مسؤولية مشغّل النشر."
+          ]
+        }
+      ]
+    }
+  },
+  "catalog": [
+    {
+      "id": "fiqh-syafii",
+      "sourceId": "fiqh_syafii",
+      "index": 1,
+      "name": {
+        "id": "Fikih Syafi'i",
+        "en": "Shāfiʿī Fiqh",
+        "ar": "الفقه الشافعي المعتمد"
+      },
+      "arabic": "الفقه الشافعي",
+      "group": "fiqh",
+      "description": {
+        "id": "Telaah fikih Syafi’i melalui Al-Umm, Minhajuth Thalibin, Tuhfatul Muhtaj, dan Nihayatul Muhtaj. Temukan ibarah, perincian hukum, serta rujukan jilid dan halamannya.",
+        "en": "Study Shāfiʿī law through Al-Umm, Minhāj al-Ṭālibīn, Tuḥfat al-Muḥtāj, and Nihāyat al-Muḥtāj. Explore source passages, legal distinctions, and volume and page references.",
+        "ar": "طالع الفقه الشافعي في الأم ومنهاج الطالبين وتحفة المحتاج ونهاية المحتاج، وتتبّع العبارات وتفصيل الأحكام وإحالات الأجزاء والصفحات."
+      },
+      "source": "metadata_modul_lengkap.json (counts), metadata_training_seluruh_ai.json (partitions), supplied project data 2026-09-20",
+      "countsPublished": true,
+      "status": "active",
+      "appAgentId": "fiqh_syafii",
+      "variant": "featured",
+      "metadata": {
+        "books": 103,
+        "volumes": 400,
+        "volumesLowerBound": true,
+        "pages": 170391,
+        "words": 71627898,
+        "lectures": 0,
+        "partitions": 241,
+        "period": {
+          "id": "150 – 1338 H",
+          "en": "150–1338 AH",
+          "ar": "١٥٠–١٣٣٨ هـ"
+        }
+      },
+      "metadataKey": "fiqh_syafii"
+    },
+    {
+      "id": "hadits",
+      "sourceId": "hadits",
+      "index": 2,
+      "name": {
+        "id": "Kutubus Sunnah & Matan Hadits",
+        "en": "Hadith Collections",
+        "ar": "متون الحديث النبوي وكتب السنة"
+      },
+      "arabic": "الحديث الشريف",
+      "group": "hadith",
+      "description": {
+        "id": "Telusuri matan dan jalur sanad dalam Kutubus Sittah, musnad, dan kitab hadits induk. Bandingkan lafaz riwayat, letak bab, dan penomoran hadits.",
+        "en": "Trace texts and chains of transmission in the Six Books, musnad collections, and major hadith sources. Compare wording, chapter placement, and hadith numbering.",
+        "ar": "تتبّع المتون والأسانيد في الكتب الستة والمسانيد وأمهات كتب الحديث، وقارن ألفاظ الروايات وأبوابها وأرقامها."
+      },
+      "source": "metadata_modul_lengkap.json (counts), metadata_training_seluruh_ai.json (partitions), supplied project data 2026-09-20",
+      "countsPublished": true,
+      "status": "active",
+      "appAgentId": "hadits",
+      "variant": "featured",
+      "metadata": {
+        "books": 1141,
+        "volumes": 1500,
+        "volumesLowerBound": true,
+        "pages": 532640,
+        "words": 105700587,
+        "lectures": 0,
+        "partitions": 233,
+        "period": {
+          "id": "Abad 2 – 10 H",
+          "en": "2–10 c. AH",
+          "ar": "القرن ٢–١٠ هـ"
+        }
+      },
+      "metadataKey": "hadits"
+    },
+    {
+      "id": "ushul-fiqh",
+      "sourceId": "ushul_fiqh",
+      "index": 3,
+      "name": {
+        "id": "Ushul Fikih 4 Mazhab",
+        "en": "Principles of Islamic Law",
+        "ar": "أصول الفقه المقارن وقواعد الاستنباط"
+      },
+      "arabic": "أصول الفقه",
+      "group": "fiqh",
+      "description": {
+        "id": "Kaji dalalatul alfaz, qiyas, dan metode istinbath lintas empat mazhab. Baca pembahasan ushul melalui Al-Mustashfa, Al-Luma’, dan Al-Burhan.",
+        "en": "Examine textual indications, analogy, and methods of legal inference across the four schools, with discussions from Al-Mustaṣfā, Al-Lumaʿ, and Al-Burhān.",
+        "ar": "ادرس دلالات الألفاظ والقياس ومناهج الاستنباط في المذاهب الأربعة، من خلال مباحث المستصفى واللمع والبرهان."
+      },
+      "source": "metadata_modul_lengkap.json (counts), metadata_training_seluruh_ai.json (partitions), supplied project data 2026-09-20",
+      "countsPublished": true,
+      "status": "active",
+      "appAgentId": "ushul_fiqh",
+      "variant": "standard",
+      "metadata": {
+        "books": 136,
+        "volumes": 320,
+        "volumesLowerBound": true,
+        "pages": 115000,
+        "words": 36522580,
+        "lectures": 0,
+        "partitions": 121,
+        "period": {
+          "id": "Abad 2 – 14 H",
+          "en": "2–14 c. AH",
+          "ar": "القرن ٢–١٤ هـ"
+        }
+      },
+      "metadataKey": "ushul_fiqh"
+    },
+    {
+      "id": "bahasa-arab",
+      "sourceId": "bahasa_arab",
+      "index": 4,
+      "name": {
+        "id": "Bahasa Arab & Ilmu Alat",
+        "en": "Arabic Language & Literature",
+        "ar": "علوم الآلة واللغة والأدب والنحو والبلاغة والمنطق"
+      },
+      "arabic": "علوم اللغة العربية",
+      "group": "language",
+      "description": {
+        "id": "Bedah struktur ibarah melalui nahwu, sharaf, balaghah, mantiq, dan mu’jam. Telusuri pemakaian lafaz serta nuansa makna dalam bahasa dan sastra Arab.",
+        "en": "Read passages through grammar, morphology, rhetoric, logic, and lexicons. Trace word usage and shades of meaning across Arabic language and literature.",
+        "ar": "حلّل بنية العبارة بالنحو والصرف والبلاغة والمنطق والمعاجم، وتتبّع استعمال الألفاظ ودقائق المعاني في اللغة والأدب العربي."
+      },
+      "source": "metadata_modul_lengkap.json (counts), metadata_training_seluruh_ai.json (partitions), supplied project data 2026-09-20",
+      "countsPublished": true,
+      "status": "active",
+      "appAgentId": "nahwu_sharaf",
+      "variant": "standard",
+      "metadata": {
+        "books": 866,
+        "volumes": 1981,
+        "volumesLowerBound": false,
+        "pages": 610000,
+        "words": 148304518,
+        "lectures": 0,
+        "partitions": 300,
+        "period": {
+          "id": "Jahiliyyah – Abad 20 M",
+          "en": "Pre-Islamic era – 20th c. CE",
+          "ar": "الجاهلية – القرن ٢٠ م"
+        }
+      },
+      "metadataKey": "bahasa_arab"
+    },
+    {
+      "id": "tafsir",
+      "sourceId": "tafsir",
+      "index": 5,
+      "name": {
+        "id": "Tafsir & 'Ulumul Qur'an",
+        "en": "Tafsir & Qur’anic Studies",
+        "ar": "التفسير المأثور وعلوم القرآن والتأويل"
+      },
+      "arabic": "التفسير وعلوم القرآن",
+      "group": "quran",
+      "description": {
+        "id": "Telaah ayat melalui Tafsir Ath-Thabari, Ibnu Katsir, dan Al-Qurthubi. Hubungkan penjelasan bil-ma’tsur dan dirayah dengan asbabun nuzul, nasikh-mansukh, serta kaidah tafsir.",
+        "en": "Study verses through the commentaries of al-Ṭabarī, Ibn Kathīr, and al-Qurṭubī. Connect transmitted and analytical interpretation with occasions of revelation, abrogation, and principles of tafsir.",
+        "ar": "طالع الآيات في تفاسير الطبري وابن كثير والقرطبي، واربط التفسير بالمأثور والدراية بأسباب النزول والناسخ والمنسوخ وقواعد التفسير."
+      },
+      "source": "metadata_modul_lengkap.json (counts), metadata_training_seluruh_ai.json (partitions), supplied project data 2026-09-20",
+      "countsPublished": true,
+      "status": "active",
+      "appAgentId": "tafsir",
+      "variant": "standard",
+      "metadata": {
+        "books": 123,
+        "volumes": 450,
+        "volumesLowerBound": true,
+        "pages": 140000,
+        "words": 78862654,
+        "lectures": 0,
+        "partitions": 183,
+        "period": {
+          "id": "Abad 2 – 14 H",
+          "en": "2–14 c. AH",
+          "ar": "القرن ٢–١٤ هـ"
+        }
+      },
+      "metadataKey": "tafsir"
+    },
+    {
+      "id": "fiqh-tahawwulat",
+      "sourceId": "fiqh_tahawwulat",
+      "index": 6,
+      "name": {
+        "id": "Fikih Tahawwulat",
+        "en": "Fiqh al-Tahawwulat",
+        "ar": "فقه التحولات وسنن المتغيرات"
+      },
+      "arabic": "فقه التحولات",
+      "group": "special",
+      "description": {
+        "id": "Dalami karya Habib Abu Bakar Al-Adni Al-Masyhur tentang tanda-tanda zaman, pergeseran peradaban, dan sunanul mughayyarat, melalui kitab serta arsip muhadharah.",
+        "en": "Explore Habib Abu Bakr al-Adni al-Mashhur’s works on signs of the times, civilizational change, and sunan al-mughayyarāt through books and lecture archives.",
+        "ar": "تعمّق في مؤلفات الحبيب أبي بكر العدني المشهور عن علامات الزمان وتحولات الحضارات وسنن المتغيرات، من خلال الكتب وأرشيف المحاضرات."
+      },
+      "source": "metadata_modul_lengkap.json (counts), metadata_training_seluruh_ai.json (partitions), supplied project data 2026-09-20",
+      "countsPublished": true,
+      "status": "active",
+      "appAgentId": "fiqh_tahawwulat",
+      "variant": "sovereign",
+      "metadata": {
+        "books": 58,
+        "volumes": 58,
+        "volumesLowerBound": false,
+        "pages": 12500,
+        "words": 5644146,
+        "lectures": 1099,
+        "partitions": 71,
+        "period": {
+          "id": "Era Kontemporer",
+          "en": "Contemporary period",
+          "ar": "العصر المعاصر"
+        }
+      },
+      "metadataKey": "fiqh_tahawwulat"
+    },
+    {
+      "id": "tarikh-sirah",
+      "sourceId": "tarikh_sirah",
+      "index": 7,
+      "name": {
+        "id": "Tarikh & Sirah Nabawiyyah",
+        "en": "History & Prophetic Biography",
+        "ar": "التاريخ الإسلامي والسيرة والبلدان والرحلات والأنساب"
+      },
+      "arabic": "السيرة والتاريخ",
+      "group": "history",
+      "description": {
+        "id": "Ikuti sirah Nabi, masa khulafaur rasyidin, dan perkembangan peradaban Islam. Telaah urutan peristiwa, jalur riwayat, serta konteks tempat dan zamannya.",
+        "en": "Follow the Prophet’s biography, the rightly guided caliphs, and the development of Islamic civilization. Examine chronology, transmitted accounts, and geographical and historical context.",
+        "ar": "تتبّع السيرة النبوية وعصر الخلفاء الراشدين وتطور الحضارة الإسلامية، وادرس تسلسل الوقائع وطرق الرواية وسياق المكان والزمان."
+      },
+      "source": "metadata_modul_lengkap.json (counts), metadata_training_seluruh_ai.json (partitions), supplied project data 2026-09-20",
+      "countsPublished": true,
+      "status": "active",
+      "appAgentId": "tarikh",
+      "variant": "standard",
+      "metadata": {
+        "books": 499,
+        "volumes": 1374,
+        "volumesLowerBound": false,
+        "pages": 480000,
+        "words": 136531222,
+        "lectures": 0,
+        "partitions": 300,
+        "period": {
+          "id": "Pra-Hijrah – Abad 14 H",
+          "en": "Before Hijrah – 14th c. AH",
+          "ar": "ما قبل الهجرة – القرن ١٤ هـ"
+        }
+      },
+      "metadataKey": "tarikh_sirah"
+    },
+    {
+      "id": "fiqh-muqaran",
+      "sourceId": "fiqh_muqaran",
+      "index": 8,
+      "name": {
+        "id": "Fikih Muqaran & Siyasah",
+        "en": "Comparative Fiqh",
+        "ar": "الفقه المقارن والسياسة الشرعية وقسمة الفرائض"
+      },
+      "arabic": "الفقه المقارن",
+      "group": "fiqh",
+      "description": {
+        "id": "Bandingkan dalil dan konstruksi hukum antarmazhab. Perluas telaah ke siyasah syar’iyyah, tata kelola negara, serta pembahasan sengketa dan persoalan kontemporer.",
+        "en": "Compare evidence and legal reasoning across schools. Extend your study to Islamic governance, public institutions, disputes, and contemporary legal questions.",
+        "ar": "قارن الأدلة وبناء الأحكام بين المذاهب، ووسّع المطالعة إلى السياسة الشرعية ونظم الحكم ومباحث المنازعات والمسائل المعاصرة."
+      },
+      "source": "metadata_modul_lengkap.json (counts), metadata_training_seluruh_ai.json (partitions), supplied project data 2026-09-20",
+      "countsPublished": true,
+      "status": "active",
+      "appAgentId": "fiqh_muqaran",
+      "variant": "standard",
+      "metadata": {
+        "books": 189,
+        "volumes": 329,
+        "volumesLowerBound": false,
+        "pages": 135000,
+        "words": 27585932,
+        "lectures": 0,
+        "partitions": 61,
+        "period": {
+          "id": "Abad 2 – 14 H",
+          "en": "2–14 c. AH",
+          "ar": "القرن ٢–١٤ هـ"
+        }
+      },
+      "metadataKey": "fiqh_muqaran"
+    },
+    {
+      "id": "fatawa-masail",
+      "sourceId": "fatawa_masail",
+      "index": 9,
+      "name": {
+        "id": "Fatawa & Masail Fiqhiyyah",
+        "en": "Fatwas & Legal Questions",
+        "ar": "الفتاوى الكبرى والنوازل الفقهية"
+      },
+      "arabic": "الفتاوى والمسائل",
+      "group": "fiqh",
+      "description": {
+        "id": "Telusuri fatwa ulama klasik dan kontemporer beserta konteks pertanyaannya. Kaji nawazil, pertimbangan hukum, dan ragam jawaban atas persoalan masyarakat.",
+        "en": "Explore classical and contemporary fatwas alongside the questions that prompted them. Study new cases, legal considerations, and differing responses to community issues.",
+        "ar": "تتبّع فتاوى العلماء المتقدمين والمعاصرين مع سياق أسئلتها، وادرس النوازل واعتبارات الحكم وتنوع الأجوبة عن قضايا المجتمع."
+      },
+      "source": "metadata_modul_lengkap.json (counts), metadata_training_seluruh_ai.json (partitions), supplied project data 2026-09-20",
+      "countsPublished": true,
+      "status": "active",
+      "appAgentId": "fatawa_masail",
+      "variant": "standard",
+      "metadata": {
+        "books": 221,
+        "volumes": 324,
+        "volumesLowerBound": false,
+        "pages": 57419,
+        "words": 19387054,
+        "lectures": 0,
+        "partitions": 101,
+        "period": {
+          "id": "Abad 6 – 14 H",
+          "en": "6–14 c. AH",
+          "ar": "القرن ٦–١٤ هـ"
+        }
+      },
+      "metadataKey": "fatawa_masail"
+    },
+    {
+      "id": "syarah-hadits",
+      "sourceId": "syarah_hadits",
+      "index": 10,
+      "name": {
+        "id": "Syarah Hadits Nabawi",
+        "en": "Hadith Commentaries",
+        "ar": "شروح الحديث النبوي وفقه الآثار"
+      },
+      "arabic": "شروح الحديث",
+      "group": "hadith",
+      "description": {
+        "id": "Dalami kandungan hadits melalui Fathul Bari, Syarah Shahih Muslim, dan Nailul Authar. Temukan penjelasan lafaz, faedah hukum, dan perbedaan pembacaan para pensyarah.",
+        "en": "Study hadith through Fatḥ al-Bārī, the commentary on Ṣaḥīḥ Muslim, and Nayl al-Awṭār. Explore wording, legal lessons, and differences among commentators.",
+        "ar": "تعمّق في معاني الحديث من خلال فتح الباري وشرح صحيح مسلم ونيل الأوطار، وتعرّف إلى شرح الألفاظ والفوائد الفقهية واختلاف أنظار الشُرّاح."
+      },
+      "source": "metadata_modul_lengkap.json (counts), metadata_training_seluruh_ai.json (partitions), supplied project data 2026-09-20",
+      "countsPublished": true,
+      "status": "active",
+      "appAgentId": "syarah_hadits",
+      "variant": "standard",
+      "metadata": {
+        "books": 202,
+        "volumes": 1007,
+        "volumesLowerBound": false,
+        "pages": 420000,
+        "words": 122463779,
+        "lectures": 0,
+        "partitions": 300,
+        "period": {
+          "id": "Abad 4 – 14 H",
+          "en": "4–14 c. AH",
+          "ar": "القرن ٤–١٤ هـ"
+        }
+      },
+      "metadataKey": "syarah_hadits"
+    },
+    {
+      "id": "fiqh-hanafi",
+      "sourceId": "fiqh_hanafi",
+      "index": 11,
+      "name": {
+        "id": "Fikih Hanafi",
+        "en": "Hanafi Fiqh",
+        "ar": "الفقه الحنفي المعتمد وظاهر الرواية"
+      },
+      "arabic": "الفقه الحنفي",
+      "group": "fiqh",
+      "description": {
+        "id": "Telaah tradisi fikih Hanafi dari Zhahirur Riwayah hingga Al-Hidayah dan Raddul Muhtar. Ikuti hubungan matan, syarah, dan fatwa dalam perincian masalah mazhab.",
+        "en": "Explore Hanafi jurisprudence from Ẓāhir al-Riwāyah to Al-Hidāyah and Radd al-Muḥtār. Follow the relationship between foundational texts, commentaries, and fatwas.",
+        "ar": "طالع الفقه الحنفي من ظاهر الرواية إلى الهداية ورد المحتار، وتتبّع صلة المتون والشروح والفتاوى بتفصيل مسائل المذهب."
+      },
+      "source": "metadata_modul_lengkap.json (counts), metadata_training_seluruh_ai.json (partitions), supplied project data 2026-09-20",
+      "countsPublished": true,
+      "status": "active",
+      "appAgentId": "fiqh_hanafi",
+      "variant": "standard",
+      "metadata": {
+        "books": 85,
+        "volumes": 288,
+        "volumesLowerBound": false,
+        "pages": 110000,
+        "words": 39300555,
+        "lectures": 0,
+        "partitions": 100,
+        "period": {
+          "id": "Abad 2 – 13 H",
+          "en": "2–13 c. AH",
+          "ar": "القرن ٢–١٣ هـ"
+        }
+      },
+      "metadataKey": "fiqh_hanafi"
+    },
+    {
+      "id": "fiqh-maliki",
+      "sourceId": "fiqh_maliki",
+      "index": 12,
+      "name": {
+        "id": "Fikih Maliki",
+        "en": "Maliki Fiqh",
+        "ar": "الفقه المالكي المعتمد ومدونة سحنون"
+      },
+      "arabic": "الفقه المالكي",
+      "group": "fiqh",
+      "description": {
+        "id": "Jelajahi fikih Maliki melalui Al-Mudawwanah, Mukhtashar Khalil, dan tradisi fatwa ulama Maghribi. Perhatikan dasar riwayat, amalan, dan rincian pendapat mazhab.",
+        "en": "Explore Maliki law through Al-Mudawwanah, Mukhtaṣar Khalīl, and the Maghribi fatwa tradition, attending to transmitted positions, practice, and distinctions within the school.",
+        "ar": "استكشف الفقه المالكي في المدونة ومختصر خليل وتراث فتاوى علماء المغرب، مع العناية بالروايات والعمل وتفصيل أقوال المذهب."
+      },
+      "source": "metadata_modul_lengkap.json (counts), metadata_training_seluruh_ai.json (partitions), supplied project data 2026-09-20",
+      "countsPublished": true,
+      "status": "active",
+      "appAgentId": "fiqh_maliki",
+      "variant": "standard",
+      "metadata": {
+        "books": 86,
+        "volumes": 339,
+        "volumesLowerBound": false,
+        "pages": 164214,
+        "words": 48363521,
+        "lectures": 0,
+        "partitions": 120,
+        "period": {
+          "id": "Abad 2 – 14 H",
+          "en": "2–14 c. AH",
+          "ar": "القرن ٢–١٤ هـ"
+        }
+      },
+      "metadataKey": "fiqh_maliki"
+    },
+    {
+      "id": "fiqh-hanbali",
+      "sourceId": "fiqh_hanbali",
+      "index": 13,
+      "name": {
+        "id": "Fikih Hanbali",
+        "en": "Hanbali Fiqh",
+        "ar": "الفقه الحنبلي المعتمد ومسائل الإمام أحمد"
+      },
+      "arabic": "الفقه الحنبلي",
+      "group": "fiqh",
+      "description": {
+        "id": "Telusuri Al-Mughni, Al-Muqni’, dan Al-Inshaf untuk membaca fikih Hanbali. Bandingkan riwayat Imam Ahmad, wajah pendapat, serta penjelasan ulama mazhab.",
+        "en": "Read Hanbali law through Al-Mughnī, Al-Muqniʿ, and Al-Inṣāf. Compare reports from Imam Aḥmad, legal positions, and explanations by the school’s scholars.",
+        "ar": "تتبّع الفقه الحنبلي في المغني والمقنع والإنصاف، وقارن الروايات عن الإمام أحمد والأوجه الفقهية وبيان علماء المذهب."
+      },
+      "source": "metadata_modul_lengkap.json (counts), metadata_training_seluruh_ai.json (partitions), supplied project data 2026-09-20",
+      "countsPublished": true,
+      "status": "active",
+      "appAgentId": "fiqh_hanbali",
+      "variant": "standard",
+      "metadata": {
+        "books": 95,
+        "volumes": 338,
+        "volumesLowerBound": false,
+        "pages": 163639,
+        "words": 34626811,
+        "lectures": 0,
+        "partitions": 100,
+        "period": {
+          "id": "Abad 3 – 14 H",
+          "en": "3–14 c. AH",
+          "ar": "القرن ٣–١٤ هـ"
+        }
+      },
+      "metadataKey": "fiqh_hanbali"
+    },
+    {
+      "id": "tasawwuf",
+      "sourceId": "tasawwuf",
+      "index": 14,
+      "name": {
+        "id": "Tasawwuf & Adzkar",
+        "en": "Spirituality & Remembrance",
+        "ar": "التصوف السني والتزكية والأذكار النبوية"
+      },
+      "arabic": "التصوف والتزكية",
+      "group": "spirituality",
+      "description": {
+        "id": "Pelajari tazkiyatun nufus, adab suluk, wirid, dan ratib dalam tradisi ulama. Telaah Ihya’ ‘Ulumiddin dan Al-Adzkar untuk menghubungkan ilmu, amal, serta pembinaan hati.",
+        "en": "Study purification of the soul, spiritual discipline, litanies, and remembrance. Read Iḥyāʾ ʿUlūm al-Dīn and Al-Adhkār to connect knowledge, practice, and cultivation of the heart.",
+        "ar": "ادرس تزكية النفوس وآداب السلوك والأوراد والأذكار في تراث العلماء، وطالع إحياء علوم الدين والأذكار لربط العلم بالعمل وتربية القلب."
+      },
+      "source": "metadata_modul_lengkap.json (counts), metadata_training_seluruh_ai.json (partitions), supplied project data 2026-09-20",
+      "countsPublished": true,
+      "status": "active",
+      "appAgentId": "tasawwuf",
+      "variant": "standard",
+      "metadata": {
+        "books": 248,
+        "volumes": 317,
+        "volumesLowerBound": false,
+        "pages": 95000,
+        "words": 18697388,
+        "lectures": 0,
+        "partitions": 61,
+        "period": {
+          "id": "Abad 3 – 14 H",
+          "en": "3–14 c. AH",
+          "ar": "القرن ٣–١٤ هـ"
+        }
+      },
+      "metadataKey": "tasawwuf"
+    },
+    {
+      "id": "tajwid-qiraat",
+      "sourceId": "tajwid_qiraat",
+      "index": 15,
+      "name": {
+        "id": "Tajwid & Qira'at",
+        "en": "Tajwid & Qur’anic Readings",
+        "ar": "التجويد والقراءات المتواترة ورسم المصحف"
+      },
+      "arabic": "التجويد والقراءات",
+      "group": "quran",
+      "description": {
+        "id": "Kaji makharijul huruf, sifat huruf, dan kaidah tartil. Kenali perbedaan qira’at sepuluh, jalur periwayatan, serta landasan bacaan untuk mendampingi talaqqi.",
+        "en": "Study articulation, letter qualities, and principles of measured recitation. Explore the ten readings, their transmission paths, and their textual foundations alongside oral instruction.",
+        "ar": "ادرس مخارج الحروف وصفاتها وأحكام الترتيل، وتعرّف إلى أوجه القراءات العشر وطرقها وأصولها بما يعين على التلقّي والمشافهة."
+      },
+      "source": "metadata_modul_lengkap.json (counts), metadata_training_seluruh_ai.json (partitions), supplied project data 2026-09-20",
+      "countsPublished": true,
+      "status": "active",
+      "appAgentId": "tajwid_qiraat",
+      "variant": "standard",
+      "metadata": {
+        "books": 130,
+        "volumes": 182,
+        "volumesLowerBound": false,
+        "pages": 45000,
+        "words": 13714766,
+        "lectures": 0,
+        "partitions": 50,
+        "period": {
+          "id": "Abad 4 – 14 H",
+          "en": "4–14 c. AH",
+          "ar": "القرن ٤–١٤ هـ"
+        }
+      },
+      "metadataKey": "tajwid_qiraat"
+    },
+    {
+      "id": "qawaid-fiqhiyyah",
+      "sourceId": "qawaid_fiqhiyyah",
+      "index": 16,
+      "name": {
+        "id": "Qawa'id Fiqhiyyah",
+        "en": "Legal Maxims",
+        "ar": "القواعد الفقهية والأشباه والنظائر والفروق"
+      },
+      "arabic": "القواعد الفقهية",
+      "group": "fiqh",
+      "description": {
+        "id": "Susun peta hukum melalui kaidah asasiyyah, kaidah furu’iyyah, dan dhowabith. Hubungkan pembahasan al-asybah wan-nazha’ir dengan contoh penerapan serta pengecualiannya.",
+        "en": "Organize legal questions through overarching maxims, subsidiary rules, and disciplinary principles. Connect al-ashbāh wa-l-naẓāʾir with applications and exceptions.",
+        "ar": "نظّم المسائل بالقواعد الكبرى والقواعد الفرعية والضوابط، واربط مباحث الأشباه والنظائر بتطبيقاتها واستثناءاتها."
+      },
+      "source": "metadata_modul_lengkap.json (counts), metadata_training_seluruh_ai.json (partitions), supplied project data 2026-09-20",
+      "countsPublished": true,
+      "status": "active",
+      "appAgentId": "qawaid_fiqhiyyah",
+      "variant": "standard",
+      "metadata": {
+        "books": 44,
+        "volumes": 85,
+        "volumesLowerBound": false,
+        "pages": 32000,
+        "words": 8187717,
+        "lectures": 0,
+        "partitions": 30,
+        "period": {
+          "id": "Abad 7 – 14 H",
+          "en": "7–14 c. AH",
+          "ar": "القرن ٧–١٤ هـ"
+        }
+      },
+      "metadataKey": "qawaid_fiqhiyyah"
+    },
+    {
+      "id": "musthalah-hadits",
+      "sourceId": "musthalah_hadits",
+      "index": 17,
+      "name": {
+        "id": "'Ulumul Hadits & Musthalah",
+        "en": "Hadith Sciences",
+        "ar": "علوم الحديث ومصطلحه ومناهج التخريج والعلل"
+      },
+      "arabic": "مصطلح الحديث",
+      "group": "hadith",
+      "description": {
+        "id": "Pelajari kritik sanad, klasifikasi hadits, jarh wa ta’dil, dan ‘ilal. Telusuri landasan metodologinya melalui Muqaddimah Ibnu Shalah dan Tadribur Rawi.",
+        "en": "Study isnad criticism, hadith classification, narrator evaluation, and hidden defects through the methodological discussions of Ibn al-Ṣalāḥ’s introduction and Tadrīb al-Rāwī.",
+        "ar": "ادرس نقد الأسانيد وأقسام الحديث والجرح والتعديل والعلل، وتتبّع أصول المنهج في مقدمة ابن الصلاح وتدريب الراوي."
+      },
+      "source": "metadata_modul_lengkap.json (counts), metadata_training_seluruh_ai.json (partitions), supplied project data 2026-09-20",
+      "countsPublished": true,
+      "status": "active",
+      "appAgentId": "musthalah_hadits",
+      "variant": "standard",
+      "metadata": {
+        "books": 393,
+        "volumes": 748,
+        "volumesLowerBound": false,
+        "pages": 285000,
+        "words": 63241925,
+        "lectures": 0,
+        "partitions": 137,
+        "period": {
+          "id": "Abad 2 – 10 H",
+          "en": "2–10 c. AH",
+          "ar": "القرن ٢–١٠ هـ"
+        }
+      },
+      "metadataKey": "musthalah_hadits"
+    },
+    {
+      "id": "aqidah",
+      "sourceId": "aqidah",
+      "index": 18,
+      "name": {
+        "id": "Aqidah & Ushuluddin",
+        "en": "Theology",
+        "ar": "العقيدة وأصول الدين والمذاهب والفرق الإسلامية"
+      },
+      "arabic": "العقيدة والتوحيد",
+      "group": "theology",
+      "description": {
+        "id": "Telaah akidah Ahlussunnah wal Jama’ah dalam tradisi Asy’ariyyah dan Maturidiyyah. Kaji dalil aqli-naqli, istilah ushuluddin, serta jawaban ulama terhadap persoalan pemikiran.",
+        "en": "Study Sunni creed in the Ashʿari and Maturidi traditions. Examine rational and transmitted evidence, theological terminology, and scholarly responses to questions of belief.",
+        "ar": "طالع عقيدة أهل السنة والجماعة في المدرستين الأشعرية والماتريدية، وادرس الأدلة العقلية والنقلية ومصطلحات أصول الدين وأجوبة العلماء عن مسائل الاعتقاد."
+      },
+      "source": "metadata_modul_lengkap.json (counts), metadata_training_seluruh_ai.json (partitions), supplied project data 2026-09-20",
+      "countsPublished": true,
+      "status": "active",
+      "appAgentId": "aqidah",
+      "variant": "standard",
+      "metadata": {
+        "books": 173,
+        "volumes": 249,
+        "volumesLowerBound": false,
+        "pages": 85000,
+        "words": 19175915,
+        "lectures": 0,
+        "partitions": 43,
+        "period": {
+          "id": "Abad 2 – 14 H",
+          "en": "2–14 c. AH",
+          "ar": "القرن ٢–١٤ هـ"
+        }
+      },
+      "metadataKey": "aqidah"
+    },
+    {
+      "id": "thabaqat-tarajim",
+      "sourceId": "thabaqat_tarajim",
+      "index": 19,
+      "name": {
+        "id": "Thabaqat & Rijalul Hadits",
+        "en": "Biographical Literature",
+        "ar": "التراجم والطبقات ورجال الحديث والجرح والتعديل"
+      },
+      "arabic": "التراجم والطبقات",
+      "group": "history",
+      "description": {
+        "id": "Kenali perawi, fuqaha, dan ulama melalui kitab thabaqat serta tarajim. Telusuri Tahdzibut Tahdzib dan Siyar A’lamin Nubala untuk membaca jaringan guru-murid dan catatan perawi.",
+        "en": "Explore narrators, jurists, and scholars through biographical dictionaries. Read Tahdhīb al-Tahdhīb and Siyar Aʿlām al-Nubalāʾ for teaching networks and narrator assessments.",
+        "ar": "تعرّف إلى الرواة والفقهاء والعلماء في كتب الطبقات والتراجم، واستعن بتهذيب التهذيب وسير أعلام النبلاء في تتبّع الشيوخ والتلاميذ وأحوال الرواة."
+      },
+      "source": "metadata_modul_lengkap.json (counts), metadata_training_seluruh_ai.json (partitions), supplied project data 2026-09-20",
+      "countsPublished": true,
+      "status": "active",
+      "appAgentId": "thabaqat_rijal",
+      "variant": "standard",
+      "metadata": {
+        "books": 492,
+        "volumes": 1348,
+        "volumesLowerBound": false,
+        "pages": 420000,
+        "words": 130494140,
+        "lectures": 0,
+        "partitions": 279,
+        "period": {
+          "id": "Abad 1 – 14 H",
+          "en": "1–14 c. AH",
+          "ar": "القرن ١–١٤ هـ"
+        }
+      },
+      "metadataKey": "thabaqat_tarajim"
+    },
+    {
+      "id": "bibliografi-faharis",
+      "sourceId": "bibliografi_faharis",
+      "index": 20,
+      "name": {
+        "id": "Bibliografi & Tahqiq Turath",
+        "en": "Bibliography & Textual Editing",
+        "ar": "فهارس الكتب والأدلة والمخطوطات ومناهج التحقيق"
+      },
+      "arabic": "فهارس التراث",
+      "group": "language",
+      "description": {
+        "id": "Telusuri judul, pengarang, manuskrip, dan riwayat cetakan melalui Kasyfuz Zhunun serta kamus bibliografi. Pelajari metode tahqiq dan pemeriksaan penisbatan karya.",
+        "en": "Trace titles, authors, manuscripts, and publication histories through Kashf al-Ẓunūn and bibliographical dictionaries. Study textual editing and the assessment of authorship.",
+        "ar": "تتبّع العناوين والمؤلفين والمخطوطات وتاريخ الطبعات في كشف الظنون والمعاجم الببليوغرافية، وادرس مناهج التحقيق وفحص نسبة المؤلفات."
+      },
+      "source": "metadata_modul_lengkap.json (counts), metadata_training_seluruh_ai.json (partitions), supplied project data 2026-09-20",
+      "countsPublished": true,
+      "status": "active",
+      "appAgentId": "bibliografi_faharis",
+      "variant": "standard",
+      "metadata": {
+        "books": 86,
+        "volumes": 264,
+        "volumesLowerBound": false,
+        "pages": 110000,
+        "words": 19977431,
+        "lectures": 0,
+        "partitions": 45,
+        "period": {
+          "id": "Abad 4 – 14 H",
+          "en": "4–14 c. AH",
+          "ar": "القرن ٤–١٤ هـ"
+        }
+      },
+      "metadataKey": "bibliografi_faharis"
+    },
+    {
+      "id": "habib-umar",
+      "sourceId": "habib_umar",
+      "index": 21,
+      "name": {
+        "id": "Khazanah Habib Umar",
+        "en": "Habib Umar Collection",
+        "ar": "خزانة الحبيب عمر"
+      },
+      "arabic": "خزانة الحبيب عمر",
+      "group": "special",
+      "description": {
+        "id": "Khazanah dars, fatwa, risalah dakwah, dan mutaba’ah ilmiah Al-Habib Umar bin Hafidz dari Tarim, Hadramaut. Koleksi sedang dipersiapkan untuk telaah yang tertata.",
+        "en": "Lessons, fatwas, writings on daʿwah, and scholarly guidance from Habib Umar bin Hafiz of Tarim, Hadramaut. The collection is being prepared for structured study.",
+        "ar": "خزانة الدروس والفتاوى ورسائل الدعوة والمتابعات العلمية للحبيب عمر بن حفيظ بتريم، حضرموت. يجري إعداد المجموعة للمطالعة المنظمة."
+      },
+      "status": "preparing",
+      "source": "App scholar corpus is locked",
+      "countsPublished": false,
+      "appAgentId": "habib_umar",
+      "variant": "standard"
+    }
+  ],
+  "books": [
+    {
+      "id": "al-umm",
+      "arabic": "الأم",
+      "title": "Al-Umm",
+      "author": "Al-Shāfiʿī",
+      "authorArabic": "الشافعي",
+      "locator": "ج١، ص٢٩–٣٠"
+    },
+    {
+      "id": "al-aziz",
+      "arabic": "العزيز شرح الوجيز",
+      "title": "Al-ʿAzīz Sharḥ al-Wajīz",
+      "author": "Al-Rāfiʿī",
+      "authorArabic": "الرافعي",
+      "locator": "ج١، ص١٦١–١٦٢"
+    },
+    {
+      "id": "al-majmu",
+      "arabic": "المجموع شرح المهذب",
+      "title": "Al-Majmūʿ Sharḥ al-Muhadhdhab",
+      "author": "Al-Nawawī",
+      "authorArabic": "النووي",
+      "locator": "ج٢، ص٢٦–٢٧"
+    },
+    {
+      "id": "fath-al-wahhab",
+      "arabic": "فتح الوهاب بشرح منهج الطلاب",
+      "title": "Fatḥ al-Wahhāb",
+      "author": "Zakariyyā al-Anṣārī",
+      "authorArabic": "زكريا الأنصاري",
+      "locator": "ج١، ص١٠"
+    },
+    {
+      "id": "bujairimi",
+      "arabic": "حاشية البجيرمي على الخطيب",
+      "title": "Ḥāshiyat al-Bujayrimī",
+      "author": "Sulaymān al-Bujayrimī",
+      "authorArabic": "سليمان البجيرمي",
+      "locator": "ج١ ق١، ص٢١٠"
+    },
+    {
+      "id": "nihayat-al-zayn",
+      "arabic": "نهاية الزين",
+      "title": "Nihāyat al-Zayn",
+      "author": "Nawawī al-Bantanī",
+      "authorArabic": "نووي البنتني",
+      "locator": "ص٢٧"
+    },
+    {
+      "id": "mukhtasar-tuhfa",
+      "arabic": "مختصر تحفة المحتاج بشرح المنهاج",
+      "title": "Mukhtaṣar Tuḥfat al-Muḥtāj",
+      "author": null,
+      "authorArabic": null,
+      "locator": "ج١، ص٦٩"
+    }
+  ],
+  "commercial": [
+    {
+      "renewal": {
+        "id": "Perpanjangan manual. Tanpa auto-debit.",
+        "en": "Manual renewal. No automatic debit.",
+        "ar": "تجديد يدوي. دون خصم تلقائي."
+      },
+      "refund": {
+        "id": "Permohonan refund ditinjau paling lambat 7 hari kerja setelah data lengkap. Jika disetujui, pemrosesan paling lambat 7 hari kerja berikutnya, mengikuti penyedia pembayaran.",
+        "en": "Refund requests are reviewed within 7 business days of complete information. Approved refunds are processed within a further 7 business days, subject to the payment provider.",
+        "ar": "تُراجع طلبات الاسترداد خلال ٧ أيام عمل من اكتمال البيانات. وبعد الموافقة تُعالج خلال ٧ أيام عمل أخرى، وفق مزود الدفع."
+      },
+      "taxes": {
+        "id": "Metode yang tersedia mengikuti checkout DOKU. Jumlah akhir dan tanggal berakhir akses ditampilkan sebelum transaksi.",
+        "en": "Available methods depend on DOKU checkout. The final amount and access expiry are shown before the transaction.",
+        "ar": "تعتمد الوسائل المتاحة على صفحة الدفع لدى DOKU. يُعرض المبلغ النهائي وتاريخ انتهاء الوصول قبل المعاملة."
+      },
+      "cancellation": {
+        "id": "Akses berakhir sesuai tanggal pada akun. Tidak ada perpanjangan otomatis.",
+        "en": "Access ends on the date shown in your account. No automatic renewal.",
+        "ar": "ينتهي الوصول في التاريخ المبيّن في حسابك. لا تجديد تلقائي."
+      },
+      "paymentLocation": {
+        "id": "Melalui checkout DOKU resmi di aplikasi.",
+        "en": "Through official DOKU checkout in the app.",
+        "ar": "عبر صفحة الدفع الرسمية لدى DOKU في التطبيق."
+      },
+      "id": "tholib",
+      "price": 49000,
+      "currency": "IDR",
+      "months": 1,
+      "name": {
+        "id": "Paket Tholib",
+        "en": "Tholib Plan",
+        "ar": "باقة الطالب"
+      },
+      "period": {
+        "id": "1 bulan",
+        "en": "1 month",
+        "ar": "شهر واحد"
+      },
+      "coverage": {
+        "id": "Satu asisten spesialis pilihan sesuai cakupan pada checkout.",
+        "en": "One selected specialist assistant, as specified at checkout.",
+        "ar": "مساعد متخصص واحد تختاره وفق النطاق المبيّن عند الدفع."
+      }
+    },
+    {
+      "renewal": {
+        "id": "Perpanjangan manual. Tanpa auto-debit.",
+        "en": "Manual renewal. No automatic debit.",
+        "ar": "تجديد يدوي. دون خصم تلقائي."
+      },
+      "refund": {
+        "id": "Permohonan refund ditinjau paling lambat 7 hari kerja setelah data lengkap. Jika disetujui, pemrosesan paling lambat 7 hari kerja berikutnya, mengikuti penyedia pembayaran.",
+        "en": "Refund requests are reviewed within 7 business days of complete information. Approved refunds are processed within a further 7 business days, subject to the payment provider.",
+        "ar": "تُراجع طلبات الاسترداد خلال ٧ أيام عمل من اكتمال البيانات. وبعد الموافقة تُعالج خلال ٧ أيام عمل أخرى، وفق مزود الدفع."
+      },
+      "taxes": {
+        "id": "Metode yang tersedia mengikuti checkout DOKU. Jumlah akhir dan tanggal berakhir akses ditampilkan sebelum transaksi.",
+        "en": "Available methods depend on DOKU checkout. The final amount and access expiry are shown before the transaction.",
+        "ar": "تعتمد الوسائل المتاحة على صفحة الدفع لدى DOKU. يُعرض المبلغ النهائي وتاريخ انتهاء الوصول قبل المعاملة."
+      },
+      "cancellation": {
+        "id": "Akses berakhir sesuai tanggal pada akun. Tidak ada perpanjangan otomatis.",
+        "en": "Access ends on the date shown in your account. No automatic renewal.",
+        "ar": "ينتهي الوصول في التاريخ المبيّن في حسابك. لا تجديد تلقائي."
+      },
+      "paymentLocation": {
+        "id": "Melalui checkout DOKU resmi di aplikasi.",
+        "en": "Through official DOKU checkout in the app.",
+        "ar": "عبر صفحة الدفع الرسمية لدى DOKU في التطبيق."
+      },
+      "id": "tematik",
+      "price": 149000,
+      "currency": "IDR",
+      "months": 3,
+      "name": {
+        "id": "Paket Tematik",
+        "en": "Thematic Plan",
+        "ar": "الباقة الموضوعية"
+      },
+      "period": {
+        "id": "3 bulan",
+        "en": "3 months",
+        "ar": "٣ أشهر"
+      },
+      "coverage": {
+        "id": "Satu rumpun kajian sesuai daftar asisten pada checkout.",
+        "en": "One study group, with assistants listed at checkout.",
+        "ar": "مجموعة دراسية واحدة وفق قائمة المساعدين عند الدفع."
+      }
+    },
+    {
+      "renewal": {
+        "id": "Perpanjangan manual. Tanpa auto-debit.",
+        "en": "Manual renewal. No automatic debit.",
+        "ar": "تجديد يدوي. دون خصم تلقائي."
+      },
+      "refund": {
+        "id": "Permohonan refund ditinjau paling lambat 7 hari kerja setelah data lengkap. Jika disetujui, pemrosesan paling lambat 7 hari kerja berikutnya, mengikuti penyedia pembayaran.",
+        "en": "Refund requests are reviewed within 7 business days of complete information. Approved refunds are processed within a further 7 business days, subject to the payment provider.",
+        "ar": "تُراجع طلبات الاسترداد خلال ٧ أيام عمل من اكتمال البيانات. وبعد الموافقة تُعالج خلال ٧ أيام عمل أخرى، وفق مزود الدفع."
+      },
+      "taxes": {
+        "id": "Metode yang tersedia mengikuti checkout DOKU. Jumlah akhir dan tanggal berakhir akses ditampilkan sebelum transaksi.",
+        "en": "Available methods depend on DOKU checkout. The final amount and access expiry are shown before the transaction.",
+        "ar": "تعتمد الوسائل المتاحة على صفحة الدفع لدى DOKU. يُعرض المبلغ النهائي وتاريخ انتهاء الوصول قبل المعاملة."
+      },
+      "cancellation": {
+        "id": "Akses berakhir sesuai tanggal pada akun. Tidak ada perpanjangan otomatis.",
+        "en": "Access ends on the date shown in your account. No automatic renewal.",
+        "ar": "ينتهي الوصول في التاريخ المبيّن في حسابك. لا تجديد تلقائي."
+      },
+      "paymentLocation": {
+        "id": "Melalui checkout DOKU resmi di aplikasi.",
+        "en": "Through official DOKU checkout in the app.",
+        "ar": "عبر صفحة الدفع الرسمية لدى DOKU في التطبيق."
+      },
+      "id": "sultan",
+      "price": 499000,
+      "currency": "IDR",
+      "months": 12,
+      "name": {
+        "id": "Sultan All-Access",
+        "en": "Sultan All-Access",
+        "ar": "سلطان للوصول الشامل"
+      },
+      "period": {
+        "id": "1 tahun",
+        "en": "1 year",
+        "ar": "سنة واحدة"
+      },
+      "coverage": {
+        "id": "Seluruh asisten yang tercakup dalam paket aktif. Profil yang masih dalam persiapan belum termasuk akses.",
+        "en": "All assistants covered by the active plan. Profiles in preparation are not yet accessible.",
+        "ar": "جميع المساعدين المشمولين بالباقة المفعّلة. الملفات قيد الإعداد غير متاحة بعد."
+      }
+    }
+  ],
+  "releases": [
+    {
+      "version": "1.0.51",
+      "date": "2026-09-20",
+      "summary": {
+        "id": "Antarmuka trilingual, katalog asisten, dan Catatan lokal.",
+        "en": "Trilingual interface, assistant catalogue, and local Notes.",
+        "ar": "واجهة بثلاث لغات وفهرس المساعدين وملاحظات محلية."
+      },
+      "body": {
+        "id": "Versi aplikasi yang tercantum dalam konfigurasi pengelola adalah 1.0.51. Ketersediaan asisten mengikuti status pada aplikasi. Catatan disimpan lokal pada perangkat. Referensi dan hasil AI tetap memerlukan pemeriksaan.",
+        "en": "The app version listed in the publisher configuration is 1.0.51. Assistant availability follows the status in the app. Notes are stored locally on the device. References and AI outputs still require review.",
+        "ar": "إصدار التطبيق المبيّن في إعدادات الجهة المشغلة هو 1.0.51. تتبع إتاحة المساعدين حالتهم في التطبيق. تُحفظ الملاحظات محليًا على الجهاز، وتظل المراجع ومخرجات الذكاء الاصطناعي محتاجة إلى المراجعة."
+      }
+    }
+  ]
+}

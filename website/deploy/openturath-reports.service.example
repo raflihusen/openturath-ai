@@ -1,0 +1,19 @@
+[Unit]
+Description=OpenTurath private report API
+After=network.target
+[Service]
+User=openturath
+Group=openturath
+WorkingDirectory=/srv/openturath/current/server
+Environment=OT_DATA_DIR=/var/lib/openturath
+Environment=OT_TRUST_LOCAL_PROXY=1
+ExecStart=/srv/openturath/venv/bin/gunicorn --bind 127.0.0.1:8001 --workers 1 --threads 4 --timeout 20 wsgi:application
+Restart=on-failure
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/openturath
+[Install]
+WantedBy=multi-user.target

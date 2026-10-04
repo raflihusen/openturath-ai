@@ -1,0 +1,84 @@
+{
+  "mapping": {
+    "home": "navHome",
+    "notes": "navSaved",
+    "language": "language",
+    "close": "close",
+    "terms": "termsOfService",
+    "privacy": "privacyPolicy",
+    "billing": "paymentAndRefund",
+    "aiGuidelines": "aiGuideline",
+    "contact": "supportAndContact",
+    "search": "searchBooks",
+    "tahawwulat": "planTahawwulat",
+    "studySpace": "studySpace",
+    "referenceBooks": "referenceBooks"
+  },
+  "terms": {
+    "navHome": [
+      "Beranda",
+      "Home",
+      "الرئيسية"
+    ],
+    "navSaved": [
+      "Catatan",
+      "Notes",
+      "الملاحظات"
+    ],
+    "language": [
+      "Bahasa",
+      "Language",
+      "اللغة"
+    ],
+    "close": [
+      "Tutup",
+      "Close",
+      "إغلاق"
+    ],
+    "termsOfService": [
+      "Ketentuan Layanan",
+      "Terms of Service",
+      "شروط الخدمة"
+    ],
+    "privacyPolicy": [
+      "Kebijakan Privasi",
+      "Privacy Policy",
+      "سياسة الخصوصية"
+    ],
+    "paymentAndRefund": [
+      "Pembayaran dan Pengembalian Dana",
+      "Payment & Refunds",
+      "الدفع والاسترداد"
+    ],
+    "aiGuideline": [
+      "Panduan Penggunaan AI & Rujukan",
+      "AI Use & Reference Verification",
+      "استخدام الذكاء الاصطناعي والتحقق من المراجع"
+    ],
+    "supportAndContact": [
+      "Bantuan dan Kontak",
+      "Support & Contact",
+      "المساعدة والتواصل"
+    ],
+    "searchBooks": [
+      "Cari judul kitab, pengarang, atau bidang…",
+      "Search titles, authors, or disciplines…",
+      "ابحث عن عنوان أو مؤلف أو مجال…"
+    ],
+    "planTahawwulat": [
+      "Fikih Tahawwulat",
+      "Fiqh al-Tahawwulat",
+      "فقه التحولات"
+    ],
+    "studySpace": [
+      "Ruang Telaah",
+      "Study Room",
+      "مجلس المطالعة"
+    ],
+    "referenceBooks": [
+      "Pustaka Marja' Mu'tamad",
+      "Authoritative References",
+      "المراجع المعتمدة"
+    ]
+  }
+}

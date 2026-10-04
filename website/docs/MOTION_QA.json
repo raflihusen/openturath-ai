@@ -1,0 +1,27 @@
+{
+  "browser": "153.0.8010.0",
+  "checks": [
+    "True-white initial theme, black original logo, desktop corpus number at least 150px",
+    "Independent hero layers respond to fine pointer movement",
+    "Scroll entrances still run after more than eight seconds on the hero",
+    "Featured card numbers retain at least 100px primary and 26px secondary hierarchy",
+    "Catalogue spotlight responds inside the actual card",
+    "Filtering and resetting preserve usable bento layout",
+    "All four manuscript stages update with the corresponding scroll step",
+    "FAQ opens smoothly while preserving native details state",
+    "Dark mode uses white original logo and neutral obsidian canvas",
+    "Manual reduced-motion preference persists and exposes all content",
+    "System reduced-motion changes disable parallax immediately",
+    "Touch devices do not receive mouse parallax",
+    "Mobile ID and AR retain large numbers, accessible theme control and zero overflow",
+    "No-JavaScript visitors receive full metrics, manuscript and native navigation"
+  ],
+  "measurements": {
+    "desktopBook": 165.888,
+    "cardBook": 112,
+    "cardSecondary": 27,
+    "mobileBook": 113.1,
+    "mobileCardTitle": 26
+  },
+  "errors": []
+}

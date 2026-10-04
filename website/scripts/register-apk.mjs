@@ -1,0 +1,30 @@
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import {createHash} from 'node:crypto';
+import {execFileSync} from 'node:child_process';
+const root=path.resolve(import.meta.dirname,'..');
+const input=process.argv[2];
+if(!input)throw Error('Usage: npm run release:apk -- /absolute/path/openturath-v1.0.51.apk');
+const source=path.resolve(input);
+// Inspect structure, never execute the binary. This is not a signature audit.
+execFileSync('python3',['-c',
+  'import sys,zipfile\nz=zipfile.ZipFile(sys.argv[1]); names=set(z.namelist()); assert "AndroidManifest.xml" in names and "classes.dex" in names, "Not an Android APK"; assert z.testzip() is None, "Corrupt APK"',source]);
+const configPath=path.join(root,'site.config.json');
+const config=JSON.parse(await fs.readFile(configPath,'utf8'));
+const android=config.downloads.find(d=>d.type==='apk'&&d.platform==='Android');
+if(!android)throw Error('Android release is not configured.');
+const fileName=`openturath-v${android.version}.apk`;
+if(path.basename(source)!==fileName)throw Error(`Expected ${fileName}; register the correct release file.`);
+const bytes=await fs.readFile(source);
+const destination=path.join(root,'public','downloads',fileName);
+await fs.mkdir(path.dirname(destination),{recursive:true});
+if(source!==destination)await fs.writeFile(destination,bytes);
+android.sha256=createHash('sha256').update(bytes).digest('hex');
+android.sizeBytes=bytes.length;
+android.size=`${(bytes.length/1e6).toFixed(1)} MB`;
+android.url=new URL('/downloads/'+fileName,config.canonicalUrl).href;
+android.comingSoon=false;delete android.unavailableReason;
+config.distribution={mode:'app-release'};
+await fs.writeFile(configPath,JSON.stringify(config,null,2)+'\n');
+console.log(`Registered ${fileName}: ${bytes.length} bytes. SHA-256 ${android.sha256}`);
+console.log('Run npm test and npm run build:release. Confirm APK version and signing certificate on a device before distributing.');

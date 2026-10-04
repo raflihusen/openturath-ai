@@ -15,7 +15,7 @@ export const articles = {
           "اطرح السؤال"
         ],
         "body": [
-          "Pilih khadim sesuai disiplin ilmu, lalu uraikan masalah dan konteks yang ingin Anda dalami.",
+          "Pilih asisten sesuai disiplin ilmu, lalu uraikan masalah dan konteks yang ingin Anda dalami.",
           "Choose the assistant for your discipline and describe the question and its context.",
           "اختر المساعد المختص، ثم بيّن المسألة وسياقها الذي تريد دراسته."
         ]
@@ -109,7 +109,7 @@ export const articles = {
           "الفهرس والإتاحة"
         ],
         "body": [
-          "Dua puluh disiplin keilmuan, dari fikih mazhab hingga tahqiq naskah. Temukan khadim yang memahami bidang telaah Anda. Akumulasi metadata 20 modul aplikasi · 21 profil khadim, termasuk 1 dalam persiapan.",
+          "Dua puluh disiplin keilmuan, dari fikih mazhab hingga tahqiq naskah. Temukan asisten yang memahami bidang telaah Anda. Akumulasi metadata 20 modul aplikasi · 21 profil asisten, termasuk 1 dalam persiapan.",
           "Twenty scholarly disciplines, from the schools of fiqh to manuscript study. Find an assistant dedicated to your field. Combined metadata from 20 app modules · 21 assistant profiles, including 1 in preparation.",
           "عشرون تخصصًا علميًّا، من فقه المذاهب إلى تحقيق النصوص. اختر المساعد المختص بمجال بحثك. مجموع بيانات ٢٠ وحدة في التطبيق · ٢١ ملف مساعد، منها ملف واحد قيد الإعداد."
         ]
@@ -297,9 +297,9 @@ export const articles = {
           "العروض والمدة"
         ],
         "body": [
-          "Harga tiap masa akses tercantum di halaman Akses dan di aplikasi. Pilih asisten untuk bidang ilmu yang ingin Anda telaah. Akses dan aktivasi diproses resmi di aplikasi melalui DOKU, tanpa perpanjangan otomatis. Rincian paket, metode pembayaran, dan total biaya ditampilkan sebelum transaksi.",
-          "Prices for each access period are listed on the Access page and in the app. Choose an assistant for the discipline you wish to study. Access and activation are handled in the app through DOKU, with manual renewal. Plan details, payment methods, and the total are shown before you pay.",
-          "أسعار كل مدة مبيّنة في صفحة الاشتراك وداخل التطبيق. اختر المساعد المختص بالعلم الذي تريد دراسته. يُفعّل الوصول رسميًّا داخل التطبيق عبر DOKU، مع تجديد يدوي. تُعرض تفاصيل الباقة ووسائل الدفع والمبلغ الإجمالي قبل إتمام المعاملة."
+          "Akses asisten spesialis dimulai dari Rp 49.000 per bulan. Pilih asisten spesialis disiplin ilmu yang ingin Anda telaah. Akses dan aktivasi diproses resmi di aplikasi melalui DOKU, tanpa perpanjangan otomatis. Rincian paket, metode pembayaran, dan total biaya ditampilkan sebelum transaksi.",
+          "Specialist access starts at IDR 49,000 per month. Choose a specialist assistant for the discipline you wish to study. Access and activation are handled in the app through DOKU, with manual renewal. Plan details, payment methods, and the total are shown before you pay.",
+          "يبدأ الوصول إلى المساعد المختص من ٤٩٬٠٠٠ روبية إندونيسية شهريًّا. اختر المساعد المختص بالعلم الذي تريد دراسته. يُفعّل الوصول رسميًّا داخل التطبيق عبر DOKU، مع تجديد يدوي. تُعرض تفاصيل الباقة ووسائل الدفع والمبلغ الإجمالي قبل إتمام المعاملة."
         ]
       },
       {

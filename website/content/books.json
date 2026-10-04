@@ -1,0 +1,58 @@
+[
+  {
+    "id": "al-umm",
+    "arabic": "الأم",
+    "title": "Al-Umm",
+    "author": "Al-Shāfiʿī",
+    "authorArabic": "الشافعي",
+    "locator": "ج١، ص٢٩–٣٠"
+  },
+  {
+    "id": "al-aziz",
+    "arabic": "العزيز شرح الوجيز",
+    "title": "Al-ʿAzīz Sharḥ al-Wajīz",
+    "author": "Al-Rāfiʿī",
+    "authorArabic": "الرافعي",
+    "locator": "ج١، ص١٦١–١٦٢"
+  },
+  {
+    "id": "al-majmu",
+    "arabic": "المجموع شرح المهذب",
+    "title": "Al-Majmūʿ Sharḥ al-Muhadhdhab",
+    "author": "Al-Nawawī",
+    "authorArabic": "النووي",
+    "locator": "ج٢، ص٢٦–٢٧"
+  },
+  {
+    "id": "fath-al-wahhab",
+    "arabic": "فتح الوهاب بشرح منهج الطلاب",
+    "title": "Fatḥ al-Wahhāb",
+    "author": "Zakariyyā al-Anṣārī",
+    "authorArabic": "زكريا الأنصاري",
+    "locator": "ج١، ص١٠"
+  },
+  {
+    "id": "bujairimi",
+    "arabic": "حاشية البجيرمي على الخطيب",
+    "title": "Ḥāshiyat al-Bujayrimī",
+    "author": "Sulaymān al-Bujayrimī",
+    "authorArabic": "سليمان البجيرمي",
+    "locator": "ج١ ق١، ص٢١٠"
+  },
+  {
+    "id": "nihayat-al-zayn",
+    "arabic": "نهاية الزين",
+    "title": "Nihāyat al-Zayn",
+    "author": "Nawawī al-Bantanī",
+    "authorArabic": "نووي البنتني",
+    "locator": "ص٢٧"
+  },
+  {
+    "id": "mukhtasar-tuhfa",
+    "arabic": "مختصر تحفة المحتاج بشرح المنهاج",
+    "title": "Mukhtaṣar Tuḥfat al-Muḥtāj",
+    "author": null,
+    "authorArabic": null,
+    "locator": "ج١، ص٦٩"
+  }
+]

@@ -1,0 +1,16 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import fs from 'node:fs/promises';
+import os from 'node:os';
+import path from 'node:path';
+import {execFileSync} from 'node:child_process';
+import {releaseIssues} from '../src/core.mjs';
+import {renderPage} from '../src/pages.mjs';
+const root=path.resolve(import.meta.dirname,'..');
+const tri=s=>({id:s,en:s,ar:s});
+function fixture(){return {name:'OpenTurath',tagline:'AI For Islamic Scholarship.',canonicalUrl:'https://example.invalid',operator:{name:'TEST ONLY',email:'help@example.invalid',privacyEmail:'privacy@example.invalid',securityEmail:'security@example.invalid',jurisdiction:'TEST ONLY'},downloads:[{platform:'Android',type:'store',version:'1.0.0',date:'2026-09-19',minimumOS:'TEST ONLY',url:'https://example.invalid/app'}],plans:[{name:tri('TEST ONLY'),price:0,currency:'IDR',period:tri('TEST ONLY'),coverage:tri('TEST ONLY'),renewal:tri('TEST ONLY'),refund:tri('TEST ONLY'),taxes:tri('TEST ONLY'),cancellation:tri('TEST ONLY'),paymentLocation:tri('TEST ONLY')}],releaseNotes:[{version:'1.0.0',date:'2026-09-19',summary:tri('TEST ONLY'),body:tri('TEST ONLY')}],reports:{enabled:false,retentionDays:30},analytics:{enabled:false},policiesApproved:true,catalogReviewed:true,comparisonRightsConfirmed:true,appDeepLinkBase:''};}
+test('release build generates QR, metadata and real route templates without modifying source config',async()=>{
+ const c=fixture();assert.deepEqual(releaseIssues(c),[]);const tmp=await fs.mkdtemp(path.join(os.tmpdir(),'ot-release-'));
+ try{for(const f of ['src','public','scripts','content'])await fs.cp(path.join(root,f),path.join(tmp,f),{recursive:true});await fs.mkdir(path.join(tmp,'docs'));await fs.writeFile(path.join(tmp,'site.config.json'),JSON.stringify(c));execFileSync(process.execPath,[path.join(tmp,'scripts/build.mjs'),'--release'],{stdio:'pipe'});const html=await fs.readFile(path.join(tmp,'dist/ar/download/index.html'),'utf8');assert.ok(html.includes('download-ar.svg'));assert.ok(html.includes('https://example.invalid/app'));assert.ok(html.includes('application/ld+json'));assert.ok(!html.includes('noindex'));const qr=await fs.readFile(path.join(tmp,'dist/assets/download-ar.svg'),'utf8');assert.ok(qr.includes('https://example.invalid/ar/download/'));assert.ok(qr.includes('viewBox='));const report=await fs.readFile(path.join(tmp,'dist/en/report/index.html'),'utf8');assert.ok(!report.includes('type="submit"'));assert.ok(report.includes('data-save-report'));assert.ok(report.includes('Site submissions are disabled'));const robots=await fs.readFile(path.join(tmp,'dist/robots.txt'),'utf8');assert.ok(robots.includes('Allow: /'));}finally{await fs.rm(tmp,{recursive:true,force:true});}
+});
+test('downloads without notes fail and revoked releases never show active links',()=>{const c=fixture();c.releaseNotes=[];assert.ok(releaseIssues(c).some(x=>x.includes('missing notes')));c.downloads[0].revoked=true;assert.ok(releaseIssues(c).some(x=>x.includes('at least one')));const html=renderPage('en','download',{config:c}).body;assert.ok(!html.includes('https://example.invalid/app'));assert.ok(html.includes('not been published'));});

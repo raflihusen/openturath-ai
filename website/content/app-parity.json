@@ -1,0 +1,32 @@
+{
+  "date": "2026-09-20",
+  "appPricingRevision": "perdana-2026-09-20",
+  "websitePricingRevision": "website-brief-2026-09-20",
+  "pricingParity": false,
+  "previousAppPricesIDR": {
+    "specialist1Month": 50000,
+    "tahawwulat1Month": 300000,
+    "tahawwulat6Months": 1499000,
+    "tahawwulat12Months": 1999000
+  },
+  "websitePricesIDR": {
+    "tholib": 49000,
+    "tematik": 149000,
+    "sultan": 499000
+  },
+  "websiteProfiles": 21,
+  "appPublicDisciplines": 20,
+  "appScholarProfilesLocked": [
+    "habib_umar",
+    "imam_ghazali"
+  ],
+  "policyVersion": "1.0",
+  "glossarySha256": "4808580d904ed9f75c217843edf7feb47880a4280c460b756e4d91287f7a3d68",
+  "legalSourceSha256": "eebd7a5e1883ae4b8fe0480f336e71b0da7989ee9f97105babd5d1401c5915c1",
+  "openIssues": [
+    "App checkout SKUs and entitlements must match the latest commercial brief before selling these website plans.",
+    "The canonical refund policy says 30 calendar days while application products use calendar months.",
+    "APK bytes and production DOKU transactions were not supplied for validation.",
+    "Q001 has ten quotation records, all not-reviewed."
+  ]
+}

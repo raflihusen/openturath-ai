@@ -1,0 +1,791 @@
+{
+  "browser": "153.0.8010.0",
+  "pages": [
+    {
+      "locale": "id",
+      "route": "",
+      "width": 1440,
+      "overflow": false,
+      "dir": "ltr",
+      "h1": 1
+    },
+    {
+      "locale": "id",
+      "route": "library/",
+      "width": 1440,
+      "overflow": false,
+      "dir": "ltr",
+      "h1": 1
+    },
+    {
+      "locale": "id",
+      "route": "access/",
+      "width": 1440,
+      "overflow": false,
+      "dir": "ltr",
+      "h1": 1
+    },
+    {
+      "locale": "id",
+      "route": "download/",
+      "width": 1440,
+      "overflow": false,
+      "dir": "ltr",
+      "h1": 1
+    },
+    {
+      "locale": "id",
+      "route": "terms/",
+      "width": 1440,
+      "overflow": false,
+      "dir": "ltr",
+      "h1": 1
+    },
+    {
+      "locale": "id",
+      "route": "privacy/",
+      "width": 1440,
+      "overflow": false,
+      "dir": "ltr",
+      "h1": 1
+    },
+    {
+      "locale": "id",
+      "route": "billing/",
+      "width": 1440,
+      "overflow": false,
+      "dir": "ltr",
+      "h1": 1
+    },
+    {
+      "locale": "id",
+      "route": "ai-guidelines/",
+      "width": 1440,
+      "overflow": false,
+      "dir": "ltr",
+      "h1": 1
+    },
+    {
+      "locale": "id",
+      "route": "report/",
+      "width": 1440,
+      "overflow": false,
+      "dir": "ltr",
+      "h1": 1
+    },
+    {
+      "locale": "id",
+      "route": "research/q001/",
+      "width": 1440,
+      "overflow": false,
+      "dir": "ltr",
+      "h1": 1
+    },
+    {
+      "locale": "id",
+      "route": "",
+      "width": 390,
+      "overflow": false,
+      "dir": "ltr",
+      "h1": 1
+    },
+    {
+      "locale": "id",
+      "route": "library/",
+      "width": 390,
+      "overflow": false,
+      "dir": "ltr",
+      "h1": 1
+    },
+    {
+      "locale": "id",
+      "route": "access/",
+      "width": 390,
+      "overflow": false,
+      "dir": "ltr",
+      "h1": 1
+    },
+    {
+      "locale": "id",
+      "route": "download/",
+      "width": 390,
+      "overflow": false,
+      "dir": "ltr",
+      "h1": 1
+    },
+    {
+      "locale": "id",
+      "route": "terms/",
+      "width": 390,
+      "overflow": false,
+      "dir": "ltr",
+      "h1": 1
+    },
+    {
+      "locale": "id",
+      "route": "privacy/",
+      "width": 390,
+      "overflow": false,
+      "dir": "ltr",
+      "h1": 1
+    },
+    {
+      "locale": "id",
+      "route": "billing/",
+      "width": 390,
+      "overflow": false,
+      "dir": "ltr",
+      "h1": 1
+    },
+    {
+      "locale": "id",
+      "route": "ai-guidelines/",
+      "width": 390,
+      "overflow": false,
+      "dir": "ltr",
+      "h1": 1
+    },
+    {
+      "locale": "id",
+      "route": "report/",
+      "width": 390,
+      "overflow": false,
+      "dir": "ltr",
+      "h1": 1
+    },
+    {
+      "locale": "id",
+      "route": "research/q001/",
+      "width": 390,
+      "overflow": false,
+      "dir": "ltr",
+      "h1": 1
+    },
+    {
+      "locale": "id",
+      "route": "",
+      "width": 320,
+      "overflow": false,
+      "dir": "ltr",
+      "h1": 1
+    },
+    {
+      "locale": "id",
+      "route": "library/",
+      "width": 320,
+      "overflow": false,
+      "dir": "ltr",
+      "h1": 1
+    },
+    {
+      "locale": "id",
+      "route": "access/",
+      "width": 320,
+      "overflow": false,
+      "dir": "ltr",
+      "h1": 1
+    },
+    {
+      "locale": "id",
+      "route": "download/",
+      "width": 320,
+      "overflow": false,
+      "dir": "ltr",
+      "h1": 1
+    },
+    {
+      "locale": "id",
+      "route": "terms/",
+      "width": 320,
+      "overflow": false,
+      "dir": "ltr",
+      "h1": 1
+    },
+    {
+      "locale": "id",
+      "route": "privacy/",
+      "width": 320,
+      "overflow": false,
+      "dir": "ltr",
+      "h1": 1
+    },
+    {
+      "locale": "id",
+      "route": "billing/",
+      "width": 320,
+      "overflow": false,
+      "dir": "ltr",
+      "h1": 1
+    },
+    {
+      "locale": "id",
+      "route": "ai-guidelines/",
+      "width": 320,
+      "overflow": false,
+      "dir": "ltr",
+      "h1": 1
+    },
+    {
+      "locale": "id",
+      "route": "report/",
+      "width": 320,
+      "overflow": false,
+      "dir": "ltr",
+      "h1": 1
+    },
+    {
+      "locale": "id",
+      "route": "research/q001/",
+      "width": 320,
+      "overflow": false,
+      "dir": "ltr",
+      "h1": 1
+    },
+    {
+      "locale": "en",
+      "route": "",
+      "width": 1440,
+      "overflow": false,
+      "dir": "ltr",
+      "h1": 1
+    },
+    {
+      "locale": "en",
+      "route": "library/",
+      "width": 1440,
+      "overflow": false,
+      "dir": "ltr",
+      "h1": 1
+    },
+    {
+      "locale": "en",
+      "route": "access/",
+      "width": 1440,
+      "overflow": false,
+      "dir": "ltr",
+      "h1": 1
+    },
+    {
+      "locale": "en",
+      "route": "download/",
+      "width": 1440,
+      "overflow": false,
+      "dir": "ltr",
+      "h1": 1
+    },
+    {
+      "locale": "en",
+      "route": "terms/",
+      "width": 1440,
+      "overflow": false,
+      "dir": "ltr",
+      "h1": 1
+    },
+    {
+      "locale": "en",
+      "route": "privacy/",
+      "width": 1440,
+      "overflow": false,
+      "dir": "ltr",
+      "h1": 1
+    },
+    {
+      "locale": "en",
+      "route": "billing/",
+      "width": 1440,
+      "overflow": false,
+      "dir": "ltr",
+      "h1": 1
+    },
+    {
+      "locale": "en",
+      "route": "ai-guidelines/",
+      "width": 1440,
+      "overflow": false,
+      "dir": "ltr",
+      "h1": 1
+    },
+    {
+      "locale": "en",
+      "route": "report/",
+      "width": 1440,
+      "overflow": false,
+      "dir": "ltr",
+      "h1": 1
+    },
+    {
+      "locale": "en",
+      "route": "research/q001/",
+      "width": 1440,
+      "overflow": false,
+      "dir": "ltr",
+      "h1": 1
+    },
+    {
+      "locale": "en",
+      "route": "",
+      "width": 390,
+      "overflow": false,
+      "dir": "ltr",
+      "h1": 1
+    },
+    {
+      "locale": "en",
+      "route": "library/",
+      "width": 390,
+      "overflow": false,
+      "dir": "ltr",
+      "h1": 1
+    },
+    {
+      "locale": "en",
+      "route": "access/",
+      "width": 390,
+      "overflow": false,
+      "dir": "ltr",
+      "h1": 1
+    },
+    {
+      "locale": "en",
+      "route": "download/",
+      "width": 390,
+      "overflow": false,
+      "dir": "ltr",
+      "h1": 1
+    },
+    {
+      "locale": "en",
+      "route": "terms/",
+      "width": 390,
+      "overflow": false,
+      "dir": "ltr",
+      "h1": 1
+    },
+    {
+      "locale": "en",
+      "route": "privacy/",
+      "width": 390,
+      "overflow": false,
+      "dir": "ltr",
+      "h1": 1
+    },
+    {
+      "locale": "en",
+      "route": "billing/",
+      "width": 390,
+      "overflow": false,
+      "dir": "ltr",
+      "h1": 1
+    },
+    {
+      "locale": "en",
+      "route": "ai-guidelines/",
+      "width": 390,
+      "overflow": false,
+      "dir": "ltr",
+      "h1": 1
+    },
+    {
+      "locale": "en",
+      "route": "report/",
+      "width": 390,
+      "overflow": false,
+      "dir": "ltr",
+      "h1": 1
+    },
+    {
+      "locale": "en",
+      "route": "research/q001/",
+      "width": 390,
+      "overflow": false,
+      "dir": "ltr",
+      "h1": 1
+    },
+    {
+      "locale": "en",
+      "route": "",
+      "width": 320,
+      "overflow": false,
+      "dir": "ltr",
+      "h1": 1
+    },
+    {
+      "locale": "en",
+      "route": "library/",
+      "width": 320,
+      "overflow": false,
+      "dir": "ltr",
+      "h1": 1
+    },
+    {
+      "locale": "en",
+      "route": "access/",
+      "width": 320,
+      "overflow": false,
+      "dir": "ltr",
+      "h1": 1
+    },
+    {
+      "locale": "en",
+      "route": "download/",
+      "width": 320,
+      "overflow": false,
+      "dir": "ltr",
+      "h1": 1
+    },
+    {
+      "locale": "en",
+      "route": "terms/",
+      "width": 320,
+      "overflow": false,
+      "dir": "ltr",
+      "h1": 1
+    },
+    {
+      "locale": "en",
+      "route": "privacy/",
+      "width": 320,
+      "overflow": false,
+      "dir": "ltr",
+      "h1": 1
+    },
+    {
+      "locale": "en",
+      "route": "billing/",
+      "width": 320,
+      "overflow": false,
+      "dir": "ltr",
+      "h1": 1
+    },
+    {
+      "locale": "en",
+      "route": "ai-guidelines/",
+      "width": 320,
+      "overflow": false,
+      "dir": "ltr",
+      "h1": 1
+    },
+    {
+      "locale": "en",
+      "route": "report/",
+      "width": 320,
+      "overflow": false,
+      "dir": "ltr",
+      "h1": 1
+    },
+    {
+      "locale": "en",
+      "route": "research/q001/",
+      "width": 320,
+      "overflow": false,
+      "dir": "ltr",
+      "h1": 1
+    },
+    {
+      "locale": "ar",
+      "route": "",
+      "width": 1440,
+      "overflow": false,
+      "dir": "rtl",
+      "h1": 1
+    },
+    {
+      "locale": "ar",
+      "route": "library/",
+      "width": 1440,
+      "overflow": false,
+      "dir": "rtl",
+      "h1": 1
+    },
+    {
+      "locale": "ar",
+      "route": "access/",
+      "width": 1440,
+      "overflow": false,
+      "dir": "rtl",
+      "h1": 1
+    },
+    {
+      "locale": "ar",
+      "route": "download/",
+      "width": 1440,
+      "overflow": false,
+      "dir": "rtl",
+      "h1": 1
+    },
+    {
+      "locale": "ar",
+      "route": "terms/",
+      "width": 1440,
+      "overflow": false,
+      "dir": "rtl",
+      "h1": 1
+    },
+    {
+      "locale": "ar",
+      "route": "privacy/",
+      "width": 1440,
+      "overflow": false,
+      "dir": "rtl",
+      "h1": 1
+    },
+    {
+      "locale": "ar",
+      "route": "billing/",
+      "width": 1440,
+      "overflow": false,
+      "dir": "rtl",
+      "h1": 1
+    },
+    {
+      "locale": "ar",
+      "route": "ai-guidelines/",
+      "width": 1440,
+      "overflow": false,
+      "dir": "rtl",
+      "h1": 1
+    },
+    {
+      "locale": "ar",
+      "route": "report/",
+      "width": 1440,
+      "overflow": false,
+      "dir": "rtl",
+      "h1": 1
+    },
+    {
+      "locale": "ar",
+      "route": "research/q001/",
+      "width": 1440,
+      "overflow": false,
+      "dir": "rtl",
+      "h1": 1
+    },
+    {
+      "locale": "ar",
+      "route": "",
+      "width": 390,
+      "overflow": false,
+      "dir": "rtl",
+      "h1": 1
+    },
+    {
+      "locale": "ar",
+      "route": "library/",
+      "width": 390,
+      "overflow": false,
+      "dir": "rtl",
+      "h1": 1
+    },
+    {
+      "locale": "ar",
+      "route": "access/",
+      "width": 390,
+      "overflow": false,
+      "dir": "rtl",
+      "h1": 1
+    },
+    {
+      "locale": "ar",
+      "route": "download/",
+      "width": 390,
+      "overflow": false,
+      "dir": "rtl",
+      "h1": 1
+    },
+    {
+      "locale": "ar",
+      "route": "terms/",
+      "width": 390,
+      "overflow": false,
+      "dir": "rtl",
+      "h1": 1
+    },
+    {
+      "locale": "ar",
+      "route": "privacy/",
+      "width": 390,
+      "overflow": false,
+      "dir": "rtl",
+      "h1": 1
+    },
+    {
+      "locale": "ar",
+      "route": "billing/",
+      "width": 390,
+      "overflow": false,
+      "dir": "rtl",
+      "h1": 1
+    },
+    {
+      "locale": "ar",
+      "route": "ai-guidelines/",
+      "width": 390,
+      "overflow": false,
+      "dir": "rtl",
+      "h1": 1
+    },
+    {
+      "locale": "ar",
+      "route": "report/",
+      "width": 390,
+      "overflow": false,
+      "dir": "rtl",
+      "h1": 1
+    },
+    {
+      "locale": "ar",
+      "route": "research/q001/",
+      "width": 390,
+      "overflow": false,
+      "dir": "rtl",
+      "h1": 1
+    },
+    {
+      "locale": "ar",
+      "route": "",
+      "width": 320,
+      "overflow": false,
+      "dir": "rtl",
+      "h1": 1
+    },
+    {
+      "locale": "ar",
+      "route": "library/",
+      "width": 320,
+      "overflow": false,
+      "dir": "rtl",
+      "h1": 1
+    },
+    {
+      "locale": "ar",
+      "route": "access/",
+      "width": 320,
+      "overflow": false,
+      "dir": "rtl",
+      "h1": 1
+    },
+    {
+      "locale": "ar",
+      "route": "download/",
+      "width": 320,
+      "overflow": false,
+      "dir": "rtl",
+      "h1": 1
+    },
+    {
+      "locale": "ar",
+      "route": "terms/",
+      "width": 320,
+      "overflow": false,
+      "dir": "rtl",
+      "h1": 1
+    },
+    {
+      "locale": "ar",
+      "route": "privacy/",
+      "width": 320,
+      "overflow": false,
+      "dir": "rtl",
+      "h1": 1
+    },
+    {
+      "locale": "ar",
+      "route": "billing/",
+      "width": 320,
+      "overflow": false,
+      "dir": "rtl",
+      "h1": 1
+    },
+    {
+      "locale": "ar",
+      "route": "ai-guidelines/",
+      "width": 320,
+      "overflow": false,
+      "dir": "rtl",
+      "h1": 1
+    },
+    {
+      "locale": "ar",
+      "route": "report/",
+      "width": 320,
+      "overflow": false,
+      "dir": "rtl",
+      "h1": 1
+    },
+    {
+      "locale": "ar",
+      "route": "research/q001/",
+      "width": 320,
+      "overflow": false,
+      "dir": "rtl",
+      "h1": 1
+    }
+  ],
+  "interactions": [
+    "Arabic diacritic search, discipline filter, empty state, reset, URL state",
+    "Desktop Indonesian hero description occupies two lines",
+    "Source dialog opens, Escape closes, keyboard focus restored",
+    "Theme persists after reload",
+    "Language switch preserves route, query and fragment",
+    "Arabic mobile menu navigation",
+    "Unavailable platforms expose no download links",
+    "Mobile first viewport contains a working accessible download link",
+    "Ten real FAQ answers toggle with Enter and Space, preserving focus",
+    "Six computed metadata totals appear immediately after the hero",
+    "Report saved through real local API with report ID",
+    "Failed report retains content and offers draft download",
+    "Mobile archive tabs and reading mode",
+    "Reduced-motion preference disables parallax",
+    "Core Arabic content and navigation available without JavaScript"
+  ],
+  "accessibility": [
+    {
+      "locale": "id",
+      "route": "",
+      "violations": []
+    },
+    {
+      "locale": "id",
+      "route": "access/",
+      "violations": []
+    },
+    {
+      "locale": "id",
+      "route": "report/",
+      "violations": []
+    },
+    {
+      "locale": "en",
+      "route": "",
+      "violations": []
+    },
+    {
+      "locale": "en",
+      "route": "access/",
+      "violations": []
+    },
+    {
+      "locale": "en",
+      "route": "report/",
+      "violations": []
+    },
+    {
+      "locale": "ar",
+      "route": "",
+      "violations": []
+    },
+    {
+      "locale": "ar",
+      "route": "access/",
+      "violations": []
+    },
+    {
+      "locale": "ar",
+      "route": "report/",
+      "violations": []
+    }
+  ],
+  "errors": [],
+  "accessibilityMode": "Stable rendering with reduced motion; motion tested separately"
+}

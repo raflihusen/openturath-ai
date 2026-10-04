@@ -1,0 +1,23 @@
+{
+  "generatedAt": "2026-10-04T17:28:51.855Z",
+  "mode": "preview",
+  "routes": 175,
+  "locales": [
+    "id",
+    "en",
+    "ar"
+  ],
+  "collections": 21,
+  "responses": 6,
+  "productionBlockers": [],
+  "validationScope": "website artifact only",
+  "distribution": {
+    "mode": "website-only",
+    "reason": "awaiting-release-artifact"
+  },
+  "operationalWarnings": [
+    "Website offer SKUs are not yet aligned with the audited app backend.",
+    "APK artifact not supplied; website-only mode exposes no active binary download.",
+    "Production transactions and infrastructure are not verified by this build."
+  ]
+}

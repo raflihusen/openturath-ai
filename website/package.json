@@ -1,16 +1,24 @@
 {
   "name": "openturath-website",
-  "version": "7.0.0",
+  "version": "6.0.0",
   "private": true,
   "type": "module",
-  "description": "OpenTurath — landing page.",
+  "description": "OpenTurath — AI For Islamic Scholarship.",
   "engines": {
     "node": ">=22"
   },
   "scripts": {
-    "sync": "node scripts/sync-app-facts.mjs",
     "build": "node scripts/build.mjs",
     "build:release": "node scripts/build.mjs --release",
-    "test": "node --test tests/*.test.mjs"
+    "dev": "node scripts/build.mjs && python3 server/app.py",
+    "start": "python3 server/app.py",
+    "test": "node --test tests/*.test.mjs && python3 -m unittest discover -s tests -p 'test_*.py'",
+    "check": "node scripts/check.mjs",
+    "setup": "node scripts/setup.mjs",
+    "reports": "python3 server/manage.py",
+    "package": "python3 scripts/package.py",
+    "test:browser": "node scripts/browser-qa.mjs",
+    "release:apk": "node scripts/register-apk.mjs",
+    "test:visual": "node scripts/visual-review.mjs"
   }
 }
