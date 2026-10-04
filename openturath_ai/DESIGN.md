@@ -1,300 +1,131 @@
-# OpenTurath Design System & Philosophy Manual
-**The Quiet Scholar (Al-'Alim Al-Khamus / العالم الخامل الذكر)**  
-*Pedoman Desain, Arsitektur UI/UX, dan Filosofi Produk untuk Ekosistem Aplikasi OpenTurath AI*
+# OpenTurath — Pedoman Desain
 
----
+> Konten adalah tokoh utama. Antarmuka mundur satu langkah.
 
-## 1. Filosofi Inti: The Quiet Scholar (Al-'Alim Al-Khamus)
+Dokumen ini ditulis dari kode. Bila dokumen dan kode berbeda, kode di `lib/core/design/` yang benar, lalu dokumen ini diperbarui. Acuan lengkap lintas media (web, slide, media sosial, dokumen) ada di design system OpenTurath.
 
-> **"Konten adalah tokoh utama. Antarmuka mundur satu langkah."**  
-> *(Content is the protagonist; the UI takes one step back.)*
+## 1. Satu sumber token
 
-Aplikasi kajian turats, manuskrip keislaman, dan riset fatwa bukan sekadar aplikasi komersial biasa. Pengguna kita adalah santri, asatidz, peneliti, akademisi, dan kyai yang menghabiskan waktu berjam-jam membaca naskah klasik berharakat rapat, membedah ibarah rumit, dan membandingkan syarah kitab.
-
-### Pilar Filosofis
-1. **Kesahajaan & Keteduhan (Sobriety & Calm)**  
-   Menolak estetika startup Silicon Valley yang hiperaktif, gradien neon mencolok, badge diskon yang berkedip, animasi berlebihan, atau pop-up agresif. Antarmuka harus menghadirkan ketenangan seperti ruang perpustakaan pesantren di keheningan malam.
-2. **Kebenaran Data Tanpa Fabrikasi (Truth in Data / Zero Fabrication)**  
-   Tidak boleh ada data palsu, rekayasa kategori, atau klaim asal demi mempercantik tampilan kartu. Jika suatu naskah belum memiliki data era atau tahkik yang terverifikasi di Maktabah Syamilah, biarkan kosong secara jujur atau tampilkan status apa adanya.
-3. **Adab & Kehati-hatian Ilmiah (Scholarly Adab)**  
-   Aplikasi menegaskan posisinya sebagai alat bantu penelusuran ibarah naskah, bukan mufti digital atau pengganti guru yang bersanad. Nada bahasa (*tone of voice*) selalu bersahaja, santun, dan menghindari klaim mutlak.
-4. **Haram Tanda Seru (!) pada Pesan Sistem**  
-   Pesan sukses, notifikasi, dan toast tidak pernah menggunakan tanda seru (`!`). Keberhasilan aksi (seperti menyalin teks atau menyimpan catatan) adalah hal biasa yang tenang: *"Ibarah tersalin."*, *"Catatan disimpan."*, bukan *"Berhasil Disalin!"*.
-5. **Perpaduan Presisi Apple HIG & Minimalisme Google Camera**  
-   Struktur dan tata letak mengadopsi ketelitian *Apple Human Interface Guidelines* (ritme tombol, kurva radius terdisiplin, gestur sentuh haptik halus) yang dipadukan dengan keringkasan panel informasi Google Camera (informasi teknis padat disajikan dalam bentuk micro-pill EXIF yang rapi dan elegan).
-
----
-
-## 2. Palet Warna: Obsidian & Kertas Kitab (Parchment)
-
-### Prinsip Utama: Anti-Gold & Monokrom Disiplin
-- **LARANGAN KERAS WARNA EMAS / GOLD**:  
-  Warna emas komersial (`#D4AF37`, `#FFD700`, aksen kuning mengkilap) **DIHARAMKAN SECARA PATEN**. Warna emas murah menimbulkan kesan aplikasi religius komersial yang norak (*tacky*).
-- **Dominasi Monokrom & Netral**:  
-  Nuansa islami dan kewibawaan lahir dari isi teks, tipografi Arab yang anggun, dan perataan tata letak, bukan dari ornamen kubah atau kaligrafi warna-warni yang mengganggu fokus membaca.
-
----
-
-### A. Dark Mode (Deep Obsidian Canvas)
-Mode gelap adalah kanvas utama penelitian malam hari. Menghindari warna abu-abu kebiruan murahan; menggunakan obsidian pekat dengan kontras tinggi berstandar WCAG AAA.
-
-| Token | Nilai Hex | Peran & Penggunaan |
+| Hal | Berkas | Aturan |
 |---|---|---|
-| `canvasDark` | `#0E0E10` | Latar belakang utama layar (Deep Obsidian). Memberikan kedalaman absolut tanpa silau. |
-| `surfaceDark` | `#18181B` | Permukaan kartu, sheet modal, dialog, dan app bar (Zinc 900). |
-| `surfaceSubtleDark` | `#27272A` | Wadah inset, latar belakang micro-pill, dan kontainer sekunder (Zinc 800). |
-| `borderDark` | `#27272A` | Garis tepi batas kartu dan pemisah (0.8px - 1px hairline border). |
-| `borderSubtleDark` | `#1E1E22` | Garis pemisah tipis antar baris metadata naskah. |
-| `textPrimaryDark` | `#FAFAFA` | Teks utama, judul Arab, nama pengarang (Zinc 50, kontras maksimal). |
-| `textSecondaryDark` | `#A1A1AA` | Label metadata, sub-judul, teks penjelasan (Zinc 400, >7.0:1 WCAG AAA). |
-| `textTertiaryDark` | `#71717A` | Placeholder input teks, nomor jilid tidak aktif, waktu riwayat (Zinc 500). |
-| `accentDark` | `#60A5FA` | Aksen safir intelektual lembut untuk ikon aktif, tautan, dan indikator pilihan. |
+| Warna | `ot_colors.dart` → `OTColors` | Satu-satunya tempat nilai warna ditulis |
+| Huruf | `ot_typography.dart` → `OTFontSize`, `OTTypography` | Sembilan ukuran, tiga bobot |
+| Jarak | `ot_spacing.dart` → `OTSpacing` | Kelipatan 4 |
+| Radius | `ot_radius.dart` → `OTRadius` | Lima langkah dan pil |
+| Gerak | `ot_motion.dart` → `OTMotion` | 180 / 220 / 280 / 320 ms |
 
----
+`AppTheme` hanya merakit `ThemeData` dari token itu; konstanta radius di sana adalah alias `OTRadius`. `NativeColors` dan `NativeType` adalah pembungkus tipis untuk layar native; kode baru memakai `OT*` langsung.
 
-### B. Light Mode (Warm Stone / Kertas Kitab Tua)
-Menolak warna putih murni yang menusuk mata (`#FFFFFF` murni pada seluruh kanvas layar). Menggunakan warna hangat batu alam dan kertas naskah klasik.
+`lib/screens` dan `lib/widgets` tidak boleh memuat `fontSize:` berangka, `circular(` berangka, `Color(0x…)`, atau `Colors.*` selain `Colors.transparent`. `test/design_token_guard_test.dart` gagal bila aturan ini dilanggar.
 
-| Token | Nilai Hex | Peran & Penggunaan |
+## 2. Warna
+
+Tinta dan kertas untuk segala hal yang bukan isyarat.
+
+| Token | Terang | Gelap | Pakai untuk |
+|---|---|---|---|
+| `canvas` | `#FAFAFA` | `#111111` | Latar layar |
+| `surface` | `#FFFFFF` | `#191919` | Kartu, sheet, dialog, input |
+| `surfaceSubtle` | `#F2F2F2` | `#242424` | Wadah tonal, micro-pill |
+| `textPrimary` | `#171717` | `#F5F5F5` | Teks utama dan seluruh teks Arab |
+| `textSecondary` | `#606060` | `#B8B8B8` | Metadata, label |
+| `textTertiary` | `#6B6B6B` | `#9A9A9A` | Placeholder, hint |
+| `border` | `#DADADA` | `#454545` | Garis kartu 0,8px |
+| `borderSubtle` | `#EBEBEB` | `#2D2D2D` | Pemisah di dalam kartu |
+| `borderStrong` | `#767676` | `#808080` | Batas kontrol |
+| `accent` / `onAccent` | `#171717` / `#FFFFFF` | `#F5F5F5` / `#171717` | Tombol primer |
+| `marja` | `#4A4A4A` | `#C4C4C4` | Status rujukan, bersama ikon dan label |
+| `error`, `destructive` | `#B91C1C` | `#F87171` | Galat dan aksi permanen, bersama ikon dan pesan |
+| `errorContainer` | `#FEF2F2` | `#2F1616` | Latar pesan galat |
+| `shadow` | `#000000` | `#000000` | Dasar bayangan dan scrim, selalu dengan alpha |
+
+- Merah adalah satu-satunya warna di luar tinta dan kertas di aplikasi.
+- Warna emas (`#D4AF37`, `#FFD700`) dan gradasi amber dilarang.
+- Teks di atas `accent` memakai `onAccent`, bukan putih atau hitam.
+- Semua pasangan teks lolos WCAG AA (≥ 4,5:1) di kedua tema; diuji di `test/design_system_test.dart`.
+
+## 3. Tipografi
+
+Tiga lapis yang tidak dicampur: **Newsreader** (judul), **Outfit** (antarmuka dan angka), **Scheherazade New** (seluruh teks Arab kitab). Antarmuka berbahasa Arab memakai Noto Sans Arabic.
+
+### Skala `OTFontSize`
+
+| Langkah | Peran |
+|---|---|
+| `s11` | Kepala seksi kapital, micro-pill |
+| `s12` | Keterangan, metadata |
+| `s14` | Teks antarmuka, tombol |
+| `s16` | Teks baca Latin, judul kartu |
+| `s18` | Judul seksi, Arab di daftar |
+| `s20` | Judul kitab Latin, judul layar |
+| `s22` | Arab syarah, wordmark |
+| `s26` | Judul halaman, Arab matan, harga |
+| `s36` | Display, satu kali per layar |
+
+Tidak ada ukuran di luar skala dan tidak ada pecahan. Bobot hanya `w400`, `w600`, dan `w700`.
+
+### Teks Arab
+
+1. `TextDirection.rtl`, rata awal, spasi huruf 0.
+2. Tinggi baris 1,85–1,9 agar harakat tidak terpotong.
+3. Teks berharakat minimal `s18`; `s16` hanya untuk metadata pendek tanpa harakat.
+4. Warna selalu `textPrimary` (metadata: `textSecondary`).
+
+### Catatan fon
+
+Berkas yang dibundel hanya satu bobot per keluarga (Outfit 400, Newsreader 600, Scheherazade New 400). Bobot 600 dan 700 saat ini ditebalkan secara sintetis. Bundel berkas bobot asli agar huruf tebal dan harakat tampil tajam.
+
+## 4. Jarak dan radius
+
+`OTSpacing`: 4, 8, 12, 16, 20, 24, 32, 40, 48, 64.
+
+| `OTRadius` | Nilai | Pakai untuk |
 |---|---|---|
-| `canvasLight` | `#FAFAF9` | Latar belakang layar (Warm Stone Off-White). Nyaman di mata untuk membaca lama. |
-| `surfaceLight` | `#FFFFFF` | Permukaan kartu dan sheet modal (Pure Paper White). |
-| `surfaceSubtleLight` | `#F4F4F5` | Wadah inset micro-pill dan kolom input pencarian (Zinc 100). |
-| `borderLight` | `#E4E4E7` | Garis tepi batas kartu (0.8px hairline neutral border). |
-| `borderSubtleLight` | `#F1F5F9` | Garis pemisah tipis di dalam kartu. |
-| `textPrimaryLight` | `#18181B` | Teks utama, judul naskah, teks matan Arab (Ink Black). |
-| `textSecondaryLight` | `#52525B` | Label naskah, nama penahkik, keterangan terbit (Zinc 600, >4.5:1 WCAG AA). |
-| `textTertiaryLight` | `#71717A` | Metadata sekunder dan hint pencarian. |
-| `accentLight` | `#2563EB` | Aksen safir intelektual terarah untuk status terpilih dan tombol aksi utama. |
+| `xs` | 8 | Tag, pegangan, butir daftar |
+| `input` | 14 | Kolom isian, snackbar |
+| `card` | 16 | Kartu |
+| `dialog` | 20 | Dialog |
+| `sheet` | 24 | Sudut atas lembar bawah |
+| `chip`, `button` | 999 | Tombol, chip, pencarian |
 
----
+Kedalaman dibangun dengan garis `border`, bukan bayangan.
 
-### C. Aksen Semantik Khusus
-| Token | Nilai Hex | Peran & Penggunaan |
-|---|---|---|
-| `sovereignAmber` | `#D97706` | Khusus korpus independen istimewa (seperti Fikih Tahawwulat). Memberi penanda berwibawa tanpa norak. |
-| `sovereignAmberBg` | `#1AD97706` | 10% amber wash untuk wadah lencana korpus independen. |
-| `success` | `#10B981` | Emerald Green lembut, hanya dipakai saat ada konfirmasi penting (misal status aktif langganan). |
-| `destructive` | `#DC2626` | Deep Crimson, eksklusif untuk tombol hapus catatan atau tindakan permanen. |
+## 5. Kerangka layar
 
----
+- Judul halaman, paling banyak satu baris kontrol, lalu isi.
+- Kartu hanya untuk benda yang bisa dibuka: kitab, asisten, catatan.
+- Satu tombol primer per layar.
+- Tanpa hiasan yang tidak bermakna: nomor urut pada hal yang bukan urutan, panah serong, slogan kapital.
+- Kartu bidang ilmu menampilkan nama Arabnya.
 
-## 3. Tipografi: 3-Layer Strict Architecture
+## 6. Gerak dan sentuhan
 
-Sistem tipografi OpenTurath membagi hierarki teks ke dalam 3 lapisan fungsional yang pantang dicampuradukkan:
+Cepat 180ms, normal 220ms, lembar 280ms, transisi 320ms; kurva `easeOutCubic` (lembar: `easeOutQuart`). Elemen yang ditekan mengecil ke 0,985. Memuat ditandai tiga titik berdenyut, bukan roda berputar. Getar: `selection()` untuk tab dan chip, `light()` untuk kartu dan tombol, `success()` saat menyimpan catatan.
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│ 1. BRAND & EDITORIAL LAYER       (Newsreader Serif)         │
-│    Digunakan untuk Identitas Brand & Judul Literatur         │
-├─────────────────────────────────────────────────────────────┤
-│ 2. INTERFACE LAYER               (Outfit Sans)              │
-│    Digunakan untuk Tombol, Input, Metadata, Navigasi, Angka │
-├─────────────────────────────────────────────────────────────┤
-│ 3. ARABIC SCHOLARLY LAYER        (Scheherazade New Naskh)   │
-│    Digunakan untuk Matan, Kutipan Ibarah, Teks Arab Kitab   │
-└─────────────────────────────────────────────────────────────┘
-```
+## 7. Suara dan istilah
 
-### 1. Brand & Editorial Layer (`Newsreader`)
-Memberikan sentuhan penerbitan buku literatur klasik dan percetakan ilmiah terkemuka.
-- **Brand Logo**: `Newsreader`, 22px, `FontWeight.w600`, `letterSpacing: -0.4`.
-- **Editorial Hero**: `Newsreader`, 26px, `FontWeight.w600`, `letterSpacing: -0.5`.
-- **Editorial Title**: `Newsreader`, 20px, `FontWeight.w600`, `letterSpacing: -0.3`.
-- **Editorial Subheading**: `Newsreader`, 16px, `FontWeight.w500`, `letterSpacing: -0.2`.
-- **Corpus Title**: `Newsreader`, 17px, `FontWeight.w600`, `letterSpacing: -0.2`.
+Tenang, santun, apa adanya. Pesan sistem tidak memakai tanda seru: "Ibarah tersalin.", "Catatan disimpan.", "Belum dapat memuat data."
 
-### 2. Interface Layer (`Outfit`)
-Memberikan kenyamanan keterbacaan modern setingkat sistem operasi Apple dan Google, ringkas, geometris, dan netral.
-- **Screen Title**: `Outfit`, 18px, `FontWeight.w600`, `letterSpacing: -0.3`.
-- **Card Title**: `Outfit`, 15px, `FontWeight.w600`, `letterSpacing: -0.2`.
-- **Body**: `Outfit`, 14px, `FontWeight.w400`, `height: 1.45`.
-- **Body Medium**: `Outfit`, 14px, `FontWeight.w500`, `height: 1.40`.
-- **Caption**: `Outfit`, 12px, `FontWeight.w400`, `height: 1.35`.
-- **Micro Label / Section Header**: `Outfit`, 11px, `FontWeight.w600`, `letterSpacing: 0.8` (Uppercase).
-- **Button Action**: `Outfit`, 14px, `FontWeight.w600`, `letterSpacing: 0.1`.
-- **Price Metric**: `Outfit`, 24px, `FontWeight.w700`, `letterSpacing: -0.5`.
+| Pakai | Bukan |
+|---|---|
+| Khazanah ulama | Karya ulama, daftar ulama |
+| Bidang ilmu | Kategori, korpus |
+| Ibarah | Teks naskah, kutipan Arab |
+| Salin ibarah · Salin jawaban | Salin teks |
+| Penahkik · Tahkik: | Pentahqiq, penyunting |
+| Hadis · Akidah · Usul Fikih | Hadits · Aqidah · Ushul Fiqh |
+| Nahwu, Sharaf, dan Balaghah | Saraf |
+| Tasawuf & Akhlak | Tasawuf & Perilaku |
 
-### 3. Arabic Scholarly Layer (`Scheherazade New`)
-Tulisan Arab klasik menggunakan khat Naskh murni berbobot proporsional yang menjaga kejelasan syakal/harakat tanpa font Amiri.
-- **Aturan Wajib Teks Arab**:
-  1. Wajib menggunakan `textDirection: TextDirection.rtl`.
-  2. Wajib menggunakan `height: 1.6` hingga `1.8` agar harakat atas (fathah, tanwin, fathatain) dan harakat bawah (kasrah) tidak terpotong tepi baris (*clipping*).
-  3. Warna teks Arab pada mode gelap wajib putih bersih (`#FAFAFA` atau `#F8FAFC`).
-- **Tingkatan Ukuran Arab**:
-  - `arabicDisplay` (Judul Utama Kitab): `Scheherazade New`, 22-24px, `FontWeight.w700`, `height: 1.6`.
-  - `arabicReading` (Daftar Baris Naskah): `Scheherazade New`, 18-19px, `FontWeight.w600` - `w700`, `height: 1.7`.
-  - `arabicQuote` (Ibarah & Sanad): `Scheherazade New`, 16-17px, `FontWeight.w500`, `height: 1.8`.
+Tidak dipakai: komprehensif, terlengkap, terintegrasi, optimal, mutakhir, "AI paling canggih".
 
----
+Data yang belum terverifikasi dibiarkan kosong. Kode voucher tidak pernah ditulis di layar; placeholder hanya "Masukkan kode akses".
 
-## 4. Sistem Spasi & Geometri Radius
+## 8. Daftar periksa sebelum rilis
 
-### Ritme Kelipatan 4 (Base-4 Rhythm)
-Menolak angka ganjil atau acak (seperti 13, 19, 27, 31). Seluruh jarak tata letak menggunakan proporsi matematis kelipatan 4:
-```dart
-static const double xs = 4.0;
-static const double sm = 8.0;
-static const double md = 12.0;
-static const double base = 16.0;
-static const double lg = 20.0;
-static const double xl = 24.0;
-static const double xxl = 32.0;
-static const double huge = 40.0;
-```
-
-### Sistem 3 Radius Terdisiplin (Disciplined Curvature)
-Menghindari tren *"bubble-boxing"* (pembulatan berlebihan seperti 28px-36px pada kotak kartu persegi yang membuatnya terlihat seperti bantal kartun).
-1. **Pill Curvature (`999px`)**:  
-   Khusus untuk tombol aksi (*buttons*), filter chip, search bar utama, dan micro-badge EXIF.
-2. **Container / Card Radius (`16px`)**:  
-   Baku untuk seluruh kartu naskah (`BookRowItem`), kartu asisten (`SpecialistCard`), dan kartu catatan.
-3. **Modal Sheet Radius (`24px`)**:  
-   Hanya untuk sudut kiri atas dan kanan atas lembar dialog bawah (*bottom sheet*).
-4. **Dialog Radius (`20px`)**:  
-   Untuk modal konfirmasi di tengah layar.
-5. **Inner Input Field (`14px`)**:  
-   Untuk kotak formulir isian data.
-
----
-
-## 5. Blueprint Komponen Unggulan
-
-### A. Kartu Naskah Bergaya Google Camera EXIF (`BookRowItem`)
-Kartu naskah tidak menggunakan pita vertikal warna-warni. Menggunakan bahasa desain informasi lensa kamera Google:
-1. **Top Bar**:
-   - Nomor edisi `#kitab_id` dalam wadah abu-abu halus.
-   - Tag disiplin ilmu (`القسم`) di sisi kiri.
-   - Tahun wafat mualif: `w. [Tahun] H` di sisi kanan dengan border 0.5px.
-2. **Hero Area**:
-   - Judul Arab berukuran 18px (Scheherazade New RTL Bold).
-   - Nama pengarang (Latin atau Arab) dengan ikon orang monokrom.
-3. **Strip Informasi EXIF Micro-Pill (Horizontal Wrap)**:
-   - Deretan pil mikro dengan ikon outline 12px dan teks 11px:
-     `[ ≡ 8 jilid ]` · `[ 📄 420 hlm ]` · `[ Tahkik: Nama ]` · `[ Penerbit: Nama ]` · `[ Thn: 1421 H ]`.
-   - 100% monokrom netral (abu-abu slate). Tidak ada elemen biru mencolok.
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│  #1402  الفقه الشافعي                               w. 204 H│
-│                                                             │
-│                                           كتاب الأم         │
-│  👤 Imam Muhammad bin Idris Asy-Syafi'i                     │
-│                                                             │
-│  ┌───────────────────────────────────────────────────────┐  │
-│  │ ≡ 8 jilid  ·  📄 4.200 hlm  ·  Tahkik: Dr. Rifa'at    │  │
-│  └───────────────────────────────────────────────────────┘  │
-└─────────────────────────────────────────────────────────────┘
-```
-
----
-
-### B. Lembar Rujukan & Kutipan Ilmiah (`EvidenceBottomSheet`)
-- **Header**: Berjudul tenang `'Ibarah & rujukan'`.
-- **Naskah Asli**: Ditampilkan dalam kontainer berbingkai halus dengan font Scheherazade New ukuran 19px, teks RTL, teks tebal berharakat.
-- **Intisari & Penjelasan**: Bagian syarah dan penjelasan kontekstual.
-- **Aksi Baku**:
-  - Tombol kiri: `Salin ibarah` (Ikon Copy, Outlined Button).
-  - Tombol tengah: `Buka di Maktabah Syamilah` (Ikon Open in New, Filled Button).
-  - Tombol kanan: `Salin rujukan ilmiah` (Ikon Share, Tonal Button).
-
----
-
-### C. Ruang Percakapan Multi-Tab Keep-Alive
-- **Filosofi**: Seperti tab pada browser Google Chrome.
-- **Perilaku**:
-  - Membuka spesialis AI tidak boleh memuat ulang (*reload*) jika sesi sudah pernah dibuka sebelumnya.
-  - Tab berjalan di latar belakang (*offstage keep-alive*) agar percakapan dan telaah tidak hilang saat pengguna beralih membaca katalog kitab.
-  - Penutupan tab memerlukan konfirmasi yang tenang: *"Tutup percakapan?"*.
-
----
-
-### D. Penanganan Kendala Tenang (`AppErrorState`)
-Layar kendala tidak boleh panik atau menyalahkan pengguna:
-- **Koneksi Terputus**: *"Tidak dapat memuat data rujukan saat ini. Periksa koneksi internet lalu coba lagi."* (Aksi: `Coba lagi`).
-- **Akses Dibatasi**: *"Sesi akun kedaluwarsa atau modul telaah membutuhkan paket langganan aktif."* (Aksi: `Lihat paket langganan`).
-- **Rujukan Tidak Ditemukan**: *"Tidak ada kitab atau catatan yang sesuai dengan kata kunci atau saringan."* (Aksi: `Atur ulang pencarian`).
-- **Kendala Teknis**: *"Sistem mengalami kendala saat memproses telaah. Silakan coba kembali beberapa saat lagi."* (Aksi: `Muat ulang`).
-
----
-
-### E. Loader Tiga Titik Berdenyut (`AppLoader`)
-- Menggantikan spinner roda berputar (*circular progress*) yang melelahkan mata.
-- Tiga bulatan kecil berukuran 9px yang berdenyut berurutan (*wave pulse*) dengan jeda 200ms per titik. Memberikan kesan aplikasi sedang berpikir mendalam.
-
----
-
-## 6. Standar Interaksi & Sentuhan (Haptics & Motion)
-
-### Umpan Balik Sentuh (Apple Interactive Wrapper)
-Setiap elemen kartu dan tombol interaktif wajib dibungkus dengan wrapper interaktif yang menghasilkan:
-1. **Pressed Scale**: Reduksi ukuran halus ke `0.985` saat ditekan, lalu kembali ke `1.0` dengan kurva `Curves.easeOutCubic`.
-2. **Haptic Feedback**:
-   - `HapticFeedback.lightImpact()` pada sentuhan kartu dan tombol utama.
-   - `HapticFeedback.selectionClick()` pada pergantian tab navigasi atau filter chip.
-   - `HapticFeedback.mediumImpact()` khusus saat menyimpan naskah ke catatan.
-3. **Durasi Transisi**:
-   - Cepat (micro-interaction): `180ms`.
-   - Normal (dialog/fade): `220ms`.
-   - Lembar Bawah (sheet slide): `280ms`.
-
----
-
-## 7. Kamus Istilah Baku & Pedoman Copywriting
-
-### A. Tabel Istilah Baku (Wajib Dipatuhi)
-
-| Istilah Terlarang / Usang | Istilah Baku Wajib | Alasan & Konteks Keilmuan |
-|---|---|---|
-| *Karya Ulama* / *Daftar Ulama* | **`Khazanah Ulama`** | Nama resmi kategori ulama. Pantang diubah atau disederhanakan. |
-| *Kategori* / *Korpus* | **`Bidang Ilmu`** | Menggambarkan disiplin keislaman secara ilmiah dan alami. |
-| *Teks Naskah* / *Kutipan Arab* | **`Ibarah`** (`عبارة`) | Istilah autentik turats untuk nukilan teks kitab rujukan. |
-| *Salin Teks* (pada jawaban AI) | **`Salin jawaban`** | Jawaban AI adalah penjelasan/elaborasi, bukan naskah kitab asli. |
-| *Salin Teks* (pada kutipan kitab) | **`Salin ibarah`** | Menghormati kedudukan nukilan teks matan/ibarah asli. |
-| *Penyunting* / *Pentahqiq* / *Tahqiq* | **`Penahkik`** / Label **`Tahkik:`** | Transliterasi baku bahasa Indonesia untuk *muhaqqiq* naskah. |
-| *Saraf* / *Ilmu Saraf* | **`Nahwu, Sharaf, dan Balaghah`** | Kata "Saraf" berkonotasi medis (urat syaraf). Wajib menggunakan `Sharaf`. |
-| *Ushul Fiqh* / *Ushul Fiqih* | **`Usul Fikih`** | Ejaan baku bahasa keislaman akademis. |
-| *Hadits* / *Hadist* | **`Hadis`** | Ejaan baku KBBI/akademis untuk ilmu riwayat hadis. |
-| *Aqidah* / *Teologi* | **`Akidah`** | Ejaan baku transliterasi keislaman. |
-| *Tasawuf & Perilaku* | **`Tasawuf & Akhlak`** | Terminologi pesantren yang dihormati dan baku. |
-| *Pustaka Syafi'i* | **`Kitab rujukan`** | Menyatakan rujukan ilmiah yang relevan untuk setiap disiplin/ulama. |
-| *Ruang Kajian* | **`Percakapan`** / **`Tampilan bacaan`** | Menghindari kesan bombastis atau ruang kelas virtual palsu. |
-
----
-
-### B. Daftar Kosakata Pemasaran yang Dilarang Keras
-Kata-kata berikut **DILARANG DIGUNAKAN** di seluruh antarmuka aplikasi:
-- ❌ *Korpus* (terlalu kaku/akademis linguistik dingin)
-- ❌ *Penelaahan* (diganti dengan kata yang lebih natural seperti *kajian*, *telaah*, atau *bacaan*)
-- ❌ *Komprehensif* (klaim berlebih)
-- ❌ *Secara menyeluruh* (klaim berlebih)
-- ❌ *Solusi terlengkap / Solusi mutakhir* (jargon sales SaaS)
-- ❌ *Terintegrasi* (jargon korporat)
-- ❌ *Optimal / Presisi* (klaim hiperbolis teknologi)
-- ❌ *Berbasis AI paling canggih* (bombastis dan merendahkan martabat ilmu turats)
-
----
-
-## 8. Prinsip Kerahasiaan Akses & Voucher
-
-- **PEMBERSIHAN KODE VOUCHER RAHASIA**:  
-  Seluruh kode promo atau voucher perdana rahasia (seperti kode `PERDANA`) **HARAM DIBOCORKAN** di dalam teks layar aplikasi.
-- Label tombol penukaran kode adalah: **`Tukar Kode Akses`** atau **`Gunakan Kode Akses`**.
-- Input field hanya memuat placeholder: *"Masukkan kode akses..."* tanpa pernah mencantumkan contoh kode rahasia.
-
----
-
-## 9. Checklist Kepatuhan Desain untuk Fitur / Aplikasi Baru
-
-Gunakan checklist ini sebelum merilis modul, layar, atau aplikasi turunan baru:
-
-- [ ] **Tanpa Warna Emas**: Apakah sama sekali tidak ada warna kuning emas `#D4AF37` di seluruh layar?
-- [ ] **Integritas Dark Mode**: Apakah latar belakang pada mode gelap menggunakan `#0E0E10` pekat dan border hairline `#27272A` (bukan abu-abu terang)?
-- [ ] **Tipografi 3-Lapis**: Apakah judul brand memakai `Newsreader`, antarmuka memakai `Outfit`, dan teks Arab memakai `Scheherazade New`?
-- [ ] **Line-Height Teks Arab**: Apakah teks Arab berharakat memiliki line-height minimal `1.6` - `1.8` dan RTL?
-- [ ] **Format Kartu EXIF Minimalis**: Apakah kartu naskah menggunakan badge micro-pill EXIF horizontal tanpa strip pita biru?
-- [ ] **Bebas Tanda Seru**: Apakah seluruh pesan sukses, toast, dan dialog konfirmasi 100% bebas dari tanda seru (`!`)?
-- [ ] **Konsistensi Istilah**: Apakah menggunakan istilah `Khazanah Ulama`, `Ibarah`, `Salin jawaban`, `Salin ibarah`, `Tahkik:`, dan `Nahwu, Sharaf, dan Balaghah`?
-- [ ] **Kerahasiaan Voucher**: Apakah tidak ada teks publik yang membocorkan kode voucher rahasia?
-- [ ] **Haptik & Sentuhan**: Apakah seluruh elemen yang dapat ditekan menggunakan `AppleInteractiveWrapper` dengan `lightImpact`?
-- [ ] **Uji Unit & Analisis Statis**: Apakah `flutter analyze lib/` menghasilkan 0 error dan seluruh pengujian lolos 100%?
+- [ ] `flutter analyze` tanpa temuan dan seluruh tes lulus, termasuk tes penjaga token.
+- [ ] Tidak ada warna di luar tinta, kertas, dan merah galat.
+- [ ] Teks Arab RTL, minimal `s18` bila berharakat, tinggi baris ≥ 1,85.
+- [ ] Satu tombol primer per layar; target sentuh ≥ 44px.
+- [ ] Pesan sistem tanpa tanda seru dan memakai istilah baku.
+- [ ] Tidak ada kode voucher atau data karangan di layar.
