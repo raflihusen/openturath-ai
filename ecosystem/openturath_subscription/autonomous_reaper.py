@@ -86,12 +86,14 @@ STATIC_WHITELIST = {
 }
 
 MASTER_NOTEBOOKS = [
+    # 1. Fikih Syafi'i
     {
         "name": "AI Fikih Syafi'i",
         "id": os.getenv("NOTEBOOK_ID_FIKIH_SYAFII", "334e7b83-0e76-4787-a1d6-314642a35862"),
         "key": "fiqh_syafii",
         "cuid": os.getenv("AKAL_SERVICE_CUID_FIKIH_SYAFII", "cms4ls3j60001l20439k1nqh4"),
     },
+    # 2. Fikih Tahawwulat (5 Cabang)
     {
         "name": "Al-Muhaqqiq (Tahawwulat)",
         "id": os.getenv("NOTEBOOK_ID_FIKIH_TAHAWWULAT_AL_MUHAQQIQ", "dc7ee7e4-f4ad-4db6-9cd0-0013727abbe4"),
@@ -122,29 +124,155 @@ MASTER_NOTEBOOKS = [
         "key": "fiqh_tahawwulat",
         "cuid": os.getenv("AKAL_SERVICE_CUID_FIKIH_TAHAWWULAT", "cmln2i27k0000jx047oabzw8p"),
     },
+    # 3. Bahasa & Sastra Arab
     {
         "name": "AI Bahasa Arab",
-        "id": os.getenv("NOTEBOOK_ID_BAHASA_ARAB", "15bc4cef-4b94-4241-b05a-d50a586bde06"),
+        "id": "1ae6ae57-53f0-4ce2-a2be-c324e03abb83",
         "key": "nahwu",
         "cuid": os.getenv("AKAL_SERVICE_CUID_BAHASA_ARAB", "cmnd7l4o60002l504ab6qq31x"),
     },
     {
-        "name": "AI Hadits",
-        "id": os.getenv("NOTEBOOK_ID_HADITS", "b9626501-538c-4358-a44f-6731eaec50b6"),
+        "name": "AI Bahasa Arab (Legacy)",
+        "id": "15bc4cef-4b94-4241-b05a-d50a586bde06",
+        "key": "nahwu",
+        "cuid": "",
+    },
+    # 4. Hadits Nabawi
+    {
+        "name": "AI Hadits Nabawi",
+        "id": "9da436c8-f9b7-4e8b-a51f-d798a31892a7",
         "key": "hadits",
         "cuid": os.getenv("AKAL_SERVICE_CUID_HADITS", ""),
     },
     {
-        "name": "AI Tafsir",
-        "id": os.getenv("NOTEBOOK_ID_TAFSIR", "df92cc50-1106-4221-8748-1663f00fa7fe"),
+        "name": "AI Hadits (Legacy)",
+        "id": "b9626501-538c-4358-a44f-6731eaec50b6",
+        "key": "hadits",
+        "cuid": "",
+    },
+    # 5. Tafsir & Ulumul Qur'an
+    {
+        "name": "AI Tafsir & Ulumul Quran",
+        "id": "f15bd838-dac9-415b-bd40-fef3da1355d4",
         "key": "tafsir",
         "cuid": os.getenv("AKAL_SERVICE_CUID_TAFSIR", ""),
     },
     {
+        "name": "AI Tafsir (Legacy)",
+        "id": "df92cc50-1106-4221-8748-1663f00fa7fe",
+        "key": "tafsir",
+        "cuid": "",
+    },
+    # 6. Ushul Fikih
+    {
         "name": "AI Ushul Fiqih",
-        "id": os.getenv("NOTEBOOK_ID_USHUL_FIQIH", "6ab6dae8-0067-435a-85ca-b6bd4e17dd12"),
+        "id": "6009f2ee-6328-497d-b74e-4276834caa94",
         "key": "ushul_fiqh",
         "cuid": os.getenv("AKAL_SERVICE_CUID_USHUL_FIQIH", ""),
+    },
+    {
+        "name": "AI Ushul Fiqih (Legacy)",
+        "id": "6ab6dae8-0067-435a-85ca-b6bd4e17dd12",
+        "key": "ushul_fiqh",
+        "cuid": "",
+    },
+    # 7. Qawaid Fiqhiyyah
+    {
+        "name": "AI Qawaid Fiqhiyyah",
+        "id": "35cc555e-3d6c-43fd-ae82-6a06cd107899",
+        "key": "ushul_fiqh",
+        "cuid": "",
+    },
+    # 8. Aqidah & Ushuluddin
+    {
+        "name": "AI Aqidah & Ushuluddin",
+        "id": "d4807af1-1c3b-4ffd-b9b8-a944b2f8c5bd",
+        "key": "aqidah",
+        "cuid": "",
+    },
+    # 9. Bibliografi & Faharis
+    {
+        "name": "AI Bibliografi & Faharis",
+        "id": "d35f7598-076a-4c91-8ccf-9dc1aa1b0e7d",
+        "key": "bibliografi_faharis",
+        "cuid": "",
+    },
+    # 10. Tajwid & Qiraat
+    {
+        "name": "AI Tajwid & Qiraat",
+        "id": "0364032d-3cb9-4b4e-bf5c-b0bf72f134f6",
+        "key": "tafsir",
+        "cuid": "",
+    },
+    # 11. Fikih Muqaran & Umum
+    {
+        "name": "AI Fikih Muqaran & Umum",
+        "id": "66ed9863-e177-43a9-a1a4-25fb953520a7",
+        "key": "fiqh_muqaran",
+        "cuid": "",
+    },
+    # 12. Tasawwuf & Adzkar
+    {
+        "name": "AI Tasawwuf & Adzkar",
+        "id": "9a9902ff-ff0a-4696-845b-a809a69db84b",
+        "key": "tasawwuf",
+        "cuid": "",
+    },
+    # 13. Fikih Hanafi
+    {
+        "name": "AI Fikih Hanafi",
+        "id": "063ddf96-61a5-46c7-a6ae-5b9eb8bddb6b",
+        "key": "fiqh_hanafi",
+        "cuid": "",
+    },
+    # 14. Fikih Hanbali
+    {
+        "name": "AI Fikih Hanbali",
+        "id": "45f6ccdd-d3e5-4ca7-96cb-4f905d3cde3e",
+        "key": "fiqh_hanbali",
+        "cuid": "",
+    },
+    # 15. Fatawa & Masail Fiqhiyyah
+    {
+        "name": "AI Fatawa & Masail Fiqhiyyah",
+        "id": "45a2043c-4617-42a7-9f00-fbc2138def48",
+        "key": "fiqh",
+        "cuid": "",
+    },
+    # 16. Fikih Maliki
+    {
+        "name": "AI Fikih Maliki",
+        "id": "cc152334-e7d2-44ac-bb14-65e70d893b40",
+        "key": "fiqh_maliki",
+        "cuid": "",
+    },
+    # 17. Musthalah & Ulumul Hadits
+    {
+        "name": "AI Musthalah & Ulumul Hadits",
+        "id": "af26bf8f-4429-4d2f-9cf0-17bcc835fb86",
+        "key": "hadits",
+        "cuid": "",
+    },
+    # 18. Thabaqat & Tarajim Rijal
+    {
+        "name": "AI Thabaqat & Tarajim Rijal",
+        "id": "59fd5420-7392-4d58-825a-02b87bade32d",
+        "key": "tarikh",
+        "cuid": "",
+    },
+    # 19. Tarikh & Sirah Nabawiyyah
+    {
+        "name": "AI Tarikh & Sirah Nabawiyyah",
+        "id": "94d49b05-e0b6-4ea2-9b7d-7c75f8edca75",
+        "key": "tarikh",
+        "cuid": "",
+    },
+    # 20. Syarah Hadits
+    {
+        "name": "AI Syarah Hadits",
+        "id": "27c104b7-e8aa-40a9-b9dd-ad4741b2d515",
+        "key": "hadits",
+        "cuid": "",
     },
 ]
 
