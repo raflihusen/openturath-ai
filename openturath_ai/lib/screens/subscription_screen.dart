@@ -1,6 +1,7 @@
 import '../widgets/adaptive_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_functions/cloud_functions.dart';
+import '../widgets/ot_motion_widgets.dart';
 import '../core/design/ot_motion.dart';
 import '../core/scholarly_fonts.dart';
 import '../core/app_copy.dart';
@@ -507,8 +508,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     return Scaffold(
       backgroundColor: OTColors.canvas(dark),
       appBar: AppBar(
-        // Rapat ke tombol kembali; tanpa tombol kembali sejajar isi halaman.
-        titleSpacing: (ModalRoute.of(context)?.canPop ?? false) ? 0 : 20,
+        titleSpacing: otTitleSpacing(context),
         title: Text(AppCopy.subscription),
         backgroundColor: OTColors.canvas(dark),
       ),

@@ -8,7 +8,6 @@ import '../core/design/ot_colors.dart';
 import '../widgets/ot_motion_widgets.dart';
 import '../core/design/ot_spacing.dart';
 import '../core/design/ot_radius.dart';
-import '../core/design/ot_typography.dart';
 import '../core/localization.dart';
 import '../core/scholarly_fonts.dart';
 import '../models/bookmark_model.dart';
@@ -123,45 +122,20 @@ class _OpenTurathBookLibraryPageState extends State<OpenTurathBookLibraryPage> {
 
     return Scaffold(
       backgroundColor: canvas,
+      appBar: AppBar(
+        titleSpacing: otTitleSpacing(context),
+        backgroundColor: canvas,
+        title: Text(widget.collectionName),
+      ),
       body: SafeArea(
         child: CustomScrollView(
-          physics: const BouncingScrollPhysics(),
           slivers: [
             SliverToBoxAdapter(
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(20, 14, 20, 0),
+                padding: const EdgeInsets.fromLTRB(20, 8, 20, 0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
-                      children: [
-                        IconButton(
-                          icon: Icon(Icons.arrow_back_rounded,
-                              color: ink, size: 22),
-                          tooltip: Loc.tr('back'),
-                          onPressed: () => Navigator.of(context).maybePop(),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 20),
-                    Text(
-                      Loc.tr('bookCatalog'),
-                      style: ScholarlyFonts.outfit(
-                        color: ink,
-                        fontSize: 22,
-                        fontWeight: FontWeight.w700,
-                        letterSpacing: -0.3,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      widget.collectionName,
-                      style: ScholarlyFonts.outfit(
-                        color: textSecondary,
-                        fontSize: 13,
-                      ),
-                    ),
-                    const SizedBox(height: 18),
                     // Search Bar
                     TextField(
                       controller: _searchController,
@@ -244,8 +218,6 @@ class _OpenTurathBookLibraryPageState extends State<OpenTurathBookLibraryPage> {
                         color: textSecondary,
                       ),
                     ),
-                    const SizedBox(height: 8),
-                    const Divider(height: 1, thickness: 0.8),
                   ],
                 ),
               ),
@@ -290,7 +262,7 @@ class _OpenTurathBookLibraryPageState extends State<OpenTurathBookLibraryPage> {
                     crossAxisSpacing: 12,
                     mainAxisSpacing: 12,
                     mainAxisExtent:
-                        MediaQuery.textScalerOf(context).scale(220),
+                        MediaQuery.textScalerOf(context).scale(156),
                   ),
                   delegate: SliverChildBuilderDelegate(
                     (context, index) {
@@ -380,50 +352,19 @@ class _BookEditorialItem extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final ink = OTColors.textPrimary(isDark);
     final textSecondary = OTColors.textSecondary(isDark);
-    final border = OTColors.border(isDark);
 
-    Widget fact(IconData icon, String label) => Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(icon, size: 14, color: textSecondary),
-            const SizedBox(width: 4),
-            Flexible(
-              child: Text(
-                label,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style:
-                    ScholarlyFonts.outfit(fontSize: 12, color: textSecondary),
-              ),
-            ),
-          ],
-        );
+    final facts = [
+      book.volumeLabel,
+      book.pagesLabel,
+    ].where((fact) => fact != Loc.tr('unknownMetadata')).join(' · ');
 
     return OTBentoTile(
       onTap: onTap,
       semanticLabel: '${book.title}, ${book.author}',
+      padding: const EdgeInsets.fromLTRB(18, 14, 18, 14),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  book.localizedSection,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: OTTypography.caption(color: textSecondary),
-                ),
-              ),
-              const SizedBox(width: 8),
-              Text(
-                book.deathLabel,
-                maxLines: 1,
-                style: OTTypography.caption(color: textSecondary),
-              ),
-            ],
-          ),
-          const SizedBox(height: 10),
           // Judul Arab asli, maksimal dua baris agar tinggi kartu seragam.
           Text(
             book.title,
@@ -433,31 +374,43 @@ class _BookEditorialItem extends StatelessWidget {
             overflow: TextOverflow.ellipsis,
             style: ScholarlyFonts.scheherazadeNew(
               color: ink,
-              fontSize: 22,
+              fontSize: 21,
               fontWeight: FontWeight.bold,
-              height: 1.35,
+              height: 1.4,
+            ),
+          ),
+          const SizedBox(height: 2),
+          Text(
+            book.author,
+            textDirection: TextDirection.rtl,
+            textAlign: TextAlign.right,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: ScholarlyFonts.scheherazadeNew(
+              color: textSecondary,
+              fontSize: 15,
+              height: 1.5,
             ),
           ),
           const Spacer(),
-          Text(
-            Loc.tr('authorCredit', [book.author]),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: ScholarlyFonts.outfit(fontSize: 13, color: textSecondary),
-          ),
-          const SizedBox(height: 8),
-          Divider(height: 1, color: border),
-          const SizedBox(height: 8),
           Row(
             children: [
-              Flexible(child: fact(Icons.layers_outlined, book.volumeLabel)),
-              const SizedBox(width: 12),
-              Flexible(
-                  child:
-                      fact(Icons.description_outlined, book.pagesLabel)),
-              const Spacer(),
-              Icon(Icons.arrow_forward_rounded,
-                  color: textSecondary, size: 16),
+              Expanded(
+                child: Text(
+                  facts,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: ScholarlyFonts.outfit(
+                      fontSize: 12.5, color: textSecondary),
+                ),
+              ),
+              if (book.deathYear != null)
+                Text(
+                  book.deathLabel,
+                  maxLines: 1,
+                  style: ScholarlyFonts.outfit(
+                      fontSize: 12.5, color: textSecondary),
+                ),
             ],
           ),
         ],
@@ -551,8 +504,9 @@ ${Loc.tr('bookScienceSection')}: ${book.section}''';
                         overflow: TextOverflow.ellipsis,
                         style: ScholarlyFonts.outfit(
                           color: ink,
-                          fontSize: 16,
+                          fontSize: 18,
                           fontWeight: FontWeight.w600,
+                          letterSpacing: -0.3,
                         ),
                       ),
                     ),

@@ -19,6 +19,9 @@ import 'package:openturath_ai/screens/dashboard_screen.dart';
 import 'package:openturath_ai/screens/bookmark_screen.dart';
 import 'package:openturath_ai/screens/login_screen.dart';
 import 'package:openturath_ai/widgets/app_error_state.dart';
+import 'package:openturath_ai/screens/library_metadata_overview_screen.dart';
+import 'package:openturath_ai/screens/book_library_editorial_screen.dart';
+import 'package:openturath_ai/screens/book_catalog_screen.dart';
 import 'package:openturath_ai/widgets/app_loader.dart';
 import 'package:openturath_ai/screens/profile_screen.dart';
 import 'package:openturath_ai/screens/subscription_screen.dart';
@@ -283,6 +286,39 @@ void main() {
         size: win, tap: 'Daftar asisten aktif');
     await _shot(tester, 'dlg_access_dark', const ProfileScreen(),
         size: win, tap: 'Daftar asisten aktif', dark: true);
+    // Layar pustaka: ringkasan koleksi, daftar kitab, dan rincian kitab.
+    final catalog = OpenTurathCatalogRepository.instance;
+    final libraryMeta = await tester.runAsync(() => catalog.loadAllMetadata());
+    final libraryBooks =
+        await tester.runAsync(() => catalog.loadBooksForModule('fiqh_syafii'));
+    if (libraryMeta != null && libraryMeta.isNotEmpty) {
+      final syafii = libraryMeta['fiqh_syafii'] ?? libraryMeta.values.first;
+      await _shot(tester, 'library_overview',
+          AiLibraryOverviewPage(metadata: syafii, onSearch: () {}),
+          size: win);
+      await _shot(tester, 'library_overview_wide',
+          AiLibraryOverviewPage(metadata: syafii, onSearch: () {}),
+          size: const Size(1280, 860));
+    }
+    if (libraryBooks != null && libraryBooks.isNotEmpty) {
+      await _shot(
+          tester,
+          'library_books',
+          OpenTurathBookLibraryPage(
+              books: libraryBooks, collectionName: "Fikih Syafi'i"),
+          size: win);
+      await _shot(tester, 'library_book_detail',
+          OpenTurathBookDetailPage(book: libraryBooks.first),
+          size: win);
+      await _shot(tester, 'library_book_detail_wide',
+          OpenTurathBookDetailPage(book: libraryBooks.first),
+          size: const Size(1280, 860));
+    }
+    await _shot(tester, 'catalog_id', const BookCatalogScreen(), size: win);
+    await _shot(tester, 'profile_dark', const ProfileScreen(),
+        size: win, dark: true);
+    await _shot(tester, 'subscription_ar_new', const SubscriptionScreen(),
+        size: const Size(1280, 900), locale: 'ar');
     await _shot(tester, 'notes_id', const BookmarkScreen());
     await _shot(
         tester,

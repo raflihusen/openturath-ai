@@ -159,7 +159,8 @@ void main() {
           collectionName: 'الحديث الشريف',
         ),
       ));
-      expect(find.text(Loc.tr('bookCatalog')), findsOneWidget);
+      // Judul halaman adalah nama koleksi.
+      expect(find.text('الحديث الشريف'), findsOneWidget);
       expect(find.text(book.title), findsOneWidget);
       expect(tester.takeException(), isNull);
 

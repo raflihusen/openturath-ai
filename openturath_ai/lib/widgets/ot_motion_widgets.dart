@@ -332,3 +332,8 @@ IconData otOutwardIcon(BuildContext context) =>
     Directionality.of(context) == TextDirection.rtl
         ? Icons.north_west_rounded
         : Icons.north_east_rounded;
+
+/// Jarak judul [AppBar]: rapat ke tombol kembali; tanpa tombol kembali,
+/// judul sejajar dengan tepi isi halaman.
+double otTitleSpacing(BuildContext context) =>
+    (ModalRoute.of(context)?.canPop ?? false) ? 0 : 20;

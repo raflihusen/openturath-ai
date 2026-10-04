@@ -712,4 +712,6 @@ const copyCatalog = <String, List<String>>{
   "roomSeePlans": ["Lihat paket", "See plans", "عرض الباقات"],
   "roomPaywallBody": ["Aktifkan langganan untuk menelaah bersama asisten {0}.", "Activate a subscription to study with the {0} assistant.", "فعّل الاشتراك للمطالعة مع مساعد {0}."],
   "planSingleLabel": ["Satu bidang ilmu", "One field of study", "مجال علمي واحد"],
+  "noExpiryShort": ["TANPA BATAS", "NO EXPIRY", "بلا انتهاء"],
+  "accessTermLabel": ["Masa akses", "Access term", "مدة الوصول"],
 };

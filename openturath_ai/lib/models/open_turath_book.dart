@@ -111,6 +111,13 @@ class OpenTurathBook {
 
   String get pagesLabel {
     if (pages.isEmpty || pages == '-') return Loc.tr('unknownMetadata');
-    return Loc.tr('pageCount', [pages]);
+    // "2267" ditampilkan "2.267"; nilai non-angka dibiarkan apa adanya.
+    final count = int.tryParse(pages);
+    final shown = count == null
+        ? pages
+        : pages.replaceAllMapped(
+            RegExp(r'(\d)(?=(\d{3})+$)'),
+            (match) => '${match[1]}${Loc.language == 'id' ? '.' : ','}');
+    return Loc.tr('pageCount', [shown]);
   }
 }

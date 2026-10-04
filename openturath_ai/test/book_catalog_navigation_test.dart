@@ -42,8 +42,9 @@ void main() {
       expect(find.text('كتاب الأم'), findsOneWidget);
       expect(find.text('الإمام محمد بن إدريس الشافعي'), findsOneWidget);
       expect(find.text('w. 204 H'), findsOneWidget);
-      expect(find.text('8 jilid'), findsOneWidget);
-      expect(find.text('Darul Kutub Al-Ilmiyyah'), findsOneWidget);
+      // Fakta edisi kini satu baris: "8 jilid · penerbit · ...".
+      expect(find.textContaining('8 jilid'), findsOneWidget);
+      expect(find.textContaining('Darul Kutub Al-Ilmiyyah'), findsOneWidget);
 
       // Tap the item
       await tester.tap(find.byType(BookRowItem));

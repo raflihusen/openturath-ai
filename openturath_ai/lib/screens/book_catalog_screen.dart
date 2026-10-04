@@ -4,6 +4,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart' show NumberFormat;
 
+import '../widgets/ot_motion_widgets.dart';
 import '../core/app_copy.dart';
 import '../core/catalog_section_label.dart';
 import '../core/localization.dart';
@@ -247,23 +248,15 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
         backgroundColor: background,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back_rounded, color: textPrimary),
-          tooltip: Loc.tr('back'),
-          onPressed: () => Navigator.pop(context),
-        ),
+        titleSpacing: otTitleSpacing(context),
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              AppCopy.referenceBooks,
-              style: OTTypography.screenTitle(color: textPrimary)
-                  .copyWith(fontSize: 18),
-            ),
+            Text(AppCopy.referenceBooks),
             Text(
               _resolveSubtitle(),
               style: OTTypography.caption(color: textSecondary)
-                  .copyWith(fontSize: 11),
+                  .copyWith(fontSize: 12),
             ),
           ],
         ),

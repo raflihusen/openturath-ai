@@ -911,7 +911,13 @@ class _MembershipPass extends StatelessWidget {
     final cardColor = OTColors.inverseSurface(isDark);
     const onCard = OTColors.onInverseSurface;
     final onCardMuted = onCard.withValues(alpha: 0.64);
-    final expiry = summary.expiresAt == null ? '—' : _expiryLabel();
+    // Akses tanpa batas (termasuk tanggal penanda jauh di masa depan) tidak
+    // ditampilkan sebagai tanggal; akun tanpa akses tidak menampilkan apa pun.
+    final unlimited = summary.isOpen &&
+        (summary.expiresAt == null || summary.expiresAt!.year >= 2090);
+    final expiry = unlimited
+        ? Loc.tr('noExpiryShort')
+        : (summary.expiresAt == null ? '' : _expiryLabel());
 
     final card = Semantics(
       label:
@@ -1052,28 +1058,31 @@ class _MembershipPass extends StatelessWidget {
                                 ),
                               ),
                               const SizedBox(width: OTSpacing.md),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                children: [
-                                  Text(
-                                    summary.expiryLabel.isEmpty
-                                        ? AppCopy.validUntil
-                                        : summary.expiryLabel,
-                                    style: ScholarlyFonts.outfit(
-                                        color: onCardMuted, fontSize: 11),
-                                  ),
-                                  const SizedBox(height: 2),
-                                  Text(
-                                    expiry,
-                                    style: ScholarlyFonts.outfit(
-                                      color: onCard,
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w600,
-                                      letterSpacing: 0.6,
+                              if (expiry.isNotEmpty)
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  children: [
+                                    Text(
+                                      unlimited
+                                          ? Loc.tr('accessTermLabel')
+                                          : summary.expiryLabel.isEmpty
+                                              ? AppCopy.validUntil
+                                              : summary.expiryLabel,
+                                      style: ScholarlyFonts.outfit(
+                                          color: onCardMuted, fontSize: 11),
                                     ),
-                                  ),
-                                ],
-                              ),
+                                    const SizedBox(height: 2),
+                                    Text(
+                                      expiry,
+                                      style: ScholarlyFonts.outfit(
+                                        color: onCard,
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600,
+                                        letterSpacing: 0.6,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                             ],
                           ),
                         ],
