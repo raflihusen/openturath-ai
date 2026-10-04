@@ -241,7 +241,7 @@ const copyCatalog = <String, List<String>>{
   "ahlanWithName": ["Ahlan, {0}", "Welcome, {0}", "أهلًا، {0}"],
   "brandPhilosophyTitle": ["Gerbang ilmu, penjaga khazanah", "A gateway to learning, a guardian of heritage", "بوابة العلم وحارس التراث"],
   "brandPhilosophy": ["Dalam identitas OpenTurath, tiga ruang di dalam lambang mewakili Islam, Iman, dan Ihsan sebagai ats-tsawabit. Lengkungan luar melambangkan Fikih Tahawwulat sebagai benteng penjaga ketiganya. Sebutan ar-rukn ar-rabi’ digunakan dalam kerangka Fikih Tahawwulat. Gerbang dan segel menandai keterbukaan belajar serta komitmen untuk memeriksa rujukan.", "In OpenTurath’s identity, the three inner spaces represent Islam, Iman, and Ihsan as al-thawabit. The outer arch represents Fiqh al-Tahawwulat as their guardian. The term al-rukn al-rabi‘ belongs to that scholarly framework. The gateway and seal express openness to learning and a commitment to verifying references.", "في هوية أوبن تراث ترمز المساحات الثلاث الداخلية إلى الإسلام والإيمان والإحسان، وهي الثوابت. ويرمز القوس الخارجي إلى فقه التحولات بوصفه سياجًا يحميها. ويُستعمل مصطلح الركن الرابع في إطار فقه التحولات. وتعبر البوابة والخاتم عن الانفتاح على العلم والالتزام بمراجعة المراجع."],
-  "launchOffer": ["Harga Perdana", "Launch offer", "عرض الافتتاح"],
+  "launchOffer": ["Harga perdana", "Launch offer", "عرض الافتتاح"],
   "saving": ["Hemat {0}%", "Save {0}%", "توفير {0}٪"],
   "normalPrice": ["Harga normal {0}", "Regular price {0}", "السعر المعتاد {0}"],
   "bestValue": ["Pilihan Terbaik", "Best value", "الخيار الأوفر"],
@@ -697,4 +697,7 @@ const copyCatalog = <String, List<String>>{
   "loginStatEntries": ["entri kitab", "catalogued works", "مدخل في الفهارس"],
   "loginStatPages": ["halaman (perkiraan)", "pages (estimated)", "صفحة (تقديرًا)"],
   "unitMillion": ["juta", "million", "مليون"],
+  "libraryInNumbers": ["Pustaka dalam angka", "The library in numbers", "المكتبة بالأرقام"],
+  "aiEtiquetteLabel": ["Adab menggunakan AI", "Etiquette of using AI", "أدب استعمال الذكاء الاصطناعي"],
+  "planLabel": ["Paket", "Plan", "الباقة"],
 };

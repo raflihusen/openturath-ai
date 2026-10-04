@@ -12,7 +12,14 @@ import 'package:openturath_ai/core/app_config.dart';
 import 'package:openturath_ai/core/localization.dart';
 import 'package:openturath_ai/core/theme.dart';
 import 'package:openturath_ai/models/agent_model.dart';
+import 'package:openturath_ai/core/constants.dart';
+import 'package:openturath_ai/models/user_model.dart';
+import 'package:openturath_ai/screens/dashboard_screen.dart';
 import 'package:openturath_ai/screens/login_screen.dart';
+import 'package:openturath_ai/screens/profile_screen.dart';
+import 'package:openturath_ai/screens/subscription_screen.dart';
+import 'package:openturath_ai/services/auth_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:openturath_ai/services/open_turath_catalog_repository.dart';
 import 'package:openturath_ai/widgets/assistant_grid_card.dart';
 import 'package:openturath_ai/widgets/legal_document_sheet.dart';
@@ -76,7 +83,11 @@ Future<void> _shot(WidgetTester tester, String name, Widget child,
       ..createSync(recursive: true)
       ..writeAsBytesSync(bytes!.buffer.asUint8List());
   });
-  tester.takeException();
+  final error = tester.takeException();
+  if (error != null) {
+    // ignore: avoid_print
+    print('RENDER ERROR in $name: ${error.toString().split('\n').take(6).join(' | ')}');
+  }
 }
 
 void main() {
@@ -150,6 +161,27 @@ void main() {
           locale: locale);
     }
     await _shot(tester, 'login_dark', const LoginScreen(), dark: true);
+    SharedPreferences.setMockInitialValues({});
+    AuthService.previewUser = UserModel(
+      uid: 'Qx7Zp2LmN8vRt4Kc',
+      name: 'Rafli Husen',
+      email: 'contoh@openturath.id',
+      photoUrl: '',
+      plan: AppConstants.planTrial,
+      questionsUsed: 0,
+    );
+    for (final locale in ['id', 'ar']) {
+      await _shot(tester, 'dashboard_$locale', const DashboardScreen(),
+          locale: locale);
+      await _shot(tester, 'profile_$locale', const ProfileScreen(),
+          locale: locale);
+      await _shot(tester, 'subscription_$locale', const SubscriptionScreen(),
+          size: const Size(950, 1500), locale: locale);
+    }
+    await _shot(tester, 'dashboard_dark', const DashboardScreen(), dark: true);
+    await _shot(tester, 'dashboard_phone', const DashboardScreen(),
+        size: const Size(390, 844));
+    AuthService.previewUser = null;
     await _shot(tester, 'login_phone', const LoginScreen(),
         size: const Size(390, 844));
     await _shot(

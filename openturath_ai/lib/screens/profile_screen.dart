@@ -3,7 +3,6 @@ import '../core/localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../core/scholarly_fonts.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 import '../core/routes.dart';
@@ -301,7 +300,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           initialData: _authService.cachedCurrentUser,
           builder: (context, snapshot) {
             final userModel = snapshot.data ?? _authService.cachedCurrentUser;
-            final fbUser = FirebaseAuth.instance.currentUser;
+            final fbUser = _authService.currentUser;
 
             final displayName = userModel?.name.isNotEmpty == true
                 ? userModel!.name
@@ -1078,14 +1077,68 @@ class _MembershipPass extends StatelessWidget {
               SizedBox(width: 340, child: card),
               const SizedBox(width: OTSpacing.md),
               Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    for (var i = 0; i < actions.length; i++) ...[
-                      if (i > 0) const SizedBox(height: OTSpacing.md),
-                      Expanded(child: actions[i]),
+                child: Container(
+                  clipBehavior: Clip.antiAlias,
+                  decoration: BoxDecoration(
+                    color: OTColors.surface(isDark),
+                    borderRadius: OTRadius.cardBorder,
+                    border: Border.all(color: OTColors.border(isDark)),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(OTSpacing.base),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(Loc.tr('planLabel'),
+                                style: ScholarlyFonts.outfit(
+                                    fontSize: 12, color: muted)),
+                            const SizedBox(height: 2),
+                            Text(summary.accessLabel,
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                style: ScholarlyFonts.outfit(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                    color: foreground)),
+                            if (summary.supportingLabel.isNotEmpty) ...[
+                              const SizedBox(height: 4),
+                              Text(summary.supportingLabel,
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: ScholarlyFonts.outfit(
+                                      fontSize: 13,
+                                      height: 1.4,
+                                      color: muted)),
+                            ],
+                          ],
+                        ),
+                      ),
+                      Column(
+                        children: [
+                          if (onViewAccess != null) ...[
+                            Divider(height: 1, color: OTColors.border(isDark)),
+                            _AccountActionRow(
+                              icon: Icons.auto_stories_outlined,
+                              label: Loc.tr('viewAccessList'),
+                              color: foreground,
+                              onTap: onViewAccess,
+                            ),
+                          ],
+                          Divider(height: 1, color: OTColors.border(isDark)),
+                          _AccountActionRow(
+                            icon: Icons.tune_rounded,
+                            label: summary.ctaLabel,
+                            color: foreground,
+                            onTap: onManage,
+                          ),
+                        ],
+                      ),
                     ],
-                  ],
+                  ),
                 ),
               ),
             ],

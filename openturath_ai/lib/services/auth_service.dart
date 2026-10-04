@@ -61,11 +61,16 @@ class AuthService {
     return null;
   }
 
+  /// Pengguna contoh untuk pratinjau dan tes render; tidak dipakai di aplikasi.
+  @visibleForTesting
+  static UserModel? previewUser;
+
   // ── Current Firebase User ──────────────────────────────────────
-  User? get currentUser => _auth.currentUser;
+  User? get currentUser => previewUser != null ? null : _auth.currentUser;
   Stream<User?> get authStateChanges => _auth.authStateChanges();
 
   UserModel? get cachedCurrentUser {
+    if (previewUser != null) return previewUser;
     final user = _auth.currentUser;
     if (user == null) return null;
     return _userCache[user.uid] ??
@@ -293,7 +298,9 @@ class AuthService {
   }
 
   // ── Stream user changes (real-time with single persistent cached stream, F10 & F41) ──
-  Stream<UserModel?> get userStream => _cachedUserStream ??= _buildUserStream();
+  Stream<UserModel?> get userStream => previewUser != null
+      ? Stream<UserModel?>.value(previewUser)
+      : _cachedUserStream ??= _buildUserStream();
 
   Stream<UserModel?> _buildUserStream() => sessionUserStream<UserModel>(
         auth: _auth.authStateChanges().map((user) => user?.uid),

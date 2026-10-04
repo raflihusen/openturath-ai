@@ -1,6 +1,5 @@
 import '../widgets/adaptive_sheet.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import '../core/app_copy.dart';
 import '../core/app_snackbar.dart';
@@ -14,6 +13,7 @@ import '../widgets/doku_checkout_sheet.dart';
 import '../widgets/promo_price.dart';
 import '../widgets/redeem_code_sheet.dart';
 import '../core/app_platform.dart';
+import '../services/auth_service.dart';
 
 /// Penawaran perdana. Hak akses tetap diputuskan oleh backend yang terverifikasi.
 class SubscriptionScreen extends StatefulWidget {
@@ -102,7 +102,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
 
   Future<void> _checkout(AgentModel agent, SubscriptionOffer offer) async {
     if (_processing) return;
-    final user = FirebaseAuth.instance.currentUser;
+    final user = AuthService().currentUser;
     if (user == null || user.isAnonymous) {
       setState(() {
         _checkoutAgentId = agent.id;
@@ -403,7 +403,9 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.fromLTRB(20, 12, 20, 48),
-          child: Center(
+          // Rata awal, sejajar dengan judul halaman.
+          child: Align(
+            alignment: AlignmentDirectional.topStart,
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 760),
               child: Column(
@@ -500,15 +502,13 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                                     padding: const EdgeInsets.symmetric(
                                         vertical: 10, horizontal: 8),
                                     decoration: BoxDecoration(
-                                      color: _tahawwulatIndex == i
-                                          ? OTColors.surface(dark)
-                                          : OTColors.primaryContainer(dark),
+                                      color: OTColors.surface(dark),
                                       borderRadius: BorderRadius.circular(16),
                                       border: Border.all(
                                         color: _tahawwulatIndex == i
                                             ? OTColors.accent(dark)
                                             : OTColors.border(dark),
-                                        width: _tahawwulatIndex == i ? 1.4 : 1,
+                                        width: _tahawwulatIndex == i ? 1.6 : 1,
                                       ),
                                     ),
                                     child: Column(
@@ -519,9 +519,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                                           maxLines: 2,
                                           overflow: TextOverflow.ellipsis,
                                           style: OTTypography.captionMedium(
-                                            color: _tahawwulatIndex == i
-                                                ? ink
-                                                : featuredInk,
+                                            color: _tahawwulatIndex == i ? ink : muted,
                                           ),
                                         ),
                                         const SizedBox(height: 4),
@@ -700,15 +698,13 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                                     padding: const EdgeInsets.symmetric(
                                         vertical: 10, horizontal: 8),
                                     decoration: BoxDecoration(
-                                      color: _specialistIndex == i
-                                          ? OTColors.primaryContainer(dark)
-                                          : OTColors.surface(dark),
+                                      color: OTColors.surface(dark),
                                       borderRadius: BorderRadius.circular(16),
                                       border: Border.all(
                                         color: _specialistIndex == i
                                             ? OTColors.accent(dark)
                                             : border,
-                                        width: _specialistIndex == i ? 1.4 : 1,
+                                        width: _specialistIndex == i ? 1.6 : 1,
                                       ),
                                     ),
                                     child: Column(
@@ -719,9 +715,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                                           maxLines: 2,
                                           overflow: TextOverflow.ellipsis,
                                           style: OTTypography.captionMedium(
-                                            color: _specialistIndex == i
-                                                ? OTColors.onPrimaryContainer(dark)
-                                                : muted,
+                                            color: _specialistIndex == i ? ink : muted,
                                           ),
                                         ),
                                         const SizedBox(height: 4),
@@ -734,9 +728,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                                           style: TextStyle(
                                             fontSize: 12,
                                             fontWeight: FontWeight.w700,
-                                            color: _specialistIndex == i
-                                                ? OTColors.onPrimaryContainer(dark)
-                                                : ink,
+                                            color: ink,
                                           ),
                                         ),
                                       ],

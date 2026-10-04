@@ -7,7 +7,7 @@ import 'doku_service.dart';
 import 'callable_gateway.dart';
 
 class SubscriptionService {
-  final FirebaseFirestore _db = FirebaseFirestore.instance;
+  late final FirebaseFirestore _db = FirebaseFirestore.instance;
   final DokuService _dokuService = DokuService();
 
   /// Normalisasi kode voucher: hapus spasi, ubah huruf kapital, hapus tanda strip

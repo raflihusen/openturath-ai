@@ -31,6 +31,9 @@ import '../services/bookmark_service.dart';
 import '../models/bookmark_model.dart';
 import '../widgets/assistant_grid_card.dart';
 import '../services/open_turath_catalog_repository.dart';
+import '../core/legal_copy.dart';
+import '../widgets/legal_document_sheet.dart';
+import 'package:intl/intl.dart' show NumberFormat;
 
 /// Beranda OpenTurath AI (Tactile Scholarly Research Desk)
 /// Dilengkapi animasi Apple Interactive micro-compression, pantulan pegas halus,
@@ -527,7 +530,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               return OTReveal(
                                 index: index + 2,
                                 child: OTBentoTile(
-                                  semanticLabel: disc.name,
+                                  semanticLabel: Loc.text(disc.name),
                                   onTap: () {
                                     final shell =
                                         MainShellController.of(context);
@@ -550,7 +553,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                         children: [
                                           Expanded(
                                             child: Text(
-                                              disc.name,
+                                              Loc.text(disc.name),
                                               maxLines: 1,
                                               overflow: TextOverflow.ellipsis,
                                               style: ScholarlyFonts.newsreader(
@@ -603,6 +606,31 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           ),
                           const SizedBox(height: 12),
                           const _RecentNoteTile(),
+                          const SizedBox(height: 12),
+                          LayoutBuilder(builder: (context, box) {
+                            const totals = _LibraryNumbersTile();
+                            const adab = _AdabOfDayTile();
+                            if (box.maxWidth < 680) {
+                              return const Column(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: [
+                                  totals,
+                                  SizedBox(height: 12),
+                                  adab,
+                                ],
+                              );
+                            }
+                            return const IntrinsicHeight(
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: [
+                                  Expanded(child: totals),
+                                  SizedBox(width: 12),
+                                  Expanded(child: adab),
+                                ],
+                              ),
+                            );
+                          }),
                         ],
                       ],
                     ),
@@ -613,6 +641,122 @@ class _DashboardScreenState extends State<DashboardScreen> {
           ),
         );
       },
+    );
+  }
+}
+
+/// Jumlah pustaka, entri kitab, dan halaman dari metadata katalog.
+class _LibraryNumbersTile extends StatelessWidget {
+  const _LibraryNumbersTile();
+
+  @override
+  Widget build(BuildContext context) {
+    Loc.watch(context);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final ink = OTColors.textPrimary(isDark);
+    final muted = OTColors.textSecondary(isDark);
+    return OTBentoTile(
+      padding: const EdgeInsets.all(OTSpacing.lg),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(Loc.tr('libraryInNumbers'),
+              style: ScholarlyFonts.outfit(fontSize: 12, color: muted)),
+          const SizedBox(height: OTSpacing.md),
+          FutureBuilder<Map<String, AiLibraryMetadata>>(
+            future: OpenTurathCatalogRepository.instance.loadAllMetadata(),
+            builder: (context, snapshot) {
+              final all = snapshot.data ?? const <String, AiLibraryMetadata>{};
+              if (all.isEmpty) return const SizedBox(height: 44);
+              final number = NumberFormat.decimalPattern(Loc.language);
+              final entries = all.values
+                  .fold<int>(0, (sum, item) => sum + item.totalKitab);
+              final pages = all.values
+                  .fold<int>(0, (sum, item) => sum + item.totalHalaman);
+              Widget stat(String value, String label) => Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(value,
+                            style: ScholarlyFonts.outfit(
+                                fontSize: 20,
+                                fontWeight: FontWeight.w600,
+                                color: ink)),
+                        Text(label,
+                            maxLines: 2,
+                            style: ScholarlyFonts.outfit(
+                                fontSize: 12, color: muted)),
+                      ],
+                    ),
+                  );
+              return Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  stat(number.format(all.length),
+                      Loc.tr('loginStatLibraries')),
+                  stat('${number.format(entries ~/ 100 * 100)}+',
+                      Loc.tr('loginStatEntries')),
+                  stat(
+                      '${number.format(pages ~/ 100000 / 10)} ${Loc.tr('unitMillion')}+',
+                      Loc.tr('loginStatPages')),
+                ],
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Satu adab menggunakan AI per hari, diambil dari panduan.
+class _AdabOfDayTile extends StatelessWidget {
+  const _AdabOfDayTile();
+
+  @override
+  Widget build(BuildContext context) {
+    Loc.watch(context);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final ink = OTColors.textPrimary(isDark);
+    final muted = OTColors.textSecondary(isDark);
+    final adab = LegalCopy.aiGuidelineSections
+        .where((section) => section.title.startsWith('Adab '))
+        .toList();
+    // Naskah adab baru tersedia dalam bahasa Indonesia.
+    if (adab.isEmpty || Loc.language != 'id') return const SizedBox.shrink();
+    final today = DateTime.now();
+    final section =
+        adab[today.difference(DateTime(today.year)).inDays % adab.length];
+    final title = section.title.split(' · ').last;
+    final body = section.content.split('\n').first;
+    return OTBentoTile(
+      onTap: () => LegalDocumentSheet.showAiGuideline(context),
+      semanticLabel: '${Loc.tr('aiEtiquetteLabel')}: $title',
+      padding: const EdgeInsets.all(OTSpacing.lg),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: Text(Loc.tr('aiEtiquetteLabel'),
+                    style: ScholarlyFonts.outfit(fontSize: 12, color: muted)),
+              ),
+              Icon(Icons.arrow_forward_rounded, size: 16, color: muted),
+            ],
+          ),
+          const SizedBox(height: OTSpacing.sm),
+          Text(title,
+              style: ScholarlyFonts.outfit(
+                  fontSize: 16, fontWeight: FontWeight.w600, color: ink)),
+          const SizedBox(height: 4),
+          Text(body,
+              maxLines: 3,
+              overflow: TextOverflow.ellipsis,
+              style: ScholarlyFonts.outfit(
+                  fontSize: 13, height: 1.5, color: muted)),
+        ],
+      ),
     );
   }
 }
