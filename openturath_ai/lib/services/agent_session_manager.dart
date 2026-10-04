@@ -20,9 +20,8 @@ class AgentSessionTab {
   bool isGooglePermissionError = false;
   bool isGoogleAuthPage = false;
 
-  /// Pengguna sudah membaca penjelasan dan memilih masuk ke Google di dalam
-  /// ruang asisten. Hanya di memori; ditanyakan lagi setiap aplikasi dibuka.
-  static bool googleSignInConsent = false;
+  /// Izin masuk ke akun Google yang sama di dalam ruang asisten.
+  static bool googleSignInConsent = true;
   static double defaultFontScale = 1.0;
   double fontScale = defaultFontScale;
   bool hasAcknowledgedAdab = false;
