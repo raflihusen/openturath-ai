@@ -435,7 +435,7 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                     foregroundColor: OTColors.surfaceLight,
                     elevation: 0,
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 18, vertical: 10),
+                        horizontal: 16, vertical: 8),
                   ),
                   onPressed: () {
                     Navigator.pop(ctx);
@@ -752,7 +752,7 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                   child: ListView.separated(
                     scrollDirection: Axis.horizontal,
                     padding:
-                        const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     itemCount: sessions.length,
                     separatorBuilder: (_, __) => const SizedBox(width: 6),
                     itemBuilder: (context, index) {
@@ -783,7 +783,7 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                                       .resolve(Directionality.of(context)),
                               child: Padding(
                                 padding: const EdgeInsets.symmetric(
-                                    horizontal: 10, vertical: 6),
+                                    horizontal: 8, vertical: 4),
                                 child: Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
@@ -2080,7 +2080,7 @@ class _GoogleSignInBar extends StatelessWidget {
     return Material(
       color: OTColors.surface(isDark),
       child: Container(
-        padding: const EdgeInsetsDirectional.fromSTEB(16, 6, 8, 6),
+        padding: const EdgeInsetsDirectional.fromSTEB(16, 4, 8, 4),
         decoration: BoxDecoration(
           border: Border(bottom: BorderSide(color: OTColors.border(isDark))),
         ),

@@ -213,7 +213,7 @@ class TahawwulatFlagshipCard extends StatelessWidget {
                       final tileWidth =
                           (box.maxWidth - gap * (columns - 1)) / columns;
                       return Padding(
-                        padding: const EdgeInsets.only(bottom: 14),
+                        padding: const EdgeInsets.only(bottom: 12),
                         child: Wrap(
                           spacing: gap,
                           runSpacing: gap,
@@ -236,7 +236,7 @@ class TahawwulatFlagshipCard extends StatelessWidget {
                               color: OTColors.surfaceLight.withValues(alpha: 0.14)),
                         ),
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 14, vertical: 10),
+                            horizontal: 12, vertical: 8),
                         child: Row(
                           children: [
                             Expanded(
@@ -313,7 +313,7 @@ class TahawwulatFlagshipCard extends StatelessWidget {
                               color: OTColors.surfaceLight.withValues(alpha: 0.28),
                             ),
                           ),
-                          padding: const EdgeInsets.symmetric(horizontal: 14),
+                          padding: const EdgeInsets.symmetric(horizontal: 12),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [

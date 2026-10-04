@@ -35,7 +35,7 @@ class PromoPrice extends StatelessWidget {
         Text(period, style: OTTypography.caption(color: secondary)),
       ]),
       if (regularAmount > amount && !compact) Padding(
-        padding: const EdgeInsets.only(top: 6),
+        padding: const EdgeInsets.only(top: 4),
         child: Text('${Loc.tr('launchOffer')} · ${Loc.tr('saving', ['$saving'])}',
           style: OTTypography.captionMedium(color: secondary))),
     ]);

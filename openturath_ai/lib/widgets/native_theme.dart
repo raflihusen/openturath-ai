@@ -40,7 +40,7 @@ class NativeTheme extends StatelessWidget {
                   foregroundColor: NativeColors.onAccent(dark),
                   minimumSize: const Size(48, 48),
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 22, vertical: 14),
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                   textStyle: NativeType.body(dark, size: 17),
                   elevation: 0)),
           outlinedButtonTheme: OutlinedButtonThemeData(
@@ -48,7 +48,7 @@ class NativeTheme extends StatelessWidget {
                   foregroundColor: NativeColors.accent(dark),
                   minimumSize: const Size(48, 48),
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                   textStyle: NativeType.body(dark, size: 15))),
           textButtonTheme: TextButtonThemeData(
               style: TextButton.styleFrom(

@@ -1213,7 +1213,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
             side: BorderSide(color: border, width: 1.0),
           ),
           child: Padding(
-            padding: const EdgeInsets.fromLTRB(22, 24, 22, 20),
+            padding: const EdgeInsets.fromLTRB(20, 24, 20, 20),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,

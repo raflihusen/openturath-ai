@@ -657,7 +657,7 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
               ),
             if (_types.isNotEmpty) ...[
               Container(
-                margin: const EdgeInsets.symmetric(horizontal: 6, vertical: 8),
+                margin: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
                 width: 1,
                 color: border,
               ),
@@ -763,7 +763,7 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
                 onTap: _loadCatalog,
                 child: Container(
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
                   decoration: BoxDecoration(
                     color: primaryAccent,
                     borderRadius: BorderRadius.circular(OTRadius.input),
@@ -808,7 +808,7 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
                   onTap: _clearFilters,
                   child: Container(
                     padding:
-                        const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
+                        const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     decoration: BoxDecoration(
                       border: Border.all(color: border),
                       borderRadius: BorderRadius.circular(OTRadius.xs),
@@ -876,7 +876,7 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
     final activeFg = OTColors.onPrimaryContainer(isDark);
 
     return Padding(
-      padding: const EdgeInsetsDirectional.only(end: 6),
+      padding: const EdgeInsetsDirectional.only(end: 4),
       child: AppleInteractiveWrapper(
         onTap: onTap,
         pressedScale: 0.94,
@@ -885,7 +885,7 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 180),
           curve: Curves.easeOutCubic,
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
           decoration: BoxDecoration(
             color: isSelected ? activeBg : surface,
             borderRadius: BorderRadius.circular(OTRadius.card),

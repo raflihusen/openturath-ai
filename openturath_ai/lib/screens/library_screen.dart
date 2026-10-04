@@ -188,7 +188,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
   Widget _detailRow(
       String label, String value, Color textPrimary, Color textSecondary) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6),
+      padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -273,7 +273,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
                 filled: true,
                 fillColor: surface,
                 contentPadding:
-                    const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 border: OutlineInputBorder(
                   borderRadius: OTRadius.inputBorder,
                   borderSide: BorderSide(color: border, width: 0.8),

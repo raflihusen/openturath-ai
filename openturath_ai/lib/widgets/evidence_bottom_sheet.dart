@@ -127,7 +127,7 @@ class EvidenceBottomSheet extends StatelessWidget {
 
               // ── Header Bar (Figma Screen 10) ──
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -182,7 +182,7 @@ class EvidenceBottomSheet extends StatelessWidget {
                     _stagger(
                       1,
                       Container(
-                        padding: const EdgeInsets.all(14),
+                        padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
                           color: isDark ? AppTheme.surfaceElevated : AppTheme.surfaceCardLight,
                           borderRadius: BorderRadius.circular(AppTheme.radiusCard),

@@ -337,7 +337,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               child: ConstrainedBox(
                 constraints: const BoxConstraints(maxWidth: 760),
                 child: ListView(
-                  padding: const EdgeInsets.fromLTRB(20, 8, 20, 28),
+                  padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
                   physics: const BouncingScrollPhysics(),
                   children: [
                     OTReveal(
@@ -968,7 +968,7 @@ class _MembershipPass extends StatelessWidget {
                               const Spacer(),
                               Container(
                                 padding: const EdgeInsets.symmetric(
-                                    horizontal: 10, vertical: 4),
+                                    horizontal: 8, vertical: 4),
                                 decoration: BoxDecoration(
                                   borderRadius: OTRadius.chipBorder,
                                   border: Border.all(
@@ -1226,7 +1226,7 @@ class _AccountActionRow extends StatelessWidget {
       onTap: onTap,
       child: Padding(
         padding: const EdgeInsets.symmetric(
-            horizontal: OTSpacing.base, vertical: 14),
+            horizontal: OTSpacing.base, vertical: 12),
         child: Row(
           children: [
             if (busy)

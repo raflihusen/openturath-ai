@@ -245,7 +245,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 Semantics(
                                   liveRegion: true,
                                   child: Container(
-                                    padding: const EdgeInsets.all(14),
+                                    padding: const EdgeInsets.all(12),
                                     decoration: BoxDecoration(
                                       color: OTColors.surfaceSubtle(dark),
                                       border: Border.all(
@@ -386,7 +386,7 @@ class _LoginAside extends StatelessWidget {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.all(36),
+              padding: const EdgeInsets.all(32),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [

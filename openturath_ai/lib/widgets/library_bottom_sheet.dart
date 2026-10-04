@@ -198,7 +198,7 @@ class _ResearchLibrarySheetState extends State<ResearchLibrarySheet> {
                         : null,
                     filled: true,
                     fillColor: surface,
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                     border: OutlineInputBorder(
                       borderRadius: OTRadius.inputBorder,
                       borderSide: BorderSide(color: border, width: 0.8),
@@ -378,7 +378,7 @@ class CanonicalBookTile extends StatelessWidget {
                     runSpacing: 4,
                     children: book.compactLabels.map((lbl) {
                       return Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2.5),
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                         decoration: BoxDecoration(
                           color: OTColors.surfaceSubtle(isDark),
                           borderRadius: BorderRadius.circular(OTRadius.xs),

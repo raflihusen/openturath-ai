@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 /// OpenTurath Design System v2 — Spacing Tokens (Base-4 Rhythm)
 /// Menolak angka acak (13, 19, 27, 31). Menggunakan ritme proporsional kelipatan 4.
 class OTSpacing {
+  static const double xxs = 2.0; // Celah optis terkecil
   static const double xs = 4.0;
   static const double sm = 8.0;
   static const double md = 12.0;

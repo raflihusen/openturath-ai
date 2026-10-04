@@ -252,7 +252,7 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
                   children: [
                     Container(
                       height: 44,
-                      padding: const EdgeInsets.symmetric(horizontal: 14),
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
                       decoration: BoxDecoration(
                         color: surface,
                         borderRadius: OTRadius.inputBorder,
@@ -415,7 +415,7 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
                                 physics: const BouncingScrollPhysics(
                                     parent: AlwaysScrollableScrollPhysics()),
                                 padding: const EdgeInsets.fromLTRB(
-                                    OTSpacing.lg, OTSpacing.md, OTSpacing.lg, 28),
+                                    OTSpacing.lg, OTSpacing.md, OTSpacing.lg, 24),
                                 children: [
                                   if (flagship != null) ...[
                                     OTReveal(

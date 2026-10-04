@@ -329,9 +329,9 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
                 // ── Disclaimer Wajib Akun yang Sama (Langkah 2) ──
                 Container(
                   width: double.infinity,
-                  margin: const EdgeInsets.fromLTRB(16, 6, 16, 10),
+                  margin: const EdgeInsets.fromLTRB(16, 4, 16, 8),
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
                   decoration: BoxDecoration(
                     color: surface,
                     borderRadius: BorderRadius.circular(AppTheme.radiusCard),
@@ -344,7 +344,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
                         children: [
                           Container(
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 6, vertical: 2),
+                                horizontal: 4, vertical: 2),
                             decoration: BoxDecoration(
                               color: textPrimary.withValues(alpha: 0.08),
                               borderRadius: BorderRadius.circular(OTRadius.xs),
@@ -396,7 +396,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
                         const SizedBox(height: 8),
                         Container(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 10, vertical: 6),
+                              horizontal: 8, vertical: 4),
                           decoration: BoxDecoration(
                             color: canvas,
                             borderRadius: BorderRadius.circular(OTRadius.xs),
@@ -431,7 +431,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
                 // ── InAppWebView Halaman Masuk Resmi Google ──
                 Expanded(
                   child: Container(
-                    margin: const EdgeInsets.fromLTRB(16, 0, 16, 14),
+                    margin: const EdgeInsets.fromLTRB(16, 0, 16, 12),
                     decoration: BoxDecoration(
                       color: surface,
                       borderRadius: BorderRadius.circular(AppTheme.radiusCard),

@@ -301,7 +301,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                               prefixIcon: Icon(Icons.search_rounded,
                                   size: 20, color: muted),
                               contentPadding: const EdgeInsets.symmetric(
-                                  horizontal: 14, vertical: 10),
+                                  horizontal: 12, vertical: 8),
                             ),
                           ),
                         ],
@@ -476,7 +476,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
             : () => _showDisciplinePickerModal(context, specialists),
         borderRadius: BorderRadius.circular(OTRadius.input),
         child: Padding(
-          padding: const EdgeInsetsDirectional.fromSTEB(14, 0, 10, 0),
+          padding: const EdgeInsetsDirectional.fromSTEB(12, 0, 8, 0),
           child: Row(
             children: [
               Expanded(

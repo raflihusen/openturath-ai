@@ -168,7 +168,7 @@ class _NativeTurathChatViewState extends State<NativeTurathChatView>
                 : ListView.builder(
                     controller: _scrollController,
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 16, vertical: 18),
+                        horizontal: 16, vertical: 16),
                     itemCount:
                         widget.messages.length + (widget.isGenerating ? 1 : 0),
                     itemBuilder: (context, index) {
@@ -263,7 +263,7 @@ class _NativeTurathChatViewState extends State<NativeTurathChatView>
       },
       borderRadius: BorderRadius.circular(OTRadius.card),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         decoration: BoxDecoration(
           color: bg,
           borderRadius: BorderRadius.circular(OTRadius.card),
@@ -493,7 +493,7 @@ class _NativeTurathChatViewState extends State<NativeTurathChatView>
       child: SafeArea(
         top: false,
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
           decoration: BoxDecoration(
             color: surface,
             borderRadius: BorderRadius.circular(OTRadius.card),
@@ -529,7 +529,7 @@ class _NativeTurathChatViewState extends State<NativeTurathChatView>
                     ),
                     border: InputBorder.none,
                     isDense: true,
-                    contentPadding: const EdgeInsets.symmetric(vertical: 10),
+                    contentPadding: const EdgeInsets.symmetric(vertical: 8),
                   ),
                   onSubmitted: (_) => _handleSend(),
                 ),

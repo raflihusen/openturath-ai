@@ -327,7 +327,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             return Container(
                               height: 44,
                               padding: const EdgeInsetsDirectional.only(
-                                  start: 14, end: 6),
+                                  start: 12, end: 4),
                               decoration: BoxDecoration(
                                 color: OTColors.surface(isDark),
                                 borderRadius: OTRadius.inputBorder,
@@ -380,7 +380,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                         borderRadius: BorderRadius.circular(
                                             OTRadius.card),
                                         child: Padding(
-                                          padding: const EdgeInsets.all(8.0),
+                                          padding: const EdgeInsets.all(8),
                                           child: Icon(Icons.close_rounded,
                                               size: 18, color: textSecondary),
                                         ),
@@ -429,7 +429,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               if (matches.isEmpty) {
                                 return Padding(
                                   padding:
-                                      const EdgeInsets.symmetric(vertical: 36),
+                                      const EdgeInsets.symmetric(vertical: 32),
                                   child: Center(
                                     child: Text(
                                       AppCopy.noAssistantsFound,
@@ -1204,7 +1204,7 @@ class _DashboardAnnouncementCarouselState
               const Center(child: SheetGrabber(bottom: 18)),
               Container(
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
                   color: OTColors.surfaceSubtle(widget.isDark),
                   borderRadius: BorderRadius.circular(OTRadius.chip),
@@ -1312,7 +1312,7 @@ class _DashboardAnnouncementCarouselState
                           children: [
                             Container(
                               padding: const EdgeInsets.symmetric(
-                                  horizontal: 8, vertical: 2.5),
+                                  horizontal: 8, vertical: 2),
                               decoration: BoxDecoration(
                                 color: OTColors.surfaceSubtle(widget.isDark),
                                 borderRadius:

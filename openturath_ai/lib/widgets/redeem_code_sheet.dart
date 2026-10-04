@@ -192,7 +192,7 @@ class _RedeemCodeSheetState extends State<RedeemCodeSheet> {
                 filled: true,
                 fillColor: canvas,
                 contentPadding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 border: OutlineInputBorder(
                   borderRadius: OTRadius.inputBorder,
                   borderSide: BorderSide(color: borderColor, width: 0.8),

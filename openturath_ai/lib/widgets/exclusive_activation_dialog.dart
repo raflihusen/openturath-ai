@@ -128,7 +128,7 @@ class ExclusiveActivationDialog extends StatelessWidget {
           child: ClipRRect(
             borderRadius: BorderRadius.circular(OTRadius.card),
             child: SingleChildScrollView(
-              padding: const EdgeInsets.fromLTRB(28, 36, 28, 32),
+              padding: const EdgeInsets.fromLTRB(24, 32, 24, 32),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -167,7 +167,7 @@ class ExclusiveActivationDialog extends StatelessWidget {
 
                   // ── 2. Verified Exclusive Chip ──
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                     decoration: BoxDecoration(
                       color: OTColors.borderStrongDark.withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(OTRadius.card),
@@ -283,7 +283,7 @@ class ExclusiveActivationDialog extends StatelessWidget {
                               ),
                             ),
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                               decoration: BoxDecoration(
                                 color: OTColors.surfaceSubtleDark,
                                 borderRadius: BorderRadius.circular(OTRadius.xs),
@@ -305,7 +305,7 @@ class ExclusiveActivationDialog extends StatelessWidget {
                         ),
 
                         const Padding(
-                          padding: EdgeInsets.symmetric(vertical: 14),
+                          padding: EdgeInsets.symmetric(vertical: 12),
                           child: Divider(color: OTColors.borderSubtleDark, height: 1),
                         ),
 
@@ -329,7 +329,7 @@ class ExclusiveActivationDialog extends StatelessWidget {
                         ),
 
                         const Padding(
-                          padding: EdgeInsets.symmetric(vertical: 14),
+                          padding: EdgeInsets.symmetric(vertical: 12),
                           child: Divider(color: OTColors.borderSubtleDark, height: 1),
                         ),
 

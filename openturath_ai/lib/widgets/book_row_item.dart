@@ -65,7 +65,7 @@ class BookRowItem extends StatelessWidget {
         borderRadius: BorderRadius.circular(OTRadius.card),
         child: Container(
           width: double.infinity,
-          padding: const EdgeInsets.fromLTRB(18, 14, 18, 14),
+          padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
           decoration: BoxDecoration(
             color: surface,
             borderRadius: BorderRadius.circular(OTRadius.card),

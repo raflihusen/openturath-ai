@@ -45,6 +45,24 @@ void main() {
     expect(screens, isEmpty);
   });
 
+  test('padding hanya memakai langkah skala jarak', () {
+    const allowed = {0, 2, 4, 8, 12, 16, 20, 24, 32, 40, 48, 56, 64, 72, 96};
+    final call = RegExp(r'EdgeInsets(?:Directional)?\.\w+\([^()]*\)');
+    final number = RegExp(r'(?<![\w.])(\d+(?:\.\d+)?)(?![\w.])');
+    final bad = <String>[];
+    for (final file in files) {
+      for (final match in call.allMatches(file.readAsStringSync())) {
+        for (final value in number.allMatches(match.group(0)!)) {
+          final parsed = double.parse(value.group(1)!);
+          if (!allowed.contains(parsed)) {
+            bad.add('${file.path}: ${match.group(0)}');
+          }
+        }
+      }
+    }
+    expect(bad, isEmpty);
+  });
+
   test('hanya tiga bobot huruf: 400, 600, 700', () {
     expect(offenders(RegExp(r'FontWeight\.(w[123589]00|bold|normal)\b')),
         isEmpty);

@@ -167,7 +167,7 @@ class LegalDocumentSheet extends StatelessWidget {
               physics: const BouncingScrollPhysics(),
               itemCount: sections.length,
               separatorBuilder: (context, index) => Padding(
-                padding: const EdgeInsets.symmetric(vertical: 14),
+                padding: const EdgeInsets.symmetric(vertical: 12),
                 child: Divider(height: 1, color: border.withValues(alpha: 0.6)),
               ),
               itemBuilder: (context, index) {

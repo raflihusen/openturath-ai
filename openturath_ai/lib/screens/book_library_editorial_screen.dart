@@ -340,7 +340,7 @@ class _BookEditorialItem extends StatelessWidget {
     return OTBentoTile(
       onTap: onTap,
       semanticLabel: '${book.title}, ${book.author}',
-      padding: const EdgeInsets.fromLTRB(18, 14, 18, 14),
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -466,7 +466,7 @@ ${Loc.tr('bookScienceSection')}: ${book.section}''';
           slivers: [
             SliverToBoxAdapter(
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(20, 14, 20, 0),
+                padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
                 child: Row(
                   children: [
                     IconButton(
@@ -506,7 +506,7 @@ ${Loc.tr('bookScienceSection')}: ${book.section}''';
             ),
             SliverToBoxAdapter(
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(20, 16, 20, 36),
+                padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
                 child: Center(
                     child: ConstrainedBox(
                   constraints: const BoxConstraints(maxWidth: 760),

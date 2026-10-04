@@ -306,8 +306,8 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                           Flexible(
                             child: Container(
                               padding: const EdgeInsets.symmetric(
-                                horizontal: 10,
-                                vertical: 3.5,
+                                horizontal: 8,
+                                vertical: 4,
                               ),
                               decoration: BoxDecoration(
                                 color: OTColors.primaryContainer(isDark),
@@ -456,7 +456,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                                 const SizedBox(height: 8),
                                 Container(
                                   padding: const EdgeInsets.symmetric(
-                                    horizontal: 10,
+                                    horizontal: 8,
                                     vertical: 4,
                                   ),
                                   decoration: BoxDecoration(
@@ -663,7 +663,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
         ]),
         const SizedBox(height: 6),
         Padding(
-          padding: const EdgeInsetsDirectional.only(start: 25),
+          padding: const EdgeInsetsDirectional.only(start: 24),
           child: Directionality(
             textDirection: RegExp(r'[\u0600-\u06FF]').hasMatch(value)
                 ? TextDirection.rtl

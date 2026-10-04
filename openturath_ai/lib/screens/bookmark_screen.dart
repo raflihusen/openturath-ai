@@ -592,7 +592,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                                     OTSpacing.lg,
                                     OTSpacing.sm,
                                     OTSpacing.lg,
-                                    108,
+                                    96,
                                   ),
                                   // Jendela lebar: dua kolom kartu; ponsel: satu kolom.
                                   itemCount:
@@ -787,8 +787,8 @@ class _BookmarkCardState extends State<_BookmarkCard> {
         WidgetSpan(
           alignment: PlaceholderAlignment.middle,
           child: Container(
-            margin: const EdgeInsets.symmetric(horizontal: 1.5),
-            padding: const EdgeInsets.symmetric(horizontal: 4.5, vertical: 1),
+            margin: const EdgeInsets.symmetric(horizontal: 2),
+            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
             decoration: BoxDecoration(
               color: isDark ? OTColors.surfaceLight : OTColors.surfaceDark,
               borderRadius: BorderRadius.circular(OTRadius.xs),
@@ -892,7 +892,7 @@ class _BookmarkCardState extends State<_BookmarkCard> {
                 children: [
                   Container(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 8, vertical: 2.5),
+                        horizontal: 8, vertical: 2),
                     decoration: BoxDecoration(
                       color: OTColors.primaryContainer(isDark),
                       borderRadius: OTRadius.chipBorder,
@@ -968,7 +968,7 @@ class _BookmarkCardState extends State<_BookmarkCard> {
                   const SizedBox(height: OTSpacing.sm),
                   Container(
                     padding:
-                        const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
                       color: widget.surfaceSubtle,
                       borderRadius: OTRadius.chipBorder,
@@ -994,7 +994,7 @@ class _BookmarkCardState extends State<_BookmarkCard> {
                   Container(
                     width: double.infinity,
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 14, vertical: 12),
+                        horizontal: 12, vertical: 12),
                     decoration: BoxDecoration(
                       color: widget.surfaceSubtle,
                       borderRadius: BorderRadius.circular(OTRadius.input),

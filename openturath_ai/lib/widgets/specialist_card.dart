@@ -73,7 +73,7 @@ class SpecialistCard extends StatelessWidget {
         ),
         clipBehavior: Clip.antiAlias,
         child: Padding(
-          padding: const EdgeInsetsDirectional.fromSTEB(16, 14, 8, 14),
+          padding: const EdgeInsetsDirectional.fromSTEB(16, 12, 8, 12),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [

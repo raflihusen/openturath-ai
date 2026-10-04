@@ -194,7 +194,7 @@ class _TahawwulatIntroductionSheetState
     // Ponsel dan jendela sempit: bagian sebagai baris chip.
     final chips = SingleChildScrollView(
       scrollDirection: Axis.horizontal,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       child: Row(
         children: List.generate(_tabs.length, (idx) {
           final isSelected = _selectedTabIndex == idx;
@@ -217,7 +217,7 @@ class _TahawwulatIntroductionSheetState
             : 20.0;
         return ListView(
           controller: _scrollController,
-          padding: EdgeInsets.fromLTRB(gutter, page ? 8 : 6, gutter, 56),
+          padding: EdgeInsets.fromLTRB(gutter, page ? 8 : 4, gutter, 56),
           children: _sections(context, isDark),
         );
       },
@@ -1354,7 +1354,7 @@ class _TahawwulatIntroductionSheetState
         borderRadius: BorderRadius.circular(OTRadius.card),
         border: Border.all(color: borderColor, width: 0.8),
       ),
-      padding: const EdgeInsets.all(14),
+      padding: const EdgeInsets.all(12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -1375,7 +1375,7 @@ class _TahawwulatIntroductionSheetState
             children: rows.map((r) {
               return Container(
                 margin: const EdgeInsets.only(bottom: 8),
-                padding: const EdgeInsets.all(10),
+                padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
                   color: isDark ? OTColors.surfaceDark : OTColors.surfaceLight,
                   borderRadius: BorderRadius.circular(OTRadius.xs),
@@ -1565,7 +1565,7 @@ class _TahawwulatIntroductionSheetState
                 Column(
                   children: qawaidBooks.map((book) {
                     return Container(
-                      margin: const EdgeInsets.only(bottom: 6),
+                      margin: const EdgeInsets.only(bottom: 4),
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
                         color: isDark
@@ -1578,7 +1578,7 @@ class _TahawwulatIntroductionSheetState
                         children: [
                           Container(
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 6, vertical: 2),
+                                horizontal: 4, vertical: 2),
                             decoration: BoxDecoration(
                               color: isDark ? OTColors.surfaceLight.withValues(alpha: 0.12) : OTColors.shadow.withValues(alpha: 0.12),
                               borderRadius: BorderRadius.circular(OTRadius.xs),
@@ -1804,13 +1804,13 @@ class _TahawwulatIntroductionSheetState
         );
 
         return Container(
-          margin: const EdgeInsets.only(bottom: 10),
+          margin: const EdgeInsets.only(bottom: 8),
           decoration: BoxDecoration(
             color: OTColors.surfaceSubtle(isDark),
             borderRadius: BorderRadius.circular(OTRadius.input),
             border: Border.all(color: OTColors.border(isDark), width: 0.8),
           ),
-          padding: const EdgeInsets.all(14),
+          padding: const EdgeInsets.all(12),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -1899,7 +1899,7 @@ class _TahawwulatIntroductionSheetState
                   borderRadius: BorderRadius.circular(OTRadius.xs),
                   child: Container(
                     padding: const EdgeInsets.symmetric(
-                      horizontal: 10,
+                      horizontal: 8,
                       vertical: 4,
                     ),
                     decoration: BoxDecoration(
@@ -2069,7 +2069,7 @@ class _TahawwulatIntroductionSheetState
 
     // Jarak di atas tiap bab agar pergantian bab terasa.
     return Padding(
-      padding: EdgeInsets.only(top: widget.asPage ? 26 : 12),
+      padding: EdgeInsets.only(top: widget.asPage ? 24 : 12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -2128,7 +2128,7 @@ class _TahawwulatIntroductionSheetState
     final textTertiary = OTColors.textTertiary(isDark);
 
     return Container(
-      padding: const EdgeInsets.all(14),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: isDark ? OTColors.surfaceDark : OTColors.canvasLight,
         borderRadius: BorderRadius.circular(OTRadius.input),
