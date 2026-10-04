@@ -65,6 +65,7 @@ STATIC_WHITELIST = {
     "alkhateeb23@gmail.com",
     "omarasb1441@gmail.com",
     "prilatief@gmail.com",
+    "udinvoldigoad05@gmail.com",
 
     # Asatidz & Masyayikh & VIP Manual Permanen
     "aaadman40@gmail.com",
