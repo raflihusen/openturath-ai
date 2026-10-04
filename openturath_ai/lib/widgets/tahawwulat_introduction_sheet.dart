@@ -12,6 +12,7 @@ import '../core/scholarly_fonts.dart';
 
 import 'package:openturath_ai/core/design/ot_typography.dart';
 import 'package:openturath_ai/core/design/ot_radius.dart';
+import 'ot_components.dart';
 /// Item pembantu untuk data 6 Kitab Qawa'id
 class _QawaidBook {
   final String level;
@@ -199,32 +200,10 @@ class _TahawwulatIntroductionSheetState
           final isSelected = _selectedTabIndex == idx;
           return Padding(
             padding: const EdgeInsetsDirectional.only(end: 8),
-            child: AppleInteractiveWrapper(
-              onTap: () => select(idx),
-              pressedScale: 0.96,
-              borderRadius: BorderRadius.circular(OTRadius.card),
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 200),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                decoration: BoxDecoration(
-                  color:
-                      isSelected ? textPrimary : OTColors.surfaceSubtle(isDark),
-                  borderRadius: BorderRadius.circular(OTRadius.card),
-                  border: Border.all(
-                    color: isSelected ? textPrimary : borderColor,
-                    width: 0.8,
-                  ),
-                ),
-                child: Text(
-                  _tabs[idx],
-                  style: ScholarlyFonts.outfit(
-                    fontSize: OTFontSize.s12,
-                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
-                    color: isSelected ? surfaceColor : textSecondary,
-                  ),
-                ),
-              ),
+            child: OTChip(
+              label: _tabs[idx],
+              selected: isSelected,
+              onSelected: () => select(idx),
             ),
           );
         }),

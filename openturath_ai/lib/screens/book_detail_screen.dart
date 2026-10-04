@@ -262,10 +262,6 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
           ),
           title: Text(
             Loc.tr('bookDetails'),
-            style: ScholarlyFonts.outfit(color: textPrimary).copyWith(
-              fontSize: OTFontSize.s18,
-              fontWeight: FontWeight.w700,
-            ),
           ),
           actions: [
             IconButton(

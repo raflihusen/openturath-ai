@@ -73,7 +73,7 @@ Tidak ada ukuran di luar skala dan tidak ada pecahan. Bobot hanya `w400`, `w600`
 
 ### Catatan fon
 
-Berkas yang dibundel hanya satu bobot per keluarga (Outfit 400, Newsreader 600, Scheherazade New 400). Bobot 600 dan 700 saat ini ditebalkan secara sintetis. Bundel berkas bobot asli agar huruf tebal dan harakat tampil tajam.
+Bobot asli dibundel: Outfit 400/600/700, Newsreader 400/600, Scheherazade New 400/700. Tidak ada penebalan sintetis.
 
 ## 4. Jarak dan radius
 
@@ -90,7 +90,20 @@ Berkas yang dibundel hanya satu bobot per keluarga (Outfit 400, Newsreader 600, 
 
 Kedalaman dibangun dengan garis `border`, bukan bayangan.
 
-## 5. Kerangka layar
+## 5. Komponen bersama
+
+| Kebutuhan | Pakai | Berkas |
+|---|---|---|
+| Tombol | `FilledButton`, `OutlinedButton`, `TextButton` tanpa `style` | bentuk pil dan tinggi 48 dari `AppTheme` |
+| Varian tombol | `OTButtons.destructive`, `.onInk`, `.quiet`, `.compactOutlined`, `.compactTonal` | `lib/core/design/ot_buttons.dart` |
+| Chip pilihan | `OTChip` | `lib/widgets/ot_components.dart` |
+| Judul halaman | `AppBar(title: Text(...))` tanpa `style` | Newsreader `s20` dari tema |
+| Kartu yang bisa dibuka | `OTBentoTile` | `lib/widgets/ot_motion_widgets.dart` |
+| Tanda "buka" | `otChevronIcon(context)` | mengikuti arah baca |
+
+Layar tidak menulis `styleFrom` sendiri; tes penjaga menolaknya.
+
+## 5a. Kerangka layar
 
 - Judul halaman, paling banyak satu baris kontrol, lalu isi.
 - Kartu hanya untuk benda yang bisa dibuka: kitab, asisten, catatan.
@@ -99,6 +112,8 @@ Kedalaman dibangun dengan garis `border`, bukan bayangan.
 - Kartu bidang ilmu menampilkan nama Arabnya.
 
 ## 6. Gerak dan sentuhan
+
+Angka gerak splash, loader, dan login dirancang di `motion/src/spec.ts` (Remotion) dan dicerminkan di `OTMotion`.
 
 Cepat 180ms, normal 220ms, lembar 280ms, transisi 320ms; kurva `easeOutCubic` (lembar: `easeOutQuart`). Elemen yang ditekan mengecil ke 0,985. Memuat ditandai tiga titik berdenyut, bukan roda berputar. Getar: `selection()` untuk tab dan chip, `light()` untuk kartu dan tombol, `success()` saat menyimpan catatan.
 
