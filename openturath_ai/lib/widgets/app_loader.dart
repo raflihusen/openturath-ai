@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import '../core/theme.dart';
 import '../core/localization.dart';
 import '../core/scholarly_fonts.dart';
-import 'openturath_brand.dart';
+import '../core/design/ot_motion.dart';
+import 'ot_arch_motion.dart';
 
 import 'package:openturath_ai/core/design/ot_typography.dart';
 import 'package:openturath_ai/core/design/ot_radius.dart';
@@ -54,7 +55,7 @@ class _AppLoaderState extends State<AppLoader>
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 1400),
+      duration: OTMotion.loaderLoop,
     )..repeat();
   }
 
@@ -81,7 +82,8 @@ class _AppLoaderState extends State<AppLoader>
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         if (widget.isFullscreen) ...[
-          OpenTurathMark(size: 40, color: textPrimary),
+          OTArchLoader(
+              progress: still ? 0.5 : _controller.value, ink: textPrimary),
           const SizedBox(height: 22),
           // Garis tipis dengan ruas yang meluncur: memuat tanpa durasi pasti.
           ClipRRect(

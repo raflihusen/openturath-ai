@@ -4,6 +4,7 @@ import '../core/design/native_design.dart';
 import '../core/localization.dart';
 
 import 'package:openturath_ai/core/design/ot_radius.dart';
+import 'app_loader.dart';
 /// Opt-in controls for native pages; never used by the AI room.
 class NativePress extends StatefulWidget {
   const NativePress({super.key, required this.child, this.onTap, this.label});
@@ -152,15 +153,11 @@ class _NativeLoadingState extends State<NativeLoading> {
       child: Padding(
         padding: const EdgeInsets.all(24),
         child: Column(mainAxisSize: MainAxisSize.min, children: [
-          if (MediaQuery.disableAnimationsOf(context))
-            Icon(Icons.hourglass_empty_rounded,
-                color: NativeColors.textSecondary(dark))
-          else
-            SizedBox(
-                width: 22,
-                height: 22,
-                child: CircularProgressIndicator(
-                    strokeWidth: 1.5, color: NativeColors.textSecondary(dark))),
+          // Satu loader untuk seluruh aplikasi: tiga titik berdenyut.
+          AppLoader(
+              dotSize: 6,
+              spacing: 3,
+              color: NativeColors.textSecondary(dark)),
           const SizedBox(height: 16),
           Text(widget.label ?? NativeCopy.text('loading'),
               style: NativeType.meta(dark), textAlign: TextAlign.center),

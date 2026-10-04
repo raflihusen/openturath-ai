@@ -6,6 +6,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'package:openturath_ai/core/design/ot_colors.dart';
+import 'package:openturath_ai/core/design/ot_motion.dart';
+import 'ot_arch_motion.dart';
+
 /// "Gema lengkung": lengkung runcing logo diulang sebagai lapisan bersarang,
 /// seperti pintu yang makin dalam. Cahaya di dasar bernapas pelan dan
 /// merambat dari lapisan terdalam ke luar. Tanpa teks, tanpa ikon.
@@ -20,9 +23,13 @@ class ArchEchoCanvas extends StatefulWidget {
 }
 
 class _ArchEchoCanvasState extends State<ArchEchoCanvas>
-    with SingleTickerProviderStateMixin {
-  late final AnimationController _clock = AnimationController(
-      vsync: this, duration: const Duration(hours: 1));
+    with TickerProviderStateMixin {
+  // Urutan masuk: lapisan terbangun dari yang terdalam, lalu cahaya naik.
+  late final AnimationController _intro = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: OTMotion.loginGlowEndMs));
+  late final AnimationController _clock =
+      AnimationController(vsync: this, duration: const Duration(hours: 1));
   late final AppLifecycleListener _lifecycle;
   bool _still = false;
 
@@ -39,6 +46,11 @@ class _ArchEchoCanvasState extends State<ArchEchoCanvas>
   void didChangeDependencies() {
     super.didChangeDependencies();
     _still = MediaQuery.disableAnimationsOf(context) || _underTest;
+    if (_still) {
+      _intro.value = 1;
+    } else if (_intro.status == AnimationStatus.dismissed) {
+      _intro.forward();
+    }
     _sync();
   }
 
@@ -56,6 +68,7 @@ class _ArchEchoCanvasState extends State<ArchEchoCanvas>
   @override
   void dispose() {
     _lifecycle.dispose();
+    _intro.dispose();
     _clock.dispose();
     super.dispose();
   }
@@ -64,12 +77,13 @@ class _ArchEchoCanvasState extends State<ArchEchoCanvas>
   Widget build(BuildContext context) {
     return RepaintBoundary(
       child: AnimatedBuilder(
-        animation: _clock,
+        animation: Listenable.merge([_clock, _intro]),
         builder: (context, _) => CustomPaint(
           size: Size.infinite,
           painter: _ArchEchoPainter(
             // Saat diam, pakai satu bingkai yang representatif.
             seconds: _still ? 2.6 : _clock.value * 3600,
+            introMs: _intro.value * OTMotion.loginGlowEndMs,
             compact: widget.compact,
           ),
         ),
@@ -79,40 +93,16 @@ class _ArchEchoCanvasState extends State<ArchEchoCanvas>
 }
 
 class _ArchEchoPainter extends CustomPainter {
-  _ArchEchoPainter({required this.seconds, required this.compact});
+  _ArchEchoPainter(
+      {required this.seconds, required this.introMs, required this.compact});
 
   final double seconds;
+  final double introMs;
   final bool compact;
 
   static const _layers = 7;
   static const _breath = 13.0; // detik per napas cahaya
   static const _lag = 0.085; // jeda rambat antarlapisan (bagian satu napas)
-
-  /// Lengkung runcing seperti logo: dua busur bertemu di puncak. Garis
-  /// lantai tidak ikut digambar pada versi [open].
-  static Path _arch(Rect rect, {bool open = false}) {
-    final shoulder = rect.top + rect.height * 0.40;
-    final path = Path()
-      ..moveTo(rect.left, rect.bottom)
-      ..lineTo(rect.left, shoulder)
-      ..cubicTo(
-          rect.left,
-          rect.top + rect.height * 0.19,
-          rect.center.dx - rect.width * 0.2,
-          rect.top + rect.height * 0.075,
-          rect.center.dx,
-          rect.top)
-      ..cubicTo(
-          rect.center.dx + rect.width * 0.2,
-          rect.top + rect.height * 0.075,
-          rect.right,
-          rect.top + rect.height * 0.19,
-          rect.right,
-          shoulder)
-      ..lineTo(rect.right, rect.bottom);
-    if (!open) path.close();
-    return path;
-  }
 
   /// Gelombang halus 0..1 dengan puncak yang lebih lama daripada sinus.
   static double _wave(double phase) {
@@ -133,6 +123,8 @@ class _ArchEchoPainter extends CustomPainter {
 
     // Cahaya di ujung lorong, di belakang semua lapisan.
     final glow = _wave(t);
+    final glowIn = OTMotion.curve
+        .transform((introMs / OTMotion.loginGlowEndMs).clamp(0.0, 1.0));
     final glowCenter = Offset(centerX, vanish + (bottom - vanish) * 0.10);
     final glowRadius = width * 0.46;
     canvas.drawCircle(
@@ -143,7 +135,7 @@ class _ArchEchoPainter extends CustomPainter {
           glowCenter,
           glowRadius,
           [
-            Color.fromRGBO(255, 255, 255, 0.06 + 0.06 * glow),
+            Color.fromRGBO(255, 255, 255, (0.06 + 0.06 * glow) * glowIn),
             OTColors.surfaceLight.withValues(alpha: 0.00),
           ],
         ),
@@ -153,7 +145,14 @@ class _ArchEchoPainter extends CustomPainter {
     for (var i = 0; i < _layers; i++) {
       final depth = i / (_layers - 1); // 0 luar .. 1 dalam
       final pulse = _wave(t - (_layers - 1 - i) * _lag);
-      final scale = (1 - depth * 0.74) * (1 + 0.012 * (pulse - 0.5));
+      final enter = OTMotion.curve.transform(
+          ((introMs - (_layers - 1 - i) * OTMotion.loginLayerStaggerMs) /
+                  OTMotion.loginLayerDurationMs)
+              .clamp(0.0, 1.0));
+      if (enter == 0) continue;
+      final scale = (1 - depth * 0.74) *
+          (1 + 0.012 * (pulse - 0.5)) *
+          (0.94 + 0.06 * enter);
       final w = width * scale;
       final rect = Rect.fromLTRB(
         centerX - w / 2,
@@ -175,22 +174,24 @@ class _ArchEchoPainter extends CustomPainter {
           );
 
       canvas.drawPath(
-        _arch(rect),
+        otArchPath(rect),
         Paint()
           ..style = PaintingStyle.fill
-          ..shader = fade(0.018 + 0.016 * pulse),
+          ..shader = fade((0.018 + 0.016 * pulse) * enter),
       );
       canvas.drawPath(
-        _arch(rect, open: true),
+        otArchPath(rect, open: true),
         Paint()
           ..style = PaintingStyle.stroke
           ..strokeWidth = 1
-          ..shader = fade(0.07 + 0.03 * depth + 0.09 * pulse),
+          ..shader = fade((0.07 + 0.03 * depth + 0.09 * pulse) * enter),
       );
     }
   }
 
   @override
   bool shouldRepaint(_ArchEchoPainter oldDelegate) =>
-      oldDelegate.seconds != seconds || oldDelegate.compact != compact;
+      oldDelegate.seconds != seconds ||
+      oldDelegate.introMs != introMs ||
+      oldDelegate.compact != compact;
 }

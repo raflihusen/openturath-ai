@@ -2,12 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../core/design/ot_colors.dart';
+import '../core/design/ot_motion.dart';
 import '../core/routes.dart';
-import '../core/theme.dart';
-import '../widgets/app_loader.dart';
-import '../core/scholarly_fonts.dart';
+import '../widgets/ot_arch_motion.dart';
 
-import 'package:openturath_ai/core/design/ot_typography.dart';
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key, this.resolveInitialRoute});
 
@@ -17,43 +16,19 @@ class SplashScreen extends StatefulWidget {
   State<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<double> _fadeAnimation;
-  late Animation<double> _scaleAnimation;
-
+class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-
-    _controller = AnimationController(
-      duration: const Duration(milliseconds: 450),
-      vsync: this,
-    );
-
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeOut),
-    );
-
-    _scaleAnimation = Tween<double>(begin: 0.95, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic),
-    );
-
-    _controller.forward();
     // Navigator's initial route must finish mounting before it is replaced.
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) _checkAuthAndNavigate();
     });
   }
 
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
   Future<void> _checkAuthAndNavigate() async {
+    // Pembuka terlihat sejenak, tetapi tidak pernah menahan lebih lama.
+    final hold = Future<void>.delayed(OTMotion.splashHold);
     var targetRoute = AppRoutes.login;
     try {
       if (widget.resolveInitialRoute != null) {
@@ -76,49 +51,28 @@ class _SplashScreenState extends State<SplashScreen>
       // Reading auth state may fail, but must not leave an endless splash.
       targetRoute = AppRoutes.login;
     }
+    await hold;
     if (!mounted) return;
     Navigator.pushReplacementNamed(context, targetRoute);
   }
 
   @override
   Widget build(BuildContext context) {
-    const bg = AppTheme.canvasDark;
-    const textPrimary = AppTheme.textPrimaryDark;
-    const accent = AppTheme.textSecondaryDark;
+    // Mengikuti tema aplikasi, sama seperti layar luncur sistem.
+    final dark = Theme.of(context).brightness == Brightness.dark;
+    final bg = OTColors.canvas(dark);
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: const SystemUiOverlayStyle(
+      value: SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
-        statusBarIconBrightness: Brightness.light,
+        statusBarIconBrightness: dark ? Brightness.light : Brightness.dark,
         systemNavigationBarColor: bg,
-        systemNavigationBarIconBrightness: Brightness.light,
+        systemNavigationBarIconBrightness:
+            dark ? Brightness.light : Brightness.dark,
       ),
       child: Scaffold(
         backgroundColor: bg,
-        body: Center(
-          child: FadeTransition(
-            opacity: _fadeAnimation,
-            child: ScaleTransition(
-              scale: _scaleAnimation,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'OpenTurath',
-                    style: ScholarlyFonts.newsreader(
-                      fontSize: OTFontSize.s36,
-                      fontWeight: FontWeight.w600,
-                      letterSpacing: -0.6,
-                      color: textPrimary,
-                    ),
-                  ),
-                  const SizedBox(height: 28),
-                  const AppLoader(color: accent, dotSize: 7, spacing: 3.5),
-                ],
-              ),
-            ),
-          ),
-        ),
+        body: Center(child: OTSplashIntro(ink: OTColors.textPrimary(dark))),
       ),
     );
   }

@@ -24,6 +24,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:openturath_ai/core/design/ot_typography.dart';
 import 'package:openturath_ai/core/design/ot_radius.dart';
 
+import '../widgets/app_loader.dart';
+import '../core/design/ot_motion.dart';
+
 /// A shared, theme-adaptive sign-in surface for mobile and desktop.
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -188,45 +191,52 @@ class _LoginScreenState extends State<LoginScreen> {
                             mainAxisSize: MainAxisSize.min,
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
-                              Text(
-                                Loc.tr('loginTitle'),
-                                style: ScholarlyFonts.newsreader(
-                                  fontSize: OTFontSize.s36,
-                                  fontWeight: FontWeight.w400,
-                                  letterSpacing: -0.8,
-                                  height: 1.15,
-                                  color: primary,
+                              OTReveal(
+                                delayMs: OTMotion.loginHeadlineMs,
+                                child: Text(
+                                  Loc.tr('loginTitle'),
+                                  style: ScholarlyFonts.newsreader(
+                                    fontSize: OTFontSize.s36,
+                                    fontWeight: FontWeight.w400,
+                                    letterSpacing: -0.8,
+                                    height: 1.15,
+                                    color: primary,
+                                  ),
                                 ),
                               ),
                               const SizedBox(height: 10),
-                              Text(
-                                Loc.tr('loginSubtitle'),
-                                style: ScholarlyFonts.outfit(
-                                  fontSize: OTFontSize.s16,
-                                  height: 1.5,
-                                  color: secondary,
+                              OTReveal(
+                                delayMs: OTMotion.loginSubtitleMs,
+                                child: Text(
+                                  Loc.tr('loginSubtitle'),
+                                  style: ScholarlyFonts.outfit(
+                                    fontSize: OTFontSize.s16,
+                                    height: 1.5,
+                                    color: secondary,
+                                  ),
                                 ),
                               ),
                               const SizedBox(height: 28),
-                              FilledButton.icon(
-                                onPressed: _isLoading ? null : _signIn,
-                                icon: _isLoading
-                                    ? SizedBox(
-                                        width: 20,
-                                        height: 20,
-                                        child: CircularProgressIndicator(
-                                            strokeWidth: 2, color: secondary),
-                                      )
-                                    : _GoogleGVector(),
-                                label: Text(
-                                  _isLoading
-                                      ? Loc.tr('desktopConnectingGoogle')
-                                      : AppCopy.continueWithGoogle,
-                                  textAlign: TextAlign.center,
-                                  style: ScholarlyFonts.outfit(
-                                    fontSize: OTFontSize.s16,
-                                    fontWeight: FontWeight.w600,
-                                    height: 1.4,
+                              OTReveal(
+                                delayMs: OTMotion.loginButtonMs,
+                                child: FilledButton.icon(
+                                  onPressed: _isLoading ? null : _signIn,
+                                  icon: _isLoading
+                                      ? AppLoader(
+                                          dotSize: 5,
+                                          spacing: 2,
+                                          color: secondary)
+                                      : _GoogleGVector(),
+                                  label: Text(
+                                    _isLoading
+                                        ? Loc.tr('desktopConnectingGoogle')
+                                        : AppCopy.continueWithGoogle,
+                                    textAlign: TextAlign.center,
+                                    style: ScholarlyFonts.outfit(
+                                      fontSize: OTFontSize.s16,
+                                      fontWeight: FontWeight.w600,
+                                      height: 1.4,
+                                    ),
                                   ),
                                 ),
                               ),
@@ -265,40 +275,43 @@ class _LoginScreenState extends State<LoginScreen> {
                                 ),
                               ],
                               const SizedBox(height: 20),
-                              Text.rich(
-                                TextSpan(
-                                  text: '${AppCopy.termsAgreementPrefix} ',
-                                  style: ScholarlyFonts.outfit(
-                                      fontSize: OTFontSize.s12,
-                                      height: 1.6,
-                                      color: secondary),
-                                  children: [
-                                    TextSpan(
-                                      text: AppCopy.termsOfService
-                                          .replaceAll(' ', '\u00A0'),
-                                      style: TextStyle(
-                                        color: primary,
-                                        decoration: TextDecoration.underline,
+                              OTReveal(
+                                delayMs: OTMotion.loginLegalMs,
+                                child: Text.rich(
+                                  TextSpan(
+                                    text: '${AppCopy.termsAgreementPrefix} ',
+                                    style: ScholarlyFonts.outfit(
+                                        fontSize: OTFontSize.s12,
+                                        height: 1.6,
+                                        color: secondary),
+                                    children: [
+                                      TextSpan(
+                                        text: AppCopy.termsOfService
+                                            .replaceAll(' ', '\u00A0'),
+                                        style: TextStyle(
+                                          color: primary,
+                                          decoration: TextDecoration.underline,
+                                        ),
+                                        recognizer: _termsRecognizer,
                                       ),
-                                      recognizer: _termsRecognizer,
-                                    ),
-                                    TextSpan(
-                                      text: switch (Loc.language) {
-                                        'en' => ' and ',
-                                        'ar' => ' و',
-                                        _ => ' dan ',
-                                      },
-                                    ),
-                                    TextSpan(
-                                      text: AppCopy.privacyPolicy
-                                          .replaceAll(' ', '\u00A0'),
-                                      style: TextStyle(
-                                        color: primary,
-                                        decoration: TextDecoration.underline,
+                                      TextSpan(
+                                        text: switch (Loc.language) {
+                                          'en' => ' and ',
+                                          'ar' => ' و',
+                                          _ => ' dan ',
+                                        },
                                       ),
-                                      recognizer: _privacyRecognizer,
-                                    ),
-                                  ],
+                                      TextSpan(
+                                        text: AppCopy.privacyPolicy
+                                            .replaceAll(' ', '\u00A0'),
+                                        style: TextStyle(
+                                          color: primary,
+                                          decoration: TextDecoration.underline,
+                                        ),
+                                        recognizer: _privacyRecognizer,
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
                             ],

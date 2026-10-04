@@ -10,9 +10,13 @@ import 'package:openturath_ai/core/design/ot_radius.dart';
 /// [index] memberi jeda berurutan antar-ubin. Tanpa timer, jadi aman di tes,
 /// dan otomatis nonaktif bila pengguna meminta gerak dikurangi.
 class OTReveal extends StatefulWidget {
-  const OTReveal({super.key, this.index = 0, required this.child});
+  const OTReveal(
+      {super.key, this.index = 0, this.delayMs, required this.child});
 
   final int index;
+
+  /// Jeda eksplisit; bila diisi, menggantikan jeda dari [index].
+  final int? delayMs;
   final Widget child;
 
   @override
@@ -30,7 +34,7 @@ class _OTRevealState extends State<OTReveal>
   @override
   void initState() {
     super.initState();
-    final delay = widget.index.clamp(0, 8) * _stagger;
+    final delay = widget.delayMs ?? widget.index.clamp(0, 8) * _stagger;
     final total = _base + delay;
     _controller = AnimationController(
         vsync: this, duration: Duration(milliseconds: total));
