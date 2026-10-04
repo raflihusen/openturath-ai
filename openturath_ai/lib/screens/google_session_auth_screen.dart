@@ -118,38 +118,47 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
   /// Memeriksa kuki dan URL untuk mendeteksi apakah sesi Google telah aktif
   Future<void> _checkAndAuthenticateSession(WebUri? url) async {
     if (!mounted || _isSessionReady) return;
-    final urlStr = url?.toString() ?? '';
+    final currentWebUrl = url ?? await _webController?.getUrl();
+    final urlStr = currentWebUrl?.toString() ?? '';
 
-    // 1. Deteksi melalui URL NotebookLM yang telah berhasil terbuka
-    if (url != null &&
-        NotebookNavigation.notebook(url.uriValue) &&
-        !urlStr.contains('ServiceLogin') &&
-        !urlStr.contains('signin') &&
+    // Jangan tandai selesai jika pengguna masih berada di halaman formulir masuk
+    if (urlStr.contains('ServiceLogin') ||
+        urlStr.contains('signin/v2') ||
+        urlStr.contains('signin/rejected') ||
+        urlStr.contains('identifier')) {
+      return;
+    }
+
+    // 1. Deteksi melalui URL asisten/Google yang telah berhasil terbuka
+    if (currentWebUrl != null &&
+        NotebookNavigation.notebook(currentWebUrl.uriValue) &&
         !urlStr.contains('accounts.google')) {
       await _onSessionAuthenticated();
       return;
     }
 
-    // 2. Deteksi melalui kuki sesi resmi Google
-    try {
-      final cookieManager = DesktopWebViewRuntime.cookies;
-      final cookiesLm = await cookieManager.getCookies(
-        url: WebUri('https://notebooklm.google.com'),
-      );
-      final cookiesNb = await cookieManager.getCookies(
-        url: WebUri('https://notebook.google.com'),
-      );
-      final allCookies = [...cookiesLm, ...cookiesNb];
-      final hasSession = allCookies.any((c) =>
-          c.name == 'SID' ||
-          c.name == 'HSID' ||
-          c.name == 'SSID' ||
-          c.name == 'OSID');
+    // 2. Deteksi melalui kuki sesi resmi Google jika sudah bukan di halaman login
+    if (urlStr.isNotEmpty && !urlStr.contains('accounts.google')) {
+      try {
+        final cookieManager = DesktopWebViewRuntime.cookies;
+        final cookiesLm = await cookieManager.getCookies(
+          url: WebUri('https://notebooklm.google.com'),
+        );
+        final cookiesNb = await cookieManager.getCookies(
+          url: WebUri('https://notebook.google.com'),
+        );
+        final allCookies = [...cookiesLm, ...cookiesNb];
+        final hasSession = allCookies.any((c) =>
+            c.name == 'SID' ||
+            c.name == 'HSID' ||
+            c.name == 'SSID' ||
+            c.name == 'OSID');
 
-      if (hasSession) {
-        await _onSessionAuthenticated();
-      }
-    } catch (_) {}
+        if (hasSession) {
+          await _onSessionAuthenticated();
+        }
+      } catch (_) {}
+    }
   }
 
   /// Dialog konfirmasi jika pengguna membatalkan / keluar dari langkah ke-2
@@ -298,6 +307,13 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
                 onPressed: () {
                   _webController?.reload();
                 },
+              ),
+              TextButton(
+                onPressed: _onSessionAuthenticated,
+                child: Text(
+                  'Lanjutkan',
+                  style: OTTypography.button(color: textPrimary),
+                ),
               ),
               IconButton(
                 tooltip: Loc.tr('exit'),

@@ -1279,22 +1279,6 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
     });
   }
 
-  void _handleAuthenticationRequired() {
-    _readinessTimer?.cancel();
-    _inputRetryTimer?.cancel();
-    if (!mounted) return;
-    setState(() {
-      final session = widget.session;
-      session.isWebLoading = false;
-      session.isSessionReady = false;
-      session.isGoogleAuthPage = true;
-      session.isGooglePermissionError = false;
-      session.isPaywallRequired = false;
-      session.isTimeoutError = false;
-      session.errorMessage = NotebookNavigation.authenticationMessage;
-    });
-  }
-
   Future<void> _checkReady() async {
     if (_checkingReady || widget.session.webController == null || !mounted) {
       return;
@@ -1303,14 +1287,8 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
     try {
       final controller = widget.session.webController!;
       final url = await controller.getUrl();
-      if (url != null && NotebookNavigation.signInFlow(url.uriValue) &&
-          AgentSessionTab.googleSignInConsent) {
+      if (url != null && NotebookNavigation.signInFlow(url.uriValue)) {
         if (!widget.session.isGoogleAuthPage) _enterGoogleSignIn();
-        return;
-      }
-      if (url != null && NotebookNavigation.authentication(url.uriValue)) {
-        _handleAuthenticationRequired();
-        await controller.stopLoading();
         return;
       }
       if (widget.session.isGoogleAuthPage ||
@@ -1574,13 +1552,16 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
                   AgentSessionTab.googleSignInConsent = true;
                   setState(() {
                     session.errorMessage = null;
-                    session.isGoogleAuthPage = false;
+                    session.isGoogleAuthPage = true;
                     session.isWebLoading = true;
                     session.isSessionReady = false;
                   });
+                  final targetSignInUrl = email.isNotEmpty
+                      ? 'https://accounts.google.com/ServiceLogin?continue=${Uri.encodeComponent(session.resolvedUrl!)}&Email=${Uri.encodeComponent(email)}&login_hint=${Uri.encodeComponent(email)}'
+                      : 'https://accounts.google.com/ServiceLogin?continue=${Uri.encodeComponent(session.resolvedUrl!)}';
                   session.webController?.loadUrl(
                       urlRequest:
-                          URLRequest(url: WebUri(session.resolvedUrl!)));
+                          URLRequest(url: WebUri(targetSignInUrl)));
                   _startReadinessCheck();
                 },
           secondaryLabel: Loc.tr('roomOpenInBrowser'),
@@ -1655,12 +1636,8 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
             onCreateWindow: (controller, createWindowAction) async {
               final targetUrl = createWindowAction.request.url;
               if (targetUrl != null &&
-                  NotebookNavigation.authentication(targetUrl.uriValue)) {
-                _handleAuthenticationRequired();
-                return false;
-              }
-              if (targetUrl != null &&
-                  NotebookNavigation.allowed(targetUrl.uriValue)) {
+                  (NotebookNavigation.signInFlow(targetUrl.uriValue) ||
+                      NotebookNavigation.allowed(targetUrl.uriValue))) {
                 await controller.loadUrl(
                     urlRequest: URLRequest(url: targetUrl));
                 return true;
@@ -1874,13 +1851,8 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
             onLoadStart: (controller, uri) async {
               session.hasInjectedEarlyScript = false;
               if (uri != null &&
-                  NotebookNavigation.authentication(uri.uriValue)) {
-                if (AgentSessionTab.googleSignInConsent) {
-                  if (!session.isGoogleAuthPage) _enterGoogleSignIn();
-                  return;
-                }
-                _handleAuthenticationRequired();
-                await controller.stopLoading();
+                  NotebookNavigation.signInFlow(uri.uriValue)) {
+                if (!session.isGoogleAuthPage) _enterGoogleSignIn();
                 return;
               }
               if (session.isGoogleAuthPage &&
@@ -1962,14 +1934,9 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
             },
             shouldOverrideUrlLoading: (controller, action) async {
               final uri = action.request.url;
-              final consented = AgentSessionTab.googleSignInConsent;
-              if (uri != null &&
-                  NotebookNavigation.authentication(uri.uriValue)) {
-                // Tanpa persetujuan, halaman masuk tidak dimuat sama sekali.
-                if (!consented) {
-                  _handleAuthenticationRequired();
-                  return NavigationActionPolicy.CANCEL;
-                }
+              if (uri == null) return NavigationActionPolicy.CANCEL;
+
+              if (NotebookNavigation.signInFlow(uri.uriValue)) {
                 if (action.isForMainFrame == true &&
                     !session.isGoogleAuthPage) {
                   _enterGoogleSignIn();
@@ -1979,7 +1946,6 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
               if (action.isForMainFrame != true) {
                 return NavigationActionPolicy.ALLOW;
               }
-              if (uri == null) return NavigationActionPolicy.CANCEL;
 
               if (NotebookNavigation.allowed(uri.uriValue)) {
                 // Selesai masuk: kembali ke notebook dan lanjutkan pemuatan.
@@ -1987,15 +1953,10 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
                   setState(() {
                     session.isGoogleAuthPage = false;
                     session.isWebLoading = true;
+                    session.errorMessage = null;
                   });
                   _startReadinessCheck();
                 }
-                return NavigationActionPolicy.ALLOW;
-              }
-              // Langkah lanjutan proses masuk tetap di domain Google.
-              if (consented &&
-                  session.isGoogleAuthPage &&
-                  NotebookNavigation.signInFlow(uri.uriValue)) {
                 return NavigationActionPolicy.ALLOW;
               }
               return NavigationActionPolicy.CANCEL;
