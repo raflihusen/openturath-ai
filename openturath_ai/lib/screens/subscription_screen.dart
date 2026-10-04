@@ -19,6 +19,8 @@ import '../core/app_platform.dart';
 import '../services/auth_service.dart';
 
 import 'package:openturath_ai/core/design/ot_radius.dart';
+import 'package:openturath_ai/core/design/ot_buttons.dart';
+
 /// Penawaran perdana. Hak akses tetap diputuskan oleh backend yang terverifikasi.
 class SubscriptionScreen extends StatefulWidget {
   const SubscriptionScreen({super.key});
@@ -239,7 +241,8 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
       isScrollControlled: true,
       backgroundColor: surface,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(OTRadius.dialog)),
+        borderRadius:
+            BorderRadius.vertical(top: Radius.circular(OTRadius.dialog)),
       ),
       builder: (ctx) {
         var query = '';
@@ -377,7 +380,9 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     Widget eyebrow(String text) => Text(
           text,
           style: ScholarlyFonts.outfit(
-              fontSize: OTFontSize.s12, fontWeight: FontWeight.w400, color: muted),
+              fontSize: OTFontSize.s12,
+              fontWeight: FontWeight.w400,
+              color: muted),
         );
 
     Widget planTitle(String text) => Text(
@@ -396,12 +401,6 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
           height: 48,
           child: FilledButton(
             onPressed: _processing ? null : onPressed,
-            style: FilledButton.styleFrom(
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(OTRadius.input)),
-              textStyle: ScholarlyFonts.outfit(
-                  fontSize: OTFontSize.s14, fontWeight: FontWeight.w600),
-            ),
             child: Text(Loc.tr('continuePayment')),
           ),
         );
@@ -459,12 +458,11 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     final flagshipScope = Align(
       alignment: AlignmentDirectional.centerStart,
       child: Text(
-        (flagship.subAgents ?? const [])
-            .map((sub) => sub.name)
-            .join(' · '),
+        (flagship.subAgents ?? const []).map((sub) => sub.name).join(' · '),
         maxLines: 2,
         overflow: TextOverflow.ellipsis,
-        style: ScholarlyFonts.outfit(fontSize: OTFontSize.s14, height: 1.5, color: ink),
+        style: ScholarlyFonts.outfit(
+            fontSize: OTFontSize.s14, height: 1.5, color: ink),
       ),
     );
 
@@ -632,10 +630,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                         onPressed: _processing
                             ? null
                             : () => RedeemCodeSheet.show(context),
-                        style: TextButton.styleFrom(
-                          foregroundColor: muted,
-                          minimumSize: const Size(0, 44),
-                        ),
+                        style: OTButtons.quiet(dark),
                         icon: const Icon(Icons.confirmation_number_outlined,
                             size: 18),
                         label: Text(Loc.tr('redeemAccess')),

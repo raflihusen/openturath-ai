@@ -26,6 +26,8 @@ import 'note_reader_screen.dart';
 import '../widgets/ot_motion_widgets.dart';
 
 import 'package:openturath_ai/core/design/ot_typography.dart';
+import 'package:openturath_ai/core/design/ot_buttons.dart';
+
 class BookmarkScreen extends StatefulWidget {
   const BookmarkScreen({super.key});
 
@@ -171,15 +173,11 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
             ),
             FilledButton(
               onPressed: () => Navigator.pop(context, true),
-              style: FilledButton.styleFrom(
-                backgroundColor: NativeColors.destructiveFill(isDark),
-                shape:
-                    RoundedRectangleBorder(borderRadius: OTRadius.buttonBorder),
-              ),
+              style: OTButtons.destructive(isDark),
               child: Text(
                 AppCopy.delete,
-                style: OTTypography.button(
-                    color: NativeColors.onAccent(isDark)),
+                style:
+                    OTTypography.button(color: NativeColors.onAccent(isDark)),
               ),
             ),
           ],
@@ -338,362 +336,367 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 1040),
             child: Column(
-          children: [
-            // ── Search Field (collapsible) ──
-            if (_showSearch)
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: OTSpacing.lg,
-                  vertical: OTSpacing.xs + 2,
-                ),
-                child: Container(
-                  constraints: const BoxConstraints(minHeight: 48),
-                  decoration: BoxDecoration(
-                    color: surfaceSubtle,
-                    borderRadius: OTRadius.inputBorder,
-                    border: Border.all(color: border, width: 1),
-                  ),
-                  child: TextField(
-                    controller: _searchCtrl,
-                    autofocus: true,
-                    onChanged: (val) {
-                      setState(() {
-                        _searchQuery = val;
-                        _filter();
-                      });
-                    },
-                    style: OTTypography.body(color: textPrimary),
-                    decoration: InputDecoration(
-                      hintText: AppCopy.searchSavedHint,
-                      hintStyle: OTTypography.body(color: textSecondary),
-                      prefixIcon: Icon(
-                        Icons.search_rounded,
-                        size: 18,
-                        color: textSecondary,
-                      ),
-                      suffixIcon: _searchQuery.isNotEmpty
-                          ? IconButton(
-                              icon: Icon(
-                                Icons.close_rounded,
-                                size: 16,
-                                color: textSecondary,
-                              ),
-                              onPressed: () {
-                                _searchCtrl.clear();
-                                setState(() {
-                                  _searchQuery = '';
-                                  _filter();
-                                });
-                              },
-                            )
-                          : null,
-                      border: InputBorder.none,
-                      contentPadding: const EdgeInsets.symmetric(vertical: 12),
+              children: [
+                // ── Search Field (collapsible) ──
+                if (_showSearch)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: OTSpacing.lg,
+                      vertical: OTSpacing.xs + 2,
                     ),
-                  ),
-                ),
-              ),
-
-            Padding(
-              padding:
-                  const EdgeInsets.fromLTRB(OTSpacing.lg, 12, OTSpacing.lg, 8),
-              child: Align(
-                alignment: AlignmentDirectional.centerStart,
-                child: Text(
-                  AppCopy.savedNotesCount(_filteredBookmarks.length),
-                  style:
-                      OTTypography.caption(color: textSecondary).copyWith(
-                    fontSize: OTFontSize.s12,
-                    letterSpacing: 0.2,
-                  ),
-                ),
-              ),
-            ),
-
-            // ── Horizontal Filter Pills (Pengelompokan Keilmuan) ──
-            Container(
-              height: MediaQuery.textScalerOf(context).scale(48).clamp(48, 100),
-              margin: const EdgeInsets.only(bottom: 8),
-              child: ListView.separated(
-                scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.symmetric(horizontal: OTSpacing.lg),
-                itemCount: _categories.length,
-                separatorBuilder: (_, __) =>
-                    const SizedBox(width: OTSpacing.sm),
-                itemBuilder: (context, index) {
-                  final cat = _categories[index];
-                  final isSelected = _selectedCategory == cat;
-
-                  return GestureDetector(
-                    onTap: () {
-                      OTMotion.selection();
-                      setState(() {
-                        _selectedCategory = cat;
-                        _filter();
-                      });
-                    },
-                    child: AnimatedContainer(
-                      duration: MediaQuery.disableAnimationsOf(context)
-                          ? Duration.zero
-                          : OTMotion.fast,
-                      curve: OTMotion.curve,
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: OTSpacing.md + 2,
-                        vertical: 6,
-                      ),
+                    child: Container(
+                      constraints: const BoxConstraints(minHeight: 48),
                       decoration: BoxDecoration(
-                        color: isSelected
-                            ? OTColors.primaryContainer(isDark)
-                            : surface,
-                        borderRadius: BorderRadius.circular(OTRadius.card),
-                        border: Border.all(
-                          color: isSelected
-                              ? OTColors.primaryContainer(isDark)
-                              : border.withValues(alpha: 0.7),
-                          width: 0.8,
-                        ),
+                        color: surfaceSubtle,
+                        borderRadius: OTRadius.inputBorder,
+                        border: Border.all(color: border, width: 1),
                       ),
-                      child: Center(
-                        child: Text(
-                          Loc.text(cat),
-                          style: OTTypography.caption(
-                            color: isSelected
-                                ? OTColors.onPrimaryContainer(isDark)
-                                : textSecondary,
-                          ).copyWith(
-                            fontSize: OTFontSize.s12,
-                            fontWeight:
-                                isSelected ? FontWeight.w600 : FontWeight.w400,
+                      child: TextField(
+                        controller: _searchCtrl,
+                        autofocus: true,
+                        onChanged: (val) {
+                          setState(() {
+                            _searchQuery = val;
+                            _filter();
+                          });
+                        },
+                        style: OTTypography.body(color: textPrimary),
+                        decoration: InputDecoration(
+                          hintText: AppCopy.searchSavedHint,
+                          hintStyle: OTTypography.body(color: textSecondary),
+                          prefixIcon: Icon(
+                            Icons.search_rounded,
+                            size: 18,
+                            color: textSecondary,
                           ),
+                          suffixIcon: _searchQuery.isNotEmpty
+                              ? IconButton(
+                                  icon: Icon(
+                                    Icons.close_rounded,
+                                    size: 16,
+                                    color: textSecondary,
+                                  ),
+                                  onPressed: () {
+                                    _searchCtrl.clear();
+                                    setState(() {
+                                      _searchQuery = '';
+                                      _filter();
+                                    });
+                                  },
+                                )
+                              : null,
+                          border: InputBorder.none,
+                          contentPadding:
+                              const EdgeInsets.symmetric(vertical: 12),
                         ),
                       ),
                     ),
-                  );
-                },
-              ),
-            ),
+                  ),
 
-            if (_bookmarkService.hasPendingSync)
-              Padding(
-                padding: const EdgeInsets.fromLTRB(
-                    OTSpacing.base, 0, OTSpacing.base, OTSpacing.sm),
-                child: Semantics(
-                  liveRegion: true,
-                  child: Container(
-                    padding: const EdgeInsetsDirectional.only(
-                        start: OTSpacing.md, end: OTSpacing.xs),
-                    decoration: BoxDecoration(
-                      color: surfaceSubtle,
-                      borderRadius: OTRadius.cardBorder,
-                      border: Border.all(color: border),
-                    ),
-                    child: Row(
-                      children: [
-                        Icon(Icons.cloud_off_outlined,
-                            size: 18, color: textSecondary),
-                        const SizedBox(width: OTSpacing.sm),
-                        Expanded(
-                          child: Text(
-                            Loc.tr('notesSyncPendingBanner',
-                                ['${_bookmarkService.pendingSyncCount}']),
-                            style: NativeFonts.outfit(
-                                fontSize: OTFontSize.s14,
-                                height: 1.35,
-                                color: textSecondary),
-                          ),
-                        ),
-                        TextButton(
-                          onPressed: _syncBookmarks,
-                          child: Text(Loc.tr('syncNow')),
-                        ),
-                      ],
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(
+                      OTSpacing.lg, 12, OTSpacing.lg, 8),
+                  child: Align(
+                    alignment: AlignmentDirectional.centerStart,
+                    child: Text(
+                      AppCopy.savedNotesCount(_filteredBookmarks.length),
+                      style:
+                          OTTypography.caption(color: textSecondary).copyWith(
+                        fontSize: OTFontSize.s12,
+                        letterSpacing: 0.2,
+                      ),
                     ),
                   ),
                 ),
-              ),
 
-            // ── List of Saved Bookmarks ──
-            Expanded(
-              child: _isLoading
-                  ? const Center(child: NativeLoading())
-                  : RefreshIndicator(
-                      onRefresh: _syncBookmarks,
-                      color: accent,
-                      backgroundColor: surface,
-                      child: _filteredBookmarks.isEmpty
-                          ? LayoutBuilder(
-                              builder: (context, constraints) =>
-                                  SingleChildScrollView(
-                                physics: const AlwaysScrollableScrollPhysics(
-                                  parent: BouncingScrollPhysics(),
-                                ),
-                                child: ConstrainedBox(
-                                  constraints: BoxConstraints(
-                                    minHeight: constraints.maxHeight,
-                                  ),
-                                  child: Center(
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: OTSpacing.xl),
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          Container(
-                                            width: 68,
-                                            height: 68,
-                                            decoration: BoxDecoration(
-                                              color: surfaceSubtle,
-                                              borderRadius: OTRadius.cardBorder,
-                                              border: Border.all(
-                                                  color: border, width: 1.0),
-                                            ),
-                                            child: Center(
-                                              child: Icon(
-                                                Icons
-                                                    .collections_bookmark_outlined,
-                                                size: 30,
-                                                color: textSecondary,
+                // ── Horizontal Filter Pills (Pengelompokan Keilmuan) ──
+                Container(
+                  height:
+                      MediaQuery.textScalerOf(context).scale(48).clamp(48, 100),
+                  margin: const EdgeInsets.only(bottom: 8),
+                  child: ListView.separated(
+                    scrollDirection: Axis.horizontal,
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: OTSpacing.lg),
+                    itemCount: _categories.length,
+                    separatorBuilder: (_, __) =>
+                        const SizedBox(width: OTSpacing.sm),
+                    itemBuilder: (context, index) {
+                      final cat = _categories[index];
+                      final isSelected = _selectedCategory == cat;
+
+                      return GestureDetector(
+                        onTap: () {
+                          OTMotion.selection();
+                          setState(() {
+                            _selectedCategory = cat;
+                            _filter();
+                          });
+                        },
+                        child: AnimatedContainer(
+                          duration: MediaQuery.disableAnimationsOf(context)
+                              ? Duration.zero
+                              : OTMotion.fast,
+                          curve: OTMotion.curve,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: OTSpacing.md + 2,
+                            vertical: 6,
+                          ),
+                          decoration: BoxDecoration(
+                            color: isSelected
+                                ? OTColors.primaryContainer(isDark)
+                                : surface,
+                            borderRadius: BorderRadius.circular(OTRadius.card),
+                            border: Border.all(
+                              color: isSelected
+                                  ? OTColors.primaryContainer(isDark)
+                                  : border.withValues(alpha: 0.7),
+                              width: 0.8,
+                            ),
+                          ),
+                          child: Center(
+                            child: Text(
+                              Loc.text(cat),
+                              style: OTTypography.caption(
+                                color: isSelected
+                                    ? OTColors.onPrimaryContainer(isDark)
+                                    : textSecondary,
+                              ).copyWith(
+                                fontSize: OTFontSize.s12,
+                                fontWeight: isSelected
+                                    ? FontWeight.w600
+                                    : FontWeight.w400,
+                              ),
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+
+                if (_bookmarkService.hasPendingSync)
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(
+                        OTSpacing.base, 0, OTSpacing.base, OTSpacing.sm),
+                    child: Semantics(
+                      liveRegion: true,
+                      child: Container(
+                        padding: const EdgeInsetsDirectional.only(
+                            start: OTSpacing.md, end: OTSpacing.xs),
+                        decoration: BoxDecoration(
+                          color: surfaceSubtle,
+                          borderRadius: OTRadius.cardBorder,
+                          border: Border.all(color: border),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(Icons.cloud_off_outlined,
+                                size: 18, color: textSecondary),
+                            const SizedBox(width: OTSpacing.sm),
+                            Expanded(
+                              child: Text(
+                                Loc.tr('notesSyncPendingBanner',
+                                    ['${_bookmarkService.pendingSyncCount}']),
+                                style: NativeFonts.outfit(
+                                    fontSize: OTFontSize.s14,
+                                    height: 1.35,
+                                    color: textSecondary),
+                              ),
+                            ),
+                            TextButton(
+                              onPressed: _syncBookmarks,
+                              child: Text(Loc.tr('syncNow')),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+
+                // ── List of Saved Bookmarks ──
+                Expanded(
+                  child: _isLoading
+                      ? const Center(child: NativeLoading())
+                      : RefreshIndicator(
+                          onRefresh: _syncBookmarks,
+                          color: accent,
+                          backgroundColor: surface,
+                          child: _filteredBookmarks.isEmpty
+                              ? LayoutBuilder(
+                                  builder: (context, constraints) =>
+                                      SingleChildScrollView(
+                                    physics:
+                                        const AlwaysScrollableScrollPhysics(
+                                      parent: BouncingScrollPhysics(),
+                                    ),
+                                    child: ConstrainedBox(
+                                      constraints: BoxConstraints(
+                                        minHeight: constraints.maxHeight,
+                                      ),
+                                      child: Center(
+                                        child: Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: OTSpacing.xl),
+                                          child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              Container(
+                                                width: 68,
+                                                height: 68,
+                                                decoration: BoxDecoration(
+                                                  color: surfaceSubtle,
+                                                  borderRadius:
+                                                      OTRadius.cardBorder,
+                                                  border: Border.all(
+                                                      color: border,
+                                                      width: 1.0),
+                                                ),
+                                                child: Center(
+                                                  child: Icon(
+                                                    Icons
+                                                        .collections_bookmark_outlined,
+                                                    size: 30,
+                                                    color: textSecondary,
+                                                  ),
+                                                ),
                                               ),
-                                            ),
-                                          ),
-                                          const SizedBox(height: OTSpacing.lg),
-                                          Text(
-                                            _allBookmarks.isEmpty
-                                                ? NativeCopy.text('notesEmpty')
-                                                : NativeCopy.text(
-                                                    'noNotesResults'),
-                                            style: OTTypography.cardTitle(
-                                                    color: textPrimary)
-                                                .copyWith(
-                                              fontSize: OTFontSize.s16,
-                                            ),
-                                          ),
-                                          const SizedBox(
-                                              height: OTSpacing.xs + 2),
-                                          Text(
-                                            _allBookmarks.isEmpty
-                                                ? NativeCopy.text('notesHint')
-                                                : NativeCopy.text('searchHint'),
-                                            textAlign: TextAlign.center,
-                                            style: OTTypography.body(
-                                                    color: textSecondary)
-                                                .copyWith(
-                                              fontSize: OTFontSize.s14,
-                                            ),
-                                          ),
-                                          const SizedBox(height: OTSpacing.xl),
-                                          OutlinedButton.icon(
-                                            onPressed: () {
-                                              OTMotion.light();
-                                              if (_allBookmarks.isEmpty) {
-                                                _openNoteEditor();
-                                              } else {
-                                                _searchCtrl.clear();
-                                                setState(() {
-                                                  _searchQuery = '';
-                                                  _selectedCategory = 'Semua';
-                                                  _filter();
-                                                });
-                                              }
-                                            },
-                                            icon: const Icon(
-                                                Icons.menu_book_outlined,
-                                                size: 16),
-                                            label: Text(_allBookmarks.isEmpty
-                                                ? NativeCopy.text('write')
-                                                : NativeCopy.text(
-                                                    'resetSearch')),
-                                            style: OutlinedButton.styleFrom(
-                                              foregroundColor: textPrimary,
-                                              side: BorderSide(
-                                                  color: border, width: 1.0),
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                horizontal: OTSpacing.lg,
-                                                vertical: OTSpacing.md,
+                                              const SizedBox(
+                                                  height: OTSpacing.lg),
+                                              Text(
+                                                _allBookmarks.isEmpty
+                                                    ? NativeCopy.text(
+                                                        'notesEmpty')
+                                                    : NativeCopy.text(
+                                                        'noNotesResults'),
+                                                style: OTTypography.cardTitle(
+                                                        color: textPrimary)
+                                                    .copyWith(
+                                                  fontSize: OTFontSize.s16,
+                                                ),
                                               ),
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    OTRadius.buttonBorder,
+                                              const SizedBox(
+                                                  height: OTSpacing.xs + 2),
+                                              Text(
+                                                _allBookmarks.isEmpty
+                                                    ? NativeCopy.text(
+                                                        'notesHint')
+                                                    : NativeCopy.text(
+                                                        'searchHint'),
+                                                textAlign: TextAlign.center,
+                                                style: OTTypography.body(
+                                                        color: textSecondary)
+                                                    .copyWith(
+                                                  fontSize: OTFontSize.s14,
+                                                ),
                                               ),
-                                              textStyle:
-                                                  OTTypography.button(),
-                                            ),
+                                              const SizedBox(
+                                                  height: OTSpacing.xl),
+                                              OutlinedButton.icon(
+                                                onPressed: () {
+                                                  OTMotion.light();
+                                                  if (_allBookmarks.isEmpty) {
+                                                    _openNoteEditor();
+                                                  } else {
+                                                    _searchCtrl.clear();
+                                                    setState(() {
+                                                      _searchQuery = '';
+                                                      _selectedCategory =
+                                                          'Semua';
+                                                      _filter();
+                                                    });
+                                                  }
+                                                },
+                                                icon: const Icon(
+                                                    Icons.menu_book_outlined,
+                                                    size: 16),
+                                                label: Text(_allBookmarks
+                                                        .isEmpty
+                                                    ? NativeCopy.text('write')
+                                                    : NativeCopy.text(
+                                                        'resetSearch')),
+                                              ),
+                                            ],
                                           ),
-                                        ],
+                                        ),
                                       ),
                                     ),
                                   ),
-                                ),
-                              ),
-                            )
-                          : ListView.separated(
-                              physics: const AlwaysScrollableScrollPhysics(
-                                parent: BouncingScrollPhysics(),
-                              ),
-                              padding: const EdgeInsets.fromLTRB(
-                                OTSpacing.lg,
-                                OTSpacing.sm,
-                                OTSpacing.lg,
-                                108,
-                              ),
-                              // Jendela lebar: dua kolom kartu; ponsel: satu kolom.
-                              itemCount:
-                                  MediaQuery.sizeOf(context).width >= 1000
-                                      ? (_filteredBookmarks.length + 1) ~/ 2
-                                      : _filteredBookmarks.length,
-                              separatorBuilder: (_, __) =>
-                                  const SizedBox(height: OTSpacing.md),
-                              itemBuilder: (context, row) {
-                                Widget card(int index) {
-                                final item = _filteredBookmarks[index];
-                                return OTReveal(index: index % 6, child: _BookmarkCard(
-                                  item: item,
-                                  searchQuery: _searchQuery,
-                                  surface: surface,
-                                  surfaceSubtle: surfaceSubtle,
-                                  border: border,
-                                  textPrimary: textPrimary,
-                                  textSecondary: textSecondary,
-                                  accent: accent,
-                                  onEdit: () => _openNoteEditor(item),
-                                  onCopy: () => _copyIbarah(
-                                      item.arabicExcerpt.isNotEmpty
-                                          ? item.arabicExcerpt
-                                          : item.fullAnswer),
-                                  onOpen: () => _openBookmarkItem(item),
-                                  onShare: () => _shareBookmark(item),
-                                  onDelete: () => _deleteBookmark(item),
-                                ));
-                                }
+                                )
+                              : ListView.separated(
+                                  physics: const AlwaysScrollableScrollPhysics(
+                                    parent: BouncingScrollPhysics(),
+                                  ),
+                                  padding: const EdgeInsets.fromLTRB(
+                                    OTSpacing.lg,
+                                    OTSpacing.sm,
+                                    OTSpacing.lg,
+                                    108,
+                                  ),
+                                  // Jendela lebar: dua kolom kartu; ponsel: satu kolom.
+                                  itemCount:
+                                      MediaQuery.sizeOf(context).width >= 1000
+                                          ? (_filteredBookmarks.length + 1) ~/ 2
+                                          : _filteredBookmarks.length,
+                                  separatorBuilder: (_, __) =>
+                                      const SizedBox(height: OTSpacing.md),
+                                  itemBuilder: (context, row) {
+                                    Widget card(int index) {
+                                      final item = _filteredBookmarks[index];
+                                      return OTReveal(
+                                          index: index % 6,
+                                          child: _BookmarkCard(
+                                            item: item,
+                                            searchQuery: _searchQuery,
+                                            surface: surface,
+                                            surfaceSubtle: surfaceSubtle,
+                                            border: border,
+                                            textPrimary: textPrimary,
+                                            textSecondary: textSecondary,
+                                            accent: accent,
+                                            onEdit: () => _openNoteEditor(item),
+                                            onCopy: () => _copyIbarah(
+                                                item.arabicExcerpt.isNotEmpty
+                                                    ? item.arabicExcerpt
+                                                    : item.fullAnswer),
+                                            onOpen: () =>
+                                                _openBookmarkItem(item),
+                                            onShare: () => _shareBookmark(item),
+                                            onDelete: () =>
+                                                _deleteBookmark(item),
+                                          ));
+                                    }
 
-                                if (MediaQuery.sizeOf(context).width < 1000) {
-                                  return card(row);
-                                }
-                                final second = row * 2 + 1;
-                                return Row(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Expanded(child: card(row * 2)),
-                                    const SizedBox(width: OTSpacing.md),
-                                    Expanded(
-                                      child: second < _filteredBookmarks.length
-                                          ? card(second)
-                                          : const SizedBox.shrink(),
-                                    ),
-                                  ],
-                                );
-                              },
-                            ),
-                    ),
+                                    if (MediaQuery.sizeOf(context).width <
+                                        1000) {
+                                      return card(row);
+                                    }
+                                    final second = row * 2 + 1;
+                                    return Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Expanded(child: card(row * 2)),
+                                        const SizedBox(width: OTSpacing.md),
+                                        Expanded(
+                                          child:
+                                              second < _filteredBookmarks.length
+                                                  ? card(second)
+                                                  : const SizedBox.shrink(),
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                ),
+                        ),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
-    ),
-  ),
-);
+    );
   }
 }
 
@@ -936,10 +939,9 @@ class _BookmarkCardState extends State<_BookmarkCard> {
                     ),
                     child: Text(
                       pillLabel,
-                      style:
-                          OTTypography.captionMedium(
+                      style: OTTypography.captionMedium(
                               color: OTColors.onPrimaryContainer(isDark))
-                              .copyWith(
+                          .copyWith(
                         fontSize: OTFontSize.s11,
                         fontWeight: FontWeight.w400,
                       ),
@@ -971,8 +973,8 @@ class _BookmarkCardState extends State<_BookmarkCard> {
               _buildHighlightedText(
                 text: displayTitle,
                 query: widget.searchQuery,
-                baseStyle: OTTypography.cardTitle(color: widget.textPrimary)
-                    .copyWith(
+                baseStyle:
+                    OTTypography.cardTitle(color: widget.textPrimary).copyWith(
                   fontSize: OTFontSize.s16,
                   fontWeight: FontWeight.w600,
                 ),
@@ -990,9 +992,8 @@ class _BookmarkCardState extends State<_BookmarkCard> {
                       ? parseAiAnswerContent(readableAnswer).preview
                       : _getSnippet(readableAnswer, widget.searchQuery),
                   query: widget.searchQuery,
-                  baseStyle:
-                      OTTypography.caption(color: widget.textSecondary)
-                          .copyWith(
+                  baseStyle: OTTypography.caption(color: widget.textSecondary)
+                      .copyWith(
                     fontSize: OTFontSize.s12,
                   ),
                   isDark: isDark,
@@ -1020,8 +1021,8 @@ class _BookmarkCardState extends State<_BookmarkCard> {
                       text:
                           '${item.bookReference}${item.pageNumber.isNotEmpty ? " · Hlm. ${item.pageNumber}" : ""}',
                       query: widget.searchQuery,
-                      baseStyle: OTTypography.captionMedium(
-                          color: widget.textPrimary),
+                      baseStyle:
+                          OTTypography.captionMedium(color: widget.textPrimary),
                       isDark: isDark,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -1106,15 +1107,8 @@ class _BookmarkCardState extends State<_BookmarkCard> {
                       onPressed: widget.onEdit,
                       icon: const Icon(Icons.edit_outlined, size: 14),
                       label: Text(Loc.tr('edit')),
-                      style: OutlinedButton.styleFrom(
-                        foregroundColor: widget.textPrimary,
-                        side: BorderSide(color: widget.border, width: 0.8),
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 12, vertical: 8),
-                        textStyle: OTTypography.captionMedium(),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: OTRadius.buttonBorder),
-                      ),
+                      style: OTButtons.compactOutlined(
+                          Theme.of(context).brightness == Brightness.dark),
                     ),
                     const SizedBox(width: OTSpacing.xs + 2),
                     OutlinedButton.icon(
@@ -1129,15 +1123,8 @@ class _BookmarkCardState extends State<_BookmarkCard> {
                                     ? 'Salin catatan'
                                     : 'Salin jawaban')),
                       ),
-                      style: OutlinedButton.styleFrom(
-                        foregroundColor: widget.textPrimary,
-                        side: BorderSide(color: widget.border, width: 0.8),
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 12, vertical: 8),
-                        textStyle: OTTypography.captionMedium(),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: OTRadius.buttonBorder),
-                      ),
+                      style: OTButtons.compactOutlined(
+                          Theme.of(context).brightness == Brightness.dark),
                     ),
                     if (isBookRef) ...[
                       const SizedBox(width: OTSpacing.xs + 2),
@@ -1145,16 +1132,8 @@ class _BookmarkCardState extends State<_BookmarkCard> {
                         onPressed: widget.onOpen,
                         icon: const Icon(Icons.menu_book, size: 14),
                         label: Text(Loc.tr('viewBook')),
-                        style: FilledButton.styleFrom(
-                          backgroundColor: widget.surfaceSubtle,
-                          foregroundColor: widget.textPrimary,
-                          elevation: 0,
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 12, vertical: 8),
-                          textStyle: OTTypography.captionMedium(),
-                          shape: RoundedRectangleBorder(
-                              borderRadius: OTRadius.buttonBorder),
-                        ),
+                        style: OTButtons.compactTonal(
+                            Theme.of(context).brightness == Brightness.dark),
                       ),
                     ],
                     const Spacer(),

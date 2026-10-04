@@ -174,9 +174,6 @@ class _AppLoaderState extends State<AppLoader>
             onPressed: widget.onCancel,
             style: TextButton.styleFrom(
               minimumSize: const Size(80, 44),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(AppTheme.radiusPill),
-              ),
             ),
             child: Text(
               widget.cancelLabel ?? Loc.tr('cancel'),

@@ -38,6 +38,13 @@ void main() {
         offenders(RegExp(r'\bColors\.(?!transparent\b)[a-zA-Z]')), isEmpty);
   });
 
+  test('layar tidak menata tombol sendiri; varian ada di OTButtons', () {
+    final screens = offenders(RegExp(r'\.styleFrom\('))
+        .where((line) => line.startsWith('lib/screens'))
+        .toList();
+    expect(screens, isEmpty);
+  });
+
   test('hanya tiga bobot huruf: 400, 600, 700', () {
     expect(offenders(RegExp(r'FontWeight\.(w[123589]00|bold|normal)\b')),
         isEmpty);

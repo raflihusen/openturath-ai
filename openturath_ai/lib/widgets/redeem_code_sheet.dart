@@ -215,9 +215,6 @@ class _RedeemCodeSheetState extends State<RedeemCodeSheet> {
                 style: FilledButton.styleFrom(
                   backgroundColor: textPrimary,
                   foregroundColor: canvas,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: OTRadius.buttonBorder,
-                  ),
                   elevation: 0,
                 ),
                 child: _isLoading

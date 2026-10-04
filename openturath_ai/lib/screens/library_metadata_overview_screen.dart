@@ -13,6 +13,7 @@ import 'book_library_editorial_screen.dart';
 
 import 'package:openturath_ai/core/design/ot_typography.dart';
 import 'package:openturath_ai/core/design/ot_radius.dart';
+
 String _readerTitle(String value) {
   return value
       .replaceFirst(RegExp(r'^(Super\s+)?AI\s+', caseSensitive: false), '')
@@ -142,8 +143,7 @@ class _AiLibraryOverviewPageState extends State<AiLibraryOverviewPage> {
       ...LibraryStat.from(metadata),
       if (metadata.totalKata > 0)
         LibraryStat(
-          NumberFormat.compact(locale: Loc.language)
-              .format(metadata.totalKata),
+          NumberFormat.compact(locale: Loc.language).format(metadata.totalKata),
           Loc.tr('libraryWords').toLowerCase(),
         ),
     ];
@@ -208,7 +208,9 @@ class _AiLibraryOverviewPageState extends State<AiLibraryOverviewPage> {
                         Text(
                           Loc.tr('librarySummary'),
                           style: ScholarlyFonts.outfit(
-                              color: muted, fontSize: OTFontSize.s14, height: 1.55),
+                              color: muted,
+                              fontSize: OTFontSize.s14,
+                              height: 1.55),
                         ),
                         if (stats.isNotEmpty) ...[
                           const SizedBox(height: 20),
@@ -237,7 +239,8 @@ class _AiLibraryOverviewPageState extends State<AiLibraryOverviewPage> {
                                     Text(
                                       stat.unit,
                                       style: ScholarlyFonts.outfit(
-                                          fontSize: OTFontSize.s14, color: muted),
+                                          fontSize: OTFontSize.s14,
+                                          color: muted),
                                     ),
                                   ],
                                 ),
@@ -246,7 +249,8 @@ class _AiLibraryOverviewPageState extends State<AiLibraryOverviewPage> {
                         ],
                         const SizedBox(height: 24),
                         FilledButton.icon(
-                          onPressed: _isLoadingBooks ? null : _handleOpenCatalog,
+                          onPressed:
+                              _isLoadingBooks ? null : _handleOpenCatalog,
                           iconAlignment: IconAlignment.end,
                           icon: _isLoadingBooks
                               ? const SizedBox(
@@ -260,15 +264,6 @@ class _AiLibraryOverviewPageState extends State<AiLibraryOverviewPage> {
                           label: Text(_isLoadingBooks
                               ? Loc.tr('libraryOpening')
                               : Loc.tr('openCatalog')),
-                          style: FilledButton.styleFrom(
-                            minimumSize: const Size(0, 44),
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 20),
-                            textStyle: ScholarlyFonts.outfit(
-                                fontSize: OTFontSize.s14, fontWeight: FontWeight.w600),
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(OTRadius.input)),
-                          ),
                         ),
                       ],
                     ),
@@ -278,7 +273,8 @@ class _AiLibraryOverviewPageState extends State<AiLibraryOverviewPage> {
                     padding: const EdgeInsetsDirectional.only(start: 4),
                     child: Text(
                       Loc.tr('libraryDataNote'),
-                      style: ScholarlyFonts.outfit(fontSize: OTFontSize.s12, color: muted),
+                      style: ScholarlyFonts.outfit(
+                          fontSize: OTFontSize.s12, color: muted),
                     ),
                   ),
                 ],

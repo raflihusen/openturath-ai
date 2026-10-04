@@ -34,6 +34,7 @@ import '../widgets/app_loader.dart';
 import '../widgets/library_bottom_sheet.dart';
 import '../core/localization.dart';
 
+import 'package:openturath_ai/core/design/ot_buttons.dart';
 /// AgentWebviewScreen: Tampilan Ruang Kajian NotebookLM
 /// Dilengkapi App Bar native yang bersih di bawah kamera notch/status bar,
 /// tombol kembali yang jelas, dan injeksi CSS/JS untuk menyembunyikan header Google.
@@ -1130,16 +1131,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                                             fontSize: OTFontSize.s14,
                                           ),
                                         ),
-                                        style: FilledButton.styleFrom(
-                                          backgroundColor:
-                                              OTColors.accent(isDark),
-                                          foregroundColor: OTColors.surfaceLight,
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(OTRadius.card),
-                                          ),
                                         ),
-                                      ),
                                     ),
                                     const SizedBox(height: 10),
                                     SizedBox(
@@ -1319,18 +1311,6 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                   width: double.infinity,
                   child: ElevatedButton(
                     onPressed: () => Navigator.pop(dialogCtx),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor:
-                          isDark ? OTColors.surfaceLight : OTColors.surfaceDark,
-                      foregroundColor:
-                          isDark ? OTColors.canvasDark : OTColors.surfaceLight,
-                      elevation: 0,
-                      padding: const EdgeInsets.symmetric(vertical: 14),
-                      shape: RoundedRectangleBorder(
-                        borderRadius:
-                            BorderRadius.circular(AppTheme.radiusPill),
-                      ),
-                    ),
                     child: Text(
                       AppCopy.adabAcknowledgeButton,
                       style: ScholarlyFonts.outfit(
@@ -1568,16 +1548,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                 ),
                 const SizedBox(width: 12),
                 ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: OTColors.error(isDark),
-                    foregroundColor: OTColors.onAccent(isDark),
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(OTRadius.input),
-                    ),
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 18, vertical: 10),
-                  ),
+                  style: OTButtons.destructive(isDark),
                   onPressed: () {
                     Navigator.pop(ctx);
                     _webController?.evaluateJavascript(

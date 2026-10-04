@@ -369,9 +369,6 @@ class ExclusiveActivationDialog extends StatelessWidget {
                         foregroundColor: OTColors.surfaceDark,
                         elevation: 6,
                         shadowColor: OTColors.borderStrongDark.withValues(alpha: 0.35),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(OTRadius.input),
-                        ),
                       ),
                       child: const Row(
                         mainAxisAlignment: MainAxisAlignment.center,

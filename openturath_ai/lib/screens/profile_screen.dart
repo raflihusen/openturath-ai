@@ -24,6 +24,8 @@ import '../core/membership_pass_state.dart';
 import '../widgets/apple_interactive_wrapper.dart';
 import '../widgets/legal_document_sheet.dart';
 
+import 'package:openturath_ai/core/design/ot_buttons.dart';
+
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
 
@@ -81,11 +83,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
             FilledButton(
               onPressed: () => Navigator.pop(context, true),
-              style: FilledButton.styleFrom(
-                backgroundColor: OTColors.destructive(isDark),
-                shape:
-                    RoundedRectangleBorder(borderRadius: OTRadius.buttonBorder),
-              ),
+              style: OTButtons.destructive(isDark),
               child: Text(AppCopy.logoutButton,
                   style: OTTypography.button(color: OTColors.onAccent(isDark))),
             ),
@@ -146,11 +144,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
             FilledButton(
               onPressed: () => Navigator.pop(context, true),
-              style: FilledButton.styleFrom(
-                backgroundColor: OTColors.destructive(isDark),
-                shape:
-                    RoundedRectangleBorder(borderRadius: OTRadius.buttonBorder),
-              ),
+              style: OTButtons.destructive(isDark),
               child: Text(AppCopy.deleteAccountButton,
                   style: OTTypography.button(color: OTColors.onAccent(isDark))),
             ),
@@ -404,7 +398,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       padding: const EdgeInsets.all(4),
                                       decoration: BoxDecoration(
                                         color: OTColors.surfaceSubtle(isDark),
-                                        borderRadius: BorderRadius.circular(OTRadius.input),
+                                        borderRadius: BorderRadius.circular(
+                                            OTRadius.input),
                                       ),
                                       child: Row(
                                         children: [
@@ -638,12 +633,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
         actions: [
           FilledButton(
             onPressed: () => Navigator.pop(ctx),
-            style: FilledButton.styleFrom(
-              backgroundColor: textPrimary,
-              foregroundColor: isDark ? OTColors.surfaceDark : OTColors.surfaceLight,
-              shape:
-                  RoundedRectangleBorder(borderRadius: OTRadius.buttonBorder),
-            ),
             child: Text(AppCopy.close, style: OTTypography.button()),
           ),
         ],
@@ -699,7 +688,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   for (final entry in Loc.languageNames.entries)
                     ListTile(
                         shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(OTRadius.input)),
+                            borderRadius:
+                                BorderRadius.circular(OTRadius.input)),
                         title: Text(
                           entry.value,
                           maxLines: 1,
@@ -765,8 +755,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
             boxShadow: isSelected
                 ? [
                     BoxShadow(
-                      color:
-                          OTColors.shadow.withValues(alpha: isDark ? 0.35 : 0.06),
+                      color: OTColors.shadow
+                          .withValues(alpha: isDark ? 0.35 : 0.06),
                       blurRadius: 4,
                       offset: const Offset(0, 1),
                     ),
@@ -894,7 +884,8 @@ class _MembershipPass extends StatelessWidget {
           ),
           Text(
             Loc.tr('cardFlipHint'),
-            style: ScholarlyFonts.outfit(color: onCardMuted, fontSize: OTFontSize.s11),
+            style: ScholarlyFonts.outfit(
+                color: onCardMuted, fontSize: OTFontSize.s11),
           ),
         ],
       ),
@@ -1051,7 +1042,8 @@ class _MembershipPass extends StatelessWidget {
                                         maxLines: 1,
                                         overflow: TextOverflow.ellipsis,
                                         style: ScholarlyFonts.outfit(
-                                            color: onCardMuted, fontSize: OTFontSize.s12),
+                                            color: onCardMuted,
+                                            fontSize: OTFontSize.s12),
                                       ),
                                     ],
                                   ],
@@ -1069,7 +1061,8 @@ class _MembershipPass extends StatelessWidget {
                                               ? AppCopy.validUntil
                                               : summary.expiryLabel,
                                       style: ScholarlyFonts.outfit(
-                                          color: onCardMuted, fontSize: OTFontSize.s11),
+                                          color: onCardMuted,
+                                          fontSize: OTFontSize.s11),
                                     ),
                                     const SizedBox(height: 2),
                                     Text(
@@ -1168,7 +1161,9 @@ class _MembershipPass extends StatelessWidget {
                                   maxLines: 2,
                                   overflow: TextOverflow.ellipsis,
                                   style: ScholarlyFonts.outfit(
-                                      fontSize: OTFontSize.s14, height: 1.4, color: muted)),
+                                      fontSize: OTFontSize.s14,
+                                      height: 1.4,
+                                      color: muted)),
                             ],
                           ],
                         ),

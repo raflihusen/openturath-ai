@@ -21,6 +21,8 @@ import '../widgets/app_loader.dart';
 
 import 'package:openturath_ai/core/design/ot_typography.dart';
 import 'package:openturath_ai/core/design/ot_radius.dart';
+import 'package:openturath_ai/core/design/ot_buttons.dart';
+
 /// Layar Autentikasi Sesi Google (Langkah 2 dari 2)
 /// Menghubungkan sesi Google / NotebookLM di WebView secara langsung setelah login Firebase,
 /// dengan disclaimer jelas bahwa pengguna wajib masuk dengan akun Google yang sama.
@@ -192,18 +194,10 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
           ),
           FilledButton(
             onPressed: () => Navigator.pop(ctx, true),
-            style: FilledButton.styleFrom(
-              backgroundColor: OTColors.destructive(isDark),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(OTRadius.xs),
-              ),
-            ),
+            style: OTButtons.destructive(isDark),
             child: Text(
               Loc.tr('exit'),
-              style: ScholarlyFonts.outfit(
-                color: OTColors.surfaceLight,
-                fontWeight: FontWeight.w600,
-              ),
+              style: OTTypography.button(color: OTColors.onAccent(isDark)),
             ),
           ),
         ],
@@ -275,7 +269,8 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
             elevation: 0,
             scrolledUnderElevation: 0,
             leading: IconButton(
-              icon: Icon(Icons.arrow_back_rounded, size: 20, color: textSecondary),
+              icon: Icon(Icons.arrow_back_rounded,
+                  size: 20, color: textSecondary),
               tooltip: Loc.tr('back'),
               onPressed: () async {
                 final canGoBack = await _webController?.canGoBack() ?? false;
@@ -298,14 +293,16 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
             actions: [
               IconButton(
                 tooltip: Loc.tr('tryAgain'),
-                icon: Icon(Icons.refresh_rounded, size: 20, color: textSecondary),
+                icon:
+                    Icon(Icons.refresh_rounded, size: 20, color: textSecondary),
                 onPressed: () {
                   _webController?.reload();
                 },
               ),
               IconButton(
                 tooltip: Loc.tr('exit'),
-                icon: Icon(Icons.logout_rounded, size: 20, color: textSecondary),
+                icon:
+                    Icon(Icons.logout_rounded, size: 20, color: textSecondary),
                 onPressed: _confirmCancelAndSignOut,
               ),
               const SizedBox(width: 4),
@@ -333,7 +330,8 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
                 Container(
                   width: double.infinity,
                   margin: const EdgeInsets.fromLTRB(16, 6, 16, 10),
-                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
                   decoration: BoxDecoration(
                     color: surface,
                     borderRadius: BorderRadius.circular(AppTheme.radiusCard),
@@ -450,58 +448,63 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
                             _targetLoginUrl,
                           )
                         : InAppWebView(
-                            gestureRecognizers: <Factory<OneSequenceGestureRecognizer>>{
+                            gestureRecognizers: <Factory<
+                                OneSequenceGestureRecognizer>>{
                               Factory<OneSequenceGestureRecognizer>(
                                 () => EagerGestureRecognizer(),
                               ),
                             },
-                            webViewEnvironment: DesktopWebViewRuntime.environment,
-                            initialUrlRequest: URLRequest(url: WebUri(_targetLoginUrl)),
-                      initialSettings: InAppWebViewSettings(
-                        incognito: false,
-                        userAgent: _userAgent,
-                        javaScriptEnabled: true,
-                        domStorageEnabled: true,
-                        databaseEnabled: true,
-                        sharedCookiesEnabled: true,
-                        thirdPartyCookiesEnabled: true,
-                        useHybridComposition: true,
-                        supportMultipleWindows: false,
-                        useShouldOverrideUrlLoading: true,
-                        javaScriptCanOpenWindowsAutomatically: false,
-                        mixedContentMode:
-                            MixedContentMode.MIXED_CONTENT_NEVER_ALLOW,
-                        allowFileAccess: false,
-                        allowContentAccess: false,
-                        forceDark: isDark ? ForceDark.ON : ForceDark.OFF,
-                        algorithmicDarkeningAllowed: false,
-                      ),
-                      shouldOverrideUrlLoading:
-                          (controller, navigationAction) async {
-                        final uri = navigationAction.request.url;
-                        if (uri == null) return NavigationActionPolicy.CANCEL;
+                            webViewEnvironment:
+                                DesktopWebViewRuntime.environment,
+                            initialUrlRequest:
+                                URLRequest(url: WebUri(_targetLoginUrl)),
+                            initialSettings: InAppWebViewSettings(
+                              incognito: false,
+                              userAgent: _userAgent,
+                              javaScriptEnabled: true,
+                              domStorageEnabled: true,
+                              databaseEnabled: true,
+                              sharedCookiesEnabled: true,
+                              thirdPartyCookiesEnabled: true,
+                              useHybridComposition: true,
+                              supportMultipleWindows: false,
+                              useShouldOverrideUrlLoading: true,
+                              javaScriptCanOpenWindowsAutomatically: false,
+                              mixedContentMode:
+                                  MixedContentMode.MIXED_CONTENT_NEVER_ALLOW,
+                              allowFileAccess: false,
+                              allowContentAccess: false,
+                              forceDark: isDark ? ForceDark.ON : ForceDark.OFF,
+                              algorithmicDarkeningAllowed: false,
+                            ),
+                            shouldOverrideUrlLoading:
+                                (controller, navigationAction) async {
+                              final uri = navigationAction.request.url;
+                              if (uri == null) {
+                                return NavigationActionPolicy.CANCEL;
+                              }
 
-                        if (NotebookNavigation.signInFlow(uri.uriValue) ||
-                            NotebookNavigation.notebook(uri.uriValue)) {
-                          return NavigationActionPolicy.ALLOW;
-                        }
-                        return NavigationActionPolicy.CANCEL;
-                      },
-                      onWebViewCreated: (controller) =>
-                          _webController = controller,
-                      onProgressChanged: (controller, progress) {
-                        if (mounted) _loadProgress.value = progress / 100;
-                      },
-                      onLoadStop: (controller, url) async {
-                        if (!mounted || url == null) return;
-                        await _checkAndAuthenticateSession(url);
-                      },
-                      onUpdateVisitedHistory:
-                          (controller, url, isReload) async {
-                        if (!mounted || url == null) return;
-                        await _checkAndAuthenticateSession(url);
-                      },
-                    ),
+                              if (NotebookNavigation.signInFlow(uri.uriValue) ||
+                                  NotebookNavigation.notebook(uri.uriValue)) {
+                                return NavigationActionPolicy.ALLOW;
+                              }
+                              return NavigationActionPolicy.CANCEL;
+                            },
+                            onWebViewCreated: (controller) =>
+                                _webController = controller,
+                            onProgressChanged: (controller, progress) {
+                              if (mounted) _loadProgress.value = progress / 100;
+                            },
+                            onLoadStop: (controller, url) async {
+                              if (!mounted || url == null) return;
+                              await _checkAndAuthenticateSession(url);
+                            },
+                            onUpdateVisitedHistory:
+                                (controller, url, isReload) async {
+                              if (!mounted || url == null) return;
+                              await _checkAndAuthenticateSession(url);
+                            },
+                          ),
                   ),
                 ),
               ],

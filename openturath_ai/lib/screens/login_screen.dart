@@ -23,6 +23,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:openturath_ai/core/design/ot_typography.dart';
 import 'package:openturath_ai/core/design/ot_radius.dart';
+
 /// A shared, theme-adaptive sign-in surface for mobile and desktop.
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -228,19 +229,6 @@ class _LoginScreenState extends State<LoginScreen> {
                                     height: 1.4,
                                   ),
                                 ),
-                                style: FilledButton.styleFrom(
-                                  backgroundColor: OTColors.accent(dark),
-                                  foregroundColor: OTColors.onAccent(dark),
-                                  disabledBackgroundColor:
-                                      OTColors.surfaceSubtle(dark),
-                                  disabledForegroundColor: secondary,
-                                  minimumSize: const Size(0, 48),
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 16, vertical: 14),
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(OTRadius.input)),
-                                  elevation: 0,
-                                ),
                               ),
                               if (_desktopError != null) ...[
                                 const SizedBox(height: 16),
@@ -252,7 +240,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                       color: OTColors.surfaceSubtle(dark),
                                       border: Border.all(
                                           color: OTColors.border(dark)),
-                                      borderRadius: BorderRadius.circular(OTRadius.xs),
+                                      borderRadius:
+                                          BorderRadius.circular(OTRadius.xs),
                                     ),
                                     child: Row(
                                       crossAxisAlignment:
@@ -409,7 +398,9 @@ class _LoginAside extends StatelessWidget {
                       child: Text(
                         Loc.tr('loginAsideBody'),
                         style: ScholarlyFonts.outfit(
-                            fontSize: OTFontSize.s16, height: 1.55, color: muted),
+                            fontSize: OTFontSize.s16,
+                            height: 1.55,
+                            color: muted),
                       ),
                     ),
                   ),
@@ -463,7 +454,8 @@ class _LibraryTotals extends StatelessWidget {
                   ),
                   const SizedBox(height: 2),
                   Text(label,
-                      style: ScholarlyFonts.outfit(fontSize: OTFontSize.s12, color: muted)),
+                      style: ScholarlyFonts.outfit(
+                          fontSize: OTFontSize.s12, color: muted)),
                 ],
               ),
             );

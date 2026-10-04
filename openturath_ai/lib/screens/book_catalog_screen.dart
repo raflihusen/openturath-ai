@@ -21,6 +21,8 @@ import '../widgets/book_row_item.dart';
 import '../widgets/apple_interactive_wrapper.dart';
 
 import 'package:openturath_ai/core/design/ot_radius.dart';
+import 'package:openturath_ai/core/design/ot_buttons.dart';
+
 /// Halaman Katalog Kitab (Full-Screen Route).
 /// Mendukung 2.226 Kitab Induk lintas 6 disiplin ilmu kanonikal dengan pencarian Arab toleran harakat,
 /// filter hierarki disiplin (القسم), abad keilmuan, dan kartu kitab minimalis bergaya turath.
@@ -443,11 +445,7 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
                 isDark, surface, border, textPrimary, textSecondary),
             icon: const Icon(Icons.tune_rounded, size: 16),
             label: Text(Loc.tr('ui_d7decf1aa2')),
-            style: OutlinedButton.styleFrom(
-              foregroundColor: textPrimary,
-              side: BorderSide(color: border),
-              visualDensity: VisualDensity.compact,
-            ),
+            style: OTButtons.compactOutlined(isDark),
           ),
         ],
       ),

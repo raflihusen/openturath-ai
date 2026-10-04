@@ -143,8 +143,6 @@ class AgentMultiTabRoom extends StatefulWidget {
           FilledButton(
             style: FilledButton.styleFrom(
               backgroundColor: OTColors.accent(isDark),
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(OTRadius.xs)),
             ),
             onPressed: () => Navigator.pop(ctx, controller.text.trim()),
             child: Text(
@@ -366,9 +364,6 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                     ),
                     style: OutlinedButton.styleFrom(
                       side: BorderSide(color: border, width: 1),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(OTRadius.input),
-                      ),
                       padding: const EdgeInsets.symmetric(vertical: 12),
                     ),
                   ),
@@ -439,9 +434,6 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                     backgroundColor: OTColors.borderStrongDark,
                     foregroundColor: OTColors.surfaceLight,
                     elevation: 0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(OTRadius.input),
-                    ),
                     padding: const EdgeInsets.symmetric(
                         horizontal: 18, vertical: 10),
                   ),

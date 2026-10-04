@@ -42,13 +42,11 @@ class NativeTheme extends StatelessWidget {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 22, vertical: 14),
                   textStyle: NativeType.body(dark, size: 17),
-                  shape: const StadiumBorder(),
                   elevation: 0)),
           outlinedButtonTheme: OutlinedButtonThemeData(
               style: OutlinedButton.styleFrom(
                   foregroundColor: NativeColors.accent(dark),
                   minimumSize: const Size(48, 48),
-                  shape: const StadiumBorder(),
                   padding:
                       const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
                   textStyle: NativeType.body(dark, size: 15))),

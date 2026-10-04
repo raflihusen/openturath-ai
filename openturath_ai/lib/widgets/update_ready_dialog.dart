@@ -170,9 +170,6 @@ class UpdateReadyDialog extends StatelessWidget {
                 style: FilledButton.styleFrom(
                   backgroundColor: OTColors.accent(isDark),
                   foregroundColor: OTColors.onAccent(isDark),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(AppTheme.radiusPill),
-                  ),
                   elevation: 0,
                 ),
                 child: Text(
@@ -196,9 +193,6 @@ class UpdateReadyDialog extends StatelessWidget {
                 onPressed: () => Navigator.of(context).pop(),
                 style: TextButton.styleFrom(
                   foregroundColor: textSecondary,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(AppTheme.radiusPill),
-                  ),
                 ),
                 child: Text(
                   'Nanti Saja',

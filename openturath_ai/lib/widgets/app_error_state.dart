@@ -3,7 +3,6 @@ import '../core/design/ot_colors.dart';
 import '../core/scholarly_fonts.dart';
 
 import 'package:openturath_ai/core/design/ot_typography.dart';
-import 'package:openturath_ai/core/design/ot_radius.dart';
 /// AppErrorState: Komponen visual baku penanganan galat dan koneksi terputus.
 /// Menghindarkan aplikasi dari layar kosong atau error bisu tanpa pemulihan.
 class AppErrorState extends StatelessWidget {
@@ -139,9 +138,6 @@ class AppErrorState extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(horizontal: 24),
                     textStyle: ScholarlyFonts.outfit(
                         fontSize: OTFontSize.s14, fontWeight: FontWeight.w600),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(OTRadius.input),
-                    ),
                   ),
                 ),
               ],
@@ -155,9 +151,6 @@ class AppErrorState extends StatelessWidget {
                     side: BorderSide(color: OTColors.border(isDark)),
                     textStyle: ScholarlyFonts.outfit(
                         fontSize: OTFontSize.s14, fontWeight: FontWeight.w400),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(OTRadius.input),
-                    ),
                   ),
                   child: Text(secondaryLabel),
                 ),

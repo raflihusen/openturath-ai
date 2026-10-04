@@ -108,9 +108,6 @@ class UpdateReadyBanner extends StatelessWidget {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   minimumSize: const Size(64, 36),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(AppTheme.radiusPill),
-                  ),
                   elevation: 0,
                 ),
                 child: Text(

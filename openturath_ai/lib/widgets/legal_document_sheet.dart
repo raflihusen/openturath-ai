@@ -211,9 +211,6 @@ class LegalDocumentSheet extends StatelessWidget {
               style: FilledButton.styleFrom(
                 backgroundColor: textPrimary,
                 foregroundColor: canvas,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(OTRadius.input),
-                ),
               ),
               child: Text(
                 'Tutup',

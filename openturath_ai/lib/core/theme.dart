@@ -159,7 +159,9 @@ class AppTheme {
     },
   );
 
-  static ThemeData get darkTheme {
+  static ThemeData get darkTheme => _withComponents(_darkBase, true);
+
+  static ThemeData get _darkBase {
     return ThemeData(
       useMaterial3: true,
       brightness: Brightness.dark,
@@ -339,7 +341,9 @@ class AppTheme {
   }
 
   // Light Theme
-  static ThemeData get lightTheme {
+  static ThemeData get lightTheme => _withComponents(_lightBase, false);
+
+  static ThemeData get _lightBase {
     return ThemeData(
       useMaterial3: true,
       brightness: Brightness.light,
@@ -569,6 +573,93 @@ class AppTheme {
   }
 
   // ── Text Theme Generator ──────────────────────────────────────────────────
+  /// Satu lapis komponen untuk kedua tema: tombol pil setinggi 48, chip pil,
+  /// judul halaman Newsreader, dan bilah navigasi. Layar tidak menimpa ini.
+  static ThemeData _withComponents(ThemeData base, bool dark) {
+    final ink = OTColors.textPrimary(dark);
+    final muted = OTColors.textSecondary(dark);
+    const pill = StadiumBorder();
+    const size = Size(0, 48);
+    const padding = EdgeInsets.symmetric(horizontal: 24);
+    final label = OTTypography.button();
+    final filled = FilledButton.styleFrom(
+      backgroundColor: OTColors.accent(dark),
+      foregroundColor: OTColors.onAccent(dark),
+      disabledBackgroundColor: OTColors.surfaceSubtle(dark),
+      disabledForegroundColor: muted,
+      elevation: 0,
+      minimumSize: size,
+      padding: padding,
+      shape: pill,
+      textStyle: label,
+    );
+    TextStyle navLabel(Set<WidgetState> states) => OTTypography.caption(
+          color: states.contains(WidgetState.selected) ? ink : muted,
+        ).copyWith(
+            fontWeight: states.contains(WidgetState.selected)
+                ? FontWeight.w600
+                : FontWeight.w400);
+    IconThemeData navIcon(Set<WidgetState> states) => IconThemeData(
+        size: 24, color: states.contains(WidgetState.selected) ? ink : muted);
+    return base.copyWith(
+      appBarTheme: base.appBarTheme
+          .copyWith(titleTextStyle: OTTypography.screenTitle(color: ink)),
+      filledButtonTheme: FilledButtonThemeData(style: filled),
+      elevatedButtonTheme: ElevatedButtonThemeData(style: filled),
+      outlinedButtonTheme: OutlinedButtonThemeData(
+        style: OutlinedButton.styleFrom(
+          foregroundColor: ink,
+          side: BorderSide(color: OTColors.borderStrong(dark)),
+          minimumSize: size,
+          padding: padding,
+          shape: pill,
+          textStyle: label,
+        ),
+      ),
+      textButtonTheme: TextButtonThemeData(
+        style: TextButton.styleFrom(
+          foregroundColor: ink,
+          minimumSize: const Size(0, 44),
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          shape: pill,
+          textStyle: label,
+        ),
+      ),
+      chipTheme: ChipThemeData(
+        backgroundColor: OTColors.surface(dark),
+        selectedColor: OTColors.accent(dark),
+        disabledColor: OTColors.surfaceSubtle(dark),
+        side: BorderSide(color: OTColors.borderStrong(dark)),
+        shape: pill,
+        showCheckmark: false,
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        labelStyle: OTTypography.captionMedium(
+          color: WidgetStateColor.resolveWith((states) =>
+              states.contains(WidgetState.selected)
+                  ? OTColors.onAccent(dark)
+                  : ink),
+        ),
+      ),
+      navigationBarTheme: NavigationBarThemeData(
+        backgroundColor: OTColors.surface(dark),
+        indicatorColor: OTColors.primaryContainer(dark),
+        surfaceTintColor: Colors.transparent,
+        elevation: 0,
+        height: 68,
+        labelTextStyle: WidgetStateProperty.resolveWith(navLabel),
+        iconTheme: WidgetStateProperty.resolveWith(navIcon),
+      ),
+      navigationRailTheme: NavigationRailThemeData(
+        backgroundColor: OTColors.surface(dark),
+        indicatorColor: OTColors.primaryContainer(dark),
+        selectedIconTheme: IconThemeData(size: 24, color: ink),
+        unselectedIconTheme: IconThemeData(size: 24, color: muted),
+        selectedLabelTextStyle: OTTypography.bodyMedium(color: ink),
+        unselectedLabelTextStyle: OTTypography.body(color: muted),
+      ),
+    );
+  }
+
   static TextTheme _buildTextTheme(Brightness brightness) {
     final isDark = brightness == Brightness.dark;
     final primary = isDark ? textPrimaryDark : textPrimaryLight;

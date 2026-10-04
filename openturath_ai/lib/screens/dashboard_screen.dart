@@ -35,6 +35,7 @@ import '../services/open_turath_catalog_repository.dart';
 import '../core/legal_copy.dart';
 import '../widgets/legal_document_sheet.dart';
 import 'package:openturath_ai/core/design/ot_typography.dart';
+import 'package:openturath_ai/core/design/ot_buttons.dart';
 import 'package:intl/intl.dart' show NumberFormat;
 
 /// Beranda OpenTurath AI (Tactile Scholarly Research Desk)
@@ -349,7 +350,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                       onChanged: (val) => setState(
                                           () => _searchQuery = val.trim()),
                                       style: ScholarlyFonts.outfit(
-                                          fontSize: OTFontSize.s14, color: textPrimary),
+                                          fontSize: OTFontSize.s14,
+                                          color: textPrimary),
                                       decoration: InputDecoration(
                                         hintText: AppCopy.dashboardSearchHint,
                                         hintStyle: ScholarlyFonts.outfit(
@@ -375,7 +377,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                           _searchController.clear();
                                           setState(() => _searchQuery = '');
                                         },
-                                        borderRadius: BorderRadius.circular(OTRadius.card),
+                                        borderRadius: BorderRadius.circular(
+                                            OTRadius.card),
                                         child: Padding(
                                           padding: const EdgeInsets.all(8.0),
                                           child: Icon(Icons.close_rounded,
@@ -431,7 +434,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                     child: Text(
                                       AppCopy.noAssistantsFound,
                                       style: ScholarlyFonts.outfit(
-                                          fontSize: OTFontSize.s14, color: textSecondary),
+                                          fontSize: OTFontSize.s14,
+                                          color: textSecondary),
                                     ),
                                   ),
                                 );
@@ -676,7 +680,8 @@ class _LibraryNumbersTile extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(Loc.tr('libraryInNumbers'),
-              style: ScholarlyFonts.outfit(fontSize: OTFontSize.s12, color: muted)),
+              style: ScholarlyFonts.outfit(
+                  fontSize: OTFontSize.s12, color: muted)),
           const SizedBox(height: OTSpacing.md),
           FutureBuilder<Map<String, AiLibraryMetadata>>(
             future: OpenTurathCatalogRepository.instance.loadAllMetadata(),
@@ -827,16 +832,18 @@ class _AdabOfDayTile extends StatelessWidget {
             children: [
               Expanded(
                 child: Text(Loc.tr('aiEtiquetteLabel'),
-                    style: ScholarlyFonts.outfit(fontSize: OTFontSize.s12, color: muted)),
+                    style: ScholarlyFonts.outfit(
+                        fontSize: OTFontSize.s12, color: muted)),
               ),
-              Icon(Icons.arrow_forward_rounded,
-                  size: 16, color: muted),
+              Icon(Icons.arrow_forward_rounded, size: 16, color: muted),
             ],
           ),
           const SizedBox(height: OTSpacing.sm),
           Text(title,
               style: ScholarlyFonts.outfit(
-                  fontSize: OTFontSize.s16, fontWeight: FontWeight.w600, color: ink)),
+                  fontSize: OTFontSize.s16,
+                  fontWeight: FontWeight.w600,
+                  color: ink)),
           const SizedBox(height: 4),
           Text(body,
               maxLines: 3,
@@ -905,8 +912,8 @@ class _RecentNoteTileState extends State<_RecentNoteTile> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(Loc.tr('recentNote'),
-                    style:
-                        ScholarlyFonts.outfit(fontSize: OTFontSize.s12, color: secondary)),
+                    style: ScholarlyFonts.outfit(
+                        fontSize: OTFontSize.s12, color: secondary)),
                 const SizedBox(height: 2),
                 Text(
                   title,
@@ -963,11 +970,14 @@ class _StudyEntryCard extends StatelessWidget {
             displayName == null
                 ? AppCopy.ahlanDefault
                 : AppCopy.ahlanWithName(displayName),
-            style: ScholarlyFonts.outfit(fontSize: OTFontSize.s14, color: muted)),
+            style:
+                ScholarlyFonts.outfit(fontSize: OTFontSize.s14, color: muted)),
         const SizedBox(height: 14),
         Text(Loc.text(title),
             style: ScholarlyFonts.newsreader(
-                fontSize: MediaQuery.sizeOf(context).width >= 768 ? OTFontSize.s26 : OTFontSize.s26,
+                fontSize: MediaQuery.sizeOf(context).width >= 768
+                    ? OTFontSize.s26
+                    : OTFontSize.s26,
                 fontWeight: FontWeight.w400,
                 letterSpacing: -.6,
                 height: 1.18,
@@ -981,10 +991,7 @@ class _StudyEntryCard extends StatelessWidget {
         const SizedBox(height: 20),
         FilledButton.icon(
             onPressed: onPrimary,
-            style: FilledButton.styleFrom(
-              backgroundColor: ink,
-              foregroundColor: OTColors.textPrimaryLight,
-            ),
+            style: OTButtons.onInk(),
             label:
                 Text(hasHistory ? AppCopy.continueStudy : AppCopy.startStudy),
             icon: const Icon(Icons.arrow_forward_rounded, size: 18),
@@ -1018,7 +1025,8 @@ class _TahawwulatSpotlight extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(Loc.tr('planFeaturedLabel'),
-                  style: ScholarlyFonts.outfit(fontSize: OTFontSize.s12, color: muted)),
+                  style: ScholarlyFonts.outfit(
+                      fontSize: OTFontSize.s12, color: muted)),
               const SizedBox(height: 4),
               Text(
                 Loc.text('Fikih Tahawwulat'),
@@ -1068,7 +1076,9 @@ class _TahawwulatSpotlight extends StatelessWidget {
             children: [
               Text(Loc.tr('flagshipExplore', ['5']),
                   style: ScholarlyFonts.outfit(
-                      fontSize: OTFontSize.s14, fontWeight: FontWeight.w600, color: ink)),
+                      fontSize: OTFontSize.s14,
+                      fontWeight: FontWeight.w600,
+                      color: ink)),
               const SizedBox(width: 4),
               Icon(Icons.arrow_forward_rounded, size: 16, color: ink),
             ],
@@ -1182,7 +1192,8 @@ class _DashboardAnnouncementCarouselState
         return Container(
           decoration: BoxDecoration(
             color: widget.surface,
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(OTRadius.sheet)),
+            borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(OTRadius.sheet)),
             border: Border.all(color: widget.border, width: 1.0),
           ),
           padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
@@ -1237,13 +1248,6 @@ class _DashboardAnnouncementCarouselState
                 height: 44,
                 child: FilledButton(
                   onPressed: () => Navigator.pop(ctx),
-                  style: FilledButton.styleFrom(
-                    backgroundColor: OTColors.textPrimary(widget.isDark),
-                    foregroundColor: OTColors.surface(widget.isDark),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(OTRadius.chip),
-                    ),
-                  ),
                   child: Text(
                     AppCopy.close,
                     style: ScholarlyFonts.outfit(
@@ -1311,7 +1315,8 @@ class _DashboardAnnouncementCarouselState
                                   horizontal: 8, vertical: 2.5),
                               decoration: BoxDecoration(
                                 color: OTColors.surfaceSubtle(widget.isDark),
-                                borderRadius: BorderRadius.circular(OTRadius.chip),
+                                borderRadius:
+                                    BorderRadius.circular(OTRadius.chip),
                                 border: Border.all(
                                   color: OTColors.border(widget.isDark),
                                   width: 0.8,
@@ -1447,7 +1452,8 @@ class _DateHeader extends StatelessWidget {
             child: Text(
               HijriDateUtils.formatMasehiOnly(),
               style: ScholarlyFonts.outfit(
-                  fontSize: OTFontSize.s14, color: OTColors.textSecondary(isDark)),
+                  fontSize: OTFontSize.s14,
+                  color: OTColors.textSecondary(isDark)),
             ),
           ),
         ],

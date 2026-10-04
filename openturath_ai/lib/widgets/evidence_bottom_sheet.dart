@@ -343,9 +343,6 @@ class EvidenceBottomSheet extends StatelessWidget {
                                 foregroundColor: accent,
                                 side: BorderSide(color: accent.withValues(alpha: 0.6)),
                                 padding: const EdgeInsets.symmetric(vertical: 12),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(AppTheme.radiusPill),
-                                ),
                                 textStyle: ScholarlyFonts.outfit(
                                   fontSize: OTFontSize.s14,
                                   fontWeight: FontWeight.w600,
@@ -365,9 +362,6 @@ class EvidenceBottomSheet extends StatelessWidget {
                                     ? AppTheme.canvasDark
                                     : OTColors.surfaceLight,
                                 padding: const EdgeInsets.symmetric(vertical: 12),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(AppTheme.radiusPill),
-                                ),
                                 textStyle: ScholarlyFonts.outfit(
                                   fontSize: OTFontSize.s14,
                                   fontWeight: FontWeight.w600,
