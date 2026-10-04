@@ -15,7 +15,9 @@ import 'package:openturath_ai/models/agent_model.dart';
 import 'package:openturath_ai/core/constants.dart';
 import 'package:openturath_ai/models/user_model.dart';
 import 'package:openturath_ai/screens/dashboard_screen.dart';
+import 'package:openturath_ai/screens/bookmark_screen.dart';
 import 'package:openturath_ai/screens/login_screen.dart';
+import 'package:openturath_ai/widgets/app_loader.dart';
 import 'package:openturath_ai/screens/profile_screen.dart';
 import 'package:openturath_ai/screens/subscription_screen.dart';
 import 'package:openturath_ai/services/auth_service.dart';
@@ -192,6 +194,16 @@ void main() {
     await _shot(tester, 'dashboard_dark', const DashboardScreen(), dark: true);
     await _shot(tester, 'dashboard_phone', const DashboardScreen(),
         size: const Size(390, 844));
+    await _shot(tester, 'notes_id', const BookmarkScreen());
+    await _shot(
+        tester,
+        'loader_id',
+        Scaffold(
+            body: AppLoader.fullscreen(
+                title: 'Fikih Syafi\'i',
+                subtitle: 'Menyiapkan ruang telaah…',
+                onCancel: () {})),
+        size: const Size(950, 600));
     AuthService.previewUser = null;
     await _shot(tester, 'login_phone', const LoginScreen(),
         size: const Size(390, 844));

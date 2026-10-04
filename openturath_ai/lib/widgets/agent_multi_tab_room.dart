@@ -2069,15 +2069,24 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
               ),
             ),
 
-          // Fullscreen pulsing loader hanya saat inisialisasi awal
-          if (!session.isSessionReady && session.isWebLoading)
-            Positioned.fill(
-              child: AppLoader.fullscreen(
-                title: session.agent.title,
-                subtitle: AppCopy.loadingReferences,
-                onCancel: () => AgentSessionManager.instance.closeRoom(),
-              ),
+          // Layar muat hanya saat inisialisasi awal; memudar ke konten.
+          Positioned.fill(
+            child: AnimatedSwitcher(
+              duration: const Duration(milliseconds: 240),
+              switchOutCurve: Curves.easeOut,
+              child: !session.isSessionReady && session.isWebLoading
+                  ? AppLoader.fullscreen(
+                      key: const ValueKey('room-loader'),
+                      title: session.agent.title,
+                      subtitle: AppCopy.loadingReferences,
+                      onCancel: () => AgentSessionManager.instance.closeRoom(),
+                    )
+                  : const IgnorePointer(
+                      key: ValueKey('room-ready'),
+                      child: SizedBox.expand(),
+                    ),
             ),
+          ),
 
           // Banner penolong saat sesi Google belum terhubung / halaman login aktif
           if (session.isGoogleAuthPage)

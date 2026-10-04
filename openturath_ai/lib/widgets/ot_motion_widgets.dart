@@ -77,8 +77,8 @@ class OTActiveFade extends StatefulWidget {
 
 class _OTActiveFadeState extends State<OTActiveFade>
     with SingleTickerProviderStateMixin {
-  late final AnimationController _controller = AnimationController(
-      vsync: this, duration: OTMotion.normal, value: 1);
+  late final AnimationController _controller =
+      AnimationController(vsync: this, duration: OTMotion.normal, value: 1);
   late final Animation<double> _progress =
       CurvedAnimation(parent: _controller, curve: OTMotion.curve);
 
@@ -260,6 +260,20 @@ class _OTFlipCardState extends State<OTFlipCard>
     }
   }
 
+  /// Posisi kursor di atas kartu, -1..1 pada tiap sumbu; nol saat di luar.
+  Offset _lean = Offset.zero;
+  static const _maxLean = 0.07; // sekitar 4 derajat
+
+  void _follow(PointerEvent event) {
+    final box = context.findRenderObject() as RenderBox?;
+    if (box == null || !box.hasSize) return;
+    final local = box.globalToLocal(event.position);
+    setState(() => _lean = Offset(
+          (local.dx / box.size.width * 2 - 1).clamp(-1.0, 1.0),
+          (local.dy / box.size.height * 2 - 1).clamp(-1.0, 1.0),
+        ));
+  }
+
   @override
   void dispose() {
     _controller.dispose();
@@ -268,32 +282,45 @@ class _OTFlipCardState extends State<OTFlipCard>
 
   @override
   Widget build(BuildContext context) {
+    final still = MediaQuery.disableAnimationsOf(context);
     return Semantics(
       button: true,
       label: widget.semanticLabel,
-      child: GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        onTap: _toggle,
-        child: AnimatedBuilder(
-          animation: _turn,
-          builder: (context, _) {
-            final angle = _turn.value * 3.141592653589793;
-            final showBack = _turn.value >= 0.5;
-            return Transform(
-              alignment: Alignment.center,
-              transform: Matrix4.identity()
-                ..setEntry(3, 2, 0.0012)
-                ..rotateY(angle),
-              child: showBack
-                  ? Transform(
-                      alignment: Alignment.center,
-                      transform: Matrix4.identity()
-                        ..rotateY(3.141592653589793),
-                      child: widget.back,
-                    )
-                  : widget.front,
-            );
-          },
+      child: MouseRegion(
+        cursor: SystemMouseCursors.click,
+        onHover: still ? null : _follow,
+        onExit: (_) => setState(() => _lean = Offset.zero),
+        child: GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTap: _toggle,
+          child: TweenAnimationBuilder<Offset>(
+            tween: Tween<Offset>(end: _lean),
+            duration: OTMotion.fast,
+            curve: OTMotion.curve,
+            builder: (context, lean, _) => AnimatedBuilder(
+              animation: _turn,
+              builder: (context, _) {
+                final angle = _turn.value * 3.141592653589793;
+                final showBack = _turn.value >= 0.5;
+                return Transform(
+                  alignment: Alignment.center,
+                  transform: Matrix4.identity()
+                    ..setEntry(3, 2, 0.0012)
+                    // Kartu miring mengikuti kursor, lalu berbalik saat diketuk.
+                    ..rotateX(-lean.dy * _maxLean)
+                    ..rotateY(lean.dx * _maxLean + angle),
+                  child: showBack
+                      ? Transform(
+                          alignment: Alignment.center,
+                          transform: Matrix4.identity()
+                            ..rotateY(3.141592653589793),
+                          child: widget.back,
+                        )
+                      : widget.front,
+                );
+              },
+            ),
+          ),
         ),
       ),
     );

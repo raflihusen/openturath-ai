@@ -52,7 +52,7 @@ const copyCatalog = <String, List<String>>{
   "openStudy": ["Membuka asisten…", "Opening assistant…", "جارٍ فتح المساعد…"],
   "studyOptions": ["Tampilan bacaan", "Reading options", "خيارات القراءة"],
   "referenceBooks": ["Kitab rujukan", "Reference books", "الكتب المرجعية"],
-  "savedCollection": ["Perbendaharaan Catatan", "Collected Notes", "خزانة الملاحظات"],
+  "savedCollection": ["Catatan", "Notes", "الملاحظات"],
   "bookDetails": ["Identitas kitab", "Book Record", "بطاقة الكتاب"],
   "chooseField": ["Pilih bidang", "Choose a discipline", "اختر مجال العلم"],
   "allCategories": ["Semua bidang", "All disciplines", "جميع المجالات"],
