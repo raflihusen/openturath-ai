@@ -241,7 +241,7 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
         body: SafeArea(
           top: false,
           child: Align(
-            alignment: AlignmentDirectional.topStart,
+            alignment: Alignment.topCenter,
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 1040),
               child: Column(

@@ -701,8 +701,8 @@ const copyCatalog = <String, List<String>>{
   "aiEtiquetteLabel": ["Adab menggunakan AI", "Etiquette of using AI", "أدب استعمال الذكاء الاصطناعي"],
   "planLabel": ["Paket", "Plan", "الباقة"],
   "planFreeBadge": ["GRATIS", "FREE", "مجاني"],
-  "roomAuthTitle": ["Ruang asisten belum tersambung", "The assistant room is not connected yet", "غرفة المساعد غير متصلة بعد"],
-  "roomAuthBody": ["Asisten ini berjalan di NotebookLM dan memerlukan sesi Google. Sesi itu belum bisa dibuat dari dalam aplikasi, jadi untuk sementara buka asisten ini di browser.", "This assistant runs on NotebookLM and needs a Google session. That session cannot be created inside the app yet, so for now open the assistant in your browser.", "يعمل هذا المساعد على NotebookLM ويحتاج إلى جلسة Google. لا يمكن إنشاء هذه الجلسة داخل التطبيق حاليًا، فافتح المساعد في المتصفح مؤقتًا."],
+  "roomAuthTitle": ["Sambungkan NotebookLM", "Connect NotebookLM", "ربط NotebookLM"],
+  "roomAuthBody": ["Asisten berjalan di NotebookLM milik Google, jadi Anda perlu masuk ke Google sekali lagi. Gunakan akun yang sama dengan akun OpenTurath Anda: {0}. Anda masuk langsung di halaman Google; OpenTurath tidak melihat dan tidak menyimpan kata sandi Anda.", "The assistant runs on Google's NotebookLM, so you need to sign in to Google once more. Use the same account as your OpenTurath account: {0}. You sign in on Google's own page; OpenTurath never sees or stores your password.", "يعمل المساعد على NotebookLM من Google، لذا تحتاج إلى تسجيل الدخول إلى Google مرة أخرى. استخدم الحساب نفسه المرتبط بأوبن تراث: {0}. يتم الدخول في صفحة Google نفسها؛ ولا يطّلع أوبن تراث على كلمة المرور ولا يحفظها."],
   "roomOpenInBrowser": ["Buka di browser", "Open in browser", "فتح في المتصفح"],
   "roomPermissionTitle": ["Akun Google belum punya izin", "This Google account has no access", "حساب Google لا يملك الإذن"],
   "roomPermissionBody": ["Akun Google yang aktif belum bisa membuka asisten ini. Periksa akun yang dipakai, lalu coba buka di browser.", "The active Google account cannot open this assistant. Check which account is in use, then try opening it in your browser.", "حساب Google الحالي لا يستطيع فتح هذا المساعد. تحقق من الحساب المستخدم ثم جرّب فتحه في المتصفح."],
@@ -714,4 +714,7 @@ const copyCatalog = <String, List<String>>{
   "planSingleLabel": ["Satu bidang ilmu", "One field of study", "مجال علمي واحد"],
   "noExpiryShort": ["TANPA BATAS", "NO EXPIRY", "بلا انتهاء"],
   "accessTermLabel": ["Masa akses", "Access term", "مدة الوصول"],
+  "roomSignInGoogle": ["Masuk dengan Google", "Sign in with Google", "تسجيل الدخول عبر Google"],
+  "roomAuthSameAccount": ["akun Google yang sama", "the same Google account", "حساب Google نفسه"],
+  "roomAuthBarHint": ["Masuk dengan akun yang sama", "Sign in with the same account", "سجّل الدخول بالحساب نفسه"],
 };

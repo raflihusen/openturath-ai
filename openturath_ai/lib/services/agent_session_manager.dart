@@ -19,6 +19,10 @@ class AgentSessionTab {
   bool isTimeoutError = false;
   bool isGooglePermissionError = false;
   bool isGoogleAuthPage = false;
+
+  /// Pengguna sudah membaca penjelasan dan memilih masuk ke Google di dalam
+  /// ruang asisten. Hanya di memori; ditanyakan lagi setiap aplikasi dibuka.
+  static bool googleSignInConsent = false;
   static double defaultFontScale = 1.0;
   double fontScale = defaultFontScale;
   bool hasAcknowledgedAdab = false;

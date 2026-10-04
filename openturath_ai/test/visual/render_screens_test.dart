@@ -188,14 +188,12 @@ void main() {
           const TahawwulatIntroductionSheet(asPage: true),
           size: const Size(1280, 1500), locale: locale);
     }
-    for (final section in [2, 3, 4, 5, 6]) {
-      await _shot(
-          tester,
-          'tahawwulat_s$section',
-          TahawwulatIntroductionSheet(
-              key: ValueKey(section), asPage: true, initialSection: section),
-          size: const Size(1280, 1700));
-    }
+    await _shot(tester, 'tahawwulat_long',
+        const TahawwulatIntroductionSheet(asPage: true),
+        size: const Size(1280, 3600));
+    await _shot(tester, 'tahawwulat_window',
+        const TahawwulatIntroductionSheet(asPage: true),
+        size: const Size(850, 860));
     await _shot(tester, 'tahawwulat_phone',
         const Scaffold(body: TahawwulatIntroductionSheet()),
         size: const Size(390, 844));

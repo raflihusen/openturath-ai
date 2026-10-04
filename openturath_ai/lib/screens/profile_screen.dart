@@ -344,7 +344,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             final membership = resolveMembershipPass(userModel);
 
             return Align(
-              alignment: AlignmentDirectional.topStart,
+              alignment: Alignment.topCenter,
               child: ConstrainedBox(
                 constraints: const BoxConstraints(maxWidth: 760),
                 child: ListView(

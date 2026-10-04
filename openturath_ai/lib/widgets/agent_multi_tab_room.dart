@@ -1,4 +1,3 @@
-import '../services/browser_workspace_launcher.dart';
 import '../widgets/adaptive_sheet.dart';
 import '../services/desktop_webview_runtime.dart';
 import '../widgets/desktop_webview_gate.dart';
@@ -1273,6 +1272,20 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
     }
   }
 
+  /// Halaman masuk Google ditampilkan apa adanya setelah pengguna setuju.
+  void _enterGoogleSignIn() {
+    _readinessTimer?.cancel();
+    _inputRetryTimer?.cancel();
+    if (!mounted) return;
+    setState(() {
+      final session = widget.session;
+      session.isWebLoading = false;
+      session.isSessionReady = false;
+      session.isGoogleAuthPage = true;
+      session.errorMessage = null;
+    });
+  }
+
   void _handleAuthenticationRequired() {
     _readinessTimer?.cancel();
     _inputRetryTimer?.cancel();
@@ -1297,6 +1310,11 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
     try {
       final controller = widget.session.webController!;
       final url = await controller.getUrl();
+      if (url != null && NotebookNavigation.signInFlow(url.uriValue) &&
+          AgentSessionTab.googleSignInConsent) {
+        if (!widget.session.isGoogleAuthPage) _enterGoogleSignIn();
+        return;
+      }
       if (url != null && NotebookNavigation.authentication(url.uriValue)) {
         _handleAuthenticationRequired();
         await controller.stopLoading();
@@ -1549,13 +1567,31 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
           backLabel: Loc.tr('back'),
         );
       } else if (session.isGoogleAuthPage) {
+        final email = _authService.currentUser?.email?.trim() ?? '';
         state = AppErrorState(
-          icon: Icons.link_off_rounded,
+          icon: Icons.link_rounded,
           title: Loc.tr('roomAuthTitle'),
-          message: Loc.tr('roomAuthBody'),
-          retryLabel: Loc.tr('roomOpenInBrowser'),
-          retryIcon: Icons.open_in_new_rounded,
-          onRetry: session.resolvedUrl == null ? null : openInBrowser,
+          message: Loc.tr('roomAuthBody',
+              [email.isEmpty ? Loc.tr('roomAuthSameAccount') : email]),
+          retryLabel: Loc.tr('roomSignInGoogle'),
+          retryIcon: Icons.login_rounded,
+          onRetry: session.resolvedUrl == null
+              ? null
+              : () {
+                  AgentSessionTab.googleSignInConsent = true;
+                  setState(() {
+                    session.errorMessage = null;
+                    session.isGoogleAuthPage = false;
+                    session.isWebLoading = true;
+                    session.isSessionReady = false;
+                  });
+                  session.webController?.loadUrl(
+                      urlRequest:
+                          URLRequest(url: WebUri(session.resolvedUrl!)));
+                  _startReadinessCheck();
+                },
+          secondaryLabel: Loc.tr('roomOpenInBrowser'),
+          onSecondary: session.resolvedUrl == null ? null : openInBrowser,
           onBack: close,
           backLabel: Loc.tr('back'),
         );
@@ -1846,8 +1882,17 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
               session.hasInjectedEarlyScript = false;
               if (uri != null &&
                   NotebookNavigation.authentication(uri.uriValue)) {
+                if (AgentSessionTab.googleSignInConsent) {
+                  if (!session.isGoogleAuthPage) _enterGoogleSignIn();
+                  return;
+                }
                 _handleAuthenticationRequired();
                 await controller.stopLoading();
+                return;
+              }
+              if (session.isGoogleAuthPage &&
+                  uri != null &&
+                  !NotebookNavigation.notebook(uri.uriValue)) {
                 return;
               }
               final host = uri?.host.toLowerCase() ?? '';
@@ -1924,10 +1969,19 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
             },
             shouldOverrideUrlLoading: (controller, action) async {
               final uri = action.request.url;
+              final consented = AgentSessionTab.googleSignInConsent;
               if (uri != null &&
                   NotebookNavigation.authentication(uri.uriValue)) {
-                _handleAuthenticationRequired();
-                return NavigationActionPolicy.CANCEL;
+                // Tanpa persetujuan, halaman masuk tidak dimuat sama sekali.
+                if (!consented) {
+                  _handleAuthenticationRequired();
+                  return NavigationActionPolicy.CANCEL;
+                }
+                if (action.isForMainFrame == true &&
+                    !session.isGoogleAuthPage) {
+                  _enterGoogleSignIn();
+                }
+                return NavigationActionPolicy.ALLOW;
               }
               if (action.isForMainFrame != true) {
                 return NavigationActionPolicy.ALLOW;
@@ -1935,6 +1989,20 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
               if (uri == null) return NavigationActionPolicy.CANCEL;
 
               if (NotebookNavigation.allowed(uri.uriValue)) {
+                // Selesai masuk: kembali ke notebook dan lanjutkan pemuatan.
+                if (session.isGoogleAuthPage && mounted) {
+                  setState(() {
+                    session.isGoogleAuthPage = false;
+                    session.isWebLoading = true;
+                  });
+                  _startReadinessCheck();
+                }
+                return NavigationActionPolicy.ALLOW;
+              }
+              // Langkah lanjutan proses masuk tetap di domain Google.
+              if (consented &&
+                  session.isGoogleAuthPage &&
+                  NotebookNavigation.signInFlow(uri.uriValue)) {
                 return NavigationActionPolicy.ALLOW;
               }
               return NavigationActionPolicy.CANCEL;
@@ -1985,193 +2053,72 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
             ),
           ),
 
-          // Banner penolong saat sesi Google belum terhubung / halaman login aktif
+          // Selama halaman masuk Google tampil: bilah tipis yang menunjukkan
+          // alamat halaman dan akun yang perlu dipakai. Halamannya tidak diubah.
           if (session.isGoogleAuthPage)
             Positioned(
-              top: 16,
-              left: 16,
-              right: 16,
-              child: Material(
-                elevation: 8,
-                borderRadius: BorderRadius.circular(14),
-                color:
-                    isDark ? const Color(0xFF282828) : const Color(0xFFFFFFFF),
-                child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(14),
-                    border: Border.all(
-                      color: isDark
-                          ? const Color(0xFF414141)
-                          : const Color(0xFFE5E5E5),
-                      width: 1,
-                    ),
-                  ),
-                  child: Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          color:
-                              OTColors.accent(isDark).withValues(alpha: 0.12),
-                          shape: BoxShape.circle,
-                        ),
-                        child: Icon(
-                          Icons.account_circle_rounded,
-                          color: OTColors.accent(isDark),
-                          size: 22,
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: FutureBuilder<String>(
-                          future: NativeAgentLauncher.getActiveNotebookEmail(),
-                          builder: (context, snapshot) {
-                            final activeEmail = snapshot.data?.trim() ?? '';
-                            final targetEmail = activeEmail.isNotEmpty
-                                ? activeEmail
-                                : (_authService.currentUser?.email?.trim() ??
-                                    '');
-                            final displayEmail =
-                                targetEmail.isNotEmpty ? targetEmail : 'Google';
-                            return Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Row(
-                                  children: [
-                                    Text(
-                                      'Akun Terdeteksi: ',
-                                      style: ScholarlyFonts.outfit(
-                                        fontSize: 12,
-                                        color: isDark
-                                            ? const Color(0xFFA4A4A4)
-                                            : const Color(0xFF747474),
-                                      ),
-                                    ),
-                                    Flexible(
-                                      child: Text(
-                                        displayEmail,
-                                        style: ScholarlyFonts.outfit(
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w700,
-                                          color: isDark
-                                              ? Colors.white
-                                              : const Color(0xFF191919),
-                                        ),
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 2),
-                                Text(
-                                  'Buka ruang browser untuk memakai sesi Google yang sama.',
-                                  style: ScholarlyFonts.outfit(
-                                    fontSize: 11,
-                                    color: isDark
-                                        ? const Color(0xFFA4A4A4)
-                                        : const Color(0xFF747474),
-                                  ),
-                                ),
-                              ],
-                            );
-                          },
-                        ),
-                      ),
-                      const SizedBox(width: 6),
-                      OutlinedButton.icon(
-                        style: OutlinedButton.styleFrom(
-                          visualDensity: VisualDensity.compact,
-                          foregroundColor:
-                              isDark ? Colors.white : const Color(0xFF191919),
-                          side: BorderSide(
-                            color: isDark
-                                ? const Color(0xFF414141)
-                                : const Color(0xFFD5D5D5),
-                          ),
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 10, vertical: 8),
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8)),
-                        ),
-                        icon: const Icon(Icons.refresh_rounded, size: 14),
-                        label: Text(
-                          'Ruang Browser',
-                          style: ScholarlyFonts.outfit(
-                              fontSize: 11, fontWeight: FontWeight.w600),
-                        ),
-                        onPressed: () async {
-                          try {
-                            await BrowserWorkspaceLauncher()
-                                .open(agentId: session.agent.id);
-                          } catch (_) {
-                            if (context.mounted) {
-                              AppSnackBar.error(
-                                  context, 'Ruang browser belum dapat dibuka.');
-                            }
-                          }
-                        },
-                      ),
-                      const SizedBox(width: 4),
-                      TextButton(
-                        style: TextButton.styleFrom(
-                          visualDensity: VisualDensity.compact,
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 10, vertical: 8),
-                        ),
-                        onPressed: () async {
-                          await AgentMultiTabRoom.showChangeGoogleAccountDialog(
-                              context);
-                          if (mounted) setState(() {});
-                        },
-                        child: Text(
-                          'Ganti Akun',
-                          style: ScholarlyFonts.outfit(
-                            fontSize: 11,
-                            fontWeight: FontWeight.w600,
-                            color: isDark
-                                ? const Color(0xFFA4A4A4)
-                                : const Color(0xFF747474),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 4),
-                      ElevatedButton.icon(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: OTColors.accent(isDark),
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 14, vertical: 10),
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8)),
-                          elevation: 0,
-                        ),
-                        icon:
-                            const Icon(Icons.open_in_browser_rounded, size: 16),
-                        label: Text(
-                          'Buka di Browser',
-                          style: ScholarlyFonts.outfit(
-                              fontSize: 12, fontWeight: FontWeight.w600),
-                        ),
-                        onPressed: () async {
-                          final url = session.resolvedUrl;
-                          if (url != null) {
-                            final email = await NativeAgentLauncher
-                                .getActiveNotebookEmail();
-                            await NativeAgentLauncher.launchNotebook(url,
-                                email: email.isNotEmpty ? email : null);
-                          }
-                        },
-                      ),
-                    ],
-                  ),
-                ),
+              top: 0,
+              left: 0,
+              right: 0,
+              child: _GoogleSignInBar(
+                email: _authService.currentUser?.email?.trim() ?? '',
+                onCancel: () => AgentSessionManager.instance.closeRoom(),
               ),
             ),
         ],
+      ),
+    );
+  }
+}
+
+/// Bilah di atas halaman masuk Google: gembok dan alamat asli halaman, akun
+/// yang perlu dipakai, dan tombol batal.
+class _GoogleSignInBar extends StatelessWidget {
+  const _GoogleSignInBar({required this.email, required this.onCancel});
+
+  final String email;
+  final VoidCallback onCancel;
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final ink = OTColors.textPrimary(isDark);
+    final muted = OTColors.textSecondary(isDark);
+    return Material(
+      color: OTColors.surface(isDark),
+      child: Container(
+        padding: const EdgeInsetsDirectional.fromSTEB(16, 6, 8, 6),
+        decoration: BoxDecoration(
+          border: Border(bottom: BorderSide(color: OTColors.border(isDark))),
+        ),
+        child: Row(
+          children: [
+            Icon(Icons.lock_outline_rounded, size: 16, color: muted),
+            const SizedBox(width: 8),
+            Text(
+              'accounts.google.com',
+              style: ScholarlyFonts.outfit(
+                  fontSize: 13, fontWeight: FontWeight.w600, color: ink),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                email.isEmpty
+                    ? Loc.tr('roomAuthBarHint')
+                    : '${Loc.tr('roomAuthBarHint')}: $email',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: ScholarlyFonts.outfit(fontSize: 13, color: muted),
+              ),
+            ),
+            TextButton(
+              onPressed: onCancel,
+              style: TextButton.styleFrom(
+                  foregroundColor: muted, minimumSize: const Size(0, 36)),
+              child: Text(Loc.tr('cancel')),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -28,7 +28,20 @@ class NotebookNavigation {
                   .split('/')
                   .any(const {'login', 'signin', 'servicelogin'}.contains)));
 
-  // Google OAuth must run in a supported browser, never in this app WebView.
+  /// Halaman milik Google yang dilewati selama proses masuk (verifikasi dua
+  /// langkah, penyetelan sesi). Hanya HTTPS ke domain Google; halaman ini
+  /// ditampilkan apa adanya, tanpa skrip dari aplikasi.
+  static bool signInFlow(Uri uri) {
+    if (!_trustedHttps(uri)) return false;
+    final host = uri.host.toLowerCase();
+    return authentication(uri) ||
+        host == 'google.com' ||
+        host.endsWith('.google.com') ||
+        host.endsWith('.youtube.com') ||
+        RegExp(r'^accounts\.google\.[a-z.]{2,6}$').hasMatch(host);
+  }
+
+  // Skrip aplikasi hanya berjalan di halaman notebook, tidak di halaman masuk.
   static bool allowed(Uri uri) =>
       _trustedHttps(uri) &&
       hosts.contains(uri.host.toLowerCase()) &&

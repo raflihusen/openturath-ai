@@ -7,6 +7,7 @@ import '../core/design/ot_motion.dart';
 import '../models/agent_model.dart';
 import '../models/sub_agent_model.dart';
 import 'apple_interactive_wrapper.dart';
+import 'arch_echo_canvas.dart';
 import '../core/scholarly_fonts.dart';
 
 /// Item pembantu untuk data 6 Kitab Qawa'id
@@ -110,7 +111,12 @@ class TahawwulatIntroductionSheet extends StatefulWidget {
 class _TahawwulatIntroductionSheetState
     extends State<TahawwulatIntroductionSheet> {
   final ScrollController _scrollController = ScrollController();
-  late int _selectedTabIndex = widget.initialSection.clamp(0, _tabs.length - 1);
+
+  /// Bab pada halaman majalah: (label, judul) berurutan, dan jangkar gulirnya.
+  final List<(String, String)> _chapters = [];
+  final Map<String, GlobalKey> _chapterKeys = {};
+  late int _selectedTabIndex =
+      widget.asPage ? 0 : widget.initialSection.clamp(0, _tabs.length - 1);
 
   static const List<String> _tabs = [
     "Semua",
@@ -148,7 +154,6 @@ class _TahawwulatIntroductionSheetState
     final textTertiary = OTColors.textTertiary(isDark);
 
     final page = widget.asPage;
-    final wide = page && MediaQuery.sizeOf(context).width >= 900;
 
     final title = Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -224,34 +229,6 @@ class _TahawwulatIntroductionSheetState
       ),
     );
 
-    // Desktop lebar: daftar isi di sisi awal.
-    final contents = SizedBox(
-      width: 232,
-      child: ListView(
-        padding: const EdgeInsetsDirectional.fromSTEB(20, 28, 12, 28),
-        children: [
-          Padding(
-            padding: const EdgeInsetsDirectional.only(start: 14, bottom: 10),
-            child: Text(
-              "Daftar isi",
-              style: ScholarlyFonts.outfit(
-                fontSize: 13,
-                fontWeight: FontWeight.w500,
-                color: textTertiary,
-              ),
-            ),
-          ),
-          for (var idx = 0; idx < _tabs.length; idx++)
-            _ContentsRow(
-              label: _tabs[idx],
-              selected: _selectedTabIndex == idx,
-              isDark: isDark,
-              onTap: () => select(idx),
-            ),
-        ],
-      ),
-    );
-
     final reader = LayoutBuilder(
       builder: (context, box) {
         final gutter = page
@@ -266,44 +243,252 @@ class _TahawwulatIntroductionSheetState
     );
 
     if (page) {
-      return Scaffold(
-        backgroundColor: surfaceColor,
-        body: SafeArea(
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsetsDirectional.fromSTEB(12, 14, 20, 14),
-                child: Row(
-                  children: [
-                    IconButton(
-                      tooltip:
-                          MaterialLocalizations.of(context).backButtonTooltip,
-                      icon: Icon(Icons.adaptive.arrow_back_rounded,
-                          size: 20, color: textPrimary),
-                      onPressed: () => Navigator.of(context).pop(),
-                    ),
-                    const SizedBox(width: 8),
-                    Expanded(child: title),
-                  ],
+      // Halaman majalah: sampul, daftar isi bernomor, lalu bab demi bab
+      // dalam satu gulungan. Tanpa panel samping.
+      _chapters.clear();
+      final sections = _sections(context, isDark);
+      final viewport = MediaQuery.sizeOf(context);
+      final roomy = viewport.width >= 760;
+      const onCover = OTColors.onInverseSurface;
+
+      final cover = Container(
+        height: (viewport.height * 0.78).clamp(420.0, 640.0),
+        color: OTColors.inverseSurface(isDark),
+        child: Stack(
+          children: [
+            // Lengkung logo sebagai gambar sampul, di sisi akhir.
+            PositionedDirectional(
+              top: 0,
+              bottom: 0,
+              end: 0,
+              width: roomy ? viewport.width * 0.46 : viewport.width,
+              child: Opacity(
+                opacity: roomy ? 1 : 0.45,
+                child: const ExcludeSemantics(
+                    child: ArchEchoCanvas(compact: true)),
+              ),
+            ),
+            Align(
+              alignment: AlignmentDirectional.bottomStart,
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(
+                    roomy ? 64 : 24, 0, roomy ? 64 : 24, roomy ? 56 : 32),
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                      maxWidth: roomy ? viewport.width * 0.56 - 64 : 620),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Pengantar · ${_chapters.length} bagian",
+                        style: ScholarlyFonts.outfit(
+                          fontSize: 13,
+                          color: onCover.withValues(alpha: 0.6),
+                        ),
+                      ),
+                      const SizedBox(height: 14),
+                      Text(
+                        "Mengenal\nFikih Tahawwulat",
+                        style: ScholarlyFonts.newsreader(
+                          fontSize:
+                              viewport.width >= 1100 ? 64 : (roomy ? 46 : 40),
+                          fontWeight: FontWeight.w500,
+                          letterSpacing: roomy ? -2 : -1.2,
+                          height: 1.02,
+                          color: onCover,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      Text(
+                        "فِقْهُ التَّحَوُّلَاتِ",
+                        textDirection: TextDirection.rtl,
+                        style: ScholarlyFonts.scheherazadeNew(
+                          fontSize: roomy ? 30 : 24,
+                          height: 1.5,
+                          color: onCover.withValues(alpha: 0.72),
+                        ),
+                      ),
+                      const SizedBox(height: 14),
+                      Text(
+                        "Ilmu membaca perubahan zaman dengan petunjuk Nabi ﷺ, "
+                        "disusun Al-Habib Abu Bakar Al-Adni bin Ali Al-Masyhur.",
+                        style: ScholarlyFonts.outfit(
+                          fontSize: roomy ? 17 : 15,
+                          height: 1.55,
+                          color: onCover.withValues(alpha: 0.72),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-              if (!wide) chips,
-              Divider(height: 1, thickness: 1, color: borderColor),
-              Expanded(
-                child: wide
-                    ? Row(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          contents,
-                          VerticalDivider(
-                              width: 1, thickness: 1, color: borderColor),
-                          Expanded(child: reader),
-                        ],
-                      )
-                    : reader,
-              ),
-            ],
+            ),
+          ],
+        ),
+      );
+
+      Widget contentsEntry(int index) {
+        final chapter = _chapters[index];
+        return InkWell(
+          onTap: () {
+            final target = _chapterKeys[chapter.$1]?.currentContext;
+            if (target == null) return;
+            Scrollable.ensureVisible(
+              target,
+              duration: MediaQuery.disableAnimationsOf(context)
+                  ? Duration.zero
+                  : const Duration(milliseconds: 420),
+              curve: OTMotion.curve,
+            );
+          },
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 13),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.baseline,
+              textBaseline: TextBaseline.alphabetic,
+              children: [
+                SizedBox(
+                  width: 44,
+                  child: Text(
+                    (index + 1).toString().padLeft(2, '0'),
+                    style: ScholarlyFonts.newsreader(
+                        fontSize: 18, color: textTertiary),
+                  ),
+                ),
+                Expanded(
+                  child: Text(
+                    chapter.$2,
+                    style: ScholarlyFonts.newsreader(
+                      fontSize: 19,
+                      fontWeight: FontWeight.w500,
+                      letterSpacing: -0.2,
+                      height: 1.25,
+                      color: textPrimary,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
+        );
+      }
+
+      final half = (_chapters.length / 2).ceil();
+      Widget contentsColumn(int from, int to) => Column(
+            children: [
+              for (var i = from; i < to; i++) ...[
+                contentsEntry(i),
+                Divider(height: 1, color: borderColor),
+              ],
+            ],
+          );
+
+      return Scaffold(
+        backgroundColor: surfaceColor,
+        body: Stack(
+          children: [
+            SingleChildScrollView(
+              controller: _scrollController,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  cover,
+                  Center(
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 920),
+                      child: Padding(
+                        padding: EdgeInsets.fromLTRB(
+                            roomy ? 64 : 24, 56, roomy ? 64 : 24, 24),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Daftar isi",
+                              style: ScholarlyFonts.outfit(
+                                  fontSize: 13, color: textTertiary),
+                            ),
+                            const SizedBox(height: 10),
+                            Divider(height: 1, color: borderColor),
+                            if (roomy)
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Expanded(child: contentsColumn(0, half)),
+                                  const SizedBox(width: 48),
+                                  Expanded(
+                                      child: contentsColumn(
+                                          half, _chapters.length)),
+                                ],
+                              )
+                            else
+                              contentsColumn(0, _chapters.length),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  Center(
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 728),
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(24, 16, 24, 96),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: sections,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            // Garis kemajuan baca di tepi atas.
+            Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              child: AnimatedBuilder(
+                animation: _scrollController,
+                builder: (context, _) {
+                  final position = _scrollController.hasClients &&
+                          _scrollController.position.hasContentDimensions
+                      ? _scrollController.position
+                      : null;
+                  final progress =
+                      position == null || position.maxScrollExtent <= 0
+                          ? 0.0
+                          : (position.pixels / position.maxScrollExtent)
+                              .clamp(0.0, 1.0);
+                  return Align(
+                    alignment: AlignmentDirectional.centerStart,
+                    child: FractionallySizedBox(
+                      widthFactor: progress,
+                      child: Container(height: 2, color: textPrimary),
+                    ),
+                  );
+                },
+              ),
+            ),
+            // Tombol kembali mengambang di atas sampul.
+            PositionedDirectional(
+              top: 16,
+              start: 16,
+              child: SafeArea(
+                child: Material(
+                  color: surfaceColor,
+                  shape: CircleBorder(side: BorderSide(color: borderColor)),
+                  child: IconButton(
+                    tooltip:
+                        MaterialLocalizations.of(context).backButtonTooltip,
+                    icon: Icon(Icons.arrow_back_rounded,
+                        size: 20, color: textPrimary),
+                    onPressed: () => Navigator.of(context).pop(),
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
       );
     }
@@ -1839,6 +2024,68 @@ class _TahawwulatIntroductionSheetState
     final textPrimary = OTColors.textPrimary(isDark);
     final textSecondary = OTColors.textSecondary(isDark);
 
+    if (widget.asPage) {
+      _chapters.add((tag, title));
+      final number = _chapters.length.toString().padLeft(2, '0');
+      return Padding(
+        key: _chapterKeys.putIfAbsent(tag, GlobalKey.new),
+        padding: const EdgeInsets.only(top: 72, bottom: 8),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Divider(height: 1, color: OTColors.border(isDark)),
+            const SizedBox(height: 20),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.baseline,
+              textBaseline: TextBaseline.alphabetic,
+              children: [
+                Text(
+                  number,
+                  style: ScholarlyFonts.newsreader(
+                    fontSize: 64,
+                    fontWeight: FontWeight.w300,
+                    letterSpacing: -2,
+                    height: 1,
+                    color: OTColors.textTertiary(isDark),
+                  ),
+                ),
+                const SizedBox(width: 14),
+                // "Bab N" tidak diulang: nomor besar sudah menjadi urutannya.
+                if (!tag.startsWith('Bab'))
+                  Text(
+                    tag,
+                    style: ScholarlyFonts.outfit(
+                        fontSize: 13, color: OTColors.textTertiary(isDark)),
+                  ),
+              ],
+            ),
+            const SizedBox(height: 18),
+            Text(
+              title,
+              style: ScholarlyFonts.newsreader(
+                fontSize: 36,
+                fontWeight: FontWeight.w500,
+                letterSpacing: -0.9,
+                height: 1.12,
+                color: textPrimary,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              arabic,
+              textDirection: TextDirection.rtl,
+              style: ScholarlyFonts.scheherazadeNew(
+                fontSize: 22,
+                height: 1.6,
+                color: textSecondary,
+              ),
+            ),
+            const SizedBox(height: 8),
+          ],
+        ),
+      );
+    }
+
     // Jarak di atas tiap bab agar pergantian bab terasa.
     return Padding(
       padding: EdgeInsets.only(top: widget.asPage ? 26 : 12),
@@ -1882,9 +2129,9 @@ class _TahawwulatIntroductionSheetState
     return Text(
       text,
       style: ScholarlyFonts.outfit(
-        fontSize: widget.asPage ? 15.5 : 14,
+        fontSize: widget.asPage ? 17 : 14,
         fontWeight: FontWeight.w400,
-        height: widget.asPage ? 1.7 : 1.6,
+        height: widget.asPage ? 1.75 : 1.6,
         color: OTColors.textPrimary(isDark).withValues(alpha: 0.84),
       ),
     );
@@ -1943,48 +2190,6 @@ class _TahawwulatIntroductionSheetState
         width: 1.5,
         height: 12,
         color: OTColors.border(isDark).withValues(alpha: 0.7),
-      ),
-    );
-  }
-}
-
-/// Satu baris daftar isi di halaman baca desktop.
-class _ContentsRow extends StatelessWidget {
-  const _ContentsRow({
-    required this.label,
-    required this.selected,
-    required this.isDark,
-    required this.onTap,
-  });
-
-  final String label;
-  final bool selected;
-  final bool isDark;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final ink = OTColors.textPrimary(isDark);
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 2),
-      child: Material(
-        color: selected ? OTColors.surfaceSubtle(isDark) : Colors.transparent,
-        borderRadius: BorderRadius.circular(8),
-        child: InkWell(
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(8),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-            child: Text(
-              label,
-              style: ScholarlyFonts.outfit(
-                fontSize: 13.5,
-                fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
-                color: selected ? ink : OTColors.textSecondary(isDark),
-              ),
-            ),
-          ),
-        ),
       ),
     );
   }

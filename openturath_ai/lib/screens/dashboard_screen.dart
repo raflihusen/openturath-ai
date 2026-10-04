@@ -212,7 +212,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               color: accent,
               // Rata atas-awal: konten pendek tidak lagi melayang di tengah layar.
               child: Align(
-                alignment: AlignmentDirectional.topStart,
+                alignment: Alignment.topCenter,
                 child: ConstrainedBox(
                   constraints: const BoxConstraints(maxWidth: 1040),
                   child: SingleChildScrollView(
@@ -229,6 +229,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       children: [
                         // Banner pembaruan jika tersedia
                         const UpdateReadyBanner(),
+                        const _DateHeader(),
+                        const SizedBox(height: 14),
 
                         // Kartu ini hanya menampilkan keadaan yang benar-benar ada:
                         // sesi yang masih tersimpan, asisten terakhir, atau pintu mulai.
@@ -813,7 +815,7 @@ class _AdabOfDayTile extends StatelessWidget {
                 child: Text(Loc.tr('aiEtiquetteLabel'),
                     style: ScholarlyFonts.outfit(fontSize: 12, color: muted)),
               ),
-              Icon(Icons.adaptive.arrow_forward_rounded,
+              Icon(Icons.arrow_forward_rounded,
                   size: 16, color: muted),
             ],
           ),
@@ -948,10 +950,6 @@ class _StudyEntryCard extends StatelessWidget {
                 ? AppCopy.ahlanDefault
                 : AppCopy.ahlanWithName(displayName),
             style: ScholarlyFonts.outfit(fontSize: 13, color: muted)),
-        const SizedBox(height: 2),
-        Text(
-            '${HijriDateUtils.formatMasehiOnly()} · ${HijriDateUtils.formatHijriOnly()}',
-            style: ScholarlyFonts.outfit(fontSize: 12, color: muted)),
         const SizedBox(height: 14),
         Text(Loc.text(title),
             style: ScholarlyFonts.newsreader(
@@ -1401,4 +1399,45 @@ class _AnnouncementSlide {
     required this.summary,
     required this.detailedContent,
   });
+}
+
+/// Tanggal hari ini: Hijriah sebagai judul, Masehi di sampingnya.
+class _DateHeader extends StatelessWidget {
+  const _DateHeader();
+
+  @override
+  Widget build(BuildContext context) {
+    Loc.watch(context);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Semantics(
+      label:
+          '${HijriDateUtils.formatHijriOnly()}, ${HijriDateUtils.formatMasehiOnly()}',
+      excludeSemantics: true,
+      child: Wrap(
+        crossAxisAlignment: WrapCrossAlignment.end,
+        spacing: 12,
+        runSpacing: 2,
+        children: [
+          Text(
+            HijriDateUtils.formatHijriOnly(),
+            style: ScholarlyFonts.newsreader(
+              fontSize: 22,
+              fontWeight: FontWeight.w600,
+              letterSpacing: -0.3,
+              height: 1.2,
+              color: OTColors.textPrimary(isDark),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(bottom: 2),
+            child: Text(
+              HijriDateUtils.formatMasehiOnly(),
+              style: ScholarlyFonts.outfit(
+                  fontSize: 14, color: OTColors.textSecondary(isDark)),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }

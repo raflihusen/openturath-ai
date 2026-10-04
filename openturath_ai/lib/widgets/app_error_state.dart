@@ -11,6 +11,8 @@ class AppErrorState extends StatelessWidget {
   final VoidCallback? onRetry;
   final String retryLabel;
   final IconData retryIcon;
+  final VoidCallback? onSecondary;
+  final String secondaryLabel;
   final VoidCallback? onBack;
   final String backLabel;
 
@@ -22,6 +24,8 @@ class AppErrorState extends StatelessWidget {
     this.onRetry,
     this.retryLabel = 'Coba lagi',
     this.retryIcon = Icons.refresh_rounded,
+    this.onSecondary,
+    this.secondaryLabel = '',
     this.onBack,
     this.backLabel = 'Kembali',
   });
@@ -35,7 +39,9 @@ class AppErrorState extends StatelessWidget {
     this.retryLabel = 'Coba lagi',
     this.onBack,
     this.backLabel = 'Kembali',
-  }) : retryIcon = Icons.refresh_rounded;
+  })  : retryIcon = Icons.refresh_rounded,
+        onSecondary = null,
+        secondaryLabel = '';
 
   const AppErrorState.unauthorized({
     super.key,
@@ -46,7 +52,9 @@ class AppErrorState extends StatelessWidget {
     this.retryLabel = 'Lihat langganan',
     this.onBack,
     this.backLabel = 'Kembali',
-  }) : retryIcon = Icons.refresh_rounded;
+  })  : retryIcon = Icons.refresh_rounded,
+        onSecondary = null,
+        secondaryLabel = '';
 
   const AppErrorState.empty({
     super.key,
@@ -57,7 +65,9 @@ class AppErrorState extends StatelessWidget {
     this.retryLabel = 'Atur ulang pencarian',
     this.onBack,
     this.backLabel = 'Kembali',
-  }) : retryIcon = Icons.refresh_rounded;
+  })  : retryIcon = Icons.refresh_rounded,
+        onSecondary = null,
+        secondaryLabel = '';
 
   const AppErrorState.generic({
     super.key,
@@ -68,7 +78,9 @@ class AppErrorState extends StatelessWidget {
     this.retryLabel = 'Muat ulang',
     this.onBack,
     this.backLabel = 'Kembali',
-  }) : retryIcon = Icons.refresh_rounded;
+  })  : retryIcon = Icons.refresh_rounded,
+        onSecondary = null,
+        secondaryLabel = '';
 
   @override
   Widget build(BuildContext context) {
@@ -129,6 +141,23 @@ class AppErrorState extends StatelessWidget {
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
+                ),
+              ],
+              if (onSecondary != null) ...[
+                const SizedBox(height: 8),
+                OutlinedButton(
+                  onPressed: onSecondary,
+                  style: OutlinedButton.styleFrom(
+                    minimumSize: const Size(200, 44),
+                    foregroundColor: ink,
+                    side: BorderSide(color: OTColors.border(isDark)),
+                    textStyle: ScholarlyFonts.outfit(
+                        fontSize: 14, fontWeight: FontWeight.w500),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: Text(secondaryLabel),
                 ),
               ],
               if (onBack != null) ...[
