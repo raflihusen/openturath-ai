@@ -1,5 +1,6 @@
 import '../widgets/desktop_shortcuts.dart';
 import 'package:flutter/material.dart';
+import '../core/design/native_design.dart';
 import 'package:flutter/services.dart';
 
 import '../core/app_snackbar.dart';
@@ -481,12 +482,7 @@ ${Loc.tr('bookScienceSection')}: ${book.section}''';
                         Loc.tr('bookReferenceLabel'),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: ScholarlyFonts.outfit(
-                          color: ink,
-                          fontSize: OTFontSize.s18,
-                          fontWeight: FontWeight.w600,
-                          letterSpacing: -0.3,
-                        ),
+                        style: OTTypography.screenTitle(color: ink),
                       ),
                     ),
                     IconButton(
@@ -681,48 +677,35 @@ class _BookBentoGrid extends StatelessWidget {
       );
     }
 
-    return LayoutBuilder(builder: (context, constraints) {
-      const gap = OTSpacing.md;
-      final width = constraints.maxWidth;
-      final stacked = width < 420;
-      final wideColumns = width >= 560 && wide.length.isEven ? 2 : 1;
-      final wideWidth = (width - gap * (wideColumns - 1)) / wideColumns;
-
-      return Column(
+    // Satu tabel identitas edisi: kartu hanya untuk benda yang bisa dibuka,
+    // jadi fakta-fakta ini berbagi satu permukaan dengan garis pemisah.
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final rows = [...facts, ...wide];
+    return Container(
+      padding: const EdgeInsets.fromLTRB(
+          OTSpacing.base, OTSpacing.md, OTSpacing.base, OTSpacing.xs),
+      decoration: BoxDecoration(
+        color: OTColors.surface(isDark),
+        borderRadius: BorderRadius.circular(OTRadius.card),
+        border: Border.all(color: OTColors.border(isDark)),
+      ),
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // Fakta singkat dalam satu baris dengan tinggi yang sama.
-          if (facts.isNotEmpty && !stacked)
-            IntrinsicHeight(
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  for (var i = 0; i < facts.length; i++) ...[
-                    if (i > 0) const SizedBox(width: gap),
-                    Expanded(child: OTReveal(index: i, child: facts[i])),
-                  ],
-                ],
-              ),
-            ),
-          if (facts.isNotEmpty && stacked)
-            for (var i = 0; i < facts.length; i++) ...[
-              if (i > 0) const SizedBox(height: gap),
-              OTReveal(index: i, child: facts[i]),
-            ],
-          if (facts.isNotEmpty && wide.isNotEmpty) const SizedBox(height: gap),
-          Wrap(
-            spacing: gap,
-            runSpacing: gap,
-            children: [
-              for (var i = 0; i < wide.length; i++)
-                SizedBox(
-                    width: wideWidth,
-                    child: OTReveal(index: facts.length + i, child: wide[i])),
-            ],
+          Text(
+            NativeCopy.text('edition').toUpperCase(),
+            style: OTTypography.sectionHeading(
+                color: OTColors.textSecondary(isDark)),
           ),
+          const SizedBox(height: OTSpacing.xs),
+          for (var i = 0; i < rows.length; i++) ...[
+            if (i > 0)
+              Divider(height: 1, color: OTColors.borderSubtle(isDark)),
+            OTReveal(index: i, child: rows[i]),
+          ],
         ],
-      );
-    });
+      ),
+    );
   }
 }
 
@@ -747,53 +730,50 @@ class _BentoTile extends StatelessWidget {
     final displayValue = value.trim();
     final isArabic = RegExp(r'[؀-ۿ]').hasMatch(displayValue);
 
-    return Container(
-      constraints: BoxConstraints(minHeight: wide ? 0 : 96),
-      padding: const EdgeInsets.all(OTSpacing.base),
-      decoration: BoxDecoration(
-        color: OTColors.surface(isDark),
-        borderRadius: BorderRadius.circular(OTRadius.card),
-        border: Border.all(color: OTColors.border(isDark)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(icon, size: 18, color: textSecondary),
-              const SizedBox(width: OTSpacing.sm),
-              Expanded(
-                child: Text(
-                  label,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: ScholarlyFonts.outfit(
-                      fontSize: OTFontSize.s12, color: textSecondary),
-                ),
-              ),
-            ],
+    final valueText = Text(
+      displayValue,
+      textDirection: isArabic ? TextDirection.rtl : null,
+      textAlign: TextAlign.start,
+      style: isArabic
+          ? ScholarlyFonts.scheherazadeNew(
+              fontSize: OTFontSize.s18, height: 1.7, color: ink)
+          : OTTypography.bodyMedium(color: ink),
+    );
+    final labelRow = Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(icon, size: 16, color: textSecondary),
+        const SizedBox(width: OTSpacing.sm),
+        Flexible(
+          child: Text(
+            label,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: OTTypography.caption(color: textSecondary),
           ),
-          SizedBox(height: wide ? OTSpacing.sm : OTSpacing.base),
-          SizedBox(
-            width: double.infinity,
-            child: Text(
-              displayValue,
-              textDirection: isArabic ? TextDirection.rtl : null,
-              style: isArabic
-                  ? ScholarlyFonts.scheherazadeNew(
-                      fontSize: wide ? OTFontSize.s18 : OTFontSize.s20,
-                      height: 1.7,
-                      fontWeight: FontWeight.w600,
-                      color: ink)
-                  : ScholarlyFonts.outfit(
-                      fontSize: wide ? OTFontSize.s16 : OTFontSize.s20,
-                      height: 1.3,
-                      fontWeight: FontWeight.w600,
-                      color: ink),
+        ),
+      ],
+    );
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: OTSpacing.md),
+      // Nilai pendek sejajar dengan labelnya; teks panjang turun ke bawahnya.
+      child: wide
+          ? Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                labelRow,
+                const SizedBox(height: OTSpacing.xs),
+                valueText,
+              ],
+            )
+          : Row(
+              children: [
+                Expanded(child: labelRow),
+                const SizedBox(width: OTSpacing.md),
+                valueText,
+              ],
             ),
-          ),
-        ],
-      ),
     );
   }
 }

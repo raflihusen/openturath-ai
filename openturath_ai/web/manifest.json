@@ -1,12 +1,12 @@
 {
-    "name": "openturath_ai",
-    "short_name": "openturath_ai",
+    "name": "OpenTurath",
+    "short_name": "OpenTurath",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
-    "orientation": "portrait-primary",
+    "background_color": "#fafafa",
+    "theme_color": "#171717",
+    "description": "Membaca kitab, menelusuri ibarah.",
+    "orientation": "any",
     "prefer_related_applications": false,
     "icons": [
         {

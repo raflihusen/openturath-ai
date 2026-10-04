@@ -29,6 +29,7 @@ import 'package:openturath_ai/services/auth_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:openturath_ai/services/open_turath_catalog_repository.dart';
 import 'package:openturath_ai/widgets/assistant_grid_card.dart';
+import 'package:openturath_ai/widgets/exclusive_activation_dialog.dart';
 import 'package:openturath_ai/widgets/legal_document_sheet.dart';
 import 'package:openturath_ai/widgets/tahawwulat_flagship_card.dart';
 import 'package:openturath_ai/widgets/tahawwulat_introduction_sheet.dart';
@@ -275,6 +276,16 @@ void main() {
     const win = Size(850, 860);
     await _shot(tester, 'dlg_field', const SubscriptionScreen(),
         size: win, tap: 'Pilih bidang');
+    for (final dark in [false, true]) {
+      await _shot(
+          tester,
+          'dlg_activation${dark ? '_dark' : ''}',
+          const Scaffold(
+              body: ExclusiveActivationDialog(
+                  serviceTitle: "Fikih Syafi'i", durationDays: 30)),
+          size: win,
+          dark: dark);
+    }
     await _shot(tester, 'dlg_redeem', const SubscriptionScreen(),
         size: const Size(850, 1500), tap: 'Gunakan voucher');
     await _shot(tester, 'dlg_language', const ProfileScreen(),

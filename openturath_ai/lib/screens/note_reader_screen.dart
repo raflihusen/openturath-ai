@@ -101,7 +101,7 @@ class _NoteReaderScreenState extends State<NoteReaderScreen> {
         child: Align(
             alignment: Alignment.topCenter,
             child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 760),
+                constraints: const BoxConstraints(maxWidth: 680),
                 child: SelectionArea(
                   child: ListView(
                     padding: const EdgeInsets.fromLTRB(
@@ -160,11 +160,18 @@ class _NoteReaderScreenState extends State<NoteReaderScreen> {
                             data: displayContent,
                             selectable: true,
                             styleSheet: MarkdownStyleSheet(
-                              p: (RegExp(r'[\u0600-\u06FF]')
-                                          .hasMatch(displayContent)
-                                      ? NativeFonts.scheherazadeNew
-                                      : NativeFonts.outfit)(
-                                  fontSize: OTFontSize.s18, height: 1.9, color: primary),
+                              // Arab kitab: Naskh 22/1,9. Latin: serif baca 16/1,7.
+                              p: RegExp(r'[\u0600-\u06FF]')
+                                      .hasMatch(displayContent)
+                                  ? NativeFonts.scheherazadeNew(
+                                      fontSize: OTFontSize.s22,
+                                      height: 1.9,
+                                      color: primary)
+                                  : NativeFonts.newsreader(
+                                      fontSize: OTFontSize.s16,
+                                      height: 1.7,
+                                      fontWeight: FontWeight.w400,
+                                      color: primary),
                               h1: NativeFonts.newsreader(
                                   fontSize: OTFontSize.s26,
                                   height: 1.2,
@@ -207,13 +214,16 @@ class _NoteReaderScreenState extends State<NoteReaderScreen> {
                                   ? TextDirection.rtl
                                   : TextDirection.ltr,
                               child: Text(citation.display,
-                                  style: (RegExp(r'[\u0600-\u06FF]')
-                                              .hasMatch(citation.display)
-                                          ? NativeFonts.scheherazadeNew
-                                          : NativeFonts.outfit)(
-                                      fontSize: OTFontSize.s16,
-                                      height: 1.7,
-                                      color: primary)),
+                                  style: RegExp(r'[\u0600-\u06FF]')
+                                          .hasMatch(citation.display)
+                                      ? NativeFonts.scheherazadeNew(
+                                          fontSize: OTFontSize.s18,
+                                          height: 1.85,
+                                          color: primary)
+                                      : NativeFonts.outfit(
+                                          fontSize: OTFontSize.s14,
+                                          height: 1.5,
+                                          color: primary)),
                             ),
                           ),
                       ],

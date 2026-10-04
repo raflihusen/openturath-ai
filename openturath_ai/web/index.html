@@ -18,20 +18,28 @@
 
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
-  <meta name="description" content="A new Flutter project.">
+  <meta name="description" content="OpenTurath: membaca kitab, menelusuri ibarah.">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#fafafa" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#111111" media="(prefers-color-scheme: dark)">
 
   <!-- iOS meta tags & icons -->
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <meta name="apple-mobile-web-app-title" content="openturath_ai">
+  <meta name="apple-mobile-web-app-title" content="OpenTurath">
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
 
   <!-- Favicon -->
 
 
-  <title>openturath_ai</title>
+  <title>OpenTurath</title>
   <link rel="manifest" href="manifest.json">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <!-- Latar saat memuat sama dengan kanvas aplikasi, agar tidak berkedip. -->
+  <style>
+    html, body { margin: 0; height: 100%; background: #fafafa; }
+    @media (prefers-color-scheme: dark) { html, body { background: #111111; } }
+  </style>
 </head>
 <body>
   <script src="flutter_bootstrap.js" async></script>
