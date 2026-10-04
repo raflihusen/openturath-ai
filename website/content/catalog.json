@@ -41,14 +41,14 @@
     "sourceId": "hadits",
     "index": 2,
     "name": {
-      "id": "Kutubus Sunnah & Matan Hadits",
+      "id": "Kutubus Sunnah & Matan Hadis",
       "en": "Hadith Collections",
       "ar": "متون الحديث النبوي وكتب السنة"
     },
     "arabic": "الحديث الشريف",
     "group": "hadith",
     "description": {
-      "id": "Telusuri matan dan jalur sanad dalam Kutubus Sittah, musnad, dan kitab hadits induk. Bandingkan lafaz riwayat, letak bab, dan penomoran hadits.",
+      "id": "Telusuri matan dan jalur sanad dalam Kutubus Sittah, musnad, dan kitab hadis induk. Bandingkan lafaz riwayat, letak bab, dan penomoran hadis.",
       "en": "Trace texts and chains of transmission in the Six Books, musnad collections, and major hadith sources. Compare wording, chapter placement, and hadith numbering.",
       "ar": "تتبّع المتون والأسانيد في الكتب الستة والمسانيد وأمهات كتب الحديث، وقارن ألفاظ الروايات وأبوابها وأرقامها."
     },
@@ -78,7 +78,7 @@
     "sourceId": "ushul_fiqh",
     "index": 3,
     "name": {
-      "id": "Ushul Fikih 4 Mazhab",
+      "id": "Usul Fikih 4 Mazhab",
       "en": "Principles of Islamic Law",
       "ar": "أصول الفقه المقارن وقواعد الاستنباط"
     },
@@ -337,14 +337,14 @@
     "sourceId": "syarah_hadits",
     "index": 10,
     "name": {
-      "id": "Syarah Hadits Nabawi",
+      "id": "Syarah Hadis Nabawi",
       "en": "Hadith Commentaries",
       "ar": "شروح الحديث النبوي وفقه الآثار"
     },
     "arabic": "شروح الحديث",
     "group": "hadith",
     "description": {
-      "id": "Dalami kandungan hadits melalui Fathul Bari, Syarah Shahih Muslim, dan Nailul Authar. Temukan penjelasan lafaz, faedah hukum, dan perbedaan pembacaan para pensyarah.",
+      "id": "Dalami kandungan hadis melalui Fathul Bari, Syarah Shahih Muslim, dan Nailul Authar. Temukan penjelasan lafaz, faedah hukum, dan perbedaan pembacaan para pensyarah.",
       "en": "Study hadith through Fatḥ al-Bārī, the commentary on Ṣaḥīḥ Muslim, and Nayl al-Awṭār. Explore wording, legal lessons, and differences among commentators.",
       "ar": "تعمّق في معاني الحديث من خلال فتح الباري وشرح صحيح مسلم ونيل الأوطار، وتعرّف إلى شرح الألفاظ والفوائد الفقهية واختلاف أنظار الشُرّاح."
     },
@@ -485,7 +485,7 @@
     "sourceId": "tasawwuf",
     "index": 14,
     "name": {
-      "id": "Tasawwuf & Adzkar",
+      "id": "Tasawuf & Adzkar",
       "en": "Spirituality & Remembrance",
       "ar": "التصوف السني والتزكية والأذكار النبوية"
     },
@@ -596,14 +596,14 @@
     "sourceId": "musthalah_hadits",
     "index": 17,
     "name": {
-      "id": "'Ulumul Hadits & Musthalah",
+      "id": "'Ulumul Hadis & Musthalah",
       "en": "Hadith Sciences",
       "ar": "علوم الحديث ومصطلحه ومناهج التخريج والعلل"
     },
     "arabic": "مصطلح الحديث",
     "group": "hadith",
     "description": {
-      "id": "Pelajari kritik sanad, klasifikasi hadits, jarh wa ta’dil, dan ‘ilal. Telusuri landasan metodologinya melalui Muqaddimah Ibnu Shalah dan Tadribur Rawi.",
+      "id": "Pelajari kritik sanad, klasifikasi hadis, jarh wa ta’dil, dan ‘ilal. Telusuri landasan metodologinya melalui Muqaddimah Ibnu Shalah dan Tadribur Rawi.",
       "en": "Study isnad criticism, hadith classification, narrator evaluation, and hidden defects through the methodological discussions of Ibn al-Ṣalāḥ’s introduction and Tadrīb al-Rāwī.",
       "ar": "ادرس نقد الأسانيد وأقسام الحديث والجرح والتعديل والعلل، وتتبّع أصول المنهج في مقدمة ابن الصلاح وتدريب الراوي."
     },
@@ -633,7 +633,7 @@
     "sourceId": "aqidah",
     "index": 18,
     "name": {
-      "id": "Aqidah & Ushuluddin",
+      "id": "Akidah & Ushuluddin",
       "en": "Theology",
       "ar": "العقيدة وأصول الدين والمذاهب والفرق الإسلامية"
     },
@@ -670,7 +670,7 @@
     "sourceId": "thabaqat_tarajim",
     "index": 19,
     "name": {
-      "id": "Thabaqat & Rijalul Hadits",
+      "id": "Thabaqat & Rijalul Hadis",
       "en": "Biographical Literature",
       "ar": "التراجم والطبقات ورجال الحديث والجرح والتعديل"
     },

@@ -212,7 +212,7 @@
   "catalogReviewed": true,
   "comparisonRightsConfirmed": true,
   "reports": {
-    "enabled": true,
+    "enabled": false,
     "retentionDays": 30
   },
   "analytics": {
