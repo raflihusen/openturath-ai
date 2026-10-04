@@ -42,11 +42,26 @@ Future<void> _loadFonts() async {
     await loader.load();
   }
 
-  await load('NativeOutfit', 'assets/native_fonts/NativeOutfit.ttf');
-  await load('NativeInter', 'assets/native_fonts/NativeInter.ttf');
-  await load('NativeNewsreader', 'assets/native_fonts/NativeNewsreader.ttf');
-  await load('NativeArabic', 'assets/native_fonts/NativeArabic.ttf');
-  await load('NativeArabicUI', 'assets/native_fonts/NativeArabicUI.ttf');
+  Future<void> loadAll(String family, List<String> assets) async {
+    final loader = FontLoader(family);
+    for (final asset in assets) {
+      loader.addFont(rootBundle.load(asset));
+    }
+    await loader.load();
+  }
+
+  const dir = 'assets/native_fonts';
+  await loadAll('NativeOutfit', [
+    '$dir/NativeOutfit.ttf',
+    '$dir/NativeOutfit-600.ttf',
+    '$dir/NativeOutfit-700.ttf',
+  ]);
+  await load('NativeInter', '$dir/NativeInter.ttf');
+  await loadAll('NativeNewsreader',
+      ['$dir/NativeNewsreader-400.ttf', '$dir/NativeNewsreader.ttf']);
+  await loadAll(
+      'NativeArabic', ['$dir/NativeArabic.ttf', '$dir/NativeArabic-700.ttf']);
+  await load('NativeArabicUI', '$dir/NativeArabicUI.ttf');
   final icons = File(
       '/opt/homebrew/share/flutter/bin/cache/artifacts/material_fonts/MaterialIcons-Regular.otf');
   if (icons.existsSync()) {

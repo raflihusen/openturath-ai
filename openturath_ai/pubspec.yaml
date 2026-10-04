@@ -62,13 +62,23 @@ flutter:
     - family: NativeOutfit
       fonts:
         - asset: assets/native_fonts/NativeOutfit.ttf
+          weight: 400
+        - asset: assets/native_fonts/NativeOutfit-600.ttf
+          weight: 600
+        - asset: assets/native_fonts/NativeOutfit-700.ttf
+          weight: 700
     - family: NativeNewsreader
       fonts:
+        - asset: assets/native_fonts/NativeNewsreader-400.ttf
+          weight: 400
         - asset: assets/native_fonts/NativeNewsreader.ttf
           weight: 600
     - family: NativeArabic
       fonts:
         - asset: assets/native_fonts/NativeArabic.ttf
+          weight: 400
+        - asset: assets/native_fonts/NativeArabic-700.ttf
+          weight: 700
     - family: NativeArabicUI
       fonts:
         - asset: assets/native_fonts/NativeArabicUI.ttf
