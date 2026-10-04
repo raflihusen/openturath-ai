@@ -1,0 +1,8 @@
+{
+  "note": "Isi url, sizeBytes, sha256, dan date setelah berkas diunggah ke GitHub Releases. Selama url kosong, platform tampil sebagai 'Segera tersedia'.",
+  "platforms": [
+    {"id": "android", "name": "Android", "file": "APK", "url": null, "sizeBytes": null, "sha256": null, "date": null},
+    {"id": "macos", "name": "macOS", "file": "DMG", "minimum": "macOS 13", "url": null, "sizeBytes": null, "sha256": null, "date": null},
+    {"id": "windows", "name": "Windows", "file": "EXE", "minimum": "Windows 10", "url": null, "sizeBytes": null, "sha256": null, "date": null}
+  ]
+}

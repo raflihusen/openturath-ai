@@ -1,0 +1,10 @@
+{
+  "name": "OpenTurath",
+  "canonicalUrl": "https://openturath.id",
+  "contact": {
+    "email": "openturath@gmail.com",
+    "note": "Ganti dengan alamat domain (mis. halo@openturath.id) setelah penerusan email aktif."
+  },
+  "policy": {"version": "1.0", "effectiveDate": "2026-09-13"},
+  "releaseRoutes": ["", "download", "access", "terms", "privacy", "billing", "account-deletion", "ai-guidelines", "contact"]
+}

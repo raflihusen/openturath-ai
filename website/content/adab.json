@@ -1,0 +1,96 @@
+{
+  "version": 6,
+  "principles": [
+    {
+      "id": "role",
+      "heading": [
+        "Gunakan alatnya. Rawat hubungan dengan guru.",
+        "Use the tool. Keep learning with teachers.",
+        "استعن بالأداة، والزم أهل العلم."
+      ],
+      "body": [
+        "OpenTurath membantu Anda menemukan ibarah, menata bacaan, dan menyiapkan pertanyaan. Bawalah hasil telaah itu kepada guru agar istilah, konteks, dan kesimpulannya dipahami dengan tepat. Talaqqi juga menumbuhkan adab dan kebijaksanaan yang menyertai ilmu.",
+        "Use OpenTurath to find passages, organise reading, and prepare questions. Bring that work to your teacher to explore its terms, context, and conclusions. Talaqqi also nurtures the conduct and judgement that accompany knowledge.",
+        "يساعدك OpenTurath على الوصول إلى العبارات وتنظيم القراءة وإعداد الأسئلة. اعرض ما تتوصل إليه على معلمك لضبط المصطلحات وفهم السياق والنتائج. فالتلقّي ينمّي الأدب والحكمة المصاحبة للعلم."
+      ]
+    },
+    {
+      "id": "sources",
+      "heading": [
+        "Telusuri sumbernya. Baca konteksnya.",
+        "Trace the source. Read the context.",
+        "تتبّع المصدر، واقرأ السياق."
+      ],
+      "body": [
+        "Mulailah dari teks Arab, lalu periksa pembahasan sebelum dan sesudahnya. Cocokkan judul kitab, edisi, jilid, dan halaman. Tandai dengan jelas mana ibarah asli, terjemahan, dan ringkasan AI agar catatan Anda mudah ditelaah kembali.",
+        "Start with the Arabic text and read the discussion around it. Check the title, edition, volume, and page. Clearly distinguish original passages, translations, and AI summaries so your notes remain easy to review.",
+        "ابدأ بالنص العربي، واقرأ ما قبله وما بعده. قابل عنوان الكتاب والطبعة والجزء والصفحة، وميّز في ملاحظاتك بين العبارة الأصلية والترجمة وتلخيص الذكاء الاصطناعي، ليسهل الرجوع إليها."
+      ]
+    },
+    {
+      "id": "schools",
+      "heading": [
+        "Hormati mazhab dan keluasan ikhtilaf.",
+        "Respect schools and scholarly differences.",
+        "احترم المذاهب وسعة الخلاف العلمي."
+      ],
+      "body": [
+        "Setiap disiplin memiliki istilah, urutan rujukan, dan cara menimbang pendapat. Pelajari perbedaan untuk memperdalam pemahaman. Untuk fatwa atau penerapan hukum pada keadaan tertentu, mintalah penjelasan ulama yang memahami persoalannya.",
+        "Each discipline has its terminology, reference hierarchy, and methods for weighing opinions. Study differences to deepen understanding. For a fatwa or the application of a ruling to a particular situation, consult a qualified scholar familiar with the circumstances.",
+        "لكل فن مصطلحاته ومراتب مصادره ومناهجه في الترجيح. ادرس الخلاف لتوسيع الفهم، وارجع في الفتوى وتنزيل الأحكام على الوقائع إلى عالم مؤهل يدرك ملابسات المسألة."
+      ]
+    },
+    {
+      "id": "honesty",
+      "heading": [
+        "Jaga amanah dalam menukil.",
+        "Keep attribution honest.",
+        "احفظ أمانة النقل."
+      ],
+      "body": [
+        "Nisbahkan pendapat kepada pemiliknya dan cantumkan sumber yang sudah Anda periksa. Jika baru membaca ringkasan, jelaskan sebatas itu. Saat menemukan kesalahan, sertakan ibarah dan rujukan yang membantu koreksi, lalu sampaikan dengan santun.",
+        "Attribute opinions to their authors and cite sources you have checked. Be clear when you have only read a summary. When you find an error, share the passage and reference that support a correction, and do so courteously.",
+        "انسب الأقوال إلى أصحابها، واذكر المصادر التي راجعتها. وإن اكتفيت بملخص فبيّن ذلك. وإذا وجدت خطأً، فاذكر العبارة ومرجعها بما يعين على تصحيحه، والتزم حسن الخطاب."
+      ]
+    },
+    {
+      "id": "judgement",
+      "heading": [
+        "Timbang jawabannya, bukan kefasihannya.",
+        "Weigh the evidence behind the answer.",
+        "زِن الجواب بدليله."
+      ],
+      "body": [
+        "Jawaban yang lancar tetap perlu ditimbang dengan dalil dan konteks. Periksa alasan yang digunakan, kenali bagian yang belum jelas, dan simpan pertanyaan lanjutan. Sikap teliti membuat bantuan teknologi lebih bermanfaat bagi telaah Anda.",
+        "A fluent answer still needs evidence and context. Examine its reasoning, identify what remains unclear, and keep follow-up questions. Careful judgement makes technology a more useful part of your study.",
+        "يبقى الجواب الفصيح محتاجًا إلى الدليل والسياق. افحص وجه الاستدلال، وحدّد ما لم يتضح لك، ودوّن أسئلتك التالية. بهذه العناية تكون التقنية أعون لك على البحث."
+      ]
+    },
+    {
+      "id": "sanad",
+      "heading": [
+        "Sambungkan bacaan dengan tradisi ilmu.",
+        "Connect reading with living scholarship.",
+        "صِل القراءة بتقاليد العلم."
+      ],
+      "body": [
+        "Jadikan kemudahan akses sebagai bekal menghadiri majelis, membaca kitab secara bertahap, dan mengenal para ulama beserta jalur keilmuannya. Sanad dan pendampingan guru membantu menempatkan pengetahuan dalam tradisi yang hidup.",
+        "Let easier access support attending lessons, reading books progressively, and learning about scholars and their intellectual lineages. Sanad and a teacher’s guidance place knowledge within a living tradition.",
+        "اجعل تيسير الوصول إلى المصادر زادًا لحضور المجالس والتدرّج في قراءة الكتب ومعرفة العلماء وطرق تلقيهم. فالسند وصحبة المعلم يصلان المعرفة بتقليد علمي حي."
+      ]
+    },
+    {
+      "id": "benefit",
+      "heading": [
+        "Arahkan ilmu untuk membawa manfaat.",
+        "Let knowledge serve others.",
+        "اجعل العلم سبيلًا إلى النفع."
+      ],
+      "body": [
+        "Gunakan hasil telaah untuk menjernihkan persoalan, membantu sesama, dan menjaga kehormatan manusia. Hindari penyebaran tuduhan atau kutipan yang melepaskan ucapan dari konteksnya. Semangat manhaj salamah mengajak kita menempuh jalan ilmu dengan tenang, bertanggung jawab, dan membawa kedamaian.",
+        "Use your study to clarify questions, help others, and preserve human dignity. Avoid spreading accusations or quotations stripped of context. The spirit of manhaj salamah calls for a calm, responsible pursuit of knowledge that contributes to peace.",
+        "اجعل ثمرة البحث إيضاح المسائل ونفع الناس وصون كرامتهم. واجتنب نشر الاتهامات أو اقتطاع الأقوال من سياقها. وتدعونا روح منهج السلامة إلى طلب العلم بسكينة ومسؤولية وإصلاح."
+      ]
+    }
+  ]
+}

@@ -1,0 +1,764 @@
+[
+  {
+    "id": "fiqh-syafii",
+    "sourceId": "fiqh_syafii",
+    "index": 1,
+    "name": {
+      "id": "Fikih Syafi'i",
+      "en": "Shāfiʿī Fiqh",
+      "ar": "الفقه الشافعي المعتمد"
+    },
+    "arabic": "الفقه الشافعي",
+    "group": "fiqh",
+    "description": {
+      "id": "Telaah fikih Syafi’i melalui Al-Umm, Minhajuth Thalibin, Tuhfatul Muhtaj, dan Nihayatul Muhtaj. Temukan ibarah, perincian hukum, serta rujukan jilid dan halamannya.",
+      "en": "Study Shāfiʿī law through Al-Umm, Minhāj al-Ṭālibīn, Tuḥfat al-Muḥtāj, and Nihāyat al-Muḥtāj. Explore source passages, legal distinctions, and volume and page references.",
+      "ar": "طالع الفقه الشافعي في الأم ومنهاج الطالبين وتحفة المحتاج ونهاية المحتاج، وتتبّع العبارات وتفصيل الأحكام وإحالات الأجزاء والصفحات."
+    },
+    "source": "metadata_modul_lengkap.json (counts), metadata_training_seluruh_ai.json (partitions), supplied project data 2026-09-20",
+    "countsPublished": true,
+    "status": "active",
+    "appAgentId": "fiqh_syafii",
+    "variant": "featured",
+    "metadata": {
+      "books": 103,
+      "volumes": 400,
+      "volumesLowerBound": true,
+      "pages": 170391,
+      "words": 71627898,
+      "lectures": 0,
+      "partitions": 241,
+      "period": {
+        "id": "150 – 1338 H",
+        "en": "150–1338 AH",
+        "ar": "١٥٠–١٣٣٨ هـ"
+      }
+    },
+    "metadataKey": "fiqh_syafii"
+  },
+  {
+    "id": "hadits",
+    "sourceId": "hadits",
+    "index": 2,
+    "name": {
+      "id": "Kutubus Sunnah & Matan Hadits",
+      "en": "Hadith Collections",
+      "ar": "متون الحديث النبوي وكتب السنة"
+    },
+    "arabic": "الحديث الشريف",
+    "group": "hadith",
+    "description": {
+      "id": "Telusuri matan dan jalur sanad dalam Kutubus Sittah, musnad, dan kitab hadits induk. Bandingkan lafaz riwayat, letak bab, dan penomoran hadits.",
+      "en": "Trace texts and chains of transmission in the Six Books, musnad collections, and major hadith sources. Compare wording, chapter placement, and hadith numbering.",
+      "ar": "تتبّع المتون والأسانيد في الكتب الستة والمسانيد وأمهات كتب الحديث، وقارن ألفاظ الروايات وأبوابها وأرقامها."
+    },
+    "source": "metadata_modul_lengkap.json (counts), metadata_training_seluruh_ai.json (partitions), supplied project data 2026-09-20",
+    "countsPublished": true,
+    "status": "active",
+    "appAgentId": "hadits",
+    "variant": "featured",
+    "metadata": {
+      "books": 1141,
+      "volumes": 1500,
+      "volumesLowerBound": true,
+      "pages": 532640,
+      "words": 105700587,
+      "lectures": 0,
+      "partitions": 233,
+      "period": {
+        "id": "Abad 2 – 10 H",
+        "en": "2–10 c. AH",
+        "ar": "القرن ٢–١٠ هـ"
+      }
+    },
+    "metadataKey": "hadits"
+  },
+  {
+    "id": "ushul-fiqh",
+    "sourceId": "ushul_fiqh",
+    "index": 3,
+    "name": {
+      "id": "Ushul Fikih 4 Mazhab",
+      "en": "Principles of Islamic Law",
+      "ar": "أصول الفقه المقارن وقواعد الاستنباط"
+    },
+    "arabic": "أصول الفقه",
+    "group": "fiqh",
+    "description": {
+      "id": "Kaji dalalatul alfaz, qiyas, dan metode istinbath lintas empat mazhab. Baca pembahasan ushul melalui Al-Mustashfa, Al-Luma’, dan Al-Burhan.",
+      "en": "Examine textual indications, analogy, and methods of legal inference across the four schools, with discussions from Al-Mustaṣfā, Al-Lumaʿ, and Al-Burhān.",
+      "ar": "ادرس دلالات الألفاظ والقياس ومناهج الاستنباط في المذاهب الأربعة، من خلال مباحث المستصفى واللمع والبرهان."
+    },
+    "source": "metadata_modul_lengkap.json (counts), metadata_training_seluruh_ai.json (partitions), supplied project data 2026-09-20",
+    "countsPublished": true,
+    "status": "active",
+    "appAgentId": "ushul_fiqh",
+    "variant": "standard",
+    "metadata": {
+      "books": 136,
+      "volumes": 320,
+      "volumesLowerBound": true,
+      "pages": 115000,
+      "words": 36522580,
+      "lectures": 0,
+      "partitions": 121,
+      "period": {
+        "id": "Abad 2 – 14 H",
+        "en": "2–14 c. AH",
+        "ar": "القرن ٢–١٤ هـ"
+      }
+    },
+    "metadataKey": "ushul_fiqh"
+  },
+  {
+    "id": "bahasa-arab",
+    "sourceId": "bahasa_arab",
+    "index": 4,
+    "name": {
+      "id": "Bahasa Arab & Ilmu Alat",
+      "en": "Arabic Language & Literature",
+      "ar": "علوم الآلة واللغة والأدب والنحو والبلاغة والمنطق"
+    },
+    "arabic": "علوم اللغة العربية",
+    "group": "language",
+    "description": {
+      "id": "Bedah struktur ibarah melalui nahwu, sharaf, balaghah, mantiq, dan mu’jam. Telusuri pemakaian lafaz serta nuansa makna dalam bahasa dan sastra Arab.",
+      "en": "Read passages through grammar, morphology, rhetoric, logic, and lexicons. Trace word usage and shades of meaning across Arabic language and literature.",
+      "ar": "حلّل بنية العبارة بالنحو والصرف والبلاغة والمنطق والمعاجم، وتتبّع استعمال الألفاظ ودقائق المعاني في اللغة والأدب العربي."
+    },
+    "source": "metadata_modul_lengkap.json (counts), metadata_training_seluruh_ai.json (partitions), supplied project data 2026-09-20",
+    "countsPublished": true,
+    "status": "active",
+    "appAgentId": "nahwu_sharaf",
+    "variant": "standard",
+    "metadata": {
+      "books": 866,
+      "volumes": 1981,
+      "volumesLowerBound": false,
+      "pages": 610000,
+      "words": 148304518,
+      "lectures": 0,
+      "partitions": 300,
+      "period": {
+        "id": "Jahiliyyah – Abad 20 M",
+        "en": "Pre-Islamic era – 20th c. CE",
+        "ar": "الجاهلية – القرن ٢٠ م"
+      }
+    },
+    "metadataKey": "bahasa_arab"
+  },
+  {
+    "id": "tafsir",
+    "sourceId": "tafsir",
+    "index": 5,
+    "name": {
+      "id": "Tafsir & 'Ulumul Qur'an",
+      "en": "Tafsir & Qur’anic Studies",
+      "ar": "التفسير المأثور وعلوم القرآن والتأويل"
+    },
+    "arabic": "التفسير وعلوم القرآن",
+    "group": "quran",
+    "description": {
+      "id": "Telaah ayat melalui Tafsir Ath-Thabari, Ibnu Katsir, dan Al-Qurthubi. Hubungkan penjelasan bil-ma’tsur dan dirayah dengan asbabun nuzul, nasikh-mansukh, serta kaidah tafsir.",
+      "en": "Study verses through the commentaries of al-Ṭabarī, Ibn Kathīr, and al-Qurṭubī. Connect transmitted and analytical interpretation with occasions of revelation, abrogation, and principles of tafsir.",
+      "ar": "طالع الآيات في تفاسير الطبري وابن كثير والقرطبي، واربط التفسير بالمأثور والدراية بأسباب النزول والناسخ والمنسوخ وقواعد التفسير."
+    },
+    "source": "metadata_modul_lengkap.json (counts), metadata_training_seluruh_ai.json (partitions), supplied project data 2026-09-20",
+    "countsPublished": true,
+    "status": "active",
+    "appAgentId": "tafsir",
+    "variant": "standard",
+    "metadata": {
+      "books": 123,
+      "volumes": 450,
+      "volumesLowerBound": true,
+      "pages": 140000,
+      "words": 78862654,
+      "lectures": 0,
+      "partitions": 183,
+      "period": {
+        "id": "Abad 2 – 14 H",
+        "en": "2–14 c. AH",
+        "ar": "القرن ٢–١٤ هـ"
+      }
+    },
+    "metadataKey": "tafsir"
+  },
+  {
+    "id": "fiqh-tahawwulat",
+    "sourceId": "fiqh_tahawwulat",
+    "index": 6,
+    "name": {
+      "id": "Fikih Tahawwulat",
+      "en": "Fiqh al-Tahawwulat",
+      "ar": "فقه التحولات وسنن المتغيرات"
+    },
+    "arabic": "فقه التحولات",
+    "group": "special",
+    "description": {
+      "id": "Dalami karya Habib Abu Bakar Al-Adni Al-Masyhur tentang tanda-tanda zaman, pergeseran peradaban, dan sunanul mughayyarat, melalui kitab serta arsip muhadharah.",
+      "en": "Explore Habib Abu Bakr al-Adni al-Mashhur’s works on signs of the times, civilizational change, and sunan al-mughayyarāt through books and lecture archives.",
+      "ar": "تعمّق في مؤلفات الحبيب أبي بكر العدني المشهور عن علامات الزمان وتحولات الحضارات وسنن المتغيرات، من خلال الكتب وأرشيف المحاضرات."
+    },
+    "source": "metadata_modul_lengkap.json (counts), metadata_training_seluruh_ai.json (partitions), supplied project data 2026-09-20",
+    "countsPublished": true,
+    "status": "active",
+    "appAgentId": "fiqh_tahawwulat",
+    "variant": "sovereign",
+    "metadata": {
+      "books": 58,
+      "volumes": 58,
+      "volumesLowerBound": false,
+      "pages": 12500,
+      "words": 5644146,
+      "lectures": 1099,
+      "partitions": 71,
+      "period": {
+        "id": "Era Kontemporer",
+        "en": "Contemporary period",
+        "ar": "العصر المعاصر"
+      }
+    },
+    "metadataKey": "fiqh_tahawwulat"
+  },
+  {
+    "id": "tarikh-sirah",
+    "sourceId": "tarikh_sirah",
+    "index": 7,
+    "name": {
+      "id": "Tarikh & Sirah Nabawiyyah",
+      "en": "History & Prophetic Biography",
+      "ar": "التاريخ الإسلامي والسيرة والبلدان والرحلات والأنساب"
+    },
+    "arabic": "السيرة والتاريخ",
+    "group": "history",
+    "description": {
+      "id": "Ikuti sirah Nabi, masa khulafaur rasyidin, dan perkembangan peradaban Islam. Telaah urutan peristiwa, jalur riwayat, serta konteks tempat dan zamannya.",
+      "en": "Follow the Prophet’s biography, the rightly guided caliphs, and the development of Islamic civilization. Examine chronology, transmitted accounts, and geographical and historical context.",
+      "ar": "تتبّع السيرة النبوية وعصر الخلفاء الراشدين وتطور الحضارة الإسلامية، وادرس تسلسل الوقائع وطرق الرواية وسياق المكان والزمان."
+    },
+    "source": "metadata_modul_lengkap.json (counts), metadata_training_seluruh_ai.json (partitions), supplied project data 2026-09-20",
+    "countsPublished": true,
+    "status": "active",
+    "appAgentId": "tarikh",
+    "variant": "standard",
+    "metadata": {
+      "books": 499,
+      "volumes": 1374,
+      "volumesLowerBound": false,
+      "pages": 480000,
+      "words": 136531222,
+      "lectures": 0,
+      "partitions": 300,
+      "period": {
+        "id": "Pra-Hijrah – Abad 14 H",
+        "en": "Before Hijrah – 14th c. AH",
+        "ar": "ما قبل الهجرة – القرن ١٤ هـ"
+      }
+    },
+    "metadataKey": "tarikh_sirah"
+  },
+  {
+    "id": "fiqh-muqaran",
+    "sourceId": "fiqh_muqaran",
+    "index": 8,
+    "name": {
+      "id": "Fikih Muqaran & Siyasah",
+      "en": "Comparative Fiqh",
+      "ar": "الفقه المقارن والسياسة الشرعية وقسمة الفرائض"
+    },
+    "arabic": "الفقه المقارن",
+    "group": "fiqh",
+    "description": {
+      "id": "Bandingkan dalil dan konstruksi hukum antarmazhab. Perluas telaah ke siyasah syar’iyyah, tata kelola negara, serta pembahasan sengketa dan persoalan kontemporer.",
+      "en": "Compare evidence and legal reasoning across schools. Extend your study to Islamic governance, public institutions, disputes, and contemporary legal questions.",
+      "ar": "قارن الأدلة وبناء الأحكام بين المذاهب، ووسّع المطالعة إلى السياسة الشرعية ونظم الحكم ومباحث المنازعات والمسائل المعاصرة."
+    },
+    "source": "metadata_modul_lengkap.json (counts), metadata_training_seluruh_ai.json (partitions), supplied project data 2026-09-20",
+    "countsPublished": true,
+    "status": "active",
+    "appAgentId": "fiqh_muqaran",
+    "variant": "standard",
+    "metadata": {
+      "books": 189,
+      "volumes": 329,
+      "volumesLowerBound": false,
+      "pages": 135000,
+      "words": 27585932,
+      "lectures": 0,
+      "partitions": 61,
+      "period": {
+        "id": "Abad 2 – 14 H",
+        "en": "2–14 c. AH",
+        "ar": "القرن ٢–١٤ هـ"
+      }
+    },
+    "metadataKey": "fiqh_muqaran"
+  },
+  {
+    "id": "fatawa-masail",
+    "sourceId": "fatawa_masail",
+    "index": 9,
+    "name": {
+      "id": "Fatawa & Masail Fiqhiyyah",
+      "en": "Fatwas & Legal Questions",
+      "ar": "الفتاوى الكبرى والنوازل الفقهية"
+    },
+    "arabic": "الفتاوى والمسائل",
+    "group": "fiqh",
+    "description": {
+      "id": "Telusuri fatwa ulama klasik dan kontemporer beserta konteks pertanyaannya. Kaji nawazil, pertimbangan hukum, dan ragam jawaban atas persoalan masyarakat.",
+      "en": "Explore classical and contemporary fatwas alongside the questions that prompted them. Study new cases, legal considerations, and differing responses to community issues.",
+      "ar": "تتبّع فتاوى العلماء المتقدمين والمعاصرين مع سياق أسئلتها، وادرس النوازل واعتبارات الحكم وتنوع الأجوبة عن قضايا المجتمع."
+    },
+    "source": "metadata_modul_lengkap.json (counts), metadata_training_seluruh_ai.json (partitions), supplied project data 2026-09-20",
+    "countsPublished": true,
+    "status": "active",
+    "appAgentId": "fatawa_masail",
+    "variant": "standard",
+    "metadata": {
+      "books": 221,
+      "volumes": 324,
+      "volumesLowerBound": false,
+      "pages": 57419,
+      "words": 19387054,
+      "lectures": 0,
+      "partitions": 101,
+      "period": {
+        "id": "Abad 6 – 14 H",
+        "en": "6–14 c. AH",
+        "ar": "القرن ٦–١٤ هـ"
+      }
+    },
+    "metadataKey": "fatawa_masail"
+  },
+  {
+    "id": "syarah-hadits",
+    "sourceId": "syarah_hadits",
+    "index": 10,
+    "name": {
+      "id": "Syarah Hadits Nabawi",
+      "en": "Hadith Commentaries",
+      "ar": "شروح الحديث النبوي وفقه الآثار"
+    },
+    "arabic": "شروح الحديث",
+    "group": "hadith",
+    "description": {
+      "id": "Dalami kandungan hadits melalui Fathul Bari, Syarah Shahih Muslim, dan Nailul Authar. Temukan penjelasan lafaz, faedah hukum, dan perbedaan pembacaan para pensyarah.",
+      "en": "Study hadith through Fatḥ al-Bārī, the commentary on Ṣaḥīḥ Muslim, and Nayl al-Awṭār. Explore wording, legal lessons, and differences among commentators.",
+      "ar": "تعمّق في معاني الحديث من خلال فتح الباري وشرح صحيح مسلم ونيل الأوطار، وتعرّف إلى شرح الألفاظ والفوائد الفقهية واختلاف أنظار الشُرّاح."
+    },
+    "source": "metadata_modul_lengkap.json (counts), metadata_training_seluruh_ai.json (partitions), supplied project data 2026-09-20",
+    "countsPublished": true,
+    "status": "active",
+    "appAgentId": "syarah_hadits",
+    "variant": "standard",
+    "metadata": {
+      "books": 202,
+      "volumes": 1007,
+      "volumesLowerBound": false,
+      "pages": 420000,
+      "words": 122463779,
+      "lectures": 0,
+      "partitions": 300,
+      "period": {
+        "id": "Abad 4 – 14 H",
+        "en": "4–14 c. AH",
+        "ar": "القرن ٤–١٤ هـ"
+      }
+    },
+    "metadataKey": "syarah_hadits"
+  },
+  {
+    "id": "fiqh-hanafi",
+    "sourceId": "fiqh_hanafi",
+    "index": 11,
+    "name": {
+      "id": "Fikih Hanafi",
+      "en": "Hanafi Fiqh",
+      "ar": "الفقه الحنفي المعتمد وظاهر الرواية"
+    },
+    "arabic": "الفقه الحنفي",
+    "group": "fiqh",
+    "description": {
+      "id": "Telaah tradisi fikih Hanafi dari Zhahirur Riwayah hingga Al-Hidayah dan Raddul Muhtar. Ikuti hubungan matan, syarah, dan fatwa dalam perincian masalah mazhab.",
+      "en": "Explore Hanafi jurisprudence from Ẓāhir al-Riwāyah to Al-Hidāyah and Radd al-Muḥtār. Follow the relationship between foundational texts, commentaries, and fatwas.",
+      "ar": "طالع الفقه الحنفي من ظاهر الرواية إلى الهداية ورد المحتار، وتتبّع صلة المتون والشروح والفتاوى بتفصيل مسائل المذهب."
+    },
+    "source": "metadata_modul_lengkap.json (counts), metadata_training_seluruh_ai.json (partitions), supplied project data 2026-09-20",
+    "countsPublished": true,
+    "status": "active",
+    "appAgentId": "fiqh_hanafi",
+    "variant": "standard",
+    "metadata": {
+      "books": 85,
+      "volumes": 288,
+      "volumesLowerBound": false,
+      "pages": 110000,
+      "words": 39300555,
+      "lectures": 0,
+      "partitions": 100,
+      "period": {
+        "id": "Abad 2 – 13 H",
+        "en": "2–13 c. AH",
+        "ar": "القرن ٢–١٣ هـ"
+      }
+    },
+    "metadataKey": "fiqh_hanafi"
+  },
+  {
+    "id": "fiqh-maliki",
+    "sourceId": "fiqh_maliki",
+    "index": 12,
+    "name": {
+      "id": "Fikih Maliki",
+      "en": "Maliki Fiqh",
+      "ar": "الفقه المالكي المعتمد ومدونة سحنون"
+    },
+    "arabic": "الفقه المالكي",
+    "group": "fiqh",
+    "description": {
+      "id": "Jelajahi fikih Maliki melalui Al-Mudawwanah, Mukhtashar Khalil, dan tradisi fatwa ulama Maghribi. Perhatikan dasar riwayat, amalan, dan rincian pendapat mazhab.",
+      "en": "Explore Maliki law through Al-Mudawwanah, Mukhtaṣar Khalīl, and the Maghribi fatwa tradition, attending to transmitted positions, practice, and distinctions within the school.",
+      "ar": "استكشف الفقه المالكي في المدونة ومختصر خليل وتراث فتاوى علماء المغرب، مع العناية بالروايات والعمل وتفصيل أقوال المذهب."
+    },
+    "source": "metadata_modul_lengkap.json (counts), metadata_training_seluruh_ai.json (partitions), supplied project data 2026-09-20",
+    "countsPublished": true,
+    "status": "active",
+    "appAgentId": "fiqh_maliki",
+    "variant": "standard",
+    "metadata": {
+      "books": 86,
+      "volumes": 339,
+      "volumesLowerBound": false,
+      "pages": 164214,
+      "words": 48363521,
+      "lectures": 0,
+      "partitions": 120,
+      "period": {
+        "id": "Abad 2 – 14 H",
+        "en": "2–14 c. AH",
+        "ar": "القرن ٢–١٤ هـ"
+      }
+    },
+    "metadataKey": "fiqh_maliki"
+  },
+  {
+    "id": "fiqh-hanbali",
+    "sourceId": "fiqh_hanbali",
+    "index": 13,
+    "name": {
+      "id": "Fikih Hanbali",
+      "en": "Hanbali Fiqh",
+      "ar": "الفقه الحنبلي المعتمد ومسائل الإمام أحمد"
+    },
+    "arabic": "الفقه الحنبلي",
+    "group": "fiqh",
+    "description": {
+      "id": "Telusuri Al-Mughni, Al-Muqni’, dan Al-Inshaf untuk membaca fikih Hanbali. Bandingkan riwayat Imam Ahmad, wajah pendapat, serta penjelasan ulama mazhab.",
+      "en": "Read Hanbali law through Al-Mughnī, Al-Muqniʿ, and Al-Inṣāf. Compare reports from Imam Aḥmad, legal positions, and explanations by the school’s scholars.",
+      "ar": "تتبّع الفقه الحنبلي في المغني والمقنع والإنصاف، وقارن الروايات عن الإمام أحمد والأوجه الفقهية وبيان علماء المذهب."
+    },
+    "source": "metadata_modul_lengkap.json (counts), metadata_training_seluruh_ai.json (partitions), supplied project data 2026-09-20",
+    "countsPublished": true,
+    "status": "active",
+    "appAgentId": "fiqh_hanbali",
+    "variant": "standard",
+    "metadata": {
+      "books": 95,
+      "volumes": 338,
+      "volumesLowerBound": false,
+      "pages": 163639,
+      "words": 34626811,
+      "lectures": 0,
+      "partitions": 100,
+      "period": {
+        "id": "Abad 3 – 14 H",
+        "en": "3–14 c. AH",
+        "ar": "القرن ٣–١٤ هـ"
+      }
+    },
+    "metadataKey": "fiqh_hanbali"
+  },
+  {
+    "id": "tasawwuf",
+    "sourceId": "tasawwuf",
+    "index": 14,
+    "name": {
+      "id": "Tasawwuf & Adzkar",
+      "en": "Spirituality & Remembrance",
+      "ar": "التصوف السني والتزكية والأذكار النبوية"
+    },
+    "arabic": "التصوف والتزكية",
+    "group": "spirituality",
+    "description": {
+      "id": "Pelajari tazkiyatun nufus, adab suluk, wirid, dan ratib dalam tradisi ulama. Telaah Ihya’ ‘Ulumiddin dan Al-Adzkar untuk menghubungkan ilmu, amal, serta pembinaan hati.",
+      "en": "Study purification of the soul, spiritual discipline, litanies, and remembrance. Read Iḥyāʾ ʿUlūm al-Dīn and Al-Adhkār to connect knowledge, practice, and cultivation of the heart.",
+      "ar": "ادرس تزكية النفوس وآداب السلوك والأوراد والأذكار في تراث العلماء، وطالع إحياء علوم الدين والأذكار لربط العلم بالعمل وتربية القلب."
+    },
+    "source": "metadata_modul_lengkap.json (counts), metadata_training_seluruh_ai.json (partitions), supplied project data 2026-09-20",
+    "countsPublished": true,
+    "status": "active",
+    "appAgentId": "tasawwuf",
+    "variant": "standard",
+    "metadata": {
+      "books": 248,
+      "volumes": 317,
+      "volumesLowerBound": false,
+      "pages": 95000,
+      "words": 18697388,
+      "lectures": 0,
+      "partitions": 61,
+      "period": {
+        "id": "Abad 3 – 14 H",
+        "en": "3–14 c. AH",
+        "ar": "القرن ٣–١٤ هـ"
+      }
+    },
+    "metadataKey": "tasawwuf"
+  },
+  {
+    "id": "tajwid-qiraat",
+    "sourceId": "tajwid_qiraat",
+    "index": 15,
+    "name": {
+      "id": "Tajwid & Qira'at",
+      "en": "Tajwid & Qur’anic Readings",
+      "ar": "التجويد والقراءات المتواترة ورسم المصحف"
+    },
+    "arabic": "التجويد والقراءات",
+    "group": "quran",
+    "description": {
+      "id": "Kaji makharijul huruf, sifat huruf, dan kaidah tartil. Kenali perbedaan qira’at sepuluh, jalur periwayatan, serta landasan bacaan untuk mendampingi talaqqi.",
+      "en": "Study articulation, letter qualities, and principles of measured recitation. Explore the ten readings, their transmission paths, and their textual foundations alongside oral instruction.",
+      "ar": "ادرس مخارج الحروف وصفاتها وأحكام الترتيل، وتعرّف إلى أوجه القراءات العشر وطرقها وأصولها بما يعين على التلقّي والمشافهة."
+    },
+    "source": "metadata_modul_lengkap.json (counts), metadata_training_seluruh_ai.json (partitions), supplied project data 2026-09-20",
+    "countsPublished": true,
+    "status": "active",
+    "appAgentId": "tajwid_qiraat",
+    "variant": "standard",
+    "metadata": {
+      "books": 130,
+      "volumes": 182,
+      "volumesLowerBound": false,
+      "pages": 45000,
+      "words": 13714766,
+      "lectures": 0,
+      "partitions": 50,
+      "period": {
+        "id": "Abad 4 – 14 H",
+        "en": "4–14 c. AH",
+        "ar": "القرن ٤–١٤ هـ"
+      }
+    },
+    "metadataKey": "tajwid_qiraat"
+  },
+  {
+    "id": "qawaid-fiqhiyyah",
+    "sourceId": "qawaid_fiqhiyyah",
+    "index": 16,
+    "name": {
+      "id": "Qawa'id Fiqhiyyah",
+      "en": "Legal Maxims",
+      "ar": "القواعد الفقهية والأشباه والنظائر والفروق"
+    },
+    "arabic": "القواعد الفقهية",
+    "group": "fiqh",
+    "description": {
+      "id": "Susun peta hukum melalui kaidah asasiyyah, kaidah furu’iyyah, dan dhowabith. Hubungkan pembahasan al-asybah wan-nazha’ir dengan contoh penerapan serta pengecualiannya.",
+      "en": "Organize legal questions through overarching maxims, subsidiary rules, and disciplinary principles. Connect al-ashbāh wa-l-naẓāʾir with applications and exceptions.",
+      "ar": "نظّم المسائل بالقواعد الكبرى والقواعد الفرعية والضوابط، واربط مباحث الأشباه والنظائر بتطبيقاتها واستثناءاتها."
+    },
+    "source": "metadata_modul_lengkap.json (counts), metadata_training_seluruh_ai.json (partitions), supplied project data 2026-09-20",
+    "countsPublished": true,
+    "status": "active",
+    "appAgentId": "qawaid_fiqhiyyah",
+    "variant": "standard",
+    "metadata": {
+      "books": 44,
+      "volumes": 85,
+      "volumesLowerBound": false,
+      "pages": 32000,
+      "words": 8187717,
+      "lectures": 0,
+      "partitions": 30,
+      "period": {
+        "id": "Abad 7 – 14 H",
+        "en": "7–14 c. AH",
+        "ar": "القرن ٧–١٤ هـ"
+      }
+    },
+    "metadataKey": "qawaid_fiqhiyyah"
+  },
+  {
+    "id": "musthalah-hadits",
+    "sourceId": "musthalah_hadits",
+    "index": 17,
+    "name": {
+      "id": "'Ulumul Hadits & Musthalah",
+      "en": "Hadith Sciences",
+      "ar": "علوم الحديث ومصطلحه ومناهج التخريج والعلل"
+    },
+    "arabic": "مصطلح الحديث",
+    "group": "hadith",
+    "description": {
+      "id": "Pelajari kritik sanad, klasifikasi hadits, jarh wa ta’dil, dan ‘ilal. Telusuri landasan metodologinya melalui Muqaddimah Ibnu Shalah dan Tadribur Rawi.",
+      "en": "Study isnad criticism, hadith classification, narrator evaluation, and hidden defects through the methodological discussions of Ibn al-Ṣalāḥ’s introduction and Tadrīb al-Rāwī.",
+      "ar": "ادرس نقد الأسانيد وأقسام الحديث والجرح والتعديل والعلل، وتتبّع أصول المنهج في مقدمة ابن الصلاح وتدريب الراوي."
+    },
+    "source": "metadata_modul_lengkap.json (counts), metadata_training_seluruh_ai.json (partitions), supplied project data 2026-09-20",
+    "countsPublished": true,
+    "status": "active",
+    "appAgentId": "musthalah_hadits",
+    "variant": "standard",
+    "metadata": {
+      "books": 393,
+      "volumes": 748,
+      "volumesLowerBound": false,
+      "pages": 285000,
+      "words": 63241925,
+      "lectures": 0,
+      "partitions": 137,
+      "period": {
+        "id": "Abad 2 – 10 H",
+        "en": "2–10 c. AH",
+        "ar": "القرن ٢–١٠ هـ"
+      }
+    },
+    "metadataKey": "musthalah_hadits"
+  },
+  {
+    "id": "aqidah",
+    "sourceId": "aqidah",
+    "index": 18,
+    "name": {
+      "id": "Aqidah & Ushuluddin",
+      "en": "Theology",
+      "ar": "العقيدة وأصول الدين والمذاهب والفرق الإسلامية"
+    },
+    "arabic": "العقيدة والتوحيد",
+    "group": "theology",
+    "description": {
+      "id": "Telaah akidah Ahlussunnah wal Jama’ah dalam tradisi Asy’ariyyah dan Maturidiyyah. Kaji dalil aqli-naqli, istilah ushuluddin, serta jawaban ulama terhadap persoalan pemikiran.",
+      "en": "Study Sunni creed in the Ashʿari and Maturidi traditions. Examine rational and transmitted evidence, theological terminology, and scholarly responses to questions of belief.",
+      "ar": "طالع عقيدة أهل السنة والجماعة في المدرستين الأشعرية والماتريدية، وادرس الأدلة العقلية والنقلية ومصطلحات أصول الدين وأجوبة العلماء عن مسائل الاعتقاد."
+    },
+    "source": "metadata_modul_lengkap.json (counts), metadata_training_seluruh_ai.json (partitions), supplied project data 2026-09-20",
+    "countsPublished": true,
+    "status": "active",
+    "appAgentId": "aqidah",
+    "variant": "standard",
+    "metadata": {
+      "books": 173,
+      "volumes": 249,
+      "volumesLowerBound": false,
+      "pages": 85000,
+      "words": 19175915,
+      "lectures": 0,
+      "partitions": 43,
+      "period": {
+        "id": "Abad 2 – 14 H",
+        "en": "2–14 c. AH",
+        "ar": "القرن ٢–١٤ هـ"
+      }
+    },
+    "metadataKey": "aqidah"
+  },
+  {
+    "id": "thabaqat-tarajim",
+    "sourceId": "thabaqat_tarajim",
+    "index": 19,
+    "name": {
+      "id": "Thabaqat & Rijalul Hadits",
+      "en": "Biographical Literature",
+      "ar": "التراجم والطبقات ورجال الحديث والجرح والتعديل"
+    },
+    "arabic": "التراجم والطبقات",
+    "group": "history",
+    "description": {
+      "id": "Kenali perawi, fuqaha, dan ulama melalui kitab thabaqat serta tarajim. Telusuri Tahdzibut Tahdzib dan Siyar A’lamin Nubala untuk membaca jaringan guru-murid dan catatan perawi.",
+      "en": "Explore narrators, jurists, and scholars through biographical dictionaries. Read Tahdhīb al-Tahdhīb and Siyar Aʿlām al-Nubalāʾ for teaching networks and narrator assessments.",
+      "ar": "تعرّف إلى الرواة والفقهاء والعلماء في كتب الطبقات والتراجم، واستعن بتهذيب التهذيب وسير أعلام النبلاء في تتبّع الشيوخ والتلاميذ وأحوال الرواة."
+    },
+    "source": "metadata_modul_lengkap.json (counts), metadata_training_seluruh_ai.json (partitions), supplied project data 2026-09-20",
+    "countsPublished": true,
+    "status": "active",
+    "appAgentId": "thabaqat_rijal",
+    "variant": "standard",
+    "metadata": {
+      "books": 492,
+      "volumes": 1348,
+      "volumesLowerBound": false,
+      "pages": 420000,
+      "words": 130494140,
+      "lectures": 0,
+      "partitions": 279,
+      "period": {
+        "id": "Abad 1 – 14 H",
+        "en": "1–14 c. AH",
+        "ar": "القرن ١–١٤ هـ"
+      }
+    },
+    "metadataKey": "thabaqat_tarajim"
+  },
+  {
+    "id": "bibliografi-faharis",
+    "sourceId": "bibliografi_faharis",
+    "index": 20,
+    "name": {
+      "id": "Bibliografi & Tahqiq Turath",
+      "en": "Bibliography & Textual Editing",
+      "ar": "فهارس الكتب والأدلة والمخطوطات ومناهج التحقيق"
+    },
+    "arabic": "فهارس التراث",
+    "group": "language",
+    "description": {
+      "id": "Telusuri judul, pengarang, manuskrip, dan riwayat cetakan melalui Kasyfuz Zhunun serta kamus bibliografi. Pelajari metode tahqiq dan pemeriksaan penisbatan karya.",
+      "en": "Trace titles, authors, manuscripts, and publication histories through Kashf al-Ẓunūn and bibliographical dictionaries. Study textual editing and the assessment of authorship.",
+      "ar": "تتبّع العناوين والمؤلفين والمخطوطات وتاريخ الطبعات في كشف الظنون والمعاجم الببليوغرافية، وادرس مناهج التحقيق وفحص نسبة المؤلفات."
+    },
+    "source": "metadata_modul_lengkap.json (counts), metadata_training_seluruh_ai.json (partitions), supplied project data 2026-09-20",
+    "countsPublished": true,
+    "status": "active",
+    "appAgentId": "bibliografi_faharis",
+    "variant": "standard",
+    "metadata": {
+      "books": 86,
+      "volumes": 264,
+      "volumesLowerBound": false,
+      "pages": 110000,
+      "words": 19977431,
+      "lectures": 0,
+      "partitions": 45,
+      "period": {
+        "id": "Abad 4 – 14 H",
+        "en": "4–14 c. AH",
+        "ar": "القرن ٤–١٤ هـ"
+      }
+    },
+    "metadataKey": "bibliografi_faharis"
+  },
+  {
+    "id": "habib-umar",
+    "sourceId": "habib_umar",
+    "index": 21,
+    "name": {
+      "id": "Khazanah Habib Umar",
+      "en": "Habib Umar Collection",
+      "ar": "خزانة الحبيب عمر"
+    },
+    "arabic": "خزانة الحبيب عمر",
+    "group": "special",
+    "description": {
+      "id": "Khazanah dars, fatwa, risalah dakwah, dan mutaba’ah ilmiah Al-Habib Umar bin Hafidz dari Tarim, Hadramaut. Koleksi sedang dipersiapkan untuk telaah yang tertata.",
+      "en": "Lessons, fatwas, writings on daʿwah, and scholarly guidance from Habib Umar bin Hafiz of Tarim, Hadramaut. The collection is being prepared for structured study.",
+      "ar": "خزانة الدروس والفتاوى ورسائل الدعوة والمتابعات العلمية للحبيب عمر بن حفيظ بتريم، حضرموت. يجري إعداد المجموعة للمطالعة المنظمة."
+    },
+    "status": "preparing",
+    "source": "App scholar corpus is locked",
+    "countsPublished": false,
+    "appAgentId": "habib_umar",
+    "variant": "standard"
+  }
+]

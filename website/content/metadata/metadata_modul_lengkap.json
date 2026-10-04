@@ -1,0 +1,223 @@
+{
+  "fiqh_syafii": {
+    "id_modul": "01_FIKIH_SYAFII",
+    "kategori": "Fikih Mazhab",
+    "nama": "Fikih Syafi'i",
+    "nama_arab": "الفقه الشافعي",
+    "total_kitab": 103,
+    "total_jilid": "400+",
+    "total_halaman": 170391,
+    "total_kata": 71627898,
+    "rentang_masa": "150 – 1338 H"
+  },
+  "hadits": {
+    "id_modul": "02_HADITS",
+    "kategori": "Hadits Nabawi",
+    "nama": "Kutubus Sunnah & Matan Hadits",
+    "nama_arab": "الحديث الشريف",
+    "total_kitab": 1141,
+    "total_jilid": "1.500+",
+    "total_halaman": 532640,
+    "total_kata": 105700587,
+    "rentang_masa": "Abad 2 – 10 H"
+  },
+  "ushul_fiqh": {
+    "id_modul": "03_USHUL_FIKIH",
+    "kategori": "Ushul Fikih",
+    "nama": "Ushul Fikih 4 Mazhab",
+    "nama_arab": "أصول الفقه",
+    "total_kitab": 136,
+    "total_jilid": "320+",
+    "total_halaman": 115000,
+    "total_kata": 36522580,
+    "rentang_masa": "Abad 2 – 14 H"
+  },
+  "bahasa_arab": {
+    "id_modul": "04_BAHASA_DAN_SASTRA_ARAB",
+    "kategori": "Bahasa & Ilmu Alat",
+    "nama": "Bahasa Arab & Ilmu Alat",
+    "nama_arab": "علوم اللغة العربية",
+    "total_kitab": 866,
+    "total_jilid": "1.981",
+    "total_halaman": 610000,
+    "total_kata": 148304518,
+    "rentang_masa": "Jahiliyyah – Abad 20 M"
+  },
+  "tafsir": {
+    "id_modul": "05_TAFSIR_DAN_ULUMUL_QURAN",
+    "kategori": "Tafsir & Al-Qur'an",
+    "nama": "Tafsir & 'Ulumul Qur'an",
+    "nama_arab": "التفسير وعلوم القرآن",
+    "total_kitab": 123,
+    "total_jilid": "450+",
+    "total_halaman": 140000,
+    "total_kata": 78862654,
+    "rentang_masa": "Abad 2 – 14 H"
+  },
+  "fiqh_tahawwulat": {
+    "id_modul": "06_FIKIH_TAHAWWULAT",
+    "kategori": "Fikih Tahawwulat",
+    "nama": "Fikih Tahawwulat",
+    "nama_arab": "فقه التحولات",
+    "total_kitab": 58,
+    "total_jilid": "58",
+    "total_halaman": 12500,
+    "total_kata": 5644146,
+    "rentang_masa": "Era Kontemporer",
+    "total_dars": 1099
+  },
+  "tarikh_sirah": {
+    "id_modul": "07_TARIKH_DAN_SIRAH_NABAWIYYAH",
+    "kategori": "Tarikh & Peradaban",
+    "nama": "Tarikh & Sirah Nabawiyyah",
+    "nama_arab": "السيرة والتاريخ",
+    "total_kitab": 499,
+    "total_jilid": "1.374",
+    "total_halaman": 480000,
+    "total_kata": 136531222,
+    "rentang_masa": "Pra-Hijrah – Abad 14 H"
+  },
+  "fiqh_muqaran": {
+    "id_modul": "08_FIKIH_MUQARAN_DAN_UMUM",
+    "kategori": "Fikih Lintas Madzhab",
+    "nama": "Fikih Muqaran & Siyasah",
+    "nama_arab": "الفقه المقارن",
+    "total_kitab": 189,
+    "total_jilid": "329",
+    "total_halaman": 135000,
+    "total_kata": 27585932,
+    "rentang_masa": "Abad 2 – 14 H"
+  },
+  "fatawa_masail": {
+    "id_modul": "09_FATAWA_DAN_MASAIL_FIQHIYYAH",
+    "kategori": "Fatawa & Nawazil",
+    "nama": "Fatawa & Masail Fiqhiyyah",
+    "nama_arab": "الفتاوى والمسائل",
+    "total_kitab": 221,
+    "total_jilid": "324",
+    "total_halaman": 57419,
+    "total_kata": 19387054,
+    "rentang_masa": "Abad 6 – 14 H"
+  },
+  "syarah_hadits": {
+    "id_modul": "10_SYARAH_HADITS",
+    "kategori": "Hadits Nabawi",
+    "nama": "Syarah Hadits Nabawi",
+    "nama_arab": "شروح الحديث",
+    "total_kitab": 202,
+    "total_jilid": "1.007",
+    "total_halaman": 420000,
+    "total_kata": 122463779,
+    "rentang_masa": "Abad 4 – 14 H"
+  },
+  "fiqh_hanafi": {
+    "id_modul": "11_FIKIH_HANAFI",
+    "kategori": "Fikih Mazhab",
+    "nama": "Fikih Hanafi",
+    "nama_arab": "الفقه الحنفي",
+    "total_kitab": 85,
+    "total_jilid": "288",
+    "total_halaman": 110000,
+    "total_kata": 39300555,
+    "rentang_masa": "Abad 2 – 13 H"
+  },
+  "fiqh_maliki": {
+    "id_modul": "12_FIKIH_MALIKI",
+    "kategori": "Fikih Mazhab",
+    "nama": "Fikih Maliki",
+    "nama_arab": "الفقه المالكي",
+    "total_kitab": 86,
+    "total_jilid": "339",
+    "total_halaman": 164214,
+    "total_kata": 48363521,
+    "rentang_masa": "Abad 2 – 14 H"
+  },
+  "fiqh_hanbali": {
+    "id_modul": "13_FIKIH_HANBALI",
+    "kategori": "Fikih Mazhab",
+    "nama": "Fikih Hanbali",
+    "nama_arab": "الفقه الحنبلي",
+    "total_kitab": 95,
+    "total_jilid": "338",
+    "total_halaman": 163639,
+    "total_kata": 34626811,
+    "rentang_masa": "Abad 3 – 14 H"
+  },
+  "tasawwuf": {
+    "id_modul": "14_TASAWWUF_DAN_ADZKAR",
+    "kategori": "Tasawwuf & Adzkar",
+    "nama": "Tasawwuf & Adzkar",
+    "nama_arab": "التصوف والتزكية",
+    "total_kitab": 248,
+    "total_jilid": "317",
+    "total_halaman": 95000,
+    "total_kata": 18697388,
+    "rentang_masa": "Abad 3 – 14 H"
+  },
+  "tajwid_qiraat": {
+    "id_modul": "15_TAJWID_DAN_QIRAAT",
+    "kategori": "Al-Qur'an & Qira'at",
+    "nama": "Tajwid & Qira'at",
+    "nama_arab": "التجويد والقراءات",
+    "total_kitab": 130,
+    "total_jilid": "182",
+    "total_halaman": 45000,
+    "total_kata": 13714766,
+    "rentang_masa": "Abad 4 – 14 H"
+  },
+  "qawaid_fiqhiyyah": {
+    "id_modul": "16_QAWAID_FIQHIYYAH",
+    "kategori": "Kaidah Fikih",
+    "nama": "Qawa'id Fiqhiyyah",
+    "nama_arab": "القواعد الفقهية",
+    "total_kitab": 44,
+    "total_jilid": "85",
+    "total_halaman": 32000,
+    "total_kata": 8187717,
+    "rentang_masa": "Abad 7 – 14 H"
+  },
+  "musthalah_hadits": {
+    "id_modul": "17_MUSTHALAH_DAN_ULUMUL_HADITS",
+    "kategori": "Hadits Nabawi",
+    "nama": "'Ulumul Hadits & Musthalah",
+    "nama_arab": "مصطلح الحديث",
+    "total_kitab": 393,
+    "total_jilid": "748",
+    "total_halaman": 285000,
+    "total_kata": 63241925,
+    "rentang_masa": "Abad 2 – 10 H"
+  },
+  "aqidah": {
+    "id_modul": "18_AQIDAH_DAN_USHULUDDIN",
+    "kategori": "Aqidah & Pemikiran",
+    "nama": "Aqidah & Ushuluddin",
+    "nama_arab": "العقيدة والتوحيد",
+    "total_kitab": 173,
+    "total_jilid": "249",
+    "total_halaman": 85000,
+    "total_kata": 19175915,
+    "rentang_masa": "Abad 2 – 14 H"
+  },
+  "thabaqat_tarajim": {
+    "id_modul": "19_THABAQAT_DAN_TARAJIM_RIJAL",
+    "kategori": "Biografi & Sanad",
+    "nama": "Thabaqat & Rijalul Hadits",
+    "nama_arab": "التراجم والطبقات",
+    "total_kitab": 492,
+    "total_jilid": "1.348",
+    "total_halaman": 420000,
+    "total_kata": 130494140,
+    "rentang_masa": "Abad 1 – 14 H"
+  },
+  "bibliografi_faharis": {
+    "id_modul": "26_BIBLIOGRAFI_DAN_FAHARIS",
+    "kategori": "Bibliografi & Manuskrip",
+    "nama": "Bibliografi & Tahqiq Turath",
+    "nama_arab": "فهارس التراث",
+    "total_kitab": 86,
+    "total_jilid": "264",
+    "total_halaman": 110000,
+    "total_kata": 19977431,
+    "rentang_masa": "Abad 4 – 14 H"
+  }
+}
