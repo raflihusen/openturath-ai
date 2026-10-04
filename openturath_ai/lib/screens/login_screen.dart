@@ -16,10 +16,8 @@ import '../core/app_snackbar.dart';
 import '../services/auth_service.dart';
 import '../widgets/openturath_brand.dart';
 import '../widgets/language_switcher.dart';
-import '../widgets/library_canvas.dart';
-import '../models/open_turath_book.dart';
+import '../widgets/arch_echo_canvas.dart';
 import '../services/open_turath_catalog_repository.dart';
-import '../core/design/ot_motion.dart';
 import 'package:intl/intl.dart' show NumberFormat;
 
 /// A shared, theme-adaptive sign-in surface for mobile and desktop.
@@ -146,7 +144,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ],
                   ),
                 ),
-                // Ponsel: rak kitab tampil di atas formulir.
+                // Ponsel: kanvas lengkung tampil di atas formulir.
                 if (viewport.maxWidth < 900 && viewport.maxHeight >= 640)
                   Padding(
                     padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
@@ -162,7 +160,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 : OTColors.inverseSurface(dark)),
                       ),
                       child: const ExcludeSemantics(
-                          child: LibraryCanvas(compact: true)),
+                          child: ArchEchoCanvas(compact: true)),
                     ),
                   ),
                 Expanded(
@@ -282,7 +280,13 @@ class _LoginScreenState extends State<LoginScreen> {
                                       ),
                                       recognizer: _termsRecognizer,
                                     ),
-                                    const TextSpan(text: ' · '),
+                                    TextSpan(
+                                      text: switch (Loc.language) {
+                                        'en' => ' and ',
+                                        'ar' => ' و',
+                                        _ => ' dan ',
+                                      },
+                                    ),
                                     TextSpan(
                                       text: AppCopy.privacyPolicy
                                           .replaceAll(' ', '\u00A0'),
@@ -320,21 +324,8 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 }
 
-class _LoginAside extends StatefulWidget {
+class _LoginAside extends StatelessWidget {
   const _LoginAside();
-
-  @override
-  State<_LoginAside> createState() => _LoginAsideState();
-}
-
-class _LoginAsideState extends State<_LoginAside> {
-  final ValueNotifier<OpenTurathBook?> _focus = ValueNotifier(null);
-
-  @override
-  void dispose() {
-    _focus.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -357,11 +348,9 @@ class _LoginAsideState extends State<_LoginAside> {
         ),
         child: Stack(
           children: [
-            // Rak kitab: judul asli dari katalog di dalam jendela lengkung.
-            Positioned.fill(
-              child: ExcludeSemantics(
-                child: LibraryCanvas(onFocus: (book) => _focus.value = book),
-              ),
+            // Lengkung logo bersarang dengan cahaya yang bernapas pelan.
+            const Positioned.fill(
+              child: ExcludeSemantics(child: ArchEchoCanvas()),
             ),
             // Gradasi bawah agar teks tetap terbaca di atas kanvas.
             Positioned.fill(
@@ -387,37 +376,6 @@ class _LoginAsideState extends State<_LoginAside> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Spacer(),
-                  // Kitab yang sedang menyala di kanvas: judul, pengarang, wafat.
-                  ValueListenableBuilder<OpenTurathBook?>(
-                    valueListenable: _focus,
-                    builder: (context, book, _) => AnimatedSwitcher(
-                      duration: OTMotion.normal,
-                      child: book == null
-                          ? const SizedBox(height: 20)
-                          : SizedBox(
-                              key: ValueKey(book.id),
-                              height: 20,
-                              width: double.infinity,
-                              child: Text(
-                                [
-                                  book.author,
-                                  if (book.deathYear != null)
-                                    'ت ${book.deathYear} هـ',
-                                ].join(' · '),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                textDirection: TextDirection.rtl,
-                                textAlign: TextAlign.left,
-                                style: TextStyle(
-                                  fontFamily: 'NativeArabicUI',
-                                  fontSize: 13,
-                                  color: muted,
-                                ),
-                              ),
-                            ),
-                    ),
-                  ),
-                  const SizedBox(height: 14),
                   OTReveal(
                     child: Text(
                       AppCopy.appTagline,
