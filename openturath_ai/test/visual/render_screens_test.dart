@@ -70,8 +70,8 @@ Future<void> _shot(WidgetTester tester, String name, Widget child,
       home: child,
     ),
   ));
-  await tester.runAsync(
-      () => Future<void>.delayed(const Duration(milliseconds: 300)));
+  await tester
+      .runAsync(() => Future<void>.delayed(const Duration(milliseconds: 300)));
   await tester.pump(const Duration(milliseconds: 900));
   await tester.pump(const Duration(milliseconds: 900));
   final boundary =
@@ -86,7 +86,8 @@ Future<void> _shot(WidgetTester tester, String name, Widget child,
   final error = tester.takeException();
   if (error != null) {
     // ignore: avoid_print
-    print('RENDER ERROR in $name: ${error.toString().split('\n').take(6).join(' | ')}');
+    print(
+        'RENDER ERROR in $name: ${error.toString().split('\n').take(6).join(' | ')}');
   }
 }
 
@@ -128,7 +129,9 @@ void main() {
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        for (var c = i; c < i + 3 && c < others.length; c++) ...[
+                        for (var c = i;
+                            c < i + 3 && c < others.length;
+                            c++) ...[
                           if (c > i) const SizedBox(width: 12),
                           Expanded(
                             child: AssistantGridCard(
@@ -153,13 +156,21 @@ void main() {
       await _shot(tester, 'login_$locale', const LoginScreen(), locale: locale);
       await _shot(tester, 'assistants_$locale', assistants(),
           size: const Size(1000, 1100), locale: locale);
+      await _shot(tester, 'tahawwulat_$locale',
+          const TahawwulatIntroductionSheet(asPage: true),
+          size: const Size(1280, 1500), locale: locale);
+    }
+    for (final section in [2, 3, 4, 5, 6]) {
       await _shot(
           tester,
-          'tahawwulat_$locale',
-          const Scaffold(body: TahawwulatIntroductionSheet()),
-          size: const Size(950, 1400),
-          locale: locale);
+          'tahawwulat_s$section',
+          TahawwulatIntroductionSheet(
+              key: ValueKey(section), asPage: true, initialSection: section),
+          size: const Size(1280, 1700));
     }
+    await _shot(tester, 'tahawwulat_phone',
+        const Scaffold(body: TahawwulatIntroductionSheet()),
+        size: const Size(390, 844));
     await _shot(tester, 'login_dark', const LoginScreen(), dark: true);
     SharedPreferences.setMockInitialValues({});
     AuthService.previewUser = UserModel(
