@@ -85,7 +85,7 @@ class NotebookChatController extends ChangeNotifier {
       error = switch (failure.code) {
         'unauthenticated' => 'Silakan masuk kembali ke OpenTurath.',
         'notebook-session-required' =>
-          'Buka NotebookLM di profil Chrome tempat penghubung dipasang, lalu masuk dengan akun Google yang sama dengan OpenTurath.',
+          'Buka ruang asisten di profil Chrome tempat penghubung dipasang, lalu masuk dengan akun Google yang sama dengan OpenTurath.',
         'permission-denied' => 'Akses kajian ini belum aktif untuk akun Anda.',
         'account-mismatch' =>
           'Akun Google di Chrome berbeda. Gunakan akun yang sama dengan OpenTurath.',

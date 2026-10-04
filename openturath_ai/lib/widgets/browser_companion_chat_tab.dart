@@ -60,7 +60,7 @@ class _BrowserCompanionChatTabState extends State<BrowserCompanionChatTab> {
           ? 'Penghubung Chrome tersambung'
           : 'Menunggu penghubung Google Chrome')),
       subtitle: BrowserCompanionChatService.runtime.connected
-          ? const Text('Gunakan akun Google yang sama di NotebookLM. Akses kajian diperiksa saat pertanyaan dikirim.')
+          ? const Text('Gunakan akun Google yang sama dengan OpenTurath. Akses kajian diperiksa saat pertanyaan dikirim.')
           : null,
       trailing: BrowserCompanionChatService.runtime.connected ? null
           : TextButton(onPressed: _starting ? null : _start,
