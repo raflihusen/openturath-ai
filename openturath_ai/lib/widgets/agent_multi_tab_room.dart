@@ -328,46 +328,6 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                             color: textPrimary)),
                   ],
                 ),
-                const SizedBox(height: 16),
-                Divider(height: 1, thickness: 0.8, color: border),
-                const SizedBox(height: 16),
-                Text(
-                  'Bahasa Output Jawaban',
-                  style: OTTypography.cardTitle(color: textPrimary)
-                      .copyWith(fontSize: OTFontSize.s16),
-                ),
-                const SizedBox(height: 6),
-                Text(
-                  'Atur bahasa jawaban asisten keilmuan (mendukung 50+ bahasa).',
-                  style: OTTypography.caption(color: textSecondary),
-                ),
-                const SizedBox(height: 14),
-                SizedBox(
-                  width: double.infinity,
-                  child: OutlinedButton.icon(
-                    onPressed: () {
-                      Navigator.pop(ctx);
-                      session.webController?.evaluateJavascript(
-                        source:
-                            'if (typeof window.otOpenLanguageSettings === "function") { window.otOpenLanguageSettings(); } else if (typeof otOpenLanguageSettings === "function") { otOpenLanguageSettings(); }',
-                      );
-                    },
-                    icon: Icon(Icons.language_rounded,
-                        size: 18, color: textPrimary),
-                    label: Text(
-                      'Ganti Bahasa Output (50+ Bahasa)',
-                      style: ScholarlyFonts.outfit(
-                        fontWeight: FontWeight.w600,
-                        fontSize: OTFontSize.s14,
-                        color: textPrimary,
-                      ),
-                    ),
-                    style: OutlinedButton.styleFrom(
-                      side: BorderSide(color: border, width: 1),
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                    ),
-                  ),
-                ),
               ],
             ),
           );
