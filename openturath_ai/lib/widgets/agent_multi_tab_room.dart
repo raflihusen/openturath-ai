@@ -1251,10 +1251,19 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
         if (!widget.session.isGoogleAuthPage) _enterGoogleSignIn();
         return;
       }
-      if (widget.session.isGoogleAuthPage ||
-          url == null ||
-          !NotebookNavigation.notebook(url.uriValue)) {
+      if (url == null || !NotebookNavigation.notebook(url.uriValue)) {
         return;
+      }
+      if (widget.session.isGoogleAuthPage) {
+        if (mounted) {
+          setState(() {
+            widget.session.isGoogleAuthPage = false;
+            widget.session.errorMessage = null;
+          });
+        } else {
+          widget.session.isGoogleAuthPage = false;
+          widget.session.errorMessage = null;
+        }
       }
       final hasScript = await controller.evaluateJavascript(
         source:
@@ -1279,7 +1288,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
       final result = await controller.evaluateJavascript(
           source: 'window.otNotebook ? window.otNotebook.ready() : false');
       _readySamples = result == true ? _readySamples + 1 : 0;
-      if (!mounted || widget.session.isGoogleAuthPage) return;
+      if (!mounted) return;
       final elapsedMs = _loadingStarted != null
           ? DateTime.now().difference(_loadingStarted!).inMilliseconds
           : 0;
@@ -1292,7 +1301,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
           final prefs = await SharedPreferences.getInstance();
           await prefs.setBool('google_session_ready', true);
         } catch (_) {}
-        if (!mounted || widget.session.isGoogleAuthPage) return;
+        if (!mounted) return;
         if (mounted) {
           setState(() {
             widget.session.isWebLoading = false;
@@ -1850,6 +1859,14 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
               if (!NotebookNavigation.notebook(uri.uriValue)) {
                 return;
               }
+
+              if (session.isGoogleAuthPage && mounted) {
+                setState(() {
+                  session.isGoogleAuthPage = false;
+                  session.errorMessage = null;
+                });
+              }
+
               try {
                 await controller.evaluateJavascript(
                     source:
@@ -1871,11 +1888,35 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
                 // A navigation or closed tab can invalidate an in-flight script.
               }
             },
+            onUpdateVisitedHistory: (controller, uri, isReload) async {
+              if (!mounted || uri == null) return;
+              if (NotebookNavigation.notebook(uri.uriValue)) {
+                if (session.isGoogleAuthPage && mounted) {
+                  setState(() {
+                    session.isGoogleAuthPage = false;
+                    session.errorMessage = null;
+                  });
+                }
+                _startReadinessCheck();
+              } else if (NotebookNavigation.signInFlow(uri.uriValue)) {
+                if (!session.isGoogleAuthPage && mounted) {
+                  _enterGoogleSignIn();
+                }
+              }
+            },
             onProgressChanged: (controller, progress) async {
               final currentUrl = await controller.getUrl();
+              if (currentUrl != null &&
+                  NotebookNavigation.notebook(currentUrl.uriValue)) {
+                if (session.isGoogleAuthPage && mounted) {
+                  setState(() {
+                    session.isGoogleAuthPage = false;
+                    session.errorMessage = null;
+                  });
+                }
+              }
               if (currentUrl == null ||
-                  !NotebookNavigation.notebook(currentUrl.uriValue) ||
-                  session.isGoogleAuthPage) {
+                  !NotebookNavigation.notebook(currentUrl.uriValue)) {
                 return;
               }
               if (mounted &&
