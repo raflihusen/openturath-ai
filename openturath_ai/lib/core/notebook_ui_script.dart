@@ -623,9 +623,7 @@ const notebookUiScript = r'''
 
   function isStillLoading() {
     const body = (document.body?.innerText || '').toLowerCase();
-    const hasLoadingText = body.includes('loading notebook') || body.includes('memuat notebook') || body.includes('loading...');
-    const hasSpinner = !!document.querySelector('mat-spinner, mat-progress-spinner, .mat-mdc-progress-spinner, [role="progressbar"], .loading-spinner');
-    return hasLoadingText || hasSpinner;
+    return body.includes('loading notebook') || body.includes('memuat notebook');
   }
 
   function ready() {

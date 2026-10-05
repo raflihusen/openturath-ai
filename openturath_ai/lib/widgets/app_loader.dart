@@ -3,12 +3,10 @@ import '../core/theme.dart';
 import '../core/localization.dart';
 import '../core/scholarly_fonts.dart';
 import '../core/design/ot_motion.dart';
-import 'ot_arch_motion.dart';
-
 import 'package:openturath_ai/core/design/ot_typography.dart';
-import 'package:openturath_ai/core/design/ot_radius.dart';
+
 /// AppLoader: Komponen visual baku tiga titik berdenyut (Three-Dots Pulse Loader).
-/// Menyatukan 4 implementasi loader berbeda menjadi satu komponen berstandar Apple HIG.
+/// Menyatukan implementasi loader menjadi satu komponen elegan berstandar Apple HIG.
 class AppLoader extends StatefulWidget {
   final double dotSize;
   final double spacing;
@@ -81,65 +79,42 @@ class _AppLoaderState extends State<AppLoader>
       mainAxisSize: MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        if (widget.isFullscreen) ...[
-          OTArchLoader(
-              progress: still ? 0.5 : _controller.value, ink: textPrimary),
-          const SizedBox(height: 22),
-          // Garis tipis dengan ruas yang meluncur: memuat tanpa durasi pasti.
-          ClipRRect(
-            borderRadius: BorderRadius.circular(OTRadius.xs),
-            child: SizedBox(
-              width: 132,
-              height: 2,
-              child: AnimatedBuilder(
-                animation: _controller,
-                builder: (context, _) => CustomPaint(
-                  painter: _SlidingBarPainter(
-                    progress: still ? 0.5 : _controller.value,
-                    track: textPrimary.withValues(alpha: 0.10),
-                    bar: textPrimary,
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ] else
-          AnimatedBuilder(
-            animation: _controller,
-            builder: (context, child) {
-              return Row(
-                mainAxisSize: MainAxisSize.min,
-                children: List.generate(3, (index) {
-                  final delay = index * 0.2;
-                  final t = (_controller.value - delay) % 1.0;
-                  final curveVal =
-                      Curves.easeInOutSine.transform(t < 0 ? t + 1.0 : t);
-                  final scale =
-                      0.75 + (0.45 * (1.0 - (curveVal - 0.5).abs() * 2));
-                  final opacity =
-                      0.3 + (0.7 * (1.0 - (curveVal - 0.5).abs() * 2));
+        AnimatedBuilder(
+          animation: _controller,
+          builder: (context, child) {
+            return Row(
+              mainAxisSize: MainAxisSize.min,
+              children: List.generate(3, (index) {
+                final delay = index * 0.2;
+                final t = still ? 0.5 : (_controller.value - delay) % 1.0;
+                final curveVal =
+                    Curves.easeInOutSine.transform(t < 0 ? t + 1.0 : t);
+                final scale =
+                    0.75 + (0.45 * (1.0 - (curveVal - 0.5).abs() * 2));
+                final opacity =
+                    0.3 + (0.7 * (1.0 - (curveVal - 0.5).abs() * 2));
 
-                  return Container(
-                    margin: EdgeInsets.symmetric(horizontal: widget.spacing),
-                    child: Transform.scale(
-                      scale: scale,
-                      child: Opacity(
-                        opacity: opacity.clamp(0.25, 1.0),
-                        child: Container(
-                          width: widget.dotSize,
-                          height: widget.dotSize,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: dotColor,
-                          ),
+                return Container(
+                  margin: EdgeInsets.symmetric(horizontal: widget.spacing),
+                  child: Transform.scale(
+                    scale: scale,
+                    child: Opacity(
+                      opacity: opacity.clamp(0.25, 1.0),
+                      child: Container(
+                        width: widget.dotSize,
+                        height: widget.dotSize,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: dotColor,
                         ),
                       ),
                     ),
-                  );
-                }),
-              );
-            },
-          ),
+                  ),
+                );
+              }),
+            );
+          },
+        ),
         if (widget.title != null) ...[
           const SizedBox(height: 20),
           Text(
@@ -203,28 +178,4 @@ class _AppLoaderState extends State<AppLoader>
 
     return Center(child: content);
   }
-}
-
-/// Ruas pendek yang meluncur di atas lintasan tipis.
-class _SlidingBarPainter extends CustomPainter {
-  _SlidingBarPainter(
-      {required this.progress, required this.track, required this.bar});
-
-  final double progress;
-  final Color track;
-  final Color bar;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    canvas.drawRect(Offset.zero & size, Paint()..color = track);
-    final eased = Curves.easeInOutCubic.transform(progress);
-    final width = size.width * 0.38;
-    final left = -width + (size.width + width) * eased;
-    canvas.drawRect(
-        Rect.fromLTWH(left, 0, width, size.height), Paint()..color = bar);
-  }
-
-  @override
-  bool shouldRepaint(_SlidingBarPainter oldDelegate) =>
-      oldDelegate.progress != progress;
 }

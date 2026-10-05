@@ -1187,7 +1187,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
   void _startReadinessCheck() {
     _readinessTimer?.cancel();
     _inputRetryTimer?.cancel();
-    _loadingStarted = DateTime.now();
+    _loadingStarted ??= DateTime.now();
     _readySamples = 0;
     _readinessTimer =
         Timer.periodic(const Duration(milliseconds: 500), (_) => _checkReady());
@@ -1213,6 +1213,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
 
   void _handleAccessDenied(AgentSessionTab session) {
     _readinessTimer?.cancel();
+    _loadingStarted = null;
     if (mounted) {
       setState(() {
         session.isWebLoading = false;
@@ -1247,6 +1248,25 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
     }
     _checkingReady = true;
     try {
+      _loadingStarted ??= DateTime.now();
+      final elapsedSec =
+          DateTime.now().difference(_loadingStarted!).inSeconds;
+      if (elapsedSec >= 45) {
+        _readinessTimer?.cancel();
+        _inputRetryTimer?.cancel();
+        _loadingStarted = null;
+        if (mounted) {
+          setState(() {
+            widget.session.isWebLoading = false;
+            widget.session.isSessionReady = false;
+            widget.session.isTimeoutError = true;
+            widget.session.errorMessage =
+                'Koneksi ke asisten turats membutuhkan waktu lebih lama dari biasanya. Silakan muat ulang atau periksa koneksi internet Anda.';
+          });
+        }
+        return;
+      }
+
       final controller = widget.session.webController!;
       final url = await controller.getUrl();
       if (url != null && NotebookNavigation.signInFlow(url.uriValue)) {
@@ -1296,6 +1316,8 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
           : 0;
       if (_readySamples >= 2 && elapsedMs >= 1500) {
         _readinessTimer?.cancel();
+        _inputRetryTimer?.cancel();
+        _loadingStarted = null;
         await controller.evaluateJavascript(
           source: 'window.otNotebook?.activate()',
         );
@@ -1304,27 +1326,14 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
           await prefs.setBool('google_session_ready', true);
         } catch (_) {}
         if (!mounted) return;
-        if (mounted) {
-          setState(() {
-            widget.session.isWebLoading = false;
-            widget.session.isSessionReady = true;
-            widget.session.isGooglePermissionError = false;
-            widget.session.errorMessage = null;
-            widget.session.isTimeoutError = false;
-          });
-          _syncInitialHistory();
-        }
-      } else if (DateTime.now().difference(_loadingStarted!).inSeconds >= 45) {
-        _readinessTimer?.cancel();
-        if (mounted) {
-          setState(() {
-            widget.session.isWebLoading = false;
-            widget.session.isSessionReady = false;
-            widget.session.isTimeoutError = true;
-            widget.session.errorMessage =
-                'Koneksi ke asisten turats membutuhkan waktu lebih lama dari biasanya. Silakan muat ulang atau periksa koneksi internet Anda.';
-          });
-        }
+        setState(() {
+          widget.session.isWebLoading = false;
+          widget.session.isSessionReady = true;
+          widget.session.isGooglePermissionError = false;
+          widget.session.errorMessage = null;
+          widget.session.isTimeoutError = false;
+        });
+        _syncInitialHistory();
       }
     } catch (_) {
     } finally {
@@ -1478,6 +1487,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
           session.isWebLoading = true;
           session.isSessionReady = false;
         });
+        _loadingStarted = DateTime.now();
         if (session.webController != null) {
           session.webController!.reload();
           _startReadinessCheck();
