@@ -249,6 +249,16 @@ const notebookUiScript = r'''
       .rendered-markdown p + p, .chat-response p + p { margin-top: 1em !important; }
       ::-webkit-scrollbar { display: none !important; width: 0 !important; }
       html, body, * { scrollbar-width: none !important; }
+
+      /* Sembunyikan dialog / pop-up selamat datang dan intro Gemini Notebook */
+      app-welcome-dialog, app-onboarding-dialog,
+      .welcome-dialog, .onboarding-dialog,
+      [class*="welcome-dialog" i], [class*="onboarding-dialog" i],
+      [class*="feature-dialog" i], [class*="announcement-dialog" i] {
+        display: none !important;
+        opacity: 0 !important;
+        pointer-events: none !important;
+      }
     `;
   }
 
@@ -367,6 +377,71 @@ const notebookUiScript = r'''
     });
   }
 
+  function dismissPopups() {
+    try {
+      const dialogs = document.querySelectorAll(
+        'mat-dialog-container, .mat-mdc-dialog-container, [role="dialog"], [aria-modal="true"], .cdk-overlay-pane, app-welcome-dialog, app-onboarding-dialog'
+      );
+
+      let foundPromoOrWelcome = false;
+      dialogs.forEach(dialog => {
+        // Jangan ganggu dialog pemilihan bahasa / menu asisten yang sengaja dibuka
+        if (dialog.querySelector('[role="menu"], .mat-mdc-menu-panel, mat-radio-group, [role="radiogroup"], mat-radio-button')) {
+          return;
+        }
+
+        const fullText = (dialog.innerText || dialog.textContent || '').trim().toLowerCase();
+        const isWelcomeOrPromo =
+          fullText.includes('selamat datang') ||
+          fullText.includes('welcome') ||
+          fullText.includes('gemini notebook') ||
+          fullText.includes('fleksibilitas dan kontrol') ||
+          fullText.includes('flexibility and control') ||
+          fullText.includes('batas diperbarui') ||
+          fullText.includes('limits updated') ||
+          fullText.includes('data anda dilindungi') ||
+          fullText.includes('your data is protected') ||
+          fullText.includes('info terbaru');
+
+        if (isWelcomeOrPromo) {
+          foundPromoOrWelcome = true;
+          // Otomatis klik tombol konfirmasi / tutup agar status tersimpan di backend Google
+          const buttons = dialog.querySelectorAll('button, [role="button"]');
+          for (const btn of buttons) {
+            const btnText = (btn.innerText || btn.textContent || btn.getAttribute('aria-label') || '').trim().toLowerCase();
+            const hasCloseIcon = !!btn.querySelector('mat-icon[data-mat-icon-name="close"], mat-icon[fonticon="close"], svg');
+            if (btnText === 'oke' || btnText === 'ok' || btnText === 'mengerti' || btnText === 'got it' || btnText === 'close' || btnText === 'tutup' || btnText.includes('close') || hasCloseIcon) {
+              try { btn.click(); break; } catch (_) {}
+            }
+          }
+
+          dialog.style.setProperty('display', 'none', 'important');
+          dialog.style.setProperty('opacity', '0', 'important');
+          dialog.style.setProperty('pointer-events', 'none', 'important');
+          dialog.style.setProperty('visibility', 'hidden', 'important');
+
+          const pane = dialog.closest('.cdk-overlay-pane');
+          if (pane) {
+            pane.style.setProperty('display', 'none', 'important');
+            pane.style.setProperty('opacity', '0', 'important');
+            pane.style.setProperty('pointer-events', 'none', 'important');
+          }
+        }
+      });
+
+      if (foundPromoOrWelcome) {
+        document.querySelectorAll('.cdk-overlay-backdrop').forEach(bd => {
+          const activeMenu = document.querySelector('[role="menu"]:not([style*="display: none"]), .mat-mdc-menu-panel:not([style*="display: none"])');
+          if (!activeMenu) {
+            bd.style.setProperty('display', 'none', 'important');
+            bd.style.setProperty('opacity', '0', 'important');
+            bd.style.setProperty('pointer-events', 'none', 'important');
+          }
+        });
+      }
+    } catch (_) {}
+  }
+
   let lastCleanAt = 0;
   function clean() {
     if (!document.documentElement) return;
@@ -377,6 +452,7 @@ const notebookUiScript = r'''
     ensureStyles();
     removeTopToolbars();
     removeHeroCard();
+    dismissPopups();
   }
 
   function triggerClick(el) {
@@ -779,5 +855,12 @@ window.otSetMenuOpen = function(isOpen) {
 
 ensureStyles();
 clean();
+dismissPopups();
+var _otPopupCounter = 0;
+var _otPopupTimer = setInterval(function() {
+  dismissPopups();
+  _otPopupCounter++;
+  if (_otPopupCounter > 40) clearInterval(_otPopupTimer);
+}, 250);
 })();
 ''';
