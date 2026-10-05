@@ -2023,12 +2023,12 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
               ),
             ),
 
-          // Layar muat hanya saat inisialisasi awal; memudar ke konten.
+          // Layar muat hanya saat inisialisasi awal; memudar ke konten saat siap.
           Positioned.fill(
             child: AnimatedSwitcher(
               duration: const Duration(milliseconds: 240),
               switchOutCurve: Curves.easeOut,
-              child: !session.isSessionReady && session.isWebLoading
+              child: !session.isSessionReady
                   ? AppLoader.fullscreen(
                       key: const ValueKey('room-loader'),
                       title: session.agent.title,

@@ -169,7 +169,10 @@ const notebookUiScript = r'''
       app-chat-intro, app-conversation-intro, app-notebook-intro,
       app-project-intro, app-chat-empty-state, app-empty-state,
       .chat-intro, .conversation-intro, .notebook-intro, .project-intro,
-      .chat-empty-state, .empty-state,
+      .chat-empty-state, .empty-state, [class*="zero-state" i],
+      app-notebook-title, app-project-title,
+      .empty-state-header, .chat-empty-state-container,
+      [class*="intro-header" i], [class*="hero-header" i],
       [class*="guide-intro" i], [class*="project-summary" i],
       [class*="project-overview" i], [class*="notebook-overview" i],
       [class*="chat-intro" i], [class*="conversation-intro" i],
@@ -346,7 +349,10 @@ const notebookUiScript = r'''
       'app-chat-intro', 'app-conversation-intro', 'app-notebook-intro',
       'app-project-intro', 'app-chat-empty-state', 'app-empty-state',
       '.chat-intro', '.conversation-intro', '.notebook-intro', '.project-intro',
-      '.chat-empty-state', '.empty-state',
+      '.chat-empty-state', '.empty-state', [class*="zero-state" i],
+      'app-notebook-title', 'app-project-title',
+      '.empty-state-header', '.chat-empty-state-container',
+      '[class*="intro-header" i]', '[class*="hero-header" i]',
       '[class*="guide-intro" i]', '[class*="project-summary" i]',
       '[class*="project-overview" i]', '[class*="notebook-overview" i]',
       '[class*="chat-intro" i]', '[class*="conversation-intro" i]',
@@ -359,21 +365,53 @@ const notebookUiScript = r'''
       });
     });
 
-    // Cari intro "sources" hanya pada area chat / panel utama (sangat hemat CPU)
-    document.querySelectorAll('.chat-panel-content, .chat-view, .conversation-container, .message-list, [role="log"], main').forEach(panel => {
+    // Cari intro "sources", judul notebook ("AI-MUHAQQIQ"), tanggal, dan icon scroll
+    // baik saat ada pesan obrolan maupun saat obrolan masih kosong (empty state)
+    document.querySelectorAll('.chat-panel-content, .chat-view, .conversation-container, .message-list, [role="log"], main, app-chat-view, app-conversation').forEach(panel => {
+      // 1. Jika ada pesan pertama, sembunyikan semua elemen sebelumnya (header intro)
       const firstMessage = panel.querySelector('.chat-message, .model-message, .user-message, [role="article"], .chat-message-pair');
       if (firstMessage) {
         let prev = firstMessage.previousElementSibling;
         while (prev) {
-          const prevTxt = (prev.textContent || '').toLowerCase();
-          if (prevTxt.includes('source') || prevTxt.includes('sumber') || prevTxt.includes('•') || prev.querySelector('img, svg, mat-icon') || prevTxt.length < 80) {
-            if (!prev.querySelector('textarea, [contenteditable="true"]')) {
-              prev.style.setProperty('display', 'none', 'important');
-            }
+          if (!prev.querySelector('textarea, [contenteditable="true"], form')) {
+            prev.style.setProperty('display', 'none', 'important');
           }
           prev = prev.previousElementSibling;
         }
       }
+
+      // 2. Deteksi dinamis berbasis konten teks pada seluruh elemen hero/header di panel obrolan:
+      // Sembunyikan elemen "0 sumber · [tanggal]", "Loading Notebook...", nama asisten (Al-Muhaqqiq dsb), dan icon scroll
+      panel.querySelectorAll('div, p, span, h1, h2, h3, header, section, mat-icon, img').forEach(el => {
+        if (el.querySelector('textarea, [contenteditable="true"], form') || el.closest('app-chat-input, form, textarea, [contenteditable="true"], .chat-message, [role="article"]')) {
+          return;
+        }
+        const txt = (el.innerText || el.textContent || '').trim();
+        if (!txt) return;
+
+        // Deteksi pola "0 sumber · 9 Mar 2026", "0 sources · ...", dsb.
+        const isSourceDate = /^\d+\s*(sumber|source|sources)\s*[·•]/i.test(txt) ||
+                             /[·•]\s*\d+\s*(jan|feb|mar|apr|mei|jun|jul|agu|sep|okt|nov|des|january|february|march|april|may|june|july|august|september|october|november|december)/i.test(txt) ||
+                             ((txt.includes('sumber') || txt.includes('source')) && (txt.includes('·') || txt.includes('•')));
+        const isLoadingNotebook = txt === 'Loading Notebook...' || txt === 'Memuat Notebook...';
+
+        if (isSourceDate || isLoadingNotebook) {
+          el.style.setProperty('display', 'none', 'important');
+          // Sembunyikan container kartu hero jika ada
+          const parentHero = el.closest('[class*="intro" i], [class*="hero" i], [class*="empty" i], [class*="header" i], [class*="title" i], [class*="summary" i]') || el.parentElement;
+          if (parentHero && !parentHero.querySelector('textarea, form, .chat-message, [role="article"]')) {
+            parentHero.style.setProperty('display', 'none', 'important');
+          }
+          // Sembunyikan elemen di atasnya (nama asisten/judul dan icon scroll)
+          let sib = el.previousElementSibling;
+          while (sib) {
+            if (!sib.querySelector('textarea, form, .chat-message, [role="article"]')) {
+              sib.style.setProperty('display', 'none', 'important');
+            }
+            sib = sib.previousElementSibling;
+          }
+        }
+      });
     });
   }
 
@@ -585,7 +623,9 @@ const notebookUiScript = r'''
 
   function isStillLoading() {
     const body = (document.body?.innerText || '').toLowerCase();
-    return body.includes('loading notebook') || body.includes('memuat notebook');
+    const hasLoadingText = body.includes('loading notebook') || body.includes('memuat notebook') || body.includes('loading...');
+    const hasSpinner = !!document.querySelector('mat-spinner, mat-progress-spinner, .mat-mdc-progress-spinner, [role="progressbar"], .loading-spinner');
+    return hasLoadingText || hasSpinner;
   }
 
   function ready() {
