@@ -26,7 +26,7 @@
   "openIssues": [
     "App checkout SKUs and entitlements must match the latest commercial brief before selling these website plans.",
     "The canonical refund policy says 30 calendar days while application products use calendar months.",
-    "APK bytes and production DOKU transactions were not supplied for validation.",
+    "APK bytes and production Midtrans transactions were not supplied for validation.",
     "Q001 has ten quotation records, all not-reviewed."
   ]
 }

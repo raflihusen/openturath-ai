@@ -51,9 +51,9 @@
         "ar": "تُراجع طلبات الاسترداد خلال ٧ أيام عمل من اكتمال البيانات. وبعد الموافقة تُعالج خلال ٧ أيام عمل أخرى، وفق مزود الدفع."
       },
       "taxes": {
-        "id": "Metode yang tersedia mengikuti checkout DOKU. Jumlah akhir dan tanggal berakhir akses ditampilkan sebelum transaksi.",
-        "en": "Available methods depend on DOKU checkout. The final amount and access expiry are shown before the transaction.",
-        "ar": "تعتمد الوسائل المتاحة على صفحة الدفع لدى DOKU. يُعرض المبلغ النهائي وتاريخ انتهاء الوصول قبل المعاملة."
+        "id": "Metode yang tersedia mengikuti checkout Midtrans. Jumlah akhir dan tanggal berakhir akses ditampilkan sebelum transaksi.",
+        "en": "Available methods depend on Midtrans checkout. The final amount and access expiry are shown before the transaction.",
+        "ar": "تعتمد الوسائل المتاحة على صفحة الدفع لدى Midtrans. يُعرض المبلغ النهائي وتاريخ انتهاء الوصول قبل المعاملة."
       },
       "cancellation": {
         "id": "Akses berakhir sesuai tanggal pada akun. Tidak ada perpanjangan otomatis.",
@@ -61,9 +61,9 @@
         "ar": "ينتهي الوصول في التاريخ المبيّن في حسابك. لا تجديد تلقائي."
       },
       "paymentLocation": {
-        "id": "Melalui checkout DOKU resmi di aplikasi.",
-        "en": "Through official DOKU checkout in the app.",
-        "ar": "عبر صفحة الدفع الرسمية لدى DOKU في التطبيق."
+        "id": "Melalui checkout Midtrans resmi di aplikasi.",
+        "en": "Through official Midtrans checkout in the app.",
+        "ar": "عبر صفحة الدفع الرسمية لدى Midtrans في التطبيق."
       },
       "id": "tholib",
       "price": 50000,
@@ -97,9 +97,9 @@
         "ar": "تُراجع طلبات الاسترداد خلال ٧ أيام عمل من اكتمال البيانات. وبعد الموافقة تُعالج خلال ٧ أيام عمل أخرى، وفق مزود الدفع."
       },
       "taxes": {
-        "id": "Metode yang tersedia mengikuti checkout DOKU. Jumlah akhir dan tanggal berakhir akses ditampilkan sebelum transaksi.",
-        "en": "Available methods depend on DOKU checkout. The final amount and access expiry are shown before the transaction.",
-        "ar": "تعتمد الوسائل المتاحة على صفحة الدفع لدى DOKU. يُعرض المبلغ النهائي وتاريخ انتهاء الوصول قبل المعاملة."
+        "id": "Metode yang tersedia mengikuti checkout Midtrans. Jumlah akhir dan tanggal berakhir akses ditampilkan sebelum transaksi.",
+        "en": "Available methods depend on Midtrans checkout. The final amount and access expiry are shown before the transaction.",
+        "ar": "تعتمد الوسائل المتاحة على صفحة الدفع لدى Midtrans. يُعرض المبلغ النهائي وتاريخ انتهاء الوصول قبل المعاملة."
       },
       "cancellation": {
         "id": "Akses berakhir sesuai tanggal pada akun. Tidak ada perpanjangan otomatis.",
@@ -107,9 +107,9 @@
         "ar": "ينتهي الوصول في التاريخ المبيّن في حسابك. لا تجديد تلقائي."
       },
       "paymentLocation": {
-        "id": "Melalui checkout DOKU resmi di aplikasi.",
-        "en": "Through official DOKU checkout in the app.",
-        "ar": "عبر صفحة الدفع الرسمية لدى DOKU في التطبيق."
+        "id": "Melalui checkout Midtrans resmi di aplikasi.",
+        "en": "Through official Midtrans checkout in the app.",
+        "ar": "عبر صفحة الدفع الرسمية لدى Midtrans في التطبيق."
       },
       "id": "tematik",
       "price": 299000,
@@ -143,9 +143,9 @@
         "ar": "تُراجع طلبات الاسترداد خلال ٧ أيام عمل من اكتمال البيانات. وبعد الموافقة تُعالج خلال ٧ أيام عمل أخرى، وفق مزود الدفع."
       },
       "taxes": {
-        "id": "Metode yang tersedia mengikuti checkout DOKU. Jumlah akhir dan tanggal berakhir akses ditampilkan sebelum transaksi.",
-        "en": "Available methods depend on DOKU checkout. The final amount and access expiry are shown before the transaction.",
-        "ar": "تعتمد الوسائل المتاحة على صفحة الدفع لدى DOKU. يُعرض المبلغ النهائي وتاريخ انتهاء الوصول قبل المعاملة."
+        "id": "Metode yang tersedia mengikuti checkout Midtrans. Jumlah akhir dan tanggal berakhir akses ditampilkan sebelum transaksi.",
+        "en": "Available methods depend on Midtrans checkout. The final amount and access expiry are shown before the transaction.",
+        "ar": "تعتمد الوسائل المتاحة على صفحة الدفع لدى Midtrans. يُعرض المبلغ النهائي وتاريخ انتهاء الوصول قبل المعاملة."
       },
       "cancellation": {
         "id": "Akses berakhir sesuai tanggal pada akun. Tidak ada perpanjangan otomatis.",
@@ -153,9 +153,9 @@
         "ar": "ينتهي الوصول في التاريخ المبيّن في حسابك. لا تجديد تلقائي."
       },
       "paymentLocation": {
-        "id": "Melalui checkout DOKU resmi di aplikasi.",
-        "en": "Through official DOKU checkout in the app.",
-        "ar": "عبر صفحة الدفع الرسمية لدى DOKU في التطبيق."
+        "id": "Melalui checkout Midtrans resmi di aplikasi.",
+        "en": "Through official Midtrans checkout in the app.",
+        "ar": "عبر صفحة الدفع الرسمية لدى Midtrans في التطبيق."
       },
       "id": "sultan",
       "price": 499000,

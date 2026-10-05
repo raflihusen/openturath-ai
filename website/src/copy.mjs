@@ -46,7 +46,7 @@ export const copy = {
     "billing": "Pembayaran dan Pengembalian Dana",
     "aiGuidelines": "Panduan Penggunaan AI & Rujukan",
     "accessTitle": "Akses ke khazanah keilmuan",
-    "accessSub": "Pilih asisten spesialis disiplin ilmu yang ingin Anda telaah. Akses dan aktivasi diproses resmi di aplikasi melalui DOKU, tanpa perpanjangan otomatis.",
+    "accessSub": "Pilih asisten spesialis disiplin ilmu yang ingin Anda telaah. Akses dan aktivasi diproses resmi di aplikasi melalui Midtrans, tanpa perpanjangan otomatis.",
     "downloadTitle": "Mulai telaah\ndi OpenTurath.",
     "downloadSub": "Pilih perangkat Anda. Ketersediaan rilis dan panduan pemasangan tercantum di bawah.",
     "faq": "Pertanyaan yang sering diajukan",
@@ -197,7 +197,7 @@ export const copy = {
     "memberEyebrow": "AKSES KEILMUAN",
     "chooseMembership": "Buka akses di aplikasi",
     "memberManual": "Perpanjangan manual. Tanpa auto-debit.",
-    "memberPayment": "DOKU · QRIS · Virtual Account · E-Wallet",
+    "memberPayment": "Midtrans · QRIS · Virtual Account · E-Wallet",
     "memberMethods": "Rincian paket, metode pembayaran, dan total biaya ditampilkan sebelum transaksi.",
     "memberRefund": "Permohonan refund ditinjau paling lambat 7 hari kerja setelah data lengkap. Jika disetujui, pemrosesan paling lambat 7 hari kerja berikutnya, mengikuti penyedia pembayaran.",
     "memberNotice": "Aktivasi keanggotaan melalui aplikasi OpenTurath.",
@@ -296,7 +296,7 @@ export const copy = {
     "billing": "Payment & Refunds",
     "aiGuidelines": "AI Use & Reference Verification",
     "accessTitle": "A home for deeper scholarship",
-    "accessSub": "Choose a specialist assistant for the discipline you wish to study. Access and activation are handled in the app through DOKU, with manual renewal.",
+    "accessSub": "Choose a specialist assistant for the discipline you wish to study. Access and activation are handled in the app through Midtrans, with manual renewal.",
     "downloadTitle": "Begin your study\nin OpenTurath.",
     "downloadSub": "Choose your device. Release availability and installation guidance are listed below.",
     "faq": "Frequently asked questions",
@@ -447,7 +447,7 @@ export const copy = {
     "memberEyebrow": "MEMBERSHIP",
     "chooseMembership": "Access in the app",
     "memberManual": "Manual renewal. No automatic debit.",
-    "memberPayment": "DOKU · QRIS · Virtual Account · E-Wallet",
+    "memberPayment": "Midtrans · QRIS · Virtual Account · E-Wallet",
     "memberMethods": "Plan details, payment methods, and the total are shown before you pay.",
     "memberRefund": "Refund requests are reviewed within 7 business days of complete information. Approved refunds are processed within a further 7 business days, subject to the payment provider.",
     "memberNotice": "Membership is activated in the OpenTurath app.",
@@ -546,7 +546,7 @@ export const copy = {
     "billing": "الدفع والاسترداد",
     "aiGuidelines": "استخدام الذكاء الاصطناعي والتحقق من المراجع",
     "accessTitle": "آفاق أرحب لمطالعة التراث",
-    "accessSub": "اختر المساعد المختص بالعلم الذي تريد دراسته. يُفعّل الوصول رسميًّا داخل التطبيق عبر DOKU، مع تجديد يدوي.",
+    "accessSub": "اختر المساعد المختص بالعلم الذي تريد دراسته. يُفعّل الوصول رسميًّا داخل التطبيق عبر Midtrans، مع تجديد يدوي.",
     "downloadTitle": "ابدأ مطالعتك\nفي OpenTurath.",
     "downloadSub": "اختر جهازك. تجد أدناه حالة الإصدارات وإرشادات التثبيت.",
     "faq": "الأسئلة الشائعة",
@@ -697,7 +697,7 @@ export const copy = {
     "memberEyebrow": "عضوية المطالعة",
     "chooseMembership": "ابدأ الوصول عبر التطبيق",
     "memberManual": "تجديد يدوي. دون خصم تلقائي.",
-    "memberPayment": "DOKU · QRIS · حساب افتراضي · محفظة إلكترونية",
+    "memberPayment": "Midtrans · QRIS · حساب افتراضي · محفظة إلكترونية",
     "memberMethods": "تُعرض تفاصيل الباقة ووسائل الدفع والمبلغ الإجمالي قبل إتمام المعاملة.",
     "memberRefund": "تُراجع طلبات الاسترداد خلال ٧ أيام عمل من اكتمال البيانات. وبعد الموافقة تُعالج خلال ٧ أيام عمل أخرى، وفق مزود الدفع.",
     "memberNotice": "تُفعّل العضوية داخل تطبيق OpenTurath.",
@@ -815,9 +815,9 @@ export const faq = [
       "ما تكلفة العضوية وكيف أسدّدها؟"
     ],
     "a": [
-      "Akses satu asisten mulai dari Rp 50.000 per bulan, dengan pilihan masa 1, 6, atau 12 bulan. Pilih masa akses dan lakukan aktivasi di aplikasi melalui DOKU. QRIS, Virtual Account, dan E-Wallet tersedia sesuai pilihan pada halaman pembayaran. Perpanjangan dilakukan manual, tanpa auto-debit; total biaya serta masa akses ditampilkan sebelum transaksi.",
-      "Access to one assistant starts at IDR 50,000 per month, for 1, 6, or 12 months. Choose a period and activate it in the app through DOKU. QRIS, Virtual Account, and E-Wallet options depend on the payment screen. Renewal is manual with no automatic debit; the total and access period are shown before payment.",
-      "يبدأ الوصول إلى مساعد واحد من ٥٠٬٠٠٠ روبية إندونيسية شهريًّا، لمدة شهر أو ٦ أشهر أو ١٢ شهرًا. اختر المدة وفعّلها داخل التطبيق عبر DOKU، باستخدام QRIS أو الحساب الافتراضي أو المحفظة الإلكترونية بحسب الخيارات المعروضة. التجديد يدوي دون خصم تلقائي، ويظهر المبلغ ومدة الوصول قبل الدفع."
+      "Akses satu asisten mulai dari Rp 50.000 per bulan, dengan pilihan masa 1, 6, atau 12 bulan. Pilih masa akses dan lakukan aktivasi di aplikasi melalui Midtrans. QRIS, Virtual Account, dan E-Wallet tersedia sesuai pilihan pada halaman pembayaran. Perpanjangan dilakukan manual, tanpa auto-debit; total biaya serta masa akses ditampilkan sebelum transaksi.",
+      "Access to one assistant starts at IDR 50,000 per month, for 1, 6, or 12 months. Choose a period and activate it in the app through Midtrans. QRIS, Virtual Account, and E-Wallet options depend on the payment screen. Renewal is manual with no automatic debit; the total and access period are shown before payment.",
+      "يبدأ الوصول إلى مساعد واحد من ٥٠٬٠٠٠ روبية إندونيسية شهريًّا، لمدة شهر أو ٦ أشهر أو ١٢ شهرًا. اختر المدة وفعّلها داخل التطبيق عبر Midtrans، باستخدام QRIS أو الحساب الافتراضي أو المحفظة الإلكترونية بحسب الخيارات المعروضة. التجديد يدوي دون خصم تلقائي، ويظهر المبلغ ومدة الوصول قبل الدفع."
     ]
   },
   {

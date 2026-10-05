@@ -167,9 +167,9 @@ export const articles = {
           "الباقات والجهات الخارجية"
         ],
         "body": [
-          "Harga total, cakupan, batas penggunaan, dan tanggal akhir akses perlu dibaca sebelum pembayaran. Perpanjangan manual tanpa auto-debit. DOKU memproses pembayaran. Percakapan memakai Google NotebookLM dengan ketentuannya sendiri. Pembelian OpenTurath tidak menaikkan paket Google Anda.",
-          "Read the total price, scope, usage limits, and expiry before payment. Renewal is manual with no automatic debit. DOKU processes payments. Conversations use Google NotebookLM under its own terms. Buying OpenTurath does not upgrade your Google plan.",
-          "اقرأ السعر الإجمالي والنطاق وحدود الاستخدام وانتهاء الوصول قبل الدفع. التجديد يدوي دون خصم تلقائي. تعالج DOKU المدفوعات، وتستخدم المحادثات Google NotebookLM بشروطه. لا يرقّي شراء OpenTurath باقة Google."
+          "Harga total, cakupan, batas penggunaan, dan tanggal akhir akses perlu dibaca sebelum pembayaran. Perpanjangan manual tanpa auto-debit. Midtrans memproses pembayaran. Percakapan memakai Google NotebookLM dengan ketentuannya sendiri. Pembelian OpenTurath tidak menaikkan paket Google Anda.",
+          "Read the total price, scope, usage limits, and expiry before payment. Renewal is manual with no automatic debit. Midtrans processes payments. Conversations use Google NotebookLM under its own terms. Buying OpenTurath does not upgrade your Google plan.",
+          "اقرأ السعر الإجمالي والنطاق وحدود الاستخدام وانتهاء الوصول قبل الدفع. التجديد يدوي دون خصم تلقائي. تعالج Midtrans المدفوعات، وتستخدم المحادثات Google NotebookLM بشروطه. لا يرقّي شراء OpenTurath باقة Google."
         ]
       },
       {
@@ -226,9 +226,9 @@ export const articles = {
           "بيانات التطبيق وأغراضها"
         ],
         "body": [
-          "Aplikasi memproses identitas Google, status akses, data transaksi DOKU, kontak transaksi, sesi percakapan, serta data bantuan sesuai fitur yang dipakai. Data diperlukan untuk autentikasi, penyediaan layanan, pembayaran, dan kewajiban pencatatan. Pengelola menyatakan tidak menjual data pribadi atau menggunakan percakapan untuk iklan bertarget.",
-          "The app processes Google identity, access status, DOKU transaction data, transaction contacts, conversation sessions, and support data as needed by each feature. Purposes include authentication, service delivery, payment, and required records. The operator states that personal data is not sold and conversations are not used for targeted advertising.",
-          "يعالج التطبيق هوية Google وحالة الوصول وبيانات معاملات DOKU وجهات اتصال المعاملات والمحادثات والدعم بحسب الميزة. تشمل الأغراض المصادقة وتقديم الخدمة والدفع والسجلات المطلوبة. ويصرّح المشغّل بعدم بيع البيانات أو استخدام المحادثات للإعلانات الموجّهة."
+          "Aplikasi memproses identitas Google, status akses, data transaksi Midtrans, kontak transaksi, sesi percakapan, serta data bantuan sesuai fitur yang dipakai. Data diperlukan untuk autentikasi, penyediaan layanan, pembayaran, dan kewajiban pencatatan. Pengelola menyatakan tidak menjual data pribadi atau menggunakan percakapan untuk iklan bertarget.",
+          "The app processes Google identity, access status, Midtrans transaction data, transaction contacts, conversation sessions, and support data as needed by each feature. Purposes include authentication, service delivery, payment, and required records. The operator states that personal data is not sold and conversations are not used for targeted advertising.",
+          "يعالج التطبيق هوية Google وحالة الوصول وبيانات معاملات Midtrans وجهات اتصال المعاملات والمحادثات والدعم بحسب الميزة. تشمل الأغراض المصادقة وتقديم الخدمة والدفع والسجلات المطلوبة. ويصرّح المشغّل بعدم بيع البيانات أو استخدام المحادثات للإعلانات الموجّهة."
         ]
       },
       {
@@ -238,9 +238,9 @@ export const articles = {
           "الملاحظات المحلية والخدمات الخارجية"
         ],
         "body": [
-          "Catatan disimpan pada perangkat dan dapat hilang saat data aplikasi dihapus. Cadangkan melalui salin atau bagikan. Google menangani autentikasi dan NotebookLM, DOKU menangani pembayaran, dan Firebase/Google Cloud menangani data transaksi serta akses. Pemrosesan penyedia dapat berlangsung lintas negara.",
-          "Notes are stored on your device and may be lost when app data is deleted. Back up using copy or share. Google handles authentication and NotebookLM, DOKU handles payments, and Firebase/Google Cloud handles transaction and access data. Provider processing may cross borders.",
-          "تُحفظ الملاحظات على جهازك وقد تُفقد عند حذف بيانات التطبيق. انسخها أو شاركها للاحتفاظ بها. تتولى Google المصادقة وNotebookLM، وDOKU الدفع، وFirebase/Google Cloud بيانات المعاملات والوصول. قد تجري معالجة المزوّدين عبر الحدود."
+          "Catatan disimpan pada perangkat dan dapat hilang saat data aplikasi dihapus. Cadangkan melalui salin atau bagikan. Google menangani autentikasi dan NotebookLM, Midtrans menangani pembayaran, dan Firebase/Google Cloud menangani data transaksi serta akses. Pemrosesan penyedia dapat berlangsung lintas negara.",
+          "Notes are stored on your device and may be lost when app data is deleted. Back up using copy or share. Google handles authentication and NotebookLM, Midtrans handles payments, and Firebase/Google Cloud handles transaction and access data. Provider processing may cross borders.",
+          "تُحفظ الملاحظات على جهازك وقد تُفقد عند حذف بيانات التطبيق. انسخها أو شاركها للاحتفاظ بها. تتولى Google المصادقة وNotebookLM، وMidtrans الدفع، وFirebase/Google Cloud بيانات المعاملات والوصول. قد تجري معالجة المزوّدين عبر الحدود."
         ]
       },
       {
@@ -297,21 +297,21 @@ export const articles = {
           "العروض والمدة"
         ],
         "body": [
-          "Akses asisten spesialis dimulai dari Rp 49.000 per bulan. Pilih asisten spesialis disiplin ilmu yang ingin Anda telaah. Akses dan aktivasi diproses resmi di aplikasi melalui DOKU, tanpa perpanjangan otomatis. Rincian paket, metode pembayaran, dan total biaya ditampilkan sebelum transaksi.",
-          "Specialist access starts at IDR 49,000 per month. Choose a specialist assistant for the discipline you wish to study. Access and activation are handled in the app through DOKU, with manual renewal. Plan details, payment methods, and the total are shown before you pay.",
-          "يبدأ الوصول إلى المساعد المختص من ٤٩٬٠٠٠ روبية إندونيسية شهريًّا. اختر المساعد المختص بالعلم الذي تريد دراسته. يُفعّل الوصول رسميًّا داخل التطبيق عبر DOKU، مع تجديد يدوي. تُعرض تفاصيل الباقة ووسائل الدفع والمبلغ الإجمالي قبل إتمام المعاملة."
+          "Akses asisten spesialis dimulai dari Rp 49.000 per bulan. Pilih asisten spesialis disiplin ilmu yang ingin Anda telaah. Akses dan aktivasi diproses resmi di aplikasi melalui Midtrans, tanpa perpanjangan otomatis. Rincian paket, metode pembayaran, dan total biaya ditampilkan sebelum transaksi.",
+          "Specialist access starts at IDR 49,000 per month. Choose a specialist assistant for the discipline you wish to study. Access and activation are handled in the app through Midtrans, with manual renewal. Plan details, payment methods, and the total are shown before you pay.",
+          "يبدأ الوصول إلى المساعد المختص من ٤٩٬٠٠٠ روبية إندونيسية شهريًّا. اختر المساعد المختص بالعلم الذي تريد دراسته. يُفعّل الوصول رسميًّا داخل التطبيق عبر Midtrans، مع تجديد يدوي. تُعرض تفاصيل الباقة ووسائل الدفع والمبلغ الإجمالي قبل إتمام المعاملة."
         ]
       },
       {
         "heading": [
-          "DOKU dan aktivasi",
-          "DOKU and activation",
-          "DOKU والتفعيل"
+          "Midtrans dan aktivasi",
+          "Midtrans and activation",
+          "Midtrans والتفعيل"
         ],
         "body": [
-          "Pembayaran memakai DOKU melalui QRIS, Virtual Account, atau E-Wallet yang tersedia pada checkout. Status dibayar dan status akses aktif perlu dikonfirmasi terpisah. Jika dana terpotong tetapi akses belum aktif, hubungi bantuan dengan nomor transaksi sebelum membayar ulang.",
-          "Payments use available DOKU methods such as QRIS, Virtual Account, or E-Wallet. Payment status and active access must be confirmed separately. If funds are deducted but access is inactive, contact support with the transaction number before paying again.",
-          "تتم المدفوعات عبر وسائل DOKU المتاحة مثل QRIS والحساب الافتراضي والمحفظة الإلكترونية. تُراجع حالة الدفع وتفعيل الوصول كلٌّ على حدة. إذا خُصم المبلغ دون تفعيل، تواصل مع الدعم برقم المعاملة قبل إعادة الدفع."
+          "Pembayaran memakai Midtrans melalui QRIS, Virtual Account, atau E-Wallet yang tersedia pada checkout. Status dibayar dan status akses aktif perlu dikonfirmasi terpisah. Jika dana terpotong tetapi akses belum aktif, hubungi bantuan dengan nomor transaksi sebelum membayar ulang.",
+          "Payments use available Midtrans methods such as QRIS, Virtual Account, or E-Wallet. Payment status and active access must be confirmed separately. If funds are deducted but access is inactive, contact support with the transaction number before paying again.",
+          "تتم المدفوعات عبر وسائل Midtrans المتاحة مثل QRIS والحساب الافتراضي والمحفظة الإلكترونية. تُراجع حالة الدفع وتفعيل الوصول كلٌّ على حدة. إذا خُصم المبلغ دون تفعيل، تواصل مع الدعم برقم المعاملة قبل إعادة الدفع."
         ]
       },
       {
@@ -688,14 +688,14 @@ export const articles = {
       },
       {
         "heading": [
-          "DOKU dan aktivasi",
-          "DOKU and activation",
-          "DOKU والتفعيل"
+          "Midtrans dan aktivasi",
+          "Midtrans and activation",
+          "Midtrans والتفعيل"
         ],
         "body": [
-          "Pembayaran memakai DOKU melalui QRIS, Virtual Account, atau E-Wallet yang tersedia pada checkout. Status dibayar dan status akses aktif perlu dikonfirmasi terpisah. Jika dana terpotong tetapi akses belum aktif, hubungi bantuan dengan nomor transaksi sebelum membayar ulang.",
-          "Payments use available DOKU methods such as QRIS, Virtual Account, or E-Wallet. Payment status and active access must be confirmed separately. If funds are deducted but access is inactive, contact support with the transaction number before paying again.",
-          "تتم المدفوعات عبر وسائل DOKU المتاحة مثل QRIS والحساب الافتراضي والمحفظة الإلكترونية. تُراجع حالة الدفع وتفعيل الوصول كلٌّ على حدة. إذا خُصم المبلغ دون تفعيل، تواصل مع الدعم برقم المعاملة قبل إعادة الدفع."
+          "Pembayaran memakai Midtrans melalui QRIS, Virtual Account, atau E-Wallet yang tersedia pada checkout. Status dibayar dan status akses aktif perlu dikonfirmasi terpisah. Jika dana terpotong tetapi akses belum aktif, hubungi bantuan dengan nomor transaksi sebelum membayar ulang.",
+          "Payments use available Midtrans methods such as QRIS, Virtual Account, or E-Wallet. Payment status and active access must be confirmed separately. If funds are deducted but access is inactive, contact support with the transaction number before paying again.",
+          "تتم المدفوعات عبر وسائل Midtrans المتاحة مثل QRIS والحساب الافتراضي والمحفظة الإلكترونية. تُراجع حالة الدفع وتفعيل الوصول كلٌّ على حدة. إذا خُصم المبلغ دون تفعيل، تواصل مع الدعم برقم المعاملة قبل إعادة الدفع."
         ]
       },
       {
