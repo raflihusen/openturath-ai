@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../models/turath_chat_message.dart';
 
 import '../core/app_copy.dart';
@@ -1225,9 +1226,10 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
     }
   }
 
-  /// Halaman masuk Google ditampilkan apa adanya setelah pengguna setuju.
+  /// Halaman masuk Google ditampilkan apa adanya secara bersih tanpa banner.
   void _enterGoogleSignIn() {
-    _readinessTimer?.cancel();
+    // Jangan batalkan _readinessTimer agar saat Google selesai redirect/autentikasi,
+    // kesiapan ruang asisten langsung terdeteksi otomatis.
     _inputRetryTimer?.cancel();
     if (!mounted) return;
     setState(() {
@@ -1933,33 +1935,65 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
                 }
               }
             },
+            onConsoleMessage: (controller, consoleMessage) {
+              if (consoleMessage.messageLevel == ConsoleMessageLevel.ERROR) {
+                debugPrint(
+                    '[OpenTurath WebView JS Error] ${consoleMessage.message}');
+              }
+            },
             shouldOverrideUrlLoading: (controller, action) async {
               final uri = action.request.url;
               if (uri == null) return NavigationActionPolicy.CANCEL;
 
-              if (NotebookNavigation.signInFlow(uri.uriValue)) {
-                if (action.isForMainFrame == true &&
-                    !session.isGoogleAuthPage) {
-                  _enterGoogleSignIn();
-                }
-                return NavigationActionPolicy.ALLOW;
-              }
+              // 1. Izinkan selalu jika bukan navigasi frame utama (iframe, background XHR, token, botguard)
               if (action.isForMainFrame != true) {
                 return NavigationActionPolicy.ALLOW;
               }
 
-              if (NotebookNavigation.allowed(uri.uriValue)) {
-                // Selesai masuk: kembali ke notebook dan lanjutkan pemuatan.
-                if (session.isGoogleAuthPage && mounted) {
-                  setState(() {
-                    session.isGoogleAuthPage = false;
-                    session.isWebLoading = true;
-                    session.errorMessage = null;
-                  });
-                  _startReadinessCheck();
+              // 2. Izinkan skema internal
+              final scheme = uri.scheme.toLowerCase();
+              if (scheme == 'about' ||
+                  scheme == 'data' ||
+                  scheme == 'blob' ||
+                  scheme == 'javascript') {
+                return NavigationActionPolicy.ALLOW;
+              }
+
+              // 3. Izinkan seluruh ekosistem Google dan NotebookLM
+              final host = uri.host.toLowerCase();
+              final isGoogleEcosystem = host == 'google.com' ||
+                  host.endsWith('.google.com') ||
+                  host.endsWith('.google.co.id') ||
+                  host.endsWith('.gstatic.com') ||
+                  host.endsWith('.googleusercontent.com') ||
+                  host.endsWith('.googleapis.com') ||
+                  host.endsWith('.recaptcha.net') ||
+                  host.endsWith('.youtube.com');
+
+              if (isGoogleEcosystem ||
+                  NotebookNavigation.signInFlow(uri.uriValue) ||
+                  NotebookNavigation.allowed(uri.uriValue)) {
+                if (NotebookNavigation.allowed(uri.uriValue)) {
+                  if (session.isGoogleAuthPage && mounted) {
+                    setState(() {
+                      session.isGoogleAuthPage = false;
+                      session.isWebLoading = true;
+                      session.errorMessage = null;
+                    });
+                    _startReadinessCheck();
+                  }
                 }
                 return NavigationActionPolicy.ALLOW;
               }
+
+              // 4. Jika tautan eksternal diklik di main frame (misal referensi di luar Google),
+              // buka di browser bawaan sistem agar tidak mengganggu ruang telaah asisten.
+              try {
+                if (await canLaunchUrl(uri.uriValue)) {
+                  await launchUrl(uri.uriValue,
+                      mode: LaunchMode.externalApplication);
+                }
+              } catch (_) {}
               return NavigationActionPolicy.CANCEL;
             },
           ),
@@ -2008,72 +2042,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
             ),
           ),
 
-          // Selama halaman masuk Google tampil: bilah tipis yang menunjukkan
-          // alamat halaman dan akun yang perlu dipakai. Halamannya tidak diubah.
-          if (session.isGoogleAuthPage)
-            Positioned(
-              top: 0,
-              left: 0,
-              right: 0,
-              child: _GoogleSignInBar(
-                email: _authService.currentUser?.email?.trim() ?? '',
-                onCancel: () => AgentSessionManager.instance.closeRoom(),
-              ),
-            ),
         ],
-      ),
-    );
-  }
-}
-
-/// Bilah di atas halaman masuk Google: gembok dan alamat asli halaman, akun
-/// yang perlu dipakai, dan tombol batal.
-class _GoogleSignInBar extends StatelessWidget {
-  const _GoogleSignInBar({required this.email, required this.onCancel});
-
-  final String email;
-  final VoidCallback onCancel;
-
-  @override
-  Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final ink = OTColors.textPrimary(isDark);
-    final muted = OTColors.textSecondary(isDark);
-    return Material(
-      color: OTColors.surface(isDark),
-      child: Container(
-        padding: const EdgeInsetsDirectional.fromSTEB(16, 4, 8, 4),
-        decoration: BoxDecoration(
-          border: Border(bottom: BorderSide(color: OTColors.border(isDark))),
-        ),
-        child: Row(
-          children: [
-            Icon(Icons.lock_outline_rounded, size: 16, color: muted),
-            const SizedBox(width: 8),
-            Text(
-              'accounts.google.com',
-              style: ScholarlyFonts.outfit(
-                  fontSize: OTFontSize.s14, fontWeight: FontWeight.w600, color: ink),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Text(
-                email.isEmpty
-                    ? Loc.tr('roomAuthBarHint')
-                    : '${Loc.tr('roomAuthBarHint')}: $email',
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: ScholarlyFonts.outfit(fontSize: OTFontSize.s14, color: muted),
-              ),
-            ),
-            TextButton(
-              onPressed: onCancel,
-              style: TextButton.styleFrom(
-                  foregroundColor: muted, minimumSize: const Size(0, 36)),
-              child: Text(Loc.tr('cancel')),
-            ),
-          ],
-        ),
       ),
     );
   }

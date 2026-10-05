@@ -32,12 +32,20 @@ class NotebookNavigation {
   /// langkah, penyetelan sesi). Hanya HTTPS ke domain Google; halaman ini
   /// ditampilkan apa adanya, tanpa skrip dari aplikasi.
   static bool signInFlow(Uri uri) {
+    if (uri.scheme == 'about' || uri.scheme == 'data' || uri.scheme == 'blob') {
+      return true;
+    }
     if (!_trustedHttps(uri)) return false;
     final host = uri.host.toLowerCase();
     return authentication(uri) ||
         host == 'google.com' ||
         host.endsWith('.google.com') ||
+        host.endsWith('.google.co.id') ||
+        host.endsWith('.gstatic.com') ||
+        host.endsWith('.googleusercontent.com') ||
         host.endsWith('.youtube.com') ||
+        host.endsWith('.googleapis.com') ||
+        host.endsWith('.recaptcha.net') ||
         RegExp(r'^accounts\.google\.[a-z.]{2,6}$').hasMatch(host);
   }
 
