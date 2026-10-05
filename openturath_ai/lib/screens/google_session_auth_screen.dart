@@ -1,14 +1,10 @@
 import 'dart:async';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../core/app_copy.dart';
-import '../core/app_platform.dart';
-import '../core/constants.dart';
 import '../core/design/ot_colors.dart';
 import '../core/localization.dart';
 import '../core/notebook_navigation.dart';
@@ -55,27 +51,43 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
             '')
         .trim();
     if (email.isNotEmpty) {
-      return 'https://accounts.google.com/ServiceLogin?continue=https://notebooklm.google.com/&Email=${Uri.encodeComponent(email)}&login_hint=${Uri.encodeComponent(email)}';
+      return 'https://accounts.google.com/InteractiveLogin?continue=https://notebooklm.google.com/&login_hint=${Uri.encodeComponent(email)}';
     }
-    return 'https://accounts.google.com/ServiceLogin?continue=https://notebooklm.google.com/';
-  }
-
-  String get _userAgent {
-    if (AppPlatform.isDesktop) {
-      return AppConstants.desktopSafariUserAgent;
-    }
-    return AppConstants.chromeMobileUserAgent;
+    return 'https://accounts.google.com/InteractiveLogin?continue=https://notebooklm.google.com/';
   }
 
   @override
   void initState() {
     super.initState();
+    // Cek langsung apakah kuki sesi Google sudah aktif sebelumnya
+    _checkInitialSession();
     // Polling periodik cookie untuk memastikan deteksi sesi segera setelah user menyelesaikan login Google
     _cookiePollTimer = Timer.periodic(const Duration(seconds: 2), (_) {
       if (mounted && !_isSessionReady) {
         _checkAndAuthenticateSession(null);
       }
     });
+  }
+
+  Future<void> _checkInitialSession() async {
+    try {
+      final cookieManager = DesktopWebViewRuntime.cookies;
+      final cookiesLm = await cookieManager.getCookies(
+        url: WebUri('https://notebooklm.google.com'),
+      );
+      final cookiesNb = await cookieManager.getCookies(
+        url: WebUri('https://notebook.google.com'),
+      );
+      final allCookies = [...cookiesLm, ...cookiesNb];
+      final hasSession = allCookies.any((c) =>
+          c.name == 'SID' ||
+          c.name == 'HSID' ||
+          c.name == 'SSID' ||
+          c.name == 'OSID');
+      if (hasSession && mounted) {
+        await _onSessionAuthenticated();
+      }
+    } catch (_) {}
   }
 
   @override
@@ -123,8 +135,11 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
 
     // Jangan tandai selesai jika pengguna masih berada di halaman formulir masuk
     if (urlStr.contains('ServiceLogin') ||
+        urlStr.contains('InteractiveLogin') ||
         urlStr.contains('signin/v2') ||
         urlStr.contains('signin/rejected') ||
+        urlStr.contains('challenge') ||
+        urlStr.contains('v3/signin') ||
         urlStr.contains('identifier')) {
       return;
     }
@@ -459,52 +474,55 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
                             context,
                             InAppWebViewSettings(
                               incognito: false,
-                              userAgent: _userAgent,
                             ),
                             _targetLoginUrl,
                           )
                         : InAppWebView(
-                            gestureRecognizers: <Factory<
-                                OneSequenceGestureRecognizer>>{
-                              Factory<OneSequenceGestureRecognizer>(
-                                () => EagerGestureRecognizer(),
-                              ),
-                            },
                             webViewEnvironment:
                                 DesktopWebViewRuntime.environment,
                             initialUrlRequest:
                                 URLRequest(url: WebUri(_targetLoginUrl)),
                             initialSettings: InAppWebViewSettings(
                               incognito: false,
-                              userAgent: _userAgent,
                               javaScriptEnabled: true,
                               domStorageEnabled: true,
                               databaseEnabled: true,
-                              sharedCookiesEnabled: true,
-                              thirdPartyCookiesEnabled: true,
-                              useHybridComposition: true,
-                              supportMultipleWindows: false,
-                              useShouldOverrideUrlLoading: true,
-                              javaScriptCanOpenWindowsAutomatically: false,
+                              useWideViewPort: false,
+                              loadWithOverviewMode: false,
+                              cacheEnabled: true,
+                              clearCache: false,
+                              transparentBackground: false,
+                              allowsInlineMediaPlayback: true,
+                              supportZoom: false,
+                              displayZoomControls: false,
                               mixedContentMode:
                                   MixedContentMode.MIXED_CONTENT_NEVER_ALLOW,
-                              allowFileAccess: false,
-                              allowContentAccess: false,
+                              thirdPartyCookiesEnabled: true,
+                              sharedCookiesEnabled: true,
+                              hardwareAcceleration: true,
+                              useHybridComposition: true,
+                              useOnRenderProcessGone: true,
+                              supportMultipleWindows: true,
+                              javaScriptCanOpenWindowsAutomatically: true,
+                              isInspectable: true,
                               forceDark: isDark ? ForceDark.ON : ForceDark.OFF,
-                              algorithmicDarkeningAllowed: false,
+                              forceDarkStrategy: ForceDarkStrategy
+                                  .PREFER_WEB_THEME_OVER_USER_AGENT_DARKENING,
+                              algorithmicDarkeningAllowed: true,
                             ),
-                            shouldOverrideUrlLoading:
-                                (controller, navigationAction) async {
-                              final uri = navigationAction.request.url;
-                              if (uri == null) {
-                                return NavigationActionPolicy.CANCEL;
+                            onCreateWindow:
+                                (controller, createWindowAction) async {
+                              final targetUrl = createWindowAction.request.url;
+                              if (targetUrl != null &&
+                                  (NotebookNavigation.signInFlow(
+                                          targetUrl.uriValue) ||
+                                      NotebookNavigation.allowed(
+                                          targetUrl.uriValue))) {
+                                await controller.loadUrl(
+                                    urlRequest: URLRequest(url: targetUrl));
+                                return true;
                               }
-
-                              if (NotebookNavigation.signInFlow(uri.uriValue) ||
-                                  NotebookNavigation.notebook(uri.uriValue)) {
-                                return NavigationActionPolicy.ALLOW;
-                              }
-                              return NavigationActionPolicy.CANCEL;
+                              return false;
                             },
                             onWebViewCreated: (controller) =>
                                 _webController = controller,
@@ -519,6 +537,10 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
                                 (controller, url, isReload) async {
                               if (!mounted || url == null) return;
                               await _checkAndAuthenticateSession(url);
+                            },
+                            onReceivedError: (controller, request, error) {
+                              debugPrint(
+                                  '[GoogleSessionAuth] WebView error: ${error.description}');
                             },
                           ),
                   ),

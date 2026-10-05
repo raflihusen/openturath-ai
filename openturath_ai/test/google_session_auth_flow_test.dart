@@ -49,7 +49,8 @@ void main() {
 
     // Verifikasi teks disclaimer pencegahan salah akun
     expect(
-      find.textContaining('Asisten berjalan di NotebookLM milik Google'),
+      find.textContaining(
+          'Silakan masuk ke Google sekali lagi menggunakan akun yang sama'),
       findsOneWidget,
     );
     expect(
