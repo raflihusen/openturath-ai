@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:openturath_ai/core/design/ot_radius.dart';
@@ -13,23 +12,9 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   group('1. Asset Files & Animation Integrity Tests', () {
-    test('All Lottie JSON animation files are valid and parseable', () {
+    test('Lottie animations and bloat are permanently eliminated', () {
       final dir = Directory('assets/animations');
-      expect(dir.existsSync(), isTrue, reason: 'assets/animations directory must exist');
-
-      final files = dir.listSync().whereType<File>().where((f) => f.path.endsWith('.json'));
-      expect(files.isNotEmpty, isTrue, reason: 'Must contain Lottie JSON animation files');
-
-      for (final file in files) {
-        final content = file.readAsStringSync();
-        expect(content.isNotEmpty, isTrue, reason: '${file.path} must not be empty');
-
-        final dynamic decoded = jsonDecode(content);
-        expect(decoded, isA<Map<String, dynamic>>(), reason: '${file.path} must be valid JSON object');
-        final map = decoded as Map<String, dynamic>;
-        expect(map.containsKey('v') || map.containsKey('layers') || map.containsKey('fr'), isTrue,
-            reason: '${file.path} must have valid Lottie animation structure');
-      }
+      expect(dir.existsSync(), isFalse, reason: 'assets/animations directory must not exist');
     });
 
     test('All SVG vector files are valid XML and well-formed', () {
@@ -47,12 +32,9 @@ void main() {
       }
     });
 
-    test('Core official Google NotebookLM SVGs and Lottie files are present', () {
+    test('Core official OpenTurath SVG logo is present', () {
       const requiredFiles = [
-        'assets/images/notebooklm_round.svg',
-        'assets/images/gemini_notebook_with_text_only_light.svg',
-        'assets/images/gemini_notebook_with_text_only_dark.svg',
-        'assets/animations/thinking_ux_icon_looping.json',
+        'assets/images/OpenTurath_logo_transparent.svg',
       ];
 
       for (final path in requiredFiles) {

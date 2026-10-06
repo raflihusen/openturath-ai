@@ -85,37 +85,6 @@ class AppTheme {
   static const Color lmDarkCitationText = citationTextDark;
   static const Color lmDarkPillAction = pillActionBgDark;
 
-  static const Color brandRed = Color(0xFF171717);
-  static const Color brandGreen = OTColors.textSecondaryLight;
-  static const Color brandBlue = accentLight;
-
-  static const Color bgBase = canvasDark;
-  static const Color bgDeep = Color(0xFF111111);
-  static const Color bgCanvas = canvasDark;
-  static const Color surfaceL1 = surfaceCardDark;
-  static const Color surfaceL2 = surfaceHeaderDark;
-  static const Color surfaceL3 = borderDark;
-
-  static const Color textPrimary = textPrimaryDark;
-  static const Color textSecondary = textSecondaryDark;
-  static const Color textTertiary = textTertiaryDark;
-
-  static const Color gold = accentLight;
-  static const Color goldBright = accentDark;
-  static const Color goldMuted = citationBgDark;
-
-  static const Color success = OTColors.textPrimaryLight;
-  static const Color error = OTColors.destructiveLight;
-  static const Color warning = OTColors.textSecondaryLight;
-  static const Color info = OTColors.textPrimaryLight;
-
-  static const Color lightBg = canvasLight;
-  static const Color lightSurface = surfaceCardLight;
-  static const Color lightSurfaceL2 = surfaceHeaderLight;
-  static const Color lightBorder = borderLight;
-  static const Color lightTextPrimary = textPrimaryLight;
-  static const Color lightTextSecondary = textSecondaryLight;
-
   // ── 4. Geometri & Radius Apple HIG (3 Nilai Baku: 8, 16, 100) ───────────────
   static const double radiusXS = OTRadius.xs; // Kecil: tag, tooltip
   static const double radiusCard = OTRadius.card; // Kartu
@@ -361,7 +330,7 @@ class AppTheme {
         onTertiary: surfaceCardLight,
         tertiaryContainer: pillSecondaryBgLight,
         onTertiaryContainer: textPrimaryLight,
-        error: error,
+        error: OTColors.destructiveLight,
         onError: OTColors.surfaceLight,
         errorContainer: OTColors.errorContainerLight,
         onErrorContainer: OTColors.destructiveLight,
