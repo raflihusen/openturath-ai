@@ -1315,7 +1315,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
             widget.session.isSessionReady = false;
             widget.session.isTimeoutError = true;
             widget.session.errorMessage =
-                'Koneksi ke asisten turats membutuhkan waktu lebih lama dari biasanya. Silakan muat ulang atau periksa koneksi internet Anda.';
+                'Ruang asisten sedang memproses antrean. Silakan ketuk Coba Lagi untuk memuat ulang.';
           });
         }
         return;

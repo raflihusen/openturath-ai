@@ -656,32 +656,19 @@ const notebookUiScript = r'''
   window.otGetConversationList = conversationList;
 
   function isStillLoading() {
-    const spinners = document.querySelectorAll('mat-spinner, mat-progress-spinner, mat-progress-bar, [role="progressbar"], .loading-container, .loading-screen, app-loading-screen, [class*="loading-screen" i], [class*="loading-container" i]');
+    const spinners = document.querySelectorAll('mat-spinner, mat-progress-spinner, mat-progress-bar, app-loading-screen');
     for (const s of spinners) {
-      if (getComputedStyle(s).display !== 'none' && getComputedStyle(s).visibility !== 'hidden' && s.offsetWidth > 0) {
+      if (s.offsetWidth > 0 && s.offsetHeight > 0 && getComputedStyle(s).display !== 'none' && getComputedStyle(s).visibility !== 'hidden') {
         return true;
       }
     }
-
-    const raw = (document.body?.innerText || document.body?.textContent || '').toLowerCase();
-    return raw.includes('loading notebook') || raw.includes('memuat notebook') || raw.includes('menyiapkan notebook');
+    return false;
   }
 
   function ready() {
     if (accessDenied()) return false;
     if (isStillLoading()) return false;
-    const chatPanel = document.querySelector('.chat-panel-content, .chat-view, .conversation-container, .message-list, [role="log"], app-chat-view, app-conversation, app-chat-panel, .chat-panel, app-chat');
-    if (!chatPanel) return false;
-    if (!inputReady()) return false;
-
-    // Pastikan toolbar / top-bar Google NotebookLM sudah tersembunyi
-    const topToolbar = document.querySelector('top-bar, .top-bar, app-header, mat-toolbar, .notebook-header, [role="banner"]');
-    if (topToolbar && visible(topToolbar)) {
-      clean();
-      return false;
-    }
-
-    return true;
+    return inputReady();
   }
   function inputReady() {
     const input = document.querySelector('textarea, [contenteditable="true"], [role="textbox"]');
