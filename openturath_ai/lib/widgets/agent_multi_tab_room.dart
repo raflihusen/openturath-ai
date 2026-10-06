@@ -1354,13 +1354,17 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
       final elapsedMs = _loadingStarted != null
           ? DateTime.now().difference(_loadingStarted!).inMilliseconds
           : 0;
-      if (_readySamples >= 2 && elapsedMs >= 1500) {
+      // Wajib stabil: minimal 4 sampel berturut-turut (2 detik) dan minimal 3000ms berlalu
+      // agar tidak ada flicker atau pemunculan dini sebelum layout Angular selesai sempurna.
+      if (_readySamples >= 4 && elapsedMs >= 3000) {
         _readinessTimer?.cancel();
         _inputRetryTimer?.cancel();
         _loadingStarted = null;
         await controller.evaluateJavascript(
           source: 'window.otNotebook?.activate()',
         );
+        // Jeda mikro stabilisasi 250ms agar rendering WebKit rampung sebelum fade-out loader
+        await Future.delayed(const Duration(milliseconds: 250));
         try {
           final prefs = await SharedPreferences.getInstance();
           await prefs.setBool('google_session_ready', true);
@@ -2077,7 +2081,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
           // Layar muat hanya saat inisialisasi awal; memudar ke konten saat siap.
           Positioned.fill(
             child: AnimatedSwitcher(
-              duration: const Duration(milliseconds: 240),
+              duration: const Duration(milliseconds: 320),
               switchOutCurve: Curves.easeOut,
               child: (!session.isSessionReady && !session.isGoogleAuthPage)
                   ? AppLoader.fullscreen(

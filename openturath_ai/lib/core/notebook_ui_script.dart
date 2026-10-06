@@ -180,6 +180,11 @@ const notebookUiScript = r'''
       [class*="empty-state" i],
       /* Sembunyikan badge PRO */
       .pro-badge, [class*="pro-badge" i], [class*="tier-badge" i],
+      /* Sembunyikan SEMUA elemen dan container loading internal NotebookLM */
+      app-loading-screen, .loading-screen, .loading-container,
+      [class*="loading-screen" i], [class*="notebook-loading" i], [class*="project-loading" i],
+      .cdk-overlay-backdrop:has(mat-spinner), .cdk-overlay-pane:has(mat-spinner),
+      mat-spinner, mat-progress-spinner, mat-progress-bar, [role="progressbar"],
       /* Sembunyikan Disclaimer Bawah Secara Total */
       .disclaimer, [class*="disclaimer" i], footer, [role="contentinfo"] {
         display: none !important;
@@ -427,6 +432,20 @@ const notebookUiScript = r'''
         }
       });
     });
+
+    // 4. Sembunyikan di seluruh dokumen elemen yang bertuliskan "Loading Notebook..." atau "Memuat Notebook..."
+    document.querySelectorAll('div, p, span, h1, h2, h3, h4, h5, section, app-loading-screen, .loading-container').forEach(el => {
+      if (el.querySelector('textarea, [contenteditable="true"], form, .chat-message, [role="article"]')) return;
+      if (el.closest('app-chat-input, form, textarea, [contenteditable="true"], .chat-message, [role="article"]')) return;
+      const txt = (el.innerText || el.textContent || '').trim().toLowerCase();
+      if (!txt) return;
+      if (txt === 'loading notebook...' || txt === 'memuat notebook...' || txt === 'loading notebook' || txt === 'memuat notebook' || txt.includes('loading notebook') || txt.includes('memuat notebook')) {
+        el.style.setProperty('display', 'none', 'important');
+        if (el.parentElement && !el.parentElement.querySelector('textarea, form, .chat-message')) {
+          el.parentElement.style.setProperty('display', 'none', 'important');
+        }
+      }
+    });
   }
 
   function dismissPopups() {
@@ -636,18 +655,24 @@ const notebookUiScript = r'''
   window.otGetConversationList = conversationList;
 
   function isStillLoading() {
+    const spinner = document.querySelector('mat-spinner, mat-progress-spinner, mat-progress-bar, [role="progressbar"], .loading-container, .loading-screen, app-loading-screen, [class*="loading-screen" i]');
+    if (spinner && spinner.offsetParent !== null) return true;
+
     const body = (document.body?.innerText || '').toLowerCase();
-    return body.includes('loading notebook') || body.includes('memuat notebook');
+    return body.includes('loading notebook') || body.includes('memuat notebook') || body.includes('menyiapkan notebook');
   }
 
   function ready() {
     if (accessDenied()) return false;
     if (isStillLoading()) return false;
+    const chatPanel = document.querySelector('.chat-panel-content, .chat-view, .conversation-container, .message-list, [role="log"], app-chat-view, app-conversation, app-chat-panel, .chat-panel, app-chat');
+    if (!chatPanel) return false;
     return inputReady();
   }
   function inputReady() {
     const input = document.querySelector('textarea, [contenteditable="true"], [role="textbox"]');
-    return !!(input && visible(input));
+    if (!input || input.disabled || input.getAttribute('aria-disabled') === 'true') return false;
+    return visible(input);
   }
 function accessDenied() {
   if (inputReady()) return false;
