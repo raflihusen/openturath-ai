@@ -349,7 +349,7 @@ const notebookUiScript = r'''
       'app-chat-intro', 'app-conversation-intro', 'app-notebook-intro',
       'app-project-intro', 'app-chat-empty-state', 'app-empty-state',
       '.chat-intro', '.conversation-intro', '.notebook-intro', '.project-intro',
-      '.chat-empty-state', '.empty-state', [class*="zero-state" i],
+      '.chat-empty-state', '.empty-state', '[class*="zero-state" i]',
       'app-notebook-title', 'app-project-title',
       '.empty-state-header', '.chat-empty-state-container',
       '[class*="intro-header" i]', '[class*="hero-header" i]',
@@ -367,7 +367,7 @@ const notebookUiScript = r'''
 
     // Cari intro "sources", judul notebook ("AI-MUHAQQIQ"), tanggal, dan icon scroll
     // baik saat ada pesan obrolan maupun saat obrolan masih kosong (empty state)
-    document.querySelectorAll('.chat-panel-content, .chat-view, .conversation-container, .message-list, [role="log"], main, app-chat-view, app-conversation').forEach(panel => {
+    document.querySelectorAll('.chat-panel-content, .chat-view, .conversation-container, .message-list, [role="log"], main, app-chat-view, app-conversation, app-chat-panel, .chat-panel, app-chat').forEach(panel => {
       // 1. Jika ada pesan pertama, sembunyikan semua elemen sebelumnya (header intro)
       const firstMessage = panel.querySelector('.chat-message, .model-message, .user-message, [role="article"], .chat-message-pair');
       if (firstMessage) {
@@ -378,9 +378,16 @@ const notebookUiScript = r'''
           }
           prev = prev.previousElementSibling;
         }
+      } else {
+        // 2. Jika belum ada pesan sama sekali (empty chat), sembunyikan judul notebook, rincian sumber, dan tanggal
+        panel.querySelectorAll('h1, h2, h3, [class*="title" i], [class*="source" i], [class*="date" i], [class*="empty" i], [class*="intro" i], [class*="hero" i], [class*="summary" i], app-chat-empty-state, app-empty-state').forEach(el => {
+          if (!el.querySelector('textarea, [contenteditable="true"], form') && !el.closest('app-chat-input, form, textarea, [contenteditable="true"]')) {
+            el.style.setProperty('display', 'none', 'important');
+          }
+        });
       }
 
-      // 2. Deteksi dinamis berbasis konten teks pada seluruh elemen hero/header di panel obrolan:
+      // 3. Deteksi dinamis berbasis konten teks pada seluruh elemen hero/header di panel obrolan:
       // Sembunyikan elemen "0 sumber · [tanggal]", "Loading Notebook...", nama asisten (Al-Muhaqqiq dsb), dan icon scroll
       panel.querySelectorAll('div, p, span, h1, h2, h3, header, section, mat-icon, img').forEach(el => {
         if (el.querySelector('textarea, [contenteditable="true"], form') || el.closest('app-chat-input, form, textarea, [contenteditable="true"], .chat-message, [role="article"]')) {
@@ -393,7 +400,7 @@ const notebookUiScript = r'''
         const isSourceDate = /^\d+\s*(sumber|source|sources)\s*[·•]/i.test(txt) ||
                              /[·•]\s*\d+\s*(jan|feb|mar|apr|mei|jun|jul|agu|sep|okt|nov|des|january|february|march|april|may|june|july|august|september|october|november|december)/i.test(txt) ||
                              ((txt.includes('sumber') || txt.includes('source')) && (txt.includes('·') || txt.includes('•')));
-        const isLoadingNotebook = txt === 'Loading Notebook...' || txt === 'Memuat Notebook...';
+        const isLoadingNotebook = txt === 'Loading Notebook...' || txt === 'Memuat Notebook...' || txt.toLowerCase().includes('loading notebook');
 
         if (isSourceDate || isLoadingNotebook) {
           el.style.setProperty('display', 'none', 'important');
@@ -401,8 +408,15 @@ const notebookUiScript = r'''
           const parentHero = el.closest('[class*="intro" i], [class*="hero" i], [class*="empty" i], [class*="header" i], [class*="title" i], [class*="summary" i]') || el.parentElement;
           if (parentHero && !parentHero.querySelector('textarea, form, .chat-message, [role="article"]')) {
             parentHero.style.setProperty('display', 'none', 'important');
+            let prevParent = parentHero.previousElementSibling;
+            while (prevParent) {
+              if (!prevParent.querySelector('textarea, form, .chat-message, [role="article"]')) {
+                prevParent.style.setProperty('display', 'none', 'important');
+              }
+              prevParent = prevParent.previousElementSibling;
+            }
           }
-          // Sembunyikan elemen di atasnya (nama asisten/judul dan icon scroll)
+          // Sembunyikan elemen langsung di atasnya (nama asisten/judul dan icon scroll)
           let sib = el.previousElementSibling;
           while (sib) {
             if (!sib.querySelector('textarea, form, .chat-message, [role="article"]')) {
