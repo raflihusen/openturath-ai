@@ -87,11 +87,15 @@ Berdasarkan `AUDIT_OPENTURATH_AI.md`, dokumen perancangan pustaka, dan keluhan k
   - Termasuk penghapusan Mode Tamu di layar login, hardening keamanan transaksi pembayaran, pembersihan nama Arab redundan, dan proteksi total desain asli.
 - **Rilis macOS DMG (Kompilasi Lokal Terbaru)**:
   - File: `/Users/apple/Downloads/ramadhan/OpenTurath_AI_macOS.dmg`
-  - Ukuran: 47 MB (49.033.483 bytes)
-  - SHA-256: `6865289a0bc9716da5265fea450837ddb8950c269cea99e274d7af73a4127f03`
-  - Timestamp: 2026-10-06 10:58 WIB
-  - Status: Kompilasi Xcode/macOS Release selesai 100%, UDZO image terkemas rapi via `package_macos.sh`.
-  - Pembaruan: Naskah adab dirapikan menjadi 1 bab berkesinambungan (8 Adab penuntut ilmu terstruktur tanpa rujukan sumber mentah), selaras multibahasa (ID, EN, AR), lolos 100% `flutter analyze` dan seluruh unit test.
+  - Ukuran: 47 MB (49.427.583 bytes)
+  - SHA-256: `07fffeaa34510042256e785c28fd23d8f06d43924d8925d4d59b952b989a258d`
+  - Timestamp: 2026-10-06 13:39 WIB
+  - Status: Kompilasi Xcode/macOS Release selesai 100%, UDZO image terkemas rapi via `package_macos.sh`, dan `/Applications/OpenTurath AI.app` diperbarui langsung.
+  - Perbaikan Kritis:
+    1. Eliminasi SyntaxError fatal pada `notebook_ui_script.dart` (`[class*="zero-state" i]`) yang menyebabkan `window.otNotebook` gagal dievaluasi sehingga AI macet loading selamanya.
+    2. Pembersihan menyeluruh empty state: teks nama asisten (Al-Muhaqqiq dll), rincian `X sumber · tanggal`, serta loading internal NotebookLM disembunyikan bersih sebelum obrolan siap.
+    3. Komponen loading terstandarisasi penuh ke Three-Dots Pulse Loader elegan (titik tiga berdenyut baku), bebas dari animasi lengkung/bar linear lama.
+    4. Seluruh naskah pedoman adab disatukan menjadi 8 poin rapi tanpa rujukan nomor kitab/halaman.
 - **Rilis macOS DMG (Cloud GitHub Actions)**:
   - Workflow: `.github/workflows/release_all_platforms.yml` (Job `build-macos-dmg`).
   - Output Artifact: `OpenTurath_AI_macOS.dmg`.
