@@ -156,6 +156,15 @@ Berdasarkan `AUDIT_OPENTURATH_AI.md`, dokumen perancangan pustaka, dan keluhan k
   - `agent_multi_tab_room.dart`:
     - `_checkReady()` kini memprioritaskan URL notebook dan secara instan mereset `isGoogleAuthPage = false`, menjamin `AppLoader` (three-dots pulse) berdiri kokoh dan tenang tanpa kedipan hingga asisten 100% siap.
 
+### Fasa 15: Eliminasi Jebakan `textContent` Matching & Koreksi Pesan Timeout Internet (`aaf6b3f`)
+- **Akar Masalah Fundamental**:
+  1. *Timeout 45 Detik & Tuduhan Salah Koneksi Internet*: Pengguna mengalami timeout 45 detik terus-menerus dan muncul dialog error yang meminta memeriksa koneksi internet, padahal koneksi internet pengguna berkecepatan 1.3 Gbps.
+  2. *Jebakan `textContent`*: Fungsi JS `isStillLoading()` sebelumnya memeriksa `document.body?.textContent.includes('loading notebook')`. Karena `textContent` mengembalikan seluruh teks termasuk elemen yang di-hide (`display: none`) dan teks skrip JS yang diinjeksi, ekspresi tersebut **selalu bernilai `true` selamanya**.
+  3. Akibatnya, `ready()` tidak pernah bisa mengembalikan `true`, sesi tidak pernah dianggap siap, dan aplikasi selalu terkena timeout 45 detik.
+- **Solusi Tuntas**:
+  - `notebook_ui_script.dart`: Menghapus total pencarian string teks global pada `textContent`. `isStillLoading()` kini hanya memeriksa spinner/loading bar bawaan yang benar-benar aktif dan kasat mata (`offsetWidth > 0`). Kesiapan obrolan murni ditentukan oleh `inputReady()` (textarea tersedia, enabled, dan siap diketik).
+  - `agent_multi_tab_room.dart`: Menyesuaikan pesan timeout agar akurat ("Ruang asisten sedang memproses antrean. Silakan ketuk Coba Lagi untuk memuat ulang") dan tidak lagi menyalahkan koneksi internet pengguna.
+
 ---
 
 ## 5. Agenda & Fokus Selanjutnya
