@@ -106,6 +106,16 @@ Berdasarkan `AUDIT_OPENTURATH_AI.md`, dokumen perancangan pustaka, dan keluhan k
     - Mengembalikan pemanggilan native `GoogleSignIn` SDK (bukan `signInWithProvider` yang unsupported di desktop macOS).
     - Menambahkan tombol akses darurat: "Masuk sebagai Tamu (Mode Telaah)" agar riset turats tidak pernah terblokir.
 
+### Fasa 11: Solusi Definitif Jebakan Login Google & Timeout Loader Asisten (`91c5031`)
+- **Akar Masalah**:
+  1. Pada WebView macOS (`InAppWebView`), saat dialihkan ke formulir masuk Google (`accounts.google.com`), `AppLoader.fullscreen` menutup seluruh layar karena kondisi hanya memeriksa `!session.isSessionReady` tanpa mengecualikan `session.isGoogleAuthPage`. Akibatnya formulir Google terhalang total oleh layar muat.
+  2. Fungsi `_checkReady()` menghitung timeout 45 detik tanpa mengecualikan halaman masuk Google. Setelah 45 detik, status kesalahan dipicu dan memunculkan kartu "Masuk dengan Akun yang Sama".
+  3. Saat pengguna menekan "Masuk dengan Google", siklus yang sama berulang sehingga pengguna terjebak selamanya.
+- **Solusi Tuntas**:
+  - `agent_multi_tab_room.dart`: Pengecualian mutlak `(!session.isSessionReady && !session.isGoogleAuthPage)` sehingga formulir masuk Google ditampilkan bersih dan dapat diisi pengguna.
+  - Reset `_loadingStarted = null` saat navigasi ke `signInFlow` atau saat dalam keadaan `isGoogleAuthPage`, mencegah timeout prematur.
+  - Kompilasi biner rilis macOS (`flutter build macos --release`), pembuatan DMG (`tool/package_macos.sh`), pembaruan `/Applications/OpenTurath AI.app`, dan peluncuran ulang aplikasi terverifikasi aktif (PID baru).
+
 ---
 
 ## 5. Agenda & Fokus Selanjutnya
