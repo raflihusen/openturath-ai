@@ -116,6 +116,20 @@ Berdasarkan `AUDIT_OPENTURATH_AI.md`, dokumen perancangan pustaka, dan keluhan k
   - Reset `_loadingStarted = null` saat navigasi ke `signInFlow` atau saat dalam keadaan `isGoogleAuthPage`, mencegah timeout prematur.
   - Kompilasi biner rilis macOS (`flutter build macos --release`), pembuatan DMG (`tool/package_macos.sh`), pembaruan `/Applications/OpenTurath AI.app`, dan peluncuran ulang aplikasi terverifikasi aktif (PID baru).
 
+### Fasa 12: Eliminasi Total Teks Loading Notebook & Penstabilan Transisi Bebas Flicker (`c60d31e`)
+- **Akar Masalah**:
+  1. Ambang batas kesiapan `_checkReady()` sebelumnya terlalu dini (`_readySamples >= 2 && elapsedMs >= 1500`), sehingga layar muat `AppLoader` memudar sebelum layout Angular NotebookLM stabil. Hal ini menimbulkan loncatan/kedipan (*flicker*) visual.
+  2. Teks "Loading Notebook..." dan indikator loading bawaan NotebookLM sempat terlihat di WebView saat transisi karena selector CSS belum mencakup kontainer pemuatan internal Google (`app-loading-screen`, `mat-spinner`, dll.) dan belum ada penyisiran global berbasis teks di seluruh dokumen.
+- **Solusi Tuntas**:
+  - `notebook_ui_script.dart`:
+    - Penambahan aturan CSS `display: none !important; visibility: hidden !important;` pada selector internal pemuatan NotebookLM (`app-loading-screen`, `.loading-container`, `mat-spinner`, dsb).
+    - Penyisiran DOM global di `clean()` untuk menghapus seluruh elemen yang memuat teks "Loading Notebook..." atau "Memuat Notebook...".
+    - Penyempurnaan `isStillLoading()` dan `ready()`: wajib memastikan spinner bawaan hilang, chat panel utama sudah terbentuk, dan input textarea siap serta tidak dalam status *disabled*.
+  - `agent_multi_tab_room.dart`:
+    - Peningkatan syarat kesiapan sesi ke minimal 4 sampel stabil berturut-turut ($\ge 2$ detik) dan durasi tunggu minimal 3000ms.
+    - Penambahan jeda mikro stabilisasi WebKit 250ms sebelum memudarkan loader, serta pemanjangan kurva transisi `AnimatedSwitcher` ke 320ms yang mulus.
+  - Kompilasi biner rilis macOS terbaru (`flutter build macos --release`), pembuatan DMG (`tool/package_macos.sh`), pembaruan `/Applications/OpenTurath AI.app`, dan peluncuran ulang aplikasi aktif (PID 5864).
+
 ---
 
 ## 5. Agenda & Fokus Selanjutnya
