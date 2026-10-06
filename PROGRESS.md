@@ -165,6 +165,16 @@ Berdasarkan `AUDIT_OPENTURATH_AI.md`, dokumen perancangan pustaka, dan keluhan k
   - `notebook_ui_script.dart`: Menghapus total pencarian string teks global pada `textContent`. `isStillLoading()` kini hanya memeriksa spinner/loading bar bawaan yang benar-benar aktif dan kasat mata (`offsetWidth > 0`). Kesiapan obrolan murni ditentukan oleh `inputReady()` (textarea tersedia, enabled, dan siap diketik).
   - `agent_multi_tab_room.dart`: Menyesuaikan pesan timeout agar akurat ("Ruang asisten sedang memproses antrean. Silakan ketuk Coba Lagi untuk memuat ulang") dan tidak lagi menyalahkan koneksi internet pengguna.
 
+### Fasa 16: Penguncian Presisi Bilah Input Chat di Dasar Layar (`ad5c153`)
+- **Akar Masalah Fundamental**:
+  1. *Input Chat Berada di Atas Layar*: Saat obrolan masih kosong (empty state), seluruh elemen hero card, panduan buku catatan, dan ringkasan sumber disembunyikan (`display: none !important`). Karena wadah atas kolaps ke tinggi `0px` dan bilah input (`app-chat-input`) berada dalam aliran dokumen normal tanpa penjangkaran bawah, kotak input terdorong ke paling atas layar persis di bawah AppBar native Flutter, meninggalkan area putih kosong raksasa di bawahnya.
+- **Solusi Tuntas**:
+  - `notebook_ui_script.dart`:
+    - Menerapkan penjangkaran presisi `position: fixed !important; bottom: 0 !important; left: 0 !important; right: 0 !important;` pada host custom element `app-chat-input` dengan `display: flex; justify-content: center; align-items: flex-end;`.
+    - Mengatur lebar anak langsung `app-chat-input > *` ke `max-width: 768px; width: 100%; margin: 0 auto;` dengan `pointer-events: auto;` sehingga klik pada textarea dan tombol kirim berfungsi normal, sementara area kosong samping tetap tembus klik (`pointer-events: none` pada host).
+    - Menambahkan `padding-bottom: 130px !important;` pada seluruh wadah riwayat obrolan (`.chat-panel-content`, `.chat-view`, `.conversation-container`, `.message-list`, `[role="log"]`) agar pesan terakhir tidak pernah tertutup bilah input yang melayang di dasar layar.
+    - Menambahkan fungsi JS `pinInputToBottom()` di dalam siklus pembersihan `clean()` untuk memastikan posisi bawah selalu terjaga secara presisi.
+
 ---
 
 ## 5. Agenda & Fokus Selanjutnya
