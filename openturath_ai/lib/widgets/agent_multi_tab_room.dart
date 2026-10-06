@@ -1261,6 +1261,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
     // Jangan batalkan _readinessTimer agar saat Google selesai redirect/autentikasi,
     // kesiapan ruang asisten langsung terdeteksi otomatis.
     _inputRetryTimer?.cancel();
+    _loadingStarted = null;
     if (!mounted) return;
     setState(() {
       final session = widget.session;
@@ -1281,6 +1282,18 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
     }
     _checkingReady = true;
     try {
+      final controller = widget.session.webController!;
+      final url = await controller.getUrl();
+      if (url != null && NotebookNavigation.signInFlow(url.uriValue)) {
+        _loadingStarted = null;
+        if (!widget.session.isGoogleAuthPage) _enterGoogleSignIn();
+        return;
+      }
+      if (widget.session.isGoogleAuthPage) {
+        _loadingStarted = null;
+        return;
+      }
+
       _loadingStarted ??= DateTime.now();
       final elapsedSec =
           DateTime.now().difference(_loadingStarted!).inSeconds;
@@ -1300,12 +1313,6 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
         return;
       }
 
-      final controller = widget.session.webController!;
-      final url = await controller.getUrl();
-      if (url != null && NotebookNavigation.signInFlow(url.uriValue)) {
-        if (!widget.session.isGoogleAuthPage) _enterGoogleSignIn();
-        return;
-      }
       if (url == null || !NotebookNavigation.notebook(url.uriValue)) {
         return;
       }
@@ -1564,10 +1571,11 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
               ? null
               : () {
                   AgentSessionTab.googleSignInConsent = true;
+                  _loadingStarted = null;
                   setState(() {
                     session.errorMessage = null;
                     session.isGoogleAuthPage = true;
-                    session.isWebLoading = true;
+                    session.isWebLoading = false;
                     session.isSessionReady = false;
                   });
                   final targetSignInUrl = email.isNotEmpty
@@ -2071,7 +2079,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
             child: AnimatedSwitcher(
               duration: const Duration(milliseconds: 240),
               switchOutCurve: Curves.easeOut,
-              child: !session.isSessionReady
+              child: (!session.isSessionReady && !session.isGoogleAuthPage)
                   ? AppLoader.fullscreen(
                       key: const ValueKey('room-loader'),
                       title: session.agent.title,
