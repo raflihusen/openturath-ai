@@ -237,15 +237,69 @@ const notebookUiScript = r'''
       .ot-opening-language .mat-mdc-menu-panel { opacity: 0 !important; }
       .cdk-overlay-container { z-index: 99999 !important; }
 
-      /* Ruang bawah obrolan agar pesan tidak tertutup */
-      .chat-panel-content, .chat-view, .conversation-container, .message-list, [role="log"] {
-        padding-bottom: max(64px, calc(env(safe-area-inset-bottom, 24px) + 48px)) !important;
+      /* ========================================================
+         KUNCI BILAH INPUT DI DASAR LAYAR (BOTTOM ANCHORED)
+         ======================================================== */
+      app-chat-input {
+        position: fixed !important;
+        bottom: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 0 !important;
+        padding-left: 16px !important;
+        padding-right: 16px !important;
+        padding-bottom: max(20px, calc(env(safe-area-inset-bottom, 16px) + 10px)) !important;
+        padding-top: 10px !important;
+        box-sizing: border-box !important;
+        display: flex !important;
+        justify-content: center !important;
+        align-items: flex-end !important;
+        z-index: 10000 !important;
+        background: transparent !important;
+        pointer-events: none !important;
       }
 
-      div.chat-input-container, .input-container, app-chat-input, form.chat-input-form,
-      [class*="input-container" i], [class*="chat-input" i],
-      .chat-input-area, [class*="input-area" i], .query-box-container {
-        margin-bottom: max(22px, calc(env(safe-area-inset-bottom, 16px) + 14px)) !important;
+      app-chat-input > * {
+        pointer-events: auto !important;
+        width: 100% !important;
+        max-width: 768px !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+        margin-top: 0 !important;
+        margin-bottom: 0 !important;
+        box-sizing: border-box !important;
+      }
+
+      app-chat-input form,
+      app-chat-input .chat-input-container,
+      app-chat-input form.chat-input-form,
+      app-chat-input .query-box-container {
+        margin-top: 0 !important;
+        margin-bottom: 0 !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+      }
+
+      /* Fallback jika app-chat-input tidak ada sebagai custom element */
+      body:not(:has(app-chat-input)) div.chat-input-container,
+      body:not(:has(app-chat-input)) form.chat-input-form {
+        position: fixed !important;
+        bottom: max(20px, calc(env(safe-area-inset-bottom, 16px) + 10px)) !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+        width: min(768px, calc(100% - 32px)) !important;
+        max-width: 768px !important;
+        margin: 0 !important;
+        z-index: 10000 !important;
+        box-sizing: border-box !important;
+      }
+
+      /* Ruang bawah obrolan agar pesan tidak tertutup oleh bilah input */
+      .chat-panel-content, .chat-view, .conversation-container, .message-list, [role="log"], main, app-chat-view {
+        padding-bottom: 130px !important;
+        box-sizing: border-box !important;
       }
 
       .chat-message-pair, .to-user-container, .to-model-container {
@@ -514,6 +568,34 @@ const notebookUiScript = r'''
     } catch (_) {}
   }
 
+  function pinInputToBottom() {
+    const inputHost = document.querySelector('app-chat-input');
+    if (inputHost) {
+      inputHost.style.setProperty('position', 'fixed', 'important');
+      inputHost.style.setProperty('bottom', '0', 'important');
+      inputHost.style.setProperty('left', '0', 'important');
+      inputHost.style.setProperty('right', '0', 'important');
+      inputHost.style.setProperty('width', '100%', 'important');
+      inputHost.style.setProperty('z-index', '10000', 'important');
+      inputHost.style.setProperty('display', 'flex', 'important');
+      inputHost.style.setProperty('justify-content', 'center', 'important');
+      inputHost.style.setProperty('align-items', 'flex-end', 'important');
+      inputHost.style.setProperty('background', 'transparent', 'important');
+      inputHost.style.setProperty('pointer-events', 'none', 'important');
+      inputHost.style.setProperty('padding', '10px 16px max(20px, calc(env(safe-area-inset-bottom, 16px) + 10px)) 16px', 'important');
+      inputHost.style.setProperty('box-sizing', 'border-box', 'important');
+      inputHost.style.setProperty('margin', '0', 'important');
+
+      Array.from(inputHost.children).forEach(child => {
+        child.style.setProperty('pointer-events', 'auto', 'important');
+        child.style.setProperty('width', '100%', 'important');
+        child.style.setProperty('max-width', '768px', 'important');
+        child.style.setProperty('margin', '0 auto', 'important');
+        child.style.setProperty('box-sizing', 'border-box', 'important');
+      });
+    }
+  }
+
   let lastCleanAt = 0;
   function clean() {
     if (!document.documentElement) return;
@@ -525,6 +607,7 @@ const notebookUiScript = r'''
     removeTopToolbars();
     removeHeroCard();
     dismissPopups();
+    pinInputToBottom();
   }
 
   function triggerClick(el) {
