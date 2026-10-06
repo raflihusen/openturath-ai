@@ -85,6 +85,13 @@ Berdasarkan `AUDIT_OPENTURATH_AI.md`, dokumen perancangan pustaka, dan keluhan k
   - Timestamp: 2026-09-20 08:42:38 WIB
   - Status: Kompilasi Gradle selesai 100% (Full assembleRelease 167.7s).
   - Termasuk penghapusan Mode Tamu di layar login, hardening keamanan transaksi pembayaran, pembersihan nama Arab redundan, dan proteksi total desain asli.
+- **Rilis macOS DMG (Kompilasi Lokal Terbaru)**:
+  - File: `/Users/apple/Downloads/ramadhan/OpenTurath_AI_macOS.dmg`
+  - Ukuran: 47 MB (49.033.483 bytes)
+  - SHA-256: `6865289a0bc9716da5265fea450837ddb8950c269cea99e274d7af73a4127f03`
+  - Timestamp: 2026-10-06 10:58 WIB
+  - Status: Kompilasi Xcode/macOS Release selesai 100%, UDZO image terkemas rapi via `package_macos.sh`.
+  - Pembaruan: Naskah adab dirapikan menjadi 1 bab berkesinambungan (8 Adab penuntut ilmu terstruktur tanpa rujukan sumber mentah), selaras multibahasa (ID, EN, AR), lolos 100% `flutter analyze` dan seluruh unit test.
 - **Rilis macOS DMG (Cloud GitHub Actions)**:
   - Workflow: `.github/workflows/release_all_platforms.yml` (Job `build-macos-dmg`).
   - Output Artifact: `OpenTurath_AI_macOS.dmg`.
