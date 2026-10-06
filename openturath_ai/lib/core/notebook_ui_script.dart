@@ -237,41 +237,15 @@ const notebookUiScript = r'''
       .ot-opening-language .mat-mdc-menu-panel { opacity: 0 !important; }
       .cdk-overlay-container { z-index: 99999 !important; }
 
-      /* ========================================================
-         LAYOUT UTAMA: INPUT SELALU DI BAWAH (BOTTOM ANCHORED)
-         ======================================================== */
-      body, app-root, app-project, app-notebook, main, [role="main"],
-      .chat-view, .chat-panel, app-chat-panel, app-conversation, app-chat-view,
-      .chat-panel-content, .conversation-container {
-        display: flex !important;
-        flex-direction: column !important;
-        height: 100% !important;
-        min-height: 100% !important;
-        box-sizing: border-box !important;
-      }
-
-      /* Area pesan mengambil sisa ruang di atas dan mendorong input ke bawah */
+      /* Ruang bawah obrolan agar pesan tidak tertutup */
       .chat-panel-content, .chat-view, .conversation-container, .message-list, [role="log"] {
-        flex: 1 1 auto !important;
-        display: flex !important;
-        flex-direction: column !important;
-        justify-content: flex-end !important;
-        overflow-y: auto !important;
-        padding-bottom: max(16px, calc(env(safe-area-inset-bottom, 16px))) !important;
+        padding-bottom: max(64px, calc(env(safe-area-inset-bottom, 24px) + 48px)) !important;
       }
 
-      /* Input chat HARUS SELALU berada di bagian bawah (bottom-anchored) */
       div.chat-input-container, .input-container, app-chat-input, form.chat-input-form,
       [class*="input-container" i], [class*="chat-input" i],
       .chat-input-area, [class*="input-area" i], .query-box-container {
-        margin-top: auto !important;
-        margin-bottom: max(20px, calc(env(safe-area-inset-bottom, 16px) + 12px)) !important;
-        margin-left: auto !important;
-        margin-right: auto !important;
-        width: 100% !important;
-        max-width: 768px !important;
-        flex-shrink: 0 !important;
-        box-sizing: border-box !important;
+        margin-bottom: max(22px, calc(env(safe-area-inset-bottom, 16px) + 14px)) !important;
       }
 
       .chat-message-pair, .to-user-container, .to-model-container {
@@ -540,28 +514,6 @@ const notebookUiScript = r'''
     } catch (_) {}
   }
 
-  function ensureInputAtBottom() {
-    const inputs = document.querySelectorAll(
-      'app-chat-input, div.chat-input-container, .input-container, form.chat-input-form, .query-box-container, [class*="input-container" i], [class*="chat-input" i]'
-    );
-    inputs.forEach(el => {
-      el.style.setProperty('margin-top', 'auto', 'important');
-      el.style.setProperty('margin-left', 'auto', 'important');
-      el.style.setProperty('margin-right', 'auto', 'important');
-      el.style.setProperty('max-width', '768px', 'important');
-      el.style.setProperty('width', '100%', 'important');
-      el.style.setProperty('flex-shrink', '0', 'important');
-      let p = el.parentElement;
-      while (p && p !== document.body) {
-        p.style.setProperty('display', 'flex', 'important');
-        p.style.setProperty('flex-direction', 'column', 'important');
-        p.style.setProperty('height', '100%', 'important');
-        p.style.setProperty('min-height', '100%', 'important');
-        p = p.parentElement;
-      }
-    });
-  }
-
   let lastCleanAt = 0;
   function clean() {
     if (!document.documentElement) return;
@@ -573,7 +525,6 @@ const notebookUiScript = r'''
     removeTopToolbars();
     removeHeroCard();
     dismissPopups();
-    ensureInputAtBottom();
   }
 
   function triggerClick(el) {
@@ -705,11 +656,15 @@ const notebookUiScript = r'''
   window.otGetConversationList = conversationList;
 
   function isStillLoading() {
-    const spinner = document.querySelector('mat-spinner, mat-progress-spinner, mat-progress-bar, [role="progressbar"], .loading-container, .loading-screen, app-loading-screen, [class*="loading-screen" i]');
-    if (spinner && spinner.offsetParent !== null) return true;
+    const spinners = document.querySelectorAll('mat-spinner, mat-progress-spinner, mat-progress-bar, [role="progressbar"], .loading-container, .loading-screen, app-loading-screen, [class*="loading-screen" i], [class*="loading-container" i]');
+    for (const s of spinners) {
+      if (getComputedStyle(s).display !== 'none' && getComputedStyle(s).visibility !== 'hidden' && s.offsetWidth > 0) {
+        return true;
+      }
+    }
 
-    const body = (document.body?.innerText || '').toLowerCase();
-    return body.includes('loading notebook') || body.includes('memuat notebook') || body.includes('menyiapkan notebook');
+    const raw = (document.body?.innerText || document.body?.textContent || '').toLowerCase();
+    return raw.includes('loading notebook') || raw.includes('memuat notebook') || raw.includes('menyiapkan notebook');
   }
 
   function ready() {
@@ -717,7 +672,16 @@ const notebookUiScript = r'''
     if (isStillLoading()) return false;
     const chatPanel = document.querySelector('.chat-panel-content, .chat-view, .conversation-container, .message-list, [role="log"], app-chat-view, app-conversation, app-chat-panel, .chat-panel, app-chat');
     if (!chatPanel) return false;
-    return inputReady();
+    if (!inputReady()) return false;
+
+    // Pastikan toolbar / top-bar Google NotebookLM sudah tersembunyi
+    const topToolbar = document.querySelector('top-bar, .top-bar, app-header, mat-toolbar, .notebook-header, [role="banner"]');
+    if (topToolbar && visible(topToolbar)) {
+      clean();
+      return false;
+    }
+
+    return true;
   }
   function inputReady() {
     const input = document.querySelector('textarea, [contenteditable="true"], [role="textbox"]');

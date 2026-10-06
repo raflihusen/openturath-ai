@@ -1284,7 +1284,15 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
     try {
       final controller = widget.session.webController!;
       final url = await controller.getUrl();
-      if (url != null && NotebookNavigation.signInFlow(url.uriValue)) {
+      if (url != null && NotebookNavigation.notebook(url.uriValue)) {
+        if (widget.session.isGoogleAuthPage && mounted) {
+          setState(() {
+            widget.session.isGoogleAuthPage = false;
+            widget.session.errorMessage = null;
+            widget.session.isWebLoading = true;
+          });
+        }
+      } else if (url != null && NotebookNavigation.signInFlow(url.uriValue)) {
         _loadingStarted = null;
         if (!widget.session.isGoogleAuthPage) _enterGoogleSignIn();
         return;
