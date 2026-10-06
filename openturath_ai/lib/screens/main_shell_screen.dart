@@ -271,6 +271,12 @@ class _MainShellScreenState extends State<MainShellScreen> {
             onPopInvokedWithResult: (didPop, result) async {
               if (didPop) return;
               if (sessionManager.isOpen) {
+                // Periksa apakah webview pada tab aktif memiliki riwayat navigasi sebelumnya
+                final activeWebCtrl = sessionManager.activeTab?.webController;
+                if (activeWebCtrl != null && await activeWebCtrl.canGoBack()) {
+                  await activeWebCtrl.goBack();
+                  return;
+                }
                 if (context.mounted) {
                   AppSnackBar.clear(context);
                 }

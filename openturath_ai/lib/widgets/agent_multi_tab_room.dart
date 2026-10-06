@@ -1057,17 +1057,43 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    AgentSessionManager.instance.addListener(_onSessionManagerChanged);
     if (widget.session.resolvedUrl == null) {
       _fetchUrl();
+    }
+  }
+
+  void _onSessionManagerChanged() {
+    if (!mounted) return;
+    final isOpen = AgentSessionManager.instance.isOpen;
+    if (!isOpen) {
+      // Room ditutup/disembunyikan: jeda/batalkan timer agar tidak memboroskan CPU
+      _readinessTimer?.cancel();
+      _readinessTimer = null;
+      _inputRetryTimer?.cancel();
+      _inputRetryTimer = null;
+      _loadingStarted = null;
+    } else if (widget.isActive &&
+        !widget.session.isSessionReady &&
+        _readinessTimer == null) {
+      // Room dibuka kembali dan sesi belum siap: lanjutkan polling kesiapan
+      _startReadinessCheck();
     }
   }
 
   @override
   void didUpdateWidget(_SingleAgentTabWebView oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (!oldWidget.isActive && widget.isActive) {
+    if (oldWidget.isActive && !widget.isActive) {
+      // Tab ini beralih ke background: hentikan polling
+      _readinessTimer?.cancel();
+      _readinessTimer = null;
+      _inputRetryTimer?.cancel();
+      _inputRetryTimer = null;
+    } else if (!oldWidget.isActive && widget.isActive) {
       _verifySurfaceHealth();
-      if (!widget.session.isSessionReady) {
+      if (!widget.session.isSessionReady &&
+          AgentSessionManager.instance.isOpen) {
         _startReadinessCheck();
       }
     }
@@ -1076,8 +1102,11 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+    AgentSessionManager.instance.removeListener(_onSessionManagerChanged);
     _readinessTimer?.cancel();
+    _readinessTimer = null;
     _inputRetryTimer?.cancel();
+    _inputRetryTimer = null;
     if (mounted) {
       AppSnackBar.clear(context);
     }
@@ -1243,7 +1272,11 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
   }
 
   Future<void> _checkReady() async {
-    if (_checkingReady || widget.session.webController == null || !mounted) {
+    if (_checkingReady ||
+        widget.session.webController == null ||
+        !mounted ||
+        !AgentSessionManager.instance.isOpen ||
+        !widget.isActive) {
       return;
     }
     _checkingReady = true;

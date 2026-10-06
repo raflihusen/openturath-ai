@@ -363,7 +363,30 @@ class AuthService {
     await BrowserCompanionChatService.stop();
 
     // Auth deletion enforces recent login. The server trigger owns revocation and recursive cleanup.
-    await user.delete();
+    try {
+      await user.delete();
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'requires-recent-login') {
+        if (kIsWeb || defaultTargetPlatform != TargetPlatform.windows) {
+          final googleUser = await _googleSignIn.signIn();
+          if (googleUser != null) {
+            final googleAuth = await googleUser.authentication;
+            final credential = GoogleAuthProvider.credential(
+              accessToken: googleAuth.accessToken,
+              idToken: googleAuth.idToken,
+            );
+            await user.reauthenticateWithCredential(credential);
+            await user.delete();
+          } else {
+            rethrow;
+          }
+        } else {
+          rethrow;
+        }
+      } else {
+        rethrow;
+      }
+    }
     AgentSessionManager.instance.closeAll();
     try {
       await DesktopWebViewRuntime.clearSession();
