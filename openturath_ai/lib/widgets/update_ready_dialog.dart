@@ -5,6 +5,7 @@ import '../core/theme.dart';
 import '../core/design/ot_colors.dart';
 import '../services/update_service.dart';
 import '../core/scholarly_fonts.dart';
+import '../core/localization.dart';
 
 import 'package:openturath_ai/core/design/ot_typography.dart';
 import 'package:openturath_ai/core/design/ot_radius.dart';
@@ -41,7 +42,7 @@ class UpdateReadyDialog extends StatelessWidget {
     final info = updateService.updateInfo;
     final version = info?.latestVersion ?? '';
     final releaseNotes = info?.releaseNotes ??
-        'Penyempurnaan stabilitas telaah dan sistem keilmuan.';
+        Loc.tr('updateReadyDefaultNotes');
 
     return Dialog(
       backgroundColor: surface,
@@ -76,7 +77,9 @@ class UpdateReadyDialog extends StatelessWidget {
 
             // Judul Pembaruan
             Text(
-              isDesktop ? 'Pembaruan Tersedia' : 'Pembaruan Telah Siap',
+              isDesktop
+                  ? Loc.tr('updateReadyTitleDesktop')
+                  : Loc.tr('updateReadyTitleMobile'),
               style: ScholarlyFonts.newsreader(
                 fontSize: OTFontSize.s20,
                 fontWeight: FontWeight.w600,
@@ -95,7 +98,7 @@ class UpdateReadyDialog extends StatelessWidget {
                 borderRadius: BorderRadius.circular(AppTheme.radiusPill),
               ),
               child: Text(
-                'Versi $version',
+                Loc.tr('updateReadyVersion', [version]),
                 style: ScholarlyFonts.outfit(
                   fontSize: OTFontSize.s12,
                   fontWeight: FontWeight.w600,
@@ -109,8 +112,8 @@ class UpdateReadyDialog extends StatelessWidget {
             // Penjelasan Status Unduhan
             Text(
               isDesktop
-                  ? 'Tersedia versi desktop terbaru dengan peningkatan keilmuan dan stabilitas. Buka tautan untuk memperbarui.'
-                  : 'Aplikasi telah selesai mengunduh pembaruan di latar belakang secara senyap. Ketuk tombol di bawah untuk memasang dan memuat ulang aplikasi.',
+                  ? Loc.tr('updateReadyDescDesktop')
+                  : Loc.tr('updateReadyDescMobile'),
               style: ScholarlyFonts.outfit(
                 fontSize: OTFontSize.s14,
                 height: 1.5,
@@ -161,9 +164,9 @@ class UpdateReadyDialog extends StatelessWidget {
                   if (opened) {
                     Navigator.of(context).pop();
                   } else {
-                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                       content: Text(
-                          'Pembaruan belum dapat dibuka. Silakan coba kembali.'),
+                          Loc.tr('updateReadyOpenFailed')),
                     ));
                   }
                 },
@@ -174,8 +177,8 @@ class UpdateReadyDialog extends StatelessWidget {
                 ),
                 child: Text(
                   isDesktop
-                      ? 'Unduh Pembaruan'
-                      : 'Pasang & Muat Ulang Sekarang',
+                      ? Loc.tr('updateReadyActionDesktop')
+                      : Loc.tr('updateReadyActionMobile'),
                   style: ScholarlyFonts.outfit(
                     fontSize: OTFontSize.s14,
                     fontWeight: FontWeight.w600,
@@ -195,7 +198,7 @@ class UpdateReadyDialog extends StatelessWidget {
                   foregroundColor: textSecondary,
                 ),
                 child: Text(
-                  'Nanti Saja',
+                  Loc.tr('updateReadyLater'),
                   style: ScholarlyFonts.outfit(
                     fontSize: OTFontSize.s14,
                     fontWeight: FontWeight.w400,

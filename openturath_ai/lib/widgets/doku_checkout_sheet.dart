@@ -486,14 +486,14 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
                             Container(
                               padding: const EdgeInsets.all(8),
                               decoration: BoxDecoration(
-                                color: OTColors.borderStrongLight.withAlpha(30),
+                                color: OTColors.borderStrong(isDark).withAlpha(30),
                                 borderRadius:
                                     BorderRadius.circular(AppTheme.radiusXS),
                               ),
-                              child: const Icon(
+                              child: Icon(
                                 Icons.lock_rounded,
                                 size: 18,
-                                color: OTColors.borderStrongLight,
+                                color: OTColors.borderStrong(isDark),
                               ),
                             ),
                             const SizedBox(width: 10),

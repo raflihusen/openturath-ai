@@ -643,7 +643,7 @@ class AgentModel {
           fieldId: 'aqidah',
           subtitleAcademic: 'Asy\'ariyyah · Maturidiyyah · Dalil Aqli',
           suggestedPrompts: [
-            'Jelaskan pembagian sifat Wajib, Mustahil, dan Jaiz bagi Allah!',
+            'Bagaimana pembagian sifat wajib, mustahil, dan jaiz bagi Allah menurut kitab tauhid?',
             'Bagaimana dalil aqli tentang keesaan Allah menurut Al-Sanusiyyah?',
             'Apa perbedaan pemikiran Asy\'ariyyah dan Mu\'tazilah tentang kalamullah?',
           ],
@@ -752,7 +752,7 @@ class AgentModel {
           fieldId: 'usul',
           subtitleAcademic: 'Asybah wan-Nazhair & Kaidah Asasiyyah',
           suggestedPrompts: [
-            'Jelaskan 5 kaidah kubra dalam fikih Islam beserta contoh penerapannya!',
+            'Bagaimana lima kaidah asasiyah (al-qawa\'id al-kubra) dalam fikih beserta contoh penerapannya?',
             'Bagaimana kaidah "Al-Yaqinu la yazulu bisy-syakk" diterapkan dalam shalat?',
             'Kutipan dari Al-Asybah wan-Nazhair Imam As-Suyuthi.',
           ],
@@ -796,7 +796,7 @@ class AgentModel {
           fieldId: 'tafsir',
           subtitleAcademic: 'Al-Jazariyyah, Asy-Syathibiyyah & Qira\'at Sab\'ah',
           suggestedPrompts: [
-            'Jelaskan makharijul huruf dan shifat lazimah menurut Matan Al-Jazariyyah!',
+            'Bagaimana makharijul huruf dan sifat lazimah menurut Matan Al-Jazariyyah?',
             'Apa perbedaan bacaan Imam Hafsh dan Warsy dalam Surah Al-Fatihah?',
             'Bagaimana kaidah hukum nun sukun dan tanwin dijelaskan para imam qiraat?',
           ],

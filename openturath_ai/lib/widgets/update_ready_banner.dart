@@ -5,6 +5,7 @@ import '../core/theme.dart';
 import '../core/design/ot_colors.dart';
 import '../services/update_service.dart';
 import '../core/scholarly_fonts.dart';
+import '../core/localization.dart';
 
 import 'package:openturath_ai/core/design/ot_typography.dart';
 class UpdateReadyBanner extends StatelessWidget {
@@ -51,8 +52,8 @@ class UpdateReadyBanner extends StatelessWidget {
                 height: 40,
                 decoration: BoxDecoration(
                   color: isDark
-                      ? AppTheme.borderDark
-                      : AppTheme.pillSecondaryBgLight,
+                    ? AppTheme.borderDark
+                    : AppTheme.pillSecondaryBgLight,
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
@@ -68,8 +69,8 @@ class UpdateReadyBanner extends StatelessWidget {
                   children: [
                     Text(
                       isDesktop
-                          ? 'Pembaruan v$version Tersedia'
-                          : 'Pembaruan v$version Siap Dipasang',
+                          ? Loc.tr('updateBannerTitleDesktop', [version])
+                          : Loc.tr('updateBannerTitleMobile', [version]),
                       style: ScholarlyFonts.outfit(
                         fontSize: OTFontSize.s14,
                         fontWeight: FontWeight.w600,
@@ -79,8 +80,8 @@ class UpdateReadyBanner extends StatelessWidget {
                     const SizedBox(height: 2),
                     Text(
                       isDesktop
-                          ? 'Ketuk untuk membuka tautan pembaruan versi desktop terbaru.'
-                          : 'Selesai diunduh di latar belakang. Ketuk pasang untuk menerapkan.',
+                          ? Loc.tr('updateBannerDescDesktop')
+                          : Loc.tr('updateBannerDescMobile'),
                       style: ScholarlyFonts.outfit(
                         fontSize: OTFontSize.s12,
                         color: textSecondary,
@@ -96,9 +97,9 @@ class UpdateReadyBanner extends StatelessWidget {
                 onPressed: () async {
                   final opened = await updateService.installNow();
                   if (!opened && context.mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                       content: Text(
-                          'Pembaruan belum dapat dibuka. Silakan coba kembali.'),
+                          Loc.tr('updateReadyOpenFailed')),
                     ));
                   }
                 },
@@ -111,7 +112,9 @@ class UpdateReadyBanner extends StatelessWidget {
                   elevation: 0,
                 ),
                 child: Text(
-                  isDesktop ? 'Perbarui' : 'Pasang',
+                  isDesktop
+                      ? Loc.tr('updateBannerActionDesktop')
+                      : Loc.tr('updateBannerActionMobile'),
                   style: ScholarlyFonts.outfit(
                     fontSize: OTFontSize.s14,
                     fontWeight: FontWeight.w600,

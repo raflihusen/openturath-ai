@@ -70,7 +70,7 @@ class AgentMultiTabRoom extends StatefulWidget {
             const SizedBox(width: 8),
             Expanded(
               child: Text(
-                'Akun Google untuk Asisten',
+                Loc.tr('googleAccountDialogTitle'),
                 style: ScholarlyFonts.outfit(
                   fontSize: OTFontSize.s16,
                   fontWeight: FontWeight.w600,
@@ -85,7 +85,7 @@ class AgentMultiTabRoom extends StatefulWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Pastikan email ini sesuai dengan akun Google yang memiliki akses ke modul / notebook turats Anda. Browser akan langsung memilih akun ini tanpa salah masuk ke akun lain (/u/0/).',
+              Loc.tr('googleAccountDialogDesc'),
               style: ScholarlyFonts.outfit(
                 fontSize: OTFontSize.s12,
                 color:
@@ -125,7 +125,7 @@ class AgentMultiTabRoom extends StatefulWidget {
           TextButton(
             onPressed: () => Navigator.pop(ctx),
             child: Text(
-              'Batal',
+              Loc.tr('cancel'),
               style: ScholarlyFonts.outfit(
                   color: isDark ? OTColors.surfaceLight.withValues(alpha: 0.7) : OTColors.shadow.withValues(alpha: 0.87)),
             ),
@@ -137,7 +137,7 @@ class AgentMultiTabRoom extends StatefulWidget {
                 controller.text = def;
               },
               child: Text(
-                'Pakai Akun Utama',
+                Loc.tr('usePrimaryAccount'),
                 style: ScholarlyFonts.outfit(color: OTColors.accent(isDark)),
               ),
             ),
@@ -147,7 +147,7 @@ class AgentMultiTabRoom extends StatefulWidget {
             ),
             onPressed: () => Navigator.pop(ctx, controller.text.trim()),
             child: Text(
-              'Simpan',
+              Loc.tr('save'),
               style: ScholarlyFonts.outfit(fontWeight: FontWeight.w600),
             ),
           ),
@@ -158,7 +158,7 @@ class AgentMultiTabRoom extends StatefulWidget {
     if (newEmail != null && context.mounted) {
       await NativeAgentLauncher.setActiveNotebookEmail(newEmail);
       if (context.mounted) {
-        final display = newEmail.isEmpty ? 'Akun Masuk Utama' : newEmail;
+        final display = newEmail.isEmpty ? Loc.tr('primaryLoginAccount') : newEmail;
         AppSnackBar.info(context, Loc.tr('assistantGoogleAccountSet', [display]));
       }
     }
@@ -264,7 +264,7 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                 ),
                 const SizedBox(height: 6),
                 Text(
-                  'Sesuaikan ukuran huruf percakapan agar nyaman dibaca.',
+                  Loc.tr('readingFontSizeHint'),
                   style: OTTypography.caption(color: textSecondary),
                 ),
                 const SizedBox(height: 20),
@@ -368,7 +368,7 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                 const SizedBox(width: 10),
                 Expanded(
                   child: Text(
-                    'Hapus Riwayat Obrolan?',
+                    Loc.tr('clearChatHistoryTitle'),
                     style: OTTypography.cardTitle(color: textPrimary)
                         .copyWith(fontSize: OTFontSize.s16),
                   ),
@@ -377,7 +377,7 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
             ),
             const SizedBox(height: 10),
             Text(
-              'Seluruh percakapan pada sesi asisten ini akan dibersihkan dari layar.',
+              Loc.tr('clearChatHistoryDesc'),
               style: OTTypography.body(color: textSecondary),
             ),
             const SizedBox(height: 24),
@@ -406,7 +406,7 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                     );
                     if (mounted) {
                       AppSnackBar.success(
-                          context, 'Riwayat obrolan telah dibersihkan.');
+                          context, Loc.tr('chatHistoryCleared'));
                     }
                   },
                   child: Text(Loc.tr('delete'),
@@ -449,13 +449,13 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                 const Center(child: SheetGrabber()),
                 const SizedBox(height: 16),
                 Text(
-                  'Sesi Asisten Terbuka',
+                  Loc.tr('sessionSwitcherTitle'),
                   style: OTTypography.cardTitle(color: textPrimary)
                       .copyWith(fontSize: OTFontSize.s16),
                 ),
                 const SizedBox(height: 6),
                 Text(
-                  'Pilih asisten untuk berpindah sesi kajian aktif.',
+                  Loc.tr('selectSessionToSwitch'),
                   style: OTTypography.caption(color: textSecondary),
                 ),
                 const SizedBox(height: 16),
@@ -1745,7 +1745,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
                           AppCopy.answerCopied,
                           duration: const Duration(milliseconds: 2500),
                           action: SnackBarAction(
-                            label: 'Simpan',
+                            label: Loc.tr('save'),
                             textColor: OTColors.onInverseSurface,
                             onPressed: () {
                               if (_authService.currentUser?.uid == owner) {
