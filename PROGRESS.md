@@ -130,6 +130,32 @@ Berdasarkan `AUDIT_OPENTURATH_AI.md`, dokumen perancangan pustaka, dan keluhan k
     - Penambahan jeda mikro stabilisasi WebKit 250ms sebelum memudarkan loader, serta pemanjangan kurva transisi `AnimatedSwitcher` ke 320ms yang mulus.
   - Kompilasi biner rilis macOS terbaru (`flutter build macos --release`), pembuatan DMG (`tool/package_macos.sh`), pembaruan `/Applications/OpenTurath AI.app`, dan peluncuran ulang aplikasi aktif (PID 5864).
 
+### Fasa 13: Penguncian Posisi Input Chat di Bawah Layar & Eliminasi Celah FOUC (`5973687`)
+- **Akar Masalah**:
+  1. Input chat sempat terdorong ke paling atas layar (*top-aligned*) pada keadaan obrolan kosong karena kartu hero/intro di atasnya disembunyikan tanpa adanya aturan `margin-top: auto` atau `justify-content: flex-end` pada wadah flex induk.
+  2. Saat navigasi dari Google login ke notebook, `isGoogleAuthPage` belum langsung dimatikan pada `onLoadStart`, sehingga ada jeda fraksi detik di mana loader tidak aktif sebelum halaman siap sepenuhnya.
+- **Solusi Tuntas**:
+  - `notebook_ui_script.dart`:
+    - Penerapan aturan flex layout hierarkis (`display: flex; flex-direction: column; justify-content: flex-end; height: 100%`) dan `margin-top: auto !important` pada seluruh kontainer input chat (`app-chat-input`, `form.chat-input-form`, dll).
+    - Penambahan fungsi JS `ensureInputAtBottom()` yang dijalankan otomatis pada siklus pembersihan `clean()` untuk memastikan input selalu terkunci di bawah layar.
+  - `agent_multi_tab_room.dart`:
+    - Pembaruan `onLoadStart` agar langsung mendeteksi URL notebook dan mereset `session.isGoogleAuthPage = false`, sehingga `AppLoader` langsung menutupi proses pemuatan dari awal tanpa celah visual.
+  - Kompilasi biner rilis macOS terbaru (`flutter build macos --release`), pembuatan DMG (`tool/package_macos.sh`), pembaruan `/Applications/OpenTurath AI.app`, dan peluncuran ulang aplikasi terverifikasi aktif (PID 8845).
+
+### Fasa 14: Perbaikan Tuntas Flicker Loop Google Auth & Pemulihan Posisi Alami Input Chat (`e2f9dcc` & `6707261`)
+- **Akar Masalah Fundamental**:
+  1. *Flicker Loop & Kebocoran Loading Google*: Fungsi `NotebookNavigation.signInFlow` sebelumnya mengevaluasi `host.endsWith('.google.com')`. Karena host `notebooklm.google.com` berakhiran `.google.com`, `signInFlow` salah mendeteksi URL notebook sebagai alur login Google. Akibatnya, `_checkReady()` di `agent_multi_tab_room.dart` memanggil `_enterGoogleSignIn()` yang menyetel `isGoogleAuthPage = true`. Ini langsung mencopot layar muat Flutter `AppLoader` dan mengekspos halaman mentah NotebookLM beserta spinner Google. Saat event navigasi mereset `isGoogleAuthPage = false`, loader muncul lagi, lalu pada tick berikutnya `_checkReady()` mencopotnya lagi. Siklus ini berulang terus-menerus setiap 500ms, menimbulkan kedipan (*flicker loop*) hebat.
+  2. *Input Chat Terdorong ke Atas*: Skrip JS `ensureInputAtBottom` pada commit sebelumnya memaksa `height: 100%` pada seluruh leluhur elemen input. Hal ini merusak tata letak flex/grid Angular NotebookLM, membuat kontainer input melar memenuhi 100% viewport dan menyebabkan kotak input mengapung di bagian paling atas layar dengan area kosong putih di bawahnya.
+- **Solusi Tuntas**:
+  - `notebook_navigation.dart`:
+    - `signInFlow(uri)` kini secara tegas mengecualikan URL notebook (`if (notebook(uri)) return false;`) dan memastikan domain `hosts` NotebookLM tidak terpicu oleh klausa `.google.com`.
+    - Dibuatkan unit test otomatis (`test/notebook_navigation_test.dart`) yang memverifikasi keakuratan klasifikasi URL secara 100%.
+  - `notebook_ui_script.dart`:
+    - Menghapus total fungsi perusak `ensureInputAtBottom()` dan aturan flex paksa pada root. Mengembalikan posisi alami input chat di bagian bawah dengan ruang padding dan margin yang proporsional.
+    - Memperketat verifikasi `ready()`: memastikan bar navigasi/header atas Google sudah tersembunyi total dan semua indikator pemuatan telah hilang sebelum loader Flutter dibuka.
+  - `agent_multi_tab_room.dart`:
+    - `_checkReady()` kini memprioritaskan URL notebook dan secara instan mereset `isGoogleAuthPage = false`, menjamin `AppLoader` (three-dots pulse) berdiri kokoh dan tenang tanpa kedipan hingga asisten 100% siap.
+
 ---
 
 ## 5. Agenda & Fokus Selanjutnya
