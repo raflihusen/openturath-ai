@@ -237,14 +237,41 @@ const notebookUiScript = r'''
       .ot-opening-language .mat-mdc-menu-panel { opacity: 0 !important; }
       .cdk-overlay-container { z-index: 99999 !important; }
 
-      /* Ruang bawah obrolan agar pesan tidak tertutup */
-      .chat-panel-content, .chat-view, .conversation-container, .message-list, [role="log"] {
-        padding-bottom: max(64px, calc(env(safe-area-inset-bottom, 24px) + 48px)) !important;
+      /* ========================================================
+         LAYOUT UTAMA: INPUT SELALU DI BAWAH (BOTTOM ANCHORED)
+         ======================================================== */
+      body, app-root, app-project, app-notebook, main, [role="main"],
+      .chat-view, .chat-panel, app-chat-panel, app-conversation, app-chat-view,
+      .chat-panel-content, .conversation-container {
+        display: flex !important;
+        flex-direction: column !important;
+        height: 100% !important;
+        min-height: 100% !important;
+        box-sizing: border-box !important;
       }
+
+      /* Area pesan mengambil sisa ruang di atas dan mendorong input ke bawah */
+      .chat-panel-content, .chat-view, .conversation-container, .message-list, [role="log"] {
+        flex: 1 1 auto !important;
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: flex-end !important;
+        overflow-y: auto !important;
+        padding-bottom: max(16px, calc(env(safe-area-inset-bottom, 16px))) !important;
+      }
+
+      /* Input chat HARUS SELALU berada di bagian bawah (bottom-anchored) */
       div.chat-input-container, .input-container, app-chat-input, form.chat-input-form,
       [class*="input-container" i], [class*="chat-input" i],
       .chat-input-area, [class*="input-area" i], .query-box-container {
-        margin-bottom: max(22px, calc(env(safe-area-inset-bottom, 16px) + 14px)) !important;
+        margin-top: auto !important;
+        margin-bottom: max(20px, calc(env(safe-area-inset-bottom, 16px) + 12px)) !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+        width: 100% !important;
+        max-width: 768px !important;
+        flex-shrink: 0 !important;
+        box-sizing: border-box !important;
       }
 
       .chat-message-pair, .to-user-container, .to-model-container {
@@ -513,6 +540,28 @@ const notebookUiScript = r'''
     } catch (_) {}
   }
 
+  function ensureInputAtBottom() {
+    const inputs = document.querySelectorAll(
+      'app-chat-input, div.chat-input-container, .input-container, form.chat-input-form, .query-box-container, [class*="input-container" i], [class*="chat-input" i]'
+    );
+    inputs.forEach(el => {
+      el.style.setProperty('margin-top', 'auto', 'important');
+      el.style.setProperty('margin-left', 'auto', 'important');
+      el.style.setProperty('margin-right', 'auto', 'important');
+      el.style.setProperty('max-width', '768px', 'important');
+      el.style.setProperty('width', '100%', 'important');
+      el.style.setProperty('flex-shrink', '0', 'important');
+      let p = el.parentElement;
+      while (p && p !== document.body) {
+        p.style.setProperty('display', 'flex', 'important');
+        p.style.setProperty('flex-direction', 'column', 'important');
+        p.style.setProperty('height', '100%', 'important');
+        p.style.setProperty('min-height', '100%', 'important');
+        p = p.parentElement;
+      }
+    });
+  }
+
   let lastCleanAt = 0;
   function clean() {
     if (!document.documentElement) return;
@@ -524,6 +573,7 @@ const notebookUiScript = r'''
     removeTopToolbars();
     removeHeroCard();
     dismissPopups();
+    ensureInputAtBottom();
   }
 
   function triggerClick(el) {

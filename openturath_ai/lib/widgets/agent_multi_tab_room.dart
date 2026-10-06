@@ -1876,10 +1876,19 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
             },
             onLoadStart: (controller, uri) async {
               session.hasInjectedEarlyScript = false;
-              if (uri != null &&
-                  NotebookNavigation.signInFlow(uri.uriValue)) {
-                if (!session.isGoogleAuthPage) _enterGoogleSignIn();
-                return;
+              if (uri != null) {
+                if (NotebookNavigation.notebook(uri.uriValue)) {
+                  if (session.isGoogleAuthPage && mounted) {
+                    setState(() {
+                      session.isGoogleAuthPage = false;
+                      session.isWebLoading = true;
+                      session.errorMessage = null;
+                    });
+                  }
+                } else if (NotebookNavigation.signInFlow(uri.uriValue)) {
+                  if (!session.isGoogleAuthPage) _enterGoogleSignIn();
+                  return;
+                }
               }
               if (session.isGoogleAuthPage &&
                   uri != null &&
