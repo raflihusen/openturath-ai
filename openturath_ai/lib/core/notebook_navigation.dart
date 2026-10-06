@@ -32,6 +32,7 @@ class NotebookNavigation {
   /// langkah, penyetelan sesi). Hanya HTTPS ke domain Google; halaman ini
   /// ditampilkan apa adanya, tanpa skrip dari aplikasi.
   static bool signInFlow(Uri uri) {
+    if (notebook(uri)) return false;
     if (uri.scheme == 'about' || uri.scheme == 'data' || uri.scheme == 'blob') {
       return true;
     }
@@ -39,7 +40,7 @@ class NotebookNavigation {
     final host = uri.host.toLowerCase();
     return authentication(uri) ||
         host == 'google.com' ||
-        host.endsWith('.google.com') ||
+        (host.endsWith('.google.com') && !hosts.contains(host)) ||
         host.endsWith('.google.co.id') ||
         host.endsWith('.gstatic.com') ||
         host.endsWith('.googleusercontent.com') ||
