@@ -729,8 +729,8 @@ class _LibraryNumbersTile extends StatelessWidget {
   }
 }
 
-/// Ringkasan tujuh adab untuk bahasa selain Indonesia: (judul, satu kalimat).
-/// Urutannya mengikuti "Adab 1-7" di [LegalCopy.aiGuidelineSections].
+/// Ringkasan delapan adab untuk bahasa selain Indonesia: (judul, satu kalimat).
+/// Urutannya mengikuti "Adab 1-8" di [LegalCopy.aiGuidelineSections].
 const Map<String, List<(String, String)>> _adabDigest = {
   'en': [
     (
@@ -739,7 +739,7 @@ const Map<String, List<(String, String)>> _adabDigest = {
     ),
     (
       'Check the text and its context',
-      'Read what comes before and after a quotation, and confirm the edition, volume, and page in the book itself.'
+      'Read what comes before and after a quotation to understand the full context, conditions, and exceptions in the original text.'
     ),
     (
       'Respect the schools and the specialists',
@@ -761,6 +761,10 @@ const Map<String, List<(String, String)>> _adabDigest = {
       'Guard your tongue and your hands',
       'Do not use AI to disparage scholars or fellow Muslims, or to stir up hostility.'
     ),
+    (
+      'Polite and scholarly corrections',
+      'Report textual errors, misattributions, or inaccuracies respectfully through official channels so the heritage remains preserved.'
+    ),
   ],
   'ar': [
     (
@@ -769,7 +773,7 @@ const Map<String, List<(String, String)>> _adabDigest = {
     ),
     (
       'تحقق من النص وسياقه',
-      'اقرأ ما قبل الاقتباس وما بعده، وراجع الطبعة والجزء والصفحة في الكتاب نفسه.'
+      'اقرأ ما قبل الاقتباس وما بعده لفهم سياق المسألة وشروطها في النص الأصلي.'
     ),
     (
       'احترم المذاهب وأهل الاختصاص',
@@ -790,6 +794,10 @@ const Map<String, List<(String, String)>> _adabDigest = {
     (
       'احفظ لسانك ويدك',
       'لا تستعملها في ذم العلماء أو المسلمين ولا في إثارة العداوة.'
+    ),
+    (
+      'الأدب في التصحيح والتنبيه',
+      'إذا وجدت خطأ في نص أو نسبة، فبلّغ عنه بأدب وعلمية عبر القنوات الرسمية حفظًا للتراث.'
     ),
   ],
 };

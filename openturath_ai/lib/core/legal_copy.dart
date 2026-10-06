@@ -332,77 +332,66 @@ abstract final class LegalCopy {
 
   static const List<LegalSection> aiGuidelineSections = [
     LegalSection(
-      title: "Adab Menggunakan AI dalam Menuntut Ilmu",
-      content: "Dalam kerangka Fikih Tahawwulat yang disusun Al-Habib Abu Bakar Al-Adni bin Ali Al-Masyhur (rahimahullah), teknologi termasuk urusan sarana yang terus diperbarui (tahdits al-wasa'il). AI adalah alat: ia menguatkan niat pemakainya, baik maupun buruk.\n\nIlmu yang dicari lewat membaca dan penelusuran disebut ilmu dirayah; AI membantu di wilayah ini. Adapun ilmu riwayah, yang bersambung sanadnya dan membawa penyucian jiwa, hanya diperoleh dengan talaqqi kepada guru.\n\nTujuh adab berikut dirumuskan OpenTurath dengan berpijak pada prinsip-prinsip tersebut.",
+      title: "Prinsip dan Adab Menuntut Ilmu",
+      content:
+          "Teknologi kecerdasan buatan hadir sebagai sarana penunjang bacaan dan pemetaan pembahasan turats. "
+          "AI adalah alat bantu penelusuran teks, sedangkan pemahaman agama yang mendalam, ketersambungan sanad, "
+          "dan penyucian jiwa hanya diperoleh melalui tradisi talaqqi kepada guru dan ulama yang berkompeten.\n\n"
+          "Berikut adalah pedoman adab yang perlu dijaga oleh setiap penuntut ilmu saat menelaah naskah bersama OpenTurath.",
     ),
     LegalSection(
       title: "Adab 1 · AI adalah alat bantu, bukan guru",
-      content: "Gunakan AI untuk memperluas bacaan, memetakan pembahasan, dan menyiapkan pertanyaan kepada guru. AI bukan syekh murabbi, tidak berwenang berfatwa, dan tidak menggantikan majelis ilmu.\n\nKesimpulan hukum dari AI adalah bahan awal yang perlu diajukan kepada ulama yang berkompeten.",
-    ),
-    LegalSection(
-      title: "Adab 2 · Periksa teks dan konteksnya",
-      content: "Baca kalimat sebelum dan sesudah kutipan (siyaq an-nash). Periksa syarat, pengecualian, cetakan, jilid, dan halaman pada kitab aslinya.\n\nBedakan tiga hal: teks asli kitab, ringkasan AI, dan terjemahan.",
-    ),
-    LegalSection(
-      title: "Adab 3 · Hormati otoritas mazhab dan para ahli",
-      content: "Jangan memakai AI untuk mencari bahan debat (jidal), memprovokasi, atau menghakimi pendapat ulama.\n\nPenetapan hukum dan penilaian derajat hadis adalah wewenang ahlinya; AI hanya menampilkan riwayat dan pendapat.",
-    ),
-    LegalSection(
-      title: "Adab 4 · Jujur dalam menisbatkan",
-      content: "Jangan memberi kesan telah membaca sebuah kitab bila baru membaca ringkasan AI. Nisbatkan hanya kepada sumber yang sudah Anda periksa sendiri.\n\nBila menemukan kekeliruan AI, catat dan laporkan dengan santun.",
-    ),
-    LegalSection(
-      title: "Adab 5 · Waspada terhadap jawaban yang meyakinkan tetapi keliru",
-      content: "Kalimat yang fasih dan yakin tidak menjamin kebenaran. Fikih Tahawwulat menyebut bahaya ini sebagai tipu daya digital (ad-dajl ar-raqmi).\n\nTimbang setiap jawaban dengan Al-Qur'an, sunnah, dan penjelasan para ulama; jangan terpesona oleh kecepatan mesin.",
-    ),
-    LegalSection(
-      title: "Adab 6 · Jaga sanad",
-      content: "Ilmu agama dipikul oleh orang-orang yang adil dari setiap generasi. AI mengolah data tanpa ruh: ia tidak memiliki sanad, sifat adil ('adalah), maupun ijazah.\n\nPerlakukan AI sebagai perpustakaan, bukan pemikul amanah ilmu.",
-    ),
-    LegalSection(
-      title: "Adab 7 · Jaga lisan dan tangan",
-      content: "Sesuai manhaj salamah, jangan memakai AI untuk mencela ulama atau sesama muslim, menyebar kebencian, atau memicu permusuhan.\n\nJadikan ia sarana ilmu yang menenangkan dan mempersatukan.",
-    ),
-    LegalSection(
-      title: "Rujukan Adab",
-      content: "Kitab karya Al-Habib Abu Bakar Al-Adni: Ad-Dala'il an-Nabawiyyah (hlm. 60–62); Ihya' Lughat al-Islam al-'Alamiyyah (hlm. 46–47); Al-Marja' at-Tarbawi (hlm. 27); At-Tabshirah ad-Da'wiyyah (hlm. 76–77 dan 221–222).\n\nMuhadharah: Mafashil wa Fawashil 147 tentang pedoman memakai media dan perangkat modern; At-Tadzkirah wa at-Tabshirah, pertemuan kedua; Al-Marshad an-Nabawi, pertemuan ketiga.\n\nNomor halaman mengikuti rujukan yang kami terima dan sedang dicocokkan ulang dengan cetakan kitabnya.",
-    ),
-    LegalSection(
-      title: '1. Peran OpenTurath dalam Belajar',
       content:
-          'OpenTurath membantu menelusuri pembahasan dalam kitab dan menyusun penjelasan awal berdasarkan sumber yang tersedia. '
-          'Gunakan hasilnya untuk memperluas pembacaan, menyiapkan pertanyaan kepada guru, atau menemukan rujukan yang perlu diperiksa.\n\n'
-          'Jawaban AI dapat keliru meskipun disampaikan dengan kalimat yang meyakinkan. '
-          'Kehadiran judul kitab atau nomor halaman belum membuktikan bahwa seluruh isi jawaban bebas dari kekeliruan.',
+          "Gunakan asisten AI untuk memperluas pembacaan, memetakan letak bab pembahasan, dan merumuskan pertanyaan sebelum diajukan kepada guru. "
+          "AI bukan syekh murabbi, tidak berwenang berfatwa, dan tidak menggantikan kehadiran di majelis ilmu.\n\n"
+          "Kesimpulan atau penjelasan dari AI adalah bahan kajian awal yang perlu diteliti kembali kepada ulama yang berkompeten.",
     ),
     LegalSection(
-      title: '2. Membaca Kutipan Bersama Konteks',
+      title: "Adab 2 · Meneliti teks dan konteksnya",
       content:
-          'Periksa judul kitab, nama pengarang, edisi, jilid, dan halaman yang dirujuk. '
-          'Baca bagian sebelum dan sesudah kutipan untuk memahami hubungan pembahasan secara utuh. '
-          'Syarat, pengecualian, dan konteks pembahasan sangat memengaruhi maksud ibarah hukum.\n\n'
-          'Jika penomoran halaman berbeda, cocokkan dengan cetakan atau edisi yang Anda gunakan.',
+          "Ketika menemukan suatu kutipan ibarah, bacalah bagian sebelum dan sesudahnya secara utuh untuk memahami konteks permasalahan (siyaq an-nash). "
+          "Perhatikan syarat, pengecualian, serta batasan hukum pada naskah aslinya.\n\n"
+          "Bedakan secara cermat antara tiga perkara: naskah asli kitab, terjemahan makna, dan kesimpulan bahasa mesin.",
     ),
     LegalSection(
-      title: '3. Menjaga Adab Perbedaan Pendapat',
+      title: "Adab 3 · Menghormati mazhab dan para ahli",
       content:
-          'Penjelasan tentang mazhab atau kedudukan suatu pendapat perlu dibaca sesuai bidang dan rujukannya. '
-          'Ringkasan perbandingan tidak otomatis mencakup seluruh pandangan ulama.\n\n'
-          'Istilah khusus seperti mu\'tamad, sanad, dan derajat hadis memiliki metodologi ilmiah yang ketat. '
-          'Untuk pemahaman agama yang mendalam dan penetapan hukum, tetaplah merujuk kepada guru dan ulama yang berkompeten.',
+          "Jangan mempergunakan hasil telaah untuk memicu perdebatan (jidal), menyudutkan pihak lain, atau menghakimi pandangan ulama. "
+          "Penjelasan perbandingan pendapat yang ditampilkan AI tidak otomatis merangkum seluruh kekayaan khazanah fukaha.\n\n"
+          "Penetapan hukum dan penilaian derajat riwayat merupakan wewenang para pakar yang memiliki keahlian ilmiah mendalam.",
     ),
     LegalSection(
-      title: '4. Mengutip dan Membagikan Hasil',
+      title: "Adab 4 · Kejujuran dan amanah ilmiah",
       content:
-          'Bedakan dengan jujur antara naskah kitab asli, kutipan terjemahan, dan sintesis penjelasan AI. '
-          'Cantumkan sumber yang benar-benar Anda periksa pada naskah aslinya. '
-          'Jangan memberi kesan telah membaca kitab secara utuh apabila penelusuran baru dilakukan melalui ringkasan AI.',
+          "Jangan memberi kesan telah membaca suatu kitab secara utuh apabila telaah baru dilakukan melalui ringkasan mesin pencari. "
+          "Nisbatkan dan kutip hanya naskah yang telah Anda periksa dan baca sendiri secara langsung.\n\n"
+          "Kejujuran ilmiah adalah mahkota bagi penuntut ilmu dan penjaga keberkahan telaah turats.",
     ),
     LegalSection(
-      title: '5. Melaporkan Kesalahan Teks atau Rujukan',
+      title: "Adab 5 · Waspada terhadap kekeliruan mesin",
       content:
-          'Apabila Anda menemukan kekeliruan kutipan teks Arab, salah atribusi pengarang, atau kesalahan jilid dan halaman, '
-          'kirimkan laporan ke $contactSupportEmail dengan menyertakan nama kitab, pertanyaan, dan usulan koreksi yang benar.',
+          "Susunan kalimat yang terdengar fasih, rapi, dan meyakinkan tidak menjadi jaminan atas kebenaran hakiki. "
+          "Kehadiran judul kitab atau penomoran bab belum membuktikan bahwa seluruh uraian bebas dari kesalahan tafsir.\n\n"
+          "Timbang setiap jawaban dengan kaidah Al-Qur'an, sunnah, dan penjelasan para ulama; jangan tergesa-gesa mengambil kesimpulan hanya karena kecepatan mesin.",
+    ),
+    LegalSection(
+      title: "Adab 6 · Menjaga kemuliaan sanad dan talaqqi",
+      content:
+          "Ilmu agama diwariskan dari generasi ke generasi oleh para ulama yang terpercaya dan memiliki integritas moral. "
+          "Kecerdasan buatan mengolah data secara mekanis tanpa ruh: ia tidak memiliki sanad keilmuan, sifat adil ('adalah), maupun ijazah pengajaran.\n\n"
+          "Posisikan teknologi ini semata-mata sebagai sarana pembantu penelusuran di perpustakaan, bukan sebagai pemikul amanah agama.",
+    ),
+    LegalSection(
+      title: "Adab 7 · Menjaga lisan dan tangan",
+      content:
+          "Sesuai manhaj keselamatan (salamatus shadr wal lisan), jangan menggunakan kutipan untuk mencela ulama, merendahkan sesama muslim, menyebarkan prasangka, atau menyalakan permusuhan.\n\n"
+          "Jadikanlah ilmu sebagai sarana yang menyejukkan hati, menyatukan umat, dan menambah rasa takut kepada Allah.",
+    ),
+    LegalSection(
+      title: "Adab 8 · Sikap santun dalam menyampaikan koreksi",
+      content:
+          "Apabila Anda mendapati kekeliruan teks Arab, salah atribusi pengarang, atau ketidaktepatan informasi dalam naskah yang ditampilkan, sampaikan koreksi secara santun dan ilmiah.\n\n"
+          "Laporan perbaikan dapat dikirimkan melalui saluran resmi ($contactSupportEmail) agar khazanah kitab tetap terjaga keasliannya.",
     ),
   ];
 
