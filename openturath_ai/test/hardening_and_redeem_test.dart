@@ -2,7 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:openturath_ai/core/hijri_date_utils.dart';
 import 'package:openturath_ai/models/agent_model.dart';
 import 'package:openturath_ai/models/user_model.dart';
-import 'package:openturath_ai/screens/agent_webview_screen.dart';
+import 'package:openturath_ai/core/notebook_navigation.dart';
 import 'package:openturath_ai/services/subscription_service.dart';
 
 void main() {
@@ -95,7 +95,7 @@ void main() {
       bool check(String urlStr) {
         final uri = Uri.tryParse(urlStr);
         if (uri == null) return false;
-        return AgentWebviewScreen.isAllowedNotebookUrl(uri);
+        return NotebookNavigation.notebook(uri);
       }
 
       expect(check('https://notebooklm.google.com/notebook/abc-123'), isTrue);

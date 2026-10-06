@@ -117,11 +117,9 @@ void main() {
         'lib/screens/google_session_auth_screen.dart',
         'lib/screens/profile_screen.dart',
         'lib/screens/dashboard_screen.dart',
-        'lib/screens/library_screen.dart',
         'lib/screens/book_catalog_screen.dart',
         'lib/screens/bookmark_screen.dart',
         'lib/widgets/app_error_state.dart',
-        'lib/widgets/evidence_bottom_sheet.dart',
         'lib/widgets/openturath_brand.dart',
       ];
 

@@ -17,7 +17,7 @@ class BookModel {
   });
 }
 
-/// Raw imported canonical catalog entry from dataset (e.g. canonical_syafii.json).
+/// Raw imported canonical catalog entry from dataset (e.g. 01_KATALOG_FIKIH_SYAFII.json).
 /// Preserves raw bibliographical fields without premature editorial assumptions.
 class CanonicalEntry {
   const CanonicalEntry({
