@@ -471,7 +471,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                       mainAxisSpacing: 12,
                                       mainAxisExtent:
                                           MediaQuery.textScalerOf(context)
-                                              .scale(164),
+                                              .scale(212),
                                     ),
                                     itemCount: _curatedDisciplines.length,
                                     itemBuilder: (context, index) {
@@ -486,10 +486,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                       return OTReveal(
                                         index: index + 2,
                                         child: OTInkCard(
-                                          watermark: NativeCopy.values[
-                                                      'field_${disc.fieldId}']
-                                                  ?[2] ??
-                                              '',
+                                          watermark: const {'fiqh': 'الفقه', 'hadith': 'الحديث', 'tafsir': 'التفسير', 'aqidah': 'العقيدة', 'usul_fiqh': 'أصول الفقه', 'arabic': 'العربية'}[disc.fieldId] ?? NativeCopy.values['field_${disc.fieldId}']?[2] ?? '',
                                           semanticLabel:
                                               'AI ${Loc.text(disc.name)}',
                                           onTap: () {
@@ -629,7 +626,7 @@ class _LibraryNumbersTile extends StatelessWidget {
   Widget build(BuildContext context) {
     Loc.watch(context);
     return OTInkCard(
-      watermark: 'كتب',
+      watermark: '',
       padding: const EdgeInsets.all(OTSpacing.lg),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -649,41 +646,33 @@ class _LibraryNumbersTile extends StatelessWidget {
                   all.values.fold<int>(0, (sum, item) => sum + item.totalKitab);
               final pages = all.values
                   .fold<int>(0, (sum, item) => sum + item.totalHalaman);
-              Widget stat(String value, String label) => Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 16, vertical: 12),
-                    decoration: BoxDecoration(
-                        color: OTExpressive.white.withValues(alpha: .06),
-                        borderRadius: OTRadius.inputBorder),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(value,
-                            style: ScholarlyFonts.outfit(
-                                fontSize: OTFontSize.s26,
-                                fontWeight: FontWeight.w600,
-                                color: OTExpressive.white)),
-                        Text(label,
-                            maxLines: 2,
-                            style: ScholarlyFonts.outfit(
-                                fontSize: OTFontSize.s12,
-                                color: OTExpressive.whiteMuted)),
-                      ],
-                    ),
-                  );
-              return Wrap(
-                spacing: 12,
-                runSpacing: 12,
+              Widget stat(String value, String label) => Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  stat(number.format(all.length), Loc.tr('loginStatLibraries')),
-                  stat(Loc.atLeast(number.format(entries ~/ 100 * 100)),
-                      Loc.tr('loginStatEntries')),
-                  stat(
-                      Loc.atLeast(number.format(pages ~/ 100000 / 10),
-                          Loc.tr('unitMillion')),
-                      Loc.tr('loginStatPages')),
-                ],
-              );
+                  Text(value, style: ScholarlyFonts.outfit(
+                    fontSize: OTFontSize.s22, fontWeight: FontWeight.w600,
+                    color: OTExpressive.white)),
+                  const SizedBox(height: 6),
+                  Text(label, style: ScholarlyFonts.outfit(
+                    fontSize: OTFontSize.s12, color: OTExpressive.whiteMuted)),
+                ]);
+              final metrics = [
+                stat(number.format(all.length), Loc.tr('loginStatLibraries')),
+                stat(Loc.atLeast(number.format(entries ~/ 100 * 100)), Loc.tr('loginStatEntries')),
+                stat(Loc.atLeast(number.format(pages ~/ 100000 / 10), Loc.tr('unitMillion')), Loc.tr('loginStatPages')),
+              ];
+              return LayoutBuilder(builder: (context, box) {
+                final stacked = box.maxWidth < 360 || MediaQuery.textScalerOf(context).scale(16) > 24;
+                if (stacked) return Column(crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [for (final metric in metrics) Padding(
+                    padding: const EdgeInsets.only(bottom: 16), child: metric)]);
+                return Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  for (var i = 0; i < metrics.length; i++) ...[
+                    if (i > 0) const SizedBox(width: 16),
+                    Expanded(child: metrics[i]),
+                  ],
+                ]);
+              });
             },
           ),
         ],
@@ -817,10 +806,12 @@ class _AdabOfDayTile extends StatelessWidget {
                   color: ink)),
           const SizedBox(height: 4),
           Text(body,
-              maxLines: 3,
+              maxLines: 2,
               overflow: TextOverflow.ellipsis,
               style: ScholarlyFonts.outfit(
                   fontSize: OTFontSize.s14, height: 1.5, color: muted)),
+          const SizedBox(height: 12),
+          Text(Loc.tr('aiEtiquetteLabel'), style: OTTypography.bodyMedium(color: ink)),
         ],
       ),
     );
