@@ -47,7 +47,7 @@ class AppErrorState extends StatelessWidget {
   const AppErrorState.unauthorized({
     super.key,
     this.title = 'Langganan diperlukan',
-    this.message = 'Sesi Anda telah berakhir atau akses ke asisten ini belum aktif.',
+    this.message = 'Sesi Anda telah berakhir atau akses ke AI ini belum aktif.',
     this.icon = Icons.lock_outline_rounded,
     this.onRetry,
     this.retryLabel = 'Lihat langganan',
@@ -73,7 +73,7 @@ class AppErrorState extends StatelessWidget {
   const AppErrorState.generic({
     super.key,
     this.title = 'Terjadi kendala teknis',
-    this.message = 'Asisten belum dapat dimuat. Coba lagi sebentar.',
+    this.message = 'AI belum dapat dimuat. Coba lagi sebentar.',
     this.icon = Icons.error_outline_rounded,
     this.onRetry,
     this.retryLabel = 'Muat ulang',
