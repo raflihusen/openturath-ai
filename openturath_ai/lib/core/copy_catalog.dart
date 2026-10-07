@@ -752,4 +752,6 @@ const copyCatalog = <String, List<String>>{
   "catalogFailure": ["Rujukan belum dapat dimuat. Coba lagi.", "References could not be loaded. Try again.", "تعذر تحميل المراجع. حاول مجددًا."],
   "catalogSourceLabel": ["Data katalog · periksa edisi saat mengutip", "Catalog data · verify the edition when citing", "بيانات الفهرس · راجع الطبعة عند الاقتباس"],
   "preparingAnswer": ["Menyusun jawaban…", "Preparing an answer…", "جار إعداد الجواب…"],
+  "payAmount": ["Bayar {0}", "Pay {0}", "ادفع {0}"],
+  "monthlyEquivalent": ["Setara {0}/bulan · dibayar sekaligus", "Equivalent to {0}/month · paid upfront", "ما يعادل {0} شهريًا · يُدفع كاملًا"],
 };

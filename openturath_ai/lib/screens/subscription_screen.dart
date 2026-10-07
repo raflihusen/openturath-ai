@@ -176,13 +176,13 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
 
   Widget _card({required Widget child, bool flagship = false}) {
     final dark = Theme.of(context).brightness == Brightness.dark;
-    final border = OTColors.border(dark);
+    final border = OTColors.surface(dark);
     if (flagship) {
       return Container(
         decoration: BoxDecoration(
           color: OTColors.surface(dark),
           borderRadius: BorderRadius.circular(OTRadius.card),
-          border: Border.all(color: OTColors.borderStrong(dark)),
+          border: Border.all(color: OTColors.surface(dark)),
         ),
         padding: const EdgeInsets.all(20),
         child: child,
@@ -396,12 +396,12 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
           ),
         );
 
-    Widget cta(VoidCallback onPressed) => SizedBox(
+    Widget cta(VoidCallback onPressed, int amount) => SizedBox(
           width: double.infinity,
           height: 48,
           child: FilledButton(
             onPressed: _processing ? null : onPressed,
-            child: Text(Loc.tr('continuePayment')),
+            child: Text(Loc.tr('payAmount', [ProductPricing.rupiah(amount)])),
           ),
         );
 
@@ -441,7 +441,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
           const SizedBox(height: 20),
           PromoPrice(
             amount: price.amount,
-            regularAmount: price.regularAmount,
+            regularAmount: price.amount,
             period: price.period,
           ),
           const SizedBox(height: 16),
@@ -450,7 +450,12 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
           for (final benefit in benefits) _benefitRow(benefit, ink),
           if (wide) const Spacer() else const SizedBox(height: 8),
           const SizedBox(height: 8),
-          cta(onCheckout),
+          if (price.months > 1) ...[
+            Text(Loc.tr('monthlyEquivalent', [ProductPricing.rupiah((price.amount / price.months).round())]),
+              style: OTTypography.caption(color: muted)),
+            const SizedBox(height: 12),
+          ],
+          cta(onCheckout, price.amount),
           _checkoutNotice(agentId),
         ];
 
@@ -682,10 +687,10 @@ class _TierSelector extends StatelessWidget {
                     padding:
                         const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
                     decoration: BoxDecoration(
-                      color: OTColors.surface(dark),
+                      color: selected == i ? ink : OTColors.surfaceSubtle(dark),
                       borderRadius: BorderRadius.circular(OTRadius.input),
                       border: Border.all(
-                        color: selected == i ? ink : OTColors.border(dark),
+                        color: selected == i ? ink : OTColors.surfaceSubtle(dark),
                         width: selected == i ? 1.6 : 1,
                       ),
                     ),
@@ -698,32 +703,9 @@ class _TierSelector extends StatelessWidget {
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                           style: OTTypography.captionMedium(
-                              color: selected == i ? ink : muted),
+                              color: selected == i ? OTColors.canvas(dark) : muted),
                         ),
-                        const SizedBox(height: 4),
-                        Text(
-                          Loc.ltr(offers[i].priceLabel),
-                          textAlign: TextAlign.center,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: ScholarlyFonts.outfit(
-                            fontSize: OTFontSize.s14,
-                            fontWeight: FontWeight.w600,
-                            color: ink,
-                          ),
-                        ),
-                        // Setara per bulan, dibulatkan ke ribuan terdekat.
-                        if (offers[i].months > 1) ...[
-                          const SizedBox(height: 2),
-                          Text(
-                            '≈ ${Loc.ltr(ProductPricing.rupiah(((offers[i].amount / offers[i].months) / 1000).round() * 1000))}${Loc.tr('perMonth')}',
-                            textAlign: TextAlign.center,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: ScholarlyFonts.outfit(
-                                fontSize: OTFontSize.s12, color: muted),
-                          ),
-                        ],
+
                       ],
                     ),
                   ),
