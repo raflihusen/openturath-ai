@@ -2168,6 +2168,11 @@ const copyCatalog = <String, List<String>>{
     "The assistant could not be opened",
     "تعذّر فتح المساعد"
   ],
+  "roomHttpFailure": [
+    "Server halaman AI mengembalikan HTTP {0}. Coba muat ulang sebentar lagi.",
+    "The AI page returned HTTP {0}. Try reloading shortly.",
+    "أعاد خادم صفحة AI الرمز HTTP {0}. حاول إعادة التحميل بعد قليل."
+  ],
   "roomNotReadyBody": [
     "Halaman sudah dibuka, tetapi kolom percakapan belum siap. Muat ulang atau periksa sesi Google Anda.",
     "The page opened, but its conversation input is not ready. Reload or check your Google session.",
