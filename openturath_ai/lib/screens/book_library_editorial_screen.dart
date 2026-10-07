@@ -112,10 +112,11 @@ class _OpenTurathBookLibraryPageState extends State<OpenTurathBookLibraryPage> {
       }
     }).toList();
     result.sort((a, b) => switch (_sort) {
-      _BookSort.title => a.title.compareTo(b.title),
-      _BookSort.author => a.author.compareTo(b.author),
-      _BookSort.volumes => (int.tryParse(a.volumes) ?? 0).compareTo(int.tryParse(b.volumes) ?? 0),
-    });
+          _BookSort.title => a.title.compareTo(b.title),
+          _BookSort.author => a.author.compareTo(b.author),
+          _BookSort.volumes => (int.tryParse(a.volumes) ?? 0)
+              .compareTo(int.tryParse(b.volumes) ?? 0),
+        });
     return result;
   }
 
@@ -138,149 +139,153 @@ class _OpenTurathBookLibraryPageState extends State<OpenTurathBookLibraryPage> {
 
     final visibleBooks = _filteredBooks;
     return LayoutBuilder(builder: (context, box) {
-    final pageInset = ((box.maxWidth - 1160) / 2).clamp(box.maxWidth < 600 ? 16.0 : 24.0, double.infinity);
-    final available = box.maxWidth - 2 * pageInset;
-    final largeText = MediaQuery.textScalerOf(context).scale(16) > 24;
-    final columns = available >= 1100 ? 3 : available >= 720 ? 2 : 1;
-    return Scaffold(
-      backgroundColor: canvas,
-      appBar: AppBar(
-        titleSpacing: otTitleSpacing(context),
+      final pageInset = ((box.maxWidth - 1160) / 2)
+          .clamp(box.maxWidth < 600 ? 16.0 : 24.0, double.infinity);
+      final available = box.maxWidth - 2 * pageInset;
+      final largeText = MediaQuery.textScalerOf(context).scale(16) > 24;
+      final columns = available >= 1100
+          ? 3
+          : available >= 720
+              ? 2
+              : 1;
+      return Scaffold(
         backgroundColor: canvas,
-        title: Text(widget.collectionName),
-      ),
-      body: SafeArea(
-        child: CustomScrollView(
-          slivers: [
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: EdgeInsets.fromLTRB(pageInset, 8, pageInset, 0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(Loc.tr('catalogSourceLabel'),
-                        style: OTTypography.caption(color: textSecondary)),
-                    const SizedBox(height: OTSpacing.md),
-                    // Search Bar
-                    TextField(
-                      controller: _searchController,
-                      focusNode: _searchFocusNode,
-                      style: ScholarlyFonts.outfit(
-                          color: ink, fontSize: OTFontSize.s14),
-                      decoration: InputDecoration(
-                        hintText: Loc.tr('ui_0ae09a2807'),
-                        hintStyle: ScholarlyFonts.outfit(
-                            color: textSecondary, fontSize: OTFontSize.s14),
-                        prefixIcon: Icon(Icons.search_rounded,
-                            color: textSecondary, size: 20),
-                        suffixIcon: _query.isNotEmpty
-                            ? IconButton(
-                                tooltip: Loc.tr('clearSearch'),
-                                icon: Icon(Icons.clear_rounded,
-                                    color: textSecondary, size: 18),
-                                onPressed: () {
-                                  _searchController.clear();
-                                  _searchFocusNode.requestFocus();
-                                },
-                              )
-                            : null,
-                        filled: true,
-                        fillColor: OTColors.surfaceSubtle(isDark),
-                        contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 12),
-                        border: OutlineInputBorder(
-                          borderRadius: OTRadius.inputBorder,
-                          borderSide: BorderSide.none,
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: OTRadius.inputBorder,
-                          borderSide: BorderSide.none,
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: OTRadius.inputBorder,
-                          borderSide: BorderSide(color: ink, width: 1.2),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    // Filter Chips
-                    SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
-                        children: [
-                          _FilterChip(
-                            label: Loc.tr('allBooks'),
-                            isSelected: _filter == _BookVolumeFilter.all,
-                            onTap: () =>
-                                setState(() => _filter = _BookVolumeFilter.all),
-                          ),
-                          const SizedBox(width: 8),
-                          _FilterChip(
-                            label: Loc.tr('singleVolume'),
-                            isSelected:
-                                _filter == _BookVolumeFilter.singleVolume,
-                            onTap: () => setState(
-                                () => _filter = _BookVolumeFilter.singleVolume),
-                          ),
-                          const SizedBox(width: 8),
-                          _FilterChip(
-                            label: Loc.tr('multipleVolumes'),
-                            isSelected:
-                                _filter == _BookVolumeFilter.multiVolume,
-                            onTap: () => setState(
-                                () => _filter = _BookVolumeFilter.multiVolume),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    Wrap(spacing: 12, runSpacing: 8, crossAxisAlignment: WrapCrossAlignment.center, children: [
-                      DropdownButton<_BookSort>(value: _sort, underline: const SizedBox.shrink(), onChanged: (v) {if(v != null)setState(() => _sort=v);}, items: [
-                        DropdownMenuItem(value: _BookSort.title, child: Text(reviewCopy('Judul','العنوان','Title'))),
-                        DropdownMenuItem(value: _BookSort.author, child: Text(reviewCopy('Pengarang','المؤلف','Author'))),
-                        DropdownMenuItem(value: _BookSort.volumes, child: Text(reviewCopy('Jumlah jilid','عدد الأجزاء','Volumes'))),
-                      ]),
-                      IconButton.filledTonal(tooltip: reviewCopy('Tampilan kartu','عرض البطاقات','Card view'), isSelected: !_list, onPressed: () => setState(() => _list=false), icon: const Icon(Icons.grid_view_rounded)),
-                      IconButton.filledTonal(tooltip: reviewCopy('Daftar ringkas','قائمة مختصرة','Compact list'), isSelected: _list, onPressed: () => setState(() => _list=true), icon: const Icon(Icons.view_list_rounded)),
-                    ]),
-                    const SizedBox(height: 18),
-                    Text(
-                      _query.isEmpty && _filter == _BookVolumeFilter.all
-                          ? Loc.tr('bookCount', ['${visibleBooks.length}'])
-                          : Loc.tr('booksShown', [
-                              '${visibleBooks.length}',
-                              '${widget.books.length}',
-                            ]),
-                      style: ScholarlyFonts.outfit(
-                        fontSize: OTFontSize.s12,
-                        color: textSecondary,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            if (visibleBooks.isEmpty)
-              SliverFillRemaining(
-                hasScrollBody: false,
-                child: Center(
+        appBar: AppBar(
+          titleSpacing: otTitleSpacing(context),
+          backgroundColor: canvas,
+          title: Text(widget.collectionName),
+        ),
+        body: SafeArea(
+          child: CustomScrollView(
+            slivers: [
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: EdgeInsets.fromLTRB(pageInset, 8, pageInset, 0),
                   child: Column(
-                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Icon(Icons.search_off_rounded,
-                          size: 48, color: textSecondary),
-                      const SizedBox(height: 12),
-                      Text(
-                        Loc.tr('ui_54db73b3af'),
+                      Text(Loc.tr('catalogSourceLabel'),
+                          style: OTTypography.caption(color: textSecondary)),
+                      const SizedBox(height: OTSpacing.md),
+                      // Search Bar
+                      TextField(
+                        controller: _searchController,
+                        focusNode: _searchFocusNode,
                         style: ScholarlyFonts.outfit(
-                          fontSize: OTFontSize.s16,
-                          fontWeight: FontWeight.w400,
-                          color: ink,
+                            color: ink, fontSize: OTFontSize.s14),
+                        decoration: InputDecoration(
+                          hintText: Loc.tr('ui_0ae09a2807'),
+                          hintStyle: ScholarlyFonts.outfit(
+                              color: textSecondary, fontSize: OTFontSize.s14),
+                          prefixIcon: Icon(Icons.search_rounded,
+                              color: textSecondary, size: 20),
+                          suffixIcon: _query.isNotEmpty
+                              ? IconButton(
+                                  tooltip: Loc.tr('clearSearch'),
+                                  icon: Icon(Icons.clear_rounded,
+                                      color: textSecondary, size: 18),
+                                  onPressed: () {
+                                    _searchController.clear();
+                                    _searchFocusNode.requestFocus();
+                                  },
+                                )
+                              : null,
+                          filled: true,
+                          fillColor: OTColors.surfaceSubtle(isDark),
+                          contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 12),
+                          border: OutlineInputBorder(
+                            borderRadius: OTRadius.inputBorder,
+                            borderSide: BorderSide.none,
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: OTRadius.inputBorder,
+                            borderSide: BorderSide.none,
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: OTRadius.inputBorder,
+                            borderSide: BorderSide(color: ink, width: 1.2),
+                          ),
                         ),
                       ),
-                      const SizedBox(height: 4),
+                      const SizedBox(height: 12),
+                      // Filter Chips
+                      SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          children: [
+                            _FilterChip(
+                              label: Loc.tr('allBooks'),
+                              isSelected: _filter == _BookVolumeFilter.all,
+                              onTap: () => setState(
+                                  () => _filter = _BookVolumeFilter.all),
+                            ),
+                            const SizedBox(width: 8),
+                            _FilterChip(
+                              label: Loc.tr('singleVolume'),
+                              isSelected:
+                                  _filter == _BookVolumeFilter.singleVolume,
+                              onTap: () => setState(() =>
+                                  _filter = _BookVolumeFilter.singleVolume),
+                            ),
+                            const SizedBox(width: 8),
+                            _FilterChip(
+                              label: Loc.tr('multipleVolumes'),
+                              isSelected:
+                                  _filter == _BookVolumeFilter.multiVolume,
+                              onTap: () => setState(() =>
+                                  _filter = _BookVolumeFilter.multiVolume),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      Wrap(
+                          spacing: 12,
+                          runSpacing: 8,
+                          crossAxisAlignment: WrapCrossAlignment.center,
+                          children: [
+                            DropdownButton<_BookSort>(
+                                value: _sort,
+                                underline: const SizedBox.shrink(),
+                                onChanged: (v) {
+                                  if (v != null) setState(() => _sort = v);
+                                },
+                                items: [
+                                  DropdownMenuItem(
+                                      value: _BookSort.title,
+                                      child: Text(reviewCopy(
+                                          'Judul', 'العنوان', 'Title'))),
+                                  DropdownMenuItem(
+                                      value: _BookSort.author,
+                                      child: Text(reviewCopy(
+                                          'Pengarang', 'المؤلف', 'Author'))),
+                                  DropdownMenuItem(
+                                      value: _BookSort.volumes,
+                                      child: Text(reviewCopy('Jumlah jilid',
+                                          'عدد الأجزاء', 'Volumes'))),
+                                ]),
+                            IconButton.filledTonal(
+                                tooltip: reviewCopy('Tampilan kartu',
+                                    'عرض البطاقات', 'Card view'),
+                                isSelected: !_list,
+                                onPressed: () => setState(() => _list = false),
+                                icon: const Icon(Icons.grid_view_rounded)),
+                            IconButton.filledTonal(
+                                tooltip: reviewCopy('Daftar ringkas',
+                                    'قائمة مختصرة', 'Compact list'),
+                                isSelected: _list,
+                                onPressed: () => setState(() => _list = true),
+                                icon: const Icon(Icons.view_list_rounded)),
+                          ]),
+                      const SizedBox(height: 18),
                       Text(
-                        Loc.tr('ui_f7c779cb7d'),
+                        _query.isEmpty && _filter == _BookVolumeFilter.all
+                            ? Loc.tr('bookCount', ['${visibleBooks.length}'])
+                            : Loc.tr('booksShown', [
+                                '${visibleBooks.length}',
+                                '${widget.books.length}',
+                              ]),
                         style: ScholarlyFonts.outfit(
                           fontSize: OTFontSize.s12,
                           color: textSecondary,
@@ -289,29 +294,80 @@ class _OpenTurathBookLibraryPageState extends State<OpenTurathBookLibraryPage> {
                     ],
                   ),
                 ),
-              )
-            else
-              SliverPadding(
-                padding: EdgeInsets.fromLTRB(pageInset, 8, pageInset, 40),
-                sliver: Builder(builder: (context) {
-                  final delegate = SliverChildBuilderDelegate((context, index) {
-                    final book = visibleBooks[index];
-                    return _BookEditorialItem(book: book, index: index + 1, onTap: () async {
-                      if (_opening) return;
-                      if (widget.onOpenBook != null) {widget.onOpenBook!(book); return;}
-                      _opening = true;
-                      try {await Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => OpenTurathBookDetailPage(book: book)));}
-                      finally {_opening = false;}
-                    });
-                  }, childCount: visibleBooks.length);
-                  if (_list || largeText) return SliverList(delegate: delegate);
-                  return SliverGrid(delegate: delegate, gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: columns, crossAxisSpacing: 16, mainAxisSpacing: 16, mainAxisExtent: MediaQuery.textScalerOf(context).scale(260)));
-                }),
               ),
-          ],
+              if (visibleBooks.isEmpty)
+                SliverFillRemaining(
+                  hasScrollBody: false,
+                  child: Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.search_off_rounded,
+                            size: 48, color: textSecondary),
+                        const SizedBox(height: 12),
+                        Text(
+                          Loc.tr('ui_54db73b3af'),
+                          style: ScholarlyFonts.outfit(
+                            fontSize: OTFontSize.s16,
+                            fontWeight: FontWeight.w400,
+                            color: ink,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          Loc.tr('ui_f7c779cb7d'),
+                          style: ScholarlyFonts.outfit(
+                            fontSize: OTFontSize.s12,
+                            color: textSecondary,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                )
+              else
+                SliverPadding(
+                  padding: EdgeInsets.fromLTRB(pageInset, 8, pageInset, 40),
+                  sliver: Builder(builder: (context) {
+                    final delegate =
+                        SliverChildBuilderDelegate((context, index) {
+                      final book = visibleBooks[index];
+                      return _BookEditorialItem(
+                          book: book,
+                          index: index + 1,
+                          onTap: () async {
+                            if (_opening) return;
+                            if (widget.onOpenBook != null) {
+                              widget.onOpenBook!(book);
+                              return;
+                            }
+                            _opening = true;
+                            try {
+                              await Navigator.of(context).push(
+                                  MaterialPageRoute<void>(
+                                      builder: (_) => OpenTurathBookDetailPage(
+                                          book: book)));
+                            } finally {
+                              _opening = false;
+                            }
+                          });
+                    }, childCount: visibleBooks.length);
+                    if (_list || largeText)
+                      return SliverList(delegate: delegate);
+                    return SliverGrid(
+                        delegate: delegate,
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: columns,
+                            crossAxisSpacing: 16,
+                            mainAxisSpacing: 16,
+                            mainAxisExtent:
+                                MediaQuery.textScalerOf(context).scale(260)));
+                  }),
+                ),
+            ],
+          ),
         ),
-      ),
-    );
+      );
     });
   }
 }
@@ -367,8 +423,11 @@ class _BookEditorialItem extends StatelessWidget {
               Text(
                 book.title,
                 textDirection: answerDirection(book.title),
-                textAlign: answerDirection(book.title) == TextDirection.rtl ? TextAlign.right : TextAlign.left,
-                maxLines: 3, overflow: TextOverflow.ellipsis,
+                textAlign: answerDirection(book.title) == TextDirection.rtl
+                    ? TextAlign.right
+                    : TextAlign.left,
+                maxLines: 3,
+                overflow: TextOverflow.ellipsis,
                 style: ScholarlyFonts.scheherazadeNew(
                   color: ink,
                   fontSize: OTFontSize.s26,
@@ -380,7 +439,9 @@ class _BookEditorialItem extends StatelessWidget {
               Text(
                 book.author,
                 textDirection: answerDirection(book.author),
-                textAlign: answerDirection(book.author) == TextDirection.rtl ? TextAlign.right : TextAlign.left,
+                textAlign: answerDirection(book.author) == TextDirection.rtl
+                    ? TextAlign.right
+                    : TextAlign.left,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 style: ScholarlyFonts.scheherazadeNew(
@@ -401,7 +462,6 @@ class _BookEditorialItem extends StatelessWidget {
                           fontSize: OTFontSize.s12, color: textSecondary),
                     ),
                   ),
-
                 ],
               ),
             ],
