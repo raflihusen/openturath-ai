@@ -81,7 +81,8 @@ class TahawwulatHero extends StatelessWidget {
             ]);
         return TahawwulatHeroSurface(
             padding: EdgeInsets.all(wide ? 32 : 24),
-            radius: wide ? OTExpressive.heroRadius : OTExpressive.compactHeroRadius,
+            radius:
+                wide ? OTExpressive.heroRadius : OTExpressive.compactHeroRadius,
             child: wide
                 ? Row(children: [
                     Expanded(flex: 3, child: text),
