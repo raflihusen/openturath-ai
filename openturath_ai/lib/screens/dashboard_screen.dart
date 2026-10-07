@@ -593,15 +593,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                 ],
                               );
                             }
-                            return const IntrinsicHeight(
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.stretch,
-                                children: [
-                                  Expanded(child: totals),
-                                  SizedBox(width: 12),
-                                  Expanded(child: adab),
-                                ],
-                              ),
+                            return const Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Expanded(child: totals),
+                                SizedBox(width: 12),
+                                Expanded(child: adab),
+                              ],
                             );
                           }),
                         ],
