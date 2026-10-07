@@ -1,13 +1,12 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import '../core/theme.dart';
-import 'openturath_brand.dart';
 import '../core/localization.dart';
 import '../core/scholarly_fonts.dart';
 import '../core/design/ot_motion.dart';
 import 'package:openturath_ai/core/design/ot_typography.dart';
 
-/// Dua busur mengitari emblem OpenTurath, dengan gerak periodik dan reduced motion.
+/// Loader folio OpenTurath dengan kecepatan periodik dan dukungan reduced motion.
 class AppLoader extends StatefulWidget {
   final double dotSize;
   final double spacing;
@@ -120,17 +119,10 @@ class _AppLoaderState extends State<AppLoader>
                               : 48.0;
                       return SizedBox.square(
                           dimension: size,
-                          child: Stack(alignment: Alignment.center, children: [
-                            Positioned.fill(
-                                child: CustomPaint(
-                                    painter: _OrbitPainter(
-                                        progress:
-                                            still ? .25 : _controller.value,
-                                        color: dotColor))),
-                            ExcludeSemantics(
-                                child: OpenTurathMark(
-                                    size: size * .38, color: dotColor)),
-                          ]));
+                          child: CustomPaint(
+                              painter: _OrbitPainter(
+                                  progress: still ? .25 : _controller.value,
+                                  color: dotColor)));
                     }))),
         if (widget.title != null) ...[
           const SizedBox(height: 20),
@@ -205,20 +197,27 @@ class _OrbitPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final phase = progress * 2 * math.pi;
-    final turn = phase - .65 * math.sin(phase);
+    // Periodic easing preserves velocity at the loop seam. Four folios breathe
+    // and turn as one; opacity does not flicker or imply measured progress.
+    final turn = phase - .72 * math.sin(phase);
     final breath = .5 - .5 * math.cos(phase);
     final w = size.shortestSide;
-    final paint = Paint()
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = w * .065
-      ..strokeCap = StrokeCap.round;
-    final rect = Rect.fromCenter(
-        center: size.center(Offset.zero), width: w * .82, height: w * .82);
-    for (var i = 0; i < 2; i++) {
-      paint.color = color.withValues(alpha: i == 0 ? .95 : .3);
-      canvas.drawArc(
-          rect, turn + i * math.pi, .65 + breath * 1.2, false, paint);
+    canvas.save();
+    canvas.translate(size.width / 2, size.height / 2);
+    canvas.rotate(turn);
+    for (var i = 0; i < 4; i++) {
+      canvas.save();
+      canvas.rotate(i * math.pi / 2);
+      final radius = w * (.16 + .07 * breath);
+      final rect = Rect.fromCenter(
+          center: Offset(radius, -radius),
+          width: w * (.30 - .05 * breath),
+          height: w * (.30 + .04 * breath));
+      canvas.drawRRect(RRect.fromRectAndRadius(rect, Radius.circular(w * .105)),
+          Paint()..color = color.withValues(alpha: 1 - i * .16));
+      canvas.restore();
     }
+    canvas.restore();
   }
 
   @override
