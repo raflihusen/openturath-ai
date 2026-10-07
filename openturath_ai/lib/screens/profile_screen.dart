@@ -405,7 +405,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                         final choices = <Widget>[
                                           _buildThemeOption(
                                             stacked: stacked,
-                                            title: Loc.isArabic ? 'تلقائي' : Loc.language == 'en' ? 'System' : 'Otomatis',
+                                            title: Loc.isArabic
+                                                ? 'تلقائي'
+                                                : Loc.language == 'en'
+                                                    ? 'System'
+                                                    : 'Otomatis',
                                             icon: Icons.brightness_auto_rounded,
                                             isSelected:
                                                 currentMode == ThemeMode.system,
@@ -823,7 +827,10 @@ class _MembershipPass extends StatelessWidget {
                   children: [
                 Text(holderName, style: OTTypography.screenTitle(color: ink)),
                 if (email.isNotEmpty)
-                  Text(email.replaceAll('.', '.\u200b').replaceAll('@', '@\u200b'),
+                  Text(
+                      email
+                          .replaceAll('.', '.\u200b')
+                          .replaceAll('@', '@\u200b'),
                       textDirection: TextDirection.ltr,
                       style: OTTypography.caption(color: muted)),
               ])),
