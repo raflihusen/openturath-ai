@@ -467,7 +467,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 onSelectionChanged: (values) async { try { await AppConfig.setLocale(values.single); } catch (_) {} },
                               ))),
                           ])),
-                          ),
                         ],
                       ),
                     ),
