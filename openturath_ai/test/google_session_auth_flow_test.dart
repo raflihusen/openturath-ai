@@ -42,7 +42,7 @@ void main() {
 
     // Verifikasi banner langkah 2 dari 2
     expect(find.text('LANGKAH 2 DARI 2'), findsOneWidget);
-    expect(find.text('Autentikasi Ruang Asisten Google'), findsOneWidget);
+    expect(find.text('Autentikasi Ruang AI Google'), findsOneWidget);
 
     // Verifikasi email akun yang sama tampil di disclaimer
     expect(find.text('santri.openturath@gmail.com'), findsOneWidget);
