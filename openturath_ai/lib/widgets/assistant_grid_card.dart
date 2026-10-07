@@ -86,20 +86,17 @@ class AssistantGridCard extends StatelessWidget {
             Tooltip(
                 message: openLabel,
                 excludeFromSemantics: true,
-                child: Semantics(
-                    label: openLabel,
-                    button: true,
-                    child: SizedBox(
-                        width: 72,
-                        height: 48,
-                        child: FilledButton(
-                            onPressed: onOpen,
-                            style: FilledButton.styleFrom(
-                                backgroundColor: ink,
-                                foregroundColor: OTExpressive.hero,
-                                padding: EdgeInsets.zero),
-                            child: const Icon(Icons.chat_bubble_outline_rounded,
-                                size: 24))))),
+                child: SizedBox(
+                    width: 72,
+                    height: 48,
+                    child: FilledButton(
+                        onPressed: onOpen,
+                        style: FilledButton.styleFrom(
+                            backgroundColor: ink,
+                            foregroundColor: OTExpressive.hero,
+                            padding: EdgeInsets.zero),
+                        child: Icon(Icons.chat_bubble_outline_rounded,
+                            semanticLabel: openLabel, size: 24)))),
             if (onOpenLibrary != null) ...[
               const SizedBox(width: 8),
               Tooltip(
