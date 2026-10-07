@@ -40,9 +40,10 @@ void main() {
     ));
     await tester.pumpAndSettle();
 
-    expect(find.text('Jelajahi 5 AI'), findsOneWidget);
-    expect(find.text('Mengenal Fikih Tahawwulat'), findsOneWidget);
-    // Kelima AI langsung terlihat tanpa perlu membuka daftar.
+    expect(find.text('Al-Muhaqqiq'), findsNothing);
+    await tester.tap(find.text('Buka AI Fikih Tahawwulat'));
+    await tester.pumpAndSettle();
+    // Pilihan dan fungsi baru terlihat setelah masuk ke ruang AI.
     expect(tester.takeException(), isNull);
     expect(find.text('Al-Muhaqqiq'), findsOneWidget);
     expect(find.text('Al-Khatib'), findsOneWidget);
