@@ -454,21 +454,51 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             },
                           ),
                           Divider(height: 1, color: border),
-                          Padding(padding: const EdgeInsets.all(24), child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start, children: [
-                            Row(children: [Icon(Icons.translate_rounded, color: textSecondary),
-                              const SizedBox(width: 12), Text(AppCopy.language, style: OTTypography.bodyMedium(color: textPrimary))]),
-                            const SizedBox(height: 16),
-                            Directionality(textDirection: TextDirection.ltr, child: Container(
-                              padding: const EdgeInsets.all(4),
-                              decoration: BoxDecoration(color: OTColors.surfaceSubtle(isDark), borderRadius: OTRadius.inputBorder),
-                              child: Row(children: [for (final code in const ['id', 'en', 'ar'])
-                                _buildThemeOption(title: code.toUpperCase(),
-                                  isSelected: Loc.language == code, isDark: isDark,
-                                  textPrimary: textPrimary, textSecondary: textSecondary,
-                                  onTap: () async { try { await AppConfig.setLocale(code); } catch (_) {} }),
-                              ]))),
-                          ])),
+                          Padding(
+                              padding: const EdgeInsets.all(24),
+                              child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(children: [
+                                      Icon(Icons.translate_rounded,
+                                          color: textSecondary),
+                                      const SizedBox(width: 12),
+                                      Text(AppCopy.language,
+                                          style: OTTypography.bodyMedium(
+                                              color: textPrimary))
+                                    ]),
+                                    const SizedBox(height: 16),
+                                    Directionality(
+                                        textDirection: TextDirection.ltr,
+                                        child: Container(
+                                            padding: const EdgeInsets.all(4),
+                                            decoration: BoxDecoration(
+                                                color: OTColors.surfaceSubtle(
+                                                    isDark),
+                                                borderRadius:
+                                                    OTRadius.inputBorder),
+                                            child: Row(children: [
+                                              for (final code in const [
+                                                'id',
+                                                'en',
+                                                'ar'
+                                              ])
+                                                _buildThemeOption(
+                                                    title: code.toUpperCase(),
+                                                    isSelected:
+                                                        Loc.language == code,
+                                                    isDark: isDark,
+                                                    textPrimary: textPrimary,
+                                                    textSecondary:
+                                                        textSecondary,
+                                                    onTap: () async {
+                                                      try {
+                                                        await AppConfig
+                                                            .setLocale(code);
+                                                      } catch (_) {}
+                                                    }),
+                                            ]))),
+                                  ])),
                         ],
                       ),
                     ),
@@ -715,8 +745,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              if (icon != null) ...[Icon(icon, size: 16, color: color),
-                              const SizedBox(width: 4)],
+                              if (icon != null) ...[
+                                Icon(icon, size: 16, color: color),
+                                const SizedBox(width: 4)
+                              ],
                               Flexible(
                                   child: Text(Loc.text(title),
                                       textAlign: TextAlign.center,
@@ -762,68 +794,77 @@ class _MembershipPass extends StatelessWidget {
       decoration: BoxDecoration(
           color: OTColors.surface(isDark), borderRadius: OTRadius.cardBorder),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Container(
-                padding: const EdgeInsets.all(OTSpacing.md),
-                decoration: BoxDecoration(
-                    color: OTColors.surfaceSubtle(isDark),
-                    borderRadius: OTRadius.inputBorder),
-                child: SizedBox.square(
-                    dimension: 48,
-                    child: Center(
-                        child: Text(
-                            holderName.trim().isEmpty
-                                ? 'O'
-                                : holderName
-                                    .trim()
-                                    .characters
-                                    .first
-                                    .toUpperCase(),
-                            style: OTTypography.pageTitle(color: ink))))),
-            const SizedBox(width: OTSpacing.md),
-            Expanded(
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                  Text(holderName, style: OTTypography.screenTitle(color: ink)),
-                  if (email.isNotEmpty)
-                    Text(email,
-                        textDirection: TextDirection.ltr,
-                        style: OTTypography.caption(color: muted)),
-                ])),
-          ]),
-          const SizedBox(height: OTSpacing.lg),
+        Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(20),
+              padding: const EdgeInsets.all(OTSpacing.md),
               decoration: BoxDecoration(
                   color: OTColors.surfaceSubtle(isDark),
-                  borderRadius: OTRadius.cardBorder),
-              child: Row(children: [
-                Icon(summary.isOpen ? Icons.verified_rounded : Icons.lock_outline_rounded, color: ink, size: 24),
-                const SizedBox(width: 16),
-                Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Text(summary.accessLabel, style: OTTypography.bodyMedium(color: ink)),
-                  if (expiry != null) ...[
-                    const SizedBox(height: 6),
-                    Text(unlimited ? expiry : '${AppCopy.validUntil} $expiry', style: OTTypography.caption(color: muted)),
-                  ],
-                ])),
+                  borderRadius: OTRadius.inputBorder),
+              child: SizedBox.square(
+                  dimension: 48,
+                  child: Center(
+                      child: Text(
+                          holderName.trim().isEmpty
+                              ? 'O'
+                              : holderName
+                                  .trim()
+                                  .characters
+                                  .first
+                                  .toUpperCase(),
+                          style: OTTypography.pageTitle(color: ink))))),
+          const SizedBox(width: OTSpacing.md),
+          Expanded(
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                Text(holderName, style: OTTypography.screenTitle(color: ink)),
+                if (email.isNotEmpty)
+                  Text(email,
+                      textDirection: TextDirection.ltr,
+                      style: OTTypography.caption(color: muted)),
               ])),
-          const SizedBox(height: OTSpacing.lg),
-          Wrap(spacing: OTSpacing.sm, runSpacing: OTSpacing.sm, children: [
-            if (onViewAccess != null)
-              OutlinedButton.icon(
-                  onPressed: onViewAccess,
-                  icon: const Icon(Icons.auto_stories_outlined, size: 18),
-                  label: Text(Loc.tr('viewAccessList'))),
-            FilledButton.icon(
-                onPressed: onManage,
-                icon: const Icon(Icons.tune_rounded, size: 18),
-                label: Text(summary.ctaLabel)),
-          ]),
         ]),
-
+        const SizedBox(height: OTSpacing.lg),
+        Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+                color: OTColors.surfaceSubtle(isDark),
+                borderRadius: OTRadius.cardBorder),
+            child: Row(children: [
+              Icon(
+                  summary.isOpen
+                      ? Icons.verified_rounded
+                      : Icons.lock_outline_rounded,
+                  color: ink,
+                  size: 24),
+              const SizedBox(width: 16),
+              Expanded(
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                    Text(summary.accessLabel,
+                        style: OTTypography.bodyMedium(color: ink)),
+                    if (expiry != null) ...[
+                      const SizedBox(height: 6),
+                      Text(unlimited ? expiry : '${AppCopy.validUntil} $expiry',
+                          style: OTTypography.caption(color: muted)),
+                    ],
+                  ])),
+            ])),
+        const SizedBox(height: OTSpacing.lg),
+        Wrap(spacing: OTSpacing.sm, runSpacing: OTSpacing.sm, children: [
+          if (onViewAccess != null)
+            OutlinedButton.icon(
+                onPressed: onViewAccess,
+                icon: const Icon(Icons.auto_stories_outlined, size: 18),
+                label: Text(Loc.tr('viewAccessList'))),
+          FilledButton.icon(
+              onPressed: onManage,
+              icon: const Icon(Icons.tune_rounded, size: 18),
+              label: Text(summary.ctaLabel)),
+        ]),
+      ]),
     );
   }
 }
