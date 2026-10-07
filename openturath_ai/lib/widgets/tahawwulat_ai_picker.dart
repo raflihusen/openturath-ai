@@ -53,7 +53,7 @@ class TahawwulatAiPicker {
                             color: OTColors.textSecondary(dark))),
                     const SizedBox(height: 24),
                     for (var i = 0; i < agents.length; i++) ...[
-                      Material(
+                      Semantics(button: true, child: Material(
                         color: OTColors.surfaceSubtle(dark),
                         borderRadius: OTRadius.cardBorder,
                         child: InkWell(
@@ -107,7 +107,7 @@ class TahawwulatAiPicker {
                                   Icon(Icons.arrow_forward_rounded,
                                       color: ink, size: 18),
                                 ]))),
-                      ),
+                      )),
                       if (i < agents.length - 1) const SizedBox(height: 12),
                     ],
                   ]),
