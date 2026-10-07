@@ -111,13 +111,13 @@ Future<void> _shot(WidgetTester tester, String name, Widget child,
       .runAsync(() => Future<void>.delayed(const Duration(milliseconds: 300)));
   await tester.pump(const Duration(milliseconds: 900));
   await tester.pump(const Duration(milliseconds: 900));
-  if (tap != null && find.text(tap).evaluate().isEmpty) {
+  final trigger = tap == null ? null : (find.text(tap).evaluate().isNotEmpty ? find.text(tap) : find.byTooltip(tap));
+  if (trigger != null && trigger.evaluate().isEmpty) {
     fail('Render $name: required action $tap was not found');
-  } else if (tap != null) {
-    // Buka dialog atau lembar dengan mengetuk teks pemicunya.
-    await tester.ensureVisible(find.text(tap).first);
+  } else if (trigger != null) {
+    await tester.ensureVisible(trigger.first);
     await tester.pump(const Duration(milliseconds: 300));
-    await tester.tap(find.text(tap).first, warnIfMissed: false);
+    await tester.tap(trigger.first, warnIfMissed: false);
     await tester.pump(const Duration(milliseconds: 500));
     await tester.runAsync(
         () => Future<void>.delayed(const Duration(milliseconds: 200)));
