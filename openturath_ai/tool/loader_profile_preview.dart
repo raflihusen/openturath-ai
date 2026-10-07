@@ -12,6 +12,7 @@ import 'package:openturath_ai/widgets/app_loader.dart';
 final boundary = GlobalKey();
 final timings = <FrameTiming>[];
 void collect(List<FrameTiming> batch) => timings.addAll(batch);
+
 class _BenchmarkLifecycle extends WidgetsBindingObserver {
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
@@ -21,12 +22,14 @@ class _BenchmarkLifecycle extends WidgetsBindingObserver {
     }
   }
 }
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   // Measurement fixture keeps Dart frame scheduling active even when the QA
   // runner returns focus to Codex. This does not alter production lifecycle.
   WidgetsBinding.instance.addObserver(_BenchmarkLifecycle());
-  WidgetsBinding.instance.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
+  WidgetsBinding.instance
+      .handleAppLifecycleStateChanged(AppLifecycleState.resumed);
   runApp(MaterialApp(
       home: Scaffold(
           body: Center(
@@ -62,7 +65,8 @@ Future<void> main() async {
 
   File('/tmp/ot-cairo-loader-profile.json').writeAsStringSync(jsonEncode({
     'mode': 'native macOS profile',
-    'lifecycle': 'controlled resumed fixture; production lifecycle tested separately',
+    'lifecycle':
+        'controlled resumed fixture; production lifecycle tested separately',
     'measurementMs': 18000,
     'cycles': 10,
     'build': summary(
