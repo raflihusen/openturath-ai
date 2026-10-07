@@ -12,6 +12,7 @@ import '../localization.dart';
 /// Skala ukuran huruf tertutup. `screens/` dan `widgets/` tidak boleh menulis
 /// angka `fontSize` sendiri; pilih salah satu dari sembilan langkah ini.
 abstract final class OTFontSize {
+  static const double calendarDay = 32; // Dedicated dual-calendar day role.
   static const double s11 = 11; // Kepala seksi kapital, micro-pill
   static const double s12 = 12; // Keterangan, metadata
   static const double s14 = 14; // Teks antarmuka, tombol
