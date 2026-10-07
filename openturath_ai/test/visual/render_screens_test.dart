@@ -31,6 +31,7 @@ import 'package:openturath_ai/widgets/payment_success_dialog.dart';
 import 'package:openturath_ai/screens/profile_screen.dart';
 import 'package:openturath_ai/screens/subscription_screen.dart';
 import 'package:openturath_ai/services/auth_service.dart';
+import 'package:openturath_ai/services/agent_session_manager.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:openturath_ai/services/open_turath_catalog_repository.dart';
 import 'package:openturath_ai/widgets/exclusive_activation_dialog.dart';
@@ -270,6 +271,10 @@ void main() {
     await _shot(tester, 'dashboard_dark', const DashboardScreen(), dark: true);
     await _shot(tester, 'dashboard_phone', const DashboardScreen(),
         size: const Size(390, 844));
+    AgentSessionManager.instance.openAgent(agents.first);
+    await _shot(tester, 'dashboard_resume', const DashboardScreen(),
+        size: const Size(390, 844));
+    AgentSessionManager.instance.closeTab(0);
     // Ukuran jendela yang dipakai pengguna (sekitar 850 x 860) dan jendela lebar.
     await _shot(tester, 'subscription_window', const SubscriptionScreen(),
         size: const Size(850, 1500));
