@@ -1,0 +1,97 @@
+{
+  "status": "implemented-local",
+  "revision": "2026-10-07",
+  "source": "lib/core/design",
+  "brand": "OpenTurath",
+  "direction": "Calm scholarly interfaces, neutral tonal surfaces, soft corners",
+  "colors": {
+    "textPrimaryLight": "#171717",
+    "textSecondaryLight": "#606060",
+    "textTertiaryLight": "#6B6B6B",
+    "borderLight": "#DADADA",
+    "borderSubtleLight": "#EBEBEB",
+    "borderStrongLight": "#767676",
+    "accentLight": "#171717",
+    "primaryContainerLight": "#F0F0F0",
+    "onPrimaryContainerLight": "#171717",
+    "canvasDark": "#151515",
+    "surfaceDark": "#202020",
+    "surfaceSubtleDark": "#2B2B2B",
+    "textPrimaryDark": "#F5F5F5",
+    "textSecondaryDark": "#B8B8B8",
+    "textTertiaryDark": "#9A9A9A",
+    "borderDark": "#454545",
+    "borderSubtleDark": "#2D2D2D",
+    "borderStrongDark": "#808080",
+    "accentDark": "#F5F5F5",
+    "primaryContainerDark": "#222222",
+    "onPrimaryContainerDark": "#F5F5F5",
+    "onAccentDark": "#171717",
+    "inverseSurfaceDark": "#2B2B2B",
+    "onInverseSurface": "#F5F5F5",
+    "marjaLight": "#4A4A4A",
+    "errorLight": "#B91C1C",
+    "errorDark": "#F87171",
+    "errorContainerLight": "#FEF2F2",
+    "errorContainerDark": "#2F1616",
+    "shadow": "#000000"
+  },
+  "radii": {
+    "hero": 32.0,
+    "xs": 8.0,
+    "input": 28.0,
+    "card": 24.0,
+    "sheet": 32.0,
+    "dialog": 28.0,
+    "chip": 999.0,
+    "button": 999.0
+  },
+  "typography": {
+    "interface": "NativeOutfit",
+    "editorial": "NativeNewsreader",
+    "arabicText": "NativeArabic",
+    "arabicInterface": "NativeArabicUI",
+    "scale": [
+      11,
+      12,
+      14,
+      16,
+      18,
+      20,
+      22,
+      26,
+      36
+    ],
+    "weights": [
+      400,
+      600,
+      700
+    ]
+  },
+  "spacing": [
+    2,
+    4,
+    8,
+    12,
+    16,
+    20,
+    24,
+    32,
+    40,
+    48,
+    64
+  ],
+  "layout": {
+    "maxDashboardWidth": 1040,
+    "maxReadingWidth": 800,
+    "railBreakpoint": 600,
+    "extendedRailBreakpoint": 1100,
+    "railWidth": 88
+  },
+  "contracts": {
+    "border": "Use tonal separation for cards; keep visible keyboard focus",
+    "bilingual": "Paragraph base direction with isolated Arabic phrases in Latin prose",
+    "sourceText": "Keep raw evidence and clipboard text unchanged",
+    "verification": "Passing tests do not establish live authentication or payment success"
+  }
+}

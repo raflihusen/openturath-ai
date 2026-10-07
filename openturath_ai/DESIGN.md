@@ -24,13 +24,13 @@ Tinta dan kertas untuk segala hal yang bukan isyarat.
 
 | Token | Terang | Gelap | Pakai untuk |
 |---|---|---|---|
-| `canvas` | `#FAFAFA` | `#111111` | Latar layar |
-| `surface` | `#FFFFFF` | `#191919` | Kartu, sheet, dialog, input |
-| `surfaceSubtle` | `#F2F2F2` | `#242424` | Wadah tonal, micro-pill |
+| `canvas` | `#F6F6F6` | `#151515` | Latar layar |
+| `surface` | `#FFFFFF` | `#202020` | Kartu, sheet, dialog, input |
+| `surfaceSubtle` | `#EDEDED` | `#2B2B2B` | Wadah tonal, micro-pill |
 | `textPrimary` | `#171717` | `#F5F5F5` | Teks utama dan seluruh teks Arab |
 | `textSecondary` | `#606060` | `#B8B8B8` | Metadata, label |
 | `textTertiary` | `#6B6B6B` | `#9A9A9A` | Placeholder, hint |
-| `border` | `#DADADA` | `#454545` | Garis kartu 0,8px |
+| `border` | `#DADADA` | `#454545` | Pemisah isi dan batas sekunder |
 | `borderSubtle` | `#EBEBEB` | `#2D2D2D` | Pemisah di dalam kartu |
 | `borderStrong` | `#767676` | `#808080` | Batas kontrol |
 | `accent` / `onAccent` | `#171717` / `#FFFFFF` | `#F5F5F5` / `#171717` | Tombol primer |
@@ -46,7 +46,7 @@ Tinta dan kertas untuk segala hal yang bukan isyarat.
 
 ## 3. Tipografi
 
-Tiga lapis yang tidak dicampur: **Newsreader** (judul), **Outfit** (antarmuka dan angka), **Scheherazade New** (seluruh teks Arab kitab). Antarmuka berbahasa Arab memakai Noto Sans Arabic.
+Tiga lapis yang tidak dicampur: **Newsreader** (judul koleksi dan kitab), **Outfit** (antarmuka dan angka), **Scheherazade New** (seluruh teks Arab kitab). Antarmuka berbahasa Arab memakai Noto Sans Arabic.
 
 ### Skala `OTFontSize`
 
@@ -82,13 +82,13 @@ Bobot asli dibundel: Outfit 400/600/700, Newsreader 400/600, Scheherazade New 40
 | `OTRadius` | Nilai | Pakai untuk |
 |---|---|---|
 | `xs` | 8 | Tag, pegangan, butir daftar |
-| `input` | 14 | Kolom isian, snackbar |
-| `card` | 16 | Kartu |
-| `dialog` | 20 | Dialog |
-| `sheet` | 24 | Sudut atas lembar bawah |
+| `input` | 28 | Kolom isian, snackbar |
+| `card` | 24 | Kartu |
+| `dialog` | 28 | Dialog |
+| `sheet`, `hero` | 32 | Sudut atas lembar bawah |
 | `chip`, `button` | 999 | Tombol, chip, pencarian |
 
-Kedalaman dibangun dengan garis `border`, bukan bayangan.
+Permukaan utama dipisahkan oleh warna tonal dan jarak. Hindari garis luar pada setiap kartu; gunakan garis untuk pemisah isi, fokus, dan batas kontrol yang memerlukannya.
 
 ## 5. Komponen bersama
 
@@ -97,7 +97,7 @@ Kedalaman dibangun dengan garis `border`, bukan bayangan.
 | Tombol | `FilledButton`, `OutlinedButton`, `TextButton` tanpa `style` | bentuk pil dan tinggi 48 dari `AppTheme` |
 | Varian tombol | `OTButtons.destructive`, `.onInk`, `.quiet`, `.compactOutlined`, `.compactTonal` | `lib/core/design/ot_buttons.dart` |
 | Chip pilihan | `OTChip` | `lib/widgets/ot_components.dart` |
-| Judul halaman | `AppBar(title: Text(...))` tanpa `style` | Newsreader `s20` dari tema |
+| Judul halaman | `AppBar(title: Text(...))` tanpa `style` | Outfit `s20` dari tema |
 | Kartu yang bisa dibuka | `OTBentoTile` | `lib/widgets/ot_motion_widgets.dart` |
 | Tanda "buka" | `otChevronIcon(context)` | mengikuti arah baca |
 
@@ -107,7 +107,7 @@ Layar tidak menulis `styleFrom` sendiri; tes penjaga menolaknya.
 
 - Judul halaman, paling banyak satu baris kontrol, lalu isi.
 - Kartu hanya untuk benda yang bisa dibuka: kitab, asisten, catatan.
-- Satu tombol primer per layar.
+- Satu aksi primer per konteks; masing-masing paket langganan memiliki aksi pembayaran sendiri.
 - Tanpa hiasan yang tidak bermakna: nomor urut pada hal yang bukan urutan, panah serong, slogan kapital.
 - Kartu bidang ilmu menampilkan nama Arabnya.
 
@@ -115,7 +115,7 @@ Layar tidak menulis `styleFrom` sendiri; tes penjaga menolaknya.
 
 Angka gerak splash, loader, dan login dirancang di `motion/src/spec.ts` (Remotion) dan dicerminkan di `OTMotion`.
 
-Cepat 180ms, normal 220ms, lembar 280ms, transisi 320ms; kurva `easeOutCubic` (lembar: `easeOutQuart`). Elemen yang ditekan mengecil ke 0,985. Memuat ditandai tiga titik berdenyut, bukan roda berputar. Getar: `selection()` untuk tab dan chip, `light()` untuk kartu dan tombol, `success()` saat menyimpan catatan.
+Cepat 180ms, normal 220ms, lembar 280ms, transisi 320ms; kurva `easeOutCubic` (lembar: `easeOutQuart`). Elemen yang ditekan mengecil ke 0,985. Status memuat memakai indikator dan teks yang sesuai konteks; katalog menyediakan aksi mencoba kembali. Getar: `selection()` untuk tab dan chip, `light()` untuk kartu dan tombol, `success()` saat menyimpan catatan.
 
 ## 7. Suara dan istilah
 
@@ -154,3 +154,19 @@ Radius: input/dialog 28, card 24, sheet/hero 32, pill 999, xs 8.
 Pencarian hadir sebelum panel beranda, navigasi berlabel, katalog berupa daftar
 editorial. Kutipan Arab memiliki arah sendiri; satu istilah Arab tidak boleh
 mengubah seluruh paragraf Indonesia menjadi RTL.
+
+## Kontrak implementasi 7 Oktober 2026
+
+Sumber terpadu lokal: `docs/design-system.json`, disinkronkan dengan kode token.
+Proposal SaaS pada direktori bertanggal 30 September tetap merupakan arsip proposal.
+
+- Beranda: sapaan, tanggal pendukung, pencarian sebelum konten utama, tiga kolom bidang pada desktop.
+- Navigasi: rail berlabel mulai 600 px, sidebar diperluas mulai 1100 px, navigasi bawah pada ponsel.
+- Pengaturan: identitas dan masa akses; pilihan tema vertikal pada layar sempit dengan teks besar.
+- Koleksi: daftar kitab dengan tinggi mengikuti isi; kategori, jumlah, dan filter dalam satu alur.
+- Langganan: durasi sebagai pilihan, satu harga utama dan total pada CTA. Nilai bisnis tidak diubah; harga coret tidak ditampilkan tanpa konteks pembanding.
+- Jawaban: `ScholarlyAnswer` mempertahankan Markdown, paragraf bilingual, blok kode, dan sumber. Kutipan Arab dalam paragraf Latin tidak mengubah arah seluruh paragraf.
+- Data: catatan edisi tidak disajikan sebagai nama muhaqqiq; angka dan tahun yang mencurigakan diberi catatan review tanpa mengarang koreksi.
+- Semua perubahan bersifat lokal. Fixture visual memakai akun dan jawaban contoh, bukan bukti layanan terautentikasi.
+
+Bukti dan batas verifikasi disimpan pada `reports/redesign-2026-10-07/IMPLEMENTATION.md`.
