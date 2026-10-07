@@ -582,7 +582,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ),
         title: Text(
           AppCopy.aboutTitle,
-          style: OTTypography.corpusTitle(color: textPrimary)
+          style: OTTypography.screenTitle(color: textPrimary)
               .copyWith(fontSize: OTFontSize.s20),
         ),
         content: SingleChildScrollView(
@@ -606,13 +606,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 style: OTTypography.caption(color: textSecondary),
               ),
               const SizedBox(height: 16),
-              const Center(child: OpenTurathMark(size: 64)),
-              const SizedBox(height: 12),
-              Text(Loc.tr('brandPhilosophyTitle'),
-                  style: OTTypography.cardTitle(color: textPrimary)),
-              const SizedBox(height: 8),
-              Text(Loc.tr('brandPhilosophy'),
-                  style: OTTypography.body(color: textSecondary)),
+              ExpansionTile(
+                tilePadding: EdgeInsets.zero,
+                childrenPadding: const EdgeInsets.only(bottom: 16),
+                leading: const OpenTurathMark(size: 32),
+                title: Text(Loc.tr('brandPhilosophyTitle'),
+                    style: OTTypography.cardTitle(color: textPrimary)),
+                children: [
+                  Text(Loc.tr('brandPhilosophy'),
+                      style: OTTypography.body(color: textSecondary)),
+                ],
+              ),
               const SizedBox(height: 16),
               Divider(height: 1, color: border),
               const SizedBox(height: 8),
