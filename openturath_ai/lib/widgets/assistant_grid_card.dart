@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:openturath_ai/core/design/ot_buttons.dart';
 import 'package:intl/intl.dart' show NumberFormat;
 
-import '../core/design/ot_colors.dart';
-import '../core/design/ot_radius.dart';
-import '../core/design/ot_spacing.dart';
 import '../core/localization.dart';
 import '../models/agent_model.dart';
 import '../services/open_turath_catalog_repository.dart';
@@ -58,92 +54,41 @@ class AssistantGridCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Loc.watch(context);
-    const dark = true;
     const ink = OTExpressive.white;
     const muted = OTExpressive.whiteMuted;
-    final stats = LibraryStat.from(metadata);
-
+    final stats = LibraryStat.from(metadata).take(2).toList();
     return OTInkCard(
       watermark: agent.titleArabic,
       semanticLabel: '${Loc.tr('openAssistant')} ${agent.title}',
-      padding: const EdgeInsets.fromLTRB(
-          OTSpacing.lg, OTSpacing.lg, OTSpacing.sm, OTSpacing.sm),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisSize: MainAxisSize.min,
         children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                Loc.text(agent.title),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style:
-                    OTTypography.screenTitle(color: ink).copyWith(height: 1.2),
-              ),
-              if (agent.isComingSoon) ...[
-                const SizedBox(height: OTSpacing.sm),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: OTSpacing.sm, vertical: OTSpacing.xs),
-                  decoration: BoxDecoration(
-                    color: OTColors.surfaceSubtle(dark),
-                    borderRadius: OTRadius.chipBorder,
-                  ),
-                  child: Text(
-                    Loc.tr('comingSoon'),
-                    style: OTTypography.metadataTag(color: muted),
-                  ),
-                ),
-              ],
-              // Satu baris metadata, bukan deretan pil: angka tetap terbaca
-              // tanpa membuat kartu terasa seperti kumpulan tombol.
-              if (stats.isNotEmpty) ...[
-                const SizedBox(height: OTSpacing.sm),
-                Text.rich(
-                  TextSpan(children: [
-                    for (final (index, stat) in stats.indexed) ...[
-                      if (index > 0) const TextSpan(text: ' · '),
-                      TextSpan(
-                        text: stat.value,
-                        style: const TextStyle(
-                            color: ink, fontWeight: FontWeight.w600),
-                      ),
-                      TextSpan(text: ' ${stat.unit}'),
-                    ],
-                  ]),
-                  style: OTTypography.caption(color: muted),
-                ),
-              ],
-            ],
-          ),
-          Padding(
-            padding: const EdgeInsets.only(top: OTSpacing.md),
-            child: Row(
-              children: [
-                TextButton(
-                    onPressed: onOpen,
-                    style: OTButtons.quiet(dark),
-                    child: Text(Loc.tr('openAssistant'))),
-                const SizedBox(width: OTSpacing.xs),
-                Icon(
-                  Directionality.of(context) == TextDirection.rtl
-                      ? Icons.arrow_back_rounded
-                      : Icons.arrow_forward_rounded,
-                  size: 16,
-                  color: ink,
-                ),
-                const Spacer(),
-                if (onOpenLibrary != null)
-                  TextButton(
-                    onPressed: onOpenLibrary,
-                    style: OTButtons.quiet(dark),
-                    child: Text(Loc.tr('viewReferences')),
-                  ),
-              ],
-            ),
-          ),
+          Text(Loc.text(agent.title),
+              style: OTTypography.screenTitle(color: ink).copyWith(height: 1.25)),
+          if (agent.isComingSoon) ...[
+            const SizedBox(height: 8),
+            Text(Loc.tr('comingSoon'), style: OTTypography.caption(color: muted)),
+          ],
+          if (stats.isNotEmpty) ...[
+            const SizedBox(height: 10),
+            Text(stats.map((s) => '${s.value} ${s.unit}').join(' · '),
+                style: OTTypography.caption(color: muted)),
+          ],
+          const SizedBox(height: 20),
+          Wrap(spacing: 8, runSpacing: 8, children: [
+            FilledButton.icon(
+                onPressed: onOpen,
+                style: FilledButton.styleFrom(backgroundColor: ink,
+                    foregroundColor: OTExpressive.hero),
+                icon: Icon(Directionality.of(context) == TextDirection.rtl
+                    ? Icons.arrow_back_rounded : Icons.arrow_forward_rounded, size: 16),
+                label: Text(Loc.tr('openAssistant'))),
+            if (onOpenLibrary != null)
+              TextButton(onPressed: onOpenLibrary,
+                  style: TextButton.styleFrom(foregroundColor: muted),
+                  child: Text(Loc.tr('viewReferences'))),
+          ]),
         ],
       ),
     );
