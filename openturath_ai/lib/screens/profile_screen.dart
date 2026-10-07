@@ -824,7 +824,8 @@ class _MembershipPass extends StatelessWidget {
           IconButton(
               tooltip: summary.ctaLabel,
               onPressed: onManage,
-              icon: Icon(Icons.tune_rounded, color: ink)),
+              icon: Icon(Icons.tune_rounded, color: ink,
+                  semanticLabel: summary.ctaLabel)),
         ]),
         const SizedBox(height: 16),
         Divider(height: 1, color: OTColors.borderSubtle(isDark)),
