@@ -90,7 +90,11 @@ class TahawwulatHero extends StatelessWidget {
                     Expanded(flex: 3, child: text),
                     const SizedBox(width: 24),
                     const Expanded(
-                        flex: 2, child: Center(child: SizedBox(width: 280, child: TahawwulatDiagram(inverse: true))))
+                        flex: 2,
+                        child: Center(
+                            child: SizedBox(
+                                width: 280,
+                                child: TahawwulatDiagram(inverse: true))))
                   ])
                 : Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
