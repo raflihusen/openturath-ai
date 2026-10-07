@@ -7,7 +7,7 @@ import '../core/scholarly_fonts.dart';
 import '../core/design/ot_motion.dart';
 import 'package:openturath_ai/core/design/ot_typography.dart';
 
-/// Loader folio OpenTurath dengan kecepatan periodik dan dukungan reduced motion.
+/// Dua busur mengitari emblem OpenTurath, dengan gerak periodik dan reduced motion.
 class AppLoader extends StatefulWidget {
   final double dotSize;
   final double spacing;
