@@ -1835,136 +1835,36 @@ class _TahawwulatIntroductionSheetState
           ),
         );
 
-        return Container(
-          margin: const EdgeInsets.only(bottom: 8),
-          decoration: BoxDecoration(
-            color: OTColors.surfaceSubtle(isDark),
-            borderRadius: BorderRadius.circular(OTRadius.input),
-            border: Border.all(color: OTColors.border(isDark), width: 0.8),
-          ),
-          padding: const EdgeInsets.all(12),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Container(
-                    width: 26,
-                    height: 26,
-                    decoration: BoxDecoration(
-                      color: isDark
-                          ? OTColors.borderSubtleDark
-                          : OTColors.borderSubtleLight,
-                      borderRadius: BorderRadius.circular(OTRadius.xs),
-                    ),
-                    alignment: Alignment.center,
-                    child: Text(
-                      room.number,
-                      style: ScholarlyFonts.jetBrainsMono(
-                        fontSize: OTFontSize.s12,
-                        fontWeight: FontWeight.w700,
-                        color: OTColors.textPrimary(isDark),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  Text(
-                    room.name,
-                    style: ScholarlyFonts.newsreader(
-                      fontSize: OTFontSize.s16,
-                      fontWeight: FontWeight.w600,
-                      color: OTColors.textPrimary(isDark),
-                    ),
-                  ),
-                  const SizedBox(width: 6),
-                  Text(
-                    "(${room.arabic})",
-                    style: ScholarlyFonts.scheherazadeNew(
-                      fontSize: OTFontSize.s16,
-                      color: OTColors.textSecondary(isDark),
-                    ),
-                  ),
-                  const Spacer(),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 4,
-                    ),
-                    decoration: BoxDecoration(
-                      color: isDark
-                          ? OTColors.surfaceLight.withValues(alpha: 0.1)
-                          : OTColors.shadow.withValues(alpha: 0.05),
-                      borderRadius: BorderRadius.circular(OTRadius.xs),
-                    ),
-                    child: Text(
-                      room.role,
-                      style: ScholarlyFonts.outfit(
-                        fontSize: OTFontSize.s12,
-                        fontWeight: FontWeight.w600,
-                        color: OTColors.textSecondary(isDark),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 8),
-              Text(
-                room.desc,
-                style: ScholarlyFonts.outfit(
-                  fontSize: OTFontSize.s14,
-                  fontWeight: FontWeight.w400,
-                  color: OTColors.textSecondary(isDark),
-                  height: 1.4,
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 12),
+          child: Row(children: [
+            Expanded(
+              child: FilledButton.tonal(
+                style: FilledButton.styleFrom(
+                  backgroundColor: OTColors.surfaceSubtle(isDark),
+                  foregroundColor: OTColors.textPrimary(isDark),
+                  padding: const EdgeInsets.all(20),
                 ),
+                onPressed: widget.onSelectSubAgent == null ? null : () {
+                  Navigator.of(context).pop();
+                  widget.onSelectSubAgent!(matchingSub);
+                },
+                child: Text(Loc.isArabic ? room.arabic : room.name,
+                  style: ScholarlyFonts.outfit(fontSize: OTFontSize.s18)),
               ),
-              const SizedBox(height: 10),
-              Align(
-                alignment: Alignment.centerRight,
-                child: AppleInteractiveWrapper(
-                  onTap: () {
-                    Navigator.of(context).pop();
-                    if (widget.onSelectSubAgent != null) {
-                      widget.onSelectSubAgent!(matchingSub);
-                    }
-                  },
-                  pressedScale: 0.96,
-                  borderRadius: BorderRadius.circular(OTRadius.xs),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 4,
-                    ),
-                    decoration: BoxDecoration(
-                      color: isDark ? OTColors.surfaceLight : OTColors.shadow,
-                      borderRadius: BorderRadius.circular(OTRadius.xs),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          "Buka ${room.name}",
-                          style: ScholarlyFonts.outfit(
-                            fontSize: OTFontSize.s12,
-                            fontWeight: FontWeight.w600,
-                            color: isDark
-                                ? OTColors.shadow
-                                : OTColors.surfaceLight,
-                          ),
-                        ),
-                        const SizedBox(width: 4),
-                        Icon(
-                          Icons.arrow_forward_rounded,
-                          size: 12,
-                          color:
-                              isDark ? OTColors.shadow : OTColors.surfaceLight,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
+            ),
+            const SizedBox(width: 8),
+            IconButton(
+              tooltip: Loc.isArabic ? 'عن المساعد' : 'Tentang asisten',
+              onPressed: () => showDialog<void>(context: context,
+                builder: (context) => AlertDialog(
+                  title: Text(room.role), content: Text(room.desc),
+                  actions: [TextButton(onPressed: () => Navigator.pop(context),
+                    child: Text(Loc.isArabic ? 'إغلاق' : 'Tutup'))],
+                )),
+              icon: const Icon(Icons.info_outline_rounded),
+            ),
+          ]),
         );
       }).toList(),
     );
