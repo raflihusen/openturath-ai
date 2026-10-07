@@ -594,28 +594,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           const SizedBox(height: 12),
                           const _RecentNoteTile(),
                           const SizedBox(height: 12),
-                          LayoutBuilder(builder: (context, box) {
-                            const totals = _LibraryNumbersTile();
-                            const adab = _AdabOfDayTile();
-                            if (box.maxWidth < 680) {
-                              return const Column(
-                                crossAxisAlignment: CrossAxisAlignment.stretch,
-                                children: [
-                                  totals,
-                                  SizedBox(height: 12),
-                                  adab,
-                                ],
-                              );
-                            }
-                            return const Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Expanded(child: totals),
-                                SizedBox(width: 12),
-                                Expanded(child: adab),
-                              ],
-                            );
-                          }),
+                          const _LibraryNumbersTile(),
+                          const SizedBox(height: 12),
+                          const _AdabOfDayTile(),
                         ],
                       ],
                     ),
@@ -658,22 +639,28 @@ class _LibraryNumbersTile extends StatelessWidget {
                   all.values.fold<int>(0, (sum, item) => sum + item.totalKitab);
               final pages = all.values
                   .fold<int>(0, (sum, item) => sum + item.totalHalaman);
-              Widget stat(String value, String label, IconData icon) => Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Icon(icon, size: 18, color: OTExpressive.whiteMuted),
-                        const SizedBox(height: 8),
-                        Text(value,
-                            style: ScholarlyFonts.outfit(
-                                fontSize: OTFontSize.s26,
-                                fontWeight: FontWeight.w600,
-                                color: OTExpressive.white)),
-                        const SizedBox(height: 6),
-                        Text(label,
-                            style: ScholarlyFonts.outfit(
-                                fontSize: OTFontSize.s14,
-                                color: OTExpressive.whiteMuted)),
-                      ]);
+              Widget stat(String value, String label, IconData icon) =>
+                  LayoutBuilder(builder: (context, box) {
+                final text = Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(value, style: ScholarlyFonts.outfit(
+                        fontSize: OTFontSize.s26, fontWeight: FontWeight.w600,
+                        color: OTExpressive.white)),
+                      const SizedBox(height: 6),
+                      Text(label, style: ScholarlyFonts.outfit(
+                        fontSize: OTFontSize.s14, color: OTExpressive.whiteMuted)),
+                    ]);
+                final symbol = Icon(icon, size: 18, color: OTExpressive.whiteMuted);
+                if (box.maxWidth >= 240) {
+                  return Row(crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [Padding(padding: const EdgeInsets.only(top: 8),
+                      child: symbol), const SizedBox(width: 16), Expanded(child: text)]);
+                }
+                return Column(crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [symbol, const SizedBox(height: 8), text]);
+              });
               final metrics = [
                 stat(number.format(all.length), Loc.tr('loginStatLibraries'),
                     Icons.local_library_outlined),
