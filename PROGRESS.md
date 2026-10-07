@@ -187,6 +187,17 @@ Berdasarkan `AUDIT_OPENTURATH_AI.md`, dokumen perancangan pustaka, dan keluhan k
     - Menyembunyikan seluruh teks judul ("AI-MUHAQQIQ"), metadata sumber ("0 sumber · ..."), dan ikon gulungan 📜 di dalam empty state secara eksklusif menggunakan `visibility: hidden !important; opacity: 0 !important; pointer-events: none !important;`.
     - Hasil: Tampilan tengah layar 100% bersih dan putih, sementara tinggi wadah tetap kokoh menahan bilah input agar berada di dasar layar secara alami.
 
+### Fasa 18: Eliminasi Total Sisa Selektor `display: none` pada Empty-State & Penjaminan Keterlihatan Input Chat (`168e48a`)
+- **Akar Masalah Fundamental**:
+  1. *Sisa Selektor pada Aturan CSS `display: none`*: Blok CSS `ensureStyles()` sebelumnya masih memuat selector komponen overview/summary (`app-notebook-overview`, `app-project-summary`, `app-guide-intro`, `app-chat-intro`, `app-notebook-intro`, dll.) dalam deklarasi `display: none !important; height: 0 !important;`.
+  2. *Sisa Selektor pada JavaScript `guideSelectors`*: Fungsi JavaScript `removeHeroCard()` sebelumnya masih memuat `app-chat-empty-state`, `.empty-state`, `app-notebook-title`, dll. yang dieksekusi berkala dengan `el.style.setProperty('display', 'none', 'important')`. Hal ini merontokkan wadah penopang atas sehingga input chat terlempar ke `top: 0px`.
+- **Solusi Tuntas**:
+  1. Membersihkan seluruh selektor overview, intro, summary, dan empty-state dari blok `display: none !important;` di CSS dan menghapusnya dari `guideSelectors` di JavaScript.
+  2. Menyatukan seluruh elemen empty-state, header intro, judul buku catatan, dan metadata sumber ke dalam aturan transparan non-destruktif: `visibility: hidden !important; opacity: 0 !important; pointer-events: none !important;`.
+  3. Menjamin keterlihatan dan interaktivitas bilah input dengan aturan eksplisit:
+     `app-chat-input, div.chat-input-container, form.chat-input-form, .query-box-container { visibility: visible !important; opacity: 1 !important; pointer-events: auto !important; }`.
+  4. Hasil: Ruang tengah layar bersih dan putih tanpa elemen bertumpuk, tinggi vertikal penopang atas terjaga utuh secara geometris, dan bilah input chat duduk tenang dan alami di bagian paling bawah layar.
+
 ---
 
 ## 5. Agenda & Fokus Selanjutnya
