@@ -30,7 +30,7 @@ class _TahawwulatDiagramState extends State<TahawwulatDiagram> {
     return Column(mainAxisSize: MainAxisSize.min, children: [
       AspectRatio(aspectRatio: 1.12, child: LayoutBuilder(builder: (context, box) {
         final extent = box.maxWidth;
-        final positions = [(0.27,0.28),(0.73,0.28),(0.73,0.70),(0.27,0.70)];
+        final positions = [(0.30,0.26),(0.70,0.26),(0.70,0.62),(0.30,0.62)];
         return Stack(children: [
           Positioned.fill(child: ExcludeSemantics(child: CustomPaint(painter: _SectorsPainter(selected: widget.interactive ? selected : -1, inverse: widget.inverse)))),
           for (var i=0; i<4; i++) Positioned(
@@ -53,7 +53,7 @@ class _TahawwulatDiagramState extends State<TahawwulatDiagram> {
       ])),
     ]);
   }
-  Widget _label(int i,double extent,Color color) => Text(arabic[i], textDirection: TextDirection.rtl, textAlign: TextAlign.center,
+  Widget _label(int i,double extent,Color color) => Text(i == 3 ? 'علامات\nالساعة' : arabic[i], textDirection: TextDirection.rtl, textAlign: TextAlign.center,
     style: TextStyle(fontFamily: 'NativeArabicUI', fontSize: (extent / 17).clamp(OTFontSize.s12,OTFontSize.s22), fontWeight: FontWeight.w600, color: color));
 }
 class _SectorsPainter extends CustomPainter {
