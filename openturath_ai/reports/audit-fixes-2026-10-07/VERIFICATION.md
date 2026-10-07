@@ -15,6 +15,10 @@ Komposisi kartu bidang/AI, kalender dan metrik pustaka, katalog bersama, identit
 
 ## Batas bukti
 
-Seluruh PNG adalah fixture Flutter dengan akun contoh. Galeri bukan bukti pembayaran, autentikasi Google, pertukaran pesan NotebookLM, clipboard WebView nyata, pembaca layar OS, atau performa profile mode. Pengamatan native lewat alat kendali aplikasi sebelumnya gagal dengan `noWindowsAvailable`. Perubahan retry menjaga platform view tetap terpasang di belakang overlay; ini belum membuktikan bahwa kegagalan yang dilaporkan pengguna sudah pulih pada sesi terautentikasi.
+Seluruh PNG adalah fixture Flutter dengan akun contoh. Galeri bukan bukti pembayaran, autentikasi Google, pertukaran pesan NotebookLM, clipboard WebView nyata, pembaca layar OS, atau performa profile mode. Alat kendali jendela sebelumnya gagal dengan `noWindowsAvailable`; build release terbaru kemudian berhasil dibuka. Layar login dan buka/tutup menu bahasa diamati secara native. Build terbaru belum memiliki sesi terautentikasi untuk pengujian NotebookLM. Perubahan retry menjaga platform view tetap terpasang di belakang overlay; ini belum membuktikan bahwa kegagalan yang dilaporkan pengguna sudah pulih pada sesi terautentikasi.
 
 Tidak ada publikasi, upload APK/DMG, atau broadcast Firestore dalam pekerjaan ini. Perubahan website/favicon dari pekerjaan lain di repository tidak dimasukkan sebagai perubahan desain aplikasi ini. Checkpoint pemulihan selektif ada di `CHECKPOINTS.md`.
+
+## Paket macOS lokal
+
+Build release dan packaging selesai dengan exit 0. DMG diverifikasi melalui hdiutil; aplikasi lolos codesign deep/strict. Binary utama universal arm64/x86_64. Tanda tangan ad hoc, tanpa notarization Apple. Versi aplikasi tetap 1.0.63+64; nama file audit-fixes dan manifest membedakan paket ini dari paket lama. Ukuran, timestamp dan SHA-256 lengkap tercatat pada `DMG_MANIFEST.json`.
