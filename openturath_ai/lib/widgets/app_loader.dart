@@ -6,7 +6,7 @@ import '../core/scholarly_fonts.dart';
 import '../core/design/ot_motion.dart';
 import 'package:openturath_ai/core/design/ot_typography.dart';
 
-/// Loader busur OpenTurath dengan kecepatan periodik dan dukungan reduced motion.
+/// Loader folio OpenTurath dengan kecepatan periodik dan dukungan reduced motion.
 class AppLoader extends StatefulWidget {
   final double dotSize;
   final double spacing;
@@ -130,7 +130,7 @@ class _AppLoaderState extends State<AppLoader>
             Loc.text(widget.title!),
             textAlign: TextAlign.center,
             style: widget.isFullscreen
-                ? ScholarlyFonts.newsreader(
+                ? ScholarlyFonts.outfit(
                     fontSize: OTFontSize.s20,
                     fontWeight: FontWeight.w600,
                     letterSpacing: -0.3,
@@ -197,30 +197,25 @@ class _OrbitPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final phase = progress * 2 * math.pi;
-    final angle = phase - .65 * math.sin(phase);
-    final rect = Rect.fromCircle(
-        center: size.center(Offset.zero), radius: size.width * .42);
-    final paint = Paint()
-      ..color = color
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = size.width * .065
-      ..strokeCap = StrokeCap.round;
-    final sweep = 1.2 + .55 * math.sin(phase);
-    canvas.drawArc(rect, angle, sweep, false, paint);
-    canvas.drawArc(rect, angle + math.pi, .7 - .25 * math.sin(phase), false,
-        paint..color = color.withValues(alpha: .45));
-    final w = size.width;
-    final mark = Path()
-      ..moveTo(w * .37, w * .63)
-      ..lineTo(w * .37, w * .47)
-      ..quadraticBezierTo(w * .40, w * .36, w * .5, w * .30)
-      ..quadraticBezierTo(w * .60, w * .36, w * .63, w * .47)
-      ..lineTo(w * .63, w * .63);
-    canvas.drawPath(
-        mark,
-        paint
-          ..color = color
-          ..strokeWidth = w * .045);
+    // Periodic easing preserves velocity at the loop seam. Four folios breathe
+    // and turn as one; opacity does not flicker or imply measured progress.
+    final turn = phase - .72 * math.sin(phase);
+    final breath = .5 - .5 * math.cos(phase);
+    final w = size.shortestSide;
+    canvas.save();
+    canvas.translate(size.width / 2, size.height / 2);
+    canvas.rotate(turn);
+    for (var i = 0; i < 4; i++) {
+      canvas.save();
+      canvas.rotate(i * math.pi / 2);
+      final radius = w * (.16 + .07 * breath);
+      final rect = Rect.fromCenter(center: Offset(radius, -radius),
+        width: w * (.30 - .05 * breath), height: w * (.30 + .04 * breath));
+      canvas.drawRRect(RRect.fromRectAndRadius(rect, Radius.circular(w * .105)),
+        Paint()..color = color.withValues(alpha: 1 - i * .16));
+      canvas.restore();
+    }
+    canvas.restore();
   }
 
   @override
