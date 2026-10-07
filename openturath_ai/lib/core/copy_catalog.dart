@@ -2172,8 +2172,13 @@ const copyCatalog = <String, List<String>>{
     "The assistant could not be opened",
     "تعذّر فتح المساعد"
   ],
+  "roomNotReadyBody": [
+    "Halaman sudah dibuka, tetapi kolom percakapan belum siap. Muat ulang atau periksa sesi Google Anda.",
+    "The page opened, but its conversation input is not ready. Reload or check your Google session.",
+    "فُتحت الصفحة، لكن حقل المحادثة لم يجهز بعد. أعد التحميل أو تحقق من جلسة Google."
+  ],
   "roomLoadFailBody": [
-    "Halaman AI gagal dimuat. Periksa koneksi internet Anda, lalu coba lagi.",
+    "Halaman AI gagal dimuat. Coba muat ulang; kegagalan ini dapat berasal dari halaman atau koneksi.",
     "The assistant page failed to load. Check your internet connection and try again.",
     "تعذّر تحميل صفحة المساعد. تحقق من اتصالك بالإنترنت ثم أعد المحاولة."
   ],
