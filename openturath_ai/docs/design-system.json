@@ -1,5 +1,5 @@
 {
-  "status": "implemented-local",
+  "status": "local-review-awaiting-visual-acceptance",
   "revision": "2026-10-07",
   "source": "lib/core/design",
   "brand": "OpenTurath",
@@ -93,5 +93,17 @@
     "bilingual": "Paragraph base direction with isolated Arabic phrases in Latin prose",
     "sourceText": "Keep raw evidence and clipboard text unchanged",
     "verification": "Passing tests do not establish live authentication or payment success"
+  },
+  "flagshipReview": {
+    "heroRadius": 36,
+    "compactHeroRadius": 28,
+    "panelRadius": 24,
+    "heroSurface": "#171717",
+    "loaderLoopMs": 1800,
+    "calendarPriority": "equal",
+    "fieldComposition": "separate-script-zones",
+    "assistantSubtitles": false,
+    "diagram": "four-separated-sectors-thin-depth",
+    "source": "lib/core/design/ot_expressive.dart"
   }
 }
