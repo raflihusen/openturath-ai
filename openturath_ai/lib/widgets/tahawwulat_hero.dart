@@ -17,7 +17,7 @@ class TahawwulatHero extends StatelessWidget {
       {super.key,
       required this.onOpen,
       required this.onIntroduction,
-      this.facts = const []});
+      this.facts = const [], this.onOpenLibrary});
   final VoidCallback onOpen;
   final VoidCallback? onOpenLibrary;
   final VoidCallback onIntroduction;
