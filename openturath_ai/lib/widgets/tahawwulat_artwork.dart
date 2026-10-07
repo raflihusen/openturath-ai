@@ -21,10 +21,10 @@ class TahawwulatArtwork extends StatelessWidget {
                         begin: Alignment.centerLeft,
                         end: Alignment.centerRight,
                         colors: [
-                          Colors.transparent,
-                          Colors.white,
-                          Colors.white,
-                          Colors.transparent
+                          OTExpressive.transparent,
+                          OTExpressive.white,
+                          OTExpressive.white,
+                          OTExpressive.transparent
                         ],
                         stops: [
                           0,
@@ -38,10 +38,10 @@ class TahawwulatArtwork extends StatelessWidget {
                             begin: Alignment.topCenter,
                             end: Alignment.bottomCenter,
                             colors: [
-                              Colors.transparent,
-                              Colors.white,
-                              Colors.white,
-                              Colors.transparent
+                              OTExpressive.transparent,
+                              OTExpressive.white,
+                              OTExpressive.white,
+                              OTExpressive.transparent
                             ],
                             stops: [
                               0,
@@ -50,7 +50,7 @@ class TahawwulatArtwork extends StatelessWidget {
                               1
                             ]).createShader(rect),
                     child: image))
-            : ClipRRect(borderRadius: BorderRadius.circular(28), child: image));
+            : ClipRRect(borderRadius: BorderRadius.circular(OTExpressive.compactHeroRadius), child: image));
   }
 }
 
@@ -96,13 +96,13 @@ class _QuietFoldsPainter extends CustomPainter {
           Paint()
             ..style = PaintingStyle.stroke
             ..strokeWidth = 30 + i * 20
-            ..color = Colors.white.withValues(alpha: .014 + i * .006));
+            ..color = OTExpressive.white.withValues(alpha: .014 + i * .006));
       canvas.drawPath(
           path,
           Paint()
             ..style = PaintingStyle.stroke
             ..strokeWidth = 1
-            ..color = Colors.white.withValues(alpha: .03));
+            ..color = OTExpressive.white.withValues(alpha: .03));
     }
   }
 
