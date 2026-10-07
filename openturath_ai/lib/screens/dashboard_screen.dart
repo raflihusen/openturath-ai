@@ -809,7 +809,7 @@ class _AdabOfDayTile extends StatelessWidget {
               style: ScholarlyFonts.outfit(
                   fontSize: OTFontSize.s14, height: 1.5, color: muted)),
           const SizedBox(height: 12),
-          Text(Loc.tr('aiEtiquetteLabel'), style: OTTypography.bodyMedium(color: ink)),
+          Text(Loc.language == 'ar' ? 'قراءة الدليل' : Loc.language == 'en' ? 'Read guide' : 'Baca panduan', style: OTTypography.captionMedium(color: ink)),
         ],
       ),
     );
