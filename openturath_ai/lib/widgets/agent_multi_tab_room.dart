@@ -1708,7 +1708,8 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
                   '[OpenTurath] Main-document load failed: ${error.type}');
               final current = await controller.getUrl();
               if (!mounted) return;
-              if (session.isSessionReady && current != null &&
+              if (session.isSessionReady &&
+                  current != null &&
                   NotebookNavigation.notebook(current.uriValue) &&
                   current.toString() != request.url.toString()) {
                 return;
@@ -1737,8 +1738,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
                     session.errorMessage =
                         'Akun Google yang aktif belum dapat membuka notebook ini. Periksa akun Google yang digunakan dan izin Viewer pada notebook.';
                   });
-                }
-                else if (code != null && code >= 400) {
+                } else if (code != null && code >= 400) {
                   _readinessTimer?.cancel();
                   _inputRetryTimer?.cancel();
                   setState(() {
