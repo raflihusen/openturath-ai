@@ -233,10 +233,56 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         // Banner pembaruan jika tersedia
                         const UpdateReadyBanner(),
                         LayoutBuilder(builder: (context, box) {
-                          final greeting = Text(
-                              AppCopy.ahlanWithName(user.name),
-                              style:
-                                  OTTypography.pageTitle(color: textPrimary));
+                          final greeting = ListenableBuilder(
+                              listenable: AgentSessionManager.instance,
+                              builder: (context, _) {
+                                final active = AgentSessionManager
+                                    .instance.activeTab?.agent;
+                                final last = _agents
+                                    .where((a) => a.id == _lastOpenedAgentId)
+                                    .firstOrNull;
+                                final target = active ?? last;
+                                void open() {
+                                  if (target != null) {
+                                    _openNotebook(target, user);
+                                  } else {
+                                    final shell =
+                                        MainShellController.of(context);
+                                    if (shell != null) {
+                                      shell.switchTab(1);
+                                    } else {
+                                      NavigationGuard.safePushNamed(
+                                          context, AppRoutes.specialistList);
+                                    }
+                                  }
+                                }
+
+                                return OTBentoTile(
+                                    padding: const EdgeInsets.all(24),
+                                    child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(AppCopy.ahlanWithName(user.name),
+                                              style: OTTypography.screenTitle(
+                                                  color: textPrimary)),
+                                          const SizedBox(height: 12),
+                                          if (target != null) ...[
+                                            Text(Loc.text(target.title),
+                                                style: OTTypography.caption(
+                                                    color: textSecondary)),
+                                            const SizedBox(height: 8),
+                                          ],
+                                          TextButton.icon(
+                                              onPressed: open,
+                                              icon: const Icon(
+                                                  Icons.arrow_forward_rounded,
+                                                  size: 18),
+                                              label: Text(target != null
+                                                  ? AppCopy.continueStudy
+                                                  : Loc.tr('openAssistant'))),
+                                        ]));
+                              });
                           if (box.maxWidth < 720 ||
                               MediaQuery.textScalerOf(context).scale(16) > 24) {
                             return Column(
@@ -550,47 +596,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                     },
                                   )),
                           const SizedBox(height: 12),
-                          // Kartu ini hanya menampilkan keadaan yang benar-benar ada:
-                          // sesi yang masih tersimpan, asisten terakhir, atau pintu mulai.
-                          ListenableBuilder(
-                            listenable: AgentSessionManager.instance,
-                            builder: (context, _) {
-                              final activeAgent =
-                                  AgentSessionManager.instance.activeTab?.agent;
-                              final lastAgent = _lastOpenedAgentId == null
-                                  ? null
-                                  : _agents.cast<AgentModel?>().firstWhere(
-                                        (agent) =>
-                                            agent?.id == _lastOpenedAgentId,
-                                        orElse: () => null,
-                                      );
-                              final target = activeAgent ?? lastAgent;
-                              final hasLiveSession = activeAgent != null;
-                              final hero = _StudyEntryCard(
-                                name: user.name,
-                                agent: target,
-                                hasLiveSession: hasLiveSession,
-                                isDark: isDark,
-                                onPrimary: () {
-                                  if (target != null) {
-                                    _openNotebook(target, user);
-                                    return;
-                                  }
-                                  final shell = MainShellController.of(context);
-                                  if (shell != null) {
-                                    shell.switchTab(1);
-                                  } else {
-                                    NavigationGuard.safePushNamed(
-                                        context, AppRoutes.specialistList);
-                                  }
-                                },
-                              );
-                              return target == null
-                                  ? const SizedBox.shrink()
-                                  : hero;
-                            },
-                          ),
-                          const SizedBox(height: 24),
                           const _RecentNoteTile(),
                           const SizedBox(height: 12),
                           LayoutBuilder(builder: (context, box) {
@@ -929,65 +934,6 @@ class _RecentNoteTileState extends State<_RecentNoteTile> {
           Icon(Icons.arrow_forward_rounded, size: 18, color: secondary),
         ],
       ),
-    );
-  }
-}
-
-class _StudyEntryCard extends StatelessWidget {
-  const _StudyEntryCard(
-      {required this.name,
-      required this.agent,
-      required this.hasLiveSession,
-      required this.isDark,
-      required this.onPrimary});
-  final String name;
-  final AgentModel? agent;
-  final bool hasLiveSession;
-  final bool isDark;
-  final VoidCallback onPrimary;
-
-  @override
-  Widget build(BuildContext context) {
-    Loc.watch(context);
-
-    final hasHistory = agent != null;
-    final title = hasHistory ? agent!.title : AppCopy.studyEntryDefaultTitle;
-    final subtitle = hasLiveSession
-        ? AppCopy.studyEntryResumeSubtitle
-        : hasHistory
-            ? AppCopy.studyEntryHistorySubtitle
-            : AppCopy.studyEntryDefaultSubtitle;
-    final ink = OTColors.textPrimary(isDark);
-    final muted = OTColors.textSecondary(isDark);
-    return OTBentoTile(
-      padding: const EdgeInsets.all(OTSpacing.xl),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Text(hasHistory ? AppCopy.continueStudy : AppCopy.navStudies,
-            style: OTTypography.caption(color: muted)),
-        const SizedBox(height: 14),
-        Text(Loc.text(title),
-            style: ScholarlyFonts.newsreader(
-                fontSize: MediaQuery.sizeOf(context).width >= 768
-                    ? OTFontSize.s26
-                    : OTFontSize.s26,
-                fontWeight: FontWeight.w400,
-                letterSpacing: -.6,
-                height: 1.18,
-                color: ink)),
-        const SizedBox(height: 10),
-        ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 520),
-            child: Text(subtitle,
-                style: ScholarlyFonts.outfit(
-                    fontSize: OTFontSize.s14, height: 1.55, color: muted))),
-        const SizedBox(height: 20),
-        FilledButton.icon(
-            onPressed: onPrimary,
-            label:
-                Text(hasHistory ? AppCopy.continueStudy : AppCopy.startStudy),
-            icon: const Icon(Icons.arrow_forward_rounded, size: 18),
-            iconAlignment: IconAlignment.end),
-      ]),
     );
   }
 }
