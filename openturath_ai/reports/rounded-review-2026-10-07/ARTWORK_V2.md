@@ -11,6 +11,7 @@ Verifikasi revisi:
 - Pengujian komponen dan penjagaan token: 11 passed, exit 0.
 - Render layar final: 1 passed, exit 0, exception render menggagalkan pengujian.
 - Desktop, ponsel, dark, dan pembukaan pengenalan diperiksa secara visual dari render Flutter. Fixture tidak membuktikan sesi akun langsung.
+- Build macOS lokal terbaru: exit 0; verifikasi codesign lokal exit 0. Tidak ada publikasi atau broadcast.
 - Render sebelumnya dipertahankan; versi baru memiliki suffix `_sculpture_v2`.
 
 Checkpoint sebelum revisi: `e43d72e`. Pemulihan dilakukan dengan revert per commit yang terkait, tanpa reset checkout bersama.
