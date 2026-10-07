@@ -12,20 +12,24 @@ void main() {
       expect(AppCopy.navSettings, equals('Pengaturan'));
     });
 
-    test('Canonical app name and tagline are concise and avoid superlatives', () {
+    test('Canonical app name and tagline are concise and avoid superlatives',
+        () {
       expect(AppCopy.appName, equals('OpenTurath'));
       expect(AppCopy.appTagline, equals('AI for Islamic Scholarship'));
     });
 
     test('Success toasts never use exclamation marks (!)', () {
       expect(AppCopy.savedSuccess.contains('!'), isFalse,
-          reason: 'Success messages should be calm and not use exclamation marks');
+          reason:
+              'Success messages should be calm and not use exclamation marks');
       expect(AppCopy.answerCopied.contains('!'), isFalse,
           reason: 'Copy action should be quiet and not use exclamation marks');
       expect(AppCopy.deleteAccountSuccess.contains('!'), isFalse);
     });
 
-    test('Public strings do not contain prohibited marketing or academic jargon', () {
+    test(
+        'Public strings do not contain prohibited marketing or academic jargon',
+        () {
       final prohibitedWords = [
         'korpus',
         'ruang riset',
@@ -74,12 +78,14 @@ void main() {
         final lower = text.toLowerCase();
         for (final word in prohibitedWords) {
           expect(lower.contains(word), isFalse,
-              reason: 'String "$text" should not contain prohibited word "$word"');
+              reason:
+                  'String "$text" should not contain prohibited word "$word"');
         }
       }
     });
 
-    test('AgentModel defaultAgents descriptions and titles avoid banned jargon', () {
+    test('AgentModel defaultAgents descriptions and titles avoid banned jargon',
+        () {
       final prohibitedInAgents = [
         'korpus',
         'fasilitas',
@@ -91,27 +97,36 @@ void main() {
       ];
 
       for (final agent in AgentModel.defaultAgents) {
-        final refTitles = (agent.referenceBooks ?? []).map((b) => '${b.title} ${b.description}').join(' ');
-        final combined = '${agent.title} ${agent.description} $refTitles'.toLowerCase();
+        final refTitles = (agent.referenceBooks ?? [])
+            .map((b) => '${b.title} ${b.description}')
+            .join(' ');
+        final combined =
+            '${agent.title} ${agent.description} $refTitles'.toLowerCase();
         for (final word in prohibitedInAgents) {
           expect(combined.contains(word), isFalse,
-              reason: 'Agent ${agent.id} contains prohibited word "$word": $combined');
+              reason:
+                  'Agent ${agent.id} contains prohibited word "$word": $combined');
         }
       }
     });
 
-    test('Dynamic interpolation helpers produce serene, well-formed phrases', () {
+    test('Dynamic interpolation helpers produce serene, well-formed phrases',
+        () {
       expect(AppCopy.preparingModule('Fikih Syafi\'i'),
           equals('Fikih Syafi\'i sedang disiapkan.'));
       expect(AppCopy.subscriptionRequiredFor('Fikih Syafi\'i'),
           equals('Berlangganan untuk membuka Fikih Syafi\'i.'));
-      expect(AppCopy.accessUnavailableFor('Fikih Syafi\'i'),
-          equals('Akses ke Fikih Syafi\'i belum aktif. Pilih paket atau gunakan voucher untuk melanjutkan.'));
+      expect(
+          AppCopy.accessUnavailableFor('Fikih Syafi\'i'),
+          equals(
+              'Akses ke Fikih Syafi\'i belum aktif. Pilih paket atau gunakan voucher untuk melanjutkan.'));
       expect(AppCopy.planWithAgent('Fikih Syafi\'i', '1 Bulan'),
           equals('Fikih Syafi\'i · 1 Bulan'));
     });
 
-    test('UI screens and widgets do not leak prohibited terms into user-facing code', () {
+    test(
+        'UI screens and widgets do not leak prohibited terms into user-facing code',
+        () {
       // Subscription screen uses commercial SaaS conversion copy as requested by product owner
       final filesToScan = [
         'lib/screens/google_session_auth_screen.dart',
@@ -124,13 +139,20 @@ void main() {
       ];
 
       final bannedPatterns = [
-        RegExp(r"['\x22][^'\x22]*ruang\s+riset[^'\x22]*['\x22]", caseSensitive: false),
-        RegExp(r"['\x22][^'\x22]*ai\s+spesialis[^'\x22]*['\x22]", caseSensitive: false),
-        RegExp(r"['\x22][^'\x22]*naskah\s+primer[^'\x22]*['\x22]", caseSensitive: false),
-        RegExp(r"['\x22][^'\x22]*kurasi\s+kebahasaan[^'\x22]*['\x22]", caseSensitive: false),
-        RegExp(r"['\x22][^'\x22]*autentikasi\s+sesi[^'\x22]*['\x22]", caseSensitive: false),
-        RegExp(r"['\x22][^'\x22]*modul\s+telaah[^'\x22]*['\x22]", caseSensitive: false),
-        RegExp(r"['\x22][^'\x22]*memproses\s+telaah[^'\x22]*['\x22]", caseSensitive: false),
+        RegExp(r"['\x22][^'\x22]*ruang\s+riset[^'\x22]*['\x22]",
+            caseSensitive: false),
+        RegExp(r"['\x22][^'\x22]*ai\s+spesialis[^'\x22]*['\x22]",
+            caseSensitive: false),
+        RegExp(r"['\x22][^'\x22]*naskah\s+primer[^'\x22]*['\x22]",
+            caseSensitive: false),
+        RegExp(r"['\x22][^'\x22]*kurasi\s+kebahasaan[^'\x22]*['\x22]",
+            caseSensitive: false),
+        RegExp(r"['\x22][^'\x22]*autentikasi\s+sesi[^'\x22]*['\x22]",
+            caseSensitive: false),
+        RegExp(r"['\x22][^'\x22]*modul\s+telaah[^'\x22]*['\x22]",
+            caseSensitive: false),
+        RegExp(r"['\x22][^'\x22]*memproses\s+telaah[^'\x22]*['\x22]",
+            caseSensitive: false),
       ];
 
       for (final path in filesToScan) {
@@ -145,7 +167,8 @@ void main() {
             expect(
               pattern.hasMatch(line),
               isFalse,
-              reason: 'Banned user-facing term matched ${pattern.pattern} in $path at line ${i + 1}:\n$line',
+              reason:
+                  'Banned user-facing term matched ${pattern.pattern} in $path at line ${i + 1}:\n$line',
             );
           }
         }
