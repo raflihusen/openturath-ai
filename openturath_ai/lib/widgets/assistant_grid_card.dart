@@ -119,10 +119,7 @@ class AssistantGridCard extends StatelessWidget {
             padding: const EdgeInsets.only(top: OTSpacing.md),
             child: Row(
               children: [
-                Text(
-                  Loc.tr('openAssistant'),
-                  style: OTTypography.button(color: ink),
-                ),
+                TextButton(onPressed: onOpen, style: OTButtons.quiet(dark), child: Text(Loc.tr('openAssistant'))),
                 const SizedBox(width: OTSpacing.xs),
                 Icon(
                   Directionality.of(context) == TextDirection.rtl
