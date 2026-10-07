@@ -96,7 +96,7 @@ const copyCatalog = <String, List<String>>{
     "الوصول إلى مجال علمي واحد وكتبه المرجعية."
   ],
   "planSingleBenefit1": [
-    "Akses AI penelaah {0}",
+    "Akses {0}",
     "Access the {0} study assistant",
     "الوصول إلى مساعد دراسة {0}"
   ],
