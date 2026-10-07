@@ -881,14 +881,18 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
         }
 
         try {
-          var rtlRegex = /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]/;
-          var els = document.querySelectorAll('.rendered-markdown p, .rendered-markdown li, .rendered-markdown div, [role="article"] p, [role="article"] li');
+          // Direction follows the first letter, never the presence of an Arabic quote.
+          // Do not change wrapper divs: their children can have different directions.
+          var arabicLetter = /[\u0620-\u064A\u066E-\u06D3\u06FA-\u06FC\u0750-\u077F\u08A0-\u08C9\uFB50-\uFDFF\uFE70-\uFEFF]/;
+          var firstLetter = /[A-Za-z\u00C0-\u024F\u0620-\u064A\u066E-\u06D3\u06FA-\u06FC\u0750-\u077F\u08A0-\u08C9\uFB50-\uFDFF\uFE70-\uFEFF]/;
+          var els = document.querySelectorAll('.rendered-markdown p, .rendered-markdown li, [role="article"] p, [role="article"] li');
           if (els && typeof els.forEach === 'function') {
             els.forEach(function(el) {
-              if (rtlRegex.test(el.textContent || '')) {
-                el.setAttribute('dir', 'rtl');
-                el.classList.add('arabic');
-              }
+              var first = (el.textContent || '').match(firstLetter);
+              var rtl = !!first && arabicLetter.test(first[0]);
+              el.setAttribute('dir', rtl ? 'rtl' : 'ltr');
+              if (el.classList && typeof el.classList.toggle === 'function') el.classList.toggle('arabic', rtl);
+              if (el.style) { el.style.textAlign = rtl ? 'right' : 'left'; el.style.unicodeBidi = 'plaintext'; }
             });
           }
         } catch (_) {}
