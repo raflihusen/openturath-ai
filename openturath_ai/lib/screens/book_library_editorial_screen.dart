@@ -450,7 +450,7 @@ class _BookEditorialItem extends StatelessWidget {
                             child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.stretch,
                                 children: [
-                              title,
+                              Flexible(fit: FlexFit.loose, child: title),
                               const SizedBox(height: 12),
                               Text(book.author,
                                   textDirection: answerDirection(book.author),
