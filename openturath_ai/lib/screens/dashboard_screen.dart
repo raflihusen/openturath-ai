@@ -486,8 +486,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                       return OTReveal(
                                         index: index + 2,
                                         child: OTInkCard(
-                                          watermark: NativeCopy.values['field_${disc.fieldId}']?[2] ?? '',
-                                          semanticLabel: 'AI ${Loc.text(disc.name)}',
+                                          watermark: NativeCopy.values[
+                                                      'field_${disc.fieldId}']
+                                                  ?[2] ??
+                                              '',
+                                          semanticLabel:
+                                              'AI ${Loc.text(disc.name)}',
                                           onTap: () {
                                             final shell =
                                                 MainShellController.of(context);
@@ -505,15 +509,30 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                             }
                                           },
                                           child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
                                             children: [
-                                              Text('AI ${Loc.text(disc.name)}', maxLines: 2,
-                                                overflow: TextOverflow.ellipsis,
-                                                style: ScholarlyFonts.outfit(fontSize: OTFontSize.s20,
-                                                  fontWeight: FontWeight.w600, color: OTExpressive.white)),
+                                              Text('AI ${Loc.text(disc.name)}',
+                                                  maxLines: 2,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  style: ScholarlyFonts.outfit(
+                                                      fontSize: OTFontSize.s20,
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                      color:
+                                                          OTExpressive.white)),
                                               const Spacer(),
-                                              Text(AppCopy.assistantsAvailableCount(members.isEmpty ? disc.specialistCount : members.length),
-                                                style: OTTypography.caption(color: OTExpressive.whiteMuted)),
+                                              Text(
+                                                  AppCopy
+                                                      .assistantsAvailableCount(
+                                                          members.isEmpty
+                                                              ? disc
+                                                                  .specialistCount
+                                                              : members.length),
+                                                  style: OTTypography.caption(
+                                                      color: OTExpressive
+                                                          .whiteMuted)),
                                             ],
                                           ),
                                         ),
@@ -609,7 +628,8 @@ class _LibraryNumbersTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Loc.watch(context);
-    return OTInkCard(watermark: 'كتب',
+    return OTInkCard(
+      watermark: 'كتب',
       padding: const EdgeInsets.all(OTSpacing.lg),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -630,8 +650,11 @@ class _LibraryNumbersTile extends StatelessWidget {
               final pages = all.values
                   .fold<int>(0, (sum, item) => sum + item.totalHalaman);
               Widget stat(String value, String label) => Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                    decoration: BoxDecoration(color: OTExpressive.white.withValues(alpha: .06), borderRadius: OTRadius.inputBorder),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 12),
+                    decoration: BoxDecoration(
+                        color: OTExpressive.white.withValues(alpha: .06),
+                        borderRadius: OTRadius.inputBorder),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -643,12 +666,14 @@ class _LibraryNumbersTile extends StatelessWidget {
                         Text(label,
                             maxLines: 2,
                             style: ScholarlyFonts.outfit(
-                                fontSize: OTFontSize.s12, color: OTExpressive.whiteMuted)),
+                                fontSize: OTFontSize.s12,
+                                color: OTExpressive.whiteMuted)),
                       ],
                     ),
                   );
               return Wrap(
-                spacing: 12, runSpacing: 12,
+                spacing: 12,
+                runSpacing: 12,
                 children: [
                   stat(number.format(all.length), Loc.tr('loginStatLibraries')),
                   stat(Loc.atLeast(number.format(entries ~/ 100 * 100)),
