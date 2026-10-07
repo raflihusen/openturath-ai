@@ -681,13 +681,14 @@ class _BookBentoGrid extends StatelessWidget {
           value: book.edition,
           wide: true,
         ),
-      if (_has(book.editorName))
-        _BentoTile(
-          icon: Icons.edit_outlined,
-          label: Loc.tr('ui_ad39f1c3af'),
-          value: book.editorName,
-          wide: true,
-        ),
+      _BentoTile(
+        icon: Icons.edit_outlined,
+        label: Loc.tr('ui_ad39f1c3af'),
+        value: book.editorName.isEmpty
+            ? Loc.tr('editorNotRecorded')
+            : book.editorName,
+        wide: true,
+      ),
       if (_has(book.editionNote))
         _BentoTile(
             icon: Icons.info_outline_rounded,

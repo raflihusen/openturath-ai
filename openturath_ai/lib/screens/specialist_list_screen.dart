@@ -1,6 +1,7 @@
 import '../core/localization.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
+import '../services/telemetry_service.dart';
 import '../core/scholarly_fonts.dart';
 
 import '../core/app_copy.dart';
@@ -60,6 +61,9 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
     _loadAgents();
     OpenTurathCatalogRepository.instance.loadAllMetadata().then((all) {
       if (mounted) setState(() => _libraryStats = all);
+    }).catchError((Object error, StackTrace stack) {
+      TelemetryService.instance
+          .reportError(error, stack, context: 'library_metadata');
     });
   }
 
@@ -243,275 +247,306 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 1040),
               child: Column(
-            children: [
-              // Search & Controls Container
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: OTSpacing.lg, vertical: OTSpacing.sm),
-                child: Column(
-                  children: [
-                    Container(
-                      height: 44,
-                      padding: const EdgeInsets.symmetric(horizontal: 12),
-                      decoration: BoxDecoration(
-                        color: surface,
-                        borderRadius: OTRadius.inputBorder,
-                        border: Border.all(color: border, width: 1.0),
-                      ),
-                      child: Row(
-                        children: [
-                          Icon(Icons.search_rounded,
-                              size: 20, color: textSecondary),
-                          const SizedBox(width: 10),
-                          Expanded(
-                            child: TextField(
-                              controller: _searchCtrl,
-                              onChanged: _onSearchChanged,
-                              style: ScholarlyFonts.outfit(
-                                  fontSize: OTFontSize.s14, color: textPrimary),
-                              decoration: InputDecoration(
-                                hintText: Loc.tr('assistantSearch'),
-                                hintStyle: ScholarlyFonts.outfit(
-                                    fontSize: OTFontSize.s14, color: textSecondary),
-                                border: InputBorder.none,
-                                enabledBorder: InputBorder.none,
-                                focusedBorder: InputBorder.none,
-                                disabledBorder: InputBorder.none,
-                                errorBorder: InputBorder.none,
-                                focusedErrorBorder: InputBorder.none,
-                                filled: false,
-                                isDense: true,
-                                contentPadding: EdgeInsets.zero,
-                              ),
-                            ),
+                children: [
+                  // Search & Controls Container
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: OTSpacing.lg, vertical: OTSpacing.sm),
+                    child: Column(
+                      children: [
+                        Container(
+                          height: 44,
+                          padding: const EdgeInsets.symmetric(horizontal: 12),
+                          decoration: BoxDecoration(
+                            color: surface,
+                            borderRadius: OTRadius.inputBorder,
+                            border: Border.all(color: border, width: 1.0),
                           ),
-                          if (_searchQuery.isNotEmpty)
-                            GestureDetector(
-                              onTap: () {
-                                _searchCtrl.clear();
-                                setState(() => _searchQuery = '');
-                              },
-                              child: Icon(Icons.close_rounded,
-                                  size: 18, color: textSecondary),
-                            ),
+                          child: Row(
+                            children: [
+                              Icon(Icons.search_rounded,
+                                  size: 20, color: textSecondary),
+                              const SizedBox(width: 10),
+                              Expanded(
+                                child: TextField(
+                                  controller: _searchCtrl,
+                                  onChanged: _onSearchChanged,
+                                  style: ScholarlyFonts.outfit(
+                                      fontSize: OTFontSize.s14,
+                                      color: textPrimary),
+                                  decoration: InputDecoration(
+                                    hintText: Loc.tr('assistantSearch'),
+                                    hintStyle: ScholarlyFonts.outfit(
+                                        fontSize: OTFontSize.s14,
+                                        color: textSecondary),
+                                    border: InputBorder.none,
+                                    enabledBorder: InputBorder.none,
+                                    focusedBorder: InputBorder.none,
+                                    disabledBorder: InputBorder.none,
+                                    errorBorder: InputBorder.none,
+                                    focusedErrorBorder: InputBorder.none,
+                                    filled: false,
+                                    isDense: true,
+                                    contentPadding: EdgeInsets.zero,
+                                  ),
+                                ),
+                              ),
+                              if (_searchQuery.isNotEmpty)
+                                GestureDetector(
+                                  onTap: () {
+                                    _searchCtrl.clear();
+                                    setState(() => _searchQuery = '');
+                                  },
+                                  child: Icon(Icons.close_rounded,
+                                      size: 18, color: textSecondary),
+                                ),
+                            ],
+                          ),
+                        ),
+                        if (isGeneralTab) ...[
+                          const SizedBox(height: OTSpacing.md),
+                          // Dual Taxonomy Switcher
+                          CorpusKindControl(
+                            value: _corpusKind,
+                            onChanged: (k) {
+                              setState(() {
+                                _corpusKind = k;
+                                _selectedFieldId = null;
+                              });
+                            },
+                          ),
                         ],
-                      ),
+                      ],
                     ),
-                    if (isGeneralTab) ...[
-                      const SizedBox(height: OTSpacing.md),
-                      // Dual Taxonomy Switcher
-                      CorpusKindControl(
-                        value: _corpusKind,
-                        onChanged: (k) {
-                          setState(() {
-                            _corpusKind = k;
-                            _selectedFieldId = null;
-                          });
-                        },
-                      ),
-                    ],
-                  ],
-                ),
-              ),
+                  ),
 
-              // Discipline Filter Chips (only in discipline mode)
-              if (isGeneralTab && _corpusKind == CorpusKind.discipline) ...[
-                SizedBox(
-                  height: Loc.isArabic ? 52 : 40,
-                  child: ListView(
-                    physics: const BouncingScrollPhysics(),
-                    scrollDirection: Axis.horizontal,
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: OTSpacing.lg),
-                    children: [
-                      _filterChip(
-                        label: AppCopy.allCategories,
-                        isSelected: _selectedFieldId == null ||
-                            _selectedFieldId == 'all',
-                        onTap: () => setState(() => _selectedFieldId = 'all'),
-                        isDark: isDark,
-                        border: border,
-                        surface: surface,
-                        textPrimary: textPrimary,
-                        textSecondary: textSecondary,
-                      ),
-                      const SizedBox(width: 8),
-                      ...FieldModel.defaultFields.map((field) {
-                        return Padding(
-                          padding: const EdgeInsetsDirectional.only(end: 8),
-                          child: _filterChip(
-                            label: field.name,
-                            isSelected: _selectedFieldId == field.id,
+                  // Discipline Filter Chips (only in discipline mode)
+                  if (isGeneralTab && _corpusKind == CorpusKind.discipline) ...[
+                    SizedBox(
+                      height: Loc.isArabic ? 52 : 40,
+                      child: ListView(
+                        physics: const BouncingScrollPhysics(),
+                        scrollDirection: Axis.horizontal,
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: OTSpacing.lg),
+                        children: [
+                          _filterChip(
+                            label: AppCopy.allCategories,
+                            isSelected: _selectedFieldId == null ||
+                                _selectedFieldId == 'all',
                             onTap: () =>
-                                setState(() => _selectedFieldId = field.id),
+                                setState(() => _selectedFieldId = 'all'),
                             isDark: isDark,
                             border: border,
                             surface: surface,
                             textPrimary: textPrimary,
                             textSecondary: textSecondary,
                           ),
-                        );
-                      }),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: OTSpacing.sm),
-              ],
-
-              // Content List
-              Expanded(
-                child: _corpusKind == CorpusKind.scholar
-                    ? const ScholarsComingSoon()
-                    : _isLoading
-                    ? const OTSkeletonList()
-                    : filtered.isEmpty
-                        ? Center(
-                            child: Padding(
-                              padding: const EdgeInsets.all(OTSpacing.xl),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Icon(Icons.search_off_rounded,
-                                      size: 40, color: textSecondary),
-                                  const SizedBox(height: OTSpacing.sm),
-                                  Text(
-                                    _searchQuery.isNotEmpty
-                                        ? AppCopy.noAssistantsFound
-                                        : AppCopy.noAssistantsFound,
-                                    style:
-                                        OTTypography.body(color: textSecondary),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ],
+                          const SizedBox(width: 8),
+                          ...FieldModel.defaultFields.map((field) {
+                            return Padding(
+                              padding: const EdgeInsetsDirectional.only(end: 8),
+                              child: _filterChip(
+                                label: field.name,
+                                isSelected: _selectedFieldId == field.id,
+                                onTap: () =>
+                                    setState(() => _selectedFieldId = field.id),
+                                isDark: isDark,
+                                border: border,
+                                surface: surface,
+                                textPrimary: textPrimary,
+                                textSecondary: textSecondary,
                               ),
-                            ),
-                          )
-                        : Builder(
-                            builder: (context) {
-                              final sorted = List<AgentModel>.from(filtered);
-                              if (_searchQuery.isEmpty) {
-                                sorted.sort((a, b) {
-                                  if (a.id == 'fiqh_tahawwulat') return -1;
-                                  if (b.id == 'fiqh_tahawwulat') return 1;
-                                  if (a.isActive && !b.isActive) return -1;
-                                  if (!a.isActive && b.isActive) return 1;
-                                  return 0;
-                                });
-                              }
+                            );
+                          }),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: OTSpacing.sm),
+                  ],
 
-                              final flagship = sorted
-                                  .where((agent) =>
-                                      agent.id == 'fiqh_tahawwulat')
-                                  .firstOrNull;
-                              final others = sorted
-                                  .where((agent) => agent.id != flagship?.id)
-                                  .toList();
-                              AiLibraryMetadata? statsOf(AgentModel agent) =>
-                                  OpenTurathCatalogRepository.exactMetadata(
-                                      _libraryStats, agent.id);
-
-                              return ListView(
-                                controller: _listScrollCtrl,
-                                physics: const BouncingScrollPhysics(
-                                    parent: AlwaysScrollableScrollPhysics()),
-                                padding: const EdgeInsets.fromLTRB(
-                                    OTSpacing.lg, OTSpacing.md, OTSpacing.lg, 24),
-                                children: [
-                                  if (flagship != null) ...[
-                                    OTReveal(
-                                      child: TahawwulatFlagshipCard(
-                                        agent: flagship,
-                                        metadata: statsOf(flagship),
-                                        isSubscribed: _authService
-                                                .cachedCurrentUser
-                                                ?.hasAccessToAgent(
-                                                    flagship.id) ??
-                                            false,
-                                        onOpenMain: () => _openAgent(flagship),
-                                        onOpenSubAgent: (sub) =>
-                                            _openTahawwulatSubAgent(
-                                                flagship, sub),
-                                        onOpenLibrary: flagship.catalogId != null
-                                            ? () => showResearchLibrary(context,
-                                                agent: flagship)
-                                            : null,
+                  // Content List
+                  Expanded(
+                    child: _corpusKind == CorpusKind.scholar
+                        ? const ScholarsComingSoon()
+                        : _isLoading
+                            ? const OTSkeletonList()
+                            : filtered.isEmpty
+                                ? Center(
+                                    child: Padding(
+                                      padding:
+                                          const EdgeInsets.all(OTSpacing.xl),
+                                      child: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Icon(Icons.search_off_rounded,
+                                              size: 40, color: textSecondary),
+                                          const SizedBox(height: OTSpacing.sm),
+                                          Text(
+                                            _searchQuery.isNotEmpty
+                                                ? AppCopy.noAssistantsFound
+                                                : AppCopy.noAssistantsFound,
+                                            style: OTTypography.body(
+                                                color: textSecondary),
+                                            textAlign: TextAlign.center,
+                                          ),
+                                        ],
                                       ),
                                     ),
-                                    const SizedBox(height: OTSpacing.md),
-                                  ],
-                                  // Grid seragam: satu ketukan langsung membuka asisten.
-                                  LayoutBuilder(builder: (context, box) {
-                                    final columns = box.maxWidth >= 900
-                                        ? 3
-                                        : box.maxWidth >= 560
-                                            ? 2
-                                            : 1;
-                                    Widget card(int index) {
-                                      final agent = others[index];
-                                      return OTReveal(
-                                        index: index % 6 + 1,
-                                        child: AssistantGridCard(
-                                          agent: agent,
-                                          metadata: statsOf(agent),
-                                          onOpen: () => _openAgent(agent),
-                                          onOpenLibrary: agent.catalogId != null
-                                              ? () => showResearchLibrary(
-                                                  context,
-                                                  agent: agent)
-                                              : null,
-                                        ),
-                                      );
-                                    }
+                                  )
+                                : Builder(
+                                    builder: (context) {
+                                      final sorted =
+                                          List<AgentModel>.from(filtered);
+                                      if (_searchQuery.isEmpty) {
+                                        sorted.sort((a, b) {
+                                          if (a.id == 'fiqh_tahawwulat')
+                                            return -1;
+                                          if (b.id == 'fiqh_tahawwulat')
+                                            return 1;
+                                          if (a.isActive && !b.isActive)
+                                            return -1;
+                                          if (!a.isActive && b.isActive)
+                                            return 1;
+                                          return 0;
+                                        });
+                                      }
 
-                                    return Column(
-                                      children: [
-                                        for (var start = 0;
-                                            start < others.length;
-                                            start += columns) ...[
-                                          if (start > 0)
-                                            const SizedBox(
-                                                height: OTSpacing.md),
-                                          if (columns == 1)
-                                            card(start)
-                                          else
-                                            IntrinsicHeight(
-                                              child: Row(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.stretch,
-                                                children: [
-                                                  for (var c = 0;
-                                                      c < columns;
-                                                      c++) ...[
-                                                    if (c > 0)
-                                                      const SizedBox(
-                                                          width: OTSpacing.md),
-                                                    Expanded(
-                                                      child: start + c <
-                                                              others.length
-                                                          ? card(start + c)
-                                                          : const SizedBox
-                                                              .shrink(),
-                                                    ),
-                                                  ],
-                                                ],
+                                      final flagship = sorted
+                                          .where((agent) =>
+                                              agent.id == 'fiqh_tahawwulat')
+                                          .firstOrNull;
+                                      final others = sorted
+                                          .where((agent) =>
+                                              agent.id != flagship?.id)
+                                          .toList();
+                                      AiLibraryMetadata? statsOf(
+                                              AgentModel agent) =>
+                                          OpenTurathCatalogRepository
+                                              .exactMetadata(
+                                                  _libraryStats, agent.id);
+
+                                      return ListView(
+                                        controller: _listScrollCtrl,
+                                        physics: const BouncingScrollPhysics(
+                                            parent:
+                                                AlwaysScrollableScrollPhysics()),
+                                        padding: const EdgeInsets.fromLTRB(
+                                            OTSpacing.lg,
+                                            OTSpacing.md,
+                                            OTSpacing.lg,
+                                            24),
+                                        children: [
+                                          if (flagship != null) ...[
+                                            OTReveal(
+                                              child: TahawwulatFlagshipCard(
+                                                agent: flagship,
+                                                metadata: statsOf(flagship),
+                                                isSubscribed: _authService
+                                                        .cachedCurrentUser
+                                                        ?.hasAccessToAgent(
+                                                            flagship.id) ??
+                                                    false,
+                                                onOpenMain: () =>
+                                                    _openAgent(flagship),
+                                                onOpenSubAgent: (sub) =>
+                                                    _openTahawwulatSubAgent(
+                                                        flagship, sub),
+                                                onOpenLibrary:
+                                                    flagship.catalogId != null
+                                                        ? () =>
+                                                            showResearchLibrary(
+                                                                context,
+                                                                agent: flagship)
+                                                        : null,
                                               ),
                                             ),
+                                            const SizedBox(
+                                                height: OTSpacing.md),
+                                          ],
+                                          // Grid seragam: satu ketukan langsung membuka asisten.
+                                          LayoutBuilder(
+                                              builder: (context, box) {
+                                            final columns = box.maxWidth >= 900
+                                                ? 3
+                                                : box.maxWidth >= 560
+                                                    ? 2
+                                                    : 1;
+                                            Widget card(int index) {
+                                              final agent = others[index];
+                                              return OTReveal(
+                                                index: index % 6 + 1,
+                                                child: AssistantGridCard(
+                                                  agent: agent,
+                                                  metadata: statsOf(agent),
+                                                  onOpen: () =>
+                                                      _openAgent(agent),
+                                                  onOpenLibrary: agent
+                                                              .catalogId !=
+                                                          null
+                                                      ? () =>
+                                                          showResearchLibrary(
+                                                              context,
+                                                              agent: agent)
+                                                      : null,
+                                                ),
+                                              );
+                                            }
+
+                                            return Column(
+                                              children: [
+                                                for (var start = 0;
+                                                    start < others.length;
+                                                    start += columns) ...[
+                                                  if (start > 0)
+                                                    const SizedBox(
+                                                        height: OTSpacing.md),
+                                                  if (columns == 1)
+                                                    card(start)
+                                                  else
+                                                    IntrinsicHeight(
+                                                      child: Row(
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .stretch,
+                                                        children: [
+                                                          for (var c = 0;
+                                                              c < columns;
+                                                              c++) ...[
+                                                            if (c > 0)
+                                                              const SizedBox(
+                                                                  width:
+                                                                      OTSpacing
+                                                                          .md),
+                                                            Expanded(
+                                                              child: start + c <
+                                                                      others
+                                                                          .length
+                                                                  ? card(
+                                                                      start + c)
+                                                                  : const SizedBox
+                                                                      .shrink(),
+                                                            ),
+                                                          ],
+                                                        ],
+                                                      ),
+                                                    ),
+                                                ],
+                                              ],
+                                            );
+                                          }),
                                         ],
-                                      ],
-                                    );
-                                  }),
-                                ],
-                              );
-                            },
-                          ),
+                                      );
+                                    },
+                                  ),
+                  ),
+                ],
               ),
-            ],
             ),
           ),
         ),
       ),
-    ),
-  );
+    );
   }
 
   Widget _filterChip({
@@ -545,10 +580,9 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
         ),
         child: Text(
           Loc.text(label),
-          style:
-              OTTypography.caption(
+          style: OTTypography.caption(
                   color: isSelected ? OTColors.onAccent(isDark) : textSecondary)
-                  .copyWith(
+              .copyWith(
             fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
             fontSize: OTFontSize.s14,
           ),

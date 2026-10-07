@@ -445,6 +445,7 @@ class _LibraryTotals extends StatelessWidget {
       future: OpenTurathCatalogRepository.instance.loadAllMetadata(),
       builder: (context, snapshot) {
         final all = snapshot.data ?? const <String, AiLibraryMetadata>{};
+        if (snapshot.hasError) return Text(Loc.tr('catalogFailure'));
         if (all.isEmpty) return const SizedBox(height: 44);
         final number = NumberFormat.decimalPattern(Loc.language);
         final entries =

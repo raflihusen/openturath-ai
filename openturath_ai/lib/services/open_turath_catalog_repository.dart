@@ -125,24 +125,17 @@ class OpenTurathCatalogRepository {
   Future<Map<String, AiLibraryMetadata>> loadAllMetadata() async {
     if (_metadataCache != null) return _metadataCache!;
 
-    try {
-      final jsonString = await rootBundle.loadString(
-        'assets/data/metadata_training_seluruh_ai.json',
-      );
-      final decoded = jsonDecode(jsonString);
-      if (decoded is Map<String, dynamic>) {
-        final result = <String, AiLibraryMetadata>{};
-        decoded.forEach((key, val) {
-          if (val is Map<String, dynamic>) {
-            result[key] = AiLibraryMetadata.fromJson(key, val);
-          }
-        });
-        _metadataCache = result;
-        return result;
-      }
-    } catch (_) {}
-
-    return const {};
+    final jsonString = await rootBundle
+        .loadString('assets/data/metadata_training_seluruh_ai.json');
+    final decoded = jsonDecode(jsonString);
+    if (decoded is! Map<String, dynamic> ||
+        decoded.values.any((value) => value is! Map<String, dynamic>)) {
+      throw const FormatException('Invalid library metadata');
+    }
+    final result = decoded.map((key, value) => MapEntry(
+        key, AiLibraryMetadata.fromJson(key, value as Map<String, dynamic>)));
+    _metadataCache = result;
+    return result;
   }
 
   static const Map<String, String> _metadataAlias = {
