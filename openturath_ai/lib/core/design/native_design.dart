@@ -226,11 +226,11 @@ abstract final class NativeCopy {
       'خمسة مسارات للدراسة'
     ],
     'chooseRole': [
-      'Pilih asisten sesuai kebutuhan kajian Anda.',
+      'Pilih AI sesuai kebutuhan kajian Anda.',
       'Choose an assistant for your study needs.',
       'اختر المساعد المناسب لاحتياجات دراستك.'
     ],
-    'open': ['Buka asisten', 'Open assistant', 'فتح المساعد'],
+    'open': ['Buka AI', 'Open assistant', 'فتح المساعد'],
     'explore': ['Jelajahi koleksi', 'Explore collection', 'استكشاف المجموعة'],
     'sources': ['Kitab rujukan', 'Reference works', 'الكتب المرجعية'],
     'aboutCollection': [
@@ -249,7 +249,7 @@ abstract final class NativeCopy {
       'مؤلفات الحبيب أبي بكر العدني المشهور'
     ],
     'collectionBody': [
-      'Telaah naskah, pahami konsep, dan telusuri khazanah Fikih Tahawwulat bersama lima asisten khusus.',
+      'Telaah naskah, pahami konsep, dan telusuri khazanah Fikih Tahawwulat bersama lima AI khusus.',
       'Study texts, explore concepts, and discover the heritage of Fiqh al-Tahawwulat with five dedicated assistants.',
       'طالع النصوص وافهم المفاهيم واستكشف تراث فقه التحولات مع خمسة مساعدين متخصصين.'
     ],
@@ -312,7 +312,7 @@ abstract final class NativeCopy {
     ],
     'write': ['Tulis catatan', 'Write a note', 'كتابة ملاحظة'],
     'searchAssistants': [
-      'Cari asisten atau bidang ilmu',
+      'Cari AI atau bidang ilmu',
       'Search assistants or disciplines',
       'البحث عن مساعد أو مجال علمي'
     ],
@@ -366,7 +366,7 @@ abstract final class NativeCopy {
     ],
     'otherAccess': ['Pilihan lainnya', 'Other options', 'خيارات أخرى'],
     'allFive': [
-      'Termasuk kelima asisten khusus.',
+      'Termasuk kelima AI khusus.',
       'Includes all five dedicated assistants.',
       'يشمل المساعدين المتخصصين الخمسة.'
     ],
