@@ -60,7 +60,7 @@ class SpecialistCard extends StatelessWidget {
         ),
         clipBehavior: Clip.antiAlias,
         child: Padding(
-          padding: const EdgeInsetsDirectional.fromSTEB(16, 12, 8, 12),
+          padding: const EdgeInsetsDirectional.fromSTEB(20, 16, 20, 16),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
@@ -102,19 +102,7 @@ class SpecialistCard extends StatelessWidget {
                   ],
                 ),
               ),
-              if (onOpenLibrary != null)
-                IconButton(
-                  onPressed: onOpenLibrary,
-                  tooltip: Loc.tr('referenceBooks'),
-                  icon:
-                      Icon(Icons.auto_stories_outlined, color: muted, size: 20),
-                )
-              else
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 12),
-                  child:
-                      Icon(Icons.chevron_right_rounded, color: muted, size: 20),
-                ),
+
             ],
           ),
         ),
