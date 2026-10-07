@@ -60,9 +60,8 @@ class _DualCalendarState extends State<DualCalendar>
   Widget build(BuildContext context) {
     Loc.watch(context);
     final color = Theme.of(context).colorScheme.onSurface;
-    Widget part(String label, String formatted) {
-      final pieces = formatted.split(' ');
-      return Expanded(
+    Widget part(String label, ({int day, String month, int year, String era}) date) {
+      return SizedBox(
           child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
@@ -72,19 +71,19 @@ class _DualCalendarState extends State<DualCalendar>
                     fontSize: OTFontSize.s12,
                     color: color.withValues(alpha: .7))),
             const SizedBox(height: 4),
-            Text(pieces.first,
+            Text('${date.day}',
                 style: ScholarlyFonts.outfit(
-                        fontSize: OTFontSize.s26,
+                        fontSize: OTFontSize.s32,
                         fontWeight: FontWeight.w600,
                         color: color)
                     .copyWith(
                         fontFeatures: const [FontFeature.tabularFigures()])),
-            Text(pieces.sublist(1, pieces.length - 2).join(' '),
+            Text(date.month,
                 style: ScholarlyFonts.outfit(
                     fontSize: OTFontSize.s14,
                     color: color,
                     fontWeight: FontWeight.w600)),
-            Text(pieces.sublist(pieces.length - 2).join(' '),
+            Text('${date.year} ${date.era}',
                 style: ScholarlyFonts.outfit(
                     fontSize: OTFontSize.s12,
                     color: color.withValues(alpha: .7))),
@@ -99,6 +98,8 @@ class _DualCalendarState extends State<DualCalendar>
             borderRadius: BorderRadius.circular(OTExpressive.panelRadius)),
         child: Column(mainAxisSize: MainAxisSize.min, children: [
           Row(children: [
+            const Icon(Icons.calendar_month_outlined, size: 18),
+            const SizedBox(width: 8),
             Expanded(
                 child: Text(reviewCopy('Kalender', 'التقويم', 'Calendar'),
                     style: ScholarlyFonts.outfit(
@@ -126,13 +127,13 @@ class _DualCalendarState extends State<DualCalendar>
                           ],
                         ))),
           ]),
-          Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            part(reviewCopy('Hijriah', 'هجري', 'Hijri'),
-                HijriDateUtils.formatHijriOnly(now)),
-            const SizedBox(width: 24),
-            part(reviewCopy('Masehi', 'ميلادي', 'Gregorian'),
-                HijriDateUtils.formatMasehiOnly(now)),
-          ]),
+          LayoutBuilder(builder: (context, box) {
+            final h = part(reviewCopy('Hijriah', 'هجري', 'Hijri'), HijriDateUtils.hijriParts(now));
+            final g = part(reviewCopy('Masehi', 'ميلادي', 'Gregorian'), HijriDateUtils.gregorianParts(now));
+            if (MediaQuery.textScalerOf(context).scale(16) >= 24) return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [h, const Divider(height: 24), g]);
+            return Row(crossAxisAlignment: CrossAxisAlignment.start, children: [Expanded(child: h),
+              SizedBox(height: 88, child: VerticalDivider(width: 24, color: OTColors.border(Theme.of(context).brightness == Brightness.dark))), Expanded(child: g)]);
+          }),
         ]));
   }
 }
