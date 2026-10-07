@@ -1,3 +1,6 @@
+import '../widgets/dual_calendar.dart';
+import '../widgets/tahawwulat_hero.dart';
+import '../widgets/tahawwulat_introduction_sheet.dart';
 import '../widgets/desktop_shortcuts.dart';
 import '../widgets/adaptive_sheet.dart';
 import '../core/localization.dart';
@@ -216,7 +219,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               child: Align(
                 alignment: Alignment.topCenter,
                 child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 1040),
+                  constraints: const BoxConstraints(maxWidth: 1160),
                   child: SingleChildScrollView(
                     physics: const BouncingScrollPhysics(
                         parent: AlwaysScrollableScrollPhysics()),
@@ -231,11 +234,20 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       children: [
                         // Banner pembaruan jika tersedia
                         const UpdateReadyBanner(),
-                        Text(AppCopy.ahlanWithName(user.name),
-                            style: OTTypography.pageTitle(color: textPrimary)),
-                        const SizedBox(height: OTSpacing.xs),
-                        const _DateHeader(),
-                        const SizedBox(height: 14),
+                        LayoutBuilder(builder: (context, box) {
+                          final greeting = Text(AppCopy.ahlanWithName(user.name), style: OTTypography.pageTitle(color: textPrimary));
+                          if (box.maxWidth < 720 || MediaQuery.textScalerOf(context).scale(16) > 24) {
+                            return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [greeting, const SizedBox(height: 16), const DualCalendar()]);
+                          }
+                          return Row(children: [Expanded(child: greeting), const SizedBox(width: 24), const SizedBox(width: 360, child: DualCalendar())]);
+                        }),
+                        const SizedBox(height: 24),
+                        _TahawwulatSpotlight(onOpen: () {
+                          final shell = MainShellController.of(context);
+                          if (shell != null) {shell.switchTab(1, fieldId: 'fiqh_tahawwulat');}
+                          else {NavigationGuard.safePushNamed(context, AppRoutes.specialistList, arguments: {'fieldId': 'fiqh_tahawwulat'});}
+                        }),
+                        const SizedBox(height: 24),
 
                         // ── 3. Ergonomic Search Bar (Stadium Pill) ──
                         ListenableBuilder(
@@ -312,90 +324,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
                         const SizedBox(height: 18),
 
-                        // Kartu ini hanya menampilkan keadaan yang benar-benar ada:
-                        // sesi yang masih tersimpan, asisten terakhir, atau pintu mulai.
-                        ListenableBuilder(
-                          listenable: AgentSessionManager.instance,
-                          builder: (context, _) {
-                            final activeAgent =
-                                AgentSessionManager.instance.activeTab?.agent;
-                            final lastAgent = _lastOpenedAgentId == null
-                                ? null
-                                : _agents.cast<AgentModel?>().firstWhere(
-                                      (agent) =>
-                                          agent?.id == _lastOpenedAgentId,
-                                      orElse: () => null,
-                                    );
-                            final target = activeAgent ?? lastAgent;
-                            final hasLiveSession = activeAgent != null;
-                            final hero = _StudyEntryCard(
-                              name: user.name,
-                              agent: target,
-                              hasLiveSession: hasLiveSession,
-                              isDark: isDark,
-                              onPrimary: () {
-                                if (target != null) {
-                                  _openNotebook(target, user);
-                                  return;
-                                }
-                                final shell = MainShellController.of(context);
-                                if (shell != null) {
-                                  shell.switchTab(1);
-                                } else {
-                                  NavigationGuard.safePushNamed(
-                                      context, AppRoutes.specialistList);
-                                }
-                              },
-                            );
-                            final dates = _TahawwulatSpotlight(
-                              onOpen: () {
-                                final shell = MainShellController.of(context);
-                                if (shell != null) {
-                                  shell.switchTab(1,
-                                      fieldId: 'fiqh_tahawwulat');
-                                } else {
-                                  NavigationGuard.safePushNamed(
-                                    context,
-                                    AppRoutes.specialistList,
-                                    arguments: {'fieldId': 'fiqh_tahawwulat'},
-                                  );
-                                }
-                              },
-                            );
-                            return LayoutBuilder(
-                                builder: (context, constraints) {
-                              if (constraints.maxWidth < 680) {
-                                return Column(
-                                  crossAxisAlignment:
-                                      CrossAxisAlignment.stretch,
-                                  children: [
-                                    OTReveal(child: hero),
-                                    const SizedBox(height: 12),
-                                    OTReveal(index: 1, child: dates),
-                                  ],
-                                );
-                              }
-                              return IntrinsicHeight(
-                                child: Row(
-                                  crossAxisAlignment:
-                                      CrossAxisAlignment.stretch,
-                                  children: [
-                                    Expanded(
-                                        flex: 5, child: OTReveal(child: hero)),
-                                    const SizedBox(width: 12),
-                                    Expanded(
-                                        flex: 3,
-                                        child:
-                                            OTReveal(index: 1, child: dates)),
-                                  ],
-                                ),
-                              );
-                            });
-                          },
-                        ),
-
-                        const SizedBox(height: 16),
-
                         // ── 4. Jika Sedang Mencari (Hasil Realtime) ──
                         if (_searchQuery.isNotEmpty) ...[
                           Text(
@@ -455,7 +383,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                     title: agent.title,
                                     titleArabic: agent.titleArabic,
                                     fieldId: agent.fieldId,
-                                    scopeLabel: agent.subtitleAcademic,
+                                    scopeLabel: null,
                                     statusLabel: agent.isComingSoon
                                         ? AppCopy.comingSoon
                                         : null,
@@ -583,7 +511,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                                       overflow:
                                                           TextOverflow.ellipsis,
                                                       style: ScholarlyFonts
-                                                          .newsreader(
+                                                          .outfit(
                                                         fontSize:
                                                             OTFontSize.s20,
                                                         fontWeight:
@@ -617,7 +545,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                                   NativeCopy.values[
                                                           'field_${disc.fieldId}'] !=
                                                       null)
-                                                Text(
+                                                Align(alignment: Alignment.centerRight, child: Text(
                                                   NativeCopy.values[
                                                       'field_${disc.fieldId}']![2],
                                                   maxLines: 1,
@@ -630,7 +558,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                                     fontSize: OTFontSize.s16,
                                                     color: textSecondary,
                                                   ),
-                                                )
+                                                ))
                                               else if (members.isNotEmpty)
                                                 Text(
                                                   members
@@ -652,6 +580,45 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                     },
                                   )),
                           const SizedBox(height: 12),
+                        // Kartu ini hanya menampilkan keadaan yang benar-benar ada:
+                        // sesi yang masih tersimpan, asisten terakhir, atau pintu mulai.
+                        ListenableBuilder(
+                          listenable: AgentSessionManager.instance,
+                          builder: (context, _) {
+                            final activeAgent =
+                                AgentSessionManager.instance.activeTab?.agent;
+                            final lastAgent = _lastOpenedAgentId == null
+                                ? null
+                                : _agents.cast<AgentModel?>().firstWhere(
+                                      (agent) =>
+                                          agent?.id == _lastOpenedAgentId,
+                                      orElse: () => null,
+                                    );
+                            final target = activeAgent ?? lastAgent;
+                            final hasLiveSession = activeAgent != null;
+                            final hero = _StudyEntryCard(
+                              name: user.name,
+                              agent: target,
+                              hasLiveSession: hasLiveSession,
+                              isDark: isDark,
+                              onPrimary: () {
+                                if (target != null) {
+                                  _openNotebook(target, user);
+                                  return;
+                                }
+                                final shell = MainShellController.of(context);
+                                if (shell != null) {
+                                  shell.switchTab(1);
+                                } else {
+                                  NavigationGuard.safePushNamed(
+                                      context, AppRoutes.specialistList);
+                                }
+                              },
+                            );
+                            return target == null ? const SizedBox.shrink() : hero;
+                          },
+                        ),
+                        const SizedBox(height: 24),
                           const _RecentNoteTile(),
                           const SizedBox(height: 12),
                           LayoutBuilder(builder: (context, box) {
@@ -1035,89 +1002,15 @@ class _StudyEntryCard extends StatelessWidget {
 /// Sorotan koleksi utama: angka pustaka Fikih Tahawwulat dari metadata.
 class _TahawwulatSpotlight extends StatelessWidget {
   const _TahawwulatSpotlight({required this.onOpen});
-
   final VoidCallback onOpen;
-
   @override
-  Widget build(BuildContext context) {
-    Loc.watch(context);
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final ink = OTColors.textPrimary(isDark);
-    final muted = OTColors.textSecondary(isDark);
-    return OTBentoTile(
-      onTap: onOpen,
-      semanticLabel: Loc.text('Fikih Tahawwulat'),
-      padding: const EdgeInsets.all(OTSpacing.lg),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(Loc.tr('planFeaturedLabel'),
-                  style: ScholarlyFonts.outfit(
-                      fontSize: OTFontSize.s12, color: muted)),
-              const SizedBox(height: 4),
-              Text(
-                Loc.text('Fikih Tahawwulat'),
-                style: ScholarlyFonts.newsreader(
-                  fontSize: OTFontSize.s22,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: -0.3,
-                  color: ink,
-                ),
-              ),
-            ],
-          ),
-          FutureBuilder<Map<String, AiLibraryMetadata>>(
-            future: OpenTurathCatalogRepository.instance.loadAllMetadata(),
-            builder: (context, snapshot) {
-              final stats = LibraryStat.from(
-                  OpenTurathCatalogRepository.exactMetadata(
-                      snapshot.data ?? const {}, 'fiqh_tahawwulat'));
-              if (stats.isEmpty) return const SizedBox(height: OTSpacing.md);
-              return Padding(
-                padding: const EdgeInsets.symmetric(vertical: OTSpacing.md),
-                child: Wrap(
-                  spacing: OTSpacing.lg,
-                  runSpacing: OTSpacing.sm,
-                  children: [
-                    for (final stat in stats)
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(stat.value,
-                              style: ScholarlyFonts.outfit(
-                                  fontSize: OTFontSize.s18,
-                                  fontWeight: FontWeight.w600,
-                                  color: ink)),
-                          Text(stat.unit,
-                              style: ScholarlyFonts.outfit(
-                                  fontSize: OTFontSize.s12, color: muted)),
-                        ],
-                      ),
-                  ],
-                ),
-              );
-            },
-          ),
-          Row(
-            children: [
-              Text(Loc.tr('flagshipExplore', ['5']),
-                  style: ScholarlyFonts.outfit(
-                      fontSize: OTFontSize.s14,
-                      fontWeight: FontWeight.w600,
-                      color: ink)),
-              const SizedBox(width: 4),
-              Icon(Icons.arrow_forward_rounded, size: 16, color: ink),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
+  Widget build(BuildContext context) => FutureBuilder<Map<String, AiLibraryMetadata>>(
+    future: OpenTurathCatalogRepository.instance.loadAllMetadata(),
+    builder: (context, snapshot) => TahawwulatHero(
+      onOpen: onOpen,
+      onIntroduction: () => TahawwulatIntroductionSheet.show(context),
+      facts: LibraryStat.from(OpenTurathCatalogRepository.exactMetadata(snapshot.data ?? const {}, 'fiqh_tahawwulat')).map((s) => '${s.value} ${s.unit}').toList(),
+    ));
 }
 
 class _DashboardAnnouncementCarousel extends StatefulWidget {
@@ -1451,43 +1344,3 @@ class _AnnouncementSlide {
 }
 
 /// Tanggal hari ini: Hijriah sebagai judul, Masehi di sampingnya.
-class _DateHeader extends StatelessWidget {
-  const _DateHeader();
-
-  @override
-  Widget build(BuildContext context) {
-    Loc.watch(context);
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    return Semantics(
-      label:
-          '${HijriDateUtils.formatHijriOnly()}, ${HijriDateUtils.formatMasehiOnly()}',
-      excludeSemantics: true,
-      child: Wrap(
-        crossAxisAlignment: WrapCrossAlignment.end,
-        spacing: 12,
-        runSpacing: 2,
-        children: [
-          Text(
-            HijriDateUtils.formatHijriOnly(),
-            style: ScholarlyFonts.outfit(
-              fontSize: OTFontSize.s12,
-              fontWeight: FontWeight.w400,
-              letterSpacing: -0.3,
-              height: 1.2,
-              color: OTColors.textSecondary(isDark),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(bottom: 2),
-            child: Text(
-              HijriDateUtils.formatMasehiOnly(),
-              style: ScholarlyFonts.outfit(
-                  fontSize: OTFontSize.s12,
-                  color: OTColors.textSecondary(isDark)),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
