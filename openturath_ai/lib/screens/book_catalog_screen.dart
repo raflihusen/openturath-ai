@@ -1,3 +1,4 @@
+import '../widgets/book_reading_rows.dart';
 import '../widgets/desktop_shortcuts.dart';
 import '../widgets/adaptive_sheet.dart';
 import 'dart:async';
@@ -830,23 +831,23 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
     return RefreshIndicator(
       onRefresh: _loadCatalog,
       color: primaryAccent,
-      child: ListView.builder(
-        physics: const AlwaysScrollableScrollPhysics(
-            parent: BouncingScrollPhysics()),
-        padding: const EdgeInsets.symmetric(
-          horizontal: OTSpacing.lg,
-          vertical: OTSpacing.sm,
-        ),
-        itemCount: _filteredBooks!.length,
-        itemBuilder: (context, index) {
-          final book = _filteredBooks![index];
-          return BookRowItem(
-            book: book,
-            searchQuery: _searchQuery,
-            onTap: () => _openBookDetail(book),
-          );
-        },
-      ),
+      child: LayoutBuilder(builder: (context, constraints) {
+        final columns = bookReadingColumns(context,
+            constraints.maxWidth - OTSpacing.lg * 2);
+        return ListView.builder(
+          physics: const AlwaysScrollableScrollPhysics(
+              parent: BouncingScrollPhysics()),
+          padding: const EdgeInsets.symmetric(
+              horizontal: OTSpacing.lg, vertical: OTSpacing.sm),
+          itemCount: (_filteredBooks!.length / columns).ceil(),
+          itemBuilder: (context, row) => bookReadingRow(context, row, columns,
+              _filteredBooks!.length, (context, index) {
+            final book = _filteredBooks![index];
+            return BookRowItem(book: book, searchQuery: _searchQuery,
+                onTap: () => _openBookDetail(book));
+          }),
+        );
+      }),
     );
   }
 
