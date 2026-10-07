@@ -359,9 +359,9 @@ void main() {
       },
     );
     await _shot(tester, 'dlg_access', const ProfileScreen(),
-        size: win, tap: 'Daftar asisten aktif');
+        size: win, tap: 'Daftar AI aktif');
     await _shot(tester, 'dlg_access_dark', const ProfileScreen(),
-        size: win, tap: 'Daftar asisten aktif', dark: true);
+        size: win, tap: 'Daftar AI aktif', dark: true);
     // Layar pustaka: ringkasan koleksi, daftar kitab, dan rincian kitab.
     final catalog = OpenTurathCatalogRepository.instance;
     final libraryMeta = await tester.runAsync(() => catalog.loadAllMetadata());
