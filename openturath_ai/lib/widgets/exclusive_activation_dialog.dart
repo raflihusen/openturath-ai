@@ -98,35 +98,55 @@ class ExclusiveActivationDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final dark = Theme.of(context).brightness == Brightness.dark;
-    final ink = OTColors.textPrimary(dark), muted = OTColors.textSecondary(dark);
-    final expiry = expiryDate ?? (durationDays > 0 ? DateTime.now().add(Duration(days: durationDays)) : null);
+    final ink = OTColors.textPrimary(dark),
+        muted = OTColors.textSecondary(dark);
+    final expiry = expiryDate ??
+        (durationDays > 0
+            ? DateTime.now().add(Duration(days: durationDays))
+            : null);
     return AlertDialog(
       backgroundColor: OTColors.surface(dark),
       shape: RoundedRectangleBorder(borderRadius: OTRadius.dialogBorder),
       title: Row(children: [
         Icon(Icons.check_circle_outline_rounded, color: ink),
         const SizedBox(width: 12),
-        Expanded(child: Text(reviewCopy('Akses telah aktif', 'تم تفعيل الوصول', 'Access is active'),
-          style: OTTypography.screenTitle(color: ink))),
+        Expanded(
+            child: Text(
+                reviewCopy(
+                    'Akses telah aktif', 'تم تفعيل الوصول', 'Access is active'),
+                style: OTTypography.screenTitle(color: ink))),
       ]),
-      content: Column(mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text(serviceTitle.startsWith('AI ') ? serviceTitle : 'AI $serviceTitle',
-            style: OTTypography.bodyMedium(color: ink)),
-          const SizedBox(height: 12),
-          Text(expiry == null ? reviewCopy('Tanpa batas waktu', 'دون حد زمني', 'No time limit') :
-            '${reviewCopy('Berlaku hingga', 'صالح حتى', 'Valid until')} ${HijriDateUtils.formatMasehiOnly(expiry.toLocal())}',
-            style: OTTypography.body(color: muted)),
-          const SizedBox(height: 16),
-          Text(reviewCopy('Anda dapat membuka AI dan menyimpan hasil telaah ke Catatan.',
-            'يمكنك فتح الذكاء الاصطناعي وحفظ نتائج الدراسة في الملاحظات.',
-            'You can open the AI and save study results to Notes.'),
-            style: OTTypography.body(color: muted)),
-        ]),
+      content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+                serviceTitle.startsWith('AI ')
+                    ? serviceTitle
+                    : 'AI $serviceTitle',
+                style: OTTypography.bodyMedium(color: ink)),
+            const SizedBox(height: 12),
+            Text(
+                expiry == null
+                    ? reviewCopy(
+                        'Tanpa batas waktu', 'دون حد زمني', 'No time limit')
+                    : '${reviewCopy('Berlaku hingga', 'صالح حتى', 'Valid until')} ${HijriDateUtils.formatMasehiOnly(expiry.toLocal())}',
+                style: OTTypography.body(color: muted)),
+            const SizedBox(height: 16),
+            Text(
+                reviewCopy(
+                    'Anda dapat membuka AI dan menyimpan hasil telaah ke Catatan.',
+                    'يمكنك فتح الذكاء الاصطناعي وحفظ نتائج الدراسة في الملاحظات.',
+                    'You can open the AI and save study results to Notes.'),
+                style: OTTypography.body(color: muted)),
+          ]),
       actions: [
-        TextButton(onPressed: () => Navigator.of(context).pop(), child: Text(MaterialLocalizations.of(context).closeButtonLabel)),
-        FilledButton(onPressed: () => _handleStartStudy(context),
-          child: Text(Loc.tr('openAssistant'))),
+        TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text(MaterialLocalizations.of(context).closeButtonLabel)),
+        FilledButton(
+            onPressed: () => _handleStartStudy(context),
+            child: Text(Loc.tr('openAssistant'))),
       ],
     );
   }
