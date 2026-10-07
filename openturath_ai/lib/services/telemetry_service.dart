@@ -122,6 +122,10 @@ class TelemetryService {
       (match) => '${match.group(1)}: "[REDACTED_CODE]"',
     );
 
+    sanitized = sanitized.replaceAll(
+      RegExp(r'[A-Za-z0-9.!#$%&'*+/=?^_`{|}~-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}'),
+      '[REDACTED_EMAIL]',
+    );
     return sanitized;
   }
 
@@ -173,6 +177,8 @@ class TelemetryService {
       _reportedSignatures.removeWhere((_, time) => now.difference(time) > _dedupWindow);
 
       final user = _firebaseAuth.currentUser;
+      // Remote reporting requires an authenticated owner; pre-login errors stay local.
+      if (user == null) return;
       final maskedUserEmail = user?.email != null ? maskEmail(user!.email!) : '';
 
       final sanitizedExtra = <String, dynamic>{};
@@ -184,7 +190,8 @@ class TelemetryService {
 
       final payload = {
         'error': errorStr.length > 2000 ? errorStr.substring(0, 2000) : errorStr,
-        'context': context ?? 'general',
+        'context': sanitizeData(context ?? 'general').substring(0,
+            sanitizeData(context ?? 'general').length.clamp(0, 300)),
         'severity': severity,
         'stackTrace': stackStr.length > 5000 ? stackStr.substring(0, 5000) : stackStr,
         'breadcrumbs': List<Map<String, dynamic>>.from(_breadcrumbs),

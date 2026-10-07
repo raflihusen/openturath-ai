@@ -57,7 +57,7 @@ service cloud.firestore {
     // CLIENT ERROR LOGS (Telemetry & Crash Reports - Write Only)
     // ================================================================
     match /client_error_logs/{logId} {
-      allow create: if request.resource.data.keys().hasOnly([
+      allow create: if request.auth != null && request.resource.data.keys().hasOnly([
         'error', 'context', 'severity', 'stackTrace', 'breadcrumbs',
         'extra', 'userId', 'userEmail', 'platform', 'deviceTimestamp', 'createdAt'
       ])
@@ -69,10 +69,7 @@ service cloud.firestore {
       && (!('extra' in request.resource.data) || (request.resource.data.extra is map && request.resource.data.extra.size() <= 50))
       && (!('context' in request.resource.data) || (request.resource.data.context is string && request.resource.data.context.size() <= 300))
       && request.resource.data.severity in ['info', 'warning', 'error', 'critical']
-      && (
-        (request.auth != null && request.resource.data.userId == request.auth.uid) ||
-        (request.auth == null && request.resource.data.userId == 'unauthenticated')
-      )
+      && request.resource.data.userId == request.auth.uid
       && request.resource.data.createdAt == request.time;
       allow read, update, delete: if false;
     }

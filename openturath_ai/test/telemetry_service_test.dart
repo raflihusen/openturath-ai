@@ -48,6 +48,11 @@ void main() {
       );
     });
 
+    test('diagnostic text redacts email addresses in any field', () {
+      expect(telemetry.sanitizeData('Checkout user ahmad@example.com failed'),
+          'Checkout user [REDACTED_EMAIL] failed');
+    });
+
     test('maskEmail obfuscates email addresses for privacy', () {
       expect(telemetry.maskEmail('ahmad@example.com'), 'a***d@example.com');
       expect(telemetry.maskEmail('ab@domain.com'), '*@domain.com');
