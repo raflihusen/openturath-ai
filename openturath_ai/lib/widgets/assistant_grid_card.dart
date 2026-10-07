@@ -102,6 +102,7 @@ class AssistantGridCard extends StatelessWidget {
               Tooltip(
                   message:
                       '${Loc.tr('viewReferences')} ${Loc.text(agent.title)}',
+                  excludeFromSemantics: true,
                   child: SizedBox.square(
                       dimension: 48,
                       child: IconButton.filledTonal(
@@ -109,7 +110,8 @@ class AssistantGridCard extends StatelessWidget {
                           style: IconButton.styleFrom(
                               backgroundColor: ink.withValues(alpha: .12),
                               foregroundColor: ink),
-                          icon: const Icon(Icons.auto_stories_outlined,
+                          icon: Icon(Icons.auto_stories_outlined,
+                              semanticLabel: '${Loc.tr('viewReferences')} ${Loc.text(agent.title)}',
                               size: 24)))),
             ],
           ]),
