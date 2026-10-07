@@ -26,11 +26,13 @@ void main() {
           final section = document.sections[n];
           expect(section.content, isNotEmpty);
           expect(section.content, isNot(source.sections[n].content));
-          if (locale == 'ar')
+          if (locale == 'ar') {
             expect(
                 RegExp(r'[\u0600-\u06ff]').hasMatch(section.content), isTrue);
-          if (source.sections[n].content.contains('openturath@gmail.com'))
+          }
+          if (source.sections[n].content.contains('openturath@gmail.com')) {
             expect(section.content, contains('openturath@gmail.com'));
+          }
           for (final name in [
             'DOKU',
             'NotebookLM',
@@ -38,8 +40,9 @@ void main() {
             'SSL/TLS',
             'QRIS'
           ]) {
-            if (source.sections[n].content.contains(name))
+            if (source.sections[n].content.contains(name)) {
               expect(section.content, contains(name));
+            }
           }
         }
       }
