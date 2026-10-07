@@ -35,21 +35,6 @@ class SpecialistCard extends StatelessWidget {
   final VoidCallback? onOpen;
   final VoidCallback? onOpenLibrary;
 
-  IconData get _disciplineIcon =>
-      icon ??
-      switch (fieldId) {
-        'fiqh' => Icons.balance_outlined,
-        'hadith' => Icons.format_quote_outlined,
-        'tafsir' => Icons.auto_stories_outlined,
-        'usul' => Icons.account_tree_outlined,
-        'lughah' => Icons.translate_outlined,
-        'aqidah' => Icons.lightbulb_outline_rounded,
-        'tarikh' => Icons.history_edu_outlined,
-        'tasawwuf' => Icons.spa_outlined,
-        'bibliografi' => Icons.library_books_outlined,
-        _ => Icons.menu_book_outlined,
-      };
-
   @override
   Widget build(BuildContext context) {
     Loc.watch(context);
@@ -79,17 +64,6 @@ class SpecialistCard extends StatelessWidget {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Container(
-                width: 44,
-                height: 44,
-                decoration: BoxDecoration(
-                  color: OTColors.surfaceSubtle(isDark),
-                  borderRadius: BorderRadius.circular(OTRadius.input),
-                  border: Border.all(color: border),
-                ),
-                child: Icon(_disciplineIcon, size: 21, color: ink),
-              ),
-              const SizedBox(width: 14),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
