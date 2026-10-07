@@ -27,6 +27,7 @@ import 'package:openturath_ai/screens/library_metadata_overview_screen.dart';
 import 'package:openturath_ai/screens/book_library_editorial_screen.dart';
 import 'package:openturath_ai/screens/book_catalog_screen.dart';
 import 'package:openturath_ai/widgets/app_loader.dart';
+import 'package:openturath_ai/widgets/payment_success_dialog.dart';
 import 'package:openturath_ai/screens/profile_screen.dart';
 import 'package:openturath_ai/screens/subscription_screen.dart';
 import 'package:openturath_ai/services/auth_service.dart';
@@ -207,6 +208,22 @@ void main() {
         size: const Size(390, 1100), locale: 'ar');
     await _shot(tester, 'ai_large_text', const SpecialistListScreen(),
         size: const Size(390, 1400), textScale: 2);
+    await _shot(tester, 'tahawwulat_picker_phone', const SpecialistListScreen(),
+        size: const Size(390, 1000), tap: 'Buka AI Fikih Tahawwulat');
+    await _shot(tester, 'tahawwulat_picker_dark', const SpecialistListScreen(),
+        size: const Size(1280, 1000),
+        dark: true,
+        tap: 'Buka AI Fikih Tahawwulat');
+    await _shot(
+        tester,
+        'payment_success',
+        const Scaffold(
+            body: Center(
+                child: PaymentSuccessDialog(
+                    plan: 'AI Fikih Tahawwulat · 1 Bulan',
+                    invoice: 'CONTOH-INVOICE',
+                    amount: 300000))),
+        size: const Size(390, 844));
     Widget mixedChat() => Scaffold(
         appBar: AppBar(title: const Text('Fikih Tahawwulat: Al-Muhaqqiq')),
         body: NativeTurathChatView(
