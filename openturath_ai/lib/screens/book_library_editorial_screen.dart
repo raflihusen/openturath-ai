@@ -529,105 +529,18 @@ ${Loc.tr('bookScienceSection')}: ${book.section}''';
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            // Baris atas bento: judul dan pengarang di ubin lebar,
-                            // bidang ilmu dan wafat pengarang di ubin samping.
-                            LayoutBuilder(builder: (context, box) {
-                              final titleTile = OTBentoTile(
-                                padding: const EdgeInsets.all(24),
-                                child: Column(
-                                  crossAxisAlignment:
-                                      CrossAxisAlignment.stretch,
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      book.title,
-                                      textDirection: TextDirection.rtl,
-                                      textAlign: TextAlign.right,
-                                      style: ScholarlyFonts.scheherazadeNew(
-                                        fontSize: OTFontSize.s36,
-                                        fontWeight: FontWeight.w700,
-                                        color: ink,
-                                        height: 1.6,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 8),
-                                    Text(
-                                      book.author,
-                                      textDirection: TextDirection.rtl,
-                                      textAlign: TextAlign.right,
-                                      style: ScholarlyFonts.scheherazadeNew(
-                                        fontSize: OTFontSize.s18,
-                                        color: textSecondary,
-                                        height: 1.7,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              );
-                              Widget fact(String label, String value) => Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(label,
-                                          style: ScholarlyFonts.outfit(
-                                              fontSize: OTFontSize.s12,
-                                              color: textSecondary)),
-                                      const SizedBox(height: 2),
-                                      Text(value,
-                                          style: ScholarlyFonts.outfit(
-                                              fontSize: OTFontSize.s16,
-                                              fontWeight: FontWeight.w600,
-                                              color: ink)),
-                                    ],
-                                  );
-                              final sideTile = OTBentoTile(
-                                child: Column(
-                                  crossAxisAlignment:
-                                      CrossAxisAlignment.stretch,
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    fact(Loc.tr('bookScienceSection'),
-                                        book.localizedSection),
-                                    if (book.deathYear != null) ...[
-                                      Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: 12),
-                                        child:
-                                            Divider(height: 1, color: border),
-                                      ),
-                                      fact(Loc.tr('authorDeathLabel'),
-                                          book.deathLabel),
-                                    ],
-                                  ],
-                                ),
-                              );
-                              if (box.maxWidth < 560) {
-                                return Column(
-                                  crossAxisAlignment:
-                                      CrossAxisAlignment.stretch,
-                                  children: [
-                                    OTReveal(child: titleTile),
-                                    const SizedBox(height: OTSpacing.md),
-                                    OTReveal(index: 1, child: sideTile),
-                                  ],
-                                );
-                              }
-                              return IntrinsicHeight(
-                                child: Row(
-                                  crossAxisAlignment:
-                                      CrossAxisAlignment.stretch,
-                                  children: [
-                                    Expanded(
-                                        flex: 2,
-                                        child: OTReveal(child: titleTile)),
-                                    const SizedBox(width: OTSpacing.md),
-                                    Expanded(
-                                        child: OTReveal(
-                                            index: 1, child: sideTile)),
-                                  ],
-                                ),
-                              );
-                            }),
+                            OTBentoTile(padding: const EdgeInsets.all(24), child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+                              Text(book.title, textDirection: answerDirection(book.title), textAlign: TextAlign.start, style: answerDirection(book.title) == TextDirection.rtl ? ScholarlyFonts.scheherazadeNew(fontSize: OTFontSize.s36, fontWeight: FontWeight.w700, color: ink, height: 1.6) : OTTypography.pageTitle(color: ink)),
+                              const SizedBox(height: 8),
+                              Text(book.author, textDirection: answerDirection(book.author), textAlign: TextAlign.start, style: ScholarlyFonts.scheherazadeNew(fontSize: OTFontSize.s18, color: textSecondary, height: 1.7)),
+                              const SizedBox(height: 16),
+                              Wrap(spacing: 16, runSpacing: 8, children: [Text(book.localizedSection, style: OTTypography.body(color: textSecondary)), if(book.deathYear != null) Text(book.deathLabel, textDirection: TextDirection.ltr, style: OTTypography.body(color: textSecondary))]),
+                              const SizedBox(height: 20),
+                              Wrap(spacing: 12, runSpacing: 8, children: [
+                                FilledButton.icon(onPressed: () => _handleCopyCitation(context), icon: const Icon(Icons.copy_rounded, size: 18), label: Text(Loc.tr('bookCitationCopy'))),
+                                OutlinedButton.icon(onPressed: () => _handleBookmark(context), icon: const Icon(Icons.bookmark_add_outlined, size: 18), label: Text(Loc.tr('bookSave'))),
+                              ]),
+                            ])),
                             const SizedBox(height: OTSpacing.md),
                             _BookBentoGrid(book: book),
                             const SizedBox(height: OTSpacing.md),
@@ -774,11 +687,11 @@ class _BentoTile extends StatelessWidget {
     final ink = OTColors.textPrimary(isDark);
     final textSecondary = OTColors.textSecondary(isDark);
     final displayValue = value.trim();
-    final isArabic = RegExp(r'[؀-ۿ]').hasMatch(displayValue);
+    final isArabic = answerDirection(displayValue) == TextDirection.rtl;
 
     final valueText = Text(
       displayValue,
-      textDirection: isArabic ? TextDirection.rtl : null,
+      textDirection: answerDirection(displayValue),
       textAlign: TextAlign.start,
       style: isArabic
           ? ScholarlyFonts.scheherazadeNew(
