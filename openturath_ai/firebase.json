@@ -11,6 +11,8 @@
     {
       "site": "openturath",
       "public": "public",
+      "cleanUrls": true,
+      "trailingSlash": false,
       "ignore": [
         "firebase.json",
         "**/.*",
@@ -46,6 +48,8 @@
     {
       "site": "open-turath",
       "public": "public",
+      "cleanUrls": true,
+      "trailingSlash": false,
       "ignore": [
         "firebase.json",
         "**/.*",
@@ -81,6 +85,8 @@
     {
       "site": "openturath-ai",
       "public": "public",
+      "cleanUrls": true,
+      "trailingSlash": false,
       "ignore": [
         "firebase.json",
         "**/.*",
