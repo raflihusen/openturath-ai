@@ -63,7 +63,6 @@ class AssistantGridCard extends StatelessWidget {
     final stats = LibraryStat.from(metadata);
 
     return OTBentoTile(
-      onTap: onOpen,
       semanticLabel: '${Loc.tr('openAssistant')} ${agent.title}',
       padding: const EdgeInsets.fromLTRB(
           OTSpacing.lg, OTSpacing.lg, OTSpacing.sm, OTSpacing.sm),
@@ -78,7 +77,7 @@ class AssistantGridCard extends StatelessWidget {
                 Loc.text(agent.title),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
-                style: OTTypography.bookTitle(color: ink).copyWith(height: 1.2),
+                style: OTTypography.screenTitle(color: ink).copyWith(height: 1.2),
               ),
               if (agent.isComingSoon) ...[
                 const SizedBox(height: OTSpacing.sm),
@@ -94,13 +93,6 @@ class AssistantGridCard extends StatelessWidget {
                     style: OTTypography.metadataTag(color: muted),
                   ),
                 ),
-              ],
-              if (agent.subtitleAcademic.isNotEmpty) ...[
-                const SizedBox(height: OTSpacing.sm),
-                Text(Loc.text(agent.subtitleAcademic),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: OTTypography.body(color: muted)),
               ],
               // Satu baris metadata, bukan deretan pil: angka tetap terbaca
               // tanpa membuat kartu terasa seperti kumpulan tombol.
