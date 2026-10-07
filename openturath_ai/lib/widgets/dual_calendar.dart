@@ -73,7 +73,7 @@ class _DualCalendarState extends State<DualCalendar>
             const SizedBox(height: 4),
             Text('${date.day}',
                 style: ScholarlyFonts.outfit(
-                        fontSize: OTFontSize.s32,
+                        fontSize: OTFontSize.calendarDay,
                         fontWeight: FontWeight.w600,
                         color: color)
                     .copyWith(
