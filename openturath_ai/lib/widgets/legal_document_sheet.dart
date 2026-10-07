@@ -130,17 +130,21 @@ class LegalDocumentSheet extends StatelessWidget {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           if (icon != null)
-                            Row(crossAxisAlignment: CrossAxisAlignment.center,
+                            Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
-                              ExcludeSemantics(child: Container(
-                                  padding: const EdgeInsets.all(10),
-                                  decoration: BoxDecoration(
-                                      color: OTColors.surface(isDark),
-                                      borderRadius: OTRadius.cardBorder),
-                                  child: Icon(icon, size: 22, color: textPrimary))),
-                              const SizedBox(width: 12),
-                              Expanded(child: heading),
-                            ])
+                                  ExcludeSemantics(
+                                      child: Container(
+                                          padding: const EdgeInsets.all(10),
+                                          decoration: BoxDecoration(
+                                              color: OTColors.surface(isDark),
+                                              borderRadius:
+                                                  OTRadius.cardBorder),
+                                          child: Icon(icon,
+                                              size: 22, color: textPrimary))),
+                                  const SizedBox(width: 12),
+                                  Expanded(child: heading),
+                                ])
                           else
                             heading,
                           const SizedBox(height: 12),
@@ -152,7 +156,8 @@ class LegalDocumentSheet extends StatelessWidget {
                                   color: textSecondary)),
                         ]);
                     return icon == null
-                        ? Padding(padding: const EdgeInsets.symmetric(vertical: 8),
+                        ? Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 8),
                             child: content)
                         : Container(
                             padding: const EdgeInsets.all(20),

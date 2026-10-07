@@ -12,7 +12,9 @@ Widget bookReadingRow(BuildContext context, int row, int columns, int count,
   return Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
     Expanded(child: builder(context, first)),
     const SizedBox(width: 16),
-    Expanded(child: first + 1 < count
-        ? builder(context, first + 1) : const SizedBox.shrink()),
+    Expanded(
+        child: first + 1 < count
+            ? builder(context, first + 1)
+            : const SizedBox.shrink()),
   ]);
 }

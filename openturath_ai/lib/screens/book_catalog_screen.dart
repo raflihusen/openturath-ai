@@ -832,18 +832,20 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
       onRefresh: _loadCatalog,
       color: primaryAccent,
       child: LayoutBuilder(builder: (context, constraints) {
-        final columns = bookReadingColumns(context,
-            constraints.maxWidth - OTSpacing.lg * 2);
+        final columns = bookReadingColumns(
+            context, constraints.maxWidth - OTSpacing.lg * 2);
         return ListView.builder(
           physics: const AlwaysScrollableScrollPhysics(
               parent: BouncingScrollPhysics()),
           padding: const EdgeInsets.symmetric(
               horizontal: OTSpacing.lg, vertical: OTSpacing.sm),
           itemCount: (_filteredBooks!.length / columns).ceil(),
-          itemBuilder: (context, row) => bookReadingRow(context, row, columns,
-              _filteredBooks!.length, (context, index) {
+          itemBuilder: (context, row) => bookReadingRow(
+              context, row, columns, _filteredBooks!.length, (context, index) {
             final book = _filteredBooks![index];
-            return BookRowItem(book: book, searchQuery: _searchQuery,
+            return BookRowItem(
+                book: book,
+                searchQuery: _searchQuery,
                 onTap: () => _openBookDetail(book));
           }),
         );

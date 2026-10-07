@@ -63,17 +63,20 @@ class BookIdentityCard extends StatelessWidget {
             ]);
         final factsView = Wrap(
             alignment: rtl ? WrapAlignment.end : WrapAlignment.start,
-            spacing: 8, runSpacing: 8, children: [
-          for (final fact in facts)
-            Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
-                decoration: BoxDecoration(
-                    color: OTColors.surfaceSubtle(dark),
-                    borderRadius: OTRadius.chipBorder),
-                child: Text(fact,
-                    textDirection: answerDirection(fact),
-                    style: OTTypography.caption(color: muted))),
-        ]);
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              for (final fact in facts)
+                Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+                    decoration: BoxDecoration(
+                        color: OTColors.surfaceSubtle(dark),
+                        borderRadius: OTRadius.chipBorder),
+                    child: Text(fact,
+                        textDirection: answerDirection(fact),
+                        style: OTTypography.caption(color: muted))),
+            ]);
         final dateView = deathLabel != null && !hasAuthorDate
             ? Padding(
                 padding: const EdgeInsets.only(top: 8),
