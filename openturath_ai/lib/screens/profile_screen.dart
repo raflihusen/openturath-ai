@@ -828,9 +828,10 @@ class _MembershipPass extends StatelessWidget {
                 Text(holderName, style: OTTypography.screenTitle(color: ink)),
                 if (email.isNotEmpty)
                   Text(
-                      email
-                          .replaceAll('.', '.\u200b')
-                          .replaceAll('@', '@\u200b'),
+                      MediaQuery.sizeOf(context).width < 600 &&
+                              MediaQuery.textScalerOf(context).scale(14) > 21
+                          ? email.replaceAll('@', '@\n')
+                          : email.replaceAll('@', '@\u200b'),
                       textDirection: TextDirection.ltr,
                       style: OTTypography.caption(color: muted)),
               ])),
