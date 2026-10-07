@@ -22,7 +22,9 @@ class OTInkCard extends StatelessWidget {
   Widget build(BuildContext context) => Semantics(
         label: semanticLabel,
         child: Material(
-          color: OTExpressive.hero,
+          color: Theme.of(context).brightness == Brightness.dark
+              ? const Color(0xFF2B2B2B)
+              : OTExpressive.hero,
           borderRadius: OTRadius.cardBorder,
           clipBehavior: Clip.antiAlias,
           child: InkWell(
@@ -33,7 +35,7 @@ class OTInkCard extends StatelessWidget {
                     left: 24,
                     right: 24,
                     bottom: 16,
-                    height: 48,
+                    height: 80,
                     child: IgnorePointer(
                         child: ExcludeSemantics(
                       child: Align(
@@ -47,16 +49,12 @@ class OTInkCard extends StatelessWidget {
                                   fontSize: OTFontSize.s36,
                                   height: 1.1,
                                   color: OTExpressive.white
-                                      .withValues(alpha: .14))),
+                                      .withValues(alpha: .09))),
                         ),
                       ),
                     )),
                   ),
-                Padding(
-                  padding: padding
-                      .add(EdgeInsets.only(bottom: watermark.isEmpty ? 0 : 64)),
-                  child: child,
-                ),
+                Padding(padding: padding, child: child),
               ])),
         ),
       );
