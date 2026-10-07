@@ -22,14 +22,15 @@ void main() {
   runApp(ValueListenableBuilder<String>(
       valueListenable: AppConfig.localeNotifier,
       builder: (context, language, _) => ValueListenableBuilder<ThemeMode>(
-        valueListenable: AppConfig.themeNotifier,
-        builder: (context, mode, _) => MaterialApp(
-      locale: Locale(language), themeMode: mode,
-      debugShowCheckedModeBanner: false,
-      theme: AppTheme.lightTheme,
-      darkTheme: AppTheme.darkTheme,
-      supportedLocales: Loc.supportedLocales,
-      localizationsDelegates: GlobalMaterialLocalizations.delegates,
-      builder: (context, child) => LocaleScope(child: child!),
-      home: const MainShellScreen()))));
+          valueListenable: AppConfig.themeNotifier,
+          builder: (context, mode, _) => MaterialApp(
+              locale: Locale(language),
+              themeMode: mode,
+              debugShowCheckedModeBanner: false,
+              theme: AppTheme.lightTheme,
+              darkTheme: AppTheme.darkTheme,
+              supportedLocales: Loc.supportedLocales,
+              localizationsDelegates: GlobalMaterialLocalizations.delegates,
+              builder: (context, child) => LocaleScope(child: child!),
+              home: const MainShellScreen()))));
 }
