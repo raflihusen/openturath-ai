@@ -248,7 +248,8 @@ void main() {
     await _shot(tester, 'dashboard_metrics_wide', const DashboardScreen(),
         size: const Size(1280, 900), scrollTo: 'Pustaka dalam angka');
     await _shot(tester, 'dashboard_metrics_large', const DashboardScreen(),
-        size: const Size(600, 1100), textScale: 1.5,
+        size: const Size(600, 1100),
+        textScale: 1.5,
         scrollTo: 'Pustaka dalam angka');
     await _shot(tester, 'ai_phone_dark', const SpecialistListScreen(),
         size: const Size(390, 1100), dark: true);
