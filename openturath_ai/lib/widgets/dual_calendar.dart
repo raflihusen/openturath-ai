@@ -1,5 +1,6 @@
+import '../core/design/ot_typography.dart';
+import '../core/design/ot_expressive.dart';
 import 'dart:async';
-import 'dart:ui' show FontFeature;
 import 'package:flutter/material.dart';
 import '../core/hijri_date_utils.dart';
 import '../core/localization.dart';
@@ -35,14 +36,14 @@ class _DualCalendarState extends State<DualCalendar> with WidgetsBindingObserver
     Widget part(String label,String formatted){
       final pieces=formatted.split(' ');
       return Expanded(child:Column(crossAxisAlignment:CrossAxisAlignment.start,mainAxisSize:MainAxisSize.min,children:[
-        Text(label,style:ScholarlyFonts.outfit(fontSize:12,color:color.withValues(alpha:.7))),
+        Text(label,style:ScholarlyFonts.outfit(fontSize: OTFontSize.s12,color:color.withValues(alpha:.7))),
         const SizedBox(height:4),
-        Text(pieces.first,style:ScholarlyFonts.outfit(fontSize:36,fontWeight:FontWeight.w600,color:color).copyWith(fontFeatures:const[FontFeature.tabularFigures()])),
-        Text(pieces.sublist(1,pieces.length-2).join(' '),style:ScholarlyFonts.outfit(fontSize:14,color:color,fontWeight:FontWeight.w600)),
-        Text(pieces.sublist(pieces.length-2).join(' '),style:ScholarlyFonts.outfit(fontSize:12,color:color.withValues(alpha:.7))),
+        Text(pieces.first,style:ScholarlyFonts.outfit(fontSize: OTFontSize.s36,fontWeight:FontWeight.w600,color:color).copyWith(fontFeatures:const[FontFeature.tabularFigures()])),
+        Text(pieces.sublist(1,pieces.length-2).join(' '),style:ScholarlyFonts.outfit(fontSize: OTFontSize.s14,color:color,fontWeight:FontWeight.w600)),
+        Text(pieces.sublist(pieces.length-2).join(' '),style:ScholarlyFonts.outfit(fontSize: OTFontSize.s12,color:color.withValues(alpha:.7))),
       ]));
     }
-    return Container(padding:const EdgeInsets.all(16),decoration:BoxDecoration(color:Theme.of(context).colorScheme.surface,borderRadius:BorderRadius.circular(24)),
+    return Container(padding:const EdgeInsets.all(16),decoration:BoxDecoration(color:Theme.of(context).colorScheme.surface,borderRadius:BorderRadius.circular(OTExpressive.panelRadius)),
       child:Row(crossAxisAlignment:CrossAxisAlignment.start,children:[
         part(reviewCopy('Hijriah','هجري','Hijri'),HijriDateUtils.formatHijriOnly(now)),const SizedBox(width:20),
         part(reviewCopy('Masehi','ميلادي','Gregorian'),HijriDateUtils.formatMasehiOnly(now)),
