@@ -176,3 +176,7 @@ Bukti dan batas verifikasi disimpan pada `reports/redesign-2026-10-07/IMPLEMENTA
 Status: contoh Flutter terimplementasi lokal; penerimaan visual dan penyebaran menyeluruh masih menunggu tinjauan pengguna. `ot_expressive.dart` memuat peran monokrom untuk contoh flagship. Hero 36/28, panel 24; antarmuka sans dominan. Kalender ganda setara memakai satu waktu lokal, diperbarui tengah malam dan saat resume. Tidak ada subtitle akademik di kartu pemilihan asisten. Grafik empat sektor adalah ilustrasi editorial dengan atribusi, bukan data statistik. Loader dua busur memakai fase periodik 1800 ms dan berhenti untuk reduced motion/lifecycle tidak aktif.
 
 Checkpoint awal: `7f00d89`. Perubahan website dan penghapusan yang sudah ada tidak termasuk pekerjaan ini. Golden diperbarui hanya setelah arah visual diterima.
+
+## Ilustrasi Tahawwulat 3D — revisi visual 7 Oktober 2026
+
+Permintaan pengguna menggantikan sektor datar dengan artwork hasil imagegen: `assets/images/tahawwulat-sculpture-v2.png`. Empat label Arab mengikuti posisi referensi; hero memakai fade tepi agar menyatu dengan charcoal, dan lipatan abstrak berkontras rendah menjaga area teks tetap terbaca. Pengenalan menggunakan aset yang sama dengan legenda teks dan area sektor untuk mouse, sentuh, keyboard, serta semantics. Artwork adalah ilustrasi editorial, bukan kutipan sumber atau grafik statistik. Sumber generasi disimpan terpisah; aset lama tidak dihapus.
