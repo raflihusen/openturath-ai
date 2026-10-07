@@ -66,7 +66,7 @@ class AgentSessionTab {
 }
 
 /// AgentSessionManager: Singleton state manager for multi-tab AI study sessions.
-/// Keeps up to 7 specialists loaded in background memory like Google Chrome tabs.
+/// Keeps up to 3 specialists loaded in background memory like Google Chrome tabs.
 class AgentSessionManager extends ChangeNotifier {
   static final AgentSessionManager instance = AgentSessionManager._();
   AgentSessionManager._();

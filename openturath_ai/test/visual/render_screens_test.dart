@@ -18,6 +18,7 @@ import 'package:openturath_ai/models/user_model.dart';
 import 'package:openturath_ai/models/turath_chat_message.dart';
 import 'package:openturath_ai/widgets/native_turath_chat_view.dart';
 import 'package:openturath_ai/screens/dashboard_screen.dart';
+import 'package:openturath_ai/screens/main_shell_screen.dart';
 import 'package:openturath_ai/screens/bookmark_screen.dart';
 import 'package:openturath_ai/screens/login_screen.dart';
 import 'package:openturath_ai/widgets/app_error_state.dart';
@@ -78,6 +79,7 @@ Future<void> _shot(WidgetTester tester, String name, Widget child,
     {Size size = const Size(950, 900),
     String locale = 'id',
     bool dark = false,
+    double textScale = 1,
     String? tap}) async {
   // Jendela lebar dirender sebagai macOS, jendela sempit sebagai Android,
   // supaya lembar dan dialog adaptif tampil seperti di perangkat aslinya.
@@ -98,7 +100,8 @@ Future<void> _shot(WidgetTester tester, String name, Widget child,
       locale: Locale(locale),
       supportedLocales: Loc.supportedLocales,
       localizationsDelegates: GlobalMaterialLocalizations.delegates,
-      builder: (context, c) => LocaleScope(child: c!),
+      builder: (context, c) => MediaQuery(data: MediaQuery.of(context).copyWith(
+          textScaler: TextScaler.linear(textScale)), child: LocaleScope(child: c!)),
       home: child,
     ),
   ));
@@ -245,6 +248,10 @@ void main() {
     await _shot(tester, 'chat_mixed_phone', mixedChat(), size: const Size(390, 844));
     await _shot(tester, 'subscription_phone', const SubscriptionScreen(), size: const Size(390, 844));
     await _shot(tester, 'profile_phone', const ProfileScreen(), size: const Size(390, 844));
+    await _shot(tester, 'shell_desktop', const MainShellScreen(), size: const Size(1280, 900));
+    await _shot(tester, 'shell_phone', const MainShellScreen(), size: const Size(390, 844));
+    await _shot(tester, 'profile_large_text', const ProfileScreen(), size: const Size(390, 1000), textScale: 2);
+    await _shot(tester, 'subscription_ar_phone', const SubscriptionScreen(), size: const Size(390, 844), locale: 'ar');
     await _shot(tester, 'dashboard_dark' , const DashboardScreen(), dark: true);
     await _shot(tester, 'dashboard_phone', const DashboardScreen(),
         size: const Size(390, 844));
@@ -351,6 +358,8 @@ void main() {
       await _shot(tester, 'library_book_detail_wide',
           OpenTurathBookDetailPage(book: libraryBooks.first),
           size: const Size(1280, 860));
+      await _shot(tester, 'library_detail_phone', OpenTurathBookDetailPage(book: libraryBooks.first), size: const Size(390, 844));
+      await _shot(tester, 'library_ar_phone', OpenTurathBookLibraryPage(books: libraryBooks, collectionName: "Fikih Syafi'i"), size: const Size(390, 844), locale: 'ar');
     }
     await _shot(tester, 'catalog_id', const BookCatalogScreen(), size: win);
     await _shot(tester, 'profile_dark', const ProfileScreen(),

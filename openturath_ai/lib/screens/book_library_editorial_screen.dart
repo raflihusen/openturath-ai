@@ -700,7 +700,7 @@ class _BookBentoGrid extends StatelessWidget {
       decoration: BoxDecoration(
         color: OTColors.surface(isDark),
         borderRadius: BorderRadius.circular(OTRadius.card),
-        border: Border.all(color: OTColors.border(isDark)),
+        border: Border.all(color: OTColors.surface(isDark)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,

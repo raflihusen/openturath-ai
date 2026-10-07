@@ -170,7 +170,7 @@ class _AiLibraryOverviewPageState extends State<AiLibraryOverviewPage> {
                     decoration: BoxDecoration(
                       color: OTColors.surface(isDark),
                       borderRadius: BorderRadius.circular(OTRadius.card),
-                      border: Border.all(color: border),
+                      border: Border.all(color: OTColors.surface(isDark)),
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
