@@ -234,17 +234,36 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         // Banner pembaruan jika tersedia
                         const UpdateReadyBanner(),
                         LayoutBuilder(builder: (context, box) {
-                          final greeting = Text(AppCopy.ahlanWithName(user.name), style: OTTypography.pageTitle(color: textPrimary));
-                          if (box.maxWidth < 720 || MediaQuery.textScalerOf(context).scale(16) > 24) {
-                            return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [greeting, const SizedBox(height: 16), const DualCalendar()]);
+                          final greeting = Text(
+                              AppCopy.ahlanWithName(user.name),
+                              style:
+                                  OTTypography.pageTitle(color: textPrimary));
+                          if (box.maxWidth < 720 ||
+                              MediaQuery.textScalerOf(context).scale(16) > 24) {
+                            return Column(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: [
+                                  greeting,
+                                  const SizedBox(height: 16),
+                                  const DualCalendar()
+                                ]);
                           }
-                          return Row(children: [Expanded(child: greeting), const SizedBox(width: 24), const SizedBox(width: 360, child: DualCalendar())]);
+                          return Row(children: [
+                            Expanded(child: greeting),
+                            const SizedBox(width: 24),
+                            const SizedBox(width: 360, child: DualCalendar())
+                          ]);
                         }),
                         const SizedBox(height: 24),
                         _TahawwulatSpotlight(onOpen: () {
                           final shell = MainShellController.of(context);
-                          if (shell != null) {shell.switchTab(1, fieldId: 'fiqh_tahawwulat');}
-                          else {NavigationGuard.safePushNamed(context, AppRoutes.specialistList, arguments: {'fieldId': 'fiqh_tahawwulat'});}
+                          if (shell != null) {
+                            shell.switchTab(1, fieldId: 'fiqh_tahawwulat');
+                          } else {
+                            NavigationGuard.safePushNamed(
+                                context, AppRoutes.specialistList,
+                                arguments: {'fieldId': 'fiqh_tahawwulat'});
+                          }
                         }),
                         const SizedBox(height: 24),
 
@@ -509,8 +528,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                                       maxLines: 1,
                                                       overflow:
                                                           TextOverflow.ellipsis,
-                                                      style: ScholarlyFonts
-                                                          .outfit(
+                                                      style:
+                                                          ScholarlyFonts.outfit(
                                                         fontSize:
                                                             OTFontSize.s20,
                                                         fontWeight:
@@ -544,20 +563,24 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                                   NativeCopy.values[
                                                           'field_${disc.fieldId}'] !=
                                                       null)
-                                                Align(alignment: Alignment.centerRight, child: Text(
-                                                  NativeCopy.values[
-                                                      'field_${disc.fieldId}']![2],
-                                                  maxLines: 1,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                  textDirection:
-                                                      TextDirection.rtl,
-                                                  style: ScholarlyFonts
-                                                      .scheherazadeNew(
-                                                    fontSize: OTFontSize.s16,
-                                                    color: textSecondary,
-                                                  ),
-                                                ))
+                                                Align(
+                                                    alignment:
+                                                        Alignment.centerRight,
+                                                    child: Text(
+                                                      NativeCopy.values[
+                                                          'field_${disc.fieldId}']![2],
+                                                      maxLines: 1,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      textDirection:
+                                                          TextDirection.rtl,
+                                                      style: ScholarlyFonts
+                                                          .scheherazadeNew(
+                                                        fontSize:
+                                                            OTFontSize.s16,
+                                                        color: textSecondary,
+                                                      ),
+                                                    ))
                                               else if (members.isNotEmpty)
                                                 Text(
                                                   members
@@ -579,45 +602,47 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                     },
                                   )),
                           const SizedBox(height: 12),
-                        // Kartu ini hanya menampilkan keadaan yang benar-benar ada:
-                        // sesi yang masih tersimpan, asisten terakhir, atau pintu mulai.
-                        ListenableBuilder(
-                          listenable: AgentSessionManager.instance,
-                          builder: (context, _) {
-                            final activeAgent =
-                                AgentSessionManager.instance.activeTab?.agent;
-                            final lastAgent = _lastOpenedAgentId == null
-                                ? null
-                                : _agents.cast<AgentModel?>().firstWhere(
-                                      (agent) =>
-                                          agent?.id == _lastOpenedAgentId,
-                                      orElse: () => null,
-                                    );
-                            final target = activeAgent ?? lastAgent;
-                            final hasLiveSession = activeAgent != null;
-                            final hero = _StudyEntryCard(
-                              name: user.name,
-                              agent: target,
-                              hasLiveSession: hasLiveSession,
-                              isDark: isDark,
-                              onPrimary: () {
-                                if (target != null) {
-                                  _openNotebook(target, user);
-                                  return;
-                                }
-                                final shell = MainShellController.of(context);
-                                if (shell != null) {
-                                  shell.switchTab(1);
-                                } else {
-                                  NavigationGuard.safePushNamed(
-                                      context, AppRoutes.specialistList);
-                                }
-                              },
-                            );
-                            return target == null ? const SizedBox.shrink() : hero;
-                          },
-                        ),
-                        const SizedBox(height: 24),
+                          // Kartu ini hanya menampilkan keadaan yang benar-benar ada:
+                          // sesi yang masih tersimpan, asisten terakhir, atau pintu mulai.
+                          ListenableBuilder(
+                            listenable: AgentSessionManager.instance,
+                            builder: (context, _) {
+                              final activeAgent =
+                                  AgentSessionManager.instance.activeTab?.agent;
+                              final lastAgent = _lastOpenedAgentId == null
+                                  ? null
+                                  : _agents.cast<AgentModel?>().firstWhere(
+                                        (agent) =>
+                                            agent?.id == _lastOpenedAgentId,
+                                        orElse: () => null,
+                                      );
+                              final target = activeAgent ?? lastAgent;
+                              final hasLiveSession = activeAgent != null;
+                              final hero = _StudyEntryCard(
+                                name: user.name,
+                                agent: target,
+                                hasLiveSession: hasLiveSession,
+                                isDark: isDark,
+                                onPrimary: () {
+                                  if (target != null) {
+                                    _openNotebook(target, user);
+                                    return;
+                                  }
+                                  final shell = MainShellController.of(context);
+                                  if (shell != null) {
+                                    shell.switchTab(1);
+                                  } else {
+                                    NavigationGuard.safePushNamed(
+                                        context, AppRoutes.specialistList);
+                                  }
+                                },
+                              );
+                              return target == null
+                                  ? const SizedBox.shrink()
+                                  : hero;
+                            },
+                          ),
+                          const SizedBox(height: 24),
                           const _RecentNoteTile(),
                           const SizedBox(height: 12),
                           LayoutBuilder(builder: (context, box) {
@@ -1003,13 +1028,18 @@ class _TahawwulatSpotlight extends StatelessWidget {
   const _TahawwulatSpotlight({required this.onOpen});
   final VoidCallback onOpen;
   @override
-  Widget build(BuildContext context) => FutureBuilder<Map<String, AiLibraryMetadata>>(
-    future: OpenTurathCatalogRepository.instance.loadAllMetadata(),
-    builder: (context, snapshot) => TahawwulatHero(
-      onOpen: onOpen,
-      onIntroduction: () => TahawwulatIntroductionSheet.show(context),
-      facts: LibraryStat.from(OpenTurathCatalogRepository.exactMetadata(snapshot.data ?? const {}, 'fiqh_tahawwulat')).map((s) => '${s.value} ${s.unit}').toList(),
-    ));
+  Widget build(BuildContext context) =>
+      FutureBuilder<Map<String, AiLibraryMetadata>>(
+          future: OpenTurathCatalogRepository.instance.loadAllMetadata(),
+          builder: (context, snapshot) => TahawwulatHero(
+                onOpen: onOpen,
+                onIntroduction: () => TahawwulatIntroductionSheet.show(context),
+                facts: LibraryStat.from(
+                        OpenTurathCatalogRepository.exactMetadata(
+                            snapshot.data ?? const {}, 'fiqh_tahawwulat'))
+                    .map((s) => '${s.value} ${s.unit}')
+                    .toList(),
+              ));
 }
 
 class _DashboardAnnouncementCarousel extends StatefulWidget {
