@@ -110,8 +110,16 @@ class _AppLoaderState extends State<AppLoader>
             liveRegion: true,
             child: RepaintBoundary(
                 child: SizedBox.square(
-                  dimension: widget.isFullscreen ? 56 : widget.title == null ? 24 : 48,
-                  child: CustomPaint(painter: _OrbitPainter(animation: _controller, still: still, color: dotColor))))),
+                    dimension: widget.isFullscreen
+                        ? 56
+                        : widget.title == null
+                            ? 24
+                            : 48,
+                    child: CustomPaint(
+                        painter: _OrbitPainter(
+                            animation: _controller,
+                            still: still,
+                            color: dotColor))))),
         if (widget.title != null) ...[
           const SizedBox(height: 20),
           Text(
@@ -179,7 +187,9 @@ class _AppLoaderState extends State<AppLoader>
 
 /// Smooth periodic phase: endpoint position and velocity match exactly.
 class _OrbitPainter extends CustomPainter {
-  _OrbitPainter({required this.animation, required this.still, required this.color}) : super(repaint: animation);
+  _OrbitPainter(
+      {required this.animation, required this.still, required this.color})
+      : super(repaint: animation);
   final Animation<double> animation;
   final bool still;
   double get progress => still ? .25 : animation.value;

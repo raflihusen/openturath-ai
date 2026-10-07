@@ -17,7 +17,8 @@ class TahawwulatHero extends StatelessWidget {
       {super.key,
       required this.onOpen,
       required this.onIntroduction,
-      this.facts = const [], this.onOpenLibrary});
+      this.facts = const [],
+      this.onOpenLibrary});
   final VoidCallback onOpen;
   final VoidCallback? onOpenLibrary;
   final VoidCallback onIntroduction;
@@ -73,10 +74,16 @@ class TahawwulatHero extends StatelessWidget {
                     child: Text(reviewCopy('Buka AI Fikih Tahawwulat',
                         'افتح فقه التحولات', 'Open Fiqh Tahawwulat'))),
                 if (onOpenLibrary != null)
-                  SizedBox.square(dimension: 48, child: IconButton.filledTonal(
-                    tooltip: Loc.tr('viewReferences'), onPressed: onOpenLibrary,
-                    style: IconButton.styleFrom(backgroundColor: OTExpressive.white.withValues(alpha: .12), foregroundColor: OTExpressive.white),
-                    icon: const Icon(Icons.auto_stories_outlined))),
+                  SizedBox.square(
+                      dimension: 48,
+                      child: IconButton.filledTonal(
+                          tooltip: Loc.tr('viewReferences'),
+                          onPressed: onOpenLibrary,
+                          style: IconButton.styleFrom(
+                              backgroundColor:
+                                  OTExpressive.white.withValues(alpha: .12),
+                              foregroundColor: OTExpressive.white),
+                          icon: const Icon(Icons.auto_stories_outlined))),
                 TextButton(
                     onPressed: onIntroduction,
                     style: TextButton.styleFrom(

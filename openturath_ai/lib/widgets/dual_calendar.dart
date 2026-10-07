@@ -60,7 +60,8 @@ class _DualCalendarState extends State<DualCalendar>
   Widget build(BuildContext context) {
     Loc.watch(context);
     final color = Theme.of(context).colorScheme.onSurface;
-    Widget part(String label, ({int day, String month, int year, String era}) date) {
+    Widget part(
+        String label, ({int day, String month, int year, String era}) date) {
       return SizedBox(
           child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -128,11 +129,24 @@ class _DualCalendarState extends State<DualCalendar>
                         ))),
           ]),
           LayoutBuilder(builder: (context, box) {
-            final h = part(reviewCopy('Hijriah', 'هجري', 'Hijri'), HijriDateUtils.hijriParts(now));
-            final g = part(reviewCopy('Masehi', 'ميلادي', 'Gregorian'), HijriDateUtils.gregorianParts(now));
-            if (MediaQuery.textScalerOf(context).scale(16) >= 24) return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [h, const Divider(height: 24), g]);
-            return Row(crossAxisAlignment: CrossAxisAlignment.start, children: [Expanded(child: h),
-              SizedBox(height: 88, child: VerticalDivider(width: 24, color: OTColors.border(Theme.of(context).brightness == Brightness.dark))), Expanded(child: g)]);
+            final h = part(reviewCopy('Hijriah', 'هجري', 'Hijri'),
+                HijriDateUtils.hijriParts(now));
+            final g = part(reviewCopy('Masehi', 'ميلادي', 'Gregorian'),
+                HijriDateUtils.gregorianParts(now));
+            if (MediaQuery.textScalerOf(context).scale(16) >= 24)
+              return Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [h, const Divider(height: 24), g]);
+            return Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Expanded(child: h),
+              SizedBox(
+                  height: 88,
+                  child: VerticalDivider(
+                      width: 24,
+                      color: OTColors.border(
+                          Theme.of(context).brightness == Brightness.dark))),
+              Expanded(child: g)
+            ]);
           }),
         ]));
   }

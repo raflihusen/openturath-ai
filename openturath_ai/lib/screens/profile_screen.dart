@@ -572,112 +572,114 @@ class _ProfileScreenState extends State<ProfileScreen> {
       context: context,
       builder: (ctx) {
         Loc.watch(ctx);
-        return Directionality(textDirection: Loc.isArabic ? TextDirection.rtl : TextDirection.ltr, child: AlertDialog(
-        backgroundColor: surface,
-        shape: RoundedRectangleBorder(
-          borderRadius: OTRadius.dialogBorder,
-          side: BorderSide(color: border, width: 0.8),
-        ),
-        title: Text(
-          AppCopy.aboutTitle,
-          style: OTTypography.screenTitle(color: textPrimary)
-              .copyWith(fontSize: OTFontSize.s20),
-        ),
-        content: SingleChildScrollView(
-          physics: const BouncingScrollPhysics(),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                AppCopy.versionWithTagline(_appVersion),
-                style: OTTypography.captionMedium(color: textSecondary),
+        return Directionality(
+            textDirection: Loc.isArabic ? TextDirection.rtl : TextDirection.ltr,
+            child: AlertDialog(
+              backgroundColor: surface,
+              shape: RoundedRectangleBorder(
+                borderRadius: OTRadius.dialogBorder,
+                side: BorderSide(color: border, width: 0.8),
               ),
-              const SizedBox(height: 12),
-              Text(
-                AppCopy.aboutDescription,
-                style: OTTypography.body(color: textPrimary),
+              title: Text(
+                AppCopy.aboutTitle,
+                style: OTTypography.screenTitle(color: textPrimary)
+                    .copyWith(fontSize: OTFontSize.s20),
               ),
-              const SizedBox(height: 12),
-              Text(
-                AppCopy.aboutScholarlyPrinciple,
-                style: OTTypography.caption(color: textSecondary),
+              content: SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      AppCopy.versionWithTagline(_appVersion),
+                      style: OTTypography.captionMedium(color: textSecondary),
+                    ),
+                    const SizedBox(height: 12),
+                    Text(
+                      AppCopy.aboutDescription,
+                      style: OTTypography.body(color: textPrimary),
+                    ),
+                    const SizedBox(height: 12),
+                    Text(
+                      AppCopy.aboutScholarlyPrinciple,
+                      style: OTTypography.caption(color: textSecondary),
+                    ),
+                    const SizedBox(height: 16),
+                    ExpansionTile(
+                      tilePadding: EdgeInsets.zero,
+                      childrenPadding: const EdgeInsets.only(bottom: 16),
+                      leading: const OpenTurathMark(size: 32),
+                      title: Text(Loc.tr('brandPhilosophyTitle'),
+                          style: OTTypography.cardTitle(color: textPrimary)),
+                      children: [
+                        Text(Loc.tr('brandPhilosophy'),
+                            style: OTTypography.body(color: textSecondary)),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    Divider(height: 1, color: border),
+                    const SizedBox(height: 8),
+                    _buildAboutDocTile(
+                      icon: Icons.article_outlined,
+                      title: AppCopy.termsOfService,
+                      textPrimary: textPrimary,
+                      textSecondary: textSecondary,
+                      onTap: () {
+                        Navigator.pop(ctx);
+                        LegalDocumentSheet.showTermsOfService(context);
+                      },
+                    ),
+                    _buildAboutDocTile(
+                      icon: Icons.security_outlined,
+                      title: AppCopy.privacyPolicy,
+                      textPrimary: textPrimary,
+                      textSecondary: textSecondary,
+                      onTap: () {
+                        Navigator.pop(ctx);
+                        LegalDocumentSheet.showPrivacyPolicy(context);
+                      },
+                    ),
+                    _buildAboutDocTile(
+                      icon: Icons.payment_outlined,
+                      title: AppCopy.paymentAndRefund,
+                      textPrimary: textPrimary,
+                      textSecondary: textSecondary,
+                      onTap: () {
+                        Navigator.pop(ctx);
+                        LegalDocumentSheet.showRefundPolicy(context);
+                      },
+                    ),
+                    _buildAboutDocTile(
+                      icon: Icons.menu_book_outlined,
+                      title: AppCopy.aiGuideline,
+                      textPrimary: textPrimary,
+                      textSecondary: textSecondary,
+                      onTap: () {
+                        Navigator.pop(ctx);
+                        LegalDocumentSheet.showAiGuideline(context);
+                      },
+                    ),
+                    _buildAboutDocTile(
+                      icon: Icons.headset_mic_outlined,
+                      title: AppCopy.supportAndContact,
+                      textPrimary: textPrimary,
+                      textSecondary: textSecondary,
+                      onTap: () {
+                        Navigator.pop(ctx);
+                        LegalDocumentSheet.showContactSupport(context);
+                      },
+                    ),
+                  ],
+                ),
               ),
-              const SizedBox(height: 16),
-              ExpansionTile(
-                tilePadding: EdgeInsets.zero,
-                childrenPadding: const EdgeInsets.only(bottom: 16),
-                leading: const OpenTurathMark(size: 32),
-                title: Text(Loc.tr('brandPhilosophyTitle'),
-                    style: OTTypography.cardTitle(color: textPrimary)),
-                children: [
-                  Text(Loc.tr('brandPhilosophy'),
-                      style: OTTypography.body(color: textSecondary)),
-                ],
-              ),
-              const SizedBox(height: 16),
-              Divider(height: 1, color: border),
-              const SizedBox(height: 8),
-              _buildAboutDocTile(
-                icon: Icons.article_outlined,
-                title: AppCopy.termsOfService,
-                textPrimary: textPrimary,
-                textSecondary: textSecondary,
-                onTap: () {
-                  Navigator.pop(ctx);
-                  LegalDocumentSheet.showTermsOfService(context);
-                },
-              ),
-              _buildAboutDocTile(
-                icon: Icons.security_outlined,
-                title: AppCopy.privacyPolicy,
-                textPrimary: textPrimary,
-                textSecondary: textSecondary,
-                onTap: () {
-                  Navigator.pop(ctx);
-                  LegalDocumentSheet.showPrivacyPolicy(context);
-                },
-              ),
-              _buildAboutDocTile(
-                icon: Icons.payment_outlined,
-                title: AppCopy.paymentAndRefund,
-                textPrimary: textPrimary,
-                textSecondary: textSecondary,
-                onTap: () {
-                  Navigator.pop(ctx);
-                  LegalDocumentSheet.showRefundPolicy(context);
-                },
-              ),
-              _buildAboutDocTile(
-                icon: Icons.menu_book_outlined,
-                title: AppCopy.aiGuideline,
-                textPrimary: textPrimary,
-                textSecondary: textSecondary,
-                onTap: () {
-                  Navigator.pop(ctx);
-                  LegalDocumentSheet.showAiGuideline(context);
-                },
-              ),
-              _buildAboutDocTile(
-                icon: Icons.headset_mic_outlined,
-                title: AppCopy.supportAndContact,
-                textPrimary: textPrimary,
-                textSecondary: textSecondary,
-                onTap: () {
-                  Navigator.pop(ctx);
-                  LegalDocumentSheet.showContactSupport(context);
-                },
-              ),
-            ],
-          ),
-        ),
-        actions: [
-          FilledButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: Text(AppCopy.close, style: OTTypography.button()),
-          ),
-        ],
-      ));
+              actions: [
+                FilledButton(
+                  onPressed: () => Navigator.pop(ctx),
+                  child: Text(AppCopy.close, style: OTTypography.button()),
+                ),
+              ],
+            ));
       },
     );
   }

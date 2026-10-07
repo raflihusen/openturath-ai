@@ -536,7 +536,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                       return OTReveal(
                                         index: index + 2,
                                         child: OTInkCard(
-                                          watermark: ArabicUiLabels.forField(disc.fieldId, NativeCopy.values['field_${disc.fieldId}']?[2] ?? ''),
+                                          watermark: ArabicUiLabels.forField(
+                                              disc.fieldId,
+                                              NativeCopy.values[
+                                                          'field_${disc.fieldId}']
+                                                      ?[2] ??
+                                                  ''),
                                           semanticLabel:
                                               'AI ${Loc.text(disc.name)}',
                                           onTap: () {
@@ -670,13 +675,15 @@ class _LibraryNumbersTile extends StatelessWidget {
                                 color: OTExpressive.whiteMuted)),
                       ]);
               final metrics = [
-                stat(number.format(all.length), Loc.tr('loginStatLibraries'), Icons.local_library_outlined),
+                stat(number.format(all.length), Loc.tr('loginStatLibraries'),
+                    Icons.local_library_outlined),
                 stat(Loc.atLeast(number.format(entries ~/ 100 * 100)),
                     Loc.tr('loginStatEntries'), Icons.auto_stories_outlined),
                 stat(
                     Loc.atLeast(number.format(pages ~/ 100000 / 10),
                         Loc.tr('unitMillion')),
-                    Loc.tr('loginStatPages'), Icons.description_outlined),
+                    Loc.tr('loginStatPages'),
+                    Icons.description_outlined),
               ];
               return LayoutBuilder(builder: (context, box) {
                 final stacked = box.maxWidth < 360 ||
@@ -695,7 +702,13 @@ class _LibraryNumbersTile extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       for (var i = 0; i < metrics.length; i++) ...[
-                        if (i > 0) SizedBox(height: 80, child: VerticalDivider(width: 24, color: OTExpressive.white.withValues(alpha: .12))),
+                        if (i > 0)
+                          SizedBox(
+                              height: 80,
+                              child: VerticalDivider(
+                                  width: 24,
+                                  color: OTExpressive.white
+                                      .withValues(alpha: .12))),
                         Expanded(child: metrics[i]),
                       ],
                     ]);
@@ -720,7 +733,10 @@ class _AdabOfDayTile extends StatelessWidget {
     final muted = OTColors.textSecondary(isDark);
     final today = DateTime.now();
     final day = today.difference(DateTime(today.year)).inDays;
-    final sections = LocalizedLegal.resolve(LegalDocumentId.guideline).sections.where((s) => AdabIcons.forSection(s.id) != null).toList();
+    final sections = LocalizedLegal.resolve(LegalDocumentId.guideline)
+        .sections
+        .where((s) => AdabIcons.forSection(s.id) != null)
+        .toList();
     final index = day % sections.length;
     final section = sections[index];
     final title = section.title.split(' · ').last;

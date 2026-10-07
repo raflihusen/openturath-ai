@@ -65,7 +65,9 @@ class AssistantGridCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(Loc.text(agent.title), textAlign: TextAlign.center, maxLines: 2,
+          Text(Loc.text(agent.title),
+              textAlign: TextAlign.center,
+              maxLines: 2,
               style:
                   OTTypography.screenTitle(color: ink).copyWith(height: 1.25)),
           if (agent.isComingSoon) ...[
@@ -76,21 +78,42 @@ class AssistantGridCard extends StatelessWidget {
           if (stats.isNotEmpty) ...[
             const SizedBox(height: 10),
             Text(stats.map((s) => '${s.value} ${s.unit}').join(' · '),
-                textAlign: TextAlign.center, style: OTTypography.caption(color: muted)),
+                textAlign: TextAlign.center,
+                style: OTTypography.caption(color: muted)),
           ],
           const SizedBox(height: 20),
           Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-            Tooltip(message: '${Loc.tr('openAssistant')} ${Loc.text(agent.title)}', child: Semantics(
-              label: '${Loc.tr('openAssistant')} ${Loc.text(agent.title)}', button: true,
-              child: SizedBox(width: 72, height: 48, child: FilledButton(
-                onPressed: onOpen, style: FilledButton.styleFrom(backgroundColor: ink, foregroundColor: OTExpressive.hero, padding: EdgeInsets.zero),
-                child: const Icon(Icons.chat_bubble_outline_rounded, size: 24))))),
+            Tooltip(
+                message: '${Loc.tr('openAssistant')} ${Loc.text(agent.title)}',
+                child: Semantics(
+                    label:
+                        '${Loc.tr('openAssistant')} ${Loc.text(agent.title)}',
+                    button: true,
+                    child: SizedBox(
+                        width: 72,
+                        height: 48,
+                        child: FilledButton(
+                            onPressed: onOpen,
+                            style: FilledButton.styleFrom(
+                                backgroundColor: ink,
+                                foregroundColor: OTExpressive.hero,
+                                padding: EdgeInsets.zero),
+                            child: const Icon(Icons.chat_bubble_outline_rounded,
+                                size: 24))))),
             if (onOpenLibrary != null) ...[
               const SizedBox(width: 8),
-              Tooltip(message: '${Loc.tr('viewReferences')} ${Loc.text(agent.title)}', child: SizedBox.square(dimension: 48,
-                child: IconButton.filledTonal(onPressed: onOpenLibrary,
-                  style: IconButton.styleFrom(backgroundColor: ink.withValues(alpha: .12), foregroundColor: ink),
-                  icon: const Icon(Icons.auto_stories_outlined, size: 24)))),
+              Tooltip(
+                  message:
+                      '${Loc.tr('viewReferences')} ${Loc.text(agent.title)}',
+                  child: SizedBox.square(
+                      dimension: 48,
+                      child: IconButton.filledTonal(
+                          onPressed: onOpenLibrary,
+                          style: IconButton.styleFrom(
+                              backgroundColor: ink.withValues(alpha: .12),
+                              foregroundColor: ink),
+                          icon: const Icon(Icons.auto_stories_outlined,
+                              size: 24)))),
             ],
           ]),
         ],

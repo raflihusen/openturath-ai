@@ -33,14 +33,35 @@ class OTInkCard extends StatelessWidget {
               child: Stack(children: [
                 if (watermark.isNotEmpty)
                   Positioned.fill(
-                    child: IgnorePointer(child: ExcludeSemantics(child: LayoutBuilder(builder: (context, box) => Align(
-                      alignment: Alignment.bottomCenter,
-                      child: SizedBox(width: box.maxWidth * .85, height: box.maxHeight * .65,
-                        child: FittedBox(fit: BoxFit.contain, child: Text(watermark,
-                          textDirection: TextDirection.rtl, maxLines: 1,
-                          style: const TextStyle(fontFamily: 'NativeArabicUI', fontSize: OTFontSize.s36,
-                            fontWeight: FontWeight.w700, height: 1.5).copyWith(color: OTExpressive.white.withValues(alpha: .08))))),
-                    )))),
+                    child: IgnorePointer(
+                        child: ExcludeSemantics(
+                            child: LayoutBuilder(
+                                builder: (context, box) => Align(
+                                      alignment: Alignment.bottomCenter,
+                                      child: SizedBox(
+                                          width: box.maxWidth * .85,
+                                          height: box.maxHeight * .65,
+                                          child: FittedBox(
+                                              fit: BoxFit.contain,
+                                              child: Text(watermark,
+                                                  textDirection:
+                                                      TextDirection.rtl,
+                                                  maxLines: 1,
+                                                  style: const TextStyle(
+                                                          fontFamily:
+                                                              'NativeArabicUI',
+                                                          fontSize:
+                                                              OTFontSize.s36,
+                                                          fontWeight:
+                                                              FontWeight.w700,
+                                                          height: 1.5)
+                                                      .copyWith(
+                                                          color: OTExpressive
+                                                              .white
+                                                              .withValues(
+                                                                  alpha:
+                                                                      .08))))),
+                                    )))),
                   ),
                 Padding(padding: padding, child: child),
               ])),

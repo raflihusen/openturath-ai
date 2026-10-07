@@ -66,7 +66,8 @@ Future<void> _loadFonts() async {
       ['$dir/NativeNewsreader-400.ttf', '$dir/NativeNewsreader.ttf']);
   await loadAll(
       'NativeArabic', ['$dir/NativeArabic.ttf', '$dir/NativeArabic-700.ttf']);
-  await loadAll('NativeArabicUI', ['$dir/Cairo-400.ttf', '$dir/Cairo-600.ttf', '$dir/Cairo-700.ttf']);
+  await loadAll('NativeArabicUI',
+      ['$dir/Cairo-400.ttf', '$dir/Cairo-600.ttf', '$dir/Cairo-700.ttf']);
   final icons = File(
       '/opt/homebrew/share/flutter/bin/cache/artifacts/material_fonts/MaterialIcons-Regular.otf');
   if (icons.existsSync()) {

@@ -1,13 +1,27 @@
 import 'localization.dart';
+
 /// Utilitas penanggalan Islam (Hijriah) dan Masehi tabular dan deterministik
 /// untuk tajuk editorial OpenTurath.
 class HijriDateUtils {
-  static ({int day, String month, int year, String era}) hijriParts(DateTime date) {
+  static ({int day, String month, int year, String era}) hijriParts(
+      DateTime date) {
     final h = gregorianToHijri(date);
-    return (day: h.day, month: _hijriMonths[h.month - 1], year: h.year, era: _hijriEra);
+    return (
+      day: h.day,
+      month: _hijriMonths[h.month - 1],
+      year: h.year,
+      era: _hijriEra
+    );
   }
-  static ({int day, String month, int year, String era}) gregorianParts(DateTime date) =>
-      (day: date.day, month: _masehiMonths[date.month - 1], year: date.year, era: _gregorianEra);
+
+  static ({int day, String month, int year, String era}) gregorianParts(
+          DateTime date) =>
+      (
+        day: date.day,
+        month: _masehiMonths[date.month - 1],
+        year: date.year,
+        era: _gregorianEra
+      );
 
   static const List<String> _hijriMonthsId = [
     'Muharram',
@@ -40,18 +54,78 @@ class HijriDateUtils {
   ];
 
   static List<String> get _hijriMonths => Loc.language == 'ar'
-      ? const ['محرم','صفر','ربيع الأول','ربيع الآخر','جمادى الأولى','جمادى الآخرة','رجب','شعبان','رمضان','شوال','ذو القعدة','ذو الحجة']
+      ? const [
+          'محرم',
+          'صفر',
+          'ربيع الأول',
+          'ربيع الآخر',
+          'جمادى الأولى',
+          'جمادى الآخرة',
+          'رجب',
+          'شعبان',
+          'رمضان',
+          'شوال',
+          'ذو القعدة',
+          'ذو الحجة'
+        ]
       : Loc.language == 'en'
-        ? const ['Muharram','Safar','Rabi al-Awwal','Rabi al-Thani','Jumada al-Ula','Jumada al-Akhirah','Rajab','Sha‘ban','Ramadan','Shawwal','Dhu al-Qa‘dah','Dhu al-Hijjah']
-        : _hijriMonthsId;
+          ? const [
+              'Muharram',
+              'Safar',
+              'Rabi al-Awwal',
+              'Rabi al-Thani',
+              'Jumada al-Ula',
+              'Jumada al-Akhirah',
+              'Rajab',
+              'Sha‘ban',
+              'Ramadan',
+              'Shawwal',
+              'Dhu al-Qa‘dah',
+              'Dhu al-Hijjah'
+            ]
+          : _hijriMonthsId;
   static List<String> get _masehiMonths => Loc.language == 'ar'
-      ? const ['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر']
+      ? const [
+          'يناير',
+          'فبراير',
+          'مارس',
+          'أبريل',
+          'مايو',
+          'يونيو',
+          'يوليو',
+          'أغسطس',
+          'سبتمبر',
+          'أكتوبر',
+          'نوفمبر',
+          'ديسمبر'
+        ]
       : Loc.language == 'en'
-        ? const ['January','February','March','April','May','June','July','August','September','October','November','December']
-        : _masehiMonthsId;
+          ? const [
+              'January',
+              'February',
+              'March',
+              'April',
+              'May',
+              'June',
+              'July',
+              'August',
+              'September',
+              'October',
+              'November',
+              'December'
+            ]
+          : _masehiMonthsId;
 
-  static String get _hijriEra => Loc.isArabic ? 'هـ' : Loc.language == 'en' ? 'AH' : 'H';
-  static String get _gregorianEra => Loc.isArabic ? 'م' : Loc.language == 'en' ? 'CE' : 'M';
+  static String get _hijriEra => Loc.isArabic
+      ? 'هـ'
+      : Loc.language == 'en'
+          ? 'AH'
+          : 'H';
+  static String get _gregorianEra => Loc.isArabic
+      ? 'م'
+      : Loc.language == 'en'
+          ? 'CE'
+          : 'M';
 
   static final Map<String, ({int day, int month, int year})> _apiCache = {};
 
@@ -76,14 +150,22 @@ class HijriDateUtils {
 
     int a = y ~/ 100;
     int b = 2 - a + (a ~/ 4);
-    int jd = (365.25 * (y + 4716)).toInt() + (30.6001 * (m + 1)).toInt() + day + b - 1524;
+    int jd = (365.25 * (y + 4716)).toInt() +
+        (30.6001 * (m + 1)).toInt() +
+        day +
+        b -
+        1524;
 
     // Menghitung hari Hijriah dari Julian Day (Epoch 1 Muharram 1 H = JD 1948440)
     int l = jd - 1948440 + 10632;
     int n = (l - 1) ~/ 10631;
     l = l - 10631 * n + 354;
-    int j = ((10985 - l) ~/ 5316) * ((50 * l) ~/ 17719) + (l ~/ 5670) * ((43 * l) ~/ 15238);
-    l = l - ((30 - j) ~/ 15) * ((17719 * j) ~/ 50) - (j ~/ 16) * ((15238 * j) ~/ 43) + 29;
+    int j = ((10985 - l) ~/ 5316) * ((50 * l) ~/ 17719) +
+        (l ~/ 5670) * ((43 * l) ~/ 15238);
+    l = l -
+        ((30 - j) ~/ 15) * ((17719 * j) ~/ 50) -
+        (j ~/ 16) * ((15238 * j) ~/ 43) +
+        29;
     int hMonth = (24 * l) ~/ 709;
     int hDay = l - (709 * hMonth) ~/ 24;
     int hYear = 30 * n + j - 30;
@@ -92,7 +174,11 @@ class HijriDateUtils {
   }
 
   /// Sinkronisasi tanggal Hijriyah dari AlAdhan API resmi secara senyap di latar belakang.
-  static void registerVerifiedHijriDate({required DateTime date, required int day, required int month, required int year}) {
+  static void registerVerifiedHijriDate(
+      {required DateTime date,
+      required int day,
+      required int month,
+      required int year}) {
     final key = '${date.year}-${date.month}-${date.day}';
     _apiCache[key] = (day: day, month: month, year: year);
   }
@@ -103,12 +189,10 @@ class HijriDateUtils {
     final now = date ?? DateTime.now();
     final h = gregorianToHijri(now);
 
-    final hMonthName = (h.month >= 1 && h.month <= 12)
-        ? _hijriMonths[h.month - 1]
-        : 'Bulan';
-    final mMonthName = (now.month >= 1 && now.month <= 12)
-        ? _masehiMonths[now.month - 1]
-        : '';
+    final hMonthName =
+        (h.month >= 1 && h.month <= 12) ? _hijriMonths[h.month - 1] : 'Bulan';
+    final mMonthName =
+        (now.month >= 1 && now.month <= 12) ? _masehiMonths[now.month - 1] : '';
 
     return '${h.day} $hMonthName ${h.year} $_hijriEra • ${now.day} $mMonthName ${now.year} $_gregorianEra';
   }
@@ -118,9 +202,8 @@ class HijriDateUtils {
   static String formatHijriOnly([DateTime? date]) {
     final now = date ?? DateTime.now();
     final h = gregorianToHijri(now);
-    final hMonthName = (h.month >= 1 && h.month <= 12)
-        ? _hijriMonths[h.month - 1]
-        : 'Bulan';
+    final hMonthName =
+        (h.month >= 1 && h.month <= 12) ? _hijriMonths[h.month - 1] : 'Bulan';
     return '${h.day} $hMonthName ${h.year} $_hijriEra';
   }
 
@@ -128,9 +211,8 @@ class HijriDateUtils {
   /// Contoh: "12 September 2026 M"
   static String formatMasehiOnly([DateTime? date]) {
     final now = date ?? DateTime.now();
-    final mMonthName = (now.month >= 1 && now.month <= 12)
-        ? _masehiMonths[now.month - 1]
-        : '';
+    final mMonthName =
+        (now.month >= 1 && now.month <= 12) ? _masehiMonths[now.month - 1] : '';
     return '${now.day} $mMonthName ${now.year} $_gregorianEra';
   }
 
@@ -149,7 +231,8 @@ class HijriDateUtils {
       newMonth += 12;
     }
     final daysInTargetMonth = DateTime(newYear, newMonth + 1, 0).day;
-    final clampedDay = baseDate.day > daysInTargetMonth ? daysInTargetMonth : baseDate.day;
+    final clampedDay =
+        baseDate.day > daysInTargetMonth ? daysInTargetMonth : baseDate.day;
     return DateTime(
       newYear,
       newMonth,
