@@ -136,7 +136,7 @@
     "profile": "compact identity and factual expiry; icon-only appearance, labelled ID EN AR languages",
     "pricing": "recorded regularAmount struck through",
     "loader": "four rounded folios, 1800ms linear phase with theta - .45 sin(theta); painter listens directly",
-    "catalog": "default flexible editorial list; 70/30 identity-metadata on desktop, stacked on phone; optional grid",
+    "catalog": "paired natural-height reading cards at content width 800+ and scale below 150%; one column otherwise; identity plus grouped tonal facts; optional bounded grid",
     "calendar": "structured day/month/year from one snapshot; equal columns and divider",
     "webview": "retain native view behind recoverable error overlay; no decorative minimum delay",
     "dashboard": "greeting card contains last-session resume; full-width statistics panel separate from adab",
@@ -144,5 +144,10 @@
     "generalAiActions": "centered 72x48 icon pill plus separate 48x48 reference circle; native icon semantic labels and independent keyboard focus",
     "legal": "stable document and section IDs, full offline ID/EN/AR, live locale resolver",
     "sidebarLogo": "40 inside 56 square"
+  },
+  "readingRefinement": {
+    "search": "text-only AI results, one opening target",
+    "adab": "tonal reading cards with icon beside title in UI direction and full body",
+    "flagshipTitle": "AI Fikih Tahawwulat"
   }
 }
