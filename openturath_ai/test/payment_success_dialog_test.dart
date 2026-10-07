@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openturath_ai/core/localization.dart';
+import 'package:openturath_ai/core/app_config.dart';
 import 'package:openturath_ai/widgets/payment_success_dialog.dart';
 
 void main() {
   testWidgets(
       'receipt shows the confirmed invoice and closes without access claims',
       (tester) async {
-    Loc.setLanguage('id');
+    AppConfig.localeNotifier.value = 'id';
     await tester.pumpWidget(MaterialApp(
         home: Builder(
             builder: (context) => Scaffold(
