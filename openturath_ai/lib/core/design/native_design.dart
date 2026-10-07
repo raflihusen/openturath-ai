@@ -47,10 +47,8 @@ abstract final class NativeColors {
       dark ? surfaceLight : textPrimaryLight;
   static Color destructive(bool dark) =>
       dark ? destructiveDark : destructiveLight;
-  static Color marja(bool dark) =>
-      OTColors.marja(dark);
-  static Color collection(bool dark) =>
-      OTColors.surface(dark);
+  static Color marja(bool dark) => OTColors.marja(dark);
+  static Color collection(bool dark) => OTColors.surface(dark);
   static Color brass(bool dark) => accent(dark);
 }
 
@@ -58,8 +56,8 @@ abstract final class NativeColors {
 /// dibulatkan ke langkah skala terdekat, sehingga layar native tidak bisa
 /// keluar dari skala. Kode baru memakai [OTTypography] langsung.
 abstract final class NativeType {
-  static double _snap(double size) => OTFontSize.scale.reduce(
-      (a, b) => (a - size).abs() <= (b - size).abs() ? a : b);
+  static double _snap(double size) => OTFontSize.scale
+      .reduce((a, b) => (a - size).abs() <= (b - size).abs() ? a : b);
   static TextStyle title(bool dark, {double size = OTFontSize.s26}) =>
       NativeFonts.outfit(
           fontSize: _snap(size),
