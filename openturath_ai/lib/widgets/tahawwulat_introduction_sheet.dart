@@ -1846,23 +1846,30 @@ class _TahawwulatIntroductionSheetState
                   foregroundColor: OTColors.textPrimary(isDark),
                   padding: const EdgeInsets.all(20),
                 ),
-                onPressed: widget.onSelectSubAgent == null ? null : () {
-                  Navigator.of(context).pop();
-                  widget.onSelectSubAgent!(matchingSub);
-                },
+                onPressed: widget.onSelectSubAgent == null
+                    ? null
+                    : () {
+                        Navigator.of(context).pop();
+                        widget.onSelectSubAgent!(matchingSub);
+                      },
                 child: Text(Loc.isArabic ? room.arabic : room.name,
-                  style: ScholarlyFonts.outfit(fontSize: OTFontSize.s18)),
+                    style: ScholarlyFonts.outfit(fontSize: OTFontSize.s18)),
               ),
             ),
             const SizedBox(width: 8),
             IconButton(
               tooltip: Loc.isArabic ? 'عن المساعد' : 'Tentang asisten',
-              onPressed: () => showDialog<void>(context: context,
-                builder: (context) => AlertDialog(
-                  title: Text(room.role), content: Text(room.desc),
-                  actions: [TextButton(onPressed: () => Navigator.pop(context),
-                    child: Text(Loc.isArabic ? 'إغلاق' : 'Tutup'))],
-                )),
+              onPressed: () => showDialog<void>(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                        title: Text(room.role),
+                        content: Text(room.desc),
+                        actions: [
+                          TextButton(
+                              onPressed: () => Navigator.pop(context),
+                              child: Text(Loc.isArabic ? 'إغلاق' : 'Tutup'))
+                        ],
+                      )),
               icon: const Icon(Icons.info_outline_rounded),
             ),
           ]),
