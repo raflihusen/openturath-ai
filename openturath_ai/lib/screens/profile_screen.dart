@@ -747,7 +747,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             message: Loc.text(title),
                             child: Center(
                                 child:
-                                    Icon(icon, size: 22, color: color))))))));
+                                    icon == null
+                                      ? Text(title, style: ScholarlyFonts.outfit(fontSize: OTFontSize.s14, fontWeight: FontWeight.w600, color: color))
+                                      : Icon(icon, size: 22, color: color))))))));
     return stacked ? option : Expanded(child: option);
   }
 }
