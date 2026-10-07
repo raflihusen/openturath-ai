@@ -748,8 +748,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     child: Padding(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 4, vertical: 8),
-                        child: Tooltip(message: Loc.text(title),
-                          child: Center(child: Icon(icon, size: 22, color: color)))))));
+                        child: Tooltip(
+                            message: Loc.text(title),
+                            child: Center(
+                                child:
+                                    Icon(icon, size: 22, color: color))))))));
     return stacked ? option : Expanded(child: option);
   }
 }
@@ -786,37 +789,66 @@ class _MembershipPass extends StatelessWidget {
             : HijriDateUtils.formatMasehiOnly(summary.expiresAt!.toLocal());
     return Container(
       padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(color: OTColors.surface(isDark), borderRadius: OTRadius.cardBorder),
+      decoration: BoxDecoration(
+          color: OTColors.surface(isDark), borderRadius: OTRadius.cardBorder),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Row(children: [
-          Container(width: 48, height: 48,
-            decoration: BoxDecoration(color: OTColors.surfaceSubtle(isDark), borderRadius: OTRadius.inputBorder),
-            alignment: Alignment.center,
-            child: Text(holderName.trim().isEmpty ? 'O' : holderName.trim().characters.first.toUpperCase(),
-              style: OTTypography.screenTitle(color: ink))),
+          Container(
+              width: 48,
+              height: 48,
+              decoration: BoxDecoration(
+                  color: OTColors.surfaceSubtle(isDark),
+                  borderRadius: OTRadius.inputBorder),
+              alignment: Alignment.center,
+              child: Text(
+                  holderName.trim().isEmpty
+                      ? 'O'
+                      : holderName.trim().characters.first.toUpperCase(),
+                  style: OTTypography.screenTitle(color: ink))),
           const SizedBox(width: 12),
-          Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text(holderName, style: OTTypography.bodyMedium(color: ink)),
-            if (email.isNotEmpty) Text(email.replaceAll('@', '@\u200b'),
-              textDirection: TextDirection.ltr, style: OTTypography.caption(color: muted)),
-          ])),
-          IconButton(tooltip: summary.ctaLabel, onPressed: onManage, icon: Icon(Icons.tune_rounded, color: ink)),
+          Expanded(
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                Text(holderName, style: OTTypography.bodyMedium(color: ink)),
+                if (email.isNotEmpty)
+                  Text(email.replaceAll('@', '@\u200b'),
+                      textDirection: TextDirection.ltr,
+                      style: OTTypography.caption(color: muted)),
+              ])),
+          IconButton(
+              tooltip: summary.ctaLabel,
+              onPressed: onManage,
+              icon: Icon(Icons.tune_rounded, color: ink)),
         ]),
         const SizedBox(height: 16),
         Divider(height: 1, color: OTColors.borderSubtle(isDark)),
         const SizedBox(height: 16),
         Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Icon(summary.isOpen ? Icons.check_circle_outline_rounded : Icons.lock_outline_rounded, size: 20, color: muted),
+          Icon(
+              summary.isOpen
+                  ? Icons.check_circle_outline_rounded
+                  : Icons.lock_outline_rounded,
+              size: 20,
+              color: muted),
           const SizedBox(width: 10),
-          Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text(summary.accessLabel, style: OTTypography.captionMedium(color: ink)),
-            if (expiry != null) ...[
-              const SizedBox(height: 4),
-              Text(unlimited ? expiry : '${AppCopy.validUntil} $expiry', style: OTTypography.caption(color: muted)),
-            ],
-          ])),
-          if (onViewAccess != null) IconButton(tooltip: Loc.tr('viewAccessList'), onPressed: onViewAccess,
-            icon: Icon(Icons.auto_stories_outlined, size: 20, color: ink)),
+          Expanded(
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                Text(summary.accessLabel,
+                    style: OTTypography.captionMedium(color: ink)),
+                if (expiry != null) ...[
+                  const SizedBox(height: 4),
+                  Text(unlimited ? expiry : '${AppCopy.validUntil} $expiry',
+                      style: OTTypography.caption(color: muted)),
+                ],
+              ])),
+          if (onViewAccess != null)
+            IconButton(
+                tooltip: Loc.tr('viewAccessList'),
+                onPressed: onViewAccess,
+                icon: Icon(Icons.auto_stories_outlined, size: 20, color: ink)),
         ]),
       ]),
     );
