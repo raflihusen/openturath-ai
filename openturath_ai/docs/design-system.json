@@ -107,5 +107,22 @@
     "source": "lib/core/design/ot_expressive.dart",
     "artwork": "assets/images/tahawwulat-sculpture-v2.png",
     "heroBackground": "low-contrast-architectural-curves"
+  },
+  "aiRefinement": {
+    "date": "2026-10-07",
+    "flagshipPlacement": "AI page only, exclusive label",
+    "scienceCards": {
+      "surface": "#171717",
+      "arabicWatermarkOpacity": 0.1,
+      "semantic": "decorative, excluded"
+    },
+    "languageOrder": [
+      "id",
+      "en",
+      "ar"
+    ],
+    "profile": "plain identity, expiry grouped with real access",
+    "pricing": "recorded regularAmount struck through",
+    "loader": "four rounded folios; periodic variable velocity; reduced motion"
   }
 }
