@@ -72,7 +72,7 @@ For privacy questions, contact openturath@gmail.com.'''),
  ('3. Purposes and grounds for processing', '''Account and transaction data are processed to provide the requested service, manage subscriptions, and perform the agreement. Transaction records are also required to meet legal tax-administration and financial-transaction obligations.
 
 We do not sell your personal data to any third party and do not use your conversations for targeted advertising.'''),
- ('4. AI conversations and Google's role', '''When you send a question through the conversation feature, its text and context are processed through Google NotebookLM. Google's processing follows its Privacy Policy and NotebookLM terms.
+ ("4. AI conversations and Google's role", '''When you send a question through the conversation feature, its text and context are processed through Google NotebookLM. Google's processing follows its Privacy Policy and NotebookLM terms.
 
 OpenTurath does not use conversation contents or users' private notes to train public AI models. Avoid entering sensitive personal or confidential information into conversations.'''),
  ('5. Notes and device storage', '''Notes, source quotations, and reference bookmarks are stored locally on your device using application storage. Clearing application data or uninstalling may delete local notes. Use text-copying or note-sharing features to back up important notes to another location.'''),
