@@ -29,7 +29,7 @@ const copyCatalog = <String, List<String>>{
     "دراسة كتب التراث الإسلامي"
   ],
   "navHome": ["Beranda", "Home", "الرئيسية"],
-  "navStudies": ["AI", "Assistants", "المساعدون"],
+  "navStudies": ["AI", "AI", "AI"],
   "assistantIntro": [
     "Pilih bidang, lalu kenali mandat dan rujukan setiap AI sebelum memulai telaah.",
     "Choose a field, then review each assistant's scope and sources before you begin.",
