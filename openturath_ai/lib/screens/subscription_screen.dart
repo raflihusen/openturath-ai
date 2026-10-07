@@ -155,7 +155,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
           trxId: result['trxId'] as String?,
           planTitle: title,
           amount: offer.amount,
-          regularAmount: offer.regularAmount,
+          regularAmount: offer.amount,
           periodLabel: offer.period);
       if (mounted && paid == true) {
         AppSnackBar.success(context, Loc.tr('paymentConfirmed'));

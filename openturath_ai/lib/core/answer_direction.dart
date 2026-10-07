@@ -18,7 +18,9 @@ TextDirection answerDirection(String text) {
 /// must continue to use the original text, without added control characters.
 String isolateArabicPhrases(String text) {
   if (answerDirection(text) == TextDirection.rtl ||
-      RegExp(r'^\s*(?:`{3,}|~{3,})').hasMatch(text)) return text;
+      RegExp(r'^\s*(?:`{3,}|~{3,})').hasMatch(text)) {
+    return text;
+  }
   return text.replaceAllMapped(
     RegExp(
         r'[\u0620-\u064A\u066E-\u06D3\u06FA-\u06FC\u0750-\u077F\u08A0-\u08C9]+(?:[ \t]+[\u0620-\u064A\u066E-\u06D3\u06FA-\u06FC\u0750-\u077F\u08A0-\u08C9]+)*'),
@@ -59,7 +61,9 @@ List<String> answerDisplayBlocks(String text) {
     if (fence == null &&
         current.isNotEmpty &&
         !structured &&
-        answerDirection(current.first) != answerDirection(line)) flush();
+        answerDirection(current.first) != answerDirection(line)) {
+      flush();
+    }
     current.add(line);
   }
   flush();
