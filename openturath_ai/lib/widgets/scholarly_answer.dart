@@ -20,7 +20,7 @@ class ScholarlyAnswer extends StatelessWidget {
   Widget build(BuildContext context) => Column(
     crossAxisAlignment: CrossAxisAlignment.stretch,
     children: [
-      for (final block in text.split(RegExp(r'\n\s*\n')))
+      for (final block in answerDisplayBlocks(text))
         if (block.trim().isNotEmpty) Padding(
           padding: const EdgeInsets.only(bottom: OTSpacing.md),
           child: Directionality(

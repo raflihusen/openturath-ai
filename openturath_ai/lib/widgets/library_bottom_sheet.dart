@@ -47,9 +47,9 @@ class _CatalogCollectionLoaderState extends State<_CatalogCollectionLoader> {
     future: _load,
     builder: (context, snapshot) {
       final data = snapshot.data;
-      if (data != null) return OpenTurathBookLibraryPage(books: data.books,
+      if (data != null) { return OpenTurathBookLibraryPage(books: data.books,
         metadata: data.metadata,
-        collectionName: Loc.text(widget.agent?.title ?? data.metadata?.nama ?? Loc.tr('libraryShort')));
+        collectionName: Loc.text(widget.agent?.title ?? data.metadata?.nama ?? Loc.tr('libraryShort'))); }
       return Scaffold(appBar: AppBar(title: Text(Loc.tr('libraryShort'))),
         body: Center(child: Padding(padding: const EdgeInsets.all(24),
           child: Column(mainAxisSize: MainAxisSize.min, children: [
