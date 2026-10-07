@@ -1333,7 +1333,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
             widget.session.isSessionReady = false;
             widget.session.isTimeoutError = true;
             widget.session.errorMessage =
-                'Ruang asisten sedang memproses antrean. Silakan ketuk Coba Lagi untuk memuat ulang.';
+                Loc.tr('roomNotReadyBody');
           });
         }
         return;
@@ -1632,9 +1632,9 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
         );
       } else {
         state = AppErrorState(
-          icon: Icons.wifi_off_rounded,
+          icon: Icons.public_off_rounded,
           title: Loc.tr('roomLoadFailTitle'),
-          message: Loc.tr('roomLoadFailBody'),
+          message: session.errorMessage ?? Loc.tr('roomLoadFailBody'),
           retryLabel: Loc.tr('tryAgain'),
           onRetry: retry,
           onBack: close,
@@ -1694,7 +1694,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
               }
               return false;
             },
-            onReceivedError: (controller, request, error) {
+            onReceivedError: (controller, request, error) async {
               if (request.isForMainFrame != true || !mounted) return;
               // Navigasi yang kita batalkan sendiri (mis. ke halaman masuk
               // Google) dilaporkan WebKit sebagai "frame load interrupted";
@@ -1706,7 +1706,9 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
                   detail.contains('cancel')) {
                 return;
               }
-              debugPrint('[OpenTurath] WebView error: ${error.description}');
+              debugPrint('[OpenTurath] Main-document load failed: ${error.type}');
+              final current = await controller.getUrl();
+              if (!mounted || (current != null && current.toString() != request.url.toString())) return;
               _readinessTimer?.cancel();
               setState(() {
                 session.isWebLoading = false;
@@ -1901,6 +1903,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
             },
             onLoadStart: (controller, uri) async {
               session.hasInjectedEarlyScript = false;
+              _loadingStarted = DateTime.now();
               if (uri != null) {
                 if (NotebookNavigation.notebook(uri.uriValue)) {
                   if (session.isGoogleAuthPage && mounted) {
@@ -2021,6 +2024,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
                   await _applyThemeCss(isDark);
                 } catch (_) {
                   session.hasInjectedEarlyScript = false;
+              _loadingStarted = DateTime.now();
                 }
               }
             },
