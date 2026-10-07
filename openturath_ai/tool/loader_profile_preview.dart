@@ -31,7 +31,8 @@ Future<void> main() async {
   final activationDeadline = DateTime.now().add(const Duration(seconds: 60));
   while (WidgetsBinding.instance.lifecycleState != AppLifecycleState.resumed) {
     if (DateTime.now().isAfter(activationDeadline)) {
-      throw StateError('Native motion review requires an active foreground window');
+      throw StateError(
+          'Native motion review requires an active foreground window');
     }
     await Future<void>.delayed(const Duration(milliseconds: 50));
   }
@@ -39,8 +40,10 @@ Future<void> main() async {
   SchedulerBinding.instance.addTimingsCallback(collect);
   await Future<void>.delayed(const Duration(milliseconds: 18000));
   SchedulerBinding.instance.removeTimingsCallback(collect);
-  if (timings.isEmpty || WidgetsBinding.instance.lifecycleState != AppLifecycleState.resumed) {
-    throw StateError('Native review lost foreground activity; no valid measurement saved');
+  if (timings.isEmpty ||
+      WidgetsBinding.instance.lifecycleState != AppLifecycleState.resumed) {
+    throw StateError(
+        'Native review lost foreground activity; no valid measurement saved');
   }
   Map<String, Object> summary(List<double> values) {
     values.sort();
