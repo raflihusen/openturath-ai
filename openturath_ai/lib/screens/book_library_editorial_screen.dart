@@ -434,7 +434,7 @@ class _BookEditorialItem extends StatelessWidget {
                             padding: const EdgeInsets.all(8),
                             decoration: BoxDecoration(
                                 color: ink, borderRadius: OTRadius.chipBorder),
-                            child: Text((index + 1).toString().padLeft(2, '0'),
+                            child: Text(index.toString().padLeft(2, '0'),
                                 style: OTTypography.caption(
                                     color: OTColors.surface(dark)))),
                         const SizedBox(width: 10),
