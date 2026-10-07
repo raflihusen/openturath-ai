@@ -29,7 +29,8 @@ void main() {
   setUp(() => AppConfig.localeNotifier.value = 'id');
   tearDown(() => AppConfig.localeNotifier.value = 'id');
 
-  testWidgets('assistant card omits academic subtitles while preserving its source',
+  testWidgets(
+      'assistant card omits academic subtitles while preserving its source',
       (tester) async {
     tester.view.physicalSize = const Size(320, 640);
     tester.view.devicePixelRatio = 1;
@@ -73,7 +74,8 @@ void main() {
     headlineAplikasi: 'Dilatih dengan 1.141 kitab',
   );
 
-  testWidgets('Arabic reference overview omits conflicting legacy count and fits phone',
+  testWidgets(
+      'Arabic reference overview omits conflicting legacy count and fits phone',
       (tester) async {
     tester.view.physicalSize = const Size(360, 800);
     tester.view.devicePixelRatio = 1;
@@ -122,7 +124,8 @@ void main() {
     volumesCount: 8,
   );
 
-  testWidgets('English edition record keeps Arabic source and hides empty folder',
+  testWidgets(
+      'English edition record keeps Arabic source and hides empty folder',
       (tester) async {
     tester.view.physicalSize = const Size(320, 700);
     tester.view.devicePixelRatio = 1;
@@ -144,7 +147,8 @@ void main() {
   });
 
   for (final language in Loc.supportedCodes) {
-    testWidgets('book list and edition fit 320 px in $language', (tester) async {
+    testWidgets('book list and edition fit 320 px in $language',
+        (tester) async {
       tester.view.physicalSize = const Size(320, 700);
       tester.view.devicePixelRatio = 1;
       addTearDown(() {
