@@ -65,10 +65,12 @@ class AssistantGridCard extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(Loc.text(agent.title),
-              style: OTTypography.screenTitle(color: ink).copyWith(height: 1.25)),
+              style:
+                  OTTypography.screenTitle(color: ink).copyWith(height: 1.25)),
           if (agent.isComingSoon) ...[
             const SizedBox(height: 8),
-            Text(Loc.tr('comingSoon'), style: OTTypography.caption(color: muted)),
+            Text(Loc.tr('comingSoon'),
+                style: OTTypography.caption(color: muted)),
           ],
           if (stats.isNotEmpty) ...[
             const SizedBox(height: 10),
@@ -79,13 +81,17 @@ class AssistantGridCard extends StatelessWidget {
           Wrap(spacing: 8, runSpacing: 8, children: [
             FilledButton.icon(
                 onPressed: onOpen,
-                style: FilledButton.styleFrom(backgroundColor: ink,
-                    foregroundColor: OTExpressive.hero),
-                icon: Icon(Directionality.of(context) == TextDirection.rtl
-                    ? Icons.arrow_back_rounded : Icons.arrow_forward_rounded, size: 16),
+                style: FilledButton.styleFrom(
+                    backgroundColor: ink, foregroundColor: OTExpressive.hero),
+                icon: Icon(
+                    Directionality.of(context) == TextDirection.rtl
+                        ? Icons.arrow_back_rounded
+                        : Icons.arrow_forward_rounded,
+                    size: 16),
                 label: Text(Loc.tr('openAssistant'))),
             if (onOpenLibrary != null)
-              TextButton(onPressed: onOpenLibrary,
+              TextButton(
+                  onPressed: onOpenLibrary,
                   style: TextButton.styleFrom(foregroundColor: muted),
                   child: Text(Loc.tr('viewReferences'))),
           ]),
