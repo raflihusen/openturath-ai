@@ -139,9 +139,9 @@
     "catalog": "default flexible editorial list; 70/30 identity-metadata on desktop, stacked on phone; optional grid",
     "calendar": "structured day/month/year from one snapshot; equal columns and divider",
     "webview": "retain native view behind recoverable error overlay; no decorative minimum delay",
-    "dashboard": "greeting card contains last-session resume",
+    "dashboard": "greeting card contains last-session resume; full-width statistics panel separate from adab",
     "paymentSuccess": "receipt with confirmed invoice and amount; no unverified access activation claim",
-    "generalAiActions": "centered 72x48 icon pill plus separate 48x48 reference circle",
+    "generalAiActions": "centered 72x48 icon pill plus separate 48x48 reference circle; native icon semantic labels and independent keyboard focus",
     "legal": "stable document and section IDs, full offline ID/EN/AR, live locale resolver",
     "sidebarLogo": "40 inside 56 square"
   }
