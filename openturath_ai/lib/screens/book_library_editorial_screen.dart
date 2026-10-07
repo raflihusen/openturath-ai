@@ -165,6 +165,11 @@ class _OpenTurathBookLibraryPageState extends State<OpenTurathBookLibraryPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      if (widget.metadata != null) ...[
+                        Text('${Loc.tr('bookCount', ['${widget.metadata!.totalKitab}'])} · ${widget.metadata!.totalJilid}',
+                          style: OTTypography.caption(color: textSecondary)),
+                        const SizedBox(height: 12),
+                      ],
                       // Search Bar
                       TextField(
                         controller: _searchController,
