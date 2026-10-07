@@ -19,5 +19,6 @@
   "notarized": false,
   "native_smoke": "fresh build launched; login screen and language menu observed",
   "authenticated_notebooklm": "not verified",
-  "distribution": "local only; no broadcast"
+  "distribution": "local only; no broadcast",
+  "universal_native_binaries_verified": 37
 }
