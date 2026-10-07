@@ -363,7 +363,7 @@ class _OpenTurathBookLibraryPageState extends State<OpenTurathBookLibraryPage> {
                           });
                     }, childCount: visibleBooks.length);
                     if (_list || largeText || columns == 1) {
-                      final readingColumns = bookReadingColumns(context, constraints.crossAxisExtent);
+                      final readingColumns = bookReadingColumns(context, box.maxWidth);
                       return SliverList(delegate: SliverChildBuilderDelegate(
                           (context, row) => bookReadingRow(context, row,
                               readingColumns, visibleBooks.length,
