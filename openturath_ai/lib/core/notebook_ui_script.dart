@@ -160,19 +160,6 @@ const notebookUiScript = r'''
       button[aria-label*="Pengaturan" i], button[aria-label*="Notebook settings" i],
       .project-header button, app-project-header button,
       mat-toolbar button, .top-bar button,
-      /* Sembunyikan kartu hero / overview / summary / intro buku catatan di tengah obrolan */
-      app-notebook-guide, notebook-guide, app-guide-intro,
-      app-project-summary, app-notebook-overview,
-      app-artifact-summary, .artifact-summary,
-      .notebook-guide, .guide-container, .hero-container,
-      .cover-image-container, .summary-card, .guide-card,
-      app-chat-intro, app-conversation-intro, app-notebook-intro,
-      app-project-intro,
-      .chat-intro, .conversation-intro, .notebook-intro, .project-intro,
-      [class*="guide-intro" i], [class*="project-summary" i],
-      [class*="project-overview" i], [class*="notebook-overview" i],
-      [class*="chat-intro" i], [class*="conversation-intro" i],
-      [class*="notebook-intro" i], [class*="project-intro" i],
       /* Sembunyikan badge PRO */
       .pro-badge, [class*="pro-badge" i], [class*="tier-badge" i],
       /* Sembunyikan SEMUA elemen dan container loading internal NotebookLM */
@@ -234,10 +221,45 @@ const notebookUiScript = r'''
       .ot-opening-language .mat-mdc-menu-panel { opacity: 0 !important; }
       .cdk-overlay-container { z-index: 99999 !important; }
 
-      /* Sembunyikan elemen judul, ikon, dan sumber di dalam empty state secara transparan tanpa merusak tinggi layout */
-      .empty-state-header, .chat-empty-state-container,
-      [class*="intro-header" i], [class*="hero-header" i],
-      app-notebook-title, app-project-title,
+      /* Sembunyikan elemen judul, ikon, dan sumber di dalam empty state secara visual (transparan)
+         sehingga tinggi layout dan posisi alami input di bawah tetap terjaga 100% tanpa kolaps */
+      app-chat-empty-state,
+      .chat-empty-state,
+      .empty-state,
+      [class*="empty-state" i],
+      .empty-state-header,
+      .chat-empty-state-container,
+      app-notebook-overview,
+      .notebook-overview,
+      [class*="notebook-overview" i],
+      app-project-summary,
+      .project-summary,
+      [class*="project-summary" i],
+      app-guide-intro,
+      .guide-intro,
+      [class*="guide-intro" i],
+      app-chat-intro,
+      .chat-intro,
+      [class*="chat-intro" i],
+      app-conversation-intro,
+      .conversation-intro,
+      [class*="conversation-intro" i],
+      app-notebook-intro,
+      .notebook-intro,
+      [class*="notebook-intro" i],
+      app-project-intro,
+      .project-intro,
+      [class*="project-intro" i],
+      [class*="intro-header" i],
+      [class*="hero-header" i],
+      app-notebook-title,
+      app-project-title,
+      .chat-panel-content h1:not(.rendered-markdown *):not([role="article"] *),
+      .chat-panel-content h2:not(.rendered-markdown *):not([role="article"] *),
+      .chat-panel-content h3:not(.rendered-markdown *):not([role="article"] *),
+      .chat-view h1:not(.rendered-markdown *):not([role="article"] *),
+      .chat-view h2:not(.rendered-markdown *):not([role="article"] *),
+      .chat-view h3:not(.rendered-markdown *):not([role="article"] *),
       app-chat-empty-state h1, app-chat-empty-state h2, app-chat-empty-state h3,
       app-chat-empty-state mat-icon, app-chat-empty-state img, app-chat-empty-state svg,
       app-empty-state h1, app-empty-state h2, app-empty-state h3,
@@ -249,6 +271,24 @@ const notebookUiScript = r'''
         visibility: hidden !important;
         opacity: 0 !important;
         pointer-events: none !important;
+      }
+
+      /* Pastikan bilah input chat dan komponen di dalamnya selalu terlihat dan interaktif */
+      app-chat-input,
+      app-chat-input *,
+      div.chat-input-container,
+      div.chat-input-container *,
+      .input-container,
+      .input-container *,
+      form.chat-input-form,
+      form.chat-input-form *,
+      .chat-input-area,
+      .chat-input-area *,
+      .query-box-container,
+      .query-box-container * {
+        visibility: visible !important;
+        opacity: 1 !important;
+        pointer-events: auto !important;
       }
 
       /* Ruang bawah obrolan agar pesan tidak tertutup */
@@ -368,23 +408,10 @@ const notebookUiScript = r'''
 
   function removeHeroCard() {
     const guideSelectors = [
-      'app-notebook-guide', 'notebook-guide', 'app-guide-intro',
-      'app-project-summary', 'app-notebook-overview',
+      'app-notebook-guide', 'notebook-guide',
       'app-artifact-summary', '.artifact-summary',
       '.notebook-guide', '.guide-container', '.hero-container',
-      '.cover-image-container', '.summary-card', '.guide-card',
-      'app-chat-intro', 'app-conversation-intro', 'app-notebook-intro',
-      'app-project-intro', 'app-chat-empty-state', 'app-empty-state',
-      '.chat-intro', '.conversation-intro', '.notebook-intro', '.project-intro',
-      '.chat-empty-state', '.empty-state', '[class*="zero-state" i]',
-      'app-notebook-title', 'app-project-title',
-      '.empty-state-header', '.chat-empty-state-container',
-      '[class*="intro-header" i]', '[class*="hero-header" i]',
-      '[class*="guide-intro" i]', '[class*="project-summary" i]',
-      '[class*="project-overview" i]', '[class*="notebook-overview" i]',
-      '[class*="chat-intro" i]', '[class*="conversation-intro" i]',
-      '[class*="notebook-intro" i]', '[class*="project-intro" i]',
-      '[class*="empty-state" i]'
+      '.cover-image-container', '.summary-card', '.guide-card'
     ];
     guideSelectors.forEach(sel => {
       document.querySelectorAll(sel).forEach(el => {
@@ -442,9 +469,6 @@ const notebookUiScript = r'''
       if (!txt) return;
       if (txt === 'loading notebook...' || txt === 'memuat notebook...' || txt === 'loading notebook' || txt === 'memuat notebook' || txt.includes('loading notebook') || txt.includes('memuat notebook')) {
         el.style.setProperty('display', 'none', 'important');
-        if (el.parentElement && !el.parentElement.querySelector('textarea, form, .chat-message')) {
-          el.parentElement.style.setProperty('display', 'none', 'important');
-        }
       }
     });
   }
