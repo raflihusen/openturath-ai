@@ -594,7 +594,7 @@ class AgentModel {
         AgentModel(
           id: 'nahwu_sharaf',
           title: 'Bahasa Arab',
-          titleArabic: 'النحو والصرف',
+          titleArabic: 'علوم العربية',
           description:
               'Pelajari nahwu, sharaf, balaghah, dan makna kosakata dalam kamus Arab klasik.',
           emoji: '🔤',
