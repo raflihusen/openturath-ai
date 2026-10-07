@@ -36,13 +36,8 @@ class BookRowItem extends StatelessWidget {
       formattedVolumes = Loc.tr('volumeCount', ['${book.volumesCount}']);
     }
 
-    final facts = catalogCardFacts(
-      volumes: formattedVolumes,
-      publisher: book.publisher,
-      printYear: book.printYear,
-      muhaqqiq: book.muhaqqiq,
-      editorLabel: Loc.tr('ui_ad39f1c3af'),
-    );
+    final facts = [if (formattedVolumes != null) formattedVolumes,
+      if (book.pagesDescription?.isNotEmpty == true) book.pagesDescription!];
 
     final hasDeathYear =
         book.verifiedDeathYearHijri != null && book.verifiedDeathYearHijri! > 0;
