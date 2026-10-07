@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'ot_typography.dart';
 
 /// Monochrome roles for the flagship review direction.
 abstract final class OTExpressive {
+  static double diagramFontSize(double width) => width >= 400 ? OTFontSize.s22 : width >= 280 ? OTFontSize.s18 : OTFontSize.s14;
   static const white = Color(0xFFFFFFFF);
   static const whiteMuted = Color(0xB3FFFFFF);
   static const black = Color(0xFF000000);
