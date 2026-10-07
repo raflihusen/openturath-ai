@@ -295,7 +295,11 @@ class _TahawwulatIntroductionSheetState
                   Expanded(flex: 3, child: heading),
                   const SizedBox(width: 32),
                   const Expanded(
-                      flex: 2, child: Center(child: SizedBox(width: 260, child: TahawwulatDiagram(inverse: true))))
+                      flex: 2,
+                      child: Center(
+                          child: SizedBox(
+                              width: 260,
+                              child: TahawwulatDiagram(inverse: true))))
                 ]);
               }
               return Column(
@@ -377,76 +381,102 @@ class _TahawwulatIntroductionSheetState
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   cover,
-                  if (Loc.language != 'id') Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-                    child: Text(reviewCopy('Materi tersedia dalam Bahasa Indonesia.',
-                      'هذه المادة متاحة باللغة الإندونيسية.', 'This article is available in Indonesian.'),
-                      textAlign: TextAlign.center,
-                      style: OTTypography.caption(color: textSecondary))),
-                  Directionality(textDirection: TextDirection.ltr, child: Center(
-                    child: ConstrainedBox(
-                      constraints: const BoxConstraints(maxWidth: 920),
-                      child: Padding(
-                        padding: EdgeInsets.fromLTRB(
-                            roomy ? 64 : 24, 24, roomy ? 64 : 24, 24),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "Daftar isi",
-                              style: ScholarlyFonts.outfit(
-                                  fontSize: OTFontSize.s14,
-                                  color: textTertiary),
+                  if (Loc.language != 'id')
+                    Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 24, vertical: 16),
+                        child: Text(
+                            reviewCopy(
+                                'Materi tersedia dalam Bahasa Indonesia.',
+                                'هذه المادة متاحة باللغة الإندونيسية.',
+                                'This article is available in Indonesian.'),
+                            textAlign: TextAlign.center,
+                            style: OTTypography.caption(color: textSecondary))),
+                  Directionality(
+                      textDirection: TextDirection.ltr,
+                      child: Center(
+                        child: ConstrainedBox(
+                          constraints: const BoxConstraints(maxWidth: 920),
+                          child: Padding(
+                            padding: EdgeInsets.fromLTRB(
+                                roomy ? 64 : 24, 24, roomy ? 64 : 24, 24),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "Daftar isi",
+                                  style: ScholarlyFonts.outfit(
+                                      fontSize: OTFontSize.s14,
+                                      color: textTertiary),
+                                ),
+                                const SizedBox(height: 10),
+                                Divider(height: 1, color: borderColor),
+                                if (roomy)
+                                  Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Expanded(child: contentsColumn(0, half)),
+                                      const SizedBox(width: 48),
+                                      Expanded(
+                                          child: contentsColumn(
+                                              half, _chapters.length)),
+                                    ],
+                                  )
+                                else
+                                  contentsColumn(0, _chapters.length),
+                              ],
                             ),
-                            const SizedBox(height: 10),
-                            Divider(height: 1, color: borderColor),
-                            if (roomy)
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Expanded(child: contentsColumn(0, half)),
-                                  const SizedBox(width: 48),
-                                  Expanded(
-                                      child: contentsColumn(
-                                          half, _chapters.length)),
-                                ],
-                              )
-                            else
-                              contentsColumn(0, _chapters.length),
-                          ],
+                          ),
                         ),
-                      ),
-                    ),
-                  )),
-                  Directionality(textDirection: TextDirection.ltr, child: Center(
-                    child: ConstrainedBox(
-                      constraints: const BoxConstraints(maxWidth: 728),
-                      child: Padding(
-                        padding: const EdgeInsets.fromLTRB(24, 16, 24, 96),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: sections,
+                      )),
+                  Directionality(
+                      textDirection: TextDirection.ltr,
+                      child: Center(
+                        child: ConstrainedBox(
+                          constraints: const BoxConstraints(maxWidth: 728),
+                          child: Padding(
+                            padding: const EdgeInsets.fromLTRB(24, 16, 24, 96),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: sections,
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
-                  )),
+                      )),
                 ],
               ),
             ),
-            PositionedDirectional(top: 16, end: 16, child: SafeArea(
-              child: Material(color: surfaceColor, shape: const StadiumBorder(),
-                child: PopupMenuButton<String>(
-                  tooltip: reviewCopy('Daftar isi', 'المحتويات', 'Contents'),
-                  icon: const Icon(Icons.format_list_bulleted_rounded),
-                  onSelected: (id) {
-                    final target = _chapterKeys[id]?.currentContext;
-                    if (target != null) { Scrollable.ensureVisible(target,
-                      duration: MediaQuery.disableAnimationsOf(context) ? Duration.zero : OTMotion.transition); }
-                  },
-                  itemBuilder: (_) => [for (final chapter in _chapters)
-                    PopupMenuItem(value: chapter.$1, child: Directionality(
-                      textDirection: TextDirection.ltr, child: Text(chapter.$2)))],
-                )))),
+            PositionedDirectional(
+                top: 16,
+                end: 16,
+                child: SafeArea(
+                    child: Material(
+                        color: surfaceColor,
+                        shape: const StadiumBorder(),
+                        child: PopupMenuButton<String>(
+                          tooltip:
+                              reviewCopy('Daftar isi', 'المحتويات', 'Contents'),
+                          icon: const Icon(Icons.format_list_bulleted_rounded),
+                          onSelected: (id) {
+                            final target = _chapterKeys[id]?.currentContext;
+                            if (target != null) {
+                              Scrollable.ensureVisible(target,
+                                  duration:
+                                      MediaQuery.disableAnimationsOf(context)
+                                          ? Duration.zero
+                                          : OTMotion.transition);
+                            }
+                          },
+                          itemBuilder: (_) => [
+                            for (final chapter in _chapters)
+                              PopupMenuItem(
+                                  value: chapter.$1,
+                                  child: Directionality(
+                                      textDirection: TextDirection.ltr,
+                                      child: Text(chapter.$2)))
+                          ],
+                        )))),
             // Garis kemajuan baca di tepi atas.
             Positioned(
               top: 0,
