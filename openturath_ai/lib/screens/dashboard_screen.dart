@@ -471,7 +471,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                       mainAxisSpacing: 12,
                                       mainAxisExtent:
                                           MediaQuery.textScalerOf(context)
-                                              .scale(212),
+                                              .scale(192),
                                     ),
                                     itemCount: _curatedDisciplines.length,
                                     itemBuilder: (context, index) {
@@ -486,7 +486,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                       return OTReveal(
                                         index: index + 2,
                                         child: OTInkCard(
-                                          watermark: const {'fiqh': 'الفقه', 'hadith': 'الحديث', 'tafsir': 'التفسير', 'aqidah': 'العقيدة', 'usul_fiqh': 'أصول الفقه', 'arabic': 'العربية'}[disc.fieldId] ?? NativeCopy.values['field_${disc.fieldId}']?[2] ?? '',
+                                          watermark: const {'fiqh': 'الفقه', 'hadith': 'الحديث', 'tafsir': 'التفسير', 'aqidah': 'العقيدة', 'usul_fiqh': 'أصول الفقه', 'arabic': 'العربية', 'usul': 'أصول الفقه', 'arabic_language': 'العربية'}[disc.fieldId] ?? NativeCopy.values['field_${disc.fieldId}']?[2] ?? '',
                                           semanticLabel:
                                               'AI ${Loc.text(disc.name)}',
                                           onTap: () {
@@ -519,7 +519,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                                           FontWeight.w600,
                                                       color:
                                                           OTExpressive.white)),
-                                              const Spacer(),
+                                              const SizedBox(height: 8),
                                               Text(
                                                   AppCopy
                                                       .assistantsAvailableCount(
