@@ -94,39 +94,44 @@ class _DualCalendarState extends State<DualCalendar>
     return Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-            color: OTColors.surface(Theme.of(context).brightness == Brightness.dark),
+            color: OTColors.surface(
+                Theme.of(context).brightness == Brightness.dark),
             borderRadius: BorderRadius.circular(OTExpressive.panelRadius)),
         child: Column(mainAxisSize: MainAxisSize.min, children: [
           Row(children: [
-            Expanded(child: Text(reviewCopy('Kalender', 'التقويم', 'Calendar'),
-              style: ScholarlyFonts.outfit(fontSize: OTFontSize.s12,
-                color: color.withValues(alpha: .7)))),
+            Expanded(
+                child: Text(reviewCopy('Kalender', 'التقويم', 'Calendar'),
+                    style: ScholarlyFonts.outfit(
+                        fontSize: OTFontSize.s12,
+                        color: color.withValues(alpha: .7)))),
             IconButton(
-              visualDensity: VisualDensity.compact,
-              tooltip: reviewCopy(
-                  'Metode kalender', 'طريقة التقويم', 'Calendar method'),
-              icon: const Icon(Icons.info_outline_rounded, size: 18),
-              onPressed: () => showDialog<void>(
-                  context: context,
-                  builder: (context) => AlertDialog(
-                        title: Text(reviewCopy('Metode kalender',
-                            'طريقة التقويم', 'Calendar method')),
-                        content: Text(reviewCopy(
-                            'Tanggal Hijriah menggunakan perhitungan tabular, bukan penetapan rukyat. Tanggal mengikuti waktu lokal perangkat.',
-                            'يُحسب التاريخ الهجري حسابياً ولا يمثل إثبات الرؤية. يتبع التقويم الوقت المحلي للجهاز.',
-                            'Hijri dates use tabular calculation, not a moon-sighting determination. Dates follow local device time.')),
-                        actions: [
-                          TextButton(
-                              onPressed: () => Navigator.pop(context),
-                              child: Text(MaterialLocalizations.of(context)
-                                  .closeButtonLabel))
-                        ],
-                      ))),
+                visualDensity: VisualDensity.compact,
+                tooltip: reviewCopy(
+                    'Metode kalender', 'طريقة التقويم', 'Calendar method'),
+                icon: const Icon(Icons.info_outline_rounded, size: 18),
+                onPressed: () => showDialog<void>(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                          title: Text(reviewCopy('Metode kalender',
+                              'طريقة التقويم', 'Calendar method')),
+                          content: Text(reviewCopy(
+                              'Tanggal Hijriah menggunakan perhitungan tabular, bukan penetapan rukyat. Tanggal mengikuti waktu lokal perangkat.',
+                              'يُحسب التاريخ الهجري حسابياً ولا يمثل إثبات الرؤية. يتبع التقويم الوقت المحلي للجهاز.',
+                              'Hijri dates use tabular calculation, not a moon-sighting determination. Dates follow local device time.')),
+                          actions: [
+                            TextButton(
+                                onPressed: () => Navigator.pop(context),
+                                child: Text(MaterialLocalizations.of(context)
+                                    .closeButtonLabel))
+                          ],
+                        ))),
           ]),
           Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            part(reviewCopy('Hijriah', 'هجري', 'Hijri'), HijriDateUtils.formatHijriOnly(now)),
+            part(reviewCopy('Hijriah', 'هجري', 'Hijri'),
+                HijriDateUtils.formatHijriOnly(now)),
             const SizedBox(width: 24),
-            part(reviewCopy('Masehi', 'ميلادي', 'Gregorian'), HijriDateUtils.formatMasehiOnly(now)),
+            part(reviewCopy('Masehi', 'ميلادي', 'Gregorian'),
+                HijriDateUtils.formatMasehiOnly(now)),
           ]),
         ]));
   }
