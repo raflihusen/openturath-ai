@@ -1,5 +1,6 @@
 // Naskah kanonik ID, EN, AR. Setiap entri wajib memiliki tiga terjemahan.
 const copyCatalog = <String, List<String>>{
+  "loadingProcess": ["Memuat…", "Loading…", "جارٍ التحميل…"],
   "appName": ["OpenTurath", "OpenTurath", "أوبن تراث"],
   "appTagline": [
     "AI for Islamic Scholarship",
