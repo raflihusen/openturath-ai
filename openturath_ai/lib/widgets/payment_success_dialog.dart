@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import '../core/design/ot_colors.dart';
 import '../core/design/ot_radius.dart';
 import '../core/design/ot_typography.dart';
-import '../core/localization.dart';
 import '../core/product_pricing.dart';
 import 'tahawwulat_hero.dart';
 
@@ -47,7 +46,7 @@ class PaymentSuccessDialog extends StatelessWidget {
                 child: Icon(Icons.check_rounded,
                     size: 40, color: OTColors.canvas(dark)))),
         const SizedBox(height: 20),
-        Text(Loc.tr('paymentConfirmed'),
+        Text(reviewCopy('Pembayaran berhasil', 'تم الدفع بنجاح', 'Payment successful'),
             textAlign: TextAlign.center,
             style: OTTypography.screenTitle(color: ink)),
         const SizedBox(height: 12),
