@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../core/design/ot_expressive.dart';
+import '../core/design/ot_colors.dart';
 import '../core/design/ot_radius.dart';
 import '../core/scholarly_fonts.dart';
 import '../core/design/ot_typography.dart';
@@ -23,7 +24,7 @@ class OTInkCard extends StatelessWidget {
         label: semanticLabel,
         child: Material(
           color: Theme.of(context).brightness == Brightness.dark
-              ? const Color(0xFF2B2B2B)
+              ? OTColors.surface(true)
               : OTExpressive.hero,
           borderRadius: OTRadius.cardBorder,
           clipBehavior: Clip.antiAlias,
