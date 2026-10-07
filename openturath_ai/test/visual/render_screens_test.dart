@@ -178,8 +178,6 @@ void main() {
         .where((a) => a.kind == CorpusKind.discipline)
         .toList();
     final flagship = agents.firstWhere((a) => a.id == 'fiqh_tahawwulat');
-    await _shot(tester, 'dashboard_search_clean', const DashboardScreen(),
-        size: const Size(1280, 1000), query: 'fikih');
     for (final locale in ['id', 'ar']) {
       await _shot(tester, 'login_$locale', const LoginScreen(), locale: locale);
       await _shot(tester, 'tahawwulat_$locale',
@@ -247,6 +245,8 @@ void main() {
       plan: AppConstants.planTrial,
       questionsUsed: 0,
     );
+    await _shot(tester, 'dashboard_search_clean', const DashboardScreen(),
+        size: const Size(1280, 1000), query: 'fikih');
     for (final locale in ['id', 'ar']) {
       await _shot(tester, 'dashboard_$locale', const DashboardScreen(),
           locale: locale);
