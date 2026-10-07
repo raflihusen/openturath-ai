@@ -47,7 +47,7 @@ class TahawwulatHero extends StatelessWidget {
               const SizedBox(height: 16),
               Text(
                   reviewCopy(
-                      'Fikih Tahawwulat', 'فقه التحولات', 'Fiqh Tahawwulat'),
+                      'AI Fikih Tahawwulat', 'AI فقه التحولات', 'AI Fiqh Tahawwulat'),
                   style: ScholarlyFonts.outfit(
                       fontSize: wide ? OTFontSize.s36 : OTFontSize.s26,
                       fontWeight: FontWeight.w600,
