@@ -121,9 +121,15 @@ class _AppLoaderState extends State<AppLoader>
                       return SizedBox.square(
                           dimension: size,
                           child: Stack(alignment: Alignment.center, children: [
-                            Positioned.fill(child: CustomPaint(painter: _OrbitPainter(
-                              progress: still ? .25 : _controller.value, color: dotColor))),
-                            ExcludeSemantics(child: OpenTurathMark(size: size * .38, color: dotColor)),
+                            Positioned.fill(
+                                child: CustomPaint(
+                                    painter: _OrbitPainter(
+                                        progress:
+                                            still ? .25 : _controller.value,
+                                        color: dotColor))),
+                            ExcludeSemantics(
+                                child: OpenTurathMark(
+                                    size: size * .38, color: dotColor)),
                           ]));
                     }))),
         if (widget.title != null) ...[
@@ -202,12 +208,16 @@ class _OrbitPainter extends CustomPainter {
     final turn = phase - .65 * math.sin(phase);
     final breath = .5 - .5 * math.cos(phase);
     final w = size.shortestSide;
-    final paint = Paint()..style = PaintingStyle.stroke
-      ..strokeWidth = w * .065..strokeCap = StrokeCap.round;
-    final rect = Rect.fromCenter(center: size.center(Offset.zero), width: w * .82, height: w * .82);
+    final paint = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = w * .065
+      ..strokeCap = StrokeCap.round;
+    final rect = Rect.fromCenter(
+        center: size.center(Offset.zero), width: w * .82, height: w * .82);
     for (var i = 0; i < 2; i++) {
       paint.color = color.withValues(alpha: i == 0 ? .95 : .3);
-      canvas.drawArc(rect, turn + i * math.pi, .65 + breath * 1.2, false, paint);
+      canvas.drawArc(
+          rect, turn + i * math.pi, .65 + breath * 1.2, false, paint);
     }
   }
 
