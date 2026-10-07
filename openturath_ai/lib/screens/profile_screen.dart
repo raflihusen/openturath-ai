@@ -715,8 +715,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Icon(icon, size: 16, color: color),
-                              const SizedBox(width: 4),
+                              if (icon != null) ...[Icon(icon, size: 16, color: color),
+                              const SizedBox(width: 4)],
                               Flexible(
                                   child: Text(Loc.text(title),
                                       textAlign: TextAlign.center,
