@@ -1643,7 +1643,6 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
       }
       // Keep the platform view mounted behind a recoverable error. Retrying
       // must never call reload on a controller whose view was removed.
-
     }
 
     final initialUri = WebUri(session.resolvedUrl!);
@@ -2139,7 +2138,9 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
             child: AnimatedSwitcher(
               duration: const Duration(milliseconds: 320),
               switchOutCurve: Curves.easeOut,
-              child: (errorOverlay == null && !session.isSessionReady && !session.isGoogleAuthPage)
+              child: (errorOverlay == null &&
+                      !session.isSessionReady &&
+                      !session.isGoogleAuthPage)
                   ? AppLoader.fullscreen(
                       key: const ValueKey('room-loader'),
                       title: session.agent.title,
