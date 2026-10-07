@@ -305,7 +305,7 @@ class _OpenTurathBookLibraryPageState extends State<OpenTurathBookLibraryPage> {
                     });
                   }, childCount: visibleBooks.length);
                   if (_list || largeText) return SliverList(delegate: delegate);
-                  return SliverGrid(delegate: delegate, gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: columns, crossAxisSpacing: 16, mainAxisSpacing: 16, mainAxisExtent: MediaQuery.textScalerOf(context).scale(200)));
+                  return SliverGrid(delegate: delegate, gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: columns, crossAxisSpacing: 16, mainAxisSpacing: 16, mainAxisExtent: MediaQuery.textScalerOf(context).scale(260)));
                 }),
               ),
           ],
