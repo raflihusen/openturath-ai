@@ -111,7 +111,7 @@ class _AppLoaderState extends State<AppLoader>
             child: RepaintBoundary(
                 child: SizedBox.square(
                   dimension: widget.isFullscreen ? 56 : widget.title == null ? 24 : 48,
-                  child: CustomPaint(painter: _OrbitPainter(animation: _controller, still: still, color: dotColor)))),
+                  child: CustomPaint(painter: _OrbitPainter(animation: _controller, still: still, color: dotColor))))),
         if (widget.title != null) ...[
           const SizedBox(height: 20),
           Text(
