@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:openturath_ai/screens/book_library_editorial_screen.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -89,8 +90,11 @@ void main() {
       const AiLibraryOverviewPage(metadata: metadata, onSearch: null),
     ));
 
+    await tester.runAsync(
+        () => Future<void>.delayed(const Duration(milliseconds: 300)));
+    await tester.pumpAndSettle();
     expect(find.text('الحديث الشريف'), findsOneWidget);
-    expect(find.text(Loc.tr('librarySummary')), findsOneWidget);
+    expect(find.byType(OpenTurathBookLibraryPage), findsOneWidget);
     expect(find.textContaining('1.141'), findsNothing);
     expect(Directionality.of(tester.element(find.text('الحديث الشريف'))),
         TextDirection.rtl);
@@ -164,6 +168,9 @@ void main() {
         ),
       ));
       // Judul halaman adalah nama koleksi.
+      await tester.runAsync(
+          () => Future<void>.delayed(const Duration(milliseconds: 300)));
+      await tester.pumpAndSettle();
       expect(find.text('الحديث الشريف'), findsOneWidget);
       expect(find.text(book.title), findsOneWidget);
       expect(tester.takeException(), isNull);
