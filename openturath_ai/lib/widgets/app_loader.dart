@@ -92,7 +92,7 @@ class _AppLoaderState extends State<AppLoader>
       mainAxisSize: MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Semantics(label: widget.title == null ? Loc.tr('loading') : Loc.text(widget.title!), liveRegion: true,
+        Semantics(label: widget.title == null ? Loc.tr('loadingProcess') : Loc.text(widget.title!), liveRegion: true,
           child: RepaintBoundary(child: AnimatedBuilder(animation: _controller, builder: (context, _) {
             final size = widget.isFullscreen ? 56.0 : widget.title == null ? 24.0 : 48.0;
             return SizedBox.square(dimension: size, child: CustomPaint(painter: _OrbitPainter(progress: still ? .25 : _controller.value, color: dotColor)));
