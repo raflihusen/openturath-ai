@@ -18,16 +18,38 @@ class TahawwulatArtwork extends StatelessWidget {
             ? ShaderMask(
                 blendMode: BlendMode.dstIn,
                 shaderCallback: (rect) => const LinearGradient(
-                  begin: Alignment.centerLeft, end: Alignment.centerRight,
-                  colors: [Colors.transparent, Colors.white, Colors.white, Colors.transparent],
-                  stops: [0, .14, .86, 1]).createShader(rect),
+                        begin: Alignment.centerLeft,
+                        end: Alignment.centerRight,
+                        colors: [
+                          Colors.transparent,
+                          Colors.white,
+                          Colors.white,
+                          Colors.transparent
+                        ],
+                        stops: [
+                          0,
+                          .14,
+                          .86,
+                          1
+                        ]).createShader(rect),
                 child: ShaderMask(
-                  blendMode: BlendMode.dstIn,
-                  shaderCallback: (rect) => const LinearGradient(
-                    begin: Alignment.topCenter, end: Alignment.bottomCenter,
-                    colors: [Colors.transparent, Colors.white, Colors.white, Colors.transparent],
-                    stops: [0, .14, .86, 1]).createShader(rect),
-                  child: image))
+                    blendMode: BlendMode.dstIn,
+                    shaderCallback: (rect) => const LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [
+                              Colors.transparent,
+                              Colors.white,
+                              Colors.white,
+                              Colors.transparent
+                            ],
+                            stops: [
+                              0,
+                              .14,
+                              .86,
+                              1
+                            ]).createShader(rect),
+                    child: image))
             : ClipRRect(borderRadius: BorderRadius.circular(28), child: image));
   }
 }
