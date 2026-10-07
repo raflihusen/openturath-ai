@@ -7,6 +7,7 @@ import '../core/design/ot_typography.dart';
 import '../models/agent_model.dart';
 
 import 'package:openturath_ai/core/design/ot_radius.dart';
+
 /// Pengalih direktori yang sengaja datar: ini navigasi, bukan kartu.
 class CorpusKindControl extends StatelessWidget {
   const CorpusKindControl({
@@ -72,33 +73,34 @@ class _CorpusKindTab extends StatelessWidget {
   Widget build(BuildContext context) {
     // Lebar mengikuti label: tab rata awal, tidak diregangkan selebar jendela.
     return InkWell(
-        onTap: () {
-          OTMotion.selection();
-          onTap();
-        },
-        borderRadius: BorderRadius.circular(OTRadius.xs),
-        child: Padding(
+      onTap: () {
+        OTMotion.selection();
+        onTap();
+      },
+      borderRadius: BorderRadius.circular(OTRadius.xs),
+      child: Padding(
           padding: const EdgeInsets.only(top: 12),
-          child: IntrinsicWidth(child: Column(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.end,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Text(
-              label,
-              style: OTTypography.bodyMedium(
-                color: selected ? textPrimary : textSecondary,
+          child: IntrinsicWidth(
+              child: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.end,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(
+                label,
+                style: OTTypography.bodyMedium(
+                  color: selected ? textPrimary : textSecondary,
+                ),
               ),
-            ),
-            const SizedBox(height: 8),
-            AnimatedContainer(
-              duration: OTMotion.fast,
-              curve: OTMotion.curve,
-              height: 2,
-              color: selected ? textPrimary : Colors.transparent,
-            ),
-          ],
-        ))),
+              const SizedBox(height: 8),
+              AnimatedContainer(
+                duration: OTMotion.fast,
+                curve: OTMotion.curve,
+                height: 2,
+                color: selected ? textPrimary : Colors.transparent,
+              ),
+            ],
+          ))),
     );
   }
 }
