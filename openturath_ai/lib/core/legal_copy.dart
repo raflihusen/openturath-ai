@@ -50,7 +50,7 @@ abstract final class LegalCopy {
       content:
           'OpenTurath dikelola oleh $managerName, beralamat di $managerAddress, selanjutnya disebut "kami". '
           'Pengguna aplikasi disebut "Anda". Kontak layanan tersedia melalui $contactSupportEmail.\n\n'
-          'Ketentuan ini mengatur penggunaan akun, asisten AI, katalog rujukan, Catatan, dan fitur berbayar yang disediakan melalui OpenTurath. '
+          'Ketentuan ini mengatur penggunaan akun, AI AI, katalog rujukan, Catatan, dan fitur berbayar yang disediakan melalui OpenTurath. '
           'Informasi paket yang ditampilkan sebelum pembelian, Kebijakan Pembayaran dan Pengembalian Dana, serta Panduan Penggunaan AI dan Pemeriksaan Rujukan menjadi bagian dari ketentuan penggunaan yang relevan.',
     ),
     LegalSection(
@@ -83,7 +83,7 @@ abstract final class LegalCopy {
     LegalSection(
       title: '5. Paket, Pembayaran, dan Masa Akses',
       content:
-          'Harga, cakupan asisten, masa akses, batas penggunaan, kebutuhan akun pihak ketiga, serta biaya yang berlaku ditampilkan sebelum Anda membayar.\n\n'
+          'Harga, cakupan AI, masa akses, batas penggunaan, kebutuhan akun pihak ketiga, serta biaya yang berlaku ditampilkan sebelum Anda membayar.\n\n'
           'Langganan diperpanjang secara manual. Kami tidak melakukan penagihan berulang otomatis (auto-debit) dari pembelian paket ini.\n\n'
           'Masa akses dimulai ketika aktivasi berhasil dan tanggal berakhir ditampilkan pada akun. '
           'Pembayaran diproses melalui DOKU menurut metode yang tersedia pada saat transaksi. '
@@ -274,7 +274,7 @@ abstract final class LegalCopy {
     LegalSection(
       title: '1. Informasi Sebelum Pembelian',
       content:
-          'Sebelum melakukan pembayaran, rincian harga total, cakupan modul asisten, durasi masa akses, dan metode pembayaran ditampilkan secara jelas pada halaman langganan.\n\n'
+          'Sebelum melakukan pembayaran, rincian harga total, cakupan modul AI, durasi masa akses, dan metode pembayaran ditampilkan secara jelas pada halaman langganan.\n\n'
           'Durasi paket 30 hari dihitung sebagai 30 hari kalender penuh sejak aktivasi berhasil. '
           'Perubahan harga di masa mendatang tidak akan memengaruhi paket yang sedang berjalan.',
     ),
@@ -295,7 +295,7 @@ abstract final class LegalCopy {
     LegalSection(
       title: '4. Ketentuan Voucher',
       content:
-          'Voucher promosi atau mitra mengikuti masa berlaku, cakupan asisten, dan batas penukaran yang tercantum saat diterbitkan. '
+          'Voucher promosi atau mitra mengikuti masa berlaku, cakupan AI, dan batas penukaran yang tercantum saat diterbitkan. '
           'Voucher tidak dapat diuangkan dan berlaku untuk satu kali penukaran pada akun yang berhak.',
     ),
     LegalSection(
@@ -342,7 +342,7 @@ abstract final class LegalCopy {
     LegalSection(
       title: "Adab 1 · AI adalah alat bantu, bukan guru",
       content:
-          "Gunakan asisten AI untuk memperluas pembacaan, memetakan letak bab pembahasan, dan merumuskan pertanyaan sebelum diajukan kepada guru. "
+          "Gunakan AI AI untuk memperluas pembacaan, memetakan letak bab pembahasan, dan merumuskan pertanyaan sebelum diajukan kepada guru. "
           "AI bukan syekh murabbi, tidak berwenang berfatwa, dan tidak menggantikan kehadiran di majelis ilmu.\n\n"
           "Kesimpulan atau penjelasan dari AI adalah bahan kajian awal yang perlu diteliti kembali kepada ulama yang berkompeten.",
     ),
