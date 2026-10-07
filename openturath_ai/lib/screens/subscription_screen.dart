@@ -155,7 +155,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
           trxId: result['trxId'] as String?,
           planTitle: title,
           amount: offer.amount,
-          regularAmount: offer.amount,
+          regularAmount: offer.regularAmount,
           periodLabel: offer.period);
       if (mounted && paid == true) {
         AppSnackBar.success(context, Loc.tr('paymentConfirmed'));
@@ -444,7 +444,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
           const SizedBox(height: 20),
           PromoPrice(
             amount: price.amount,
-            regularAmount: price.amount,
+            regularAmount: price.regularAmount,
             period: price.period,
           ),
           const SizedBox(height: 16),
