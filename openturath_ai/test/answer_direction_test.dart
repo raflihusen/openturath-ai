@@ -3,6 +3,11 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:openturath_ai/core/answer_direction.dart';
 
 void main() {
+  test('Arabic vowel marks stay inside one isolated phrase', () {
+    const text = 'Makna السَّعَادَة dalam kitab.';
+    expect(isolateArabicPhrases(text),
+        'Makna \u2067السَّعَادَة\u2069 dalam kitab.');
+  });
   test('Latin explanation keeps its base direction around Arabic phrases', () {
     const text =
         'Menurut Al-Habib, kebahagiaan (السعادة) dijelaskan pada hlm. 70.';
