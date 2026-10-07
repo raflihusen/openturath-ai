@@ -94,8 +94,7 @@ class NotebookChatController extends ChangeNotifier {
         'busy' => 'Tunggu jawaban percakapan yang sedang berjalan.',
         'unavailable' =>
           'Penghubung AI belum tersambung. Periksa koneksi Anda.',
-        'failed-precondition' =>
-          'Koneksi AI di aplikasi belum diaktifkan.',
+        'failed-precondition' => 'Koneksi AI di aplikasi belum diaktifkan.',
         'resource-exhausted' =>
           'Terlalu banyak pertanyaan. Silakan tunggu sebentar.',
         'deadline-exceeded' =>
