@@ -1,25 +1,20 @@
 import 'package:flutter/material.dart';
-
-import '../core/theme.dart';
 import '../core/localization.dart';
-import '../core/scholarly_fonts.dart';
+import '../core/design/ot_colors.dart';
+import '../core/design/ot_radius.dart';
+import '../core/design/ot_typography.dart';
 import '../models/agent_model.dart';
 import '../models/sub_agent_model.dart';
-import 'apple_interactive_wrapper.dart';
-import 'tahawwulat_introduction_sheet.dart';
-import 'assistant_grid_card.dart';
 import '../services/open_turath_catalog_repository.dart';
-import 'ot_motion_widgets.dart';
+import 'assistant_grid_card.dart';
+import 'tahawwulat_introduction_sheet.dart';
 
-import 'package:openturath_ai/core/design/ot_typography.dart';
-import 'package:openturath_ai/core/design/ot_radius.dart';
-import 'package:openturath_ai/core/design/ot_colors.dart';
-/// Kartu monokrom untuk paket utama OpenTurath.
-///
-/// Kemewahan dibangun melalui ruang, tipografi, dan detail hairline. Seluruh
-/// asisten berada dalam satu daftar editorial agar kartu tetap tenang dan tidak
-/// berubah menjadi kumpulan kartu kecil yang ramai.
+/// The main collection uses the same calm surface as the rest of the library.
 class TahawwulatFlagshipCard extends StatelessWidget {
+  const TahawwulatFlagshipCard({super.key, required this.agent,
+    required this.isSubscribed, required this.onOpenMain,
+    required this.onOpenSubAgent, this.onOpenLibrary, this.onOpenIntroduction,
+    this.metadata});
   final AgentModel agent;
   final bool isSubscribed;
   final VoidCallback onOpenMain;
@@ -28,360 +23,54 @@ class TahawwulatFlagshipCard extends StatelessWidget {
   final VoidCallback? onOpenIntroduction;
   final AiLibraryMetadata? metadata;
 
-  const TahawwulatFlagshipCard({
-    super.key,
-    required this.agent,
-    required this.isSubscribed,
-    required this.onOpenMain,
-    required this.onOpenSubAgent,
-    this.onOpenLibrary,
-    this.onOpenIntroduction,
-    this.metadata,
-  });
-
-  static const _obsidian = OTColors.canvasDark;
-    static const _pearl = OTColors.textPrimaryDark;
-  static const _silver = OTColors.borderSubtleLight;
-  static const _muted = OTColors.textSecondaryDark;
-  static const _hairline = OTColors.borderDark;
-
-
   @override
   Widget build(BuildContext context) {
     Loc.watch(context);
-    final subAgents = agent.subAgents ?? const <SubAgentModel>[];
-
-    return Semantics(
-      container: true,
-      label: '${agent.title}. ${Loc.tr('flagshipExplore', [
-            '${subAgents.length}'
-          ])}',
-      child: Container(
-        decoration: BoxDecoration(
-          color: _obsidian,
-          borderRadius: BorderRadius.circular(OTRadius.card),
-          border: Border.all(
-            color: OTColors.surfaceLight.withValues(alpha: 0.16),
-            width: 0.8,
-          ),
+    final dark = Theme.of(context).brightness == Brightness.dark;
+    final ink = OTColors.textPrimary(dark);
+    final muted = OTColors.textSecondary(dark);
+    final subs = agent.subAgents ?? const <SubAgentModel>[];
+    return Container(
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(color: OTColors.surface(dark),
+        borderRadius: BorderRadius.circular(OTRadius.hero)),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+        Wrap(alignment: WrapAlignment.spaceBetween, spacing: 12, runSpacing: 8,
+          children: [Text(Loc.tr('planFeaturedLabel'), style: OTTypography.caption(color: muted)),
+            Text(Loc.tr(isSubscribed ? 'flagshipActive' : 'flagshipPremium'),
+              style: OTTypography.captionMedium(color: muted))]),
+        const SizedBox(height: 12),
+        Text(Loc.text(agent.title), style: OTTypography.editorialHero(color: ink)),
+        const SizedBox(height: 8),
+        Text(Loc.tr('flagshipPositioning'), style: OTTypography.body(color: muted)),
+        const SizedBox(height: 20),
+        Wrap(spacing: 24, runSpacing: 12, children: [
+          for (final stat in LibraryStat.from(metadata)) Text('${stat.value} ${stat.unit}',
+            style: OTTypography.captionMedium(color: muted)),
+        ]),
+        const SizedBox(height: 20),
+        Text(Loc.tr('flagshipExplore', ['${subs.length}']),
+          style: OTTypography.bodyMedium(color: ink)),
+        const SizedBox(height: 8),
+        for (final sub in subs) ListTile(
+          contentPadding: EdgeInsets.zero,
+          title: Text(Loc.isArabic ? sub.nameArabic : sub.name,
+            style: OTTypography.bodyMedium(color: ink)),
+          subtitle: Text(Loc.isArabic ? sub.descriptionArabic : Loc.text(sub.description),
+            style: OTTypography.caption(color: muted)),
+          trailing: Icon(otChevronIcon(context), size: 18, color: muted),
+          onTap: () => onOpenSubAgent(sub),
         ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(OTRadius.card),
-          child: Padding(
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        Loc.tr('planFeaturedLabel'),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: ScholarlyFonts.outfit(
-                          fontSize: OTFontSize.s11,
-                          fontWeight: FontWeight.w600,
-                          letterSpacing: 1.2,
-                          color: _silver,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 4,
-                      ),
-                      decoration: BoxDecoration(
-                        color: isSubscribed
-                            ? OTColors.surfaceLight.withValues(alpha: 0.08)
-                            : Colors.transparent,
-                        borderRadius:
-                            BorderRadius.circular(AppTheme.radiusPill),
-                        border: Border.all(
-                          color: OTColors.surfaceLight.withValues(alpha: 0.17),
-                          width: 0.8,
-                        ),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Container(
-                            width: 5,
-                            height: 5,
-                            decoration: const BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: _pearl,
-                            ),
-                          ),
-                          const SizedBox(width: 6),
-                          Text(
-                            isSubscribed
-                                ? Loc.tr('flagshipActive')
-                                : Loc.tr('flagshipPremium'),
-                            style: ScholarlyFonts.outfit(
-                              fontSize: OTFontSize.s11,
-                              fontWeight: FontWeight.w600,
-                              letterSpacing: 1.1,
-                              color: _pearl,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 18),
-                Text(
-                  agent.title,
-                  style: ScholarlyFonts.newsreader(
-                    fontSize: OTFontSize.s36,
-                    fontWeight: FontWeight.w400,
-                    letterSpacing: -0.8,
-                    height: 1.05,
-                    color: _pearl,
-                  ),
-                ),
-                const SizedBox(height: 5),
-                const SizedBox(height: 8),
-                Text(
-                  Loc.tr('flagshipPositioning'),
-                  style: ScholarlyFonts.outfit(
-                    fontSize: OTFontSize.s14,
-                    fontWeight: FontWeight.w400,
-                    color: _silver,
-                    height: 1.5,
-                  ),
-                ),
-                // Angka pustaka tampil besar: bukti kerja di balik koleksi ini.
-                if (LibraryStat.from(metadata).isNotEmpty) ...[
-                  const SizedBox(height: 20),
-                  Wrap(
-                    spacing: 28,
-                    runSpacing: 12,
-                    children: [
-                      for (final stat in LibraryStat.from(metadata))
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              stat.value,
-                              style: ScholarlyFonts.newsreader(
-                                fontSize: OTFontSize.s26,
-                                fontWeight: FontWeight.w400,
-                                letterSpacing: -0.8,
-                                height: 1.05,
-                                color: _pearl,
-                              ),
-                            ),
-                            const SizedBox(height: 2),
-                            Text(
-                              stat.unit,
-                              style: ScholarlyFonts.outfit(
-                                  fontSize: OTFontSize.s12, color: _muted),
-                            ),
-                          ],
-                        ),
-                    ],
-                  ),
-                ],
-                const SizedBox(height: 16),
-                Container(height: 0.8, color: _hairline),
-                ExpansionTile(
-                  initiallyExpanded: true,
-                  tilePadding: EdgeInsets.zero,
-                  childrenPadding: EdgeInsets.zero,
-                  shape: const Border(),
-                  collapsedShape: const Border(),
-                  iconColor: _pearl,
-                  collapsedIconColor: _silver,
-                  title: Text(
-                    Loc.tr('flagshipExplore', ['${subAgents.length}']),
-                    style: ScholarlyFonts.outfit(
-                      fontSize: OTFontSize.s14,
-                      fontWeight: FontWeight.w600,
-                      color: _pearl,
-                    ),
-                  ),
-                  children: [
-                    // Lima asisten sebagai ubin: dua kolom bila lebar cukup.
-                    LayoutBuilder(builder: (context, box) {
-                      const gap = 8.0;
-                      final columns = box.maxWidth >= 520 ? 2 : 1;
-                      final tileWidth =
-                          (box.maxWidth - gap * (columns - 1)) / columns;
-                      return Padding(
-                        padding: const EdgeInsets.only(bottom: 12),
-                        child: Wrap(
-                          spacing: gap,
-                          runSpacing: gap,
-                          children: List.generate(subAgents.length, (index) {
-                    final sub = subAgents[index];
-
-                    return SizedBox(
-                        width: tileWidth,
-                        child: AppleInteractiveWrapper(
-                      onTap: () => onOpenSubAgent(sub),
-                      pressedScale: 0.985,
-                      borderRadius: BorderRadius.circular(OTRadius.input),
-                      semanticLabel:
-                          '${Loc.tr('startStudy')} ${Loc.isArabic ? sub.nameArabic : sub.name}',
-                      child: Container(
-                        constraints: const BoxConstraints(minHeight: 54),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(OTRadius.input),
-                          border: Border.all(
-                              color: OTColors.surfaceLight.withValues(alpha: 0.14)),
-                        ),
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 12, vertical: 8),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    Loc.isArabic ? sub.nameArabic : sub.name,
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: ScholarlyFonts.outfit(
-                                      fontSize: OTFontSize.s14,
-                                      fontWeight: FontWeight.w600,
-                                      letterSpacing: -0.1,
-                                      color: _pearl,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 2),
-                                  Text(
-                                    Loc.isArabic
-                                        ? sub.descriptionArabic
-                                        : Loc.text(sub.description),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: ScholarlyFonts.outfit(
-                                      fontSize: OTFontSize.s12,
-                                      fontWeight: FontWeight.w400,
-                                      color: _muted,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            Icon(
-                              otChevronIcon(context),
-                              size: 16,
-                              color: _silver,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ));
-                          }),
-                        ),
-                      );
-                    }),
-                  ],
-                ),
-                Container(height: 0.8, color: _hairline),
-                const SizedBox(height: 16),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    // Aksi sekunder: tombol bergaris selebar labelnya, bukan blok putih penuh.
-                    Flexible(
-                      child: AppleInteractiveWrapper(
-                        onTap: onOpenIntroduction ??
-                            () => TahawwulatIntroductionSheet.show(
-                                  context,
-                                  agent: agent,
-                                  onSelectSubAgent: onOpenSubAgent,
-                                  onOpenMain: onOpenMain,
-                                ),
-                        pressedScale: 0.985,
-                        borderRadius: BorderRadius.circular(OTRadius.input),
-                        semanticLabel: Loc.tr('flagshipIntroduction'),
-                        child: Container(
-                          height: 40,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(OTRadius.input),
-                            border: Border.all(
-                              color: OTColors.surfaceLight.withValues(alpha: 0.28),
-                            ),
-                          ),
-                          padding: const EdgeInsets.symmetric(horizontal: 12),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              const Icon(
-                                Icons.auto_stories_rounded,
-                                size: 18,
-                                color: _pearl,
-                              ),
-                              const SizedBox(width: 8),
-                              Flexible(
-                                child: Text(
-                                  Loc.tr('flagshipIntroduction'),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: ScholarlyFonts.outfit(
-                                    fontSize: OTFontSize.s14,
-                                    fontWeight: FontWeight.w600,
-                                    letterSpacing: -0.15,
-                                    color: _pearl,
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(width: 8),
-                              const Icon(
-                                Icons.arrow_forward_rounded,
-                                size: 17,
-                                color: _pearl,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                    if (onOpenLibrary != null) ...[
-                      const SizedBox(width: 10),
-                      AppleInteractiveWrapper(
-                        onTap: onOpenLibrary,
-                        pressedScale: 0.96,
-                        borderRadius: BorderRadius.circular(OTRadius.input),
-                        semanticLabel:
-                            '${Loc.tr('assistantLibrary')} ${agent.title}',
-                        child: Container(
-                          width: 40,
-                          height: 40,
-                          decoration: BoxDecoration(
-                            color: _obsidian,
-                            borderRadius: BorderRadius.circular(OTRadius.input),
-                            border: Border.all(
-                              color: OTColors.surfaceLight.withValues(alpha: 0.14),
-                              width: 0.8,
-                            ),
-                          ),
-                          alignment: Alignment.center,
-                          child: const Icon(
-                            Icons.auto_stories_outlined,
-                            size: 19,
-                            color: _pearl,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
+        const SizedBox(height: 16),
+        Wrap(spacing: 12, runSpacing: 8, crossAxisAlignment: WrapCrossAlignment.center,
+          children: [
+            FilledButton(onPressed: onOpenMain, child: Text(Loc.tr('openAssistant'))),
+            if (onOpenLibrary != null) TextButton(onPressed: onOpenLibrary,
+              child: Text(Loc.tr('viewReferences'))),
+            TextButton(onPressed: onOpenIntroduction ?? () =>
+              showTahawwulatIntroduction(context), child: Text(Loc.tr('aboutTahawwulat'))),
+          ]),
+      ]),
     );
   }
 }
