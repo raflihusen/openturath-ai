@@ -1375,15 +1375,20 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
           source: 'window.otNotebook ? window.otNotebook.ready() : false');
       _readySamples = result == true ? _readySamples + 1 : 0;
       if (!mounted) return;
-      // Two successive readiness samples avoid a transient DOM match without
-      // imposing an artificial three-second minimum on a ready conversation.
-      if (_readySamples >= 2) {
+      final elapsedMs = _loadingStarted != null
+          ? DateTime.now().difference(_loadingStarted!).inMilliseconds
+          : 0;
+      // Wajib stabil: minimal 4 sampel berturut-turut (2 detik) dan minimal 3000ms berlalu
+      // agar tidak ada flicker atau pemunculan dini sebelum layout Angular selesai sempurna.
+      if (_readySamples >= 4 && elapsedMs >= 3000) {
         _readinessTimer?.cancel();
         _inputRetryTimer?.cancel();
         _loadingStarted = null;
         await controller.evaluateJavascript(
           source: 'window.otNotebook?.activate()',
         );
+        // Jeda mikro stabilisasi 250ms agar rendering WebKit rampung sebelum fade-out loader
+        await Future.delayed(const Duration(milliseconds: 250));
         try {
           final prefs = await SharedPreferences.getInstance();
           await prefs.setBool('google_session_ready', true);
@@ -1531,7 +1536,6 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
       );
     }
 
-    Widget? errorOverlay;
     if (session.errorMessage != null) {
       void close() => AgentSessionManager.instance.closeRoom();
 
@@ -1631,18 +1635,11 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
           message: session.errorMessage ?? Loc.tr('roomLoadFailBody'),
           retryLabel: Loc.tr('tryAgain'),
           onRetry: retry,
-          secondaryLabel: Loc.tr('roomOpenInBrowser'),
-          onSecondary: session.resolvedUrl == null ? null : openInBrowser,
           onBack: close,
           backLabel: Loc.tr('back'),
         );
       }
-      errorOverlay = ColoredBox(color: canvas, child: state);
-      if (session.resolvedUrl == null || session.isPaywallRequired) {
-        return errorOverlay;
-      }
-      // Keep the platform view mounted behind a recoverable error. Retrying
-      // must never call reload on a controller whose view was removed.
+      return ColoredBox(color: canvas, child: state);
     }
 
     final initialUri = WebUri(session.resolvedUrl!);
@@ -2138,9 +2135,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
             child: AnimatedSwitcher(
               duration: const Duration(milliseconds: 320),
               switchOutCurve: Curves.easeOut,
-              child: (errorOverlay == null &&
-                      !session.isSessionReady &&
-                      !session.isGoogleAuthPage)
+              child: (!session.isSessionReady && !session.isGoogleAuthPage)
                   ? AppLoader.fullscreen(
                       key: const ValueKey('room-loader'),
                       title: session.agent.title,
@@ -2153,7 +2148,6 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
                     ),
             ),
           ),
-          if (errorOverlay != null) Positioned.fill(child: errorOverlay),
         ],
       ),
     );
