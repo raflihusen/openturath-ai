@@ -3,6 +3,7 @@ import '../core/design/ot_colors.dart';
 import '../core/design/ot_typography.dart';
 import '../core/scholarly_fonts.dart';
 import '../core/answer_direction.dart';
+import '../core/design/ot_radius.dart';
 import 'ot_motion_widgets.dart';
 
 /// One bibliographic identity, shared by the collection and canonical catalogs.
@@ -60,9 +61,18 @@ class BookIdentityCard extends StatelessWidget {
                           fontSize: OTFontSize.s16, height: 1.5, color: muted)
                       : OTTypography.caption(color: muted)),
             ]);
-        final factsView = Wrap(spacing: 12, runSpacing: 8, children: [
+        final factsView = Wrap(
+            alignment: rtl ? WrapAlignment.end : WrapAlignment.start,
+            spacing: 8, runSpacing: 8, children: [
           for (final fact in facts)
-            Text(fact, style: OTTypography.caption(color: muted)),
+            Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+                decoration: BoxDecoration(
+                    color: OTColors.surfaceSubtle(dark),
+                    borderRadius: OTRadius.pillBorder),
+                child: Text(fact,
+                    textDirection: answerDirection(fact),
+                    style: OTTypography.caption(color: muted))),
         ]);
         final dateView = deathLabel != null && !hasAuthorDate
             ? Padding(
@@ -75,33 +85,24 @@ class BookIdentityCard extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [identity, dateView]);
-        final wide = !box.hasBoundedHeight &&
-            box.maxWidth >= 720 &&
-            MediaQuery.textScalerOf(context).scale(16) < 24;
         return Padding(
             padding: EdgeInsets.only(bottom: box.hasBoundedHeight ? 0 : 12),
             child: OTBentoTile(
               onTap: onTap,
               semanticLabel: '$title, $author',
-              padding: const EdgeInsets.all(20),
-              child: wide
-                  ? Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                          Expanded(flex: 7, child: textIdentity),
-                          const SizedBox(width: 24),
-                          Expanded(flex: 3, child: factsView),
-                        ])
-                  : Column(
-                      mainAxisSize: box.hasBoundedHeight
-                          ? MainAxisSize.max
-                          : MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                          textIdentity,
-                          const SizedBox(height: 12),
-                          factsView
-                        ]),
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    textIdentity,
+                    if (facts.isNotEmpty) ...[
+                      const SizedBox(height: 16),
+                      Divider(height: 1, color: OTColors.borderSubtle(dark)),
+                      const SizedBox(height: 12),
+                      factsView,
+                    ],
+                  ]),
             ));
       });
 }
