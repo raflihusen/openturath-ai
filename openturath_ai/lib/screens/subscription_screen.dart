@@ -390,7 +390,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
 
     Widget planTitle(String text) => Text(
           text,
-          style: ScholarlyFonts.newsreader(
+          style: ScholarlyFonts.outfit(
             fontSize: OTFontSize.s26,
             fontWeight: FontWeight.w600,
             letterSpacing: -0.4,
@@ -438,7 +438,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
             ),
           ),
           const SizedBox(height: 16),
-          SizedBox(height: 56, child: scope),
+          scope,
           const SizedBox(height: 16),
           tiers,
           const SizedBox(height: 20),
@@ -466,16 +466,11 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
         ];
 
     // Cakupan paket utama: lima asisten, sebagai teks.
-    final flagshipScope = Align(
-      alignment: AlignmentDirectional.centerStart,
-      child: Text(
-        (flagship.subAgents ?? const []).map((sub) => sub.name).join(' · '),
-        maxLines: 2,
-        overflow: TextOverflow.ellipsis,
-        style: ScholarlyFonts.outfit(
-            fontSize: OTFontSize.s14, height: 1.5, color: ink),
-      ),
-    );
+    final flagshipScope = Wrap(spacing: 8, runSpacing: 8, children: [
+      for (final sub in flagship.subAgents ?? const [])
+        Text(Loc.isArabic ? sub.nameArabic : sub.name,
+          style: OTTypography.caption(color: muted)),
+    ]);
 
     // Cakupan paket satu bidang: pemilih bidang.
     final fieldPicker = Material(
@@ -539,7 +534,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
             featured: true,
             body: planBody(
               wide: wide,
-              label: Loc.tr('planFeaturedLabel'),
+              label: Loc.isArabic ? 'حصري في OpenTurath · 5 AI' : Loc.language == 'en' ? 'Exclusive to OpenTurath · 5 AI' : 'Eksklusif di OpenTurath · 5 AI',
               title: AppCopy.planTahawwulat,
               description: Loc.tr('planFeaturedDescription'),
               scope: flagshipScope,
@@ -714,6 +709,15 @@ class _TierSelector extends StatelessWidget {
                                   ? OTColors.canvas(dark)
                                   : muted),
                         ),
+                        const SizedBox(height: 8),
+                        Text(offers[i].priceLabel, textAlign: TextAlign.center,
+                          style: OTTypography.caption(color: selected == i ? OTColors.canvas(dark) : ink)),
+                        if (offers[i].months > 1) ...[
+                          const SizedBox(height: 4),
+                          Text('≈ ${ProductPricing.rupiah((offers[i].amount / offers[i].months).round())}${Loc.tr('perMonth')}',
+                            textAlign: TextAlign.center,
+                            style: OTTypography.metadataTag(color: selected == i ? OTColors.canvas(dark) : muted)),
+                        ],
                       ],
                     ),
                   ),
