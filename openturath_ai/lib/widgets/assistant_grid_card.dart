@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart' show NumberFormat;
 
 import '../core/localization.dart';
+import '../core/arabic_ui_labels.dart';
 import '../models/agent_model.dart';
 import '../services/open_turath_catalog_repository.dart';
 import 'ot_ink_card.dart';
@@ -58,13 +59,13 @@ class AssistantGridCard extends StatelessWidget {
     const muted = OTExpressive.whiteMuted;
     final stats = LibraryStat.from(metadata).take(2).toList();
     return OTInkCard(
-      watermark: agent.titleArabic,
+      watermark: ArabicUiLabels.forAgent(agent.id, agent.titleArabic),
       semanticLabel: '${Loc.tr('openAssistant')} ${agent.title}',
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(Loc.text(agent.title),
+          Text(Loc.text(agent.title), textAlign: TextAlign.center, maxLines: 2,
               style:
                   OTTypography.screenTitle(color: ink).copyWith(height: 1.25)),
           if (agent.isComingSoon) ...[
@@ -75,25 +76,22 @@ class AssistantGridCard extends StatelessWidget {
           if (stats.isNotEmpty) ...[
             const SizedBox(height: 10),
             Text(stats.map((s) => '${s.value} ${s.unit}').join(' · '),
-                style: OTTypography.caption(color: muted)),
+                textAlign: TextAlign.center, style: OTTypography.caption(color: muted)),
           ],
           const SizedBox(height: 20),
-          Wrap(spacing: 8, runSpacing: 8, children: [
-            FilledButton.icon(
-                onPressed: onOpen,
-                style: FilledButton.styleFrom(
-                    backgroundColor: ink, foregroundColor: OTExpressive.hero),
-                icon: Icon(
-                    Directionality.of(context) == TextDirection.rtl
-                        ? Icons.arrow_back_rounded
-                        : Icons.arrow_forward_rounded,
-                    size: 16),
-                label: Text(Loc.tr('openAssistant'))),
-            if (onOpenLibrary != null)
-              TextButton(
-                  onPressed: onOpenLibrary,
-                  style: TextButton.styleFrom(foregroundColor: muted),
-                  child: Text(Loc.tr('viewReferences'))),
+          Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+            Tooltip(message: '${Loc.tr('openAssistant')} ${Loc.text(agent.title)}', child: Semantics(
+              label: '${Loc.tr('openAssistant')} ${Loc.text(agent.title)}', button: true,
+              child: SizedBox(width: 72, height: 48, child: FilledButton(
+                onPressed: onOpen, style: FilledButton.styleFrom(backgroundColor: ink, foregroundColor: OTExpressive.hero, padding: EdgeInsets.zero),
+                child: const Icon(Icons.chat_bubble_outline_rounded, size: 24))))),
+            if (onOpenLibrary != null) ...[
+              const SizedBox(width: 8),
+              Tooltip(message: '${Loc.tr('viewReferences')} ${Loc.text(agent.title)}', child: SizedBox.square(dimension: 48,
+                child: IconButton.filledTonal(onPressed: onOpenLibrary,
+                  style: IconButton.styleFrom(backgroundColor: ink.withValues(alpha: .12), foregroundColor: ink),
+                  icon: const Icon(Icons.auto_stories_outlined, size: 24)))),
+            ],
           ]),
         ],
       ),
