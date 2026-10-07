@@ -166,8 +166,11 @@ class _OpenTurathBookLibraryPageState extends State<OpenTurathBookLibraryPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       if (widget.metadata != null) ...[
-                        Text('${Loc.tr('bookCount', ['${widget.metadata!.totalKitab}'])} · ${widget.metadata!.totalJilid}',
-                          style: OTTypography.caption(color: textSecondary)),
+                        Text(
+                            '${Loc.tr('bookCount', [
+                                  '${widget.metadata!.totalKitab}'
+                                ])} · ${widget.metadata!.totalJilid}',
+                            style: OTTypography.caption(color: textSecondary)),
                         const SizedBox(height: 12),
                       ],
                       // Search Bar
@@ -396,17 +399,21 @@ class _FilterChip extends StatelessWidget {
 }
 
 class _BookEditorialItem extends StatelessWidget {
-  const _BookEditorialItem({required this.book, required this.index, required this.onTap});
+  const _BookEditorialItem(
+      {required this.book, required this.index, required this.onTap});
   final OpenTurathBook book;
   final int index;
   final VoidCallback onTap;
   @override
   Widget build(BuildContext context) => BookIdentityCard(
-    title: book.title, author: book.author,
-    deathLabel: book.deathYear == null ? null : book.deathLabel,
-    facts: [book.volumeLabel, book.pagesLabel].where((v) => v != Loc.tr('unknownMetadata')).toList(),
-    onTap: onTap,
-  );
+        title: book.title,
+        author: book.author,
+        deathLabel: book.deathYear == null ? null : book.deathLabel,
+        facts: [book.volumeLabel, book.pagesLabel]
+            .where((v) => v != Loc.tr('unknownMetadata'))
+            .toList(),
+        onTap: onTap,
+      );
 }
 
 class OpenTurathBookDetailPage extends StatelessWidget {
@@ -497,7 +504,6 @@ ${Loc.tr('bookScienceSection')}: ${book.section}''';
                         style: OTTypography.screenTitle(color: ink),
                       ),
                     ),
-
                   ],
                 ),
               ),
@@ -513,71 +519,82 @@ ${Loc.tr('bookScienceSection')}: ${book.section}''';
                           children: [
                             OTBentoTile(
                                 padding: const EdgeInsets.all(24),
-                                child: Directionality(textDirection: answerDirection(book.title), child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.stretch,
-                                    children: [
-                                      Text(book.title,
-                                          textDirection:
-                                              answerDirection(book.title),
-                                          textAlign: TextAlign.start,
-                                          style: answerDirection(book.title) ==
-                                                  TextDirection.rtl
-                                              ? ScholarlyFonts.scheherazadeNew(
-                                                  fontSize: OTFontSize.s36,
-                                                  fontWeight: FontWeight.w700,
-                                                  color: ink,
-                                                  height: 1.6)
-                                              : OTTypography.pageTitle(
-                                                  color: ink)),
-                                      const SizedBox(height: 8),
-                                      Text(book.author,
-                                          textDirection:
-                                              answerDirection(book.author),
-                                          textAlign: TextAlign.start,
-                                          style: ScholarlyFonts.scheherazadeNew(
-                                              fontSize: OTFontSize.s18,
-                                              color: textSecondary,
-                                              height: 1.7)),
-                                      const SizedBox(height: 16),
-                                      Wrap(
-                                          spacing: 16,
-                                          runSpacing: 8,
-                                          children: [
-                                            Text(book.localizedSection,
-                                                style: OTTypography.body(
-                                                    color: textSecondary)),
-                                            if (book.deathYear != null && !RegExp(r'[0-9٠-٩]').hasMatch(book.author))
-                                              Text(book.deathLabel,
-                                                  textDirection:
-                                                      TextDirection.ltr,
-                                                  style: OTTypography.body(
-                                                      color: textSecondary))
-                                          ]),
-                                      const SizedBox(height: 20),
-                                      Wrap(
-                                          spacing: 12,
-                                          runSpacing: 8,
-                                          children: [
-                                            FilledButton.icon(
-                                                onPressed: () =>
-                                                    _handleCopyCitation(
-                                                        context),
-                                                icon: const Icon(
-                                                    Icons.copy_rounded,
-                                                    size: 18),
-                                                label: Text(Loc.tr(
-                                                    'bookCitationCopy'))),
-                                            OutlinedButton.icon(
-                                                onPressed: () =>
-                                                    _handleBookmark(context),
-                                                icon: const Icon(
-                                                    Icons.bookmark_add_outlined,
-                                                    size: 18),
-                                                label:
-                                                    Text(Loc.tr('bookSave'))),
-                                          ]),
-                                    ]))),
+                                child: Directionality(
+                                    textDirection: answerDirection(book.title),
+                                    child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.stretch,
+                                        children: [
+                                          Text(book.title,
+                                              textDirection:
+                                                  answerDirection(book.title),
+                                              textAlign: TextAlign.start,
+                                              style: answerDirection(
+                                                          book.title) ==
+                                                      TextDirection.rtl
+                                                  ? ScholarlyFonts
+                                                      .scheherazadeNew(
+                                                          fontSize:
+                                                              OTFontSize.s36,
+                                                          fontWeight:
+                                                              FontWeight.w700,
+                                                          color: ink,
+                                                          height: 1.6)
+                                                  : OTTypography.pageTitle(
+                                                      color: ink)),
+                                          const SizedBox(height: 8),
+                                          Text(book.author,
+                                              textDirection:
+                                                  answerDirection(book.author),
+                                              textAlign: TextAlign.start,
+                                              style: ScholarlyFonts
+                                                  .scheherazadeNew(
+                                                      fontSize: OTFontSize.s18,
+                                                      color: textSecondary,
+                                                      height: 1.7)),
+                                          const SizedBox(height: 16),
+                                          Wrap(
+                                              spacing: 16,
+                                              runSpacing: 8,
+                                              children: [
+                                                Text(book.localizedSection,
+                                                    style: OTTypography.body(
+                                                        color: textSecondary)),
+                                                if (book.deathYear != null &&
+                                                    !RegExp(r'[0-9٠-٩]')
+                                                        .hasMatch(book.author))
+                                                  Text(book.deathLabel,
+                                                      textDirection:
+                                                          TextDirection.ltr,
+                                                      style: OTTypography.body(
+                                                          color: textSecondary))
+                                              ]),
+                                          const SizedBox(height: 20),
+                                          Wrap(
+                                              spacing: 12,
+                                              runSpacing: 8,
+                                              children: [
+                                                FilledButton.icon(
+                                                    onPressed: () =>
+                                                        _handleCopyCitation(
+                                                            context),
+                                                    icon: const Icon(
+                                                        Icons.copy_rounded,
+                                                        size: 18),
+                                                    label: Text(Loc.tr(
+                                                        'bookCitationCopy'))),
+                                                OutlinedButton.icon(
+                                                    onPressed: () =>
+                                                        _handleBookmark(
+                                                            context),
+                                                    icon: const Icon(
+                                                        Icons
+                                                            .bookmark_add_outlined,
+                                                        size: 18),
+                                                    label: Text(
+                                                        Loc.tr('bookSave'))),
+                                              ]),
+                                        ]))),
                             const SizedBox(height: OTSpacing.md),
                             _BookBentoGrid(book: book),
                             const SizedBox(height: OTSpacing.md),
