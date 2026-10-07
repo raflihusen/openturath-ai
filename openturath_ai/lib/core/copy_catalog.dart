@@ -1239,7 +1239,7 @@ const copyCatalog = <String, List<String>>{
   ],
   "ui_ae4f9663d7": ["Hapus filter", "Clear filters", "مسح المرشحات"],
   "ui_214d016291": [
-    "Cari kitab, pengarang, atau penahkik…",
+    "Cari kitab, pengarang, atau muhaqqiq…",
     "Search books, authors, or editors…",
     "ابحث عن كتاب أو مؤلف أو محقق…"
   ],
