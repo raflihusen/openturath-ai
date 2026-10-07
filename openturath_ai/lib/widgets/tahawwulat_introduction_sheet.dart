@@ -254,7 +254,7 @@ class _TahawwulatIntroductionSheetState
                         reviewCopy('Mengenal Fikih Tahawwulat',
                             'تعرّف على فقه التحولات', 'About Fiqh Tahawwulat'),
                         style: ScholarlyFonts.outfit(
-                            fontSize: OTFontSize.s36,
+                            fontSize: roomy ? OTFontSize.s36 : OTFontSize.s26,
                             fontWeight: FontWeight.w600,
                             height: 1.15,
                             color: onCover)),
@@ -295,7 +295,7 @@ class _TahawwulatIntroductionSheetState
                   Expanded(flex: 3, child: heading),
                   const SizedBox(width: 32),
                   const Expanded(
-                      flex: 2, child: TahawwulatDiagram(inverse: true))
+                      flex: 2, child: Center(child: SizedBox(width: 260, child: TahawwulatDiagram(inverse: true))))
                 ]);
               }
               return Column(
@@ -305,7 +305,7 @@ class _TahawwulatIntroductionSheetState
                     const SizedBox(height: 20),
                     const Center(
                         child: SizedBox(
-                            width: 260,
+                            width: 180,
                             child: TahawwulatDiagram(inverse: true)))
                   ]);
             }),
@@ -335,15 +335,15 @@ class _TahawwulatIntroductionSheetState
                   width: 44,
                   child: Text(
                     (index + 1).toString().padLeft(2, '0'),
-                    style: ScholarlyFonts.newsreader(
-                        fontSize: OTFontSize.s18, color: textTertiary),
+                    style: ScholarlyFonts.outfit(
+                        fontSize: OTFontSize.s14, color: textTertiary),
                   ),
                 ),
                 Expanded(
                   child: Text(
                     chapter.$2,
-                    style: ScholarlyFonts.newsreader(
-                      fontSize: OTFontSize.s18,
+                    style: ScholarlyFonts.outfit(
+                      fontSize: OTFontSize.s14,
                       fontWeight: FontWeight.w400,
                       letterSpacing: -0.2,
                       height: 1.25,
@@ -377,12 +377,18 @@ class _TahawwulatIntroductionSheetState
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   cover,
-                  Center(
+                  if (Loc.language != 'id') Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                    child: Text(reviewCopy('Materi tersedia dalam Bahasa Indonesia.',
+                      'هذه المادة متاحة باللغة الإندونيسية.', 'This article is available in Indonesian.'),
+                      textAlign: TextAlign.center,
+                      style: OTTypography.caption(color: textSecondary))),
+                  Directionality(textDirection: TextDirection.ltr, child: Center(
                     child: ConstrainedBox(
                       constraints: const BoxConstraints(maxWidth: 920),
                       child: Padding(
                         padding: EdgeInsets.fromLTRB(
-                            roomy ? 64 : 24, 56, roomy ? 64 : 24, 24),
+                            roomy ? 64 : 24, 24, roomy ? 64 : 24, 24),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -411,8 +417,8 @@ class _TahawwulatIntroductionSheetState
                         ),
                       ),
                     ),
-                  ),
-                  Center(
+                  )),
+                  Directionality(textDirection: TextDirection.ltr, child: Center(
                     child: ConstrainedBox(
                       constraints: const BoxConstraints(maxWidth: 728),
                       child: Padding(
@@ -423,10 +429,24 @@ class _TahawwulatIntroductionSheetState
                         ),
                       ),
                     ),
-                  ),
+                  )),
                 ],
               ),
             ),
+            PositionedDirectional(top: 16, end: 16, child: SafeArea(
+              child: Material(color: surfaceColor, shape: const StadiumBorder(),
+                child: PopupMenuButton<String>(
+                  tooltip: reviewCopy('Daftar isi', 'المحتويات', 'Contents'),
+                  icon: const Icon(Icons.format_list_bulleted_rounded),
+                  onSelected: (id) {
+                    final target = _chapterKeys[id]?.currentContext;
+                    if (target != null) Scrollable.ensureVisible(target,
+                      duration: MediaQuery.disableAnimationsOf(context) ? Duration.zero : OTMotion.transition);
+                  },
+                  itemBuilder: (_) => [for (final chapter in _chapters)
+                    PopupMenuItem(value: chapter.$1, child: Directionality(
+                      textDirection: TextDirection.ltr, child: Text(chapter.$2)))],
+                )))),
             // Garis kemajuan baca di tepi atas.
             Positioned(
               top: 0,
