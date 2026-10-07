@@ -175,8 +175,7 @@ abstract final class LegalCopy {
     ),
     LegalSection(
       title: '2. Data yang Diproses',
-      content:
-          'Kami memproses data sesuai fitur yang Anda gunakan:\n'
+      content: 'Kami memproses data sesuai fitur yang Anda gunakan:\n'
           '• Akun: Nama, alamat email, dan identitas profil publik dari akun Google untuk autentikasi dan personalisasi.\n'
           '• Langganan: Paket yang dipilih, status, masa aktif, dan penggunaan voucher.\n'
           '• Pembayaran: Nomor transaksi, jumlah pembayaran, metode, waktu, dan status dari penyedia DOKU.\n'
@@ -244,8 +243,7 @@ abstract final class LegalCopy {
     ),
     LegalSection(
       title: '11. Hak Subjek Data Pengguna',
-      content:
-          'Sesuai UU Perlindungan Data Pribadi, Anda berhak:\n'
+      content: 'Sesuai UU Perlindungan Data Pribadi, Anda berhak:\n'
           '• Mengakses dan memperoleh informasi mengenai data pribadi yang diproses.\n'
           '• Memperbarui atau memperbaiki data profil yang keliru.\n'
           '• Meminta penghapusan akun dan data pribadi Anda kapan saja melalui aplikasi.\n'
@@ -309,8 +307,7 @@ abstract final class LegalCopy {
     ),
     LegalSection(
       title: '6. Alur dan Waktu Penanganan Refund',
-      content:
-          'Kirim permohonan ke $contactSupportEmail dengan menyertakan:\n'
+      content: 'Kirim permohonan ke $contactSupportEmail dengan menyertakan:\n'
           '1. Alamat email akun OpenTurath.\n'
           '2. Nomor transaksi / invoice pembayaran.\n'
           '3. Bukti pembayaran resmi dari bank/e-wallet.\n'
@@ -406,8 +403,7 @@ abstract final class LegalCopy {
     ),
     LegalSection(
       title: '2. Saluran Komunikasi Resmi',
-      content:
-          '• Bantuan & Transaksi: $contactSupportEmail\n'
+      content: '• Bantuan & Transaksi: $contactSupportEmail\n'
           '• Permintaan Privasi & Data: $contactPrivacyEmail\n'
           '• Laporan Hak Cipta: $contactCopyrightEmail\n'
           '• Alamat Usaha: $managerAddress\n'
