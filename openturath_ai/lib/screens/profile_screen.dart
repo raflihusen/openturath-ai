@@ -37,7 +37,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   final AuthService _authService = AuthService();
   bool _isLoggingOut = false;
   bool _isDeletingAccount = false;
-  String _appVersion = '1.0.9';
+  String _appVersion = '—';
 
   @override
   void initState() {
@@ -361,7 +361,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       decoration: BoxDecoration(
                         color: surface,
                         borderRadius: OTRadius.cardBorder,
-                        border: Border.all(color: border, width: 1.0),
+                        border: Border.all(color: surface),
                       ),
                       child: Column(
                         children: [
@@ -467,7 +467,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       decoration: BoxDecoration(
                         color: surface,
                         borderRadius: OTRadius.cardBorder,
-                        border: Border.all(color: border, width: 1.0),
+                        border: Border.all(color: surface),
                       ),
                       child: Column(
                         children: [
@@ -501,7 +501,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           _AccountActionRow(
                             icon: Icons.delete_outline_rounded,
                             label: AppCopy.deleteAccountButton,
-                            color: textSecondary,
+                            color: OTColors.destructive(isDark),
                             busy: _isDeletingAccount,
                             onTap: (_isLoggingOut || _isDeletingAccount)
                                 ? null
@@ -782,426 +782,60 @@ class _ProfileScreenState extends State<ProfileScreen> {
 /// Kartu akses anggota: merangkum identitas, status, dan ruang AI yang dapat
 /// dipakai tanpa menyamarkan halaman pengaturan sebagai layar perbankan.
 class _MembershipPass extends StatelessWidget {
+  const _MembershipPass({required this.holderName, required this.email,
+    required this.summary, required this.isDark, required this.onManage,
+    this.onViewAccess, this.memberId = ''});
   final String holderName;
   final String email;
+  final String memberId;
   final MembershipPassSummary summary;
   final bool isDark;
   final VoidCallback onManage;
   final VoidCallback? onViewAccess;
 
-  /// Nomor anggota yang diturunkan dari UID akun; bukan nomor kartu tiruan.
-  final String memberId;
-
-  const _MembershipPass({
-    required this.holderName,
-    required this.email,
-    required this.summary,
-    required this.isDark,
-    required this.onManage,
-    this.onViewAccess,
-    this.memberId = '',
-  });
-
-  String _expiryLabel() {
-    if (summary.expiresAt == null) return '—';
-    const shortMonths = [
-      'JAN',
-      'FEB',
-      'MAR',
-      'APR',
-      'MEI',
-      'JUN',
-      'JUL',
-      'AGU',
-      'SEP',
-      'OKT',
-      'NOV',
-      'DES',
-    ];
-    return '${summary.expiresAt!.day.toString().padLeft(2, '0')} ${shortMonths[summary.expiresAt!.month - 1]} ${summary.expiresAt!.year}';
-  }
-
-  Widget _back(Color cardColor, Color onCard, Color onCardMuted) {
-    final names = AgentModel.defaultAgents
-        .where((agent) => summary.agentIds.contains(agent.id))
-        .map((agent) => Loc.text(agent.title))
-        .toList();
-    return Container(
-      padding: const EdgeInsets.all(OTSpacing.lg),
-      decoration: BoxDecoration(
-        color: cardColor,
-        borderRadius: BorderRadius.circular(OTRadius.card),
-        border: Border.all(color: onCard.withValues(alpha: isDark ? 0.14 : 0)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            AppCopy.navStudies.toUpperCase(),
-            style: ScholarlyFonts.outfit(
-              color: onCardMuted,
-              fontSize: OTFontSize.s11,
-              fontWeight: FontWeight.w600,
-              letterSpacing: 1.2,
-            ),
-          ),
-          const SizedBox(height: OTSpacing.sm),
-          Expanded(
-            child: names.isEmpty
-                ? Text(
-                    summary.accessLabel,
-                    style: ScholarlyFonts.outfit(
-                        color: onCard, fontSize: OTFontSize.s16, height: 1.4),
-                  )
-                : ClipRect(
-                    child: Wrap(
-                      spacing: 6,
-                      runSpacing: 6,
-                      children: [
-                        for (final name in names)
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 8, vertical: 4),
-                            decoration: BoxDecoration(
-                              borderRadius: OTRadius.chipBorder,
-                              border: Border.all(
-                                  color: onCard.withValues(alpha: 0.28)),
-                            ),
-                            child: Text(
-                              name,
-                              style: ScholarlyFonts.outfit(
-                                  color: onCard, fontSize: OTFontSize.s12),
-                            ),
-                          ),
-                      ],
-                    ),
-                  ),
-          ),
-          Text(
-            Loc.tr('cardFlipHint'),
-            style: ScholarlyFonts.outfit(
-                color: onCardMuted, fontSize: OTFontSize.s11),
-          ),
-        ],
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
-    Loc.watch(context);
-    final foreground = OTColors.textPrimary(isDark);
+    final ink = OTColors.textPrimary(isDark);
     final muted = OTColors.textSecondary(isDark);
-    final isOpen = summary.isOpen;
-    // Kartu anggota: tinta gelap di kedua mode, tanpa emas dan tanpa nomor tiruan.
-    final cardColor = OTColors.inverseSurface(isDark);
-    const onCard = OTColors.onInverseSurface;
-    final onCardMuted = onCard.withValues(alpha: 0.64);
-    // Akses tanpa batas (termasuk tanggal penanda jauh di masa depan) tidak
-    // ditampilkan sebagai tanggal; akun tanpa akses tidak menampilkan apa pun.
     final unlimited = summary.isOpen &&
         (summary.expiresAt == null || summary.expiresAt!.year >= 2090);
-    final expiry = unlimited
-        ? Loc.tr('noExpiryShort')
-        : (summary.expiresAt == null ? '' : _expiryLabel());
-
-    final card = Semantics(
-      label:
-          'OpenTurath. ${summary.badge}. $holderName. ${summary.accessLabel}',
-      child: Align(
-        alignment: AlignmentDirectional.centerStart,
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 360),
-          child: AspectRatio(
-            aspectRatio: 1.586,
-            child: OTFlipCard(
-              semanticLabel: Loc.tr('cardFlipHint'),
-              back: _back(cardColor, onCard, onCardMuted),
-              front: Container(
-                clipBehavior: Clip.antiAlias,
-                decoration: BoxDecoration(
-                  // Kilau halus dari kiri-atas; tetap satu warna tinta.
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [
-                      Color.lerp(cardColor, onCard, 0.09)!,
-                      cardColor,
-                      Color.lerp(cardColor, OTColors.shadow, 0.3)!,
-                    ],
-                    stops: const [0, 0.45, 1],
-                  ),
-                  borderRadius: BorderRadius.circular(OTRadius.card),
-                  border: Border.all(color: onCard.withValues(alpha: 0.14)),
-                ),
-                child: Stack(
-                  children: [
-                    PositionedDirectional(
-                      end: -36,
-                      bottom: -44,
-                      child: ExcludeSemantics(
-                        child: OpenTurathMark(
-                          size: 220,
-                          color: onCard.withValues(alpha: 0.05),
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(OTSpacing.lg),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              const OpenTurathMark(size: 22, color: onCard),
-                              const SizedBox(width: OTSpacing.sm),
-                              Text(
-                                'OpenTurath',
-                                textDirection: TextDirection.ltr,
-                                style: ScholarlyFonts.newsreader(
-                                  color: onCard,
-                                  fontSize: OTFontSize.s18,
-                                  fontWeight: FontWeight.w600,
-                                  letterSpacing: -0.3,
-                                ),
-                              ),
-                              const Spacer(),
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 8, vertical: 4),
-                                decoration: BoxDecoration(
-                                  borderRadius: OTRadius.chipBorder,
-                                  border: Border.all(
-                                      color: onCard.withValues(alpha: 0.32)),
-                                ),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    if (!isOpen) ...[
-                                      Icon(Icons.lock_outline_rounded,
-                                          color: onCardMuted, size: 13),
-                                      const SizedBox(width: 4),
-                                    ],
-                                    Text(
-                                      summary.badge == 'GRATIS'
-                                          ? Loc.tr('planFreeBadge')
-                                          : summary.badge,
-                                      style: ScholarlyFonts.outfit(
-                                        color: onCard,
-                                        fontSize: OTFontSize.s11,
-                                        fontWeight: FontWeight.w600,
-                                        letterSpacing: 1.0,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                          const Spacer(),
-                          if (memberId.isNotEmpty) ...[
-                            Text(
-                              memberId,
-                              textDirection: TextDirection.ltr,
-                              style: ScholarlyFonts.outfit(
-                                color: onCard.withValues(alpha: 0.86),
-                                fontSize: OTFontSize.s16,
-                                fontWeight: FontWeight.w400,
-                                letterSpacing: 2.4,
-                              ),
-                            ),
-                            const SizedBox(height: OTSpacing.md),
-                          ],
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      holderName.toUpperCase(),
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: ScholarlyFonts.outfit(
-                                        color: onCard,
-                                        fontSize: OTFontSize.s14,
-                                        fontWeight: FontWeight.w600,
-                                        letterSpacing: 1.2,
-                                      ),
-                                    ),
-                                    if (email.isNotEmpty) ...[
-                                      const SizedBox(height: 2),
-                                      Text(
-                                        email,
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: ScholarlyFonts.outfit(
-                                            color: onCardMuted,
-                                            fontSize: OTFontSize.s12),
-                                      ),
-                                    ],
-                                  ],
-                                ),
-                              ),
-                              const SizedBox(width: OTSpacing.md),
-                              if (expiry.isNotEmpty)
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.end,
-                                  children: [
-                                    Text(
-                                      unlimited
-                                          ? Loc.tr('accessTermLabel')
-                                          : summary.expiryLabel.isEmpty
-                                              ? AppCopy.validUntil
-                                              : summary.expiryLabel,
-                                      style: ScholarlyFonts.outfit(
-                                          color: onCardMuted,
-                                          fontSize: OTFontSize.s11),
-                                    ),
-                                    const SizedBox(height: 2),
-                                    Text(
-                                      expiry,
-                                      style: ScholarlyFonts.outfit(
-                                        color: onCard,
-                                        fontSize: OTFontSize.s14,
-                                        fontWeight: FontWeight.w600,
-                                        letterSpacing: 0.6,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
+    final expiry = unlimited ? Loc.tr('noExpiry')
+        : summary.expiresAt == null ? null
+        : HijriDateUtils.formatMasehiOnly(summary.expiresAt!.toLocal());
+    return Container(
+      padding: const EdgeInsets.all(OTSpacing.lg),
+      decoration: BoxDecoration(color: OTColors.surface(isDark),
+        borderRadius: OTRadius.cardBorder),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Container(padding: const EdgeInsets.all(OTSpacing.md),
+            decoration: BoxDecoration(color: OTColors.surfaceSubtle(isDark),
+              borderRadius: OTRadius.inputBorder),
+            child: OpenTurathMark(size: 28, color: ink)),
+          const SizedBox(width: OTSpacing.md),
+          Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(holderName, style: OTTypography.screenTitle(color: ink)),
+              if (email.isNotEmpty) Text(email, textDirection: TextDirection.ltr,
+                style: OTTypography.caption(color: muted)),
+            ])),
+        ]),
+        const SizedBox(height: OTSpacing.lg),
+        Text(summary.accessLabel, style: OTTypography.bodyMedium(color: ink)),
+        if (expiry != null) Padding(padding: const EdgeInsets.only(top: OTSpacing.xs),
+          child: Text(unlimited ? expiry : '${AppCopy.validUntil} $expiry',
+            style: OTTypography.caption(color: muted))),
+        const SizedBox(height: OTSpacing.lg),
+        Wrap(spacing: OTSpacing.sm, runSpacing: OTSpacing.sm, children: [
+          if (onViewAccess != null) OutlinedButton.icon(onPressed: onViewAccess,
+            icon: const Icon(Icons.auto_stories_outlined, size: 18),
+            label: Text(Loc.tr('viewAccessList'))),
+          FilledButton.icon(onPressed: onManage,
+            icon: const Icon(Icons.tune_rounded, size: 18),
+            label: Text(summary.ctaLabel)),
+        ]),
+      ]),
     );
-
-    Widget action(IconData icon, String label, VoidCallback? onTap) =>
-        OTBentoTile(
-          onTap: onTap,
-          semanticLabel: label,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                children: [
-                  Icon(icon, size: 20, color: foreground),
-                  const Spacer(),
-                  Icon(otChevronIcon(context), size: 18, color: muted),
-                ],
-              ),
-              const SizedBox(height: OTSpacing.md),
-              Text(label, style: OTTypography.bodyMedium(color: foreground)),
-            ],
-          ),
-        );
-    final actions = <Widget>[
-      if (onViewAccess != null)
-        action(Icons.auto_stories_outlined, Loc.tr('viewAccessList'),
-            onViewAccess),
-      action(Icons.tune_rounded, summary.ctaLabel, onManage),
-    ];
-
-    return LayoutBuilder(builder: (context, constraints) {
-      // Lebar: kartu di kiri, aksi sebagai ubin di kanan setinggi kartu.
-      if (constraints.maxWidth >= 620) {
-        return IntrinsicHeight(
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              // Ukuran alami kartu (rasio 1,586), bukan melebar mengikuti kolom.
-              SizedBox(width: 340, child: card),
-              const SizedBox(width: OTSpacing.md),
-              Expanded(
-                child: Container(
-                  clipBehavior: Clip.antiAlias,
-                  decoration: BoxDecoration(
-                    color: OTColors.surface(isDark),
-                    borderRadius: OTRadius.cardBorder,
-                    border: Border.all(color: OTColors.border(isDark)),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(OTSpacing.base),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(Loc.tr('planLabel'),
-                                style: ScholarlyFonts.outfit(
-                                    fontSize: OTFontSize.s12, color: muted)),
-                            const SizedBox(height: 2),
-                            Text(summary.accessLabel,
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                                style: ScholarlyFonts.outfit(
-                                    fontSize: OTFontSize.s16,
-                                    fontWeight: FontWeight.w600,
-                                    color: foreground)),
-                            if (summary.supportingLabel.isNotEmpty) ...[
-                              const SizedBox(height: 4),
-                              Text(summary.supportingLabel,
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: ScholarlyFonts.outfit(
-                                      fontSize: OTFontSize.s14,
-                                      height: 1.4,
-                                      color: muted)),
-                            ],
-                          ],
-                        ),
-                      ),
-                      Column(
-                        children: [
-                          if (onViewAccess != null) ...[
-                            Divider(height: 1, color: OTColors.border(isDark)),
-                            _AccountActionRow(
-                              icon: Icons.auto_stories_outlined,
-                              label: Loc.tr('viewAccessList'),
-                              color: foreground,
-                              onTap: onViewAccess,
-                            ),
-                          ],
-                          Divider(height: 1, color: OTColors.border(isDark)),
-                          _AccountActionRow(
-                            icon: Icons.tune_rounded,
-                            label: summary.ctaLabel,
-                            color: foreground,
-                            onTap: onManage,
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-        );
-      }
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          card,
-          for (final tile in actions) ...[
-            const SizedBox(height: OTSpacing.md),
-            tile,
-          ],
-        ],
-      );
-    });
   }
 }
 
