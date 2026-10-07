@@ -1,3 +1,4 @@
+import 'dart:ui' show SemanticsAction;
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:openturath_ai/core/app_config.dart';
@@ -93,12 +94,17 @@ void main() {
     final agent =
         AgentModel.defaultAgents.firstWhere((a) => a.id == 'fiqh_syafii');
     var opened = 0, references = 0;
+    final semantics = tester.ensureSemantics();
+    addTearDown(semantics.dispose);
     await tester.pumpWidget(MaterialApp(
         home: Scaffold(
             body: AssistantGridCard(
                 agent: agent,
                 onOpen: () => opened++,
                 onOpenLibrary: () => references++))));
+    expect(find.bySemanticsLabel(Loc.tr('openNamedAI', [Loc.text(agent.title)])), findsOneWidget);
+    expect(tester.getSemantics(find.byType(AssistantGridCard))
+        .getSemanticsData().hasAction(SemanticsAction.tap), isFalse);
     expect(find.text(Loc.tr('openAssistant')), findsNothing);
     expect(find.text(Loc.tr('viewReferences')), findsNothing);
     await tester.tap(find.byIcon(Icons.chat_bubble_outline_rounded));
