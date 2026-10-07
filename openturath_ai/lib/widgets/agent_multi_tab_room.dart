@@ -771,8 +771,7 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                                     ),
                                     const SizedBox(width: 6),
                                     Text(
-                                      session.agent.title
-                                          ,
+                                      session.agent.title,
                                       style: ScholarlyFonts.outfit(
                                         fontSize: OTFontSize.s12,
                                         fontWeight: isActive
@@ -1332,8 +1331,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
             widget.session.isWebLoading = false;
             widget.session.isSessionReady = false;
             widget.session.isTimeoutError = true;
-            widget.session.errorMessage =
-                Loc.tr('roomNotReadyBody');
+            widget.session.errorMessage = Loc.tr('roomNotReadyBody');
           });
         }
         return;
@@ -1706,9 +1704,12 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
                   detail.contains('cancel')) {
                 return;
               }
-              debugPrint('[OpenTurath] Main-document load failed: ${error.type}');
+              debugPrint(
+                  '[OpenTurath] Main-document load failed: ${error.type}');
               final current = await controller.getUrl();
-              if (!mounted || (current != null && current.toString() != request.url.toString())) return;
+              if (!mounted ||
+                  (current != null &&
+                      current.toString() != request.url.toString())) return;
               _readinessTimer?.cancel();
               setState(() {
                 session.isWebLoading = false;
@@ -2024,7 +2025,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
                   await _applyThemeCss(isDark);
                 } catch (_) {
                   session.hasInjectedEarlyScript = false;
-              _loadingStarted = DateTime.now();
+                  _loadingStarted = DateTime.now();
                 }
               }
             },
