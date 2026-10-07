@@ -26,7 +26,7 @@ Future<void> main() async {
                           color: Colors.white,
                           child:
                               AppLoader.fullscreen(title: 'OpenTurath'))))))));
-  await Future<void>.delayed(const Duration(seconds: 2));
+  await Future<void>.delayed(const Duration(seconds: 10));
   SchedulerBinding.instance.addTimingsCallback(collect);
   await Future<void>.delayed(const Duration(milliseconds: 18000));
   SchedulerBinding.instance.removeTimingsCallback(collect);
