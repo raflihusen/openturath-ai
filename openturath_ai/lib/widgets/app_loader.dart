@@ -1,3 +1,4 @@
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import '../core/theme.dart';
 import '../core/localization.dart';
@@ -5,8 +6,7 @@ import '../core/scholarly_fonts.dart';
 import '../core/design/ot_motion.dart';
 import 'package:openturath_ai/core/design/ot_typography.dart';
 
-/// AppLoader: Komponen visual baku tiga titik berdenyut (Three-Dots Pulse Loader).
-/// Menyatukan implementasi loader menjadi satu komponen elegan berstandar Apple HIG.
+/// Loader busur OpenTurath dengan kecepatan periodik dan dukungan reduced motion.
 class AppLoader extends StatefulWidget {
   final double dotSize;
   final double spacing;
@@ -45,7 +45,7 @@ class AppLoader extends StatefulWidget {
 }
 
 class _AppLoaderState extends State<AppLoader>
-    with SingleTickerProviderStateMixin {
+    with SingleTickerProviderStateMixin, WidgetsBindingObserver {
   late final AnimationController _controller;
 
   @override
@@ -54,11 +54,24 @@ class _AppLoaderState extends State<AppLoader>
     _controller = AnimationController(
       vsync: this,
       duration: OTMotion.loaderLoop,
-    )..repeat();
+    );
+    WidgetsBinding.instance.addObserver(this);
   }
 
   @override
+  void didChangeDependencies() {super.didChangeDependencies(); _syncMotion();}
+  void _syncMotion() {
+    final reduced = MediaQuery.disableAnimationsOf(context);
+    final active = WidgetsBinding.instance.lifecycleState == null || WidgetsBinding.instance.lifecycleState == AppLifecycleState.resumed;
+    if (reduced || !TickerMode.of(context) || !active) {_controller.stop();}
+    else if (!_controller.isAnimating) {_controller.repeat();}
+  }
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {if (mounted) _syncMotion();}
+
+  @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _controller.dispose();
     super.dispose();
   }
@@ -79,42 +92,11 @@ class _AppLoaderState extends State<AppLoader>
       mainAxisSize: MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        AnimatedBuilder(
-          animation: _controller,
-          builder: (context, child) {
-            return Row(
-              mainAxisSize: MainAxisSize.min,
-              children: List.generate(3, (index) {
-                final delay = index * 0.2;
-                final t = still ? 0.5 : (_controller.value - delay) % 1.0;
-                final curveVal =
-                    Curves.easeInOutSine.transform(t < 0 ? t + 1.0 : t);
-                final scale =
-                    0.75 + (0.45 * (1.0 - (curveVal - 0.5).abs() * 2));
-                final opacity =
-                    0.3 + (0.7 * (1.0 - (curveVal - 0.5).abs() * 2));
-
-                return Container(
-                  margin: EdgeInsets.symmetric(horizontal: widget.spacing),
-                  child: Transform.scale(
-                    scale: scale,
-                    child: Opacity(
-                      opacity: opacity.clamp(0.25, 1.0),
-                      child: Container(
-                        width: widget.dotSize,
-                        height: widget.dotSize,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: dotColor,
-                        ),
-                      ),
-                    ),
-                  ),
-                );
-              }),
-            );
-          },
-        ),
+        Semantics(label: widget.title == null ? Loc.tr('loading') : Loc.text(widget.title!), liveRegion: true,
+          child: RepaintBoundary(child: AnimatedBuilder(animation: _controller, builder: (context, _) {
+            final size = widget.isFullscreen ? 56.0 : widget.title == null ? 24.0 : 48.0;
+            return SizedBox.square(dimension: size, child: CustomPaint(painter: _OrbitPainter(progress: still ? .25 : _controller.value, color: dotColor)));
+          }))),
         if (widget.title != null) ...[
           const SizedBox(height: 20),
           Text(
@@ -178,4 +160,26 @@ class _AppLoaderState extends State<AppLoader>
 
     return Center(child: content);
   }
+}
+
+/// Smooth periodic phase: endpoint position and velocity match exactly.
+class _OrbitPainter extends CustomPainter {
+  const _OrbitPainter({required this.progress, required this.color});
+  final double progress;
+  final Color color;
+  @override
+  void paint(Canvas canvas,Size size) {
+    final phase=progress*2*math.pi;
+    final angle=phase-.65*math.sin(phase);
+    final rect=Rect.fromCircle(center:size.center(Offset.zero),radius:size.width*.42);
+    final paint=Paint()..color=color..style=PaintingStyle.stroke..strokeWidth=size.width*.065..strokeCap=StrokeCap.round;
+    final sweep=1.2+.55*math.sin(phase);
+    canvas.drawArc(rect,angle,sweep,false,paint);
+    canvas.drawArc(rect,angle+math.pi,.7-.25*math.sin(phase),false,paint..color=color.withValues(alpha:.45));
+    final w=size.width;
+    final mark=Path()..moveTo(w*.37,w*.63)..lineTo(w*.37,w*.47)..quadraticBezierTo(w*.40,w*.36,w*.5,w*.30)..quadraticBezierTo(w*.60,w*.36,w*.63,w*.47)..lineTo(w*.63,w*.63);
+    canvas.drawPath(mark,paint..color=color..strokeWidth=w*.045);
+  }
+  @override
+  bool shouldRepaint(_OrbitPainter old)=> old.progress!=progress || old.color!=color;
 }
