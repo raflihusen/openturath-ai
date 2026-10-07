@@ -144,7 +144,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
       return;
     }
 
-    // 1. Deteksi melalui URL asisten/Google yang telah berhasil terbuka
+    // 1. Deteksi melalui URL AI/Google yang telah berhasil terbuka
     if (currentWebUrl != null &&
         NotebookNavigation.notebook(currentWebUrl.uriValue) &&
         !urlStr.contains('accounts.google')) {
@@ -397,7 +397,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
                           const SizedBox(width: 8),
                           Expanded(
                             child: Text(
-                              'Autentikasi Ruang Asisten Google',
+                              'Autentikasi Ruang AI Google',
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: ScholarlyFonts.outfit(
