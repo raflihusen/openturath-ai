@@ -60,46 +60,20 @@ class BookIdentityCard extends StatelessWidget {
                           fontSize: OTFontSize.s16, height: 1.5, color: muted)
                       : OTTypography.caption(color: muted)),
             ]);
-        return Padding(
-            padding: EdgeInsets.only(bottom: box.hasBoundedHeight ? 0 : 12),
-            child: OTBentoTile(
-              onTap: onTap,
-              semanticLabel: '$title, $author',
-              padding: const EdgeInsets.all(20),
-              child: DecoratedBox(
-                  decoration: BoxDecoration(
-                      border: BorderDirectional(
-                          start: BorderSide(
-                              color: OTColors.borderStrong(dark)
-                                  .withValues(alpha: .2),
-                              width: 3))),
-                  child: Padding(
-                      padding: const EdgeInsetsDirectional.only(start: 16),
-                      child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          mainAxisSize: box.hasBoundedHeight
-                              ? MainAxisSize.max
-                              : MainAxisSize.min,
-                          children: [
-                            identity,
-                            const SizedBox(height: 16),
-                            Wrap(
-                                spacing: 12,
-                                runSpacing: 8,
-                                crossAxisAlignment: WrapCrossAlignment.center,
-                                children: [
-                                  for (final fact in facts)
-                                    Text(fact,
-                                        style:
-                                            OTTypography.caption(color: muted)),
-                                  if (deathLabel != null && !hasAuthorDate)
-                                    Text(deathLabel!,
-                                        textDirection: TextDirection.ltr,
-                                        style:
-                                            OTTypography.caption(color: muted)),
-                                ]),
-                            if (box.hasBoundedHeight) const Spacer(),
-                          ]))),
-            ));
+        final factsView = Wrap(spacing: 12, runSpacing: 8, children: [
+          for (final fact in facts) Text(fact, style: OTTypography.caption(color: muted)),
+        ]);
+        final dateView = deathLabel != null && !hasAuthorDate
+            ? Padding(padding: const EdgeInsets.only(top: 8), child: Text(deathLabel!, textDirection: TextDirection.ltr, style: OTTypography.caption(color: muted)))
+            : const SizedBox.shrink();
+        final textIdentity = Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.stretch, children: [identity, dateView]);
+        final wide = !box.hasBoundedHeight && box.maxWidth >= 720 && MediaQuery.textScalerOf(context).scale(16) < 24;
+        return Padding(padding: EdgeInsets.only(bottom: box.hasBoundedHeight ? 0 : 12), child: OTBentoTile(
+          onTap: onTap, semanticLabel: '$title, $author', padding: const EdgeInsets.all(20),
+          child: wide ? Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+            Expanded(flex: 7, child: textIdentity), const SizedBox(width: 24), Expanded(flex: 3, child: factsView),
+          ]) : Column(mainAxisSize: box.hasBoundedHeight ? MainAxisSize.max : MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch, children: [textIdentity, const SizedBox(height: 12), factsView]),
+        ));
       });
 }
