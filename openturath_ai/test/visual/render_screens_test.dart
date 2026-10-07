@@ -195,18 +195,18 @@ void main() {
     }
     for (final locale in ['id', 'ar']) {
       await _shot(tester, 'assistants_$locale', const SpecialistListScreen(),
-        size: const Size(1000, 1500), locale: locale);
+          size: const Size(1000, 1500), locale: locale);
     }
     for (final width in [320.0, 390.0, 600.0, 850.0, 1280.0, 1440.0]) {
       await _shot(tester, 'ai_${width.toInt()}', const SpecialistListScreen(),
-        size: Size(width, 1100));
+          size: Size(width, 1100));
     }
     await _shot(tester, 'ai_phone_dark', const SpecialistListScreen(),
-      size: const Size(390, 1100), dark: true);
+        size: const Size(390, 1100), dark: true);
     await _shot(tester, 'ai_phone_ar', const SpecialistListScreen(),
-      size: const Size(390, 1100), locale: 'ar');
+        size: const Size(390, 1100), locale: 'ar');
     await _shot(tester, 'ai_large_text', const SpecialistListScreen(),
-      size: const Size(390, 1400), textScale: 2);
+        size: const Size(390, 1400), textScale: 2);
     Widget mixedChat() => Scaffold(
         appBar: AppBar(title: const Text('Fikih Tahawwulat: Al-Muhaqqiq')),
         body: NativeTurathChatView(
@@ -346,10 +346,20 @@ void main() {
           OpenTurathBookLibraryPage(
               books: libraryBooks, collectionName: "Fikih Syafi'i"),
           size: win);
-      await _shot(tester, 'library_books_dark', OpenTurathBookLibraryPage(
-        books: libraryBooks, collectionName: "Fikih Syafi'i"), size: const Size(1280, 900), dark: true);
-      await _shot(tester, 'library_books_large_text', OpenTurathBookLibraryPage(
-        books: libraryBooks, collectionName: "Fikih Syafi'i"), size: const Size(390, 1100), textScale: 2);
+      await _shot(
+          tester,
+          'library_books_dark',
+          OpenTurathBookLibraryPage(
+              books: libraryBooks, collectionName: "Fikih Syafi'i"),
+          size: const Size(1280, 900),
+          dark: true);
+      await _shot(
+          tester,
+          'library_books_large_text',
+          OpenTurathBookLibraryPage(
+              books: libraryBooks, collectionName: "Fikih Syafi'i"),
+          size: const Size(390, 1100),
+          textScale: 2);
       await _shot(tester, 'library_book_detail',
           OpenTurathBookDetailPage(book: libraryBooks.first),
           size: win);
@@ -395,6 +405,7 @@ void main() {
                         onPressed: () =>
                             LegalDocumentSheet.showAiGuideline(context),
                         child: const Text('open'))))),
-        size: const Size(950, 900), tap: 'open');
+        size: const Size(950, 900),
+        tap: 'open');
   });
 }
