@@ -396,9 +396,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                         borderRadius: BorderRadius.circular(
                                             OTRadius.input),
                                       ),
-                                      child: Row(
-                                        children: [
+                                      child: LayoutBuilder(builder: (context, box) {
+                                        final stacked = box.maxWidth < 440 && MediaQuery.textScalerOf(context).scale(14) > 18;
+                                        final choices = <Widget>[
                                           _buildThemeOption(
+                                            stacked: stacked,
                                             title: AppCopy.modeSystem,
                                             icon: Icons.brightness_auto_rounded,
                                             isSelected:
@@ -410,6 +412,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                 ThemeMode.system),
                                           ),
                                           _buildThemeOption(
+                                            stacked: stacked,
                                             title: AppCopy.modeLight,
                                             icon: Icons.light_mode_rounded,
                                             isSelected:
@@ -421,6 +424,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                 ThemeMode.light),
                                           ),
                                           _buildThemeOption(
+                                            stacked: stacked,
                                             title: AppCopy.modeDark,
                                             icon: Icons.dark_mode_rounded,
                                             isSelected:
@@ -431,8 +435,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                             onTap: () => AppConfig.setThemeMode(
                                                 ThemeMode.dark),
                                           ),
-                                        ],
-                                      ),
+                                        ];
+                                        return stacked ? Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: choices)
+                                            : Row(children: choices);
+                                      }),
                                     ),
                                   ],
                                 ),
@@ -719,65 +725,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Widget _buildThemeOption({
-    required String title,
-    required IconData icon,
-    required bool isSelected,
-    required bool isDark,
-    required Color textPrimary,
-    required Color textSecondary,
-    required VoidCallback onTap,
+    required String title, required IconData icon, required bool isSelected,
+    required bool isDark, required Color textPrimary, required Color textSecondary,
+    required VoidCallback onTap, bool stacked = false,
   }) {
-    // Pilihan aktif harus lebih terang dari lintasannya di kedua mode.
-    final activeBg =
-        isDark ? OTColors.border(isDark) : OTColors.surface(isDark);
-    final activeFg = textPrimary;
-    final inactiveFg = textSecondary;
-
-    return Expanded(
-      child: GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        onTap: () {
-          HapticFeedback.selectionClick();
-          onTap();
-        },
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 180),
-          curve: Curves.easeOutCubic,
-          padding: const EdgeInsets.symmetric(vertical: 8),
-          decoration: BoxDecoration(
-            color: isSelected ? activeBg : Colors.transparent,
-            borderRadius: BorderRadius.circular(OTRadius.xs),
-            boxShadow: isSelected
-                ? [
-                    BoxShadow(
-                      color: OTColors.shadow
-                          .withValues(alpha: isDark ? 0.35 : 0.06),
-                      blurRadius: 4,
-                      offset: const Offset(0, 1),
-                    ),
-                  ]
-                : null,
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(icon, size: 15, color: isSelected ? activeFg : inactiveFg),
-              const SizedBox(width: 6),
-              Flexible(child: Text(
-                Loc.text(title),
-                textAlign: TextAlign.center,
-                style: ScholarlyFonts.outfit(
-                  fontSize: OTFontSize.s14,
-                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
-                  color: isSelected ? activeFg : inactiveFg,
-                ),
-              )),
-            ],
-          ),
-        ),
-      ),
-    );
+    final color = isSelected ? textPrimary : textSecondary;
+    final option = Semantics(button: true, selected: isSelected,
+      child: Material(color: isSelected ? OTColors.surface(isDark) : Colors.transparent,
+        borderRadius: BorderRadius.circular(OTRadius.input),
+        child: InkWell(onTap: () { HapticFeedback.selectionClick(); onTap(); },
+          borderRadius: BorderRadius.circular(OTRadius.input),
+          child: ConstrainedBox(constraints: const BoxConstraints(minHeight: 48),
+            child: Padding(padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+              child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                Icon(icon, size: 16, color: color), const SizedBox(width: 4),
+                Flexible(child: Text(Loc.text(title), textAlign: TextAlign.center,
+                  style: OTTypography.bodyMedium(color: color))),
+              ])))));
+    return stacked ? option : Expanded(child: option);
   }
+
 }
 
 /// Kartu akses anggota: merangkum identitas, status, dan ruang AI yang dapat

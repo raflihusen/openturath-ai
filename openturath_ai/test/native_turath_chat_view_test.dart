@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:openturath_ai/core/localization.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:openturath_ai/models/agent_model.dart';
 import 'package:openturath_ai/models/turath_chat_message.dart';
@@ -135,7 +136,7 @@ void main() {
       );
 
       expect(
-          find.text('Menelaah rujukan & menyusun penjelasan ilmiah...'),
+          find.text(Loc.tr('preparingAnswer')),
           findsOneWidget);
       // Ensure NO tacky spinners or circular progress indicators are rendered
       expect(find.byType(CircularProgressIndicator), findsNothing);
@@ -163,7 +164,7 @@ void main() {
           find.byType(TextField), 'Bagaimana kaidah fiqih al-yaqinu la yuzalu bisy-syakk?');
       await tester.pump();
 
-      final sendBtn = find.byTooltip('Kirim telaah');
+      final sendBtn = find.byTooltip(Loc.tr('sendQuestion'));
       expect(sendBtn, findsOneWidget);
 
       await tester.tap(sendBtn);
