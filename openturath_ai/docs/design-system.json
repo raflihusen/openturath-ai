@@ -103,7 +103,9 @@
     "calendarPriority": "equal",
     "fieldComposition": "separate-script-zones",
     "assistantSubtitles": false,
-    "diagram": "four-separated-sectors-thin-depth",
-    "source": "lib/core/design/ot_expressive.dart"
+    "diagram": "imagegen-monochrome-3d-sculpture-with-textual-controls",
+    "source": "lib/core/design/ot_expressive.dart",
+    "artwork": "assets/images/tahawwulat-sculpture-v2.png",
+    "heroBackground": "low-contrast-architectural-curves"
   }
 }
