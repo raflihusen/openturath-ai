@@ -77,7 +77,8 @@ class AssistantGridCard extends StatelessWidget {
                 Loc.text(agent.title),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
-                style: OTTypography.screenTitle(color: ink).copyWith(height: 1.2),
+                style:
+                    OTTypography.screenTitle(color: ink).copyWith(height: 1.2),
               ),
               if (agent.isComingSoon) ...[
                 const SizedBox(height: OTSpacing.sm),
@@ -119,7 +120,10 @@ class AssistantGridCard extends StatelessWidget {
             padding: const EdgeInsets.only(top: OTSpacing.md),
             child: Row(
               children: [
-                TextButton(onPressed: onOpen, style: OTButtons.quiet(dark), child: Text(Loc.tr('openAssistant'))),
+                TextButton(
+                    onPressed: onOpen,
+                    style: OTButtons.quiet(dark),
+                    child: Text(Loc.tr('openAssistant'))),
                 const SizedBox(width: OTSpacing.xs),
                 Icon(
                   Directionality.of(context) == TextDirection.rtl
