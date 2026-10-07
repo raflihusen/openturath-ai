@@ -36,7 +36,6 @@ import 'main_shell_screen.dart';
 import '../services/bookmark_service.dart';
 import '../models/bookmark_model.dart';
 import '../services/open_turath_catalog_repository.dart';
-import '../core/legal_copy.dart';
 import '../widgets/legal_document_sheet.dart';
 import 'package:openturath_ai/core/design/ot_typography.dart';
 import 'package:intl/intl.dart' show NumberFormat;

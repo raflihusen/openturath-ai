@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../core/catalog_card_content.dart';
 import '../core/localization.dart';
 import '../models/book_model.dart';
 import 'book_identity_card.dart';
