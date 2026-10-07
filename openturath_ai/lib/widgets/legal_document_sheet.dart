@@ -135,7 +135,7 @@ class LegalDocumentSheet extends StatelessWidget {
                                 children: [
                                   ExcludeSemantics(
                                       child: Container(
-                                          padding: const EdgeInsets.all(10),
+                                          padding: const EdgeInsets.all(12),
                                           decoration: BoxDecoration(
                                               color: OTColors.surface(isDark),
                                               borderRadius:
