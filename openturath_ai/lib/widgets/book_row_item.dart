@@ -23,8 +23,9 @@ class BookRowItem extends StatelessWidget {
     // Format jilid bersih tanpa duplikasi kata
     String? formattedVolumes;
     if (book.volumesDescription != null &&
-        book.volumesDescription!.isNotEmpty) {
-      final v = book.volumesDescription!;
+        book.volumesDescription!.trim().isNotEmpty &&
+        book.volumesDescription!.trim() != '-') {
+      final v = book.volumesDescription!.trim();
       formattedVolumes = (v.contains('جزء') ||
               v.contains('مجلد') ||
               v.contains('jilid') ||
