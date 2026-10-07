@@ -663,9 +663,9 @@ class _LibraryNumbersTile extends StatelessWidget {
               ];
               return LayoutBuilder(builder: (context, box) {
                 final stacked = box.maxWidth < 360 || MediaQuery.textScalerOf(context).scale(16) > 24;
-                if (stacked) return Column(crossAxisAlignment: CrossAxisAlignment.stretch,
+                if (stacked) { return Column(crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [for (final metric in metrics) Padding(
-                    padding: const EdgeInsets.only(bottom: 16), child: metric)]);
+                    padding: const EdgeInsets.only(bottom: 16), child: metric)]); }
                 return Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
                   for (var i = 0; i < metrics.length; i++) ...[
                     if (i > 0) const SizedBox(width: 16),
