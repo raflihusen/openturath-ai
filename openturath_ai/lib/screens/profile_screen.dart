@@ -746,10 +746,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         child: Tooltip(
                             message: Loc.text(title),
                             child: Center(
-                                child:
-                                    icon == null
-                                      ? Text(title, style: ScholarlyFonts.outfit(fontSize: OTFontSize.s14, fontWeight: FontWeight.w600, color: color))
-                                      : Icon(icon, size: 22, color: color))))))));
+                                child: icon == null
+                                    ? Text(title,
+                                        style: ScholarlyFonts.outfit(
+                                            fontSize: OTFontSize.s14,
+                                            fontWeight: FontWeight.w600,
+                                            color: color))
+                                    : Icon(icon, size: 22, color: color))))))));
     return stacked ? option : Expanded(child: option);
   }
 }

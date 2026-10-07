@@ -111,7 +111,11 @@ Future<void> _shot(WidgetTester tester, String name, Widget child,
       .runAsync(() => Future<void>.delayed(const Duration(milliseconds: 300)));
   await tester.pump(const Duration(milliseconds: 900));
   await tester.pump(const Duration(milliseconds: 900));
-  final trigger = tap == null ? null : (find.text(tap).evaluate().isNotEmpty ? find.text(tap) : find.byTooltip(tap));
+  final trigger = tap == null
+      ? null
+      : (find.text(tap).evaluate().isNotEmpty
+          ? find.text(tap)
+          : find.byTooltip(tap));
   if (trigger != null && trigger.evaluate().isEmpty) {
     fail('Render $name: required action $tap was not found');
   } else if (trigger != null) {
