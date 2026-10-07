@@ -32,7 +32,6 @@ import '../widgets/library_bottom_sheet.dart';
 import 'main_shell_screen.dart';
 import '../services/bookmark_service.dart';
 import '../models/bookmark_model.dart';
-import '../widgets/assistant_grid_card.dart';
 import '../services/open_turath_catalog_repository.dart';
 import '../core/legal_copy.dart';
 import '../widgets/legal_document_sheet.dart';
