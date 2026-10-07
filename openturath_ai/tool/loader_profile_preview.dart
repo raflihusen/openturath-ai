@@ -14,39 +14,58 @@ final timings = <FrameTiming>[];
 void collect(List<FrameTiming> batch) => timings.addAll(batch);
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(MaterialApp(home: Scaffold(body: Center(child: RepaintBoundary(
-    key: boundary, child: const SizedBox(width: 240, height: 200,
-      child: ColoredBox(color: Colors.white,
-        child: AppLoader.fullscreen(title: 'OpenTurath'))))))));
+  runApp(MaterialApp(
+      home: Scaffold(
+          body: Center(
+              child: RepaintBoundary(
+                  key: boundary,
+                  child: const SizedBox(
+                      width: 240,
+                      height: 200,
+                      child: ColoredBox(
+                          color: Colors.white,
+                          child:
+                              AppLoader.fullscreen(title: 'OpenTurath'))))))));
   await Future<void>.delayed(const Duration(seconds: 2));
   SchedulerBinding.instance.addTimingsCallback(collect);
   await Future<void>.delayed(const Duration(milliseconds: 18000));
   SchedulerBinding.instance.removeTimingsCallback(collect);
   Map<String, Object> summary(List<double> values) {
     values.sort();
-    return {'frames': values.length, 'p95Ms': values[(values.length * .95).floor()],
-      'maxMs': values.last, 'over16_67Ms': values.where((v) => v > 16.67).length};
+    return {
+      'frames': values.length,
+      'p95Ms': values[(values.length * .95).floor()],
+      'maxMs': values.last,
+      'over16_67Ms': values.where((v) => v > 16.67).length
+    };
   }
+
   File('/tmp/ot-cairo-loader-profile.json').writeAsStringSync(jsonEncode({
-    'mode': 'native macOS profile', 'measurementMs': 18000, 'cycles': 10,
-    'build': summary(timings.map((t) => t.buildDuration.inMicroseconds / 1000).toList()),
-    'raster': summary(timings.map((t) => t.rasterDuration.inMicroseconds / 1000).toList()),
+    'mode': 'native macOS profile',
+    'measurementMs': 18000,
+    'cycles': 10,
+    'build': summary(
+        timings.map((t) => t.buildDuration.inMicroseconds / 1000).toList()),
+    'raster': summary(
+        timings.map((t) => t.rasterDuration.inMicroseconds / 1000).toList()),
   }));
   final directory = Directory('/tmp/ot-cairo-loader-frames')..createSync();
   final stopwatch = Stopwatch()..start();
   var frame = 0;
   while (stopwatch.elapsedMilliseconds < 18000) {
     await SchedulerBinding.instance.endOfFrame;
-    final render = boundary.currentContext!.findRenderObject()! as RenderRepaintBoundary;
+    final render =
+        boundary.currentContext!.findRenderObject()! as RenderRepaintBoundary;
     final image = await render.toImage(pixelRatio: 1);
     final bytes = await image.toByteData(format: ui.ImageByteFormat.png);
     File('${directory.path}/${frame.toString().padLeft(4, '0')}.png')
-      .writeAsBytesSync(bytes!.buffer.asUint8List());
+        .writeAsBytesSync(bytes!.buffer.asUint8List());
     image.dispose();
     frame++;
     await Future<void>.delayed(const Duration(milliseconds: 80));
   }
-  File('${directory.path}/duration.txt').writeAsStringSync('${stopwatch.elapsedMilliseconds}');
+  File('${directory.path}/duration.txt')
+      .writeAsStringSync('${stopwatch.elapsedMilliseconds}');
   debugPrint('OPENTURATH_PROFILE_REVIEW_COMPLETE');
   exit(0);
 }
