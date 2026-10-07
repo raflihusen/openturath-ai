@@ -751,5 +751,5 @@ const copyCatalog = <String, List<String>>{
   "editorNotRecorded": ["Nama muhaqqiq belum tercatat", "Editor name not recorded", "لم يُسجل اسم المحقق"],
   "catalogFailure": ["Rujukan belum dapat dimuat. Coba lagi.", "References could not be loaded. Try again.", "تعذر تحميل المراجع. حاول مجددًا."],
   "catalogSourceLabel": ["Data katalog · periksa edisi saat mengutip", "Catalog data · verify the edition when citing", "بيانات الفهرس · راجع الطبعة عند الاقتباس"],
-  "loadingReferences": ["Menyusun jawaban…", "Preparing an answer…", "جار إعداد الجواب…"],
+  "preparingAnswer": ["Menyusun jawaban…", "Preparing an answer…", "جار إعداد الجواب…"],
 };

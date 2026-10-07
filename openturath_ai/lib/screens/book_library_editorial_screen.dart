@@ -769,9 +769,9 @@ class _BentoTile extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: OTSpacing.md),
       child: LayoutBuilder(builder: (context, box) {
-        if (box.maxWidth < 560) return Column(
+        if (box.maxWidth < 560) { return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [labelRow, const SizedBox(height: OTSpacing.xs), valueText]);
+          children: [labelRow, const SizedBox(height: OTSpacing.xs), valueText]); }
         return Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
           SizedBox(width: 168, child: labelRow),
           const SizedBox(width: OTSpacing.lg),

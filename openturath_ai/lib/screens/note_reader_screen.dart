@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_markdown/flutter_markdown.dart';
+import '../widgets/scholarly_answer.dart';
 import 'package:intl/intl.dart' show Bidi;
 import '../core/design/native_fonts.dart';
 import '../core/localization.dart';
@@ -66,7 +66,6 @@ class _NoteReaderScreenState extends State<NoteReaderScreen> {
     final canvas = NativeColors.canvas(isDark);
     final primary = NativeColors.textPrimary(isDark);
     final secondary = NativeColors.textSecondary(isDark);
-    final subtle = NativeColors.surfaceSubtle(isDark);
     final displayTitle = _item.documentKind == BookmarkDocumentKind.aiAnswer
         ? aiAnswerTitle(_item.fullAnswer, _item.agentTitle)
         : _item.title;
@@ -151,49 +150,7 @@ class _NoteReaderScreenState extends State<NoteReaderScreen> {
                       const SizedBox(height: 20),
                       Divider(color: secondary.withValues(alpha: .25)),
                       const SizedBox(height: 20),
-                      Directionality(
-                          textDirection:
-                              Bidi.detectRtlDirectionality(displayContent)
-                                  ? TextDirection.rtl
-                                  : TextDirection.ltr,
-                          child: MarkdownBody(
-                            data: displayContent,
-                            selectable: true,
-                            styleSheet: MarkdownStyleSheet(
-                              // Arab kitab: Naskh 22/1,9. Latin: serif baca 16/1,7.
-                              p: RegExp(r'[\u0600-\u06FF]')
-                                      .hasMatch(displayContent)
-                                  ? NativeFonts.scheherazadeNew(
-                                      fontSize: OTFontSize.s22,
-                                      height: 1.9,
-                                      color: primary)
-                                  : NativeFonts.newsreader(
-                                      fontSize: OTFontSize.s16,
-                                      height: 1.7,
-                                      fontWeight: FontWeight.w400,
-                                      color: primary),
-                              h1: NativeFonts.newsreader(
-                                  fontSize: OTFontSize.s26,
-                                  height: 1.2,
-                                  fontWeight: FontWeight.w700,
-                                  color: primary),
-                              h2: NativeFonts.newsreader(
-                                  fontSize: OTFontSize.s20,
-                                  height: 1.25,
-                                  fontWeight: FontWeight.w700,
-                                  color: primary),
-                              blockquote: NativeFonts.outfit(
-                                  fontSize: OTFontSize.s16,
-                                  height: 1.6,
-                                  fontStyle: FontStyle.italic,
-                                  color: secondary),
-                              blockquoteDecoration: BoxDecoration(
-                                  color: subtle,
-                                  border: BorderDirectional(
-                                      start: BorderSide(
-                                          color: secondary, width: 3))),
-                            ),
-                          )),
+                      ScholarlyAnswer(text: displayContent, ink: primary, muted: secondary),
                       if (_item.citations.isNotEmpty) ...[
                         const SizedBox(height: OTSpacing.xl),
                         Divider(color: secondary.withValues(alpha: .25)),

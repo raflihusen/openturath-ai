@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_markdown/flutter_markdown.dart';
+import 'scholarly_answer.dart';
 import '../core/app_snackbar.dart';
 import '../core/copied_answer.dart';
 import '../core/design/ot_colors.dart';
@@ -78,7 +78,10 @@ class _NativeTurathChatViewState extends State<NativeTurathChatView>
         (widget.messages.isNotEmpty &&
             oldWidget.messages.isNotEmpty &&
             widget.messages.last.text != oldWidget.messages.last.text)) {
-      _scrollToBottom();
+      if (!_scrollController.hasClients ||
+          _scrollController.position.extentAfter < 96) {
+        _scrollToBottom();
+      }
     }
   }
 
@@ -330,7 +333,6 @@ class _NativeTurathChatViewState extends State<NativeTurathChatView>
     Color border,
     bool isDark,
   ) {
-    final containsArabic = RegExp(r'[\u0600-\u06FF]').hasMatch(msg.text);
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 24),
@@ -340,31 +342,7 @@ class _NativeTurathChatViewState extends State<NativeTurathChatView>
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Konten Teks Jawaban (Aliran Naskah Terbuka)
-            containsArabic
-                ? _buildScholarlyRichText(msg.text, textPrimary, textSecondary)
-                : MarkdownBody(
-                    data: msg.text,
-                    // Answers are untrusted display text. Do not fetch embedded image URLs.
-                    sizedImageBuilder: (config) => Text(config.alt ?? ''),
-                    styleSheet: MarkdownStyleSheet(
-                      p: ScholarlyFonts.outfit(
-                        fontSize: OTFontSize.s14,
-                        height: 1.65,
-                        color: textPrimary,
-                      ),
-                      strong: ScholarlyFonts.outfit(
-                        fontSize: OTFontSize.s14,
-                        fontWeight: FontWeight.w700,
-                        color: textPrimary,
-                      ),
-                      blockquote: ScholarlyFonts.outfit(
-                        fontSize: OTFontSize.s14,
-                        fontStyle: FontStyle.italic,
-                        height: 1.6,
-                        color: textSecondary,
-                      ),
-                    ),
-                  ),
+            ScholarlyAnswer(text: msg.text, ink: textPrimary, muted: textSecondary),
 
             if (msg.citations.isNotEmpty)
               ExpansionTile(
@@ -408,52 +386,6 @@ class _NativeTurathChatViewState extends State<NativeTurathChatView>
           ],
         ),
       ),
-    );
-  }
-
-  Widget _buildScholarlyRichText(
-    String raw,
-    Color textPrimary,
-    Color textSecondary,
-  ) {
-    final lines = raw.split('\n');
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: lines.map((line) {
-        final trimmed = line.trim();
-        if (trimmed.isEmpty) return const SizedBox(height: 8);
-
-        final isArabicLine = RegExp(r'[\u0600-\u06FF]').hasMatch(trimmed);
-
-        if (isArabicLine) {
-          return Padding(
-            padding: const EdgeInsets.symmetric(vertical: 4),
-            child: Text(
-              trimmed,
-              textDirection: TextDirection.rtl,
-              textAlign: TextAlign.right,
-              style: ScholarlyFonts.scheherazadeNew(
-                fontSize: OTFontSize.s18,
-                height: 2.2,
-                fontWeight: FontWeight.w400,
-                color: textPrimary,
-              ),
-            ),
-          );
-        } else {
-          return Padding(
-            padding: const EdgeInsets.symmetric(vertical: 2),
-            child: Text(
-              trimmed,
-              style: ScholarlyFonts.outfit(
-                fontSize: OTFontSize.s14,
-                height: 1.6,
-                color: textPrimary,
-              ),
-            ),
-          );
-        }
-      }).toList(),
     );
   }
 
