@@ -459,13 +459,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             Row(children: [Icon(Icons.translate_rounded, color: textSecondary),
                               const SizedBox(width: 12), Text(AppCopy.language, style: OTTypography.bodyMedium(color: textPrimary))]),
                             const SizedBox(height: 16),
-                            Directionality(textDirection: TextDirection.ltr, child: SizedBox(width: double.infinity,
-                              child: SegmentedButton<String>(
-                                showSelectedIcon: false,
-                                segments: const [ButtonSegment(value: 'id', label: Text('ID')), ButtonSegment(value: 'en', label: Text('EN')), ButtonSegment(value: 'ar', label: Text('AR'))],
-                                selected: {Loc.language},
-                                onSelectionChanged: (values) async { try { await AppConfig.setLocale(values.single); } catch (_) {} },
-                              ))),
+                            Directionality(textDirection: TextDirection.ltr, child: Container(
+                              padding: const EdgeInsets.all(4),
+                              decoration: BoxDecoration(color: OTColors.surfaceSubtle(isDark), borderRadius: OTRadius.inputBorder),
+                              child: Row(children: [for (final code in const ['id', 'en', 'ar'])
+                                _buildThemeOption(title: code.toUpperCase(),
+                                  isSelected: Loc.language == code, isDark: isDark,
+                                  textPrimary: textPrimary, textSecondary: textSecondary,
+                                  onTap: () async { try { await AppConfig.setLocale(code); } catch (_) {} }),
+                              ]))),
                           ])),
                         ],
                       ),
@@ -684,7 +686,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Widget _buildThemeOption({
     required String title,
-    required IconData icon,
+    IconData? icon,
     required bool isSelected,
     required bool isDark,
     required Color textPrimary,
