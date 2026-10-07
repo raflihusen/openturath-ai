@@ -2,6 +2,13 @@ import 'localization.dart';
 /// Utilitas penanggalan Islam (Hijriah) dan Masehi tabular dan deterministik
 /// untuk tajuk editorial OpenTurath.
 class HijriDateUtils {
+  static ({int day, String month, int year, String era}) hijriParts(DateTime date) {
+    final h = gregorianToHijri(date);
+    return (day: h.day, month: _hijriMonths[h.month - 1], year: h.year, era: _hijriEra);
+  }
+  static ({int day, String month, int year, String era}) gregorianParts(DateTime date) =>
+      (day: date.day, month: _masehiMonths[date.month - 1], year: date.year, era: _gregorianEra);
+
   static const List<String> _hijriMonthsId = [
     'Muharram',
     'Shafar',
