@@ -185,7 +185,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
         decoration: BoxDecoration(
           color: OTColors.surface(dark),
           borderRadius: BorderRadius.circular(OTRadius.card),
-          border: Border.all(color: OTColors.borderStrong(dark), width: 1.2),
+          border: Border.all(color: OTColors.surface(dark)),
         ),
         padding: const EdgeInsets.all(20),
         child: child,
@@ -380,25 +380,6 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
 
     final single = ProductPricing.specialists[_specialistIndex];
 
-    Widget eyebrow(String text) => Text(
-          text,
-          style: ScholarlyFonts.outfit(
-              fontSize: OTFontSize.s12,
-              fontWeight: FontWeight.w400,
-              color: muted),
-        );
-
-    Widget planTitle(String text) => Text(
-          text,
-          style: ScholarlyFonts.outfit(
-            fontSize: OTFontSize.s26,
-            fontWeight: FontWeight.w600,
-            letterSpacing: -0.4,
-            height: 1.2,
-            color: ink,
-          ),
-        );
-
     Widget cta(VoidCallback onPressed, int amount) => SizedBox(
           width: double.infinity,
           height: 48,
@@ -424,19 +405,31 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
       required String agentId,
     }) =>
         [
-          eyebrow(label),
-          const SizedBox(height: 6),
-          planTitle(title),
-          const SizedBox(height: 6),
-          ConstrainedBox(
-            // Dua baris: tinggi keterangan sama di kedua kartu.
-            constraints: BoxConstraints(minHeight: wide ? 44 : 0),
-            child: Text(
-              description,
-              style: OTTypography.body(color: muted)
-                  .copyWith(fontSize: OTFontSize.s14, height: 1.5),
-            ),
-          ),
+          Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                  color: agentId == flagship.id
+                      ? ink
+                      : OTColors.surfaceSubtle(dark),
+                  borderRadius: OTRadius.cardBorder),
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(label,
+                        style: OTTypography.caption(
+                            color: agentId == flagship.id
+                                ? OTColors.canvas(dark)
+                                : muted)),
+                    const SizedBox(height: 8),
+                    Text(title,
+                        style: OTTypography.screenTitle(
+                            color: agentId == flagship.id
+                                ? OTColors.canvas(dark)
+                                : ink)),
+                  ])),
+          const SizedBox(height: 12),
+          Text(description, style: OTTypography.caption(color: muted)),
           const SizedBox(height: 16),
           scope,
           const SizedBox(height: 16),
@@ -466,11 +459,9 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
         ];
 
     // Cakupan paket utama: lima asisten, sebagai teks.
-    final flagshipScope = Wrap(spacing: 8, runSpacing: 8, children: [
-      for (final sub in flagship.subAgents ?? const [])
-        Text(Loc.isArabic ? sub.nameArabic : sub.name,
-            style: OTTypography.caption(color: muted)),
-    ]);
+    final flagshipScope = Text(
+        Loc.tr('flagshipExplore', ['${flagship.subAgents?.length ?? 0}']),
+        style: OTTypography.captionMedium(color: ink));
 
     // Cakupan paket satu bidang: pemilih bidang.
     final fieldPicker = Material(
@@ -674,28 +665,12 @@ class _TierSelector extends StatelessWidget {
     final dark = Theme.of(context).brightness == Brightness.dark;
     final ink = OTColors.textPrimary(dark);
     final muted = OTColors.textSecondary(dark);
-    final stacked = MediaQuery.sizeOf(context).width < 600 ||
-        MediaQuery.textScalerOf(context).scale(16) > 24;
+    final stacked = MediaQuery.textScalerOf(context).scale(16) > 24;
     Widget option(int i) {
       final active = selected == i;
       final textColor = active ? OTColors.canvas(dark) : ink;
-      final price = Column(
-        crossAxisAlignment:
-            stacked ? CrossAxisAlignment.end : CrossAxisAlignment.center,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(offers[i].priceLabel,
-              style: OTTypography.captionMedium(color: textColor)),
-          if (offers[i].months > 1) ...[
-            const SizedBox(height: 4),
-            Text(
-                '≈ ${ProductPricing.rupiah((offers[i].amount / offers[i].months).round())}${Loc.tr('perMonth')}',
-                textAlign: stacked ? TextAlign.end : TextAlign.center,
-                style: OTTypography.caption(color: active ? textColor : muted)),
-          ],
-        ],
-      );
       final title = Text(offers[i].title,
+          textAlign: TextAlign.center,
           style: OTTypography.captionMedium(color: textColor));
       return Semantics(
         button: true,
@@ -710,15 +685,7 @@ class _TierSelector extends StatelessWidget {
               color: active ? ink : OTColors.surfaceSubtle(dark),
               borderRadius: BorderRadius.circular(OTRadius.input),
             ),
-            child: stacked
-                ? Row(children: [
-                    Expanded(child: title),
-                    const SizedBox(width: 8),
-                    Flexible(child: price)
-                  ])
-                : Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [title, const SizedBox(height: 8), price]),
+            child: Center(child: title),
           ),
         ),
       );
