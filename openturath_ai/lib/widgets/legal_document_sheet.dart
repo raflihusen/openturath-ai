@@ -78,10 +78,9 @@ class LegalDocumentSheet extends StatelessWidget {
                       children: [
                         Text(
                           title,
-                          style: ScholarlyFonts.newsreader(
+                          style: ScholarlyFonts.outfit(
                             fontSize: OTFontSize.s22,
                             fontWeight: FontWeight.w600,
-                            letterSpacing: -0.3,
                             color: textPrimary,
                           ),
                         ),
@@ -116,48 +115,51 @@ class LegalDocumentSheet extends StatelessWidget {
                 child: ListView.separated(
                   physics: const BouncingScrollPhysics(),
                   itemCount: sections.length,
-                  separatorBuilder: (context, index) => Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                    child: Divider(
-                        height: 1, color: border.withValues(alpha: 0.6)),
-                  ),
+                  separatorBuilder: (context, index) =>
+                      const SizedBox(height: 12),
                   itemBuilder: (context, index) {
                     final sec = sections[index];
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        if (AdabIcons.forSection(sec.id) != null) ...[
-                          Container(
-                              padding: const EdgeInsets.all(12),
-                              decoration: BoxDecoration(
-                                  color: OTColors.surfaceSubtle(isDark),
-                                  borderRadius: OTRadius.cardBorder),
-                              child: Icon(AdabIcons.forSection(sec.id),
-                                  size: 24, color: textPrimary)),
-                          const SizedBox(height: 12),
-                        ],
-                        Text(
-                          sec.title,
-                          style: ScholarlyFonts.newsreader(
+                    final icon = AdabIcons.forSection(sec.id);
+                    final heading = Text(sec.title,
+                        style: ScholarlyFonts.outfit(
                             fontSize: OTFontSize.s16,
                             fontWeight: FontWeight.w600,
-                            letterSpacing: -0.2,
-                            color: textPrimary,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          LocalizedLegal.displayBody(sec.content),
-                          semanticsLabel: sec.content,
-                          style: ScholarlyFonts.outfit(
-                            fontSize: OTFontSize.s14,
-                            fontWeight: FontWeight.w400,
-                            height: 1.55,
-                            color: textSecondary,
-                          ),
-                        ),
-                      ],
-                    );
+                            color: textPrimary));
+                    final content = Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          if (icon != null)
+                            Row(crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                              ExcludeSemantics(child: Container(
+                                  padding: const EdgeInsets.all(10),
+                                  decoration: BoxDecoration(
+                                      color: OTColors.surface(isDark),
+                                      borderRadius: OTRadius.cardBorder),
+                                  child: Icon(icon, size: 22, color: textPrimary))),
+                              const SizedBox(width: 12),
+                              Expanded(child: heading),
+                            ])
+                          else
+                            heading,
+                          const SizedBox(height: 12),
+                          Text(LocalizedLegal.displayBody(sec.content),
+                              semanticsLabel: sec.content,
+                              style: ScholarlyFonts.outfit(
+                                  fontSize: OTFontSize.s14,
+                                  height: 1.65,
+                                  color: textSecondary)),
+                        ]);
+                    return icon == null
+                        ? Padding(padding: const EdgeInsets.symmetric(vertical: 8),
+                            child: content)
+                        : Container(
+                            padding: const EdgeInsets.all(20),
+                            decoration: BoxDecoration(
+                                color: OTColors.surfaceSubtle(isDark),
+                                borderRadius: OTRadius.cardBorder),
+                            child: content);
                   },
                 ),
               ),
