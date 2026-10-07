@@ -83,7 +83,8 @@ Future<void> _shot(WidgetTester tester, String name, Widget child,
     String locale = 'id',
     bool dark = false,
     double textScale = 1,
-    String? tap}) async {
+    String? tap,
+    String? scrollTo}) async {
   // Jendela lebar dirender sebagai macOS, jendela sempit sebagai Android,
   // supaya lembar dan dialog adaptif tampil seperti di perangkat aslinya.
   debugDefaultTargetPlatformOverride =
@@ -129,6 +130,10 @@ Future<void> _shot(WidgetTester tester, String name, Widget child,
     await tester.runAsync(
         () => Future<void>.delayed(const Duration(milliseconds: 200)));
     await tester.pump(const Duration(milliseconds: 900));
+  }
+  if (scrollTo != null) {
+    await tester.ensureVisible(find.text(scrollTo).first);
+    await tester.pump(const Duration(milliseconds: 500));
   }
   final boundary =
       _key.currentContext!.findRenderObject()! as RenderRepaintBoundary;
@@ -238,6 +243,13 @@ void main() {
       await _shot(tester, 'ai_${width.toInt()}', const SpecialistListScreen(),
           size: Size(width, 1100));
     }
+    await _shot(tester, 'dashboard_metrics_phone', const DashboardScreen(),
+        size: const Size(390, 900), scrollTo: 'Pustaka dalam angka');
+    await _shot(tester, 'dashboard_metrics_wide', const DashboardScreen(),
+        size: const Size(1280, 900), scrollTo: 'Pustaka dalam angka');
+    await _shot(tester, 'dashboard_metrics_large', const DashboardScreen(),
+        size: const Size(600, 1100), textScale: 1.5,
+        scrollTo: 'Pustaka dalam angka');
     await _shot(tester, 'ai_phone_dark', const SpecialistListScreen(),
         size: const Size(390, 1100), dark: true);
     await _shot(tester, 'ai_phone_ar', const SpecialistListScreen(),
