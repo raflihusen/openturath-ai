@@ -82,7 +82,7 @@ void main() {
         final content = LocalizedLegal.resolve(id);
         expect(find.text(content.title), findsOneWidget);
         expect(find.text(content.sections.first.title), findsOneWidget);
-        expect(find.text(content.sections.first.content), findsOneWidget);
+        expect(find.text(LocalizedLegal.displayBody(content.sections.first.content)), findsOneWidget);
         expect(find.text(Loc.tr('close')), findsOneWidget);
         expect(tester.takeException(), isNull);
       }
