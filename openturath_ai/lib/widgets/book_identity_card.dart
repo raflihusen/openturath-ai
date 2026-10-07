@@ -42,7 +42,7 @@ class BookIdentityCard extends StatelessWidget {
                       ? ScholarlyFonts.scheherazadeNew(
                           fontSize: OTFontSize.s22,
                           height: 1.5,
-                          fontWeight: FontWeight.w700,
+                          fontWeight: FontWeight.w600,
                           color: ink)
                       : OTTypography.screenTitle(color: ink)),
               const SizedBox(height: 8),
@@ -66,31 +66,40 @@ class BookIdentityCard extends StatelessWidget {
               onTap: onTap,
               semanticLabel: '$title, $author',
               padding: const EdgeInsets.all(20),
-              child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  mainAxisSize: box.hasBoundedHeight
-                      ? MainAxisSize.max
-                      : MainAxisSize.min,
-                  children: [
-                    if (box.hasBoundedHeight)
-                      Expanded(child: identity)
-                    else
-                      identity,
-                    const SizedBox(height: 16),
-                    Wrap(
-                        spacing: 12,
-                        runSpacing: 8,
-                        crossAxisAlignment: WrapCrossAlignment.center,
-                        children: [
-                          for (final fact in facts)
-                            Text(fact,
-                                style: OTTypography.caption(color: muted)),
-                          if (deathLabel != null && !hasAuthorDate)
-                            Text(deathLabel!,
-                                textDirection: TextDirection.ltr,
-                                style: OTTypography.caption(color: muted)),
-                        ]),
-                  ]),
+              child: DecoratedBox(
+                  decoration: BoxDecoration(
+                      border: BorderDirectional(
+                          start: BorderSide(
+                              color: OTColors.borderStrong(dark)
+                                  .withValues(alpha: .2),
+                              width: 3))),
+                  child: Padding(
+                      padding: const EdgeInsetsDirectional.only(start: 16),
+                      child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          mainAxisSize: box.hasBoundedHeight
+                              ? MainAxisSize.max
+                              : MainAxisSize.min,
+                          children: [
+                            identity,
+                            const SizedBox(height: 16),
+                            Wrap(
+                                spacing: 12,
+                                runSpacing: 8,
+                                crossAxisAlignment: WrapCrossAlignment.center,
+                                children: [
+                                  for (final fact in facts)
+                                    Text(fact,
+                                        style:
+                                            OTTypography.caption(color: muted)),
+                                  if (deathLabel != null && !hasAuthorDate)
+                                    Text(deathLabel!,
+                                        textDirection: TextDirection.ltr,
+                                        style:
+                                            OTTypography.caption(color: muted)),
+                                ]),
+                            if (box.hasBoundedHeight) const Spacer(),
+                          ]))),
             ));
       });
 }
