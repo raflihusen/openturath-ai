@@ -133,7 +133,7 @@ class _TahawwulatIntroductionSheetState
     "Dakwah & sikap",
     "Al-Khuwaishah",
     "Susunan kitab",
-    "Lima asisten",
+    "Lima AI",
   ];
 
   @override
@@ -756,13 +756,13 @@ class _TahawwulatIntroductionSheetState
         _buildSectionHeader(
           context,
           tag: "Bab 12",
-          title: "Lima asisten OpenTurath",
+          title: "Lima AI OpenTurath",
           arabic:
               "الغُرَفُ الخَمْسُ لِلذَّكَاءِ الاصْطِنَاعِيِّ التَّخَصُّصِيِّ",
         ),
         const SizedBox(height: 12),
         _buildBodyText(
-          "Disiplin ini memiliki banyak istilah baru (al-muṣṭalaḥāt al-mubtakarah) dan ribuan jam rekaman ceramah penyusunnya. Karena itu OpenTurath menyediakan lima asisten dalam satu ruang kajian:",
+          "Disiplin ini memiliki banyak istilah baru (al-muṣṭalaḥāt al-mubtakarah) dan ribuan jam rekaman ceramah penyusunnya. Karena itu OpenTurath menyediakan lima AI dalam satu ruang kajian:",
           isDark,
         ),
         const SizedBox(height: 16),
@@ -1858,7 +1858,7 @@ class _TahawwulatIntroductionSheetState
             ),
             const SizedBox(width: 8),
             IconButton(
-              tooltip: Loc.isArabic ? 'عن المساعد' : 'Tentang asisten',
+              tooltip: Loc.isArabic ? 'عن المساعد' : 'Tentang AI',
               onPressed: () => showDialog<void>(
                   context: context,
                   builder: (context) => AlertDialog(
