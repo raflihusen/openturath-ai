@@ -50,7 +50,7 @@ abstract final class LegalCopy {
       content:
           'OpenTurath dikelola oleh $managerName, beralamat di $managerAddress, selanjutnya disebut "kami". '
           'Pengguna aplikasi disebut "Anda". Kontak layanan tersedia melalui $contactSupportEmail.\n\n'
-          'Ketentuan ini mengatur penggunaan akun, AI AI, katalog rujukan, Catatan, dan fitur berbayar yang disediakan melalui OpenTurath. '
+          'Ketentuan ini mengatur penggunaan akun, AI, katalog rujukan, Catatan, dan fitur berbayar yang disediakan melalui OpenTurath. '
           'Informasi paket yang ditampilkan sebelum pembelian, Kebijakan Pembayaran dan Pengembalian Dana, serta Panduan Penggunaan AI dan Pemeriksaan Rujukan menjadi bagian dari ketentuan penggunaan yang relevan.',
     ),
     LegalSection(
@@ -339,7 +339,7 @@ abstract final class LegalCopy {
     LegalSection(
       title: "Adab 1 · AI adalah alat bantu, bukan guru",
       content:
-          "Gunakan AI AI untuk memperluas pembacaan, memetakan letak bab pembahasan, dan merumuskan pertanyaan sebelum diajukan kepada guru. "
+          "Gunakan AI untuk memperluas pembacaan, memetakan letak bab pembahasan, dan merumuskan pertanyaan sebelum diajukan kepada guru. "
           "AI bukan syekh murabbi, tidak berwenang berfatwa, dan tidak menggantikan kehadiran di majelis ilmu.\n\n"
           "Kesimpulan atau penjelasan dari AI adalah bahan kajian awal yang perlu diteliti kembali kepada ulama yang berkompeten.",
     ),
