@@ -1,4 +1,5 @@
 import '../widgets/desktop_shortcuts.dart';
+import '../widgets/book_identity_card.dart';
 import 'package:flutter/material.dart';
 import '../core/design/native_design.dart';
 import 'package:flutter/services.dart';
@@ -164,9 +165,6 @@ class _OpenTurathBookLibraryPageState extends State<OpenTurathBookLibraryPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(Loc.tr('catalogSourceLabel'),
-                          style: OTTypography.caption(color: textSecondary)),
-                      const SizedBox(height: OTSpacing.md),
                       // Search Bar
                       TextField(
                         controller: _searchController,
@@ -239,14 +237,14 @@ class _OpenTurathBookLibraryPageState extends State<OpenTurathBookLibraryPage> {
                           ],
                         ),
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 8),
                       Wrap(
                           spacing: 12,
                           runSpacing: 8,
                           crossAxisAlignment: WrapCrossAlignment.center,
                           children: [
                             SizedBox(
-                                width: available < 300 ? available : 300,
+                                width: available < 240 ? available - 100 : 180,
                                 child: DropdownButton<_BookSort>(
                                     isExpanded: true,
                                     value: _sort,
@@ -281,7 +279,7 @@ class _OpenTurathBookLibraryPageState extends State<OpenTurathBookLibraryPage> {
                                 onPressed: () => setState(() => _list = true),
                                 icon: const Icon(Icons.view_list_rounded)),
                           ]),
-                      const SizedBox(height: 18),
+                      const SizedBox(height: 8),
                       Text(
                         _query.isEmpty && _filter == _BookVolumeFilter.all
                             ? Loc.tr('bookCount', ['${visibleBooks.length}'])
@@ -355,7 +353,7 @@ class _OpenTurathBookLibraryPageState extends State<OpenTurathBookLibraryPage> {
                             }
                           });
                     }, childCount: visibleBooks.length);
-                    if (_list || largeText) {
+                    if (_list || largeText || columns == 1) {
                       return SliverList(delegate: delegate);
                     }
                     return SliverGrid(
@@ -365,7 +363,7 @@ class _OpenTurathBookLibraryPageState extends State<OpenTurathBookLibraryPage> {
                             crossAxisSpacing: 16,
                             mainAxisSpacing: 16,
                             mainAxisExtent:
-                                MediaQuery.textScalerOf(context).scale(340)));
+                                MediaQuery.textScalerOf(context).scale(280)));
                   }),
                 ),
             ],
@@ -393,123 +391,17 @@ class _FilterChip extends StatelessWidget {
 }
 
 class _BookEditorialItem extends StatelessWidget {
-  const _BookEditorialItem(
-      {required this.book, required this.index, required this.onTap});
+  const _BookEditorialItem({required this.book, required this.index, required this.onTap});
   final OpenTurathBook book;
   final int index;
   final VoidCallback onTap;
   @override
-  Widget build(BuildContext context) => LayoutBuilder(builder: (context, box) {
-        final dark = Theme.of(context).brightness == Brightness.dark;
-        final ink = OTColors.textPrimary(dark);
-        final muted = OTColors.textSecondary(dark);
-        final rtl = answerDirection(book.title) == TextDirection.rtl;
-        final title = Text(book.title,
-            textDirection: answerDirection(book.title),
-            textAlign: rtl ? TextAlign.right : TextAlign.left,
-            maxLines: 3,
-            overflow: TextOverflow.ellipsis,
-            style: rtl
-                ? ScholarlyFonts.scheherazadeNew(
-                    color: ink,
-                    fontSize: OTFontSize.s26,
-                    fontWeight: FontWeight.w700,
-                    height: 1.4)
-                : OTTypography.screenTitle(color: ink));
-        final authorRtl = answerDirection(book.author) == TextDirection.rtl;
-        return Padding(
-            padding: EdgeInsets.only(bottom: box.hasBoundedHeight ? 0 : 12),
-            child: OTBentoTile(
-                onTap: onTap,
-                semanticLabel: '${book.title}, ${book.author}',
-                padding: const EdgeInsets.all(20),
-                child: Column(
-                    mainAxisSize: box.hasBoundedHeight
-                        ? MainAxisSize.max
-                        : MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Row(children: [
-                        Container(
-                            padding: const EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                                color: ink, borderRadius: OTRadius.chipBorder),
-                            child: Text(index.toString().padLeft(2, '0'),
-                                style: OTTypography.caption(
-                                    color: OTColors.surface(dark)))),
-                        const SizedBox(width: 10),
-                        Expanded(
-                            child: Text(Loc.tr('unitBooks'),
-                                style: OTTypography.caption(color: muted))),
-                        Icon(Icons.arrow_outward_rounded,
-                            size: 18, color: muted),
-                      ]),
-                      const SizedBox(height: 16),
-                      if (box.hasBoundedHeight)
-                        Expanded(
-                            child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.stretch,
-                                children: [
-                              Flexible(fit: FlexFit.loose, child: title),
-                              const SizedBox(height: 12),
-                              Text(book.author,
-                                  textDirection: answerDirection(book.author),
-                                  textAlign: authorRtl
-                                      ? TextAlign.right
-                                      : TextAlign.left,
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: authorRtl
-                                      ? ScholarlyFonts.scheherazadeNew(
-                                          color: muted,
-                                          fontSize: OTFontSize.s16,
-                                          height: 1.5)
-                                      : OTTypography.body(color: muted)),
-                              if (book.deathYear != null)
-                                Text(book.deathLabel,
-                                    textDirection: TextDirection.ltr,
-                                    textAlign: authorRtl
-                                        ? TextAlign.right
-                                        : TextAlign.left,
-                                    style: OTTypography.caption(color: muted)),
-                            ]))
-                      else ...[
-                        title,
-                        const SizedBox(height: 12),
-                        Text(book.author,
-                            textDirection: answerDirection(book.author),
-                            textAlign:
-                                authorRtl ? TextAlign.right : TextAlign.left,
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                            style: authorRtl
-                                ? ScholarlyFonts.scheherazadeNew(
-                                    color: muted,
-                                    fontSize: OTFontSize.s16,
-                                    height: 1.5)
-                                : OTTypography.body(color: muted)),
-                        if (book.deathYear != null)
-                          Text(book.deathLabel,
-                              textDirection: TextDirection.ltr,
-                              textAlign:
-                                  authorRtl ? TextAlign.right : TextAlign.left,
-                              style: OTTypography.caption(color: muted)),
-                      ],
-                      const SizedBox(height: 12),
-                      Wrap(spacing: 12, runSpacing: 4, children: [
-                        for (final fact in [book.volumeLabel, book.pagesLabel]
-                            .where((f) => f != Loc.tr('unknownMetadata')))
-                          Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 12, vertical: 8),
-                              decoration: BoxDecoration(
-                                  color: OTColors.surfaceSubtle(dark),
-                                  borderRadius: OTRadius.chipBorder),
-                              child: Text(fact,
-                                  style: OTTypography.caption(color: muted)))
-                      ]),
-                    ])));
-      });
+  Widget build(BuildContext context) => BookIdentityCard(
+    title: book.title, author: book.author,
+    deathLabel: book.deathYear == null ? null : book.deathLabel,
+    facts: [book.volumeLabel, book.pagesLabel].where((v) => v != Loc.tr('unknownMetadata')).toList(),
+    onTap: onTap,
+  );
 }
 
 class OpenTurathBookDetailPage extends StatelessWidget {
@@ -600,17 +492,7 @@ ${Loc.tr('bookScienceSection')}: ${book.section}''';
                         style: OTTypography.screenTitle(color: ink),
                       ),
                     ),
-                    IconButton(
-                      icon: Icon(Icons.copy_rounded, color: ink, size: 20),
-                      tooltip: Loc.tr('bookCitationCopy'),
-                      onPressed: () => _handleCopyCitation(context),
-                    ),
-                    IconButton(
-                      icon: Icon(Icons.bookmark_add_outlined,
-                          color: ink, size: 20),
-                      tooltip: Loc.tr('bookSave'),
-                      onPressed: () => _handleBookmark(context),
-                    ),
+
                   ],
                 ),
               ),
@@ -626,7 +508,7 @@ ${Loc.tr('bookScienceSection')}: ${book.section}''';
                           children: [
                             OTBentoTile(
                                 padding: const EdgeInsets.all(24),
-                                child: Column(
+                                child: Directionality(textDirection: answerDirection(book.title), child: Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.stretch,
                                     children: [
@@ -660,7 +542,7 @@ ${Loc.tr('bookScienceSection')}: ${book.section}''';
                                             Text(book.localizedSection,
                                                 style: OTTypography.body(
                                                     color: textSecondary)),
-                                            if (book.deathYear != null)
+                                            if (book.deathYear != null && !RegExp(r'[0-9٠-٩]').hasMatch(book.author))
                                               Text(book.deathLabel,
                                                   textDirection:
                                                       TextDirection.ltr,
@@ -690,7 +572,7 @@ ${Loc.tr('bookScienceSection')}: ${book.section}''';
                                                 label:
                                                     Text(Loc.tr('bookSave'))),
                                           ]),
-                                    ])),
+                                    ]))),
                             const SizedBox(height: OTSpacing.md),
                             _BookBentoGrid(book: book),
                             const SizedBox(height: OTSpacing.md),
