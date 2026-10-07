@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import '../core/design/ot_colors.dart';
 import '../core/design/ot_radius.dart';
 import '../core/design/ot_typography.dart';
-import '../core/localization.dart';
 import '../models/sub_agent_model.dart';
 import 'tahawwulat_hero.dart';
 
