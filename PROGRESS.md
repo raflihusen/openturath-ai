@@ -175,6 +175,18 @@ Berdasarkan `AUDIT_OPENTURATH_AI.md`, dokumen perancangan pustaka, dan keluhan k
     - Menambahkan `padding-bottom: 130px !important;` pada seluruh wadah riwayat obrolan (`.chat-panel-content`, `.chat-view`, `.conversation-container`, `.message-list`, `[role="log"]`) agar pesan terakhir tidak pernah tertutup bilah input yang melayang di dasar layar.
     - Menambahkan fungsi JS `pinInputToBottom()` di dalam siklus pembersihan `clean()` untuk memastikan posisi bawah selalu terjaga secara presisi.
 
+### Fasa 17: Pemulihan Total Layout Alami NotebookLM via `visibility: hidden` (`9a79b5c`)
+- **Akar Masalah Fundamental**:
+  1. *Perusakan Geometri Wadah Empty State*: Penggunaan `display: none !important` pada container `.empty-state`, `app-chat-empty-state`, dan traversal perusak `parentHero.previousElementSibling` melenyapkan seluruh wadah atas dari layout flow. Akibatnya, layout alami NotebookLM yang bertumpu pada flex column kehilangan penyangga vertikalnya, sehingga kotak input terdorong ke `top: 0px`.
+  2. *Upaya Posisi Fixed Artifisial*: Penambahan `position: fixed` pada `app-chat-input` memunculkan ketidakcocokan karena arsitektur internal Angular NotebookLM membungkus form dan query-box dalam kontainer yang membutuhkan aliran flex alami.
+- **Solusi Tuntas**:
+  - `notebook_ui_script.dart`:
+    - Mengeliminasi total seluruh peretasan `position: fixed` dan fungsi `pinInputToBottom()`.
+    - Mengembalikan penataan alami input chat dengan `margin-top: auto !important` dan padding/margin standar.
+    - Menghapus aturan `display: none !important` pada wadah `.empty-state` dan `app-chat-empty-state`. Wadah tetap dibiarkan eksis menjaga geometri ruang flex atas.
+    - Menyembunyikan seluruh teks judul ("AI-MUHAQQIQ"), metadata sumber ("0 sumber · ..."), dan ikon gulungan 📜 di dalam empty state secara eksklusif menggunakan `visibility: hidden !important; opacity: 0 !important; pointer-events: none !important;`.
+    - Hasil: Tampilan tengah layar 100% bersih dan putih, sementara tinggi wadah tetap kokoh menahan bilah input agar berada di dasar layar secara alami.
+
 ---
 
 ## 5. Agenda & Fokus Selanjutnya
