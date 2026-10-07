@@ -33,7 +33,7 @@ test('21 profiles include 20 active fields and an explicitly unavailable scholar
 });
 test('home preserves the requested hero, catalogue and contextual verification FAQ',()=>{
  const html=renderPage('id','',data).body;
- assert.ok(html.includes('Ilmu. Lebih dekat.'));assert.ok(html.includes('AI for Islamic Scholarship'));
+ assert.ok(html.includes(copy.id.hero));assert.ok(html.includes('AI for Islamic Scholarship'));
  assert.equal((html.match(/data-search-item /g)||[]).length,6);
  assert.equal((html.match(/class="step-number"/g)||[]).length,4);
  assert.ok(html.includes(faq.find(f=>f.id==='edition').q[0]));assert.ok(html.includes(copy.id.archiveBody));
