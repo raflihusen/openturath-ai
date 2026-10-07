@@ -58,9 +58,9 @@ class AssistantGridCard extends StatelessWidget {
     const ink = OTExpressive.white;
     const muted = OTExpressive.whiteMuted;
     final stats = LibraryStat.from(metadata).take(2).toList();
+    final openLabel = Loc.tr('openNamedAI', [Loc.text(agent.title)]);
     return OTInkCard(
       watermark: ArabicUiLabels.forAgent(agent.id, agent.titleArabic),
-      semanticLabel: '${Loc.tr('openAssistant')} ${agent.title}',
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisSize: MainAxisSize.min,
@@ -84,10 +84,10 @@ class AssistantGridCard extends StatelessWidget {
           const SizedBox(height: 20),
           Row(mainAxisAlignment: MainAxisAlignment.center, children: [
             Tooltip(
-                message: '${Loc.tr('openAssistant')} ${Loc.text(agent.title)}',
+                message: openLabel,
+                excludeFromSemantics: true,
                 child: Semantics(
-                    label:
-                        '${Loc.tr('openAssistant')} ${Loc.text(agent.title)}',
+                    label: openLabel,
                     button: true,
                     child: SizedBox(
                         width: 72,
