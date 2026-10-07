@@ -70,7 +70,7 @@ class TahawwulatFlagshipCard extends StatelessWidget {
                   style: FilledButton.styleFrom(
                       backgroundColor: OTColors.surfaceSubtle(dark),
                       foregroundColor: ink,
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                       shape: RoundedRectangleBorder(
                           borderRadius: OTRadius.cardBorder)),
                   child: Text(Loc.isArabic ? sub.nameArabic : sub.name,
