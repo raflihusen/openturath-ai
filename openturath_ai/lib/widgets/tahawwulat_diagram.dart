@@ -73,7 +73,7 @@ class _TahawwulatDiagramState extends State<TahawwulatDiagram> {
                               style: TextButton.styleFrom(
                                   overlayColor: OTExpressive.white,
                                   shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(20))),
+                                      borderRadius: BorderRadius.circular(OTExpressive.panelRadius))),
                               onPressed: () => setState(() => selected = i),
                               child: const SizedBox.expand()))),
               ]);
