@@ -173,7 +173,7 @@ class _MainShellScreenState extends State<MainShellScreen> {
                             padding: const EdgeInsets.only(top: 16, bottom: 20),
                             child:
                                 Row(mainAxisSize: MainAxisSize.min, children: [
-                              OpenTurathMark(size: 26, color: accent),
+                              SizedBox.square(dimension: 56, child: Center(child: OpenTurathMark(size: 40, color: accent))),
                               if (expandedSidebar) ...[
                                 const SizedBox(width: 10),
                                 Text('OpenTurath',
