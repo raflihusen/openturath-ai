@@ -454,20 +454,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             },
                           ),
                           Divider(height: 1, color: border),
-                          _SettingsTile(
-                            icon: Icons.translate_rounded,
-                            title: AppCopy.language,
-                            subtitle: Loc.languageNames[Loc.language]!,
-                            trailing: Icon(Icons.chevron_right_rounded,
-                                color: textSecondary, size: 20),
-                            onTap: () => _showLanguageModal(
-                              context,
-                              isDark,
-                              textPrimary,
-                              textSecondary,
-                              surface,
-                              border,
-                            ),
+                          Padding(padding: const EdgeInsets.all(24), child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start, children: [
+                            Row(children: [Icon(Icons.translate_rounded, color: textSecondary),
+                              const SizedBox(width: 12), Text(AppCopy.language, style: OTTypography.bodyMedium(color: textPrimary))]),
+                            const SizedBox(height: 16),
+                            Directionality(textDirection: TextDirection.ltr, child: SizedBox(width: double.infinity,
+                              child: SegmentedButton<String>(
+                                showSelectedIcon: false,
+                                segments: const [ButtonSegment(value: 'id', label: Text('ID')), ButtonSegment(value: 'en', label: Text('EN')), ButtonSegment(value: 'ar', label: Text('AR'))],
+                                selected: {Loc.language},
+                                onSelectionChanged: (values) async { try { await AppConfig.setLocale(values.single); } catch (_) {} },
+                              ))),
+                          ])),
                           ),
                         ],
                       ),
@@ -678,54 +677,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  void _showLanguageModal(
-    BuildContext context,
-    bool isDark,
-    Color textPrimary,
-    Color textSecondary,
-    Color surface,
-    Color border,
-  ) {
-    showDialog<void>(
-        context: context,
-        builder: (ctx) => AlertDialog(
-              title: Text(AppCopy.language),
-              contentPadding: const EdgeInsets.fromLTRB(12, 12, 12, 16),
-              content: SizedBox(
-                width: 320,
-                child: Column(mainAxisSize: MainAxisSize.min, children: [
-                  for (final entry in Loc.languageNames.entries)
-                    ListTile(
-                        shape: RoundedRectangleBorder(
-                            borderRadius:
-                                BorderRadius.circular(OTRadius.input)),
-                        title: Text(
-                          entry.value,
-                          maxLines: 1,
-                          style: OTTypography.bodyMedium(color: textPrimary)
-                              .copyWith(
-                            fontWeight: entry.key == Loc.language
-                                ? FontWeight.w600
-                                : FontWeight.w400,
-                          ),
-                        ),
-                        trailing: entry.key == Loc.language
-                            ? Icon(Icons.check_rounded,
-                                size: 20, color: textPrimary)
-                            : null,
-                        onTap: () async {
-                          Navigator.of(ctx).pop();
-                          try {
-                            await AppConfig.setLocale(entry.key);
-                          } catch (_) {
-                            // The in-memory preference is still applied.
-                          }
-                        }),
-                ]),
-              ),
-            ));
-  }
-
   static String _memberIdFor(String uid) {
     final clean = uid.replaceAll(RegExp(r'[^A-Za-z0-9]'), '').toUpperCase();
     if (clean.length < 8 || uid.startsWith('guest_')) return '';
@@ -809,18 +760,7 @@ class _MembershipPass extends StatelessWidget {
       padding: const EdgeInsets.all(OTSpacing.lg),
       decoration: BoxDecoration(
           color: OTColors.surface(isDark), borderRadius: OTRadius.cardBorder),
-      child: Stack(children: [
-        Positioned(
-            top: 0,
-            right: 0,
-            width: 120,
-            height: 100,
-            child: IgnorePointer(
-                child: ExcludeSemantics(
-                    child: CustomPaint(
-                        painter: _IdentityLines(
-                            color: muted.withValues(alpha: .10)))))),
-        Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Container(
                 padding: const EdgeInsets.all(OTSpacing.md),
@@ -859,18 +799,16 @@ class _MembershipPass extends StatelessWidget {
                   color: OTColors.surfaceSubtle(isDark),
                   borderRadius: OTRadius.cardBorder),
               child: Row(children: [
-                OpenTurathMark(size: 36, color: muted),
+                Icon(summary.isOpen ? Icons.verified_rounded : Icons.lock_outline_rounded, color: ink, size: 24),
                 const SizedBox(width: 16),
-                Expanded(
-                    child: Text(summary.accessLabel,
-                        style: OTTypography.bodyMedium(color: ink))),
+                Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  Text(summary.accessLabel, style: OTTypography.bodyMedium(color: ink)),
+                  if (expiry != null) ...[
+                    const SizedBox(height: 6),
+                    Text(unlimited ? expiry : '${AppCopy.validUntil} $expiry', style: OTTypography.caption(color: muted)),
+                  ],
+                ])),
               ])),
-          if (expiry != null)
-            Padding(
-                padding: const EdgeInsets.only(top: OTSpacing.xs),
-                child: Text(
-                    unlimited ? expiry : '${AppCopy.validUntil} $expiry',
-                    style: OTTypography.caption(color: muted))),
           const SizedBox(height: OTSpacing.lg),
           Wrap(spacing: OTSpacing.sm, runSpacing: OTSpacing.sm, children: [
             if (onViewAccess != null)
@@ -884,36 +822,9 @@ class _MembershipPass extends StatelessWidget {
                 label: Text(summary.ctaLabel)),
           ]),
         ]),
-      ]),
+
     );
   }
-}
-
-class _IdentityLines extends CustomPainter {
-  const _IdentityLines({required this.color});
-  final Color color;
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = color
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 1;
-    for (var i = 0; i < 4; i++) {
-      final inset = i * 12.0;
-      final path = Path()
-        ..moveTo(inset, size.height)
-        ..lineTo(inset, size.height * .5)
-        ..quadraticBezierTo(
-            inset, size.height * .3, size.width * .5, 4 + inset * .4)
-        ..quadraticBezierTo(size.width - inset, size.height * .3,
-            size.width - inset, size.height * .5)
-        ..lineTo(size.width - inset, size.height);
-      canvas.drawPath(path, paint);
-    }
-  }
-
-  @override
-  bool shouldRepaint(_IdentityLines old) => old.color != color;
 }
 
 class _AccountActionRow extends StatelessWidget {
