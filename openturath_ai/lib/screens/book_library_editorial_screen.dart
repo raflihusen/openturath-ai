@@ -433,10 +433,10 @@ class _BookEditorialItem extends StatelessWidget {
                         Container(
                             padding: const EdgeInsets.all(8),
                             decoration: BoxDecoration(
-                                color: ink,
-                                borderRadius: OTRadius.chipBorder),
+                                color: ink, borderRadius: OTRadius.chipBorder),
                             child: Text((index + 1).toString().padLeft(2, '0'),
-                              style: OTTypography.caption(color: OTColors.surface(dark)))),
+                                style: OTTypography.caption(
+                                    color: OTColors.surface(dark)))),
                         const SizedBox(width: 10),
                         Expanded(
                             child: Text(Loc.tr('unitBooks'),
@@ -446,49 +446,54 @@ class _BookEditorialItem extends StatelessWidget {
                       ]),
                       const SizedBox(height: 16),
                       if (box.hasBoundedHeight)
-                        Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-                          title,
-                          const SizedBox(height: 12),
-                      Text(book.author,
-                          textDirection: answerDirection(book.author),
-                          textAlign:
-                              authorRtl ? TextAlign.right : TextAlign.left,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: authorRtl
-                              ? ScholarlyFonts.scheherazadeNew(
-                                  color: muted,
-                                  fontSize: OTFontSize.s16,
-                                  height: 1.5)
-                              : OTTypography.body(color: muted)),
-                      if (book.deathYear != null)
-                        Text(book.deathLabel,
-                            textDirection: TextDirection.ltr,
-                            textAlign:
-                                authorRtl ? TextAlign.right : TextAlign.left,
-                            style: OTTypography.caption(color: muted)),
-                        ]))
+                        Expanded(
+                            child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: [
+                              title,
+                              const SizedBox(height: 12),
+                              Text(book.author,
+                                  textDirection: answerDirection(book.author),
+                                  textAlign: authorRtl
+                                      ? TextAlign.right
+                                      : TextAlign.left,
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: authorRtl
+                                      ? ScholarlyFonts.scheherazadeNew(
+                                          color: muted,
+                                          fontSize: OTFontSize.s16,
+                                          height: 1.5)
+                                      : OTTypography.body(color: muted)),
+                              if (book.deathYear != null)
+                                Text(book.deathLabel,
+                                    textDirection: TextDirection.ltr,
+                                    textAlign: authorRtl
+                                        ? TextAlign.right
+                                        : TextAlign.left,
+                                    style: OTTypography.caption(color: muted)),
+                            ]))
                       else ...[
                         title,
                         const SizedBox(height: 12),
-                      Text(book.author,
-                          textDirection: answerDirection(book.author),
-                          textAlign:
-                              authorRtl ? TextAlign.right : TextAlign.left,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: authorRtl
-                              ? ScholarlyFonts.scheherazadeNew(
-                                  color: muted,
-                                  fontSize: OTFontSize.s16,
-                                  height: 1.5)
-                              : OTTypography.body(color: muted)),
-                      if (book.deathYear != null)
-                        Text(book.deathLabel,
-                            textDirection: TextDirection.ltr,
+                        Text(book.author,
+                            textDirection: answerDirection(book.author),
                             textAlign:
                                 authorRtl ? TextAlign.right : TextAlign.left,
-                            style: OTTypography.caption(color: muted)),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: authorRtl
+                                ? ScholarlyFonts.scheherazadeNew(
+                                    color: muted,
+                                    fontSize: OTFontSize.s16,
+                                    height: 1.5)
+                                : OTTypography.body(color: muted)),
+                        if (book.deathYear != null)
+                          Text(book.deathLabel,
+                              textDirection: TextDirection.ltr,
+                              textAlign:
+                                  authorRtl ? TextAlign.right : TextAlign.left,
+                              style: OTTypography.caption(color: muted)),
                       ],
                       const SizedBox(height: 12),
                       Wrap(spacing: 12, runSpacing: 4, children: [
