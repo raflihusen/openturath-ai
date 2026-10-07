@@ -147,7 +147,8 @@ class LegalDocumentSheet extends StatelessWidget {
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          sec.content,
+                          LocalizedLegal.displayBody(sec.content),
+                          semanticsLabel: sec.content,
                           style: ScholarlyFonts.outfit(
                             fontSize: OTFontSize.s14,
                             fontWeight: FontWeight.w400,
