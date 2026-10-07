@@ -69,7 +69,7 @@ class TahawwulatHero extends StatelessWidget {
                         foregroundColor: OTExpressive.hero,
                         padding: const EdgeInsets.symmetric(
                             horizontal: 24, vertical: 16)),
-                    child: Text(reviewCopy('Buka Fikih Tahawwulat',
+                    child: Text(reviewCopy('Buka AI Fikih Tahawwulat',
                         'افتح فقه التحولات', 'Open Fiqh Tahawwulat'))),
                 TextButton(
                     onPressed: onIntroduction,
