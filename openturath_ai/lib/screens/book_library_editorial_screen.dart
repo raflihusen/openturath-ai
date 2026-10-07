@@ -365,7 +365,7 @@ class _OpenTurathBookLibraryPageState extends State<OpenTurathBookLibraryPage> {
                             crossAxisSpacing: 16,
                             mainAxisSpacing: 16,
                             mainAxisExtent:
-                                MediaQuery.textScalerOf(context).scale(320)));
+                                MediaQuery.textScalerOf(context).scale(340)));
                   }),
                 ),
             ],
@@ -433,10 +433,10 @@ class _BookEditorialItem extends StatelessWidget {
                         Container(
                             padding: const EdgeInsets.all(8),
                             decoration: BoxDecoration(
-                                color: OTColors.surfaceSubtle(dark),
+                                color: ink,
                                 borderRadius: OTRadius.chipBorder),
-                            child: Icon(Icons.menu_book_rounded,
-                                size: 18, color: muted)),
+                            child: Text((index + 1).toString().padLeft(2, '0'),
+                              style: OTTypography.caption(color: OTColors.surface(dark)))),
                         const SizedBox(width: 10),
                         Expanded(
                             child: Text(Loc.tr('unitBooks'),
@@ -446,15 +446,9 @@ class _BookEditorialItem extends StatelessWidget {
                       ]),
                       const SizedBox(height: 16),
                       if (box.hasBoundedHeight)
-                        Expanded(
-                            child: Align(
-                                alignment: rtl
-                                    ? Alignment.topRight
-                                    : Alignment.topLeft,
-                                child: title))
-                      else
-                        title,
-                      const SizedBox(height: 8),
+                        Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+                          title,
+                          const SizedBox(height: 12),
                       Text(book.author,
                           textDirection: answerDirection(book.author),
                           textAlign:
@@ -473,6 +467,29 @@ class _BookEditorialItem extends StatelessWidget {
                             textAlign:
                                 authorRtl ? TextAlign.right : TextAlign.left,
                             style: OTTypography.caption(color: muted)),
+                        ]))
+                      else ...[
+                        title,
+                        const SizedBox(height: 12),
+                      Text(book.author,
+                          textDirection: answerDirection(book.author),
+                          textAlign:
+                              authorRtl ? TextAlign.right : TextAlign.left,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: authorRtl
+                              ? ScholarlyFonts.scheherazadeNew(
+                                  color: muted,
+                                  fontSize: OTFontSize.s16,
+                                  height: 1.5)
+                              : OTTypography.body(color: muted)),
+                      if (book.deathYear != null)
+                        Text(book.deathLabel,
+                            textDirection: TextDirection.ltr,
+                            textAlign:
+                                authorRtl ? TextAlign.right : TextAlign.left,
+                            style: OTTypography.caption(color: muted)),
+                      ],
                       const SizedBox(height: 12),
                       Wrap(spacing: 12, runSpacing: 4, children: [
                         for (final fact in [book.volumeLabel, book.pagesLabel]
