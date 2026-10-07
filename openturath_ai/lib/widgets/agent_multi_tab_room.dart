@@ -1738,6 +1738,16 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
                         'Akun Google yang aktif belum dapat membuka notebook ini. Periksa akun Google yang digunakan dan izin Viewer pada notebook.';
                   });
                 }
+                else if (code != null && code >= 400) {
+                  _readinessTimer?.cancel();
+                  _inputRetryTimer?.cancel();
+                  setState(() {
+                    session.isWebLoading = false;
+                    session.isSessionReady = false;
+                    session.isTimeoutError = false;
+                    session.errorMessage = Loc.tr('roomHttpFailure', ['$code']);
+                  });
+                }
               }
             },
             onRenderProcessGone: (controller, detail) async {
