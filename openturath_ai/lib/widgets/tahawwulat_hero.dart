@@ -42,7 +42,7 @@ class TahawwulatHero extends StatelessWidget {
                             color: OTExpressive.whiteMuted,
                             fontWeight: FontWeight.w600)))
               ]),
-              const SizedBox(height: 24),
+              const SizedBox(height: 16),
               Text(
                   reviewCopy(
                       'Fikih Tahawwulat', 'فقه التحولات', 'Fiqh Tahawwulat'),
@@ -51,7 +51,7 @@ class TahawwulatHero extends StatelessWidget {
                       fontWeight: FontWeight.w600,
                       height: 1.15,
                       color: OTExpressive.white)),
-              const SizedBox(height: 20),
+              const SizedBox(height: 16),
               if (facts.isNotEmpty)
                 Wrap(spacing: 16, runSpacing: 8, children: [
                   for (final fact in facts)
@@ -60,7 +60,7 @@ class TahawwulatHero extends StatelessWidget {
                             fontSize: OTFontSize.s14,
                             color: OTExpressive.whiteMuted))
                 ]),
-              const SizedBox(height: 24),
+              const SizedBox(height: 16),
               Wrap(spacing: 12, runSpacing: 12, children: [
                 FilledButton(
                     onPressed: onOpen,
@@ -90,16 +90,16 @@ class TahawwulatHero extends StatelessWidget {
                     Expanded(flex: 3, child: text),
                     const SizedBox(width: 24),
                     const Expanded(
-                        flex: 2, child: TahawwulatDiagram(inverse: true))
+                        flex: 2, child: Center(child: SizedBox(width: 280, child: TahawwulatDiagram(inverse: true))))
                   ])
                 : Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                         text,
-                        const SizedBox(height: 20),
+                        const SizedBox(height: 16),
                         const Center(
                             child: SizedBox(
-                                width: 240,
+                                width: 180,
                                 child: TahawwulatDiagram(inverse: true)))
                       ]));
       });
