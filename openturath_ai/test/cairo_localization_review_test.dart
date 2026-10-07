@@ -83,7 +83,10 @@ void main() {
         final content = LocalizedLegal.resolve(id);
         expect(find.text(content.title), findsOneWidget);
         expect(find.text(content.sections.first.title), findsOneWidget);
-        expect(find.text(LocalizedLegal.displayBody(content.sections.first.content)), findsOneWidget);
+        expect(
+            find.text(
+                LocalizedLegal.displayBody(content.sections.first.content)),
+            findsOneWidget);
         expect(find.text(Loc.tr('close')), findsOneWidget);
         expect(tester.takeException(), isNull);
       }
@@ -102,9 +105,15 @@ void main() {
                 agent: agent,
                 onOpen: () => opened++,
                 onOpenLibrary: () => references++))));
-    expect(find.bySemanticsLabel(Loc.tr('openNamedAI', [Loc.text(agent.title)])), findsOneWidget);
-    expect(tester.getSemantics(find.byType(AssistantGridCard))
-        .getSemanticsData().hasAction(SemanticsAction.tap), isFalse);
+    expect(
+        find.bySemanticsLabel(Loc.tr('openNamedAI', [Loc.text(agent.title)])),
+        findsOneWidget);
+    expect(
+        tester
+            .getSemantics(find.byType(AssistantGridCard))
+            .getSemanticsData()
+            .hasAction(SemanticsAction.tap),
+        isFalse);
     expect(find.text(Loc.tr('openAssistant')), findsNothing);
     expect(find.text(Loc.tr('viewReferences')), findsNothing);
     await tester.tap(find.byIcon(Icons.chat_bubble_outline_rounded));
