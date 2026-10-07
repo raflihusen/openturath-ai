@@ -2174,9 +2174,9 @@ const copyCatalog = <String, List<String>>{
     "أعاد خادم صفحة AI الرمز HTTP {0}. حاول إعادة التحميل بعد قليل."
   ],
   "roomNotReadyBody": [
-    "Halaman sudah dibuka, tetapi kolom percakapan belum siap. Muat ulang atau periksa sesi Google Anda.",
-    "The page opened, but its conversation input is not ready. Reload or check your Google session.",
-    "فُتحت الصفحة، لكن حقل المحادثة لم يجهز بعد. أعد التحميل أو تحقق من جلسة Google."
+    "Kolom percakapan belum siap. Muat ulang atau periksa sesi Google Anda.",
+    "The conversation input is not ready. Reload or check your Google session.",
+    "حقل المحادثة لم يجهز بعد. أعد التحميل أو تحقق من جلسة Google."
   ],
   "roomLoadFailBody": [
     "Halaman AI gagal dimuat. Coba muat ulang; kegagalan ini dapat berasal dari halaman atau koneksi.",
