@@ -55,13 +55,13 @@ class TahawwulatFlagshipCard extends StatelessWidget {
       LayoutBuilder(builder: (context, box) {
         final columns = MediaQuery.textScalerOf(context).scale(16) > 24
             ? 1
-            : box.maxWidth >= 720
-                ? 3
+            : box.maxWidth >= 900
+                ? 5
                 : box.maxWidth >= 420
                     ? 2
                     : 1;
         final width = (box.maxWidth - (columns - 1) * 12) / columns;
-        return Wrap(spacing: 12, runSpacing: 12, children: [
+        return Wrap(alignment: WrapAlignment.center, spacing: 12, runSpacing: 12, children: [
           for (final sub in subs)
             SizedBox(
                 width: width,
@@ -70,7 +70,7 @@ class TahawwulatFlagshipCard extends StatelessWidget {
                   style: FilledButton.styleFrom(
                       backgroundColor: OTColors.surfaceSubtle(dark),
                       foregroundColor: ink,
-                      padding: const EdgeInsets.all(24),
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
                       shape: RoundedRectangleBorder(
                           borderRadius: OTRadius.cardBorder)),
                   child: Text(Loc.isArabic ? sub.nameArabic : sub.name,
