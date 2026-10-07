@@ -12,8 +12,8 @@ class NotebookNavigation {
     'ogs.google.com',
   };
   static const authenticationMessage =
-      'Koneksi asisten di dalam aplikasi belum mendukung sesi akun ini. '
-      'Login ulang OpenTurath tidak menyambungkan sesi asisten. '
+      'Koneksi AI di dalam aplikasi belum mendukung sesi akun ini. '
+      'Login ulang OpenTurath tidak menyambungkan sesi AI. '
       'Silakan kembali ke beranda.';
 
   static bool _trustedHttps(Uri uri) =>
