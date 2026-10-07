@@ -1,18 +1,9 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart' show NumberFormat;
-
-import '../widgets/ot_motion_widgets.dart';
-import '../core/design/ot_colors.dart';
-import '../core/app_snackbar.dart';
 import '../core/localization.dart';
-import '../core/scholarly_fonts.dart';
 import '../services/open_turath_catalog_repository.dart';
-import '../widgets/assistant_grid_card.dart';
+import '../models/open_turath_book.dart';
+import '../widgets/app_loader.dart';
 import 'book_library_editorial_screen.dart';
-
-import 'package:openturath_ai/core/design/ot_typography.dart';
-import 'package:openturath_ai/core/design/ot_radius.dart';
 
 String _readerTitle(String value) {
   return value
@@ -99,190 +90,22 @@ class AiLibraryOverviewPage extends StatefulWidget {
 }
 
 class _AiLibraryOverviewPageState extends State<AiLibraryOverviewPage> {
-  bool _isLoadingBooks = false;
-
-  Future<void> _handleOpenCatalog() async {
-    if (widget.onSearch != null) {
-      widget.onSearch!();
-      return;
-    }
-
-    setState(() => _isLoadingBooks = true);
-    try {
-      final books = await OpenTurathCatalogRepository.instance
-          .loadBooksForModule(widget.metadata.keyName);
-
-      if (mounted) {
-        setState(() => _isLoadingBooks = false);
-        Navigator.of(context).push(
-          MaterialPageRoute<void>(
-            builder: (_) => OpenTurathBookLibraryPage(
-              books: books,
-              collectionName: _collectionTitle(widget.metadata),
-            ),
-          ),
-        );
-      }
-    } catch (_) {
-      if (mounted) {
-        setState(() => _isLoadingBooks = false);
-        AppSnackBar.error(context, Loc.tr('catalogError'));
-      }
-    }
-  }
-
+  late Future<List<OpenTurathBook>> _books = OpenTurathCatalogRepository.instance
+      .loadBooksForModule(widget.metadata.keyName);
   @override
-  Widget build(BuildContext context) {
-    Loc.watch(context);
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final ink = OTColors.textPrimary(isDark);
-    final muted = OTColors.textSecondary(isDark);
-    final border = OTColors.border(isDark);
-    final metadata = widget.metadata;
-    final stats = [
-      ...LibraryStat.from(metadata),
-      if (metadata.totalKata > 0)
-        LibraryStat(
-          NumberFormat.compact(locale: Loc.language).format(metadata.totalKata),
-          Loc.tr('libraryWords').toLowerCase(),
-        ),
-    ];
-
-    return Scaffold(
-      backgroundColor: OTColors.canvas(isDark),
-      appBar: AppBar(
-        titleSpacing: otTitleSpacing(context),
-        title: Text(Loc.tr('libraryOverview')),
-        backgroundColor: OTColors.canvas(isDark),
-      ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(20, 8, 20, 40),
-          child: Center(
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 720),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.all(24),
-                    decoration: BoxDecoration(
-                      color: OTColors.surface(isDark),
-                      borderRadius: BorderRadius.circular(OTRadius.card),
-                      border: Border.all(color: OTColors.surface(isDark)),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          _collectionTitle(metadata),
-                          style: Loc.isArabic
-                              ? ScholarlyFonts.scheherazadeNew(
-                                  color: ink,
-                                  fontSize: OTFontSize.s26,
-                                  fontWeight: FontWeight.w700,
-                                  height: 1.6,
-                                )
-                              : ScholarlyFonts.newsreader(
-                                  color: ink,
-                                  fontSize: OTFontSize.s26,
-                                  fontWeight: FontWeight.w600,
-                                  letterSpacing: -0.5,
-                                  height: 1.2,
-                                ),
-                        ),
-                        if (!Loc.isArabic && metadata.namaArab.isNotEmpty) ...[
-                          const SizedBox(height: 2),
-                          Text(
-                            metadata.namaArab,
-                            textDirection: TextDirection.rtl,
-                            style: ScholarlyFonts.scheherazadeNew(
-                              color: muted,
-                              fontSize: OTFontSize.s20,
-                              height: 1.6,
-                            ),
-                          ),
-                        ],
-                        const SizedBox(height: 10),
-                        Text(
-                          Loc.tr('librarySummary'),
-                          style: ScholarlyFonts.outfit(
-                              color: muted,
-                              fontSize: OTFontSize.s14,
-                              height: 1.55),
-                        ),
-                        if (stats.isNotEmpty) ...[
-                          const SizedBox(height: 20),
-                          Divider(height: 1, color: border),
-                          const SizedBox(height: 20),
-                          // Angka pustaka yang benar-benar tercatat.
-                          Wrap(
-                            spacing: 36,
-                            runSpacing: 16,
-                            children: [
-                              for (final stat in stats)
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      stat.value,
-                                      style: ScholarlyFonts.outfit(
-                                        fontSize: OTFontSize.s26,
-                                        fontWeight: FontWeight.w600,
-                                        letterSpacing: -0.5,
-                                        color: ink,
-                                      ).copyWith(fontFeatures: const [
-                                        FontFeature.tabularFigures()
-                                      ]),
-                                    ),
-                                    Text(
-                                      stat.unit,
-                                      style: ScholarlyFonts.outfit(
-                                          fontSize: OTFontSize.s14,
-                                          color: muted),
-                                    ),
-                                  ],
-                                ),
-                            ],
-                          ),
-                        ],
-                        const SizedBox(height: 24),
-                        FilledButton.icon(
-                          onPressed:
-                              _isLoadingBooks ? null : _handleOpenCatalog,
-                          iconAlignment: IconAlignment.end,
-                          icon: _isLoadingBooks
-                              ? const SizedBox(
-                                  width: 16,
-                                  height: 16,
-                                  child:
-                                      CircularProgressIndicator(strokeWidth: 2),
-                                )
-                              : const Icon(Icons.arrow_forward_rounded,
-                                  size: 18),
-                          label: Text(_isLoadingBooks
-                              ? Loc.tr('libraryOpening')
-                              : Loc.tr('openCatalog')),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  Padding(
-                    padding: const EdgeInsetsDirectional.only(start: 4),
-                    child: Text(
-                      Loc.tr('libraryDataNote'),
-                      style: ScholarlyFonts.outfit(
-                          fontSize: OTFontSize.s12, color: muted),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
+  Widget build(BuildContext context) => FutureBuilder<List<OpenTurathBook>>(
+    future: _books,
+    builder: (context, snapshot) {
+      if (snapshot.hasData) return OpenTurathBookLibraryPage(
+        books: snapshot.data!, metadata: widget.metadata,
+        collectionName: _collectionTitle(widget.metadata));
+      return Scaffold(appBar: AppBar(title: Text(Loc.tr('libraryOverview'))),
+        body: snapshot.hasError ? Center(child: Column(mainAxisSize: MainAxisSize.min, children: [
+          Text(Loc.tr('catalogFailure')),
+          const SizedBox(height: 16),
+          FilledButton(onPressed: () => setState(() {
+            _books = OpenTurathCatalogRepository.instance.loadBooksForModule(widget.metadata.keyName);
+          }), child: Text(Loc.tr('retryCatalog'))),
+        ])) : AppLoader.fullscreen(subtitle: Loc.tr('loadingReferences')));
+    });
 }
