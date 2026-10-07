@@ -1,0 +1,32 @@
+Branch: codex/minimalist-redesign-2026-10-07
+Recovery point: 7ad4243
+
+c343930 feat(design): bangun permukaan tonal radius lembut dan hierarki antarmuka minimal
+13c8b34 feat(ui): utamakan pencarian beranda dan navigasi berlabel dengan panel kajian ringan
+5052cce feat(settings): ganti kartu bergaya ATM dengan identitas dan akses akun yang ringkas
+49e2bf9 feat(copy): jelaskan tindakan asisten rujukan dan masa akses dalam tiga bahasa
+6bffcdd feat(library): ubah katalog menjadi daftar editorial dan pisahkan catatan edisi dari muhaqqiq
+d85c881 fix(reading): tambah renderer paragraf bilingual dengan isolasi Arab dan Markdown
+2df735a fix(reading): gunakan renderer bilingual bersama dan pertahankan posisi baca saat streaming
+46d30df fix(webview): pertahankan arah paragraf Latin dengan kutipan Arab dan uji skrip aktif
+2f2a36d fix(catalog): buka daftar langsung dan bedakan katalog gagal dari koleksi kosong
+c00154e feat(subscription): sederhanakan pilihan durasi dan tampilkan total pembayaran secara jelas
+9932dc8 fix(telemetry): redaksi email dan batasi laporan jarak jauh pada akun terautentikasi
+eb10253 fix(ux): pertahankan menu jawaban scrollbar dan diagnostik kegagalan pembayaran
+8ffb2bc fix(validation): perbaiki literal redaksi dan label katalog terlokalisasi
+2573498 feat(collection): ganti panel hitam dengan koleksi tonal dan daftar asisten yang mudah dibaca
+0774dc0 fix(review): sambungkan pengenalan dan simpan status rujukan sesuai bukti katalog
+f329eed test(visual): jadikan error render kegagalan dan tambah bukti jawaban bilingual serta ponsel
+58ac3e3 fix(collection): gunakan ikon navigasi adaptif dari komponen bersama
+634b8a5 fix(polish): hilangkan overflow tema border input ganda dan warna kutipan bawaan
+05d3647 feat(catalog): tampilkan status pemuatan dan pemulihan kegagalan pada satu halaman
+023b9b1 test(catalog): lindungi batas data rusak asal edisi dan identitas koleksi
+cecd4e1 fix(catalog): rapikan panel edisi dan lokalisasi aksi pemulihan
+1ddf385 test(responsive): verifikasi shell aplikasi Arab ponsel dan pembesaran teks pengaturan
+9bf11e9 fix(markdown): pertahankan blok kode dan pisahkan pengantar Arab dari penjelasan Latin
+5aedd61 fix(accessibility): susun pilihan tema secara vertikal saat teks diperbesar
+2b55e0a style(redesign): rapikan format kode antarmuka dan pengujian
+103cca3 fix(layout): finalisasi pilihan tema aksesibel dan tiga kolom desktop yang seimbang
+1ca352d docs(design): sinkronkan pedoman dan sumber token terpadu dengan desain baru
+9717f62 fix(validation): bersihkan lint dan konsistenkan total pada ringkasan checkout
+51c16a6 test(chat): pertahankan alur kirim dua pertanyaan dengan label aksesibel baru
