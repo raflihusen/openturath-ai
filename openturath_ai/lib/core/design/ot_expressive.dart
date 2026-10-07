@@ -8,6 +8,7 @@ abstract final class OTExpressive {
       : width >= 280
           ? OTFontSize.s18
           : OTFontSize.s14;
+  static const transparent = Color(0x00FFFFFF);
   static const white = Color(0xFFFFFFFF);
   static const whiteMuted = Color(0xB3FFFFFF);
   static const black = Color(0xFF000000);
