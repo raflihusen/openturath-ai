@@ -772,7 +772,7 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                                     const SizedBox(width: 6),
                                     Text(
                                       session.agent.title
-                                          .replaceFirst('AI ', ''),
+                                          ,
                                       style: ScholarlyFonts.outfit(
                                         fontSize: OTFontSize.s12,
                                         fontWeight: isActive
