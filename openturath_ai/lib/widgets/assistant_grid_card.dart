@@ -63,7 +63,7 @@ class AssistantGridCard extends StatelessWidget {
 
     return OTBentoTile(
       onTap: onOpen,
-      semanticLabel: '${Loc.tr('startStudy')} ${agent.title}',
+      semanticLabel: '${Loc.tr('openAssistant')} ${agent.title}',
       padding: const EdgeInsets.fromLTRB(
           OTSpacing.lg, OTSpacing.lg, OTSpacing.sm, OTSpacing.sm),
       child: Column(
@@ -95,6 +95,12 @@ class AssistantGridCard extends StatelessWidget {
                   ),
                 ),
               ],
+              if (agent.subtitleAcademic.isNotEmpty) ...[
+                const SizedBox(height: OTSpacing.sm),
+                Text(Loc.text(agent.subtitleAcademic), maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: OTTypography.body(color: muted)),
+              ],
               // Satu baris metadata, bukan deretan pil: angka tetap terbaca
               // tanpa membuat kartu terasa seperti kumpulan tombol.
               if (stats.isNotEmpty) ...[
@@ -121,7 +127,7 @@ class AssistantGridCard extends StatelessWidget {
             child: Row(
               children: [
                 Text(
-                  Loc.tr('startStudy'),
+                  Loc.tr('openAssistant'),
                   style: OTTypography.button(color: ink),
                 ),
                 const SizedBox(width: OTSpacing.xs),
@@ -137,7 +143,7 @@ class AssistantGridCard extends StatelessWidget {
                   TextButton(
                     onPressed: onOpenLibrary,
                     style: OTButtons.quiet(dark),
-                    child: Text(Loc.tr('libraryShort')),
+                    child: Text(Loc.tr('viewReferences')),
                   ),
               ],
             ),

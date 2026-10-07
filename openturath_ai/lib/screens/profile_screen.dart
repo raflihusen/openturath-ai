@@ -799,7 +799,7 @@ class _MembershipPass extends StatelessWidget {
     final muted = OTColors.textSecondary(isDark);
     final unlimited = summary.isOpen &&
         (summary.expiresAt == null || summary.expiresAt!.year >= 2090);
-    final expiry = unlimited ? Loc.tr('noExpiry')
+    final expiry = unlimited ? Loc.tr('lifetimeAccess')
         : summary.expiresAt == null ? null
         : HijriDateUtils.formatMasehiOnly(summary.expiresAt!.toLocal());
     return Container(

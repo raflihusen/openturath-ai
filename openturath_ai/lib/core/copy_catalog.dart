@@ -743,4 +743,13 @@ const copyCatalog = <String, List<String>>{
   "updateBannerDescMobile": ["Selesai diunduh di latar belakang. Ketuk pasang untuk menerapkan.", "Downloaded in the background. Tap install to apply.", "اكتمل التنزيل في الخلفية. اضغط تثبيت للتطبيق."],
   "updateBannerActionDesktop": ["Perbarui", "Update", "تحديث"],
   "updateBannerActionMobile": ["Pasang", "Install", "تثبيت"],
+  "openAssistant": ["Buka asisten", "Open assistant", "افتح المساعد"],
+  "viewReferences": ["Lihat rujukan", "View references", "عرض المراجع"],
+  "lifetimeAccess": ["Tanpa batas waktu", "No expiry", "بلا حد زمني"],
+  "editionNote": ["Catatan edisi", "Edition note", "ملاحظة الطبعة"],
+  "metadataReview": ["Data edisi ini perlu diperiksa pada sumber katalog.", "Check these edition details against the catalog source.", "تحتاج بيانات هذه الطبعة إلى مراجعة مصدر الفهرس."],
+  "editorNotRecorded": ["Nama muhaqqiq belum tercatat", "Editor name not recorded", "لم يُسجل اسم المحقق"],
+  "catalogFailure": ["Rujukan belum dapat dimuat. Coba lagi.", "References could not be loaded. Try again.", "تعذر تحميل المراجع. حاول مجددًا."],
+  "catalogSourceLabel": ["Data katalog · periksa edisi saat mengutip", "Catalog data · verify the edition when citing", "بيانات الفهرس · راجع الطبعة عند الاقتباس"],
+  "loadingReferences": ["Menyusun jawaban…", "Preparing an answer…", "جار إعداد الجواب…"],
 };
