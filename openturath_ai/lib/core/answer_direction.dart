@@ -23,7 +23,7 @@ String isolateArabicPhrases(String text) {
   }
   return text.replaceAllMapped(
     RegExp(
-        r'[\u0620-\u064A\u066E-\u06D3\u06FA-\u06FC\u0750-\u077F\u08A0-\u08C9]+(?:[ \t]+[\u0620-\u064A\u066E-\u06D3\u06FA-\u06FC\u0750-\u077F\u08A0-\u08C9]+)*'),
+        r'[\u0620-\u065F\u0670\u066E-\u06D3\u06FA-\u06FC\u0750-\u077F\u08A0-\u08FF]+(?:[ \t]+[\u0620-\u065F\u0670\u066E-\u06D3\u06FA-\u06FC\u0750-\u077F\u08A0-\u08FF]+)*'),
     (match) => '\u2067${match.group(0)}\u2069',
   );
 }
