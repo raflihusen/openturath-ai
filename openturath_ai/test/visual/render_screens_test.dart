@@ -18,6 +18,7 @@ import 'package:openturath_ai/models/user_model.dart';
 import 'package:openturath_ai/models/turath_chat_message.dart';
 import 'package:openturath_ai/widgets/native_turath_chat_view.dart';
 import 'package:openturath_ai/screens/dashboard_screen.dart';
+import 'package:openturath_ai/screens/specialist_list_screen.dart';
 import 'package:openturath_ai/screens/main_shell_screen.dart';
 import 'package:openturath_ai/screens/bookmark_screen.dart';
 import 'package:openturath_ai/screens/login_screen.dart';
@@ -31,10 +32,8 @@ import 'package:openturath_ai/screens/subscription_screen.dart';
 import 'package:openturath_ai/services/auth_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:openturath_ai/services/open_turath_catalog_repository.dart';
-import 'package:openturath_ai/widgets/assistant_grid_card.dart';
 import 'package:openturath_ai/widgets/exclusive_activation_dialog.dart';
 import 'package:openturath_ai/widgets/legal_document_sheet.dart';
-import 'package:openturath_ai/widgets/tahawwulat_flagship_card.dart';
 import 'package:openturath_ai/widgets/tahawwulat_introduction_sheet.dart';
 
 final _dir = Platform.environment['OT_SNAPSHOT_DIR'];
@@ -157,62 +156,12 @@ void main() {
                   'buildSignature': ''
                 });
     await tester.runAsync(_loadFonts);
-    final meta = await tester.runAsync(
-            () => OpenTurathCatalogRepository.instance.loadAllMetadata()) ??
-        const <String, AiLibraryMetadata>{};
     final agents = AgentModel.defaultAgents
         .where((a) => a.kind == CorpusKind.discipline)
         .toList();
     final flagship = agents.firstWhere((a) => a.id == 'fiqh_tahawwulat');
-    final others = agents.where((a) => a.id != flagship.id).take(6).toList();
-
-    Widget assistants() => Scaffold(
-          body: SingleChildScrollView(
-            padding: const EdgeInsets.all(20),
-            child: Column(children: [
-              TahawwulatFlagshipCard(
-                agent: flagship,
-                metadata: meta['fiqh_tahawwulat'],
-                isSubscribed: true,
-                onOpenMain: () {},
-                onOpenSubAgent: (_) {},
-                onOpenLibrary: () {},
-              ),
-              const SizedBox(height: 12),
-              for (var i = 0; i < others.length; i += 3)
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 12),
-                  child: IntrinsicHeight(
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        for (var c = i;
-                            c < i + 3 && c < others.length;
-                            c++) ...[
-                          if (c > i) const SizedBox(width: 12),
-                          Expanded(
-                            child: AssistantGridCard(
-                              agent: others[c],
-                              metadata:
-                                  OpenTurathCatalogRepository.exactMetadata(
-                                      meta, others[c].id),
-                              onOpen: () {},
-                              onOpenLibrary: () {},
-                            ),
-                          ),
-                        ],
-                      ],
-                    ),
-                  ),
-                ),
-            ]),
-          ),
-        );
-
     for (final locale in ['id', 'ar']) {
       await _shot(tester, 'login_$locale', const LoginScreen(), locale: locale);
-      await _shot(tester, 'assistants_$locale', assistants(),
-          size: const Size(1000, 1100), locale: locale);
       await _shot(tester, 'tahawwulat_$locale',
           const TahawwulatIntroductionSheet(asPage: true),
           size: const Size(1280, 1500), locale: locale);
@@ -244,6 +193,20 @@ void main() {
       await _shot(tester, 'subscription_$locale', const SubscriptionScreen(),
           size: const Size(950, 1500), locale: locale);
     }
+    for (final locale in ['id', 'ar']) {
+      await _shot(tester, 'assistants_$locale', const SpecialistListScreen(),
+        size: const Size(1000, 1500), locale: locale);
+    }
+    for (final width in [320.0, 390.0, 600.0, 850.0, 1280.0, 1440.0]) {
+      await _shot(tester, 'ai_${width.toInt()}', const SpecialistListScreen(),
+        size: Size(width, 1100));
+    }
+    await _shot(tester, 'ai_phone_dark', const SpecialistListScreen(),
+      size: const Size(390, 1100), dark: true);
+    await _shot(tester, 'ai_phone_ar', const SpecialistListScreen(),
+      size: const Size(390, 1100), locale: 'ar');
+    await _shot(tester, 'ai_large_text', const SpecialistListScreen(),
+      size: const Size(390, 1400), textScale: 2);
     Widget mixedChat() => Scaffold(
         appBar: AppBar(title: const Text('Fikih Tahawwulat: Al-Muhaqqiq')),
         body: NativeTurathChatView(
@@ -301,7 +264,7 @@ void main() {
         AppErrorState(
           icon: Icons.link_off_rounded,
           title: Loc.tr('roomAuthTitle'),
-          message: Loc.tr('roomAuthBody'),
+          message: Loc.tr('roomAuthBody', ['contoh@openturath.id']),
           retryLabel: Loc.tr('roomOpenInBrowser'),
           retryIcon: Icons.open_in_new_rounded,
           onRetry: () {},
@@ -340,7 +303,7 @@ void main() {
     }
     await _shot(tester, 'dlg_redeem', const SubscriptionScreen(),
         size: const Size(850, 1500), tap: 'Gunakan voucher');
-    await _shot(tester, 'dlg_language', const ProfileScreen(),
+    await _shot(tester, 'profile_language', const ProfileScreen(),
         size: win, tap: 'Bahasa');
     await _shot(tester, 'dlg_about', const ProfileScreen(),
         size: win, tap: 'Tentang OpenTurath');
@@ -383,6 +346,10 @@ void main() {
           OpenTurathBookLibraryPage(
               books: libraryBooks, collectionName: "Fikih Syafi'i"),
           size: win);
+      await _shot(tester, 'library_books_dark', OpenTurathBookLibraryPage(
+        books: libraryBooks, collectionName: "Fikih Syafi'i"), size: const Size(1280, 900), dark: true);
+      await _shot(tester, 'library_books_large_text', OpenTurathBookLibraryPage(
+        books: libraryBooks, collectionName: "Fikih Syafi'i"), size: const Size(390, 1100), textScale: 2);
       await _shot(tester, 'library_book_detail',
           OpenTurathBookDetailPage(book: libraryBooks.first),
           size: win);
@@ -428,6 +395,6 @@ void main() {
                         onPressed: () =>
                             LegalDocumentSheet.showAiGuideline(context),
                         child: const Text('open'))))),
-        size: const Size(950, 900));
+        size: const Size(950, 900), tap: 'open');
   });
 }
