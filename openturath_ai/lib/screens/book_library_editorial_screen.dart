@@ -368,7 +368,7 @@ class _OpenTurathBookLibraryPageState extends State<OpenTurathBookLibraryPage> {
                             crossAxisSpacing: 16,
                             mainAxisSpacing: 16,
                             mainAxisExtent:
-                                MediaQuery.textScalerOf(context).scale(280)));
+                                MediaQuery.textScalerOf(context).scale(252)));
                   }),
                 ),
             ],
