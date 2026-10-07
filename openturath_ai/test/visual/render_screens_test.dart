@@ -36,6 +36,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:openturath_ai/services/open_turath_catalog_repository.dart';
 import 'package:openturath_ai/widgets/exclusive_activation_dialog.dart';
 import 'package:openturath_ai/widgets/legal_document_sheet.dart';
+import 'package:openturath_ai/core/localized_legal.dart';
 import 'package:openturath_ai/widgets/tahawwulat_introduction_sheet.dart';
 
 final _dir = Platform.environment['OT_SNAPSHOT_DIR'];
@@ -182,6 +183,22 @@ void main() {
     await _shot(tester, 'tahawwulat_phone',
         const Scaffold(body: TahawwulatIntroductionSheet()),
         size: const Size(390, 844));
+    for (final locale in ['en', 'ar']) {
+      for (final id in LegalDocumentId.values) {
+        await _shot(tester, 'document_${id.name}_$locale',
+            Scaffold(body: LegalDocumentSheet(documentId: id)),
+            size: const Size(850, 1000), locale: locale);
+      }
+    }
+    await _shot(tester, 'cairo_specimen', Scaffold(body: Center(
+      child: Column(mainAxisSize: MainAxisSize.min, children: [
+        for (final weight in [FontWeight.w400, FontWeight.w600, FontWeight.w700])
+          Padding(padding: const EdgeInsets.all(24), child: Text(
+            'الشَّافِعِي • الحَنْبَلِي • عُلُوم العَرَبِيَّة',
+            textDirection: TextDirection.rtl,
+            style: TextStyle(fontFamily: 'NativeArabicUI', fontSize: 36,
+              fontWeight: weight, height: 1.8))),
+      ]))), size: const Size(1100, 600));
     await _shot(tester, 'login_dark', const LoginScreen(), dark: true);
     SharedPreferences.setMockInitialValues({});
     AuthService.previewUser = UserModel(
