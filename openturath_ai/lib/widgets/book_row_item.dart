@@ -23,9 +23,13 @@ class BookRowItem extends StatelessWidget {
     Loc.watch(context);
     // Format jilid bersih tanpa duplikasi kata
     String? formattedVolumes;
-    if (book.volumesDescription != null && book.volumesDescription!.isNotEmpty) {
+    if (book.volumesDescription != null &&
+        book.volumesDescription!.isNotEmpty) {
       final v = book.volumesDescription!;
-      formattedVolumes = (v.contains('جزء') || v.contains('مجلد') || v.contains('jilid') || v.contains('Jilid'))
+      formattedVolumes = (v.contains('جزء') ||
+              v.contains('مجلد') ||
+              v.contains('jilid') ||
+              v.contains('Jilid'))
           ? v
           : Loc.tr('volumeCount', [v]);
     } else if (book.volumesCount != null && book.volumesCount! > 0) {
@@ -40,14 +44,16 @@ class BookRowItem extends StatelessWidget {
       editorLabel: Loc.tr('ui_ad39f1c3af'),
     );
 
-    final hasDeathYear = book.verifiedDeathYearHijri != null &&
-        book.verifiedDeathYearHijri! > 0;
+    final hasDeathYear =
+        book.verifiedDeathYearHijri != null && book.verifiedDeathYearHijri! > 0;
 
     return BookIdentityCard(
       title: book.titleArabic,
       author: book.authorArabic,
       facts: facts.take(2).toList(),
-      deathLabel: hasDeathYear ? Loc.tr('deathYear', ['${book.verifiedDeathYearHijri}']) : null,
+      deathLabel: hasDeathYear
+          ? Loc.tr('deathYear', ['${book.verifiedDeathYearHijri}'])
+          : null,
       onTap: onTap,
     );
   }
