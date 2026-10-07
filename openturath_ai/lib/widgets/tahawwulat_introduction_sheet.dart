@@ -8,7 +8,6 @@ import '../core/design/ot_colors.dart';
 import '../core/design/ot_motion.dart';
 import '../models/agent_model.dart';
 import '../models/sub_agent_model.dart';
-import 'apple_interactive_wrapper.dart';
 import 'tahawwulat_diagram.dart';
 import 'tahawwulat_hero.dart';
 import '../core/scholarly_fonts.dart';
@@ -380,23 +379,6 @@ class _TahawwulatIntroductionSheetState
                 children: [
                   cover,
                   Center(
-                      child: ConstrainedBox(
-                          constraints: const BoxConstraints(maxWidth: 600),
-                          child: Padding(
-                              padding: const EdgeInsets.all(24),
-                              child: Column(children: [
-                                const TahawwulatDiagram(interactive: true),
-                                const SizedBox(height: 16),
-                                Text(
-                                    reviewCopy(
-                                        'Diagram editorial dari kerangka pembahasan Fikih Tahawwulat Al-Habib Abu Bakar Al-Adni bin Ali Al-Masyhur.',
-                                        'رسم توضيحي لإطار فقه التحولات عند الحبيب أبي بكر العدني بن علي المشهور.',
-                                        'Editorial diagram of the Fiqh Tahawwulat framework of Al-Habib Abu Bakar Al-Adni bin Ali Al-Masyhur.'),
-                                    textAlign: TextAlign.center,
-                                    style: OTTypography.caption(
-                                        color: textSecondary)),
-                              ])))),
-                  Center(
                     child: ConstrainedBox(
                       constraints: const BoxConstraints(maxWidth: 920),
                       child: Padding(
@@ -591,6 +573,23 @@ class _TahawwulatIntroductionSheetState
           isDark,
         ),
         const SizedBox(height: 16),
+                  Center(
+                      child: ConstrainedBox(
+                          constraints: const BoxConstraints(maxWidth: 600),
+                          child: Padding(
+                              padding: const EdgeInsets.all(24),
+                              child: Column(children: [
+                                const TahawwulatDiagram(interactive: true),
+                                const SizedBox(height: 16),
+                                Text(
+                                    reviewCopy(
+                                        'Diagram editorial dari kerangka pembahasan Fikih Tahawwulat Al-Habib Abu Bakar Al-Adni bin Ali Al-Masyhur.',
+                                        'رسم توضيحي لإطار فقه التحولات عند الحبيب أبي بكر العدني بن علي المشهور.',
+                                        'Editorial diagram of the Fiqh Tahawwulat framework of Al-Habib Abu Bakar Al-Adni bin Ali Al-Masyhur.'),
+                                    textAlign: TextAlign.center,
+                                    style: OTTypography.caption(
+                                        color: textSecondary)),
+                              ])))),
         _buildFourPillarsFlowchart(context, isDark),
         const SizedBox(height: 24),
       ],
