@@ -517,114 +517,140 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           const SizedBox(height: 14),
 
                           // Setiap bidang tampil sebagai kartu direktori keilmuan adaptif berkelas.
-                          GridView.builder(
-                            physics: const NeverScrollableScrollPhysics(),
-                            shrinkWrap: true,
-                            gridDelegate:
-                                SliverGridDelegateWithMaxCrossAxisExtent(
-                              maxCrossAxisExtent: 320,
-                              crossAxisSpacing: 12,
-                              mainAxisSpacing: 12,
-                              mainAxisExtent:
-                                  MediaQuery.textScalerOf(context).scale(124),
-                            ),
-                            itemCount: _curatedDisciplines.length,
-                            itemBuilder: (context, index) {
-                              final disc = _curatedDisciplines[index];
-                              // Jumlah dihitung dari daftar asisten, bukan angka tetap.
-                              final members = _agents
-                                  .where((agent) =>
-                                      agent.kind == CorpusKind.discipline &&
-                                      agent.fieldId == disc.fieldId)
-                                  .toList();
-                              return OTReveal(
-                                index: index + 2,
-                                child: OTBentoTile(
-                                  semanticLabel: Loc.text(disc.name),
-                                  onTap: () {
-                                    final shell =
-                                        MainShellController.of(context);
-                                    if (shell != null) {
-                                      shell.switchTab(1, fieldId: disc.fieldId);
-                                    } else {
-                                      NavigationGuard.safePushNamed(
-                                        context,
-                                        AppRoutes.specialistList,
-                                        arguments: {'fieldId': disc.fieldId},
-                                      );
-                                    }
-                                  },
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Row(
-                                        children: [
-                                          Expanded(
-                                            child: Text(
-                                              Loc.text(disc.name),
-                                              maxLines: 1,
-                                              overflow: TextOverflow.ellipsis,
-                                              style: ScholarlyFonts.newsreader(
-                                                fontSize: OTFontSize.s20,
-                                                fontWeight: FontWeight.w600,
-                                                letterSpacing: -0.25,
-                                                color: textPrimary,
+                          LayoutBuilder(
+                              builder: (context, box) => GridView.builder(
+                                    physics:
+                                        const NeverScrollableScrollPhysics(),
+                                    shrinkWrap: true,
+                                    gridDelegate:
+                                        SliverGridDelegateWithFixedCrossAxisCount(
+                                      crossAxisCount:
+                                          MediaQuery.textScalerOf(context)
+                                                      .scale(14) >
+                                                  18
+                                              ? 1
+                                              : box.maxWidth >= 700
+                                                  ? 3
+                                                  : box.maxWidth >= 340
+                                                      ? 2
+                                                      : 1,
+                                      crossAxisSpacing: 12,
+                                      mainAxisSpacing: 12,
+                                      mainAxisExtent:
+                                          MediaQuery.textScalerOf(context)
+                                              .scale(124),
+                                    ),
+                                    itemCount: _curatedDisciplines.length,
+                                    itemBuilder: (context, index) {
+                                      final disc = _curatedDisciplines[index];
+                                      // Jumlah dihitung dari daftar asisten, bukan angka tetap.
+                                      final members = _agents
+                                          .where((agent) =>
+                                              agent.kind ==
+                                                  CorpusKind.discipline &&
+                                              agent.fieldId == disc.fieldId)
+                                          .toList();
+                                      return OTReveal(
+                                        index: index + 2,
+                                        child: OTBentoTile(
+                                          semanticLabel: Loc.text(disc.name),
+                                          onTap: () {
+                                            final shell =
+                                                MainShellController.of(context);
+                                            if (shell != null) {
+                                              shell.switchTab(1,
+                                                  fieldId: disc.fieldId);
+                                            } else {
+                                              NavigationGuard.safePushNamed(
+                                                context,
+                                                AppRoutes.specialistList,
+                                                arguments: {
+                                                  'fieldId': disc.fieldId
+                                                },
+                                              );
+                                            }
+                                          },
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Row(
+                                                children: [
+                                                  Expanded(
+                                                    child: Text(
+                                                      Loc.text(disc.name),
+                                                      maxLines: 1,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      style: ScholarlyFonts
+                                                          .newsreader(
+                                                        fontSize:
+                                                            OTFontSize.s20,
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                        letterSpacing: -0.25,
+                                                        color: textPrimary,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
                                               ),
-                                            ),
+                                              const Spacer(),
+                                              Text(
+                                                AppCopy
+                                                    .assistantsAvailableCount(
+                                                        members.isEmpty
+                                                            ? disc
+                                                                .specialistCount
+                                                            : members.length),
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
+                                                style: ScholarlyFonts.outfit(
+                                                  fontSize: OTFontSize.s14,
+                                                  fontWeight: FontWeight.w600,
+                                                  color: textPrimary,
+                                                ),
+                                              ),
+                                              // Nama Arab bidang ilmu adalah wajah kartu;
+                                              // di antarmuka Arab judulnya sudah Arab.
+                                              if (!Loc.isArabic &&
+                                                  NativeCopy.values[
+                                                          'field_${disc.fieldId}'] !=
+                                                      null)
+                                                Text(
+                                                  NativeCopy.values[
+                                                      'field_${disc.fieldId}']![2],
+                                                  maxLines: 1,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  textDirection:
+                                                      TextDirection.rtl,
+                                                  style: ScholarlyFonts
+                                                      .scheherazadeNew(
+                                                    fontSize: OTFontSize.s16,
+                                                    color: textSecondary,
+                                                  ),
+                                                )
+                                              else if (members.isNotEmpty)
+                                                Text(
+                                                  members
+                                                      .map((agent) =>
+                                                          Loc.text(agent.title))
+                                                      .join(' · '),
+                                                  maxLines: 1,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  style: ScholarlyFonts.outfit(
+                                                    fontSize: OTFontSize.s12,
+                                                    color: textSecondary,
+                                                  ),
+                                                ),
+                                            ],
                                           ),
-                                        ],
-                                      ),
-                                      const Spacer(),
-                                      Text(
-                                        AppCopy.assistantsAvailableCount(
-                                            members.isEmpty
-                                                ? disc.specialistCount
-                                                : members.length),
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: ScholarlyFonts.outfit(
-                                          fontSize: OTFontSize.s14,
-                                          fontWeight: FontWeight.w600,
-                                          color: textPrimary,
                                         ),
-                                      ),
-                                      // Nama Arab bidang ilmu adalah wajah kartu;
-                                      // di antarmuka Arab judulnya sudah Arab.
-                                      if (!Loc.isArabic &&
-                                          NativeCopy.values[
-                                                  'field_${disc.fieldId}'] !=
-                                              null)
-                                        Text(
-                                          NativeCopy.values[
-                                              'field_${disc.fieldId}']![2],
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                          textDirection: TextDirection.rtl,
-                                          style: ScholarlyFonts.scheherazadeNew(
-                                            fontSize: OTFontSize.s16,
-                                            color: textSecondary,
-                                          ),
-                                        )
-                                      else if (members.isNotEmpty)
-                                        Text(
-                                          members
-                                              .map((agent) =>
-                                                  Loc.text(agent.title))
-                                              .join(' · '),
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: ScholarlyFonts.outfit(
-                                            fontSize: OTFontSize.s12,
-                                            color: textSecondary,
-                                          ),
-                                        ),
-                                    ],
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
+                                      );
+                                    },
+                                  )),
                           const SizedBox(height: 12),
                           const _RecentNoteTile(),
                           const SizedBox(height: 12),

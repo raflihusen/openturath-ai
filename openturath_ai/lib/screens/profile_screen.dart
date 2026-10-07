@@ -396,8 +396,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                         borderRadius: BorderRadius.circular(
                                             OTRadius.input),
                                       ),
-                                      child: LayoutBuilder(builder: (context, box) {
-                                        final stacked = box.maxWidth < 440 && MediaQuery.textScalerOf(context).scale(14) > 18;
+                                      child: LayoutBuilder(
+                                          builder: (context, box) {
+                                        final stacked = box.maxWidth < 440 &&
+                                            MediaQuery.textScalerOf(context)
+                                                    .scale(14) >
+                                                18;
                                         final choices = <Widget>[
                                           _buildThemeOption(
                                             stacked: stacked,
@@ -436,7 +440,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                 ThemeMode.dark),
                                           ),
                                         ];
-                                        return stacked ? Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: choices)
+                                        return stacked
+                                            ? Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.stretch,
+                                                children: choices)
                                             : Row(children: choices);
                                       }),
                                     ),
@@ -725,34 +733,59 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Widget _buildThemeOption({
-    required String title, required IconData icon, required bool isSelected,
-    required bool isDark, required Color textPrimary, required Color textSecondary,
-    required VoidCallback onTap, bool stacked = false,
+    required String title,
+    required IconData icon,
+    required bool isSelected,
+    required bool isDark,
+    required Color textPrimary,
+    required Color textSecondary,
+    required VoidCallback onTap,
+    bool stacked = false,
   }) {
     final color = isSelected ? textPrimary : textSecondary;
-    final option = Semantics(button: true, selected: isSelected,
-      child: Material(color: isSelected ? OTColors.surface(isDark) : Colors.transparent,
-        borderRadius: BorderRadius.circular(OTRadius.input),
-        child: InkWell(onTap: () { HapticFeedback.selectionClick(); onTap(); },
-          borderRadius: BorderRadius.circular(OTRadius.input),
-          child: ConstrainedBox(constraints: const BoxConstraints(minHeight: 48),
-            child: Padding(padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
-              child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                Icon(icon, size: 16, color: color), const SizedBox(width: 4),
-                Flexible(child: Text(Loc.text(title), textAlign: TextAlign.center,
-                  style: OTTypography.bodyMedium(color: color))),
-              ])))));
+    final option = Semantics(
+        button: true,
+        selected: isSelected,
+        child: Material(
+            color: isSelected ? OTColors.surface(isDark) : Colors.transparent,
+            borderRadius: BorderRadius.circular(OTRadius.input),
+            child: InkWell(
+                onTap: () {
+                  HapticFeedback.selectionClick();
+                  onTap();
+                },
+                borderRadius: BorderRadius.circular(OTRadius.input),
+                child: ConstrainedBox(
+                    constraints: const BoxConstraints(minHeight: 48),
+                    child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 4, vertical: 8),
+                        child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(icon, size: 16, color: color),
+                              const SizedBox(width: 4),
+                              Flexible(
+                                  child: Text(Loc.text(title),
+                                      textAlign: TextAlign.center,
+                                      style: OTTypography.bodyMedium(
+                                          color: color))),
+                            ]))))));
     return stacked ? option : Expanded(child: option);
   }
-
 }
 
 /// Kartu akses anggota: merangkum identitas, status, dan ruang AI yang dapat
 /// dipakai tanpa menyamarkan halaman pengaturan sebagai layar perbankan.
 class _MembershipPass extends StatelessWidget {
-  const _MembershipPass({required this.holderName, required this.email,
-    required this.summary, required this.isDark, required this.onManage,
-    this.onViewAccess, this.memberId = ''});
+  const _MembershipPass(
+      {required this.holderName,
+      required this.email,
+      required this.summary,
+      required this.isDark,
+      required this.onManage,
+      this.onViewAccess,
+      this.memberId = ''});
   final String holderName;
   final String email;
   final String memberId;
@@ -767,40 +800,53 @@ class _MembershipPass extends StatelessWidget {
     final muted = OTColors.textSecondary(isDark);
     final unlimited = summary.isOpen &&
         (summary.expiresAt == null || summary.expiresAt!.year >= 2090);
-    final expiry = unlimited ? Loc.tr('lifetimeAccess')
-        : summary.expiresAt == null ? null
-        : HijriDateUtils.formatMasehiOnly(summary.expiresAt!.toLocal());
+    final expiry = unlimited
+        ? Loc.tr('lifetimeAccess')
+        : summary.expiresAt == null
+            ? null
+            : HijriDateUtils.formatMasehiOnly(summary.expiresAt!.toLocal());
     return Container(
       padding: const EdgeInsets.all(OTSpacing.lg),
-      decoration: BoxDecoration(color: OTColors.surface(isDark),
-        borderRadius: OTRadius.cardBorder),
+      decoration: BoxDecoration(
+          color: OTColors.surface(isDark), borderRadius: OTRadius.cardBorder),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Container(padding: const EdgeInsets.all(OTSpacing.md),
-            decoration: BoxDecoration(color: OTColors.surfaceSubtle(isDark),
-              borderRadius: OTRadius.inputBorder),
-            child: OpenTurathMark(size: 28, color: ink)),
+          Container(
+              padding: const EdgeInsets.all(OTSpacing.md),
+              decoration: BoxDecoration(
+                  color: OTColors.surfaceSubtle(isDark),
+                  borderRadius: OTRadius.inputBorder),
+              child: OpenTurathMark(size: 28, color: ink)),
           const SizedBox(width: OTSpacing.md),
-          Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(holderName, style: OTTypography.screenTitle(color: ink)),
-              if (email.isNotEmpty) Text(email, textDirection: TextDirection.ltr,
-                style: OTTypography.caption(color: muted)),
-            ])),
+          Expanded(
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                Text(holderName, style: OTTypography.screenTitle(color: ink)),
+                if (email.isNotEmpty)
+                  Text(email,
+                      textDirection: TextDirection.ltr,
+                      style: OTTypography.caption(color: muted)),
+              ])),
         ]),
         const SizedBox(height: OTSpacing.lg),
         Text(summary.accessLabel, style: OTTypography.bodyMedium(color: ink)),
-        if (expiry != null) Padding(padding: const EdgeInsets.only(top: OTSpacing.xs),
-          child: Text(unlimited ? expiry : '${AppCopy.validUntil} $expiry',
-            style: OTTypography.caption(color: muted))),
+        if (expiry != null)
+          Padding(
+              padding: const EdgeInsets.only(top: OTSpacing.xs),
+              child: Text(unlimited ? expiry : '${AppCopy.validUntil} $expiry',
+                  style: OTTypography.caption(color: muted))),
         const SizedBox(height: OTSpacing.lg),
         Wrap(spacing: OTSpacing.sm, runSpacing: OTSpacing.sm, children: [
-          if (onViewAccess != null) OutlinedButton.icon(onPressed: onViewAccess,
-            icon: const Icon(Icons.auto_stories_outlined, size: 18),
-            label: Text(Loc.tr('viewAccessList'))),
-          FilledButton.icon(onPressed: onManage,
-            icon: const Icon(Icons.tune_rounded, size: 18),
-            label: Text(summary.ctaLabel)),
+          if (onViewAccess != null)
+            OutlinedButton.icon(
+                onPressed: onViewAccess,
+                icon: const Icon(Icons.auto_stories_outlined, size: 18),
+                label: Text(Loc.tr('viewAccessList'))),
+          FilledButton.icon(
+              onPressed: onManage,
+              icon: const Icon(Icons.tune_rounded, size: 18),
+              label: Text(summary.ctaLabel)),
         ]),
       ]),
     );
