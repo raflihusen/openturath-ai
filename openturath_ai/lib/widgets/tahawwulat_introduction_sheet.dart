@@ -573,23 +573,23 @@ class _TahawwulatIntroductionSheetState
           isDark,
         ),
         const SizedBox(height: 16),
-                  Center(
-                      child: ConstrainedBox(
-                          constraints: const BoxConstraints(maxWidth: 600),
-                          child: Padding(
-                              padding: const EdgeInsets.all(24),
-                              child: Column(children: [
-                                const TahawwulatDiagram(interactive: true),
-                                const SizedBox(height: 16),
-                                Text(
-                                    reviewCopy(
-                                        'Diagram editorial dari kerangka pembahasan Fikih Tahawwulat Al-Habib Abu Bakar Al-Adni bin Ali Al-Masyhur.',
-                                        'رسم توضيحي لإطار فقه التحولات عند الحبيب أبي بكر العدني بن علي المشهور.',
-                                        'Editorial diagram of the Fiqh Tahawwulat framework of Al-Habib Abu Bakar Al-Adni bin Ali Al-Masyhur.'),
-                                    textAlign: TextAlign.center,
-                                    style: OTTypography.caption(
-                                        color: OTColors.textSecondary(isDark))),
-                              ])))),
+        Center(
+            child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 600),
+                child: Padding(
+                    padding: const EdgeInsets.all(24),
+                    child: Column(children: [
+                      const TahawwulatDiagram(interactive: true),
+                      const SizedBox(height: 16),
+                      Text(
+                          reviewCopy(
+                              'Diagram editorial dari kerangka pembahasan Fikih Tahawwulat Al-Habib Abu Bakar Al-Adni bin Ali Al-Masyhur.',
+                              'رسم توضيحي لإطار فقه التحولات عند الحبيب أبي بكر العدني بن علي المشهور.',
+                              'Editorial diagram of the Fiqh Tahawwulat framework of Al-Habib Abu Bakar Al-Adni bin Ali Al-Masyhur.'),
+                          textAlign: TextAlign.center,
+                          style: OTTypography.caption(
+                              color: OTColors.textSecondary(isDark))),
+                    ])))),
         _buildFourPillarsFlowchart(context, isDark),
         const SizedBox(height: 24),
       ],
