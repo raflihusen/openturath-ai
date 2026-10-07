@@ -54,7 +54,7 @@ class _TahawwulatDiagramState extends State<TahawwulatDiagram> {
     ]);
   }
   Widget _label(int i,double extent,Color color) => Text(i == 3 ? 'علامات\nالساعة' : arabic[i], textDirection: TextDirection.rtl, textAlign: TextAlign.center,
-    style: TextStyle(fontFamily: 'NativeArabicUI', fontSize: (extent / 17).clamp(OTFontSize.s12,OTFontSize.s22), fontWeight: FontWeight.w600, color: color));
+    style: TextStyle(fontFamily: 'NativeArabicUI', fontSize: OTExpressive.diagramFontSize(extent), fontWeight: FontWeight.w600, color: color));
 }
 class _SectorsPainter extends CustomPainter {
   const _SectorsPainter({required this.selected,required this.inverse});
