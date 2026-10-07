@@ -486,7 +486,20 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                       return OTReveal(
                                         index: index + 2,
                                         child: OTInkCard(
-                                          watermark: const {'fiqh': 'الفقه', 'hadith': 'الحديث', 'tafsir': 'التفسير', 'aqidah': 'العقيدة', 'usul_fiqh': 'أصول الفقه', 'arabic': 'العربية', 'usul': 'أصول الفقه', 'arabic_language': 'العربية'}[disc.fieldId] ?? NativeCopy.values['field_${disc.fieldId}']?[2] ?? '',
+                                          watermark: const {
+                                                'fiqh': 'الفقه',
+                                                'hadith': 'الحديث',
+                                                'tafsir': 'التفسير',
+                                                'aqidah': 'العقيدة',
+                                                'usul_fiqh': 'أصول الفقه',
+                                                'arabic': 'العربية',
+                                                'usul': 'أصول الفقه',
+                                                'arabic_language': 'العربية'
+                                              }[disc.fieldId] ??
+                                              NativeCopy.values[
+                                                      'field_${disc.fieldId}']
+                                                  ?[2] ??
+                                              '',
                                           semanticLabel:
                                               'AI ${Loc.text(disc.name)}',
                                           onTap: () {
@@ -645,31 +658,49 @@ class _LibraryNumbersTile extends StatelessWidget {
               final pages = all.values
                   .fold<int>(0, (sum, item) => sum + item.totalHalaman);
               Widget stat(String value, String label) => Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(value, style: ScholarlyFonts.outfit(
-                    fontSize: OTFontSize.s22, fontWeight: FontWeight.w600,
-                    color: OTExpressive.white)),
-                  const SizedBox(height: 6),
-                  Text(label, style: ScholarlyFonts.outfit(
-                    fontSize: OTFontSize.s12, color: OTExpressive.whiteMuted)),
-                ]);
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(value,
+                            style: ScholarlyFonts.outfit(
+                                fontSize: OTFontSize.s22,
+                                fontWeight: FontWeight.w600,
+                                color: OTExpressive.white)),
+                        const SizedBox(height: 6),
+                        Text(label,
+                            style: ScholarlyFonts.outfit(
+                                fontSize: OTFontSize.s12,
+                                color: OTExpressive.whiteMuted)),
+                      ]);
               final metrics = [
                 stat(number.format(all.length), Loc.tr('loginStatLibraries')),
-                stat(Loc.atLeast(number.format(entries ~/ 100 * 100)), Loc.tr('loginStatEntries')),
-                stat(Loc.atLeast(number.format(pages ~/ 100000 / 10), Loc.tr('unitMillion')), Loc.tr('loginStatPages')),
+                stat(Loc.atLeast(number.format(entries ~/ 100 * 100)),
+                    Loc.tr('loginStatEntries')),
+                stat(
+                    Loc.atLeast(number.format(pages ~/ 100000 / 10),
+                        Loc.tr('unitMillion')),
+                    Loc.tr('loginStatPages')),
               ];
               return LayoutBuilder(builder: (context, box) {
-                final stacked = box.maxWidth < 360 || MediaQuery.textScalerOf(context).scale(16) > 24;
-                if (stacked) { return Column(crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [for (final metric in metrics) Padding(
-                    padding: const EdgeInsets.only(bottom: 16), child: metric)]); }
-                return Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  for (var i = 0; i < metrics.length; i++) ...[
-                    if (i > 0) const SizedBox(width: 16),
-                    Expanded(child: metrics[i]),
-                  ],
-                ]);
+                final stacked = box.maxWidth < 360 ||
+                    MediaQuery.textScalerOf(context).scale(16) > 24;
+                if (stacked) {
+                  return Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        for (final metric in metrics)
+                          Padding(
+                              padding: const EdgeInsets.only(bottom: 16),
+                              child: metric)
+                      ]);
+                }
+                return Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      for (var i = 0; i < metrics.length; i++) ...[
+                        if (i > 0) const SizedBox(width: 16),
+                        Expanded(child: metrics[i]),
+                      ],
+                    ]);
               });
             },
           ),
@@ -809,7 +840,13 @@ class _AdabOfDayTile extends StatelessWidget {
               style: ScholarlyFonts.outfit(
                   fontSize: OTFontSize.s14, height: 1.5, color: muted)),
           const SizedBox(height: 12),
-          Text(Loc.language == 'ar' ? 'قراءة الدليل' : Loc.language == 'en' ? 'Read guide' : 'Baca panduan', style: OTTypography.captionMedium(color: ink)),
+          Text(
+              Loc.language == 'ar'
+                  ? 'قراءة الدليل'
+                  : Loc.language == 'en'
+                      ? 'Read guide'
+                      : 'Baca panduan',
+              style: OTTypography.captionMedium(color: ink)),
         ],
       ),
     );
