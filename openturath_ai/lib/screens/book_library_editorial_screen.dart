@@ -57,7 +57,7 @@ class _OpenTurathBookLibraryPageState extends State<OpenTurathBookLibraryPage> {
 
   String _query = '';
   _BookSort _sort = _BookSort.title;
-  bool _list = false;
+  bool _list = true;
   bool _opening = false;
   _BookVolumeFilter _filter = _BookVolumeFilter.all;
 
