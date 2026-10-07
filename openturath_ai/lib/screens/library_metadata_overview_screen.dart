@@ -90,24 +90,33 @@ class AiLibraryOverviewPage extends StatefulWidget {
 }
 
 class _AiLibraryOverviewPageState extends State<AiLibraryOverviewPage> {
-  late Future<List<OpenTurathBook>> _books = OpenTurathCatalogRepository.instance
+  late Future<List<OpenTurathBook>> _books = OpenTurathCatalogRepository
+      .instance
       .loadBooksForModule(widget.metadata.keyName);
   @override
   Widget build(BuildContext context) => FutureBuilder<List<OpenTurathBook>>(
-    future: _books,
-    builder: (context, snapshot) {
-      if (snapshot.hasData) {
-        return OpenTurathBookLibraryPage(
-          books: snapshot.data!, metadata: widget.metadata,
-          collectionName: _collectionTitle(widget.metadata));
-      }
-      return Scaffold(appBar: AppBar(title: Text(Loc.tr('libraryOverview'))),
-        body: snapshot.hasError ? Center(child: Column(mainAxisSize: MainAxisSize.min, children: [
-          Text(Loc.tr('catalogFailure')),
-          const SizedBox(height: 16),
-          FilledButton(onPressed: () => setState(() {
-            _books = OpenTurathCatalogRepository.instance.loadBooksForModule(widget.metadata.keyName);
-          }), child: Text(Loc.tr('retryCatalog'))),
-        ])) : AppLoader.fullscreen(subtitle: Loc.tr('loadingReferences')));
-    });
+      future: _books,
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          return OpenTurathBookLibraryPage(
+              books: snapshot.data!,
+              metadata: widget.metadata,
+              collectionName: _collectionTitle(widget.metadata));
+        }
+        return Scaffold(
+            appBar: AppBar(title: Text(Loc.tr('libraryOverview'))),
+            body: snapshot.hasError
+                ? Center(
+                    child: Column(mainAxisSize: MainAxisSize.min, children: [
+                    Text(Loc.tr('catalogFailure')),
+                    const SizedBox(height: 16),
+                    FilledButton(
+                        onPressed: () => setState(() {
+                              _books = OpenTurathCatalogRepository.instance
+                                  .loadBooksForModule(widget.metadata.keyName);
+                            }),
+                        child: Text(Loc.tr('retryCatalog'))),
+                  ]))
+                : AppLoader.fullscreen(subtitle: Loc.tr('loadingReferences')));
+      });
 }
