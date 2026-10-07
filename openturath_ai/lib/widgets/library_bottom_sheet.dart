@@ -30,7 +30,7 @@ Future<void> showResearchLibrary(
     if (!context.mounted) return;
     Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) =>
         OpenTurathBookLibraryPage(books: books,
-            collectionName: Loc.text(agent?.title ?? metadata?.nama ?? AppCopy.libraryShort),
+            collectionName: Loc.text(agent?.title ?? metadata?.nama ?? Loc.tr('libraryShort')),
             metadata: metadata)));
   } catch (_) {
     if (context.mounted) AppSnackBar.error(context, Loc.tr('catalogFailure'));

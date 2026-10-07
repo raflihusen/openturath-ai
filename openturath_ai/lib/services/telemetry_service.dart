@@ -123,7 +123,7 @@ class TelemetryService {
     );
 
     sanitized = sanitized.replaceAll(
-      RegExp(r'[A-Za-z0-9.!#$%&'*+/=?^_`{|}~-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}'),
+      RegExp(r'''[A-Za-z0-9.!#$%&'*+/=?^_`{|}~-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}'''),
       '[REDACTED_EMAIL]',
     );
     return sanitized;
@@ -179,7 +179,7 @@ class TelemetryService {
       final user = _firebaseAuth.currentUser;
       // Remote reporting requires an authenticated owner; pre-login errors stay local.
       if (user == null) return;
-      final maskedUserEmail = user?.email != null ? maskEmail(user!.email!) : '';
+      final maskedUserEmail = user.email != null ? maskEmail(user.email!) : '';
 
       final sanitizedExtra = <String, dynamic>{};
       if (extra != null) {
@@ -196,7 +196,7 @@ class TelemetryService {
         'stackTrace': stackStr.length > 5000 ? stackStr.substring(0, 5000) : stackStr,
         'breadcrumbs': List<Map<String, dynamic>>.from(_breadcrumbs),
         'extra': sanitizedExtra,
-        'userId': user?.uid ?? 'unauthenticated',
+        'userId': user.uid,
         'userEmail': maskedUserEmail,
         'platform': kIsWeb ? 'web' : Platform.operatingSystem,
         'deviceTimestamp': now.toIso8601String(),
