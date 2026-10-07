@@ -262,7 +262,7 @@ void main() {
                   isUser: false,
                   timestamp: DateTime(2026),
                   text:
-                      '## Memahami kebahagiaan\n\nIni contoh tampilan bilingual. Istilah **السعادة** berada dalam paragraf Indonesia tanpa mengubah arah baca. Rujukan perlu diperiksa pada edisi kitab yang digunakan.\n\n> السعادة في الدارين\n\n### Langkah telaah\n\n1. Baca kutipan sumber.\n2. Periksa konteks dan halaman.\n3. Pisahkan kutipan dari penjelasan AI.',
+                      '## Memahami kebahagiaan\n\nIni contoh tampilan bilingual. Istilah **السَّعَادَة** berada dalam paragraf Indonesia tanpa mengubah arah baca. Rujukan perlu diperiksa pada edisi kitab yang digunakan.\n\n> السعادة في الدارين\n\n### Langkah telaah\n\n1. Baca kutipan sumber.\n2. Periksa konteks dan halaman.\n3. Pisahkan kutipan dari penjelasan AI.',
                   citations: const [
                     'Contoh tampilan · bukan kutipan terverifikasi'
                   ])
