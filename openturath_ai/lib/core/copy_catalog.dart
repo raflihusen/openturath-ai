@@ -2111,7 +2111,7 @@ const copyCatalog = <String, List<String>>{
   "unitPages": ["halaman", "pages", "صفحة"],
   "unitLectures": ["muhadharah", "lectures", "محاضرة"],
   "flagshipPositioning": [
-    "AI AI yang dibangun khusus untuk Fikih Tahawwulat.",
+    "AI yang dibangun khusus untuk Fikih Tahawwulat.",
     "An AI assistant built specifically for Fiqh al-Tahawwulat.",
     "مساعد ذكي بُني خصيصًا لفقه التحولات."
   ],
