@@ -440,8 +440,8 @@ class _TahawwulatIntroductionSheetState
                   icon: const Icon(Icons.format_list_bulleted_rounded),
                   onSelected: (id) {
                     final target = _chapterKeys[id]?.currentContext;
-                    if (target != null) Scrollable.ensureVisible(target,
-                      duration: MediaQuery.disableAnimationsOf(context) ? Duration.zero : OTMotion.transition);
+                    if (target != null) { Scrollable.ensureVisible(target,
+                      duration: MediaQuery.disableAnimationsOf(context) ? Duration.zero : OTMotion.transition); }
                   },
                   itemBuilder: (_) => [for (final chapter in _chapters)
                     PopupMenuItem(value: chapter.$1, child: Directionality(
