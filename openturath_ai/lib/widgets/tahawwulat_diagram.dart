@@ -51,7 +51,10 @@ class _TahawwulatDiagramState extends State<TahawwulatDiagram> {
     final artwork = TahawwulatArtwork(blendEdges: widget.inverse);
     return Column(mainAxisSize: MainAxisSize.min, children: [
       if (!widget.interactive)
-        Semantics(image: true, label: List.generate(4, label).join(', '), child: artwork)
+        Semantics(
+            image: true,
+            label: List.generate(4, label).join(', '),
+            child: artwork)
       else
         AspectRatio(
             aspectRatio: 1,
@@ -73,17 +76,32 @@ class _TahawwulatDiagramState extends State<TahawwulatDiagram> {
                               style: TextButton.styleFrom(
                                   overlayColor: OTExpressive.white,
                                   shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(OTExpressive.panelRadius))),
+                                      borderRadius: BorderRadius.circular(
+                                          OTExpressive.panelRadius))),
                               onPressed: () => setState(() => selected = i),
                               child: AnimatedContainer(
-                                duration: MediaQuery.disableAnimationsOf(context) ? Duration.zero : const Duration(milliseconds: 200),
+                                duration:
+                                    MediaQuery.disableAnimationsOf(context)
+                                        ? Duration.zero
+                                        : const Duration(milliseconds: 200),
                                 decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(OTExpressive.panelRadius),
-                                  border: Border.all(width: 2,
-                                    color: selected == i ? OTExpressive.white : OTExpressive.transparent)),
-                                child: Align(alignment: Alignment.topRight,
-                                  child: selected == i ? const Padding(padding: EdgeInsets.all(12),
-                                    child: Icon(Icons.check_circle_rounded, color: OTExpressive.white, size: 24)) : null),
+                                    borderRadius: BorderRadius.circular(
+                                        OTExpressive.panelRadius),
+                                    border: Border.all(
+                                        width: 2,
+                                        color: selected == i
+                                            ? OTExpressive.white
+                                            : OTExpressive.transparent)),
+                                child: Align(
+                                    alignment: Alignment.topRight,
+                                    child: selected == i
+                                        ? const Padding(
+                                            padding: EdgeInsets.all(12),
+                                            child: Icon(
+                                                Icons.check_circle_rounded,
+                                                color: OTExpressive.white,
+                                                size: 24))
+                                        : null),
                               )))),
               ]);
             })),
