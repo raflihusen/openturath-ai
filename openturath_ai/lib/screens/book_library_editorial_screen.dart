@@ -389,85 +389,31 @@ class _FilterChip extends StatelessWidget {
 }
 
 class _BookEditorialItem extends StatelessWidget {
-  const _BookEditorialItem({
-    required this.book,
-    required this.index,
-    required this.onTap,
-  });
-
+  const _BookEditorialItem({required this.book,required this.index,required this.onTap});
   final OpenTurathBook book;
   final int index;
   final VoidCallback onTap;
-
   @override
-  Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final ink = OTColors.textPrimary(isDark);
-    final textSecondary = OTColors.textSecondary(isDark);
-
-    final facts = [
-      book.volumeLabel,
-      book.pagesLabel,
-    ].where((fact) => fact != Loc.tr('unknownMetadata')).join(' · ');
-
-    return Padding(
-        padding: const EdgeInsets.only(bottom: OTSpacing.sm),
-        child: OTBentoTile(
-          onTap: onTap,
-          semanticLabel: '${book.title}, ${book.author}',
-          padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              // Judul Arab asli, maksimal dua baris agar tinggi kartu seragam.
-              Text(
-                book.title,
-                textDirection: answerDirection(book.title),
-                textAlign: answerDirection(book.title) == TextDirection.rtl
-                    ? TextAlign.right
-                    : TextAlign.left,
-                maxLines: 3,
-                overflow: TextOverflow.ellipsis,
-                style: ScholarlyFonts.scheherazadeNew(
-                  color: ink,
-                  fontSize: OTFontSize.s26,
-                  fontWeight: FontWeight.w700,
-                  height: 1.4,
-                ),
-              ),
-              const SizedBox(height: 2),
-              Text(
-                book.author,
-                textDirection: answerDirection(book.author),
-                textAlign: answerDirection(book.author) == TextDirection.rtl
-                    ? TextAlign.right
-                    : TextAlign.left,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: ScholarlyFonts.scheherazadeNew(
-                  color: textSecondary,
-                  fontSize: OTFontSize.s16,
-                  height: 1.5,
-                ),
-              ),
-              const SizedBox(height: OTSpacing.sm),
-              Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      facts,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: ScholarlyFonts.outfit(
-                          fontSize: OTFontSize.s12, color: textSecondary),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ));
-  }
+  Widget build(BuildContext context) => LayoutBuilder(builder:(context,box) {
+    final dark=Theme.of(context).brightness==Brightness.dark;
+    final ink=OTColors.textPrimary(dark);
+    final muted=OTColors.textSecondary(dark);
+    final rtl=answerDirection(book.title)==TextDirection.rtl;
+    final title=Text(book.title,textDirection:answerDirection(book.title),textAlign:rtl?TextAlign.right:TextAlign.left,maxLines:3,overflow:TextOverflow.ellipsis,
+      style: rtl ? ScholarlyFonts.scheherazadeNew(color:ink,fontSize:OTFontSize.s26,fontWeight:FontWeight.w700,height:1.4) : OTTypography.screenTitle(color:ink));
+    final authorRtl=answerDirection(book.author)==TextDirection.rtl;
+    return Padding(padding:EdgeInsets.only(bottom:box.hasBoundedHeight?0:12),child:OTBentoTile(onTap:onTap,semanticLabel:'${book.title}, ${book.author}',padding:const EdgeInsets.all(20),child:Column(
+      mainAxisSize:box.hasBoundedHeight?MainAxisSize.max:MainAxisSize.min,
+      crossAxisAlignment:CrossAxisAlignment.stretch,children:[
+        if(box.hasBoundedHeight) Expanded(child:Align(alignment:rtl?Alignment.topRight:Alignment.topLeft,child:title)) else title,
+        const SizedBox(height:8),
+        Text(book.author,textDirection:answerDirection(book.author),textAlign:authorRtl?TextAlign.right:TextAlign.left,maxLines:2,overflow:TextOverflow.ellipsis,
+          style:authorRtl?ScholarlyFonts.scheherazadeNew(color:muted,fontSize:OTFontSize.s16,height:1.5):OTTypography.body(color:muted)),
+        if(book.deathYear!=null)Text(book.deathLabel,textDirection:TextDirection.ltr,textAlign:authorRtl?TextAlign.right:TextAlign.left,style:OTTypography.caption(color:muted)),
+        const SizedBox(height:12),
+        Wrap(spacing:12,runSpacing:4,children:[for(final fact in [book.volumeLabel,book.pagesLabel].where((f)=>f!=Loc.tr('unknownMetadata')))Text(fact,style:OTTypography.body(color:muted))]),
+      ])));
+  });
 }
 
 class OpenTurathBookDetailPage extends StatelessWidget {
