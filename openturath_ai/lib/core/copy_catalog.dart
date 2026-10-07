@@ -29,9 +29,9 @@ const copyCatalog = <String, List<String>>{
     "دراسة كتب التراث الإسلامي"
   ],
   "navHome": ["Beranda", "Home", "الرئيسية"],
-  "navStudies": ["Asisten", "Assistants", "المساعدون"],
+  "navStudies": ["AI", "Assistants", "المساعدون"],
   "assistantIntro": [
-    "Pilih bidang, lalu kenali mandat dan rujukan setiap asisten sebelum memulai telaah.",
+    "Pilih bidang, lalu kenali mandat dan rujukan setiap AI sebelum memulai telaah.",
     "Choose a field, then review each assistant's scope and sources before you begin.",
     "اختر مجالًا ثم اطّلع على اختصاص كل مساعد ومراجعه قبل بدء المطالعة."
   ],
@@ -48,12 +48,12 @@ const copyCatalog = <String, List<String>>{
     "خمسة مسارات لمطالعة المتون والمفاهيم والتدريب والمحاضرات والدعوة."
   ],
   "assistantFeaturedAction": [
-    "Lihat lima asisten",
+    "Lihat lima AI",
     "See five assistants",
     "عرض المساعدين الخمسة"
   ],
   "assistantSelected": [
-    "Asisten terpilih",
+    "AI terpilih",
     "Selected assistant",
     "مسار المطالعة"
   ],
@@ -62,22 +62,22 @@ const copyCatalog = <String, List<String>>{
     "Scope and references",
     "الاختصاص والمراجع"
   ],
-  "assistantMore": ["Asisten lainnya", "Other assistants", "مساعدون آخرون"],
+  "assistantMore": ["AI lainnya", "Other assistants", "مساعدون آخرون"],
   "assistantAvailable": ["Tersedia", "Available", "متاح"],
   "assistantSearch": [
-    "Cari asisten atau kitab rujukan",
+    "Cari AI atau kitab rujukan",
     "Search assistants or references",
     "ابحث عن مساعد أو كتاب مرجعي"
   ],
   "clearSearch": ["Hapus pencarian", "Clear search", "مسح البحث"],
   "assistantLibrary": ["Lihat pustaka", "View library", "عرض المكتبة"],
   "planFeaturedLabel": [
-    "Koleksi utama · 5 asisten",
+    "Koleksi utama · 5 AI",
     "Main collection · 5 assistants",
     "المجموعة الرئيسية · 5 مساعدين"
   ],
   "flagshipExplore": [
-    "Jelajahi {0} asisten",
+    "Jelajahi {0} AI",
     "Explore {0} assistants",
     "استكشف {0} مساعدين"
   ],
@@ -90,7 +90,7 @@ const copyCatalog = <String, List<String>>{
   "flagshipPremium": ["PREMIUM", "PREMIUM", "مميّز"],
   "planExclusive": ["Eksklusif", "Exclusive", "حصري"],
   "planFeaturedDescription": [
-    "Lima asisten untuk menelaah Fikih Tahawwulat, didukung kitab rujukan dan arsip muhadharah.",
+    "Lima AI untuk menelaah Fikih Tahawwulat, didukung kitab rujukan dan arsip muhadharah.",
     "Five assistants for studying Fiqh al-Tahawwulat, supported by source works and a lecture archive.",
     "خمسة مساعدين لدراسة فقه التحولات مع الكتب المرجعية وأرشيف المحاضرات."
   ],
@@ -100,7 +100,7 @@ const copyCatalog = <String, List<String>>{
     "الوصول إلى مجال علمي واحد وكتبه المرجعية."
   ],
   "planSingleBenefit1": [
-    "Akses asisten penelaah {0}",
+    "Akses AI penelaah {0}",
     "Access the {0} study assistant",
     "الوصول إلى مساعد دراسة {0}"
   ],
@@ -125,7 +125,7 @@ const copyCatalog = <String, List<String>>{
     "الوصول إلى مجلس فقه التحولات"
   ],
   "planFeaturedBenefit2": [
-    "Lima asisten: Al-Muhaqqiq, Al-Bayan, Al-Mukhtabir, Al-Habib, dan Al-Khatib",
+    "Lima AI: Al-Muhaqqiq, Al-Bayan, Al-Mukhtabir, Al-Habib, dan Al-Khatib",
     "Five assistants: Al-Muhaqqiq, Al-Bayan, Al-Mukhtabir, Al-Habib, and Al-Khatib",
     "خمسة مساعدين: المحقق والبيان والمختبر والحبيب والخطيب"
   ],
@@ -174,7 +174,7 @@ const copyCatalog = <String, List<String>>{
   "navSettings": ["Pengaturan", "Settings", "الإعدادات"],
   "membershipFor": ["Untuk", "For", "لصاحب الحساب"],
   "studySpace": ["Percakapan", "Conversation", "المحادثة"],
-  "openStudy": ["Membuka asisten…", "Opening assistant…", "جارٍ فتح المساعد…"],
+  "openStudy": ["Membuka AI…", "Opening assistant…", "جارٍ فتح المساعد…"],
   "studyOptions": ["Tampilan bacaan", "Reading options", "خيارات القراءة"],
   "referenceBooks": ["Kitab rujukan", "Reference books", "الكتب المرجعية"],
   "savedCollection": ["Catatan", "Notes", "الملاحظات"],
@@ -185,7 +185,7 @@ const copyCatalog = <String, List<String>>{
   "continueStudy": ["Lanjutkan telaah", "Continue reading", "متابعة المطالعة"],
   "startStudy": ["Mulai telaah", "Begin your study", "ابدأ المطالعة"],
   "dashboardSearchHint": [
-    "Cari asisten atau bidang keilmuan…",
+    "Cari AI atau bidang keilmuan…",
     "Search assistants or disciplines…",
     "ابحث عن المساعد أو المجال العلمي…"
   ],
@@ -202,17 +202,17 @@ const copyCatalog = <String, List<String>>{
     "مجلس مطالعتك جاهز للمتابعة."
   ],
   "studyEntryHistorySubtitle": [
-    "Lanjutkan dari asisten yang terakhir Anda buka.",
+    "Lanjutkan dari AI yang terakhir Anda buka.",
     "Pick up with the assistant you opened last.",
     "عُد إلى مراجعك وملاحظاتك السابقة."
   ],
   "studyEntryDefaultSubtitle": [
-    "Pilih asisten, ajukan masalah, lalu periksa rujukannya di kitab.",
+    "Pilih AI, ajukan masalah, lalu periksa rujukannya di kitab.",
     "Pick an assistant, ask your question, then check its references in the books.",
     "اطرح مسألة وتتبع مباحثها في كتب التراث المعتمدة."
   ],
   "loadingReferences": [
-    "Menyiapkan asisten…",
+    "Menyiapkan AI…",
     "Preparing assistant…",
     "جارٍ تهيئة المساعد…"
   ],
@@ -222,7 +222,7 @@ const copyCatalog = <String, List<String>>{
     "قيد الإعداد."
   ],
   "moduleUnavailable": [
-    "Asisten ini belum tersedia. Coba lagi nanti.",
+    "AI ini belum tersedia. Coba lagi nanti.",
     "This assistant is not yet available. Please try again later.",
     "هذا المساعد غير متاح حاليًا. حاول لاحقًا."
   ],
@@ -232,7 +232,7 @@ const copyCatalog = <String, List<String>>{
     "تعذر تحميل المحتوى. أعد المحاولة."
   ],
   "cannotLoadStudy": [
-    "Asisten belum bisa dibuka",
+    "AI belum bisa dibuka",
     "The assistant could not be opened",
     "تعذر فتح المساعد"
   ],
@@ -637,7 +637,7 @@ const copyCatalog = <String, List<String>>{
   "trialAccess": ["Akses uji coba", "Trial access", "وصول تجريبي"],
   "activeUntil": ["Aktif hingga", "Active until", "فعّال حتى"],
   "allAssistantsAvailable": [
-    "Akses semua asisten",
+    "Akses semua AI",
     "Access to all assistants",
     "جميع المساعدين متاحون"
   ],
@@ -797,7 +797,7 @@ const copyCatalog = <String, List<String>>{
     "وصول تجريبي · {0} يومًا"
   ],
   "assistantsAvailableCount": [
-    "{0} asisten",
+    "{0} AI",
     "{0} assistants",
     "المساعدون المتاحون: {0}"
   ],
@@ -848,7 +848,7 @@ const copyCatalog = <String, List<String>>{
     "مجلس لمطالعة مؤلفات الحبيب أبي بكر العدني المشهور. اقرأ العبارة مع مرجعها واعرض ثمرة المطالعة على معلمك."
   ],
   "specialistAccess": [
-    "Akses satu asisten",
+    "Akses satu AI",
     "Single Assistant Access",
     "الوصول إلى مساعد واحد"
   ],
@@ -1053,7 +1053,7 @@ const copyCatalog = <String, List<String>>{
   "ui_119fdd76dd": ["Koleksi sumber", "Source collection", "مجموعة المصادر"],
   "ui_3f42b695cf": ["Salin sitasi", "Copy citation", "نسخ التوثيق الكامل"],
   "ui_55fddd168e": [
-    "Cari asisten atau ulama…",
+    "Cari AI atau ulama…",
     "Search study guides…",
     "ابحث عن خادم التراث…"
   ],
@@ -1086,8 +1086,8 @@ const copyCatalog = <String, List<String>>{
     "Active access on this account.",
     "الوصول الفعّال في هذا الحساب."
   ],
-  "ui_b236ca6182": ["Semua asisten", "All assistants", "جميع المساعدين"],
-  "ui_f2dfc4506e": ["Asisten kajian", "Study guide", "خادم المطالعة"],
+  "ui_b236ca6182": ["Semua AI", "All assistants", "جميع المساعدين"],
+  "ui_f2dfc4506e": ["AI kajian", "Study guide", "خادم المطالعة"],
   "ui_c720f7612f": ["Pengguna", "Reader", "القارئ"],
   "ui_26894b3c65": [
     "Ganti ke tema terang",
@@ -1304,7 +1304,7 @@ const copyCatalog = <String, List<String>>{
     "يلزم الاشتراك"
   ],
   "ui_806605b861": [
-    "Sesi Anda telah berakhir atau akses ke asisten ini belum aktif.",
+    "Sesi Anda telah berakhir atau akses ke AI ini belum aktif.",
     "Your session has ended or access to this guide is inactive.",
     "انتهت الجلسة أو لم يُفعّل الوصول إلى هذا الخادم."
   ],
@@ -1326,7 +1326,7 @@ const copyCatalog = <String, List<String>>{
     "حدث خلل تقني"
   ],
   "ui_97331668a8": [
-    "Asisten belum dapat dimuat. Coba lagi sebentar.",
+    "AI belum dapat dimuat. Coba lagi sebentar.",
     "The study guide could not be loaded. Try again shortly.",
     "تعذر تحميل خادم المطالعة. حاول بعد قليل."
   ],
@@ -1526,27 +1526,27 @@ const copyCatalog = <String, List<String>>{
   "ui_73d11e46c9": ["Kembali ke Beranda", "Return home", "العودة إلى الرئيسية"],
   "ui_2b3aa03422": ["Ukuran huruf", "Text size", "حجم الخط"],
   "ui_1781d557ab": [
-    "Akun Google ini belum dapat membuka asisten. Gunakan akun Google yang sudah dihubungkan dengan OpenTurath.",
+    "Akun Google ini belum dapat membuka AI. Gunakan akun Google yang sudah dihubungkan dengan OpenTurath.",
     "This Google account cannot open the study guide. Use the account linked to OpenTurath.",
     "لا يمكن لهذا الحساب فتح خادم المطالعة. استخدم حساب Google المرتبط بأوبن تراث."
   ],
   "ui_5d804a44a9": [
-    "Akses untuk asisten ini memerlukan langganan aktif.",
+    "Akses untuk AI ini memerlukan langganan aktif.",
     "This study guide requires an active subscription.",
     "يتطلب هذا الخادم اشتراكًا فعّالًا."
   ],
   "ui_438c4a2dca": [
-    "Tautan asisten tidak valid.",
+    "Tautan AI tidak valid.",
     "The study guide link is invalid.",
     "رابط خادم المطالعة غير صحيح."
   ],
   "ui_8239d461f2": [
-    "Akses asisten ini memerlukan langganan aktif.",
+    "Akses AI ini memerlukan langganan aktif.",
     "This study guide requires an active subscription.",
     "يتطلب هذا الخادم اشتراكًا فعّالًا."
   ],
   "ui_c970e1b24e": [
-    "Asisten belum bisa dihubungkan. Coba lagi.",
+    "AI belum bisa dihubungkan. Coba lagi.",
     "Unable to connect to the study guide. Try again.",
     "تعذر الاتصال بخادم المطالعة. أعد المحاولة."
   ],
@@ -1561,12 +1561,12 @@ const copyCatalog = <String, List<String>>{
     "لم يُمنح حساب Google الوصول بعد"
   ],
   "ui_49e0e13474": [
-    "Asisten belum bisa dibuka",
+    "AI belum bisa dibuka",
     "The study guide could not be opened",
     "تعذر فتح خادم المطالعة"
   ],
   "ui_7108148c80": [
-    "Asisten belum bisa dibuka",
+    "AI belum bisa dibuka",
     "The study guide could not be opened",
     "تعذر فتح خادم المطالعة"
   ],
@@ -1954,7 +1954,7 @@ const copyCatalog = <String, List<String>>{
     "الدخول إلى غرفة المطالعة"
   ],
   "desktopLoginHelp": [
-    "Gunakan akun Google Anda untuk membuka akses telaah kitab dan asisten riset.",
+    "Gunakan akun Google Anda untuk membuka akses telaah kitab dan AI riset.",
     "Use your Google account to unlock access to books and study assistants.",
     "استخدم حساب جوجل لفتح دراسة الكتب ومساعدي البحث."
   ],
@@ -2041,7 +2041,7 @@ const copyCatalog = <String, List<String>>{
     "ابحث بالعنوان أو المؤلف أو الناشر أو المحقق..."
   ],
   "assistantGoogleAccountSet": [
-    "Akun Google asisten diatur ke: {0}",
+    "Akun Google AI diatur ke: {0}",
     "Assistant Google account set to: {0}",
     "حساب Google للمساعد: {0}"
   ],
@@ -2065,12 +2065,12 @@ const copyCatalog = <String, List<String>>{
     "تابع مطالعتك بحساب Google."
   ],
   "loginAsideBody": [
-    "Telusuri ibarah dan rujukan langsung dari kitab turats, dengan asisten untuk tiap bidang ilmu.",
+    "Telusuri ibarah dan rujukan langsung dari kitab turats, dengan AI untuk tiap bidang ilmu.",
     "Trace passages and references straight from the classical texts, with an assistant for each discipline.",
     "تتبّع العبارات والمراجع من كتب التراث مباشرة، مع مساعد لكل فنّ."
   ],
   "loginFeatureAssistants": [
-    "Asisten per bidang ilmu",
+    "AI per bidang ilmu",
     "An assistant for each discipline",
     "مساعد لكل فنّ"
   ],
@@ -2085,7 +2085,7 @@ const copyCatalog = <String, List<String>>{
     "مستند إلى الكتب المرجعية"
   ],
   "loginFeatureSourcesBody": [
-    "Setiap asisten punya pustaka kitab yang dapat Anda periksa.",
+    "Setiap AI punya pustaka kitab yang dapat Anda periksa.",
     "Every assistant has a library of works you can inspect.",
     "لكل مساعد مكتبة يمكنك مراجعتها."
   ],
@@ -2106,7 +2106,7 @@ const copyCatalog = <String, List<String>>{
   ],
   "recentNote": ["Catatan terakhir", "Latest note", "آخر ملاحظة"],
   "viewAccessList": [
-    "Daftar asisten aktif",
+    "Daftar AI aktif",
     "Active assistants",
     "المساعدون المفعّلون"
   ],
@@ -2115,7 +2115,7 @@ const copyCatalog = <String, List<String>>{
   "unitPages": ["halaman", "pages", "صفحة"],
   "unitLectures": ["muhadharah", "lectures", "محاضرة"],
   "flagshipPositioning": [
-    "Asisten AI yang dibangun khusus untuk Fikih Tahawwulat.",
+    "AI AI yang dibangun khusus untuk Fikih Tahawwulat.",
     "An AI assistant built specifically for Fiqh al-Tahawwulat.",
     "مساعد ذكي بُني خصيصًا لفقه التحولات."
   ],
@@ -2163,28 +2163,28 @@ const copyCatalog = <String, List<String>>{
     "حساب Google لا يملك الإذن"
   ],
   "roomPermissionBody": [
-    "Akun Google yang aktif belum bisa membuka asisten ini. Periksa akun yang dipakai, lalu coba buka di browser.",
+    "Akun Google yang aktif belum bisa membuka AI ini. Periksa akun yang dipakai, lalu coba buka di browser.",
     "The active Google account cannot open this assistant. Check which account is in use, then try opening it in your browser.",
     "حساب Google الحالي لا يستطيع فتح هذا المساعد. تحقق من الحساب المستخدم ثم جرّب فتحه في المتصفح."
   ],
   "roomLoadFailTitle": [
-    "Asisten belum bisa dibuka",
+    "AI belum bisa dibuka",
     "The assistant could not be opened",
     "تعذّر فتح المساعد"
   ],
   "roomLoadFailBody": [
-    "Halaman asisten gagal dimuat. Periksa koneksi internet Anda, lalu coba lagi.",
+    "Halaman AI gagal dimuat. Periksa koneksi internet Anda, lalu coba lagi.",
     "The assistant page failed to load. Check your internet connection and try again.",
     "تعذّر تحميل صفحة المساعد. تحقق من اتصالك بالإنترنت ثم أعد المحاولة."
   ],
   "roomPaywallTitle": [
-    "Asisten ini memerlukan langganan",
+    "AI ini memerlukan langganan",
     "This assistant requires a subscription",
     "هذا المساعد يتطلب اشتراكًا"
   ],
   "roomSeePlans": ["Lihat paket", "See plans", "عرض الباقات"],
   "roomPaywallBody": [
-    "Aktifkan langganan untuk menelaah bersama asisten {0}.",
+    "Aktifkan langganan untuk menelaah bersama AI {0}.",
     "Activate a subscription to study with the {0} assistant.",
     "فعّل الاشتراك للمطالعة مع مساعد {0}."
   ],
@@ -2211,7 +2211,7 @@ const copyCatalog = <String, List<String>>{
     "سجّل الدخول بالحساب نفسه"
   ],
   "googleAccountDialogTitle": [
-    "Akun Google untuk Asisten",
+    "Akun Google untuk AI",
     "Google Account for Assistant",
     "حساب Google للمساعد"
   ],
@@ -2236,7 +2236,7 @@ const copyCatalog = <String, List<String>>{
     "مسح سجل المحادثة؟"
   ],
   "clearChatHistoryDesc": [
-    "Seluruh percakapan pada sesi asisten ini akan dibersihkan dari layar.",
+    "Seluruh percakapan pada sesi AI ini akan dibersihkan dari layar.",
     "All conversations in this assistant session will be cleared from the screen.",
     "سيتم مسح جميع المحادثات في جلسة هذا المساعد من الشاشة."
   ],
@@ -2251,12 +2251,12 @@ const copyCatalog = <String, List<String>>{
     "اضبط حجم خط المحادثة لقراءة مريحة."
   ],
   "sessionSwitcherTitle": [
-    "Sesi Asisten Terbuka",
+    "Sesi AI Terbuka",
     "Open Assistant Sessions",
     "جلسات المساعد المفتوحة"
   ],
   "selectSessionToSwitch": [
-    "Pilih asisten untuk berpindah sesi kajian aktif.",
+    "Pilih AI untuk berpindah sesi kajian aktif.",
     "Select an assistant to switch active study sessions.",
     "اختر مساعدًا للتبديل إلى جلسة المطالعة النشطة."
   ],
@@ -2324,7 +2324,7 @@ const copyCatalog = <String, List<String>>{
   ],
   "updateBannerActionDesktop": ["Perbarui", "Update", "تحديث"],
   "updateBannerActionMobile": ["Pasang", "Install", "تثبيت"],
-  "openAssistant": ["Buka asisten", "Open assistant", "افتح المساعد"],
+  "openAssistant": ["Buka AI", "Open assistant", "افتح المساعد"],
   "viewReferences": ["Lihat rujukan", "View references", "عرض المراجع"],
   "lifetimeAccess": ["Tanpa batas waktu", "No expiry", "بلا حد زمني"],
   "editionNote": ["Catatan edisi", "Edition note", "ملاحظة الطبعة"],
