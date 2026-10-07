@@ -652,28 +652,30 @@ class _LibraryNumbersTile extends StatelessWidget {
                   all.values.fold<int>(0, (sum, item) => sum + item.totalKitab);
               final pages = all.values
                   .fold<int>(0, (sum, item) => sum + item.totalHalaman);
-              Widget stat(String value, String label) => Column(
+              Widget stat(String value, String label, IconData icon) => Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        Icon(icon, size: 18, color: OTExpressive.whiteMuted),
+                        const SizedBox(height: 8),
                         Text(value,
                             style: ScholarlyFonts.outfit(
-                                fontSize: OTFontSize.s22,
+                                fontSize: OTFontSize.s26,
                                 fontWeight: FontWeight.w600,
                                 color: OTExpressive.white)),
                         const SizedBox(height: 6),
                         Text(label,
                             style: ScholarlyFonts.outfit(
-                                fontSize: OTFontSize.s12,
+                                fontSize: OTFontSize.s14,
                                 color: OTExpressive.whiteMuted)),
                       ]);
               final metrics = [
-                stat(number.format(all.length), Loc.tr('loginStatLibraries')),
+                stat(number.format(all.length), Loc.tr('loginStatLibraries'), Icons.local_library_outlined),
                 stat(Loc.atLeast(number.format(entries ~/ 100 * 100)),
-                    Loc.tr('loginStatEntries')),
+                    Loc.tr('loginStatEntries'), Icons.auto_stories_outlined),
                 stat(
                     Loc.atLeast(number.format(pages ~/ 100000 / 10),
                         Loc.tr('unitMillion')),
-                    Loc.tr('loginStatPages')),
+                    Loc.tr('loginStatPages'), Icons.description_outlined),
               ];
               return LayoutBuilder(builder: (context, box) {
                 final stacked = box.maxWidth < 360 ||
@@ -692,7 +694,7 @@ class _LibraryNumbersTile extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       for (var i = 0; i < metrics.length; i++) ...[
-                        if (i > 0) const SizedBox(width: 16),
+                        if (i > 0) SizedBox(height: 80, child: VerticalDivider(width: 24, color: OTExpressive.white.withValues(alpha: .12))),
                         Expanded(child: metrics[i]),
                       ],
                     ]);
