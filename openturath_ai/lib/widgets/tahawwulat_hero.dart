@@ -34,7 +34,7 @@ class TahawwulatHero extends StatelessWidget {
                     color: OTExpressive.whiteMuted, size: 20),
                 const SizedBox(width: 10),
                 Expanded(
-                    child: Text('OpenTurath',
+                    child: Text(reviewCopy('Eksklusif di OpenTurath', 'حصري في OpenTurath', 'Exclusive to OpenTurath'),
                         style: ScholarlyFonts.outfit(
                             fontSize: OTFontSize.s14,
                             color: OTExpressive.whiteMuted,
