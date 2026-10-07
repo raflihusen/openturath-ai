@@ -84,7 +84,8 @@ Future<void> _shot(WidgetTester tester, String name, Widget child,
     bool dark = false,
     double textScale = 1,
     String? tap,
-    String? scrollTo}) async {
+    String? scrollTo,
+    String? query}) async {
   // Jendela lebar dirender sebagai macOS, jendela sempit sebagai Android,
   // supaya lembar dan dialog adaptif tampil seperti di perangkat aslinya.
   debugDefaultTargetPlatformOverride =
@@ -115,6 +116,10 @@ Future<void> _shot(WidgetTester tester, String name, Widget child,
       .runAsync(() => Future<void>.delayed(const Duration(milliseconds: 300)));
   await tester.pump(const Duration(milliseconds: 900));
   await tester.pump(const Duration(milliseconds: 900));
+  if (query != null) {
+    await tester.enterText(find.byType(TextField).first, query);
+    await tester.pump(const Duration(milliseconds: 600));
+  }
   final trigger = tap == null
       ? null
       : (find.text(tap).evaluate().isNotEmpty
@@ -217,6 +222,14 @@ void main() {
                         height: 1.8))),
         ]))),
         size: const Size(1100, 600));
+    await _shot(tester, 'dashboard_search_clean', const DashboardScreen(),
+        size: const Size(1280, 1000), query: 'fikih');
+    await _shot(tester, 'adab_cards_id',
+        const Scaffold(body: LegalDocumentSheet(documentId: LegalDocumentId.guideline)),
+        size: const Size(850, 1000));
+    await _shot(tester, 'adab_cards_ar_phone',
+        const Scaffold(body: LegalDocumentSheet(documentId: LegalDocumentId.guideline)),
+        size: const Size(390, 1000), locale: 'ar');
     await _shot(tester, 'login_dark', const LoginScreen(), dark: true);
     SharedPreferences.setMockInitialValues({});
     AuthService.previewUser = UserModel(
@@ -408,6 +421,16 @@ void main() {
       await _shot(tester, 'library_overview_wide',
           AiLibraryOverviewPage(metadata: syafii, onSearch: () {}),
           size: const Size(1280, 860));
+    }
+    final tahawwulatBooks = await tester.runAsync(
+        () => catalog.loadBooksForModule('fiqh_tahawwulat'));
+    if (tahawwulatBooks != null && tahawwulatBooks.isNotEmpty) {
+      for (final width in [390.0, 850.0, 1280.0]) {
+        await _shot(tester, 'reading_tahawwulat_${width.toInt()}',
+            OpenTurathBookLibraryPage(books: tahawwulatBooks,
+                collectionName: 'AI Fikih Tahawwulat'),
+            size: Size(width, 1000));
+      }
     }
     if (libraryBooks != null && libraryBooks.isNotEmpty) {
       await _shot(
