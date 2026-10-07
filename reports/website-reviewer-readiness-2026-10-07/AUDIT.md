@@ -2,6 +2,9 @@
 
 Tanggal: 7 Oktober 2026 · Tujuan: reviewer eksternal memahami nilai riset, kemampuan nyata, dan bukti OpenTurath dalam 30–90 detik.
 
+
+> **Revisi pertimbangan — 8 Oktober 2026:** baca [validasi percakapan tambahan](VALIDASI_MASUKAN_2026-10-08.md) dan [rencana terbaru](PLAN_REVISI_2026-10-08.md). Ada laporan sekunder tentang penggunaan Claude Code untuk R&D, tetapi screenshot asli dan task mapping belum diperiksa. Pisahkan Claude untuk pengembangan, corpus/evaluation, dan API runtime. Temuan serta skor 42/100 di bawah tetap baseline 7 Oktober; tidak ada crawl produksi ulang dalam revisi ini.
+
 ## Kesimpulan
 
 Website V6 memiliki identitas ilmiah, katalog, alur telaah sumber, halaman kebijakan, dan arsip perbandingan yang transparan. Tetapi pembuktian sebagai infrastruktur riset belum memadai. Hambatan terpenting adalah bukti retrieval yang dapat diperiksa, rekonsiliasi angka corpus, demonstrasi aplikasi nyata, dokumentasi penggunaan Claude, dan catatan penggunaan oleh ahli.
@@ -111,7 +114,7 @@ Rujukan: [About](</Users/apple/Downloads/openturath-website 6/src/articles.mjs:8
 | 2. Masalah reliabilitas AI | WEAK | Pedoman ada, risiko salah sumber/atribusi/konteks belum ditonjolkan |
 | 3. Rasa sakit pencarian peneliti | WEAK | Langkah telaah ada; friksi pencarian lintas jilid/edisi belum konkret |
 | 4. Kemampuan dan status | WEAK | Profil aktif/persiapan ada; available/development/planned belum sistematis |
-| 5. Claude nyata dan spesifik | UNVERIFIED | Tidak ada bukti pada sumber yang diperiksa |
+| 5. Claude nyata dan spesifik | UNVERIFIED | Runtime belum dibuktikan; penggunaan Claude Code R&D dilaporkan pada 8 Oktober, artefak primer belum diperiksa |
 | 6. Akurasi sebagai konsep utama | WEAK | Verifikasi ditekankan; belum ada evaluasi terukur |
 | 7. Research/benchmark | WEAK | Halaman ada, baru arsip satu pertanyaan |
 | 8. Validasi ahli | UNVERIFIED | Record pilot dan izin publikasi belum ditemukan |
@@ -166,7 +169,7 @@ Exact passage, book identification, attribution, reference location, fabricated 
 
 ### P0 — sebelum mengandalkan website untuk review startup
 
-1. **Rekonsiliasi arsitektur dan Claude.** Tentukan apa yang dikerjakan OpenTurath, apa yang dikerjakan NotebookLM, dan apa yang benar-benar menggunakan Claude. Jika Claude dipakai offline, tampilkan penggunaan offline; jika baru direncanakan, label Planned.
+1. **Susun Evidence Pack dan rekonsiliasi arsitektur serta Claude per lapisan.** Periksa dulu bukti R&D/coding yang dilaporkan sebelum menyimpulkan penggunaan hanya rencana. Pisahkan alat akses, subscription/API, dan integrasi runtime. Detail urutan terbaru tersedia di [rencana revisi 8 Oktober](PLAN_REVISI_2026-10-08.md). Tentukan apa yang dikerjakan OpenTurath, apa yang dikerjakan NotebookLM, dan apa yang benar-benar menggunakan Claude. Jika Claude dipakai offline, tampilkan penggunaan offline; jika baru direncanakan, label Planned.
 2. **Selesaikan satu contoh sumber end-to-end.** Pertanyaan nyata, output aplikasi nyata, ibarah lengkap beserta konteks, edisi, pengarang, jilid/halaman, scan/tautan legal, penelaah dan tanggal. Jangan membuat screenshot tiruan. Satu contoh membuktikan workflow, bukan aggregate accuracy.
 3. **Rekonsiliasi corpus.** Pilih canonical manifest, definisikan work/edition/file/volume/page, bedakan koleksi/ingested/indexed, cek overlap, dan jelaskan enam selisih kitab. Jangan hanya mengubah 103 menjadi 87 tanpa menelusuri dasar hitung.
 4. **Perjelas hero dan dekatkan Research.** Tambahkan kalimat output konkret serta masalah rujukan. Arah editorial yang aman: membantu peneliti menemukan dan menelaah ibarah dengan jejak ke sumber; pengukuran penghematan waktu menunggu bukti.
