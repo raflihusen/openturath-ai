@@ -16,3 +16,9 @@
 - DILARANG KERAS memicu pengunggahan APK ke CDN / Firebase Hosting maupun menyiarkan versi rilis baru ke Firestore (`app_config/version`) secara otomatis setiap kali APK selesai dikompilasi.
 - Otomasi broadcast update (`publish_auto_update.py`) HANYA BOLEH dijalankan jika pengguna memberikan instruksi eksplisit secara langsung (misalnya: *"updatein dong"*, *"rilis update sekarang"*, atau sejenisnya).
 
+## 4. Standar Preservasi Format Ideal WebView (MANDATORY)
+- **DILARANG MERUSAK ATAU MENGUBAH LOGIKA SIKLUS HIDUP WEBVIEW** di `openturath_ai/lib/widgets/agent_multi_tab_room.dart` dan `desktop_webview_runtime.dart`.
+- Logika kestabilan polling kesiapan sesi NotebookLM (Angular SPA) **WAJIB mempertahankan minimal 4 sampel berturut-turut (2 detik), elapsed waktu minimum 3000ms, dan jeda mikro 250ms**. Dilarang memotongnya menjadi 1-2 sampel demi alasan kecepatan semu karena memicu layout flicker/blank DOM.
+- Tampilan galat (**error state**) **WAJIB menggantikan seluruh viewport WebView secara bersih** (`return ColoredBox(color: canvas, child: state)`). Dilarang keras menumpuk platform view `InAppWebView` di bawah overlay `Positioned.fill` saat galat terjadi.
+- Dokumen rujukan teknis permanen: `openturath_ai/docs/STANDAR_IDEAL_WEBVIEW.md`.
+
