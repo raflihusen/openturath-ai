@@ -26,16 +26,16 @@ class AgentService {
           .call(AppConstants.fnGetAgentUrl, {'agentId': agentId});
       if (result is! Map) {
         throw const AgentAccessException(
-            'invalid-response', 'Respons alamat asisten tidak valid.');
+            'invalid-response', 'Respons alamat AI tidak valid.');
       }
       final url = result['url'];
       if (url == null || url == '') {
         throw const AgentAccessException(
-            'empty-url', 'URL asisten belum tersedia untuk bidang ini.');
+            'empty-url', 'URL AI belum tersedia untuk bidang ini.');
       }
       if (url is! String) {
         throw const AgentAccessException(
-            'invalid-url', 'Alamat asisten dari server tidak valid.');
+            'invalid-url', 'Alamat AI dari server tidak valid.');
       }
       final uri = Uri.tryParse(url);
       if (uri == null ||
@@ -46,7 +46,7 @@ class AgentService {
           uri.hasQuery ||
           uri.hasFragment) {
         throw const AgentAccessException(
-            'invalid-url', 'Alamat asisten dari server tidak valid.');
+            'invalid-url', 'Alamat AI dari server tidak valid.');
       }
       // The authenticated server owns notebook selection and entitlement checks.
       // Validate its destination without substituting a second client catalog.
@@ -55,7 +55,7 @@ class AgentService {
       if (e.code == 'permission-denied') {
         throw AgentAccessException(
           'permission-denied',
-          e.message ?? 'Langganan diperlukan untuk membuka asisten ini.',
+          e.message ?? 'Langganan diperlukan untuk membuka AI ini.',
         );
       }
       throw AgentAccessException(
