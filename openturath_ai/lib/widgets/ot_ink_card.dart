@@ -20,10 +20,10 @@ class OTInkCard extends StatelessWidget {
       child: InkWell(onTap: onTap, child: Stack(children: [
         if (watermark.isNotEmpty) Positioned.fill(child: IgnorePointer(child: ExcludeSemantics(
           child: Align(alignment: Alignment.bottomRight, child: Padding(
-            padding: const EdgeInsets.only(right: 16), child: Text(watermark,
+            padding: const EdgeInsets.only(right: 16), child: Transform.scale(scale: 1.8, alignment: Alignment.bottomRight, child: Text(watermark,
             textDirection: TextDirection.rtl, maxLines: 1,
-            style: ScholarlyFonts.scheherazadeNew(fontSize: OTFontSize.s64,
-              height: 1.1, color: OTExpressive.white.withValues(alpha: .10)))))))),
+            style: ScholarlyFonts.scheherazadeNew(fontSize: OTFontSize.s36,
+              height: 1.1, color: OTExpressive.white.withValues(alpha: .10))))))))),
         Padding(padding: padding, child: child),
       ])),
     ),
