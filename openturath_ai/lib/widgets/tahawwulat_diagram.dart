@@ -52,7 +52,7 @@ class _TahawwulatDiagramState extends State<TahawwulatDiagram> {
     ]);
   }
   Widget _label(int i,double extent,Color color) => Text(arabic[i], textDirection: TextDirection.rtl, textAlign: TextAlign.center,
-    style: ScholarlyFonts.notoSansArabic(fontSize: (extent / 17).clamp(12.0,22.0), fontWeight: FontWeight.w600, color: color));
+    style: TextStyle(fontFamily: 'NativeArabicUI', fontSize: (extent / 17).clamp(12.0,22.0), fontWeight: FontWeight.w600, color: color));
 }
 class _SectorsPainter extends CustomPainter {
   const _SectorsPainter({required this.selected,required this.inverse});
