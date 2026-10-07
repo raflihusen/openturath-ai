@@ -38,7 +38,7 @@ Harga, cakupan asisten, masa akses, batas penggunaan, kebutuhan akun pihak ketig
 
 Langganan diperpanjang secara manual. Kami tidak melakukan penagihan berulang otomatis (auto-debit) dari pembelian paket ini.
 
-Masa akses dimulai ketika aktivasi berhasil dan tanggal berakhir ditampilkan pada akun. Pembayaran diproses melalui DOKU menurut metode yang tersedia pada saat transaksi. Keberhasilan pembayaran dan aktivasi akses adalah dua status yang berbeda. Jika dana telah dibayarkan namun langganan belum aktif, hubungi bantuan dengan nomor transaksi.
+Masa akses dimulai ketika aktivasi berhasil dan tanggal berakhir ditampilkan pada akun. Pembayaran diproses melalui Midtrans menurut metode yang tersedia pada saat transaksi. Keberhasilan pembayaran dan aktivasi akses adalah dua status yang berbeda. Jika dana telah dibayarkan namun langganan belum aktif, hubungi bantuan dengan nomor transaksi.
 
 ### 6. Layanan Pihak Ketiga (Google NotebookLM)
 
@@ -115,7 +115,7 @@ Untuk pertanyaan privasi, hubungi openturath@gmail.com.
 Kami memproses data sesuai fitur yang Anda gunakan:
 • Akun: Nama, alamat email, dan identitas profil publik dari akun Google untuk autentikasi dan personalisasi.
 • Langganan: Paket yang dipilih, status, masa aktif, dan penggunaan voucher.
-• Pembayaran: Nomor transaksi, jumlah pembayaran, metode, waktu, dan status dari penyedia DOKU.
+• Pembayaran: Nomor transaksi, jumlah pembayaran, metode, waktu, dan status dari penyedia Midtrans.
 • Kontak Transaksi: Nomor WhatsApp/telepon yang Anda berikan saat pembayaran untuk pengiriman informasi aktivasi.
 • Percakapan: Pertanyaan, jawaban, dan konteks percakapan yang diproses melalui sesi Google NotebookLM.
 • Catatan: Catatan, kutipan, dan rujukan yang Anda simpan pada penyimpanan lokal perangkat.
@@ -142,7 +142,7 @@ Catatan, kutipan ibarah, dan penanda rujukan disimpan secara lokal di perangkat 
 
 Data dibagikan hanya sebatas yang diperlukan untuk menjalankan layanan:
 • Google: Untuk proses masuk autentikasi dan pemrosesan sesi percakapan NotebookLM.
-• DOKU: Lembaga pembayaran resmi untuk memproses transaksi perbankan, dompet digital, atau QRIS.
+• Midtrans: Lembaga pembayaran resmi untuk memproses transaksi perbankan, dompet digital, atau QRIS.
 • Firebase / Google Cloud: Pengelolaan database transaksi dan status hak akses akun yang aman.
 
 Seluruh penyedia bekerja berdasarkan standar keamanan dan enkripsi industri.
@@ -196,9 +196,9 @@ Durasi paket 30 hari dihitung sebagai 30 hari kalender penuh sejak aktivasi berh
 
 ### 2. Pembayaran dan Aktivasi Akses
 
-Pembayaran diproses melalui gerbang pembayaran resmi DOKU dengan metode QRIS, transfer bank (virtual account), maupun dompet digital.
+Pembayaran diproses melalui gerbang pembayaran resmi Midtrans dengan metode QRIS, transfer bank (virtual account), maupun dompet digital.
 
-Bukti pembayaran resmi dikirimkan melalui notifikasi DOKU dan email akun Anda. Masa akses aktif seketika transaksi dinyatakan berhasil dan tersinkronisasi. Jika dana telah terpotong namun status belum aktif, jangan melakukan pembayaran ulang; hubungi openturath@gmail.com dengan menyertakan nomor transaksi.
+Bukti pembayaran resmi dikirimkan melalui notifikasi Midtrans dan email akun Anda. Masa akses aktif seketika transaksi dinyatakan berhasil dan tersinkronisasi. Jika dana telah terpotong namun status belum aktif, jangan melakukan pembayaran ulang; hubungi openturath@gmail.com dengan menyertakan nomor transaksi.
 
 ### 3. Perpanjangan Manual (Tanpa Auto-Debit)
 

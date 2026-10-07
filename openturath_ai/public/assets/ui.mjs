@@ -13,7 +13,7 @@ export const copy = {
     "close": "Tutup",
     "theme": "Ubah tema",
     "hero": "Ilmu. Lebih dekat.",
-    "heroSub": "Menelaah ribuan karya klasik dan kontemporer dengan verifikasi teks Arab, jilid, dan halaman secara presisi.",
+    "heroSub": "Ajukan pertanyaan, lalu baca jawabannya bersama ibarah Arab, jilid, dan halamannya di kitab.",
     "seeResults": "Lihat hasil pengujian",
     "scroll": "Mulai menelaah",
     "opening": "Setiap pertanyaan, sebuah jalan menuju sumber.",
@@ -25,7 +25,7 @@ export const copy = {
     "openSource": "Buka rujukan",
     "readFull": "Baca jawaban lengkap",
     "fieldTitle": "Khazanah para ulama.\nRuang bagi setiap telaah.",
-    "fieldSub": "Dua puluh disiplin keilmuan, dari fikih mazhab hingga tahqiq naskah. Temukan khadim yang memahami bidang telaah Anda.",
+    "fieldSub": "Dua puluh disiplin keilmuan, dari fikih mazhab hingga tahqiq naskah. Temukan asisten yang memahami bidang telaah Anda.",
     "allLibrary": "Jelajahi seluruh pustaka",
     "compareTitle": "Pertanyaan yang sama.\nPeriksa hasilnya.",
     "compareSub": "Enam jawaban, ditampilkan sebagaimana tersimpan dalam bahan pengujian. Baca teksnya. Telusuri rujukannya. Nilai perbedaannya.",
@@ -45,10 +45,10 @@ export const copy = {
     "access": "Keanggotaan",
     "billing": "Pembayaran dan Pengembalian Dana",
     "aiGuidelines": "Panduan Penggunaan AI & Rujukan",
-    "accessTitle": "Akses Penuh Khazanah Keilmuan",
-    "accessSub": "Pilih khadim spesialis disiplin ilmu yang ingin Anda telaah. Akses dan aktivasi diproses resmi di aplikasi melalui DOKU, tanpa perpanjangan otomatis.",
-    "downloadTitle": "Lanjutkan telaah\ndi OpenTurath.",
-    "downloadSub": "Pilih platform Anda untuk melanjutkan telaah. Ketersediaan rilis dan panduan pemasangan tercantum di bawah.",
+    "accessTitle": "Akses ke khazanah keilmuan",
+    "accessSub": "Pilih asisten spesialis disiplin ilmu yang ingin Anda telaah. Akses dan aktivasi diproses resmi di aplikasi melalui Midtrans, tanpa perpanjangan otomatis.",
+    "downloadTitle": "Mulai telaah\ndi OpenTurath.",
+    "downloadSub": "Pilih perangkat Anda. Ketersediaan rilis dan panduan pemasangan tercantum di bawah.",
     "faq": "Pertanyaan yang sering diajukan",
     "help": "Bantuan",
     "contact": "Bantuan dan Kontak",
@@ -177,12 +177,12 @@ export const copy = {
     "booksAlt": "Kitab klasik dengan halaman terbuka",
     "verifyEyebrow": "METODE TELAAH",
     "verifyTitle": "Dari mas’alah,\nkembali ke sumber.",
-    "verifySub": "Empat langkah sistematis untuk menelaah naskah asli: pertanyaan terarah, penelusuran teks primer, pencocokan koordinat cetakan, dan telaah bersama guru.",
+    "verifySub": "Empat langkah sistematis untuk menelaah naskah asli: pertanyaan terarah, penelusuran teks primer, pencocokan jilid dan halaman, dan telaah bersama guru.",
     "step1": "Ajukan pertanyaan",
-    "step1Body": "Pilih khadim sesuai disiplin ilmu, lalu uraikan masalah dan konteks yang ingin Anda dalami.",
+    "step1Body": "Pilih asisten sesuai disiplin ilmu, lalu uraikan masalah dan konteks yang ingin Anda dalami.",
     "step2": "Telusuri teks primer",
     "step2Body": "Telusuri ibarah Arab dalam kitab rujukan. Baca kutipan beserta pembahasan yang mengitarinya.",
-    "step3": "Kenali koordinat cetakan",
+    "step3": "Cocokkan dengan kitab cetak",
     "step3Body": "Judul kitab, edisi, jilid, dan halaman menjadi panduan untuk mencocokkan ibarah dengan naskah sumber.",
     "step4": "Telaah bersama guru",
     "step4Body": "Bawa ibarah beserta rujukannya ke majelis ilmu. Perdalam makna, timbang konteks, dan susun kesimpulan dengan bimbingan guru.",
@@ -193,11 +193,11 @@ export const copy = {
     "preparingBody": "Koleksi ini sedang dikurasi dan ditata sebelum dibuka untuk umum. Perkembangan ketersediaannya akan diumumkan melalui catatan rilis.",
     "archiveEyebrow": "JEJAK RUJUKAN",
     "archiveTitle": "Ibarah terbuka.\nTelaah yang transparan.",
-    "archiveBody": "Baca bagaimana OpenTurath menyajikan ibarah Al-Umm beserta nomor jilid dan halaman dalam arsip Q001. Bandingkan keluaran asli enam model dan telusuri catatan pemeriksaan sumbernya.",
+    "archiveBody": "Baca bagaimana OpenTurath menyajikan ibarah Al-Umm beserta nomor jilid dan halaman dalam arsip Q001. Telusuri catatan pemeriksaan sumbernya.",
     "memberEyebrow": "AKSES KEILMUAN",
-    "chooseMembership": "Buka Akses di Aplikasi",
+    "chooseMembership": "Buka akses di aplikasi",
     "memberManual": "Perpanjangan manual. Tanpa auto-debit.",
-    "memberPayment": "DOKU · QRIS · Virtual Account · E-Wallet",
+    "memberPayment": "Midtrans · QRIS · Virtual Account · E-Wallet",
     "memberMethods": "Rincian paket, metode pembayaran, dan total biaya ditampilkan sebelum transaksi.",
     "memberRefund": "Permohonan refund ditinjau paling lambat 7 hari kerja setelah data lengkap. Jika disetujui, pemrosesan paling lambat 7 hari kerja berikutnya, mengikuti penyedia pembayaran.",
     "memberNotice": "Aktivasi keanggotaan melalui aplikasi OpenTurath.",
@@ -219,8 +219,8 @@ export const copy = {
     "navDownload": "Unduh",
     "awaitingArtifact": "Berkas rilis sedang disiapkan",
     "statsEyebrow": "SKALA KHAZANAH",
-    "statsTitle": "Khazanah besar.\nRuang telaah tanpa batas.",
-    "statsSource": "Akumulasi metadata 20 modul aplikasi · 21 profil khadim, termasuk 1 dalam persiapan.",
+    "statsTitle": "Khazanah besar.\nRuang telaah yang lapang.",
+    "statsSource": "Akumulasi metadata 20 modul aplikasi · 21 profil asisten, termasuk 1 dalam persiapan.",
     "metricDisciplines": "Disiplin ilmu aktif",
     "metricBooks": "Kitab turats",
     "metricVolumes": "Jilid naskah",
@@ -263,7 +263,7 @@ export const copy = {
     "close": "Close",
     "theme": "Change theme",
     "hero": "Knowledge. Within reach.",
-    "heroSub": "Explore thousands of classical and contemporary works through careful verification of Arabic text, volumes, and pages.",
+    "heroSub": "Ask a question, then read the answer with its Arabic passage, volume, and page in the book.",
     "seeResults": "Examine the results",
     "scroll": "Begin exploring",
     "opening": "Every question, a way back to the source.",
@@ -296,9 +296,9 @@ export const copy = {
     "billing": "Payment & Refunds",
     "aiGuidelines": "AI Use & Reference Verification",
     "accessTitle": "A home for deeper scholarship",
-    "accessSub": "Choose a specialist assistant for the discipline you wish to study. Access and activation are handled in the app through DOKU, with manual renewal.",
-    "downloadTitle": "Continue your research\nin OpenTurath.",
-    "downloadSub": "Choose your platform to continue studying. Release availability and installation guidance are listed below.",
+    "accessSub": "Choose a specialist assistant for the discipline you wish to study. Access and activation are handled in the app through Midtrans, with manual renewal.",
+    "downloadTitle": "Begin your study\nin OpenTurath.",
+    "downloadSub": "Choose your device. Release availability and installation guidance are listed below.",
     "faq": "Frequently asked questions",
     "help": "Help",
     "contact": "Support & Contact",
@@ -443,11 +443,11 @@ export const copy = {
     "preparingBody": "This collection is being curated and organised for public access. Availability updates will appear in the release notes.",
     "archiveEyebrow": "A TRACEABLE REFERENCE",
     "archiveTitle": "Open passages.\nTransparent enquiry.",
-    "archiveBody": "Explore how OpenTurath presents passages from Al-Umm with volume and page references in the Q001 archive. Compare six original model responses and examine the source-review records.",
+    "archiveBody": "Explore how OpenTurath presents passages from Al-Umm with volume and page references in the Q001 archive. Examine the source-review records.",
     "memberEyebrow": "MEMBERSHIP",
     "chooseMembership": "Access in the app",
     "memberManual": "Manual renewal. No automatic debit.",
-    "memberPayment": "DOKU · QRIS · Virtual Account · E-Wallet",
+    "memberPayment": "Midtrans · QRIS · Virtual Account · E-Wallet",
     "memberMethods": "Plan details, payment methods, and the total are shown before you pay.",
     "memberRefund": "Refund requests are reviewed within 7 business days of complete information. Approved refunds are processed within a further 7 business days, subject to the payment provider.",
     "memberNotice": "Membership is activated in the OpenTurath app.",
@@ -513,7 +513,7 @@ export const copy = {
     "close": "إغلاق",
     "theme": "تغيير المظهر",
     "hero": "العلم. أقرب إليك.",
-    "heroSub": "تأمّل آلاف المؤلفات التراثية والمعاصرة مع العناية بالتحقّق من النص العربي والجزء والصفحة.",
+    "heroSub": "اطرح سؤالك، ثم اقرأ الجواب مع العبارة العربية وجزئها وصفحتها في الكتاب.",
     "seeResults": "اطّلع على النتائج",
     "scroll": "ابدأ التصفّح",
     "opening": "كل سؤال طريق إلى مصدره.",
@@ -546,9 +546,9 @@ export const copy = {
     "billing": "الدفع والاسترداد",
     "aiGuidelines": "استخدام الذكاء الاصطناعي والتحقق من المراجع",
     "accessTitle": "آفاق أرحب لمطالعة التراث",
-    "accessSub": "اختر المساعد المختص بالعلم الذي تريد دراسته. يُفعّل الوصول رسميًّا داخل التطبيق عبر DOKU، مع تجديد يدوي.",
-    "downloadTitle": "واصل بحثك\nفي OpenTurath.",
-    "downloadSub": "اختر منصتك لمواصلة المطالعة. تجد أدناه حالة الإصدارات وإرشادات التثبيت.",
+    "accessSub": "اختر المساعد المختص بالعلم الذي تريد دراسته. يُفعّل الوصول رسميًّا داخل التطبيق عبر Midtrans، مع تجديد يدوي.",
+    "downloadTitle": "ابدأ مطالعتك\nفي OpenTurath.",
+    "downloadSub": "اختر جهازك. تجد أدناه حالة الإصدارات وإرشادات التثبيت.",
     "faq": "الأسئلة الشائعة",
     "help": "المساعدة",
     "contact": "المساعدة والتواصل",
@@ -693,11 +693,11 @@ export const copy = {
     "preparingBody": "تخضع هذه المجموعة للمراجعة والتنظيم تمهيدًا لإتاحتها. وتُعلن مستجداتها في ملاحظات الإصدار.",
     "archiveEyebrow": "أثر الإحالة",
     "archiveTitle": "نصوص بين يديك.\nوبحث واضح المعالم.",
-    "archiveBody": "اقرأ كيف يعرض OpenTurath عبارات الأم مع أرقام الأجزاء والصفحات في أرشيف Q001. قارن الإجابات الأصلية لستة نماذج واطّلع على سجلات مراجعة المصادر.",
+    "archiveBody": "اقرأ كيف يعرض OpenTurath عبارات الأم مع أرقام الأجزاء والصفحات في أرشيف Q001. وتتبّع سجلات مراجعة المصادر.",
     "memberEyebrow": "عضوية المطالعة",
     "chooseMembership": "ابدأ الوصول عبر التطبيق",
     "memberManual": "تجديد يدوي. دون خصم تلقائي.",
-    "memberPayment": "DOKU · QRIS · حساب افتراضي · محفظة إلكترونية",
+    "memberPayment": "Midtrans · QRIS · حساب افتراضي · محفظة إلكترونية",
     "memberMethods": "تُعرض تفاصيل الباقة ووسائل الدفع والمبلغ الإجمالي قبل إتمام المعاملة.",
     "memberRefund": "تُراجع طلبات الاسترداد خلال ٧ أيام عمل من اكتمال البيانات. وبعد الموافقة تُعالج خلال ٧ أيام عمل أخرى، وفق مزود الدفع.",
     "memberNotice": "تُفعّل العضوية داخل تطبيق OpenTurath.",
@@ -776,7 +776,7 @@ export const faq = [
       "كيف تُراجع النصوص العربية وإحالات الكتب؟"
     ],
     "a": [
-      "Penelusuran dimulai dari korpus kitab pada asisten yang Anda pilih. Kutipan Arab, judul kitab, jilid, dan halaman menjadi titik temu dengan naskah sumber. Verifikasi dilengkapi dengan mencocokkan ibarah serta edisi cetakannya, sehingga kutipan dapat ditelaah dalam konteks yang utuh.",
+      "Penelusuran dimulai dari kitab rujukan pada asisten yang Anda pilih. Kutipan Arab, judul kitab, jilid, dan halaman menjadi titik temu dengan naskah sumber. Verifikasi dilengkapi dengan mencocokkan ibarah serta edisi cetakannya, sehingga kutipan dapat ditelaah dalam konteks yang utuh.",
       "Research starts with the book corpus of your chosen assistant. Arabic quotations, titles, volumes, and pages point you back to the source. Verification is completed by matching the passage and its edition, so the quotation can be studied in its full context.",
       "يبدأ البحث من مجموعة مصادر المساعد الذي تختاره. وتدلّك العبارة العربية وعنوان الكتاب والجزء والصفحة على موضع النص. وتكتمل المراجعة بمقابلة العبارة وطبعتها، لقراءة النقل في سياقه التام."
     ]
@@ -802,7 +802,7 @@ export const faq = [
       "ما الكتب المعتمدة في كل تخصص؟"
     ],
     "a": [
-      "Setiap khadim memiliki cakupan tersendiri. Fikih Syafi’i menelaah antara lain Al-Umm, Minhajuth Thalibin, dan Tuhfatul Muhtaj; hadits menelusuri Kutubus Sittah; ushul fikih mengkaji Al-Mustashfa, Al-Luma’, dan Al-Burhan. Buka kartu khazanah untuk mengenali fokus, cakupan, dan metadata bidangnya.",
+      "Setiap asisten memiliki cakupan tersendiri. Fikih Syafi’i menelaah antara lain Al-Umm, Minhajuth Thalibin, dan Tuhfatul Muhtaj; hadis menelusuri Kutubus Sittah; ushul fikih mengkaji Al-Mustashfa, Al-Luma’, dan Al-Burhan. Buka kartu khazanah untuk mengenali fokus, cakupan, dan metadata bidangnya.",
       "Each assistant has a distinct scope. Shafi‘i fiqh studies works such as Al-Umm, Minhaj al-Talibin, and Tuhfat al-Muhtaj; hadith searches the Six Books; usul al-fiqh studies Al-Mustasfa, Al-Luma‘, and Al-Burhan. Open a collection card to explore its focus, scope, and metadata.",
       "لكل مساعد نطاق خاص. فمن مصادر الفقه الشافعي الأم ومنهاج الطالبين وتحفة المحتاج، ومن مصادر الحديث الكتب الستة، ومن أصول الفقه المستصفى واللمع والبرهان. افتح بطاقة الخزانة للتعرّف على موضوعها ونطاقها وبياناتها."
     ]
@@ -815,9 +815,9 @@ export const faq = [
       "ما تكلفة العضوية وكيف أسدّدها؟"
     ],
     "a": [
-      "Akses khadim spesialis dimulai dari Rp 50.000 per bulan. Pilih paket dan lakukan aktivasi di aplikasi melalui DOKU. QRIS, Virtual Account, dan E-Wallet tersedia sesuai pilihan pada halaman pembayaran. Perpanjangan dilakukan manual, tanpa auto-debit; total biaya serta masa akses ditampilkan sebelum transaksi.",
-      "Specialist access starts at IDR 50,000 per month. Choose a plan and activate it in the app through DOKU. QRIS, Virtual Account, and E-Wallet options depend on the payment screen. Renewal is manual with no automatic debit; the total and access period are shown before payment.",
-      "يبدأ الوصول إلى المساعد المختص من ٥٠٬٠٠٠ روبية إندونيسية شهريًّا. اختر الباقة وفعّلها داخل التطبيق عبر DOKU، باستخدام QRIS أو الحساب الافتراضي أو المحفظة الإلكترونية بحسب الخيارات المعروضة. التجديد يدوي دون خصم تلقائي، ويظهر المبلغ ومدة الوصول قبل الدفع."
+      "Akses satu asisten mulai dari Rp 50.000 per bulan, dengan pilihan masa 1, 6, atau 12 bulan. Pilih masa akses dan lakukan aktivasi di aplikasi melalui Midtrans. QRIS, Virtual Account, dan E-Wallet tersedia sesuai pilihan pada halaman pembayaran. Perpanjangan dilakukan manual, tanpa auto-debit; total biaya serta masa akses ditampilkan sebelum transaksi.",
+      "Access to one assistant starts at IDR 50,000 per month, for 1, 6, or 12 months. Choose a period and activate it in the app through Midtrans. QRIS, Virtual Account, and E-Wallet options depend on the payment screen. Renewal is manual with no automatic debit; the total and access period are shown before payment.",
+      "يبدأ الوصول إلى مساعد واحد من ٥٠٬٠٠٠ روبية إندونيسية شهريًّا، لمدة شهر أو ٦ أشهر أو ١٢ شهرًا. اختر المدة وفعّلها داخل التطبيق عبر Midtrans، باستخدام QRIS أو الحساب الافتراضي أو المحفظة الإلكترونية بحسب الخيارات المعروضة. التجديد يدوي دون خصم تلقائي، ويظهر المبلغ ومدة الوصول قبل الدفع."
     ]
   },
   {
@@ -849,14 +849,14 @@ export const faq = [
   {
     "id": "platforms",
     "q": [
-      "Apakah OpenTurath dapat digunakan selain di Android?",
-      "Can I use OpenTurath on a platform other than Android?",
-      "هل يمكن استخدام OpenTurath على غير Android؟"
+      "Di perangkat apa OpenTurath dapat digunakan?",
+      "Which devices can run OpenTurath?",
+      "على أي الأجهزة يعمل OpenTurath؟"
     ],
     "a": [
-      "Android adalah platform distribusi APK OpenTurath. Halaman Unduh menampilkan versi, status berkas, dan persyaratan perangkat terbaru. Versi macOS, Windows, dan iOS sedang dipersiapkan; ketersediaannya akan diumumkan melalui saluran resmi.",
-      "Android is the platform for OpenTurath APK distribution. Downloads shows the version, file availability, and current device requirements. macOS, Windows, and iOS versions are in preparation; availability will be announced through official channels.",
-      "Android هو منصة توزيع APK الخاصة بـ OpenTurath. تُبيّن صفحة التنزيل الإصدار وحالة الملف ومتطلبات الجهاز. إصدارات macOS وWindows وiOS قيد الإعداد، وتُعلن إتاحتها عبر القنوات الرسمية."
+      "OpenTurath disiapkan untuk Android, macOS, dan Windows. Halaman Unduh menampilkan status berkas dan persyaratan perangkat terbaru. iPhone dan iPad belum tersedia.",
+      "OpenTurath is being prepared for Android, macOS, and Windows. The Downloads page shows file availability and current device requirements. iPhone and iPad are not available yet.",
+      "يُجهَّز OpenTurath لأنظمة Android وmacOS وWindows. تُبيّن صفحة التنزيل حالة الملف ومتطلبات الجهاز. ولا يتوفر حاليًا لآيفون وآيباد."
     ]
   },
   {
@@ -880,7 +880,7 @@ export const faq = [
       "هل تتطلب المحادثات حساب Google؟"
     ],
     "a": [
-      "Percakapan dengan khadim berlangsung melalui Google NotebookLM. Masuklah dengan akun Google yang memenuhi persyaratan layanan tersebut. Keanggotaan OpenTurath mengatur akses koleksi, sementara batas penggunaan dan pemrosesan percakapan mengikuti ketentuan NotebookLM.",
+      "Percakapan dengan asisten berlangsung melalui Google NotebookLM. Masuklah dengan akun Google yang memenuhi persyaratan layanan tersebut. Keanggotaan OpenTurath mengatur akses koleksi, sementara batas penggunaan dan pemrosesan percakapan mengikuti ketentuan NotebookLM.",
       "Conversations with assistants take place through Google NotebookLM. Sign in with a Google account that meets its service requirements. OpenTurath membership controls collection access; conversation processing and usage limits follow NotebookLM’s terms.",
       "تجري المحادثات مع المساعدين عبر Google NotebookLM. سجّل الدخول بحساب Google يستوفي متطلبات الخدمة. تنظّم عضوية OpenTurath الوصول إلى المجموعات، وتخضع معالجة المحادثات وحدود استخدامها لشروط NotebookLM."
     ]

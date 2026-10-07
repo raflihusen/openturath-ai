@@ -1864,3 +1864,12 @@ body {
 .method-story {
   display:block}
 }
+
+/* Panah mengikuti arah baca. */
+[dir=rtl] .button svg, [dir=rtl] .text-link svg { transform: scaleX(-1); }
+[dir=rtl] .text-link:hover svg { transform: translateX(-4px) scaleX(-1); }
+/* Target sentuh minimal 44px di layar sentuh. */
+@media (pointer: coarse) {
+  .text-link, .quiet-button, .filter-list button, .site-footer a { min-height: 44px; display: inline-flex; align-items: center; }
+}
+.catalog-more { margin-top: 32px; }

@@ -15,7 +15,7 @@ export const articles = {
           "اطرح السؤال"
         ],
         "body": [
-          "Pilih asisten sesuai disiplin ilmu, lalu uraikan masalah dan konteks yang ingin Anda dalami.",
+          "Pilih khadim sesuai disiplin ilmu, lalu uraikan masalah dan konteks yang ingin Anda dalami.",
           "Choose the assistant for your discipline and describe the question and its context.",
           "اختر المساعد المختص، ثم بيّن المسألة وسياقها الذي تريد دراسته."
         ]
@@ -109,7 +109,7 @@ export const articles = {
           "الفهرس والإتاحة"
         ],
         "body": [
-          "Dua puluh disiplin keilmuan, dari fikih mazhab hingga tahqiq naskah. Temukan asisten yang memahami bidang telaah Anda. Akumulasi metadata 20 modul aplikasi · 21 profil asisten, termasuk 1 dalam persiapan.",
+          "Dua puluh disiplin keilmuan, dari fikih mazhab hingga tahqiq naskah. Temukan khadim yang memahami bidang telaah Anda. Akumulasi metadata 20 modul aplikasi · 21 profil khadim, termasuk 1 dalam persiapan.",
           "Twenty scholarly disciplines, from the schools of fiqh to manuscript study. Find an assistant dedicated to your field. Combined metadata from 20 app modules · 21 assistant profiles, including 1 in preparation.",
           "عشرون تخصصًا علميًّا، من فقه المذاهب إلى تحقيق النصوص. اختر المساعد المختص بمجال بحثك. مجموع بيانات ٢٠ وحدة في التطبيق · ٢١ ملف مساعد، منها ملف واحد قيد الإعداد."
         ]
@@ -138,74 +138,170 @@ export const articles = {
     "blocks": [
       {
         "heading": [
-          "Pengelola, persetujuan, dan akun",
-          "Operator, consent, and accounts",
-          "الجهة المشغلة والموافقة والحسابات"
+          "1. Pengelola dan Cakupan Ketentuan",
+          "1. Operator and Scope of Terms",
+          "١. المشغّل ونطاق الشروط"
         ],
         "body": [
-          "Layanan dikelola Pengelola OpenTurath di Indonesia. Pendaftaran mandiri untuk pengguna berusia 18 tahun ke atas yang berwenang membuat perjanjian. Akun bersifat pribadi. Pembelian individu tidak otomatis memberikan hak akses lembaga.",
-          "The service is operated by Pengelola OpenTurath in Indonesia. Self-registration is for people aged 18 or older who can enter an agreement. Accounts are personal. Individual purchases do not automatically grant institutional access.",
-          "تدير الخدمة Pengelola OpenTurath في إندونيسيا. التسجيل الذاتي لمن بلغ ١٨ عامًا وكان مؤهلًا للتعاقد. الحساب شخصي، ولا يمنح الشراء الفردي وصولًا مؤسسيًا تلقائيًا."
+          "OpenTurath dikelola oleh Pengelola OpenTurath, beralamat di Indonesia, selanjutnya disebut \"kami\". Pengguna aplikasi disebut \"Anda\". Kontak layanan tersedia melalui openturath@gmail.com.\n\nKetentuan ini mengatur penggunaan akun, asisten AI, katalog rujukan, Catatan, dan fitur berbayar yang disediakan melalui OpenTurath. Informasi paket yang ditampilkan sebelum pembelian, Kebijakan Pembayaran dan Pengembalian Dana, serta Panduan Penggunaan AI dan Pemeriksaan Rujukan menjadi bagian dari ketentuan penggunaan yang relevan.",
+          "OpenTurath is operated by Pengelola OpenTurath, located in Indonesia, hereinafter referred to as \"we\" or \"us\". Users of the application are referred to as \"you\". Service contact is available via openturath@gmail.com.\n\nThese terms govern the use of accounts, AI assistants, reference catalogs, Notes, and paid features provided through OpenTurath. Plan details displayed prior to purchase, the Payment and Refund Policy, and the AI Guidelines and Reference Verification Guide form part of the applicable terms of use.",
+          "تُدار منصة OpenTurath بواسطة Pengelola OpenTurath، ومقرها في إندونيسيا، ويُشار إليها لاحقًا بـ \"نحن\". ويُشار إلى مستخدمي التطبيق بـ \"أنت\". يتوفر التواصل عبر openturath@gmail.com.\n\nتنظم هذه الشروط استخدام الحسابات، ومساعدي الذكاء الاصطناعي، وفهرس المراجع، وميزة الملاحظات، والخدمات المدفوعة المقدمة عبر OpenTurath. وتُعد تفاصيل الباقات المعروضة قبل الشراء، وسياسة الدفع واسترداد الأموال، ودليل استخدام الذكاء الاصطناعي ومراجعة النقول جزءًا لا يتجزأ من هذه الشروط."
         ]
       },
       {
         "heading": [
-          "Fungsi layanan dan hak pengguna",
-          "Service purpose and user rights",
-          "وظيفة الخدمة وحقوق المستخدم"
+          "2. Persetujuan dan Persyaratan Pengguna",
+          "2. Agreement and User Eligibility",
+          "٢. الموافقة وأهلية المستخدم"
         ],
         "body": [
-          "AI membantu penelusuran, bukan fatwa resmi atau pengganti guru. Periksa teks, atribusi, terjemahan, dan edisi sebelum menggunakannya. Keterbatasan AI tidak menghapus tanggung jawab pengelola atau hak konsumen yang dilindungi hukum.",
-          "AI assists research and is not an official fatwa or a replacement for teachers. Check text, attribution, translation, and edition before using it. AI limitations do not remove the operator’s responsibilities or legally protected consumer rights.",
-          "يساعد الذكاء الاصطناعي في البحث، وليس فتوى رسمية ولا بديلًا عن المعلم. راجع النص والنسبة والترجمة والطبعة قبل الاستعمال. ولا تُسقط حدود التقنية مسؤولية المشغّل أو حقوق المستهلك المحمية قانونًا."
+          "Sebelum membuat akun atau membeli paket, Anda diberi kesempatan membaca ketentuan yang berlaku. Penggunaan mandiri OpenTurath ditujukan bagi pengguna berusia sekurang-kurangnya 18 tahun. Anda juga harus memiliki kecakapan atau kewenangan yang diperlukan untuk membuat perjanjian dan melakukan pembayaran.\n\nAkses bagi pengguna di bawah 18 tahun belum dibuka melalui pendaftaran mandiri. Jika bertindak untuk lembaga, Anda harus berwenang mewakilinya. Pembelian individu tidak otomatis memberikan hak penggunaan bersama untuk seluruh anggota lembaga.",
+          "Before creating an account or purchasing a plan, you are given the opportunity to review the applicable terms. Independent use of OpenTurath is intended for users who are at least 18 years of age. You must also possess the legal capacity or authority required to enter into agreements and make payments.\n\nAccess for users under 18 years of age is not currently available through self-registration. If acting on behalf of an institution, you must be authorized to represent it. An individual purchase does not automatically grant shared usage rights for all members of that institution.",
+          "قبل إنشاء الحساب أو شراء أي باقة، يُتاح لك الاطلاع على الشروط المعمول بها. الاستخدام الذاتي لمنصة OpenTurath مخصص لمن أتم ثمانية عشر (١٨) عامًا على الأقل، مع توافر الأهلية القانونية أو الصلاحية اللازمة للتعاقد وإتمام المدفوعات.\n\nالوصول لمن هم دون سن ١٨ عامًا غير متاح حاليًا عبر التسجيل الذاتي. وإذا كنت تتصرف نيابة عن مؤسسة، فيجب أن تكون مفوضًا رسميًا بتمثيلها. الشراء الفردي لا يمنح تلقائيًا حقوق استخدام مشترك لجميع أفراد المؤسسة."
         ]
       },
       {
         "heading": [
-          "Paket dan pihak ketiga",
-          "Plans and third parties",
-          "الباقات والجهات الخارجية"
+          "3. Akun dan Keamanan Akses",
+          "3. Account and Access Security",
+          "٣. الحساب وأمن الوصول"
         ],
         "body": [
-          "Harga total, cakupan, batas penggunaan, dan tanggal akhir akses perlu dibaca sebelum pembayaran. Perpanjangan manual tanpa auto-debit. Midtrans memproses pembayaran. Percakapan memakai Google NotebookLM dengan ketentuannya sendiri. Pembelian OpenTurath tidak menaikkan paket Google Anda.",
-          "Read the total price, scope, usage limits, and expiry before payment. Renewal is manual with no automatic debit. Midtrans processes payments. Conversations use Google NotebookLM under its own terms. Buying OpenTurath does not upgrade your Google plan.",
-          "اقرأ السعر الإجمالي والنطاق وحدود الاستخدام وانتهاء الوصول قبل الدفع. التجديد يدوي دون خصم تلقائي. تعالج Midtrans المدفوعات، وتستخدم المحادثات Google NotebookLM بشروطه. لا يرقّي شراء OpenTurath باقة Google."
+          "Gunakan informasi akun yang benar dan akses masuk yang menjadi hak Anda. Akun bersifat pribadi, kecuali suatu paket secara tertulis menyediakan penggunaan untuk beberapa orang.\n\nJaga perangkat dan akses masuk Anda. Jangan memberikan kata sandi atau kode sekali pakai kepada pihak lain. Laporkan dugaan penggunaan tanpa izin melalui openturath@gmail.com. Laporan pengambilalihan akun akan diperiksa berdasarkan keadaan dan bukti yang tersedia.",
+          "Provide accurate account information and use credentials that you are authorized to use. Accounts are personal, unless a specific plan expressly provides for multi-user access in writing.\n\nSafeguard your device and login credentials. Do not share your password or one-time codes with others. Report any suspected unauthorized access to openturath@gmail.com. Account takeover reports will be investigated based on the circumstances and available evidence.",
+          "يجب استخدام بيانات صحيحة وبيانات دخول مخولة لك قانونًا. الحساب شخصي وخاص، ما لم تنص باقة معينة صراحةً على استخدام متعدد. حافظ على جهازك وبيانات دخولك، ولا تشارك كلمة المرور أو رموز التحقق لمرة واحدة مع أي طرف. أبلغ عن أي اشتباه في استخدام غير مصرح به عبر openturath@gmail.com، وستتم مراجعة البلاغات بناءً على الوقائع والأدلة المتاحة."
         ]
       },
       {
         "heading": [
-          "Penggunaan dan hak cipta",
-          "Use and copyright",
-          "الاستخدام وحقوق النشر"
+          "4. Fungsi Layanan dan Batas Jawaban AI",
+          "4. Service Purpose and Limits of AI Outputs",
+          "٤. وظيفة الخدمة وحدود مخرجات الذكاء الاصطناعي"
         ],
         "body": [
-          "Dilarang mengambil alih akun, menghindari kontrol akses, menjual kembali akses tanpa izin, atau memalsukan kutipan. Hak atas Catatan tetap milik penulisnya. Catatan disimpan lokal. Hak kitab, tahkik, dan terjemahan mengikuti pemegang hak masing-masing.",
-          "Account takeover, bypassing access controls, unauthorized resale, and fabricated quotations are prohibited. Authors retain rights to their Notes, which are stored locally. Books, edited editions, and translations retain their respective rights.",
-          "يُحظر الاستيلاء على الحسابات وتجاوز ضوابط الوصول وإعادة البيع دون إذن وتزوير النقول. تبقى حقوق الملاحظات لأصحابها وتُحفظ محليًا. وتتبع الكتب والتحقيقات والترجمات حقوق أصحابها."
+          "OpenTurath membantu penelusuran literatur, pembacaan kutipan, dan penyusunan bahan belajar. Jawaban dapat mengandung kesalahan pada penjelasan, atribusi, terjemahan, atau keterangan rujukan.\n\nPeriksa kutipan pada kitab dan edisi yang digunakan sebelum menjadikannya dasar tulisan, pengajaran, keputusan, atau penyampaian hukum kepada orang lain. Nomor halaman pada satu edisi tidak selalu sama dengan edisi lain.\n\nJawaban AI bukan merupakan fatwa resmi, penetapan hukum yang mengikat, atau pengganti bimbingan guru dan ulama yang berkompeten. Tidak ditemukannya rujukan dalam hasil pencarian berarti layanan belum menemukannya pada penelusuran tersebut, bukan bukti bahwa pembahasannya tidak ada.",
+          "OpenTurath assists in literary research, passage reading, and study preparation. Responses may contain errors in explanation, attribution, translation, or reference details.\n\nVerify citations against the original book and specific edition before using them as a basis for writing, teaching, decisions, or conveying legal rulings to others. Page numbers in one edition may not correspond to those in another.\n\nAI outputs do not constitute official fatwas, binding legal determinations, or substitutes for guidance from qualified teachers and scholars. The absence of a citation in search results indicates only that the service did not locate it in that query, not that the discussion does not exist.",
+          "تساعد منصة OpenTurath في البحث الأدبي ومطالعة النقول وإعداد المواد الدراسية. قد تتضمن الإجابات أخطاء في الشرح أو نسبة الأقوال أو الترجمة أو بيانات المراجع.\n\nتحقق من النقول في طبعة الكتاب المعتمدة قبل جعلها أساسًا لكتابة أو تدريس أو فتوى أو تقرير حكم للغير؛ فاختلاف الطبعات يتبعه اختلاف أرقام الصفحات.\n\nمخرجات الذكاء الاصطناعي ليست فتاوى شرعية ولا أحكامًا ملزمة ولا بديلًا عن التلقي من العلماء المعتبرين. وعدم العثور على مسألة في نتائج البحث يعني عدم الوصول إليها في ذلك البحث فقط، ولا يعد دليلًا على عدم وجودها في المصادر."
         ]
       },
       {
         "heading": [
-          "Perubahan, pembatasan, dan pemulihan",
-          "Changes, restrictions, and remedies",
-          "التغييرات والقيود والمعالجة"
+          "5. Paket, Pembayaran, dan Masa Akses",
+          "5. Plans, Payment, and Access Period",
+          "٥. الباقات والدفع ومدة الوصول"
         ],
         "body": [
-          "Pemeliharaan dapat memengaruhi layanan. Pengurangan manfaat berbayar yang material memerlukan penyelesaian yang wajar. Pembatasan akun harus proporsional dengan masalah. Jika memungkinkan, alasan dan kesempatan klarifikasi diberikan. Perubahan kebijakan tidak menghapus hak pembelian yang telah timbul.",
-          "Maintenance may affect service. Material reductions in paid benefits require a reasonable remedy. Account restrictions should be proportionate, with reasons and an opportunity to clarify where possible. Policy changes do not remove accrued purchase rights.",
-          "قد تؤثر الصيانة في الخدمة. ويستلزم النقص الجوهري في المنافع المدفوعة معالجة معقولة. تكون قيود الحساب متناسبة، مع بيان الأسباب وإتاحة التوضيح متى أمكن. ولا تُسقط التغييرات الحقوق الناشئة عن الشراء."
+          "Harga, cakupan asisten, masa akses, batas penggunaan, kebutuhan akun pihak ketiga, serta biaya yang berlaku ditampilkan sebelum Anda membayar.\n\nLangganan diperpanjang secara manual. Kami tidak melakukan penagihan berulang otomatis (auto-debit) dari pembelian paket ini.\n\nMasa akses dimulai ketika aktivasi berhasil dan tanggal berakhir ditampilkan pada akun. Pembayaran diproses melalui Midtrans menurut metode yang tersedia pada saat transaksi. Keberhasilan pembayaran dan aktivasi akses adalah dua status yang berbeda. Jika dana telah dibayarkan namun langganan belum aktif, hubungi bantuan dengan nomor transaksi.",
+          "Prices, assistant scope, access duration, usage limits, third-party account requirements, and applicable fees are clearly displayed before you pay.\n\nSubscriptions are renewed manually. We do not perform recurring automatic billing (auto-debit) for purchases of these plans.\n\nThe access period begins upon successful activation, and the expiration date is displayed in your account. Payments are processed through Midtrans using methods available at transaction time. Payment success and access activation are two distinct statuses. If funds have been deducted but access remains inactive, contact support with your transaction number.",
+          "تُعرض الأسعار ونطاق المساعدين ومدة الوصول وحدود الاستخدام ومتطلبات حسابات الأطراف الثالثة والرسوم بوضوح قبل إتمام الدفع.\n\nتُجدد الاشتراكات يدويًا دون أي خصم تلقائي متكرر (auto-debit).\n\nتبدأ مدة الوصول فور اكتمال التفعيل ويظهر تاريخ الانتهاء في حسابك. تعالج المدفوعات عبر Midtrans وفق الوسائل المتاحة وقت المعاملة. نجاح الدفع وتفعيل الوصول مرحلتان منفصلتان؛ فإذا خُصم المبلغ ولم يُفعّل الاشتراك، فتواصل مع الدعم برقم المعاملة."
         ]
       },
       {
         "heading": [
-          "Pengaduan dan hukum yang berlaku",
-          "Complaints and governing law",
-          "الشكاوى والقانون المطبق"
+          "6. Layanan Pihak Ketiga (Google NotebookLM)",
+          "6. Third-Party Services (Google NotebookLM)",
+          "٦. خدمات الأطراف الثالثة (Google NotebookLM)"
         ],
         "body": [
-          "Hubungi openturath@gmail.com untuk pengaduan dan klarifikasi. Perkembangan awal penanganan disampaikan dalam 2 hari kerja sesuai naskah resmi. Ketentuan aplikasi tunduk pada hukum Republik Indonesia.",
-          "Contact openturath@gmail.com for complaints and clarification. An initial handling update is provided within 2 business days under the official policy. The app terms are governed by Indonesian law.",
-          "تواصل عبر openturath@gmail.com للشكاوى والتوضيح. يُقدّم تحديث أولي خلال يومي عمل وفق السياسة الرسمية. تخضع شروط التطبيق لقانون جمهورية إندونيسيا."
+          "Fitur percakapan menggunakan NotebookLM dari Google. Aksesnya dapat bergantung pada akun, wilayah, batas penggunaan, dan ketentuan penyedia yang berlaku untuk Anda. Pembelian OpenTurath tidak dengan sendirinya mengubah jenis langganan atau hak akses akun Google Anda.\n\nJika perubahan layanan pihak ketiga menyebabkan fitur berbayar tidak dapat diberikan sesuai yang ditawarkan, kami akan menilai pemulihan akses, penggantian layanan yang Anda setujui, atau pengembalian dana sesuai hak Anda.",
+          "Conversational features utilize Google NotebookLM. Access may depend on your account, geographic region, rate limits, and provider terms applicable to you. Purchasing OpenTurath does not alter your Google subscription tier or Google account privileges.\n\nIf third-party service modifications prevent paid features from being delivered as offered, we will assess access restoration, an agreed alternative service, or a refund in accordance with your rights.",
+          "تعتمد ميزة المحادثة على Google NotebookLM، وقد يرتبط الوصول إليها بحسابك ونطاقك الجغرافي وحدود الاستخدام وشروط المزود. شراء OpenTurath لا يغيّر باقة Google أو حقوق حسابك لديها.\n\nإذا طرأت تغييرات لدى الطرف الثالث حالت دون تقديم الخدمة المدفوعة كما وُعدت، فسنقيم سبل استعادة الوصول، أو تقديم خدمة بديلة متفق عليها، أو استرداد المبلغ وفق حقوقك المقررة."
+        ]
+      },
+      {
+        "heading": [
+          "7. Penggunaan yang Diperbolehkan dan Dilarang",
+          "7. Permitted and Prohibited Conduct",
+          "٧. الاستخدام المسموح والمحظور"
+        ],
+        "body": [
+          "Anda dapat menggunakan layanan untuk belajar, menyiapkan pengajaran, dan melakukan penelusuran sesuai paket yang dimiliki. Penggunaan hasilnya tetap harus memperhatikan hak cipta, ketepatan atribusi, serta adab keilmuan.\n\nDilarang menggunakan OpenTurath untuk mengambil alih akun, menghindari pembatasan akses secara tidak sah, menyebarkan perangkat lunak berbahaya, atau menjual kembali akses berbayar kepada pihak lain.\n\nDilarang membuat atau menyebarkan kutipan yang sengaja dipalsukan dan diatasnamakan kepada ulama atau sumber tertentu. Pembahasan ilmiah yang sah, termasuk perbedaan pendapat dan kritik terhadap suatu penafsiran, tidak dengan sendirinya merupakan pelanggaran.",
+          "You may use the service for study, lesson preparation, and research within your plan's scope. Use of outputs must respect copyright, citation accuracy, and scholarly ethics.\n\nYou may not use OpenTurath to take over accounts, bypass access controls without authorization, distribute malware, or resell paid access to third parties.\n\nYou may not create or distribute deliberately fabricated quotations attributed to scholars or specific sources. Legitimate scholarly discussion, including differences of opinion and critical analysis of interpretations, does not in itself constitute a violation.",
+          "يجوز استخدام الخدمة للدراسة وإعداد الدروس والبحث العلمي في حدود باقتك، مع مراعاة حقوق النشر ودقة العزو وأدب العلم.\n\nيُحظر استخدام المنصة لمحاولة الاستيلاء على الحسابات، أو تجاوز ضوابط الوصول دون إذن، أو نشر البرمجيات الخبيثة، أو إعادة بيع الوصول المدفوع.\n\nيُحظر تلفيق نقول أو نسبتها زورًا إلى العلماء أو المصادر التراثية. ولا يُعد النقاش العلمي النزيه، بما فيه بيان الخلاف ونقد التفسيرات، مخالفة لهذه الشروط."
+        ]
+      },
+      {
+        "heading": [
+          "8. Catatan dan Materi Pengguna",
+          "8. User Notes and Materials",
+          "٨. ملاحظات المستخدم ومواده الخاصة"
+        ],
+        "body": [
+          "Hak atas tulisan atau catatan yang Anda buat tetap berada pada Anda. Anda memberi izin terbatas kepada kami untuk memproses dan menyimpan materi tersebut semata-mata untuk menjalankan fitur yang Anda pilih. Izin ini tidak memindahkan kepemilikan dan kami tidak menjual atau menerbitkan catatan pribadi Anda.\n\nCatatan disimpan secara lokal pada perangkat Anda melalui penyimpanan aplikasi. Gunakan fitur salin atau berbagi yang tersedia untuk mencadangkan materi penting.",
+          "You retain ownership of any writings or notes you create. You grant us a limited license to process and store such materials solely to execute the features you select. This license does not transfer ownership, and we do not sell or publish your personal notes.\n\nNotes are stored locally on your device via application storage. Use the available copy or export features to back up critical materials.",
+          "تبقى ملكية ما تدونه من كتابات وملاحظات خالصة لك. وتمنحنا ترخيصًا محدودًا بمعالجتها وتخزينها بالقدر اللازم لتشغيل الميزات التي تختارها دون نقل للملكية، ونحن لا نبيع ملاحظاتك ولا ننشرها.\n\nتُحفظ الملاحظات محليًا في جهازك عبر ذاكرة التطبيق؛ لذا يرجى استخدام أدوات النسخ أو التصدير المتاحة للاحتفاظ بنسخ احتياطية."
+        ]
+      },
+      {
+        "heading": [
+          "9. Hak atas Aplikasi dan Kitab",
+          "9. App Rights and Manuscript Heritage",
+          "٩. حقوق الملكية الفكرية للتطبيق والمصنفات"
+        ],
+        "body": [
+          "Hak atas perangkat lunak, tampilan, dan merek OpenTurath tetap berada pada pemegang haknya. Materi kitab, terjemahan, dan tahkik mengikuti status hak masing-masing.\n\nAkses berbayar tidak memindahkan hak cipta atas kitab atau memberi izin umum untuk menyebarluaskan seluruh isi kitab secara komersial. Penggunaan kutipan harus memperhatikan batas penggunaan wajar dan kewajiban atribusi.",
+          "Rights in OpenTurath software, user interfaces, and trademarks remain with their respective holders. Manuscript texts, translations, and scholarly editions follow their respective copyright statuses.\n\nPaid access does not transfer copyright in books or grant a general license to distribute full texts commercially. Quotations must observe fair-use standards and mandatory scholarly attribution.",
+          "تظل حقوق برمجيات OpenTurath وتصميماتها وعلاماتها محفوظة لأصحابها. وتتبع نصوص الكتب والترجمات والتحقيقات حقوق حائزيها.\n\nالوصول المدفوع لا ينقل ملكية الكتب الفكرية ولا يمنح ترخيصًا بنشر الكتب كاملة تجاريًا. ويجب في الاقتباس مراعاة الاستخدام العادل وواجب العزو العلمي."
+        ]
+      },
+      {
+        "heading": [
+          "10. Ketersediaan dan Perubahan Fitur",
+          "10. Feature Changes and Maintenance",
+          "١٠. توفر الخدمة وتعديل الميزات"
+        ],
+        "body": [
+          "Layanan dapat mengalami pemeliharaan berkala atau pembaruan teknis. Kami berupaya memberi pemberitahuan mengenai pemeliharaan terencana.\n\nPerubahan yang secara material mengurangi manfaat paket berbayar akan disertai pilihan penyelesaian yang wajar. Kami tidak menggunakan perubahan ketentuan untuk menghapus hak yang sudah timbul dari pembelian Anda.",
+          "The service may undergo periodic maintenance or technical updates. We endeavor to provide advance notice for planned maintenance.\n\nChanges that materially reduce the benefits of a paid plan will be accompanied by reasonable remedy options. We do not use terms modifications to retroactively eliminate rights accrued from your purchases.",
+          "قد تخضع الخدمة لصيانة دورية أو تحديثات فنية، ونسعى للإشعار المسبق بالصيانة المجدولة.\n\nالتعديلات التي تنقص من منافع الباقة المدفوعة نقصًا جوهريًا ستصحبها حلول تعويضية معقولة، ولن تُستغل التعديلات لإسقاط حقوق نشأت بالفعل من شرائك."
+        ]
+      },
+      {
+        "heading": [
+          "11. Pembatasan dan Penutupan Akun",
+          "11. Account Restrictions and Termination",
+          "١١. تعليق الحساب وإغلاقه"
+        ],
+        "body": [
+          "Kami dapat membatasi akses jika terdapat dasar yang wajar mengenai pelanggaran serius, risiko keamanan, atau penggunaan tanpa hak. Tindakan disesuaikan dengan tingkat masalah, mulai dari peringatan, penghentian sementara, hingga penutupan akun.\n\nJika keadaan memungkinkan, kami menyampaikan alasan dan memberi kesempatan klarifikasi melalui openturath@gmail.com.",
+          "We may restrict access if there are reasonable grounds regarding serious violations, security risks, or unauthorized usage. Actions are proportionate to the severity, ranging from notices and temporary suspension to account termination.\n\nWhere practicable, we communicate the reasons and provide an opportunity for clarification via openturath@gmail.com.",
+          "يجوز تقييد الوصول عند وجود أسباب وجيهة لمخالفة جسيمة أو خطر أمني أو استخدام غير مشروع. وتتدرج الإجراءات تناسبًا من الإنذار والتعليق المؤقت إلى الإغلاق التام.\n\nومتى أمكن، نوضح الأسباب ونمنح فرصة لتقديم الإيضاحات عبر openturath@gmail.com."
+        ]
+      },
+      {
+        "heading": [
+          "12. Tanggung Jawab dan Hak Pengguna",
+          "12. Liability and Consumer Rights",
+          "١٢. المسؤولية وحقوق المستهلك"
+        ],
+        "body": [
+          "Kami bertanggung jawab menyediakan layanan sesuai perjanjian dan hukum yang berlaku. Penjelasan mengenai keterbatasan AI tidak menghapus kewajiban kami untuk memberikan informasi yang benar, menangani keluhan, atau menyelesaikan layanan berbayar.\n\nAnda bertanggung jawab menilai kesesuaian hasil untuk tujuan penggunaannya dan memeriksa sumber sebelum mengambil kesimpulan. Tidak ada ketentuan yang meniadakan hak konsumen yang dilindungi undang-undang.",
+          "We are responsible for providing services in accordance with our agreement and governing law. Disclaimers regarding AI limitations do not negate our duty to provide truthful information, handle complaints, or deliver paid services.\n\nYou are responsible for evaluating the suitability of outputs for your intended purpose and checking sources before drawing conclusions. Nothing in these terms excludes statutory consumer rights.",
+          "نلتزم بتقديم الخدمة وفق الاتفاق والقوانين السارية. وبيان حدود الذكاء الاصطناعي لا يعفينا من واجب تحري الصدق ومعالجة الشكاوى وإتمام الخدمات المدفوعة.\n\nيتحمل المستخدم مسؤولية تقييم المخرجات لغرضه ومراجعة الأصول قبل الاستنتاج. ولا يلغي أي بند من هذه الشروط حقوق المستهلك المكفولة قانونًا."
+        ]
+      },
+      {
+        "heading": [
+          "13. Pengaduan dan Musyawarah",
+          "13. Complaints and Dispute Resolution",
+          "١٣. الشكاوى وتسوية النزاعات"
+        ],
+        "body": [
+          "Hubungi openturath@gmail.com dengan penjelasan masalah dan informasi yang relevan. Kami akan mencatat pengaduan, menyampaikan perkembangan penanganan dalam 2 (dua) hari kerja, dan mengupayakan penyelesaian secara musyawarah.\n\nKetentuan ini tunduk pada hukum Republik Indonesia.",
+          "Contact openturath@gmail.com with a clear description of the issue and relevant information. We will log your complaint, provide an initial update within 2 (two) business days, and seek amicable resolution.\n\nThese terms are governed by the laws of the Republic of Indonesia.",
+          "تواصل عبر openturath@gmail.com مع بيان المشكلة والبيانات المتعلقة بها. سنقيد الشكوى ونقدم تحديثًا أوليًا خلال يومي (٢) عمل، مع السعي للحل الودي.\n\nتخضع هذه الشروط لقوانين جمهورية إندونيسيا."
+        ]
+      },
+      {
+        "heading": [
+          "14. Perubahan Ketentuan dan Kontak",
+          "14. Policy Amendments and Official Contacts",
+          "١٤. تعديل الشروط وبيانات التواصل"
+        ],
+        "body": [
+          "Versi dokumen: 1.0 (Berlaku sejak 13 September 2026).\n\nPerubahan penting akan diberitahukan sebelum berlaku dan tidak berlaku surut untuk menghilangkan hak yang telah timbul.\n\nPengelola: Pengelola OpenTurath\nAlamat: Indonesia\nBantuan: openturath@gmail.com\nPrivasi: openturath@gmail.com\nHak Cipta: openturath@gmail.com",
+          "Document version: 1.0 (Effective from 13 September 2026).\n\nMaterial amendments will be notified prior to becoming effective and will not apply retroactively to eliminate existing rights.\n\nOperator: Pengelola OpenTurath\nAddress: Indonesia\nSupport: openturath@gmail.com\nPrivacy: openturath@gmail.com\nCopyright: openturath@gmail.com",
+          "نسخة الوثيقة: ١.٠ (سارية من ١٣ سبتمبر ٢٠٢٦).\n\nيُشعر بالتعديلات الجوهرية قبل سريانها ولا تطبق بأثر رجعي لإسقاط حقوق مكتسبة.\n\nالمشغّل: Pengelola OpenTurath\nالعنوان: إندونيسيا\nالدعم: openturath@gmail.com\nالخصوصية: openturath@gmail.com\nحقوق النشر: openturath@gmail.com"
         ]
       }
     ],
@@ -221,62 +317,158 @@ export const articles = {
     "blocks": [
       {
         "heading": [
-          "Data aplikasi dan tujuannya",
-          "App data and purposes",
-          "بيانات التطبيق وأغراضها"
+          "1. Pengelola Data dan Ruang Lingkup",
+          "1. Data Controller and Scope",
+          "١. مسؤول معالجة البيانات ونطاق السياسة"
         ],
         "body": [
-          "Aplikasi memproses identitas Google, status akses, data transaksi Midtrans, kontak transaksi, sesi percakapan, serta data bantuan sesuai fitur yang dipakai. Data diperlukan untuk autentikasi, penyediaan layanan, pembayaran, dan kewajiban pencatatan. Pengelola menyatakan tidak menjual data pribadi atau menggunakan percakapan untuk iklan bertarget.",
-          "The app processes Google identity, access status, Midtrans transaction data, transaction contacts, conversation sessions, and support data as needed by each feature. Purposes include authentication, service delivery, payment, and required records. The operator states that personal data is not sold and conversations are not used for targeted advertising.",
-          "يعالج التطبيق هوية Google وحالة الوصول وبيانات معاملات Midtrans وجهات اتصال المعاملات والمحادثات والدعم بحسب الميزة. تشمل الأغراض المصادقة وتقديم الخدمة والدفع والسجلات المطلوبة. ويصرّح المشغّل بعدم بيع البيانات أو استخدام المحادثات للإعلانات الموجّهة."
+          "Kebijakan Privasi ini menjelaskan pemrosesan data pribadi saat Anda menggunakan aplikasi OpenTurath, pembayaran, dan bantuan layanan. Pengelola OpenTurath (Indonesia) bertanggung jawab atas pemrosesan data yang tujuan dan caranya ditentukan oleh OpenTurath, sesuai UU Nomor 27 Tahun 2022 tentang Pelindungan Data Pribadi.\n\nUntuk pertanyaan privasi, hubungi openturath@gmail.com.",
+          "This Privacy Policy explains personal data processing when you use OpenTurath applications, payments, and customer support. Pengelola OpenTurath (Indonesia) is the data controller responsible for determining purposes and means of processing, pursuant to Law No. 27 of 2022 on Personal Data Protection (UU PDP).\n\nFor privacy inquiries, contact openturath@gmail.com.",
+          "توضح سياسة الخصوصية هذه معالجة البيانات الشخصية عند استخدام تطبيقات OpenTurath وخدمات الدفع والدعم. وتعد Pengelola OpenTurath في إندونيسيا هي الجهة المسؤولة عن تحديد أغراض المعالجة ووسائلها وفق قانون حماية البيانات الشخصية الإندونيسي (القانون رقم ٢٧ لسنة ٢٠٢٢).\n\nللاستفسارات المتعلقة بالخصوصية: openturath@gmail.com."
         ]
       },
       {
         "heading": [
-          "Catatan lokal dan layanan eksternal",
-          "Local Notes and external services",
-          "الملاحظات المحلية والخدمات الخارجية"
+          "2. Data yang Diproses",
+          "2. Categories of Processed Data",
+          "٢. البيانات التي تتم معالجتها"
         ],
         "body": [
-          "Catatan disimpan pada perangkat dan dapat hilang saat data aplikasi dihapus. Cadangkan melalui salin atau bagikan. Google menangani autentikasi dan NotebookLM, Midtrans menangani pembayaran, dan Firebase/Google Cloud menangani data transaksi serta akses. Pemrosesan penyedia dapat berlangsung lintas negara.",
-          "Notes are stored on your device and may be lost when app data is deleted. Back up using copy or share. Google handles authentication and NotebookLM, Midtrans handles payments, and Firebase/Google Cloud handles transaction and access data. Provider processing may cross borders.",
-          "تُحفظ الملاحظات على جهازك وقد تُفقد عند حذف بيانات التطبيق. انسخها أو شاركها للاحتفاظ بها. تتولى Google المصادقة وNotebookLM، وMidtrans الدفع، وFirebase/Google Cloud بيانات المعاملات والوصول. قد تجري معالجة المزوّدين عبر الحدود."
+          "Kami memproses data sesuai fitur yang Anda gunakan:\n• Akun: Nama, alamat email, dan identitas profil publik dari akun Google untuk autentikasi dan personalisasi.\n• Langganan: Paket yang dipilih, status, masa aktif, dan penggunaan voucher.\n• Pembayaran: Nomor transaksi, jumlah pembayaran, metode, waktu, dan status dari penyedia Midtrans.\n• Kontak Transaksi: Nomor WhatsApp/telepon yang Anda berikan saat pembayaran untuk pengiriman informasi aktivasi.\n• Percakapan: Pertanyaan, jawaban, dan konteks percakapan yang diproses melalui sesi Google NotebookLM.\n• Catatan: Catatan, kutipan, dan rujukan yang Anda simpan pada penyimpanan lokal perangkat.\n• Bantuan: Alamat kontak, isi pengaduan, nomor transaksi, dan lampiran tangkapan layar untuk penanganan masalah.\n• Sesi Teknis: Token sesi autentikasi yang aman untuk mempertahankan login di perangkat.",
+          "We process data based on features you use:\n• Account: Name, email address, and public profile identifier from Google for authentication and personalization.\n• Subscription: Selected plan, status, validity dates, and voucher usage.\n• Payment: Transaction ID, payment amount, method, timestamp, and status from provider Midtrans.\n• Transaction Contact: WhatsApp/phone number provided during checkout for activation notices.\n• Conversations: Prompts, responses, and session context processed via Google NotebookLM.\n• Notes: Notes, quotations, and locators stored in device local storage.\n• Support: Contact address, inquiry details, transaction ID, and screenshots for troubleshooting.\n• Technical Sessions: Secure authentication session tokens to maintain login on your device.",
+          "نعالج البيانات بحسب الميزات المستخدمة:\n• الحساب: الاسم والبريد الإلكتروني والصورة العامة من حساب Google للمصادقة.\n• الاشتراك: الباقة المختارة، وحالتها، وفترة الصلاحية، واستخدام القسائم.\n• المدفوعات: رقم المعاملة والمبلغ والوسيلة والوقت والحالة من مزود الدفع Midtrans.\n• بيانات التواصل للمعاملات: رقم الهاتف/واتساب المدخل عند الدفع لإشعار التفعيل.\n• المحادثات: الأسئلة والأجوبة وسياق الجلسات المعالج عبر Google NotebookLM.\n• الملاحظات: الملاحظات والنقول والمراجع المحفوظة محليًا على جهازك.\n• الدعم الفني: وسيلة الاتصال وفحوى البلاغ ورقم المعاملة والصور المرفقة.\n• الجلسات الفنية: رموز الجلسات الآمنة للحفاظ على تسجيل الدخول."
         ]
       },
       {
         "heading": [
-          "Data pada website",
-          "Data on this website",
-          "البيانات في هذا الموقع"
+          "3. Tujuan dan Dasar Pemrosesan",
+          "3. Purposes and Legal Basis of Processing",
+          "٣. أغراض المعالجة وأساسها القانوني"
         ],
         "body": [
-          "Website menyimpan pilihan bahasa, tema, gerak, dan ukuran baca di localStorage. Tidak ada analitik eksternal yang diaktifkan. Formulir menyimpan topik, email opsional, isi pesan, persetujuan, bahasa, halaman, ID permintaan, dan waktu laporan. Hindari mengirim kata sandi, OTP, data kartu, atau data sensitif.",
-          "The website stores language, theme, motion, and reading-size preferences in localStorage. No external analytics are enabled. The form stores topic, optional email, message, consent, language, page, request ID, and report time. Do not submit passwords, OTPs, card data, or sensitive information.",
-          "يحفظ الموقع تفضيلات اللغة والمظهر والحركة وحجم القراءة في localStorage. لا تحليلات خارجية مفعّلة. يحفظ النموذج الموضوع والبريد الاختياري والرسالة والموافقة واللغة والصفحة ومعرّف الطلب ووقته. لا ترسل كلمات المرور أو رموز التحقّق أو بيانات البطاقات أو المعلومات الحساسة."
+          "Data akun dan transaksi diproses untuk menyediakan layanan yang Anda minta, mengelola langganan, dan melaksanakan perjanjian. Pencatatan transaksi juga diperlukan untuk memenuhi kewajiban hukum administrasi perpajakan dan transaksi keuangan.\n\nKami tidak menjual data pribadi Anda kepada pihak ketiga manapun, dan tidak menggunakan percakapan Anda untuk iklan bertarget.",
+          "Account and transaction data are processed to provide requested services, manage subscriptions, and perform contracts. Transaction records are also required to comply with statutory taxation and financial transaction obligations.\n\nWe do not sell your personal data to any third party, nor do we use your conversation contents for targeted advertising.",
+          "تُعالج بيانات الحساب والمعاملات لتقديم الخدمات المطلوبة وإدارة الاشتراكات وتنفيذ الاتفاقيات، وتُحفظ سجلات الدفع للوفاء بالالتزامات المالية والضريبية المقررة قانونًا.\n\nنحن لا نبيع بياناتك الشخصية لأي طرف ثالث، ولا نستخدم محتوى محادثاتك في الإعلانات الموجهة."
         ]
       },
       {
         "heading": [
-          "Retensi dan penghapusan",
-          "Retention and deletion",
-          "الاحتفاظ والحذف"
+          "4. Percakapan AI dan Peran Google",
+          "4. AI Conversations and Google NotebookLM",
+          "٤. محادثات الذكاء الاصطناعي ودور Google"
         ],
         "body": [
-          "Data akun mengikuti masa aktif dan permohonan penghapusan. Catatan lokal berada dalam kendali perangkat Anda. Transaksi dapat dipertahankan untuk kewajiban hukum. Laporan website dijadwalkan untuk dihapus setelah 30 hari. Cadangan dan log infrastruktur mengikuti pengaturan operasional pengelola.",
-          "Account data follows account lifetime and deletion requests. Local Notes remain under your device’s control. Transactions may be retained for legal obligations. Website reports are scheduled for deletion after 30 days. Backups and infrastructure logs follow the operator’s operational settings.",
-          "ترتبط بيانات الحساب بمدة نشاطه وطلبات الحذف. وتبقى الملاحظات المحلية تحت تحكم جهازك. قد تُحفظ المعاملات للالتزامات القانونية. يُجدول حذف بلاغات الموقع بعد ٣٠ يومًا، وتتبع النسخ الاحتياطية وسجلات البنية إعدادات المشغّل."
+          "Ketika Anda mengirim pertanyaan melalui fitur percakapan, teks dan konteks diproses melalui layanan Google NotebookLM. Kebijakan pemrosesan Google mengikuti Kebijakan Privasi Google dan ketentuan NotebookLM.\n\nAplikasi OpenTurath tidak menggunakan isi percakapan atau catatan pribadi pengguna untuk melatih model kecerdasan buatan publik. Hindari memasukkan informasi pribadi sensitif atau rahasia ke dalam percakapan.",
+          "When you submit questions in conversation features, text and context are processed through Google NotebookLM. Google processing is governed by Google's Privacy Policy and NotebookLM terms.\n\nOpenTurath does not utilize user conversation contents or personal notes to train public artificial intelligence models. Avoid submitting sensitive personal or confidential information into conversations.",
+          "عند إرسال أسئلة في المحادثة، يُعالج النص وسياقه عبر خدمة Google NotebookLM وفق سياسة خصوصية Google وشروط NotebookLM.\n\nلا تستخدم OpenTurath محتوى محادثاتك أو ملاحظاتك الشخصية لتدريب نماذج الذكاء الاصطناعي العامة. يُرجى تجنب إدخال معلومات حساسة أو سرية في المحادثات."
         ]
       },
       {
         "heading": [
-          "Hak privasi dan pengguna di bawah umur",
-          "Privacy rights and minors",
-          "حقوق الخصوصية والقاصرون"
+          "5. Catatan dan Penyimpanan Perangkat",
+          "5. Device Local Storage for Notes",
+          "٥. التخزين المحلي للملاحظات على الجهاز"
         ],
         "body": [
-          "Ajukan akses, koreksi, atau penghapusan data melalui openturath@gmail.com. Pendaftaran mandiri dibatasi untuk usia 18 tahun ke atas. Hubungi pengelola jika ditemukan akun anak yang tidak memenuhi ketentuan. Naskah resmi menjelaskan ruang lingkup dan tanggung jawab data aplikasi.",
-          "Request access, correction, or deletion through openturath@gmail.com. Self-registration is restricted to ages 18 and above. Contact the operator about an ineligible child account. The official policy explains the scope and responsibilities for app data.",
-          "اطلب الاطلاع أو التصحيح أو الحذف عبر openturath@gmail.com. التسجيل الذاتي لمن بلغ ١٨ عامًا. تواصل مع المشغّل عند العثور على حساب طفل غير مستوفٍ للشروط. توضح السياسة الرسمية نطاق بيانات التطبيق والمسؤوليات."
+          "Catatan, kutipan ibarah, dan penanda rujukan disimpan secara lokal di perangkat Anda menggunakan penyimpanan aplikasi. Jika Anda membersihkan data aplikasi atau mencopot pemasangan aplikasi, catatan lokal dapat terhapus. Gunakan fitur salin teks atau bagikan catatan untuk mencadangkan catatan penting Anda ke tempat penyimpanan lain.",
+          "Notes, text citations, and reference markers are stored locally on your device using application storage. Clearing application data or uninstalling the app may permanently remove local notes. Use copy text or export features to back up important materials to external storage.",
+          "تُحفظ الملاحظات والنقول وإشارات المراجع محليًا على جهازك داخل ذاكرة التطبيق. مسح بيانات التطبيق أو إلغاء تثبيته قد يؤدي إلى حذف الملاحظات المحلية. استخدم ميزة نسخ النصوص أو التصدير للاحتفاظ بنسخ احتياطية في مكان آمن."
+        ]
+      },
+      {
+        "heading": [
+          "6. Penerima dan Penyedia Layanan",
+          "6. Service Providers and Data Recipients",
+          "٦. مزودو الخدمات والجهات المستلمة للبيانات"
+        ],
+        "body": [
+          "Data dibagikan hanya sebatas yang diperlukan untuk menjalankan layanan:\n• Google: Untuk proses masuk autentikasi dan pemrosesan sesi percakapan NotebookLM.\n• Midtrans: Lembaga pembayaran resmi untuk memproses transaksi perbankan, dompet digital, atau QRIS.\n• Firebase / Google Cloud: Pengelolaan database transaksi dan status hak akses akun yang aman.\n\nSeluruh penyedia bekerja berdasarkan standar keamanan dan enkripsi industri.",
+          "Data is shared strictly to the extent necessary to provide the service:\n• Google: For authentication sign-in and NotebookLM conversation processing.\n• Midtrans: Licensed payment institution to process banking, digital wallet, or QRIS transactions.\n• Firebase / Google Cloud: Secure database management of transactions and account entitlement statuses.\n\nAll service providers operate under recognized industry security and encryption standards.",
+          "تتم مشاركة البيانات بالقدر الضروري فقط لتشغيل الخدمة:\n• Google: للمصادقة وتسجيل الدخول ومعالجة جلسات محادثات NotebookLM.\n• Midtrans: مؤسسة الدفع الرسمية لمعالجة المعاملات المصرفية والمحافظ الإلكترونية وQRIS.\n• Firebase / Google Cloud: لإدارة قواعد بيانات المعاملات وحالات صلاحيات الحسابات بأمان.\n\nيعمل جميع المزودين وفق أعلى معايير الأمان والتشفير المعتمدة عالميًا."
+        ]
+      },
+      {
+        "heading": [
+          "7. Kebijakan Iklan, Analitik, dan Promosi",
+          "7. Advertising, Analytics, and Promotion Policy",
+          "٧. سياسة الإعلانات والتحليلات والترويج"
+        ],
+        "body": [
+          "OpenTurath bebas dari iklan pihak ketiga dan tidak menjual data pribadi Anda. Pemberitahuan transaksi dan pembaruan layanan dikirimkan semata-mata untuk keperluan operasional akun Anda.",
+          "OpenTurath is free from third-party advertising and does not sell your personal data. Transaction notices and service updates are sent solely for account operational purposes.",
+          "تطبيق OpenTurath خالٍ تمامًا من إعلانات الأطراف الثالثة ولا يبيع بياناتك. وتُرسل إشعارات المعاملات وتحديثات الخدمة للأغراض التشغيلية المرتبطة بحسابك فقط."
+        ]
+      },
+      {
+        "heading": [
+          "8. Pemrosesan Data Lintas Wilayah",
+          "8. Cross-Border Data Processing",
+          "٨. المعالجة الدولية للبيانات"
+        ],
+        "body": [
+          "Infrastruktur autentikasi Google dan basis data cloud dapat memproses sebagian data teknis di pusat data yang aman di dalam maupun luar wilayah Indonesia, dengan perlindungan enkripsi transit dan at-rest berstandar global.",
+          "Google authentication infrastructure and cloud databases may process certain technical data in secure data centers inside or outside Indonesia, protected by global transit and at-rest encryption standards.",
+          "قد تعالج البنية التحتية لمصادقة Google وقواعد البيانات السحابية بعض البيانات الفنية في مراكز بيانات آمنة داخل إندونيسيا أو خارجها، مع تطبيق معايير التشفير العالمية أثناء النقل والتخزين."
+        ]
+      },
+      {
+        "heading": [
+          "9. Masa Penyimpanan Data (Retensi)",
+          "9. Data Retention Periods",
+          "٩. فترات الاحتفاظ بالبيانات"
+        ],
+        "body": [
+          "• Data Akun: Disimpan selama akun aktif, dan dihapus setelah permohonan penutupan akun disetujui.\n• Data Transaksi: Disimpan selama batas waktu yang diwajibkan oleh ketentuan perpajakan dan hukum transaksi keuangan Republik Indonesia.\n• Catatan Pengguna: Disimpan di perangkat Anda hingga Anda menghapusnya sendiri atau mencopot aplikasi.\n• Pengaduan Bantuan: Disimpan selama proses penyelesaian masalah dan pengarsipan layanan.",
+          "• Account Data: Retained while the account is active, and deleted upon approved account closure requests.\n• Transaction Data: Retained for periods required by statutory taxation and financial regulations of Indonesia.\n• User Notes: Retained on your device until deleted by you or the app is uninstalled.\n• Support Inquiries: Retained during problem resolution and customer service archiving.",
+          "• بيانات الحساب: تُحفظ طوال مدة نشاط الحساب، وتُحذف فور قبول طلب إغلاق الحساب.\n• بيانات المعاملات: تُحفظ للمدة التي توجبها القوانين الضريبية والمالية في إندونيسيا.\n• ملاحظات المستخدم: تبقى في جهازك إلى أن تحذفها يدويًا أو تلغي تثبيت التطبيق.\n• بلاغات الدعم: تُحفظ خلال مدة معالجة المشكلة والتوثيق الخدمي."
+        ]
+      },
+      {
+        "heading": [
+          "10. Keamanan dan Perlindungan Data",
+          "10. Security and Safeguards",
+          "١٠. أمن البيانات وحمايتها"
+        ],
+        "body": [
+          "Kami menerapkan langkah-langkah pengamanan teknis, termasuk komunikasi terenkripsi SSL/TLS, pembatasan akses data, dan perlindungan token sesi. Kata sandi akun Google Anda tidak pernah disimpan di server OpenTurath.",
+          "We apply technical security measures, including SSL/TLS encrypted communication, restricted data access, and session token protection. Your Google account password is never stored on OpenTurath servers.",
+          "نطبق تدابير أمنية فنية تشمل تشفير الاتصالات عبر SSL/TLS وتقييد الوصول وحماية رموز الجلسات. ولا يتم تخزين كلمة مرور حساب Google الخاص بك في خوادم OpenTurath مطلقًا."
+        ]
+      },
+      {
+        "heading": [
+          "11. Hak Subjek Data Pengguna",
+          "11. User Data Subject Rights",
+          "١١. حقوق أصحاب البيانات"
+        ],
+        "body": [
+          "Sesuai UU Perlindungan Data Pribadi, Anda berhak:\n• Mengakses dan memperoleh informasi mengenai data pribadi yang diproses.\n• Memperbarui atau memperbaiki data profil yang keliru.\n• Meminta penghapusan akun dan data pribadi Anda kapan saja melalui aplikasi.\n• Menyampaikan keberatan atau pertanyaan seputar privasi ke openturath@gmail.com.",
+          "Pursuant to the Personal Data Protection Law, you have the right to:\n• Access and obtain information regarding your processed personal data.\n• Update or correct inaccurate profile data.\n• Request deletion of your account and personal data at any time via the application.\n• Submit objections or privacy questions to openturath@gmail.com.",
+          "وفقًا لقانون حماية البيانات الشخصية، يحق لك:\n• الاطلاع على بياناتك الشخصية المعالجة والحصول على معلومات عنها.\n• تحديث البيانات غير الدقيقة أو تصحيحها.\n• طلب حذف حسابك وبياناتك الشخصية في أي وقت من خلال التطبيق.\n• تقديم أي استفسار أو اعتراض عبر openturath@gmail.com."
+        ]
+      },
+      {
+        "heading": [
+          "12. Pengguna di Bawah Umur",
+          "12. Underage Users",
+          "١٢. المستخدمون القاصرون"
+        ],
+        "body": [
+          "Pendaftaran akun mandiri ditujukan bagi pengguna berusia 18 tahun ke atas. Jika Anda orang tua atau wali dan mendapati akun dibuka tanpa izin yang diperlukan, hubungi openturath@gmail.com untuk penanganan dan penghapusan data.",
+          "Self-registration is intended for users who are 18 years of age or older. If you are a parent or guardian and discover that an account was created without necessary authorization, contact openturath@gmail.com for prompt resolution and data deletion.",
+          "التسجيل الذاتي مخصص لمن أتم ثمانية عشر (١٨) عامًا فما فوق. وإذا كنت ولي أمر أو وصيًا واكتشفت إنشاء حساب دون إذن، فتواصل معنا عبر openturath@gmail.com للتعامل مع الحالة وحذف البيانات فورًا."
+        ]
+      },
+      {
+        "heading": [
+          "13. Kontak dan Pembaruan Kebijakan",
+          "13. Contact and Policy Updates",
+          "١٣. التواصل وتحديثات السياسة"
+        ],
+        "body": [
+          "Versi dokumen: 1.0 (Berlaku sejak 13 September 2026).\n\nUntuk pertanyaan atau permohonan hak privasi, hubungi:\nEmail: openturath@gmail.com\nPengelola: Pengelola OpenTurath (Indonesia)",
+          "Document version: 1.0 (Effective from 13 September 2026).\n\nFor questions or exercising privacy rights, contact:\nEmail: openturath@gmail.com\nOperator: Pengelola OpenTurath (Indonesia)",
+          "نسخة الوثيقة: ١.٠ (سارية من ١٣ سبتمبر ٢٠٢٦).\n\nللاستفسارات وممارسة حقوق الخصوصية، يرجى التواصل عبر:\nالبريد الإلكتروني: openturath@gmail.com\nالمشغّل: Pengelola OpenTurath (إندونيسيا)"
         ]
       }
     ],
@@ -292,62 +484,86 @@ export const articles = {
     "blocks": [
       {
         "heading": [
-          "Penawaran dan durasi",
-          "Offers and duration",
-          "العروض والمدة"
+          "1. Informasi Sebelum Pembelian",
+          "1. Pre-Purchase Information",
+          "١. معلومات ما قبل الشراء"
         ],
         "body": [
-          "Akses asisten spesialis dimulai dari Rp 49.000 per bulan. Pilih asisten spesialis disiplin ilmu yang ingin Anda telaah. Akses dan aktivasi diproses resmi di aplikasi melalui Midtrans, tanpa perpanjangan otomatis. Rincian paket, metode pembayaran, dan total biaya ditampilkan sebelum transaksi.",
-          "Specialist access starts at IDR 49,000 per month. Choose a specialist assistant for the discipline you wish to study. Access and activation are handled in the app through Midtrans, with manual renewal. Plan details, payment methods, and the total are shown before you pay.",
-          "يبدأ الوصول إلى المساعد المختص من ٤٩٬٠٠٠ روبية إندونيسية شهريًّا. اختر المساعد المختص بالعلم الذي تريد دراسته. يُفعّل الوصول رسميًّا داخل التطبيق عبر Midtrans، مع تجديد يدوي. تُعرض تفاصيل الباقة ووسائل الدفع والمبلغ الإجمالي قبل إتمام المعاملة."
+          "Sebelum melakukan pembayaran, rincian harga total, cakupan modul asisten, durasi masa akses, dan metode pembayaran ditampilkan secara jelas pada halaman langganan.\n\nDurasi paket 30 hari dihitung sebagai 30 hari kalender penuh sejak aktivasi berhasil. Perubahan harga di masa mendatang tidak akan memengaruhi paket yang sedang berjalan.",
+          "Prior to payment, the total price, module assistant scope, access duration, and payment methods are clearly shown on the subscription page.\n\nA 30-day plan duration is calculated as 30 full calendar days from successful activation. Future price changes will not affect an active subscription period.",
+          "قبل إتمام الدفع، تُعرض تفاصيل السعر الإجمالي ونطاق المساعدين ومدة الوصول ووسائل الدفع بوضوح في صفحة الاشتراك.\n\nتُحسب مدة الباقة البالغة ٣٠ يومًا بثلاثين يومًا تقويميًا كاملًا من وقت التفعيل، ولن تؤثر أي تغييرات مستقبلية في الأسعار على الاشتراكات السارية."
         ]
       },
       {
         "heading": [
-          "Midtrans dan aktivasi",
-          "Midtrans and activation",
-          "Midtrans والتفعيل"
+          "2. Pembayaran dan Aktivasi Akses",
+          "2. Payment and Access Activation",
+          "٢. الدفع وتفعيل الوصول"
         ],
         "body": [
-          "Pembayaran memakai Midtrans melalui QRIS, Virtual Account, atau E-Wallet yang tersedia pada checkout. Status dibayar dan status akses aktif perlu dikonfirmasi terpisah. Jika dana terpotong tetapi akses belum aktif, hubungi bantuan dengan nomor transaksi sebelum membayar ulang.",
-          "Payments use available Midtrans methods such as QRIS, Virtual Account, or E-Wallet. Payment status and active access must be confirmed separately. If funds are deducted but access is inactive, contact support with the transaction number before paying again.",
-          "تتم المدفوعات عبر وسائل Midtrans المتاحة مثل QRIS والحساب الافتراضي والمحفظة الإلكترونية. تُراجع حالة الدفع وتفعيل الوصول كلٌّ على حدة. إذا خُصم المبلغ دون تفعيل، تواصل مع الدعم برقم المعاملة قبل إعادة الدفع."
+          "Pembayaran diproses melalui gerbang pembayaran resmi Midtrans dengan metode QRIS, transfer bank (virtual account), maupun dompet digital.\n\nBukti pembayaran resmi dikirimkan melalui notifikasi Midtrans dan email akun Anda. Masa akses aktif seketika transaksi dinyatakan berhasil dan tersinkronisasi. Jika dana telah terpotong namun status belum aktif, jangan melakukan pembayaran ulang; hubungi openturath@gmail.com dengan menyertakan nomor transaksi.",
+          "Payments are processed through the official Midtrans gateway using QRIS, bank transfer (virtual account), or digital wallets.\n\nOfficial payment receipts are delivered via Midtrans notifications and your account email. Access activates immediately once the transaction is confirmed successful and synced. If funds were deducted but access is not activated, do not repay; contact openturath@gmail.com with your transaction ID.",
+          "تتم معالجة المدفوعات عبر بوابة Midtrans الرسمية بواسطة QRIS أو التحويل البنكي (الحساب الافتراضي) أو المحافظ الإلكترونية.\n\nيُرسل إيصال الدفع عبر إشعارات Midtrans وبريد حسابك. يُفعّل الوصول فور تأكيد نجاح المعاملة، وإذا خُصم المبلغ دون تفعيل فامتنع عن إعادة الدفع وتواصل مع openturath@gmail.com برقم المعاملة."
         ]
       },
       {
         "heading": [
-          "Perpanjangan dan voucher",
-          "Renewal and vouchers",
-          "التجديد والقسائم"
+          "3. Perpanjangan Manual (Tanpa Auto-Debit)",
+          "3. Manual Renewal (No Auto-Debit)",
+          "٣. التجديد اليدوي (دون خصم تلقائي)"
         ],
         "body": [
-          "Semua perpanjangan dilakukan manual tanpa auto-debit. Akses berakhir sesuai tanggal pada akun. Voucher mengikuti cakupan, masa berlaku, dan batas penukaran yang diterbitkan. Voucher tidak dapat diuangkan.",
-          "All renewals are manual with no automatic debit. Access expires on the date shown in your account. Vouchers follow their published scope, validity, and redemption limits. Vouchers cannot be exchanged for cash.",
-          "كل تجديد يدوي دون خصم تلقائي. ينتهي الوصول في التاريخ المبيّن في الحساب. تتبع القسائم نطاقها وصلاحيتها وحدود استخدامها المنشورة، ولا تُستبدل نقدًا."
+          "Seluruh paket langganan OpenTurath diperpanjang secara manual tanpa penagihan berulang otomatis (tanpa auto-debit). Setelah masa aktif berakhir, akses berbayar akan berhenti dengan sendirinya kecuali Anda memilih untuk memperpanjang secara sadar.",
+          "All OpenTurath subscriptions renew manually without recurring automatic debit (no auto-debit). Once the active period concludes, paid access ceases automatically unless you consciously choose to renew.",
+          "تُجدد كافة باقات OpenTurath يدويًا دون أي خصم تلقائي متكرر. وعند انتهاء فترة الصلاحية يتوقف الوصول تلقائيًا ما لم تقرر التجديد بنفسك."
         ]
       },
       {
         "heading": [
-          "Dasar refund",
-          "Grounds for a refund",
-          "أسباب الاسترداد"
+          "4. Ketentuan Voucher",
+          "4. Voucher Terms",
+          "٤. شروط القسائم"
         ],
         "body": [
-          "Pengembalian dana dapat diminta untuk pembayaran ganda, akses yang tidak aktif setelah verifikasi, atau gangguan inti berbayar berkepanjangan yang tidak dapat dipulihkan. Penyelesaian dapat berupa pemulihan, penyesuaian masa akses dengan persetujuan Anda, atau pengembalian dana penuh.",
-          "A refund can be requested for duplicate payment, access not activated after verification, or prolonged unrecoverable failure of a core paid service. Remedies may include restored access, an agreed extension, or a full refund.",
-          "يمكن طلب الاسترداد للدفع المكرر أو عدم التفعيل بعد التحقّق أو عطل طويل غير قابل للإصلاح في خدمة مدفوعة أساسية. وقد تكون المعالجة باستعادة الوصول أو تمديد متفق عليه أو استرداد كامل."
+          "Voucher promosi atau mitra mengikuti masa berlaku, cakupan asisten, dan batas penukaran yang tercantum saat diterbitkan. Voucher tidak dapat diuangkan dan berlaku untuk satu kali penukaran pada akun yang berhak.",
+          "Promotional or partner vouchers follow the validity period, assistant scope, and redemption limits specified upon issuance. Vouchers cannot be redeemed for cash and are valid for a single redemption on eligible accounts.",
+          "تخضع قسائم الترويج والشراكات لفترة الصلاحية ونطاق المساعدين وحدود الاستخدام المحددة عند إصدارها. ولا يمكن استبدالها نقدًا، وتسري لمرة واحدة لكل حساب مؤهل."
         ]
       },
       {
         "heading": [
-          "Prosedur dan SLA",
-          "Process and service targets",
-          "الإجراء ومواعيد المعالجة"
+          "5. Dasar Pengajuan Pengembalian Dana (Refund)",
+          "5. Grounds for Refund",
+          "٥. أسباب استرداد الأموال"
         ],
         "body": [
-          "Kirim email akun, nomor transaksi, bukti bayar, dan penjelasan kendala ke openturath@gmail.com. Konfirmasi penerimaan paling lambat 2 hari kerja. Pemeriksaan dan keputusan paling lambat 7 hari kerja setelah informasi lengkap. Jika disetujui, pemrosesan pengembalian dana paling lambat 7 hari kerja berikutnya mengikuti bank atau dompet asal.",
-          "Send your account email, transaction number, payment evidence, and issue description to openturath@gmail.com. Receipt is acknowledged within 2 business days. Review and decision take up to 7 business days after complete information. Approved refunds are processed within a further 7 business days subject to the original bank or wallet.",
-          "أرسل بريد الحساب ورقم المعاملة وإثبات الدفع ووصف المشكلة إلى openturath@gmail.com. يُؤكّد الاستلام خلال يومي عمل، وتتم المراجعة والقرار خلال ٧ أيام عمل بعد اكتمال البيانات. ثم يُعالج الاسترداد الموافق عليه خلال ٧ أيام عمل أخرى وفق البنك أو المحفظة الأصلية."
+          "Anda berhak mengajukan pemeriksaan dan pengembalian dana apabila terjadi:\n• Pembayaran ganda akibat kendala teknis pada sistem transaksi.\n• Dana telah terpotong namun hak akses tidak aktif setelah dilakukan verifikasi.\n• Gangguan teknis berkepanjangan pada layanan inti berbayar yang tidak dapat dipulihkan.\n\nPenyelesaian dapat berupa pemulihan akses, penyesuaian masa aktif yang Anda setujui, atau pengembalian dana penuh.",
+          "You are entitled to request an investigation and refund in the event of:\n• Duplicate payment resulting from technical system anomalies.\n• Funds deducted but access rights remaining inactive after verification.\n• Prolonged unrecoverable technical downtime of core paid services.\n\nRemedies may include access restoration, mutually agreed validity extensions, or a full refund.",
+          "يحق لك طلب التحقق واسترداد الأموال في الحالات التالية:\n• الدفع المزدوج الناتج عن خلل فني في المعاملة.\n• خصم المبلغ مع عدم تفعيل الصلاحيات بعد التحقق.\n• انقطاع فني طويل وغير قابل للإصلاح في الخدمات الأساسية المدفوعة.\n\nوتشمل الحلول استعادة الوصول، أو تمديد الصلاحية بالتراضي، أو الاسترداد الكامل للمبلغ."
+        ]
+      },
+      {
+        "heading": [
+          "6. Alur dan Waktu Penanganan Refund",
+          "6. Refund Process and SLA",
+          "٦. إجراءات الاسترداد والمدد الزمنية"
+        ],
+        "body": [
+          "Kirim permohonan ke openturath@gmail.com dengan menyertakan:\n1. Alamat email akun OpenTurath.\n2. Nomor transaksi / invoice pembayaran.\n3. Bukti pembayaran resmi dari bank/e-wallet.\n4. Penjelasan kendala yang dialami.\n\nKonfirmasi penerimaan dikirimkan maksimal dalam 2 (dua) hari kerja. Pemeriksaan dan keputusan pengembalian dana diselesaikan dalam 7 (tujuh) hari kerja. Jika disetujui, pengembalian dana diproses ke rekening atau dompet asal sesuai ketentuan perbankan (7 (tujuh) hari kerja).",
+          "Submit your request to openturath@gmail.com with:\n1. OpenTurath account email address.\n2. Transaction / invoice reference number.\n3. Official receipt from bank or digital wallet.\n4. Description of the issue encountered.\n\nReceipt confirmation is sent within 2 (two) business days. Investigation and refund determinations are completed within 7 (seven) business days. If approved, refunds are credited to the source account or wallet subject to banking processing timeframes (7 (seven) business days).",
+          "أرسل الطلب إلى openturath@gmail.com متضمنًا:\n١. بريد حساب OpenTurath.\n٢. رقم المعاملة أو الفاتورة.\n٣. إيصال الدفع البنكي أو المحفظة الإلكترونية.\n٤. بيان الخلل الحاصل.\n\nيُؤكد استلام الطلب خلال يومي (٢) عمل، وتُستكمل المراجعة والبت في القرار خلال سبعة (٧) أيام عمل. وفي حال الموافقة يُعاد المبلغ إلى الحساب أو المحفظة الأصلية وفق الإجراءات المصرفية (٧ أيام عمل)."
+        ]
+      },
+      {
+        "heading": [
+          "7. Saluran Bantuan Transaksi",
+          "7. Transaction Support Channels",
+          "٧. قنوات دعم المعاملات"
+        ],
+        "body": [
+          "Kendala pembayaran dan transaksi dipantau setiap hari kerja (Senin – Jumat, 09.00 – 17.00 WIB).\nEmail layanan transaksi: openturath@gmail.com",
+          "Payment and transaction issues are monitored during business hours (Monday – Friday, 09:00 – 17:00 WIB).\nTransaction support email: openturath@gmail.com",
+          "تتم متابعة مشكلات الدفع والمعاملات خلال أيام العمل (من الاثنين إلى الجمعة، ٠٩:٠٠ – ١٧:٠٠ بتوقيت جاكرتا).\nبريد دعم المعاملات: openturath@gmail.com"
         ]
       }
     ],
@@ -463,45 +679,81 @@ export const articles = {
   "tahawwulat": {
     "key": "tahawwulat",
     "intro": [
-      "Fikih Tahawwulat. Lima ruang telaah.",
-      "Fiqh Tahawwulat. Five study spaces.",
-      "فقه التحولات. خمس مساحات للدراسة."
+      "Fikih Tahawwulat. Navigasi Kenabian.",
+      "Fiqh Tahawwulat. Prophetic Navigation.",
+      "فقه التحولات. بوصلة النبوة."
     ],
     "blocks": [
       {
         "heading": [
-          "Al-Muhaqqiq dan Al-Bayan",
-          "Al-Muhaqqiq and Al-Bayan",
-          "المحقق والبيان"
+          "Hakikat Fikih Tahawwulat & Rukun Keempat Agama",
+          "Essence of Fiqh Tahawwulat and the Fourth Pillar",
+          "حقيقة فقه التحولات والركن الرابع للدين"
         ],
         "body": [
-          "Al-Muhaqqiq membantu telaah matan dan ibarah. Al-Bayan membantu penyederhanaan konsep dan istilah. Tetap cocokkan penjelasan dengan sumber dan pengajaran guru.",
-          "Al-Muhaqqiq supports close reading of texts and passages. Al-Bayan supports explanations of concepts and terms. Check both against sources and a teacher’s instruction.",
-          "يساعد المحقق في مطالعة المتون والعبارات، والبيان في شرح المفاهيم والمصطلحات. قابل الشرح بالمصادر وتعليم أهل العلم."
+          "Fikih Tahawwulat dikodifikasi oleh Al-Musnid Al-Allamah Al-Habib Abu Bakar Al-Adni bin Ali Al-Masyhur (1366–1444 H / 1947–2022 M) sebagai kompas navigasi kenabian. Berlandaskan Hadits Jibril yang memuat empat rukun agama: Al-Islam (syariat), Al-Iman (akidah), Al-Ihsan (tasawuf/tazkiyah), dan Fiqh Asyrat as-Sa'ah (tanda-tanda kiamat dan perubahan zaman). Disiplin ini membaca dinamika peradaban dengan bimbingan nubuwwah.",
+          "Fiqh Tahawwulat was codified by Al-Musnid Al-Allamah Al-Habib Abu Bakr Al-Adni bin Ali Al-Mashhur (1366–1444 AH / 1947–2022 CE) as a prophetic navigation compass. Grounded in the Hadith of Jibril comprising the four pillars of religion: Al-Islam (law), Al-Iman (creed), Al-Ihsan (spiritual purification), and Fiqh Ashrat as-Sa'ah (signs of the Hour and civilizational shifts). It reads world developments through prophetic guidance.",
+          "أسّس فقه التحولات المسند العلامة الحبيب أبو بكر العدني بن علي المشهور (١٣٦٦–١٤٤٤ هـ / ١٩٤٧–٢٠٢٢ م) بوصلةً نبوية لقراءة المتغيرات. ويستند إلى حديث جبريل بأركان الدين الأربعة: الإسلام والإيمان والإحسان وفقه أشراط الساعة وتحولات الزمان، لقراءة أحوال الحضارة بنور النبوة."
         ]
       },
       {
         "heading": [
-          "Al-Mukhtabir",
-          "Al-Mukhtabir",
-          "المختبر"
+          "Sunnatul Mulaimah dan Manhaj Salamah",
+          "Sunnatul Mulaimah and the Method of Peace",
+          "سنة الملاءمة ومنهج السلامة"
         ],
         "body": [
-          "Latihan pemahaman untuk meninjau kembali materi yang dipelajari. Hasil latihan bukan sertifikasi keilmuan.",
-          "Comprehension exercises to revisit what you have studied. Exercise results are not scholarly certification.",
-          "تدريبات للفهم ومراجعة ما دُرس. لا تُعد نتائجها شهادة علمية."
+          "Kaidah utama Fikih Tahawwulat bertumpu pada Sunnatul Mulaimah (kebijaksanaan merangkul dan mencari titik temu dalam dakwah) serta menjauhi Sunnatul Mukhalaqah (sikap konfrontatif yang memicu perpecahan). Manhaj keselamatan (Salamatus Shadr wal Lisan) membimbing penuntut ilmu untuk menjaga kesucian hati dari kebencian dan lisan dari celaan di tengah fitnah akhir zaman.",
+          "The central principle of Fiqh Tahawwulat rests upon Sunnatul Mulaimah (embracing wisdom, reconciliation, and constructive dialogue in da'wah) while averting Sunnatul Mukhalaqah (confrontational discord). The Method of Peace (Salamatus Sadr wal Lisan) guides students of knowledge to protect hearts from malice and tongues from slander amidst end-times tribulations.",
+          "تقوم قواعد فقه التحولات على \"سنة الملاءمة\" بالحكمة والاحتواء في الدعوة وتجنب \"سنة المخالقة\" المورثة للنزاع والفرقة. ويعصم \"منهج السلامة\" (سلامة الصدر واللسان) طالب العلم من الضغينة والطعن وسط فتن الزمان المتلاطمة."
         ]
       },
       {
         "heading": [
-          "Al-Habib dan Al-Khatib",
-          "Al-Habib and Al-Khatib",
-          "الحبيب والخطيب"
+          "Nushush Da'wah vs Nushush Ahkam",
+          "Texts of Da'wah and Texts of Legal Rulings",
+          "نصوص الدعوة ونصوص الأحكام"
         ],
         "body": [
-          "Al-Habib menelaah arsip muhadharah Habib Abu Bakar Al-Masyhur. Al-Khatib membantu penyusunan bahan dakwah dan khutbah. Asisten bukan percakapan langsung dengan tokoh yang namanya disebut.",
-          "Al-Habib studies the lecture archive of Habib Abu Bakar Al-Masyhur. Al-Khatib helps prepare teaching and sermon material. An assistant is not a live conversation with the named scholar.",
-          "يتناول الحبيب أرشيف محاضرات الحبيب أبي بكر المشهور، ويساعد الخطيب في إعداد مواد الدعوة والخطب. والمساعد ليس محادثة مباشرة مع العالم المذكور."
+          "Fikih Tahawwulat membedakan secara cermat antara Nushush Ahkam (teks hukum fikih yang bersifat mengikat dan memiliki syarat ketat penetapan) dan Nushush Da'wah (teks seruan etis, peringatan kenabian, dan kabar masa depan). Pemisahan ini mencegah kecerobohan memfatwakan persoalan sosial yang rumit tanpa memahami realitas sejarah.",
+          "Fiqh Tahawwulat draws a careful distinction between Nusus Ahkam (normative legal texts requiring strict juridical conditions) and Nusus Da'wah (ethical exhortations, prophetic warnings, and foresights of historical shifts). This demarcation prevents hasty rulings on complex societal crises without understanding their historical context.",
+          "يفرّق فقه التحولات بدقة بين \"نصوص الأحكام\" الفقهية الملزمة بشروط استنباطها، و\"نصوص الدعوة\" المتضمنة البلاغ الإرشادي والتحذيرات النبوية من الفتن، لمنع استعجال الفتوى في النوازل المعقدة بغير فقه للواقع."
+        ]
+      },
+      {
+        "heading": [
+          "Lima Bilik Khadim AI Spesialis",
+          "Five Specialized Assistant Chambers",
+          "خمس غرف للمساعدين المتخصصين"
+        ],
+        "body": [
+          "Khadim Fikih Tahawwulat dirancang dalam lima bilik spesialis: Al-Muhaqqiq (penelusuran matan dan tahkik teks kanonis), Al-Bayan (penjelasan konsep, istilah, dan kaidah peradaban), Al-Mukhtabir (latihan pemahaman dan uji daya kritis telaah), Al-Habib (eksplorasi arsip muhadharah dan pemikiran Habib Abu Bakar), serta Al-Khatib (penyusunan bahan khutbah dan pesan dakwah yang menyejukkan).",
+          "The Fiqh Tahawwulat assistant suite operates through five specialized chambers: Al-Muhaqqiq (passage verification and canonical text study), Al-Bayan (concept clarification and civilizational terminology), Al-Mukhtabir (comprehension exercises and critical review), Al-Habib (exploration of Habib Abu Bakr's lecture archives), and Al-Khatib (sermon curation and constructive outreach material).",
+          "صُممت غرف خادم فقه التحولات في خمسة اختصاصات: المحقق (لدراسة المتون والتحقيق التراثي)، والبيان (لإيضاح المصطلحات والقواعد الحضارية)، والمختبر (لاختبار الفهم والمدارسة)، والحبيب (لتصفح المحاضرات التوجيهية وتراث الحبيب أبي بكر)، والخطيب (لإعداد خطب ومواعظ تسعى للإصلاح)."
+        ]
+      },
+      {
+        "heading": [
+          "Korpus Mahkota 58 Kitab Kanonik",
+          "Sovereign Corpus of 58 Canonical Books",
+          "المدونة الجامعة من ٥٨ مصنفًا"
+        ],
+        "body": [
+          "Korpus telaah mencakup 58 karya monumental Habib Abu Bakar Al-Adni, antara lain Al-Usus wal-Munthalaqat, An-Nabdzah As-Sughra, Al-Muthala'ah al-Ula, Al-Arba'un al-Habibiyyah, Khidmatul Asyirah, Saif al-Muqallad, dan Taisir Fiqh at-Tahawwulat. Seluruh kitab ditata secara berjenjang dari mukadimah, pendalaman kaidah, hingga risalah dakwah kontemporer.",
+          "The study corpus encompasses 58 foundational works by Habib Abu Bakr Al-Adni, including Al-Usus wal-Muntalaqat, An-Nabdhah As-Sughra, Al-Mutala'ah al-Ula, Al-Arba'un al-Habibiyyah, Khidmatul Ashirah, Sayf al-Muqallad, and Taysir Fiqh at-Tahawwulat, systematically structured from introductory primers to advanced treatises.",
+          "تضم المدونة المعتمدة ٥٨ مصنفًا مؤسسًا للحبيب أبي بكر المشهور، منها: الأسس والمنطلقات، والنبذة الصغرى، والمطالعة الأولى، والأربعون الحبيبية، وخدمة العشيرة، وسيف المقلد، وتيسير فقه التحولات، مرتبةً تدرجيًا من المقدمات إلى الأصول التطبيقية."
+        ]
+      },
+      {
+        "heading": [
+          "Etika Telaah dan Batas Teknologi",
+          "Study Ethics and Technological Boundaries",
+          "آداب المدارسة وحدود التقنية"
+        ],
+        "body": [
+          "Asisten AI Fikih Tahawwulat dihadirkan semata-mata sebagai sarana pembantu indeksasi dan pemetaan naskah di perpustakaan digital. Layanan ini bukan syekh murabbi, tidak memberikan sertifikasi sanad, dan tidak menggantikan tradisi mulia talaqqi langsung kepada para guru dan masyaikh yang memiliki mata rantai keilmuan bersambung.",
+          "The Fiqh Tahawwulat AI assistant serves solely as an indexation and literature exploration tool within a digital library. It is not a spiritual master, does not confer scholarly licenses (ijazah/sanad), and does not replace the venerable tradition of face-to-face talaqqi under authenticated living scholars.",
+          "إن مساعد فقه التحولات وسيلة تقنية للمطالعة وفهرسة النصوص التراثية فحسب؛ فليس شيخًا مربيًا، ولا يمنح إجازة أو سندًا علميًا، ولا يغني عن التلقي والمشافهة بين يدي أهل العلم أصحاب السند المتصل."
         ]
       }
     ]
@@ -681,9 +933,9 @@ export const articles = {
           "العروض والمدة"
         ],
         "body": [
-          "Penawaran website terbaru adalah Tholib Rp49.000 untuk 1 bulan, Tematik Rp149.000 untuk 3 bulan, dan Sultan All-Access Rp499.000 untuk 1 tahun. Pastikan cakupan, durasi kalender, jumlah akhir, dan tanggal berakhir yang sama ditampilkan pada aplikasi sebelum membayar. Jangan melanjutkan jika penawarannya berbeda.",
-          "Current website offers are Tholib at IDR49,000 for 1 month, Thematic at IDR149,000 for 3 months, and Sultan All-Access at IDR499,000 for 1 year. Confirm the same scope, calendar duration, final total, and expiry in the app before paying. Do not proceed if the offer differs.",
-          "عروض الموقع الحالية: الطالب بسعر ٤٩٬٠٠٠ روبية لشهر، والموضوعية بسعر ١٤٩٬٠٠٠ لثلاثة أشهر، وسلطان بسعر ٤٩٩٬٠٠٠ لسنة. تأكّد من مطابقة النطاق والمدة التقويمية والمبلغ النهائي والانتهاء في التطبيق قبل الدفع. لا تتابع عند الاختلاف."
+          "Penawaran resmi adalah Paket Tholib Rp 50.000 untuk 1 bulan, Paket Tholib Rp 299.000 untuk 6 bulan, dan Paket Bahits Rp 499.000 untuk 1 tahun. Khusus rumpun Fikih Tahawwulat Sovereign tersedia paket 1 bulan Rp 300.000, 6 bulan Rp 1.499.000, dan 1 tahun Rp 1.999.000. Pastikan cakupan, durasi kalender, jumlah akhir, dan tanggal berakhir yang sama ditampilkan pada aplikasi sebelum membayar. Jangan melanjutkan jika penawarannya berbeda.",
+          "Official offers are Tholib Plan at IDR 50,000 for 1 month, Tholib Plan at IDR 299,000 for 6 months, and Bahits Plan at IDR 499,000 for 1 year. The dedicated Fiqh Tahawwulat Sovereign tier offers 1 month at IDR 300,000, 6 months at IDR 1,499,000, and 1 year at IDR 1,999,000. Confirm the same scope, calendar duration, final total, and expiry in the app before paying. Do not proceed if the offer differs.",
+          "العروض الرسمية: باقة الطالب بسعر ٥٠٬٠٠٠ روبية لشهر، وباقة الطالب بسعر ٢٩٩٬٠٠٠ لستة أشهر، وباقة الباحث بسعر ٤٩٩٬٠٠٠ لسنة كاملة. ولباقة فقه التحولات السيادية الخاصة: شهر بسعر ٣٠٠٬٠٠٠، و٦ أشهر بسعر ١٬٤٩٩٬٠٠٠، وسنة بسعر ١٬٩٩٩٬٠٠٠. تأكّد من مطابقة النطاق والمدة التقويمية والمبلغ النهائي في التطبيق قبل الدفع."
         ]
       },
       {
