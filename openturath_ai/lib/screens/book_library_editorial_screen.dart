@@ -14,6 +14,7 @@ import '../core/scholarly_fonts.dart';
 import '../models/bookmark_model.dart';
 import '../models/open_turath_book.dart';
 import '../services/auth_service.dart';
+import '../services/open_turath_catalog_repository.dart';
 import '../services/bookmark_service.dart';
 
 import 'package:openturath_ai/core/design/ot_typography.dart';
@@ -25,10 +26,12 @@ class OpenTurathBookLibraryPage extends StatefulWidget {
     required this.books,
     required this.collectionName,
     this.onOpenBook,
+    this.metadata,
   });
 
   final List<OpenTurathBook> books;
   final String collectionName;
+  final AiLibraryMetadata? metadata;
   final ValueChanged<OpenTurathBook>? onOpenBook;
 
   @override
@@ -116,12 +119,11 @@ class _OpenTurathBookLibraryPageState extends State<OpenTurathBookLibraryPage> {
     Loc.watch(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final canvas = OTColors.canvas(isDark);
-    final surface = OTColors.surface(isDark);
     final ink = OTColors.textPrimary(isDark);
     final textSecondary = OTColors.textSecondary(isDark);
-    final border = OTColors.border(isDark);
 
     final visibleBooks = _filteredBooks;
+    final pageInset = ((MediaQuery.sizeOf(context).width - 1040) / 2).clamp(20.0, double.infinity);
 
     return Scaffold(
       backgroundColor: canvas,
@@ -135,10 +137,13 @@ class _OpenTurathBookLibraryPageState extends State<OpenTurathBookLibraryPage> {
           slivers: [
             SliverToBoxAdapter(
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(20, 8, 20, 0),
+                padding: EdgeInsets.fromLTRB(pageInset, 8, pageInset, 0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    Text(Loc.tr('catalogSourceLabel'),
+                        style: OTTypography.caption(color: textSecondary)),
+                    const SizedBox(height: OTSpacing.md),
                     // Search Bar
                     TextField(
                       controller: _searchController,
@@ -162,16 +167,16 @@ class _OpenTurathBookLibraryPageState extends State<OpenTurathBookLibraryPage> {
                               )
                             : null,
                         filled: true,
-                        fillColor: surface,
+                        fillColor: OTColors.surfaceSubtle(isDark),
                         contentPadding: const EdgeInsets.symmetric(
                             horizontal: 16, vertical: 12),
                         border: OutlineInputBorder(
                           borderRadius: OTRadius.inputBorder,
-                          borderSide: BorderSide(color: border),
+                          borderSide: BorderSide.none,
                         ),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: OTRadius.inputBorder,
-                          borderSide: BorderSide(color: border),
+                          borderSide: BorderSide.none,
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: OTRadius.inputBorder,
@@ -212,7 +217,9 @@ class _OpenTurathBookLibraryPageState extends State<OpenTurathBookLibraryPage> {
                     ),
                     const SizedBox(height: 18),
                     Text(
-                      Loc.tr('booksShown', [
+                      _query.isEmpty && _filter == _BookVolumeFilter.all
+                          ? Loc.tr('bookCount', ['${visibleBooks.length}'])
+                          : Loc.tr('booksShown', [
                         '${visibleBooks.length}',
                         '${widget.books.length}',
                       ]),
@@ -257,16 +264,9 @@ class _OpenTurathBookLibraryPageState extends State<OpenTurathBookLibraryPage> {
               )
             else
               SliverPadding(
-                padding: const EdgeInsets.fromLTRB(20, 8, 20, 40),
+                padding: EdgeInsets.fromLTRB(pageInset, 8, pageInset, 40),
                 // Grid kartu seragam: satu kolom di ponsel, dua atau tiga di layar lebar.
-                sliver: SliverGrid(
-                  gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                    maxCrossAxisExtent: 420,
-                    crossAxisSpacing: 12,
-                    mainAxisSpacing: 12,
-                    mainAxisExtent:
-                        MediaQuery.textScalerOf(context).scale(164),
-                  ),
+                sliver: SliverList(
                   delegate: SliverChildBuilderDelegate(
                     (context, index) {
                       final book = visibleBooks[index];
@@ -338,7 +338,9 @@ class _BookEditorialItem extends StatelessWidget {
       book.pagesLabel,
     ].where((fact) => fact != Loc.tr('unknownMetadata')).join(' · ');
 
-    return OTBentoTile(
+    return Padding(
+      padding: const EdgeInsets.only(bottom: OTSpacing.sm),
+      child: OTBentoTile(
       onTap: onTap,
       semanticLabel: '${book.title}, ${book.author}',
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
@@ -350,11 +352,10 @@ class _BookEditorialItem extends StatelessWidget {
             book.title,
             textDirection: TextDirection.rtl,
             textAlign: TextAlign.right,
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
+            
             style: ScholarlyFonts.scheherazadeNew(
               color: ink,
-              fontSize: OTFontSize.s22,
+              fontSize: OTFontSize.s26,
               fontWeight: FontWeight.w700,
               height: 1.4,
             ),
@@ -372,7 +373,7 @@ class _BookEditorialItem extends StatelessWidget {
               height: 1.5,
             ),
           ),
-          const Spacer(),
+          const SizedBox(height: OTSpacing.sm),
           Row(
             children: [
               Expanded(
@@ -395,7 +396,7 @@ class _BookEditorialItem extends StatelessWidget {
           ),
         ],
       ),
-    );
+    ));
   }
 }
 
@@ -601,6 +602,13 @@ ${Loc.tr('bookScienceSection')}: ${book.section}''';
                     }),
                     const SizedBox(height: OTSpacing.md),
                     _BookBentoGrid(book: book),
+                    const SizedBox(height: OTSpacing.md),
+                    Text(Loc.tr('verificationNotice'),
+                        style: OTTypography.caption(color: textSecondary)),
+                    if (book.needsMetadataReview) Padding(
+                        padding: const EdgeInsets.only(top: OTSpacing.sm),
+                        child: Text(Loc.tr('metadataReview'),
+                            style: OTTypography.bodyMedium(color: ink))),
                   ],
                 ))),
               ),
@@ -655,13 +663,16 @@ class _BookBentoGrid extends StatelessWidget {
           value: book.edition,
           wide: true,
         ),
-      if (_has(book.editor))
+      if (_has(book.editorName))
         _BentoTile(
           icon: Icons.edit_outlined,
           label: Loc.tr('ui_ad39f1c3af'),
-          value: book.editor,
+          value: book.editorName,
           wide: true,
         ),
+      if (_has(book.editionNote))
+        _BentoTile(icon: Icons.info_outline_rounded,
+          label: Loc.tr('editionNote'), value: book.editionNote, wide: true),
       if (_has(book.publisher))
         _BentoTile(
           icon: Icons.apartment_outlined,
@@ -757,23 +768,16 @@ class _BentoTile extends StatelessWidget {
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: OTSpacing.md),
-      // Nilai pendek sejajar dengan labelnya; teks panjang turun ke bawahnya.
-      child: wide
-          ? Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                labelRow,
-                const SizedBox(height: OTSpacing.xs),
-                valueText,
-              ],
-            )
-          : Row(
-              children: [
-                Expanded(child: labelRow),
-                const SizedBox(width: OTSpacing.md),
-                valueText,
-              ],
-            ),
+      child: LayoutBuilder(builder: (context, box) {
+        if (box.maxWidth < 560) return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [labelRow, const SizedBox(height: OTSpacing.xs), valueText]);
+        return Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          SizedBox(width: 168, child: labelRow),
+          const SizedBox(width: OTSpacing.lg),
+          Expanded(child: valueText),
+        ]);
+      }),
     );
   }
 }

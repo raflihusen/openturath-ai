@@ -38,6 +38,13 @@ class OpenTurathBook {
   final String sourceFolder;
   final String pages;
 
+  /// Preserve the catalog value, but do not present an edition assessment as a person's name.
+  String get editorName => editor.contains('طبعة أصلية معتمدة') ? '' : editor;
+  String get editionNote => editor.contains('طبعة أصلية معتمدة') ? editor : '';
+  bool get needsMetadataReview => editionNote.isNotEmpty ||
+      RegExp(r'(?:1[6-9]\d{2}|2\d{3})\s*هـ').hasMatch(edition) ||
+      (int.tryParse(pages) ?? 0) > 50000;
+
   factory OpenTurathBook.fromJson(Map<String, dynamic> json) {
     return OpenTurathBook(
       id: _intValue(json['id']),
