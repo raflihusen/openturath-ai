@@ -8,7 +8,8 @@ import '../core/design/ot_spacing.dart';
 import '../core/localization.dart';
 import '../models/agent_model.dart';
 import '../services/open_turath_catalog_repository.dart';
-import 'ot_motion_widgets.dart';
+import 'ot_ink_card.dart';
+import '../core/design/ot_expressive.dart';
 
 import 'package:openturath_ai/core/design/ot_typography.dart';
 
@@ -57,12 +58,13 @@ class AssistantGridCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Loc.watch(context);
-    final dark = Theme.of(context).brightness == Brightness.dark;
-    final ink = OTColors.textPrimary(dark);
-    final muted = OTColors.textSecondary(dark);
+    const dark = true;
+    const ink = OTExpressive.white;
+    const muted = OTExpressive.whiteMuted;
     final stats = LibraryStat.from(metadata);
 
-    return OTBentoTile(
+    return OTInkCard(
+      watermark: agent.titleArabic,
       semanticLabel: '${Loc.tr('openAssistant')} ${agent.title}',
       padding: const EdgeInsets.fromLTRB(
           OTSpacing.lg, OTSpacing.lg, OTSpacing.sm, OTSpacing.sm),
