@@ -139,7 +139,7 @@ class _MainShellScreenState extends State<MainShellScreen> {
     final accent = OTColors.accent(isDark);
     final indicator = OTColors.primaryContainer(isDark);
 
-    final isWideScreen = MediaQuery.of(context).size.width >= 768;
+    final isWideScreen = MediaQuery.of(context).size.width >= 600;
     final expandedSidebar = MediaQuery.sizeOf(context).width >= 1100;
     final screens = _buildScreens();
 
@@ -150,7 +150,7 @@ class _MainShellScreenState extends State<MainShellScreen> {
               children: [
                 Container(
                   decoration: BoxDecoration(color: surface,
-                    border: BorderDirectional(end: BorderSide(color: OTColors.border(isDark)))) ,
+                    border: BorderDirectional(end: BorderSide(color: OTColors.borderSubtle(isDark)))) ,
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -158,12 +158,14 @@ class _MainShellScreenState extends State<MainShellScreen> {
                         child: NavigationRail(
                           backgroundColor: surface,
                           indicatorColor: indicator,
-                          minWidth: 68,
+                          minWidth: 88,
                           minExtendedWidth: 208,
                           extended: expandedSidebar,
                           selectedIndex: _currentIndex,
                           // Ikon saja; nama tujuan muncul sebagai tooltip.
-                          labelType: NavigationRailLabelType.none,
+                          labelType: expandedSidebar
+                              ? NavigationRailLabelType.none
+                              : NavigationRailLabelType.all,
                           leading: Padding(
                             padding: const EdgeInsets.only(top: 16, bottom: 20),
                             child: Row(mainAxisSize: MainAxisSize.min, children: [

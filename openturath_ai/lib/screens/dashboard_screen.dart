@@ -35,7 +35,6 @@ import '../services/open_turath_catalog_repository.dart';
 import '../core/legal_copy.dart';
 import '../widgets/legal_document_sheet.dart';
 import 'package:openturath_ai/core/design/ot_typography.dart';
-import 'package:openturath_ai/core/design/ot_buttons.dart';
 import 'package:intl/intl.dart' show NumberFormat;
 
 /// Beranda OpenTurath AI (Tactile Scholarly Research Desk)
@@ -232,8 +231,86 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       children: [
                         // Banner pembaruan jika tersedia
                         const UpdateReadyBanner(),
+                        Text(AppCopy.ahlanWithName(user.name),
+                            style: OTTypography.pageTitle(color: textPrimary)),
+                        const SizedBox(height: OTSpacing.xs),
                         const _DateHeader(),
                         const SizedBox(height: 14),
+
+                        // ── 3. Ergonomic Search Bar (Stadium Pill) ──
+                        ListenableBuilder(
+                          listenable: _searchFocusNode,
+                          builder: (context, _) {
+                            final isFocused = _searchFocusNode.hasFocus;
+                            return Container(
+                              constraints: const BoxConstraints(minHeight: 56),
+                              padding: const EdgeInsetsDirectional.only(
+                                  start: 12, end: 4),
+                              decoration: BoxDecoration(
+                                color: OTColors.surfaceSubtle(isDark),
+                                borderRadius: OTRadius.inputBorder,
+                                border: Border.all(
+                                    color: isFocused
+                                        ? accent
+                                        : OTColors.surfaceSubtle(isDark)),
+                              ),
+                              child: Row(
+                                children: [
+                                  Icon(Icons.search_rounded,
+                                      size: 20,
+                                      color:
+                                          isFocused ? accent : textSecondary),
+                                  const SizedBox(width: 10),
+                                  Expanded(
+                                    child: TextField(
+                                      controller: _searchController,
+                                      focusNode: _searchFocusNode,
+                                      onChanged: (val) => setState(
+                                          () => _searchQuery = val.trim()),
+                                      style: ScholarlyFonts.outfit(
+                                          fontSize: OTFontSize.s14,
+                                          color: textPrimary),
+                                      decoration: InputDecoration(
+                                        hintText: AppCopy.dashboardSearchHint,
+                                        hintStyle: ScholarlyFonts.outfit(
+                                            fontSize: OTFontSize.s14,
+                                            color: textSecondary),
+                                        border: InputBorder.none,
+                                        enabledBorder: InputBorder.none,
+                                        focusedBorder: InputBorder.none,
+                                        disabledBorder: InputBorder.none,
+                                        errorBorder: InputBorder.none,
+                                        focusedErrorBorder: InputBorder.none,
+                                        filled: false,
+                                        isDense: true,
+                                        contentPadding: EdgeInsets.zero,
+                                      ),
+                                    ),
+                                  ),
+                                  if (_searchQuery.isNotEmpty)
+                                    Tooltip(
+                                      message: Loc.tr('clearSearch'),
+                                      child: InkWell(
+                                        onTap: () {
+                                          _searchController.clear();
+                                          setState(() => _searchQuery = '');
+                                        },
+                                        borderRadius: BorderRadius.circular(
+                                            OTRadius.card),
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(8),
+                                          child: Icon(Icons.close_rounded,
+                                              size: 18, color: textSecondary),
+                                        ),
+                                      ),
+                                    ),
+                                ],
+                              ),
+                            );
+                          },
+                        ),
+
+                        const SizedBox(height: 18),
 
                         // Kartu ini hanya menampilkan keadaan yang benar-benar ada:
                         // sesi yang masih tersimpan, asisten terakhir, atau pintu mulai.
@@ -318,81 +395,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         ),
 
                         const SizedBox(height: 16),
-
-                        // ── 3. Ergonomic Search Bar (Stadium Pill) ──
-                        ListenableBuilder(
-                          listenable: _searchFocusNode,
-                          builder: (context, _) {
-                            final isFocused = _searchFocusNode.hasFocus;
-                            return Container(
-                              height: 44,
-                              padding: const EdgeInsetsDirectional.only(
-                                  start: 12, end: 4),
-                              decoration: BoxDecoration(
-                                color: OTColors.surface(isDark),
-                                borderRadius: OTRadius.inputBorder,
-                                border: Border.all(
-                                    color: isFocused
-                                        ? accent
-                                        : OTColors.border(isDark)),
-                              ),
-                              child: Row(
-                                children: [
-                                  Icon(Icons.search_rounded,
-                                      size: 20,
-                                      color:
-                                          isFocused ? accent : textSecondary),
-                                  const SizedBox(width: 10),
-                                  Expanded(
-                                    child: TextField(
-                                      controller: _searchController,
-                                      focusNode: _searchFocusNode,
-                                      onChanged: (val) => setState(
-                                          () => _searchQuery = val.trim()),
-                                      style: ScholarlyFonts.outfit(
-                                          fontSize: OTFontSize.s14,
-                                          color: textPrimary),
-                                      decoration: InputDecoration(
-                                        hintText: AppCopy.dashboardSearchHint,
-                                        hintStyle: ScholarlyFonts.outfit(
-                                            fontSize: OTFontSize.s14,
-                                            color: textSecondary),
-                                        border: InputBorder.none,
-                                        enabledBorder: InputBorder.none,
-                                        focusedBorder: InputBorder.none,
-                                        disabledBorder: InputBorder.none,
-                                        errorBorder: InputBorder.none,
-                                        focusedErrorBorder: InputBorder.none,
-                                        filled: false,
-                                        isDense: true,
-                                        contentPadding: EdgeInsets.zero,
-                                      ),
-                                    ),
-                                  ),
-                                  if (_searchQuery.isNotEmpty)
-                                    Tooltip(
-                                      message: Loc.tr('clearSearch'),
-                                      child: InkWell(
-                                        onTap: () {
-                                          _searchController.clear();
-                                          setState(() => _searchQuery = '');
-                                        },
-                                        borderRadius: BorderRadius.circular(
-                                            OTRadius.card),
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(8),
-                                          child: Icon(Icons.close_rounded,
-                                              size: 18, color: textSecondary),
-                                        ),
-                                      ),
-                                    ),
-                                ],
-                              ),
-                            );
-                          },
-                        ),
-
-                        const SizedBox(height: 18),
 
                         // ── 4. Jika Sedang Mencari (Hasil Realtime) ──
                         if (_searchQuery.isNotEmpty) ...[
@@ -960,7 +962,7 @@ class _StudyEntryCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Loc.watch(context);
-    final displayName = name.isEmpty || name == 'Ahlan' ? null : name;
+
     final hasHistory = agent != null;
     final title = hasHistory ? agent!.title : AppCopy.studyEntryDefaultTitle;
     final subtitle = hasLiveSession
@@ -968,18 +970,13 @@ class _StudyEntryCard extends StatelessWidget {
         : hasHistory
             ? AppCopy.studyEntryHistorySubtitle
             : AppCopy.studyEntryDefaultSubtitle;
-    const ink = OTColors.onInverseSurface;
-    final muted = ink.withValues(alpha: 0.68);
+    final ink = OTColors.textPrimary(isDark);
+    final muted = OTColors.textSecondary(isDark);
     return OTBentoTile(
-      inverse: true,
       padding: const EdgeInsets.all(OTSpacing.xl),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Text(
-            displayName == null
-                ? AppCopy.ahlanDefault
-                : AppCopy.ahlanWithName(displayName),
-            style:
-                ScholarlyFonts.outfit(fontSize: OTFontSize.s14, color: muted)),
+        Text(hasHistory ? AppCopy.continueStudy : AppCopy.navStudies,
+            style: OTTypography.caption(color: muted)),
         const SizedBox(height: 14),
         Text(Loc.text(title),
             style: ScholarlyFonts.newsreader(
@@ -999,7 +996,7 @@ class _StudyEntryCard extends StatelessWidget {
         const SizedBox(height: 20),
         FilledButton.icon(
             onPressed: onPrimary,
-            style: OTButtons.onInk(),
+
             label:
                 Text(hasHistory ? AppCopy.continueStudy : AppCopy.startStudy),
             icon: const Icon(Icons.arrow_forward_rounded, size: 18),
@@ -1447,12 +1444,12 @@ class _DateHeader extends StatelessWidget {
         children: [
           Text(
             HijriDateUtils.formatHijriOnly(),
-            style: ScholarlyFonts.newsreader(
-              fontSize: OTFontSize.s22,
-              fontWeight: FontWeight.w600,
+            style: ScholarlyFonts.outfit(
+              fontSize: OTFontSize.s12,
+              fontWeight: FontWeight.w400,
               letterSpacing: -0.3,
               height: 1.2,
-              color: OTColors.textPrimary(isDark),
+              color: OTColors.textSecondary(isDark),
             ),
           ),
           Padding(
@@ -1460,7 +1457,7 @@ class _DateHeader extends StatelessWidget {
             child: Text(
               HijriDateUtils.formatMasehiOnly(),
               style: ScholarlyFonts.outfit(
-                  fontSize: OTFontSize.s14,
+                  fontSize: OTFontSize.s12,
                   color: OTColors.textSecondary(isDark)),
             ),
           ),
