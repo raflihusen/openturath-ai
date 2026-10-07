@@ -80,7 +80,13 @@ flutter:
           weight: 700
     - family: NativeArabicUI
       fonts:
-        - asset: assets/native_fonts/NativeArabicUI.ttf
+        - asset: assets/native_fonts/Cairo-400.ttf
+          weight: 400
+        - asset: assets/native_fonts/Cairo-600.ttf
+          weight: 600
+        - asset: assets/native_fonts/Cairo-700.ttf
+          weight: 700
   assets:
+    - assets/native_fonts/Cairo-OFL.txt
     - assets/images/
     - assets/data/
