@@ -1,6 +1,6 @@
 import '../widgets/dual_calendar.dart';
-import '../widgets/tahawwulat_hero.dart';
-import '../widgets/tahawwulat_introduction_sheet.dart';
+import '../widgets/ot_ink_card.dart';
+import '../core/design/ot_expressive.dart';
 import '../widgets/desktop_shortcuts.dart';
 import '../widgets/adaptive_sheet.dart';
 import '../core/localization.dart';
@@ -255,18 +255,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           ]);
                         }),
                         const SizedBox(height: 24),
-                        _TahawwulatSpotlight(onOpen: () {
-                          final shell = MainShellController.of(context);
-                          if (shell != null) {
-                            shell.switchTab(1, fieldId: 'fiqh_tahawwulat');
-                          } else {
-                            NavigationGuard.safePushNamed(
-                                context, AppRoutes.specialistList,
-                                arguments: {'fieldId': 'fiqh_tahawwulat'});
-                          }
-                        }),
-                        const SizedBox(height: 24),
-
                         // ── 3. Ergonomic Search Bar (Stadium Pill) ──
                         ListenableBuilder(
                           listenable: _searchFocusNode,
@@ -484,7 +472,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                       mainAxisSpacing: 12,
                                       mainAxisExtent:
                                           MediaQuery.textScalerOf(context)
-                                              .scale(124),
+                                              .scale(164),
                                     ),
                                     itemCount: _curatedDisciplines.length,
                                     itemBuilder: (context, index) {
@@ -498,8 +486,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                           .toList();
                                       return OTReveal(
                                         index: index + 2,
-                                        child: OTBentoTile(
-                                          semanticLabel: Loc.text(disc.name),
+                                        child: OTInkCard(
+                                          watermark: NativeCopy.values['field_${disc.fieldId}']?[2] ?? '',
+                                          semanticLabel: 'AI ${Loc.text(disc.name)}',
                                           onTap: () {
                                             final shell =
                                                 MainShellController.of(context);
@@ -517,84 +506,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                             }
                                           },
                                           child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
+                                            crossAxisAlignment: CrossAxisAlignment.start,
                                             children: [
-                                              Row(
-                                                children: [
-                                                  Expanded(
-                                                    child: Text(
-                                                      Loc.text(disc.name),
-                                                      maxLines: 1,
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
-                                                      style:
-                                                          ScholarlyFonts.outfit(
-                                                        fontSize:
-                                                            OTFontSize.s20,
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                        letterSpacing: -0.25,
-                                                        color: textPrimary,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                              const Spacer(),
-                                              Text(
-                                                AppCopy
-                                                    .assistantsAvailableCount(
-                                                        members.isEmpty
-                                                            ? disc
-                                                                .specialistCount
-                                                            : members.length),
-                                                maxLines: 1,
+                                              Text('AI ${Loc.text(disc.name)}', maxLines: 2,
                                                 overflow: TextOverflow.ellipsis,
-                                                style: ScholarlyFonts.outfit(
-                                                  fontSize: OTFontSize.s14,
-                                                  fontWeight: FontWeight.w600,
-                                                  color: textPrimary,
-                                                ),
-                                              ),
-                                              // Nama Arab bidang ilmu adalah wajah kartu;
-                                              // di antarmuka Arab judulnya sudah Arab.
-                                              if (!Loc.isArabic &&
-                                                  NativeCopy.values[
-                                                          'field_${disc.fieldId}'] !=
-                                                      null)
-                                                Align(
-                                                    alignment:
-                                                        Alignment.centerRight,
-                                                    child: Text(
-                                                      NativeCopy.values[
-                                                          'field_${disc.fieldId}']![2],
-                                                      maxLines: 1,
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
-                                                      textDirection:
-                                                          TextDirection.rtl,
-                                                      style: ScholarlyFonts
-                                                          .scheherazadeNew(
-                                                        fontSize:
-                                                            OTFontSize.s16,
-                                                        color: textSecondary,
-                                                      ),
-                                                    ))
-                                              else if (members.isNotEmpty)
-                                                Text(
-                                                  members
-                                                      .map((agent) =>
-                                                          Loc.text(agent.title))
-                                                      .join(' · '),
-                                                  maxLines: 1,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                  style: ScholarlyFonts.outfit(
-                                                    fontSize: OTFontSize.s12,
-                                                    color: textSecondary,
-                                                  ),
-                                                ),
+                                                style: ScholarlyFonts.outfit(fontSize: OTFontSize.s20,
+                                                  fontWeight: FontWeight.w600, color: OTExpressive.white)),
+                                              const Spacer(),
+                                              Text(AppCopy.assistantsAvailableCount(members.isEmpty ? disc.specialistCount : members.length),
+                                                style: OTTypography.caption(color: OTExpressive.whiteMuted)),
                                             ],
                                           ),
                                         ),
@@ -1021,25 +941,6 @@ class _StudyEntryCard extends StatelessWidget {
       ]),
     );
   }
-}
-
-/// Sorotan koleksi utama: angka pustaka Fikih Tahawwulat dari metadata.
-class _TahawwulatSpotlight extends StatelessWidget {
-  const _TahawwulatSpotlight({required this.onOpen});
-  final VoidCallback onOpen;
-  @override
-  Widget build(BuildContext context) =>
-      FutureBuilder<Map<String, AiLibraryMetadata>>(
-          future: OpenTurathCatalogRepository.instance.loadAllMetadata(),
-          builder: (context, snapshot) => TahawwulatHero(
-                onOpen: onOpen,
-                onIntroduction: () => TahawwulatIntroductionSheet.show(context),
-                facts: LibraryStat.from(
-                        OpenTurathCatalogRepository.exactMetadata(
-                            snapshot.data ?? const {}, 'fiqh_tahawwulat'))
-                    .map((s) => '${s.value} ${s.unit}')
-                    .toList(),
-              ));
 }
 
 class _DashboardAnnouncementCarousel extends StatefulWidget {
