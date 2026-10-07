@@ -113,8 +113,9 @@
     "flagshipPlacement": "AI page only, exclusive label",
     "scienceCards": {
       "surface": "#171717",
-      "arabicWatermarkOpacity": 0.1,
-      "semantic": "decorative, excluded"
+      "arabicWatermarkOpacity": 0.14,
+      "semantic": "decorative, excluded",
+      "composition": "separate decorative footer; names and counts grouped"
     },
     "languageOrder": [
       "id",
@@ -123,6 +124,9 @@
     ],
     "profile": "plain identity, expiry grouped with real access",
     "pricing": "recorded regularAmount struck through",
-    "loader": "four rounded folios; periodic variable velocity; reduced motion"
+    "loader": "two rounded arcs around OpenTurath emblem; periodic velocity; reduced motion",
+    "catalog": "shared BookIdentityCard; 252 logical-pixel grid; list for large text",
+    "calendar": "single rounded equal-priority panel with adjacent method control",
+    "webview": "retain native view behind recoverable error overlay; no decorative minimum delay"
   }
 }
