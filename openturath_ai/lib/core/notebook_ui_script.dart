@@ -666,13 +666,13 @@ const notebookUiScript = r'''
 
   function ready() {
     if (accessDenied()) return false;
-    if (isStillLoading()) return false;
+    // Other panels may keep a source/upload spinner running after chat is usable.
     return inputReady();
   }
   function inputReady() {
-    const input = document.querySelector('textarea, [contenteditable="true"], [role="textbox"]');
-    if (!input || input.disabled || input.getAttribute('aria-disabled') === 'true') return false;
-    return visible(input);
+    // The page can contain a hidden or disabled input before the live composer.
+    return [...document.querySelectorAll('textarea, [contenteditable="true"], [role="textbox"]')]
+      .some(input => !input.disabled && input.getAttribute('aria-disabled') !== 'true' && visible(input));
   }
 function accessDenied() {
   if (inputReady()) return false;
