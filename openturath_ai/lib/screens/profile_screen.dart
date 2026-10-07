@@ -570,7 +570,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
   ) {
     showDialog(
       context: context,
-      builder: (ctx) => AlertDialog(
+      builder: (ctx) {
+        Loc.watch(ctx);
+        return Directionality(textDirection: Loc.isArabic ? TextDirection.rtl : TextDirection.ltr, child: AlertDialog(
         backgroundColor: surface,
         shape: RoundedRectangleBorder(
           borderRadius: OTRadius.dialogBorder,
@@ -675,7 +677,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
             child: Text(AppCopy.close, style: OTTypography.button()),
           ),
         ],
-      ),
+      ));
+      },
     );
   }
 
