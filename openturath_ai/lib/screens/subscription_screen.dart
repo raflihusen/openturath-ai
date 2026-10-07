@@ -185,7 +185,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
         decoration: BoxDecoration(
           color: OTColors.surface(dark),
           borderRadius: BorderRadius.circular(OTRadius.card),
-          border: Border.all(color: OTColors.surface(dark)),
+          border: Border.all(color: OTColors.borderStrong(dark), width: 1.2),
         ),
         padding: const EdgeInsets.all(20),
         child: child,
@@ -670,63 +670,53 @@ class _TierSelector extends StatelessWidget {
     final dark = Theme.of(context).brightness == Brightness.dark;
     final ink = OTColors.textPrimary(dark);
     final muted = OTColors.textSecondary(dark);
-    return IntrinsicHeight(
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+    final stacked = MediaQuery.sizeOf(context).width < 600 ||
+        MediaQuery.textScalerOf(context).scale(16) > 24;
+    Widget option(int i) {
+      final active = selected == i;
+      final textColor = active ? OTColors.canvas(dark) : ink;
+      final price = Column(
+        crossAxisAlignment: stacked ? CrossAxisAlignment.end : CrossAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
         children: [
-          for (var i = 0; i < offers.length; i++) ...[
-            if (i > 0) const SizedBox(width: 8),
-            Expanded(
-              child: Semantics(
-                button: true,
-                selected: selected == i,
-                child: InkWell(
-                  onTap: onSelect == null ? null : () => onSelect!(i),
-                  borderRadius: BorderRadius.circular(OTRadius.input),
-                  child: AnimatedContainer(
-                    duration: OTMotion.fast,
-                    padding:
-                        const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
-                    decoration: BoxDecoration(
-                      color: selected == i ? ink : OTColors.surfaceSubtle(dark),
-                      borderRadius: BorderRadius.circular(OTRadius.input),
-                      border: Border.all(
-                        color:
-                            selected == i ? ink : OTColors.surfaceSubtle(dark),
-                        width: selected == i ? 1.6 : 1,
-                      ),
-                    ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          offers[i].title,
-                          textAlign: TextAlign.center,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: OTTypography.captionMedium(
-                              color: selected == i
-                                  ? OTColors.canvas(dark)
-                                  : muted),
-                        ),
-                        const SizedBox(height: 8),
-                        Text(offers[i].priceLabel, textAlign: TextAlign.center,
-                          style: OTTypography.caption(color: selected == i ? OTColors.canvas(dark) : ink)),
-                        if (offers[i].months > 1) ...[
-                          const SizedBox(height: 4),
-                          Text('≈ ${ProductPricing.rupiah((offers[i].amount / offers[i].months).round())}${Loc.tr('perMonth')}',
-                            textAlign: TextAlign.center,
-                            style: OTTypography.metadataTag(color: selected == i ? OTColors.canvas(dark) : muted)),
-                        ],
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ),
+          Text(offers[i].priceLabel, style: OTTypography.captionMedium(color: textColor)),
+          if (offers[i].months > 1) ...[
+            const SizedBox(height: 4),
+            Text('≈ ${ProductPricing.rupiah((offers[i].amount / offers[i].months).round())}${Loc.tr('perMonth')}',
+              textAlign: stacked ? TextAlign.end : TextAlign.center,
+              style: OTTypography.caption(color: active ? textColor : muted)),
           ],
         ],
-      ),
-    );
+      );
+      final title = Text(offers[i].title, style: OTTypography.captionMedium(color: textColor));
+      return Semantics(button: true, selected: active,
+        child: InkWell(
+          onTap: onSelect == null ? null : () => onSelect!(i),
+          borderRadius: BorderRadius.circular(OTRadius.input),
+          child: AnimatedContainer(
+            duration: OTMotion.fast,
+            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+            decoration: BoxDecoration(
+              color: active ? ink : OTColors.surfaceSubtle(dark),
+              borderRadius: BorderRadius.circular(OTRadius.input),
+            ),
+            child: stacked ? Row(children: [Expanded(child: title), const SizedBox(width: 8), Flexible(child: price)])
+              : Column(mainAxisAlignment: MainAxisAlignment.center, children: [title, const SizedBox(height: 8), price]),
+          ),
+        ),
+      );
+    }
+    if (stacked) {
+      return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+        for (var i = 0; i < offers.length; i++) ...[
+          if (i > 0) const SizedBox(height: 8), option(i),
+        ],
+      ]);
+    }
+    return IntrinsicHeight(child: Row(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+      for (var i = 0; i < offers.length; i++) ...[
+        if (i > 0) const SizedBox(width: 8), Expanded(child: option(i)),
+      ],
+    ]));
   }
 }
