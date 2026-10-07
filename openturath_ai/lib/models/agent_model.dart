@@ -8,7 +8,10 @@ enum CorpusKind { discipline, scholar }
 class AgentModel {
   final String id;
   final String _title;
-  String get title => Loc.isArabic && titleArabic.isNotEmpty ? titleArabic : Loc.text(_title);
+  String get title {
+    final label = Loc.isArabic && titleArabic.isNotEmpty ? titleArabic : Loc.text(_title);
+    return label.startsWith('AI ') ? label : 'AI $label';
+  }
   final String titleArabic;
   final String description;
   final String emoji;
