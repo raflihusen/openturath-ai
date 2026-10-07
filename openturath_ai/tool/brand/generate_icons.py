@@ -89,21 +89,21 @@ def optical_offset(mask):
     return (weighted / total - (box[1] + box[3]) / 2) / h
 
 
-def compose(size, plate_ratio=1.0, radius_ratio=0.0, mark_ratio=0.62, transparent=False):
-    canvas = Image.new('RGBA', (size, size), (0, 0, 0, 0) if transparent else PLATE)
-    plate_px = round(size * plate_ratio)
+def compose(size, plate_ratio=1.0, radius_ratio=0.0, mark_ratio=0.62, transparent=False, no_plate=False):
+    canvas = Image.new('RGBA', (size, size), (0, 0, 0, 0) if (transparent or no_plate) else PLATE)
+    plate_px = round(size * (1.0 if no_plate else plate_ratio))
     origin = (size - plate_px) // 2
-    if transparent:
+    if transparent and not no_plate:
         big = Image.new('L', (plate_px * SS, plate_px * SS), 0)
         ImageDraw.Draw(big).rounded_rectangle(
             [0, 0, plate_px * SS - 1, plate_px * SS - 1], radius=plate_px * SS * radius_ratio, fill=255)
         plate_mask = big.resize((plate_px, plate_px), Image.LANCZOS)
         canvas.paste(Image.new('RGBA', (plate_px, plate_px), PLATE), (origin, origin), plate_mask)
-    mark_px = max(8, round(plate_px * mark_ratio / 0.798))  # 0.798 = tinggi logo dalam viewBox
+    mark_px = max(8, round(plate_px * mark_ratio / 0.657))  # 0.657 = rasio tinggi emblem baru
     mask = render_mark(mark_px)
     shift = round(optical_offset(mask) * mark_px * OPTICAL)
-    x = origin + (plate_px - mark_px) // 2
-    y = origin + (plate_px - mark_px) // 2 - shift
+    x = (size - mark_px) // 2
+    y = (size - mark_px) // 2 - shift
     canvas.paste(Image.new('RGBA', (mark_px, mark_px), INK), (x, y), mask)
     return canvas
 
@@ -137,8 +137,13 @@ def main():
         save(compose(512, mark_ratio=0.58), target)
     save(compose(192, mark_ratio=0.46), 'web/icons/Icon-maskable-192.png')
     save(compose(512, mark_ratio=0.46), 'web/icons/Icon-maskable-512.png')
+    # Favicon murni transparan (tanpa pelat krem) untuk tab browser
     for target in ('web/favicon.png', 'public/favicon.png'):
-        save(compose(64, plate_ratio=0.94, radius_ratio=0.22, mark_ratio=0.64, transparent=True), target)
+        save(compose(64, mark_ratio=0.82, transparent=True, no_plate=True), target)
+    # Favicon .ico multi-resolusi murni transparan
+    ico_img = compose(64, mark_ratio=0.82, transparent=True, no_plate=True)
+    ico_img.save('public/favicon.ico', sizes=[(16, 16), (32, 32), (48, 48), (64, 64)])
+    print('wrote public/favicon.ico')
     # Windows.
     ico = compose(256, plate_ratio=0.94, radius_ratio=0.2, mark_ratio=0.6, transparent=True)
     ico.save('windows/runner/resources/app_icon.ico', sizes=[(16, 16), (32, 32), (48, 48), (256, 256)])

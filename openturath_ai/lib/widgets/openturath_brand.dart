@@ -13,13 +13,10 @@ class OpenTurathMark extends StatelessWidget {
   Widget build(BuildContext context) {
     final dark = Theme.of(context).brightness == Brightness.dark;
     return Semantics(label: Loc.tr('appName'), image: true,
-      // Koreksi optis: titik berat logo lebih rendah dari pusat kotaknya.
-      child: Transform.translate(
-        offset: Offset(0, -size * 0.02),
-        child: SvgPicture.asset('assets/images/OpenTurath_logo_transparent.svg',
-          width: size, height: size, fit: BoxFit.contain,
-          excludeFromSemantics: true,
-          colorFilter: ColorFilter.mode(color ?? OTColors.textPrimary(dark), BlendMode.srcIn))));
+      child: SvgPicture.asset('assets/images/OpenTurath_logo_transparent.svg',
+        width: size, height: size, fit: BoxFit.contain,
+        excludeFromSemantics: true,
+        colorFilter: ColorFilter.mode(color ?? OTColors.textPrimary(dark), BlendMode.srcIn)));
   }
 }
 
