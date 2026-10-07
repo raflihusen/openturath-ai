@@ -55,7 +55,7 @@ class NotebookChatService {
   static NotebookChatReply decodeReply(Object? raw, String requestId) {
     final invalid = FirebaseFunctionsException(
       code: 'unavailable',
-      message: 'Jawaban asisten belum dapat dibaca.',
+      message: 'Jawaban AI belum dapat dibaca.',
     );
     if (raw is! Map ||
         raw['requestId'] != requestId ||
