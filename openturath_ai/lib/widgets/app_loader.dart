@@ -59,15 +59,26 @@ class _AppLoaderState extends State<AppLoader>
   }
 
   @override
-  void didChangeDependencies() {super.didChangeDependencies(); _syncMotion();}
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _syncMotion();
+  }
+
   void _syncMotion() {
     final reduced = MediaQuery.disableAnimationsOf(context);
-    final active = WidgetsBinding.instance.lifecycleState == null || WidgetsBinding.instance.lifecycleState == AppLifecycleState.resumed;
-    if (reduced || !TickerMode.of(context) || !active) {_controller.stop();}
-    else if (!_controller.isAnimating) {_controller.repeat();}
+    final active = WidgetsBinding.instance.lifecycleState == null ||
+        WidgetsBinding.instance.lifecycleState == AppLifecycleState.resumed;
+    if (reduced || !TickerMode.of(context) || !active) {
+      _controller.stop();
+    } else if (!_controller.isAnimating) {
+      _controller.repeat();
+    }
   }
+
   @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {if (mounted) _syncMotion();}
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (mounted) _syncMotion();
+  }
 
   @override
   void dispose() {
@@ -92,11 +103,27 @@ class _AppLoaderState extends State<AppLoader>
       mainAxisSize: MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Semantics(label: widget.title == null ? Loc.tr('loadingProcess') : Loc.text(widget.title!), liveRegion: true,
-          child: RepaintBoundary(child: AnimatedBuilder(animation: _controller, builder: (context, _) {
-            final size = widget.isFullscreen ? 56.0 : widget.title == null ? 24.0 : 48.0;
-            return SizedBox.square(dimension: size, child: CustomPaint(painter: _OrbitPainter(progress: still ? .25 : _controller.value, color: dotColor)));
-          }))),
+        Semantics(
+            label: widget.title == null
+                ? Loc.tr('loadingProcess')
+                : Loc.text(widget.title!),
+            liveRegion: true,
+            child: RepaintBoundary(
+                child: AnimatedBuilder(
+                    animation: _controller,
+                    builder: (context, _) {
+                      final size = widget.isFullscreen
+                          ? 56.0
+                          : widget.title == null
+                              ? 24.0
+                              : 48.0;
+                      return SizedBox.square(
+                          dimension: size,
+                          child: CustomPaint(
+                              painter: _OrbitPainter(
+                                  progress: still ? .25 : _controller.value,
+                                  color: dotColor)));
+                    }))),
         if (widget.title != null) ...[
           const SizedBox(height: 20),
           Text(
@@ -168,18 +195,35 @@ class _OrbitPainter extends CustomPainter {
   final double progress;
   final Color color;
   @override
-  void paint(Canvas canvas,Size size) {
-    final phase=progress*2*math.pi;
-    final angle=phase-.65*math.sin(phase);
-    final rect=Rect.fromCircle(center:size.center(Offset.zero),radius:size.width*.42);
-    final paint=Paint()..color=color..style=PaintingStyle.stroke..strokeWidth=size.width*.065..strokeCap=StrokeCap.round;
-    final sweep=1.2+.55*math.sin(phase);
-    canvas.drawArc(rect,angle,sweep,false,paint);
-    canvas.drawArc(rect,angle+math.pi,.7-.25*math.sin(phase),false,paint..color=color.withValues(alpha:.45));
-    final w=size.width;
-    final mark=Path()..moveTo(w*.37,w*.63)..lineTo(w*.37,w*.47)..quadraticBezierTo(w*.40,w*.36,w*.5,w*.30)..quadraticBezierTo(w*.60,w*.36,w*.63,w*.47)..lineTo(w*.63,w*.63);
-    canvas.drawPath(mark,paint..color=color..strokeWidth=w*.045);
+  void paint(Canvas canvas, Size size) {
+    final phase = progress * 2 * math.pi;
+    final angle = phase - .65 * math.sin(phase);
+    final rect = Rect.fromCircle(
+        center: size.center(Offset.zero), radius: size.width * .42);
+    final paint = Paint()
+      ..color = color
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = size.width * .065
+      ..strokeCap = StrokeCap.round;
+    final sweep = 1.2 + .55 * math.sin(phase);
+    canvas.drawArc(rect, angle, sweep, false, paint);
+    canvas.drawArc(rect, angle + math.pi, .7 - .25 * math.sin(phase), false,
+        paint..color = color.withValues(alpha: .45));
+    final w = size.width;
+    final mark = Path()
+      ..moveTo(w * .37, w * .63)
+      ..lineTo(w * .37, w * .47)
+      ..quadraticBezierTo(w * .40, w * .36, w * .5, w * .30)
+      ..quadraticBezierTo(w * .60, w * .36, w * .63, w * .47)
+      ..lineTo(w * .63, w * .63);
+    canvas.drawPath(
+        mark,
+        paint
+          ..color = color
+          ..strokeWidth = w * .045);
   }
+
   @override
-  bool shouldRepaint(_OrbitPainter old)=> old.progress!=progress || old.color!=color;
+  bool shouldRepaint(_OrbitPainter old) =>
+      old.progress != progress || old.color != color;
 }
