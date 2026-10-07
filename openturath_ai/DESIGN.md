@@ -220,3 +220,5 @@ Kontrak ini menggantikan rincian komposisi sebelumnya: Cairo asli 400/600/700 di
 Katalog memakai daftar editorial sebagai default, tinggi mengikuti isi: identitas 70% dan metadata 30% pada desktop; bertumpuk pada ponsel. Tidak ada punggung buku dekoratif. Data kosong tidak menjadi nol. Beranda memakai divider antara identitas dan akses/sesi, kalender field terstruktur setara (angka hari 32), statistik berikon tanpa kapsul bertumpuk, dan adab ber-ID serta ikon stabil.
 
 Loader empat folio memakai fase linear periodik 1800 ms dengan sudut theta − 0,45 sin(theta), repaint langsung dari controller; reduced motion dan lifecycle dipertahankan. Lima dokumen lokal dengan 46 section tersedia penuh ID/EN/AR melalui resolver reaktif, bukan teks Indonesia yang disalin ke dialog. Visual fixture dan hasil tes tidak membuktikan transaksi nyata atau autentikasi NotebookLM.
+
+Statistik dashboard memakai panel selebar konten, terpisah dari adab, agar tiga metrik tidak berubah menjadi kolom sempit dan tinggi pada desktop menengah. Kontrol ikon menyertakan nama pada semantics ikon native; tooltip tetap tersedia tanpa label ganda. Nama navigasi AI konsisten pada ID/EN/AR.
