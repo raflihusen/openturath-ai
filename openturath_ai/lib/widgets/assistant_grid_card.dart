@@ -108,7 +108,7 @@ class AssistantGridCard extends StatelessWidget {
                       TextSpan(
                         text: stat.value,
                         style:
-                            TextStyle(color: ink, fontWeight: FontWeight.w600),
+                            const TextStyle(color: ink, fontWeight: FontWeight.w600),
                       ),
                       TextSpan(text: ' ${stat.unit}'),
                     ],
