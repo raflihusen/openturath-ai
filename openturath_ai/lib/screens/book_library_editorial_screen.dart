@@ -427,7 +427,8 @@ class OpenTurathBookDetailPage extends StatelessWidget {
       author: book.author,
       createdAt: DateTime.now(),
       documentKind: BookmarkDocumentKind.bookReference,
-      verificationStatus: BookmarkVerificationStatus.verified,
+      verificationStatus: book.needsMetadataReview
+          ? BookmarkVerificationStatus.needsReview : BookmarkVerificationStatus.unverified,
     );
 
     await BookmarkService().addBookmark(bookmark, userId: uid);
@@ -440,7 +441,8 @@ class OpenTurathBookDetailPage extends StatelessWidget {
     final citation = '''[OpenTurath AI]
 ${Loc.tr('bookReferenceLabel')}: ${book.title}
 ${Loc.tr('authorCredit', [book.author])} (${book.deathLabel})
-${Loc.tr('ui_ad39f1c3af')}: ${book.editor}
+${Loc.tr('ui_ad39f1c3af')}: ${book.editorName.isEmpty ? Loc.tr('editorNotRecorded') : book.editorName}
+${book.editionNote.isEmpty ? '' : '${Loc.tr('editionNote')}: ${book.editionNote}'}
 ${Loc.tr('bookPublisher')}: ${book.publisher} (${book.edition})
 ${book.volumeLabel} | ${book.pagesLabel}
 ${Loc.tr('bookScienceSection')}: ${book.section}''';

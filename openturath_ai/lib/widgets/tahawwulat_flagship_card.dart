@@ -68,7 +68,7 @@ class TahawwulatFlagshipCard extends StatelessWidget {
             if (onOpenLibrary != null) TextButton(onPressed: onOpenLibrary,
               child: Text(Loc.tr('viewReferences'))),
             TextButton(onPressed: onOpenIntroduction ?? () =>
-              showTahawwulatIntroduction(context), child: Text(Loc.tr('aboutTahawwulat'))),
+              TahawwulatIntroductionSheet.show(context, agent: agent, onSelectSubAgent: onOpenSubAgent, onOpenMain: onOpenMain), child: Text(Loc.tr('flagshipIntroduction'))),
           ]),
       ]),
     );

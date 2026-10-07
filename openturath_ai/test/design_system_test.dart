@@ -99,9 +99,9 @@ void main() {
       expect(OTRadius.chip, 999.0);
       expect(OTRadius.button, 999.0);
 
-      expect(OTRadius.inputBorder, BorderRadius.circular(14.0));
-      expect(OTRadius.cardBorder, BorderRadius.circular(16.0));
-      expect(OTRadius.dialogBorder, BorderRadius.circular(20.0));
+      expect(OTRadius.inputBorder, BorderRadius.circular(28.0));
+      expect(OTRadius.cardBorder, BorderRadius.circular(24.0));
+      expect(OTRadius.dialogBorder, BorderRadius.circular(28.0));
       expect(OTRadius.chipBorder, BorderRadius.circular(999.0));
       expect(OTRadius.buttonBorder, BorderRadius.circular(999.0));
     });
