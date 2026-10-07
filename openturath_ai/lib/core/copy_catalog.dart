@@ -754,4 +754,6 @@ const copyCatalog = <String, List<String>>{
   "preparingAnswer": ["Menyusun jawaban…", "Preparing an answer…", "جار إعداد الجواب…"],
   "payAmount": ["Bayar {0}", "Pay {0}", "ادفع {0}"],
   "monthlyEquivalent": ["Setara {0}/bulan · dibayar sekaligus", "Equivalent to {0}/month · paid upfront", "ما يعادل {0} شهريًا · يُدفع كاملًا"],
+  "chatPurpose": ["Ruang telaah naskah & kajian komparatif berbasis turats.", "Study source texts and compare scholarly explanations.", "مجلس لمطالعة نصوص التراث ومقارنة الشروح العلمية."],
+  "sendQuestion": ["Kirim pertanyaan", "Send question", "أرسل السؤال"],
 };

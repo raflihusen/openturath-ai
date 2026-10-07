@@ -229,7 +229,7 @@ class _NativeTurathChatViewState extends State<NativeTurathChatView>
             ),
             const SizedBox(height: 8),
             Text(
-              'Ruang telaah naskah & kajian komparatif berbasis turats.',
+              Loc.tr('chatPurpose'),
               textAlign: TextAlign.center,
               style: OTTypography.caption(color: textSecondary),
             ),
@@ -397,7 +397,7 @@ class _NativeTurathChatViewState extends State<NativeTurathChatView>
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 4),
           child: Text(
-            'Menelaah rujukan & menyusun penjelasan ilmiah...',
+            Loc.tr('preparingAnswer'),
             style: ScholarlyFonts.outfit(
               fontSize: OTFontSize.s14,
               fontStyle: FontStyle.italic,
@@ -457,9 +457,13 @@ class _NativeTurathChatViewState extends State<NativeTurathChatView>
                     hintText: Loc.tr('askQuestionHint'),
                     hintStyle: ScholarlyFonts.outfit(
                       fontSize: OTFontSize.s14,
-                      color: textSecondary.withAlpha(160),
+                      color: textSecondary,
                     ),
+                    filled: false,
                     border: InputBorder.none,
+                    enabledBorder: InputBorder.none,
+                    focusedBorder: InputBorder.none,
+                    disabledBorder: InputBorder.none,
                     isDense: true,
                     contentPadding: const EdgeInsets.symmetric(vertical: 8),
                   ),
@@ -467,24 +471,10 @@ class _NativeTurathChatViewState extends State<NativeTurathChatView>
                 ),
               ),
               const SizedBox(width: 8),
-              Tooltip(
-                message: 'Kirim telaah',
-                child: Material(
-                  color: _canSend ? textPrimary : textSecondary.withAlpha(60),
-                  shape: const CircleBorder(),
-                  child: InkWell(
-                    onTap: _canSend ? _handleSend : null,
-                    customBorder: const CircleBorder(),
-                    child: Padding(
-                      padding: const EdgeInsets.all(8),
-                      child: Icon(
-                        Icons.arrow_upward_rounded,
-                        size: 18,
-                        color: _canSend ? canvas : textSecondary.withAlpha(120),
-                      ),
-                    ),
-                  ),
-                ),
+              IconButton.filled(
+                tooltip: Loc.tr('sendQuestion'),
+                onPressed: _canSend ? _handleSend : null,
+                icon: const Icon(Icons.arrow_upward_rounded, size: 20),
               ),
             ],
           ),

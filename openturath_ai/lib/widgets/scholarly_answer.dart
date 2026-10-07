@@ -3,6 +3,8 @@ import 'package:flutter_markdown/flutter_markdown.dart';
 import '../core/answer_direction.dart';
 import '../core/design/ot_typography.dart';
 import '../core/design/ot_spacing.dart';
+import '../core/design/ot_colors.dart';
+import '../core/design/ot_radius.dart';
 import '../core/scholarly_fonts.dart';
 
 /// One shared reading surface for chat and saved answers. Paragraphs retain
@@ -38,6 +40,10 @@ class ScholarlyAnswer extends StatelessWidget {
                 h2: OTTypography.screenTitle(color: ink),
                 h3: OTTypography.cardTitle(color: ink),
                 blockquote: OTTypography.body(color: muted),
+                blockquoteDecoration: BoxDecoration(
+                  color: OTColors.surfaceSubtle(Theme.of(context).brightness == Brightness.dark),
+                  borderRadius: BorderRadius.circular(OTRadius.xs)),
+                blockquotePadding: const EdgeInsets.all(OTSpacing.base),
               ),
             ),
           ),

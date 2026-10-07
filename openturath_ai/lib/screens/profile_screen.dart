@@ -763,14 +763,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
             children: [
               Icon(icon, size: 15, color: isSelected ? activeFg : inactiveFg),
               const SizedBox(width: 6),
-              Text(
+              Flexible(child: Text(
                 Loc.text(title),
+                textAlign: TextAlign.center,
                 style: ScholarlyFonts.outfit(
                   fontSize: OTFontSize.s14,
                   fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
                   color: isSelected ? activeFg : inactiveFg,
                 ),
-              ),
+              )),
             ],
           ),
         ),
