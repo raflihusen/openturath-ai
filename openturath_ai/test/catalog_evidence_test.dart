@@ -1,8 +1,25 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter/foundation.dart';
 import 'package:openturath_ai/models/open_turath_book.dart';
 import 'package:openturath_ai/services/open_turath_catalog_repository.dart';
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+  test(
+      'missing metadata and book assets surface as failures rather than empty catalogs',
+      () async {
+    final messenger =
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
+    messenger.setMockMessageHandler('flutter/assets', (_) async => null);
+    addTearDown(() => messenger.setMockMessageHandler('flutter/assets', null));
+    rootBundle.clear();
+    await expectLater(OpenTurathCatalogRepository.instance.loadAllMetadata(),
+        throwsA(isA<FlutterError>()));
+    await expectLater(
+        OpenTurathCatalogRepository.instance.loadBooksForModule('fiqh_maliki'),
+        throwsA(isA<FlutterError>()));
+  });
   test('malformed catalogs fail explicitly while valid empty lists stay empty',
       () {
     expect(() => OpenTurathBook.decodeList('{broken'), throwsFormatException);
