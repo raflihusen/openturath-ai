@@ -810,50 +810,81 @@ class _MembershipPass extends StatelessWidget {
       decoration: BoxDecoration(
           color: OTColors.surface(isDark), borderRadius: OTRadius.cardBorder),
       child: Stack(children: [
-        Positioned(top: 0, right: 0, width: 120, height: 100, child: IgnorePointer(child: ExcludeSemantics(child: CustomPaint(painter: _IdentityLines(color: muted.withValues(alpha: .10)))))),
+        Positioned(
+            top: 0,
+            right: 0,
+            width: 120,
+            height: 100,
+            child: IgnorePointer(
+                child: ExcludeSemantics(
+                    child: CustomPaint(
+                        painter: _IdentityLines(
+                            color: muted.withValues(alpha: .10)))))),
         Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Container(
+                padding: const EdgeInsets.all(OTSpacing.md),
+                decoration: BoxDecoration(
+                    color: OTColors.surfaceSubtle(isDark),
+                    borderRadius: OTRadius.inputBorder),
+                child: SizedBox.square(
+                    dimension: 48,
+                    child: Center(
+                        child: Text(
+                            holderName.trim().isEmpty
+                                ? 'O'
+                                : holderName
+                                    .trim()
+                                    .characters
+                                    .first
+                                    .toUpperCase(),
+                            style: OTTypography.pageTitle(color: ink))))),
+            const SizedBox(width: OTSpacing.md),
+            Expanded(
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                  Text(holderName, style: OTTypography.screenTitle(color: ink)),
+                  if (email.isNotEmpty)
+                    Text(email,
+                        textDirection: TextDirection.ltr,
+                        style: OTTypography.caption(color: muted)),
+                ])),
+          ]),
+          const SizedBox(height: OTSpacing.lg),
           Container(
-              padding: const EdgeInsets.all(OTSpacing.md),
+              width: double.infinity,
+              padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
                   color: OTColors.surfaceSubtle(isDark),
-                  borderRadius: OTRadius.inputBorder),
-              child: SizedBox.square(dimension: 48, child: Center(child: Text(holderName.trim().isEmpty ? 'O' : holderName.trim().characters.first.toUpperCase(), style: OTTypography.pageTitle(color: ink))))),
-          const SizedBox(width: OTSpacing.md),
-          Expanded(
-              child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                Text(holderName, style: OTTypography.screenTitle(color: ink)),
-                if (email.isNotEmpty)
-                  Text(email,
-                      textDirection: TextDirection.ltr,
-                      style: OTTypography.caption(color: muted)),
+                  borderRadius: OTRadius.cardBorder),
+              child: Row(children: [
+                OpenTurathMark(size: 36, color: muted),
+                const SizedBox(width: 16),
+                Expanded(
+                    child: Text(summary.accessLabel,
+                        style: OTTypography.bodyMedium(color: ink))),
               ])),
+          if (expiry != null)
+            Padding(
+                padding: const EdgeInsets.only(top: OTSpacing.xs),
+                child: Text(
+                    unlimited ? expiry : '${AppCopy.validUntil} $expiry',
+                    style: OTTypography.caption(color: muted))),
+          const SizedBox(height: OTSpacing.lg),
+          Wrap(spacing: OTSpacing.sm, runSpacing: OTSpacing.sm, children: [
+            if (onViewAccess != null)
+              OutlinedButton.icon(
+                  onPressed: onViewAccess,
+                  icon: const Icon(Icons.auto_stories_outlined, size: 18),
+                  label: Text(Loc.tr('viewAccessList'))),
+            FilledButton.icon(
+                onPressed: onManage,
+                icon: const Icon(Icons.tune_rounded, size: 18),
+                label: Text(summary.ctaLabel)),
+          ]),
         ]),
-        const SizedBox(height: OTSpacing.lg),
-        Container(width: double.infinity, padding: const EdgeInsets.all(20), decoration: BoxDecoration(color: OTColors.surfaceSubtle(isDark), borderRadius: OTRadius.cardBorder), child: Row(children: [
-          OpenTurathMark(size: 36, color: muted), const SizedBox(width: 16),
-          Expanded(child: Text(summary.accessLabel, style: OTTypography.bodyMedium(color: ink))),
-        ])),
-        if (expiry != null)
-          Padding(
-              padding: const EdgeInsets.only(top: OTSpacing.xs),
-              child: Text(unlimited ? expiry : '${AppCopy.validUntil} $expiry',
-                  style: OTTypography.caption(color: muted))),
-        const SizedBox(height: OTSpacing.lg),
-        Wrap(spacing: OTSpacing.sm, runSpacing: OTSpacing.sm, children: [
-          if (onViewAccess != null)
-            OutlinedButton.icon(
-                onPressed: onViewAccess,
-                icon: const Icon(Icons.auto_stories_outlined, size: 18),
-                label: Text(Loc.tr('viewAccessList'))),
-          FilledButton.icon(
-              onPressed: onManage,
-              icon: const Icon(Icons.tune_rounded, size: 18),
-              label: Text(summary.ctaLabel)),
-        ]),
-      ]),]),
+      ]),
     );
   }
 }
@@ -863,15 +894,26 @@ class _IdentityLines extends CustomPainter {
   final Color color;
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()..color = color..style = PaintingStyle.stroke..strokeWidth = 1;
-    for (var i=0; i<4; i++) {
-      final inset=i*12.0;
-      final path=Path()..moveTo(inset,size.height)..lineTo(inset,size.height*.5)..quadraticBezierTo(inset,size.height*.3,size.width*.5,4+inset*.4)..quadraticBezierTo(size.width-inset,size.height*.3,size.width-inset,size.height*.5)..lineTo(size.width-inset,size.height);
-      canvas.drawPath(path,paint);
+    final paint = Paint()
+      ..color = color
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1;
+    for (var i = 0; i < 4; i++) {
+      final inset = i * 12.0;
+      final path = Path()
+        ..moveTo(inset, size.height)
+        ..lineTo(inset, size.height * .5)
+        ..quadraticBezierTo(
+            inset, size.height * .3, size.width * .5, 4 + inset * .4)
+        ..quadraticBezierTo(size.width - inset, size.height * .3,
+            size.width - inset, size.height * .5)
+        ..lineTo(size.width - inset, size.height);
+      canvas.drawPath(path, paint);
     }
   }
+
   @override
-  bool shouldRepaint(_IdentityLines old)=>old.color!=color;
+  bool shouldRepaint(_IdentityLines old) => old.color != color;
 }
 
 class _AccountActionRow extends StatelessWidget {
