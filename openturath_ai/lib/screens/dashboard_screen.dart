@@ -609,17 +609,14 @@ class _LibraryNumbersTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Loc.watch(context);
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final ink = OTColors.textPrimary(isDark);
-    final muted = OTColors.textSecondary(isDark);
-    return OTBentoTile(
+    return OTInkCard(watermark: 'كتب',
       padding: const EdgeInsets.all(OTSpacing.lg),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(Loc.tr('libraryInNumbers'),
               style: ScholarlyFonts.outfit(
-                  fontSize: OTFontSize.s12, color: muted)),
+                  fontSize: OTFontSize.s12, color: OTExpressive.whiteMuted)),
           const SizedBox(height: OTSpacing.md),
           FutureBuilder<Map<String, AiLibraryMetadata>>(
             future: OpenTurathCatalogRepository.instance.loadAllMetadata(),
@@ -632,24 +629,26 @@ class _LibraryNumbersTile extends StatelessWidget {
                   all.values.fold<int>(0, (sum, item) => sum + item.totalKitab);
               final pages = all.values
                   .fold<int>(0, (sum, item) => sum + item.totalHalaman);
-              Widget stat(String value, String label) => Expanded(
+              Widget stat(String value, String label) => Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    decoration: BoxDecoration(color: OTExpressive.white.withValues(alpha: .06), borderRadius: OTRadius.inputBorder),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(value,
                             style: ScholarlyFonts.outfit(
-                                fontSize: OTFontSize.s20,
+                                fontSize: OTFontSize.s26,
                                 fontWeight: FontWeight.w600,
-                                color: ink)),
+                                color: OTExpressive.white)),
                         Text(label,
                             maxLines: 2,
                             style: ScholarlyFonts.outfit(
-                                fontSize: OTFontSize.s12, color: muted)),
+                                fontSize: OTFontSize.s12, color: OTExpressive.whiteMuted)),
                       ],
                     ),
                   );
-              return Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              return Wrap(
+                spacing: 12, runSpacing: 12,
                 children: [
                   stat(number.format(all.length), Loc.tr('loginStatLibraries')),
                   stat(Loc.atLeast(number.format(entries ~/ 100 * 100)),
