@@ -366,8 +366,8 @@ class _BookEditorialItem extends StatelessWidget {
               // Judul Arab asli, maksimal dua baris agar tinggi kartu seragam.
               Text(
                 book.title,
-                textDirection: answerTextDirection(book.title),
-                textAlign: answerTextDirection(book.title) == TextDirection.rtl ? TextAlign.right : TextAlign.left,
+                textDirection: answerDirection(book.title),
+                textAlign: answerDirection(book.title) == TextDirection.rtl ? TextAlign.right : TextAlign.left,
                 maxLines: 3, overflow: TextOverflow.ellipsis,
                 style: ScholarlyFonts.scheherazadeNew(
                   color: ink,
@@ -379,8 +379,8 @@ class _BookEditorialItem extends StatelessWidget {
               const SizedBox(height: 2),
               Text(
                 book.author,
-                textDirection: answerTextDirection(book.author),
-                textAlign: answerTextDirection(book.author) == TextDirection.rtl ? TextAlign.right : TextAlign.left,
+                textDirection: answerDirection(book.author),
+                textAlign: answerDirection(book.author) == TextDirection.rtl ? TextAlign.right : TextAlign.left,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 style: ScholarlyFonts.scheherazadeNew(
