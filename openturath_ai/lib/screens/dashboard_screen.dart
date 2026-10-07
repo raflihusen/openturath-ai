@@ -5,6 +5,8 @@ import '../widgets/desktop_shortcuts.dart';
 import '../widgets/adaptive_sheet.dart';
 import '../core/localization.dart';
 import '../core/arabic_ui_labels.dart';
+import '../core/localized_legal.dart';
+import '../core/adab_icons.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import '../core/design/native_design.dart';
@@ -707,79 +709,6 @@ class _LibraryNumbersTile extends StatelessWidget {
   }
 }
 
-/// Ringkasan delapan adab untuk bahasa selain Indonesia: (judul, satu kalimat).
-/// Urutannya mengikuti "Adab 1-8" di [LegalCopy.aiGuidelineSections].
-const Map<String, List<(String, String)>> _adabDigest = {
-  'en': [
-    (
-      'AI is a study aid, not a teacher',
-      'Use it to widen your reading and prepare questions for your teacher. It issues no fatwa and does not replace the study circle.'
-    ),
-    (
-      'Check the text and its context',
-      'Read what comes before and after a quotation to understand the full context, conditions, and exceptions in the original text.'
-    ),
-    (
-      'Respect the schools and the specialists',
-      'Legal rulings and hadith grading belong to qualified scholars; AI only presents reports and opinions.'
-    ),
-    (
-      'Attribute honestly',
-      'Cite only sources you have checked yourself, not a book you know through an AI summary.'
-    ),
-    (
-      'Beware of confident but wrong answers',
-      'Fluent, assured wording proves nothing. Weigh every answer against the Qur\'an, the Sunnah, and the scholars.'
-    ),
-    (
-      'Keep the chain of transmission',
-      'AI has no sanad, no probity, and no ijazah. Treat it as a library, not as a bearer of knowledge.'
-    ),
-    (
-      'Guard your tongue and your hands',
-      'Do not use AI to disparage scholars or fellow Muslims, or to stir up hostility.'
-    ),
-    (
-      'Polite and scholarly corrections',
-      'Report textual errors, misattributions, or inaccuracies respectfully through official channels so the heritage remains preserved.'
-    ),
-  ],
-  'ar': [
-    (
-      'الذكاء الاصطناعي وسيلة لا شيخ',
-      'استعن به لتوسيع المطالعة وإعداد الأسئلة لشيخك؛ فهو لا يفتي ولا يغني عن مجالس العلم.'
-    ),
-    (
-      'تحقق من النص وسياقه',
-      'اقرأ ما قبل الاقتباس وما بعده لفهم سياق المسألة وشروطها في النص الأصلي.'
-    ),
-    (
-      'احترم المذاهب وأهل الاختصاص',
-      'الحكم الشرعي وتصحيح الحديث لأهلهما، والذكاء الاصطناعي يعرض الروايات والأقوال فحسب.'
-    ),
-    (
-      'الأمانة في العزو',
-      'لا تعزُ إلا إلى مصدر راجعته بنفسك، لا إلى كتاب عرفته من تلخيص الآلة.'
-    ),
-    (
-      'احذر الجواب الواثق الخاطئ',
-      'فصاحة العبارة ليست دليلًا على الصواب؛ فاعرض كل جواب على الكتاب والسنة وكلام العلماء.'
-    ),
-    (
-      'حافظ على السند',
-      'الآلة لا سند لها ولا عدالة ولا إجازة؛ فعاملها معاملة المكتبة لا حامل العلم.'
-    ),
-    (
-      'احفظ لسانك ويدك',
-      'لا تستعملها في ذم العلماء أو المسلمين ولا في إثارة العداوة.'
-    ),
-    (
-      'الأدب في التصحيح والتنبيه',
-      'إذا وجدت خطأ في نص أو نسبة، فبلّغ عنه بأدب وعلمية عبر القنوات الرسمية حفظًا للتراث.'
-    ),
-  ],
-};
-
 /// Satu adab menggunakan AI per hari, diambil dari panduan.
 class _AdabOfDayTile extends StatelessWidget {
   const _AdabOfDayTile();
@@ -792,21 +721,11 @@ class _AdabOfDayTile extends StatelessWidget {
     final muted = OTColors.textSecondary(isDark);
     final today = DateTime.now();
     final day = today.difference(DateTime(today.year)).inDays;
-    final String title;
-    final String body;
-    final digest = _adabDigest[Loc.language];
-    if (digest != null) {
-      (title, body) = digest[day % digest.length];
-    } else {
-      // Bahasa Indonesia: langsung dari naskah panduan.
-      final adab = LegalCopy.aiGuidelineSections
-          .where((section) => section.title.startsWith('Adab '))
-          .toList();
-      if (adab.isEmpty) return const SizedBox.shrink();
-      final section = adab[day % adab.length];
-      title = section.title.split(' · ').last;
-      body = section.content.split('\n').first;
-    }
+    final sections = LocalizedLegal.resolve(LegalDocumentId.guideline).sections.where((s) => AdabIcons.forSection(s.id) != null).toList();
+    final index = day % sections.length;
+    final section = sections[index];
+    final title = section.title.split(' · ').last;
+    final body = section.content.split('\n\n').first;
     return OTBentoTile(
       onTap: () => LegalDocumentSheet.showAiGuideline(context),
       semanticLabel: '${Loc.tr('aiEtiquetteLabel')}: $title',
@@ -816,8 +735,10 @@ class _AdabOfDayTile extends StatelessWidget {
         children: [
           Row(
             children: [
+              Icon(AdabIcons.forSection(section.id), size: 24, color: muted),
+              const SizedBox(width: 12),
               Expanded(
-                child: Text(Loc.tr('aiEtiquetteLabel'),
+                child: Text('${Loc.tr('aiEtiquetteLabel')} · ${index + 1}/8',
                     style: ScholarlyFonts.outfit(
                         fontSize: OTFontSize.s12, color: muted)),
               ),
