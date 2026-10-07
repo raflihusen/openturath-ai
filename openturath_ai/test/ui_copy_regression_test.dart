@@ -5,12 +5,18 @@ import 'package:openturath_ai/core/app_copy.dart';
 
 void main() {
   test('Voucher errors remain natural even for uppercase transport codes', () {
-    expect(SubscriptionService.redeemErrorMessage('NOT_FOUND'), contains('tidak ditemukan'));
-    expect(SubscriptionService.redeemErrorMessage('INTERNAL'), isNot(contains('INTERNAL')));
-    expect(SubscriptionService.redeemErrorMessage('already-exists'), contains('sudah pernah'));
-    expect(SubscriptionService.redeemErrorMessage('unauthenticated'), contains('masuk'));
+    expect(SubscriptionService.redeemErrorMessage('NOT_FOUND'),
+        contains('tidak ditemukan'));
+    expect(SubscriptionService.redeemErrorMessage('INTERNAL'),
+        isNot(contains('INTERNAL')));
+    expect(SubscriptionService.redeemErrorMessage('already-exists'),
+        contains('sudah pernah'));
+    expect(SubscriptionService.redeemErrorMessage('unauthenticated'),
+        contains('masuk'));
   });
-  test('All science AI titles have the requested prefix without changing entitlement IDs', () {
+  test(
+      'All science AI titles have the requested prefix without changing entitlement IDs',
+      () {
     for (final agent in AgentModel.defaultAgents) {
       expect(agent.title.isNotEmpty, isTrue);
       expect(agent.title, startsWith('AI '));
