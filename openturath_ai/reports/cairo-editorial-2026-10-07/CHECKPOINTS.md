@@ -1,8 +1,11 @@
-# Checkpoint Cairo dan katalog editorial
+# Checkpoint dan pemulihan
 
-Branch: `codex/cairo-editorial-2026-10-07`. Baseline: `e8c6861`.
+Branch: `codex/cairo-editorial-2026-10-07`  
+Baseline: `e8c6861`
 
-Setiap perubahan kode/aset/test/dokumen disimpan terpisah. Pemulihan selektif memakai `git revert <hash>` pada commit komponen yang dipilih; jangan reset seluruh workspace karena ada perubahan lain di luar pekerjaan ini. Commit perbaikan yang bergantung pada komponen awal harus ditinjau bersama. Tidak ada push, upload, atau broadcast.
+Semua perubahan tahap Cairo mempunyai checkpoint file eksplisit. Daftar berikut termasuk koreksi visual, pengujian native, dan revert eksperimen harness yang tidak dipakai dalam bukti akhir.
+
+Untuk pemulihan selektif, pilih commit komponen lalu gunakan `git revert <hash>` pada branch kerja; periksa dependensi commit setelahnya. Jangan memakai reset atau membuang perubahan workspace lain. Untuk membandingkan baseline tanpa mengubah checkout, gunakan `git diff e8c6861..HEAD -- openturath_ai` dari akar workspace.
 
 | Commit | Perubahan |
 |---|---|
@@ -58,3 +61,42 @@ Setiap perubahan kode/aset/test/dokumen disimpan terpisah. Pemulihan selektif me
 | c7b99e4 | style(legal-ui): format isolated body resolver and checks |
 | ff66f94 | test(native): add isolated real-route Cairo review entry point |
 | c6742d8 | style(native): format isolated route review harness |
+| 6702d9a | docs(recovery): record explicit Cairo redesign checkpoints and safe selective rollback |
+| b46192c | test(legal-ui): assert isolated body representation during locale changes |
+| eca19a7 | test(native): mark preview-user access as isolated fixture-only usage |
+| 917503c | test(motion): warm native renderer before steady-state frame measurements |
+| 112e041 | test(native): mirror application locale and appearance reactivity in fixture |
+| 46e9290 | style(native): format reactive review application |
+| 388aa21 | fix(catalog): omit absent volume description rather than rendering placeholder units |
+| 66d8e2b | fix(dashboard): give statistics full width and compact narrow stacked metrics |
+| 26c1b06 | style(dashboard): format full-width metric composition |
+| ca69cca | fix(copy): name icon actions without repeating AI or legacy assistant terminology |
+| cead988 | fix(a11y): give general AI controls single independent accessible names |
+| 057d9a8 | fix(a11y): keep inner actions separate when ink cards have no navigation action |
+| 1f6e13a | test(a11y): verify a single AI action name and no card-wide tap semantics |
+| 60de4fb | style(a11y): format semantic action regression checks |
+| 0079583 | fix(a11y): attach AI action name directly to button content for proper semantics merging |
+| b6d90bc | fix(a11y): expose five Tahawwulat choices as actionable buttons |
+| a7fa46c | style(a11y): format selectable Tahawwulat controls |
+| fd3853f | test(motion): require active native window and reject stale or empty timing evidence |
+| 877e7e5 | style(motion): format foreground timing safeguards |
+| e82a442 | test(a11y): release semantics handle before widget test verification |
+| 9e9f0ac | test(motion): isolate repaint benchmark from desktop focus changes without altering production lifecycle |
+| 26edbd1 | style(motion): format controlled native frame benchmark |
+| 863be15 | Revert "style(motion): format controlled native frame benchmark" |
+| 516f399 | Revert "test(motion): isolate repaint benchmark from desktop focus changes without altering production lifecycle" |
+| 4865ef0 | fix(a11y): name each AI reference button for native screen readers |
+| 0a6b69a | fix(a11y): expose flagship reference icon label in native accessibility |
+| 5aeb1ad | style(a11y): format reference icon labels |
+| 7b88677 | test(visual): capture full-width dashboard metrics at phone desktop and large text |
+| 97af30a | style(visual): format dashboard scroll fixtures |
+| bfd66e6 | fix(copy): keep AI navigation naming consistent in all three languages |
+| 79d34bc | fix(a11y): expose calendar method control to native screen readers |
+| e512073 | fix(a11y): label compact profile access management icon |
+| ccb9c9b | style(a11y): format native utility labels |
+| 39f68fd | docs(design): record full-width metrics and native icon accessibility contract |
+| 80ae624 | docs(tokens): synchronize dashboard and accessible AI control composition |
+| f0938be | docs(review): refresh 85 production widget renders with expanded dashboard metrics |
+| 6e8e7cb | docs(motion): retain real native ten-cycle profile measurement and sampled capture |
+| b27483b | docs(review): expose metric variants and label sampled native loading recording |
+| 352a4a7 | docs(verification): record rendered native and motion evidence with explicit release boundaries |
