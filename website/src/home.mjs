@@ -9,6 +9,37 @@ import {membership} from './membership.mjs';
 // Beranda menampilkan sebagian bidang; daftar lengkap ada di halaman Khazanah.
 const HOME_FIELDS=6;
 
+function problemStory(l) {
+  return `<section class="section problem-section" id="verifiability"><div class="container">
+    <div class="editorial-heading" data-reveal>
+      <div>${eyebrow(tr(l,'problemEyebrow'))}<h2>${nl(tr(l,'problemTitle'))}</h2></div>
+      <p>${tr(l,'problemSub')}</p>
+    </div>
+    <div class="failure-modes-grid">
+      <div class="failure-card" data-reveal>
+        <span class="failure-index">01</span>
+        <h3>${tr(l,'failureAttribution')}</h3>
+        <p>${tr(l,'failureAttributionBody')}</p>
+      </div>
+      <div class="failure-card" data-reveal>
+        <span class="failure-index">02</span>
+        <h3>${tr(l,'failureCitation')}</h3>
+        <p>${tr(l,'failureCitationBody')}</p>
+      </div>
+      <div class="failure-card" data-reveal>
+        <span class="failure-index">03</span>
+        <h3>${tr(l,'failureContext')}</h3>
+        <p>${tr(l,'failureContextBody')}</p>
+      </div>
+      <div class="failure-card failure-card-solution" data-reveal>
+        <span class="failure-index">04</span>
+        <h3>${tr(l,'failureSolution')}</h3>
+        <p>${tr(l,'failureSolutionBody')}</p>
+      </div>
+    </div>
+  </div></section>`;
+}
+
 export function immersiveHome(l,data,dialog) {
   return `<section class="scholar-hero" aria-labelledby="hero-title">
     <div class="hero-copy container">
@@ -24,6 +55,7 @@ export function immersiveHome(l,data,dialog) {
     </div>
     <p class="hero-foot">${tr(l,'heroFoot')}</p>
   </section>
+  ${problemStory(l)}
   ${collectionStats(l,data.catalog)}
   ${methodStory(l)}
   <section class="section catalogue-section" id="assistants"><div class="container" data-search-scope>

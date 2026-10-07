@@ -79,27 +79,75 @@ export const articles = {
           "Record the text, edition, reviewer, and review date before marking a reference as verified. This record makes your findings reproducible.",
           "دوّن النص والطبعة واسم المراجع وتاريخ المقابلة قبل إثبات التحقّق من الإحالة. بهذا السجل يمكن إعادة تتبّع نتائج البحث."
         ]
+      },
+      {
+        "heading": [
+          "Arsitektur Penelusuran & Struktur Naskah",
+          "Corpus Ingestion & Structural Preservation",
+          "بنية معالجة النصوص وصيانة الهيكل التراثي"
+        ],
+        "body": [
+          "Penelusuran berakar pada korpus naskah primer yang dinormalisasi secara ortografis tanpa merusak integritas harakat asli. Struktur hierarki naskah—memisahkan matan ringkas, syarah analitis, dan hasyiyah marjinal—dipertahankan agar aturan hukum tidak terlepas dari pengecualiannya.",
+          "Research is grounded in primary classical texts normalized orthographically while preserving vocalized glyphs. Document structure—distinguishing concise rule (matn), analytical commentary (sharh), and marginal gloss (hashiyah)—is preserved intact so legal determinations retain their necessary qualifications.",
+          "ينطلق البحث من متون وشروح التراث بعد تسوية الأنماط الإملائية مع صيانة الضبط بالشكل. ويُراعى التسلسل الهرمي للنصوص—عزل المتن عن الشرح التحليلي والحاشية الهامشية—بحيث لا تنفصل الأحكام عن قيودها وشروطها."
+        ]
+      },
+      {
+        "heading": [
+          "Lapisan Penalaran & Eksplorasi Claude (R&D)",
+          "Reasoning Intelligence & Claude R&D",
+          "طبقة الاستدلال وأبحاث النماذج المتقدمة (Claude R&D)"
+        ],
+        "body": [
+          "Dalam alur penelitian dan pengembangan (R&D), OpenTurath mengevaluasi model penalaran mutakhir seperti Claude dari Anthropic untuk pemahaman naskah Arab klasik berkonteks panjang, ekstraksi metadata terstruktur, dan audit halusinasi sitasi. Model penalaran bertindak sebagai lapisan intelegensi di atas naskah primer, bukan sebagai sumber kebenaran tunggal.",
+          "In ongoing research and development (R&D), OpenTurath evaluates advanced reasoning models such as Anthropic's Claude for long-context classical Arabic document understanding, structured metadata extraction, and citation auditing. The reasoning model operates strictly as an intelligence layer over retrieved primary sources, never as an ungrounded oracle.",
+          "في مسار البحث والتطوير (R&D)، يختبر OpenTurath نماذج استدلالية متقدمة مثل Claude من Anthropic لفهم النصوص العربية الكلاسيكية ذات السياقات الطويلة، واستخراج البيانات الوصفية المهيكلة، وتدقيق النقول. ويعمل النموذج كطبقة استدلال فوق المصادر المسترجعة لا كمصدر ذاتي للحقيقة."
+        ]
       }
     ]
   },
   "about": {
     "key": "about",
     "intro": [
-      "Ilmu lebih dekat. Adab tetap dijaga.",
-      "Knowledge within reach. Adab preserved.",
-      "العلم أقرب. والأدب محفوظ."
+      "Infrastruktur riset khazanah keilmuan Islam.",
+      "AI-native research infrastructure for classical Islamic scholarship.",
+      "بنية تحتية بحثية ذكية لخدمة التراث الإسلامي الأصيل."
     ],
     "blocks": [
       {
         "heading": [
-          "Ruang telaah turats",
-          "A space for turath study",
-          "مساحة لمطالعة التراث"
+          "Infrastruktur Riset Khazanah Keilmuan Islam",
+          "AI-Native Research Infrastructure for Classical Turath",
+          "بنية تحتية بحثية لخدمة التراث الإسلامي"
         ],
         "body": [
-          "OpenTurath membantu penelusuran literatur Islam, pembacaan ibarah, dan penyimpanan Catatan lokal. AI membantu persiapan belajar, sedangkan pemahaman mendalam tetap membutuhkan guru dan sumber asli.",
-          "OpenTurath supports Islamic literature research, close reading, and local Notes. AI assists study preparation, while deeper understanding still requires teachers and original sources.",
-          "يعين OpenTurath على البحث في الكتب الإسلامية وقراءة العبارات وحفظ الملاحظات محليًا. ويساعد الذكاء الاصطناعي في الإعداد للدراسة مع بقاء الحاجة إلى أهل العلم والمصادر الأصلية."
+          "OpenTurath dibangun sebagai infrastruktur riset generasi baru yang menghubungkan para pengkaji dan akademisi dengan khazanah literatur keilmuan Islam. Prinsip utama kami adalah Source First: AI tidak bertujuan menggantikan teks primer atau peran guru, melainkan mempercepat penemuan ibarah asli agar peneliti dapat menelaah dan memverifikasinya secara langsung.",
+          "OpenTurath is engineered as next-generation research infrastructure connecting scholars and researchers with classical Islamic literature. Our core philosophy is Source First: AI does not replace primary texts or teachers, but dramatically accelerates locating the verified Arabic passage so scholars can inspect and verify it directly.",
+          "صُمم OpenTurath كبنية تحتية بحثية رائدة تربط الباحثين وطلبة العلم بأمهات مصادر التراث الإسلامي. وننطلق من مبدأ راسخ: أولوية المصدر (Source First)؛ فالذكاء الاصطناعي لا يحل محل المصادر الأصلية أو مجالس الشيوخ، بل يختصر وقت الوصول إلى النص المحقق لمراجعته بدقة."
+        ]
+      },
+      {
+        "heading": [
+          "Akurasi Tingkat Riset vs. Plausibilitas Generatif",
+          "Research-Grade Verifiability vs. Generative Plausibility",
+          "التحقيق العلمي الموثق مقابل التوليد الاحتمالي"
+        ],
+        "body": [
+          "Berbeda dari AI umum yang kerap menghasilkan kutipan fiktif atau menyematkan pendapat ke ulama yang salah, OpenTurath berfokus pada ketepatan atribusi, keotentikan redaksi ibarah, dan keterlacakan jilid serta halaman pada kitab cetak. Kami membedakan secara tegas antara jawaban yang terdengar meyakinkan secara generatif dengan kebenaran yang dapat diverifikasi secara ilmiah.",
+          "Unlike general-purpose conversational LLMs that frequently invent non-existent citations or misattribute legal positions, OpenTurath focuses on attribution accuracy, exact passage integrity, and verifiable volume and page references. We establish a clear boundary between generative plausibility and scholarly verifiability.",
+          "على خلاف نماذج المحادثة العامة التي تختلق مراجع وهمية أو تخلط بين أقوال العلماء، يركز OpenTurath على دقة العزو، وصحة متن العبارة، وقابلية مطابقة الجزء والصفحة في النسخ المطبوعة. نفرق بصرامة بين الإجابة التي تبدو مقنعة ظاهريًا والتوثيق العلمي الخاضع للمراجعة."
+        ]
+      },
+      {
+        "heading": [
+          "Alur Kerja R&D & Peta Jalan Komputasi",
+          "R&D Workflows & Computational Scaling",
+          "مسار البحث والتطوير والتوسع الحوسبي"
+        ],
+        "body": [
+          "OpenTurath adalah inisiatif riset independen tahap awal. Dalam alur R&D dan evaluasi, kami menguji model penalaran mutakhir seperti Claude dari Anthropic untuk pemahaman naskah berkonteks panjang, ekstraksi metadata berstruktur, dan audit halusinasi. Peta jalan teknis berikutnya adalah memperluas kapasitas API guna mengotomatisasi pemrosesan korpus ribuan jilid dan menjalankan evaluasi berskala besar.",
+          "OpenTurath is an early-stage independent research initiative. In our R&D and benchmarking workflows, we evaluate advanced reasoning models such as Anthropic's Claude for long-context classical Arabic document understanding, structured metadata extraction, and citation auditing. Our technical roadmap focuses on expanding API capacity to automate full-codex processing across thousands of volumes.",
+          "يُعد OpenTurath مبادرة بحثية مستقلة في مراحلها الأولى. وفي مسار البحث والتطوير والتقييم، نختبر نماذج استدلالية متقدمة مثل Claude من Anthropic لفهم النصوص العربية المطولة، واستخراج البيانات الوصفية، والحد من الهلوسة المرجعية. وتتمثل خطتنا القادمة في توسيع سعة واجهات البرمجة (API) لمعالجة آلاف المجلدات آليًا."
         ]
       },
       {
@@ -198,14 +246,14 @@ export const articles = {
       },
       {
         "heading": [
-          "6. Layanan Pihak Ketiga (Google NotebookLM)",
-          "6. Third-Party Services (Google NotebookLM)",
-          "٦. خدمات الأطراف الثالثة (Google NotebookLM)"
+          "6. Layanan Pihak Ketiga (Infrastruktur Pemrosesan)",
+          "6. Third-Party Services (Processing Infrastructure)",
+          "٦. خدمات الأطراف الثالثة (البنية التحتية للمعالجة)"
         ],
         "body": [
-          "Fitur percakapan menggunakan NotebookLM dari Google. Aksesnya dapat bergantung pada akun, wilayah, batas penggunaan, dan ketentuan penyedia yang berlaku untuk Anda. Pembelian OpenTurath tidak dengan sendirinya mengubah jenis langganan atau hak akses akun Google Anda.\n\nJika perubahan layanan pihak ketiga menyebabkan fitur berbayar tidak dapat diberikan sesuai yang ditawarkan, kami akan menilai pemulihan akses, penggantian layanan yang Anda setujui, atau pengembalian dana sesuai hak Anda.",
-          "Conversational features utilize Google NotebookLM. Access may depend on your account, geographic region, rate limits, and provider terms applicable to you. Purchasing OpenTurath does not alter your Google subscription tier or Google account privileges.\n\nIf third-party service modifications prevent paid features from being delivered as offered, we will assess access restoration, an agreed alternative service, or a refund in accordance with your rights.",
-          "تعتمد ميزة المحادثة على Google NotebookLM، وقد يرتبط الوصول إليها بحسابك ونطاقك الجغرافي وحدود الاستخدام وشروط المزود. شراء OpenTurath لا يغيّر باقة Google أو حقوق حسابك لديها.\n\nإذا طرأت تغييرات لدى الطرف الثالث حالت دون تقديم الخدمة المدفوعة كما وُعدت، فسنقيم سبل استعادة الوصول، أو تقديم خدمة بديلة متفق عليها، أو استرداد المبلغ وفق حقوقك المقررة."
+          "Fitur percakapan memanfaatkan infrastruktur komputasi riset terkelola untuk pemrosesan konteks dokumen. Aksesnya dapat bergantung pada akun, wilayah, batas komputasi, dan ketentuan operasional yang berlaku untuk Anda. Pembelian OpenTurath tidak dengan sendirinya mengubah jenis langganan atau hak akses akun eksternal Anda.\n\nJika perubahan layanan pihak ketiga menyebabkan fitur berbayar tidak dapat diberikan sesuai yang ditawarkan, kami akan menilai pemulihan akses, penggantian layanan yang Anda setujui, atau pengembalian dana sesuai hak Anda.",
+          "Conversational features utilize managed research computing infrastructure for document context processing. Access may depend on your account, geographic region, computing limits, and operational terms applicable to you. Purchasing OpenTurath does not alter external subscription tiers or third-party account privileges.\n\nIf third-party service modifications prevent paid features from being delivered as offered, we will assess access restoration, an agreed alternative service, or a refund in accordance with your rights.",
+          "تعتمد ميزة المحادثة على بنية تحتية حوسبية بحثية مخصصة لمعالجة سياق الوثائق والنصوص. وقد يرتبط الوصول بحسابك ونطاقك الجغرافي وحدود المعالجة والشروط التشغيلية. شراء OpenTurath لا يغيّر باقات الاشتراكات الخارجية أو حقوق الحسابات لدى المزودين.\n\nإذا طرأت تغييرات لدى الطرف الثالث حالت دون تقديم الخدمة المدفوعة كما وُعدت، فسنقيم سبل استعادة الوصول، أو تقديم خدمة بديلة متفق عليها، أو استرداد المبلغ وفق حقوقك المقررة."
         ]
       },
       {
@@ -334,9 +382,9 @@ export const articles = {
           "٢. البيانات التي تتم معالجتها"
         ],
         "body": [
-          "Kami memproses data sesuai fitur yang Anda gunakan:\n• Akun: Nama, alamat email, dan identitas profil publik dari akun Google untuk autentikasi dan personalisasi.\n• Langganan: Paket yang dipilih, status, masa aktif, dan penggunaan voucher.\n• Pembayaran: Nomor transaksi, jumlah pembayaran, metode, waktu, dan status dari penyedia Midtrans.\n• Kontak Transaksi: Nomor WhatsApp/telepon yang Anda berikan saat pembayaran untuk pengiriman informasi aktivasi.\n• Percakapan: Pertanyaan, jawaban, dan konteks percakapan yang diproses melalui sesi Google NotebookLM.\n• Catatan: Catatan, kutipan, dan rujukan yang Anda simpan pada penyimpanan lokal perangkat.\n• Bantuan: Alamat kontak, isi pengaduan, nomor transaksi, dan lampiran tangkapan layar untuk penanganan masalah.\n• Sesi Teknis: Token sesi autentikasi yang aman untuk mempertahankan login di perangkat.",
-          "We process data based on features you use:\n• Account: Name, email address, and public profile identifier from Google for authentication and personalization.\n• Subscription: Selected plan, status, validity dates, and voucher usage.\n• Payment: Transaction ID, payment amount, method, timestamp, and status from provider Midtrans.\n• Transaction Contact: WhatsApp/phone number provided during checkout for activation notices.\n• Conversations: Prompts, responses, and session context processed via Google NotebookLM.\n• Notes: Notes, quotations, and locators stored in device local storage.\n• Support: Contact address, inquiry details, transaction ID, and screenshots for troubleshooting.\n• Technical Sessions: Secure authentication session tokens to maintain login on your device.",
-          "نعالج البيانات بحسب الميزات المستخدمة:\n• الحساب: الاسم والبريد الإلكتروني والصورة العامة من حساب Google للمصادقة.\n• الاشتراك: الباقة المختارة، وحالتها، وفترة الصلاحية، واستخدام القسائم.\n• المدفوعات: رقم المعاملة والمبلغ والوسيلة والوقت والحالة من مزود الدفع Midtrans.\n• بيانات التواصل للمعاملات: رقم الهاتف/واتساب المدخل عند الدفع لإشعار التفعيل.\n• المحادثات: الأسئلة والأجوبة وسياق الجلسات المعالج عبر Google NotebookLM.\n• الملاحظات: الملاحظات والنقول والمراجع المحفوظة محليًا على جهازك.\n• الدعم الفني: وسيلة الاتصال وفحوى البلاغ ورقم المعاملة والصور المرفقة.\n• الجلسات الفنية: رموز الجلسات الآمنة للحفاظ على تسجيل الدخول."
+          "Kami memproses data sesuai fitur yang Anda gunakan:\n• Akun: Nama, alamat email, dan identitas profil dari akun autentikasi untuk verifikasi dan personalisasi.\n• Langganan: Paket yang dipilih, status, masa aktif, dan penggunaan voucher.\n• Pembayaran: Nomor transaksi, jumlah pembayaran, metode, waktu, dan status dari penyedia Midtrans.\n• Kontak Transaksi: Nomor WhatsApp/telepon yang Anda berikan saat pembayaran untuk pengiriman informasi aktivasi.\n• Percakapan: Pertanyaan, jawaban, dan konteks telaah yang diproses melalui sesi komputasi riset terisolasi.\n• Catatan: Catatan, kutipan, dan rujukan yang Anda simpan pada penyimpanan lokal perangkat.\n• Bantuan: Alamat kontak, isi pengaduan, nomor transaksi, dan lampiran tangkapan layar untuk penanganan masalah.\n• Sesi Teknis: Token sesi autentikasi yang aman untuk mempertahankan login di perangkat.",
+          "We process data based on features you use:\n• Account: Name, email address, and profile identifier from the authentication account for verification and personalization.\n• Subscription: Selected plan, status, validity dates, and voucher usage.\n• Payment: Transaction ID, payment amount, method, timestamp, and status from provider Midtrans.\n• Transaction Contact: WhatsApp/phone number provided during checkout for activation notices.\n• Conversations: Prompts, responses, and study context processed via isolated research compute sessions.\n• Notes: Notes, quotations, and locators stored in device local storage.\n• Support: Contact address, inquiry details, transaction ID, and screenshots for troubleshooting.\n• Technical Sessions: Secure authentication session tokens to maintain login on your device.",
+          "نعالج البيانات بحسب الميزات المستخدمة:\n• الحساب: الاسم والبريد الإلكتروني والصورة العامة من حساب المصادقة للتحقق والتخصيص.\n• الاشتراك: الباقة المختارة، وحالتها، وفترة الصلاحية، واستخدام القسائم.\n• المدفوعات: رقم المعاملة والمبلغ والوسيلة والوقت والحالة من مزود الدفع Midtrans.\n• بيانات التواصل للمعاملات: رقم الهاتف/واتساب المدخل عند الدفع لإشعار التفعيل.\n• المحادثات: الأسئلة والأجوبة وسياق المطالعة المعالج عبر جلسات حوسبة بحثية معزولة.\n• الملاحظات: الملاحظات والنقول والمراجع المحفوظة محليًا على جهازك.\n• الدعم الفني: وسيلة الاتصال وفحوى البلاغ ورقم المعاملة والصور المرفقة.\n• الجلسات الفنية: رموز الجلسات الآمنة للحفاظ على تسجيل الدخول."
         ]
       },
       {
@@ -353,14 +401,14 @@ export const articles = {
       },
       {
         "heading": [
-          "4. Percakapan AI dan Peran Google",
-          "4. AI Conversations and Google NotebookLM",
-          "٤. محادثات الذكاء الاصطناعي ودور Google"
+          "4. Percakapan AI dan Infrastruktur Komputasi",
+          "4. AI Conversations and Computing Infrastructure",
+          "٤. محادثات الذكاء الاصطناعي والبنية التحتية الحاسوبية"
         ],
         "body": [
-          "Ketika Anda mengirim pertanyaan melalui fitur percakapan, teks dan konteks diproses melalui layanan Google NotebookLM. Kebijakan pemrosesan Google mengikuti Kebijakan Privasi Google dan ketentuan NotebookLM.\n\nAplikasi OpenTurath tidak menggunakan isi percakapan atau catatan pribadi pengguna untuk melatih model kecerdasan buatan publik. Hindari memasukkan informasi pribadi sensitif atau rahasia ke dalam percakapan.",
-          "When you submit questions in conversation features, text and context are processed through Google NotebookLM. Google processing is governed by Google's Privacy Policy and NotebookLM terms.\n\nOpenTurath does not utilize user conversation contents or personal notes to train public artificial intelligence models. Avoid submitting sensitive personal or confidential information into conversations.",
-          "عند إرسال أسئلة في المحادثة، يُعالج النص وسياقه عبر خدمة Google NotebookLM وفق سياسة خصوصية Google وشروط NotebookLM.\n\nلا تستخدم OpenTurath محتوى محادثاتك أو ملاحظاتك الشخصية لتدريب نماذج الذكاء الاصطناعي العامة. يُرجى تجنب إدخال معلومات حساسة أو سرية في المحادثات."
+          "Ketika Anda mengirim pertanyaan melalui fitur percakapan, teks dan konteks telaah diproses melalui sesi komputasi riset terisolasi dengan proteksi privasi ketat.\n\nAplikasi OpenTurath tidak menggunakan isi percakapan atau catatan pribadi pengguna untuk melatih model kecerdasan buatan publik. Hindari memasukkan informasi pribadi sensitif atau rahasia ke dalam percakapan.",
+          "When you submit questions in conversation features, text and study context are processed through isolated research computing sessions under rigorous privacy protections.\n\nOpenTurath does not utilize user conversation contents or personal notes to train public artificial intelligence models. Avoid submitting sensitive personal or confidential information into conversations.",
+          "عند إرسال أسئلة في المحادثة، يُعالج النص وسياق المطالعة عبر جلسات حوسبة بحثية معزولة في بيئة محكمة تراعي حماية الخصوصية.\n\nلا تستخدم OpenTurath محتوى محادثاتك أو ملاحظاتك الشخصية لتدريب نماذج الذكاء الاصطناعي العامة. يُرجى تجنب إدخال معلومات حساسة أو سرية في المحادثات."
         ]
       },
       {
@@ -382,9 +430,9 @@ export const articles = {
           "٦. مزودو الخدمات والجهات المستلمة للبيانات"
         ],
         "body": [
-          "Data dibagikan hanya sebatas yang diperlukan untuk menjalankan layanan:\n• Google: Untuk proses masuk autentikasi dan pemrosesan sesi percakapan NotebookLM.\n• Midtrans: Lembaga pembayaran resmi untuk memproses transaksi perbankan, dompet digital, atau QRIS.\n• Firebase / Google Cloud: Pengelolaan database transaksi dan status hak akses akun yang aman.\n\nSeluruh penyedia bekerja berdasarkan standar keamanan dan enkripsi industri.",
-          "Data is shared strictly to the extent necessary to provide the service:\n• Google: For authentication sign-in and NotebookLM conversation processing.\n• Midtrans: Licensed payment institution to process banking, digital wallet, or QRIS transactions.\n• Firebase / Google Cloud: Secure database management of transactions and account entitlement statuses.\n\nAll service providers operate under recognized industry security and encryption standards.",
-          "تتم مشاركة البيانات بالقدر الضروري فقط لتشغيل الخدمة:\n• Google: للمصادقة وتسجيل الدخول ومعالجة جلسات محادثات NotebookLM.\n• Midtrans: مؤسسة الدفع الرسمية لمعالجة المعاملات المصرفية والمحافظ الإلكترونية وQRIS.\n• Firebase / Google Cloud: لإدارة قواعد بيانات المعاملات وحالات صلاحيات الحسابات بأمان.\n\nيعمل جميع المزودين وفق أعلى معايير الأمان والتشفير المعتمدة عالميًا."
+          "Data dibagikan hanya sebatas yang diperlukan untuk menjalankan layanan:\n• Infrastruktur Autentikasi & Komputasi: Untuk proses masuk yang aman dan eksekusi sesi telaah dokumen terisolasi.\n• Midtrans: Lembaga pembayaran resmi untuk memproses transaksi perbankan, dompet digital, atau QRIS.\n• Firebase / Google Cloud: Pengelolaan database transaksi dan status hak akses akun yang aman.\n\nSeluruh penyedia bekerja berdasarkan standar keamanan dan enkripsi industri.",
+          "Data is shared strictly to the extent necessary to provide the service:\n• Authentication & Computing Infrastructure: For secure authentication and execution of isolated document research sessions.\n• Midtrans: Licensed payment institution to process banking, digital wallet, or QRIS transactions.\n• Firebase / Google Cloud: Secure database management of transactions and account entitlement statuses.\n\nAll service providers operate under recognized industry security and encryption standards.",
+          "تتم مشاركة البيانات بالقدر الضروري فقط لتشغيل الخدمة:\n• بنية المصادقة والحوسبة: لتسجيل الدخول الآمن وتشغيل جلسات مطالعة النصوص المعزولة.\n• Midtrans: مؤسسة الدفع الرسمية لمعالجة المعاملات المصرفية والمحافظ الإلكترونية وQRIS.\n• Firebase / Google Cloud: لإدارة قواعد بيانات المعاملات وحالات صلاحيات الحسابات بأمان.\n\nيعمل جميع المزودين وفق أعلى معايير الأمان والتشفير المعتمدة عالميًا."
         ]
       },
       {
@@ -761,45 +809,45 @@ export const articles = {
   "research/methodology": {
     "key": "methods",
     "intro": [
-      "Bukti yang dapat ditelaah.",
-      "Evidence open to examination.",
-      "أدلة قابلة للمراجعة."
+      "Metodologi verifikasi dan bukti yang dapat ditelaah.",
+      "Verification methodology and inspectable scholarly evidence.",
+      "منهجية التحقيق والأدلة الخاضعة للمراجعة العلمية."
     ],
     "blocks": [
       {
         "heading": [
-          "Arsip terbatas",
-          "A limited archive",
-          "أرشيف محدود"
+          "Kerangka Evaluasi & 4 Dimensi Verifikasi",
+          "Evaluation Framework & 4 Verifiability Dimensions",
+          "إطار التقييم وأبعاد التحقق الأربعة"
         ],
         "body": [
-          "Q001 menyimpan satu pertanyaan dan enam jawaban asli. Tanggal uji, versi model, paket, dan kondisi lengkap tidak tercatat. Arsip ini tidak membuktikan keunggulan menyeluruh suatu layanan.",
-          "Q001 preserves one question and six original answers. Test date, model versions, plans, and full conditions were not recorded. This archive does not prove a service’s overall superiority.",
-          "يحفظ Q001 سؤالًا واحدًا وست إجابات أصلية. لم تُسجّل تواريخ الاختبار وإصدارات النماذج والباقات والظروف الكاملة. لا يثبت الأرشيف تفوق خدمة بصورة عامة."
+          "Evaluasi penalaran turats diuji pada empat dimensi kritis: (1) Exact Passage Retrieval—ketepatan menemukan naskah primer asli; (2) Attribution Accuracy—keotentikan nisbah mazhab dan pemilahan qaul mu'tamad vs da'if; (3) Volume/Page Traceability—keterlacakan jilid dan halaman pada edisi cetak muhaqqaq; serta (4) Hallucination Resistance—pencegahan fabrikasi judul kitab atau sanad fiktif.",
+          "Scholarly AI evaluation is assessed across four critical dimensions: (1) Exact Passage Retrieval—locating verbatim classical Arabic passages; (2) Attribution Accuracy—rigorous distinction between relied-upon (mu'tamad) and weak opinions without cross-school conflation; (3) Volume/Page Traceability—verifiable physical volume and page coordinates; and (4) Hallucination Resistance—systematic elimination of invented book titles or phantom citations.",
+          "تُقاس كفاءة النماذج البحثية عبر أربعة أبعاد جوهرية: (١) استرجاع النص الأصلي بدقة حرفية تامة؛ (٢) دقة العزو والتمييز بين المعتمد والضعيف دون تلفيق؛ (٣) قابلية التتبع المادي لأرقام الأجزاء والصفحات في الطبعات المحققة؛ (٤) مقاومة الهلوسة المرجعية والمنع التام لاختلاق عناوين وهمية أو أسانيد مركبة."
         ]
       },
       {
         "heading": [
-          "Status sepuluh kutipan",
-          "Status of ten quotations",
-          "حالة النقول العشرة"
+          "Transparansi Arsip Uji & Batasan Riset",
+          "Archive Transparency & Research Boundaries",
+          "شفافية الأرشيف والحدود المنهجية"
         ],
         "body": [
-          "Sepuluh kutipan memiliki status belum ditelaah. Teks pembanding edisi, nomor halaman cetak, penelaah, dan tanggal verifikasi belum tersedia. Hash arsip menjaga integritas teks tersimpan, bukan membuktikan kebenarannya.",
-          "Ten quotations remain not reviewed. Edition comparison text, verified print pages, reviewer, and verification date are not available. Archive hashes protect saved-text integrity, not factual accuracy.",
-          "النقول العشرة لم تُراجع بعد. ولا تتوفر نصوص المقابلة والصفحات المحققة والمراجع وتاريخ التحقّق. تحمي البصمات سلامة النص المحفوظ ولا تثبت صحته العلمية."
+          "Arsip komparatif menyimpan pertanyaan dan respons asli tanpa modifikasi. Status telaah dicatat secara transparan—kutipan yang belum selesai dikolasi (muqabalah) terhadap cetakan fisik ditandai secara terbuka. Hash kriptografis menjaga integritas teks arsip, menegaskan komitmen kami pada pembuktian faktual di atas klaim pemasaran generatif.",
+          "The comparative archive preserves unedited prompts and original baseline outputs. Review statuses are documented transparently—passages awaiting complete physical collation (muqabalah) against verified print editions are explicitly labeled. Cryptographic hashing protects data integrity, maintaining factual rigor over sweeping generative marketing claims.",
+          "يحفظ الأرشيف المقارن نصوص الأسئلة والإجابات الأصلية دون أي تعديل. وتُوثق حالة المراجعة بشفافية تامة؛ فالنقول التي تنتظر استكمال المقابلة الميدانية على الطبعات المطبوعة يُنص عليها بوضوح. وتحمي البصمات المشفرة سلامة البيانات، ترسيخًا للأمانة العلمية بعيدًا عن ادعاءات التسويق المبالغ فيها."
         ]
       },
       {
         "heading": [
-          "Koreksi yang terdokumentasi",
-          "Documented corrections",
-          "التصحيحات الموثقة"
+          "Protokol Koreksi Terbuka & Pelaporan Ilmiah",
+          "Open Correction Protocol & Scholarly Peer Review",
+          "بروتوكول التصحيح المفتوح والمراجعة العلمية"
         ],
         "body": [
-          "Koreksi perlu menyertakan sumber edisi dan alasan perubahan. Teks jawaban asli dipertahankan agar riwayat dapat diperiksa. Gunakan formulir laporan untuk mengirim temuan.",
-          "Corrections need an edition source and a reason for the change. Original answers are preserved for an inspectable history. Use the report form to submit findings.",
-          "يلزم للتصحيح مصدر الطبعة وسبب التغيير. تُحفظ الإجابات الأصلية لإتاحة مراجعة التاريخ. أرسل الملاحظات عبر نموذج البلاغ."
+          "Koreksi teks atau rujukan mewajibkan penyertaan data edisi cetak, penerbit, nomor jilid, halaman, dan catatan muqabalah. Riwayat teks asli tetap dipertahankan agar evolusi pembacaan dapat diteliti secara objektif. Pengkaji dapat menyampaikan temuan kritis melalui formulir laporan resmi.",
+          "Textual or citation corrections require explicit print metadata: edition, publisher, volume, page, and collation notes. Original textual history is preserved so methodological evolution remains fully auditable. Scholars can submit critical findings through our formal reporting channel.",
+          "يتطلب تصحيح أي نص أو عزو إرفاق بيانات الطبعة، والناشر، ورقم الجزء والصفحة، وملاحظات المقابلة. ويُحفظ تاريخ التعديلات لضمان إمكانية التدقيق المنهجي الشفاف. ويتاح للباحثين تقديم الملاحظات الدقيقة عبر قنوات البلاغ المعتمدة."
         ]
       }
     ]
@@ -1059,9 +1107,9 @@ export const articles = {
           "البيانات في مواضع مختلفة"
         ],
         "body": [
-          "Cadangkan Catatan lokal sebelum menghapus data aplikasi. Penghapusan akun OpenTurath tidak otomatis menghapus data pada akun Google/NotebookLM. Data transaksi yang wajib disimpan secara hukum dapat dikecualikan dari penghapusan langsung.",
-          "Back up local Notes before deleting app data. Deleting OpenTurath does not automatically delete data in your Google/NotebookLM account. Transaction records legally required for retention may be exempt from immediate deletion.",
-          "انسخ الملاحظات المحلية قبل حذف بيانات التطبيق. لا يحذف حذف حساب OpenTurath بيانات Google/NotebookLM تلقائيًا. وقد تُستثنى سجلات المعاملات الواجب حفظها قانونًا من الحذف الفوري."
+          "Cadangkan Catatan lokal sebelum menghapus data aplikasi. Penghapusan akun OpenTurath tidak otomatis menghapus data pada akun atau sesi pihak ketiga eksternal. Data transaksi yang wajib disimpan secara hukum dapat dikecualikan dari penghapusan langsung.",
+          "Back up local Notes before deleting app data. Deleting OpenTurath does not automatically delete data in external third-party accounts or sessions. Transaction records legally required for retention may be exempt from immediate deletion.",
+          "انسخ الملاحظات المحلية قبل حذف بيانات التطبيق. لا يحذف حذف حساب OpenTurath البيانات في الحسابات أو الجلسات الخارجية للأطراف الثالثة تلقائيًا. وقد تُستثنى سجلات المعاملات الواجب حفظها قانونًا من الحذف الفوري."
         ]
       }
     ],

@@ -13,7 +13,7 @@ export const copy = {
     "close": "Tutup",
     "theme": "Ubah tema",
     "hero": "Ilmu. Lebih dekat.",
-    "heroSub": "Ajukan pertanyaan, lalu baca jawabannya bersama ibarah Arab, jilid, dan halamannya di kitab.",
+    "heroSub": "Temukan ibarah Arab, telusuri rujukan hukum, dan verifikasi teks langsung ke naskah primer — dibangun dengan prinsip Source First (Sumber Diutamakan).",
     "seeResults": "Lihat hasil pengujian",
     "scroll": "Mulai menelaah",
     "opening": "Setiap pertanyaan, sebuah jalan menuju sumber.",
@@ -170,7 +170,7 @@ export const copy = {
     "chars": "karakter",
     "share": "Salin tautan",
     "linkCopied": "Tautan disalin.",
-    "heroTagline": "Khazanah para ulama. Dalam jangkauan Anda.",
+    "heroTagline": "Infrastruktur Riset Berbasis AI untuk Khazanah Keilmuan Islam",
     "heroCta": "Jelajahi khazanah",
     "heroSecondary": "Pelajari metodenya",
     "heroFoot": "Berpijak pada sumber. Bertumbuh bersama bimbingan guru.",
@@ -248,7 +248,18 @@ export const copy = {
     "methodVolume": "Jilid",
     "methodPage": "Halaman",
     "methodQuestion": "Apakah menyentuh melalui kain membatalkan wudu?",
-    "methodNote": "Kutipan arsip sebagai contoh alur telaah. Buka sumber untuk konteks lengkap."
+    "methodNote": "Kutipan arsip sebagai contoh alur telaah. Buka sumber untuk konteks lengkap.",
+    "problemEyebrow": "Masalah Ilmiah & Akurasi",
+    "problemTitle": "Jawaban AI mudah dibuat.\nSumber yang terverifikasi jauh lebih sulit.",
+    "problemSub": "Dalam penelitian ilmiah turats, jawaban yang sekadar terdengar meyakinkan tidak pernah mencukupi. Model AI umum kerap mengalami kegagalan struktural saat berhadapan dengan naskah klasik.",
+    "failureAttribution": "Salah Ulama & Mazhab",
+    "failureAttributionBody": "LLM umum kerap menyematkan pendapat kepada ulama yang keliru, mencampuradukkan posisi hukum, atau melakukan sinkretisme tanpa kaidah (talfiq al-batil).",
+    "failureCitation": "Halusinasi Sitasi & Halaman",
+    "failureCitationBody": "Menghasilkan judul kitab, nomor jilid, dan nomor halaman yang meyakinkan namun fiktif dan mustahil diverifikasi pada kitab cetak fisik.",
+    "failureContext": "Teks Terpotong Konteks",
+    "failureContextBody": "Segmentasi teks generik memotong kalimat hukum dari pengecualian krusial yang dijelaskan oleh pensyarah (syarah) dan catatan tepi (hasyiyah).",
+    "failureSolution": "Prinsip Source First",
+    "failureSolutionBody": "OpenTurath tidak meminta peneliti percaya buta pada AI. Kami mempercepat penemuan ibarah asli agar peneliti dapat langsung memeriksa dan menguji naskah primer."
   },
   "en": {
     "skip": "Skip to content",
@@ -262,8 +273,8 @@ export const copy = {
     "menu": "Menu",
     "close": "Close",
     "theme": "Change theme",
-    "hero": "Knowledge. Within reach.",
-    "heroSub": "Ask a question, then read the answer with its Arabic passage, volume, and page in the book.",
+    "hero": "Research Classical Scholarship with Sources You Can Verify",
+    "heroSub": "Locate exact Arabic passages, trace legal determinations across multi-volume works, and verify every citation directly against primary texts — built on the principle of Source First.",
     "seeResults": "Examine the results",
     "scroll": "Begin exploring",
     "opening": "Every question, a way back to the source.",
@@ -420,7 +431,7 @@ export const copy = {
     "chars": "characters",
     "share": "Copy link",
     "linkCopied": "Link copied.",
-    "heroTagline": "The scholarship of generations. Within your reach.",
+    "heroTagline": "AI-Native Research Infrastructure for Classical Islamic Scholarship",
     "heroCta": "Explore the library",
     "heroSecondary": "Discover the method",
     "heroFoot": "Rooted in sources. Guided by teachers.",
@@ -498,7 +509,18 @@ export const copy = {
     "methodVolume": "Volume",
     "methodPage": "Page",
     "methodQuestion": "Does touching through clothing invalidate wudu?",
-    "methodNote": "An archived passage illustrates the study process. Open the source for full context."
+    "methodNote": "An archived passage illustrates the study process. Open the source for full context.",
+    "problemEyebrow": "The Research Problem",
+    "problemTitle": "AI answers are easy.\nVerifiable sources are harder.",
+    "problemSub": "In serious scholarship, plausible answers are not enough. General-purpose AI systems struggle with source-intensive classical Arabic research.",
+    "failureAttribution": "Attribution Drift",
+    "failureAttributionBody": "Standard LLMs frequently assign legal opinions to the wrong scholar, conflate distinct school positions, or commit ungrounded syncretism (talfiq).",
+    "failureCitation": "Bibliographic Hallucination",
+    "failureCitationBody": "Generating plausible-sounding book titles, volume numbers, and page references that do not actually exist in authoritative editions.",
+    "failureContext": "Context Stripping",
+    "failureContextBody": "Arbitrary chunking isolates a concise core rule (matn) from its indispensable qualifications in commentaries (sharh) and marginal glosses (hashiyah).",
+    "failureSolution": "Source-First Verification",
+    "failureSolutionBody": "OpenTurath does not ask researchers to trust the AI. It helps them locate, inspect, and verify the original Arabic passage directly in the primary text."
   },
   "ar": {
     "skip": "انتقل إلى المحتوى",
@@ -512,8 +534,8 @@ export const copy = {
     "menu": "القائمة",
     "close": "إغلاق",
     "theme": "تغيير المظهر",
-    "hero": "العلم. أقرب إليك.",
-    "heroSub": "اطرح سؤالك، ثم اقرأ الجواب مع العبارة العربية وجزئها وصفحتها في الكتاب.",
+    "hero": "تحقيق التراث بأصول موثقة وقابلة للمراجعة",
+    "heroSub": "تتبّع مواضع العبارات في أمهات المصادر، وحقّق الإحالات والمسائل عبر الشروح والحواشي، وقابل كل نقل بنصه المطبوع مباشرة — وفق مبدأ أولوية المصدر (Source First).",
     "seeResults": "اطّلع على النتائج",
     "scroll": "ابدأ التصفّح",
     "opening": "كل سؤال طريق إلى مصدره.",
@@ -670,9 +692,9 @@ export const copy = {
     "chars": "حرفًا",
     "share": "انسخ الرابط",
     "linkCopied": "نُسخ الرابط.",
-    "heroTagline": "تراث العلماء. بين يديك.",
-    "heroCta": "استكشف الخزانة",
-    "heroSecondary": "تعرّف على المنهج",
+    "heroTagline": "بنية تحتية بحثية ذكية لخدمة التراث الإسلامي الأصيل",
+    "heroCta": "تصفّح الخزانة",
+    "heroSecondary": "تعرّف على المنهجية",
     "heroFoot": "على أصول المصادر، وبإرشاد أهل العلم.",
     "booksAlt": "كتب تراثية مفتوحة الصفحات",
     "verifyEyebrow": "منهج المطالعة",
@@ -748,7 +770,18 @@ export const copy = {
     "methodVolume": "الجزء",
     "methodPage": "الصفحة",
     "methodQuestion": "هل ينقض اللمس من وراء الثوب الوضوء؟",
-    "methodNote": "نص من الأرشيف لتوضيح مسار الدراسة. افتح المصدر للاطلاع على السياق الكامل."
+    "methodNote": "نص من الأرشيف لتوضيح مسار الدراسة. افتح المصدر للاطلاع على السياق الكامل.",
+    "problemEyebrow": "الإشكالية البحثية والتوثيق",
+    "problemTitle": "إجابات الذكاء الاصطناعي ميسورة.\nأما توثيق المصادر فأمر عسير.",
+    "problemSub": "في التحقيق العلمي الرصين، لا تكفي الإجابات الظاهرية المقنعة. وتعاني النماذج اللغوية العامة من إشكالات بنيوية عند التعامل مع أمهات كتب التراث.",
+    "failureAttribution": "خلط الأقوال والمذاهب",
+    "failureAttributionBody": "كثيرًا ما تنسب النماذج العامة المسائل إلى غير أصحابها، أو تخلط بين المعتمد والضعيف، أو تقع في التلفيق غير المنضبط بين المذاهب.",
+    "failureCitation": "اختلاق الإحالات والصفحات",
+    "failureCitationBody": "توليد عناوين كتب وأرقام أجزاء وصفحات تبدو صحيحة في الظاهر لكنها وهمية ويتعذر إيجادها في الطبعات المحققة المعتمدة.",
+    "failureContext": "اقتطاع النصوص عن سياقها",
+    "failureContextBody": "تقطيع النصوص آليًا يعزل عبارة المتن الموجزة عن قيودها وشروطها واستثناءاتها الدقيقة المبسوطة في الشروح والحواشي.",
+    "failureSolution": "منهجية أولوية المصدر",
+    "failureSolutionBody": "لا يطلب OpenTurath من الباحث الثقة التوليدية بالذكاء الاصطناعي؛ بل ييسر وصوله إلى العبارة الأصلية ليحققها ويقابلها بنفسه في المصدر المعتمد."
   }
 };
 
@@ -828,9 +861,9 @@ export const faq = [
       "أين تُحفظ ملاحظات المطالعة؟"
     ],
     "a": [
-      "Catatan yang Anda simpan melalui fitur Catatan berada secara lokal di perangkat Anda. Gunakan fitur ekspor atau pencadangan yang tersedia sebelum mengganti perangkat atau menghapus data aplikasi. Percakapan pada Google NotebookLM dikelola oleh layanan tersebut dan terpisah dari Catatan lokal.",
-      "Notes saved through the Notes feature are stored locally on your device. Use the available export or backup features before changing devices or clearing app data. Google NotebookLM conversations are managed by that service, separately from local Notes.",
-      "تُحفظ الملاحظات التي تسجّلها في ميزة الملاحظات محليًّا على جهازك. استخدم خيارات التصدير أو النسخ الاحتياطي المتاحة قبل تغيير الجهاز أو مسح بيانات التطبيق. أمّا محادثات Google NotebookLM فتديرها تلك الخدمة بصورة منفصلة."
+      "Catatan yang Anda simpan melalui fitur Catatan berada sepenuhnya secara lokal di perangkat Anda demi menjaga kerahasiaan telaah. Gunakan fitur ekspor atau pencadangan yang tersedia sebelum mengganti perangkat atau menghapus data aplikasi. Riwayat telaah interaktif dikelola terpisah dari Catatan lokal perangkat.",
+      "Notes saved through the Notes feature are stored entirely locally on your device to ensure privacy and research independence. Use the available export or backup features before changing devices or clearing app data. Interactive research sessions are handled securely and separated from local device Notes.",
+      "تُحفظ الملاحظات التي تسجّلها في ميزة الملاحظات محليًّا بالكامل على جهازك لضمان الخصوصية واستقلالية البحث. استخدم خيارات التصدير أو النسخ الاحتياطي المتاحة قبل تغيير الجهاز أو مسح بيانات التطبيق. وتُدار جلسات المطالعة التفاعلية بأمان وبشكل منفصل عن الملاحظات المحلية."
     ]
   },
   {
@@ -875,14 +908,14 @@ export const faq = [
   {
     "id": "account",
     "q": [
-      "Apakah percakapan memerlukan akun Google?",
-      "Do conversations require a Google account?",
-      "هل تتطلب المحادثات حساب Google؟"
+      "Bagaimana autentikasi akun dan sesi telaah dikelola?",
+      "How are user accounts and research sessions authenticated?",
+      "كيف تتم مصادقة الحساب وجلسات المطالعة البحثية؟"
     ],
     "a": [
-      "Percakapan dengan asisten berlangsung melalui Google NotebookLM. Masuklah dengan akun Google yang memenuhi persyaratan layanan tersebut. Keanggotaan OpenTurath mengatur akses koleksi, sementara batas penggunaan dan pemrosesan percakapan mengikuti ketentuan NotebookLM.",
-      "Conversations with assistants take place through Google NotebookLM. Sign in with a Google account that meets its service requirements. OpenTurath membership controls collection access; conversation processing and usage limits follow NotebookLM’s terms.",
-      "تجري المحادثات مع المساعدين عبر Google NotebookLM. سجّل الدخول بحساب Google يستوفي متطلبات الخدمة. تنظّم عضوية OpenTurath الوصول إلى المجموعات، وتخضع معالجة المحادثات وحدود استخدامها لشروط NotebookLM."
+      "Autentikasi akun riset menggunakan verifikasi akun terpadu yang aman untuk mengelola hak akses koleksi dan sinkronisasi keanggotaan. Sesi telaah diproses dalam ruang komputasi riset terisolasi tanpa melatih model kecerdasan buatan publik pada catatan pribadi Anda.",
+      "Research accounts use secure unified account authentication to manage collection entitlements and membership verification. Active study sessions are processed within isolated scholarly research environments, strictly protecting your notes and personal queries without training public models.",
+      "تستخدم حسابات الباحثين مصادقة آمنة وموحدة لإدارة صلاحيات المجموعات والتحقق من حالة العضوية. وتتم معالجة جلسات المطالعة داخل بيئات بحثية محكمة مخصصة للنصوص، مع حماية تامة لملاحظاتك واستفساراتك ودون تدريب نماذج عامة عليها."
     ]
   }
 ];
