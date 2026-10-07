@@ -35,9 +35,15 @@ class BookRowItem extends StatelessWidget {
       formattedVolumes = Loc.tr('volumeCount', ['${book.volumesCount}']);
     }
 
+    final pages = book.pagesDescription?.trim();
+    final pageLabel = pages == null || pages.isEmpty || pages == '-'
+        ? null
+        : RegExp(r'^[0-9٠-٩.,،\s]+$').hasMatch(pages)
+            ? Loc.tr('pageCount', [pages])
+            : pages;
     final facts = [
       if (formattedVolumes != null) formattedVolumes,
-      if (book.pagesDescription?.isNotEmpty == true) book.pagesDescription!
+      if (pageLabel != null) pageLabel
     ];
 
     final hasDeathYear =
