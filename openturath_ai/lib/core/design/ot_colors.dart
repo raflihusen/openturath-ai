@@ -27,8 +27,8 @@ class OTColors {
 
   // ── 2. Dark Mode (Neutral Ink) ──
   static const Color canvasDark = Color(0xFF151515);
-  static const Color surfaceDark = Color(0xFF202020);
-  static const Color surfaceSubtleDark = Color(0xFF2B2B2B);
+  static const Color surfaceDark = Color(0xFF292929);
+  static const Color surfaceSubtleDark = Color(0xFF353535);
   static const Color textPrimaryDark = Color(0xFFF5F5F5);
   static const Color textSecondaryDark = Color(0xFFB8B8B8);
   static const Color textTertiaryDark = Color(0xFF9A9A9A); // Placeholder, hint
