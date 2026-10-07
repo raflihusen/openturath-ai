@@ -69,7 +69,7 @@ class BookIdentityCard extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
                 decoration: BoxDecoration(
                     color: OTColors.surfaceSubtle(dark),
-                    borderRadius: OTRadius.pillBorder),
+                    borderRadius: OTRadius.chipBorder),
                 child: Text(fact,
                     textDirection: answerDirection(fact),
                     style: OTTypography.caption(color: muted))),
