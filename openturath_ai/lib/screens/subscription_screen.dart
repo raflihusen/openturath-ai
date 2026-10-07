@@ -5,7 +5,7 @@ import '../widgets/ot_motion_widgets.dart';
 import '../core/design/ot_motion.dart';
 import '../core/scholarly_fonts.dart';
 import '../core/app_copy.dart';
-import '../core/app_snackbar.dart';
+import '../widgets/payment_success_dialog.dart';
 import '../core/design/ot_colors.dart';
 import '../core/design/ot_typography.dart';
 import '../core/localization.dart';
@@ -158,7 +158,8 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
           regularAmount: offer.regularAmount,
           periodLabel: offer.period);
       if (mounted && paid == true) {
-        AppSnackBar.success(context, Loc.tr('paymentConfirmed'));
+        await PaymentSuccessDialog.show(context,
+            plan: title, invoice: invoice, amount: offer.amount);
       }
     } on FirebaseFunctionsException catch (error, stack) {
       TelemetryService.instance.reportError(error, stack, context: 'checkout');
@@ -664,7 +665,6 @@ class _TierSelector extends StatelessWidget {
   Widget build(BuildContext context) {
     final dark = Theme.of(context).brightness == Brightness.dark;
     final ink = OTColors.textPrimary(dark);
-    final muted = OTColors.textSecondary(dark);
     final stacked = MediaQuery.textScalerOf(context).scale(16) > 24;
     Widget option(int i) {
       final active = selected == i;
