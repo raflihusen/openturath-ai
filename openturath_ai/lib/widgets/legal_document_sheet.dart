@@ -5,7 +5,9 @@ import '../widgets/adaptive_sheet.dart';
 import 'package:flutter/material.dart';
 
 import '../core/design/ot_colors.dart';
-import '../core/legal_copy.dart';
+import '../core/localized_legal.dart';
+import '../core/localization.dart';
+import '../core/adab_icons.dart';
 import '../core/scholarly_fonts.dart';
 
 import 'package:openturath_ai/core/design/ot_typography.dart';
@@ -14,89 +16,23 @@ import 'package:openturath_ai/core/design/ot_radius.dart';
 /// Mengadopsi prinsip desain "The Quiet Scholar" dengan keterbacaan tinggi,
 /// tipografi terpadu, dan pembagian pasal yang lapang.
 class LegalDocumentSheet extends StatelessWidget {
-  final String title;
-  final String subtitle;
-  final List<LegalSection> sections;
-
-  const LegalDocumentSheet({
-    super.key,
-    required this.title,
-    required this.subtitle,
-    required this.sections,
-  });
-
-  /// Buka lembar Ketentuan Layanan
-  static Future<void> showTermsOfService(BuildContext context) {
-    return _show(
-      context,
-      title: LegalCopy.termsTitle,
-      subtitle:
-          'Versi ${LegalCopy.documentVersion} · Berlaku mulai ${LegalCopy.effectiveDate}',
-      sections: LegalCopy.termsSections,
-    );
-  }
-
-  /// Buka lembar Kebijakan Privasi
-  static Future<void> showPrivacyPolicy(BuildContext context) {
-    return _show(
-      context,
-      title: LegalCopy.privacyTitle,
-      subtitle:
-          'Versi ${LegalCopy.documentVersion} · Sesuai UU No. 27 Tahun 2022',
-      sections: LegalCopy.privacySections,
-    );
-  }
-
-  /// Buka lembar Pembayaran dan Pengembalian Dana
-  static Future<void> showRefundPolicy(BuildContext context) {
-    return _show(
-      context,
-      title: LegalCopy.refundTitle,
-      subtitle: 'Ketentuan Pembayaran DOKU & Pengembalian Dana',
-      sections: LegalCopy.refundSections,
-    );
-  }
-
-  /// Buka lembar Panduan Penggunaan AI dan Rujukan
-  static Future<void> showAiGuideline(BuildContext context) {
-    return _show(
-      context,
-      title: LegalCopy.aiGuidelineTitle,
-      subtitle: 'Etika Telaah, Pembacaan Konteks, dan Adab Keilmuan',
-      sections: LegalCopy.aiGuidelineSections,
-    );
-  }
-
-  /// Buka lembar Bantuan dan Kontak
-  static Future<void> showContactSupport(BuildContext context) {
-    return _show(
-      context,
-      title: LegalCopy.contactTitle,
-      subtitle: 'Saluran Resmi dan Pengaduan Layanan',
-      sections: LegalCopy.contactSections,
-    );
-  }
-
-  static Future<void> _show(
-    BuildContext context, {
-    required String title,
-    required String subtitle,
-    required List<LegalSection> sections,
-  }) {
-    return showAdaptiveSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (ctx) => LegalDocumentSheet(
-        title: title,
-        subtitle: subtitle,
-        sections: sections,
-      ),
-    );
-  }
+  final LegalDocumentId documentId;
+  const LegalDocumentSheet({super.key, required this.documentId});
+  static Future<void> showTermsOfService(BuildContext context) => _show(context, LegalDocumentId.terms);
+  static Future<void> showPrivacyPolicy(BuildContext context) => _show(context, LegalDocumentId.privacy);
+  static Future<void> showRefundPolicy(BuildContext context) => _show(context, LegalDocumentId.refund);
+  static Future<void> showAiGuideline(BuildContext context) => _show(context, LegalDocumentId.guideline);
+  static Future<void> showContactSupport(BuildContext context) => _show(context, LegalDocumentId.contact);
+  static Future<void> _show(BuildContext context, LegalDocumentId id) => showAdaptiveSheet(
+    context: context, isScrollControlled: true, backgroundColor: Colors.transparent,
+    builder: (ctx) => LegalDocumentSheet(documentId: id));
 
   @override
   Widget build(BuildContext context) {
+    Loc.watch(context);
+    final document = LocalizedLegal.resolve(documentId);
+    final title = document.title, subtitle = document.subtitle;
+    final sections = document.sections;
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
 
@@ -106,7 +42,7 @@ class LegalDocumentSheet extends StatelessWidget {
     final textPrimary = OTColors.textPrimary(isDark);
     final textSecondary = OTColors.textSecondary(isDark);
 
-    return Container(
+    return Directionality(textDirection: Loc.isArabic ? TextDirection.rtl : TextDirection.ltr, child: Container(
       height: MediaQuery.of(context).size.height * 0.85,
       decoration: BoxDecoration(
         color: surface,
@@ -153,6 +89,7 @@ class LegalDocumentSheet extends StatelessWidget {
                 onPressed: () => Navigator.pop(context),
                 icon: Icon(Icons.close_rounded, size: 20, color: textSecondary),
                 splashRadius: 20,
+                tooltip: Loc.tr('close'),
               ),
             ],
           ),
@@ -175,6 +112,11 @@ class LegalDocumentSheet extends StatelessWidget {
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    if (AdabIcons.forSection(sec.id) != null) ...[
+                      Container(padding: const EdgeInsets.all(12), decoration: BoxDecoration(color: OTColors.surfaceSubtle(isDark), borderRadius: OTRadius.cardBorder),
+                        child: Icon(AdabIcons.forSection(sec.id), size: 24, color: textPrimary)),
+                      const SizedBox(height: 12),
+                    ],
                     Text(
                       sec.title,
                       style: ScholarlyFonts.newsreader(
@@ -213,7 +155,7 @@ class LegalDocumentSheet extends StatelessWidget {
                 foregroundColor: canvas,
               ),
               child: Text(
-                'Tutup',
+                Loc.tr('close'),
                 style: ScholarlyFonts.outfit(
                   fontSize: OTFontSize.s14,
                   fontWeight: FontWeight.w600,
@@ -224,6 +166,6 @@ class LegalDocumentSheet extends StatelessWidget {
           ),
         ],
       ),
-    );
+    ));
   }
 }
