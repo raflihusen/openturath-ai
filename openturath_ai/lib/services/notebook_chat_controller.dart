@@ -85,7 +85,7 @@ class NotebookChatController extends ChangeNotifier {
       error = switch (failure.code) {
         'unauthenticated' => 'Silakan masuk kembali ke OpenTurath.',
         'notebook-session-required' =>
-          'Buka ruang asisten di profil Chrome tempat penghubung dipasang, lalu masuk dengan akun Google yang sama dengan OpenTurath.',
+          'Buka ruang AI di profil Chrome tempat penghubung dipasang, lalu masuk dengan akun Google yang sama dengan OpenTurath.',
         'permission-denied' => 'Akses kajian ini belum aktif untuk akun Anda.',
         'account-mismatch' =>
           'Akun Google di Chrome berbeda. Gunakan akun yang sama dengan OpenTurath.',
@@ -93,20 +93,20 @@ class NotebookChatController extends ChangeNotifier {
           'Pengiriman terputus. Pertanyaan mungkin sudah diterima; tidak dikirim ulang otomatis.',
         'busy' => 'Tunggu jawaban percakapan yang sedang berjalan.',
         'unavailable' =>
-          'Penghubung asisten belum tersambung. Periksa koneksi Anda.',
+          'Penghubung AI belum tersambung. Periksa koneksi Anda.',
         'failed-precondition' =>
-          'Koneksi asisten di aplikasi belum diaktifkan.',
+          'Koneksi AI di aplikasi belum diaktifkan.',
         'resource-exhausted' =>
           'Terlalu banyak pertanyaan. Silakan tunggu sebentar.',
         'deadline-exceeded' =>
           'Respons belum diterima. Pertanyaan tidak dikirim ulang otomatis.',
         _ =>
-          'Asisten belum dapat menjawab. Pertanyaan tidak dikirim ulang otomatis.',
+          'AI belum dapat menjawab. Pertanyaan tidak dikirim ulang otomatis.',
       };
     } catch (_) {
       if (_disposed || epoch != _epoch || currentUid() != owner) return;
       error =
-          'Asisten belum dapat dihubungi. Pertanyaan tidak dikirim ulang otomatis.';
+          'AI belum dapat dihubungi. Pertanyaan tidak dikirim ulang otomatis.';
     } finally {
       if (!_disposed && epoch == _epoch) {
         if (currentUid() != owner) {
