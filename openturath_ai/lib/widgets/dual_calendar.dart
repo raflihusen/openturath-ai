@@ -1,5 +1,6 @@
 import '../core/design/ot_typography.dart';
 import '../core/design/ot_expressive.dart';
+import '../core/design/ot_colors.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import '../core/hijri_date_utils.dart';
@@ -73,7 +74,7 @@ class _DualCalendarState extends State<DualCalendar>
             const SizedBox(height: 4),
             Text(pieces.first,
                 style: ScholarlyFonts.outfit(
-                        fontSize: OTFontSize.s36,
+                        fontSize: OTFontSize.s26,
                         fontWeight: FontWeight.w600,
                         color: color)
                     .copyWith(
@@ -93,15 +94,14 @@ class _DualCalendarState extends State<DualCalendar>
     return Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.surface,
+            color: OTColors.surface(Theme.of(context).brightness == Brightness.dark),
             borderRadius: BorderRadius.circular(OTExpressive.panelRadius)),
-        child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          part(reviewCopy('Hijriah', 'هجري', 'Hijri'),
-              HijriDateUtils.formatHijriOnly(now)),
-          const SizedBox(width: 20),
-          part(reviewCopy('Masehi', 'ميلادي', 'Gregorian'),
-              HijriDateUtils.formatMasehiOnly(now)),
-          IconButton(
+        child: Column(mainAxisSize: MainAxisSize.min, children: [
+          Row(children: [
+            Expanded(child: Text(reviewCopy('Kalender', 'التقويم', 'Calendar'),
+              style: ScholarlyFonts.outfit(fontSize: OTFontSize.s12,
+                color: color.withValues(alpha: .7)))),
+            IconButton(
               visualDensity: VisualDensity.compact,
               tooltip: reviewCopy(
                   'Metode kalender', 'طريقة التقويم', 'Calendar method'),
@@ -122,6 +122,12 @@ class _DualCalendarState extends State<DualCalendar>
                                   .closeButtonLabel))
                         ],
                       ))),
+          ]),
+          Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            part(reviewCopy('Hijriah', 'هجري', 'Hijri'), HijriDateUtils.formatHijriOnly(now)),
+            const SizedBox(width: 24),
+            part(reviewCopy('Masehi', 'ميلادي', 'Gregorian'), HijriDateUtils.formatMasehiOnly(now)),
+          ]),
         ]));
   }
 }
