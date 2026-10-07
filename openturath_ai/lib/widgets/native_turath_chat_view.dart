@@ -364,18 +364,23 @@ class _NativeTurathChatViewState extends State<NativeTurathChatView>
 
             // Action Bar Bawah (Salin, Bookmark)
             Wrap(
-              spacing: 8, runSpacing: 8,
+              spacing: 8,
+              runSpacing: 8,
               children: [
                 TextButton.icon(
-                  icon: Icon(Icons.content_copy_rounded, size: 18, color: textSecondary),
+                  icon: Icon(Icons.content_copy_rounded,
+                      size: 18, color: textSecondary),
                   label: Text(Loc.tr('copyAnswerAction')),
-                  onPressed: () => _copyMessage([msg.text, ...msg.citations].join('\n\n')),
+                  onPressed: () =>
+                      _copyMessage([msg.text, ...msg.citations].join('\n\n')),
                 ),
                 TextButton.icon(
-                  icon: Icon(Icons.bookmark_border_rounded, size: 18, color: textSecondary),
+                  icon: Icon(Icons.bookmark_border_rounded,
+                      size: 18, color: textSecondary),
                   label: Text(Loc.tr('saveAnswerMenu')),
                   onPressed: () => _bookmarkMessage(
-                    [msg.text, ...msg.citations].join('\n\n'), citations: msg.references),
+                      [msg.text, ...msg.citations].join('\n\n'),
+                      citations: msg.references),
                 ),
               ],
             ),
