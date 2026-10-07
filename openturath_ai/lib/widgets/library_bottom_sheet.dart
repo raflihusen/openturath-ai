@@ -1,4 +1,5 @@
 import 'adaptive_sheet.dart';
+import 'app_loader.dart';
 import 'package:flutter/material.dart';
 import '../core/app_copy.dart';
 import '../core/design/ot_colors.dart';
@@ -73,7 +74,7 @@ class _CatalogCollectionLoaderState extends State<_CatalogCollectionLoader> {
                             onPressed: () => setState(() => _load = _fetch()),
                             child: Text(Loc.tr('retryCatalog'))),
                       ] else ...[
-                        const CircularProgressIndicator(),
+                        const AppLoader(),
                         const SizedBox(height: 16),
                         Text(Loc.tr('loadingReferences')),
                       ],
