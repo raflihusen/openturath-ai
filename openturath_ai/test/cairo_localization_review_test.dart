@@ -11,7 +11,9 @@ import 'package:openturath_ai/widgets/assistant_grid_card.dart';
 
 void main() {
   tearDown(() => AppConfig.localeNotifier.value = 'id');
-  test('Arabic display isolation preserves canonical contact and regulation text', () {
+  test(
+      'Arabic display isolation preserves canonical contact and regulation text',
+      () {
     const source = 'البريد openturath@gmail.com والنظام 8/1999';
     final display = LocalizedLegal.displayBody(source, locale: 'ar');
     expect(display, contains('\u2066openturath@gmail.com\u2069'));

@@ -16,8 +16,9 @@ abstract final class LocalizedLegal {
   static String displayBody(String source, {String? locale}) {
     if ((locale ?? Loc.language) != 'ar') return source;
     return source.replaceAllMapped(
-      RegExp(r'https?://[^\s]+|[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}|[0-9]+/[0-9]+'),
-      (match) => Loc.ltr(match.group(0)!));
+        RegExp(
+            r'https?://[^\s]+|[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}|[0-9]+/[0-9]+'),
+        (match) => Loc.ltr(match.group(0)!));
   }
 
   static List<LegalSection> canonical(LegalDocumentId id) => switch (id) {
