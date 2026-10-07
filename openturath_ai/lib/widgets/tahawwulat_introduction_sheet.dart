@@ -588,7 +588,7 @@ class _TahawwulatIntroductionSheetState
                                         'Editorial diagram of the Fiqh Tahawwulat framework of Al-Habib Abu Bakar Al-Adni bin Ali Al-Masyhur.'),
                                     textAlign: TextAlign.center,
                                     style: OTTypography.caption(
-                                        color: textSecondary)),
+                                        color: OTColors.textSecondary(isDark))),
                               ])))),
         _buildFourPillarsFlowchart(context, isDark),
         const SizedBox(height: 24),
