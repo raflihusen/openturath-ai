@@ -167,17 +167,12 @@ const notebookUiScript = r'''
       .notebook-guide, .guide-container, .hero-container,
       .cover-image-container, .summary-card, .guide-card,
       app-chat-intro, app-conversation-intro, app-notebook-intro,
-      app-project-intro, app-chat-empty-state, app-empty-state,
+      app-project-intro,
       .chat-intro, .conversation-intro, .notebook-intro, .project-intro,
-      .chat-empty-state, .empty-state, [class*="zero-state" i],
-      app-notebook-title, app-project-title,
-      .empty-state-header, .chat-empty-state-container,
-      [class*="intro-header" i], [class*="hero-header" i],
       [class*="guide-intro" i], [class*="project-summary" i],
       [class*="project-overview" i], [class*="notebook-overview" i],
       [class*="chat-intro" i], [class*="conversation-intro" i],
       [class*="notebook-intro" i], [class*="project-intro" i],
-      [class*="empty-state" i],
       /* Sembunyikan badge PRO */
       .pro-badge, [class*="pro-badge" i], [class*="tier-badge" i],
       /* Sembunyikan SEMUA elemen dan container loading internal NotebookLM */
@@ -185,6 +180,8 @@ const notebookUiScript = r'''
       [class*="loading-screen" i], [class*="notebook-loading" i], [class*="project-loading" i],
       .cdk-overlay-backdrop:has(mat-spinner), .cdk-overlay-pane:has(mat-spinner),
       mat-spinner, mat-progress-spinner, mat-progress-bar, [role="progressbar"],
+      /* Sembunyikan chip saran prompt agar area obrolan bersih */
+      button[class*="suggestion" i], [class*="chip" i], [class*="prompt-chip" i], mat-chip, mat-chip-set,
       /* Sembunyikan Disclaimer Bawah Secara Total */
       .disclaimer, [class*="disclaimer" i], footer, [role="contentinfo"] {
         display: none !important;
@@ -237,68 +234,38 @@ const notebookUiScript = r'''
       .ot-opening-language .mat-mdc-menu-panel { opacity: 0 !important; }
       .cdk-overlay-container { z-index: 99999 !important; }
 
-      /* ========================================================
-         KUNCI BILAH INPUT DI DASAR LAYAR (BOTTOM ANCHORED)
-         ======================================================== */
-      app-chat-input {
-        position: fixed !important;
-        bottom: 0 !important;
-        left: 0 !important;
-        right: 0 !important;
-        width: 100% !important;
-        max-width: 100% !important;
-        margin: 0 !important;
-        padding-left: 16px !important;
-        padding-right: 16px !important;
-        padding-bottom: max(20px, calc(env(safe-area-inset-bottom, 16px) + 10px)) !important;
-        padding-top: 10px !important;
-        box-sizing: border-box !important;
-        display: flex !important;
-        justify-content: center !important;
-        align-items: flex-end !important;
-        z-index: 10000 !important;
-        background: transparent !important;
+      /* Sembunyikan elemen judul, ikon, dan sumber di dalam empty state secara transparan tanpa merusak tinggi layout */
+      .empty-state-header, .chat-empty-state-container,
+      [class*="intro-header" i], [class*="hero-header" i],
+      app-notebook-title, app-project-title,
+      app-chat-empty-state h1, app-chat-empty-state h2, app-chat-empty-state h3,
+      app-chat-empty-state mat-icon, app-chat-empty-state img, app-chat-empty-state svg,
+      app-empty-state h1, app-empty-state h2, app-empty-state h3,
+      app-empty-state mat-icon, app-empty-state img, app-empty-state svg,
+      .chat-empty-state h1, .chat-empty-state h2, .chat-empty-state h3,
+      .chat-empty-state mat-icon, .chat-empty-state img, .chat-empty-state svg,
+      .empty-state h1, .empty-state h2, .empty-state h3,
+      .empty-state mat-icon, .empty-state img, .empty-state svg {
+        visibility: hidden !important;
+        opacity: 0 !important;
         pointer-events: none !important;
       }
 
-      app-chat-input > * {
-        pointer-events: auto !important;
-        width: 100% !important;
-        max-width: 768px !important;
+      /* Ruang bawah obrolan agar pesan tidak tertutup */
+      .chat-panel-content, .chat-view, .conversation-container, .message-list, [role="log"] {
+        padding-bottom: max(64px, calc(env(safe-area-inset-bottom, 24px) + 48px)) !important;
+      }
+
+      /* Penataan alami bilah input chat di dasar layar (bottom-anchored via flex layout) */
+      div.chat-input-container, .input-container, app-chat-input, form.chat-input-form,
+      [class*="input-container" i], [class*="chat-input" i],
+      .chat-input-area, [class*="input-area" i], .query-box-container {
+        margin-top: auto !important;
+        margin-bottom: max(22px, calc(env(safe-area-inset-bottom, 16px) + 14px)) !important;
         margin-left: auto !important;
         margin-right: auto !important;
-        margin-top: 0 !important;
-        margin-bottom: 0 !important;
-        box-sizing: border-box !important;
-      }
-
-      app-chat-input form,
-      app-chat-input .chat-input-container,
-      app-chat-input form.chat-input-form,
-      app-chat-input .query-box-container {
-        margin-top: 0 !important;
-        margin-bottom: 0 !important;
         width: 100% !important;
-        box-sizing: border-box !important;
-      }
-
-      /* Fallback jika app-chat-input tidak ada sebagai custom element */
-      body:not(:has(app-chat-input)) div.chat-input-container,
-      body:not(:has(app-chat-input)) form.chat-input-form {
-        position: fixed !important;
-        bottom: max(20px, calc(env(safe-area-inset-bottom, 16px) + 10px)) !important;
-        left: 50% !important;
-        transform: translateX(-50%) !important;
-        width: min(768px, calc(100% - 32px)) !important;
         max-width: 768px !important;
-        margin: 0 !important;
-        z-index: 10000 !important;
-        box-sizing: border-box !important;
-      }
-
-      /* Ruang bawah obrolan agar pesan tidak tertutup oleh bilah input */
-      .chat-panel-content, .chat-view, .conversation-container, .message-list, [role="log"], main, app-chat-view {
-        padding-bottom: 130px !important;
         box-sizing: border-box !important;
       }
 
@@ -439,56 +406,35 @@ const notebookUiScript = r'''
           prev = prev.previousElementSibling;
         }
       } else {
-        // 2. Jika belum ada pesan sama sekali (empty chat), sembunyikan judul notebook, rincian sumber, dan tanggal
-        panel.querySelectorAll('h1, h2, h3, [class*="title" i], [class*="source" i], [class*="date" i], [class*="empty" i], [class*="intro" i], [class*="hero" i], [class*="summary" i], app-chat-empty-state, app-empty-state').forEach(el => {
+        // 2. Jika belum ada pesan sama sekali (empty chat):
+        // Sembunyikan elemen judul, ikon, dan sumber dengan VISIBILITY: HIDDEN (bukan display: none)
+        // agar tinggi layout alami tetap utuh dan kotak input tetap berada di dasar layar!
+        panel.querySelectorAll('h1, h2, h3, img, svg, mat-icon, [class*="title" i], [class*="source" i], [class*="date" i]').forEach(el => {
           if (!el.querySelector('textarea, [contenteditable="true"], form') && !el.closest('app-chat-input, form, textarea, [contenteditable="true"]')) {
-            el.style.setProperty('display', 'none', 'important');
+            el.style.setProperty('visibility', 'hidden', 'important');
+            el.style.setProperty('opacity', '0', 'important');
+            el.style.setProperty('pointer-events', 'none', 'important');
+          }
+        });
+
+        panel.querySelectorAll('div, p, span').forEach(el => {
+          if (el.querySelector('textarea, [contenteditable="true"], form') || el.closest('app-chat-input, form, textarea, [contenteditable="true"]')) return;
+          const txt = (el.innerText || el.textContent || '').trim();
+          if (!txt) return;
+          const isSourceDate = /^\d+\s*(sumber|source|sources)\s*[·•]/i.test(txt) ||
+                               /[·•]\s*\d+\s*(jan|feb|mar|apr|mei|jun|jul|agu|sep|okt|nov|des|january|february|march|april|may|june|july|august|september|october|november|december)/i.test(txt) ||
+                               ((txt.includes('sumber') || txt.includes('source')) && (txt.includes('·') || txt.includes('•')));
+          const isAssistantTitle = txt === 'AI-MUHAQQIQ' || txt.toUpperCase() === 'AI-MUHAQQIQ';
+          if (isSourceDate || isAssistantTitle) {
+            el.style.setProperty('visibility', 'hidden', 'important');
+            el.style.setProperty('opacity', '0', 'important');
+            el.style.setProperty('pointer-events', 'none', 'important');
           }
         });
       }
-
-      // 3. Deteksi dinamis berbasis konten teks pada seluruh elemen hero/header di panel obrolan:
-      // Sembunyikan elemen "0 sumber · [tanggal]", "Loading Notebook...", nama asisten (Al-Muhaqqiq dsb), dan icon scroll
-      panel.querySelectorAll('div, p, span, h1, h2, h3, header, section, mat-icon, img').forEach(el => {
-        if (el.querySelector('textarea, [contenteditable="true"], form') || el.closest('app-chat-input, form, textarea, [contenteditable="true"], .chat-message, [role="article"]')) {
-          return;
-        }
-        const txt = (el.innerText || el.textContent || '').trim();
-        if (!txt) return;
-
-        // Deteksi pola "0 sumber · 9 Mar 2026", "0 sources · ...", dsb.
-        const isSourceDate = /^\d+\s*(sumber|source|sources)\s*[·•]/i.test(txt) ||
-                             /[·•]\s*\d+\s*(jan|feb|mar|apr|mei|jun|jul|agu|sep|okt|nov|des|january|february|march|april|may|june|july|august|september|october|november|december)/i.test(txt) ||
-                             ((txt.includes('sumber') || txt.includes('source')) && (txt.includes('·') || txt.includes('•')));
-        const isLoadingNotebook = txt === 'Loading Notebook...' || txt === 'Memuat Notebook...' || txt.toLowerCase().includes('loading notebook');
-
-        if (isSourceDate || isLoadingNotebook) {
-          el.style.setProperty('display', 'none', 'important');
-          // Sembunyikan container kartu hero jika ada
-          const parentHero = el.closest('[class*="intro" i], [class*="hero" i], [class*="empty" i], [class*="header" i], [class*="title" i], [class*="summary" i]') || el.parentElement;
-          if (parentHero && !parentHero.querySelector('textarea, form, .chat-message, [role="article"]')) {
-            parentHero.style.setProperty('display', 'none', 'important');
-            let prevParent = parentHero.previousElementSibling;
-            while (prevParent) {
-              if (!prevParent.querySelector('textarea, form, .chat-message, [role="article"]')) {
-                prevParent.style.setProperty('display', 'none', 'important');
-              }
-              prevParent = prevParent.previousElementSibling;
-            }
-          }
-          // Sembunyikan elemen langsung di atasnya (nama asisten/judul dan icon scroll)
-          let sib = el.previousElementSibling;
-          while (sib) {
-            if (!sib.querySelector('textarea, form, .chat-message, [role="article"]')) {
-              sib.style.setProperty('display', 'none', 'important');
-            }
-            sib = sib.previousElementSibling;
-          }
-        }
-      });
     });
 
-    // 4. Sembunyikan di seluruh dokumen elemen yang bertuliskan "Loading Notebook..." atau "Memuat Notebook..."
+    // 3. Sembunyikan di seluruh dokumen elemen yang bertuliskan "Loading Notebook..." atau "Memuat Notebook..."
     document.querySelectorAll('div, p, span, h1, h2, h3, h4, h5, section, app-loading-screen, .loading-container').forEach(el => {
       if (el.querySelector('textarea, [contenteditable="true"], form, .chat-message, [role="article"]')) return;
       if (el.closest('app-chat-input, form, textarea, [contenteditable="true"], .chat-message, [role="article"]')) return;
@@ -568,34 +514,6 @@ const notebookUiScript = r'''
     } catch (_) {}
   }
 
-  function pinInputToBottom() {
-    const inputHost = document.querySelector('app-chat-input');
-    if (inputHost) {
-      inputHost.style.setProperty('position', 'fixed', 'important');
-      inputHost.style.setProperty('bottom', '0', 'important');
-      inputHost.style.setProperty('left', '0', 'important');
-      inputHost.style.setProperty('right', '0', 'important');
-      inputHost.style.setProperty('width', '100%', 'important');
-      inputHost.style.setProperty('z-index', '10000', 'important');
-      inputHost.style.setProperty('display', 'flex', 'important');
-      inputHost.style.setProperty('justify-content', 'center', 'important');
-      inputHost.style.setProperty('align-items', 'flex-end', 'important');
-      inputHost.style.setProperty('background', 'transparent', 'important');
-      inputHost.style.setProperty('pointer-events', 'none', 'important');
-      inputHost.style.setProperty('padding', '10px 16px max(20px, calc(env(safe-area-inset-bottom, 16px) + 10px)) 16px', 'important');
-      inputHost.style.setProperty('box-sizing', 'border-box', 'important');
-      inputHost.style.setProperty('margin', '0', 'important');
-
-      Array.from(inputHost.children).forEach(child => {
-        child.style.setProperty('pointer-events', 'auto', 'important');
-        child.style.setProperty('width', '100%', 'important');
-        child.style.setProperty('max-width', '768px', 'important');
-        child.style.setProperty('margin', '0 auto', 'important');
-        child.style.setProperty('box-sizing', 'border-box', 'important');
-      });
-    }
-  }
-
   let lastCleanAt = 0;
   function clean() {
     if (!document.documentElement) return;
@@ -607,7 +525,6 @@ const notebookUiScript = r'''
     removeTopToolbars();
     removeHeroCard();
     dismissPopups();
-    pinInputToBottom();
   }
 
   function triggerClick(el) {
