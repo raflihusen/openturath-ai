@@ -641,26 +641,38 @@ class _LibraryNumbersTile extends StatelessWidget {
                   .fold<int>(0, (sum, item) => sum + item.totalHalaman);
               Widget stat(String value, String label, IconData icon) =>
                   LayoutBuilder(builder: (context, box) {
-                final text = Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(value, style: ScholarlyFonts.outfit(
-                        fontSize: OTFontSize.s26, fontWeight: FontWeight.w600,
-                        color: OTExpressive.white)),
-                      const SizedBox(height: 6),
-                      Text(label, style: ScholarlyFonts.outfit(
-                        fontSize: OTFontSize.s14, color: OTExpressive.whiteMuted)),
-                    ]);
-                final symbol = Icon(icon, size: 18, color: OTExpressive.whiteMuted);
-                if (box.maxWidth >= 240) {
-                  return Row(crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [Padding(padding: const EdgeInsets.only(top: 8),
-                      child: symbol), const SizedBox(width: 16), Expanded(child: text)]);
-                }
-                return Column(crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [symbol, const SizedBox(height: 8), text]);
-              });
+                    final text = Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(value,
+                              style: ScholarlyFonts.outfit(
+                                  fontSize: OTFontSize.s26,
+                                  fontWeight: FontWeight.w600,
+                                  color: OTExpressive.white)),
+                          const SizedBox(height: 6),
+                          Text(label,
+                              style: ScholarlyFonts.outfit(
+                                  fontSize: OTFontSize.s14,
+                                  color: OTExpressive.whiteMuted)),
+                        ]);
+                    final symbol =
+                        Icon(icon, size: 18, color: OTExpressive.whiteMuted);
+                    if (box.maxWidth >= 240) {
+                      return Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                                padding: const EdgeInsets.only(top: 8),
+                                child: symbol),
+                            const SizedBox(width: 16),
+                            Expanded(child: text)
+                          ]);
+                    }
+                    return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [symbol, const SizedBox(height: 8), text]);
+                  });
               final metrics = [
                 stat(number.format(all.length), Loc.tr('loginStatLibraries'),
                     Icons.local_library_outlined),
