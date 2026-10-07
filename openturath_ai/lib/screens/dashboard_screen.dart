@@ -268,15 +268,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                               style: OTTypography.screenTitle(
                                                   color: textPrimary)),
                                           const SizedBox(height: 12),
-                                          const SizedBox(height: 12),
                                           const Divider(height: 1),
+                                          const SizedBox(height: 12),
                                           if (target != null) ...[
                                             Text(Loc.text(target.title),
                                                 style: OTTypography.caption(
                                                     color: textSecondary)),
                                             const SizedBox(height: 8),
                                           ],
-                                          TextButton.icon(
+                                          FilledButton.icon(
                                               onPressed: open,
                                               icon: const Icon(
                                                   Icons.arrow_forward_rounded,
