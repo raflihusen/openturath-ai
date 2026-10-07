@@ -15,6 +15,7 @@ import '../core/scholarly_fonts.dart';
 import 'package:openturath_ai/core/design/ot_typography.dart';
 import 'package:openturath_ai/core/design/ot_radius.dart';
 import 'ot_components.dart';
+
 /// Item pembantu untuk data 6 Kitab Qawa'id
 class _QawaidBook {
   final String level;
@@ -234,21 +235,79 @@ class _TahawwulatIntroductionSheetState
       final roomy = viewport.width >= 760;
       const onCover = OTColors.onInverseSurface;
 
-      final cover = Padding(padding: EdgeInsets.fromLTRB(roomy ? 32 : 16, 64, roomy ? 32 : 16, 24), child: Container(
-        padding: EdgeInsets.all(roomy ? 32 : 24),
-        decoration: BoxDecoration(color: OTExpressive.hero, borderRadius: BorderRadius.circular(roomy ? OTExpressive.heroRadius : OTExpressive.compactHeroRadius)),
-        child: LayoutBuilder(builder: (context, box) {
-          final heading = Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
-            Text(reviewCopy('Mengenal Fikih Tahawwulat','تعرّف على فقه التحولات','About Fiqh Tahawwulat'), style: ScholarlyFonts.outfit(fontSize: OTFontSize.s36, fontWeight: FontWeight.w600, height: 1.15, color: onCover)),
-            const SizedBox(height: 20),
-            Text(reviewCopy('Ilmu membaca perubahan zaman dengan petunjuk Nabi ﷺ, disusun Al-Habib Abu Bakar Al-Adni bin Ali Al-Masyhur.','علم قراءة تحولات الزمان بهدي النبي ﷺ، للإمام الحبيب أبي بكر العدني بن علي المشهور.','Reading changing times through Prophetic guidance, by Al-Habib Abu Bakar Al-Adni bin Ali Al-Masyhur.'), style: ScholarlyFonts.outfit(fontSize: OTFontSize.s16, height: 1.6, color: OTExpressive.whiteMuted)),
-            const SizedBox(height: 24),
-            FilledButton(onPressed: () {final target = _chapters.isEmpty ? null : _chapterKeys[_chapters.first.$1]?.currentContext; if(target!=null)Scrollable.ensureVisible(target, duration: MediaQuery.disableAnimationsOf(context) ? Duration.zero : OTMotion.transition);}, style: FilledButton.styleFrom(backgroundColor: OTExpressive.white, foregroundColor: OTExpressive.black), child: Text(reviewCopy('Mulai membaca','ابدأ القراءة','Start reading'))),
-          ]);
-          if(box.maxWidth >= 720 && MediaQuery.textScalerOf(context).scale(16) <= 24) return Row(children: [Expanded(flex:3,child:heading), const SizedBox(width:32), const Expanded(flex:2,child:TahawwulatDiagram(inverse:true))]);
-          return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children:[heading,const SizedBox(height:20),const Center(child:SizedBox(width:260,child:TahawwulatDiagram(inverse:true)))]);
-        }),
-      ));
+      final cover = Padding(
+          padding:
+              EdgeInsets.fromLTRB(roomy ? 32 : 16, 64, roomy ? 32 : 16, 24),
+          child: Container(
+            padding: EdgeInsets.all(roomy ? 32 : 24),
+            decoration: BoxDecoration(
+                color: OTExpressive.hero,
+                borderRadius: BorderRadius.circular(roomy
+                    ? OTExpressive.heroRadius
+                    : OTExpressive.compactHeroRadius)),
+            child: LayoutBuilder(builder: (context, box) {
+              final heading = Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                        reviewCopy('Mengenal Fikih Tahawwulat',
+                            'تعرّف على فقه التحولات', 'About Fiqh Tahawwulat'),
+                        style: ScholarlyFonts.outfit(
+                            fontSize: OTFontSize.s36,
+                            fontWeight: FontWeight.w600,
+                            height: 1.15,
+                            color: onCover)),
+                    const SizedBox(height: 20),
+                    Text(
+                        reviewCopy(
+                            'Ilmu membaca perubahan zaman dengan petunjuk Nabi ﷺ, disusun Al-Habib Abu Bakar Al-Adni bin Ali Al-Masyhur.',
+                            'علم قراءة تحولات الزمان بهدي النبي ﷺ، للإمام الحبيب أبي بكر العدني بن علي المشهور.',
+                            'Reading changing times through Prophetic guidance, by Al-Habib Abu Bakar Al-Adni bin Ali Al-Masyhur.'),
+                        style: ScholarlyFonts.outfit(
+                            fontSize: OTFontSize.s16,
+                            height: 1.6,
+                            color: OTExpressive.whiteMuted)),
+                    const SizedBox(height: 24),
+                    FilledButton(
+                        onPressed: () {
+                          final target = _chapters.isEmpty
+                              ? null
+                              : _chapterKeys[_chapters.first.$1]
+                                  ?.currentContext;
+                          if (target != null)
+                            Scrollable.ensureVisible(target,
+                                duration:
+                                    MediaQuery.disableAnimationsOf(context)
+                                        ? Duration.zero
+                                        : OTMotion.transition);
+                        },
+                        style: FilledButton.styleFrom(
+                            backgroundColor: OTExpressive.white,
+                            foregroundColor: OTExpressive.black),
+                        child: Text(reviewCopy(
+                            'Mulai membaca', 'ابدأ القراءة', 'Start reading'))),
+                  ]);
+              if (box.maxWidth >= 720 &&
+                  MediaQuery.textScalerOf(context).scale(16) <= 24)
+                return Row(children: [
+                  Expanded(flex: 3, child: heading),
+                  const SizedBox(width: 32),
+                  const Expanded(
+                      flex: 2, child: TahawwulatDiagram(inverse: true))
+                ]);
+              return Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    heading,
+                    const SizedBox(height: 20),
+                    const Center(
+                        child: SizedBox(
+                            width: 260,
+                            child: TahawwulatDiagram(inverse: true)))
+                  ]);
+            }),
+          ));
 
       Widget contentsEntry(int index) {
         final chapter = _chapters[index];
@@ -316,11 +375,23 @@ class _TahawwulatIntroductionSheetState
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   cover,
-                  Center(child: ConstrainedBox(constraints: const BoxConstraints(maxWidth: 600), child: Padding(padding: const EdgeInsets.all(24), child: Column(children: [
-                    const TahawwulatDiagram(interactive: true),
-                    const SizedBox(height: 16),
-                    Text(reviewCopy('Diagram editorial dari kerangka pembahasan Fikih Tahawwulat Al-Habib Abu Bakar Al-Adni bin Ali Al-Masyhur.','رسم توضيحي لإطار فقه التحولات عند الحبيب أبي بكر العدني بن علي المشهور.','Editorial diagram of the Fiqh Tahawwulat framework of Al-Habib Abu Bakar Al-Adni bin Ali Al-Masyhur.'), textAlign: TextAlign.center, style: OTTypography.caption(color: textSecondary)),
-                  ])))),
+                  Center(
+                      child: ConstrainedBox(
+                          constraints: const BoxConstraints(maxWidth: 600),
+                          child: Padding(
+                              padding: const EdgeInsets.all(24),
+                              child: Column(children: [
+                                const TahawwulatDiagram(interactive: true),
+                                const SizedBox(height: 16),
+                                Text(
+                                    reviewCopy(
+                                        'Diagram editorial dari kerangka pembahasan Fikih Tahawwulat Al-Habib Abu Bakar Al-Adni bin Ali Al-Masyhur.',
+                                        'رسم توضيحي لإطار فقه التحولات عند الحبيب أبي بكر العدني بن علي المشهور.',
+                                        'Editorial diagram of the Fiqh Tahawwulat framework of Al-Habib Abu Bakar Al-Adni bin Ali Al-Masyhur.'),
+                                    textAlign: TextAlign.center,
+                                    style: OTTypography.caption(
+                                        color: textSecondary)),
+                              ])))),
                   Center(
                     child: ConstrainedBox(
                       constraints: const BoxConstraints(maxWidth: 920),
@@ -333,7 +404,8 @@ class _TahawwulatIntroductionSheetState
                             Text(
                               "Daftar isi",
                               style: ScholarlyFonts.outfit(
-                                  fontSize: OTFontSize.s14, color: textTertiary),
+                                  fontSize: OTFontSize.s14,
+                                  color: textTertiary),
                             ),
                             const SizedBox(height: 10),
                             Divider(height: 1, color: borderColor),
@@ -424,7 +496,8 @@ class _TahawwulatIntroductionSheetState
       height: MediaQuery.of(context).size.height * 0.92,
       decoration: BoxDecoration(
         color: surfaceColor,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(OTRadius.sheet)),
+        borderRadius:
+            const BorderRadius.vertical(top: Radius.circular(OTRadius.sheet)),
         border: Border.all(color: borderColor, width: 0.8),
       ),
       child: Column(
@@ -832,7 +905,9 @@ class _TahawwulatIntroductionSheetState
             width: 26,
             height: 26,
             decoration: BoxDecoration(
-              color: isDark ? OTColors.borderSubtleDark : OTColors.borderSubtleLight,
+              color: isDark
+                  ? OTColors.borderSubtleDark
+                  : OTColors.borderSubtleLight,
               borderRadius: BorderRadius.circular(OTRadius.xs),
             ),
             alignment: Alignment.center,
@@ -1047,7 +1122,8 @@ class _TahawwulatIntroductionSheetState
                 child: Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: isDark ? OTColors.surfaceDark : OTColors.surfaceLight,
+                    color:
+                        isDark ? OTColors.surfaceDark : OTColors.surfaceLight,
                     borderRadius: BorderRadius.circular(OTRadius.input),
                     border: Border.all(color: borderColor, width: 0.8),
                   ),
@@ -1089,9 +1165,8 @@ class _TahawwulatIntroductionSheetState
                         : OTColors.surfaceSubtleLight,
                     borderRadius: BorderRadius.circular(OTRadius.input),
                     border: Border.all(
-                      color: isDark
-                          ? OTColors.borderDark
-                          : OTColors.borderLight,
+                      color:
+                          isDark ? OTColors.borderDark : OTColors.borderLight,
                       width: 1.0,
                     ),
                   ),
@@ -1342,7 +1417,8 @@ class _TahawwulatIntroductionSheetState
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text("❌ ", style: TextStyle(fontSize: OTFontSize.s11)),
+                        const Text("❌ ",
+                            style: TextStyle(fontSize: OTFontSize.s11)),
                         Expanded(
                           child: Text(
                             r.before,
@@ -1482,7 +1558,9 @@ class _TahawwulatIntroductionSheetState
                       padding: const EdgeInsets.symmetric(
                           horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
-                        color: isDark ? OTColors.surfaceLight.withValues(alpha: 0.24) : OTColors.shadow.withValues(alpha: 0.87),
+                        color: isDark
+                            ? OTColors.surfaceLight.withValues(alpha: 0.24)
+                            : OTColors.shadow.withValues(alpha: 0.87),
                         borderRadius: BorderRadius.circular(OTRadius.xs),
                       ),
                       child: Text(
@@ -1526,7 +1604,10 @@ class _TahawwulatIntroductionSheetState
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 4, vertical: 2),
                             decoration: BoxDecoration(
-                              color: isDark ? OTColors.surfaceLight.withValues(alpha: 0.12) : OTColors.shadow.withValues(alpha: 0.12),
+                              color: isDark
+                                  ? OTColors.surfaceLight
+                                      .withValues(alpha: 0.12)
+                                  : OTColors.shadow.withValues(alpha: 0.12),
                               borderRadius: BorderRadius.circular(OTRadius.xs),
                             ),
                             child: Text(
@@ -1592,7 +1673,9 @@ class _TahawwulatIntroductionSheetState
                       padding: const EdgeInsets.symmetric(
                           horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
-                        color: isDark ? OTColors.surfaceLight.withValues(alpha: 0.24) : OTColors.shadow.withValues(alpha: 0.87),
+                        color: isDark
+                            ? OTColors.surfaceLight.withValues(alpha: 0.24)
+                            : OTColors.shadow.withValues(alpha: 0.87),
                         borderRadius: BorderRadius.circular(OTRadius.xs),
                       ),
                       child: Text(
@@ -1860,14 +1943,17 @@ class _TahawwulatIntroductionSheetState
                           style: ScholarlyFonts.outfit(
                             fontSize: OTFontSize.s12,
                             fontWeight: FontWeight.w600,
-                            color: isDark ? OTColors.shadow : OTColors.surfaceLight,
+                            color: isDark
+                                ? OTColors.shadow
+                                : OTColors.surfaceLight,
                           ),
                         ),
                         const SizedBox(width: 4),
                         Icon(
                           Icons.arrow_forward_rounded,
                           size: 12,
-                          color: isDark ? OTColors.shadow : OTColors.surfaceLight,
+                          color:
+                              isDark ? OTColors.shadow : OTColors.surfaceLight,
                         ),
                       ],
                     ),
@@ -1982,7 +2068,8 @@ class _TahawwulatIntroductionSheetState
                   Text(
                     tag,
                     style: ScholarlyFonts.outfit(
-                        fontSize: OTFontSize.s14, color: OTColors.textTertiary(isDark)),
+                        fontSize: OTFontSize.s14,
+                        color: OTColors.textTertiary(isDark)),
                   ),
               ],
             ),
