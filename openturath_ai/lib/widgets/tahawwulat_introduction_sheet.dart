@@ -242,7 +242,9 @@ class _TahawwulatIntroductionSheetState
               EdgeInsets.fromLTRB(roomy ? 32 : 16, 64, roomy ? 32 : 16, 24),
           child: TahawwulatHeroSurface(
             padding: EdgeInsets.all(roomy ? 32 : 24),
-            radius: roomy ? OTExpressive.heroRadius : OTExpressive.compactHeroRadius,
+            radius: roomy
+                ? OTExpressive.heroRadius
+                : OTExpressive.compactHeroRadius,
             child: LayoutBuilder(builder: (context, box) {
               final heading = Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
