@@ -99,7 +99,7 @@ class TahawwulatHero extends StatelessWidget {
                         const SizedBox(height: 20),
                         const Center(
                             child: SizedBox(
-                                width: 210,
+                                width: 160,
                                 child: TahawwulatDiagram(inverse: true)))
                       ]));
       });
