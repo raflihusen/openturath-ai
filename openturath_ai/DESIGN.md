@@ -170,3 +170,9 @@ Proposal SaaS pada direktori bertanggal 30 September tetap merupakan arsip propo
 - Semua perubahan bersifat lokal. Fixture visual memakai akun dan jawaban contoh, bukan bukti layanan terautentikasi.
 
 Bukti dan batas verifikasi disimpan pada `reports/redesign-2026-10-07/IMPLEMENTATION.md`.
+
+## Arah rounded flagship — tinjauan 7 Oktober 2026
+
+Status: contoh Flutter terimplementasi lokal; penerimaan visual dan penyebaran menyeluruh masih menunggu tinjauan pengguna. `ot_expressive.dart` memuat peran monokrom untuk contoh flagship. Hero 36/28, panel 24; antarmuka sans dominan. Kalender ganda setara memakai satu waktu lokal, diperbarui tengah malam dan saat resume. Tidak ada subtitle akademik di kartu pemilihan asisten. Grafik empat sektor adalah ilustrasi editorial dengan atribusi, bukan data statistik. Loader dua busur memakai fase periodik 1800 ms dan berhenti untuk reduced motion/lifecycle tidak aktif.
+
+Checkpoint awal: `7f00d89`. Perubahan website dan penghapusan yang sudah ada tidak termasuk pekerjaan ini. Golden diperbarui hanya setelah arah visual diterima.
