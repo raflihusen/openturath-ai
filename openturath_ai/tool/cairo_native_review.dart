@@ -1,3 +1,4 @@
+// ignore_for_file: invalid_use_of_visible_for_testing_member
 // Native fixture of actual application routes; no authentication or payments.
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
