@@ -45,7 +45,7 @@ void main() {
         TahawwulatHero(onOpen: () => opened++, onIntroduction: () {}),
         scale: 2));
     expect(tester.takeException(), isNull);
-    await tester.tap(find.text('Buka Fikih Tahawwulat'));
+    await tester.tap(find.text('Buka AI Fikih Tahawwulat'));
     expect(opened, 1);
   });
   testWidgets('sector choice updates the explanation', (tester) async {
