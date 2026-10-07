@@ -110,23 +110,25 @@
   },
   "aiRefinement": {
     "date": "2026-10-07",
-    "flagshipPlacement": "AI page only, exclusive label",
+    "flagshipPlacement": "AI page only; entry opens five-AI function picker",
     "scienceCards": {
       "surface": "#171717",
-      "arabicWatermarkOpacity": 0.14,
+      "arabicWatermarkOpacity": 0.09,
       "semantic": "decorative, excluded",
-      "composition": "separate decorative footer; names and counts grouped"
+      "composition": "thin background overlay, no reserved footer; compact 144 base height"
     },
     "languageOrder": [
       "id",
       "en",
       "ar"
     ],
-    "profile": "plain identity, expiry grouped with real access",
+    "profile": "compact identity and factual expiry; icon-only appearance, labelled ID EN AR languages",
     "pricing": "recorded regularAmount struck through",
     "loader": "four rounded folios; periodic velocity; reduced motion",
-    "catalog": "shared BookIdentityCard; 280 logical-pixel grid with three-line Arabic titles; list for large text",
+    "catalog": "shared BookIdentityCard with subtle book spine; metadata beside identity; accessible list at large text",
     "calendar": "single rounded equal-priority panel with adjacent method control",
-    "webview": "retain native view behind recoverable error overlay; no decorative minimum delay"
+    "webview": "retain native view behind recoverable error overlay; no decorative minimum delay",
+    "dashboard": "greeting card contains last-session resume",
+    "paymentSuccess": "receipt with confirmed invoice and amount; no unverified access activation claim"
   }
 }
