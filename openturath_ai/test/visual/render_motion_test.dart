@@ -23,6 +23,7 @@ Future<void> _fonts() async {
 }
 
 Future<void> _save(WidgetTester tester, String name) async {
+  expect(tester.takeException(), isNull, reason: 'Motion $name must render without errors');
   await tester.runAsync(() async {
     final boundary =
         _key.currentContext!.findRenderObject()! as RenderRepaintBoundary;
@@ -63,6 +64,10 @@ void main() {
       await tester.pumpWidget(frame(const AppLoader.fullscreen()));
       await tester.pump(const Duration(milliseconds: 500));
       await _save(tester, 'loader_$tag');
+      for (var frame = 0; frame < 12; frame++) {
+        if (frame > 0) await tester.pump(const Duration(milliseconds: 150));
+        await _save(tester, 'loader_${tag}_frame_${frame.toString().padLeft(2, '0')}');
+      }
     }
   }, skip: _dir == null);
 }
