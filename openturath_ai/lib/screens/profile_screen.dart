@@ -809,7 +809,9 @@ class _MembershipPass extends StatelessWidget {
       padding: const EdgeInsets.all(OTSpacing.lg),
       decoration: BoxDecoration(
           color: OTColors.surface(isDark), borderRadius: OTRadius.cardBorder),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      child: Stack(children: [
+        Positioned(top: 0, right: 0, width: 120, height: 100, child: IgnorePointer(child: ExcludeSemantics(child: CustomPaint(painter: _IdentityLines(color: muted.withValues(alpha: .10)))))),
+        Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Container(
               padding: const EdgeInsets.all(OTSpacing.md),
@@ -851,9 +853,25 @@ class _MembershipPass extends StatelessWidget {
               icon: const Icon(Icons.tune_rounded, size: 18),
               label: Text(summary.ctaLabel)),
         ]),
-      ]),
+      ]),]),
     );
   }
+}
+
+class _IdentityLines extends CustomPainter {
+  const _IdentityLines({required this.color});
+  final Color color;
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()..color = color..style = PaintingStyle.stroke..strokeWidth = 1;
+    for (var i=0; i<4; i++) {
+      final inset=i*12.0;
+      final path=Path()..moveTo(inset,size.height)..lineTo(inset,size.height*.5)..quadraticBezierTo(inset,size.height*.3,size.width*.5,4+inset*.4)..quadraticBezierTo(size.width-inset,size.height*.3,size.width-inset,size.height*.5)..lineTo(size.width-inset,size.height);
+      canvas.drawPath(path,paint);
+    }
+  }
+  @override
+  bool shouldRepaint(_IdentityLines old)=>old.color!=color;
 }
 
 class _AccountActionRow extends StatelessWidget {
