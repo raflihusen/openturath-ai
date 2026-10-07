@@ -136,7 +136,7 @@ class BrowserCompanionRuntime extends ChangeNotifier {
         code: code,
         message: code == 'uncertain'
             ? 'Permintaan mungkin sudah diproses. Tidak dikirim ulang secara otomatis.'
-            : 'Koneksi asisten belum dapat digunakan. Hubungkan kembali akun yang sesuai.',
+            : 'Koneksi AI belum dapat digunakan. Hubungkan kembali akun yang sesuai.',
       );
 
   CompanionIdentity? get _current {
