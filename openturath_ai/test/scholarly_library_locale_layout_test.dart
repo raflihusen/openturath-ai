@@ -29,7 +29,7 @@ void main() {
   setUp(() => AppConfig.localeNotifier.value = 'id');
   tearDown(() => AppConfig.localeNotifier.value = 'id');
 
-  testWidgets('assistant card shows its remit and source instead of generic library rows',
+  testWidgets('assistant card omits academic subtitles while preserving its source',
       (tester) async {
     tester.view.physicalSize = const Size(320, 640);
     tester.view.devicePixelRatio = 1;
@@ -53,7 +53,7 @@ void main() {
     ));
 
     expect(find.text('Fikih Syafi’i'), findsOneWidget);
-    expect(find.text('Matan · Syarah · Hasyiyah'), findsOneWidget);
+    expect(find.text('Matan · Syarah · Hasyiyah'), findsNothing);
     expect(find.text('الأم · المجموع'), findsOneWidget);
     expect(find.text('Pustaka'), findsNothing);
     expect(tester.takeException(), isNull);
