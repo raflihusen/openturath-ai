@@ -173,7 +173,7 @@ Bukti dan batas verifikasi disimpan pada `reports/redesign-2026-10-07/IMPLEMENTA
 
 ## Arah rounded flagship — tinjauan 7 Oktober 2026
 
-Status: contoh Flutter terimplementasi lokal; penerimaan visual dan penyebaran menyeluruh masih menunggu tinjauan pengguna. `ot_expressive.dart` memuat peran monokrom untuk contoh flagship. Hero 36/28, panel 24; antarmuka sans dominan. Kalender ganda setara memakai satu waktu lokal, diperbarui tengah malam dan saat resume. Tidak ada subtitle akademik di kartu pemilihan asisten. Grafik empat sektor adalah ilustrasi editorial dengan atribusi, bukan data statistik. Loader empat folio rounded memakai fase periodik 1800 ms dan berhenti untuk reduced motion/lifecycle tidak aktif.
+Status: contoh Flutter terimplementasi lokal; penerimaan visual dan penyebaran menyeluruh masih menunggu tinjauan pengguna. `ot_expressive.dart` memuat peran monokrom untuk contoh flagship. Hero 36/28, panel 24; antarmuka sans dominan. Kalender ganda setara memakai satu waktu lokal, diperbarui tengah malam dan saat resume. Tidak ada subtitle akademik di kartu pemilihan asisten. Grafik empat sektor adalah ilustrasi editorial dengan atribusi, bukan data statistik. Loader dua busur rounded mengitari emblem OpenTurath dengan fase periodik 1800 ms dan berhenti untuk reduced motion/lifecycle tidak aktif.
 
 Checkpoint awal: `7f00d89`. Perubahan website dan penghapusan yang sudah ada tidak termasuk pekerjaan ini. Golden diperbarui hanya setelah arah visual diterima.
 
@@ -187,4 +187,18 @@ Beranda tidak menampilkan hero Tahawwulat; produk utama tampil eksklusif pada ha
 
 Pustaka dalam angka memakai kapsul metrik dengan angka dari katalog. Katalog mempertahankan RTL lokal, menambahkan identitas buku dan metadata pill. Profil tanpa pola kubah; masa berlaku menyatu dengan panel akses. Bahasa ID–EN–AR menggunakan kontrol pill yang sama dengan tampilan. Harga coret menggunakan regularAmount yang memang tercatat.
 
-Loader empat folio bergerak dengan fase periodik, kecepatan berubah, reduced motion dan lifecycle tetap dihormati. WebView memeriksa semua input yang terlihat, tidak menunggu spinner panel lain, dan menampilkan pesan kesiapan aktual. Tes adapter bukan bukti autentikasi Google end-to-end.
+Loader dua busur mengitari emblem OpenTurath dengan fase periodik, kecepatan berubah, reduced motion dan lifecycle tetap dihormati. WebView memeriksa semua input yang terlihat, tidak menunggu spinner panel lain, dan menampilkan pesan kesiapan aktual. Tes adapter bukan bukti autentikasi Google end-to-end.
+
+
+## Koreksi audit visual — 7 Oktober 2026
+
+- Kartu bidang dan AI memakai zona dekorasi Arab tersendiri di footer. Judul dan jumlah AI berdekatan; tombol utama terang dan rujukan sekunder. Tidak ada subtitle akademik.
+- Fikih Tahawwulat tetap hanya pada halaman AI, memakai sculpture 3D yang sudah diterima sebagai arah seni. Lima pilihan disusun lima kolom pada desktop dan baris terpusat ketika membungkus.
+- Kalender ganda berada dalam satu panel dengan tombol metode. Statistik pustaka memakai tiga kolom atau susunan vertikal berdasarkan ruang komponen.
+- Kedua katalog berbagi BookIdentityCard. Metadata berdekatan, toolbar ringkas, judul sumber tidak diedit. Jika nama pengarang sudah mengandung angka, label tahun tambahan disembunyikan; ini aturan tampilan, bukan koreksi metadata.
+- Profil menggunakan inisial, paket dan masa berlaku faktual; bahasa ID–EN–AR sejajar dengan Tampilan. Penjelasan identitas pada Tentang dapat diperluas.
+- Harga coret berasal dari regularAmount. Perbandingan durasi berupa baris pada ponsel, kartu sejajar pada desktop. Dialog aktivasi hanya menjelaskan akses yang benar-benar diberikan.
+- Artikel pengenalan Indonesia tetap LTR dalam UI Arab, dengan pemberitahuan bahasa materi dan menu bab. Diagram memiliki indikator sektor terpilih.
+- Loader native dua busur berujung rounded mengitari emblem OpenTurath; siklus 1800 ms, reduced motion statis, lifecycle/TickerMode dihormati.
+- WebView dipertahankan ketika overlay error tampil sehingga retry tidak menargetkan view yang sudah dilepas. Tidak ada penundaan minimum dekoratif. Pemulihan autentikasi nyata tetap memerlukan percakapan terautentikasi; render fixture dan tes adapter tidak membuktikannya.
+- Verifikasi snapshot menggunakan rute AI sebenarnya, enam lebar 320–1440, tema gelap, Arab, dan pembesaran teks. Penerimaan visual pengguna dan performa perangkat dicatat terpisah dari kelulusan tes.
