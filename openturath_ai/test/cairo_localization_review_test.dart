@@ -98,7 +98,6 @@ void main() {
         AgentModel.defaultAgents.firstWhere((a) => a.id == 'fiqh_syafii');
     var opened = 0, references = 0;
     final semantics = tester.ensureSemantics();
-    addTearDown(semantics.dispose);
     await tester.pumpWidget(MaterialApp(
         home: Scaffold(
             body: AssistantGridCard(
@@ -121,5 +120,6 @@ void main() {
     expect(references, 0);
     await tester.tap(find.byIcon(Icons.auto_stories_outlined));
     expect(references, 1);
+    semantics.dispose();
   });
 }
