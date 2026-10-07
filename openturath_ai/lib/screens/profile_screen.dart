@@ -816,7 +816,7 @@ class _MembershipPass extends StatelessWidget {
               decoration: BoxDecoration(
                   color: OTColors.surfaceSubtle(isDark),
                   borderRadius: OTRadius.inputBorder),
-              child: OpenTurathMark(size: 28, color: ink)),
+              child: SizedBox.square(dimension: 48, child: Center(child: Text(holderName.trim().isEmpty ? 'O' : holderName.trim().characters.first.toUpperCase(), style: OTTypography.pageTitle(color: ink))))),
           const SizedBox(width: OTSpacing.md),
           Expanded(
               child: Column(
@@ -830,7 +830,10 @@ class _MembershipPass extends StatelessWidget {
               ])),
         ]),
         const SizedBox(height: OTSpacing.lg),
-        Text(summary.accessLabel, style: OTTypography.bodyMedium(color: ink)),
+        Container(width: double.infinity, padding: const EdgeInsets.all(20), decoration: BoxDecoration(color: OTColors.surfaceSubtle(isDark), borderRadius: BorderRadius.circular(24)), child: Row(children: [
+          OpenTurathMark(size: 36, color: muted), const SizedBox(width: 16),
+          Expanded(child: Text(summary.accessLabel, style: OTTypography.bodyMedium(color: ink))),
+        ])),
         if (expiry != null)
           Padding(
               padding: const EdgeInsets.only(top: OTSpacing.xs),
