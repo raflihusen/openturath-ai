@@ -15,6 +15,8 @@ import 'package:openturath_ai/core/theme.dart';
 import 'package:openturath_ai/models/agent_model.dart';
 import 'package:openturath_ai/core/constants.dart';
 import 'package:openturath_ai/models/user_model.dart';
+import 'package:openturath_ai/models/turath_chat_message.dart';
+import 'package:openturath_ai/widgets/native_turath_chat_view.dart';
 import 'package:openturath_ai/screens/dashboard_screen.dart';
 import 'package:openturath_ai/screens/bookmark_screen.dart';
 import 'package:openturath_ai/screens/login_screen.dart';
@@ -105,8 +107,7 @@ Future<void> _shot(WidgetTester tester, String name, Widget child,
   await tester.pump(const Duration(milliseconds: 900));
   await tester.pump(const Duration(milliseconds: 900));
   if (tap != null && find.text(tap).evaluate().isEmpty) {
-    // ignore: avoid_print
-    print('RENDER NOTE in $name: "$tap" tidak ditemukan');
+    fail('Render $name: required action $tap was not found');
   } else if (tap != null) {
     // Buka dialog atau lembar dengan mengetuk teks pemicunya.
     await tester.ensureVisible(find.text(tap).first);
@@ -128,11 +129,8 @@ Future<void> _shot(WidgetTester tester, String name, Widget child,
   });
   debugDefaultTargetPlatformOverride = null;
   final error = tester.takeException();
-  if (error != null) {
-    // ignore: avoid_print
-    print(
-        'RENDER ERROR in $name: ${error.toString().split('\n').take(6).join(' | ')}');
-  }
+  expect(error, isNull, reason: 'Render $name must have no framework exception');
+
 }
 
 void main() {
@@ -143,6 +141,10 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   testWidgets('render', (tester) async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(const MethodChannel('dev.fluttercommunity.plus/package_info'),
+          (_) async => {'appName': 'OpenTurath AI', 'packageName': 'id.openturath',
+            'version': '1.0.63', 'buildNumber': '64', 'buildSignature': ''});
     await tester.runAsync(_loadFonts);
     final meta = await tester.runAsync(
             () => OpenTurathCatalogRepository.instance.loadAllMetadata()) ??
@@ -231,7 +233,19 @@ void main() {
       await _shot(tester, 'subscription_$locale', const SubscriptionScreen(),
           size: const Size(950, 1500), locale: locale);
     }
-    await _shot(tester, 'dashboard_dark', const DashboardScreen(), dark: true);
+    Widget mixedChat() => Scaffold(appBar: AppBar(title: const Text('Fikih Tahawwulat: Al-Muhaqqiq')),
+      body: NativeTurathChatView(agent: flagship, isGenerating: false, onSend: (_) {},
+        messages: [TurathChatMessage(id: 'question', isUser: true, timestamp: DateTime(2026),
+          text: 'Bagaimana memahami makna kebahagiaan dalam Fikih Tahawwulat?'),
+          TurathChatMessage(id: 'answer', isUser: false, timestamp: DateTime(2026),
+            text: '## Memahami kebahagiaan\n\nIni contoh tampilan bilingual. Istilah **السعادة** berada dalam paragraf Indonesia tanpa mengubah arah baca. Rujukan perlu diperiksa pada edisi kitab yang digunakan.\n\n> السعادة في الدارين\n\n### Langkah telaah\n\n1. Baca kutipan sumber.\n2. Periksa konteks dan halaman.\n3. Pisahkan kutipan dari penjelasan AI.',
+            citations: const ['Contoh tampilan · bukan kutipan terverifikasi'])]));
+    await _shot(tester, 'chat_mixed', mixedChat(), size: const Size(1280, 900));
+    await _shot(tester, 'chat_mixed_dark', mixedChat(), dark: true);
+    await _shot(tester, 'chat_mixed_phone', mixedChat(), size: const Size(390, 844));
+    await _shot(tester, 'subscription_phone', const SubscriptionScreen(), size: const Size(390, 844));
+    await _shot(tester, 'profile_phone', const ProfileScreen(), size: const Size(390, 844));
+    await _shot(tester, 'dashboard_dark' , const DashboardScreen(), dark: true);
     await _shot(tester, 'dashboard_phone', const DashboardScreen(),
         size: const Size(390, 844));
     // Ukuran jendela yang dipakai pengguna (sekitar 850 x 860) dan jendela lebar.

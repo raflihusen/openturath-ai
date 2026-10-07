@@ -14,6 +14,7 @@ void main() {
     expect(answerDirection('## معنى السعادة'), TextDirection.rtl);
     expect(answerDirection('## Penjelasan السعادة'), TextDirection.ltr);
     expect(answerDirection('70. قال المؤلف'), TextDirection.rtl);
+    expect(answerDirection('٧٠. Read the source'), TextDirection.ltr);
     expect(answerDirection('70. Read the source'), TextDirection.ltr);
   });
 }
