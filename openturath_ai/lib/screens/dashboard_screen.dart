@@ -471,7 +471,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                       mainAxisSpacing: 12,
                                       mainAxisExtent:
                                           MediaQuery.textScalerOf(context)
-                                              .scale(200),
+                                              .scale(144),
                                     ),
                                     itemCount: _curatedDisciplines.length,
                                     itemBuilder: (context, index) {
