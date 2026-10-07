@@ -3,6 +3,7 @@ import '../core/scholarly_fonts.dart';
 import '../services/browser_workspace_launcher.dart';
 
 import 'package:openturath_ai/core/design/ot_typography.dart';
+
 class BrowserWorkspaceScreen extends StatefulWidget {
   const BrowserWorkspaceScreen({super.key});
   @override
