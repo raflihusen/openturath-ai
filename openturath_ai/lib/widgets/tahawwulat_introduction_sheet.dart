@@ -1,3 +1,4 @@
+import '../core/localization.dart';
 import '../core/design/ot_expressive.dart';
 import '../widgets/adaptive_sheet.dart';
 import 'package:flutter/material.dart';
