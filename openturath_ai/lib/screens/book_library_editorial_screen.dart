@@ -245,7 +245,8 @@ class _OpenTurathBookLibraryPageState extends State<OpenTurathBookLibraryPage> {
                           runSpacing: 8,
                           crossAxisAlignment: WrapCrossAlignment.center,
                           children: [
-                            DropdownButton<_BookSort>(
+                            SizedBox(width: available < 300 ? available : 300, child: DropdownButton<_BookSort>(
+                                isExpanded: true,
                                 value: _sort,
                                 underline: const SizedBox.shrink(),
                                 onChanged: (v) {
@@ -264,7 +265,7 @@ class _OpenTurathBookLibraryPageState extends State<OpenTurathBookLibraryPage> {
                                       value: _BookSort.volumes,
                                       child: Text(reviewCopy('Jumlah jilid',
                                           'عدد الأجزاء', 'Volumes'))),
-                                ]),
+                                ])),
                             IconButton.filledTonal(
                                 tooltip: reviewCopy('Tampilan kartu',
                                     'عرض البطاقات', 'Card view'),
@@ -352,8 +353,9 @@ class _OpenTurathBookLibraryPageState extends State<OpenTurathBookLibraryPage> {
                             }
                           });
                     }, childCount: visibleBooks.length);
-                    if (_list || largeText)
+                    if (_list || largeText) {
                       return SliverList(delegate: delegate);
+                    }
                     return SliverGrid(
                         delegate: delegate,
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -477,7 +479,6 @@ ${Loc.tr('bookScienceSection')}: ${book.section}''';
     final canvas = OTColors.canvas(isDark);
     final ink = OTColors.textPrimary(isDark);
     final textSecondary = OTColors.textSecondary(isDark);
-    final border = OTColors.border(isDark);
 
     return Scaffold(
       backgroundColor: canvas,
