@@ -209,10 +209,12 @@ class _OrbitPainter extends CustomPainter {
       canvas.save();
       canvas.rotate(i * math.pi / 2);
       final radius = w * (.16 + .07 * breath);
-      final rect = Rect.fromCenter(center: Offset(radius, -radius),
-        width: w * (.30 - .05 * breath), height: w * (.30 + .04 * breath));
+      final rect = Rect.fromCenter(
+          center: Offset(radius, -radius),
+          width: w * (.30 - .05 * breath),
+          height: w * (.30 + .04 * breath));
       canvas.drawRRect(RRect.fromRectAndRadius(rect, Radius.circular(w * .105)),
-        Paint()..color = color.withValues(alpha: 1 - i * .16));
+          Paint()..color = color.withValues(alpha: 1 - i * .16));
       canvas.restore();
     }
     canvas.restore();
