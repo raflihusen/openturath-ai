@@ -30,23 +30,31 @@ class OTInkCard extends StatelessWidget {
               child: Stack(children: [
                 if (watermark.isNotEmpty)
                   Positioned(
-                    left: 24, right: 24, bottom: 16, height: 48,
-                    child: IgnorePointer(child: ExcludeSemantics(
-                      child: Align(alignment: Alignment.bottomRight,
-                        child: FittedBox(fit: BoxFit.scaleDown,
+                    left: 24,
+                    right: 24,
+                    bottom: 16,
+                    height: 48,
+                    child: IgnorePointer(
+                        child: ExcludeSemantics(
+                      child: Align(
+                        alignment: Alignment.bottomRight,
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
                           child: Text(watermark,
-                            textDirection: TextDirection.rtl,
-                            maxLines: 1,
-                            style: ScholarlyFonts.scheherazadeNew(
-                              fontSize: OTFontSize.s36, height: 1.1,
-                              color: OTExpressive.white.withValues(alpha: .14))),
+                              textDirection: TextDirection.rtl,
+                              maxLines: 1,
+                              style: ScholarlyFonts.scheherazadeNew(
+                                  fontSize: OTFontSize.s36,
+                                  height: 1.1,
+                                  color: OTExpressive.white
+                                      .withValues(alpha: .14))),
                         ),
                       ),
                     )),
                   ),
                 Padding(
-                  padding: padding.add(EdgeInsets.only(
-                    bottom: watermark.isEmpty ? 0 : 64)),
+                  padding: padding
+                      .add(EdgeInsets.only(bottom: watermark.isEmpty ? 0 : 64)),
                   child: child,
                 ),
               ])),
