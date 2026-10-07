@@ -430,12 +430,19 @@ class _BookEditorialItem extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       Row(children: [
-                        Container(padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(color: OTColors.surfaceSubtle(dark), borderRadius: OTRadius.chipBorder),
-                          child: Icon(Icons.menu_book_rounded, size: 18, color: muted)),
+                        Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                                color: OTColors.surfaceSubtle(dark),
+                                borderRadius: OTRadius.chipBorder),
+                            child: Icon(Icons.menu_book_rounded,
+                                size: 18, color: muted)),
                         const SizedBox(width: 10),
-                        Expanded(child: Text(Loc.tr('unitBooks'), style: OTTypography.caption(color: muted))),
-                        Icon(Icons.arrow_outward_rounded, size: 18, color: muted),
+                        Expanded(
+                            child: Text(Loc.tr('unitBooks'),
+                                style: OTTypography.caption(color: muted))),
+                        Icon(Icons.arrow_outward_rounded,
+                            size: 18, color: muted),
                       ]),
                       const SizedBox(height: 16),
                       if (box.hasBoundedHeight)
@@ -470,9 +477,14 @@ class _BookEditorialItem extends StatelessWidget {
                       Wrap(spacing: 12, runSpacing: 4, children: [
                         for (final fact in [book.volumeLabel, book.pagesLabel]
                             .where((f) => f != Loc.tr('unknownMetadata')))
-                          Container(padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                            decoration: BoxDecoration(color: OTColors.surfaceSubtle(dark), borderRadius: OTRadius.chipBorder),
-                            child: Text(fact, style: OTTypography.caption(color: muted)))
+                          Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 12, vertical: 8),
+                              decoration: BoxDecoration(
+                                  color: OTColors.surfaceSubtle(dark),
+                                  borderRadius: OTRadius.chipBorder),
+                              child: Text(fact,
+                                  style: OTTypography.caption(color: muted)))
                       ]),
                     ])));
       });
