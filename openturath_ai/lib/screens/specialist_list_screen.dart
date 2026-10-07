@@ -400,14 +400,18 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
                                           List<AgentModel>.from(filtered);
                                       if (_searchQuery.isEmpty) {
                                         sorted.sort((a, b) {
-                                          if (a.id == 'fiqh_tahawwulat')
+                                          if (a.id == 'fiqh_tahawwulat') {
                                             return -1;
-                                          if (b.id == 'fiqh_tahawwulat')
+                                          }
+                                          if (b.id == 'fiqh_tahawwulat') {
                                             return 1;
-                                          if (a.isActive && !b.isActive)
+                                          }
+                                          if (a.isActive && !b.isActive) {
                                             return -1;
-                                          if (!a.isActive && b.isActive)
+                                          }
+                                          if (!a.isActive && b.isActive) {
                                             return 1;
+                                          }
                                           return 0;
                                         });
                                       }
