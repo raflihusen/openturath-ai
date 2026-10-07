@@ -4,6 +4,7 @@ import '../core/design/ot_expressive.dart';
 import '../widgets/desktop_shortcuts.dart';
 import '../widgets/adaptive_sheet.dart';
 import '../core/localization.dart';
+import '../core/arabic_ui_labels.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import '../core/design/native_design.dart';
@@ -267,6 +268,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                               style: OTTypography.screenTitle(
                                                   color: textPrimary)),
                                           const SizedBox(height: 12),
+                                          const SizedBox(height: 12),
+                                          const Divider(height: 1),
                                           if (target != null) ...[
                                             Text(Loc.text(target.title),
                                                 style: OTTypography.caption(
@@ -532,20 +535,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                       return OTReveal(
                                         index: index + 2,
                                         child: OTInkCard(
-                                          watermark: const {
-                                                'fiqh': 'الفقه',
-                                                'hadith': 'الحديث',
-                                                'tafsir': 'التفسير',
-                                                'aqidah': 'العقيدة',
-                                                'usul_fiqh': 'أصول الفقه',
-                                                'arabic': 'العربية',
-                                                'usul': 'أصول الفقه',
-                                                'arabic_language': 'العربية'
-                                              }[disc.fieldId] ??
-                                              NativeCopy.values[
-                                                      'field_${disc.fieldId}']
-                                                  ?[2] ??
-                                              '',
+                                          watermark: ArabicUiLabels.forField(disc.fieldId, NativeCopy.values['field_${disc.fieldId}']?[2] ?? ''),
                                           semanticLabel:
                                               'AI ${Loc.text(disc.name)}',
                                           onTap: () {
