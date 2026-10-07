@@ -12,7 +12,7 @@ import '../models/book_model.dart';
 import '../services/canonical_library_service.dart';
 import '../services/open_turath_catalog_repository.dart';
 import '../screens/book_library_editorial_screen.dart';
-import '../core/app_snackbar.dart';
+import '../models/open_turath_book.dart';
 import 'apple_interactive_wrapper.dart';
 import '../core/localization.dart';
 
@@ -22,20 +22,48 @@ Future<void> showResearchLibrary(
   BuildContext context, {
   AgentModel? agent,
 }) async {
-  final agentKey = agent?.id ?? 'fiqh_syafii';
-  try {
-    final repository = OpenTurathCatalogRepository.instance;
-    final metadata = await repository.getMetadataForModule(agentKey);
-    final books = await repository.loadBooksForModule(agentKey);
-    if (!context.mounted) return;
-    Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) =>
-        OpenTurathBookLibraryPage(books: books,
-            collectionName: Loc.text(agent?.title ?? metadata?.nama ?? Loc.tr('libraryShort')),
-            metadata: metadata)));
-  } catch (_) {
-    if (context.mounted) AppSnackBar.error(context, Loc.tr('catalogFailure'));
-  }
+  await Navigator.of(context).push(MaterialPageRoute<void>(
+    builder: (_) => _CatalogCollectionLoader(agent: agent)));
+}
 
+class _CatalogCollectionLoader extends StatefulWidget {
+  const _CatalogCollectionLoader({this.agent});
+  final AgentModel? agent;
+  @override
+  State<_CatalogCollectionLoader> createState() => _CatalogCollectionLoaderState();
+}
+
+class _CatalogCollectionLoaderState extends State<_CatalogCollectionLoader> {
+  late Future<({List<OpenTurathBook> books, AiLibraryMetadata? metadata})> _load = _fetch();
+  Future<({List<OpenTurathBook> books, AiLibraryMetadata? metadata})> _fetch() async {
+    final key = widget.agent?.id ?? 'fiqh_syafii';
+    final repo = OpenTurathCatalogRepository.instance;
+    final metadata = await repo.getMetadataForModule(key);
+    final books = await repo.loadBooksForModule(key);
+    return (books: books, metadata: metadata);
+  }
+  @override
+  Widget build(BuildContext context) => FutureBuilder(
+    future: _load,
+    builder: (context, snapshot) {
+      final data = snapshot.data;
+      if (data != null) return OpenTurathBookLibraryPage(books: data.books,
+        metadata: data.metadata,
+        collectionName: Loc.text(widget.agent?.title ?? data.metadata?.nama ?? Loc.tr('libraryShort')));
+      return Scaffold(appBar: AppBar(title: Text(Loc.tr('libraryShort'))),
+        body: Center(child: Padding(padding: const EdgeInsets.all(24),
+          child: Column(mainAxisSize: MainAxisSize.min, children: [
+            if (snapshot.hasError) ...[
+              Text(Loc.tr('catalogFailure'), textAlign: TextAlign.center),
+              const SizedBox(height: 16),
+              FilledButton(onPressed: () => setState(() => _load = _fetch()),
+                child: Text(Loc.tr('retry'))),
+            ] else ...[
+              const CircularProgressIndicator(), const SizedBox(height: 16),
+              Text(Loc.tr('loadingReferences')),
+            ],
+          ]))));
+    });
 }
 
 class ResearchLibrarySheet extends StatefulWidget {
