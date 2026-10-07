@@ -5,6 +5,8 @@ import 'package:flutter/services.dart';
 
 import '../core/app_snackbar.dart';
 import '../core/arabic_utils.dart';
+import '../core/answer_direction.dart';
+import '../widgets/tahawwulat_hero.dart';
 import '../core/design/ot_colors.dart';
 import '../widgets/ot_motion_widgets.dart';
 import '../core/design/ot_spacing.dart';
@@ -40,6 +42,8 @@ class OpenTurathBookLibraryPage extends StatefulWidget {
       _OpenTurathBookLibraryPageState();
 }
 
+enum _BookSort { title, author, volumes }
+
 enum _BookVolumeFilter {
   all,
   singleVolume,
@@ -51,6 +55,9 @@ class _OpenTurathBookLibraryPageState extends State<OpenTurathBookLibraryPage> {
   late final FocusNode _searchFocusNode;
 
   String _query = '';
+  _BookSort _sort = _BookSort.title;
+  bool _list = false;
+  bool _opening = false;
   _BookVolumeFilter _filter = _BookVolumeFilter.all;
 
   @override
@@ -76,7 +83,7 @@ class _OpenTurathBookLibraryPageState extends State<OpenTurathBookLibraryPage> {
   }
 
   List<OpenTurathBook> get _filteredBooks {
-    return widget.books.where((book) {
+    final result = widget.books.where((book) {
       final matchesQuery = _query.isEmpty ||
           [
             book.title,
@@ -104,6 +111,12 @@ class _OpenTurathBookLibraryPageState extends State<OpenTurathBookLibraryPage> {
               vols.contains('-');
       }
     }).toList();
+    result.sort((a, b) => switch (_sort) {
+      _BookSort.title => a.title.compareTo(b.title),
+      _BookSort.author => a.author.compareTo(b.author),
+      _BookSort.volumes => (int.tryParse(a.volumes) ?? 0).compareTo(int.tryParse(b.volumes) ?? 0),
+    });
+    return result;
   }
 
   @override
@@ -124,9 +137,11 @@ class _OpenTurathBookLibraryPageState extends State<OpenTurathBookLibraryPage> {
     final textSecondary = OTColors.textSecondary(isDark);
 
     final visibleBooks = _filteredBooks;
-    final pageInset = ((MediaQuery.sizeOf(context).width - 1040) / 2)
-        .clamp(20.0, double.infinity);
-
+    return LayoutBuilder(builder: (context, box) {
+    final pageInset = ((box.maxWidth - 1160) / 2).clamp(box.maxWidth < 600 ? 16.0 : 24.0, double.infinity);
+    final available = box.maxWidth - 2 * pageInset;
+    final largeText = MediaQuery.textScalerOf(context).scale(16) > 24;
+    final columns = available >= 1100 ? 3 : available >= 720 ? 2 : 1;
     return Scaffold(
       backgroundColor: canvas,
       appBar: AppBar(
@@ -218,6 +233,16 @@ class _OpenTurathBookLibraryPageState extends State<OpenTurathBookLibraryPage> {
                         ],
                       ),
                     ),
+                    const SizedBox(height: 16),
+                    Wrap(spacing: 12, runSpacing: 8, crossAxisAlignment: WrapCrossAlignment.center, children: [
+                      DropdownButton<_BookSort>(value: _sort, underline: const SizedBox.shrink(), onChanged: (v) {if(v != null)setState(() => _sort=v);}, items: [
+                        DropdownMenuItem(value: _BookSort.title, child: Text(reviewCopy('Judul','العنوان','Title'))),
+                        DropdownMenuItem(value: _BookSort.author, child: Text(reviewCopy('Pengarang','المؤلف','Author'))),
+                        DropdownMenuItem(value: _BookSort.volumes, child: Text(reviewCopy('Jumlah jilid','عدد الأجزاء','Volumes'))),
+                      ]),
+                      IconButton.filledTonal(tooltip: reviewCopy('Tampilan kartu','عرض البطاقات','Card view'), isSelected: !_list, onPressed: () => setState(() => _list=false), icon: const Icon(Icons.grid_view_rounded)),
+                      IconButton.filledTonal(tooltip: reviewCopy('Daftar ringkas','قائمة مختصرة','Compact list'), isSelected: _list, onPressed: () => setState(() => _list=true), icon: const Icon(Icons.view_list_rounded)),
+                    ]),
                     const SizedBox(height: 18),
                     Text(
                       _query.isEmpty && _filter == _BookVolumeFilter.all
@@ -268,38 +293,26 @@ class _OpenTurathBookLibraryPageState extends State<OpenTurathBookLibraryPage> {
             else
               SliverPadding(
                 padding: EdgeInsets.fromLTRB(pageInset, 8, pageInset, 40),
-                // Grid kartu seragam: satu kolom di ponsel, dua atau tiga di layar lebar.
-                sliver: SliverList(
-                  delegate: SliverChildBuilderDelegate(
-                    (context, index) {
-                      final book = visibleBooks[index];
-                      return OTReveal(
-                          index: index % 6,
-                          child: _BookEditorialItem(
-                            book: book,
-                            index: index + 1,
-                            onTap: () {
-                              if (widget.onOpenBook != null) {
-                                widget.onOpenBook!(book);
-                                return;
-                              }
-                              Navigator.of(context).push(
-                                MaterialPageRoute<void>(
-                                  builder: (_) =>
-                                      OpenTurathBookDetailPage(book: book),
-                                ),
-                              );
-                            },
-                          ));
-                    },
-                    childCount: visibleBooks.length,
-                  ),
-                ),
+                sliver: Builder(builder: (context) {
+                  final delegate = SliverChildBuilderDelegate((context, index) {
+                    final book = visibleBooks[index];
+                    return _BookEditorialItem(book: book, index: index + 1, onTap: () async {
+                      if (_opening) return;
+                      if (widget.onOpenBook != null) {widget.onOpenBook!(book); return;}
+                      _opening = true;
+                      try {await Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => OpenTurathBookDetailPage(book: book)));}
+                      finally {_opening = false;}
+                    });
+                  }, childCount: visibleBooks.length);
+                  if (_list || largeText) return SliverList(delegate: delegate);
+                  return SliverGrid(delegate: delegate, gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: columns, crossAxisSpacing: 16, mainAxisSpacing: 16, mainAxisExtent: MediaQuery.textScalerOf(context).scale(200)));
+                }),
               ),
           ],
         ),
       ),
     );
+    });
   }
 }
 
@@ -353,8 +366,9 @@ class _BookEditorialItem extends StatelessWidget {
               // Judul Arab asli, maksimal dua baris agar tinggi kartu seragam.
               Text(
                 book.title,
-                textDirection: TextDirection.rtl,
-                textAlign: TextAlign.right,
+                textDirection: answerTextDirection(book.title),
+                textAlign: answerTextDirection(book.title) == TextDirection.rtl ? TextAlign.right : TextAlign.left,
+                maxLines: 3, overflow: TextOverflow.ellipsis,
                 style: ScholarlyFonts.scheherazadeNew(
                   color: ink,
                   fontSize: OTFontSize.s26,
@@ -365,9 +379,9 @@ class _BookEditorialItem extends StatelessWidget {
               const SizedBox(height: 2),
               Text(
                 book.author,
-                textDirection: TextDirection.rtl,
-                textAlign: TextAlign.right,
-                maxLines: 1,
+                textDirection: answerTextDirection(book.author),
+                textAlign: answerTextDirection(book.author) == TextDirection.rtl ? TextAlign.right : TextAlign.left,
+                maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 style: ScholarlyFonts.scheherazadeNew(
                   color: textSecondary,
@@ -387,13 +401,7 @@ class _BookEditorialItem extends StatelessWidget {
                           fontSize: OTFontSize.s12, color: textSecondary),
                     ),
                   ),
-                  if (book.deathYear != null)
-                    Text(
-                      book.deathLabel,
-                      maxLines: 1,
-                      style: ScholarlyFonts.outfit(
-                          fontSize: OTFontSize.s12, color: textSecondary),
-                    ),
+
                 ],
               ),
             ],
