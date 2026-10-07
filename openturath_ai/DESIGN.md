@@ -25,8 +25,8 @@ Tinta dan kertas untuk segala hal yang bukan isyarat.
 | Token | Terang | Gelap | Pakai untuk |
 |---|---|---|---|
 | `canvas` | `#F6F6F6` | `#151515` | Latar layar |
-| `surface` | `#FFFFFF` | `#202020` | Kartu, sheet, dialog, input |
-| `surfaceSubtle` | `#EDEDED` | `#2B2B2B` | Wadah tonal, micro-pill |
+| `surface` | `#FFFFFF` | `#292929` | Kartu, sheet, dialog, input |
+| `surfaceSubtle` | `#EDEDED` | `#353535` | Wadah tonal, micro-pill |
 | `textPrimary` | `#171717` | `#F5F5F5` | Teks utama dan seluruh teks Arab |
 | `textSecondary` | `#606060` | `#B8B8B8` | Metadata, label |
 | `textTertiary` | `#6B6B6B` | `#9A9A9A` | Placeholder, hint |
@@ -149,7 +149,7 @@ Data yang belum terverifikasi dibiarkan kosong. Kode voucher tidak pernah dituli
 
 Antarmuka memakai judul Outfit; Newsreader untuk koleksi dan kitab. Permukaan
 bertingkat menggantikan garis di semua kartu. Canvas #F6F6F6 / #151515,
-surface #FFFFFF / #202020, tonal #EDEDED / #2B2B2B.
+surface #FFFFFF / #292929, tonal #EDEDED / #353535.
 Radius: input/dialog 28, card 24, sheet/hero 32, pill 999, xs 8.
 Pencarian hadir sebelum panel beranda, navigasi berlabel, katalog berupa daftar
 editorial. Kutipan Arab memiliki arah sendiri; satu istilah Arab tidak boleh
@@ -202,3 +202,12 @@ Loader dua busur mengitari emblem OpenTurath dengan fase periodik, kecepatan ber
 - Loader native dua busur berujung rounded mengitari emblem OpenTurath; siklus 1800 ms, reduced motion statis, lifecycle/TickerMode dihormati.
 - WebView dipertahankan ketika overlay error tampil sehingga retry tidak menargetkan view yang sudah dilepas. Tidak ada penundaan minimum dekoratif. Pemulihan autentikasi nyata tetap memerlukan percakapan terautentikasi; render fixture dan tes adapter tidak membuktikannya.
 - Verifikasi snapshot menggunakan rute AI sebenarnya, enam lebar 320–1440, tema gelap, Arab, dan pembesaran teks. Penerimaan visual pengguna dan performa perangkat dicatat terpisah dari kelulusan tes.
+
+
+## Penyempurnaan kompak — 7 Oktober 2026
+
+Aturan ini menggantikan komposisi audit sebelumnya: watermark Arab tipis opacity 9% berada di belakang isi, tanpa footer atau padding khusus. Kartu bidang tinggi dasar 144 dan bertumbuh mengikuti skala teks. Beranda menggabungkan sapaan dan lanjut sesi dalam satu kartu.
+
+Tombol Buka AI Fikih Tahawwulat membuka sheet berisi lima AI dengan fungsi singkat dan jalur masing-masing; tidak langsung membuka AI utama. Fungsi ini menjadi pengecualian subtitle hanya di pemilih khusus tersebut. Profil menyatukan nama, email, paket, dan masa berlaku dalam panel kompak. Pilihan tampilan hanya ikon ber-tooltip; pilihan bahasa tetap ID–EN–AR.
+
+Loader kembali ke empat folio rounded yang sebelumnya dipilih pengguna. Katalog memakai garis punggung buku tipis dan metadata dekat judul/pengarang. Pembayaran menggunakan header tonal, durasi pill, harga faktual, dan receipt sukses hanya setelah invoice dikonfirmasi lunas. Permukaan gelap #292929 dan tonal #353535 menjaga siluet rounded terhadap canvas.
