@@ -515,7 +515,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           _AccountActionRow(
                             icon: Icons.delete_outline_rounded,
                             label: AppCopy.deleteAccountButton,
-                            color: OTColors.destructive(isDark),
+                            color: OTColors.textPrimary(isDark),
                             busy: _isDeletingAccount,
                             onTap: (_isLoggingOut || _isDeletingAccount)
                                 ? null
