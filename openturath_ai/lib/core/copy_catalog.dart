@@ -52,11 +52,7 @@ const copyCatalog = <String, List<String>>{
     "See five assistants",
     "عرض المساعدين الخمسة"
   ],
-  "assistantSelected": [
-    "AI terpilih",
-    "Selected assistant",
-    "مسار المطالعة"
-  ],
+  "assistantSelected": ["AI terpilih", "Selected assistant", "مسار المطالعة"],
   "assistantSelectedHint": [
     "Mandat dan rujukan",
     "Scope and references",
