@@ -7,6 +7,7 @@ import '../models/agent_model.dart';
 import '../models/sub_agent_model.dart';
 import '../services/open_turath_catalog_repository.dart';
 import 'assistant_grid_card.dart';
+import 'ot_motion_widgets.dart';
 import 'tahawwulat_introduction_sheet.dart';
 
 /// The main collection uses the same calm surface as the rest of the library.
