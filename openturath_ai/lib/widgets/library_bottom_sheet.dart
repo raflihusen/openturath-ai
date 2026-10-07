@@ -57,7 +57,7 @@ class _CatalogCollectionLoaderState extends State<_CatalogCollectionLoader> {
               Text(Loc.tr('catalogFailure'), textAlign: TextAlign.center),
               const SizedBox(height: 16),
               FilledButton(onPressed: () => setState(() => _load = _fetch()),
-                child: Text(Loc.tr('retry'))),
+                child: Text(Loc.tr('retryCatalog'))),
             ] else ...[
               const CircularProgressIndicator(), const SizedBox(height: 16),
               Text(Loc.tr('loadingReferences')),

@@ -9,7 +9,7 @@ void main() {
     expect(OpenTurathBook.decodeList('[]'), isEmpty);
   });
   test('edition assessments never become editor names; raw evidence is retained', () {
-    final book = OpenTurathBook.fromJson({'muhaqqiq': 'طبعة أصلية معتمدة',
+    final book = OpenTurathBook.fromJson({'tahqiq': 'طبعة أصلية معتمدة',
       'cetakan': 'الأولى، 2003 هـ', 'halaman': '52244'});
     expect(book.editorName, isEmpty);
     expect(book.editionNote, 'طبعة أصلية معتمدة');
