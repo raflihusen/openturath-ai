@@ -26,10 +26,22 @@ Future<void> main() async {
                           color: Colors.white,
                           child:
                               AppLoader.fullscreen(title: 'OpenTurath'))))))));
+  final metricsFile = File('/tmp/ot-cairo-loader-profile.json');
+  if (metricsFile.existsSync()) metricsFile.deleteSync();
+  final activationDeadline = DateTime.now().add(const Duration(seconds: 60));
+  while (WidgetsBinding.instance.lifecycleState != AppLifecycleState.resumed) {
+    if (DateTime.now().isAfter(activationDeadline)) {
+      throw StateError('Native motion review requires an active foreground window');
+    }
+    await Future<void>.delayed(const Duration(milliseconds: 50));
+  }
   await Future<void>.delayed(const Duration(seconds: 10));
   SchedulerBinding.instance.addTimingsCallback(collect);
   await Future<void>.delayed(const Duration(milliseconds: 18000));
   SchedulerBinding.instance.removeTimingsCallback(collect);
+  if (timings.isEmpty || WidgetsBinding.instance.lifecycleState != AppLifecycleState.resumed) {
+    throw StateError('Native review lost foreground activity; no valid measurement saved');
+  }
   Map<String, Object> summary(List<double> values) {
     values.sort();
     return {
