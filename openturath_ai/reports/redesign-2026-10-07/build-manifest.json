@@ -1307,5 +1307,9 @@
       "sha256": "270340e06e13cd34eb4dd729bfdf10e1411e55b9ddb5b0ee5603249c26b0dcda",
       "bytes": 14470
     }
-  ]
+  ],
+  "compiled_dart_binary": {
+    "path": "/Users/apple/Downloads/ramadhan/openturath_ai/build/macos/Build/Products/Release/OpenTurath AI.app/Contents/Frameworks/App.framework/Versions/A/App",
+    "modified_utc": "2026-10-07T04:48:46.553666+00:00"
+  }
 }

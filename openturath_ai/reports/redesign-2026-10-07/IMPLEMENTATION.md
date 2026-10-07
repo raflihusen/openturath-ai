@@ -66,7 +66,7 @@ Render mencakup desktop, ponsel, terang/gelap, bahasa Indonesia/Arab, dialog, sh
 
 Log update checker pada widget test menyebut Firebase belum diinisialisasi: fixture ini sengaja tidak melakukan request update produksi. Ini tidak dihitung sebagai bukti kegagalan update live maupun bukti update live berhasil.
 
-Log final disimpan di `verification/`. Galeri tidak merender ulang HTML prototype dari audit sebelumnya.
+Log final disimpan di `verification/`; whitespace akhir baris dinormalisasi tanpa mengubah hasil pemeriksaan. Galeri tidak merender ulang HTML prototype dari audit sebelumnya.
 
 ## Build dan distribusi
 
@@ -74,7 +74,7 @@ Artefak: `/Users/apple/Downloads/ramadhan/openturath_ai/build/macos/Build/Produc
 
 Versi: 1.0.63+64; universal Intel/Apple Silicon; 129,994,536 byte berkas bundle. Build exit 0. Pemeriksaan signature deep/strict exit 0; signature ad hoc, TeamIdentifier tidak ditetapkan. Notarization dan peluncuran interaktif binary ini belum diuji. Peringatan dependency Pods tentang deployment target dan script phase tercatat di log build.
 
-SHA-256 manifest isi bundle: `1748081e44239749e23200f3505c784f9839ec50755f482458c812eeedc3555f`. Ini hash manifest path+isi, bukan hash ZIP. Rincian berkas ada di `build-manifest.json`.
+SHA-256 manifest isi bundle: `1748081e44239749e23200f3505c784f9839ec50755f482458c812eeedc3555f`. Ini hash manifest path+isi, bukan hash ZIP. Rincian berkas ada di `build-manifest.json`. Timestamp binary Dart hasil kompilasi: 2026-10-07T04:48:46.553666+00:00. Timestamp direktori bundle dapat berasal dari pembuatan sebelumnya dan bukan patokan usia binary.
 
 Tidak ada deployment, push, unggahan CDN, broadcast Firestore, atau APK publik pada pekerjaan ini. Firestore rules yang berubah tetap lokal. Pembayaran, Google/NotebookLM live, screen reader pada perangkat asli, performa perangkat, dan notarization tidak dinyatakan lolos oleh render widget.
 

@@ -92,8 +92,8 @@ ok 15 - calendar month end clamps January in leap and common years
   duration_ms: 17.663208
   type: 'test'
   ...
-# Subtest: A01 webhook rejects missing invalid or stale timestamp 
-ok 16 - A01 webhook rejects missing invalid or stale timestamp 
+# Subtest: A01 webhook rejects missing invalid or stale timestamp
+ok 16 - A01 webhook rejects missing invalid or stale timestamp
   ---
   duration_ms: 17.337542
   type: 'test'
