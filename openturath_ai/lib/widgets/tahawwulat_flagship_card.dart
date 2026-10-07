@@ -34,6 +34,7 @@ class TahawwulatFlagshipCard extends StatelessWidget {
     return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
       TahawwulatHero(
           onOpen: choose,
+          onOpenLibrary: onOpenLibrary,
           onIntroduction: onOpenIntroduction ??
               () => TahawwulatIntroductionSheet.show(context,
                   agent: agent,
@@ -42,15 +43,6 @@ class TahawwulatFlagshipCard extends StatelessWidget {
           facts: LibraryStat.from(metadata)
               .map((s) => '${s.value} ${s.unit}')
               .toList()),
-      if (onOpenLibrary != null)
-        Padding(
-            padding: const EdgeInsets.only(top: 16),
-            child: Align(
-                alignment: AlignmentDirectional.centerStart,
-                child: TextButton.icon(
-                    onPressed: onOpenLibrary,
-                    icon: const Icon(Icons.auto_stories_outlined),
-                    label: Text(Loc.tr('viewReferences'))))),
     ]);
   }
 }
