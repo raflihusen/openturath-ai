@@ -22,6 +22,8 @@ class OTInkCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Semantics(
         label: semanticLabel,
+        container: onTap == null,
+        explicitChildNodes: onTap == null,
         child: Material(
           color: Theme.of(context).brightness == Brightness.dark
               ? OTColors.surface(true)
