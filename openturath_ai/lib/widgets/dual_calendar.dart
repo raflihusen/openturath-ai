@@ -133,10 +133,11 @@ class _DualCalendarState extends State<DualCalendar>
                 HijriDateUtils.hijriParts(now));
             final g = part(reviewCopy('Masehi', 'ميلادي', 'Gregorian'),
                 HijriDateUtils.gregorianParts(now));
-            if (MediaQuery.textScalerOf(context).scale(16) >= 24)
+            if (MediaQuery.textScalerOf(context).scale(16) >= 24) {
               return Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [h, const Divider(height: 24), g]);
+            }
             return Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Expanded(child: h),
               SizedBox(
