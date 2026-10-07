@@ -26,11 +26,12 @@ class CorpusKindControl extends StatelessWidget {
     final border = OTColors.border(isDark);
 
     return Container(
-      height: 44,
       decoration: BoxDecoration(
         border: Border(bottom: BorderSide(color: border, width: 0.8)),
       ),
-      child: Row(
+      child: Wrap(
+        spacing: 24,
+        runSpacing: 8,
         children: [
           _CorpusKindTab(
             label: Loc.tr('corpusDisciplineTab'),
@@ -39,7 +40,6 @@ class CorpusKindControl extends StatelessWidget {
             textSecondary: textSecondary,
             onTap: () => onChanged(CorpusKind.discipline),
           ),
-          const SizedBox(width: 24),
           _CorpusKindTab(
             label: Loc.tr('corpusScholarTab'),
             selected: value == CorpusKind.scholar,
@@ -77,15 +77,15 @@ class _CorpusKindTab extends StatelessWidget {
           onTap();
         },
         borderRadius: BorderRadius.circular(OTRadius.xs),
-        child: IntrinsicWidth(
-            child: Column(
+        child: Padding(
+          padding: const EdgeInsets.only(top: 12),
+          child: IntrinsicWidth(child: Column(
+          mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.end,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Text(
               label,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
               style: OTTypography.bodyMedium(
                 color: selected ? textPrimary : textSecondary,
               ),
@@ -98,7 +98,7 @@ class _CorpusKindTab extends StatelessWidget {
               color: selected ? textPrimary : Colors.transparent,
             ),
           ],
-        )),
+        ))),
     );
   }
 }
