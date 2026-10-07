@@ -30,7 +30,7 @@ void main() {
         expect(controller.error, 'Silakan masuk kembali ke OpenTurath.');
         expect(controller.error, isNot(contains('NotebookLM')));
       } else {
-        expect(controller.error, contains('ruang asisten'));
+        expect(controller.error, contains('ruang AI'));
         expect(controller.error, contains('profil Chrome'));
         expect(controller.error, contains('akun Google yang sama'));
       }
