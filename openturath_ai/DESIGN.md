@@ -211,3 +211,12 @@ Aturan ini menggantikan komposisi audit sebelumnya: watermark Arab tipis opacity
 Tombol Buka AI Fikih Tahawwulat membuka sheet berisi lima AI dengan fungsi singkat dan jalur masing-masing; tidak langsung membuka AI utama. Fungsi ini menjadi pengecualian subtitle hanya di pemilih khusus tersebut. Profil menyatukan nama, email, paket, dan masa berlaku dalam panel kompak. Pilihan tampilan hanya ikon ber-tooltip; pilihan bahasa tetap ID–EN–AR.
 
 Loader kembali ke empat folio rounded yang sebelumnya dipilih pengguna. Katalog memakai garis punggung buku tipis dan metadata dekat judul/pengarang. Pembayaran menggunakan header tonal, durasi pill, harga faktual, dan receipt sukses hanya setelah invoice dikonfirmasi lunas. Permukaan gelap #292929 dan tonal #353535 menjaga siluet rounded terhadap canvas.
+
+
+## Cairo dan katalog editorial — 7 Oktober 2026
+
+Kontrak ini menggantikan rincian komposisi sebelumnya: Cairo asli 400/600/700 dibundel untuk UI Arab (lisensi OFL di aset); Outfit tetap untuk ID/EN dan Scheherazade untuk sumber kitab. Watermark ringkas Cairo 700 mengisi sekitar 85% lebar, opacity 8%, tanpa ruang tambahan dan dikeluarkan dari semantics. AI umum berjudul dan bermetadata terpusat, dengan pill ikon percakapan 72×48 dan lingkaran rujukan 48 terpisah. Hero eksklusif menyimpan tombol lima AI dan ikon rujukan di dalamnya. Logo rail 40 dalam area 56.
+
+Katalog memakai daftar editorial sebagai default, tinggi mengikuti isi: identitas 70% dan metadata 30% pada desktop; bertumpuk pada ponsel. Tidak ada punggung buku dekoratif. Data kosong tidak menjadi nol. Beranda memakai divider antara identitas dan akses/sesi, kalender field terstruktur setara (angka hari 32), statistik berikon tanpa kapsul bertumpuk, dan adab ber-ID serta ikon stabil.
+
+Loader empat folio memakai fase linear periodik 1800 ms dengan sudut theta − 0,45 sin(theta), repaint langsung dari controller; reduced motion dan lifecycle dipertahankan. Lima dokumen lokal dengan 46 section tersedia penuh ID/EN/AR melalui resolver reaktif, bukan teks Indonesia yang disalin ke dialog. Visual fixture dan hasil tes tidak membuktikan transaksi nyata atau autentikasi NotebookLM.

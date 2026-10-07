@@ -66,7 +66,18 @@
       400,
       600,
       700
-    ]
+    ],
+    "arabicUi": {
+      "family": "Cairo",
+      "assetFamily": "NativeArabicUI",
+      "weights": [
+        400,
+        600,
+        700
+      ],
+      "delivery": "bundled OFL; no runtime download"
+    },
+    "calendarDay": 32
   },
   "spacing": [
     2,
@@ -101,7 +112,7 @@
     "heroSurface": "#171717",
     "loaderLoopMs": 1800,
     "calendarPriority": "equal",
-    "fieldComposition": "separate-script-zones",
+    "fieldComposition": "background watermark without reserved space",
     "assistantSubtitles": false,
     "diagram": "imagegen-monochrome-3d-sculpture-with-textual-controls",
     "source": "lib/core/design/ot_expressive.dart",
@@ -113,9 +124,9 @@
     "flagshipPlacement": "AI page only; entry opens five-AI function picker",
     "scienceCards": {
       "surface": "#171717",
-      "arabicWatermarkOpacity": 0.09,
+      "arabicWatermarkOpacity": 0.08,
       "semantic": "decorative, excluded",
-      "composition": "thin background overlay, no reserved footer; compact 144 base height"
+      "composition": "Cairo 700 measured to 85% width behind content, no reserved footer"
     },
     "languageOrder": [
       "id",
@@ -124,11 +135,14 @@
     ],
     "profile": "compact identity and factual expiry; icon-only appearance, labelled ID EN AR languages",
     "pricing": "recorded regularAmount struck through",
-    "loader": "four rounded folios; periodic velocity; reduced motion",
-    "catalog": "shared BookIdentityCard with subtle book spine; metadata beside identity; accessible list at large text",
-    "calendar": "single rounded equal-priority panel with adjacent method control",
+    "loader": "four rounded folios, 1800ms linear phase with theta - .45 sin(theta); painter listens directly",
+    "catalog": "default flexible editorial list; 70/30 identity-metadata on desktop, stacked on phone; optional grid",
+    "calendar": "structured day/month/year from one snapshot; equal columns and divider",
     "webview": "retain native view behind recoverable error overlay; no decorative minimum delay",
     "dashboard": "greeting card contains last-session resume",
-    "paymentSuccess": "receipt with confirmed invoice and amount; no unverified access activation claim"
+    "paymentSuccess": "receipt with confirmed invoice and amount; no unverified access activation claim",
+    "generalAiActions": "centered 72x48 icon pill plus separate 48x48 reference circle",
+    "legal": "stable document and section IDs, full offline ID/EN/AR, live locale resolver",
+    "sidebarLogo": "40 inside 56 square"
   }
 }
