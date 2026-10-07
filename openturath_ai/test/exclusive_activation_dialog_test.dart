@@ -1,11 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:openturath_ai/core/app_config.dart';
+import 'package:openturath_ai/core/localization.dart';
 import 'package:openturath_ai/widgets/exclusive_activation_dialog.dart';
 
 void main() {
-  testWidgets('ExclusiveActivationDialog renders premium celebration card and benefits', (tester) async {
+  testWidgets(
+      'activation shows factual expiry without unsupported access claims',
+      (tester) async {
+    AppConfig.localeNotifier.value = 'id';
     await tester.pumpWidget(
       MaterialApp(
+        locale: const Locale('id'),
+        supportedLocales: Loc.supportedLocales,
+        localizationsDelegates: GlobalMaterialLocalizations.delegates,
         home: Scaffold(
           body: Builder(
             builder: (context) => ElevatedButton(
@@ -14,7 +23,7 @@ void main() {
                   context,
                   serviceTitle: "Kajian Fikih Syafi'i: Al-Muhaqqiq",
                   durationDays: 7,
-                  expiryDate: DateTime(2026, 10, 6),
+                  expiryDate: DateTime(2040, 10, 6),
                   agentId: 'fiqh_syafii',
                 );
               },
@@ -28,19 +37,13 @@ void main() {
     await tester.tap(find.text('Show Dialog'));
     await tester.pumpAndSettle();
 
-    // Verifikasi chip eksklusif & judul
-    expect(find.text('AKSES PERDANA TERVERIFIKASI'), findsOneWidget);
-    expect(find.text('Akses Eksklusif Terbuka'), findsOneWidget);
-    expect(find.text("Kajian Fikih Syafi'i: Al-Muhaqqiq"), findsOneWidget);
-    expect(find.text('Aktif • 7 Hari'), findsOneWidget);
-
-    // Verifikasi poin-poin hak istimewa
-    expect(find.text('Tanya-Jawab Ilmiah Tanpa Batas'), findsOneWidget);
-    expect(find.text('Ibarah & Rujukan Kitab Asli'), findsOneWidget);
-    expect(find.text('Simpan Catatan & Faedah'), findsOneWidget);
-
-    // Verifikasi tombol aksi
-    expect(find.text('Mulai Telaah Sekarang'), findsOneWidget);
+    expect(find.text('Akses telah aktif'), findsOneWidget);
+    expect(find.text("AI Kajian Fikih Syafi'i: Al-Muhaqqiq"), findsOneWidget);
+    expect(find.textContaining('Berlaku hingga'), findsOneWidget);
+    expect(find.textContaining('2040'), findsOneWidget);
+    expect(find.textContaining('TERVERIFIKASI'), findsNothing);
+    expect(find.textContaining('Tanpa Batas'), findsNothing);
+    expect(find.text('Buka AI'), findsOneWidget);
     expect(find.text('Tutup'), findsOneWidget);
 
     // Klik tombol tutup
@@ -48,6 +51,6 @@ void main() {
     await tester.tap(find.text('Tutup'));
     await tester.pumpAndSettle();
 
-    expect(find.text('AKSES PERDANA TERVERIFIKASI'), findsNothing);
+    expect(find.text('Akses telah aktif'), findsNothing);
   });
 }
