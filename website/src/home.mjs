@@ -47,7 +47,7 @@ export function immersiveHome(l,data,dialog) {
       <h1 id="hero-title">${tr(l,'hero')}</h1>
       <h2 class="hero-tagline">${tr(l,'heroTagline')}</h2>
       <p class="hero-description">${tr(l,'heroSub')}</p>
-      <div class="button-row hero-actions"><a class="button" href="${pathFor(l,'download')}">${tr(l,'download')}${arrow}</a><a class="button button-secondary" href="${pathFor(l,'library')}">${tr(l,'heroCta')}${arrow}</a></div>
+      <div class="button-row hero-actions"><a class="button" href="${pathFor(l,'research')}">${tr(l,'heroResearchCta')}${arrow}</a><a class="button button-secondary" href="${pathFor(l,'library')}">${tr(l,'heroCta')}${arrow}</a></div>
     </div>
     <div class="hero-art" data-hero-art>
       <span class="hero-calligraphy" data-text="تراث" lang="ar" dir="rtl" aria-hidden="true">تراث</span>

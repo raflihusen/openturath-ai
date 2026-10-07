@@ -109,69 +109,81 @@ export const articles = {
   "about": {
     "key": "about",
     "intro": [
-      "Infrastruktur riset khazanah keilmuan Islam.",
+      "Infrastruktur riset khazanah keilmuan Islam berbasis kecerdasan buatan.",
       "AI-native research infrastructure for classical Islamic scholarship.",
       "بنية تحتية بحثية ذكية لخدمة التراث الإسلامي الأصيل."
     ],
     "blocks": [
       {
         "heading": [
-          "Infrastruktur Riset Khazanah Keilmuan Islam",
-          "AI-Native Research Infrastructure for Classical Turath",
-          "بنية تحتية بحثية لخدمة التراث الإسلامي"
+          "Mengapa OpenTurath Hadir: Menjaga Keaslian Khazanah",
+          "Why OpenTurath Exists: The Scholarly Imperative",
+          "لماذا وُجد OpenTurath: صيانة أصول التراث العلمي"
         ],
         "body": [
-          "OpenTurath dibangun sebagai infrastruktur riset generasi baru yang menghubungkan para pengkaji dan akademisi dengan khazanah literatur keilmuan Islam. Prinsip utama kami adalah Source First: AI tidak bertujuan menggantikan teks primer atau peran guru, melainkan mempercepat penemuan ibarah asli agar peneliti dapat menelaah dan memverifikasinya secara langsung.",
-          "OpenTurath is engineered as next-generation research infrastructure connecting scholars and researchers with classical Islamic literature. Our core philosophy is Source First: AI does not replace primary texts or teachers, but dramatically accelerates locating the verified Arabic passage so scholars can inspect and verify it directly.",
-          "صُمم OpenTurath كبنية تحتية بحثية رائدة تربط الباحثين وطلبة العلم بأمهات مصادر التراث الإسلامي. وننطلق من مبدأ راسخ: أولوية المصدر (Source First)؛ فالذكاء الاصطناعي لا يحل محل المصادر الأصلية أو مجالس الشيوخ، بل يختصر وقت الوصول إلى النص المحقق لمراجعته بدقة."
+          "Khazanah keilmuan Islam membentang lebih dari satu milenium, memuat ribuan karya multi-jilid dalam fikih, ushul, hadis, tafsir, dan sejarah. Meneliti naskah-naskah ini menuntut ketepatan redaksi ibarah, pemahaman sanad dan penisbahan pendapat, serta verifikasi naskah primer. Mesin pencari konvensional dan asisten generatif umum tidak dirancang untuk memenuhi standar ketelitian filologis dan keilmuan ini.",
+          "Classical Islamic scholarship encompasses over a millennium of rigorous intellectual heritage across multi-volume treatises in law, legal theory, hadith, exegesis, and history. Navigating these codices demands precise textual collation, accurate attribution of scholarly determinations, and direct verification against primary editions. Conventional search engines and generic generative assistants were never engineered to satisfy these exacting scholarly standards.",
+          "يمتد التراث الإسلامي لأكثر من ألف عام من التدوين العلمي الرصين، جامعًا آلاف المجلدات في الفقه وأصوله والحديث والتفسير والتاريخ. وتتطلب دراسة هذه المصادر دقةً بالغة في تحرير عبارات النصوص، ومعرفة مراتب الأقوال وعزوها، ومقابلة النقول بطبعاتها المعتمدة. ولم تُبنَ محركات البحث التقليدية أو نماذج الذكاء الاصطناعي العامة لتلبية هذه المعايير التحقيقية الصارمة."
         ]
       },
       {
         "heading": [
-          "Akurasi Tingkat Riset vs. Plausibilitas Generatif",
-          "Research-Grade Verifiability vs. Generative Plausibility",
-          "التحقيق العلمي الموثق مقابل التوليد الاحتمالي"
+          "Mengapa AI Umum Gagal dalam Penelitian Turats",
+          "Why General-Purpose AI Fails in Classical Scholarship",
+          "لماذا تقصر النماذج العامة عن خدمة البحث التراثي"
         ],
         "body": [
-          "Berbeda dari AI umum yang kerap menghasilkan kutipan fiktif atau menyematkan pendapat ke ulama yang salah, OpenTurath berfokus pada ketepatan atribusi, keotentikan redaksi ibarah, dan keterlacakan jilid serta halaman pada kitab cetak. Kami membedakan secara tegas antara jawaban yang terdengar meyakinkan secara generatif dengan kebenaran yang dapat diverifikasi secara ilmiah.",
-          "Unlike general-purpose conversational LLMs that frequently invent non-existent citations or misattribute legal positions, OpenTurath focuses on attribution accuracy, exact passage integrity, and verifiable volume and page references. We establish a clear boundary between generative plausibility and scholarly verifiability.",
-          "على خلاف نماذج المحادثة العامة التي تختلق مراجع وهمية أو تخلط بين أقوال العلماء، يركز OpenTurath على دقة العزو، وصحة متن العبارة، وقابلية مطابقة الجزء والصفحة في النسخ المطبوعة. نفرق بصرامة بين الإجابة التي تبدو مقنعة ظاهريًا والتوثيق العلمي الخاضع للمراجعة."
+          "Model bahasa besar (LLM) komersial mampu merangkai jawaban bahasa Arab yang fasih dan tampak meyakinkan di permukaan. Namun, dalam domain turats, model-model tersebut secara sistematis mengalami kegagalan fatal: atribusi keliru (menisbahkan fatwa ke ulama yang salah), phantom citation (menciptakan judul kitab, nomor jilid, dan halaman fiktif), serta distorsi konteks akibat pemotongan teks tanpa mempertimbangkan relasi matn, syarah, dan hasyiyah. Dalam dunia akademik dan telaah agama, kutipan yang tidak dapat diverifikasi adalah cacat ilmiah yang fatal.",
+          "Commercial large language models (LLMs) can produce fluent, highly plausible prose. In classical scholarly domains, however, they systematically exhibit catastrophic failure modes: attribution drift (assigning legal opinions to the wrong jurists), phantom citations (fabricating fictitious book titles, volumes, and page numbers), and context stripping caused by naive chunking that separates a concise core text (matn) from indispensable qualifications in commentaries (sharh) and marginal glosses (hashiyah). In serious scholarship, an unverifiable citation renders an entire inquiry invalid.",
+          "تستطيع النماذج اللغوية الكبيرة صياغة نصوص عربية بليغة تبدو مقنعة في ظاهرها. غير أنها في ميدان التراث تقع في عيوب بنيوية قاتلة: خلط العزو (نسبة الفتاوى والأقوال إلى غير أربابها)، واختلاق الإحالات الوهمية (توليد عناوين وأجزاء وصفحات لا وجود لها في الواقع)، واقتطاع النصوص آليًا بما يفصل عبارة المتن الموجزة عن شروطها وقيودها في الشروح والحواشي. وفي ميدان البحث العلمي الشرعي، يُعد النقل غير الموثق خطأً يسقط حجية الاستدلال."
         ]
       },
       {
         "heading": [
-          "Alur Kerja R&D & Peta Jalan Komputasi",
-          "R&D Workflows & Computational Scaling",
-          "مسار البحث والتطوير والتوسع الحوسبي"
+          "Apa yang Kami Bangun: Infrastruktur Berprinsip 'Source First'",
+          "What We Are Building: Source-First Research Infrastructure",
+          "ما الذي نبنيه: بنية تحتية تعتمد أولوية المصدر (Source First)"
         ],
         "body": [
-          "OpenTurath adalah inisiatif riset independen tahap awal. Dalam alur R&D dan evaluasi, kami menguji model penalaran mutakhir seperti Claude dari Anthropic untuk pemahaman naskah berkonteks panjang, ekstraksi metadata berstruktur, dan audit halusinasi. Peta jalan teknis berikutnya adalah memperluas kapasitas API guna mengotomatisasi pemrosesan korpus ribuan jilid dan menjalankan evaluasi berskala besar.",
-          "OpenTurath is an early-stage independent research initiative. In our R&D and benchmarking workflows, we evaluate advanced reasoning models such as Anthropic's Claude for long-context classical Arabic document understanding, structured metadata extraction, and citation auditing. Our technical roadmap focuses on expanding API capacity to automate full-codex processing across thousands of volumes.",
-          "يُعد OpenTurath مبادرة بحثية مستقلة في مراحلها الأولى. وفي مسار البحث والتطوير والتقييم، نختبر نماذج استدلالية متقدمة مثل Claude من Anthropic لفهم النصوص العربية المطولة، واستخراج البيانات الوصفية، والحد من الهلوسة المرجعية. وتتمثل خطتنا القادمة في توسيع سعة واجهات البرمجة (API) لمعالجة آلاف المجلدات آليًا."
+          "OpenTurath dibangun di atas paradigma 'Source First' (Sumber Diutamakan). Kami tidak memposisikan AI sebagai mufti atau pemberi fatwa otonom yang meminta peneliti percaya buta pada jawabannya. Sebaliknya, OpenTurath adalah infrastruktur riset komputasional yang mengindeks 5.370 karya, 11.901+ jilid, 4,18 juta halaman, dan 1,148 miliar kata lintas 20 disiplin keilmuan. Tujuannya satu: mempercepat penemuan ibarah asli, membimbing peneliti ke jilid dan halaman kitab cetak fisik, dan memastikan setiap kutipan dapat diuji ke naskah primer.",
+          "OpenTurath is built on the foundation of 'Source First'. Rather than positioning AI as an autonomous authority that asks researchers to trust synthetic outputs, OpenTurath operates as computational research infrastructure indexing 5,370 works, 11,901+ volumes, 4.18 million pages, and 1.148 billion words across 20 distinct disciplines. Its singular purpose: dramatically accelerating the retrieval of primary Arabic passages, pinpointing physical print coordinates (edition, volume, and page), and ensuring every citation is directly verifiable.",
+          "أُسس OpenTurath على مبدأ 'أولوية المصدر' (Source First). فنحن لا نطرح الذكاء الاصطناعي كمرجع مستقل يطلب من الباحثين الثقة العمياء في مخرجاته التوليدية. بل هو بنية تحتية حوسبية تفهرس ٥٫٣٧٠ مصنفًا، وأكثر من ١١٫٩٠١ مجلد، و٤٫١٨ مليون صفحة، و١٫١٤٨ مليار كلمة عبر عشرين فنًّا وتخصصًا علميًا. والغاية واحدة: تيسير العثور على موضع العبارة الأصلية، وتحديد الجزء والصفحة في النسخ المطبوعة، وتمكين الباحث من الرجوع المباشر إلى النص الأصيل."
         ]
       },
       {
         "heading": [
-          "Katalog dan ketersediaan",
-          "Catalogue and availability",
-          "الفهرس والإتاحة"
+          "Tahap Pengembangan & Peran Claude dalam R&D",
+          "Current Development Stage & Claude R&D Workflows",
+          "المرحلة الحالية ودور Claude في البحث والتطوير"
         ],
         "body": [
-          "Dua puluh disiplin keilmuan, dari fikih mazhab hingga tahqiq naskah. Temukan khadim yang memahami bidang telaah Anda. Akumulasi metadata 20 modul aplikasi · 21 profil khadim, termasuk 1 dalam persiapan.",
-          "Twenty scholarly disciplines, from the schools of fiqh to manuscript study. Find an assistant dedicated to your field. Combined metadata from 20 app modules · 21 assistant profiles, including 1 in preparation.",
-          "عشرون تخصصًا علميًّا، من فقه المذاهب إلى تحقيق النصوص. اختر المساعد المختص بمجال بحثك. مجموع بيانات ٢٠ وحدة في التطبيق · ٢١ ملف مساعد، منها ملف واحد قيد الإعداد."
+          "OpenTurath adalah inisiatif riset independen tahap awal. Dalam alur R&D dan benchmarking kami, model penalaran mutakhir seperti Claude dari Anthropic dimanfaatkan untuk mengeksplorasi pemahaman dokumen berkonteks panjang (long-context understanding), ekstraksi ontologi keilmuan Islam berstruktur, dan audit otomatis terhadap halusinasi kutipan. Peta jalan komputasi berikutnya berfokus pada perluasan kapasitas API guna mengotomatisasi pemrosesan korpus berskala ribuan jilid, integrasi evaluasi muqabalah multi-versi naskah, dan penguatan jalur inferensi yang terkurasi.",
+          "OpenTurath is an early-stage independent research initiative. In our active R&D and benchmarking workflows, we leverage advanced reasoning systems such as Anthropic's Claude to explore long-context classical Arabic comprehension, structured Islamic ontology modeling, and automated citation hallucination auditing. Our computational roadmap focuses on scaling API throughput to automate full-codex ingestion across multi-volume corpora, expanding multi-edition textual collation (muqabalah), and hardening curated verification pipelines.",
+          "يُعد OpenTurath مشروعًا بحثيًا مستقلاً في مراحله الأولى. وفي مسارات البحث والتطوير ومقاييس الأداء لدينا، نستفيد من نماذج الاستدلال المتقدمة مثل Claude من Anthropic في استكشاف الفهم العميق للنصوص التراثية المطولة (Long-Context)، وبناء الأنطولوجيات المعرفية المتخصصة، والتدقيق الآلي لهلوسة المراجع. وتتركز خطتنا الحوسبية القادمة على توسيع سعة واجهات البرمجة (API) لمعالجة أمهات الكتب عبر آلاف المجلدات، وتطوير المقابلة النصية بين الطبعات، وتأمين تدفقات التحقق العلمي."
         ]
       },
       {
         "heading": [
-          "Pengelola dan bantuan",
-          "Operator and support",
-          "الجهة المشغلة والدعم"
+          "Komunitas Penguji & Evaluasi Lapangan",
+          "Scholarly Validation & Community Testing",
+          "مجتمع الاختبار والتقييم الميداني"
         ],
         "body": [
-          "Pengelola OpenTurath, Indonesia. Kontak resmi openturath@gmail.com. Jam layanan Senin sampai Jumat, 09.00 sampai 17.00 WIB. Tanggapan awal diupayakan dalam 2 hari kerja.",
-          "Pengelola OpenTurath, Indonesia. Official contact: openturath@gmail.com. Service hours are Monday to Friday, 09:00 to 17:00 WIB (UTC+7). Initial support response is targeted within 2 business days.",
-          "الجهة المشغلة: Pengelola OpenTurath، إندونيسيا. التواصل: openturath@gmail.com. ساعات الخدمة من الاثنين إلى الجمعة، من ٠٩:٠٠ إلى ١٧:٠٠ بتوقيت جاكرتا (UTC+7). الرد الأولي خلال يومي عمل."
+          "Metodologi dan hasil sistem kami diuji bersama para peneliti naskah, dosen studi Islam, santri, dan dewan asatidz di lingkungan pesantren dan perguruan tinggi Islam di Indonesia. Umpan balik mereka menjadi kompas utama kami dalam menetapkan standar ketat muqabalah (pencocokan naskah), perbaikan metadata edisi fisik, dan pencegahan distorsi pemahaman mazhab.",
+          "Our methodologies and system outputs are continually tested in collaboration with manuscript researchers, Islamic studies academics, and traditional madrasah/pesantren scholars in Indonesia. Their direct feedback guides our strict muqabalah (textual collation) criteria, physical edition metadata corrections, and safeguards against legal and terminological distortion.",
+          "تخضع منهجياتنا ومخرجاتنا للاختبار المستمر بالتعاون مع باحثي المخطوطات، وأساتذة الدراسات الإسلامية، وطلبة العلم وشيوخ المحاضن العلمية والمعاهد التراثية في إندونيسيا. وتُعد ملاحظاتهم الدقيقة الموجه الأساسي لضبط معايير المقابلة النصية (المقابلة)، وتحرير بيانات الطبعات الورقية، والتحرز من أي تشويه في نقل المسائل والمصطلحات."
+        ]
+      },
+      {
+        "heading": [
+          "Pengelola, Tata Kelola & Bantuan",
+          "Operator, Governance and Support",
+          "الجهة المشغلة والحوكمة والدعم"
+        ],
+        "body": [
+          "Pengelola OpenTurath, Indonesia. Dikelola dengan komitmen menjaga integritas ilmiah, adab transmisi keilmuan, dan keterbukaan metodologis. Kontak resmi: openturath@gmail.com. Jam layanan Senin sampai Jumat, 09.00 sampai 17.00 WIB (UTC+7). Tanggapan awal diupayakan dalam 2 hari kerja.",
+          "Pengelola OpenTurath, Indonesia. Governed by a steadfast commitment to scholarly integrity, the adab of knowledge transmission, and methodological transparency. Official contact: openturath@gmail.com. Service hours: Monday to Friday, 09:00 to 17:00 WIB (UTC+7). Initial response is targeted within 2 business days.",
+          "الجهة المشغلة: Pengelola OpenTurath، إندونيسيا. تُدار المنصة بالتزام راسخ بصيانة الأمانة العلمية، وآداب حمل العلم، والشفافية المنهجية. للتواصل الرسمي: openturath@gmail.com. ساعات الخدمة: من الاثنين إلى الجمعة، ٠٩:٠٠ إلى ١٧:٠٠ بتوقيت جاكرتا (UTC+7). ويُستهدف الرد الأولي خلال يومي عمل."
         ]
       }
     ]
