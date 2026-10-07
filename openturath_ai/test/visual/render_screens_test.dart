@@ -224,12 +224,19 @@ void main() {
         size: const Size(1100, 600));
     await _shot(tester, 'dashboard_search_clean', const DashboardScreen(),
         size: const Size(1280, 1000), query: 'fikih');
-    await _shot(tester, 'adab_cards_id',
-        const Scaffold(body: LegalDocumentSheet(documentId: LegalDocumentId.guideline)),
+    await _shot(
+        tester,
+        'adab_cards_id',
+        const Scaffold(
+            body: LegalDocumentSheet(documentId: LegalDocumentId.guideline)),
         size: const Size(850, 1000));
-    await _shot(tester, 'adab_cards_ar_phone',
-        const Scaffold(body: LegalDocumentSheet(documentId: LegalDocumentId.guideline)),
-        size: const Size(390, 1000), locale: 'ar');
+    await _shot(
+        tester,
+        'adab_cards_ar_phone',
+        const Scaffold(
+            body: LegalDocumentSheet(documentId: LegalDocumentId.guideline)),
+        size: const Size(390, 1000),
+        locale: 'ar');
     await _shot(tester, 'login_dark', const LoginScreen(), dark: true);
     SharedPreferences.setMockInitialValues({});
     AuthService.previewUser = UserModel(
@@ -422,13 +429,15 @@ void main() {
           AiLibraryOverviewPage(metadata: syafii, onSearch: () {}),
           size: const Size(1280, 860));
     }
-    final tahawwulatBooks = await tester.runAsync(
-        () => catalog.loadBooksForModule('fiqh_tahawwulat'));
+    final tahawwulatBooks = await tester
+        .runAsync(() => catalog.loadBooksForModule('fiqh_tahawwulat'));
     if (tahawwulatBooks != null && tahawwulatBooks.isNotEmpty) {
       for (final width in [390.0, 850.0, 1280.0]) {
-        await _shot(tester, 'reading_tahawwulat_${width.toInt()}',
-            OpenTurathBookLibraryPage(books: tahawwulatBooks,
-                collectionName: 'AI Fikih Tahawwulat'),
+        await _shot(
+            tester,
+            'reading_tahawwulat_${width.toInt()}',
+            OpenTurathBookLibraryPage(
+                books: tahawwulatBooks, collectionName: 'AI Fikih Tahawwulat'),
             size: Size(width, 1000));
       }
     }
