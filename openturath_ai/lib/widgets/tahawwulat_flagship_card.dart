@@ -68,8 +68,8 @@ class TahawwulatFlagshipCard extends StatelessWidget {
                 child: FilledButton.tonal(
                   onPressed: () => onOpenSubAgent(sub),
                   style: FilledButton.styleFrom(
-                        backgroundColor: OTColors.surfaceSubtle(dark),
-                        foregroundColor: ink,
+                      backgroundColor: OTColors.surfaceSubtle(dark),
+                      foregroundColor: ink,
                       padding: const EdgeInsets.all(24),
                       shape: RoundedRectangleBorder(
                           borderRadius: OTRadius.cardBorder)),
