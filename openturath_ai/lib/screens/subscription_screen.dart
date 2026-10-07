@@ -1,3 +1,4 @@
+import '../widgets/app_loader.dart';
 import '../widgets/adaptive_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_functions/cloud_functions.dart';
@@ -620,11 +621,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                       const Padding(
                         padding: EdgeInsets.all(12),
                         child: Center(
-                          child: SizedBox(
-                            width: 22,
-                            height: 22,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          ),
+                          child: AppLoader(),
                         ),
                       ),
                     Center(
