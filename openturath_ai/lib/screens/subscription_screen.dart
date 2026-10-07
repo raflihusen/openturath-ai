@@ -8,6 +8,7 @@ import '../core/scholarly_fonts.dart';
 import '../core/app_copy.dart';
 import '../widgets/payment_success_dialog.dart';
 import '../core/design/ot_colors.dart';
+import '../core/design/ot_expressive.dart';
 import '../core/design/ot_typography.dart';
 import '../core/localization.dart';
 import '../core/product_pricing.dart';
@@ -412,7 +413,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
                   color: agentId == flagship.id
-                      ? ink
+                      ? OTExpressive.hero
                       : OTColors.surfaceSubtle(dark),
                   borderRadius: OTRadius.cardBorder),
               child: Column(
@@ -421,13 +422,13 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                     Text(label,
                         style: OTTypography.caption(
                             color: agentId == flagship.id
-                                ? OTColors.canvas(dark)
+                                ? OTExpressive.white
                                 : muted)),
                     const SizedBox(height: 8),
                     Text(title,
                         style: OTTypography.screenTitle(
                             color: agentId == flagship.id
-                                ? OTColors.canvas(dark)
+                                ? OTExpressive.white
                                 : ink)),
                   ])),
           const SizedBox(height: 12),
