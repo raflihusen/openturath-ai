@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import '../core/localization.dart';
 import '../core/scholarly_fonts.dart';
 import 'tahawwulat_diagram.dart';
+import 'tahawwulat_artwork.dart';
 
 String reviewCopy(String id, String ar, String en) => Loc.isArabic
     ? ar
@@ -78,13 +79,9 @@ class TahawwulatHero extends StatelessWidget {
                         'تعرّف على فقه التحولات', 'About Fiqh Tahawwulat'))),
               ]),
             ]);
-        return Container(
+        return TahawwulatHeroSurface(
             padding: EdgeInsets.all(wide ? 32 : 24),
-            decoration: BoxDecoration(
-                color: OTExpressive.hero,
-                borderRadius: BorderRadius.circular(wide
-                    ? OTExpressive.heroRadius
-                    : OTExpressive.compactHeroRadius)),
+            radius: wide ? OTExpressive.heroRadius : OTExpressive.compactHeroRadius,
             child: wide
                 ? Row(children: [
                     Expanded(flex: 3, child: text),
@@ -99,7 +96,7 @@ class TahawwulatHero extends StatelessWidget {
                         const SizedBox(height: 20),
                         const Center(
                             child: SizedBox(
-                                width: 160,
+                                width: 240,
                                 child: TahawwulatDiagram(inverse: true)))
                       ]));
       });
