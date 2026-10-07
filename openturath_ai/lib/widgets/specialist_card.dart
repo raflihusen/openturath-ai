@@ -7,6 +7,7 @@ import 'apple_interactive_wrapper.dart';
 
 import 'package:openturath_ai/core/design/ot_typography.dart';
 import 'package:openturath_ai/core/design/ot_radius.dart';
+
 /// Each entry describes the assistant's scholarly remit and source material.
 class SpecialistCard extends StatelessWidget {
   const SpecialistCard({
@@ -34,7 +35,9 @@ class SpecialistCard extends StatelessWidget {
   final VoidCallback? onOpen;
   final VoidCallback? onOpenLibrary;
 
-  IconData get _disciplineIcon => icon ?? switch (fieldId) {
+  IconData get _disciplineIcon =>
+      icon ??
+      switch (fieldId) {
         'fiqh' => Icons.balance_outlined,
         'hadith' => Icons.format_quote_outlined,
         'tafsir' => Icons.auto_stories_outlined,
@@ -102,7 +105,8 @@ class SpecialistCard extends StatelessWidget {
                         color: ink,
                       ),
                     ),
-                    if (reference != null && reference.isNotEmpty &&
+                    if (reference != null &&
+                        reference.isNotEmpty &&
                         onOpenLibrary != null) ...[
                       const SizedBox(height: 7),
                       Text(
@@ -128,14 +132,14 @@ class SpecialistCard extends StatelessWidget {
                 IconButton(
                   onPressed: onOpenLibrary,
                   tooltip: Loc.tr('referenceBooks'),
-                  icon: Icon(Icons.auto_stories_outlined,
-                      color: muted, size: 20),
+                  icon:
+                      Icon(Icons.auto_stories_outlined, color: muted, size: 20),
                 )
               else
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 12),
-                  child: Icon(Icons.chevron_right_rounded,
-                      color: muted, size: 20),
+                  child:
+                      Icon(Icons.chevron_right_rounded, color: muted, size: 20),
                 ),
             ],
           ),
