@@ -1,3 +1,4 @@
+import 'tahawwulat_artwork.dart';
 import '../core/localization.dart';
 import '../core/design/ot_expressive.dart';
 import '../widgets/adaptive_sheet.dart';
@@ -239,13 +240,9 @@ class _TahawwulatIntroductionSheetState
       final cover = Padding(
           padding:
               EdgeInsets.fromLTRB(roomy ? 32 : 16, 64, roomy ? 32 : 16, 24),
-          child: Container(
+          child: TahawwulatHeroSurface(
             padding: EdgeInsets.all(roomy ? 32 : 24),
-            decoration: BoxDecoration(
-                color: OTExpressive.hero,
-                borderRadius: BorderRadius.circular(roomy
-                    ? OTExpressive.heroRadius
-                    : OTExpressive.compactHeroRadius)),
+            radius: roomy ? OTExpressive.heroRadius : OTExpressive.compactHeroRadius,
             child: LayoutBuilder(builder: (context, box) {
               final heading = Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
