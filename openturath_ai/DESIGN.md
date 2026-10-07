@@ -222,3 +222,9 @@ Katalog memakai daftar editorial sebagai default, tinggi mengikuti isi: identita
 Loader empat folio memakai fase linear periodik 1800 ms dengan sudut theta − 0,45 sin(theta), repaint langsung dari controller; reduced motion dan lifecycle dipertahankan. Lima dokumen lokal dengan 46 section tersedia penuh ID/EN/AR melalui resolver reaktif, bukan teks Indonesia yang disalin ke dialog. Visual fixture dan hasil tes tidak membuktikan transaksi nyata atau autentikasi NotebookLM.
 
 Statistik dashboard memakai panel selebar konten, terpisah dari adab, agar tiga metrik tidak berubah menjadi kolom sempit dan tinggi pada desktop menengah. Kontrol ikon menyertakan nama pada semantics ikon native; tooltip tetap tersedia tanpa label ganda. Nama navigasi AI konsisten pada ID/EN/AR.
+
+## Kartu baca — 8 Oktober 2026
+
+Arah Cairo, monokrom, watermark, artwork, dan motion yang telah diterima dipertahankan. Hasil pencarian AI memakai baris teks tanpa ikon dekoratif maupun tombol ikon tambahan; seluruh baris membuka AI dan rujukan tetap tersedia pada halaman AI. Hero memakai nama AI Fikih Tahawwulat. Setiap adab mempunyai kartu tonal tersendiri, ikon di sisi judul mengikuti arah UI, dan isi lengkap dipertahankan.
+
+Katalog menggantikan pembagian 70/30 yang menyisakan ruang kosong dengan satu identitas bibliografis: judul dan pengarang mengikuti arah sumber, lalu divider halus dan metadata pill berkelompok pada sisi yang sama. Mode baca utama memakai dua kartu berdampingan bila lebar konten minimal 800 dan skala teks di bawah 150%; selain itu satu kartu per baris, tinggi mengikuti isi. Mode grid alternatif tetap tersedia. JSON, metadata, pencarian, filter, pengurutan, dan tujuan detail tetap dipertahankan.
