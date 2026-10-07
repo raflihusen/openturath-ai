@@ -32,7 +32,7 @@ class _TahawwulatDiagramState extends State<TahawwulatDiagram> {
   ];
   static const explanationsEnglish = [
     'Belief in Allah, the angels, scriptures, messengers, the Last Day, and divine decree.',
-    'Worship and religious practice in a Muslim's life.',
+    "Worship and religious practice in a Muslim's life.",
     'Worshipping Allah with awareness and clarity of heart.',
     'Reading changing times through the Fiqh Tahawwulat framework of Al-Habib Abu Bakar Al-Adni bin Ali Al-Masyhur.',
   ];
@@ -45,15 +45,22 @@ class _TahawwulatDiagramState extends State<TahawwulatDiagram> {
       if (!widget.interactive)
         Semantics(image: true, label: labels.join(', '), child: artwork)
       else
-        AspectRatio(aspectRatio: 1, child: Stack(children: [
-          Positioned.fill(child: artwork),
-          for (var i = 0; i < 4; i++)
-            Positioned(left: i == 0 || i == 3 ? 0 : null,
-              right: i == 1 || i == 2 ? 0 : null,
-              top: i < 2 ? 0 : null, bottom: i >= 2 ? 0 : null,
-              width: null, child: FractionallySizedBox(widthFactor: .5,
-                child: SizedBox.shrink())),
-        ])),
+        AspectRatio(aspectRatio: 1, child: LayoutBuilder(builder: (context, box) {
+          final half = box.maxWidth / 2;
+          return Stack(children: [
+            Positioned.fill(child: artwork),
+            for (var i = 0; i < 4; i++)
+              Positioned(left: i == 0 || i == 3 ? 0 : half,
+                top: i < 2 ? 0 : half, width: half, height: half,
+                child: Semantics(button: true, selected: selected == i, label: label(i),
+                  child: TextButton(
+                    style: TextButton.styleFrom(
+                      overlayColor: OTExpressive.white,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20))),
+                    onPressed: () => setState(() => selected = i),
+                    child: const SizedBox.expand()))),
+          ]);
+        })),
       if (widget.interactive) ...[
         const SizedBox(height: 16),
         Wrap(alignment: WrapAlignment.center, spacing: 8, runSpacing: 8,
