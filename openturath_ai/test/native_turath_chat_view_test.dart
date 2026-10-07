@@ -68,8 +68,7 @@ void main() {
       );
 
       expect(find.text(agentSyafii.title), findsOneWidget);
-      expect(find.textContaining('Ruang telaah naskah'),
-          findsOneWidget);
+      expect(find.textContaining('Ruang telaah naskah'), findsOneWidget);
       expect(find.byType(TextField), findsOneWidget);
     });
 
@@ -135,9 +134,7 @@ void main() {
         ),
       );
 
-      expect(
-          find.text(Loc.tr('preparingAnswer')),
-          findsOneWidget);
+      expect(find.text(Loc.tr('preparingAnswer')), findsOneWidget);
       // Ensure NO tacky spinners or circular progress indicators are rendered
       expect(find.byType(CircularProgressIndicator), findsNothing);
     });
@@ -160,8 +157,8 @@ void main() {
         ),
       );
 
-      await tester.enterText(
-          find.byType(TextField), 'Bagaimana kaidah fiqih al-yaqinu la yuzalu bisy-syakk?');
+      await tester.enterText(find.byType(TextField),
+          'Bagaimana kaidah fiqih al-yaqinu la yuzalu bisy-syakk?');
       await tester.pump();
 
       final sendBtn = find.byTooltip(Loc.tr('sendQuestion'));
@@ -170,8 +167,8 @@ void main() {
       await tester.tap(sendBtn);
       await tester.pump();
 
-      expect(sentPrompt,
-          'Bagaimana kaidah fiqih al-yaqinu la yuzalu bisy-syakk?');
+      expect(
+          sentPrompt, 'Bagaimana kaidah fiqih al-yaqinu la yuzalu bisy-syakk?');
     });
   });
 }

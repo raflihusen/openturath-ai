@@ -9,9 +9,12 @@ import 'package:flutter/material.dart';
 /// Seluruh `screens/` dan `widgets/` wajib mengambil warna dari sini.
 class OTColors {
   // ── 1. Light Mode (Neutral Paper) ──
-  static const Color canvasLight = Color(0xFFF6F6F6); // Kertas hangat untuk ruang telaah
-  static const Color surfaceLight = Color(0xFFFFFFFF); // Panel utama, bottom sheet, dialog, kartu, input field
-  static const Color surfaceSubtleLight = Color(0xFFEDEDED); // Kontainer tonal sekunder
+  static const Color canvasLight =
+      Color(0xFFF6F6F6); // Kertas hangat untuk ruang telaah
+  static const Color surfaceLight = Color(
+      0xFFFFFFFF); // Panel utama, bottom sheet, dialog, kartu, input field
+  static const Color surfaceSubtleLight =
+      Color(0xFFEDEDED); // Kontainer tonal sekunder
   static const Color textPrimaryLight = Color(0xFF171717);
   static const Color textSecondaryLight = Color(0xFF606060);
   static const Color textTertiaryLight = Color(0xFF6B6B6B); // Placeholder, hint
@@ -50,7 +53,8 @@ class OTColors {
   // ── 5. Status rujukan — dibedakan dengan label dan ikon ──
   // Dipakai HANYA sebagai penanda status marja' / terverifikasi, tidak pernah dekoratif.
   static const Color marjaLight = Color(0xFF4A4A4A); // Tinta status
-  static const Color marjaDark = Color(0xFFC4C4C4); // Tinta status di mode gelap
+  static const Color marjaDark =
+      Color(0xFFC4C4C4); // Tinta status di mode gelap
 
   // ── 6. Status kritis — satu-satunya warna di luar tinta dan kertas ──
   // Merah hanya untuk galat dan aksi permanen, selalu bersama ikon dan pesan.
@@ -67,22 +71,30 @@ class OTColors {
   // ── 7. Context-Aware Adaptive Helpers ──
   static Color canvas(bool isDark) => isDark ? canvasDark : canvasLight;
   static Color surface(bool isDark) => isDark ? surfaceDark : surfaceLight;
-  static Color surfaceSubtle(bool isDark) => isDark ? surfaceSubtleDark : surfaceSubtleLight;
+  static Color surfaceSubtle(bool isDark) =>
+      isDark ? surfaceSubtleDark : surfaceSubtleLight;
   static Color border(bool isDark) => isDark ? borderDark : borderLight;
-  static Color borderSubtle(bool isDark) => isDark ? borderSubtleDark : borderSubtleLight;
-  static Color borderStrong(bool isDark) => isDark ? borderStrongDark : borderStrongLight;
-  static Color textPrimary(bool isDark) => isDark ? textPrimaryDark : textPrimaryLight;
-  static Color textSecondary(bool isDark) => isDark ? textSecondaryDark : textSecondaryLight;
-  static Color textTertiary(bool isDark) => isDark ? textTertiaryDark : textTertiaryLight;
+  static Color borderSubtle(bool isDark) =>
+      isDark ? borderSubtleDark : borderSubtleLight;
+  static Color borderStrong(bool isDark) =>
+      isDark ? borderStrongDark : borderStrongLight;
+  static Color textPrimary(bool isDark) =>
+      isDark ? textPrimaryDark : textPrimaryLight;
+  static Color textSecondary(bool isDark) =>
+      isDark ? textSecondaryDark : textSecondaryLight;
+  static Color textTertiary(bool isDark) =>
+      isDark ? textTertiaryDark : textTertiaryLight;
   static Color accent(bool isDark) => isDark ? accentDark : accentLight;
   static Color onAccent(bool isDark) => isDark ? onAccentDark : onAccentLight;
   static Color primaryContainer(bool isDark) =>
       isDark ? primaryContainerDark : primaryContainerLight;
   static Color onPrimaryContainer(bool isDark) =>
       isDark ? onPrimaryContainerDark : onPrimaryContainerLight;
-  static Color inverseSurface(bool isDark) => isDark ? inverseSurfaceDark : inverseSurfaceLight;
+  static Color inverseSurface(bool isDark) =>
+      isDark ? inverseSurfaceDark : inverseSurfaceLight;
   static Color marja(bool isDark) => isDark ? marjaDark : marjaLight;
-  static Color destructive(bool isDark) => isDark ? destructiveDark : destructiveLight;
+  static Color destructive(bool isDark) =>
+      isDark ? destructiveDark : destructiveLight;
   static Color error(bool isDark) => isDark ? errorDark : errorLight;
   static Color errorContainer(bool isDark) =>
       isDark ? errorContainerDark : errorContainerLight;

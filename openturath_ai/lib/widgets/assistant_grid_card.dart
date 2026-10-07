@@ -11,6 +11,7 @@ import '../services/open_turath_catalog_repository.dart';
 import 'ot_motion_widgets.dart';
 
 import 'package:openturath_ai/core/design/ot_typography.dart';
+
 /// Satu angka pustaka sebagai pil: angka tegas, satuan redup.
 class LibraryStat {
   const LibraryStat(this.value, this.unit);
@@ -77,8 +78,7 @@ class AssistantGridCard extends StatelessWidget {
                 Loc.text(agent.title),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
-                style: OTTypography.bookTitle(color: ink)
-                    .copyWith(height: 1.2),
+                style: OTTypography.bookTitle(color: ink).copyWith(height: 1.2),
               ),
               if (agent.isComingSoon) ...[
                 const SizedBox(height: OTSpacing.sm),
@@ -97,7 +97,8 @@ class AssistantGridCard extends StatelessWidget {
               ],
               if (agent.subtitleAcademic.isNotEmpty) ...[
                 const SizedBox(height: OTSpacing.sm),
-                Text(Loc.text(agent.subtitleAcademic), maxLines: 2,
+                Text(Loc.text(agent.subtitleAcademic),
+                    maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: OTTypography.body(color: muted)),
               ],
@@ -111,8 +112,8 @@ class AssistantGridCard extends StatelessWidget {
                       if (index > 0) const TextSpan(text: ' · '),
                       TextSpan(
                         text: stat.value,
-                        style: TextStyle(
-                            color: ink, fontWeight: FontWeight.w600),
+                        style:
+                            TextStyle(color: ink, fontWeight: FontWeight.w600),
                       ),
                       TextSpan(text: ' ${stat.unit}'),
                     ],

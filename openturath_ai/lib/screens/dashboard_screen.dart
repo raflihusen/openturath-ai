@@ -996,7 +996,6 @@ class _StudyEntryCard extends StatelessWidget {
         const SizedBox(height: 20),
         FilledButton.icon(
             onPressed: onPrimary,
-
             label:
                 Text(hasHistory ? AppCopy.continueStudy : AppCopy.startStudy),
             icon: const Icon(Icons.arrow_forward_rounded, size: 18),
@@ -1208,8 +1207,7 @@ class _DashboardAnnouncementCarouselState
             children: [
               const Center(child: SheetGrabber(bottom: 18)),
               Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
                   color: OTColors.surfaceSubtle(widget.isDark),
                   borderRadius: BorderRadius.circular(OTRadius.chip),

@@ -15,7 +15,8 @@ class OTRadius {
   static BorderRadius xsBorder = BorderRadius.circular(xs);
   static BorderRadius inputBorder = BorderRadius.circular(input);
   static BorderRadius cardBorder = BorderRadius.circular(card);
-  static BorderRadius sheetBorder = const BorderRadius.vertical(top: Radius.circular(sheet));
+  static BorderRadius sheetBorder =
+      const BorderRadius.vertical(top: Radius.circular(sheet));
   static BorderRadius dialogBorder = BorderRadius.circular(dialog);
   static BorderRadius chipBorder = BorderRadius.circular(chip);
   static BorderRadius buttonBorder = BorderRadius.circular(button);

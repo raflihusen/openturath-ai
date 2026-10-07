@@ -62,7 +62,8 @@ void main() {
 
     test('leaveBreadcrumb adds breadcrumbs and respects ring buffer limit', () {
       for (int i = 1; i <= 25; i++) {
-        telemetry.leaveBreadcrumb('Langkah navigasi $i', category: 'navigation');
+        telemetry.leaveBreadcrumb('Langkah navigasi $i',
+            category: 'navigation');
       }
 
       // Pastikan reporting tidak melempar exception saat dipanggil tanpa firebase
@@ -76,7 +77,8 @@ void main() {
       );
     });
 
-    test('Deduplication prevents immediate duplicate error reporting', () async {
+    test('Deduplication prevents immediate duplicate error reporting',
+        () async {
       // Panggilan pertama
       await telemetry.reportError(
         'Duplicate error message',

@@ -19,28 +19,47 @@ void main() {
         final y = b.computeLuminance();
         return ((x > y ? x : y) + .05) / ((x > y ? y : x) + .05);
       }
+
       for (final dark in [false, true]) {
-        final neutral = [OTColors.canvas(dark), OTColors.surface(dark),
-          OTColors.surfaceSubtle(dark), OTColors.textPrimary(dark),
-          OTColors.textSecondary(dark), OTColors.accent(dark),
-          OTColors.primaryContainer(dark), OTColors.marja(dark)];
+        final neutral = [
+          OTColors.canvas(dark),
+          OTColors.surface(dark),
+          OTColors.surfaceSubtle(dark),
+          OTColors.textPrimary(dark),
+          OTColors.textSecondary(dark),
+          OTColors.accent(dark),
+          OTColors.primaryContainer(dark),
+          OTColors.marja(dark)
+        ];
         for (final color in neutral) {
           expect(color.r, color.g);
           expect(color.g, color.b);
         }
-        for (final background in [OTColors.canvas(dark), OTColors.surface(dark)]) {
-          expect(contrast(OTColors.textPrimary(dark), background), greaterThanOrEqualTo(4.5));
-          expect(contrast(OTColors.textSecondary(dark), background), greaterThanOrEqualTo(4.5));
-          expect(contrast(OTColors.textTertiary(dark), background), greaterThanOrEqualTo(4.5));
+        for (final background in [
+          OTColors.canvas(dark),
+          OTColors.surface(dark)
+        ]) {
+          expect(contrast(OTColors.textPrimary(dark), background),
+              greaterThanOrEqualTo(4.5));
+          expect(contrast(OTColors.textSecondary(dark), background),
+              greaterThanOrEqualTo(4.5));
+          expect(contrast(OTColors.textTertiary(dark), background),
+              greaterThanOrEqualTo(4.5));
           // Merah galat adalah satu-satunya warna di luar tinta dan kertas.
-          expect(contrast(OTColors.destructive(dark), background), greaterThanOrEqualTo(4.5));
+          expect(contrast(OTColors.destructive(dark), background),
+              greaterThanOrEqualTo(4.5));
         }
-        expect(contrast(OTColors.accent(dark), OTColors.onAccent(dark)), greaterThanOrEqualTo(4.5));
-        expect(contrast(OTColors.primaryContainer(dark), OTColors.onPrimaryContainer(dark)), greaterThanOrEqualTo(4.5));
+        expect(contrast(OTColors.accent(dark), OTColors.onAccent(dark)),
+            greaterThanOrEqualTo(4.5));
+        expect(
+            contrast(OTColors.primaryContainer(dark),
+                OTColors.onPrimaryContainer(dark)),
+            greaterThanOrEqualTo(4.5));
       }
     });
 
-    test('OTTypography strictly separates Brand, Interface, and Arabic layers', () {
+    test('OTTypography strictly separates Brand, Interface, and Arabic layers',
+        () {
       // 1. Brand / Editorial layer (Newsreader)
       final brand = OTTypography.brandLogo();
       expect(brand.fontSize, 22);

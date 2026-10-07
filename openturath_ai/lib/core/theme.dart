@@ -266,11 +266,13 @@ class AppTheme {
             const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(OTRadius.input),
-          borderSide: const BorderSide(color: OTColors.borderStrongDark, width: 1),
+          borderSide:
+              const BorderSide(color: OTColors.borderStrongDark, width: 1),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(OTRadius.input),
-          borderSide: const BorderSide(color: OTColors.borderStrongDark, width: 1),
+          borderSide:
+              const BorderSide(color: OTColors.borderStrongDark, width: 1),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(OTRadius.input),
@@ -447,11 +449,13 @@ class AppTheme {
             const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(OTRadius.input),
-          borderSide: const BorderSide(color: OTColors.borderStrongLight, width: 1),
+          borderSide:
+              const BorderSide(color: OTColors.borderStrongLight, width: 1),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(OTRadius.input),
-          borderSide: const BorderSide(color: OTColors.borderStrongLight, width: 1),
+          borderSide:
+              const BorderSide(color: OTColors.borderStrongLight, width: 1),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(OTRadius.input),
@@ -662,9 +666,13 @@ class AppTheme {
           color: primary,
           letterSpacing: -0.1),
       titleMedium: _fontOutfit(
-          fontSize: OTFontSize.s16, fontWeight: FontWeight.w600, color: primary),
+          fontSize: OTFontSize.s16,
+          fontWeight: FontWeight.w600,
+          color: primary),
       titleSmall: _fontOutfit(
-          fontSize: OTFontSize.s14, fontWeight: FontWeight.w600, color: secondary),
+          fontSize: OTFontSize.s14,
+          fontWeight: FontWeight.w600,
+          color: secondary),
       bodyLarge: _fontOutfit(
           fontSize: OTFontSize.s16,
           fontWeight: FontWeight.w400,
@@ -681,7 +689,9 @@ class AppTheme {
           color: tertiary,
           height: 1.4),
       labelLarge: _fontOutfit(
-          fontSize: OTFontSize.s14, fontWeight: FontWeight.w600, color: primary),
+          fontSize: OTFontSize.s14,
+          fontWeight: FontWeight.w600,
+          color: primary),
       labelSmall: _fontOutfit(
           fontSize: OTFontSize.s11,
           fontWeight: FontWeight.w500,

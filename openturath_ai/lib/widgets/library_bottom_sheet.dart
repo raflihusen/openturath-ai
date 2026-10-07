@@ -23,47 +23,62 @@ Future<void> showResearchLibrary(
   AgentModel? agent,
 }) async {
   await Navigator.of(context).push(MaterialPageRoute<void>(
-    builder: (_) => _CatalogCollectionLoader(agent: agent)));
+      builder: (_) => _CatalogCollectionLoader(agent: agent)));
 }
 
 class _CatalogCollectionLoader extends StatefulWidget {
   const _CatalogCollectionLoader({this.agent});
   final AgentModel? agent;
   @override
-  State<_CatalogCollectionLoader> createState() => _CatalogCollectionLoaderState();
+  State<_CatalogCollectionLoader> createState() =>
+      _CatalogCollectionLoaderState();
 }
 
 class _CatalogCollectionLoaderState extends State<_CatalogCollectionLoader> {
-  late Future<({List<OpenTurathBook> books, AiLibraryMetadata? metadata})> _load = _fetch();
-  Future<({List<OpenTurathBook> books, AiLibraryMetadata? metadata})> _fetch() async {
+  late Future<({List<OpenTurathBook> books, AiLibraryMetadata? metadata})>
+      _load = _fetch();
+  Future<({List<OpenTurathBook> books, AiLibraryMetadata? metadata})>
+      _fetch() async {
     final key = widget.agent?.id ?? 'fiqh_syafii';
     final repo = OpenTurathCatalogRepository.instance;
     final metadata = await repo.getMetadataForModule(key);
     final books = await repo.loadBooksForModule(key);
     return (books: books, metadata: metadata);
   }
+
   @override
   Widget build(BuildContext context) => FutureBuilder(
-    future: _load,
-    builder: (context, snapshot) {
-      final data = snapshot.data;
-      if (data != null) { return OpenTurathBookLibraryPage(books: data.books,
-        metadata: data.metadata,
-        collectionName: Loc.text(widget.agent?.title ?? data.metadata?.nama ?? Loc.tr('libraryShort'))); }
-      return Scaffold(appBar: AppBar(title: Text(Loc.tr('libraryShort'))),
-        body: Center(child: Padding(padding: const EdgeInsets.all(24),
-          child: Column(mainAxisSize: MainAxisSize.min, children: [
-            if (snapshot.hasError) ...[
-              Text(Loc.tr('catalogFailure'), textAlign: TextAlign.center),
-              const SizedBox(height: 16),
-              FilledButton(onPressed: () => setState(() => _load = _fetch()),
-                child: Text(Loc.tr('retryCatalog'))),
-            ] else ...[
-              const CircularProgressIndicator(), const SizedBox(height: 16),
-              Text(Loc.tr('loadingReferences')),
-            ],
-          ]))));
-    });
+      future: _load,
+      builder: (context, snapshot) {
+        final data = snapshot.data;
+        if (data != null) {
+          return OpenTurathBookLibraryPage(
+              books: data.books,
+              metadata: data.metadata,
+              collectionName: Loc.text(widget.agent?.title ??
+                  data.metadata?.nama ??
+                  Loc.tr('libraryShort')));
+        }
+        return Scaffold(
+            appBar: AppBar(title: Text(Loc.tr('libraryShort'))),
+            body: Center(
+                child: Padding(
+                    padding: const EdgeInsets.all(24),
+                    child: Column(mainAxisSize: MainAxisSize.min, children: [
+                      if (snapshot.hasError) ...[
+                        Text(Loc.tr('catalogFailure'),
+                            textAlign: TextAlign.center),
+                        const SizedBox(height: 16),
+                        FilledButton(
+                            onPressed: () => setState(() => _load = _fetch()),
+                            child: Text(Loc.tr('retryCatalog'))),
+                      ] else ...[
+                        const CircularProgressIndicator(),
+                        const SizedBox(height: 16),
+                        Text(Loc.tr('loadingReferences')),
+                      ],
+                    ]))));
+      });
 }
 
 class ResearchLibrarySheet extends StatefulWidget {
@@ -168,7 +183,8 @@ class _ResearchLibrarySheetState extends State<ResearchLibrarySheet> {
         return Container(
           decoration: BoxDecoration(
             color: canvas,
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(OTRadius.sheet)),
+            borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(OTRadius.sheet)),
             border: Border.all(color: border, width: 0.8),
           ),
           child: Column(
@@ -178,7 +194,8 @@ class _ResearchLibrarySheetState extends State<ResearchLibrarySheet> {
 
               // Header
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: OTSpacing.lg, vertical: OTSpacing.xs),
+                padding: const EdgeInsets.symmetric(
+                    horizontal: OTSpacing.lg, vertical: OTSpacing.xs),
                 child: Row(
                   children: [
                     Expanded(
@@ -187,7 +204,8 @@ class _ResearchLibrarySheetState extends State<ResearchLibrarySheet> {
                         children: [
                           Text(
                             title,
-                            style: OTTypography.corpusTitle(color: textPrimary).copyWith(fontSize: OTFontSize.s18),
+                            style: OTTypography.corpusTitle(color: textPrimary)
+                                .copyWith(fontSize: OTFontSize.s18),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -209,22 +227,26 @@ class _ResearchLibrarySheetState extends State<ResearchLibrarySheet> {
 
               // Search field
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: OTSpacing.lg, vertical: OTSpacing.sm),
+                padding: const EdgeInsets.symmetric(
+                    horizontal: OTSpacing.lg, vertical: OTSpacing.sm),
                 child: TextField(
                   controller: _searchController,
                   decoration: InputDecoration(
                     hintText: Loc.tr('librarySearchHint'),
                     hintStyle: OTTypography.caption(color: textSecondary),
-                    prefixIcon: Icon(Icons.search_rounded, size: 20, color: textSecondary),
+                    prefixIcon: Icon(Icons.search_rounded,
+                        size: 20, color: textSecondary),
                     suffixIcon: _searchController.text.isNotEmpty
                         ? IconButton(
-                            icon: Icon(Icons.clear_rounded, size: 18, color: textSecondary),
+                            icon: Icon(Icons.clear_rounded,
+                                size: 18, color: textSecondary),
                             onPressed: () => _searchController.clear(),
                           )
                         : null,
                     filled: true,
                     fillColor: surface,
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    contentPadding:
+                        const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                     border: OutlineInputBorder(
                       borderRadius: OTRadius.inputBorder,
                       borderSide: BorderSide(color: border, width: 0.8),
@@ -250,11 +272,13 @@ class _ResearchLibrarySheetState extends State<ResearchLibrarySheet> {
                               child: Column(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  Icon(Icons.menu_book_outlined, size: 48, color: textSecondary),
+                                  Icon(Icons.menu_book_outlined,
+                                      size: 48, color: textSecondary),
                                   const SizedBox(height: OTSpacing.md),
                                   Text(
                                     _errorMessage!,
-                                    style: OTTypography.body(color: textSecondary),
+                                    style:
+                                        OTTypography.body(color: textSecondary),
                                     textAlign: TextAlign.center,
                                   ),
                                   const SizedBox(height: OTSpacing.base),
@@ -284,7 +308,8 @@ class _ResearchLibrarySheetState extends State<ResearchLibrarySheet> {
                                             ? 'Tidak ada kitab yang cocok dengan pencarian'
                                             : 'Katalog naskah sedang disiapkan.',
                                         textAlign: TextAlign.center,
-                                        style: OTTypography.body(color: textSecondary),
+                                        style: OTTypography.body(
+                                            color: textSecondary),
                                       ),
                                     ],
                                   ),
@@ -298,12 +323,14 @@ class _ResearchLibrarySheetState extends State<ResearchLibrarySheet> {
                                   vertical: OTSpacing.sm,
                                 ),
                                 itemCount: _filteredBooks!.length,
-                                separatorBuilder: (_, __) => const SizedBox(height: 12),
+                                separatorBuilder: (_, __) =>
+                                    const SizedBox(height: 12),
                                 itemBuilder: (ctx, index) {
                                   final item = _filteredBooks![index];
                                   return CanonicalBookTile(
                                     book: item,
-                                    onOpenEdition: () => _showEditionDetails(item),
+                                    onOpenEdition: () =>
+                                        _showEditionDetails(item),
                                   );
                                 },
                               ),
@@ -364,7 +391,8 @@ class CanonicalBookTile extends StatelessWidget {
                   book.titleArabic,
                   textDirection: TextDirection.rtl,
                   textAlign: TextAlign.right,
-                  style: OTTypography.arabicReading(color: textPrimary).copyWith(
+                  style:
+                      OTTypography.arabicReading(color: textPrimary).copyWith(
                     fontSize: OTFontSize.s20,
                     height: 1.6,
                     fontWeight: FontWeight.w700,
@@ -382,10 +410,14 @@ class CanonicalBookTile extends StatelessWidget {
                 // Author
                 Text(
                   latinAuthor ?? book.authorArabic,
-                  textDirection: latinAuthor == null ? TextDirection.rtl : TextDirection.ltr,
-                  textAlign: latinAuthor == null ? TextAlign.right : TextAlign.left,
+                  textDirection: latinAuthor == null
+                      ? TextDirection.rtl
+                      : TextDirection.ltr,
+                  textAlign:
+                      latinAuthor == null ? TextAlign.right : TextAlign.left,
                   style: latinAuthor == null
-                      ? OTTypography.arabicReading(color: textSecondary).copyWith(fontSize: OTFontSize.s16)
+                      ? OTTypography.arabicReading(color: textSecondary)
+                          .copyWith(fontSize: OTFontSize.s16)
                       : OTTypography.caption(color: textSecondary),
                 ),
 
@@ -404,15 +436,18 @@ class CanonicalBookTile extends StatelessWidget {
                     runSpacing: 4,
                     children: book.compactLabels.map((lbl) {
                       return Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 2),
                         decoration: BoxDecoration(
                           color: OTColors.surfaceSubtle(isDark),
                           borderRadius: BorderRadius.circular(OTRadius.xs),
-                          border: Border.all(color: border.withValues(alpha: 0.5), width: 0.6),
+                          border: Border.all(
+                              color: border.withValues(alpha: 0.5), width: 0.6),
                         ),
                         child: Text(
                           lbl,
-                          style: OTTypography.caption(color: textSecondary).copyWith(fontSize: OTFontSize.s11),
+                          style: OTTypography.caption(color: textSecondary)
+                              .copyWith(fontSize: OTFontSize.s11),
                         ),
                       );
                     }).toList(),
@@ -425,10 +460,12 @@ class CanonicalBookTile extends StatelessWidget {
                   children: [
                     Text(
                       'Keterangan kitab',
-                      style: OTTypography.button(color: accent).copyWith(fontSize: OTFontSize.s12),
+                      style: OTTypography.button(color: accent)
+                          .copyWith(fontSize: OTFontSize.s12),
                     ),
                     const SizedBox(width: 4),
-                    Icon(Icons.arrow_forward_ios_rounded, size: 10, color: accent),
+                    Icon(Icons.arrow_forward_ios_rounded,
+                        size: 10, color: accent),
                   ],
                 ),
               ],

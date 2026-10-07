@@ -454,8 +454,11 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
           if (wide) const Spacer() else const SizedBox(height: 8),
           const SizedBox(height: 8),
           if (price.months > 1) ...[
-            Text(Loc.tr('monthlyEquivalent', [ProductPricing.rupiah((price.amount / price.months).round())]),
-              style: OTTypography.caption(color: muted)),
+            Text(
+                Loc.tr('monthlyEquivalent', [
+                  ProductPricing.rupiah((price.amount / price.months).round())
+                ]),
+                style: OTTypography.caption(color: muted)),
             const SizedBox(height: 12),
           ],
           cta(onCheckout, price.amount),
@@ -693,7 +696,8 @@ class _TierSelector extends StatelessWidget {
                       color: selected == i ? ink : OTColors.surfaceSubtle(dark),
                       borderRadius: BorderRadius.circular(OTRadius.input),
                       border: Border.all(
-                        color: selected == i ? ink : OTColors.surfaceSubtle(dark),
+                        color:
+                            selected == i ? ink : OTColors.surfaceSubtle(dark),
                         width: selected == i ? 1.6 : 1,
                       ),
                     ),
@@ -706,9 +710,10 @@ class _TierSelector extends StatelessWidget {
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                           style: OTTypography.captionMedium(
-                              color: selected == i ? OTColors.canvas(dark) : muted),
+                              color: selected == i
+                                  ? OTColors.canvas(dark)
+                                  : muted),
                         ),
-
                       ],
                     ),
                   ),

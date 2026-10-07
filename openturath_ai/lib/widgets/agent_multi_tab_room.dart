@@ -37,6 +37,7 @@ import 'browser_companion_chat_tab.dart';
 import '../core/localization.dart';
 
 import 'package:openturath_ai/core/design/ot_radius.dart';
+
 // Explicit local prototype opt-in; remains off in normal/release builds.
 const _backendChatPrototype =
     bool.fromEnvironment('OPENTURATH_BACKEND_CHAT_PROTOTYPE');
@@ -61,8 +62,10 @@ class AgentMultiTabRoom extends StatefulWidget {
     final newEmail = await showDialog<String>(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: isDark ? OTColors.surfaceSubtleDark : OTColors.surfaceLight,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(OTRadius.card)),
+        backgroundColor:
+            isDark ? OTColors.surfaceSubtleDark : OTColors.surfaceLight,
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(OTRadius.card)),
         title: Row(
           children: [
             Icon(Icons.manage_accounts_rounded,
@@ -88,8 +91,9 @@ class AgentMultiTabRoom extends StatefulWidget {
               Loc.tr('googleAccountDialogDesc'),
               style: ScholarlyFonts.outfit(
                 fontSize: OTFontSize.s12,
-                color:
-                    isDark ? OTColors.textSecondaryDark : OTColors.borderStrongLight,
+                color: isDark
+                    ? OTColors.textSecondaryDark
+                    : OTColors.borderStrongLight,
               ),
             ),
             const SizedBox(height: 14),
@@ -105,8 +109,9 @@ class AgentMultiTabRoom extends StatefulWidget {
                 hintText: 'nama@gmail.com',
                 prefixIcon: const Icon(Icons.email_outlined, size: 18),
                 filled: true,
-                fillColor:
-                    isDark ? OTColors.surfaceSubtleDark : OTColors.surfaceSubtleLight,
+                fillColor: isDark
+                    ? OTColors.surfaceSubtleDark
+                    : OTColors.surfaceSubtleLight,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(OTRadius.input),
                   borderSide: BorderSide(
@@ -127,7 +132,9 @@ class AgentMultiTabRoom extends StatefulWidget {
             child: Text(
               Loc.tr('cancel'),
               style: ScholarlyFonts.outfit(
-                  color: isDark ? OTColors.surfaceLight.withValues(alpha: 0.7) : OTColors.shadow.withValues(alpha: 0.87)),
+                  color: isDark
+                      ? OTColors.surfaceLight.withValues(alpha: 0.7)
+                      : OTColors.shadow.withValues(alpha: 0.87)),
             ),
           ),
           if (AuthService().currentUser?.email != null)
@@ -158,8 +165,10 @@ class AgentMultiTabRoom extends StatefulWidget {
     if (newEmail != null && context.mounted) {
       await NativeAgentLauncher.setActiveNotebookEmail(newEmail);
       if (context.mounted) {
-        final display = newEmail.isEmpty ? Loc.tr('primaryLoginAccount') : newEmail;
-        AppSnackBar.info(context, Loc.tr('assistantGoogleAccountSet', [display]));
+        final display =
+            newEmail.isEmpty ? Loc.tr('primaryLoginAccount') : newEmail;
+        AppSnackBar.info(
+            context, Loc.tr('assistantGoogleAccountSet', [display]));
       }
     }
   }
@@ -247,8 +256,8 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
             padding: const EdgeInsets.fromLTRB(24, 20, 24, 32),
             decoration: BoxDecoration(
               color: surface,
-              borderRadius:
-                  const BorderRadius.vertical(top: Radius.circular(OTRadius.dialog)),
+              borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(OTRadius.dialog)),
               border: Border.all(color: border, width: 0.8),
             ),
             child: Column(
@@ -352,7 +361,8 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
         padding: const EdgeInsets.fromLTRB(24, 20, 24, 32),
         decoration: BoxDecoration(
           color: surface,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(OTRadius.dialog)),
+          borderRadius: const BorderRadius.vertical(
+              top: Radius.circular(OTRadius.dialog)),
           border: Border.all(color: border, width: 0.8),
         ),
         child: Column(
@@ -395,8 +405,8 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                     backgroundColor: OTColors.borderStrongDark,
                     foregroundColor: OTColors.surfaceLight,
                     elevation: 0,
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 16, vertical: 8),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   ),
                   onPressed: () {
                     Navigator.pop(ctx);
@@ -411,7 +421,8 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                   },
                   child: Text(Loc.tr('delete'),
                       style: ScholarlyFonts.outfit(
-                          fontWeight: FontWeight.w600, color: OTColors.surfaceLight)),
+                          fontWeight: FontWeight.w600,
+                          color: OTColors.surfaceLight)),
                 ),
               ],
             ),
@@ -438,8 +449,8 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
             padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
             decoration: BoxDecoration(
               color: surface,
-              borderRadius:
-                  const BorderRadius.vertical(top: Radius.circular(OTRadius.dialog)),
+              borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(OTRadius.dialog)),
               border: Border.all(color: border, width: 0.8),
             ),
             child: Column(
@@ -651,7 +662,8 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                           color: OTColors.borderStrongDark, size: 18),
                       const SizedBox(width: 12),
                       Text(Loc.tr('clearChatHistory'),
-                          style: OTTypography.body(color: OTColors.borderStrongDark)),
+                          style: OTTypography.body(
+                              color: OTColors.borderStrongDark)),
                     ],
                   ),
                 ),
@@ -687,7 +699,9 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                     children: [
                       Icon(Icons.tab_rounded, color: textPrimary, size: 18),
                       const SizedBox(width: 12),
-                      Text(Loc.tr('openAssistantSessions', ['${sessions.length}']),
+                      Text(
+                          Loc.tr(
+                              'openAssistantSessions', ['${sessions.length}']),
                           style: OTTypography.body(color: textPrimary)),
                     ],
                   ),
@@ -785,7 +799,8 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                                     _sessionManager.closeTab(index);
                                   },
                                   radius: 18,
-                                  borderRadius: BorderRadius.circular(OTRadius.input),
+                                  borderRadius:
+                                      BorderRadius.circular(OTRadius.input),
                                   child: Container(
                                     width: 32,
                                     height: 32,
@@ -1307,8 +1322,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
       }
 
       _loadingStarted ??= DateTime.now();
-      final elapsedSec =
-          DateTime.now().difference(_loadingStarted!).inSeconds;
+      final elapsedSec = DateTime.now().difference(_loadingStarted!).inSeconds;
       if (elapsedSec >= 45) {
         _readinessTimer?.cancel();
         _inputRetryTimer?.cancel();
@@ -1559,8 +1573,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
         state = AppErrorState(
           icon: Icons.lock_outline_rounded,
           title: Loc.tr('roomPaywallTitle'),
-          message:
-              Loc.tr('roomPaywallBody', [Loc.text(session.agent.title)]),
+          message: Loc.tr('roomPaywallBody', [Loc.text(session.agent.title)]),
           retryLabel: Loc.tr('roomSeePlans'),
           retryIcon: Icons.arrow_forward_rounded,
           onRetry: () => NavigationGuard.safePushNamed(
@@ -1598,8 +1611,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
                       ? 'https://accounts.google.com/ServiceLogin?continue=${Uri.encodeComponent(session.resolvedUrl!)}&Email=${Uri.encodeComponent(email)}&login_hint=${Uri.encodeComponent(email)}'
                       : 'https://accounts.google.com/ServiceLogin?continue=${Uri.encodeComponent(session.resolvedUrl!)}';
                   session.webController?.loadUrl(
-                      urlRequest:
-                          URLRequest(url: WebUri(targetSignInUrl)));
+                      urlRequest: URLRequest(url: WebUri(targetSignInUrl)));
                   _startReadinessCheck();
                 },
           secondaryLabel: Loc.tr('roomOpenInBrowser'),
@@ -1762,7 +1774,8 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
                       _lastCopiedToastAt = now;
 
                       await Clipboard.setData(ClipboardData(text: text));
-                      if (context.mounted && _authService.currentUser?.uid == owner) {
+                      if (context.mounted &&
+                          _authService.currentUser?.uid == owner) {
                         OTMotion.light();
                         AppSnackBar.success(
                           context,
@@ -2117,7 +2130,6 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
                     ),
             ),
           ),
-
         ],
       ),
     );

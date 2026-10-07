@@ -100,8 +100,10 @@ Future<void> _shot(WidgetTester tester, String name, Widget child,
       locale: Locale(locale),
       supportedLocales: Loc.supportedLocales,
       localizationsDelegates: GlobalMaterialLocalizations.delegates,
-      builder: (context, c) => MediaQuery(data: MediaQuery.of(context).copyWith(
-          textScaler: TextScaler.linear(textScale)), child: LocaleScope(child: c!)),
+      builder: (context, c) => MediaQuery(
+          data: MediaQuery.of(context)
+              .copyWith(textScaler: TextScaler.linear(textScale)),
+          child: LocaleScope(child: c!)),
       home: child,
     ),
   ));
@@ -117,8 +119,8 @@ Future<void> _shot(WidgetTester tester, String name, Widget child,
     await tester.pump(const Duration(milliseconds: 300));
     await tester.tap(find.text(tap).first, warnIfMissed: false);
     await tester.pump(const Duration(milliseconds: 500));
-    await tester
-        .runAsync(() => Future<void>.delayed(const Duration(milliseconds: 200)));
+    await tester.runAsync(
+        () => Future<void>.delayed(const Duration(milliseconds: 200)));
     await tester.pump(const Duration(milliseconds: 900));
   }
   final boundary =
@@ -132,8 +134,8 @@ Future<void> _shot(WidgetTester tester, String name, Widget child,
   });
   debugDefaultTargetPlatformOverride = null;
   final error = tester.takeException();
-  expect(error, isNull, reason: 'Render $name must have no framework exception');
-
+  expect(error, isNull,
+      reason: 'Render $name must have no framework exception');
 }
 
 void main() {
@@ -145,9 +147,15 @@ void main() {
 
   testWidgets('render', (tester) async {
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-        .setMockMethodCallHandler(const MethodChannel('dev.fluttercommunity.plus/package_info'),
-          (_) async => {'appName': 'OpenTurath AI', 'packageName': 'id.openturath',
-            'version': '1.0.63', 'buildNumber': '64', 'buildSignature': ''});
+        .setMockMethodCallHandler(
+            const MethodChannel('dev.fluttercommunity.plus/package_info'),
+            (_) async => {
+                  'appName': 'OpenTurath AI',
+                  'packageName': 'id.openturath',
+                  'version': '1.0.63',
+                  'buildNumber': '64',
+                  'buildSignature': ''
+                });
     await tester.runAsync(_loadFonts);
     final meta = await tester.runAsync(
             () => OpenTurathCatalogRepository.instance.loadAllMetadata()) ??
@@ -236,23 +244,46 @@ void main() {
       await _shot(tester, 'subscription_$locale', const SubscriptionScreen(),
           size: const Size(950, 1500), locale: locale);
     }
-    Widget mixedChat() => Scaffold(appBar: AppBar(title: const Text('Fikih Tahawwulat: Al-Muhaqqiq')),
-      body: NativeTurathChatView(agent: flagship, isGenerating: false, onSend: (_) {},
-        messages: [TurathChatMessage(id: 'question', isUser: true, timestamp: DateTime(2026),
-          text: 'Bagaimana memahami makna kebahagiaan dalam Fikih Tahawwulat?'),
-          TurathChatMessage(id: 'answer', isUser: false, timestamp: DateTime(2026),
-            text: '## Memahami kebahagiaan\n\nIni contoh tampilan bilingual. Istilah **السعادة** berada dalam paragraf Indonesia tanpa mengubah arah baca. Rujukan perlu diperiksa pada edisi kitab yang digunakan.\n\n> السعادة في الدارين\n\n### Langkah telaah\n\n1. Baca kutipan sumber.\n2. Periksa konteks dan halaman.\n3. Pisahkan kutipan dari penjelasan AI.',
-            citations: const ['Contoh tampilan · bukan kutipan terverifikasi'])]));
+    Widget mixedChat() => Scaffold(
+        appBar: AppBar(title: const Text('Fikih Tahawwulat: Al-Muhaqqiq')),
+        body: NativeTurathChatView(
+            agent: flagship,
+            isGenerating: false,
+            onSend: (_) {},
+            messages: [
+              TurathChatMessage(
+                  id: 'question',
+                  isUser: true,
+                  timestamp: DateTime(2026),
+                  text:
+                      'Bagaimana memahami makna kebahagiaan dalam Fikih Tahawwulat?'),
+              TurathChatMessage(
+                  id: 'answer',
+                  isUser: false,
+                  timestamp: DateTime(2026),
+                  text:
+                      '## Memahami kebahagiaan\n\nIni contoh tampilan bilingual. Istilah **السعادة** berada dalam paragraf Indonesia tanpa mengubah arah baca. Rujukan perlu diperiksa pada edisi kitab yang digunakan.\n\n> السعادة في الدارين\n\n### Langkah telaah\n\n1. Baca kutipan sumber.\n2. Periksa konteks dan halaman.\n3. Pisahkan kutipan dari penjelasan AI.',
+                  citations: const [
+                    'Contoh tampilan · bukan kutipan terverifikasi'
+                  ])
+            ]));
     await _shot(tester, 'chat_mixed', mixedChat(), size: const Size(1280, 900));
     await _shot(tester, 'chat_mixed_dark', mixedChat(), dark: true);
-    await _shot(tester, 'chat_mixed_phone', mixedChat(), size: const Size(390, 844));
-    await _shot(tester, 'subscription_phone', const SubscriptionScreen(), size: const Size(390, 844));
-    await _shot(tester, 'profile_phone', const ProfileScreen(), size: const Size(390, 844));
-    await _shot(tester, 'shell_desktop', const MainShellScreen(), size: const Size(1280, 900));
-    await _shot(tester, 'shell_phone', const MainShellScreen(), size: const Size(390, 844));
-    await _shot(tester, 'profile_large_text', const ProfileScreen(), size: const Size(390, 1000), textScale: 2);
-    await _shot(tester, 'subscription_ar_phone', const SubscriptionScreen(), size: const Size(390, 844), locale: 'ar');
-    await _shot(tester, 'dashboard_dark' , const DashboardScreen(), dark: true);
+    await _shot(tester, 'chat_mixed_phone', mixedChat(),
+        size: const Size(390, 844));
+    await _shot(tester, 'subscription_phone', const SubscriptionScreen(),
+        size: const Size(390, 844));
+    await _shot(tester, 'profile_phone', const ProfileScreen(),
+        size: const Size(390, 844));
+    await _shot(tester, 'shell_desktop', const MainShellScreen(),
+        size: const Size(1280, 900));
+    await _shot(tester, 'shell_phone', const MainShellScreen(),
+        size: const Size(390, 844));
+    await _shot(tester, 'profile_large_text', const ProfileScreen(),
+        size: const Size(390, 1000), textScale: 2);
+    await _shot(tester, 'subscription_ar_phone', const SubscriptionScreen(),
+        size: const Size(390, 844), locale: 'ar');
+    await _shot(tester, 'dashboard_dark', const DashboardScreen(), dark: true);
     await _shot(tester, 'dashboard_phone', const DashboardScreen(),
         size: const Size(390, 844));
     // Ukuran jendela yang dipakai pengguna (sekitar 850 x 860) dan jendela lebar.
@@ -358,8 +389,16 @@ void main() {
       await _shot(tester, 'library_book_detail_wide',
           OpenTurathBookDetailPage(book: libraryBooks.first),
           size: const Size(1280, 860));
-      await _shot(tester, 'library_detail_phone', OpenTurathBookDetailPage(book: libraryBooks.first), size: const Size(390, 844));
-      await _shot(tester, 'library_ar_phone', OpenTurathBookLibraryPage(books: libraryBooks, collectionName: "Fikih Syafi'i"), size: const Size(390, 844), locale: 'ar');
+      await _shot(tester, 'library_detail_phone',
+          OpenTurathBookDetailPage(book: libraryBooks.first),
+          size: const Size(390, 844));
+      await _shot(
+          tester,
+          'library_ar_phone',
+          OpenTurathBookLibraryPage(
+              books: libraryBooks, collectionName: "Fikih Syafi'i"),
+          size: const Size(390, 844),
+          locale: 'ar');
     }
     await _shot(tester, 'catalog_id', const BookCatalogScreen(), size: win);
     await _shot(tester, 'profile_dark', const ProfileScreen(),

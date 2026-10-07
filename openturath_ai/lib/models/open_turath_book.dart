@@ -41,25 +41,33 @@ class OpenTurathBook {
   /// Preserve the catalog value, but do not present an edition assessment as a person's name.
   String get editorName => editor.contains('طبعة أصلية معتمدة') ? '' : editor;
   String get editionNote => editor.contains('طبعة أصلية معتمدة') ? editor : '';
-  bool get needsMetadataReview => editionNote.isNotEmpty ||
+  bool get needsMetadataReview =>
+      editionNote.isNotEmpty ||
       RegExp(r'(?:1[6-9]\d{2}|2\d{3})\s*هـ').hasMatch(edition) ||
       (int.tryParse(pages) ?? 0) > 50000;
 
   factory OpenTurathBook.fromJson(Map<String, dynamic> json) {
     return OpenTurathBook(
       id: _intValue(json['id']),
-      textType: _textValue(json['text_type'] ?? json['jenis_naskah'] ?? json['نوع_النص']),
+      textType: _textValue(
+          json['text_type'] ?? json['jenis_naskah'] ?? json['نوع_النص']),
       deathYear: _nullableInt(json['tahun_wafat']),
       section: _textValue(json['القسم'] ?? json['section'] ?? json['kategori']),
       shortName: _textValue(json['الاسم_المختصر'] ?? json['short_name']),
-      title: Loc.cleanTitle(_textValue(json['الكتاب'] ?? json['title'] ?? json['nama_kitab'])),
+      title: Loc.cleanTitle(
+          _textValue(json['الكتاب'] ?? json['title'] ?? json['nama_kitab'])),
       author: _textValue(json['المؤلف'] ?? json['author'] ?? json['pengarang']),
-      editor: _textValue(json['المحقق_أو_المعتني'] ?? json['editor'] ?? json['tahqiq']),
-      publisher: _textValue(json['الناشر'] ?? json['publisher'] ?? json['penerbit']),
-      edition: _textValue(json['سنة_الطبع_والطبعة'] ?? json['edition'] ?? json['cetakan']),
-      volumes: _textValue(json['عدد_الأجزاء'] ?? json['volumes'] ?? json['jilid']),
+      editor: _textValue(
+          json['المحقق_أو_المعتني'] ?? json['editor'] ?? json['tahqiq']),
+      publisher:
+          _textValue(json['الناشر'] ?? json['publisher'] ?? json['penerbit']),
+      edition: _textValue(
+          json['سنة_الطبع_والطبعة'] ?? json['edition'] ?? json['cetakan']),
+      volumes:
+          _textValue(json['عدد_الأجزاء'] ?? json['volumes'] ?? json['jilid']),
       sourceFolder: _textValue(json['folder_sumber'] ?? json['source_folder']),
-      pages: _textValue(json['عدد_الصفحات'] ?? json['pages'] ?? json['halaman']),
+      pages:
+          _textValue(json['عدد_الصفحات'] ?? json['pages'] ?? json['halaman']),
     );
   }
 
@@ -67,11 +75,15 @@ class OpenTurathBook {
     final decoded = jsonDecode(source);
     final dynamic list = decoded is List
         ? decoded
-        : decoded is Map<String, dynamic> ? (decoded['kitab'] ?? decoded['books']) : null;
+        : decoded is Map<String, dynamic>
+            ? (decoded['kitab'] ?? decoded['books'])
+            : null;
     if (list is! List || list.any((item) => item is! Map<String, dynamic>)) {
-      throw const FormatException('Catalog must contain a list of book records');
+      throw const FormatException(
+          'Catalog must contain a list of book records');
     }
-    return list.map((item) => OpenTurathBook.fromJson(item as Map<String, dynamic>))
+    return list
+        .map((item) => OpenTurathBook.fromJson(item as Map<String, dynamic>))
         .toList(growable: false);
   }
 
@@ -111,8 +123,7 @@ class OpenTurathBook {
     final count = int.tryParse(pages);
     final shown = count == null
         ? pages
-        : pages.replaceAllMapped(
-            RegExp(r'(\d)(?=(\d{3})+$)'),
+        : pages.replaceAllMapped(RegExp(r'(\d)(?=(\d{3})+$)'),
             (match) => '${match[1]}${Loc.language == 'id' ? '.' : ','}');
     return Loc.tr('pageCount', [shown]);
   }

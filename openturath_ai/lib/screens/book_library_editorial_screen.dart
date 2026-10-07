@@ -19,6 +19,7 @@ import '../services/bookmark_service.dart';
 
 import 'package:openturath_ai/core/design/ot_typography.dart';
 import '../widgets/ot_components.dart';
+
 /// Halaman Katalog Kitab Editorial OpenTurath (Monochrome Editorial)
 class OpenTurathBookLibraryPage extends StatefulWidget {
   const OpenTurathBookLibraryPage({
@@ -123,7 +124,8 @@ class _OpenTurathBookLibraryPageState extends State<OpenTurathBookLibraryPage> {
     final textSecondary = OTColors.textSecondary(isDark);
 
     final visibleBooks = _filteredBooks;
-    final pageInset = ((MediaQuery.sizeOf(context).width - 1040) / 2).clamp(20.0, double.infinity);
+    final pageInset = ((MediaQuery.sizeOf(context).width - 1040) / 2)
+        .clamp(20.0, double.infinity);
 
     return Scaffold(
       backgroundColor: canvas,
@@ -148,7 +150,8 @@ class _OpenTurathBookLibraryPageState extends State<OpenTurathBookLibraryPage> {
                     TextField(
                       controller: _searchController,
                       focusNode: _searchFocusNode,
-                      style: ScholarlyFonts.outfit(color: ink, fontSize: OTFontSize.s14),
+                      style: ScholarlyFonts.outfit(
+                          color: ink, fontSize: OTFontSize.s14),
                       decoration: InputDecoration(
                         hintText: Loc.tr('ui_0ae09a2807'),
                         hintStyle: ScholarlyFonts.outfit(
@@ -220,9 +223,9 @@ class _OpenTurathBookLibraryPageState extends State<OpenTurathBookLibraryPage> {
                       _query.isEmpty && _filter == _BookVolumeFilter.all
                           ? Loc.tr('bookCount', ['${visibleBooks.length}'])
                           : Loc.tr('booksShown', [
-                        '${visibleBooks.length}',
-                        '${widget.books.length}',
-                      ]),
+                              '${visibleBooks.length}',
+                              '${widget.books.length}',
+                            ]),
                       style: ScholarlyFonts.outfit(
                         fontSize: OTFontSize.s12,
                         color: textSecondary,
@@ -273,21 +276,21 @@ class _OpenTurathBookLibraryPageState extends State<OpenTurathBookLibraryPage> {
                       return OTReveal(
                           index: index % 6,
                           child: _BookEditorialItem(
-                        book: book,
-                        index: index + 1,
-                        onTap: () {
-                          if (widget.onOpenBook != null) {
-                            widget.onOpenBook!(book);
-                            return;
-                          }
-                          Navigator.of(context).push(
-                            MaterialPageRoute<void>(
-                              builder: (_) =>
-                                  OpenTurathBookDetailPage(book: book),
-                            ),
-                          );
-                        },
-                      ));
+                            book: book,
+                            index: index + 1,
+                            onTap: () {
+                              if (widget.onOpenBook != null) {
+                                widget.onOpenBook!(book);
+                                return;
+                              }
+                              Navigator.of(context).push(
+                                MaterialPageRoute<void>(
+                                  builder: (_) =>
+                                      OpenTurathBookDetailPage(book: book),
+                                ),
+                              );
+                            },
+                          ));
                     },
                     childCount: visibleBooks.length,
                   ),
@@ -339,64 +342,63 @@ class _BookEditorialItem extends StatelessWidget {
     ].where((fact) => fact != Loc.tr('unknownMetadata')).join(' · ');
 
     return Padding(
-      padding: const EdgeInsets.only(bottom: OTSpacing.sm),
-      child: OTBentoTile(
-      onTap: onTap,
-      semanticLabel: '${book.title}, ${book.author}',
-      padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          // Judul Arab asli, maksimal dua baris agar tinggi kartu seragam.
-          Text(
-            book.title,
-            textDirection: TextDirection.rtl,
-            textAlign: TextAlign.right,
-            
-            style: ScholarlyFonts.scheherazadeNew(
-              color: ink,
-              fontSize: OTFontSize.s26,
-              fontWeight: FontWeight.w700,
-              height: 1.4,
-            ),
-          ),
-          const SizedBox(height: 2),
-          Text(
-            book.author,
-            textDirection: TextDirection.rtl,
-            textAlign: TextAlign.right,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: ScholarlyFonts.scheherazadeNew(
-              color: textSecondary,
-              fontSize: OTFontSize.s16,
-              height: 1.5,
-            ),
-          ),
-          const SizedBox(height: OTSpacing.sm),
-          Row(
+        padding: const EdgeInsets.only(bottom: OTSpacing.sm),
+        child: OTBentoTile(
+          onTap: onTap,
+          semanticLabel: '${book.title}, ${book.author}',
+          padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Expanded(
-                child: Text(
-                  facts,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: ScholarlyFonts.outfit(
-                      fontSize: OTFontSize.s12, color: textSecondary),
+              // Judul Arab asli, maksimal dua baris agar tinggi kartu seragam.
+              Text(
+                book.title,
+                textDirection: TextDirection.rtl,
+                textAlign: TextAlign.right,
+                style: ScholarlyFonts.scheherazadeNew(
+                  color: ink,
+                  fontSize: OTFontSize.s26,
+                  fontWeight: FontWeight.w700,
+                  height: 1.4,
                 ),
               ),
-              if (book.deathYear != null)
-                Text(
-                  book.deathLabel,
-                  maxLines: 1,
-                  style: ScholarlyFonts.outfit(
-                      fontSize: OTFontSize.s12, color: textSecondary),
+              const SizedBox(height: 2),
+              Text(
+                book.author,
+                textDirection: TextDirection.rtl,
+                textAlign: TextAlign.right,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: ScholarlyFonts.scheherazadeNew(
+                  color: textSecondary,
+                  fontSize: OTFontSize.s16,
+                  height: 1.5,
                 ),
+              ),
+              const SizedBox(height: OTSpacing.sm),
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      facts,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: ScholarlyFonts.outfit(
+                          fontSize: OTFontSize.s12, color: textSecondary),
+                    ),
+                  ),
+                  if (book.deathYear != null)
+                    Text(
+                      book.deathLabel,
+                      maxLines: 1,
+                      style: ScholarlyFonts.outfit(
+                          fontSize: OTFontSize.s12, color: textSecondary),
+                    ),
+                ],
+              ),
             ],
           ),
-        ],
-      ),
-    ));
+        ));
   }
 }
 
@@ -428,7 +430,8 @@ class OpenTurathBookDetailPage extends StatelessWidget {
       createdAt: DateTime.now(),
       documentKind: BookmarkDocumentKind.bookReference,
       verificationStatus: book.needsMetadataReview
-          ? BookmarkVerificationStatus.needsReview : BookmarkVerificationStatus.unverified,
+          ? BookmarkVerificationStatus.needsReview
+          : BookmarkVerificationStatus.unverified,
     );
 
     await BookmarkService().addBookmark(bookmark, userId: uid);
@@ -508,111 +511,124 @@ ${Loc.tr('bookScienceSection')}: ${book.section}''';
                 padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
                 child: Center(
                     child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 760),
-                  child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Baris atas bento: judul dan pengarang di ubin lebar,
-                    // bidang ilmu dan wafat pengarang di ubin samping.
-                    LayoutBuilder(builder: (context, box) {
-                      final titleTile = OTBentoTile(
-                        padding: const EdgeInsets.all(24),
+                        constraints: const BoxConstraints(maxWidth: 760),
                         child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              book.title,
-                              textDirection: TextDirection.rtl,
-                              textAlign: TextAlign.right,
-                              style: ScholarlyFonts.scheherazadeNew(
-                                fontSize: OTFontSize.s36,
-                                fontWeight: FontWeight.w700,
-                                color: ink,
-                                height: 1.6,
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              book.author,
-                              textDirection: TextDirection.rtl,
-                              textAlign: TextAlign.right,
-                              style: ScholarlyFonts.scheherazadeNew(
-                                fontSize: OTFontSize.s18,
-                                color: textSecondary,
-                                height: 1.7,
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
-                      Widget fact(String label, String value) => Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(label,
-                                  style: ScholarlyFonts.outfit(
-                                      fontSize: OTFontSize.s12, color: textSecondary)),
-                              const SizedBox(height: 2),
-                              Text(value,
-                                  style: ScholarlyFonts.outfit(
-                                      fontSize: OTFontSize.s16,
-                                      fontWeight: FontWeight.w600,
-                                      color: ink)),
-                            ],
-                          );
-                      final sideTile = OTBentoTile(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            fact(Loc.tr('bookScienceSection'),
-                                book.localizedSection),
-                            if (book.deathYear != null) ...[
-                              Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 12),
-                                child: Divider(height: 1, color: border),
-                              ),
-                              fact(Loc.tr('authorDeathLabel'),
-                                  book.deathLabel),
-                            ],
-                          ],
-                        ),
-                      );
-                      if (box.maxWidth < 560) {
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            OTReveal(child: titleTile),
+                            // Baris atas bento: judul dan pengarang di ubin lebar,
+                            // bidang ilmu dan wafat pengarang di ubin samping.
+                            LayoutBuilder(builder: (context, box) {
+                              final titleTile = OTBentoTile(
+                                padding: const EdgeInsets.all(24),
+                                child: Column(
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.stretch,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      book.title,
+                                      textDirection: TextDirection.rtl,
+                                      textAlign: TextAlign.right,
+                                      style: ScholarlyFonts.scheherazadeNew(
+                                        fontSize: OTFontSize.s36,
+                                        fontWeight: FontWeight.w700,
+                                        color: ink,
+                                        height: 1.6,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 8),
+                                    Text(
+                                      book.author,
+                                      textDirection: TextDirection.rtl,
+                                      textAlign: TextAlign.right,
+                                      style: ScholarlyFonts.scheherazadeNew(
+                                        fontSize: OTFontSize.s18,
+                                        color: textSecondary,
+                                        height: 1.7,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                              Widget fact(String label, String value) => Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(label,
+                                          style: ScholarlyFonts.outfit(
+                                              fontSize: OTFontSize.s12,
+                                              color: textSecondary)),
+                                      const SizedBox(height: 2),
+                                      Text(value,
+                                          style: ScholarlyFonts.outfit(
+                                              fontSize: OTFontSize.s16,
+                                              fontWeight: FontWeight.w600,
+                                              color: ink)),
+                                    ],
+                                  );
+                              final sideTile = OTBentoTile(
+                                child: Column(
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.stretch,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    fact(Loc.tr('bookScienceSection'),
+                                        book.localizedSection),
+                                    if (book.deathYear != null) ...[
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 12),
+                                        child:
+                                            Divider(height: 1, color: border),
+                                      ),
+                                      fact(Loc.tr('authorDeathLabel'),
+                                          book.deathLabel),
+                                    ],
+                                  ],
+                                ),
+                              );
+                              if (box.maxWidth < 560) {
+                                return Column(
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.stretch,
+                                  children: [
+                                    OTReveal(child: titleTile),
+                                    const SizedBox(height: OTSpacing.md),
+                                    OTReveal(index: 1, child: sideTile),
+                                  ],
+                                );
+                              }
+                              return IntrinsicHeight(
+                                child: Row(
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.stretch,
+                                  children: [
+                                    Expanded(
+                                        flex: 2,
+                                        child: OTReveal(child: titleTile)),
+                                    const SizedBox(width: OTSpacing.md),
+                                    Expanded(
+                                        child: OTReveal(
+                                            index: 1, child: sideTile)),
+                                  ],
+                                ),
+                              );
+                            }),
                             const SizedBox(height: OTSpacing.md),
-                            OTReveal(index: 1, child: sideTile),
+                            _BookBentoGrid(book: book),
+                            const SizedBox(height: OTSpacing.md),
+                            Text(Loc.tr('verificationNotice'),
+                                style:
+                                    OTTypography.caption(color: textSecondary)),
+                            if (book.needsMetadataReview)
+                              Padding(
+                                  padding:
+                                      const EdgeInsets.only(top: OTSpacing.sm),
+                                  child: Text(Loc.tr('metadataReview'),
+                                      style:
+                                          OTTypography.bodyMedium(color: ink))),
                           ],
-                        );
-                      }
-                      return IntrinsicHeight(
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            Expanded(
-                                flex: 2, child: OTReveal(child: titleTile)),
-                            const SizedBox(width: OTSpacing.md),
-                            Expanded(
-                                child: OTReveal(index: 1, child: sideTile)),
-                          ],
-                        ),
-                      );
-                    }),
-                    const SizedBox(height: OTSpacing.md),
-                    _BookBentoGrid(book: book),
-                    const SizedBox(height: OTSpacing.md),
-                    Text(Loc.tr('verificationNotice'),
-                        style: OTTypography.caption(color: textSecondary)),
-                    if (book.needsMetadataReview) Padding(
-                        padding: const EdgeInsets.only(top: OTSpacing.sm),
-                        child: Text(Loc.tr('metadataReview'),
-                            style: OTTypography.bodyMedium(color: ink))),
-                  ],
-                ))),
+                        ))),
               ),
             ),
           ],
@@ -673,8 +689,11 @@ class _BookBentoGrid extends StatelessWidget {
           wide: true,
         ),
       if (_has(book.editionNote))
-        _BentoTile(icon: Icons.info_outline_rounded,
-          label: Loc.tr('editionNote'), value: book.editionNote, wide: true),
+        _BentoTile(
+            icon: Icons.info_outline_rounded,
+            label: Loc.tr('editionNote'),
+            value: book.editionNote,
+            wide: true),
       if (_has(book.publisher))
         _BentoTile(
           icon: Icons.apartment_outlined,
@@ -712,8 +731,7 @@ class _BookBentoGrid extends StatelessWidget {
           ),
           const SizedBox(height: OTSpacing.xs),
           for (var i = 0; i < rows.length; i++) ...[
-            if (i > 0)
-              Divider(height: 1, color: OTColors.borderSubtle(isDark)),
+            if (i > 0) Divider(height: 1, color: OTColors.borderSubtle(isDark)),
             OTReveal(index: i, child: rows[i]),
           ],
         ],
@@ -771,9 +789,15 @@ class _BentoTile extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: OTSpacing.md),
       child: LayoutBuilder(builder: (context, box) {
-        if (box.maxWidth < 560) { return Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [labelRow, const SizedBox(height: OTSpacing.xs), valueText]); }
+        if (box.maxWidth < 560) {
+          return Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                labelRow,
+                const SizedBox(height: OTSpacing.xs),
+                valueText
+              ]);
+        }
         return Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
           SizedBox(width: 168, child: labelRow),
           const SizedBox(width: OTSpacing.lg),

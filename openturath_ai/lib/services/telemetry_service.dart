@@ -75,7 +75,8 @@ class TelemetryService {
       return false; // biarkan default handling berjalan
     };
 
-    leaveBreadcrumb('Aplikasi dimulai (Telemetry aktif)', category: 'lifecycle');
+    leaveBreadcrumb('Aplikasi dimulai (Telemetry aktif)',
+        category: 'lifecycle');
   }
 
   /// Rekam jejak interaksi pengguna / sistem ke in-memory ring buffer
@@ -106,7 +107,9 @@ class TelemetryService {
 
     // 2. Mask password / apikey / secret / auth
     sanitized = sanitized.replaceAllMapped(
-      RegExp(r'''(password|secret|apiKey|api_key|token|access_token|refreshToken)["':\s=]+[^,\s\n}]+''', caseSensitive: false),
+      RegExp(
+          r'''(password|secret|apiKey|api_key|token|access_token|refreshToken)["':\s=]+[^,\s\n}]+''',
+          caseSensitive: false),
       (match) => '${match.group(1)}: "[REDACTED]"',
     );
 
@@ -118,12 +121,14 @@ class TelemetryService {
 
     // 4. Mask voucher codes bila ada
     sanitized = sanitized.replaceAllMapped(
-      RegExp(r'''(voucher|code)["':\s=]+[a-zA-Z0-9\-_]{5,20}''', caseSensitive: false),
+      RegExp(r'''(voucher|code)["':\s=]+[a-zA-Z0-9\-_]{5,20}''',
+          caseSensitive: false),
       (match) => '${match.group(1)}: "[REDACTED_CODE]"',
     );
 
     sanitized = sanitized.replaceAll(
-      RegExp(r'''[A-Za-z0-9.!#$%&'*+/=?^_`{|}~-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}'''),
+      RegExp(
+          r'''[A-Za-z0-9.!#$%&'*+/=?^_`{|}~-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}'''),
       '[REDACTED_EMAIL]',
     );
     return sanitized;
@@ -142,7 +147,8 @@ class TelemetryService {
   }
 
   /// Buat signature unik untuk deduplikasi error
-  String _computeErrorSignature(String errorStr, String? context, String? stackTraceStr) {
+  String _computeErrorSignature(
+      String errorStr, String? context, String? stackTraceStr) {
     final firstThreeLines = (stackTraceStr ?? '')
         .split('\n')
         .where((l) => l.trim().isNotEmpty)
@@ -174,7 +180,8 @@ class TelemetryService {
       _reportedSignatures[signature] = now;
 
       // Bersihkan signature lama yang sudah lewat window
-      _reportedSignatures.removeWhere((_, time) => now.difference(time) > _dedupWindow);
+      _reportedSignatures
+          .removeWhere((_, time) => now.difference(time) > _dedupWindow);
 
       final user = _firebaseAuth.currentUser;
       // Remote reporting requires an authenticated owner; pre-login errors stay local.
@@ -184,16 +191,19 @@ class TelemetryService {
       final sanitizedExtra = <String, dynamic>{};
       if (extra != null) {
         for (final entry in extra.entries) {
-          sanitizedExtra[entry.key] = sanitizeData(entry.value?.toString() ?? '');
+          sanitizedExtra[entry.key] =
+              sanitizeData(entry.value?.toString() ?? '');
         }
       }
 
       final payload = {
-        'error': errorStr.length > 2000 ? errorStr.substring(0, 2000) : errorStr,
-        'context': sanitizeData(context ?? 'general').substring(0,
-            sanitizeData(context ?? 'general').length.clamp(0, 300)),
+        'error':
+            errorStr.length > 2000 ? errorStr.substring(0, 2000) : errorStr,
+        'context': sanitizeData(context ?? 'general').substring(
+            0, sanitizeData(context ?? 'general').length.clamp(0, 300)),
         'severity': severity,
-        'stackTrace': stackStr.length > 5000 ? stackStr.substring(0, 5000) : stackStr,
+        'stackTrace':
+            stackStr.length > 5000 ? stackStr.substring(0, 5000) : stackStr,
         'breadcrumbs': List<Map<String, dynamic>>.from(_breadcrumbs),
         'extra': sanitizedExtra,
         'userId': user.uid,

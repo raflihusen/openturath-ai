@@ -149,8 +149,11 @@ class _MainShellScreenState extends State<MainShellScreen> {
             body: Row(
               children: [
                 Container(
-                  decoration: BoxDecoration(color: surface,
-                    border: BorderDirectional(end: BorderSide(color: OTColors.borderSubtle(isDark)))) ,
+                  decoration: BoxDecoration(
+                      color: surface,
+                      border: BorderDirectional(
+                          end: BorderSide(
+                              color: OTColors.borderSubtle(isDark)))),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -168,11 +171,15 @@ class _MainShellScreenState extends State<MainShellScreen> {
                               : NavigationRailLabelType.all,
                           leading: Padding(
                             padding: const EdgeInsets.only(top: 16, bottom: 20),
-                            child: Row(mainAxisSize: MainAxisSize.min, children: [
+                            child:
+                                Row(mainAxisSize: MainAxisSize.min, children: [
                               OpenTurathMark(size: 26, color: accent),
                               if (expandedSidebar) ...[
                                 const SizedBox(width: 10),
-                                Text('OpenTurath', style: Theme.of(context).textTheme.titleMedium),
+                                Text('OpenTurath',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleMedium),
                               ],
                             ]),
                           ),

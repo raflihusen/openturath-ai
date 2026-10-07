@@ -14,6 +14,7 @@ import '../core/localization.dart';
 import '../core/scholarly_fonts.dart';
 
 import 'package:openturath_ai/core/design/ot_radius.dart';
+
 /// Antarmuka obrolan 100% native Flutter dengan estetika "The Quiet Islamic Scholar".
 class NativeTurathChatView extends StatefulWidget {
   final AgentModel agent;
@@ -162,44 +163,44 @@ class _NativeTurathChatViewState extends State<NativeTurathChatView>
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 800),
           child: Column(
-        children: [
-          // ── 1. Timeline Obrolan ──
-          Expanded(
-            child: widget.messages.isEmpty
-                ? _buildEmptyState(
-                    textPrimary, textSecondary, surfaceSubtle, border)
-                : ListView.builder(
-                    controller: _scrollController,
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 16, vertical: 16),
-                    itemCount:
-                        widget.messages.length + (widget.isGenerating ? 1 : 0),
-                    itemBuilder: (context, index) {
-                      if (index == widget.messages.length) {
-                        return _buildBreathingIndicator(textSecondary);
-                      }
-                      final msg = widget.messages[index];
-                      return msg.isUser
-                          ? _buildUserBubble(
-                              msg, surfaceSubtle, border, textPrimary)
-                          : _buildAssistantMessage(
-                              msg, textPrimary, textSecondary, border, isDark);
-                    },
-                  ),
-          ),
+            children: [
+              // ── 1. Timeline Obrolan ──
+              Expanded(
+                child: widget.messages.isEmpty
+                    ? _buildEmptyState(
+                        textPrimary, textSecondary, surfaceSubtle, border)
+                    : ListView.builder(
+                        controller: _scrollController,
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 16),
+                        itemCount: widget.messages.length +
+                            (widget.isGenerating ? 1 : 0),
+                        itemBuilder: (context, index) {
+                          if (index == widget.messages.length) {
+                            return _buildBreathingIndicator(textSecondary);
+                          }
+                          final msg = widget.messages[index];
+                          return msg.isUser
+                              ? _buildUserBubble(
+                                  msg, surfaceSubtle, border, textPrimary)
+                              : _buildAssistantMessage(msg, textPrimary,
+                                  textSecondary, border, isDark);
+                        },
+                      ),
+              ),
 
-          // ── 2. Floating Pill Input Bar ──
-          _buildInputBar(
-            canvas,
-            surface,
-            border,
-            textPrimary,
-            textSecondary,
-            accent,
-            isDark,
+              // ── 2. Floating Pill Input Bar ──
+              _buildInputBar(
+                canvas,
+                surface,
+                border,
+                textPrimary,
+                textSecondary,
+                accent,
+                isDark,
+              ),
+            ],
           ),
-        ],
-      ),
         ),
       ),
     );
@@ -297,8 +298,9 @@ class _NativeTurathChatViewState extends State<NativeTurathChatView>
         child: ConstrainedBox(
           constraints: BoxConstraints(
             maxWidth: (MediaQuery.sizeOf(context).width < 800
-                ? MediaQuery.sizeOf(context).width
-                : 800) * 0.82,
+                    ? MediaQuery.sizeOf(context).width
+                    : 800) *
+                0.82,
           ),
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -333,7 +335,6 @@ class _NativeTurathChatViewState extends State<NativeTurathChatView>
     Color border,
     bool isDark,
   ) {
-
     return Padding(
       padding: const EdgeInsets.only(bottom: 24),
       child: Align(
@@ -342,7 +343,8 @@ class _NativeTurathChatViewState extends State<NativeTurathChatView>
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Konten Teks Jawaban (Aliran Naskah Terbuka)
-            ScholarlyAnswer(text: msg.text, ink: textPrimary, muted: textSecondary),
+            ScholarlyAnswer(
+                text: msg.text, ink: textPrimary, muted: textSecondary),
 
             if (msg.citations.isNotEmpty)
               ExpansionTile(

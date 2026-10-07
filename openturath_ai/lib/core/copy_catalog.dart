@@ -1,50 +1,174 @@
 // Naskah kanonik ID, EN, AR. Setiap entri wajib memiliki tiga terjemahan.
 const copyCatalog = <String, List<String>>{
   "appName": ["OpenTurath", "OpenTurath", "أوبن تراث"],
-  "appTagline": ["AI for Islamic Scholarship", "AI for Islamic Scholarship", "الذكاء الاصطناعي للعلوم الإسلامية"],
-  "defaultFieldDesc": ["Pilih bidang untuk mulai menelusuri kitab.", "Choose a discipline to explore its books.", "اختر مجالًا للاطلاع على كتبه."],
+  "appTagline": [
+    "AI for Islamic Scholarship",
+    "AI for Islamic Scholarship",
+    "الذكاء الاصطناعي للعلوم الإسلامية"
+  ],
+  "defaultFieldDesc": [
+    "Pilih bidang untuk mulai menelusuri kitab.",
+    "Choose a discipline to explore its books.",
+    "اختر مجالًا للاطلاع على كتبه."
+  ],
   "aboutTitle": ["Tentang OpenTurath", "About OpenTurath", "عن أوبن تراث"],
-  "aboutDescription": ["OpenTurath membantu Anda menelusuri pembahasan dan rujukan dalam kitab-kitab Islam dengan bantuan AI. Pilih bidang yang ingin dipelajari, ajukan pertanyaan, lalu baca kutipan dan keterangan kitab yang tersedia. Simpan jawaban atau kutipan ke Catatan untuk dipelajari kembali.", "OpenTurath helps you find passages and references in classical Islamic works with the aid of AI. Choose a discipline, submit a scholarly inquiry, and read the cited passages. Save useful extracts to your notes.", "يعينك أوبن تراث على تتبع العبارات والمراجع في كتب التراث بأدوات الذكاء الاصطناعي. اختر مجالًا واطرح مسألتك واقرأ النصوص المحالة إلى مصادرها، واحفظ ما تحتاج إليه في ملاحظاتك."],
-  "aboutScholarlyPrinciple": ["Kami ingin membuat proses mencari rujukan lebih mudah, sambil menjaga kebiasaan membaca sumber dengan teliti. Jawaban AI tetap perlu diperiksa pada kitab yang dirujuk, terutama sebelum digunakan untuk mengajar, menulis, atau mengambil kesimpulan. Pemahaman agama dan penetapan hukum tetap memerlukan bimbingan guru serta ulama yang berkompeten.", "Read every reference carefully and verify each answer against the cited edition. Religious understanding and legal judgment require guidance from qualified teachers and scholars.", "اقرأ المراجع بعناية وراجع كل جواب في الطبعة المحال إليها. وفهم الدين واستنباط الأحكام يحتاجان إلى إرشاد المعلمين والعلماء المؤهلين."],
-  "academicSlogan": ["Riset kitab turats", "Classical Islamic Textual Studies", "دراسة كتب التراث الإسلامي"],
+  "aboutDescription": [
+    "OpenTurath membantu Anda menelusuri pembahasan dan rujukan dalam kitab-kitab Islam dengan bantuan AI. Pilih bidang yang ingin dipelajari, ajukan pertanyaan, lalu baca kutipan dan keterangan kitab yang tersedia. Simpan jawaban atau kutipan ke Catatan untuk dipelajari kembali.",
+    "OpenTurath helps you find passages and references in classical Islamic works with the aid of AI. Choose a discipline, submit a scholarly inquiry, and read the cited passages. Save useful extracts to your notes.",
+    "يعينك أوبن تراث على تتبع العبارات والمراجع في كتب التراث بأدوات الذكاء الاصطناعي. اختر مجالًا واطرح مسألتك واقرأ النصوص المحالة إلى مصادرها، واحفظ ما تحتاج إليه في ملاحظاتك."
+  ],
+  "aboutScholarlyPrinciple": [
+    "Kami ingin membuat proses mencari rujukan lebih mudah, sambil menjaga kebiasaan membaca sumber dengan teliti. Jawaban AI tetap perlu diperiksa pada kitab yang dirujuk, terutama sebelum digunakan untuk mengajar, menulis, atau mengambil kesimpulan. Pemahaman agama dan penetapan hukum tetap memerlukan bimbingan guru serta ulama yang berkompeten.",
+    "Read every reference carefully and verify each answer against the cited edition. Religious understanding and legal judgment require guidance from qualified teachers and scholars.",
+    "اقرأ المراجع بعناية وراجع كل جواب في الطبعة المحال إليها. وفهم الدين واستنباط الأحكام يحتاجان إلى إرشاد المعلمين والعلماء المؤهلين."
+  ],
+  "academicSlogan": [
+    "Riset kitab turats",
+    "Classical Islamic Textual Studies",
+    "دراسة كتب التراث الإسلامي"
+  ],
   "navHome": ["Beranda", "Home", "الرئيسية"],
   "navStudies": ["Asisten", "Assistants", "المساعدون"],
-  "assistantIntro": ["Pilih bidang, lalu kenali mandat dan rujukan setiap asisten sebelum memulai telaah.", "Choose a field, then review each assistant's scope and sources before you begin.", "اختر مجالًا ثم اطّلع على اختصاص كل مساعد ومراجعه قبل بدء المطالعة."],
+  "assistantIntro": [
+    "Pilih bidang, lalu kenali mandat dan rujukan setiap asisten sebelum memulai telaah.",
+    "Choose a field, then review each assistant's scope and sources before you begin.",
+    "اختر مجالًا ثم اطّلع على اختصاص كل مساعد ومراجعه قبل بدء المطالعة."
+  ],
   "assistantBrowse": ["Bidang ilmu", "Fields of study", "مجالات العلم"],
-  "assistantBrowseHint": ["Pilih untuk menyaring", "Select to filter", "اختر للتصفية"],
+  "assistantBrowseHint": [
+    "Pilih untuk menyaring",
+    "Select to filter",
+    "اختر للتصفية"
+  ],
   "assistantFeatured": ["KOLEKSI KHUSUS", "SPECIAL COLLECTION", "مجموعة خاصة"],
-  "assistantFeaturedDesc": ["Lima jalan telaah untuk matan, konsep, latihan, muhadharah, dan dakwah.", "Five study paths for source texts, concepts, practice, lectures, and teaching.", "خمسة مسارات لمطالعة المتون والمفاهيم والتدريب والمحاضرات والدعوة."],
-  "assistantFeaturedAction": ["Lihat lima asisten", "See five assistants", "عرض المساعدين الخمسة"],
-  "assistantSelected": ["Asisten terpilih", "Selected assistant", "مسار المطالعة"],
-  "assistantSelectedHint": ["Mandat dan rujukan", "Scope and references", "الاختصاص والمراجع"],
+  "assistantFeaturedDesc": [
+    "Lima jalan telaah untuk matan, konsep, latihan, muhadharah, dan dakwah.",
+    "Five study paths for source texts, concepts, practice, lectures, and teaching.",
+    "خمسة مسارات لمطالعة المتون والمفاهيم والتدريب والمحاضرات والدعوة."
+  ],
+  "assistantFeaturedAction": [
+    "Lihat lima asisten",
+    "See five assistants",
+    "عرض المساعدين الخمسة"
+  ],
+  "assistantSelected": [
+    "Asisten terpilih",
+    "Selected assistant",
+    "مسار المطالعة"
+  ],
+  "assistantSelectedHint": [
+    "Mandat dan rujukan",
+    "Scope and references",
+    "الاختصاص والمراجع"
+  ],
   "assistantMore": ["Asisten lainnya", "Other assistants", "مساعدون آخرون"],
   "assistantAvailable": ["Tersedia", "Available", "متاح"],
-  "assistantSearch": ["Cari asisten atau kitab rujukan", "Search assistants or references", "ابحث عن مساعد أو كتاب مرجعي"],
+  "assistantSearch": [
+    "Cari asisten atau kitab rujukan",
+    "Search assistants or references",
+    "ابحث عن مساعد أو كتاب مرجعي"
+  ],
   "clearSearch": ["Hapus pencarian", "Clear search", "مسح البحث"],
   "assistantLibrary": ["Lihat pustaka", "View library", "عرض المكتبة"],
-  "planFeaturedLabel": ["Koleksi utama · 5 asisten", "Main collection · 5 assistants", "المجموعة الرئيسية · 5 مساعدين"],
-  "flagshipExplore": ["Jelajahi {0} asisten", "Explore {0} assistants", "استكشف {0} مساعدين"],
-  "flagshipIntroduction": ["Mengenal Fikih Tahawwulat", "About Fiqh al-Tahawwulat", "التعرّف إلى فقه التحولات"],
+  "planFeaturedLabel": [
+    "Koleksi utama · 5 asisten",
+    "Main collection · 5 assistants",
+    "المجموعة الرئيسية · 5 مساعدين"
+  ],
+  "flagshipExplore": [
+    "Jelajahi {0} asisten",
+    "Explore {0} assistants",
+    "استكشف {0} مساعدين"
+  ],
+  "flagshipIntroduction": [
+    "Mengenal Fikih Tahawwulat",
+    "About Fiqh al-Tahawwulat",
+    "التعرّف إلى فقه التحولات"
+  ],
   "flagshipActive": ["AKTIF", "ACTIVE", "فعّال"],
   "flagshipPremium": ["PREMIUM", "PREMIUM", "مميّز"],
   "planExclusive": ["Eksklusif", "Exclusive", "حصري"],
-  "planFeaturedDescription": ["Lima asisten untuk menelaah Fikih Tahawwulat, didukung kitab rujukan dan arsip muhadharah.", "Five assistants for studying Fiqh al-Tahawwulat, supported by source works and a lecture archive.", "خمسة مساعدين لدراسة فقه التحولات مع الكتب المرجعية وأرشيف المحاضرات."],
-  "planSingleDescription": ["Akses satu bidang keilmuan beserta kitab rujukannya.", "Access one field of study and its reference works.", "الوصول إلى مجال علمي واحد وكتبه المرجعية."],
-  "planSingleBenefit1": ["Akses asisten penelaah {0}", "Access the {0} study assistant", "الوصول إلى مساعد دراسة {0}"],
-  "planSingleBenefit2": ["Telusuri ibarah dan konsep dalam kitab rujukan", "Explore passages and concepts in the reference works", "تتبّع العبارات والمفاهيم في الكتب المرجعية"],
-  "planSingleBenefit3": ["Baca rujukan kitab, jilid, dan halaman bila tersedia", "Read cited works, volumes, and pages when available", "اقرأ إحالات الكتب والأجزاء والصفحات عند توفرها"],
-  "planSingleBenefit4": ["Simpan hasil telaah untuk dibaca kembali", "Save your study results for later reading", "احفظ نتائج المطالعة للرجوع إليها"],
-  "planFeaturedBenefit1": ["Akses ruang kajian Fikih Tahawwulat", "Access the Fiqh al-Tahawwulat study room", "الوصول إلى مجلس فقه التحولات"],
-  "planFeaturedBenefit2": ["Lima asisten: Al-Muhaqqiq, Al-Bayan, Al-Mukhtabir, Al-Habib, dan Al-Khatib", "Five assistants: Al-Muhaqqiq, Al-Bayan, Al-Mukhtabir, Al-Habib, and Al-Khatib", "خمسة مساعدين: المحقق والبيان والمختبر والحبيب والخطيب"],
-  "planFeaturedBenefit3": ["Uji pemahaman interaktif dan evaluasi mandiri", "Interactive comprehension practice and self review", "اختبار الفهم التفاعلي والمراجعة الذاتية"],
-  "planFeaturedBenefit4": ["Arsip muhadharah dan transkrip sebagai bahan telaah", "Lecture archive and transcripts for study", "أرشيف المحاضرات ونصوصها للمطالعة"],
+  "planFeaturedDescription": [
+    "Lima asisten untuk menelaah Fikih Tahawwulat, didukung kitab rujukan dan arsip muhadharah.",
+    "Five assistants for studying Fiqh al-Tahawwulat, supported by source works and a lecture archive.",
+    "خمسة مساعدين لدراسة فقه التحولات مع الكتب المرجعية وأرشيف المحاضرات."
+  ],
+  "planSingleDescription": [
+    "Akses satu bidang keilmuan beserta kitab rujukannya.",
+    "Access one field of study and its reference works.",
+    "الوصول إلى مجال علمي واحد وكتبه المرجعية."
+  ],
+  "planSingleBenefit1": [
+    "Akses asisten penelaah {0}",
+    "Access the {0} study assistant",
+    "الوصول إلى مساعد دراسة {0}"
+  ],
+  "planSingleBenefit2": [
+    "Telusuri ibarah dan konsep dalam kitab rujukan",
+    "Explore passages and concepts in the reference works",
+    "تتبّع العبارات والمفاهيم في الكتب المرجعية"
+  ],
+  "planSingleBenefit3": [
+    "Baca rujukan kitab, jilid, dan halaman bila tersedia",
+    "Read cited works, volumes, and pages when available",
+    "اقرأ إحالات الكتب والأجزاء والصفحات عند توفرها"
+  ],
+  "planSingleBenefit4": [
+    "Simpan hasil telaah untuk dibaca kembali",
+    "Save your study results for later reading",
+    "احفظ نتائج المطالعة للرجوع إليها"
+  ],
+  "planFeaturedBenefit1": [
+    "Akses ruang kajian Fikih Tahawwulat",
+    "Access the Fiqh al-Tahawwulat study room",
+    "الوصول إلى مجلس فقه التحولات"
+  ],
+  "planFeaturedBenefit2": [
+    "Lima asisten: Al-Muhaqqiq, Al-Bayan, Al-Mukhtabir, Al-Habib, dan Al-Khatib",
+    "Five assistants: Al-Muhaqqiq, Al-Bayan, Al-Mukhtabir, Al-Habib, and Al-Khatib",
+    "خمسة مساعدين: المحقق والبيان والمختبر والحبيب والخطيب"
+  ],
+  "planFeaturedBenefit3": [
+    "Uji pemahaman interaktif dan evaluasi mandiri",
+    "Interactive comprehension practice and self review",
+    "اختبار الفهم التفاعلي والمراجعة الذاتية"
+  ],
+  "planFeaturedBenefit4": [
+    "Arsip muhadharah dan transkrip sebagai bahan telaah",
+    "Lecture archive and transcripts for study",
+    "أرشيف المحاضرات ونصوصها للمطالعة"
+  ],
   "planChoose": ["Pilih paket {0}", "Choose the {0} plan", "اختر خطة {0}"],
-  "checkoutAuthExpired": ["Sesi akun berakhir. Masuk kembali lalu ulangi pembayaran.", "Your session expired. Sign in again, then retry payment.", "انتهت جلستك. سجّل الدخول مجددًا ثم أعد محاولة الدفع."],
-  "checkoutServiceUnavailable": ["Layanan pembayaran belum merespons. Periksa koneksi lalu coba lagi.", "The payment service is not responding. Check your connection and retry.", "خدمة الدفع لا تستجيب. تحقق من الاتصال ثم أعد المحاولة."],
-  "checkoutPlanUnavailable": ["Paket belum dapat diproses saat ini. Coba lagi beberapa saat lagi.", "This plan cannot be processed right now. Please try again shortly.", "تعذرت معالجة هذه الخطة الآن. حاول مجددًا بعد قليل."],
-  "checkoutAccountDenied": ["Akun ini belum dapat memulai pembayaran. Periksa status akun Anda.", "This account cannot start payment. Check your account status.", "لا يمكن لهذا الحساب بدء الدفع. تحقق من حالة حسابك."],
-  "checkoutSelectionInvalid": ["Pilihan paket perlu diperbarui. Buka kembali halaman ini lalu coba lagi.", "Your plan selection needs updating. Reopen this page and retry.", "يجب تحديث اختيار الخطة. افتح هذه الصفحة مجددًا ثم أعد المحاولة."],
-  "checkoutLinkUnavailable": ["Tautan pembayaran belum tersedia. Coba lagi.", "The payment link is unavailable. Please try again.", "رابط الدفع غير متاح حاليًا. أعد المحاولة."],
+  "checkoutAuthExpired": [
+    "Sesi akun berakhir. Masuk kembali lalu ulangi pembayaran.",
+    "Your session expired. Sign in again, then retry payment.",
+    "انتهت جلستك. سجّل الدخول مجددًا ثم أعد محاولة الدفع."
+  ],
+  "checkoutServiceUnavailable": [
+    "Layanan pembayaran belum merespons. Periksa koneksi lalu coba lagi.",
+    "The payment service is not responding. Check your connection and retry.",
+    "خدمة الدفع لا تستجيب. تحقق من الاتصال ثم أعد المحاولة."
+  ],
+  "checkoutPlanUnavailable": [
+    "Paket belum dapat diproses saat ini. Coba lagi beberapa saat lagi.",
+    "This plan cannot be processed right now. Please try again shortly.",
+    "تعذرت معالجة هذه الخطة الآن. حاول مجددًا بعد قليل."
+  ],
+  "checkoutAccountDenied": [
+    "Akun ini belum dapat memulai pembayaran. Periksa status akun Anda.",
+    "This account cannot start payment. Check your account status.",
+    "لا يمكن لهذا الحساب بدء الدفع. تحقق من حالة حسابك."
+  ],
+  "checkoutSelectionInvalid": [
+    "Pilihan paket perlu diperbarui. Buka kembali halaman ini lalu coba lagi.",
+    "Your plan selection needs updating. Reopen this page and retry.",
+    "يجب تحديث اختيار الخطة. افتح هذه الصفحة مجددًا ثم أعد المحاولة."
+  ],
+  "checkoutLinkUnavailable": [
+    "Tautan pembayaran belum tersedia. Coba lagi.",
+    "The payment link is unavailable. Please try again.",
+    "رابط الدفع غير متاح حاليًا. أعد المحاولة."
+  ],
   "navSaved": ["Catatan", "Notes", "الملاحظات"],
   "navSettings": ["Pengaturan", "Settings", "الإعدادات"],
   "membershipFor": ["Untuk", "For", "لصاحب الحساب"],
@@ -59,126 +183,450 @@ const copyCatalog = <String, List<String>>{
   "searchResults": ["Hasil pencarian", "Search results", "نتائج البحث"],
   "continueStudy": ["Lanjutkan telaah", "Continue reading", "متابعة المطالعة"],
   "startStudy": ["Mulai telaah", "Begin your study", "ابدأ المطالعة"],
-  "dashboardSearchHint": ["Cari asisten atau bidang keilmuan…", "Search assistants or disciplines…", "ابحث عن المساعد أو المجال العلمي…"],
+  "dashboardSearchHint": [
+    "Cari asisten atau bidang keilmuan…",
+    "Search assistants or disciplines…",
+    "ابحث عن المساعد أو المجال العلمي…"
+  ],
   "ahlanDefault": ["Ahlan", "Welcome", "أهلًا وسهلًا"],
   "studyBookCategory": ["TELAAH KITAB", "TEXTUAL STUDIES", "مطالعة الكتب"],
-  "studyEntryDefaultTitle": ["Mulai dari satu pertanyaan", "Start with a question", "قراءة عبارات التراث وفهمها"],
-  "studyEntryResumeSubtitle": ["Sesi terakhir Anda masih terbuka.", "Your last session is still open.", "مجلس مطالعتك جاهز للمتابعة."],
-  "studyEntryHistorySubtitle": ["Lanjutkan dari asisten yang terakhir Anda buka.", "Pick up with the assistant you opened last.", "عُد إلى مراجعك وملاحظاتك السابقة."],
-  "studyEntryDefaultSubtitle": ["Pilih asisten, ajukan masalah, lalu periksa rujukannya di kitab.", "Pick an assistant, ask your question, then check its references in the books.", "اطرح مسألة وتتبع مباحثها في كتب التراث المعتمدة."],
-  "loadingReferences": ["Menyiapkan asisten…", "Preparing assistant…", "جارٍ تهيئة المساعد…"],
-  "modulePreparing": ["sedang disiapkan.", "is being prepared.", "قيد الإعداد."],
-  "moduleUnavailable": ["Asisten ini belum tersedia. Coba lagi nanti.", "This assistant is not yet available. Please try again later.", "هذا المساعد غير متاح حاليًا. حاول لاحقًا."],
-  "cannotLoad": ["Data belum bisa dimuat. Coba lagi.", "The content could not be loaded. Please try again.", "تعذر تحميل المحتوى. أعد المحاولة."],
-  "cannotLoadStudy": ["Asisten belum bisa dibuka", "The assistant could not be opened", "تعذر فتح المساعد"],
-  "studyNotLoadedYet": ["Percakapan belum bisa dimuat. Coba lagi sebentar.", "Conversation has not loaded yet. Please try again shortly.", "لم يكتمل تحميل المحادثة. حاول بعد قليل."],
-  "subscriptionRequiredTitle": ["Berlangganan untuk melanjutkan", "Subscribe to continue", "يلزم الاشتراك للمتابعة"],
-  "subscriptionRequiredShort": ["Akses diperlukan", "Access required", "يلزم تفعيل الوصول"],
-  "catalogLoadFailed": ["Daftar kitab belum bisa dimuat.", "The book catalog could not be loaded.", "تعذر تحميل فهرس الكتب."],
-  "catalogPreparing": ["Katalog kitab sedang disiapkan.", "The book catalog is being prepared.", "فهرس الكتب قيد الإعداد."],
-  "inputQuestionHint": ["Tulis pertanyaan atau ibarah yang ingin ditelaah…", "Enter a scholarly inquiry or a passage to study…", "اكتب المسألة أو العبارة التي تريد مطالعتها…"],
-  "viewSubscription": ["Lihat langganan", "View subscription", "عرض خيارات الاشتراك"],
+  "studyEntryDefaultTitle": [
+    "Mulai dari satu pertanyaan",
+    "Start with a question",
+    "قراءة عبارات التراث وفهمها"
+  ],
+  "studyEntryResumeSubtitle": [
+    "Sesi terakhir Anda masih terbuka.",
+    "Your last session is still open.",
+    "مجلس مطالعتك جاهز للمتابعة."
+  ],
+  "studyEntryHistorySubtitle": [
+    "Lanjutkan dari asisten yang terakhir Anda buka.",
+    "Pick up with the assistant you opened last.",
+    "عُد إلى مراجعك وملاحظاتك السابقة."
+  ],
+  "studyEntryDefaultSubtitle": [
+    "Pilih asisten, ajukan masalah, lalu periksa rujukannya di kitab.",
+    "Pick an assistant, ask your question, then check its references in the books.",
+    "اطرح مسألة وتتبع مباحثها في كتب التراث المعتمدة."
+  ],
+  "loadingReferences": [
+    "Menyiapkan asisten…",
+    "Preparing assistant…",
+    "جارٍ تهيئة المساعد…"
+  ],
+  "modulePreparing": [
+    "sedang disiapkan.",
+    "is being prepared.",
+    "قيد الإعداد."
+  ],
+  "moduleUnavailable": [
+    "Asisten ini belum tersedia. Coba lagi nanti.",
+    "This assistant is not yet available. Please try again later.",
+    "هذا المساعد غير متاح حاليًا. حاول لاحقًا."
+  ],
+  "cannotLoad": [
+    "Data belum bisa dimuat. Coba lagi.",
+    "The content could not be loaded. Please try again.",
+    "تعذر تحميل المحتوى. أعد المحاولة."
+  ],
+  "cannotLoadStudy": [
+    "Asisten belum bisa dibuka",
+    "The assistant could not be opened",
+    "تعذر فتح المساعد"
+  ],
+  "studyNotLoadedYet": [
+    "Percakapan belum bisa dimuat. Coba lagi sebentar.",
+    "Conversation has not loaded yet. Please try again shortly.",
+    "لم يكتمل تحميل المحادثة. حاول بعد قليل."
+  ],
+  "subscriptionRequiredTitle": [
+    "Berlangganan untuk melanjutkan",
+    "Subscribe to continue",
+    "يلزم الاشتراك للمتابعة"
+  ],
+  "subscriptionRequiredShort": [
+    "Akses diperlukan",
+    "Access required",
+    "يلزم تفعيل الوصول"
+  ],
+  "catalogLoadFailed": [
+    "Daftar kitab belum bisa dimuat.",
+    "The book catalog could not be loaded.",
+    "تعذر تحميل فهرس الكتب."
+  ],
+  "catalogPreparing": [
+    "Katalog kitab sedang disiapkan.",
+    "The book catalog is being prepared.",
+    "فهرس الكتب قيد الإعداد."
+  ],
+  "inputQuestionHint": [
+    "Tulis pertanyaan atau ibarah yang ingin ditelaah…",
+    "Enter a scholarly inquiry or a passage to study…",
+    "اكتب المسألة أو العبارة التي تريد مطالعتها…"
+  ],
+  "viewSubscription": [
+    "Lihat langganan",
+    "View subscription",
+    "عرض خيارات الاشتراك"
+  ],
   "tryAgain": ["Coba lagi", "Try again", "إعادة المحاولة"],
-  "sessionExpiredOrNoAccess": ["Sesi berakhir, atau akses ke ruang telaah ini belum aktif.", "Your session has ended or access to this study room is inactive.", "انتهت جلستك أو لم يُفعّل وصولك إلى هذا المجلس."],
-  "agentLoadFailed": ["Ruang telaah belum bisa dimuat. Coba lagi sebentar.", "The study room could not be loaded. Please try again shortly.", "تعذر تحميل المجلس. حاول بعد قليل."],
+  "sessionExpiredOrNoAccess": [
+    "Sesi berakhir, atau akses ke ruang telaah ini belum aktif.",
+    "Your session has ended or access to this study room is inactive.",
+    "انتهت جلستك أو لم يُفعّل وصولك إلى هذا المجلس."
+  ],
+  "agentLoadFailed": [
+    "Ruang telaah belum bisa dimuat. Coba lagi sebentar.",
+    "The study room could not be loaded. Please try again shortly.",
+    "تعذر تحميل المجلس. حاول بعد قليل."
+  ],
   "backToHome": ["Kembali ke beranda", "Return home", "العودة إلى الرئيسية"],
-  "noAssistantsFound": ["Belum ada bidang atau kitab yang cocok. Coba kata kunci lain.", "No matching discipline or book was found. Try another search term.", "لم يُعثر على مجال أو كتاب مطابق. جرّب عبارة أخرى."],
+  "noAssistantsFound": [
+    "Belum ada bidang atau kitab yang cocok. Coba kata kunci lain.",
+    "No matching discipline or book was found. Try another search term.",
+    "لم يُعثر على مجال أو كتاب مطابق. جرّب عبارة أخرى."
+  ],
   "comingSoon": ["Belum tersedia", "Not yet available", "غير متاح بعد"],
-  "deviceNotSupportedTitle": ["Perangkat belum didukung", "Device not supported", "الجهاز غير مدعوم"],
-  "deviceNotSupportedMessage": ["OpenTurath saat ini mendukung Android, macOS, dan Windows. Perangkat ini belum didukung.", "OpenTurath currently supports Android, macOS, and Windows. This device is not supported.", "يدعم أوبن تراث حاليًا Android وmacOS وWindows. هذا الجهاز غير مدعوم."],
-  "cannotConnectTitle": ["Tidak dapat terhubung", "Unable to connect", "تعذر الاتصال"],
-  "cannotConnectMessage": ["Tidak dapat terhubung ke layanan OpenTurath. Periksa koneksi internet, lalu coba lagi.", "Unable to connect to OpenTurath. Check your internet connection and try again.", "تعذر الاتصال بأوبن تراث. تحقق من اتصالك بالإنترنت وأعد المحاولة."],
-  "adabDialogTitle": ["Catatan sebelum telaah", "Before beginning your study", "قبل الشروع في المطالعة"],
+  "deviceNotSupportedTitle": [
+    "Perangkat belum didukung",
+    "Device not supported",
+    "الجهاز غير مدعوم"
+  ],
+  "deviceNotSupportedMessage": [
+    "OpenTurath saat ini mendukung Android, macOS, dan Windows. Perangkat ini belum didukung.",
+    "OpenTurath currently supports Android, macOS, and Windows. This device is not supported.",
+    "يدعم أوبن تراث حاليًا Android وmacOS وWindows. هذا الجهاز غير مدعوم."
+  ],
+  "cannotConnectTitle": [
+    "Tidak dapat terhubung",
+    "Unable to connect",
+    "تعذر الاتصال"
+  ],
+  "cannotConnectMessage": [
+    "Tidak dapat terhubung ke layanan OpenTurath. Periksa koneksi internet, lalu coba lagi.",
+    "Unable to connect to OpenTurath. Check your internet connection and try again.",
+    "تعذر الاتصال بأوبن تراث. تحقق من اتصالك بالإنترنت وأعد المحاولة."
+  ],
+  "adabDialogTitle": [
+    "Catatan sebelum telaah",
+    "Before beginning your study",
+    "قبل الشروع في المطالعة"
+  ],
   "adabAcknowledgeButton": ["Saya mengerti", "I understand", "فهمت"],
-  "adabDialogLead": ["OpenTurath membantu mencari kutipan dan menelaah ibarah dalam kitab. Cocokkan kembali rujukan pada kitab rujukan, dan tetaplah bertalaqqi kepada guru serta masyayikh yang berkompeten.", "OpenTurath helps you find quotations and study passages. Verify references in the source works and continue learning with qualified teachers and scholars.", "يساعدك أوبن تراث في تتبع النقول ومطالعة العبارات. راجع الإحالات في مصادرها وواصل التلقي عن المعلمين والمشايخ المؤهلين."],
-  "adabHeading1": ["Bantuan untuk menelusuri kitab", "Finding passages in the sources", "تتبع العبارات في المصادر"],
-  "adabBody1": ["Gunakan OpenTurath untuk mencari ibarah dan menelaah penjelasan ulama dalam kitab. Verifikasi hasilnya langsung dengan naskah kitab rujukan.", "Use OpenTurath to find passages and scholarly explanations. Verify the results directly in the source text.", "استعن بأوبن تراث لتتبع العبارات وشروح العلماء، وراجع النتائج في النص الأصلي."],
-  "adabHeading2": ["Talaqqi dan bimbingan guru", "Learning with teachers", "التلقي وإرشاد المعلمين"],
-  "adabBody2": ["Untuk memahami agama dengan baik dan benar, tetaplah bertalaqqi kepada guru dan ulama yang berkompeten.", "Sound religious understanding calls for continued study with qualified teachers and scholars.", "الفهم السليم للدين يستلزم مواصلة التلقي عن المعلمين والعلماء المؤهلين."],
-  "adabHeading3": ["Tahqiq dan periksa rujukan", "Verify the text and its references", "تحقيق النص ومراجعة الإحالات"],
-  "adabBody3": ["Periksa matan, syarah, dan nomor jilid/halaman pada kitab rujukan sebelum menjadikannya sandaran istinbath.", "Check the text, commentary, volume, and page in the cited edition before drawing conclusions.", "راجع المتن والشرح ورقم الجزء والصفحة في الطبعة المعتمدة قبل الاستنباط."],
-  "noAnswerToCopy": ["Belum ada jawaban untuk disalin.", "There is no answer to copy yet.", "لا يوجد جواب لنسخه بعد."],
-  "noConversationToCopy": ["Belum ada catatan telaah untuk disalin.", "There are no study notes to copy yet.", "لا توجد ملاحظات مطالعة لنسخها بعد."],
+  "adabDialogLead": [
+    "OpenTurath membantu mencari kutipan dan menelaah ibarah dalam kitab. Cocokkan kembali rujukan pada kitab rujukan, dan tetaplah bertalaqqi kepada guru serta masyayikh yang berkompeten.",
+    "OpenTurath helps you find quotations and study passages. Verify references in the source works and continue learning with qualified teachers and scholars.",
+    "يساعدك أوبن تراث في تتبع النقول ومطالعة العبارات. راجع الإحالات في مصادرها وواصل التلقي عن المعلمين والمشايخ المؤهلين."
+  ],
+  "adabHeading1": [
+    "Bantuan untuk menelusuri kitab",
+    "Finding passages in the sources",
+    "تتبع العبارات في المصادر"
+  ],
+  "adabBody1": [
+    "Gunakan OpenTurath untuk mencari ibarah dan menelaah penjelasan ulama dalam kitab. Verifikasi hasilnya langsung dengan naskah kitab rujukan.",
+    "Use OpenTurath to find passages and scholarly explanations. Verify the results directly in the source text.",
+    "استعن بأوبن تراث لتتبع العبارات وشروح العلماء، وراجع النتائج في النص الأصلي."
+  ],
+  "adabHeading2": [
+    "Talaqqi dan bimbingan guru",
+    "Learning with teachers",
+    "التلقي وإرشاد المعلمين"
+  ],
+  "adabBody2": [
+    "Untuk memahami agama dengan baik dan benar, tetaplah bertalaqqi kepada guru dan ulama yang berkompeten.",
+    "Sound religious understanding calls for continued study with qualified teachers and scholars.",
+    "الفهم السليم للدين يستلزم مواصلة التلقي عن المعلمين والعلماء المؤهلين."
+  ],
+  "adabHeading3": [
+    "Tahqiq dan periksa rujukan",
+    "Verify the text and its references",
+    "تحقيق النص ومراجعة الإحالات"
+  ],
+  "adabBody3": [
+    "Periksa matan, syarah, dan nomor jilid/halaman pada kitab rujukan sebelum menjadikannya sandaran istinbath.",
+    "Check the text, commentary, volume, and page in the cited edition before drawing conclusions.",
+    "راجع المتن والشرح ورقم الجزء والصفحة في الطبعة المعتمدة قبل الاستنباط."
+  ],
+  "noAnswerToCopy": [
+    "Belum ada jawaban untuk disalin.",
+    "There is no answer to copy yet.",
+    "لا يوجد جواب لنسخه بعد."
+  ],
+  "noConversationToCopy": [
+    "Belum ada catatan telaah untuk disalin.",
+    "There are no study notes to copy yet.",
+    "لا توجد ملاحظات مطالعة لنسخها بعد."
+  ],
   "answerCopied": ["Jawaban disalin.", "Answer copied.", "نُسخ الجواب."],
-  "conversationCopied": ["Catatan telaah disalin dan tersimpan ke Catatan.", "Study notes copied and saved.", "نُسخت ملاحظات المطالعة وحُفظت."],
-  "copyFailed": ["Jawaban belum bisa disalin. Coba lagi.", "The answer could not be copied. Please try again.", "تعذر نسخ الجواب. أعد المحاولة."],
-  "noAnswerToSave": ["Belum ada jawaban untuk disimpan.", "There is no answer to save yet.", "لا يوجد جواب لحفظه بعد."],
-  "savedSuccess": ["Tersimpan ke Catatan.", "Saved to Notes.", "حُفظ في الملاحظات."],
-  "saveFailed": ["Jawaban belum tersimpan. Coba lagi.", "The answer was not saved. Please try again.", "لم يُحفظ الجواب. أعد المحاولة."],
+  "conversationCopied": [
+    "Catatan telaah disalin dan tersimpan ke Catatan.",
+    "Study notes copied and saved.",
+    "نُسخت ملاحظات المطالعة وحُفظت."
+  ],
+  "copyFailed": [
+    "Jawaban belum bisa disalin. Coba lagi.",
+    "The answer could not be copied. Please try again.",
+    "تعذر نسخ الجواب. أعد المحاولة."
+  ],
+  "noAnswerToSave": [
+    "Belum ada jawaban untuk disimpan.",
+    "There is no answer to save yet.",
+    "لا يوجد جواب لحفظه بعد."
+  ],
+  "savedSuccess": [
+    "Tersimpan ke Catatan.",
+    "Saved to Notes.",
+    "حُفظ في الملاحظات."
+  ],
+  "saveFailed": [
+    "Jawaban belum tersimpan. Coba lagi.",
+    "The answer was not saved. Please try again.",
+    "لم يُحفظ الجواب. أعد المحاولة."
+  ],
   "referenceCopied": ["Rujukan disalin.", "Reference copied.", "نُسخ المرجع."],
   "ibarahCopied": ["Ibarah disalin.", "Passage copied.", "نُسخت العبارة."],
-  "noteContentCopied": ["Isi catatan disalin.", "Note copied.", "نُسخت الملاحظة."],
+  "noteContentCopied": [
+    "Isi catatan disalin.",
+    "Note copied.",
+    "نُسخت الملاحظة."
+  ],
   "bookmarkDeleted": ["Catatan dihapus.", "Note deleted.", "حُذفت الملاحظة."],
-  "bookmarkDeleteFailed": ["Catatan belum bisa dihapus. Coba lagi.", "The note could not be deleted. Please try again.", "تعذر حذف الملاحظة. أعد المحاولة."],
-  "cacheClearedSuccess": ["Data sementara dibersihkan.", "Temporary data cleared.", "مُسحت البيانات المؤقتة."],
-  "searchSavedHint": ["Cari catatan atau ibarah…", "Search notes or passages…", "ابحث في الملاحظات أو العبارات…"],
+  "bookmarkDeleteFailed": [
+    "Catatan belum bisa dihapus. Coba lagi.",
+    "The note could not be deleted. Please try again.",
+    "تعذر حذف الملاحظة. أعد المحاولة."
+  ],
+  "cacheClearedSuccess": [
+    "Data sementara dibersihkan.",
+    "Temporary data cleared.",
+    "مُسحت البيانات المؤقتة."
+  ],
+  "searchSavedHint": [
+    "Cari catatan atau ibarah…",
+    "Search notes or passages…",
+    "ابحث في الملاحظات أو العبارات…"
+  ],
   "searchSavedTooltip": ["Cari catatan", "Search notes", "البحث في الملاحظات"],
   "noSavedTitle": ["Belum ada catatan", "No notes yet", "لا توجد ملاحظات بعد"],
-  "noSavedDescription": ["Simpan jawaban atau ibarah penting di sini agar mudah dibaca kembali.", "Save useful answers or passages here to read again.", "احفظ الأجوبة والعبارات المفيدة هنا للرجوع إليها."],
+  "noSavedDescription": [
+    "Simpan jawaban atau ibarah penting di sini agar mudah dibaca kembali.",
+    "Save useful answers or passages here to read again.",
+    "احفظ الأجوبة والعبارات المفيدة هنا للرجوع إليها."
+  ],
   "copyIbarahAction": ["Salin ibarah", "Copy passage", "نسخ العبارة"],
   "viewReferenceAction": ["Lihat rujukan", "View reference", "عرض المرجع"],
   "shareReferenceTooltip": ["Bagikan catatan", "Share note", "مشاركة الملاحظة"],
   "copyAnswerAction": ["Salin jawaban", "Copy answer", "نسخ الجواب"],
-  "copyConversationAction": ["Salin catatan telaah", "Copy study notes", "نسخ ملاحظات المطالعة"],
-  "saveAnswerMenu": ["Simpan ke Catatan", "Save to Notes", "الحفظ في الملاحظات"],
+  "copyConversationAction": [
+    "Salin catatan telaah",
+    "Copy study notes",
+    "نسخ ملاحظات المطالعة"
+  ],
+  "saveAnswerMenu": [
+    "Simpan ke Catatan",
+    "Save to Notes",
+    "الحفظ في الملاحظات"
+  ],
   "copyContentTooltip": ["Salin isi", "Copy content", "نسخ المحتوى"],
   "editNote": ["Edit catatan", "Edit note", "تحرير الملاحظة"],
   "deleteNote": ["Hapus catatan", "Delete note", "حذف الملاحظة"],
   "deleteNoteTitle": ["Hapus catatan", "Delete note", "حذف الملاحظة"],
-  "deleteNoteDesc": ["Catatan ini akan dihapus permanen.", "This note will be permanently deleted.", "ستُحذف هذه الملاحظة نهائيًا."],
+  "deleteNoteDesc": [
+    "Catatan ini akan dihapus permanen.",
+    "This note will be permanently deleted.",
+    "ستُحذف هذه الملاحظة نهائيًا."
+  ],
   "addNote": ["Tambah catatan", "Add note", "إضافة ملاحظة"],
   "closeSearch": ["Tutup pencarian", "Close search", "إغلاق البحث"],
   "undo": ["Urungkan", "Undo", "تراجع"],
   "bookReferenceLabel": ["Rujukan kitab", "Book reference", "مرجع الكتاب"],
-  "googleSessionConnectTitle": ["Masuk ke akun Google", "Sign in to Google", "تسجيل الدخول إلى Google"],
-  "googleSessionConnectSubtitle": ["Siapkan akun untuk ruang telaah Anda", "Prepare your account for textual study", "هيّئ حسابك لمطالعة النصوص"],
-  "googleSessionConnectDesc": ["Setelah masuk, Anda langsung kembali ke ruang telaah.", "After signing in, you will return to your study room automatically.", "ستعود إلى مجلس المطالعة تلقائيًا بعد تسجيل الدخول."],
-  "googleSessionSignInHint": ["Gunakan akun Google yang sama supaya tidak perlu masuk ulang.", "Use the same Google account to resume your study without signing in again.", "استخدم حساب Google نفسه لمتابعة المطالعة دون تسجيل الدخول مجددًا."],
-  "googleSessionSignInSameAccountDesc": ["Gunakan akun Google yang sama agar akses telaah terbuka tanpa masuk ulang.", "Use the same Google account to open your study room without signing in again.", "استخدم حساب Google نفسه لفتح مجلسك دون تسجيل الدخول مجددًا."],
-  "googleSessionConnected": ["Akun Google terhubung", "Google account connected", "تم ربط حساب Google"],
-  "googleSessionPreparing": ["Menyiapkan ruang telaah…", "Preparing your study room…", "جارٍ تهيئة مجلس المطالعة…"],
-  "cancelSignIn": ["Batalkan proses masuk", "Cancel sign-in", "إلغاء تسجيل الدخول"],
-  "cancelSignInTitle": ["Batalkan proses masuk", "Cancel sign-in", "إلغاء تسجيل الدخول"],
-  "connectingGoogleAccount": ["Menghubungkan akun Google…", "Connecting your Google account…", "جارٍ ربط حساب Google…"],
-  "googleSessionFailed": ["Gagal menghubungkan akun Google.", "Unable to connect your Google account.", "تعذر ربط حساب Google."],
-  "googleSessionActive": ["Sesi Google aktif", "Google session active", "جلسة Google نشطة"],
-  "continueWithGoogle": ["Lanjutkan dengan Google", "Continue with Google", "المتابعة باستخدام Google"],
-  "googleSignInFailed": ["Gagal masuk dengan Google. Coba lagi.", "Google sign-in failed. Please try again.", "تعذر تسجيل الدخول باستخدام Google. أعد المحاولة."],
-  "desktopKeychainError": ["Sesi login tidak dapat disimpan dengan aman di macOS. Build aplikasi perlu diperiksa oleh pengelola; login ulang tidak memperbaiki masalah ini.", "Your sign-in session could not be stored securely on macOS. The app build needs to be checked by its maintainer; signing in again will not fix this issue.", "تعذر حفظ جلسة تسجيل الدخول بأمان على macOS. يجب على المسؤول فحص بناء التطبيق؛ ولن تُصلح إعادة تسجيل الدخول هذه المشكلة."],
-  "desktopListenerError": ["Gagal membuka listener lokal desktop untuk autentikasi.", "Failed to initialize local desktop listener for authentication.", "تعذر فتح منفذ الاستماع المحلي لسطح المكتب للمصادقة."],
-  "desktopBrowserError": ["Tidak dapat membuka peramban web untuk login.", "Unable to open web browser for sign-in.", "تعذر فتح متصفح الويب لتسجيل الدخول."],
-  "desktopTimeoutError": ["Waktu masuk habis. Coba lagi.", "Sign-in timed out. Please try again.", "انتهت مهلة تسجيل الدخول. يُرجى المحاولة مجددًا."],
-  "termsAgreementPrefix": ["Dengan masuk, Anda menyetujui", "By signing in, you agree to", "بتسجيل الدخول، توافق على"],
+  "googleSessionConnectTitle": [
+    "Masuk ke akun Google",
+    "Sign in to Google",
+    "تسجيل الدخول إلى Google"
+  ],
+  "googleSessionConnectSubtitle": [
+    "Siapkan akun untuk ruang telaah Anda",
+    "Prepare your account for textual study",
+    "هيّئ حسابك لمطالعة النصوص"
+  ],
+  "googleSessionConnectDesc": [
+    "Setelah masuk, Anda langsung kembali ke ruang telaah.",
+    "After signing in, you will return to your study room automatically.",
+    "ستعود إلى مجلس المطالعة تلقائيًا بعد تسجيل الدخول."
+  ],
+  "googleSessionSignInHint": [
+    "Gunakan akun Google yang sama supaya tidak perlu masuk ulang.",
+    "Use the same Google account to resume your study without signing in again.",
+    "استخدم حساب Google نفسه لمتابعة المطالعة دون تسجيل الدخول مجددًا."
+  ],
+  "googleSessionSignInSameAccountDesc": [
+    "Gunakan akun Google yang sama agar akses telaah terbuka tanpa masuk ulang.",
+    "Use the same Google account to open your study room without signing in again.",
+    "استخدم حساب Google نفسه لفتح مجلسك دون تسجيل الدخول مجددًا."
+  ],
+  "googleSessionConnected": [
+    "Akun Google terhubung",
+    "Google account connected",
+    "تم ربط حساب Google"
+  ],
+  "googleSessionPreparing": [
+    "Menyiapkan ruang telaah…",
+    "Preparing your study room…",
+    "جارٍ تهيئة مجلس المطالعة…"
+  ],
+  "cancelSignIn": [
+    "Batalkan proses masuk",
+    "Cancel sign-in",
+    "إلغاء تسجيل الدخول"
+  ],
+  "cancelSignInTitle": [
+    "Batalkan proses masuk",
+    "Cancel sign-in",
+    "إلغاء تسجيل الدخول"
+  ],
+  "connectingGoogleAccount": [
+    "Menghubungkan akun Google…",
+    "Connecting your Google account…",
+    "جارٍ ربط حساب Google…"
+  ],
+  "googleSessionFailed": [
+    "Gagal menghubungkan akun Google.",
+    "Unable to connect your Google account.",
+    "تعذر ربط حساب Google."
+  ],
+  "googleSessionActive": [
+    "Sesi Google aktif",
+    "Google session active",
+    "جلسة Google نشطة"
+  ],
+  "continueWithGoogle": [
+    "Lanjutkan dengan Google",
+    "Continue with Google",
+    "المتابعة باستخدام Google"
+  ],
+  "googleSignInFailed": [
+    "Gagal masuk dengan Google. Coba lagi.",
+    "Google sign-in failed. Please try again.",
+    "تعذر تسجيل الدخول باستخدام Google. أعد المحاولة."
+  ],
+  "desktopKeychainError": [
+    "Sesi login tidak dapat disimpan dengan aman di macOS. Build aplikasi perlu diperiksa oleh pengelola; login ulang tidak memperbaiki masalah ini.",
+    "Your sign-in session could not be stored securely on macOS. The app build needs to be checked by its maintainer; signing in again will not fix this issue.",
+    "تعذر حفظ جلسة تسجيل الدخول بأمان على macOS. يجب على المسؤول فحص بناء التطبيق؛ ولن تُصلح إعادة تسجيل الدخول هذه المشكلة."
+  ],
+  "desktopListenerError": [
+    "Gagal membuka listener lokal desktop untuk autentikasi.",
+    "Failed to initialize local desktop listener for authentication.",
+    "تعذر فتح منفذ الاستماع المحلي لسطح المكتب للمصادقة."
+  ],
+  "desktopBrowserError": [
+    "Tidak dapat membuka peramban web untuk login.",
+    "Unable to open web browser for sign-in.",
+    "تعذر فتح متصفح الويب لتسجيل الدخول."
+  ],
+  "desktopTimeoutError": [
+    "Waktu masuk habis. Coba lagi.",
+    "Sign-in timed out. Please try again.",
+    "انتهت مهلة تسجيل الدخول. يُرجى المحاولة مجددًا."
+  ],
+  "termsAgreementPrefix": [
+    "Dengan masuk, Anda menyetujui",
+    "By signing in, you agree to",
+    "بتسجيل الدخول، توافق على"
+  ],
   "profile": ["Profil", "Profile", "الملف الشخصي"],
   "subscription": ["Langganan", "Subscription", "الاشتراك"],
-  "activeSubscription": ["Langganan aktif", "Active subscription", "اشتراك فعّال"],
-  "inactiveSubscription": ["Pilih paket atau gunakan voucher untuk mulai berlangganan.", "Choose a plan or redeem a voucher to begin.", "اختر باقة أو استخدم قسيمة لبدء الاشتراك."],
+  "activeSubscription": [
+    "Langganan aktif",
+    "Active subscription",
+    "اشتراك فعّال"
+  ],
+  "inactiveSubscription": [
+    "Pilih paket atau gunakan voucher untuk mulai berlangganan.",
+    "Choose a plan or redeem a voucher to begin.",
+    "اختر باقة أو استخدم قسيمة لبدء الاشتراك."
+  ],
   "appearance": ["Tampilan", "Appearance", "المظهر"],
   "modeDark": ["Gelap", "Dark", "داكن"],
   "modeLight": ["Terang", "Light", "فاتح"],
   "modeSystem": ["Ikuti perangkat", "Follow device", "تلقائي"],
   "language": ["Bahasa", "Language", "اللغة"],
-  "languageIndonesian": ["Bahasa Indonesia", "Bahasa Indonesia", "Bahasa Indonesia"],
-  "languageDialogNotice": ["Pilih bahasa antarmuka.", "Choose your interface language.", "اختر لغة الواجهة."],
-  "languageDialogCurrent": ["Indonesia · English · العربية", "Indonesia · English · العربية", "Indonesia · English · العربية"],
+  "languageIndonesian": [
+    "Bahasa Indonesia",
+    "Bahasa Indonesia",
+    "Bahasa Indonesia"
+  ],
+  "languageDialogNotice": [
+    "Pilih bahasa antarmuka.",
+    "Choose your interface language.",
+    "اختر لغة الواجهة."
+  ],
+  "languageDialogCurrent": [
+    "Indonesia · English · العربية",
+    "Indonesia · English · العربية",
+    "Indonesia · English · العربية"
+  ],
   "logoutDialogTitle": ["Keluar dari akun", "Sign out", "تسجيل الخروج"],
-  "logoutDialogBody": ["Anda perlu masuk kembali untuk menggunakan akun ini.", "You will need to sign in again to use this account.", "ستحتاج إلى تسجيل الدخول مجددًا لاستخدام هذا الحساب."],
+  "logoutDialogBody": [
+    "Anda perlu masuk kembali untuk menggunakan akun ini.",
+    "You will need to sign in again to use this account.",
+    "ستحتاج إلى تسجيل الدخول مجددًا لاستخدام هذا الحساب."
+  ],
   "logoutButton": ["Keluar", "Sign out", "تسجيل الخروج"],
   "loggingOut": ["Sedang keluar…", "Signing out…", "جارٍ تسجيل الخروج…"],
   "deleteAccountTitle": ["Hapus akun", "Delete account", "حذف الحساب"],
-  "deleteAccountBody": ["Akun OpenTurath akan dihapus dan akses akun berakhir. Data yang masih perlu disimpan untuk kewajiban hukum mengikuti Kebijakan Privasi. Simpan catatan penting sebelum melanjutkan.", "Your OpenTurath account will be deleted and account access will end. Data that must be retained for legal obligations is handled under the Privacy Policy. Save important notes before continuing.", "سيُحذف حساب أوبن تراث وينتهي الوصول إليه. وتخضع البيانات التي يلزم الاحتفاظ بها للالتزامات القانونية لسياسة الخصوصية. احفظ ملاحظاتك المهمة قبل المتابعة."],
+  "deleteAccountBody": [
+    "Akun OpenTurath akan dihapus dan akses akun berakhir. Data yang masih perlu disimpan untuk kewajiban hukum mengikuti Kebijakan Privasi. Simpan catatan penting sebelum melanjutkan.",
+    "Your OpenTurath account will be deleted and account access will end. Data that must be retained for legal obligations is handled under the Privacy Policy. Save important notes before continuing.",
+    "سيُحذف حساب أوبن تراث وينتهي الوصول إليه. وتخضع البيانات التي يلزم الاحتفاظ بها للالتزامات القانونية لسياسة الخصوصية. احفظ ملاحظاتك المهمة قبل المتابعة."
+  ],
   "deleteAccountButton": ["Hapus akun", "Delete account", "حذف الحساب"],
   "deleteAccountCancel": ["Batal", "Cancel", "إلغاء"],
   "deleteAccountSuccess": ["Akun dihapus.", "Account deleted.", "حُذف الحساب."],
-  "recentLoginRequired": ["Masuk kembali untuk melanjutkan penghapusan akun.", "Sign in again to continue deleting your account.", "سجّل الدخول مجددًا لمتابعة حذف الحساب."],
-  "networkError": ["Periksa koneksi internet, lalu coba lagi.", "Check your internet connection and try again.", "تحقق من اتصالك بالإنترنت وأعد المحاولة."],
+  "recentLoginRequired": [
+    "Masuk kembali untuk melanjutkan penghapusan akun.",
+    "Sign in again to continue deleting your account.",
+    "سجّل الدخول مجددًا لمتابعة حذف الحساب."
+  ],
+  "networkError": [
+    "Periksa koneksi internet, lalu coba lagi.",
+    "Check your internet connection and try again.",
+    "تحقق من اتصالك بالإنترنت وأعد المحاولة."
+  ],
   "accountSection": ["Akun", "Account", "الحساب"],
-  "generalSettingsSection": ["Pengaturan umum", "General settings", "الإعدادات العامة"],
-  "supportAndPolicySection": ["Bantuan & kebijakan", "Support & policies", "المساعدة والسياسات"],
-  "clearCache": ["Bersihkan data sementara", "Clear temporary data", "مسح البيانات المؤقتة"],
-  "clearCacheSubtitle": ["Hapus unduhan sementara dari perangkat", "Remove temporary downloads from this device", "إزالة التنزيلات المؤقتة من الجهاز"],
-  "clearCacheDialogTitle": ["Bersihkan data sementara", "Clear temporary data", "مسح البيانات المؤقتة"],
-  "clearCacheDialogDesc": ["Data unduhan dan cache sesi lokal akan dibersihkan. Anda tetap berada dalam akun.", "Downloaded and locally cached session data will be cleared. You will remain signed in.", "ستُمسح التنزيلات وبيانات الجلسات المؤقتة من الجهاز، وسيبقى حسابك مسجلًا."],
+  "generalSettingsSection": [
+    "Pengaturan umum",
+    "General settings",
+    "الإعدادات العامة"
+  ],
+  "supportAndPolicySection": [
+    "Bantuan & kebijakan",
+    "Support & policies",
+    "المساعدة والسياسات"
+  ],
+  "clearCache": [
+    "Bersihkan data sementara",
+    "Clear temporary data",
+    "مسح البيانات المؤقتة"
+  ],
+  "clearCacheSubtitle": [
+    "Hapus unduhan sementara dari perangkat",
+    "Remove temporary downloads from this device",
+    "إزالة التنزيلات المؤقتة من الجهاز"
+  ],
+  "clearCacheDialogTitle": [
+    "Bersihkan data sementara",
+    "Clear temporary data",
+    "مسح البيانات المؤقتة"
+  ],
+  "clearCacheDialogDesc": [
+    "Data unduhan dan cache sesi lokal akan dibersihkan. Anda tetap berada dalam akun.",
+    "Downloaded and locally cached session data will be cleared. You will remain signed in.",
+    "ستُمسح التنزيلات وبيانات الجلسات المؤقتة من الجهاز، وسيبقى حسابك مسجلًا."
+  ],
   "clearAction": ["Bersihkan", "Clear", "مسح"],
   "chooseAppearance": ["Pilih tampilan", "Choose appearance", "اختيار المظهر"],
   "accessStatus": ["Status akses", "Access status", "حالة الوصول"],
@@ -187,21 +635,69 @@ const copyCatalog = <String, List<String>>{
   "planTahawwulat": ["Fikih Tahawwulat", "Fiqh al-Tahawwulat", "فقه التحولات"],
   "trialAccess": ["Akses uji coba", "Trial access", "وصول تجريبي"],
   "activeUntil": ["Aktif hingga", "Active until", "فعّال حتى"],
-  "allAssistantsAvailable": ["Akses semua asisten", "Access to all assistants", "جميع المساعدين متاحون"],
-  "accessExpiringSoon": ["Masa akses hampir berakhir", "Access expires soon", "توشك مدة الوصول على الانتهاء"],
+  "allAssistantsAvailable": [
+    "Akses semua asisten",
+    "Access to all assistants",
+    "جميع المساعدين متاحون"
+  ],
+  "accessExpiringSoon": [
+    "Masa akses hampir berakhir",
+    "Access expires soon",
+    "توشك مدة الوصول على الانتهاء"
+  ],
   "readyToUse": ["Siap digunakan", "Ready to use", "جاهز للاستخدام"],
   "validUntil": ["Berlaku hingga", "Valid until", "صالح حتى"],
   "renewPro": ["Perpanjang akses", "Renew access", "تجديد الوصول"],
-  "manageSubscription": ["Kelola langganan", "Manage subscription", "إدارة الاشتراك"],
-  "preparingProAccess": ["Menyiapkan akses", "Preparing access", "جارٍ تهيئة الوصول"],
-  "paymentBeingVerified": ["Pembayaran sedang diperiksa", "Payment is being verified", "جارٍ التحقق من الدفع"],
-  "viewPaymentStatus": ["Lihat status pembayaran", "View payment status", "عرض حالة الدفع"],
-  "accessNotYetActive": ["Akses belum aktif", "Access is not active yet", "لم يُفعّل الوصول بعد"],
-  "paymentNotSuccessful": ["Pembayaran belum berhasil", "Payment was unsuccessful", "لم تكتمل عملية الدفع"],
-  "tryPaymentAgain": ["Coba pembayaran lagi", "Try payment again", "إعادة محاولة الدفع"],
-  "chooseAssistantAndPlan": ["Pilih bidang dan masa akses untuk memulai telaah.", "Choose a discipline and access period to begin your study.", "اختر مجالًا ومدة وصول لبدء المطالعة."],
-  "chooseProPlan": ["Pilih masa akses", "Choose access period", "اختيار مدة الوصول"],
-  "permanentAccessLabel": ["Tanpa batas waktu", "No expiry date", "دون تاريخ انتهاء"],
+  "manageSubscription": [
+    "Kelola langganan",
+    "Manage subscription",
+    "إدارة الاشتراك"
+  ],
+  "preparingProAccess": [
+    "Menyiapkan akses",
+    "Preparing access",
+    "جارٍ تهيئة الوصول"
+  ],
+  "paymentBeingVerified": [
+    "Pembayaran sedang diperiksa",
+    "Payment is being verified",
+    "جارٍ التحقق من الدفع"
+  ],
+  "viewPaymentStatus": [
+    "Lihat status pembayaran",
+    "View payment status",
+    "عرض حالة الدفع"
+  ],
+  "accessNotYetActive": [
+    "Akses belum aktif",
+    "Access is not active yet",
+    "لم يُفعّل الوصول بعد"
+  ],
+  "paymentNotSuccessful": [
+    "Pembayaran belum berhasil",
+    "Payment was unsuccessful",
+    "لم تكتمل عملية الدفع"
+  ],
+  "tryPaymentAgain": [
+    "Coba pembayaran lagi",
+    "Try payment again",
+    "إعادة محاولة الدفع"
+  ],
+  "chooseAssistantAndPlan": [
+    "Pilih bidang dan masa akses untuk memulai telaah.",
+    "Choose a discipline and access period to begin your study.",
+    "اختر مجالًا ومدة وصول لبدء المطالعة."
+  ],
+  "chooseProPlan": [
+    "Pilih masa akses",
+    "Choose access period",
+    "اختيار مدة الوصول"
+  ],
+  "permanentAccessLabel": [
+    "Tanpa batas waktu",
+    "No expiry date",
+    "دون تاريخ انتهاء"
+  ],
   "manageAccess": ["Kelola akses", "Manage access", "إدارة الوصول"],
   "close": ["Tutup", "Close", "إغلاق"],
   "cancel": ["Batal", "Cancel", "إلغاء"],
@@ -214,33 +710,117 @@ const copyCatalog = <String, List<String>>{
   "readMore": ["Baca selengkapnya", "Read more", "قراءة المزيد"],
   "today": ["Hari ini", "Today", "اليوم"],
   "hijriCalendar": ["Kalender Hijriah", "Hijri calendar", "التقويم الهجري"],
-  "paymentSuccessTitle": ["Pembayaran diterima", "Payment received", "تم استلام الدفع"],
-  "paymentSuccessRedirect": ["Akses sudah aktif. Membuka OpenTurath…", "Access is active. Opening OpenTurath…", "فُعّل الوصول. جارٍ فتح أوبن تراث…"],
+  "paymentSuccessTitle": [
+    "Pembayaran diterima",
+    "Payment received",
+    "تم استلام الدفع"
+  ],
+  "paymentSuccessRedirect": [
+    "Akses sudah aktif. Membuka OpenTurath…",
+    "Access is active. Opening OpenTurath…",
+    "فُعّل الوصول. جارٍ فتح أوبن تراث…"
+  ],
   "packagePerField": ["Satu bidang ilmu", "One discipline", "مجال واحد"],
   "packageAllFields": ["Semua bidang ilmu", "All disciplines", "جميع المجالات"],
-  "packageAllFieldsPreparing": ["Paket semua bidang sedang disiapkan.", "The all-disciplines plan is being prepared.", "اشتراك جميع المجالات قيد الإعداد."],
+  "packageAllFieldsPreparing": [
+    "Paket semua bidang sedang disiapkan.",
+    "The all-disciplines plan is being prepared.",
+    "اشتراك جميع المجالات قيد الإعداد."
+  ],
   "chooseFieldPlan": ["Pilih bidang", "Choose a discipline", "اختيار المجال"],
-  "accessAllFields": ["Akses semua bidang", "Access all disciplines", "الوصول إلى جميع المجالات"],
-  "accessSingleField": ["Akses satu bidang", "Access one discipline", "الوصول إلى مجال واحد"],
-  "notSubscribed": ["Belum ada akses aktif", "No active access", "لا يوجد وصول فعّال"],
+  "accessAllFields": [
+    "Akses semua bidang",
+    "Access all disciplines",
+    "الوصول إلى جميع المجالات"
+  ],
+  "accessSingleField": [
+    "Akses satu bidang",
+    "Access one discipline",
+    "الوصول إلى مجال واحد"
+  ],
+  "notSubscribed": [
+    "Belum ada akses aktif",
+    "No active access",
+    "لا يوجد وصول فعّال"
+  ],
   "termsOfService": ["Ketentuan Layanan", "Terms of Service", "شروط الخدمة"],
   "privacyPolicy": ["Kebijakan Privasi", "Privacy Policy", "سياسة الخصوصية"],
-  "paymentAndRefund": ["Pembayaran dan pengembalian dana", "Payment & Refunds", "الدفع والاسترداد"],
-  "aiGuideline": ["Panduan penggunaan AI dan rujukan", "AI Use & Reference Verification", "استخدام الذكاء الاصطناعي والتحقق من المراجع"],
-  "supportAndContact": ["Bantuan dan Kontak", "Support & Contact", "المساعدة والتواصل"],
-  "manualRenewalNotice": ["Langganan tidak diperpanjang otomatis. Perpanjang sendiri saat masa akses berakhir.", "Subscriptions do not renew automatically. You may renew when your access period ends.", "لا تتجدد الاشتراكات تلقائيًا. يمكنك التجديد عند انتهاء مدة الوصول."],
-  "splashTitle": ["Membaca kitab, menelusuri ibarah.", "Returning to the Sources. Tracing the Sacred Texts.", "الرجوع إلى الأصول، واستنطاق العبارات."],
-  "splashBody": ["Telusuri kitab para ulama dengan bantuan AI, lengkap dengan rujukannya.", "Classical Islamic scholarship anchored in authentic transmission, shielded by the jurisprudence of crisis, navigated with reverence and modern precision.", "تراث العلماء الأعلام، محروسًا بفقه التحولات، ومطالعًا بأدب العلم وأحدث أدوات العصر."],
-  "preparingModule": ["{0} sedang disiapkan.", "{0} is being prepared.", "{0} قيد الإعداد."],
-  "subscriptionRequiredFor": ["Berlangganan untuk membuka {0}.", "Subscribe to access {0}.", "اشترك للوصول إلى {0}."],
-  "accessUnavailableFor": ["Akses ke {0} belum aktif. Pilih paket atau gunakan voucher untuk melanjutkan.", "Access to {0} is inactive. Choose a plan or redeem a code to continue.", "لم يُفعّل الوصول إلى {0}. اختر اشتراكًا أو استخدم رمز وصول للمتابعة."],
-  "trialDaysLeft": ["Masa coba · {0} hari", "Trial access · {0} days", "وصول تجريبي · {0} يومًا"],
-  "assistantsAvailableCount": ["{0} asisten", "{0} assistants", "المساعدون المتاحون: {0}"],
-  "savedNotesCount": ["{0} catatan tersimpan", "{0} saved notes", "الملاحظات المحفوظة: {0}"],
-  "versionWithTagline": ["Versi {0} · {1}", "Version {0} · {1}", "الإصدار {0} · {1}"],
+  "paymentAndRefund": [
+    "Pembayaran dan pengembalian dana",
+    "Payment & Refunds",
+    "الدفع والاسترداد"
+  ],
+  "aiGuideline": [
+    "Panduan penggunaan AI dan rujukan",
+    "AI Use & Reference Verification",
+    "استخدام الذكاء الاصطناعي والتحقق من المراجع"
+  ],
+  "supportAndContact": [
+    "Bantuan dan Kontak",
+    "Support & Contact",
+    "المساعدة والتواصل"
+  ],
+  "manualRenewalNotice": [
+    "Langganan tidak diperpanjang otomatis. Perpanjang sendiri saat masa akses berakhir.",
+    "Subscriptions do not renew automatically. You may renew when your access period ends.",
+    "لا تتجدد الاشتراكات تلقائيًا. يمكنك التجديد عند انتهاء مدة الوصول."
+  ],
+  "splashTitle": [
+    "Membaca kitab, menelusuri ibarah.",
+    "Returning to the Sources. Tracing the Sacred Texts.",
+    "الرجوع إلى الأصول، واستنطاق العبارات."
+  ],
+  "splashBody": [
+    "Telusuri kitab para ulama dengan bantuan AI, lengkap dengan rujukannya.",
+    "Classical Islamic scholarship anchored in authentic transmission, shielded by the jurisprudence of crisis, navigated with reverence and modern precision.",
+    "تراث العلماء الأعلام، محروسًا بفقه التحولات، ومطالعًا بأدب العلم وأحدث أدوات العصر."
+  ],
+  "preparingModule": [
+    "{0} sedang disiapkan.",
+    "{0} is being prepared.",
+    "{0} قيد الإعداد."
+  ],
+  "subscriptionRequiredFor": [
+    "Berlangganan untuk membuka {0}.",
+    "Subscribe to access {0}.",
+    "اشترك للوصول إلى {0}."
+  ],
+  "accessUnavailableFor": [
+    "Akses ke {0} belum aktif. Pilih paket atau gunakan voucher untuk melanjutkan.",
+    "Access to {0} is inactive. Choose a plan or redeem a code to continue.",
+    "لم يُفعّل الوصول إلى {0}. اختر اشتراكًا أو استخدم رمز وصول للمتابعة."
+  ],
+  "trialDaysLeft": [
+    "Masa coba · {0} hari",
+    "Trial access · {0} days",
+    "وصول تجريبي · {0} يومًا"
+  ],
+  "assistantsAvailableCount": [
+    "{0} asisten",
+    "{0} assistants",
+    "المساعدون المتاحون: {0}"
+  ],
+  "savedNotesCount": [
+    "{0} catatan tersimpan",
+    "{0} saved notes",
+    "الملاحظات المحفوظة: {0}"
+  ],
+  "versionWithTagline": [
+    "Versi {0} · {1}",
+    "Version {0} · {1}",
+    "الإصدار {0} · {1}"
+  ],
   "ahlanWithName": ["Ahlan, {0}", "Welcome, {0}", "أهلًا، {0}"],
-  "brandPhilosophyTitle": ["Gerbang ilmu, penjaga khazanah", "A gateway to learning, a guardian of heritage", "بوابة العلم وحارس التراث"],
-  "brandPhilosophy": ["Dalam identitas OpenTurath, tiga ruang di dalam lambang mewakili Islam, Iman, dan Ihsan sebagai ats-tsawabit. Lengkungan luar melambangkan Fikih Tahawwulat sebagai benteng penjaga ketiganya. Sebutan ar-rukn ar-rabi’ digunakan dalam kerangka Fikih Tahawwulat. Gerbang dan segel menandai keterbukaan belajar serta komitmen untuk memeriksa rujukan.", "In OpenTurath’s identity, the three inner spaces represent Islam, Iman, and Ihsan as al-thawabit. The outer arch represents Fiqh al-Tahawwulat as their guardian. The term al-rukn al-rabi‘ belongs to that scholarly framework. The gateway and seal express openness to learning and a commitment to verifying references.", "في هوية أوبن تراث ترمز المساحات الثلاث الداخلية إلى الإسلام والإيمان والإحسان، وهي الثوابت. ويرمز القوس الخارجي إلى فقه التحولات بوصفه سياجًا يحميها. ويُستعمل مصطلح الركن الرابع في إطار فقه التحولات. وتعبر البوابة والخاتم عن الانفتاح على العلم والالتزام بمراجعة المراجع."],
+  "brandPhilosophyTitle": [
+    "Gerbang ilmu, penjaga khazanah",
+    "A gateway to learning, a guardian of heritage",
+    "بوابة العلم وحارس التراث"
+  ],
+  "brandPhilosophy": [
+    "Dalam identitas OpenTurath, tiga ruang di dalam lambang mewakili Islam, Iman, dan Ihsan sebagai ats-tsawabit. Lengkungan luar melambangkan Fikih Tahawwulat sebagai benteng penjaga ketiganya. Sebutan ar-rukn ar-rabi’ digunakan dalam kerangka Fikih Tahawwulat. Gerbang dan segel menandai keterbukaan belajar serta komitmen untuk memeriksa rujukan.",
+    "In OpenTurath’s identity, the three inner spaces represent Islam, Iman, and Ihsan as al-thawabit. The outer arch represents Fiqh al-Tahawwulat as their guardian. The term al-rukn al-rabi‘ belongs to that scholarly framework. The gateway and seal express openness to learning and a commitment to verifying references.",
+    "في هوية أوبن تراث ترمز المساحات الثلاث الداخلية إلى الإسلام والإيمان والإحسان، وهي الثوابت. ويرمز القوس الخارجي إلى فقه التحولات بوصفه سياجًا يحميها. ويُستعمل مصطلح الركن الرابع في إطار فقه التحولات. وتعبر البوابة والخاتم عن الانفتاح على العلم والالتزام بمراجعة المراجع."
+  ],
   "launchOffer": ["Harga perdana", "Launch offer", "عرض الافتتاح"],
   "saving": ["Hemat {0}%", "Save {0}%", "توفير {0}٪"],
   "normalPrice": ["Harga normal {0}", "Regular price {0}", "السعر المعتاد {0}"],
@@ -251,63 +831,219 @@ const copyCatalog = <String, List<String>>{
   "perMonth": ["/bulan", "/month", "/شهر"],
   "perSixMonths": ["/6 bulan", "/6 months", "/ستة أشهر"],
   "perYear": ["/tahun", "/year", "/سنة"],
-  "tahawwulatHonor": ["Rukun Keempat · Benteng Penjaga Khazanah", "The Fourth Pillar · Guardian of the Heritage", "الركن الرابع · سياج التراث"],
-  "tahawwulatBenefit": ["Telaah naskah, sanad pembahasan tanda zaman, dan karya Al-Habib Abu Bakar Al-Adni Al-Masyhur.", "Study texts, transmitted accounts of the signs of the times, and the works of al-Habib Abu Bakr al-Adni al-Mashhur.", "مطالعة النصوص وأسانيد مباحث علامات الزمان ومؤلفات الحبيب أبي بكر العدني المشهور."],
-  "tahawwulatWelcome": ["Majelis telaah karya Al-Habib Abu Bakar Al-Adni Al-Masyhur. Bacalah ibarah bersama rujukannya dan bawalah hasil telaah kepada guru.", "A study room for the works of al-Habib Abu Bakr al-Adni al-Mashhur. Read each passage alongside its source and discuss your findings with a teacher.", "مجلس لمطالعة مؤلفات الحبيب أبي بكر العدني المشهور. اقرأ العبارة مع مرجعها واعرض ثمرة المطالعة على معلمك."],
-  "specialistAccess": ["Akses satu asisten", "Single Assistant Access", "الوصول إلى مساعد واحد"],
+  "tahawwulatHonor": [
+    "Rukun Keempat · Benteng Penjaga Khazanah",
+    "The Fourth Pillar · Guardian of the Heritage",
+    "الركن الرابع · سياج التراث"
+  ],
+  "tahawwulatBenefit": [
+    "Telaah naskah, sanad pembahasan tanda zaman, dan karya Al-Habib Abu Bakar Al-Adni Al-Masyhur.",
+    "Study texts, transmitted accounts of the signs of the times, and the works of al-Habib Abu Bakr al-Adni al-Mashhur.",
+    "مطالعة النصوص وأسانيد مباحث علامات الزمان ومؤلفات الحبيب أبي بكر العدني المشهور."
+  ],
+  "tahawwulatWelcome": [
+    "Majelis telaah karya Al-Habib Abu Bakar Al-Adni Al-Masyhur. Bacalah ibarah bersama rujukannya dan bawalah hasil telaah kepada guru.",
+    "A study room for the works of al-Habib Abu Bakr al-Adni al-Mashhur. Read each passage alongside its source and discuss your findings with a teacher.",
+    "مجلس لمطالعة مؤلفات الحبيب أبي بكر العدني المشهور. اقرأ العبارة مع مرجعها واعرض ثمرة المطالعة على معلمك."
+  ],
+  "specialistAccess": [
+    "Akses satu asisten",
+    "Single Assistant Access",
+    "الوصول إلى مساعد واحد"
+  ],
   "scholarLibrary": ["Khazanah ulama", "خزانة العلماء", "خزانة العلماء"],
-  "scholarPreparing": ["Khazanah ulama sedang disiapkan", "Scholars’ Collection is being prepared", "خزانة العلماء قيد الإعداد"],
-  "scholarPreparingBody": ["Biografi dan keterangan sanad ulama Nusantara dan Haramain sedang dirapikan. Koleksi ini belum dibuka untuk umum.", "Biographies and transmission records of scholars from Nusantara and the Haramain are being reviewed. This collection is not yet open to the public.", "تجري مراجعة تراجم علماء نوسانتارا والحرمين وبيانات أسانيدهم. لم تُفتح هذه الخزانة للعامة بعد."],
-  "digitalStudentCard": ["Kartu santri digital", "Digital Scholar Card", "بطاقة طالب العلم الرقمية"],
+  "scholarPreparing": [
+    "Khazanah ulama sedang disiapkan",
+    "Scholars’ Collection is being prepared",
+    "خزانة العلماء قيد الإعداد"
+  ],
+  "scholarPreparingBody": [
+    "Biografi dan keterangan sanad ulama Nusantara dan Haramain sedang dirapikan. Koleksi ini belum dibuka untuk umum.",
+    "Biographies and transmission records of scholars from Nusantara and the Haramain are being reviewed. This collection is not yet open to the public.",
+    "تجري مراجعة تراجم علماء نوسانتارا والحرمين وبيانات أسانيدهم. لم تُفتح هذه الخزانة للعامة بعد."
+  ],
+  "digitalStudentCard": [
+    "Kartu santri digital",
+    "Digital Scholar Card",
+    "بطاقة طالب العلم الرقمية"
+  ],
   "activeResearcher": ["Muhaqqiq Aktif", "Active Researcher", "باحث فعّال"],
-  "studentOfTurath": ["Tholib Turats", "Student of the Classics", "طالب التراث"],
-  "expirySoonest": ["Masa akses terdekat berakhir", "Next access expiry", "أقرب انتهاء للوصول"],
-  "hijriEstimate": ["Hijriah perkiraan", "Estimated Hijri date", "تاريخ هجري تقريبي"],
-  "daysRemaining": ["Sisa {0} hari", "{0} days remaining", "الأيام المتبقية: {0}"],
+  "studentOfTurath": [
+    "Tholib Turats",
+    "Student of the Classics",
+    "طالب التراث"
+  ],
+  "expirySoonest": [
+    "Masa akses terdekat berakhir",
+    "Next access expiry",
+    "أقرب انتهاء للوصول"
+  ],
+  "hijriEstimate": [
+    "Hijriah perkiraan",
+    "Estimated Hijri date",
+    "تاريخ هجري تقريبي"
+  ],
+  "daysRemaining": [
+    "Sisa {0} hari",
+    "{0} days remaining",
+    "الأيام المتبقية: {0}"
+  ],
   "back": ["Kembali", "Back", "رجوع"],
   "save": ["Simpan", "Save", "حفظ"],
   "bookCatalog": ["Katalog kitab", "Book catalog", "فهرس الكتب"],
-  "catalogIntro": ["Telusuri naskah dan keterangan edisi dalam koleksi ini.", "Explore the texts and edition records in this collection.", "تصفح النصوص وبيانات الطبعات في هذه المجموعة."],
-  "openCatalog": ["Telusuri koleksi kitab", "Browse the collection", "تصفح مجموعة الكتب"],
-  "catalogError": ["Koleksi belum dapat dibuka. Coba lagi.", "The collection could not be opened. Please try again.", "تعذر فتح المجموعة. أعد المحاولة."],
+  "catalogIntro": [
+    "Telusuri naskah dan keterangan edisi dalam koleksi ini.",
+    "Explore the texts and edition records in this collection.",
+    "تصفح النصوص وبيانات الطبعات في هذه المجموعة."
+  ],
+  "openCatalog": [
+    "Telusuri koleksi kitab",
+    "Browse the collection",
+    "تصفح مجموعة الكتب"
+  ],
+  "catalogError": [
+    "Koleksi belum dapat dibuka. Coba lagi.",
+    "The collection could not be opened. Please try again.",
+    "تعذر فتح المجموعة. أعد المحاولة."
+  ],
   "collection": ["Koleksi Kitab", "Book Collection", "مجموعة الكتب"],
-  "searchBooks": ["Cari judul kitab, pengarang, atau bidang…", "Search titles, authors, or disciplines…", "ابحث عن عنوان أو مؤلف أو مجال…"],
+  "searchBooks": [
+    "Cari judul kitab, pengarang, atau bidang…",
+    "Search titles, authors, or disciplines…",
+    "ابحث عن عنوان أو مؤلف أو مجال…"
+  ],
   "allBooks": ["Semua kitab", "All books", "جميع الكتب"],
   "matan": ["Matan Dasar", "Foundational Texts", "المتون الأساسية"],
   "sharh": ["Syarah Mu'tamad", "Authoritative Commentaries", "الشروح المعتمدة"],
   "hashiyah": ["Hasyiyah Ilmiah", "Scholarly Marginalia", "الحواشي العلمية"],
-  "unclassified": ["Belum diklasifikasikan", "Not yet classified", "غير مصنف بعد"],
-  "classificationNotice": ["Jenis naskah mengikuti keterangan katalog. Entri yang belum memiliki keterangan tetap ditampilkan tanpa dugaan.", "Text types follow catalog metadata. Unclassified entries remain visible without inferred labels.", "تتبع أنواع النصوص بيانات الفهرس. وتظل المواد غير المصنفة ظاهرة دون تصنيف تخميني."],
+  "unclassified": [
+    "Belum diklasifikasikan",
+    "Not yet classified",
+    "غير مصنف بعد"
+  ],
+  "classificationNotice": [
+    "Jenis naskah mengikuti keterangan katalog. Entri yang belum memiliki keterangan tetap ditampilkan tanpa dugaan.",
+    "Text types follow catalog metadata. Unclassified entries remain visible without inferred labels.",
+    "تتبع أنواع النصوص بيانات الفهرس. وتظل المواد غير المصنفة ظاهرة دون تصنيف تخميني."
+  ],
   "authorBiography": ["Tarjamah al-Mu'allif", "Author Record", "ترجمة المؤلف"],
-  "editionRecord": ["Data edisi dan tahqiq", "Edition & Textual Editing", "بيانات الطبعة والتحقيق"],
-  "verificationNotice": ["Keterangan edisi mengikuti data katalog. Nama muhaqqiq yang tercatat bukan penetapan bahwa naskah telah diperiksa oleh OpenTurath.", "Edition details follow the catalog. A recorded editor does not establish that OpenTurath has verified the text.", "تتبع بيانات الطبعة الفهرس. وذكر المحقق لا يعني أن أوبن تراث قد راجع النص."],
+  "editionRecord": [
+    "Data edisi dan tahqiq",
+    "Edition & Textual Editing",
+    "بيانات الطبعة والتحقيق"
+  ],
+  "verificationNotice": [
+    "Keterangan edisi mengikuti data katalog. Nama muhaqqiq yang tercatat bukan penetapan bahwa naskah telah diperiksa oleh OpenTurath.",
+    "Edition details follow the catalog. A recorded editor does not establish that OpenTurath has verified the text.",
+    "تتبع بيانات الطبعة الفهرس. وذكر المحقق لا يعني أن أوبن تراث قد راجع النص."
+  ],
   "unknownMetadata": ["Belum tercatat", "Not recorded", "غير مسجل"],
   "phone": ["Nomor WhatsApp", "WhatsApp number", "رقم واتساب"],
-  "phoneHint": ["Contoh: 081234567890", "Example: +6281234567890", "مثال: ‎+6281234567890"],
-  "phoneNotice": ["Nomor aktif untuk konfirmasi pembayaran.", "An active number for payment confirmation.", "رقم فعّال لتأكيد الدفع."],
-  "phoneInvalid": ["Masukkan nomor telepon yang valid.", "Enter a valid phone number.", "أدخل رقم هاتف صحيحًا."],
-  "continuePayment": ["Lanjutkan pembayaran", "Continue to payment", "المتابعة إلى الدفع"],
-  "signInRequired": ["Masuk dulu sebelum berlangganan.", "Please sign in before subscribing.", "يرجى تسجيل الدخول قبل الاشتراك."],
-  "checkoutError": ["Pembayaran belum dapat disiapkan. Coba lagi.", "Payment could not be prepared. Please try again.", "تعذر إعداد الدفع. أعد المحاولة."],
-  "priceChanged": ["Harga server belum sesuai dengan penawaran ini. Pembayaran belum dibuka. Silakan coba kembali setelah pembaruan layanan.", "The server price does not match this offer. Checkout has not opened. Please try again after the service is updated.", "لا يطابق سعر الخادم هذا العرض. لم تُفتح صفحة الدفع. حاول مجددًا بعد تحديث الخدمة."],
-  "paymentConfirmed": ["Pembayaran terverifikasi. Akses sudah aktif.", "Payment verified. Access is active.", "تم التحقق من الدفع وتفعيل الوصول."],
-  "choosePlan": ["Pilih masa akses", "Choose access period", "اختيار مدة الوصول"],
-  "syncPurchases": ["Pulihkan pembelian GoAkal", "Restore GoAkal purchases", "استعادة مشتريات GoAkal"],
-  "syncDone": ["Data pembelian telah diperbarui.", "Purchase records have been refreshed.", "حُدثت بيانات المشتريات."],
-  "redeemAccess": ["Gunakan voucher", "Redeem access code", "استبدال رمز الوصول"],
+  "phoneHint": [
+    "Contoh: 081234567890",
+    "Example: +6281234567890",
+    "مثال: ‎+6281234567890"
+  ],
+  "phoneNotice": [
+    "Nomor aktif untuk konfirmasi pembayaran.",
+    "An active number for payment confirmation.",
+    "رقم فعّال لتأكيد الدفع."
+  ],
+  "phoneInvalid": [
+    "Masukkan nomor telepon yang valid.",
+    "Enter a valid phone number.",
+    "أدخل رقم هاتف صحيحًا."
+  ],
+  "continuePayment": [
+    "Lanjutkan pembayaran",
+    "Continue to payment",
+    "المتابعة إلى الدفع"
+  ],
+  "signInRequired": [
+    "Masuk dulu sebelum berlangganan.",
+    "Please sign in before subscribing.",
+    "يرجى تسجيل الدخول قبل الاشتراك."
+  ],
+  "checkoutError": [
+    "Pembayaran belum dapat disiapkan. Coba lagi.",
+    "Payment could not be prepared. Please try again.",
+    "تعذر إعداد الدفع. أعد المحاولة."
+  ],
+  "priceChanged": [
+    "Harga server belum sesuai dengan penawaran ini. Pembayaran belum dibuka. Silakan coba kembali setelah pembaruan layanan.",
+    "The server price does not match this offer. Checkout has not opened. Please try again after the service is updated.",
+    "لا يطابق سعر الخادم هذا العرض. لم تُفتح صفحة الدفع. حاول مجددًا بعد تحديث الخدمة."
+  ],
+  "paymentConfirmed": [
+    "Pembayaran terverifikasi. Akses sudah aktif.",
+    "Payment verified. Access is active.",
+    "تم التحقق من الدفع وتفعيل الوصول."
+  ],
+  "choosePlan": [
+    "Pilih masa akses",
+    "Choose access period",
+    "اختيار مدة الوصول"
+  ],
+  "syncPurchases": [
+    "Pulihkan pembelian GoAkal",
+    "Restore GoAkal purchases",
+    "استعادة مشتريات GoAkal"
+  ],
+  "syncDone": [
+    "Data pembelian telah diperbarui.",
+    "Purchase records have been refreshed.",
+    "حُدثت بيانات المشتريات."
+  ],
+  "redeemAccess": [
+    "Gunakan voucher",
+    "Redeem access code",
+    "استبدال رمز الوصول"
+  ],
   "paymentReview": ["Ringkasan pembayaran", "Payment summary", "ملخص الدفع"],
-  "featuredReferences": ["Rujukan pilihan", "Selected references", "مراجع مختارة"],
-  "ui_0fb589d0e6": ["Tidak dapat membuka tautan halaman.", "The page could not be opened.", "تعذر فتح الصفحة."],
-  "ui_0ae09a2807": ["Cari judul kitab, pengarang, muhaqqiq, atau bidang...", "Search titles, authors, editors, or disciplines…", "ابحث عن عنوان أو مؤلف أو محقق أو مجال…"],
+  "featuredReferences": [
+    "Rujukan pilihan",
+    "Selected references",
+    "مراجع مختارة"
+  ],
+  "ui_0fb589d0e6": [
+    "Tidak dapat membuka tautan halaman.",
+    "The page could not be opened.",
+    "تعذر فتح الصفحة."
+  ],
+  "ui_0ae09a2807": [
+    "Cari judul kitab, pengarang, muhaqqiq, atau bidang...",
+    "Search titles, authors, editors, or disciplines…",
+    "ابحث عن عنوان أو مؤلف أو محقق أو مجال…"
+  ],
   "ui_318276fc51": ["Semua Kitab", "All books", "جميع الكتب"],
   "ui_e2395c685d": ["Satu jilid", "Single volume", "جزء واحد"],
   "ui_a91f06ad05": ["Beberapa jilid", "Multiple volumes", "عدة أجزاء"],
-  "ui_54db73b3af": ["Tidak ditemukan kitab yang sesuai", "No matching books found", "لم يُعثر على كتب مطابقة"],
-  "ui_f7c779cb7d": ["Coba cari dengan kata kunci judul atau nama pengarang lain", "Try another title or author", "جرّب عنوانًا أو اسم مؤلف آخر"],
-  "ui_225b7ddde1": ["Kitab rujukan disimpan ke Catatan", "Book reference saved to Notes", "حُفظ مرجع الكتاب في الملاحظات"],
-  "ui_e150b5de89": ["Sitasi disalin.", "Book citation copied", "نُسخ توثيق الكتاب"],
+  "ui_54db73b3af": [
+    "Tidak ditemukan kitab yang sesuai",
+    "No matching books found",
+    "لم يُعثر على كتب مطابقة"
+  ],
+  "ui_f7c779cb7d": [
+    "Coba cari dengan kata kunci judul atau nama pengarang lain",
+    "Try another title or author",
+    "جرّب عنوانًا أو اسم مؤلف آخر"
+  ],
+  "ui_225b7ddde1": [
+    "Kitab rujukan disimpan ke Catatan",
+    "Book reference saved to Notes",
+    "حُفظ مرجع الكتاب في الملاحظات"
+  ],
+  "ui_e150b5de89": [
+    "Sitasi disalin.",
+    "Book citation copied",
+    "نُسخ توثيق الكتاب"
+  ],
   "ui_8529af5e96": ["Salin Sitasi", "Copy citation", "نسخ التوثيق"],
-  "ui_f8f8446f44": ["METADATA NASKAH RUJUKAN", "REFERENCE RECORD", "بيانات المرجع"],
+  "ui_f8f8446f44": [
+    "METADATA NASKAH RUJUKAN",
+    "REFERENCE RECORD",
+    "بيانات المرجع"
+  ],
   "ui_ad39f1c3af": ["Muhaqqiq", "Editor", "المحقق أو المعتني"],
   "ui_dc4df1ba5f": ["Penerbit Naskah", "Publisher", "الناشر"],
   "ui_d28e8d3153": ["Tahun / Cetakan", "Year / Edition", "السنة والطبعة"],
@@ -315,8 +1051,16 @@ const copyCatalog = <String, List<String>>{
   "ui_02c2d79961": ["Jumlah Halaman", "Pages", "عدد الصفحات"],
   "ui_119fdd76dd": ["Koleksi sumber", "Source collection", "مجموعة المصادر"],
   "ui_3f42b695cf": ["Salin sitasi", "Copy citation", "نسخ التوثيق الكامل"],
-  "ui_55fddd168e": ["Cari asisten atau ulama…", "Search study guides…", "ابحث عن خادم التراث…"],
-  "ui_3e2acc1d99": ["Katalog rujukan belum dapat dimuat saat ini.", "The reference catalog could not be loaded.", "تعذر تحميل فهرس المراجع حاليًا."],
+  "ui_55fddd168e": [
+    "Cari asisten atau ulama…",
+    "Search study guides…",
+    "ابحث عن خادم التراث…"
+  ],
+  "ui_3e2acc1d99": [
+    "Katalog rujukan belum dapat dimuat saat ini.",
+    "The reference catalog could not be loaded.",
+    "تعذر تحميل فهرس المراجع حاليًا."
+  ],
   "ui_0c9f252156": ["Detail edisi", "Edition record", "بيانات الطبعة"],
   "ui_872fd06ff7": ["Tahun Wafat", "Year of death", "سنة الوفاة"],
   "ui_47b35543e3": ["Jenis kitab", "Text type", "نوع النص"],
@@ -325,15 +1069,35 @@ const copyCatalog = <String, List<String>>{
   "ui_e488d9f73e": ["Tahqiq / Editor", "Textual editor", "المحقق أو المعتني"],
   "ui_88bddfe74a": ["ID edisi", "Edition ID", "معرّف الطبعة"],
   "ui_9f0b5b5d87": ["Pustaka Rujukan", "Reference Library", "مكتبة المراجع"],
-  "ui_c8c23c3325": ["Cari judul kitab atau pengarang...", "Search titles or authors…", "ابحث عن عنوان أو مؤلف…"],
-  "ui_6b42d45847": ["Tidak ada kitab yang cocok dengan pencarian", "No books match this search", "لا توجد كتب مطابقة للبحث"],
+  "ui_c8c23c3325": [
+    "Cari judul kitab atau pengarang...",
+    "Search titles or authors…",
+    "ابحث عن عنوان أو مؤلف…"
+  ],
+  "ui_6b42d45847": [
+    "Tidak ada kitab yang cocok dengan pencarian",
+    "No books match this search",
+    "لا توجد كتب مطابقة للبحث"
+  ],
   "ui_6a2b35b4ca": ["Rincian akses", "Access details", "تفاصيل الوصول"],
-  "ui_b92aed18d1": ["Akses yang aktif di akun ini.", "Active access on this account.", "الوصول الفعّال في هذا الحساب."],
+  "ui_b92aed18d1": [
+    "Akses yang aktif di akun ini.",
+    "Active access on this account.",
+    "الوصول الفعّال في هذا الحساب."
+  ],
   "ui_b236ca6182": ["Semua asisten", "All assistants", "جميع المساعدين"],
   "ui_f2dfc4506e": ["Asisten kajian", "Study guide", "خادم المطالعة"],
   "ui_c720f7612f": ["Pengguna", "Reader", "القارئ"],
-  "ui_26894b3c65": ["Ganti ke tema terang", "Switch to light appearance", "التبديل إلى المظهر الفاتح"],
-  "ui_b16e7fe4e5": ["Ganti ke tema gelap", "Switch to dark appearance", "التبديل إلى المظهر الداكن"],
+  "ui_26894b3c65": [
+    "Ganti ke tema terang",
+    "Switch to light appearance",
+    "التبديل إلى المظهر الفاتح"
+  ],
+  "ui_b16e7fe4e5": [
+    "Ganti ke tema gelap",
+    "Switch to dark appearance",
+    "التبديل إلى المظهر الداكن"
+  ],
   "ui_42c76592cd": ["Semua", "All", "الكل"],
   "ui_cfebd8cd1d": ["Kitab", "Books", "الكتب"],
   "ui_936a67f609": ["Hadis", "Hadith", "الحديث"],
@@ -344,38 +1108,106 @@ const copyCatalog = <String, List<String>>{
   "ui_4f8ef2bc2a": ["Bahasa Arab", "Arabic Language", "اللغة العربية"],
   "ui_aac8eb7439": ["Baru saja", "Just now", "الآن"],
   "ui_67f956b4e0": ["Kemarin", "Yesterday", "أمس"],
-  "ui_b601dbcd35": ["belum diidentifikasi", "not yet identified", "لم يُحدد بعد"],
+  "ui_b601dbcd35": [
+    "belum diidentifikasi",
+    "not yet identified",
+    "لم يُحدد بعد"
+  ],
   "ui_5301648dcf": ["Edit", "Edit", "تحرير"],
   "ui_96556d16a8": ["Salin rujukan", "Copy reference", "نسخ المرجع"],
   "ui_25935f7ea7": ["Salin catatan", "Copy note", "نسخ الملاحظة"],
   "ui_0b05afdbfa": ["Lihat kitab", "View book", "عرض الكتاب"],
-  "ui_bfbf5d1c00": ["Baca panduan rujukan selengkapnya", "Read the reference guide", "قراءة دليل المراجع"],
-  "ui_c6b269deaf": ["Sesuaikan ukuran huruf percakapan agar nyaman dibaca.", "Adjust the conversation text size for comfortable reading.", "اضبط حجم خط المحادثة لقراءة مريحة."],
+  "ui_bfbf5d1c00": [
+    "Baca panduan rujukan selengkapnya",
+    "Read the reference guide",
+    "قراءة دليل المراجع"
+  ],
+  "ui_c6b269deaf": [
+    "Sesuaikan ukuran huruf percakapan agar nyaman dibaca.",
+    "Adjust the conversation text size for comfortable reading.",
+    "اضبط حجم خط المحادثة لقراءة مريحة."
+  ],
   "ui_9d04d267b4": ["Kecil (85%)", "Small (85%)", "صغير (85٪)"],
   "ui_b52b4d4d4e": ["Standar (100%)", "Standard (100%)", "عادي (100٪)"],
   "ui_5eac981a5e": ["Sedang (120%)", "Medium (120%)", "متوسط (120٪)"],
   "ui_e2824091ed": ["Besar (140%)", "Large (140%)", "كبير (140٪)"],
-  "ui_49c3b2fbd2": ["Sangat besar (165%)", "Very large (165%)", "كبير جدًا (165٪)"],
+  "ui_49c3b2fbd2": [
+    "Sangat besar (165%)",
+    "Very large (165%)",
+    "كبير جدًا (165٪)"
+  ],
   "ui_a9dc11525b": ["Maksimal (200%)", "Largest (200%)", "الأكبر (200٪)"],
   "ui_fb007d4dc4": ["LANJUTKAN KAJIAN", "CONTINUE STUDY", "متابعة المطالعة"],
   "ui_76122c20a6": ["TENTANG OPENTURATH", "ABOUT OPENTURATH", "عن أوبن تراث"],
-  "ui_b7d2c1dc2f": ["Mengenal OpenTurath", "Introducing OpenTurath", "التعريف بأوبن تراث"],
-  "ui_755dcc41d8": ["Membaca ibarah dan menelusuri rujukan langsung dari kitab.", "Read passages and trace their sources in the books.", "اقرأ العبارات وتتبع مراجعها في الكتب."],
+  "ui_b7d2c1dc2f": [
+    "Mengenal OpenTurath",
+    "Introducing OpenTurath",
+    "التعريف بأوبن تراث"
+  ],
+  "ui_755dcc41d8": [
+    "Membaca ibarah dan menelusuri rujukan langsung dari kitab.",
+    "Read passages and trace their sources in the books.",
+    "اقرأ العبارات وتتبع مراجعها في الكتب."
+  ],
   "ui_d2765b003d": ["ADAB BELAJAR", "ETIQUETTE OF LEARNING", "آداب التعلم"],
-  "ui_47963d644e": ["Tetap belajar bersama guru", "Continue Learning with a Teacher", "مواصلة التعلم مع المعلم"],
-  "ui_cff414308e": ["Belajarlah dengan bimbingan guru dan ulama yang bersanad.", "Study with teachers and scholars grounded in scholarly transmission.", "تعلم بإرشاد المعلمين والعلماء المتصلين بأسانيد العلم."],
+  "ui_47963d644e": [
+    "Tetap belajar bersama guru",
+    "Continue Learning with a Teacher",
+    "مواصلة التعلم مع المعلم"
+  ],
+  "ui_cff414308e": [
+    "Belajarlah dengan bimbingan guru dan ulama yang bersanad.",
+    "Study with teachers and scholars grounded in scholarly transmission.",
+    "تعلم بإرشاد المعلمين والعلماء المتصلين بأسانيد العلم."
+  ],
   "ui_c70f1ad336": ["PERIKSA SUMBER", "VERIFY THE SOURCE", "مراجعة المصدر"],
-  "ui_4ea99e4281": ["Cocokkan dengan kitab asal", "Compare with the Original Work", "المقابلة بالكتاب الأصلي"],
-  "ui_569c7ee460": ["Periksa kembali kutipan di Maktabah Syamilah atau kitab cetak.", "Check the quotation in al-Maktabah al-Shamilah or the printed edition.", "راجع النقل في المكتبة الشاملة أو الطبعة الورقية."],
-  "ui_b32d1c0f8c": ["Baca ibarah beserta konteksnya pada kitab cetak yang dirujuk sebelum menarik kesimpulan atau membagikan hasil kajian.", "Read the passage in its context in the cited edition before drawing conclusions or sharing your findings.", "اقرأ العبارة في سياقها في الطبعة المحال إليها قبل الاستنتاج أو نشر نتائج المطالعة."],
+  "ui_4ea99e4281": [
+    "Cocokkan dengan kitab asal",
+    "Compare with the Original Work",
+    "المقابلة بالكتاب الأصلي"
+  ],
+  "ui_569c7ee460": [
+    "Periksa kembali kutipan di Maktabah Syamilah atau kitab cetak.",
+    "Check the quotation in al-Maktabah al-Shamilah or the printed edition.",
+    "راجع النقل في المكتبة الشاملة أو الطبعة الورقية."
+  ],
+  "ui_b32d1c0f8c": [
+    "Baca ibarah beserta konteksnya pada kitab cetak yang dirujuk sebelum menarik kesimpulan atau membagikan hasil kajian.",
+    "Read the passage in its context in the cited edition before drawing conclusions or sharing your findings.",
+    "اقرأ العبارة في سياقها في الطبعة المحال إليها قبل الاستنتاج أو نشر نتائج المطالعة."
+  ],
   "ui_2705ede796": ["AMANAH ILMIAH", "SCHOLARLY INTEGRITY", "الأمانة العلمية"],
-  "ui_09ea45b2e2": ["Cantumkan rujukan saat mengutip", "Cite Your Sources", "توثيق النقول"],
-  "ui_15cf04ae7e": ["Sertakan nama pengarang, judul kitab, bab, jilid, dan halaman.", "Include the author, title, chapter, volume, and page.", "اذكر المؤلف وعنوان الكتاب والباب والجزء والصفحة."],
-  "ui_14cfe21026": ["Saat mengutip, tuliskan nama pengarang, judul kitab, bab, jilid, dan halaman sesuai sumber yang digunakan agar rujukan mudah ditemukan.", "When quoting, record the author, title, chapter, volume, and page of the edition used so the passage can be found.", "عند النقل، دوّن المؤلف والعنوان والباب والجزء والصفحة بحسب الطبعة المستخدمة ليسهل الرجوع إلى النص."],
+  "ui_09ea45b2e2": [
+    "Cantumkan rujukan saat mengutip",
+    "Cite Your Sources",
+    "توثيق النقول"
+  ],
+  "ui_15cf04ae7e": [
+    "Sertakan nama pengarang, judul kitab, bab, jilid, dan halaman.",
+    "Include the author, title, chapter, volume, and page.",
+    "اذكر المؤلف وعنوان الكتاب والباب والجزء والصفحة."
+  ],
+  "ui_14cfe21026": [
+    "Saat mengutip, tuliskan nama pengarang, judul kitab, bab, jilid, dan halaman sesuai sumber yang digunakan agar rujukan mudah ditemukan.",
+    "When quoting, record the author, title, chapter, volume, and page of the edition used so the passage can be found.",
+    "عند النقل، دوّن المؤلف والعنوان والباب والجزء والصفحة بحسب الطبعة المستخدمة ليسهل الرجوع إلى النص."
+  ],
   "ui_413f80555b": ["TELUSURI RUJUKAN", "TRACE REFERENCES", "تتبع المراجع"],
-  "ui_b33d5c77a0": ["Lihat asal kutipan", "Find the Source Passage", "الرجوع إلى أصل النقل"],
-  "ui_4cdd20079a": ["Gunakan informasi kitab, jilid, dan halaman untuk memeriksa naskah.", "Use the title, volume, and page to check the text.", "استعن بعنوان الكتاب والجزء والصفحة لمراجعة النص."],
-  "ui_8f934ac8b3": ["Buka rujukan yang tersedia untuk menelusuri asal kutipan. Cocokkan teks, jilid, dan halaman dengan edisi kitab yang Anda gunakan.", "Open the reference to trace the quotation. Check its text, volume, and page against the edition you use.", "افتح المرجع لتتبع أصل النقل. وقابل النص والجزء والصفحة بالطبعة التي تعتمدها."],
+  "ui_b33d5c77a0": [
+    "Lihat asal kutipan",
+    "Find the Source Passage",
+    "الرجوع إلى أصل النقل"
+  ],
+  "ui_4cdd20079a": [
+    "Gunakan informasi kitab, jilid, dan halaman untuk memeriksa naskah.",
+    "Use the title, volume, and page to check the text.",
+    "استعن بعنوان الكتاب والجزء والصفحة لمراجعة النص."
+  ],
+  "ui_8f934ac8b3": [
+    "Buka rujukan yang tersedia untuk menelusuri asal kutipan. Cocokkan teks, jilid, dan halaman dengan edisi kitab yang Anda gunakan.",
+    "Open the reference to trace the quotation. Check its text, volume, and page against the edition you use.",
+    "افتح المرجع لتتبع أصل النقل. وقابل النص والجزء والصفحة بالطبعة التي تعتمدها."
+  ],
   "ui_5d17f9bd8a": ["Mutaqaddimin", "Early Scholars", "المتقدمون"],
   "ui_81fd968c9b": ["Ashab Al-Wujuh", "Ashab al-Wujuh", "أصحاب الوجوه"],
   "ui_923915fb65": ["Muta'akhkhirin", "Later Scholars", "المتأخرون"],
@@ -383,67 +1215,223 @@ const copyCatalog = <String, List<String>>{
   "ui_c8764945d0": ["Matan", "Base Text", "متن"],
   "ui_eee6a2e022": ["Syarah", "Commentary", "شرح"],
   "ui_081b825dd6": ["Hasyiyah", "Marginal Commentary", "حاشية"],
-  "ui_3ba0e78ec2": ["Salaf (≤ 300 H)", "Early Generations (≤ 300 AH)", "السلف (حتى 300 هـ)"],
-  "ui_bd01f56649": ["Mutaqaddimin (301-600 H)", "Early Scholars (301–600 AH)", "المتقدمون (301–600 هـ)"],
-  "ui_8533bf8340": ["Muta'akhkhirin (601-1100 H)", "Later Scholars (601–1100 AH)", "المتأخرون (601–1100 هـ)"],
-  "ui_67af369dfd": ["Mu'ashir (> 1100 H)", "Recent Scholars (> 1100 AH)", "المعاصرون (بعد 1100 هـ)"],
-  "ui_f118d07faa": ["87 Kitab Mazhab Syafi'i", "87 Shafi‘i Works", "87 كتابًا في المذهب الشافعي"],
+  "ui_3ba0e78ec2": [
+    "Salaf (≤ 300 H)",
+    "Early Generations (≤ 300 AH)",
+    "السلف (حتى 300 هـ)"
+  ],
+  "ui_bd01f56649": [
+    "Mutaqaddimin (301-600 H)",
+    "Early Scholars (301–600 AH)",
+    "المتقدمون (301–600 هـ)"
+  ],
+  "ui_8533bf8340": [
+    "Muta'akhkhirin (601-1100 H)",
+    "Later Scholars (601–1100 AH)",
+    "المتأخرون (601–1100 هـ)"
+  ],
+  "ui_67af369dfd": [
+    "Mu'ashir (> 1100 H)",
+    "Recent Scholars (> 1100 AH)",
+    "المعاصرون (بعد 1100 هـ)"
+  ],
+  "ui_f118d07faa": [
+    "87 Kitab Mazhab Syafi'i",
+    "87 Shafi‘i Works",
+    "87 كتابًا في المذهب الشافعي"
+  ],
   "ui_ae4f9663d7": ["Hapus filter", "Clear filters", "مسح المرشحات"],
-  "ui_214d016291": ["Cari kitab, pengarang, atau penahkik…", "Search books, authors, or editors…", "ابحث عن كتاب أو مؤلف أو محقق…"],
+  "ui_214d016291": [
+    "Cari kitab, pengarang, atau penahkik…",
+    "Search books, authors, or editors…",
+    "ابحث عن كتاب أو مؤلف أو محقق…"
+  ],
   "ui_c0c96d1d9a": ["Filter aktif", "Active filters", "المرشحات المفعّلة"],
   "ui_d7decf1aa2": ["Filter", "Filter", "تصفية"],
   "ui_ac03e7c93b": ["Saring koleksi", "Filter collection", "تصفية المجموعة"],
   "ui_8b71077ed7": ["Bidang", "Discipline", "المجال"],
   "ui_f37a89cbd1": ["Era", "Period", "العصر"],
-  "ui_a74cf8b9bd": ["Hapus semua filter", "Clear all filters", "مسح جميع المرشحات"],
+  "ui_a74cf8b9bd": [
+    "Hapus semua filter",
+    "Clear all filters",
+    "مسح جميع المرشحات"
+  ],
   "ui_6e02202968": ["Semua Bagian", "All sections", "جميع الأقسام"],
   "ui_3236d63ff7": ["Semua Era", "All periods", "جميع العصور"],
-  "ui_022c202d54": ["Belum ada kitab yang cocok", "No matching books", "لا توجد كتب مطابقة"],
-  "ui_6e35db0b1e": ["Coba gunakan kata kunci lain, nama pengarang, atau penahkik.", "Try another keyword, author, or editor.", "جرّب عبارة أخرى أو اسم مؤلف أو محقق."],
-  "ui_72250267ce": ["Kitab rujukan Mazhab Syafi'i", "Shafi‘i Reference Works", "مراجع المذهب الشافعي"],
-  "ui_5ed90ac17a": ["Cari judul, pengarang, penerbit, atau tahkik...", "Search titles, authors, publishers, or editors…", "ابحث عن عنوان أو مؤلف أو ناشر أو محقق…"],
-  "ui_531856ca5c": ["Katalog naskah sedang disiapkan.", "The manuscript catalog is being prepared.", "فهرس النصوص قيد الإعداد."],
+  "ui_022c202d54": [
+    "Belum ada kitab yang cocok",
+    "No matching books",
+    "لا توجد كتب مطابقة"
+  ],
+  "ui_6e35db0b1e": [
+    "Coba gunakan kata kunci lain, nama pengarang, atau penahkik.",
+    "Try another keyword, author, or editor.",
+    "جرّب عبارة أخرى أو اسم مؤلف أو محقق."
+  ],
+  "ui_72250267ce": [
+    "Kitab rujukan Mazhab Syafi'i",
+    "Shafi‘i Reference Works",
+    "مراجع المذهب الشافعي"
+  ],
+  "ui_5ed90ac17a": [
+    "Cari judul, pengarang, penerbit, atau tahkik...",
+    "Search titles, authors, publishers, or editors…",
+    "ابحث عن عنوان أو مؤلف أو ناشر أو محقق…"
+  ],
+  "ui_531856ca5c": [
+    "Katalog naskah sedang disiapkan.",
+    "The manuscript catalog is being prepared.",
+    "فهرس النصوص قيد الإعداد."
+  ],
   "ui_84d7c6b7ae": ["Keterangan kitab", "Book details", "بيانات الكتاب"],
   "ui_edf572027a": ["Bidang ilmu", "Disciplines", "مجالات العلم"],
   "ui_3a9ab0a6cd": ["Khazanah ulama", "Scholars’ Collection", "خزانة العلماء"],
   "ui_816f17cafd": ["Koneksi terputus", "Connection lost", "انقطع الاتصال"],
-  "ui_e124a4b2f9": ["Tidak dapat memuat data saat ini. Periksa koneksi internet lalu coba lagi.", "Unable to load data. Check your connection and try again.", "تعذر تحميل البيانات. تحقق من اتصالك وأعد المحاولة."],
-  "ui_644767241f": ["Tidak dapat memuat data rujukan saat ini. Periksa koneksi internet lalu coba lagi.", "Unable to load references. Check your connection and try again.", "تعذر تحميل المراجع. تحقق من اتصالك وأعد المحاولة."],
-  "ui_b442950d9e": ["Langganan diperlukan", "Subscription required", "يلزم الاشتراك"],
-  "ui_806605b861": ["Sesi Anda telah berakhir atau akses ke asisten ini belum aktif.", "Your session has ended or access to this guide is inactive.", "انتهت الجلسة أو لم يُفعّل الوصول إلى هذا الخادم."],
+  "ui_e124a4b2f9": [
+    "Tidak dapat memuat data saat ini. Periksa koneksi internet lalu coba lagi.",
+    "Unable to load data. Check your connection and try again.",
+    "تعذر تحميل البيانات. تحقق من اتصالك وأعد المحاولة."
+  ],
+  "ui_644767241f": [
+    "Tidak dapat memuat data rujukan saat ini. Periksa koneksi internet lalu coba lagi.",
+    "Unable to load references. Check your connection and try again.",
+    "تعذر تحميل المراجع. تحقق من اتصالك وأعد المحاولة."
+  ],
+  "ui_b442950d9e": [
+    "Langganan diperlukan",
+    "Subscription required",
+    "يلزم الاشتراك"
+  ],
+  "ui_806605b861": [
+    "Sesi Anda telah berakhir atau akses ke asisten ini belum aktif.",
+    "Your session has ended or access to this guide is inactive.",
+    "انتهت الجلسة أو لم يُفعّل الوصول إلى هذا الخادم."
+  ],
   "ui_23cd63ee3f": ["Lihat langganan", "View subscription", "عرض الاشتراك"],
-  "ui_8b45fa81f6": ["Rujukan tidak ditemukan", "Reference not found", "لم يُعثر على المرجع"],
-  "ui_22ec2ee167": ["Tidak ada kitab atau catatan yang sesuai dengan kata kunci atau saringan.", "No books or notes match the search or filters.", "لا توجد كتب أو ملاحظات توافق البحث أو المرشحات."],
+  "ui_8b45fa81f6": [
+    "Rujukan tidak ditemukan",
+    "Reference not found",
+    "لم يُعثر على المرجع"
+  ],
+  "ui_22ec2ee167": [
+    "Tidak ada kitab atau catatan yang sesuai dengan kata kunci atau saringan.",
+    "No books or notes match the search or filters.",
+    "لا توجد كتب أو ملاحظات توافق البحث أو المرشحات."
+  ],
   "ui_daba3fc380": ["Atur ulang pencarian", "Reset search", "إعادة ضبط البحث"],
-  "ui_a3fc8f2907": ["Terjadi kendala teknis", "Something went wrong", "حدث خلل تقني"],
-  "ui_97331668a8": ["Asisten belum dapat dimuat. Coba lagi sebentar.", "The study guide could not be loaded. Try again shortly.", "تعذر تحميل خادم المطالعة. حاول بعد قليل."],
+  "ui_a3fc8f2907": [
+    "Terjadi kendala teknis",
+    "Something went wrong",
+    "حدث خلل تقني"
+  ],
+  "ui_97331668a8": [
+    "Asisten belum dapat dimuat. Coba lagi sebentar.",
+    "The study guide could not be loaded. Try again shortly.",
+    "تعذر تحميل خادم المطالعة. حاول بعد قليل."
+  ],
   "ui_b1c0a06c2d": ["Jilid", "Volumes", "الأجزاء"],
-  "ui_ffc1ce6e71": ["Ketuk untuk membuka tautan pembaruan versi desktop terbaru.", "Open the latest desktop update.", "افتح تحديث سطح المكتب الأخير."],
-  "ui_9d5001b52a": ["Selesai diunduh di latar belakang. Ketuk pasang untuk menerapkan.", "Download complete. Select Install to apply the update.", "اكتمل التنزيل. اختر التثبيت لتطبيق التحديث."],
+  "ui_ffc1ce6e71": [
+    "Ketuk untuk membuka tautan pembaruan versi desktop terbaru.",
+    "Open the latest desktop update.",
+    "افتح تحديث سطح المكتب الأخير."
+  ],
+  "ui_9d5001b52a": [
+    "Selesai diunduh di latar belakang. Ketuk pasang untuk menerapkan.",
+    "Download complete. Select Install to apply the update.",
+    "اكتمل التنزيل. اختر التثبيت لتطبيق التحديث."
+  ],
   "ui_032324ae7a": ["Perbarui", "Update", "تحديث"],
   "ui_643682e0fa": ["Pasang", "Install", "تثبيت"],
-  "ui_942752a765": ["Kode voucher tidak ditemukan. Periksa kembali penulisan kode Anda.", "Access code not found. Check the code and try again.", "لم يُعثر على رمز الوصول. راجع كتابته وأعد المحاولة."],
-  "ui_46806499b9": ["Kode ini sudah pernah ditukarkan sebelumnya.", "This code has already been redeemed.", "سبق استخدام هذا الرمز."],
-  "ui_4a945b8dda": ["Kuota penukaran untuk kode voucher ini sudah habis.", "This code has reached its redemption limit.", "بلغ هذا الرمز الحد الأقصى للاستخدام."],
-  "ui_2b0987dfb4": ["Masa berlaku kode voucher ini telah berakhir.", "This access code has expired.", "انتهت صلاحية رمز الوصول."],
-  "ui_bfa2564b0f": ["Kode voucher ini sudah tidak aktif.", "This access code is inactive.", "رمز الوصول غير فعّال."],
-  "ui_3841780fe2": ["Format penulisan kode voucher belum sesuai.", "The access code format is invalid.", "صيغة رمز الوصول غير صحيحة."],
-  "ui_259e2d8b2c": ["Masukkan kode voucher", "Enter your access code", "أدخل رمز الوصول"],
+  "ui_942752a765": [
+    "Kode voucher tidak ditemukan. Periksa kembali penulisan kode Anda.",
+    "Access code not found. Check the code and try again.",
+    "لم يُعثر على رمز الوصول. راجع كتابته وأعد المحاولة."
+  ],
+  "ui_46806499b9": [
+    "Kode ini sudah pernah ditukarkan sebelumnya.",
+    "This code has already been redeemed.",
+    "سبق استخدام هذا الرمز."
+  ],
+  "ui_4a945b8dda": [
+    "Kuota penukaran untuk kode voucher ini sudah habis.",
+    "This code has reached its redemption limit.",
+    "بلغ هذا الرمز الحد الأقصى للاستخدام."
+  ],
+  "ui_2b0987dfb4": [
+    "Masa berlaku kode voucher ini telah berakhir.",
+    "This access code has expired.",
+    "انتهت صلاحية رمز الوصول."
+  ],
+  "ui_bfa2564b0f": [
+    "Kode voucher ini sudah tidak aktif.",
+    "This access code is inactive.",
+    "رمز الوصول غير فعّال."
+  ],
+  "ui_3841780fe2": [
+    "Format penulisan kode voucher belum sesuai.",
+    "The access code format is invalid.",
+    "صيغة رمز الوصول غير صحيحة."
+  ],
+  "ui_259e2d8b2c": [
+    "Masukkan kode voucher",
+    "Enter your access code",
+    "أدخل رمز الوصول"
+  ],
   "ui_7db0b47a80": ["Akses aktif.", "Access activated", "فُعّل الوصول"],
-  "ui_ba384f3c7f": ["Kode tidak valid atau sudah kedaluwarsa", "Code invalid or expired", "الرمز غير صحيح أو منتهي الصلاحية"],
-  "ui_76fa6fcef2": ["Voucher aktif. Akses telaah sudah dibuka.", "Code redeemed. Your study access is open.", "استُخدم الرمز وفُتح الوصول إلى المطالعة."],
-  "ui_6f8fc6f8d5": ["Gunakan voucher", "Redeem access code", "استخدام رمز الوصول"],
-  "ui_75edf97617": ["Masukkan kode voucher yang Anda miliki.", "Enter your access code.", "أدخل رمز الوصول الذي لديك."],
-  "ui_56a2f9f730": ["Tutup halaman pembayaran?", "Close payment page", "إغلاق صفحة الدفع"],
-  "ui_85f60bf7af": ["Menutup halaman ini tidak otomatis membatalkan transaksi jika pembayaran telah diproses. Transaksi Anda tetap tercatat di sistem.", "Closing this page does not cancel a payment that has been processed. Your transaction remains on record.", "لا يؤدي إغلاق الصفحة إلى إلغاء دفعة تمت معالجتها. وتبقى معاملتك مسجلة."],
+  "ui_ba384f3c7f": [
+    "Kode tidak valid atau sudah kedaluwarsa",
+    "Code invalid or expired",
+    "الرمز غير صحيح أو منتهي الصلاحية"
+  ],
+  "ui_76fa6fcef2": [
+    "Voucher aktif. Akses telaah sudah dibuka.",
+    "Code redeemed. Your study access is open.",
+    "استُخدم الرمز وفُتح الوصول إلى المطالعة."
+  ],
+  "ui_6f8fc6f8d5": [
+    "Gunakan voucher",
+    "Redeem access code",
+    "استخدام رمز الوصول"
+  ],
+  "ui_75edf97617": [
+    "Masukkan kode voucher yang Anda miliki.",
+    "Enter your access code.",
+    "أدخل رمز الوصول الذي لديك."
+  ],
+  "ui_56a2f9f730": [
+    "Tutup halaman pembayaran?",
+    "Close payment page",
+    "إغلاق صفحة الدفع"
+  ],
+  "ui_85f60bf7af": [
+    "Menutup halaman ini tidak otomatis membatalkan transaksi jika pembayaran telah diproses. Transaksi Anda tetap tercatat di sistem.",
+    "Closing this page does not cancel a payment that has been processed. Your transaction remains on record.",
+    "لا يؤدي إغلاق الصفحة إلى إلغاء دفعة تمت معالجتها. وتبقى معاملتك مسجلة."
+  ],
   "ui_5bcbc797a7": ["Lanjutkan", "Continue", "متابعة"],
   "ui_f0874594eb": ["Pembayaran", "Payment", "الدفع"],
-  "ui_9218f901c4": ["Koneksi terenkripsi", "Encrypted connection", "اتصال مشفر"],
+  "ui_9218f901c4": [
+    "Koneksi terenkripsi",
+    "Encrypted connection",
+    "اتصال مشفر"
+  ],
   "ui_1c93ce4af4": ["Muat ulang status", "Refresh status", "تحديث الحالة"],
   "ui_28654608b2": ["Alhamdulillah", "Alhamdulillah", "الحمد لله"],
-  "ui_109055bfcd": ["Pembayaran berhasil", "Payment successful", "تم الدفع بنجاح"],
-  "ui_1408872bee": ["Akses modul telah aktif. Mengalihkan…", "Access is active. Returning to your study…", "فُعّل الوصول. جارٍ الرجوع إلى المطالعة…"],
-  "ui_4ccf3c2529": ["Isi judul atau tulis catatan terlebih dahulu.", "Enter a title or write a note first.", "أدخل عنوانًا أو اكتب ملاحظة أولًا."],
+  "ui_109055bfcd": [
+    "Pembayaran berhasil",
+    "Payment successful",
+    "تم الدفع بنجاح"
+  ],
+  "ui_1408872bee": [
+    "Akses modul telah aktif. Mengalihkan…",
+    "Access is active. Returning to your study…",
+    "فُعّل الوصول. جارٍ الرجوع إلى المطالعة…"
+  ],
+  "ui_4ccf3c2529": [
+    "Isi judul atau tulis catatan terlebih dahulu.",
+    "Enter a title or write a note first.",
+    "أدخل عنوانًا أو اكتب ملاحظة أولًا."
+  ],
   "ui_dc885de9d1": ["Catatan Pribadi", "Personal Note", "ملاحظة شخصية"],
   "ui_bdbc1bc83d": ["Catatan baru", "New note", "ملاحظة جديدة"],
   "ui_38329dceb2": ["Menyimpan draf...", "Saving draft…", "جارٍ حفظ المسودة…"],
@@ -461,40 +1449,136 @@ const copyCatalog = <String, List<String>>{
   "ui_8c150a373b": ["kutipan ibarah", "quoted passage", "عبارة مقتبسة"],
   "ui_ba0dab7b01": ["Kutipan Arab", "Arabic quotation", "اقتباس عربي"],
   "ui_63395fecb6": ["Judul Bab", "Chapter title", "عنوان الفصل"],
-  "ui_67450a0c82": ["Kiri ke kanan (LTR)", "Left-to-right direction", "الاتجاه من اليسار إلى اليمين"],
-  "ui_7cb5acfec8": ["Kanan ke kiri (RTL)", "Right-to-left / Arabic direction", "الاتجاه من اليمين إلى اليسار"],
-  "ui_168ac11968": ["Belum ada isi catatan.", "This note is empty.", "هذه الملاحظة فارغة."],
+  "ui_67450a0c82": [
+    "Kiri ke kanan (LTR)",
+    "Left-to-right direction",
+    "الاتجاه من اليسار إلى اليمين"
+  ],
+  "ui_7cb5acfec8": [
+    "Kanan ke kiri (RTL)",
+    "Right-to-left / Arabic direction",
+    "الاتجاه من اليمين إلى اليسار"
+  ],
+  "ui_168ac11968": [
+    "Belum ada isi catatan.",
+    "This note is empty.",
+    "هذه الملاحظة فارغة."
+  ],
   "ui_74ed01cdfb": ["Judul catatan", "Note title", "عنوان الملاحظة"],
-  "ui_d0b4373b9e": ["Tulis catatan atau tempel ibarah di sini…", "Write a note or paste a passage here…", "اكتب ملاحظة أو ألصق عبارة هنا…"],
+  "ui_d0b4373b9e": [
+    "Tulis catatan atau tempel ibarah di sini…",
+    "Write a note or paste a passage here…",
+    "اكتب ملاحظة أو ألصق عبارة هنا…"
+  ],
   "ui_0e03995bc9": ["Ibarah tersalin.", "Passage copied.", "نُسخت العبارة."],
-  "ui_23bee09642": ["Taqrir & Syarah:", "Explanation & Commentary:", "التقرير والشرح:"],
-  "ui_254caa0612": ["Ibarah & rujukan", "Passage & reference", "العبارة والمرجع"],
+  "ui_23bee09642": [
+    "Taqrir & Syarah:",
+    "Explanation & Commentary:",
+    "التقرير والشرح:"
+  ],
+  "ui_254caa0612": [
+    "Ibarah & rujukan",
+    "Passage & reference",
+    "العبارة والمرجع"
+  ],
   "ui_47ad9fd917": ["Pengarang", "Author", "المؤلف"],
   "ui_0e380bd079": ["Halaman", "Page", "الصفحة"],
   "ui_2dc18d8d8b": ["Disiplin", "Discipline", "المجال"],
-  "ui_57c258a29c": ["Naskah ibarah asli", "Original passage", "العبارة الأصلية"],
-  "ui_e486ebab2c": ["Intisari & penjelasan", "Summary & explanation", "الخلاصة والبيان"],
-  "ui_5502967ab3": ["Buka di Maktabah Syamilah", "Open in al-Maktabah al-Shamilah", "فتح في المكتبة الشاملة"],
-  "ui_9a30ee772c": ["Salin rujukan ilmiah", "Copy scholarly reference", "نسخ الإحالة العلمية"],
+  "ui_57c258a29c": [
+    "Naskah ibarah asli",
+    "Original passage",
+    "العبارة الأصلية"
+  ],
+  "ui_e486ebab2c": [
+    "Intisari & penjelasan",
+    "Summary & explanation",
+    "الخلاصة والبيان"
+  ],
+  "ui_5502967ab3": [
+    "Buka di Maktabah Syamilah",
+    "Open in al-Maktabah al-Shamilah",
+    "فتح في المكتبة الشاملة"
+  ],
+  "ui_9a30ee772c": [
+    "Salin rujukan ilmiah",
+    "Copy scholarly reference",
+    "نسخ الإحالة العلمية"
+  ],
   "ui_d67287e521": ["KOLEKSI UTAMA", "FEATURED COLLECTION", "المجموعة المميزة"],
   "ui_e84b97b822": ["AKTIF", "ACTIVE", "فعّال"],
   "ui_71c772586f": ["PREMIUM", "SPECIAL COLLECTION", "خزانة خاصة"],
-  "ui_91abbb166e": ["Ketentuan pembayaran DOKU dan pengembalian dana", "DOKU Payment & Refund Terms", "شروط الدفع عبر DOKU والاسترداد"],
-  "ui_9f7ecdca34": ["Etika telaah dan adab keilmuan", "Study Ethics, Context, and Scholarly Etiquette", "أخلاقيات المطالعة وفهم السياق وآداب العلم"],
-  "ui_58062da3e8": ["Saluran resmi dan pengaduan", "Official Contacts & Service Complaints", "قنوات التواصل الرسمية وشكاوى الخدمة"],
+  "ui_91abbb166e": [
+    "Ketentuan pembayaran DOKU dan pengembalian dana",
+    "DOKU Payment & Refund Terms",
+    "شروط الدفع عبر DOKU والاسترداد"
+  ],
+  "ui_9f7ecdca34": [
+    "Etika telaah dan adab keilmuan",
+    "Study Ethics, Context, and Scholarly Etiquette",
+    "أخلاقيات المطالعة وفهم السياق وآداب العلم"
+  ],
+  "ui_58062da3e8": [
+    "Saluran resmi dan pengaduan",
+    "Official Contacts & Service Complaints",
+    "قنوات التواصل الرسمية وشكاوى الخدمة"
+  ],
   "ui_73d11e46c9": ["Kembali ke Beranda", "Return home", "العودة إلى الرئيسية"],
   "ui_2b3aa03422": ["Ukuran huruf", "Text size", "حجم الخط"],
-  "ui_1781d557ab": ["Akun Google ini belum dapat membuka asisten. Gunakan akun Google yang sudah dihubungkan dengan OpenTurath.", "This Google account cannot open the study guide. Use the account linked to OpenTurath.", "لا يمكن لهذا الحساب فتح خادم المطالعة. استخدم حساب Google المرتبط بأوبن تراث."],
-  "ui_5d804a44a9": ["Akses untuk asisten ini memerlukan langganan aktif.", "This study guide requires an active subscription.", "يتطلب هذا الخادم اشتراكًا فعّالًا."],
-  "ui_438c4a2dca": ["Tautan asisten tidak valid.", "The study guide link is invalid.", "رابط خادم المطالعة غير صحيح."],
-  "ui_8239d461f2": ["Akses asisten ini memerlukan langganan aktif.", "This study guide requires an active subscription.", "يتطلب هذا الخادم اشتراكًا فعّالًا."],
-  "ui_c970e1b24e": ["Asisten belum bisa dihubungkan. Coba lagi.", "Unable to connect to the study guide. Try again.", "تعذر الاتصال بخادم المطالعة. أعد المحاولة."],
-  "ui_118b9118fe": ["Akses khusus diperlukan", "Special access required", "يلزم وصول خاص"],
-  "ui_b460951771": ["Akun Google belum memiliki izin", "Google account has no access yet", "لم يُمنح حساب Google الوصول بعد"],
-  "ui_49e0e13474": ["Asisten belum bisa dibuka", "The study guide could not be opened", "تعذر فتح خادم المطالعة"],
-  "ui_7108148c80": ["Asisten belum bisa dibuka", "The study guide could not be opened", "تعذر فتح خادم المطالعة"],
-  "ui_c65a8dd3c0": ["Buka akses langganan", "View subscription access", "عرض الوصول بالاشتراك"],
-  "ui_f9d6eb247c": ["Ganti akun Google", "Switch Google account", "تبديل حساب Google"],
+  "ui_1781d557ab": [
+    "Akun Google ini belum dapat membuka asisten. Gunakan akun Google yang sudah dihubungkan dengan OpenTurath.",
+    "This Google account cannot open the study guide. Use the account linked to OpenTurath.",
+    "لا يمكن لهذا الحساب فتح خادم المطالعة. استخدم حساب Google المرتبط بأوبن تراث."
+  ],
+  "ui_5d804a44a9": [
+    "Akses untuk asisten ini memerlukan langganan aktif.",
+    "This study guide requires an active subscription.",
+    "يتطلب هذا الخادم اشتراكًا فعّالًا."
+  ],
+  "ui_438c4a2dca": [
+    "Tautan asisten tidak valid.",
+    "The study guide link is invalid.",
+    "رابط خادم المطالعة غير صحيح."
+  ],
+  "ui_8239d461f2": [
+    "Akses asisten ini memerlukan langganan aktif.",
+    "This study guide requires an active subscription.",
+    "يتطلب هذا الخادم اشتراكًا فعّالًا."
+  ],
+  "ui_c970e1b24e": [
+    "Asisten belum bisa dihubungkan. Coba lagi.",
+    "Unable to connect to the study guide. Try again.",
+    "تعذر الاتصال بخادم المطالعة. أعد المحاولة."
+  ],
+  "ui_118b9118fe": [
+    "Akses khusus diperlukan",
+    "Special access required",
+    "يلزم وصول خاص"
+  ],
+  "ui_b460951771": [
+    "Akun Google belum memiliki izin",
+    "Google account has no access yet",
+    "لم يُمنح حساب Google الوصول بعد"
+  ],
+  "ui_49e0e13474": [
+    "Asisten belum bisa dibuka",
+    "The study guide could not be opened",
+    "تعذر فتح خادم المطالعة"
+  ],
+  "ui_7108148c80": [
+    "Asisten belum bisa dibuka",
+    "The study guide could not be opened",
+    "تعذر فتح خادم المطالعة"
+  ],
+  "ui_c65a8dd3c0": [
+    "Buka akses langganan",
+    "View subscription access",
+    "عرض الوصول بالاشتراك"
+  ],
+  "ui_f9d6eb247c": [
+    "Ganti akun Google",
+    "Switch Google account",
+    "تبديل حساب Google"
+  ],
   "ui_f3eaad8539": ["Buka pustaka", "Open library", "فتح المكتبة"],
   "ui_906a4865fb": ["Fikih Hanafi", "Hanafi Fiqh", "الفقه الحنفي"],
   "ui_6d6b866be5": ["Fikih Maliki", "Maliki Fiqh", "الفقه المالكي"],
@@ -502,57 +1586,233 @@ const copyCatalog = <String, List<String>>{
   "ui_2b90583ab7": ["Perbandingan Mazhab", "Comparative Fiqh", "الفقه المقارن"],
   "ui_bb6b589ac6": ["Matan Hadits", "Matan Hadith", "متن الحديث"],
   "ui_34fc2f7f7b": ["Tafsir Al-Qur'an", "Qur’anic Exegesis", "تفسير القرآن"],
-  "ui_703ae50c4d": ["Sejarah & Sirah", "History & Prophetic Biography", "التاريخ والسيرة النبوية"],
-  "ui_b63b74acc6": ["Tasawwuf & Adzkar", "Spirituality & Remembrance", "التصوف والأذكار"],
+  "ui_703ae50c4d": [
+    "Sejarah & Sirah",
+    "History & Prophetic Biography",
+    "التاريخ والسيرة النبوية"
+  ],
+  "ui_b63b74acc6": [
+    "Tasawwuf & Adzkar",
+    "Spirituality & Remembrance",
+    "التصوف والأذكار"
+  ],
   "ui_566e9666a0": ["Qawaid Fiqhiyyah", "Legal Maxims", "القواعد الفقهية"],
-  "ui_966710e7a1": ["Fatawa & Masail Fiqhiyyah", "Fatwas & Legal Questions", "الفتاوى والمسائل الفقهية"],
-  "ui_32a669e14a": ["Tajwid & Qiraat", "Qur’anic Recitation & Readings", "التجويد والقراءات"],
+  "ui_966710e7a1": [
+    "Fatawa & Masail Fiqhiyyah",
+    "Fatwas & Legal Questions",
+    "الفتاوى والمسائل الفقهية"
+  ],
+  "ui_32a669e14a": [
+    "Tajwid & Qiraat",
+    "Qur’anic Recitation & Readings",
+    "التجويد والقراءات"
+  ],
   "ui_589da3ee24": ["Musthalah Hadis", "Hadith Methodology", "مصطلح الحديث"],
   "ui_7314d2a449": ["Syarah Hadis", "Hadith Commentaries", "شروح الحديث"],
-  "ui_2c2ccbaa7d": ["Thabaqat & Rijalul Hadis", "Biographical Classes & Hadith Transmitters", "الطبقات ورجال الحديث"],
-  "ui_c970ade947": ["Bibliografi & Faharis", "Bibliography & Indexes", "الببليوغرافيا والفهارس"],
-  "ui_07146c785a": ["Manhaj Abu Bakr al-Masyhur", "The Method of Abu Bakr al-Mashhur", "منهج أبي بكر المشهور"],
-  "ui_e9aed75027": ["Matan · Syarah · Hasyiyah Mu'tabarah", "Texts · Commentaries · Recognized Marginalia", "المتون والشروح والحواشي المعتبرة"],
-  "ui_544fc16256": ["Zhahir Ar-Riwayah · Syuruh & Fatawa", "Zahir al-Riwayah · Commentaries & Fatwas", "ظاهر الرواية والشروح والفتاوى"],
-  "ui_9522214d6e": ["Al-Mudawwanah · Mukhtashar Khalil & Syarah", "Al-Mudawwanah · Mukhtasar Khalil & Commentaries", "المدونة ومختصر خليل وشروحه"],
-  "ui_7fa06164bc": ["Al-Mughni · Zad Al-Mustaqni' & Syuruh", "Al-Mughni · Zad al-Mustaqni‘ & Commentaries", "المغني وزاد المستقنع وشروحه"],
-  "ui_bc473de8a5": ["Perbandingan Mazhab Empat & Tarjih Dalil", "The Four Schools & Evaluation of Evidence", "مقارنة المذاهب الأربعة وترجيح الأدلة"],
-  "ui_ae3e519036": ["Kutubus Sittah · Takhrij & Rijal", "The Six Books · Source Tracing & Transmitters", "الكتب الستة والتخريج والرجال"],
-  "ui_8101c037c1": ["Tafsir Thabari, Ibnu Katsir & Qurtubi", "Al-Tabari, Ibn Kathir & Al-Qurtubi", "تفاسير الطبري وابن كثير والقرطبي"],
-  "ui_8a80cc1bb2": ["Kaidah Istinbath & Maqashid Syariah", "Principles of Inference & Objectives of the Law", "قواعد الاستنباط ومقاصد الشريعة"],
-  "ui_a143b4c40e": ["Alfiyah Ibnu Malik & Lisanul Arab", "Ibn Malik’s Alfiyyah & Lisan al-‘Arab", "ألفية ابن مالك ولسان العرب"],
-  "ui_1ce2c78441": ["Asy'ariyyah · Maturidiyyah · Dalil Aqli", "Ash‘ari & Maturidi Theology · Rational Arguments", "الأشعرية والماتريدية والأدلة العقلية"],
-  "ui_a59c40f1dd": ["Sirah Ibnu Hisyam & Tarikh Thabari", "Ibn Hisham’s Sirah & Al-Tabari’s History", "سيرة ابن هشام وتاريخ الطبري"],
-  "ui_d036360b96": ["Ihya Ulumiddin & Naskah Hujjatul Islam", "Ihya’ ‘Ulum al-Din & Al-Ghazali’s Works", "إحياء علوم الدين ومؤلفات حجة الإسلام"],
-  "ui_824262fcf2": ["Asybah wan-Nazhair & Kaidah Asasiyyah", "Al-Ashbah wa al-Naza’ir & Foundational Maxims", "الأشباه والنظائر والقواعد الأساسية"],
-  "ui_71adf46f84": ["Fatawa Kubra & Nawadzil Mu'ashirah", "Major Fatwa Collections & Contemporary Cases", "الفتاوى الكبرى والنوازل المعاصرة"],
-  "ui_73baa9c078": ["Al-Jazariyyah, Asy-Syathibiyyah & Qira'at Sab'ah", "Al-Jazariyyah, Al-Shatibiyyah & the Seven Readings", "الجزرية والشاطبية والقراءات السبع"],
-  "ui_57d1a189d8": ["Muqaddimah Ibnu Shalah & Nukhbatul Fikar", "Ibn al-Salah’s Introduction & Nukhbat al-Fikar", "مقدمة ابن الصلاح ونخبة الفكر"],
-  "ui_2a1f6bb073": ["Fathul Bari, An-Nawawi 'ala Muslim & Syuruh Sittah", "Fath al-Bari, Al-Nawawi on Muslim & Commentaries", "فتح الباري وشرح النووي على مسلم وشروح الكتب الستة"],
-  "ui_7ffe474ded": ["Tahdzibut Tahdzib, Siyar A'lam Nubala & Thabaqat", "Tahdhib al-Tahdhib, Siyar A‘lam al-Nubala’ & Biographies", "تهذيب التهذيب وسير أعلام النبلاء والطبقات"],
-  "ui_130ea65db6": ["Kasyfuzh Zhunun, Mu'jamul Mushannifin & Faharis", "Kashf al-Zunun, Author Dictionaries & Indexes", "كشف الظنون ومعاجم المصنفين والفهارس"],
-  "ui_85c784a27e": ["Matan · Syarah · Hasyiyah", "Texts · Commentaries · Marginalia", "المتون والشروح والحواشي"],
-  "ui_d3cc4c7772": ["Ihya Ulumiddin · Adab & Wirid", "Ihya’ ‘Ulum al-Din · Etiquette & Devotions", "إحياء علوم الدين والآداب والأوراد"],
-  "introTitle": ["Mengenal Fikih Tahawwulat", "Introducing Fiqh al-Tahawwulat", "التعريف بفقه التحولات"],
-  "introFoundation": ["Tsawabit dan tanda zaman", "The Constants and the Signs of the Times", "الثوابت وعلامات الزمان"],
-  "introFoundationBody": ["Dalam kerangka Al-Habib Abu Bakar Al-Adni Al-Masyhur, Fikih Tahawwulat menelaah perubahan zaman untuk menjaga Islam, Iman, dan Ihsan. Sebutan Rukun Keempat dipahami dalam kerangka keilmuan tersebut.", "Within the framework of al-Habib Abu Bakr al-Adni al-Mashhur, Fiqh al-Tahawwulat studies changing times in order to safeguard Islam, Iman, and Ihsan. The designation Fourth Pillar belongs to this scholarly framework.", "يدرس فقه التحولات، في إطار الحبيب أبي بكر العدني المشهور، تغيرات الزمان لصيانة الإسلام والإيمان والإحسان. ويُفهم وصف الركن الرابع ضمن هذا الإطار العلمي."],
-  "introMethod": ["Adab dan cara menelaah", "Scholarly Etiquette and Method", "آداب المطالعة ومنهجها"],
-  "introMethodBody": ["Baca teks bersama konteksnya. Periksa kutipan, nama kitab, jilid, dan halaman. Pembacaan tanda zaman perlu kehati-hatian, bimbingan guru, serta penjagaan lisan dan tindakan.", "Read each passage in context. Check its wording, title, volume, and page. Studying the signs of the times calls for care, guidance from teachers, and restraint in speech and action.", "اقرأ النص في سياقه، وراجع ألفاظه واسم الكتاب والجزء والصفحة. ودراسة علامات الزمان تستلزم التثبت وإرشاد المعلمين وصيانة اللسان والعمل."],
-  "introRooms": ["Lima ruang telaah", "Five Study Rooms", "خمسة مجالس للمطالعة"],
-  "introReferences": ["Menelusuri karya dan rujukan", "Following the Works and References", "تتبع المؤلفات والمراجع"],
-  "introReferencesBody": ["Koleksi mempertemukan karya tulis dan materi muhadharah yang tercatat dalam katalog. Setiap jawaban tetap perlu dicocokkan dengan sumbernya.", "The collection brings together written works and lecture material recorded in the catalog. Each answer should still be checked against its source.", "تجمع المجموعة المؤلفات ومواد المحاضرات المسجلة في الفهرس. وتبقى مراجعة كل جواب في مصدره لازمة."],
-  "originalArticle": ["Baca naskah pengenalan lengkap (Indonesia)", "Read the complete introduction (Indonesian)", "قراءة النص التعريفي الكامل بالإندونيسية"],
-  "ui_8b4029fe50": ["Teks matan & ibarah", "Base Texts & Passages", "المتون والعبارات"],
-  "ui_87343cd230": ["Penyederhanaan Konsep", "Explaining Concepts", "تبسيط المفاهيم"],
-  "ui_9cabfc4bb1": ["Uji pemahaman interaktif", "Understanding & Review", "اختبار الفهم والمراجعة"],
-  "ui_4837b8e469": ["Arsip muhadharah Habib Abu Bakar", "Lectures of Habib Abu Bakr", "محاضرات الحبيب أبي بكر"],
-  "ui_b8d36541c3": ["Materi dakwah & khutbah", "Sermon & Teaching Preparation", "إعداد مواد الدعوة والخطب"],
+  "ui_2c2ccbaa7d": [
+    "Thabaqat & Rijalul Hadis",
+    "Biographical Classes & Hadith Transmitters",
+    "الطبقات ورجال الحديث"
+  ],
+  "ui_c970ade947": [
+    "Bibliografi & Faharis",
+    "Bibliography & Indexes",
+    "الببليوغرافيا والفهارس"
+  ],
+  "ui_07146c785a": [
+    "Manhaj Abu Bakr al-Masyhur",
+    "The Method of Abu Bakr al-Mashhur",
+    "منهج أبي بكر المشهور"
+  ],
+  "ui_e9aed75027": [
+    "Matan · Syarah · Hasyiyah Mu'tabarah",
+    "Texts · Commentaries · Recognized Marginalia",
+    "المتون والشروح والحواشي المعتبرة"
+  ],
+  "ui_544fc16256": [
+    "Zhahir Ar-Riwayah · Syuruh & Fatawa",
+    "Zahir al-Riwayah · Commentaries & Fatwas",
+    "ظاهر الرواية والشروح والفتاوى"
+  ],
+  "ui_9522214d6e": [
+    "Al-Mudawwanah · Mukhtashar Khalil & Syarah",
+    "Al-Mudawwanah · Mukhtasar Khalil & Commentaries",
+    "المدونة ومختصر خليل وشروحه"
+  ],
+  "ui_7fa06164bc": [
+    "Al-Mughni · Zad Al-Mustaqni' & Syuruh",
+    "Al-Mughni · Zad al-Mustaqni‘ & Commentaries",
+    "المغني وزاد المستقنع وشروحه"
+  ],
+  "ui_bc473de8a5": [
+    "Perbandingan Mazhab Empat & Tarjih Dalil",
+    "The Four Schools & Evaluation of Evidence",
+    "مقارنة المذاهب الأربعة وترجيح الأدلة"
+  ],
+  "ui_ae3e519036": [
+    "Kutubus Sittah · Takhrij & Rijal",
+    "The Six Books · Source Tracing & Transmitters",
+    "الكتب الستة والتخريج والرجال"
+  ],
+  "ui_8101c037c1": [
+    "Tafsir Thabari, Ibnu Katsir & Qurtubi",
+    "Al-Tabari, Ibn Kathir & Al-Qurtubi",
+    "تفاسير الطبري وابن كثير والقرطبي"
+  ],
+  "ui_8a80cc1bb2": [
+    "Kaidah Istinbath & Maqashid Syariah",
+    "Principles of Inference & Objectives of the Law",
+    "قواعد الاستنباط ومقاصد الشريعة"
+  ],
+  "ui_a143b4c40e": [
+    "Alfiyah Ibnu Malik & Lisanul Arab",
+    "Ibn Malik’s Alfiyyah & Lisan al-‘Arab",
+    "ألفية ابن مالك ولسان العرب"
+  ],
+  "ui_1ce2c78441": [
+    "Asy'ariyyah · Maturidiyyah · Dalil Aqli",
+    "Ash‘ari & Maturidi Theology · Rational Arguments",
+    "الأشعرية والماتريدية والأدلة العقلية"
+  ],
+  "ui_a59c40f1dd": [
+    "Sirah Ibnu Hisyam & Tarikh Thabari",
+    "Ibn Hisham’s Sirah & Al-Tabari’s History",
+    "سيرة ابن هشام وتاريخ الطبري"
+  ],
+  "ui_d036360b96": [
+    "Ihya Ulumiddin & Naskah Hujjatul Islam",
+    "Ihya’ ‘Ulum al-Din & Al-Ghazali’s Works",
+    "إحياء علوم الدين ومؤلفات حجة الإسلام"
+  ],
+  "ui_824262fcf2": [
+    "Asybah wan-Nazhair & Kaidah Asasiyyah",
+    "Al-Ashbah wa al-Naza’ir & Foundational Maxims",
+    "الأشباه والنظائر والقواعد الأساسية"
+  ],
+  "ui_71adf46f84": [
+    "Fatawa Kubra & Nawadzil Mu'ashirah",
+    "Major Fatwa Collections & Contemporary Cases",
+    "الفتاوى الكبرى والنوازل المعاصرة"
+  ],
+  "ui_73baa9c078": [
+    "Al-Jazariyyah, Asy-Syathibiyyah & Qira'at Sab'ah",
+    "Al-Jazariyyah, Al-Shatibiyyah & the Seven Readings",
+    "الجزرية والشاطبية والقراءات السبع"
+  ],
+  "ui_57d1a189d8": [
+    "Muqaddimah Ibnu Shalah & Nukhbatul Fikar",
+    "Ibn al-Salah’s Introduction & Nukhbat al-Fikar",
+    "مقدمة ابن الصلاح ونخبة الفكر"
+  ],
+  "ui_2a1f6bb073": [
+    "Fathul Bari, An-Nawawi 'ala Muslim & Syuruh Sittah",
+    "Fath al-Bari, Al-Nawawi on Muslim & Commentaries",
+    "فتح الباري وشرح النووي على مسلم وشروح الكتب الستة"
+  ],
+  "ui_7ffe474ded": [
+    "Tahdzibut Tahdzib, Siyar A'lam Nubala & Thabaqat",
+    "Tahdhib al-Tahdhib, Siyar A‘lam al-Nubala’ & Biographies",
+    "تهذيب التهذيب وسير أعلام النبلاء والطبقات"
+  ],
+  "ui_130ea65db6": [
+    "Kasyfuzh Zhunun, Mu'jamul Mushannifin & Faharis",
+    "Kashf al-Zunun, Author Dictionaries & Indexes",
+    "كشف الظنون ومعاجم المصنفين والفهارس"
+  ],
+  "ui_85c784a27e": [
+    "Matan · Syarah · Hasyiyah",
+    "Texts · Commentaries · Marginalia",
+    "المتون والشروح والحواشي"
+  ],
+  "ui_d3cc4c7772": [
+    "Ihya Ulumiddin · Adab & Wirid",
+    "Ihya’ ‘Ulum al-Din · Etiquette & Devotions",
+    "إحياء علوم الدين والآداب والأوراد"
+  ],
+  "introTitle": [
+    "Mengenal Fikih Tahawwulat",
+    "Introducing Fiqh al-Tahawwulat",
+    "التعريف بفقه التحولات"
+  ],
+  "introFoundation": [
+    "Tsawabit dan tanda zaman",
+    "The Constants and the Signs of the Times",
+    "الثوابت وعلامات الزمان"
+  ],
+  "introFoundationBody": [
+    "Dalam kerangka Al-Habib Abu Bakar Al-Adni Al-Masyhur, Fikih Tahawwulat menelaah perubahan zaman untuk menjaga Islam, Iman, dan Ihsan. Sebutan Rukun Keempat dipahami dalam kerangka keilmuan tersebut.",
+    "Within the framework of al-Habib Abu Bakr al-Adni al-Mashhur, Fiqh al-Tahawwulat studies changing times in order to safeguard Islam, Iman, and Ihsan. The designation Fourth Pillar belongs to this scholarly framework.",
+    "يدرس فقه التحولات، في إطار الحبيب أبي بكر العدني المشهور، تغيرات الزمان لصيانة الإسلام والإيمان والإحسان. ويُفهم وصف الركن الرابع ضمن هذا الإطار العلمي."
+  ],
+  "introMethod": [
+    "Adab dan cara menelaah",
+    "Scholarly Etiquette and Method",
+    "آداب المطالعة ومنهجها"
+  ],
+  "introMethodBody": [
+    "Baca teks bersama konteksnya. Periksa kutipan, nama kitab, jilid, dan halaman. Pembacaan tanda zaman perlu kehati-hatian, bimbingan guru, serta penjagaan lisan dan tindakan.",
+    "Read each passage in context. Check its wording, title, volume, and page. Studying the signs of the times calls for care, guidance from teachers, and restraint in speech and action.",
+    "اقرأ النص في سياقه، وراجع ألفاظه واسم الكتاب والجزء والصفحة. ودراسة علامات الزمان تستلزم التثبت وإرشاد المعلمين وصيانة اللسان والعمل."
+  ],
+  "introRooms": [
+    "Lima ruang telaah",
+    "Five Study Rooms",
+    "خمسة مجالس للمطالعة"
+  ],
+  "introReferences": [
+    "Menelusuri karya dan rujukan",
+    "Following the Works and References",
+    "تتبع المؤلفات والمراجع"
+  ],
+  "introReferencesBody": [
+    "Koleksi mempertemukan karya tulis dan materi muhadharah yang tercatat dalam katalog. Setiap jawaban tetap perlu dicocokkan dengan sumbernya.",
+    "The collection brings together written works and lecture material recorded in the catalog. Each answer should still be checked against its source.",
+    "تجمع المجموعة المؤلفات ومواد المحاضرات المسجلة في الفهرس. وتبقى مراجعة كل جواب في مصدره لازمة."
+  ],
+  "originalArticle": [
+    "Baca naskah pengenalan lengkap (Indonesia)",
+    "Read the complete introduction (Indonesian)",
+    "قراءة النص التعريفي الكامل بالإندونيسية"
+  ],
+  "ui_8b4029fe50": [
+    "Teks matan & ibarah",
+    "Base Texts & Passages",
+    "المتون والعبارات"
+  ],
+  "ui_87343cd230": [
+    "Penyederhanaan Konsep",
+    "Explaining Concepts",
+    "تبسيط المفاهيم"
+  ],
+  "ui_9cabfc4bb1": [
+    "Uji pemahaman interaktif",
+    "Understanding & Review",
+    "اختبار الفهم والمراجعة"
+  ],
+  "ui_4837b8e469": [
+    "Arsip muhadharah Habib Abu Bakar",
+    "Lectures of Habib Abu Bakr",
+    "محاضرات الحبيب أبي بكر"
+  ],
+  "ui_b8d36541c3": [
+    "Materi dakwah & khutbah",
+    "Sermon & Teaching Preparation",
+    "إعداد مواد الدعوة والخطب"
+  ],
   "ui_7004b5d8ff": ["Matan & Ibarah", "Texts & Passages", "المتون والعبارات"],
-  "ui_87d9751aa5": ["Konsep & Istilah", "Concepts & Terms", "المفاهيم والمصطلحات"],
+  "ui_87d9751aa5": [
+    "Konsep & Istilah",
+    "Concepts & Terms",
+    "المفاهيم والمصطلحات"
+  ],
   "ui_b75ba44465": ["Ujian Nalar", "Review & Reasoning", "المراجعة والنظر"],
   "ui_e5ad7cb376": ["Khazanah Lisan", "Oral Heritage", "التراث الشفهي"],
   "ui_44aa1b83f5": ["Dakwah & Khutbah", "Teaching & Sermons", "الدعوة والخطب"],
-  "booksShown": ["Menampilkan {0} dari {1} kitab", "Showing {0} of {1} books", "عرض {0} من {1} كتابًا"],
+  "booksShown": [
+    "Menampilkan {0} dari {1} kitab",
+    "Showing {0} of {1} books",
+    "عرض {0} من {1} كتابًا"
+  ],
   "bookCount": ["{0} kitab", "{0} books", "عدد الكتب: {0}"],
   "authorCredit": ["Karya {0}", "By {0}", "تأليف {0}"],
   "editorCredit": ["Tahqiq: {0}", "Edited by {0}", "تحقيق: {0}"],
@@ -560,28 +1820,60 @@ const copyCatalog = <String, List<String>>{
   "volumeCount": ["{0} jilid", "{0} volumes", "عدد الأجزاء: {0}"],
   "pageCount": ["{0} hlm.", "{0} pp.", "عدد الصفحات: {0}"],
   "textSize": ["Ukuran teks ({0}%)", "Text size ({0}%)", "حجم النص ({0}٪)"],
-  "updateAvailable": ["Pembaruan v{0} tersedia", "Update v{0} available", "التحديث v{0} متاح"],
-  "updateReady": ["Pembaruan v{0} siap dipasang", "Update v{0} ready to install", "التحديث v{0} جاهز للتثبيت"],
-  "openNamedStudy": ["Buka ruang telaah {0}", "Open {0} study room", "فتح مجلس {0}"],
-  "policyOriginal": ["Naskah kebijakan resmi berbahasa Indonesia.", "The official policy text is in Indonesian.", "نص السياسة الرسمي باللغة الإندونيسية."],
-  "collectionPreparing": ["Koleksi kitab untuk {0} masih disiapkan.", "The collection for {0} is still being prepared.", "مجموعة كتب {0} لا تزال قيد الإعداد."],
+  "updateAvailable": [
+    "Pembaruan v{0} tersedia",
+    "Update v{0} available",
+    "التحديث v{0} متاح"
+  ],
+  "updateReady": [
+    "Pembaruan v{0} siap dipasang",
+    "Update v{0} ready to install",
+    "التحديث v{0} جاهز للتثبيت"
+  ],
+  "openNamedStudy": [
+    "Buka ruang telaah {0}",
+    "Open {0} study room",
+    "فتح مجلس {0}"
+  ],
+  "policyOriginal": [
+    "Naskah kebijakan resmi berbahasa Indonesia.",
+    "The official policy text is in Indonesian.",
+    "نص السياسة الرسمي باللغة الإندونيسية."
+  ],
+  "collectionPreparing": [
+    "Koleksi kitab untuk {0} masih disiapkan.",
+    "The collection for {0} is still being prepared.",
+    "مجموعة كتب {0} لا تزال قيد الإعداد."
+  ],
   "justNow": ["Baru saja", "Just now", "الآن"],
   "minutesAgo": ["{0} menit lalu", "{0} minutes ago", "قبل {0} دقيقة"],
   "hoursAgo": ["{0} jam lalu", "{0} hours ago", "قبل {0} ساعة"],
   "daysAgo": ["{0} hari lalu", "{0} days ago", "قبل {0} يوم"],
   "yesterday": ["Kemarin", "Yesterday", "أمس"],
   "expiryDate": ["Berakhir {0}", "Expires {0}", "ينتهي في {0}"],
-  "externalReferenceError": ["Tidak dapat membuka rujukan eksternal.", "Unable to open the external reference.", "تعذر فتح المرجع الخارجي."],
+  "externalReferenceError": [
+    "Tidak dapat membuka rujukan eksternal.",
+    "Unable to open the external reference.",
+    "تعذر فتح المرجع الخارجي."
+  ],
   "pageNumber": ["Hlm. {0}", "p. {0}", "ص. {0}"],
   "libraryOverview": ["Pustaka rujukan", "Reference library", "مكتبة المراجع"],
-  "librarySummary": ["Jelajahi karya dalam koleksi ini dan periksa rincian tiap edisi sebelum mengutipnya.", "Explore the works in this collection and check each edition before citing it.", "تصفح مؤلفات هذه المجموعة وراجع بيانات كل طبعة قبل الاستشهاد بها."],
+  "librarySummary": [
+    "Jelajahi karya dalam koleksi ini dan periksa rincian tiap edisi sebelum mengutipnya.",
+    "Explore the works in this collection and check each edition before citing it.",
+    "تصفح مؤلفات هذه المجموعة وراجع بيانات كل طبعة قبل الاستشهاد بها."
+  ],
   "libraryOpening": ["Membuka katalog…", "Opening catalog…", "جار فتح الفهرس…"],
   "libraryPeriod": ["Rentang masa", "Historical range", "المدى الزمني"],
   "libraryAuthority": ["Ruang lingkup", "Collection scope", "نطاق المجموعة"],
   "libraryWorks": ["Karya", "Works", "المؤلفات"],
   "libraryPages": ["Halaman", "Pages", "الصفحات"],
   "libraryWords": ["Kata", "Words", "الكلمات"],
-  "libraryDataNote": ["Angka mengikuti catatan katalog; periksa edisi saat mengutip.", "Figures follow the catalog record; verify the edition when citing.", "الأرقام بحسب الفهرس؛ راجع الطبعة عند الاستشهاد."],
+  "libraryDataNote": [
+    "Angka mengikuti catatan katalog; periksa edisi saat mengutip.",
+    "Figures follow the catalog record; verify the edition when citing.",
+    "الأرقام بحسب الفهرس؛ راجع الطبعة عند الاستشهاد."
+  ],
   "libraryRecord": ["Rincian koleksi", "Collection details", "تفاصيل المجموعة"],
   "singleVolume": ["Satu jilid", "Single volume", "جزء واحد"],
   "multipleVolumes": ["Beberapa jilid", "Multiple volumes", "عدة أجزاء"],
@@ -591,15 +1883,27 @@ const copyCatalog = <String, List<String>>{
   "bookVolumes": ["Jilid", "Volumes", "عدد الأجزاء"],
   "bookPages": ["Halaman", "Pages", "عدد الصفحات"],
   "bookSourceFolder": ["Koleksi sumber", "Source collection", "مجموعة المصادر"],
-  "bookAuthorDeath": ["Pengarang dan tahun wafat", "Author and death year", "المؤلف والوفاة"],
-  "bookClassification": ["Klasifikasi naskah", "Text classification", "تصنيف النص"],
+  "bookAuthorDeath": [
+    "Pengarang dan tahun wafat",
+    "Author and death year",
+    "المؤلف والوفاة"
+  ],
+  "bookClassification": [
+    "Klasifikasi naskah",
+    "Text classification",
+    "تصنيف النص"
+  ],
   "bookScienceSection": ["Bidang ilmu", "Discipline", "القسم العلمي"],
   "bookTextType": ["Jenis naskah", "Text type", "نوع النص"],
   "bookAuthorEra": ["Periode pengarang", "Author's period", "عصر المؤلف"],
   "bookEditionData": ["Data edisi", "Edition details", "بيانات الطبعة"],
   "bookPrintYear": ["Tahun terbit", "Publication year", "سنة الطبع"],
   "bookSave": ["Simpan ke Catatan", "Save to Notes", "الحفظ في الملاحظات"],
-  "bookRemove": ["Hapus dari Catatan", "Remove from Notes", "إزالة من الملاحظات"],
+  "bookRemove": [
+    "Hapus dari Catatan",
+    "Remove from Notes",
+    "إزالة من الملاحظات"
+  ],
   "bookCitationCopy": ["Salin sitasi", "Copy citation", "نسخ التوثيق"],
   "bookTypeWork": ["Karya ilmiah", "Scholarly work", "مصنف علمي"],
   "bookTypeMatn": ["Matan", "Base text", "متن"],
@@ -608,16 +1912,36 @@ const copyCatalog = <String, List<String>>{
   "bookTypeSummary": ["Mukhtasar", "Abridgment", "مختصر"],
   "bookTypeEncyclopedia": ["Ensiklopedia", "Encyclopedia", "موسوعة"],
   "bookTypePoem": ["Manzhumah", "Didactic poem", "منظومة"],
-  "bookEraHeritage": ["Khazanah Islam", "Islamic scholarly heritage", "التراث الإسلامي"],
+  "bookEraHeritage": [
+    "Khazanah Islam",
+    "Islamic scholarly heritage",
+    "التراث الإسلامي"
+  ],
   "bookEraEarly": ["Mutaqaddimin", "Early scholars", "المتقدمون"],
   "bookEraMiddle": ["Mutawassithin", "Middle period scholars", "المتوسطون"],
   "bookEraLate": ["Muta'akhkhirin", "Later scholars", "المتأخرون"],
   "bookEraModern": ["Mu'ashirin", "Contemporary scholars", "المعاصرون"],
   "catalogEraFaces": ["Ashab Al-Wujuh", "Early school jurists", "أصحاب الوجوه"],
-  "catalogCenturySalaf": ["Salaf (≤ 300 H)", "Early period (to 300 AH)", "العصر الأول (حتى 300 هـ)"],
-  "catalogCenturyEarly": ["Mutaqaddimin (301-600 H)", "Early scholars (301–600 AH)", "المتقدمون (301–600 هـ)"],
-  "catalogCenturyLate": ["Muta'akhkhirin (601-1100 H)", "Later scholars (601–1100 AH)", "المتأخرون (601–1100 هـ)"],
-  "catalogCenturyModern": ["Mu'ashir (> 1100 H)", "Modern period (after 1100 AH)", "العصر الحديث (بعد 1100 هـ)"],
+  "catalogCenturySalaf": [
+    "Salaf (≤ 300 H)",
+    "Early period (to 300 AH)",
+    "العصر الأول (حتى 300 هـ)"
+  ],
+  "catalogCenturyEarly": [
+    "Mutaqaddimin (301-600 H)",
+    "Early scholars (301–600 AH)",
+    "المتقدمون (301–600 هـ)"
+  ],
+  "catalogCenturyLate": [
+    "Muta'akhkhirin (601-1100 H)",
+    "Later scholars (601–1100 AH)",
+    "المتأخرون (601–1100 هـ)"
+  ],
+  "catalogCenturyModern": [
+    "Mu'ashir (> 1100 H)",
+    "Modern period (after 1100 AH)",
+    "العصر الحديث (بعد 1100 هـ)"
+  ],
   "desktopLoginIntro": [
     "Ruang baca digital untuk meneliti literatur turats klasik bersama pendamping telaah.",
     "Digital reading room for classical turath literature with study assistants.",
@@ -646,115 +1970,399 @@ const copyCatalog = <String, List<String>>{
   "edit": ["Edit", "Edit", "تحرير"],
   "viewBook": ["Lihat kitab", "View book", "عرض الكتاب"],
   "outputLanguage": ["Bahasa jawaban", "Answer language", "لغة الجواب"],
-  "clearChatHistory": ["Hapus riwayat obrolan", "Clear chat history", "مسح سجل المحادثة"],
+  "clearChatHistory": [
+    "Hapus riwayat obrolan",
+    "Clear chat history",
+    "مسح سجل المحادثة"
+  ],
   "fontSizeLabel": ["Ukuran huruf", "Text size", "حجم الخط"],
-  "openAssistantSessions": ["Sesi terbuka ({0})", "Open assistant sessions ({0})", "جلسات المساعدين المفتوحة ({0})"],
+  "openAssistantSessions": [
+    "Sesi terbuka ({0})",
+    "Open assistant sessions ({0})",
+    "جلسات المساعدين المفتوحة ({0})"
+  ],
   "closeSession": ["Tutup sesi", "Close session", "إغلاق الجلسة"],
-  "backToHomeTooltip": ["Kembali ke Beranda", "Back to Home", "العودة إلى الرئيسية"],
+  "backToHomeTooltip": [
+    "Kembali ke Beranda",
+    "Back to Home",
+    "العودة إلى الرئيسية"
+  ],
   "textCopied": ["Teks tersalin.", "Text copied.", "نُسخ النص."],
   "sourceReferences": ["Rujukan sumber", "Source references", "مراجع المصادر"],
-  "askQuestionHint": ["Ajukan pertanyaan atau masalah...", "Ask a question or describe a case...", "اطرح سؤالًا أو مسألة..."],
-  "externalReferenceFailed": ["Tidak dapat membuka rujukan eksternal: {0}", "Could not open the external reference: {0}", "تعذر فتح المرجع الخارجي: {0}"],
+  "askQuestionHint": [
+    "Ajukan pertanyaan atau masalah...",
+    "Ask a question or describe a case...",
+    "اطرح سؤالًا أو مسألة..."
+  ],
+  "externalReferenceFailed": [
+    "Tidak dapat membuka rujukan eksternal: {0}",
+    "Could not open the external reference: {0}",
+    "تعذر فتح المرجع الخارجي: {0}"
+  ],
   "authorLabel": ["Pengarang", "Author", "المؤلف"],
   "pageLabel": ["Halaman", "Page", "الصفحة"],
   "disciplineLabel": ["Disiplin", "Discipline", "الفن"],
-  "openInShamela": ["Buka di Maktabah Syamilah", "Open in al-Maktaba al-Shamela", "فتح في المكتبة الشاملة"],
-  "copyScholarlyCitation": ["Salin rujukan ilmiah", "Copy scholarly citation", "نسخ التوثيق العلمي"],
-  "browserOpenFailed": ["Browser belum dapat dibuka.", "The browser could not be opened.", "تعذر فتح المتصفح."],
-  "continueInBrowser": ["Lanjutkan di browser", "Continue in browser", "المتابعة في المتصفح"],
+  "openInShamela": [
+    "Buka di Maktabah Syamilah",
+    "Open in al-Maktaba al-Shamela",
+    "فتح في المكتبة الشاملة"
+  ],
+  "copyScholarlyCitation": [
+    "Salin rujukan ilmiah",
+    "Copy scholarly citation",
+    "نسخ التوثيق العلمي"
+  ],
+  "browserOpenFailed": [
+    "Browser belum dapat dibuka.",
+    "The browser could not be opened.",
+    "تعذر فتح المتصفح."
+  ],
+  "continueInBrowser": [
+    "Lanjutkan di browser",
+    "Continue in browser",
+    "المتابعة في المتصفح"
+  ],
   "downloadWebView2": ["Unduh WebView2", "Download WebView2", "تنزيل WebView2"],
   "marjaBooks": ["Kitab rujukan", "Reference books", "الكتب المرجعية"],
-  "reloadBookList": ["Muat ulang daftar kitab", "Reload book list", "إعادة تحميل قائمة الكتب"],
-  "bookNotFound": ["Kitab tidak ditemukan.", "No book found.", "لم يُعثر على كتاب."],
-  "librarySearchHint": ["Cari judul, pengarang, penerbit, atau tahkik...", "Search title, author, publisher, or editor...", "ابحث بالعنوان أو المؤلف أو الناشر أو المحقق..."],
-  "assistantGoogleAccountSet": ["Akun Google asisten diatur ke: {0}", "Assistant Google account set to: {0}", "حساب Google للمساعد: {0}"],
+  "reloadBookList": [
+    "Muat ulang daftar kitab",
+    "Reload book list",
+    "إعادة تحميل قائمة الكتب"
+  ],
+  "bookNotFound": [
+    "Kitab tidak ditemukan.",
+    "No book found.",
+    "لم يُعثر على كتاب."
+  ],
+  "librarySearchHint": [
+    "Cari judul, pengarang, penerbit, atau tahkik...",
+    "Search title, author, publisher, or editor...",
+    "ابحث بالعنوان أو المؤلف أو الناشر أو المحقق..."
+  ],
+  "assistantGoogleAccountSet": [
+    "Akun Google asisten diatur ke: {0}",
+    "Assistant Google account set to: {0}",
+    "حساب Google للمساعد: {0}"
+  ],
   "noteSyncPending": ["Belum tersinkron", "Not synced yet", "لم تُزامَن بعد"],
-  "notesSyncPendingBanner": ["{0} catatan tersimpan di perangkat dan menunggu koneksi.", "{0} notes are saved on this device and waiting for a connection.", "الملاحظات المحفوظة على الجهاز بانتظار الاتصال: {0}"],
+  "notesSyncPendingBanner": [
+    "{0} catatan tersimpan di perangkat dan menunggu koneksi.",
+    "{0} notes are saved on this device and waiting for a connection.",
+    "الملاحظات المحفوظة على الجهاز بانتظار الاتصال: {0}"
+  ],
   "syncNow": ["Sinkronkan", "Sync now", "مزامنة"],
   "corpusDisciplineTab": ["Bidang ilmu", "Disciplines", "الفنون"],
   "corpusScholarTab": ["Khazanah ulama", "Scholars", "خزانة العلماء"],
-  "loginTitle": ["Masuk ke OpenTurath", "Sign in to OpenTurath", "تسجيل الدخول إلى أوبن تراث"],
-  "loginSubtitle": ["Lanjutkan telaah kitab dengan akun Google Anda.", "Continue your study with your Google account.", "تابع مطالعتك بحساب Google."],
-  "loginAsideBody": ["Telusuri ibarah dan rujukan langsung dari kitab turats, dengan asisten untuk tiap bidang ilmu.", "Trace passages and references straight from the classical texts, with an assistant for each discipline.", "تتبّع العبارات والمراجع من كتب التراث مباشرة، مع مساعد لكل فنّ."],
-  "loginFeatureAssistants": ["Asisten per bidang ilmu", "An assistant for each discipline", "مساعد لكل فنّ"],
-  "loginFeatureAssistantsBody": ["Fikih, hadis, tafsir, akidah, usul fikih, dan bahasa Arab.", "Fiqh, hadith, tafsir, creed, legal theory, and Arabic.", "الفقه والحديث والتفسير والعقيدة وأصول الفقه والعربية."],
-  "loginFeatureSources": ["Berpijak pada kitab rujukan", "Grounded in reference works", "مستند إلى الكتب المرجعية"],
-  "loginFeatureSourcesBody": ["Setiap asisten punya pustaka kitab yang dapat Anda periksa.", "Every assistant has a library of works you can inspect.", "لكل مساعد مكتبة يمكنك مراجعتها."],
-  "loginFeatureNotes": ["Catatan telaah tersimpan", "Study notes, kept", "ملاحظات المطالعة محفوظة"],
-  "loginFeatureNotesBody": ["Simpan jawaban dan rujukan, tersinkron ke akun Anda.", "Save answers and references, synced to your account.", "احفظ الأجوبة والمراجع مع المزامنة إلى حسابك."],
-  "cardFlipHint": ["Ketuk kartu untuk membalik", "Tap the card to flip it", "اضغط على البطاقة لقلبها"],
+  "loginTitle": [
+    "Masuk ke OpenTurath",
+    "Sign in to OpenTurath",
+    "تسجيل الدخول إلى أوبن تراث"
+  ],
+  "loginSubtitle": [
+    "Lanjutkan telaah kitab dengan akun Google Anda.",
+    "Continue your study with your Google account.",
+    "تابع مطالعتك بحساب Google."
+  ],
+  "loginAsideBody": [
+    "Telusuri ibarah dan rujukan langsung dari kitab turats, dengan asisten untuk tiap bidang ilmu.",
+    "Trace passages and references straight from the classical texts, with an assistant for each discipline.",
+    "تتبّع العبارات والمراجع من كتب التراث مباشرة، مع مساعد لكل فنّ."
+  ],
+  "loginFeatureAssistants": [
+    "Asisten per bidang ilmu",
+    "An assistant for each discipline",
+    "مساعد لكل فنّ"
+  ],
+  "loginFeatureAssistantsBody": [
+    "Fikih, hadis, tafsir, akidah, usul fikih, dan bahasa Arab.",
+    "Fiqh, hadith, tafsir, creed, legal theory, and Arabic.",
+    "الفقه والحديث والتفسير والعقيدة وأصول الفقه والعربية."
+  ],
+  "loginFeatureSources": [
+    "Berpijak pada kitab rujukan",
+    "Grounded in reference works",
+    "مستند إلى الكتب المرجعية"
+  ],
+  "loginFeatureSourcesBody": [
+    "Setiap asisten punya pustaka kitab yang dapat Anda periksa.",
+    "Every assistant has a library of works you can inspect.",
+    "لكل مساعد مكتبة يمكنك مراجعتها."
+  ],
+  "loginFeatureNotes": [
+    "Catatan telaah tersimpan",
+    "Study notes, kept",
+    "ملاحظات المطالعة محفوظة"
+  ],
+  "loginFeatureNotesBody": [
+    "Simpan jawaban dan rujukan, tersinkron ke akun Anda.",
+    "Save answers and references, synced to your account.",
+    "احفظ الأجوبة والمراجع مع المزامنة إلى حسابك."
+  ],
+  "cardFlipHint": [
+    "Ketuk kartu untuk membalik",
+    "Tap the card to flip it",
+    "اضغط على البطاقة لقلبها"
+  ],
   "recentNote": ["Catatan terakhir", "Latest note", "آخر ملاحظة"],
-  "viewAccessList": ["Daftar asisten aktif", "Active assistants", "المساعدون المفعّلون"],
+  "viewAccessList": [
+    "Daftar asisten aktif",
+    "Active assistants",
+    "المساعدون المفعّلون"
+  ],
   "unitBooks": ["kitab", "works", "كتابًا"],
   "unitVolumes": ["jilid", "volumes", "مجلدًا"],
   "unitPages": ["halaman", "pages", "صفحة"],
   "unitLectures": ["muhadharah", "lectures", "محاضرة"],
-  "flagshipPositioning": ["Asisten AI yang dibangun khusus untuk Fikih Tahawwulat.", "An AI assistant built specifically for Fiqh al-Tahawwulat.", "مساعد ذكي بُني خصيصًا لفقه التحولات."],
+  "flagshipPositioning": [
+    "Asisten AI yang dibangun khusus untuk Fikih Tahawwulat.",
+    "An AI assistant built specifically for Fiqh al-Tahawwulat.",
+    "مساعد ذكي بُني خصيصًا لفقه التحولات."
+  ],
   "authorDeathLabel": ["Wafat pengarang", "Author died", "وفاة المؤلف"],
   "searchFieldHint": ["Cari bidang…", "Search disciplines…", "ابحث عن فنّ…"],
   "libraryShort": ["Pustaka", "Library", "المكتبة"],
-  "loginStatLibraries": ["pustaka bidang ilmu", "discipline libraries", "مكتبات الفنون"],
+  "loginStatLibraries": [
+    "pustaka bidang ilmu",
+    "discipline libraries",
+    "مكتبات الفنون"
+  ],
   "loginStatEntries": ["entri kitab", "catalogued works", "مدخل في الفهارس"],
-  "loginStatPages": ["halaman (perkiraan)", "pages (estimated)", "صفحة (تقديرًا)"],
+  "loginStatPages": [
+    "halaman (perkiraan)",
+    "pages (estimated)",
+    "صفحة (تقديرًا)"
+  ],
   "unitMillion": ["juta", "million", "مليون"],
-  "libraryInNumbers": ["Pustaka dalam angka", "The library in numbers", "المكتبة بالأرقام"],
-  "aiEtiquetteLabel": ["Adab menggunakan AI", "Etiquette of using AI", "أدب استعمال الذكاء الاصطناعي"],
+  "libraryInNumbers": [
+    "Pustaka dalam angka",
+    "The library in numbers",
+    "المكتبة بالأرقام"
+  ],
+  "aiEtiquetteLabel": [
+    "Adab menggunakan AI",
+    "Etiquette of using AI",
+    "أدب استعمال الذكاء الاصطناعي"
+  ],
   "planLabel": ["Paket", "Plan", "الباقة"],
   "planFreeBadge": ["GRATIS", "FREE", "مجاني"],
-  "roomAuthTitle": ["Masuk dengan Akun yang Sama", "Sign in with the Same Account", "تسجيل الدخول بنفس الحساب"],
-  "roomAuthBody": ["Silakan masuk ke Google sekali lagi menggunakan akun yang sama dengan akun OpenTurath Anda: {0}. Anda masuk langsung di halaman resmi Google; OpenTurath tidak melihat dan tidak menyimpan kata sandi Anda.", "Please sign in to Google once more using the same account as your OpenTurath account: {0}. You sign in directly on Google's official page; OpenTurath never sees or stores your password.", "يرجى تسجيل الدخول إلى Google مرة أخرى باستخدام الحساب نفسه المرتبط بأوبن تراث: {0}. يتم الدخول في صفحة Google الرسمية مباشرة؛ ولا يطّلع أوبن تراث على كلمة المرور ولا يحفظها."],
+  "roomAuthTitle": [
+    "Masuk dengan Akun yang Sama",
+    "Sign in with the Same Account",
+    "تسجيل الدخول بنفس الحساب"
+  ],
+  "roomAuthBody": [
+    "Silakan masuk ke Google sekali lagi menggunakan akun yang sama dengan akun OpenTurath Anda: {0}. Anda masuk langsung di halaman resmi Google; OpenTurath tidak melihat dan tidak menyimpan kata sandi Anda.",
+    "Please sign in to Google once more using the same account as your OpenTurath account: {0}. You sign in directly on Google's official page; OpenTurath never sees or stores your password.",
+    "يرجى تسجيل الدخول إلى Google مرة أخرى باستخدام الحساب نفسه المرتبط بأوبن تراث: {0}. يتم الدخول في صفحة Google الرسمية مباشرة؛ ولا يطّلع أوبن تراث على كلمة المرور ولا يحفظها."
+  ],
   "roomOpenInBrowser": ["Buka di browser", "Open in browser", "فتح في المتصفح"],
-  "roomPermissionTitle": ["Akun Google belum punya izin", "This Google account has no access", "حساب Google لا يملك الإذن"],
-  "roomPermissionBody": ["Akun Google yang aktif belum bisa membuka asisten ini. Periksa akun yang dipakai, lalu coba buka di browser.", "The active Google account cannot open this assistant. Check which account is in use, then try opening it in your browser.", "حساب Google الحالي لا يستطيع فتح هذا المساعد. تحقق من الحساب المستخدم ثم جرّب فتحه في المتصفح."],
-  "roomLoadFailTitle": ["Asisten belum bisa dibuka", "The assistant could not be opened", "تعذّر فتح المساعد"],
-  "roomLoadFailBody": ["Halaman asisten gagal dimuat. Periksa koneksi internet Anda, lalu coba lagi.", "The assistant page failed to load. Check your internet connection and try again.", "تعذّر تحميل صفحة المساعد. تحقق من اتصالك بالإنترنت ثم أعد المحاولة."],
-  "roomPaywallTitle": ["Asisten ini memerlukan langganan", "This assistant requires a subscription", "هذا المساعد يتطلب اشتراكًا"],
+  "roomPermissionTitle": [
+    "Akun Google belum punya izin",
+    "This Google account has no access",
+    "حساب Google لا يملك الإذن"
+  ],
+  "roomPermissionBody": [
+    "Akun Google yang aktif belum bisa membuka asisten ini. Periksa akun yang dipakai, lalu coba buka di browser.",
+    "The active Google account cannot open this assistant. Check which account is in use, then try opening it in your browser.",
+    "حساب Google الحالي لا يستطيع فتح هذا المساعد. تحقق من الحساب المستخدم ثم جرّب فتحه في المتصفح."
+  ],
+  "roomLoadFailTitle": [
+    "Asisten belum bisa dibuka",
+    "The assistant could not be opened",
+    "تعذّر فتح المساعد"
+  ],
+  "roomLoadFailBody": [
+    "Halaman asisten gagal dimuat. Periksa koneksi internet Anda, lalu coba lagi.",
+    "The assistant page failed to load. Check your internet connection and try again.",
+    "تعذّر تحميل صفحة المساعد. تحقق من اتصالك بالإنترنت ثم أعد المحاولة."
+  ],
+  "roomPaywallTitle": [
+    "Asisten ini memerlukan langganan",
+    "This assistant requires a subscription",
+    "هذا المساعد يتطلب اشتراكًا"
+  ],
   "roomSeePlans": ["Lihat paket", "See plans", "عرض الباقات"],
-  "roomPaywallBody": ["Aktifkan langganan untuk menelaah bersama asisten {0}.", "Activate a subscription to study with the {0} assistant.", "فعّل الاشتراك للمطالعة مع مساعد {0}."],
-  "planSingleLabel": ["Satu bidang ilmu", "One field of study", "مجال علمي واحد"],
+  "roomPaywallBody": [
+    "Aktifkan langganan untuk menelaah bersama asisten {0}.",
+    "Activate a subscription to study with the {0} assistant.",
+    "فعّل الاشتراك للمطالعة مع مساعد {0}."
+  ],
+  "planSingleLabel": [
+    "Satu bidang ilmu",
+    "One field of study",
+    "مجال علمي واحد"
+  ],
   "noExpiryShort": ["TANPA BATAS", "NO EXPIRY", "بلا انتهاء"],
   "accessTermLabel": ["Masa akses", "Access term", "مدة الوصول"],
-  "roomSignInGoogle": ["Masuk dengan Google", "Sign in with Google", "تسجيل الدخول عبر Google"],
-  "roomAuthSameAccount": ["akun Google yang sama", "the same Google account", "حساب Google نفسه"],
-  "roomAuthBarHint": ["Masuk dengan akun yang sama", "Sign in with the same account", "سجّل الدخول بالحساب نفسه"],
-  "googleAccountDialogTitle": ["Akun Google untuk Asisten", "Google Account for Assistant", "حساب Google للمساعد"],
-  "googleAccountDialogDesc": ["Pastikan email ini sesuai dengan akun Google yang memiliki akses ke modul atau notebook turats Anda. Browser akan langsung memilih akun ini.", "Ensure this email matches the Google account with access to your turath modules or notebooks. The browser will select this account directly.", "تأكد من مطابقة هذا البريد الإلكتروني لحساب Google المصرّح له بالوصول إلى دفاتر التراث. سيختار المتصفح هذا الحساب مباشرة."],
-  "usePrimaryAccount": ["Pakai Akun Utama", "Use Primary Account", "استخدام الحساب الرئيسي"],
-  "primaryLoginAccount": ["Akun Masuk Utama", "Primary Sign-In Account", "حساب الدخول الرئيسي"],
-  "clearChatHistoryTitle": ["Hapus Riwayat Obrolan?", "Clear Chat History?", "مسح سجل المحادثة؟"],
-  "clearChatHistoryDesc": ["Seluruh percakapan pada sesi asisten ini akan dibersihkan dari layar.", "All conversations in this assistant session will be cleared from the screen.", "سيتم مسح جميع المحادثات في جلسة هذا المساعد من الشاشة."],
-  "chatHistoryCleared": ["Riwayat obrolan telah dibersihkan.", "Chat history has been cleared.", "تم مسح سجل المحادثة."],
-  "readingFontSizeHint": ["Sesuaikan ukuran huruf percakapan agar nyaman dibaca.", "Adjust conversation font size for comfortable reading.", "اضبط حجم خط المحادثة لقراءة مريحة."],
-  "sessionSwitcherTitle": ["Sesi Asisten Terbuka", "Open Assistant Sessions", "جلسات المساعد المفتوحة"],
-  "selectSessionToSwitch": ["Pilih asisten untuk berpindah sesi kajian aktif.", "Select an assistant to switch active study sessions.", "اختر مساعدًا للتبديل إلى جلسة المطالعة النشطة."],
-  "updateReadyTitleDesktop": ["Pembaruan Tersedia", "Update Available", "تحديث متاح"],
-  "updateReadyTitleMobile": ["Pembaruan Telah Siap", "Update Ready", "التحديث جاهز"],
+  "roomSignInGoogle": [
+    "Masuk dengan Google",
+    "Sign in with Google",
+    "تسجيل الدخول عبر Google"
+  ],
+  "roomAuthSameAccount": [
+    "akun Google yang sama",
+    "the same Google account",
+    "حساب Google نفسه"
+  ],
+  "roomAuthBarHint": [
+    "Masuk dengan akun yang sama",
+    "Sign in with the same account",
+    "سجّل الدخول بالحساب نفسه"
+  ],
+  "googleAccountDialogTitle": [
+    "Akun Google untuk Asisten",
+    "Google Account for Assistant",
+    "حساب Google للمساعد"
+  ],
+  "googleAccountDialogDesc": [
+    "Pastikan email ini sesuai dengan akun Google yang memiliki akses ke modul atau notebook turats Anda. Browser akan langsung memilih akun ini.",
+    "Ensure this email matches the Google account with access to your turath modules or notebooks. The browser will select this account directly.",
+    "تأكد من مطابقة هذا البريد الإلكتروني لحساب Google المصرّح له بالوصول إلى دفاتر التراث. سيختار المتصفح هذا الحساب مباشرة."
+  ],
+  "usePrimaryAccount": [
+    "Pakai Akun Utama",
+    "Use Primary Account",
+    "استخدام الحساب الرئيسي"
+  ],
+  "primaryLoginAccount": [
+    "Akun Masuk Utama",
+    "Primary Sign-In Account",
+    "حساب الدخول الرئيسي"
+  ],
+  "clearChatHistoryTitle": [
+    "Hapus Riwayat Obrolan?",
+    "Clear Chat History?",
+    "مسح سجل المحادثة؟"
+  ],
+  "clearChatHistoryDesc": [
+    "Seluruh percakapan pada sesi asisten ini akan dibersihkan dari layar.",
+    "All conversations in this assistant session will be cleared from the screen.",
+    "سيتم مسح جميع المحادثات في جلسة هذا المساعد من الشاشة."
+  ],
+  "chatHistoryCleared": [
+    "Riwayat obrolan telah dibersihkan.",
+    "Chat history has been cleared.",
+    "تم مسح سجل المحادثة."
+  ],
+  "readingFontSizeHint": [
+    "Sesuaikan ukuran huruf percakapan agar nyaman dibaca.",
+    "Adjust conversation font size for comfortable reading.",
+    "اضبط حجم خط المحادثة لقراءة مريحة."
+  ],
+  "sessionSwitcherTitle": [
+    "Sesi Asisten Terbuka",
+    "Open Assistant Sessions",
+    "جلسات المساعد المفتوحة"
+  ],
+  "selectSessionToSwitch": [
+    "Pilih asisten untuk berpindah sesi kajian aktif.",
+    "Select an assistant to switch active study sessions.",
+    "اختر مساعدًا للتبديل إلى جلسة المطالعة النشطة."
+  ],
+  "updateReadyTitleDesktop": [
+    "Pembaruan Tersedia",
+    "Update Available",
+    "تحديث متاح"
+  ],
+  "updateReadyTitleMobile": [
+    "Pembaruan Telah Siap",
+    "Update Ready",
+    "التحديث جاهز"
+  ],
   "updateReadyVersion": ["Versi {0}", "Version {0}", "الإصدار {0}"],
-  "updateReadyDescDesktop": ["Tersedia versi desktop terbaru dengan peningkatan keilmuan dan stabilitas. Buka tautan untuk memperbarui.", "A newer desktop version is available with scholarship improvements and stability. Open the link to update.", "يتوفر إصدار جديد لسطح المكتب مع تحسينات علمية وثبات للنظام. افتح الرابط للتحديث."],
-  "updateReadyDescMobile": ["Aplikasi telah selesai mengunduh pembaruan di latar belakang secara senyap. Ketuk tombol di bawah untuk memasang dan memuat ulang aplikasi.", "The app has finished downloading updates silently in the background. Tap below to install and reload.", "اكتمل تنزيل التحديث في الخلفية بهدوء. اضغط أدناه للتثبيت وإعادة التشغيل."],
-  "updateReadyDefaultNotes": ["Penyempurnaan stabilitas telaah dan sistem keilmuan.", "Refinements for study stability and scholarly systems.", "تحسينات لاستقرار المطالعة والمنظومة العلمية."],
-  "updateReadyActionDesktop": ["Unduh Pembaruan", "Download Update", "تنزيل التحديث"],
-  "updateReadyActionMobile": ["Pasang & Muat Ulang Sekarang", "Install & Reload Now", "تثبيت وإعادة تشغيل الآن"],
+  "updateReadyDescDesktop": [
+    "Tersedia versi desktop terbaru dengan peningkatan keilmuan dan stabilitas. Buka tautan untuk memperbarui.",
+    "A newer desktop version is available with scholarship improvements and stability. Open the link to update.",
+    "يتوفر إصدار جديد لسطح المكتب مع تحسينات علمية وثبات للنظام. افتح الرابط للتحديث."
+  ],
+  "updateReadyDescMobile": [
+    "Aplikasi telah selesai mengunduh pembaruan di latar belakang secara senyap. Ketuk tombol di bawah untuk memasang dan memuat ulang aplikasi.",
+    "The app has finished downloading updates silently in the background. Tap below to install and reload.",
+    "اكتمل تنزيل التحديث في الخلفية بهدوء. اضغط أدناه للتثبيت وإعادة التشغيل."
+  ],
+  "updateReadyDefaultNotes": [
+    "Penyempurnaan stabilitas telaah dan sistem keilmuan.",
+    "Refinements for study stability and scholarly systems.",
+    "تحسينات لاستقرار المطالعة والمنظومة العلمية."
+  ],
+  "updateReadyActionDesktop": [
+    "Unduh Pembaruan",
+    "Download Update",
+    "تنزيل التحديث"
+  ],
+  "updateReadyActionMobile": [
+    "Pasang & Muat Ulang Sekarang",
+    "Install & Reload Now",
+    "تثبيت وإعادة تشغيل الآن"
+  ],
   "updateReadyLater": ["Nanti Saja", "Later", "لاحقًا"],
-  "updateReadyOpenFailed": ["Pembaruan belum dapat dibuka. Silakan coba kembali.", "Could not open update. Please try again.", "تعذر فتح التحديث. يُرجى المحاولة مرة أخرى."],
-  "updateBannerTitleDesktop": ["Pembaruan v{0} Tersedia", "Update v{0} Available", "التحديث v{0} متاح"],
-  "updateBannerTitleMobile": ["Pembaruan v{0} Siap Dipasang", "Update v{0} Ready to Install", "التحديث v{0} جاهز للتثبيت"],
-  "updateBannerDescDesktop": ["Ketuk untuk membuka tautan pembaruan versi desktop terbaru.", "Tap to open the update link for the latest desktop version.", "اضغط لفتح رابط التحديث لأحدث إصدار لسطح المكتب."],
-  "updateBannerDescMobile": ["Selesai diunduh di latar belakang. Ketuk pasang untuk menerapkan.", "Downloaded in the background. Tap install to apply.", "اكتمل التنزيل في الخلفية. اضغط تثبيت للتطبيق."],
+  "updateReadyOpenFailed": [
+    "Pembaruan belum dapat dibuka. Silakan coba kembali.",
+    "Could not open update. Please try again.",
+    "تعذر فتح التحديث. يُرجى المحاولة مرة أخرى."
+  ],
+  "updateBannerTitleDesktop": [
+    "Pembaruan v{0} Tersedia",
+    "Update v{0} Available",
+    "التحديث v{0} متاح"
+  ],
+  "updateBannerTitleMobile": [
+    "Pembaruan v{0} Siap Dipasang",
+    "Update v{0} Ready to Install",
+    "التحديث v{0} جاهز للتثبيت"
+  ],
+  "updateBannerDescDesktop": [
+    "Ketuk untuk membuka tautan pembaruan versi desktop terbaru.",
+    "Tap to open the update link for the latest desktop version.",
+    "اضغط لفتح رابط التحديث لأحدث إصدار لسطح المكتب."
+  ],
+  "updateBannerDescMobile": [
+    "Selesai diunduh di latar belakang. Ketuk pasang untuk menerapkan.",
+    "Downloaded in the background. Tap install to apply.",
+    "اكتمل التنزيل في الخلفية. اضغط تثبيت للتطبيق."
+  ],
   "updateBannerActionDesktop": ["Perbarui", "Update", "تحديث"],
   "updateBannerActionMobile": ["Pasang", "Install", "تثبيت"],
   "openAssistant": ["Buka asisten", "Open assistant", "افتح المساعد"],
   "viewReferences": ["Lihat rujukan", "View references", "عرض المراجع"],
   "lifetimeAccess": ["Tanpa batas waktu", "No expiry", "بلا حد زمني"],
   "editionNote": ["Catatan edisi", "Edition note", "ملاحظة الطبعة"],
-  "metadataReview": ["Data edisi ini perlu diperiksa pada sumber katalog.", "Check these edition details against the catalog source.", "تحتاج بيانات هذه الطبعة إلى مراجعة مصدر الفهرس."],
-  "editorNotRecorded": ["Nama muhaqqiq belum tercatat", "Editor name not recorded", "لم يُسجل اسم المحقق"],
-  "catalogFailure": ["Rujukan belum dapat dimuat. Coba lagi.", "References could not be loaded. Try again.", "تعذر تحميل المراجع. حاول مجددًا."],
-  "catalogSourceLabel": ["Data katalog · periksa edisi saat mengutip", "Catalog data · verify the edition when citing", "بيانات الفهرس · راجع الطبعة عند الاقتباس"],
-  "preparingAnswer": ["Menyusun jawaban…", "Preparing an answer…", "جار إعداد الجواب…"],
+  "metadataReview": [
+    "Data edisi ini perlu diperiksa pada sumber katalog.",
+    "Check these edition details against the catalog source.",
+    "تحتاج بيانات هذه الطبعة إلى مراجعة مصدر الفهرس."
+  ],
+  "editorNotRecorded": [
+    "Nama muhaqqiq belum tercatat",
+    "Editor name not recorded",
+    "لم يُسجل اسم المحقق"
+  ],
+  "catalogFailure": [
+    "Rujukan belum dapat dimuat. Coba lagi.",
+    "References could not be loaded. Try again.",
+    "تعذر تحميل المراجع. حاول مجددًا."
+  ],
+  "catalogSourceLabel": [
+    "Data katalog · periksa edisi saat mengutip",
+    "Catalog data · verify the edition when citing",
+    "بيانات الفهرس · راجع الطبعة عند الاقتباس"
+  ],
+  "preparingAnswer": [
+    "Menyusun jawaban…",
+    "Preparing an answer…",
+    "جار إعداد الجواب…"
+  ],
   "payAmount": ["Bayar {0}", "Pay {0}", "ادفع {0}"],
-  "monthlyEquivalent": ["Setara {0}/bulan · dibayar sekaligus", "Equivalent to {0}/month · paid upfront", "ما يعادل {0} شهريًا · يُدفع كاملًا"],
-  "chatPurpose": ["Ruang telaah naskah & kajian komparatif berbasis turats.", "Study source texts and compare scholarly explanations.", "مجلس لمطالعة نصوص التراث ومقارنة الشروح العلمية."],
+  "monthlyEquivalent": [
+    "Setara {0}/bulan · dibayar sekaligus",
+    "Equivalent to {0}/month · paid upfront",
+    "ما يعادل {0} شهريًا · يُدفع كاملًا"
+  ],
+  "chatPurpose": [
+    "Ruang telaah naskah & kajian komparatif berbasis turats.",
+    "Study source texts and compare scholarly explanations.",
+    "مجلس لمطالعة نصوص التراث ومقارنة الشروح العلمية."
+  ],
   "sendQuestion": ["Kirim pertanyaan", "Send question", "أرسل السؤال"],
   "retryCatalog": ["Coba lagi", "Try again", "حاول مجددًا"],
 };

@@ -47,13 +47,16 @@ class AiLibraryMetadata {
       nama: _stringValue(json['nama_tampilan'] ?? json['nama']),
       namaArab: _stringValue(json['nama_arab']),
       totalKitab: _intValue(json['total_kitab']),
-      totalJilid: _stringValue(json['total_jilid_fisik'] ?? json['total_jilid']),
-      totalHalaman: _intValue(json['total_halaman_fisik'] ?? json['total_halaman']),
+      totalJilid:
+          _stringValue(json['total_jilid_fisik'] ?? json['total_jilid']),
+      totalHalaman:
+          _intValue(json['total_halaman_fisik'] ?? json['total_halaman']),
       totalKata: _intValue(json['total_kata_bersih'] ?? json['total_kata']),
       rentangMasa: _stringValue(json['rentang_masa']),
       badgeOtoritas: _stringValue(json['badge_otoritas']),
       headlineAplikasi: _stringValue(json['headline_aplikasi']),
-      totalDars: json['total_dars'] == null ? null : _intValue(json['total_dars']),
+      totalDars:
+          json['total_dars'] == null ? null : _intValue(json['total_dars']),
       totalMuhadharah: json['total_muhadharah'] == null
           ? null
           : _intValue(json['total_muhadharah']),
@@ -68,10 +71,7 @@ class AiLibraryMetadata {
     if (value is int) return value;
     if (value is num) return value.round();
 
-    final cleaned = value
-            ?.toString()
-            .replaceAll(RegExp(r'[^0-9]'), '') ??
-        '';
+    final cleaned = value?.toString().replaceAll(RegExp(r'[^0-9]'), '') ?? '';
     return int.tryParse(cleaned) ?? 0;
   }
 }
@@ -92,7 +92,8 @@ class OpenTurathCatalogRepository {
     'lughah_balaghah': 'assets/data/04_KATALOG_BAHASA_DAN_SASTRA_ARAB.json',
     'nahwu_sharaf': 'assets/data/04_KATALOG_BAHASA_DAN_SASTRA_ARAB.json',
     'tafsir': 'assets/data/05_KATALOG_TAFSIR_DAN_ULUMUL_QURAN.json',
-    'tafsir_ulumul_quran': 'assets/data/05_KATALOG_TAFSIR_DAN_ULUMUL_QURAN.json',
+    'tafsir_ulumul_quran':
+        'assets/data/05_KATALOG_TAFSIR_DAN_ULUMUL_QURAN.json',
     'fiqh_tahawwulat': 'assets/data/06_KATALOG_FIKIH_TAHAWWULAT.json',
     'tarikh': 'assets/data/07_KATALOG_TARIKH_DAN_SIRAH_NABAWIYYAH.json',
     'tarikh_sirah': 'assets/data/07_KATALOG_TARIKH_DAN_SIRAH_NABAWIYYAH.json',
@@ -107,12 +108,14 @@ class OpenTurathCatalogRepository {
     'imam_ghazali': 'assets/data/14_KATALOG_TASAWWUF_DAN_ADZKAR.json',
     'tajwid_qiraat': 'assets/data/15_KATALOG_TAJWID_DAN_QIRAAT.json',
     'qawaid_fiqhiyyah': 'assets/data/16_KATALOG_QAWAID_FIQHIYYAH.json',
-    'musthalah_hadits': 'assets/data/17_KATALOG_MUSTHALAH_DAN_ULUMUL_HADITS.json',
+    'musthalah_hadits':
+        'assets/data/17_KATALOG_MUSTHALAH_DAN_ULUMUL_HADITS.json',
     'aqidah': 'assets/data/18_KATALOG_AQIDAH_DAN_USHULUDDIN.json',
     'thabaqat_tarajim': 'assets/data/19_KATALOG_THABAQAT_DAN_TARAJIM.json',
     'thabaqat_rijal': 'assets/data/19_KATALOG_THABAQAT_DAN_TARAJIM.json',
     'adab_balaghah': 'assets/data/21_KATALOG_ADAB_DAN_BALAGHAH.json',
-    'bibliografi_faharis': 'assets/data/26_KATALOG_BIBLIOGRAFI_DAN_FAHARIS.json',
+    'bibliografi_faharis':
+        'assets/data/26_KATALOG_BIBLIOGRAFI_DAN_FAHARIS.json',
   };
 
   Map<String, AiLibraryMetadata>? _metadataCache;
@@ -177,7 +180,8 @@ class OpenTurathCatalogRepository {
     final cleanKey = moduleKey.replaceAll('-', '_').toLowerCase();
     final catalogPath = _moduleToCatalogFile[cleanKey];
     if (catalogPath == null) {
-      throw ArgumentError.value(moduleKey, 'moduleKey', 'No catalog registered');
+      throw ArgumentError.value(
+          moduleKey, 'moduleKey', 'No catalog registered');
     }
 
     if (_booksCache.containsKey(catalogPath)) {

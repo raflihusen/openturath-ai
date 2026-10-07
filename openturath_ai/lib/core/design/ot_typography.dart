@@ -22,7 +22,17 @@ abstract final class OTFontSize {
   static const double s26 = 26; // Judul halaman, Arab matan
   static const double s36 = 36; // Display, satu kali per layar
 
-  static const List<double> scale = [s11, s12, s14, s16, s18, s20, s22, s26, s36];
+  static const List<double> scale = [
+    s11,
+    s12,
+    s14,
+    s16,
+    s18,
+    s20,
+    s22,
+    s26,
+    s36
+  ];
 }
 
 class OTTypography {
@@ -97,7 +107,8 @@ class OTTypography {
         fontSize: fontSize,
         fontWeight: fontWeight,
         letterSpacing: letterSpacing,
-        height: Loc.isArabic && (height == null || height < 1.85) ? 1.85 : height,
+        height:
+            Loc.isArabic && (height == null || height < 1.85) ? 1.85 : height,
         color: color,
       );
     }
@@ -112,8 +123,17 @@ class OTTypography {
 
   // ── Editorial & Heading Styles ──
   static TextStyle brandLogo({Color? color}) => useSystemFontFallback
-      ? TextStyle(fontFamily: 'Newsreader', fontSize: OTFontSize.s22, fontWeight: FontWeight.w600, letterSpacing: -.4, color: color)
-      : ScholarlyFonts.newsreader(fontSize: OTFontSize.s22, fontWeight: FontWeight.w600, letterSpacing: -.4, color: color);
+      ? TextStyle(
+          fontFamily: 'Newsreader',
+          fontSize: OTFontSize.s22,
+          fontWeight: FontWeight.w600,
+          letterSpacing: -.4,
+          color: color)
+      : ScholarlyFonts.newsreader(
+          fontSize: OTFontSize.s22,
+          fontWeight: FontWeight.w600,
+          letterSpacing: -.4,
+          color: color);
 
   static TextStyle displayLarge({Color? color}) => _newsreader(
         fontSize: OTFontSize.s36,
@@ -229,28 +249,32 @@ class OTTypography {
       );
 
   // ── Arabic Scholarly Layer (Scheherazade New) ──
-  static TextStyle arabicDisplay({Color? color, double height = 1.85}) => _scheherazadeNew(
+  static TextStyle arabicDisplay({Color? color, double height = 1.85}) =>
+      _scheherazadeNew(
         fontSize: OTFontSize.s26,
         fontWeight: FontWeight.w700,
         height: Loc.isArabic && height < 1.85 ? 1.85 : height,
         color: color,
       );
 
-  static TextStyle arabicReading({Color? color, double height = 1.85}) => _scheherazadeNew(
+  static TextStyle arabicReading({Color? color, double height = 1.85}) =>
+      _scheherazadeNew(
         fontSize: OTFontSize.s18,
         fontWeight: FontWeight.w400,
         height: Loc.isArabic && height < 1.85 ? 1.85 : height,
         color: color,
       );
 
-  static TextStyle arabicIbarah({Color? color, double height = 1.85}) => _scheherazadeNew(
+  static TextStyle arabicIbarah({Color? color, double height = 1.85}) =>
+      _scheherazadeNew(
         fontSize: OTFontSize.s26,
         fontWeight: FontWeight.w700,
         height: Loc.isArabic && height < 1.85 ? 1.85 : height,
         color: color,
       );
 
-  static TextStyle arabicQuote({Color? color, double height = 1.85}) => _scheherazadeNew(
+  static TextStyle arabicQuote({Color? color, double height = 1.85}) =>
+      _scheherazadeNew(
         fontSize: OTFontSize.s16,
         fontWeight: FontWeight.w400,
         height: Loc.isArabic && height < 1.85 ? 1.85 : height,

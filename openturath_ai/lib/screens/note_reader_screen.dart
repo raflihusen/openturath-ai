@@ -16,6 +16,7 @@ import '../services/bookmark_service.dart';
 import '../widgets/note_editor_sheet.dart';
 
 import 'package:openturath_ai/core/design/ot_typography.dart';
+
 /// Focused reading surface: the archive list remains an index, not an editor.
 class NoteReaderScreen extends StatefulWidget {
   const NoteReaderScreen({super.key, required this.item});
@@ -150,7 +151,8 @@ class _NoteReaderScreenState extends State<NoteReaderScreen> {
                       const SizedBox(height: 20),
                       Divider(color: secondary.withValues(alpha: .25)),
                       const SizedBox(height: 20),
-                      ScholarlyAnswer(text: displayContent, ink: primary, muted: secondary),
+                      ScholarlyAnswer(
+                          text: displayContent, ink: primary, muted: secondary),
                       if (_item.citations.isNotEmpty) ...[
                         const SizedBox(height: OTSpacing.xl),
                         Divider(color: secondary.withValues(alpha: .25)),
@@ -164,12 +166,13 @@ class _NoteReaderScreenState extends State<NoteReaderScreen> {
                         const SizedBox(height: OTSpacing.sm),
                         for (final citation in _item.citations)
                           Padding(
-                            padding: const EdgeInsets.only(bottom: OTSpacing.sm),
+                            padding:
+                                const EdgeInsets.only(bottom: OTSpacing.sm),
                             child: Directionality(
-                              textDirection: Bidi.detectRtlDirectionality(
-                                      citation.display)
-                                  ? TextDirection.rtl
-                                  : TextDirection.ltr,
+                              textDirection:
+                                  Bidi.detectRtlDirectionality(citation.display)
+                                      ? TextDirection.rtl
+                                      : TextDirection.ltr,
                               child: Text(citation.display,
                                   style: RegExp(r'[\u0600-\u06FF]')
                                           .hasMatch(citation.display)
