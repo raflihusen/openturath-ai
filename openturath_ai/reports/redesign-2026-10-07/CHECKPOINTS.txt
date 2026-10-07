@@ -1,6 +1,7 @@
 Branch: codex/minimalist-redesign-2026-10-07
 Recovery point: 7ad4243
-Source verified through: 3f50fa7
+Production code verified through: 3c4d7ba
+Visual fixture verified through: 5f269af
 
 c343930 feat(design): bangun permukaan tonal radius lembut dan hierarki antarmuka minimal
 13c8b34 feat(ui): utamakan pencarian beranda dan navigasi berlabel dengan panel kajian ringan
@@ -35,3 +36,7 @@ acf0fd5 docs(visual): simpan galeri 56 render aplikasi dan daftar checkpoint des
 c3f718f fix(evidence): bedakan metadata gagal dan nyatakan nama muhaqqiq yang belum tercatat
 3bc525b test(recovery): pastikan aset metadata dan kitab yang hilang menghasilkan kegagalan nyata
 3f50fa7 style(validation): gunakan blok kondisi eksplisit pada urutan asisten
+4245fa9 docs(verification): perbarui bukti visual pada kode final dan checkpoint pemulihan
+3c4d7ba fix(arabic): pertahankan harakat dalam satu fragmen terisolasi saat membaca bilingual
+a357573 test(arabic): cegah pemisahan harakat dalam istilah Arab pada paragraf Latin
+5f269af test(visual): tampilkan harakat pada contoh jawaban bilingual untuk pemeriksaan render

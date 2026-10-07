@@ -1,0 +1,357 @@
+TAP version 13
+# (node:27737) ExperimentalWarning: Transform Types is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:27737) ExperimentalWarning: stripTypeScriptTypes is an experimental feature and might change at any time
+# Subtest: A01 missing DOKU secret rejects configuration
+ok 1 - A01 missing DOKU secret rejects configuration
+  ---
+  duration_ms: 59.774333
+  type: 'test'
+  ...
+# Subtest: A02 revoked all access cannot be restored by legacy plan
+ok 2 - A02 revoked all access cannot be restored by legacy plan
+  ---
+  duration_ms: 25.44375
+  type: 'test'
+  ...
+# Subtest: PERDANA voucher grants time bound Pro trial using its server duration
+ok 3 - PERDANA voucher grants time bound Pro trial using its server duration
+  ---
+  duration_ms: 29.336416
+  type: 'test'
+  ...
+# Subtest: a trial voucher starts at redemption and cannot silently stack
+ok 4 - a trial voucher starts at redemption and cannot silently stack
+  ---
+  duration_ms: 23.095167
+  type: 'test'
+  ...
+# Subtest: A02 web access cannot restore revoked module from paid billing history
+ok 5 - A02 web access cannot restore revoked module from paid billing history
+  ---
+  duration_ms: 20.611917
+  type: 'test'
+  ...
+# Subtest: A03 new account cannot inherit a transaction owned by another UID
+ok 6 - A03 new account cannot inherit a transaction owned by another UID
+  ---
+  duration_ms: 17.436916
+  type: 'test'
+  ...
+# Subtest: A04 provisioning HTTP failure remains a failed promise
+ok 7 - A04 provisioning HTTP failure remains a failed promise
+  ---
+  duration_ms: 17.038583
+  type: 'test'
+  ...
+# Subtest: A04 failed outbox request is retried, never marked completed
+ok 8 - A04 failed outbox request is retried, never marked completed
+  ---
+  duration_ms: 17.119834
+  type: 'test'
+  ...
+# Subtest: A05 expiration checks current snapshot before revoking renewed entitlement
+ok 9 - A05 expiration checks current snapshot before revoking renewed entitlement
+  ---
+  duration_ms: 16.905
+  type: 'test'
+  ...
+# Subtest: A05 stale removal job reconciles to current paid access
+ok 10 - A05 stale removal job reconciles to current paid access
+  ---
+  duration_ms: 16.923583
+  type: 'test'
+  ...
+# Subtest: A06 deleted auth account schedules removal and recursively deletes conversations
+ok 11 - A06 deleted auth account schedules removal and recursively deletes conversations
+  ---
+  duration_ms: 16.571167
+  type: 'test'
+  ...
+# Subtest: A01 duplicate invoice grants one extension under parallel calls
+ok 12 - A01 duplicate invoice grants one extension under parallel calls
+  ---
+  duration_ms: 18.790209
+  type: 'test'
+  ...
+# Subtest: A01 signed success with wrong amount cannot activate invoice
+ok 13 - A01 signed success with wrong amount cannot activate invoice
+  ---
+  duration_ms: 15.844666
+  type: 'test'
+  ...
+# Subtest: redeem capacity survives parallel distinct accounts
+ok 14 - redeem capacity survives parallel distinct accounts
+  ---
+  duration_ms: 18.593458
+  type: 'test'
+  ...
+# Subtest: calendar month end clamps January in leap and common years
+ok 15 - calendar month end clamps January in leap and common years
+  ---
+  duration_ms: 17.663208
+  type: 'test'
+  ...
+# Subtest: A01 webhook rejects missing invalid or stale timestamp 
+ok 16 - A01 webhook rejects missing invalid or stale timestamp 
+  ---
+  duration_ms: 17.337542
+  type: 'test'
+  ...
+# Subtest: A01 webhook rejects missing invalid or stale timestamp invalid
+ok 17 - A01 webhook rejects missing invalid or stale timestamp invalid
+  ---
+  duration_ms: 16.084291
+  type: 'test'
+  ...
+# Subtest: A01 webhook rejects missing invalid or stale timestamp 2000-01-01T00:00:00Z
+ok 18 - A01 webhook rejects missing invalid or stale timestamp 2000-01-01T00:00:00Z
+  ---
+  duration_ms: 16.544292
+  type: 'test'
+  ...
+# Subtest: A01 webhook rejects missing invalid or stale timestamp 2999-01-01T00:00:00Z
+ok 19 - A01 webhook rejects missing invalid or stale timestamp 2999-01-01T00:00:00Z
+  ---
+  duration_ms: 15.969667
+  type: 'test'
+  ...
+# Subtest: A01 full authenticated webhook activates exact invoice and accepts replay once
+ok 20 - A01 full authenticated webhook activates exact invoice and accepts replay once
+  ---
+  duration_ms: 16.001459
+  type: 'test'
+  ...
+# Subtest: A04 overlapping workers acquire a single user lease
+ok 21 - A04 overlapping workers acquire a single user lease
+  ---
+  duration_ms: 16.175916
+  type: 'test'
+  ...
+# Subtest: A05 entitlement changed during delivery leaves reconciliation pending
+ok 22 - A05 entitlement changed during delivery leaves reconciliation pending
+  ---
+  duration_ms: 15.782583
+  type: 'test'
+  ...
+# Subtest: redeem rate limiter admits only eight parallel attempts per UID
+ok 23 - redeem rate limiter admits only eight parallel attempts per UID
+  ---
+  duration_ms: 18.417834
+  type: 'test'
+  ...
+# Subtest: voucher rejects malformed input null
+ok 24 - voucher rejects malformed input null
+  ---
+  duration_ms: 16.895625
+  type: 'test'
+  ...
+# Subtest: voucher rejects malformed input {}
+ok 25 - voucher rejects malformed input {}
+  ---
+  duration_ms: 16.9565
+  type: 'test'
+  ...
+# Subtest: voucher rejects malformed input "\\u0000CODE"
+ok 26 - voucher rejects malformed input "\\u0000CODE"
+  ---
+  duration_ms: 16.370459
+  type: 'test'
+  ...
+# Subtest: voucher rejects malformed input "‮CODE"
+ok 27 - voucher rejects malformed input "‮CODE"
+  ---
+  duration_ms: 15.949916
+  type: 'test'
+  ...
+# Subtest: voucher rejects malformed input "a/b/c"
+ok 28 - voucher rejects malformed input "a/b/c"
+  ---
+  duration_ms: 16.014416
+  type: 'test'
+  ...
+# Subtest: voucher rejects malformed input "' OR 1=1"
+ok 29 - voucher rejects malformed input "' OR 1=1"
+  ---
+  duration_ms: 15.633542
+  type: 'test'
+  ...
+# Subtest: voucher rejects malformed input "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+ok 30 - voucher rejects malformed input "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+  ---
+  duration_ms: 16.218375
+  type: 'test'
+  ...
+# Subtest: voucher whitespace and hyphen normalize to the canonical stored code
+ok 31 - voucher whitespace and hyphen normalize to the canonical stored code
+  ---
+  duration_ms: 16.856875
+  type: 'test'
+  ...
+# Subtest: A06 interrupted recursive deletion already blocks access
+ok 32 - A06 interrupted recursive deletion already blocks access
+  ---
+  duration_ms: 16.18075
+  type: 'test'
+  ...
+# (node:27738) ExperimentalWarning: Transform Types is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:27738) ExperimentalWarning: stripTypeScriptTypes is an experimental feature and might change at any time
+# Subtest: all 19 published disciplines resolve to the launch price without global access
+ok 33 - all 19 published disciplines resolve to the launch price without global access
+  ---
+  duration_ms: 68.016667
+  type: 'test'
+  ...
+# Subtest: Tahawwulat duration prices and aliases retain the correct calendar months
+ok 34 - Tahawwulat duration prices and aliases retain the correct calendar months
+  ---
+  duration_ms: 29.518958
+  type: 'test'
+  ...
+# Subtest: stale offer is rejected before invoice creation or gateway calls
+ok 35 - stale offer is rejected before invoice creation or gateway calls
+  ---
+  duration_ms: 21.802959
+  type: 'test'
+  ...
+# Subtest: old pricing revision and noninteger expected prices are rejected
+ok 36 - old pricing revision and noninteger expected prices are rejected
+  ---
+  duration_ms: 25.424208
+  type: 'test'
+  ...
+# Subtest: hidden all-access and unknown products remain unavailable for checkout
+ok 37 - hidden all-access and unknown products remain unavailable for checkout
+  ---
+  duration_ms: 21.182416
+  type: 'test'
+  ...
+# (node:27739) ExperimentalWarning: Transform Types is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:27739) ExperimentalWarning: stripTypeScriptTypes is an experimental feature and might change at any time
+# Subtest: unauthenticated requests never call the operator bridge
+ok 38 - unauthenticated requests never call the operator bridge
+  ---
+  duration_ms: 1.120833
+  type: 'test'
+  ...
+# Subtest: identity changes before sending are rejected
+ok 39 - identity changes before sending are rejected
+  ---
+  duration_ms: 0.2805
+  type: 'test'
+  ...
+# Subtest: prototype is disabled without explicit test user configuration
+ok 40 - prototype is disabled without explicit test user configuration
+  ---
+  duration_ms: 0.137917
+  type: 'test'
+  ...
+# Subtest: an unapproved prototype user cannot reach the bridge
+ok 41 - an unapproved prototype user cannot reach the bridge
+  ---
+  duration_ms: 0.091125
+  type: 'test'
+  ...
+# Subtest: inactive entitlement blocks chat before rate-limit or Google calls
+ok 42 - inactive entitlement blocks chat before rate-limit or Google calls
+  ---
+  duration_ms: 0.096208
+  type: 'test'
+  ...
+# Subtest: client cannot select an upstream notebook, operator or conversation
+ok 43 - client cannot select an upstream notebook, operator or conversation
+  ---
+  duration_ms: 0.658209
+  type: 'test'
+  ...
+# Subtest: malformed and oversized questions do not reach the bridge
+ok 44 - malformed and oversized questions do not reach the bridge
+  ---
+  duration_ms: 0.862209
+  type: 'test'
+  ...
+# Subtest: success passes only verified identity and strips upstream secrets
+ok 45 - success passes only verified identity and strips upstream secrets
+  ---
+  duration_ms: 0.9115
+  type: 'test'
+  ...
+# Subtest: rate-limited requests do not ask Google
+ok 46 - rate-limited requests do not ask Google
+  ---
+  duration_ms: 1.120375
+  type: 'test'
+  ...
+# Subtest: upstream exceptions are sanitized and are never automatically retried
+ok 47 - upstream exceptions are sanitized and are never automatically retried
+  ---
+  duration_ms: 1.154542
+  type: 'test'
+  ...
+# Subtest: wrong request IDs, empty answers and invalid citations fail closed
+ok 48 - wrong request IDs, empty answers and invalid citations fail closed
+  ---
+  duration_ms: 0.669667
+  type: 'test'
+  ...
+# Subtest: actual callable rejects unauthenticated access before making HTTP requests
+ok 49 - actual callable rejects unauthenticated access before making HTTP requests
+  ---
+  duration_ms: 54.954166
+  type: 'test'
+  ...
+# Subtest: actual callable revalidates token revocation before accessing the bridge
+ok 50 - actual callable revalidates token revocation before accessing the bridge
+  ---
+  duration_ms: 22.159125
+  type: 'test'
+  ...
+# Subtest: actual callable validates entitlement and forwards the Firebase UID
+ok 51 - actual callable validates entitlement and forwards the Firebase UID
+  ---
+  duration_ms: 22.944584
+  type: 'test'
+  ...
+# (node:27740) ExperimentalWarning: Transform Types is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: A11 injected UI script does not modify Google sign-in pages
+ok 52 - A11 injected UI script does not modify Google sign-in pages
+  ---
+  duration_ms: 6.213958
+  type: 'test'
+  ...
+# Subtest: font scaling remains absolute across 100 repeated applications
+ok 53 - font scaling remains absolute across 100 repeated applications
+  ---
+  duration_ms: 4.764916
+  type: 'test'
+  ...
+# Subtest: nonfinite scale cannot produce invalid CSS
+ok 54 - nonfinite scale cannot produce invalid CSS
+  ---
+  duration_ms: 0.461583
+  type: 'test'
+  ...
+# Subtest: reading styles never hide arbitrary content or toolbar elements
+ok 55 - reading styles never hide arbitrary content or toolbar elements
+  ---
+  duration_ms: 0.369375
+  type: 'test'
+  ...
+# Subtest: mixed Indonesian and Arabic paragraphs keep independent directions
+ok 56 - mixed Indonesian and Arabic paragraphs keep independent directions
+  ---
+  duration_ms: 1.37175
+  type: 'test'
+  ...
+1..56
+# tests 56
+# suites 0
+# pass 56
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 844.642042

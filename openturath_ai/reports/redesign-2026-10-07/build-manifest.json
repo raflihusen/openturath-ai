@@ -1,0 +1,1311 @@
+{
+  "artifact_path": "/Users/apple/Downloads/ramadhan/openturath_ai/build/macos/Build/Products/Release/OpenTurath AI.app",
+  "type": "local macOS app bundle",
+  "version": "1.0.63",
+  "build": "64",
+  "architectures": [
+    "x86_64",
+    "arm64"
+  ],
+  "signature": "adhoc",
+  "signature_verification_exit": 0,
+  "notarization": "not performed",
+  "size_bytes": 129994536,
+  "sha256_file_manifest": "1748081e44239749e23200f3505c784f9839ec50755f482458c812eeedc3555f",
+  "manifest_algorithm": "SHA256 of sorted newline-delimited content_sha256 + space + relative_path",
+  "source_commit": "3c4d7ba",
+  "build_exit": 0,
+  "bundle_modified_utc": "2026-10-06T10:37:24.295366+00:00",
+  "files": [
+    {
+      "path": "Contents/Frameworks/App.framework/Versions/A/App",
+      "sha256": "24aec0e61c9aafd6dd41d78d3d44de85e9cf7203fa356b7a470edf2841a9854e",
+      "bytes": 19631440
+    },
+    {
+      "path": "Contents/Frameworks/App.framework/Versions/A/Resources/Info.plist",
+      "sha256": "08b03b58e4ff25c66f5e60193b2728ab5246563bc4f253211a5c4835bbc1d333",
+      "bytes": 666
+    },
+    {
+      "path": "Contents/Frameworks/App.framework/Versions/A/Resources/flutter_assets/AssetManifest.bin",
+      "sha256": "0db7dc431a9c811d3dc798d7aa8290a2c4a30d1b7901dc76089d121259686e93",
+      "bytes": 3792
+    },
+    {
+      "path": "Contents/Frameworks/App.framework/Versions/A/Resources/flutter_assets/FontManifest.json",
+      "sha256": "49e6d71a26a6a2c4feda14ef1c4dfe952ba6c0d4f9ac53e1aad975af65c19be6",
+      "bytes": 824
+    },
+    {
+      "path": "Contents/Frameworks/App.framework/Versions/A/Resources/flutter_assets/NOTICES.Z",
+      "sha256": "1172cf7c2a515b3781b828b86dd9747eb7d03969f8a38fc89a9845decc4592e6",
+      "bytes": 106528
+    },
+    {
+      "path": "Contents/Frameworks/App.framework/Versions/A/Resources/flutter_assets/NativeAssetsManifest.json",
+      "sha256": "946e6ecdc4a6c37fa42fbfdd752a0b8515792b57ea6042463d683eb511bbb8be",
+      "bytes": 252
+    },
+    {
+      "path": "Contents/Frameworks/App.framework/Versions/A/Resources/flutter_assets/assets/data/01_KATALOG_FIKIH_SYAFII.json",
+      "sha256": "479172aa97392b0d92d8cdbda31761262f1c1d5eb28d581d8ebbb9b9ca91bc4f",
+      "bytes": 80173
+    },
+    {
+      "path": "Contents/Frameworks/App.framework/Versions/A/Resources/flutter_assets/assets/data/02_KATALOG_HADITS_DAN_SYARAH.json",
+      "sha256": "f42881840b3d0f94ac5778c1c4956fbe36bebb0cddc5ddc4aeeef808c722472d",
+      "bytes": 1595744
+    },
+    {
+      "path": "Contents/Frameworks/App.framework/Versions/A/Resources/flutter_assets/assets/data/03_KATALOG_USHUL_FIKIH.json",
+      "sha256": "497371dbf06f25d5690f0d18a66a87bae4ef25b5edc89938a7a894a6387cc890",
+      "bytes": 165125
+    },
+    {
+      "path": "Contents/Frameworks/App.framework/Versions/A/Resources/flutter_assets/assets/data/04_KATALOG_BAHASA_DAN_SASTRA_ARAB.json",
+      "sha256": "d56704ec264ef2441379da7dc1c7f965f7891b4412a7585ce4d46bb7182f293a",
+      "bytes": 565675
+    },
+    {
+      "path": "Contents/Frameworks/App.framework/Versions/A/Resources/flutter_assets/assets/data/05_KATALOG_TAFSIR_DAN_ULUMUL_QURAN.json",
+      "sha256": "516d38a4e711b01b1f038e17c5a0b07aa5cd38fc7d74f804f608c8e2460ca190",
+      "bytes": 130701
+    },
+    {
+      "path": "Contents/Frameworks/App.framework/Versions/A/Resources/flutter_assets/assets/data/06_KATALOG_FIKIH_TAHAWWULAT.json",
+      "sha256": "155c3200766ed33d7ed18160f1cd787569a22c7b0734db7f2047e99df082dba3",
+      "bytes": 43472
+    },
+    {
+      "path": "Contents/Frameworks/App.framework/Versions/A/Resources/flutter_assets/assets/data/07_KATALOG_TARIKH_DAN_SIRAH_NABAWIYYAH.json",
+      "sha256": "170c489d7fb082d62be5ed356f2399778b919993bc1b14afedaeebd1c0bd1ef8",
+      "bytes": 453890
+    },
+    {
+      "path": "Contents/Frameworks/App.framework/Versions/A/Resources/flutter_assets/assets/data/08_KATALOG_FIKIH_MUQARAN_DAN_UMUM.json",
+      "sha256": "be2105d400ca563dbc190d0acd631f9b5f4ceb20fc965b4e285a4022ca9f9567",
+      "bytes": 115173
+    },
+    {
+      "path": "Contents/Frameworks/App.framework/Versions/A/Resources/flutter_assets/assets/data/09_KATALOG_FATAWA_DAN_MASAIL_FIQHIYYAH.json",
+      "sha256": "7806d2f46e19e0368270bfbf1eb18a9b5418e331980dc5490181980cb0415b21",
+      "bytes": 406700
+    },
+    {
+      "path": "Contents/Frameworks/App.framework/Versions/A/Resources/flutter_assets/assets/data/10_KATALOG_SYARAH_HADITS.json",
+      "sha256": "83fe482fec69c4bc6ffe9008dab959607e0d6f7b3de1c38c6b054f85884b8483",
+      "bytes": 260619
+    },
+    {
+      "path": "Contents/Frameworks/App.framework/Versions/A/Resources/flutter_assets/assets/data/11_KATALOG_FIKIH_HANAFI.json",
+      "sha256": "a0bedb3d8f87dd5bd83d0c1ae092475a4ab9915a376b24a5c5bed34075b03e24",
+      "bytes": 99939
+    },
+    {
+      "path": "Contents/Frameworks/App.framework/Versions/A/Resources/flutter_assets/assets/data/12_KATALOG_FIKIH_MALIKI.json",
+      "sha256": "ef6f26226ce9904e1b88176b15fbcc9e9732989664ad8151410d10de1c37f939",
+      "bytes": 103680
+    },
+    {
+      "path": "Contents/Frameworks/App.framework/Versions/A/Resources/flutter_assets/assets/data/13_KATALOG_FIKIH_HANBALI.json",
+      "sha256": "ec5ace3e65d39e1ee44290817552a9a3bcddbad5e0303fe5f6a0896826fccf76",
+      "bytes": 122243
+    },
+    {
+      "path": "Contents/Frameworks/App.framework/Versions/A/Resources/flutter_assets/assets/data/14_KATALOG_TASAWWUF_DAN_ADZKAR.json",
+      "sha256": "374b392dd22d4899954b2fb72f67dc8f2d5d82633845b34c939b803351ec146f",
+      "bytes": 299601
+    },
+    {
+      "path": "Contents/Frameworks/App.framework/Versions/A/Resources/flutter_assets/assets/data/15_KATALOG_TAJWID_DAN_QIRAAT.json",
+      "sha256": "85b9391caf88e8390b0745a795c202a4443591960ea4ec41b109409c9c975332",
+      "bytes": 165122
+    },
+    {
+      "path": "Contents/Frameworks/App.framework/Versions/A/Resources/flutter_assets/assets/data/16_KATALOG_QAWAID_FIQHIYYAH.json",
+      "sha256": "9ba030056711e2788cd6e0c714887cc7164ab26a53a27ddbe9f137593d79c6f3",
+      "bytes": 61171
+    },
+    {
+      "path": "Contents/Frameworks/App.framework/Versions/A/Resources/flutter_assets/assets/data/17_KATALOG_MUSTHALAH_DAN_ULUMUL_HADITS.json",
+      "sha256": "a64378430d14db9284efb64ea31534f4a5e7921eb2aad03d8258ef2509e31581",
+      "bytes": 217546
+    },
+    {
+      "path": "Contents/Frameworks/App.framework/Versions/A/Resources/flutter_assets/assets/data/18_KATALOG_AQIDAH_DAN_USHULUDDIN.json",
+      "sha256": "df665ba563241540d6ba072c51a6590650b2c0b303f39e859b43e8994449cec5",
+      "bytes": 183163
+    },
+    {
+      "path": "Contents/Frameworks/App.framework/Versions/A/Resources/flutter_assets/assets/data/19_KATALOG_THABAQAT_DAN_TARAJIM.json",
+      "sha256": "3251ad3b112883ddc0763a43674a19d37b60e17b33c5fbb58f630cb0e5e972c4",
+      "bytes": 658642
+    },
+    {
+      "path": "Contents/Frameworks/App.framework/Versions/A/Resources/flutter_assets/assets/data/21_KATALOG_ADAB_DAN_BALAGHAH.json",
+      "sha256": "63d5783811b61326cdb2f0d4bf136fcc12e98be616ac609e89ff40a8f280bbcf",
+      "bytes": 455073
+    },
+    {
+      "path": "Contents/Frameworks/App.framework/Versions/A/Resources/flutter_assets/assets/data/26_KATALOG_BIBLIOGRAFI_DAN_FAHARIS.json",
+      "sha256": "ef7bac708146265b997ec0d7bdbbccda364a0506c78ec8de66277e5971603265",
+      "bytes": 107780
+    },
+    {
+      "path": "Contents/Frameworks/App.framework/Versions/A/Resources/flutter_assets/assets/data/canonical_syafii.json",
+      "sha256": "fdab75d53d8d7ec1357d6926db411b2f41fca0ad3ee74e54b8fa5aa5d302a08b",
+      "bytes": 79220
+    },
+    {
+      "path": "Contents/Frameworks/App.framework/Versions/A/Resources/flutter_assets/assets/data/metadata_training_seluruh_ai.json",
+      "sha256": "d30e6e8de09ce884b123d7ec11f445b3fdbc8c5b6aafc04cb508e25423458a1b",
+      "bytes": 14715
+    },
+    {
+      "path": "Contents/Frameworks/App.framework/Versions/A/Resources/flutter_assets/assets/images/OpenTurath_logo_transparent.svg",
+      "sha256": "c3af3f38ba5674496585d7dface0746b27536f9cb464faa54f41bd969dce0cb0",
+      "bytes": 6371
+    },
+    {
+      "path": "Contents/Frameworks/App.framework/Versions/A/Resources/flutter_assets/assets/native_fonts/NativeArabic-700.ttf",
+      "sha256": "91363517a63dbc7448b5814226d33d845b26b32a461cd159ea0b3f23c7effd2d",
+      "bytes": 593472
+    },
+    {
+      "path": "Contents/Frameworks/App.framework/Versions/A/Resources/flutter_assets/assets/native_fonts/NativeArabic.ttf",
+      "sha256": "794bac8dc9e83d1d620bc471ea694f5f31d0965ce8006490a79dfc51a2d283b3",
+      "bytes": 331504
+    },
+    {
+      "path": "Contents/Frameworks/App.framework/Versions/A/Resources/flutter_assets/assets/native_fonts/NativeArabicUI.ttf",
+      "sha256": "63111b5b2e074dd48cc67692e0a2726d86ee94c1c37fe8598257b7b4e87e869e",
+      "bytes": 844676
+    },
+    {
+      "path": "Contents/Frameworks/App.framework/Versions/A/Resources/flutter_assets/assets/native_fonts/NativeInter.ttf",
+      "sha256": "29160a80ff49ddcab2c97711247e08b1fab27a484a329ce8b813d820dc559031",
+      "bytes": 876576
+    },
+    {
+      "path": "Contents/Frameworks/App.framework/Versions/A/Resources/flutter_assets/assets/native_fonts/NativeNewsreader-400.ttf",
+      "sha256": "8272cdc075f4e44afa596ddfc9547e58bd835f8ebddc20130b521f3b0947eb0b",
+      "bytes": 118296
+    },
+    {
+      "path": "Contents/Frameworks/App.framework/Versions/A/Resources/flutter_assets/assets/native_fonts/NativeNewsreader.ttf",
+      "sha256": "46af64a6a049bd0d33cf96a3b390bb10cb4c049028a067e25880dccd3c7deb85",
+      "bytes": 111648
+    },
+    {
+      "path": "Contents/Frameworks/App.framework/Versions/A/Resources/flutter_assets/assets/native_fonts/NativeOutfit-600.ttf",
+      "sha256": "186b9de73b06fe31af06247f01f26fd012c41a6f8a85a2fdb1a9c92fab8f5bec",
+      "bytes": 55384
+    },
+    {
+      "path": "Contents/Frameworks/App.framework/Versions/A/Resources/flutter_assets/assets/native_fonts/NativeOutfit-700.ttf",
+      "sha256": "f850df78750685d662fd29e66338f4e1042a19fed29fb303ccc9fc7781408c47",
+      "bytes": 55304
+    },
+    {
+      "path": "Contents/Frameworks/App.framework/Versions/A/Resources/flutter_assets/assets/native_fonts/NativeOutfit.ttf",
+      "sha256": "b667551a8e7d406c089cb2fdf754f2fddfb1dc256a33fcc06c690965c6b9d5d7",
+      "bytes": 47820
+    },
+    {
+      "path": "Contents/Frameworks/App.framework/Versions/A/Resources/flutter_assets/fonts/MaterialIcons-Regular.otf",
+      "sha256": "c47a36ce367255fcba68c1efe735f5f1db640f7d4962a9c7eb429a78fc7cc679",
+      "bytes": 17432
+    },
+    {
+      "path": "Contents/Frameworks/App.framework/Versions/A/Resources/flutter_assets/packages/flutter_inappwebview/assets/t_rex_runner/t-rex.css",
+      "sha256": "2e563220bd855e11f230dc27a0d6f2fd5b839a2996f86edc8025aab45e6fa5c3",
+      "bytes": 1688
+    },
+    {
+      "path": "Contents/Frameworks/App.framework/Versions/A/Resources/flutter_assets/packages/flutter_inappwebview/assets/t_rex_runner/t-rex.html",
+      "sha256": "dc72cfc1f1d2a5013bb9de34f8cacf5e26e542d7d713fcbe09b865b4aaca6ddf",
+      "bytes": 82244
+    },
+    {
+      "path": "Contents/Frameworks/App.framework/Versions/A/Resources/flutter_assets/packages/flutter_inappwebview_web/assets/web/web_support.js",
+      "sha256": "2f9ccef9db4da6b73d3c678ffe570aad402791b00dfa520730fdb66d0dc209fc",
+      "bytes": 28409
+    },
+    {
+      "path": "Contents/Frameworks/App.framework/Versions/A/Resources/flutter_assets/shaders/ink_sparkle.frag",
+      "sha256": "4c656362013e3b297a82ebe184f3eb59fca79319097858d2cd22ec42a9fb4373",
+      "bytes": 11984
+    },
+    {
+      "path": "Contents/Frameworks/App.framework/Versions/A/Resources/flutter_assets/shaders/stretch_effect.frag",
+      "sha256": "63ff79bb6f3444ca51e9eea77418c7e4f9bcba36520f941fdf7c2843f36770d5",
+      "bytes": 10176
+    },
+    {
+      "path": "Contents/Frameworks/App.framework/Versions/A/_CodeSignature/CodeResources",
+      "sha256": "e6d39cfa700beb0bdb0c9059e48d6fee9e927f157d83d388df1f01a97c3fefd9",
+      "bytes": 16140
+    },
+    {
+      "path": "Contents/Frameworks/AppAuth.framework/Versions/A/AppAuth",
+      "sha256": "1dc5bdf63f3cd5495c756f0eb7e9a3f96bbdaaee72d4a85848999fab4e817c11",
+      "bytes": 672576
+    },
+    {
+      "path": "Contents/Frameworks/AppAuth.framework/Versions/A/Resources/AppAuthCore_Privacy.bundle/Contents/Info.plist",
+      "sha256": "18445da5d9020c4c972af3fa2c76ffb483befe6a3829ce52d4ee0ca8dd2c8364",
+      "bytes": 1299
+    },
+    {
+      "path": "Contents/Frameworks/AppAuth.framework/Versions/A/Resources/AppAuthCore_Privacy.bundle/Contents/Resources/PrivacyInfo.xcprivacy",
+      "sha256": "5ade962faaea1eddbbdd06c4cf8a872cec554f64c55a00e00136004d378e1ced",
+      "bytes": 391
+    },
+    {
+      "path": "Contents/Frameworks/AppAuth.framework/Versions/A/Resources/Info.plist",
+      "sha256": "244d85e786a74c6b40072d6d084afd26090b325fa81d2fe66080c1ffbf65984b",
+      "bytes": 1332
+    },
+    {
+      "path": "Contents/Frameworks/AppAuth.framework/Versions/A/_CodeSignature/CodeResources",
+      "sha256": "b5b96be8024e959d9ab79a25b73bdafe3dd1a8e62496f9ab0835ab585fc10e98",
+      "bytes": 3080
+    },
+    {
+      "path": "Contents/Frameworks/AppCheckCore.framework/Versions/A/AppCheckCore",
+      "sha256": "04f53ad195c3baa51c35d828600bd6da9931b5ea0eb38b64e21bb35b2cc667e6",
+      "bytes": 674992
+    },
+    {
+      "path": "Contents/Frameworks/AppCheckCore.framework/Versions/A/Resources/Info.plist",
+      "sha256": "65b10b4be7b19007e0937fb40f1277f96c8e096519ff2a22bbe236bbdb65145a",
+      "bytes": 1348
+    },
+    {
+      "path": "Contents/Frameworks/AppCheckCore.framework/Versions/A/_CodeSignature/CodeResources",
+      "sha256": "d86c6d79f0a6782680f11e8fe1ffafa87c248882f3343c3488eb60f5228d2fda",
+      "bytes": 2442
+    },
+    {
+      "path": "Contents/Frameworks/FBLPromises.framework/Versions/A/FBLPromises",
+      "sha256": "546a0fc39b267a34a96d54f378cdaac075c578059e0e5af9eb5b80e4098d47a3",
+      "bytes": 333648
+    },
+    {
+      "path": "Contents/Frameworks/FBLPromises.framework/Versions/A/Resources/FBLPromises_Privacy.bundle/Contents/Info.plist",
+      "sha256": "239ef85c609bbfa962170955c7a0cf30b0dc93ff962d4b98c0ed28f3d13f2b41",
+      "bytes": 1299
+    },
+    {
+      "path": "Contents/Frameworks/FBLPromises.framework/Versions/A/Resources/FBLPromises_Privacy.bundle/Contents/Resources/PrivacyInfo.xcprivacy",
+      "sha256": "74b0cd72fc23c1ef302f22ee2753f61817cdc5af0ff7a7f2d0632b524fb8acea",
+      "bytes": 373
+    },
+    {
+      "path": "Contents/Frameworks/FBLPromises.framework/Versions/A/Resources/Info.plist",
+      "sha256": "c874f532fccf7d069d0e2a61272f920df31d6bee4ffa3c97d598220cbd56ca6f",
+      "bytes": 1344
+    },
+    {
+      "path": "Contents/Frameworks/FBLPromises.framework/Versions/A/_CodeSignature/CodeResources",
+      "sha256": "d11ec30657573e9572397783424a50b7d2d943a7aeaa513e4a9da8c6f9752aaa",
+      "bytes": 3296
+    },
+    {
+      "path": "Contents/Frameworks/FirebaseAppCheckInterop.framework/Versions/A/FirebaseAppCheckInterop",
+      "sha256": "90851482ad1ee52ccd88bbc11b8c5ceeae79f3a3b5409248c4c83213d5948fa1",
+      "bytes": 118512
+    },
+    {
+      "path": "Contents/Frameworks/FirebaseAppCheckInterop.framework/Versions/A/Resources/Info.plist",
+      "sha256": "102b24d8dd19ed11cba4db69c691d3f7706cc13b3babed2700956dfddc7a7c29",
+      "bytes": 1382
+    },
+    {
+      "path": "Contents/Frameworks/FirebaseAppCheckInterop.framework/Versions/A/_CodeSignature/CodeResources",
+      "sha256": "af586450e44cff287cd767d711315122ec0b57a9c4c23c191101d850aa1405a2",
+      "bytes": 2442
+    },
+    {
+      "path": "Contents/Frameworks/FirebaseAuth.framework/Versions/A/FirebaseAuth",
+      "sha256": "bb61b6f25c9dab81fb3102c5d5be93b27e7f5cae5ad4cfe19268acb38f1e73b8",
+      "bytes": 3729216
+    },
+    {
+      "path": "Contents/Frameworks/FirebaseAuth.framework/Versions/A/Resources/FirebaseAuth_Privacy.bundle/Contents/Info.plist",
+      "sha256": "2340b969d40f7ba7751bb914fcb1717e0e13b8eeb0783ccc8d696ffcceb18159",
+      "bytes": 1303
+    },
+    {
+      "path": "Contents/Frameworks/FirebaseAuth.framework/Versions/A/Resources/FirebaseAuth_Privacy.bundle/Contents/Resources/PrivacyInfo.xcprivacy",
+      "sha256": "04c162eafa49b2ced0663231a89cc9f5793506c802b68486719b5da0608aefd5",
+      "bytes": 2102
+    },
+    {
+      "path": "Contents/Frameworks/FirebaseAuth.framework/Versions/A/Resources/Info.plist",
+      "sha256": "06523eae8ee3a9b6e20f33acf9af16f961c43193bf0ea707b3bc990bae92c76c",
+      "bytes": 1349
+    },
+    {
+      "path": "Contents/Frameworks/FirebaseAuth.framework/Versions/A/_CodeSignature/CodeResources",
+      "sha256": "f0713f61135d81345c5a803308ac9c4655c9726190c7252eea4207f3211f3ed5",
+      "bytes": 3084
+    },
+    {
+      "path": "Contents/Frameworks/FirebaseAuthInterop.framework/Versions/A/FirebaseAuthInterop",
+      "sha256": "ef24fea897cda6a073b5a37fd47b343a3b3acc00539dfa9ca4ee59677afc7db4",
+      "bytes": 118448
+    },
+    {
+      "path": "Contents/Frameworks/FirebaseAuthInterop.framework/Versions/A/Resources/Info.plist",
+      "sha256": "0fa513bc7021ada1f37e18e986c33d68a13d85a10a0d18160ce7c596163859d2",
+      "bytes": 1370
+    },
+    {
+      "path": "Contents/Frameworks/FirebaseAuthInterop.framework/Versions/A/_CodeSignature/CodeResources",
+      "sha256": "b1ac839dca7e04284cd08cad3fe68847fd323996f547c956b10e5b0a8e3f278d",
+      "bytes": 2442
+    },
+    {
+      "path": "Contents/Frameworks/FirebaseCore.framework/Versions/A/FirebaseCore",
+      "sha256": "0fe7b08cbd17ff88e6db8643615e0286e1c2caaf16bf87eefa28783d29a8b9a3",
+      "bytes": 363504
+    },
+    {
+      "path": "Contents/Frameworks/FirebaseCore.framework/Versions/A/Resources/FirebaseCore_Privacy.bundle/Contents/Info.plist",
+      "sha256": "389b5984d8e77f4872eb68ae6a8c15ed69999d71e3e0036c1c4524314ce9090e",
+      "bytes": 1303
+    },
+    {
+      "path": "Contents/Frameworks/FirebaseCore.framework/Versions/A/Resources/FirebaseCore_Privacy.bundle/Contents/Resources/PrivacyInfo.xcprivacy",
+      "sha256": "11e31f5f6b60e80ebd5901549fce5043f9af3e683f874022945000b405306c3f",
+      "bytes": 855
+    },
+    {
+      "path": "Contents/Frameworks/FirebaseCore.framework/Versions/A/Resources/Info.plist",
+      "sha256": "fbf8fc9104780f9be7694acb7287d1eb0a102eb93a086e0570279a394234922d",
+      "bytes": 1349
+    },
+    {
+      "path": "Contents/Frameworks/FirebaseCore.framework/Versions/A/_CodeSignature/CodeResources",
+      "sha256": "0428a2f0c2b2f5dd29d5ab8677a6877ff1f1c1be0870abe53d16ad2c3d9ad019",
+      "bytes": 3084
+    },
+    {
+      "path": "Contents/Frameworks/FirebaseCoreExtension.framework/Versions/A/FirebaseCoreExtension",
+      "sha256": "6f4e5d9ca4c936b5a4875b9c797f734fbf81d797cd29b0d55a3ef14660ef4ec4",
+      "bytes": 118480
+    },
+    {
+      "path": "Contents/Frameworks/FirebaseCoreExtension.framework/Versions/A/Resources/FirebaseCoreExtension_Privacy.bundle/Contents/Info.plist",
+      "sha256": "bf60b8976f6732cd1c7ae25b7a985b7a3ddf6fe09d50f536e74c06d2ab95ef57",
+      "bytes": 1321
+    },
+    {
+      "path": "Contents/Frameworks/FirebaseCoreExtension.framework/Versions/A/Resources/FirebaseCoreExtension_Privacy.bundle/Contents/Resources/PrivacyInfo.xcprivacy",
+      "sha256": "1377eccedff8f8320f78040e9c9d3e17ecc0ea569594b56af0ef17be44197c7a",
+      "bytes": 478
+    },
+    {
+      "path": "Contents/Frameworks/FirebaseCoreExtension.framework/Versions/A/Resources/Info.plist",
+      "sha256": "5ea91f0cfecad2670909e34cf8bbff511816575533f2e64b0a70a4efbb35945a",
+      "bytes": 1376
+    },
+    {
+      "path": "Contents/Frameworks/FirebaseCoreExtension.framework/Versions/A/_CodeSignature/CodeResources",
+      "sha256": "c9cbba168399048b6c6489398bf225f53392a69ec0126e7477df06f0670652cf",
+      "bytes": 3120
+    },
+    {
+      "path": "Contents/Frameworks/FirebaseCoreInternal.framework/Versions/A/FirebaseCoreInternal",
+      "sha256": "b9b91f69ba79a6172934997ad0676dad3dfd61d33d96dc12b194208f15b4a45d",
+      "bytes": 724128
+    },
+    {
+      "path": "Contents/Frameworks/FirebaseCoreInternal.framework/Versions/A/Resources/FirebaseCoreInternal_Privacy.bundle/Contents/Info.plist",
+      "sha256": "fa111d9e783704d4e9c52a78ed42f12e9a7f567bf22aabb687a2d619bf892d8b",
+      "bytes": 1319
+    },
+    {
+      "path": "Contents/Frameworks/FirebaseCoreInternal.framework/Versions/A/Resources/FirebaseCoreInternal_Privacy.bundle/Contents/Resources/PrivacyInfo.xcprivacy",
+      "sha256": "5b7fe979423dede3e08afc29a42f00f6086275dc548a84c29774235863eed3ef",
+      "bytes": 855
+    },
+    {
+      "path": "Contents/Frameworks/FirebaseCoreInternal.framework/Versions/A/Resources/Info.plist",
+      "sha256": "ee2417d3b3fc4eb51765fea1e2d16e2d1412edec01ba5923225bb61c870ba105",
+      "bytes": 1373
+    },
+    {
+      "path": "Contents/Frameworks/FirebaseCoreInternal.framework/Versions/A/_CodeSignature/CodeResources",
+      "sha256": "3093189fb7f0d4c12ccb4416a83b115279beccafa4c8fbd393d5d885d51657bf",
+      "bytes": 3116
+    },
+    {
+      "path": "Contents/Frameworks/FirebaseFirestore.framework/Versions/A/FirebaseFirestore",
+      "sha256": "161cb57ab14753c5d9213cb4c79e7f22a24e7e758ef7c6293f00ce36600c6f97",
+      "bytes": 772800
+    },
+    {
+      "path": "Contents/Frameworks/FirebaseFirestore.framework/Versions/A/Resources/FirebaseFirestore_Privacy.bundle/Contents/Info.plist",
+      "sha256": "82bbf4f426d66e3562ed938c0a51ba314687d7c0defb9b71297496dd7f83e388",
+      "bytes": 1313
+    },
+    {
+      "path": "Contents/Frameworks/FirebaseFirestore.framework/Versions/A/Resources/FirebaseFirestore_Privacy.bundle/Contents/Resources/PrivacyInfo.xcprivacy",
+      "sha256": "cfbb3c4f76a66d53698bae91f7110c00f2148e6e6f13ad7d32592909bc010e51",
+      "bytes": 1105
+    },
+    {
+      "path": "Contents/Frameworks/FirebaseFirestore.framework/Versions/A/Resources/Info.plist",
+      "sha256": "93ccfe8059b55d94a28a1812c08b50e436f6d11614150fdbf6b5ea2810ae9a5b",
+      "bytes": 1364
+    },
+    {
+      "path": "Contents/Frameworks/FirebaseFirestore.framework/Versions/A/_CodeSignature/CodeResources",
+      "sha256": "4e7560c5b16c27212007e2de8a674b105c3ca97f52a16de392f27184d6d747ed",
+      "bytes": 3104
+    },
+    {
+      "path": "Contents/Frameworks/FirebaseFirestoreInternal.framework/Versions/A/FirebaseFirestoreInternal",
+      "sha256": "2b11a338432dfe4a2be70823505e723d709c8450cc163bf240c8329aeb8c4bdd",
+      "bytes": 10223472
+    },
+    {
+      "path": "Contents/Frameworks/FirebaseFirestoreInternal.framework/Versions/A/Resources/FirebaseFirestoreInternal_Privacy.bundle/Contents/Info.plist",
+      "sha256": "f8e9e63ec338f7bfa818c86c90fbbe8a86d5f9c2a71a6a6c0e34637b8ea584df",
+      "bytes": 1329
+    },
+    {
+      "path": "Contents/Frameworks/FirebaseFirestoreInternal.framework/Versions/A/Resources/FirebaseFirestoreInternal_Privacy.bundle/Contents/Resources/PrivacyInfo.xcprivacy",
+      "sha256": "cfbb3c4f76a66d53698bae91f7110c00f2148e6e6f13ad7d32592909bc010e51",
+      "bytes": 1105
+    },
+    {
+      "path": "Contents/Frameworks/FirebaseFirestoreInternal.framework/Versions/A/Resources/Info.plist",
+      "sha256": "5c6613614f8707529afd8933b0dba9a3a759ec78f86f905cb767c04db5810c45",
+      "bytes": 1388
+    },
+    {
+      "path": "Contents/Frameworks/FirebaseFirestoreInternal.framework/Versions/A/_CodeSignature/CodeResources",
+      "sha256": "7468179f8f899dac1ff3e52475a12e1fbb0494f13e8233f887f6282b304eee44",
+      "bytes": 3136
+    },
+    {
+      "path": "Contents/Frameworks/FirebaseFunctions.framework/Versions/A/FirebaseFunctions",
+      "sha256": "c319261fc6f5111fe6fb427a650becbbd9b3355c94ffe824c8ba33c201bae5b8",
+      "bytes": 772560
+    },
+    {
+      "path": "Contents/Frameworks/FirebaseFunctions.framework/Versions/A/Resources/Info.plist",
+      "sha256": "5835149ec2246c7e0406a73d5b39ed8bc265e2ae0e198b4487f6710608527711",
+      "bytes": 1364
+    },
+    {
+      "path": "Contents/Frameworks/FirebaseFunctions.framework/Versions/A/_CodeSignature/CodeResources",
+      "sha256": "cc2d0926ab142118dfc0dba4e48d919a1e402cadadcdf888f681f2539af06a85",
+      "bytes": 2442
+    },
+    {
+      "path": "Contents/Frameworks/FirebaseMessagingInterop.framework/Versions/A/FirebaseMessagingInterop",
+      "sha256": "1a4091029e906fb1e349040facdb991f6e74cc5bc6b4f38df9d249f495606b19",
+      "bytes": 118544
+    },
+    {
+      "path": "Contents/Frameworks/FirebaseMessagingInterop.framework/Versions/A/Resources/Info.plist",
+      "sha256": "4ac7a0827bc5f098bf8a1371088fb56ecfb81bc3a484f1667797ac13ef65acee",
+      "bytes": 1385
+    },
+    {
+      "path": "Contents/Frameworks/FirebaseMessagingInterop.framework/Versions/A/_CodeSignature/CodeResources",
+      "sha256": "0c174654bfda2c0735d962479daa01863e83fd9fa665b97f0c3efb2375a56664",
+      "bytes": 2442
+    },
+    {
+      "path": "Contents/Frameworks/FirebaseSharedSwift.framework/Versions/A/FirebaseSharedSwift",
+      "sha256": "0ba38df62b3074739a3b896d8d0c5dad5059c2cac7bcd13ccc80be3a8bf3d545",
+      "bytes": 1070080
+    },
+    {
+      "path": "Contents/Frameworks/FirebaseSharedSwift.framework/Versions/A/Resources/Info.plist",
+      "sha256": "596c3e7c583a5b596f223ce020330dc38c2bff5e3e050af82dbcdd4fd552fbdb",
+      "bytes": 1370
+    },
+    {
+      "path": "Contents/Frameworks/FirebaseSharedSwift.framework/Versions/A/_CodeSignature/CodeResources",
+      "sha256": "94bfbf6f80844928cb08be40d44c3d4a2adbbc085b5d2befb3ed420b15f3126b",
+      "bytes": 2442
+    },
+    {
+      "path": "Contents/Frameworks/FlutterMacOS.framework/Versions/A/FlutterMacOS",
+      "sha256": "a48a4e9133dcd03c10b9b1eeb91b0b4d8e2f06d533b94150d3ce4dbde65471eb",
+      "bytes": 28516736
+    },
+    {
+      "path": "Contents/Frameworks/FlutterMacOS.framework/Versions/A/Resources/Info.plist",
+      "sha256": "0d745697b8fc883a3ddb5a0b3f00f8a97b9d12a03f3fd801700361177f48e1a0",
+      "bytes": 850
+    },
+    {
+      "path": "Contents/Frameworks/FlutterMacOS.framework/Versions/A/Resources/PrivacyInfo.xcprivacy",
+      "sha256": "42542470043a0a3af3ab452ae4355bf764b916b7a442d3c814f362241a794454",
+      "bytes": 325
+    },
+    {
+      "path": "Contents/Frameworks/FlutterMacOS.framework/Versions/A/Resources/icudtl.dat",
+      "sha256": "c12537022ef818991a7bfed41a76d8d6ae962ffbc0e6511ac762a5d0845e7f7c",
+      "bytes": 778864
+    },
+    {
+      "path": "Contents/Frameworks/FlutterMacOS.framework/Versions/A/_CodeSignature/CodeResources",
+      "sha256": "122d62e3affc37e4065d4d2247a398f48f6c209b9a182833478e79980f509ec1",
+      "bytes": 2916
+    },
+    {
+      "path": "Contents/Frameworks/GTMAppAuth.framework/Versions/A/GTMAppAuth",
+      "sha256": "9765a670f3c197b93bcbea632d2f6d3652903621d28b1744ca3d777d9d9cf931",
+      "bytes": 639136
+    },
+    {
+      "path": "Contents/Frameworks/GTMAppAuth.framework/Versions/A/Resources/GTMAppAuth_Privacy.bundle/Contents/Info.plist",
+      "sha256": "4ded62218bd0cea9d717c9bb06d4aa70d4f08034459824428e0cfd89e475a09c",
+      "bytes": 1297
+    },
+    {
+      "path": "Contents/Frameworks/GTMAppAuth.framework/Versions/A/Resources/GTMAppAuth_Privacy.bundle/Contents/Resources/PrivacyInfo.xcprivacy",
+      "sha256": "5a9b8fc0cddb10201bb47cc2804b3f004c7251476622d25bfc4eb54ed46e1084",
+      "bytes": 373
+    },
+    {
+      "path": "Contents/Frameworks/GTMAppAuth.framework/Versions/A/Resources/Info.plist",
+      "sha256": "b422cff9cd035acdb4266bc082f944ecabfca6c6001bd0eb11c3e2cd763460b4",
+      "bytes": 1341
+    },
+    {
+      "path": "Contents/Frameworks/GTMAppAuth.framework/Versions/A/_CodeSignature/CodeResources",
+      "sha256": "8dd3136535ad58337b1beaa3c58a6885589c0c2ab515efcc6508fa34cbca256f",
+      "bytes": 3076
+    },
+    {
+      "path": "Contents/Frameworks/GTMSessionFetcher.framework/Versions/A/GTMSessionFetcher",
+      "sha256": "7cdf746e9b7f7faf1ed048ba2e9b42c8174a92a30cb5f26bf2a687a7e623786a",
+      "bytes": 839856
+    },
+    {
+      "path": "Contents/Frameworks/GTMSessionFetcher.framework/Versions/A/Resources/GTMSessionFetcher_Core_Privacy.bundle/Contents/Info.plist",
+      "sha256": "7577b096f86d8abcf2d4d3b21c3231e2a99fa8cede15727819a39d4dd256ca54",
+      "bytes": 1321
+    },
+    {
+      "path": "Contents/Frameworks/GTMSessionFetcher.framework/Versions/A/Resources/GTMSessionFetcher_Core_Privacy.bundle/Contents/Resources/PrivacyInfo.xcprivacy",
+      "sha256": "3e4a93cbe86acef7dd7e063a28c849992f556e7f52cadc5f37c1e8b0e1b54686",
+      "bytes": 598
+    },
+    {
+      "path": "Contents/Frameworks/GTMSessionFetcher.framework/Versions/A/Resources/GTMSessionFetcher_Full_Privacy.bundle/Contents/Info.plist",
+      "sha256": "7b68f4d1e1245fd6c357bcf8e9a59fba7aa83b278ed31be2b8edb5fa50ccb562",
+      "bytes": 1321
+    },
+    {
+      "path": "Contents/Frameworks/GTMSessionFetcher.framework/Versions/A/Resources/GTMSessionFetcher_Full_Privacy.bundle/Contents/Resources/PrivacyInfo.xcprivacy",
+      "sha256": "74b0cd72fc23c1ef302f22ee2753f61817cdc5af0ff7a7f2d0632b524fb8acea",
+      "bytes": 373
+    },
+    {
+      "path": "Contents/Frameworks/GTMSessionFetcher.framework/Versions/A/Resources/Info.plist",
+      "sha256": "90a260adb784e7d866a52ce841e29aafcef4d3f2099b51267e7e08d637893bda",
+      "bytes": 1362
+    },
+    {
+      "path": "Contents/Frameworks/GTMSessionFetcher.framework/Versions/A/_CodeSignature/CodeResources",
+      "sha256": "70ec671a8903ab278eaca9c47365856f6b62a8ba63d639444d94b0ef5133cbbd",
+      "bytes": 3806
+    },
+    {
+      "path": "Contents/Frameworks/GoogleSignIn.framework/Versions/A/GoogleSignIn",
+      "sha256": "ffc216e95993c32fd148e46c4fe86a2aece3f0154f351a0215e3c7d3ffe91d53",
+      "bytes": 364784
+    },
+    {
+      "path": "Contents/Frameworks/GoogleSignIn.framework/Versions/A/Resources/GoogleSignIn.bundle/Contents/Info.plist",
+      "sha256": "b8b03edea82effc29492ed2a012708ba5d2f832a27d4bc434d9de32f43d225f0",
+      "bytes": 1285
+    },
+    {
+      "path": "Contents/Frameworks/GoogleSignIn.framework/Versions/A/Resources/GoogleSignIn.bundle/Contents/Resources/PrivacyInfo.xcprivacy",
+      "sha256": "9300972853096f7d570d6c4a4bf7152a36c798e89c4f0d81d3b4c6b5dfaddfd0",
+      "bytes": 3756
+    },
+    {
+      "path": "Contents/Frameworks/GoogleSignIn.framework/Versions/A/Resources/GoogleSignIn.bundle/Contents/Resources/Roboto-Bold.ttf",
+      "sha256": "594d74a49e307be7cc9e1ee5f1023684e6820cf11bcc968bee590391e1ad5a5a",
+      "bytes": 127744
+    },
+    {
+      "path": "Contents/Frameworks/GoogleSignIn.framework/Versions/A/Resources/GoogleSignIn.bundle/Contents/Resources/ar.lproj/GoogleSignIn.strings",
+      "sha256": "b2cf9e8d9fc8ad0f9610b3e54ef0b8b494f021b7fa23acef6094b2205abe8c72",
+      "bytes": 1759
+    },
+    {
+      "path": "Contents/Frameworks/GoogleSignIn.framework/Versions/A/Resources/GoogleSignIn.bundle/Contents/Resources/ca.lproj/GoogleSignIn.strings",
+      "sha256": "33e88ff500dc3db2462e2ac933c11c28929fad351f57b3e6d62ac44610ad61aa",
+      "bytes": 1669
+    },
+    {
+      "path": "Contents/Frameworks/GoogleSignIn.framework/Versions/A/Resources/GoogleSignIn.bundle/Contents/Resources/cs.lproj/GoogleSignIn.strings",
+      "sha256": "51da08624c2a79de47c81683b29e8a1344a47887563be256e1a77a67f6be3544",
+      "bytes": 1615
+    },
+    {
+      "path": "Contents/Frameworks/GoogleSignIn.framework/Versions/A/Resources/GoogleSignIn.bundle/Contents/Resources/da.lproj/GoogleSignIn.strings",
+      "sha256": "e8261b9646d8ea89f7bf7a61a73aedce30fe51f68aa947ecbdfe8cc7e04db7da",
+      "bytes": 1611
+    },
+    {
+      "path": "Contents/Frameworks/GoogleSignIn.framework/Versions/A/Resources/GoogleSignIn.bundle/Contents/Resources/de.lproj/GoogleSignIn.strings",
+      "sha256": "16cd413df1ab77e509df76f873a5a687ffcf360b1f150743d934c5ab3377c228",
+      "bytes": 1703
+    },
+    {
+      "path": "Contents/Frameworks/GoogleSignIn.framework/Versions/A/Resources/GoogleSignIn.bundle/Contents/Resources/el.lproj/GoogleSignIn.strings",
+      "sha256": "9cc0c1349cf665fc773330d31a2628f600a43caa8b5c880b034a5667f8f0fabc",
+      "bytes": 2103
+    },
+    {
+      "path": "Contents/Frameworks/GoogleSignIn.framework/Versions/A/Resources/GoogleSignIn.bundle/Contents/Resources/en.lproj/GoogleSignIn.strings",
+      "sha256": "c726a39c382e3f1a7c1f58ecf470f812da263749f930da87f7c0c3aa0ec648c2",
+      "bytes": 1547
+    },
+    {
+      "path": "Contents/Frameworks/GoogleSignIn.framework/Versions/A/Resources/GoogleSignIn.bundle/Contents/Resources/en_GB.lproj/GoogleSignIn.strings",
+      "sha256": "a2bd782a051b1a0b3c437ec6a31e9bf7f6778995a72acc32a0eb4a6399ad1ac2",
+      "bytes": 1547
+    },
+    {
+      "path": "Contents/Frameworks/GoogleSignIn.framework/Versions/A/Resources/GoogleSignIn.bundle/Contents/Resources/es.lproj/GoogleSignIn.strings",
+      "sha256": "501e44c4f3bb9c05b13297c60240fd0e16e79f8a63e6fb25198208dcb9421ca6",
+      "bytes": 1678
+    },
+    {
+      "path": "Contents/Frameworks/GoogleSignIn.framework/Versions/A/Resources/GoogleSignIn.bundle/Contents/Resources/es_MX.lproj/GoogleSignIn.strings",
+      "sha256": "84d327c7197b7e549a1e9e8d8bb3e1cb02e0282c6323e5fb3dde0a47395af634",
+      "bytes": 1607
+    },
+    {
+      "path": "Contents/Frameworks/GoogleSignIn.framework/Versions/A/Resources/GoogleSignIn.bundle/Contents/Resources/fi.lproj/GoogleSignIn.strings",
+      "sha256": "0e99f31a89ead8cc0fc72ad6abdcc84abd26f699265eeff61a889b3739da773b",
+      "bytes": 1640
+    },
+    {
+      "path": "Contents/Frameworks/GoogleSignIn.framework/Versions/A/Resources/GoogleSignIn.bundle/Contents/Resources/fr.lproj/GoogleSignIn.strings",
+      "sha256": "b5513877acf2d79c8f0eaff7fcde4aa165f3abb01611b606112602fd443777ba",
+      "bytes": 1676
+    },
+    {
+      "path": "Contents/Frameworks/GoogleSignIn.framework/Versions/A/Resources/GoogleSignIn.bundle/Contents/Resources/fr_CA.lproj/GoogleSignIn.strings",
+      "sha256": "f71092cf3fdba7e3e03d0d99748378b111947ca77a991830ddd24c39922b086e",
+      "bytes": 1657
+    },
+    {
+      "path": "Contents/Frameworks/GoogleSignIn.framework/Versions/A/Resources/GoogleSignIn.bundle/Contents/Resources/google.png",
+      "sha256": "1f622890207ca0d911c2004b04464b774c3aa0dfa2375054fe2019746c8330a5",
+      "bytes": 572
+    },
+    {
+      "path": "Contents/Frameworks/GoogleSignIn.framework/Versions/A/Resources/GoogleSignIn.bundle/Contents/Resources/google@2x.png",
+      "sha256": "323ab89fa20161adb219e1715035f9312e93cb69308b54f20e43d2d75685c0b2",
+      "bytes": 987
+    },
+    {
+      "path": "Contents/Frameworks/GoogleSignIn.framework/Versions/A/Resources/GoogleSignIn.bundle/Contents/Resources/google@3x.png",
+      "sha256": "bee36b5824597812ab7b1a83d8d10364e49cbae2311b95fa118a18371bdc2655",
+      "bytes": 1622
+    },
+    {
+      "path": "Contents/Frameworks/GoogleSignIn.framework/Versions/A/Resources/GoogleSignIn.bundle/Contents/Resources/he.lproj/GoogleSignIn.strings",
+      "sha256": "2ad0751665fa6100761107c40a08df049067400ed7d8d3fb42e3eec4567a60b0",
+      "bytes": 1780
+    },
+    {
+      "path": "Contents/Frameworks/GoogleSignIn.framework/Versions/A/Resources/GoogleSignIn.bundle/Contents/Resources/hi.lproj/GoogleSignIn.strings",
+      "sha256": "dd41d72736ab5f4a97d09ddb14c4800ee40b9bed2369d64f0c5ffab96a62461e",
+      "bytes": 2286
+    },
+    {
+      "path": "Contents/Frameworks/GoogleSignIn.framework/Versions/A/Resources/GoogleSignIn.bundle/Contents/Resources/hr.lproj/GoogleSignIn.strings",
+      "sha256": "240fb2998ce9e3a796a97906fc6f960a5611c0784dc73b16cae914faed0a5bfe",
+      "bytes": 1621
+    },
+    {
+      "path": "Contents/Frameworks/GoogleSignIn.framework/Versions/A/Resources/GoogleSignIn.bundle/Contents/Resources/hu.lproj/GoogleSignIn.strings",
+      "sha256": "1a8445f99c68fbb05f3714f80f70ed088a62371b5b9885e312b4516f07d89e4f",
+      "bytes": 1663
+    },
+    {
+      "path": "Contents/Frameworks/GoogleSignIn.framework/Versions/A/Resources/GoogleSignIn.bundle/Contents/Resources/id.lproj/GoogleSignIn.strings",
+      "sha256": "3f246fe3732f813c93a04952365102a965a2248ae24e504f19531398588b2bf9",
+      "bytes": 1553
+    },
+    {
+      "path": "Contents/Frameworks/GoogleSignIn.framework/Versions/A/Resources/GoogleSignIn.bundle/Contents/Resources/it.lproj/GoogleSignIn.strings",
+      "sha256": "4edc697cfa93600e8b6904d8722840355057bcb2e9c62426a97cecb642f633c8",
+      "bytes": 1570
+    },
+    {
+      "path": "Contents/Frameworks/GoogleSignIn.framework/Versions/A/Resources/GoogleSignIn.bundle/Contents/Resources/ja.lproj/GoogleSignIn.strings",
+      "sha256": "864dce623eb1a99beea7e72a1db9008610c403c97585704c1f780b2089381114",
+      "bytes": 1711
+    },
+    {
+      "path": "Contents/Frameworks/GoogleSignIn.framework/Versions/A/Resources/GoogleSignIn.bundle/Contents/Resources/ko.lproj/GoogleSignIn.strings",
+      "sha256": "021a829945c7e477b6e89a7cd9da683f5a29c0ffc0c012ee839baf50ef7ac013",
+      "bytes": 1634
+    },
+    {
+      "path": "Contents/Frameworks/GoogleSignIn.framework/Versions/A/Resources/GoogleSignIn.bundle/Contents/Resources/ms.lproj/GoogleSignIn.strings",
+      "sha256": "cb6c11480bf45c4b99ac1c2dcfdb67a5f82a799917a2630d4fb3e961357b5c93",
+      "bytes": 1565
+    },
+    {
+      "path": "Contents/Frameworks/GoogleSignIn.framework/Versions/A/Resources/GoogleSignIn.bundle/Contents/Resources/nb.lproj/GoogleSignIn.strings",
+      "sha256": "02a0ce4613ef0c23ec3f161d59d5c493e9de626c81b04be93180a11a42caeab0",
+      "bytes": 1593
+    },
+    {
+      "path": "Contents/Frameworks/GoogleSignIn.framework/Versions/A/Resources/GoogleSignIn.bundle/Contents/Resources/nl.lproj/GoogleSignIn.strings",
+      "sha256": "49051865c00640eded4c359b1e820e11d1f191055dbb480591f9397d37ab5e0d",
+      "bytes": 1606
+    },
+    {
+      "path": "Contents/Frameworks/GoogleSignIn.framework/Versions/A/Resources/GoogleSignIn.bundle/Contents/Resources/pl.lproj/GoogleSignIn.strings",
+      "sha256": "cc1ef4452fcc98acbeed22950bd7f0a22a579e025a8f50c78fdbb600ed38e55d",
+      "bytes": 1578
+    },
+    {
+      "path": "Contents/Frameworks/GoogleSignIn.framework/Versions/A/Resources/GoogleSignIn.bundle/Contents/Resources/pt.lproj/GoogleSignIn.strings",
+      "sha256": "8789b92e1a14c1fd45f26619273c573d1b109e3cf400e56e80a5870baaebccee",
+      "bytes": 1608
+    },
+    {
+      "path": "Contents/Frameworks/GoogleSignIn.framework/Versions/A/Resources/GoogleSignIn.bundle/Contents/Resources/pt_BR.lproj/GoogleSignIn.strings",
+      "sha256": "8789b92e1a14c1fd45f26619273c573d1b109e3cf400e56e80a5870baaebccee",
+      "bytes": 1608
+    },
+    {
+      "path": "Contents/Frameworks/GoogleSignIn.framework/Versions/A/Resources/GoogleSignIn.bundle/Contents/Resources/pt_PT.lproj/GoogleSignIn.strings",
+      "sha256": "56004febb8c697dfc2844b493b2d1fda94f7d71881c5e9f457dd50b434600e99",
+      "bytes": 1646
+    },
+    {
+      "path": "Contents/Frameworks/GoogleSignIn.framework/Versions/A/Resources/GoogleSignIn.bundle/Contents/Resources/ro.lproj/GoogleSignIn.strings",
+      "sha256": "af87451f0d584649dc36d5bd174adbf3aa7a490e7742272f2f7dd86e2262e3dd",
+      "bytes": 1598
+    },
+    {
+      "path": "Contents/Frameworks/GoogleSignIn.framework/Versions/A/Resources/GoogleSignIn.bundle/Contents/Resources/ru.lproj/GoogleSignIn.strings",
+      "sha256": "1d379702a951ecf98843d957092a8c4afee3eefe866a6001643e3b77755dc5dc",
+      "bytes": 1954
+    },
+    {
+      "path": "Contents/Frameworks/GoogleSignIn.framework/Versions/A/Resources/GoogleSignIn.bundle/Contents/Resources/sk.lproj/GoogleSignIn.strings",
+      "sha256": "3ff722865a3c2e610d9b84cb055d936320b83d66cafa24c8eb819368d41d5dac",
+      "bytes": 1665
+    },
+    {
+      "path": "Contents/Frameworks/GoogleSignIn.framework/Versions/A/Resources/GoogleSignIn.bundle/Contents/Resources/sv.lproj/GoogleSignIn.strings",
+      "sha256": "101e93a9c6ce8a01e7a86337aa212f6881045411d6e45270179fef261861431e",
+      "bytes": 1579
+    },
+    {
+      "path": "Contents/Frameworks/GoogleSignIn.framework/Versions/A/Resources/GoogleSignIn.bundle/Contents/Resources/th.lproj/GoogleSignIn.strings",
+      "sha256": "f3b0083f38b726109db921a7904a98de4a5017b978c5b09a8480c5447a3c4fc7",
+      "bytes": 2133
+    },
+    {
+      "path": "Contents/Frameworks/GoogleSignIn.framework/Versions/A/Resources/GoogleSignIn.bundle/Contents/Resources/tr.lproj/GoogleSignIn.strings",
+      "sha256": "0d49eb542849a6b7c689a72562f7204ca7451ce1be2beaad0743520d9bab80d2",
+      "bytes": 1596
+    },
+    {
+      "path": "Contents/Frameworks/GoogleSignIn.framework/Versions/A/Resources/GoogleSignIn.bundle/Contents/Resources/uk.lproj/GoogleSignIn.strings",
+      "sha256": "261c6ee81d9ffeb32feefaa9e2bf490ca6dbfa56e788432a95b4a333e2c7aeef",
+      "bytes": 1864
+    },
+    {
+      "path": "Contents/Frameworks/GoogleSignIn.framework/Versions/A/Resources/GoogleSignIn.bundle/Contents/Resources/vi.lproj/GoogleSignIn.strings",
+      "sha256": "5dd81023a8de776c88096b792e07363668e595dead4be8e5219bbbdd88398fe0",
+      "bytes": 1717
+    },
+    {
+      "path": "Contents/Frameworks/GoogleSignIn.framework/Versions/A/Resources/GoogleSignIn.bundle/Contents/Resources/zh_CN.lproj/GoogleSignIn.strings",
+      "sha256": "5274434127f770963d92af8700a2b838cae491bb7608642d4ff2a517fb81d677",
+      "bytes": 1489
+    },
+    {
+      "path": "Contents/Frameworks/GoogleSignIn.framework/Versions/A/Resources/GoogleSignIn.bundle/Contents/Resources/zh_TW.lproj/GoogleSignIn.strings",
+      "sha256": "f0af4ba5c0339e860cb1b938679f8f4cd1f910401bbea187cfbb239ab13bb7e5",
+      "bytes": 1525
+    },
+    {
+      "path": "Contents/Frameworks/GoogleSignIn.framework/Versions/A/Resources/Info.plist",
+      "sha256": "3fc3c44ca2240d83c139519ffaccc9b84e6d30cd2c65846a429b1af7d3ae7e2a",
+      "bytes": 1347
+    },
+    {
+      "path": "Contents/Frameworks/GoogleSignIn.framework/Versions/A/_CodeSignature/CodeResources",
+      "sha256": "79632f64c4279a1f1062e2a64692c7a2f3fa598433551f7c08625ebcc062f516",
+      "bytes": 21470
+    },
+    {
+      "path": "Contents/Frameworks/GoogleUtilities.framework/Versions/A/GoogleUtilities",
+      "sha256": "5aecf104519b8ae61d45ac4c856eb0d91afc420756c8ac0a1c1513f2e408888d",
+      "bytes": 453168
+    },
+    {
+      "path": "Contents/Frameworks/GoogleUtilities.framework/Versions/A/Resources/GoogleUtilities_Privacy.bundle/Contents/Info.plist",
+      "sha256": "83504015e6ac6ba9cf09686cd8cac112efa9d192a6709018829ad480242f19da",
+      "bytes": 1307
+    },
+    {
+      "path": "Contents/Frameworks/GoogleUtilities.framework/Versions/A/Resources/GoogleUtilities_Privacy.bundle/Contents/Resources/PrivacyInfo.xcprivacy",
+      "sha256": "f81b5cf8f043662712eca9e9785767264cf190025fe7bdb49777296c068de53c",
+      "bytes": 1233
+    },
+    {
+      "path": "Contents/Frameworks/GoogleUtilities.framework/Versions/A/Resources/Info.plist",
+      "sha256": "a3afa4a24a41b88c4398013b944a13e5c66c1cff7cd5cb7362f55c2d54f78452",
+      "bytes": 1356
+    },
+    {
+      "path": "Contents/Frameworks/GoogleUtilities.framework/Versions/A/_CodeSignature/CodeResources",
+      "sha256": "6441fdfc396929bc78d9caa3079bb60d9fb8db8fe38fe938861c2084ca35eb4c",
+      "bytes": 3096
+    },
+    {
+      "path": "Contents/Frameworks/OrderedSet.framework/Versions/A/OrderedSet",
+      "sha256": "fac775ae779cd96a4a6fa3c75089aead4ae4c02793c9a1612c66cf5d0da784aa",
+      "bytes": 307776
+    },
+    {
+      "path": "Contents/Frameworks/OrderedSet.framework/Versions/A/Resources/Info.plist",
+      "sha256": "4f7dec016fe08f651b6728b0c3bea8e35672d38bc7c89fe3d6edb130753a14e3",
+      "bytes": 1341
+    },
+    {
+      "path": "Contents/Frameworks/OrderedSet.framework/Versions/A/Resources/OrderedSet_privacy.bundle/Contents/Info.plist",
+      "sha256": "bc7b0e2ebf26b75e86dd1e89b3f46017f0f5701abce987367c86967a5a3a912f",
+      "bytes": 1297
+    },
+    {
+      "path": "Contents/Frameworks/OrderedSet.framework/Versions/A/Resources/OrderedSet_privacy.bundle/Contents/Resources/PrivacyInfo.xcprivacy",
+      "sha256": "5a9b8fc0cddb10201bb47cc2804b3f004c7251476622d25bfc4eb54ed46e1084",
+      "bytes": 373
+    },
+    {
+      "path": "Contents/Frameworks/OrderedSet.framework/Versions/A/_CodeSignature/CodeResources",
+      "sha256": "7314f526c1e61c6537520ac34fe79e46e77ecc2dc042b08a905424a36942c859",
+      "bytes": 3076
+    },
+    {
+      "path": "Contents/Frameworks/Promises.framework/Versions/A/Promises",
+      "sha256": "4053ee2b0266179b0e7e0ff8faad946cf7721cf051580fa179e67c7ed280a997",
+      "bytes": 420432
+    },
+    {
+      "path": "Contents/Frameworks/Promises.framework/Versions/A/Resources/Info.plist",
+      "sha256": "b220dbf41d50d67e87fe5ca8937da9d5c6a783ed5a445677fe3dccc874625465",
+      "bytes": 1335
+    },
+    {
+      "path": "Contents/Frameworks/Promises.framework/Versions/A/Resources/Promises_Privacy.bundle/Contents/Info.plist",
+      "sha256": "46c2b5c3e3f8f0049a843148594433b8937f2a05868cec3fa26c057d83f0e852",
+      "bytes": 1293
+    },
+    {
+      "path": "Contents/Frameworks/Promises.framework/Versions/A/Resources/Promises_Privacy.bundle/Contents/Resources/PrivacyInfo.xcprivacy",
+      "sha256": "74b0cd72fc23c1ef302f22ee2753f61817cdc5af0ff7a7f2d0632b524fb8acea",
+      "bytes": 373
+    },
+    {
+      "path": "Contents/Frameworks/Promises.framework/Versions/A/_CodeSignature/CodeResources",
+      "sha256": "d27f78941d67f4f0d77c2569840165cc173659e570af7f24ad19ab862c93771a",
+      "bytes": 3284
+    },
+    {
+      "path": "Contents/Frameworks/absl.framework/Versions/A/Resources/Info.plist",
+      "sha256": "d57202280bd230d0e359648b3d722589ef546c2b85fb7e23f754b162016aaac3",
+      "bytes": 1330
+    },
+    {
+      "path": "Contents/Frameworks/absl.framework/Versions/A/Resources/xcprivacy.bundle/Contents/Info.plist",
+      "sha256": "d97649785bdc34a62699c8c710bd816ba1d5b9f65a983cefbaf160c24ee48849",
+      "bytes": 1286
+    },
+    {
+      "path": "Contents/Frameworks/absl.framework/Versions/A/Resources/xcprivacy.bundle/Contents/Resources/PrivacyInfo.xcprivacy",
+      "sha256": "f232217ae9edf2ab6a541a28eff50cfe05303c2b4756fff95cca72eccbc3b898",
+      "bytes": 381
+    },
+    {
+      "path": "Contents/Frameworks/absl.framework/Versions/A/_CodeSignature/CodeResources",
+      "sha256": "f546daba832696365edfbb01986d8f5cc78b40a8eb870bcca68bfccbd5533f4a",
+      "bytes": 3256
+    },
+    {
+      "path": "Contents/Frameworks/absl.framework/Versions/A/absl",
+      "sha256": "96056c5a0ba6417f3ab3efabc38c01584fb054508506614ac3f2b85a5ea7f64c",
+      "bytes": 2759264
+    },
+    {
+      "path": "Contents/Frameworks/device_info_plus.framework/Versions/A/Resources/Info.plist",
+      "sha256": "d376f802a102ac730f4c60f1c2edd56eb671c2b4d93652f2ce2deacabfcdfa31",
+      "bytes": 1359
+    },
+    {
+      "path": "Contents/Frameworks/device_info_plus.framework/Versions/A/Resources/device_info_plus_privacy.bundle/Contents/Info.plist",
+      "sha256": "7ba1127c91a181442b0a00646ff1b3526b17e6367ff05a416db73b994ead620f",
+      "bytes": 1309
+    },
+    {
+      "path": "Contents/Frameworks/device_info_plus.framework/Versions/A/Resources/device_info_plus_privacy.bundle/Contents/Resources/PrivacyInfo.xcprivacy",
+      "sha256": "204d035a88eab2281b3d914f46c796766ae78e3cb82537711928dca9e28dbbb8",
+      "bytes": 325
+    },
+    {
+      "path": "Contents/Frameworks/device_info_plus.framework/Versions/A/_CodeSignature/CodeResources",
+      "sha256": "65d8b7483697a45d69d1c038999b6f0be2d9ba0efee3a8e7a8f656e57b066d51",
+      "bytes": 3100
+    },
+    {
+      "path": "Contents/Frameworks/device_info_plus.framework/Versions/A/device_info_plus",
+      "sha256": "a87ed6bb1b90047557dc0acea0e7b99261e52aad0a8bfb065cce1aa5d9d747b4",
+      "bytes": 319232
+    },
+    {
+      "path": "Contents/Frameworks/flutter_inappwebview_macos.framework/Versions/A/Resources/Info.plist",
+      "sha256": "17f075df07ffe13d6264e260aa2aa36482ee57a54bbef89f995670671f0bb491",
+      "bytes": 1389
+    },
+    {
+      "path": "Contents/Frameworks/flutter_inappwebview_macos.framework/Versions/A/Resources/flutter_inappwebview_macos_privacy.bundle/Contents/Info.plist",
+      "sha256": "5ef0eb2b2d4a8a23ec07902e52e978209d6144cb1bdfb8a9f527c8f428a49407",
+      "bytes": 1329
+    },
+    {
+      "path": "Contents/Frameworks/flutter_inappwebview_macos.framework/Versions/A/Resources/flutter_inappwebview_macos_privacy.bundle/Contents/Resources/PrivacyInfo.xcprivacy",
+      "sha256": "47226a29608df206ad0a110e6afeb5a77ff575ac1df9c76bfdb2d6dfb3fafed1",
+      "bytes": 372
+    },
+    {
+      "path": "Contents/Frameworks/flutter_inappwebview_macos.framework/Versions/A/_CodeSignature/CodeResources",
+      "sha256": "7c00310dd593f454f8129355c7f53a4c66f53973d85e3fee9cb4a3fc2da67275",
+      "bytes": 3140
+    },
+    {
+      "path": "Contents/Frameworks/flutter_inappwebview_macos.framework/Versions/A/flutter_inappwebview_macos",
+      "sha256": "b73971296af57a3b3bcff174d6fdd3215fba47c2275ffd8f305ea069b1bfbfae",
+      "bytes": 4375216
+    },
+    {
+      "path": "Contents/Frameworks/grpc.framework/Versions/A/Resources/Info.plist",
+      "sha256": "914374a83d0f0980c443edfbbb8bb97a52bfe72d05cbc0bdf0529ac89a3d0f88",
+      "bytes": 1324
+    },
+    {
+      "path": "Contents/Frameworks/grpc.framework/Versions/A/Resources/grpc.bundle/Contents/Info.plist",
+      "sha256": "8ca203a6235b93f5bb7d305dc00389819017aa34a8c6b6a58ca751152d570aba",
+      "bytes": 1270
+    },
+    {
+      "path": "Contents/Frameworks/grpc.framework/Versions/A/Resources/grpc.bundle/Contents/Resources/PrivacyInfo.xcprivacy",
+      "sha256": "03b2c70833a331a2b1efd11ff168ed02a8eadfd5e7d1fbf30eecc7509a4aea47",
+      "bytes": 599
+    },
+    {
+      "path": "Contents/Frameworks/grpc.framework/Versions/A/_CodeSignature/CodeResources",
+      "sha256": "ea7ba48b35ca206850bc15836c253482f8c21794f0beb88fbd17b3c6d21154e6",
+      "bytes": 3020
+    },
+    {
+      "path": "Contents/Frameworks/grpc.framework/Versions/A/grpc",
+      "sha256": "11e7250b3164665d3189d3c8c2b059756597c71fc373ff668909fba06a129c1b",
+      "bytes": 28383392
+    },
+    {
+      "path": "Contents/Frameworks/grpcpp.framework/Versions/A/Resources/Info.plist",
+      "sha256": "e7134f3ba33ae73511aacc49cfe7fb999d65fa888f69be9f68d16093418f3318",
+      "bytes": 1330
+    },
+    {
+      "path": "Contents/Frameworks/grpcpp.framework/Versions/A/Resources/gRPCCertificates-Cpp.bundle/Contents/Info.plist",
+      "sha256": "3c8fa0b644cd7fa96d05586d1f42e202573ad9ad976dc9ed338a4cb7103a9576",
+      "bytes": 1302
+    },
+    {
+      "path": "Contents/Frameworks/grpcpp.framework/Versions/A/Resources/gRPCCertificates-Cpp.bundle/Contents/Resources/roots.pem",
+      "sha256": "96143344c4ae109588125b2c41d5daf654a5fafc6e23fac37f7ba3d29da7e776",
+      "bytes": 264440
+    },
+    {
+      "path": "Contents/Frameworks/grpcpp.framework/Versions/A/Resources/grpcpp.bundle/Contents/Info.plist",
+      "sha256": "bbb0fb8d89e173c41a522a1ff7833ac1abda6b1596e3fb9de1324c6c12e75e31",
+      "bytes": 1274
+    },
+    {
+      "path": "Contents/Frameworks/grpcpp.framework/Versions/A/Resources/grpcpp.bundle/Contents/Resources/PrivacyInfo.xcprivacy",
+      "sha256": "03b2c70833a331a2b1efd11ff168ed02a8eadfd5e7d1fbf30eecc7509a4aea47",
+      "bytes": 599
+    },
+    {
+      "path": "Contents/Frameworks/grpcpp.framework/Versions/A/_CodeSignature/CodeResources",
+      "sha256": "51bb79d686c68287fd64fdeb92513ae5ddd86847280c69e45de6c6f84b30443c",
+      "bytes": 3646
+    },
+    {
+      "path": "Contents/Frameworks/grpcpp.framework/Versions/A/grpcpp",
+      "sha256": "1871ad058279cc6c39c440a969edafb56e2e00d1988fc49ada64d2df2dbbba70",
+      "bytes": 1862528
+    },
+    {
+      "path": "Contents/Frameworks/leveldb.framework/Versions/A/Resources/Info.plist",
+      "sha256": "d0d94142fa9b865f912190ee359c6ec1974e46ed92e0a45a0beae15ade4671e9",
+      "bytes": 1333
+    },
+    {
+      "path": "Contents/Frameworks/leveldb.framework/Versions/A/Resources/leveldb_Privacy.bundle/Contents/Info.plist",
+      "sha256": "e5a5d27e0569dafee5c369ec82d30ef2c76cf1cba0e951f2d8207747853a94dd",
+      "bytes": 1292
+    },
+    {
+      "path": "Contents/Frameworks/leveldb.framework/Versions/A/Resources/leveldb_Privacy.bundle/Contents/Resources/PrivacyInfo.xcprivacy",
+      "sha256": "0ac00a0b7eff0079dce252e29ab41d71cf58c6c94fe4e44ea110cef5c62970e1",
+      "bytes": 856
+    },
+    {
+      "path": "Contents/Frameworks/leveldb.framework/Versions/A/_CodeSignature/CodeResources",
+      "sha256": "b8e10faf288a68ffc6444308af4517374e1ae818a2d566fc72031e36722be0ef",
+      "bytes": 3064
+    },
+    {
+      "path": "Contents/Frameworks/leveldb.framework/Versions/A/leveldb",
+      "sha256": "369ee175f29eb21f6ce2718ad9e8c5cd2b2ae0195863c7d11381ff5ded3d3de4",
+      "bytes": 908640
+    },
+    {
+      "path": "Contents/Frameworks/libswift_Concurrency.dylib",
+      "sha256": "40832351e8ba8629f913c48f22f686c300164cb5ecfd7ecc0e99b72021e241ba",
+      "bytes": 1121312
+    },
+    {
+      "path": "Contents/Frameworks/nanopb.framework/Versions/A/Resources/Info.plist",
+      "sha256": "c30d19f1051b62832582957d0cec9c52e2239ac87c80a1e5b4ad4acd5c44e464",
+      "bytes": 1333
+    },
+    {
+      "path": "Contents/Frameworks/nanopb.framework/Versions/A/Resources/nanopb_Privacy.bundle/Contents/Info.plist",
+      "sha256": "d96d86a8f4868fae8aac5bc9be4123692957ebdc01f7d098f7298eaf527c01d1",
+      "bytes": 1293
+    },
+    {
+      "path": "Contents/Frameworks/nanopb.framework/Versions/A/Resources/nanopb_Privacy.bundle/Contents/Resources/PrivacyInfo.xcprivacy",
+      "sha256": "729ba3cbd0f458c78cd61edf17350edafe0e34ca86e314ec64c8cb22ccd21b54",
+      "bytes": 374
+    },
+    {
+      "path": "Contents/Frameworks/nanopb.framework/Versions/A/_CodeSignature/CodeResources",
+      "sha256": "8be78f526183292522d69e14cb15c7b93f664375f506f9248b7ec1e402487c16",
+      "bytes": 3060
+    },
+    {
+      "path": "Contents/Frameworks/nanopb.framework/Versions/A/nanopb",
+      "sha256": "1283bd993c01937c4900df71a00adc259ab640a28f4a388f9f350a88036eb8ec",
+      "bytes": 159728
+    },
+    {
+      "path": "Contents/Frameworks/objective_c.framework/Versions/A/Resources/Info.plist",
+      "sha256": "57f0160881d1040458efd11a5256f761775e915a0060496b4a79ccb902f8485c",
+      "bytes": 739
+    },
+    {
+      "path": "Contents/Frameworks/objective_c.framework/Versions/A/_CodeSignature/CodeResources",
+      "sha256": "8d91bc8b7e125eed13b8800bbb5edb28f94cf67d749b9b6db670eb5727f86c4c",
+      "bytes": 2442
+    },
+    {
+      "path": "Contents/Frameworks/objective_c.framework/Versions/A/objective_c",
+      "sha256": "7c8f038593c946a1d3369f7ef5e5864f43f67f536291f1d12a435abbdc70fb8c",
+      "bytes": 362160
+    },
+    {
+      "path": "Contents/Frameworks/openssl_grpc.framework/Versions/A/Resources/Info.plist",
+      "sha256": "891e9f02f16a94119dd7ab2fe38134fe95c1b2f8178910ecfda3ee00f6d2f6e3",
+      "bytes": 1348
+    },
+    {
+      "path": "Contents/Frameworks/openssl_grpc.framework/Versions/A/Resources/openssl_grpc.bundle/Contents/Info.plist",
+      "sha256": "7031d40a05e22736ead84ed3cfe9a8be2d603842cf97672197464db80c185412",
+      "bytes": 1286
+    },
+    {
+      "path": "Contents/Frameworks/openssl_grpc.framework/Versions/A/Resources/openssl_grpc.bundle/Contents/Resources/PrivacyInfo.xcprivacy",
+      "sha256": "03b2c70833a331a2b1efd11ff168ed02a8eadfd5e7d1fbf30eecc7509a4aea47",
+      "bytes": 599
+    },
+    {
+      "path": "Contents/Frameworks/openssl_grpc.framework/Versions/A/_CodeSignature/CodeResources",
+      "sha256": "bdc86aaf1a5ccad9d4cf9f805649acbcd07d15799993bd3b4e9c4ea98793adfd",
+      "bytes": 3052
+    },
+    {
+      "path": "Contents/Frameworks/openssl_grpc.framework/Versions/A/openssl_grpc",
+      "sha256": "9523727b4e5bfda78c3060eb7585d3b6344f7bbce711b1f14d2465b3d8aa55d3",
+      "bytes": 4288688
+    },
+    {
+      "path": "Contents/Frameworks/package_info_plus.framework/Versions/A/Resources/Info.plist",
+      "sha256": "33b9e933983f25fc987c6295da09f61c280c9062a8d6ac56dcaedc6eaf242f6d",
+      "bytes": 1362
+    },
+    {
+      "path": "Contents/Frameworks/package_info_plus.framework/Versions/A/Resources/package_info_plus_privacy.bundle/Contents/Info.plist",
+      "sha256": "45121d7b3c529e162c3adad3b0c2b3bbf1b0c95021f36a3ca69c23aab09141fb",
+      "bytes": 1311
+    },
+    {
+      "path": "Contents/Frameworks/package_info_plus.framework/Versions/A/Resources/package_info_plus_privacy.bundle/Contents/Resources/PrivacyInfo.xcprivacy",
+      "sha256": "204d035a88eab2281b3d914f46c796766ae78e3cb82537711928dca9e28dbbb8",
+      "bytes": 325
+    },
+    {
+      "path": "Contents/Frameworks/package_info_plus.framework/Versions/A/_CodeSignature/CodeResources",
+      "sha256": "76024a56ab96d437cca95eb09503e81117db8be29ca2add847fe0672c32c38f0",
+      "bytes": 3104
+    },
+    {
+      "path": "Contents/Frameworks/package_info_plus.framework/Versions/A/package_info_plus",
+      "sha256": "02cb4b1f89e2e57dbc99971d6dbb14b591b2cb987b86a01afb9f1d8875161b00",
+      "bytes": 140560
+    },
+    {
+      "path": "Contents/Frameworks/shared_preferences_foundation.framework/Versions/A/Resources/Info.plist",
+      "sha256": "ee036b2aeb48568b63502e75d250e116281e5245e07b4c2784243fd4917aae05",
+      "bytes": 1398
+    },
+    {
+      "path": "Contents/Frameworks/shared_preferences_foundation.framework/Versions/A/Resources/shared_preferences_foundation_privacy.bundle/Contents/Info.plist",
+      "sha256": "8cb45c578dad31fa3d597b2e018351cc0dc076e0788b5fe07435619b0b0472b1",
+      "bytes": 1335
+    },
+    {
+      "path": "Contents/Frameworks/shared_preferences_foundation.framework/Versions/A/Resources/shared_preferences_foundation_privacy.bundle/Contents/Resources/PrivacyInfo.xcprivacy",
+      "sha256": "056428b938bd57018a60019d15c3c1ee2fa727f23687598bbbd934848b180b1a",
+      "bytes": 598
+    },
+    {
+      "path": "Contents/Frameworks/shared_preferences_foundation.framework/Versions/A/_CodeSignature/CodeResources",
+      "sha256": "73f39a0b4097e0637b6df9798ce0a8bd6a68b2fb6e49fd53bbb2222b3128232e",
+      "bytes": 3152
+    },
+    {
+      "path": "Contents/Frameworks/shared_preferences_foundation.framework/Versions/A/shared_preferences_foundation",
+      "sha256": "c92862beeae94428eea44c5407a0d2740e8d34c45f7ca886b28190f1f3e3193d",
+      "bytes": 419024
+    },
+    {
+      "path": "Contents/Frameworks/sqflite_darwin.framework/Versions/A/Resources/Info.plist",
+      "sha256": "abf126c631043fa0e1c21b4d66d922a80d623096aadd17cbe82a138914141675",
+      "bytes": 1353
+    },
+    {
+      "path": "Contents/Frameworks/sqflite_darwin.framework/Versions/A/Resources/sqflite_darwin_privacy.bundle/Contents/Info.plist",
+      "sha256": "42607f29d4c6370e00e925a2698c9d83f9e29ca09f629ba22a74ad1615ed23c7",
+      "bytes": 1305
+    },
+    {
+      "path": "Contents/Frameworks/sqflite_darwin.framework/Versions/A/Resources/sqflite_darwin_privacy.bundle/Contents/Resources/PrivacyInfo.xcprivacy",
+      "sha256": "47226a29608df206ad0a110e6afeb5a77ff575ac1df9c76bfdb2d6dfb3fafed1",
+      "bytes": 372
+    },
+    {
+      "path": "Contents/Frameworks/sqflite_darwin.framework/Versions/A/_CodeSignature/CodeResources",
+      "sha256": "7e88380cf8269ea5b2f7844546d51da71885d052ee60277f2ac6110946a41d26",
+      "bytes": 3092
+    },
+    {
+      "path": "Contents/Frameworks/sqflite_darwin.framework/Versions/A/sqflite_darwin",
+      "sha256": "1563ae0ec74e24ef76c7f0fbc29c9c25a9fae55a2e256a4c520f669dce083c73",
+      "bytes": 496080
+    },
+    {
+      "path": "Contents/Frameworks/url_launcher_macos.framework/Versions/A/Resources/Info.plist",
+      "sha256": "2d86215e4997a081ff3a2aad6c933d05347f9423f681c70466fb29542ee098af",
+      "bytes": 1365
+    },
+    {
+      "path": "Contents/Frameworks/url_launcher_macos.framework/Versions/A/Resources/url_launcher_macos_privacy.bundle/Contents/Info.plist",
+      "sha256": "804b55c3641154a851da2bf568b13e03f59f682f190787a324fae6bccc7aaaff",
+      "bytes": 1313
+    },
+    {
+      "path": "Contents/Frameworks/url_launcher_macos.framework/Versions/A/Resources/url_launcher_macos_privacy.bundle/Contents/Resources/PrivacyInfo.xcprivacy",
+      "sha256": "204d035a88eab2281b3d914f46c796766ae78e3cb82537711928dca9e28dbbb8",
+      "bytes": 325
+    },
+    {
+      "path": "Contents/Frameworks/url_launcher_macos.framework/Versions/A/_CodeSignature/CodeResources",
+      "sha256": "046486f047c5e0d0bb0eb0fb51e52f156e9578f2c713e4a4b8cbcd8c28fdb29d",
+      "bytes": 3108
+    },
+    {
+      "path": "Contents/Frameworks/url_launcher_macos.framework/Versions/A/url_launcher_macos",
+      "sha256": "12f3edcedb6fb0798a39bb89be629ffae0d9405c29dfb997ba40100a43277500",
+      "bytes": 331648
+    },
+    {
+      "path": "Contents/Info.plist",
+      "sha256": "4316f526f020e56338c428b09df9dd620e8b1ef76479ec5bb88f9ca594c61197",
+      "bytes": 2019
+    },
+    {
+      "path": "Contents/MacOS/OpenTurath AI",
+      "sha256": "3e27c4de49ed343a1b280704cacb0aed3c83494a21801a002c4308aa170d37b7",
+      "bytes": 1747536
+    },
+    {
+      "path": "Contents/PkgInfo",
+      "sha256": "82502191c9484b04d685374f9879a0066069c49b8acae7a04b01d38d07e8eca0",
+      "bytes": 8
+    },
+    {
+      "path": "Contents/Resources/AppIcon.icns",
+      "sha256": "e5ac04bf93fca40d77ec64be57a738c21eff9c4ea8adef2c1e1f007f7071b59b",
+      "bytes": 20678
+    },
+    {
+      "path": "Contents/Resources/Assets.car",
+      "sha256": "37ff4056cb2436a2bb6b077da88023eccdd5e16787e97359ef6c885572121f88",
+      "bytes": 113096
+    },
+    {
+      "path": "Contents/Resources/Base.lproj/MainMenu.nib",
+      "sha256": "2a7f4327099cfbb0e3fe0365b63849d617de40e880ac06390f899664dc6fc77c",
+      "bytes": 16221
+    },
+    {
+      "path": "Contents/Resources/google_sign_in_ios_privacy.bundle/Contents/Info.plist",
+      "sha256": "13c674801a8130dd65b4cc45072af14753393f90a5b8fbf14aed7d8d55a26771",
+      "bytes": 1313
+    },
+    {
+      "path": "Contents/Resources/google_sign_in_ios_privacy.bundle/Contents/Resources/PrivacyInfo.xcprivacy",
+      "sha256": "6d2da0d8d930227d428c1d9363b0ad6e3a12e2c9b68c5ce297158a7412fc8c31",
+      "bytes": 373
+    },
+    {
+      "path": "Contents/_CodeSignature/CodeResources",
+      "sha256": "270340e06e13cd34eb4dd729bfdf10e1411e55b9ddb5b0ee5603249c26b0dcda",
+      "bytes": 14470
+    }
+  ]
+}

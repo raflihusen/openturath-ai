@@ -1,0 +1,364 @@
+00:00 +0: loading /Users/apple/Downloads/ramadhan/openturath_ai/test/catalog_card_content_test.dart
+00:00 +0: /Users/apple/Downloads/ramadhan/openturath_ai/test/catalog_card_content_test.dart: catalogCardFacts keeps the three most useful edition facts in a stable order
+00:00 +1: /Users/apple/Downloads/ramadhan/openturath_ai/test/catalog_card_content_test.dart: catalogCardFacts uses tahqiq only when a primary fact is unavailable
+00:00 +2: /Users/apple/Downloads/ramadhan/openturath_ai/test/catalog_card_content_test.dart: catalogCardFacts drops placeholders and never returns more than three facts
+00:01 +3: /Users/apple/Downloads/ramadhan/openturath_ai/test/book_catalog_navigation_test.dart: Milestone 1 — Book Catalog & Navigation Architecture BookRowItem displays Arabic title in RTL and compact tags
+00:01 +4: /Users/apple/Downloads/ramadhan/openturath_ai/test/book_catalog_navigation_test.dart: Milestone 1 — Book Catalog & Navigation Architecture BookDetailScreen follows Arabic locale and keeps source text RTL
+00:01 +5: /Users/apple/Downloads/ramadhan/openturath_ai/test/book_catalog_navigation_test.dart: Milestone 1 — Book Catalog & Navigation Architecture BookCatalogScreen displays title and search input
+00:01 +6: /Users/apple/Downloads/ramadhan/openturath_ai/test/book_catalog_navigation_test.dart: Milestone 1 — Book Catalog & Navigation Architecture English book details localize chrome while preserving Arabic title
+00:02 +7: /Users/apple/Downloads/ramadhan/openturath_ai/test/book_catalog_navigation_test.dart: Milestone 1 — Book Catalog & Navigation Architecture AppRoutes contains bookCatalog and bookDetail
+00:02 +8: /Users/apple/Downloads/ramadhan/openturath_ai/test/dashboard_and_theme_restructure_test.dart: Milestone 3: 3-Mode Theme & Dashboard Restructuring AppConfig supports ThemeMode.system, ThemeMode.light, and ThemeMode.dark
+00:02 +9: /Users/apple/Downloads/ramadhan/openturath_ai/test/dashboard_and_theme_restructure_test.dart: Milestone 3: 3-Mode Theme & Dashboard Restructuring HijriDateUtils formatDualDate produces elegant scholarly date with H and M
+00:02 +10: /Users/apple/Downloads/ramadhan/openturath_ai/test/dashboard_and_theme_restructure_test.dart: Milestone 3: 3-Mode Theme & Dashboard Restructuring HijriDateUtils formatHijriOnly produces valid Hijri format
+00:02 +11: /Users/apple/Downloads/ramadhan/openturath_ai/test/dashboard_and_theme_restructure_test.dart: Milestone 3: 3-Mode Theme & Dashboard Restructuring Dashboard resume session selects matching active agent when last opened exists
+00:02 +12: /Users/apple/Downloads/ramadhan/openturath_ai/test/dashboard_and_theme_restructure_test.dart: Milestone 3: 3-Mode Theme & Dashboard Restructuring Recent notes can store and format canonical book and ibarah citations
+00:02 +13: /Users/apple/Downloads/ramadhan/openturath_ai/test/dashboard_and_theme_restructure_test.dart: Milestone 3: 3-Mode Theme & Dashboard Restructuring AgentSessionManager maxTabs is limited to 3 to prevent Android WebView memory bloat
+00:05 +14: /Users/apple/Downloads/ramadhan/openturath_ai/test/resilience_and_compliance_test.dart: Resilience & Compliance Suite AppErrorState renders properly with retry and back buttons
+00:06 +15: /Users/apple/Downloads/ramadhan/openturath_ai/test/resilience_and_compliance_test.dart: Resilience & Compliance Suite AgentModel defaultAgents have complete Arabic metadata and no null pointer risks
+00:06 +16: /Users/apple/Downloads/ramadhan/openturath_ai/test/resilience_and_compliance_test.dart: Resilience & Compliance Suite Anonymous guest user model properties are valid
+00:06 +17: /Users/apple/Downloads/ramadhan/openturath_ai/test/resilience_and_compliance_test.dart: Resilience & Compliance Suite AppTheme Obsidian standard does not leak gold color #D4AF37
+00:06 +18: /Users/apple/Downloads/ramadhan/openturath_ai/test/resilience_and_compliance_test.dart: Resilience & Compliance Suite AgentAccessException encapsulates code, message, and string representation
+00:06 +19: /Users/apple/Downloads/ramadhan/openturath_ai/test/resilience_and_compliance_test.dart: Resilience & Compliance Suite UserModel hasAccessToAgent respects modular entitlements and expiry
+00:06 +20: /Users/apple/Downloads/ramadhan/openturath_ai/test/resilience_and_compliance_test.dart: Resilience & Compliance Suite ThemeData dark and light include hardened component themes
+00:06 +21: /Users/apple/Downloads/ramadhan/openturath_ai/test/resilience_and_compliance_test.dart: Resilience & Compliance Suite Localization contains valid cancel key in all three languages
+00:06 +22: /Users/apple/Downloads/ramadhan/openturath_ai/test/resilience_and_compliance_test.dart: Resilience & Compliance Suite BookmarkModel serializes and deserializes correctly
+00:09 +23: /Users/apple/Downloads/ramadhan/openturath_ai/test/device_service_test.dart: DeviceService & Fingerprint Hashing computeHash produces valid 64-char lowercase hex string
+00:09 +24: /Users/apple/Downloads/ramadhan/openturath_ai/test/device_service_test.dart: DeviceService & Fingerprint Hashing computeHash is case-insensitive for brand and model normalization
+00:09 +25: /Users/apple/Downloads/ramadhan/openturath_ai/test/device_service_test.dart: DeviceService & Fingerprint Hashing Different rawId produces distinct hashes (avalanche effect)
+00:09 +26: /Users/apple/Downloads/ramadhan/openturath_ai/test/device_service_test.dart: DeviceService & Fingerprint Hashing getDeviceFingerprint returns a non-empty fingerprint safely in test environment
+[DeviceService] Warning failed to inspect device info: MissingPluginException(No implementation found for method getDeviceInfo on channel dev.fluttercommunity.plus/device_info)
+00:10 +27: /Users/apple/Downloads/ramadhan/openturath_ai/test/application_states_test.dart: Milestone 4: 14 Application States Verification State 2 & 3: AppLoader renders inline and fullscreen pulse states
+00:11 +28: /Users/apple/Downloads/ramadhan/openturath_ai/test/application_states_test.dart: Milestone 4: 14 Application States Verification State 9: AppErrorState.network renders peaceful scholarly network error
+00:11 +29: /Users/apple/Downloads/ramadhan/openturath_ai/test/application_states_test.dart: Milestone 4: 14 Application States Verification State 10: AppErrorState.unauthorized renders locked module state
+00:11 +30: /Users/apple/Downloads/ramadhan/openturath_ai/test/application_states_test.dart: Milestone 4: 14 Application States Verification State 7 & 8: AppErrorState.empty renders scholarly empty state
+00:11 +31: /Users/apple/Downloads/ramadhan/openturath_ai/test/application_states_test.dart: Milestone 4: 14 Application States Verification State 11: AppErrorState.generic renders serene fallback state
+00:11 +32: /Users/apple/Downloads/ramadhan/openturath_ai/test/application_states_test.dart: Milestone 4: 14 Application States Verification State 13: Disabled/Locked entitlement check accurately enforces paywall
+00:11 +33: /Users/apple/Downloads/ramadhan/openturath_ai/test/exclusive_activation_dialog_test.dart: ExclusiveActivationDialog renders premium celebration card and benefits
+00:11 +34: /Users/apple/Downloads/ramadhan/openturath_ai/test/exclusive_activation_dialog_test.dart: ExclusiveActivationDialog renders premium celebration card and benefits
+00:13 +35: /Users/apple/Downloads/ramadhan/openturath_ai/test/exclusive_activation_dialog_test.dart: ExclusiveActivationDialog renders premium celebration card and benefits
+00:13 +36: /Users/apple/Downloads/ramadhan/openturath_ai/test/deep_test.dart: 1. Asset Files & Animation Integrity Tests All SVG vector files are valid XML and well-formed
+00:13 +37: /Users/apple/Downloads/ramadhan/openturath_ai/test/deep_test.dart: 1. Asset Files & Animation Integrity Tests Core official OpenTurath SVG logo is present
+00:13 +38: /Users/apple/Downloads/ramadhan/openturath_ai/test/deep_test.dart: 1. Asset Files & Animation Integrity Tests Old raster logo_openturath.png is permanently eliminated
+00:13 +39: /Users/apple/Downloads/ramadhan/openturath_ai/test/deep_test.dart: 2. Design System & Theme Engine Invariants Official Google NotebookLM color tokens are exact
+00:13 +40: /Users/apple/Downloads/ramadhan/openturath_ai/test/deep_test.dart: 2. Design System & Theme Engine Invariants Radius AppTheme adalah alias token OTRadius
+00:13 +41: /Users/apple/Downloads/ramadhan/openturath_ai/test/deep_test.dart: 3. Agent Catalog & Module Entitlements Tests Default catalog contains core Turats disciplines with full metadata
+00:13 +42: /Users/apple/Downloads/ramadhan/openturath_ai/test/deep_test.dart: 3. Agent Catalog & Module Entitlements Tests Active agent books contain valid titles, authors, and descriptions
+00:13 +43: /Users/apple/Downloads/ramadhan/openturath_ai/test/deep_test.dart: 3. Agent Catalog & Module Entitlements Tests Sub-agents represent valid specialized research modes
+00:13 +44: /Users/apple/Downloads/ramadhan/openturath_ai/test/deep_test.dart: 4. Smart Arabic Search & Text Normalization Tests Arabic diacritics stripping is exhaustive
+00:13 +45: /Users/apple/Downloads/ramadhan/openturath_ai/test/deep_test.dart: 4. Smart Arabic Search & Text Normalization Tests Alef variations are unified to bare alef
+00:13 +46: /Users/apple/Downloads/ramadhan/openturath_ai/test/deep_test.dart: 4. Smart Arabic Search & Text Normalization Tests Arabic search correctly finds substrings regardless of voweling
+00:13 +47: /Users/apple/Downloads/ramadhan/openturath_ai/test/deep_test.dart: 5. Localization Dictionary Exhaustive Tests All language keys exist across Indonesian, English, and Arabic
+00:14 +48: /Users/apple/Downloads/ramadhan/openturath_ai/test/bookmark_content_contract_test.dart: AI answer bookmark content contract uses the first markdown heading as title and omits it from preview
+00:14 +49: /Users/apple/Downloads/ramadhan/openturath_ai/test/bookmark_content_contract_test.dart: AI answer bookmark content contract falls back to the first meaningful line when no heading exists
+00:14 +50: /Users/apple/Downloads/ramadhan/openturath_ai/test/bookmark_content_contract_test.dart: AI answer bookmark content contract removes technical response labels from display titles
+00:14 +51: /Users/apple/Downloads/ramadhan/openturath_ai/test/bookmark_content_contract_test.dart: Bookmark document metadata old records remain readable with safe AI answer defaults
+00:14 +52: /Users/apple/Downloads/ramadhan/openturath_ai/test/bookmark_content_contract_test.dart: Bookmark document metadata manual notes retain their private-note identity after serialization
+00:16 +53: /Users/apple/Downloads/ramadhan/openturath_ai/test/desktop_interaction_test.dart: Search shortcut and Escape work with focused text input on TargetPlatform.windows (variant: TargetPlatform.windows)
+00:17 +54: /Users/apple/Downloads/ramadhan/openturath_ai/test/desktop_interaction_test.dart: Search shortcut and Escape work with focused text input on TargetPlatform.macOS (variant: TargetPlatform.macOS)
+00:18 +55: /Users/apple/Downloads/ramadhan/openturath_ai/test/desktop_interaction_test.dart: Desktop sheet stays centered, bounded and scrollable at Size(860.0, 600.0) (variant: TargetPlatform.windows)
+00:19 +56: /Users/apple/Downloads/ramadhan/openturath_ai/test/desktop_interaction_test.dart: Desktop sheet stays centered, bounded and scrollable at Size(1920.0, 1080.0) (variant: TargetPlatform.windows)
+00:20 +57: /Users/apple/Downloads/ramadhan/openturath_ai/test/desktop_interaction_test.dart: Interactive cards support keyboard activation (variant: TargetPlatform.windows)
+00:22 +58: /Users/apple/Downloads/ramadhan/openturath_ai/test/telemetry_service_test.dart: TelemetryService Tests sanitizeData masks sensitive tokens, passwords, and cookies
+00:22 +59: /Users/apple/Downloads/ramadhan/openturath_ai/test/telemetry_service_test.dart: TelemetryService Tests diagnostic text redacts email addresses in any field
+00:22 +60: /Users/apple/Downloads/ramadhan/openturath_ai/test/telemetry_service_test.dart: TelemetryService Tests maskEmail obfuscates email addresses for privacy
+00:22 +61: /Users/apple/Downloads/ramadhan/openturath_ai/test/telemetry_service_test.dart: TelemetryService Tests leaveBreadcrumb adds breadcrumbs and respects ring buffer limit
+00:22 +62: /Users/apple/Downloads/ramadhan/openturath_ai/test/telemetry_service_test.dart: TelemetryService Tests Deduplication prevents immediate duplicate error reporting
+00:24 +63: /Users/apple/Downloads/ramadhan/openturath_ai/test/editorial_catalog_reliability_test.dart: unvocalized Arabic search finds the vocalized title and clears
+00:25 +64: /Users/apple/Downloads/ramadhan/openturath_ai/test/editorial_catalog_reliability_test.dart: volume choices expose selection and support keyboard activation
+00:26 +65: /Users/apple/Downloads/ramadhan/openturath_ai/test/editorial_catalog_reliability_test.dart: catalog reflows at 360.0 in id dark=false with 2x text
+00:26 +66: /Users/apple/Downloads/ramadhan/openturath_ai/test/editorial_catalog_reliability_test.dart: catalog reflows at 360.0 in id dark=true with 2x text
+00:26 +67: /Users/apple/Downloads/ramadhan/openturath_ai/test/editorial_catalog_reliability_test.dart: catalog reflows at 360.0 in en dark=false with 2x text
+00:26 +68: /Users/apple/Downloads/ramadhan/openturath_ai/test/editorial_catalog_reliability_test.dart: catalog reflows at 360.0 in en dark=true with 2x text
+00:26 +69: /Users/apple/Downloads/ramadhan/openturath_ai/test/editorial_catalog_reliability_test.dart: catalog reflows at 360.0 in ar dark=false with 2x text
+00:26 +70: /Users/apple/Downloads/ramadhan/openturath_ai/test/editorial_catalog_reliability_test.dart: catalog reflows at 360.0 in ar dark=true with 2x text
+00:26 +71: /Users/apple/Downloads/ramadhan/openturath_ai/test/editorial_catalog_reliability_test.dart: catalog reflows at 390.0 in id dark=false with 2x text
+00:26 +72: /Users/apple/Downloads/ramadhan/openturath_ai/test/editorial_catalog_reliability_test.dart: catalog reflows at 390.0 in id dark=true with 2x text
+00:26 +73: /Users/apple/Downloads/ramadhan/openturath_ai/test/editorial_catalog_reliability_test.dart: catalog reflows at 390.0 in id dark=true with 2x text
+00:26 +74: /Users/apple/Downloads/ramadhan/openturath_ai/test/editorial_catalog_reliability_test.dart: catalog reflows at 390.0 in id dark=true with 2x text
+00:27 +75: /Users/apple/Downloads/ramadhan/openturath_ai/test/editorial_catalog_reliability_test.dart: catalog reflows at 390.0 in id dark=true with 2x text
+00:27 +76: /Users/apple/Downloads/ramadhan/openturath_ai/test/editorial_catalog_reliability_test.dart: catalog reflows at 390.0 in id dark=true with 2x text
+00:27 +77: /Users/apple/Downloads/ramadhan/openturath_ai/test/editorial_catalog_reliability_test.dart: catalog reflows at 390.0 in id dark=true with 2x text
+00:27 +78: /Users/apple/Downloads/ramadhan/openturath_ai/test/editorial_catalog_reliability_test.dart: catalog reflows at 390.0 in id dark=true with 2x text
+00:27 +79: /Users/apple/Downloads/ramadhan/openturath_ai/test/editorial_catalog_reliability_test.dart: catalog reflows at 390.0 in id dark=true with 2x text
+00:27 +80: /Users/apple/Downloads/ramadhan/openturath_ai/test/editorial_catalog_reliability_test.dart: catalog reflows at 390.0 in en dark=false with 2x text
+00:27 +81: /Users/apple/Downloads/ramadhan/openturath_ai/test/editorial_catalog_reliability_test.dart: catalog reflows at 390.0 in en dark=true with 2x text
+00:27 +82: /Users/apple/Downloads/ramadhan/openturath_ai/test/editorial_catalog_reliability_test.dart: catalog reflows at 390.0 in ar dark=false with 2x text
+00:27 +83: /Users/apple/Downloads/ramadhan/openturath_ai/test/editorial_catalog_reliability_test.dart: catalog reflows at 390.0 in ar dark=true with 2x text
+00:27 +84: /Users/apple/Downloads/ramadhan/openturath_ai/test/editorial_catalog_reliability_test.dart: catalog reflows at 768.0 in id dark=false with 2x text
+00:28 +85: /Users/apple/Downloads/ramadhan/openturath_ai/test/editorial_catalog_reliability_test.dart: catalog reflows at 768.0 in id dark=true with 2x text
+00:28 +86: /Users/apple/Downloads/ramadhan/openturath_ai/test/editorial_catalog_reliability_test.dart: catalog reflows at 768.0 in en dark=false with 2x text
+00:28 +87: /Users/apple/Downloads/ramadhan/openturath_ai/test/editorial_catalog_reliability_test.dart: catalog reflows at 768.0 in en dark=false with 2x text
+00:28 +88: /Users/apple/Downloads/ramadhan/openturath_ai/test/editorial_catalog_reliability_test.dart: catalog reflows at 768.0 in en dark=false with 2x text
+00:28 +89: /Users/apple/Downloads/ramadhan/openturath_ai/test/editorial_catalog_reliability_test.dart: catalog reflows at 768.0 in en dark=false with 2x text
+00:28 +90: /Users/apple/Downloads/ramadhan/openturath_ai/test/editorial_catalog_reliability_test.dart: catalog reflows at 768.0 in en dark=false with 2x text
+00:28 +91: /Users/apple/Downloads/ramadhan/openturath_ai/test/editorial_catalog_reliability_test.dart: catalog reflows at 768.0 in en dark=false with 2x text
+00:28 +92: /Users/apple/Downloads/ramadhan/openturath_ai/test/editorial_catalog_reliability_test.dart: catalog reflows at 768.0 in en dark=false with 2x text
+00:28 +93: /Users/apple/Downloads/ramadhan/openturath_ai/test/editorial_catalog_reliability_test.dart: catalog reflows at 768.0 in en dark=false with 2x text
+00:28 +94: /Users/apple/Downloads/ramadhan/openturath_ai/test/editorial_catalog_reliability_test.dart: catalog reflows at 768.0 in en dark=false with 2x text
+00:29 +95: /Users/apple/Downloads/ramadhan/openturath_ai/test/editorial_catalog_reliability_test.dart: catalog reflows at 768.0 in en dark=true with 2x text
+00:29 +96: /Users/apple/Downloads/ramadhan/openturath_ai/test/editorial_catalog_reliability_test.dart: catalog reflows at 768.0 in ar dark=false with 2x text
+00:29 +97: /Users/apple/Downloads/ramadhan/openturath_ai/test/editorial_catalog_reliability_test.dart: catalog reflows at 768.0 in ar dark=true with 2x text
+00:29 +98: /Users/apple/Downloads/ramadhan/openturath_ai/test/editorial_catalog_reliability_test.dart: catalog reflows at 1024.0 in id dark=false with 2x text
+00:29 +99: /Users/apple/Downloads/ramadhan/openturath_ai/test/editorial_catalog_reliability_test.dart: catalog reflows at 1024.0 in id dark=false with 2x text
+00:29 +100: /Users/apple/Downloads/ramadhan/openturath_ai/test/editorial_catalog_reliability_test.dart: catalog reflows at 1024.0 in id dark=false with 2x text
+00:29 +101: /Users/apple/Downloads/ramadhan/openturath_ai/test/editorial_catalog_reliability_test.dart: catalog reflows at 1024.0 in id dark=false with 2x text
+00:29 +102: /Users/apple/Downloads/ramadhan/openturath_ai/test/editorial_catalog_reliability_test.dart: catalog reflows at 1024.0 in id dark=false with 2x text
+00:29 +103: /Users/apple/Downloads/ramadhan/openturath_ai/test/editorial_catalog_reliability_test.dart: catalog reflows at 1024.0 in id dark=false with 2x text
+00:30 +104: /Users/apple/Downloads/ramadhan/openturath_ai/test/editorial_catalog_reliability_test.dart: catalog reflows at 1024.0 in id dark=true with 2x text
+00:30 +105: /Users/apple/Downloads/ramadhan/openturath_ai/test/editorial_catalog_reliability_test.dart: catalog reflows at 1024.0 in en dark=false with 2x text
+00:30 +106: /Users/apple/Downloads/ramadhan/openturath_ai/test/editorial_catalog_reliability_test.dart: catalog reflows at 1024.0 in en dark=true with 2x text
+00:30 +107: /Users/apple/Downloads/ramadhan/openturath_ai/test/editorial_catalog_reliability_test.dart: catalog reflows at 1024.0 in en dark=true with 2x text
+00:30 +108: /Users/apple/Downloads/ramadhan/openturath_ai/test/editorial_catalog_reliability_test.dart: catalog reflows at 1024.0 in en dark=true with 2x text
+00:30 +109: /Users/apple/Downloads/ramadhan/openturath_ai/test/editorial_catalog_reliability_test.dart: catalog reflows at 1024.0 in en dark=true with 2x text
+00:31 +110: /Users/apple/Downloads/ramadhan/openturath_ai/test/editorial_catalog_reliability_test.dart: catalog reflows at 1024.0 in ar dark=false with 2x text
+00:31 +111: /Users/apple/Downloads/ramadhan/openturath_ai/test/editorial_catalog_reliability_test.dart: catalog reflows at 1024.0 in ar dark=true with 2x text
+00:31 +112: /Users/apple/Downloads/ramadhan/openturath_ai/test/editorial_catalog_reliability_test.dart: catalog reflows at 1440.0 in id dark=false with 2x text
+00:31 +113: /Users/apple/Downloads/ramadhan/openturath_ai/test/editorial_catalog_reliability_test.dart: catalog reflows at 1440.0 in id dark=true with 2x text
+00:31 +114: /Users/apple/Downloads/ramadhan/openturath_ai/test/assistant_room_default_mode_test.dart: study room opens the NotebookLM WebView unless a prototype is opted in
+00:31 +115: /Users/apple/Downloads/ramadhan/openturath_ai/test/editorial_catalog_reliability_test.dart: catalog reflows at 1440.0 in en dark=false with 2x text
+00:32 +116: /Users/apple/Downloads/ramadhan/openturath_ai/test/editorial_catalog_reliability_test.dart: catalog reflows at 1440.0 in en dark=true with 2x text
+00:32 +117: /Users/apple/Downloads/ramadhan/openturath_ai/test/editorial_catalog_reliability_test.dart: catalog reflows at 1440.0 in ar dark=false with 2x text
+00:32 +118: /Users/apple/Downloads/ramadhan/openturath_ai/test/editorial_catalog_reliability_test.dart: catalog reflows at 1440.0 in ar dark=true with 2x text
+00:34 +119: /Users/apple/Downloads/ramadhan/openturath_ai/test/navigation_guard_test.dart: NavigationGuard Single-Flight Tests safePushNamed ignores concurrent duplicate navigation calls
+[NavigationGuard] Menolak push duplikat untuk "/test_sub" (rute sedang in-flight)
+[NavigationGuard] Menolak push duplikat untuk "/test_sub" (rute sedang in-flight)
+00:35 +120: /Users/apple/Downloads/ramadhan/openturath_ai/test/navigation_guard_test.dart: NavigationGuard Single-Flight Tests safeNavigate executes only one action during concurrent invocations
+[NavigationGuard] Menolak navigasi duplikat (operasi navigasi sedang aktif)
+[NavigationGuard] Menolak navigasi duplikat (operasi navigasi sedang aktif)
+[NavigationGuard] Menolak navigasi duplikat (operasi navigasi sedang aktif)
+[NavigationGuard] Menolak navigasi duplikat (operasi navigasi sedang aktif)
+00:35 +121: /Users/apple/Downloads/ramadhan/openturath_ai/test/navigation_guard_test.dart: NavigationGuard Single-Flight Tests safePushNamed allows opening a child route while parent route is active on stack
+00:36 +122: /Users/apple/Downloads/ramadhan/openturath_ai/test/google_session_auth_flow_test.dart: GoogleSessionAuthScreen menampilkan disclaimer akun yang sama dan langkah 2
+00:37 +123: /Users/apple/Downloads/ramadhan/openturath_ai/test/notebook_chat_controller_login_target_test.dart: controller gives the proper login target for unauthenticated
+00:37 +124: /Users/apple/Downloads/ramadhan/openturath_ai/test/notebook_chat_controller_login_target_test.dart: controller gives the proper login target for notebook-session-required
+00:38 +125: /Users/apple/Downloads/ramadhan/openturath_ai/test/notebook_backend_chat_test.dart: one authenticated backend call returns native answer and citation data
+00:38 +126: /Users/apple/Downloads/ramadhan/openturath_ai/test/notebook_backend_chat_test.dart: simultaneous sends never duplicate an in-flight question
+00:38 +127: /Users/apple/Downloads/ramadhan/openturath_ai/test/notebook_backend_chat_test.dart: logout clears history and discards late responses
+00:38 +128: /Users/apple/Downloads/ramadhan/openturath_ai/test/notebook_backend_chat_test.dart: a late response cannot alter a new account conversation or its busy state
+00:38 +129: /Users/apple/Downloads/ramadhan/openturath_ai/test/notebook_backend_chat_test.dart: failed connector does not create an assistant message or retry
+00:38 +130: /Users/apple/Downloads/ramadhan/openturath_ai/test/notebook_backend_chat_test.dart: malformed response is discarded
+00:38 +131: /Users/apple/Downloads/ramadhan/openturath_ai/test/notebook_backend_chat_test.dart: disposing the tab suppresses pending updates
+00:38 +132: /Users/apple/Downloads/ramadhan/openturath_ai/test/notebook_backend_chat_test.dart: real native tab sends, displays citations and accepts the next question without a WebView
+00:38 +133: /Users/apple/Downloads/ramadhan/openturath_ai/test/notebook_backend_chat_test.dart: real native tab sends, displays citations and accepts the next question without a WebView
+00:38 +134: /Users/apple/Downloads/ramadhan/openturath_ai/test/notebook_backend_chat_test.dart: real native tab sends, displays citations and accepts the next question without a WebView
+00:38 +135: /Users/apple/Downloads/ramadhan/openturath_ai/test/notebook_backend_chat_test.dart: real native tab sends, displays citations and accepts the next question without a WebView
+00:38 +136: /Users/apple/Downloads/ramadhan/openturath_ai/test/notebook_backend_chat_test.dart: real native tab sends, displays citations and accepts the next question without a WebView
+00:38 +137: /Users/apple/Downloads/ramadhan/openturath_ai/test/notebook_backend_chat_test.dart: real native tab sends, displays citations and accepts the next question without a WebView
+00:38 +138: /Users/apple/Downloads/ramadhan/openturath_ai/test/notebook_backend_chat_test.dart: real native tab sends, displays citations and accepts the next question without a WebView
+00:38 +139: /Users/apple/Downloads/ramadhan/openturath_ai/test/notebook_backend_chat_test.dart: real native tab sends, displays citations and accepts the next question without a WebView
+00:38 +140: /Users/apple/Downloads/ramadhan/openturath_ai/test/notebook_backend_chat_test.dart: real native tab sends, displays citations and accepts the next question without a WebView
+00:38 +141: /Users/apple/Downloads/ramadhan/openturath_ai/test/notebook_backend_chat_test.dart: real native tab sends, displays citations and accepts the next question without a WebView
+00:38 +142: /Users/apple/Downloads/ramadhan/openturath_ai/test/notebook_backend_chat_test.dart: real native tab sends, displays citations and accepts the next question without a WebView
+00:38 +143: /Users/apple/Downloads/ramadhan/openturath_ai/test/notebook_backend_chat_test.dart: real native tab sends, displays citations and accepts the next question without a WebView
+00:38 +144: /Users/apple/Downloads/ramadhan/openturath_ai/test/notebook_backend_chat_test.dart: real native tab sends, displays citations and accepts the next question without a WebView
+00:38 +145: /Users/apple/Downloads/ramadhan/openturath_ai/test/notebook_backend_chat_test.dart: real native tab sends, displays citations and accepts the next question without a WebView
+00:38 +146: /Users/apple/Downloads/ramadhan/openturath_ai/test/notebook_backend_chat_test.dart: real native tab sends, displays citations and accepts the next question without a WebView
+00:40 +147: /Users/apple/Downloads/ramadhan/openturath_ai/test/catalog_evidence_test.dart: missing metadata and book assets surface as failures rather than empty catalogs
+00:40 +148: /Users/apple/Downloads/ramadhan/openturath_ai/test/catalog_evidence_test.dart: malformed catalogs fail explicitly while valid empty lists stay empty
+00:40 +149: /Users/apple/Downloads/ramadhan/openturath_ai/test/catalog_evidence_test.dart: edition assessments never become editor names; raw evidence is retained
+00:40 +150: /Users/apple/Downloads/ramadhan/openturath_ai/test/catalog_evidence_test.dart: unknown modules cannot silently load the Shafii catalog
+00:41 +151: /Users/apple/Downloads/ramadhan/openturath_ai/test/active_subscription_access_test.dart: Active Subscription Access Verification Active subscriber with plan tholib_1m has access to all agents even with empty entitlements
+00:41 +152: /Users/apple/Downloads/ramadhan/openturath_ai/test/active_subscription_access_test.dart: Active Subscription Access Verification Active subscriber with plan bahits_1y or tholib_6m has full access
+00:41 +153: /Users/apple/Downloads/ramadhan/openturath_ai/test/active_subscription_access_test.dart: Active Subscription Access Verification Active subscriber with redeem voucher code has full access
+00:41 +154: /Users/apple/Downloads/ramadhan/openturath_ai/test/active_subscription_access_test.dart: Active Subscription Access Verification Expired subscriber is denied access
+00:41 +155: /Users/apple/Downloads/ramadhan/openturath_ai/test/active_subscription_access_test.dart: Active Subscription Access Verification Single-module subscriber only has access to entitled module
+00:41 +156: /Users/apple/Downloads/ramadhan/openturath_ai/test/active_subscription_access_test.dart: time-bound trial voucher grants access without a question quota
+00:42 +157: /Users/apple/Downloads/ramadhan/openturath_ai/test/catalog_search_reset_test.dart: clear cancels pending search instead of restoring the stale query
+00:42 +158: /Users/apple/Downloads/ramadhan/openturath_ai/test/catalog_search_reset_test.dart: clear cancels pending search instead of restoring the stale query
+00:43 +159: /Users/apple/Downloads/ramadhan/openturath_ai/test/agent_service_canonical_url_test.dart: accepts the official alternate notebook host without rewriting it
+00:43 +160: /Users/apple/Downloads/ramadhan/openturath_ai/test/agent_service_canonical_url_test.dart: preserves server permission-denied and does not fall back to a local URL
+00:43 +161: /Users/apple/Downloads/ramadhan/openturath_ai/test/agent_service_canonical_url_test.dart: preserves server unauthenticated and does not fall back to a local URL
+00:43 +162: /Users/apple/Downloads/ramadhan/openturath_ai/test/agent_service_canonical_url_test.dart: preserves server unavailable and does not fall back to a local URL
+00:43 +163: /Users/apple/Downloads/ramadhan/openturath_ai/test/agent_service_canonical_url_test.dart: rejects malformed callable response Null
+00:43 +164: /Users/apple/Downloads/ramadhan/openturath_ai/test/agent_service_canonical_url_test.dart: rejects malformed callable response String
+00:43 +165: /Users/apple/Downloads/ramadhan/openturath_ai/test/agent_service_canonical_url_test.dart: rejects malformed callable response List<String>
+00:43 +166: /Users/apple/Downloads/ramadhan/openturath_ai/test/agent_service_canonical_url_test.dart: does not conceal missing server destinations: {}
+00:43 +167: /Users/apple/Downloads/ramadhan/openturath_ai/test/agent_service_canonical_url_test.dart: does not conceal missing server destinations: {url: null}
+00:43 +168: /Users/apple/Downloads/ramadhan/openturath_ai/test/agent_service_canonical_url_test.dart: does not conceal missing server destinations: {url: }
+00:43 +169: /Users/apple/Downloads/ramadhan/openturath_ai/test/agent_service_canonical_url_test.dart: rejects unsafe or invalid destination case 0
+00:43 +170: /Users/apple/Downloads/ramadhan/openturath_ai/test/agent_service_canonical_url_test.dart: rejects unsafe or invalid destination case 1
+00:43 +171: /Users/apple/Downloads/ramadhan/openturath_ai/test/agent_service_canonical_url_test.dart: rejects unsafe or invalid destination case 2
+00:43 +172: /Users/apple/Downloads/ramadhan/openturath_ai/test/agent_service_canonical_url_test.dart: rejects unsafe or invalid destination case 3
+00:43 +173: /Users/apple/Downloads/ramadhan/openturath_ai/test/agent_service_canonical_url_test.dart: rejects unsafe or invalid destination case 4
+00:43 +174: /Users/apple/Downloads/ramadhan/openturath_ai/test/agent_service_canonical_url_test.dart: rejects unsafe or invalid destination case 5
+00:43 +175: /Users/apple/Downloads/ramadhan/openturath_ai/test/agent_service_canonical_url_test.dart: rejects unsafe or invalid destination case 6
+00:43 +176: /Users/apple/Downloads/ramadhan/openturath_ai/test/agent_service_canonical_url_test.dart: rejects unsafe or invalid destination case 7
+00:43 +177: /Users/apple/Downloads/ramadhan/openturath_ai/test/agent_service_canonical_url_test.dart: rejects unsafe or invalid destination case 8
+00:43 +178: /Users/apple/Downloads/ramadhan/openturath_ai/test/agent_service_canonical_url_test.dart: rejects unsafe or invalid destination case 9
+00:43 +179: /Users/apple/Downloads/ramadhan/openturath_ai/test/agent_service_canonical_url_test.dart: rejects unsafe or invalid destination case 10
+00:43 +180: /Users/apple/Downloads/ramadhan/openturath_ai/test/agent_service_canonical_url_test.dart: rejects unsafe or invalid destination case 11
+00:43 +181: /Users/apple/Downloads/ramadhan/openturath_ai/test/agent_service_canonical_url_test.dart: rejects unsafe or invalid destination case 12
+00:43 +182: /Users/apple/Downloads/ramadhan/openturath_ai/test/agent_service_canonical_url_test.dart: rejects unsafe or invalid destination case 13
+00:43 +183: /Users/apple/Downloads/ramadhan/openturath_ai/test/agent_service_canonical_url_test.dart: rejects unsafe or invalid destination case 14
+00:44 +184: /Users/apple/Downloads/ramadhan/openturath_ai/test/legal_policy_test.dart: Audit Integritas Legal & Kebijakan OpenTurath Semua placeholder [[...]] wajib telah diselesaikan (bebas dari kurung siku ganda)
+00:44 +185: /Users/apple/Downloads/ramadhan/openturath_ai/test/legal_policy_test.dart: Audit Integritas Legal & Kebijakan OpenTurath Etika The Quiet Scholar: Bebas tanda seru (!) pada seluruh dokumen hukum dan kebijakan
+00:44 +186: /Users/apple/Downloads/ramadhan/openturath_ai/test/legal_policy_test.dart: Audit Integritas Legal & Kebijakan OpenTurath Keutuhan struktur dan pasal-pasal kanonik
+00:44 +187: /Users/apple/Downloads/ramadhan/openturath_ai/test/legal_policy_test.dart: Audit Integritas Legal & Kebijakan OpenTurath LegalDocumentSheet dapat ditampilkan tanpa crash untuk setiap dokumen
+00:45 +188: /Users/apple/Downloads/ramadhan/openturath_ai/test/desktop_transport_test.dart: Windows callable authenticates and preserves the server contract
+00:45 +189: /Users/apple/Downloads/ramadhan/openturath_ai/test/desktop_transport_test.dart: Windows callable authenticates and preserves the server contract
+00:45 +190: /Users/apple/Downloads/ramadhan/openturath_ai/test/desktop_transport_test.dart: Windows callable authenticates and preserves the server contract
+00:45 +191: /Users/apple/Downloads/ramadhan/openturath_ai/test/desktop_transport_test.dart: Windows callable authenticates and preserves the server contract
+00:45 +192: /Users/apple/Downloads/ramadhan/openturath_ai/test/desktop_transport_test.dart: Missing login cannot dispatch a paid operation
+00:45 +193: /Users/apple/Downloads/ramadhan/openturath_ai/test/desktop_transport_test.dart: Callable error details reach the existing entitlement UI
+00:45 +194: /Users/apple/Downloads/ramadhan/openturath_ai/test/desktop_transport_test.dart: Rejects malformed envelope <html>upstream error</html>
+00:45 +195: /Users/apple/Downloads/ramadhan/openturath_ai/test/desktop_transport_test.dart: Rejects malformed envelope []
+00:45 +196: /Users/apple/Downloads/ramadhan/openturath_ai/test/desktop_transport_test.dart: Rejects malformed envelope {}
+00:45 +197: /Users/apple/Downloads/ramadhan/openturath_ai/test/desktop_transport_test.dart: Payment timeout never retries a possibly completed transaction
+00:46 +198: /Users/apple/Downloads/ramadhan/openturath_ai/test/widget_test.dart: UserModel & ModuleEntitlement Unit Tests User trial without active voucher entitlement has no access
+00:46 +199: /Users/apple/Downloads/ramadhan/openturath_ai/test/widget_test.dart: UserModel & ModuleEntitlement Unit Tests User with active voucher trial entitlement has access and questions
+00:46 +200: /Users/apple/Downloads/ramadhan/openturath_ai/test/widget_test.dart: UserModel & ModuleEntitlement Unit Tests User trial is denied when voucher entitlement is expired
+00:46 +201: /Users/apple/Downloads/ramadhan/openturath_ai/test/widget_test.dart: UserModel & ModuleEntitlement Unit Tests Modular entitlement gives exclusive access to entitled module only
+00:46 +202: /Users/apple/Downloads/ramadhan/openturath_ai/test/widget_test.dart: UserModel & ModuleEntitlement Unit Tests User with active Syafii subscription cannot access Tahawwulat even if subscriptionExpiry is active
+00:46 +203: /Users/apple/Downloads/ramadhan/openturath_ai/test/widget_test.dart: UserModel & ModuleEntitlement Unit Tests Expired module entitlement correctly denies premium access
+00:46 +204: /Users/apple/Downloads/ramadhan/openturath_ai/test/widget_test.dart: AgentModel Catalog Tests Default catalog contains core modules with complete metadata
+00:46 +205: /Users/apple/Downloads/ramadhan/openturath_ai/test/widget_test.dart: ResearchNote & Citation Generator Tests ResearchNote formats citation correctly with book, volume, and page
+00:46 +206: /Users/apple/Downloads/ramadhan/openturath_ai/test/widget_test.dart: ArabicUtils Smart Arabic Search Tests ArabicUtils.normalize strips harakat and unifies letter forms
+00:46 +207: /Users/apple/Downloads/ramadhan/openturath_ai/test/widget_test.dart: ArabicUtils Smart Arabic Search Tests ArabicUtils.matches matches plain query with harakat text
+00:46 +208: /Users/apple/Downloads/ramadhan/openturath_ai/test/widget_test.dart: ArabicUtils Smart Arabic Search Tests ArabicUtils.matches supports Latin search in bilingual metadata
+00:46 +209: /Users/apple/Downloads/ramadhan/openturath_ai/test/widget_test.dart: Localization & AppConfig Tests Localization dictionary returns valid strings for all supported languages
+00:47 +210: /Users/apple/Downloads/ramadhan/openturath_ai/test/design_token_guard_test.dart: skala huruf tertutup: sembilan langkah, tanpa pecahan
+00:47 +211: /Users/apple/Downloads/ramadhan/openturath_ai/test/design_token_guard_test.dart: tidak ada fontSize berangka di layar dan widget
+00:47 +212: /Users/apple/Downloads/ramadhan/openturath_ai/test/design_token_guard_test.dart: tidak ada radius berangka di layar dan widget
+00:47 +213: /Users/apple/Downloads/ramadhan/openturath_ai/test/design_token_guard_test.dart: tidak ada warna mentah di layar dan widget
+00:47 +214: /Users/apple/Downloads/ramadhan/openturath_ai/test/design_token_guard_test.dart: layar tidak menata tombol sendiri; varian ada di OTButtons
+00:47 +215: /Users/apple/Downloads/ramadhan/openturath_ai/test/design_token_guard_test.dart: padding hanya memakai langkah skala jarak
+00:47 +216: /Users/apple/Downloads/ramadhan/openturath_ai/test/design_token_guard_test.dart: hanya tiga bobot huruf: 400, 600, 700
+00:48 +217: /Users/apple/Downloads/ramadhan/openturath_ai/test/audit_entitlement_test.dart: A10 specific paid module survives revoked all-access
+00:48 +218: /Users/apple/Downloads/ramadhan/openturath_ai/test/audit_entitlement_test.dart: A10 all language aliases use the same canonical entitlement
+00:48 +219: /Users/apple/Downloads/ramadhan/openturath_ai/test/audit_entitlement_test.dart: A10 unrelated prefix cannot open a new module
+00:48 +220: /Users/apple/Downloads/ramadhan/openturath_ai/test/answer_citation_provenance_test.dart: Saved answer keeps its source locators through local storage
+00:48 +221: /Users/apple/Downloads/ramadhan/openturath_ai/test/answer_citation_provenance_test.dart: Notes written before citations existed still load
+00:48 +222: /Users/apple/Downloads/ramadhan/openturath_ai/test/answer_citation_provenance_test.dart: Malformed citation entries are dropped, valid ones are kept
+00:50 +223: /Users/apple/Downloads/ramadhan/openturath_ai/test/audit_auth_stream_test.dart: A09 delayed old cache cannot emit or subscribe after logout
+00:50 +224: /Users/apple/Downloads/ramadhan/openturath_ai/test/audit_auth_stream_test.dart: A09 final cancellation invalidates pending cache and later listeners restart
+00:50 +225: /Users/apple/Downloads/ramadhan/openturath_ai/test/audit_storage_test.dart: A07 values never cross account keys or caller mutation
+00:50 +226: /Users/apple/Downloads/ramadhan/openturath_ai/test/audit_storage_test.dart: A08 parallel updates through separate instances preserve both records
+00:50 +227: /Users/apple/Downloads/ramadhan/openturath_ai/test/audit_storage_test.dart: A08 slow write does not release exclusion after five seconds
+00:50 +228: /Users/apple/Downloads/ramadhan/openturath_ai/test/audit_storage_test.dart: A08 slow write does not release exclusion after five seconds
+00:51 +229: /Users/apple/Downloads/ramadhan/openturath_ai/test/audit_storage_test.dart: A08 failed write surfaces error and releases queue
+00:51 +230: /Users/apple/Downloads/ramadhan/openturath_ai/test/audit_storage_test.dart: A07 corrupted payload is preserved before any replacement
+00:51 +231: /Users/apple/Downloads/ramadhan/openturath_ai/test/audit_storage_test.dart: A07 failed quarantine prevents overwriting corrupt original
+00:51 +232: /Users/apple/Downloads/ramadhan/openturath_ai/test/native_turath_chat_view_test.dart: TurathChatMessage Model Suite TurathChatMessage properties and copyWith
+00:51 +233: /Users/apple/Downloads/ramadhan/openturath_ai/test/native_turath_chat_view_test.dart: TurathChatMessage Model Suite AgentSessionTab initializes with Jalur B native defaults
+00:51 +234: /Users/apple/Downloads/ramadhan/openturath_ai/test/native_turath_chat_view_test.dart: NativeTurathChatView Widget Suite Renders empty scholarly state when no messages
+00:52 +235: /Users/apple/Downloads/ramadhan/openturath_ai/test/native_turath_chat_view_test.dart: NativeTurathChatView Widget Suite Renders empty scholarly state when no messages
+00:52 +236: /Users/apple/Downloads/ramadhan/openturath_ai/test/native_turath_chat_view_test.dart: NativeTurathChatView Widget Suite Renders empty scholarly state when no messages
+00:52 +237: /Users/apple/Downloads/ramadhan/openturath_ai/test/native_turath_chat_view_test.dart: NativeTurathChatView Widget Suite Renders empty scholarly state when no messages
+00:52 +238: /Users/apple/Downloads/ramadhan/openturath_ai/test/native_turath_chat_view_test.dart: NativeTurathChatView Widget Suite Renders empty scholarly state when no messages
+00:53 +239: /Users/apple/Downloads/ramadhan/openturath_ai/test/native_turath_chat_view_test.dart: NativeTurathChatView Widget Suite Renders user and assistant messages with scholarly layout
+00:53 +240: /Users/apple/Downloads/ramadhan/openturath_ai/test/native_turath_chat_view_test.dart: NativeTurathChatView Widget Suite Displays universal breathing text indicator during generation
+00:54 +241: /Users/apple/Downloads/ramadhan/openturath_ai/test/native_turath_chat_view_test.dart: NativeTurathChatView Widget Suite Triggers onSend callback when user submits a question
+00:55 +242: /Users/apple/Downloads/ramadhan/openturath_ai/test/ui_copy_regression_test.dart: Voucher errors remain natural even for uppercase transport codes
+00:55 +243: /Users/apple/Downloads/ramadhan/openturath_ai/test/ui_copy_regression_test.dart: All assistant titles have serene field names without changing entitlement IDs
+00:55 +244: /Users/apple/Downloads/ramadhan/openturath_ai/test/ui_copy_regression_test.dart: Conversation loading and menu describe their actions
+00:56 +245: /Users/apple/Downloads/ramadhan/openturath_ai/test/answer_direction_test.dart: Arabic vowel marks stay inside one isolated phrase
+00:56 +246: /Users/apple/Downloads/ramadhan/openturath_ai/test/answer_direction_test.dart: Latin explanation keeps its base direction around Arabic phrases
+00:56 +247: /Users/apple/Downloads/ramadhan/openturath_ai/test/answer_direction_test.dart: fenced examples preserve blank lines and Arabic introductions split from Latin prose
+00:56 +248: /Users/apple/Downloads/ramadhan/openturath_ai/test/answer_direction_test.dart: Arabic quote and Markdown heading retain their own direction
+01:00 +249: /Users/apple/Downloads/ramadhan/openturath_ai/test/visual/render_screens_test.dart: visual snapshots are opt-in (set OT_SNAPSHOT_DIR)
+01:01 +250: /Users/apple/Downloads/ramadhan/openturath_ai/test/visual/render_motion_test.dart: render motion
+01:03 +250 ~1: /Users/apple/Downloads/ramadhan/openturath_ai/test/scholarly_library_locale_layout_test.dart: assistant card shows its remit and source instead of generic library rows
+01:04 +251 ~1: /Users/apple/Downloads/ramadhan/openturath_ai/test/scholarly_library_locale_layout_test.dart: assistant card shows its remit and source instead of generic library rows
+01:04 +252 ~1: /Users/apple/Downloads/ramadhan/openturath_ai/test/scholarly_library_locale_layout_test.dart: assistant card shows its remit and source instead of generic library rows
+01:04 +253 ~1: /Users/apple/Downloads/ramadhan/openturath_ai/test/scholarly_library_locale_layout_test.dart: assistant card shows its remit and source instead of generic library rows
+01:04 +254 ~1: /Users/apple/Downloads/ramadhan/openturath_ai/test/scholarly_library_locale_layout_test.dart: assistant card shows its remit and source instead of generic library rows
+01:04 +255 ~1: /Users/apple/Downloads/ramadhan/openturath_ai/test/scholarly_library_locale_layout_test.dart: assistant card shows its remit and source instead of generic library rows
+01:04 +256 ~1: /Users/apple/Downloads/ramadhan/openturath_ai/test/scholarly_library_locale_layout_test.dart: assistant card shows its remit and source instead of generic library rows
+01:04 +257 ~1: /Users/apple/Downloads/ramadhan/openturath_ai/test/scholarly_library_locale_layout_test.dart: assistant card shows its remit and source instead of generic library rows
+01:04 +258 ~1: /Users/apple/Downloads/ramadhan/openturath_ai/test/scholarly_library_locale_layout_test.dart: Arabic reference overview omits conflicting legacy count and fits phone
+01:05 +259 ~1: /Users/apple/Downloads/ramadhan/openturath_ai/test/scholarly_library_locale_layout_test.dart: English edition record keeps Arabic source and hides empty folder
+01:05 +260 ~1: /Users/apple/Downloads/ramadhan/openturath_ai/test/canonical_multi_discipline_catalog_test.dart: Canonical Multi-Discipline Catalog Integration (2,226 Kitab) All 6 JSON catalog asset files exist and parse exactly 2,226 books
+01:05 +261 ~1: /Users/apple/Downloads/ramadhan/openturath_ai/test/scholarly_library_locale_layout_test.dart: book list and edition fit 320 px in id
+01:05 +262 ~1: /Users/apple/Downloads/ramadhan/openturath_ai/test/scholarly_library_locale_layout_test.dart: book list and edition fit 320 px in id
+01:05 +263 ~1: /Users/apple/Downloads/ramadhan/openturath_ai/test/scholarly_library_locale_layout_test.dart: book list and edition fit 320 px in id
+01:05 +264 ~1: /Users/apple/Downloads/ramadhan/openturath_ai/test/scholarly_library_locale_layout_test.dart: book list and edition fit 320 px in id
+01:05 +265 ~1: /Users/apple/Downloads/ramadhan/openturath_ai/test/scholarly_library_locale_layout_test.dart: canonical dossier fits 320 px in id
+01:06 +266 ~1: /Users/apple/Downloads/ramadhan/openturath_ai/test/scholarly_library_locale_layout_test.dart: book list and edition fit 320 px in en
+01:06 +267 ~1: /Users/apple/Downloads/ramadhan/openturath_ai/test/scholarly_library_locale_layout_test.dart: book list and edition fit 320 px in en
+01:06 +268 ~1: /Users/apple/Downloads/ramadhan/openturath_ai/test/scholarly_library_locale_layout_test.dart: book list and edition fit 320 px in en
+01:06 +269 ~1: /Users/apple/Downloads/ramadhan/openturath_ai/test/scholarly_library_locale_layout_test.dart: book list and edition fit 320 px in en
+01:06 +270 ~1: /Users/apple/Downloads/ramadhan/openturath_ai/test/bookmark_sync_test.dart: BookmarkService Offline-First & Cloud Sync Tests syncWithCloud seamlessly migrates legacy anonymous bookmarks to logged-in user
+01:06 +271 ~1: /Users/apple/Downloads/ramadhan/openturath_ai/test/scholarly_library_locale_layout_test.dart: canonical dossier fits 320 px in en
+01:06 +272 ~1: /Users/apple/Downloads/ramadhan/openturath_ai/test/scholarly_library_locale_layout_test.dart: canonical dossier fits 320 px in en
+01:06 +273 ~1: /Users/apple/Downloads/ramadhan/openturath_ai/test/scholarly_library_locale_layout_test.dart: canonical dossier fits 320 px in en
+01:06 +274 ~1: /Users/apple/Downloads/ramadhan/openturath_ai/test/scholarly_library_locale_layout_test.dart: canonical dossier fits 320 px in en
+01:06 +275 ~1: /Users/apple/Downloads/ramadhan/openturath_ai/test/scholarly_library_locale_layout_test.dart: book list and edition fit 320 px in ar
+01:06 +276 ~1: /Users/apple/Downloads/ramadhan/openturath_ai/test/scholarly_library_locale_layout_test.dart: canonical dossier fits 320 px in ar
+01:07 +277 ~1: /Users/apple/Downloads/ramadhan/openturath_ai/test/membership_pass_state_test.dart: presents a time-bound trial as Pro with remaining days
+01:07 +278 ~1: /Users/apple/Downloads/ramadhan/openturath_ai/test/membership_pass_state_test.dart: uses nearest expiry and count for several individual AI accesses
+01:07 +279 ~1: /Users/apple/Downloads/ramadhan/openturath_ai/test/membership_pass_state_test.dart: does not claim access while a payment is pending
+01:07 +280 ~1: /Users/apple/Downloads/ramadhan/openturath_ai/test/membership_pass_state_test.dart: pending payment with a future expiry never grants an active passport
+01:07 +281 ~1: /Users/apple/Downloads/ramadhan/openturath_ai/test/membership_pass_state_test.dart: keeps an active Pro pass open when another payment is pending
+01:07 +282 ~1: /Users/apple/Downloads/ramadhan/openturath_ai/test/membership_pass_state_test.dart: locks a user without a valid entitlement
+01:07 +283 ~1: /Users/apple/Downloads/ramadhan/openturath_ai/test/membership_pass_state_test.dart: keeps a legacy account-level Pro subscription open during migration
+01:08 +284 ~1: /Users/apple/Downloads/ramadhan/openturath_ai/test/doku_direct_test.dart: DOKU Signature generation satisfies DOKU HMACSHA256 protocol specification
+01:08 +285 ~1: /Users/apple/Downloads/ramadhan/openturath_ai/test/doku_direct_test.dart: Direct DOKU Checkout API returns HTTP 200 with checkout URL when env configured
+01:09 +286 ~1: /Users/apple/Downloads/ramadhan/openturath_ai/test/copied_answer_test.dart: Copied answer persists in Saved, keeps full text, and never crosses accounts
+01:09 +287 ~1: /Users/apple/Downloads/ramadhan/openturath_ai/test/copied_answer_test.dart: Repeated copy deduplicates but different answers and assistants stay separate
+01:09 +288 ~1: /Users/apple/Downloads/ramadhan/openturath_ai/test/copied_answer_test.dart: Empty copies cannot create a saved item
+01:11 +289 ~1: /Users/apple/Downloads/ramadhan/openturath_ai/test/audit_checkout_completion_test.dart: A12 completion dismisses confirmation before closing checkout exactly once
+01:11 +290 ~1: /Users/apple/Downloads/ramadhan/openturath_ai/test/hardening_and_redeem_test.dart: System Hardening & Entitlement Suite All active agents have consistent pricing catalog
+01:11 +291 ~1: /Users/apple/Downloads/ramadhan/openturath_ai/test/hardening_and_redeem_test.dart: System Hardening & Entitlement Suite UserModel modular entitlement grants access when active and not expired
+01:11 +292 ~1: /Users/apple/Downloads/ramadhan/openturath_ai/test/hardening_and_redeem_test.dart: System Hardening & Entitlement Suite UserModel modular entitlement denies access when expired
+01:11 +293 ~1: /Users/apple/Downloads/ramadhan/openturath_ai/test/hardening_and_redeem_test.dart: System Hardening & Entitlement Suite Full bundle plan grants access to all active agents regardless of individual entitlements
+01:11 +294 ~1: /Users/apple/Downloads/ramadhan/openturath_ai/test/hardening_and_redeem_test.dart: System Hardening & Entitlement Suite URL security policy allows Google NotebookLM ecosystem and blocks external redirects (Production Code)
+01:11 +295 ~1: /Users/apple/Downloads/ramadhan/openturath_ai/test/hardening_and_redeem_test.dart: System Hardening & Entitlement Suite Redeem code normalization handles whitespace, casing, and dashes (Production Code)
+01:11 +296 ~1: /Users/apple/Downloads/ramadhan/openturath_ai/test/hardening_and_redeem_test.dart: System Hardening & Entitlement Suite redeemErrorMessage formats neutral copy and preserves device protection messages
+01:11 +297 ~1: /Users/apple/Downloads/ramadhan/openturath_ai/test/hardening_and_redeem_test.dart: System Hardening & Entitlement Suite addCalendarMonthsClamped correctly handles leap year 29 Feb and non-leap 28 Feb boundary conditions (F-11)
+01:12 +298 ~1: /Users/apple/Downloads/ramadhan/openturath_ai/test/note_editor_reliability_test.dart: system back flushes changes before the route closes
+01:13 +299 ~1: /Users/apple/Downloads/ramadhan/openturath_ai/test/note_editor_reliability_test.dart: system back flushes changes before the route closes
+01:13 +300 ~1: /Users/apple/Downloads/ramadhan/openturath_ai/test/note_editor_reliability_test.dart: system back flushes changes before the route closes
+01:13 +301 ~1: /Users/apple/Downloads/ramadhan/openturath_ai/test/note_editor_reliability_test.dart: system back flushes changes before the route closes
+01:13 +302 ~1: /Users/apple/Downloads/ramadhan/openturath_ai/test/note_editor_reliability_test.dart: system back flushes changes before the route closes
+01:13 +303 ~1: /Users/apple/Downloads/ramadhan/openturath_ai/test/note_editor_reliability_test.dart: system back flushes changes before the route closes
+01:13 +304 ~1: /Users/apple/Downloads/ramadhan/openturath_ai/test/note_editor_reliability_test.dart: system back flushes changes before the route closes
+01:13 +305 ~1: /Users/apple/Downloads/ramadhan/openturath_ai/test/note_editor_reliability_test.dart: system back flushes changes before the route closes
+01:13 +306 ~1: /Users/apple/Downloads/ramadhan/openturath_ai/test/note_editor_reliability_test.dart: system back flushes changes before the route closes
+01:14 +307 ~1: /Users/apple/Downloads/ramadhan/openturath_ai/test/note_editor_reliability_test.dart: accounts cannot restore each other drafts and legacy data stays intact
+01:15 +308 ~1: /Users/apple/Downloads/ramadhan/openturath_ai/test/note_editor_reliability_test.dart: accounts cannot restore each other drafts and legacy data stays intact
+01:15 +309 ~1: /Users/apple/Downloads/ramadhan/openturath_ai/test/note_editor_reliability_test.dart: accounts cannot restore each other drafts and legacy data stays intact
+01:15 +310 ~1: /Users/apple/Downloads/ramadhan/openturath_ai/test/note_editor_reliability_test.dart: accounts cannot restore each other drafts and legacy data stays intact
+01:15 +311 ~1: /Users/apple/Downloads/ramadhan/openturath_ai/test/note_editor_reliability_test.dart: accounts cannot restore each other drafts and legacy data stays intact
+01:15 +312 ~1: /Users/apple/Downloads/ramadhan/openturath_ai/test/note_editor_reliability_test.dart: accounts cannot restore each other drafts and legacy data stays intact
+01:15 +313 ~1: /Users/apple/Downloads/ramadhan/openturath_ai/test/note_editor_reliability_test.dart: back immediately preserves the latest draft and restores it
+01:15 +314 ~1: /Users/apple/Downloads/ramadhan/openturath_ai/test/note_editor_reliability_test.dart: back immediately preserves the latest draft and restores it
+01:15 +315 ~1: /Users/apple/Downloads/ramadhan/openturath_ai/test/note_editor_reliability_test.dart: back immediately preserves the latest draft and restores it
+01:15 +316 ~1: /Users/apple/Downloads/ramadhan/openturath_ai/test/note_editor_reliability_test.dart: back immediately preserves the latest draft and restores it
+01:15 +317 ~1: /Users/apple/Downloads/ramadhan/openturath_ai/test/note_editor_reliability_test.dart: back immediately preserves the latest draft and restores it
+01:15 +318 ~1: /Users/apple/Downloads/ramadhan/openturath_ai/test/note_editor_reliability_test.dart: back immediately preserves the latest draft and restores it
+01:16 +319 ~1: /Users/apple/Downloads/ramadhan/openturath_ai/test/note_editor_reliability_test.dart: saving cancels autosave and leaves no resurrected draft
+01:16 +320 ~1: /Users/apple/Downloads/ramadhan/openturath_ai/test/note_editor_reliability_test.dart: clearing the editor replaces old draft content with empty text
+01:17 +321 ~1: /Users/apple/Downloads/ramadhan/openturath_ai/test/note_editor_reliability_test.dart: clearing the editor replaces old draft content with empty text
+01:18 +322 ~1: /Users/apple/Downloads/ramadhan/openturath_ai/test/note_editor_reliability_test.dart: restored Arabic draft uses RTL even with Indonesian UI
+01:18 +323 ~1: /Users/apple/Downloads/ramadhan/openturath_ai/test/note_editor_reliability_test.dart: an older draft cannot replace a newer saved note
+01:18 +324 ~1: /Users/apple/Downloads/ramadhan/openturath_ai/test/note_editor_reliability_test.dart: cleared content of an existing note restores as an empty draft
+01:23 +325 ~1: /Users/apple/Downloads/ramadhan/openturath_ai/test/phone_layout_review_test.dart: koleksi utama tetap ringkas dan semua asisten dapat dibuka di ponsel
+01:25 +326 ~1: /Users/apple/Downloads/ramadhan/openturath_ai/test/phone_layout_review_test.dart: harga paket utama tetap terbaca pada kartu gelap
+01:26 +327 ~1: /Users/apple/Downloads/ramadhan/openturath_ai/test/splash_startup_test.dart: first launch leaves splash for login without a navigator race
+01:27 +328 ~1: /Users/apple/Downloads/ramadhan/openturath_ai/test/splash_startup_test.dart: restored auth routes to dashboard after mounting
+01:27 +329 ~1: /Users/apple/Downloads/ramadhan/openturath_ai/test/splash_startup_test.dart: restored auth routes to dashboard after mounting
+01:27 +330 ~1: /Users/apple/Downloads/ramadhan/openturath_ai/test/splash_startup_test.dart: an auth read error leaves splash for the real login screen
+01:29 +331 ~1: /Users/apple/Downloads/ramadhan/openturath_ai/test/launch_localization_test.dart: every copy entry has three translations with identical placeholders
+01:29 +332 ~1: /Users/apple/Downloads/ramadhan/openturath_ai/test/launch_localization_test.dart: language survives reinitialization and invalid persisted values are rejected
+01:29 +333 ~1: /Users/apple/Downloads/ramadhan/openturath_ai/test/launch_localization_test.dart: unknown classifications stay unknown rather than being inferred from a title
+01:29 +334 ~1: /Users/apple/Downloads/ramadhan/openturath_ai/test/launch_localization_test.dart: catalog exposes 19 independent disciplines plus Tahawwulat
+01:29 +335 ~1: /Users/apple/Downloads/ramadhan/openturath_ai/test/launch_localization_test.dart: Arabic price and English labels rebuild without remounting the screen
+01:29 +336 ~1: /Users/apple/Downloads/ramadhan/openturath_ai/test/launch_localization_test.dart: Arabic price and English labels rebuild without remounting the screen
+01:30 +337 ~1: /Users/apple/Downloads/ramadhan/openturath_ai/test/launch_localization_test.dart: Arabic price and English labels rebuild without remounting the screen
+01:30 +338 ~1: /Users/apple/Downloads/ramadhan/openturath_ai/test/launch_localization_test.dart: Arabic price and English labels rebuild without remounting the screen
+01:30 +339 ~1: /Users/apple/Downloads/ramadhan/openturath_ai/test/browser_companion_runtime_test.dart: private loopback companion with synthetic identities foreign correlation cannot complete the current owner request
+01:30 +340 ~1: /Users/apple/Downloads/ramadhan/openturath_ai/test/browser_companion_runtime_test.dart: private loopback companion with synthetic identities foreign correlation cannot complete the current owner request
+01:31 +341 ~1: /Users/apple/Downloads/ramadhan/openturath_ai/test/browser_companion_runtime_test.dart: private loopback companion with synthetic identities the observed browser email is required even with a matching subject echo
+01:31 +342 ~1: /Users/apple/Downloads/ramadhan/openturath_ai/test/browser_companion_runtime_test.dart: private loopback companion with synthetic identities validated browser unauthenticated has a distinct session error
+01:32 +343 ~1: /Users/apple/Downloads/ramadhan/openturath_ai/test/browser_companion_runtime_test.dart: private loopback companion with synthetic identities disconnect invalidates dispatched requests without replay after reattach
+01:32 +344 ~1: /Users/apple/Downloads/ramadhan/openturath_ai/test/browser_companion_runtime_test.dart: private loopback companion with synthetic identities owner subject changes discard a late answer even if email stays the same
+01:32 +345 ~1: /Users/apple/Downloads/ramadhan/openturath_ai/test/browser_companion_runtime_test.dart: private loopback companion with synthetic identities logout revokes the client and queued request before it reaches the browser
+01:32 +346 ~1: /Users/apple/Downloads/ramadhan/openturath_ai/test/browser_companion_runtime_test.dart: private loopback companion with synthetic identities timeout is uncertain and no late poll reconstructs the question
+01:32 +347 ~1: /Users/apple/Downloads/ramadhan/openturath_ai/test/browser_companion_runtime_test.dart: private loopback companion with synthetic identities restart retains consumed IDs and never reconstructs a dispatched request
+01:33 +348 ~1: /Users/apple/Downloads/ramadhan/openturath_ai/test/browser_companion_runtime_test.dart: private loopback companion with synthetic identities metadata from another epoch is preserved on stop
+01:33 +349 ~1: /Users/apple/Downloads/ramadhan/openturath_ai/test/browser_companion_runtime_test.dart: private loopback companion with synthetic identities symlinked runtime directories are rejected without modifying the target
+01:33 +350 ~1: /Users/apple/Downloads/ramadhan/openturath_ai/test/browser_companion_runtime_test.dart: private loopback companion with synthetic identities only JSON UTF-8 IPC bodies are accepted
+01:33 +351 ~1: /Users/apple/Downloads/ramadhan/openturath_ai/test/browser_companion_runtime_test.dart: private loopback companion with synthetic identities same-client attach maintains heartbeat while an answer is pending
+01:33 +352 ~1: /Users/apple/Downloads/ramadhan/openturath_ai/test/browser_companion_runtime_test.dart: private loopback companion with synthetic identities an expired client cannot replay its pending request on attach
+01:34 +353 ~1: /Users/apple/Downloads/ramadhan/openturath_ai/test/browser_companion_runtime_test.dart: private loopback companion with synthetic identities invalid citation shape and unknown error codes remain safe failures
+01:34 +354 ~1: All tests passed!
