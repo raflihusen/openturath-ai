@@ -441,12 +441,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                 ThemeMode.dark),
                                           ),
                                         ];
-                                        return stacked
-                                            ? Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.stretch,
-                                                children: choices)
-                                            : Row(children: choices);
+                                        return Row(children: choices);
                                       }),
                                     ),
                                   ],
