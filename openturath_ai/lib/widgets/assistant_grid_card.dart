@@ -111,7 +111,8 @@ class AssistantGridCard extends StatelessWidget {
                               backgroundColor: ink.withValues(alpha: .12),
                               foregroundColor: ink),
                           icon: Icon(Icons.auto_stories_outlined,
-                              semanticLabel: '${Loc.tr('viewReferences')} ${Loc.text(agent.title)}',
+                              semanticLabel:
+                                  '${Loc.tr('viewReferences')} ${Loc.text(agent.title)}',
                               size: 24)))),
             ],
           ]),
