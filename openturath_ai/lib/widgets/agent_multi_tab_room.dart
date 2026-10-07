@@ -1707,9 +1707,12 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
               debugPrint(
                   '[OpenTurath] Main-document load failed: ${error.type}');
               final current = await controller.getUrl();
-              if (!mounted ||
-                  (current != null &&
-                      current.toString() != request.url.toString())) return;
+              if (!mounted) return;
+              if (session.isSessionReady && current != null &&
+                  NotebookNavigation.notebook(current.uriValue) &&
+                  current.toString() != request.url.toString()) {
+                return;
+              }
               _readinessTimer?.cancel();
               setState(() {
                 session.isWebLoading = false;
