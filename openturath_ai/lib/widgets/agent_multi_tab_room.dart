@@ -1512,7 +1512,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
         session.isPaywallRequired = isPaywall;
         session.errorMessage = isPaywall
             ? 'Untuk membuka dan menelaah kitab bersama ${session.agent.title}, silakan aktifkan paket langganan Anda.'
-            : 'Asisten belum bisa dihubungkan. Coba lagi.';
+            : 'AI belum bisa dihubungkan. Coba lagi.';
       });
     }
   }
