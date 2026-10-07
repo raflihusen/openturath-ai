@@ -190,15 +190,28 @@ void main() {
             size: const Size(850, 1000), locale: locale);
       }
     }
-    await _shot(tester, 'cairo_specimen', Scaffold(body: Center(
-      child: Column(mainAxisSize: MainAxisSize.min, children: [
-        for (final weight in [FontWeight.w400, FontWeight.w600, FontWeight.w700])
-          Padding(padding: const EdgeInsets.all(24), child: Text(
-            'الشَّافِعِي • الحَنْبَلِي • عُلُوم العَرَبِيَّة',
-            textDirection: TextDirection.rtl,
-            style: TextStyle(fontFamily: 'NativeArabicUI', fontSize: 36,
-              fontWeight: weight, height: 1.8))),
-      ]))), size: const Size(1100, 600));
+    await _shot(
+        tester,
+        'cairo_specimen',
+        Scaffold(
+            body: Center(
+                child: Column(mainAxisSize: MainAxisSize.min, children: [
+          for (final weight in [
+            FontWeight.w400,
+            FontWeight.w600,
+            FontWeight.w700
+          ])
+            Padding(
+                padding: const EdgeInsets.all(24),
+                child: Text('الشَّافِعِي • الحَنْبَلِي • عُلُوم العَرَبِيَّة',
+                    textDirection: TextDirection.rtl,
+                    style: TextStyle(
+                        fontFamily: 'NativeArabicUI',
+                        fontSize: 36,
+                        fontWeight: weight,
+                        height: 1.8))),
+        ]))),
+        size: const Size(1100, 600));
     await _shot(tester, 'login_dark', const LoginScreen(), dark: true);
     SharedPreferences.setMockInitialValues({});
     AuthService.previewUser = UserModel(
