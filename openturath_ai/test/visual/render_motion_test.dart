@@ -65,8 +65,8 @@ void main() {
       await tester.pumpWidget(frame(const AppLoader.fullscreen()));
       await tester.pump(const Duration(milliseconds: 500));
       await _save(tester, 'loader_$tag');
-      for (var frame = 0; frame < 12; frame++) {
-        if (frame > 0) await tester.pump(const Duration(milliseconds: 150));
+      for (var frame = 0; frame < 60; frame++) {
+        if (frame > 0) await tester.pump(const Duration(milliseconds: 30));
         await _save(
             tester, 'loader_${tag}_frame_${frame.toString().padLeft(2, '0')}');
       }
