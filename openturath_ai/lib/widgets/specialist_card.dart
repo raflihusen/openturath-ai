@@ -102,7 +102,6 @@ class SpecialistCard extends StatelessWidget {
                   ],
                 ),
               ),
-
             ],
           ),
         ),
