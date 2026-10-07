@@ -83,7 +83,8 @@ class TahawwulatHero extends StatelessWidget {
                               backgroundColor:
                                   OTExpressive.white.withValues(alpha: .12),
                               foregroundColor: OTExpressive.white),
-                          icon: const Icon(Icons.auto_stories_outlined))),
+                          icon: Icon(Icons.auto_stories_outlined,
+                              semanticLabel: Loc.tr('viewReferences')))),
                 TextButton(
                     onPressed: onIntroduction,
                     style: TextButton.styleFrom(
