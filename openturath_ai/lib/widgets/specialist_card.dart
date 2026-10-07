@@ -54,7 +54,6 @@ class SpecialistCard extends StatelessWidget {
     final border = OTColors.border(isDark);
     final ink = OTColors.textPrimary(isDark);
     final muted = OTColors.textSecondary(isDark);
-    final scope = scopeLabel?.trim();
     final reference = referenceLabel?.trim();
     final displayTitle = Loc.isArabic && (titleArabic?.isNotEmpty ?? false)
         ? titleArabic!
@@ -97,25 +96,12 @@ class SpecialistCard extends StatelessWidget {
                       displayTitle,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
-                      style: ScholarlyFonts.newsreader(
+                      style: ScholarlyFonts.outfit(
                         fontSize: OTFontSize.s18,
                         fontWeight: FontWeight.w600,
                         color: ink,
                       ),
                     ),
-                    if (scope != null && scope.isNotEmpty) ...[
-                      const SizedBox(height: 3),
-                      Text(
-                        Loc.text(scope),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: ScholarlyFonts.outfit(
-                          fontSize: OTFontSize.s12,
-                          height: 1.35,
-                          color: muted,
-                        ),
-                      ),
-                    ],
                     if (reference != null && reference.isNotEmpty &&
                         onOpenLibrary != null) ...[
                       const SizedBox(height: 7),
