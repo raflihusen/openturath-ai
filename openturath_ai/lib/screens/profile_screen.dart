@@ -369,7 +369,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             valueListenable: AppConfig.themeNotifier,
                             builder: (context, currentMode, _) {
                               return Padding(
-                                padding: const EdgeInsets.all(16),
+                                padding: const EdgeInsets.all(20),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
@@ -405,7 +405,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                         final choices = <Widget>[
                                           _buildThemeOption(
                                             stacked: stacked,
-                                            title: AppCopy.modeSystem,
+                                            title: Loc.isArabic ? 'تلقائي' : Loc.language == 'en' ? 'System' : 'Otomatis',
                                             icon: Icons.brightness_auto_rounded,
                                             isSelected:
                                                 currentMode == ThemeMode.system,
@@ -455,7 +455,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ),
                           Divider(height: 1, color: border),
                           Padding(
-                              padding: const EdgeInsets.all(24),
+                              padding: const EdgeInsets.all(20),
                               child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
@@ -819,7 +819,7 @@ class _MembershipPass extends StatelessWidget {
                   children: [
                 Text(holderName, style: OTTypography.screenTitle(color: ink)),
                 if (email.isNotEmpty)
-                  Text(email,
+                  Text(email.replaceAll('.', '.\u200b').replaceAll('@', '@\u200b'),
                       textDirection: TextDirection.ltr,
                       style: OTTypography.caption(color: muted)),
               ])),
@@ -834,7 +834,7 @@ class _MembershipPass extends StatelessWidget {
             child: Row(children: [
               Icon(
                   summary.isOpen
-                      ? Icons.verified_rounded
+                      ? Icons.check_circle_outline_rounded
                       : Icons.lock_outline_rounded,
                   color: ink,
                   size: 24),
