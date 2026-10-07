@@ -61,23 +61,28 @@ class TahawwulatFlagshipCard extends StatelessWidget {
                     ? 2
                     : 1;
         final width = (box.maxWidth - (columns - 1) * 12) / columns;
-        return Wrap(alignment: WrapAlignment.center, spacing: 12, runSpacing: 12, children: [
-          for (final sub in subs)
-            SizedBox(
-                width: width,
-                child: FilledButton.tonal(
-                  onPressed: () => onOpenSubAgent(sub),
-                  style: FilledButton.styleFrom(
-                      backgroundColor: OTColors.surfaceSubtle(dark),
-                      foregroundColor: ink,
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: OTRadius.cardBorder)),
-                  child: Text(Loc.isArabic ? sub.nameArabic : sub.name,
-                      textAlign: TextAlign.center,
-                      style: OTTypography.bodyMedium(color: ink)),
-                ))
-        ]);
+        return Wrap(
+            alignment: WrapAlignment.center,
+            spacing: 12,
+            runSpacing: 12,
+            children: [
+              for (final sub in subs)
+                SizedBox(
+                    width: width,
+                    child: FilledButton.tonal(
+                      onPressed: () => onOpenSubAgent(sub),
+                      style: FilledButton.styleFrom(
+                          backgroundColor: OTColors.surfaceSubtle(dark),
+                          foregroundColor: ink,
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 16),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: OTRadius.cardBorder)),
+                      child: Text(Loc.isArabic ? sub.nameArabic : sub.name,
+                          textAlign: TextAlign.center,
+                          style: OTTypography.bodyMedium(color: ink)),
+                    ))
+            ]);
       }),
       if (onOpenLibrary != null)
         Padding(
