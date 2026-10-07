@@ -137,13 +137,25 @@ def main():
         save(compose(512, mark_ratio=0.58), target)
     save(compose(192, mark_ratio=0.46), 'web/icons/Icon-maskable-192.png')
     save(compose(512, mark_ratio=0.46), 'web/icons/Icon-maskable-512.png')
-    # Favicon murni transparan (tanpa pelat krem) untuk tab browser
-    for target in ('web/favicon.png', 'public/favicon.png'):
-        save(compose(64, mark_ratio=0.82, transparent=True, no_plate=True), target)
-    # Favicon .ico multi-resolusi murni transparan
-    ico_img = compose(64, mark_ratio=0.82, transparent=True, no_plate=True)
-    ico_img.save('public/favicon.ico', sizes=[(16, 16), (32, 32), (48, 48), (64, 64)])
-    print('wrote public/favicon.ico')
+    # Favicon PNG standar untuk browser tabs (Arc, Chrome, Safari)
+    for px in (16, 32, 48):
+        fav = compose(px, plate_ratio=0.92, radius_ratio=0.22, mark_ratio=0.62, transparent=True)
+        save(fav, f'public/favicon-{px}x{px}.png')
+        save(fav, f'public/assets/favicon-{px}x{px}.png')
+    
+    # Apple Touch Icon 180x180
+    apple_icon = compose(180, plate_ratio=0.92, radius_ratio=0.22, mark_ratio=0.62, transparent=True)
+    save(apple_icon, 'public/apple-touch-icon.png')
+    save(apple_icon, 'public/assets/apple-touch-icon.png')
+
+    # Favicon 64x64 umum
+    for target in ('web/favicon.png', 'public/favicon.png', 'public/assets/favicon.png'):
+        save(compose(64, plate_ratio=0.92, radius_ratio=0.22, mark_ratio=0.62, transparent=True), target)
+    # Favicon .ico multi-resolusi
+    ico_img = compose(48, plate_ratio=0.92, radius_ratio=0.22, mark_ratio=0.62, transparent=True)
+    ico_img.save('public/favicon.ico', sizes=[(16, 16), (32, 32), (48, 48)])
+    ico_img.save('public/assets/favicon.ico', sizes=[(16, 16), (32, 32), (48, 48)])
+    print('wrote public/favicon.ico and public/assets/favicon.ico')
     # Windows.
     ico = compose(256, plate_ratio=0.94, radius_ratio=0.2, mark_ratio=0.6, transparent=True)
     ico.save('windows/runner/resources/app_icon.ico', sizes=[(16, 16), (32, 32), (48, 48), (256, 256)])
