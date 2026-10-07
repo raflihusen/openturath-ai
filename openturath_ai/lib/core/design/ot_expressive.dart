@@ -3,7 +3,11 @@ import 'ot_typography.dart';
 
 /// Monochrome roles for the flagship review direction.
 abstract final class OTExpressive {
-  static double diagramFontSize(double width) => width >= 400 ? OTFontSize.s22 : width >= 280 ? OTFontSize.s18 : OTFontSize.s14;
+  static double diagramFontSize(double width) => width >= 400
+      ? OTFontSize.s22
+      : width >= 280
+          ? OTFontSize.s18
+          : OTFontSize.s14;
   static const white = Color(0xFFFFFFFF);
   static const whiteMuted = Color(0xB3FFFFFF);
   static const black = Color(0xFF000000);
@@ -12,8 +16,8 @@ abstract final class OTExpressive {
   static const diagramLabel = Color(0xFFEEEEEE);
   static const diagramSelected = 0xFF242424;
   static const diagramEdge = Color(0xFF777777);
-  static const diagramLight = [0xFFE5E5E5,0xFFD8D8D8,0xFFC9C9C9,0xFFB8B8B8];
-  static const diagramDark = [0xFF3B3B3B,0xFF494949,0xFF555555,0xFF686868];
+  static const diagramLight = [0xFFE5E5E5, 0xFFD8D8D8, 0xFFC9C9C9, 0xFFB8B8B8];
+  static const diagramDark = [0xFF3B3B3B, 0xFF494949, 0xFF555555, 0xFF686868];
   static const double heroRadius = 36;
   static const double compactHeroRadius = 28;
   static const double panelRadius = 24;
