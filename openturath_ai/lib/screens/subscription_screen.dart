@@ -469,7 +469,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     final flagshipScope = Wrap(spacing: 8, runSpacing: 8, children: [
       for (final sub in flagship.subAgents ?? const [])
         Text(Loc.isArabic ? sub.nameArabic : sub.name,
-          style: OTTypography.caption(color: muted)),
+            style: OTTypography.caption(color: muted)),
     ]);
 
     // Cakupan paket satu bidang: pemilih bidang.
@@ -534,7 +534,11 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
             featured: true,
             body: planBody(
               wide: wide,
-              label: Loc.isArabic ? 'حصري في OpenTurath · 5 AI' : Loc.language == 'en' ? 'Exclusive to OpenTurath · 5 AI' : 'Eksklusif di OpenTurath · 5 AI',
+              label: Loc.isArabic
+                  ? 'حصري في OpenTurath · 5 AI'
+                  : Loc.language == 'en'
+                      ? 'Exclusive to OpenTurath · 5 AI'
+                      : 'Eksklusif di OpenTurath · 5 AI',
               title: AppCopy.planTahawwulat,
               description: Loc.tr('planFeaturedDescription'),
               scope: flagshipScope,
@@ -676,20 +680,26 @@ class _TierSelector extends StatelessWidget {
       final active = selected == i;
       final textColor = active ? OTColors.canvas(dark) : ink;
       final price = Column(
-        crossAxisAlignment: stacked ? CrossAxisAlignment.end : CrossAxisAlignment.center,
+        crossAxisAlignment:
+            stacked ? CrossAxisAlignment.end : CrossAxisAlignment.center,
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(offers[i].priceLabel, style: OTTypography.captionMedium(color: textColor)),
+          Text(offers[i].priceLabel,
+              style: OTTypography.captionMedium(color: textColor)),
           if (offers[i].months > 1) ...[
             const SizedBox(height: 4),
-            Text('≈ ${ProductPricing.rupiah((offers[i].amount / offers[i].months).round())}${Loc.tr('perMonth')}',
-              textAlign: stacked ? TextAlign.end : TextAlign.center,
-              style: OTTypography.caption(color: active ? textColor : muted)),
+            Text(
+                '≈ ${ProductPricing.rupiah((offers[i].amount / offers[i].months).round())}${Loc.tr('perMonth')}',
+                textAlign: stacked ? TextAlign.end : TextAlign.center,
+                style: OTTypography.caption(color: active ? textColor : muted)),
           ],
         ],
       );
-      final title = Text(offers[i].title, style: OTTypography.captionMedium(color: textColor));
-      return Semantics(button: true, selected: active,
+      final title = Text(offers[i].title,
+          style: OTTypography.captionMedium(color: textColor));
+      return Semantics(
+        button: true,
+        selected: active,
         child: InkWell(
           onTap: onSelect == null ? null : () => onSelect!(i),
           borderRadius: BorderRadius.circular(OTRadius.input),
@@ -700,22 +710,33 @@ class _TierSelector extends StatelessWidget {
               color: active ? ink : OTColors.surfaceSubtle(dark),
               borderRadius: BorderRadius.circular(OTRadius.input),
             ),
-            child: stacked ? Row(children: [Expanded(child: title), const SizedBox(width: 8), Flexible(child: price)])
-              : Column(mainAxisAlignment: MainAxisAlignment.center, children: [title, const SizedBox(height: 8), price]),
+            child: stacked
+                ? Row(children: [
+                    Expanded(child: title),
+                    const SizedBox(width: 8),
+                    Flexible(child: price)
+                  ])
+                : Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [title, const SizedBox(height: 8), price]),
           ),
         ),
       );
     }
+
     if (stacked) {
       return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
         for (var i = 0; i < offers.length; i++) ...[
-          if (i > 0) const SizedBox(height: 8), option(i),
+          if (i > 0) const SizedBox(height: 8),
+          option(i),
         ],
       ]);
     }
-    return IntrinsicHeight(child: Row(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+    return IntrinsicHeight(
+        child: Row(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
       for (var i = 0; i < offers.length; i++) ...[
-        if (i > 0) const SizedBox(width: 8), Expanded(child: option(i)),
+        if (i > 0) const SizedBox(width: 8),
+        Expanded(child: option(i)),
       ],
     ]));
   }
