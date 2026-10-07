@@ -7,7 +7,8 @@ import '../core/design/ot_motion.dart';
 import '../models/agent_model.dart';
 import '../models/sub_agent_model.dart';
 import 'apple_interactive_wrapper.dart';
-import 'arch_echo_canvas.dart';
+import 'tahawwulat_diagram.dart';
+import 'tahawwulat_hero.dart';
 import '../core/scholarly_fonts.dart';
 
 import 'package:openturath_ai/core/design/ot_typography.dart';
@@ -232,82 +233,21 @@ class _TahawwulatIntroductionSheetState
       final roomy = viewport.width >= 760;
       const onCover = OTColors.onInverseSurface;
 
-      final cover = Container(
-        height: (viewport.height * 0.78).clamp(420.0, 640.0),
-        color: OTColors.inverseSurface(isDark),
-        child: Stack(
-          children: [
-            // Lengkung logo sebagai gambar sampul, di sisi akhir.
-            PositionedDirectional(
-              top: 0,
-              bottom: 0,
-              end: 0,
-              width: roomy ? viewport.width * 0.46 : viewport.width,
-              child: Opacity(
-                opacity: roomy ? 1 : 0.45,
-                child: const ExcludeSemantics(
-                    child: ArchEchoCanvas(compact: true)),
-              ),
-            ),
-            Align(
-              alignment: AlignmentDirectional.bottomStart,
-              child: Padding(
-                padding: EdgeInsets.fromLTRB(
-                    roomy ? 64 : 24, 0, roomy ? 64 : 24, roomy ? 56 : 32),
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(
-                      maxWidth: roomy ? viewport.width * 0.56 - 64 : 620),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Pengantar · ${_chapters.length} bagian",
-                        style: ScholarlyFonts.outfit(
-                          fontSize: OTFontSize.s14,
-                          color: onCover.withValues(alpha: 0.6),
-                        ),
-                      ),
-                      const SizedBox(height: 14),
-                      Text(
-                        "Mengenal\nFikih Tahawwulat",
-                        style: ScholarlyFonts.newsreader(
-                          fontSize:
-                              viewport.width >= 1100 ? 64 : (roomy ? OTFontSize.s36 : OTFontSize.s36),
-                          fontWeight: FontWeight.w400,
-                          letterSpacing: roomy ? -2 : -1.2,
-                          height: 1.02,
-                          color: onCover,
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                      Text(
-                        "فِقْهُ التَّحَوُّلَاتِ",
-                        textDirection: TextDirection.rtl,
-                        style: ScholarlyFonts.scheherazadeNew(
-                          fontSize: roomy ? OTFontSize.s26 : OTFontSize.s26,
-                          height: 1.5,
-                          color: onCover.withValues(alpha: 0.72),
-                        ),
-                      ),
-                      const SizedBox(height: 14),
-                      Text(
-                        "Ilmu membaca perubahan zaman dengan petunjuk Nabi ﷺ, "
-                        "disusun Al-Habib Abu Bakar Al-Adni bin Ali Al-Masyhur.",
-                        style: ScholarlyFonts.outfit(
-                          fontSize: roomy ? OTFontSize.s16 : OTFontSize.s16,
-                          height: 1.55,
-                          color: onCover.withValues(alpha: 0.72),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      );
+      final cover = Padding(padding: EdgeInsets.fromLTRB(roomy ? 32 : 16, 64, roomy ? 32 : 16, 24), child: Container(
+        padding: EdgeInsets.all(roomy ? 32 : 24),
+        decoration: BoxDecoration(color: const Color(0xFF171717), borderRadius: BorderRadius.circular(roomy ? 36 : 28)),
+        child: LayoutBuilder(builder: (context, box) {
+          final heading = Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
+            Text(reviewCopy('Mengenal Fikih Tahawwulat','تعرّف على فقه التحولات','About Fiqh Tahawwulat'), style: ScholarlyFonts.outfit(fontSize: OTFontSize.s36, fontWeight: FontWeight.w600, height: 1.15, color: onCover)),
+            const SizedBox(height: 20),
+            Text(reviewCopy('Ilmu membaca perubahan zaman dengan petunjuk Nabi ﷺ, disusun Al-Habib Abu Bakar Al-Adni bin Ali Al-Masyhur.','علم قراءة تحولات الزمان بهدي النبي ﷺ، للإمام الحبيب أبي بكر العدني بن علي المشهور.','Reading changing times through Prophetic guidance, by Al-Habib Abu Bakar Al-Adni bin Ali Al-Masyhur.'), style: ScholarlyFonts.outfit(fontSize: OTFontSize.s16, height: 1.6, color: Colors.white70)),
+            const SizedBox(height: 24),
+            FilledButton(onPressed: () {final target = _chapterKeys[1]?.currentContext; if(target!=null)Scrollable.ensureVisible(target, duration: MediaQuery.disableAnimationsOf(context) ? Duration.zero : OTMotion.transition);}, style: FilledButton.styleFrom(backgroundColor: Colors.white, foregroundColor: Colors.black), child: Text(reviewCopy('Mulai membaca','ابدأ القراءة','Start reading'))),
+          ]);
+          if(box.maxWidth >= 720 && MediaQuery.textScalerOf(context).scale(16) <= 24) return Row(children: [Expanded(flex:3,child:heading), const SizedBox(width:32), const Expanded(flex:2,child:TahawwulatDiagram(inverse:true))]);
+          return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children:[heading,const SizedBox(height:20),const Center(child:SizedBox(width:260,child:TahawwulatDiagram(inverse:true)))]);
+        }),
+      ));
 
       Widget contentsEntry(int index) {
         final chapter = _chapters[index];
@@ -375,6 +315,11 @@ class _TahawwulatIntroductionSheetState
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   cover,
+                  Center(child: ConstrainedBox(constraints: const BoxConstraints(maxWidth: 600), child: Padding(padding: const EdgeInsets.all(24), child: Column(children: [
+                    const TahawwulatDiagram(interactive: true),
+                    const SizedBox(height: 16),
+                    Text(reviewCopy('Diagram editorial dari kerangka pembahasan Fikih Tahawwulat Al-Habib Abu Bakar Al-Adni bin Ali Al-Masyhur.','رسم توضيحي لإطار فقه التحولات عند الحبيب أبي بكر العدني بن علي المشهور.','Editorial diagram of the Fiqh Tahawwulat framework of Al-Habib Abu Bakar Al-Adni bin Ali Al-Masyhur.'), textAlign: TextAlign.center, style: OTTypography.caption(color: textSecondary)),
+                  ])))),
                   Center(
                     child: ConstrainedBox(
                       constraints: const BoxConstraints(maxWidth: 920),
