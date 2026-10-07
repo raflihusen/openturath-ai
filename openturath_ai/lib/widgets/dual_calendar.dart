@@ -110,7 +110,8 @@ class _DualCalendarState extends State<DualCalendar>
                 visualDensity: VisualDensity.compact,
                 tooltip: reviewCopy(
                     'Metode kalender', 'طريقة التقويم', 'Calendar method'),
-                icon: const Icon(Icons.info_outline_rounded, size: 18),
+                icon: Icon(Icons.info_outline_rounded, size: 18,
+                    semanticLabel: reviewCopy('Metode kalender', 'طريقة التقويم', 'Calendar method')),
                 onPressed: () => showDialog<void>(
                     context: context,
                     builder: (context) => AlertDialog(
