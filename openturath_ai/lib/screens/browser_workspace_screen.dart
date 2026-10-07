@@ -51,7 +51,7 @@ class _BrowserWorkspaceScreenState extends State<BrowserWorkspaceScreen> {
                       style: Theme.of(context).textTheme.titleLarge),
                   const SizedBox(height: 12),
                   const Text(
-                      'Masuk dengan Google dari ruang browser, lalu buka ruang asisten di browser dan profil yang sama. Tidak ada login Google di WebView aplikasi.'),
+                      'Masuk dengan Google dari ruang browser, lalu buka ruang AI di browser dan profil yang sama. Tidak ada login Google di WebView aplikasi.'),
                   const SizedBox(height: 28),
                   FilledButton.icon(
                     onPressed: _opening ? null : _open,
