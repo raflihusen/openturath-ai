@@ -27,7 +27,7 @@ class OTMotion {
   static const int splashWordEndMs = 1150;
   static const double splashWordShift = 8;
 
-  static const Duration loaderLoop = Duration(milliseconds: 1600);
+  static const Duration loaderLoop = Duration(milliseconds: 1800);
   static const double loaderSweep = 0.22;
 
   static const int loginLayerStaggerMs = 60;
