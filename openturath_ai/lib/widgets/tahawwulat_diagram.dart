@@ -1,3 +1,5 @@
+import '../core/design/ot_typography.dart';
+import '../core/design/ot_expressive.dart';
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import '../core/localization.dart';
@@ -24,7 +26,7 @@ class _TahawwulatDiagramState extends State<TahawwulatDiagram> {
   ];
   @override
   Widget build(BuildContext context) {
-    final ink = widget.inverse ? Colors.white : Theme.of(context).colorScheme.onSurface;
+    final ink = widget.inverse ? OTExpressive.white : Theme.of(context).colorScheme.onSurface;
     return Column(mainAxisSize: MainAxisSize.min, children: [
       AspectRatio(aspectRatio: 1.12, child: LayoutBuilder(builder: (context, box) {
         final extent = box.maxWidth;
@@ -36,9 +38,9 @@ class _TahawwulatDiagramState extends State<TahawwulatDiagram> {
             width: extent * .44, height: extent * .22,
             child: widget.interactive ? Semantics(selected: selected == i, child: TextButton(
               onPressed: () => setState(() => selected = i),
-              style: TextButton.styleFrom(foregroundColor: i == selected ? Colors.white : ink, minimumSize: const Size(48,48)),
-              child: _label(i, extent, i == selected ? Colors.white : ink),
-            )) : Center(child: _label(i, extent, widget.inverse ? const Color(0xFFEEEEEE) : const Color(0xFF252525))),
+              style: TextButton.styleFrom(foregroundColor: i == selected ? OTExpressive.white : widget.inverse ? OTExpressive.white : OTExpressive.ink, minimumSize: const Size(48,48)),
+              child: _label(i, extent, i == selected ? OTExpressive.white : widget.inverse ? OTExpressive.white : OTExpressive.ink),
+            )) : Center(child: _label(i, extent, widget.inverse ? OTExpressive.diagramLabel : OTExpressive.ink)),
           ),
         ]);
       })),
@@ -47,12 +49,12 @@ class _TahawwulatDiagramState extends State<TahawwulatDiagram> {
           for(var i=0; i<4;i++) ChoiceChip(label: Text(Loc.isArabic ? arabic[i] : labels[i]), selected: selected == i, onSelected: (_) => setState(() => selected = i)),
         ]),
         const SizedBox(height: 16),
-        Semantics(liveRegion: true, child: Text(Loc.isArabic ? arabic[selected] : explanations[selected], textAlign: TextAlign.center, style: ScholarlyFonts.outfit(fontSize: 16, height: 1.6, color: ink))),
+        Semantics(liveRegion: true, child: Text(Loc.isArabic ? arabic[selected] : explanations[selected], textAlign: TextAlign.center, style: ScholarlyFonts.outfit(fontSize: OTFontSize.s16, height: 1.6, color: ink))),
       ])),
     ]);
   }
   Widget _label(int i,double extent,Color color) => Text(arabic[i], textDirection: TextDirection.rtl, textAlign: TextAlign.center,
-    style: TextStyle(fontFamily: 'NativeArabicUI', fontSize: (extent / 17).clamp(12.0,22.0), fontWeight: FontWeight.w600, color: color));
+    style: TextStyle(fontFamily: 'NativeArabicUI', fontSize: (extent / 17).clamp(OTFontSize.s12,OTFontSize.s22), fontWeight: FontWeight.w600, color: color));
 }
 class _SectorsPainter extends CustomPainter {
   const _SectorsPainter({required this.selected,required this.inverse});
@@ -61,16 +63,16 @@ class _SectorsPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final r=math.min(size.width,size.height)*.44;
     final center=Offset(size.width/2,size.height/2-3);
-    final shades=inverse ? [0xFF3B3B3B,0xFF494949,0xFF555555,0xFF686868] : [0xFFE5E5E5,0xFFD8D8D8,0xFFC9C9C9,0xFFB8B8B8];
+    final shades=inverse ? OTExpressive.diagramDark : OTExpressive.diagramLight;
     for(var i=0;i<4;i++) {
       final a = [-math.pi,-math.pi/2,0.0,math.pi/2][i];
       final mid=a+math.pi/4;
       final c=center+Offset(math.cos(mid)*7,math.sin(mid)*7);
       final path=Path()..moveTo(c.dx,c.dy)..lineTo(c.dx+math.cos(a)*r,c.dy+math.sin(a)*r)..arcTo(Rect.fromCircle(center:c,radius:r),a,math.pi/2,false)..close();
       canvas.save();canvas.translate(0,5);
-      canvas.drawPath(path,Paint()..color=const Color(0xFF777777).withValues(alpha:inverse?.22:.18));canvas.restore();
-      canvas.drawShadow(path,Colors.black.withValues(alpha:.15),3,false);
-      canvas.drawPath(path,Paint()..color=Color(i==selected?0xFF242424:shades[i]));
+      canvas.drawPath(path,Paint()..color=OTExpressive.diagramEdge.withValues(alpha:inverse ? .22 : .18));canvas.restore();
+      canvas.drawShadow(path,OTExpressive.black.withValues(alpha:.15),3,false);
+      canvas.drawPath(path,Paint()..color=Color(i==selected ? OTExpressive.diagramSelected : shades[i]));
     }
   }
   @override
