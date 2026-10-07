@@ -149,7 +149,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       const SizedBox(width: 10),
                       Text(
                         AppCopy.appName,
-                        style: ScholarlyFonts.newsreader(
+                        style: ScholarlyFonts.outfit(
                           fontSize: OTFontSize.s18,
                           fontWeight: FontWeight.w600,
                           letterSpacing: -0.3,
@@ -195,7 +195,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 delayMs: OTMotion.loginHeadlineMs,
                                 child: Text(
                                   Loc.tr('loginTitle'),
-                                  style: ScholarlyFonts.newsreader(
+                                  style: ScholarlyFonts.outfit(
                                     fontSize: OTFontSize.s36,
                                     fontWeight: FontWeight.w400,
                                     letterSpacing: -0.8,
@@ -394,7 +394,7 @@ class _LoginAside extends StatelessWidget {
                   OTReveal(
                     child: Text(
                       AppCopy.appTagline,
-                      style: ScholarlyFonts.newsreader(
+                      style: ScholarlyFonts.outfit(
                         fontSize: OTFontSize.s36,
                         fontWeight: FontWeight.w400,
                         letterSpacing: -1.1,
