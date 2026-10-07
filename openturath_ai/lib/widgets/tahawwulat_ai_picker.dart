@@ -82,7 +82,23 @@ class TahawwulatAiPicker {
                                             style: OTTypography.bodyMedium(
                                                 color: ink)),
                                         const SizedBox(height: 4),
-                                        Text(agents[i].description,
+                                        Text(
+                                            reviewCopy(
+                                                const [
+                                                  'Telusuri teks kitab dan ibarah rujukan.',
+                                                  'Pahami konsep dan istilah dengan penjelasan ringkas.',
+                                                  'Uji pemahaman melalui latihan interaktif.',
+                                                  'Telusuri arsip muhadarah Habib Abu Bakar.',
+                                                  'Susun bahan dakwah dan khutbah.'
+                                                ][i % 5],
+                                                agents[i].descriptionArabic,
+                                                const [
+                                                  'Explore source texts and book references.',
+                                                  'Understand concepts through concise explanations.',
+                                                  'Test your understanding with interactive exercises.',
+                                                  'Explore Habib Abu Bakar’s lecture archive.',
+                                                  'Prepare material for talks and sermons.'
+                                                ][i % 5]),
                                             style: OTTypography.caption(
                                                 color: OTColors.textSecondary(
                                                     dark))),
