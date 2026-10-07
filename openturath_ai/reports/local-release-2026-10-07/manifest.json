@@ -1,0 +1,55 @@
+{
+  "created_at": "2026-10-07T13:16:17.884279+03:00",
+  "version": "1.0.63+64",
+  "source_revision_before_build": "b687f4e",
+  "branch": "codex/rounded-flagship-review-2026-10-07",
+  "scope": "local downloadable release artifacts",
+  "public_upload": false,
+  "version_broadcast": false,
+  "apk": {
+    "path": "/Users/apple/Downloads/ramadhan/app-release-latest.apk",
+    "bytes": 67418932,
+    "sha256": "60885018c40c2437eac6ba4695e76f664f03ca5441c3a7ac15f506af7de667dd",
+    "mtime_epoch": 1791368134.023838,
+    "mtime_local": "2026-10-07T13:15:34.023838+03:00",
+    "apk_signer_sha256": "5cd190417e22b1b10407928f63007d41a86554f1037b632c4652eb4e29e342b0",
+    "matches_previous_signer": true,
+    "signature_scheme": "v2",
+    "version_name": "1.0.63",
+    "version_code": 64,
+    "min_sdk": 24,
+    "target_sdk": 36,
+    "architectures": [
+      "arm64-v8a",
+      "armeabi-v7a",
+      "x86_64"
+    ],
+    "new_artwork_included": true,
+    "gradle_seconds": 661.4,
+    "build_exit": 0,
+    "backup_path": "/Users/apple/Downloads/ramadhan/openturath_ai/build/local-release-backups/2026-10-07-before-artwork-release/app-release-latest.apk"
+  },
+  "dmg": {
+    "path": "/Users/apple/Downloads/ramadhan/OpenTurath_AI_macOS.dmg",
+    "bytes": 51453510,
+    "sha256": "1d198c3f6c9466d2c7f3f1936e634dfbae49db45930e62da7226ef859cf5beb7",
+    "mtime_epoch": 1791367538.695309,
+    "signature": "adhoc",
+    "notarized": false,
+    "architectures": [
+      "arm64",
+      "x86_64"
+    ],
+    "mtime_local": "2026-10-07T13:05:38.695309+03:00",
+    "package_exit": 0,
+    "disk_image_verify_exit": 0,
+    "mounted_app_verify_exit": 0,
+    "native_binary_count": 37
+  },
+  "verification_limits": [
+    "No physical Android installation test in this build turn.",
+    "No Apple Developer ID signature or notarization.",
+    "Authenticated NotebookLM flow not verified by artifact compilation."
+  ],
+  "backup_directory": "/Users/apple/Downloads/ramadhan/openturath_ai/build/local-release-backups/2026-10-07-before-artwork-release"
+}
