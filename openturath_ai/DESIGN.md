@@ -144,3 +144,13 @@ Data yang belum terverifikasi dibiarkan kosong. Kode voucher tidak pernah dituli
 - [ ] Satu tombol primer per layar; target sentuh ≥ 44px.
 - [ ] Pesan sistem tanpa tanda seru dan memakai istilah baku.
 - [ ] Tidak ada kode voucher atau data karangan di layar.
+
+## 2026-10-07 — Minimal scholarly workspace
+
+Antarmuka memakai judul Outfit; Newsreader untuk koleksi dan kitab. Permukaan
+bertingkat menggantikan garis di semua kartu. Canvas #F6F6F6 / #151515,
+surface #FFFFFF / #202020, tonal #EDEDED / #2B2B2B.
+Radius: input/dialog 28, card 24, sheet/hero 32, pill 999, xs 8.
+Pencarian hadir sebelum panel beranda, navigasi berlabel, katalog berupa daftar
+editorial. Kutipan Arab memiliki arah sendiri; satu istilah Arab tidak boleh
+mengubah seluruh paragraf Indonesia menjadi RTL.

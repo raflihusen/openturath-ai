@@ -92,10 +92,10 @@ void main() {
     });
 
     test('OTRadius enforces disciplined curvature without bubble-boxing', () {
-      expect(OTRadius.input, 14.0);
-      expect(OTRadius.card, 16.0);
-      expect(OTRadius.sheet, 24.0);
-      expect(OTRadius.dialog, 20.0);
+      expect(OTRadius.input, 28.0);
+      expect(OTRadius.card, 24.0);
+      expect(OTRadius.sheet, 32.0);
+      expect(OTRadius.dialog, 28.0);
       expect(OTRadius.chip, 999.0);
       expect(OTRadius.button, 999.0);
 

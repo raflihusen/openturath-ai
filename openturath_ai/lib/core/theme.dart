@@ -595,10 +595,10 @@ class AppTheme {
         ),
       ),
       chipTheme: ChipThemeData(
-        backgroundColor: OTColors.surface(dark),
+        backgroundColor: OTColors.surfaceSubtle(dark),
         selectedColor: OTColors.accent(dark),
         disabledColor: OTColors.surfaceSubtle(dark),
-        side: BorderSide(color: OTColors.borderStrong(dark)),
+        side: BorderSide.none,
         shape: pill,
         showCheckmark: false,
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),

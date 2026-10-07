@@ -122,7 +122,7 @@ class OTTypography {
         color: color,
       );
 
-  static TextStyle pageTitle({Color? color}) => _newsreader(
+  static TextStyle pageTitle({Color? color}) => _outfit(
         fontSize: OTFontSize.s26,
         fontWeight: FontWeight.w600,
         letterSpacing: -0.6,
@@ -144,7 +144,7 @@ class OTTypography {
         color: color,
       );
 
-  static TextStyle screenTitle({Color? color}) => _newsreader(
+  static TextStyle screenTitle({Color? color}) => _outfit(
         fontSize: OTFontSize.s20,
         fontWeight: FontWeight.w600,
         letterSpacing: -0.3,

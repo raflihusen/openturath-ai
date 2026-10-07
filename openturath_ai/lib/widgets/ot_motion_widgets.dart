@@ -134,7 +134,7 @@ class OTBentoTile extends StatefulWidget {
   final EdgeInsetsGeometry padding;
   final String? semanticLabel;
 
-  static const double radius = 16;
+  static const double radius = OTRadius.card;
 
   @override
   State<OTBentoTile> createState() => _OTBentoTileState();
@@ -161,9 +161,10 @@ class _OTBentoTileState extends State<OTBentoTile> {
       curve: OTMotion.curve,
       padding: widget.padding,
       decoration: BoxDecoration(
-        color: background,
+        color: _hovered && interactive && !widget.inverse
+            ? OTColors.surfaceSubtle(isDark) : background,
         borderRadius: BorderRadius.circular(OTBentoTile.radius),
-        border: Border.all(color: border),
+        border: Border.all(color: _hovered && interactive ? border : background),
       ),
       child: widget.child,
     );

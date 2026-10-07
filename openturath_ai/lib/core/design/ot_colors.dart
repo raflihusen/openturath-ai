@@ -9,9 +9,9 @@ import 'package:flutter/material.dart';
 /// Seluruh `screens/` dan `widgets/` wajib mengambil warna dari sini.
 class OTColors {
   // ── 1. Light Mode (Neutral Paper) ──
-  static const Color canvasLight = Color(0xFFFAFAFA); // Kertas hangat untuk ruang telaah
+  static const Color canvasLight = Color(0xFFF6F6F6); // Kertas hangat untuk ruang telaah
   static const Color surfaceLight = Color(0xFFFFFFFF); // Panel utama, bottom sheet, dialog, kartu, input field
-  static const Color surfaceSubtleLight = Color(0xFFF2F2F2); // Kontainer tonal sekunder
+  static const Color surfaceSubtleLight = Color(0xFFEDEDED); // Kontainer tonal sekunder
   static const Color textPrimaryLight = Color(0xFF171717);
   static const Color textSecondaryLight = Color(0xFF606060);
   static const Color textTertiaryLight = Color(0xFF6B6B6B); // Placeholder, hint
@@ -23,9 +23,9 @@ class OTColors {
   static const Color onPrimaryContainerLight = Color(0xFF171717);
 
   // ── 2. Dark Mode (Neutral Ink) ──
-  static const Color canvasDark = Color(0xFF111111);
-  static const Color surfaceDark = Color(0xFF191919);
-  static const Color surfaceSubtleDark = Color(0xFF242424);
+  static const Color canvasDark = Color(0xFF151515);
+  static const Color surfaceDark = Color(0xFF202020);
+  static const Color surfaceSubtleDark = Color(0xFF2B2B2B);
   static const Color textPrimaryDark = Color(0xFFF5F5F5);
   static const Color textSecondaryDark = Color(0xFFB8B8B8);
   static const Color textTertiaryDark = Color(0xFF9A9A9A); // Placeholder, hint
@@ -44,7 +44,7 @@ class OTColors {
 
   // ── 4. Permukaan Terbalik (Snackbar, tooltip, pil gelap di mode terang) ──
   static const Color inverseSurfaceLight = textPrimaryLight;
-  static const Color inverseSurfaceDark = Color(0xFF242424);
+  static const Color inverseSurfaceDark = Color(0xFF2B2B2B);
   static const Color onInverseSurface = Color(0xFFF5F5F5);
 
   // ── 5. Status rujukan — dibedakan dengan label dan ikon ──
