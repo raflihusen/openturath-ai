@@ -3,6 +3,7 @@ import '../core/design/ot_colors.dart';
 import '../core/scholarly_fonts.dart';
 
 import 'package:openturath_ai/core/design/ot_typography.dart';
+
 /// AppErrorState: Komponen visual baku penanganan galat dan koneksi terputus.
 /// Menghindarkan aplikasi dari layar kosong atau error bisu tanpa pemulihan.
 class AppErrorState extends StatelessWidget {
@@ -20,7 +21,8 @@ class AppErrorState extends StatelessWidget {
   const AppErrorState({
     super.key,
     this.title = 'Koneksi terputus',
-    this.message = 'Tidak dapat memuat data saat ini. Periksa koneksi internet lalu coba lagi.',
+    this.message =
+        'Tidak dapat memuat data saat ini. Periksa koneksi internet lalu coba lagi.',
     this.icon = Icons.wifi_off_rounded,
     this.onRetry,
     this.retryLabel = 'Coba lagi',
@@ -34,7 +36,8 @@ class AppErrorState extends StatelessWidget {
   const AppErrorState.network({
     super.key,
     this.title = 'Koneksi terputus',
-    this.message = 'Tidak dapat memuat data rujukan saat ini. Periksa koneksi internet lalu coba lagi.',
+    this.message =
+        'Tidak dapat memuat data rujukan saat ini. Periksa koneksi internet lalu coba lagi.',
     this.icon = Icons.wifi_off_rounded,
     this.onRetry,
     this.retryLabel = 'Coba lagi',
@@ -60,7 +63,8 @@ class AppErrorState extends StatelessWidget {
   const AppErrorState.empty({
     super.key,
     this.title = 'Rujukan tidak ditemukan',
-    this.message = 'Tidak ada kitab atau catatan yang sesuai dengan kata kunci atau saringan.',
+    this.message =
+        'Tidak ada kitab atau catatan yang sesuai dengan kata kunci atau saringan.',
     this.icon = Icons.find_in_page_outlined,
     this.onRetry,
     this.retryLabel = 'Atur ulang pencarian',
