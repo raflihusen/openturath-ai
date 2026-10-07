@@ -13,6 +13,7 @@ class OTMotion {
   // Dicerminkan dari `motion/src/spec.ts` (Remotion). Ubah keduanya bersama.
   static const int splashTotalMs = 1400;
   static const Duration splashTotal = Duration(milliseconds: splashTotalMs);
+
   /// Splash tidak menahan navigasi lebih lama dari ini.
   static const Duration splashHold = Duration(milliseconds: 900);
   static const int splashDrawStartMs = 0;
