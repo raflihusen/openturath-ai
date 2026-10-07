@@ -1,3 +1,4 @@
+import '../widgets/book_reading_rows.dart';
 import '../widgets/desktop_shortcuts.dart';
 import '../widgets/book_identity_card.dart';
 import 'package:flutter/material.dart';
@@ -362,7 +363,12 @@ class _OpenTurathBookLibraryPageState extends State<OpenTurathBookLibraryPage> {
                           });
                     }, childCount: visibleBooks.length);
                     if (_list || largeText || columns == 1) {
-                      return SliverList(delegate: delegate);
+                      final readingColumns = bookReadingColumns(context, constraints.crossAxisExtent);
+                      return SliverList(delegate: SliverChildBuilderDelegate(
+                          (context, row) => bookReadingRow(context, row,
+                              readingColumns, visibleBooks.length,
+                              (context, index) => delegate.builder(context, index)!),
+                          childCount: (visibleBooks.length / readingColumns).ceil()));
                     }
                     return SliverGrid(
                         delegate: delegate,
