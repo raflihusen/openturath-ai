@@ -1,3 +1,4 @@
+import '../core/design/ot_expressive.dart';
 import '../widgets/adaptive_sheet.dart';
 import 'package:flutter/material.dart';
 
@@ -235,14 +236,14 @@ class _TahawwulatIntroductionSheetState
 
       final cover = Padding(padding: EdgeInsets.fromLTRB(roomy ? 32 : 16, 64, roomy ? 32 : 16, 24), child: Container(
         padding: EdgeInsets.all(roomy ? 32 : 24),
-        decoration: BoxDecoration(color: const Color(0xFF171717), borderRadius: BorderRadius.circular(roomy ? 36 : 28)),
+        decoration: BoxDecoration(color: OTExpressive.hero, borderRadius: BorderRadius.circular(roomy ? OTExpressive.heroRadius : OTExpressive.compactHeroRadius)),
         child: LayoutBuilder(builder: (context, box) {
           final heading = Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
             Text(reviewCopy('Mengenal Fikih Tahawwulat','تعرّف على فقه التحولات','About Fiqh Tahawwulat'), style: ScholarlyFonts.outfit(fontSize: OTFontSize.s36, fontWeight: FontWeight.w600, height: 1.15, color: onCover)),
             const SizedBox(height: 20),
-            Text(reviewCopy('Ilmu membaca perubahan zaman dengan petunjuk Nabi ﷺ, disusun Al-Habib Abu Bakar Al-Adni bin Ali Al-Masyhur.','علم قراءة تحولات الزمان بهدي النبي ﷺ، للإمام الحبيب أبي بكر العدني بن علي المشهور.','Reading changing times through Prophetic guidance, by Al-Habib Abu Bakar Al-Adni bin Ali Al-Masyhur.'), style: ScholarlyFonts.outfit(fontSize: OTFontSize.s16, height: 1.6, color: Colors.white70)),
+            Text(reviewCopy('Ilmu membaca perubahan zaman dengan petunjuk Nabi ﷺ, disusun Al-Habib Abu Bakar Al-Adni bin Ali Al-Masyhur.','علم قراءة تحولات الزمان بهدي النبي ﷺ، للإمام الحبيب أبي بكر العدني بن علي المشهور.','Reading changing times through Prophetic guidance, by Al-Habib Abu Bakar Al-Adni bin Ali Al-Masyhur.'), style: ScholarlyFonts.outfit(fontSize: OTFontSize.s16, height: 1.6, color: OTExpressive.whiteMuted)),
             const SizedBox(height: 24),
-            FilledButton(onPressed: () {final target = _chapterKeys[1]?.currentContext; if(target!=null)Scrollable.ensureVisible(target, duration: MediaQuery.disableAnimationsOf(context) ? Duration.zero : OTMotion.transition);}, style: FilledButton.styleFrom(backgroundColor: Colors.white, foregroundColor: Colors.black), child: Text(reviewCopy('Mulai membaca','ابدأ القراءة','Start reading'))),
+            FilledButton(onPressed: () {final target = _chapterKeys[1]?.currentContext; if(target!=null)Scrollable.ensureVisible(target, duration: MediaQuery.disableAnimationsOf(context) ? Duration.zero : OTMotion.transition);}, style: FilledButton.styleFrom(backgroundColor: OTExpressive.white, foregroundColor: OTExpressive.black), child: Text(reviewCopy('Mulai membaca','ابدأ القراءة','Start reading'))),
           ]);
           if(box.maxWidth >= 720 && MediaQuery.textScalerOf(context).scale(16) <= 24) return Row(children: [Expanded(flex:3,child:heading), const SizedBox(width:32), const Expanded(flex:2,child:TahawwulatDiagram(inverse:true))]);
           return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children:[heading,const SizedBox(height:20),const Center(child:SizedBox(width:260,child:TahawwulatDiagram(inverse:true)))]);
