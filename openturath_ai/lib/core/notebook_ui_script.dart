@@ -317,8 +317,10 @@ const notebookUiScript = r'''
         line-height: 1.8 !important;
       }
       .rendered-markdown p + p, .chat-response p + p { margin-top: 1em !important; }
-      ::-webkit-scrollbar { display: none !important; width: 0 !important; }
-      html, body, * { scrollbar-width: none !important; }
+      .chat-panel-content, .chat-view, .conversation-container { scrollbar-width: thin; }
+      .rendered-markdown { max-width: 720px; margin-inline: auto; }
+      .rendered-markdown p, .rendered-markdown li { unicode-bidi: plaintext; }
+      .chat-input-container { border-radius: 28px !important; }
 
       /* Sembunyikan dialog / pop-up selamat datang dan intro Gemini Notebook */
       app-welcome-dialog, app-onboarding-dialog,
@@ -353,34 +355,7 @@ const notebookUiScript = r'''
       });
     });
 
-    // Sembunyikan tombol opsi titik tiga (more_vert / more_horiz / options) secara halus
-    document.querySelectorAll('mat-icon, [data-mat-icon-name]').forEach(icon => {
-      const name = (icon.getAttribute('data-mat-icon-name') || icon.getAttribute('fonticon') || icon.textContent || '').trim().toLowerCase();
-      if (name === 'more_vert' || name === 'more_horiz') {
-        const btn = icon.closest('button, [role="button"]');
-        if (btn && btn.querySelectorAll('textarea, input').length === 0) {
-          btn.style.setProperty('opacity', '0', 'important');
-          btn.style.setProperty('pointer-events', 'none', 'important');
-          btn.style.setProperty('position', 'absolute', 'important');
-          btn.style.setProperty('left', '-9999px', 'important');
-          btn.style.setProperty('width', '0', 'important');
-          btn.style.setProperty('height', '0', 'important');
-        }
-      }
-    });
-
-    document.querySelectorAll('button[aria-label*="options" i], button[aria-label*="opsi" i], button[aria-label*="more" i]').forEach(btn => {
-      const label = (btn.getAttribute('aria-label') || '').toLowerCase();
-      if (!label.includes('send') && !label.includes('kirim') && !label.includes('mic') && !label.includes('suara')) {
-        btn.style.setProperty('opacity', '0', 'important');
-        btn.style.setProperty('pointer-events', 'none', 'important');
-        btn.style.setProperty('position', 'absolute', 'important');
-        btn.style.setProperty('left', '-9999px', 'important');
-        btn.style.setProperty('width', '0', 'important');
-        btn.style.setProperty('height', '0', 'important');
-      }
-    });
-
+    // Preserve response menus, citation actions, and keyboard-accessible controls.
     // Sembunyikan lencana PRO dengan selektor spesifik (tanpa querySelectorAll(*))
     document.querySelectorAll('.pro-badge, [class*="pro-badge" i], [class*="tier-badge" i], button span, a span').forEach(el => {
       if (el.children.length === 0 && (el.textContent || '').trim().toUpperCase() === 'PRO') {

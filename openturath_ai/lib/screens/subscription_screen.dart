@@ -17,6 +17,7 @@ import '../widgets/promo_price.dart';
 import '../widgets/redeem_code_sheet.dart';
 import '../core/app_platform.dart';
 import '../services/auth_service.dart';
+import '../services/telemetry_service.dart';
 
 import 'package:openturath_ai/core/design/ot_radius.dart';
 import 'package:openturath_ai/core/design/ot_buttons.dart';
@@ -159,7 +160,8 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
       if (mounted && paid == true) {
         AppSnackBar.success(context, Loc.tr('paymentConfirmed'));
       }
-    } on FirebaseFunctionsException catch (error) {
+    } on FirebaseFunctionsException catch (error, stack) {
+      TelemetryService.instance.reportError(error, stack, context: 'checkout');
       if (mounted) {
         setState(() => _checkoutError = _checkoutErrorMessage(error));
       }
@@ -167,7 +169,8 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
       if (mounted) {
         setState(() => _checkoutError = Loc.tr('checkoutLinkUnavailable'));
       }
-    } catch (_) {
+    } catch (error, stack) {
+      TelemetryService.instance.reportError(error, stack, context: 'checkout');
       if (mounted) setState(() => _checkoutError = Loc.tr('checkoutError'));
     } finally {
       if (mounted) setState(() => _processing = false);
