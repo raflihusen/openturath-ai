@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:openturath_ai/core/localization.dart';
+import 'package:openturath_ai/core/app_config.dart';
 import 'package:openturath_ai/core/theme.dart';
 import 'package:openturath_ai/core/constants.dart';
 import 'package:openturath_ai/models/user_model.dart';
@@ -18,12 +19,17 @@ void main() {
       photoUrl: '',
       plan: AppConstants.planTrial,
       questionsUsed: 0);
-  runApp(MaterialApp(
+  runApp(ValueListenableBuilder<String>(
+      valueListenable: AppConfig.localeNotifier,
+      builder: (context, language, _) => ValueListenableBuilder<ThemeMode>(
+        valueListenable: AppConfig.themeNotifier,
+        builder: (context, mode, _) => MaterialApp(
+      locale: Locale(language), themeMode: mode,
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       supportedLocales: Loc.supportedLocales,
       localizationsDelegates: GlobalMaterialLocalizations.delegates,
       builder: (context, child) => LocaleScope(child: child!),
-      home: const MainShellScreen()));
+      home: const MainShellScreen()))));
 }
