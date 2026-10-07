@@ -276,12 +276,13 @@ class _TahawwulatIntroductionSheetState
                               ? null
                               : _chapterKeys[_chapters.first.$1]
                                   ?.currentContext;
-                          if (target != null)
+                          if (target != null) {
                             Scrollable.ensureVisible(target,
                                 duration:
                                     MediaQuery.disableAnimationsOf(context)
                                         ? Duration.zero
                                         : OTMotion.transition);
+                          }
                         },
                         style: FilledButton.styleFrom(
                             backgroundColor: OTExpressive.white,
@@ -290,13 +291,14 @@ class _TahawwulatIntroductionSheetState
                             'Mulai membaca', 'ابدأ القراءة', 'Start reading'))),
                   ]);
               if (box.maxWidth >= 720 &&
-                  MediaQuery.textScalerOf(context).scale(16) <= 24)
+                  MediaQuery.textScalerOf(context).scale(16) <= 24) {
                 return Row(children: [
                   Expanded(flex: 3, child: heading),
                   const SizedBox(width: 32),
                   const Expanded(
                       flex: 2, child: TahawwulatDiagram(inverse: true))
                 ]);
+              }
               return Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
