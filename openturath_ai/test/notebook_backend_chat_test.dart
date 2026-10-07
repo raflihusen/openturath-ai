@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter/material.dart';
+import 'package:openturath_ai/core/localization.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:openturath_ai/models/agent_model.dart';
@@ -191,7 +192,7 @@ void main() {
     expect(find.byType(InAppWebView), findsNothing);
     await tester.enterText(find.byType(TextField), 'Pertanyaan fixture');
     await tester.pump();
-    await tester.tap(find.byTooltip('Kirim telaah'));
+    await tester.tap(find.byTooltip(Loc.tr('sendQuestion')));
     await tester.pump();
     expect(gateway.requests, hasLength(1));
     // A user may prepare the next question while the previous answer is pending.
@@ -204,7 +205,7 @@ void main() {
     await tester.tap(find.text('Rujukan sumber'));
     await tester.pump(const Duration(milliseconds: 300));
     expect(find.text('[1] Kutipan fixture'), findsOneWidget);
-    await tester.tap(find.byTooltip('Kirim telaah'));
+    await tester.tap(find.byTooltip(Loc.tr('sendQuestion')));
     await tester.pump();
     expect(gateway.requests, hasLength(2));
     gateway.reply(1);
