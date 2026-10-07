@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../core/design/ot_colors.dart';
 import '../core/design/ot_typography.dart';
 import '../core/scholarly_fonts.dart';
-import '../core/arabic_utils.dart';
+import '../core/answer_direction.dart';
 import 'ot_motion_widgets.dart';
 
 /// One bibliographic identity, shared by the collection and canonical catalogs.
@@ -45,8 +45,7 @@ class BookIdentityCard extends StatelessWidget {
         child: Column(crossAxisAlignment: CrossAxisAlignment.stretch,
           mainAxisSize: box.hasBoundedHeight ? MainAxisSize.max : MainAxisSize.min,
           children: [
-            if (box.hasBoundedHeight) Expanded(child: SingleChildScrollView(
-              physics: const NeverScrollableScrollPhysics(), child: identity)) else identity,
+            if (box.hasBoundedHeight) Expanded(child: identity) else identity,
             const SizedBox(height: 16),
             Wrap(spacing: 12, runSpacing: 8, crossAxisAlignment: WrapCrossAlignment.center,
               children: [
