@@ -11,7 +11,8 @@ import '../models/agent_model.dart';
 import '../models/book_model.dart';
 import '../services/canonical_library_service.dart';
 import '../services/open_turath_catalog_repository.dart';
-import '../screens/library_metadata_overview_screen.dart';
+import '../screens/book_library_editorial_screen.dart';
+import '../core/app_snackbar.dart';
 import 'apple_interactive_wrapper.dart';
 import '../core/localization.dart';
 
@@ -22,22 +23,19 @@ Future<void> showResearchLibrary(
   AgentModel? agent,
 }) async {
   final agentKey = agent?.id ?? 'fiqh_syafii';
-  final metadata = await OpenTurathCatalogRepository.instance.getMetadataForModule(agentKey);
-
-  if (context.mounted && metadata != null) {
-    Navigator.of(context).push(
-      AiLibraryOverviewPage.route(metadata: metadata),
-    );
-    return;
+  try {
+    final repository = OpenTurathCatalogRepository.instance;
+    final metadata = await repository.getMetadataForModule(agentKey);
+    final books = await repository.loadBooksForModule(agentKey);
+    if (!context.mounted) return;
+    Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) =>
+        OpenTurathBookLibraryPage(books: books,
+            collectionName: Loc.text(agent?.title ?? metadata?.nama ?? AppCopy.libraryShort),
+            metadata: metadata)));
+  } catch (_) {
+    if (context.mounted) AppSnackBar.error(context, Loc.tr('catalogFailure'));
   }
 
-  if (context.mounted) {
-    NavigationGuard.safePushNamed(
-      context,
-      AppRoutes.bookCatalog,
-      arguments: agent,
-    );
-  }
 }
 
 class ResearchLibrarySheet extends StatefulWidget {

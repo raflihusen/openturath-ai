@@ -64,26 +64,15 @@ class OpenTurathBook {
   }
 
   static List<OpenTurathBook> decodeList(String source) {
-    try {
-      final decoded = jsonDecode(source);
-      final dynamic list = decoded is List
-          ? decoded
-          : (decoded is Map<String, dynamic>
-              ? (decoded['kitab'] ?? decoded['books'] ?? const [])
-              : const []);
-      if (list is! List) return const [];
-
-      return list
-          .whereType<Map>()
-          .map(
-            (item) => OpenTurathBook.fromJson(
-              Map<String, dynamic>.from(item),
-            ),
-          )
-          .toList(growable: false);
-    } catch (_) {
-      return const [];
+    final decoded = jsonDecode(source);
+    final dynamic list = decoded is List
+        ? decoded
+        : decoded is Map<String, dynamic> ? (decoded['kitab'] ?? decoded['books']) : null;
+    if (list is! List || list.any((item) => item is! Map<String, dynamic>)) {
+      throw const FormatException('Catalog must contain a list of book records');
     }
+    return list.map((item) => OpenTurathBook.fromJson(item as Map<String, dynamic>))
+        .toList(growable: false);
   }
 
   static int _intValue(dynamic value) {

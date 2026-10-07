@@ -169,26 +169,24 @@ class OpenTurathCatalogRepository {
       }
     }
 
-    return all['fiqh_syafii'];
+    return exactMetadata(all, cleanKey);
   }
 
   /// Memuat daftar kitab untuk modul atau asisten tertentu dari katalog JSON
   Future<List<OpenTurathBook>> loadBooksForModule(String moduleKey) async {
     final cleanKey = moduleKey.replaceAll('-', '_').toLowerCase();
-    final catalogPath = _moduleToCatalogFile[cleanKey] ??
-        _moduleToCatalogFile['fiqh_syafii']!;
+    final catalogPath = _moduleToCatalogFile[cleanKey];
+    if (catalogPath == null) {
+      throw ArgumentError.value(moduleKey, 'moduleKey', 'No catalog registered');
+    }
 
     if (_booksCache.containsKey(catalogPath)) {
       return _booksCache[catalogPath]!;
     }
 
-    try {
-      final jsonString = await rootBundle.loadString(catalogPath);
-      final books = OpenTurathBook.decodeList(jsonString);
-      _booksCache[catalogPath] = books;
-      return books;
-    } catch (_) {
-      return const [];
-    }
+    final jsonString = await rootBundle.loadString(catalogPath);
+    final books = OpenTurathBook.decodeList(jsonString);
+    _booksCache[catalogPath] = books;
+    return books;
   }
 }
