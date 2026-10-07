@@ -10,7 +10,7 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   GoogleFonts.config.allowRuntimeFetching = false;
 
-  testWidgets('koleksi utama tetap ringkas dan semua asisten dapat dibuka di ponsel',
+  testWidgets('koleksi utama tetap ringkas dan semua AI dapat dibuka di ponsel',
       (tester) async {
     tester.view.physicalSize = const Size(360, 800);
     tester.view.devicePixelRatio = 1;
@@ -40,9 +40,9 @@ void main() {
     ));
     await tester.pumpAndSettle();
 
-    expect(find.text('Jelajahi 5 asisten'), findsOneWidget);
+    expect(find.text('Jelajahi 5 AI'), findsOneWidget);
     expect(find.text('Mengenal Fikih Tahawwulat'), findsOneWidget);
-    // Kelima asisten langsung terlihat tanpa perlu membuka daftar.
+    // Kelima AI langsung terlihat tanpa perlu membuka daftar.
     expect(tester.takeException(), isNull);
     expect(find.text('Al-Muhaqqiq'), findsOneWidget);
     expect(find.text('Al-Khatib'), findsOneWidget);
