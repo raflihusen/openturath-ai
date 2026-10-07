@@ -5,32 +5,102 @@ import '../core/localization.dart';
 import '../core/scholarly_fonts.dart';
 import 'tahawwulat_diagram.dart';
 
-String reviewCopy(String id, String ar, String en) => Loc.isArabic ? ar : Loc.language == 'en' ? en : id;
+String reviewCopy(String id, String ar, String en) => Loc.isArabic
+    ? ar
+    : Loc.language == 'en'
+        ? en
+        : id;
 
 class TahawwulatHero extends StatelessWidget {
-  const TahawwulatHero({super.key, required this.onOpen, required this.onIntroduction, this.facts = const []});
+  const TahawwulatHero(
+      {super.key,
+      required this.onOpen,
+      required this.onIntroduction,
+      this.facts = const []});
   final VoidCallback onOpen;
   final VoidCallback onIntroduction;
   final List<String> facts;
   @override
   Widget build(BuildContext context) => LayoutBuilder(builder: (context, box) {
-    final wide=box.maxWidth >= 720 && MediaQuery.textScalerOf(context).scale(16) <= 24;
-    final text=Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
-      Row(children:[const Icon(Icons.auto_stories_rounded,color:OTExpressive.whiteMuted,size:20),const SizedBox(width:10),
-        Expanded(child:Text('OpenTurath',style:ScholarlyFonts.outfit(fontSize: OTFontSize.s14,color:OTExpressive.whiteMuted,fontWeight:FontWeight.w600)))]),
-      const SizedBox(height:24),
-      Text(reviewCopy('Fikih Tahawwulat','فقه التحولات','Fiqh Tahawwulat'),style:ScholarlyFonts.outfit(fontSize:wide ? OTFontSize.s36 : OTFontSize.s26,fontWeight:FontWeight.w600,height:1.15,color:OTExpressive.white)),
-      const SizedBox(height:20),
-      if(facts.isNotEmpty) Wrap(spacing:16,runSpacing:8,children:[for(final fact in facts) Text(fact,style:ScholarlyFonts.outfit(fontSize: OTFontSize.s14,color:OTExpressive.whiteMuted))]),
-      const SizedBox(height:24),
-      Wrap(spacing:12,runSpacing:12,children:[
-        FilledButton(onPressed:onOpen,style:FilledButton.styleFrom(backgroundColor:OTExpressive.white,foregroundColor:OTExpressive.hero,padding:const EdgeInsets.symmetric(horizontal:24,vertical:16)),
-          child:Text(reviewCopy('Buka Fikih Tahawwulat','افتح فقه التحولات','Open Fiqh Tahawwulat'))),
-        TextButton(onPressed:onIntroduction,style:TextButton.styleFrom(foregroundColor:OTExpressive.white,padding:const EdgeInsets.symmetric(horizontal:16,vertical:16)),
-          child:Text(reviewCopy('Mengenal Fikih Tahawwulat','تعرّف على فقه التحولات','About Fiqh Tahawwulat'))),
-      ]),
-    ]);
-    return Container(padding:EdgeInsets.all(wide?32:24),decoration:BoxDecoration(color:OTExpressive.hero,borderRadius:BorderRadius.circular(wide ? OTExpressive.heroRadius : OTExpressive.compactHeroRadius)),
-      child:wide?Row(children:[Expanded(flex:3,child:text),const SizedBox(width:24),const Expanded(flex:2,child:TahawwulatDiagram(inverse:true))]):Column(crossAxisAlignment:CrossAxisAlignment.stretch,children:[text,const SizedBox(height:20),const Center(child:SizedBox(width:210,child:TahawwulatDiagram(inverse:true)))]));
-  });
+        final wide = box.maxWidth >= 720 &&
+            MediaQuery.textScalerOf(context).scale(16) <= 24;
+        final text = Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(children: [
+                const Icon(Icons.auto_stories_rounded,
+                    color: OTExpressive.whiteMuted, size: 20),
+                const SizedBox(width: 10),
+                Expanded(
+                    child: Text('OpenTurath',
+                        style: ScholarlyFonts.outfit(
+                            fontSize: OTFontSize.s14,
+                            color: OTExpressive.whiteMuted,
+                            fontWeight: FontWeight.w600)))
+              ]),
+              const SizedBox(height: 24),
+              Text(
+                  reviewCopy(
+                      'Fikih Tahawwulat', 'فقه التحولات', 'Fiqh Tahawwulat'),
+                  style: ScholarlyFonts.outfit(
+                      fontSize: wide ? OTFontSize.s36 : OTFontSize.s26,
+                      fontWeight: FontWeight.w600,
+                      height: 1.15,
+                      color: OTExpressive.white)),
+              const SizedBox(height: 20),
+              if (facts.isNotEmpty)
+                Wrap(spacing: 16, runSpacing: 8, children: [
+                  for (final fact in facts)
+                    Text(fact,
+                        style: ScholarlyFonts.outfit(
+                            fontSize: OTFontSize.s14,
+                            color: OTExpressive.whiteMuted))
+                ]),
+              const SizedBox(height: 24),
+              Wrap(spacing: 12, runSpacing: 12, children: [
+                FilledButton(
+                    onPressed: onOpen,
+                    style: FilledButton.styleFrom(
+                        backgroundColor: OTExpressive.white,
+                        foregroundColor: OTExpressive.hero,
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 24, vertical: 16)),
+                    child: Text(reviewCopy('Buka Fikih Tahawwulat',
+                        'افتح فقه التحولات', 'Open Fiqh Tahawwulat'))),
+                TextButton(
+                    onPressed: onIntroduction,
+                    style: TextButton.styleFrom(
+                        foregroundColor: OTExpressive.white,
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 16)),
+                    child: Text(reviewCopy('Mengenal Fikih Tahawwulat',
+                        'تعرّف على فقه التحولات', 'About Fiqh Tahawwulat'))),
+              ]),
+            ]);
+        return Container(
+            padding: EdgeInsets.all(wide ? 32 : 24),
+            decoration: BoxDecoration(
+                color: OTExpressive.hero,
+                borderRadius: BorderRadius.circular(wide
+                    ? OTExpressive.heroRadius
+                    : OTExpressive.compactHeroRadius)),
+            child: wide
+                ? Row(children: [
+                    Expanded(flex: 3, child: text),
+                    const SizedBox(width: 24),
+                    const Expanded(
+                        flex: 2, child: TahawwulatDiagram(inverse: true))
+                  ])
+                : Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                        text,
+                        const SizedBox(height: 20),
+                        const Center(
+                            child: SizedBox(
+                                width: 210,
+                                child: TahawwulatDiagram(inverse: true)))
+                      ]));
+      });
 }
