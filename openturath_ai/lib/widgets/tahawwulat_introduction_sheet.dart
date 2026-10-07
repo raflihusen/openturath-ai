@@ -69,7 +69,7 @@ class TahawwulatIntroductionSheet extends StatefulWidget {
     this.agent,
     this.onSelectSubAgent,
     this.onOpenMain,
-    this.asPage = false,
+    this.asPage = true,
     this.initialSection = 0,
   });
 
@@ -105,6 +105,7 @@ class TahawwulatIntroductionSheet extends StatefulWidget {
         agent: agent,
         onSelectSubAgent: onSelectSubAgent,
         onOpenMain: onOpenMain,
+        asPage: true,
       ),
     );
   }
