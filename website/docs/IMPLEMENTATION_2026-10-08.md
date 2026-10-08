@@ -8,4 +8,4 @@ Urutan: (1) copy dan kebijakan, (2) sinkronisasi fakta aplikasi dan manifest pub
 
 Batas fakta: tidak membuat screenshot usage Claude, review ahli, edisi atau skor benchmark. Ketiadaan sumber disajikan sebagai status pending. Aplikasi lokal bukan bukti kesiapan distribusi publik. Tidak deploy, mengirim email atau mengaktifkan pembayaran. Folder asli tetap tidak disentuh.
 
-Baseline website: 1425cce. Bukti audit: ../.. /reports/website-latest-audit-2026-10-08/AUDIT.md.
+Baseline website: 1425cce. Bukti audit: ../../reports/website-latest-audit-2026-10-08/AUDIT.md.
