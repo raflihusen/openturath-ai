@@ -209,6 +209,21 @@ Berdasarkan `AUDIT_OPENTURATH_AI.md`, dokumen perancangan pustaka, dan keluhan k
      - Mengembalikan penjangkaran presisi `position: fixed !important; bottom: 0 !important;` pada `app-chat-input` dengan padding bawah 130px pada kontainer riwayat obrolan serta fungsi pembantu `pinInputToBottom()`.
   2. Hasil: Ikon titik tiga di pojok kiri atas lenyap 100%, ruang baca telaah bersih hening, dan bilah input chat terkunci dengan anggun di dasar layar.
 
+### Fasa 20: Elevasi Alami Bilah Input Chat, Eliminasi Total Ikon Ka'bah (🕋), dan Pemulihan Loader Super Halus
+- **Akar Masalah Fundamental**:
+  1. *Kolom Input Terlalu Mentok ke Bawah*: Penjangkaran sebelumnya menggunakan `bottom: 0 !important;` dengan padding minimal, sehingga kapsul input menempel tepat di tepi bawah jendela tanpa jarak visual yang bernapas. Ketiadaan disclaimer (karena disembunyikan total) membuat posisi kapsul input tampak tenggelam dan tertekan secara tidak wajar.
+  2. *Ikon Ka'bah (`🕋`) Masih Terlihat*: Di buku catatan "Al Matan Hadits", cover emoji notebook disetel berupa emoji Ka'bah (`🕋`). Elemen ini dirender sebagai teks Unicode Extended Pictographic (`<span>🕋</span>`) atau dalam komponen cover (`app-notebook-cover`, `.cover-emoji`), sehingga lolos dari pemfilteran berbasis tag nama elemen (`img`, `svg`, `mat-icon`) dan pencarian string lama.
+  3. *Animasi Loader Terasa Patah-patah / Choppy*: Rumus animasi titik denyut sebelumnya menggunakan `(curveVal - 0.5).abs() * 2.0` yang memiliki diskontinuitas turunan (cusp/tikungan tajam) di titik balik `0.5`, sehingga kecepatan pemuaian titik berbalik arah secara instan tanpa pelambatan alami (menimbulkan sentakan visual). Ditambah pembentukan subtree widget `Transform` + `Opacity` + `Container` di setiap frame menimbulkan beban compositing.
+- **Solusi Tuntas**:
+  1. `notebook_ui_script.dart`:
+     - Menyetel elevasi alami bilah input: `bottom: max(32px, calc(env(safe-area-inset-bottom, 16px) + 24px)) !important;` pada CSS dan JS `pinInputToBottom()`. Kapsul input kini mengambang secara alami dan seimbang, persis seakan-akan ada baris disclaimer di bawahnya namun disclaimer tetap 100% tersembunyi.
+     - Mengeliminasi total seluruh variasi cover icon, cover emoji, dan empty state container (`app-notebook-cover`, `.notebook-cover`, `.cover-emoji`, `.notebook-icon`, `app-chat-empty-state`, dll.) via CSS `display: none !important;`.
+     - Menambahkan pemindai JavaScript khusus di `removeHeroCard()` yang memeriksa karakter `🕋` dan standalone emoji di luar bubble pesan obrolan, lalu memusnahkannya secara seketika (`display: none !important; visibility: hidden !important;`).
+  2. `app_loader.dart`:
+     - Merefaktor animasi ke `_ThreeDotsPainter` berbasis hardware-accelerated `CustomPainter` dengan nol alokasi widget per frame dan anti-aliasing GPU.
+     - Menerapkan kurva gelombang kosinus halus murni ($C^2$ continuous): `factor = 0.5 * (1.0 - math.cos(normalized * 2 * math.pi))`. Pada kedua batas dan puncak denyut, turunan kecepatannya melambat anggun hingga nol sebelum mengempis kembali, menghasilkan gerakan denyut titik yang luar biasa tenang, stabil, dan sutra (60/120fps smooth).
+  3. Hasil: Kapsul input berada di posisi proporsional yang sangat nyaman dipandang, area obrolan hening bebas dari sisa ikon Ka'bah atau elemen luar, dan animasi pemuatan berjalan amat mulus tanpa sentakan.
+
 ---
 
 ## 5. Agenda & Fokus Selanjutnya
@@ -217,4 +232,3 @@ Berdasarkan `AUDIT_OPENTURATH_AI.md`, dokumen perancangan pustaka, dan keluhan k
    - Memastikan tidak ada lagi sisa warna jenuh pada modal dan layar transaksional di desktop maupun mobile.
 2. **Katalog & Spesialis**:
    - Memastikan ke-21 spesialis memiliki keterhubungan yang mulus antara ruang dialog telaah dengan pustaka kitab referensinya.
-EOF

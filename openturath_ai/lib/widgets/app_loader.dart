@@ -56,6 +56,7 @@ class _AppLoaderState extends State<AppLoader>
       duration: OTMotion.loaderLoop,
     );
     WidgetsBinding.instance.addObserver(this);
+    _controller.repeat();
   }
 
   @override
@@ -69,7 +70,7 @@ class _AppLoaderState extends State<AppLoader>
     final active = WidgetsBinding.instance.lifecycleState == null ||
         WidgetsBinding.instance.lifecycleState == AppLifecycleState.resumed;
     if (reduced || !TickerMode.of(context) || !active) {
-      _controller.stop();
+      if (_controller.isAnimating) _controller.stop();
     } else if (!_controller.isAnimating) {
       _controller.repeat();
     }
@@ -104,22 +105,32 @@ class _AppLoaderState extends State<AppLoader>
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Semantics(
-            label: widget.title == null
-                ? Loc.tr('loadingProcess')
-                : Loc.text(widget.title!),
-            liveRegion: true,
-            child: RepaintBoundary(
-                child: SizedBox.square(
-                    dimension: widget.isFullscreen
-                        ? 56
-                        : widget.title == null
-                            ? 24
-                            : 48,
-                    child: CustomPaint(
-                        painter: _OrbitPainter(
-                            animation: _controller,
-                            still: still,
-                            color: dotColor))))),
+          label: widget.title == null
+              ? Loc.tr('loadingProcess')
+              : Loc.text(widget.title!),
+          liveRegion: true,
+          child: RepaintBoundary(
+            child: AnimatedBuilder(
+              animation: _controller,
+              builder: (context, child) {
+                final progress = still ? 0.5 : _controller.value;
+                final totalWidth = (widget.dotSize * 3) + (widget.spacing * 4);
+                return SizedBox(
+                  width: totalWidth,
+                  height: widget.dotSize * 1.5,
+                  child: CustomPaint(
+                    painter: _ThreeDotsPainter(
+                      progress: progress,
+                      dotColor: dotColor,
+                      dotRadius: widget.dotSize / 2,
+                      spacing: widget.spacing * 2,
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+        ),
         if (widget.title != null) ...[
           const SizedBox(height: 20),
           Text(
@@ -185,42 +196,46 @@ class _AppLoaderState extends State<AppLoader>
   }
 }
 
-/// Smooth periodic phase: endpoint position and velocity match exactly.
-class _OrbitPainter extends CustomPainter {
-  _OrbitPainter(
-      {required this.animation, required this.still, required this.color})
-      : super(repaint: animation);
-  final Animation<double> animation;
-  final bool still;
-  double get progress => still ? .25 : animation.value;
-  final Color color;
+class _ThreeDotsPainter extends CustomPainter {
+  final double progress;
+  final Color dotColor;
+  final double dotRadius;
+  final double spacing;
+
+  _ThreeDotsPainter({
+    required this.progress,
+    required this.dotColor,
+    required this.dotRadius,
+    required this.spacing,
+  });
+
   @override
   void paint(Canvas canvas, Size size) {
-    final phase = progress * 2 * math.pi;
-    // Periodic easing preserves velocity at the loop seam. Four folios breathe
-    // and turn as one; opacity does not flicker or imply measured progress.
-    final turn = phase - .45 * math.sin(phase);
-    final breath = .5 - .5 * math.cos(phase);
-    final w = size.shortestSide;
-    canvas.save();
-    canvas.translate(size.width / 2, size.height / 2);
-    canvas.rotate(turn);
-    for (var i = 0; i < 4; i++) {
-      canvas.save();
-      canvas.rotate(i * math.pi / 2);
-      final radius = w * (.16 + .07 * breath);
-      final rect = Rect.fromCenter(
-          center: Offset(radius, -radius),
-          width: w * (.30 - .05 * breath),
-          height: w * (.30 + .04 * breath));
-      canvas.drawRRect(RRect.fromRectAndRadius(rect, Radius.circular(w * .105)),
-          Paint()..color = color.withValues(alpha: 1 - i * .16));
-      canvas.restore();
+    final paint = Paint()..isAntiAlias = true;
+    final totalWidth = (dotRadius * 2 * 3) + (spacing * 2);
+    final startX = (size.width - totalWidth) / 2 + dotRadius;
+    final centerY = size.height / 2;
+
+    for (int i = 0; i < 3; i++) {
+      final delay = i * 0.16;
+      final t = (progress - delay) % 1.0;
+      final normalized = t < 0 ? t + 1.0 : t;
+      // Kurva kosinus mulus C2 continuous (smooth cosine ease wave)
+      final factor = 0.5 * (1.0 - math.cos(normalized * 2 * math.pi));
+      final scale = 0.70 + (0.35 * factor);
+      final alpha = (0.28 + (0.72 * factor)).clamp(0.0, 1.0);
+
+      paint.color = dotColor.withValues(alpha: alpha);
+      final cx = startX + i * (dotRadius * 2 + spacing);
+      canvas.drawCircle(Offset(cx, centerY), dotRadius * scale, paint);
     }
-    canvas.restore();
   }
 
   @override
-  bool shouldRepaint(_OrbitPainter old) =>
-      old.animation != animation || old.still != still || old.color != color;
+  bool shouldRepaint(covariant _ThreeDotsPainter oldDelegate) {
+    return oldDelegate.progress != progress ||
+        oldDelegate.dotColor != dotColor ||
+        oldDelegate.dotRadius != dotRadius ||
+        oldDelegate.spacing != spacing;
+  }
 }

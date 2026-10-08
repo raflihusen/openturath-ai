@@ -243,8 +243,25 @@ const notebookUiScript = r'''
       .ot-opening-language .mat-mdc-menu-panel { opacity: 0 !important; }
       .cdk-overlay-container { z-index: 99999 !important; }
 
-      /* Sembunyikan elemen judul, ikon, dan sumber di dalam empty state secara visual (transparan)
-         sehingga tinggi layout dan posisi alami input di bawah tetap terjaga 100% tanpa kolaps */
+      /* Sembunyikan Cover / Icon / Emoji Ka'bah / Hero Header / Empty State secara total */
+      app-notebook-cover,
+      .notebook-cover,
+      [class*="notebook-cover" i],
+      app-project-cover,
+      .project-cover,
+      [class*="project-cover" i],
+      .cover-emoji,
+      [class*="cover-emoji" i],
+      .cover-icon,
+      [class*="cover-icon" i],
+      .notebook-icon,
+      [class*="notebook-icon" i],
+      .cover-image-container,
+      [class*="cover-image" i],
+      app-notebook-icon,
+      app-cover-icon,
+      app-emoji-picker,
+      .emoji-picker,
       app-chat-empty-state,
       .chat-empty-state,
       .empty-state,
@@ -290,9 +307,17 @@ const notebookUiScript = r'''
       .chat-empty-state mat-icon, .chat-empty-state img, .chat-empty-state svg,
       .empty-state h1, .empty-state h2, .empty-state h3,
       .empty-state mat-icon, .empty-state img, .empty-state svg {
+        display: none !important;
         visibility: hidden !important;
         opacity: 0 !important;
         pointer-events: none !important;
+        height: 0 !important;
+        width: 0 !important;
+        min-height: 0 !important;
+        max-height: 0 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        overflow: hidden !important;
       }
 
       /* Pastikan bilah input chat dan komponen di dalamnya selalu terlihat dan interaktif */
@@ -314,11 +339,11 @@ const notebookUiScript = r'''
       }
 
       /* ========================================================
-         KUNCI BILAH INPUT DI DASAR LAYAR (BOTTOM ANCHORED)
+         KUNCI BILAH INPUT DENGAN ELEVASI ALAMI (SEAKAN DISCLAIMER ADA DI BAWAHNYA)
          ======================================================== */
       app-chat-input {
         position: fixed !important;
-        bottom: 0 !important;
+        bottom: max(32px, calc(env(safe-area-inset-bottom, 16px) + 24px)) !important;
         left: 0 !important;
         right: 0 !important;
         width: 100% !important;
@@ -326,12 +351,12 @@ const notebookUiScript = r'''
         margin: 0 !important;
         padding-left: 16px !important;
         padding-right: 16px !important;
-        padding-bottom: max(20px, calc(env(safe-area-inset-bottom, 16px) + 10px)) !important;
-        padding-top: 10px !important;
+        padding-bottom: 0 !important;
+        padding-top: 0 !important;
         box-sizing: border-box !important;
         display: flex !important;
         justify-content: center !important;
-        align-items: flex-end !important;
+        align-items: center !important;
         z-index: 10000 !important;
         background: transparent !important;
         pointer-events: none !important;
@@ -362,7 +387,7 @@ const notebookUiScript = r'''
       body:not(:has(app-chat-input)) div.chat-input-container,
       body:not(:has(app-chat-input)) form.chat-input-form {
         position: fixed !important;
-        bottom: max(20px, calc(env(safe-area-inset-bottom, 16px) + 10px)) !important;
+        bottom: max(32px, calc(env(safe-area-inset-bottom, 16px) + 24px)) !important;
         left: 50% !important;
         transform: translateX(-50%) !important;
         width: min(768px, calc(100% - 32px)) !important;
@@ -374,7 +399,7 @@ const notebookUiScript = r'''
 
       /* Ruang bawah obrolan agar pesan tidak tertutup oleh bilah input */
       .chat-panel-content, .chat-view, .conversation-container, .message-list, [role="log"], main, app-chat-view {
-        padding-bottom: 130px !important;
+        padding-bottom: 140px !important;
         box-sizing: border-box !important;
       }
 
@@ -455,12 +480,45 @@ const notebookUiScript = r'''
       'app-notebook-guide', 'notebook-guide',
       'app-artifact-summary', '.artifact-summary',
       '.notebook-guide', '.guide-container', '.hero-container',
-      '.cover-image-container', '.summary-card', '.guide-card'
+      '.cover-image-container', '.summary-card', '.guide-card',
+      'app-notebook-cover', '.notebook-cover', '[class*="notebook-cover" i]',
+      'app-project-cover', '.project-cover', '[class*="project-cover" i]',
+      '.cover-emoji', '[class*="cover-emoji" i]',
+      '.cover-icon', '[class*="cover-icon" i]',
+      '.notebook-icon', '[class*="notebook-icon" i]',
+      'app-notebook-icon', 'app-cover-icon',
+      'app-chat-empty-state', '.chat-empty-state', '.empty-state', '[class*="empty-state" i]'
     ];
     guideSelectors.forEach(sel => {
       document.querySelectorAll(sel).forEach(el => {
         el.style.setProperty('display', 'none', 'important');
+        el.style.setProperty('visibility', 'hidden', 'important');
+        el.style.setProperty('opacity', '0', 'important');
+        el.style.setProperty('pointer-events', 'none', 'important');
       });
+    });
+
+    // Scan spesifik untuk icon Ka'bah (🕋) dan standalone emoji cover di luar pesan obrolan
+    document.querySelectorAll('span, div, p, h1, h2, h3, [role="img"]').forEach(el => {
+      if (el.closest('.chat-message, .model-message, .user-message, [role="article"], .rendered-markdown, app-chat-response, app-chat-input, form, textarea, [contenteditable="true"]')) {
+        return;
+      }
+      const rawTxt = (el.innerText || el.textContent || '').trim();
+      if (!rawTxt) return;
+
+      const containsKabah = rawTxt.includes('🕋') || rawTxt.includes('\uD83D\uDDFB');
+      const isStandaloneEmoji = rawTxt.length <= 4 && /\p{Extended_Pictographic}/u.test(rawTxt);
+
+      if (containsKabah || (isStandaloneEmoji && !el.querySelector('.chat-message, [role="article"]'))) {
+        el.style.setProperty('display', 'none', 'important');
+        el.style.setProperty('visibility', 'hidden', 'important');
+        el.style.setProperty('opacity', '0', 'important');
+        el.style.setProperty('pointer-events', 'none', 'important');
+        const parentCover = el.closest('[class*="cover" i], [class*="icon" i], [class*="header" i], [class*="intro" i]');
+        if (parentCover && !parentCover.matches('body, html, main, app-root, .chat-view, .chat-panel-content')) {
+          parentCover.style.setProperty('display', 'none', 'important');
+        }
+      }
     });
 
     // Cari intro "sources", judul notebook ("AI-MUHAQQIQ"), tanggal, dan icon scroll
@@ -478,10 +536,9 @@ const notebookUiScript = r'''
         }
       } else {
         // 2. Jika belum ada pesan sama sekali (empty chat):
-        // Sembunyikan elemen judul, ikon, dan sumber dengan VISIBILITY: HIDDEN (bukan display: none)
-        // agar tinggi layout alami tetap utuh dan kotak input tetap berada di dasar layar!
         panel.querySelectorAll('h1, h2, h3, img, svg, mat-icon, [class*="title" i], [class*="source" i], [class*="date" i]').forEach(el => {
           if (!el.querySelector('textarea, [contenteditable="true"], form') && !el.closest('app-chat-input, form, textarea, [contenteditable="true"]')) {
+            el.style.setProperty('display', 'none', 'important');
             el.style.setProperty('visibility', 'hidden', 'important');
             el.style.setProperty('opacity', '0', 'important');
             el.style.setProperty('pointer-events', 'none', 'important');
@@ -496,7 +553,8 @@ const notebookUiScript = r'''
                                /[·•]\s*\d+\s*(jan|feb|mar|apr|mei|jun|jul|agu|sep|okt|nov|des|january|february|march|april|may|june|july|august|september|october|november|december)/i.test(txt) ||
                                ((txt.includes('sumber') || txt.includes('source')) && (txt.includes('·') || txt.includes('•')));
           const isAssistantTitle = txt === 'AI-MUHAQQIQ' || txt.toUpperCase() === 'AI-MUHAQQIQ';
-          if (isSourceDate || isAssistantTitle) {
+          if (isSourceDate || isAssistantTitle || txt.includes('🕋')) {
+            el.style.setProperty('display', 'none', 'important');
             el.style.setProperty('visibility', 'hidden', 'important');
             el.style.setProperty('opacity', '0', 'important');
             el.style.setProperty('pointer-events', 'none', 'important');
@@ -635,17 +693,17 @@ const notebookUiScript = r'''
                       document.querySelector('div.chat-input-container')?.closest('form, div');
     if (inputHost) {
       inputHost.style.setProperty('position', 'fixed', 'important');
-      inputHost.style.setProperty('bottom', '0', 'important');
+      inputHost.style.setProperty('bottom', 'max(32px, calc(env(safe-area-inset-bottom, 16px) + 24px))', 'important');
       inputHost.style.setProperty('left', '0', 'important');
       inputHost.style.setProperty('right', '0', 'important');
       inputHost.style.setProperty('width', '100%', 'important');
       inputHost.style.setProperty('z-index', '10000', 'important');
       inputHost.style.setProperty('display', 'flex', 'important');
       inputHost.style.setProperty('justify-content', 'center', 'important');
-      inputHost.style.setProperty('align-items', 'flex-end', 'important');
+      inputHost.style.setProperty('align-items', 'center', 'important');
       inputHost.style.setProperty('background', 'transparent', 'important');
       inputHost.style.setProperty('pointer-events', 'none', 'important');
-      inputHost.style.setProperty('padding', '10px 16px max(20px, calc(env(safe-area-inset-bottom, 16px) + 10px)) 16px', 'important');
+      inputHost.style.setProperty('padding', '0 16px', 'important');
       inputHost.style.setProperty('box-sizing', 'border-box', 'important');
       inputHost.style.setProperty('margin', '0', 'important');
 
