@@ -125,7 +125,7 @@ class AuthService {
             }
           }
           uid ??= keys.last.replaceFirst('openturath_cached_user_', '');
-          if (uid != null && uid.isNotEmpty) {
+          if (uid.isNotEmpty) {
             await prefs.setString('current_user_uid', uid);
           }
         }
