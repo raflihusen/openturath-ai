@@ -13,7 +13,7 @@ const notebookUiScript = r'''
   }
   const answerSelector = '.chat-message[data-sender="model"], .model-message, .response-message, .to-user-container, .to-user-message, .chat-message-pair .answer, [data-message-author-role="assistant"], app-chat-response, app-chat-message, .chat-response, [role="article"]';
   const questionSelector = '.chat-message[data-sender="user"], .user-message, .from-user, .to-model-container, [data-message-author-role="user"], app-chat-query, app-chat-prompt';
-  const visible = el => !!el && el.getClientRects().length > 0 && getComputedStyle(el).visibility !== 'hidden' && getComputedStyle(el).display !== 'none';
+  const visible = el => !!el && (el.offsetWidth > 0 || el.offsetHeight > 0 || el.getClientRects().length > 0) && getComputedStyle(el).visibility !== 'hidden' && getComputedStyle(el).display !== 'none';
   const text = el => (el?.innerText || el?.textContent || '').trim();
   function answerText(el) {
     if (!el) return '';
@@ -294,10 +294,6 @@ const notebookUiScript = r'''
       app-cover-icon,
       app-emoji-picker,
       .emoji-picker,
-      app-chat-empty-state *,
-      .chat-empty-state *,
-      .empty-state *,
-      [class*="empty-state" i] *,
       .chat-panel-content h1:not(.rendered-markdown *):not([role="article"] *),
       .chat-panel-content h2:not(.rendered-markdown *):not([role="article"] *),
       .chat-panel-content h3:not(.rendered-markdown *):not([role="article"] *),
@@ -306,6 +302,7 @@ const notebookUiScript = r'''
       .chat-view h3:not(.rendered-markdown *):not([role="article"] *),
       app-chat-empty-state h1, app-chat-empty-state h2, app-chat-empty-state h3,
       app-chat-empty-state mat-icon, app-chat-empty-state img, app-chat-empty-state svg,
+      app-chat-empty-state .notebook-cover, app-chat-empty-state .cover-emoji,
       app-empty-state h1, app-empty-state h2, app-empty-state h3,
       app-empty-state mat-icon, app-empty-state img, app-empty-state svg,
       .chat-empty-state h1, .chat-empty-state h2, .chat-empty-state h3,
@@ -329,7 +326,10 @@ const notebookUiScript = r'''
       .chat-input-area,
       .chat-input-area *,
       .query-box-container,
-      .query-box-container * {
+      .query-box-container *,
+      textarea,
+      [contenteditable="true"],
+      [role="textbox"] {
         visibility: visible !important;
         opacity: 1 !important;
         pointer-events: auto !important;
@@ -493,18 +493,24 @@ const notebookUiScript = r'''
       });
     });
 
-    // Scan spesifik untuk icon Ka'bah (🕋) dan standalone emoji cover di luar pesan obrolan
-    document.querySelectorAll('span, div, p, h1, h2, h3, [role="img"]').forEach(el => {
-      if (el.closest('.chat-message, .model-message, .user-message, [role="article"], .rendered-markdown, app-chat-response, app-chat-input, form, textarea, [contenteditable="true"]')) {
-        return;
-      }
+    // Sembunyikan elemen spesifik icon Ka'bah (🕋) atau cover emoji (HANYA elemen daun / leaf element)
+    document.querySelectorAll('span, div, p, [role="img"], mat-icon, .cover-emoji, [class*="cover-emoji" i]').forEach(el => {
+      // 1. DILARANG KERAS menyentuh container obrolan, form, atau input
+      if (el.querySelector('textarea, [contenteditable="true"], [role="textbox"], app-chat-input, form, input')) return;
+      if (el.closest('.chat-message, .model-message, .user-message, [role="article"], .rendered-markdown, app-chat-response, app-chat-input, form, textarea, [contenteditable="true"]')) return;
+      if (el.tagName === 'BODY' || el.tagName === 'HTML' || el.tagName === 'MAIN') return;
+      if (el.matches('.chat-panel-content, .chat-view, .conversation-container, .message-list, [role="log"], app-chat-view, app-chat-panel, .chat-panel')) return;
+
       const rawTxt = (el.innerText || el.textContent || '').trim();
       if (!rawTxt) return;
 
-      const containsKabah = rawTxt.includes('🕋') || rawTxt.includes('\uD83D\uDDFB');
-      const isStandaloneEmoji = rawTxt.length <= 4 && /\p{Extended_Pictographic}/u.test(rawTxt);
+      // 2. Pastikan HANYA elemen daun atau elemen kecil yang secara spesifik merupakan emoji/cover (bukan container teks besar)
+      const isExactEmoji = rawTxt === '🕋' || rawTxt === '\uD83D\uDDFB';
+      const isSmallEmojiHost = (rawTxt.includes('🕋') || (rawTxt.length <= 4 && /\p{Extended_Pictographic}/u.test(rawTxt))) && el.children.length <= 1;
+      const isCoverClass = el.matches('.cover-emoji, [class*="cover-emoji" i], .cover-icon, [class*="cover-icon" i], app-notebook-cover, .notebook-cover, [class*="notebook-cover" i]');
 
-      if (containsKabah || (isStandaloneEmoji && !el.querySelector('.chat-message, [role="article"]'))) {
+      if (isExactEmoji || isSmallEmojiHost || isCoverClass) {
+        el.style.setProperty('display', 'none', 'important');
         el.style.setProperty('visibility', 'hidden', 'important');
         el.style.setProperty('opacity', '0', 'important');
         el.style.setProperty('pointer-events', 'none', 'important');
@@ -544,7 +550,8 @@ const notebookUiScript = r'''
                                /[·•]\s*\d+\s*(jan|feb|mar|apr|mei|jun|jul|agu|sep|okt|nov|des|january|february|march|april|may|june|july|august|september|october|november|december)/i.test(txt) ||
                                ((txt.includes('sumber') || txt.includes('source')) && (txt.includes('·') || txt.includes('•')));
           const isAssistantTitle = txt === 'AI-MUHAQQIQ' || txt.toUpperCase() === 'AI-MUHAQQIQ';
-          if (isSourceDate || isAssistantTitle || txt.includes('🕋')) {
+          const isExactEmoji = txt === '🕋' || (txt.includes('🕋') && txt.length <= 4);
+          if (isSourceDate || isAssistantTitle || isExactEmoji) {
             el.style.setProperty('visibility', 'hidden', 'important');
             el.style.setProperty('opacity', '0', 'important');
             el.style.setProperty('pointer-events', 'none', 'important');
@@ -635,7 +642,7 @@ const notebookUiScript = r'''
     document.querySelectorAll('mat-icon, [data-mat-icon-name], svg').forEach(icon => {
       const name = (icon.getAttribute('data-mat-icon-name') || icon.getAttribute('fonticon') || icon.textContent || '').trim().toLowerCase();
       if (name === 'more_vert' || name === 'more_horiz' || name.includes('more_vert') || name.includes('more_horiz')) {
-        if (icon.closest('.chat-message, .model-message, .user-message, [role="article"], .rendered-markdown, app-chat-response')) {
+        if (icon.closest('.chat-message, .model-message, .user-message, [role="article"], .rendered-markdown, app-chat-response, app-chat-input, form, div.chat-input-container')) {
           return;
         }
         const btn = icon.closest('button, [role="button"], a, .mat-mdc-icon-button') || icon;
@@ -652,7 +659,7 @@ const notebookUiScript = r'''
     });
 
     document.querySelectorAll('button[aria-label*="options" i], button[aria-label*="opsi" i], button[aria-label*="more" i], button[aria-label*="tindakan" i], button[aria-label*="lainnya" i], [role="button"][aria-label*="options" i], [role="button"][aria-label*="opsi" i]').forEach(btn => {
-      if (btn.closest('.chat-message, .model-message, .user-message, [role="article"], .rendered-markdown, app-chat-response')) {
+      if (btn.closest('.chat-message, .model-message, .user-message, [role="article"], .rendered-markdown, app-chat-response, app-chat-input, form, div.chat-input-container')) {
         return;
       }
       const label = (btn.getAttribute('aria-label') || '').toLowerCase();
@@ -867,8 +874,11 @@ const notebookUiScript = r'''
   }
   function inputReady() {
     // The page can contain a hidden or disabled input before the live composer.
-    return [...document.querySelectorAll('textarea, [contenteditable="true"], [role="textbox"]')]
-      .some(input => !input.disabled && input.getAttribute('aria-disabled') !== 'true' && visible(input));
+    const inputs = [...document.querySelectorAll('textarea, [contenteditable="true"], [role="textbox"]')];
+    return inputs.some(input => {
+      if (input.disabled || input.getAttribute('aria-disabled') === 'true') return false;
+      return visible(input) || (input.offsetWidth > 0 && getComputedStyle(input).display !== 'none');
+    });
   }
 function accessDenied() {
   if (inputReady()) return false;
