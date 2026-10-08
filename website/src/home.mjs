@@ -5,6 +5,7 @@ import {collectionStats} from './metadata.mjs';
 import {adabPreview} from './adab.mjs';
 import {methodStory} from './method.mjs';
 import {membership} from './membership.mjs';
+import {tahawwulatFeature} from './tahawwulat.mjs';
 
 // Beranda menampilkan sebagian bidang; daftar lengkap ada di halaman Khazanah.
 const HOME_FIELDS=6;
@@ -44,8 +45,8 @@ export function immersiveHome(l,data,dialog) {
   return `<section class="scholar-hero" aria-labelledby="hero-title">
     <div class="hero-copy container">
       <p class="eyebrow" lang="en" dir="ltr">AI for Islamic Scholarship</p>
-      <h1 id="hero-title">${tr(l,'hero')}</h1>
-      <h2 class="hero-tagline">${tr(l,'heroTagline')}</h2>
+      <h1 id="hero-title">${nl(tr(l,'hero'))}</h1>
+      <p class="hero-tagline">${tr(l,'heroTagline')}</p>
       <p class="hero-description">${tr(l,'heroSub')}</p>
       <div class="button-row hero-actions"><a class="button" href="${pathFor(l,'research')}">${tr(l,'heroResearchCta')}${arrow}</a><a class="button button-secondary" href="${pathFor(l,'library')}">${tr(l,'heroCta')}${arrow}</a></div>
     </div>
@@ -55,19 +56,20 @@ export function immersiveHome(l,data,dialog) {
     </div>
     <p class="hero-foot">${tr(l,'heroFoot')}</p>
   </section>
+  ${tahawwulatFeature(l,data)}
   ${problemStory(l)}
   ${collectionStats(l,data.catalog)}
   ${methodStory(l)}
   <section class="section catalogue-section" id="assistants"><div class="container" data-search-scope>
     <div class="editorial-heading"><div>${eyebrow(tr(l,'catalogEyebrow'))}<h2>${nl(tr(l,'fieldTitle'))}</h2></div><p>${tr(l,'fieldSub')}</p></div>
-    <div class="collection-grid full-grid">${data.catalog.slice(0,HOME_FIELDS).map(c=>`<div class="bento-${c.variant||'standard'}" data-reveal="card" data-search-item data-search-text="${e(Object.values(c.name).join(' ')+' '+c.arabic+' '+Object.values(c.description).join(' '))}" data-group="${c.group}">${collectionCard(l,c)}</div>`).join('')}</div>
+    <div class="collection-grid full-grid">${data.catalog.filter(c=>c.id!=='fiqh-tahawwulat').slice(0,HOME_FIELDS).map(c=>`<div class="bento-${c.variant||'standard'}" data-reveal="card" data-search-item data-search-text="${e(Object.values(c.name).join(' ')+' '+c.arabic+' '+Object.values(c.description).join(' '))}" data-group="${c.group}">${collectionCard(l,c)}</div>`).join('')}</div>
     <p class="catalog-more">${link(l,'library',tr(l,'allLibrary'))}</p>
     <p class="fine-print catalog-note">${tr(l,'catalogNote')}</p>
   </div></section>
   <section class="section archive-section"><div class="container archive-layout">
     <div>${eyebrow(tr(l,'archiveEyebrow'))}<h2>${nl(tr(l,'archiveTitle'))}</h2><p>${tr(l,'archiveBody')}</p>${link(l,'research/q001',tr(l,'readFull'))}</div>
     <article class="manuscript-card"><div class="manuscript-meta"><span>Q001 · 03 / 10</span><span>${tr(l,'archiveSample')}</span></div>
-      <blockquote lang="ar" dir="rtl">وَلَوْ مَسَّ بِيَدِهِ مَا شَاءَ فَوْقَ بَدَنِهَا مِنْ ثَوْبٍ رَقِيقٍ</blockquote>
+      <p class="status-label">${tr(l,'sourcePending')}</p><blockquote lang="ar" dir="rtl">وَلَوْ مَسَّ بِيَدِهِ مَا شَاءَ فَوْقَ بَدَنِهَا مِنْ ثَوْبٍ رَقِيقٍ</blockquote>
       <div class="manuscript-footer"><span lang="ar" dir="rtl">الأم · ج١، ص٣٠</span><button class="text-link" data-dialog="source-dialog">${tr(l,'openSource')}${arrow}</button></div>
     </article>
   </div></section>
