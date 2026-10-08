@@ -1,4 +1,4 @@
-// Editorial content; the original v1.0 app document is retained as a historical record.
+// Website information; the original app v1.0 document remains a historical record.
 export const articles = {
   "how-it-works": {
     "key": "how",
@@ -347,9 +347,9 @@ export const articles = {
           "١٤. تعديل الشروط وبيانات التواصل"
         ],
         "body": [
-          "Versi dokumen: 1.0 (Berlaku sejak 13 September 2026).\n\nPerubahan penting akan diberitahukan sebelum berlaku dan tidak berlaku surut untuk menghilangkan hak yang telah timbul.\n\nPengelola: Pengelola OpenTurath\nAlamat: Indonesia\nBantuan: openturath@gmail.com\nPrivasi: openturath@gmail.com\nHak Cipta: openturath@gmail.com",
-          "Document version: 1.0 (Effective from 13 September 2026).\n\nMaterial amendments will be notified prior to becoming effective and will not apply retroactively to eliminate existing rights.\n\nOperator: Pengelola OpenTurath\nAddress: Indonesia\nSupport: openturath@gmail.com\nPrivacy: openturath@gmail.com\nCopyright: openturath@gmail.com",
-          "نسخة الوثيقة: ١.٠ (سارية من ١٣ سبتمبر ٢٠٢٦).\n\nيُشعر بالتعديلات الجوهرية قبل سريانها ولا تطبق بأثر رجعي لإسقاط حقوق مكتسبة.\n\nالمشغّل: Pengelola OpenTurath\nالعنوان: إندونيسيا\nالدعم: openturath@gmail.com\nالخصوصية: openturath@gmail.com\nحقوق النشر: openturath@gmail.com"
+          "Informasi website diperbarui 8 Oktober 2026. Naskah aplikasi v1.0 bertanggal 13 September 2026 tersedia sebagai dokumen sebelumnya. Untuk pertanyaan tentang layanan, pemrosesan data, atau hak privasi: openturath@gmail.com. Pengelola OpenTurath, Indonesia.",
+          "Website information updated 8 October 2026. The app v1.0 text dated 13 September 2026 is available as an earlier document. For questions about services, data processing, or privacy rights: openturath@gmail.com. Pengelola OpenTurath, Indonesia.",
+          "حُدّثت معلومات الموقع في ٨ أكتوبر ٢٠٢٦. يتوفر نص التطبيق v1.0 المؤرّخ في ١٣ سبتمبر ٢٠٢٦ كوثيقة سابقة. للاستفسار عن الخدمات والبيانات وحقوق الخصوصية: openturath@gmail.com. الجهة المشغّلة في إندونيسيا."
         ]
       }
     ],
@@ -413,9 +413,9 @@ export const articles = {
       },
       {
         "heading": [
-          "5. Catatan dan Penyimpanan Perangkat",
-          "5. Device Local Storage for Notes",
-          "٥. التخزين المحلي للملاحظات على الجهاز"
+          "5. Catatan lokal dan bookmark cloud",
+          "5. Local notes and cloud bookmarks",
+          "٥. الملاحظات المحلية والعلامات السحابية"
         ],
         "body": [
           "Research Notes disimpan lokal di perangkat. Bookmark dan jawaban yang disimpan dapat disinkronkan ke Firestore ketika Anda login, termasuk kutipan dan rujukannya. Periksa jenis penyimpanan sebelum memasukkan materi pribadi.",
@@ -454,9 +454,9 @@ export const articles = {
           "٨. المعالجة الدولية للبيانات"
         ],
         "body": [
-          "Infrastruktur autentikasi Google dan basis data cloud dapat memproses sebagian data teknis di pusat data yang aman di dalam maupun luar wilayah Indonesia, dengan perlindungan enkripsi transit dan at-rest berstandar global.",
-          "Google authentication infrastructure and cloud databases may process certain technical data in secure data centers inside or outside Indonesia, protected by global transit and at-rest encryption standards.",
-          "قد تعالج البنية التحتية لمصادقة Google وقواعد البيانات السحابية بعض البيانات الفنية في مراكز بيانات آمنة داخل إندونيسيا أو خارجها، مع تطبيق معايير التشفير العالمية أثناء النقل والتخزين."
+          "Data akun, transaksi, dan bookmark tersinkron diproses melalui layanan Google/Firebase. Sesi NotebookLM mengikuti layanan dan pengaturan akun Google. Lokasi pemrosesan serta retensi mengikuti ketentuan penyedia masing-masing; tanyakan pengelola bila Anda membutuhkan informasi sebelum memakai layanan.",
+          "Accounts, transactions, and synced bookmarks are processed through Google/Firebase. NotebookLM sessions follow Google services and account settings. Processing locations and retention follow each provider’s terms; ask the operator for information before using a service.",
+          "تُعالج الحسابات والمعاملات والعلامات المتزامنة عبر Google/Firebase. وتتبع جلسات NotebookLM خدمات Google وإعدادات الحساب. تخضع مواقع المعالجة ومدد الاحتفاظ لشروط كل مزوّد؛ استفسر قبل استخدام الخدمة."
         ]
       },
       {
@@ -514,9 +514,9 @@ export const articles = {
           "١٣. التواصل وتحديثات السياسة"
         ],
         "body": [
-          "Versi dokumen: 1.0 (Berlaku sejak 13 September 2026).\n\nUntuk pertanyaan atau permohonan hak privasi, hubungi:\nEmail: openturath@gmail.com\nPengelola: Pengelola OpenTurath (Indonesia)",
-          "Document version: 1.0 (Effective from 13 September 2026).\n\nFor questions or exercising privacy rights, contact:\nEmail: openturath@gmail.com\nOperator: Pengelola OpenTurath (Indonesia)",
-          "نسخة الوثيقة: ١.٠ (سارية من ١٣ سبتمبر ٢٠٢٦).\n\nللاستفسارات وممارسة حقوق الخصوصية، يرجى التواصل عبر:\nالبريد الإلكتروني: openturath@gmail.com\nالمشغّل: Pengelola OpenTurath (إندونيسيا)"
+          "Informasi website diperbarui 8 Oktober 2026. Naskah aplikasi v1.0 bertanggal 13 September 2026 tersedia sebagai dokumen sebelumnya. Untuk pertanyaan tentang layanan, pemrosesan data, atau hak privasi: openturath@gmail.com. Pengelola OpenTurath, Indonesia.",
+          "Website information updated 8 October 2026. The app v1.0 text dated 13 September 2026 is available as an earlier document. For questions about services, data processing, or privacy rights: openturath@gmail.com. Pengelola OpenTurath, Indonesia.",
+          "حُدّثت معلومات الموقع في ٨ أكتوبر ٢٠٢٦. يتوفر نص التطبيق v1.0 المؤرّخ في ١٣ سبتمبر ٢٠٢٦ كوثيقة سابقة. للاستفسار عن الخدمات والبيانات وحقوق الخصوصية: openturath@gmail.com. الجهة المشغّلة في إندونيسيا."
         ]
       }
     ],
@@ -727,81 +727,21 @@ export const articles = {
   "tahawwulat": {
     "key": "tahawwulat",
     "intro": [
-      "Fikih Tahawwulat. Navigasi Kenabian.",
-      "Fiqh Tahawwulat. Prophetic Navigation.",
-      "فقه التحولات. بوصلة النبوة."
+      "AI Fikih Tahawwulat",
+      "Fiqh Tahawwulat AI",
+      "الذكاء الاصطناعي لفقه التحولات"
     ],
     "blocks": [
       {
         "heading": [
-          "Hakikat Fikih Tahawwulat & Rukun Keempat Agama",
-          "Essence of Fiqh Tahawwulat and the Fourth Pillar",
-          "حقيقة فقه التحولات والركن الرابع للدين"
+          "Ruang kajian khusus",
+          "A dedicated study space",
+          "مساحة متخصصة للمطالعة"
         ],
         "body": [
-          "Fikih Tahawwulat dikodifikasi oleh Al-Musnid Al-Allamah Al-Habib Abu Bakar Al-Adni bin Ali Al-Masyhur (1366–1444 H / 1947–2022 M) sebagai kompas navigasi kenabian. Berlandaskan Hadits Jibril yang memuat empat rukun agama: Al-Islam (syariat), Al-Iman (akidah), Al-Ihsan (tasawuf/tazkiyah), dan Fiqh Asyrat as-Sa'ah (tanda-tanda kiamat dan perubahan zaman). Disiplin ini membaca dinamika peradaban dengan bimbingan nubuwwah.",
-          "Fiqh Tahawwulat was codified by Al-Musnid Al-Allamah Al-Habib Abu Bakr Al-Adni bin Ali Al-Mashhur (1366–1444 AH / 1947–2022 CE) as a prophetic navigation compass. Grounded in the Hadith of Jibril comprising the four pillars of religion: Al-Islam (law), Al-Iman (creed), Al-Ihsan (spiritual purification), and Fiqh Ashrat as-Sa'ah (signs of the Hour and civilizational shifts). It reads world developments through prophetic guidance.",
-          "أسّس فقه التحولات المسند العلامة الحبيب أبو بكر العدني بن علي المشهور (١٣٦٦–١٤٤٤ هـ / ١٩٤٧–٢٠٢٢ م) بوصلةً نبوية لقراءة المتغيرات. ويستند إلى حديث جبريل بأركان الدين الأربعة: الإسلام والإيمان والإحسان وفقه أشراط الساعة وتحولات الزمان، لقراءة أحوال الحضارة بنور النبوة."
-        ]
-      },
-      {
-        "heading": [
-          "Sunnatul Mulaimah dan Manhaj Salamah",
-          "Sunnatul Mulaimah and the Method of Peace",
-          "سنة الملاءمة ومنهج السلامة"
-        ],
-        "body": [
-          "Kaidah utama Fikih Tahawwulat bertumpu pada Sunnatul Mulaimah (kebijaksanaan merangkul dan mencari titik temu dalam dakwah) serta menjauhi Sunnatul Mukhalaqah (sikap konfrontatif yang memicu perpecahan). Manhaj keselamatan (Salamatus Shadr wal Lisan) membimbing penuntut ilmu untuk menjaga kesucian hati dari kebencian dan lisan dari celaan di tengah fitnah akhir zaman.",
-          "The central principle of Fiqh Tahawwulat rests upon Sunnatul Mulaimah (embracing wisdom, reconciliation, and constructive dialogue in da'wah) while averting Sunnatul Mukhalaqah (confrontational discord). The Method of Peace (Salamatus Sadr wal Lisan) guides students of knowledge to protect hearts from malice and tongues from slander amidst end-times tribulations.",
-          "تقوم قواعد فقه التحولات على \"سنة الملاءمة\" بالحكمة والاحتواء في الدعوة وتجنب \"سنة المخالقة\" المورثة للنزاع والفرقة. ويعصم \"منهج السلامة\" (سلامة الصدر واللسان) طالب العلم من الضغينة والطعن وسط فتن الزمان المتلاطمة."
-        ]
-      },
-      {
-        "heading": [
-          "Nushush Da'wah vs Nushush Ahkam",
-          "Texts of Da'wah and Texts of Legal Rulings",
-          "نصوص الدعوة ونصوص الأحكام"
-        ],
-        "body": [
-          "Fikih Tahawwulat membedakan secara cermat antara Nushush Ahkam (teks hukum fikih yang bersifat mengikat dan memiliki syarat ketat penetapan) dan Nushush Da'wah (teks seruan etis, peringatan kenabian, dan kabar masa depan). Pemisahan ini mencegah kecerobohan memfatwakan persoalan sosial yang rumit tanpa memahami realitas sejarah.",
-          "Fiqh Tahawwulat draws a careful distinction between Nusus Ahkam (normative legal texts requiring strict juridical conditions) and Nusus Da'wah (ethical exhortations, prophetic warnings, and foresights of historical shifts). This demarcation prevents hasty rulings on complex societal crises without understanding their historical context.",
-          "يفرّق فقه التحولات بدقة بين \"نصوص الأحكام\" الفقهية الملزمة بشروط استنباطها، و\"نصوص الدعوة\" المتضمنة البلاغ الإرشادي والتحذيرات النبوية من الفتن، لمنع استعجال الفتوى في النوازل المعقدة بغير فقه للواقع."
-        ]
-      },
-      {
-        "heading": [
-          "Lima Bilik Khadim AI Spesialis",
-          "Five Specialized Assistant Chambers",
-          "خمس غرف للمساعدين المتخصصين"
-        ],
-        "body": [
-          "Khadim Fikih Tahawwulat dirancang dalam lima bilik spesialis: Al-Muhaqqiq (penelusuran matan dan tahkik teks kanonis), Al-Bayan (penjelasan konsep, istilah, dan kaidah peradaban), Al-Mukhtabir (latihan pemahaman dan uji daya kritis telaah), Al-Habib (eksplorasi arsip muhadharah dan pemikiran Habib Abu Bakar), serta Al-Khatib (penyusunan bahan khutbah dan pesan dakwah yang menyejukkan).",
-          "The Fiqh Tahawwulat assistant suite operates through five specialized chambers: Al-Muhaqqiq (passage verification and canonical text study), Al-Bayan (concept clarification and civilizational terminology), Al-Mukhtabir (comprehension exercises and critical review), Al-Habib (exploration of Habib Abu Bakr's lecture archives), and Al-Khatib (sermon curation and constructive outreach material).",
-          "صُممت غرف خادم فقه التحولات في خمسة اختصاصات: المحقق (لدراسة المتون والتحقيق التراثي)، والبيان (لإيضاح المصطلحات والقواعد الحضارية)، والمختبر (لاختبار الفهم والمدارسة)، والحبيب (لتصفح المحاضرات التوجيهية وتراث الحبيب أبي بكر)، والخطيب (لإعداد خطب ومواعظ تسعى للإصلاح)."
-        ]
-      },
-      {
-        "heading": [
-          "Korpus Mahkota 58 Kitab Kanonik",
-          "Sovereign Corpus of 58 Canonical Books",
-          "المدونة الجامعة من ٥٨ مصنفًا"
-        ],
-        "body": [
-          "Korpus telaah mencakup 58 karya monumental Habib Abu Bakar Al-Adni, antara lain Al-Usus wal-Munthalaqat, An-Nabdzah As-Sughra, Al-Muthala'ah al-Ula, Al-Arba'un al-Habibiyyah, Khidmatul Asyirah, Saif al-Muqallad, dan Taisir Fiqh at-Tahawwulat. Seluruh kitab ditata secara berjenjang dari mukadimah, pendalaman kaidah, hingga risalah dakwah kontemporer.",
-          "The study corpus encompasses 58 foundational works by Habib Abu Bakr Al-Adni, including Al-Usus wal-Muntalaqat, An-Nabdhah As-Sughra, Al-Mutala'ah al-Ula, Al-Arba'un al-Habibiyyah, Khidmatul Ashirah, Sayf al-Muqallad, and Taysir Fiqh at-Tahawwulat, systematically structured from introductory primers to advanced treatises.",
-          "تضم المدونة المعتمدة ٥٨ مصنفًا مؤسسًا للحبيب أبي بكر المشهور، منها: الأسس والمنطلقات، والنبذة الصغرى، والمطالعة الأولى، والأربعون الحبيبية، وخدمة العشيرة، وسيف المقلد، وتيسير فقه التحولات، مرتبةً تدرجيًا من المقدمات إلى الأصول التطبيقية."
-        ]
-      },
-      {
-        "heading": [
-          "Etika Telaah dan Batas Teknologi",
-          "Study Ethics and Technological Boundaries",
-          "آداب المدارسة وحدود التقنية"
-        ],
-        "body": [
-          "Asisten AI Fikih Tahawwulat dihadirkan semata-mata sebagai sarana pembantu indeksasi dan pemetaan naskah di perpustakaan digital. Layanan ini bukan syekh murabbi, tidak memberikan sertifikasi sanad, dan tidak menggantikan tradisi mulia talaqqi langsung kepada para guru dan masyaikh yang memiliki mata rantai keilmuan bersambung.",
-          "The Fiqh Tahawwulat AI assistant serves solely as an indexation and literature exploration tool within a digital library. It is not a spiritual master, does not confer scholarly licenses (ijazah/sanad), and does not replace the venerable tradition of face-to-face talaqqi under authenticated living scholars.",
-          "إن مساعد فقه التحولات وسيلة تقنية للمطالعة وفهرسة النصوص التراثية فحسب؛ فليس شيخًا مربيًا، ولا يمنح إجازة أو سندًا علميًا، ولا يغني عن التلقي والمشافهة بين يدي أهل العلم أصحاب السند المتصل."
+          "Lima pilihan asisten dan susunan kitab mengikuti pengantar dalam aplikasi OpenTurath.",
+          "Five assistant choices and the book sequence follow the OpenTurath app introduction.",
+          "يتبع اختيار المساعدين الخمسة وتسلسل الكتب المدخل في تطبيق OpenTurath."
         ]
       }
     ]
