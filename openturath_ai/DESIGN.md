@@ -200,7 +200,7 @@ Loader dua busur mengitari emblem OpenTurath dengan fase periodik, kecepatan ber
 - Harga coret berasal dari regularAmount. Perbandingan durasi berupa baris pada ponsel, kartu sejajar pada desktop. Dialog aktivasi hanya menjelaskan akses yang benar-benar diberikan.
 - Artikel pengenalan Indonesia tetap LTR dalam UI Arab, dengan pemberitahuan bahasa materi dan menu bab. Diagram memiliki indikator sektor terpilih.
 - Loader native dua busur berujung rounded mengitari emblem OpenTurath; siklus 1800 ms, reduced motion statis, lifecycle/TickerMode dihormati.
-- WebView dipertahankan ketika overlay error tampil sehingga retry tidak menargetkan view yang sudah dilepas. Tidak ada penundaan minimum dekoratif. Pemulihan autentikasi nyata tetap memerlukan percakapan terautentikasi; render fixture dan tes adapter tidak membuktikannya.
+- Status galat menggantikan seluruh viewport WebView dengan ColoredBox sesuai docs/STANDAR_IDEAL_WEBVIEW.md. Polling mempertahankan empat sampel berturut-turut, elapsed minimum 3000 ms, dan jeda 250 ms. Pemulihan autentikasi nyata tetap memerlukan percakapan terautentikasi; render fixture dan tes adapter tidak membuktikannya.
 - Verifikasi snapshot menggunakan rute AI sebenarnya, enam lebar 320–1440, tema gelap, Arab, dan pembesaran teks. Penerimaan visual pengguna dan performa perangkat dicatat terpisah dari kelulusan tes.
 
 
@@ -228,3 +228,10 @@ Statistik dashboard memakai panel selebar konten, terpisah dari adab, agar tiga 
 Arah Cairo, monokrom, watermark, artwork, dan motion yang telah diterima dipertahankan. Hasil pencarian AI memakai baris teks tanpa ikon dekoratif maupun tombol ikon tambahan; seluruh baris membuka AI dan rujukan tetap tersedia pada halaman AI. Hero memakai nama AI Fikih Tahawwulat. Setiap adab mempunyai kartu tonal tersendiri, ikon di sisi judul mengikuti arah UI, dan isi lengkap dipertahankan.
 
 Katalog menggantikan pembagian 70/30 yang menyisakan ruang kosong dengan satu identitas bibliografis: judul dan pengarang mengikuti arah sumber, lalu divider halus dan metadata pill berkelompok pada sisi yang sama. Mode baca utama memakai dua kartu berdampingan bila lebar konten minimal 800 dan skala teks di bawah 150%; selain itu satu kartu per baris, tinggi mengikuti isi. Mode grid alternatif tetap tersedia. JSON, metadata, pencarian, filter, pengurutan, dan tujuan detail tetap dipertahankan.
+
+
+## Kolom input WebView — 9 Oktober 2026
+
+Presentasi NotebookLM menambatkan pembungkus luar kolom input melalui jalur kontainer hingga viewport. Hanya jalur input yang terlihat dan aktif memperoleh kelas layout; area pesan memperoleh flex dan scroll tersendiri, sementara susunan internal textarea dan tombol kirim tetap asli. Tinggi mengikuti visualViewport dengan fallback innerHeight, termasuk saat resize. Kelas diperbarui ketika DOM diganti atau percakapan dikosongkan. Tidak menggunakan fixed positioning atau memindahkan node Angular.
+
+Placeholder visual kolom input dihapus dan label aksesibilitas yang sebelumnya hanya tersedia lewat placeholder dipertahankan. Perubahan ini berada di lib/core/notebook_ui_script.dart; lifecycle, polling, dan isolasi galat WebView tetap mengikuti standar permanen. Tes geometri WebKit ada di tool/webview/composer_layout_test.cjs; fixture browser tidak membuktikan layout pada DOM NotebookLM terautentikasi yang sedang berjalan.
