@@ -110,24 +110,19 @@ class _AppLoaderState extends State<AppLoader>
               : Loc.text(widget.title!),
           liveRegion: true,
           child: RepaintBoundary(
-            child: AnimatedBuilder(
-              animation: _controller,
-              builder: (context, child) {
-                final progress = still ? 0.5 : _controller.value;
-                final totalWidth = (widget.dotSize * 3) + (widget.spacing * 4);
-                return SizedBox(
-                  width: totalWidth,
-                  height: widget.dotSize * 1.5,
-                  child: CustomPaint(
-                    painter: _ThreeDotsPainter(
-                      progress: progress,
-                      dotColor: dotColor,
-                      dotRadius: widget.dotSize / 2,
-                      spacing: widget.spacing * 2,
-                    ),
-                  ),
-                );
-              },
+            child: SizedBox.square(
+              dimension: widget.isFullscreen
+                  ? 56.0
+                  : widget.title == null
+                      ? 24.0
+                      : 48.0,
+              child: CustomPaint(
+                painter: _OrbitPainter(
+                  animation: _controller,
+                  still: still,
+                  color: dotColor,
+                ),
+              ),
             ),
           ),
         ),
@@ -196,46 +191,55 @@ class _AppLoaderState extends State<AppLoader>
   }
 }
 
-class _ThreeDotsPainter extends CustomPainter {
-  final double progress;
-  final Color dotColor;
-  final double dotRadius;
-  final double spacing;
+/// Loader folio OpenTurath: empat lembaran kitab berputar mengorbit dan bernafas tenang.
+class _OrbitPainter extends CustomPainter {
+  _OrbitPainter({
+    required this.animation,
+    required this.still,
+    required this.color,
+  }) : super(repaint: animation);
 
-  _ThreeDotsPainter({
-    required this.progress,
-    required this.dotColor,
-    required this.dotRadius,
-    required this.spacing,
-  });
+  final Animation<double> animation;
+  final bool still;
+  double get progress => still ? 0.25 : animation.value;
+  final Color color;
 
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()..isAntiAlias = true;
-    final totalWidth = (dotRadius * 2 * 3) + (spacing * 2);
-    final startX = (size.width - totalWidth) / 2 + dotRadius;
-    final centerY = size.height / 2;
+    final phase = progress * 2 * math.pi;
+    // Rotasi mulus berkelanjutan tanpa sentakan kecepatan (smooth constant angular velocity)
+    final turn = phase;
+    // Nafas ekspansi dan kontraksi tenang
+    final breath = 0.5 - 0.5 * math.cos(phase);
+    final w = size.shortestSide;
 
-    for (int i = 0; i < 3; i++) {
-      final delay = i * 0.16;
-      final t = (progress - delay) % 1.0;
-      final normalized = t < 0 ? t + 1.0 : t;
-      // Kurva kosinus mulus C2 continuous (smooth cosine ease wave)
-      final factor = 0.5 * (1.0 - math.cos(normalized * 2 * math.pi));
-      final scale = 0.70 + (0.35 * factor);
-      final alpha = (0.28 + (0.72 * factor)).clamp(0.0, 1.0);
+    canvas.save();
+    canvas.translate(size.width / 2, size.height / 2);
+    canvas.rotate(turn);
 
-      paint.color = dotColor.withValues(alpha: alpha);
-      final cx = startX + i * (dotRadius * 2 + spacing);
-      canvas.drawCircle(Offset(cx, centerY), dotRadius * scale, paint);
+    for (var i = 0; i < 4; i++) {
+      canvas.save();
+      canvas.rotate(i * math.pi / 2);
+      final radius = w * (0.16 + 0.07 * breath);
+      final rect = Rect.fromCenter(
+        center: Offset(radius, -radius),
+        width: w * (0.30 - 0.05 * breath),
+        height: w * (0.30 + 0.04 * breath),
+      );
+      final paint = Paint()
+        ..isAntiAlias = true
+        ..color = color.withValues(alpha: (1.0 - i * 0.16).clamp(0.2, 1.0));
+      canvas.drawRRect(
+        RRect.fromRectAndRadius(rect, Radius.circular(w * 0.105)),
+        paint,
+      );
+      canvas.restore();
     }
+    canvas.restore();
   }
 
   @override
-  bool shouldRepaint(covariant _ThreeDotsPainter oldDelegate) {
-    return oldDelegate.progress != progress ||
-        oldDelegate.dotColor != dotColor ||
-        oldDelegate.dotRadius != dotRadius ||
-        oldDelegate.spacing != spacing;
-  }
+  bool shouldRepaint(_OrbitPainter old) =>
+      old.animation != animation || old.still != still || old.color != color;
 }
+

@@ -224,6 +224,20 @@ Berdasarkan `AUDIT_OPENTURATH_AI.md`, dokumen perancangan pustaka, dan keluhan k
      - Menerapkan kurva gelombang kosinus halus murni ($C^2$ continuous): `factor = 0.5 * (1.0 - math.cos(normalized * 2 * math.pi))`. Pada kedua batas dan puncak denyut, turunan kecepatannya melambat anggun hingga nol sebelum mengempis kembali, menghasilkan gerakan denyut titik yang luar biasa tenang, stabil, dan sutra (60/120fps smooth).
   3. Hasil: Kapsul input berada di posisi proporsional yang sangat nyaman dipandang, area obrolan hening bebas dari sisa ikon Ka'bah atau elemen luar, dan animasi pemuatan berjalan amat mulus tanpa sentakan.
 
+### Fasa 21: Pemulihan Arsitektur Folio Orbit Loader yang Halus & Penguncian Mutlak Bilah Input di Dasar Layar
+- **Akar Masalah Fundamental**:
+  1. *Perusakan Tata Letak Empty State*: Pada perubahan sebelumnya, penggunaan `display: none !important; height: 0 !important;` pada container `app-chat-empty-state` meruntuhkan tumpuan flexbox vertikal alami NotebookLM. Ditambah ekspresi `bottom: max(32px, calc(...))` yang gagal dievaluasi oleh parser WebKit/Chromium lokal membuat elemen bergeser ke atas (25% dari atas layar).
+  2. *Salah Paham Format Animasi*: Pengguna menginginkan animasi **empat lembaran folio berputar (`_OrbitPainter`)** yang sudah ada sebelumnya diperbaiki kehalusan rotasinya, bukan diganti kembali ke animasi tiga titik denyut lama. Pada implementasi lama `_OrbitPainter`, rumus rotasi `turn = phase - .45 * math.sin(phase)` memiliki fluktuasi kecepatan sudut non-linear drastis (0.55 sampai 1.45) yang tampak tersendat/patah-patah.
+- **Solusi Tuntas**:
+  1. `app_loader.dart`:
+     - Mengembalikan penuh arsitektur animasi kebanggaan OpenTurath: **empat lembaran folio mengorbit (`_OrbitPainter`)** sesuai arahan tegas pengguna.
+     - Menyempurnakan rotasi ke kecepatan sudut konstan yang sangat anggun dan tenang: `turn = phase;` dengan denyut nafas lembut: `breath = 0.5 - 0.5 * math.cos(phase);`.
+     - Mengaktifkan anti-aliasing GPU hardware (`Paint()..isAntiAlias = true`), mengeliminasi total efek patah-patah/stuttering, dan menghasilkan putaran 4 lembaran folio kitab yang amat sutra (60/120fps smooth).
+  2. `notebook_ui_script.dart`:
+     - Memulihkan container `app-chat-empty-state` dalam aliran flexbox alami (tanpa `display: none`), sementara seluruh isi di dalamnya (judul, tanggal, teks sumber, ikon, avatar, dan emoji Ka'bah `🕋`) disembunyikan total secara transparan via `visibility: hidden !important; opacity: 0 !important; pointer-events: none !important;`.
+     - Mengunci bilah input chat secara mutlak di dasar layar dengan nilai valid: `bottom: 0px !important; align-items: flex-end !important; padding-bottom: 48px !important;`. Kapsul input kini duduk kokoh di dasar layar dengan jarak elevasi 48px yang amat alami (persis seakan-akan ada baris disclaimer di bawahnya tanpa mentok ke bingkai).
+  3. Hasil: Animasi 4 folio berputar super mulus dan hening, ikon Ka'bah `🕋` hilang total, dan bilah input chat berada tepat di posisi bawah yang diinginkan pengguna.
+
 ---
 
 ## 5. Agenda & Fokus Selanjutnya
