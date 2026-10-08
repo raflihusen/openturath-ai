@@ -66,3 +66,23 @@ test('WebKit composer remains bottom anchored through empty, populated, resized 
     assert.equal(await page.locator('.ot-chat-path, .ot-chat-composer, .ot-chat-transcript').count(), 0);
   } finally { await browser.close(); }
 });
+
+test('complete NotebookLM presentation script keeps input usable without placeholder', async () => {
+  const browser = await webkit.launch({ headless: true });
+  try {
+    const page = await browser.newPage({ viewport: { width: 1200, height: 900 } });
+    const errors = []; page.on('pageerror', error => errors.push(error.message));
+    await page.route('https://notebooklm.google.com/**', route => route.fulfill({
+      contentType: 'text/html', body: `<style>.pill {display:flex;flex-direction:row;padding:16px;border-radius:28px;background:#222} textarea{flex:1} button{width:40px}</style><app-root><main><div class="unknown-empty-wrapper">${composer}</div></main></app-root>`
+    }));
+    await page.goto('https://notebooklm.google.com/notebook/layout-fixture');
+    await page.addScriptTag({ content: script });
+    const g = await geometry(page);
+    assert.ok(Math.abs(g.gap - 22) < 2, JSON.stringify(g));
+    assert.equal(g.placeholder, null); assert.equal(g.row, 'row');
+    assert.equal(await page.evaluate(() => window.otNotebook.ready()), true);
+    await page.locator('textarea').fill('Uji input');
+    assert.equal(await page.locator('textarea').inputValue(), 'Uji input');
+    assert.deepEqual(errors, []);
+  } finally { await browser.close(); }
+});
