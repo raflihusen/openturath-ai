@@ -103,3 +103,5 @@
  .editorial-heading h2,.archive-layout h2,.faq-heading h2{font-size:36px}.framework-choices span{font-size:25px}.qawaid-list h3{font-size:26px}.room-ar{font-size:30px}
 }
 @media(prefers-reduced-motion:reduce){.tahawwulat-feature *{scroll-behavior:auto;transition:none}}
+@media(max-width:420px){[dir=rtl] .hero-actions{flex-direction:column;align-items:stretch}[dir=rtl] .hero-actions .button{font-size:18px;line-height:1.5;min-height:48px;white-space:nowrap;border-radius:28px}}
+.availability-note{margin-bottom:28px}
