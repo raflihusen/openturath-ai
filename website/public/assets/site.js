@@ -77,3 +77,6 @@ if(experienceTabs.length){
  mobileStages.addEventListener('change',syncOrientation);syncOrientation();syncStage();
 }
 initProductMotion();
+
+// Accessible introductory choices; these never create an AI session.
+$$('[data-tahawwulat-framework]').forEach(panel=>{const choices=$$('[data-framework-choice]',panel);const out=$('[data-framework-output]',panel);choices.forEach(button=>button.addEventListener('click',()=>{choices.forEach(other=>other.setAttribute('aria-pressed',String(other===button)));out.textContent=button.dataset.explanation;}));});
