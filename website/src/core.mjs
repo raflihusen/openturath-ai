@@ -12,6 +12,7 @@ export function releaseIssues(c) {
  if(!c.plans?.length)errors.push('plans: approved access information required');
  for(const p of c.plans||[]){
   for(const k of ['name','period','coverage','renewal','refund','taxes','cancellation','paymentLocation'])for(const l of ['id','en','ar'])if(!p[k]?.[l]?.trim())errors.push(`plans.${k}.${l}: approved translation required`);
+  if(!Number.isInteger(p.months)||p.months<1)errors.push('plans.months: positive integer period required');
   if(typeof p.price!=='number'||!Number.isFinite(p.price)||p.price<0||p.price===''||p.price==null)errors.push('plans.price: nonnegative price required');
   if(!/^[A-Z]{3}$/.test(p.currency||''))errors.push('plans.currency: ISO currency required');
  }
