@@ -229,45 +229,36 @@ const notebookUiScript = r'''
       .ot-opening-language .mat-mdc-menu-panel { opacity: 0 !important; }
       .cdk-overlay-container { z-index: 99999 !important; }
 
-      /* Pastikan seluruh hierarki kontainer obrolan mengisi tinggi penuh agar margin-top: auto mendorong input ke dasar layar */
-      app-root,
-      main,
-      [role="main"],
-      app-chat,
-      app-chat-view,
-      .chat-view,
-      .chat-panel-content,
-      .conversation-container,
-      app-conversation,
-      app-chat-empty-state,
-      .chat-empty-state,
-      .empty-state,
-      [class*="empty-state" i] {
+      /* Only the live composer's outer path owns viewport layout. */
+      html, body { height: 100% !important; margin: 0 !important; }
+      body.ot-chat-layout { height: var(--ot-chat-height, 100dvh) !important; }
+      .ot-chat-path {
         display: flex !important;
         flex-direction: column !important;
-        flex: 1 1 auto !important;
-        height: 100% !important;
-        min-height: 100% !important;
-        justify-content: flex-end !important;
-        align-items: center !important;
+        flex: 1 1 0px !important;
+        min-height: 0 !important;
+        min-width: 0 !important;
+        height: auto !important;
+        align-items: stretch !important;
+        justify-content: flex-start !important;
+        box-sizing: border-box !important;
         padding-top: 0 !important;
         margin-top: 0 !important;
+      }
+      .ot-chat-transcript {
+        flex: 1 1 0px !important;
+        min-height: 0 !important;
+        overflow-y: auto !important;
+      }
+      .ot-chat-composer {
+        flex: 0 0 auto !important;
+        margin: auto auto max(22px, env(safe-area-inset-bottom, 0px)) !important;
+        width: calc(100% - 32px) !important;
+        max-width: 768px !important;
         box-sizing: border-box !important;
       }
-
-      app-chat-empty-state > *,
-      .chat-empty-state > *,
-      .empty-state > *,
-      [class*="empty-state" i] > * {
-        display: flex !important;
-        flex-direction: column !important;
-        flex: 1 1 auto !important;
-        height: 100% !important;
-        min-height: 100% !important;
-        justify-content: flex-end !important;
-        align-items: center !important;
-        box-sizing: border-box !important;
-      }
+      .ot-chat-composer textarea::placeholder,
+      .ot-chat-composer input::placeholder { color: transparent !important; }
 
       /* Sembunyikan elemen judul, ikon, dan sumber di dalam empty state agar bersih */
       .empty-state-header,
@@ -344,24 +335,6 @@ const notebookUiScript = r'''
         visibility: visible !important;
         opacity: 1 !important;
         pointer-events: auto !important;
-      }
-
-      /* Ruang bawah obrolan agar pesan tidak tertutup */
-      .chat-panel-content, .chat-view, .conversation-container, .message-list, [role="log"] {
-        padding-bottom: max(64px, calc(env(safe-area-inset-bottom, 24px) + 48px)) !important;
-      }
-
-      /* Penataan alami bilah input chat di dasar layar (bottom-anchored via flex layout) */
-      div.chat-input-container, .input-container, app-chat-input, form.chat-input-form,
-      [class*="input-container" i], [class*="chat-input" i],
-      .chat-input-area, [class*="input-area" i], .query-box-container {
-        margin-top: auto !important;
-        margin-bottom: max(22px, calc(env(safe-area-inset-bottom, 16px) + 14px)) !important;
-        margin-left: auto !important;
-        margin-right: auto !important;
-        width: 100% !important;
-        max-width: 768px !important;
-        box-sizing: border-box !important;
       }
 
       .chat-message-pair, .to-user-container, .to-model-container {
@@ -592,49 +565,85 @@ const notebookUiScript = r'''
     } catch (_) {}
   }
 
-  function anchorEmptyStateInput() {
-    const textarea = document.querySelector('textarea, [contenteditable="true"], [role="textbox"], input[type="text"]');
-    if (!textarea) return;
-
-    // Hanya aktif pada empty state (tidak ada pesan obrolan aktif)
-    const hasMessages = !!document.querySelector('.chat-message, .model-message, .user-message, [role="article"], .chat-message-pair, app-chat-response');
-    if (hasMessages) return;
-
-    const emptyState = textarea.closest('app-chat-empty-state, .chat-empty-state, .empty-state, [class*="empty-state" i]');
-    if (emptyState) {
-      emptyState.style.setProperty('display', 'flex', 'important');
-      emptyState.style.setProperty('flex-direction', 'column', 'important');
-      emptyState.style.setProperty('justify-content', 'flex-end', 'important');
-      emptyState.style.setProperty('align-items', 'center', 'important');
-      emptyState.style.setProperty('height', '100%', 'important');
-      emptyState.style.setProperty('min-height', '100%', 'important');
-      emptyState.style.setProperty('flex', '1 1 auto', 'important');
-      emptyState.style.setProperty('padding-top', '0px', 'important');
-      emptyState.style.setProperty('margin-top', '0px', 'important');
-
-      let cur = textarea.parentElement;
-      while (cur && cur !== emptyState) {
-        cur.style.setProperty('display', 'flex', 'important');
-        cur.style.setProperty('flex-direction', 'column', 'important');
-        cur.style.setProperty('justify-content', 'flex-end', 'important');
-        cur.style.setProperty('align-items', 'center', 'important');
-        cur.style.setProperty('flex', '1 1 auto', 'important');
-        cur.style.setProperty('width', '100%', 'important');
-        cur = cur.parentElement;
+  function anchorConversationInput() {
+    // Match the visible, enabled composer, never a hidden source/search field.
+    const inputs = [...document.querySelectorAll('textarea, [contenteditable="true"], [role="textbox"]')];
+    const input = inputs.find(el => visible(el) && !el.disabled && el.getAttribute('aria-disabled') !== 'true');
+    const oldNodes = [...document.querySelectorAll('.ot-chat-path, .ot-chat-transcript, .ot-chat-composer')];
+    const path = new Set();
+    const transcripts = new Set();
+    let composer = null;
+    if (input) {
+      const panelSelector = 'app-chat, app-chat-view, app-chat-panel, .chat-panel, .chat-view, .chat-panel-content, .conversation-container, main, [role="main"]';
+      const composerSelector = 'app-chat-input, .chat-input-container, .input-container, form.chat-input-form, .chat-input-area, .query-box-container';
+      composer = input.closest(composerSelector);
+      // Fallback for changed upstream class names: retain the entire send control.
+      if (!composer) {
+        let node = input.parentElement;
+        while (node && node !== document.body && !node.matches(panelSelector)) {
+          if (node.querySelector('button, [role="button"]')) { composer = node; break; }
+          node = node.parentElement;
+        }
+      }
+      if (composer) {
+        // Nested input wrappers belong to the composer, not to the flex path.
+        while (composer.parentElement && composer.parentElement.matches(composerSelector)) {
+          composer = composer.parentElement;
+        }
+        let node = composer.parentElement;
+        while (node && node !== document.documentElement) {
+          path.add(node);
+          [...node.children].forEach(child => {
+            if (child === composer || child.contains(composer)) return;
+            if (child.matches('.message-list, [role="log"], .chat-panel-content, .conversation-container') ||
+                child.querySelector(answerSelector + ',' + questionSelector)) transcripts.add(child);
+          });
+          node = node.parentElement;
+        }
+        // Keep the original accessible name when removing a placeholder-only label.
+        const placeholder = input.getAttribute('placeholder');
+        if (placeholder) {
+          if (!input.hasAttribute('aria-label') && !input.hasAttribute('aria-labelledby')) {
+            input.setAttribute('aria-label', placeholder);
+          }
+          input.removeAttribute('placeholder');
+        }
+        composer.querySelectorAll('mat-label, .mat-mdc-floating-label, [data-placeholder]').forEach(label => {
+          if (/^ajukan pertanyaan atau buat konten[.\s]*$/i.test(text(label))) label.style.setProperty('display', 'none', 'important');
+        });
       }
     }
-
-    const inputPill = textarea.closest('div.chat-input-container, .input-container, form.chat-input-form, app-chat-input, [class*="chat-input" i]');
-    if (inputPill) {
-      inputPill.style.setProperty('margin-top', 'auto', 'important');
-      inputPill.style.setProperty('margin-bottom', '22px', 'important');
-      inputPill.style.setProperty('margin-left', 'auto', 'important');
-      inputPill.style.setProperty('margin-right', 'auto', 'important');
-      inputPill.style.setProperty('width', '100%', 'important');
-      inputPill.style.setProperty('max-width', '768px', 'important');
-      inputPill.style.setProperty('border-radius', '28px', 'important');
+    // Reconcile every pass, including empty -> messages -> cleared / replaced DOM.
+    oldNodes.forEach(node => {
+      if (!path.has(node)) node.classList.remove('ot-chat-path');
+      if (!transcripts.has(node)) node.classList.remove('ot-chat-transcript');
+      if (node !== composer) node.classList.remove('ot-chat-composer');
+    });
+    path.forEach(node => node.classList.add('ot-chat-path'));
+    transcripts.forEach(node => node.classList.add('ot-chat-transcript'));
+    if (composer) composer.classList.add('ot-chat-composer');
+    document.body?.classList.toggle('ot-chat-layout', !!composer);
+    const height = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+    const value = height + 'px';
+    if (document.documentElement.style.getPropertyValue('--ot-chat-height') !== value) {
+      document.documentElement.style.setProperty('--ot-chat-height', value);
     }
   }
+
+  let layoutFrame = 0;
+  function scheduleConversationLayout() {
+    if (layoutFrame) return;
+    layoutFrame = requestAnimationFrame(() => {
+      layoutFrame = 0;
+      anchorConversationInput();
+    });
+  }
+  window.addEventListener('resize', scheduleConversationLayout);
+  window.visualViewport?.addEventListener('resize', scheduleConversationLayout);
+  const composerObserver = new MutationObserver(scheduleConversationLayout);
+  composerObserver.observe(document.documentElement, {
+    subtree: true, childList: true, attributes: true, attributeFilter: ['placeholder']
+  });
 
   let lastCleanAt = 0;
   function clean() {
@@ -646,7 +655,7 @@ const notebookUiScript = r'''
     ensureStyles();
     removeTopToolbars();
     removeHeroCard();
-    anchorEmptyStateInput();
+    anchorConversationInput();
     dismissPopups();
   }
 
