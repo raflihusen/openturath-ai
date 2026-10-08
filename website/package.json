@@ -19,6 +19,7 @@
     "package": "python3 scripts/package.py",
     "test:browser": "node scripts/browser-qa.mjs",
     "release:apk": "node scripts/register-apk.mjs",
-    "test:visual": "node scripts/visual-review.mjs"
+    "test:visual": "node scripts/visual-review.mjs",
+    "sync": "node scripts/sync-app-facts.mjs"
   }
 }

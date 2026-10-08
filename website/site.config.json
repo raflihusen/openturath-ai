@@ -17,7 +17,8 @@
       "date": "2026-09-20",
       "minimumOS": "Android 7.0+",
       "url": "https://openturath.id/downloads/openturath-v1.0.63.apk",
-      "comingSoon": true
+      "comingSoon": true,
+      "unavailableReason": "awaiting-public-release"
     },
     {
       "platform": "macOS",
@@ -26,7 +27,8 @@
       "date": "2026-09-20",
       "minimumOS": "macOS 13+",
       "url": "https://openturath.id/download",
-      "comingSoon": true
+      "comingSoon": true,
+      "unavailableReason": "awaiting-public-release"
     },
     {
       "platform": "Windows",
@@ -35,7 +37,8 @@
       "date": "2026-09-20",
       "minimumOS": "Windows 10+",
       "url": "https://openturath.id/download",
-      "comingSoon": true
+      "comingSoon": true,
+      "unavailableReason": "awaiting-public-release"
     }
   ],
   "plans": [
@@ -70,9 +73,9 @@
       "currency": "IDR",
       "months": 1,
       "name": {
-        "id": "Paket Tholib",
-        "en": "Tholib Plan",
-        "ar": "باقة الطالب"
+        "id": "Asisten bidang umum",
+        "en": "General-field assistant",
+        "ar": "مساعد المجال العام"
       },
       "period": {
         "id": "1 bulan",
@@ -80,9 +83,9 @@
         "ar": "شهر واحد"
       },
       "coverage": {
-        "id": "Satu asisten spesialis pilihan sesuai cakupan pada checkout.",
-        "en": "One selected specialist assistant, as specified at checkout.",
-        "ar": "مساعد متخصص واحد تختاره وفق النطاق المبيّن عند الدفع."
+        "id": "Satu asisten bidang umum yang dipilih. Fikih Tahawwulat memiliki paket tersendiri.",
+        "en": "One selected general-field assistant. Fiqh Tahawwulat has a separate package.",
+        "ar": "مساعد واحد في المجال العام المختار؛ ولفقه التحولات باقة مستقلة."
       }
     },
     {
@@ -116,9 +119,9 @@
       "currency": "IDR",
       "months": 6,
       "name": {
-        "id": "Paket Tematik",
-        "en": "Thematic Plan",
-        "ar": "الباقة الموضوعية"
+        "id": "Asisten bidang umum",
+        "en": "General-field assistant",
+        "ar": "مساعد المجال العام"
       },
       "period": {
         "id": "6 bulan",
@@ -126,9 +129,9 @@
         "ar": "٦ أشهر"
       },
       "coverage": {
-        "id": "Satu rumpun kajian sesuai daftar asisten pada checkout.",
-        "en": "One study group, with assistants listed at checkout.",
-        "ar": "مجموعة دراسية واحدة وفق قائمة المساعدين عند الدفع."
+        "id": "Satu asisten bidang umum yang dipilih. Fikih Tahawwulat memiliki paket tersendiri.",
+        "en": "One selected general-field assistant. Fiqh Tahawwulat has a separate package.",
+        "ar": "مساعد واحد في المجال العام المختار؛ ولفقه التحولات باقة مستقلة."
       }
     },
     {
@@ -162,9 +165,9 @@
       "currency": "IDR",
       "months": 12,
       "name": {
-        "id": "Sultan All-Access",
-        "en": "Sultan All-Access",
-        "ar": "سلطان للوصول الشامل"
+        "id": "Asisten bidang umum",
+        "en": "General-field assistant",
+        "ar": "مساعد المجال العام"
       },
       "period": {
         "id": "12 bulan",
@@ -172,9 +175,9 @@
         "ar": "١٢ شهرًا"
       },
       "coverage": {
-        "id": "Seluruh asisten yang tercakup dalam paket aktif. Profil yang masih dalam persiapan belum termasuk akses.",
-        "en": "All assistants covered by the active plan. Profiles in preparation are not yet accessible.",
-        "ar": "جميع المساعدين المشمولين بالباقة المفعّلة. الملفات قيد الإعداد غير متاحة بعد."
+        "id": "Satu asisten bidang umum yang dipilih. Fikih Tahawwulat memiliki paket tersendiri.",
+        "en": "One selected general-field assistant. Fiqh Tahawwulat has a separate package.",
+        "ar": "مساعد واحد في المجال العام المختار؛ ولفقه التحولات باقة مستقلة."
       }
     }
   ],
@@ -219,13 +222,30 @@
     "enabled": false
   },
   "appDeepLinkBase": "",
-  "commercialRevision": "website-brief-2026-09-20",
-  "appCommercialParity": "pending-backend-mapping",
+  "commercialRevision": "perdana-2026-09-20",
+  "appCommercialParity": "matched-source-unverified-production",
   "policyVersion": "1.0",
   "policyEffectiveDate": "2026-09-13",
   "distribution": {
     "mode": "website-only",
     "reason": "awaiting-release-artifact"
   },
-  "websiteVersion": "6.0.0"
+  "websiteVersion": "6.0.0",
+  "tahawwulatPlans": [
+    {
+      "months": 1,
+      "amount": 300000,
+      "regular": 1000000
+    },
+    {
+      "months": 6,
+      "amount": 1499000,
+      "regular": 2995000
+    },
+    {
+      "months": 12,
+      "amount": 1999000,
+      "regular": 4995000
+    }
+  ]
 }
