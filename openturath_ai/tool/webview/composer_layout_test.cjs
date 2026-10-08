@@ -55,7 +55,14 @@ test('WebKit composer remains bottom anchored through empty, populated, resized 
     await page.$eval('textarea:not([hidden])', el => el.setAttribute('placeholder', 'Ajukan pertanyaan atau buat konten'));
     await page.waitForFunction(() => !document.querySelector('textarea:not([hidden])').hasAttribute('placeholder'));
     await page.screenshot({ path: process.env.OT_COMPOSER_SCREENSHOT || '/tmp/ot-composer-layout.png' });
-    await page.evaluate(() => { document.querySelector('.query-box-container').remove(); window.layout(); });
+    // Upstream can rename both empty-state and composer classes.
+    await page.evaluate(html => {
+      document.querySelector('.unknown-empty-wrapper').innerHTML = html.replace('query-box-container', 'renamed-composer');
+      window.layout();
+    }, composer);
+    g = await geometry(page); assert.ok(Math.abs(g.gap - 22) < 2, JSON.stringify(g));
+    assert.equal(g.row, 'row'); assert.equal(g.placeholder, null);
+    await page.evaluate(() => { document.querySelector('.renamed-composer').remove(); window.layout(); });
     assert.equal(await page.locator('.ot-chat-path, .ot-chat-composer, .ot-chat-transcript').count(), 0);
   } finally { await browser.close(); }
 });
