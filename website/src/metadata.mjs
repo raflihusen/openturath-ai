@@ -1,5 +1,6 @@
 import {escapeHtml as e, pick} from './core.mjs';
-import {tr} from './copy.mjs';
+import {tr,localized} from './copy.mjs';
+import {link} from './render.mjs';
 
 export const number = (value, locale, digits=0) => new Intl.NumberFormat(
   {id:'id-ID', en:'en-US', ar:'ar-EG'}[locale], {maximumFractionDigits:digits}
@@ -24,7 +25,7 @@ export function collectionMetadata(l,c) {
     [number(m.words/1e6,l,1)+' '+tr(l,'metaMillion'),'metaWords'],
     ...(m.lectures?[[number(m.lectures,l),'metaLectures']]:[])
   ];
-  return `<ul class="collection-metrics" aria-label="${tr(l,'collectionMetrics')}">${values.map(([value,key],i)=>`<li class="${i===0?'metric-primary':''}"><bdi>${e(value)}</bdi><span>${tr(l,key)}</span></li>`).join('')}<li class="metric-period">${e(pick(m.period,l))}</li></ul>`;
+  return `<ul class="collection-metrics" aria-label="${tr(l,'collectionMetrics')}">${values.map(([value,key],i)=>`<li class="${i===0?'metric-primary':''}"><bdi>${e(value)}</bdi><span>${tr(l,key)}</span></li>`).join('')}<li class="metric-period">${e(pick(m.period,l))}</li></ul>${c.countReview?`<p class="corpus-status">${localized(['Jumlah kitab pada dua metadata:','Book counts across two metadata records:','أعداد الكتب في سجلّين:'],l)} <bdi>${c.metadata.books} / ${c.countReview.trainingBooks}</bdi>. ${link(l,'research/corpus',tr(l,'corpusNotes'))}</p>`:''}`;
 }
 
 export function collectionStats(l,catalog) {
@@ -39,7 +40,7 @@ export function collectionStats(l,catalog) {
       return `<div class="scale-tile" data-metric="${key}" data-value="${totals[key]}" data-reveal="number"><dt>${tr(l,label)}</dt><dd><span class="number-window"><bdi class="number-rise">${prominent}</bdi></span>${unit?`<span class="scale-unit">${unit}</span>`:''}${prominent!==exact?`<small><bdi>${exact}</bdi></small>`:''}</dd>${key==='books'?'<span class="scale-calligraphy" lang="ar" dir="rtl" aria-hidden="true">كتب</span>':''}</div>`;
     }).join('')}</dl>
     <div class="scale-index" data-metric="partitions" data-value="${totals.partitions}" data-reveal><p><bdi>${number(totals.partitions,l)}</bdi> ${tr(l,'metricPartitions')}</p><span>${tr(l,'statsEra')}</span></div>
-    <p class="fine-print scale-source">${tr(l,'statsSource')}</p>
+    <p class="fine-print scale-source">${tr(l,'statsSource')} ${link(l,'research/corpus',tr(l,'corpusNotes'))}</p>
   </div></section>`;
 }
 

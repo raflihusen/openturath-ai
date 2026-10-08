@@ -13,12 +13,14 @@ const config=await read('site.config.json');
 const production=process.argv.includes('--release');
 const issues=[...releaseIssues(config),...await downloadIntegrityIssues(config,root)];
 if(production&&issues.length){console.error('Production release blocked:\n'+issues.map(x=>' - '+x).join('\n'));process.exit(1);}
-const data={config,catalog:await read('content/catalog.json'),books:await read('content/books.json'),evaluation:await read('content/evaluation.json'),evidence:await read('content/evidence.json'),corrections:await read('content/corrections.json')};
+const data={config,catalog:await read('content/catalog.json'),books:await read('content/books.json'),evaluation:await read('content/evaluation.json'),evidence:await read('content/evidence.json'),corrections:await read('content/corrections.json'),training:await read('content/metadata/metadata_training_seluruh_ai.json')};
 const metadataIssues=validateCatalogMetadata(data.catalog,await read('content/metadata/metadata_modul_lengkap.json'),await read('content/metadata/metadata_training_seluruh_ai.json'));
 if(metadataIssues.length)throw new Error(metadataIssues.join('\n'));
+for(const c of data.catalog){const n=data.training[c.metadataKey]?.total_kitab;if(n!=null&&n!==c.metadata?.books)c.countReview={trainingBooks:n};}
 const dist=path.join(root,'dist');await fs.mkdir(dist,{recursive:true});
 // Only remove our generated directory; never touch config, source or report data.
 await fs.rm(dist,{recursive:true,force:true});await fs.mkdir(dist,{recursive:true});await fs.cp(path.join(root,'public'),dist,{recursive:true});
+await fs.writeFile(path.join(dist,'assets/corpus-metadata.json'),JSON.stringify({source:'app metadata snapshots',uniqueWorksVerified:false,collections:data.catalog.filter(c=>c.status==='active').map(c=>({id:c.id,name:c.name,moduleBooks:c.metadata.books,trainingBooks:data.training[c.metadataKey]?.total_kitab,partitions:c.metadata.partitions}))},null,2));
 await fs.copyFile(path.join(root,'src/copy.mjs'),path.join(dist,'assets/ui.mjs'));
 await fs.copyFile(path.join(root,'src/core.mjs'),path.join(dist,'assets/core.mjs'));
 await fs.copyFile(path.join(root,'content/q001-original.md'),path.join(dist,'assets/q001-original.md'));

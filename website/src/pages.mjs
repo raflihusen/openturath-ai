@@ -1,3 +1,4 @@
+import {corpusPage} from './corpus.mjs';
 import {collectionMetadata} from './metadata.mjs';
 import {membership} from './membership.mjs';
 import {tahawwulatPage} from './tahawwulat.mjs';
@@ -10,7 +11,7 @@ const quote='وَلَوْ مَسَّ بِيَدِهِ مَا شَاءَ فَوْ
 const quoteRef='الأم · ج١، ص٣٠ · Q001';
 const desc=(l)=>tr(l,'heroSub');
 const intro=(l,k,title,sub)=>pageHead(l,k,title,sub);
-export function allRoutes(data){return ['', 'library','research','research/q001','research/corrections','download','releases','access','help','contact','report',...Object.keys(articles),...data.catalog.map(c=>'library/'+c.id),...data.books.map(b=>'books/'+b.id),...data.config.releaseNotes.map(r=>'releases/'+r.version),'404'];}
+export function allRoutes(data){return ['', 'library','research','research/q001','research/corrections','research/corpus','download','releases','access','help','contact','report',...Object.keys(articles),...data.catalog.map(c=>'library/'+c.id),...data.books.map(b=>'books/'+b.id),...data.config.releaseNotes.map(r=>'releases/'+r.version),'404'];}
 function study(l){return `<div class="study-spread"><div class="study-question">${eyebrow(tr(l,'example')+' / Q001')}<span class="small-label">${tr(l,'originalQuery')}</span><p class="question-text" lang="id" dir="ltr">Bagaimana mazhab Syafi'i menjelaskan hukum bersentuhan kulit antara laki-laki dan perempuan non-mahram dalam kaitannya dengan wudhu? Jelaskan batasan dan pengecualiannya.</p>${link(l,'research/q001',tr(l,'readFull'))}</div><div class="study-source"><div class="source-meta"><span>${tr(l,'sourceText')}</span><span dir="ltr">03 / 10</span></div><blockquote lang="ar" dir="rtl">${quote}</blockquote><div class="citation-line"><span lang="ar" dir="rtl">الأم، ج١، ص٣٠</span><button class="text-link" data-dialog="source-dialog">${tr(l,'openSource')}${arrow}</button></div></div></div>`;}
 function sourceDialog(l){return `<dialog class="source-dialog" id="source-dialog"><div class="dialog-head"><h2>${tr(l,'bibliography')}</h2><button class="icon-button" data-close aria-label="${tr(l,'close')}">${icon('close')}</button></div>${eyebrow('Q001 · 03')}<h3 class="arabic-display" lang="ar" dir="rtl">الأم</h3><blockquote lang="ar" dir="rtl">${quote}</blockquote><p class="status-label">${tr(l,'unverified')}</p><p>${tr(l,'sourceNote')}</p><dl class="metadata"><dt>${tr(l,'author')}</dt><dd lang="ar" dir="rtl">الإمام الشافعي</dd><dt>${tr(l,'locator')}</dt><dd lang="ar" dir="rtl">ج١، ص٣٠</dd><dt>${tr(l,'edition')}</dt><dd>${tr(l,'unknown')}</dd></dl><div class="button-row"><button class="button" data-copy="${e(quote+'\n'+quoteRef)}">${tr(l,'copy')}</button>${link(l,'books/al-umm',tr(l,'bibliography'))}</div></dialog>`;}
 function home(l,d){return immersiveHome(l,d,sourceDialog(l));}
@@ -33,6 +34,7 @@ export function renderPage(l,route,d){let title=tr(l,'homeTitle'),body='';
  else if(route==='library'){title=tr(l,'library');body=library(l,d);}
  else if(route.startsWith('library/')){const c=d.catalog.find(c=>route==='library/'+c.id);title=pick(c.name,l);body=collection(l,c,d);}
  else if(route.startsWith('books/')){const b=d.books.find(b=>route==='books/'+b.id);title=l==='ar'?b.arabic:b.title;body=book(l,b);}
+ else if(route==='research/corpus'){title=tr(l,'corpusNotes');body=corpusPage(l,d);}
  else if(route==='research'){title=tr(l,'research');body=research(l,d);}
  else if(route==='research/q001'){title=tr(l,'topic');body=casePage(l,d);}
  else if(route==='research/corrections'){title=tr(l,'corrections');body=pageHead(l,tr(l,'research'),title)+`<section class="container section compact-top">${d.corrections.length?d.corrections.map(c=>`<article class="reading-content"><p class="eyebrow">${e(c.id)} · ${e(c.date)}</p><h2>${e(pick(c.title,l))}</h2><p>${e(pick(c.body,l))}</p><p>${e(c.fromVersion)} → ${e(c.toVersion)}</p></article>`).join(''):empty(l,tr(l,'noCorrections'),'','research','research')}</section>`;}
