@@ -10,7 +10,7 @@ export function publicationIntegrityIssues({config,proof,evidence,releases,appFa
   const release=config.downloads.find(r=>r.platform.toLowerCase()===platform.id);
   if(!release){issues.push('manifest: unknown platform '+platform.id);continue;}
   const active=!release.comingSoon&&!release.revoked;
-  if(active&&(!platform.url||platform.url!==release.url||platform.sha256!==release.sha256||platform.sizeBytes!==release.sizeBytes))issues.push('manifest: active release metadata differs for '+platform.id);
+  if(active&&(!platform.url||platform.url!==release.url||platform.sha256!==(release.sha256??null)||platform.sizeBytes!==(release.sizeBytes??null)))issues.push('manifest: active release metadata differs for '+platform.id);
   if(!active&&platform.url)issues.push('manifest: inactive release exposes a URL for '+platform.id);
  }
  for(const r of config.downloads)if(!releases.platforms.some(p=>p.id===r.platform.toLowerCase()))issues.push('manifest: missing platform '+r.platform);
