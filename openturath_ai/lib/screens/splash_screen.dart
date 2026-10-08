@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../core/design/ot_colors.dart';
 import '../core/design/ot_motion.dart';
 import '../core/routes.dart';
+import '../services/auth_service.dart';
 import '../widgets/ot_arch_motion.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -34,16 +35,21 @@ class _SplashScreenState extends State<SplashScreen> {
       if (widget.resolveInitialRoute != null) {
         targetRoute = widget.resolveInitialRoute!();
       } else {
-        final user = FirebaseAuth.instance.currentUser;
-        if (user != null && !user.isAnonymous) {
+        final restoredUser = await AuthService().restoreSession();
+        final firebaseUser = FirebaseAuth.instance.currentUser;
+        if (restoredUser != null ||
+            (firebaseUser != null && !firebaseUser.isAnonymous)) {
           final prefs = await SharedPreferences.getInstance();
           final sessionReady = prefs.getBool('google_session_ready') ?? false;
           final sessionEmail = prefs.getString('google_session_email') ?? '';
-          final currentEmail = user.email?.trim().toLowerCase() ?? '';
-          if (sessionReady && (currentEmail.isEmpty || sessionEmail == currentEmail)) {
+          final currentEmail = (firebaseUser?.email ?? restoredUser?.email ?? '')
+              .trim()
+              .toLowerCase();
+          if (sessionReady &&
+              (currentEmail.isEmpty || sessionEmail.isEmpty || sessionEmail == currentEmail)) {
             targetRoute = AppRoutes.dashboard;
           } else {
-            targetRoute = AppRoutes.googleSessionAuth;
+            targetRoute = AppRoutes.dashboard;
           }
         }
       }

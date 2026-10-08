@@ -37,6 +37,7 @@ class AuthService {
     _userCache[user.uid] = user;
     try {
       final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('current_user_uid', user.uid);
       await prefs.setString(
         'openturath_cached_user_${user.uid}',
         jsonEncode(user.toJsonMap()),
@@ -72,16 +73,87 @@ class AuthService {
   UserModel? get cachedCurrentUser {
     if (previewUser != null) return previewUser;
     final user = _auth.currentUser;
-    if (user == null) return null;
-    return _userCache[user.uid] ??
-        UserModel(
-          uid: user.uid,
-          name: user.displayName ?? 'Pengguna',
-          email: user.email ?? '',
-          photoUrl: user.photoURL ?? '',
-          plan: AppConstants.planTrial,
-          questionsUsed: 0,
-        );
+    if (user != null) {
+      return _userCache[user.uid] ??
+          UserModel(
+            uid: user.uid,
+            name: user.displayName ?? 'Pengguna',
+            email: user.email ?? '',
+            photoUrl: user.photoURL ?? '',
+            plan: AppConstants.planTrial,
+            questionsUsed: 0,
+          );
+    }
+    if (_userCache.isNotEmpty) {
+      return _userCache.values.first;
+    }
+    return null;
+  }
+
+  /// Memulihkan sesi pengguna secara aman dari Firebase Auth atau cache disk lokal
+  Future<UserModel?> restoreSession() async {
+    if (previewUser != null) return previewUser;
+    User? firebaseUser = _auth.currentUser;
+    if (firebaseUser == null) {
+      try {
+        firebaseUser = await _auth
+            .authStateChanges()
+            .firstWhere((u) => u != null)
+            .timeout(const Duration(milliseconds: 1200));
+      } catch (_) {}
+    }
+
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      String? uid = firebaseUser?.uid ?? prefs.getString('current_user_uid');
+      if (uid == null || uid.isEmpty) {
+        final keys = prefs
+            .getKeys()
+            .where((k) => k.startsWith('openturath_cached_user_'))
+            .toList();
+        if (keys.isNotEmpty) {
+          final sessionEmail =
+              prefs.getString('google_session_email')?.trim().toLowerCase();
+          for (final k in keys) {
+            final raw = prefs.getString(k);
+            if (raw != null &&
+                sessionEmail != null &&
+                sessionEmail.isNotEmpty &&
+                raw.toLowerCase().contains(sessionEmail)) {
+              uid = k.replaceFirst('openturath_cached_user_', '');
+              break;
+            }
+          }
+          uid ??= keys.last.replaceFirst('openturath_cached_user_', '');
+          if (uid != null && uid.isNotEmpty) {
+            await prefs.setString('current_user_uid', uid);
+          }
+        }
+      }
+
+      if (uid != null && uid.isNotEmpty) {
+        final cached = await _getCachedUser(uid);
+        if (cached != null) {
+          _userCache[cached.uid] = cached;
+          return cached;
+        }
+      }
+    } catch (_) {}
+
+    if (firebaseUser != null) {
+      final fallback = UserModel(
+        uid: firebaseUser.uid,
+        name: firebaseUser.displayName ?? 'Pengguna',
+        email: firebaseUser.email ?? '',
+        photoUrl: firebaseUser.photoURL ?? '',
+        plan: AppConstants.planTrial,
+        questionsUsed: 0,
+      );
+      _userCache[fallback.uid] = fallback;
+      return fallback;
+    }
+
+    return null;
   }
 
   // ── Google Sign In ─────────────────────────────────────────────
@@ -131,9 +203,10 @@ class AuthService {
       if (effectiveEmail != null && effectiveEmail.isNotEmpty) {
         try {
           final prefs = await SharedPreferences.getInstance();
+          await prefs.setString('current_user_uid', firebaseUser.uid);
           await prefs.setString('google_session_email', effectiveEmail);
           await prefs.setString('notebook_google_email', effectiveEmail);
-          await prefs.remove('google_session_ready');
+          await prefs.setBool('google_session_ready', true);
         } catch (_) {}
       }
       return userModel;
@@ -341,6 +414,7 @@ class AuthService {
 
     try {
       final prefs = await SharedPreferences.getInstance();
+      await prefs.remove('current_user_uid');
       await prefs.remove('google_session_ready');
       await prefs.remove('google_session_email');
       await prefs.remove('notebook_google_email');
@@ -348,6 +422,8 @@ class AuthService {
       if (currentUid != null) {
         _userCache.remove(currentUid);
         await prefs.remove('openturath_cached_user_$currentUid');
+      } else {
+        _userCache.clear();
       }
     } catch (_) {}
 
