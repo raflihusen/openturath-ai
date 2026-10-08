@@ -1,0 +1,104 @@
+{
+  "headers": {
+    "alt-svc": "h3=\":443\"; ma=86400",
+    "cache-control": "max-age=3600",
+    "cf-cache-status": "DYNAMIC",
+    "cf-ray": "a4728d195b943412-FRA",
+    "content-encoding": "zstd",
+    "content-type": "text/html; charset=utf-8",
+    "date": "Thu, 08 Oct 2026 04:55:03 GMT",
+    "last-modified": "Wed, 07 Oct 2026 23:16:23 GMT",
+    "nel": "{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}",
+    "priority": "u=0,i",
+    "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=fecNJVPh%2F1lpx1hXhzBsCzqcmN5uZliIMeVoVNhKOUT3eo%2FcOeDy0l9RS1XclR%2FqtW1vQ8O95oRA9iJlBcj4SneVLRdmJ4LpUMISg3zwmjAxw9cjUrN8wg2SDWRoc%2BjO\"}]}",
+    "server": "cloudflare",
+    "server-timing": "cfCacheStatus;desc=\"DYNAMIC\"\ncfEdge;dur=5,cfOrigin;dur=7\ncfExtPri",
+    "strict-transport-security": "max-age=31556926",
+    "vary": "x-fh-requested-host, accept-encoding",
+    "x-cache": "HIT",
+    "x-cache-hits": "0",
+    "x-served-by": "cache-fra-eddf8230234-FRA",
+    "x-timer": "S1791435304.905948,VS0,VE1"
+  },
+  "seo": {
+    "alternates": [
+      {
+        "lang": "id",
+        "href": "https://openturath.id/id/"
+      },
+      {
+        "lang": "en",
+        "href": "https://openturath.id/en/"
+      },
+      {
+        "lang": "ar",
+        "href": "https://openturath.id/ar/"
+      },
+      {
+        "lang": "x-default",
+        "href": "https://openturath.id/"
+      }
+    ],
+    "scripts": [
+      {
+        "src": "https://openturath.id/assets/theme.js",
+        "type": ""
+      },
+      {
+        "src": "https://openturath.id/assets/site.js",
+        "type": "module"
+      },
+      {
+        "src": "https://static.cloudflareinsights.com/beacon.min.js/v4bc70e2c01a94c73b74392e4234840661791215815920",
+        "type": "module"
+      }
+    ],
+    "icons": [
+      "https://openturath.id/assets/favicon-32x32.png?v=ot3",
+      "https://openturath.id/assets/favicon-16x16.png?v=ot3",
+      "https://openturath.id/assets/favicon-48x48.png?v=ot3",
+      "https://openturath.id/favicon.ico?v=ot3",
+      "https://openturath.id/assets/favicon.svg?v=ot3",
+      "https://openturath.id/favicon.png?v=ot3",
+      "https://openturath.id/assets/apple-touch-icon.png?v=ot3",
+      "https://openturath.id/assets/favicon.svg"
+    ],
+    "jsonld": [
+      {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "OpenTurath",
+        "description": "Locate exact Arabic passages, trace references and scholarly positions across multi-volume works, and verify citations directly against primary texts — built on a Source First approach.",
+        "url": "https://openturath.id/en/",
+        "inLanguage": "en"
+      }
+    ]
+  },
+  "narrow": [
+    {
+      "locale": "id",
+      "ctaTop": 674,
+      "overflow": false
+    },
+    {
+      "locale": "en",
+      "ctaTop": 674,
+      "overflow": false
+    },
+    {
+      "locale": "ar",
+      "ctaTop": 898,
+      "overflow": false
+    }
+  ],
+  "dimensions": [
+    "Quotation match",
+    "Bibliographic accuracy",
+    "Support for claims",
+    "Interpretive accuracy",
+    "Completeness",
+    "Scope alignment",
+    "Robustness"
+  ],
+  "visible_unlabelled_buttons": []
+}
