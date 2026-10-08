@@ -238,6 +238,23 @@ Berdasarkan `AUDIT_OPENTURATH_AI.md`, dokumen perancangan pustaka, dan keluhan k
      - Mengunci bilah input chat secara mutlak di dasar layar dengan nilai valid: `bottom: 0px !important; align-items: flex-end !important; padding-bottom: 48px !important;`. Kapsul input kini duduk kokoh di dasar layar dengan jarak elevasi 48px yang amat alami (persis seakan-akan ada baris disclaimer di bawahnya tanpa mentok ke bingkai).
   3. Hasil: Animasi 4 folio berputar super mulus dan hening, ikon Ka'bah `🕋` hilang total, dan bilah input chat berada tepat di posisi bawah yang diinginkan pengguna.
 
+
+### Fasa 22: Eliminasi Error Timeout Kolom Percakapan & Pemulihan Kesiapan Input Seketika (`ff50751`)
+- **Akar Masalah Fundamental**:
+  1. *Timeout "Kolom percakapan belum siap"*: Pada revisi Fasa 21, penambahan aturan CSS wildcard `app-chat-empty-state *, .empty-state *, [class*="empty-state" i] *` yang disetel `visibility: hidden !important;` secara membabi-buta menimpa elemen `textarea` dan kontainer input yang berada di dalam struktur empty state NotebookLM.
+  2. *Penghapusan Kontainer Obrolan Global*: Loop JavaScript `querySelectorAll('span, div, p, h1, h2, h3')` untuk ikon Ka'bah memeriksa `rawTxt.includes('🕋')` pada seluruh elemen teks. Karena container induk obrolan (`div.chat-view`, `div.chat-panel-content`, `app-chat-empty-state`) memuat seluruh teks halaman termasuk judul buku catatan ("Al Fikih Tahawwulat: Al-Muhaqqiq"), loop tersebut menyetel `visibility: hidden !important;` pada kontainer induk obrolan itu sendiri!
+  3. *Kegagalan Polling Kesiapan*: Fungsi deteksi kesiapan `visible(input)` membaca `getComputedStyle(input).visibility`. Akibat kontainer induk atau elemen input tersembunyi, `visible(input)` selalu menghasilkan `false`, membuat `otNotebook.ready()` tidak pernah terpenuhi hingga batas 45 detik habis dan memicu galat error: *"AI belum bisa dibuka. Kolom percakapan belum siap. Muat ulang atau periksa sesi Google Anda."*.
+- **Solusi Tuntas**:
+  1. `notebook_ui_script.dart`:
+     - Menghapus total aturan CSS wildcard `[class*="empty-state" i] *`. Membatasi penyembunyian empty state hanya pada elemen tajuk spesifik (`h1, h2, h3, mat-icon, img, svg, .notebook-cover, .cover-emoji`).
+     - Menjamin secara mutlak hak visibilitas dan interaktivitas: `textarea, [contenteditable="true"], [role="textbox"], app-chat-input, app-chat-input *, div.chat-input-container *, form.chat-input-form *` dengan `visibility: visible !important; opacity: 1 !important; pointer-events: auto !important;`.
+     - Merevisi pemindai emoji Ka'bah (`🕋`) agar HANYA menargetkan elemen daun (*leaf node* / tanpa anak elemen input) dan memberikan proteksi mutlak: DILARANG KERAS menyentuh elemen yang memuat `textarea`, `form`, `app-chat-input`, atau kontainer obrolan.
+     - Menyempurnakan `visible(el)` dan `inputReady()` agar lebih tangguh (`offsetWidth > 0 || offsetHeight > 0 || getClientRects().length > 0`) sehingga kesiapan obrolan terdeteksi seketika saat textarea terhidrasi.
+  2. Kompilasi & Verifikasi:
+     - 368 unit test Flutter lulus 100% tanpa regresi.
+     - Kompilasi biner rilis macOS selesai 100% (`✓ Built build/macos/Build/Products/Release/OpenTurath AI.app (132.1MB)`).
+     - Pembuatan DMG (`tool/package_macos.sh`), pembaruan `/Applications/OpenTurath AI.app`, dan peluncuran ulang aplikasi aktif terverifikasi (PID 87951).
+
 ---
 
 ## 5. Agenda & Fokus Selanjutnya
