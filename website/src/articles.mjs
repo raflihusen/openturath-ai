@@ -1,4 +1,4 @@
-// Editorial articles; the canonical application policy remains separately linked.
+// Editorial content; the original v1.0 app document is retained as a historical record.
 export const articles = {
   "how-it-works": {
     "key": "how",
@@ -82,26 +82,14 @@ export const articles = {
       },
       {
         "heading": [
-          "Arsitektur Penelusuran & Struktur Naskah",
-          "Corpus Ingestion & Structural Preservation",
-          "بنية معالجة النصوص وصيانة الهيكل التراثي"
+          "Layanan dan batasnya",
+          "Services and their limits",
+          "الخدمات وحدودها"
         ],
         "body": [
-          "Penelusuran berakar pada korpus naskah primer yang dinormalisasi secara ortografis tanpa merusak integritas harakat asli. Struktur hierarki naskah—memisahkan matan ringkas, syarah analitis, dan hasyiyah marjinal—dipertahankan agar aturan hukum tidak terlepas dari pengecualiannya.",
-          "Research is grounded in primary classical texts normalized orthographically while preserving vocalized glyphs. Document structure—distinguishing concise rule (matn), analytical commentary (sharh), and marginal gloss (hashiyah)—is preserved intact so legal determinations retain their necessary qualifications.",
-          "ينطلق البحث من متون وشروح التراث بعد تسوية الأنماط الإملائية مع صيانة الضبط بالشكل. ويُراعى التسلسل الهرمي للنصوص—عزل المتن عن الشرح التحليلي والحاشية الهامشية—بحيث لا تنفصل الأحكام عن قيودها وشروطها."
-        ]
-      },
-      {
-        "heading": [
-          "Lapisan Penalaran & Eksplorasi Claude (R&D)",
-          "Reasoning Intelligence & Claude R&D",
-          "طبقة الاستدلال وأبحاث النماذج المتقدمة (Claude R&D)"
-        ],
-        "body": [
-          "Dalam alur penelitian dan pengembangan (R&D), OpenTurath mengevaluasi model penalaran mutakhir seperti Claude dari Anthropic untuk pemahaman naskah Arab klasik berkonteks panjang, ekstraksi metadata terstruktur, dan audit halusinasi sitasi. Model penalaran bertindak sebagai lapisan intelegensi di atas naskah primer, bukan sebagai sumber kebenaran tunggal.",
-          "In ongoing research and development (R&D), OpenTurath evaluates advanced reasoning models such as Anthropic's Claude for long-context classical Arabic document understanding, structured metadata extraction, and citation auditing. The reasoning model operates strictly as an intelligence layer over retrieved primary sources, never as an ungrounded oracle.",
-          "في مسار البحث والتطوير (R&D)، يختبر OpenTurath نماذج استدلالية متقدمة مثل Claude من Anthropic لفهم النصوص العربية الكلاسيكية ذات السياقات الطويلة، واستخراج البيانات الوصفية المهيكلة، وتدقيق النقول. ويعمل النموذج كطبقة استدلال فوق المصادر المسترجعة لا كمصدر ذاتي للحقيقة."
+          "Percakapan aplikasi menggunakan NotebookLM, sedangkan OpenTurath menyediakan pemilihan disiplin, katalog, dan alur telaah. Pencarian judul Arab pada katalog berbeda dari penelusuran seluruh teks kitab. Rujukan dari jawaban belum dianggap terverifikasi sebelum dibandingkan dengan edisi sumber.",
+          "App conversations use NotebookLM, while OpenTurath provides discipline selection, catalogues, and study workflows. Arabic title search differs from full-text book retrieval. Answer references are not treated as verified until compared with source editions.",
+          "تستخدم محادثات التطبيق NotebookLM، ويقدّم OpenTurath اختيار المجالات والفهارس ومسارات المطالعة. يختلف البحث في العناوين عن استرجاع النص الكامل. ولا تُعد إحالات الإجابة متحقّقًا منها قبل مقابلة المصادر."
         ]
       }
     ]
@@ -109,69 +97,69 @@ export const articles = {
   "about": {
     "key": "about",
     "intro": [
-      "Infrastruktur riset khazanah keilmuan Islam berbasis kecerdasan buatan.",
-      "AI-native research infrastructure for classical Islamic scholarship.",
-      "بنية تحتية بحثية ذكية لخدمة التراث الإسلامي الأصيل."
+      "Infrastruktur riset turats, dengan sumber diutamakan.",
+      "Research infrastructure for classical texts, with sources first.",
+      "بنية بحثية للتراث تُقدّم المصدر."
     ],
     "blocks": [
       {
         "heading": [
-          "Mengapa OpenTurath Hadir: Menjaga Keaslian Khazanah",
-          "Why OpenTurath Exists: The Scholarly Imperative",
-          "لماذا وُجد OpenTurath: صيانة أصول التراث العلمي"
+          "Mengapa OpenTurath dibangun",
+          "Why OpenTurath is being built",
+          "لماذا يُطوَّر OpenTurath"
         ],
         "body": [
-          "Khazanah keilmuan Islam membentang lebih dari satu milenium, memuat ribuan karya multi-jilid dalam fikih, ushul, hadis, tafsir, dan sejarah. Meneliti naskah-naskah ini menuntut ketepatan redaksi ibarah, pemahaman sanad dan penisbahan pendapat, serta verifikasi naskah primer. Mesin pencari konvensional dan asisten generatif umum tidak dirancang untuk memenuhi standar ketelitian filologis dan keilmuan ini.",
-          "Classical Islamic scholarship encompasses over a millennium of rigorous intellectual heritage across multi-volume treatises in law, legal theory, hadith, exegesis, and history. Navigating these codices demands precise textual collation, accurate attribution of scholarly determinations, and direct verification against primary editions. Conventional search engines and generic generative assistants were never engineered to satisfy these exacting scholarly standards.",
-          "يمتد التراث الإسلامي لأكثر من ألف عام من التدوين العلمي الرصين، جامعًا آلاف المجلدات في الفقه وأصوله والحديث والتفسير والتاريخ. وتتطلب دراسة هذه المصادر دقةً بالغة في تحرير عبارات النصوص، ومعرفة مراتب الأقوال وعزوها، ومقابلة النقول بطبعاتها المعتمدة. ولم تُبنَ محركات البحث التقليدية أو نماذج الذكاء الاصطناعي العامة لتلبية هذه المعايير التحقيقية الصارمة."
+          "Penelitian turats menghubungkan ibarah, konteks, dan pendapat ulama dengan kitab serta edisinya. OpenTurath dikembangkan untuk membantu pekerjaan ini melalui katalog disiplin ilmu, asisten kajian, dan pencatatan rujukan.",
+          "Research connects Arabic passages, context, and scholarly positions with books and editions. OpenTurath is being developed to support this work through discipline catalogues, study assistants, and reference records.",
+          "يربط البحث التراثي العبارات والسياق وأقوال العلماء بالكتب وطبعاتها. يُطوَّر OpenTurath لخدمة هذا العمل بفهرسة المجالات ومساعدي المطالعة وتسجيل الإحالات."
         ]
       },
       {
         "heading": [
-          "Mengapa AI Umum Gagal dalam Penelitian Turats",
-          "Why General-Purpose AI Fails in Classical Scholarship",
-          "لماذا تقصر النماذج العامة عن خدمة البحث التراثي"
+          "Mengapa sumber perlu diperiksa",
+          "Why sources need review",
+          "لماذا تُراجع المصادر"
         ],
         "body": [
-          "Model bahasa besar (LLM) komersial mampu merangkai jawaban bahasa Arab yang fasih dan tampak meyakinkan di permukaan. Namun, dalam domain turats, model-model tersebut secara sistematis mengalami kegagalan fatal: atribusi keliru (menisbahkan fatwa ke ulama yang salah), phantom citation (menciptakan judul kitab, nomor jilid, dan halaman fiktif), serta distorsi konteks akibat pemotongan teks tanpa mempertimbangkan relasi matn, syarah, dan hasyiyah. Dalam dunia akademik dan telaah agama, kutipan yang tidak dapat diverifikasi adalah cacat ilmiah yang fatal.",
-          "Commercial large language models (LLMs) can produce fluent, highly plausible prose. In classical scholarly domains, however, they systematically exhibit catastrophic failure modes: attribution drift (assigning legal opinions to the wrong jurists), phantom citations (fabricating fictitious book titles, volumes, and page numbers), and context stripping caused by naive chunking that separates a concise core text (matn) from indispensable qualifications in commentaries (sharh) and marginal glosses (hashiyah). In serious scholarship, an unverifiable citation renders an entire inquiry invalid.",
-          "تستطيع النماذج اللغوية الكبيرة صياغة نصوص عربية بليغة تبدو مقنعة في ظاهرها. غير أنها في ميدان التراث تقع في عيوب بنيوية قاتلة: خلط العزو (نسبة الفتاوى والأقوال إلى غير أربابها)، واختلاق الإحالات الوهمية (توليد عناوين وأجزاء وصفحات لا وجود لها في الواقع)، واقتطاع النصوص آليًا بما يفصل عبارة المتن الموجزة عن شروطها وقيودها في الشروح والحواشي. وفي ميدان البحث العلمي الشرعي، يُعد النقل غير الموثق خطأً يسقط حجية الاستدلال."
+          "AI dapat menghasilkan teks yang fasih sekaligus salah menisbahkan pendapat atau menyebut halaman yang tidak cocok. Karena itu, rujukan perlu diperiksa pada edisi sumber dan dipahami bersama konteksnya. Katalog dan jawaban AI membantu telaah, bukan menetapkan otoritas ilmiah.",
+          "AI can produce fluent text while misattributing opinions or citing a mismatched page. References need review against source editions and their context. Catalogues and AI answers support study; they do not establish scholarly authority.",
+          "قد يصوغ الذكاء الاصطناعي نصًّا بليغًا مع خطأ في العزو أو الصفحة. لذلك تُراجع الإحالة في طبعتها وسياقها. وتعين الفهارس والإجابات على المطالعة دون أن تُثبت حجية علمية."
         ]
       },
       {
         "heading": [
-          "Apa yang Kami Bangun: Infrastruktur Berprinsip 'Source First'",
-          "What We Are Building: Source-First Research Infrastructure",
-          "ما الذي نبنيه: بنية تحتية تعتمد أولوية المصدر (Source First)"
+          "Yang tersedia dan yang masih dikembangkan",
+          "Available work and ongoing development",
+          "العمل المتاح وما يجري تطويره"
         ],
         "body": [
-          "OpenTurath dibangun di atas paradigma 'Source First' (Sumber Diutamakan). Kami tidak memposisikan AI sebagai mufti atau pemberi fatwa otonom yang meminta peneliti percaya buta pada jawabannya. Sebaliknya, OpenTurath adalah infrastruktur riset komputasional yang mengindeks 5.370 karya, 11.901+ jilid, 4,18 juta halaman, dan 1,148 miliar kata lintas 20 disiplin keilmuan. Tujuannya satu: mempercepat penemuan ibarah asli, membimbing peneliti ke jilid dan halaman kitab cetak fisik, dan memastikan setiap kutipan dapat diuji ke naskah primer.",
-          "OpenTurath is built on the foundation of 'Source First'. Rather than positioning AI as an autonomous authority that asks researchers to trust synthetic outputs, OpenTurath operates as computational research infrastructure indexing 5,370 works, 11,901+ volumes, 4.18 million pages, and 1.148 billion words across 20 distinct disciplines. Its singular purpose: dramatically accelerating the retrieval of primary Arabic passages, pinpointing physical print coordinates (edition, volume, and page), and ensuring every citation is directly verifiable.",
-          "أُسس OpenTurath على مبدأ 'أولوية المصدر' (Source First). فنحن لا نطرح الذكاء الاصطناعي كمرجع مستقل يطلب من الباحثين الثقة العمياء في مخرجاته التوليدية. بل هو بنية تحتية حوسبية تفهرس ٥٫٣٧٠ مصنفًا، وأكثر من ١١٫٩٠١ مجلد، و٤٫١٨ مليون صفحة، و١٫١٤٨ مليار كلمة عبر عشرين فنًّا وتخصصًا علميًا. والغاية واحدة: تيسير العثور على موضع العبارة الأصلية، وتحديد الجزء والصفحة في النسخ المطبوعة، وتمكين الباحث من الرجوع المباشر إلى النص الأصيل."
+          "Kode aplikasi memuat katalog 20 bidang, ruang Fikih Tahawwulat dengan lima pilihan asisten, catatan, bookmark, dan pengelolaan akses. Website menampilkan katalog dan arsip perbandingan Q001. Distribusi publik aplikasi serta pemeriksaan lengkap sumber dalam arsip belum tersedia di situs ini.",
+          "The app code includes 20 study fields, a Fiqh Tahawwulat space with five assistants, notes, bookmarks, and access management. This website presents the catalogue and Q001 comparison archive. Public app distribution and completed source reviews are not yet available on this site.",
+          "يتضمن كود التطبيق ٢٠ مجالًا ومساحة لفقه التحولات بخمسة مساعدين وملاحظات وعلامات وإدارة وصول. يعرض الموقع الفهرس وأرشيف Q001؛ ولا تتوفر فيه بعد تنزيلات عامة أو مراجعة مكتملة لمصادر الأرشيف."
         ]
       },
       {
         "heading": [
-          "Tahap Pengembangan & Peran Claude dalam R&D",
-          "Current Development Stage & Claude R&D Workflows",
-          "المرحلة الحالية ودور Claude في البحث والتطوير"
+          "Claude dalam pengembangan",
+          "Claude in development",
+          "Claude في التطوير"
         ],
         "body": [
-          "OpenTurath adalah inisiatif riset independen tahap awal. Dalam alur R&D dan benchmarking kami, model penalaran mutakhir seperti Claude dari Anthropic dimanfaatkan untuk mengeksplorasi pemahaman dokumen berkonteks panjang (long-context understanding), ekstraksi ontologi keilmuan Islam berstruktur, dan audit otomatis terhadap halusinasi kutipan. Peta jalan komputasi berikutnya berfokus pada perluasan kapasitas API guna mengotomatisasi pemrosesan korpus berskala ribuan jilid, integrasi evaluasi muqabalah multi-versi naskah, dan penguatan jalur inferensi yang terkurasi.",
-          "OpenTurath is an early-stage independent research initiative. In our active R&D and benchmarking workflows, we leverage advanced reasoning systems such as Anthropic's Claude to explore long-context classical Arabic comprehension, structured Islamic ontology modeling, and automated citation hallucination auditing. Our computational roadmap focuses on scaling API throughput to automate full-codex ingestion across multi-volume corpora, expanding multi-edition textual collation (muqabalah), and hardening curated verification pipelines.",
-          "يُعد OpenTurath مشروعًا بحثيًا مستقلاً في مراحله الأولى. وفي مسارات البحث والتطوير ومقاييس الأداء لدينا، نستفيد من نماذج الاستدلال المتقدمة مثل Claude من Anthropic في استكشاف الفهم العميق للنصوص التراثية المطولة (Long-Context)، وبناء الأنطولوجيات المعرفية المتخصصة، والتدقيق الآلي لهلوسة المراجع. وتتركز خطتنا الحوسبية القادمة على توسيع سعة واجهات البرمجة (API) لمعالجة أمهات الكتب عبر آلاف المجلدات، وتطوير المقابلة النصية بين الطبعات، وتأمين تدفقات التحقق العلمي."
+          "Pengelola melaporkan penggunaan Claude Code dalam pekerjaan pengembangan dan riset OpenTurath. Bukti penggunaan ini perlu dipisahkan dari integrasi API pada layanan percakapan. Pemrosesan corpus, evaluasi kutipan, dan kapasitas API menjadi arah pengembangan yang perlu didokumentasikan melalui contoh kerja serta ukuran beban yang jelas.",
+          "The operator reports using Claude Code in OpenTurath development and research. This use should be distinguished from API integration in the conversation service. Corpus processing, quotation evaluation, and API capacity are development directions requiring documented examples and workload measurements.",
+          "تذكر الجهة المشغّلة استخدام Claude Code في تطوير OpenTurath والبحث. ويختلف ذلك عن دمج API في خدمة المحادثة. تحتاج معالجة المجموعة وتقييم النصوص وتوسعة API إلى أمثلة موثّقة وقياسات لحجم العمل."
         ]
       },
       {
         "heading": [
-          "Komunitas Penguji & Evaluasi Lapangan",
-          "Scholarly Validation & Community Testing",
-          "مجتمع الاختبار والتقييم الميداني"
+          "Pemeriksaan ilmiah",
+          "Scholarly review",
+          "المراجعة العلمية"
         ],
         "body": [
-          "Metodologi dan hasil sistem kami diuji bersama para peneliti naskah, dosen studi Islam, santri, dan dewan asatidz di lingkungan pesantren dan perguruan tinggi Islam di Indonesia. Umpan balik mereka menjadi kompas utama kami dalam menetapkan standar ketat muqabalah (pencocokan naskah), perbaikan metadata edisi fisik, dan pencegahan distorsi pemahaman mazhab.",
-          "Our methodologies and system outputs are continually tested in collaboration with manuscript researchers, Islamic studies academics, and traditional madrasah/pesantren scholars in Indonesia. Their direct feedback guides our strict muqabalah (textual collation) criteria, physical edition metadata corrections, and safeguards against legal and terminological distortion.",
-          "تخضع منهجياتنا ومخرجاتنا للاختبار المستمر بالتعاون مع باحثي المخطوطات، وأساتذة الدراسات الإسلامية، وطلبة العلم وشيوخ المحاضن العلمية والمعاهد التراثية في إندونيسيا. وتُعد ملاحظاتهم الدقيقة الموجه الأساسي لضبط معايير المقابلة النصية (المقابلة)، وتحرير بيانات الطبعات الورقية، والتحرز من أي تشويه في نقل المسائل والمصطلحات."
+          "Arsip Q001 mencatat satu pertanyaan, enam jawaban, dan sepuluh kutipan yang belum diperiksa terhadap edisi sumber. Belum tersedia catatan publik mengenai peserta pengujian ahli, tugas, atau hasil penilaiannya. Koreksi dapat dikirim melalui email dengan identitas kitab, edisi, dan halaman; status pemeriksaan diperbarui setelah bukti ditelaah.",
+          "Q001 records one question, six answers, and ten quotations awaiting source-edition review. Public records of expert participants, tasks, or assessment results are not yet available. Corrections can be emailed with the book, edition, and page; review status is updated after evidence is examined.",
+          "يسجّل Q001 سؤالًا وست إجابات وعشرة نصوص تنتظر مقابلة المصادر. لم تتوفر بعد سجلات عامة للمراجعين ومهامهم ونتائجهم. تُرسل التصحيحات بالبريد مع الكتاب والطبعة والصفحة، وتُحدّث الحالة بعد فحص الأدلة."
         ]
       },
       {
@@ -263,9 +251,9 @@ export const articles = {
           "٦. خدمات الأطراف الثالثة (البنية التحتية للمعالجة)"
         ],
         "body": [
-          "Fitur percakapan memanfaatkan infrastruktur komputasi riset terkelola untuk pemrosesan konteks dokumen. Aksesnya dapat bergantung pada akun, wilayah, batas komputasi, dan ketentuan operasional yang berlaku untuk Anda. Pembelian OpenTurath tidak dengan sendirinya mengubah jenis langganan atau hak akses akun eksternal Anda.\n\nJika perubahan layanan pihak ketiga menyebabkan fitur berbayar tidak dapat diberikan sesuai yang ditawarkan, kami akan menilai pemulihan akses, penggantian layanan yang Anda setujui, atau pengembalian dana sesuai hak Anda.",
-          "Conversational features utilize managed research computing infrastructure for document context processing. Access may depend on your account, geographic region, computing limits, and operational terms applicable to you. Purchasing OpenTurath does not alter external subscription tiers or third-party account privileges.\n\nIf third-party service modifications prevent paid features from being delivered as offered, we will assess access restoration, an agreed alternative service, or a refund in accordance with your rights.",
-          "تعتمد ميزة المحادثة على بنية تحتية حوسبية بحثية مخصصة لمعالجة سياق الوثائق والنصوص. وقد يرتبط الوصول بحسابك ونطاقك الجغرافي وحدود المعالجة والشروط التشغيلية. شراء OpenTurath لا يغيّر باقات الاشتراكات الخارجية أو حقوق الحسابات لدى المزودين.\n\nإذا طرأت تغييرات لدى الطرف الثالث حالت دون تقديم الخدمة المدفوعة كما وُعدت، فسنقيم سبل استعادة الوصول، أو تقديم خدمة بديلة متفق عليها، أو استرداد المبلغ وفق حقوقك المقررة."
+          "Percakapan dalam aplikasi menggunakan sesi Google NotebookLM melalui WebView atau jalur bridge. Teks pertanyaan, jawaban, dan konteks dokumen dapat diproses oleh layanan tersebut. Kebijakan serta pengaturan akun penyedia berlaku; penggunaan Claude Code dalam pengembangan tidak berarti percakapan pengguna diproses oleh Claude. OpenTurath tidak menggunakan materi pengguna untuk melatih model publik. Jangan memasukkan informasi rahasia ke percakapan.",
+          "App conversations use Google NotebookLM sessions through a WebView or bridge path. Questions, answers, and document context may be processed by that service. Provider policies and account settings apply; Claude Code use in development does not mean user conversations are processed by Claude. OpenTurath does not use user material to train public models. Do not submit confidential information.",
+          "تستخدم محادثات التطبيق جلسات Google NotebookLM عبر WebView أو bridge، وقد تعالج الخدمة الأسئلة والإجابات وسياق المستندات. تسري سياسات المزوّد وإعدادات الحساب؛ واستخدام Claude Code للتطوير لا يعني معالجة محادثات المستخدمين به. لا يستخدم OpenTurath مواد المستخدم لتدريب نماذج عامة. تجنّب المعلومات السرية."
         ]
       },
       {
@@ -287,9 +275,9 @@ export const articles = {
           "٨. ملاحظات المستخدم ومواده الخاصة"
         ],
         "body": [
-          "Hak atas tulisan atau catatan yang Anda buat tetap berada pada Anda. Anda memberi izin terbatas kepada kami untuk memproses dan menyimpan materi tersebut semata-mata untuk menjalankan fitur yang Anda pilih. Izin ini tidak memindahkan kepemilikan dan kami tidak menjual atau menerbitkan catatan pribadi Anda.\n\nCatatan disimpan secara lokal pada perangkat Anda melalui penyimpanan aplikasi. Gunakan fitur salin atau berbagi yang tersedia untuk mencadangkan materi penting.",
-          "You retain ownership of any writings or notes you create. You grant us a limited license to process and store such materials solely to execute the features you select. This license does not transfer ownership, and we do not sell or publish your personal notes.\n\nNotes are stored locally on your device via application storage. Use the available copy or export features to back up critical materials.",
-          "تبقى ملكية ما تدونه من كتابات وملاحظات خالصة لك. وتمنحنا ترخيصًا محدودًا بمعالجتها وتخزينها بالقدر اللازم لتشغيل الميزات التي تختارها دون نقل للملكية، ونحن لا نبيع ملاحظاتك ولا ننشرها.\n\nتُحفظ الملاحظات محليًا في جهازك عبر ذاكرة التطبيق؛ لذا يرجى استخدام أدوات النسخ أو التصدير المتاحة للاحتفاظ بنسخ احتياطية."
+          "Research Notes disimpan lokal di perangkat. Bookmark dan jawaban yang disimpan dapat disinkronkan ke Firestore ketika Anda login, termasuk kutipan dan rujukannya. Periksa jenis penyimpanan sebelum memasukkan materi pribadi.",
+          "Research Notes are stored locally. Saved bookmarks and answers can sync to Firestore when you sign in, including quotations and references. Check the storage type before entering private material.",
+          "تُحفظ Research Notes محليًّا. ويمكن مزامنة العلامات والإجابات المحفوظة مع Firestore عند تسجيل الدخول، بما فيها النصوص والإحالات. راجع نوع التخزين قبل إدخال مواد خاصة."
         ]
       },
       {
@@ -394,9 +382,9 @@ export const articles = {
           "٢. البيانات التي تتم معالجتها"
         ],
         "body": [
-          "Kami memproses data sesuai fitur yang Anda gunakan:\n• Akun: Nama, alamat email, dan identitas profil dari akun autentikasi untuk verifikasi dan personalisasi.\n• Langganan: Paket yang dipilih, status, masa aktif, dan penggunaan voucher.\n• Pembayaran: Nomor transaksi, jumlah pembayaran, metode, waktu, dan status dari penyedia Midtrans.\n• Kontak Transaksi: Nomor WhatsApp/telepon yang Anda berikan saat pembayaran untuk pengiriman informasi aktivasi.\n• Percakapan: Pertanyaan, jawaban, dan konteks telaah yang diproses melalui sesi komputasi riset terisolasi.\n• Catatan: Catatan, kutipan, dan rujukan yang Anda simpan pada penyimpanan lokal perangkat.\n• Bantuan: Alamat kontak, isi pengaduan, nomor transaksi, dan lampiran tangkapan layar untuk penanganan masalah.\n• Sesi Teknis: Token sesi autentikasi yang aman untuk mempertahankan login di perangkat.",
-          "We process data based on features you use:\n• Account: Name, email address, and profile identifier from the authentication account for verification and personalization.\n• Subscription: Selected plan, status, validity dates, and voucher usage.\n• Payment: Transaction ID, payment amount, method, timestamp, and status from provider Midtrans.\n• Transaction Contact: WhatsApp/phone number provided during checkout for activation notices.\n• Conversations: Prompts, responses, and study context processed via isolated research compute sessions.\n• Notes: Notes, quotations, and locators stored in device local storage.\n• Support: Contact address, inquiry details, transaction ID, and screenshots for troubleshooting.\n• Technical Sessions: Secure authentication session tokens to maintain login on your device.",
-          "نعالج البيانات بحسب الميزات المستخدمة:\n• الحساب: الاسم والبريد الإلكتروني والصورة العامة من حساب المصادقة للتحقق والتخصيص.\n• الاشتراك: الباقة المختارة، وحالتها، وفترة الصلاحية، واستخدام القسائم.\n• المدفوعات: رقم المعاملة والمبلغ والوسيلة والوقت والحالة من مزود الدفع Midtrans.\n• بيانات التواصل للمعاملات: رقم الهاتف/واتساب المدخل عند الدفع لإشعار التفعيل.\n• المحادثات: الأسئلة والأجوبة وسياق المطالعة المعالج عبر جلسات حوسبة بحثية معزولة.\n• الملاحظات: الملاحظات والنقول والمراجع المحفوظة محليًا على جهازك.\n• الدعم الفني: وسيلة الاتصال وفحوى البلاغ ورقم المعاملة والصور المرفقة.\n• الجلسات الفنية: رموز الجلسات الآمنة للحفاظ على تسجيل الدخول."
+          "Kami memproses data sesuai fitur yang Anda gunakan:\n• Akun: Nama, alamat email, dan identitas profil dari akun autentikasi untuk verifikasi dan personalisasi.\n• Langganan: Paket yang dipilih, status, masa aktif, dan penggunaan voucher.\n• Pembayaran: Nomor transaksi, jumlah pembayaran, metode, waktu, dan status dari penyedia Midtrans.\n• Kontak Transaksi: Nomor WhatsApp/telepon yang Anda berikan saat pembayaran untuk pengiriman informasi aktivasi.\n• Percakapan: Pertanyaan, jawaban, dan konteks telaah yang diproses melalui sesi komputasi riset terisolasi.\n• Catatan: Catatan, kutipan, dan rujukan yang Anda simpan pada penyimpanan lokal perangkat.\n• Bantuan: Alamat kontak, isi pengaduan, nomor transaksi, dan lampiran tangkapan layar untuk penanganan masalah.\n• Sesi Teknis: Token sesi autentikasi yang aman untuk mempertahankan login di perangkat.\nResearch Notes disimpan lokal di perangkat. Bookmark dan jawaban yang disimpan dapat disinkronkan ke Firestore ketika Anda login, termasuk kutipan dan rujukannya. Periksa jenis penyimpanan sebelum memasukkan materi pribadi.",
+          "We process data based on features you use:\n• Account: Name, email address, and profile identifier from the authentication account for verification and personalization.\n• Subscription: Selected plan, status, validity dates, and voucher usage.\n• Payment: Transaction ID, payment amount, method, timestamp, and status from provider Midtrans.\n• Transaction Contact: WhatsApp/phone number provided during checkout for activation notices.\n• Conversations: Prompts, responses, and study context processed via isolated research compute sessions.\n• Notes: Notes, quotations, and locators stored in device local storage.\n• Support: Contact address, inquiry details, transaction ID, and screenshots for troubleshooting.\n• Technical Sessions: Secure authentication session tokens to maintain login on your device.\nResearch Notes are stored locally. Saved bookmarks and answers can sync to Firestore when you sign in, including quotations and references. Check the storage type before entering private material.",
+          "نعالج البيانات بحسب الميزات المستخدمة:\n• الحساب: الاسم والبريد الإلكتروني والصورة العامة من حساب المصادقة للتحقق والتخصيص.\n• الاشتراك: الباقة المختارة، وحالتها، وفترة الصلاحية، واستخدام القسائم.\n• المدفوعات: رقم المعاملة والمبلغ والوسيلة والوقت والحالة من مزود الدفع Midtrans.\n• بيانات التواصل للمعاملات: رقم الهاتف/واتساب المدخل عند الدفع لإشعار التفعيل.\n• المحادثات: الأسئلة والأجوبة وسياق المطالعة المعالج عبر جلسات حوسبة بحثية معزولة.\n• الملاحظات: الملاحظات والنقول والمراجع المحفوظة محليًا على جهازك.\n• الدعم الفني: وسيلة الاتصال وفحوى البلاغ ورقم المعاملة والصور المرفقة.\n• الجلسات الفنية: رموز الجلسات الآمنة للحفاظ على تسجيل الدخول.\nتُحفظ Research Notes محليًّا. ويمكن مزامنة العلامات والإجابات المحفوظة مع Firestore عند تسجيل الدخول، بما فيها النصوص والإحالات. راجع نوع التخزين قبل إدخال مواد خاصة."
         ]
       },
       {
@@ -418,9 +406,9 @@ export const articles = {
           "٤. محادثات الذكاء الاصطناعي والبنية التحتية الحاسوبية"
         ],
         "body": [
-          "Ketika Anda mengirim pertanyaan melalui fitur percakapan, teks dan konteks telaah diproses melalui sesi komputasi riset terisolasi dengan proteksi privasi ketat.\n\nAplikasi OpenTurath tidak menggunakan isi percakapan atau catatan pribadi pengguna untuk melatih model kecerdasan buatan publik. Hindari memasukkan informasi pribadi sensitif atau rahasia ke dalam percakapan.",
-          "When you submit questions in conversation features, text and study context are processed through isolated research computing sessions under rigorous privacy protections.\n\nOpenTurath does not utilize user conversation contents or personal notes to train public artificial intelligence models. Avoid submitting sensitive personal or confidential information into conversations.",
-          "عند إرسال أسئلة في المحادثة، يُعالج النص وسياق المطالعة عبر جلسات حوسبة بحثية معزولة في بيئة محكمة تراعي حماية الخصوصية.\n\nلا تستخدم OpenTurath محتوى محادثاتك أو ملاحظاتك الشخصية لتدريب نماذج الذكاء الاصطناعي العامة. يُرجى تجنب إدخال معلومات حساسة أو سرية في المحادثات."
+          "Percakapan dalam aplikasi menggunakan sesi Google NotebookLM melalui WebView atau jalur bridge. Teks pertanyaan, jawaban, dan konteks dokumen dapat diproses oleh layanan tersebut. Kebijakan serta pengaturan akun penyedia berlaku; penggunaan Claude Code dalam pengembangan tidak berarti percakapan pengguna diproses oleh Claude. OpenTurath tidak menggunakan materi pengguna untuk melatih model publik. Jangan memasukkan informasi rahasia ke percakapan.",
+          "App conversations use Google NotebookLM sessions through a WebView or bridge path. Questions, answers, and document context may be processed by that service. Provider policies and account settings apply; Claude Code use in development does not mean user conversations are processed by Claude. OpenTurath does not use user material to train public models. Do not submit confidential information.",
+          "تستخدم محادثات التطبيق جلسات Google NotebookLM عبر WebView أو bridge، وقد تعالج الخدمة الأسئلة والإجابات وسياق المستندات. تسري سياسات المزوّد وإعدادات الحساب؛ واستخدام Claude Code للتطوير لا يعني معالجة محادثات المستخدمين به. لا يستخدم OpenTurath مواد المستخدم لتدريب نماذج عامة. تجنّب المعلومات السرية."
         ]
       },
       {
@@ -430,9 +418,9 @@ export const articles = {
           "٥. التخزين المحلي للملاحظات على الجهاز"
         ],
         "body": [
-          "Catatan, kutipan ibarah, dan penanda rujukan disimpan secara lokal di perangkat Anda menggunakan penyimpanan aplikasi. Jika Anda membersihkan data aplikasi atau mencopot pemasangan aplikasi, catatan lokal dapat terhapus. Gunakan fitur salin teks atau bagikan catatan untuk mencadangkan catatan penting Anda ke tempat penyimpanan lain.",
-          "Notes, text citations, and reference markers are stored locally on your device using application storage. Clearing application data or uninstalling the app may permanently remove local notes. Use copy text or export features to back up important materials to external storage.",
-          "تُحفظ الملاحظات والنقول وإشارات المراجع محليًا على جهازك داخل ذاكرة التطبيق. مسح بيانات التطبيق أو إلغاء تثبيته قد يؤدي إلى حذف الملاحظات المحلية. استخدم ميزة نسخ النصوص أو التصدير للاحتفاظ بنسخ احتياطية في مكان آمن."
+          "Research Notes disimpan lokal di perangkat. Bookmark dan jawaban yang disimpan dapat disinkronkan ke Firestore ketika Anda login, termasuk kutipan dan rujukannya. Periksa jenis penyimpanan sebelum memasukkan materi pribadi.",
+          "Research Notes are stored locally. Saved bookmarks and answers can sync to Firestore when you sign in, including quotations and references. Check the storage type before entering private material.",
+          "تُحفظ Research Notes محليًّا. ويمكن مزامنة العلامات والإجابات المحفوظة مع Firestore عند تسجيل الدخول، بما فيها النصوص والإحالات. راجع نوع التخزين قبل إدخال مواد خاصة."
         ]
       },
       {
@@ -442,9 +430,9 @@ export const articles = {
           "٦. مزودو الخدمات والجهات المستلمة للبيانات"
         ],
         "body": [
-          "Data dibagikan hanya sebatas yang diperlukan untuk menjalankan layanan:\n• Infrastruktur Autentikasi & Komputasi: Untuk proses masuk yang aman dan eksekusi sesi telaah dokumen terisolasi.\n• Midtrans: Lembaga pembayaran resmi untuk memproses transaksi perbankan, dompet digital, atau QRIS.\n• Firebase / Google Cloud: Pengelolaan database transaksi dan status hak akses akun yang aman.\n\nSeluruh penyedia bekerja berdasarkan standar keamanan dan enkripsi industri.",
-          "Data is shared strictly to the extent necessary to provide the service:\n• Authentication & Computing Infrastructure: For secure authentication and execution of isolated document research sessions.\n• Midtrans: Licensed payment institution to process banking, digital wallet, or QRIS transactions.\n• Firebase / Google Cloud: Secure database management of transactions and account entitlement statuses.\n\nAll service providers operate under recognized industry security and encryption standards.",
-          "تتم مشاركة البيانات بالقدر الضروري فقط لتشغيل الخدمة:\n• بنية المصادقة والحوسبة: لتسجيل الدخول الآمن وتشغيل جلسات مطالعة النصوص المعزولة.\n• Midtrans: مؤسسة الدفع الرسمية لمعالجة المعاملات المصرفية والمحافظ الإلكترونية وQRIS.\n• Firebase / Google Cloud: لإدارة قواعد بيانات المعاملات وحالات صلاحيات الحسابات بأمان.\n\nيعمل جميع المزودين وفق أعلى معايير الأمان والتشفير المعتمدة عالميًا."
+          "Google/Firebase: autentikasi, akun, transaksi, hak akses, dan sinkronisasi bookmark yang dipilih pengguna. Google NotebookLM: sesi percakapan dan pemrosesan konteks dokumen. Midtrans: pembayaran. Hosting/CDN, termasuk Cloudflare pada domain publik: penyajian website dan data teknis koneksi; beacon performa dapat aktif pada konfigurasi CDN. Website tidak memuat percakapan aplikasi.",
+          "Google/Firebase: authentication, accounts, transactions, entitlements, and user-selected bookmark sync. Google NotebookLM: conversations and document context processing. Midtrans: payments. Hosting/CDN, including Cloudflare on the public domain: site delivery and technical connection data; performance beacons may be enabled by CDN configuration. This site does not host app conversations.",
+          "Google/Firebase للمصادقة والحسابات والمعاملات والصلاحيات ومزامنة العلامات المختارة. Google NotebookLM للمحادثات وسياق المستندات. Midtrans للدفع. الاستضافة وCDN ومنها Cloudflare لتقديم الموقع وبيانات الاتصال؛ وقد تُفعّل قياسات الأداء في CDN. لا يستضيف الموقع محادثات التطبيق."
         ]
       },
       {
@@ -454,9 +442,9 @@ export const articles = {
           "٧. سياسة الإعلانات والتحليلات والترويج"
         ],
         "body": [
-          "OpenTurath bebas dari iklan pihak ketiga dan tidak menjual data pribadi Anda. Pemberitahuan transaksi dan pembaruan layanan dikirimkan semata-mata untuk keperluan operasional akun Anda.",
-          "OpenTurath is free from third-party advertising and does not sell your personal data. Transaction notices and service updates are sent solely for account operational purposes.",
-          "تطبيق OpenTurath خالٍ تمامًا من إعلانات الأطراف الثالثة ولا يبيع بياناتك. وتُرسل إشعارات المعاملات وتحديثات الخدمة للأغراض التشغيلية المرتبطة بحسابك فقط."
+          "Website tidak menampilkan iklan pihak ketiga. OpenTurath tidak menjual data pribadi. Domain publik menggunakan Cloudflare; pengukuran performa website dapat berjalan melalui beacon CDN, terpisah dari isi percakapan aplikasi. Pengelola perlu menjaga konfigurasi CDN selaras dengan informasi ini.",
+          "The website does not show third-party advertisements. OpenTurath does not sell personal data. The public domain uses Cloudflare; CDN beacons may measure site performance, separately from app conversation content. The operator must keep CDN settings aligned with this information.",
+          "لا يعرض الموقع إعلانات من أطراف ثالثة ولا يبيع OpenTurath البيانات الشخصية. يستخدم النطاق العام Cloudflare، وقد يقيس beacon أداء الموقع بمعزل عن محادثات التطبيق. تُراعى مطابقة إعدادات CDN لهذه المعلومات."
         ]
       },
       {
@@ -478,9 +466,9 @@ export const articles = {
           "٩. فترات الاحتفاظ بالبيانات"
         ],
         "body": [
-          "• Data Akun: Disimpan selama akun aktif, dan dihapus setelah permohonan penutupan akun disetujui.\n• Data Transaksi: Disimpan selama batas waktu yang diwajibkan oleh ketentuan perpajakan dan hukum transaksi keuangan Republik Indonesia.\n• Catatan Pengguna: Disimpan di perangkat Anda hingga Anda menghapusnya sendiri atau mencopot aplikasi.\n• Pengaduan Bantuan: Disimpan selama proses penyelesaian masalah dan pengarsipan layanan.",
-          "• Account Data: Retained while the account is active, and deleted upon approved account closure requests.\n• Transaction Data: Retained for periods required by statutory taxation and financial regulations of Indonesia.\n• User Notes: Retained on your device until deleted by you or the app is uninstalled.\n• Support Inquiries: Retained during problem resolution and customer service archiving.",
-          "• بيانات الحساب: تُحفظ طوال مدة نشاط الحساب، وتُحذف فور قبول طلب إغلاق الحساب.\n• بيانات المعاملات: تُحفظ للمدة التي توجبها القوانين الضريبية والمالية في إندونيسيا.\n• ملاحظات المستخدم: تبقى في جهازك إلى أن تحذفها يدويًا أو تلغي تثبيت التطبيق.\n• بلاغات الدعم: تُحفظ خلال مدة معالجة المشكلة والتوثيق الخدمي."
+          "• Data Akun: Disimpan selama akun aktif, dan dihapus setelah permohonan penutupan akun disetujui.\n• Data Transaksi: Disimpan selama batas waktu yang diwajibkan oleh ketentuan perpajakan dan hukum transaksi keuangan Republik Indonesia.\n• Catatan Pengguna: Disimpan di perangkat Anda hingga Anda menghapusnya sendiri atau mencopot aplikasi.\n• Pengaduan Bantuan: Disimpan selama proses penyelesaian masalah dan pengarsipan layanan.\nBookmark tersinkron disimpan pada akun cloud sampai dihapus melalui fitur yang tersedia. Pertanyaan tentang penghapusan atau retensi layanan pihak ketiga dapat diajukan ke pengelola.",
+          "• Account Data: Retained while the account is active, and deleted upon approved account closure requests.\n• Transaction Data: Retained for periods required by statutory taxation and financial regulations of Indonesia.\n• User Notes: Retained on your device until deleted by you or the app is uninstalled.\n• Support Inquiries: Retained during problem resolution and customer service archiving.\nSynced bookmarks remain in the cloud account until deleted using available features. Ask the operator about deletion or third-party retention.",
+          "• بيانات الحساب: تُحفظ طوال مدة نشاط الحساب، وتُحذف فور قبول طلب إغلاق الحساب.\n• بيانات المعاملات: تُحفظ للمدة التي توجبها القوانين الضريبية والمالية في إندونيسيا.\n• ملاحظات المستخدم: تبقى في جهازك إلى أن تحذفها يدويًا أو تلغي تثبيت التطبيق.\n• بلاغات الدعم: تُحفظ خلال مدة معالجة المشكلة والتوثيق الخدمي.\nتبقى العلامات المتزامنة في الحساب السحابي حتى حذفها بالميزات المتاحة. استفسر عن الحذف أو احتفاظ خدمات الطرف الثالث لدى الجهة المشغّلة."
         ]
       },
       {
@@ -821,45 +809,45 @@ export const articles = {
   "research/methodology": {
     "key": "methods",
     "intro": [
-      "Metodologi verifikasi dan bukti yang dapat ditelaah.",
-      "Verification methodology and inspectable scholarly evidence.",
-      "منهجية التحقيق والأدلة الخاضعة للمراجعة العلمية."
+      "Metode pemeriksaan dan batas arsip.",
+      "Review method and archive boundaries.",
+      "منهج المراجعة وحدود الأرشيف."
     ],
     "blocks": [
       {
         "heading": [
-          "Kerangka Evaluasi & 4 Dimensi Verifikasi",
-          "Evaluation Framework & 4 Verifiability Dimensions",
-          "إطار التقييم وأبعاد التحقق الأربعة"
+          "Tujuh dimensi pemeriksaan",
+          "Seven review dimensions",
+          "سبعة جوانب للمراجعة"
         ],
         "body": [
-          "Evaluasi penalaran turats diuji pada empat dimensi kritis: (1) Exact Passage Retrieval—ketepatan menemukan naskah primer asli; (2) Attribution Accuracy—keotentikan nisbah mazhab dan pemilahan qaul mu'tamad vs da'if; (3) Volume/Page Traceability—keterlacakan jilid dan halaman pada edisi cetak muhaqqaq; serta (4) Hallucination Resistance—pencegahan fabrikasi judul kitab atau sanad fiktif.",
-          "Scholarly AI evaluation is assessed across four critical dimensions: (1) Exact Passage Retrieval—locating verbatim classical Arabic passages; (2) Attribution Accuracy—rigorous distinction between relied-upon (mu'tamad) and weak opinions without cross-school conflation; (3) Volume/Page Traceability—verifiable physical volume and page coordinates; and (4) Hallucination Resistance—systematic elimination of invented book titles or phantom citations.",
-          "تُقاس كفاءة النماذج البحثية عبر أربعة أبعاد جوهرية: (١) استرجاع النص الأصلي بدقة حرفية تامة؛ (٢) دقة العزو والتمييز بين المعتمد والضعيف دون تلفيق؛ (٣) قابلية التتبع المادي لأرقام الأجزاء والصفحات في الطبعات المحققة؛ (٤) مقاومة الهلوسة المرجعية والمنع التام لاختلاق عناوين وهمية أو أسانيد مركبة."
+          "Pemeriksaan membedakan: kecocokan kutipan, ketepatan bibliografi, dukungan terhadap klaim, ketepatan pemahaman, kelengkapan, kesesuaian cakupan, dan ketahanan. Nilai tiap dimensi belum tersedia untuk enam jawaban Q001. Kecocokan teks tidak otomatis membuktikan ketepatan pemahaman atau hukum.",
+          "Review distinguishes quotation match, bibliographic accuracy, support for claims, interpretive accuracy, completeness, scope alignment, and robustness. Assessments are not yet available for the six Q001 answers. A textual match does not by itself establish interpretive or legal accuracy.",
+          "تُميّز المراجعة بين مطابقة النص ودقة الإحالة وإسناد الادعاء ودقة الفهم والاكتمال وموافقة النطاق والمتانة. لم تتوفر تقييمات إجابات Q001 الست؛ ولا تثبت مطابقة النص وحدها صحة الفهم أو الحكم."
         ]
       },
       {
         "heading": [
-          "Transparansi Arsip Uji & Batasan Riset",
-          "Archive Transparency & Research Boundaries",
-          "شفافية الأرشيف والحدود المنهجية"
+          "Integritas arsip dan verifikasi sumber",
+          "Archive integrity and source verification",
+          "سلامة الأرشيف والتحقّق من المصدر"
         ],
         "body": [
-          "Arsip komparatif menyimpan pertanyaan dan respons asli tanpa modifikasi. Status telaah dicatat secara transparan—kutipan yang belum selesai dikolasi (muqabalah) terhadap cetakan fisik ditandai secara terbuka. Hash kriptografis menjaga integritas teks arsip, menegaskan komitmen kami pada pembuktian faktual di atas klaim pemasaran generatif.",
-          "The comparative archive preserves unedited prompts and original baseline outputs. Review statuses are documented transparently—passages awaiting complete physical collation (muqabalah) against verified print editions are explicitly labeled. Cryptographic hashing protects data integrity, maintaining factual rigor over sweeping generative marketing claims.",
-          "يحفظ الأرشيف المقارن نصوص الأسئلة والإجابات الأصلية دون أي تعديل. وتُوثق حالة المراجعة بشفافية تامة؛ فالنقول التي تنتظر استكمال المقابلة الميدانية على الطبعات المطبوعة يُنص عليها بوضوح. وتحمي البصمات المشفرة سلامة البيانات، ترسيخًا للأمانة العلمية بعيدًا عن ادعاءات التسويق المبالغ فيها."
+          "Hash SHA-256 menjaga agar teks jawaban yang diarsipkan tidak berubah. Hash tidak membuktikan bahwa kutipan cocok dengan kitab. Semua sepuluh kutipan Q001 masih menunggu identitas edisi, teks pembanding, penelaah, serta tanggal pemeriksaan. Model, tanggal uji, paket, dan kondisi pengujian belum tercatat lengkap; arsip ini bukan benchmark terkontrol.",
+          "SHA-256 hashes protect archived answer text from change. A hash does not prove a quotation matches a book. All ten Q001 quotations await edition identity, comparison text, reviewer, and review date. Model, test date, plan, and conditions are not fully recorded; this archive is not a controlled benchmark.",
+          "تحمي بصمات SHA-256 نصوص الإجابات من التغيير، ولا تثبت مطابقة النص للكتاب. تنتظر النصوص العشرة الطبعة والنص المقابل والمراجع والتاريخ. لم تُسجّل ظروف الاختبار كاملة؛ فليس الأرشيف اختبار أداء مضبوطًا."
         ]
       },
       {
         "heading": [
-          "Protokol Koreksi Terbuka & Pelaporan Ilmiah",
-          "Open Correction Protocol & Scholarly Peer Review",
-          "بروتوكول التصحيح المفتوح والمراجعة العلمية"
+          "Mengirim koreksi",
+          "Sending corrections",
+          "إرسال التصحيحات"
         ],
         "body": [
-          "Koreksi teks atau rujukan mewajibkan penyertaan data edisi cetak, penerbit, nomor jilid, halaman, dan catatan muqabalah. Riwayat teks asli tetap dipertahankan agar evolusi pembacaan dapat diteliti secara objektif. Pengkaji dapat menyampaikan temuan kritis melalui formulir laporan resmi.",
-          "Textual or citation corrections require explicit print metadata: edition, publisher, volume, page, and collation notes. Original textual history is preserved so methodological evolution remains fully auditable. Scholars can submit critical findings through our formal reporting channel.",
-          "يتطلب تصحيح أي نص أو عزو إرفاق بيانات الطبعة، والناشر، ورقم الجزء والصفحة، وملاحظات المقابلة. ويُحفظ تاريخ التعديلات لضمان إمكانية التدقيق المنهجي الشفاف. ويتاح للباحثين تقديم الملاحظات الدقيقة عبر قنوات البلاغ المعتمدة."
+          "Kirim koreksi ke openturath@gmail.com dengan kitab, penerbit, edisi, jilid, halaman, dan catatan pembanding. Formulir website hanya membantu membuat salinan laporan; unduhan file tidak mengirim laporan. Teks jawaban asli dipertahankan terpisah dari catatan penelaah.",
+          "Email corrections to openturath@gmail.com with the book, publisher, edition, volume, page, and comparison notes. The website form prepares a report copy; downloading that file does not submit it. Original answers remain separate from reviewer notes.",
+          "أرسل التصحيح إلى openturath@gmail.com مع الكتاب والناشر والطبعة والجزء والصفحة والملاحظات. يُعدّ نموذج الموقع نسخة للبلاغ؛ وتنزيلها لا يرسله. تبقى الإجابة الأصلية منفصلة عن ملاحظات المراجع."
         ]
       }
     ]
