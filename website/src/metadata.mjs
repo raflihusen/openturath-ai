@@ -15,7 +15,7 @@ export function collectionTotals(catalog) {
   }, {disciplines:0,books:0,volumes:0,pages:0,words:0,partitions:0,volumesLowerBound:false});
 }
 
-export function collectionMetadata(l,c) {
+export function collectionMetadata(l,c,{linked=true}={}) {
   if (!c.metadata || c.status !== 'active') return '';
   const m=c.metadata;
   const values=[
@@ -25,7 +25,7 @@ export function collectionMetadata(l,c) {
     [number(m.words/1e6,l,1)+' '+tr(l,'metaMillion'),'metaWords'],
     ...(m.lectures?[[number(m.lectures,l),'metaLectures']]:[])
   ];
-  return `<ul class="collection-metrics" aria-label="${tr(l,'collectionMetrics')}">${values.map(([value,key],i)=>`<li class="${i===0?'metric-primary':''}"><bdi>${e(value)}</bdi><span>${tr(l,key)}</span></li>`).join('')}<li class="metric-period">${e(pick(m.period,l))}</li></ul>${c.countReview?`<p class="corpus-status">${localized(['Jumlah kitab pada dua metadata:','Book counts across two metadata records:','أعداد الكتب في سجلّين:'],l)} <bdi>${c.metadata.books} / ${c.countReview.trainingBooks}</bdi>. ${link(l,'research/corpus',tr(l,'corpusNotes'))}</p>`:''}`;
+  return `<ul class="collection-metrics" aria-label="${tr(l,'collectionMetrics')}">${values.map(([value,key],i)=>`<li class="${i===0?'metric-primary':''}"><bdi>${e(value)}</bdi><span>${tr(l,key)}</span></li>`).join('')}<li class="metric-period">${e(pick(m.period,l))}</li></ul>${c.countReview?`<p class="corpus-status">${localized(['Jumlah kitab pada dua metadata:','Book counts across two metadata records:','أعداد الكتب في سجلّين:'],l)} <bdi>${c.metadata.books} / ${c.countReview.trainingBooks}</bdi>. ${linked?link(l,'research/corpus',tr(l,'corpusNotes')):e(tr(l,'corpusNotes'))}</p>`:''}`;
 }
 
 export function collectionStats(l,catalog) {
