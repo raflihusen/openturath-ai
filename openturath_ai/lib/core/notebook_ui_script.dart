@@ -169,6 +169,8 @@ const notebookUiScript = r'''
       mat-spinner, mat-progress-spinner, mat-progress-bar, [role="progressbar"],
       /* Sembunyikan chip saran prompt agar area obrolan bersih */
       button[class*="suggestion" i], [class*="chip" i], [class*="prompt-chip" i], mat-chip, mat-chip-set,
+      app-suggested-actions, .suggested-actions, [class*="suggested-actions" i],
+      app-suggestion-chips, .suggestion-chips, [class*="prompt-chips" i], [class*="prompt-card" i],
       /* Sembunyikan Disclaimer Bawah Secara Total */
       .disclaimer, [class*="disclaimer" i], footer, [role="contentinfo"] {
         display: none !important;
@@ -246,6 +248,24 @@ const notebookUiScript = r'''
         flex: 1 1 auto !important;
         height: 100% !important;
         min-height: 100% !important;
+        justify-content: flex-end !important;
+        align-items: center !important;
+        padding-top: 0 !important;
+        margin-top: 0 !important;
+        box-sizing: border-box !important;
+      }
+
+      app-chat-empty-state > *,
+      .chat-empty-state > *,
+      .empty-state > *,
+      [class*="empty-state" i] > * {
+        display: flex !important;
+        flex-direction: column !important;
+        flex: 1 1 auto !important;
+        height: 100% !important;
+        min-height: 100% !important;
+        justify-content: flex-end !important;
+        align-items: center !important;
         box-sizing: border-box !important;
       }
 
@@ -460,13 +480,11 @@ const notebookUiScript = r'''
         }
       } else {
         // 2. Jika belum ada pesan sama sekali (empty chat):
-        // Sembunyikan elemen judul, ikon, dan sumber dengan VISIBILITY: HIDDEN (bukan display: none)
-        // agar tinggi layout alami tetap utuh dan kotak input tetap berada di dasar layar!
+        // Sembunyikan elemen judul, ikon, dan sumber dengan DISPLAY: NONE
+        // agar tidak memakan ruang di atas dan kotak input otomatis berada di dasar layar
         panel.querySelectorAll('h1, h2, h3, img, svg, mat-icon, [class*="title" i], [class*="source" i], [class*="date" i]').forEach(el => {
           if (!el.querySelector('textarea, [contenteditable="true"], form') && !el.closest('app-chat-input, form, textarea, [contenteditable="true"]')) {
-            el.style.setProperty('visibility', 'hidden', 'important');
-            el.style.setProperty('opacity', '0', 'important');
-            el.style.setProperty('pointer-events', 'none', 'important');
+            el.style.setProperty('display', 'none', 'important');
           }
         });
 
@@ -480,9 +498,7 @@ const notebookUiScript = r'''
           const isAssistantTitle = txt === 'AI-MUHAQQIQ' || txt.toUpperCase() === 'AI-MUHAQQIQ';
           const isKabahEmoji = txt === '🕋' || (txt.includes('🕋') && txt.length <= 4);
           if (isSourceDate || isAssistantTitle || isKabahEmoji) {
-            el.style.setProperty('visibility', 'hidden', 'important');
-            el.style.setProperty('opacity', '0', 'important');
-            el.style.setProperty('pointer-events', 'none', 'important');
+            el.style.setProperty('display', 'none', 'important');
           }
         });
       }
@@ -576,6 +592,50 @@ const notebookUiScript = r'''
     } catch (_) {}
   }
 
+  function anchorEmptyStateInput() {
+    const textarea = document.querySelector('textarea, [contenteditable="true"], [role="textbox"], input[type="text"]');
+    if (!textarea) return;
+
+    // Hanya aktif pada empty state (tidak ada pesan obrolan aktif)
+    const hasMessages = !!document.querySelector('.chat-message, .model-message, .user-message, [role="article"], .chat-message-pair, app-chat-response');
+    if (hasMessages) return;
+
+    const emptyState = textarea.closest('app-chat-empty-state, .chat-empty-state, .empty-state, [class*="empty-state" i]');
+    if (emptyState) {
+      emptyState.style.setProperty('display', 'flex', 'important');
+      emptyState.style.setProperty('flex-direction', 'column', 'important');
+      emptyState.style.setProperty('justify-content', 'flex-end', 'important');
+      emptyState.style.setProperty('align-items', 'center', 'important');
+      emptyState.style.setProperty('height', '100%', 'important');
+      emptyState.style.setProperty('min-height', '100%', 'important');
+      emptyState.style.setProperty('flex', '1 1 auto', 'important');
+      emptyState.style.setProperty('padding-top', '0px', 'important');
+      emptyState.style.setProperty('margin-top', '0px', 'important');
+
+      let cur = textarea.parentElement;
+      while (cur && cur !== emptyState) {
+        cur.style.setProperty('display', 'flex', 'important');
+        cur.style.setProperty('flex-direction', 'column', 'important');
+        cur.style.setProperty('justify-content', 'flex-end', 'important');
+        cur.style.setProperty('align-items', 'center', 'important');
+        cur.style.setProperty('flex', '1 1 auto', 'important');
+        cur.style.setProperty('width', '100%', 'important');
+        cur = cur.parentElement;
+      }
+    }
+
+    const inputPill = textarea.closest('div.chat-input-container, .input-container, form.chat-input-form, app-chat-input, [class*="chat-input" i]');
+    if (inputPill) {
+      inputPill.style.setProperty('margin-top', 'auto', 'important');
+      inputPill.style.setProperty('margin-bottom', '22px', 'important');
+      inputPill.style.setProperty('margin-left', 'auto', 'important');
+      inputPill.style.setProperty('margin-right', 'auto', 'important');
+      inputPill.style.setProperty('width', '100%', 'important');
+      inputPill.style.setProperty('max-width', '768px', 'important');
+      inputPill.style.setProperty('border-radius', '28px', 'important');
+    }
+  }
+
   let lastCleanAt = 0;
   function clean() {
     if (!document.documentElement) return;
@@ -586,6 +646,7 @@ const notebookUiScript = r'''
     ensureStyles();
     removeTopToolbars();
     removeHeroCard();
+    anchorEmptyStateInput();
     dismissPopups();
   }
 
