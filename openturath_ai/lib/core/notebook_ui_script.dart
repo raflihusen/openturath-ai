@@ -568,7 +568,8 @@ const notebookUiScript = r'''
   function anchorConversationInput() {
     // Match the visible, enabled composer, never a hidden source/search field.
     const inputs = [...document.querySelectorAll('textarea, [contenteditable="true"], [role="textbox"]')];
-    const input = inputs.find(el => visible(el) && !el.disabled && el.getAttribute('aria-disabled') !== 'true');
+    const enabledInputs = inputs.filter(el => visible(el) && !el.disabled && el.getAttribute('aria-disabled') !== 'true');
+    const input = enabledInputs.find(el => el.closest('app-chat-input, .chat-input-container, form.chat-input-form, .chat-input-area, .query-box-container, app-chat, app-chat-view, app-chat-panel, .chat-panel, .chat-view, .chat-panel-content')) || enabledInputs[0];
     const oldNodes = [...document.querySelectorAll('.ot-chat-path, .ot-chat-transcript, .ot-chat-composer')];
     const path = new Set();
     const transcripts = new Set();
