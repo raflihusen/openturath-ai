@@ -12,7 +12,8 @@ const appFacts=JSON.parse(await (await import('node:fs/promises')).readFile(new 
 test('single membership offer retains commercial source data and manual renewal',()=>{
  // Harga dan masa akses harus sama dengan aplikasi (content/app-facts.json).
  assert.deepEqual(data.config.plans.map(p=>[p.price,p.months]),appFacts.pricing.specialist.map(o=>[o.amount,o.months]));
- assert.equal(data.config.appCommercialParity,'pending-backend-mapping');
+ assert.equal(data.config.appCommercialParity,'matched-source-unverified-production');
+ assert.deepEqual(data.config.tahawwulatPlans.map(p=>[p.amount,p.months]),appFacts.pricing.tahawwulat.map(p=>[p.amount,p.months]));
  for(const locale of ['id','en','ar']){
   const html=renderPage(locale,'access',data).body;
   assert.ok(html.includes('class="membership-banner"'));
@@ -33,7 +34,7 @@ test('21 profiles include 20 active fields and an explicitly unavailable scholar
 });
 test('home preserves the requested hero, catalogue and contextual verification FAQ',()=>{
  const html=renderPage('id','',data).body;
- assert.ok(html.includes(copy.id.hero));assert.ok(html.includes('AI for Islamic Scholarship'));
+ assert.ok(html.includes(copy.id.hero.replaceAll('\n','<br>')));assert.ok(html.includes('AI for Islamic Scholarship'));
  assert.equal((html.match(/data-search-item /g)||[]).length,6);
  assert.equal((html.match(/class="step-number"/g)||[]).length,4);
  assert.ok(html.includes(faq.find(f=>f.id==='edition').q[0]));assert.ok(html.includes(copy.id.archiveBody));
