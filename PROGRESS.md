@@ -255,6 +255,23 @@ Berdasarkan `AUDIT_OPENTURATH_AI.md`, dokumen perancangan pustaka, dan keluhan k
      - Kompilasi biner rilis macOS selesai 100% (`✓ Built build/macos/Build/Products/Release/OpenTurath AI.app (132.1MB)`).
      - Pembuatan DMG (`tool/package_macos.sh`), pembaruan `/Applications/OpenTurath AI.app`, dan peluncuran ulang aplikasi aktif terverifikasi (PID 87951).
 
+
+### Fasa 23: Penguncian Presisi Bilah Input Chat di Dasar Layar pada Empty State
+- **Akar Masalah Fundamental**:
+  1. *Floating Input di Atas Layar*: Pada Google NotebookLM dalam keadaan kosong (*empty state*), komponen input secara bawaan dirender di bawah judul/cover notebook di bagian atas dokumen flow. Ketika judul dan cover disembunyikan secara visual (`visibility: hidden`), elemen input tertinggal mengapung di posisi atas (~Y=200px) dengan ruang putih kosong raksasa di bawahnya.
+  2. *Kegagalan Selektor `body:not(:has(app-chat-input))`*: CSS lama hanya menargetkan elemen custom `<app-chat-input>` untuk `position: fixed`. Pada empty state, container input berada di dalam `<form class="chat-input-form">` / `<div class="chat-input-container">` di dalam `app-chat-empty-state`. Karena elemen `<app-chat-input>` masih ada di dalam DOM template chat non-empty, selektor fallback `body:not(:has(app-chat-input))` menghasilkan `false` dan diabaikan WebKit, sehingga input empty state sama sekali tidak mendapatkan aturan `position: fixed`.
+  3. *Penjebakan Selektor di JS `pinInputToBottom`*: Fungsi `pinInputToBottom` memprioritaskan `document.querySelector('app-chat-input')`. Ketika dipanggil, ia memilih node `<app-chat-input>` yang sedang tidak aktif di latar belakang, membiarkan elemen input aktif pada empty-state tidak tersentuh.
+- **Solusi Tuntas**:
+  1. `notebook_ui_script.dart`:
+     - Menghapus selektor kontainer `app-chat-empty-state` dan `.chat-empty-state` dari daftar elemen `visibility: hidden; opacity: 0`. Yang disembunyikan murni hanyalah elemen tajuk/cover/metadata di dalamnya (`.empty-state-header`, `h1-h3`, `mat-icon`, `img`, `svg`, `.notebook-cover`, `.cover-emoji`, chips saran prompt).
+     - Menambahkan aturan CSS eksplisit untuk mode empty state:
+       `app-chat-empty-state form, app-chat-empty-state .chat-input-container, .chat-empty-state form, .chat-empty-state .chat-input-container, div.chat-input-container:not(app-chat-input *), form.chat-input-form:not(app-chat-input *)` dikunci mutlak ke `position: fixed !important; bottom: 48px !important; left: 50% !important; transform: translateX(-50%) !important; width: min(768px, calc(100% - 32px)) !important; max-width: 768px !important; z-index: 10000 !important; pointer-events: auto !important;`.
+     - Merevisi total fungsi `pinInputToBottom()` di JavaScript:
+       - Mendeteksi input aktif secara presisi dari daun pohon DOM (`textarea, [contenteditable="true"], [role="textbox"]`).
+       - Jika berada di dalam `app-chat-input` (mode obrolan aktif), kunci host tersebut ke dasar layar dengan padding bawah 48px.
+       - Jika berada di dalam empty state (tanpa `app-chat-input`), telusuri form atau container input aktif terdekat, netralkan properti `transform`, `contain`, dan `filter` pada seluruh ancestor yang berpotensi menjebak fixed positioning, lalu kunci target ke `position: fixed; bottom: 48px; left: 50%; transform: translateX(-50%); width: min(768px, calc(100% - 32px)); max-width: 768px;`.
+  2. Hasil: Kapsul input obrolan ("Ajukan pertanyaan atau buat konten" + tombol `↑`) kini duduk manis, kokoh, dan rapi di dasar layar (terangkat 48px dengan breathing room alami) baik pada saat obrolan kosong maupun saat percakapan sedang berjalan.
+
 ---
 
 ## 5. Agenda & Fokus Selanjutnya

@@ -245,12 +245,8 @@ const notebookUiScript = r'''
 
       /* Sembunyikan elemen judul, ikon, cover, emoji Ka'bah, dan sumber di dalam empty state secara visual (transparan)
          sehingga tinggi layout dan posisi alami input di bawah tetap terjaga 100% tanpa kolaps */
-      app-chat-empty-state,
-      .chat-empty-state,
-      .empty-state,
-      [class*="empty-state" i],
       .empty-state-header,
-      .chat-empty-state-container,
+      .chat-empty-state-container .empty-state-header,
       app-notebook-overview,
       .notebook-overview,
       [class*="notebook-overview" i],
@@ -314,6 +310,22 @@ const notebookUiScript = r'''
         pointer-events: none !important;
       }
 
+      /* Sembunyikan saran / chips / prompt kartu di dalam empty state agar bersih */
+      app-suggested-actions,
+      .suggested-actions,
+      [class*="suggested-actions" i],
+      app-suggestion-chips,
+      .suggestion-chips,
+      [class*="prompt-chips" i],
+      [class*="prompt-card" i] {
+        display: none !important;
+        visibility: hidden !important;
+        height: 0 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        overflow: hidden !important;
+      }
+
       /* Pastikan bilah input chat dan komponen di dalamnya selalu terlihat dan interaktif */
       app-chat-input,
       app-chat-input *,
@@ -338,6 +350,7 @@ const notebookUiScript = r'''
       /* ========================================================
          KUNCI BILAH INPUT DI DASAR LAYAR DENGAN JARAK ELEVASI ALAMI (SEPERTI ADA DISCLAIMER)
          ======================================================== */
+      /* 1. Host wrapper di mode percakapan */
       app-chat-input {
         position: fixed !important;
         bottom: 0px !important;
@@ -380,9 +393,20 @@ const notebookUiScript = r'''
         box-sizing: border-box !important;
       }
 
-      /* Fallback jika app-chat-input tidak ada sebagai custom element */
-      body:not(:has(app-chat-input)) div.chat-input-container,
-      body:not(:has(app-chat-input)) form.chat-input-form {
+      /* 2. Host input di mode EMPTY STATE atau di luar app-chat-input */
+      app-chat-empty-state form,
+      app-chat-empty-state .chat-input-container,
+      app-chat-empty-state .query-box-container,
+      .chat-empty-state form,
+      .chat-empty-state .chat-input-container,
+      .chat-empty-state .query-box-container,
+      .empty-state form,
+      .empty-state .chat-input-container,
+      [class*="empty-state" i] form,
+      [class*="empty-state" i] .chat-input-container,
+      div.chat-input-container:not(app-chat-input *),
+      form.chat-input-form:not(app-chat-input *),
+      .query-box-container:not(app-chat-input *) {
         position: fixed !important;
         bottom: 48px !important;
         left: 50% !important;
@@ -392,6 +416,7 @@ const notebookUiScript = r'''
         margin: 0 !important;
         z-index: 10000 !important;
         box-sizing: border-box !important;
+        pointer-events: auto !important;
       }
 
       /* Ruang bawah obrolan agar pesan tidak tertutup oleh bilah input */
@@ -686,31 +711,78 @@ const notebookUiScript = r'''
   }
 
   function pinInputToBottom() {
-    const inputHost = document.querySelector('app-chat-input') || 
-                      document.querySelector('div.chat-input-container')?.closest('form, div');
-    if (inputHost) {
-      inputHost.style.setProperty('position', 'fixed', 'important');
-      inputHost.style.setProperty('bottom', '0px', 'important');
-      inputHost.style.setProperty('left', '0px', 'important');
-      inputHost.style.setProperty('right', '0px', 'important');
-      inputHost.style.setProperty('width', '100%', 'important');
-      inputHost.style.setProperty('z-index', '10000', 'important');
-      inputHost.style.setProperty('display', 'flex', 'important');
-      inputHost.style.setProperty('justify-content', 'center', 'important');
-      inputHost.style.setProperty('align-items', 'flex-end', 'important');
-      inputHost.style.setProperty('background', 'transparent', 'important');
-      inputHost.style.setProperty('pointer-events', 'none', 'important');
-      inputHost.style.setProperty('padding', '10px 16px 48px 16px', 'important');
-      inputHost.style.setProperty('box-sizing', 'border-box', 'important');
-      inputHost.style.setProperty('margin', '0px', 'important');
+    const textarea = document.querySelector('textarea, [contenteditable="true"], [role="textbox"], input[type="text"]');
+    if (!textarea) return;
 
-      Array.from(inputHost.children).forEach(child => {
+    // 1. Jika ada host custom app-chat-input (mode obrolan aktif dengan pesan)
+    const chatInputCustom = textarea.closest('app-chat-input');
+    if (chatInputCustom) {
+      chatInputCustom.style.setProperty('position', 'fixed', 'important');
+      chatInputCustom.style.setProperty('bottom', '0px', 'important');
+      chatInputCustom.style.setProperty('left', '0px', 'important');
+      chatInputCustom.style.setProperty('right', '0px', 'important');
+      chatInputCustom.style.setProperty('width', '100%', 'important');
+      chatInputCustom.style.setProperty('z-index', '10000', 'important');
+      chatInputCustom.style.setProperty('display', 'flex', 'important');
+      chatInputCustom.style.setProperty('justify-content', 'center', 'important');
+      chatInputCustom.style.setProperty('align-items', 'flex-end', 'important');
+      chatInputCustom.style.setProperty('background', 'transparent', 'important');
+      chatInputCustom.style.setProperty('pointer-events', 'none', 'important');
+      chatInputCustom.style.setProperty('padding', '10px 16px 48px 16px', 'important');
+      chatInputCustom.style.setProperty('box-sizing', 'border-box', 'important');
+      chatInputCustom.style.setProperty('margin', '0px', 'important');
+
+      Array.from(chatInputCustom.children).forEach(child => {
         child.style.setProperty('pointer-events', 'auto', 'important');
         child.style.setProperty('width', '100%', 'important');
         child.style.setProperty('max-width', '768px', 'important');
         child.style.setProperty('margin', '0 auto', 'important');
         child.style.setProperty('box-sizing', 'border-box', 'important');
       });
+      return;
+    }
+
+    // 2. Mode EMPTY STATE (input berada di form / chat-input-container)
+    const form = textarea.closest('form');
+    const container = textarea.closest('.chat-input-container, [class*="chat-input" i], [class*="input-container" i], .query-box-container');
+    const target = form || container || textarea.parentElement;
+
+    if (target && target !== document.body) {
+      // Netralkan transform, contain, dan filter pada ancestor agar position: fixed mengikat viewport
+      let p = target.parentElement;
+      while (p && p !== document.body) {
+        if (p.style) {
+          const comp = getComputedStyle(p);
+          if (comp.transform && comp.transform !== 'none') {
+            p.style.setProperty('transform', 'none', 'important');
+          }
+          if (comp.contain && comp.contain !== 'none') {
+            p.style.setProperty('contain', 'none', 'important');
+          }
+          if (comp.filter && comp.filter !== 'none') {
+            p.style.setProperty('filter', 'none', 'important');
+          }
+        }
+        p = p.parentElement;
+      }
+
+      target.style.setProperty('position', 'fixed', 'important');
+      target.style.setProperty('bottom', '48px', 'important');
+      target.style.setProperty('left', '50%', 'important');
+      target.style.setProperty('transform', 'translateX(-50%)', 'important');
+      target.style.setProperty('width', 'min(768px, calc(100% - 32px))', 'important');
+      target.style.setProperty('max-width', '768px', 'important');
+      target.style.setProperty('z-index', '10000', 'important');
+      target.style.setProperty('margin', '0px', 'important');
+      target.style.setProperty('pointer-events', 'auto', 'important');
+      target.style.setProperty('box-sizing', 'border-box', 'important');
+
+      if (target === form && container && container !== form) {
+        container.style.setProperty('width', '100%', 'important');
+        container.style.setProperty('max-width', '100%', 'important');
+        container.style.setProperty('margin', '0 auto', 'important');
+        container.style.setProperty('box-sizing', 'border-box', 'important');
+      }
     }
   }
 
