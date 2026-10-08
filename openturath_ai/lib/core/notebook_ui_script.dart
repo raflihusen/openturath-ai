@@ -181,7 +181,7 @@ const notebookUiScript = r'''
         margin: 0 !important;
       }
 
-      /* Sembunyikan tombol opsi titik tiga di dalam webview obrolan */
+      /* Sembunyikan tombol opsi titik tiga dan header chat di dalam webview obrolan */
       button[aria-label*="chat options" i],
       button[aria-label*="more options" i],
       button[aria-label*="opsi lainnya" i],
@@ -194,14 +194,36 @@ const notebookUiScript = r'''
       button[aria-label="Opsi" i],
       button[aria-label*="More actions" i],
       button[aria-label*="Tindakan lainnya" i],
+      button[aria-label*="more" i],
+      button[aria-label*="opsi" i],
+      button[aria-label*="options" i],
+      button[aria-label*="tindakan" i],
+      button[aria-label*="lainnya" i],
+      button[aria-label*="menu" i],
+      [role="button"][aria-label*="more" i],
+      [role="button"][aria-label*="opsi" i],
+      [role="button"][aria-label*="options" i],
+      [role="button"][aria-label*="tindakan" i],
+      [role="button"][aria-label*="lainnya" i],
+      [role="button"][aria-label*="menu" i],
       .chat-options-button,
       [class*="chat-options" i],
       [class*="chat-actions" i],
       .conversation-actions,
-      button:has(mat-icon[data-mat-icon-name="more_vert"]),
-      button:has(mat-icon[data-mat-icon-name="more_horiz"]),
-      button:has(mat-icon[fonticon="more_vert"]),
-      button:has(mat-icon[fonticon="more_horiz"]) {
+      [class*="conversation-actions" i],
+      [class*="header-actions" i],
+      app-chat-header,
+      .chat-header,
+      [class*="chat-header" i],
+      app-conversation-header,
+      .conversation-header,
+      [class*="conversation-header" i],
+      button:has(mat-icon[data-mat-icon-name*="more"]),
+      button:has(mat-icon[fonticon*="more"]),
+      mat-icon[data-mat-icon-name*="more"],
+      mat-icon[fonticon*="more"] {
+        display: none !important;
+        visibility: hidden !important;
         opacity: 0 !important;
         pointer-events: none !important;
         position: absolute !important;
@@ -291,21 +313,68 @@ const notebookUiScript = r'''
         pointer-events: auto !important;
       }
 
-      /* Ruang bawah obrolan agar pesan tidak tertutup */
-      .chat-panel-content, .chat-view, .conversation-container, .message-list, [role="log"] {
-        padding-bottom: max(64px, calc(env(safe-area-inset-bottom, 24px) + 48px)) !important;
+      /* ========================================================
+         KUNCI BILAH INPUT DI DASAR LAYAR (BOTTOM ANCHORED)
+         ======================================================== */
+      app-chat-input {
+        position: fixed !important;
+        bottom: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 0 !important;
+        padding-left: 16px !important;
+        padding-right: 16px !important;
+        padding-bottom: max(20px, calc(env(safe-area-inset-bottom, 16px) + 10px)) !important;
+        padding-top: 10px !important;
+        box-sizing: border-box !important;
+        display: flex !important;
+        justify-content: center !important;
+        align-items: flex-end !important;
+        z-index: 10000 !important;
+        background: transparent !important;
+        pointer-events: none !important;
       }
 
-      /* Penataan alami bilah input chat di dasar layar (bottom-anchored via flex layout) */
-      div.chat-input-container, .input-container, app-chat-input, form.chat-input-form,
-      [class*="input-container" i], [class*="chat-input" i],
-      .chat-input-area, [class*="input-area" i], .query-box-container {
-        margin-top: auto !important;
-        margin-bottom: max(22px, calc(env(safe-area-inset-bottom, 16px) + 14px)) !important;
-        margin-left: auto !important;
-        margin-right: auto !important;
+      app-chat-input > * {
+        pointer-events: auto !important;
         width: 100% !important;
         max-width: 768px !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+        margin-top: 0 !important;
+        margin-bottom: 0 !important;
+        box-sizing: border-box !important;
+      }
+
+      app-chat-input form,
+      app-chat-input .chat-input-container,
+      app-chat-input form.chat-input-form,
+      app-chat-input .query-box-container {
+        margin-top: 0 !important;
+        margin-bottom: 0 !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+      }
+
+      /* Fallback jika app-chat-input tidak ada sebagai custom element */
+      body:not(:has(app-chat-input)) div.chat-input-container,
+      body:not(:has(app-chat-input)) form.chat-input-form {
+        position: fixed !important;
+        bottom: max(20px, calc(env(safe-area-inset-bottom, 16px) + 10px)) !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+        width: min(768px, calc(100% - 32px)) !important;
+        max-width: 768px !important;
+        margin: 0 !important;
+        z-index: 10000 !important;
+        box-sizing: border-box !important;
+      }
+
+      /* Ruang bawah obrolan agar pesan tidak tertutup oleh bilah input */
+      .chat-panel-content, .chat-view, .conversation-container, .message-list, [role="log"], main, app-chat-view {
+        padding-bottom: 130px !important;
         box-sizing: border-box !important;
       }
 
@@ -513,6 +582,83 @@ const notebookUiScript = r'''
     } catch (_) {}
   }
 
+  function removeMoreOptionsButtons() {
+    // Sembunyikan tombol opsi titik tiga (more_vert / more_horiz / options) di luar pesan jawaban
+    document.querySelectorAll('mat-icon, [data-mat-icon-name], svg').forEach(icon => {
+      const name = (icon.getAttribute('data-mat-icon-name') || icon.getAttribute('fonticon') || icon.textContent || '').trim().toLowerCase();
+      if (name === 'more_vert' || name === 'more_horiz' || name.includes('more_vert') || name.includes('more_horiz')) {
+        if (icon.closest('.chat-message, .model-message, .user-message, [role="article"], .rendered-markdown, app-chat-response')) {
+          return;
+        }
+        const btn = icon.closest('button, [role="button"], a, .mat-mdc-icon-button') || icon;
+        btn.style.setProperty('display', 'none', 'important');
+        btn.style.setProperty('visibility', 'hidden', 'important');
+        btn.style.setProperty('opacity', '0', 'important');
+        btn.style.setProperty('pointer-events', 'none', 'important');
+        btn.style.setProperty('position', 'absolute', 'important');
+        btn.style.setProperty('left', '-9999px', 'important');
+        btn.style.setProperty('top', '-9999px', 'important');
+        btn.style.setProperty('width', '0', 'important');
+        btn.style.setProperty('height', '0', 'important');
+      }
+    });
+
+    document.querySelectorAll('button[aria-label*="options" i], button[aria-label*="opsi" i], button[aria-label*="more" i], button[aria-label*="tindakan" i], button[aria-label*="lainnya" i], [role="button"][aria-label*="options" i], [role="button"][aria-label*="opsi" i]').forEach(btn => {
+      if (btn.closest('.chat-message, .model-message, .user-message, [role="article"], .rendered-markdown, app-chat-response')) {
+        return;
+      }
+      const label = (btn.getAttribute('aria-label') || '').toLowerCase();
+      if (!label.includes('send') && !label.includes('kirim') && !label.includes('mic') && !label.includes('suara')) {
+        btn.style.setProperty('display', 'none', 'important');
+        btn.style.setProperty('visibility', 'hidden', 'important');
+        btn.style.setProperty('opacity', '0', 'important');
+        btn.style.setProperty('pointer-events', 'none', 'important');
+        btn.style.setProperty('position', 'absolute', 'important');
+        btn.style.setProperty('left', '-9999px', 'important');
+        btn.style.setProperty('top', '-9999px', 'important');
+        btn.style.setProperty('width', '0', 'important');
+        btn.style.setProperty('height', '0', 'important');
+      }
+    });
+
+    document.querySelectorAll('app-chat-header, .chat-header, [class*="chat-header" i], app-conversation-header, .conversation-header, [class*="conversation-actions" i]').forEach(el => {
+      if (!el.querySelector('textarea, [contenteditable="true"], form, .chat-message, [role="article"]')) {
+        el.style.setProperty('display', 'none', 'important');
+        el.style.setProperty('visibility', 'hidden', 'important');
+        el.style.setProperty('opacity', '0', 'important');
+      }
+    });
+  }
+
+  function pinInputToBottom() {
+    const inputHost = document.querySelector('app-chat-input') || 
+                      document.querySelector('div.chat-input-container')?.closest('form, div');
+    if (inputHost) {
+      inputHost.style.setProperty('position', 'fixed', 'important');
+      inputHost.style.setProperty('bottom', '0', 'important');
+      inputHost.style.setProperty('left', '0', 'important');
+      inputHost.style.setProperty('right', '0', 'important');
+      inputHost.style.setProperty('width', '100%', 'important');
+      inputHost.style.setProperty('z-index', '10000', 'important');
+      inputHost.style.setProperty('display', 'flex', 'important');
+      inputHost.style.setProperty('justify-content', 'center', 'important');
+      inputHost.style.setProperty('align-items', 'flex-end', 'important');
+      inputHost.style.setProperty('background', 'transparent', 'important');
+      inputHost.style.setProperty('pointer-events', 'none', 'important');
+      inputHost.style.setProperty('padding', '10px 16px max(20px, calc(env(safe-area-inset-bottom, 16px) + 10px)) 16px', 'important');
+      inputHost.style.setProperty('box-sizing', 'border-box', 'important');
+      inputHost.style.setProperty('margin', '0', 'important');
+
+      Array.from(inputHost.children).forEach(child => {
+        child.style.setProperty('pointer-events', 'auto', 'important');
+        child.style.setProperty('width', '100%', 'important');
+        child.style.setProperty('max-width', '768px', 'important');
+        child.style.setProperty('margin', '0 auto', 'important');
+        child.style.setProperty('box-sizing', 'border-box', 'important');
+      });
+    }
+  }
+
   let lastCleanAt = 0;
   function clean() {
     if (!document.documentElement) return;
@@ -522,8 +668,10 @@ const notebookUiScript = r'''
     syncTheme();
     ensureStyles();
     removeTopToolbars();
+    removeMoreOptionsButtons();
     removeHeroCard();
     dismissPopups();
+    pinInputToBottom();
   }
 
   function triggerClick(el) {
@@ -933,9 +1081,13 @@ window.otSetMenuOpen = function(isOpen) {
 ensureStyles();
 clean();
 dismissPopups();
+removeMoreOptionsButtons();
+pinInputToBottom();
 var _otPopupCounter = 0;
 var _otPopupTimer = setInterval(function() {
   dismissPopups();
+  removeMoreOptionsButtons();
+  pinInputToBottom();
   _otPopupCounter++;
   if (_otPopupCounter > 40) clearInterval(_otPopupTimer);
 }, 250);
