@@ -198,6 +198,17 @@ Berdasarkan `AUDIT_OPENTURATH_AI.md`, dokumen perancangan pustaka, dan keluhan k
      `app-chat-input, div.chat-input-container, form.chat-input-form, .query-box-container { visibility: visible !important; opacity: 1 !important; pointer-events: auto !important; }`.
   4. Hasil: Ruang tengah layar bersih dan putih tanpa elemen bertumpuk, tinggi vertikal penopang atas terjaga utuh secara geometris, dan bilah input chat duduk tenang dan alami di bagian paling bawah layar.
 
+### Fasa 19: Eliminasi Total Tombol Opsi Titik Tiga (More Vert) & Penguncian Bilah Input di Dasar Layar (`7ebe860`)
+- **Akar Masalah Fundamental**:
+  1. *Pemunculan Kembali Ikon Titik Tiga (`⋮` / `more_vert`)*: Pada commit `eb10253`, blok JavaScript penyisir ikon `more_vert` dan `more_horiz` terhapus dengan dalih menjaga menu jawaban. Di sisi lain, selektor CSS `button:has(mat-icon[data-mat-icon-name="more_vert"])` tidak cocok dengan ikon ligatur Angular Material (`<mat-icon>more_vert</mat-icon>`) yang tidak memiliki atribut `data-mat-icon-name`. Akibatnya, tombol opsi titik tiga di pojok kiri atas viewport webview muncul kembali.
+  2. *Bilah Input Melayang di Bagian Atas*: Penyembunyian elemen empty-state tanpa penjangkaran bawah (`position: fixed`) menyebabkan elemen input berada di aliran dokumen atas secara default, meninggalkan ruang putih kosong raksasa di bawahnya dan membuat layar terlihat rusak/galat.
+- **Solusi Tuntas**:
+  1. `notebook_ui_script.dart`:
+     - Memperluas selektor CSS `display: none !important; position: absolute !important; left: -9999px !important;` untuk menangkap seluruh variasi tombol opsi, header chat (`app-chat-header`, `app-conversation-header`, `.chat-header`), dan ikon `more_vert`/`more_horiz` di luar bubble jawaban model.
+     - Menambahkan fungsi JavaScript `removeMoreOptionsButtons()` di dalam siklus pembersihan berkala `clean()` dan timer hidrasi awal yang menyisir DOM untuk menyembunyikan setiap elemen `more_vert` yang berada di luar artikel/pesan jawaban.
+     - Mengembalikan penjangkaran presisi `position: fixed !important; bottom: 0 !important;` pada `app-chat-input` dengan padding bawah 130px pada kontainer riwayat obrolan serta fungsi pembantu `pinInputToBottom()`.
+  2. Hasil: Ikon titik tiga di pojok kiri atas lenyap 100%, ruang baca telaah bersih hening, dan bilah input chat terkunci dengan anggun di dasar layar.
+
 ---
 
 ## 5. Agenda & Fokus Selanjutnya
