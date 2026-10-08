@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-10-07T23:14:49.257Z",
-  "mode": "production",
-  "routes": 175,
+  "generatedAt": "2026-10-08T10:11:51.816Z",
+  "mode": "preview",
+  "routes": 178,
   "locales": [
     "id",
     "en",
@@ -16,7 +16,7 @@
     "reason": "awaiting-release-artifact"
   },
   "operationalWarnings": [
-    "Website offer SKUs are not yet aligned with the audited app backend.",
+    "Prices match local app source; production checkout and entitlements remain unverified.",
     "APK artifact not supplied; website-only mode exposes no active binary download.",
     "Production transactions and infrastructure are not verified by this build."
   ]
