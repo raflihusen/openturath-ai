@@ -1,0 +1,223 @@
+{
+  "checkedAt": "2026-10-08T10:31:33.137Z",
+  "base": "https://openturath.id",
+  "scope": "Read-only HTTP checks; no deployment or CDN changes",
+  "pages": [
+    {
+      "url": "https://openturath.id/id/",
+      "status": 200,
+      "headers": [
+        {
+          "name": "Content-Security-Policy",
+          "expected": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data:; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'",
+          "actual": null,
+          "matches": false
+        },
+        {
+          "name": "Strict-Transport-Security",
+          "expected": "max-age=31536000; includeSubDomains",
+          "actual": "max-age=31556926",
+          "matches": false
+        },
+        {
+          "name": "X-Content-Type-Options",
+          "expected": "nosniff",
+          "actual": null,
+          "matches": false
+        },
+        {
+          "name": "X-Frame-Options",
+          "expected": "DENY",
+          "actual": null,
+          "matches": false
+        },
+        {
+          "name": "Referrer-Policy",
+          "expected": "strict-origin-when-cross-origin",
+          "actual": null,
+          "matches": false
+        },
+        {
+          "name": "Permissions-Policy",
+          "expected": "camera=(), microphone=(), geolocation=()",
+          "actual": null,
+          "matches": false
+        }
+      ],
+      "cloudflareBeacon": false
+    },
+    {
+      "url": "https://openturath.id/en/",
+      "status": 200,
+      "headers": [
+        {
+          "name": "Content-Security-Policy",
+          "expected": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data:; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'",
+          "actual": null,
+          "matches": false
+        },
+        {
+          "name": "Strict-Transport-Security",
+          "expected": "max-age=31536000; includeSubDomains",
+          "actual": "max-age=31556926",
+          "matches": false
+        },
+        {
+          "name": "X-Content-Type-Options",
+          "expected": "nosniff",
+          "actual": null,
+          "matches": false
+        },
+        {
+          "name": "X-Frame-Options",
+          "expected": "DENY",
+          "actual": null,
+          "matches": false
+        },
+        {
+          "name": "Referrer-Policy",
+          "expected": "strict-origin-when-cross-origin",
+          "actual": null,
+          "matches": false
+        },
+        {
+          "name": "Permissions-Policy",
+          "expected": "camera=(), microphone=(), geolocation=()",
+          "actual": null,
+          "matches": false
+        }
+      ],
+      "cloudflareBeacon": false
+    },
+    {
+      "url": "https://openturath.id/ar/",
+      "status": 200,
+      "headers": [
+        {
+          "name": "Content-Security-Policy",
+          "expected": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data:; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'",
+          "actual": null,
+          "matches": false
+        },
+        {
+          "name": "Strict-Transport-Security",
+          "expected": "max-age=31536000; includeSubDomains",
+          "actual": "max-age=31556926",
+          "matches": false
+        },
+        {
+          "name": "X-Content-Type-Options",
+          "expected": "nosniff",
+          "actual": null,
+          "matches": false
+        },
+        {
+          "name": "X-Frame-Options",
+          "expected": "DENY",
+          "actual": null,
+          "matches": false
+        },
+        {
+          "name": "Referrer-Policy",
+          "expected": "strict-origin-when-cross-origin",
+          "actual": null,
+          "matches": false
+        },
+        {
+          "name": "Permissions-Policy",
+          "expected": "camera=(), microphone=(), geolocation=()",
+          "actual": null,
+          "matches": false
+        }
+      ],
+      "cloudflareBeacon": false
+    },
+    {
+      "url": "https://openturath.id/id/tahawwulat/",
+      "status": 200,
+      "headers": [
+        {
+          "name": "Content-Security-Policy",
+          "expected": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data:; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'",
+          "actual": null,
+          "matches": false
+        },
+        {
+          "name": "Strict-Transport-Security",
+          "expected": "max-age=31536000; includeSubDomains",
+          "actual": "max-age=31556926",
+          "matches": false
+        },
+        {
+          "name": "X-Content-Type-Options",
+          "expected": "nosniff",
+          "actual": null,
+          "matches": false
+        },
+        {
+          "name": "X-Frame-Options",
+          "expected": "DENY",
+          "actual": null,
+          "matches": false
+        },
+        {
+          "name": "Referrer-Policy",
+          "expected": "strict-origin-when-cross-origin",
+          "actual": null,
+          "matches": false
+        },
+        {
+          "name": "Permissions-Policy",
+          "expected": "camera=(), microphone=(), geolocation=()",
+          "actual": null,
+          "matches": false
+        }
+      ],
+      "cloudflareBeacon": false
+    },
+    {
+      "url": "https://openturath.id/id/privacy/",
+      "status": 200,
+      "headers": [
+        {
+          "name": "Content-Security-Policy",
+          "expected": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data:; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'",
+          "actual": null,
+          "matches": false
+        },
+        {
+          "name": "Strict-Transport-Security",
+          "expected": "max-age=31536000; includeSubDomains",
+          "actual": "max-age=31556926",
+          "matches": false
+        },
+        {
+          "name": "X-Content-Type-Options",
+          "expected": "nosniff",
+          "actual": null,
+          "matches": false
+        },
+        {
+          "name": "X-Frame-Options",
+          "expected": "DENY",
+          "actual": null,
+          "matches": false
+        },
+        {
+          "name": "Referrer-Policy",
+          "expected": "strict-origin-when-cross-origin",
+          "actual": null,
+          "matches": false
+        },
+        {
+          "name": "Permissions-Policy",
+          "expected": "camera=(), microphone=(), geolocation=()",
+          "actual": null,
+          "matches": false
+        }
+      ],
+      "cloudflareBeacon": false
+    }
+  ],
+  "passed": false
+}
