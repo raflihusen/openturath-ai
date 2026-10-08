@@ -182,6 +182,11 @@ const notebookUiScript = r'''
       }
 
       /* Sembunyikan tombol opsi titik tiga di dalam webview obrolan */
+      app-chat-header button,
+      .chat-header button,
+      [class*="chat-header" i] button,
+      app-notebook-header button,
+      .notebook-header button,
       button[aria-label*="chat options" i],
       button[aria-label*="more options" i],
       button[aria-label*="opsi lainnya" i],
@@ -202,6 +207,7 @@ const notebookUiScript = r'''
       button:has(mat-icon[data-mat-icon-name="more_horiz"]),
       button:has(mat-icon[fonticon="more_vert"]),
       button:has(mat-icon[fonticon="more_horiz"]) {
+        display: none !important;
         opacity: 0 !important;
         pointer-events: none !important;
         position: absolute !important;
@@ -221,14 +227,31 @@ const notebookUiScript = r'''
       .ot-opening-language .mat-mdc-menu-panel { opacity: 0 !important; }
       .cdk-overlay-container { z-index: 99999 !important; }
 
-      /* Sembunyikan elemen judul, ikon, dan sumber di dalam empty state secara visual (transparan)
-         sehingga tinggi layout dan posisi alami input di bawah tetap terjaga 100% tanpa kolaps */
+      /* Pastikan seluruh hierarki kontainer obrolan mengisi tinggi penuh agar margin-top: auto mendorong input ke dasar layar */
+      app-root,
+      main,
+      [role="main"],
+      app-chat,
+      app-chat-view,
+      .chat-view,
+      .chat-panel-content,
+      .conversation-container,
+      app-conversation,
       app-chat-empty-state,
       .chat-empty-state,
       .empty-state,
-      [class*="empty-state" i],
+      [class*="empty-state" i] {
+        display: flex !important;
+        flex-direction: column !important;
+        flex: 1 1 auto !important;
+        height: 100% !important;
+        min-height: 100% !important;
+        box-sizing: border-box !important;
+      }
+
+      /* Sembunyikan elemen judul, ikon, dan sumber di dalam empty state agar bersih */
       .empty-state-header,
-      .chat-empty-state-container,
+      .chat-empty-state-container .empty-state-header,
       app-notebook-overview,
       .notebook-overview,
       [class*="notebook-overview" i],
@@ -254,6 +277,8 @@ const notebookUiScript = r'''
       [class*="hero-header" i],
       app-notebook-title,
       app-project-title,
+      app-notebook-cover,
+      .notebook-cover,
       .chat-panel-content h1:not(.rendered-markdown *):not([role="article"] *),
       .chat-panel-content h2:not(.rendered-markdown *):not([role="article"] *),
       .chat-panel-content h3:not(.rendered-markdown *):not([role="article"] *),
@@ -268,9 +293,13 @@ const notebookUiScript = r'''
       .chat-empty-state mat-icon, .chat-empty-state img, .chat-empty-state svg,
       .empty-state h1, .empty-state h2, .empty-state h3,
       .empty-state mat-icon, .empty-state img, .empty-state svg {
+        display: none !important;
         visibility: hidden !important;
-        opacity: 0 !important;
-        pointer-events: none !important;
+        height: 0 !important;
+        min-height: 0 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        overflow: hidden !important;
       }
 
       /* Pastikan bilah input chat dan komponen di dalamnya selalu terlihat dan interaktif */
@@ -362,6 +391,21 @@ const notebookUiScript = r'''
     });
 
     // Preserve response menus, citation actions, and keyboard-accessible controls.
+    // Sembunyikan tombol opsi titik tiga (more_vert / more_horiz / options) di luar balon pesan obrolan
+    document.querySelectorAll('mat-icon, [data-mat-icon-name]').forEach(icon => {
+      const name = (icon.getAttribute('data-mat-icon-name') || icon.getAttribute('fonticon') || icon.textContent || '').trim().toLowerCase();
+      if (name === 'more_vert' || name === 'more_horiz') {
+        if (icon.closest('.chat-message, .model-message, .user-message, [role="article"], .rendered-markdown, app-chat-response')) {
+          return;
+        }
+        const btn = icon.closest('button, [role="button"]') || icon;
+        btn.style.setProperty('display', 'none', 'important');
+        btn.style.setProperty('visibility', 'hidden', 'important');
+        btn.style.setProperty('opacity', '0', 'important');
+        btn.style.setProperty('pointer-events', 'none', 'important');
+      }
+    });
+
     // Sembunyikan lencana PRO dengan selektor spesifik (tanpa querySelectorAll(*))
     document.querySelectorAll('.pro-badge, [class*="pro-badge" i], [class*="tier-badge" i], button span, a span').forEach(el => {
       if (el.children.length === 0 && (el.textContent || '').trim().toUpperCase() === 'PRO') {
