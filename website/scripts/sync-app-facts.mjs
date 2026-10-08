@@ -1,3 +1,4 @@
+import {releaseManifest} from './publication-integrity.mjs';
 // Membaca fakta produk langsung dari kode aplikasi dan menuliskannya ke
 // content/app-facts.json. Situs tidak menyimpan harga atau versi sendiri.
 import fs from 'node:fs/promises';
@@ -42,5 +43,14 @@ export async function readAppFacts() {
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const facts = await readAppFacts();
   await fs.writeFile(path.join(root, 'content/app-facts.json'), JSON.stringify(facts, null, 2) + '\n');
+  const configPath=path.join(root,'site.config.json');
+  const config=JSON.parse(await fs.readFile(configPath,'utf8'));
+  config.plans=config.plans.map((p,i)=>({...p,price:facts.pricing.specialist[i].amount,months:facts.pricing.specialist[i].months}));
+  config.tahawwulatPlans=facts.pricing.tahawwulat;
+  config.commercialRevision=facts.pricing.revision;
+  config.appCommercialParity='matched-source-unverified-production';
+  for(const d of config.downloads)if(d.comingSoon){d.version=facts.version;if(d.platform==='Android')d.minimumOS='Android '+facts.android.name+'+';}
+  await fs.writeFile(configPath,JSON.stringify(config,null,2)+'\n');
+  await fs.writeFile(path.join(root,'content/releases.json'),JSON.stringify(releaseManifest(config),null,2)+'\n');
   console.log(`app-facts.json: versi ${facts.version}, Android ${facts.android.name}+, ${facts.pricing.specialist.length}+${facts.pricing.tahawwulat.length} harga`);
 }

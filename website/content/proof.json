@@ -1,6 +1,6 @@
 {
   "reviewed": false,
-  "reviewNote": "Ubah menjadi true setelah teks dan halaman dicocokkan dengan kitab cetak. Build rilis menolak berjalan selama masih false.",
+  "reviewNote": "This example is pending. The build rejects reviewed=true unless evidence q001-e03 has a matched source edition, source text, URL, reviewer and date. Pending archives remain publishable with explicit review labels.",
   "question": {
     "id": "Apakah menyentuh lawan jenis dari balik kain membatalkan wudu menurut mazhab Syafi'i?",
     "en": "Does touching someone of the opposite sex through cloth break wudu in the Shafi'i school?",
@@ -12,8 +12,15 @@
     "ar": "لا. الناقض هو التقاء البشرتين مباشرة، فإذا كان بينهما حائل، رقيقًا كان أو صفيقًا، لم ينتقض الوضوء."
   },
   "quote": "وَلَوْ مَسَّ بِيَدِهِ مَا شَاءَ فَوْقَ بَدَنِهَا مِنْ ثَوْبٍ رَقِيقٍ خَامٍ أَوْ بَتٍّ أَوْ غَيْرِهِ أَوْ صَفِيقٍ مُتَلَذِّذًا أَوْ غَيْرَ مُتَلَذِّذٍ وَفَعَلَتْ هِيَ ذَلِكَ لَمْ يَجِبْ عَلَى وَاحِدٍ مِنْهُمَا وُضُوءٌ",
-  "book": {"ar": "الأم", "latin": "Al-Umm"},
-  "author": {"id": "Imam asy-Syafi'i (w. 204 H)", "en": "Imam al-Shafi'i (d. 204 AH)", "ar": "الإمام الشافعي (ت ٢٠٤ هـ)"},
+  "book": {
+    "ar": "الأم",
+    "latin": "Al-Umm"
+  },
+  "author": {
+    "id": "Imam asy-Syafi'i (w. 204 H)",
+    "en": "Imam al-Shafi'i (d. 204 AH)",
+    "ar": "الإمام الشافعي (ت ٢٠٤ هـ)"
+  },
   "volume": 1,
   "page": 30,
   "source": "content/evidence.json · q001-e03"

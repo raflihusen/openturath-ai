@@ -1,3 +1,4 @@
+import {publicationIntegrityIssues} from './publication-integrity.mjs';
 import fs from 'node:fs/promises';
 import {validateCatalogMetadata} from '../src/metadata.mjs';
 import {downloadIntegrityIssues} from './download-integrity.mjs';
@@ -11,6 +12,8 @@ const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const read=async name=>JSON.parse(await fs.readFile(path.join(root,name),'utf8'));
 const config=await read('site.config.json');
 const production=process.argv.includes('--release');
+const integrity=publicationIntegrityIssues({config,proof:await read('content/proof.json'),evidence:await read('content/evidence.json'),releases:await read('content/releases.json'),appFacts:await read('content/app-facts.json')});
+if(integrity.length)throw new Error(integrity.join('\n'));
 const issues=[...releaseIssues(config),...await downloadIntegrityIssues(config,root)];
 if(production&&issues.length){console.error('Production release blocked:\n'+issues.map(x=>' - '+x).join('\n'));process.exit(1);}
 const data={config,catalog:await read('content/catalog.json'),books:await read('content/books.json'),evaluation:await read('content/evaluation.json'),evidence:await read('content/evidence.json'),corrections:await read('content/corrections.json'),training:await read('content/metadata/metadata_training_seluruh_ai.json')};
@@ -36,7 +39,7 @@ const urls=config.canonicalUrl?locales.flatMap(l=>routes.filter(r=>r!=='404').ma
 await fs.writeFile(path.join(dist,'sitemap.xml'),`<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${urls.map(u=>`<url><loc>${e(u)}</loc></url>`).join('')}</urlset>`);
 await fs.writeFile(path.join(dist,'robots.txt'),production?`User-agent: *\nAllow: /\nDisallow: /api/\nSitemap: ${config.canonicalUrl.replace(/\/$/,'')}/sitemap.xml\n`:'User-agent: *\nDisallow: /\n');
 await fs.writeFile(path.join(dist,'_headers'),`/*\n  X-Content-Type-Options: nosniff\n  Referrer-Policy: strict-origin-when-cross-origin\n  X-Frame-Options: DENY\n  Permissions-Policy: camera=(), microphone=(), geolocation=()\n  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data:; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'\n`);
-await fs.writeFile(path.join(root,'docs/BUILD_REPORT.json'),JSON.stringify({generatedAt:new Date().toISOString(),mode:production?'production':'preview',routes:routes.length*3+1,locales,collections:data.catalog.length,responses:data.evaluation.runs.length,productionBlockers:issues,validationScope:"website artifact only",distribution:config.distribution||{mode:"app-release"},operationalWarnings:config.appCommercialParity==="pending-backend-mapping"?["Website offer SKUs are not yet aligned with the audited app backend.","APK artifact not supplied; website-only mode exposes no active binary download.","Production transactions and infrastructure are not verified by this build."]:[]},null,2));
+await fs.writeFile(path.join(root,'docs/BUILD_REPORT.json'),JSON.stringify({generatedAt:new Date().toISOString(),mode:production?'production':'preview',routes:routes.length*3+1,locales,collections:data.catalog.length,responses:data.evaluation.runs.length,productionBlockers:issues,validationScope:"website artifact only",distribution:config.distribution||{mode:"app-release"},operationalWarnings:config.appCommercialParity!=="verified-production"?["Prices match local app source; production checkout and entitlements remain unverified.","APK artifact not supplied; website-only mode exposes no active binary download.","Production transactions and infrastructure are not verified by this build."]:[]},null,2));
 console.log(`Built ${routes.length*3+1} HTML pages; ${data.catalog.length} collections; ${data.evaluation.runs.length} original answers. Mode: ${production?'production':'preview (noindex)'}.`);
 if(issues.length)console.log(`${issues.length} owner configuration requirements recorded in docs/BUILD_REPORT.json.`);
 
