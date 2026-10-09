@@ -202,6 +202,10 @@ export const getAgentUrl = functions
     }
 
     const userData = userDoc.data()!;
+    if (userData.access_version === 2 && (context.auth.token.email_verified !== true ||
+        String(context.auth.token.email || "").trim().toLowerCase() !== String(userData.email || "").trim().toLowerCase())) {
+      throw new functions.https.HttpsError("failed-precondition","Gunakan email terverifikasi yang terdaftar untuk akses notebook ini.");
+    }
     if (userData.access_version === 2) {
       const entity = AGENT_TO_ENTITY[agentId];
       if (!entity) throw new functions.https.HttpsError("not-found", "Kajian tidak ditemukan.");
@@ -216,6 +220,15 @@ export const getAgentUrl = functions
 
     const entitlementAccess = getEntitlementAccess(userData, entitlementKey);
     if (entitlementAccess.active) {
+      if ((await db.collection("access_control").doc("runtime").get()).data()?.writer === "vps-v2") {
+        const entity=AGENT_TO_ENTITY[agentId];
+        if (!entity) throw new functions.https.HttpsError("not-found","Kajian tidak ditemukan.");
+        try {return await new AccessControl(db,NOTEBOOK_ENTITIES,ENTITY_SCOPES).resolveObservedLegacy(uid,userData.email,entity);}
+        catch (e) {
+          if (e instanceof AccessFault) throw new functions.https.HttpsError(e.code as functions.https.FunctionsErrorCode,e.message);
+          throw e;
+        }
+      }
       return {
         url,
         notebookId: resolved?.notebookId,
@@ -1673,6 +1686,12 @@ export const onUserCreate = functions.firestore
     if (!user.emailVerified || !user.email) return null;
     // Only verified email users may claim historical transactions.
     const emailLower = user.email.toLowerCase().trim();
+    if ((await db.collection("access_control").doc("runtime").get()).data()?.writer === "vps-v2") {
+      await snapshot.ref.update({access_due_ms:Date.now()});
+      await db.collection("provisioning_outbox").doc(`v2_signup_${uid}`).set({uid,email:user.email,
+        action:"reconcile",status:"pending",created_at:admin.firestore.FieldValue.serverTimestamp()});
+      return null;
+    }
     const [ownedByUid, ownedByEmail] = await Promise.all([
       db.collection("transactions").where("uid", "==", uid).where("status", "in", ["success", "paid"]).get(),
       db.collection("transactions").where("customer_email", "==", emailLower).where("status", "in", ["success", "paid"]).get(),
