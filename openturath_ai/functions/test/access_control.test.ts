@@ -114,3 +114,28 @@ for (const u of [{email:"prilatief@gmail.com"},{is_vip:true},{role:"vip"},{email
     assert.equal(calls.filter(c=>!c.desired).length,0); assert.equal(isVip(u),true);
   });
 }
+
+test("verified legacy ownership transfer preserves grants and resumes in-flight jobs", async () => {
+  const {db, engine, user, jobs, calls} = setup(); user("old");
+  await engine.reserve("old", entity);
+  db.seed("access_legacy_owners/old", {email:"old@example.test", legacy_revoke_only:true});
+  db.seed("users/new", {email:"old@example.test",access_grant_ids:["existing"]});
+  await engine.adoptLegacy("new", "old");
+  assert.equal(db.docs.get("access_grants/old").uid,"new");
+  assert.deepEqual(new Set(db.docs.get("users/new").access_grant_ids),new Set(["existing","old"]));
+  await jobs();
+  assert.equal(calls.length,1);
+  assert.equal((await engine.resolve("new",entity)).notebookId,"master");
+  assert.equal(db.docs.get("access_notebooks/master").occupied,1);
+  await engine.adoptLegacy("new", "old");
+  assert.equal(db.docs.get("access_notebooks/master").occupied,1);
+});
+test("permanent legacy VIP registry protects an owner without profile VIP flags", async () => {
+  const {db,engine,user,jobs,calls}=setup();user("u");
+  await engine.reserve("u",entity);await jobs();
+  db.docs.get("access_grants/u").expires_ms=now-1;
+  db.seed(`access_vip_registry/${keyOf("u@example.test")}`,{permanent:true});
+  await engine.revoke("u",entity);
+  assert.equal(calls.length,1);
+  assert.equal((await engine.resolve("u",entity)).notebookId,"master");
+});
