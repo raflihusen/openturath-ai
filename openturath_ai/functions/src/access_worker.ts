@@ -74,7 +74,7 @@ async function importOwner(doc: any): Promise<void> {
   const uid = doc.id, u = doc.data(), email = normalEmail(u.email);
   if (!email) return;
   const txs = new Map<string, any>();
-  for (const [field, value] of [["uid", uid], ["customer_email", email], ["payer_email", email]]) {
+  for (const [field, value] of [["uid", uid], ["customer_email", email], ["payer_email", email], ["email", email]]) {
     const snap = await db.collection("transactions").where(field, "==", value).get();
     for (const tx of snap.docs) txs.set(tx.id, tx.data());
   }
@@ -107,12 +107,13 @@ async function importOwner(doc: any): Promise<void> {
   }
   // Do not invent a grant from profile expiry. Unproved legacy voucher/manual
   // access remains reviewable and outside automated revocation until imported.
-  if (ids.size) await doc.ref.update({access_grant_ids: [...ids], access_version: 2});
+  if (ids.size) await doc.ref.update({access_grant_ids: [...ids], access_version: 2, access_due_ms: Date.now()});
 }
 async function assignments(): Promise<void> {
-  await pages("users", async doc => {
+  const due = await db.collection("users").where("access_due_ms", "<=", Date.now()).orderBy("access_due_ms").limit(100).get();
+  for (const doc of due.docs) {
     const u = doc.data();
-    if (u.access_version !== 2) return;
+    if (u.access_version !== 2) continue;
     const grants = await engine.grants(doc.id);
     for (const [entity, scope] of Object.entries(ENTITY_SCOPES)) {
       if (rights(u, grants, scope)) {
@@ -121,7 +122,13 @@ async function assignments(): Promise<void> {
           code: e.code || "unavailable", updated_ms: Date.now()}, {merge: true}); }
       } else await engine.revoke(doc.id, entity);
     }
-  });
+    const expiry = grants.filter(g => g.status === "active" && g.expires_ms > Date.now()).map(g => g.expires_ms);
+    const next = Math.min(Date.now() + 3600000, ...expiry);
+    await db.runTransaction(async t => {
+      const current = (await t.get(doc.ref)).data();
+      if (current?.access_due_ms === u.access_due_ms) t.update(doc.ref, {access_due_ms: next});
+    });
+  }
 }
 async function settleRevokes(): Promise<void> {
   const snap = await db.collection("access_assignments").where("status", "==", "revoking").get();
@@ -139,7 +146,19 @@ async function cycle(): Promise<void> {
   stats.last_cycle_ms = Date.now();
   const cfg = (await runtime.get()).data();
   if (cfg?.writer !== "vps-v2") return; // Installed shadow mode until explicit cutover.
-  await pages("users", importOwner);
+  // Consume source jobs incrementally rather than scanning every account/tx.
+  const source = await db.collection("provisioning_outbox").where("status", "in", ["pending", "retry", "processing"]).limit(100).get();
+  for (const job of source.docs) {
+    const uid = job.data().uid;
+    if (typeof uid !== "string" || uid.includes("@")) {await job.ref.update({status:"v2_review"}); continue;}
+    const doc = await db.collection("users").doc(uid).get();
+    if (doc.exists) await importOwner(doc);
+    else {
+      const a = await db.collection("access_assignments").where("uid", "==", uid).get();
+      for (const assignment of a.docs) await engine.revoke(uid, assignment.data().entity);
+    }
+    await job.ref.update({status:"v2_handed_off", updated_ms:Date.now()});
+  }
   await assignments();
   const jobs = await db.collection("access_jobs").where("status", "in", ["pending", "retry", "processing"]).get();
   const eligible = jobs.docs.filter(d => (d.data().due_ms || 0) <= Date.now()).sort((a,b) => a.data().due_ms - b.data().due_ms);
