@@ -70,5 +70,8 @@ if __name__ == "__main__":
         print(json.dumps(result))
     except Exception as error:
         # SDK exception strings can contain private payloads or session details.
-        print(json.dumps({"error": "Sharing observation/operation failed", "category": type(error).__name__}))
+        message = str(error).lower()
+        auth_failure = any(term in message for term in ("csrf", "authentication", "session expired", "cookie expired"))
+        print(json.dumps({"error": "Sharing observation/operation failed", "category": type(error).__name__,
+                          "code": "authentication_unavailable" if auth_failure else "provider_unavailable"}))
         sys.exit(1)
