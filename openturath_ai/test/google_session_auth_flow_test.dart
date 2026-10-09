@@ -29,12 +29,14 @@ void main() {
       questionsUsed: 0,
     );
 
+    String? loginUrl;
     await tester.pumpWidget(
       MaterialApp(
         home: GoogleSessionAuthScreen(
-          webViewBuilder: (context, settings, url) => const SizedBox(
-            key: Key('mock_webview'),
-          ),
+          webViewBuilder: (context, settings, url) {
+            loginUrl = url;
+            return const SizedBox(key: Key('mock_webview'));
+          },
         ),
       ),
     );
@@ -57,6 +59,10 @@ void main() {
       find.textContaining('santri.openturath@gmail.com'),
       findsWidgets,
     );
+
+    final login = Uri.parse(loginUrl!);
+    expect(login.host, 'accounts.google.com');
+    expect(login.queryParameters['continue'], 'https://notebook.google.com/');
 
     // Verifikasi webview placeholder ter-mount
     expect(find.byKey(const Key('mock_webview')), findsOneWidget);
