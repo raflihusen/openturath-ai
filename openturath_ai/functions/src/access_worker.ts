@@ -3,7 +3,7 @@ import {execFile} from "child_process";
 import {createServer} from "http";
 import {AccessControl, Entity, Provider, ShareObservation, isVip, keyOf, millis, normalEmail, rights, billingExpiry} from "./access_control";
 import {NOTEBOOK_ENTITIES} from "./notebook_catalog";
-import {ENTITY_SCOPES} from "./access_catalog";
+import {ENTITY_SCOPES, AGENT_ENTITLEMENTS} from "./access_catalog";
 
 admin.initializeApp({projectId: process.env.GOOGLE_CLOUD_PROJECT || "open-turath"});
 const db = admin.firestore();
@@ -83,7 +83,7 @@ async function importOwner(doc: any): Promise<void> {
     for (const tx of snap.docs) txs.set(tx.id, tx.data());
   }
   const ids = new Set<string>(u.access_grant_ids || []);
-  if (isVip(u) || [...txs.values()].some(t => String(t.status).toUpperCase() === "VIP_PERMANENT" || t.is_vip === true)) {
+  if (isVip(u) || [...txs.values()].some(t => String(t.status).toUpperCase() === "VIP_PERMANENT" || String(t.plan).toUpperCase() === "VIP_PERMANENT" || t.is_vip === true)) {
     const id = keyOf("vip", uid);
     await db.collection("access_grants").doc(id).set({uid, kind: "VIP_PERMANENT", scope: "all_access", status: "active"}, {merge: true});
     ids.add(id);
@@ -91,12 +91,19 @@ async function importOwner(doc: any): Promise<void> {
   for (const [id, tx] of txs) {
     if (tx.uid && tx.uid !== uid) continue;
     if (!["paid", "success", "settled", "settlement", "expired"].includes(String(tx.status).toLowerCase()) || !(Number(tx.amount) > 0)) continue;
-    const scope = tx.entitlement_key;
+    const labels: Record<string, string> = {
+      "AI Fikih Tahawwulat": "fiqh_tahawwulat", "Fikih Tahawwulat": "fiqh_tahawwulat",
+      "AI Fikih Syafi'i": "fiqh_syafii", "AI Fikih Syafii": "fiqh_syafii", "Fikih Syafi'i": "fiqh_syafii",
+      "AI Ushul Fiqih": "ushul_fiqh", "AI Hadits": "hadits", "AI Tafsir": "tafsir", "AI Bahasa Arab": "nahwu",
+    };
+    const scope = tx.entitlement_key || AGENT_ENTITLEMENTS[tx.agent_id] || labels[tx.service_name] ||
+      (/^all_ai(?:_1m|_6m|_1y)?$/.test(tx.plan || "") ? "all_access" : "");
     if (!Object.values(ENTITY_SCOPES).includes(scope) && !["all_access", "all_ai"].includes(scope)) continue;
     const gid = tx.invoice_number ? keyOf("invoice", tx.invoice_number) : keyOf("legacy_tx", id);
     const gr = db.collection("access_grants").doc(gid);
-    if ((await gr.get()).exists) { ids.add(gid); continue; }
-    const paid = millis(tx.paid_at || tx.payment_time || tx.created_at);
+    const prior = (await gr.get()).data();
+    if (prior) { if (prior.uid === uid) ids.add(gid); continue; }
+    const paid = millis(tx.paid_at || tx.completed_at || tx.payment_time || tx.created_at);
     const explicit = millis(tx.subscription_expires_at || tx.access_expires_at || tx.expires_at);
     // Legacy one-month records are capped by real payment time + 30 days.
     // Unknown timestamps/plan durations are review cases, never auto-removals.
