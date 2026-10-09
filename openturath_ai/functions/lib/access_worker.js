@@ -218,6 +218,18 @@ async function assignments() {
         const u = doc.data();
         if (u.access_version !== 2 || u.adopted_by)
             continue;
+        if (!u.legacy_revoke_only && !u.account_deleted && !u.pending_deletion) {
+            try {
+                const authOwner = await admin.auth().getUser(doc.id);
+                if (!authOwner.emailVerified || (0, access_control_1.normalEmail)(authOwner.email) !== (0, access_control_1.normalEmail)(u.email))
+                    throw new Error("Owner identity not verified");
+            }
+            catch (_) {
+                await db.collection("access_reviews").doc((0, access_control_1.keyOf)(doc.id, "identity")).set({ uid: doc.id, code: "identity_review", updated_ms: Date.now() });
+                await doc.ref.update({ access_due_ms: Date.now() + 3600000 });
+                continue;
+            }
+        }
         const grants = await engine.grants(doc.id);
         let needsRetry = false;
         for (const [entity, scope] of Object.entries(access_catalog_1.ENTITY_SCOPES)) {

@@ -239,12 +239,15 @@ class AccessControl {
     }
     async revoke(uid, entity) {
         const { user, grants } = await this.owner(uid);
-        if (user.access_revocation_hold || rights(user, grants, this.scopes[entity], this.clock()))
+        if ((user === null || user === void 0 ? void 0 : user.access_revocation_hold) || rights(user, grants, this.scopes[entity], this.clock()))
             return;
         const ar = this.assignmentRef(uid, entity);
         await this.db.runTransaction(async (t) => {
             const a = (await t.get(ar)).data();
             if (!a || ["revoked", "revoking"].includes(a.status))
+                return;
+            const permanent = await t.get(this.db.collection("access_vip_registry").doc((0, exports.keyOf)(a.email)));
+            if ((0, exports.isVip)({ email: a.email }, grants) || permanent.exists)
                 return;
             const revision = a.revision + 1;
             t.update(ar, { status: "revoking", revision, updated_ms: this.clock() });
@@ -268,6 +271,7 @@ class AccessControl {
         });
     }
     async runJob(ref) {
+        var _a;
         if (!this.provider)
             throw new Error("Sharing provider is not configured");
         const token = crypto.randomUUID(), now = this.clock();
@@ -293,8 +297,11 @@ class AccessControl {
                 await ref.update({ status: "superseded", due_ms: 8640000000000000 });
                 return;
             }
-            if (!job.desired && (owner.user.access_revocation_hold || (0, exports.isVip)(owner.user, owner.grants)))
-                throw new Error("Protected or unresolved legacy owner");
+            if (!job.desired) {
+                const permanent = await this.db.collection("access_vip_registry").doc((0, exports.keyOf)(job.email)).get();
+                if (((_a = owner.user) === null || _a === void 0 ? void 0 : _a.access_revocation_hold) || (0, exports.isVip)(Object.assign(Object.assign({}, owner.user), { email: job.email }), owner.grants) || permanent.exists)
+                    throw new Error("Protected or unresolved legacy owner");
+            }
             const observation = await this.provider.apply(job.notebook_id, job.email, job.desired);
             this.validateObservation(observation, job.notebook_id);
             const present = observation.emails.map(exports.normalEmail).includes(job.email);
