@@ -8,6 +8,8 @@ import json
 import os
 import re
 import sys
+import shutil
+import tempfile
 
 UUID = re.compile(r"^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$", re.I)
 
@@ -40,28 +42,36 @@ async def run(request):
     path = os.environ.get("NOTEBOOKLM_STORAGE_PATH")
     if not path or not os.path.isfile(path):
         raise ValueError("Consented owner storage is unavailable")
-    async with NotebookLMClient.from_storage(path=path) as client:
-        initial = await observe(client, notebook_id)
-        if operation != "observe":
-            if initial["isPublic"]:
-                await client.sharing.set_public(notebook_id, False)
-            if operation == "apply":
-                email = request.get("email", "").strip().lower()
-                if not re.fullmatch(r"[^\s@]+@[^\s@]+\.[^\s@]+", email) or not isinstance(request.get("desired"), bool):
-                    raise ValueError("Invalid target identity")
-                present = email in initial["emails"]
-                if request["desired"] and not present:
-                    if len(initial["emails"]) >= 2000:
-                        raise ValueError("Hard viewer capacity reached")
-                    await client.sharing.add_user(notebook_id, email, SharePermission.VIEWER, notify=False)
-                elif not request["desired"] and present:
-                    await client.sharing.remove_user(notebook_id, email)
-                await client.sharing.set_view_level(notebook_id, ShareViewLevel.CHAT_ONLY)
-            result = await observe(client, notebook_id)
-            if result["isPublic"]:
-                raise ValueError("Restricted sharing could not be verified")
-            return result
-        return initial
+    # SDK response cookies can rotate SIDCC for a different Google account.
+    # Keep the consented browser snapshot authoritative and isolate each RPC
+    # session's cookie writes, rather than corrupting the shared account state.
+    with tempfile.TemporaryDirectory(prefix="sharing-session-", dir=os.path.dirname(path)) as temporary:
+        session_path = os.path.join(temporary, "storage_state.json")
+        shutil.copyfile(path, session_path)
+        os.chmod(session_path, 0o600)
+        async with NotebookLMClient.from_storage(path=session_path) as client:
+            initial = await observe(client, notebook_id)
+            if operation != "observe":
+                if initial["isPublic"]:
+                    await client.sharing.set_public(notebook_id, False)
+                if operation == "apply":
+                    email = request.get("email", "").strip().lower()
+                    if not re.fullmatch(r"[^\s@]+@[^\s@]+\.[^\s@]+", email) or not isinstance(request.get("desired"), bool):
+                        raise ValueError("Invalid target identity")
+                    present = email in initial["emails"]
+                    if request["desired"] and not present:
+                        if len(initial["emails"]) >= 2000:
+                            raise ValueError("Hard viewer capacity reached")
+                        await client.sharing.add_user(notebook_id, email, SharePermission.VIEWER, notify=False)
+                    elif not request["desired"] and present:
+                        await client.sharing.remove_user(notebook_id, email)
+                    await client.sharing.set_view_level(notebook_id, ShareViewLevel.CHAT_ONLY)
+                result = await observe(client, notebook_id)
+                if result["isPublic"]:
+                    raise ValueError("Restricted sharing could not be verified")
+                return result
+            return initial
+
 
 
 if __name__ == "__main__":
