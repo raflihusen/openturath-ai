@@ -16,6 +16,14 @@ import urllib.request
 import urllib.parse
 from datetime import datetime, timezone, timedelta
 from typing import Any
+import socket
+_orig_getaddrinfo = socket.getaddrinfo
+def _resilient_getaddrinfo(host, port, *args, **kwargs):
+    h_str = host.decode("utf-8", "ignore") if isinstance(host, (bytes, bytearray)) else str(host)
+    if h_str == "notebooklm.google.com":
+        return _orig_getaddrinfo("142.250.74.78", port, *args, **kwargs)
+    return _orig_getaddrinfo(host, port, *args, **kwargs)
+socket.getaddrinfo = _resilient_getaddrinfo
 
 def load_dotenv():
     env_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), ".env")
@@ -86,9 +94,15 @@ STATIC_WHITELIST = {
 }
 
 MASTER_NOTEBOOKS = [
-    # 1. Fikih Syafi'i
+    # 1. Fikih Syafi'i (Master & Legacy)
     {
-        "name": "AI Fikih Syafi'i",
+        "name": "01 - FIKIH SYAFII (MASTER)",
+        "id": "c89d09ca-4b48-4000-a98d-59e532607fb6",
+        "key": "fiqh_syafii",
+        "cuid": os.getenv("AKAL_SERVICE_CUID_FIKIH_SYAFII", "cms4ls3j60001l20439k1nqh4"),
+    },
+    {
+        "name": "AI Fikih Syafi'i (Legacy)",
         "id": os.getenv("NOTEBOOK_ID_FIKIH_SYAFII", "334e7b83-0e76-4787-a1d6-314642a35862"),
         "key": "fiqh_syafii",
         "cuid": os.getenv("AKAL_SERVICE_CUID_FIKIH_SYAFII", "cms4ls3j60001l20439k1nqh4"),
@@ -427,6 +441,9 @@ class AutonomousReaper:
                 if u_sub_exp and u_sub_exp > now:
                     for k in active_by_module:
                         active_by_module[k].add(email)
+                elif u_sub_exp and u_sub_exp <= now:
+                    for k in expired_by_module:
+                        expired_by_module[k].add(email)
 
                 entitlements = d.get("entitlements", {})
                 for k, v in entitlements.items():

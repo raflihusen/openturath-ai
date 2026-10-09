@@ -685,8 +685,10 @@ def handle_telegram_command(text: str, chat_id: int):
             loop = asyncio.new_event_loop()
             asyncio.set_event_loop(loop)
             result = loop.run_until_complete(reaper.run_cycle())
-            loop.close()
-            send_telegram_message(f"✅ <b>[REAPER SELESAI]</b>\n• User Sah Terdaftar: <code>{result['authorized_count']}</code>\n• Akses Expired Dicabut: <code>{result['revoked_count']}</code>\n• Error: <code>{result['errors']}</code>")
+            vip_cnt = result.get('vip_count', result.get('authorized_count', 0))
+            rev_cnt = result.get('revoked_count', 0)
+            err_cnt = result.get('errors', 0)
+            send_telegram_message(f"✅ <b>[REAPER SELESAI]</b>\n• VIP Terlindungi: <code>{vip_cnt}</code>\n• Akses Expired Dicabut: <code>{rev_cnt}</code>\n• Error: <code>{err_cnt}</code>")
         except Exception as e:
             send_telegram_message(f"❌ <b>[REAPER ERROR]</b> Gagal: {e}")
         
