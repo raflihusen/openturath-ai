@@ -3,7 +3,7 @@ import {execFile} from "child_process";
 import {createServer} from "http";
 import {rename, chmod, readFile} from "fs/promises";
 import {promisify} from "util";
-import {AccessControl, Entity, Provider, ShareObservation, isVip, keyOf, millis, normalEmail, rights, billingExpiry} from "./access_control";
+import {AccessControl, Entity, Provider, ShareObservation, isVip, keyOf, millis, normalEmail, rights, billingExpiry, verifiedAkalPeriods} from "./access_control";
 import {NOTEBOOK_ENTITIES} from "./notebook_catalog";
 import {ENTITY_SCOPES, AGENT_ENTITLEMENTS} from "./access_catalog";
 
@@ -197,21 +197,11 @@ async function importVerifiedAkalEvidence(path: string): Promise<void> {
   // GoAkal over authenticated HTTPS. Invoice expiry is never subscription expiry.
   const rows = JSON.parse(await readFile(path,"utf8"));
   if (!Array.isArray(rows)) throw new Error("Invalid provider evidence");
-  const scopes: Record<string,string> = {"AI Fikih Tahawwulat":"fiqh_tahawwulat",
-    "SUPER AI FIKIH SYAFI'I":"fiqh_syafii", "SUPER AI BAHASA ARAB":"nahwu"};
-  const durations: Record<string,number> = {"1 Bulan":1,"6 Bulan":6,"12 Bulan":12};
-  const users = await db.collection("users").get(), seen = new Set<string>(), ends = new Map<string,number>();
-  rows.sort((a,b)=>(Number.isFinite(millis(a.paidAt))?millis(a.paidAt):Infinity)-(Number.isFinite(millis(b.paidAt))?millis(b.paidAt):Infinity));
-  let imported=0, excluded=0;
-  for (const row of rows) {
-    const scope=scopes[row.serviceTitle], months=durations[row.priceSchemeTitle], paid=millis(row.paidAt);
-    const email=normalEmail(row.payerEmail), payment=String(row.paymentId || ""), amount=Number(row.incomingAmount);
-    if (row.status !== "PAID" || !(amount>0) || !scope || !months || !email || !payment || !Number.isFinite(paid)) {excluded++;continue;}
-    const gid=keyOf("goakal_verified",payment,scope);
-    if (seen.has(gid)) continue;
-    seen.add(gid);
-    const chain=keyOf(email,scope), starts=Math.max(paid,ends.get(chain)||0), expires=billingExpiry(starts,months);
-    ends.set(chain,expires);
+  const users = await db.collection("users").get();
+  const periods = verifiedAkalPeriods(rows);
+  let imported=0, excluded=rows.length-periods.length;
+  for (const period of periods) {
+    const {id:gid, email, scope, payment, amount, starts, expires, paid, months}=period;
     const matches=users.docs.filter(d=>normalEmail(d.data().email)===email);
     if (matches.length>1) {excluded++;continue;}
     const uid=matches[0]?.id || `legacy_${keyOf(email)}`;
