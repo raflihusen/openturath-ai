@@ -94,6 +94,7 @@ async function importOwner(doc: any): Promise<void> {
     await db.collection("access_grants").doc(id).set({uid, kind: "VIP_PERMANENT", scope: "all_access", status: "active"}, {merge: true});
     ids.add(id);
   }
+  const unresolved: string[] = [];
   for (const [id, tx] of txs) {
     if (tx.uid && tx.uid !== uid) continue;
     if (!["paid", "success", "settled", "settlement", "expired"].includes(String(tx.status).toLowerCase()) || !(Number(tx.amount) > 0)) continue;
@@ -104,7 +105,7 @@ async function importOwner(doc: any): Promise<void> {
     };
     const scope = tx.entitlement_key || AGENT_ENTITLEMENTS[tx.agent_id] || labels[tx.service_name] ||
       (/^all_ai(?:_1m|_6m|_1y)?$/.test(tx.plan || "") ? "all_access" : "");
-    if (!Object.values(ENTITY_SCOPES).includes(scope) && !["all_access", "all_ai"].includes(scope)) continue;
+    if (!Object.values(ENTITY_SCOPES).includes(scope) && !["all_access", "all_ai"].includes(scope)) {unresolved.push(id); continue;}
     const gid = tx.invoice_number ? keyOf("invoice", tx.invoice_number) : keyOf("legacy_tx", id);
     const gr = db.collection("access_grants").doc(gid);
     const prior = (await gr.get()).data();
@@ -115,12 +116,17 @@ async function importOwner(doc: any): Promise<void> {
     // Unknown timestamps/plan durations are review cases, never auto-removals.
     const plan = String(tx.plan || "").toLowerCase();
     const months = Number(tx.duration_months) || (/(1y|tahun|annual)/.test(plan) ? 12 : /6m/.test(plan) ? 6 : /1m|tholib/.test(plan) ? 1 : 0);
-    if (!Number.isFinite(paid) || !months) continue;
+    if (!Number.isFinite(paid) || !months) {unresolved.push(id); continue;}
     const calculated = billingExpiry(paid, months);
     const expiry = Number.isFinite(explicit) ? Math.min(explicit, calculated) : calculated;
     await gr.set({uid, scope, kind: "payment", status: "active", amount: Number(tx.amount), transaction_document: id,
       invoice_number: tx.invoice_number || null, starts_ms: paid, expires_ms: expiry, imported: true});
     ids.add(gid);
+  }
+  if (unresolved.length) {
+    await doc.ref.update({access_revocation_hold:true});
+    await db.collection("access_reviews").doc(keyOf(uid,"legacy_evidence")).set({uid,
+      code:"legacy_payment_evidence_incomplete", transaction_documents:unresolved, updated_ms:Date.now()});
   }
   // Do not invent a grant from profile expiry. Unproved legacy voucher/manual
   // access remains reviewable and outside automated revocation until imported.
