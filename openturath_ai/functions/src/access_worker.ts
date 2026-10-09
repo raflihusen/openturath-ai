@@ -77,6 +77,11 @@ async function seed(restrict = false): Promise<void> {
 async function importOwner(doc: any): Promise<void> {
   const uid = doc.id, u = doc.data(), email = normalEmail(u.email);
   if (!email) return;
+  if (!u.legacy_revoke_only) {
+    const authOwner = await admin.auth().getUser(uid);
+    if (!authOwner.emailVerified || normalEmail(authOwner.email) !== email) return;
+    await engine.adoptLegacy(uid, `legacy_${keyOf(email)}`);
+  }
   const txs = new Map<string, any>();
   for (const [field, value] of [["uid", uid], ["customer_email", email], ["payer_email", email], ["email", email]]) {
     const snap = await db.collection("transactions").where(field, "==", value).get();
@@ -120,11 +125,34 @@ async function importOwner(doc: any): Promise<void> {
   // access remains reviewable and outside automated revocation until imported.
   if (ids.size) await doc.ref.update({access_grant_ids: [...ids], access_version: 2, access_due_ms: Date.now()});
 }
+async function prepareLegacy(): Promise<void> {
+  const transactions = await db.collection("transactions").get();
+  const users = await db.collection("users").get();
+  const known = new Set(users.docs.map(d => normalEmail(d.data().email)));
+  for (const doc of transactions.docs) {
+    const tx = doc.data(), email = normalEmail(tx.customer_email || tx.payer_email || tx.email);
+    if (!email) continue;
+    if (tx.is_vip === true || String(tx.plan).toUpperCase() === "VIP_PERMANENT" || String(tx.status).toUpperCase() === "VIP_PERMANENT") {
+      await db.collection("access_vip_registry").doc(keyOf(email)).set({email, permanent:true, source_transaction:doc.id}, {merge:true});
+    }
+    if (known.has(email) || tx.uid || !(Number(tx.amount) > 0)) continue;
+    const id = `legacy_${keyOf(email)}`, ref = db.collection("access_legacy_owners").doc(id);
+    if (!(await ref.get()).exists) await ref.set({email, legacy_revoke_only:true, access_due_ms:Date.now()});
+  }
+  await pages("access_legacy_owners", async doc => {if (!doc.data().adopted_by) await importOwner(doc);});
+  await pages("users", async doc => {
+    try {await importOwner(doc);} catch (_) {
+      await db.collection("access_reviews").doc(keyOf(doc.id,"owner")).set({uid:doc.id,code:"identity_review",updated_ms:Date.now()});
+    }
+  });
+}
 async function assignments(): Promise<void> {
-  const due = await db.collection("users").where("access_due_ms", "<=", Date.now()).orderBy("access_due_ms").limit(100).get();
+  const dueUsers = await db.collection("users").where("access_due_ms", "<=", Date.now()).orderBy("access_due_ms").limit(100).get();
+  const dueLegacy = await db.collection("access_legacy_owners").where("access_due_ms", "<=", Date.now()).orderBy("access_due_ms").limit(100).get();
+  const due = {docs:[...dueUsers.docs, ...dueLegacy.docs]};
   for (const doc of due.docs) {
     const u = doc.data();
-    if (u.access_version !== 2) continue;
+    if (u.access_version !== 2 || u.adopted_by) continue;
     const grants = await engine.grants(doc.id);
     let needsRetry = false;
     for (const [entity, scope] of Object.entries(ENTITY_SCOPES)) {
@@ -229,6 +257,7 @@ async function main(): Promise<void> {
   const mode = process.argv[2];
   if (mode === "--seed" || mode === "--restrict") return seed(mode === "--restrict");
   if (mode === "--import") return pages("users", importOwner);
+  if (mode === "--prepare") return prepareLegacy();
   if (mode === "--once") return cycle();
   createServer((_, res) => {res.setHeader("Content-Type", "application/json");
     res.statusCode = stats.error ? 503 : 200; res.end(JSON.stringify(stats));
