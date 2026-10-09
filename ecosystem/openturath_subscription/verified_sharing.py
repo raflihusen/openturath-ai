@@ -51,6 +51,8 @@ async def run(request):
                     raise ValueError("Invalid target identity")
                 present = email in initial["emails"]
                 if request["desired"] and not present:
+                    if len(initial["emails"]) >= 2000:
+                        raise ValueError("Hard viewer capacity reached")
                     await client.sharing.add_user(notebook_id, email, SharePermission.VIEWER, notify=False)
                 elif not request["desired"] and present:
                     await client.sharing.remove_user(notebook_id, email)
