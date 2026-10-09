@@ -1461,23 +1461,13 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
       session.errorMessage = null;
     });
 
-    final user = _authService.cachedCurrentUser;
-    final hasAccess = user != null && user.hasAccessToAgent(session.agent.id);
-    if (!hasAccess) {
-      if (!mounted) return;
-      setState(() {
-        session.isUrlLoading = false;
-        session.isPaywallRequired = true;
-        session.isGooglePermissionError = false;
-        session.errorMessage =
-            'Untuk membuka dan menelaah kitab bersama ${session.agent.title}, silakan aktifkan paket langganan Anda.';
-      });
-      return;
-    }
+    // The server owns current rights; a stale local profile must not turn a
+    // paid-but-provisioning assignment into a request to purchase again.
+    final openingUid = _authService.currentUser?.uid;
 
     try {
       final url = await _agentService.getAgentUrl(session.agent.id);
-      if (!mounted) return;
+      if (!mounted || _authService.currentUser?.uid != openingUid) return;
       if (url != null && url.isNotEmpty) {
         setState(() {
           session.resolvedUrl = url;
@@ -1492,7 +1482,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
         });
       }
     } catch (e) {
-      if (!mounted) return;
+      if (!mounted || _authService.currentUser?.uid != openingUid) return;
       final msg = e.toString().toLowerCase();
       final isPaywall = msg.contains('permission-denied') ||
           msg.contains('berlangganan') ||
@@ -1501,7 +1491,6 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
           msg.contains('unauthenticated') ||
           msg.contains('unauthorized') ||
           msg.contains('not-found') ||
-          !hasAccess ||
           (e is AgentAccessException &&
               (e.code == 'permission-denied' ||
                   e.code == 'unauthenticated' ||
@@ -1512,7 +1501,9 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
         session.isPaywallRequired = isPaywall;
         session.errorMessage = isPaywall
             ? 'Untuk membuka dan menelaah kitab bersama ${session.agent.title}, silakan aktifkan paket langganan Anda.'
-            : 'AI belum bisa dihubungkan. Coba lagi.';
+            : e is AgentAccessException && e.code == 'failed-precondition'
+                ? e.message
+                : 'AI belum bisa dihubungkan. Coba lagi.';
       });
     }
   }
