@@ -87,7 +87,8 @@ async function importOwner(doc: any): Promise<void> {
     const snap = await db.collection("transactions").where(field, "==", value).get();
     for (const tx of snap.docs) txs.set(tx.id, tx.data());
   }
-  const ids = new Set<string>(u.access_grant_ids || []);
+  const fresh = (await doc.ref.get()).data();
+  const ids = new Set<string>(fresh.access_grant_ids || []);
   if (isVip(u) || [...txs.values()].some(t => String(t.status).toUpperCase() === "VIP_PERMANENT" || String(t.plan).toUpperCase() === "VIP_PERMANENT" || t.is_vip === true)) {
     const id = keyOf("vip", uid);
     await db.collection("access_grants").doc(id).set({uid, kind: "VIP_PERMANENT", scope: "all_access", status: "active"}, {merge: true});
@@ -123,7 +124,12 @@ async function importOwner(doc: any): Promise<void> {
   }
   // Do not invent a grant from profile expiry. Unproved legacy voucher/manual
   // access remains reviewable and outside automated revocation until imported.
-  if (ids.size) await doc.ref.update({access_grant_ids: [...ids], access_version: 2, access_due_ms: Date.now()});
+  if (ids.size) await db.runTransaction(async t => {
+    const current = (await t.get(doc.ref)).data();
+    if (!current || current.adopted_by) return;
+    t.update(doc.ref, {access_grant_ids: [...new Set([...(current.access_grant_ids || []), ...ids])],
+      access_version: 2, access_due_ms: Date.now()});
+  });
 }
 async function prepareLegacy(): Promise<void> {
   const transactions = await db.collection("transactions").get();
@@ -258,6 +264,7 @@ async function main(): Promise<void> {
   if (mode === "--seed" || mode === "--restrict") return seed(mode === "--restrict");
   if (mode === "--import") return pages("users", importOwner);
   if (mode === "--prepare") return prepareLegacy();
+  if (mode === "--prepare-assignments") return assignments();
   if (mode === "--once") return cycle();
   createServer((_, res) => {res.setHeader("Content-Type", "application/json");
     res.statusCode = stats.error ? 503 : 200; res.end(JSON.stringify(stats));
