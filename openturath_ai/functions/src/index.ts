@@ -873,6 +873,7 @@ async function processSuccessfulPayment(invoiceNumber: string, paidAmount: unkno
     const userUpdate: any = {
       entitlements: updatedEntitlements,
       access_version: 2,
+      access_due_ms: Date.now(),
       access_grant_ids: [...new Set([...(uData.access_grant_ids || []), grantId])],
       updated_at: admin.firestore.FieldValue.serverTimestamp(),
     };
@@ -1185,9 +1186,12 @@ export const midtransWebhook = functions
         const gr = db.collection("access_grants").doc(keyOf("invoice", String(orderId)));
         await db.runTransaction(async t => {
           const grant = await t.get(gr);
+          const ownerRef = grant.data()?.uid ? db.collection("users").doc(grant.data()!.uid) : null;
+          const ownerDoc = ownerRef ? await t.get(ownerRef) : null;
           if (grant.exists) t.update(gr, transactionStatus.startsWith("partial")
             ? {review_required: true, payment_status: transactionStatus}
             : {status: "revoked", payment_status: transactionStatus});
+          if (ownerRef && ownerDoc?.exists) t.update(ownerRef, {access_due_ms: Date.now()});
         });
         await eventRef.update({status: "completed"});
         res.status(200).json({status: "OK"});
@@ -1572,6 +1576,7 @@ export const redeemCode = functions
         entitlements: updatedEntitlements,
         updated_at: admin.firestore.FieldValue.serverTimestamp(),
         access_version: 2,
+        access_due_ms: Date.now(),
         access_grant_ids: [...new Set([...(userData.access_grant_ids || []), voucherGrantId])],
       };
 
@@ -2288,6 +2293,19 @@ export const chatGate = functions
         return;
       }
 
+      const profile = (await db.collection("users").doc(session.uid).get()).data();
+      if (profile?.access_version === 2) {
+        try {
+          const entity = AGENT_TO_ENTITY[agentId];
+          const assigned = await new AccessControl(db, NOTEBOOK_ENTITIES, ENTITY_SCOPES).resolve(session.uid, entity);
+          res.setHeader("Content-Type", "text/html;charset=UTF-8");
+          res.send(getChatWrapperHTML({...agent, notebookId: assigned.notebookId}, agentId, session.email));
+        } catch (e) {
+          res.status(e instanceof AccessFault && e.code === "permission-denied" ? 403 : 503)
+            .send("Akses notebook sedang disiapkan atau diperiksa. Anda tidak perlu membeli ulang.");
+        }
+        return;
+      }
       res.setHeader("Content-Type", "text/html;charset=UTF-8");
       res.send(getChatWrapperHTML(agent, agentId, session.email));
       return;
