@@ -672,7 +672,7 @@ export const createCheckout = functions
          pricingRevision !== "perdana-2026-09-20")) {
       throw new functions.https.HttpsError("failed-precondition", "Harga penawaran telah berubah. Muat ulang aplikasi.");
     }
-    const invoiceNumber = `OT-${Date.now()}-${Math.floor(1000 + Math.random() * 9000)}`;
+    const invoiceNumber = `OT-${crypto.randomUUID()}`;
 
     const trxRef = db.collection("transactions").doc();
     const trxId = trxRef.id;
@@ -696,6 +696,8 @@ export const createCheckout = functions
       created_at: admin.firestore.FieldValue.serverTimestamp(),
     });
 
+    await db.collection("payment_reconciliation").doc(invoiceNumber).set({invoice_number:invoiceNumber,
+      transaction_document:trxId,uid,gateway:"midtrans",state:"pending",due_ms:Date.now()+60000,attempts:0});
     let paymentUrl = "";
     let snapToken = "";
     try {
@@ -862,6 +864,9 @@ async function processSuccessfulPayment(invoiceNumber: string, paidAmount: unkno
     const expiryDate = new Date(billingExpiry(baseDate.getTime(), durationMonths));
     const grantId = keyOf("invoice", invoiceNumber);
     if (receiptRef) t.set(receiptRef, {invoice_number: invoiceNumber, uid, transaction_id: gatewayEvidence!.transactionId});
+    if (txData.gateway === "midtrans") t.set(db.collection("payment_reconciliation").doc(invoiceNumber), {
+      invoice_number:invoiceNumber,transaction_document:txDocRef.id,uid,gateway:"midtrans",state:"paid",
+      lease:null,due_ms:Date.now()+6*3600000}, {merge:true});
     t.set(db.collection("access_grants").doc(grantId), {
       uid, scope: entitlementKey, kind: "payment", status: "active", amount,
       invoice_number: invoiceNumber, transaction_document: txDocRef.id,
