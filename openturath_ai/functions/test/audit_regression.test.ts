@@ -109,9 +109,11 @@ test('A01 duplicate invoice grants one extension under parallel calls',async()=>
   const {api,db}=loadBackend(root);
   db.seed('users/u',{email:'u@example.test',entitlements:{hadits:active()}});
   const old=db.docs.get('users/u').entitlements.hadits.expiry.toDate();
+  db.seed('access_grants/previous',{uid:'u',scope:'hadits',kind:'payment',status:'active',amount:50000,expires_ms:old.getTime()});
+  db.docs.get('users/u').access_grant_ids=['previous'];
   db.seed('transactions/t',{uid:'u',invoice_number:'INV-1',amount:50000,duration_months:1,entitlement_key:'hadits',plan:'tholib_1m',customer_email:'u@example.test'});
   await Promise.all(Array.from({length:30},()=>api.processSuccessfulPayment('INV-1',50000)));
-  assert.equal(db.docs.get('users/u').entitlements.hadits.expiry.toMillis(),api.addCalendarMonthsClamped(old,1).getTime());
+  assert.equal(db.docs.get('users/u').entitlements.hadits.expiry.toMillis(),old.getTime()+30*86400000);
   assert.equal([...db.docs.keys()].filter(k=>k.startsWith('provisioning_outbox/')).length,1);
 });
 test('A01 signed success with wrong amount cannot activate invoice',async()=>{
