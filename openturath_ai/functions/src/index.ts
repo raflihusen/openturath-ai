@@ -2,6 +2,8 @@ import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
 import axios from "axios";
 import * as crypto from "crypto";
+import {AccessControl, AccessFault, isVip, keyOf, millis} from "./access_control";
+import {AGENT_ENTITLEMENTS, ENTITY_SCOPES} from "./access_catalog";
 import { handleNativeChat, NativeChatError } from "./native_chat";
 import {
   NOTEBOOK_ENTITIES,
@@ -51,99 +53,6 @@ for (const [agentId, entityCode] of Object.entries(AGENT_TO_ENTITY)) {
 
 // Mapping eksplisit mencegah agent baru "jatuh" ke entitlement default dan
 // tidak sengaja terbuka oleh langganan modul lain.
-const AGENT_ENTITLEMENTS: Record<string, string> = {
-  // Fikih Tahawwulat (Sovereign Flagship)
-  fiqh_tahawwulat: "fiqh_tahawwulat",
-  fiqh_tahawwulat_muhaqqiq: "fiqh_tahawwulat",
-  fiqh_tahawwulat_bayan: "fiqh_tahawwulat",
-  fiqh_tahawwulat_mukhtabir: "fiqh_tahawwulat",
-  fiqh_tahawwulat_habib: "fiqh_tahawwulat",
-  fiqh_tahawwulat_khatib: "fiqh_tahawwulat",
-
-  // 4 Mazhab Fikih & Muqaran
-  fiqh_syafii: "fiqh_syafii",
-  fiqh_syafii_muhaqqiq: "fiqh_syafii",
-  fiqh_hanafi: "fiqh_hanafi",
-  fiqh_hanafi_muhaqqiq: "fiqh_hanafi",
-  fiqh_maliki: "fiqh_maliki",
-  fiqh_maliki_muhaqqiq: "fiqh_maliki",
-  fiqh_hanbali: "fiqh_hanbali",
-  fiqh_hanbali_muhaqqiq: "fiqh_hanbali",
-  fiqh_hambali: "fiqh_hanbali",
-  fiqh_muqaran: "fiqh_muqaran",
-  fiqh_muqaran_muhaqqiq: "fiqh_muqaran",
-  fatawa_masail: "fiqh",
-  fatawa_dan_masail: "fiqh",
-  fatawa: "fiqh",
-
-  // Kaidah & Ushul Fikih
-  qawaid_fiqhiyyah: "ushul_fiqh",
-  usul_qawaid: "ushul_fiqh",
-  qawaid: "ushul_fiqh",
-  ushul_fiqh: "ushul_fiqh",
-  ushul_muhaqqiq: "ushul_fiqh",
-  usul_maqashid: "ushul_fiqh",
-  usul_istinbath: "ushul_fiqh",
-
-  // Bahasa & Sastra Arab
-  nahwu_sharaf: "nahwu",
-  nahwu_sharaf_muerib: "nahwu",
-  nahwu_sharaf_tashrif: "nahwu",
-  bahasa_arab: "nahwu",
-  lughah_nahwu: "nahwu",
-  lughah_sharaf: "nahwu",
-  lughah_balaghah: "nahwu",
-  lughah_mujam: "nahwu",
-
-  // Tafsir & Al-Qur'an
-  tafsir: "tafsir",
-  tafsir_muhaqqiq: "tafsir",
-  tafsir_ahkam: "tafsir",
-  tafsir_matsur: "tafsir",
-  tafsir_ulumul_quran: "tafsir",
-  tajwid_qiraat: "tafsir",
-  tajwid: "tafsir",
-  qiraat: "tafsir",
-
-  // Hadits & Syarah
-  hadits: "hadits",
-  hadits_muhaqqiq: "hadits",
-  hadits_syarah: "hadits",
-  syarah_hadits: "hadits",
-  hadits_takhrij: "hadits",
-  hadits_ilal: "hadits",
-  musthalah_hadits: "hadits",
-
-  // Akidah & Teologi
-  aqidah: "aqidah",
-  aqidah_kalam: "aqidah",
-  aqidah_ushuluddin: "aqidah",
-  ushuluddin: "aqidah",
-
-  // Sejarah, Sirah & Biografi
-  tarikh: "tarikh",
-  tarikh_khulafa: "tarikh",
-  sirah: "tarikh",
-  tarikh_thabaqat: "tarikh",
-  thabaqat_rijal: "tarikh",
-
-  // Tasawwuf & Ulama
-  tasawwuf: "tasawwuf",
-  tasawwuf_adzkar: "tasawwuf",
-  tasawwuf_ihya: "tasawwuf",
-  tasawwuf_adab: "tasawwuf",
-  habib_umar: "tasawwuf",
-  imam_ghazali: "tasawwuf",
-
-  // Bibliografi & Faharis
-  bibliografi_faharis: "bibliografi_faharis",
-  faharis: "bibliografi_faharis",
-  bibliografi: "bibliografi_faharis",
-
-  all_ai: "all_access",
-};
-
-
 // Whitelist modul yang diizinkan untuk dibeli via checkout payment (OT-F001)
 export const PURCHASABLE_AGENTS = new Set([
   "fiqh_tahawwulat",
@@ -206,6 +115,7 @@ export function addCalendarMonthsClamped(baseDate: Date, months: number): Date {
 }
 
 function getEntitlementAccess(userData: FirebaseFirestore.DocumentData, entitlementKey: string): { premiumPlan: boolean; active: boolean } {
+  if (isVip(userData)) return {premiumPlan:true,active:true};
   if (userData.account_deleted === true) return {premiumPlan:false,active:false};
   const entitlements = userData.entitlements && typeof userData.entitlements === "object"
     ? userData.entitlements as Record<string, any> : {};
@@ -292,6 +202,15 @@ export const getAgentUrl = functions
     }
 
     const userData = userDoc.data()!;
+    if (userData.access_version === 2) {
+      const entity = AGENT_TO_ENTITY[agentId];
+      if (!entity) throw new functions.https.HttpsError("not-found", "Kajian tidak ditemukan.");
+      try { return await new AccessControl(db, NOTEBOOK_ENTITIES, ENTITY_SCOPES).resolve(uid, entity); }
+      catch (e) {
+        if (e instanceof AccessFault) throw new functions.https.HttpsError(e.code as functions.https.FunctionsErrorCode, e.message);
+        throw e;
+      }
+    }
     const questionsUsed = (userData.questions_used as number) || 0;
     const entitlementKey = getEntitlementKey(agentId);
 
@@ -914,7 +833,20 @@ async function processSuccessfulPayment(invoiceNumber: string, paidAmount: unkno
         baseDate = curExpDate;
       }
     }
-    const expiryDate = addCalendarMonthsClamped(baseDate, durationMonths);
+    // Only ledger-backed grants extend a paid period. Profile expiry is a projection.
+    baseDate = now;
+    for (const id of uData.access_grant_ids || []) {
+      const g = (await t.get(db.collection("access_grants").doc(id))).data();
+      if (g?.scope === entitlementKey && g.status === "active" && g.expires_ms > baseDate.getTime()) baseDate = new Date(g.expires_ms);
+    }
+    const expiryDate = new Date(baseDate.getTime() + durationMonths * 30 * 86400000);
+    const grantId = keyOf("invoice", invoiceNumber);
+    t.set(db.collection("access_grants").doc(grantId), {
+      uid, scope: entitlementKey, kind: "payment", status: "active", amount,
+      invoice_number: invoiceNumber, transaction_document: txDocRef.id,
+      gateway: txData.gateway || "doku", starts_ms: baseDate.getTime(), expires_ms: expiryDate.getTime(),
+      created_ms: now.getTime(),
+    });
 
     // F03: Update Status Transaksi Atomik
     t.update(txDocRef, {
@@ -932,7 +864,7 @@ async function processSuccessfulPayment(invoiceNumber: string, paidAmount: unkno
       [entitlementKey]: {
         plan: plan,
         status: "active",
-        source: "doku_payment",
+        source: `${txData.gateway || "doku"}_payment`,
         expiry: admin.firestore.Timestamp.fromDate(expiryDate),
         updated_at: admin.firestore.FieldValue.serverTimestamp(),
       }
@@ -940,6 +872,8 @@ async function processSuccessfulPayment(invoiceNumber: string, paidAmount: unkno
 
     const userUpdate: any = {
       entitlements: updatedEntitlements,
+      access_version: 2,
+      access_grant_ids: [...new Set([...(uData.access_grant_ids || []), grantId])],
       updated_at: admin.firestore.FieldValue.serverTimestamp(),
     };
 
@@ -1159,8 +1093,8 @@ export const midtransWebhook = functions
       const statusCode = body.status_code;
       const grossAmount = body.gross_amount;
       const signatureKey = body.signature_key;
-      const transactionStatus = body.transaction_status;
-      const fraudStatus = body.fraud_status;
+      let transactionStatus = body.transaction_status;
+      let fraudStatus = body.fraud_status;
 
       console.log(`[Midtrans Webhook] Notifikasi order: ${orderId}, status: ${transactionStatus}, code: ${statusCode}`);
 
@@ -1181,6 +1115,18 @@ export const midtransWebhook = functions
         return;
       }
 
+      // Notification signature does not authenticate all status fields. Always
+      // inquire using the server key before deciding access, including refunds.
+      const inquiry = await axios.get(`${cfg.apiUrl}/${encodeURIComponent(String(orderId))}/status`, {
+        headers: {Authorization: `Basic ${Buffer.from(`${cfg.serverKey}:`).toString("base64")}`}, timeout: 15000,
+      });
+      const verified = inquiry.data;
+      if (verified.order_id !== orderId || Number(verified.gross_amount) !== Number(grossAmount) ||
+          (verified.currency && verified.currency !== "IDR")) {
+        res.status(400).send("Payment identity mismatch"); return;
+      }
+      transactionStatus = verified.transaction_status;
+      fraudStatus = verified.fraud_status;
       // State machine idempotensi event
       const eventKey = crypto.createHash("sha256").update(`midtrans_${orderId}_${transactionStatus}_${statusCode}`).digest("hex");
       const eventRef = db.collection("webhook_events").doc(eventKey);
@@ -1227,13 +1173,24 @@ export const midtransWebhook = functions
         console.log(`[Midtrans Webhook] Payment ${transactionStatus} for ${orderId}. Updating transaction record...`);
         const txQuery = await db.collection("transactions").where("invoice_number", "==", orderId).limit(1).get();
         if (!txQuery.empty) {
-          await txQuery.docs[0].ref.update({
-            status: transactionStatus,
-            updated_at: admin.firestore.FieldValue.serverTimestamp(),
+          await db.runTransaction(async t => {
+            const tx = await t.get(txQuery.docs[0].ref);
+            if (tx.data()?.activation_applied === true) return;
+            t.update(txQuery.docs[0].ref, {status: transactionStatus, updated_at: admin.firestore.FieldValue.serverTimestamp()});
           });
         }
         await eventRef.update({ status: "completed" });
         res.status(200).json({ status: "OK", message: `Transaction marked as ${transactionStatus}` });
+      } else if (["refund", "partial_refund", "chargeback", "partial_chargeback"].includes(transactionStatus)) {
+        const gr = db.collection("access_grants").doc(keyOf("invoice", String(orderId)));
+        await db.runTransaction(async t => {
+          const grant = await t.get(gr);
+          if (grant.exists) t.update(gr, transactionStatus.startsWith("partial")
+            ? {review_required: true, payment_status: transactionStatus}
+            : {status: "revoked", payment_status: transactionStatus});
+        });
+        await eventRef.update({status: "completed"});
+        res.status(200).json({status: "OK"});
       } else {
         console.log(`[Midtrans Webhook] Pending status ${transactionStatus} for ${orderId}.`);
         await eventRef.update({ status: "pending" });
@@ -1564,6 +1521,11 @@ export const redeemCode = functions
 
       const newExpiry = new Date(baseDate.getTime() + durationDays * 24 * 60 * 60 * 1000);
 
+      const voucherGrantId = keyOf("voucher", rawCode, uid);
+      transaction.set(db.collection("access_grants").doc(voucherGrantId), {
+        uid, scope: entitlementKey, kind: "voucher", status: "active", redemption_code: rawCode,
+        starts_ms: redeemedAt.getTime(), expires_ms: newExpiry.getTime(), created_ms: redeemedAt.getTime(),
+      });
       // 1. Simpan catatan penukaran
       transaction.set(redemptionRef, {
         uid,
@@ -1609,6 +1571,8 @@ export const redeemCode = functions
       const userUpdate: any = {
         entitlements: updatedEntitlements,
         updated_at: admin.firestore.FieldValue.serverTimestamp(),
+        access_version: 2,
+        access_grant_ids: [...new Set([...(userData.access_grant_ids || []), voucherGrantId])],
       };
 
       // Hanya set plan global jika voucher adalah all_access
@@ -1773,6 +1737,7 @@ export const dailyRevoke = functions
   .runWith({ serviceAccount: "open-turath@appspot.gserviceaccount.com", timeoutSeconds: 300 })
   .pubsub.schedule("every 1 hours")
   .onRun(async () => {
+    if ((await db.collection("access_control").doc("runtime").get()).data()?.writer === "vps-v2") return null;
     const revokedSummary: Array<{ email: string; scope: string; reason: string }> = [];
     let cursor: FirebaseFirestore.QueryDocumentSnapshot | undefined;
     while (true) {
@@ -1964,6 +1929,7 @@ export const processProvisioningOutbox = functions
   .runWith({ serviceAccount: "open-turath@appspot.gserviceaccount.com", timeoutSeconds: 300 })
   .pubsub.schedule("every 5 minutes")
   .onRun(async () => {
+    if ((await db.collection("access_control").doc("runtime").get()).data()?.writer === "vps-v2") return null;
     const started = Date.now();
     const pending = await db.collection("provisioning_outbox")
       .where("status", "in", ["pending", "retry", "processing"]).limit(25).get();
