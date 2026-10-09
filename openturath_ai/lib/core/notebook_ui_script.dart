@@ -229,7 +229,7 @@ const notebookUiScript = r'''
       .ot-opening-language .mat-mdc-menu-panel { opacity: 0 !important; }
       .cdk-overlay-container { z-index: 99999 !important; }
 
-      /* Only the live composer's outer path owns viewport layout. */
+      /* Grow the viewport and transcript; keep input-only branches at natural height. */
       html, body { height: 100% !important; margin: 0 !important; }
       body.ot-chat-layout { height: var(--ot-chat-height, 100dvh) !important; }
       .ot-chat-path {
@@ -245,7 +245,25 @@ const notebookUiScript = r'''
         padding-top: 0 !important;
         margin-top: 0 !important;
       }
+      .ot-chat-composer-path {
+        flex: 0 0 auto !important;
+        height: auto !important;
+        min-height: 0 !important;
+        max-height: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+      }
+      .ot-chat-transcript-path {
+        display: flex !important;
+        flex-direction: column !important;
+        flex: 1 1 0px !important;
+        min-height: 0 !important;
+        height: auto !important;
+        max-height: none !important;
+      }
       .ot-chat-transcript {
+        height: auto !important;
+        max-height: none !important;
         flex: 1 1 0px !important;
         min-height: 0 !important;
         overflow-y: auto !important;
@@ -566,13 +584,15 @@ const notebookUiScript = r'''
   }
 
   function anchorConversationInput() {
-    // Match the visible, enabled composer, never a hidden source/search field.
+    // A disabled input still owns the layout while NotebookLM generates a response.
     const inputs = [...document.querySelectorAll('textarea, [contenteditable="true"], [role="textbox"]')];
-    const enabledInputs = inputs.filter(el => visible(el) && !el.disabled && el.getAttribute('aria-disabled') !== 'true');
+    const enabledInputs = inputs.filter(visible);
     const input = enabledInputs.find(el => el.closest('app-chat-input, .chat-input-container, form.chat-input-form, .chat-input-area, .query-box-container, app-chat, app-chat-view, app-chat-panel, .chat-panel, .chat-view, .chat-panel-content')) || enabledInputs[0];
-    const oldNodes = [...document.querySelectorAll('.ot-chat-path, .ot-chat-transcript, .ot-chat-composer')];
+    const oldNodes = [...document.querySelectorAll('.ot-chat-path, .ot-chat-transcript, .ot-chat-composer, .ot-chat-composer-path, .ot-chat-transcript-path')];
     const path = new Set();
     const transcripts = new Set();
+    const composerPaths = new Set();
+    const transcriptPaths = new Set();
     let composer = null;
     if (input) {
       const panelSelector = 'app-chat, app-chat-view, app-chat-panel, .chat-panel, .chat-view, .chat-panel-content, .conversation-container, main, [role="main"]';
@@ -591,16 +611,41 @@ const notebookUiScript = r'''
         while (composer.parentElement && composer.parentElement.matches(composerSelector)) {
           composer = composer.parentElement;
         }
+        const ancestors = [];
         let node = composer.parentElement;
+        let conversationRoot = null;
         while (node && node !== document.documentElement) {
-          path.add(node);
-          [...node.children].forEach(child => {
-            if (child === composer || child.contains(composer)) return;
-            if (child.matches('.message-list, [role="log"], .chat-panel-content, .conversation-container') ||
-                child.querySelector(answerSelector + ',' + questionSelector)) transcripts.add(child);
-          });
+          ancestors.push(node);
+          // The first shared parent owns the transcript and input as separate rows.
+          // Input-only wrappers below it must never receive flex: 1.
+          const siblings = [...node.children].filter(child => child !== composer && !child.contains(composer));
+          const messageBranches = siblings.filter(child =>
+            child.matches('.message-list, [role="log"]') ||
+            child.querySelector(answerSelector + ',' + questionSelector));
+          if (!conversationRoot && messageBranches.length) {
+            conversationRoot = node;
+            messageBranches.forEach(branch => {
+              const scrollers = [branch, ...branch.querySelectorAll('*')].filter(el => {
+                if (!el.querySelector(answerSelector + ',' + questionSelector)) return false;
+                return el.matches('.message-list, [role="log"]') || /auto|scroll/.test(getComputedStyle(el).overflowY);
+              });
+              const scroller = scrollers[scrollers.length - 1] || branch;
+              transcripts.add(scroller);
+              let wrapper = scroller.parentElement;
+              while (wrapper && wrapper !== node) {
+                transcriptPaths.add(wrapper);
+                wrapper = wrapper.parentElement;
+              }
+            });
+          }
           node = node.parentElement;
         }
+        let belowRoot = !!conversationRoot;
+        ancestors.forEach(ancestor => {
+          if (ancestor === conversationRoot) belowRoot = false;
+          path.add(ancestor);
+          if (belowRoot) composerPaths.add(ancestor);
+        });
         // Keep the original accessible name when removing a placeholder-only label.
         const placeholder = input.getAttribute('placeholder');
         if (placeholder) {
@@ -619,9 +664,13 @@ const notebookUiScript = r'''
       if (!path.has(node)) node.classList.remove('ot-chat-path');
       if (!transcripts.has(node)) node.classList.remove('ot-chat-transcript');
       if (node !== composer) node.classList.remove('ot-chat-composer');
+      if (!composerPaths.has(node)) node.classList.remove('ot-chat-composer-path');
+      if (!transcriptPaths.has(node)) node.classList.remove('ot-chat-transcript-path');
     });
     path.forEach(node => node.classList.add('ot-chat-path'));
     transcripts.forEach(node => node.classList.add('ot-chat-transcript'));
+    composerPaths.forEach(node => node.classList.add('ot-chat-composer-path'));
+    transcriptPaths.forEach(node => node.classList.add('ot-chat-transcript-path'));
     if (composer) composer.classList.add('ot-chat-composer');
     document.body?.classList.toggle('ot-chat-layout', !!composer);
     const height = window.visualViewport ? window.visualViewport.height : window.innerHeight;
@@ -643,7 +692,7 @@ const notebookUiScript = r'''
   window.visualViewport?.addEventListener('resize', scheduleConversationLayout);
   const composerObserver = new MutationObserver(scheduleConversationLayout);
   composerObserver.observe(document.documentElement, {
-    subtree: true, childList: true, attributes: true, attributeFilter: ['placeholder']
+    subtree: true, childList: true, attributes: true, attributeFilter: ['placeholder', 'disabled', 'aria-disabled']
   });
 
   // Temporary geometry-only diagnostics for the real WKWebView regression.
