@@ -157,5 +157,12 @@
     "generating": "visible disabled composer retains layout; readiness checks remain separate",
     "placeholder": "removed visually; accessible name preserved",
     "validation": "WebKit regression passed; authenticated NotebookLM runtime still pending"
+  },
+  "notebookEndpoint": {
+    "canonicalOrigin": "https://notebook.google.com",
+    "legacyOrigin": "https://notebooklm.google.com",
+    "selection": "validate server assignment; normalize only host to verified Google redirect destination",
+    "preserved": "notebook ID/path, server entitlement, strict HTTPS allowlist, WebView lifecycle",
+    "reason": "legacy-host TCP timeout observed locally; canonical-host HTTPS succeeded"
   }
 }
