@@ -484,6 +484,9 @@ class AutonomousReaper:
         HANYA mencabut jika email tersebut BENAR-BENAR TERDAFTAR SEBAGAI EXPIRED pada notebook tersebut.
         Akun VIP manual yang ada di whitelist / VIP_PERMANENT TIDAK AKAN DISENTUH SAMA SEKALI.
         """
+        control = self.db.collection("access_control").document("runtime").get().to_dict() or {}
+        if control.get("writer") == "vps-v2":
+            return {"success": True, "action": "vps_writer_active", "revoked": 0}
         now = datetime.now(timezone.utc)
         logger.info("=" * 80)
         logger.info(f"🛡️ SAFE REAPER CYCLE STARTED: {now.strftime('%Y-%m-%d %H:%M:%S UTC')}")
