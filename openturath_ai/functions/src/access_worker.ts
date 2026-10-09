@@ -174,6 +174,14 @@ async function importOwner(doc: any): Promise<void> {
     await db.collection("access_reviews").doc(keyOf(uid,"legacy_evidence")).set({uid,
       code:"legacy_payment_evidence_incomplete", transaction_documents:unresolved, updated_ms:Date.now()});
   }
+  if (!unresolved.length) {
+    const review = db.collection("access_reviews").doc(keyOf(uid,"legacy_evidence"));
+    const free = await db.collection("access_reviews").doc(keyOf(email,"free_access")).get();
+    if ((await review.get()).exists && !free.exists) {
+      await doc.ref.update({access_revocation_hold:false});
+      await review.update({status:"resolved_by_verified_billing",updated_ms:Date.now()});
+    }
+  }
   if (unresolved.length && fresh.access_version !== 2) return;
   // Do not invent a grant from profile expiry. Unproved legacy voucher/manual
   // access remains reviewable and outside automated revocation until imported.
