@@ -6,6 +6,8 @@ const functions = require("firebase-functions");
 const admin = require("firebase-admin");
 const axios_1 = require("axios");
 const crypto = require("crypto");
+const access_control_1 = require("./access_control");
+const access_catalog_1 = require("./access_catalog");
 const native_chat_1 = require("./native_chat");
 const notebook_catalog_1 = require("./notebook_catalog");
 admin.initializeApp();
@@ -42,87 +44,6 @@ for (const [agentId, entityCode] of Object.entries(notebook_catalog_1.AGENT_TO_E
 }
 // Mapping eksplisit mencegah agent baru "jatuh" ke entitlement default dan
 // tidak sengaja terbuka oleh langganan modul lain.
-const AGENT_ENTITLEMENTS = {
-    // Fikih Tahawwulat (Sovereign Flagship)
-    fiqh_tahawwulat: "fiqh_tahawwulat",
-    fiqh_tahawwulat_muhaqqiq: "fiqh_tahawwulat",
-    fiqh_tahawwulat_bayan: "fiqh_tahawwulat",
-    fiqh_tahawwulat_mukhtabir: "fiqh_tahawwulat",
-    fiqh_tahawwulat_habib: "fiqh_tahawwulat",
-    fiqh_tahawwulat_khatib: "fiqh_tahawwulat",
-    // 4 Mazhab Fikih & Muqaran
-    fiqh_syafii: "fiqh_syafii",
-    fiqh_syafii_muhaqqiq: "fiqh_syafii",
-    fiqh_hanafi: "fiqh_hanafi",
-    fiqh_hanafi_muhaqqiq: "fiqh_hanafi",
-    fiqh_maliki: "fiqh_maliki",
-    fiqh_maliki_muhaqqiq: "fiqh_maliki",
-    fiqh_hanbali: "fiqh_hanbali",
-    fiqh_hanbali_muhaqqiq: "fiqh_hanbali",
-    fiqh_hambali: "fiqh_hanbali",
-    fiqh_muqaran: "fiqh_muqaran",
-    fiqh_muqaran_muhaqqiq: "fiqh_muqaran",
-    fatawa_masail: "fiqh",
-    fatawa_dan_masail: "fiqh",
-    fatawa: "fiqh",
-    // Kaidah & Ushul Fikih
-    qawaid_fiqhiyyah: "ushul_fiqh",
-    usul_qawaid: "ushul_fiqh",
-    qawaid: "ushul_fiqh",
-    ushul_fiqh: "ushul_fiqh",
-    ushul_muhaqqiq: "ushul_fiqh",
-    usul_maqashid: "ushul_fiqh",
-    usul_istinbath: "ushul_fiqh",
-    // Bahasa & Sastra Arab
-    nahwu_sharaf: "nahwu",
-    nahwu_sharaf_muerib: "nahwu",
-    nahwu_sharaf_tashrif: "nahwu",
-    bahasa_arab: "nahwu",
-    lughah_nahwu: "nahwu",
-    lughah_sharaf: "nahwu",
-    lughah_balaghah: "nahwu",
-    lughah_mujam: "nahwu",
-    // Tafsir & Al-Qur'an
-    tafsir: "tafsir",
-    tafsir_muhaqqiq: "tafsir",
-    tafsir_ahkam: "tafsir",
-    tafsir_matsur: "tafsir",
-    tafsir_ulumul_quran: "tafsir",
-    tajwid_qiraat: "tafsir",
-    tajwid: "tafsir",
-    qiraat: "tafsir",
-    // Hadits & Syarah
-    hadits: "hadits",
-    hadits_muhaqqiq: "hadits",
-    hadits_syarah: "hadits",
-    syarah_hadits: "hadits",
-    hadits_takhrij: "hadits",
-    hadits_ilal: "hadits",
-    musthalah_hadits: "hadits",
-    // Akidah & Teologi
-    aqidah: "aqidah",
-    aqidah_kalam: "aqidah",
-    aqidah_ushuluddin: "aqidah",
-    ushuluddin: "aqidah",
-    // Sejarah, Sirah & Biografi
-    tarikh: "tarikh",
-    tarikh_khulafa: "tarikh",
-    sirah: "tarikh",
-    tarikh_thabaqat: "tarikh",
-    thabaqat_rijal: "tarikh",
-    // Tasawwuf & Ulama
-    tasawwuf: "tasawwuf",
-    tasawwuf_adzkar: "tasawwuf",
-    tasawwuf_ihya: "tasawwuf",
-    tasawwuf_adab: "tasawwuf",
-    habib_umar: "tasawwuf",
-    imam_ghazali: "tasawwuf",
-    // Bibliografi & Faharis
-    bibliografi_faharis: "bibliografi_faharis",
-    faharis: "bibliografi_faharis",
-    bibliografi: "bibliografi_faharis",
-    all_ai: "all_access",
-};
 // Whitelist modul yang diizinkan untuk dibeli via checkout payment (OT-F001)
 exports.PURCHASABLE_AGENTS = new Set([
     "fiqh_tahawwulat",
@@ -164,7 +85,7 @@ exports.MODULE_PLANS = {
     "1y": { amount: 499000, durationMonths: 12, labelSuffix: "(1 Tahun)" },
 };
 function getEntitlementKey(agentId) {
-    const entitlementKey = AGENT_ENTITLEMENTS[agentId];
+    const entitlementKey = access_catalog_1.AGENT_ENTITLEMENTS[agentId];
     if (!entitlementKey) {
         // OT-F001: Jangan pernah mengembalikan input mentah client untuk mencegah privilege escalation
         return "";
@@ -182,6 +103,8 @@ function addCalendarMonthsClamped(baseDate, months) {
 }
 function getEntitlementAccess(userData, entitlementKey) {
     var _a, _b, _c;
+    if ((0, access_control_1.isVip)(userData))
+        return { premiumPlan: true, active: true };
     if (userData.account_deleted === true)
         return { premiumPlan: false, active: false };
     const entitlements = userData.entitlements && typeof userData.entitlements === "object"
@@ -248,6 +171,19 @@ exports.getAgentUrl = functions
         throw new functions.https.HttpsError("not-found", "User tidak ditemukan.");
     }
     const userData = userDoc.data();
+    if (userData.access_version === 2) {
+        const entity = notebook_catalog_1.AGENT_TO_ENTITY[agentId];
+        if (!entity)
+            throw new functions.https.HttpsError("not-found", "Kajian tidak ditemukan.");
+        try {
+            return await new access_control_1.AccessControl(db, notebook_catalog_1.NOTEBOOK_ENTITIES, access_catalog_1.ENTITY_SCOPES).resolve(uid, entity);
+        }
+        catch (e) {
+            if (e instanceof access_control_1.AccessFault)
+                throw new functions.https.HttpsError(e.code, e.message);
+            throw e;
+        }
+    }
     const questionsUsed = userData.questions_used || 0;
     const entitlementKey = getEntitlementKey(agentId);
     const entitlementAccess = getEntitlementAccess(userData, entitlementKey);
@@ -702,7 +638,7 @@ function getServiceTitleForEntitlement(entitlementKey) {
         return "AI Tasawwuf & Tazkiyatun Nafs";
     return "Modul kajian";
 }
-async function processSuccessfulPayment(invoiceNumber, paidAmount) {
+async function processSuccessfulPayment(invoiceNumber, paidAmount, gatewayEvidence) {
     const txQuery = await db.collection("transactions")
         .where("invoice_number", "==", invoiceNumber)
         .limit(1)
@@ -753,6 +689,15 @@ async function processSuccessfulPayment(invoiceNumber, paidAmount) {
         if (!uid) {
             throw new Error(`Transaction ${invoiceNumber} tidak memiliki owner UID`);
         }
+        const receiptRef = gatewayEvidence ? db.collection("payment_receipts").doc((0, access_control_1.keyOf)("midtrans", gatewayEvidence.transactionId)) : null;
+        if (gatewayEvidence) {
+            if (gatewayEvidence.orderId !== invoiceNumber || (gatewayEvidence.currency && gatewayEvidence.currency !== "IDR") ||
+                typeof gatewayEvidence.transactionId !== "string" || !/^[a-zA-Z0-9_-]{1,128}$/.test(gatewayEvidence.transactionId))
+                throw new Error("Invalid gateway identity");
+            const receipt = (await t.get(receiptRef)).data();
+            if (receipt && receipt.invoice_number !== invoiceNumber)
+                throw new Error("Gateway transaction already bound to another invoice");
+        }
         const userRef = db.collection("users").doc(uid);
         const uSnap = await t.get(userRef);
         if (!uSnap.exists)
@@ -769,7 +714,24 @@ async function processSuccessfulPayment(invoiceNumber, paidAmount) {
                 baseDate = curExpDate;
             }
         }
-        const expiryDate = addCalendarMonthsClamped(baseDate, durationMonths);
+        // Only ledger-backed grants extend a paid period. Profile expiry is a projection.
+        baseDate = now;
+        for (const id of uData.access_grant_ids || []) {
+            const g = (await t.get(db.collection("access_grants").doc(id))).data();
+            if (g && g.scope === entitlementKey && g.status === "active" && g.expires_ms > baseDate.getTime())
+                baseDate = new Date(g.expires_ms);
+        }
+        const expiryDate = new Date((0, access_control_1.billingExpiry)(baseDate.getTime(), durationMonths));
+        const grantId = (0, access_control_1.keyOf)("invoice", invoiceNumber);
+        if (receiptRef)
+            t.set(receiptRef, { invoice_number: invoiceNumber, uid, transaction_id: gatewayEvidence.transactionId });
+        t.set(db.collection("access_grants").doc(grantId), {
+            uid, scope: entitlementKey, kind: "payment", status: "active", amount,
+            invoice_number: invoiceNumber, transaction_document: txDocRef.id,
+            transaction_id: (gatewayEvidence === null || gatewayEvidence === void 0 ? void 0 : gatewayEvidence.transactionId) || txData.transaction_id || invoiceNumber,
+            gateway: txData.gateway || "doku", starts_ms: baseDate.getTime(), expires_ms: expiryDate.getTime(),
+            created_ms: now.getTime(),
+        });
         // F03: Update Status Transaksi Atomik
         t.update(txDocRef, {
             status: "paid",
@@ -782,12 +744,15 @@ async function processSuccessfulPayment(invoiceNumber, paidAmount) {
         const updatedEntitlements = Object.assign(Object.assign({}, entitlements), { [entitlementKey]: {
                 plan: plan,
                 status: "active",
-                source: "doku_payment",
+                source: `${txData.gateway || "doku"}_payment`,
                 expiry: admin.firestore.Timestamp.fromDate(expiryDate),
                 updated_at: admin.firestore.FieldValue.serverTimestamp(),
             } });
         const userUpdate = {
             entitlements: updatedEntitlements,
+            access_version: 2,
+            access_due_ms: Date.now(),
+            access_grant_ids: [...new Set([...(uData.access_grant_ids || []), grantId])],
             updated_at: admin.firestore.FieldValue.serverTimestamp(),
         };
         // F01: Hanya ubah plan global jika pembelian adalah paket all_access
@@ -987,8 +952,8 @@ exports.midtransWebhook = functions
         const statusCode = body.status_code;
         const grossAmount = body.gross_amount;
         const signatureKey = body.signature_key;
-        const transactionStatus = body.transaction_status;
-        const fraudStatus = body.fraud_status;
+        let transactionStatus = body.transaction_status;
+        let fraudStatus = body.fraud_status;
         console.log(`[Midtrans Webhook] Notifikasi order: ${orderId}, status: ${transactionStatus}, code: ${statusCode}`);
         if (!orderId || !statusCode || !grossAmount || !signatureKey) {
             console.error("[Midtrans Webhook] Missing required signature parameters in body.");
@@ -1004,6 +969,19 @@ exports.midtransWebhook = functions
             res.status(401).send("Invalid signature");
             return;
         }
+        // Notification signature does not authenticate all status fields. Always
+        // inquire using the server key before deciding access, including refunds.
+        const inquiry = await axios_1.default.get(`${cfg.apiUrl}/${encodeURIComponent(String(orderId))}/status`, {
+            headers: { Authorization: `Basic ${Buffer.from(`${cfg.serverKey}:`).toString("base64")}` }, timeout: 15000,
+        });
+        const verified = inquiry.data;
+        if (verified.order_id !== orderId || Number(verified.gross_amount) !== Number(grossAmount) ||
+            (verified.currency && verified.currency !== "IDR")) {
+            res.status(400).send("Payment identity mismatch");
+            return;
+        }
+        transactionStatus = verified.transaction_status;
+        fraudStatus = verified.fraud_status;
         // State machine idempotensi event
         const eventKey = crypto.createHash("sha256").update(`midtrans_${orderId}_${transactionStatus}_${statusCode}`).digest("hex");
         const eventRef = db.collection("webhook_events").doc(eventKey);
@@ -1027,7 +1005,7 @@ exports.midtransWebhook = functions
         if (isSuccess) {
             console.log(`[Midtrans Webhook] Payment confirmed for ${orderId}. Activating entitlement...`);
             try {
-                const actResult = await processSuccessfulPayment(orderId, grossAmount);
+                const actResult = await processSuccessfulPayment(orderId, grossAmount, { transactionId: verified.transaction_id, orderId: verified.order_id, currency: verified.currency });
                 await eventRef.update({
                     status: "completed",
                     completed_at: admin.firestore.FieldValue.serverTimestamp(),
@@ -1048,13 +1026,33 @@ exports.midtransWebhook = functions
             console.log(`[Midtrans Webhook] Payment ${transactionStatus} for ${orderId}. Updating transaction record...`);
             const txQuery = await db.collection("transactions").where("invoice_number", "==", orderId).limit(1).get();
             if (!txQuery.empty) {
-                await txQuery.docs[0].ref.update({
-                    status: transactionStatus,
-                    updated_at: admin.firestore.FieldValue.serverTimestamp(),
+                await db.runTransaction(async (t) => {
+                    var _a;
+                    const tx = await t.get(txQuery.docs[0].ref);
+                    if (((_a = tx.data()) === null || _a === void 0 ? void 0 : _a.activation_applied) === true)
+                        return;
+                    t.update(txQuery.docs[0].ref, { status: transactionStatus, updated_at: admin.firestore.FieldValue.serverTimestamp() });
                 });
             }
             await eventRef.update({ status: "completed" });
             res.status(200).json({ status: "OK", message: `Transaction marked as ${transactionStatus}` });
+        }
+        else if (["refund", "partial_refund", "chargeback", "partial_chargeback"].includes(transactionStatus)) {
+            const gr = db.collection("access_grants").doc((0, access_control_1.keyOf)("invoice", String(orderId)));
+            await db.runTransaction(async (t) => {
+                var _a;
+                const grant = await t.get(gr);
+                const ownerRef = ((_a = grant.data()) === null || _a === void 0 ? void 0 : _a.uid) ? db.collection("users").doc(grant.data().uid) : null;
+                const ownerDoc = ownerRef ? await t.get(ownerRef) : null;
+                if (grant.exists)
+                    t.update(gr, transactionStatus.startsWith("partial")
+                        ? { review_required: true, payment_status: transactionStatus }
+                        : { status: "revoked", payment_status: transactionStatus });
+                if (ownerRef && (ownerDoc === null || ownerDoc === void 0 ? void 0 : ownerDoc.exists))
+                    t.update(ownerRef, { access_due_ms: Date.now() });
+            });
+            await eventRef.update({ status: "completed" });
+            res.status(200).json({ status: "OK" });
         }
         else {
             console.log(`[Midtrans Webhook] Pending status ${transactionStatus} for ${orderId}.`);
@@ -1125,7 +1123,7 @@ exports.checkPaymentStatus = functions
                 (trxStatus === "capture" && fraudStatus === "accept");
             if (isSuccess) {
                 console.log(`[checkPaymentStatus] Midtrans Inquiry verified SUCCESS for ${invoiceNumber}! Activating subscription...`);
-                const actResult = await processSuccessfulPayment(invoiceNumber, mData.gross_amount);
+                const actResult = await processSuccessfulPayment(invoiceNumber, mData.gross_amount, { transactionId: mData.transaction_id, orderId: mData.order_id, currency: mData.currency });
                 return {
                     success: true,
                     status: "SUCCESS",
@@ -1233,7 +1231,10 @@ exports.redeemCode = functions
     const deviceBrand = typeof (data === null || data === void 0 ? void 0 : data.deviceBrand) === "string" ? data.deviceBrand.slice(0, 100) : "";
     // F-03 & F-05: Rate limit penukaran voucher per UID (maksimal 8 percobaan per 15 menit)
     await enforceRateLimit(`rdm_${uid}`, 8, 900, "Terlalu banyak percobaan penukaran kode redeem.");
-    const userEmail = (context.auth.token.email || "").trim().toLowerCase();
+    // Email yang belum diverifikasi tidak boleh tercatat sebagai identitas pemilik akses.
+    const userEmail = context.auth.token.email_verified === true
+        ? (context.auth.token.email || "").trim().toLowerCase()
+        : "";
     let redeemResult = {
         entitlementKey: "fiqh_syafii",
         durationDays: 7,
@@ -1327,6 +1328,11 @@ exports.redeemCode = functions
             }
         }
         const newExpiry = new Date(baseDate.getTime() + durationDays * 24 * 60 * 60 * 1000);
+        const voucherGrantId = (0, access_control_1.keyOf)("voucher", rawCode, uid);
+        transaction.set(db.collection("access_grants").doc(voucherGrantId), {
+            uid, scope: entitlementKey, kind: "voucher", status: "active", redemption_code: rawCode,
+            starts_ms: redeemedAt.getTime(), expires_ms: newExpiry.getTime(), created_ms: redeemedAt.getTime(),
+        });
         // 1. Simpan catatan penukaran
         transaction.set(redemptionRef, {
             uid,
@@ -1365,6 +1371,9 @@ exports.redeemCode = functions
         const userUpdate = {
             entitlements: updatedEntitlements,
             updated_at: admin.firestore.FieldValue.serverTimestamp(),
+            access_version: 2,
+            access_due_ms: Date.now(),
+            access_grant_ids: [...new Set([...(userData.access_grant_ids || []), voucherGrantId])],
         };
         // Hanya set plan global jika voucher adalah all_access
         if (entitlementKey === "all_access") {
@@ -1523,7 +1532,9 @@ exports.dailyRevoke = functions
     .runWith({ serviceAccount: "open-turath@appspot.gserviceaccount.com", timeoutSeconds: 300 })
     .pubsub.schedule("every 1 hours")
     .onRun(async () => {
-    var _a, _b, _c;
+    var _a, _b, _c, _d;
+    if (((_a = (await db.collection("access_control").doc("runtime").get()).data()) === null || _a === void 0 ? void 0 : _a.writer) === "vps-v2")
+        return null;
     const revokedSummary = [];
     let cursor;
     while (true) {
@@ -1623,11 +1634,11 @@ exports.dailyRevoke = functions
             if (isYearly || entKey === "all_access" || entKey === "all_ai" || !entKey) {
                 allActiveEmails.add(email);
                 for (const k of PROVISIONED_KEYS) {
-                    (_a = activeEmailsByEntitlement.get(k)) === null || _a === void 0 ? void 0 : _a.add(email);
+                    (_b = activeEmailsByEntitlement.get(k)) === null || _b === void 0 ? void 0 : _b.add(email);
                 }
             }
             else if (activeEmailsByEntitlement.has(entKey)) {
-                (_b = activeEmailsByEntitlement.get(entKey)) === null || _b === void 0 ? void 0 : _b.add(email);
+                (_c = activeEmailsByEntitlement.get(entKey)) === null || _c === void 0 ? void 0 : _c.add(email);
             }
         }
     }
@@ -1657,7 +1668,7 @@ exports.dailyRevoke = functions
                 : (String(d.plan || "").toLowerCase().includes("tholib") ? ["fiqh_tahawwulat", "fiqh_syafii"] : PROVISIONED_KEYS);
             const expiredKeysToRevoke = [];
             for (const k of targetKeys) {
-                if (!allActiveEmails.has(email) && !((_c = activeEmailsByEntitlement.get(k)) === null || _c === void 0 ? void 0 : _c.has(email))) {
+                if (!allActiveEmails.has(email) && !((_d = activeEmailsByEntitlement.get(k)) === null || _d === void 0 ? void 0 : _d.has(email))) {
                     expiredKeysToRevoke.push(k);
                 }
             }
@@ -1715,6 +1726,9 @@ exports.processProvisioningOutbox = functions
     .runWith({ serviceAccount: "open-turath@appspot.gserviceaccount.com", timeoutSeconds: 300 })
     .pubsub.schedule("every 5 minutes")
     .onRun(async () => {
+    var _a;
+    if (((_a = (await db.collection("access_control").doc("runtime").get()).data()) === null || _a === void 0 ? void 0 : _a.writer) === "vps-v2")
+        return null;
     const started = Date.now();
     const pending = await db.collection("provisioning_outbox")
         .where("status", "in", ["pending", "retry", "processing"]).limit(25).get();
@@ -2042,10 +2056,24 @@ exports.chatGate = functions
         }
         // Re-check the local entitlement on each initial page request. This
         // prevents an old session cookie from bypassing expiry/revocation.
-        const hasAccess = await verifySubscriptionFirestore(session.email, agent.entitlementKey, session.uid);
+        const profile = (await db.collection("users").doc(session.uid).get()).data();
+        const hasAccess = (profile === null || profile === void 0 ? void 0 : profile.access_version) === 2 || await verifySubscriptionFirestore(session.email, agent.entitlementKey, session.uid);
         if (!hasAccess) {
             clearSessionCookie(res);
             res.redirect(`/login?ref=${encodeURIComponent(agentId)}&error=not_found`);
+            return;
+        }
+        if ((profile === null || profile === void 0 ? void 0 : profile.access_version) === 2) {
+            try {
+                const entity = notebook_catalog_1.AGENT_TO_ENTITY[agentId];
+                const assigned = await new access_control_1.AccessControl(db, notebook_catalog_1.NOTEBOOK_ENTITIES, access_catalog_1.ENTITY_SCOPES).resolve(session.uid, entity);
+                res.setHeader("Content-Type", "text/html;charset=UTF-8");
+                res.send(getChatWrapperHTML(Object.assign(Object.assign({}, agent), { notebookId: assigned.notebookId }), agentId, session.email));
+            }
+            catch (e) {
+                res.status(e instanceof access_control_1.AccessFault && e.code === "permission-denied" ? 403 : 503)
+                    .send("Akses notebook sedang disiapkan atau diperiksa. Anda tidak perlu membeli ulang.");
+            }
             return;
         }
         res.setHeader("Content-Type", "text/html;charset=UTF-8");
@@ -2058,7 +2086,8 @@ exports.chatGate = functions
 async function handleLogin(req, res, secret, apiKey) {
     const idToken = (req.body.id_token || (req.headers.authorization ? req.headers.authorization.split("Bearer ")[1] : "") || "").trim();
     const csrfTokenForm = req.body.csrf_token || "";
-    const ref = req.body.ref || "fikih-tahawwulat-muhaqqiq";
+    // Hanya ID agen yang dikenal; nilai mentah dari body tidak boleh masuk ke URL redirect.
+    const ref = resolveAgentRef(req.body.ref);
     if (!verifyCsrfToken(csrfTokenForm, secret)) {
         res.redirect(`/login?ref=${ref}&error=invalid_request`);
         return;
@@ -2195,7 +2224,8 @@ exports.syncAkalPurchases = functions
     }
     const uid = context.auth.uid;
     const email = (context.auth.token.email || "").toLowerCase().trim();
-    if (!email) {
+    // Pembelian diklaim berdasarkan email, jadi email wajib sudah diverifikasi penyedia identitas.
+    if (!email || context.auth.token.email_verified !== true) {
         throw new functions.https.HttpsError("failed-precondition", "Akun Google Anda tidak memiliki alamat email yang valid.");
     }
     const apiKey = getAkalApiKey();
@@ -2521,10 +2551,16 @@ exports.akalWebhook = functions
         return;
     }
     const payload = req.body || {};
-    const akalSecret = process.env.AKAL_WEBHOOK_SECRET || "3b5e4d182c8e150efeae39c651d074e6a602f5e873e710a3604af9023fef3042";
+    // Fail-closed: tanpa secret terkonfigurasi, webhook menolak semua request.
+    const akalSecret = process.env.AKAL_WEBHOOK_SECRET || "";
+    if (akalSecret.length < 32) {
+        console.error("[Akal Webhook] AKAL_WEBHOOK_SECRET is not configured; rejecting request.");
+        res.status(503).json({ error: "Webhook not configured" });
+        return;
+    }
     // Verifikasi token dari Akal (di dalam body JSON payload.token atau payload.data.token)
     const token = payload.token || ((_a = payload.data) === null || _a === void 0 ? void 0 : _a.token) || req.headers["x-akal-token"];
-    if (!token || token !== akalSecret) {
+    if (typeof token !== "string" || !safeTimingEqual(token, akalSecret)) {
         console.warn("[Akal Webhook] Signature verification failed or missing token.");
         res.status(401).json({ error: "Unauthorized" });
         return;
@@ -2543,8 +2579,14 @@ exports.akalWebhook = functions
     const serviceTitle = (service.name || service.title || "").trim();
     const priceScheme = data.priceScheme || {};
     const priceSchemeTitle = (priceScheme.name || priceScheme.title || "").trim();
-    const txnId = (data.id || "").trim() || `akal_${Date.now()}`;
+    const rawTxnId = typeof data.id === "string" ? data.id.trim() : "";
     const amount = Number(data.amount) || 0;
+    // Tanpa ID dari Akal, turunkan ID deterministik agar retry webhook tetap idempoten.
+    const txnId = /^[A-Za-z0-9_-]{1,128}$/.test(rawTxnId)
+        ? rawTxnId
+        : `akal_${crypto.createHash("sha256")
+            .update(`${email}|${serviceTitle}|${priceSchemeTitle}|${data.paidAt || ""}|${amount}`)
+            .digest("hex").slice(0, 40)}`;
     if (!email) {
         res.status(400).json({ error: "Missing payer email" });
         return;
@@ -2710,7 +2752,7 @@ function verifyCsrfToken(token, secret) {
     if (isNaN(tsNum) || Date.now() - tsNum > 3600 * 1000)
         return false; // 1 jam
     const expectedSig = crypto.createHmac("sha256", secret).update(ts).digest("base64url");
-    return signature === expectedSig;
+    return safeTimingEqual(signature, expectedSig);
 }
 function escapeHtml(str) {
     return String(str)
