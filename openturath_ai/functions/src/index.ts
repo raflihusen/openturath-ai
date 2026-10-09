@@ -2291,7 +2291,8 @@ export const chatGate = functions
 
       // Re-check the local entitlement on each initial page request. This
       // prevents an old session cookie from bypassing expiry/revocation.
-      const hasAccess = await verifySubscriptionFirestore(
+      const profile = (await db.collection("users").doc(session.uid).get()).data();
+      const hasAccess = profile?.access_version === 2 || await verifySubscriptionFirestore(
         session.email,
         agent.entitlementKey,
         session.uid
@@ -2302,7 +2303,6 @@ export const chatGate = functions
         return;
       }
 
-      const profile = (await db.collection("users").doc(session.uid).get()).data();
       if (profile?.access_version === 2) {
         try {
           const entity = AGENT_TO_ENTITY[agentId];
