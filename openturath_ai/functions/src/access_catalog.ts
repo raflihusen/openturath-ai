@@ -95,7 +95,12 @@ export const AGENT_ENTITLEMENTS: Record<string, string> = {
 export const ENTITY_SCOPES: Record<string, string> = {};
 for (const [agent, entity] of Object.entries(AGENT_TO_ENTITY)) {
   const scope = AGENT_ENTITLEMENTS[agent];
-  if (!scope) throw new Error(`Missing scope for ${agent}`);
+  if (!scope) continue;
   if (ENTITY_SCOPES[entity] && ENTITY_SCOPES[entity] !== scope) throw new Error(`Conflicting scope for ${entity}`);
   ENTITY_SCOPES[entity] = scope;
+}
+
+for (const [agent, entity] of Object.entries(AGENT_TO_ENTITY)) {
+  if (!ENTITY_SCOPES[entity]) throw new Error(`Missing scope for ${entity}`);
+  AGENT_ENTITLEMENTS[agent] = ENTITY_SCOPES[entity];
 }
