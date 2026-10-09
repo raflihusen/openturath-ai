@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import {AccessControl, isVip, keyOf, rights} from "../src/access_control.ts";
+import {AccessControl, isVip, keyOf, rights, verifiedAkalPeriods} from "../src/access_control.ts";
 import {MemoryDB} from "./audit_harness.ts";
 
 const entity = "entity", scope = "fiqh_syafii", now = 100000;
@@ -156,4 +156,26 @@ test("an unresolved legacy hold prevents an already queued removal", async () =>
   await jobs();
   assert.equal(calls.length,1);
   assert.equal(db.docs.get("access_notebooks/master").occupied,1);
+});
+
+const akalRow = (extra={}) => ({status:"PAID",incomingAmount:50000,payerEmail:"u@example.test",paymentId:"p1",
+  serviceTitle:"SUPER AI FIKIH SYAFI'I",priceSchemeTitle:"1 Bulan",paidAt:"2026-01-01T00:00:00Z",expiryDate:"2026-01-01T01:00:00Z",...extra});
+test("provider invoice expiry and unpaid expired quotations never determine subscription rights",()=>{
+  const periods=verifiedAkalPeriods([akalRow(),akalRow({paymentId:"unpaid",status:"EXPIRED"}),akalRow({paymentId:"free",incomingAmount:0})]);
+  assert.equal(periods.length,1);
+  assert.equal(periods[0].expires-Date.parse("2026-01-01T00:00:00Z"),30*86400000);
+});
+test("historical renewals sort by real payment time and duplicate receipts never compound",()=>{
+  const second=akalRow({paymentId:"p2",paidAt:"2026-01-15T00:00:00Z"});
+  const periods=verifiedAkalPeriods([second,akalRow(),second]);
+  assert.equal(periods.length,2);
+  assert.equal(periods[1].expires-Date.parse("2026-01-01T00:00:00Z"),60*86400000);
+});
+test("provider annual packages remain module specific and unknown products do not grant access",()=>{
+  const periods=verifiedAkalPeriods([akalRow({priceSchemeTitle:"12 Bulan"}),akalRow({paymentId:"unknown",serviceTitle:"unrecognized"})]);
+  assert.equal(periods.length,1);assert.equal(periods[0].scope,"fiqh_syafii");
+  assert.equal(periods[0].expires,Date.parse("2027-01-01T00:00:00Z"));
+});
+test("the same provider payment cannot be reassigned to another email",()=>{
+  assert.throws(()=>verifiedAkalPeriods([akalRow(),akalRow({payerEmail:"other@example.test"})]),/identity collision/);
 });
