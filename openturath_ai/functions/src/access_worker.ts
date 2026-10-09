@@ -166,7 +166,8 @@ async function importOwner(doc: any): Promise<void> {
   const evidence = await engine.grants(uid);
   if (!isVip(u, evidence)) for (const [scope, entitlement] of Object.entries(u.entitlements || {})) {
     const e = entitlement as any;
-    if (e.status === "active" && millis(e.expiry) > Date.now() && !rights(u, evidence, scope)) unresolved.push(`profile_scope:${scope}`);
+    const automatedProjection = verifiedProvider && /goakal|akal/.test(String(e.source || "").toLowerCase());
+    if (!automatedProjection && e.status === "active" && millis(e.expiry) > Date.now() && !rights(u, evidence, scope)) unresolved.push(`profile_scope:${scope}`);
   }
   if (unresolved.length) {
     await doc.ref.update({access_revocation_hold:true});
