@@ -333,6 +333,7 @@ export const NOTEBOOK_ENTITIES: Record<string, NotebookEntityInfo> = {
     code: "03_USHUL_FIKIH",
     name: "Ushul Fikih (Metodologi Penggalian Hukum Islam)",
     masterId: "6009f2ee-6328-497d-b74e-4276834caa94",
+    legacyIds: ["6ab6dae8-0067-435a-85ca-b6bd4e17dd12"],
     masterUrl: "https://notebooklm.google.com/notebook/6009f2ee-6328-497d-b74e-4276834caa94",
     clones: [
       { name: "03 - USHUL FIKIH - 01", id: "40c932cf-36fb-40d0-aab6-7dce19ebc516", url: "https://notebooklm.google.com/notebook/40c932cf-36fb-40d0-aab6-7dce19ebc516" },
@@ -375,6 +376,7 @@ export const NOTEBOOK_ENTITIES: Record<string, NotebookEntityInfo> = {
     code: "05_TAFSIR_DAN_ULUMUL_QURAN",
     name: "Tafsir & Ulumul Qur'an (Eksegesis Kitab Suci)",
     masterId: "f15bd838-dac9-415b-bd40-fef3da1355d4",
+    legacyIds: ["df92cc50-1106-4221-8748-1663f00fa7fe"],
     masterUrl: "https://notebooklm.google.com/notebook/f15bd838-dac9-415b-bd40-fef3da1355d4",
     clones: [
       { name: "05 - TAFSIR & ULUMUL QURAN - 01", id: "a5107537-eed1-4bc9-857f-ec028fdd3dd8", url: "https://notebooklm.google.com/notebook/a5107537-eed1-4bc9-857f-ec028fdd3dd8" },
@@ -396,6 +398,7 @@ export const NOTEBOOK_ENTITIES: Record<string, NotebookEntityInfo> = {
     code: "02_HADITS",
     name: "Hadits Nabawi (Kitab Induk Hadis)",
     masterId: "9da436c8-f9b7-4e8b-a51f-d798a31892a7",
+    legacyIds: ["b9626501-538c-4358-a44f-6731eaec50b6"],
     masterUrl: "https://notebooklm.google.com/notebook/9da436c8-f9b7-4e8b-a51f-d798a31892a7",
     clones: [
       { name: "02 - HADITS - 01", id: "06ae7c0a-432f-47d0-98de-5c13ed77821a", url: "https://notebooklm.google.com/notebook/06ae7c0a-432f-47d0-98de-5c13ed77821a" },
@@ -460,6 +463,7 @@ export const NOTEBOOK_ENTITIES: Record<string, NotebookEntityInfo> = {
     code: "04_BAHASA_DAN_SASTRA_ARAB",
     name: "Bahasa & Sastra Arab (Nahwu, Sharaf, Balaghah, Leksikografi)",
     masterId: "1ae6ae57-53f0-4ce2-a2be-c324e03abb83",
+    legacyIds: ["15bc4cef-4b94-4241-b05a-d50a586bde06"],
     masterUrl: "https://notebooklm.google.com/notebook/1ae6ae57-53f0-4ce2-a2be-c324e03abb83",
     clones: [
       { name: "04 - BAHASA & SASTRA ARAB - 01", id: "a82987d8-9934-43c9-b3f6-3654ac4d65a8", url: "https://notebooklm.google.com/notebook/a82987d8-9934-43c9-b3f6-3654ac4d65a8" },
