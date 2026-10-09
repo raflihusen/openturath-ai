@@ -258,6 +258,29 @@ async function prepareLegacy(): Promise<void> {
     }
   });
 }
+async function projectRights(doc: any, user: any, grants: any[]): Promise<void> {
+  if (user.legacy_revoke_only || user.account_deleted || user.pending_deletion) return;
+  const protectedOwner = await engine.owner(doc.id);
+  if (isVip(protectedOwner.user, grants)) {
+    if (user.is_vip !== true) await doc.ref.update({is_vip:true});
+    return;
+  }
+  const updates: Record<string,any> = {};
+  for (const scope of new Set([...Object.values(ENTITY_SCOPES),"all_access","all_ai"])) {
+    const active = rights(user,grants,scope);
+    if (!active && user.access_revocation_hold) continue;
+    const matching=grants.filter(g=>[scope,"all_access","all_ai"].includes(g.scope) && g.status === "active" &&
+      (g.kind === "payment" && g.amount>0 || g.kind === "voucher" || g.kind === "admin" && g.admin_verified));
+    const existing=user.entitlements?.[scope];
+    if (!matching.length && !existing) continue;
+    const expiry=Math.max(0,...matching.map(g=>g.expires_ms || 0));
+    const status=active?"active":"expired";
+    if (existing?.status === status && millis(existing.expiry) === expiry) continue;
+    updates[`entitlements.${scope}`]={plan:active?"premium":"expired",status,
+      expiry:admin.firestore.Timestamp.fromMillis(expiry),source:"access_ledger"};
+  }
+  if (Object.keys(updates).length) await doc.ref.update(updates);
+}
 async function assignments(): Promise<void> {
   const dueUsers = await db.collection("users").where("access_due_ms", "<=", Date.now()).orderBy("access_due_ms").limit(100).get();
   const dueLegacy = await db.collection("access_legacy_owners").where("access_due_ms", "<=", Date.now()).orderBy("access_due_ms").limit(100).get();
@@ -276,6 +299,7 @@ async function assignments(): Promise<void> {
       }
     }
     const grants = await engine.grants(doc.id);
+    await projectRights(doc,u,grants);
     let needsRetry = false;
     for (const [entity, scope] of Object.entries(ENTITY_SCOPES)) {
       try { await engine.importObserved(doc.id, entity); }
