@@ -81,7 +81,18 @@ export class AccessControl {
       }
       for (const d of oldGrants.docs) {const g = (await t.get(d.ref)).data(); if (g?.uid === legacyUid) grants.push(d);}
       for (const a of assignments) {
-        t.set(a.target, {...a.a, uid, revision:a.a.revision + 1});
+        const revision = a.a.revision + 1;
+        const adopted = {...a.a, uid, revision};
+        t.set(a.target, adopted);
+        // Jobs belonging to the old UID become stale after ownership transfer.
+        // Recreate in-flight work under the verified new owner and revision.
+        if (["provisioning", "revoking"].includes(a.a.status)) {
+          const desired = a.a.status === "provisioning";
+          for (const id of desired ? [a.a.notebook_id] : (a.a.history || [a.a.notebook_id])) {
+            t.set(this.db.collection("access_jobs").doc(keyOf(uid, a.a.entity, String(revision), id)),
+              {...adopted, notebook_id:id, desired, status:"pending", attempts:0, due_ms:this.clock()});
+          }
+        }
         t.update(a.ref, {status:"adopted", adopted_by:uid});
         t.set(a.identity, {uid, entity:a.a.entity, email:a.a.email});
         for (const id of a.a.history || [a.a.notebook_id]) t.set(this.db.collection("access_memberships").doc(keyOf(id,a.a.email)), {uid}, {merge:true});
