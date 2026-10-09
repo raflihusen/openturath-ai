@@ -90,7 +90,7 @@ export class AccessControl {
       // Reuse observed registration before waterfall: imports retain the real
       // notebook and do not consume a second seat, including legacy notebooks.
       const found = candidates.find(c => c.m?.present === true && c.n?.is_public === false && ["active", "draining"].includes(c.n?.status)) ||
-        candidates.find(c => c.n?.status === "active" && c.n?.is_public === false &&
+        candidates.find(c => !e.legacyIds?.includes(c.id) && c.n?.status === "active" && c.n?.is_public === false &&
           c.n?.healthy_until_ms > this.clock() && c.n.occupied < Math.min(2000, c.n.admission_limit || 1995));
       if (!found) throw new AccessFault("resource-exhausted", "paid_waiting_capacity");
       const revision = (existing?.revision || 0) + 1;
