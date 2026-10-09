@@ -876,9 +876,10 @@ exports.reconcileMidtransPayments = functions
         return null;
     const cfg = getMidtransConfig(), jobs = await db.collection("payment_reconciliation").where("due_ms", "<=", Date.now()).orderBy("due_ms").limit(200).get();
     let cursor = 0, completed = 0, failed = 0;
+    const started = Date.now();
     const run = async () => {
         var _a;
-        while (cursor < jobs.docs.length) {
+        while (cursor < jobs.docs.length && Date.now() - started < 240000) {
             const doc = jobs.docs[cursor++], token = crypto.randomUUID();
             const job = await db.runTransaction(async (t) => {
                 const current = (await t.get(doc.ref)).data();
@@ -918,6 +919,7 @@ exports.reconcileMidtransPayments = functions
             }
             catch (_) {
                 failed++;
+                due = Date.now() + Math.min(6 * 3600000, 60000 * 2 ** Math.min(job.attempts || 0, 12));
             }
             await db.runTransaction(async (t) => {
                 const current = (await t.get(doc.ref)).data();
