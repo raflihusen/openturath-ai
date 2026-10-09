@@ -2334,6 +2334,14 @@ export const chatGate = functions
         }
         return;
       }
+      if ((await db.collection("access_control").doc("runtime").get()).data()?.writer === "vps-v2") {
+        try {
+          const assigned=await new AccessControl(db,NOTEBOOK_ENTITIES,ENTITY_SCOPES).resolveObservedLegacy(session.uid,session.email,AGENT_TO_ENTITY[agentId]);
+          res.setHeader("Content-Type","text/html;charset=UTF-8");
+          res.send(getChatWrapperHTML({...agent,notebookId:assigned.notebookId},agentId,session.email));
+        } catch (_) {res.status(503).send("Akses notebook terdaftar sedang diperiksa. Anda tidak perlu membeli ulang.");}
+        return;
+      }
       res.setHeader("Content-Type", "text/html;charset=UTF-8");
       res.send(getChatWrapperHTML(agent, agentId, session.email));
       return;
