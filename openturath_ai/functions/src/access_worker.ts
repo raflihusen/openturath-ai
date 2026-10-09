@@ -130,7 +130,9 @@ async function importOwner(doc: any): Promise<void> {
   const unresolved: string[] = [];
   for (const [id, tx] of txs) {
     if (tx.uid && tx.uid !== uid) continue;
-    if (!["paid", "success", "settled", "settlement", "expired"].includes(String(tx.status).toLowerCase()) || !(Number(tx.amount) > 0)) continue;
+    const paidStatus = ["paid", "success", "settled", "settlement"].includes(String(tx.status).toLowerCase());
+    const settledBeforeExpiry = String(tx.status).toLowerCase() === "expired" && tx.activation_applied === true && tx.paid_at;
+    if ((!paidStatus && !settledBeforeExpiry) || !(Number(tx.amount) > 0)) continue;
     const labels: Record<string, string> = {
       "AI Fikih Tahawwulat": "fiqh_tahawwulat", "Fikih Tahawwulat": "fiqh_tahawwulat",
       "AI Fikih Syafi'i": "fiqh_syafii", "AI Fikih Syafii": "fiqh_syafii", "Fikih Syafi'i": "fiqh_syafii",
@@ -143,7 +145,7 @@ async function importOwner(doc: any): Promise<void> {
     const gr = db.collection("access_grants").doc(gid);
     const prior = (await gr.get()).data();
     if (prior) { if (prior.uid === uid) ids.add(gid); continue; }
-    const paid = millis(tx.paid_at || tx.completed_at || tx.payment_time || tx.created_at);
+    const paid = millis(tx.paid_at || tx.completed_at || tx.payment_time);
     const explicit = millis(tx.subscription_expires_at || tx.access_expires_at || tx.expires_at);
     // Legacy one-month records are capped by real payment time + 30 days.
     // Unknown timestamps/plan durations are review cases, never auto-removals.
