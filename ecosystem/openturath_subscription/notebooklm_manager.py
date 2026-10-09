@@ -150,12 +150,17 @@ async def remove_viewer(notebook_id: str, email: str) -> dict[str, Any]:
                 notebook_id=notebook_id,
                 email=email,
             )
-            # Kunci paten: Selalu pastikan status tetap RESTRICTED & CHAT_ONLY setelah pencabutan user
-            await client.sharing.set_public(notebook_id, False)
+            # Kunci paten: Anyone with link (is_public = True), CHAT_ONLY, dan Anti-Bocor (requiredCopyRole = 1)
+            await client.sharing.set_public(notebook_id, True)
             await client.sharing.set_view_level(
                 notebook_id=notebook_id,
                 level=ShareViewLevel.CHAT_ONLY,
             )
+            from notebooklm.rpc.types import RPCMethod
+            mut_copy = [None, None, None, [None, None, None, None, 1]]
+            mut_chat = [None, None, None, None, None, None, None, None, [[1]]]
+            params = [notebook_id, [mut_copy, mut_chat]]
+            await client.rpc_call(RPCMethod.RENAME_NOTEBOOK, params, allow_null=True)
 
         logger.info(
             "✅ Berhasil hapus viewer | email=%s | notebook=%s | total_viewers=%d",
