@@ -192,11 +192,13 @@ export class AccessControl {
   }
   async revoke(uid: string, entity: string): Promise<void> {
     const {user, grants} = await this.owner(uid);
-    if (user.access_revocation_hold || rights(user, grants, this.scopes[entity], this.clock())) return;
+    if (user?.access_revocation_hold || rights(user, grants, this.scopes[entity], this.clock())) return;
     const ar = this.assignmentRef(uid, entity);
     await this.db.runTransaction(async (t: any) => {
       const a = (await t.get(ar)).data();
       if (!a || ["revoked", "revoking"].includes(a.status)) return;
+      const permanent = await t.get(this.db.collection("access_vip_registry").doc(keyOf(a.email)));
+      if (isVip({email:a.email}, grants) || permanent.exists) return;
       const revision = a.revision + 1;
       t.update(ar, {status: "revoking", revision, updated_ms: this.clock()});
       for (const notebook of a.history || [a.notebook_id]) {
@@ -239,7 +241,11 @@ export class AccessControl {
       if (!a || bound?.uid !== job.uid || a.revision !== job.revision || job.desired !== rights(owner.user, owner.grants, job.scope, this.clock())) {
         await ref.update({status: "superseded", due_ms: 8640000000000000}); return;
       }
-      if (!job.desired && (owner.user.access_revocation_hold || isVip(owner.user, owner.grants))) throw new Error("Protected or unresolved legacy owner");
+      if (!job.desired) {
+        const permanent = await this.db.collection("access_vip_registry").doc(keyOf(job.email)).get();
+        if (owner.user?.access_revocation_hold || isVip({...owner.user, email:job.email}, owner.grants) || permanent.exists)
+          throw new Error("Protected or unresolved legacy owner");
+      }
       const observation = await this.provider.apply(job.notebook_id, job.email, job.desired);
       this.validateObservation(observation, job.notebook_id);
       const present = observation.emails.map(normalEmail).includes(job.email);
