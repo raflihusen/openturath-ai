@@ -24,7 +24,7 @@ const provider: Provider = {
 };
 const engine = new AccessControl(db, NOTEBOOK_ENTITIES, ENTITY_SCOPES, provider);
 const runtime = db.collection("access_control").doc("runtime");
-const stats = {started_ms: Date.now(), last_cycle_ms: 0, last_success_ms: 0, error: "", cycles: 0};
+const stats = {started_ms: Date.now(), last_cycle_ms: 0, last_success_ms: 0, mode: "starting", error: "", cycles: 0};
 async function pages(collection: string, visit: (doc: any) => Promise<void>): Promise<void> {
   let cursor: any;
   while (true) {
@@ -145,6 +145,7 @@ async function settleRevokes(): Promise<void> {
 async function cycle(): Promise<void> {
   stats.last_cycle_ms = Date.now();
   const cfg = (await runtime.get()).data();
+  stats.mode = cfg?.writer === "vps-v2" ? "active" : "shadow";
   if (cfg?.writer !== "vps-v2") return; // Installed shadow mode until explicit cutover.
   // Consume source jobs incrementally rather than scanning every account/tx.
   const source = await db.collection("provisioning_outbox").where("status", "in", ["pending", "retry", "processing"]).limit(100).get();
