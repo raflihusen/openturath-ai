@@ -131,6 +131,20 @@ export function loadBackend(root = process.cwd()) {
   vm.runInNewContext(stripTypeScriptTypes(nativeSource + '\nexports.handleNativeChat = handleNativeChat; exports.NativeChatError = NativeChatError;', {mode: 'transform'}),
     {exports: nativeExports});
   deps['./native_chat'] = nativeExports;
+  const accessSource = fs.readFileSync(path.join(root, 'functions/src/access_control.ts'), 'utf8')
+    .replace(/^import \* as crypto from "crypto";/m, 'const crypto = require("crypto");')
+    .replace(/export (const|class|function|async function) /g, '$1 ');
+  const accessExports: any = {};
+  vm.runInNewContext(stripTypeScriptTypes(accessSource + '\nexports.AccessControl=AccessControl; exports.AccessFault=AccessFault; exports.isVip=isVip; exports.keyOf=keyOf; exports.millis=millis;'),
+    {exports:accessExports, require:()=>crypto, Date});
+  deps['./access_control'] = accessExports;
+  const mappingSource = fs.readFileSync(path.join(root, 'functions/src/access_catalog.ts'), 'utf8')
+    .replace(/^import[^\n]+\n/, 'const AGENT_TO_ENTITY = catalog.AGENT_TO_ENTITY;\n')
+    .replace(/export const /g, 'const ');
+  const mappingExports: any = {};
+  vm.runInNewContext(stripTypeScriptTypes(mappingSource + '\nexports.AGENT_ENTITLEMENTS=AGENT_ENTITLEMENTS; exports.ENTITY_SCOPES=ENTITY_SCOPES;'),
+    {exports:mappingExports, catalog:catalogExports});
+  deps['./access_catalog'] = mappingExports;
   const file = path.join(root,'functions/src/index.ts');
   let source = fs.readFileSync(file,'utf8')
     .replace(/^import \* as (\w+) from "([^"]+)";/gm, 'const $1 = require("$2");')
