@@ -1,23 +1,56 @@
 import * as admin from "firebase-admin";
 import {execFile} from "child_process";
 import {createServer} from "http";
+import {rename, chmod} from "fs/promises";
+import {promisify} from "util";
 import {AccessControl, Entity, Provider, ShareObservation, isVip, keyOf, millis, normalEmail, rights, billingExpiry} from "./access_control";
 import {NOTEBOOK_ENTITIES} from "./notebook_catalog";
 import {ENTITY_SCOPES, AGENT_ENTITLEMENTS} from "./access_catalog";
 
 admin.initializeApp({projectId: process.env.GOOGLE_CLOUD_PROJECT || "open-turath"});
 const db = admin.firestore();
-const callProvider = (request: any): Promise<ShareObservation> => new Promise((resolve, reject) => {
+const telemetry = {last_provider_success_ms:0, authentication_error:false, session_refreshes:0};
+const execute = promisify(execFile);
+let refreshing: Promise<void> | undefined, lastRefreshAttempt = 0;
+async function refreshConsentedSession(): Promise<void> {
+  if (refreshing) return refreshing;
+  const cli = process.env.ACCESS_NOTEBOOKLM_CLI, owner = process.env.ACCESS_OWNER_EMAIL;
+  const storage = process.env.NOTEBOOKLM_STORAGE_PATH;
+  if (!cli || !owner || !storage || Date.now()-lastRefreshAttempt < 60000) throw new Error("Owner session unavailable");
+  lastRefreshAttempt = Date.now();
+  refreshing = (async () => {
+    const temporary = `${storage}.refresh`;
+    // Reuse only the explicitly consented owner's existing browser login.
+    // The CLI does not automate login or mint credentials for another account.
+    await execute(cli, ["login", "--browser-cookies", "chrome", "--account", owner, "--storage", temporary],
+      {timeout:60000, maxBuffer:1048576});
+    await chmod(temporary, 0o600); await rename(temporary, storage);
+    telemetry.session_refreshes++;
+  })();
+  try {await refreshing;} finally {refreshing = undefined;}
+}
+const requestProvider = (request: any): Promise<ShareObservation> => new Promise((resolve, reject) => {
   const python = process.env.ACCESS_PYTHON;
   const adapter = process.env.ACCESS_SHARING_ADAPTER;
   if (!python || !adapter) return reject(new Error("Sharing adapter not configured"));
   const child = execFile(python, [adapter], {timeout: 100000, maxBuffer: 8 * 1024 * 1024}, (error, out) => {
-    if (error) return reject(new Error("Sharing provider unavailable"));
-    try { const data = JSON.parse(out); if (data.error) throw new Error(); resolve(data); }
-    catch (_) { reject(new Error("Invalid sharing evidence")); }
+    try {
+      const data = JSON.parse(out);
+      if (data.code === "authentication_unavailable") return reject(Object.assign(new Error("Owner session unavailable"), {authentication:true}));
+      if (error || data.error) return reject(new Error("Sharing provider unavailable"));
+      telemetry.last_provider_success_ms = Date.now(); telemetry.authentication_error = false; resolve(data);
+    } catch (_) { reject(new Error("Invalid sharing evidence")); }
   });
   child.stdin?.end(JSON.stringify(request));
 });
+async function callProvider(request: any): Promise<ShareObservation> {
+  try {return await requestProvider(request);} catch (error: any) {
+    if (!error.authentication) throw error;
+    telemetry.authentication_error = true;
+    await refreshConsentedSession();
+    return requestProvider(request);
+  }
+}
 const provider: Provider = {
   observe: notebookId => callProvider({notebookId, operation: "observe"}),
   apply: (notebookId, email, desired) => callProvider({notebookId, email, desired, operation: "apply"}),
@@ -234,7 +267,7 @@ async function cycle(): Promise<void> {
   await settleRevokes();
   const jobs = await db.collection("access_jobs").where("due_ms", "<=", Date.now()).count().get();
   stats.last_success_ms = Date.now(); stats.error = ""; stats.cycles++;
-  await db.collection("access_control").doc("heartbeat").set({...stats, pending_jobs: jobs.data().count, writer: "vps-v2"});
+  await db.collection("access_control").doc("heartbeat").set({...stats, pending_jobs: jobs.data().count, ...telemetry, writer: "vps-v2"});
 }
 async function runJobs(): Promise<void> {
   while (true) {
@@ -289,7 +322,9 @@ async function main(): Promise<void> {
   if (mode === "--prepare-assignments") return assignments();
   if (mode === "--once") return cycle();
   createServer((_, res) => {res.setHeader("Content-Type", "application/json");
-    res.statusCode = stats.error ? 503 : 200; res.end(JSON.stringify(stats));
+    const providerStale = stats.mode === "active" && Date.now()-telemetry.last_provider_success_ms > 300000;
+    res.statusCode = stats.error || telemetry.authentication_error || providerStale ? 503 : 200;
+    res.end(JSON.stringify({...stats,...telemetry}));
   }).listen(8091, "127.0.0.1");
   void runJobs(); // Separate from scheduler: a slow provider cannot postpone expiry discovery.
   void reconcile();
