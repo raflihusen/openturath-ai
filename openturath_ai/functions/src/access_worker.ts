@@ -40,8 +40,11 @@ function notebooks(e: Entity): Array<{id: string; name: string; legacy?: boolean
   return [{id: e.masterId, name: e.name}, ...e.clones, ...(e.legacyIds || []).map(id => ({id, name: "Legacy", legacy: true}))];
 }
 async function seed(restrict = false): Promise<void> {
-  for (const entity of Object.values(NOTEBOOK_ENTITIES)) {
-    for (const n of notebooks(entity)) {
+  const targets = Object.values(NOTEBOOK_ENTITIES).flatMap(entity => notebooks(entity).map(n => ({entity, n})));
+  let cursor = 0;
+  const inspect = async () => {
+    while (cursor < targets.length) {
+      const {entity, n} = targets[cursor++];
       const nr = db.collection("access_notebooks").doc(n.id);
       const existing = (await nr.get()).data();
       // Never reset a live counter from a snapshot while reservations can run.
@@ -68,7 +71,8 @@ async function seed(restrict = false): Promise<void> {
         console.log(JSON.stringify({event: "notebook_unavailable", notebook: n.id}));
       }
     }
-  }
+  };
+  await Promise.all([inspect(), inspect(), inspect()]);
 }
 async function importOwner(doc: any): Promise<void> {
   const uid = doc.id, u = doc.data(), email = normalEmail(u.email);
