@@ -9,6 +9,7 @@ export interface NotebookEntityInfo {
   name: string;
   masterId: string;
   masterUrl: string;
+  legacyIds?: string[];
   clones: Array<{ name: string; id: string; url: string }>;
 }
 
@@ -415,8 +416,9 @@ export const NOTEBOOK_ENTITIES: Record<string, NotebookEntityInfo> = {
   "01_FIKIH_SYAFII": {
     code: "01_FIKIH_SYAFII",
     name: "Fikih Syafi'i (Mazhab Imam Asy-Syafi'i)",
-    masterId: "334e7b83-0e76-4787-a1d6-314642a35862",
-    masterUrl: "https://notebooklm.google.com/notebook/334e7b83-0e76-4787-a1d6-314642a35862",
+    masterId: "c89d09ca-4b48-4000-a98d-59e532607fb6",
+    legacyIds: ["334e7b83-0e76-4787-a1d6-314642a35862"],
+    masterUrl: "https://notebooklm.google.com/notebook/c89d09ca-4b48-4000-a98d-59e532607fb6",
     clones: [
       { name: "01 - FIKIH SYAFII - 01", id: "8c9d4719-07d7-4603-92f3-0fbb1abac4f9", url: "https://notebooklm.google.com/notebook/8c9d4719-07d7-4603-92f3-0fbb1abac4f9" },
       { name: "01 - FIKIH SYAFII - 02", id: "4245a33e-dab2-4b4f-b592-40de43e22d73", url: "https://notebooklm.google.com/notebook/4245a33e-dab2-4b4f-b592-40de43e22d73" },
