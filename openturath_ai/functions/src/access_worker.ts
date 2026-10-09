@@ -117,6 +117,8 @@ async function assignments(): Promise<void> {
     const grants = await engine.grants(doc.id);
     let needsRetry = false;
     for (const [entity, scope] of Object.entries(ENTITY_SCOPES)) {
+      try { await engine.importObserved(doc.id, entity); }
+      catch (_) {needsRetry = true; continue;}
       if (rights(u, grants, scope)) {
         try { await engine.reserve(doc.id, entity); }
         catch (e: any) { needsRetry = true; await db.collection("access_reviews").doc(keyOf(doc.id, entity)).set({uid: doc.id, entity,
