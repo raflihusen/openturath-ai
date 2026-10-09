@@ -114,6 +114,19 @@ export class AccessControl {
       }
     });
   }
+  async repair(uid: string, entity: string): Promise<void> {
+    const owner = await this.owner(uid);
+    if (!rights(owner.user, owner.grants, this.scopes[entity], this.clock())) return this.revoke(uid, entity);
+    const ar = this.assignmentRef(uid, entity);
+    await this.db.runTransaction(async (t: any) => {
+      const a = (await t.get(ar)).data();
+      if (!a || a.status !== "ready") return;
+      const revision = a.revision + 1;
+      t.update(ar, {status: "provisioning", revision, updated_ms: this.clock()});
+      t.set(this.db.collection("access_jobs").doc(keyOf(uid, entity, String(revision))), {
+        ...a, revision, desired: true, status: "pending", attempts: 0, due_ms: this.clock()});
+    });
+  }
   async runJob(ref: any): Promise<void> {
     if (!this.provider) throw new Error("Sharing provider is not configured");
     const token = crypto.randomUUID(), now = this.clock();
