@@ -178,6 +178,40 @@ async function runJobs(): Promise<void> {
     await new Promise(resolve => setTimeout(resolve, 1000));
   }
 }
+async function reconcile(): Promise<void> {
+  const all = Object.values(NOTEBOOK_ENTITIES).flatMap(e => notebooks(e));
+  let cursor = 0;
+  while (true) {
+    try {
+      if ((await runtime.get()).data()?.writer === "vps-v2") {
+        const target = all[cursor++ % all.length];
+        const ref = db.collection("access_notebooks").doc(target.id);
+        const snapshot = await ref.get();
+        if (snapshot.exists) {
+          const observation = await provider.observe(target.id);
+          if (!observation.complete) throw new Error("Incomplete health observation");
+          const emails = new Set(observation.emails.map(normalEmail));
+          const memberships = await db.collection("access_memberships").where("notebook_id", "==", target.id).get();
+          const reserved = memberships.docs.filter(d => d.data().counted && !emails.has(d.data().email)).length;
+          await db.runTransaction(async t => {
+            const current = (await t.get(ref)).data();
+            if (!current) return;
+            // Account for reservations not yet observed by Google; an external
+            // manual invite must not allow the allocator to overbook.
+            t.update(ref, {occupied: Math.max(current.occupied, emails.size + reserved),
+              observed_count: emails.size, observed_ms: Date.now(), healthy_until_ms: Date.now() + 86400000,
+              is_public: observation.isPublic, status: observation.isPublic ? "quarantined" : current.status});
+          });
+          if (!observation.isPublic) for (const member of memberships.docs) {
+            const m = member.data();
+            if (m.uid && m.present && !emails.has(m.email)) await engine.repair(m.uid, m.entity);
+          }
+        }
+      }
+    } catch (_) {console.error("Notebook reconciliation unavailable; retrying next target");}
+    await new Promise(resolve => setTimeout(resolve, 15000));
+  }
+}
 async function main(): Promise<void> {
   const mode = process.argv[2];
   if (mode === "--seed" || mode === "--restrict") return seed(mode === "--restrict");
@@ -187,6 +221,7 @@ async function main(): Promise<void> {
     res.statusCode = stats.error ? 503 : 200; res.end(JSON.stringify(stats));
   }).listen(8091, "127.0.0.1");
   void runJobs(); // Separate from scheduler: a slow provider cannot postpone expiry discovery.
+  void reconcile();
   while (true) {
     try { await cycle(); }
     catch (_) {stats.error = "Access cycle failed; inspect authenticated diagnostics"; console.error(stats.error);}
