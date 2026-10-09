@@ -279,7 +279,13 @@ async function projectRights(doc: any, user: any, grants: any[]): Promise<void> 
     updates[`entitlements.${scope}`]={plan:active?"premium":"expired",status,
       expiry:admin.firestore.Timestamp.fromMillis(expiry),source:"access_ledger"};
   }
-  if (Object.keys(updates).length) await doc.ref.update(updates);
+  if (Object.keys(updates).length) await db.runTransaction(async (t:any)=>{
+    const current=(await t.get(doc.ref)).data();
+    if (!current || current.access_due_ms !== user.access_due_ms ||
+        current.access_revocation_hold !== user.access_revocation_hold ||
+        JSON.stringify(current.access_grant_ids || []) !== JSON.stringify(user.access_grant_ids || [])) return;
+    t.update(doc.ref,updates);
+  });
 }
 async function assignments(): Promise<void> {
   const dueUsers = await db.collection("users").where("access_due_ms", "<=", Date.now()).orderBy("access_due_ms").limit(100).get();
