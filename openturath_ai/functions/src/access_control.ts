@@ -99,6 +99,29 @@ export class AccessControl {
       return assignment;
     });
   }
+  async importObserved(uid: string, entity: string): Promise<void> {
+    const {user} = await this.owner(uid);
+    const email = normalEmail(user?.email);
+    if (!email) return;
+    const observed = await this.db.collection("access_memberships").where("email", "==", email).get();
+    const members = observed.docs.map((d: any) => ({ref: d.ref, ...d.data()}))
+      .filter((m: any) => m.entity === entity && m.present && m.verified_ms);
+    if (!members.length) return;
+    const ar = this.assignmentRef(uid, entity);
+    const identity = this.db.collection("access_identities").doc(keyOf(email, entity));
+    await this.db.runTransaction(async (t: any) => {
+      const existing = (await t.get(ar)).data();
+      const bound = (await t.get(identity)).data();
+      if (existing) return;
+      if (bound && bound.uid !== uid) throw new AccessFault("failed-precondition", "Google identity requires ownership recovery");
+      const ids = members.map((m: any) => m.notebook_id);
+      t.set(ar, {uid, email, entity, scope: this.scopes[entity], notebook_id: ids[0], history: ids,
+        status: "ready", revision: 1, verified_ms: Math.min(...members.map((m: any) => m.verified_ms)),
+        created_ms: this.clock(), updated_ms: this.clock(), imported: true});
+      t.set(identity, {uid, email, entity});
+      for (const m of members) t.set(m.ref, {uid}, {merge: true});
+    });
+  }
   async revoke(uid: string, entity: string): Promise<void> {
     const {user, grants} = await this.owner(uid);
     if (rights(user, grants, this.scopes[entity], this.clock())) return;
