@@ -179,3 +179,11 @@ test("provider annual packages remain module specific and unknown products do no
 test("the same provider payment cannot be reassigned to another email",()=>{
   assert.throws(()=>verifiedAkalPeriods([akalRow(),akalRow({payerEmail:"other@example.test"})]),/identity collision/);
 });
+test("legacy app routing uses its registered clone even when a master has spare capacity",async()=>{
+  const {db,engine}=setup();
+  db.seed(`access_memberships/${keyOf("clone","u@example.test")}`,{email:"u@example.test",notebook_id:"clone",entity,present:true,verified_ms:now});
+  const before=db.docs.get("access_notebooks/master").occupied;
+  const result=await engine.resolveObservedLegacy("u","u@example.test",entity);
+  assert.equal(result.notebookId,"clone");assert.equal(db.docs.get("access_notebooks/master").occupied,before);
+  await assert.rejects(engine.resolveObservedLegacy("unknown","unknown@example.test",entity),{code:"failed-precondition"});
+});
