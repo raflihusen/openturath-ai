@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AccessControl = exports.AccessFault = exports.isVip = exports.millis = exports.keyOf = exports.normalEmail = exports.VIP_EMAILS = void 0;
 exports.billingExpiry = billingExpiry;
+exports.verifiedAkalPeriods = verifiedAkalPeriods;
 exports.rights = rights;
 const crypto = require("crypto");
 // Shared by Firebase callable functions and the Ubuntu worker. No Google RPC in
@@ -31,6 +32,29 @@ function billingExpiry(baseMs, months) {
     const last = new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth() + 1, 0)).getUTCDate();
     date.setUTCDate(Math.min(day, last));
     return date.getTime();
+}
+function verifiedAkalPeriods(rows) {
+    const scopes = { "AI Fikih Tahawwulat": "fiqh_tahawwulat",
+        "SUPER AI FIKIH SYAFI'I": "fiqh_syafii", "SUPER AI BAHASA ARAB": "nahwu" };
+    const durations = { "1 Bulan": 1, "6 Bulan": 6, "12 Bulan": 12 };
+    const valid = rows.filter(r => r.status === "PAID" && Number(r.incomingAmount) > 0 && scopes[r.serviceTitle] &&
+        durations[r.priceSchemeTitle] && (0, exports.normalEmail)(r.payerEmail) && r.paymentId && Number.isFinite((0, exports.millis)(r.paidAt)));
+    valid.sort((a, b) => (0, exports.millis)(a.paidAt) - (0, exports.millis)(b.paidAt));
+    const seen = new Map(), ends = new Map(), periods = [];
+    for (const row of valid) {
+        const scope = scopes[row.serviceTitle], months = durations[row.priceSchemeTitle], paid = (0, exports.millis)(row.paidAt);
+        const email = (0, exports.normalEmail)(row.payerEmail), payment = String(row.paymentId), id = (0, exports.keyOf)("goakal_verified", payment, scope);
+        if (seen.has(id)) {
+            if (seen.get(id) !== email)
+                throw new Error("Provider payment identity collision");
+            continue;
+        }
+        seen.set(id, email);
+        const chain = (0, exports.keyOf)(email, scope), starts = Math.max(paid, ends.get(chain) || 0), expires = billingExpiry(starts, months);
+        ends.set(chain, expires);
+        periods.push({ id, email, scope, payment, amount: Number(row.incomingAmount), paid, months, starts, expires });
+    }
+    return periods;
 }
 const isVip = (u, grants = []) => exports.VIP_EMAILS.has((0, exports.normalEmail)(u === null || u === void 0 ? void 0 : u.email)) ||
     (u === null || u === void 0 ? void 0 : u.is_vip) === true || ["vip", "admin", "guru", "special"].includes(String((u === null || u === void 0 ? void 0 : u.role) || "").toLowerCase()) ||

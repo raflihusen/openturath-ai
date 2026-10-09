@@ -213,13 +213,22 @@ async function importOwner(doc) {
     if (!(0, access_control_1.isVip)(u, evidence))
         for (const [scope, entitlement] of Object.entries(u.entitlements || {})) {
             const e = entitlement;
-            if (e.status === "active" && (0, access_control_1.millis)(e.expiry) > Date.now() && !(0, access_control_1.rights)(u, evidence, scope))
+            const automatedProjection = verifiedProvider && /goakal|akal/.test(String(e.source || "").toLowerCase());
+            if (!automatedProjection && e.status === "active" && (0, access_control_1.millis)(e.expiry) > Date.now() && !(0, access_control_1.rights)(u, evidence, scope))
                 unresolved.push(`profile_scope:${scope}`);
         }
     if (unresolved.length) {
         await doc.ref.update({ access_revocation_hold: true });
         await db.collection("access_reviews").doc((0, access_control_1.keyOf)(uid, "legacy_evidence")).set({ uid,
             code: "legacy_payment_evidence_incomplete", transaction_documents: unresolved, updated_ms: Date.now() });
+    }
+    if (!unresolved.length) {
+        const review = db.collection("access_reviews").doc((0, access_control_1.keyOf)(uid, "legacy_evidence"));
+        const free = await db.collection("access_reviews").doc((0, access_control_1.keyOf)(email, "free_access")).get();
+        if ((await review.get()).exists && !free.exists) {
+            await doc.ref.update({ access_revocation_hold: false });
+            await review.update({ status: "resolved_by_verified_billing", updated_ms: Date.now() });
+        }
     }
     if (unresolved.length && fresh.access_version !== 2)
         return;
@@ -241,25 +250,11 @@ async function importVerifiedAkalEvidence(path) {
     const rows = JSON.parse(await (0, promises_1.readFile)(path, "utf8"));
     if (!Array.isArray(rows))
         throw new Error("Invalid provider evidence");
-    const scopes = { "AI Fikih Tahawwulat": "fiqh_tahawwulat",
-        "SUPER AI FIKIH SYAFI'I": "fiqh_syafii", "SUPER AI BAHASA ARAB": "nahwu" };
-    const durations = { "1 Bulan": 1, "6 Bulan": 6, "12 Bulan": 12 };
-    const users = await db.collection("users").get(), seen = new Set(), ends = new Map();
-    rows.sort((a, b) => (Number.isFinite((0, access_control_1.millis)(a.paidAt)) ? (0, access_control_1.millis)(a.paidAt) : Infinity) - (Number.isFinite((0, access_control_1.millis)(b.paidAt)) ? (0, access_control_1.millis)(b.paidAt) : Infinity));
-    let imported = 0, excluded = 0;
-    for (const row of rows) {
-        const scope = scopes[row.serviceTitle], months = durations[row.priceSchemeTitle], paid = (0, access_control_1.millis)(row.paidAt);
-        const email = (0, access_control_1.normalEmail)(row.payerEmail), payment = String(row.paymentId || ""), amount = Number(row.incomingAmount);
-        if (row.status !== "PAID" || !(amount > 0) || !scope || !months || !email || !payment || !Number.isFinite(paid)) {
-            excluded++;
-            continue;
-        }
-        const gid = (0, access_control_1.keyOf)("goakal_verified", payment, scope);
-        if (seen.has(gid))
-            continue;
-        seen.add(gid);
-        const chain = (0, access_control_1.keyOf)(email, scope), starts = Math.max(paid, ends.get(chain) || 0), expires = (0, access_control_1.billingExpiry)(starts, months);
-        ends.set(chain, expires);
+    const users = await db.collection("users").get();
+    const periods = (0, access_control_1.verifiedAkalPeriods)(rows);
+    let imported = 0, excluded = rows.length - periods.length;
+    for (const period of periods) {
+        const { id: gid, email, scope, payment, amount, starts, expires, paid, months } = period;
         const matches = users.docs.filter(d => (0, access_control_1.normalEmail)(d.data().email) === email);
         if (matches.length > 1) {
             excluded++;
