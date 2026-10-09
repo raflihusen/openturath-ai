@@ -19,6 +19,7 @@ export const NOTEBOOK_ENTITIES: Record<string, NotebookEntityInfo> = {
     name: "Al-Muhaqqiq (Fikih Tahawwulat - Cabang Analitis & Ushul)",
     masterId: "dc7ee7e4-f4ad-4db6-9cd0-0013727abbe4",
     masterUrl: "https://notebooklm.google.com/notebook/dc7ee7e4-f4ad-4db6-9cd0-0013727abbe4",
+    legacyIds: ["67b65ed8-0d1e-4fb4-929c-4fcb735d3be3"],
     clones: [
       { name: "06.1 - AL-MUHAQQIQ - 01", id: "de5bfb3d-48e4-4633-8c7e-c20dad70efbd", url: "https://notebooklm.google.com/notebook/de5bfb3d-48e4-4633-8c7e-c20dad70efbd" },
       { name: "06.1 - AL-MUHAQQIQ - 02", id: "c7a226a6-0ab2-442c-9d35-9fe051a7b385", url: "https://notebooklm.google.com/notebook/c7a226a6-0ab2-442c-9d35-9fe051a7b385" },
@@ -40,6 +41,7 @@ export const NOTEBOOK_ENTITIES: Record<string, NotebookEntityInfo> = {
     name: "Al-Bayan (Fikih Tahawwulat - Cabang Sosialisasi & Dakwah Ammah)",
     masterId: "483d0291-0a70-411c-bff0-f1ea4b83b2fd",
     masterUrl: "https://notebooklm.google.com/notebook/483d0291-0a70-411c-bff0-f1ea4b83b2fd",
+    legacyIds: ["75882649-638f-4729-97f8-19897d90b108"],
     clones: [
       { name: "06.2 - AL-BAYAN - 01", id: "a1878000-38e2-4382-896c-258a70a84ec2", url: "https://notebooklm.google.com/notebook/a1878000-38e2-4382-896c-258a70a84ec2" },
       { name: "06.2 - AL-BAYAN - 02", id: "23727227-d3b3-437d-af6a-c149fbf11476", url: "https://notebooklm.google.com/notebook/23727227-d3b3-437d-af6a-c149fbf11476" },
@@ -59,8 +61,9 @@ export const NOTEBOOK_ENTITIES: Record<string, NotebookEntityInfo> = {
   "06.3_AL_MUKHTABIR": {
     code: "06.3_AL_MUKHTABIR",
     name: "Al-Mukhtabir (Fikih Tahawwulat - Cabang Komparasi & Verifikasi Ilmiah)",
-    masterId: "ac61a7a0-87e7-42a5-a30f-980ff74a78d8",
-    masterUrl: "https://notebooklm.google.com/notebook/ac61a7a0-87e7-42a5-a30f-980ff74a78d8",
+    masterId: "ac803816-5541-4446-bc9d-b56326493555",
+    masterUrl: "https://notebooklm.google.com/notebook/ac803816-5541-4446-bc9d-b56326493555",
+    legacyIds: ["ac61a7a0-87e7-42a5-a30f-980ff74a78d8"],
     clones: [
       { name: "06.3 - AL-MUKHTABIR - 01", id: "d4cdd234-de90-4573-9a4b-4547b778bff7", url: "https://notebooklm.google.com/notebook/d4cdd234-de90-4573-9a4b-4547b778bff7" },
       { name: "06.3 - AL-MUKHTABIR - 02", id: "8af7065e-6c04-4ef5-8894-5b5a8c54c90e", url: "https://notebooklm.google.com/notebook/8af7065e-6c04-4ef5-8894-5b5a8c54c90e" },
@@ -80,8 +83,9 @@ export const NOTEBOOK_ENTITIES: Record<string, NotebookEntityInfo> = {
   "06.4_AL_HABIB": {
     code: "06.4_AL_HABIB",
     name: "Al-Habib (Fikih Tahawwulat - Cabang Hikmah & Tazkiyah)",
-    masterId: "6673e79a-7156-42e1-b116-bc1653a32094",
-    masterUrl: "https://notebooklm.google.com/notebook/6673e79a-7156-42e1-b116-bc1653a32094",
+    masterId: "c8b8a754-991d-429d-8379-b0478abb6ceb",
+    masterUrl: "https://notebooklm.google.com/notebook/c8b8a754-991d-429d-8379-b0478abb6ceb",
+    legacyIds: ["6673e79a-7156-42e1-b116-bc1653a32094"],
     clones: [
       { name: "06.4 - AL-HABIB - 01", id: "b30f1e86-8494-4a64-ac7f-602301b07ad1", url: "https://notebooklm.google.com/notebook/b30f1e86-8494-4a64-ac7f-602301b07ad1" },
       { name: "06.4 - AL-HABIB - 02", id: "b09f2859-9dca-4a62-b4df-028034cb89a2", url: "https://notebooklm.google.com/notebook/b09f2859-9dca-4a62-b4df-028034cb89a2" },
@@ -101,8 +105,9 @@ export const NOTEBOOK_ENTITIES: Record<string, NotebookEntityInfo> = {
   "06.5_AL_KHATIB": {
     code: "06.5_AL_KHATIB",
     name: "Al-Khatib (Fikih Tahawwulat - Cabang Khutbah & Retorika Aktual)",
-    masterId: "1288e413-9569-47a3-892f-64008e53c1e8",
-    masterUrl: "https://notebooklm.google.com/notebook/1288e413-9569-47a3-892f-64008e53c1e8",
+    masterId: "926f3633-53fc-4dbf-81da-0570f7a4d26b",
+    masterUrl: "https://notebooklm.google.com/notebook/926f3633-53fc-4dbf-81da-0570f7a4d26b",
+    legacyIds: ["1288e413-9569-47a3-892f-64008e53c1e8"],
     clones: [
       { name: "06.5 - AL-KHATIB - 01", id: "c644c43f-b145-495c-a299-ebcac28a6ea9", url: "https://notebooklm.google.com/notebook/c644c43f-b145-495c-a299-ebcac28a6ea9" },
       { name: "06.5 - AL-KHATIB - 02", id: "bab4cebb-5441-4eb1-8b05-86d368717022", url: "https://notebooklm.google.com/notebook/bab4cebb-5441-4eb1-8b05-86d368717022" },
