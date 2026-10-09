@@ -123,11 +123,17 @@ async function importOwner(doc: any): Promise<void> {
       invoice_number: tx.invoice_number || null, starts_ms: paid, expires_ms: expiry, imported: true});
     ids.add(gid);
   }
+  const evidence = await engine.grants(uid);
+  if (!isVip(u, evidence)) for (const [scope, entitlement] of Object.entries(u.entitlements || {})) {
+    const e = entitlement as any;
+    if (e.status === "active" && millis(e.expiry) > Date.now() && !rights(u, evidence, scope)) unresolved.push(`profile_scope:${scope}`);
+  }
   if (unresolved.length) {
     await doc.ref.update({access_revocation_hold:true});
     await db.collection("access_reviews").doc(keyOf(uid,"legacy_evidence")).set({uid,
       code:"legacy_payment_evidence_incomplete", transaction_documents:unresolved, updated_ms:Date.now()});
   }
+  if (unresolved.length && fresh.access_version !== 2) return;
   // Do not invent a grant from profile expiry. Unproved legacy voucher/manual
   // access remains reviewable and outside automated revocation until imported.
   if (ids.size) await db.runTransaction(async t => {
