@@ -267,13 +267,20 @@ const notebookUiScript = r'''
         flex: 1 1 0px !important;
         min-height: 0 !important;
         overflow-y: auto !important;
+        padding-bottom: 96px !important;
+        box-sizing: border-box !important;
       }
       .ot-chat-composer {
-        flex: 0 0 auto !important;
-        margin: auto auto max(22px, env(safe-area-inset-bottom, 0px)) !important;
+        position: fixed !important;
+        bottom: max(22px, env(safe-area-inset-bottom, 0px)) !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
         width: calc(100% - 32px) !important;
         max-width: 768px !important;
         box-sizing: border-box !important;
+        margin: 0 !important;
+        z-index: 1000 !important;
+        pointer-events: auto !important;
       }
       .ot-chat-composer textarea::placeholder,
       .ot-chat-composer input::placeholder { color: transparent !important; }
