@@ -24,6 +24,7 @@
 
 ## 5. Hukum Sakral VIP & Standar Ekspirasi (MANDATORY)
 - **YANG VIP ADALAH VIP SEJATI.** Semua akun yang terdaftar di `STATIC_WHITELIST`, `is_vip: true`, `role: "vip"`, atau dokumen `VIP_PERMANENT` (seperti `prilatief@gmail.com`, `alkhateeb23@gmail.com`, `omarasb1441@gmail.com`, Asatidz, Masyayikh, dan tamu kehormatan) adalah hak prerogatif mutlak Pemilik (Owner). **DILARANG KERAS meragukan, menganggapnya kesalahan, atau mencoba mencabut akun VIP.**
+- **Hak Akses Granular Per-Modul:** Pengguna yang memiliki paket aktif di modul tertentu (misalnya Fikih Tahawwulat 1 Tahun) DILARANG KERAS dicabut dari notebook modul tersebut hanya karena paket di modul lain (Fikih Syafi'i) kedaluwarsa. Evaluasi hak akses WAJIB independen per-modul.
 - **Anti-Ghost Sync & Idempotensi:** Webhook atau skrip sinkronisasi dilarang menambahkan durasi berlangganan berulang kali (*compounding loop*) tanpa memeriksa keunikan transaksi (`transaction_id`). Transaksi dengan `amount: 0.0` tidak boleh memicu perpanjangan otomatis tanpa verifikasi admin.
 - **Deteksi Kedaluwarsa Presisi:** Evaluasi hak akses wajib memvalidasi transaksi riil, bukan semata-mata membaca field profil yang berpotensi korup. User dengan paket 1 bulan yang telah melewati masa 30 hari WAJIB dideteksi sebagai expired.
 - **Sinkronisasi Master Notebook:** Skrip reaper WAJIB memantau Master Notebook aktif `01 - FIKIH SYAFII (MASTER)` (`c89d09ca-4b48-4000-a98d-59e532607fb6`), bukan hanya notebook legacy.

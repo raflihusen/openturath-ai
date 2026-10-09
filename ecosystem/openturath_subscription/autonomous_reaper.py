@@ -399,11 +399,12 @@ class AutonomousReaper:
 
                 if status in ["SUCCESS", "PAID", "SETTLED"]:
                     if exp_dt and exp_dt > now:
-                        if is_yearly or ent_key in ["all_access", "all_ai", None]:
-                            for k in active_by_module:
-                                active_by_module[k].add(email)
-                        elif ent_key in active_by_module:
+                        if ent_key in active_by_module:
                             active_by_module[ent_key].add(email)
+                        elif ent_key in ["all_access", "all_ai", None]:
+                            if is_yearly or ent_key in ["all_access", "all_ai"]:
+                                for k in active_by_module:
+                                    active_by_module[k].add(email)
                     elif exp_dt and exp_dt <= now:
                         if ent_key in expired_by_module:
                             expired_by_module[ent_key].add(email)
@@ -437,21 +438,25 @@ class AutonomousReaper:
                     global_vip_emails.add(email)
                     continue
 
-                u_sub_exp = parse_dt(d.get("subscription_expiry"))
-                if u_sub_exp and u_sub_exp > now:
-                    for k in active_by_module:
-                        active_by_module[k].add(email)
-                elif u_sub_exp and u_sub_exp <= now:
-                    for k in expired_by_module:
-                        expired_by_module[k].add(email)
-
                 entitlements = d.get("entitlements", {})
-                for k, v in entitlements.items():
-                    if isinstance(v, dict) and k in active_by_module:
-                        e_dt = parse_dt(v.get("expiry") or v.get("expires_at"))
-                        if e_dt and e_dt > now:
+                if entitlements and isinstance(entitlements, dict):
+                    # Model granular per-modul (prioritas utama)
+                    for k, v in entitlements.items():
+                        if isinstance(v, dict) and k in active_by_module:
+                            e_dt = parse_dt(v.get("expiry") or v.get("expires_at"))
+                            if e_dt and e_dt > now:
+                                active_by_module[k].add(email)
+                            elif e_dt and e_dt <= now:
+                                expired_by_module[k].add(email)
+                                active_by_module[k].discard(email)
+                else:
+                    # Model flat legacy (fallback)
+                    u_sub_exp = parse_dt(d.get("subscription_expiry"))
+                    if u_sub_exp and u_sub_exp > now:
+                        for k in active_by_module:
                             active_by_module[k].add(email)
-                        elif e_dt and e_dt <= now:
+                    elif u_sub_exp and u_sub_exp <= now:
+                        for k in expired_by_module:
                             expired_by_module[k].add(email)
         except Exception as e:
             logger.error(f"Error reading Firestore users: {e}")

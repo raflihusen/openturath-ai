@@ -98,14 +98,13 @@ Padahal **Master Notebook Fikih Syafi'i yang aktif digunakan aplikasi dan user**
 
 Reaper **sama sekali tidak pernah memindai atau membersihkan** `c89d09ca-4b48-4000-a98d-59e532607fb6`! Akibatnya, ada 5 user lain yang sudah expired sejak awal September masih tersisa sebagai viewer di notebook master tersebut.
 
-#### D. Kecacatan 4: Kebocoran Akses Antar-Notebook (Cross-Module Bleed)
-Nadia hanya membeli/diberi akses 1 bulan untuk Fikih Syafi'i. Namun di Google NotebookLM, email Nadia terdaftar sebagai VIEWER di **4 notebook sekaligus**:
-1. `01 - FIKIH SYAFII (MASTER)` (`c89d09ca-4b48-4000-a98d-59e532607fb6`)
-2. `SUPER AI FOR FIKIH SYAFI'I` (`334e7b83-0e76-4787-a1d6-314642a35862`)
-3. `Al-MUHAQQIQ (Tahawwulat)` (`dc7ee7e4-f4ad-4db6-9cd0-0013727abbe4`)
-4. `AL-BAYAN (Tahawwulat)` (`483d0291-0a70-411c-bff0-f1ea4b83b2fd`)
-
-Ini terjadi karena skrip sinkronisasi lama menambahkan user ke bundle Fikih Tahawwulat padahal paket yang dibeli hanya Fikih Syafi'i.
+#### D. Kecacatan 4: Kebocoran & Kegagalan Isolasi Antar-Modul (Cross-Module Bleed & Monolithic Revocation)
+Kasus nyata Nadia Safira:
+- Nadia memiliki **2 hak akses terpisah**:
+  1. **Fikih Tahawwulat 1 Tahun (`bahits_1y`):** Aktif hingga **05 Juni 2027**.
+  2. **Fikih Syafi'i 1 Bulan (`syafii_1m`):** Telah kedaluwarsa pada **20 September 2026**.
+- **Kesalahan Fatal AI:** AI memperlakukan akun secara monolitik (saat mendeteksi Fikih Syafi'i habis, AI sempat mencabut akses dari Fikih Tahawwulat juga).
+- **Aturan Baku Granular:** Evaluasi ekspirasi WAJIB per-kunci modul (`entitlements.<module_key>`). Jika user habis masa aktif di Fikih Syafi'i, sistem HANYA mencabut akses di notebook Fikih Syafi'i (`c89d09ca...` dan `334e7b83...`), dan **TETAP MEMPERTAHANKAN 100% AKSES AKTIF di seluruh notebook Fikih Tahawwulat** (`Al-Muhaqqiq`, `Al-Bayan`, `Al-Mukhtabir`, `Al-Habib`, `Al-Khatib`) hingga Juni 2027!
 
 ---
 
@@ -114,6 +113,10 @@ Ini terjadi karena skrip sinkronisasi lama menambahkan user ke bundle Fikih Taha
 1. **VIP Adalah VIP Permanen (Zero-Touch Policy):**
    - Daftar di `STATIC_WHITELIST` pada `autonomous_reaper.py` adalah daftar kebal mutlak.
    - Jangan pernah menghapus `prilatief@gmail.com`, Masyayikh, atau tamu terverifikasi.
+
+2. **Hak Akses Granular Bersifat Independen (Zero Collateral Revocation):**
+   - User yang memiliki paket aktif di modul tertentu (misalnya Fikih Tahawwulat 1 Tahun) DILARANG KERAS dicabut dari modul tersebut hanya karena modul lainnya (misalnya Fikih Syafi'i) telah kedaluwarsa.
+   - Sistem reaper wajib memeriksa `entitlements[key]` secara terisolasi per-notebook.
    
 2. **Idempotensi Wajib dalam Webhook/Sync:**
    - Dilarang membuat transaksi baru atau memperpanjang `subscription_expiry` jika ID transaksi Akal/Order sudah pernah tercatat.
