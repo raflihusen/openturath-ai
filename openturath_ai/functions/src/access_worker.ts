@@ -115,15 +115,16 @@ async function assignments(): Promise<void> {
     const u = doc.data();
     if (u.access_version !== 2) continue;
     const grants = await engine.grants(doc.id);
+    let needsRetry = false;
     for (const [entity, scope] of Object.entries(ENTITY_SCOPES)) {
       if (rights(u, grants, scope)) {
         try { await engine.reserve(doc.id, entity); }
-        catch (e: any) { await db.collection("access_reviews").doc(keyOf(doc.id, entity)).set({uid: doc.id, entity,
+        catch (e: any) { needsRetry = true; await db.collection("access_reviews").doc(keyOf(doc.id, entity)).set({uid: doc.id, entity,
           code: e.code || "unavailable", updated_ms: Date.now()}, {merge: true}); }
       } else await engine.revoke(doc.id, entity);
     }
     const expiry = grants.filter(g => g.status === "active" && g.expires_ms > Date.now()).map(g => g.expires_ms);
-    const next = Math.min(Date.now() + 3600000, ...expiry);
+    const next = Math.min(Date.now() + (needsRetry ? 60000 : 3600000), ...expiry);
     await db.runTransaction(async t => {
       const current = (await t.get(doc.ref)).data();
       if (current?.access_due_ms === u.access_due_ms) t.update(doc.ref, {access_due_ms: next});
@@ -161,14 +162,21 @@ async function cycle(): Promise<void> {
     await job.ref.update({status:"v2_handed_off", updated_ms:Date.now()});
   }
   await assignments();
-  const jobs = await db.collection("access_jobs").where("status", "in", ["pending", "retry", "processing"]).get();
-  const eligible = jobs.docs.filter(d => (d.data().due_ms || 0) <= Date.now()).sort((a,b) => a.data().due_ms - b.data().due_ms);
-  for (const doc of eligible.slice(0, 100)) await engine.runJob(doc.ref);
   await settleRevokes();
-  const failed = eligible.filter(d => Date.now() - (d.data().created_ms || Date.now()) > 300000).length;
+  const jobs = await db.collection("access_jobs").where("due_ms", "<=", Date.now()).count().get();
   stats.last_success_ms = Date.now(); stats.error = ""; stats.cycles++;
-  await db.collection("access_control").doc("heartbeat").set({...stats, delayed_jobs: failed,
-    pending_jobs: jobs.size, writer: "vps-v2"});
+  await db.collection("access_control").doc("heartbeat").set({...stats, pending_jobs: jobs.data().count, writer: "vps-v2"});
+}
+async function runJobs(): Promise<void> {
+  while (true) {
+    try {
+      if ((await runtime.get()).data()?.writer === "vps-v2") {
+        const jobs = await db.collection("access_jobs").where("due_ms", "<=", Date.now()).orderBy("due_ms").limit(20).get();
+        for (const job of jobs.docs) await engine.runJob(job.ref);
+      }
+    } catch (_) { console.error("Job loop failed; retrying"); }
+    await new Promise(resolve => setTimeout(resolve, 1000));
+  }
 }
 async function main(): Promise<void> {
   const mode = process.argv[2];
@@ -178,6 +186,7 @@ async function main(): Promise<void> {
   createServer((_, res) => {res.setHeader("Content-Type", "application/json");
     res.statusCode = stats.error ? 503 : 200; res.end(JSON.stringify(stats));
   }).listen(8091, "127.0.0.1");
+  void runJobs(); // Separate from scheduler: a slow provider cannot postpone expiry discovery.
   while (true) {
     try { await cycle(); }
     catch (_) {stats.error = "Access cycle failed; inspect authenticated diagnostics"; console.error(stats.error);}
