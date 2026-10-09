@@ -131,7 +131,7 @@ async function importOwner(doc: any): Promise<void> {
   const unresolved: string[] = [];
   for (const [id, tx] of txs) {
     if (tx.uid && tx.uid !== uid) continue;
-    if (verifiedProvider && String(tx.source || "").toLowerCase() === "goakal") continue;
+    if (verifiedProvider && !["midtrans", "doku"].includes(String(tx.gateway || "").toLowerCase())) continue;
     const paidStatus = ["paid", "success", "settled", "settlement"].includes(String(tx.status).toLowerCase());
     const settledBeforeExpiry = String(tx.status).toLowerCase() === "expired" && tx.activation_applied === true && tx.paid_at;
     if ((!paidStatus && !settledBeforeExpiry) || !(Number(tx.amount) > 0)) continue;
@@ -143,6 +143,9 @@ async function importOwner(doc: any): Promise<void> {
     const scope = tx.entitlement_key || AGENT_ENTITLEMENTS[tx.agent_id] || labels[tx.service_name] ||
       (/^all_ai(?:_1m|_6m|_1y)?$/.test(tx.plan || "") ? "all_access" : "");
     if (!Object.values(ENTITY_SCOPES).includes(scope) && !["all_access", "all_ai"].includes(scope)) {unresolved.push(id); continue;}
+    if (tx.activation_applied !== true || !["midtrans", "doku"].includes(String(tx.gateway || "").toLowerCase())) {
+      unresolved.push(id); continue;
+    }
     const gid = tx.invoice_number ? keyOf("invoice", tx.invoice_number) : keyOf("legacy_tx", id);
     const gr = db.collection("access_grants").doc(gid);
     const prior = (await gr.get()).data();
