@@ -171,6 +171,16 @@ async function assignments(): Promise<void> {
   for (const doc of due.docs) {
     const u = doc.data();
     if (u.access_version !== 2 || u.adopted_by) continue;
+    if (!u.legacy_revoke_only && !u.account_deleted && !u.pending_deletion) {
+      try {
+        const authOwner = await admin.auth().getUser(doc.id);
+        if (!authOwner.emailVerified || normalEmail(authOwner.email) !== normalEmail(u.email)) throw new Error("Owner identity not verified");
+      } catch (_) {
+        await db.collection("access_reviews").doc(keyOf(doc.id,"identity")).set({uid:doc.id,code:"identity_review",updated_ms:Date.now()});
+        await doc.ref.update({access_due_ms:Date.now()+3600000});
+        continue;
+      }
+    }
     const grants = await engine.grants(doc.id);
     let needsRetry = false;
     for (const [entity, scope] of Object.entries(ENTITY_SCOPES)) {
