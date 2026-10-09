@@ -112,7 +112,7 @@ export class AccessControl {
           const desired = a.a.status === "provisioning";
           for (const id of desired ? [a.a.notebook_id] : (a.a.history || [a.a.notebook_id])) {
             t.set(this.db.collection("access_jobs").doc(keyOf(uid, a.a.entity, String(revision), id)),
-              {...adopted, notebook_id:id, desired, status:"pending", attempts:0, due_ms:this.clock()});
+              {...adopted, notebook_id:id, desired, status:"pending", attempts:0, queued_ms:this.clock(), due_ms:this.clock()});
           }
         }
         t.update(a.ref, {status:"adopted", adopted_by:uid});
@@ -200,7 +200,7 @@ export class AccessControl {
       t.set(identity, {uid, email, entity});
       t.set(ar, assignment);
       t.set(this.db.collection("access_jobs").doc(keyOf(uid, entity, String(revision))), {
-        ...assignment, desired: true, status: "pending", attempts: 0, due_ms: this.clock()});
+        ...assignment, desired: true, status: "pending", attempts: 0, queued_ms:this.clock(), due_ms: this.clock()});
       return assignment;
     });
   }
@@ -242,7 +242,7 @@ export class AccessControl {
       t.update(ar, {status: "revoking", revision, updated_ms: this.clock()});
       for (const notebook of a.history || [a.notebook_id]) {
         t.set(this.db.collection("access_jobs").doc(keyOf(uid, entity, String(revision), notebook)), {
-          ...a, notebook_id: notebook, revision, desired: false, status: "pending", attempts: 0, due_ms: this.clock()});
+          ...a, notebook_id: notebook, revision, desired: false, status: "pending", attempts: 0, queued_ms:this.clock(), due_ms: this.clock()});
       }
     });
   }
@@ -256,7 +256,7 @@ export class AccessControl {
       const revision = a.revision + 1;
       t.update(ar, {status: "provisioning", revision, updated_ms: this.clock()});
       t.set(this.db.collection("access_jobs").doc(keyOf(uid, entity, String(revision))), {
-        ...a, revision, desired: true, status: "pending", attempts: 0, due_ms: this.clock()});
+        ...a, revision, desired: true, status: "pending", attempts: 0, queued_ms:this.clock(), due_ms: this.clock()});
     });
   }
   async runJob(ref: any): Promise<void> {
