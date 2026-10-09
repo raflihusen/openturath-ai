@@ -223,6 +223,17 @@ async function importVerifiedAkalEvidence(path: string): Promise<void> {
     });
     imported++;
   }
+  const freeEmails = new Set(rows.filter(r=>r.status === "PAID" && Number(r.incomingAmount) === 0).map(r=>normalEmail(r.payerEmail)));
+  for (const email of freeEmails) {
+    if (!email) continue;
+    if ((await db.collection("access_vip_registry").doc(keyOf(email)).get()).exists) continue;
+    const owner = users.docs.find(d=>normalEmail(d.data().email)===email);
+    if (owner && isVip(owner.data())) continue;
+    const ref = owner?.ref || db.collection("access_legacy_owners").doc(`legacy_${keyOf(email)}`);
+    if ((await ref.get()).exists) await ref.update({access_revocation_hold:true});
+    await db.collection("access_reviews").doc(keyOf(email,"free_access")).set({email,
+      code:"zero_amount_requires_admin_evidence",updated_ms:Date.now()});
+  }
   await db.collection("access_control").doc("legacy_provider_audit").set({provider:"goakal",fetched_rows:rows.length,
     imported,excluded,completed_ms:Date.now(),invoice_expiry_ignored:true});
   console.log(JSON.stringify({provider:"goakal",imported,excluded}));
