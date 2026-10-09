@@ -545,6 +545,7 @@ async function reconcile() {
     }
 }
 async function main() {
+    var _a;
     const mode = process.argv[2];
     if (mode === "--seed" || mode === "--restrict")
         return seed(mode === "--restrict");
@@ -556,6 +557,15 @@ async function main() {
         return prepareLegacy();
     if (mode === "--prepare-assignments")
         return assignments();
+    if (mode === "--run-one") {
+        const id = process.argv[3];
+        if (!/^[a-f0-9]{64}$/.test(id || ""))
+            throw new Error("A verified job ID is required");
+        const ref = db.collection("access_jobs").doc(id);
+        await engine.runJob(ref);
+        console.log(JSON.stringify(Object.assign({ job_status: (_a = (await ref.get()).data()) === null || _a === void 0 ? void 0 : _a.status }, telemetry)));
+        return;
+    }
     if (mode === "--once")
         return cycle();
     (0, http_1.createServer)((_, res) => {

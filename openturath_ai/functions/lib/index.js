@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.onClientErrorLogged = exports.akalWebhook = exports.syncAkalPurchases = exports.chatGate = exports.cleanupOrphanedDeletions = exports.onUserDeleted = exports.processProvisioningOutbox = exports.dailyRevoke = exports.onUserCreate = exports.redeemCode = exports.checkPaymentStatus = exports.midtransWebhook = exports.dokuWebhook = exports.createCheckout = exports.askAgent = exports.recordQuestion = exports.getAgentUrl = exports.MODULE_PLANS = exports.PURCHASABLE_AGENTS = void 0;
+exports.onClientErrorLogged = exports.akalWebhook = exports.syncAkalPurchases = exports.chatGate = exports.cleanupOrphanedDeletions = exports.onUserDeleted = exports.processProvisioningOutbox = exports.dailyRevoke = exports.onUserCreate = exports.redeemCode = exports.checkPaymentStatus = exports.midtransWebhook = exports.dokuWebhook = exports.reconcileMidtransPayments = exports.createCheckout = exports.askAgent = exports.recordQuestion = exports.getAgentUrl = exports.MODULE_PLANS = exports.PURCHASABLE_AGENTS = void 0;
 exports.addCalendarMonthsClamped = addCalendarMonthsClamped;
 const functions = require("firebase-functions");
 const admin = require("firebase-admin");
@@ -559,7 +559,7 @@ exports.createCheckout = functions
             pricingRevision !== "perdana-2026-09-20")) {
         throw new functions.https.HttpsError("failed-precondition", "Harga penawaran telah berubah. Muat ulang aplikasi.");
     }
-    const invoiceNumber = `OT-${Date.now()}-${Math.floor(1000 + Math.random() * 9000)}`;
+    const invoiceNumber = `OT-${crypto.randomUUID()}`;
     const trxRef = db.collection("transactions").doc();
     const trxId = trxRef.id;
     const uid = ((_a = context.auth) === null || _a === void 0 ? void 0 : _a.uid) || null;
@@ -580,6 +580,8 @@ exports.createCheckout = functions
         customer_phone: phone || "",
         created_at: admin.firestore.FieldValue.serverTimestamp(),
     });
+    await db.collection("payment_reconciliation").doc(invoiceNumber).set({ invoice_number: invoiceNumber,
+        transaction_document: trxId, uid, gateway: "midtrans", state: "pending", due_ms: Date.now() + 60000, attempts: 0 });
     let paymentUrl = "";
     let snapToken = "";
     try {
@@ -743,6 +745,11 @@ async function processSuccessfulPayment(invoiceNumber, paidAmount, gatewayEviden
         const grantId = (0, access_control_1.keyOf)("invoice", invoiceNumber);
         if (receiptRef)
             t.set(receiptRef, { invoice_number: invoiceNumber, uid, transaction_id: gatewayEvidence.transactionId });
+        if (txData.gateway === "midtrans")
+            t.set(db.collection("payment_reconciliation").doc(invoiceNumber), {
+                invoice_number: invoiceNumber, transaction_document: txDocRef.id, uid, gateway: "midtrans", state: "paid",
+                lease: null, expires_ms: expiryDate.getTime(), due_ms: Date.now() + 6 * 3600000
+            }, { merge: true });
         t.set(db.collection("access_grants").doc(grantId), {
             uid, scope: entitlementKey, kind: "payment", status: "active", amount,
             invoice_number: invoiceNumber, transaction_document: txDocRef.id,
@@ -831,6 +838,98 @@ function safeTimingEqual(a, b) {
         return false;
     return crypto.timingSafeEqual(bufA, bufB);
 }
+async function applyMidtransRefund(invoice, verified) {
+    const partial = String(verified.transaction_status).startsWith("partial");
+    const query = await db.collection("transactions").where("invoice_number", "==", invoice).limit(1).get();
+    const grantRef = db.collection("access_grants").doc((0, access_control_1.keyOf)("invoice", invoice));
+    await db.runTransaction(async (t) => {
+        var _a, _b, _c, _d, _e, _f;
+        const grant = await t.get(grantRef), tx = query.empty ? null : await t.get(query.docs[0].ref);
+        const uid = ((_a = grant.data()) === null || _a === void 0 ? void 0 : _a.uid) || ((_b = tx === null || tx === void 0 ? void 0 : tx.data()) === null || _b === void 0 ? void 0 : _b.uid);
+        const ownerRef = uid ? db.collection("users").doc(uid) : null, owner = ownerRef ? await t.get(ownerRef) : null;
+        const amount = (_d = (_c = grant.data()) === null || _c === void 0 ? void 0 : _c.amount) !== null && _d !== void 0 ? _d : (_e = tx === null || tx === void 0 ? void 0 : tx.data()) === null || _e === void 0 ? void 0 : _e.amount;
+        if (amount === undefined || verified.order_id !== invoice || Number(verified.gross_amount) !== amount ||
+            verified.currency && verified.currency !== "IDR" ||
+            grant.exists && ((_f = grant.data()) === null || _f === void 0 ? void 0 : _f.transaction_id) !== verified.transaction_id)
+            throw new Error("Refund identity mismatch");
+        if (grant.exists)
+            t.update(grantRef, partial ? { review_required: true, payment_status: verified.transaction_status } :
+                { status: "revoked", payment_status: verified.transaction_status });
+        if (tx === null || tx === void 0 ? void 0 : tx.exists)
+            t.update(tx.ref, { status: verified.transaction_status, updated_at: admin.firestore.FieldValue.serverTimestamp() });
+        if (ownerRef && (owner === null || owner === void 0 ? void 0 : owner.exists))
+            t.update(ownerRef, { access_due_ms: Date.now() });
+        if (partial)
+            t.set(db.collection("access_reviews").doc((0, access_control_1.keyOf)("refund", invoice)), { uid: uid || null,
+                invoice_number: invoice, code: "partial_refund_policy_review", updated_ms: Date.now() }, { merge: true });
+        t.set(db.collection("payment_reconciliation").doc(invoice), { invoice_number: invoice, gateway: "midtrans",
+            state: partial ? "partial_refund" : "refunded", lease: null, due_ms: partial ? Date.now() + 6 * 3600000 : 8640000000000000 }, { merge: true });
+    });
+}
+// A missing webhook or closed app must not leave a paid invoice unprovisioned.
+// The queue also rechecks active payments for refunds that were not delivered.
+exports.reconcileMidtransPayments = functions
+    .runWith({ serviceAccount: "open-turath@appspot.gserviceaccount.com", timeoutSeconds: 300 })
+    .pubsub.schedule("every 5 minutes").onRun(async () => {
+    var _a;
+    if (((_a = (await db.collection("access_control").doc("runtime").get()).data()) === null || _a === void 0 ? void 0 : _a.writer) !== "vps-v2")
+        return null;
+    const cfg = getMidtransConfig(), jobs = await db.collection("payment_reconciliation").where("due_ms", "<=", Date.now()).orderBy("due_ms").limit(200).get();
+    let cursor = 0, completed = 0, failed = 0;
+    const run = async () => {
+        var _a;
+        while (cursor < jobs.docs.length) {
+            const doc = jobs.docs[cursor++], token = crypto.randomUUID();
+            const job = await db.runTransaction(async (t) => {
+                const current = (await t.get(doc.ref)).data();
+                if (!current || current.due_ms > Date.now())
+                    return null;
+                t.update(doc.ref, { lease: token, due_ms: Date.now() + 300000, attempts: (current.attempts || 0) + 1 });
+                return current;
+            });
+            if (!job)
+                continue;
+            let due = Date.now() + 60000;
+            try {
+                const response = await axios_1.default.get(`${cfg.apiUrl}/${encodeURIComponent(job.invoice_number)}/status`, {
+                    headers: { Authorization: `Basic ${Buffer.from(`${cfg.serverKey}:`).toString("base64")}` }, timeout: 15000
+                });
+                const verified = response.data, status = verified.transaction_status;
+                if (verified.order_id !== job.invoice_number || verified.currency && verified.currency !== "IDR")
+                    throw new Error("Gateway order mismatch");
+                if (status === "settlement" || status === "capture" && verified.fraud_status === "accept") {
+                    await processSuccessfulPayment(job.invoice_number, verified.gross_amount, { transactionId: verified.transaction_id,
+                        orderId: verified.order_id, currency: verified.currency });
+                    due = job.expires_ms && job.expires_ms < Date.now() ? 8640000000000000 : Date.now() + 6 * 3600000;
+                }
+                else if (["refund", "partial_refund", "chargeback", "partial_chargeback"].includes(status)) {
+                    await applyMidtransRefund(job.invoice_number, verified);
+                    due = String(status).startsWith("partial") ? Date.now() + 6 * 3600000 : 8640000000000000;
+                }
+                else if (["expire", "deny", "cancel", "failure"].includes(status)) {
+                    const tx = await db.collection("transactions").doc(job.transaction_document).get();
+                    if (tx.exists && !((_a = tx.data()) === null || _a === void 0 ? void 0 : _a.activation_applied)) {
+                        await db.runTransaction(async (t) => { var _a; const current = await t.get(tx.ref); if (current.exists && !((_a = current.data()) === null || _a === void 0 ? void 0 : _a.activation_applied))
+                            t.update(tx.ref, { status }); });
+                        due = 8640000000000000;
+                    }
+                }
+                completed++;
+            }
+            catch (_) {
+                failed++;
+            }
+            await db.runTransaction(async (t) => {
+                const current = (await t.get(doc.ref)).data();
+                if ((current === null || current === void 0 ? void 0 : current.lease) === token)
+                    t.update(doc.ref, { due_ms: due, lease: null, last_checked_ms: Date.now() });
+            });
+        }
+    };
+    await Promise.all([run(), run(), run(), run(), run()]);
+    await db.collection("access_control").doc("payment_heartbeat").set({ completed, failed, checked_ms: Date.now() });
+    return null;
+});
 // ================================================================
 // FUNCTION 2b: dokuWebhook (HTTP Notification dari DOKU)
 // Otomatis aktifkan akses santri di Firestore saat bayar sukses
@@ -1056,19 +1155,7 @@ exports.midtransWebhook = functions
             res.status(200).json({ status: "OK", message: `Transaction marked as ${transactionStatus}` });
         }
         else if (["refund", "partial_refund", "chargeback", "partial_chargeback"].includes(transactionStatus)) {
-            const gr = db.collection("access_grants").doc((0, access_control_1.keyOf)("invoice", String(orderId)));
-            await db.runTransaction(async (t) => {
-                var _a;
-                const grant = await t.get(gr);
-                const ownerRef = ((_a = grant.data()) === null || _a === void 0 ? void 0 : _a.uid) ? db.collection("users").doc(grant.data().uid) : null;
-                const ownerDoc = ownerRef ? await t.get(ownerRef) : null;
-                if (grant.exists)
-                    t.update(gr, transactionStatus.startsWith("partial")
-                        ? { review_required: true, payment_status: transactionStatus }
-                        : { status: "revoked", payment_status: transactionStatus });
-                if (ownerRef && (ownerDoc === null || ownerDoc === void 0 ? void 0 : ownerDoc.exists))
-                    t.update(ownerRef, { access_due_ms: Date.now() });
-            });
+            await applyMidtransRefund(String(orderId), verified);
             await eventRef.update({ status: "completed" });
             res.status(200).json({ status: "OK" });
         }
@@ -1116,7 +1203,7 @@ exports.checkPaymentStatus = functions
     if (txData.uid !== callerUid) {
         throw new functions.https.HttpsError("permission-denied", "Anda tidak memiliki akses untuk memeriksa transaksi ini.");
     }
-    if (txData.status === "paid" || txData.status === "success") {
+    if ((txData.status === "paid" || txData.status === "success") && txData.gateway !== "midtrans") {
         return { success: true, status: "SUCCESS", message: "Akses langganan sudah aktif." };
     }
     const gateway = txData.gateway || "midtrans";
@@ -1148,6 +1235,12 @@ exports.checkPaymentStatus = functions
                     message: "Pembayaran terverifikasi. Akses Anda sudah aktif.",
                     details: actResult,
                 };
+            }
+            else if (["refund", "partial_refund", "chargeback", "partial_chargeback"].includes(trxStatus)) {
+                await applyMidtransRefund(invoiceNumber, mData);
+                return { success: false, status: trxStatus.toUpperCase(), message: trxStatus.startsWith("partial")
+                        ? "Pengembalian sebagian tercatat. Hak akses sedang ditinjau."
+                        : "Pembayaran dikembalikan. Hak akses dari transaksi ini dihentikan." };
             }
             else if (trxStatus === "cancel" || trxStatus === "expire" || trxStatus === "deny") {
                 return {
