@@ -122,7 +122,9 @@ export class AccessControl {
       const bound = (await t.get(identity)).data();
       if (existing) return;
       if (bound && bound.uid !== uid) throw new AccessFault("failed-precondition", "Google identity requires ownership recovery");
-      const ids = members.map((m: any) => m.notebook_id);
+      const e = this.entities[entity];
+      const preferred = [...(e.legacyIds || []), e.masterId, ...e.clones.map(c => c.id)];
+      const ids = members.map((m: any) => m.notebook_id).sort((a: string, b: string) => preferred.indexOf(a) - preferred.indexOf(b));
       t.set(ar, {uid, email, entity, scope: this.scopes[entity], notebook_id: ids[0], history: ids,
         status: "ready", revision: 1, verified_ms: Math.min(...members.map((m: any) => m.verified_ms)),
         created_ms: this.clock(), updated_ms: this.clock(), imported: true});
