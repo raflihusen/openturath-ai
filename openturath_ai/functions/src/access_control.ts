@@ -140,6 +140,23 @@ export class AccessControl {
       entityCode: entity, revision: a.revision, isMaster: a.notebook_id === this.entities[entity].masterId,
       cloneName: n.name, validUntil: new Date(this.clock() + 60000).toISOString()};
   }
+  async resolveObservedLegacy(uid: string, email: string, entity: string): Promise<any> {
+    // During migration, preserve proven physical registrations for legacy
+    // manual rights. Never invent an assignment from a UID hash or free slot.
+    const members=await this.db.collection("access_memberships").where("email","==",normalEmail(email)).get();
+    const assignment=(await this.assignmentRef(uid,entity).get()).data();
+    const e=this.entities[entity];
+    const preferred=[assignment?.notebook_id,...(e.legacyIds || []),e.masterId,...e.clones.map(c=>c.id)];
+    const candidates=members.docs.map((d:any)=>d.data()).filter((m:any)=>m.entity===entity && m.present && m.verified_ms)
+      .sort((a:any,b:any)=>preferred.indexOf(a.notebook_id)-preferred.indexOf(b.notebook_id));
+    for (const member of candidates) {
+      const n=(await this.db.collection("access_notebooks").doc(member.notebook_id).get()).data();
+      if (n?.entity===entity && n.is_public===false && ["active","draining"].includes(n.status))
+        return {url:`https://notebook.google.com/notebook/${member.notebook_id}`,notebookId:member.notebook_id,
+          entityCode:entity,isMaster:member.notebook_id===e.masterId,cloneName:n.name};
+    }
+    throw new AccessFault("failed-precondition","Hak akses lama sedang dicocokkan dengan notebook terdaftar. Anda tidak perlu membeli ulang.");
+  }
   async reserve(uid: string, entity: string): Promise<any> {
     const {user, grants} = await this.owner(uid);
     if (!rights(user, grants, this.scopes[entity], this.clock())) throw new AccessFault("permission-denied", "No current grant");
