@@ -172,6 +172,23 @@ class AccessControl {
             entityCode: entity, revision: a.revision, isMaster: a.notebook_id === this.entities[entity].masterId,
             cloneName: n.name, validUntil: new Date(this.clock() + 60000).toISOString() };
     }
+    async resolveObservedLegacy(uid, email, entity) {
+        // During migration, preserve proven physical registrations for legacy
+        // manual rights. Never invent an assignment from a UID hash or free slot.
+        const members = await this.db.collection("access_memberships").where("email", "==", (0, exports.normalEmail)(email)).get();
+        const assignment = (await this.assignmentRef(uid, entity).get()).data();
+        const e = this.entities[entity];
+        const preferred = [assignment === null || assignment === void 0 ? void 0 : assignment.notebook_id, ...(e.legacyIds || []), e.masterId, ...e.clones.map(c => c.id)];
+        const candidates = members.docs.map((d) => d.data()).filter((m) => m.entity === entity && m.present && m.verified_ms)
+            .sort((a, b) => preferred.indexOf(a.notebook_id) - preferred.indexOf(b.notebook_id));
+        for (const member of candidates) {
+            const n = (await this.db.collection("access_notebooks").doc(member.notebook_id).get()).data();
+            if ((n === null || n === void 0 ? void 0 : n.entity) === entity && n.is_public === false && ["active", "draining"].includes(n.status))
+                return { url: `https://notebook.google.com/notebook/${member.notebook_id}`, notebookId: member.notebook_id,
+                    entityCode: entity, isMaster: member.notebook_id === e.masterId, cloneName: n.name };
+        }
+        throw new AccessFault("failed-precondition", "Hak akses lama sedang dicocokkan dengan notebook terdaftar. Anda tidak perlu membeli ulang.");
+    }
     async reserve(uid, entity) {
         const { user, grants } = await this.owner(uid);
         if (!rights(user, grants, this.scopes[entity], this.clock()))
@@ -231,13 +248,13 @@ class AccessControl {
             return assignment;
         });
     }
-    async importObserved(uid, entity) {
+    async importObserved(uid, entity, observedMembers) {
         const { user } = await this.owner(uid);
         const email = (0, exports.normalEmail)(user === null || user === void 0 ? void 0 : user.email);
         if (!email)
             return;
-        const observed = await this.db.collection("access_memberships").where("email", "==", email).get();
-        const members = observed.docs.map((d) => (Object.assign({ ref: d.ref }, d.data())))
+        const observed = observedMembers || (await this.db.collection("access_memberships").where("email", "==", email).get()).docs;
+        const members = observed.map((d) => (Object.assign({ ref: d.ref }, d.data())))
             .filter((m) => m.entity === entity && m.present && m.verified_ms);
         if (!members.length)
             return;

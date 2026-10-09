@@ -152,6 +152,7 @@ function getEntitlementAccess(userData, entitlementKey) {
 exports.getAgentUrl = functions
     .runWith({ serviceAccount: "open-turath@appspot.gserviceaccount.com" })
     .https.onCall(async (data, context) => {
+    var _a;
     if (!context.auth) {
         throw new functions.https.HttpsError("unauthenticated", "Login diperlukan untuk mengakses agent.");
     }
@@ -171,6 +172,10 @@ exports.getAgentUrl = functions
         throw new functions.https.HttpsError("not-found", "User tidak ditemukan.");
     }
     const userData = userDoc.data();
+    if (userData.access_version === 2 && (context.auth.token.email_verified !== true ||
+        String(context.auth.token.email || "").trim().toLowerCase() !== String(userData.email || "").trim().toLowerCase())) {
+        throw new functions.https.HttpsError("failed-precondition", "Gunakan email terverifikasi yang terdaftar untuk akses notebook ini.");
+    }
     if (userData.access_version === 2) {
         const entity = notebook_catalog_1.AGENT_TO_ENTITY[agentId];
         if (!entity)
@@ -188,6 +193,19 @@ exports.getAgentUrl = functions
     const entitlementKey = getEntitlementKey(agentId);
     const entitlementAccess = getEntitlementAccess(userData, entitlementKey);
     if (entitlementAccess.active) {
+        if (((_a = (await db.collection("access_control").doc("runtime").get()).data()) === null || _a === void 0 ? void 0 : _a.writer) === "vps-v2") {
+            const entity = notebook_catalog_1.AGENT_TO_ENTITY[agentId];
+            if (!entity)
+                throw new functions.https.HttpsError("not-found", "Kajian tidak ditemukan.");
+            try {
+                return await new access_control_1.AccessControl(db, notebook_catalog_1.NOTEBOOK_ENTITIES, access_catalog_1.ENTITY_SCOPES).resolveObservedLegacy(uid, userData.email, entity);
+            }
+            catch (e) {
+                if (e instanceof access_control_1.AccessFault)
+                    throw new functions.https.HttpsError(e.code, e.message);
+                throw e;
+            }
+        }
         return {
             url,
             notebookId: resolved === null || resolved === void 0 ? void 0 : resolved.notebookId,
@@ -1442,12 +1460,19 @@ exports.redeemCode = functions
 exports.onUserCreate = functions.firestore
     .document("users/{uid}")
     .onCreate(async (snapshot, context) => {
+    var _a;
     const uid = context.params.uid;
     const user = await admin.auth().getUser(uid);
     if (!user.emailVerified || !user.email)
         return null;
     // Only verified email users may claim historical transactions.
     const emailLower = user.email.toLowerCase().trim();
+    if (((_a = (await db.collection("access_control").doc("runtime").get()).data()) === null || _a === void 0 ? void 0 : _a.writer) === "vps-v2") {
+        await snapshot.ref.update({ access_due_ms: Date.now() });
+        await db.collection("provisioning_outbox").doc(`v2_signup_${uid}`).set({ uid, email: user.email,
+            action: "reconcile", status: "pending", created_at: admin.firestore.FieldValue.serverTimestamp() });
+        return null;
+    }
     const [ownedByUid, ownedByEmail] = await Promise.all([
         db.collection("transactions").where("uid", "==", uid).where("status", "in", ["success", "paid"]).get(),
         db.collection("transactions").where("customer_email", "==", emailLower).where("status", "in", ["success", "paid"]).get(),
@@ -2005,6 +2030,7 @@ function clearSessionCookie(res) {
 exports.chatGate = functions
     .runWith({ serviceAccount: "open-turath@appspot.gserviceaccount.com" })
     .https.onRequest(async (req, res) => {
+    var _a;
     const sessionSecret = getWebSessionSecret();
     if (!sessionSecret) {
         console.error("WEB_SESSION_SECRET is not configured; web access is disabled.");
@@ -2073,6 +2099,17 @@ exports.chatGate = functions
             catch (e) {
                 res.status(e instanceof access_control_1.AccessFault && e.code === "permission-denied" ? 403 : 503)
                     .send("Akses notebook sedang disiapkan atau diperiksa. Anda tidak perlu membeli ulang.");
+            }
+            return;
+        }
+        if (((_a = (await db.collection("access_control").doc("runtime").get()).data()) === null || _a === void 0 ? void 0 : _a.writer) === "vps-v2") {
+            try {
+                const assigned = await new access_control_1.AccessControl(db, notebook_catalog_1.NOTEBOOK_ENTITIES, access_catalog_1.ENTITY_SCOPES).resolveObservedLegacy(session.uid, session.email, notebook_catalog_1.AGENT_TO_ENTITY[agentId]);
+                res.setHeader("Content-Type", "text/html;charset=UTF-8");
+                res.send(getChatWrapperHTML(Object.assign(Object.assign({}, agent), { notebookId: assigned.notebookId }), agentId, session.email));
+            }
+            catch (_) {
+                res.status(503).send("Akses notebook terdaftar sedang diperiksa. Anda tidak perlu membeli ulang.");
             }
             return;
         }

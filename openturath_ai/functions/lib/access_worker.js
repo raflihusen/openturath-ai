@@ -328,6 +328,43 @@ async function prepareLegacy() {
         }
     });
 }
+async function projectRights(doc, user, grants) {
+    var _a;
+    if (user.legacy_revoke_only || user.account_deleted || user.pending_deletion)
+        return;
+    const protectedOwner = await engine.owner(doc.id);
+    if ((0, access_control_1.isVip)(protectedOwner.user, grants)) {
+        if (user.is_vip !== true)
+            await doc.ref.update({ is_vip: true });
+        return;
+    }
+    const updates = {};
+    for (const scope of new Set([...Object.values(access_catalog_1.ENTITY_SCOPES), "all_access", "all_ai"])) {
+        const active = (0, access_control_1.rights)(user, grants, scope);
+        if (!active && user.access_revocation_hold)
+            continue;
+        const matching = grants.filter(g => [scope, "all_access", "all_ai"].includes(g.scope) && g.status === "active" &&
+            (g.kind === "payment" && g.amount > 0 || g.kind === "voucher" || g.kind === "admin" && g.admin_verified));
+        const existing = (_a = user.entitlements) === null || _a === void 0 ? void 0 : _a[scope];
+        if (!matching.length && !existing)
+            continue;
+        const expiry = Math.max(0, ...matching.map(g => g.expires_ms || 0));
+        const status = active ? "active" : "expired";
+        if ((existing === null || existing === void 0 ? void 0 : existing.status) === status && (0, access_control_1.millis)(existing.expiry) === expiry)
+            continue;
+        updates[`entitlements.${scope}`] = { plan: active ? "premium" : "expired", status,
+            expiry: admin.firestore.Timestamp.fromMillis(expiry), source: "access_ledger" };
+    }
+    if (Object.keys(updates).length)
+        await db.runTransaction(async (t) => {
+            const current = (await t.get(doc.ref)).data();
+            if (!current || current.access_due_ms !== user.access_due_ms ||
+                current.access_revocation_hold !== user.access_revocation_hold ||
+                JSON.stringify(current.access_grant_ids || []) !== JSON.stringify(user.access_grant_ids || []))
+                return;
+            t.update(doc.ref, updates);
+        });
+}
 async function assignments() {
     const dueUsers = await db.collection("users").where("access_due_ms", "<=", Date.now()).orderBy("access_due_ms").limit(100).get();
     const dueLegacy = await db.collection("access_legacy_owners").where("access_due_ms", "<=", Date.now()).orderBy("access_due_ms").limit(100).get();
@@ -348,17 +385,23 @@ async function assignments() {
                 continue;
             }
         }
-        const grants = await engine.grants(doc.id);
+        const effective = await engine.owner(doc.id), grants = effective.grants;
+        await projectRights(doc, u, grants);
+        const observed = await db.collection("access_memberships").where("email", "==", (0, access_control_1.normalEmail)(u.email)).get();
+        const existing = await db.collection("access_assignments").where("uid", "==", doc.id).get();
+        const relevant = new Set([...observed.docs.map(d => d.data().entity), ...existing.docs.map(d => d.data().entity)]);
         let needsRetry = false;
         for (const [entity, scope] of Object.entries(access_catalog_1.ENTITY_SCOPES)) {
+            if (!relevant.has(entity) && (u.legacy_revoke_only || !(0, access_control_1.rights)(effective.user, grants, scope)))
+                continue;
             try {
-                await engine.importObserved(doc.id, entity);
+                await engine.importObserved(doc.id, entity, observed.docs);
             }
             catch (_) {
                 needsRetry = true;
                 continue;
             }
-            if ((0, access_control_1.rights)(u, grants, scope)) {
+            if ((0, access_control_1.rights)(effective.user, grants, scope)) {
                 try {
                     await engine.reserve(doc.id, entity);
                 }
