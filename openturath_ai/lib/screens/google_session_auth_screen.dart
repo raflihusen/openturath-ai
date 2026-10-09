@@ -51,9 +51,9 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
             '')
         .trim();
     if (email.isNotEmpty) {
-      return 'https://accounts.google.com/InteractiveLogin?continue=https://notebooklm.google.com/&login_hint=${Uri.encodeComponent(email)}';
+      return 'https://accounts.google.com/InteractiveLogin?continue=${NotebookNavigation.canonicalOrigin}/&login_hint=${Uri.encodeComponent(email)}';
     }
-    return 'https://accounts.google.com/InteractiveLogin?continue=https://notebooklm.google.com/';
+    return 'https://accounts.google.com/InteractiveLogin?continue=${NotebookNavigation.canonicalOrigin}/';
   }
 
   @override
@@ -73,7 +73,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
     try {
       final cookieManager = DesktopWebViewRuntime.cookies;
       final cookiesLm = await cookieManager.getCookies(
-        url: WebUri('https://notebooklm.google.com'),
+        url: WebUri(NotebookNavigation.canonicalOrigin),
       );
       final cookiesNb = await cookieManager.getCookies(
         url: WebUri('https://notebook.google.com'),
@@ -157,7 +157,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
       try {
         final cookieManager = DesktopWebViewRuntime.cookies;
         final cookiesLm = await cookieManager.getCookies(
-          url: WebUri('https://notebooklm.google.com'),
+          url: WebUri(NotebookNavigation.canonicalOrigin),
         );
         final cookiesNb = await cookieManager.getCookies(
           url: WebUri('https://notebook.google.com'),
