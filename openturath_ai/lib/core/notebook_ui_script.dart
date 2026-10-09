@@ -646,6 +646,28 @@ const notebookUiScript = r'''
     subtree: true, childList: true, attributes: true, attributeFilter: ['placeholder']
   });
 
+  // Temporary geometry-only diagnostics for the real WKWebView regression.
+  let otProbeCount = 0;
+  const otProbeTimer = setInterval(() => {
+    function chain(el) {
+      const rows = [];
+      while (el && rows.length < 18) {
+        const r = el.getBoundingClientRect(), c = getComputedStyle(el);
+        rows.push({tag: el.tagName, cls: el.className, rect: [r.x,r.y,r.width,r.height],
+          client: el.clientHeight, scroll: el.scrollHeight, display: c.display,
+          height: c.height, min: c.minHeight, max: c.maxHeight, flex: c.flex,
+          direction: c.flexDirection, position: c.position, overflow: c.overflow,
+          margin: c.margin, padding: c.padding, transform: c.transform});
+        el = el.parentElement;
+      }
+      return rows;
+    }
+    console.error('OT_LAYOUT_DIAGNOSTIC ' + JSON.stringify({viewport:[innerWidth,innerHeight],
+      inputs:[...document.querySelectorAll('textarea,[role="textbox"],[contenteditable="true"]')].filter(visible).map(chain),
+      answers:[...document.querySelectorAll(answerSelector)].filter(visible).slice(0,2).map(chain)}));
+    if (++otProbeCount >= 12) clearInterval(otProbeTimer);
+  }, 6000);
+
   let lastCleanAt = 0;
   function clean() {
     if (!document.documentElement) return;
