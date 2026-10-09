@@ -1,4 +1,8 @@
 class NotebookNavigation {
+  // Google redirects the legacy host here. Use the destination directly so
+  // unavailable legacy DNS routes cannot prevent the redirect from starting.
+  static const canonicalHost = 'notebook.google.com';
+  static const canonicalOrigin = 'https://$canonicalHost';
   static const hosts = {
     'notebooklm.google.com',
     'notebook.google.com',
