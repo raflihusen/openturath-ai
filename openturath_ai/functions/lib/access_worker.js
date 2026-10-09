@@ -164,7 +164,7 @@ async function importOwner(doc) {
     for (const [id, tx] of txs) {
         if (tx.uid && tx.uid !== uid)
             continue;
-        if (verifiedProvider && String(tx.source || "").toLowerCase() === "goakal")
+        if (verifiedProvider && !["midtrans", "doku"].includes(String(tx.gateway || "").toLowerCase()))
             continue;
         const paidStatus = ["paid", "success", "settled", "settlement"].includes(String(tx.status).toLowerCase());
         const settledBeforeExpiry = String(tx.status).toLowerCase() === "expired" && tx.activation_applied === true && tx.paid_at;
@@ -178,6 +178,10 @@ async function importOwner(doc) {
         const scope = tx.entitlement_key || access_catalog_1.AGENT_ENTITLEMENTS[tx.agent_id] || labels[tx.service_name] ||
             (/^all_ai(?:_1m|_6m|_1y)?$/.test(tx.plan || "") ? "all_access" : "");
         if (!Object.values(access_catalog_1.ENTITY_SCOPES).includes(scope) && !["all_access", "all_ai"].includes(scope)) {
+            unresolved.push(id);
+            continue;
+        }
+        if (tx.activation_applied !== true || !["midtrans", "doku"].includes(String(tx.gateway || "").toLowerCase())) {
             unresolved.push(id);
             continue;
         }
@@ -281,6 +285,21 @@ async function importVerifiedAkalEvidence(path) {
             t.update(ownerRef, { access_grant_ids: [...new Set([...(owner.access_grant_ids || []), gid])], access_due_ms: Date.now() });
         });
         imported++;
+    }
+    const freeEmails = new Set(rows.filter(r => r.status === "PAID" && Number(r.incomingAmount) === 0).map(r => (0, access_control_1.normalEmail)(r.payerEmail)));
+    for (const email of freeEmails) {
+        if (!email)
+            continue;
+        if ((await db.collection("access_vip_registry").doc((0, access_control_1.keyOf)(email)).get()).exists)
+            continue;
+        const owner = users.docs.find(d => (0, access_control_1.normalEmail)(d.data().email) === email);
+        if (owner && (0, access_control_1.isVip)(owner.data()))
+            continue;
+        const ref = (owner === null || owner === void 0 ? void 0 : owner.ref) || db.collection("access_legacy_owners").doc(`legacy_${(0, access_control_1.keyOf)(email)}`);
+        if ((await ref.get()).exists)
+            await ref.update({ access_revocation_hold: true });
+        await db.collection("access_reviews").doc((0, access_control_1.keyOf)(email, "free_access")).set({ email,
+            code: "zero_amount_requires_admin_evidence", updated_ms: Date.now() });
     }
     await db.collection("access_control").doc("legacy_provider_audit").set({ provider: "goakal", fetched_rows: rows.length,
         imported, excluded, completed_ms: Date.now(), invoice_expiry_ignored: true });
