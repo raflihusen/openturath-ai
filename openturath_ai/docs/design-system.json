@@ -138,7 +138,7 @@
     "loader": "four rounded folios, 1800ms linear phase with theta - .45 sin(theta); painter listens directly",
     "catalog": "paired natural-height reading cards at content width 800+ and scale below 150%; one column otherwise; identity plus grouped tonal facts; optional bounded grid",
     "calendar": "structured day/month/year from one snapshot; equal columns and divider",
-    "webview": "retain native view behind recoverable error overlay; no decorative minimum delay",
+    "webview": "error replaces entire viewport; readiness retains four samples, minimum 3000ms and 250ms stabilization",
     "dashboard": "greeting card contains last-session resume; full-width statistics panel separate from adab",
     "paymentSuccess": "receipt with confirmed invoice and amount; no unverified access activation claim",
     "generalAiActions": "centered 72x48 icon pill plus separate 48x48 reference circle; native icon semantic labels and independent keyboard focus",
@@ -149,5 +149,13 @@
     "search": "text-only AI results, one opening target",
     "adab": "tonal reading cards with icon beside title in UI direction and full body",
     "flagshipTitle": "AI Fikih Tahawwulat"
+  },
+  "webviewComposer": {
+    "date": "2026-10-09",
+    "layout": "closest shared transcript/composer parent; transcript fills remaining viewport; input-only branch uses natural height",
+    "bottomGapPx": 22,
+    "generating": "visible disabled composer retains layout; readiness checks remain separate",
+    "placeholder": "removed visually; accessible name preserved",
+    "validation": "WebKit regression passed; authenticated NotebookLM runtime still pending"
   }
 }
