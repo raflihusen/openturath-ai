@@ -41,20 +41,13 @@ CHECK_INTERVAL_SECONDS = 60
 async def enforce_restricted_and_chat_only(client: NotebookLMClient, notebook_id: str, name: str):
     try:
         status = await client.sharing.get_status(notebook_id)
-        # Sesuai PROTOKOL PATEN: Wajib Anyone with the link (is_public = True)
-        if not status.is_public:
-            logger.warning(f"🚨 Notebook {name} is restricted! Enabling PUBLIC link...")
-            await client.sharing.set_public(notebook_id, True)
+        # Kunci paten: Wajib RESTRICTED (is_public = False) agar hanya email terdaftar yang bisa akses
+        if status.is_public:
+            logger.warning(f"🚨 Public link detected on {name}! Forcing RESTRICTED...")
+            await client.sharing.set_public(notebook_id, False)
             
         # Selalu kunci view_level ke CHAT_ONLY
         await client.sharing.set_view_level(notebook_id, ShareViewLevel.CHAT_ONLY)
-        
-        # Kunci anti bocor RAG (Allow copies = OFF)
-        from notebooklm.rpc.types import RPCMethod
-        mut_copy = [None, None, None, [None, None, None, None, 1]]
-        mut_chat = [None, None, None, None, None, None, None, None, [[1]]]
-        params = [notebook_id, [mut_copy, mut_chat]]
-        await client.rpc_call(RPCMethod.RENAME_NOTEBOOK, params, allow_null=True)
     except Exception as e:
         logger.error(f"❌ Error on {name}: {e}")
 

@@ -538,10 +538,9 @@ class AutonomousReaper:
                     else:
                         logger.info(f"✅ {nb_name:<28}: {len(current_viewers)} Viewers (Semua Aman)")
 
-                    # PROTOKOL PATEN: Anyone with the link (is_public = True),
-                    # Chat Only (Sy = 1), dan Anti-Bocor RAG (requiredCopyRole = 1 / Owner Only)
-                    if not status.is_public:
-                        await nlm_client.sharing.set_public(nb_id, True)
+                    # KUNCI PATEN: Selalu pastikan status 100% RESTRICTED + CHAT_ONLY (Hanya email terdaftar yang bisa akses)
+                    if status.is_public:
+                        await nlm_client.sharing.set_public(nb_id, False)
                     await nlm_client.sharing.set_view_level(nb_id, ShareViewLevel.CHAT_ONLY)
                     mut_copy = [None, None, None, [None, None, None, None, 1]]
                     mut_chat = [None, None, None, None, None, None, None, None, [[1]]]
