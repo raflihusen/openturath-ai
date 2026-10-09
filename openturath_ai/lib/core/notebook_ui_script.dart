@@ -250,6 +250,8 @@ const notebookUiScript = r'''
         height: 100% !important;
         min-height: 100% !important;
         overflow: auto !important;
+        padding-bottom: 140px !important;
+        box-sizing: border-box !important;
       }
 
 
@@ -291,12 +293,24 @@ const notebookUiScript = r'''
         flex: 1 1 0px !important;
         min-height: 0 !important;
         overflow-y: auto !important;
-        padding-bottom: 96px !important;
+        padding-bottom: 140px !important;
         box-sizing: border-box !important;
       }
       .chat-panel-content, .chat-view, .conversation-container, .message-list, [role="log"] {
-        padding-bottom: 96px !important;
+        padding-bottom: 140px !important;
         box-sizing: border-box !important;
+      }
+      .chat-panel-content::after,
+      .conversation-container::after,
+      .message-list::after,
+      mat-sidenav-content::after {
+        content: "" !important;
+        display: block !important;
+        height: 140px !important;
+        min-height: 140px !important;
+        width: 100% !important;
+        pointer-events: none !important;
+        flex: 0 0 140px !important;
       }
       .chat-message, .model-message, .user-message, .chat-message-pair,
       app-chat-response, app-chat-message, app-chat-query, app-chat-prompt,
@@ -408,7 +422,6 @@ const notebookUiScript = r'''
       .chat-panel-content, .chat-view, .conversation-container { scrollbar-width: thin; }
       .rendered-markdown { max-width: 720px; margin-inline: auto; }
       .rendered-markdown p, .rendered-markdown li { unicode-bidi: plaintext; }
-      .chat-input-container { border-radius: 28px !important; }
 
       /* Sembunyikan dialog / pop-up selamat datang dan intro Gemini Notebook */
       app-welcome-dialog, app-onboarding-dialog,
