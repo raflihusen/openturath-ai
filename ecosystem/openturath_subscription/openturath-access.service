@@ -11,6 +11,8 @@ WorkingDirectory=/home/ubuntu/openturath-access/releases/current
 Environment=GOOGLE_CLOUD_PROJECT=open-turath
 Environment=GOOGLE_APPLICATION_CREDENTIALS=/home/ubuntu/openturath-access/secrets/firestore-key.json
 Environment=NOTEBOOKLM_STORAGE_PATH=/home/ubuntu/openturath-access/secrets/storage_state.json
+Environment=ACCESS_NOTEBOOKLM_CLI=/home/ubuntu/openturath-access/venv/bin/notebooklm
+Environment=ACCESS_OWNER_EMAIL=raflimaulan@gmail.com
 Environment=ACCESS_PYTHON=/home/ubuntu/openturath-access/venv/bin/python
 Environment=ACCESS_SHARING_ADAPTER=/home/ubuntu/openturath-access/verified_sharing.py
 ExecStart=/usr/bin/node /home/ubuntu/openturath-access/releases/current/lib/access_worker.js
