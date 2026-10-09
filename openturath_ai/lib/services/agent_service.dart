@@ -49,8 +49,9 @@ class AgentService {
             'invalid-url', 'Alamat AI dari server tidak valid.');
       }
       // The authenticated server owns notebook selection and entitlement checks.
-      // Validate its destination without substituting a second client catalog.
-      return url;
+      // Preserve its exact notebook ID/path and validate before normalizing only
+      // the legacy Google host to the verified Google redirect destination.
+      return uri.replace(host: NotebookNavigation.canonicalHost).toString();
     } on FirebaseFunctionsException catch (e) {
       if (e.code == 'permission-denied') {
         throw AgentAccessException(
