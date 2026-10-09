@@ -67,7 +67,7 @@ if __name__ == "__main__":
     try:
         result = asyncio.run(asyncio.wait_for(run(json.load(sys.stdin)), timeout=90))
         print(json.dumps(result))
-    except Exception:
+    except Exception as error:
         # SDK exception strings can contain private payloads or session details.
-        print(json.dumps({"error": "Sharing observation/operation failed"}))
+        print(json.dumps({"error": "Sharing observation/operation failed", "category": type(error).__name__}))
         sys.exit(1)
