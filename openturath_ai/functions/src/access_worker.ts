@@ -241,6 +241,10 @@ async function prepareLegacy(): Promise<void> {
   const transactions = await db.collection("transactions").get();
   const users = await db.collection("users").get();
   const known = new Set(users.docs.map(d => normalEmail(d.data().email)));
+  for (const doc of users.docs) if (isVip(doc.data())) {
+    const email=normalEmail(doc.data().email);
+    if (email) await db.collection("access_vip_registry").doc(keyOf(email)).set({email,permanent:true,source_profile:doc.id},{merge:true});
+  }
   for (const doc of transactions.docs) {
     const tx = doc.data(), email = normalEmail(tx.customer_email || tx.payer_email || tx.email);
     if (!email) continue;
@@ -350,13 +354,22 @@ async function cycle(): Promise<void> {
   for (const job of source.docs) {
     const uid = job.data().uid;
     if (typeof uid !== "string" || uid.includes("@")) {await job.ref.update({status:"v2_review"}); continue;}
-    const doc = await db.collection("users").doc(uid).get();
-    if (doc.exists) await importOwner(doc);
-    else {
-      const a = await db.collection("access_assignments").where("uid", "==", uid).get();
-      for (const assignment of a.docs) await engine.revoke(uid, assignment.data().entity);
+    try {
+      const doc = await db.collection("users").doc(uid).get();
+      if (doc.exists) {
+        await importOwner(doc);
+        if ((await doc.ref.get()).data()?.access_version !== 2) {
+          await job.ref.update({status:"v2_review",reason:"legacy_evidence_required",updated_ms:Date.now()});
+          continue;
+        }
+      } else {
+        const a = await db.collection("access_assignments").where("uid", "==", uid).get();
+        for (const assignment of a.docs) await engine.revoke(uid, assignment.data().entity);
+      }
+      await job.ref.update({status:"v2_handed_off", updated_ms:Date.now()});
+    } catch (_) {
+      await job.ref.update({status:"v2_review",reason:"identity_or_billing_review",updated_ms:Date.now()});
     }
-    await job.ref.update({status:"v2_handed_off", updated_ms:Date.now()});
   }
   await assignments();
   await settleRevokes();
