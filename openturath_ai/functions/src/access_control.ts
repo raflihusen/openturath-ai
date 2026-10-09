@@ -48,7 +48,49 @@ export class AccessControl {
   }
   async owner(uid: string): Promise<{user: any; grants: any[]}> {
     const [u, grants] = await Promise.all([this.db.collection("users").doc(uid).get(), this.grants(uid)]);
-    return {user: u.data(), grants};
+    const legacy = !u.exists ? await this.db.collection("access_legacy_owners").doc(uid).get() : null;
+    let user = u.data() || legacy?.data();
+    if (user?.adopted_by) user = {...user, account_deleted: true};
+    if (user?.email) {
+      const protectedOwner = await this.db.collection("access_vip_registry").doc(keyOf(normalEmail(user.email))).get();
+      if (protectedOwner.exists) user = {...user, is_vip: true};
+    }
+    return {user, grants};
+  }
+  async adoptLegacy(uid: string, legacyUid: string): Promise<void> {
+    const current = await this.db.collection("users").doc(uid).get();
+    const legacyRef = this.db.collection("access_legacy_owners").doc(legacyUid);
+    const legacy = await legacyRef.get();
+    if (!current.exists || !legacy.exists || legacy.data().adopted_by ||
+        normalEmail(current.data().email) !== normalEmail(legacy.data().email)) return;
+    const oldAssignments = await this.db.collection("access_assignments").where("uid", "==", legacyUid).get();
+    const oldGrants = await this.db.collection("access_grants").where("uid", "==", legacyUid).get();
+    await this.db.runTransaction(async (t: any) => {
+      const user = (await t.get(current.ref)).data();
+      const prior = (await t.get(legacyRef)).data();
+      if (!user || !prior || prior.adopted_by || normalEmail(user.email) !== normalEmail(prior.email)) return;
+      const assignments = [], grants = [];
+      for (const d of oldAssignments.docs) {
+        const a = (await t.get(d.ref)).data();
+        const target = this.assignmentRef(uid, a.entity);
+        const existing = (await t.get(target)).data();
+        const identity = this.db.collection("access_identities").doc(keyOf(a.email, a.entity));
+        const bound = (await t.get(identity)).data();
+        if (existing || bound?.uid !== legacyUid) throw new AccessFault("failed-precondition", "Identity adoption conflict");
+        assignments.push({ref:d.ref, a, target, identity});
+      }
+      for (const d of oldGrants.docs) {const g = (await t.get(d.ref)).data(); if (g?.uid === legacyUid) grants.push(d);}
+      for (const a of assignments) {
+        t.set(a.target, {...a.a, uid, revision:a.a.revision + 1});
+        t.update(a.ref, {status:"adopted", adopted_by:uid});
+        t.set(a.identity, {uid, entity:a.a.entity, email:a.a.email});
+        for (const id of a.a.history || [a.a.notebook_id]) t.set(this.db.collection("access_memberships").doc(keyOf(id,a.a.email)), {uid}, {merge:true});
+      }
+      for (const g of grants) t.update(g.ref, {uid});
+      t.update(current.ref, {access_version:2, access_due_ms:this.clock(),
+        access_grant_ids:[...new Set([...(user.access_grant_ids || []), ...grants.map(g=>g.id)])]});
+      t.update(legacyRef, {adopted_by:uid});
+    });
   }
   async resolve(uid: string, entity: string): Promise<any> {
     const {user, grants} = await this.owner(uid);
@@ -68,6 +110,11 @@ export class AccessControl {
   async reserve(uid: string, entity: string): Promise<any> {
     const {user, grants} = await this.owner(uid);
     if (!rights(user, grants, this.scopes[entity], this.clock())) throw new AccessFault("permission-denied", "No current grant");
+    if (user.legacy_revoke_only) {
+      const existing = (await this.assignmentRef(uid, entity).get()).data();
+      if (existing) return existing;
+      throw new AccessFault("failed-precondition", "Legacy payment identity awaits application signup");
+    }
     const email = normalEmail(user.email);
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) throw new AccessFault("failed-precondition", "Verified owner email required");
     const e = this.entities[entity];
@@ -177,7 +224,8 @@ export class AccessControl {
     try {
       let owner = await this.owner(job.uid);
       const a = (await this.assignmentRef(job.uid, job.entity).get()).data();
-      if (!a || a.revision !== job.revision || job.desired !== rights(owner.user, owner.grants, job.scope, this.clock())) {
+      const bound = (await this.db.collection("access_identities").doc(keyOf(job.email, job.entity)).get()).data();
+      if (!a || bound?.uid !== job.uid || a.revision !== job.revision || job.desired !== rights(owner.user, owner.grants, job.scope, this.clock())) {
         await ref.update({status: "superseded", due_ms: 8640000000000000}); return;
       }
       if (!job.desired && isVip(owner.user, owner.grants)) throw new Error("Protected VIP");
