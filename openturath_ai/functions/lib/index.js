@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.onClientErrorLogged = exports.akalWebhook = exports.syncAkalPurchases = exports.chatGate = exports.cleanupOrphanedDeletions = exports.onUserDeleted = exports.processProvisioningOutbox = exports.dailyRevoke = exports.onUserCreate = exports.redeemCode = exports.checkPaymentStatus = exports.midtransWebhook = exports.dokuWebhook = exports.reconcileMidtransPayments = exports.createCheckout = exports.askAgent = exports.recordQuestion = exports.getAgentUrl = exports.MODULE_PLANS = exports.PURCHASABLE_AGENTS = void 0;
+exports.onClientErrorLogged = exports.akalWebhook = exports.syncAkalPurchases = exports.chatGate = exports.cleanupOrphanedDeletions = exports.onUserDeleted = exports.processProvisioningOutbox = exports.dailyRevoke = exports.onUserCreate = exports.redeemCode = exports.checkPaymentStatus = exports.midtransWebhook = exports.dokuWebhook = exports.monitorAccessHealth = exports.reconcileMidtransPayments = exports.createCheckout = exports.askAgent = exports.recordQuestion = exports.getAgentUrl = exports.MODULE_PLANS = exports.PURCHASABLE_AGENTS = void 0;
 exports.addCalendarMonthsClamped = addCalendarMonthsClamped;
 const functions = require("firebase-functions");
 const admin = require("firebase-admin");
@@ -16,19 +16,22 @@ const db = admin.firestore();
 // TELEGRAM NOTIFICATION HELPER
 // ================================================================
 async function sendTelegramNotification(text) {
+    var _a;
     const token = process.env.TELEGRAM_BOT_TOKEN;
     const chatId = process.env.TELEGRAM_CHAT_ID;
     if (!token || !chatId)
-        return;
+        return false;
     try {
-        await axios_1.default.post(`https://api.telegram.org/bot${token}/sendMessage`, {
+        const result = await axios_1.default.post(`https://api.telegram.org/bot${token}/sendMessage`, {
             chat_id: chatId,
             text,
             parse_mode: "HTML",
         }, { timeout: 5000 });
+        return ((_a = result.data) === null || _a === void 0 ? void 0 : _a.ok) === true;
     }
-    catch (err) {
-        console.error("[Telegram] Failed to send notification:", (err === null || err === void 0 ? void 0 : err.message) || err);
+    catch (_) {
+        console.error("[Telegram] Notification delivery failed; credentials redacted.");
+        return false;
     }
 }
 // ================================================================
@@ -930,6 +933,60 @@ exports.reconcileMidtransPayments = functions
     };
     await Promise.all([run(), run(), run(), run(), run()]);
     await db.collection("access_control").doc("payment_heartbeat").set({ completed, failed, checked_ms: Date.now() });
+    return null;
+});
+exports.monitorAccessHealth = functions
+    .runWith({ serviceAccount: "open-turath@appspot.gserviceaccount.com", timeoutSeconds: 120 })
+    .pubsub.schedule("every 1 minutes").onRun(async () => {
+    const runtime = (await db.collection("access_control").doc("runtime").get()).data();
+    if ((runtime === null || runtime === void 0 ? void 0 : runtime.writer) !== "vps-v2")
+        return null;
+    const ref = db.collection("access_control").doc("monitor_health");
+    const [h, p, cfgSnap, previous] = await Promise.all([
+        db.collection("access_control").doc("heartbeat").get(), db.collection("access_control").doc("payment_heartbeat").get(),
+        db.collection("access_control").doc("monitor").get(), ref.get()
+    ]);
+    const now = Date.now(), cfg = cfgSnap.data() || {}, prior = previous.data() || {}, started = prior.started_ms || now;
+    const heart = h.data() || {}, payment = p.data() || {}, issues = [];
+    if (now - (heart.last_success_ms || runtime.activated_ms || now) > 300000)
+        issues.push("worker_stale");
+    if (heart.authentication_error || now - (heart.last_provider_success_ms || runtime.activated_ms || now) > 300000)
+        issues.push("sharing_provider_stale");
+    if (now - (payment.checked_ms || started) > 900000)
+        issues.push("payment_reconciliation_stale");
+    try {
+        const pending = await db.collection("access_jobs").where("status", "in", ["pending", "retry", "processing"]).orderBy("queued_ms").limit(1).get();
+        if (!pending.empty && now - pending.docs[0].data().queued_ms > 900000)
+            issues.push("access_queue_overdue");
+    }
+    catch (_) {
+        if (now - started > 900000)
+            issues.push("queue_observation_unavailable");
+    }
+    const state = issues.length ? issues.join(",") : "healthy", token = crypto.randomUUID();
+    const enabled = cfg.enabled === true && cfg.approved_by_owner === true;
+    const notify = await db.runTransaction(async (t) => {
+        const current = (await t.get(ref)).data() || {};
+        const send = enabled && current.notified_state !== state &&
+            (issues.length > 0 || current.notified_state && current.notified_state !== "healthy") && !(current.lease_until_ms > now);
+        t.set(ref, Object.assign(Object.assign(Object.assign({}, current), { started_ms: started, checked_ms: now, state, issues, notification_enabled: enabled }), (send ? { lease: token, lease_until_ms: now + 60000 } : {})));
+        return send;
+    });
+    if (notify) {
+        const labels = { worker_stale: "Worker VPS belum mengirim bukti siklus sukses lebih dari 5 menit.",
+            sharing_provider_stale: "Koneksi NotebookLM belum terverifikasi; pemulihan sesi perlu diperiksa.",
+            payment_reconciliation_stale: "Pemeriksaan pembayaran berkala belum berjalan sesuai jadwal.",
+            access_queue_overdue: "Ada pekerjaan akses yang tertahan lebih dari 15 menit.",
+            queue_observation_unavailable: "Antrean akses belum dapat diperiksa." };
+        const text = issues.length ? "⚠️ <b>Otomasi akses OpenTurath perlu perhatian</b>\n" + issues.map(i => labels[i]).join("\n") :
+            "✅ <b>Otomasi akses OpenTurath pulih.</b> Pemeriksaan worker, NotebookLM, dan pembayaran kembali berjalan.";
+        const delivered = await sendTelegramNotification(text);
+        await db.runTransaction(async (t) => {
+            const current = (await t.get(ref)).data();
+            if ((current === null || current === void 0 ? void 0 : current.lease) === token)
+                t.update(ref, Object.assign({ lease: null, lease_until_ms: 0 }, (delivered ? { notified_state: state, notified_ms: Date.now() } : { notification_delivery_failed_ms: Date.now() })));
+        });
+    }
     return null;
 });
 // ================================================================

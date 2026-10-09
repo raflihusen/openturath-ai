@@ -141,7 +141,7 @@ class AccessControl {
                 if (["provisioning", "revoking"].includes(a.a.status)) {
                     const desired = a.a.status === "provisioning";
                     for (const id of desired ? [a.a.notebook_id] : (a.a.history || [a.a.notebook_id])) {
-                        t.set(this.db.collection("access_jobs").doc((0, exports.keyOf)(uid, a.a.entity, String(revision), id)), Object.assign(Object.assign({}, adopted), { notebook_id: id, desired, status: "pending", attempts: 0, due_ms: this.clock() }));
+                        t.set(this.db.collection("access_jobs").doc((0, exports.keyOf)(uid, a.a.entity, String(revision), id)), Object.assign(Object.assign({}, adopted), { notebook_id: id, desired, status: "pending", attempts: 0, queued_ms: this.clock(), due_ms: this.clock() }));
                     }
                 }
                 t.update(a.ref, { status: "adopted", adopted_by: uid });
@@ -244,7 +244,7 @@ class AccessControl {
                 counted: true, revision, reserved_ms: this.clock() }, { merge: true });
             t.set(identity, { uid, email, entity });
             t.set(ar, assignment);
-            t.set(this.db.collection("access_jobs").doc((0, exports.keyOf)(uid, entity, String(revision))), Object.assign(Object.assign({}, assignment), { desired: true, status: "pending", attempts: 0, due_ms: this.clock() }));
+            t.set(this.db.collection("access_jobs").doc((0, exports.keyOf)(uid, entity, String(revision))), Object.assign(Object.assign({}, assignment), { desired: true, status: "pending", attempts: 0, queued_ms: this.clock(), due_ms: this.clock() }));
             return assignment;
         });
     }
@@ -293,7 +293,7 @@ class AccessControl {
             const revision = a.revision + 1;
             t.update(ar, { status: "revoking", revision, updated_ms: this.clock() });
             for (const notebook of a.history || [a.notebook_id]) {
-                t.set(this.db.collection("access_jobs").doc((0, exports.keyOf)(uid, entity, String(revision), notebook)), Object.assign(Object.assign({}, a), { notebook_id: notebook, revision, desired: false, status: "pending", attempts: 0, due_ms: this.clock() }));
+                t.set(this.db.collection("access_jobs").doc((0, exports.keyOf)(uid, entity, String(revision), notebook)), Object.assign(Object.assign({}, a), { notebook_id: notebook, revision, desired: false, status: "pending", attempts: 0, queued_ms: this.clock(), due_ms: this.clock() }));
             }
         });
     }
@@ -308,7 +308,7 @@ class AccessControl {
                 return;
             const revision = a.revision + 1;
             t.update(ar, { status: "provisioning", revision, updated_ms: this.clock() });
-            t.set(this.db.collection("access_jobs").doc((0, exports.keyOf)(uid, entity, String(revision))), Object.assign(Object.assign({}, a), { revision, desired: true, status: "pending", attempts: 0, due_ms: this.clock() }));
+            t.set(this.db.collection("access_jobs").doc((0, exports.keyOf)(uid, entity, String(revision))), Object.assign(Object.assign({}, a), { revision, desired: true, status: "pending", attempts: 0, queued_ms: this.clock(), due_ms: this.clock() }));
         });
     }
     async runJob(ref) {
