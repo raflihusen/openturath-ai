@@ -13,6 +13,14 @@ export const VIP_EMAILS = new Set([
 export const normalEmail = (s: unknown): string => typeof s === "string" ? s.trim().toLowerCase() : "";
 export const keyOf = (...parts: string[]): string => crypto.createHash("sha256").update(JSON.stringify(parts)).digest("hex");
 export const millis = (v: any): number => v?.toMillis?.() ?? (v?.toDate ? v.toDate().getTime() : typeof v === "number" ? v : Date.parse(v || ""));
+export function billingExpiry(baseMs: number, months: number): number {
+  if (!Number.isInteger(months) || months < 1 || months > 120) throw new Error("Invalid product duration");
+  if (months === 1) return baseMs + 30 * 86400000;
+  const date = new Date(baseMs), day = date.getUTCDate();
+  date.setUTCDate(1); date.setUTCMonth(date.getUTCMonth() + months);
+  const last = new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth() + 1, 0)).getUTCDate();
+  date.setUTCDate(Math.min(day, last)); return date.getTime();
+}
 export const isVip = (u: any, grants: any[] = []): boolean => VIP_EMAILS.has(normalEmail(u?.email)) ||
   u?.is_vip === true || ["vip", "admin", "guru", "special"].includes(String(u?.role || "").toLowerCase()) ||
   grants.some(g => g.kind === "VIP_PERMANENT");
