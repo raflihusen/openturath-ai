@@ -32,4 +32,17 @@ The Google session screen uses the canonical origin as its login continuation, w
 - Auth test additionally checks the Google login continuation resolves directly to the canonical origin.
 - Analyzer: no issues found.
 - Corrected local macOS release version: 1.0.64+65.
-- Real authenticated runtime and final package verification pending at this checkpoint.
+- Final macOS release build: exit 0, application 132.5 MB.
+- Packaging: exit 0; hdiutil verification VALID; read-only mounted package matched the build's Info.plist and App.framework hashes, and included the Applications link. Volume detached.
+- All 37 distinct Mach-O files support both arm64 and x86_64; deep/strict signature verification passed. Ad-hoc signature; no Apple notarization or Intel-host launch.
+- Native app 1.0.64+65 launched successfully, but returned to the OpenTurath sign-in screen after binary replacement. The user was asked to sign in and open Al-Muhaqqiq. Authenticated NotebookLM loading/response verification remains pending; public HTTPS success is not treated as that proof.
+
+## Local artifact
+
+- `/Users/apple/Downloads/ramadhan/OpenTurath_AI_macOS_1.0.64.dmg`
+- Version 1.0.64+65; 51,324,782 bytes; timestamp 2026-10-09 13:08:45 +03:00.
+- SHA-256: `1569dec389d1c660a8b254379eb51685f45e1ff1f73cf426179a878fd9689b25`.
+- Implementation checkpoints: dfad76c, d038298, d836971, d3a17aa; version eb3eb77.
+- Local build only; no deployment, upload or update broadcast. Prior DMGs retained.
+
+The implemented correction removes the observed dependency on an unreachable legacy-origin route. It cannot guarantee Google service availability or eliminate future network outages. The audit does not claim that actual authenticated AI use has already passed.
