@@ -155,7 +155,7 @@ export function loadBackend(root = process.cwd()) {
     'getEntitlementAccess','processSuccessfulPayment','dokuWebhook','getDokuConfig','notifySubscriptionServer',
     'onUserCreate','dailyRevoke','processProvisioningOutbox','cleanupOrphanedDeletions','redeemCode',
     'addCalendarMonthsClamped','verifySubscriptionFirestore','generateDokuSignature','handleLogin','chatGate',
-    'getAgentUrl','askAgent','checkPaymentStatus','resolvePlanPricing','createCheckout',
+    'getAgentUrl','askAgent','checkPaymentStatus','resolvePlanPricing','createCheckout','reconcileMidtransPayments','applyMidtransRefund',
   ].map(n=>n+':typeof '+n+' === "undefined" ? undefined : '+n).join(',') + ', onUserDeleted: typeof onUserDeleted === "undefined" ? undefined : onUserDeleted};';
   const exports: any = {};
   vm.runInNewContext(stripTypeScriptTypes(source), {require:(name: string)=>{if(!(name in deps))throw Error('Unexpected dependency '+name);return deps[name];}, exports, Buffer, process, URL, console:{log(){},warn(){},error(){}},Date, setTimeout,clearTimeout});
