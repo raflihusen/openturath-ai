@@ -192,7 +192,7 @@ export class AccessControl {
   }
   async revoke(uid: string, entity: string): Promise<void> {
     const {user, grants} = await this.owner(uid);
-    if (rights(user, grants, this.scopes[entity], this.clock())) return;
+    if (user.access_revocation_hold || rights(user, grants, this.scopes[entity], this.clock())) return;
     const ar = this.assignmentRef(uid, entity);
     await this.db.runTransaction(async (t: any) => {
       const a = (await t.get(ar)).data();
@@ -239,7 +239,7 @@ export class AccessControl {
       if (!a || bound?.uid !== job.uid || a.revision !== job.revision || job.desired !== rights(owner.user, owner.grants, job.scope, this.clock())) {
         await ref.update({status: "superseded", due_ms: 8640000000000000}); return;
       }
-      if (!job.desired && isVip(owner.user, owner.grants)) throw new Error("Protected VIP");
+      if (!job.desired && (owner.user.access_revocation_hold || isVip(owner.user, owner.grants))) throw new Error("Protected or unresolved legacy owner");
       const observation = await this.provider.apply(job.notebook_id, job.email, job.desired);
       this.validateObservation(observation, job.notebook_id);
       const present = observation.emails.map(normalEmail).includes(job.email);
