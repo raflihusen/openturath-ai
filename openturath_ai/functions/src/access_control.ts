@@ -21,6 +21,28 @@ export function billingExpiry(baseMs: number, months: number): number {
   const last = new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth() + 1, 0)).getUTCDate();
   date.setUTCDate(Math.min(day, last)); return date.getTime();
 }
+export function verifiedAkalPeriods(rows: any[]): any[] {
+  const scopes: Record<string,string> = {"AI Fikih Tahawwulat":"fiqh_tahawwulat",
+    "SUPER AI FIKIH SYAFI'I":"fiqh_syafii", "SUPER AI BAHASA ARAB":"nahwu"};
+  const durations: Record<string,number> = {"1 Bulan":1,"6 Bulan":6,"12 Bulan":12};
+  const valid = rows.filter(r=>r.status === "PAID" && Number(r.incomingAmount)>0 && scopes[r.serviceTitle] &&
+    durations[r.priceSchemeTitle] && normalEmail(r.payerEmail) && r.paymentId && Number.isFinite(millis(r.paidAt)));
+  valid.sort((a,b)=>millis(a.paidAt)-millis(b.paidAt));
+  const seen = new Map<string,string>(), ends = new Map<string,number>(), periods = [];
+  for (const row of valid) {
+    const scope=scopes[row.serviceTitle], months=durations[row.priceSchemeTitle], paid=millis(row.paidAt);
+    const email=normalEmail(row.payerEmail), payment=String(row.paymentId), id=keyOf("goakal_verified",payment,scope);
+    if (seen.has(id)) {
+      if (seen.get(id) !== email) throw new Error("Provider payment identity collision");
+      continue;
+    }
+    seen.set(id,email);
+    const chain=keyOf(email,scope), starts=Math.max(paid,ends.get(chain)||0), expires=billingExpiry(starts,months);
+    ends.set(chain,expires);
+    periods.push({id,email,scope,payment,amount:Number(row.incomingAmount),paid,months,starts,expires});
+  }
+  return periods;
+}
 export const isVip = (u: any, grants: any[] = []): boolean => VIP_EMAILS.has(normalEmail(u?.email)) ||
   u?.is_vip === true || ["vip", "admin", "guru", "special"].includes(String(u?.role || "").toLowerCase()) ||
   grants.some(g => g.kind === "VIP_PERMANENT");
