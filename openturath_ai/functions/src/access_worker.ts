@@ -127,9 +127,11 @@ async function importOwner(doc: any): Promise<void> {
     await db.collection("access_grants").doc(id).set({uid, kind: "VIP_PERMANENT", scope: "all_access", status: "active"}, {merge: true});
     ids.add(id);
   }
+  const verifiedProvider = (await engine.grants(uid)).some(g=>g.provider === "goakal" && g.provider_verified === true);
   const unresolved: string[] = [];
   for (const [id, tx] of txs) {
     if (tx.uid && tx.uid !== uid) continue;
+    if (verifiedProvider && String(tx.source || "").toLowerCase() === "goakal") continue;
     const paidStatus = ["paid", "success", "settled", "settlement"].includes(String(tx.status).toLowerCase());
     const settledBeforeExpiry = String(tx.status).toLowerCase() === "expired" && tx.activation_applied === true && tx.paid_at;
     if ((!paidStatus && !settledBeforeExpiry) || !(Number(tx.amount) > 0)) continue;
@@ -187,7 +189,7 @@ async function importVerifiedAkalEvidence(path: string): Promise<void> {
     "SUPER AI FIKIH SYAFI'I":"fiqh_syafii", "SUPER AI BAHASA ARAB":"nahwu"};
   const durations: Record<string,number> = {"1 Bulan":1,"6 Bulan":6,"12 Bulan":12};
   const users = await db.collection("users").get(), seen = new Set<string>(), ends = new Map<string,number>();
-  rows.sort((a,b)=>millis(a.paidAt)-millis(b.paidAt));
+  rows.sort((a,b)=>(Number.isFinite(millis(a.paidAt))?millis(a.paidAt):Infinity)-(Number.isFinite(millis(b.paidAt))?millis(b.paidAt):Infinity));
   let imported=0, excluded=0;
   for (const row of rows) {
     const scope=scopes[row.serviceTitle], months=durations[row.priceSchemeTitle], paid=millis(row.paidAt);
