@@ -72,7 +72,7 @@ export class AccessControl {
       const bound = (await t.get(identity)).data();
       if (bound && bound.uid !== uid) throw new AccessFault("failed-precondition", "Google identity requires ownership recovery");
       if (existing && existing.email !== email) throw new AccessFault("failed-precondition", "Email change requires verified migration");
-      if (existing && existing.status !== "revoked") return existing;
+      if (existing && ["ready", "provisioning"].includes(existing.status)) return existing;
       const candidates = [];
       for (const id of ids) {
         const nr = this.db.collection("access_notebooks").doc(id);
@@ -123,7 +123,7 @@ export class AccessControl {
       const lr = this.db.collection("access_locks").doc(keyOf(j.notebook_id, j.email));
       const lock = (await t.get(lr)).data();
       if (lock?.until_ms > now) return null;
-      t.set(lr, {token, until_ms: now + 180000});
+      t.set(lr, {token, until_ms: now + 300000});
       t.update(ref, {status: "processing", lease: token, attempts: (j.attempts || 0) + 1});
       return {...j, lockRef: lr, attempts: (j.attempts || 0) + 1};
     });
