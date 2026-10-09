@@ -73,7 +73,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
     try {
       final cookieManager = DesktopWebViewRuntime.cookies;
       final cookiesLm = await cookieManager.getCookies(
-        url: WebUri(NotebookNavigation.canonicalOrigin),
+        url: WebUri('https://notebooklm.google.com'),
       );
       final cookiesNb = await cookieManager.getCookies(
         url: WebUri('https://notebook.google.com'),
@@ -157,7 +157,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
       try {
         final cookieManager = DesktopWebViewRuntime.cookies;
         final cookiesLm = await cookieManager.getCookies(
-          url: WebUri(NotebookNavigation.canonicalOrigin),
+          url: WebUri('https://notebooklm.google.com'),
         );
         final cookiesNb = await cookieManager.getCookies(
           url: WebUri('https://notebook.google.com'),
