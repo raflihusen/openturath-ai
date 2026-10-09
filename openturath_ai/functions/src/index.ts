@@ -837,7 +837,7 @@ async function processSuccessfulPayment(invoiceNumber: string, paidAmount: unkno
     baseDate = now;
     for (const id of uData.access_grant_ids || []) {
       const g = (await t.get(db.collection("access_grants").doc(id))).data();
-      if (g?.scope === entitlementKey && g.status === "active" && g.expires_ms > baseDate.getTime()) baseDate = new Date(g.expires_ms);
+      if (g && g.scope === entitlementKey && g.status === "active" && g.expires_ms > baseDate.getTime()) baseDate = new Date(g.expires_ms);
     }
     const expiryDate = new Date(baseDate.getTime() + durationMonths * 30 * 86400000);
     const grantId = keyOf("invoice", invoiceNumber);
