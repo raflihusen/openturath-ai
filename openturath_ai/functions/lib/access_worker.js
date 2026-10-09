@@ -304,6 +304,12 @@ async function prepareLegacy() {
     const transactions = await db.collection("transactions").get();
     const users = await db.collection("users").get();
     const known = new Set(users.docs.map(d => (0, access_control_1.normalEmail)(d.data().email)));
+    for (const doc of users.docs)
+        if ((0, access_control_1.isVip)(doc.data())) {
+            const email = (0, access_control_1.normalEmail)(doc.data().email);
+            if (email)
+                await db.collection("access_vip_registry").doc((0, access_control_1.keyOf)(email)).set({ email, permanent: true, source_profile: doc.id }, { merge: true });
+        }
     for (const doc of transactions.docs) {
         const tx = doc.data(), email = (0, access_control_1.normalEmail)(tx.customer_email || tx.payer_email || tx.email);
         if (!email)
@@ -438,6 +444,7 @@ async function settleRevokes() {
     }
 }
 async function cycle() {
+    var _a;
     stats.last_cycle_ms = Date.now();
     const cfg = (await runtime.get()).data();
     stats.mode = (cfg === null || cfg === void 0 ? void 0 : cfg.writer) === "vps-v2" ? "active" : "shadow";
@@ -451,15 +458,25 @@ async function cycle() {
             await job.ref.update({ status: "v2_review" });
             continue;
         }
-        const doc = await db.collection("users").doc(uid).get();
-        if (doc.exists)
-            await importOwner(doc);
-        else {
-            const a = await db.collection("access_assignments").where("uid", "==", uid).get();
-            for (const assignment of a.docs)
-                await engine.revoke(uid, assignment.data().entity);
+        try {
+            const doc = await db.collection("users").doc(uid).get();
+            if (doc.exists) {
+                await importOwner(doc);
+                if (((_a = (await doc.ref.get()).data()) === null || _a === void 0 ? void 0 : _a.access_version) !== 2) {
+                    await job.ref.update({ status: "v2_review", reason: "legacy_evidence_required", updated_ms: Date.now() });
+                    continue;
+                }
+            }
+            else {
+                const a = await db.collection("access_assignments").where("uid", "==", uid).get();
+                for (const assignment of a.docs)
+                    await engine.revoke(uid, assignment.data().entity);
+            }
+            await job.ref.update({ status: "v2_handed_off", updated_ms: Date.now() });
         }
-        await job.ref.update({ status: "v2_handed_off", updated_ms: Date.now() });
+        catch (_) {
+            await job.ref.update({ status: "v2_review", reason: "identity_or_billing_review", updated_ms: Date.now() });
+        }
     }
     await assignments();
     await settleRevokes();
