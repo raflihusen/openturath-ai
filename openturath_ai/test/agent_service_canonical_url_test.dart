@@ -28,13 +28,14 @@ void main() {
   // Synthetic ID: this suite must never depend on a production notebook.
   const path = '/notebook/00000000-0000-4000-8000-000000000001';
   const assignedUrl = 'https://notebooklm.google.com$path';
+  const canonicalUrl = 'https://notebook.google.com$path';
 
-  test('uses the server destination even for an agent with a former override',
+  test('preserves server notebook assignment while bypassing legacy host redirect',
       () async {
     final gateway = _Gateway(response: {'url': assignedUrl});
     final service = AgentService(functions: gateway);
 
-    expect(await service.getAgentUrl('fiqh_syafii'), assignedUrl);
+    expect(await service.getAgentUrl('fiqh_syafii'), canonicalUrl);
     expect(gateway.calledName, AppConstants.fnGetAgentUrl);
     expect(gateway.calledData, {'agentId': 'fiqh_syafii'});
   });
