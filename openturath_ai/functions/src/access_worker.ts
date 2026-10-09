@@ -304,13 +304,17 @@ async function assignments(): Promise<void> {
         continue;
       }
     }
-    const grants = await engine.grants(doc.id);
+    const effective = await engine.owner(doc.id), grants = effective.grants;
     await projectRights(doc,u,grants);
+    const observed = await db.collection("access_memberships").where("email","==",normalEmail(u.email)).get();
+    const existing = await db.collection("access_assignments").where("uid","==",doc.id).get();
+    const relevant = new Set([...observed.docs.map(d=>d.data().entity),...existing.docs.map(d=>d.data().entity)]);
     let needsRetry = false;
     for (const [entity, scope] of Object.entries(ENTITY_SCOPES)) {
-      try { await engine.importObserved(doc.id, entity); }
+      if (!relevant.has(entity) && (u.legacy_revoke_only || !rights(effective.user,grants,scope))) continue;
+      try { await engine.importObserved(doc.id, entity, observed.docs); }
       catch (_) {needsRetry = true; continue;}
-      if (rights(u, grants, scope)) {
+      if (rights(effective.user, grants, scope)) {
         try { await engine.reserve(doc.id, entity); }
         catch (e: any) { needsRetry = true; await db.collection("access_reviews").doc(keyOf(doc.id, entity)).set({uid: doc.id, entity,
           code: e.code || "unavailable", updated_ms: Date.now()}, {merge: true}); }
