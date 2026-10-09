@@ -139,3 +139,21 @@ test("permanent legacy VIP registry protects an owner without profile VIP flags"
   assert.equal(calls.length,1);
   assert.equal((await engine.resolve("u",entity)).notebookId,"master");
 });
+test("deleted static VIP accounts retain their physical notebook membership", async () => {
+  const {db,engine,user,jobs,calls}=setup();user("u",{email:"prilatief@gmail.com"});
+  await engine.reserve("u",entity);await jobs();
+  db.docs.delete("users/u"); db.docs.delete("access_grants/u");
+  await engine.revoke("u",entity);await jobs();
+  assert.equal(calls.length,1);
+  assert.equal((await engine.assignmentRef("u",entity).get()).data().status,"ready");
+});
+test("an unresolved legacy hold prevents an already queued removal", async () => {
+  const {db,engine,user,jobs,calls}=setup();user("u");
+  await engine.reserve("u",entity);await jobs();
+  db.docs.get("access_grants/u").expires_ms=now-1;
+  await engine.revoke("u",entity);
+  db.docs.get("users/u").access_revocation_hold=true;
+  await jobs();
+  assert.equal(calls.length,1);
+  assert.equal(db.docs.get("access_notebooks/master").occupied,1);
+});
