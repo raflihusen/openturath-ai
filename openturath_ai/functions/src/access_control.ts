@@ -124,7 +124,7 @@ export class AccessControl {
       const lock = (await t.get(lr)).data();
       if (lock?.until_ms > now) return null;
       t.set(lr, {token, until_ms: now + 300000});
-      t.update(ref, {status: "processing", lease: token, attempts: (j.attempts || 0) + 1});
+      t.update(ref, {status: "processing", lease: token, due_ms: now + 300000, attempts: (j.attempts || 0) + 1});
       return {...j, lockRef: lr, attempts: (j.attempts || 0) + 1};
     });
     if (!job) return;
@@ -132,7 +132,7 @@ export class AccessControl {
       let owner = await this.owner(job.uid);
       const a = (await this.assignmentRef(job.uid, job.entity).get()).data();
       if (!a || a.revision !== job.revision || job.desired !== rights(owner.user, owner.grants, job.scope, this.clock())) {
-        await ref.update({status: "superseded"}); return;
+        await ref.update({status: "superseded", due_ms: 8640000000000000}); return;
       }
       if (!job.desired && isVip(owner.user, owner.grants)) throw new Error("Protected VIP");
       const observation = await this.provider.apply(job.notebook_id, job.email, job.desired);
@@ -160,7 +160,7 @@ export class AccessControl {
           t.update(nr, {occupied: Math.max(0, notebook.occupied - 1)});
           t.set(mr, {counted: false}, {merge: true});
         }
-        t.update(ref, {status: "completed", verified_ms: this.clock()});
+        t.update(ref, {status: "completed", due_ms: 8640000000000000, verified_ms: this.clock()});
         // For multi-target revokes only this target is confirmed here. A later
         // reconciliation marks the overall assignment revoked once all finish.
         if (job.desired) t.update(this.assignmentRef(job.uid, job.entity), {status: "ready", verified_ms: this.clock()});
