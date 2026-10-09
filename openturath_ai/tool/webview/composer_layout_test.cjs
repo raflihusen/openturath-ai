@@ -117,3 +117,55 @@ test('separate composer branch does not consume transcript space, including disa
     await check();
   } finally {await browser.close()}
 });
+
+test('Angular Material mat-sidenav-container maintains visible messages and bottom anchored composer', async () => {
+  const browser = await webkit.launch({ headless: true });
+  try {
+    const page = await browser.newPage({ viewport: { width: 1000, height: 800 } });
+    await page.setContent(`<style>${css}
+      .pill {display:flex;flex-direction:row;padding:16px;border-radius:28px;background:#222} textarea{flex:1} button{width:40px}
+      </style>
+      <app-root>
+        <mat-sidenav-container>
+          <mat-sidenav style="height:800px;width:300px;display:block">Sidebar</mat-sidenav>
+          <mat-sidenav-content>
+            <div class="chat-panel-content">
+              <div class="query-box-container">${composer}</div>
+            </div>
+          </mat-sidenav-content>
+        </mat-sidenav-container>
+      </app-root>`);
+    await page.addScriptTag({ content: boot });
+    let g = await geometry(page);
+    assert.ok(Math.abs(g.gap - 22) < 2, JSON.stringify(g));
+    
+    // Add messages into the conversation
+    await page.evaluate(() => {
+      const host = document.querySelector('.chat-panel-content');
+      const messages = document.createElement('div');
+      messages.className = 'message-list';
+      messages.innerHTML = '<div class="user-message">Pertanyaan</div><div class="model-message">' + 'Jawaban AI<br>'.repeat(50) + '</div>';
+      host.insertBefore(messages, document.querySelector('.query-box-container'));
+      window.layout();
+    });
+
+    const positions = await page.evaluate(() => {
+      const content = document.querySelector('mat-sidenav-content').getBoundingClientRect();
+      const userMsg = document.querySelector('.user-message').getBoundingClientRect();
+      const modelMsg = document.querySelector('.model-message').getBoundingClientRect();
+      const comp = document.querySelector('.ot-chat-composer').getBoundingClientRect();
+      return {
+        contentTop: content.top,
+        userTop: userMsg.top,
+        modelTop: modelMsg.top,
+        composerGap: innerHeight - comp.bottom
+      };
+    });
+
+    assert.equal(positions.contentTop, 0);
+    assert.ok(positions.userTop >= 0 && positions.userTop < 100, JSON.stringify(positions));
+    assert.ok(positions.modelTop > positions.userTop, JSON.stringify(positions));
+    assert.ok(Math.abs(positions.composerGap - 22) < 2, JSON.stringify(positions));
+  } finally { await browser.close(); }
+});
+

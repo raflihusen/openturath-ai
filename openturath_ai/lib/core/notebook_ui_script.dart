@@ -228,6 +228,30 @@ const notebookUiScript = r'''
       .ot-opening-language [role="menu"],
       .ot-opening-language .mat-mdc-menu-panel { opacity: 0 !important; }
       .cdk-overlay-container { z-index: 99999 !important; }
+      mat-sidenav-container.ot-chat-path,
+      mat-sidenav-container {
+        display: block !important;
+        position: relative !important;
+        height: 100% !important;
+        min-height: 100% !important;
+        overflow: hidden !important;
+      }
+      mat-sidenav {
+        position: absolute !important;
+        top: 0 !important;
+        bottom: 0 !important;
+        z-index: 3 !important;
+      }
+      mat-sidenav-content.ot-chat-path,
+      mat-sidenav-content {
+        position: relative !important;
+        display: flex !important;
+        flex-direction: column !important;
+        height: 100% !important;
+        min-height: 100% !important;
+        overflow: auto !important;
+      }
+
 
       /* Grow the viewport and transcript; keep input-only branches at natural height. */
       html, body { height: 100% !important; margin: 0 !important; }
@@ -269,6 +293,17 @@ const notebookUiScript = r'''
         overflow-y: auto !important;
         padding-bottom: 96px !important;
         box-sizing: border-box !important;
+      }
+      .chat-panel-content, .chat-view, .conversation-container, .message-list, [role="log"] {
+        padding-bottom: 96px !important;
+        box-sizing: border-box !important;
+      }
+      .chat-message, .model-message, .user-message, .chat-message-pair,
+      app-chat-response, app-chat-message, app-chat-query, app-chat-prompt,
+      .to-user-container, .to-model-container, [role="article"], .rendered-markdown,
+      app-chat-turn {
+        visibility: visible !important;
+        opacity: 1 !important;
       }
       .ot-chat-composer {
         position: fixed !important;
@@ -466,12 +501,12 @@ const notebookUiScript = r'''
     // baik saat ada pesan obrolan maupun saat obrolan masih kosong (empty state)
     document.querySelectorAll('.chat-panel-content, .chat-view, .conversation-container, .message-list, [role="log"], main, app-chat-view, app-conversation, app-chat-panel, .chat-panel, app-chat').forEach(panel => {
       // 1. Jika ada pesan pertama, sembunyikan semua elemen sebelumnya (header intro)
-      const firstMessage = panel.querySelector('.chat-message, .model-message, .user-message, [role="article"], .chat-message-pair');
+      const firstMessage = panel.querySelector(questionSelector + ',' + answerSelector + ', .chat-message-pair, app-chat-turn, app-chat-message, app-chat-response, app-chat-query, app-chat-prompt');
       if (firstMessage) {
         let prev = firstMessage.previousElementSibling;
         while (prev) {
-          if (!prev.matches('.chat-message, .model-message, .user-message, [role="article"], .chat-message-pair, app-chat-message, app-chat-response, .to-user-container, .to-model-container') &&
-              !prev.querySelector('.chat-message, .model-message, .user-message, [role="article"], .chat-message-pair, app-chat-message, app-chat-response, textarea, [contenteditable="true"], form')) {
+          if (!prev.matches(questionSelector + ',' + answerSelector + ', .chat-message-pair, app-chat-turn, app-chat-message, app-chat-response, app-chat-query, app-chat-prompt') &&
+              !prev.querySelector(questionSelector + ',' + answerSelector + ', .chat-message-pair, app-chat-turn, app-chat-message, app-chat-response, app-chat-query, app-chat-prompt, textarea, [contenteditable="true"], form')) {
             prev.style.setProperty('display', 'none', 'important');
           }
           prev = prev.previousElementSibling;
