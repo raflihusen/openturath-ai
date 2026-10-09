@@ -278,6 +278,32 @@ def get_firestore_client():
             logger.warning(f"⚠️ Could not initialize Firestore client: {e}. If running locally, make sure GOOGLE_APPLICATION_CREDENTIALS is set.")
     return db_client
 
+def vps_writer_active():
+    # Fail closed if the shared control document cannot be read: allowing an
+    # old writer during an outage can revoke VIP/module access incorrectly.
+    db = get_firestore_client()
+    if db is None:
+        raise RuntimeError("Access writer coordination unavailable")
+    return (db.collection("access_control").document("runtime").get().to_dict() or {}).get("writer") == "vps-v2"
+
+def queue_legacy_event(payload):
+    # Only called after the HTTP handler has authenticated the webhook. Store
+    # normalized billing evidence, never the webhook secret or arbitrary payload.
+    email, name, service, status, plan, amount, transaction_id, paid_at = parse_akal_payload(payload)
+    identity = str(transaction_id or "")
+    digest = hashlib.sha256(json.dumps([identity, str(status), email, service, amount, paid_at], separators=(",", ":")).encode()).hexdigest()
+    ref = get_firestore_client().collection("access_legacy_events").document(digest)
+    try:
+        ref.create({"email": email, "service": service, "payment_status": status,
+                    "plan": plan, "amount": amount, "transaction_id": identity,
+                    "paid_at": paid_at, "status": "verification_required",
+                    "received_at": firestore.SERVER_TIMESTAMP})
+    except Exception as exc:
+        from google.api_core.exceptions import AlreadyExists
+        if not isinstance(exc, AlreadyExists):
+            raise
+    return {"success": True, "action": "durable_vps_handoff", "event_id": digest}
+
 def determine_plan_and_expiry(price_scheme_name: str, service_name: str) -> tuple[str, int]:
     # Default to 1 month tholib
     plan = "tholib_1m"
@@ -495,6 +521,9 @@ async def process_webhook(payload: dict) -> dict:
         logger.info("🧪 Test webhook diterima dari Akal. Membalas sukses.")
         return {"success": True, "action": "test_connection", "message": "Connection test successful"}
 
+    if vps_writer_active():
+        return queue_legacy_event(payload)
+
     email, user_name, service_name, status, price_scheme_name, amount, transaction_id, paid_at_str = parse_akal_payload(payload)
 
     logger.info(
@@ -678,6 +707,8 @@ def handle_telegram_command(text: str, chat_id: int):
         send_telegram_message(help_msg)
 
     elif text.startswith("/reap") or text.startswith("/sync"):
+        if vps_writer_active():
+            return
         send_telegram_message("🔄 <b>[REAPER]</b> Memulai siklus pemindaian dan sinkronisasi otomatis...")
         try:
             from autonomous_reaper import AutonomousReaper
@@ -1055,6 +1086,9 @@ class WebhookHandler(BaseHTTPRequestHandler):
             if not self._authorize_cron(cron_secret, "/cron/reap"):
                 return
             try:
+                if vps_writer_active():
+                    self._send_json(200, {"success": True, "action": "vps_writer_active"})
+                    return
                 logger.info("⚡ Executing scheduled autonomous reaper cycle via /cron/reap...")
                 from autonomous_reaper import AutonomousReaper
                 reaper = AutonomousReaper()
