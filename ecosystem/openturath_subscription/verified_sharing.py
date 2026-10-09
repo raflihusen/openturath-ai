@@ -42,7 +42,7 @@ async def run(request):
     path = os.environ.get("NOTEBOOKLM_STORAGE_PATH")
     if not path or not os.path.isfile(path):
         raise ValueError("Consented owner storage is unavailable")
-    # SDK response cookies can rotate SIDCC for a different Google account.
+    # SDK response cookies rotate SIDCC independently of the browser snapshot.
     # Keep the consented browser snapshot authoritative and isolate each RPC
     # session's cookie writes, rather than corrupting the shared account state.
     with tempfile.TemporaryDirectory(prefix="sharing-session-", dir=os.path.dirname(path)) as temporary:
