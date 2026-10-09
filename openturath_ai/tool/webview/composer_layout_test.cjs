@@ -97,7 +97,7 @@ test('separate composer branch does not consume transcript space, including disa
       .composer-branch {min-height:50%;padding-bottom:48px}
       .message-list {height:450px;max-height:450px;overflow:auto}
       </style><app-root><main><div class="chat-panel">
-      <div class="transcript-branch"><div class="message-list"><div class="model-message">${'Jawaban<br>'.repeat(200)}</div></div></div>
+      <div class="transcript-branch"><div class="message-list"><div class="model-message">${'جواب عربي طويل لاختبار مساحة القراءة والتمرير<br>'.repeat(200)}</div></div></div>
       <div class="composer-branch">${composer}</div></div></main></app-root>`);
     await page.addScriptTag({content:boot});
     const check = async () => {
@@ -108,6 +108,9 @@ test('separate composer branch does not consume transcript space, including disa
       assert.ok(transcript.scroll > transcript.height);
     };
     await check();
+    await page.screenshot({path:'/tmp/ot-webview-nested-light.png'});
+    await page.addStyleTag({content:'body{background:#1f1f1f;color:#f5f5f5}.pill{background:#292929}textarea{background:transparent;color:inherit}'});
+    await page.screenshot({path:'/tmp/ot-webview-nested-dark.png'});
     await page.$eval('textarea', el => {el.disabled = true;window.layout()});
     await check();
     await page.$eval('textarea', el => {el.disabled = false;window.layout()});
