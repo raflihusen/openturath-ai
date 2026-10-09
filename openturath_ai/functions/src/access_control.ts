@@ -187,12 +187,12 @@ export class AccessControl {
       return assignment;
     });
   }
-  async importObserved(uid: string, entity: string): Promise<void> {
+  async importObserved(uid: string, entity: string, observedMembers?: any[]): Promise<void> {
     const {user} = await this.owner(uid);
     const email = normalEmail(user?.email);
     if (!email) return;
-    const observed = await this.db.collection("access_memberships").where("email", "==", email).get();
-    const members = observed.docs.map((d: any) => ({ref: d.ref, ...d.data()}))
+    const observed = observedMembers || (await this.db.collection("access_memberships").where("email", "==", email).get()).docs;
+    const members = observed.map((d: any) => ({ref: d.ref, ...d.data()}))
       .filter((m: any) => m.entity === entity && m.present && m.verified_ms);
     if (!members.length) return;
     const ar = this.assignmentRef(uid, entity);
