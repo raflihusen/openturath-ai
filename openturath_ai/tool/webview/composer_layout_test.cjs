@@ -86,3 +86,31 @@ test('complete NotebookLM presentation script keeps input usable without placeho
     assert.deepEqual(errors, []);
   } finally { await browser.close(); }
 });
+
+
+test('separate composer branch does not consume transcript space, including disabled generation', async () => {
+  const browser = await webkit.launch({ headless: true });
+  try {
+    const page = await browser.newPage({ viewport: { width: 920, height: 900 } });
+    await page.setContent(`<style>${css}
+      .pill {display:flex;flex-direction:row;padding:16px} textarea{flex:1}
+      .composer-branch {min-height:50%;padding-bottom:48px}
+      .message-list {height:450px;max-height:450px;overflow:auto}
+      </style><app-root><main><div class="chat-panel">
+      <div class="transcript-branch"><div class="message-list"><div class="model-message">${'Jawaban<br>'.repeat(200)}</div></div></div>
+      <div class="composer-branch">${composer}</div></div></main></app-root>`);
+    await page.addScriptTag({content:boot});
+    const check = async () => {
+      const g = await geometry(page);
+      assert.ok(Math.abs(g.gap - 22) < 2, JSON.stringify(g));
+      const transcript = await page.$eval('.message-list', el => ({height:el.clientHeight,scroll:el.scrollHeight}));
+      assert.ok(transcript.height > 750, JSON.stringify(transcript));
+      assert.ok(transcript.scroll > transcript.height);
+    };
+    await check();
+    await page.$eval('textarea', el => {el.disabled = true;window.layout()});
+    await check();
+    await page.$eval('textarea', el => {el.disabled = false;window.layout()});
+    await check();
+  } finally {await browser.close()}
+});
