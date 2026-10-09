@@ -16,8 +16,7 @@ async def observe(client, notebook_id):
     from notebooklm.rpc import RPCMethod
     from notebooklm.types import ShareStatus
 
-    raw = await client.rpc_call(RPCMethod.GET_SHARE_STATUS, [notebook_id, [2]],
-                                source_path=f"/notebook/{notebook_id}")
+    raw = await client.rpc_call(RPCMethod.GET_SHARE_STATUS, [notebook_id, [2]])
     # The SDK parser tolerates malformed lists. A revoke verifier must not turn
     # absent/malformed data into an empty, apparently successful viewer list.
     if not isinstance(raw, list) or len(raw) < 2 or not isinstance(raw[0], list):
