@@ -26,7 +26,7 @@ export function rights(u: any, grants: any[], scope: string, now = Date.now()): 
 export class AccessFault extends Error {
   constructor(public code: string, message: string) { super(message); }
 }
-export interface Entity { code: string; masterId: string; masterUrl: string; name: string; clones: Array<{id: string; url: string; name: string}>; }
+export interface Entity { code: string; legacyIds?: string[]; masterId: string; masterUrl: string; name: string; clones: Array<{id: string; url: string; name: string}>; }
 export interface ShareObservation { notebookId: string; isPublic: boolean; emails: string[]; complete: boolean; }
 export interface Provider { observe(id: string): Promise<ShareObservation>; apply(id: string, email: string, desired: boolean): Promise<ShareObservation>; }
 
@@ -64,7 +64,7 @@ export class AccessControl {
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) throw new AccessFault("failed-precondition", "Verified owner email required");
     const e = this.entities[entity];
     if (!e) throw new AccessFault("invalid-argument", "Unknown entity");
-    const ids = [e.masterId, ...e.clones.map(c => c.id)];
+    const ids = [e.masterId, ...e.clones.map(c => c.id), ...(e.legacyIds || [])];
     const ar = this.assignmentRef(uid, entity);
     const identity = this.db.collection("access_identities").doc(keyOf(email, entity));
     return this.db.runTransaction(async (t: any) => {
