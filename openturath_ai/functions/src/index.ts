@@ -2,7 +2,7 @@ import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
 import axios from "axios";
 import * as crypto from "crypto";
-import {AccessControl, AccessFault, isVip, keyOf, millis} from "./access_control";
+import {AccessControl, AccessFault, isVip, keyOf, millis, billingExpiry} from "./access_control";
 import {AGENT_ENTITLEMENTS, ENTITY_SCOPES} from "./access_catalog";
 import { handleNativeChat, NativeChatError } from "./native_chat";
 import {
@@ -758,7 +758,7 @@ function getServiceTitleForEntitlement(entitlementKey: string): string {
   return "Modul kajian";
 }
 
-async function processSuccessfulPayment(invoiceNumber: string, paidAmount: unknown) {
+async function processSuccessfulPayment(invoiceNumber: string, paidAmount: unknown, gatewayEvidence?: {transactionId: string; orderId: string; currency?: string}) {
   const txQuery = await db.collection("transactions")
     .where("invoice_number", "==", invoiceNumber)
     .limit(1)
@@ -817,6 +817,13 @@ async function processSuccessfulPayment(invoiceNumber: string, paidAmount: unkno
       throw new Error(`Transaction ${invoiceNumber} tidak memiliki owner UID`);
     }
 
+    const receiptRef = gatewayEvidence ? db.collection("payment_receipts").doc(keyOf("midtrans", gatewayEvidence.transactionId)) : null;
+    if (gatewayEvidence) {
+      if (gatewayEvidence.orderId !== invoiceNumber || (gatewayEvidence.currency && gatewayEvidence.currency !== "IDR") ||
+          !/^[a-zA-Z0-9_-]{1,128}$/.test(gatewayEvidence.transactionId)) throw new Error("Invalid gateway identity");
+      const receipt = (await t.get(receiptRef!)).data();
+      if (receipt && receipt.invoice_number !== invoiceNumber) throw new Error("Gateway transaction already bound to another invoice");
+    }
     const userRef = db.collection("users").doc(uid);
     const uSnap = await t.get(userRef);
     if (!uSnap.exists) throw new Error("Payment owner profile is missing");
@@ -839,11 +846,13 @@ async function processSuccessfulPayment(invoiceNumber: string, paidAmount: unkno
       const g = (await t.get(db.collection("access_grants").doc(id))).data();
       if (g && g.scope === entitlementKey && g.status === "active" && g.expires_ms > baseDate.getTime()) baseDate = new Date(g.expires_ms);
     }
-    const expiryDate = new Date(baseDate.getTime() + durationMonths * 30 * 86400000);
+    const expiryDate = new Date(billingExpiry(baseDate.getTime(), durationMonths));
     const grantId = keyOf("invoice", invoiceNumber);
+    if (receiptRef) t.set(receiptRef, {invoice_number: invoiceNumber, uid, transaction_id: gatewayEvidence!.transactionId});
     t.set(db.collection("access_grants").doc(grantId), {
       uid, scope: entitlementKey, kind: "payment", status: "active", amount,
       invoice_number: invoiceNumber, transaction_document: txDocRef.id,
+      transaction_id: gatewayEvidence?.transactionId || txData.transaction_id || invoiceNumber,
       gateway: txData.gateway || "doku", starts_ms: baseDate.getTime(), expires_ms: expiryDate.getTime(),
       created_ms: now.getTime(),
     });
@@ -1155,7 +1164,7 @@ export const midtransWebhook = functions
       if (isSuccess) {
         console.log(`[Midtrans Webhook] Payment confirmed for ${orderId}. Activating entitlement...`);
         try {
-          const actResult = await processSuccessfulPayment(orderId, grossAmount);
+          const actResult = await processSuccessfulPayment(orderId, grossAmount, {transactionId: verified.transaction_id, orderId: verified.order_id, currency: verified.currency});
           await eventRef.update({
             status: "completed",
             completed_at: admin.firestore.FieldValue.serverTimestamp(),
@@ -1282,7 +1291,7 @@ export const checkPaymentStatus = functions
 
         if (isSuccess) {
           console.log(`[checkPaymentStatus] Midtrans Inquiry verified SUCCESS for ${invoiceNumber}! Activating subscription...`);
-          const actResult = await processSuccessfulPayment(invoiceNumber, mData.gross_amount);
+          const actResult = await processSuccessfulPayment(invoiceNumber, mData.gross_amount, {transactionId: mData.transaction_id, orderId: mData.order_id, currency: mData.currency});
           return {
             success: true,
             status: "SUCCESS",
