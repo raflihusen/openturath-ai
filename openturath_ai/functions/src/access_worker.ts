@@ -350,8 +350,9 @@ async function cycle(): Promise<void> {
   stats.mode = cfg?.writer === "vps-v2" ? "active" : "shadow";
   if (cfg?.writer !== "vps-v2") return; // Installed shadow mode until explicit cutover.
   // Consume source jobs incrementally rather than scanning every account/tx.
-  const source = await db.collection("provisioning_outbox").where("status", "in", ["pending", "retry", "processing"]).limit(100).get();
+  const source = await db.collection("provisioning_outbox").where("status", "in", ["pending", "retry", "processing", "failed"]).limit(100).get();
   for (const job of source.docs) {
+    if (job.data().next_attempt_ms>Date.now()) continue;
     const uid = job.data().uid;
     if (typeof uid !== "string" || uid.includes("@")) {await job.ref.update({status:"v2_review"}); continue;}
     try {
@@ -367,8 +368,10 @@ async function cycle(): Promise<void> {
         for (const assignment of a.docs) await engine.revoke(uid, assignment.data().entity);
       }
       await job.ref.update({status:"v2_handed_off", updated_ms:Date.now()});
-    } catch (_) {
-      await job.ref.update({status:"v2_review",reason:"identity_or_billing_review",updated_ms:Date.now()});
+    } catch (error:any) {
+      const permanent=["auth/user-not-found","auth/invalid-uid","failed-precondition"].includes(error.code);
+      await job.ref.update({status:permanent?"v2_review":"retry",reason:permanent?"identity_or_billing_review":"temporary_dependency_failure",
+        next_attempt_ms:Date.now()+60000,updated_ms:Date.now()});
     }
   }
   await assignments();
