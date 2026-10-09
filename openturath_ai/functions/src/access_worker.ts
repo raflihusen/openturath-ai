@@ -429,6 +429,14 @@ async function main(): Promise<void> {
   if (mode === "--import-akal-evidence") return importVerifiedAkalEvidence(process.argv[3]);
   if (mode === "--prepare") return prepareLegacy();
   if (mode === "--prepare-assignments") return assignments();
+  if (mode === "--run-one") {
+    const id=process.argv[3];
+    if (!/^[a-f0-9]{64}$/.test(id || "")) throw new Error("A verified job ID is required");
+    const ref=db.collection("access_jobs").doc(id);
+    await engine.runJob(ref);
+    console.log(JSON.stringify({job_status:(await ref.get()).data()?.status,...telemetry}));
+    return;
+  }
   if (mode === "--once") return cycle();
   createServer((_, res) => {res.setHeader("Content-Type", "application/json");
     const providerStale = stats.mode === "active" && Date.now()-telemetry.last_provider_success_ms > 300000;
