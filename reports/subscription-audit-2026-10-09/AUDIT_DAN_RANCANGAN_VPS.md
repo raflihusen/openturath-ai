@@ -235,17 +235,17 @@ Service dijalankan di bawah supervisor dengan restart dan startup validation. Le
 
 Satu VPS tetap titik kegagalan. Agar outage tidak membutuhkan pemantauan manual rutin, gunakan durable queue, monitor independen, dan jalur failover worker yang sudah diuji. Komponen cloud dan VPS tidak boleh menjadi dua penulis keputusan yang bersaing. Target CPU/RAM belum dipatok sebelum spesifikasi dan beban sharing nyata diketahui.
 
-## 6. Kapasitas NotebookLM adalah syarat arsitektur
+## 6. Kapasitas NotebookLM: koreksi berdasarkan pemeriksaan pemilik
 
-Dokumentasi Google saat audit menyatakan akun Gmail pribadi dapat berbagi notebook privat hingga 50 pengguna. Ini batas akun/sharing, bukan kapasitas CPU VPS. [Dokumentasi berbagi notebook Google](https://support.google.com/gemininotebook/answer/16206563?hl=en).
+Pemilik telah memeriksa bahwa notebook yang digunakan dapat menampung **2.000 pengguna**. Rancangan ini menggunakan kapasitas tersebut. Kesimpulan sebelumnya yang memakai batas umum 50 sebagai kendala akun ini dicabut; angka umum dokumentasi tidak boleh mengalahkan pemeriksaan langsung pemilik terhadap akun yang dipakai.
 
-Jika 10.000 pelanggan sekaligus berhak pada modul yang sama dan batas tersebut berlaku pada akun pemilik, secara aritmetika diperlukan paling sedikit 200 notebook per entitas, sebelum cadangan dan VIP. Lima cabang Tahawwulat berarti paling sedikit 1.000 notebook untuk skema distribusi demikian. Katalog 13 clone per entitas tidak membuktikan kecukupan kapasitas; routing source saat ini memilih master. Perhitungan ini bersifat kondisional, bukan rekomendasi membuat 1.000 clone atau konfirmasi limit akun produksi.
+Untuk 10.000 pelanggan aktif pada satu entitas, kebutuhan mentah adalah lima notebook berkapasitas 2.000. Ini belum menyisakan ruang untuk VIP, akses manual, reservasi, dan perpindahan. Kapasitas penjualan harus menghitung kursi nyata dan reservasi, bukan hanya user paid. Contoh batas alokasi 1.900 adalah opsi cadangan operasional, bukan perubahan batas akun: dibutuhkan enam notebook untuk 10.000 kursi pada batas alokasi tersebut. Jika ingin kapasitas yang tetap cukup ketika satu dari enam notebook tidak tersedia, perlu notebook ketujuh atau strategi cadangan setara. Besarnya buffer ditetapkan dari kondisi nyata.
 
-Tentukan jalur produk melalui uji kelayakan: kapasitas private-sharing akun yang sebenarnya, assignment sticky dengan batas kursi, lifecycle clone/source, atau layanan akses lain yang dapat dikontrol server. Jalur Enterprise memiliki API sharing resmi, tetapi penerima memerlukan role/license serta berada pada project/workforce pool yang sesuai; bukan substitusi transparan untuk seluruh pelanggan Gmail sekarang. [API Enterprise](https://docs.cloud.google.com/gemini/enterprise/notebooklm-enterprise/docs/api-notebooks), [persyaratan sharing](https://docs.cloud.google.com/gemini/enterprise/notebooklm-enterprise/docs/share-notebooks), [lisensi](https://docs.cloud.google.com/gemini/enterprise/notebooklm-enterprise/docs/set-up-licensing).
+Lima spesialis Tahawwulat adalah lima entitas konten, masing-masing memerlukan pool notebook tersendiri. Jangan menyamakan cabang keilmuan Al-Muhaqqiq/Al-Bayan/dll. dengan clone penampung pengguna. Jika semua 10.000 user membeli akses ke kelima spesialis, kebutuhan mentahnya lima notebook per spesialis, total 25 notebook, sebelum buffer. Jumlah pelanggan total produk tidak otomatis sama dengan 10.000 user aktif pada setiap entitas.
 
-Public link memungkinkan orang dengan link membuka notebook. Karena itu ia tidak memberi pencabutan individual yang dapat diandalkan melalui gate aplikasi saja. Dokumentasi Google juga membedakan link Chat View dari pencabutan underlying access ke sumber; jangan menyamakan UI tersembunyi dengan kontrol akses yang terbukti. Ini memerlukan pemeriksaan akun/fitur aktual untuk kebutuhan perlindungan kitab. [Dokumentasi public sharing](https://support.google.com/gemininotebook/answer/16322204?hl=en).
+Katalog source mempunyai 24 entitas dan 312 entri clone, tetapi keberadaan entri tidak membuktikan kesehatan atau keterisian notebook aktual. Evaluasi fungsi resolver membuktikan semua agent yang dipetakan tetap diarahkan ke master. Jadi masalahnya adalah penyambungan pool dan assignment, bukan kurangnya daftar clone dalam source.
 
-Laporan stress test yang tersedia berisi 10 pertanyaan berurutan dan tiga worker chat. Itu tidak menguji 10.000 identitas, antrean akses, pagination pembayaran, atau kapasitas private sharing.
+Laporan stress test yang tersedia berisi 10 pertanyaan berurutan dan tiga worker chat. Itu tidak menguji alokasi 10.000 identitas, pembayaran bersamaan, atau lifecycle kursi dan pencabutan.
 
 ## 7. Target layanan dan pengujian penerimaan
 
@@ -286,3 +286,118 @@ Uji penerimaan harus mencakup:
 6. **Rollback:** hentikan mutasi worker baru, pertahankan antrean/ledger untuk replay, pulihkan routing versi terdahulu yang sudah aman. Jangan mengaktifkan kembali penulis ghost billing saat rollback. Renewal dan pembayaran baru tetap ditampung durable selama pemulihan.
 
 Pekerjaan operasional yang masih perlu bukti adalah deployment aktual Cloud Run/Functions/Scheduler, spesifikasi VPS, sesi akun NotebookLM yang dipakai, jumlah viewer per notebook, batas sharing aktual, dan rekonstruksi transaksi produksi. Audit source ini sudah cukup untuk menetapkan bahwa masalah tidak selesai dengan sekadar memindahkan daemon ke VPS.
+
+## 9. Pendalaman: Midtrans, semua AI, dan overflow master ke cabang
+
+**Status rancangan: arah dasarnya benar, tetapi belum layak disebut ideal atau lengkap sebelum bagian ini diimplementasikan dan diuji.** Midtrans adalah gateway utama yang diminta pemilik. Akal/DOKU lama hanya dipertahankan sebagai asal ledger historis atau jalur legacy yang memang masih diperlukan, bukan sebagai pengendali keputusan baru yang bersaing.
+
+### 9.1 Apa yang sudah dan belum tersambung
+
+`createCheckout` memang memanggil Midtrans Snap dan menyimpan `gateway: midtrans` (`index.ts:749–780`). `midtransWebhook` memeriksa signature dan meneruskan sukses ke aktivasi atomik (`1148–1225`). `checkPaymentStatus` mempunyai GET Status untuk inquiry oleh pengguna (`1298–1324`).
+
+Namun resolver notebook tidak membaca kapasitas atau assignment; ia selalu memilih master (`notebook_catalog.ts:638–662`). Katalog Syafi'i masih memberi label master pada ID legacy `334e7b83...` (`416–419`), sedangkan master aktif menurut SOP pemilik adalah `c89d09ca...`. Registry baru harus menetapkan identitas canonical dan tetap melacak akses legacy untuk pencabutan. Jangan mengganti tautan produksi sebelum inventaris dan assignment jelas.
+
+Worker outbox sekarang hanya mendukung enam key modul. Pembelian lain yang lolos whitelist checkout belum otomatis berarti semua notebook terkait dapat diprovision. Paket all-access juga masih dinonaktifkan oleh resolver harga (`index.ts:454–460`); rancangan wajib mampu menangani bundle, tetapi tidak berarti mengaktifkan penjualan paket itu tanpa keputusan pemilik.
+
+### 9.2 Alur lengkap yang harus menjadi kontrak sistem
+
+```mermaid
+flowchart TD
+  U[User memilih paket] --> C[Order dengan snapshot produk dan UID]
+  C --> Q[Periksa pool dan reservasi kursi]
+  Q --> P[Checkout Midtrans]
+  P --> I[Inbox notifikasi durable]
+  I --> G[Verifikasi status aktual Midtrans]
+  G --> L[Payment ledger dan hak per modul]
+  L --> A[Assignment master atau clone tersimpan]
+  A --> O[Outbox per notebook target]
+  O --> W[Worker VPS melakukan sharing]
+  W --> V[Read-back akses penerima]
+  V --> R[Akses siap dan URL assignment]
+  X[Expiry atau refund] --> E[Hitung ulang seluruh grant modul]
+  E --> H[Cabut assignment yang sudah tidak berhak]
+  H --> B[Verifikasi removal lalu bebaskan kursi]
+```
+
+Pembayaran, entitlement, assignment, dan akses nyata merupakan empat status berbeda. `paid` tidak sama dengan seluruh AI siap dipakai. Tampilan pelanggan harus mengikuti status kesiapan yang terbukti, bukan mengklaim akses aktif ketika sharing masih pending.
+
+### 9.3 Katalog produk harus menjangkau seluruh master dan spesialis
+
+Tetapkan katalog versi dengan hubungan:
+
+`product_id → daftar module_key → daftar entity_id → pool notebook_id`.
+
+Satu modul dapat memberikan beberapa AI/spesialis. Contoh Tahawwulat memberikan Al-Muhaqqiq, Al-Bayan, Al-Mukhtabir, Al-Habib, dan Al-Khatib sesuai paketnya; masing-masing mempunyai master dan clone kapasitas sendiri. Untuk semua modul lain, dokumentasikan tepat AI mana yang termasuk. Jangan menganggap semua key yang mirip sama-sama berhak atau menggantungkan cakupan pada nama paket.
+
+Order menyimpan snapshot katalog, harga, durasi, dan daftar entitas yang dibeli. Perubahan katalog berikutnya tidak diam-diam memperluas atau mengurangi pembelian lama. Keputusan apakah pembeli lama otomatis memperoleh AI baru harus menjadi kebijakan produk eksplisit. Registry pool mencatat notebook, pemilik, entitas, versi corpus/instruksi, kapasitas, dan status kelayakan.
+
+### 9.4 Alokasi saat master penuh
+
+Untuk user baru, pilih master jika sehat dan masih mempunyai kursi yang dapat dialokasikan. Jika penuh atau dihentikan untuk penempatan baru, pilih clone sehat dari entitas yang sama. Jangan mengarahkan ke AI/mazhab berbeda. Penempatan disimpan pada `assignment(uid, entity_id)`; user lama tetap memakai notebook yang sama ketika renew atau membuka aplikasi.
+
+Menghitung `hash(uid) % jumlah_clone` tidak cukup: tidak menjamin batas kapasitas, dan perubahan jumlah clone dapat memindahkan banyak user. Simpan assignment permanen, lalu gunakan transaksi database untuk pemeriksaan dan reservasi kursi. Dua pembayaran yang berebut kursi terakhir harus menghasilkan hanya satu reservasi di master; yang lain dialokasikan ke clone.
+
+Kursi terpakai mencakup penerima akses aktual, VIP/manual yang diakui, reservasi aktif, serta removal yang belum terverifikasi. Bedakan slot admin yang memang dihitung provider. Counter cache harus direkonsiliasi dengan daftar viewer; jangan menganggap counter database selalu sama dengan kenyataan. Jika jumlah nyata tidak lengkap/meragukan, hentikan alokasi ke notebook tersebut dan gunakan pool sehat lain.
+
+Pembelian baru memesan kursi pada seluruh entitas paket sebelum checkout, dengan waktu reservasi mengikuti masa bayar order Midtrans. Pending order tidak boleh menahan kursi selamanya; pelepasan harus memperhatikan kemungkinan pembayaran terlambat. Jika pembayaran sah datang setelah reservasi lepas, pembayaran tetap dicatat; alokasikan ulang, atau tandai paid_waiting_capacity dengan pemulihan/kompensasi yang jelas. Jangan menolak webhook pembayaran sah hanya karena notebook penuh.
+
+Renewal user yang masih aktif tidak mengonsumsi kursi kedua. Pembelian ulang setelah akses benar-benar dicabut perlu memperoleh kursi lagi. Bila semua pool penuh, hentikan checkout baru sebelum menarik pembayaran; mulai penyiapan clone cadangan sebelum kapasitas habis. Provision clone baru hanya ketika corpus, instruksi, ownership, private access, dan canary sudah lolos; bukan sekadar URL baru.
+
+### 9.5 Status Midtrans, refund, dan notifikasi terlambat
+
+Tambahkan worker inquiry terjadwal untuk order pending/processing yang belum final; jangan bergantung pada pelanggan menekan tombol cek. Status callback/browser finish tidak menjadi bukti pembayaran. Cocokkan environment, invoice, nominal, currency, UID, dan status transaksi aktual server-to-server. Simpan timestamp settlement yang riil terpisah dari waktu webhook diterima.
+
+Midtrans mendokumentasikan kemungkinan notifikasi datang tidak berurutan serta GET Status untuk memastikan keadaan terkini. Signature memakai order_id, status_code, gross_amount, dan ServerKey; karena itu pemeriksaan signature tidak menggantikan evaluasi state machine seluruh isi event. [Notifikasi Midtrans](https://docs.midtrans.com/docs/https-notification-webhooks), [penanganan notifikasi](https://docs.midtrans.com/reference/handle-notifications).
+
+State machine wajib mempertahankan fakta payment yang sudah sah ketika event pending/expire lama datang. Capture dengan fraud challenge tidak langsung memberi akses. Refund/full refund/partial refund memerlukan kebijakan yang berbeda; partial refund tidak otomatis menghabiskan seluruh modul. Jangan mencabut VIP atau hak lain yang masih berlaku. Kebijakan chargeback juga harus ditetapkan dan mempunyai asal bukti, bukan mengikuti string status sembarang.
+
+**Simulasi lanjutan terhadap fungsi Midtrans asli dengan database dan HTTP tiruan:**
+
+```text
+M1 settlement identik dikirim ulang: expiry tidak bertambah lagi (baik)
+M2 settlement kemudian expire terlambat: status transaksi paid menjadi expire (cacat)
+M3 refund: response 200, tetapi entitlement tetap active; belum ada aturan rekonsiliasi refund
+P1 entitas katalog: 24; entri clone: 312
+P2 semua agent yang dipetakan resolver: tetap master, tanpa overflow
+P3 route Syafi'i sampel: masih ID legacy 334e7b83...
+```
+
+M2 bukan bukti bahwa Midtrans selalu mengirim urutan tersebut; ia membuktikan sistem tidak menangani urutan terlambat yang harus diantisipasi. M3 membuktikan cabang refund tidak mengubah hak, bukan menetapkan bahwa seluruh refund wajib menghapus hak. Tidak ada transaksi uang atau sharing produksi dilakukan.
+
+### 9.6 Fanout, kesiapan paket, dan awal masa aktif
+
+Simpan job per notebook target. Jika empat dari lima AI berhasil dan satu gagal, retry hanya target yang belum verified. Invoice tidak dihitung ulang, assignment sukses tidak hilang, dan pelanggan dapat melihat AI mana yang siap. Definisikan kapan masa aktif pembelian baru dimulai agar antrean sharing tidak mengurangi durasi yang dijual: rekomendasi readiness bagi paket baru, sementara renewal aktif mengikuti expiry sebelumnya. Kebijakan ini perlu diputuskan bersama kontrak penjualan; historis 30 hari yang sudah diberikan tidak boleh diubah sepihak.
+
+Jika durasi dimulai pada readiness, resolver harus tetap mengakui grant paid-awaiting-provision sebagai hak provisioning agar tidak terjadi deadlock, lalu menetapkan effective_from dan expiry secara idempoten setelah syarat readiness paket terpenuhi. Payment.paid_at tetap waktu pembayaran; jangan menggantinya dengan readiness. Sediakan tenggat pemulihan dan kompensasi untuk paket yang tak kunjung lengkap.
+
+### 9.7 Pencabutan, kursi bebas, dan migrasi notebook
+
+Expiry/refund menghitung ulang seluruh grant yang mencakup modul. Jika masih ada grant aktif atau VIP, akses dipertahankan. Jika hak habis, cabut semua assignment historis modul yang masih teramati ada, termasuk master, clone lama, dan notebook yang ditinggalkan saat migrasi. Cabut hanya target yang tidak lagi dibutuhkan grant lain. Jangan mengandalkan daftar master saja.
+
+Kursi baru bebas setelah removal diverifikasi, bukan ketika profil berubah menjadi expired. Crash setelah sharing tetapi sebelum counter update harus dapat diperbaiki dari observed state dan job yang tersimpan. Pembayaran/renewal yang terjadi saat removal harus diuji bersama fencing/revision dan perbaikan akses.
+
+Pemindahan terencana menggunakan grant target→verifikasi→perbarui assignment routing→cabut sumber→verifikasi. Selama perpindahan, kedua kursi dihitung. Pastikan source dan target mempunyai corpus/instruksi versi yang sesuai. Saat notebook tidak dapat diakses, jangan membebaskan kursinya berdasarkan asumsi. Catat removal tertunda untuk diselesaikan saat pulih.
+
+Riwayat percakapan Google tidak boleh diasumsikan ikut berpindah clone. Simpan catatan/jawaban pengguna di penyimpanan aplikasi yang sudah ada, dan uji pengalaman migrasi. Jangan mengganti notebook pada setiap buka tab atau mengubah siklus hidup WebView yang dilindungi AGENTS.md.
+
+### 9.8 Kegagalan bersama, keamanan penjualan, dan operasi
+
+Tiga hal harus dipisahkan: jumlah kursi viewer, batas operasi sharing, dan beban chat bersamaan. Kapasitas 2.000 viewer bukan bukti 2.000 chat simultan tanpa antrean. Pool clone pada akun Google yang sama juga belum menjadi redundansi autentikasi: sesi pemilik gagal dapat menghentikan seluruh sharing.
+
+Pantau usia job, readiness paket, kapasitas per entitas/pool, auth owner, mismatch viewer-counter, umur coroutine/lease, dan status pending Midtrans. Gunakan circuit breaker dan concurrency terbatas saat provider bermasalah; tidak menjalankan ribuan retry sekaligus. Dashboard admin menjelaskan invoice→grant→assignment→viewer beserta alasan keputusan, dengan aksi replay aman.
+
+Perlu idempotency key checkout dari server untuk klik ganda, invoice unik yang dijamin database, konfigurasi sandbox/production eksplisit, dan pemulihan timeout Snap ketika order mungkin sudah dibuat. Satu Firebase UID terikat email Google yang terverifikasi; email kontak pembayaran tidak otomatis menjadi pemilik akses. Perubahan email, akun dihapus lalu dibuat ulang, serta pembelian website sebelum signup harus mempunyai aturan transfer/pemulihan yang jelas. Endpoint internal memakai job ID dan revision agar perintah lama tidak dapat menghidupkan akses lagi.
+
+### 9.9 Tambahan syarat penerimaan rancangan
+
+- Dua atau 100 pembayaran bersamaan ketika master hanya menyisakan satu kursi: tidak overbook dan semuanya memperoleh assignment sah pada pool yang tersedia.
+- Dataset 10.000 user: tidak satu pun URL aplikasi berbeda dari notebook yang diberi akses; renewal tidak menggandakan kursi.
+- Semua produk yang dapat dibeli mempunyai entity/pool/provisioning lengkap; tidak ada key unsupported yang tersembunyi di worker.
+- Pool penuh, reservation timeout, settlement terlambat, dan Snap timeout mempunyai hasil pembayaran serta recovery yang jelas.
+- Capture→settlement, pending terlambat, expire terlambat, duplicate, refund/partial refund, dan GET Status outage tidak membuat durasi/akses salah.
+- Fanout lima atau 24 entitas gagal sebagian lalu worker restart: pekerjaan selesai tanpa pembayaran kedua, expiry compounding, atau klaim kesiapan palsu.
+- Migration meninggalkan akses di notebook sumber: reconciliation menemukannya dan pencabutan modul menangani seluruh riwayat assignment.
+- Clone baru belum sehat/versi corpus salah, owner auth gagal, notebook draining, dan counter tidak cocok: allocator tidak mengirim pelanggan ke target bermasalah.
+- VIP permanen tetap utuh pada overflow, migrasi, refund, expiry, dan restore; kegagalan registri VIP menghentikan removal.
+
+Sampai kontrak Midtrans→grant→pool→assignment→verified access ini terpenuhi, rancangan tetap berstatus proposal engineering yang perlu implementasi dan pembuktian, bukan sistem ideal yang sudah selesai.
