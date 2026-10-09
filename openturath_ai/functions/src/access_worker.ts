@@ -136,7 +136,7 @@ async function importOwner(doc: any): Promise<void> {
   if (unresolved.length && fresh.access_version !== 2) return;
   // Do not invent a grant from profile expiry. Unproved legacy voucher/manual
   // access remains reviewable and outside automated revocation until imported.
-  if (ids.size) await db.runTransaction(async t => {
+  if (ids.size) await db.runTransaction(async (t: any) => {
     const current = (await t.get(doc.ref)).data();
     if (!current || current.adopted_by) return;
     t.update(doc.ref, {access_grant_ids: [...new Set([...(current.access_grant_ids || []), ...ids])],
