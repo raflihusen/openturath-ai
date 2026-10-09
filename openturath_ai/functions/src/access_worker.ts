@@ -1,7 +1,7 @@
 import * as admin from "firebase-admin";
 import {execFile} from "child_process";
 import {createServer} from "http";
-import {rename, chmod} from "fs/promises";
+import {rename, chmod, readFile} from "fs/promises";
 import {promisify} from "util";
 import {AccessControl, Entity, Provider, ShareObservation, isVip, keyOf, millis, normalEmail, rights, billingExpiry} from "./access_control";
 import {NOTEBOOK_ENTITIES} from "./notebook_catalog";
@@ -178,6 +178,50 @@ async function importOwner(doc: any): Promise<void> {
       access_version: 2, access_due_ms: Date.now()});
   });
 }
+async function importVerifiedAkalEvidence(path: string): Promise<void> {
+  // Operator-only input: the deployment audit fetched all service pages from
+  // GoAkal over authenticated HTTPS. Invoice expiry is never subscription expiry.
+  const rows = JSON.parse(await readFile(path,"utf8"));
+  if (!Array.isArray(rows)) throw new Error("Invalid provider evidence");
+  const scopes: Record<string,string> = {"AI Fikih Tahawwulat":"fiqh_tahawwulat",
+    "SUPER AI FIKIH SYAFI'I":"fiqh_syafii", "SUPER AI BAHASA ARAB":"nahwu"};
+  const durations: Record<string,number> = {"1 Bulan":1,"6 Bulan":6,"12 Bulan":12};
+  const users = await db.collection("users").get(), seen = new Set<string>(), ends = new Map<string,number>();
+  rows.sort((a,b)=>millis(a.paidAt)-millis(b.paidAt));
+  let imported=0, excluded=0;
+  for (const row of rows) {
+    const scope=scopes[row.serviceTitle], months=durations[row.priceSchemeTitle], paid=millis(row.paidAt);
+    const email=normalEmail(row.payerEmail), payment=String(row.paymentId || ""), amount=Number(row.incomingAmount);
+    if (row.status !== "PAID" || !(amount>0) || !scope || !months || !email || !payment || !Number.isFinite(paid)) {excluded++;continue;}
+    const gid=keyOf("goakal_verified",payment,scope);
+    if (seen.has(gid)) continue;
+    seen.add(gid);
+    const chain=keyOf(email,scope), starts=Math.max(paid,ends.get(chain)||0), expires=billingExpiry(starts,months);
+    ends.set(chain,expires);
+    const matches=users.docs.filter(d=>normalEmail(d.data().email)===email);
+    if (matches.length>1) {excluded++;continue;}
+    const uid=matches[0]?.id || `legacy_${keyOf(email)}`;
+    if (!matches.length) await db.collection("access_legacy_owners").doc(uid).set({email,legacy_revoke_only:true,access_due_ms:Date.now()}, {merge:true});
+    const ref=db.collection("access_grants").doc(gid);
+    await db.runTransaction(async t=>{
+      const previous=await t.get(ref);
+      if (previous.exists) return;
+      t.create(ref,{uid,email,scope,kind:"payment",status:"active",amount,provider:"goakal",
+        transaction_id:payment,starts_ms:starts,expires_ms:expires,paid_ms:paid,
+        duration_months:months,provider_verified:true,verified_ms:Date.now()});
+    });
+    const ownerRef=matches[0]?.ref || db.collection("access_legacy_owners").doc(uid);
+    await db.runTransaction(async (t:any)=>{
+      const owner=(await t.get(ownerRef)).data();
+      if (!owner || owner.adopted_by) return;
+      t.update(ownerRef,{access_grant_ids:[...new Set([...(owner.access_grant_ids || []),gid])],access_due_ms:Date.now()});
+    });
+    imported++;
+  }
+  await db.collection("access_control").doc("legacy_provider_audit").set({provider:"goakal",fetched_rows:rows.length,
+    imported,excluded,completed_ms:Date.now(),invoice_expiry_ignored:true});
+  console.log(JSON.stringify({provider:"goakal",imported,excluded}));
+}
 async function prepareLegacy(): Promise<void> {
   const transactions = await db.collection("transactions").get();
   const users = await db.collection("users").get();
@@ -320,6 +364,7 @@ async function main(): Promise<void> {
   const mode = process.argv[2];
   if (mode === "--seed" || mode === "--restrict") return seed(mode === "--restrict");
   if (mode === "--import") return pages("users", importOwner);
+  if (mode === "--import-akal-evidence") return importVerifiedAkalEvidence(process.argv[3]);
   if (mode === "--prepare") return prepareLegacy();
   if (mode === "--prepare-assignments") return assignments();
   if (mode === "--once") return cycle();
