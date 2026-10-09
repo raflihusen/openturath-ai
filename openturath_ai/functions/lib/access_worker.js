@@ -159,11 +159,16 @@ async function importOwner(doc) {
         await db.collection("access_grants").doc(id).set({ uid, kind: "VIP_PERMANENT", scope: "all_access", status: "active" }, { merge: true });
         ids.add(id);
     }
+    const verifiedProvider = (await engine.grants(uid)).some(g => g.provider === "goakal" && g.provider_verified === true);
     const unresolved = [];
     for (const [id, tx] of txs) {
         if (tx.uid && tx.uid !== uid)
             continue;
-        if (!["paid", "success", "settled", "settlement", "expired"].includes(String(tx.status).toLowerCase()) || !(Number(tx.amount) > 0))
+        if (verifiedProvider && String(tx.source || "").toLowerCase() === "goakal")
+            continue;
+        const paidStatus = ["paid", "success", "settled", "settlement"].includes(String(tx.status).toLowerCase());
+        const settledBeforeExpiry = String(tx.status).toLowerCase() === "expired" && tx.activation_applied === true && tx.paid_at;
+        if ((!paidStatus && !settledBeforeExpiry) || !(Number(tx.amount) > 0))
             continue;
         const labels = {
             "AI Fikih Tahawwulat": "fiqh_tahawwulat", "Fikih Tahawwulat": "fiqh_tahawwulat",
@@ -184,7 +189,7 @@ async function importOwner(doc) {
                 ids.add(gid);
             continue;
         }
-        const paid = (0, access_control_1.millis)(tx.paid_at || tx.completed_at || tx.payment_time || tx.created_at);
+        const paid = (0, access_control_1.millis)(tx.paid_at || tx.completed_at || tx.payment_time);
         const explicit = (0, access_control_1.millis)(tx.subscription_expires_at || tx.access_expires_at || tx.expires_at);
         // Legacy one-month records are capped by real payment time + 30 days.
         // Unknown timestamps/plan durations are review cases, never auto-removals.
@@ -224,6 +229,62 @@ async function importOwner(doc) {
             t.update(doc.ref, { access_grant_ids: [...new Set([...(current.access_grant_ids || []), ...ids])],
                 access_version: 2, access_due_ms: Date.now() });
         });
+}
+async function importVerifiedAkalEvidence(path) {
+    var _a, _b;
+    // Operator-only input: the deployment audit fetched all service pages from
+    // GoAkal over authenticated HTTPS. Invoice expiry is never subscription expiry.
+    const rows = JSON.parse(await (0, promises_1.readFile)(path, "utf8"));
+    if (!Array.isArray(rows))
+        throw new Error("Invalid provider evidence");
+    const scopes = { "AI Fikih Tahawwulat": "fiqh_tahawwulat",
+        "SUPER AI FIKIH SYAFI'I": "fiqh_syafii", "SUPER AI BAHASA ARAB": "nahwu" };
+    const durations = { "1 Bulan": 1, "6 Bulan": 6, "12 Bulan": 12 };
+    const users = await db.collection("users").get(), seen = new Set(), ends = new Map();
+    rows.sort((a, b) => (Number.isFinite((0, access_control_1.millis)(a.paidAt)) ? (0, access_control_1.millis)(a.paidAt) : Infinity) - (Number.isFinite((0, access_control_1.millis)(b.paidAt)) ? (0, access_control_1.millis)(b.paidAt) : Infinity));
+    let imported = 0, excluded = 0;
+    for (const row of rows) {
+        const scope = scopes[row.serviceTitle], months = durations[row.priceSchemeTitle], paid = (0, access_control_1.millis)(row.paidAt);
+        const email = (0, access_control_1.normalEmail)(row.payerEmail), payment = String(row.paymentId || ""), amount = Number(row.incomingAmount);
+        if (row.status !== "PAID" || !(amount > 0) || !scope || !months || !email || !payment || !Number.isFinite(paid)) {
+            excluded++;
+            continue;
+        }
+        const gid = (0, access_control_1.keyOf)("goakal_verified", payment, scope);
+        if (seen.has(gid))
+            continue;
+        seen.add(gid);
+        const chain = (0, access_control_1.keyOf)(email, scope), starts = Math.max(paid, ends.get(chain) || 0), expires = (0, access_control_1.billingExpiry)(starts, months);
+        ends.set(chain, expires);
+        const matches = users.docs.filter(d => (0, access_control_1.normalEmail)(d.data().email) === email);
+        if (matches.length > 1) {
+            excluded++;
+            continue;
+        }
+        const uid = ((_a = matches[0]) === null || _a === void 0 ? void 0 : _a.id) || `legacy_${(0, access_control_1.keyOf)(email)}`;
+        if (!matches.length)
+            await db.collection("access_legacy_owners").doc(uid).set({ email, legacy_revoke_only: true, access_due_ms: Date.now() }, { merge: true });
+        const ref = db.collection("access_grants").doc(gid);
+        await db.runTransaction(async (t) => {
+            const previous = await t.get(ref);
+            if (previous.exists)
+                return;
+            t.create(ref, { uid, email, scope, kind: "payment", status: "active", amount, provider: "goakal",
+                transaction_id: payment, starts_ms: starts, expires_ms: expires, paid_ms: paid,
+                duration_months: months, provider_verified: true, verified_ms: Date.now() });
+        });
+        const ownerRef = ((_b = matches[0]) === null || _b === void 0 ? void 0 : _b.ref) || db.collection("access_legacy_owners").doc(uid);
+        await db.runTransaction(async (t) => {
+            const owner = (await t.get(ownerRef)).data();
+            if (!owner || owner.adopted_by)
+                return;
+            t.update(ownerRef, { access_grant_ids: [...new Set([...(owner.access_grant_ids || []), gid])], access_due_ms: Date.now() });
+        });
+        imported++;
+    }
+    await db.collection("access_control").doc("legacy_provider_audit").set({ provider: "goakal", fetched_rows: rows.length,
+        imported, excluded, completed_ms: Date.now(), invoice_expiry_ignored: true });
+    console.log(JSON.stringify({ provider: "goakal", imported, excluded }));
 }
 async function prepareLegacy() {
     const transactions = await db.collection("transactions").get();
@@ -415,6 +476,8 @@ async function main() {
         return seed(mode === "--restrict");
     if (mode === "--import")
         return pages("users", importOwner);
+    if (mode === "--import-akal-evidence")
+        return importVerifiedAkalEvidence(process.argv[3]);
     if (mode === "--prepare")
         return prepareLegacy();
     if (mode === "--prepare-assignments")
