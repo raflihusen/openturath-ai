@@ -1,7 +1,7 @@
 import * as admin from "firebase-admin";
 import {execFile} from "child_process";
 import {createServer} from "http";
-import {AccessControl, Entity, Provider, ShareObservation, isVip, keyOf, millis, normalEmail, rights} from "./access_control";
+import {AccessControl, Entity, Provider, ShareObservation, isVip, keyOf, millis, normalEmail, rights, billingExpiry} from "./access_control";
 import {NOTEBOOK_ENTITIES} from "./notebook_catalog";
 import {ENTITY_SCOPES} from "./access_catalog";
 
@@ -99,7 +99,7 @@ async function importOwner(doc: any): Promise<void> {
     const plan = String(tx.plan || "").toLowerCase();
     const months = Number(tx.duration_months) || (/(1y|tahun|annual)/.test(plan) ? 12 : /6m/.test(plan) ? 6 : /1m|tholib/.test(plan) ? 1 : 0);
     if (!Number.isFinite(paid) || !months) continue;
-    const calculated = paid + months * 30 * 86400000;
+    const calculated = billingExpiry(paid, months);
     const expiry = Number.isFinite(explicit) ? Math.min(explicit, calculated) : calculated;
     await gr.set({uid, scope, kind: "payment", status: "active", amount: Number(tx.amount), transaction_document: id,
       invoice_number: tx.invoice_number || null, starts_ms: paid, expires_ms: expiry, imported: true});
