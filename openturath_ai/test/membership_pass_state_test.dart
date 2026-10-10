@@ -159,4 +159,11 @@ void main() {
     expect(resolveMembershipPass(member, now: DateTime(2026, 10, 10)).badge,
         'GRATIS');
   });
+  test('paid module keeps PRO label alongside an all-access trial', () {
+    final pass = resolveMembershipPass(user({
+      'all_access': ModuleEntitlement(plan: 'trial', expiry: DateTime(2030)),
+      'fiqh_syafii': ModuleEntitlement(plan: 'pro', expiry: DateTime(2030)),
+    }));
+    expect(pass.badge, 'PRO');
+  });
 }
