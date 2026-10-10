@@ -13,6 +13,15 @@ export const VIP_EMAILS = new Set([
 export const normalEmail = (s: unknown): string => typeof s === "string" ? s.trim().toLowerCase() : "";
 export const keyOf = (...parts: string[]): string => crypto.createHash("sha256").update(JSON.stringify(parts)).digest("hex");
 export const millis = (v: any): number => v?.toMillis?.() ?? (v?.toDate ? v.toDate().getTime() : typeof v === "number" ? v : Date.parse(v || ""));
+// A verified provider receipt does not supersede an owner's later bonus,
+// transfer, or manual correction. Ambiguous adjustments block revocation;
+// they do not automatically create or extend a payment grant.
+export function hasLegacyAccessAdjustment(tx: any): boolean {
+  const source = String(tx.source || "").toLowerCase();
+  return Boolean(tx.bonus_reason || tx.bonus_applied_at || tx.original_transaction_id ||
+    tx.admin_verified || tx.admin_approved || source.includes("manual") || source.includes("transfer") ||
+    tx.access_override || tx.override_reason);
+}
 export function billingExpiry(baseMs: number, months: number): number {
   if (!Number.isInteger(months) || months < 1 || months > 120) throw new Error("Invalid product duration");
   if (months === 1) return baseMs + 30 * 86400000;
