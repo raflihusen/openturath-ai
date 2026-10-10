@@ -96,16 +96,25 @@ class _LoginScreenState extends State<LoginScreen> {
       }
     } catch (e) {
       if (!mounted) return;
-      final message = e.toString().contains('network') ||
-              e.toString().contains('SocketException')
+      final platformCode = e is PlatformException ? e.code : null;
+      final googleKeychainFailure = e is PlatformException &&
+          e.code == 'sign_in_failed' &&
+          '${e.details}'.toLowerCase().contains('keychain');
+      final message = googleKeychainFailure
+          ? AppCopy.desktopKeychainError
+          : platformCode == 'sign_in_canceled'
+          ? ''
+          : platformCode == 'network_error' ||
+                e.toString().contains('network') ||
+                e.toString().contains('SocketException')
           ? AppCopy.networkError
-          : (e is FirebaseAuthException
-              ? switch (e.code) {
-                  'keychain-error' => AppCopy.desktopKeychainError,
-                  'popup-closed-by-user' || 'canceled' => '',
-                  _ => e.message ?? AppCopy.googleSignInFailed,
-                }
-              : AppCopy.googleSignInFailed);
+          : e is FirebaseAuthException
+          ? switch (e.code) {
+              'keychain-error' => AppCopy.desktopKeychainError,
+              'popup-closed-by-user' || 'canceled' => '',
+              _ => e.message ?? AppCopy.googleSignInFailed,
+            }
+          : AppCopy.googleSignInFailed;
       if (message.isEmpty) return;
       if (AppPlatform.isDesktop) {
         setState(() => _desktopError = message);
