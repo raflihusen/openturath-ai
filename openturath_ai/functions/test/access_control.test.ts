@@ -327,6 +327,16 @@ test("a timeout after Google removes the member restores the original verified m
   const job=[...db.docs.values()].find(d=>d.mutation_started_ms);
   assert.equal(job.safety_restore_required,false);assert.equal(job.status,"review_required");
 });
+test("safety restoration repairs missing membership metadata and reconciles the observed seat count",async()=>{
+  const {db,engine,user,jobs,provider}=setup();user("u");await engine.reserve("u",entity);await jobs();
+  db.docs.get("access_grants/u").expires_ms=now-1;await engine.revoke("u",entity);
+  const original=provider.apply.bind(provider),key=`access_memberships/${keyOf("master","u@example.test")}`;
+  provider.apply=async(id,email,desired)=>{const result=await original(id,email,desired);if(!desired){
+    db.docs.delete(key);db.docs.get("access_notebooks/master").occupied=0;throw Error("partial external failure");}return result;};
+  await jobs();const member=db.docs.get(key);assert.equal(member.email,"u@example.test");assert.equal(member.uid,"u");
+  assert.equal(member.entity,entity);assert.equal(member.notebook_id,"master");assert.equal(member.present,true);
+  assert.equal(member.counted,true);assert.equal(db.docs.get("access_notebooks/master").occupied,1);
+});
 test("failed safety restoration is persisted and retried before pause and expiry checks",async()=>{
   const {db,engine,user,jobs,provider,members}=setup();user("u");await engine.reserve("u",entity);await jobs();
   db.docs.get("access_grants/u").expires_ms=now-1;await engine.revoke("u",entity);
