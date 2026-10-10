@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import {AccessControl, isVip, keyOf, rights, verifiedAkalPeriods, hasLegacyAccessAdjustment} from "../src/access_control.ts";
+import {AccessControl, isVip, keyOf, rights, verifiedAkalPeriods, hasLegacyAccessAdjustment, REVOCATION_POLICY, evidenceHash} from "../src/access_control.ts";
 import {MemoryDB} from "./audit_harness.ts";
 
 const entity = "entity", scope = "fiqh_syafii", now = 100000;
@@ -209,4 +209,94 @@ test("legacy app routing uses its registered clone even when a master has spare 
   const result=await engine.resolveObservedLegacy("u","u@example.test",entity);
   assert.equal(result.notebookId,"clone");assert.equal(db.docs.get("access_notebooks/master").occupied,before);
   await assert.rejects(engine.resolveObservedLegacy("unknown","unknown@example.test",entity),{code:"failed-precondition"});
+});
+
+async function approveLegacy(db:any,engine:any,uid="u",module=scope) {
+  const draft=await engine.assessRevocation(uid,module);
+  assert.equal(draft.reason,"legacy_audit_missing_or_stale");
+  db.seed(`access_legacy_audits/${keyOf(uid,module)}`,{uid,scope:module,email:`${uid}@example.test`,
+    status:"approved",owner_approved:true,policy:REVOCATION_POLICY,fingerprint:draft.fingerprint});
+}
+test("Muhammad incident: provider receipt cannot supersede a later owner bonus even if hold was lost",async()=>{
+  const {db,engine,user,jobs,calls}=setup();user("u");await engine.reserve("u",entity);await jobs();
+  Object.assign(db.docs.get("access_grants/u"),{provider:"goakal",provider_verified:true,expires_ms:now-1});
+  db.seed("transactions/owner_bonus",{customer_email:"u@example.test",amount:2995000,bonus_reason:"specific override request",
+    subscription_expires_at:now+999999,entitlement_key:scope});
+  await engine.revoke("u",entity);await jobs();
+  assert.equal(calls.filter(c=>!c.desired).length,0);
+  assert.equal((await engine.assessRevocation("u",scope)).reason,"legacy_audit_missing_or_stale");
+});
+test("Arie incident: new zero-value transfer invalidates a previously approved removal before Google",async()=>{
+  const {db,engine,user,jobs,calls}=setup();user("u");await engine.reserve("u",entity);await jobs();
+  Object.assign(db.docs.get("access_grants/u"),{provider:"goakal",expires_ms:now-1});
+  await approveLegacy(db,engine);await engine.revoke("u",entity);
+  db.seed("transactions/transfer",{customer_email:"u@example.test",amount:0,source:"transfer_from_original",
+    original_transaction_id:"paid_original",modules:[scope],subscription_expires_at:now+999999});
+  await jobs();assert.equal(calls.filter(c=>!c.desired).length,0);
+  assert.equal((await engine.assignmentRef("u",entity).get()).data().status,"revocation_review");
+  assert.equal([...db.docs.values()].some(d=>d.status === "review_required"),true);
+});
+test("a hold arriving during Google removal restores the original permission and preserves its seat",async()=>{
+  const {db,engine,user,jobs,calls,members,provider}=setup();user("u");await engine.reserve("u",entity);await jobs();
+  db.docs.get("access_grants/u").expires_ms=now-1;await engine.revoke("u",entity);
+  const original=provider.apply.bind(provider);
+  provider.apply=async(id,email,desired)=>{const result=await original(id,email,desired);
+    if(!desired)db.docs.get("users/u").access_revocation_hold=true;return result;};
+  await jobs();assert.deepEqual(calls.map(c=>c.desired),[true,false,true]);
+  assert.equal(members.get("master")!.has("u@example.test"),true);
+  assert.equal(db.docs.get("access_notebooks/master").occupied,1);
+  assert.equal([...db.docs.values()].some(d=>d.status === "retry"),true);
+});
+test("manual evidence arriving during removal restores membership even without a hold or renewal grant",async()=>{
+  const {db,engine,user,jobs,calls,members,provider}=setup();user("u");await engine.reserve("u",entity);await jobs();
+  db.docs.get("access_grants/u").expires_ms=now-1;await engine.revoke("u",entity);
+  const original=provider.apply.bind(provider);
+  provider.apply=async(id,email,desired)=>{const result=await original(id,email,desired);
+    if(!desired)db.seed("transactions/new_bonus",{customer_email:email,bonus_reason:"owner exception",entitlement_key:scope});return result;};
+  await jobs();assert.deepEqual(calls.map(c=>c.desired),[true,false,true]);
+  assert.equal(members.get("master")!.has("u@example.test"),true);
+  assert.equal(db.docs.get("access_notebooks/master").occupied,1);
+});
+test("grant job never directly removes a membership if expiry changes during provisioning",async()=>{
+  const {db,engine,user,jobs,calls,provider,members}=setup();user("u");await engine.reserve("u",entity);
+  const original=provider.apply.bind(provider);
+  provider.apply=async(id,email,desired)=>{const result=await original(id,email,desired);
+    db.docs.get("access_grants/u").expires_ms=now-1;return result;};
+  await jobs();assert.deepEqual(calls.map(c=>c.desired),[true]);assert.equal(members.get("master")!.has("u@example.test"),true);
+});
+test("legacy audit is bound to identity scope policy and the exact evidence snapshot",async()=>{
+  const {db,engine,user}=setup();user("u");Object.assign(db.docs.get("access_grants/u"),{provider:"goakal",expires_ms:now-1});
+  await approveLegacy(db,engine);assert.equal((await engine.assessRevocation("u",scope)).allowed,true);
+  const cert=db.docs.get(`access_legacy_audits/${keyOf("u",scope)}`);
+  cert.uid="other";assert.equal((await engine.assessRevocation("u",scope)).allowed,false);cert.uid="u";
+  cert.scope="fiqh_tahawwulat";assert.equal((await engine.assessRevocation("u",scope)).allowed,false);cert.scope=scope;
+  cert.policy=REVOCATION_POLICY-1;assert.equal((await engine.assessRevocation("u",scope)).allowed,false);cert.policy=REVOCATION_POLICY;
+  db.docs.get("access_grants/u").expires_ms=now-2;assert.equal((await engine.assessRevocation("u",scope)).allowed,false);
+});
+test("manual rights in another known module do not invalidate an independent modern scope decision",async()=>{
+  const {db,engine,user}=setup();user("u");db.docs.get("access_grants/u").expires_ms=now-1;
+  db.seed("transactions/other_module",{customer_email:"u@example.test",source:"manual_override",
+    modules:["fiqh_tahawwulat"],subscription_expires_at:now+999999});
+  assert.equal((await engine.assessRevocation("u",scope)).allowed,true);
+});
+test("unknown scope evidence blocks revocation instead of guessing the module",async()=>{
+  const {db,engine,user}=setup();user("u");db.docs.get("access_grants/u").expires_ms=now-1;
+  db.seed("transactions/unknown",{customer_email:"u@example.test",source:"manual_override",plan:"tholib_1m"});
+  assert.equal((await engine.assessRevocation("u",scope)).allowed,false);
+});
+test("missing scope evidence or deleted profile does not prove permission to remove access",async()=>{
+  const {db,engine,user}=setup();user("u");db.docs.delete("access_grants/u");
+  assert.equal((await engine.assessRevocation("u",scope)).reason,"missing_scope_evidence");
+  db.docs.delete("users/u");assert.equal((await engine.assessRevocation("u",scope)).reason,"identity_unresolved");
+});
+test("legacy identity adoption preserves holds and requires a new identity-specific audit",async()=>{
+  const {db,engine,user}=setup();user("new",{email:"old@example.test"});
+  db.seed("access_legacy_owners/old",{email:"old@example.test",access_revocation_hold:true});
+  await engine.adoptLegacy("new","old");
+  assert.equal(db.docs.get("users/new").access_revocation_hold,true);
+  assert.equal(db.docs.get("users/new").access_legacy_audit_required,true);
+});
+test("evidence hash is independent of property order and changes for an owner adjustment",()=>{
+  assert.equal(evidenceHash({b:2,a:1}),evidenceHash({a:1,b:2}));
+  assert.notEqual(evidenceHash({a:1}),evidenceHash({a:1,bonus_reason:"owner"}));
 });
