@@ -3,7 +3,7 @@ import {execFile} from "child_process";
 import {createServer} from "http";
 import {rename, chmod, readFile} from "fs/promises";
 import {promisify} from "util";
-import {AccessControl, Entity, Provider, ShareObservation, isVip, keyOf, millis, normalEmail, rights, billingExpiry, verifiedAkalPeriods} from "./access_control";
+import {AccessControl, Entity, Provider, ShareObservation, isVip, keyOf, millis, normalEmail, rights, billingExpiry, verifiedAkalPeriods, hasLegacyAccessAdjustment} from "./access_control";
 import {NOTEBOOK_ENTITIES} from "./notebook_catalog";
 import {ENTITY_SCOPES, AGENT_ENTITLEMENTS} from "./access_catalog";
 
@@ -130,6 +130,12 @@ async function importOwner(doc: any): Promise<void> {
   const verifiedProvider = (await engine.grants(uid)).some(g=>g.provider === "goakal" && g.provider_verified === true);
   const unresolved: string[] = [];
   for (const [id, tx] of txs) {
+    // Check before gateway/amount/UID filters: transfers can be free, retain
+    // an old UID, and owner bonuses are not visible in the provider API.
+    if (hasLegacyAccessAdjustment(tx)) {
+      unresolved.push(`owner_adjustment:${id}`);
+      continue;
+    }
     if (tx.uid && tx.uid !== uid) continue;
     if (verifiedProvider && !["midtrans", "doku"].includes(String(tx.gateway || "").toLowerCase())) continue;
     const paidStatus = ["paid", "success", "settled", "settlement"].includes(String(tx.status).toLowerCase());
