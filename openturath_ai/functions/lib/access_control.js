@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AccessControl = exports.AccessFault = exports.isVip = exports.millis = exports.keyOf = exports.normalEmail = exports.VIP_EMAILS = void 0;
+exports.hasLegacyAccessAdjustment = hasLegacyAccessAdjustment;
 exports.billingExpiry = billingExpiry;
 exports.verifiedAkalPeriods = verifiedAkalPeriods;
 exports.rights = rights;
@@ -21,6 +22,15 @@ const keyOf = (...parts) => crypto.createHash("sha256").update(JSON.stringify(pa
 exports.keyOf = keyOf;
 const millis = (v) => { var _a, _b; return (_b = (_a = v === null || v === void 0 ? void 0 : v.toMillis) === null || _a === void 0 ? void 0 : _a.call(v)) !== null && _b !== void 0 ? _b : ((v === null || v === void 0 ? void 0 : v.toDate) ? v.toDate().getTime() : typeof v === "number" ? v : Date.parse(v || "")); };
 exports.millis = millis;
+// A verified provider receipt does not supersede an owner's later bonus,
+// transfer, or manual correction. Ambiguous adjustments block revocation;
+// they do not automatically create or extend a payment grant.
+function hasLegacyAccessAdjustment(tx) {
+    const source = String(tx.source || "").toLowerCase();
+    return Boolean(tx.bonus_reason || tx.bonus_applied_at || tx.original_transaction_id ||
+        tx.admin_verified || tx.admin_approved || source.includes("manual") || source.includes("transfer") ||
+        tx.access_override || tx.override_reason);
+}
 function billingExpiry(baseMs, months) {
     if (!Number.isInteger(months) || months < 1 || months > 120)
         throw new Error("Invalid product duration");
@@ -279,6 +289,9 @@ class AccessControl {
         });
     }
     async revoke(uid, entity) {
+        var _a;
+        if (((_a = (await this.db.collection("access_control").doc("runtime").get()).data()) === null || _a === void 0 ? void 0 : _a.revocations_paused) === true)
+            return;
         const { user, grants } = await this.owner(uid);
         if ((user === null || user === void 0 ? void 0 : user.access_revocation_hold) || rights(user, grants, this.scopes[entity], this.clock()))
             return;
@@ -312,7 +325,7 @@ class AccessControl {
         });
     }
     async runJob(ref) {
-        var _a;
+        var _a, _b, _c;
         if (!this.provider)
             throw new Error("Sharing provider is not configured");
         const token = crypto.randomUUID(), now = this.clock();
@@ -339,8 +352,10 @@ class AccessControl {
                 return;
             }
             if (!job.desired) {
+                if (((_a = (await this.db.collection("access_control").doc("runtime").get()).data()) === null || _a === void 0 ? void 0 : _a.revocations_paused) === true)
+                    throw new Error("Revocations paused for incident audit");
                 const permanent = await this.db.collection("access_vip_registry").doc((0, exports.keyOf)(job.email)).get();
-                if (((_a = owner.user) === null || _a === void 0 ? void 0 : _a.access_revocation_hold) || (0, exports.isVip)(Object.assign(Object.assign({}, owner.user), { email: job.email }), owner.grants) || permanent.exists)
+                if (((_b = owner.user) === null || _b === void 0 ? void 0 : _b.access_revocation_hold) || (0, exports.isVip)(Object.assign(Object.assign({}, owner.user), { email: job.email }), owner.grants) || permanent.exists)
                     throw new Error("Protected or unresolved legacy owner");
             }
             const observation = await this.provider.apply(job.notebook_id, job.email, job.desired);
@@ -351,6 +366,8 @@ class AccessControl {
             owner = await this.owner(job.uid);
             const desiredNow = rights(owner.user, owner.grants, job.scope, this.clock());
             if (desiredNow !== job.desired) {
+                if (!desiredNow && ((_c = (await this.db.collection("access_control").doc("runtime").get()).data()) === null || _c === void 0 ? void 0 : _c.revocations_paused) === true)
+                    throw new Error("Compensating revocation paused for incident audit");
                 // Database and Google are not atomic. Repair a concurrent renewal or
                 // expiry before declaring the stale operation complete.
                 await this.provider.apply(job.notebook_id, job.email, desiredNow);

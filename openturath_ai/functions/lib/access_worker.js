@@ -162,6 +162,12 @@ async function importOwner(doc) {
     const verifiedProvider = (await engine.grants(uid)).some(g => g.provider === "goakal" && g.provider_verified === true);
     const unresolved = [];
     for (const [id, tx] of txs) {
+        // Check before gateway/amount/UID filters: transfers can be free, retain
+        // an old UID, and owner bonuses are not visible in the provider API.
+        if ((0, access_control_1.hasLegacyAccessAdjustment)(tx)) {
+            unresolved.push(`owner_adjustment:${id}`);
+            continue;
+        }
         if (tx.uid && tx.uid !== uid)
             continue;
         if (verifiedProvider && !["midtrans", "doku"].includes(String(tx.gateway || "").toLowerCase()))
