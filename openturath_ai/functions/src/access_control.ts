@@ -118,12 +118,14 @@ export class AccessControl {
     const permanent = await this.db.collection("access_vip_registry").doc(keyOf(email)).get();
     if (isVip({...user,email},grants) || permanent.exists) return {allowed:false,reason:"permanent_vip"};
     if (user.access_revocation_hold) return {allowed:false,reason:"owner_hold"};
+    if (user.account_deleted || user.pending_deletion) return {allowed:false,reason:"deletion_requires_separate_review"};
     if (rights(user,grants,scope,this.clock())) return {allowed:false,reason:"active_scope"};
     const selected = grants.filter(g=>[scope,"all_access","all_ai"].includes(g.scope));
     // Absence of evidence is not proof of expiry. Deletion requires its own
     // reviewed path; an absent user document never authorizes removal.
     if (!selected.length) return {allowed:false,reason:"missing_scope_evidence"};
     if (selected.some(g=>!Number.isFinite(g.expires_ms) ||
+      !["active","revoked"].includes(g.status) ||
       !(g.kind === "payment" && g.amount>0 || g.kind === "admin" && g.admin_verified === true || g.kind === "voucher")))
       return {allowed:false,reason:"invalid_scope_evidence"};
     const txs = new Map<string,any>();
@@ -361,12 +363,20 @@ export class AccessControl {
       if (!a || bound?.uid !== job.uid || a.revision !== job.revision || job.desired !== rights(owner.user, owner.grants, job.scope, this.clock())) {
         await ref.update({status: "superseded", due_ms: 8640000000000000}); return;
       }
+      let assessment:any;
       if (!job.desired) {
-        if ((await this.db.collection("access_control").doc("runtime").get()).data()?.revocations_paused === true)
-          throw new Error("Revocations paused for incident audit");
-        const permanent = await this.db.collection("access_vip_registry").doc(keyOf(job.email)).get();
-        if (owner.user?.access_revocation_hold || isVip({...owner.user, email:job.email}, owner.grants) || permanent.exists)
-          throw new Error("Protected or unresolved legacy owner");
+        assessment = await this.assessRevocation(job.uid,job.scope,job.email);
+        if (!assessment.allowed || job.decision_policy !== REVOCATION_POLICY || job.decision_fingerprint !== assessment.fingerprint) {
+          await this.db.runTransaction(async(t:any)=>{
+            const current=(await t.get(this.assignmentRef(job.uid,job.entity))).data();
+            t.update(ref,{status:"review_required",due_ms:8640000000000000,
+              review_reason:assessment.reason || "stale_decision",updated_ms:this.clock()});
+            if(current?.revision === job.revision)t.update(this.assignmentRef(job.uid,job.entity),{status:"revocation_review"});
+          });
+          await this.db.collection("access_reviews").doc(keyOf(job.uid,job.entity,"revocation_gate")).set({uid:job.uid,entity:job.entity,
+            code:assessment.allowed?"stale_decision":assessment.reason,status:"blocked",updated_ms:this.clock()});
+          return;
+        }
       }
       const observation = await this.provider.apply(job.notebook_id, job.email, job.desired);
       this.validateObservation(observation, job.notebook_id);
@@ -374,9 +384,25 @@ export class AccessControl {
       if (present !== job.desired) throw new Error("Target membership not verified");
       owner = await this.owner(job.uid);
       const desiredNow = rights(owner.user, owner.grants, job.scope, this.clock());
+      if (!job.desired) {
+        const after = await this.assessRevocation(job.uid,job.scope,job.email);
+        if (!after.allowed || after.fingerprint !== assessment.fingerprint) {
+          // A hold, manual change, renewal or pause arriving while Google was
+          // running invalidates the removal even when expiry still looks old.
+          const restored = await this.provider.apply(job.notebook_id,job.email,true);
+          this.validateObservation(restored,job.notebook_id);
+          if (!restored.emails.map(normalEmail).includes(job.email))throw new Error("Safety restoration not verified");
+          await this.db.collection("access_memberships").doc(keyOf(job.notebook_id,job.email)).set(
+            {present:true,verified_ms:this.clock()},{merge:true});
+          throw new Error("Revocation evidence changed; original membership restored");
+        }
+      }
       if (desiredNow !== job.desired) {
-        if (!desiredNow && (await this.db.collection("access_control").doc("runtime").get()).data()?.revocations_paused === true)
-          throw new Error("Compensating revocation paused for incident audit");
+        if (!desiredNow) {
+          // Grant jobs are never authorized to remove access. Require a new
+          // removal job with its own scope proof and policy fingerprint.
+          throw new Error("Grant changed; a separately assessed revocation is required");
+        }
         // Database and Google are not atomic. Repair a concurrent renewal or
         // expiry before declaring the stale operation complete.
         await this.provider.apply(job.notebook_id, job.email, desiredNow);
