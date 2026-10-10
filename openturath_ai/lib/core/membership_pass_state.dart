@@ -119,7 +119,8 @@ MembershipPassSummary resolveMembershipPass(UserModel? user, {DateTime? now}) {
       .where((entry) => entry.key == 'all_access' || entry.key == 'all_ai')
       .toList();
   final selected = all.isNotEmpty ? all : active;
-  final isTrial = selected.every((entry) => entry.value.plan == 'trial');
+  final isTrial = active.every(
+      (entry) => entry.value.plan == 'trial' || entry.value.status == 'trial');
   final isPermanent =
       selected.every((entry) => entry.value.plan == 'permanent');
   final expiries = selected
