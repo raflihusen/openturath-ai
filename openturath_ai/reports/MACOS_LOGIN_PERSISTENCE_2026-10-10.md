@@ -96,3 +96,13 @@ never displays raw unknown SDK credential payloads. Six new regression tests
 plus existing auth/splash/membership tests passed (26 total); analysis passed.
 This build diagnoses the failure correctly; it is not an authenticated success
 claim or a claim that system Keychain access has been repaired.
+
+
+Local build 1.0.66+67 completed successfully. It was installed at
+`/Applications/OpenTurath AI.app`; its installed Info.plist version/build and
+deep/strict signature verification passed. The prior installed app is retained
+at `build/release-backups/OpenTurath_AI_before_1.0.66_20261010.app`.
+`/Users/apple/Downloads/ramadhan/OpenTurath_AI_macOS_1.0.66.dmg` passed image
+verification and universal binary packaging checks; SHA-256 is
+`219245bcdccf9be34a4bd3019532d1b6acc05817b03eada6d02a5a6472fad181`.
+This is a local, ad-hoc, unnotarized diagnostic build. No public update was broadcast.
