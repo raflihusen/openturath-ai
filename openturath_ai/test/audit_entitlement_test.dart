@@ -21,4 +21,34 @@ void main() {
   test('A10 unrelated prefix cannot open a new module', () {
     expect(user({'fiqh': entitlement()}).hasAccessToAgent('fiqh_syafii'), isFalse);
   });
+  test('Permanent VIP opens every module despite old revoked subscriptions', () {
+    for (final protection in [{'is_vip': true}, {'role': 'VIP'}]) {
+      final vip = UserModel.fromMap('vip', {
+        ...protection, 'email': 'vip@example.test', 'plan': 'free',
+        'subscription_expiry': DateTime.utc(2000).toIso8601String(),
+        'entitlements': {'all_access': {
+          'plan': 'all_access', 'status': 'revoked',
+          'expiry': DateTime.utc(2000).toIso8601String(),
+        }},
+      });
+      expect(vip.isVip, isTrue);
+      expect(vip.isTrial, isFalse);
+      expect(vip.isPremium, isTrue);
+      expect(vip.hasAccess, isTrue);
+      for (final agent in ['fiqh_syafii', 'fiqh_tahawwulat', 'tafsir', 'hadits']) {
+        expect(vip.hasAccessToAgent(agent), isTrue, reason: agent);
+      }
+      expect(vip.copyWith(questionsUsed: 10000).isVip, isTrue);
+      expect(UserModel.fromMap('vip', vip.toJsonMap()).isVip, isTrue);
+      expect(UserModel.fromMap('vip', vip.toMap()).isVip, isTrue);
+    }
+  });
+  test('Expired ordinary account does not become permanent VIP', () {
+    final ordinary = UserModel.fromMap('ordinary', {
+      'is_vip': false, 'role': 'user', 'plan': 'all_access',
+      'subscription_expiry': DateTime.utc(2000).toIso8601String(),
+    });
+    expect(ordinary.isVip, isFalse);
+    expect(ordinary.hasAccessToAgent('hadits'), isFalse);
+  });
 }
