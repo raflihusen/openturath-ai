@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -158,6 +159,7 @@ class AuthService {
 
   // ── Google Sign In ─────────────────────────────────────────────
   Future<UserModel?> signInWithGoogle() async {
+    var stage = 'google-authorize';
     try {
       User? firebaseUser;
 
@@ -169,6 +171,7 @@ class AuthService {
         final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
         if (googleUser == null) return null; // Pengguna membatalkan login
 
+        stage = 'google-token';
         final GoogleSignInAuthentication googleAuth =
             await googleUser.authentication;
 
@@ -178,6 +181,7 @@ class AuthService {
         );
 
         try {
+          stage = 'firebase-credential';
           final userCredential = await _auth.signInWithCredential(credential);
           firebaseUser = userCredential.user;
         } on FirebaseAuthException catch (e) {
@@ -198,6 +202,7 @@ class AuthService {
       }
 
       if (firebaseUser == null) return null;
+      stage = 'profile-resolve';
       final userModel = await _resolveOrCreateFirebaseUser(firebaseUser);
       final effectiveEmail = firebaseUser.email?.trim().toLowerCase();
       if (effectiveEmail != null && effectiveEmail.isNotEmpty) {
@@ -211,6 +216,27 @@ class AuthService {
       }
       return userModel;
     } catch (e) {
+      // Only fixed diagnostic categories: never log OAuth tokens or account data.
+      final code = e is PlatformException
+          ? e.code
+          : e is FirebaseAuthException
+          ? e.code
+          : e.runtimeType.toString();
+      final detail = e is PlatformException ? '${e.details}'.toLowerCase() : '';
+      final category = detail.contains('keychain')
+          ? 'keychain'
+          : detail.contains('cancel')
+          ? 'cancelled'
+          : detail.contains('network')
+          ? 'network'
+          : detail.contains('configuration')
+          ? 'configuration'
+          : 'unspecified';
+      final safeCode = RegExp(r'^[a-zA-Z0-9_-]{1,80}$').hasMatch(code)
+          ? code
+          : 'unknown';
+      // ignore: avoid_print
+      print('OpenTurathAuth stage=$stage code=$safeCode category=$category');
       rethrow;
     }
   }
