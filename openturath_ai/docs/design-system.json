@@ -172,5 +172,11 @@
     "packagingGate": "tool/macos/verify_session_signing.py rejects ad-hoc or missing own Keychain group",
     "authority": "Firebase SDK authenticates; cached profile is not a replacement credential",
     "validation": "cold-close/reopen verification pending final signed build"
+  },
+  "accountSubscription": {
+    "placement": "visible labelled subscription button below user identity on home and profile",
+    "statusPriority": "server VIP first; active paid PRO; trial TRIAL; pending or expired never PRO",
+    "authorization": "presentation only; existing per-module rights preserved",
+    "responsive": "Wrap at narrow widths and enlarged text"
   }
 }
