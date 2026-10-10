@@ -243,3 +243,9 @@ Uji regresi WebKit mencakup cabang transcript/composer terpisah, pembungkus inpu
 URL notebook dari server divalidasi terlebih dahulu, lalu hanya host lama notebooklm.google.com dinormalisasi ke notebook.google.com, tujuan redirect 301 Google yang terverifikasi. ID notebook, path, hak akses server, dan penolakan URL tidak tepercaya tetap dipertahankan. Halaman penghubung sesi Google juga memakai origin yang sama. Ini menghindari ketergantungan pada koneksi ke host lama sebelum redirect bisa dimulai; tidak mengganti ID notebook atau memintas TLS.
 
 Audit lokal menemukan timeout TCP ke alamat hasil DNS host lama, sementara host tujuan dan Google Accounts merespons. Kegagalan tersebut terjadi sebelum dokumen/JavaScript dimuat, sehingga bukan akibat aturan layout composer. Lifecycle WebView, polling minimal empat sampel/3000 ms/250 ms, dan penggantian seluruh viewport pada galat tidak diubah. Perubahan host tidak menjamin ketersediaan layanan Google atau jaringan; verifikasi percakapan nyata tetap diperlukan.
+
+## Persistensi login macOS — 10 Oktober 2026
+
+Startup aplikasi tidak boleh menghapus entri sesi milik Firebase SDK. Pembersihan legacy sebelumnya memakai nama domain/key yang juga digunakan SDK resmi sebagai fallback macOS ketika Keychain ditolak, sehingga sesi terhapus pada setiap peluncuran. AppDelegate sekarang menyerahkan pemulihan/penyimpanan sesi sepenuhnya kepada SDK; logout tetap merupakan tindakan eksplisit pengguna.
+
+Build rilis memakai identitas Apple stabil dan Keychain access group milik bundle/team yang sama. Pengemasan DMG memverifikasi signature dan grup itu melalui tool/macos/verify_session_signing.py, serta menolak signature ad-hoc. Sertifikat lokal Apple Development berbeda dari Developer ID/notarisasi untuk distribusi publik; status artefak harus dilaporkan sesuai hasil nyata. Profil lokal bukan pengganti autentikasi Firebase. VIP, hak akses modul dan lifecycle WebView tidak diubah.

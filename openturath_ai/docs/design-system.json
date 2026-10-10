@@ -164,5 +164,13 @@
     "selection": "validate server assignment; normalize only host to verified Google redirect destination",
     "preserved": "notebook ID/path, server entitlement, strict HTTPS allowlist, WebView lifecycle",
     "reason": "legacy-host TCP timeout observed locally; canonical-host HTTPS succeeded"
+  },
+  "macosSessionPersistence": {
+    "date": "2026-10-10",
+    "startup": "preserve Firebase SDK persisted session; no automatic credential-key purge",
+    "release": "stable Apple signing identity with own team/bundle Keychain group",
+    "packagingGate": "tool/macos/verify_session_signing.py rejects ad-hoc or missing own Keychain group",
+    "authority": "Firebase SDK authenticates; cached profile is not a replacement credential",
+    "validation": "cold-close/reopen verification pending final signed build"
   }
 }
