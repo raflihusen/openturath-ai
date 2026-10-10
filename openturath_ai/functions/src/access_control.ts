@@ -239,6 +239,7 @@ export class AccessControl {
     });
   }
   async revoke(uid: string, entity: string): Promise<void> {
+    if ((await this.db.collection("access_control").doc("runtime").get()).data()?.revocations_paused === true) return;
     const {user, grants} = await this.owner(uid);
     if (user?.access_revocation_hold || rights(user, grants, this.scopes[entity], this.clock())) return;
     const ar = this.assignmentRef(uid, entity);
@@ -290,6 +291,8 @@ export class AccessControl {
         await ref.update({status: "superseded", due_ms: 8640000000000000}); return;
       }
       if (!job.desired) {
+        if ((await this.db.collection("access_control").doc("runtime").get()).data()?.revocations_paused === true)
+          throw new Error("Revocations paused for incident audit");
         const permanent = await this.db.collection("access_vip_registry").doc(keyOf(job.email)).get();
         if (owner.user?.access_revocation_hold || isVip({...owner.user, email:job.email}, owner.grants) || permanent.exists)
           throw new Error("Protected or unresolved legacy owner");
