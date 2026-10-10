@@ -54,3 +54,45 @@ Installed app: `/Applications/OpenTurath AI.app`
 Previous app preserved at `/Users/apple/Downloads/ramadhan/openturath_ai/build/release-backups/OpenTurath_AI_before_1.0.65_20261010_193747.app`.
 
 The local app launched and rendered the real login screen. Google sign-in was started through its normal button; macOS AuthenticationServicesAgent was running, but its authentication dialog was unavailable through the enabled computer-use surface. User was asked to complete real login personally. Authenticated home/profile inspection and cold-close/reopen remain pending that input. No logged-in success is claimed. Fifteen focused membership tests passed; 91 visual fixtures passed; these remain distinct from authenticated runtime acceptance. No public broadcast/upload occurred.
+
+
+## Follow-up: Google login fails before Firebase (1.0.66+67)
+
+The user supplied two screenshots of the generic Google failure. A release build
+was launched with stdout captured; real authorization produced this safe event:
+`OpenTurathAuth stage=google-authorize code=sign_in_failed category=keychain`.
+No email, OAuth token, or SDK credential payload was logged.
+
+The installed GoogleSignIn source (`GIDSignIn.m`, `addSaveAuthCallback`) treats
+failure to save GTMAppAuth's auth session as `kGIDSignInErrorCodeKeychain`.
+The Flutter plugin maps this to `sign_in_failed` and details `keychain error`.
+Previously the screen discarded those details and showed the generic retry text.
+The Firebase fallback probe did not cover this earlier Google SDK write; it is
+not proof that real Google login works. The previously suspected invisible
+Google permission dialog was not established as the cause.
+
+Independent native probes on this Mac:
+- A fresh synthetic classic-Keychain `SecItemAdd` returned `-25293` (`errSecAuthFailed`).
+- Apple's signed `/usr/bin/security add-generic-password`, with an unrelated
+  synthetic service/account/value, also failed with exit 51 and the message
+  `The user name or passphrase you entered is not correct.`
+- `security show-keychain-info` on the existing login keychain produced the same error.
+- `SecKeychainGetStatus` reported unlocked/readable/writable. Therefore this is
+  **not established as a simply locked keychain**.
+- A system unlock attempt returned `-25293`. Signing the synthetic probe with
+  the existing Apple Development identity also returned `errSecInternalComponent`.
+
+These observations establish a host login-Keychain access/authentication problem
+that affects operations outside OpenTurath. They do not establish whether its
+underlying cause is a password mismatch, OS authorization state, or a damaged
+keychain. No keychain reset, credential deletion, trust relaxation, stored
+password inspection, or security bypass was performed. Real login and a cold
+quit/reopen remain blocked by this host condition. A paid Developer ID account
+has not been demonstrated necessary to resolve this host failure.
+
+The app now maps Google's actual Keychain failure to actionable localized copy,
+treats authorization cancellation quietly, distinguishes network errors, and
+never displays raw unknown SDK credential payloads. Six new regression tests
+plus existing auth/splash/membership tests passed (26 total); analysis passed.
+This build diagnoses the failure correctly; it is not an authenticated success
+claim or a claim that system Keychain access has been repaired.
