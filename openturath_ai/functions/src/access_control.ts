@@ -22,6 +22,27 @@ export function hasLegacyAccessAdjustment(tx: any): boolean {
     tx.admin_verified || tx.admin_approved || source.includes("manual") || source.includes("transfer") ||
     tx.access_override || tx.override_reason);
 }
+export const REVOCATION_POLICY = 3;
+export function evidenceHash(value: any): string {
+  const canonical = (v: any): any => {
+    if (v?.toMillis || v?.toDate) return millis(v);
+    if (v instanceof Date) return v.getTime();
+    if (Array.isArray(v)) return v.map(canonical);
+    if (v && typeof v === "object") return Object.fromEntries(Object.keys(v).sort().map(k=>[k,canonical(v[k])]));
+    return v ?? null;
+  };
+  return crypto.createHash("sha256").update(JSON.stringify(canonical(value))).digest("hex");
+}
+export function legacyTransactionScopes(tx: any): string[] {
+  const explicit = [tx.entitlement_key, tx.scope, ...(Array.isArray(tx.modules)?tx.modules:[])].filter(Boolean);
+  if (explicit.length) return explicit;
+  const label = String(tx.service_name || tx.serviceTitle || "").toLowerCase();
+  if (/tahawwulat|tahawulat/.test(label)) return ["fiqh_tahawwulat"];
+  if (/syafi|syafii/.test(label)) return ["fiqh_syafii"];
+  if (/bahasa arab/.test(label)) return ["nahwu"];
+  if (/^all_ai/.test(String(tx.plan || ""))) return ["all_access"];
+  return []; // Unknown scope must be reviewed, never guessed from package duration.
+}
 export function billingExpiry(baseMs: number, months: number): number {
   if (!Number.isInteger(months) || months < 1 || months > 120) throw new Error("Invalid product duration");
   if (months === 1) return baseMs + 30 * 86400000;
