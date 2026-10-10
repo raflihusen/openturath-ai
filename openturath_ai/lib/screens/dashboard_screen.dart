@@ -1,3 +1,5 @@
+import '../widgets/membership_controls.dart';
+import '../core/membership_pass_state.dart';
 import '../widgets/dual_calendar.dart';
 import '../widgets/ot_ink_card.dart';
 import '../core/design/ot_expressive.dart';
@@ -269,6 +271,17 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                               style: OTTypography.screenTitle(
                                                   color: textPrimary)),
                                           const SizedBox(height: 12),
+                                          MembershipControls(
+                                            summary:
+                                                resolveMembershipPass(user),
+                                            onSubscribe: () =>
+                                                NavigationGuard.safePushNamed(
+                                              context,
+                                              AppRoutes.subscription,
+                                              arguments: {'user': user},
+                                            ),
+                                          ),
+                                          const SizedBox(height: 16),
                                           const Divider(height: 1),
                                           const SizedBox(height: 12),
                                           if (target != null) ...[
