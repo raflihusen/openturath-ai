@@ -106,3 +106,51 @@ at `build/release-backups/OpenTurath_AI_before_1.0.66_20261010.app`.
 verification and universal binary packaging checks; SHA-256 is
 `219245bcdccf9be34a4bd3019532d1b6acc05817b03eada6d02a5a6472fad181`.
 This is a local, ad-hoc, unnotarized diagnostic build. No public update was broadcast.
+
+
+## Follow-up: screen-unlock authorization is the leading host cause
+
+After the user's 20:33 screenshot, `security show-keychain-info` still failed.
+This Mac is running macOS 26.5.2. Its screensaver authorization rule currently
+contains `com.openai.sky.CUAService.AuthorizationPlugin.remote` followed by
+`use-login-window-ui`. The installed Codex authorization plugin is build
+1001103; the plugin bundled with installed ChatGPT.app 26.930.61225 is build
+1001365. This is an observed version mismatch, not proof that the newer build
+fixes the defect.
+
+Filtered native logs on October 10 (timestamps +03:00) show:
+- Multiple Codex plugin `allow` events followed by loginwindow saying it did
+  NOT unlock the user's keychain (10:42, 11:59, 13:01, 13:53, 15:05, 15:52, 17:28).
+- At 19:18:23.744, the Codex authorization plugin allowed screen unlock.
+  At 19:18:23.884, `SecKeychainLogin` failed with `-2147413984`
+  (`CSSMERR_DL_OPERATION_AUTH_DENIED`) and returned `-25293`.
+- The same failure repeated at 19:18:25 after another plugin allow event.
+
+This makes the custom screen-unlock path a substantially stronger lead than
+an assumed user password change or an app-only signing problem. It establishes
+temporal ordering and the failure point; the internal credential handoff and
+complete causality remain unproven on this Mac. Do not deliberately reproduce
+lock/unlock while investigating a potentially damaging keychain condition.
+
+Primary-source reference: Apple DTS confirms a known authorization-plugin
+screensaver unlock/data-protection-Keychain bug (FB13128730):
+https://developer.apple.com/forums/thread/796487
+Related first-hand reports in the official Codex issue tracker match the
+cross-client failure and installed/bundled plugin version mismatch:
+https://github.com/openai/codex/issues/40226
+These reports are corroborating observations, not a verified recovery result
+for this Mac.
+
+An encrypted byte-for-byte backup was preserved with owner-only access at
+`/Users/apple/Library/Application Support/OpenTurath Diagnostics/keychain-encrypted-before-recovery-20261010T173853Z.keychain-db`.
+The original remained unchanged during this backup. No credentials were
+exported, no keychain was reset, and no stored password was accessed.
+
+Proposed mitigation: turn off Codex Settings > Computer Use > Locked Use,
+then reboot/log in using the normal Mac password and recheck Keychain access
+before retrying OpenTurath. This preserves native macOS screen-lock protection
+and prevents the investigated custom unlock path from running. The CUA tool
+explicitly refused access to `com.openai.codex` for safety reasons; therefore
+that setting must be changed by the user. No authorization rule or plugin was
+changed through a filesystem or command-line bypass. Actual recovery and
+Google sign-in/quit-reopen remain pending.
