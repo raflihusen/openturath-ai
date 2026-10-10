@@ -91,6 +91,7 @@ class UserModel {
   final int questionsUsed;
   final DateTime? subscriptionExpiry; // Legacy global expiry fallback
   final Map<String, ModuleEntitlement> entitlements;
+  final bool isVip;
 
   UserModel({
     required this.uid,
@@ -101,13 +102,14 @@ class UserModel {
     required this.questionsUsed,
     this.subscriptionExpiry,
     this.entitlements = const {},
+    this.isVip = false,
   });
 
   // ── Global Legacy Helpers ──
-  bool get isTrial => plan == AppConstants.planTrial || plan == 'trial';
+  bool get isTrial => !isVip && (plan == AppConstants.planTrial || plan == 'trial');
   bool get isGuest => email.isEmpty || uid.startsWith('guest_');
-  bool get isPremium =>
-      plan != 'free' &&
+  bool get isPremium => isVip ||
+      (plan != 'free' &&
       (plan == AppConstants.planTholib1m ||
           plan == AppConstants.planTholib6m ||
           plan == AppConstants.planBahits1y ||
@@ -127,13 +129,13 @@ class UserModel {
           plan.startsWith('voucher') ||
           plan == 'custom' ||
           (subscriptionExpiry != null &&
-              subscriptionExpiry!.isAfter(DateTime.now())));
+              subscriptionExpiry!.isAfter(DateTime.now()))));
 
   /// Voucher trial dan paket berbayar memakai sumber masa berlaku yang sama.
   /// Jangan pernah menjadikan nama paket sebagai alasan menolak masa berlaku
   /// yang masih aktif dari server.
   bool get isSubscriptionActive =>
-      subscriptionExpiry != null && subscriptionExpiry!.isAfter(DateTime.now());
+      isVip || (subscriptionExpiry != null && subscriptionExpiry!.isAfter(DateTime.now()));
 
   /// Trial is an entitlement with an expiry supplied by the server voucher.
   /// A local question counter must never grant or revoke access.
@@ -151,6 +153,8 @@ class UserModel {
       entitlements[entitlementKeys[agentId] ?? agentId];
 
   bool isAgentSubscriptionActive(String agentId) {
+    // Owner-approved permanent VIP outranks expired or revoked paid packages.
+    if (isVip) return true;
     final mappedKey = entitlementKeys[agentId] ?? agentId;
 
     // 1. Specific module entitlement check FIRST
@@ -264,6 +268,9 @@ class UserModel {
       questionsUsed: data['questions_used'] ?? 0,
       subscriptionExpiry: expiry,
       entitlements: parsedEntitlements,
+      isVip: data['is_vip'] == true ||
+          ['vip', 'admin', 'guru', 'special'].contains(
+            (data['role'] ?? '').toString().toLowerCase()),
     );
   }
 
@@ -273,6 +280,7 @@ class UserModel {
   }
 
   Map<String, dynamic> toMap() => {
+        'is_vip': isVip,
         'name': name,
         'email': email,
         'photo_url': photoUrl,
@@ -285,6 +293,7 @@ class UserModel {
       };
 
   Map<String, dynamic> toJsonMap() => {
+        'is_vip': isVip,
         'name': name,
         'email': email,
         'photo_url': photoUrl,
@@ -309,6 +318,7 @@ class UserModel {
       questionsUsed: questionsUsed ?? this.questionsUsed,
       subscriptionExpiry: subscriptionExpiry ?? this.subscriptionExpiry,
       entitlements: entitlements ?? this.entitlements,
+      isVip: isVip,
     );
   }
 }
