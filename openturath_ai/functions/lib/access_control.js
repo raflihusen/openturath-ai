@@ -145,7 +145,7 @@ class AccessControl {
         return { user, grants };
     }
     async assessRevocation(uid, scope, targetEmail) {
-        var _a;
+        var _a, _b;
         const { user, grants } = await this.owner(uid);
         const email = (0, exports.normalEmail)(targetEmail || (user === null || user === void 0 ? void 0 : user.email));
         const runtime = (await this.db.collection("access_control").doc("runtime").get()).data() || {};
@@ -193,6 +193,20 @@ class AccessControl {
                 certificate.fingerprint !== fingerprint || certificate.uid !== uid || certificate.scope !== scope ||
                 certificate.email !== email || certificate.owner_approved !== true)
                 return { allowed: false, reason: "legacy_audit_missing_or_stale", fingerprint, legacy: true };
+            for (const tx of txs.values())
+                if (hasLegacyAccessAdjustment(tx)) {
+                    const decision = (_b = certificate.adjustments) === null || _b === void 0 ? void 0 : _b[tx.id];
+                    const explicit = (0, exports.millis)(tx.subscription_expires_at || tx.access_expires_at || tx.expires_at);
+                    const honored = selected.find(g => g.id === (decision === null || decision === void 0 ? void 0 : decision.grant_id) && g.kind === "admin" && g.admin_verified === true &&
+                        g.source_transaction === tx.id && Number.isFinite(explicit) && g.expires_ms >= explicit);
+                    const resolved = (decision === null || decision === void 0 ? void 0 : decision.action) === "honor" && honored ||
+                        (decision === null || decision === void 0 ? void 0 : decision.action) === "expired_owner_confirmed" && Number.isFinite(explicit) && explicit <= this.clock() ||
+                        (decision === null || decision === void 0 ? void 0 : decision.action) === "void_owner_confirmed" && decision.owner_approved === true && typeof decision.reason === "string" && decision.reason.length > 0;
+                    if (!resolved)
+                        return { allowed: false, reason: "manual_adjustment_unresolved", fingerprint, legacy: true };
+                    if ((honored === null || honored === void 0 ? void 0 : honored.status) === "active" && honored.expires_ms > this.clock())
+                        return { allowed: false, reason: "active_owner_adjustment", fingerprint, legacy: true };
+                }
         }
         return { allowed: true, reason: "verified_scope_expired", fingerprint, legacy: !!legacy };
     }
@@ -254,6 +268,14 @@ class AccessControl {
     }
     async resolve(uid, entity) {
         const { user, grants } = await this.owner(uid);
+        if (!rights(user, grants, this.scopes[entity], this.clock()) && (user === null || user === void 0 ? void 0 : user.access_revocation_hold) === true &&
+            !user.account_deleted && !user.pending_deletion) {
+            // A migration hold preserves the exact existing physical registration;
+            // it never allocates a new notebook or invents a financial entitlement.
+            const registered = await this.resolveObservedLegacy(uid, user.email, entity);
+            const assignment = (await this.assignmentRef(uid, entity).get()).data();
+            return Object.assign(Object.assign({}, registered), { status: "ready", revision: (assignment === null || assignment === void 0 ? void 0 : assignment.revision) || 1, legacyReview: true, validUntil: new Date(this.clock() + 60000).toISOString() });
+        }
         if (!rights(user, grants, this.scopes[entity], this.clock()))
             throw new AccessFault("permission-denied", "Hak akses kajian ini sudah tidak aktif.");
         const a = (await this.assignmentRef(uid, entity).get()).data();
@@ -414,6 +436,37 @@ class AccessControl {
             t.set(this.db.collection("access_jobs").doc((0, exports.keyOf)(uid, entity, String(revision))), Object.assign(Object.assign({}, a), { revision, desired: true, status: "pending", attempts: 0, queued_ms: this.clock(), due_ms: this.clock() }));
         });
     }
+    async restoreOriginalMembership(ref, job) {
+        if (!this.provider || job.original_present !== true)
+            throw new Error("Restoration requires recorded original membership");
+        const restored = await this.provider.apply(job.notebook_id, job.email, true);
+        this.validateObservation(restored, job.notebook_id);
+        if (!restored.emails.map(exports.normalEmail).includes(job.email))
+            throw new Error("Safety restoration not verified");
+        const owner = await this.owner(job.uid);
+        await this.db.runTransaction(async (t) => {
+            const ar = this.assignmentRef(job.uid, job.entity), mr = this.db.collection("access_memberships").doc((0, exports.keyOf)(job.notebook_id, job.email));
+            const nr = this.db.collection("access_notebooks").doc(job.notebook_id);
+            const a = (await t.get(ar)).data(), m = (await t.get(mr)).data(), n = (await t.get(nr)).data();
+            t.set(mr, { present: true, counted: true, verified_ms: this.clock() }, { merge: true });
+            if (n)
+                t.update(nr, { occupied: Math.max(n.occupied + ((m === null || m === void 0 ? void 0 : m.counted) ? 0 : 1), restored.emails.length) });
+            if ((a === null || a === void 0 ? void 0 : a.revision) === job.revision)
+                t.update(ar, { status: rights(owner.user, owner.grants, job.scope, this.clock()) ? "ready" : "revocation_review",
+                    verified_ms: this.clock() });
+            t.update(ref, { status: "review_required", safety_restore_required: false, restored_ms: this.clock(),
+                due_ms: 8640000000000000, review_reason: "incomplete_or_invalidated_removal_restored" });
+        });
+    }
+    async blockRemovalJob(ref, job, reason) {
+        await this.db.runTransaction(async (t) => {
+            const ar = this.assignmentRef(job.uid, job.entity), current = (await t.get(ar)).data();
+            t.update(ref, { status: "review_required", due_ms: 8640000000000000, review_reason: reason, updated_ms: this.clock() });
+            if ((current === null || current === void 0 ? void 0 : current.revision) === job.revision)
+                t.update(ar, { status: "revocation_review" });
+        });
+        await this.db.collection("access_reviews").doc((0, exports.keyOf)(job.uid, job.entity, "revocation_gate")).set({ uid: job.uid, entity: job.entity, code: reason, status: "blocked", updated_ms: this.clock() });
+    }
     async runJob(ref) {
         if (!this.provider)
             throw new Error("Sharing provider is not configured");
@@ -426,13 +479,20 @@ class AccessControl {
             const lock = (await t.get(lr)).data();
             if ((lock === null || lock === void 0 ? void 0 : lock.until_ms) > now)
                 return null;
-            t.set(lr, { token, until_ms: now + 300000 });
-            t.update(ref, { status: "processing", lease: token, due_ms: now + 300000, attempts: (j.attempts || 0) + 1 });
+            t.set(lr, { token, until_ms: now + 600000 });
+            t.update(ref, { status: "processing", lease: token, due_ms: now + 600000, attempts: (j.attempts || 0) + 1 });
             return Object.assign(Object.assign({}, j), { lockRef: lr, attempts: (j.attempts || 0) + 1 });
         });
         if (!job)
             return;
+        let removalAttempted = false, restorationCompleted = false;
         try {
+            // This recovery precedes all expiry/pause checks. A process killed after
+            // Google removed access must first restore the previously observed state.
+            if (job.safety_restore_required === true) {
+                await this.restoreOriginalMembership(ref, job);
+                return;
+            }
             let owner = await this.owner(job.uid);
             const a = (await this.assignmentRef(job.uid, job.entity).get()).data();
             const bound = (await this.db.collection("access_identities").doc((0, exports.keyOf)(job.email, job.entity)).get()).data();
@@ -444,19 +504,32 @@ class AccessControl {
             if (!job.desired) {
                 assessment = await this.assessRevocation(job.uid, job.scope, job.email);
                 if (!assessment.allowed || job.decision_policy !== exports.REVOCATION_POLICY || job.decision_fingerprint !== assessment.fingerprint) {
-                    await this.db.runTransaction(async (t) => {
-                        const current = (await t.get(this.assignmentRef(job.uid, job.entity))).data();
-                        t.update(ref, { status: "review_required", due_ms: 8640000000000000,
-                            review_reason: assessment.reason || "stale_decision", updated_ms: this.clock() });
-                        if ((current === null || current === void 0 ? void 0 : current.revision) === job.revision)
-                            t.update(this.assignmentRef(job.uid, job.entity), { status: "revocation_review" });
-                    });
-                    await this.db.collection("access_reviews").doc((0, exports.keyOf)(job.uid, job.entity, "revocation_gate")).set({ uid: job.uid, entity: job.entity,
-                        code: assessment.allowed ? "stale_decision" : assessment.reason, status: "blocked", updated_ms: this.clock() });
+                    await this.blockRemovalJob(ref, job, assessment.allowed ? "stale_decision" : assessment.reason);
                     return;
                 }
             }
-            const observation = await this.provider.apply(job.notebook_id, job.email, job.desired);
+            let observation;
+            if (!job.desired) {
+                const before = await this.provider.observe(job.notebook_id);
+                this.validateObservation(before, job.notebook_id);
+                const preMutation = await this.assessRevocation(job.uid, job.scope, job.email);
+                if (!preMutation.allowed || preMutation.fingerprint !== assessment.fingerprint) {
+                    await this.blockRemovalJob(ref, job, preMutation.allowed ? "stale_decision" : preMutation.reason);
+                    return;
+                }
+                job.original_present = before.emails.map(exports.normalEmail).includes(job.email);
+                if (job.original_present) {
+                    // Persist intent before the external side effect. The flag is only
+                    // cleared with verified completion or verified safety restoration.
+                    await ref.update({ original_present: true, safety_restore_required: true, mutation_started_ms: this.clock() });
+                    removalAttempted = true;
+                    observation = await this.provider.apply(job.notebook_id, job.email, false);
+                }
+                else
+                    observation = before;
+            }
+            else
+                observation = await this.provider.apply(job.notebook_id, job.email, true);
             this.validateObservation(observation, job.notebook_id);
             const present = observation.emails.map(exports.normalEmail).includes(job.email);
             if (present !== job.desired)
@@ -468,12 +541,13 @@ class AccessControl {
                 if (!after.allowed || after.fingerprint !== assessment.fingerprint) {
                     // A hold, manual change, renewal or pause arriving while Google was
                     // running invalidates the removal even when expiry still looks old.
-                    const restored = await this.provider.apply(job.notebook_id, job.email, true);
-                    this.validateObservation(restored, job.notebook_id);
-                    if (!restored.emails.map(exports.normalEmail).includes(job.email))
-                        throw new Error("Safety restoration not verified");
-                    await this.db.collection("access_memberships").doc((0, exports.keyOf)(job.notebook_id, job.email)).set({ present: true, verified_ms: this.clock() }, { merge: true });
-                    throw new Error("Revocation evidence changed; original membership restored");
+                    if (job.original_present) {
+                        await this.restoreOriginalMembership(ref, job);
+                        restorationCompleted = true;
+                    }
+                    else
+                        await this.blockRemovalJob(ref, job, "decision_changed_without_original_membership");
+                    return;
                 }
             }
             if (desiredNow !== job.desired) {
@@ -501,7 +575,7 @@ class AccessControl {
                     t.update(nr, { occupied: Math.max(0, notebook.occupied - 1) });
                     t.set(mr, { counted: false }, { merge: true });
                 }
-                t.update(ref, { status: "completed", due_ms: 8640000000000000, verified_ms: this.clock() });
+                t.update(ref, { status: "completed", safety_restore_required: false, due_ms: 8640000000000000, verified_ms: this.clock() });
                 // For multi-target revokes only this target is confirmed here. A later
                 // reconciliation marks the overall assignment revoked once all finish.
                 if (job.desired)
@@ -509,6 +583,13 @@ class AccessControl {
             });
         }
         catch (e) {
+            if (removalAttempted && !restorationCompleted) {
+                try {
+                    await this.restoreOriginalMembership(ref, job);
+                    return;
+                }
+                catch (_) { /* Keep the durable recovery flag for the next attempt. */ }
+            }
             await ref.update({ status: "retry", last_error: String(e.message).slice(0, 240),
                 due_ms: this.clock() + Math.min(300000, 1000 * 2 ** Math.min(job.attempts, 8)), updated_ms: this.clock() });
         }

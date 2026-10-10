@@ -78,7 +78,8 @@ const provider = {
 };
 const engine = new access_control_1.AccessControl(db, notebook_catalog_1.NOTEBOOK_ENTITIES, access_catalog_1.ENTITY_SCOPES, provider);
 const runtime = db.collection("access_control").doc("runtime");
-const stats = { started_ms: Date.now(), last_cycle_ms: 0, last_success_ms: 0, mode: "starting", error: "", cycles: 0 };
+const stats = { started_ms: Date.now(), last_cycle_ms: 0, last_success_ms: 0, mode: "starting", error: "", cycles: 0,
+    revocations_paused: true, revocation_policy: access_control_1.REVOCATION_POLICY };
 async function pages(collection, visit) {
     let cursor;
     while (true) {
@@ -454,6 +455,7 @@ async function cycle() {
     stats.last_cycle_ms = Date.now();
     const cfg = (await runtime.get()).data();
     stats.mode = (cfg === null || cfg === void 0 ? void 0 : cfg.writer) === "vps-v2" ? "active" : "shadow";
+    stats.revocations_paused = (cfg === null || cfg === void 0 ? void 0 : cfg.revocations_paused) === true;
     if ((cfg === null || cfg === void 0 ? void 0 : cfg.writer) !== "vps-v2")
         return; // Installed shadow mode until explicit cutover.
     // Consume source jobs incrementally rather than scanning every account/tx.
