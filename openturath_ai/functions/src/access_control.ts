@@ -109,6 +109,47 @@ export class AccessControl {
     }
     return {user, grants};
   }
+  async assessRevocation(uid: string, scope: string, targetEmail?: string): Promise<any> {
+    const {user, grants} = await this.owner(uid);
+    const email = normalEmail(targetEmail || user?.email);
+    const runtime = (await this.db.collection("access_control").doc("runtime").get()).data() || {};
+    if (runtime.revocations_paused === true) return {allowed:false,reason:"incident_pause"};
+    if (!user || !email || normalEmail(user.email) !== email) return {allowed:false,reason:"identity_unresolved"};
+    const permanent = await this.db.collection("access_vip_registry").doc(keyOf(email)).get();
+    if (isVip({...user,email},grants) || permanent.exists) return {allowed:false,reason:"permanent_vip"};
+    if (user.access_revocation_hold) return {allowed:false,reason:"owner_hold"};
+    if (rights(user,grants,scope,this.clock())) return {allowed:false,reason:"active_scope"};
+    const selected = grants.filter(g=>[scope,"all_access","all_ai"].includes(g.scope));
+    // Absence of evidence is not proof of expiry. Deletion requires its own
+    // reviewed path; an absent user document never authorizes removal.
+    if (!selected.length) return {allowed:false,reason:"missing_scope_evidence"};
+    if (selected.some(g=>!Number.isFinite(g.expires_ms) ||
+      !(g.kind === "payment" && g.amount>0 || g.kind === "admin" && g.admin_verified === true || g.kind === "voucher")))
+      return {allowed:false,reason:"invalid_scope_evidence"};
+    const txs = new Map<string,any>();
+    for (const [field,value] of [["uid",uid],["customer_email",email],["payer_email",email],["email",email]]) {
+      const s = await this.db.collection("transactions").where(field,"==",value).get();
+      for (const d of s.docs) {
+        const scopes = legacyTransactionScopes(d.data());
+        if (!scopes.length || scopes.some(s=>[scope,"all_access","all_ai"].includes(s))) txs.set(d.id,{id:d.id,...d.data()});
+      }
+    }
+    const legacy = user.legacy_revoke_only || user.access_legacy_audit_required || selected.some(g=>g.provider === "goakal" || g.imported) ||
+      [...txs.values()].some(t=>hasLegacyAccessAdjustment(t) || !["midtrans","doku"].includes(String(t.gateway || "").toLowerCase()));
+    const fingerprint = evidenceHash({policy:REVOCATION_POLICY,uid,email,scope,
+      owner:{account_deleted:!!user.account_deleted,pending_deletion:!!user.pending_deletion,
+        adopted_by:user.adopted_by || null,entitlement:user.entitlements?.[scope] || null},
+      grants:[...selected].sort((a,b)=>String(a.id).localeCompare(String(b.id))),
+      transactions:[...txs.values()].sort((a,b)=>a.id.localeCompare(b.id))});
+    if (legacy) {
+      const certificate = (await this.db.collection("access_legacy_audits").doc(keyOf(uid,scope)).get()).data();
+      if (certificate?.status !== "approved" || certificate.policy !== REVOCATION_POLICY ||
+        certificate.fingerprint !== fingerprint || certificate.uid !== uid || certificate.scope !== scope ||
+        certificate.email !== email || certificate.owner_approved !== true)
+        return {allowed:false,reason:"legacy_audit_missing_or_stale",fingerprint,legacy:true};
+    }
+    return {allowed:true,reason:"verified_scope_expired",fingerprint,legacy:!!legacy};
+  }
   async adoptLegacy(uid: string, legacyUid: string): Promise<void> {
     const current = await this.db.collection("users").doc(uid).get();
     const legacyRef = this.db.collection("access_legacy_owners").doc(legacyUid);
@@ -151,6 +192,8 @@ export class AccessControl {
       }
       for (const g of grants) t.update(g.ref, {uid});
       t.update(current.ref, {access_version:2, access_due_ms:this.clock(),
+        access_legacy_audit_required:true,
+        access_revocation_hold:!!user.access_revocation_hold || !!prior.access_revocation_hold,
         access_grant_ids:[...new Set([...(user.access_grant_ids || []), ...grants.map(g=>g.id)])]});
       t.update(legacyRef, {adopted_by:uid});
     });
@@ -260,7 +303,13 @@ export class AccessControl {
     });
   }
   async revoke(uid: string, entity: string): Promise<void> {
-    if ((await this.db.collection("access_control").doc("runtime").get()).data()?.revocations_paused === true) return;
+    const assessment = await this.assessRevocation(uid,this.scopes[entity]);
+    if (!assessment.allowed) {
+      if (!["active_scope","permanent_vip","incident_pause"].includes(assessment.reason))
+        await this.db.collection("access_reviews").doc(keyOf(uid,entity,"revocation_gate")).set({uid,entity,scope:this.scopes[entity],
+          code:assessment.reason,fingerprint:assessment.fingerprint || null,status:"blocked",updated_ms:this.clock()});
+      return;
+    }
     const {user, grants} = await this.owner(uid);
     if (user?.access_revocation_hold || rights(user, grants, this.scopes[entity], this.clock())) return;
     const ar = this.assignmentRef(uid, entity);
@@ -273,7 +322,8 @@ export class AccessControl {
       t.update(ar, {status: "revoking", revision, updated_ms: this.clock()});
       for (const notebook of a.history || [a.notebook_id]) {
         t.set(this.db.collection("access_jobs").doc(keyOf(uid, entity, String(revision), notebook)), {
-          ...a, notebook_id: notebook, revision, desired: false, status: "pending", attempts: 0, queued_ms:this.clock(), due_ms: this.clock()});
+          ...a, notebook_id: notebook, revision, desired: false, decision_fingerprint:assessment.fingerprint,
+          decision_policy:REVOCATION_POLICY,status: "pending", attempts: 0, queued_ms:this.clock(), due_ms: this.clock()});
       }
     });
   }
