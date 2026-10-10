@@ -337,7 +337,6 @@ test("failed safety restoration is persisted and retried before pause and expiry
   assert.equal(entry[1].safety_restore_required,true);assert.equal(entry[1].status,"retry");
   db.seed("access_control/runtime",{revocations_paused:true});entry[1].due_ms=now;provider.apply=original;
   await jobs();assert.equal(members.get("master")!.has("u@example.test"),true);
-  assert.equal(entry[1].safety_restore_required,true); // The old object is a snapshot; verify the committed document below.
   assert.equal(db.docs.get(entry[0]).safety_restore_required,false);
   assert.equal(db.docs.get(entry[0]).status,"review_required");
 });
