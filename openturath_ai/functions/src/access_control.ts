@@ -372,6 +372,15 @@ export class AccessControl {
         due_ms:8640000000000000,review_reason:"incomplete_or_invalidated_removal_restored"});
     });
   }
+  async blockRemovalJob(ref:any,job:any,reason:string): Promise<void> {
+    await this.db.runTransaction(async(t:any)=>{
+      const ar=this.assignmentRef(job.uid,job.entity),current=(await t.get(ar)).data();
+      t.update(ref,{status:"review_required",due_ms:8640000000000000,review_reason:reason,updated_ms:this.clock()});
+      if(current?.revision === job.revision)t.update(ar,{status:"revocation_review"});
+    });
+    await this.db.collection("access_reviews").doc(keyOf(job.uid,job.entity,"revocation_gate")).set(
+      {uid:job.uid,entity:job.entity,code:reason,status:"blocked",updated_ms:this.clock()});
+  }
   async runJob(ref: any): Promise<void> {
     if (!this.provider) throw new Error("Sharing provider is not configured");
     const token = crypto.randomUUID(), now = this.clock();
@@ -403,14 +412,7 @@ export class AccessControl {
       if (!job.desired) {
         assessment = await this.assessRevocation(job.uid,job.scope,job.email);
         if (!assessment.allowed || job.decision_policy !== REVOCATION_POLICY || job.decision_fingerprint !== assessment.fingerprint) {
-          await this.db.runTransaction(async(t:any)=>{
-            const current=(await t.get(this.assignmentRef(job.uid,job.entity))).data();
-            t.update(ref,{status:"review_required",due_ms:8640000000000000,
-              review_reason:assessment.reason || "stale_decision",updated_ms:this.clock()});
-            if(current?.revision === job.revision)t.update(this.assignmentRef(job.uid,job.entity),{status:"revocation_review"});
-          });
-          await this.db.collection("access_reviews").doc(keyOf(job.uid,job.entity,"revocation_gate")).set({uid:job.uid,entity:job.entity,
-            code:assessment.allowed?"stale_decision":assessment.reason,status:"blocked",updated_ms:this.clock()});
+          await this.blockRemovalJob(ref,job,assessment.allowed?"stale_decision":assessment.reason);
           return;
         }
       }
@@ -418,6 +420,10 @@ export class AccessControl {
       if (!job.desired) {
         const before = await this.provider.observe(job.notebook_id);
         this.validateObservation(before,job.notebook_id);
+        const preMutation = await this.assessRevocation(job.uid,job.scope,job.email);
+        if(!preMutation.allowed || preMutation.fingerprint !== assessment.fingerprint) {
+          await this.blockRemovalJob(ref,job,preMutation.allowed?"stale_decision":preMutation.reason);return;
+        }
         job.original_present = before.emails.map(normalEmail).includes(job.email);
         if (job.original_present) {
           // Persist intent before the external side effect. The flag is only
@@ -439,7 +445,7 @@ export class AccessControl {
           // running invalidates the removal even when expiry still looks old.
           if(job.original_present) {
             await this.restoreOriginalMembership(ref,job);restorationCompleted=true;
-          } else await ref.update({status:"review_required",due_ms:8640000000000000,review_reason:"decision_changed_without_original_membership"});
+          } else await this.blockRemovalJob(ref,job,"decision_changed_without_original_membership");
           return;
         }
       }
