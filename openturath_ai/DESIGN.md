@@ -248,7 +248,7 @@ Audit lokal menemukan timeout TCP ke alamat hasil DNS host lama, sementara host 
 
 Startup aplikasi tidak boleh menghapus entri sesi milik Firebase SDK. Pembersihan legacy sebelumnya memakai nama domain/key yang juga digunakan SDK resmi sebagai fallback macOS ketika Keychain ditolak, sehingga sesi terhapus pada setiap peluncuran. AppDelegate sekarang menyerahkan pemulihan/penyimpanan sesi sepenuhnya kepada SDK; logout tetap merupakan tindakan eksplisit pengguna.
 
-Build rilis memakai identitas Apple stabil dan Keychain access group milik bundle/team yang sama. Pengemasan DMG memverifikasi signature dan grup itu melalui tool/macos/verify_session_signing.py, serta menolak signature ad-hoc. Sertifikat lokal Apple Development berbeda dari Developer ID/notarisasi untuk distribusi publik; status artefak harus dilaporkan sesuai hasil nyata. Profil lokal bukan pengganti autentikasi Firebase. VIP, hak akses modul dan lifecycle WebView tidak diubah.
+Untuk versi lokal yang dipilih pemilik tanpa akun Developer berbayar, build memakai signature ad-hoc tanpa profil sementara atau entitlement Keychain yang membutuhkan izin Apple. Firebase SDK resmi tetap mengelola fallback macOS; aplikasi tidak membuat penyimpanan token sendiri. tool/macos/verify_firebase_fallback.py membuktikan data sintetis pada kelas SDK yang terpasang dapat dibaca oleh proses baru setelah proses pertama keluar. Bukti ini bukan pengganti login akun nyata dan uji tutup/buka. Pengemasan memverifikasi signature, versi sumber, kedua arsitektur, dan ketiadaan entitlement terlarang/profil kedaluwarsa. Distribusi yang diverifikasi Apple tetap memerlukan Developer ID dan notarisasi. Hak VIP/modul dan lifecycle WebView tidak diubah.
 
 ## Account subscription visibility — 2026-10-10
 
