@@ -249,3 +249,7 @@ Audit lokal menemukan timeout TCP ke alamat hasil DNS host lama, sementara host 
 Startup aplikasi tidak boleh menghapus entri sesi milik Firebase SDK. Pembersihan legacy sebelumnya memakai nama domain/key yang juga digunakan SDK resmi sebagai fallback macOS ketika Keychain ditolak, sehingga sesi terhapus pada setiap peluncuran. AppDelegate sekarang menyerahkan pemulihan/penyimpanan sesi sepenuhnya kepada SDK; logout tetap merupakan tindakan eksplisit pengguna.
 
 Build rilis memakai identitas Apple stabil dan Keychain access group milik bundle/team yang sama. Pengemasan DMG memverifikasi signature dan grup itu melalui tool/macos/verify_session_signing.py, serta menolak signature ad-hoc. Sertifikat lokal Apple Development berbeda dari Developer ID/notarisasi untuk distribusi publik; status artefak harus dilaporkan sesuai hasil nyata. Profil lokal bukan pengganti autentikasi Firebase. VIP, hak akses modul dan lifecycle WebView tidak diubah.
+
+## Account subscription visibility — 2026-10-10
+
+Beranda dan profil menampilkan tombol Langganan berlabel jelas langsung di bawah identitas pengguna. Tombol menggantikan ikon tune tersembunyi pada kartu profil dan membuka rute langganan yang sama. Status VIP dari profil server selalu mengungguli paket berbayar/expired. Paket aktif diberi PRO; masa coba diberi TRIAL; pembayaran tertunda tidak mengklaim PRO. Label ini hanya presentasi, tanpa mengubah otorisasi per modul maupun siklus hidup WebView. Kontrol memakai Wrap agar tetap terbaca pada layar sempit dan teks diperbesar.
