@@ -17,7 +17,7 @@ subprocess.run(['codesign', '--verify', '--deep', '--strict', str(app)], check=T
 info = plistlib.loads((app / 'Contents/Info.plist').read_bytes())
 signature = subprocess.run(['codesign', '-d', '--verbose=2', str(app)],
                            check=True, capture_output=True, text=True).stderr
-result = subprocess.run(['codesign', '-d', '--entitlements', '-', str(app)],
+result = subprocess.run(['codesign', '-d', '--entitlements', '-', '--xml', str(app)],
                         check=True, capture_output=True)
 entitlements = plistlib.loads(result.stdout) if result.stdout.strip() else {}
 if 'Signature=adhoc' in signature and args.allow_local_adhoc:
