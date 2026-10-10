@@ -214,6 +214,15 @@ export class AccessControl {
   }
   async resolve(uid: string, entity: string): Promise<any> {
     const {user, grants} = await this.owner(uid);
+    if (!rights(user,grants,this.scopes[entity],this.clock()) && user?.access_revocation_hold === true &&
+      !user.account_deleted && !user.pending_deletion) {
+      // A migration hold preserves the exact existing physical registration;
+      // it never allocates a new notebook or invents a financial entitlement.
+      const registered = await this.resolveObservedLegacy(uid,user.email,entity);
+      const assignment = (await this.assignmentRef(uid,entity).get()).data();
+      return {...registered,status:"ready",revision:assignment?.revision || 1,legacyReview:true,
+        validUntil:new Date(this.clock()+60000).toISOString()};
+    }
     if (!rights(user, grants, this.scopes[entity], this.clock())) throw new AccessFault("permission-denied", "Hak akses kajian ini sudah tidak aktif.");
     const a = (await this.assignmentRef(uid, entity).get()).data();
     if (!a || a.status !== "ready" || a.email !== normalEmail(user.email)) {
