@@ -350,3 +350,19 @@ test("restart recovery restores a journaled original membership without issuing 
   assert.equal(members.get("master")!.has("u@example.test"),true);
   assert.equal(db.docs.get("access_notebooks/master").occupied,1);
 });
+test("a migration hold preserves the customer's registered clone in the application without creating a grant",async()=>{
+  const {db,engine,user}=setup();user("u",{access_revocation_hold:true});db.docs.get("access_grants/u").expires_ms=now-1;
+  db.seed(`access_memberships/${keyOf("clone","u@example.test")}`,{email:"u@example.test",entity,notebook_id:"clone",present:true,verified_ms:now});
+  const result=await engine.resolve("u",entity);assert.equal(result.notebookId,"clone");assert.equal(result.legacyReview,true);
+  assert.equal((await db.collection("access_jobs").get()).size,0);assert.equal((await db.collection("access_grants").get()).size,1);
+});
+test("a migration hold cannot allocate or open a notebook without physical registration evidence",async()=>{
+  const {db,engine,user}=setup();user("u",{access_revocation_hold:true});db.docs.get("access_grants/u").expires_ms=now-1;
+  await assert.rejects(engine.resolve("u",entity),{code:"failed-precondition"});
+  assert.equal(db.docs.get("access_notebooks/master").occupied,0);
+});
+test("a migration hold does not bypass explicit account deletion",async()=>{
+  const {db,engine,user}=setup();user("u",{access_revocation_hold:true,pending_deletion:true});
+  db.seed(`access_memberships/${keyOf("clone","u@example.test")}`,{email:"u@example.test",entity,notebook_id:"clone",present:true,verified_ms:now});
+  await assert.rejects(engine.resolve("u",entity),{code:"permission-denied"});
+});
