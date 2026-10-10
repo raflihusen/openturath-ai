@@ -43,6 +43,18 @@ class MembershipPassSummary {
 
 MembershipPassSummary resolveMembershipPass(UserModel? user, {DateTime? now}) {
   final reference = now ?? DateTime.now();
+  // Owner-designated VIP status takes precedence over every paid package.
+  if (user?.isVip == true) {
+    return MembershipPassSummary(
+      state: MembershipPassState.permanent,
+      badge: 'VIP',
+      accessLabel: AppCopy.allAssistantsAvailable,
+      supportingLabel: AppCopy.permanentAccessLabel,
+      expiryLabel: AppCopy.validUntil,
+      expiresAt: null,
+      ctaLabel: AppCopy.manageAccess,
+    );
+  }
   final entitlements =
       user?.entitlements ?? const <String, ModuleEntitlement>{};
   final values = entitlements.entries.toList();
@@ -53,14 +65,14 @@ MembershipPassSummary resolveMembershipPass(UserModel? user, {DateTime? now}) {
             (entitlement.expiry != null &&
                 entitlement.expiry!.isAfter(reference)));
   }).toList();
-  if (active.isEmpty && user?.isSubscriptionActive == true) {
+  if (active.isEmpty && user?.subscriptionExpiry?.isAfter(reference) == true) {
     final expiry = user!.subscriptionExpiry;
     final expiring = expiry != null && expiry.difference(reference).inDays <= 3;
     return MembershipPassSummary(
       state: expiring
           ? MembershipPassState.expiringSoon
           : MembershipPassState.activePro,
-      badge: 'PRO',
+      badge: user.isTrial ? 'TRIAL' : 'PRO',
       accessLabel: AppCopy.allAssistantsAvailable,
       supportingLabel:
           expiring ? AppCopy.accessExpiringSoon : AppCopy.readyToUse,
@@ -82,7 +94,7 @@ MembershipPassSummary resolveMembershipPass(UserModel? user, {DateTime? now}) {
         AppCopy.preparingProAccess,
         AppCopy.paymentBeingVerified,
         AppCopy.viewPaymentStatus,
-        badge: 'PRO',
+        badge: 'GRATIS',
       );
     }
     if (hasFailed) {
@@ -134,7 +146,7 @@ MembershipPassSummary resolveMembershipPass(UserModel? user, {DateTime? now}) {
     final days = expiry == null ? 0 : expiry.difference(reference).inDays + 1;
     return MembershipPassSummary(
         state: MembershipPassState.trialPro,
-        badge: 'PRO',
+        badge: 'TRIAL',
         accessLabel: accessLabel,
         supportingLabel: AppCopy.trialDaysLeft(days),
         expiryLabel: AppCopy.validUntil,
