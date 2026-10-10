@@ -28,7 +28,6 @@ TARGETS_TO_RESTORE = [
         "nb_name": "01 - FIKIH SYAFII (MASTER)",
         "nb_id": "c89d09ca-4b48-4000-a98d-59e532607fb6",
         "emails": [
-            "basithmuhammad612@gmail.com",
             "ndsfraaaaaaa@gmail.com",
             "riefbois33@gmail.com"
         ]
@@ -37,7 +36,6 @@ TARGETS_TO_RESTORE = [
         "nb_name": "AI Fikih Syafi'i (Legacy)",
         "nb_id": "334e7b83-0e76-4787-a1d6-314642a35862",
         "emails": [
-            "basithmuhammad612@gmail.com",
             "ndsfraaaaaaa@gmail.com",
             "riefbois33@gmail.com"
         ]
@@ -46,7 +44,6 @@ TARGETS_TO_RESTORE = [
         "nb_name": "Al-Muhaqqiq (Tahawwulat)",
         "nb_id": "dc7ee7e4-f4ad-4db6-9cd0-0013727abbe4",
         "emails": [
-            "basithmuhammad612@gmail.com",
             "ndsfraaaaaaa@gmail.com",
             "riefbois33@gmail.com"
         ]
@@ -55,7 +52,6 @@ TARGETS_TO_RESTORE = [
         "nb_name": "Al-Bayan (Fikih Tahawwulat)",
         "nb_id": "483d0291-0a70-411c-bff0-f1ea4b83b2fd",
         "emails": [
-            "basithmuhammad612@gmail.com",
             "ndsfraaaaaaa@gmail.com",
             "riefbois33@gmail.com"
         ]
