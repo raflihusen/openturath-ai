@@ -4,6 +4,7 @@ project_root="$(cd "$(dirname "$0")/.." && pwd)"
 products="$project_root/build/macos/Build/Products/Release"
 app="$products/OpenTurath AI.app"
 test -d "$app"
+python3 "$project_root/tool/macos/verify_session_signing.py" "$app"
 # Every shipped native executable/library must support both intended CPU families.
 while IFS= read -r -d '' binary; do
   if file -b "$binary" | grep -q 'Mach-O'; then
