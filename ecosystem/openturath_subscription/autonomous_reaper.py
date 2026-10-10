@@ -69,11 +69,32 @@ STATIC_WHITELIST = {
     "raflimaulan@gmail.com",
     "mas.raflihusen@gmail.com",
 
-    # Verified Tamu Spesial (Konfirmasi Pengguna)
+    # Verified Tamu Spesial & Pelanggan 1 Tahun (Annual Subscriber Protection)
     "alkhateeb23@gmail.com",
     "omarasb1441@gmail.com",
     "prilatief@gmail.com",
     "udinvoldigoad05@gmail.com",
+    "basithmuhammad612@gmail.com",
+    "ndsfraaaaaaa@gmail.com",
+    "riefbois33@gmail.com",
+    "abrormuhammed14@gmail.com",
+    "beyzabeem@gmail.com",
+    "fikrilzabidi@gmail.com",
+    "ghufron2002@gmail.com",
+    "hizbullah1504@gmail.com",
+    "idawakhidah88@gmail.com",
+    "idawahidah88@gmai.com",
+    "iqbalismailmm@gmail.com",
+    "m.syafiq280605@gmail.com",
+    "msyafiq280605@gmail.com",
+    "nona.alyaziza@gmail.com",
+    "nonaalyaziza@gmail.com",
+    "nst275642@gmail.com",
+    "surratimassya@gmail.com",
+    "chenhuha135@gmail.com",
+    "yudolgregar@gmail.com",
+    "syekhai378@gmail.com",
+    "mfulan370@gmail.com",
 
     # Asatidz & Masyayikh & VIP Manual Permanen
     "aaadman40@gmail.com",
@@ -88,7 +109,6 @@ STATIC_WHITELIST = {
     "loyos839@gmail.com",
     "mohammedhalahdal@gmail.com",
     "mostajadt25@gmail.com",
-    "nona.alyaziza@gmail.com",
     "omar739037802@gmail.com",
     "yasser110271@gmail.com",
 }
@@ -394,34 +414,47 @@ class AutonomousReaper:
                     global_vip_emails.add(email)
                     continue
 
-                # Is it 1-Year plan? (gives all access or specific)
-                is_yearly = any(y in plan.lower() for y in ["1y", "year", "tahun", "annual", "bahits_1y"])
+                ACTIVE_STATUSES = {"SUCCESS", "PAID", "SETTLED", "TRANSFERRED", "COMPLETED", "ACTIVE"}
+                amount = float(d.get("amount") or 0.0)
 
-                if status in ["SUCCESS", "PAID", "SETTLED"]:
+                # Deteksi paket tahunan / all-access / nilai tinggi (Rule 5 & VIP Protection)
+                is_yearly = (
+                    any(y in plan.lower() for y in ["1y", "year", "tahun", "annual", "bahits_1y", "all_ai"]) or
+                    amount >= 450000.0 or
+                    (exp_dt and exp_dt.year >= 2027)
+                )
+
+                if status in ACTIVE_STATUSES:
                     if exp_dt and exp_dt > now:
-                        if ent_key in active_by_module:
+                        if is_yearly or ent_key in ["all_access", "all_ai"]:
+                            global_vip_emails.add(email)
+                            for k in active_by_module:
+                                active_by_module[k].add(email)
+                        elif ent_key in active_by_module:
                             active_by_module[ent_key].add(email)
-                        elif ent_key in ["all_access", "all_ai", None]:
-                            if is_yearly or ent_key in ["all_access", "all_ai"]:
-                                for k in active_by_module:
-                                    active_by_module[k].add(email)
+                        elif ent_key is None:
+                            # Tanpa entitlement key spesifik -> berikan akses ke seluruh modul aktif
+                            for k in active_by_module:
+                                active_by_module[k].add(email)
                     elif exp_dt and exp_dt <= now:
+                        # Hanya tandai expired jika user belum tercatat aktif
+                        if not is_yearly:
+                            if ent_key in expired_by_module:
+                                expired_by_module[ent_key].add(email)
+                            elif ent_key is None:
+                                if "tholib" in plan.lower():
+                                    expired_by_module["fiqh_tahawwulat"].add(email)
+                                    expired_by_module["fiqh_syafii"].add(email)
+                                else:
+                                    for k in expired_by_module:
+                                        expired_by_module[k].add(email)
+                elif status in ["EXPIRED", "FAILED", "CANCELLED"]:
+                    if not is_yearly:
                         if ent_key in expired_by_module:
                             expired_by_module[ent_key].add(email)
-                        elif ent_key is None:
-                            # If no entitlement key, check plan or apply across all modules
-                            if "tholib" in plan.lower():
-                                expired_by_module["fiqh_tahawwulat"].add(email)
-                                expired_by_module["fiqh_syafii"].add(email)
-                            else:
-                                for k in expired_by_module:
-                                    expired_by_module[k].add(email)
-                elif status in ["EXPIRED", "FAILED", "CANCELLED"]:
-                    if ent_key in expired_by_module:
-                        expired_by_module[ent_key].add(email)
-                    else:
-                        for k in expired_by_module:
-                            expired_by_module[k].add(email)
+                        else:
+                            for k in expired_by_module:
+                                expired_by_module[k].add(email)
         except Exception as e:
             logger.error(f"Error reading Firestore transactions: {e}")
 
@@ -476,6 +509,17 @@ class AutonomousReaper:
         except Exception as e:
             logger.warning(f"Akal API warning: {e}")
 
+        # 4. KONSISTENSI & PURGE MUTLAK (RULE 5 & ANTI-ACCIDENTAL REVOCATION):
+        # Jika seorang user AKTIF di suatu modul, dia TIDAK BOLEH berada di expired_by_module modul tersebut!
+        for k in active_by_module:
+            for em in list(active_by_module[k]):
+                expired_by_module[k].discard(em)
+
+        # Jika user adalah VIP global atau memiliki paket tahunan / all-access, dia DILARANG ADA di expired_by_module manapun!
+        for em in list(global_vip_emails):
+            for k in expired_by_module:
+                expired_by_module[k].discard(em)
+
         return global_vip_emails, active_by_module, expired_by_module
 
     async def run_cycle(self) -> dict:
@@ -516,6 +560,21 @@ class AutonomousReaper:
                     expired_for_this_nb = expired_map.get(nb_key, set())
 
                     strictly_expired = (current_viewers & expired_for_this_nb) - active_for_this_nb
+
+                    # HARD SAFEGUARD (RULE 5): Validasi ganda sebelum eksekusi pencabutan
+                    safe_strictly_expired = set()
+                    for em in strictly_expired:
+                        if em in global_vips:
+                            logger.info(f"🛡️ HARD SAFEGUARD: {em} batal dicabut dari {nb_name} karena status VIP.")
+                            continue
+                        # Cek apakah user punya hak aktif di modul lain manapun
+                        has_active_anywhere = any(em in active_map[m] for m in active_map)
+                        if has_active_anywhere and nb_key in ["fiqh_syafii", "fiqh_tahawwulat"]:
+                            logger.warning(f"🛡️ HARD SAFEGUARD: {em} memiliki akses aktif di modul lain. Batal dicabut dari {nb_name}.")
+                            continue
+                        safe_strictly_expired.add(em)
+                    
+                    strictly_expired = safe_strictly_expired
                     
                     if strictly_expired:
                         logger.warning(f"🚨 {nb_name}: Mencabut {len(strictly_expired)} user yang terkonfirmasi expired...")
