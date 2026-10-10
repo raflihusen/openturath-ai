@@ -510,9 +510,9 @@ const copyCatalog = <String, List<String>>{
     "تعذر تسجيل الدخول باستخدام Google. أعد المحاولة."
   ],
   "desktopKeychainError": [
-    "Sesi login tidak dapat disimpan dengan aman di macOS. Build aplikasi perlu diperiksa oleh pengelola; login ulang tidak memperbaiki masalah ini.",
-    "Your sign-in session could not be stored securely on macOS. The app build needs to be checked by its maintainer; signing in again will not fix this issue.",
-    "تعذر حفظ جلسة تسجيل الدخول بأمان على macOS. يجب على المسؤول فحص بناء التطبيق؛ ولن تُصلح إعادة تسجيل الدخول هذه المشكلة."
+    "macOS menolak penyimpanan sesi di Keychain. Periksa akses Keychain login di Mac ini, lalu coba lagi.",
+    "macOS denied access to Keychain when saving your session. Check access to this Mac’s login Keychain, then try again.",
+    "رفض macOS حفظ الجلسة في سلسلة المفاتيح. تحقق من الوصول إلى سلسلة مفاتيح تسجيل الدخول على هذا الجهاز، ثم أعد المحاولة."
   ],
   "desktopListenerError": [
     "Gagal membuka listener lokal desktop untuk autentikasi.",
