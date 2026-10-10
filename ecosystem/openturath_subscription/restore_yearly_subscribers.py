@@ -91,9 +91,9 @@ async def restore_access():
                     print(f"   ✅ User {email_clean} SUDAH ADA di {nb_name}.")
                     continue
                 
-                print(f"   ➕ Menambahkan {email_clean} sebagai READER...")
+                print(f"   ➕ Menambahkan {email_clean} sebagai VIEWER...")
                 try:
-                    await nlm.sharing.add_user(nb_id, email_clean, SharePermission.READER)
+                    await nlm.sharing.add_user(nb_id, email_clean, SharePermission.VIEWER)
                     print(f"   🎉 BERHASIL menambahkan {email_clean} ke {nb_name}!")
                     
                     # Catat log pemulihan di Firestore
