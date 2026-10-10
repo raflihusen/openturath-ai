@@ -149,6 +149,18 @@ export class AccessControl {
         certificate.fingerprint !== fingerprint || certificate.uid !== uid || certificate.scope !== scope ||
         certificate.email !== email || certificate.owner_approved !== true)
         return {allowed:false,reason:"legacy_audit_missing_or_stale",fingerprint,legacy:true};
+      for (const tx of txs.values()) if (hasLegacyAccessAdjustment(tx)) {
+        const decision = certificate.adjustments?.[tx.id];
+        const explicit = millis(tx.subscription_expires_at || tx.access_expires_at || tx.expires_at);
+        const honored = selected.find(g=>g.id === decision?.grant_id && g.kind === "admin" && g.admin_verified === true &&
+          g.source_transaction === tx.id && Number.isFinite(explicit) && g.expires_ms >= explicit);
+        const resolved = decision?.action === "honor" && honored ||
+          decision?.action === "expired_owner_confirmed" && Number.isFinite(explicit) && explicit <= this.clock() ||
+          decision?.action === "void_owner_confirmed" && decision.owner_approved === true && typeof decision.reason === "string" && decision.reason.length>0;
+        if (!resolved) return {allowed:false,reason:"manual_adjustment_unresolved",fingerprint,legacy:true};
+        if (honored?.status === "active" && honored.expires_ms > this.clock())
+          return {allowed:false,reason:"active_owner_adjustment",fingerprint,legacy:true};
+      }
     }
     return {allowed:true,reason:"verified_scope_expired",fingerprint,legacy:!!legacy};
   }
