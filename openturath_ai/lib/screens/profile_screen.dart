@@ -1,3 +1,4 @@
+import '../widgets/membership_controls.dart';
 import '../widgets/adaptive_sheet.dart';
 import '../core/localization.dart';
 import 'package:flutter/material.dart';
@@ -821,12 +822,9 @@ class _MembershipPass extends StatelessWidget {
                       textDirection: TextDirection.ltr,
                       style: OTTypography.caption(color: muted)),
               ])),
-          IconButton(
-              tooltip: summary.ctaLabel,
-              onPressed: onManage,
-              icon: Icon(Icons.tune_rounded,
-                  color: ink, semanticLabel: summary.ctaLabel)),
         ]),
+        const SizedBox(height: 16),
+        MembershipControls(summary: summary, onSubscribe: onManage),
         const SizedBox(height: 16),
         Divider(height: 1, color: OTColors.borderSubtle(isDark)),
         const SizedBox(height: 16),
