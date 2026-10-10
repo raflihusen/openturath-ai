@@ -448,9 +448,11 @@ class AccessControl {
             const ar = this.assignmentRef(job.uid, job.entity), mr = this.db.collection("access_memberships").doc((0, exports.keyOf)(job.notebook_id, job.email));
             const nr = this.db.collection("access_notebooks").doc(job.notebook_id);
             const a = (await t.get(ar)).data(), m = (await t.get(mr)).data(), n = (await t.get(nr)).data();
-            t.set(mr, { present: true, counted: true, verified_ms: this.clock() }, { merge: true });
+            const identity = (await t.get(this.db.collection("access_identities").doc((0, exports.keyOf)(job.email, job.entity)))).data();
+            t.set(mr, { uid: (identity === null || identity === void 0 ? void 0 : identity.uid) || (m === null || m === void 0 ? void 0 : m.uid) || job.uid, email: job.email, entity: job.entity, notebook_id: job.notebook_id,
+                present: true, counted: true, verified_ms: this.clock() }, { merge: true });
             if (n)
-                t.update(nr, { occupied: Math.max(n.occupied + ((m === null || m === void 0 ? void 0 : m.counted) ? 0 : 1), restored.emails.length) });
+                t.update(nr, { occupied: Math.max(n.occupied + (m && !m.counted ? 1 : 0), restored.emails.length) });
             if ((a === null || a === void 0 ? void 0 : a.revision) === job.revision)
                 t.update(ar, { status: rights(owner.user, owner.grants, job.scope, this.clock()) ? "ready" : "revocation_review",
                     verified_ms: this.clock() });
