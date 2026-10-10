@@ -3,7 +3,7 @@ import {execFile} from "child_process";
 import {createServer} from "http";
 import {rename, chmod, readFile} from "fs/promises";
 import {promisify} from "util";
-import {AccessControl, Entity, Provider, ShareObservation, isVip, keyOf, millis, normalEmail, rights, billingExpiry, verifiedAkalPeriods, hasLegacyAccessAdjustment} from "./access_control";
+import {AccessControl, Entity, Provider, ShareObservation, isVip, keyOf, millis, normalEmail, rights, billingExpiry, verifiedAkalPeriods, hasLegacyAccessAdjustment, REVOCATION_POLICY} from "./access_control";
 import {NOTEBOOK_ENTITIES} from "./notebook_catalog";
 import {ENTITY_SCOPES, AGENT_ENTITLEMENTS} from "./access_catalog";
 
@@ -57,7 +57,8 @@ const provider: Provider = {
 };
 const engine = new AccessControl(db, NOTEBOOK_ENTITIES, ENTITY_SCOPES, provider);
 const runtime = db.collection("access_control").doc("runtime");
-const stats = {started_ms: Date.now(), last_cycle_ms: 0, last_success_ms: 0, mode: "starting", error: "", cycles: 0};
+const stats = {started_ms: Date.now(), last_cycle_ms: 0, last_success_ms: 0, mode: "starting", error: "", cycles: 0,
+  revocations_paused:true,revocation_policy:REVOCATION_POLICY};
 async function pages(collection: string, visit: (doc: any) => Promise<void>): Promise<void> {
   let cursor: any;
   while (true) {
@@ -354,6 +355,7 @@ async function cycle(): Promise<void> {
   stats.last_cycle_ms = Date.now();
   const cfg = (await runtime.get()).data();
   stats.mode = cfg?.writer === "vps-v2" ? "active" : "shadow";
+  stats.revocations_paused = cfg?.revocations_paused === true;
   if (cfg?.writer !== "vps-v2") return; // Installed shadow mode until explicit cutover.
   // Consume source jobs incrementally rather than scanning every account/tx.
   const source = await db.collection("provisioning_outbox").where("status", "in", ["pending", "retry", "processing", "failed"]).limit(100).get();
