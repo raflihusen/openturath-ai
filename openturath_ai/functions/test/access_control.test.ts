@@ -160,6 +160,14 @@ test("an unresolved legacy hold prevents an already queued removal", async () =>
 
 const akalRow = (extra={}) => ({status:"PAID",incomingAmount:50000,payerEmail:"u@example.test",paymentId:"p1",
   serviceTitle:"SUPER AI FIKIH SYAFI'I",priceSchemeTitle:"1 Bulan",paidAt:"2026-01-01T00:00:00Z",expiryDate:"2026-01-01T01:00:00Z",...extra});
+test("incident pause blocks queued removals while preserving access grants",async()=>{
+  const {db,engine,user,jobs,calls}=setup();user("u");await engine.reserve("u",entity);await jobs();
+  db.docs.get("access_grants/u").expires_ms=now-1;await engine.revoke("u",entity);
+  db.seed("access_control/runtime",{revocations_paused:true});
+  await jobs();assert.equal(calls.length,1);assert.equal(db.docs.get("access_notebooks/master").occupied,1);
+  user("new");await engine.reserve("new",entity);await jobs();
+  assert.equal(calls.filter(c=>c.desired===true).length,2);
+});
 test("owner bonuses and free transfers block legacy revocation despite verified expired receipts",async()=>{
   for (const tx of [{amount:2995000,bonus_reason:"specific override request",bonus_applied_at:1},
     {amount:0,source:"transfer_from_original",original_transaction_id:"paid_original"},
