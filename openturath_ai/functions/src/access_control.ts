@@ -304,6 +304,8 @@ export class AccessControl {
       owner = await this.owner(job.uid);
       const desiredNow = rights(owner.user, owner.grants, job.scope, this.clock());
       if (desiredNow !== job.desired) {
+        if (!desiredNow && (await this.db.collection("access_control").doc("runtime").get()).data()?.revocations_paused === true)
+          throw new Error("Compensating revocation paused for incident audit");
         // Database and Google are not atomic. Repair a concurrent renewal or
         // expiry before declaring the stale operation complete.
         await this.provider.apply(job.notebook_id, job.email, desiredNow);
