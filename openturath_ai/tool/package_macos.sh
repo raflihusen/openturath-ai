@@ -8,7 +8,7 @@ python3 "$project_root/tool/macos/verify_session_signing.py" "$app"
 # Every shipped native executable/library must support both intended CPU families.
 while IFS= read -r -d '' binary; do
   if file -b "$binary" | grep -q 'Mach-O'; then
-    lipo "$binary" -verify_arch arm64 || lipo "$binary" -verify_arch x86_64
+    lipo "$binary" -verify_arch arm64 x86_64
   fi
 done < <(find "$app/Contents" -type f -print0)
 plutil -lint "$app/Contents/Info.plist"
