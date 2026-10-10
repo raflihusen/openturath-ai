@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import {AccessControl, isVip, keyOf, rights, verifiedAkalPeriods} from "../src/access_control.ts";
+import {AccessControl, isVip, keyOf, rights, verifiedAkalPeriods, hasLegacyAccessAdjustment} from "../src/access_control.ts";
 import {MemoryDB} from "./audit_harness.ts";
 
 const entity = "entity", scope = "fiqh_syafii", now = 100000;
@@ -160,6 +160,21 @@ test("an unresolved legacy hold prevents an already queued removal", async () =>
 
 const akalRow = (extra={}) => ({status:"PAID",incomingAmount:50000,payerEmail:"u@example.test",paymentId:"p1",
   serviceTitle:"SUPER AI FIKIH SYAFI'I",priceSchemeTitle:"1 Bulan",paidAt:"2026-01-01T00:00:00Z",expiryDate:"2026-01-01T01:00:00Z",...extra});
+test("owner bonuses and free transfers block legacy revocation despite verified expired receipts",async()=>{
+  for (const tx of [{amount:2995000,bonus_reason:"specific override request",bonus_applied_at:1},
+    {amount:0,source:"transfer_from_original",original_transaction_id:"paid_original"},
+    {amount:0,source:"manual_override",uid:"legacy-email@example.test"}]) {
+    const {db,engine,user,calls}=setup();user("u");
+    await engine.reserve("u",entity);const before=calls.length;
+    db.docs.get("access_grants/u").expires_ms=now-1;
+    assert.equal(hasLegacyAccessAdjustment(tx),true);
+    db.docs.get("users/u").access_revocation_hold=hasLegacyAccessAdjustment(tx);
+    await engine.revoke("u",entity);
+    assert.equal(calls.length,before);
+    assert.equal(db.docs.get(engine.assignmentRef("u",entity).path).status,"provisioning");
+  }
+  assert.equal(hasLegacyAccessAdjustment({amount:50000,status:"PAID",source:"akal"}),false);
+});
 test("provider invoice expiry and unpaid expired quotations never determine subscription rights",()=>{
   const periods=verifiedAkalPeriods([akalRow(),akalRow({paymentId:"unpaid",status:"EXPIRED"}),akalRow({paymentId:"free",incomingAmount:0})]);
   assert.equal(periods.length,1);
