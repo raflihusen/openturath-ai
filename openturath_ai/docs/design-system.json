@@ -168,10 +168,11 @@
   "macosSessionPersistence": {
     "date": "2026-10-10",
     "startup": "preserve Firebase SDK persisted session; no automatic credential-key purge",
-    "release": "stable Apple signing identity with own team/bundle Keychain group",
-    "packagingGate": "tool/macos/verify_session_signing.py rejects ad-hoc or missing own Keychain group",
+    "release": "owner-selected local ad-hoc mode; no expiring profile or restricted Keychain entitlement",
+    "packagingGate": "verify signature, current version, both architectures, and no expiring/restricted local profile",
     "authority": "Firebase SDK authenticates; cached profile is not a replacement credential",
-    "validation": "cold-close/reopen verification pending final signed build"
+    "validation": "SDK synthetic fallback survives fresh native processes; local app launched; real authenticated close/reopen pending",
+    "distribution": "Apple-verified public release requires Developer ID and notarization"
   },
   "accountSubscription": {
     "placement": "visible labelled subscription button below user identity on home and profile",
