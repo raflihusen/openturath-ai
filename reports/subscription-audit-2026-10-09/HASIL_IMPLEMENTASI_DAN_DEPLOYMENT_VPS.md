@@ -1,5 +1,7 @@
 # Hasil implementasi dan deployment otomasi akses
 
+**Koreksi insiden 10 Oktober 2026:** empat pencabutan yang dicatat di bawah ternyata salah karena migrasi mengabaikan bonus pemilik dan transfer paket. Dua pelanggan masih berhak; seluruh akses telah dipulihkan. Pencabutan otomatis dibekukan. Lihat [laporan insiden dan pemulihan](INSIDEN_PENCABUTAN_SALAH_2026-10-10.md). Angka dan penilaian di bawah adalah snapshot sebelum koreksi, bukan status akhir kelayakan akses.
+
 Tanggal pemeriksaan: 9 Oktober 2026. Ini adalah catatan hasil nyata, bukan jaminan bahwa semua kemungkinan kegagalan telah tertutup.
 
 ## Status produksi
