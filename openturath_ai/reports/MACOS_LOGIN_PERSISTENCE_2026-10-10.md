@@ -37,3 +37,20 @@ The code correction is checkpointed, but a new signed app/DMG and real account s
 Xcode generated a team TG4G5DYSFG development profile authorizing `TG4G5DYSFG.*` Keychain groups. It contains one registered device and expires 2026-10-17 13:06:52 UTC. This profile enables a local signed test; it is not a durable public release identity. Developer ID signing and notarization remain prerequisites for public macOS distribution.
 
 The account UI now exposes a labelled Langganan button directly beneath identity on home and profile. Owner VIP status wins over paid/expired packages; active subscribers show PRO, trials show TRIAL, and pending payment does not claim PRO. No rights were granted or revoked by this presentation change. Fourteen focused membership/control tests passed, Flutter analyzer reported no issues, and the existing visual suite rendered 91 representative screens successfully. Desktop and enlarged-text phone profile captures were inspected. Fixtures are visual evidence, not authenticated production-session evidence.
+
+## Final local release after owner declined paid Developer membership
+
+Owner requested a free alternative. The earlier assumption that stable Apple identity is required for the session-purge fix was too restrictive: Apple identity is required for authorized Data Protection Keychain use and Apple-verified distribution, while the installed Firebase SDK already implements a macOS AuthUserDefaults fallback. The mandatory fix remains preserving those SDK entries on startup.
+
+`tool/macos/verify_firebase_fallback.py` compiled the installed SDK AuthUserDefaults source unchanged, using only a unique disposable service and synthetic marker. The ad-hoc native probe returned Data Protection Keychain status -34018, wrote the marker through the official SDK helper, exited, and restored it in a new process. The probe cleared only its synthetic test domain. This establishes fallback storage persistence, not a real authenticated account session.
+
+Xcode release compilation completed with exit 0. Final artifact was explicitly re-signed locally after compilation: no embedded short-lived development profile and no restricted Keychain entitlement. Source release configuration now selects the same profile-free local mode. No Gatekeeper setting was changed. Signing validation, both-architecture checks, DMG checksum verification, read-only mount inspection, version 1.0.65+66, Applications symlink, and exact App.framework hash comparison passed.
+
+Installer: `/Users/apple/Downloads/ramadhan/OpenTurath_AI_macOS_1.0.65.dmg`
+Size: 51,502,186 bytes
+SHA-256: `8ae38522ff4e0716e4f7f699ffe6e7c2de2d3ae2bc0daf9b5bcac250a5bef312`
+
+Installed app: `/Applications/OpenTurath AI.app`
+Previous app preserved at `/Users/apple/Downloads/ramadhan/openturath_ai/build/release-backups/OpenTurath_AI_before_1.0.65_20261010_193747.app`.
+
+The local app launched and rendered the real login screen. Google sign-in was started through its normal button; macOS AuthenticationServicesAgent was running, but its authentication dialog was unavailable through the enabled computer-use surface. User was asked to complete real login personally. Authenticated home/profile inspection and cold-close/reopen remain pending that input. No logged-in success is claimed. Fifteen focused membership tests passed; 91 visual fixtures passed; these remain distinct from authenticated runtime acceptance. No public broadcast/upload occurred.
