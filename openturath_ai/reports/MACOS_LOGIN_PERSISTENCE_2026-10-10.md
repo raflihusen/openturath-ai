@@ -31,3 +31,9 @@ No Firebase token store was implemented in app preferences. Firebase SDK remains
 - Xcode Apple Accounts screen showed no signed-in account. User was asked to sign in personally; no password was requested by the agent.
 
 The code correction is checkpointed, but a new signed app/DMG and real account sign-in followed by close/reopen verification are pending the Apple account/provisioning prerequisite. Existing installed app and prior DMGs were not replaced. No public upload or update broadcast occurred.
+
+## Follow-up after user completed Xcode account sign-in
+
+Xcode generated a team TG4G5DYSFG development profile authorizing `TG4G5DYSFG.*` Keychain groups. It contains one registered device and expires 2026-10-17 13:06:52 UTC. This profile enables a local signed test; it is not a durable public release identity. Developer ID signing and notarization remain prerequisites for public macOS distribution.
+
+The account UI now exposes a labelled Langganan button directly beneath identity on home and profile. Owner VIP status wins over paid/expired packages; active subscribers show PRO, trials show TRIAL, and pending payment does not claim PRO. No rights were granted or revoked by this presentation change. Fourteen focused membership/control tests passed, Flutter analyzer reported no issues, and the existing visual suite rendered 91 representative screens successfully. Desktop and enlarged-text phone profile captures were inspected. Fixtures are visual evidence, not authenticated production-session evidence.
