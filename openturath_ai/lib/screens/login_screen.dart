@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import '../core/app_platform.dart';
 import '../core/localization.dart';
 import 'package:flutter/gestures.dart';
@@ -9,6 +8,7 @@ import '../core/scholarly_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../core/app_copy.dart';
+import '../core/login_error_message.dart';
 import '../core/routes.dart';
 import '../core/design/ot_colors.dart';
 import '../widgets/ot_motion_widgets.dart';
@@ -96,25 +96,7 @@ class _LoginScreenState extends State<LoginScreen> {
       }
     } catch (e) {
       if (!mounted) return;
-      final platformCode = e is PlatformException ? e.code : null;
-      final googleKeychainFailure = e is PlatformException &&
-          e.code == 'sign_in_failed' &&
-          '${e.details}'.toLowerCase().contains('keychain');
-      final message = googleKeychainFailure
-          ? AppCopy.desktopKeychainError
-          : platformCode == 'sign_in_canceled'
-          ? ''
-          : platformCode == 'network_error' ||
-                e.toString().contains('network') ||
-                e.toString().contains('SocketException')
-          ? AppCopy.networkError
-          : e is FirebaseAuthException
-          ? switch (e.code) {
-              'keychain-error' => AppCopy.desktopKeychainError,
-              'popup-closed-by-user' || 'canceled' => '',
-              _ => e.message ?? AppCopy.googleSignInFailed,
-            }
-          : AppCopy.googleSignInFailed;
+      final message = loginErrorMessage(e);
       if (message.isEmpty) return;
       if (AppPlatform.isDesktop) {
         setState(() => _desktopError = message);
