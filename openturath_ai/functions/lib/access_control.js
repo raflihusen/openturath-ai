@@ -1,7 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.AccessControl = exports.AccessFault = exports.isVip = exports.millis = exports.keyOf = exports.normalEmail = exports.VIP_EMAILS = void 0;
+exports.AccessControl = exports.AccessFault = exports.isVip = exports.REVOCATION_POLICY = exports.millis = exports.keyOf = exports.normalEmail = exports.VIP_EMAILS = void 0;
 exports.hasLegacyAccessAdjustment = hasLegacyAccessAdjustment;
+exports.evidenceHash = evidenceHash;
+exports.legacyTransactionScopes = legacyTransactionScopes;
 exports.billingExpiry = billingExpiry;
 exports.verifiedAkalPeriods = verifiedAkalPeriods;
 exports.rights = rights;
@@ -30,6 +32,36 @@ function hasLegacyAccessAdjustment(tx) {
     return Boolean(tx.bonus_reason || tx.bonus_applied_at || tx.original_transaction_id ||
         tx.admin_verified || tx.admin_approved || source.includes("manual") || source.includes("transfer") ||
         tx.access_override || tx.override_reason);
+}
+exports.REVOCATION_POLICY = 3;
+function evidenceHash(value) {
+    const canonical = (v) => {
+        if ((v === null || v === void 0 ? void 0 : v.toMillis) || (v === null || v === void 0 ? void 0 : v.toDate))
+            return (0, exports.millis)(v);
+        if (v instanceof Date)
+            return v.getTime();
+        if (Array.isArray(v))
+            return v.map(canonical);
+        if (v && typeof v === "object")
+            return Object.fromEntries(Object.keys(v).sort().map(k => [k, canonical(v[k])]));
+        return v !== null && v !== void 0 ? v : null;
+    };
+    return crypto.createHash("sha256").update(JSON.stringify(canonical(value))).digest("hex");
+}
+function legacyTransactionScopes(tx) {
+    const explicit = [tx.entitlement_key, tx.scope, ...(Array.isArray(tx.modules) ? tx.modules : [])].filter(Boolean);
+    if (explicit.length)
+        return explicit;
+    const label = String(tx.service_name || tx.serviceTitle || "").toLowerCase();
+    if (/tahawwulat|tahawulat/.test(label))
+        return ["fiqh_tahawwulat"];
+    if (/syafi|syafii/.test(label))
+        return ["fiqh_syafii"];
+    if (/bahasa arab/.test(label))
+        return ["nahwu"];
+    if (/^all_ai/.test(String(tx.plan || "")))
+        return ["all_access"];
+    return []; // Unknown scope must be reviewed, never guessed from package duration.
 }
 function billingExpiry(baseMs, months) {
     if (!Number.isInteger(months) || months < 1 || months > 120)
@@ -112,6 +144,58 @@ class AccessControl {
         }
         return { user, grants };
     }
+    async assessRevocation(uid, scope, targetEmail) {
+        var _a;
+        const { user, grants } = await this.owner(uid);
+        const email = (0, exports.normalEmail)(targetEmail || (user === null || user === void 0 ? void 0 : user.email));
+        const runtime = (await this.db.collection("access_control").doc("runtime").get()).data() || {};
+        if (runtime.revocations_paused === true)
+            return { allowed: false, reason: "incident_pause" };
+        if (!user || !email || (0, exports.normalEmail)(user.email) !== email)
+            return { allowed: false, reason: "identity_unresolved" };
+        const permanent = await this.db.collection("access_vip_registry").doc((0, exports.keyOf)(email)).get();
+        if ((0, exports.isVip)(Object.assign(Object.assign({}, user), { email }), grants) || permanent.exists)
+            return { allowed: false, reason: "permanent_vip" };
+        if (user.access_revocation_hold)
+            return { allowed: false, reason: "owner_hold" };
+        if (user.account_deleted || user.pending_deletion)
+            return { allowed: false, reason: "deletion_requires_separate_review" };
+        if (rights(user, grants, scope, this.clock()))
+            return { allowed: false, reason: "active_scope" };
+        const selected = grants.filter(g => [scope, "all_access", "all_ai"].includes(g.scope));
+        // Absence of evidence is not proof of expiry. Deletion requires its own
+        // reviewed path; an absent user document never authorizes removal.
+        if (!selected.length)
+            return { allowed: false, reason: "missing_scope_evidence" };
+        if (selected.some(g => !Number.isFinite(g.expires_ms) ||
+            !["active", "revoked"].includes(g.status) ||
+            !(g.kind === "payment" && g.amount > 0 || g.kind === "admin" && g.admin_verified === true || g.kind === "voucher")))
+            return { allowed: false, reason: "invalid_scope_evidence" };
+        const txs = new Map();
+        for (const [field, value] of [["uid", uid], ["customer_email", email], ["payer_email", email], ["email", email]]) {
+            const s = await this.db.collection("transactions").where(field, "==", value).get();
+            for (const d of s.docs) {
+                const scopes = legacyTransactionScopes(d.data());
+                if (!scopes.length || scopes.some(s => [scope, "all_access", "all_ai"].includes(s)))
+                    txs.set(d.id, Object.assign({ id: d.id }, d.data()));
+            }
+        }
+        const legacy = user.legacy_revoke_only || user.access_legacy_audit_required || selected.some(g => g.provider === "goakal" || g.imported) ||
+            [...txs.values()].some(t => hasLegacyAccessAdjustment(t) || !["midtrans", "doku"].includes(String(t.gateway || "").toLowerCase()));
+        const fingerprint = evidenceHash({ policy: exports.REVOCATION_POLICY, uid, email, scope,
+            owner: { account_deleted: !!user.account_deleted, pending_deletion: !!user.pending_deletion,
+                adopted_by: user.adopted_by || null, entitlement: ((_a = user.entitlements) === null || _a === void 0 ? void 0 : _a[scope]) || null },
+            grants: [...selected].sort((a, b) => String(a.id).localeCompare(String(b.id))),
+            transactions: [...txs.values()].sort((a, b) => a.id.localeCompare(b.id)) });
+        if (legacy) {
+            const certificate = (await this.db.collection("access_legacy_audits").doc((0, exports.keyOf)(uid, scope)).get()).data();
+            if ((certificate === null || certificate === void 0 ? void 0 : certificate.status) !== "approved" || certificate.policy !== exports.REVOCATION_POLICY ||
+                certificate.fingerprint !== fingerprint || certificate.uid !== uid || certificate.scope !== scope ||
+                certificate.email !== email || certificate.owner_approved !== true)
+                return { allowed: false, reason: "legacy_audit_missing_or_stale", fingerprint, legacy: true };
+        }
+        return { allowed: true, reason: "verified_scope_expired", fingerprint, legacy: !!legacy };
+    }
     async adoptLegacy(uid, legacyUid) {
         const current = await this.db.collection("users").doc(uid).get();
         const legacyRef = this.db.collection("access_legacy_owners").doc(legacyUid);
@@ -162,6 +246,8 @@ class AccessControl {
             for (const g of grants)
                 t.update(g.ref, { uid });
             t.update(current.ref, { access_version: 2, access_due_ms: this.clock(),
+                access_legacy_audit_required: true,
+                access_revocation_hold: !!user.access_revocation_hold || !!prior.access_revocation_hold,
                 access_grant_ids: [...new Set([...(user.access_grant_ids || []), ...grants.map(g => g.id)])] });
             t.update(legacyRef, { adopted_by: uid });
         });
@@ -289,9 +375,13 @@ class AccessControl {
         });
     }
     async revoke(uid, entity) {
-        var _a;
-        if (((_a = (await this.db.collection("access_control").doc("runtime").get()).data()) === null || _a === void 0 ? void 0 : _a.revocations_paused) === true)
+        const assessment = await this.assessRevocation(uid, this.scopes[entity]);
+        if (!assessment.allowed) {
+            if (!["active_scope", "permanent_vip", "incident_pause"].includes(assessment.reason))
+                await this.db.collection("access_reviews").doc((0, exports.keyOf)(uid, entity, "revocation_gate")).set({ uid, entity, scope: this.scopes[entity],
+                    code: assessment.reason, fingerprint: assessment.fingerprint || null, status: "blocked", updated_ms: this.clock() });
             return;
+        }
         const { user, grants } = await this.owner(uid);
         if ((user === null || user === void 0 ? void 0 : user.access_revocation_hold) || rights(user, grants, this.scopes[entity], this.clock()))
             return;
@@ -306,7 +396,7 @@ class AccessControl {
             const revision = a.revision + 1;
             t.update(ar, { status: "revoking", revision, updated_ms: this.clock() });
             for (const notebook of a.history || [a.notebook_id]) {
-                t.set(this.db.collection("access_jobs").doc((0, exports.keyOf)(uid, entity, String(revision), notebook)), Object.assign(Object.assign({}, a), { notebook_id: notebook, revision, desired: false, status: "pending", attempts: 0, queued_ms: this.clock(), due_ms: this.clock() }));
+                t.set(this.db.collection("access_jobs").doc((0, exports.keyOf)(uid, entity, String(revision), notebook)), Object.assign(Object.assign({}, a), { notebook_id: notebook, revision, desired: false, decision_fingerprint: assessment.fingerprint, decision_policy: exports.REVOCATION_POLICY, status: "pending", attempts: 0, queued_ms: this.clock(), due_ms: this.clock() }));
             }
         });
     }
@@ -325,7 +415,6 @@ class AccessControl {
         });
     }
     async runJob(ref) {
-        var _a, _b, _c;
         if (!this.provider)
             throw new Error("Sharing provider is not configured");
         const token = crypto.randomUUID(), now = this.clock();
@@ -351,12 +440,21 @@ class AccessControl {
                 await ref.update({ status: "superseded", due_ms: 8640000000000000 });
                 return;
             }
+            let assessment;
             if (!job.desired) {
-                if (((_a = (await this.db.collection("access_control").doc("runtime").get()).data()) === null || _a === void 0 ? void 0 : _a.revocations_paused) === true)
-                    throw new Error("Revocations paused for incident audit");
-                const permanent = await this.db.collection("access_vip_registry").doc((0, exports.keyOf)(job.email)).get();
-                if (((_b = owner.user) === null || _b === void 0 ? void 0 : _b.access_revocation_hold) || (0, exports.isVip)(Object.assign(Object.assign({}, owner.user), { email: job.email }), owner.grants) || permanent.exists)
-                    throw new Error("Protected or unresolved legacy owner");
+                assessment = await this.assessRevocation(job.uid, job.scope, job.email);
+                if (!assessment.allowed || job.decision_policy !== exports.REVOCATION_POLICY || job.decision_fingerprint !== assessment.fingerprint) {
+                    await this.db.runTransaction(async (t) => {
+                        const current = (await t.get(this.assignmentRef(job.uid, job.entity))).data();
+                        t.update(ref, { status: "review_required", due_ms: 8640000000000000,
+                            review_reason: assessment.reason || "stale_decision", updated_ms: this.clock() });
+                        if ((current === null || current === void 0 ? void 0 : current.revision) === job.revision)
+                            t.update(this.assignmentRef(job.uid, job.entity), { status: "revocation_review" });
+                    });
+                    await this.db.collection("access_reviews").doc((0, exports.keyOf)(job.uid, job.entity, "revocation_gate")).set({ uid: job.uid, entity: job.entity,
+                        code: assessment.allowed ? "stale_decision" : assessment.reason, status: "blocked", updated_ms: this.clock() });
+                    return;
+                }
             }
             const observation = await this.provider.apply(job.notebook_id, job.email, job.desired);
             this.validateObservation(observation, job.notebook_id);
@@ -365,9 +463,25 @@ class AccessControl {
                 throw new Error("Target membership not verified");
             owner = await this.owner(job.uid);
             const desiredNow = rights(owner.user, owner.grants, job.scope, this.clock());
+            if (!job.desired) {
+                const after = await this.assessRevocation(job.uid, job.scope, job.email);
+                if (!after.allowed || after.fingerprint !== assessment.fingerprint) {
+                    // A hold, manual change, renewal or pause arriving while Google was
+                    // running invalidates the removal even when expiry still looks old.
+                    const restored = await this.provider.apply(job.notebook_id, job.email, true);
+                    this.validateObservation(restored, job.notebook_id);
+                    if (!restored.emails.map(exports.normalEmail).includes(job.email))
+                        throw new Error("Safety restoration not verified");
+                    await this.db.collection("access_memberships").doc((0, exports.keyOf)(job.notebook_id, job.email)).set({ present: true, verified_ms: this.clock() }, { merge: true });
+                    throw new Error("Revocation evidence changed; original membership restored");
+                }
+            }
             if (desiredNow !== job.desired) {
-                if (!desiredNow && ((_c = (await this.db.collection("access_control").doc("runtime").get()).data()) === null || _c === void 0 ? void 0 : _c.revocations_paused) === true)
-                    throw new Error("Compensating revocation paused for incident audit");
+                if (!desiredNow) {
+                    // Grant jobs are never authorized to remove access. Require a new
+                    // removal job with its own scope proof and policy fingerprint.
+                    throw new Error("Grant changed; a separately assessed revocation is required");
+                }
                 // Database and Google are not atomic. Repair a concurrent renewal or
                 // expiry before declaring the stale operation complete.
                 await this.provider.apply(job.notebook_id, job.email, desiredNow);
