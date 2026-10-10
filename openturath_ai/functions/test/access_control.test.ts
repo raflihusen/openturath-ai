@@ -245,7 +245,7 @@ test("a hold arriving during Google removal restores the original permission and
   await jobs();assert.deepEqual(calls.map(c=>c.desired),[true,false,true]);
   assert.equal(members.get("master")!.has("u@example.test"),true);
   assert.equal(db.docs.get("access_notebooks/master").occupied,1);
-  assert.equal([...db.docs.values()].some(d=>d.status === "retry"),true);
+  assert.equal([...db.docs.values()].some(d=>d.status === "review_required"),true);
 });
 test("manual evidence arriving during removal restores membership even without a hold or renewal grant",async()=>{
   const {db,engine,user,jobs,calls,members,provider}=setup();user("u");await engine.reserve("u",entity);await jobs();
@@ -299,4 +299,55 @@ test("legacy identity adoption preserves holds and requires a new identity-speci
 test("evidence hash is independent of property order and changes for an owner adjustment",()=>{
   assert.equal(evidenceHash({b:2,a:1}),evidenceHash({a:1,b:2}));
   assert.notEqual(evidenceHash({a:1}),evidenceHash({a:1,bonus_reason:"owner"}));
+});
+test("an audit label alone cannot discard an unresolved future bonus",async()=>{
+  const {db,engine,user}=setup();user("u");db.docs.get("access_grants/u").expires_ms=now-1;
+  db.seed("transactions/bonus",{customer_email:"u@example.test",bonus_reason:"owner exception",entitlement_key:scope,
+    subscription_expires_at:now+999999});
+  await approveLegacy(db,engine);
+  assert.equal((await engine.assessRevocation("u",scope)).reason,"manual_adjustment_unresolved");
+  db.docs.get(`access_legacy_audits/${keyOf("u",scope)}`).adjustments={bonus:{action:"expired_owner_confirmed"}};
+  assert.equal((await engine.assessRevocation("u",scope)).allowed,false);
+});
+test("owner evidence arriving during the initial Google observation prevents any removal",async()=>{
+  const {db,engine,user,jobs,calls,provider}=setup();user("u");await engine.reserve("u",entity);await jobs();
+  db.docs.get("access_grants/u").expires_ms=now-1;await engine.revoke("u",entity);
+  const original=provider.observe.bind(provider);
+  provider.observe=async id=>{db.seed("transactions/bonus",{customer_email:"u@example.test",bonus_reason:"new owner exception",entitlement_key:scope});return original(id);};
+  await jobs();assert.deepEqual(calls.map(c=>c.desired),[true]);
+});
+test("a timeout after Google removes the member restores the original verified membership",async()=>{
+  const {db,engine,user,jobs,calls,members,provider}=setup();user("u");await engine.reserve("u",entity);await jobs();
+  db.docs.get("access_grants/u").expires_ms=now-1;await engine.revoke("u",entity);
+  const original=provider.apply.bind(provider);
+  provider.apply=async(id,email,desired)=>{const result=await original(id,email,desired);if(!desired)throw Error("response lost after Google mutation");return result;};
+  await jobs();assert.deepEqual(calls.map(c=>c.desired),[true,false,true]);
+  assert.equal(members.get("master")!.has("u@example.test"),true);
+  assert.equal(db.docs.get("access_notebooks/master").occupied,1);
+  const job=[...db.docs.values()].find(d=>d.mutation_started_ms);
+  assert.equal(job.safety_restore_required,false);assert.equal(job.status,"review_required");
+});
+test("failed safety restoration is persisted and retried before pause and expiry checks",async()=>{
+  const {db,engine,user,jobs,provider,members}=setup();user("u");await engine.reserve("u",entity);await jobs();
+  db.docs.get("access_grants/u").expires_ms=now-1;await engine.revoke("u",entity);
+  const original=provider.apply.bind(provider);
+  provider.apply=async(id,email,desired)=>{if(desired)throw Error("network unavailable during restoration");
+    await original(id,email,desired);throw Error("response lost after removal");};
+  await jobs();const entry=[...db.docs.entries()].find(([k,d])=>k.startsWith("access_jobs/")&&d.desired===false)!;
+  assert.equal(entry[1].safety_restore_required,true);assert.equal(entry[1].status,"retry");
+  db.seed("access_control/runtime",{revocations_paused:true});entry[1].due_ms=now;provider.apply=original;
+  await jobs();assert.equal(members.get("master")!.has("u@example.test"),true);
+  assert.equal(entry[1].safety_restore_required,true); // The old object is a snapshot; verify the committed document below.
+  assert.equal(db.docs.get(entry[0]).safety_restore_required,false);
+  assert.equal(db.docs.get(entry[0]).status,"review_required");
+});
+test("restart recovery restores a journaled original membership without issuing another removal",async()=>{
+  const {db,engine,user,jobs,members,calls}=setup();user("u");await engine.reserve("u",entity);await jobs();
+  db.docs.get("access_grants/u").expires_ms=now-1;await engine.revoke("u",entity);
+  const job=[...db.docs.values()].find(d=>d.desired===false);
+  Object.assign(job,{safety_restore_required:true,original_present:true,status:"processing",due_ms:now});
+  members.get("master")!.delete("u@example.test");db.seed("access_control/runtime",{revocations_paused:true});
+  await jobs();assert.deepEqual(calls.map(c=>c.desired),[true,true]);
+  assert.equal(members.get("master")!.has("u@example.test"),true);
+  assert.equal(db.docs.get("access_notebooks/master").occupied,1);
 });
