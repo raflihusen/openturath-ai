@@ -104,6 +104,26 @@ class AuthService {
       } catch (_) {}
     }
 
+    // Silent Sign-in Fallback: Pulihkan kredensial Google OAuth tanpa prompt jika sesi Firebase belum siap
+    if (firebaseUser == null &&
+        !kIsWeb &&
+        (defaultTargetPlatform == TargetPlatform.android ||
+            defaultTargetPlatform == TargetPlatform.iOS ||
+            defaultTargetPlatform == TargetPlatform.macOS)) {
+      try {
+        final googleUser = await _googleSignIn.signInSilently();
+        if (googleUser != null) {
+          final googleAuth = await googleUser.authentication;
+          final credential = GoogleAuthProvider.credential(
+            accessToken: googleAuth.accessToken,
+            idToken: googleAuth.idToken,
+          );
+          final userCredential = await _auth.signInWithCredential(credential);
+          firebaseUser = userCredential.user;
+        }
+      } catch (_) {}
+    }
+
     try {
       final prefs = await SharedPreferences.getInstance();
       String? uid = firebaseUser?.uid ?? prefs.getString('current_user_uid');
