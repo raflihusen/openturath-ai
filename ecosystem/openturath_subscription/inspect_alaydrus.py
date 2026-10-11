@@ -2,7 +2,6 @@ import os
 import sys
 import asyncio
 from google.cloud import firestore
-from google.cloud.firestore_v1.base_query import FieldFilter
 
 NOTEBOOKLM_PY_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "notebooklm-py", "src")
 sys.path.insert(0, os.path.abspath(NOTEBOOKLM_PY_PATH))
@@ -20,16 +19,33 @@ from notebooklm import NotebookLMClient
 
 db = firestore.Client.from_service_account_json("/Users/apple/Downloads/ramadhan/service-account.json")
 
-print("=== SHARING LOG FOR muhammadalaydrus65@gmail.com ===")
-logs = list(db.collection("sharing_log").where(filter=FieldFilter("email", "==", "muhammadalaydrus65@gmail.com")).stream())
-for l in sorted(logs, key=lambda x: str(x.to_dict().get("created_at", ""))):
-    data = l.to_dict()
-    print(f"[{data.get('created_at')}] action: {data.get('action')}, status: {data.get('status')}, reason: {data.get('reason')}, source: {data.get('source')}")
+TARGET_EMAIL = "muhammadalaydrus65@gmail.com"
 
-print("\n=== USER DOCUMENTS IN FIRESTORE ===")
-users = list(db.collection("users").where(filter=FieldFilter("email", "==", "muhammadalaydrus65@gmail.com")).stream())
-for u in users:
-    print(u.id, "=>", u.to_dict())
+print(f"=== CHECKING FIRESTORE FOR {TARGET_EMAIL} ===")
+
+# Check users by doc ID
+u_doc = db.collection("users").document(TARGET_EMAIL).get()
+if u_doc.exists:
+    print(f"users/{TARGET_EMAIL} exists =>", u_doc.to_dict())
+else:
+    print(f"users/{TARGET_EMAIL} does NOT exist directly.")
+
+# Search across collections for this email
+for col_name in ["users", "customers", "access_grants", "access_assignments", "access_memberships", "access_legacy_owners", "access_reviews", "sharing_log"]:
+    try:
+        docs = list(db.collection(col_name).stream())
+        matched = []
+        for d in docs:
+            data = d.to_dict() or {}
+            # check if email matches anywhere
+            if any(isinstance(v, str) and TARGET_EMAIL in v.lower() for v in data.values()):
+                matched.append((d.id, data))
+        if matched:
+            print(f"\n--- Matched in collection '{col_name}': {len(matched)} docs ---")
+            for mid, mdata in matched:
+                print(f"  {mid}: {mdata}")
+    except Exception as e:
+        print(f"Error checking {col_name}: {e}")
 
 NOTEBOOKS = [
     {"name": "01 - FIKIH SYAFII (MASTER)", "id": "c89d09ca-4b48-4000-a98d-59e532607fb6"},
@@ -44,9 +60,8 @@ async def check_nlm():
     async with NotebookLMClient.from_storage(path=storage_path) as nlm:
         for nb in NOTEBOOKS:
             status = await nlm.sharing.get_status(nb["id"])
-            viewers = {u.email.lower(): u.role.name for u in status.shared_users}
-            present = "muhammadalaydrus65@gmail.com" in viewers
-            role = viewers.get("muhammadalaydrus65@gmail.com", "NONE")
-            print(f"{nb['name']}: {'ADA (' + role + ')' if present else 'TIDAK ADA'}")
+            viewers = {u.email.lower() for u in status.shared_users}
+            present = TARGET_EMAIL in viewers
+            print(f"{nb['name']} ({nb['id']}): {'✅ ADA (TERDAFTAR)' if present else '❌ TIDAK ADA (KECABUT)'}")
 
 asyncio.run(check_nlm())
