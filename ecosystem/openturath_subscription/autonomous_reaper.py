@@ -127,28 +127,28 @@ MASTER_NOTEBOOKS = [
         "key": "fiqh_syafii",
         "cuid": os.getenv("AKAL_SERVICE_CUID_FIKIH_SYAFII", "cms4ls3j60001l20439k1nqh4"),
     },
-    # 2. Fikih Tahawwulat (5 Cabang Master Asli 71 Sumber & Pool)
+    # 2. Fikih Tahawwulat (5 Cabang Master Asli & Pool)
     {
         "name": "06.1 - AL-MUHAQQIQ (MASTER)",
-        "id": "67b65ed8-0d1e-4fb4-929c-4fcb735d3be3",
+        "id": "483d0291-0a70-411c-bff0-f1ea4b83b2fd",
         "key": "fiqh_tahawwulat",
         "cuid": os.getenv("AKAL_SERVICE_CUID_FIKIH_TAHAWWULAT", "cmln2i27k0000jx047oabzw8p"),
     },
     {
         "name": "Al-Muhaqqiq (Secondary Pool)",
-        "id": "dc7ee7e4-f4ad-4db6-9cd0-0013727abbe4",
+        "id": "67b65ed8-0d1e-4fb4-929c-4fcb735d3be3",
         "key": "fiqh_tahawwulat",
         "cuid": os.getenv("AKAL_SERVICE_CUID_FIKIH_TAHAWWULAT", "cmln2i27k0000jx047oabzw8p"),
     },
     {
         "name": "06.2 - AL-BAYAN (MASTER)",
-        "id": "75882649-638f-4729-97f8-19897d90b108",
+        "id": "dc7ee7e4-f4ad-4db6-9cd0-0013727abbe4",
         "key": "fiqh_tahawwulat",
         "cuid": os.getenv("AKAL_SERVICE_CUID_FIKIH_TAHAWWULAT", "cmln2i27k0000jx047oabzw8p"),
     },
     {
         "name": "Al-Bayan (Secondary Pool)",
-        "id": "483d0291-0a70-411c-bff0-f1ea4b83b2fd",
+        "id": "75882649-638f-4729-97f8-19897d90b108",
         "key": "fiqh_tahawwulat",
         "cuid": os.getenv("AKAL_SERVICE_CUID_FIKIH_TAHAWWULAT", "cmln2i27k0000jx047oabzw8p"),
     },

@@ -22,16 +22,16 @@ from notebooklm.rpc.types import SharePermission, RPCMethod, ShareViewLevel
 cred_path = "/Users/apple/Downloads/ramadhan/service-account.json"
 db = firestore.Client.from_service_account_json(cred_path)
 
-# 1. Master Asli Fikih Tahawwulat (71 Sumber)
+# 1. Master Asli Fikih Tahawwulat
 TAHAWWULAT_MASTERS_ASLI = [
     {
         "name": "06.1 - AL-MUHAQQIQ (MASTER)",
-        "id": "67b65ed8-0d1e-4fb4-929c-4fcb735d3be3",
+        "id": "483d0291-0a70-411c-bff0-f1ea4b83b2fd",
         "key": "fiqh_tahawwulat"
     },
     {
         "name": "06.2 - AL-BAYAN (MASTER)",
-        "id": "75882649-638f-4729-97f8-19897d90b108",
+        "id": "dc7ee7e4-f4ad-4db6-9cd0-0013727abbe4",
         "key": "fiqh_tahawwulat"
     },
     {
@@ -57,14 +57,14 @@ ALL_MASTERS_TO_SECURE = [
     {"name": "01 - FIKIH SYAFII (MASTER)", "id": "c89d09ca-4b48-4000-a98d-59e532607fb6"},
     {"name": "AI Fikih Syafi'i (Legacy)", "id": "334e7b83-0e76-4787-a1d6-314642a35862"},
     # Tahawwulat Master Asli
-    {"name": "06.1 - AL-MUHAQQIQ (MASTER)", "id": "67b65ed8-0d1e-4fb4-929c-4fcb735d3be3"},
-    {"name": "06.2 - AL-BAYAN (MASTER)", "id": "75882649-638f-4729-97f8-19897d90b108"},
+    {"name": "06.1 - AL-MUHAQQIQ (MASTER)", "id": "483d0291-0a70-411c-bff0-f1ea4b83b2fd"},
+    {"name": "06.2 - AL-BAYAN (MASTER)", "id": "dc7ee7e4-f4ad-4db6-9cd0-0013727abbe4"},
     {"name": "06.3 - AL-MUKHTABIR (MASTER)", "id": "ac803816-5541-4446-bc9d-b56326493555"},
     {"name": "06.4 - AL-HABIB (MASTER)", "id": "c8b8a754-991d-429d-8379-b0478abb6ceb"},
     {"name": "06.5 - AL-KHATIB (MASTER)", "id": "926f3633-53fc-4dbf-81da-0570f7a4d26b"},
     # Tahawwulat Secondary / Legacy Pool
-    {"name": "Al-MUHAQQIQ (Secondary)", "id": "dc7ee7e4-f4ad-4db6-9cd0-0013727abbe4"},
-    {"name": "AL-BAYAN (Secondary)", "id": "483d0291-0a70-411c-bff0-f1ea4b83b2fd"},
+    {"name": "Al-MUHAQQIQ (Secondary)", "id": "67b65ed8-0d1e-4fb4-929c-4fcb735d3be3"},
+    {"name": "AL-BAYAN (Secondary)", "id": "75882649-638f-4729-97f8-19897d90b108"},
     {"name": "ALMUKHTABIR (Legacy)", "id": "ac61a7a0-87e7-42a5-a30f-980ff74a78d8"},
     {"name": "ALHABIB (Legacy)", "id": "6673e79a-7156-42e1-b116-bc1653a32094"},
     {"name": "ALKHATIB (Legacy)", "id": "1288e413-9569-47a3-892f-64008e53c1e8"},

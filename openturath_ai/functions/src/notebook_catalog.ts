@@ -17,9 +17,9 @@ export const NOTEBOOK_ENTITIES: Record<string, NotebookEntityInfo> = {
   "06.1_AL_MUHAQQIQ": {
     code: "06.1_AL_MUHAQQIQ",
     name: "Al-Muhaqqiq (Fikih Tahawwulat - Cabang Analitis & Ushul)",
-    masterId: "67b65ed8-0d1e-4fb4-929c-4fcb735d3be3",
-    masterUrl: "https://notebooklm.google.com/notebook/67b65ed8-0d1e-4fb4-929c-4fcb735d3be3",
-    legacyIds: ["dc7ee7e4-f4ad-4db6-9cd0-0013727abbe4"],
+    masterId: "483d0291-0a70-411c-bff0-f1ea4b83b2fd",
+    masterUrl: "https://notebooklm.google.com/notebook/483d0291-0a70-411c-bff0-f1ea4b83b2fd",
+    legacyIds: ["67b65ed8-0d1e-4fb4-929c-4fcb735d3be3"],
     clones: [
       { name: "06.1 - AL-MUHAQQIQ - 01", id: "de5bfb3d-48e4-4633-8c7e-c20dad70efbd", url: "https://notebooklm.google.com/notebook/de5bfb3d-48e4-4633-8c7e-c20dad70efbd" },
       { name: "06.1 - AL-MUHAQQIQ - 02", id: "c7a226a6-0ab2-442c-9d35-9fe051a7b385", url: "https://notebooklm.google.com/notebook/c7a226a6-0ab2-442c-9d35-9fe051a7b385" },
@@ -39,9 +39,9 @@ export const NOTEBOOK_ENTITIES: Record<string, NotebookEntityInfo> = {
   "06.2_AL_BAYAN": {
     code: "06.2_AL_BAYAN",
     name: "Al-Bayan (Fikih Tahawwulat - Cabang Sosialisasi & Dakwah Ammah)",
-    masterId: "75882649-638f-4729-97f8-19897d90b108",
-    masterUrl: "https://notebooklm.google.com/notebook/75882649-638f-4729-97f8-19897d90b108",
-    legacyIds: ["483d0291-0a70-411c-bff0-f1ea4b83b2fd"],
+    masterId: "dc7ee7e4-f4ad-4db6-9cd0-0013727abbe4",
+    masterUrl: "https://notebooklm.google.com/notebook/dc7ee7e4-f4ad-4db6-9cd0-0013727abbe4",
+    legacyIds: ["75882649-638f-4729-97f8-19897d90b108"],
     clones: [
       { name: "06.2 - AL-BAYAN - 01", id: "a1878000-38e2-4382-896c-258a70a84ec2", url: "https://notebooklm.google.com/notebook/a1878000-38e2-4382-896c-258a70a84ec2" },
       { name: "06.2 - AL-BAYAN - 02", id: "23727227-d3b3-437d-af6a-c149fbf11476", url: "https://notebooklm.google.com/notebook/23727227-d3b3-437d-af6a-c149fbf11476" },
