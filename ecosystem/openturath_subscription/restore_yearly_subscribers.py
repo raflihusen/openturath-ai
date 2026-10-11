@@ -41,7 +41,23 @@ TARGETS_TO_RESTORE = [
         ]
     },
     {
-        "nb_name": "Al-Muhaqqiq (Tahawwulat)",
+        "nb_name": "06.1 - AL-MUHAQQIQ (MASTER ASLI)",
+        "nb_id": "67b65ed8-0d1e-4fb4-929c-4fcb735d3be3",
+        "emails": [
+            "ndsfraaaaaaa@gmail.com",
+            "riefbois33@gmail.com"
+        ]
+    },
+    {
+        "nb_name": "06.2 - AL-BAYAN (MASTER ASLI)",
+        "nb_id": "75882649-638f-4729-97f8-19897d90b108",
+        "emails": [
+            "ndsfraaaaaaa@gmail.com",
+            "riefbois33@gmail.com"
+        ]
+    },
+    {
+        "nb_name": "Al-Muhaqqiq (Tahawwulat Secondary)",
         "nb_id": "dc7ee7e4-f4ad-4db6-9cd0-0013727abbe4",
         "emails": [
             "ndsfraaaaaaa@gmail.com",
@@ -49,7 +65,7 @@ TARGETS_TO_RESTORE = [
         ]
     },
     {
-        "nb_name": "Al-Bayan (Fikih Tahawwulat)",
+        "nb_name": "Al-Bayan (Fikih Tahawwulat Secondary)",
         "nb_id": "483d0291-0a70-411c-bff0-f1ea4b83b2fd",
         "emails": [
             "ndsfraaaaaaa@gmail.com",
