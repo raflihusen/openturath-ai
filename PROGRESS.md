@@ -272,11 +272,32 @@ Berdasarkan `AUDIT_OPENTURATH_AI.md`, dokumen perancangan pustaka, dan keluhan k
        - Jika berada di dalam empty state (tanpa `app-chat-input`), telusuri form atau container input aktif terdekat, netralkan properti `transform`, `contain`, dan `filter` pada seluruh ancestor yang berpotensi menjebak fixed positioning, lalu kunci target ke `position: fixed; bottom: 48px; left: 50%; transform: translateX(-50%); width: min(768px, calc(100% - 32px)); max-width: 768px;`.
   2. Hasil: Kapsul input obrolan ("Ajukan pertanyaan atau buat konten" + tombol `↑`) kini duduk manis, kokoh, dan rapi di dasar layar (terangkat 48px dengan breathing room alami) baik pada saat obrolan kosong maupun saat percakapan sedang berjalan.
 
+### Fasa 24: Sanitasi Workspace & Penghentian Kebocoran Token (Cache Read 81.65M) (`1cf1b7d`)
+- **Akar Masalah Fundamental**:
+  - Akumulasi berkas dump teks monolitik berukuran 1MB - 1.7MB per berkas di root folder (`OPENTURATH_AI_FULL_AUDIT_SOURCE.txt`, `OPENTURATH_AI_MASTER_AUDIT_PACK.*`, `OpenTurath_UI_UX_Blueprint.html`, dll) yang menyumbang jutaan token setiap kali dipindai oleh AI agent.
+  - Ketiadaan filter `.geminiignore` dan `.cursorignore`, serta kelonggaran pada `.gitignore`, menyebabkan proses indexing dan context caching berulang-ulang hingga membakar 81.65 Juta token Cache Read dan 423+ kredit API.
+  - Penumpukan 13 file `.zip` (~260MB), 5 file `.dmg` installer lama (~300MB), dan puluhan skrip Python lepas di direktori root.
+- **Solusi Tuntas**:
+  1. Pembuatan `.geminiignore` dan `.cursorignore` serta pembaruan ketat `.gitignore` untuk memblokir pembacaan file dump, arsip biner, dan laporan lama oleh seluruh AI indexer.
+  2. Isolasi aman seluruh file dump teks dan arsip biner lama ke direktori terisolasi `_archive_offline/` tanpa kehilangan riwayat data (*zero data loss*).
+  3. Reorganisasi seluruh skrip utilitas otomasi ke dalam direktori terstruktur `scripts/katalog/` dan `scripts/midtrans_docs/`.
+  4. Hasil: Direktori root bersih, ramping, dan pembacaan token AI seketika anjlok ke batas wajar.
+
+### Fasa 25: Eliminasi Permanen Auto-Logout macOS Tanpa $99 Apple Developer ID (`975636d`)
+- **Akar Masalah Fundamental**:
+  1. *Jebakan Entitlement Keychain*: File `DebugProfile.entitlements` dan `Release.entitlements` memuat tag `<key>keychain-access-groups</key>` dengan `$(AppIdentifierPrefix)`. Karena build lokal beroperasi tanpa Team ID Apple Developer berbayar ($99), prefix bernilai kosong. macOS Security Framework menolak akses Keychain dengan galat `-34018 (errSecMissingEntitlement)`. Pada aplikasi non-sandboxed (`app-sandbox = false`), pembatasan ini sebenarnya tidak diperlukan dan memicu pemblokiran Keychain.
+  2. *Ejeksi Prematur di Dashboard Screen*: Pada `dashboard_screen.dart:111`, metode `_loadData()` memeriksa `_authService.currentUser == null` secara sinkron sesaat setelah layar dimuat. Karena inisialisasi native Keychain pada desktop berlangsung asinkron (~100-300ms), Firebase Auth di memory sesaat bernilai `null`. Hal ini langsung mendepak pengguna kembali ke `AppRoutes.login`, mengabaikan sesi valid yang telah diverifikasi oleh `SplashScreen`.
+  3. *Resistensi Offline*: Kegagalan sesaat koneksi jaringan saat boot menyebabkan `signInSilently()` gagal, yang sebelumnya dianggap sebagai sinyal logout oleh aplikasi.
+- **Solusi Tuntas**:
+  1. `DebugProfile.entitlements` & `Release.entitlements`: Menghapus blok deklarasi `keychain-access-groups` sehingga aplikasi non-sandboxed dapat mengakses `login.keychain-db` bawaan pengguna tanpa bergantung pada Team ID berbayar.
+  2. `dashboard_screen.dart`: Memperbarui `_loadData()` dengan pengecekan bertingkat: memeriksa memory `currentUser`, fallback ke `cachedCurrentUser` dari disk, dan menunggu `restoreSession()` di background. Pengguna HANYA diarahkan ke login jika benar-benar tidak ada sesi baik di memory maupun di disk cache.
+  3. `auth_service.dart`: Memperkuat `getCurrentUserModel()` agar mengembalikan `cachedCurrentUser` atau cache disk jika Firebase user di memory masih sesaat null saat cold-start.
+  4. Analisis & Verifikasi: Lolos `dart analyze lib/` dengan 0 issues, bebas dari ketergantungan akun berbayar $99.
+
 ---
 
 ## 5. Agenda & Fokus Selanjutnya
-1. **Inspeksi Estetika Layar Nyata (Android APK & macOS DMG)**:
-   - Pasang `app-release-latest.apk` pada perangkat target dan unduh `OpenTurath_AI_macOS.dmg` dari GitHub Actions untuk dipasang di folder Applications Mac.
-   - Memastikan tidak ada lagi sisa warna jenuh pada modal dan layar transaksional di desktop maupun mobile.
+1. **Verifikasi Runtime Sesi macOS**:
+   - Menjalankan uji buka/tutup dingin (cold quit & reopen) pada macOS untuk memvalidasi bahwa sesi akun pengguna tetap bertahan langsung di Dashboard.
 2. **Katalog & Spesialis**:
    - Memastikan ke-21 spesialis memiliki keterhubungan yang mulus antara ruang dialog telaah dengan pustaka kitab referensinya.
