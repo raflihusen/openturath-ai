@@ -28,13 +28,32 @@ class CallableGateway {
         client.close();
       }
     }
-    final result = await FirebaseFunctions.instance
-        .httpsCallable(
-          name,
-          options: HttpsCallableOptions(timeout: timeout),
-        )
-        .call(data);
-    return result.data;
+    try {
+      final result = await FirebaseFunctions.instance
+          .httpsCallable(
+            name,
+            options: HttpsCallableOptions(timeout: timeout),
+          )
+          .call(data);
+      return result.data;
+    } on FirebaseFunctionsException catch (e) {
+      if (e.code == 'unauthenticated' &&
+          FirebaseAuth.instance.currentUser != null) {
+        try {
+          await FirebaseAuth.instance.currentUser?.getIdToken(true);
+          final retryResult = await FirebaseFunctions.instance
+              .httpsCallable(
+                name,
+                options: HttpsCallableOptions(timeout: timeout),
+              )
+              .call(data);
+          return retryResult.data;
+        } catch (_) {
+          rethrow;
+        }
+      }
+      rethrow;
+    }
   }
 }
 

@@ -518,6 +518,30 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                     },
                   ),
                 ),
+                if (sessions.length < AgentSessionManager.maxTabs) ...[
+                  const SizedBox(height: 14),
+                  SizedBox(
+                    width: double.infinity,
+                    child: OutlinedButton.icon(
+                      icon: const Icon(Icons.add_rounded, size: 18),
+                      label: Text(Loc.tr('openAnotherSpecialist')),
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: OTColors.textPrimary(isDark),
+                        side: BorderSide(
+                          color: OTColors.borderStrong(isDark),
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(OTRadius.button),
+                        ),
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                      ),
+                      onPressed: () {
+                        Navigator.pop(ctx);
+                        _sessionManager.closeRoom();
+                      },
+                    ),
+                  ),
+                ],
               ],
             ),
           );
@@ -575,6 +599,39 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
             icon: Icon(Icons.menu_book_outlined, color: textPrimary, size: 20),
             tooltip: AppCopy.referenceBooks,
             onPressed: () => _openLibrarySheet(context, activeTab.agent),
+          ),
+          // Chrome-style Tab Switcher Button
+          Semantics(
+            label: Loc.tr('openAssistantSessions', ['${sessions.length}']),
+            button: true,
+            child: InkResponse(
+              onTap: () => _showSessionSwitcher(context),
+              radius: 20,
+              child: Container(
+                margin: const EdgeInsets.symmetric(horizontal: 4),
+                padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(OTRadius.xs),
+                  border: Border.all(
+                    color: sessions.length > 1
+                        ? OTColors.borderStrong(isDark)
+                        : border,
+                    width: 1.4,
+                  ),
+                  color: sessions.length > 1
+                      ? surfaceSubtle
+                      : Colors.transparent,
+                ),
+                child: Text(
+                  '${sessions.length}',
+                  style: ScholarlyFonts.outfit(
+                    fontSize: OTFontSize.s12,
+                    fontWeight: FontWeight.w700,
+                    color: textPrimary,
+                  ),
+                ),
+              ),
+            ),
           ),
           PopupMenuButton<String>(
             icon: Icon(Icons.more_vert_rounded, color: textPrimary, size: 20),
@@ -710,8 +767,8 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
           ),
           const SizedBox(width: 4),
         ],
-        // Chrome-like Multi-Tab Bar (Hanya tampil di Desktop jika terdapat lebih dari 1 sesi aktif)
-        bottom: (AppPlatform.isDesktop && sessions.length > 1)
+        // Chrome-like Multi-Tab Bar (Tampil di semua platform jika terdapat lebih dari 1 sesi aktif)
+        bottom: sessions.length > 1
             ? PreferredSize(
                 preferredSize: const Size.fromHeight(42),
                 child: Container(
@@ -728,9 +785,49 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                     scrollDirection: Axis.horizontal,
                     padding:
                         const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    itemCount: sessions.length,
+                    itemCount: sessions.length +
+                        (sessions.length < AgentSessionManager.maxTabs ? 1 : 0),
                     separatorBuilder: (_, __) => const SizedBox(width: 6),
                     itemBuilder: (context, index) {
+                      if (index == sessions.length) {
+                        return Container(
+                          decoration: BoxDecoration(
+                            color: Colors.transparent,
+                            borderRadius: BorderRadius.circular(OTRadius.xs),
+                            border: Border.all(
+                              color: border.withValues(alpha: 0.6),
+                              width: 1.0,
+                            ),
+                          ),
+                          child: InkWell(
+                            onTap: () {
+                              AppSnackBar.clear(context);
+                              _sessionManager.closeRoom();
+                            },
+                            borderRadius: BorderRadius.circular(OTRadius.xs),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 10, vertical: 4),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(Icons.add_rounded,
+                                      size: 15, color: textSecondary),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    Loc.tr('openAnotherSpecialist'),
+                                    style: ScholarlyFonts.outfit(
+                                      fontSize: OTFontSize.s11,
+                                      fontWeight: FontWeight.w500,
+                                      color: textSecondary,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        );
+                      }
                       final session = sessions[index];
                       final isActive = index == _sessionManager.activeIndex;
 
@@ -1459,51 +1556,79 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
     setState(() {
       session.isUrlLoading = true;
       session.errorMessage = null;
+      session.isPaywallRequired = false;
     });
+
+    if (_authService.currentUser == null) {
+      await _authService.restoreSession();
+    }
 
     // The server owns current rights; a stale local profile must not turn a
     // paid-but-provisioning assignment into a request to purchase again.
-    final openingUid = _authService.currentUser?.uid;
+    final openingUid = _authService.currentUser?.uid ??
+        _authService.cachedCurrentUser?.uid;
 
     try {
       final url = await _agentService.getAgentUrl(session.agent.id);
-      if (!mounted || _authService.currentUser?.uid != openingUid) return;
+      final currentUid = _authService.currentUser?.uid ??
+          _authService.cachedCurrentUser?.uid;
+      if (!mounted ||
+          (openingUid != null && currentUid != null && currentUid != openingUid)) {
+        return;
+      }
       if (url != null && url.isNotEmpty) {
         setState(() {
           session.resolvedUrl = url;
           session.isUrlLoading = false;
+          session.isPaywallRequired = false;
+          session.errorMessage = null;
         });
       } else {
+        final user = _authService.cachedCurrentUser;
+        final isVip = user?.isVip == true;
         setState(() {
           session.isUrlLoading = false;
-          session.isPaywallRequired = true;
-          session.errorMessage =
-              'Untuk membuka dan menelaah kitab bersama ${session.agent.title}, silakan aktifkan paket langganan Anda.';
+          session.isPaywallRequired = !isVip;
+          session.errorMessage = isVip
+              ? 'Sesi AI sedang dipersiapkan oleh server. Silakan coba lagi.'
+              : 'Untuk membuka dan menelaah kitab bersama ${session.agent.title}, silakan aktifkan paket langganan Anda.';
         });
       }
     } catch (e) {
-      if (!mounted || _authService.currentUser?.uid != openingUid) return;
+      final currentUid = _authService.currentUser?.uid ??
+          _authService.cachedCurrentUser?.uid;
+      if (!mounted ||
+          (openingUid != null && currentUid != null && currentUid != openingUid)) {
+        return;
+      }
       final msg = e.toString().toLowerCase();
-      final isPaywall = msg.contains('permission-denied') ||
-          msg.contains('berlangganan') ||
-          msg.contains('langganan') ||
-          msg.contains('subscription') ||
-          msg.contains('unauthenticated') ||
-          msg.contains('unauthorized') ||
-          msg.contains('not-found') ||
-          (e is AgentAccessException &&
-              (e.code == 'permission-denied' ||
-                  e.code == 'unauthenticated' ||
-                  e.code == 'not-found'));
+
+      final user = _authService.cachedCurrentUser;
+      final isVip = user?.isVip == true;
+      final hasAgentAccess =
+          user != null && user.hasAccessToAgent(session.agent.id);
+
+      // Rule 5: Akun VIP sejati atau pengguna dengan akses aktif DILARANG KERAS terkena paywall.
+      // Paywall HANYA aktif jika server eksplisit menolak hak akses ('permission-denied')
+      // DAN pengguna memang bukan VIP serta tidak memiliki akses aktif ke modul ini.
+      final isPaywall = !isVip &&
+          !hasAgentAccess &&
+          (msg.contains('permission-denied') ||
+              (e is AgentAccessException && e.code == 'permission-denied'));
+
+      final isAuthError = msg.contains('unauthenticated') ||
+          (e is AgentAccessException && e.code == 'unauthenticated');
 
       setState(() {
         session.isUrlLoading = false;
         session.isPaywallRequired = isPaywall;
         session.errorMessage = isPaywall
             ? 'Untuk membuka dan menelaah kitab bersama ${session.agent.title}, silakan aktifkan paket langganan Anda.'
-            : e is AgentAccessException && e.code == 'failed-precondition'
-                ? e.message
-                : 'AI belum bisa dihubungkan. Coba lagi.';
+            : isAuthError
+                ? 'Sesi login Anda belum terhubung. Silakan muat ulang atau masuk kembali.'
+                : e is AgentAccessException && e.code == 'failed-precondition'
+                    ? e.message
+                    : 'AI belum bisa dihubungkan. Coba lagi.';
       });
     }
   }
@@ -1543,6 +1668,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
           session.errorMessage = null;
           session.isTimeoutError = false;
           session.isGooglePermissionError = false;
+          session.isPaywallRequired = false;
           session.isWebLoading = true;
           session.isSessionReady = false;
         });

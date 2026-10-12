@@ -1979,6 +1979,11 @@ const copyCatalog = <String, List<String>>{
     "جلسات المساعدين المفتوحة ({0})"
   ],
   "closeSession": ["Tutup sesi", "Close session", "إغلاق الجلسة"],
+  "openAnotherSpecialist": [
+    "Buka Bidang Lain",
+    "Open Another Specialist",
+    "فتح تخصص آخر"
+  ],
   "backToHomeTooltip": [
     "Kembali ke Beranda",
     "Back to Home",
