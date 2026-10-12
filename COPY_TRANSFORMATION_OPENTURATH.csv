@@ -1,0 +1,283 @@
+﻿Area,Before,After,Ketentuan
+Global,OpenTurath,OpenTurath,Pertahankan wordmark.
+Global,Beranda,Beranda,Pertahankan.
+Global,Keilmuan,Keilmuan,Direktori ruang riset.
+Global,Rujukan,Tersimpan,"Tab koleksi pribadi, bukan pustaka kanonikal."
+Global,Profil,Profil,Pertahankan; judul layar juga Profil.
+Global,Pengaturan,Profil,Judul layar profile_screen saat ini.
+Global,Kembali,Kembali,Pertahankan.
+Global,Batal,Batal,Pertahankan.
+Global,Simpan,Simpan,Pertahankan.
+Global,Hapus,Hapus,Pertahankan untuk tindakan penghapusan yang jelas.
+Global,Tutup,Tutup,Pertahankan.
+Global,Lihat,Lihat,Untuk membuka hasil yang baru disimpan.
+Global,Urungkan,Urungkan,Pertahankan.
+Global,Mengerti,Tutup,Modal informasi nonpersetujuan.
+Global,AI for Islamic Scholarship,Riset kitab turats,Tagline satu kali pada login/tentang; boleh dihapus dari layar kerja.
+Global,Santri Peneliti,Peneliti,Fallback nama; utamakan nama pengguna.
+Global,Peneliti Turats,Peneliti,Fallback nama.
+Global,Santri OpenTurath,Peneliti,Fallback server; bukan identitas pengguna jika nama asli tersedia.
+Global,Tersedia Sekarang,Tersedia,Kamus lokal; hanya dengan status yang terbukti.
+Global,Segera / Segera hadir,Belum tersedia,Tanpa janji waktu rilis; kedua varian ditemukan.
+Global,Kelola Langganan,Langganan,Label tujuan.
+Global,Langganan Aktif,Akses aktif,Sesuaikan dengan scope dan expiry.
+Global,Berlaku hingga,Aktif hingga,Untuk masa akses; kode mempunyai masa penukaran berbeda.
+Global,Akses Penuh Seluruh Kitab,Akses semua ruang riset yang tersedia,Jangan mengklaim semua kitab.
+Global,Riset Turats Tanpa Batas,Riset kitab turats,Hapus klaim tanpa batas.
+Global,Jelajahi seluruh korpus turats Islam dan ibarah asli.,Pilih ruang riset.,Tidak mengklaim seluruh turats terwakili.
+Global,Pilih Paket Ini,Pilih paket,Kamus lokal; tombol checkout sebut total bila relevan.
+Beranda,Apa yang ingin Anda telusuri?,[Hapus],Search sudah memberi tugas yang jelas.
+Beranda,"Cari kitab, istilah, hadis, persoalan...",Cari bidang atau ulama,Sesuai pencarian metadata saat ini; kitab ditambahkan sesudah indeks tersedia.
+Beranda,Hasil Penelusuran,Hasil pencarian,Istilah konsisten.
+Beranda,Tidak ditemukan naskah atau korpus yang sesuai.,Tidak ada hasil,Tidak mengaku mencari isi naskah.
+Beranda,Lanjutkan,Terakhir dibuka,Hanya riwayat pembukaan berhasil.
+Beranda,{metadata} · Sesi Terakhir,Buka kembali,Hapus daftar kitab/subtitle berulang; bukan janji resume percakapan tepat.
+Beranda,Pilihan untuk Anda,[Hapus],Tidak ada personalisasi; Tahawwulat masuk katalog normal.
+Beranda,Korpus khusus · 1.500+ muhadharah naskah lengkap,Manhaj Abu Bakr al-Masyhur,Angka/cakupan penuh hanya dipakai bila dibuktikan manifest.
+Beranda,Masuk,Buka ruang riset,Bedakan dari login akun.
+Beranda,Semua [tautan section],Lihat semua,Tautan ke direktori lengkap.
+Beranda,Semua [filter],Semua bidang,Makna filter eksplisit; bukan daftar empat terakhir.
+Beranda,Belum ada modul pada rumpun ini.,Belum ada ruang riset untuk bidang ini,Status isi kosong.
+Beranda,{judul} belum tersedia (Segera Hadir). Modul ini sedang dalam tahap kurasi naskah kitab primer.,Ruang riset ini belum tersedia,Cegah navigasi; tidak mengarang tahap kurasi.
+Keilmuan,Direktori korpus dan tradisi naskah primer,[Hapus],Judul dan kontrol cukup.
+Keilmuan,{n} rujukan korpus,{n} ruang riset,Hitung objek yang sebenarnya ditampilkan.
+Keilmuan,Cari Keilmuan,Cari,Tooltip pencarian.
+Keilmuan,Tutup Pencarian,Tutup pencarian,Sentence case.
+Keilmuan,"Cari spesialis, kitab, atau bab...",Cari bidang atau ulama,Indeks bab tidak ada; jangan menjanjikan pencarian bab.
+Keilmuan,Tidak ada rujukan yang sesuai.,Tidak ada hasil,Sertakan Hapus filter bila ada filter aktif.
+Keilmuan,Korpus Khusus,[Hapus pada kartu Tahawwulat],Jenis/cakupan pindah ke metadata dan detail.
+Keilmuan,1.500+ muhadharah · naskah lengkap · takhrij sanad al-habib abu bakar al-masyhur,Manhaj Abu Bakr al-Masyhur,Tidak mengklaim takhrij tanpa provenance.
+Keilmuan,Masuk ke Ruang Riset,Buka ruang riset,Singkat dan konsisten.
+Keilmuan,Dua judul referenceBooks yang digabung dan dielipsis,{cakupan ringkas},Nilai berasal dari field cakupan; jumlah kitab setelah data diselesaikan.
+Keilmuan,Hadits / Hadits & Syarah Sunnah,Hadis / Hadis & Syarah,Standarkan label bidang dan kartu.
+Keilmuan,Usul Fiqh / Ushul Fiqih / Ushul Fiqh,Usul Fikih,Satu standar ejaan UI; judul kitab tetap asli.
+Keilmuan,Aqidah / Aqidah & Ilmu Kalam,Akidah / Akidah & Ilmu Kalam,Satu standar ejaan UI.
+Keilmuan,Tasawuf & Akhlaq / Tasawwuf,Tasawuf & Akhlak / Tasawuf,Satu standar ejaan UI.
+Keilmuan,Tarikh,Sejarah,Label filter; ID tarikh tetap.
+Keilmuan,Sejarah & Sirah Nabawiyyah,Sejarah & Sirah,Cakupan rinci pada detail.
+Keilmuan,Fikih Muqaran,Perbandingan Mazhab,Bukan mazhab kelima; ID tetap.
+Keilmuan,Habib Umar bin Hafiz,Korpus Habib Umar bin Hafizh,Pilih satu transliterasi nama dan tambahkan alias pencarian.
+Keilmuan,Manhaj Fiqh Fitnah & Tanda Zaman • Rukun Keempat,Manhaj Abu Bakr al-Masyhur,Penjelasan istilah khusus ada di detail dengan atribusi.
+Keilmuan,Kitab & Ribuan Muhadharah Tarim,Karya dan pengajian,Cakupan rinci hanya yang terdokumentasi.
+Keilmuan,Al-Muhaqqiq (Riset Dalil),Riset dalil,Pertahankan nama lama sebagai alias jika diperlukan.
+Keilmuan,Al-Bayan (Penjelasan Luas),Penjelasan,Fungsi lebih jelas daripada persona.
+Keilmuan,Riset Mendalam,Riset dalil,Hindari klaim kualitas tanpa pembeda operasional.
+Keilmuan,Penjelasan Luas,Penjelasan,Pertahankan fungsi.
+Langganan,Langganan Ruang Riset,Langganan,Judul layar.
+Langganan,Kode Akses [AppBar],[Hapus],Hilangkan pemanggil duplikat.
+Langganan,Dukungan Riset Berkelanjutan,Pilih akses,Tidak memasarkan dengan jargon.
+Langganan,Akses komprehensif ke korpus naskah primer turats Islam dengan analisis komparatif instan.,[Hapus],Detail paket menjelaskan cakupan nyata.
+Langganan,AKSES PENUH,Semua ruang riset,Sentence case.
+Langganan,SEMUA 11+ MODUL,{n} ruang riset tersedia,Hitungan server-ready; enam active lokal bukan otomatis enam siap.
+Langganan,Paket Seluruh AI Keilmuan,Semua ruang riset,Satu nama paket.
+Langganan,"Fikih 4 mazhab, Tahawwulat, hadits, tafsir, aqidah, ushul, dan sastra bahasa.",Lihat ruang riset yang termasuk,Tautan ke daftar tersedia; yang belum tersedia diberi status.
+Langganan,Bulanan,1 bulan,Konsisten dengan durasi lain.
+Langganan,6 Bulan,6 bulan,Sentence case.
+Langganan,1 Tahun · Hemat 25%,1 tahun,"Diskon terpisah, dihitung setelah harga server benar."
+Langganan,Rp 890.000 / tahun,Rp799.000 / tahun [menurut backend arsip],Harga produksi harus berasal dari quote server; ini temuan snapshot.
+Langganan,Akses simultan ke 11+ modul naskah primer turats,Akses ruang riset yang tersedia,Tidak menjanjikan modul coming soon sebagai siap.
+Langganan,Penelusuran tanpa batas kuota pertanyaan harian,Batas penggunaan mengikuti layanan riset,"Jika benar tidak ada batas tambahan OpenTurath, jelaskan secara spesifik di detail paket."
+Langganan,"Sitasi marja' kitab asli, nomor halaman & matan lengkap",Periksa sumber yang dicantumkan pada jawaban,Tidak menjamin locator yang tidak tersedia.
+Langganan,Prioritas kurasi naskah dan pembaruan berkala,Pembaruan pustaka,Tampilkan hanya jika manfaat ini benar-benar berlaku.
+Langganan,Paket Akses Penuh Semua AI / All Access,Semua ruang riset,Label tampilan; ID internal tidak diubah.
+Langganan,Akses ke seluruh modul AI OpenTurath,Akses ruang riset yang termasuk dalam paket,Scope eksplisit.
+Langganan,Pilih Paket Ini ({harga}),Lanjutkan · {harga},Tahap berikutnya pembayaran; total dari server.
+Langganan,PILIHAN MODUL SATUAN,Satu ruang riset,Sentence case.
+Langganan,1 Modul Spesialis Terpilih,Satu ruang riset,Hapus pengulangan bila sudah menjadi judul section.
+Langganan,Fokus telaah pada satu disiplin keilmuan tertentu,Pilih ruang riset,"Instruksi untuk selector, juga mendukung korpus tokoh."
+Langganan,Rp 50.000 / bln,Rp50.000 / bulan,"Harga dari katalog, bukan string hardcoded."
+Langganan,{judul} · {kategori},{judul},Kategori ditambah hanya jika diperlukan membedakan pilihan.
+Langganan,Langganan {modul} (Rp 50.000),Lanjutkan · {harga},Jangan mencetak Rp50.000 jika harga selected item berbeda.
+Langganan,Punya voucher atau kode redeem santri? Klaim di sini,Gunakan kode akses,"Satu baris, sesudah status akses sebelum paket."
+Langganan,Nomor WhatsApp Konfirmasi,Nomor WhatsApp,Label field; jelaskan kebutuhan nyata satu kali.
+Langganan,Masukkan nomor WhatsApp aktif untuk pengiriman bukti aktivasi langganan dan rincian transaksi riset Anda.,Nomor untuk konfirmasi pembayaran,"Gunakan hanya jika pengiriman benar-benar tersedia; jika tidak, jelaskan penggunaan checkout sebenarnya."
+Langganan,Contoh: 081234567890,081234567890,"Contoh format sebagai hint, label tetap terpisah."
+Langganan,Masukkan nomor telepon yang valid.,Periksa nomor WhatsApp,Inline validation; pertahankan format internasional jika didukung.
+Langganan,Lanjutkan Pembayaran,Lanjutkan pembayaran,Sentence case.
+Langganan,Silakan masuk akun terlebih dahulu untuk berlangganan.,Masuk untuk melanjutkan,CTA Masuk.
+Langganan,Terjadi kendala saat menyiapkan sesi pembayaran. Periksa koneksi internet Anda lalu coba kembali.,Pembayaran belum dapat dibuka. Coba lagi.,Tidak selalu menyalahkan koneksi.
+Langganan,Alhamdulillah! Pembayaran berhasil. Akses ruang riset Anda telah aktif!,Pembayaran diterima,Status akses/provisioning ditampilkan terpisah.
+Langganan,Tidak dapat membuka sesi pembayaran saat ini. Silakan coba kembali.,Pembayaran belum dapat dibuka. Coba lagi.,Satu pesan.
+Voucher,Klaim Kode Akses Santri,Gunakan kode akses,Judul sheet.
+Voucher,Punya kode voucher khusus? Tukarkan untuk membuka akses.,[Hapus],Tidak menambah informasi operasional.
+Voucher,CONTOH: SYAFII7D,Masukkan kode,Label input Kode akses selalu terlihat.
+Voucher,Tukarkan Kode Akses,Aktifkan,Aksi utama.
+Voucher,Silakan masukkan kode akses santri terlebih dahulu.,Masukkan kode akses,"Inline, bukan snackbar jauh dari field."
+Voucher,Kode berhasil diaktifkan! / Kode akses berhasil diaktifkan!,Kode diterima,Konfirmasi transaksi; tampilkan nama modul dan masa berlaku dari server.
+Voucher,Gagal mengaktifkan kode. / Gagal menukarkan kode akses.,Kode belum dapat diaktifkan. Coba lagi.,Pertahankan input dan jalur retry.
+Voucher,Kode redeem tidak boleh kosong.,Masukkan kode akses,Map error invalid-argument.
+Voucher,Kode redeem tidak ditemukan atau salah.,Kode tidak ditemukan,Map not-found.
+Voucher,Kode redeem ini sudah tidak aktif.,Kode sudah tidak aktif,Map failed-precondition.
+Voucher,Batas pemakaian kode redeem ini sudah tercapai.,Kuota kode sudah habis,Map resource-exhausted; tidak dibingungkan dengan kuota pertanyaan.
+Voucher,Masa berlaku penukaran kode ini telah kedaluwarsa.,Kode sudah kedaluwarsa,Map deadline-exceeded; bukan expiry akses.
+Voucher,Anda sudah pernah menukarkan kode ini sebelumnya.,Kode sudah digunakan pada akun ini,"Jika request pertama timeout, tampilkan akses hasil yang sudah ada."
+Voucher,Login diperlukan untuk menukarkan kode akses.,Masuk untuk menggunakan kode,Map unauthenticated.
+Voucher,Alhamdulillah! Akses {hari} hari untuk modul ini berhasil diaktifkan.,Kode diterima · {ruang riset},Tanggal akhir dari server; jangan janjikan notebook siap sebelum provisioning.
+Voucher,Terjadi kendala koneksi: {exception},Tidak dapat menghubungi layanan. Coba lagi.,Log teknis disimpan internal; exception tidak ditampilkan ke pengguna.
+Profil,PRO / TRIAL,Akses aktif / Belum ada akses,"Derived dari entitlement sebenarnya, bukan satu plan global."
+Profil,Tingkatkan ke OpenTurath Pro,[Hapus],Status dan baris Langganan cukup; tidak mengulang upsell.
+Profil,Akses korpus kitab tanpa batas kuota.,[Hapus],Klaim tidak dibuktikan.
+Profil,Upgrade,Lihat paket,Hapus bila hanya menduplikasi tile Langganan.
+Profil,AKUN & LISENSI,Akun,Sentence case.
+Profil,Paket & Langganan,Langganan,Satu tujuan.
+Profil,Klaim Kode Akses Santri [tile],[Hapus],Akses melalui Langganan.
+Profil,Tukarkan voucher atau kode akses trial terkontrol,[Hapus],Bahasa operasional internal.
+Profil,Paket Semua AI (Akses Penuh){expiry},Semua ruang riset · aktif hingga {tanggal},Berdasarkan scope yang benar.
+Profil,Paket Rumpun Keilmuan{expiry},{nama paket} · aktif hingga {tanggal},Hanya jika paket tersebut ada.
+Profil,Paket Spesialis Satuan{expiry},{nama ruang riset} · aktif hingga {tanggal},Scope terukur.
+Profil,Langganan Aktif{expiry},Akses aktif hingga {tanggal},Tidak menganggap semua modul terbuka.
+Profil,Belum Berlangganan · Aktifkan Akses Penuh,Belum ada akses aktif,Voucher aktif tidak boleh masuk state ini.
+Profil,TAMPILAN & PREFERENSI,Tampilan,Sentence case.
+Profil,Tema Tampilan,Tema,Nama field.
+Profil,Ikuti Pengaturan Sistem / Ikuti Sistem,Ikuti sistem,Satu label.
+Profil,Otomatis menyesuaikan tema perangkat Anda,[Hapus],Sudah tersirat pada label.
+Profil,Mode Terang (Warm Off-White),Terang,Hapus nama token desain.
+Profil,"Kertas alami, kontras tinggi yang nyaman di mata",[Hapus],Tidak diperlukan untuk memilih tema.
+Profil,Mode Gelap (Deep Obsidian),Gelap,Hapus nama token desain.
+Profil,Minim silau untuk muthala'ah dan riset malam hari,[Hapus],Tidak diperlukan.
+Profil,Beralih ke Tema Terang / Beralih ke Tema Gelap,Gunakan tema terang / Gunakan tema gelap,Tooltip rail desktop.
+Profil,Bahasa Aplikasi,Bahasa,"Jika belum dapat diubah, tampilkan info statis tanpa chevron."
+Profil,Bahasa Indonesia (Utama),Indonesia,Jangan menunjukkan pemilih bahasa yang belum bekerja.
+Profil,Antarmuka aplikasi saat ini dioptimalkan untuk Bahasa Indonesia dengan dukungan penuh teks Arab gundul/berharakat pada naskah kitab kuning primer.,Antarmuka: Indonesia. Teks kitab: Arab.,Hapus klaim dukungan penuh sebelum diuji.
+Profil,Dukungan antarmuka penuh Bahasa Arab (العربية) dan Inggris (English) sedang dalam proses finalisasi kurasi kebahasaan.,[Hapus],Tidak menjanjikan tahap rilis yang tidak dibuktikan.
+Profil,TENTANG & KEBIJAKAN,Informasi,Sentence case.
+Profil,Ketentuan Layanan,Ketentuan layanan,Pertahankan substansi dokumen.
+Profil,Syarat dan ketentuan riset OpenTurath,[Hapus],Label sudah jelas.
+Profil,Kebijakan Privasi,Privasi,Label menu; judul dokumen dapat Kebijakan privasi.
+Profil,Perlindungan kerahasiaan data riset,[Hapus],"Ganti dengan isi kebijakan faktual, bukan janji di menu."
+Profil,Tentang OpenTurath,Tentang OpenTurath,Pertahankan.
+Profil,Versi {versi} · AI for Islamic Scholarship,Versi {versi},Hindari tagline berulang.
+Profil,OpenTurath adalah asisten riset naskah primer keilmuan Islam yang menggabungkan ribuan halaman kitab kuning mu'tabar dengan teknologi penelaahan cerdas.,OpenTurath membantu menelusuri dan mempelajari sumber turats.,Cakupan sebenarnya dicantumkan dalam pustaka.
+Profil,"Prinsip Ilmiah: Berbasis sanad, penelusuran ibarah naskah asli, dan kehati-hatian dalam istinbath. Bukan pengganti proses talaqqi dengan masyayikh.",Periksa kutipan pada sumber dan pelajari persoalan bersama guru yang kompeten.,Jangan menisbatkan sanad pada software.
+Profil,Konfirmasi Keluar,Keluar dari akun?,Pertanyaan langsung.
+Profil,Apakah Anda yakin ingin keluar dari akun OpenTurath AI?,Sesi riset pada perangkat ini akan ditutup.,Sesuai signOut yang membersihkan sesi WebView.
+Profil,Keluar dari Akun / Keluar Akun,Keluar,Konsisten.
+Profil,Hapus Akun & Data / Hapus Akun & Data Riset,Hapus akun,Detail menjelaskan scope aktual.
+Profil,Hapus Akun Permanen,Hapus akun,"Konsekuensi pada pesan, bukan judul panjang."
+Profil,PERINGATAN: Tindakan ini permanen ... seluruh data ... dihapus secara menyeluruh dari server.,Akun OpenTurath akan dihapus. Tinjau data yang ikut dihapus sebelum melanjutkan.,Wajib daftar komponen yang benar; jangan gunakan copy penghapusan lengkap sebelum backend mendukungnya.
+Profil,Akun dan seluruh data Anda telah berhasil dihapus.,Akun OpenTurath dihapus,Hanya setelah penghapusan terkait berhasil; kegagalan parsial dilaporkan terpisah.
+Profil,Sesi telah kedaluwarsa. Silakan masuk ulang terlebih dahulu.,Masuk kembali untuk menghapus akun,Reautentikasi sebelum tindakan destruktif.
+Profil,Terjadi gangguan jaringan.,Penghapusan belum selesai. Coba lagi.,Jangan menutupi kegagalan parsial sebagai satu error jaringan.
+Profil,Saya Pahami & Setuju,Tutup,Untuk pembaca kebijakan; persetujuan kontrak yang nyata tetap memakai aksi persetujuan terpisah.
+Kebijakan,Hanya mengumpulkan profil dasar untuk otentikasi dan personalisasi,Profil digunakan untuk akun; data transaksi dan nomor yang diminta digunakan untuk pembayaran.,"Harus cocok dengan inventaris data dan integrasi aktual, bukan teks legal final."
+Kebijakan,Seluruh catatan/riwayat dienkripsi ... tidak dibagikan kepada pihak ketiga manapun,Catatan tersimpan di perangkat ini. Sesi riset dan pembayaran menggunakan layanan pihak ketiga yang dijelaskan di kebijakan.,Copy kerja; terangkan penyedia dan perlindungan sebenarnya setelah verifikasi operasional.
+Kebijakan,Koneksi ... SSL/TLS; kata sandi tidak pernah disimpan,Masuk melalui Google. Pengelolaan sesi dan data dijelaskan di kebijakan privasi.,Jangan membuat klaim infrastruktur tambahan hanya dari UI.
+Kebijakan,Hak mutlak menghapus seluruh riwayat kapan saja melalui Pengaturan,Hapus akun melalui Profil → Hapus akun.,"Rinci scope, data provider, dan retensi transaksi yang benar."
+Login,Lanjutkan dengan Google,Lanjutkan dengan Google,Pertahankan.
+Login,Tidak dapat membuka tautan halaman.,Tautan belum dapat dibuka,Sediakan coba lagi/copy link bila sesuai.
+Login,Koneksi internet bermasalah. Periksa jaringan Anda.,Tidak terhubung ke internet,Gunakan hanya jika koneksi memang diketahui putus.
+Login,Gagal masuk akun Google. Silakan coba kembali.,Gagal masuk. Coba lagi.,Jangan menganggap cancel pengguna sebagai error.
+Login,"Dengan masuk, Anda menyetujui","Dengan melanjutkan, Anda menyetujui Ketentuan layanan dan telah membaca Kebijakan privasi.",Keduanya tautan; cocokkan dengan alur persetujuan sebenarnya.
+Sesi Google,Batal Hubungkan Google?,Batalkan masuk Google?,Jika memang membatalkan sesi yang diperlukan.
+Sesi Google,Akun Google diperlukan agar ruang riset manuskrip AI dapat langsung digunakan tanpa meminta login berulang kali.,Gunakan akun Google yang memiliki akses ke ruang riset.,Tidak menjamin login tak akan diminta ulang.
+Sesi Google,Tetap di Sini,Lanjutkan masuk,Tindakan jelas.
+Sesi Google,Sesi Google Terhubung,Google terhubung,Jika koneksi benar telah dikonfirmasi.
+Sesi Google,Menyiapkan akses korpus riset kitab...,Menyiapkan ruang riset…,"Tahap sedang berjalan, bukan janji aktif."
+Sesi Google,Hubungkan Akun Google,Masuk ke Google,Selaraskan dengan tindakan provider.
+Sesi Google,Autentikasi sesi riset naskah turats,[Hapus],Istilah teknis tidak diperlukan.
+Sesi Google,Masuk ke akun Google Anda agar ruang riset AI langsung aktif tanpa meminta login berulang.,Gunakan akun Google yang mendapat akses.,Scope akses harus sesuai akun.
+Ruang riset,Ruang Riset AI / Ruang Riset Turats,Ruang riset,Utamakan nama modul pada AppBar.
+Ruang riset,Ruang Telaah Naskah Primer,[Hapus],Subtitle AppBar tidak menambah orientasi.
+Ruang riset,Opsi Riset / Opsi Ruang Riset,Opsi,Tooltip; heading menu tidak wajib.
+Ruang riset,Ukuran Teks Telaah,Ukuran teks,Label kontrol.
+Ruang riset,Sesuaikan ukuran huruf naskah ({persen}%),{persen}%,Nilai cukup; instruksi tidak diulang.
+Ruang riset,Sesuaikan ukuran huruf naskah dan terjemahan untuk kenyamanan membaca,[Hapus],Judul dan pilihan cukup.
+Ruang riset,Ringkas (85%),85%,Jangan menyamakan font kecil dengan ringkasan.
+Ruang riset,Normal (100%),100% · bawaan,Ukuran default.
+Ruang riset,Sedang (120%),120%,Nilai terukur.
+Ruang riset,Besar (140%),140%,Nilai terukur.
+Ruang riset,Ekstra Besar (165%),165%,Nilai terukur.
+Ruang riset,Maksimal Naskah (200%),200%,Tidak mengunci pembesaran OS global.
+Ruang riset,Salin Jawaban AI Terakhir,Salin jawaban,Hanya jika jawaban terakhir dapat diidentifikasi andal.
+Ruang riset,Salin teks hasil telaah ke papan klip,[Hapus],Sudah tersirat.
+Ruang riset,Simpan ke Rujukan,Simpan jawaban,Jawaban AI belum otomatis kutipan sumber.
+Ruang riset,Tandai dan simpan ibarah ke koleksi rujukan Anda,[Hapus],Tidak menamai sintesis AI sebagai ibarah.
+Ruang riset,Buka di Browser Eksternal,Buka di browser,Tindakan jelas.
+Ruang riset,Buka sesi riset di peramban web perangkat,[Hapus],Tidak diperlukan.
+Ruang riset,Menyiapkan korpus naskah primer...,Memuat ruang riset…,Sesuai tindakan jaringan.
+Ruang riset,URL riset tidak tersedia. Silakan hubungi pengelola.,Ruang riset belum dapat dibuka,CTA Hubungi pengelola bila jalurnya tersedia.
+Ruang riset,Gagal memuat ruang riset. Silakan coba beberapa saat lagi.,Ruang riset gagal dimuat,CTA Coba lagi.
+Ruang riset,Tidak dapat memuat sesi riset. Periksa koneksi internet Anda lalu coba kembali.,Ruang riset gagal dimuat. Coba lagi.,Pisahkan offline jika diketahui.
+Ruang riset,Akses Berlangganan Diperlukan,Perlu akses aktif,Dapat berupa langganan atau kode.
+Ruang riset,Modul {judul} memerlukan langganan aktif. Silakan pilih paket langganan untuk mengakses ruang riset.,Lihat pilihan akses untuk {judul}.,Tujuan Langganan memiliki satu entry kode.
+Ruang riset,Anda belum memiliki akses ke ruang riset {judul}. Silakan periksa atau aktifkan paket langganan Anda.,Akses ke {judul} belum tersedia pada akun ini.,Bedakan provisioning gagal dengan entitlement tidak ada.
+Ruang riset,Kendala Memuat Ruang Riset,Ruang riset gagal dimuat,Konsisten.
+Ruang riset,Buka Paket Langganan,Lihat akses,Menu Langganan dengan konteks modul.
+Ruang riset,Coba Muat Ulang,Coba lagi,Konsisten.
+Ruang riset,Kembali ke Beranda,Ke beranda,Konsisten.
+Ruang riset,Belum ada jawaban AI yang dapat disalin.,Belum ada jawaban untuk disalin,Tidak menyalin main sebagai fallback.
+Ruang riset,Hasil telaah AI berhasil disalin! / Hasil telaah AI berhasil disalin,Jawaban disalin,Hanya sesudah clipboard sukses.
+Ruang riset,Tidak dapat menyalin telaah saat ini. Silakan coba kembali.,Jawaban belum dapat disalin,Tawarkan retry/fungsi provider jika tersedia.
+Ruang riset,Belum ada telaah AI yang dapat disimpan.,Belum ada jawaban untuk disimpan,Konsisten.
+Ruang riset,Tidak dapat menyimpan telaah kosong,Belum ada jawaban untuk disimpan,Konsisten.
+Ruang riset,Telaah {judul},Jawaban · {judul},Fallback nama item; gunakan pertanyaan asli jika tersedia.
+Ruang riset,Kutubut Turats,Sumber belum tercatat,Jangan mengganti bibliografi hilang dengan nama generik.
+Ruang riset,Telaah tersimpan di Bookmark! / Telaah tersimpan di Bookmark,Jawaban disimpan,Snackbar dengan Lihat.
+Ruang riset,Tidak dapat menyimpan bookmark saat ini. Silakan coba kembali.,Jawaban belum tersimpan. Coba lagi.,Tidak kehilangan input/isi.
+Adab,Adab Riset & Penafian Talaqqi,Tentang hasil riset,Informasi satu kali dan dapat diakses kembali; tidak mengulang dialog tiap sesi.
+Adab,"Wasilah Bantu, Bukan Mufti",Periksa sumber,"Orientasi tugas, bukan slogan."
+Adab,"OpenTurath adalah perkakas digital pelacak ibarah dan komparasi naskah primer kitab kuning, bukan mufti fatwa mandiri.",Jawaban AI membantu penelusuran. Periksa kutipan pada sumbernya.,Batas tugas singkat.
+Adab,Kewajiban Talaqqi Bersanad,Belajar bersama guru,Bukan pernyataan sanad software.
+Adab,Kajian agama hakiki wajib melalui bimbingan talaqqi dengan masyayikh dan ulama yang kompeten.,Pelajari persoalan bersama guru yang kompeten.,Pertahankan adab dengan bahasa alami.
+Adab,Sikap Ihtiyath (Wara'),Cocokkan edisi,Tugas ilmiah konkret.
+Adab,Selalu verifikasi dalil dan ibarah ke naskah fisik cetakan mu'tamad sebelum menjadikannya landasan kajian.,Cocokkan kutipan dan halaman dengan edisi yang dirujuk.,Sumber digital edisi sah juga dapat ditelusuri.
+Adab,Saya Memahami & Menjaga Adab,Lanjutkan,Tidak meminta afirmasi moral berulang.
+Tersimpan,Catatan ibarah dan referensi naskah tersimpan,[Hapus],Judul Tersimpan cukup; jenis item menunjukkan isi.
+Tersimpan,Cari Rujukan,Cari tersimpan,Tooltip.
+Tersimpan,"Cari dalam kutipan, kitab, atau topik...",Cari dalam tersimpan,"Pencarian pada data yang ada, bukan seluruh pustaka."
+Tersimpan,Belum Ada Rujukan Tersimpan,Belum ada yang disimpan,Empty state.
+Tersimpan,Tandai ibarah kitab dari ruang riset AI untuk menelaah dan menyimpannya di sini.,Simpan jawaban dari ruang riset.,"Setelah simpan kutipan native ada, dapat diperluas."
+Tersimpan,Mulai Menelusuri,Buka keilmuan,Tujuan jelas.
+Tersimpan,Hapus Rujukan?,Hapus dari tersimpan?,Tidak menyiratkan menghapus sumber kitab.
+Tersimpan,Rujukan {judul} akan dihapus dari daftar tersimpan.,{judul} akan dihapus dari tersimpan.,Pertahankan judul.
+Tersimpan,Rujukan {judul} berhasil dihapus.,Dihapus dari tersimpan,Sertakan Urungkan.
+Tersimpan,Hapus Rujukan,Hapus dari tersimpan,Tooltip.
+Tersimpan,Kutipan ibarah berhasil disalin ke clipboard.,Teks disalin,Gunakan Kutipan disalin hanya untuk sourceExcerpt.
+Tersimpan,Format kutipan ilmiah berhasil disalin & siap dibagikan.,Sitasi disalin,Hanya jika sumber/edisi terisi; jika tidak Jawaban disalin.
+Tersimpan,Salin Ibarah,Salin kutipan / Salin jawaban,"Sesuai contentKind, bukan tebakan Unicode."
+Tersimpan,Lihat Bukti,Lihat sumber / Buka jawaban,Lihat sumber hanya dengan sumber yang terhubung.
+Tersimpan,Bagikan Rujukan Ilmiah,Salin sitasi,"Fungsi saat ini clipboard, bukan native share."
+Tersimpan,Marja'/Rujukan,Sumber,Format ekspor.
+Tersimpan,Kajian & Penjelasan,Jawaban AI,Pisahkan dari kutipan primer.
+Tersimpan,Ditelusuri via OpenTurath AI (Kecerdasan Buatan Turats Islam),Disimpan melalui OpenTurath,"Metadata aplikasi, bukan pengarang kitab."
+Bukti sumber,Sumber {nomor},Sumber {nomor nyata},Jangan hardcode citationNumber 1 pada semua item.
+Bukti sumber,Penulis / Musannif/Pengarang,Pengarang,"Harus nama pengarang, bukan agentTitle."
+Bukti sumber,Halaman,Halaman cetak / Halaman PDF,"Pilih menurut locator, jangan menyamakan dua nomor."
+Bukti sumber,Kategori / Disiplin,Bidang,"Konteks, bukan otoritas."
+Bukti sumber,Kutipan Ibarah Asli (Arab),Kutipan sumber,Hanya saat terhubung ke sumber; Arab ditampilkan RTL.
+Bukti sumber,Intisari & Analisis Kontekstual,Penjelasan AI,Jangan menyamakan dengan syarah pengarang.
+Bukti sumber,Taqrir & Syarah,Penjelasan AI,Format ekspor ketika penjelasan berasal dari sistem.
+Bukti sumber,Maktabah Syamilah,Cari di Syamilah,"Untuk URL pencarian fallback; jika exact source, Buka sumber."
+Bukti sumber,Bagikan Kutipan Rujukan,Salin sitasi,Jika hanya clipboard; share memerlukan implementasi berbeda.
+Bukti sumber,Ibarah asli berhasil disalin ke clipboard.,Kutipan disalin,Hanya untuk kutipan sumber.
+Bukti sumber,Format kutipan ilmiah rujukan berhasil disalin.,Sitasi disalin,Sumber wajib cukup lengkap.
+Bukti sumber,Tidak dapat membuka rujukan eksternal: {url},Sumber belum dapat dibuka,URL teknis tidak dijadikan pesan error utama.
+Pembayaran,Pembayaran Aman DOKU,Pembayaran · DOKU,"Nama penyedia, bukan klaim keamanan absolut."
+Pembayaran,Periksa Status Pembayaran & Muat Ulang,Periksa pembayaran,Jangan membuat order baru saat cek status.
+Pembayaran,Batalkan Pembayaran?,Tutup pembayaran?,Menutup tampilan tidak membatalkan invoice.
+Pembayaran,Apakah Anda yakin ingin menutup laman pembayaran? Sesi pembayaran Anda masih tersimpan.,Halaman akan ditutup. Status pembayaran tetap dapat diperiksa.,Sediakan akses kembali ke transaksi jika dijanjikan.
+Pembayaran,Lanjutkan Bayar,Lanjutkan pembayaran,Konsisten.
+Pembayaran,"Ya, Tutup",Tutup,Tindakan eksplisit.
+Pembayaran,Pembayaran Berhasil Diverifikasi,Pembayaran diterima,Setelah verifikasi server.
+Pembayaran,Akses ke ruang riset Anda telah aktif secara otomatis. Mengalihkan...,Menyiapkan akses…,Tampilkan Akses aktif hanya setelah siap.
+Pembaruan,Pembaruan v{versi} Tersedia,Versi {versi} tersedia,Untuk desktop yang belum diunduh.
+Pembaruan,Pembaruan v{versi} Siap Dipasang,Versi {versi} siap dipasang,Untuk file yang sudah terunduh dan diverifikasi.
+Pembaruan,Ketuk untuk membuka tautan pembaruan versi desktop terbaru.,Buka unduhan pembaruan,Aksi sesuai platform.
+Pembaruan,Selesai diunduh di latar belakang. Ketuk pasang untuk menerapkan.,[Hapus],Status dan tombol Pasang cukup.
+Pembaruan,Perbarui,Unduh pembaruan,Untuk tautan unduh desktop.
+Pembaruan,Pasang,Pasang,Pertahankan jika binary siap.
+Error,Koneksi Terputus,Tidak terhubung,Hanya bila koneksi diketahui putus.
+Error,Tidak dapat memuat data saat ini. Periksa koneksi internet lalu coba lagi.,Data belum dapat dimuat. Coba lagi.,Default tidak menyalahkan jaringan tanpa bukti.
+Error,Coba Lagi,Coba lagi,Sentence case.
+Pustaka baru,[Belum ada] Bidang Ilmu,Bidang Ilmu,Label jalur.
+Pustaka baru,[Belum ada] Korpus Ulama,Korpus Ulama,Label jalur.
+Pustaka baru,[Belum ada] Pustaka,Pustaka,Akses bibliografi dari kartu dan ruang riset.
+Pustaka baru,[Belum ada] Cari kitab atau pengarang,Cari kitab atau pengarang,Pencarian katalog bibliografi.
+Pustaka baru,[Belum ada] 87 entri katalog,87 entri katalog,Hanya jumlah entri file saat ini; derived saat implementasi.
+Pustaka baru,[Belum ada] Metadata belum seluruhnya ditelaah,Metadata belum seluruhnya ditelaah,Status katalog; tidak mengaku semua data final.
+Pustaka baru,[Belum ada] Detail edisi,Detail edisi,"Akses penerbit, muhaqqiq, cakupan, relasi."
+Pustaka baru,[Belum ada] Sumber jawaban,Sumber jawaban,Berbeda dari katalog semua sumber.
+Pustaka baru,[Belum ada] Belum tercatat,Belum tercatat,Field bibliografi kosong; bukan tanpa pengarang/muhaqqiq.
+Pustaka baru,[Belum ada] Metadata sedang ditelaah,Metadata sedang ditelaah,Gunakan hanya jika pekerjaan penelaahan benar berstatus aktif; selain itu Perlu penelaahan.
+Pustaka baru,[Belum ada] Hapus filter,Hapus filter,Memulihkan hasil kosong.
+Pustaka baru,[Belum ada] Filter / Urutkan,Filter / Urutkan,Kontrol hanya untuk field yang tersedia.
