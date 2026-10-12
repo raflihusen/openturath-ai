@@ -108,18 +108,26 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   Future<void> _loadData() async {
     try {
-      if (_authService.currentUser == null) {
+      // 1. Dapatkan profil pengguna: memory -> disk cache -> restoreSession
+      var user = _authService.currentUser != null
+          ? await _authService.getCurrentUserModel()
+          : null;
+      user ??= _authService.cachedCurrentUser;
+      user ??= await _authService.restoreSession();
+
+      // 2. Hanya navigasikan ke login jika benar-benar tidak ada sesi di memory maupun disk cache
+      if (user == null && _authService.currentUser == null) {
         if (!mounted) return;
         Navigator.pushReplacementNamed(context, AppRoutes.login);
         return;
       }
 
       final results = await Future.wait([
-        _authService.getCurrentUserModel(),
+        user != null ? Future.value(user) : _authService.getCurrentUserModel(),
         _agentService.getAgents(),
       ]).timeout(
         const Duration(seconds: 4),
-        onTimeout: () => [null, AgentModel.defaultAgents],
+        onTimeout: () => [user, AgentModel.defaultAgents],
       );
 
       if (!mounted) return;

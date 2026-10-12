@@ -379,7 +379,18 @@ class AuthService {
   // ── Get Current UserModel from Firestore ───────────────────────
   Future<UserModel?> getCurrentUserModel() async {
     final user = currentUser;
-    if (user == null) return null;
+    if (user == null) {
+      if (cachedCurrentUser != null) return cachedCurrentUser;
+      try {
+        final prefs = await SharedPreferences.getInstance();
+        final uid = prefs.getString('current_user_uid');
+        if (uid != null && uid.isNotEmpty) {
+          final cached = await _getCachedUser(uid);
+          if (cached != null) return cached;
+        }
+      } catch (_) {}
+      return null;
+    }
     try {
       final doc = await _db
           .collection(AppConstants.colUsers)
