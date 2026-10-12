@@ -11,8 +11,8 @@ const notebookUiScript = r'''
     }
     return;
   }
-  const answerSelector = '.chat-message[data-sender="model"], .model-message, .response-message, .to-user-container, .to-user-message, .chat-message-pair .answer, [data-message-author-role="assistant"], app-chat-response, app-chat-message, .chat-response, [role="article"]';
-  const questionSelector = '.chat-message[data-sender="user"], .user-message, .from-user, .to-model-container, [data-message-author-role="user"], app-chat-query, app-chat-prompt';
+  const answerSelector = '.chat-message[data-sender="model"], .model-message, .response-message, .to-user-container, .to-user-message, .chat-message-pair .answer, [data-message-author-role="assistant"], app-chat-response, app-chat-message, .chat-response, [role="article"], app-chat-turn, chat-turn, [class*="turn" i], [class*="response" i]';
+  const questionSelector = '.chat-message[data-sender="user"], .user-message, .from-user, .to-model-container, [data-message-author-role="user"], app-chat-query, app-chat-prompt, [class*="query" i], [class*="prompt" i], [class*="user-turn" i]';
   const visible = el => !!el && el.getClientRects().length > 0 && getComputedStyle(el).visibility !== 'hidden' && getComputedStyle(el).display !== 'none';
   const text = el => (el?.innerText || el?.textContent || '').trim();
   function answerText(el) {
@@ -260,10 +260,10 @@ const notebookUiScript = r'''
       .ot-chat-path {
         display: flex !important;
         flex-direction: column !important;
-        flex: 1 1 0px !important;
-        min-height: 0 !important;
+        flex: 1 1 auto !important;
+        min-height: 100% !important;
         min-width: 0 !important;
-        height: auto !important;
+        height: 100% !important;
         align-items: stretch !important;
         justify-content: flex-start !important;
         box-sizing: border-box !important;
@@ -281,23 +281,40 @@ const notebookUiScript = r'''
       .ot-chat-transcript-path {
         display: flex !important;
         flex-direction: column !important;
-        flex: 1 1 0px !important;
-        min-height: 0 !important;
-        height: auto !important;
+        flex: 1 1 auto !important;
+        min-height: 100% !important;
+        height: 100% !important;
         max-height: none !important;
       }
       .ot-chat-transcript {
-        height: auto !important;
+        display: flex !important;
+        flex-direction: column !important;
+        height: 100% !important;
+        min-height: 100% !important;
         max-height: none !important;
-        flex: 1 1 0px !important;
-        min-height: 0 !important;
+        flex: 1 1 auto !important;
         overflow-y: auto !important;
+        -webkit-overflow-scrolling: touch !important;
         box-sizing: border-box !important;
+        padding-bottom: 120px !important;
+      }
+      .chat-panel-content, .chat-view, .conversation-container, .message-list, [role="log"],
+      main, [role="main"], app-chat-view, app-conversation, app-chat-panel, .chat-panel, app-chat {
+        position: relative !important;
+        display: flex !important;
+        flex-direction: column !important;
+        height: 100% !important;
+        min-height: 100% !important;
+        overflow-y: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+        box-sizing: border-box !important;
+        padding-bottom: 120px !important;
       }
       .chat-message, .model-message, .user-message, .chat-message-pair,
       app-chat-response, app-chat-message, app-chat-query, app-chat-prompt,
       .to-user-container, .to-model-container, [role="article"], .rendered-markdown,
-      app-chat-turn {
+      app-chat-turn, chat-turn, [class*="turn" i], [class*="query" i], [class*="response" i],
+      [data-message-author-role] {
         visibility: visible !important;
         opacity: 1 !important;
       }
@@ -307,10 +324,12 @@ const notebookUiScript = r'''
       app-chat-response:last-child,
       app-chat-message:last-child,
       app-chat-turn:last-child,
+      chat-turn:last-child,
+      [class*="turn" i]:last-child,
       .chat-message:last-child,
       [role="article"]:last-child {
-        margin-bottom: 100px !important;
-        padding-bottom: 16px !important;
+        margin-bottom: 120px !important;
+        padding-bottom: 24px !important;
       }
       .ot-chat-composer {
         position: fixed !important;
@@ -357,12 +376,6 @@ const notebookUiScript = r'''
       app-project-title,
       app-notebook-cover,
       .notebook-cover,
-      .chat-panel-content h1:not(.rendered-markdown *):not([role="article"] *),
-      .chat-panel-content h2:not(.rendered-markdown *):not([role="article"] *),
-      .chat-panel-content h3:not(.rendered-markdown *):not([role="article"] *),
-      .chat-view h1:not(.rendered-markdown *):not([role="article"] *),
-      .chat-view h2:not(.rendered-markdown *):not([role="article"] *),
-      .chat-view h3:not(.rendered-markdown *):not([role="article"] *),
       app-chat-empty-state h1, app-chat-empty-state h2, app-chat-empty-state h3,
       app-chat-empty-state mat-icon, app-chat-empty-state img, app-chat-empty-state svg,
       app-empty-state h1, app-empty-state h2, app-empty-state h3,
@@ -476,7 +489,7 @@ const notebookUiScript = r'''
     });
 
     // Sembunyikan baris header atas spesifik tanpa forced layout loop
-    document.querySelectorAll('body > div, app-root > div, header, [role="banner"], app-top-bar, .top-bar').forEach(el => {
+    document.querySelectorAll('header, [role="banner"], app-top-bar, .top-bar, app-header, mat-toolbar').forEach(el => {
       if (el.children.length > 0 && el.children.length <= 10) {
         const txt = (el.innerText || el.textContent || '').trim().toLowerCase();
         const hasShared = txt.includes('shared') || txt.includes('dibagikan');
@@ -495,53 +508,49 @@ const notebookUiScript = r'''
       'app-notebook-guide', 'notebook-guide',
       'app-artifact-summary', '.artifact-summary',
       '.notebook-guide', '.guide-container', '.hero-container',
-      '.cover-image-container', '.summary-card', '.guide-card'
+      '.cover-image-container', '.summary-card', '.guide-card',
+      'app-notebook-overview', '.notebook-overview',
+      'app-project-summary', '.project-summary',
+      'app-guide-intro', '.guide-intro',
+      'app-chat-intro', '.chat-intro',
+      'app-conversation-intro', '.conversation-intro',
+      'app-notebook-intro', '.notebook-intro',
+      'app-project-intro', '.project-intro',
+      'app-notebook-title', 'app-project-title',
+      'app-notebook-cover', '.notebook-cover',
+      '.empty-state-header'
     ];
     guideSelectors.forEach(sel => {
       document.querySelectorAll(sel).forEach(el => {
-        el.style.setProperty('display', 'none', 'important');
+        if (!el.querySelector('textarea, [contenteditable="true"], form')) {
+          el.style.setProperty('display', 'none', 'important');
+        }
       });
     });
 
     // Cari intro "sources", judul notebook ("AI-MUHAQQIQ"), tanggal, dan icon scroll
-    // baik saat ada pesan obrolan maupun saat obrolan masih kosong (empty state)
+    // jika ada pesan obrolan, sembunyikan elemen sebelum pesan pertama
+    const messageSel = questionSelector + ',' + answerSelector + ', .chat-message-pair, app-chat-turn, chat-turn, [class*="turn" i], app-chat-message, app-chat-response, app-chat-query, app-chat-prompt, [class*="query" i], [data-message-author-role]';
     document.querySelectorAll('.chat-panel-content, .chat-view, .conversation-container, .message-list, [role="log"], main, app-chat-view, app-conversation, app-chat-panel, .chat-panel, app-chat').forEach(panel => {
-      // 1. Jika ada pesan pertama, sembunyikan semua elemen sebelumnya (header intro)
-      const firstMessage = panel.querySelector(questionSelector + ',' + answerSelector + ', .chat-message-pair, app-chat-turn, app-chat-message, app-chat-response, app-chat-query, app-chat-prompt');
+      const firstMessage = panel.querySelector(messageSel);
       if (firstMessage) {
         let prev = firstMessage.previousElementSibling;
         while (prev) {
-          if (!prev.matches(questionSelector + ',' + answerSelector + ', .chat-message-pair, app-chat-turn, app-chat-message, app-chat-response, app-chat-query, app-chat-prompt') &&
-              !prev.querySelector(questionSelector + ',' + answerSelector + ', .chat-message-pair, app-chat-turn, app-chat-message, app-chat-response, app-chat-query, app-chat-prompt, textarea, [contenteditable="true"], form')) {
+          if (!prev.matches(messageSel) && !prev.querySelector(messageSel + ', textarea, [contenteditable="true"], form')) {
             prev.style.setProperty('display', 'none', 'important');
           }
           prev = prev.previousElementSibling;
         }
       } else {
-        // 2. Jika belum ada pesan sama sekali (empty chat):
-        // Sembunyikan elemen judul, ikon, dan sumber dengan DISPLAY: NONE
-        // agar tidak memakan ruang di atas dan kotak input otomatis berada di dasar layar
-        panel.querySelectorAll('h1, h2, h3, img, svg, mat-icon, [class*="title" i], [class*="source" i], [class*="date" i]').forEach(el => {
+        // Obrolan masih kosong (empty state): sembunyikan judul dan icon di empty-state saja (jangan sentuh container obrolan atau respon)
+        panel.querySelectorAll('.empty-state-header, app-notebook-title, app-notebook-cover, .notebook-cover, .cover-emoji, [class*="hero-header" i], [class*="intro-header" i], app-chat-empty-state mat-icon, app-chat-empty-state img, app-chat-empty-state svg, app-empty-state mat-icon, app-empty-state img, app-empty-state svg').forEach(el => {
           if (!el.querySelector('textarea, [contenteditable="true"], form') && !el.closest('app-chat-input, form, textarea, [contenteditable="true"]')) {
-            el.style.setProperty('display', 'none', 'important');
-          }
-        });
-
-        panel.querySelectorAll('div, p, span').forEach(el => {
-          if (el.querySelector('textarea, [contenteditable="true"], form') || el.closest('app-chat-input, form, textarea, [contenteditable="true"]')) return;
-          const txt = (el.innerText || el.textContent || '').trim();
-          if (!txt) return;
-          const isSourceDate = /^\d+\s*(sumber|source|sources)\s*[·•]/i.test(txt) ||
-                               /[·•]\s*\d+\s*(jan|feb|mar|apr|mei|jun|jul|agu|sep|okt|nov|des|january|february|march|april|may|june|july|august|september|october|november|december)/i.test(txt) ||
-                               ((txt.includes('sumber') || txt.includes('source')) && (txt.includes('·') || txt.includes('•')));
-          const isAssistantTitle = txt === 'AI-MUHAQQIQ' || txt.toUpperCase() === 'AI-MUHAQQIQ';
-          const isKabahEmoji = txt === '🕋' || (txt.includes('🕋') && txt.length <= 4);
-          if (isSourceDate || isAssistantTitle || isKabahEmoji) {
             el.style.setProperty('display', 'none', 'important');
           }
         });
       }
     });
+  }
 
     // Sembunyikan emoji cover / Ka'bah (🕋) jika berdiri sendiri di luar obrolan
     document.querySelectorAll('span, div, p, [role="img"]').forEach(el => {
@@ -635,7 +644,7 @@ const notebookUiScript = r'''
     // A disabled input still owns the layout while NotebookLM generates a response.
     const inputs = [...document.querySelectorAll('textarea, [contenteditable="true"], [role="textbox"]')];
     const enabledInputs = inputs.filter(visible);
-    const input = enabledInputs.find(el => el.closest('app-chat-input, .chat-input-container, form.chat-input-form, .chat-input-area, .query-box-container, app-chat, app-chat-view, app-chat-panel, .chat-panel, .chat-view, .chat-panel-content')) || enabledInputs[0];
+    const input = enabledInputs.find(el => el.closest('app-chat-input, .chat-input-container, form.chat-input-form, .chat-input-area, .query-box-container, app-chat, app-chat-view, app-chat-panel, .chat-panel, .chat-view, .chat-panel-content')) || enabledInputs[0] || inputs[0];
     const oldNodes = [...document.querySelectorAll('.ot-chat-path, .ot-chat-transcript, .ot-chat-composer, .ot-chat-composer-path, .ot-chat-transcript-path')];
     const path = new Set();
     const transcripts = new Set();
@@ -668,7 +677,7 @@ const notebookUiScript = r'''
           // Input-only wrappers below it must never receive flex: 1.
           const siblings = [...node.children].filter(child => child !== composer && !child.contains(composer));
           const messageBranches = siblings.filter(child =>
-            child.matches('.message-list, [role="log"]') ||
+            child.matches('.message-list, [role="log"], .chat-panel-content, .chat-view, .conversation-container') ||
             child.querySelector(answerSelector + ',' + questionSelector));
           if (!conversationRoot && messageBranches.length) {
             conversationRoot = node;
@@ -687,6 +696,10 @@ const notebookUiScript = r'''
             });
           }
           node = node.parentElement;
+        }
+        if (transcripts.size === 0) {
+          const panel = document.querySelector('.chat-panel-content, .chat-view, .conversation-container, .message-list, [role="log"], main, app-chat-view');
+          if (panel && !panel.contains(composer)) transcripts.add(panel);
         }
         let belowRoot = !!conversationRoot;
         ancestors.forEach(ancestor => {
@@ -1010,7 +1023,7 @@ let userPausedFollow = false;
 let followScheduled = false;
 
 function chatScrollHost() {
-  const candidates = document.querySelectorAll('.chat-panel-content, .chat-view, .conversation-container, .message-list, [role="log"]');
+  const candidates = document.querySelectorAll('.ot-chat-transcript, .chat-panel-content, .chat-view, .conversation-container, .message-list, [role="log"], main');
   for (const candidate of candidates) {
     if (candidate.scrollHeight > candidate.clientHeight + 24) return candidate;
   }

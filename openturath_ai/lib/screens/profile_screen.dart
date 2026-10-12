@@ -1,4 +1,3 @@
-import '../widgets/membership_controls.dart';
 import '../widgets/adaptive_sheet.dart';
 import '../core/localization.dart';
 import 'package:flutter/material.dart';
@@ -822,9 +821,21 @@ class _MembershipPass extends StatelessWidget {
                       textDirection: TextDirection.ltr,
                       style: OTTypography.caption(color: muted)),
               ])),
+          if (summary.isOpen) ...[
+            const SizedBox(width: 8),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+              decoration: BoxDecoration(
+                color: OTColors.primaryContainer(isDark),
+                borderRadius: OTRadius.inputBorder,
+              ),
+              child: Text(
+                summary.badge,
+                style: OTTypography.captionMedium(color: ink),
+              ),
+            ),
+          ],
         ]),
-        const SizedBox(height: 16),
-        MembershipControls(summary: summary, onSubscribe: onManage),
         const SizedBox(height: 16),
         Divider(height: 1, color: OTColors.borderSubtle(isDark)),
         const SizedBox(height: 16),
@@ -854,6 +865,18 @@ class _MembershipPass extends StatelessWidget {
                 onPressed: onViewAccess,
                 icon: Icon(Icons.auto_stories_outlined, size: 20, color: ink)),
         ]),
+        const SizedBox(height: 16),
+        Divider(height: 1, color: OTColors.borderSubtle(isDark)),
+        const SizedBox(height: 16),
+        SizedBox(
+          width: double.infinity,
+          child: FilledButton.icon(
+            key: const ValueKey('visible-subscription-button'),
+            onPressed: onManage,
+            icon: const Icon(Icons.card_membership_outlined, size: 20),
+            label: Text(AppCopy.subscription),
+          ),
+        ),
       ]),
     );
   }
