@@ -294,6 +294,18 @@ Berdasarkan `AUDIT_OPENTURATH_AI.md`, dokumen perancangan pustaka, dan keluhan k
   3. `auth_service.dart`: Memperkuat `getCurrentUserModel()` agar mengembalikan `cachedCurrentUser` atau cache disk jika Firebase user di memory masih sesaat null saat cold-start.
   4. Analisis & Verifikasi: Lolos `dart analyze lib/` dengan 0 issues, bebas dari ketergantungan akun berbayar $99.
 
+### Fasa 26: Kompilasi Rilis APK Android & DMG macOS Universal Xcode 27 (`6a08aa3`, `95cc61d`)
+- **Akar Masalah Kompilasi macOS**:
+  1. *Perubahan Xcode 27 (macOS 12.0 Deployment Target)*: Xcode 27 menjatuhkan dukungan target di bawah macOS 12.0 (`The range of supported deployment target versions is 12.0 to 27.0.x`), memicu kegagalan build pada target lama macOS 10.15.
+  2. *Perubahan LLVM lipo Xcode 27*: Utilitas `lipo` baru pada toolchain Xcode 27 menolak sintaks verifikasi arsitektur ganda simultan (`lipo <binary> -verify_arch arm64 x86_64`), menyebabkan skrip internal Flutter `release_unpack_macos` gagal mengenali slice fat binary.
+- **Solusi Tuntas**:
+  1. Memperbarui `platform :osx, '12.0'` di `Podfile` dan `MACOSX_DEPLOYMENT_TARGET = 12.0` di `Runner.xcodeproj`.
+  2. Menyediakan wrapper toolchain `lipo` cerdas yang memverifikasi setiap slice arsitektur secara berurutan dan mengintegrasikannya ke `macos_assemble.sh`.
+  3. Mengompilasi dan mengemas kedua artefak rilis ke direktori utama workspace:
+     - **Android Release APK**: `/Users/apple/Downloads/ramadhan/app-release-latest.apk` (65 MB) + `app-release-latest.apk.sha256`.
+     - **macOS Universal DMG**: `/Users/apple/Downloads/ramadhan/OpenTurath_AI_macOS.dmg` (48 MB) + `OpenTurath_AI_macOS.dmg.sha256`.
+     - Skrip audit `verify_session_signing.py` meloloskan verifikasi ad-hoc tanpa error.
+
 ---
 
 ## 5. Agenda & Fokus Selanjutnya
