@@ -1,6 +1,0 @@
-
-> openturath-website@6.0.0 build:release
-> node scripts/build.mjs --release
-
-Built 178 HTML pages; 21 collections; 6 original answers. Mode: production.
-Checked 177 localized pages, 12051 local links/assets, all translations, 6 archive hashes, and 10 quotation records. No errors.

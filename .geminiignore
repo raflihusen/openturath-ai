@@ -1,0 +1,56 @@
+# ──────────────────────────────────────────────────────────────────────
+# OpenTurath AI - Gemini & Context Ignore Rules
+# Mencegah pembengkakan kuota token (Cache Read Token Blocker)
+# ──────────────────────────────────────────────────────────────────────
+
+# Offline Archives & Dumps
+_archive_offline/
+binaries_archive/
+docs_archive/
+audit ai canggih/
+audit_kerajaan_ai/
+hasil audit baru/
+openturath_ai_pure_code_ai_prompt/
+KUMPULAN_KATALOG_KITAB/
+APP KAMUS FIKIH TAHAWWULAT/
+
+# Heavy Binaries & Compressions
+*.zip
+*.dmg
+*.apk
+*.aab
+*.apkm
+*.sha256
+motion/
+creative_assets/
+chrome_session/
+
+# Giant Audit Dumps & Old Prompt Texts in Root
+OPENTURATH_AI_FULL_AUDIT_SOURCE.txt
+OPENTURATH_AI_FULL_SOURCE_AUDIT.txt
+OPENTURATH_AI_MASTER_AUDIT_PACK.md
+OPENTURATH_AI_MASTER_AUDIT_PACK.txt
+OpenTurath_UI_UX_Blueprint.html
+01_KATALOG_PRODUK_OPENTURATH.html
+02_DOKUMEN_FLOW_TRANSAKSI_MIDTRANS.html
+DOKUMEN_ONBOARDING_MIDTRANS_OPENTURATH.html
+OPENTURATH_HASIL_AUDIT_COPY.md
+OPENTURATH_PETA_PENGGANTIAN_COPY.json
+AUDIT_*.md
+MASTER_AUDIT_*.md
+MASTER_*_PROMPT*.md
+MASTER_RENCANA_EKSEKUSI_AUDIT_FORENSIK.md
+PROMPT_AUDIT_*.md
+RIWAYAT_AUDIT_OPENTURATH.md
+
+# Build Artifacts & Caches
+**/build/
+**/.dart_tool/
+**/node_modules/
+**/dist/
+reports/
+openturath_ai/reports/
+openturath_ai/public/*.apk
+openturath_ai/public/downloads/
+.claude/
+*.log

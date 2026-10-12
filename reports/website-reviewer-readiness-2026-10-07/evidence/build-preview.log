@@ -1,6 +1,0 @@
-
-> openturath-website@6.0.0 build
-> node scripts/build.mjs
-
-Built 172 HTML pages; 21 collections; 6 original answers. Mode: preview (noindex).
-Checked 171 localized pages, 9705 local links/assets, all translations, 6 archive hashes, and 10 quotation records. No errors.
