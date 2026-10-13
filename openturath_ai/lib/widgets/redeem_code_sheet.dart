@@ -135,7 +135,7 @@ class _RedeemCodeSheetState extends State<RedeemCodeSheet> {
           border: Border.all(color: borderColor, width: 0.8),
         ),
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
-        child: Column(
+        child: SingleChildScrollView(child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -144,13 +144,13 @@ class _RedeemCodeSheetState extends State<RedeemCodeSheet> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
+                Expanded(child: Text(
                   Loc.tr('ui_6f8fc6f8d5'),
                   style: OTTypography.cardTitle(color: textPrimary).copyWith(
                     fontSize: OTFontSize.s18,
                     fontWeight: FontWeight.w600,
                   ),
-                ),
+                )),
                 IconButton(
                   icon:
                       Icon(Icons.close_rounded, size: 20, color: textSecondary),
@@ -227,7 +227,7 @@ class _RedeemCodeSheetState extends State<RedeemCodeSheet> {
             ),
             const SizedBox(height: OTSpacing.sm),
           ],
-        ),
+        )),
       ),
     );
   }
