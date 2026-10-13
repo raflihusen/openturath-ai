@@ -2,6 +2,7 @@
 
 **Tanggal:** 13 Oktober 2026  
 **Status:** Rencana teknis; belum merupakan perubahan implementasi atau bukti deployment.  
+**Revisi:** 2 — pematangan kontrak bukti, concurrency, migrasi, login kedua wajib, dan checkpoint rollback.
 **Tujuan:** menghilangkan cacat akses dan pembayaran, memperkuat keamanan serta keandalan, dan memperbaiki pengalaman pengguna tanpa mengorbankan hak VIP atau stabilitas WebView.
 
 ## 1. Ringkasan eksekutif
@@ -58,6 +59,8 @@ Audit lanjutan menghasilkan register bukti dengan file/baris, revision kode, ske
 8. Jangan mengubah siklus hidup WebView di `agent_multi_tab_room.dart` atau `desktop_webview_runtime.dart` dalam paket remediasi akses.
 9. Readiness NotebookLM tetap minimal 4 sampel berturut-turut, elapsed minimal 3000 ms, dan micro-delay 250 ms. Error menggantikan viewport dengan `ColoredBox`, bukan overlay platform view.
 10. Build APK lokal tidak memicu upload atau broadcast update. `publish_auto_update.py` hanya dijalankan atas instruksi eksplisit pengguna.
+11. **Login kedua wajib:** autentikasi aplikasi tidak menggantikan autentikasi sesi Google/NotebookLM. Langkah kedua tidak boleh dihapus, dibuat opsional, atau dilewati hanya karena pengguna VIP, memiliki langganan, atau sudah login aplikasi. Sesi valid boleh dipertahankan sesuai kontrak aplikasi existing, tetapi akses memerlukan pembuktian kesiapan sesi tahap kedua.
+12. **Checkpoint setiap perubahan:** setiap perubahan file dibuatkan commit terarah setelah pemeriksaan diff; stage hanya file yang dimaksud, jangan memasukkan secret atau pekerjaan pengguna lain. Rollback kode menggunakan commit yang tercatat; rollback efek database/NotebookLM membutuhkan prosedur kompensasi tersendiri.
 
 ## 4. Register pekerjaan prioritas
 
@@ -563,3 +566,205 @@ Setiap paket memiliki PIC engineering, reviewer, operator deployment, dan approv
 Mulai dari **WP-00, WP-01, WP-02, dan WP-03**. Ini menghasilkan containment yang cepat sekaligus fondasi verifikasi. Jangan memulai migrasi besar sebelum mengetahui writer produksi dan memiliki regression test yang dapat dipercaya.
 
 Keputusan bisnis yang perlu disahkan sebelum WP-05: kontrak renewal tiap produk, kebijakan refund, durasi selain satu bulan, binding identitas payer, dan approval grant gratis. Keputusan ini tidak boleh diturunkan dari substring nama produk atau asumsi developer.
+
+## 23. Koreksi bukti dan batas kesimpulan audit
+
+Penilaian bahwa rencana ini sempurna atau valid 100% tidak digunakan sebagai gerbang implementasi. Setiap diagnosis diperiksa terhadap revision kode dan deployment aktual.
+
+### 23.1 Idempotensi existing
+
+`webhook_server.py:351–358` sudah memeriksa keberadaan transaksi. Masalahnya adalah read/write tidak atomik, keberadaan record dianggap pemrosesan selesai, dan retry dapat melewati pembaruan entitlement setelah kegagalan parsial. Patch “skip semua order existing” tidak cukup dan dapat mengunci kegagalan tersebut.
+
+### 23.2 Reaper existing
+
+`autonomous_reaper.py:428–489` sudah membaca transaksi. Masalah lebih spesifik yang perlu regression test:
+
+- `:510–514`: expiry entitlement profil dapat menghapus status aktif yang sebelumnya diperoleh dari transaksi.
+- `:517–520`: profil global aktif diperlakukan sebagai akses seluruh modul.
+- `:534–538`: email pembeli layanan GoAkal ditambahkan ke seluruh modul pada jalur yang diperiksa.
+- `:488–489, :524–525`: error pembacaan dicatat tetapi hasil parsial masih dapat diteruskan.
+
+Nomor baris adalah petunjuk investigasi, bukan kontrak permanen. Saat implementasi, catat revision dan fungsi yang diperiksa agar bukti tetap dapat ditelusuri.
+
+## 24. Hierarki bukti dan rekonstruksi ledger
+
+Ledger deterministik tidak menjamin benar jika inputnya korup. Backfill tidak boleh menyalin expiry legacy lalu menyebutnya bukti transaksi asli.
+
+| Kelas bukti | Isi | Penggunaan |
+|---|---|---|
+| Provider terverifikasi | ID transaksi, paidAt, produk, nominal, status | Dasar grant pembayaran |
+| Otorisasi administratif sah | VIP, beasiswa, approval Owner/admin | Dasar grant administratif |
+| Field turunan legacy | Expiry profil atau expiry buatan sinkronisasi | Bahan rekonsiliasi; bukan bukti primer |
+| Observasi NotebookLM | Viewer terlihat/tidak terlihat | Bukti keadaan eksternal; bukan bukti hak |
+
+Setiap grant mencatat `evidence_source`, `verification_state`, `source_revision`, `policy_version`, interval hasil perhitungan, dan approval bila relevan. Transaksi yang paidAt/produk/identitasnya tidak dapat dibuktikan masuk rekonsiliasi, bukan dihitung dari waktu saat migrasi.
+
+Pisahkan VIP resmi dari heuristik legacy seperti expiry sangat jauh, nominal tinggi, atau paket tahunan. VIP resmi dipertahankan permanen. Data yang dahulu dilindungi heuristik tetap dipertahankan untuk review; jangan otomatis menjadikannya VIP permanen atau mencabutnya. Paket tahunan berbayar memiliki scope dan interval sendiri.
+
+## 25. Renewal canonical dan binding identitas
+
+### 25.1 Algoritma renewal
+
+Sebelum coding, tetapkan policy per produk: coverage fixed, extension, overlap, upgrade, atau transfer. Untuk extension, normalisasi transaksi terverifikasi ke urutan `(effective_paid_at, stable_transaction_key)` lalu hitung interval deterministik. Simpan hasil dan versi perhitungan.
+
+Jika transaksi historis datang terlambat, recomputation harus menghasilkan keputusan yang sama dengan replay canonical seluruh transaksi relevan. Jangan menghitung grant baru hanya dari expiry profil saat event diterima. Recompute dengan scope terbatas, version check, dan impact preview; penurunan hak memerlukan bukti lengkap serta pemeriksaan pengecualian administratif.
+
+Uji permutation event, paidAt sama, late refund, paket lintas modul, renewal sebelum expiry, renewal sesudah expiry, dan transaksi duplikat. Refund parsial atau perubahan produk membutuhkan aturan bisnis eksplisit; tidak boleh diperlakukan otomatis sebagai pembatalan seluruh akun.
+
+### 25.2 Kepemilikan pembelian dan subject akses
+
+Pisahkan identitas payer dari UID aplikasi. Transaksi sebelum registrasi disimpan sebagai `UNCLAIMED`; proses claim mengikat purchase ke UID secara atomik setelah verifikasi identitas. Satu purchase tidak boleh diklaim dua akun.
+
+Kontrak wajib mencakup email payer berbeda, perubahan email, anonymous account linking, penghapusan/recreation akun, serta transfer administratif sah. Email baru tidak otomatis memindahkan grant. Binding dan transfer memiliki audit record, pelaku, alasan, dan versi; PII tidak dijadikan ID publik.
+
+## 26. Race renewal–revoke dan batas fencing
+
+### 26.1 Serialisasi membership
+
+Re-evaluation sebelum remove masih menyisakan race: renewal dapat terjadi setelah pemeriksaan namun sebelum RPC selesai. Gunakan antrean terurut per `(subject, notebook)`, `desired_state_version`, dan pemeriksaan versi sebelum serta setelah operasi.
+
+Jika remove selesai tetapi desired state terbaru adalah PRESENT, buat compensating add idempoten dan prioritaskan pemulihan. Jangan menandai job stale sebagai bukti absence yang sah. Ukur waktu drift serta recovery latency.
+
+Tidak ada transaksi atomik lintas Firestore dan NotebookLM. Target adalah efek idempoten, jendela konflik kecil, deteksi, serta pemulihan otomatis; jangan menjanjikan konsistensi instan yang tidak didukung provider.
+
+### 26.2 Cutover writer
+
+Epoch database tidak otomatis memagari RPC Google. Urutan cutover wajib:
+
+1. Pause claim job baru pada writer lama.
+2. Drain atau klasifikasikan semua job in-flight sebagai known/unknown outcome.
+3. Stop service/process lama dan verifikasi tidak ada scheduler lain yang menghidupkannya kembali.
+4. Pindahkan ownership/epoch.
+5. Aktifkan writer baru.
+6. Read-back dan rekonsiliasi pekerjaan dengan outcome tidak diketahui.
+
+Lease expiry bukan bukti proses lama sudah berhenti. Pengujian mencakup worker tertunda, network partition, restart otomatis, dan job lama setelah cutover.
+
+## 27. Kelengkapan bukti dan kapasitas
+
+### 27.1 Evidence snapshot
+
+Evaluator menerima manifest bukti:
+
+```text
+EvidenceSnapshot {
+  sources_required, sources_completed,
+  pagination_completed,
+  read_started_at, read_completed_at,
+  errors[], catalog_version, policy_version,
+  subject_evidence_version
+}
+```
+
+Query kosong berbeda dari query gagal. Pagination belum selesai berbeda dari tidak ada transaksi. Partial result tidak boleh menghasilkan REVOKE. Snapshot harus memenuhi sumber wajib dan freshness sesuai jenis keputusan; grant maupun revoke tetap memerlukan bukti yang sesuai.
+
+Evaluasi subject menggunakan query terarah, bukan mewajibkan scan seluruh database. Full reconciliation adalah audit berkala, bukan jalur utama setiap webhook.
+
+### 27.2 Desain kapasitas
+
+Tetapkan indeks, pagination, ukuran batch, bounded concurrency per akun NotebookLM, backpressure, dan partisi antrean. Hindari hot document global untuk seluruh job. Inventory quota provider dan Firestore sebelum memilih parameter.
+
+Ukur baseline throughput, biaya per transaksi, p95/p99 provisioning latency, dan waktu drain. Load test menggunakan data sintetis representatif. Retensi inbox/log/raw payload memiliki kebijakan akses serta TTL; jangan menghapus bukti transaksi/grant yang masih diperlukan untuk hak aktif atau rekonsiliasi.
+
+## 28. Adapter NotebookLM dan circuit breaker
+
+Adapter memisahkan policy akses dari mekanisme RPC/sesi. Ia mengembalikan outcome terstruktur, bukan hanya boolean sukses.
+
+| Kondisi | Tindakan |
+|---|---|
+| Session expired atau challenge | Pause akun writer; pemulihan operator |
+| Rate limit | Backoff dan turunkan concurrency |
+| RPC/response contract berubah | Circuit breaker; hentikan mutasi |
+| Timeout sesudah kemungkinan side effect | Read-back bounded; outcome UNKNOWN sampai terbukti |
+| Daftar viewer parsial | Jangan menyimpulkan absence |
+| Owner/account mismatch | Quarantine job dan periksa routing |
+| Desired berubah selama operasi | Evaluasi ulang dan lakukan kompensasi |
+
+Read-back mempertimbangkan keterlambatan observasi dan pagination. Batas polling ditetapkan dari pengujian adapter, bukan diasumsikan instan. Simpan fixture response yang sudah disanitasi dan contract tests agar perubahan RPC dapat dideteksi sebelum mass operation.
+
+## 29. Login kedua wajib dan state machine pengguna
+
+### 29.1 Dua lapisan autentikasi
+
+1. **Login aplikasi:** identitas Firebase/akun OpenTurath untuk profil, pembayaran, dan entitlement.
+2. **Login kedua:** sesi Google/NotebookLM yang dibutuhkan untuk menggunakan notebook.
+
+VIP atau langganan aktif memenuhi hak akses, bukan menggantikan login kedua. Jangan membuat bypass untuk akun istimewa. Sesi tahap kedua yang masih valid dapat digunakan sesuai mekanisme existing; ini bukan kewajiban mengetik ulang credential setiap pembukaan aplikasi.
+
+Pisahkan sesi pengguna WebView dari sesi operator backend sharing. Keberhasilan writer backend tidak membuktikan sesi Google pengguna sudah siap, dan login Google pengguna tidak memberi kewenangan writer backend.
+
+Validasi identitas sesi tahap kedua melalui mekanisme yang benar-benar tersedia. Jika identitas email tidak dapat dibuktikan dari WebView secara andal, jangan mengklaim sudah cocok; sediakan state mismatch/verification needed dan instruksi yang jelas. Jangan membaca atau mencatat password/cookie pengguna untuk mengatasi mismatch.
+
+### 29.2 State dan penerimaan
+
+```text
+APP_LOGIN_REQUIRED
+ -> APP_AUTHENTICATED
+ -> SECOND_LOGIN_REQUIRED
+ -> SECOND_SESSION_CHECKING
+ -> SECOND_SESSION_READY
+ -> NOTEBOOK_OPENING
+ -> NOTEBOOK_READY
+```
+
+Cabang: second session expired, account mismatch, network unavailable, access pending, dan recoverable error. Setiap state memiliki copy ID/EN/AR, CTA, perilaku back/reopen, retry bounded, serta semantics.
+
+Regression wajib: VIP tanpa sesi kedua tetap diarahkan ke tahap kedua; akun reguler juga demikian; sesi valid tidak mengalami loop login; logout/account switching tidak memakai readiness akun sebelumnya; expiry sesi kembali ke langkah kedua; desktop dan Android konsisten. Implementasi mempertahankan invariants lifecycle/polling WebView di Bab 3.
+
+### 29.3 Pembayaran dan akses
+
+State pembayaran terpisah dari autentikasi:
+
+```text
+ORDER_CREATED -> AWAITING_PAYMENT -> VERIFICATION_PENDING
+ -> PAYMENT_VERIFIED -> ACCESS_PROVISIONING -> ACCESS_READY
+```
+
+Cabang: cancelled, order expired, verification failed, provisioning delayed, needs support. ACCESS_READY tidak berarti SECOND_SESSION_READY. UI menjelaskan kedua syarat tersebut tanpa mengarahkan pengguna membayar ulang untuk masalah sesi Google.
+
+Persist order ID dan status yang aman agar penutupan checkout/restart dapat dipulihkan. Success berasal dari server, bukan redirect. Setiap state menetapkan CTA, timeout UI, refresh policy, dan correlation ID dukungan yang tidak mengungkap secret.
+
+## 30. Account closure dan pencegahan resurrection
+
+Bedakan revoke karena expiry dari penutupan atas permintaan sah. Tetapkan bersama Owner bagaimana penghapusan akun memengaruhi VIP, grant, data pembayaran, dan sharing. Developer tidak menyimpulkan bahwa permintaan delete membatalkan VIP secara otomatis.
+
+Gunakan tombstone server-only minimal sesuai retensi untuk mencegah webhook lama membuat ulang akun/akses yang ditutup. Transaksi masuk setelah closure disimpan untuk rekonsiliasi, tidak langsung melakukan provisioning. Refund/cancellation tetap tercatat tanpa menghidupkan akun.
+
+Uji delete selama pending payment, delete saat provisioning, recreate akun dengan email sama, late webhook, dan transfer administratif. Tetapkan pemisahan data yang harus dihapus dari bukti transaksi yang perlu dipertahankan berdasarkan kebijakan yang disahkan.
+
+## 31. Gerbang operasional terukur dan checkpoint Git
+
+### 31.1 Bukti rilis
+
+Sebelum canary/live, catat target dan hasil aktual untuk:
+
+- Zero attempted revoke terhadap VIP resmi pada matriks pengujian dan shadow.
+- Semua permutation/concurrency test menghasilkan grant canonical yang sama.
+- Semua destructive diff memiliki bukti serta keputusan yang terdokumentasi.
+- Replay dead-letter tidak menambah durasi.
+- Queue age, provisioning latency, drift duration, dan recovery time memenuhi target baseline yang disepakati.
+- Login kedua wajib lulus di seluruh platform yang dirilis.
+- Writer drain, fencing internal, rollback, dan compensating operation telah diuji.
+
+Jendela observasi harus mencakup interval scheduler expiry dan retry yang relevan. Tetapkan durasi serta sampel dari volume aktual, bukan klaim “canary sukses” setelah satu transaksi.
+
+### 31.2 Protokol perubahan
+
+Untuk setiap patch/file change:
+
+1. Periksa working tree dan instruksi lokal.
+2. Buat perubahan dengan scope kecil yang dapat dipulihkan.
+3. Periksa diff lengkap, secret, serta dampak terhadap login kedua/VIP/WebView.
+4. Jalankan verifikasi yang relevan.
+5. Stage hanya file yang dimaksud dan commit deskriptif `type(scope): detail`.
+6. Catat hash commit pada register paket implementasi.
+
+Jangan menumpuk perubahan lintas paket tanpa checkpoint. Jika verifikasi gagal, catat status secara jujur; checkpoint bukan bukti siap deploy. Jangan push atau rewrite history tanpa instruksi yang sesuai.
+
+Rollback source menggunakan revert commit terarah agar riwayat tetap jelas. Checkpoint Git tidak memulihkan database, secret provider, atau membership NotebookLM; operasi tersebut memakai snapshot, versioned migration, serta compensating actions yang sudah diuji.
+
+### 31.3 Urutan eksekusi revisi
+
+Mulai dengan koreksi register bukti dan inventory runtime; buat test runner serta regression containment. Lalu patch VIP/revoke/nominal dan partial recovery. Setelah kontrak renewal/identitas disahkan, implementasikan ledger/evaluator/outbox, shadow, drain cutover, dan rollout terukur.
+
+Setiap paket mengeluarkan implementation note berisi commit, command verifikasi, hasil, migration version, perubahan runtime, dan langkah rollback. Dokumen ini menjadi master plan; implementation note adalah bukti apa yang benar-benar sudah dikerjakan.
