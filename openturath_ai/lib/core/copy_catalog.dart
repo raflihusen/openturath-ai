@@ -2378,4 +2378,145 @@ const copyCatalog = <String, List<String>>{
   ],
   "sendQuestion": ["Kirim pertanyaan", "Send question", "أرسل السؤال"],
   "retryCatalog": ["Coba lagi", "Try again", "حاول مجددًا"],
+  "roomSameAccountTitle": [
+    "Login dengan Akun yang Sama",
+    "Sign in with the same account",
+    "سجّل الدخول بالحساب نفسه"
+  ],
+  "roomSameAccountBody": [
+    "Silakan login ke Google dengan akun yang sama: {0}",
+    "Please sign in to Google with the same account: {0}",
+    "يُرجى تسجيل الدخول إلى Google بالحساب نفسه: {0}"
+  ],
+  "roomSameAccountBodyPlain": [
+    "Silakan login ke Google dengan akun yang sama.",
+    "Please sign in to Google with the same account.",
+    "يُرجى تسجيل الدخول إلى Google بالحساب نفسه."
+  ],
+  "roomLoginNow": ["Login Sekarang", "Sign in now", "سجّل الدخول الآن"],
+  "roomGooglePermissionDetail": [
+    "Akun Google yang aktif belum dapat membuka notebook ini. Periksa akun Google yang digunakan dan izin Viewer pada notebook.",
+    "The active Google account cannot open this notebook yet. Check which Google account is in use and its Viewer permission on the notebook.",
+    "لا يستطيع حساب Google النشط فتح هذا الدفتر بعد. تحقق من حساب Google المستخدم ومن إذن المشاهدة على الدفتر."
+  ],
+  "errSignInAgain": [
+    "Silakan masuk kembali ke akun Anda.",
+    "Please sign in to your account again.",
+    "يُرجى تسجيل الدخول إلى حسابك مرة أخرى."
+  ],
+  "errServiceUnavailable": [
+    "Layanan belum dapat dihubungi.",
+    "The service cannot be reached right now.",
+    "تعذّر الوصول إلى الخدمة حاليًا."
+  ],
+  "errServerTimeout": [
+    "Server belum merespons. Coba kembali.",
+    "The server has not responded. Please try again.",
+    "لم يستجب الخادم. حاول مرة أخرى."
+  ],
+  "errUnreadableResponse": [
+    "Respons layanan tidak dapat dibaca.",
+    "The service response could not be read.",
+    "تعذّرت قراءة ردّ الخدمة."
+  ],
+  "errCheckConnection": [
+    "Periksa koneksi internet Anda.",
+    "Check your internet connection.",
+    "تحقق من اتصالك بالإنترنت."
+  ],
+  "errGoogleSignInFirst": [
+    "Masuk dengan akun Google Anda terlebih dahulu.",
+    "Sign in with your Google account first.",
+    "سجّل الدخول بحساب Google أولًا."
+  ],
+  "errAccountChanged": [
+    "Akun berubah. Buka kembali percakapan untuk akun aktif.",
+    "The account changed. Reopen the conversation for the active account.",
+    "تغيّر الحساب. أعد فتح المحادثة للحساب النشط."
+  ],
+  "errQuestionInvalid": [
+    "Pertanyaan kosong atau terlalu panjang.",
+    "The question is empty or too long.",
+    "السؤال فارغ أو طويل جدًا."
+  ],
+  "errChromeBridge": [
+    "Penghubung Google Chrome belum tersambung.",
+    "The Google Chrome connector is not connected yet.",
+    "موصل Google Chrome غير متصل بعد."
+  ],
+  "errDesktopChromeRequired": [
+    "Penghubung ini memerlukan aplikasi desktop dan Google Chrome.",
+    "This connector requires the desktop app and Google Chrome.",
+    "يتطلب هذا الموصل تطبيق سطح المكتب و Google Chrome."
+  ],
+  "errAnswerUnreadable": [
+    "Jawaban AI belum dapat dibaca.",
+    "The AI answer could not be read yet.",
+    "تعذّرت قراءة جواب الذكاء الاصطناعي بعد."
+  ],
+  "redeemSignInFirst": [
+    "Silakan masuk ke akun Anda lalu coba kembali.",
+    "Please sign in to your account and try again.",
+    "يُرجى تسجيل الدخول إلى حسابك ثم المحاولة مرة أخرى."
+  ],
+  "redeemNotForAccount": [
+    "Kode voucher ini tidak dapat digunakan untuk akun Anda.",
+    "This voucher code cannot be used with your account.",
+    "لا يمكن استخدام رمز القسيمة هذا مع حسابك."
+  ],
+  "redeemServiceUnavailable": [
+    "Layanan belum dapat dihubungi. Periksa koneksi lalu coba lagi.",
+    "The service cannot be reached. Check your connection and try again.",
+    "تعذّر الوصول إلى الخدمة. تحقق من الاتصال ثم حاول مرة أخرى."
+  ],
+  "redeemNotActivated": [
+    "Kode voucher belum dapat diaktifkan. Silakan periksa kembali kode Anda.",
+    "The voucher code could not be activated. Please check your code again.",
+    "تعذّر تفعيل رمز القسيمة. يُرجى التحقق من الرمز مرة أخرى."
+  ],
+  "companionSameAccountHint": [
+    "Gunakan akun Google yang sama dengan OpenTurath. Akses kajian diperiksa saat pertanyaan dikirim.",
+    "Use the same Google account as OpenTurath. Access is checked when a question is sent.",
+    "استخدم حساب Google نفسه المستخدم في أوبن تراث. يُتحقق من صلاحية الوصول عند إرسال السؤال."
+  ],
+  "dashMatchSource": [
+    "Cocokkan dengan Kitab Asal",
+    "Check against the source text",
+    "طابِق مع الكتاب الأصل"
+  ],
+  "workspaceHeadline": [
+    "Satu ruang untuk kajian Anda.",
+    "One space for your studies.",
+    "مساحة واحدة لدراستك."
+  ],
+  "workspaceIntro": [
+    "Masuk dengan Google dari ruang browser, lalu buka ruang AI di browser dan profil yang sama. Tidak ada login Google di WebView aplikasi.",
+    "Sign in with Google from the browser space, then open the AI space in the same browser and profile. There is no Google sign-in inside the app WebView.",
+    "سجّل الدخول بحساب Google من مساحة المتصفح، ثم افتح مساحة الذكاء الاصطناعي في المتصفح والملف الشخصي نفسيهما. لا يوجد تسجيل دخول إلى Google داخل WebView التطبيق."
+  ],
+  "workspaceOpening": [
+    "Membuka ruang…",
+    "Opening the space…",
+    "جارٍ فتح المساحة…"
+  ],
+  "workspaceReopen": [
+    "Buka ruang kembali",
+    "Open the space again",
+    "افتح المساحة مرة أخرى"
+  ],
+  "workspaceOpen": [
+    "Buka ruang kajian",
+    "Open the study space",
+    "افتح مساحة الدراسة"
+  ],
+  "workspaceOpened": [
+    "Ruang kajian telah dibuka di browser. Anda dapat menambahkan pintasannya ke layar utama.",
+    "The study space is open in your browser. You can add a shortcut to your home screen.",
+    "فُتحت مساحة الدراسة في المتصفح. يمكنك إضافة اختصار لها إلى الشاشة الرئيسية."
+  ],
+  "workspaceSessionNote": [
+    "Sesi dipakai kembali per perangkat dan profil browser. Google tetap dapat meminta persetujuan atau verifikasi keamanan.",
+    "The session is reused per device and browser profile. Google may still ask for consent or a security check.",
+    "تُعاد استخدام الجلسة لكل جهاز وملف متصفح. وقد يطلب Google الموافقة أو التحقق الأمني."
+  ],
 };

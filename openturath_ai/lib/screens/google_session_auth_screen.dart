@@ -321,7 +321,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
               },
             ),
             title: Text(
-              'Login dengan Akun yang Sama',
+              Loc.tr('roomSameAccountTitle'),
               style: ScholarlyFonts.newsreader(
                 fontSize: OTFontSize.s18,
                 fontWeight: FontWeight.w600,
@@ -412,7 +412,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
                           const SizedBox(width: 8),
                           Expanded(
                             child: Text(
-                              'Login dengan Akun yang Sama',
+                              Loc.tr('roomSameAccountTitle'),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: ScholarlyFonts.outfit(

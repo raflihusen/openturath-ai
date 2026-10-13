@@ -1369,7 +1369,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
         session.isPaywallRequired = false;
         session.isTimeoutError = false;
         session.errorMessage =
-            'Akun Google yang aktif belum dapat membuka notebook ini. Periksa akun Google yang digunakan dan izin Viewer pada notebook.';
+            Loc.tr('roomGooglePermissionDetail');
       });
     }
   }
@@ -1709,11 +1709,11 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
         final email = _authService.currentUser?.email?.trim() ?? '';
         state = AppErrorState(
           icon: Icons.link_rounded,
-          title: 'Login dengan Akun yang Sama',
+          title: Loc.tr('roomSameAccountTitle'),
           message: email.isNotEmpty
-              ? 'Silakan login ke Google dengan akun yang sama: $email'
-              : 'Silakan login ke Google dengan akun yang sama.',
-          retryLabel: 'Login Sekarang',
+              ? Loc.tr('roomSameAccountBody', [email])
+              : Loc.tr('roomSameAccountBodyPlain'),
+          retryLabel: Loc.tr('roomLoginNow'),
           retryIcon: Icons.login_rounded,
           onRetry: () async {
             await Navigator.pushNamed(context, AppRoutes.googleSessionAuth);
@@ -1856,7 +1856,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
                     session.isGooglePermissionError = true;
                     session.isPaywallRequired = false;
                     session.errorMessage =
-                        'Akun Google yang aktif belum dapat membuka notebook ini. Periksa akun Google yang digunakan dan izin Viewer pada notebook.';
+                        Loc.tr('roomGooglePermissionDetail');
                   });
                 } else if (code != null && code >= 400) {
                   _readinessTimer?.cancel();

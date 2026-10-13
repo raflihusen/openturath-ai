@@ -1,3 +1,4 @@
+import '../core/localization.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter/foundation.dart';
 
@@ -20,7 +21,7 @@ class BrowserCompanionRuntime extends ChangeNotifier {
   String get status => 'unsupported';
   Future<void> start() async => throw FirebaseFunctionsException(
         code: 'failed-precondition',
-        message: 'Penghubung ini memerlukan aplikasi desktop dan Google Chrome.',
+        message: Loc.tr('errDesktopChromeRequired'),
       );
   Future<void> stop() async {}
   Future<Map<String, dynamic>> ask({

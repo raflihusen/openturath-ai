@@ -1,3 +1,4 @@
+import '../core/localization.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 
 import 'callable_gateway.dart';
@@ -39,7 +40,7 @@ class NotebookChatService {
     if (question.trim().isEmpty || question.length > 8000) {
       throw FirebaseFunctionsException(
         code: 'invalid-argument',
-        message: 'Pertanyaan kosong atau terlalu panjang.',
+        message: Loc.tr('errQuestionInvalid'),
       );
     }
     final raw = await _gateway.call('askAgent', {
@@ -55,7 +56,7 @@ class NotebookChatService {
   static NotebookChatReply decodeReply(Object? raw, String requestId) {
     final invalid = FirebaseFunctionsException(
       code: 'unavailable',
-      message: 'Jawaban AI belum dapat dibaca.',
+      message: Loc.tr('errAnswerUnreadable'),
     );
     if (raw is! Map ||
         raw['requestId'] != requestId ||

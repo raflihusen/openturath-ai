@@ -1,3 +1,4 @@
+import '../core/localization.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import '../core/constants.dart';
@@ -42,18 +43,18 @@ class SubscriptionService {
       return 'Kuota penukaran untuk kode voucher ini sudah habis.';
     }
     if (c.contains('unauthenticated')) {
-      return 'Silakan masuk ke akun Anda lalu coba kembali.';
+      return Loc.tr('redeemSignInFirst');
     }
     if (c.contains('invalid-argument')) {
       return 'Format penulisan kode voucher belum sesuai.';
     }
     if (c.contains('permission-denied')) {
-      return 'Kode voucher ini tidak dapat digunakan untuk akun Anda.';
+      return Loc.tr('redeemNotForAccount');
     }
     if (c.contains('unavailable')) {
-      return 'Layanan belum dapat dihubungi. Periksa koneksi lalu coba lagi.';
+      return Loc.tr('redeemServiceUnavailable');
     }
-    return 'Kode voucher belum dapat diaktifkan. Silakan periksa kembali kode Anda.';
+    return Loc.tr('redeemNotActivated');
   }
 
   // ── Klaim Kode Redeem Santri (Voucher Akses 7 Hari, dsb) ─────

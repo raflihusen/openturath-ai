@@ -1,3 +1,4 @@
+import '../core/localization.dart';
 import 'dart:async';
 import 'dart:convert';
 
@@ -81,7 +82,7 @@ class CallableHttpTransport {
       if (idToken == null || idToken.isEmpty) {
         throw FirebaseFunctionsException(
           code: 'unauthenticated',
-          message: 'Silakan masuk kembali ke akun Anda.',
+          message: Loc.tr('errSignInAgain'),
         );
       }
       // No automatic retry: checkout/redeem/quota calls may mutate server state.
@@ -109,14 +110,14 @@ class CallableHttpTransport {
               .toLowerCase()
               .replaceAll('_', '-'),
           message:
-              error['message'] as String? ?? 'Layanan belum dapat dihubungi.',
+              error['message'] as String? ?? Loc.tr('errServiceUnavailable'),
           details: error['details'],
         );
       }
       if (response.statusCode < 200 || response.statusCode >= 300) {
         throw FirebaseFunctionsException(
           code: 'unavailable',
-          message: 'Layanan belum dapat dihubungi.',
+          message: Loc.tr('errServiceUnavailable'),
         );
       }
       if (decoded.containsKey('result')) return decoded['result'];
@@ -127,17 +128,17 @@ class CallableHttpTransport {
     } on TimeoutException {
       throw FirebaseFunctionsException(
         code: 'deadline-exceeded',
-        message: 'Server belum merespons. Coba kembali.',
+        message: Loc.tr('errServerTimeout'),
       );
     } on FormatException {
       throw FirebaseFunctionsException(
         code: 'internal',
-        message: 'Respons layanan tidak dapat dibaca.',
+        message: Loc.tr('errUnreadableResponse'),
       );
     } on http.ClientException {
       throw FirebaseFunctionsException(
         code: 'unavailable',
-        message: 'Periksa koneksi internet Anda.',
+        message: Loc.tr('errCheckConnection'),
       );
     }
   }

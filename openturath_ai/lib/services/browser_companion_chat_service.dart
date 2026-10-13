@@ -1,3 +1,4 @@
+import '../core/localization.dart';
 import 'dart:async';
 import 'dart:convert';
 
@@ -66,7 +67,7 @@ class BrowserCompanionChatService extends NotebookChatService {
     if (owner == null) {
       throw FirebaseFunctionsException(
           code: 'unauthenticated',
-          message: 'Masuk dengan akun Google Anda terlebih dahulu.');
+          message: Loc.tr('errGoogleSignInFirst'));
     }
     final key = _key(owner);
     if (_ownerKey != null && _ownerKey != key) _generation++;
@@ -106,7 +107,7 @@ class BrowserCompanionChatService extends NotebookChatService {
         _sessionGeneration() != generation) {
       throw FirebaseFunctionsException(
           code: 'unauthenticated',
-          message: 'Akun berubah. Buka kembali percakapan untuk akun aktif.');
+          message: Loc.tr('errAccountChanged'));
     }
   }
 
@@ -119,13 +120,13 @@ class BrowserCompanionChatService extends NotebookChatService {
     if (question.trim().isEmpty || question.length > 8000) {
       throw FirebaseFunctionsException(
           code: 'invalid-argument',
-          message: 'Pertanyaan kosong atau terlalu panjang.');
+          message: Loc.tr('errQuestionInvalid'));
     }
     final owner = _identityReader();
     if (owner == null || owner.uid != expectedUid) {
       throw FirebaseFunctionsException(
           code: 'unauthenticated',
-          message: 'Masuk dengan akun Google Anda terlebih dahulu.');
+          message: Loc.tr('errGoogleSignInFirst'));
     }
     final ownerKey = _key(owner)!;
     final generation = _sessionGeneration();
@@ -134,7 +135,7 @@ class BrowserCompanionChatService extends NotebookChatService {
     if (!_transport.connected) {
       throw FirebaseFunctionsException(
           code: 'unavailable',
-          message: 'Penghubung Google Chrome belum tersambung.');
+          message: Loc.tr('errChromeBridge'));
     }
     try {
       // Resolve from the authenticated server on every send; never client catalog.

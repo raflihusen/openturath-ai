@@ -1,3 +1,4 @@
+import '../core/localization.dart';
 import 'package:flutter/material.dart';
 import '../core/scholarly_fonts.dart';
 import '../services/browser_workspace_launcher.dart';
@@ -48,11 +49,11 @@ class _BrowserWorkspaceScreenState extends State<BrowserWorkspaceScreen> {
                       style: ScholarlyFonts.newsreader(
                           fontSize: OTFontSize.s36, color: colors.onSurface)),
                   const SizedBox(height: 24),
-                  Text('Satu ruang untuk kajian Anda.',
+                  Text(Loc.tr('workspaceHeadline'),
                       style: Theme.of(context).textTheme.titleLarge),
                   const SizedBox(height: 12),
-                  const Text(
-                      'Masuk dengan Google dari ruang browser, lalu buka ruang AI di browser dan profil yang sama. Tidak ada login Google di WebView aplikasi.'),
+                  Text(
+                      Loc.tr('workspaceIntro')),
                   const SizedBox(height: 28),
                   FilledButton.icon(
                     onPressed: _opening ? null : _open,
@@ -63,15 +64,14 @@ class _BrowserWorkspaceScreenState extends State<BrowserWorkspaceScreen> {
                             child: CircularProgressIndicator(strokeWidth: 2))
                         : const Icon(Icons.open_in_browser_rounded),
                     label: Text(_opening
-                        ? 'Membuka ruang…'
+                        ? Loc.tr('workspaceOpening')
                         : _opened
-                            ? 'Buka ruang kembali'
-                            : 'Buka ruang kajian'),
+                            ? Loc.tr('workspaceReopen')
+                            : Loc.tr('workspaceOpen')),
                   ),
                   if (_opened) ...[
                     const SizedBox(height: 16),
-                    const Text(
-                        'Ruang kajian telah dibuka di browser. Anda dapat menambahkan pintasannya ke layar utama.'),
+                    Text(Loc.tr('workspaceOpened')),
                   ],
                   if (_message != null) ...[
                     const SizedBox(height: 16),
@@ -79,7 +79,7 @@ class _BrowserWorkspaceScreenState extends State<BrowserWorkspaceScreen> {
                   ],
                   const SizedBox(height: 24),
                   Text(
-                      'Sesi dipakai kembali per perangkat dan profil browser. Google tetap dapat meminta persetujuan atau verifikasi keamanan.',
+                      Loc.tr('workspaceSessionNote'),
                       style: Theme.of(context).textTheme.bodySmall),
                 ],
               ),
