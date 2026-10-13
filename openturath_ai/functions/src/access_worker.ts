@@ -3,9 +3,9 @@ import {execFile} from "child_process";
 import {createServer} from "http";
 import {rename, chmod, readFile} from "fs/promises";
 import {promisify} from "util";
-import {AccessControl, Entity, Provider, ShareObservation, isVip, keyOf, millis, normalEmail, rights, billingExpiry, verifiedAkalPeriods, hasLegacyAccessAdjustment, REVOCATION_POLICY} from "./access_control";
+import {AccessControl, Entity, Provider, ShareObservation, isVip, keyOf, millis, normalEmail, rights, billingExpiry, verifiedAkalPeriods, hasLegacyAccessAdjustment, classifyLegacyEvent, REVOCATION_POLICY} from "./access_control";
 import {NOTEBOOK_ENTITIES} from "./notebook_catalog";
-import {ENTITY_SCOPES, AGENT_ENTITLEMENTS} from "./access_catalog";
+import {ENTITY_SCOPES, AGENT_ENTITLEMENTS, resolveAkalScopes} from "./access_catalog";
 
 admin.initializeApp({projectId: process.env.GOOGLE_CLOUD_PROJECT || "open-turath"});
 const db = admin.firestore();
@@ -351,6 +351,50 @@ async function settleRevokes(): Promise<void> {
     if (absent) await doc.ref.update({status: "revoked", verified_ms: Date.now()});
   }
 }
+// The sharing server hands authenticated GoAkal webhook events to this queue
+// once the VPS writer is active. Without a consumer a real payment would wait
+// forever, so each cycle settles a bounded batch.
+async function consumeLegacyEvents(): Promise<void> {
+  const events = await db.collection("access_legacy_events").where("status", "==", "verification_required").limit(50).get();
+  for (const doc of events.docs) {
+    const decision = classifyLegacyEvent(doc.data(), resolveAkalScopes);
+    if (decision.action !== "grant") {
+      await doc.ref.update({status: decision.action === "noted" ? "noted" : "operator_review",
+        decision_reason: decision.reason, processed_ms: Date.now()});
+      continue;
+    }
+    try {
+      const matches = await db.collection("users").where("email", "==", decision.email).limit(2).get();
+      if (matches.size > 1) {
+        await doc.ref.update({status: "operator_review", decision_reason: "ambiguous_owner", processed_ms: Date.now()});
+        continue;
+      }
+      const ownerRef = matches.docs[0]?.ref || db.collection("access_legacy_owners").doc(`legacy_${keyOf(decision.email)}`);
+      if (!matches.size) await ownerRef.set({email: decision.email, legacy_revoke_only: true, access_due_ms: Date.now()}, {merge: true});
+      const granted: string[] = [];
+      for (const scope of decision.scopes) {
+        const ref = db.collection("access_grants").doc(keyOf("goakal", decision.transactionId, scope));
+        await db.runTransaction(async (t: any) => {
+          if ((await t.get(ref)).exists) return;
+          t.create(ref, {uid: ownerRef.id, email: decision.email, scope, kind: "payment", status: "active",
+            amount: decision.amount, provider: "goakal", source: "akal_webhook", transaction_id: decision.transactionId,
+            starts_ms: decision.paidMs, expires_ms: decision.expiresMs, created_ms: Date.now()});
+        });
+        granted.push(ref.id);
+      }
+      await db.runTransaction(async (t: any) => {
+        const owner = (await t.get(ownerRef)).data();
+        if (!owner || owner.adopted_by) return;
+        t.update(ownerRef, {access_grant_ids: [...new Set([...(owner.access_grant_ids || []), ...granted])],
+          access_version: 2, access_due_ms: Date.now()});
+      });
+      await doc.ref.update({status: "granted", grant_ids: granted, processed_ms: Date.now()});
+    } catch (_) {
+      // Leave the event queued; the next cycle retries it.
+      console.error("Legacy event could not be settled; retrying next cycle");
+    }
+  }
+}
 async function cycle(): Promise<void> {
   stats.last_cycle_ms = Date.now();
   const cfg = (await runtime.get()).data();
@@ -382,6 +426,7 @@ async function cycle(): Promise<void> {
         next_attempt_ms:Date.now()+60000,updated_ms:Date.now()});
     }
   }
+  await consumeLegacyEvents();
   await assignments();
   await settleRevokes();
   const jobs = await db.collection("access_jobs").where("due_ms", "<=", Date.now()).count().get();

@@ -135,7 +135,7 @@ export function loadBackend(root = process.cwd()) {
     .replace(/^import \* as crypto from "crypto";/m, 'const crypto = require("crypto");')
     .replace(/export (const|class|function|async function) /g, '$1 ');
   const accessExports: any = {};
-  vm.runInNewContext(stripTypeScriptTypes(accessSource + '\nexports.AccessControl=AccessControl; exports.AccessFault=AccessFault; exports.isVip=isVip; exports.keyOf=keyOf; exports.millis=millis; exports.billingExpiry=billingExpiry; exports.VIP_EMAILS=VIP_EMAILS; exports.normalEmail=normalEmail;', {mode: 'transform'}),
+  vm.runInNewContext(stripTypeScriptTypes(accessSource + '\nexports.AccessControl=AccessControl; exports.AccessFault=AccessFault; exports.isVip=isVip; exports.keyOf=keyOf; exports.millis=millis; exports.billingExpiry=billingExpiry; exports.VIP_EMAILS=VIP_EMAILS; exports.normalEmail=normalEmail; exports.akalDurationMonths=akalDurationMonths; exports.classifyLegacyEvent=classifyLegacyEvent;', {mode: 'transform'}),
     {exports:accessExports, require:()=>crypto, Date});
   deps['./access_control'] = accessExports;
   const mappingSource = fs.readFileSync(path.join(root, 'functions/src/access_catalog.ts'), 'utf8')

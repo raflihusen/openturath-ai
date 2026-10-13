@@ -376,3 +376,24 @@ test("a migration hold does not bypass explicit account deletion",async()=>{
   db.seed(`access_memberships/${keyOf("clone","u@example.test")}`,{email:"u@example.test",entity,notebook_id:"clone",present:true,verified_ms:now});
   await assert.rejects(engine.resolve("u",entity),{code:"permission-denied"});
 });
+
+test("legacy GoAkal events are granted only with complete positive evidence for a known product", async () => {
+  const {classifyLegacyEvent, akalDurationMonths} = await import("../src/access_control.ts");
+  const scopes = (service: unknown) => service === "AI Fikih Syafi'i" ? ["fiqh_syafii"] : [];
+  const event = {payment_status: "PAID", email: " Buyer@Example.test ", transaction_id: "pay_1", amount: 50000,
+    service: "AI Fikih Syafi'i", plan: "12 Bulan", paid_at: "2026-01-31T00:00:00Z"};
+  const granted = classifyLegacyEvent(event, scopes);
+  assert.equal(granted.action, "grant");
+  assert.equal(granted.email, "buyer@example.test");
+  assert.deepEqual(granted.scopes, ["fiqh_syafii"]);
+  assert.equal(granted.months, 12);
+  assert.equal(new Date(granted.expiresMs).toISOString(), "2027-01-31T00:00:00.000Z");
+  for (const [patch, reason] of [[{amount: 0}, "non_positive_amount"], [{transaction_id: ""}, "invalid_transaction_id"],
+    [{service: "Kelas Lain"}, "unknown_service"], [{paid_at: ""}, "missing_payment_time"], [{email: "x"}, "invalid_email"],
+    [{reason: "invalid_billing_identity_or_amount"}, "invalid_billing_identity_or_amount"], [{payment_status: "PENDING"}, "unknown_payment_status"]] as const) {
+    const decision = classifyLegacyEvent({...event, ...patch}, scopes);
+    assert.equal(decision.action, "review"); assert.equal(decision.reason, reason);
+  }
+  assert.equal(classifyLegacyEvent({...event, payment_status: "EXPIRED"}, scopes).action, "noted");
+  assert.equal(akalDurationMonths("6 Bulan"), 6); assert.equal(akalDurationMonths("1 Bulan"), 1);
+});

@@ -2,7 +2,7 @@ import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
 import axios from "axios";
 import * as crypto from "crypto";
-import {AccessControl, AccessFault, isVip, keyOf, millis, billingExpiry} from "./access_control";
+import {AccessControl, AccessFault, isVip, keyOf, millis, billingExpiry, akalDurationMonths} from "./access_control";
 import {AGENT_ENTITLEMENTS, ENTITY_SCOPES, AKAL_SERVICES, SCOPE_LABELS, PROVISIONABLE_SCOPES, resolveAkalScopes} from "./access_catalog";
 import { handleNativeChat, NativeChatError } from "./native_chat";
 import {
@@ -2636,10 +2636,7 @@ async function verifyAkalSubscription(email: string, serviceCuid: string, apiKey
 }
 
 function detectDurationMonths(priceSchemeTitle: string, serviceTitle: string): number {
-  const s = (priceSchemeTitle + " " + serviceTitle).toLowerCase();
-  if (s.includes("12 bulan") || s.includes("12m") || s.includes("tahun") || s.includes("1y") || s.includes("year") || s.includes("annual")) return 12;
-  if (s.includes("6 bulan") || s.includes("6m")) return 6;
-  return 1;
+  return akalDurationMonths(priceSchemeTitle, serviceTitle);
 }
 
 // ================================================================
