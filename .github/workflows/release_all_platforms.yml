@@ -28,6 +28,20 @@ jobs:
         working-directory: openturath_ai
       - run: flutter test --no-pub
         working-directory: openturath_ai
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm ci
+        working-directory: openturath_ai/functions
+      - run: npm run check
+        working-directory: openturath_ai/functions
+      - run: npm test
+        working-directory: openturath_ai/functions
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m unittest discover -s tests -v
+        working-directory: ecosystem/openturath_subscription
 
   # ════════════════════════════════════════════════════════════════
   # 1. BUILD WINDOWS EXE (Installer & Portable Zip)
