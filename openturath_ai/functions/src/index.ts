@@ -3,7 +3,7 @@ import * as admin from "firebase-admin";
 import axios from "axios";
 import * as crypto from "crypto";
 import {AccessControl, AccessFault, isVip, keyOf, millis, billingExpiry} from "./access_control";
-import {AGENT_ENTITLEMENTS, ENTITY_SCOPES} from "./access_catalog";
+import {AGENT_ENTITLEMENTS, ENTITY_SCOPES, AKAL_SERVICES, SCOPE_LABELS, PROVISIONABLE_SCOPES, resolveAkalScopes} from "./access_catalog";
 import { handleNativeChat, NativeChatError } from "./native_chat";
 import {
   NOTEBOOK_ENTITIES,
@@ -39,6 +39,17 @@ async function sendTelegramNotification(text: string): Promise<boolean> {
   }
 }
 
+
+// Telegram messages use parse_mode HTML; every value that originates from a
+// user, a payment provider or a client device must pass through this.
+function esc(value: unknown): string {
+  return String(value ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").slice(0, 400);
+}
+
+// Cutover switch shared with the VPS worker and the legacy Python writers.
+async function vpsWriterActive(): Promise<boolean> {
+  return (await db.collection("access_control").doc("runtime").get()).data()?.writer === "vps-v2";
+}
 
 // ================================================================
 // HARGA & DURASI OTORITATIF — Ditentukan oleh `resolvePlanPricing`
@@ -730,7 +741,7 @@ export const createCheckout = functions
       }).catch(() => {});
       throw new functions.https.HttpsError(
         "internal",
-        "Gagal membuat sesi pembayaran Midtrans: " + (err.response?.data?.error_messages?.join(", ") || err.message || "Kendala teknis Midtrans")
+        "Sesi pembayaran belum dapat dibuat. Silakan coba lagi sebentar lagi."
       );
     }
 
@@ -758,21 +769,8 @@ function generateDokuGetSignature(
 }
 
 function getServiceTitleForEntitlement(entitlementKey: string): string {
-  if (entitlementKey === "all_access" || entitlementKey === "all_ai") return "Paket Semua AI";
-  if (entitlementKey === "fiqh_tahawwulat") return "AI Fikih Tahawwulat";
-  if (entitlementKey === "fiqh_syafii") return "AI Fikih Syafi'i";
-  if (entitlementKey === "fiqh_hanafi") return "AI Fikih Hanafi";
-  if (entitlementKey === "fiqh_maliki") return "AI Fikih Maliki";
-  if (entitlementKey === "fiqh_hanbali") return "AI Fikih Hanbali";
-  if (entitlementKey === "fiqh_muqaran") return "AI Fikih Perbandingan Mazhab";
-  if (entitlementKey === "ushul_fiqh") return "AI Ushul Fiqih";
-  if (entitlementKey === "tafsir") return "AI Tafsir";
-  if (entitlementKey === "hadits") return "AI Hadits";
-  if (entitlementKey === "nahwu" || entitlementKey === "bahasa_arab" || entitlementKey === "nahwu_sharaf") return "AI Bahasa Arab";
-  if (entitlementKey === "aqidah" || entitlementKey === "aqidah_kalam" || entitlementKey === "aqidah_ushuluddin") return "AI Aqidah & Ushuluddin";
-  if (entitlementKey === "tarikh" || entitlementKey === "tarikh_khulafa" || entitlementKey === "tarikh_thabaqat" || entitlementKey === "sirah") return "AI Tarikh & Sirah Nabawiyah";
-  if (entitlementKey === "tasawwuf" || entitlementKey === "habib_umar" || entitlementKey === "tasawwuf_ihya" || entitlementKey === "tasawwuf_adab") return "AI Tasawwuf & Tazkiyatun Nafs";
-  return "Modul kajian";
+  if (entitlementKey === "all_ai") return SCOPE_LABELS.all_access;
+  return SCOPE_LABELS[entitlementKey] || "Modul kajian";
 }
 
 async function processSuccessfulPayment(invoiceNumber: string, paidAmount: unknown, gatewayEvidence?: {transactionId: string; orderId: string; currency?: string}) {
@@ -956,11 +954,11 @@ async function processSuccessfulPayment(invoiceNumber: string, paidAmount: unkno
   await sendTelegramNotification(
     `💳 <b>[PEMBAYARAN DITERIMA & AKSES AKTIF]</b>\n` +
     `🕌 OpenTurath AI Server\n` +
-    `👤 Pengguna: <code>${activationResult.email}</code>\n` +
-    `🆔 Invoice: <code>${invoiceNumber}</code>\n` +
-    `📦 Produk: <b>${activationResult.serviceTitle}</b>\n` +
-    `🏷️ Paket: <b>${activationResult.plan.toUpperCase()}</b>\n` +
-    `🔑 Entitlement: <code>${activationResult.entitlementKey}</code>\n` +
+    `👤 Pengguna: <code>${esc(activationResult.email)}</code>\n` +
+    `🆔 Invoice: <code>${esc(invoiceNumber)}</code>\n` +
+    `📦 Produk: <b>${esc(activationResult.serviceTitle)}</b>\n` +
+    `🏷️ Paket: <b>${esc(activationResult.plan.toUpperCase())}</b>\n` +
+    `🔑 Entitlement: <code>${esc(activationResult.entitlementKey)}</code>\n` +
     `✅ Status: Sukses terdaftar & hak akses aktif.`
   );
 
@@ -1216,7 +1214,7 @@ export const dokuWebhook = functions
       }
     } catch (err: any) {
       console.error("[DOKU Webhook] Uncaught error in handler:", err.message);
-      res.status(500).json({ error: err.message });
+      res.status(500).json({ error: "Internal error" });
     }
   });
 
@@ -1312,7 +1310,7 @@ export const midtransWebhook = functions
             error: actErr.message,
             failed_at: admin.firestore.FieldValue.serverTimestamp(),
           });
-          res.status(500).json({ status: "ERROR", message: actErr.message });
+          res.status(500).json({ status: "ERROR", message: "Failed to activate payment" });
         }
       } else if (transactionStatus === "cancel" || transactionStatus === "expire" || transactionStatus === "deny") {
         console.log(`[Midtrans Webhook] Payment ${transactionStatus} for ${orderId}. Updating transaction record...`);
@@ -1337,7 +1335,7 @@ export const midtransWebhook = functions
       }
     } catch (err: any) {
       console.error("[Midtrans Webhook] Uncaught error:", err.message);
-      res.status(500).json({ error: err.message });
+      res.status(500).json({ error: "Internal error" });
     }
   });
 
@@ -1447,7 +1445,7 @@ export const checkPaymentStatus = functions
         return {
           success: false,
           status: "PENDING",
-          error: err.response?.data?.status_message || err.message,
+          message: "Status pembayaran belum dapat diperiksa. Silakan coba lagi.",
         };
       }
     } else {
@@ -1494,7 +1492,7 @@ export const checkPaymentStatus = functions
         return {
           success: false,
           status: "PENDING",
-          error: err.response?.data || err.message
+          message: "Status pembayaran belum dapat diperiksa. Silakan coba lagi.",
         };
       }
     }
@@ -1770,9 +1768,9 @@ export const redeemCode = functions
       `🔔 <b>[VOUCHER SANTRI DIKLAIM]</b>\n` +
       `🕌 OpenTurath AI\n` +
       `🎟️ Kode: <b>${maskedCode}</b>\n` +
-      `📧 Email: <code>${redeemResult.email}</code>\n` +
-      `👤 Nama: <b>${redeemResult.name}</b>\n` +
-      `📦 Produk: <b>${redeemResult.serviceTitle}</b>\n` +
+      `📧 Email: <code>${esc(redeemResult.email)}</code>\n` +
+      `👤 Nama: <b>${esc(redeemResult.name)}</b>\n` +
+      `📦 Produk: <b>${esc(redeemResult.serviceTitle)}</b>\n` +
       `🏷️ Durasi: <b>${redeemResult.durationDays} Hari</b>\n` +
       `⏳ Berlaku s/d: <code>${redeemResult.expiryIso}</code>\n` +
       `✅ Status: Sukses terdaftar & hak akses aktif.`;
@@ -1859,30 +1857,6 @@ export const onUserCreate = functions.firestore
 // ================================================================
 // FUNCTION 4: dailyRevoke (Cron Job — tiap tengah malam)
 // ================================================================
-const PERMANENT_VIP_EMAILS = new Set([
-  "openturath@gmail.com",
-  "ramah@ptct.net",
-  "raflimaulan@gmail.com",
-  "mas.raflihusen@gmail.com",
-  "alkhateeb23@gmail.com",
-  "omarasb1441@gmail.com",
-  "prilatief@gmail.com",
-  "aaadman40@gmail.com",
-  "abo.omar5539@gmail.com",
-  "abualgilani2024@gmail.com",
-  "ahobh4241@gmail.com",
-  "alhamodi65@gmail.com",
-  "ali.bafdhl36@gmail.com",
-  "alshykhkmalbahrmz@gmail.com",
-  "atinrahmak@gmail.com",
-  "hafamfb551985@gmail.com",
-  "loyos839@gmail.com",
-  "mohammedhalahdal@gmail.com",
-  "mostajadt25@gmail.com",
-  "nona.alyaziza@gmail.com",
-  "omar739037802@gmail.com",
-  "yasser110271@gmail.com",
-]);
 
 export const dailyRevoke = functions
   .runWith({ serviceAccount: "open-turath@appspot.gserviceaccount.com", timeoutSeconds: 300 })
@@ -1904,13 +1878,7 @@ export const dailyRevoke = functions
 
           // PROTEKSI VIP PERMANEN: Kebal terhadap segala pencabutan akses otomatis
           const userEmail = (data.email || "").toLowerCase().trim();
-          if (
-            data.is_vip === true ||
-            ["vip", "admin", "guru", "special"].includes(String(data.role || "").toLowerCase()) ||
-            PERMANENT_VIP_EMAILS.has(userEmail)
-          ) {
-            return;
-          }
+          if (isVip(data)) return;
           const entitlements = { ...(data.entitlements || {}) };
           const expired: string[] = [];
           for (const [key, value] of Object.entries(entitlements)) {
@@ -1952,9 +1920,24 @@ export const dailyRevoke = functions
       .where("status", "in", ["success", "paid", "settled", "SUCCESS", "PAID", "SETTLED"])
       .get();
     const activeEmailsByEntitlement = new Map<string, Set<string>>();
-    for (const key of PROVISIONED_KEYS) {
+    for (const key of PROVISIONABLE_SCOPES) {
       activeEmailsByEntitlement.set(key, new Set<string>());
     }
+    // The owning profile, not only the transaction row, decides VIP status and
+    // whether another grant (voucher, renewal, other gateway) keeps a module active.
+    const ownerCache = new Map<string, FirebaseFirestore.DocumentData | null>();
+    const ownerOf = async (uid: unknown, email: string): Promise<FirebaseFirestore.DocumentData | null> => {
+      const cacheKey = typeof uid === "string" && uid ? `uid:${uid}` : `email:${email}`;
+      if (ownerCache.has(cacheKey)) return ownerCache.get(cacheKey)!;
+      let owner: FirebaseFirestore.DocumentData | null = null;
+      if (typeof uid === "string" && uid && !uid.includes("@")) owner = (await db.collection("users").doc(uid).get()).data() || null;
+      if (!owner) {
+        const byEmail = await db.collection("users").where("email", "==", email).limit(1).get();
+        owner = byEmail.empty ? null : byEmail.docs[0].data();
+      }
+      ownerCache.set(cacheKey, owner);
+      return owner;
+    };
     const allActiveEmails = new Set<string>();
 
     for (const doc of txSnap.docs) {
@@ -1973,8 +1956,8 @@ export const dailyRevoke = functions
       }
 
       const plan = String(d.plan || d.plan_id || "").toLowerCase();
-      const isVip = d.is_vip === true || plan.includes("vip") || (expDate && expDate.getFullYear() >= 2030);
-      if (isVip || PERMANENT_VIP_EMAILS.has(email)) continue;
+      const txVip = d.is_vip === true || plan.includes("vip") || (expDate && expDate.getFullYear() >= 2030);
+      if (txVip || isVip({email})) continue;
 
       const isYearly = ["1y", "year", "tahun", "annual", "bahits_1y"].some(y => plan.includes(y));
       const entKey = d.entitlement_key;
@@ -1982,7 +1965,7 @@ export const dailyRevoke = functions
       if (expDate && expDate > now) {
         if (isYearly || entKey === "all_access" || entKey === "all_ai" || !entKey) {
           allActiveEmails.add(email);
-          for (const k of PROVISIONED_KEYS) {
+          for (const k of PROVISIONABLE_SCOPES) {
             activeEmailsByEntitlement.get(k)?.add(email);
           }
         } else if (activeEmailsByEntitlement.has(entKey)) {
@@ -1995,7 +1978,7 @@ export const dailyRevoke = functions
       const d = doc.data();
       const email = (d.customer_email || d.payer_email || d.email || "").trim().toLowerCase();
       if (!email) continue;
-      if (PERMANENT_VIP_EMAILS.has(email) || d.is_vip === true) continue;
+      if (isVip({email}) || d.is_vip === true) continue;
 
       const status = String(d.status || "").toLowerCase();
       if (!["success", "paid", "settled"].includes(status)) continue;
@@ -2010,15 +1993,21 @@ export const dailyRevoke = functions
 
       if (expDate && expDate <= now) {
         const entKey = d.entitlement_key;
-        const targetKeys = (entKey && PROVISIONED_KEYS.includes(entKey))
+        const owner = await ownerOf(d.uid, email);
+        const registered = await db.collection("access_vip_registry").doc(keyOf(email)).get();
+        if (registered.exists || (owner && isVip({...owner, email: owner.email || email}))) continue;
+
+        const targetKeys = (entKey && PROVISIONABLE_SCOPES.includes(entKey))
           ? [entKey]
-          : (String(d.plan || "").toLowerCase().includes("tholib") ? ["fiqh_tahawwulat", "fiqh_syafii"] : PROVISIONED_KEYS);
+          : (String(d.plan || "").toLowerCase().includes("tholib") ? ["fiqh_tahawwulat", "fiqh_syafii"] : PROVISIONABLE_SCOPES);
 
         const expiredKeysToRevoke: string[] = [];
         for (const k of targetKeys) {
-          if (!allActiveEmails.has(email) && !activeEmailsByEntitlement.get(k)?.has(email)) {
-            expiredKeysToRevoke.push(k);
-          }
+          if (allActiveEmails.has(email) || activeEmailsByEntitlement.get(k)?.has(email)) continue;
+          // Independent per-module evaluation: a still-active entitlement for
+          // this module survives the expiry of an older or unrelated transaction.
+          if (owner && getEntitlementAccess(owner, k).active) continue;
+          expiredKeysToRevoke.push(k);
         }
 
         await doc.ref.update({
@@ -2056,7 +2045,7 @@ export const dailyRevoke = functions
         `Sistem mendeteksi <b>${revokedSummary.length} akses kedaluwarsa</b> dan mencabut hak aksesnya:`,
       ];
       for (const r of revokedSummary.slice(0, 15)) {
-        lines.push(`• 👤 <code>${r.email}</code> — <b>${r.scope}</b> (<i>${r.reason}</i>)`);
+        lines.push(`• 👤 <code>${esc(r.email)}</code> — <b>${esc(r.scope)}</b> (<i>${esc(r.reason)}</i>)`);
       }
       if (revokedSummary.length > 15) {
         lines.push(`• <i>... dan ${revokedSummary.length - 15} akses kedaluwarsa lainnya.</i>`);
@@ -2070,7 +2059,6 @@ export const dailyRevoke = functions
 // FUNCTION 4b: processProvisioningOutbox (Cron Worker — tiap 5 menit)
 // Memproses antrean durable outbox provisioning & revocation NotebookLM
 // ================================================================
-const PROVISIONED_KEYS = ["fiqh_tahawwulat", "fiqh_syafii", "ushul_fiqh", "hadits", "tafsir", "nahwu"];
 
 function entitlementRevision(data: any): string {
   return JSON.stringify([data?.plan, data?.subscription_expiry, data?.entitlements]);
@@ -2119,22 +2107,24 @@ export const processProvisioningOutbox = functions
         const email = (data?.email || job.email || (uid.includes("@") ? uid : "")).trim().toLowerCase();
         if (!email.includes("@")) throw new Error("Invalid provisioning email");
         const scope = job.entitlement_key;
-        const keys = scope === "all_access" || scope === "all_ai" ? PROVISIONED_KEYS : [scope];
+        const keys = scope === "all_access" || scope === "all_ai" ? PROVISIONABLE_SCOPES : [scope];
+        const protectedOwner = isVip({...(data || {}), email}) ||
+          (await db.collection("access_vip_registry").doc(keyOf(email)).get()).exists;
         for (const key of keys) {
-          if (!PROVISIONED_KEYS.includes(key)) throw new Error("Unsupported provisioning scope");
-          const isVip = data?.is_vip === true ||
-            ["vip", "admin", "guru", "special"].includes(String(data?.role || "").toLowerCase()) ||
-            PERMANENT_VIP_EMAILS.has(email);
-          const desired = isVip || (job.action === "add" ? true : Boolean(data && getEntitlementAccess(data,key).active));
+          if (!PROVISIONABLE_SCOPES.includes(key)) throw new Error("Unsupported provisioning scope");
+          // A queued "add" is re-checked against the current profile so a job
+          // delayed past expiry cannot hand access back.
+          const entitled = Boolean(data && getEntitlementAccess(data,key).active);
+          const desired = protectedOwner || (job.action === "add" ? (data ? entitled : true) : entitled);
           await notifySubscriptionServer(email,data?.name||job.name||"Peneliti",desired ? "premium" : "trial",
-            desired ? "add" : "remove",getServiceTitleForEntitlement(key));
+            desired ? "add" : "remove",getServiceTitleForEntitlement(key),key);
         }
         if (job.action === "remove") {
           await sendTelegramNotification(
             `🗑️ <b>[DEPROVISIONING NOTEBOOKLM SELESAI]</b>\n` +
             `🕌 OpenTurath AI Server\n` +
-            `👤 Email: <code>${email}</code>\n` +
-            `📦 Produk: <b>${getServiceTitleForEntitlement(job.entitlement_key)}</b>\n` +
+            `👤 Email: <code>${esc(email)}</code>\n` +
+            `📦 Produk: <b>${esc(getServiceTitleForEntitlement(job.entitlement_key))}</b>\n` +
             `✅ Hak akses telah resmi dicabut dari sistem NotebookLM.`
           );
         }
@@ -2173,7 +2163,7 @@ async function deleteUserData(uid: string, authEmail = ""): Promise<void> {
     const email = authEmail || user.data()?.email || "";
     targetEmail = email;
     const jobs = [];
-    for (const key of PROVISIONED_KEYS) {
+    for (const key of PROVISIONABLE_SCOPES) {
       const job = db.collection("provisioning_outbox").doc(`delete_${uid}_${key}`);
       jobs.push({ref:job,snap:await t.get(job),key});
     }
@@ -2188,8 +2178,8 @@ async function deleteUserData(uid: string, authEmail = ""): Promise<void> {
   if (targetEmail) {
     await sendTelegramNotification(
       `🚫 <b>[HAPUS AKUN & CABUT AKSES]</b>\n` +
-      `👤 Email: <code>${targetEmail}</code>\n` +
-      `🆔 UID: <code>${uid}</code>\n` +
+      `👤 Email: <code>${esc(targetEmail)}</code>\n` +
+      `🆔 UID: <code>${esc(uid)}</code>\n` +
       `⚠️ Akun pengguna dihapus permanen. Seluruh hak akses turats dicabut.`
     );
   }
@@ -2224,19 +2214,13 @@ async function notifySubscriptionServer(
   name: string,
   plan: string,
   action: "add" | "remove",
-  serviceName?: string
+  serviceName?: string,
+  scopeKey?: string
 ) {
   const url = "https://openturath-subscription-255541559800.asia-southeast2.run.app/webhook";
   const services = serviceName
     ? [serviceName]
-    : [
-        "AI Fikih Tahawwulat",
-        "AI Fikih Syafi'i",
-        "AI Ushul Fiqih",
-        "AI Hadits",
-        "AI Tafsir",
-        "AI Bahasa Arab",
-      ];
+    : PROVISIONABLE_SCOPES.map(getServiceTitleForEntitlement);
 
   for (const service of services) {
     const payload = {
@@ -2249,6 +2233,8 @@ async function notifySubscriptionServer(
         },
         service: {
           name: service,
+          // Authoritative for the sharing server; the label is display only.
+          ...(scopeKey ? {key: scopeKey} : {}),
         },
       },
     };
@@ -3813,22 +3799,25 @@ export const onClientErrorLogged = functions.firestore
     const data = snap.data();
     if (!data) return;
 
-    const severity = data.severity || "error";
-    // Teruskan ke Telegram untuk severity error, critical, dan fatal
-    if (severity === "critical" || severity === "fatal" || severity === "error") {
-      const errorMsg = String(data.error || "Unknown Error");
-      const errContext = String(data.context || "general");
-      const user = String(data.userEmail || data.userId || "anonymous");
-      const platform = String(data.platform || "unknown");
-
-      const msg = `⚠️ <b>[ALERT CLIENT ERROR]</b>\n` +
-        `<b>Context:</b> ${errContext}\n` +
-        `<b>Severity:</b> ${severity.toUpperCase()}\n` +
-        `<b>Platform:</b> ${platform}\n` +
-        `<b>User:</b> ${user}\n` +
-        `<b>Error:</b> <code>${errorMsg.substring(0, 300)}</code>\n` +
-        `<b>ID:</b> <code>${ctx.params.logId}</code>`;
-
-      await sendTelegramNotification(msg);
+    const severity = String(data.severity || "error");
+    if (!["critical", "error"].includes(severity)) return;
+    // Any signed-in client can write this collection. Bound what one account
+    // can push to the operator channel so payment alerts are never drowned out.
+    const owner = typeof data.userId === "string" && data.userId ? data.userId : "unknown";
+    try {
+      await enforceRateLimit(`client_alert_${owner}`.slice(0, 200), 5, 900, "limited");
+      await enforceRateLimit("client_alert_global", 30, 900, "limited");
+    } catch (_) {
+      return;
     }
+
+    const msg = `⚠️ <b>[ALERT CLIENT ERROR]</b>\n` +
+      `<b>Context:</b> ${esc(data.context || "general")}\n` +
+      `<b>Severity:</b> ${esc(severity.toUpperCase())}\n` +
+      `<b>Platform:</b> ${esc(data.platform || "unknown")}\n` +
+      `<b>User:</b> ${esc(data.userEmail || data.userId || "anonymous")}\n` +
+      `<b>Error:</b> <code>${esc(String(data.error || "Unknown Error").substring(0, 300))}</code>\n` +
+      `<b>ID:</b> <code>${esc(ctx.params.logId)}</code>`;
+
+    await sendTelegramNotification(msg);
   });
