@@ -163,29 +163,34 @@ class UpdateService extends ChangeNotifier {
           return;
         }
 
+        // Android installs a downloaded file, so the manifest must name the
+        // exact binary. A release without a valid SHA-256 is never fetched.
+        if (sha256Hash == null || sha256Hash.isEmpty) {
+          debugPrint('[UpdateService] Release manifest has no SHA-256; skipped.');
+          _updateInfo = null;
+          _status = UpdateStatus.idle;
+          notifyListeners();
+          return;
+        }
+
         // Android: Periksa apakah APK versi tersebut SUDAH pernah terunduh di cache (F44)
         final localFile = await _getLocalApkFile(latestCode);
         bool isCachedValid = false;
         if (await localFile.exists() &&
             (await localFile.length()) > 5 * 1024 * 1024) {
-          if (sha256Hash != null && sha256Hash.isNotEmpty) {
-            try {
-              final cachedSha = await _computeFileSha256(localFile);
-              if (cachedSha.toLowerCase() == sha256Hash.toLowerCase()) {
-                isCachedValid = true;
-              } else {
-                debugPrint(
-                    '[UpdateService] Cached APK hash mismatch: $cachedSha vs $sha256Hash');
-                await localFile.delete();
-              }
-            } catch (e) {
-              debugPrint('[UpdateService] Error checking cached hash: $e');
-              try {
-                await localFile.delete();
-              } catch (_) {}
+          try {
+            final cachedSha = await _computeFileSha256(localFile);
+            if (cachedSha.toLowerCase() == sha256Hash.toLowerCase()) {
+              isCachedValid = true;
+            } else {
+              debugPrint('[UpdateService] Cached APK hash mismatch; discarded.');
+              await localFile.delete();
             }
-          } else {
-            isCachedValid = true;
+          } catch (e) {
+            debugPrint('[UpdateService] Error checking cached hash: $e');
+            try {
+              await localFile.delete();
+            } catch (_) {}
           }
         }
 
@@ -216,9 +221,12 @@ class UpdateService extends ChangeNotifier {
 
   /// Unduh APK di latar belakang tanpa mengganggu user dengan mutex dan try-finally sink
   Future<void> _startSilentDownload(
-      String url, File targetFile, String? expectedSha256) async {
+      String url, File targetFile, String expectedSha256) async {
     if (_isDownloading) return;
     _isDownloading = true;
+    // Whole-download ceiling in addition to the per-chunk idle timeout.
+    final deadline = DateTime.now().add(const Duration(minutes: 20));
+    final tempFile = File('${targetFile.path}.tmp');
 
     final client = HttpClient()..connectionTimeout = const Duration(seconds: 30);
     try {
@@ -243,7 +251,6 @@ class UpdateService extends ChangeNotifier {
       if (contentLength > maxDownloadBytes) {
         throw const HttpException('Update exceeds download size limit');
       }
-      final tempFile = File('${targetFile.path}.tmp');
       if (await tempFile.exists()) {
         await tempFile.delete();
       }
@@ -256,6 +263,9 @@ class UpdateService extends ChangeNotifier {
           receivedBytes += chunk.length;
           if (receivedBytes > maxDownloadBytes) {
             throw const HttpException('Update exceeds download size limit');
+          }
+          if (DateTime.now().isAfter(deadline)) {
+            throw const HttpException('Update download exceeded time limit');
           }
           sink.add(chunk);
           if (contentLength > 0) {
@@ -279,17 +289,14 @@ class UpdateService extends ChangeNotifier {
         return;
       }
 
-      // Validasi SHA-256 secara streaming jika disediakan oleh Firestore app_config/version (F20)
-      if (expectedSha256 != null && expectedSha256.isNotEmpty) {
-        final calculatedSha256 = await _computeFileSha256(tempFile);
-        if (calculatedSha256.toLowerCase() != expectedSha256.toLowerCase()) {
-          debugPrint(
-              '[UpdateService] SHA256 checksum mismatch: $calculatedSha256 vs $expectedSha256');
-          if (await tempFile.exists()) await tempFile.delete();
-          _status = UpdateStatus.idle;
-          notifyListeners();
-          return;
-        }
+      // SHA-256 wajib cocok dengan manifest app_config/version (F20)
+      final calculatedSha256 = await _computeFileSha256(tempFile);
+      if (calculatedSha256.toLowerCase() != expectedSha256.toLowerCase()) {
+        debugPrint('[UpdateService] SHA256 checksum mismatch; download discarded.');
+        if (await tempFile.exists()) await tempFile.delete();
+        _status = UpdateStatus.idle;
+        notifyListeners();
+        return;
       }
 
       // Rename dari temp ke final APK
@@ -309,11 +316,15 @@ class UpdateService extends ChangeNotifier {
           '[UpdateService] Background download complete: ${targetFile.path}');
     } catch (e) {
       debugPrint('[UpdateService] Background download error: $e');
+      // A partial file is never reused; remove it so it cannot fill storage.
+      try {
+        if (await tempFile.exists()) await tempFile.delete();
+      } catch (_) {}
       _status = UpdateStatus.idle;
       notifyListeners();
     } finally {
       _isDownloading = false;
-      client.close();
+      client.close(force: true);
     }
   }
 
@@ -369,6 +380,17 @@ class UpdateService extends ChangeNotifier {
       return false;
     }
     try {
+      // The file sat on disk since the download; verify again before handing
+      // it to the system installer.
+      final expected = _updateInfo!.sha256Hash;
+      if (expected == null ||
+          (await _computeFileSha256(file)).toLowerCase() !=
+              expected.toLowerCase()) {
+        await file.delete();
+        _status = UpdateStatus.idle;
+        notifyListeners();
+        return false;
+      }
       final result = await OpenFilex.open(filePath,
           type: 'application/vnd.android.package-archive');
       return result.type == ResultType.done;
