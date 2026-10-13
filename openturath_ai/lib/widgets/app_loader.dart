@@ -4,6 +4,7 @@ import '../core/theme.dart';
 import '../core/localization.dart';
 import '../core/scholarly_fonts.dart';
 import '../core/design/ot_motion.dart';
+import 'package:openturath_ai/core/app_platform.dart';
 import 'package:openturath_ai/core/design/ot_typography.dart';
 
 /// Loader folio OpenTurath dengan kecepatan periodik dan dukungan reduced motion.
@@ -67,9 +68,17 @@ class _AppLoaderState extends State<AppLoader>
 
   void _syncMotion() {
     final reduced = MediaQuery.disableAnimationsOf(context);
-    final active = WidgetsBinding.instance.lifecycleState == null ||
-        WidgetsBinding.instance.lifecycleState == AppLifecycleState.resumed;
-    if (reduced || !TickerMode.of(context) || !active) {
+    final isDesktop = AppPlatform.isDesktop;
+    final state = WidgetsBinding.instance.lifecycleState;
+    // Di desktop (macOS/Windows/Linux), saat cursor fokus ke aplikasi lain (inactive),
+    // jendela aplikasi tetap terbuka dan terlihat oleh pengguna di layar.
+    // Animasi loader WAJIB terus berputar tanpa henti agar pengguna
+    // melihat proses tetap berjalan dan tidak mengira aplikasi mengalami freeze.
+    final isForeground = isDesktop ||
+        state == null ||
+        state == AppLifecycleState.resumed ||
+        state == AppLifecycleState.inactive;
+    if (reduced || !TickerMode.of(context) || !isForeground) {
       if (_controller.isAnimating) _controller.stop();
     } else if (!_controller.isAnimating) {
       _controller.repeat();

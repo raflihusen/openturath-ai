@@ -824,7 +824,7 @@ class _MembershipPass extends StatelessWidget {
           if (summary.isOpen) ...[
             const SizedBox(width: 8),
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
               decoration: BoxDecoration(
                 color: OTColors.primaryContainer(isDark),
                 borderRadius: OTRadius.inputBorder,

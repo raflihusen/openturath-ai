@@ -609,7 +609,7 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
               radius: 20,
               child: Container(
                 margin: const EdgeInsets.symmetric(horizontal: 4),
-                padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(OTRadius.xs),
                   border: Border.all(
@@ -807,7 +807,7 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                             borderRadius: BorderRadius.circular(OTRadius.xs),
                             child: Padding(
                               padding: const EdgeInsets.symmetric(
-                                  horizontal: 10, vertical: 4),
+                                  horizontal: 8, vertical: 4),
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
@@ -818,7 +818,7 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                                     Loc.tr('openAnotherSpecialist'),
                                     style: ScholarlyFonts.outfit(
                                       fontSize: OTFontSize.s11,
-                                      fontWeight: FontWeight.w500,
+                                      fontWeight: FontWeight.w600,
                                       color: textSecondary,
                                     ),
                                   ),
@@ -1247,6 +1247,8 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
   }
 
   Future<void> _verifySurfaceHealth() async {
+    // Jangan pernah mengganggu atau me-reload WebView yang sedang loading atau belum siap
+    if (widget.session.isWebLoading || !widget.session.isSessionReady) return;
     final controller = widget.session.webController;
     if (controller == null || !mounted) return;
     try {
@@ -1255,7 +1257,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
         controller.reload();
       }
     } catch (_) {
-      controller.reload();
+      // Jeda fokus mikro tidak boleh langsung memicu reload agresif
     }
   }
 
@@ -1706,29 +1708,29 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
         final email = _authService.currentUser?.email?.trim() ?? '';
         state = AppErrorState(
           icon: Icons.link_rounded,
-          title: Loc.tr('roomAuthTitle'),
-          message: Loc.tr('roomAuthBody',
-              [email.isEmpty ? Loc.tr('roomAuthSameAccount') : email]),
-          retryLabel: Loc.tr('roomSignInGoogle'),
+          title: 'Login dengan Akun yang Sama',
+          message: email.isNotEmpty
+              ? 'Silakan login ke Google dengan akun yang sama: $email'
+              : 'Silakan login ke Google dengan akun yang sama.',
+          retryLabel: 'Login Sekarang',
           retryIcon: Icons.login_rounded,
-          onRetry: session.resolvedUrl == null
-              ? null
-              : () {
-                  AgentSessionTab.googleSignInConsent = true;
-                  _loadingStarted = null;
-                  setState(() {
-                    session.errorMessage = null;
-                    session.isGoogleAuthPage = true;
-                    session.isWebLoading = false;
-                    session.isSessionReady = false;
-                  });
-                  final targetSignInUrl = email.isNotEmpty
-                      ? 'https://accounts.google.com/ServiceLogin?continue=${Uri.encodeComponent(session.resolvedUrl!)}&Email=${Uri.encodeComponent(email)}&login_hint=${Uri.encodeComponent(email)}'
-                      : 'https://accounts.google.com/ServiceLogin?continue=${Uri.encodeComponent(session.resolvedUrl!)}';
-                  session.webController?.loadUrl(
-                      urlRequest: URLRequest(url: WebUri(targetSignInUrl)));
-                  _startReadinessCheck();
-                },
+          onRetry: () async {
+            await Navigator.pushNamed(context, AppRoutes.googleSessionAuth);
+            if (!mounted) return;
+            if (session.resolvedUrl != null) {
+              setState(() {
+                session.errorMessage = null;
+                session.isGoogleAuthPage = false;
+                session.isWebLoading = true;
+                session.isSessionReady = false;
+              });
+              _loadingStarted = null;
+              session.webController?.loadUrl(
+                urlRequest: URLRequest(url: WebUri(session.resolvedUrl!)),
+              );
+              _startReadinessCheck();
+            }
+          },
           secondaryLabel: Loc.tr('roomOpenInBrowser'),
           onSecondary: session.resolvedUrl == null ? null : openInBrowser,
           onBack: close,

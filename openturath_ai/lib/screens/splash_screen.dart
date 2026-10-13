@@ -49,7 +49,7 @@ class _SplashScreenState extends State<SplashScreen> {
               (currentEmail.isEmpty || sessionEmail.isEmpty || sessionEmail == currentEmail)) {
             targetRoute = AppRoutes.dashboard;
           } else {
-            targetRoute = AppRoutes.dashboard;
+            targetRoute = AppRoutes.googleSessionAuth;
           }
         }
       }

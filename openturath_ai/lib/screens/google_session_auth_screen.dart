@@ -71,6 +71,20 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
 
   Future<void> _checkInitialSession() async {
     try {
+      final prefs = await SharedPreferences.getInstance();
+      final sessionReady = prefs.getBool('google_session_ready') ?? false;
+      final sessionEmail = prefs.getString('google_session_email') ?? '';
+      final currentEmail = (AuthService().cachedCurrentUser?.email ??
+              AuthService().currentUser?.email ??
+              '')
+          .trim()
+          .toLowerCase();
+
+      // Hanya lewati jika sesi sudah terbukti siap dan emailnya cocok
+      if (!sessionReady || currentEmail.isEmpty || sessionEmail != currentEmail) {
+        return;
+      }
+
       final cookieManager = DesktopWebViewRuntime.cookies;
       final cookiesLm = await cookieManager.getCookies(
         url: WebUri('https://notebooklm.google.com'),
@@ -306,7 +320,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
               },
             ),
             title: Text(
-              Loc.tr('googleSessionConnectTitle'),
+              'Login dengan Akun yang Sama',
               style: ScholarlyFonts.newsreader(
                 fontSize: OTFontSize.s18,
                 fontWeight: FontWeight.w600,
@@ -357,7 +371,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
           body: SafeArea(
             child: Column(
               children: [
-                // ── Disclaimer Wajib Akun yang Sama (Langkah 2) ──
+                // ── Info Wajib Akun yang Sama (Langkah 2) ──
                 Container(
                   width: double.infinity,
                   margin: const EdgeInsets.fromLTRB(16, 4, 16, 8),
@@ -375,7 +389,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
                         children: [
                           Container(
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 4, vertical: 2),
+                                horizontal: 8, vertical: 2),
                             decoration: BoxDecoration(
                               color: textPrimary.withValues(alpha: 0.08),
                               borderRadius: BorderRadius.circular(OTRadius.xs),
@@ -397,7 +411,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
                           const SizedBox(width: 8),
                           Expanded(
                             child: Text(
-                              'Autentikasi Ruang AI Google',
+                              'Login dengan Akun yang Sama',
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: ScholarlyFonts.outfit(
@@ -410,13 +424,11 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
                         ],
                       ),
                       const SizedBox(height: 8),
-                      // Teks Penjelasan Disclaimer
+                      // Cukup bilang login dengan akun yang sama
                       Text(
-                        Loc.tr('roomAuthBody', [
-                          currentEmail.isNotEmpty
-                              ? currentEmail
-                              : Loc.tr('roomAuthSameAccount')
-                        ]),
+                        currentEmail.isNotEmpty
+                            ? 'Silakan login ke Google menggunakan akun yang sama: $currentEmail'
+                            : 'Silakan login ke Google menggunakan akun yang sama.',
                         style: ScholarlyFonts.outfit(
                           fontSize: OTFontSize.s12,
                           height: 1.4,

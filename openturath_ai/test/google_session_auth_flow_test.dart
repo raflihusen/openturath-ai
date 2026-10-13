@@ -44,15 +44,15 @@ void main() {
 
     // Verifikasi banner langkah 2 dari 2
     expect(find.text('LANGKAH 2 DARI 2'), findsOneWidget);
-    expect(find.text('Autentikasi Ruang AI Google'), findsOneWidget);
+    expect(find.text('Login dengan Akun yang Sama'), findsWidgets);
 
-    // Verifikasi email akun yang sama tampil di disclaimer
+    // Verifikasi email akun yang sama tampil di layar
     expect(find.text('santri.openturath@gmail.com'), findsOneWidget);
 
-    // Verifikasi teks disclaimer pencegahan salah akun
+    // Verifikasi teks instruksi akun yang sama
     expect(
       find.textContaining(
-          'Silakan masuk ke Google sekali lagi menggunakan akun yang sama'),
+          'Silakan login ke Google menggunakan akun yang sama'),
       findsOneWidget,
     );
     expect(

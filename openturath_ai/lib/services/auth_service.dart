@@ -231,7 +231,7 @@ class AuthService {
           await prefs.setString('current_user_uid', firebaseUser.uid);
           await prefs.setString('google_session_email', effectiveEmail);
           await prefs.setString('notebook_google_email', effectiveEmail);
-          await prefs.setBool('google_session_ready', true);
+          // Sesi kuki WebView Google (Langkah 2) WAJIB diselesaikan via GoogleSessionAuthScreen
         } catch (_) {}
       }
       return userModel;

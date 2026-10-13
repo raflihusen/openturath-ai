@@ -5,6 +5,7 @@ import 'dart:ui' as ui;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
+import 'package:openturath_ai/core/app_platform.dart';
 import 'package:openturath_ai/core/design/ot_colors.dart';
 import 'package:openturath_ai/core/design/ot_motion.dart';
 import 'ot_arch_motion.dart';
@@ -57,7 +58,11 @@ class _ArchEchoCanvasState extends State<ArchEchoCanvas>
   /// Berjalan hanya saat jendela aktif dan gerak tidak dikurangi.
   void _sync() {
     final state = WidgetsBinding.instance.lifecycleState;
-    final active = state == null || state == AppLifecycleState.resumed;
+    final isDesktop = AppPlatform.isDesktop;
+    final active = isDesktop ||
+        state == null ||
+        state == AppLifecycleState.resumed ||
+        state == AppLifecycleState.inactive;
     if (_still || !active) {
       _clock.stop();
     } else if (!_clock.isAnimating) {
