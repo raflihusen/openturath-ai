@@ -5,6 +5,8 @@ exports.hasLegacyAccessAdjustment = hasLegacyAccessAdjustment;
 exports.evidenceHash = evidenceHash;
 exports.legacyTransactionScopes = legacyTransactionScopes;
 exports.billingExpiry = billingExpiry;
+exports.akalDurationMonths = akalDurationMonths;
+exports.classifyLegacyEvent = classifyLegacyEvent;
 exports.verifiedAkalPeriods = verifiedAkalPeriods;
 exports.rights = rights;
 const crypto = require("crypto");
@@ -86,6 +88,41 @@ function billingExpiry(baseMs, months) {
     const last = new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth() + 1, 0)).getUTCDate();
     date.setUTCDate(Math.min(day, last));
     return date.getTime();
+}
+function akalDurationMonths(priceSchemeTitle, serviceTitle = "") {
+    const s = `${priceSchemeTitle || ""} ${serviceTitle || ""}`.toLowerCase();
+    if (["12 bulan", "12m", "tahun", "1y", "year", "annual"].some(k => s.includes(k)))
+        return 12;
+    if (s.includes("6 bulan") || s.includes("6m"))
+        return 6;
+    return 1;
+}
+// Decides what the VPS worker may do with one authenticated GoAkal webhook
+// event queued in access_legacy_events. Anything short of complete, positive
+// billing evidence for a known product goes to the operator, never to a grant;
+// negative events are only recorded because expiry is driven by the ledger.
+function classifyLegacyEvent(event, resolveScopes) {
+    const status = String((event === null || event === void 0 ? void 0 : event.payment_status) || "").toUpperCase();
+    if (["EXPIRED", "FAILED", "CANCELLED"].includes(status))
+        return { action: "noted", reason: "negative_event_ledger_decides" };
+    if (!["PAID", "SETTLED"].includes(status))
+        return { action: "review", reason: "unknown_payment_status" };
+    const email = (0, exports.normalEmail)(event.email), id = typeof event.transaction_id === "string" ? event.transaction_id.trim() : "";
+    const amount = Number(event.amount), paidMs = (0, exports.millis)(event.paid_at), scopes = resolveScopes(event.service);
+    if (event.reason)
+        return { action: "review", reason: String(event.reason) };
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
+        return { action: "review", reason: "invalid_email" };
+    if (!/^[A-Za-z0-9_-]{1,128}$/.test(id))
+        return { action: "review", reason: "invalid_transaction_id" };
+    if (!Number.isFinite(amount) || amount <= 0)
+        return { action: "review", reason: "non_positive_amount" };
+    if (!scopes.length)
+        return { action: "review", reason: "unknown_service" };
+    if (!Number.isFinite(paidMs))
+        return { action: "review", reason: "missing_payment_time" };
+    const months = akalDurationMonths(event.plan, event.service);
+    return { action: "grant", email, transactionId: id, amount, scopes, months, paidMs, expiresMs: billingExpiry(paidMs, months) };
 }
 function verifiedAkalPeriods(rows) {
     const scopes = { "AI Fikih Tahawwulat": "fiqh_tahawwulat",

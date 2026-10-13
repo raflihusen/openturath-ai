@@ -34,6 +34,30 @@ async function sendTelegramNotification(text) {
         return false;
     }
 }
+// Telegram messages use parse_mode HTML; every value that originates from a
+// user, a payment provider or a client device must pass through this.
+function esc(value) {
+    return String(value !== null && value !== void 0 ? value : "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").slice(0, 400);
+}
+// Cutover switch shared with the VPS worker and the legacy Python writers.
+async function vpsWriterActive() {
+    var _a;
+    return ((_a = (await db.collection("access_control").doc("runtime").get()).data()) === null || _a === void 0 ? void 0 : _a.writer) === "vps-v2";
+}
+// Scopes the profile shows as active that no ledger grant backs. Moving such
+// an account to the ledger-only evaluator would silently drop those modules,
+// so the caller places it on a revocation hold for review instead.
+function unbackedLegacyScopes(entitlements, grants, skipScope, now) {
+    return Object.entries(entitlements || {}).filter(([scope, ent]) => {
+        if (scope === skipScope || !ent || ent.status === "revoked" || ent.status === "expired")
+            return false;
+        const expiry = (0, access_control_1.millis)(ent.expiry);
+        if (!Number.isFinite(expiry) || expiry <= now)
+            return false;
+        return !grants.some(g => g && g.status === "active" && Number.isFinite(g.expires_ms) && g.expires_ms > now &&
+            [scope, "all_access", "all_ai"].includes(g.scope));
+    }).map(([scope]) => scope);
+}
 // ================================================================
 // HARGA & DURASI OTORITATIF — Ditentukan oleh `resolvePlanPricing`
 // ================================================================
@@ -155,7 +179,6 @@ function getEntitlementAccess(userData, entitlementKey) {
 exports.getAgentUrl = functions
     .runWith({ serviceAccount: "open-turath@appspot.gserviceaccount.com" })
     .https.onCall(async (data, context) => {
-    var _a;
     if (!context.auth) {
         throw new functions.https.HttpsError("unauthenticated", "Login diperlukan untuk mengakses agent.");
     }
@@ -175,11 +198,14 @@ exports.getAgentUrl = functions
         throw new functions.https.HttpsError("not-found", "User tidak ditemukan.");
     }
     const userData = userDoc.data();
-    if (userData.access_version === 2 && (context.auth.token.email_verified !== true ||
+    // Until cutover no worker creates notebook assignments, so ledger-only
+    // resolution would lock out every paying account. Legacy evaluation applies.
+    const ledgerActive = userData.access_version === 2 && await vpsWriterActive();
+    if (ledgerActive && (context.auth.token.email_verified !== true ||
         String(context.auth.token.email || "").trim().toLowerCase() !== String(userData.email || "").trim().toLowerCase())) {
         throw new functions.https.HttpsError("failed-precondition", "Gunakan email terverifikasi yang terdaftar untuk akses notebook ini.");
     }
-    if (userData.access_version === 2) {
+    if (ledgerActive) {
         const entity = notebook_catalog_1.AGENT_TO_ENTITY[agentId];
         if (!entity)
             throw new functions.https.HttpsError("not-found", "Kajian tidak ditemukan.");
@@ -196,7 +222,7 @@ exports.getAgentUrl = functions
     const entitlementKey = getEntitlementKey(agentId);
     const entitlementAccess = getEntitlementAccess(userData, entitlementKey);
     if (entitlementAccess.active) {
-        if (((_a = (await db.collection("access_control").doc("runtime").get()).data()) === null || _a === void 0 ? void 0 : _a.writer) === "vps-v2") {
+        if (await vpsWriterActive()) {
             const entity = notebook_catalog_1.AGENT_TO_ENTITY[agentId];
             if (!entity)
                 throw new functions.https.HttpsError("not-found", "Kajian tidak ditemukan.");
@@ -546,12 +572,16 @@ async function enforceRateLimit(key, limit, windowSeconds, errorMessage) {
 exports.createCheckout = functions
     .runWith({ serviceAccount: "open-turath@appspot.gserviceaccount.com" })
     .https.onCall(async (data, context) => {
-    var _a, _b, _c, _d, _e, _f, _g, _h;
+    var _a, _b, _c, _d, _e;
     if (!context.auth) {
         throw new functions.https.HttpsError("unauthenticated", "Login diperlukan untuk melakukan transaksi.");
     }
-    const { plan, name, email, phone, agentId, expectedAmount, pricingRevision } = data;
-    if (!plan || !name || !email) {
+    const { plan, agentId, expectedAmount, pricingRevision } = data || {};
+    const text = (value, max) => typeof value === "string" ? value.trim().slice(0, max) : "";
+    const name = text(data === null || data === void 0 ? void 0 : data.name, 120);
+    const email = text(data === null || data === void 0 ? void 0 : data.email, 254).toLowerCase();
+    const phone = text(data === null || data === void 0 ? void 0 : data.phone, 20).replace(/[^0-9+]/g, "");
+    if (typeof plan !== "string" || !plan || !name || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
         throw new functions.https.HttpsError("invalid-argument", "Data tidak lengkap (nama dan email diperlukan).");
     }
     const currentAgentId = typeof agentId === "string" && agentId ? agentId : "fiqh_tahawwulat";
@@ -562,6 +592,8 @@ exports.createCheckout = functions
             pricingRevision !== "perdana-2026-09-20")) {
         throw new functions.https.HttpsError("failed-precondition", "Harga penawaran telah berubah. Muat ulang aplikasi.");
     }
+    // Each checkout writes two documents and calls the gateway.
+    await enforceRateLimit(`checkout_${context.auth.uid}`, 10, 600, "Terlalu banyak permintaan pembayaran.");
     const invoiceNumber = `OT-${crypto.randomUUID()}`;
     const trxRef = db.collection("transactions").doc();
     const trxId = trxRef.id;
@@ -613,7 +645,7 @@ exports.createCheckout = functions
             error: ((_e = (_d = (_c = err.response) === null || _c === void 0 ? void 0 : _c.data) === null || _d === void 0 ? void 0 : _d.error_messages) === null || _e === void 0 ? void 0 : _e.join(", ")) || err.message || "Kendala teknis Midtrans",
             failed_at: admin.firestore.FieldValue.serverTimestamp(),
         }).catch(() => { });
-        throw new functions.https.HttpsError("internal", "Gagal membuat sesi pembayaran Midtrans: " + (((_h = (_g = (_f = err.response) === null || _f === void 0 ? void 0 : _f.data) === null || _g === void 0 ? void 0 : _g.error_messages) === null || _h === void 0 ? void 0 : _h.join(", ")) || err.message || "Kendala teknis Midtrans"));
+        throw new functions.https.HttpsError("internal", "Sesi pembayaran belum dapat dibuat. Silakan coba lagi sebentar lagi.");
     }
     return {
         redirectUrl: paymentUrl,
@@ -631,35 +663,9 @@ function generateDokuGetSignature(clientId, requestId, timestamp, targetPath, se
     return `HMACSHA256=${hmac}`;
 }
 function getServiceTitleForEntitlement(entitlementKey) {
-    if (entitlementKey === "all_access" || entitlementKey === "all_ai")
-        return "Paket Semua AI";
-    if (entitlementKey === "fiqh_tahawwulat")
-        return "AI Fikih Tahawwulat";
-    if (entitlementKey === "fiqh_syafii")
-        return "AI Fikih Syafi'i";
-    if (entitlementKey === "fiqh_hanafi")
-        return "AI Fikih Hanafi";
-    if (entitlementKey === "fiqh_maliki")
-        return "AI Fikih Maliki";
-    if (entitlementKey === "fiqh_hanbali")
-        return "AI Fikih Hanbali";
-    if (entitlementKey === "fiqh_muqaran")
-        return "AI Fikih Perbandingan Mazhab";
-    if (entitlementKey === "ushul_fiqh")
-        return "AI Ushul Fiqih";
-    if (entitlementKey === "tafsir")
-        return "AI Tafsir";
-    if (entitlementKey === "hadits")
-        return "AI Hadits";
-    if (entitlementKey === "nahwu" || entitlementKey === "bahasa_arab" || entitlementKey === "nahwu_sharaf")
-        return "AI Bahasa Arab";
-    if (entitlementKey === "aqidah" || entitlementKey === "aqidah_kalam" || entitlementKey === "aqidah_ushuluddin")
-        return "AI Aqidah & Ushuluddin";
-    if (entitlementKey === "tarikh" || entitlementKey === "tarikh_khulafa" || entitlementKey === "tarikh_thabaqat" || entitlementKey === "sirah")
-        return "AI Tarikh & Sirah Nabawiyah";
-    if (entitlementKey === "tasawwuf" || entitlementKey === "habib_umar" || entitlementKey === "tasawwuf_ihya" || entitlementKey === "tasawwuf_adab")
-        return "AI Tasawwuf & Tazkiyatun Nafs";
-    return "Modul kajian";
+    if (entitlementKey === "all_ai")
+        return access_catalog_1.SCOPE_LABELS.all_access;
+    return access_catalog_1.SCOPE_LABELS[entitlementKey] || "Modul kajian";
 }
 async function processSuccessfulPayment(invoiceNumber, paidAmount, gatewayEvidence) {
     const txQuery = await db.collection("transactions")
@@ -681,6 +687,7 @@ async function processSuccessfulPayment(invoiceNumber, paidAmount, gatewayEviden
     };
     // F03, F04, F05: Transaksi Atomik Firestore
     await db.runTransaction(async (t) => {
+        var _a;
         const txSnap = await t.get(txDocRef);
         if (!txSnap.exists) {
             throw new Error(`Transaction ${invoiceNumber} tidak ditemukan dalam transaksi`);
@@ -727,23 +734,19 @@ async function processSuccessfulPayment(invoiceNumber, paidAmount, gatewayEviden
             throw new Error("Payment owner profile is missing");
         const uData = uSnap.data();
         const entitlements = (uData.entitlements || {});
-        const currentEnt = entitlements[entitlementKey];
-        // F65: Hitung tanggal kedaluwarsa dengan month-end clamp
+        // Only ledger-backed grants extend a paid period. Profile expiry is a projection.
         const now = new Date();
         let baseDate = now;
-        if (currentEnt && currentEnt.expiry && currentEnt.status === "active") {
-            const curExpDate = currentEnt.expiry.toDate ? currentEnt.expiry.toDate() : new Date(currentEnt.expiry);
-            if (curExpDate > now) {
-                baseDate = curExpDate;
-            }
-        }
-        // Only ledger-backed grants extend a paid period. Profile expiry is a projection.
-        baseDate = now;
+        const ownedGrants = [];
         for (const id of uData.access_grant_ids || []) {
             const g = (await t.get(db.collection("access_grants").doc(id))).data();
+            if (g)
+                ownedGrants.push(g);
             if (g && g.scope === entitlementKey && g.status === "active" && g.expires_ms > baseDate.getTime())
                 baseDate = new Date(g.expires_ms);
         }
+        const ledgerWriter = ((_a = (await t.get(db.collection("access_control").doc("runtime"))).data()) === null || _a === void 0 ? void 0 : _a.writer) === "vps-v2";
+        const unbacked = unbackedLegacyScopes(entitlements, ownedGrants, entitlementKey, now.getTime());
         const expiryDate = new Date((0, access_control_1.billingExpiry)(baseDate.getTime(), durationMonths));
         const grantId = (0, access_control_1.keyOf)("invoice", invoiceNumber);
         if (receiptRef)
@@ -778,11 +781,17 @@ async function processSuccessfulPayment(invoiceNumber, paidAmount, gatewayEviden
             } });
         const userUpdate = {
             entitlements: updatedEntitlements,
-            access_version: 2,
             access_due_ms: Date.now(),
             access_grant_ids: [...new Set([...(uData.access_grant_ids || []), grantId])],
             updated_at: admin.firestore.FieldValue.serverTimestamp(),
         };
+        if (ledgerWriter) {
+            userUpdate.access_version = 2;
+            if (unbacked.length) {
+                userUpdate.access_revocation_hold = true;
+                userUpdate.access_legacy_audit_required = true;
+            }
+        }
         // F01: Hanya ubah plan global jika pembelian adalah paket all_access
         if (isAllAccess) {
             userUpdate.plan = plan;
@@ -824,11 +833,11 @@ async function processSuccessfulPayment(invoiceNumber, paidAmount, gatewayEviden
     // Kirim notifikasi Telegram seketika saat pembayaran sukses & akses diaktifkan
     await sendTelegramNotification(`💳 <b>[PEMBAYARAN DITERIMA & AKSES AKTIF]</b>\n` +
         `🕌 OpenTurath AI Server\n` +
-        `👤 Pengguna: <code>${activationResult.email}</code>\n` +
-        `🆔 Invoice: <code>${invoiceNumber}</code>\n` +
-        `📦 Produk: <b>${activationResult.serviceTitle}</b>\n` +
-        `🏷️ Paket: <b>${activationResult.plan.toUpperCase()}</b>\n` +
-        `🔑 Entitlement: <code>${activationResult.entitlementKey}</code>\n` +
+        `👤 Pengguna: <code>${esc(activationResult.email)}</code>\n` +
+        `🆔 Invoice: <code>${esc(invoiceNumber)}</code>\n` +
+        `📦 Produk: <b>${esc(activationResult.serviceTitle)}</b>\n` +
+        `🏷️ Paket: <b>${esc(activationResult.plan.toUpperCase())}</b>\n` +
+        `🔑 Entitlement: <code>${esc(activationResult.entitlementKey)}</code>\n` +
         `✅ Status: Sukses terdaftar & hak akses aktif.`);
     return Object.assign({ success: true }, activationResult);
 }
@@ -1107,7 +1116,7 @@ exports.dokuWebhook = functions
     }
     catch (err) {
         console.error("[DOKU Webhook] Uncaught error in handler:", err.message);
-        res.status(500).json({ error: err.message });
+        res.status(500).json({ error: "Internal error" });
     }
 });
 // ================================================================
@@ -1195,7 +1204,7 @@ exports.midtransWebhook = functions
                     error: actErr.message,
                     failed_at: admin.firestore.FieldValue.serverTimestamp(),
                 });
-                res.status(500).json({ status: "ERROR", message: actErr.message });
+                res.status(500).json({ status: "ERROR", message: "Failed to activate payment" });
             }
         }
         else if (transactionStatus === "cancel" || transactionStatus === "expire" || transactionStatus === "deny") {
@@ -1226,7 +1235,7 @@ exports.midtransWebhook = functions
     }
     catch (err) {
         console.error("[Midtrans Webhook] Uncaught error:", err.message);
-        res.status(500).json({ error: err.message });
+        res.status(500).json({ error: "Internal error" });
     }
 });
 // ================================================================
@@ -1236,7 +1245,7 @@ exports.midtransWebhook = functions
 exports.checkPaymentStatus = functions
     .runWith({ serviceAccount: "open-turath@appspot.gserviceaccount.com" })
     .https.onCall(async (data, context) => {
-    var _a, _b, _c, _d, _e, _f, _g;
+    var _a, _b, _c, _d;
     // 0. Wajibkan pengguna terotentikasi
     if (!context.auth) {
         throw new functions.https.HttpsError("unauthenticated", "Login diperlukan untuk memeriksa status pembayaran.");
@@ -1321,7 +1330,7 @@ exports.checkPaymentStatus = functions
             return {
                 success: false,
                 status: "PENDING",
-                error: ((_c = (_b = err.response) === null || _b === void 0 ? void 0 : _b.data) === null || _c === void 0 ? void 0 : _c.status_message) || err.message,
+                message: "Status pembayaran belum dapat diperiksa. Silakan coba lagi.",
             };
         }
     }
@@ -1344,10 +1353,10 @@ exports.checkPaymentStatus = functions
                 timeout: 10000,
             });
             const dokuData = response.data || {};
-            const trxStatus = ((_d = dokuData.transaction) === null || _d === void 0 ? void 0 : _d.status) || "";
+            const trxStatus = ((_b = dokuData.transaction) === null || _b === void 0 ? void 0 : _b.status) || "";
             if (trxStatus === "SUCCESS") {
                 console.log(`[checkPaymentStatus] DOKU Inquiry verified SUCCESS for ${invoiceNumber}! Activating subscription...`);
-                const actResult = await processSuccessfulPayment(invoiceNumber, (_e = dokuData.order) === null || _e === void 0 ? void 0 : _e.amount);
+                const actResult = await processSuccessfulPayment(invoiceNumber, (_c = dokuData.order) === null || _c === void 0 ? void 0 : _c.amount);
                 return {
                     success: true,
                     status: "SUCCESS",
@@ -1364,11 +1373,11 @@ exports.checkPaymentStatus = functions
             }
         }
         catch (err) {
-            console.error("[checkPaymentStatus] Error checking DOKU status:", ((_f = err.response) === null || _f === void 0 ? void 0 : _f.data) || err.message);
+            console.error("[checkPaymentStatus] Error checking DOKU status:", ((_d = err.response) === null || _d === void 0 ? void 0 : _d.data) || err.message);
             return {
                 success: false,
                 status: "PENDING",
-                error: ((_g = err.response) === null || _g === void 0 ? void 0 : _g.data) || err.message
+                message: "Status pembayaran belum dapat diperiksa. Silakan coba lagi.",
             };
         }
     }
@@ -1414,6 +1423,7 @@ exports.redeemCode = functions
         serviceTitle: "AI Fikih Syafi'i",
     };
     await db.runTransaction(async (transaction) => {
+        var _a;
         const codeRef = db.collection("redeem_codes").doc(rawCode);
         const codeDoc = await transaction.get(codeRef);
         if (!codeDoc.exists) {
@@ -1477,7 +1487,15 @@ exports.redeemCode = functions
         const userData = userDoc.exists ? userDoc.data() : {};
         const entitlements = (userData.entitlements || {});
         const currentEnt = entitlements[entitlementKey];
+        const ownedGrants = [];
+        for (const id of userData.access_grant_ids || []) {
+            const g = (await transaction.get(db.collection("access_grants").doc(id))).data();
+            if (g)
+                ownedGrants.push(g);
+        }
+        const ledgerWriter = ((_a = (await transaction.get(db.collection("access_control").doc("runtime"))).data()) === null || _a === void 0 ? void 0 : _a.writer) === "vps-v2";
         const redeemedAt = new Date();
+        const unbacked = unbackedLegacyScopes(entitlements, ownedGrants, entitlementKey, redeemedAt.getTime());
         if (isTrialVoucher && (currentEnt === null || currentEnt === void 0 ? void 0 : currentEnt.plan) === "trial" &&
             currentEnt.status === "active" && currentEnt.expiry) {
             const currentTrialExpiry = currentEnt.expiry.toDate
@@ -1541,10 +1559,16 @@ exports.redeemCode = functions
         const userUpdate = {
             entitlements: updatedEntitlements,
             updated_at: admin.firestore.FieldValue.serverTimestamp(),
-            access_version: 2,
             access_due_ms: Date.now(),
             access_grant_ids: [...new Set([...(userData.access_grant_ids || []), voucherGrantId])],
         };
+        if (ledgerWriter) {
+            userUpdate.access_version = 2;
+            if (unbacked.length) {
+                userUpdate.access_revocation_hold = true;
+                userUpdate.access_legacy_audit_required = true;
+            }
+        }
         // Hanya set plan global jika voucher adalah all_access
         if (entitlementKey === "all_access") {
             userUpdate.plan = isTrialVoucher ? "trial" : "voucher_access";
@@ -1587,9 +1611,9 @@ exports.redeemCode = functions
     const tgMessage = `🔔 <b>[VOUCHER SANTRI DIKLAIM]</b>\n` +
         `🕌 OpenTurath AI\n` +
         `🎟️ Kode: <b>${maskedCode}</b>\n` +
-        `📧 Email: <code>${redeemResult.email}</code>\n` +
-        `👤 Nama: <b>${redeemResult.name}</b>\n` +
-        `📦 Produk: <b>${redeemResult.serviceTitle}</b>\n` +
+        `📧 Email: <code>${esc(redeemResult.email)}</code>\n` +
+        `👤 Nama: <b>${esc(redeemResult.name)}</b>\n` +
+        `📦 Produk: <b>${esc(redeemResult.serviceTitle)}</b>\n` +
         `🏷️ Durasi: <b>${redeemResult.durationDays} Hari</b>\n` +
         `⏳ Berlaku s/d: <code>${redeemResult.expiryIso}</code>\n` +
         `✅ Status: Sukses terdaftar & hak akses aktif.`;
@@ -1654,12 +1678,20 @@ exports.onUserCreate = functions.firestore
             // Verified email never overrides an existing transaction owner.
             if (data.uid && data.uid !== uid)
                 continue;
-            const key = data.entitlement_key;
+            const keys = Array.isArray(data.entitlement_keys) && data.entitlement_keys.length
+                ? data.entitlement_keys : [data.entitlement_key];
             const expiry = data.subscription_expires_at;
-            if (typeof key !== "string" || !(expiry === null || expiry === void 0 ? void 0 : expiry.toDate) || expiry.toDate() <= new Date())
+            if (!(expiry === null || expiry === void 0 ? void 0 : expiry.toDate) || expiry.toDate() <= new Date())
                 continue;
-            if (!entitlements[key] || expiry.toMillis() > entitlements[key].expiry.toMillis()) {
-                entitlements[key] = { plan: data.plan || "premium", status: "active", expiry, source: data.source || "goakal" };
+            // Zero-amount records never restore access without admin verification.
+            if (!(Number(data.amount) > 0) && data.admin_verified !== true && data.admin_approved !== true)
+                continue;
+            for (const key of keys) {
+                if (typeof key !== "string" || !key)
+                    continue;
+                if (!entitlements[key] || expiry.toMillis() > entitlements[key].expiry.toMillis()) {
+                    entitlements[key] = { plan: data.plan || "premium", status: "active", expiry, source: data.source || "goakal" };
+                }
             }
             // Link uid if not linked
             if (!data.uid) {
@@ -1669,7 +1701,7 @@ exports.onUserCreate = functions.firestore
         if (!Object.keys(entitlements).length)
             return;
         t.update(snapshot.ref, { entitlements, updated_at: admin.firestore.FieldValue.serverTimestamp() });
-        for (const key of Object.keys(entitlements)) {
+        for (const key of Object.keys(entitlements).filter(k => access_catalog_1.PROVISIONABLE_SCOPES.includes(k))) {
             t.set(db.collection("provisioning_outbox").doc(`restore_${uid}_${key}`), {
                 uid, email: user.email, entitlement_key: key, action: "add", status: "pending", attempts: 0,
                 created_at: admin.firestore.FieldValue.serverTimestamp(),
@@ -1681,30 +1713,6 @@ exports.onUserCreate = functions.firestore
 // ================================================================
 // FUNCTION 4: dailyRevoke (Cron Job — tiap tengah malam)
 // ================================================================
-const PERMANENT_VIP_EMAILS = new Set([
-    "openturath@gmail.com",
-    "ramah@ptct.net",
-    "raflimaulan@gmail.com",
-    "mas.raflihusen@gmail.com",
-    "alkhateeb23@gmail.com",
-    "omarasb1441@gmail.com",
-    "prilatief@gmail.com",
-    "aaadman40@gmail.com",
-    "abo.omar5539@gmail.com",
-    "abualgilani2024@gmail.com",
-    "ahobh4241@gmail.com",
-    "alhamodi65@gmail.com",
-    "ali.bafdhl36@gmail.com",
-    "alshykhkmalbahrmz@gmail.com",
-    "atinrahmak@gmail.com",
-    "hafamfb551985@gmail.com",
-    "loyos839@gmail.com",
-    "mohammedhalahdal@gmail.com",
-    "mostajadt25@gmail.com",
-    "nona.alyaziza@gmail.com",
-    "omar739037802@gmail.com",
-    "yasser110271@gmail.com",
-]);
 exports.dailyRevoke = functions
     .runWith({ serviceAccount: "open-turath@appspot.gserviceaccount.com", timeoutSeconds: 300 })
     .pubsub.schedule("every 1 hours")
@@ -1730,11 +1738,8 @@ exports.dailyRevoke = functions
                 const data = snap.data();
                 // PROTEKSI VIP PERMANEN: Kebal terhadap segala pencabutan akses otomatis
                 const userEmail = (data.email || "").toLowerCase().trim();
-                if (data.is_vip === true ||
-                    ["vip", "admin", "guru", "special"].includes(String(data.role || "").toLowerCase()) ||
-                    PERMANENT_VIP_EMAILS.has(userEmail)) {
+                if ((0, access_control_1.isVip)(data))
                     return;
-                }
                 const entitlements = Object.assign({}, (data.entitlements || {}));
                 const expired = [];
                 for (const [key, value] of Object.entries(entitlements)) {
@@ -1780,9 +1785,26 @@ exports.dailyRevoke = functions
         .where("status", "in", ["success", "paid", "settled", "SUCCESS", "PAID", "SETTLED"])
         .get();
     const activeEmailsByEntitlement = new Map();
-    for (const key of PROVISIONED_KEYS) {
+    for (const key of access_catalog_1.PROVISIONABLE_SCOPES) {
         activeEmailsByEntitlement.set(key, new Set());
     }
+    // The owning profile, not only the transaction row, decides VIP status and
+    // whether another grant (voucher, renewal, other gateway) keeps a module active.
+    const ownerCache = new Map();
+    const ownerOf = async (uid, email) => {
+        const cacheKey = typeof uid === "string" && uid ? `uid:${uid}` : `email:${email}`;
+        if (ownerCache.has(cacheKey))
+            return ownerCache.get(cacheKey);
+        let owner = null;
+        if (typeof uid === "string" && uid && !uid.includes("@"))
+            owner = (await db.collection("users").doc(uid).get()).data() || null;
+        if (!owner) {
+            const byEmail = await db.collection("users").where("email", "==", email).limit(1).get();
+            owner = byEmail.empty ? null : byEmail.docs[0].data();
+        }
+        ownerCache.set(cacheKey, owner);
+        return owner;
+    };
     const allActiveEmails = new Set();
     for (const doc of txSnap.docs) {
         const d = doc.data();
@@ -1802,15 +1824,15 @@ exports.dailyRevoke = functions
                 expDate = parsed;
         }
         const plan = String(d.plan || d.plan_id || "").toLowerCase();
-        const isVip = d.is_vip === true || plan.includes("vip") || (expDate && expDate.getFullYear() >= 2030);
-        if (isVip || PERMANENT_VIP_EMAILS.has(email))
+        const txVip = d.is_vip === true || plan.includes("vip") || (expDate && expDate.getFullYear() >= 2030);
+        if (txVip || (0, access_control_1.isVip)({ email }))
             continue;
         const isYearly = ["1y", "year", "tahun", "annual", "bahits_1y"].some(y => plan.includes(y));
         const entKey = d.entitlement_key;
         if (expDate && expDate > now) {
             if (isYearly || entKey === "all_access" || entKey === "all_ai" || !entKey) {
                 allActiveEmails.add(email);
-                for (const k of PROVISIONED_KEYS) {
+                for (const k of access_catalog_1.PROVISIONABLE_SCOPES) {
                     (_b = activeEmailsByEntitlement.get(k)) === null || _b === void 0 ? void 0 : _b.add(email);
                 }
             }
@@ -1824,7 +1846,7 @@ exports.dailyRevoke = functions
         const email = (d.customer_email || d.payer_email || d.email || "").trim().toLowerCase();
         if (!email)
             continue;
-        if (PERMANENT_VIP_EMAILS.has(email) || d.is_vip === true)
+        if ((0, access_control_1.isVip)({ email }) || d.is_vip === true)
             continue;
         const status = String(d.status || "").toLowerCase();
         if (!["success", "paid", "settled"].includes(status))
@@ -1840,14 +1862,22 @@ exports.dailyRevoke = functions
         }
         if (expDate && expDate <= now) {
             const entKey = d.entitlement_key;
-            const targetKeys = (entKey && PROVISIONED_KEYS.includes(entKey))
+            const owner = await ownerOf(d.uid, email);
+            const registered = await db.collection("access_vip_registry").doc((0, access_control_1.keyOf)(email)).get();
+            if (registered.exists || (owner && (0, access_control_1.isVip)(Object.assign(Object.assign({}, owner), { email: owner.email || email }))))
+                continue;
+            const targetKeys = (entKey && access_catalog_1.PROVISIONABLE_SCOPES.includes(entKey))
                 ? [entKey]
-                : (String(d.plan || "").toLowerCase().includes("tholib") ? ["fiqh_tahawwulat", "fiqh_syafii"] : PROVISIONED_KEYS);
+                : (String(d.plan || "").toLowerCase().includes("tholib") ? ["fiqh_tahawwulat", "fiqh_syafii"] : access_catalog_1.PROVISIONABLE_SCOPES);
             const expiredKeysToRevoke = [];
             for (const k of targetKeys) {
-                if (!allActiveEmails.has(email) && !((_d = activeEmailsByEntitlement.get(k)) === null || _d === void 0 ? void 0 : _d.has(email))) {
-                    expiredKeysToRevoke.push(k);
-                }
+                if (allActiveEmails.has(email) || ((_d = activeEmailsByEntitlement.get(k)) === null || _d === void 0 ? void 0 : _d.has(email)))
+                    continue;
+                // Independent per-module evaluation: a still-active entitlement for
+                // this module survives the expiry of an older or unrelated transaction.
+                if (owner && getEntitlementAccess(owner, k).active)
+                    continue;
+                expiredKeysToRevoke.push(k);
             }
             await doc.ref.update({
                 status: "EXPIRED",
@@ -1882,7 +1912,7 @@ exports.dailyRevoke = functions
             `Sistem mendeteksi <b>${revokedSummary.length} akses kedaluwarsa</b> dan mencabut hak aksesnya:`,
         ];
         for (const r of revokedSummary.slice(0, 15)) {
-            lines.push(`• 👤 <code>${r.email}</code> — <b>${r.scope}</b> (<i>${r.reason}</i>)`);
+            lines.push(`• 👤 <code>${esc(r.email)}</code> — <b>${esc(r.scope)}</b> (<i>${esc(r.reason)}</i>)`);
         }
         if (revokedSummary.length > 15) {
             lines.push(`• <i>... dan ${revokedSummary.length - 15} akses kedaluwarsa lainnya.</i>`);
@@ -1895,7 +1925,6 @@ exports.dailyRevoke = functions
 // FUNCTION 4b: processProvisioningOutbox (Cron Worker — tiap 5 menit)
 // Memproses antrean durable outbox provisioning & revocation NotebookLM
 // ================================================================
-const PROVISIONED_KEYS = ["fiqh_tahawwulat", "fiqh_syafii", "ushul_fiqh", "hadits", "tafsir", "nahwu"];
 function entitlementRevision(data) {
     return JSON.stringify([data === null || data === void 0 ? void 0 : data.plan, data === null || data === void 0 ? void 0 : data.subscription_expiry, data === null || data === void 0 ? void 0 : data.entitlements]);
 }
@@ -1950,21 +1979,23 @@ exports.processProvisioningOutbox = functions
             if (!email.includes("@"))
                 throw new Error("Invalid provisioning email");
             const scope = job.entitlement_key;
-            const keys = scope === "all_access" || scope === "all_ai" ? PROVISIONED_KEYS : [scope];
+            const keys = scope === "all_access" || scope === "all_ai" ? access_catalog_1.PROVISIONABLE_SCOPES : [scope];
+            const protectedOwner = (0, access_control_1.isVip)(Object.assign(Object.assign({}, (data || {})), { email })) ||
+                (await db.collection("access_vip_registry").doc((0, access_control_1.keyOf)(email)).get()).exists;
             for (const key of keys) {
-                if (!PROVISIONED_KEYS.includes(key))
+                if (!access_catalog_1.PROVISIONABLE_SCOPES.includes(key))
                     throw new Error("Unsupported provisioning scope");
-                const isVip = (data === null || data === void 0 ? void 0 : data.is_vip) === true ||
-                    ["vip", "admin", "guru", "special"].includes(String((data === null || data === void 0 ? void 0 : data.role) || "").toLowerCase()) ||
-                    PERMANENT_VIP_EMAILS.has(email);
-                const desired = isVip || (job.action === "add" ? true : Boolean(data && getEntitlementAccess(data, key).active));
-                await notifySubscriptionServer(email, (data === null || data === void 0 ? void 0 : data.name) || job.name || "Peneliti", desired ? "premium" : "trial", desired ? "add" : "remove", getServiceTitleForEntitlement(key));
+                // A queued "add" is re-checked against the current profile so a job
+                // delayed past expiry cannot hand access back.
+                const entitled = Boolean(data && getEntitlementAccess(data, key).active);
+                const desired = protectedOwner || (job.action === "add" ? (data ? entitled : true) : entitled);
+                await notifySubscriptionServer(email, (data === null || data === void 0 ? void 0 : data.name) || job.name || "Peneliti", desired ? "premium" : "trial", desired ? "add" : "remove", getServiceTitleForEntitlement(key), key);
             }
             if (job.action === "remove") {
                 await sendTelegramNotification(`🗑️ <b>[DEPROVISIONING NOTEBOOKLM SELESAI]</b>\n` +
                     `🕌 OpenTurath AI Server\n` +
-                    `👤 Email: <code>${email}</code>\n` +
-                    `📦 Produk: <b>${getServiceTitleForEntitlement(job.entitlement_key)}</b>\n` +
+                    `👤 Email: <code>${esc(email)}</code>\n` +
+                    `📦 Produk: <b>${esc(getServiceTitleForEntitlement(job.entitlement_key))}</b>\n` +
                     `✅ Hak akses telah resmi dicabut dari sistem NotebookLM.`);
             }
             if (data && candidateData.uid && job.action !== "remove") {
@@ -2004,7 +2035,7 @@ async function deleteUserData(uid, authEmail = "") {
         const email = authEmail || ((_a = user.data()) === null || _a === void 0 ? void 0 : _a.email) || "";
         targetEmail = email;
         const jobs = [];
-        for (const key of PROVISIONED_KEYS) {
+        for (const key of access_catalog_1.PROVISIONABLE_SCOPES) {
             const job = db.collection("provisioning_outbox").doc(`delete_${uid}_${key}`);
             jobs.push({ ref: job, snap: await t.get(job), key });
         }
@@ -2020,8 +2051,8 @@ async function deleteUserData(uid, authEmail = "") {
     await db.recursiveDelete(ref);
     if (targetEmail) {
         await sendTelegramNotification(`🚫 <b>[HAPUS AKUN & CABUT AKSES]</b>\n` +
-            `👤 Email: <code>${targetEmail}</code>\n` +
-            `🆔 UID: <code>${uid}</code>\n` +
+            `👤 Email: <code>${esc(targetEmail)}</code>\n` +
+            `🆔 UID: <code>${esc(uid)}</code>\n` +
             `⚠️ Akun pengguna dihapus permanen. Seluruh hak akses turats dicabut.`);
     }
 }
@@ -2051,18 +2082,11 @@ exports.cleanupOrphanedDeletions = functions
 // ================================================================
 // HELPER: Notify openturath-subscription Cloud Run server
 // ================================================================
-async function notifySubscriptionServer(email, name, plan, action, serviceName) {
+async function notifySubscriptionServer(email, name, plan, action, serviceName, scopeKey) {
     const url = "https://openturath-subscription-255541559800.asia-southeast2.run.app/webhook";
     const services = serviceName
         ? [serviceName]
-        : [
-            "AI Fikih Tahawwulat",
-            "AI Fikih Syafi'i",
-            "AI Ushul Fiqih",
-            "AI Hadits",
-            "AI Tafsir",
-            "AI Bahasa Arab",
-        ];
+        : access_catalog_1.PROVISIONABLE_SCOPES.map(getServiceTitleForEntitlement);
     for (const service of services) {
         const payload = {
             event: action === "add" ? "subscription.paid" : "subscription.expired",
@@ -2072,9 +2096,7 @@ async function notifySubscriptionServer(email, name, plan, action, serviceName) 
                     name: name,
                     email: email,
                 },
-                service: {
-                    name: service,
-                },
+                service: Object.assign({ name: service }, (scopeKey ? { key: scopeKey } : {})),
             },
         };
         try {
@@ -2394,12 +2416,84 @@ async function verifyAkalSubscription(email, serviceCuid, apiKey) {
     return false;
 }
 function detectDurationMonths(priceSchemeTitle, serviceTitle) {
-    const s = (priceSchemeTitle + " " + serviceTitle).toLowerCase();
-    if (s.includes("tahun") || s.includes("1y") || s.includes("year") || s.includes("annual"))
-        return 12;
-    if (s.includes("6 bulan") || s.includes("6m"))
-        return 6;
-    return 1;
+    return (0, access_control_1.akalDurationMonths)(priceSchemeTitle, serviceTitle);
+}
+function akalTransactionId(raw, fallback) {
+    const id = typeof raw === "string" ? raw.trim() : "";
+    return /^[A-Za-z0-9_-]{1,128}$/.test(id) ? id : `akal_${(0, access_control_1.keyOf)("akal", ...fallback).slice(0, 40)}`;
+}
+// Evidence that cannot be granted automatically (zero amount, missing ID,
+// unknown product) is kept for the operator and never extends access.
+async function quarantineAkalEvidence(evidence, reason) {
+    const eventKey = (0, access_control_1.keyOf)("akal_quarantine", JSON.stringify(evidence), reason);
+    await db.collection("access_legacy_events").doc(eventKey).set(Object.assign(Object.assign({}, evidence), { status: "verification_required", reason, received_at: admin.firestore.FieldValue.serverTimestamp() }), { merge: true });
+}
+// Idempotent per provider transaction: the period is fixed the first time the
+// transaction is recorded, a replay never extends it, and an existing longer
+// entitlement is never shortened. Only the purchased scopes are touched.
+async function applyAkalPurchase(p) {
+    const txRef = db.collection("transactions").doc(p.transactionId);
+    let userRef = p.uid ? db.collection("users").doc(p.uid) : null;
+    if (!userRef) {
+        const matches = await db.collection("users").where("email", "==", p.email).limit(2).get();
+        // Two profiles claiming one email is an identity problem, not a billing one.
+        if (matches.size === 1)
+            userRef = matches.docs[0].ref;
+    }
+    return db.runTransaction(async (t) => {
+        const txSnap = await t.get(txRef);
+        const prior = txSnap.data();
+        if ((prior === null || prior === void 0 ? void 0 : prior.uid) && userRef && prior.uid !== userRef.id)
+            throw new Error("GoAkal transaction belongs to another account");
+        const userSnap = userRef ? await t.get(userRef) : null;
+        const grantRefs = p.scopes.map(scope => db.collection("access_grants").doc((0, access_control_1.keyOf)("goakal", p.transactionId, scope)));
+        const grantSnaps = [];
+        for (const ref of grantRefs)
+            grantSnaps.push(await t.get(ref));
+        const paidMs = Number.isFinite(prior === null || prior === void 0 ? void 0 : prior.paid_ms) ? prior.paid_ms : p.paidMs;
+        const expiresMs = Number.isFinite(prior === null || prior === void 0 ? void 0 : prior.expires_ms) ? prior.expires_ms : (0, access_control_1.billingExpiry)(paidMs, p.months);
+        const expiry = admin.firestore.Timestamp.fromMillis(expiresMs);
+        const linked = Boolean(userRef && (userSnap === null || userSnap === void 0 ? void 0 : userSnap.exists));
+        t.set(txRef, Object.assign(Object.assign({}, (linked ? { uid: userRef.id } : {})), { customer_email: p.email, customer_name: p.name, plan: p.plan, amount: p.amount, duration_months: p.months, status: "success", source: "goakal", service_name: p.serviceTitle, entitlement_key: p.scopes[0], entitlement_keys: p.scopes, paid_ms: paidMs, expires_ms: expiresMs, paid_at: admin.firestore.Timestamp.fromMillis(paidMs), subscription_expires_at: expiry, synced_at: admin.firestore.FieldValue.serverTimestamp() }), { merge: true });
+        if (!linked)
+            return { expiresMs, linked };
+        const user = userSnap.data();
+        const entitlements = Object.assign({}, (user.entitlements || {}));
+        const grantIds = new Set(user.access_grant_ids || []);
+        p.scopes.forEach((scope, index) => {
+            if (!grantSnaps[index].exists) {
+                t.set(grantRefs[index], {
+                    uid: userRef.id, email: p.email, scope, kind: "payment", status: "active", amount: p.amount,
+                    provider: "goakal", transaction_id: p.transactionId, transaction_document: p.transactionId,
+                    starts_ms: paidMs, expires_ms: expiresMs, created_ms: Date.now(),
+                });
+                if (access_catalog_1.PROVISIONABLE_SCOPES.includes(scope)) {
+                    t.set(db.collection("provisioning_outbox").doc(`akal_${p.transactionId}_${scope}`), {
+                        uid: userRef.id, email: p.email, name: user.name || p.name, entitlement_key: scope, plan: p.plan,
+                        action: "add", status: "pending", attempts: 0, source: "goakal",
+                        created_at: admin.firestore.FieldValue.serverTimestamp(),
+                    });
+                }
+            }
+            grantIds.add(grantRefs[index].id);
+            const current = entitlements[scope];
+            const currentMs = (current === null || current === void 0 ? void 0 : current.status) === "active" || (current === null || current === void 0 ? void 0 : current.status) === undefined ? (0, access_control_1.millis)(current === null || current === void 0 ? void 0 : current.expiry) : NaN;
+            if (!(Number.isFinite(currentMs) && currentMs >= expiresMs)) {
+                entitlements[scope] = {
+                    plan: p.plan, status: "active", expiry, source: "goakal",
+                    source_transaction_id: p.transactionId,
+                    updated_at: admin.firestore.FieldValue.serverTimestamp(),
+                };
+            }
+        });
+        t.set(userRef, {
+            entitlements,
+            access_grant_ids: [...grantIds],
+            access_due_ms: Date.now(),
+            updated_at: admin.firestore.FieldValue.serverTimestamp(),
+        }, { merge: true });
+        return { expiresMs, linked };
+    });
 }
 // ================================================================
 // FUNCTION: syncAkalPurchases (Otomasi Sinkronisasi Pembelian GoAkal)
@@ -2407,7 +2501,6 @@ function detectDurationMonths(priceSchemeTitle, serviceTitle) {
 exports.syncAkalPurchases = functions
     .runWith({ serviceAccount: "open-turath@appspot.gserviceaccount.com", timeoutSeconds: 60 })
     .https.onCall(async (data, context) => {
-    var _a;
     if (!context.auth) {
         throw new functions.https.HttpsError("unauthenticated", "Login diperlukan untuk sinkronisasi.");
     }
@@ -2421,303 +2514,76 @@ exports.syncAkalPurchases = functions
     if (!apiKey) {
         throw new functions.https.HttpsError("internal", "Kunci API GoAkal belum dikonfigurasi di server.");
     }
-    // Daftar service GoAkal resmi OpenTurath AI (Seluruh Disiplin Ilmu)
-    const akalServices = [
-        {
-            cuid: "cmln2i27k0000jx047oabzw8p",
-            fallbacks: [],
-            entitlementKey: "fiqh_tahawwulat",
-            name: "AI Fikih Tahawwulat (5 Bilik AI)",
-        },
-        {
-            cuid: "cms4ls3j60001l20439k1nqh4",
-            fallbacks: ["cms4ls3j60001l20439k1nph4"],
-            entitlementKey: "fiqh_syafii",
-            name: "Super AI Fikih Syafi'i",
-        },
-        {
-            cuid: "cmnd7l4o60002l504ab6qq31x",
-            fallbacks: [],
-            entitlementKey: "nahwu",
-            name: "Super AI Bahasa Arab",
-        },
-        {
-            cuid: "cmu6hf53s000mkx04jc3vrj02",
-            fallbacks: [],
-            entitlementKey: "ushul_fiqh",
-            name: "Super AI Ushul Fikih",
-        },
-        {
-            cuid: "cmu6hfbkn0015kx04d87j1b11",
-            fallbacks: [],
-            entitlementKey: "hadits",
-            name: "Super AI Hadits Nabawi",
-        },
-        {
-            cuid: "cmu6hfi5o000cjt04xziipmr2",
-            fallbacks: [],
-            entitlementKey: "tafsir",
-            name: "Super AI Tafsir & Ulumul Qur'an",
-        },
-        {
-            cuid: "cmu6hfq7m000cjm0414zlr67i",
-            fallbacks: [],
-            entitlementKey: "ushul_fiqh",
-            name: "Super AI Qawaid Fiqhiyyah",
-        },
-        {
-            cuid: "cmu6hfx13000xjm04np32pb64",
-            fallbacks: [],
-            entitlementKey: "hadits",
-            name: "Super AI Musthalah & Ulumul Hadits",
-        },
-        {
-            cuid: "cmu6hg3bh001gjm043hjueyh5",
-            fallbacks: [],
-            entitlementKey: "aqidah",
-            name: "Super AI Aqidah & Ushuluddin",
-        },
-        {
-            cuid: "cmu6hg9wl001zjm04lyds535x",
-            fallbacks: [],
-            entitlementKey: "fiqh_hanafi",
-            name: "Super AI Fikih Hanafi",
-        },
-        {
-            cuid: "cmu6hgh6r002ijm040qddnmph",
-            fallbacks: [],
-            entitlementKey: "fiqh_maliki",
-            name: "Super AI Fikih Maliki",
-        },
-        {
-            cuid: "cmu6hgo4z0031jm04bpdj07ki",
-            fallbacks: [],
-            entitlementKey: "fiqh_hanbali",
-            name: "Super AI Fikih Hanbali",
-        },
-        {
-            cuid: "cmu6hgv6n003kjm04tit1vsh8",
-            fallbacks: [],
-            entitlementKey: "fiqh_muqaran",
-            name: "Super AI Fikih Muqaran & Siyasah",
-        },
-        {
-            cuid: "cmu6hh1nn0043jm04r4h40wdb",
-            fallbacks: [],
-            entitlementKey: "fatawa",
-            name: "Super AI Fatawa & Masail",
-        },
-        {
-            cuid: "cmu6hh86n004mjm04ejgkhlg1",
-            fallbacks: [],
-            entitlementKey: "tasawwuf",
-            name: "Super AI Tasawwuf & Adzkar",
-        },
-        {
-            cuid: "cmu6hhet70055jm04ew3lb6wq",
-            fallbacks: [],
-            entitlementKey: "tajwid",
-            name: "Super AI Tajwid & Qiraat",
-        },
-        {
-            cuid: "cmu6hhl7a005ojm04pgptpegm",
-            fallbacks: [],
-            entitlementKey: "tarikh",
-            name: "Super AI Tarikh & Sirah Nabawiyyah",
-        },
-        {
-            cuid: "cmu6hhrvz0067jm04ljdfmycu",
-            fallbacks: [],
-            entitlementKey: "hadits",
-            name: "Super AI Syarah Hadits",
-        },
-        {
-            cuid: "cmu6hhyby006qjm04e0l3p11r",
-            fallbacks: [],
-            entitlementKey: "tarikh",
-            name: "Super AI Thabaqat & Tarajim Rijal",
-        },
-        {
-            cuid: "cmu6hi4lr0079jm0462vczjdm",
-            fallbacks: [],
-            entitlementKey: "bibliografi",
-            name: "Super AI Bibliografi & Faharis Turath",
-        },
-        // ══════════════════════════════════════════════════════════════
-        // 6 PAKET TEMATIK & SULTAN ALL-ACCESS (LAUNCH PROMO BUNDLES)
-        // ══════════════════════════════════════════════════════════════
-        {
-            cuid: "cmu6rsq7z001gjn044acg1ke4",
-            fallbacks: [],
-            entitlementKey: "fiqh_syafii",
-            entitlementKeys: ["fiqh_syafii", "ushul_fiqh", "fiqh", "tasawwuf"],
-            name: "Paket Fikih Pesantren & Santri Salaf",
-        },
-        {
-            cuid: "cmu6rst3y001xjn0468aypvd0",
-            fallbacks: [],
-            entitlementKey: "hadits",
-            entitlementKeys: ["hadits", "tarikh"],
-            name: "Paket Samudra Hadits & Sirah Nabawiyyah",
-        },
-        {
-            cuid: "cmu6rswk0002ejn04s90o870l",
-            fallbacks: [],
-            entitlementKey: "tafsir",
-            entitlementKeys: ["tafsir", "nahwu", "tajwid", "bibliografi"],
-            name: "Paket Mufassir & Khazanah Bahasa Arab",
-        },
-        {
-            cuid: "cmu6rt0ja002vjn04pimuyd84",
-            fallbacks: [],
-            entitlementKey: "fiqh_muqaran",
-            entitlementKeys: ["fiqh_hanafi", "fiqh_maliki", "fiqh_hanbali", "fiqh_muqaran", "aqidah", "fiqh"],
-            name: "Paket Mufti, Mazhab Akbar & Pemikiran",
-        },
-        {
-            cuid: "cmu6rt3i6003cjn04wp9v6tqt",
-            fallbacks: [],
-            entitlementKey: "fiqh_tahawwulat",
-            entitlementKeys: ["fiqh_tahawwulat"],
-            name: "Paket Khusus Fikih Tahawwulat",
-        },
-        {
-            cuid: "cmu6rt6aa003tjn04psx42goy",
-            fallbacks: [],
-            entitlementKey: "all_access",
-            entitlementKeys: [
-                "all_access",
-                "fiqh_tahawwulat",
-                "fiqh_syafii",
-                "fiqh_hanafi",
-                "fiqh_maliki",
-                "fiqh_hanbali",
-                "fiqh_muqaran",
-                "fiqh",
-                "ushul_fiqh",
-                "nahwu",
-                "tafsir",
-                "tajwid",
-                "hadits",
-                "aqidah",
-                "tasawwuf",
-                "tarikh",
-                "bibliografi"
-            ],
-            name: "Paket Sultan All-Access (Semua 24 AI)",
-        },
-    ];
+    // One sync fans out to every GoAkal service; bound it per account.
+    await enforceRateLimit(`akal_sync_${uid}`, 3, 600, "Sinkronisasi baru saja dijalankan.");
+    const now = Date.now();
+    const deadline = now + 45000;
     const syncedServices = [];
-    const now = new Date();
-    for (const service of akalServices) {
-        const allCuids = [service.cuid, ...service.fallbacks];
-        let activeTxn = null;
-        for (const cuid of allCuids) {
-            if (activeTxn)
-                break;
-            const statuses = ["PAID", "SETTLED"];
-            for (const status of statuses) {
-                if (activeTxn)
-                    break;
-                let page = 1;
-                const maxPages = 4;
-                while (page <= maxPages) {
-                    const apiUrl = `https://goakal.com/service/api/v1/services/${cuid}/transactions?status=${status}&pageSize=100&page=${page}`;
-                    try {
-                        const response = await axios_1.default.get(apiUrl, {
-                            headers: { "X-Api-Key": apiKey },
-                            timeout: 8000,
-                        });
-                        const txns = ((_a = response.data) === null || _a === void 0 ? void 0 : _a.data) || [];
-                        if (txns.length === 0)
-                            break;
-                        for (const t of txns) {
-                            const payerEmail = (t.payerEmail || "").trim().toLowerCase();
-                            if (payerEmail !== email)
-                                continue;
-                            let expiryDate = null;
-                            if (t.expiryDate) {
-                                expiryDate = new Date(t.expiryDate);
-                            }
-                            else {
-                                const startStr = t.paidAt || t.createdAt;
-                                if (startStr) {
-                                    const duration = detectDurationMonths(t.priceSchemeTitle || "", t.serviceTitle || "");
-                                    expiryDate = new Date(startStr);
-                                    expiryDate.setMonth(expiryDate.getMonth() + duration);
-                                }
-                            }
-                            if (expiryDate && expiryDate > now) {
-                                const durMonths = detectDurationMonths(t.priceSchemeTitle || "", t.serviceTitle || "");
-                                const plan = durMonths === 12 ? "bahits_1y" : (durMonths === 6 ? "tholib_6m" : "tholib_1m");
-                                activeTxn = {
-                                    id: t.id || `akal_${Date.now()}`,
-                                    payerName: t.payerName || "Santri Peneliti",
-                                    plan,
-                                    durationMonths: durMonths,
-                                    amount: Number(t.amount) || 0,
-                                    expiryDate,
-                                    serviceTitle: t.serviceTitle || service.name,
-                                };
-                                break;
-                            }
-                        }
-                        if (activeTxn || txns.length < 100)
-                            break;
-                        page++;
-                    }
-                    catch (e) {
-                        console.warn(`[syncAkalPurchases] Query failed for cuid ${cuid}: ${e.message}`);
-                        break;
-                    }
+    const ownRows = async (cuid) => {
+        var _a;
+        const rows = [];
+        for (const status of ["PAID", "SETTLED"]) {
+            for (let page = 1; page <= 4 && Date.now() < deadline; page++) {
+                const apiUrl = `https://goakal.com/service/api/v1/services/${cuid}/transactions?status=${status}&pageSize=100&page=${page}`;
+                let txns;
+                try {
+                    const response = await axios_1.default.get(apiUrl, { headers: { "X-Api-Key": apiKey }, timeout: 8000 });
+                    txns = Array.isArray((_a = response.data) === null || _a === void 0 ? void 0 : _a.data) ? response.data.data : [];
                 }
+                catch (e) {
+                    console.warn(`[syncAkalPurchases] Query failed for one service page: ${e.message}`);
+                    break;
+                }
+                rows.push(...txns.filter(t => String((t === null || t === void 0 ? void 0 : t.payerEmail) || "").trim().toLowerCase() === email));
+                if (txns.length < 100)
+                    break;
             }
         }
-        if (activeTxn) {
-            // Tulis entitlement ke Firestore user (dukung multi-entitlement untuk bundle)
-            const targetKeys = service.entitlementKeys || [service.entitlementKey];
-            const entUpdates = {};
-            for (const k of targetKeys) {
-                entUpdates[k] = {
-                    plan: activeTxn.plan,
-                    status: "active",
-                    expiry: admin.firestore.Timestamp.fromDate(activeTxn.expiryDate),
-                    source: "goakal",
-                    source_transaction_id: activeTxn.id,
-                    updated_at: admin.firestore.FieldValue.serverTimestamp(),
-                };
+        return rows;
+    };
+    const syncService = async (service) => {
+        var _a;
+        let applied = false;
+        for (const cuid of [service.cuid, ...service.fallbacks]) {
+            for (const t of await ownRows(cuid)) {
+                const paidMs = (0, access_control_1.millis)(t.paidAt || t.createdAt);
+                if (!Number.isFinite(paidMs))
+                    continue;
+                const months = detectDurationMonths(t.priceSchemeTitle || "", t.serviceTitle || "");
+                // The provider's invoice expiry is not the subscription period.
+                if ((0, access_control_1.billingExpiry)(paidMs, months) <= now)
+                    continue;
+                const rawId = typeof t.id === "string" && t.id.trim() ? t.id : t.paymentId;
+                const amount = Number((_a = t.incomingAmount) !== null && _a !== void 0 ? _a : t.amount);
+                if (typeof rawId !== "string" || !rawId.trim() || !Number.isFinite(amount) || amount <= 0) {
+                    await quarantineAkalEvidence({
+                        email, uid, service: service.name, transaction_id: typeof rawId === "string" ? rawId : "",
+                        amount: Number.isFinite(amount) ? amount : null, paid_at: String(t.paidAt || t.createdAt || ""),
+                    }, "invalid_billing_identity_or_amount");
+                    continue;
+                }
+                await applyAkalPurchase({
+                    uid, email, name: String(t.payerName || "Santri Peneliti").slice(0, 120),
+                    transactionId: akalTransactionId(rawId, [email, service.cuid, String(paidMs)]),
+                    amount, scopes: service.scopes,
+                    plan: months === 12 ? "bahits_1y" : (months === 6 ? "tholib_6m" : "tholib_1m"),
+                    months, paidMs, serviceTitle: String(t.serviceTitle || service.name).slice(0, 200),
+                });
+                applied = true;
             }
-            await db.collection("users").doc(uid).set({
-                entitlements: entUpdates,
-                updated_at: admin.firestore.FieldValue.serverTimestamp(),
-            }, { merge: true });
-            // Simpan catatan transaksi idempotensi
-            await db.collection("transactions").doc(activeTxn.id).set({
-                uid,
-                customer_email: email,
-                customer_name: activeTxn.payerName,
-                plan: activeTxn.plan,
-                amount: activeTxn.amount,
-                duration_months: activeTxn.durationMonths,
-                status: "success",
-                source: "goakal",
-                service_name: activeTxn.serviceTitle,
-                entitlement_key: service.entitlementKey,
-                subscription_expires_at: admin.firestore.Timestamp.fromDate(activeTxn.expiryDate),
-                synced_at: admin.firestore.FieldValue.serverTimestamp(),
-            }, { merge: true });
-            // Auto-provision ke NotebookLM via Cloud Run
-            try {
-                await notifySubscriptionServer(email, activeTxn.payerName, activeTxn.plan, "add", activeTxn.serviceTitle);
-            }
-            catch (_) { }
+        }
+        if (applied)
             syncedServices.push(service.name);
-        }
-    }
+    };
+    let cursor = 0;
+    const worker = async () => { while (cursor < access_catalog_1.AKAL_SERVICES.length && Date.now() < deadline)
+        await syncService(access_catalog_1.AKAL_SERVICES[cursor++]); };
+    await Promise.all([worker(), worker(), worker(), worker(), worker(), worker()]);
+    syncedServices.sort();
     if (syncedServices.length > 0) {
         await sendTelegramNotification(`🔄 <b>[SINKRONISASI GOAKAL OTOMATIS]</b>\n` +
-            `👤 Pengguna: <code>${email}</code>\n` +
-            `📚 Hak Akses Aktif: <b>${syncedServices.join(", ")}</b>`);
+            `👤 Pengguna: <code>${esc(email)}</code>\n` +
+            `📚 Hak Akses Aktif: <b>${esc(syncedServices.join(", "))}</b>`);
     }
     return {
         success: true,
@@ -2755,156 +2621,60 @@ exports.akalWebhook = functions
         return;
     }
     const data = payload.data || payload;
-    const status = (data.status || "").toUpperCase().trim();
+    const status = String(data.status || "").toUpperCase().trim();
     if (!["PAID", "SETTLED"].includes(status)) {
         console.log(`[Akal Webhook] Transaction status is '${status}'. Acknowledging receipt.`);
         res.status(200).json({ received: true, status });
         return;
     }
     const payer = data.payer || data.user || {};
-    const email = (payer.email || "").trim().toLowerCase();
-    const name = (payer.name || "").trim() || "Santri Peneliti";
+    const email = String(payer.email || "").trim().toLowerCase();
+    const name = String(payer.name || "").trim().slice(0, 120) || "Santri Peneliti";
     const service = data.service || {};
-    const serviceTitle = (service.name || service.title || "").trim();
+    const serviceTitle = String(service.name || service.title || "").trim().slice(0, 200);
     const priceScheme = data.priceScheme || {};
-    const priceSchemeTitle = (priceScheme.name || priceScheme.title || "").trim();
+    const priceSchemeTitle = String(priceScheme.name || priceScheme.title || "").trim();
     const rawTxnId = typeof data.id === "string" ? data.id.trim() : "";
-    const amount = Number(data.amount) || 0;
-    // Preserve invalid evidence for operator verification; never auto-extend.
-    if (!rawTxnId || !Number.isFinite(amount) || amount <= 0) {
-        const eventKey = crypto.createHash("sha256")
-            .update(JSON.stringify([rawTxnId, email, serviceTitle, data.paidAt || "", String(data.amount)]))
-            .digest("hex");
-        await db.collection("access_legacy_events").doc(eventKey).set({
-            email, service: serviceTitle, transaction_id: rawTxnId,
-            payment_status: status, status: "verification_required",
-            reason: "invalid_billing_identity_or_amount",
-            received_at: admin.firestore.FieldValue.serverTimestamp(),
-        }, { merge: true });
-        res.status(200).json({ received: true, verification_required: true });
-        return;
-    }
-    // Tanpa ID dari Akal, turunkan ID deterministik agar retry webhook tetap idempoten.
-    const txnId = /^[A-Za-z0-9_-]{1,128}$/.test(rawTxnId)
-        ? rawTxnId
-        : `akal_${crypto.createHash("sha256")
-            .update(`${email}|${serviceTitle}|${priceSchemeTitle}|${data.paidAt || ""}|${amount}`)
-            .digest("hex").slice(0, 40)}`;
+    const amount = Number(data.amount);
+    const scopes = (0, access_catalog_1.resolveAkalScopes)(serviceTitle);
+    const paidMs = data.paidAt ? (0, access_control_1.millis)(data.paidAt) : Date.now();
+    const evidence = { email, service: serviceTitle, transaction_id: rawTxnId, payment_status: status,
+        amount: Number.isFinite(amount) ? amount : null, paid_at: String(data.paidAt || "") };
     if (!email) {
         res.status(400).json({ error: "Missing payer email" });
         return;
     }
-    // Tentukan entitlement keys (dukung bundle multi-entitlements)
-    let entitlementKeys = ["fiqh_tahawwulat"];
-    const sLower = serviceTitle.toLowerCase();
-    if (sLower.includes("all") || sLower.includes("sultan") || sLower.includes("semua")) {
-        entitlementKeys = [
-            "all_access",
-            "fiqh_tahawwulat",
-            "fiqh_syafii",
-            "fiqh_hanafi",
-            "fiqh_maliki",
-            "fiqh_hanbali",
-            "fiqh_muqaran",
-            "fiqh",
-            "ushul_fiqh",
-            "nahwu",
-            "tafsir",
-            "tajwid",
-            "hadits",
-            "aqidah",
-            "tasawwuf",
-            "tarikh",
-            "bibliografi",
-        ];
+    // Preserve invalid evidence for operator verification; never auto-extend
+    // and never guess which module an unknown product should unlock.
+    const reason = !rawTxnId || !Number.isFinite(amount) || amount <= 0 ? "invalid_billing_identity_or_amount"
+        : !scopes.length ? "unknown_service"
+            : !Number.isFinite(paidMs) ? "invalid_payment_time" : "";
+    if (reason) {
+        await quarantineAkalEvidence(evidence, reason);
+        res.status(200).json({ received: true, verification_required: true });
+        return;
     }
-    else if (sLower.includes("pesantren") || sLower.includes("santri salaf")) {
-        entitlementKeys = ["fiqh_syafii", "ushul_fiqh", "fiqh", "tasawwuf"];
-    }
-    else if (sLower.includes("samudra hadits") || sLower.includes("hadits & sirah")) {
-        entitlementKeys = ["hadits", "tarikh"];
-    }
-    else if (sLower.includes("mufassir") || (sLower.includes("bahasa arab") && sLower.includes("tafsir"))) {
-        entitlementKeys = ["tafsir", "nahwu", "tajwid", "bibliografi"];
-    }
-    else if (sLower.includes("mufti") || sLower.includes("mazhab akbar")) {
-        entitlementKeys = ["fiqh_hanafi", "fiqh_maliki", "fiqh_hanbali", "fiqh_muqaran", "aqidah", "fiqh"];
-    }
-    else if (sLower.includes("syafii") || sLower.includes("syafi'i")) {
-        entitlementKeys = ["fiqh_syafii"];
-    }
-    else if (sLower.includes("arab") || sLower.includes("nahwu")) {
-        entitlementKeys = ["nahwu"];
-    }
-    else if (sLower.includes("ushul")) {
-        entitlementKeys = ["ushul_fiqh"];
-    }
-    else if (sLower.includes("hadits")) {
-        entitlementKeys = ["hadits"];
-    }
-    else if (sLower.includes("tafsir")) {
-        entitlementKeys = ["tafsir"];
-    }
-    const durationMonths = detectDurationMonths(priceSchemeTitle, serviceTitle);
-    const plan = durationMonths === 12 ? "bahits_1y" : (durationMonths === 6 ? "tholib_6m" : "tholib_1m");
-    const now = new Date();
-    const baseDate = data.paidAt ? new Date(data.paidAt) : now;
-    const expiryDate = new Date(baseDate);
-    expiryDate.setDate(expiryDate.getDate() + (30 * durationMonths));
-    // 1. Simpan catatan transaksi di Firestore
-    await db.collection("transactions").doc(txnId).set({
-        customer_email: email,
-        customer_name: name,
-        plan,
-        amount,
-        duration_months: durationMonths,
-        status: "success",
-        source: "goakal",
-        service_name: serviceTitle,
-        entitlement_key: entitlementKeys[0],
-        entitlement_keys: entitlementKeys,
-        paid_at: admin.firestore.Timestamp.fromDate(baseDate),
-        processed_at: admin.firestore.FieldValue.serverTimestamp(),
-        subscription_expires_at: admin.firestore.Timestamp.fromDate(expiryDate),
-    }, { merge: true });
-    // 2. Update dokumen user jika sudah terdaftar
-    const usersSnap = await db.collection("users").where("email", "==", email).limit(1).get();
-    if (!usersSnap.empty) {
-        const userDoc = usersSnap.docs[0];
-        const entUpdates = {};
-        for (const k of entitlementKeys) {
-            entUpdates[k] = {
-                plan,
-                status: "active",
-                expiry: admin.firestore.Timestamp.fromDate(expiryDate),
-                source: "goakal",
-                source_transaction_id: txnId,
-                updated_at: admin.firestore.FieldValue.serverTimestamp(),
-            };
-        }
-        await userDoc.ref.set({
-            entitlements: entUpdates,
-            updated_at: admin.firestore.FieldValue.serverTimestamp(),
-        }, { merge: true });
-        console.log(`[Akal Webhook] User ${email} entitlements '${entitlementKeys.join(", ")}' updated successfully.`);
-    }
-    else {
-        console.log(`[Akal Webhook] User ${email} not yet registered in Firestore. Transaction stored.`);
-    }
-    // 3. Notifikasi Cloud Run sharing
+    const months = detectDurationMonths(priceSchemeTitle, serviceTitle);
+    const plan = months === 12 ? "bahits_1y" : (months === 6 ? "tholib_6m" : "tholib_1m");
+    const txnId = akalTransactionId(rawTxnId, [email, serviceTitle, priceSchemeTitle, String(data.paidAt || ""), String(amount)]);
+    let result;
     try {
-        await notifySubscriptionServer(email, name, plan, "add", serviceTitle);
+        result = await applyAkalPurchase({ email, name, transactionId: txnId, amount, scopes, plan, months, paidMs, serviceTitle });
     }
-    catch (_) { }
-    // 4. Notifikasi Telegram
+    catch (err) {
+        console.error("[Akal Webhook] Purchase could not be applied:", err.message);
+        res.status(500).json({ error: "Internal error" });
+        return;
+    }
     await sendTelegramNotification(`⚡ <b>[WEBHOOK GOAKAL REALTIME]</b>\n` +
-        `👤 Pembeli: <code>${email}</code> (${name})\n` +
-        `📦 Layanan: <b>${serviceTitle}</b>\n` +
-        `⏳ Paket: ${plan} (${durationMonths} bulan)\n` +
-        `🔑 Entitlement: <code>${entitlementKeys.join(", ")}</code>\n` +
+        `👤 Pembeli: <code>${esc(email)}</code> (${esc(name)})\n` +
+        `📦 Layanan: <b>${esc(serviceTitle)}</b>\n` +
+        `⏳ Paket: ${esc(plan)} (${months} bulan)\n` +
+        `🔑 Entitlement: <code>${esc(scopes.join(", "))}</code>\n` +
         `💰 Nominal: Rp ${amount.toLocaleString("id-ID")}\n` +
-        `📅 Masa Aktif: s/d ${expiryDate.toISOString().split("T")[0]}`);
-    res.status(200).json({ success: true, txnId, entitlementKeys });
+        `📅 Masa Aktif: s/d ${new Date(result.expiresMs).toISOString().split("T")[0]}` +
+        (result.linked ? "" : `\nℹ️ Pembeli belum terdaftar di aplikasi; akses ditautkan saat ia mendaftar.`));
+    res.status(200).json({ success: true, txnId, entitlementKeys: scopes });
 });
 function verifySessionCookie(cookieHeader, secret) {
     if (!cookieHeader)
@@ -3580,21 +3350,26 @@ exports.onClientErrorLogged = functions.firestore
     const data = snap.data();
     if (!data)
         return;
-    const severity = data.severity || "error";
-    // Teruskan ke Telegram untuk severity error, critical, dan fatal
-    if (severity === "critical" || severity === "fatal" || severity === "error") {
-        const errorMsg = String(data.error || "Unknown Error");
-        const errContext = String(data.context || "general");
-        const user = String(data.userEmail || data.userId || "anonymous");
-        const platform = String(data.platform || "unknown");
-        const msg = `⚠️ <b>[ALERT CLIENT ERROR]</b>\n` +
-            `<b>Context:</b> ${errContext}\n` +
-            `<b>Severity:</b> ${severity.toUpperCase()}\n` +
-            `<b>Platform:</b> ${platform}\n` +
-            `<b>User:</b> ${user}\n` +
-            `<b>Error:</b> <code>${errorMsg.substring(0, 300)}</code>\n` +
-            `<b>ID:</b> <code>${ctx.params.logId}</code>`;
-        await sendTelegramNotification(msg);
+    const severity = String(data.severity || "error");
+    if (!["critical", "error"].includes(severity))
+        return;
+    // Any signed-in client can write this collection. Bound what one account
+    // can push to the operator channel so payment alerts are never drowned out.
+    const owner = typeof data.userId === "string" && data.userId ? data.userId : "unknown";
+    try {
+        await enforceRateLimit(`client_alert_${owner}`.slice(0, 200), 5, 900, "limited");
+        await enforceRateLimit("client_alert_global", 30, 900, "limited");
     }
+    catch (_) {
+        return;
+    }
+    const msg = `⚠️ <b>[ALERT CLIENT ERROR]</b>\n` +
+        `<b>Context:</b> ${esc(data.context || "general")}\n` +
+        `<b>Severity:</b> ${esc(severity.toUpperCase())}\n` +
+        `<b>Platform:</b> ${esc(data.platform || "unknown")}\n` +
+        `<b>User:</b> ${esc(data.userEmail || data.userId || "anonymous")}\n` +
+        `<b>Error:</b> <code>${esc(String(data.error || "Unknown Error").substring(0, 300))}</code>\n` +
+        `<b>ID:</b> <code>${esc(ctx.params.logId)}</code>`;
+    await sendTelegramNotification(msg);
 });
 //# sourceMappingURL=index.js.map

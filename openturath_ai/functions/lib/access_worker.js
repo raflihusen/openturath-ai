@@ -450,6 +450,55 @@ async function settleRevokes() {
             await doc.ref.update({ status: "revoked", verified_ms: Date.now() });
     }
 }
+// The sharing server hands authenticated GoAkal webhook events to this queue
+// once the VPS writer is active. Without a consumer a real payment would wait
+// forever, so each cycle settles a bounded batch.
+async function consumeLegacyEvents() {
+    var _a;
+    const events = await db.collection("access_legacy_events").where("status", "==", "verification_required").limit(50).get();
+    for (const doc of events.docs) {
+        const decision = (0, access_control_1.classifyLegacyEvent)(doc.data(), access_catalog_1.resolveAkalScopes);
+        if (decision.action !== "grant") {
+            await doc.ref.update({ status: decision.action === "noted" ? "noted" : "operator_review",
+                decision_reason: decision.reason, processed_ms: Date.now() });
+            continue;
+        }
+        try {
+            const matches = await db.collection("users").where("email", "==", decision.email).limit(2).get();
+            if (matches.size > 1) {
+                await doc.ref.update({ status: "operator_review", decision_reason: "ambiguous_owner", processed_ms: Date.now() });
+                continue;
+            }
+            const ownerRef = ((_a = matches.docs[0]) === null || _a === void 0 ? void 0 : _a.ref) || db.collection("access_legacy_owners").doc(`legacy_${(0, access_control_1.keyOf)(decision.email)}`);
+            if (!matches.size)
+                await ownerRef.set({ email: decision.email, legacy_revoke_only: true, access_due_ms: Date.now() }, { merge: true });
+            const granted = [];
+            for (const scope of decision.scopes) {
+                const ref = db.collection("access_grants").doc((0, access_control_1.keyOf)("goakal", decision.transactionId, scope));
+                await db.runTransaction(async (t) => {
+                    if ((await t.get(ref)).exists)
+                        return;
+                    t.create(ref, { uid: ownerRef.id, email: decision.email, scope, kind: "payment", status: "active",
+                        amount: decision.amount, provider: "goakal", source: "akal_webhook", transaction_id: decision.transactionId,
+                        starts_ms: decision.paidMs, expires_ms: decision.expiresMs, created_ms: Date.now() });
+                });
+                granted.push(ref.id);
+            }
+            await db.runTransaction(async (t) => {
+                const owner = (await t.get(ownerRef)).data();
+                if (!owner || owner.adopted_by)
+                    return;
+                t.update(ownerRef, { access_grant_ids: [...new Set([...(owner.access_grant_ids || []), ...granted])],
+                    access_version: 2, access_due_ms: Date.now() });
+            });
+            await doc.ref.update({ status: "granted", grant_ids: granted, processed_ms: Date.now() });
+        }
+        catch (_) {
+            // Leave the event queued; the next cycle retries it.
+            console.error("Legacy event could not be settled; retrying next cycle");
+        }
+    }
+}
 async function cycle() {
     var _a;
     stats.last_cycle_ms = Date.now();
@@ -490,6 +539,7 @@ async function cycle() {
                 next_attempt_ms: Date.now() + 60000, updated_ms: Date.now() });
         }
     }
+    await consumeLegacyEvents();
     await assignments();
     await settleRevokes();
     const jobs = await db.collection("access_jobs").where("due_ms", "<=", Date.now()).count().get();
