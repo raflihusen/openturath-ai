@@ -364,15 +364,25 @@ const notebookUiScript = r'''
       .ot-chat-composer textarea::placeholder,
       .ot-chat-composer input::placeholder { color: transparent !important; }
 
-      /* Sembunyikan elemen judul, ikon, dan sumber di dalam empty state agar bersih */
+      /* Sembunyikan elemen judul, ikon, cover, kartu guide, dan tab-bar agar tampilan bersih murni obrolan */
       .empty-state-header,
       .chat-empty-state-container .empty-state-header,
-      app-notebook-overview,
-      .notebook-overview,
-      [class*="notebook-overview" i],
+      app-notebook-guide,
+      notebook-guide,
+      .notebook-guide,
+      [class*="notebook-guide" i],
+      app-guide-card,
+      .guide-card,
+      [class*="guide-card" i],
+      app-artifact-summary,
+      .artifact-summary,
+      [class*="artifact-summary" i],
       app-project-summary,
       .project-summary,
       [class*="project-summary" i],
+      app-notebook-overview,
+      .notebook-overview,
+      [class*="notebook-overview" i],
       app-guide-intro,
       .guide-intro,
       [class*="guide-intro" i],
@@ -388,6 +398,28 @@ const notebookUiScript = r'''
       app-project-title,
       app-notebook-cover,
       .notebook-cover,
+      [class*="notebook-cover" i],
+      app-project-cover,
+      .project-cover,
+      [class*="project-cover" i],
+      app-cover-card,
+      .cover-card,
+      [class*="cover-card" i],
+      .cover-image-container,
+      [class*="cover-image" i],
+      [class*="cover-container" i],
+      .summary-card,
+      [class*="summary-card" i],
+      [class*="hero-card" i],
+      [class*="hero-container" i],
+      [class*="title-card" i],
+      [class*="overview-card" i],
+      /* Sembunyikan bilah tab Sources | Chat | Studio dan tombol add/upload non-obrolan */
+      [role="tablist"],
+      .tab-bar, app-tab-bar, .tabs-container, nav[class*="tab" i], div[class*="tab-bar" i],
+      mat-tab-header, .mat-mdc-tab-header, .mobile-tab-bar, .mobile-tabs, .mobile-navigation,
+      button[aria-label*="Add source" i], button[aria-label*="Tambah sumber" i],
+      button[aria-label*="Upload" i], button[aria-label*="Unggah" i],
       app-chat-empty-state h1, app-chat-empty-state h2, app-chat-empty-state h3,
       app-chat-empty-state mat-icon, app-chat-empty-state img, app-chat-empty-state svg,
       app-empty-state h1, app-empty-state h2, app-empty-state h3,
@@ -517,26 +549,96 @@ const notebookUiScript = r'''
 
   function removeHeroCard() {
     const isComposerOrInput = el => !el || !!el.closest('app-chat-input, form, .chat-input-container, .query-box-container, textarea, [contenteditable="true"]');
+    const isMessageOrBubble = el => !el || !!el.closest('.chat-message, .model-message, .user-message, [role="article"], .rendered-markdown, app-chat-response, app-chat-query, app-chat-prompt, app-chat-turn, chat-turn, [data-message-author-role]');
+
+    // 1. Sembunyikan elemen guide / overview / cover melalui selektor spesifik
     const guideSelectors = [
-      'app-artifact-summary', '.artifact-summary',
-      '.cover-image-container', '.summary-card', '.guide-card',
-      'app-notebook-overview', '.notebook-overview',
-      'app-project-summary', '.project-summary',
-      'app-guide-intro', '.guide-intro',
-      'app-notebook-intro', '.notebook-intro',
-      'app-project-intro', '.project-intro',
+      'app-notebook-guide', 'notebook-guide', '.notebook-guide', '[class*="notebook-guide" i]',
+      'app-guide-card', '.guide-card', '[class*="guide-card" i]',
+      'app-artifact-summary', '.artifact-summary', '[class*="artifact-summary" i]',
+      'app-project-summary', '.project-summary', '[class*="project-summary" i]',
+      'app-notebook-overview', '.notebook-overview', '[class*="notebook-overview" i]',
+      'app-guide-intro', '.guide-intro', '[class*="guide-intro" i]',
+      'app-notebook-intro', '.notebook-intro', '[class*="notebook-intro" i]',
+      'app-project-intro', '.project-intro', '[class*="project-intro" i]',
       'app-notebook-title', 'app-project-title',
-      'app-notebook-cover', '.notebook-cover',
+      'app-notebook-cover', '.notebook-cover', '[class*="notebook-cover" i]',
+      'app-project-cover', '.project-cover', '[class*="project-cover" i]',
+      'app-cover-card', '.cover-card', '[class*="cover-card" i]',
+      '.cover-image-container', '[class*="cover-image" i]', '[class*="cover-container" i]',
+      '.summary-card', '[class*="summary-card" i]',
+      '[class*="hero-card" i]', '[class*="hero-container" i]', '[class*="hero-header" i]',
+      '[class*="title-card" i]', '[class*="overview-card" i]',
       '.empty-state-header'
     ];
     guideSelectors.forEach(sel => {
       document.querySelectorAll(sel).forEach(el => {
-        if (!isComposerOrInput(el) && !el.querySelector('textarea, [contenteditable="true"], form')) {
+        if (!isComposerOrInput(el) && !isMessageOrBubble(el)) {
           el.style.setProperty('display', 'none', 'important');
+          el.style.setProperty('height', '0px', 'important');
+          el.style.setProperty('overflow', 'hidden', 'important');
         }
       });
     });
 
+    // 2. Deteksi kartu sampul berbasis teks spesifik "0 sumber · [tanggal]" / "X sources · [date]"
+    document.querySelectorAll('span, p, div, small').forEach(el => {
+      if (isComposerOrInput(el) || isMessageOrBubble(el)) return;
+      if (el.children.length > 2) return;
+      const txt = (el.innerText || el.textContent || '').trim();
+      if (!txt || txt.length > 60) return;
+
+      const isSourceCount = /^\d+\s*(sumber|source|sources)\s*[·•]/i.test(txt) ||
+                            ((txt.includes('sumber') || txt.includes('source')) && (txt.includes('·') || txt.includes('•')) && /\b202\d\b/.test(txt));
+      if (!isSourceCount) return;
+
+      // Temukan kartu pembungkusnya (maksimal 3 tingkat ke atas, JANGAN PERNAH menyembunyikan main/chat-view!)
+      let target = el;
+      for (let i = 0; i < 3 && target.parentElement; i++) {
+        const parent = target.parentElement;
+        if (parent === document.body || parent.matches('main, [role="main"], app-chat-view, app-chat-panel, app-chat, .chat-panel-content, .chat-view, .conversation-container, .message-list, [role="log"]')) {
+          break;
+        }
+        if (parent.querySelector('textarea, [contenteditable="true"], form')) {
+          break;
+        }
+        if (parent.querySelector('.user-turn, .model-turn, .chat-message, app-chat-response, [role="article"]')) {
+          break;
+        }
+        target = parent;
+        if (target.matches('mat-card, [class*="card" i], [class*="guide" i], [class*="hero" i], [class*="cover" i], [class*="summary" i]')) {
+          break;
+        }
+      }
+      target.style.setProperty('display', 'none', 'important');
+      target.style.setProperty('height', '0px', 'important');
+      target.style.setProperty('min-height', '0px', 'important');
+      target.style.setProperty('max-height', '0px', 'important');
+      target.style.setProperty('margin', '0px', 'important');
+      target.style.setProperty('padding', '0px', 'important');
+      target.style.setProperty('overflow', 'hidden', 'important');
+    });
+
+    // 3. Pastikan tab Chat selalu aktif jika antarmuka mobile/tab NotebookLM terbuka
+    try {
+      const tabs = document.querySelectorAll('[role="tab"], button, a');
+      for (const tab of tabs) {
+        if (isComposerOrInput(tab) || isMessageOrBubble(tab)) continue;
+        const txt = (tab.innerText || tab.textContent || '').trim().toLowerCase();
+        if (txt === 'chat' || txt === 'obrolan' || txt === 'percakapan') {
+          const isSelected = tab.getAttribute('aria-selected') === 'true' ||
+                             tab.classList.contains('active') ||
+                             tab.classList.contains('selected') ||
+                             tab.classList.contains('mat-mdc-tab-active');
+          if (!isSelected) {
+            tab.click?.();
+          }
+          break;
+        }
+      }
+    } catch (_) {}
+
+    // 4. Panel pesan obrolan: bersihkan elemen header/cover di atas pesan pertama
     const messageSel = questionSelector + ',' + answerSelector + ', .chat-message-pair, app-chat-turn, chat-turn, app-chat-message, app-chat-response, [data-message-author-role]';
     document.querySelectorAll('.chat-panel-content, .chat-view, .conversation-container, .message-list, [role="log"]').forEach(panel => {
       const messages = [...panel.querySelectorAll(messageSel)].filter(el => !isComposerOrInput(el));
@@ -545,17 +647,25 @@ const notebookUiScript = r'''
         let prev = firstMessage.previousElementSibling;
         while (prev) {
           if (!isComposerOrInput(prev)) {
-            if (prev.matches('.empty-state-header, app-notebook-title, app-project-title, app-notebook-cover, .notebook-cover, .cover-emoji, .cover-image-container, app-artifact-summary, .artifact-summary, .summary-card, [class*="hero-header" i], [class*="intro-header" i], app-suggestion-chips, .suggestion-chips') ||
-                prev.querySelector('.empty-state-header, app-notebook-cover, .cover-image-container, app-artifact-summary, .artifact-summary, .summary-card')) {
+            const prevTxt = (prev.innerText || prev.textContent || '').trim();
+            const isSourceHeader = /^\d+\s*(sumber|source|sources)\s*[·•]/i.test(prevTxt) ||
+                                   (prev.querySelector('img, svg, mat-icon') && !prev.matches('.user-turn, .model-turn'));
+            if (prev.matches('.empty-state-header, app-notebook-guide, notebook-guide, .notebook-guide, app-guide-card, .guide-card, app-notebook-title, app-project-title, app-notebook-cover, .notebook-cover, .cover-emoji, .cover-image-container, app-artifact-summary, .artifact-summary, .summary-card, [class*="hero-header" i], [class*="intro-header" i], app-suggestion-chips, .suggestion-chips') ||
+                prev.querySelector('.empty-state-header, app-notebook-cover, .cover-image-container, app-artifact-summary, .artifact-summary, .summary-card') ||
+                isSourceHeader) {
               prev.style.setProperty('display', 'none', 'important');
+              prev.style.setProperty('height', '0px', 'important');
+              prev.style.setProperty('overflow', 'hidden', 'important');
             }
           }
           prev = prev.previousElementSibling;
         }
       } else {
-        panel.querySelectorAll('.empty-state-header, app-notebook-title, app-notebook-cover, .notebook-cover, .cover-emoji, [class*="hero-header" i], [class*="intro-header" i], app-chat-empty-state mat-icon, app-chat-empty-state img, app-chat-empty-state svg, app-empty-state mat-icon, app-empty-state img, app-empty-state svg').forEach(el => {
-          if (!isComposerOrInput(el)) {
+        panel.querySelectorAll('.empty-state-header, app-notebook-guide, notebook-guide, .notebook-guide, app-guide-card, .guide-card, app-notebook-title, app-notebook-cover, .notebook-cover, .cover-emoji, [class*="hero-header" i], [class*="intro-header" i], app-chat-empty-state mat-icon, app-chat-empty-state img, app-chat-empty-state svg, app-empty-state mat-icon, app-empty-state img, app-empty-state svg').forEach(el => {
+          if (!isComposerOrInput(el) && !isMessageOrBubble(el)) {
             el.style.setProperty('display', 'none', 'important');
+            el.style.setProperty('height', '0px', 'important');
+            el.style.setProperty('overflow', 'hidden', 'important');
           }
         });
       }

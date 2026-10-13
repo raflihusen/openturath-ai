@@ -46,4 +46,12 @@ void main() {
     expect(notebookUiScript.contains('display: block !important;'), isTrue);
     expect(notebookUiScript.contains('visibility: visible !important;'), isTrue);
   });
+
+  test('notebookUiScript hides guide card, cover, and mobile tablist while keeping chat selected', () {
+    expect(notebookUiScript.contains('app-notebook-guide'), isTrue);
+    expect(notebookUiScript.contains('app-guide-card'), isTrue);
+    expect(notebookUiScript.contains('[role="tablist"]'), isTrue);
+    expect(notebookUiScript.contains('isSourceCount'), isTrue);
+    expect(notebookUiScript.contains('target.style.setProperty(\'display\', \'none\', \'important\')'), isTrue);
+  });
 }
