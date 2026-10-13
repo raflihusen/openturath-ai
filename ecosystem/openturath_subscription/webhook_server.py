@@ -15,6 +15,8 @@ Endpoint:
   GET  /health   ← cek status server
 """
 
+from __future__ import annotations
+
 import asyncio
 import hashlib
 import hmac
@@ -40,10 +42,6 @@ def load_dotenv():
 
 load_dotenv()
 
-import asyncio
-import hashlib
-import hmac
-import json
 import logging
 import datetime
 from google.cloud import firestore
@@ -53,7 +51,9 @@ NOTEBOOKLM_PY_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), ".
 sys.path.insert(0, os.path.abspath(NOTEBOOKLM_PY_PATH))
 
 import notebooklm_manager as nlm
-from http.server import BaseHTTPRequestHandler, HTTPServer
+import access_policy
+import shared_registry
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 # ─────────────────────────────────────────────────────────────
 # LOGGING
@@ -74,108 +74,34 @@ logger = logging.getLogger(__name__)
 # Token verifikasi dari Akal: Dashboard → Developer → Webhook
 AKAL_WEBHOOK_SECRET = os.getenv("AKAL_WEBHOOK_SECRET", "")
 
-# Mapping: nama service/kelas di Akal → list dari notebook_id di NotebookLM
-# Nama harus PERSIS SAMA dengan nama kelas di goakal.com
-# Notebook ID dari URL: notebooklm.google.com/notebook/<NOTEBOOK_ID>
-PRODUCT_TO_NOTEBOOKS: dict[str, list[str]] = {
-    "AI Fikih Tahawwulat": [
-        os.getenv("NOTEBOOK_ID_FIKIH_TAHAWWULAT_AL_MUHAQQIQ", "dc7ee7e4-f4ad-4db6-9cd0-0013727abbe4"),
-        os.getenv("NOTEBOOK_ID_FIKIH_TAHAWWULAT_AL_BAYAN", "483d0291-0a70-411c-bff0-f1ea4b83b2fd"),
-        os.getenv("NOTEBOOK_ID_FIKIH_TAHAWWULAT_AL_MUKHTABIR", "ac61a7a0-87e7-42a5-a30f-980ff74a78d8"),
-        os.getenv("NOTEBOOK_ID_FIKIH_TAHAWWULAT_AL_HABIB", "6673e79a-7156-42e1-b116-bc1653a32094"),
-        os.getenv("NOTEBOOK_ID_FIKIH_TAHAWWULAT_AL_KHATIB", "1288e413-9569-47a3-892f-64008e53c1e8"),
-    ],
-    "SUPER AI FIKIH SYAFI'I": [os.getenv("NOTEBOOK_ID_FIKIH_SYAFII", "334e7b83-0e76-4787-a1d6-314642a35862")],
-    "AI Fikih Syafi'i": [os.getenv("NOTEBOOK_ID_FIKIH_SYAFII", "334e7b83-0e76-4787-a1d6-314642a35862")],
-    "Fikih Syafi'i": [os.getenv("NOTEBOOK_ID_FIKIH_SYAFII", "334e7b83-0e76-4787-a1d6-314642a35862")],
-    "AI Fikih Hanafi": [os.getenv("NOTEBOOK_ID_FIKIH_SYAFII", "334e7b83-0e76-4787-a1d6-314642a35862")],
-    "Fikih Hanafi": [os.getenv("NOTEBOOK_ID_FIKIH_SYAFII", "334e7b83-0e76-4787-a1d6-314642a35862")],
-    "AI Fikih Maliki": [os.getenv("NOTEBOOK_ID_FIKIH_SYAFII", "334e7b83-0e76-4787-a1d6-314642a35862")],
-    "Fikih Maliki": [os.getenv("NOTEBOOK_ID_FIKIH_SYAFII", "334e7b83-0e76-4787-a1d6-314642a35862")],
-    "AI Fikih Hanbali": [os.getenv("NOTEBOOK_ID_FIKIH_SYAFII", "334e7b83-0e76-4787-a1d6-314642a35862")],
-    "Fikih Hanbali": [os.getenv("NOTEBOOK_ID_FIKIH_SYAFII", "334e7b83-0e76-4787-a1d6-314642a35862")],
-    "AI Fikih Perbandingan Mazhab": [os.getenv("NOTEBOOK_ID_FIKIH_SYAFII", "334e7b83-0e76-4787-a1d6-314642a35862")],
-    "Fikih Perbandingan Mazhab": [os.getenv("NOTEBOOK_ID_FIKIH_SYAFII", "334e7b83-0e76-4787-a1d6-314642a35862")],
-    "AI Ushul Fiqih": [os.getenv("NOTEBOOK_ID_USHUL_FIQIH", "6ab6dae8-0067-435a-85ca-b6bd4e17dd12")],
-    "Ushul Fiqih": [os.getenv("NOTEBOOK_ID_USHUL_FIQIH", "6ab6dae8-0067-435a-85ca-b6bd4e17dd12")],
-    "AI Hadits": [os.getenv("NOTEBOOK_ID_HADITS", "b9626501-538c-4358-a44f-6731eaec50b6")],
-    "Hadits": [os.getenv("NOTEBOOK_ID_HADITS", "b9626501-538c-4358-a44f-6731eaec50b6")],
-    "AI Tafsir": [os.getenv("NOTEBOOK_ID_TAFSIR", "df92cc50-1106-4221-8748-1663f00fa7fe")],
-    "Tafsir": [os.getenv("NOTEBOOK_ID_TAFSIR", "df92cc50-1106-4221-8748-1663f00fa7fe")],
-    "AI Bahasa Arab": [os.getenv("NOTEBOOK_ID_BAHASA_ARAB", "15bc4cef-4b94-4241-b05a-d50a586bde06")],
-    "Bahasa Arab": [os.getenv("NOTEBOOK_ID_BAHASA_ARAB", "15bc4cef-4b94-4241-b05a-d50a586bde06")],
-    "Paket Semua AI": [
-        "dc7ee7e4-f4ad-4db6-9cd0-0013727abbe4",
-        "483d0291-0a70-411c-bff0-f1ea4b83b2fd",
-        "ac61a7a0-87e7-42a5-a30f-980ff74a78d8",
-        "6673e79a-7156-42e1-b116-bc1653a32094",
-        "1288e413-9569-47a3-892f-64008e53c1e8",
-        "334e7b83-0e76-4787-a1d6-314642a35862",
-        "6ab6dae8-0067-435a-85ca-b6bd4e17dd12",
-        "df92cc50-1106-4221-8748-1663f00fa7fe",
-        "b9626501-538c-4358-a44f-6731eaec50b6",
-        "15bc4cef-4b94-4241-b05a-d50a586bde06",
-    ],
-    "all_ai": [
-        "dc7ee7e4-f4ad-4db6-9cd0-0013727abbe4",
-        "483d0291-0a70-411c-bff0-f1ea4b83b2fd",
-        "ac61a7a0-87e7-42a5-a30f-980ff74a78d8",
-        "6673e79a-7156-42e1-b116-bc1653a32094",
-        "1288e413-9569-47a3-892f-64008e53c1e8",
-        "334e7b83-0e76-4787-a1d6-314642a35862",
-        "6ab6dae8-0067-435a-85ca-b6bd4e17dd12",
-        "df92cc50-1106-4221-8748-1663f00fa7fe",
-        "b9626501-538c-4358-a44f-6731eaec50b6",
-        "15bc4cef-4b94-4241-b05a-d50a586bde06",
-    ],
-    "all_access": [
-        "dc7ee7e4-f4ad-4db6-9cd0-0013727abbe4",
-        "483d0291-0a70-411c-bff0-f1ea4b83b2fd",
-        "ac61a7a0-87e7-42a5-a30f-980ff74a78d8",
-        "6673e79a-7156-42e1-b116-bc1653a32094",
-        "1288e413-9569-47a3-892f-64008e53c1e8",
-        "334e7b83-0e76-4787-a1d6-314642a35862",
-        "6ab6dae8-0067-435a-85ca-b6bd4e17dd12",
-        "df92cc50-1106-4221-8748-1663f00fa7fe",
-        "b9626501-538c-4358-a44f-6731eaec50b6",
-        "15bc4cef-4b94-4241-b05a-d50a586bde06",
-    ],
-}
+# Produk, modul, notebook, dan daftar VIP dibaca dari registry bersama
+# (shared/*.json, dibangkitkan dari sumber TypeScript). Berkas ini tidak
+# menyimpan salinan sendiri, sehingga server ini dan Cloud Functions tidak
+# bisa berbeda pendapat tentang siapa VIP atau notebook mana milik modul apa.
+ALL_ACCESS_SCOPES = {"all_access", "all_ai"}
+MAX_BODY_BYTES = 64 * 1024
+REQUEST_TIMEOUT_SECONDS = 30
 
-PERMANENT_VIP_EMAILS: set[str] = {
-    "openturath@gmail.com",
-    "ramah@ptct.net",
-    "raflimaulan@gmail.com",
-    "mas.raflihusen@gmail.com",
-    "alkhateeb23@gmail.com",
-    "omarasb1441@gmail.com",
-    "prilatief@gmail.com",
-}
 
-# Mapping: nama service/kelas di Akal / DOKU → key entitlement di database Firestore
-PRODUCT_TO_ENTITLEMENT_KEY: dict[str, str] = {
-    "AI Fikih Tahawwulat": "fiqh_tahawwulat",
-    "SUPER AI FIKIH SYAFI'I": "fiqh_syafii",
-    "AI Fikih Syafi'i": "fiqh_syafii",
-    "Fikih Syafi'i": "fiqh_syafii",
-    "AI Fikih Hanafi": "fiqh_hanafi",
-    "Fikih Hanafi": "fiqh_hanafi",
-    "AI Fikih Maliki": "fiqh_maliki",
-    "Fikih Maliki": "fiqh_maliki",
-    "AI Fikih Hanbali": "fiqh_hanbali",
-    "Fikih Hanbali": "fiqh_hanbali",
-    "AI Fikih Perbandingan Mazhab": "fiqh_muqaran",
-    "Fikih Perbandingan Mazhab": "fiqh_muqaran",
-    "AI Ushul Fiqih": "ushul_fiqh",
-    "Ushul Fiqih": "ushul_fiqh",
-    "AI Hadits": "hadits",
-    "AI Tafsir": "tafsir",
-    "AI Nahwu": "nahwu",
-    "AI Bahasa Arab": "nahwu",
-    "Paket Semua AI": "all_access",
-    "all_ai": "all_access",
-    "all_access": "all_access",
-}
+def masters_for_scopes(scopes: list[str]) -> list[str]:
+    ids: list[str] = []
+    for scope in scopes:
+        ids.extend(shared_registry.masters_for_scope(scope))
+    return list(dict.fromkeys(ids))
+
+
+def notebooks_for_scopes(scopes: list[str]) -> list[str]:
+    ids: list[str] = []
+    for scope in scopes:
+        ids.extend(shared_registry.notebooks_for_scope(scope))
+    return list(dict.fromkeys(ids))
+
+
+def mask_email(email: str) -> str:
+    """Log form of an address: enough to correlate, not enough to harvest."""
+    name, _, domain = (email or "").partition("@")
+    return f"{name[:1]}***@{domain}" if domain else "***"
+
 
 # Status Akal → Aksi NotebookLM
 # Ref: https://goakal.com/docs/developer/webhook
@@ -287,23 +213,42 @@ def vps_writer_active():
         raise RuntimeError("Access writer coordination unavailable")
     return (db.collection("access_control").document("runtime").get().to_dict() or {}).get("writer") == "vps-v2"
 
-def queue_legacy_event(payload):
+def queue_legacy_event(payload, reason: str = ""):
     # Only called after the HTTP handler has authenticated the webhook. Store
     # normalized billing evidence, never the webhook secret or arbitrary payload.
     email, name, service, status, plan, amount, transaction_id, paid_at = parse_akal_payload(payload)
     identity = str(transaction_id or "")
     digest = hashlib.sha256(json.dumps([identity, str(status), email, service, amount, paid_at], separators=(",", ":")).encode()).hexdigest()
     ref = get_firestore_client().collection("access_legacy_events").document(digest)
+    record = {"email": email, "service": service, "payment_status": status,
+              "plan": plan, "amount": amount, "transaction_id": identity,
+              "paid_at": paid_at, "status": "verification_required",
+              "received_at": firestore.SERVER_TIMESTAMP}
+    if reason:
+        record["reason"] = reason
     try:
-        ref.create({"email": email, "service": service, "payment_status": status,
-                    "plan": plan, "amount": amount, "transaction_id": identity,
-                    "paid_at": paid_at, "status": "verification_required",
-                    "received_at": firestore.SERVER_TIMESTAMP})
+        ref.create(record)
     except Exception as exc:
         from google.api_core.exceptions import AlreadyExists
         if not isinstance(exc, AlreadyExists):
             raise
     return {"success": True, "action": "durable_vps_handoff", "event_id": digest}
+
+
+def is_protected_owner(email: str) -> bool:
+    """VIP check before any removal. Fails closed when Firestore is unreachable."""
+    email = shared_registry.normal_email(email)
+    if email in shared_registry.vip_emails():
+        return True
+    db = get_firestore_client()
+    if db is None:
+        raise RuntimeError("VIP evidence unavailable")
+    if db.collection("access_vip_registry").document(shared_registry.vip_registry_key(email)).get().exists:
+        return True
+    for doc in db.collection("users").where("email", "==", email).limit(5).stream():
+        if shared_registry.is_vip_profile(doc.to_dict() or {}):
+            return True
+    return False
 
 def determine_plan_and_expiry(price_scheme_name: str, service_name: str) -> tuple[str, int]:
     # Default to 1 month tholib
@@ -336,194 +281,131 @@ def determine_plan_and_expiry(price_scheme_name: str, service_name: str) -> tupl
             
     return plan, duration_months
 
-def process_firestore_updates(email: str, name: str, plan: str, duration_months: int, amount: float, transaction_id: str, is_active: bool, service_name: str, paid_at_str: str = ""):
+def process_firestore_updates(email: str, name: str, plan: str, duration_months: int, amount: float,
+                              transaction_id: str, scopes: list[str], service_name: str, paid_at_str: str = ""):
+    """Record one verified GoAkal purchase.
+
+    Idempotent per transaction ID. Only the purchased modules are written; the
+    account-wide `plan` / `subscription_expiry` are never touched, so one
+    module cannot unlock the others. A longer existing entitlement is kept.
+    """
     db = get_firestore_client()
     if not db:
-        logger.warning("Firestore client not available. Skipping Firestore update.")
         raise RuntimeError("Firestore client not available")
+    email = email.strip().lower()
+    trx_ref = db.collection("transactions").document(transaction_id)
+    if trx_ref.get().exists:
+        logger.info("⏭️  Transaksi %s sudah tercatat. Idempotent skip.", transaction_id)
+        return
 
-    # Tentukan entitlement key berdasarkan mapping nama produk Akal
-    entitlement_key = "fiqh_tahawwulat" # default fallback
-    for p_name, e_key in PRODUCT_TO_ENTITLEMENT_KEY.items():
-        if p_name.lower() in service_name.lower() or service_name.lower() in p_name.lower():
-            entitlement_key = e_key
-            break
+    now = datetime.datetime.now(datetime.timezone.utc)
+    base_date = access_policy.parse_dt(paid_at_str) or now
+    user_doc = next(iter(db.collection("users").where("email", "==", email).limit(1).stream()), None)
+    entitlements = (user_doc.to_dict() or {}).get("entitlements", {}) if user_doc else {}
+    if not isinstance(entitlements, dict):
+        entitlements = {}
 
-    # ── IDEMPOTENCY CHECK: Jika transaksi ini sudah pernah diproses, skip ──
-    if transaction_id:
-        existing_trx = db.collection("transactions").document(transaction_id).get()
-        if existing_trx.exists:
-            existing_data = existing_trx.to_dict()
-            existing_status = existing_data.get("status", "")
-            logger.info(f"⏭️  Transaksi {transaction_id} sudah ada (status: {existing_status}). Idempotent skip.")
-            return  # Sudah pernah diproses, jangan proses ulang
-    else:
-        logger.warning("⚠️  Webhook tanpa transaction_id — tidak bisa menjamin idempotency!")
-        
-    try:
-        # Calculate expiry berdasarkan paidAt dari Akal, BUKAN waktu server
-        now = datetime.datetime.now(datetime.timezone.utc)
-        
-        # Parse paidAt dari payload Akal
-        base_date = now  # fallback ke now jika paidAt tidak tersedia
-        if paid_at_str:
-            try:
-                # Coba parse ISO format dari Akal
-                base_date = datetime.datetime.fromisoformat(paid_at_str.replace('Z', '+00:00'))
-                logger.info(f"Using paidAt from Akal: {base_date}")
-            except (ValueError, TypeError):
-                logger.warning(f"Cannot parse paidAt '{paid_at_str}', using server time")
-        
-        expiry_date = base_date + datetime.timedelta(days=30 * duration_months)
-        
-        # 1. Write transaction record (idempotent: set with merge)
-        trx_ref = db.collection("transactions").document(transaction_id) if transaction_id else db.collection("transactions").document()
-        if is_active:
-            trx_ref.set({
-                "customer_email": email.strip().lower(),
-                "customer_name": name,
-                "plan": plan,
-                "amount": amount,
-                "duration_months": duration_months,
-                "status": "success",
-                "source": "akal",
-                "service_name": service_name,
-                "entitlement_key": entitlement_key,
-                "paid_at": base_date,
-                "processed_at": now,
-                "created_at": now,
-                "completed_at": now,
-                "subscription_expires_at": expiry_date
-            })
-            logger.info(f"Saved successful Akal transaction {transaction_id} to Firestore.")
-        else:
-            trx_ref.set({
-                "customer_email": email.strip().lower(),
-                "customer_name": name,
-                "plan": plan,
-                "amount": amount,
-                "duration_months": duration_months,
-                "status": "expired",
-                "source": "akal",
-                "service_name": service_name,
-                "entitlement_key": entitlement_key,
-                "processed_at": now,
-                "created_at": now,
-                "completed_at": now,
-                "subscription_expires_at": now
-            })
-            logger.info(f"Saved expired Akal transaction {transaction_id} to Firestore.")
-            
-        # 2. Update user if user already exists
-        users_ref = db.collection("users")
-        query = users_ref.where("email", "==", email.strip().lower()).limit(1).stream()
-        user_doc = None
-        for doc in query:
-            user_doc = doc
-            break
-            
-        if user_doc:
-            if is_active:
-                # Untuk renewal: gunakan max(current_expiry, paidAt) + duration
-                current_data = user_doc.to_dict()
-                
-                # Check current expiry dari map entitlements per-produk
-                current_expiry = None
-                entitlements_map = current_data.get("entitlements", {})
-                if isinstance(entitlements_map, dict) and entitlement_key in entitlements_map:
-                    product_entitlement = entitlements_map[entitlement_key]
-                    if isinstance(product_entitlement, dict):
-                        current_expiry = product_entitlement.get("expiry")
-                
-                # Fallback ke global expiry jika model lama
-                if not current_expiry:
-                    current_expiry = current_data.get("subscription_expiry")
+    # Renewal bought before the current period ends continues from that end.
+    start = base_date
+    for scope in scopes:
+        current = entitlements.get(scope)
+        current_end = access_policy.parse_dt(current.get("expiry")) if isinstance(current, dict) else None
+        if current_end and current_end > start and str(current.get("status") or "active") == "active":
+            start = current_end
+    expiry_date = access_policy.billing_expiry(start, duration_months)
 
-                if current_expiry:
-                    try:
-                        current_expiry_dt = current_expiry if isinstance(current_expiry, datetime.datetime) else current_expiry.replace(tzinfo=datetime.timezone.utc)
-                        if current_expiry_dt > base_date:
-                            # User masih aktif, perpanjang dari expiry yang ada
-                            expiry_date = current_expiry_dt + datetime.timedelta(days=30 * duration_months)
-                            logger.info(f"Renewal detected: extending from {current_expiry_dt} to {expiry_date}")
-                    except (AttributeError, TypeError):
-                        pass  # Gunakan expiry_date yang sudah dihitung
-                
-                # Update data model entitlements terstruktur dan model flat lama (kompatibilitas)
-                user_doc.reference.update({
-                    "plan": plan, # legacy flat
-                    "subscription_expiry": expiry_date, # legacy flat
-                    f"entitlements.{entitlement_key}": {
-                        "plan": plan,
-                        "expiry": expiry_date,
-                        "updated_at": now
-                    },
-                    "questions_used": 0
-                })
-                logger.info(f"Updated Firestore user {email} entitlements.{entitlement_key} to {plan} expiring {expiry_date}")
-            else:
-                # PENTING: Jangan langsung cabut jika masih ada transaksi aktif lain untuk produk ini!
-                trx_docs = db.collection("transactions") \
-                    .where("customer_email", "==", email.strip().lower()) \
-                    .where("status", "in", ["success", "PAID", "SETTLED"]) \
-                    .stream()
-                has_active = False
-                for t in trx_docs:
-                    td = t.to_dict()
-                    t_key = td.get("entitlement_key")
-                    t_exp = td.get("subscription_expires_at") or td.get("expires_at")
-                    if isinstance(t_exp, datetime.datetime):
-                        t_exp_dt = t_exp if t_exp.tzinfo else t_exp.replace(tzinfo=datetime.timezone.utc)
-                    elif isinstance(t_exp, str):
-                        try:
-                            t_exp_dt = datetime.datetime.fromisoformat(t_exp.replace("Z", "+00:00"))
-                        except Exception:
-                            t_exp_dt = None
-                    else:
-                        t_exp_dt = None
-                    
-                    if t_exp_dt and t_exp_dt > now and (t_key in [entitlement_key, "all_access", "all_ai", None]):
-                        has_active = True
-                        break
-                
-                if has_active:
-                    logger.info(f"User {email} masih memiliki transaksi aktif lain untuk {entitlement_key}. Tidak mencabut subscription.")
-                else:
-                    # Update status per-produk menjadi trial/expired
-                    user_doc.reference.update({
-                        # Untuk flat legacy, kita reset jika sudah tidak ada active plan sama sekali
-                        "plan": "trial",
-                        "subscription_expiry": None,
-                        f"entitlements.{entitlement_key}": {
-                            "plan": "trial",
-                            "expiry": None,
-                            "updated_at": now
-                        },
-                        "questions_used": 0
-                    })
-                    logger.info(f"Updated Firestore user {email} entitlements.{entitlement_key} to trial (expired)")
-        else:
-            logger.info(f"User {email} not found in Firestore yet. It will be linked when they register.")
-            
-    except Exception as e:
-        logger.error(f"Error updating Firestore for Akal webhook: {e}")
-        raise  # Propagasi error agar webhook mengembalikan 500 ke Akal
+    trx_ref.set({
+        "customer_email": email,
+        "customer_name": name,
+        "plan": plan,
+        "amount": amount,
+        "duration_months": duration_months,
+        "status": "success",
+        "source": "akal",
+        "service_name": service_name,
+        "entitlement_key": scopes[0],
+        "entitlement_keys": scopes,
+        "paid_at": base_date,
+        "paid_ms": int(base_date.timestamp() * 1000),
+        "expires_ms": int(expiry_date.timestamp() * 1000),
+        "processed_at": now,
+        "created_at": now,
+        "completed_at": now,
+        "subscription_expires_at": expiry_date,
+    })
+    logger.info("Saved Akal transaction %s.", transaction_id)
+
+    if not user_doc:
+        logger.info("Pembeli %s belum terdaftar; akses ditautkan saat ia mendaftar.", mask_email(email))
+        return
+    updates = {}
+    for scope in scopes:
+        current = entitlements.get(scope)
+        current_end = access_policy.parse_dt(current.get("expiry")) if isinstance(current, dict) else None
+        if current_end and current_end >= expiry_date and str(current.get("status") or "active") == "active":
+            continue
+        updates[f"entitlements.{scope}"] = {
+            "plan": plan, "status": "active", "expiry": expiry_date, "source": "goakal",
+            "source_transaction_id": transaction_id, "updated_at": now,
+        }
+    if updates:
+        user_doc.reference.update(updates)
+        logger.info("Updated %s: %s until %s", mask_email(email), ", ".join(scopes), expiry_date.date())
+
+
+async def process_internal_provisioning(payload: dict) -> dict:
+    """Sharing command from the Cloud Functions outbox (X-Internal-Secret).
+
+    The caller already verified payment and entitlement, so nothing is written
+    to billing here: this only makes NotebookLM match the requested state.
+    """
+    data = payload.get("data") if isinstance(payload.get("data"), dict) else payload
+    status = str(data.get("status", "")).upper().strip()
+    payer = data.get("payer") or data.get("user") or {}
+    email = shared_registry.normal_email(payer.get("email"))
+    name = str(payer.get("name") or "").strip()
+    service = data.get("service") or {}
+    key = service.get("key")
+    scopes = [key] if key in shared_registry.all_scopes() else shared_registry.resolve_scopes(service.get("name"))
+    scopes = [s for s in scopes if s not in ALL_ACCESS_SCOPES]
+    if not email or "@" not in email or not scopes:
+        return {"success": False, "error": "Unknown provisioning target"}
+
+    if status in ACTIVE_STATUSES:
+        results = []
+        for nid in masters_for_scopes(scopes):
+            results.append(await nlm.add_viewer(nid, email, name))
+            await asyncio.sleep(1.0)
+        return {"success": bool(results) and all(r.get("success", False) for r in results), "action": "provisioned"}
+    if status in INACTIVE_STATUSES:
+        if is_protected_owner(email):
+            logger.info("🛡️ SKIP CABUT AKSES: %s adalah VIP permanen.", mask_email(email))
+            return {"success": True, "action": "ignored_permanent_vip"}
+        results = []
+        for nid in notebooks_for_scopes(scopes):
+            results.append(await nlm.remove_viewer(nid, email))
+            await asyncio.sleep(1.0)
+        return {"success": bool(results) and all(r.get("success", False) for r in results), "action": "deprovisioned"}
+    return {"success": True, "action": "ignored", "status": status}
 
 
 # ─────────────────────────────────────────────────────────────
 # PROSES WEBHOOK
 # ─────────────────────────────────────────────────────────────
-async def process_webhook(payload: dict) -> dict:
-    """Proses satu webhook event dari Akal."""
+async def process_webhook(payload: dict, internal: bool = False) -> dict:
+    """Proses satu webhook event dari Akal, atau perintah sharing internal."""
     event = payload.get("event", "")
-    
+
     # Tangani test event khusus dari dashboard Akal
     if event == "test":
         logger.info("🧪 Test webhook diterima dari Akal. Membalas sukses.")
         return {"success": True, "action": "test_connection", "message": "Connection test successful"}
 
     if vps_writer_active():
-        return queue_legacy_event(payload)
+        # After cutover the VPS worker is the only writer of NotebookLM sharing.
+        return {"success": True, "action": "vps_writer_active"} if internal else queue_legacy_event(payload)
+    if internal:
+        return await process_internal_provisioning(payload)
 
     email, user_name, service_name, status, price_scheme_name, amount, transaction_id, paid_at_str = parse_akal_payload(payload)
 
@@ -531,120 +413,52 @@ async def process_webhook(payload: dict) -> dict:
     # external removal. Hand off negative events instead of revoking directly.
     if status in INACTIVE_STATUSES:
         return queue_legacy_event(payload)
-    if status in ACTIVE_STATUSES and (
-        not transaction_id or not math.isfinite(amount) or amount <= 0
-    ):
-        return queue_legacy_event(payload)
-
-    logger.info(
-        "📨 Webhook | event=%-25s | status=%-10s | email=%-35s | service=%s",
-        event, status, email, service_name,
-    )
-
-    # ── Validasi field wajib ──
+    if status in IGNORED_STATUSES:
+        logger.info("   ⏭️  Status '%s' diabaikan (PENDING = belum bayar)", status)
+        return {"success": True, "action": "ignored", "status": status}
+    if status not in ACTIVE_STATUSES:
+        logger.warning("   ❓ Status '%s' tidak dikenali, diabaikan.", status)
+        return {"success": True, "action": "unknown_status", "status": status}
+    if not transaction_id or not math.isfinite(amount) or amount <= 0:
+        return queue_legacy_event(payload, "invalid_billing_identity_or_amount")
     if not email:
         logger.error("❌ Payload tidak memiliki user.email")
         return {"success": False, "error": "user.email kosong"}
 
-    if not service_name:
-        logger.error("❌ Payload tidak memiliki service.name")
-        return {"success": False, "error": "service.name kosong"}
+    logger.info("📨 Webhook | event=%-25s | status=%-10s | email=%-25s | service=%s",
+                event, status, mask_email(email), service_name)
 
-    # ── Cari notebook_ids dari mapping ──
-    notebook_ids = PRODUCT_TO_NOTEBOOKS.get(service_name)
-    if not notebook_ids:
-        # Coba partial match (case-insensitive) sebagai fallback
-        for key, nids in PRODUCT_TO_NOTEBOOKS.items():
-            if key.lower() in service_name.lower() or service_name.lower() in key.lower():
-                notebook_ids = nids
-                logger.info("   ℹ️  Partial match: '%s' → '%s'", service_name, key)
-                break
+    # An unknown product is quarantined for the operator, never mapped to a guess.
+    scopes = shared_registry.resolve_scopes(service_name)
+    if not scopes:
+        logger.error("❌ Produk '%s' tidak ada di katalog. Transaksi dikarantina.", service_name)
+        return queue_legacy_event(payload, "unknown_service")
 
-    if not notebook_ids:
-        logger.error(
-            "❌ Produk '%s' tidak terdaftar di PRODUCT_TO_NOTEBOOKS. Transaksi dikarantina (fail-closed).",
-            service_name,
-        )
-        return {"success": False, "error": f"Produk '{service_name}' tidak terdaftar"}
-
-    # Filter out empty notebook IDs
-    notebook_ids = [nid for nid in notebook_ids if nid]
-    if not notebook_ids:
-        return {"success": True, "action": "ignored_empty_notebook_ids"}
-
-    # Determine plan and duration from price scheme & service
     plan, duration_months = determine_plan_and_expiry(price_scheme_name, service_name)
+    notebook_ids = masters_for_scopes([s for s in scopes if s not in ALL_ACCESS_SCOPES])
+    logger.info("   ✅ TAMBAH akses: %s → %s (%d notebook)", mask_email(email), service_name, len(notebook_ids))
 
-    # ── Routing berdasarkan status ──
-    if status in ACTIVE_STATUSES:
-        logger.info("   ✅ TAMBAH akses: %s → %s (%d notebook)", email, service_name, len(notebook_ids))
-        
-        # 1. Update Firestore
-        process_firestore_updates(email, user_name, plan, duration_months, amount, transaction_id, is_active=True, service_name=service_name, paid_at_str=paid_at_str)
-        
-        # 2. Add viewer to NotebookLM secara otomatis
-        results = []
-        for nid in notebook_ids:
-            res = await nlm.add_viewer(nid, email, user_name)
-            results.append(res)
-            await asyncio.sleep(1.0)
-            
-        success = all(r.get("success", False) for r in results)
-        
-        # Kirim notifikasi Telegram
-        msg = (
-            f"🔔 <b>[AKSES DITAMBAHKAN]</b>\n"
-            f"🕌 OpenTurath AI\n"
-            f"📧 Email: <code>{email}</code>\n"
-            f"👤 Nama: <b>{user_name or 'N/A'}</b>\n"
-            f"📦 Produk: <b>{service_name}</b>\n"
-            f"🏷️ Plan: <b>{plan.upper()}</b> ({duration_months} bln)\n"
-            f"💰 Nominal: <code>Rp {amount:,.0f}</code>\n"
-            f"🆔 Trx: <code>{transaction_id}</code>\n"
-            f"✅ Status: {'Sukses' if success else 'Gagal'} terdaftar di {len(notebook_ids)} notebook."
-        )
-        send_telegram_message(msg)
-        
-        return {"success": success, "action": "provisioned", "results": results}
+    process_firestore_updates(email, user_name, plan, duration_months, amount, transaction_id,
+                              scopes, service_name, paid_at_str)
 
-    elif status in INACTIVE_STATUSES:
-        if email.strip().lower() in PERMANENT_VIP_EMAILS:
-            logger.info("🛡️ SKIP CABUT AKSES: %s adalah OWNER / PERMANENT VIP. Akses abadi dijamin.", email)
-            return {"success": True, "action": "ignored_permanent_vip"}
-        logger.info("   ❌ CABUT akses: %s ← %s (%d notebook)", email, service_name, len(notebook_ids))
-        
-        # 1. Update Firestore
-        process_firestore_updates(email, user_name, plan, duration_months, amount, transaction_id, is_active=False, service_name=service_name, paid_at_str=paid_at_str)
-        
-        # 2. Remove viewer dari NotebookLM secara otomatis
-        results = []
-        for nid in notebook_ids:
-            res = await nlm.remove_viewer(nid, email)
-            results.append(res)
-            await asyncio.sleep(1.0)
-            
-        success = all(r.get("success", False) for r in results)
-        
-        # Kirim notifikasi Telegram
-        msg = (
-            f"⚠️ <b>[AKSES DICABUT]</b>\n"
-            f"🕌 OpenTurath AI\n"
-            f"📧 Email: <code>{email}</code>\n"
-            f"📦 Produk: <b>{service_name}</b>\n"
-            f"❌ Status: Akses dicabut ({status.upper()})."
-        )
-        send_telegram_message(msg)
-        
-        return {"success": success, "action": "deprovisioned", "results": results}
+    results = []
+    for nid in notebook_ids:
+        results.append(await nlm.add_viewer(nid, email, user_name))
+        await asyncio.sleep(1.0)
+    success = bool(results) and all(r.get("success", False) for r in results)
 
-    elif status in IGNORED_STATUSES:
-        logger.info("   ⏭️  Status '%s' diabaikan (PENDING = belum bayar)", status)
-        return {"success": True, "action": "ignored", "status": status}
-
-    else:
-        logger.warning("   ❓ Status '%s' tidak dikenali, diabaikan.", status)
-        return {"success": True, "action": "unknown_status", "status": status}
-
+    send_telegram_message(
+        f"🔔 <b>[AKSES DITAMBAHKAN]</b>\n"
+        f"🕌 OpenTurath AI\n"
+        f"📧 Email: <code>{escape_html(email)}</code>\n"
+        f"👤 Nama: <b>{escape_html(user_name or 'N/A')}</b>\n"
+        f"📦 Produk: <b>{escape_html(service_name)}</b>\n"
+        f"🏷️ Plan: <b>{escape_html(plan.upper())}</b> ({duration_months} bln)\n"
+        f"💰 Nominal: <code>Rp {amount:,.0f}</code>\n"
+        f"🆔 Trx: <code>{escape_html(transaction_id)}</code>\n"
+        f"✅ Status: {'Sukses' if success else 'Gagal'} terdaftar di {len(notebook_ids)} notebook."
+    )
+    return {"success": success, "action": "provisioned", "results": results}
 
 
 # ─────────────────────────────────────────────────────────────
@@ -680,27 +494,13 @@ def send_telegram_message(text: str):
         logger.error(f"Error mengirim Telegram message: {e}")
 
 def is_product_released(entitlement_key: str) -> bool:
-    if entitlement_key == "fiqh_tahawwulat":
-        return True
-    elif entitlement_key == "fiqh_syafii":
-        nid = os.getenv("NOTEBOOK_ID_FIKIH_SYAFII", "334e7b83-0e76-4787-a1d6-314642a35862")
-        return bool(nid) and "paste_notebook_id" not in nid
-    elif entitlement_key == "nahwu":
-        nid = os.getenv("NOTEBOOK_ID_BAHASA_ARAB", "")
-        return bool(nid) and "paste_notebook_id" not in nid
-    elif entitlement_key == "hadits":
-        nid = os.getenv("NOTEBOOK_ID_HADITS", "")
-        return bool(nid) and "paste_notebook_id" not in nid
-    elif entitlement_key == "tafsir":
-        nid = os.getenv("NOTEBOOK_ID_TAFSIR", "")
-        return bool(nid) and "paste_notebook_id" not in nid
-    return False
+    return bool(shared_registry.masters_for_scope(entitlement_key))
 
 def handle_telegram_command(text: str, chat_id: int):
     # Check if the chat ID is authorized
     EXPECTED_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID", "")
     if str(chat_id) != EXPECTED_CHAT_ID:
-        send_telegram_message(f"⚠️ Akses ditolak untuk Chat ID: {chat_id}")
+        logger.warning("Telegram command from an unauthorized chat ignored.")
         return
 
     text = text.strip()
@@ -731,7 +531,7 @@ def handle_telegram_command(text: str, chat_id: int):
             err_cnt = result.get('errors', 0)
             send_telegram_message(f"✅ <b>[REAPER SELESAI]</b>\n• VIP Terlindungi: <code>{vip_cnt}</code>\n• Akses Expired Dicabut: <code>{rev_cnt}</code>\n• Error: <code>{err_cnt}</code>")
         except Exception as e:
-            send_telegram_message(f"❌ <b>[REAPER ERROR]</b> Gagal: {e}")
+            send_telegram_message(f"❌ <b>[REAPER ERROR]</b> Gagal: {escape_html(type(e).__name__)}")
         
     elif text.startswith("/status"):
         parts = text.split(maxsplit=1)
@@ -761,13 +561,7 @@ def handle_telegram_command(text: str, chat_id: int):
             global_plan = "trial"
             questions_used = 0
             
-            KEY_TO_HUMAN_NAME = {
-                "fiqh_tahawwulat": "AI Fikih Tahawwulat",
-                "fiqh_syafii": "Super AI Fikih Syafi'i",
-                "nahwu": "AI Bahasa Arab",
-                "hadits": "AI Hadits",
-                "tafsir": "AI Tafsir"
-            }
+            KEY_TO_HUMAN_NAME = {scope: shared_registry.scope_label(scope) for scope in shared_registry.all_scopes()}
             
             for doc in query:
                 data = doc.to_dict()
@@ -792,11 +586,7 @@ def handle_telegram_command(text: str, chat_id: int):
                     
                 ent_key = data.get("entitlement_key")
                 if not ent_key:
-                    service_name = data.get("service_name", "").lower()
-                    if "bahasa" in service_name or "nahwu" in service_name or "arab" in service_name:
-                        ent_key = "nahwu"
-                    else:
-                        ent_key = "fiqh_tahawwulat"
+                    ent_key = (shared_registry.resolve_scopes(data.get("service_name")) or ["tidak_diketahui"])[0]
                         
                 plan_val = data.get("plan", "tholib_1m")
                 
@@ -857,8 +647,8 @@ def handle_telegram_command(text: str, chat_id: int):
             status_msg = (
                 f"👤 <b>Detail Pelanggan</b>\n"
                 f"──────────────────────\n"
-                f"👤 Nama: <b>{customer_name}</b>\n"
-                f"📧 Email: <code>{email}</code>\n"
+                f"👤 Nama: <b>{escape_html(str(customer_name))}</b>\n"
+                f"📧 Email: <code>{escape_html(email)}</code>\n"
                 f"📱 Status: <i>{reg_status}</i>\n"
                 f"💬 Pertanyaan Digunakan: <code>{questions_used}</code>\n\n"
                 f"📂 <b>Kategori Langganan AI:</b>\n"
@@ -867,7 +657,7 @@ def handle_telegram_command(text: str, chat_id: int):
             )
             send_telegram_message(status_msg)
         except Exception as e:
-            send_telegram_message(f"❌ Gagal mengambil data: {str(e)}")
+            send_telegram_message(f"❌ Gagal mengambil data: {escape_html(type(e).__name__)}")
             
     elif text == "/active":
         try:
@@ -884,13 +674,7 @@ def handle_telegram_command(text: str, chat_id: int):
             
             active_by_email = {}
             
-            KEY_TO_HUMAN_NAME = {
-                "fiqh_tahawwulat": "AI Fikih Tahawwulat",
-                "fiqh_syafii": "Super AI Fikih Syafi'i",
-                "nahwu": "AI Bahasa Arab",
-                "hadits": "AI Hadits",
-                "tafsir": "AI Tafsir"
-            }
+            KEY_TO_HUMAN_NAME = {scope: shared_registry.scope_label(scope) for scope in shared_registry.all_scopes()}
             
             for doc in query:
                 data = doc.to_dict()
@@ -916,11 +700,7 @@ def handle_telegram_command(text: str, chat_id: int):
                 if exp_dt > now:
                     ent_key = data.get("entitlement_key")
                     if not ent_key:
-                        service_name = data.get("service_name", "").lower()
-                        if "bahasa" in service_name or "nahwu" in service_name or "arab" in service_name:
-                            ent_key = "nahwu"
-                        else:
-                            ent_key = "fiqh_tahawwulat"
+                        ent_key = (shared_registry.resolve_scopes(data.get("service_name")) or ["tidak_diketahui"])[0]
                             
                     if not is_product_released(ent_key):
                         continue
@@ -969,8 +749,8 @@ def handle_telegram_command(text: str, chat_id: int):
                 if ent_lines:
                     ent_details = "\n".join(ent_lines)
                     user_list.append(
-                        f"👤 <b>{display_name}</b>\n"
-                        f"📧 Email: <code>{email}</code>\n"
+                        f"👤 <b>{escape_html(str(display_name))}</b>\n"
+                        f"📧 Email: <code>{escape_html(email)}</code>\n"
                         f"{ent_details}"
                     )
                     
@@ -998,7 +778,7 @@ def handle_telegram_command(text: str, chat_id: int):
             else:
                 send_telegram_message(status_msg)
         except Exception as e:
-            send_telegram_message(f"❌ Gagal mengambil daftar pengguna: {str(e)}")
+            send_telegram_message(f"❌ Gagal mengambil daftar pengguna: {escape_html(type(e).__name__)}")
             
     elif text == "/logs":
         try:
@@ -1021,6 +801,20 @@ def handle_telegram_command(text: str, chat_id: int):
 # ─────────────────────────────────────────────────────────────
 class WebhookHandler(BaseHTTPRequestHandler):
     """HTTP Handler untuk menerima webhook dari Akal."""
+
+    timeout = REQUEST_TIMEOUT_SECONDS  # socket timeout: a stalled client cannot hold a worker
+
+    def _read_body(self):
+        """Body within the size limit, or None after replying with an error."""
+        try:
+            length = int(self.headers.get("Content-Length", ""))
+        except ValueError:
+            self._send_json(411, {"error": "Content-Length required"})
+            return None
+        if length < 0 or length > MAX_BODY_BYTES:
+            self._send_json(413, {"error": "Payload too large"})
+            return None
+        return self.rfile.read(length)
 
     def log_message(self, format, *args):
         pass  # Matikan default HTTP server logging
@@ -1049,13 +843,8 @@ class WebhookHandler(BaseHTTPRequestHandler):
 
     def do_GET(self):
         if self.path == "/health":
-            configured = {k: bool(v) for k, v in PRODUCT_TO_NOTEBOOKS.items()}
-            self._send_json(200, {
-                "status": "ok",
-                "service": "OpenTurath Subscription Automation",
-                "products_configured": configured,
-                "webhook_secret_set": bool(AKAL_WEBHOOK_SECRET),
-            })
+            # Liveness only: configuration details are not public.
+            self._send_json(200, {"status": "ok", "service": "OpenTurath Subscription Automation"})
         elif self.path == "/keepalive":
             if not self._authorize_cron(os.getenv("CRON_SECRET", ""), "/keepalive"):
                 return
@@ -1063,15 +852,8 @@ class WebhookHandler(BaseHTTPRequestHandler):
                 loop = asyncio.new_event_loop()
                 asyncio.set_event_loop(loop)
                 
-                # Cari notebook ID pertama yang valid untuk test ping
-                notebook_id = ""
-                for nids in PRODUCT_TO_NOTEBOOKS.values():
-                    for nid in nids:
-                        if nid:
-                            notebook_id = nid
-                            break
-                    if notebook_id:
-                        break
+                # Notebook master pertama di katalog dipakai untuk test ping
+                notebook_id = next(iter(masters_for_scopes(shared_registry.all_scopes())), "")
                 
                 if not notebook_id:
                     self._send_json(400, {"success": False, "error": "No notebooks configured for keepalive"})
@@ -1090,7 +872,7 @@ class WebhookHandler(BaseHTTPRequestHandler):
                     self._send_json(500, {"success": False, "error": "Google NotebookLM connection failed", "details": result})
             except Exception as e:
                 logger.error(f"   ❌ Keep-Alive exception: {e}")
-                self._send_json(500, {"success": False, "error": str(e)})
+                self._send_json(500, {"success": False, "error": "Keep-alive failed"})
         elif self.path.startswith("/cron/reap"):
             cron_secret = os.getenv("CRON_SECRET", "") or os.getenv("INTERNAL_SECRET", "")
             if not self._authorize_cron(cron_secret, "/cron/reap"):
@@ -1109,8 +891,8 @@ class WebhookHandler(BaseHTTPRequestHandler):
                 logger.info("✅ Scheduled autonomous reaper cycle finished successfully.")
                 self._send_json(200, {"success": True, "reaper_result": result})
             except Exception as e:
-                logger.error(f"❌ Error in /cron/reap: {e}")
-                self._send_json(500, {"success": False, "error": str(e)})
+                logger.error(f"Error in /cron/reap: {type(e).__name__}")
+                self._send_json(500, {"success": False, "error": "Reaper cycle failed"})
         else:
             self._send_json(404, {"error": "Not Found"})
 
@@ -1128,8 +910,9 @@ class WebhookHandler(BaseHTTPRequestHandler):
                 self._send_json(403, {"error": "Unauthorized"})
                 return
 
-            content_length = int(self.headers.get("Content-Length", 0))
-            body = self.rfile.read(content_length)
+            body = self._read_body()
+            if body is None:
+                return
             try:
                 data = json.loads(body)
                 message = data.get("message", {})
@@ -1141,23 +924,23 @@ class WebhookHandler(BaseHTTPRequestHandler):
                     handle_telegram_command(text, chat_id)
                 self._send_json(200, {"ok": True})
             except Exception as e:
-                logger.error(f"Error handling Telegram webhook POST: {e}")
-                self._send_json(500, {"error": str(e)})
+                logger.error(f"Error handling Telegram webhook POST: {type(e).__name__}")
+                self._send_json(500, {"error": "Internal server error"})
             return
 
         if self.path != "/webhook":
             self._send_json(404, {"error": "Not Found"})
             return
 
-        # Baca body
-        content_length = int(self.headers.get("Content-Length", 0))
-        body = self.rfile.read(content_length)
-
-        # Parse JSON body terlebih dahulu untuk mendeteksi 'test' event
+        body = self._read_body()
+        if body is None:
+            return
         try:
             payload = json.loads(body)
-        except json.JSONDecodeError as e:
-            logger.error("❌ JSON tidak valid: %s", e)
+        except (json.JSONDecodeError, UnicodeDecodeError):
+            self._send_json(400, {"error": "Invalid JSON"})
+            return
+        if not isinstance(payload, dict):
             self._send_json(400, {"error": "Invalid JSON"})
             return
 
@@ -1168,18 +951,21 @@ class WebhookHandler(BaseHTTPRequestHandler):
         is_test_event = payload.get("event") == "test"
         is_authorized_internal = bool(EXPECTED_INTERNAL_SECRET) and _secret_equal(internal_secret, EXPECTED_INTERNAL_SECRET)
         
-        if not is_test_event and not is_authorized_internal and not verify_akal_token(payload):
-            logger.warning("🚨 Token tidak valid! Request ditolak dari %s. Event: %s",
-                          self.client_address, payload.get('event', 'unknown'))
+        # The dashboard "test" event carries no billing data; it is answered
+        # with a fixed reply but must still present the webhook token.
+        if not is_authorized_internal and not verify_akal_token(payload):
+            logger.warning("Token tidak valid; request ditolak dari %s.", self.client_address[0])
             self._send_json(401, {"error": "Invalid token"})
             return
-
+        if is_test_event:
+            self._send_json(200, {"success": True, "action": "test_connection"})
+            return
 
         # Proses webhook (async)
         try:
             loop = asyncio.new_event_loop()
             asyncio.set_event_loop(loop)
-            result = loop.run_until_complete(process_webhook(payload))
+            result = loop.run_until_complete(process_webhook(payload, internal=is_authorized_internal))
             loop.close()
         except Exception as e:
             logger.exception("❌ Exception saat proses webhook: %s", e)
@@ -1203,21 +989,20 @@ def run_server():
     logger.info("🚀 OpenTurath Subscription Automation")
     logger.info("=" * 60)
     logger.info("🌐 Port        : %d", SERVER_PORT)
-    logger.info("🔑 Secret set  : %s", "✅ Ya" if AKAL_WEBHOOK_SECRET else "❌ Tidak (dev mode)")
+    logger.info("🔑 Secret set  : %s", "✅ Ya" if AKAL_WEBHOOK_SECRET else "❌ Tidak — semua webhook ditolak")
     logger.info("")
-    logger.info("📦 Produk yang dikonfigurasi:")
-    for name, nids in PRODUCT_TO_NOTEBOOKS.items():
-        nids = [nid for nid in nids if nid]
-        if nids:
-            logger.info("  ✅ %-30s → %d notebooks", name, len(nids))
-        else:
-            logger.info("  ❌ %-30s → BELUM DIKONFIGURASI", name)
+    logger.info("📦 Modul di katalog bersama:")
+    for scope in shared_registry.all_scopes():
+        logger.info("  ✅ %-22s → %d notebook master", scope, len(shared_registry.masters_for_scope(scope)))
+    logger.info("🛡️ VIP permanen di registry: %d", len(shared_registry.vip_emails()))
     logger.info("")
     logger.info("📍 Endpoint  : POST http://0.0.0.0:%d/webhook", SERVER_PORT)
     logger.info("📍 Health    : GET  http://0.0.0.0:%d/health", SERVER_PORT)
     logger.info("=" * 60)
 
-    server = HTTPServer(("0.0.0.0", SERVER_PORT), WebhookHandler)
+    # Threaded so a slow NotebookLM call cannot block health checks or other webhooks.
+    server = ThreadingHTTPServer(("0.0.0.0", SERVER_PORT), WebhookHandler)
+    server.daemon_threads = True
     
     # Register Telegram Webhook if SERVICE_URL is configured
     service_url = os.getenv("SERVICE_URL")

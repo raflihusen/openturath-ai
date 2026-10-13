@@ -149,3 +149,24 @@ test('client error alerts are escaped and bounded per account', async () => {
   assert.ok(sent[0][1].text.includes('&lt;a href'));
   assert.ok(db.docs.has('rate_limits/client_alert_u'));
 });
+
+test('an early renewal continues from the end of the previous paid period, once', () => sync(async () => {
+  const first = new Date(Date.now() - 20 * DAY).toISOString(), second = new Date(Date.now() - 2 * DAY).toISOString();
+  const {api, db} = fixture({[SYAFII]: [row({id: 'p1', paidAt: first}), row({id: 'p2', paidAt: second})]});
+  await api.syncAkalPurchases({}, caller);
+  await api.syncAkalPurchases({}, caller);
+  const all = grants(db).sort((a: any, b: any) => a.starts_ms - b.starts_ms);
+  assert.equal(all.length, 2);
+  assert.equal(all[1].starts_ms, all[0].expires_ms);
+  assert.equal(all[1].expires_ms - all[0].starts_ms, 60 * DAY);
+  assert.equal(db.docs.get('users/u').entitlements.fiqh_syafii.expiry.toMillis(), all[1].expires_ms);
+}));
+
+test('a chained renewal stays valid even when each period alone would look expired', () => sync(async () => {
+  const first = new Date(Date.now() - 40 * DAY).toISOString(), second = new Date(Date.now() - 35 * DAY).toISOString();
+  const {api, db} = fixture({[SYAFII]: [row({id: 'p2', paidAt: second}), row({id: 'p1', paidAt: first})]});
+  assert.equal((await api.syncAkalPurchases({}, caller)).count, 1);
+  const [grant] = grants(db);
+  assert.equal(grant.transaction_id, 'p2');
+  assert.ok(grant.expires_ms > Date.now() + 19 * DAY && grant.expires_ms < Date.now() + 21 * DAY);
+}));

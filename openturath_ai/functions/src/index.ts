@@ -2652,6 +2652,8 @@ interface AkalPurchase {
   plan: string;
   months: number;
   paidMs: number;
+  // Start already chained by the caller from earlier provider periods.
+  startsMs?: number;
   serviceTitle: string;
 }
 
@@ -2691,7 +2693,17 @@ async function applyAkalPurchase(p: AkalPurchase): Promise<{expiresMs: number; l
     for (const ref of grantRefs) grantSnaps.push(await t.get(ref));
 
     const paidMs = Number.isFinite(prior?.paid_ms) ? prior!.paid_ms : p.paidMs;
-    const expiresMs = Number.isFinite(prior?.expires_ms) ? prior!.expires_ms : billingExpiry(paidMs, p.months);
+    // A renewal paid before the previous paid period ends continues from that
+    // end. Only other ledger grants count, and only when first recorded.
+    let startsMs = Number.isFinite(prior?.starts_ms) ? prior!.starts_ms : Math.max(paidMs, p.startsMs ?? paidMs);
+    if (!Number.isFinite(prior?.expires_ms) && userSnap?.exists) {
+      for (const id of userSnap.data()!.access_grant_ids || []) {
+        const g = (await t.get(db.collection("access_grants").doc(id))).data();
+        if (g && g.kind === "payment" && g.status === "active" && p.scopes.includes(g.scope) &&
+            g.transaction_id !== p.transactionId && g.starts_ms <= paidMs && g.expires_ms > startsMs) startsMs = g.expires_ms;
+      }
+    }
+    const expiresMs = Number.isFinite(prior?.expires_ms) ? prior!.expires_ms : billingExpiry(startsMs, p.months);
     const expiry = admin.firestore.Timestamp.fromMillis(expiresMs);
     const linked = Boolean(userRef && userSnap?.exists);
 
@@ -2708,6 +2720,7 @@ async function applyAkalPurchase(p: AkalPurchase): Promise<{expiresMs: number; l
       entitlement_key: p.scopes[0],
       entitlement_keys: p.scopes,
       paid_ms: paidMs,
+      starts_ms: startsMs,
       expires_ms: expiresMs,
       paid_at: admin.firestore.Timestamp.fromMillis(paidMs),
       subscription_expires_at: expiry,
@@ -2723,7 +2736,7 @@ async function applyAkalPurchase(p: AkalPurchase): Promise<{expiresMs: number; l
         t.set(grantRefs[index], {
           uid: userRef!.id, email: p.email, scope, kind: "payment", status: "active", amount: p.amount,
           provider: "goakal", transaction_id: p.transactionId, transaction_document: p.transactionId,
-          starts_ms: paidMs, expires_ms: expiresMs, created_ms: Date.now(),
+          starts_ms: startsMs, expires_ms: expiresMs, created_ms: Date.now(),
         });
         if (PROVISIONABLE_SCOPES.includes(scope)) {
           t.set(db.collection("provisioning_outbox").doc(`akal_${p.transactionId}_${scope}`), {
@@ -2805,15 +2818,23 @@ export const syncAkalPurchases = functions
     const syncService = async (service: typeof AKAL_SERVICES[number]): Promise<void> => {
       let applied = false;
       for (const cuid of [service.cuid, ...service.fallbacks]) {
-        for (const t of await ownRows(cuid)) {
-          const paidMs = millis(t.paidAt || t.createdAt);
-          if (!Number.isFinite(paidMs)) continue;
+        const rows = (await ownRows(cuid))
+          .map(t => ({t, paidMs: millis(t.paidAt || t.createdAt)}))
+          .filter(r => Number.isFinite(r.paidMs))
+          .sort((a, b) => a.paidMs - b.paidMs);
+        let chainEnd = 0;
+        for (const {t, paidMs} of rows) {
           const months = detectDurationMonths(t.priceSchemeTitle || "", t.serviceTitle || "");
-          // The provider's invoice expiry is not the subscription period.
-          if (billingExpiry(paidMs, months) <= now) continue;
           const rawId = typeof t.id === "string" && t.id.trim() ? t.id : t.paymentId;
           const amount = Number(t.incomingAmount ?? t.amount);
-          if (typeof rawId !== "string" || !rawId.trim() || !Number.isFinite(amount) || amount <= 0) {
+          const valid = typeof rawId === "string" && rawId.trim() && Number.isFinite(amount) && amount > 0;
+          // The provider's invoice expiry is not the subscription period. A
+          // renewal paid before the previous period ended continues from it.
+          const startsMs = valid ? Math.max(paidMs, chainEnd) : paidMs;
+          const expiresMs = billingExpiry(startsMs, months);
+          if (valid) chainEnd = expiresMs;
+          if (expiresMs <= now) continue;
+          if (!valid) {
             await quarantineAkalEvidence({
               email, uid, service: service.name, transaction_id: typeof rawId === "string" ? rawId : "",
               amount: Number.isFinite(amount) ? amount : null, paid_at: String(t.paidAt || t.createdAt || ""),
@@ -2825,7 +2846,7 @@ export const syncAkalPurchases = functions
             transactionId: akalTransactionId(rawId, [email, service.cuid, String(paidMs)]),
             amount, scopes: service.scopes,
             plan: months === 12 ? "bahits_1y" : (months === 6 ? "tholib_6m" : "tholib_1m"),
-            months, paidMs, serviceTitle: String(t.serviceTitle || service.name).slice(0, 200),
+            months, paidMs, startsMs, serviceTitle: String(t.serviceTitle || service.name).slice(0, 200),
           });
           applied = true;
         }

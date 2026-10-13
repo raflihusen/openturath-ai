@@ -72,6 +72,22 @@ def notebooks_for_scope(scope: str) -> list:
     return list(dict.fromkeys(ids))
 
 
+def masters_for_scope(scope: str) -> list:
+    """Notebooks a new viewer is added to: the master of every entity of the scope."""
+    if scope in ("all_access", "all_ai"):
+        ids = []
+        for each in catalog()["all_access_scopes"]:
+            ids.extend(masters_for_scope(each))
+        return list(dict.fromkeys(ids))
+    return list(dict.fromkeys(nb["master"] for nb in catalog()["scopes"].get(scope, {}).get("notebooks", [])))
+
+
+def vip_registry_key(email: str) -> str:
+    """Document ID in access_vip_registry; identical to keyOf(email) in TypeScript."""
+    import hashlib
+    return hashlib.sha256(json.dumps([normal_email(email)], separators=(",", ":"), ensure_ascii=False).encode("utf-8")).hexdigest()
+
+
 def resolve_scopes(service_title) -> list:
     """Mirror of `resolveAkalScopes`: an unknown title resolves to nothing."""
     title = service_title.strip().lower() if isinstance(service_title, str) else ""

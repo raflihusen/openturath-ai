@@ -9,13 +9,26 @@ Rules (AGENTS.md rule 5):
 """
 from __future__ import annotations
 
-from datetime import datetime, timezone
+import calendar
+from datetime import datetime, timedelta, timezone
 
 ACTIVE_TX = {"SUCCESS", "PAID", "SETTLED", "TRANSFERRED", "COMPLETED", "ACTIVE"}
 ENDED_TX = {"EXPIRED", "FAILED", "CANCELLED"}
 ALL_ACCESS = {"all_access", "all_ai"}
 VIP_ROLES = {"vip", "admin", "guru", "special"}
 ANNUAL_HINTS = ("1y", "year", "tahun", "annual", "bahits_1y", "all_ai")
+
+
+def billing_expiry(start: datetime, months: int) -> datetime:
+    """Same period rule as `billingExpiry` in access_control.ts."""
+    if not isinstance(months, int) or months < 1 or months > 120:
+        raise ValueError("Invalid product duration")
+    if months == 1:
+        return start + timedelta(days=30)
+    start = start.astimezone(timezone.utc)
+    index = start.year * 12 + (start.month - 1) + months
+    year, month = divmod(index, 12)
+    return start.replace(year=year, month=month + 1, day=min(start.day, calendar.monthrange(year, month + 1)[1]))
 
 
 def parse_dt(value):
