@@ -21,6 +21,7 @@ import hmac
 import json
 import os
 import sys
+import math
 
 # Load .env file manually
 def load_dotenv():
@@ -525,6 +526,15 @@ async def process_webhook(payload: dict) -> dict:
         return queue_legacy_event(payload)
 
     email, user_name, service_name, status, price_scheme_name, amount, transaction_id, paid_at_str = parse_akal_payload(payload)
+
+    # Legacy writers cannot atomically verify all VIP/grant sources before
+    # external removal. Hand off negative events instead of revoking directly.
+    if status in INACTIVE_STATUSES:
+        return queue_legacy_event(payload)
+    if status in ACTIVE_STATUSES and (
+        not transaction_id or not math.isfinite(amount) or amount <= 0
+    ):
+        return queue_legacy_event(payload)
 
     logger.info(
         "📨 Webhook | event=%-25s | status=%-10s | email=%-35s | service=%s",
