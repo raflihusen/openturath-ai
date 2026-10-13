@@ -36,12 +36,12 @@
 **Secrets terekspos:**
 | Secret | File | Risiko |
 |--------|------|--------|
-| `MIDTRANS_SERVER_KEY` (Mid-server-UUSqxS1kKrL6WfeR_efAmXat) | functions/.env | Payment fraud |
+| `MIDTRANS_SERVER_KEY` (nilai diredaksi) | functions/.env | Payment fraud |
 | `MIDTRANS_CLIENT_KEY` | functions/.env | Medium |
-| `AKAL_API_KEY` (ak_054c0e...) | Kedua file | Akses API Akal penuh |
+| `AKAL_API_KEY` (nilai diredaksi) | Kedua file | Akses API Akal penuh |
 | `AKAL_WEBHOOK_SECRET` | subscription/.env | Webhook forgery |
 | `COOKIE_SECRET` | functions/.env | Session hijack |
-| `INTERNAL_SECRET` (openturath_internal_sec_2026_x99) | Kedua file | Bypass auth webhook |
+| `INTERNAL_SECRET` (nilai diredaksi) | Kedua file | Bypass auth webhook |
 
 **CATATAN:** `openturath_subscription/.gitignore` memang ada dan mengecualikan `.env`, TAPI file `.env` tetap terbaca dari disk. Jika repo ini pernah di-commit ke Git dengan `.env` di dalamnya, secret sudah bocor di history.
 
@@ -120,7 +120,7 @@ https://notebooklm.google.com/notebook/dc7ee7e4-f4ad-4db6-9cd0-0013727abbe4/prev
 **File:** `openturath_ai/functions/.env` & `openturath_subscription/.env`
 
 ```
-INTERNAL_SECRET=openturath_internal_sec_2026_x99
+INTERNAL_SECRET=<diredaksi>
 ```
 
 Secret ini digunakan untuk:
