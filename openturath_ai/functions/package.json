@@ -7,7 +7,8 @@
     "serve": "npm run build && firebase emulators:start --only functions",
     "deploy": "npm run build && firebase deploy --only functions",
     "test": "cd .. && node --test --experimental-transform-types functions/test/*.test.ts",
-    "check": "tsc --noEmit"
+    "check": "tsc --noEmit",
+    "export-shared": "npm run build && node tool/export_shared.cjs"
   },
   "dependencies": {
     "axios": "^1.7.2",

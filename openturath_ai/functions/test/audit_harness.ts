@@ -135,14 +135,14 @@ export function loadBackend(root = process.cwd()) {
     .replace(/^import \* as crypto from "crypto";/m, 'const crypto = require("crypto");')
     .replace(/export (const|class|function|async function) /g, '$1 ');
   const accessExports: any = {};
-  vm.runInNewContext(stripTypeScriptTypes(accessSource + '\nexports.AccessControl=AccessControl; exports.AccessFault=AccessFault; exports.isVip=isVip; exports.keyOf=keyOf; exports.millis=millis; exports.billingExpiry=billingExpiry;', {mode: 'transform'}),
+  vm.runInNewContext(stripTypeScriptTypes(accessSource + '\nexports.AccessControl=AccessControl; exports.AccessFault=AccessFault; exports.isVip=isVip; exports.keyOf=keyOf; exports.millis=millis; exports.billingExpiry=billingExpiry; exports.VIP_EMAILS=VIP_EMAILS; exports.normalEmail=normalEmail;', {mode: 'transform'}),
     {exports:accessExports, require:()=>crypto, Date});
   deps['./access_control'] = accessExports;
   const mappingSource = fs.readFileSync(path.join(root, 'functions/src/access_catalog.ts'), 'utf8')
-    .replace(/^import[^\n]+\n/, 'const AGENT_TO_ENTITY = catalog.AGENT_TO_ENTITY;\n')
-    .replace(/export const /g, 'const ');
+    .replace(/^import[^\n]+\n/, 'const AGENT_TO_ENTITY = catalog.AGENT_TO_ENTITY, NOTEBOOK_ENTITIES = catalog.NOTEBOOK_ENTITIES;\n')
+    .replace(/export (const|function) /g, '$1 ');
   const mappingExports: any = {};
-  vm.runInNewContext(stripTypeScriptTypes(mappingSource + '\nexports.AGENT_ENTITLEMENTS=AGENT_ENTITLEMENTS; exports.ENTITY_SCOPES=ENTITY_SCOPES;'),
+  vm.runInNewContext(stripTypeScriptTypes(mappingSource + '\nexports.AGENT_ENTITLEMENTS=AGENT_ENTITLEMENTS; exports.ENTITY_SCOPES=ENTITY_SCOPES; exports.AKAL_SERVICES=AKAL_SERVICES; exports.SCOPE_LABELS=SCOPE_LABELS; exports.resolveAkalScopes=resolveAkalScopes; exports.PROVISIONABLE_SCOPES=PROVISIONABLE_SCOPES; exports.sharedCatalog=sharedCatalog;'),
     {exports:mappingExports, catalog:catalogExports});
   deps['./access_catalog'] = mappingExports;
   const file = path.join(root,'functions/src/index.ts');
@@ -159,5 +159,5 @@ export function loadBackend(root = process.cwd()) {
   ].map(n=>n+':typeof '+n+' === "undefined" ? undefined : '+n).join(',') + ', onUserDeleted: typeof onUserDeleted === "undefined" ? undefined : onUserDeleted};';
   const exports: any = {};
   vm.runInNewContext(stripTypeScriptTypes(source), {require:(name: string)=>{if(!(name in deps))throw Error('Unexpected dependency '+name);return deps[name];}, exports, Buffer, process, URL, console:{log(){},warn(){},error(){}},Date, setTimeout,clearTimeout});
-  return { api:exports.api, db, axios, auth, users, sent };
+  return { api:exports.api, db, axios, auth, users, sent, catalog:mappingExports, access:accessExports };
 }

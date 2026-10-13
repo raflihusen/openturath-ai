@@ -10,13 +10,25 @@ exports.rights = rights;
 const crypto = require("crypto");
 // Shared by Firebase callable functions and the Ubuntu worker. No Google RPC in
 // database transactions; opening a notebook never allocates a seat.
+// Canonical permanent-VIP registry (owner prerogative, AGENTS.md rule 5). Entries are
+// only ever added. `npm run export-shared` writes this list for the Python automation;
+// test/shared_catalog.test.ts fails when the exported copy drifts.
 exports.VIP_EMAILS = new Set([
-    "openturath@gmail.com", "ramah@ptct.net", "raflimaulan@gmail.com", "mas.raflihusen@gmail.com",
-    "alkhateeb23@gmail.com", "omarasb1441@gmail.com", "prilatief@gmail.com", "udinvoldigoad05@gmail.com",
-    "aaadman40@gmail.com", "abo.omar5539@gmail.com", "abualgilani2024@gmail.com", "ahobh4241@gmail.com",
-    "alhamodi65@gmail.com", "ali.bafdhl36@gmail.com", "alshykhkmalbahrmz@gmail.com", "atinrahmak@gmail.com",
-    "hafamfb551985@gmail.com", "loyos839@gmail.com", "mohammedhalahdal@gmail.com", "mostajadt25@gmail.com",
-    "nona.alyaziza@gmail.com", "omar739037802@gmail.com", "yasser110271@gmail.com",
+    "openturath@gmail.com", "ramah@ptct.net", "raflimaulan@gmail.com",
+    "mas.raflihusen@gmail.com", "alkhateeb23@gmail.com", "omarasb1441@gmail.com",
+    "prilatief@gmail.com", "udinvoldigoad05@gmail.com", "aaadman40@gmail.com",
+    "abo.omar5539@gmail.com", "abualgilani2024@gmail.com", "ahobh4241@gmail.com",
+    "alhamodi65@gmail.com", "ali.bafdhl36@gmail.com", "alshykhkmalbahrmz@gmail.com",
+    "atinrahmak@gmail.com", "hafamfb551985@gmail.com", "loyos839@gmail.com",
+    "mohammedhalahdal@gmail.com", "mostajadt25@gmail.com", "nona.alyaziza@gmail.com",
+    "omar739037802@gmail.com", "yasser110271@gmail.com", "ndsfraaaaaaa@gmail.com",
+    "riefbois33@gmail.com", "muhammadalaydrus65@gmail.com", "abrormuhammed14@gmail.com",
+    "beyzabeem@gmail.com", "fikrilzabidi@gmail.com", "ghufron2002@gmail.com",
+    "hizbullah1504@gmail.com", "idawakhidah88@gmail.com", "idawahidah88@gmai.com",
+    "iqbalismailmm@gmail.com", "m.syafiq280605@gmail.com", "msyafiq280605@gmail.com",
+    "nonaalyaziza@gmail.com", "nst275642@gmail.com", "surratimassya@gmail.com",
+    "chenhuha135@gmail.com", "yudolgregar@gmail.com", "syekhai378@gmail.com",
+    "mfulan370@gmail.com",
 ]);
 const normalEmail = (s) => typeof s === "string" ? s.trim().toLowerCase() : "";
 exports.normalEmail = normalEmail;

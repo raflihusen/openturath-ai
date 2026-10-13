@@ -1,0 +1,587 @@
+{
+  "scopes": {
+    "aqidah": {
+      "label": "AI Aqidah & Ushuluddin",
+      "notebooks": [
+        {
+          "entity": "18_AQIDAH_DAN_USHULUDDIN",
+          "master": "d4807af1-1c3b-4ffd-b9b8-a944b2f8c5bd",
+          "legacy": []
+        }
+      ]
+    },
+    "bibliografi_faharis": {
+      "label": "AI Bibliografi & Faharis",
+      "notebooks": [
+        {
+          "entity": "26_BIBLIOGRAFI_DAN_FAHARIS",
+          "master": "d35f7598-076a-4c91-8ccf-9dc1aa1b0e7d",
+          "legacy": []
+        }
+      ]
+    },
+    "fiqh": {
+      "label": "AI Fatawa & Masail",
+      "notebooks": [
+        {
+          "entity": "09_FATAWA_DAN_MASAIL_FIQHIYYAH",
+          "master": "45a2043c-4617-42a7-9f00-fbc2138def48",
+          "legacy": []
+        }
+      ]
+    },
+    "fiqh_hanafi": {
+      "label": "AI Fikih Hanafi",
+      "notebooks": [
+        {
+          "entity": "11_FIKIH_HANAFI",
+          "master": "063ddf96-61a5-46c7-a6ae-5b9eb8bddb6b",
+          "legacy": []
+        }
+      ]
+    },
+    "fiqh_hanbali": {
+      "label": "AI Fikih Hanbali",
+      "notebooks": [
+        {
+          "entity": "13_FIKIH_HANBALI",
+          "master": "45f6ccdd-d3e5-4ca7-96cb-4f905d3cde3e",
+          "legacy": []
+        }
+      ]
+    },
+    "fiqh_maliki": {
+      "label": "AI Fikih Maliki",
+      "notebooks": [
+        {
+          "entity": "12_FIKIH_MALIKI",
+          "master": "cc152334-e7d2-44ac-bb14-65e70d893b40",
+          "legacy": []
+        }
+      ]
+    },
+    "fiqh_muqaran": {
+      "label": "AI Fikih Perbandingan Mazhab",
+      "notebooks": [
+        {
+          "entity": "08_FIKIH_MUQARAN_DAN_UMUM",
+          "master": "66ed9863-e177-43a9-a1a4-25fb953520a7",
+          "legacy": []
+        }
+      ]
+    },
+    "fiqh_syafii": {
+      "label": "AI Fikih Syafi'i",
+      "notebooks": [
+        {
+          "entity": "01_FIKIH_SYAFII",
+          "master": "c89d09ca-4b48-4000-a98d-59e532607fb6",
+          "legacy": [
+            "334e7b83-0e76-4787-a1d6-314642a35862"
+          ]
+        }
+      ]
+    },
+    "fiqh_tahawwulat": {
+      "label": "AI Fikih Tahawwulat",
+      "notebooks": [
+        {
+          "entity": "06.1_AL_MUHAQQIQ",
+          "master": "483d0291-0a70-411c-bff0-f1ea4b83b2fd",
+          "legacy": [
+            "67b65ed8-0d1e-4fb4-929c-4fcb735d3be3"
+          ]
+        },
+        {
+          "entity": "06.2_AL_BAYAN",
+          "master": "dc7ee7e4-f4ad-4db6-9cd0-0013727abbe4",
+          "legacy": [
+            "75882649-638f-4729-97f8-19897d90b108"
+          ]
+        },
+        {
+          "entity": "06.3_AL_MUKHTABIR",
+          "master": "ac803816-5541-4446-bc9d-b56326493555",
+          "legacy": [
+            "ac61a7a0-87e7-42a5-a30f-980ff74a78d8"
+          ]
+        },
+        {
+          "entity": "06.4_AL_HABIB",
+          "master": "c8b8a754-991d-429d-8379-b0478abb6ceb",
+          "legacy": [
+            "6673e79a-7156-42e1-b116-bc1653a32094"
+          ]
+        },
+        {
+          "entity": "06.5_AL_KHATIB",
+          "master": "926f3633-53fc-4dbf-81da-0570f7a4d26b",
+          "legacy": [
+            "1288e413-9569-47a3-892f-64008e53c1e8"
+          ]
+        }
+      ]
+    },
+    "hadits": {
+      "label": "AI Hadits",
+      "notebooks": [
+        {
+          "entity": "02_HADITS",
+          "master": "9da436c8-f9b7-4e8b-a51f-d798a31892a7",
+          "legacy": [
+            "b9626501-538c-4358-a44f-6731eaec50b6"
+          ]
+        },
+        {
+          "entity": "10_SYARAH_HADITS",
+          "master": "27c104b7-e8aa-40a9-b9dd-ad4741b2d515",
+          "legacy": []
+        },
+        {
+          "entity": "17_MUSTHALAH_DAN_ULUMUL_HADITS",
+          "master": "af26bf8f-4429-4d2f-9cf0-17bcc835fb86",
+          "legacy": []
+        }
+      ]
+    },
+    "nahwu": {
+      "label": "AI Bahasa Arab",
+      "notebooks": [
+        {
+          "entity": "04_BAHASA_DAN_SASTRA_ARAB",
+          "master": "1ae6ae57-53f0-4ce2-a2be-c324e03abb83",
+          "legacy": [
+            "15bc4cef-4b94-4241-b05a-d50a586bde06"
+          ]
+        }
+      ]
+    },
+    "tafsir": {
+      "label": "AI Tafsir",
+      "notebooks": [
+        {
+          "entity": "05_TAFSIR_DAN_ULUMUL_QURAN",
+          "master": "f15bd838-dac9-415b-bd40-fef3da1355d4",
+          "legacy": [
+            "df92cc50-1106-4221-8748-1663f00fa7fe"
+          ]
+        },
+        {
+          "entity": "15_TAJWID_DAN_QIRAAT",
+          "master": "0364032d-3cb9-4b4e-bf5c-b0bf72f134f6",
+          "legacy": []
+        }
+      ]
+    },
+    "tarikh": {
+      "label": "AI Tarikh & Sirah Nabawiyah",
+      "notebooks": [
+        {
+          "entity": "07_TARIKH_DAN_SIRAH_NABAWIYYAH",
+          "master": "94d49b05-e0b6-4ea2-9b7d-7c75f8edca75",
+          "legacy": []
+        },
+        {
+          "entity": "19_THABAQAT_DAN_TARAJIM_RIJAL",
+          "master": "59fd5420-7392-4d58-825a-02b87bade32d",
+          "legacy": []
+        }
+      ]
+    },
+    "tasawwuf": {
+      "label": "AI Tasawwuf & Tazkiyatun Nafs",
+      "notebooks": [
+        {
+          "entity": "14_TASAWWUF_DAN_ADZKAR",
+          "master": "9a9902ff-ff0a-4696-845b-a809a69db84b",
+          "legacy": []
+        }
+      ]
+    },
+    "ushul_fiqh": {
+      "label": "AI Ushul Fiqih",
+      "notebooks": [
+        {
+          "entity": "03_USHUL_FIKIH",
+          "master": "6009f2ee-6328-497d-b74e-4276834caa94",
+          "legacy": [
+            "6ab6dae8-0067-435a-85ca-b6bd4e17dd12"
+          ]
+        },
+        {
+          "entity": "16_QAWAID_FIQHIYYAH",
+          "master": "35cc555e-3d6c-43fd-ae82-6a06cd107899",
+          "legacy": []
+        }
+      ]
+    }
+  },
+  "all_access_scopes": [
+    "fiqh_tahawwulat",
+    "fiqh_syafii",
+    "fiqh_hanafi",
+    "fiqh_maliki",
+    "fiqh_hanbali",
+    "fiqh_muqaran",
+    "fiqh",
+    "ushul_fiqh",
+    "nahwu",
+    "tafsir",
+    "hadits",
+    "aqidah",
+    "tasawwuf",
+    "tarikh",
+    "bibliografi_faharis"
+  ],
+  "akal_services": [
+    {
+      "cuid": "cmln2i27k0000jx047oabzw8p",
+      "fallbacks": [],
+      "name": "AI Fikih Tahawwulat (5 Bilik AI)",
+      "scopes": [
+        "fiqh_tahawwulat"
+      ]
+    },
+    {
+      "cuid": "cms4ls3j60001l20439k1nqh4",
+      "fallbacks": [
+        "cms4ls3j60001l20439k1nph4"
+      ],
+      "name": "Super AI Fikih Syafi'i",
+      "scopes": [
+        "fiqh_syafii"
+      ]
+    },
+    {
+      "cuid": "cmnd7l4o60002l504ab6qq31x",
+      "fallbacks": [],
+      "name": "Super AI Bahasa Arab",
+      "scopes": [
+        "nahwu"
+      ]
+    },
+    {
+      "cuid": "cmu6hf53s000mkx04jc3vrj02",
+      "fallbacks": [],
+      "name": "Super AI Ushul Fikih",
+      "scopes": [
+        "ushul_fiqh"
+      ]
+    },
+    {
+      "cuid": "cmu6hfbkn0015kx04d87j1b11",
+      "fallbacks": [],
+      "name": "Super AI Hadits Nabawi",
+      "scopes": [
+        "hadits"
+      ]
+    },
+    {
+      "cuid": "cmu6hfi5o000cjt04xziipmr2",
+      "fallbacks": [],
+      "name": "Super AI Tafsir & Ulumul Qur'an",
+      "scopes": [
+        "tafsir"
+      ]
+    },
+    {
+      "cuid": "cmu6hfq7m000cjm0414zlr67i",
+      "fallbacks": [],
+      "name": "Super AI Qawaid Fiqhiyyah",
+      "scopes": [
+        "ushul_fiqh"
+      ]
+    },
+    {
+      "cuid": "cmu6hfx13000xjm04np32pb64",
+      "fallbacks": [],
+      "name": "Super AI Musthalah & Ulumul Hadits",
+      "scopes": [
+        "hadits"
+      ]
+    },
+    {
+      "cuid": "cmu6hg3bh001gjm043hjueyh5",
+      "fallbacks": [],
+      "name": "Super AI Aqidah & Ushuluddin",
+      "scopes": [
+        "aqidah"
+      ]
+    },
+    {
+      "cuid": "cmu6hg9wl001zjm04lyds535x",
+      "fallbacks": [],
+      "name": "Super AI Fikih Hanafi",
+      "scopes": [
+        "fiqh_hanafi"
+      ]
+    },
+    {
+      "cuid": "cmu6hgh6r002ijm040qddnmph",
+      "fallbacks": [],
+      "name": "Super AI Fikih Maliki",
+      "scopes": [
+        "fiqh_maliki"
+      ]
+    },
+    {
+      "cuid": "cmu6hgo4z0031jm04bpdj07ki",
+      "fallbacks": [],
+      "name": "Super AI Fikih Hanbali",
+      "scopes": [
+        "fiqh_hanbali"
+      ]
+    },
+    {
+      "cuid": "cmu6hgv6n003kjm04tit1vsh8",
+      "fallbacks": [],
+      "name": "Super AI Fikih Muqaran & Siyasah",
+      "scopes": [
+        "fiqh_muqaran"
+      ]
+    },
+    {
+      "cuid": "cmu6hh1nn0043jm04r4h40wdb",
+      "fallbacks": [],
+      "name": "Super AI Fatawa & Masail",
+      "scopes": [
+        "fiqh"
+      ]
+    },
+    {
+      "cuid": "cmu6hh86n004mjm04ejgkhlg1",
+      "fallbacks": [],
+      "name": "Super AI Tasawwuf & Adzkar",
+      "scopes": [
+        "tasawwuf"
+      ]
+    },
+    {
+      "cuid": "cmu6hhet70055jm04ew3lb6wq",
+      "fallbacks": [],
+      "name": "Super AI Tajwid & Qiraat",
+      "scopes": [
+        "tafsir"
+      ]
+    },
+    {
+      "cuid": "cmu6hhl7a005ojm04pgptpegm",
+      "fallbacks": [],
+      "name": "Super AI Tarikh & Sirah Nabawiyyah",
+      "scopes": [
+        "tarikh"
+      ]
+    },
+    {
+      "cuid": "cmu6hhrvz0067jm04ljdfmycu",
+      "fallbacks": [],
+      "name": "Super AI Syarah Hadits",
+      "scopes": [
+        "hadits"
+      ]
+    },
+    {
+      "cuid": "cmu6hhyby006qjm04e0l3p11r",
+      "fallbacks": [],
+      "name": "Super AI Thabaqat & Tarajim Rijal",
+      "scopes": [
+        "tarikh"
+      ]
+    },
+    {
+      "cuid": "cmu6hi4lr0079jm0462vczjdm",
+      "fallbacks": [],
+      "name": "Super AI Bibliografi & Faharis Turath",
+      "scopes": [
+        "bibliografi_faharis"
+      ]
+    },
+    {
+      "cuid": "cmu6rsq7z001gjn044acg1ke4",
+      "fallbacks": [],
+      "name": "Paket Fikih Pesantren & Santri Salaf",
+      "scopes": [
+        "fiqh_syafii",
+        "ushul_fiqh",
+        "fiqh",
+        "tasawwuf"
+      ]
+    },
+    {
+      "cuid": "cmu6rst3y001xjn0468aypvd0",
+      "fallbacks": [],
+      "name": "Paket Samudra Hadits & Sirah Nabawiyyah",
+      "scopes": [
+        "hadits",
+        "tarikh"
+      ]
+    },
+    {
+      "cuid": "cmu6rswk0002ejn04s90o870l",
+      "fallbacks": [],
+      "name": "Paket Mufassir & Khazanah Bahasa Arab",
+      "scopes": [
+        "tafsir",
+        "nahwu",
+        "bibliografi_faharis"
+      ]
+    },
+    {
+      "cuid": "cmu6rt0ja002vjn04pimuyd84",
+      "fallbacks": [],
+      "name": "Paket Mufti, Mazhab Akbar & Pemikiran",
+      "scopes": [
+        "fiqh_hanafi",
+        "fiqh_maliki",
+        "fiqh_hanbali",
+        "fiqh_muqaran",
+        "aqidah",
+        "fiqh"
+      ]
+    },
+    {
+      "cuid": "cmu6rt3i6003cjn04wp9v6tqt",
+      "fallbacks": [],
+      "name": "Paket Khusus Fikih Tahawwulat",
+      "scopes": [
+        "fiqh_tahawwulat"
+      ]
+    },
+    {
+      "cuid": "cmu6rt6aa003tjn04psx42goy",
+      "fallbacks": [],
+      "name": "Paket Sultan All-Access (Semua 24 AI)",
+      "scopes": [
+        "all_access",
+        "fiqh_tahawwulat",
+        "fiqh_syafii",
+        "fiqh_hanafi",
+        "fiqh_maliki",
+        "fiqh_hanbali",
+        "fiqh_muqaran",
+        "fiqh",
+        "ushul_fiqh",
+        "nahwu",
+        "tafsir",
+        "hadits",
+        "aqidah",
+        "tasawwuf",
+        "tarikh",
+        "bibliografi_faharis"
+      ]
+    }
+  ],
+  "keywords": [
+    [
+      "sultan|all[- ]access|semua (24 )?ai|paket semua",
+      [
+        "all_access",
+        "fiqh_tahawwulat",
+        "fiqh_syafii",
+        "fiqh_hanafi",
+        "fiqh_maliki",
+        "fiqh_hanbali",
+        "fiqh_muqaran",
+        "fiqh",
+        "ushul_fiqh",
+        "nahwu",
+        "tafsir",
+        "hadits",
+        "aqidah",
+        "tasawwuf",
+        "tarikh",
+        "bibliografi_faharis"
+      ]
+    ],
+    [
+      "tahaww?ulat",
+      [
+        "fiqh_tahawwulat"
+      ]
+    ],
+    [
+      "syafi",
+      [
+        "fiqh_syafii"
+      ]
+    ],
+    [
+      "hanafi",
+      [
+        "fiqh_hanafi"
+      ]
+    ],
+    [
+      "maliki",
+      [
+        "fiqh_maliki"
+      ]
+    ],
+    [
+      "han[bm]ali",
+      [
+        "fiqh_hanbali"
+      ]
+    ],
+    [
+      "muqaran|perbandingan mazhab",
+      [
+        "fiqh_muqaran"
+      ]
+    ],
+    [
+      "fatawa|masail",
+      [
+        "fiqh"
+      ]
+    ],
+    [
+      "a[qk]idah|ushuluddin",
+      [
+        "aqidah"
+      ]
+    ],
+    [
+      "qawaid|ushul fi[kq]",
+      [
+        "ushul_fiqh"
+      ]
+    ],
+    [
+      "hadi[ts]|musthalah",
+      [
+        "hadits"
+      ]
+    ],
+    [
+      "tafsir|tajwid|qiraat",
+      [
+        "tafsir"
+      ]
+    ],
+    [
+      "bahasa arab|nahwu|sharaf",
+      [
+        "nahwu"
+      ]
+    ],
+    [
+      "tasaww?uf|adzkar",
+      [
+        "tasawwuf"
+      ]
+    ],
+    [
+      "tarikh|sirah|thabaqat|tarajim|rijal",
+      [
+        "tarikh"
+      ]
+    ],
+    [
+      "bibliografi|faharis",
+      [
+        "bibliografi_faharis"
+      ]
+    ]
+  ]
+}
