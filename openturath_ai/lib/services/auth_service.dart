@@ -85,8 +85,10 @@ class AuthService {
             questionsUsed: 0,
           );
     }
-    if (_userCache.isNotEmpty) {
-      return _userCache.values.first;
+    // Only an unambiguous cached profile may stand in; with several accounts
+    // in memory there is no way to know which one this session belongs to.
+    if (_userCache.length == 1) {
+      return _userCache.values.single;
     }
     return null;
   }
@@ -126,31 +128,10 @@ class AuthService {
 
     try {
       final prefs = await SharedPreferences.getInstance();
-      String? uid = firebaseUser?.uid ?? prefs.getString('current_user_uid');
-      if (uid == null || uid.isEmpty) {
-        final keys = prefs
-            .getKeys()
-            .where((k) => k.startsWith('openturath_cached_user_'))
-            .toList();
-        if (keys.isNotEmpty) {
-          final sessionEmail =
-              prefs.getString('google_session_email')?.trim().toLowerCase();
-          for (final k in keys) {
-            final raw = prefs.getString(k);
-            if (raw != null &&
-                sessionEmail != null &&
-                sessionEmail.isNotEmpty &&
-                raw.toLowerCase().contains(sessionEmail)) {
-              uid = k.replaceFirst('openturath_cached_user_', '');
-              break;
-            }
-          }
-          uid ??= keys.last.replaceFirst('openturath_cached_user_', '');
-          if (uid.isNotEmpty) {
-            await prefs.setString('current_user_uid', uid);
-          }
-        }
-      }
+      // The cached profile is keyed by the UID of the last verified sign-in.
+      // Never guess from other cached profiles: that could surface another
+      // account's name and entitlements on a shared device.
+      final uid = firebaseUser?.uid ?? prefs.getString('current_user_uid');
 
       if (uid != null && uid.isNotEmpty) {
         final cached = await _getCachedUser(uid);
@@ -267,8 +248,10 @@ class AuthService {
     String? fallbackName,
     String? fallbackEmail,
   }) async {
+    // Firestore rules cap the stored name at 120 characters.
+    final rawName = firebaseUser.displayName ?? fallbackName ?? 'Pengguna';
     final effectiveName =
-        firebaseUser.displayName ?? fallbackName ?? 'Pengguna';
+        rawName.length > 120 ? rawName.substring(0, 120) : rawName;
     final effectiveEmail = firebaseUser.email ?? fallbackEmail ?? '';
     final photoUrl = firebaseUser.photoURL ?? '';
 
@@ -315,65 +298,6 @@ class AuthService {
       );
       return fallback;
     }
-  }
-
-  // ── Anonymous / Guest Sign-In ──────────────────────────────────
-  Future<UserModel?> signInAnonymously() async {
-    try {
-      final cred = await _auth.signInAnonymously();
-      final firebaseUser = cred.user;
-      if (firebaseUser == null) return _localGuestUser();
-
-      try {
-        final docRef =
-            _db.collection(AppConstants.colUsers).doc(firebaseUser.uid);
-        final doc = await docRef.get().timeout(const Duration(seconds: 4));
-
-        if (!doc.exists) {
-          final newUser = UserModel(
-            uid: firebaseUser.uid,
-            name: 'Peneliti Tamu',
-            email: '',
-            photoUrl: '',
-            plan: AppConstants.planTrial,
-            questionsUsed: 0,
-          );
-          await docRef.set({
-            'name': newUser.name,
-            'email': '',
-            'photo_url': newUser.photoUrl,
-            'plan': newUser.plan,
-            'questions_used': newUser.questionsUsed,
-            'subscription_expiry': null,
-          }).timeout(const Duration(seconds: 4));
-          await _cacheUserLocally(newUser);
-          return newUser;
-        } else {
-          final userModel = UserModel.fromFirestore(doc);
-          await _cacheUserLocally(userModel);
-          return userModel;
-        }
-      } catch (_) {
-        return _localGuestUser();
-      }
-    } catch (_) {
-      return _localGuestUser();
-    }
-  }
-
-  static String? _cachedGuestUid;
-
-  UserModel _localGuestUser() {
-    _cachedGuestUid ??=
-        'guest_${DateTime.now().millisecondsSinceEpoch.toRadixString(36)}';
-    return UserModel(
-      uid: _cachedGuestUid!,
-      name: 'Peneliti Tamu',
-      email: 'tamu@openturath.ai',
-      photoUrl: '',
-      plan: AppConstants.planTrial,
-      questionsUsed: 0,
-    );
   }
 
   // ── Get Current UserModel from Firestore ───────────────────────

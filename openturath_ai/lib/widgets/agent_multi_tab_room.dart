@@ -5,6 +5,7 @@ import '../core/app_platform.dart';
 import 'dart:async';
 import 'dart:collection';
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
@@ -1794,7 +1795,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
               useOnRenderProcessGone: true,
               supportMultipleWindows: true,
               javaScriptCanOpenWindowsAutomatically: true,
-              isInspectable: true,
+              isInspectable: kDebugMode,
               forceDark: isDark ? ForceDark.ON : ForceDark.OFF,
               forceDarkStrategy:
                   ForceDarkStrategy.PREFER_WEB_THEME_OVER_USER_AGENT_DARKENING,
@@ -2014,7 +2015,10 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
               controller.addJavaScriptHandler(
                 handlerName: 'otDismissMenu',
                 callback: (args) {
-                  if (mounted) {
+                  // The page reports one tap through several pointer events.
+                  // Only the first may close the menu; a later call with no
+                  // menu open would otherwise pop the study room itself.
+                  if (mounted && session.isMenuOpen) {
                     setState(() => session.isMenuOpen = false);
                     final nav = Navigator.of(context, rootNavigator: false);
                     if (nav.canPop()) {

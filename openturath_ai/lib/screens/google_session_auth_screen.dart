@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
@@ -516,7 +517,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
                               useOnRenderProcessGone: true,
                               supportMultipleWindows: true,
                               javaScriptCanOpenWindowsAutomatically: true,
-                              isInspectable: true,
+                              isInspectable: kDebugMode,
                               forceDark: isDark ? ForceDark.ON : ForceDark.OFF,
                               forceDarkStrategy: ForceDarkStrategy
                                   .PREFER_WEB_THEME_OVER_USER_AGENT_DARKENING,
