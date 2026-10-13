@@ -7,9 +7,12 @@ Prinsip Keamanan Absolut (Zero Accidental Revocation):
 3. Akun manual/tidak dikenal yang ada di notebook TIDAK AKAN DIHAPUS OTOMATIS, melainkan hanya dilaporkan ke Telegram untuk konfirmasi Anda.
 """
 
+from __future__ import annotations
+
 import os
 import sys
 import asyncio
+import html
 import json
 import logging
 import urllib.request
@@ -17,13 +20,18 @@ import urllib.parse
 from datetime import datetime, timezone, timedelta
 from typing import Any
 import socket
-_orig_getaddrinfo = socket.getaddrinfo
-def _resilient_getaddrinfo(host, port, *args, **kwargs):
-    h_str = host.decode("utf-8", "ignore") if isinstance(host, (bytes, bytearray)) else str(host)
-    if h_str == "notebooklm.google.com":
-        return _orig_getaddrinfo("142.250.74.78", port, *args, **kwargs)
-    return _orig_getaddrinfo(host, port, *args, **kwargs)
-socket.getaddrinfo = _resilient_getaddrinfo
+
+# Optional workaround for hosts whose resolver cannot reach notebooklm.google.com.
+# Off unless NOTEBOOKLM_PIN_IP is set; TLS still verifies the certificate.
+_PIN_IP = os.getenv("NOTEBOOKLM_PIN_IP", "")
+if _PIN_IP:
+    _orig_getaddrinfo = socket.getaddrinfo
+
+    def _pinned_getaddrinfo(host, port, *args, **kwargs):
+        name = host.decode("utf-8", "ignore") if isinstance(host, (bytes, bytearray)) else str(host)
+        return _orig_getaddrinfo(_PIN_IP if name == "notebooklm.google.com" else host, port, *args, **kwargs)
+
+    socket.getaddrinfo = _pinned_getaddrinfo
 
 def load_dotenv():
     env_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), ".env")
@@ -48,8 +56,10 @@ NOTEBOOKLM_PY_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), ".
 sys.path.insert(0, os.path.abspath(NOTEBOOKLM_PY_PATH))
 
 from akal_client import AkalClient
+import access_policy
+import shared_registry
 from notebooklm import NotebookLMClient
-from notebooklm.rpc.types import SharePermission, RPCMethod, ShareViewLevel
+from notebooklm.rpc.types import RPCMethod, ShareViewLevel
 
 logger = logging.getLogger("autonomous_reaper")
 if not logger.handlers:
@@ -62,56 +72,19 @@ if not logger.handlers:
         ],
     )
 
-STATIC_WHITELIST = {
-    # System & Owner
-    "openturath@gmail.com",
-    "ramah@ptct.net",
-    "raflimaulan@gmail.com",
-    "mas.raflihusen@gmail.com",
+# Permanent VIPs come from the registry shared with the Cloud Functions
+# (shared/vip_emails.json). This module keeps no list of its own.
+STATIC_WHITELIST = set(shared_registry.vip_emails())
 
-    # Verified Tamu Spesial & Pelanggan 1 Tahun (Annual Subscriber Protection)
-    "alkhateeb23@gmail.com",
-    "omarasb1441@gmail.com",
-    "prilatief@gmail.com",
-    "udinvoldigoad05@gmail.com",
-    "ndsfraaaaaaa@gmail.com",
-    "riefbois33@gmail.com",
-    "muhammadalaydrus65@gmail.com",
-    "abrormuhammed14@gmail.com",
-    "beyzabeem@gmail.com",
-    "fikrilzabidi@gmail.com",
-    "ghufron2002@gmail.com",
-    "hizbullah1504@gmail.com",
-    "idawakhidah88@gmail.com",
-    "idawahidah88@gmai.com",
-    "iqbalismailmm@gmail.com",
-    "m.syafiq280605@gmail.com",
-    "msyafiq280605@gmail.com",
-    "nona.alyaziza@gmail.com",
-    "nonaalyaziza@gmail.com",
-    "nst275642@gmail.com",
-    "surratimassya@gmail.com",
-    "chenhuha135@gmail.com",
-    "yudolgregar@gmail.com",
-    "syekhai378@gmail.com",
-    "mfulan370@gmail.com",
+# Removals are simulated unless the operator opts in, and a cycle that wants to
+# remove more than this many viewers stops and asks for review instead.
+APPLY_REMOVALS = os.getenv("REAPER_APPLY", "") == "1"
+MAX_REMOVALS_PER_CYCLE = int(os.getenv("REAPER_MAX_REMOVALS", "20"))
 
-    # Asatidz & Masyayikh & VIP Manual Permanen
-    "aaadman40@gmail.com",
-    "abo.omar5539@gmail.com",
-    "abualgilani2024@gmail.com",
-    "ahobh4241@gmail.com",
-    "alhamodi65@gmail.com",
-    "ali.bafdhl36@gmail.com",
-    "alshykhkmalbahrmz@gmail.com",
-    "atinrahmak@gmail.com",
-    "hafamfb551985@gmail.com",
-    "loyos839@gmail.com",
-    "mohammedhalahdal@gmail.com",
-    "mostajadt25@gmail.com",
-    "omar739037802@gmail.com",
-    "yasser110271@gmail.com",
-}
+
+class EvidenceUnavailable(RuntimeError):
+    """A data source could not be read; revoking on partial data is forbidden."""
+
 
 MASTER_NOTEBOOKS = [
     # 1. Fikih Syafi'i (Master & Legacy)
@@ -373,11 +346,8 @@ def parse_dt(val):
 
 class AutonomousReaper:
     def __init__(self):
-        cred_path = "/Users/apple/Downloads/ramadhan/service-account.json"
-        if os.path.exists(cred_path):
-            self.db = firestore.Client.from_service_account_json(cred_path)
-        else:
-            self.db = firestore.Client()
+        # Credentials come from GOOGLE_APPLICATION_CREDENTIALS / the runtime identity.
+        self.db = firestore.Client()
         
         # Prioritas lokasi auth NotebookLM:
         # 1. ~/.notebooklm/profiles/default/storage_state.json (Host / local run)
@@ -409,254 +379,140 @@ class AutonomousReaper:
 
     async def get_all_database_records(self) -> tuple[set[str], dict[str, set[str]], dict[str, set[str]]]:
         """
-        Mengambil data per-modul:
-        - global_vip_emails: set email VIP permanen (berlaku untuk semua modul)
-        - active_by_module: key -> set of active emails for this module
-        - expired_by_module: key -> set of expired emails for this module
+        Load every evidence source, then evaluate per module (access_policy).
+
+        Fail closed: if any source cannot be read completely the cycle aborts.
+        A partial picture would make active subscribers look expired.
         """
         now = datetime.now(timezone.utc)
-        global_vip_emails = set(e.lower() for e in STATIC_WHITELIST)
-        active_by_module = {}   # key -> set of emails
-        expired_by_module = {}  # key -> set of emails
+        modules = sorted({nb["key"] for nb in MASTER_NOTEBOOKS})
 
-        for nb in MASTER_NOTEBOOKS:
-            k = nb["key"]
-            if k not in active_by_module:
-                active_by_module[k] = set()
-                expired_by_module[k] = set()
-
-        # 1. Baca Firestore Transactions
         try:
-            tx_stream = self.db.collection("transactions").stream()
-            for doc in tx_stream:
-                d = doc.to_dict()
-                email = (d.get("customer_email") or d.get("payer_email") or d.get("email") or "").strip().lower()
-                if not email:
-                    continue
+            transactions = [doc.to_dict() or {} for doc in self.db.collection("transactions").stream()]
+            users = [doc.to_dict() or {} for doc in self.db.collection("users").stream()]
+            registry_docs = [doc.to_dict() or {} for doc in self.db.collection("access_vip_registry").stream()]
+        except Exception as exc:
+            raise EvidenceUnavailable(f"Firestore evidence unavailable: {type(exc).__name__}") from exc
 
-                status = (d.get("status") or "").upper()
-                plan = str(d.get("plan") or d.get("plan_id") or "").upper()
-                exp_dt = parse_dt(d.get("subscription_expires_at") or d.get("access_expires_at") or d.get("expires_at"))
-                is_vip = d.get("is_vip", False) or ("VIP" in plan) or (exp_dt and exp_dt.year >= 2030)
-                ent_key = d.get("entitlement_key")
+        vip = set(shared_registry.vip_emails())
+        vip.update(shared_registry.normal_email(d.get("email")) for d in registry_docs if d.get("email"))
 
-                if is_vip:
-                    global_vip_emails.add(email)
-                    continue
-
-                ACTIVE_STATUSES = {"SUCCESS", "PAID", "SETTLED", "TRANSFERRED", "COMPLETED", "ACTIVE"}
-                amount = float(d.get("amount") or 0.0)
-
-                # Deteksi paket tahunan / all-access / nilai tinggi (Rule 5 & VIP Protection)
-                is_yearly = (
-                    any(y in plan.lower() for y in ["1y", "year", "tahun", "annual", "bahits_1y", "all_ai"]) or
-                    amount >= 450000.0 or
-                    (exp_dt and exp_dt.year >= 2027)
-                )
-
-                if status in ACTIVE_STATUSES:
-                    if exp_dt and exp_dt > now:
-                        if is_yearly or ent_key in ["all_access", "all_ai"]:
-                            global_vip_emails.add(email)
-                            for k in active_by_module:
-                                active_by_module[k].add(email)
-                        elif ent_key in active_by_module:
-                            active_by_module[ent_key].add(email)
-                        elif ent_key is None:
-                            # Tanpa entitlement key spesifik -> berikan akses ke seluruh modul aktif
-                            for k in active_by_module:
-                                active_by_module[k].add(email)
-                    elif exp_dt and exp_dt <= now:
-                        # Hanya tandai expired jika user belum tercatat aktif
-                        if not is_yearly:
-                            if ent_key in expired_by_module:
-                                expired_by_module[ent_key].add(email)
-                            elif ent_key is None:
-                                if "tholib" in plan.lower():
-                                    expired_by_module["fiqh_tahawwulat"].add(email)
-                                    expired_by_module["fiqh_syafii"].add(email)
-                                else:
-                                    for k in expired_by_module:
-                                        expired_by_module[k].add(email)
-                elif status in ["EXPIRED", "FAILED", "CANCELLED"]:
-                    if not is_yearly:
-                        if ent_key in expired_by_module:
-                            expired_by_module[ent_key].add(email)
-                        else:
-                            for k in expired_by_module:
-                                expired_by_module[k].add(email)
-        except Exception as e:
-            logger.error(f"Error reading Firestore transactions: {e}")
-
-        # 2. Baca Firestore Users Collection
-        try:
-            user_stream = self.db.collection("users").stream()
-            for doc in user_stream:
-                d = doc.to_dict()
-                email = (d.get("email") or "").strip().lower()
-                if not email:
-                    continue
-                role = str(d.get("role") or "").lower()
-                if role in ["admin", "vip", "guru", "special"]:
-                    global_vip_emails.add(email)
-                    continue
-
-                entitlements = d.get("entitlements", {})
-                if entitlements and isinstance(entitlements, dict):
-                    # Model granular per-modul (prioritas utama)
-                    for k, v in entitlements.items():
-                        if isinstance(v, dict) and k in active_by_module:
-                            e_dt = parse_dt(v.get("expiry") or v.get("expires_at"))
-                            if e_dt and e_dt > now:
-                                active_by_module[k].add(email)
-                            elif e_dt and e_dt <= now:
-                                expired_by_module[k].add(email)
-                                active_by_module[k].discard(email)
-                else:
-                    # Model flat legacy (fallback)
-                    u_sub_exp = parse_dt(d.get("subscription_expiry"))
-                    if u_sub_exp and u_sub_exp > now:
-                        for k in active_by_module:
-                            active_by_module[k].add(email)
-                    elif u_sub_exp and u_sub_exp <= now:
-                        for k in expired_by_module:
-                            expired_by_module[k].add(email)
-        except Exception as e:
-            logger.error(f"Error reading Firestore users: {e}")
-
-        # 3. Baca Akal API
+        akal_active: dict[str, set[str]] = {}
         try:
             async with AkalClient() as akal:
-                services_resp = await akal.list_services()
-                services = services_resp.get("data", [])
-                for s in services:
-                    cuid = s.get("cuid")
-                    paid_emails = await akal.get_all_paid_emails(cuid)
-                    for em in paid_emails:
-                        em = em.strip().lower()
-                        for k in active_by_module:
-                            active_by_module[k].add(em)
-        except Exception as e:
-            logger.warning(f"Akal API warning: {e}")
+                services = (await akal.list_services()).get("data", [])
+                for service in services:
+                    cuid = service.get("cuid")
+                    emails = await akal.get_all_paid_emails(cuid)
+                    # A service the catalog does not know keeps its buyers on every module.
+                    for scope in shared_registry.scopes_for_cuid(cuid) or ["*"]:
+                        akal_active.setdefault("*" if scope in access_policy.ALL_ACCESS else scope, set()).update(emails)
+        except Exception as exc:
+            raise EvidenceUnavailable(f"GoAkal evidence unavailable: {type(exc).__name__}") from exc
 
-        # 4. KONSISTENSI & PURGE MUTLAK (RULE 5 & ANTI-ACCIDENTAL REVOCATION):
-        # Jika seorang user AKTIF di suatu modul, dia TIDAK BOLEH berada di expired_by_module modul tersebut!
-        for k in active_by_module:
-            for em in list(active_by_module[k]):
-                expired_by_module[k].discard(em)
+        return access_policy.classify(transactions, users, akal_active, vip, modules, now)
 
-        # Jika user adalah VIP global atau memiliki paket tahunan / all-access, dia DILARANG ADA di expired_by_module manapun!
-        for em in list(global_vip_emails):
-            for k in expired_by_module:
-                expired_by_module[k].discard(em)
-
-        return global_vip_emails, active_by_module, expired_by_module
-
-    async def run_cycle(self) -> dict:
+    async def run_cycle(self, apply: bool | None = None) -> dict:
         """
         Siklus Reaper yang AMAN:
-        HANYA mencabut jika email tersebut BENAR-BENAR TERDAFTAR SEBAGAI EXPIRED pada notebook tersebut.
-        Akun VIP manual yang ada di whitelist / VIP_PERMANENT TIDAK AKAN DISENTUH SAMA SEKALI.
+        HANYA mencabut jika email tersebut BENAR-BENAR TERDAFTAR SEBAGAI EXPIRED pada modul notebook tersebut.
+        VIP tidak pernah menjadi kandidat. Tanpa REAPER_APPLY=1 siklus hanya melaporkan (dry-run).
         """
+        apply = APPLY_REMOVALS if apply is None else apply
         control = self.db.collection("access_control").document("runtime").get().to_dict() or {}
         if control.get("writer") == "vps-v2":
             return {"success": True, "action": "vps_writer_active", "revoked": 0}
+        if control.get("revocations_paused") is True:
+            apply = False
         now = datetime.now(timezone.utc)
         logger.info("=" * 80)
-        logger.info(f"🛡️ SAFE REAPER CYCLE STARTED: {now.strftime('%Y-%m-%d %H:%M:%S UTC')}")
+        logger.info(f"🛡️ SAFE REAPER CYCLE STARTED ({'APPLY' if apply else 'DRY-RUN'}): {now.strftime('%Y-%m-%d %H:%M:%S UTC')}")
         logger.info("=" * 80)
 
-        global_vips, active_map, expired_map = await self.get_all_database_records()
+        try:
+            global_vips, active_map, expired_map = await self.get_all_database_records()
+        except EvidenceUnavailable as exc:
+            logger.error(f"❌ Cycle aborted, nothing revoked: {exc}")
+            send_telegram(f"⚠️ <b>[REAPER DIBATALKAN]</b>\nSumber data tidak lengkap; tidak ada akses yang dicabut.\n<code>{html.escape(str(exc))}</code>")
+            return {"timestamp": now.isoformat(), "vip_count": 0, "revoked_count": 0, "errors": 1, "aborted": True}
         logger.info(f"Loaded {len(global_vips)} VIPs protected permanently.")
 
+        plan: list[tuple[dict, set[str]]] = []
         revoked_summary = []
+        errors = 0
 
         async with NotebookLMClient.from_storage(path=self.storage_path) as nlm_client:
             for nb in MASTER_NOTEBOOKS:
-                nb_name = nb["name"]
-                nb_id = nb["id"]
-                nb_key = nb["key"]
-                
                 try:
-                    status = await nlm_client.sharing.get_status(nb_id)
-                    current_viewers = {u.email.lower() for u in status.shared_users if u.permission.name != "OWNER"}
-                    
-                    # Target yang boleh dicabut dari notebook ini:
-                    # 1. Ada di current_viewers
-                    # 2. Bukan VIP global
-                    # 3. Bukan aktif di modul ini
-                    # 4. Ada di daftar expired_by_module untuk modul ini
-                    active_for_this_nb = active_map.get(nb_key, set()) | global_vips
-                    expired_for_this_nb = expired_map.get(nb_key, set())
-
-                    strictly_expired = (current_viewers & expired_for_this_nb) - active_for_this_nb
-
-                    # HARD SAFEGUARD (RULE 5): Validasi ganda sebelum eksekusi pencabutan
-                    safe_strictly_expired = set()
-                    for em in strictly_expired:
-                        if em in global_vips:
-                            logger.info(f"🛡️ HARD SAFEGUARD: {em} batal dicabut dari {nb_name} karena status VIP.")
-                            continue
-                        # Cek apakah user punya hak aktif di modul lain manapun
-                        has_active_anywhere = any(em in active_map[m] for m in active_map)
-                        if has_active_anywhere and nb_key in ["fiqh_syafii", "fiqh_tahawwulat"]:
-                            logger.warning(f"🛡️ HARD SAFEGUARD: {em} memiliki akses aktif di modul lain. Batal dicabut dari {nb_name}.")
-                            continue
-                        safe_strictly_expired.add(em)
-                    
-                    strictly_expired = safe_strictly_expired
-                    
-                    if strictly_expired:
-                        logger.warning(f"🚨 {nb_name}: Mencabut {len(strictly_expired)} user yang terkonfirmasi expired...")
-                        removals = [[em, None, SharePermission._REMOVE.value] for em in strictly_expired]
-                        params = [[[nb_id, removals, None, [0, ""]]], 0, None, [2]]
-                        await nlm_client.sharing._rpc.rpc_call(
-                            RPCMethod.SHARE_NOTEBOOK,
-                            params,
-                            source_path=f"/notebook/{nb_id}",
-                            allow_null=True
-                        )
-                        for em in strictly_expired:
-                            revoked_summary.append({"email": em, "notebook": nb_name})
-                            self.db.collection("sharing_log").add({
-                                "email": em,
-                                "notebook_id": nb_id,
-                                "notebook_name": nb_name,
-                                "action": "remove",
-                                "status": "success",
-                                "source": "autonomous_reaper",
-                                "created_at": now
-                            })
+                    status = await nlm_client.sharing.get_status(nb["id"])
+                    viewers = {u.email.lower() for u in status.shared_users if u.permission.name != "OWNER"}
+                    candidates = access_policy.removal_candidates(viewers, nb["key"], global_vips, active_map, expired_map)
+                    if candidates:
+                        plan.append((nb, candidates))
                     else:
-                        logger.info(f"✅ {nb_name:<28}: {len(current_viewers)} Viewers (Semua Aman)")
-
-                    # KUNCI PATEN: Selalu pastikan status 100% RESTRICTED + CHAT_ONLY (Hanya email terdaftar yang bisa akses)
-                    if status.is_public:
-                        await nlm_client.sharing.set_public(nb_id, False)
-                    await nlm_client.sharing.set_view_level(nb_id, ShareViewLevel.CHAT_ONLY)
-                    mut_copy = [None, None, None, [None, None, None, None, 1]]
-                    mut_chat = [None, None, None, None, None, None, None, None, [[1]]]
-                    params = [nb_id, [mut_copy, mut_chat]]
-                    await nlm_client.rpc_call(RPCMethod.RENAME_NOTEBOOK, params, allow_null=True)
+                        logger.info(f"✅ {nb['name']:<28}: {len(viewers)} Viewers (Semua Aman)")
+                    if apply:
+                        # Selalu pastikan status RESTRICTED + CHAT_ONLY (hanya email terdaftar yang bisa akses)
+                        if status.is_public:
+                            await nlm_client.sharing.set_public(nb["id"], False)
+                        await nlm_client.sharing.set_view_level(nb["id"], ShareViewLevel.CHAT_ONLY)
+                        mut_copy = [None, None, None, [None, None, None, None, 1]]
+                        mut_chat = [None, None, None, None, None, None, None, None, [[1]]]
+                        await nlm_client.rpc_call(RPCMethod.RENAME_NOTEBOOK, [nb["id"], [mut_copy, mut_chat]], allow_null=True)
                 except Exception as e:
-                    logger.error(f"❌ Error in {nb_name}: {e}")
+                    errors += 1
+                    logger.error(f"❌ Error in {nb['name']}: {type(e).__name__}")
 
+            total = sum(len(c) for _, c in plan)
+            if apply and total > MAX_REMOVALS_PER_CYCLE:
+                logger.error(f"🚨 {total} removals exceed the per-cycle limit ({MAX_REMOVALS_PER_CYCLE}); nothing revoked.")
+                send_telegram(f"🚨 <b>[REAPER DITAHAN]</b>\n{total} calon pencabutan melebihi batas {MAX_REMOVALS_PER_CYCLE} per siklus. Tidak ada yang dicabut; mohon tinjau.")
+                apply = False
+
+            for nb, candidates in plan:
+                for em in sorted(candidates):
+                    if not apply:
+                        logger.warning(f"🔎 DRY-RUN {nb['name']}: {em} akan dicabut (terkonfirmasi expired)")
+                        revoked_summary.append({"email": em, "notebook": nb["name"], "applied": False})
+                        continue
+                    try:
+                        await nlm_client.sharing.remove_user(nb["id"], em)
+                        after = await nlm_client.sharing.get_status(nb["id"])
+                        if em in {u.email.lower() for u in after.shared_users}:
+                            raise RuntimeError("removal not verified")
+                        revoked_summary.append({"email": em, "notebook": nb["name"], "applied": True})
+                        self.db.collection("sharing_log").add({
+                            "email": em, "notebook_id": nb["id"], "notebook_name": nb["name"],
+                            "action": "remove", "status": "success", "source": "autonomous_reaper", "created_at": now,
+                        })
+                    except Exception as e:
+                        errors += 1
+                        logger.error(f"❌ Removal failed in {nb['name']}: {type(e).__name__}")
+
+        applied = [r for r in revoked_summary if r["applied"]]
         if revoked_summary:
+            title = "PENCABUTAN TERKONFIRMASI" if applied else "DRY-RUN — BELUM ADA YANG DICABUT"
             msg_lines = [
-                "⚠️ <b>[AUTONOMOUS REAPER: PENCABUTAN TERKONFIRMASI]</b>",
+                f"⚠️ <b>[AUTONOMOUS REAPER: {title}]</b>",
                 "🕌 <b>OpenTurath AI Engine</b>\n",
-                f"Sistem mencabut <b>{len(revoked_summary)} akses yang terkonfirmasi kedaluwarsa</b>:\n"
+                f"<b>{len(revoked_summary)} akses terkonfirmasi kedaluwarsa</b>:\n",
             ]
-            for r in revoked_summary:
-                msg_lines.append(f"• 👤 <code>{r['email']}</code> ({r['notebook']})")
+            for r in revoked_summary[:40]:
+                msg_lines.append(f"• 👤 <code>{html.escape(r['email'])}</code> ({html.escape(r['notebook'])})")
+            if len(revoked_summary) > 40:
+                msg_lines.append(f"• … dan {len(revoked_summary) - 40} lainnya")
+            if not applied:
+                msg_lines.append("\nJalankan dengan <code>REAPER_APPLY=1</code> setelah daftar ini ditinjau.")
             send_telegram("\n".join(msg_lines))
 
         return {
             "timestamp": now.isoformat(),
             "vip_count": len(global_vips),
-            "revoked_count": len(revoked_summary)
+            "revoked_count": len(applied),
+            "dry_run_count": len(revoked_summary) - len(applied),
+            "errors": errors,
         }
 
 if __name__ == "__main__":
     reaper = AutonomousReaper()
-    asyncio.run(reaper.run_cycle())
+    print(json.dumps(asyncio.run(reaper.run_cycle(apply=True if "--apply" in sys.argv else None)), default=str))

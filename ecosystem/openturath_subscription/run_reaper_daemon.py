@@ -46,7 +46,8 @@ async def main():
             result = await reaper.run_cycle()
             vip_count = result.get('vip_count', 0)
             revoked_count = result.get('revoked_count', 0)
-            logger.info(f"✅ Siklus selesai. VIP permanen: {vip_count}, Dicabut: {revoked_count}")
+            logger.info(f"✅ Siklus selesai. VIP permanen: {vip_count}, Dicabut: {revoked_count}, "
+                        f"Dry-run: {result.get('dry_run_count', 0)}, Error: {result.get('errors', 0)}")
             
             # 2. Cek apakah waktunya Heartbeat Laporan Tengah Malam (Jam 00:00 - 01:00 WIB)
             if wib_now.hour == 0 and wib_now.day != last_heartbeat_day:
