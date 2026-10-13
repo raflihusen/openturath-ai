@@ -57,3 +57,21 @@ test('checkout input is typed, bounded and rate limited', async () => {
     await assert.rejects(api.createCheckout(bad, {auth: {uid: 'r'}}), (e: any) => e.code === 'invalid-argument');
   }
 });
+
+test('deleting an account removes device bindings and contact details outside the profile', async () => {
+  const {api, db} = loadBackend();
+  db.seed('users/u', {email: 'u@example.test', name: 'Pengguna'});
+  db.seed('users/u/bookmarks/b', {text: 'catatan'});
+  db.seed('device_redemptions/d', {uid: 'u', email: 'u@example.test', model: 'X'});
+  db.seed('device_redemptions/other', {uid: 'someone', email: 's@example.test'});
+  db.seed('transactions/t', {uid: 'u', customer_email: 'u@example.test', customer_name: 'Pengguna', customer_phone: '0812', amount: 50000});
+  db.seed('access_grants/g', {uid: 'u', email: 'u@example.test', scope: 'hadits'});
+  await api.onUserDeleted({uid: 'u', email: 'u@example.test'});
+  assert.equal(db.docs.has('users/u'), false);
+  assert.equal(db.docs.has('users/u/bookmarks/b'), false);
+  assert.equal(db.docs.has('device_redemptions/d'), false);
+  assert.equal(db.docs.has('device_redemptions/other'), true);
+  const payment = db.docs.get('transactions/t');
+  assert.equal(payment.customer_name, ''); assert.equal(payment.customer_phone, ''); assert.equal(payment.amount, 50000);
+  assert.equal(db.docs.get('access_grants/g').email, '');
+});

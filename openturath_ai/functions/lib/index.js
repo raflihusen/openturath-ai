@@ -2049,6 +2049,19 @@ async function deleteUserData(uid, authEmail = "") {
         }
     });
     await db.recursiveDelete(ref);
+    // Records outside the profile keep only what billing and abuse prevention
+    // need: device bindings go, and contact details leave payment/ledger rows.
+    const [devices, payments, grants] = await Promise.all([
+        db.collection("device_redemptions").where("uid", "==", uid).get(),
+        db.collection("transactions").where("uid", "==", uid).get(),
+        db.collection("access_grants").where("uid", "==", uid).get(),
+    ]);
+    for (const doc of devices.docs)
+        await doc.ref.delete();
+    for (const doc of payments.docs)
+        await doc.ref.update({ customer_name: "", customer_phone: "", account_deleted: true });
+    for (const doc of grants.docs)
+        await doc.ref.update({ email: "", account_deleted: true });
     if (targetEmail) {
         await sendTelegramNotification(`🚫 <b>[HAPUS AKUN & CABUT AKSES]</b>\n` +
             `👤 Email: <code>${esc(targetEmail)}</code>\n` +
