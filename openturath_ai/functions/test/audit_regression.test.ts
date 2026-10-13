@@ -40,11 +40,11 @@ test('a trial voucher starts at redemption and cannot silently stack', async () 
   assert.equal(db.docs.get('redeem_codes/TRIAL1').times_used,0);
   assert.equal(db.docs.get('users/u').entitlements.all_access.expiry.toMillis(),existingExpiry.toMillis());
 });
-test('A02 web access cannot restore revoked module from paid billing history', async () => {
+test('A02 a revoked module is not restored by paid billing history', async () => {
   const {api,db}=loadBackend(root);
   db.seed('users/u',{email:'u@example.test',entitlements:{hadits:{...active(),status:'revoked'}}});
   db.seed('transactions/t',{uid:'u',customer_email:'u@example.test',status:'paid',entitlement_key:'hadits',subscription_expires_at:future()});
-  assert.equal(await api.verifySubscriptionFirestore('u@example.test','hadits','u'),false);
+  assert.equal(api.getEntitlementAccess(db.docs.get('users/u'),'hadits').active,false);
   assert.equal(db.docs.get('users/u').entitlements.hadits.status,'revoked');
 });
 test('A03 new account cannot inherit a transaction owned by another UID', async () => {

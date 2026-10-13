@@ -20,18 +20,6 @@
       ],
       "rewrites": [
         {
-          "source": "/chat/**",
-          "function": "chatGate"
-        },
-        {
-          "source": "/login",
-          "function": "chatGate"
-        },
-        {
-          "source": "/logout",
-          "function": "chatGate"
-        },
-        {
           "source": "/doku-webhook",
           "function": "dokuWebhook"
         },
@@ -57,18 +45,6 @@
       ],
       "rewrites": [
         {
-          "source": "/chat/**",
-          "function": "chatGate"
-        },
-        {
-          "source": "/login",
-          "function": "chatGate"
-        },
-        {
-          "source": "/logout",
-          "function": "chatGate"
-        },
-        {
           "source": "/doku-webhook",
           "function": "dokuWebhook"
         },
@@ -93,18 +69,6 @@
         "**/node_modules/**"
       ],
       "rewrites": [
-        {
-          "source": "/chat/**",
-          "function": "chatGate"
-        },
-        {
-          "source": "/login",
-          "function": "chatGate"
-        },
-        {
-          "source": "/logout",
-          "function": "chatGate"
-        },
         {
           "source": "/doku-webhook",
           "function": "dokuWebhook"

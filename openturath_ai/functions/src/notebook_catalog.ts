@@ -630,20 +630,6 @@ export interface ResolvedNotebook {
 }
 
 /**
- * Consistent hashing DJB2 untuk menjaga agar user selalu terhubung
- * ke kloning notebook yang sama (sticky session), sekaligus menyebarkan
- * beban secara merata ke seluruh 13 kloning ($1/13 \approx 7.7\%$ per notebook).
- */
-export function hashString(str: string): number {
-  let hash = 5381;
-  for (let i = 0; i < str.length; i++) {
-    hash = ((hash << 5) + hash) + str.charCodeAt(i);
-    hash = hash & hash; // Convert to 32bit int
-  }
-  return Math.abs(hash);
-}
-
-/**
  * Resolves optimal notebook URL for a given agentId and optional user UID.
  */
 export function resolveAgentNotebook(agentId: string, uid?: string): ResolvedNotebook | null {
@@ -654,15 +640,6 @@ export function resolveAgentNotebook(agentId: string, uid?: string): ResolvedNot
   if (!entity) return null;
 
   // Selalu arahkan ke Master Notebook resmi terverifikasi yang terhubung ke sharing/provisioning
-  return {
-    url: entity.masterUrl,
-    notebookId: entity.masterId,
-    cloneName: `${entity.name} (Master)`,
-    entityCode,
-    isMaster: true,
-  };
-
-  // Default ke Master jika tanpa UID atau belum ada klon
   return {
     url: entity.masterUrl,
     notebookId: entity.masterId,

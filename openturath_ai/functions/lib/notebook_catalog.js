@@ -6,7 +6,6 @@
 /// ================================================================
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AGENT_TO_ENTITY = exports.NOTEBOOK_ENTITIES = void 0;
-exports.hashString = hashString;
 exports.resolveAgentNotebook = resolveAgentNotebook;
 exports.NOTEBOOK_ENTITIES = {
     "06.1_AL_MUHAQQIQ": {
@@ -614,19 +613,6 @@ exports.AGENT_TO_ENTITY = {
     "usul_qawaid": "16_QAWAID_FIQHIYYAH",
 };
 /**
- * Consistent hashing DJB2 untuk menjaga agar user selalu terhubung
- * ke kloning notebook yang sama (sticky session), sekaligus menyebarkan
- * beban secara merata ke seluruh 13 kloning ($1/13 \approx 7.7\%$ per notebook).
- */
-function hashString(str) {
-    let hash = 5381;
-    for (let i = 0; i < str.length; i++) {
-        hash = ((hash << 5) + hash) + str.charCodeAt(i);
-        hash = hash & hash; // Convert to 32bit int
-    }
-    return Math.abs(hash);
-}
-/**
  * Resolves optimal notebook URL for a given agentId and optional user UID.
  */
 function resolveAgentNotebook(agentId, uid) {
@@ -637,14 +623,6 @@ function resolveAgentNotebook(agentId, uid) {
     if (!entity)
         return null;
     // Selalu arahkan ke Master Notebook resmi terverifikasi yang terhubung ke sharing/provisioning
-    return {
-        url: entity.masterUrl,
-        notebookId: entity.masterId,
-        cloneName: `${entity.name} (Master)`,
-        entityCode,
-        isMaster: true,
-    };
-    // Default ke Master jika tanpa UID atau belum ada klon
     return {
         url: entity.masterUrl,
         notebookId: entity.masterId,
