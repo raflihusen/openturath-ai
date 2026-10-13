@@ -16,18 +16,11 @@ class TelemetryService {
 
   static final TelemetryService instance = TelemetryService._();
 
-  FirebaseFirestore? _firestore;
-  FirebaseAuth? _auth;
+  final FirebaseFirestore? _firestore;
+  final FirebaseAuth? _auth;
 
   FirebaseFirestore get _db => _firestore ?? FirebaseFirestore.instance;
   FirebaseAuth get _firebaseAuth => _auth ?? FirebaseAuth.instance;
-
-  /// Visible for testing to inject mock instances
-  @visibleForTesting
-  void setMockInstances({FirebaseFirestore? firestore, FirebaseAuth? auth}) {
-    _firestore = firestore;
-    _auth = auth;
-  }
 
   /// Ring buffer untuk breadcrumbs (maksimal 20 peristiwa terakhir)
   static const int maxBreadcrumbs = 20;

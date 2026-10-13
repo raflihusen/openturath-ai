@@ -85,11 +85,7 @@ class CanonicalLibraryService {
 
   final Map<String, List<CanonicalBookPresentation>> _catalogCache = {};
 
-  CanonicalImport? _syafiiCatalog;
   List<CanonicalBookPresentation>? _syafiiPresentations;
-
-  /// Normalizes Arabic text by stripping diacritics and unifying letter variants.
-  static String normalizeArabic(String text) => ArabicUtils.normalize(text);
 
   /// Loads catalog for a specific agent or discipline.
   Future<List<CanonicalBookPresentation>> loadCatalogForAgent(AgentModel agent) async {
@@ -102,13 +98,6 @@ class CanonicalLibraryService {
       }
       return [];
     }
-    return loadCatalogFromAsset(assetPath);
-  }
-
-  /// Loads catalog by discipline field ID (fiqh, hadith, usul, lughah, tafsir, fiqh_tahawwulat).
-  Future<List<CanonicalBookPresentation>> loadCatalogByField(String fieldId) async {
-    final assetPath = _assetMapByField[fieldId];
-    if (assetPath == null) return [];
     return loadCatalogFromAsset(assetPath);
   }
 
@@ -141,9 +130,6 @@ class CanonicalLibraryService {
 
   /// Get cached presentations or null if not yet loaded.
   List<CanonicalBookPresentation>? get cachedSyafiiBooks => _syafiiPresentations;
-
-  /// Get parsed canonical import or null if not yet loaded.
-  CanonicalImport? get rawSyafiiCatalog => _syafiiCatalog;
 
   /// Filter books by query string with diacritic-tolerant Arabic & Latin normalization.
   List<CanonicalBookPresentation> filterBooks(

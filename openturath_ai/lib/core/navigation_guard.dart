@@ -14,9 +14,6 @@ class NavigationGuard {
   static final Set<String> _inFlightRoutes = <String>{};
   static bool _isCustomNavigating = false;
 
-  /// Mengetahui apakah ada rute tertentu yang sedang dalam proses transisi push.
-  static bool isRouteInFlight(String routeName) => _inFlightRoutes.contains(routeName);
-
   /// Mengeksekusi [Navigator.pushNamed] dengan perlindungan *Single-Flight Guard* per-route.
   ///
   /// Kunci dilepaskan otomatis setelah jendela animasi/transisi 450 milidetik selesai,

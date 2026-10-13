@@ -173,16 +173,6 @@ class HijriDateUtils {
     return (day: hDay.clamp(1, 30), month: hMonth.clamp(1, 12), year: hYear);
   }
 
-  /// Sinkronisasi tanggal Hijriyah dari AlAdhan API resmi secara senyap di latar belakang.
-  static void registerVerifiedHijriDate(
-      {required DateTime date,
-      required int day,
-      required int month,
-      required int year}) {
-    final key = '${date.year}-${date.month}-${date.day}';
-    _apiCache[key] = (day: day, month: month, year: year);
-  }
-
   /// Menghasilkan format tanggal ganda yang anggun dan editorial:
   /// Contoh: "26 Shafar 1448 H • 9 September 2026 M"
   static String formatDualDate([DateTime? date]) {

@@ -20,11 +20,8 @@ class AgentSessionTab {
   bool isGooglePermissionError = false;
   bool isGoogleAuthPage = false;
 
-  /// Izin masuk ke akun Google yang sama di dalam ruang asisten.
-  static bool googleSignInConsent = true;
   static double defaultFontScale = 1.0;
   double fontScale = defaultFontScale;
-  bool hasAcknowledgedAdab = false;
   bool hasInjectedEarlyScript = false;
   bool isMenuOpen = false;
 
@@ -80,7 +77,6 @@ class AgentSessionManager extends ChangeNotifier {
   List<AgentSessionTab> get tabs => List.unmodifiable(_tabs);
   int get activeIndex => _activeIndex;
   bool get isOpen => _isOpen;
-  bool get hasSessions => _tabs.isNotEmpty;
 
   AgentSessionTab? get activeTab {
     if (_tabs.isEmpty || _activeIndex < 0 || _activeIndex >= _tabs.length) {

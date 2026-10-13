@@ -8,7 +8,6 @@ import 'design/ot_typography.dart';
 class AppTheme {
   // ── 1. Light Mode Tokens (Warm Archival Paper) ───────────────────────────
   static const Color canvasLight = OTColors.canvasLight;
-  static const Color groupedCanvasLight = OTColors.canvasLight;
   static const Color surfaceCardLight = OTColors.surfaceLight;
   static const Color surfaceHeaderLight = OTColors.surfaceLight;
   static const Color borderLight = OTColors.borderLight;
@@ -23,19 +22,12 @@ class AppTheme {
   static const Color citationBgLight = OTColors.surfaceSubtleLight;
   static const Color citationTextLight = OTColors.textPrimaryLight;
   static const Color queryBoxBgLight = OTColors.surfaceLight;
-  static const Color queryBoxBorderLight = OTColors.borderLight;
 
   // ── 1b. Token Navigasi & Status ───────────────────────────────────────────
   // Status kritis memakai ikon dan pesan eksplisit di atas palet monokrom.
-  static const Color navBarDark = Color(0xCC111111);
-  static const Color navBarLight = Color(0xD9FAFAFA);
-  static const Color navBarBorderDark = OTColors.borderDark;
-  static const Color navBarBorderLight = OTColors.borderLight;
-  static const double dividerIndent = 54.0;
 
   // ── 2. Dark Mode Tokens (Quiet Obsidian Scholar) ─────────────────────────
   static const Color canvasDark = OTColors.canvasDark;
-  static const Color groupedCanvasDark = OTColors.canvasDark;
   static const Color surfaceCardDark = OTColors.surfaceDark;
   static const Color surfaceHeaderDark = OTColors.surfaceDark;
   static const Color borderDark = OTColors.borderDark;
@@ -50,40 +42,20 @@ class AppTheme {
   static const Color citationBgDark = OTColors.surfaceSubtleDark;
   static const Color citationTextDark = OTColors.textPrimaryDark;
   static const Color queryBoxBgDark = OTColors.surfaceDark;
-  static const Color queryBoxBorderDark = OTColors.borderDark;
   static const Color surfaceElevated = OTColors.surfaceSubtleDark;
-  static const Color scholarlyIndigo = OTColors.textPrimaryDark;
   static const Color readingCanvasParchmentLight = Color(0xFFFAFAFA);
   static const Color readingCanvasParchmentDark = Color(0xFF191919);
 
   // ── 3. Backwards Compatibility Aliases ────────────────────────────────────
   static const Color lmLightCanvas = canvasLight;
   static const Color lmLightSurface = surfaceCardLight;
-  static const Color lmLightHeader = surfaceHeaderLight;
-  static const Color lmLightInput = queryBoxBgLight;
   static const Color lmLightBorder = borderLight;
-  static const Color lmLightDivider = borderSubtleLight;
-  static const Color lmLightTextPrimary = textPrimaryLight;
-  static const Color lmLightTextSecondary = textSecondaryLight;
-  static const Color lmLightTextTertiary = textTertiaryLight;
   static const Color lmLightAccent = accentLight;
-  static const Color lmLightCitationBg = citationBgLight;
-  static const Color lmLightCitationText = citationTextLight;
-  static const Color lmLightPillAction = pillActionBgLight;
 
   static const Color lmDarkCanvas = canvasDark;
   static const Color lmDarkSurface = surfaceCardDark;
-  static const Color lmDarkHeader = surfaceHeaderDark;
-  static const Color lmDarkInput = queryBoxBgDark;
   static const Color lmDarkBorder = borderDark;
-  static const Color lmDarkDivider = borderSubtleDark;
-  static const Color lmDarkTextPrimary = textPrimaryDark;
-  static const Color lmDarkTextSecondary = textSecondaryDark;
-  static const Color lmDarkTextTertiary = textTertiaryDark;
   static const Color lmDarkAccent = accentDark;
-  static const Color lmDarkCitationBg = citationBgDark;
-  static const Color lmDarkCitationText = citationTextDark;
-  static const Color lmDarkPillAction = pillActionBgDark;
 
   // ── 4. Geometri & Radius Apple HIG (3 Nilai Baku: 8, 16, 100) ───────────────
   static const double radiusXS = OTRadius.xs; // Kecil: tag, tooltip
@@ -91,29 +63,10 @@ class AppTheme {
   static const double radiusM = OTRadius.card; // Alias untuk kompatibilitas
   static const double radiusS = OTRadius.xs;
   static const double radiusL = OTRadius.card;
-  static const double radiusXL = OTRadius.card;
   static const double radiusFull = OTRadius.chip; // Pil: chip, avatar
   static const double radiusPill = OTRadius.button; // Tombol pil
-  static const double radiusQuery = OTRadius.input; // Chat Query Stadium Pill
 
   // ── 5. Gradients ──────────────────────────────────────────────────────────
-  static const LinearGradient bgGradient = LinearGradient(
-    begin: Alignment.topCenter,
-    end: Alignment.bottomCenter,
-    colors: [canvasDark, canvasDark],
-  );
-
-  static const LinearGradient lightBgGradient = LinearGradient(
-    begin: Alignment.topCenter,
-    end: Alignment.bottomCenter,
-    colors: [canvasLight, canvasLight],
-  );
-
-  static const LinearGradient geminiSparkleGradient = LinearGradient(
-    colors: [accentDark, accentDark],
-    begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
-  );
 
   // Dark Theme
   // Satu transisi halaman untuk semua rute Material: pudar-maju yang singkat.
@@ -700,11 +653,4 @@ class AppTheme {
     );
   }
 
-  static LinearGradient agentGradient(String agentId) {
-    return const LinearGradient(
-      colors: [accentDark, accentDark],
-      begin: Alignment.topLeft,
-      end: Alignment.bottomRight,
-    );
-  }
 }

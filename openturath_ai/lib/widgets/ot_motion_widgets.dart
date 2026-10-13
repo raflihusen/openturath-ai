@@ -336,12 +336,6 @@ class _OTFlipCardState extends State<OTFlipCard>
   }
 }
 
-/// Chevron "buka" yang mengikuti arah baca: › di LTR, ‹ di RTL.
-IconData otChevronIcon(BuildContext context) =>
-    Directionality.of(context) == TextDirection.rtl
-        ? Icons.chevron_left_rounded
-        : Icons.chevron_right_rounded;
-
 /// Jarak judul [AppBar]: rapat ke tombol kembali; tanpa tombol kembali,
 /// judul sejajar dengan tepi isi halaman.
 double otTitleSpacing(BuildContext context) =>

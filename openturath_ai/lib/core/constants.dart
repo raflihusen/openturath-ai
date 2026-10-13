@@ -1,7 +1,6 @@
 class AppConstants {
   // ── App Info ──────────────────────────────────────────────────
   static const String appName = 'OpenTurath AI';
-  static const String appNameArabic = 'الذكاء الاصطناعي للعلوم الإسلامية';
   static const String appTagline = 'AI for Islamic Scholarship';
 
   // ── User Agent Desktop Resmi (Safari macOS untuk WKWebView) ──
@@ -14,7 +13,6 @@ class AppConstants {
 
   // ── Firestore Collections ─────────────────────────────────────
   static const String colUsers = 'users';
-  static const String colAgents = 'agents';
   static const String colTransactions = 'transactions';
 
   // ── Subscription Plans ────────────────────────────────────────
@@ -32,5 +30,4 @@ class AppConstants {
   static const int priceTholib1m = 50000;
   static const int priceTholib6m = 299000;
   static const int priceBahits1y = 499000;
-  static const int priceAllAiPromo1m = 99000; // Dinonaktifkan sementara
 }

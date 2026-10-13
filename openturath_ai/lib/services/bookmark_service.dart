@@ -34,14 +34,12 @@ class BookmarkService extends ChangeNotifier {
   FirebaseFirestore? _firestore;
   FirebaseAuth? _auth;
   bool _isSyncing = false;
-  bool get isSyncing => _isSyncing;
   bool _resyncRequested = false;
 
   /// Catatan yang sudah tersimpan di perangkat tetapi belum sampai ke cloud.
   final Set<String> _pendingPushIds = <String>{};
   int get pendingSyncCount => _pendingPushIds.length;
   bool get hasPendingSync => _pendingPushIds.isNotEmpty;
-  bool isPendingSync(String id) => _pendingPushIds.contains(id);
 
   FirebaseAuth? get _activeAuth {
     if (_auth != null) return _auth;
@@ -99,14 +97,6 @@ class BookmarkService extends ChangeNotifier {
       (await _store.read(_key(userId)))
           .where((bookmark) => !bookmark.isDeleted)
           .toList();
-
-  Future<void> saveAll(List<BookmarkModel> bookmarks, {String? userId}) async {
-    final key = _key(userId);
-    final existing = await _store.read(key);
-    final tombstones = existing.where((bookmark) => bookmark.isDeleted);
-    await _store.replace(key, [...bookmarks, ...tombstones]);
-    notifyListeners();
-  }
 
   Future<void> addBookmark(BookmarkModel bookmark, {String? userId}) async {
     final effectiveUid = userId ?? _activeAuth?.currentUser?.uid;

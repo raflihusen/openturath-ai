@@ -149,8 +149,6 @@ class UserModel {
   bool get isTrialExhausted => false;
 
   // ── Modular Entitlement Helpers ──
-  ModuleEntitlement? getEntitlement(String agentId) =>
-      entitlements[entitlementKeys[agentId] ?? agentId];
 
   bool isAgentSubscriptionActive(String agentId) {
     // Owner-approved permanent VIP outranks expired or revoked paid packages.

@@ -77,12 +77,6 @@ class ResearchNotesService {
     final uid = userId ?? FirebaseAuth.instance.currentUser?.uid;
     return uid == null || uid.isEmpty ? 'openturath_research_notes_v1' : 'openturath_${uid}_research_notes_v1';
   }
-  Future<List<ResearchNote>> getNotes({String? agentId, String? userId}) async {
-    final key = _key(userId);
-    final notes = await _store.read(key);
-    notes.sort((a, b) => b.createdAt.compareTo(a.createdAt));
-    return agentId == null || agentId.isEmpty ? notes : notes.where((n) => n.agentId == agentId).toList();
-  }
   Future<void> saveNote(ResearchNote note, {String? userId}) {
     final key = _key(userId);
     return _store.update(key, (notes) {

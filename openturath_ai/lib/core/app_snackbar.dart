@@ -107,12 +107,6 @@ class AppSnackBar {
     }
   }
 
-  static void hide(BuildContext context) {
-    try {
-      ScaffoldMessenger.of(context).clearSnackBars();
-    } catch (_) {}
-  }
-
   static void clear(BuildContext context) {
     try {
       ScaffoldMessenger.of(context).clearSnackBars();
