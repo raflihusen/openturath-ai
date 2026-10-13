@@ -220,7 +220,7 @@ class UpdateService extends ChangeNotifier {
     if (_isDownloading) return;
     _isDownloading = true;
 
-    final client = HttpClient();
+    final client = HttpClient()..connectionTimeout = const Duration(seconds: 30);
     try {
       _status = UpdateStatus.downloading;
       notifyListeners();
@@ -229,7 +229,7 @@ class UpdateService extends ChangeNotifier {
       await _cleanOldUpdates(targetFile.path);
 
       final request = await client.getUrl(Uri.parse(url));
-      final response = await request.close();
+      final response = await request.close().timeout(const Duration(seconds: 30));
 
       if (response.statusCode != 200) {
         _status = UpdateStatus.idle;
@@ -238,6 +238,11 @@ class UpdateService extends ChangeNotifier {
       }
 
       final contentLength = response.contentLength;
+      // Bound disk consumption even when the server omits Content-Length.
+      const maxDownloadBytes = 256 * 1024 * 1024;
+      if (contentLength > maxDownloadBytes) {
+        throw const HttpException('Update exceeds download size limit');
+      }
       final tempFile = File('${targetFile.path}.tmp');
       if (await tempFile.exists()) {
         await tempFile.delete();
@@ -247,9 +252,12 @@ class UpdateService extends ChangeNotifier {
       int receivedBytes = 0;
 
       try {
-        await for (final chunk in response) {
-          sink.add(chunk);
+        await for (final chunk in response.timeout(const Duration(seconds: 30))) {
           receivedBytes += chunk.length;
+          if (receivedBytes > maxDownloadBytes) {
+            throw const HttpException('Update exceeds download size limit');
+          }
+          sink.add(chunk);
           if (contentLength > 0) {
             final progress = receivedBytes / contentLength;
             _updateInfo = _updateInfo?.copyWith(downloadProgress: progress);
