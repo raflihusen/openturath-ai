@@ -51,6 +51,19 @@ async function vpsWriterActive(): Promise<boolean> {
   return (await db.collection("access_control").doc("runtime").get()).data()?.writer === "vps-v2";
 }
 
+// Scopes the profile shows as active that no ledger grant backs. Moving such
+// an account to the ledger-only evaluator would silently drop those modules,
+// so the caller places it on a revocation hold for review instead.
+function unbackedLegacyScopes(entitlements: Record<string, any>, grants: any[], skipScope: string, now: number): string[] {
+  return Object.entries(entitlements || {}).filter(([scope, ent]) => {
+    if (scope === skipScope || !ent || ent.status === "revoked" || ent.status === "expired") return false;
+    const expiry = millis(ent.expiry);
+    if (!Number.isFinite(expiry) || expiry <= now) return false;
+    return !grants.some(g => g && g.status === "active" && Number.isFinite(g.expires_ms) && g.expires_ms > now &&
+      [scope, "all_access", "all_ai"].includes(g.scope));
+  }).map(([scope]) => scope);
+}
+
 // ================================================================
 // HARGA & DURASI OTORITATIF — Ditentukan oleh `resolvePlanPricing`
 // ================================================================
@@ -215,11 +228,14 @@ export const getAgentUrl = functions
     }
 
     const userData = userDoc.data()!;
-    if (userData.access_version === 2 && (context.auth.token.email_verified !== true ||
+    // Until cutover no worker creates notebook assignments, so ledger-only
+    // resolution would lock out every paying account. Legacy evaluation applies.
+    const ledgerActive = userData.access_version === 2 && await vpsWriterActive();
+    if (ledgerActive && (context.auth.token.email_verified !== true ||
         String(context.auth.token.email || "").trim().toLowerCase() !== String(userData.email || "").trim().toLowerCase())) {
       throw new functions.https.HttpsError("failed-precondition","Gunakan email terverifikasi yang terdaftar untuk akses notebook ini.");
     }
-    if (userData.access_version === 2) {
+    if (ledgerActive) {
       const entity = AGENT_TO_ENTITY[agentId];
       if (!entity) throw new functions.https.HttpsError("not-found", "Kajian tidak ditemukan.");
       try { return await new AccessControl(db, NOTEBOOK_ENTITIES, ENTITY_SCOPES).resolve(uid, entity); }
@@ -233,7 +249,7 @@ export const getAgentUrl = functions
 
     const entitlementAccess = getEntitlementAccess(userData, entitlementKey);
     if (entitlementAccess.active) {
-      if ((await db.collection("access_control").doc("runtime").get()).data()?.writer === "vps-v2") {
+      if (await vpsWriterActive()) {
         const entity=AGENT_TO_ENTITY[agentId];
         if (!entity) throw new functions.https.HttpsError("not-found","Kajian tidak ditemukan.");
         try {return await new AccessControl(db,NOTEBOOK_ENTITIES,ENTITY_SCOPES).resolveObservedLegacy(uid,userData.email,entity);}
@@ -668,9 +684,13 @@ export const createCheckout = functions
         "Login diperlukan untuk melakukan transaksi."
       );
     }
-    const { plan, name, email, phone, agentId, expectedAmount, pricingRevision } = data;
+    const { plan, agentId, expectedAmount, pricingRevision } = data || {};
+    const text = (value: unknown, max: number): string => typeof value === "string" ? value.trim().slice(0, max) : "";
+    const name = text(data?.name, 120);
+    const email = text(data?.email, 254).toLowerCase();
+    const phone = text(data?.phone, 20).replace(/[^0-9+]/g, "");
 
-    if (!plan || !name || !email) {
+    if (typeof plan !== "string" || !plan || !name || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       throw new functions.https.HttpsError(
         "invalid-argument",
         "Data tidak lengkap (nama dan email diperlukan)."
@@ -685,6 +705,13 @@ export const createCheckout = functions
          pricingRevision !== "perdana-2026-09-20")) {
       throw new functions.https.HttpsError("failed-precondition", "Harga penawaran telah berubah. Muat ulang aplikasi.");
     }
+    // Each checkout writes two documents and calls the gateway.
+    await enforceRateLimit(
+      `checkout_${context.auth.uid}`,
+      10,
+      600,
+      "Terlalu banyak permintaan pembayaran."
+    );
     const invoiceNumber = `OT-${crypto.randomUUID()}`;
 
     const trxRef = db.collection("transactions").doc();
@@ -844,23 +871,18 @@ async function processSuccessfulPayment(invoiceNumber: string, paidAmount: unkno
     if (!uSnap.exists) throw new Error("Payment owner profile is missing");
     const uData = uSnap.data()!;
     const entitlements = (uData.entitlements || {}) as Record<string, any>;
-    const currentEnt = entitlements[entitlementKey];
 
-    // F65: Hitung tanggal kedaluwarsa dengan month-end clamp
+    // Only ledger-backed grants extend a paid period. Profile expiry is a projection.
     const now = new Date();
     let baseDate = now;
-    if (currentEnt && currentEnt.expiry && currentEnt.status === "active") {
-      const curExpDate = currentEnt.expiry.toDate ? currentEnt.expiry.toDate() : new Date(currentEnt.expiry);
-      if (curExpDate > now) {
-        baseDate = curExpDate;
-      }
-    }
-    // Only ledger-backed grants extend a paid period. Profile expiry is a projection.
-    baseDate = now;
+    const ownedGrants: any[] = [];
     for (const id of uData.access_grant_ids || []) {
       const g = (await t.get(db.collection("access_grants").doc(id))).data();
+      if (g) ownedGrants.push(g);
       if (g && g.scope === entitlementKey && g.status === "active" && g.expires_ms > baseDate.getTime()) baseDate = new Date(g.expires_ms);
     }
+    const ledgerWriter = (await t.get(db.collection("access_control").doc("runtime"))).data()?.writer === "vps-v2";
+    const unbacked = unbackedLegacyScopes(entitlements, ownedGrants, entitlementKey, now.getTime());
     const expiryDate = new Date(billingExpiry(baseDate.getTime(), durationMonths));
     const grantId = keyOf("invoice", invoiceNumber);
     if (receiptRef) t.set(receiptRef, {invoice_number: invoiceNumber, uid, transaction_id: gatewayEvidence!.transactionId});
@@ -899,11 +921,17 @@ async function processSuccessfulPayment(invoiceNumber: string, paidAmount: unkno
 
     const userUpdate: any = {
       entitlements: updatedEntitlements,
-      access_version: 2,
       access_due_ms: Date.now(),
       access_grant_ids: [...new Set([...(uData.access_grant_ids || []), grantId])],
       updated_at: admin.firestore.FieldValue.serverTimestamp(),
     };
+    if (ledgerWriter) {
+      userUpdate.access_version = 2;
+      if (unbacked.length) {
+        userUpdate.access_revocation_hold = true;
+        userUpdate.access_legacy_audit_required = true;
+      }
+    }
 
     // F01: Hanya ubah plan global jika pembelian adalah paket all_access
     if (isAllAccess) {
@@ -1636,7 +1664,15 @@ export const redeemCode = functions
       const entitlements = (userData.entitlements || {}) as Record<string, any>;
       const currentEnt = entitlements[entitlementKey];
 
+      const ownedGrants: any[] = [];
+      for (const id of userData.access_grant_ids || []) {
+        const g = (await transaction.get(db.collection("access_grants").doc(id))).data();
+        if (g) ownedGrants.push(g);
+      }
+      const ledgerWriter = (await transaction.get(db.collection("access_control").doc("runtime"))).data()?.writer === "vps-v2";
+
       const redeemedAt = new Date();
+      const unbacked = unbackedLegacyScopes(entitlements, ownedGrants, entitlementKey, redeemedAt.getTime());
       if (isTrialVoucher && currentEnt?.plan === "trial" &&
           currentEnt.status === "active" && currentEnt.expiry) {
         const currentTrialExpiry = currentEnt.expiry.toDate
@@ -1713,10 +1749,16 @@ export const redeemCode = functions
       const userUpdate: any = {
         entitlements: updatedEntitlements,
         updated_at: admin.firestore.FieldValue.serverTimestamp(),
-        access_version: 2,
         access_due_ms: Date.now(),
         access_grant_ids: [...new Set([...(userData.access_grant_ids || []), voucherGrantId])],
       };
+      if (ledgerWriter) {
+        userUpdate.access_version = 2;
+        if (unbacked.length) {
+          userUpdate.access_revocation_hold = true;
+          userUpdate.access_legacy_audit_required = true;
+        }
+      }
 
       // Hanya set plan global jika voucher adalah all_access
       if (entitlementKey === "all_access") {
