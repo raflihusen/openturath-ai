@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:openturath_ai/core/app_config.dart';
 import 'package:openturath_ai/models/user_model.dart';
 import 'package:openturath_ai/screens/google_session_auth_screen.dart';
@@ -8,7 +7,6 @@ import 'package:openturath_ai/services/auth_service.dart';
 
 void main() {
   setUp(() {
-    GoogleFonts.config.allowRuntimeFetching = false;
     AppConfig.localeNotifier.value = 'id';
   });
 

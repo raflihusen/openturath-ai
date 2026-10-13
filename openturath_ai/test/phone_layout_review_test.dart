@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:openturath_ai/models/agent_model.dart';
 import 'package:openturath_ai/models/sub_agent_model.dart';
 import 'package:openturath_ai/widgets/tahawwulat_flagship_card.dart';
@@ -8,7 +7,6 @@ import 'package:openturath_ai/widgets/promo_price.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
-  GoogleFonts.config.allowRuntimeFetching = false;
 
   testWidgets('koleksi utama tetap ringkas dan semua AI dapat dibuka di ponsel',
       (tester) async {

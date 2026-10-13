@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:openturath_ai/core/routes.dart';
 import 'package:openturath_ai/screens/splash_screen.dart';
 
 void main() {
-  setUp(() => GoogleFonts.config.allowRuntimeFetching = false);
 
   Future<void> startApp(
     WidgetTester tester,

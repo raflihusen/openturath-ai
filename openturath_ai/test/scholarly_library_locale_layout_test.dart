@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:openturath_ai/core/app_config.dart';
 import 'package:openturath_ai/core/localization.dart';
 import 'package:openturath_ai/models/open_turath_book.dart';
@@ -14,7 +13,6 @@ import 'package:openturath_ai/widgets/specialist_card.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
-  GoogleFonts.config.allowRuntimeFetching = false;
 
   Widget localized(String language, Widget page) {
     AppConfig.localeNotifier.value = language;

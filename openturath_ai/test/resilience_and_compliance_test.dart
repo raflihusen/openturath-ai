@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:openturath_ai/core/theme.dart';
 import 'package:openturath_ai/core/app_config.dart';
 import 'package:openturath_ai/models/agent_model.dart';
@@ -13,7 +12,6 @@ import 'package:openturath_ai/core/design/ot_typography.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
-  GoogleFonts.config.allowRuntimeFetching = false;
   OTTypography.useSystemFontFallback = true;
 
   group('Resilience & Compliance Suite', () {
