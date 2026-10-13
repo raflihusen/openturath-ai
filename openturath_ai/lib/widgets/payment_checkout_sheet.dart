@@ -23,11 +23,11 @@ import 'promo_price.dart';
 
 import 'package:openturath_ai/core/design/ot_typography.dart';
 import 'package:openturath_ai/core/design/ot_radius.dart';
-/// DokuCheckoutSheet: In-App Modal Pembayaran DOKU dengan Deteksi Otomatis
-/// Menampilkan halaman DOKU di dalam modal aplikasi tanpa perlu terlempar ke Chrome.
+/// PaymentCheckoutSheet: In-App Modal Pembayaran dengan Deteksi Otomatis
+/// Menampilkan halaman gateway di dalam modal aplikasi tanpa perlu terlempar ke Chrome.
 /// Dilengkapi background status synchronization (inquiry real-time) yang otomatis
 /// mendeteksi keberhasilan pembayaran dan menutup pop-up seketika transaksi tuntas.
-class DokuCheckoutSheet extends StatefulWidget {
+class PaymentCheckoutSheet extends StatefulWidget {
   final String paymentUrl;
   final String invoiceNumber;
   final String? trxId;
@@ -36,7 +36,7 @@ class DokuCheckoutSheet extends StatefulWidget {
   final int? regularAmount;
   final String periodLabel;
 
-  const DokuCheckoutSheet({
+  const PaymentCheckoutSheet({
     super.key,
     required this.paymentUrl,
     required this.invoiceNumber,
@@ -83,7 +83,7 @@ class DokuCheckoutSheet extends StatefulWidget {
                     ],
                   ),
                   clipBehavior: Clip.antiAlias,
-                  child: DokuCheckoutSheet(
+                  child: PaymentCheckoutSheet(
                     paymentUrl: paymentUrl,
                     invoiceNumber: invoiceNumber,
                     trxId: trxId,
@@ -105,7 +105,7 @@ class DokuCheckoutSheet extends StatefulWidget {
       backgroundColor: Colors.transparent,
       enableDrag: false,
       isDismissible: false,
-      builder: (context) => DokuCheckoutSheet(
+      builder: (context) => PaymentCheckoutSheet(
         paymentUrl: paymentUrl,
         invoiceNumber: invoiceNumber,
         trxId: trxId,
@@ -118,10 +118,10 @@ class DokuCheckoutSheet extends StatefulWidget {
   }
 
   @override
-  State<DokuCheckoutSheet> createState() => _DokuCheckoutSheetState();
+  State<PaymentCheckoutSheet> createState() => _PaymentCheckoutSheetState();
 }
 
-class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
+class _PaymentCheckoutSheetState extends State<PaymentCheckoutSheet> {
   final SubscriptionService _subService = SubscriptionService();
 
   InAppWebViewController? _webController;
@@ -604,7 +604,7 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
 
 
 
-                  // WebView DOKU / Midtrans
+                  // WebView gateway pembayaran
                   Expanded(
                     child: InAppWebView(
                       gestureRecognizers: <Factory<OneSequenceGestureRecognizer>>{
@@ -683,18 +683,18 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
                                           .externalNonBrowserApplication);
                             } catch (e) {
                               debugPrint(
-                                  '[DokuCheckout] Gagal membuka external payment app: $e');
+                                  '[PaymentCheckout] Gagal membuka external payment app: $e');
                             }
                           } else {
                             debugPrint(
-                                '[DokuCheckout] External scheme ditolak karena tidak masuk allowlist: ${uri.scheme}');
+                                '[PaymentCheckout] External scheme ditolak karena tidak masuk allowlist: ${uri.scheme}');
                           }
                           return NavigationActionPolicy.CANCEL;
                         }
 
                         if (!_isAllowedPaymentDestination(uri)) {
                           debugPrint(
-                              '[DokuCheckout] Navigation to untrusted destination rejected: $webUri');
+                              '[PaymentCheckout] Navigation to untrusted destination rejected: $webUri');
                           return NavigationActionPolicy.CANCEL;
                         }
 
@@ -734,7 +734,7 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
                           """);
                         } catch (_) {}
 
-                        // Deteksi instan jika DOM DOKU menampilkan halaman Payment Successful
+                        // Deteksi instan jika halaman gateway menampilkan halaman Payment Successful
                         try {
                           final isPaidDom =
                               await controller.evaluateJavascript(source: """

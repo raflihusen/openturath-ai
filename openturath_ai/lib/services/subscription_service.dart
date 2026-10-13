@@ -1,15 +1,12 @@
 import '../core/localization.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import '../core/constants.dart';
-import '../models/user_model.dart';
 import 'device_service.dart';
-import 'doku_service.dart';
+import 'payment_service.dart';
 import 'callable_gateway.dart';
 
 class SubscriptionService {
-  late final FirebaseFirestore _db = FirebaseFirestore.instance;
-  final DokuService _dokuService = DokuService();
+  final PaymentService _paymentService = PaymentService();
 
   /// Normalisasi kode voucher: hapus spasi, ubah huruf kapital, hapus tanda strip
   static String normalizeCode(String input) {
@@ -123,7 +120,7 @@ class SubscriptionService {
     }
   }
 
-  // ── Buat Payment Request resmi ke DOKU Payment Gateway ───────
+  // ── Buat sesi pembayaran lewat Cloud Functions ───────
   Future<Map<String, dynamic>> createPayment({
     required String uid,
     required String agentId,
@@ -137,8 +134,7 @@ class SubscriptionService {
     final resolvedAmount = amount ?? _getPriceForPlan(plan);
     final resolvedTitle = planTitle ?? _getTitleForPlan(plan);
 
-    // Eksekusi checkout DOKU melalui Cloud Functions
-    return await _dokuService.createCheckoutSession(
+    return await _paymentService.createCheckoutSession(
       uid: uid,
       agentId: agentId,
       plan: plan,
@@ -150,7 +146,7 @@ class SubscriptionService {
     );
   }
 
-  // ── Cek status transaksi secara aktif (inquiry ke DOKU API via Cloud Function) ──
+  // ── Cek status transaksi secara aktif (inquiry gateway via Cloud Function) ──
   Future<Map<String, dynamic>> verifyPaymentStatus({
     required String invoiceNumber,
     String? trxId,
@@ -164,10 +160,9 @@ class SubscriptionService {
       };
     }
 
-    // Panggil checkPaymentStatus Cloud Function yang inquiry langsung ke API DOKU (server-to-server)
-    // Server-side function yang memverifikasi signature dan keaslian status transaksi dari DOKU
+    // Status ditanyakan server ke gateway; klien tidak pernah memutuskan lunas sendiri.
     final res =
-        await _dokuService.checkPaymentStatus(invoiceNumber: cleanInvoice);
+        await _paymentService.checkPaymentStatus(invoiceNumber: cleanInvoice);
 
     // Validasi ketat respon server Cloud Function: hanya status final yang dianggap lunas
     final rawStatus = (res['status'] ?? '').toString().toUpperCase().trim();
@@ -190,21 +185,8 @@ class SubscriptionService {
   }
 
   // ── Legacy polling helper ────────────────────────────────────
-  Future<String> checkPaymentStatus(String trxId) async {
-    final doc =
-        await _db.collection(AppConstants.colTransactions).doc(trxId).get();
-    if (!doc.exists) return 'pending';
-    return (doc.data()?['status'] ?? 'pending') as String;
-  }
 
   // ── Stream status user secara real-time ───────────────────────
-  Stream<UserModel?> watchUserSubscription(String uid) {
-    return _db
-        .collection(AppConstants.colUsers)
-        .doc(uid)
-        .snapshots()
-        .map((doc) => doc.exists ? UserModel.fromFirestore(doc) : null);
-  }
 
   int _getPriceForPlan(String plan) {
     switch (plan) {
@@ -214,8 +196,6 @@ class SubscriptionService {
         return AppConstants.priceTholib6m;
       case AppConstants.planBahits1y:
         return AppConstants.priceBahits1y;
-      case 'all_ai_1m':
-        return AppConstants.priceAllAiPromo1m;
       default:
         return AppConstants.priceTholib1m;
     }

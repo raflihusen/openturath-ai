@@ -3,11 +3,10 @@ import 'package:cloud_functions/cloud_functions.dart';
 import '../core/constants.dart';
 import '../core/product_pricing.dart';
 
-/// DokuService — Layanan checkout DOKU yang aman & terpusat.
-/// Seluruh kalkulasi signature HMAC dan interaksi ke API DOKU
-/// dieksekusi secara eksklusif oleh Cloud Functions (server-side),
-/// sehingga tidak ada Secret Key yang tersimpan di dalam client/APK.
-class DokuService {
+/// PaymentService — checkout Midtrans lewat Cloud Functions.
+/// Semua interaksi dengan gateway dan kuncinya terjadi di server; aplikasi
+/// tidak pernah menyimpan kunci rahasia.
+class PaymentService {
   final CallableGateway _functions = const CallableGateway();
 
   /// Buat sesi pembayaran checkout resmi melalui Cloud Function createCheckout
@@ -48,12 +47,11 @@ class DokuService {
     } on FirebaseFunctionsException {
       rethrow;
     } catch (e) {
-      throw Exception('Gagal membuat sesi pembayaran DOKU: $e');
+      throw Exception('Gagal membuat sesi pembayaran: $e');
     }
   }
 
-  /// Periksa status pembayaran secara aktif langsung ke Cloud Functions
-  /// yang memverifikasi transaksi langsung ke DOKU Orders API.
+  /// Periksa status pembayaran lewat Cloud Function yang menanyakan gateway.
   Future<Map<String, dynamic>> checkPaymentStatus({
     required String invoiceNumber,
   }) async {
@@ -65,7 +63,6 @@ class DokuService {
       return {
         'success': false,
         'status': 'ERROR',
-        'error': e.toString(),
       };
     }
   }

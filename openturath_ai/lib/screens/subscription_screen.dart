@@ -14,7 +14,7 @@ import '../core/localization.dart';
 import '../core/product_pricing.dart';
 import '../models/agent_model.dart';
 import '../services/subscription_service.dart';
-import '../widgets/doku_checkout_sheet.dart';
+import '../widgets/payment_checkout_sheet.dart';
 import '../widgets/promo_price.dart';
 import '../widgets/redeem_code_sheet.dart';
 import '../core/app_platform.dart';
@@ -151,7 +151,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
           invoice.isEmpty) {
         throw const FormatException('Invalid checkout response');
       }
-      final paid = await DokuCheckoutSheet.show(context,
+      final paid = await PaymentCheckoutSheet.show(context,
           paymentUrl: paymentUrl,
           invoiceNumber: invoice,
           trxId: result['trxId'] as String?,
