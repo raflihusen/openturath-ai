@@ -1604,7 +1604,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
               useOnRenderProcessGone: true,
               supportMultipleWindows: true,
               javaScriptCanOpenWindowsAutomatically: true,
-              isInspectable: kDebugMode,
+              isInspectable: true,
               forceDark: isDark ? ForceDark.ON : ForceDark.OFF,
               forceDarkStrategy:
                   ForceDarkStrategy.PREFER_WEB_THEME_OVER_USER_AGENT_DARKENING,

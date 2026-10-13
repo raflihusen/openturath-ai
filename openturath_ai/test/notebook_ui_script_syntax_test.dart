@@ -27,4 +27,23 @@ void main() {
       await tempDir.delete(recursive: true);
     }
   });
+
+  test('notebookUiScript preserves message selectors and excludes composer from questions', () {
+    // questionSelector should NOT loosely match [class*="query" i] or [class*="prompt" i]
+    // because that matches .query-box-container and textarea
+    expect(notebookUiScript.contains(r'[class*="query" i], [class*="prompt" i]'), isFalse);
+    expect(notebookUiScript.contains(r'[class*="user-query" i]'), isTrue);
+    expect(notebookUiScript.contains(r'[class*="user-prompt" i]'), isTrue);
+
+    // ensureStyles should NOT hide chat-intro or conversation-intro
+    expect(notebookUiScript.contains('app-chat-intro'), isFalse);
+    expect(notebookUiScript.contains('app-conversation-intro'), isFalse);
+    expect(notebookUiScript.contains('.chat-intro'), isFalse);
+    expect(notebookUiScript.contains('.conversation-intro'), isFalse);
+
+    // message containers must maintain display block and visibility
+    expect(notebookUiScript.contains('.chat-message, .model-message, .user-message'), isTrue);
+    expect(notebookUiScript.contains('display: block !important;'), isTrue);
+    expect(notebookUiScript.contains('visibility: visible !important;'), isTrue);
+  });
 }

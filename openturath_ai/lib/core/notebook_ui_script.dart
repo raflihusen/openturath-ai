@@ -11,8 +11,8 @@ const notebookUiScript = r'''
     }
     return;
   }
-  const answerSelector = '.chat-message[data-sender="model"], .model-message, .response-message, .to-user-container, .to-user-message, .chat-message-pair .answer, [data-message-author-role="assistant"], app-chat-response, app-chat-message, .chat-response, [role="article"], app-chat-turn, chat-turn, [class*="turn" i], [class*="response" i]';
-  const questionSelector = '.chat-message[data-sender="user"], .user-message, .from-user, .to-model-container, [data-message-author-role="user"], app-chat-query, app-chat-prompt, [class*="query" i], [class*="prompt" i], [class*="user-turn" i]';
+  const answerSelector = '.chat-message[data-sender="model"], .model-message, .response-message, .to-user-container, .to-user-message, .chat-message-pair .answer, [data-message-author-role="assistant"], app-chat-response, app-chat-message, .chat-response, [role="article"], app-chat-turn, chat-turn, [class*="model-turn" i], [class*="model-response" i]';
+  const questionSelector = '.chat-message[data-sender="user"], .user-message, .from-user, .to-model-container, [data-message-author-role="user"], app-chat-query, app-chat-prompt, [class*="user-turn" i], [class*="user-query" i], [class*="user-prompt" i]';
   const visible = el => !!el && el.getClientRects().length > 0 && getComputedStyle(el).visibility !== 'hidden' && getComputedStyle(el).display !== 'none';
   const text = el => (el?.innerText || el?.textContent || '').trim();
   function answerText(el) {
@@ -298,25 +298,44 @@ const notebookUiScript = r'''
         box-sizing: border-box !important;
         padding-bottom: 120px !important;
       }
-      .chat-panel-content, .chat-view, .conversation-container, .message-list, [role="log"],
-      main, [role="main"], app-chat-view, app-conversation, app-chat-panel, .chat-panel, app-chat {
+      .chat-panel-content, .chat-view, .conversation-container, .message-list, [role="log"] {
         position: relative !important;
         display: flex !important;
         flex-direction: column !important;
         height: 100% !important;
         min-height: 100% !important;
+        flex: 1 1 auto !important;
         overflow-y: auto !important;
         -webkit-overflow-scrolling: touch !important;
         box-sizing: border-box !important;
         padding-bottom: 120px !important;
       }
+      main, [role="main"], app-chat-view, app-conversation, app-chat-panel, .chat-panel, app-chat {
+        position: relative !important;
+        display: flex !important;
+        flex-direction: column !important;
+        flex: 1 1 auto !important;
+        height: 100% !important;
+        min-height: 0 !important;
+        box-sizing: border-box !important;
+      }
       .chat-message, .model-message, .user-message, .chat-message-pair,
       app-chat-response, app-chat-message, app-chat-query, app-chat-prompt,
       .to-user-container, .to-model-container, [role="article"], .rendered-markdown,
-      app-chat-turn, chat-turn, [class*="turn" i], [class*="query" i], [class*="response" i],
-      [data-message-author-role] {
+      app-chat-turn, chat-turn, [data-message-author-role] {
+        display: block !important;
         visibility: visible !important;
         opacity: 1 !important;
+      }
+      .dark-theme .rendered-markdown, .dark .rendered-markdown,
+      .dark-theme .chat-response, .dark .chat-response,
+      .dark-theme .chat-message, .dark .chat-message,
+      .dark-theme .model-message, .dark .model-message,
+      .dark-theme .user-message, .dark .user-message,
+      .dark-theme [role="article"], .dark [role="article"],
+      [data-theme="dark"] .rendered-markdown, [data-theme="dark"] .chat-response,
+      [data-theme="dark"] .chat-message, [data-theme="dark"] [role="article"] {
+        color: #E4E4E7 !important;
       }
       .chat-message-pair:last-child,
       .model-message:last-child,
@@ -325,7 +344,6 @@ const notebookUiScript = r'''
       app-chat-message:last-child,
       app-chat-turn:last-child,
       chat-turn:last-child,
-      [class*="turn" i]:last-child,
       .chat-message:last-child,
       [role="article"]:last-child {
         margin-bottom: 120px !important;
@@ -358,12 +376,6 @@ const notebookUiScript = r'''
       app-guide-intro,
       .guide-intro,
       [class*="guide-intro" i],
-      app-chat-intro,
-      .chat-intro,
-      [class*="chat-intro" i],
-      app-conversation-intro,
-      .conversation-intro,
-      [class*="conversation-intro" i],
       app-notebook-intro,
       .notebook-intro,
       [class*="notebook-intro" i],
@@ -504,16 +516,13 @@ const notebookUiScript = r'''
   }
 
   function removeHeroCard() {
+    const isComposerOrInput = el => !el || !!el.closest('app-chat-input, form, .chat-input-container, .query-box-container, textarea, [contenteditable="true"]');
     const guideSelectors = [
-      'app-notebook-guide', 'notebook-guide',
       'app-artifact-summary', '.artifact-summary',
-      '.notebook-guide', '.guide-container', '.hero-container',
       '.cover-image-container', '.summary-card', '.guide-card',
       'app-notebook-overview', '.notebook-overview',
       'app-project-summary', '.project-summary',
       'app-guide-intro', '.guide-intro',
-      'app-chat-intro', '.chat-intro',
-      'app-conversation-intro', '.conversation-intro',
       'app-notebook-intro', '.notebook-intro',
       'app-project-intro', '.project-intro',
       'app-notebook-title', 'app-project-title',
@@ -522,29 +531,30 @@ const notebookUiScript = r'''
     ];
     guideSelectors.forEach(sel => {
       document.querySelectorAll(sel).forEach(el => {
-        if (!el.querySelector('textarea, [contenteditable="true"], form')) {
+        if (!isComposerOrInput(el) && !el.querySelector('textarea, [contenteditable="true"], form')) {
           el.style.setProperty('display', 'none', 'important');
         }
       });
     });
 
-    // Cari intro "sources", judul notebook ("AI-MUHAQQIQ"), tanggal, dan icon scroll
-    // jika ada pesan obrolan, sembunyikan elemen sebelum pesan pertama
-    const messageSel = questionSelector + ',' + answerSelector + ', .chat-message-pair, app-chat-turn, chat-turn, [class*="turn" i], app-chat-message, app-chat-response, app-chat-query, app-chat-prompt, [class*="query" i], [data-message-author-role]';
-    document.querySelectorAll('.chat-panel-content, .chat-view, .conversation-container, .message-list, [role="log"], main, app-chat-view, app-conversation, app-chat-panel, .chat-panel, app-chat').forEach(panel => {
-      const firstMessage = panel.querySelector(messageSel);
+    const messageSel = questionSelector + ',' + answerSelector + ', .chat-message-pair, app-chat-turn, chat-turn, app-chat-message, app-chat-response, [data-message-author-role]';
+    document.querySelectorAll('.chat-panel-content, .chat-view, .conversation-container, .message-list, [role="log"]').forEach(panel => {
+      const messages = [...panel.querySelectorAll(messageSel)].filter(el => !isComposerOrInput(el));
+      const firstMessage = messages[0];
       if (firstMessage) {
         let prev = firstMessage.previousElementSibling;
         while (prev) {
-          if (!prev.matches(messageSel) && !prev.querySelector(messageSel + ', textarea, [contenteditable="true"], form')) {
-            prev.style.setProperty('display', 'none', 'important');
+          if (!isComposerOrInput(prev)) {
+            if (prev.matches('.empty-state-header, app-notebook-title, app-project-title, app-notebook-cover, .notebook-cover, .cover-emoji, .cover-image-container, app-artifact-summary, .artifact-summary, .summary-card, [class*="hero-header" i], [class*="intro-header" i], app-suggestion-chips, .suggestion-chips') ||
+                prev.querySelector('.empty-state-header, app-notebook-cover, .cover-image-container, app-artifact-summary, .artifact-summary, .summary-card')) {
+              prev.style.setProperty('display', 'none', 'important');
+            }
           }
           prev = prev.previousElementSibling;
         }
       } else {
-        // Obrolan masih kosong (empty state): sembunyikan judul dan icon di empty-state saja (jangan sentuh container obrolan atau respon)
         panel.querySelectorAll('.empty-state-header, app-notebook-title, app-notebook-cover, .notebook-cover, .cover-emoji, [class*="hero-header" i], [class*="intro-header" i], app-chat-empty-state mat-icon, app-chat-empty-state img, app-chat-empty-state svg, app-empty-state mat-icon, app-empty-state img, app-empty-state svg').forEach(el => {
-          if (!el.querySelector('textarea, [contenteditable="true"], form') && !el.closest('app-chat-input, form, textarea, [contenteditable="true"]')) {
+          if (!isComposerOrInput(el)) {
             el.style.setProperty('display', 'none', 'important');
           }
         });
@@ -553,7 +563,7 @@ const notebookUiScript = r'''
 
     // Sembunyikan emoji cover / Ka'bah (🕋) jika berdiri sendiri di luar obrolan
     document.querySelectorAll('span, div, p, [role="img"]').forEach(el => {
-      if (el.closest('.chat-message, .model-message, .user-message, [role="article"], .rendered-markdown, app-chat-response, app-chat-input, form, textarea, [contenteditable="true"]')) return;
+      if (isComposerOrInput(el) || el.closest('.chat-message, .model-message, .user-message, [role="article"], .rendered-markdown, app-chat-response')) return;
       if (el.children.length === 0) {
         const t = (el.innerText || el.textContent || '').trim();
         if (t === '🕋' || (t.includes('🕋') && t.length <= 4)) {
@@ -562,14 +572,18 @@ const notebookUiScript = r'''
       }
     });
 
-    // 3. Sembunyikan di seluruh dokumen elemen yang bertuliskan "Loading Notebook..." atau "Memuat Notebook..."
-    document.querySelectorAll('div, p, span, h1, h2, h3, h4, h5, section, app-loading-screen, .loading-container').forEach(el => {
-      if (el.querySelector('textarea, [contenteditable="true"], form, .chat-message, [role="article"]')) return;
-      if (el.closest('app-chat-input, form, textarea, [contenteditable="true"], .chat-message, [role="article"]')) return;
-      const txt = (el.innerText || el.textContent || '').trim().toLowerCase();
-      if (!txt) return;
-      if (txt === 'loading notebook...' || txt === 'memuat notebook...' || txt === 'loading notebook' || txt === 'memuat notebook' || txt.includes('loading notebook') || txt.includes('memuat notebook')) {
+    // Sembunyikan pesan loading hanya pada leaf node
+    document.querySelectorAll('app-loading-screen, .loading-container, div, p, span, h1, h2, h3, h4, h5').forEach(el => {
+      if (isComposerOrInput(el) || el.querySelector('.chat-message, [role="article"]')) return;
+      if (el.matches('app-loading-screen, .loading-container')) {
         el.style.setProperty('display', 'none', 'important');
+        return;
+      }
+      if (el.children.length === 0) {
+        const txt = (el.innerText || el.textContent || '').trim().toLowerCase();
+        if (txt && txt.length < 35 && (txt === 'loading notebook...' || txt === 'memuat notebook...' || txt === 'loading notebook' || txt === 'memuat notebook' || txt.includes('loading notebook') || txt.includes('memuat notebook'))) {
+          el.style.setProperty('display', 'none', 'important');
+        }
       }
     });
   }
@@ -702,8 +716,19 @@ const notebookUiScript = r'''
           node = node.parentElement;
         }
         if (transcripts.size === 0) {
-          const panel = document.querySelector('.chat-panel-content, .chat-view, .conversation-container, .message-list, [role="log"], main, app-chat-view');
-          if (panel && !panel.contains(composer)) transcripts.add(panel);
+          const panels = document.querySelectorAll('.chat-panel-content, .chat-view, .conversation-container, .message-list, [role="log"], app-chat-view');
+          for (const p of panels) {
+            if (!p.contains(composer)) {
+              transcripts.add(p);
+              break;
+            } else {
+              const sibling = [...p.children].find(c => c !== composer && !c.contains(composer));
+              if (sibling) {
+                transcripts.add(sibling);
+                break;
+              }
+            }
+          }
         }
         let belowRoot = !!conversationRoot;
         ancestors.forEach(ancestor => {
@@ -1054,8 +1079,10 @@ document.addEventListener('wheel', event => {
   if (event.deltaY < 0) userPausedFollow = true;
 }, {passive: true, capture: true});
 document.addEventListener('click', event => {
-  if (event.target.closest?.('button[type="submit"], button[aria-label*="send" i], button[aria-label*="kirim" i]')) {
+  if (event.target.closest?.('button[type="submit"], button[aria-label*="send" i], button[aria-label*="kirim" i], .send-button, form button')) {
     userPausedFollow = false;
+    setTimeout(followLatestAnswer, 50);
+    setTimeout(followLatestAnswer, 250);
   }
 }, true);
 
