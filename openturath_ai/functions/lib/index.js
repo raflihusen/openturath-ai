@@ -2770,6 +2770,20 @@ exports.akalWebhook = functions
     const priceSchemeTitle = (priceScheme.name || priceScheme.title || "").trim();
     const rawTxnId = typeof data.id === "string" ? data.id.trim() : "";
     const amount = Number(data.amount) || 0;
+    // Preserve invalid evidence for operator verification; never auto-extend.
+    if (!rawTxnId || !Number.isFinite(amount) || amount <= 0) {
+        const eventKey = crypto.createHash("sha256")
+            .update(JSON.stringify([rawTxnId, email, serviceTitle, data.paidAt || "", String(data.amount)]))
+            .digest("hex");
+        await db.collection("access_legacy_events").doc(eventKey).set({
+            email, service: serviceTitle, transaction_id: rawTxnId,
+            payment_status: status, status: "verification_required",
+            reason: "invalid_billing_identity_or_amount",
+            received_at: admin.firestore.FieldValue.serverTimestamp(),
+        }, { merge: true });
+        res.status(200).json({ received: true, verification_required: true });
+        return;
+    }
     // Tanpa ID dari Akal, turunkan ID deterministik agar retry webhook tetap idempoten.
     const txnId = /^[A-Za-z0-9_-]{1,128}$/.test(rawTxnId)
         ? rawTxnId
