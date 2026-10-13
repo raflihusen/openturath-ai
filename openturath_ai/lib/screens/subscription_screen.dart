@@ -269,7 +269,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
           ),
           const SizedBox(height: 20),
           Text(title, style: OTTypography.pageTitle(color: OTExpressive.white)),
-          if (subtitle != null && subtitle.isNotEmpty) ...[
+          if (subtitle.isNotEmpty) ...[
             const SizedBox(height: 4),
             Text(Loc.text(subtitle),
                 style: OTTypography.caption(color: OTExpressive.whiteMuted)),

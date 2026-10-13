@@ -86,6 +86,8 @@ class _LoginScreenState extends State<LoginScreen> {
         final sessionReady = prefs.getBool('google_session_ready') ?? false;
         final sessionEmail = prefs.getString('google_session_email') ?? '';
         final userEmail = user.email.trim().toLowerCase();
+        await AuthService.reconcileWebSession(userEmail);
+        if (!mounted) return;
 
         if (sessionReady && userEmail.isNotEmpty && sessionEmail == userEmail) {
           Navigator.pushReplacementNamed(context, AppRoutes.dashboard);

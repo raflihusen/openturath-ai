@@ -373,6 +373,31 @@ class AuthService {
         }),
       );
 
+  static const webSessionOwnerKey = 'webview_session_owner';
+
+  /// Mencatat akun pemilik sesi Google yang tersimpan di WebView.
+  static Future<void> rememberWebSessionOwner(String email) async {
+    final owner = email.trim().toLowerCase();
+    if (owner.isEmpty) return;
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(webSessionOwnerKey, owner);
+    } catch (_) {}
+  }
+
+  /// Menghapus sesi Google di WebView bila bukan milik [email], agar akun
+  /// sebelumnya tidak terbawa ke pengguna berikutnya di perangkat yang sama.
+  static Future<void> reconcileWebSession(String email) async {
+    final current = email.trim().toLowerCase();
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final owner = prefs.getString(webSessionOwnerKey) ?? '';
+      if (current.isNotEmpty && owner == current) return;
+      await DesktopWebViewRuntime.clearSession();
+      await prefs.remove(webSessionOwnerKey);
+    } catch (_) {}
+  }
+
   // ── Sign Out ───────────────────────────────────────────────────
   Future<void> signOut() async {
     final currentUid = _auth.currentUser?.uid;
@@ -383,9 +408,10 @@ class AuthService {
       AgentSessionManager.instance.closeAll();
     } catch (_) {}
 
-    try {
-      await DesktopWebViewRuntime.clearSession();
-    } catch (_) {}
+    // Sesi Google di WebView sengaja dipertahankan saat keluar: cookie
+    // "perangkat tepercaya" ikut tersimpan di sana, sehingga verifikasi dua
+    // langkah tidak diminta ulang setiap kali masuk. Sesi itu dihapus oleh
+    // [reconcileWebSession] bila akun berikutnya berbeda.
 
     try {
       if (kIsWeb || defaultTargetPlatform != TargetPlatform.windows) {
@@ -458,6 +484,7 @@ class AuthService {
         if (key.startsWith('openturath_${uid}_') ||
             key == 'openturath_cached_user_$uid' ||
             key == 'google_session_ready' ||
+            key == webSessionOwnerKey ||
             key == 'google_session_email' ||
             key == 'notebook_google_email' ||
             key == 'last_opened_notebook_id') {

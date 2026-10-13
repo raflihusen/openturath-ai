@@ -1220,6 +1220,16 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
       _loadingStarted ??= DateTime.now();
       final elapsedSec = DateTime.now().difference(_loadingStarted!).inSeconds;
       if (elapsedSec >= 45) {
+        if (kDebugMode) {
+          Object? title;
+          try {
+            title = await controller.evaluateJavascript(
+                source: 'document.title + " | inputs=" + '
+                    'document.querySelectorAll(\'textarea, [contenteditable="true"], [role="textbox"]\').length');
+          } catch (_) {}
+          debugPrint(
+              '[OpenTurath] Readiness timeout: host=${url?.host} path=${url?.path} page=$title');
+        }
         _readinessTimer?.cancel();
         _inputRetryTimer?.cancel();
         _loadingStarted = null;
@@ -1290,6 +1300,8 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
           final prefs = await SharedPreferences.getInstance();
           await prefs.setBool('google_session_ready', true);
         } catch (_) {}
+        await AuthService.rememberWebSessionOwner(
+            _authService.currentUser?.email ?? '');
         if (!mounted) return;
         setState(() {
           widget.session.isWebLoading = false;

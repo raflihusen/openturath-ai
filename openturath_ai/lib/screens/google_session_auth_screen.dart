@@ -302,6 +302,23 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
     _isMismatchDialogOpen = false;
   }
 
+  /// Memeriksa cookie sesi Google di WebView. `null` berarti platform tidak
+  /// dapat membacanya, sehingga keputusan tidak boleh didasarkan padanya.
+  Future<bool?> _hasGoogleSession() async {
+    try {
+      final cookies = await DesktopWebViewRuntime.cookies.getCookies(
+        url: WebUri(NotebookNavigation.canonicalOrigin),
+        webViewController: _webController,
+      );
+      const names = {'SID', '__Secure-1PSID', '__Secure-3PSID'};
+      return cookies.any((cookie) =>
+          names.contains(cookie.name) &&
+          (cookie.value?.toString().isNotEmpty ?? false));
+    } catch (_) {
+      return null;
+    }
+  }
+
   /// Tombol Lanjutkan manual untuk memeriksa login dan konfirmasi akun
   Future<void> _handleManualContinue() async {
     if (!mounted || _isSessionReady) return;
@@ -342,6 +359,19 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
       }
     }
 
+    if (!mounted) return;
+
+    // Konfirmasi manual hanya berlaku bila sesi Google benar-benar ada;
+    // tanpa itu ruang AI pasti gagal dibuka.
+    if (await _hasGoogleSession() == false) {
+      if (mounted) {
+        AppSnackBar.warning(
+          context,
+          'Harap selesaikan proses login Google terlebih dahulu.',
+        );
+      }
+      return;
+    }
     if (!mounted) return;
 
     // Jika belum terbaca dari DOM, tampilkan konfirmasi akun sama
@@ -435,6 +465,10 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
         await prefs.setString('notebook_google_email', email);
       }
     } catch (_) {}
+    await AuthService.rememberWebSessionOwner(
+        AuthService().cachedCurrentUser?.email ??
+            AuthService().currentUser?.email ??
+            '');
 
     await Future.delayed(const Duration(milliseconds: 600));
     if (!mounted) return;
