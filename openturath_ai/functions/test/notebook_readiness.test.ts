@@ -31,3 +31,12 @@ test('unrelated source-panel progress cannot block an enabled conversation input
     accessDenied: () => false, inputReady: () => true, isStillLoading: () => true,
   }), true);
 });
+
+test('notebookUiScript parses with valid JavaScript syntax without any unexpected tokens', () => {
+  const uiMatch = source.match(/const notebookUiScript = r'''([\s\S]*?)''';/);
+  assert.ok(uiMatch, 'Could not find notebookUiScript in source');
+  assert.doesNotThrow(() => {
+    new Function(uiMatch[1]);
+  }, 'notebookUiScript contains a JavaScript syntax error!');
+});
+

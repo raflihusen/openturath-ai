@@ -550,7 +550,6 @@ const notebookUiScript = r'''
         });
       }
     });
-  }
 
     // Sembunyikan emoji cover / Ka'bah (🕋) jika berdiri sendiri di luar obrolan
     document.querySelectorAll('span, div, p, [role="img"]').forEach(el => {
@@ -599,6 +598,8 @@ const notebookUiScript = r'''
           fullText.includes('limits updated') ||
           fullText.includes('data anda dilindungi') ||
           fullText.includes('your data is protected') ||
+          fullText.includes('persyaratan layanan') ||
+          fullText.includes('terms of service') ||
           fullText.includes('info terbaru');
 
         if (isWelcomeOrPromo) {
@@ -608,7 +609,10 @@ const notebookUiScript = r'''
           for (const btn of buttons) {
             const btnText = (btn.innerText || btn.textContent || btn.getAttribute('aria-label') || '').trim().toLowerCase();
             const hasCloseIcon = !!btn.querySelector('mat-icon[data-mat-icon-name="close"], mat-icon[fonticon="close"], svg');
-            if (btnText === 'oke' || btnText === 'ok' || btnText === 'mengerti' || btnText === 'got it' || btnText === 'close' || btnText === 'tutup' || btnText.includes('close') || hasCloseIcon) {
+            if (btnText === 'oke' || btnText === 'ok' || btnText === 'mengerti' || btnText === 'got it' ||
+                btnText === 'close' || btnText === 'tutup' || btnText.includes('close') || hasCloseIcon ||
+                btnText === 'lanjutkan' || btnText === 'continue' || btnText === 'setuju' || btnText === 'agree' ||
+                btnText === 'mulai' || btnText === 'get started' || btnText === 'accept' || btnText === 'terima') {
               try { btn.click(); break; } catch (_) {}
             }
           }
