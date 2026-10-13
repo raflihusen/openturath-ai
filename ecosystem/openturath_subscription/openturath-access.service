@@ -14,7 +14,11 @@ Environment=NOTEBOOKLM_STORAGE_PATH=/home/ubuntu/openturath-access/secrets/stora
 Environment=ACCESS_NOTEBOOKLM_CLI=/home/ubuntu/openturath-access/venv/bin/notebooklm
 Environment=ACCESS_OWNER_EMAIL=raflimaulan@gmail.com
 Environment=ACCESS_PYTHON=/home/ubuntu/openturath-access/venv/bin/python
-Environment=ACCESS_SHARING_ADAPTER=/home/ubuntu/openturath-access/verified_sharing.py
+# Adapter ships inside the release so it always matches the worker version.
+Environment=ACCESS_SHARING_ADAPTER=/home/ubuntu/openturath-access/releases/current/verified_sharing.py
+Environment=NODE_ENV=production
+# Optional overrides (e.g. ACCESS_OWNER_EMAIL); credentials stay in secrets/.
+EnvironmentFile=-/home/ubuntu/openturath-access/secrets/worker.env
 ExecStart=/usr/bin/node /home/ubuntu/openturath-access/releases/current/lib/access_worker.js
 Restart=always
 RestartSec=10

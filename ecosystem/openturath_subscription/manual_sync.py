@@ -69,6 +69,11 @@ async def cmd_add(notebook_id: str, email: str, name: str = ""):
 async def cmd_remove(notebook_id: str, email: str):
     """Hapus satu email dari viewer."""
     print(f"➖ Menghapus akses {email}...")
+    import shared_registry
+    if shared_registry.normal_email(email) in shared_registry.vip_emails():
+        # Permanent VIPs are never removed, not even by hand (AGENTS.md rule 5).
+        print(f"🛡️ {email} adalah VIP permanen; pencabutan dibatalkan.")
+        return
     result = await nlm.remove_viewer(notebook_id, email)
     if result["success"]:
         print(f"✅ Berhasil! Total viewers sekarang: {result['total_shared_users']}")

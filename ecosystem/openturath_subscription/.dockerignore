@@ -3,6 +3,11 @@ env.yaml
 service-account*.json
 .env.example
 
+# Arsip operasi, tes, dan alat deploy tidak dibutuhkan saat runtime
+ops_archive/
+tests/
+deploy/
+
 # Data pelanggan dan artefak lokal
 *_report.txt
 stress_test_report.json

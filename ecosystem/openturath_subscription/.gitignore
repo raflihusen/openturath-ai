@@ -4,3 +4,10 @@
 __pycache__/
 *.pyc
 .DS_Store
+
+# Data pelanggan & artefak sesi: tidak pernah masuk Git
+*_report.txt
+stress_test_report.json
+.storage_state.json*
+storage_state.json
+master_token.json

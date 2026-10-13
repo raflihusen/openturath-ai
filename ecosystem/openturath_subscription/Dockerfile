@@ -12,6 +12,10 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy the rest of the application files
 COPY . /app/
 
+# The server only needs to write its log and refreshed session inside /app.
+RUN useradd --system --uid 10001 --home /app openturath && chown -R openturath /app
+USER openturath
+
 # Cloud Run defaults to port 8080
 EXPOSE 8080
 
