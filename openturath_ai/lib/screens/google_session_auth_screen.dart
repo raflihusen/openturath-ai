@@ -19,6 +19,7 @@ import '../widgets/app_loader.dart';
 import 'package:openturath_ai/core/design/ot_typography.dart';
 import 'package:openturath_ai/core/design/ot_radius.dart';
 import 'package:openturath_ai/core/design/ot_buttons.dart';
+import '../core/app_snackbar.dart';
 
 /// Layar Autentikasi Sesi Google (Langkah 2 dari 2)
 /// Menghubungkan sesi Google / NotebookLM di WebView secara langsung setelah login Firebase,
@@ -44,7 +45,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
   InAppWebViewController? _webController;
   bool _isSessionReady = false;
   final ValueNotifier<double> _loadProgress = ValueNotifier<double>(0.0);
-  Timer? _cookiePollTimer;
+  bool _isMismatchDialogOpen = false;
 
   String get _targetLoginUrl {
     final email = (AuthService().cachedCurrentUser?.email ??
@@ -60,64 +61,366 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
   @override
   void initState() {
     super.initState();
-    // Cek langsung apakah kuki sesi Google sudah aktif sebelumnya
-    _checkInitialSession();
-    // Polling periodik cookie untuk memastikan deteksi sesi segera setelah user menyelesaikan login Google
-    _cookiePollTimer = Timer.periodic(const Duration(seconds: 2), (_) {
-      if (mounted && !_isSessionReady) {
-        _checkAndAuthenticateSession(null);
-      }
-    });
+    _resetPendingSession();
   }
 
-  Future<void> _checkInitialSession() async {
+  Future<void> _resetPendingSession() async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      final sessionReady = prefs.getBool('google_session_ready') ?? false;
-      final sessionEmail = prefs.getString('google_session_email') ?? '';
-      final currentEmail = (AuthService().cachedCurrentUser?.email ??
-              AuthService().currentUser?.email ??
-              '')
-          .trim()
-          .toLowerCase();
-
-      // Hanya lewati jika sesi sudah terbukti siap dan emailnya cocok
-      if (!sessionReady || currentEmail.isEmpty || sessionEmail != currentEmail) {
-        return;
-      }
-
-      final cookieManager = DesktopWebViewRuntime.cookies;
-      final cookiesLm = await cookieManager.getCookies(
-        url: WebUri('https://notebooklm.google.com'),
-      );
-      final cookiesNb = await cookieManager.getCookies(
-        url: WebUri('https://notebook.google.com'),
-      );
-      final allCookies = [...cookiesLm, ...cookiesNb];
-      final hasSession = allCookies.any((c) =>
-          c.name == 'SID' ||
-          c.name == 'HSID' ||
-          c.name == 'SSID' ||
-          c.name == 'OSID');
-      if (hasSession && mounted) {
-        await _onSessionAuthenticated();
-      }
+      await prefs.setBool('google_session_ready', false);
     } catch (_) {}
   }
 
   @override
   void dispose() {
-    _cookiePollTimer?.cancel();
     _loadProgress.dispose();
     _webController = null;
     super.dispose();
   }
 
-  /// Menandai sesi Google terautentikasi dan melanjutkan ke Dashboard
+  /// Mengekstrak alamat email akun Google aktif dari DOM NotebookLM / Google header
+  Future<String?> _detectGoogleEmail(InAppWebViewController controller) async {
+    try {
+      final result = await controller.evaluateJavascript(source: '''
+(function() {
+  try {
+    // 1. Cek tombol profil / avatar di Google One-Google header
+    var selectors = [
+      'a[aria-label*="@"]',
+      'button[aria-label*="@"]',
+      'div[aria-label*="@"]',
+      'img[alt*="@"]',
+      '[aria-label*="Google Account"]',
+      '[aria-label*="Akun Google"]',
+      '[data-identifier*="@"]'
+    ];
+    for (var i = 0; i < selectors.length; i++) {
+      var els = document.querySelectorAll(selectors[i]);
+      for (var j = 0; j < els.length; j++) {
+        var str = els[j].getAttribute('aria-label') || 
+                  els[j].getAttribute('alt') || 
+                  els[j].getAttribute('title') || 
+                  els[j].getAttribute('data-identifier') || '';
+        var match = str.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}/);
+        if (match) return match[0].toLowerCase();
+      }
+    }
+    // 2. Cek variabel global Google WIZ
+    if (window.WIZ_global_data) {
+      for (var k in window.WIZ_global_data) {
+        var val = window.WIZ_global_data[k];
+        if (typeof val === 'string' && val.indexOf('@') !== -1) {
+          var m = val.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}/);
+          if (m) return m[0].toLowerCase();
+        }
+      }
+    }
+    // 3. Cek text di header / navbar
+    var header = document.querySelector('header') || document.querySelector('nav');
+    if (header) {
+      var m = (header.innerText || '').match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}/);
+      if (m) return m[0].toLowerCase();
+    }
+    return null;
+  } catch(e) {
+    return null;
+  }
+})();
+''');
+      if (result != null && result is String && result.trim().contains('@')) {
+        return result.trim().toLowerCase();
+      }
+    } catch (_) {}
+    return null;
+  }
+
+  /// Memverifikasi bahwa sesi di WebView telah selesai dan menggunakan akun yang sama
+  Future<void> _checkAccountVerification(InAppWebViewController controller) async {
+    if (!mounted || _isSessionReady) return;
+    final currentWebUrl = await controller.getUrl();
+    if (currentWebUrl == null) return;
+    final urlStr = currentWebUrl.toString();
+
+    // Jangan lakukan verifikasi jika masih di formulir login Google
+    if (urlStr.contains('accounts.google') ||
+        urlStr.contains('InteractiveLogin') ||
+        urlStr.contains('ServiceLogin') ||
+        urlStr.contains('signin/v2') ||
+        urlStr.contains('identifier') ||
+        urlStr.contains('challenge') ||
+        !NotebookNavigation.notebook(currentWebUrl.uriValue)) {
+      return;
+    }
+
+    final currentEmail = (AuthService().cachedCurrentUser?.email ??
+            AuthService().currentUser?.email ??
+            '')
+        .trim()
+        .toLowerCase();
+
+    final detectedEmail = await _detectGoogleEmail(controller);
+    if (detectedEmail != null && detectedEmail.isNotEmpty) {
+      if (currentEmail.isNotEmpty && detectedEmail != currentEmail) {
+        // Tampilkan peringatan jika akun Google berbeda
+        _showAccountMismatchDialog(detectedEmail, currentEmail);
+        return;
+      }
+      // Email Google cocok
+      await _onSessionAuthenticated();
+    }
+  }
+
+  /// Menampilkan dialog jika pengguna masuk dengan akun Google yang berbeda
+  Future<void> _showAccountMismatchDialog(
+      String detectedEmail, String expectedEmail) async {
+    if (!mounted || _isMismatchDialogOpen) return;
+    _isMismatchDialogOpen = true;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    await showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: OTColors.surface(isDark),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(OTRadius.dialog),
+          side: BorderSide(color: OTColors.border(isDark)),
+        ),
+        title: Row(
+          children: [
+            Icon(Icons.warning_amber_rounded,
+                color: OTColors.marja(isDark), size: 24),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                'Akun Google Tidak Cocok',
+                style: ScholarlyFonts.outfit(
+                  fontSize: OTFontSize.s16,
+                  fontWeight: FontWeight.w700,
+                  color: OTColors.textPrimary(isDark),
+                ),
+              ),
+            ),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Anda login di aplikasi dengan akun:',
+              style: ScholarlyFonts.outfit(
+                fontSize: OTFontSize.s12,
+                color: OTColors.textSecondary(isDark),
+              ),
+            ),
+            const SizedBox(height: 4),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              decoration: BoxDecoration(
+                color: OTColors.canvas(isDark),
+                borderRadius: BorderRadius.circular(OTRadius.xs),
+                border: Border.all(color: OTColors.border(isDark)),
+              ),
+              child: Text(
+                expectedEmail,
+                style: ScholarlyFonts.outfit(
+                  fontSize: OTFontSize.s14,
+                  fontWeight: FontWeight.w600,
+                  color: OTColors.accent(isDark),
+                ),
+              ),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              'Namun di browser Anda masuk dengan akun:',
+              style: ScholarlyFonts.outfit(
+                fontSize: OTFontSize.s12,
+                color: OTColors.textSecondary(isDark),
+              ),
+            ),
+            const SizedBox(height: 4),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              decoration: BoxDecoration(
+                color: OTColors.canvas(isDark),
+                borderRadius: BorderRadius.circular(OTRadius.xs),
+                border: Border.all(color: OTColors.border(isDark)),
+              ),
+              child: Text(
+                detectedEmail,
+                style: ScholarlyFonts.outfit(
+                  fontSize: OTFontSize.s14,
+                  fontWeight: FontWeight.w600,
+                  color: OTColors.marja(isDark),
+                ),
+              ),
+            ),
+            const SizedBox(height: 14),
+            Text(
+              'Wajib masuk dengan akun Google yang sama agar akses asisten AI dapat dibuka.',
+              style: ScholarlyFonts.outfit(
+                fontSize: OTFontSize.s12,
+                height: 1.4,
+                color: OTColors.textSecondary(isDark),
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(ctx);
+              _confirmCancelAndSignOut();
+            },
+            child: Text(
+              Loc.tr('exit'),
+              style: ScholarlyFonts.outfit(
+                  color: OTColors.textSecondary(isDark)),
+            ),
+          ),
+          FilledButton(
+            onPressed: () async {
+              Navigator.pop(ctx);
+              try {
+                await DesktopWebViewRuntime.cookies.deleteAllCookies();
+              } catch (_) {}
+              if (_webController != null) {
+                await _webController!.loadUrl(
+                  urlRequest: URLRequest(url: WebUri(_targetLoginUrl)),
+                );
+              }
+            },
+            child: Text(
+              'Ganti Akun Google',
+              style: ScholarlyFonts.outfit(fontWeight: FontWeight.w600),
+            ),
+          ),
+        ],
+      ),
+    );
+    _isMismatchDialogOpen = false;
+  }
+
+  /// Tombol Lanjutkan manual untuk memeriksa login dan konfirmasi akun
+  Future<void> _handleManualContinue() async {
+    if (!mounted || _isSessionReady) return;
+    final controller = _webController;
+    final currentWebUrl = await controller?.getUrl();
+    final urlStr = currentWebUrl?.toString() ?? '';
+
+    if (urlStr.isEmpty ||
+        urlStr.contains('accounts.google') ||
+        urlStr.contains('InteractiveLogin') ||
+        urlStr.contains('ServiceLogin') ||
+        urlStr.contains('signin/v2')) {
+      if (mounted) {
+        AppSnackBar.warning(
+          context,
+          'Harap selesaikan proses login Google terlebih dahulu.',
+        );
+      }
+      return;
+    }
+
+    final currentEmail = (AuthService().cachedCurrentUser?.email ??
+            AuthService().currentUser?.email ??
+            '')
+        .trim()
+        .toLowerCase();
+
+    if (controller != null) {
+      final detectedEmail = await _detectGoogleEmail(controller);
+      if (!mounted) return;
+      if (detectedEmail != null && detectedEmail.isNotEmpty) {
+        if (currentEmail.isNotEmpty && detectedEmail != currentEmail) {
+          _showAccountMismatchDialog(detectedEmail, currentEmail);
+          return;
+        }
+        await _onSessionAuthenticated();
+        return;
+      }
+    }
+
+    if (!mounted) return;
+
+    // Jika belum terbaca dari DOM, tampilkan konfirmasi akun sama
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: OTColors.surface(isDark),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(OTRadius.dialog),
+          side: BorderSide(color: OTColors.border(isDark)),
+        ),
+        title: Text(
+          'Konfirmasi Akun Google',
+          style: ScholarlyFonts.outfit(
+            fontWeight: FontWeight.w700,
+            fontSize: OTFontSize.s16,
+            color: OTColors.textPrimary(isDark),
+          ),
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Pastikan Anda telah masuk ke Google dengan akun:',
+              style: ScholarlyFonts.outfit(
+                fontSize: OTFontSize.s14,
+                color: OTColors.textSecondary(isDark),
+              ),
+            ),
+            const SizedBox(height: 6),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              decoration: BoxDecoration(
+                color: OTColors.canvas(isDark),
+                borderRadius: BorderRadius.circular(OTRadius.xs),
+                border: Border.all(color: OTColors.border(isDark)),
+              ),
+              child: Text(
+                currentEmail.isNotEmpty ? currentEmail : 'Akun yang sama',
+                style: ScholarlyFonts.outfit(
+                  fontSize: OTFontSize.s14,
+                  fontWeight: FontWeight.w600,
+                  color: OTColors.accent(isDark),
+                ),
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: Text(
+              'Periksa Lagi',
+              style: ScholarlyFonts.outfit(
+                  color: OTColors.textSecondary(isDark)),
+            ),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: Text(
+              'Ya, Sudah Masuk',
+              style: ScholarlyFonts.outfit(fontWeight: FontWeight.w600),
+            ),
+          ),
+        ],
+      ),
+    );
+
+    if (confirm == true && mounted) {
+      await _onSessionAuthenticated();
+    }
+  }
+
+  /// Menandai sesi Google terautentikasi dan melanjutkan
   Future<void> _onSessionAuthenticated() async {
     if (!mounted || _isSessionReady) return;
     setState(() => _isSessionReady = true);
-    _cookiePollTimer?.cancel();
 
     try {
       final prefs = await SharedPreferences.getInstance();
@@ -135,59 +438,14 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
 
     await Future.delayed(const Duration(milliseconds: 600));
     if (!mounted) return;
-    Navigator.pushNamedAndRemoveUntil(
-      context,
-      AppRoutes.dashboard,
-      (route) => false,
-    );
-  }
-
-  /// Memeriksa kuki dan URL untuk mendeteksi apakah sesi Google telah aktif
-  Future<void> _checkAndAuthenticateSession(WebUri? url) async {
-    if (!mounted || _isSessionReady) return;
-    final currentWebUrl = url ?? await _webController?.getUrl();
-    final urlStr = currentWebUrl?.toString() ?? '';
-
-    // Jangan tandai selesai jika pengguna masih berada di halaman formulir masuk
-    if (urlStr.contains('ServiceLogin') ||
-        urlStr.contains('InteractiveLogin') ||
-        urlStr.contains('signin/v2') ||
-        urlStr.contains('signin/rejected') ||
-        urlStr.contains('challenge') ||
-        urlStr.contains('v3/signin') ||
-        urlStr.contains('identifier')) {
-      return;
-    }
-
-    // 1. Deteksi melalui URL AI/Google yang telah berhasil terbuka
-    if (currentWebUrl != null &&
-        NotebookNavigation.notebook(currentWebUrl.uriValue) &&
-        !urlStr.contains('accounts.google')) {
-      await _onSessionAuthenticated();
-      return;
-    }
-
-    // 2. Deteksi melalui kuki sesi resmi Google jika sudah bukan di halaman login
-    if (urlStr.isNotEmpty && !urlStr.contains('accounts.google')) {
-      try {
-        final cookieManager = DesktopWebViewRuntime.cookies;
-        final cookiesLm = await cookieManager.getCookies(
-          url: WebUri('https://notebooklm.google.com'),
-        );
-        final cookiesNb = await cookieManager.getCookies(
-          url: WebUri('https://notebook.google.com'),
-        );
-        final allCookies = [...cookiesLm, ...cookiesNb];
-        final hasSession = allCookies.any((c) =>
-            c.name == 'SID' ||
-            c.name == 'HSID' ||
-            c.name == 'SSID' ||
-            c.name == 'OSID');
-
-        if (hasSession) {
-          await _onSessionAuthenticated();
-        }
-      } catch (_) {}
+    if (Navigator.canPop(context)) {
+      Navigator.pop(context, true);
+    } else {
+      Navigator.pushNamedAndRemoveUntil(
+        context,
+        AppRoutes.dashboard,
+        (route) => false,
+      );
     }
   }
 
@@ -339,7 +597,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
                 },
               ),
               TextButton(
-                onPressed: _onSessionAuthenticated,
+                onPressed: _handleManualContinue,
                 child: Text(
                   'Lanjutkan',
                   style: OTTypography.button(color: textPrimary),
@@ -544,12 +802,12 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
                             },
                             onLoadStop: (controller, url) async {
                               if (!mounted || url == null) return;
-                              await _checkAndAuthenticateSession(url);
+                              await _checkAccountVerification(controller);
                             },
                             onUpdateVisitedHistory:
                                 (controller, url, isReload) async {
                               if (!mounted || url == null) return;
-                              await _checkAndAuthenticateSession(url);
+                              await _checkAccountVerification(controller);
                             },
                             onReceivedError: (controller, request, error) {
                               debugPrint(

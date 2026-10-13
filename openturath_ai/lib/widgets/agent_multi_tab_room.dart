@@ -433,123 +433,7 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
     );
   }
 
-  void _showSessionSwitcher(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final surface = OTColors.surface(isDark);
-    final border = OTColors.border(isDark);
-    final textPrimary = OTColors.textPrimary(isDark);
-    final textSecondary = OTColors.textSecondary(isDark);
-    final sessions = _sessionManager.tabs;
 
-    showAdaptiveSheet<void>(
-      context: context,
-      backgroundColor: Colors.transparent,
-      builder: (ctx) => StatefulBuilder(
-        builder: (context, setSheetState) {
-          return Container(
-            padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
-            decoration: BoxDecoration(
-              color: surface,
-              borderRadius: const BorderRadius.vertical(
-                  top: Radius.circular(OTRadius.dialog)),
-              border: Border.all(color: border, width: 0.8),
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Center(child: SheetGrabber()),
-                const SizedBox(height: 16),
-                Text(
-                  Loc.tr('sessionSwitcherTitle'),
-                  style: OTTypography.cardTitle(color: textPrimary)
-                      .copyWith(fontSize: OTFontSize.s16),
-                ),
-                const SizedBox(height: 6),
-                Text(
-                  Loc.tr('selectSessionToSwitch'),
-                  style: OTTypography.caption(color: textSecondary),
-                ),
-                const SizedBox(height: 16),
-                Flexible(
-                  child: ListView.separated(
-                    shrinkWrap: true,
-                    itemCount: sessions.length,
-                    separatorBuilder: (_, __) => Divider(
-                        height: 1, color: border.withValues(alpha: 0.5)),
-                    itemBuilder: (context, index) {
-                      final s = sessions[index];
-                      final isActive = index == _sessionManager.activeIndex;
-                      return ListTile(
-                        contentPadding: EdgeInsets.zero,
-                        leading: Icon(
-                          isActive
-                              ? Icons.radio_button_checked_rounded
-                              : Icons.radio_button_unchecked_rounded,
-                          color:
-                              isActive ? OTColors.marja(isDark) : textSecondary,
-                          size: 20,
-                        ),
-                        title: Text(
-                          s.agent.title,
-                          style: OTTypography.bodyMedium(
-                            color: isActive ? textPrimary : textSecondary,
-                          ).copyWith(
-                            fontWeight:
-                                isActive ? FontWeight.w600 : FontWeight.w400,
-                          ),
-                        ),
-                        trailing: IconButton(
-                          icon: Icon(Icons.close_rounded,
-                              size: 18, color: textSecondary),
-                          tooltip: Loc.tr('closeSession'),
-                          onPressed: () {
-                            _sessionManager.closeTab(index);
-                            setSheetState(() {});
-                            if (_sessionManager.tabs.isEmpty) {
-                              Navigator.pop(ctx);
-                            }
-                          },
-                        ),
-                        onTap: () {
-                          Navigator.pop(ctx);
-                          _sessionManager.selectTab(index);
-                        },
-                      );
-                    },
-                  ),
-                ),
-                if (sessions.length < AgentSessionManager.maxTabs) ...[
-                  const SizedBox(height: 14),
-                  SizedBox(
-                    width: double.infinity,
-                    child: OutlinedButton.icon(
-                      icon: const Icon(Icons.add_rounded, size: 18),
-                      label: Text(Loc.tr('openAnotherSpecialist')),
-                      style: OutlinedButton.styleFrom(
-                        foregroundColor: OTColors.textPrimary(isDark),
-                        side: BorderSide(
-                          color: OTColors.borderStrong(isDark),
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(OTRadius.button),
-                        ),
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                      ),
-                      onPressed: () {
-                        Navigator.pop(ctx);
-                        _sessionManager.closeRoom();
-                      },
-                    ),
-                  ),
-                ],
-              ],
-            ),
-          );
-        },
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -601,39 +485,7 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
             tooltip: AppCopy.referenceBooks,
             onPressed: () => _openLibrarySheet(context, activeTab.agent),
           ),
-          // Chrome-style Tab Switcher Button
-          Semantics(
-            label: Loc.tr('openAssistantSessions', ['${sessions.length}']),
-            button: true,
-            child: InkResponse(
-              onTap: () => _showSessionSwitcher(context),
-              radius: 20,
-              child: Container(
-                margin: const EdgeInsets.symmetric(horizontal: 4),
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(OTRadius.xs),
-                  border: Border.all(
-                    color: sessions.length > 1
-                        ? OTColors.borderStrong(isDark)
-                        : border,
-                    width: 1.4,
-                  ),
-                  color: sessions.length > 1
-                      ? surfaceSubtle
-                      : Colors.transparent,
-                ),
-                child: Text(
-                  '${sessions.length}',
-                  style: ScholarlyFonts.outfit(
-                    fontSize: OTFontSize.s12,
-                    fontWeight: FontWeight.w700,
-                    color: textPrimary,
-                  ),
-                ),
-              ),
-            ),
-          ),
+
           PopupMenuButton<String>(
             icon: Icon(Icons.more_vert_rounded, color: textPrimary, size: 20),
             tooltip: AppCopy.studyOptions,
@@ -693,8 +545,6 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                 _confirmDeleteChatHistory(context, activeTab);
               } else if (val == 'font') {
                 _showFontScaleDialog(context, activeTab);
-              } else if (val == 'switch_session') {
-                _showSessionSwitcher(context);
               }
             },
             itemBuilder: (ctx) => [
@@ -750,20 +600,7 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                     ],
                   ),
                 ),
-              if (!AppPlatform.isDesktop && sessions.length > 1)
-                PopupMenuItem(
-                  value: 'switch_session',
-                  child: Row(
-                    children: [
-                      Icon(Icons.tab_rounded, color: textPrimary, size: 18),
-                      const SizedBox(width: 12),
-                      Text(
-                          Loc.tr(
-                              'openAssistantSessions', ['${sessions.length}']),
-                          style: OTTypography.body(color: textPrimary)),
-                    ],
-                  ),
-                ),
+
             ],
           ),
           const SizedBox(width: 4),
@@ -786,49 +623,9 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                     scrollDirection: Axis.horizontal,
                     padding:
                         const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    itemCount: sessions.length +
-                        (sessions.length < AgentSessionManager.maxTabs ? 1 : 0),
+                    itemCount: sessions.length,
                     separatorBuilder: (_, __) => const SizedBox(width: 6),
                     itemBuilder: (context, index) {
-                      if (index == sessions.length) {
-                        return Container(
-                          decoration: BoxDecoration(
-                            color: Colors.transparent,
-                            borderRadius: BorderRadius.circular(OTRadius.xs),
-                            border: Border.all(
-                              color: border.withValues(alpha: 0.6),
-                              width: 1.0,
-                            ),
-                          ),
-                          child: InkWell(
-                            onTap: () {
-                              AppSnackBar.clear(context);
-                              _sessionManager.closeRoom();
-                            },
-                            borderRadius: BorderRadius.circular(OTRadius.xs),
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 8, vertical: 4),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Icon(Icons.add_rounded,
-                                      size: 15, color: textSecondary),
-                                  const SizedBox(width: 4),
-                                  Text(
-                                    Loc.tr('openAnotherSpecialist'),
-                                    style: ScholarlyFonts.outfit(
-                                      fontSize: OTFontSize.s11,
-                                      fontWeight: FontWeight.w600,
-                                      color: textSecondary,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        );
-                      }
                       final session = sessions[index];
                       final isActive = index == _sessionManager.activeIndex;
 
