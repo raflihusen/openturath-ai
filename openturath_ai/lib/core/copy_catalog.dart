@@ -72,6 +72,16 @@ const copyCatalog = <String, List<String>>{
     "Main collection · 5 assistants",
     "المجموعة الرئيسية · 5 مساعدين"
   ],
+  "planFeaturedIncludes": [
+    "{0} AI dalam satu paket",
+    "{0} assistants in one plan",
+    "{0} مساعدين في باقة واحدة"
+  ],
+  "planTrustNote": [
+    "Sekali bayar · tanpa perpanjangan otomatis",
+    "One-time payment · no automatic renewal",
+    "دفعة واحدة · دون تجديد تلقائي"
+  ],
   "flagshipExplore": [
     "Jelajahi {0} AI",
     "Explore {0} assistants",

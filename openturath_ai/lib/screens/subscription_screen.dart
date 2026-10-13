@@ -13,6 +13,7 @@ import '../core/design/ot_typography.dart';
 import '../core/localization.dart';
 import '../core/product_pricing.dart';
 import '../models/agent_model.dart';
+import '../models/sub_agent_model.dart';
 import '../services/subscription_service.dart';
 import '../widgets/payment_checkout_sheet.dart';
 import '../widgets/promo_price.dart';
@@ -188,7 +189,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
         decoration: BoxDecoration(
           color: OTColors.surface(dark),
           borderRadius: BorderRadius.circular(OTRadius.card),
-          border: Border.all(color: OTColors.surface(dark)),
+          border: Border.all(color: OTColors.borderStrong(dark), width: 1.5),
         ),
         padding: const EdgeInsets.all(20),
         child: child,
@@ -204,6 +205,95 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
       child: child,
     );
   }
+
+  /// Kepala paket utama: panel gelap bergradasi dengan lencana eksklusif,
+  /// agar terbaca sebagai koleksi istimewa, bukan sekadar kartu kedua.
+  Widget _flagshipHeader(String label, String title, AgentModel agent) {
+    final subtitle = agent.subtitleAcademic;
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          begin: AlignmentDirectional.topStart,
+          end: AlignmentDirectional.bottomEnd,
+          colors: [OTExpressive.black, OTExpressive.ink],
+        ),
+        borderRadius: OTRadius.cardBorder,
+        border: Border.all(
+            color: OTExpressive.whiteMuted.withValues(alpha: 0.24)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Flexible(
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: OTExpressive.white,
+                    borderRadius: OTRadius.chipBorder,
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(Icons.workspace_premium_rounded,
+                          size: 14, color: OTExpressive.black),
+                      const SizedBox(width: 6),
+                      Flexible(
+                        child: Text(
+                          label,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: OTTypography.captionMedium(
+                              color: OTExpressive.black),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              if (!Loc.isArabic && agent.titleArabic.isNotEmpty) ...[
+                const SizedBox(width: 12),
+                Text(
+                  agent.titleArabic,
+                  textDirection: TextDirection.rtl,
+                  style: OTTypography.arabicQuote(
+                      color: OTExpressive.whiteMuted, height: 1.2),
+                ),
+              ],
+            ],
+          ),
+          const SizedBox(height: 20),
+          Text(title, style: OTTypography.pageTitle(color: OTExpressive.white)),
+          if (subtitle != null && subtitle.isNotEmpty) ...[
+            const SizedBox(height: 4),
+            Text(Loc.text(subtitle),
+                style: OTTypography.caption(color: OTExpressive.whiteMuted)),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _trustNote(Color color) => Padding(
+        padding: const EdgeInsets.only(top: 12),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.lock_outline_rounded, size: 14, color: color),
+            const SizedBox(width: 6),
+            Flexible(
+              child: Text(Loc.tr('planTrustNote'),
+                  textAlign: TextAlign.center,
+                  style: OTTypography.caption(color: color)),
+            ),
+          ],
+        ),
+      );
 
   Widget _benefitRow(String text, Color textColor) {
     return Padding(
@@ -408,31 +498,25 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
       required String agentId,
     }) =>
         [
-          Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                  color: agentId == flagship.id
-                      ? OTExpressive.hero
-                      : OTColors.surfaceSubtle(dark),
-                  borderRadius: OTRadius.cardBorder),
-              child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(label,
-                        style: OTTypography.caption(
-                            color: agentId == flagship.id
-                                ? OTExpressive.white
-                                : muted)),
-                    const SizedBox(height: 8),
-                    Text(title,
-                        style: OTTypography.screenTitle(
-                            color: agentId == flagship.id
-                                ? OTExpressive.white
-                                : ink)),
-                  ])),
+          if (agentId == flagship.id)
+            _flagshipHeader(label, title, flagship)
+          else
+            Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                    color: OTColors.surfaceSubtle(dark),
+                    borderRadius: OTRadius.cardBorder),
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(label, style: OTTypography.caption(color: muted)),
+                      const SizedBox(height: 8),
+                      Text(title, style: OTTypography.screenTitle(color: ink)),
+                    ])),
           const SizedBox(height: 12),
-          Text(description, style: OTTypography.caption(color: muted)),
+          Text(description,
+              style: OTTypography.body(color: muted).copyWith(height: 1.45)),
           const SizedBox(height: 16),
           scope,
           const SizedBox(height: 16),
@@ -442,6 +526,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
             amount: price.amount,
             regularAmount: price.regularAmount,
             period: price.period,
+            display: agentId == flagship.id,
           ),
           const SizedBox(height: 16),
           Divider(color: border, height: 1),
@@ -458,13 +543,38 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
             const SizedBox(height: 12),
           ],
           cta(onCheckout, price.amount),
+          _trustNote(muted),
           _checkoutNotice(agentId),
         ];
 
     // Cakupan paket utama: lima asisten, sebagai teks.
-    final flagshipScope = Text(
-        Loc.tr('flagshipExplore', ['${flagship.subAgents?.length ?? 0}']),
-        style: OTTypography.captionMedium(color: ink));
+    final subAgents = flagship.subAgents ?? const <SubAgentModel>[];
+    final flagshipScope = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(Loc.tr('planFeaturedIncludes', ['${subAgents.length}']),
+            style: OTTypography.captionMedium(color: ink)),
+        const SizedBox(height: 8),
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: [
+            for (final sub in subAgents)
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                decoration: BoxDecoration(
+                  color: OTColors.surfaceSubtle(dark),
+                  borderRadius: OTRadius.chipBorder,
+                  border: Border.all(color: border),
+                ),
+                child: Text(Loc.isArabic ? sub.nameArabic : sub.name,
+                    style: OTTypography.caption(color: ink)),
+              ),
+          ],
+        ),
+      ],
+    );
 
     // Cakupan paket satu bidang: pemilih bidang.
     final fieldPicker = Material(
@@ -476,7 +586,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
             : () => _showDisciplinePickerModal(context, specialists),
         borderRadius: BorderRadius.circular(OTRadius.input),
         child: Padding(
-          padding: const EdgeInsetsDirectional.fromSTEB(12, 0, 8, 0),
+          padding: const EdgeInsetsDirectional.fromSTEB(20, 12, 16, 12),
           child: Row(
             children: [
               Expanded(
@@ -487,7 +597,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                     Text(Loc.tr('chooseField'),
                         style: ScholarlyFonts.outfit(
                             fontSize: OTFontSize.s12, color: muted)),
-                    const SizedBox(height: 1),
+                    const SizedBox(height: 4),
                     Text(
                       Loc.text(selected.title),
                       maxLines: 1,
@@ -497,7 +607,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                   ],
                 ),
               ),
-              Icon(Icons.unfold_more_rounded, size: 18, color: muted),
+              Icon(Icons.unfold_more_rounded, size: 20, color: muted),
             ],
           ),
         ),
@@ -667,9 +777,19 @@ class _TierSelector extends StatelessWidget {
     Widget option(int i) {
       final active = selected == i;
       final textColor = active ? OTColors.canvas(dark) : ink;
-      final title = Text(offers[i].title,
-          textAlign: TextAlign.center,
-          style: OTTypography.captionMedium(color: textColor));
+      final title = Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(offers[i].title,
+              textAlign: TextAlign.center,
+              style: OTTypography.captionMedium(color: textColor)),
+          const SizedBox(height: 2),
+          Text(Loc.tr('saving', ['${offers[i].savingsPercent}']),
+              textAlign: TextAlign.center,
+              style: OTTypography.metadataTag(
+                  color: textColor.withValues(alpha: 0.72))),
+        ],
+      );
       return Semantics(
         button: true,
         selected: active,
@@ -678,7 +798,7 @@ class _TierSelector extends StatelessWidget {
           borderRadius: BorderRadius.circular(OTRadius.input),
           child: AnimatedContainer(
             duration: OTMotion.fast,
-            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
             decoration: BoxDecoration(
               color: active ? ink : OTColors.surfaceSubtle(dark),
               borderRadius: BorderRadius.circular(OTRadius.input),

@@ -6,12 +6,14 @@ import '../core/product_pricing.dart';
 
 class PromoPrice extends StatelessWidget {
   const PromoPrice({super.key, required this.amount, required this.regularAmount,
-    this.period = '', this.compact = false, this.foregroundColor,
+    this.period = '', this.compact = false, this.display = false, this.foregroundColor,
     this.secondaryColor});
   final int amount;
   final int regularAmount;
   final String period;
   final bool compact;
+  /// Harga utama layar: satu kali per layar, untuk paket unggulan.
+  final bool display;
   final Color? foregroundColor;
   final Color? secondaryColor;
 
@@ -31,7 +33,7 @@ class PromoPrice extends StatelessWidget {
           .copyWith(decoration: TextDecoration.lineThrough)),
       Wrap(crossAxisAlignment: WrapCrossAlignment.center, spacing: 6, children: [
         Directionality(textDirection: TextDirection.ltr, child: Text(ProductPricing.rupiah(amount),
-          style: OTTypography.price(color: foreground).copyWith(fontSize: compact ? OTFontSize.s18 : OTFontSize.s26))),
+          style: OTTypography.price(color: foreground).copyWith(fontSize: compact ? OTFontSize.s18 : display ? OTFontSize.s36 : OTFontSize.s26))),
         Text(period, style: OTTypography.caption(color: secondary)),
       ]),
       if (regularAmount > amount && !compact) Padding(
