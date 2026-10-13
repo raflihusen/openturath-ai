@@ -44,7 +44,7 @@ void main() {
             expect(section.content, contains('openturath@gmail.com'));
           }
           for (final name in [
-            'DOKU',
+            'Midtrans',
             'NotebookLM',
             'Firebase',
             'SSL/TLS',

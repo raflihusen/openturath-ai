@@ -93,7 +93,7 @@ abstract final class LegalCopy {
           'Harga, cakupan AI, masa akses, batas penggunaan, kebutuhan akun pihak ketiga, serta biaya yang berlaku ditampilkan sebelum Anda membayar.\n\n'
           'Langganan diperpanjang secara manual. Kami tidak melakukan penagihan berulang otomatis (auto-debit) dari pembelian paket ini.\n\n'
           'Masa akses dimulai ketika aktivasi berhasil dan tanggal berakhir ditampilkan pada akun. '
-          'Pembayaran diproses melalui DOKU menurut metode yang tersedia pada saat transaksi. '
+          'Pembayaran diproses melalui Midtrans menurut metode yang tersedia pada saat transaksi. '
           'Keberhasilan pembayaran dan aktivasi akses adalah dua status yang berbeda. Jika dana telah dibayarkan namun langganan belum aktif, hubungi bantuan dengan nomor transaksi.',
     ),
     LegalSection(
@@ -196,7 +196,7 @@ abstract final class LegalCopy {
       content: 'Kami memproses data sesuai fitur yang Anda gunakan:\n'
           '• Akun: Nama, alamat email, dan identitas profil publik dari akun Google untuk autentikasi dan personalisasi.\n'
           '• Langganan: Paket yang dipilih, status, masa aktif, dan penggunaan voucher.\n'
-          '• Pembayaran: Nomor transaksi, jumlah pembayaran, metode, waktu, dan status dari penyedia DOKU.\n'
+          '• Pembayaran: Nomor transaksi, jumlah pembayaran, metode, waktu, dan status dari penyedia Midtrans.\n'
           '• Kontak Transaksi: Nomor WhatsApp/telepon yang Anda berikan saat pembayaran untuk pengiriman informasi aktivasi.\n'
           '• Percakapan: Pertanyaan, jawaban, dan konteks percakapan yang diproses melalui sesi Google NotebookLM.\n'
           '• Catatan: Catatan, kutipan, dan rujukan yang Anda simpan pada penyimpanan lokal perangkat.\n'
@@ -234,7 +234,7 @@ abstract final class LegalCopy {
       content:
           'Data dibagikan hanya sebatas yang diperlukan untuk menjalankan layanan:\n'
           '• Google: Untuk proses masuk autentikasi dan pemrosesan sesi percakapan NotebookLM.\n'
-          '• DOKU: Lembaga pembayaran resmi untuk memproses transaksi perbankan, dompet digital, atau QRIS.\n'
+          '• Midtrans: Lembaga pembayaran resmi untuk memproses transaksi perbankan, dompet digital, atau QRIS.\n'
           '• Firebase / Google Cloud: Pengelolaan database transaksi dan status hak akses akun yang aman.\n\n'
           'Seluruh penyedia bekerja berdasarkan standar keamanan dan enkripsi industri.',
     ),
@@ -310,8 +310,8 @@ abstract final class LegalCopy {
       id: 'refund_02',
       title: '2. Pembayaran dan Aktivasi Akses',
       content:
-          'Pembayaran diproses melalui gerbang pembayaran resmi DOKU dengan metode QRIS, transfer bank (virtual account), maupun dompet digital.\n\n'
-          'Bukti pembayaran resmi dikirimkan melalui notifikasi DOKU dan email akun Anda. '
+          'Pembayaran diproses melalui gerbang pembayaran resmi Midtrans dengan metode QRIS, transfer bank (virtual account), maupun dompet digital.\n\n'
+          'Bukti pembayaran resmi dikirimkan melalui notifikasi Midtrans dan email akun Anda. '
           'Masa akses aktif seketika transaksi dinyatakan berhasil dan tersinkronisasi. '
           'Jika dana telah terpotong namun status belum aktif, jangan melakukan pembayaran ulang; hubungi $contactSupportEmail dengan menyertakan nomor transaksi.',
     ),

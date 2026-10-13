@@ -33,7 +33,7 @@ AI answers are not official fatwas, binding legal rulings, or substitutes for gu
 
 Subscriptions are renewed manually. This package purchase does not authorize automatic recurring charges or direct debits.
 
-Access starts after successful activation, and its expiry is displayed in your account. Payments are processed through DOKU using methods available at the time of the transaction. Successful payment and access activation are distinct statuses. If you have paid but the subscription is not active, contact support with the transaction number.'''
+Access starts after successful activation, and its expiry is displayed in your account. Payments are processed through Midtrans using methods available at the time of the transaction. Successful payment and access activation are distinct statuses. If you have paid but the subscription is not active, contact support with the transaction number.'''
     ),
     (
       '6. Third-party services: Google NotebookLM',
@@ -110,7 +110,7 @@ For privacy questions, contact openturath@gmail.com.'''
       '''We process data according to the features you use:
 • Account: name, email address, and public Google profile identity for authentication and personalization.
 • Subscription: selected package, status, validity period, and voucher use.
-• Payment: transaction number, amount, method, time, and status from DOKU.
+• Payment: transaction number, amount, method, time, and status from Midtrans.
 • Transaction contact: WhatsApp/telephone number supplied at checkout to send activation information.
 • Conversation: questions, answers, and conversation context processed through Google NotebookLM sessions.
 • Notes: notes, quotations, and references saved in local device storage.
@@ -137,7 +137,7 @@ OpenTurath does not use conversation contents or users' private notes to train p
       '6. Recipients and service providers',
       '''Data is shared only to the extent needed to operate the service:
 • Google: sign-in authentication and NotebookLM conversation sessions.
-• DOKU: the official payment provider for bank transactions, digital wallets, or QRIS.
+• Midtrans: the official payment provider for bank transactions, digital wallets, or QRIS.
 • Firebase / Google Cloud: secure transaction databases and account entitlement management.
 
 All providers operate under industry security and encryption standards.'''
@@ -191,9 +191,9 @@ A 30-day package lasts 30 full calendar days from successful activation. Future 
     ),
     (
       '2. Payment and access activation',
-      '''Payments are processed through the official DOKU gateway by QRIS, bank transfer (virtual account), or digital wallet.
+      '''Payments are processed through the official Midtrans gateway by QRIS, bank transfer (virtual account), or digital wallet.
 
-Official payment evidence is sent through DOKU notifications and your account email. Access becomes active once the transaction is confirmed successful and synchronized. If funds are deducted but access is not active, do not pay again; contact openturath@gmail.com with the transaction number.'''
+Official payment evidence is sent through Midtrans notifications and your account email. Access becomes active once the transaction is confirmed successful and synchronized. If funds are deducted but access is not active, do not pay again; contact openturath@gmail.com with the transaction number.'''
     ),
     (
       '3. Manual renewal without direct debit',
