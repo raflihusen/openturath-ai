@@ -1244,12 +1244,18 @@ window.addEventListener('keydown', function(event) {
   }
 }, true);
 
+let _otBackgroundPaused = false;
+window.otSetBackgroundPaused = function(paused) {
+  _otBackgroundPaused = !!paused;
+};
+
 // Gunakan debounce 300ms dan childList saja (tanpa characterData) untuk menghemat baterai & CPU
 const observer = new MutationObserver(() => {
-  if (scheduled) return;
+  if (_otBackgroundPaused || scheduled) return;
   scheduled = true;
   setTimeout(() => {
     scheduled = false;
+    if (_otBackgroundPaused) return;
     clean();
     checkGenerationState();
   }, 300);

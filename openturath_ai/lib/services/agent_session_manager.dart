@@ -38,6 +38,7 @@ class AgentSessionTab {
   /// Lepaskan seluruh resource WebView dan handler JavaScript untuk mencegah kebocoran memori.
   Future<void> disposeWebResources() async {
     try {
+      await webController?.loadUrl(urlRequest: URLRequest(url: WebUri('about:blank')));
       await webController?.stopLoading();
       webController?.removeJavaScriptHandler(handlerName: 'otCopiedAnswer');
       webController?.removeJavaScriptHandler(handlerName: 'otAnswerState');
@@ -89,7 +90,19 @@ class AgentSessionManager extends ChangeNotifier {
   void openAgent(AgentModel agent, {UserModel? user}) {
     final existingIndex = _tabs.indexWhere((t) => t.agent.id == agent.id);
     if (existingIndex != -1) {
-      _activeIndex = existingIndex;
+      if (_activeIndex != existingIndex) {
+        try {
+          _tabs[_activeIndex].webController?.evaluateJavascript(
+            source: 'window.otSetBackgroundPaused && window.otSetBackgroundPaused(true);',
+          );
+        } catch (_) {}
+        _activeIndex = existingIndex;
+        try {
+          _tabs[_activeIndex].webController?.evaluateJavascript(
+            source: 'window.otSetBackgroundPaused && window.otSetBackgroundPaused(false);',
+          );
+        } catch (_) {}
+      }
     } else {
       if (_tabs.length >= maxTabs) {
         // Tab limit reached: close oldest non-active tab to preserve WebView memory
@@ -106,7 +119,17 @@ class AgentSessionManager extends ChangeNotifier {
   /// Switch active tab (like clicking a Chrome tab).
   void selectTab(int index) {
     if (index >= 0 && index < _tabs.length && _activeIndex != index) {
+      try {
+        _tabs[_activeIndex].webController?.evaluateJavascript(
+          source: 'window.otSetBackgroundPaused && window.otSetBackgroundPaused(true);',
+        );
+      } catch (_) {}
       _activeIndex = index;
+      try {
+        _tabs[_activeIndex].webController?.evaluateJavascript(
+          source: 'window.otSetBackgroundPaused && window.otSetBackgroundPaused(false);',
+        );
+      } catch (_) {}
       notifyListeners();
     }
   }
