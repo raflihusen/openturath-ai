@@ -309,6 +309,29 @@ Berdasarkan `AUDIT_OPENTURATH_AI.md`, dokumen perancangan pustaka, dan keluhan k
      - **macOS Universal DMG**: `/Users/apple/Downloads/ramadhan/OpenTurath_AI_macOS.dmg` (48 MB) + `OpenTurath_AI_macOS.dmg.sha256`.
      - Skrip audit `verify_session_signing.py` meloloskan verifikasi ad-hoc tanpa error.
 
+### Fasa 27: Implementasi Master Plan Arsitektur v4.0 (12 Blind Spot Ditutup, Otomasi VPS & macOS DMG)
+- **Cakupan Perbaikan & Remediasi**:
+  1. **BS-01 (RFC 6265bis Session Vault)**: Implementasi `PersistentGoogleSession` dengan `_setCookieSafely` (`domain: null` & `path: '/'` untuk `__Host-*`), pin ekspirasi 180 hari, dan fallback pengecekan live cookie sebelum penimpaan.
+  2. **BS-02 (Hidden DOM Email Extraction)**: Timeout fallback 900ms di `google_session_auth_screen.dart` membaca cookie live session (`OTZ`, `SAPISID`, `SID`) jika avatar DOM Angular tersembunyi.
+  3. **BS-03 (Instant Provisioning Outbox Trigger)**: Cloud Function `onProvisioningOutboxCreated` (`.onCreate('provisioning_outbox/{jobId}')`) dengan *atomic lease* (`provisioning_leases/{uid}`) untuk sharing NotebookLM sub-detik tanpa menunggu polling cron 5 menit.
+  4. **BS-04 (Tombol Ganti Akun In-App)**: Tombol *"Ganti akun Google"* langsung di layar galat perizinan WebView (`isGooglePermissionError`) tanpa memaksa logout akun aplikasi.
+  5. **BS-05 (Akses Dashboard Offline)**: `splash_screen.dart` meloloskan pengguna offline dengan sesi lokal valid langsung ke Dashboard.
+  6. **BS-06 (3DSecure/QRIS Subframe Allowance)**: `payment_checkout_sheet.dart` mengizinkan seluruh subframe perbankan (`if (navigationAction.isForMainFrame != true) return ALLOW;`).
+  7. **BS-07 (Background Tab Throttling)**: `agent_multi_tab_room.dart` menjeda DOM observer (`otSetBackgroundPaused(true)`) pada tab latar belakang demi efisiensi memori 8GB RAM.
+  8. **BS-08 (Inquiry Throttle & Stream Listener)**: Throttle 6 detik pada inquiry status pembayaran, listener `AuthService().userStream` reaktif 0ms, dan navigasi langsung ke telaah spesialis via `PaymentSuccessDialog`.
+  9. **BS-09 (Registrasi Pustaka Agen Tahawwulat)**: Semua sub-agen Tahawwulat (`fiqh_tahawwulat_muhaqqiq`, `bayan`, `mukhtabir`, `habib`, `khatib`) dan 15 modul lainnya terdaftar di `open_turath_catalog_repository.dart` dengan fallback aman.
+  10. **BS-10 (Perbaikan Pop Dialog & Pemetaan Voucher)**: Menangkap `NavigatorState` sebelum pop dan navigasi bersih via `nav.popUntil(...)` di `exclusive_activation_dialog.dart` dan `profile_screen.dart`.
+  11. **BS-11 & Hukum Sakral VIP (Rule 5)**: Isolasi hak akses granular yang ketat di `user_model.dart` dan perlindungan permanen VIP di seluruh fungsi backend dan skrip reaper.
+  12. **BS-12 (Pembersihan Sesi & Formatter Voucher)**: Pembersihan brankas cookie pada logout/delete akun dan toleransi spasi/panjang hingga 64 karakter pada input voucher.
+- **Integritas Build & Verifikasi**:
+  - UI Pembayaran di `subscription_screen.dart` dipertahankan utuh sesuai instruksi pengguna.
+  - 100% Flutter Unit Tests Lolos: 387/387 passed.
+  - 100% Cloud Functions Unit Tests Lolos: 144/144 passed.
+  - 100% VPS Python Unit Tests Lolos: 24/24 passed.
+  - Paket Rilis VPS: `ecosystem/dist/openturath-access-20261014T144356Z-de6b6dbe.tar.gz` (+ sha256).
+  - Biner Rilis macOS DMG: `OpenTurath_AI_macOS.dmg` (48 MB, Universal arm64+x86_64, Ad-Hoc Signed, verified).
+  - `/Applications/OpenTurath AI.app` diperbarui dan siap digunakan.
+
 ---
 
 ## 5. Agenda & Fokus Selanjutnya
