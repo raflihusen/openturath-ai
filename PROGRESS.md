@@ -77,25 +77,28 @@ Berdasarkan `AUDIT_OPENTURATH_AI.md`, dokumen perancangan pustaka, dan keluhan k
 
 ## 4. Status Pengujian, Rilis APK & macOS
 - **Syntax & Type Check**: `flutter analyze` $\rightarrow$ **0 issues**.
-- **Automated Test Suite**: Seluruh 32 berkas pengujian unit/widget di `openturath_ai/test/` berstatus **LULUS (All Green - 159+ tests)**.
+- **Automated Test Suite**: Seluruh pengujian sistem berstatus **LULUS (All Green - 554 tests)**:
+  - Flutter Client: **386 passed**, 0 failed
+  - Cloud Functions: **144 passed**, 0 failed
+  - Subscription Engine: **24 passed**, 0 failed
 - **Rilis Binary APK Terbaru (Lokal)**:
   - File: `/Users/apple/Downloads/ramadhan/app-release-latest.apk`
-  - Versi: `1.0.51+52`
-  - Ukuran: 62.7 MB (62.682.302 bytes)
-  - Timestamp: 2026-09-20 08:42:38 WIB
-  - Status: Kompilasi Gradle selesai 100% (Full assembleRelease 167.7s).
-  - Termasuk penghapusan Mode Tamu di layar login, hardening keamanan transaksi pembayaran, pembersihan nama Arab redundan, dan proteksi total desain asli.
+  - Versi: `1.0.67+68`
+  - Ukuran: 67.9 MB (67.909.262 bytes)
+  - SHA-256: `f15767e48d762beeb31fdc2dce3f4982384beb3a386c3689ce33ee53c6681c60`
+  - Timestamp: 2026-10-14 05:32 WIB
+  - Status: Kompilasi Gradle selesai 100% (assembleRelease 291.2s).
 - **Rilis macOS DMG (Kompilasi Lokal Terbaru)**:
   - File: `/Users/apple/Downloads/ramadhan/OpenTurath_AI_macOS.dmg`
-  - Ukuran: 47 MB (49.427.583 bytes)
-  - SHA-256: `07fffeaa34510042256e785c28fd23d8f06d43924d8925d4d59b952b989a258d`
-  - Timestamp: 2026-10-06 13:39 WIB
-  - Status: Kompilasi Xcode/macOS Release selesai 100%, UDZO image terkemas rapi via `package_macos.sh`, dan `/Applications/OpenTurath AI.app` diperbarui langsung.
-  - Perbaikan Kritis:
-    1. Eliminasi SyntaxError fatal pada `notebook_ui_script.dart` (`[class*="zero-state" i]`) yang menyebabkan `window.otNotebook` gagal dievaluasi sehingga AI macet loading selamanya.
-    2. Pembersihan menyeluruh empty state: teks nama asisten (Al-Muhaqqiq dll), rincian `X sumber · tanggal`, serta loading internal NotebookLM disembunyikan bersih sebelum obrolan siap.
-    3. Komponen loading terstandarisasi penuh ke Three-Dots Pulse Loader elegan (titik tiga berdenyut baku), bebas dari animasi lengkung/bar linear lama.
-    4. Seluruh naskah pedoman adab disatukan menjadi 8 poin rapi tanpa rujukan nomor kitab/halaman.
+  - Versi: `1.0.67+68`
+  - Ukuran: 48 MB
+  - SHA-256: `a622fdd664b3e895f1661eba83a5979b2b20d149c2fbf880cdf9afce8eb2ecb4`
+  - Timestamp: 2026-10-14 07:15 WIB
+  - Status: Kompilasi Xcode/macOS Release universal (arm64 + x86_64) selesai 100%, UDZO image terkemas rapi via `package_macos.sh`.
+- **Paket Distribusi Pekerja Akses VPS**:
+  - File: `/Users/apple/Downloads/ramadhan/ecosystem/dist/openturath-access-20261014T035043Z-5b44945e.tar.gz`
+  - SHA-256: Diverifikasi via `openturath-access-20261014T035043Z-5b44945e.tar.gz.sha256`
+  - Status: Registry kanonikal 17 VIP terintegrasi penuh.
 - **Rilis macOS DMG (Cloud GitHub Actions)**:
   - Workflow: `.github/workflows/release_all_platforms.yml` (Job `build-macos-dmg`).
   - Output Artifact: `OpenTurath_AI_macOS.dmg`.
