@@ -332,6 +332,22 @@ Berdasarkan `AUDIT_OPENTURATH_AI.md`, dokumen perancangan pustaka, dan keluhan k
   - Biner Rilis macOS DMG: `OpenTurath_AI_macOS.dmg` (48 MB, Universal arm64+x86_64, Ad-Hoc Signed, verified).
   - `/Applications/OpenTurath AI.app` diperbarui dan siap digunakan.
 
+### Fasa 28: Penyelesaian Mutlak Masalah Akun Ganda, Bar Transparan WebView, & Redesain Monokrom Pembayaran
+- **Penyelesaian Masalah Akun & Login**:
+  1. *Pencegahan Auto-Bypass ke Beranda*: Menghapus `_tryAutoRestoreSession()` prematur di `initState()` pada `GoogleSessionAuthScreen`.
+  2. *Verifikasi Akun Eksak & Anti Sesi Nyasar*: `PersistentGoogleSession.restoreSessionIfAvailable()` dan `AuthService.reconcileWebSession()` mewajibkan `savedOwner == cleanEmail` sebelum memulihkan sesi. Jika akun berbeda, sesi browser lama langsung dibersihkan (`clearOnSignOut()`) sehingga login dimulai bersih tanpa residu akun sebelumnya.
+  3. *Verifikasi Pencocokan Email Google*: `_checkAccountVerification()` di `GoogleSessionAuthScreen` memvalidasi email Google via DOM dan `WIZ_global_data`. Jika email tidak cocok dengan Firebase Auth, dialog `_showAccountMismatchDialog` langsung muncul dan memblokir akses ke beranda. Bypassing unverified cookie dieliminasi total.
+- **Penyembunyian Bar Transparan & Tombol Copy WebView**:
+  1. *Eliminasi Bar Header Transparan*: Mengeliminasi seluruh variasi sticky header, scrim scroll, dan bar semi-transparan (`app-chat-header`, `app-conversation-header`, `app-chat-panel-header`, `.top-scrim`, `.header-scrim`, `[class*="scrim" i]`, `[class*="gradient" i]`, `[class*="fade-overlay" i]`).
+  2. *Penghapusan Fade Mask*: Menghapus `-webkit-mask-image` dan pseudo-elemen `::before` / `::after` pada container obrolan sehingga teks paling atas tidak lagi pudar/terpotong.
+  3. *Penyembunyian Tombol Copy & Action Turn*: Menyembunyikan tombol copy nonaktif/tooltip (`button[aria-label*="copy" i]`, `button:has(mat-icon[fonticon*="copy" i])`, `.message-actions`, `.turn-actions`, `mat-tooltip-component`) agar area baca murni dan bebas gangguan.
+- **Pembersihan Desain Pembayaran (Pure Monochrome Obsidian)**:
+  1. *Penghapusan Aksen Oranye*: Mengganti seluruh aksen oranye/amber (`OTColors.tahawwulat`) pada kartu Fikih Tahawwulat, lencana "Eksklusif di OpenTurath", penanda tier 12 bulan, dan teks hemat menjadi palet monokrom hitam-putih minimalis (`OTExpressive.white`, `OTExpressive.whiteMuted`, `alpha: 0.08` - `0.22`).
+- **Verifikasi & Build**:
+  1. 387/387 Flutter unit tests lolos 100%.
+  2. Kompilasi biner rilis macOS universal arm64+x86_64 berhasil.
+  3. Pembuatan `OpenTurath_AI_macOS.dmg` (48 MB) dan pembaruan `/Applications/OpenTurath AI.app` terpasang.
+
 ---
 
 ## 5. Agenda & Fokus Selanjutnya
