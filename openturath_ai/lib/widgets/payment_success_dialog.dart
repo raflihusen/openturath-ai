@@ -93,7 +93,9 @@ class PaymentSuccessDialog extends StatelessWidget {
                     );
                   }
                 },
-                child: Text(reviewCopy('Mulai Telaah Sekarang', 'ابدأ الدراسة الآن', 'Start Study Now')))),
+                child: Text(agent != null
+                    ? reviewCopy('Mulai Telaah Sekarang', 'ابدأ الدراسة الآن', 'Start Study Now')
+                    : reviewCopy('Selesai', 'تم', 'Done')))),
       ]),
     );
   }
