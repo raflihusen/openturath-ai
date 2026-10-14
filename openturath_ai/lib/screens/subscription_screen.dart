@@ -182,7 +182,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
           periodLabel: offer.period);
       if (mounted && paid == true) {
         await PaymentSuccessDialog.show(context,
-            plan: title, invoice: invoice, amount: offer.amount);
+            plan: title, invoice: invoice, amount: offer.amount, agent: agent);
       }
     } on FirebaseFunctionsException catch (error, stack) {
       TelemetryService.instance.reportError(error, stack, context: 'checkout');

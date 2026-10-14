@@ -17,6 +17,7 @@ import '../core/constants.dart';
 import '../core/checkout_completion.dart';
 import '../core/theme.dart';
 import '../core/design/ot_colors.dart';
+import '../services/auth_service.dart';
 import '../services/subscription_service.dart';
 import 'app_loader.dart';
 import 'promo_price.dart';
@@ -127,6 +128,8 @@ class _PaymentCheckoutSheetState extends State<PaymentCheckoutSheet> {
   InAppWebViewController? _webController;
   Timer? _pollTimer;
   StreamSubscription<QuerySnapshot>? _txSubscription;
+  StreamSubscription? _userSubscription;
+  DateTime? _lastInquiryAt;
   double _loadProgress = 0.0;
   bool _isChecking = false;
   bool _isSuccess = false;
@@ -165,7 +168,16 @@ class _PaymentCheckoutSheetState extends State<PaymentCheckoutSheet> {
       );
     }
 
-    // 2. Active inquiry polling setiap 2 detik sebagai fail-safe
+    // 2. Real-time User Entitlements Listener: mendeteksi aktivasi instan dari webhook server
+    _userSubscription = AuthService().userStream.listen((user) {
+      if (user != null && !_isSuccess && mounted) {
+        if (user.isVip || user.isSubscriptionActive) {
+          _triggerSuccess();
+        }
+      }
+    });
+
+    // 3. Active inquiry polling setiap 5 detik sebagai fail-safe
     _pollTimer = Timer.periodic(const Duration(seconds: 5), (_) {
       _checkPaymentStatus();
     });
@@ -175,6 +187,7 @@ class _PaymentCheckoutSheetState extends State<PaymentCheckoutSheet> {
   void dispose() {
     _pollTimer?.cancel();
     _txSubscription?.cancel();
+    _userSubscription?.cancel();
     _webController = null;
     super.dispose();
   }
@@ -183,12 +196,13 @@ class _PaymentCheckoutSheetState extends State<PaymentCheckoutSheet> {
     if (_isSuccess || _hasPopped || !mounted) return;
     _pollTimer?.cancel();
     _txSubscription?.cancel();
+    _userSubscription?.cancel();
     setState(() {
       _isSuccess = true;
     });
 
-    // Beri jeda 2.2 detik agar pengguna menikmati animasi sukses
-    await Future.delayed(const Duration(milliseconds: 2200));
+    // Beri jeda 400ms agar dialog piagam aktivasi langsung muncul
+    await Future.delayed(const Duration(milliseconds: 400));
     await _completion.finish(
       dismissConfirmation: () {
         final dialogContext = _confirmationContext;
@@ -209,9 +223,16 @@ class _PaymentCheckoutSheetState extends State<PaymentCheckoutSheet> {
     );
   }
 
-  Future<void> _checkPaymentStatus() async {
+  Future<void> _checkPaymentStatus({bool force = false}) async {
     if (_isChecking || _isSuccess || _hasPopped || !mounted) return;
     if (widget.invoiceNumber.isEmpty) return;
+
+    if (!force &&
+        _lastInquiryAt != null &&
+        DateTime.now().difference(_lastInquiryAt!) <
+            const Duration(seconds: 6)) {
+      return;
+    }
 
     _pollAttempts++;
     // F33: Batas maksimal polling 150 kali (5 menit) agar tidak memboroskan sumber daya
@@ -220,6 +241,7 @@ class _PaymentCheckoutSheetState extends State<PaymentCheckoutSheet> {
       return;
     }
 
+    _lastInquiryAt = DateTime.now();
     _isChecking = true;
     try {
       final res = await _subService.verifyPaymentStatus(
@@ -559,7 +581,7 @@ class _PaymentCheckoutSheetState extends State<PaymentCheckoutSheet> {
                                   ? null
                                   : () {
                                       _webController?.reload();
-                                      _checkPaymentStatus();
+                                      _checkPaymentStatus(force: true);
                                     },
                               icon: _isChecking
                                   ? const SizedBox(
@@ -664,6 +686,11 @@ class _PaymentCheckoutSheetState extends State<PaymentCheckoutSheet> {
                       },
                       shouldOverrideUrlLoading:
                           (controller, navigationAction) async {
+                        // Izinkan seluruh subframe (iframe 3DSecure bank, polling QRIS Midtrans)
+                        if (navigationAction.isForMainFrame != true) {
+                          return NavigationActionPolicy.ALLOW;
+                        }
+
                         final webUri = navigationAction.request.url;
                         if (webUri == null) {
                           return NavigationActionPolicy.CANCEL;
