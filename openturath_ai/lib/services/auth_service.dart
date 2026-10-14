@@ -389,12 +389,21 @@ class AuthService {
   /// sebelumnya tidak terbawa ke pengguna berikutnya di perangkat yang sama.
   static Future<void> reconcileWebSession(String email) async {
     final current = email.trim().toLowerCase();
+    if (current.isEmpty) return;
     try {
       final prefs = await SharedPreferences.getInstance();
-      final owner = prefs.getString(webSessionOwnerKey) ?? '';
-      if (current.isNotEmpty && owner == current) return;
-      await DesktopWebViewRuntime.clearSession();
-      await prefs.remove(webSessionOwnerKey);
+      final owner = (prefs.getString(webSessionOwnerKey) ?? '').trim().toLowerCase();
+      // Hanya hapus sesi bila terbukti ada pemilik sebelumnya yang BERBEDA.
+      // Jika owner kosong (misal instalasi baru atau sesi pertama), jangan hapus
+      // cookie Google WebView yang mungkin sudah aktif dan valid.
+      if (owner.isNotEmpty && owner != current) {
+        await DesktopWebViewRuntime.clearSession();
+        await prefs.remove(webSessionOwnerKey);
+        await prefs.setBool('google_session_ready', false);
+        await prefs.remove('google_session_email');
+      } else if (owner.isEmpty) {
+        await prefs.setString(webSessionOwnerKey, current);
+      }
     } catch (_) {}
   }
 

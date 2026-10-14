@@ -87,6 +87,7 @@ class _LoginScreenState extends State<LoginScreen> {
         final sessionEmail = prefs.getString('google_session_email') ?? '';
         final userEmail = user.email.trim().toLowerCase();
         await AuthService.reconcileWebSession(userEmail);
+        await AuthService.rememberWebSessionOwner(userEmail);
         if (!mounted) return;
 
         if (sessionReady && userEmail.isNotEmpty && sessionEmail == userEmail) {
