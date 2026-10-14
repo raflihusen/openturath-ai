@@ -13,14 +13,7 @@ export const VIP_EMAILS = new Set([
   "alhamodi65@gmail.com", "ali.bafdhl36@gmail.com", "alshykhkmalbahrmz@gmail.com",
   "atinrahmak@gmail.com", "hafamfb551985@gmail.com", "loyos839@gmail.com",
   "mohammedhalahdal@gmail.com", "mostajadt25@gmail.com", "nona.alyaziza@gmail.com",
-  "omar739037802@gmail.com", "yasser110271@gmail.com", "ndsfraaaaaaa@gmail.com",
-  "riefbois33@gmail.com", "muhammadalaydrus65@gmail.com", "abrormuhammed14@gmail.com",
-  "beyzabeem@gmail.com", "fikrilzabidi@gmail.com", "ghufron2002@gmail.com",
-  "hizbullah1504@gmail.com", "idawakhidah88@gmail.com", "idawahidah88@gmai.com",
-  "iqbalismailmm@gmail.com", "m.syafiq280605@gmail.com", "msyafiq280605@gmail.com",
-  "nonaalyaziza@gmail.com", "nst275642@gmail.com", "surratimassya@gmail.com",
-  "chenhuha135@gmail.com", "yudolgregar@gmail.com", "syekhai378@gmail.com",
-  "mfulan370@gmail.com",
+  "omar739037802@gmail.com", "yasser110271@gmail.com",
 ]);
 export const normalEmail = (s: unknown): string => typeof s === "string" ? s.trim().toLowerCase() : "";
 export const keyOf = (...parts: string[]): string => crypto.createHash("sha256").update(JSON.stringify(parts)).digest("hex");

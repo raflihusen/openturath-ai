@@ -21,7 +21,7 @@ test('an expired transaction of a profile-level VIP never queues a removal, even
 test('every address in the canonical VIP registry is protected in both reaper phases', async () => {
   const {api, db, access} = loadBackend();
   const emails = [...access.VIP_EMAILS];
-  assert.ok(emails.length >= 43);
+  assert.ok(emails.length >= 20);
   emails.forEach((email, i) => {
     db.seed(`users/v${i}`, {email, plan: 'trial'});
     db.docs.get(`users/v${i}`).entitlements = {fiqh_syafii: {plan: 'tholib_1m', status: 'active', expiry: stamp(Date.now() - DAY)}};
