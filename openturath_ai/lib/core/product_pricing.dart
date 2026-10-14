@@ -21,9 +21,9 @@ class SubscriptionOffer {
 }
 
 abstract final class ProductPricing {
-  static const revision = 'perdana-2026-09-20';
+  static const revision = 'harga-v92-2026-10-14';
   static const specialist = SubscriptionOffer(
-    plan: 'tholib_1m', months: 1, regularAmount: 300000, amount: 50000);
+    plan: 'tholib_1m', months: 1, regularAmount: 300000, amount: 49000);
   static const specialists = [
     specialist,
     SubscriptionOffer(plan: 'tholib_6m', months: 6, regularAmount: 1200000, amount: 299000),

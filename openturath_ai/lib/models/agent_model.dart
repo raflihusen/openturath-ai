@@ -173,18 +173,16 @@ class AgentModel {
           ],
           referenceBooks: [
             BookModel(
-              title: 'Nubdzah Al-Bayan fi Ma\'rifati Sunan Al-Khalaq',
-              titleArabic: 'نبذة البيان في معرفة سنن الخلق والبيان',
+              title: 'Al-Marshad An-Nabawi',
+              titleArabic: 'المرصد النبوي',
               author: 'Habib Abu Bakar Al-Masyhur',
-              description:
-                  'Kitab pengantar dasar metodologi Sunan Al-Khalaq, tanda akhir zaman, dan peta dakwah fikih tahawwulat.',
+              description: 'Karya Habib Abu Bakar Al-Masyhur dalam empat juz.',
             ),
             BookModel(
-              title: 'Al-Fiqh Al-Manhaji fi Fiqh Al-Tahawwulat',
-              titleArabic: 'الفقه المنهجي في فقه التحولات',
+              title: 'An-Nubdzah Ash-Shughra',
+              titleArabic: 'النبذة الصغرى',
               author: 'Habib Abu Bakar Al-Masyhur',
-              description:
-                  'Panduan pengantar Fikih Tahawwulat untuk pelajar dan peneliti.',
+              description: 'Risalah ringkas Habib Abu Bakar Al-Masyhur.',
             ),
           ],
         ),
@@ -208,7 +206,7 @@ class AgentModel {
           ],
           status: 'active',
           sortOrder: 2,
-          price1m: 50000,
+          price1m: 49000,
           price6m: 299000,
           price1y: 499000,
           subAgents: [
@@ -257,7 +255,7 @@ class AgentModel {
           catalogId: 'canonical_hanafi',
           status: 'active',
           sortOrder: 3,
-          price1m: 50000,
+          price1m: 49000,
           price6m: 299000,
           price1y: 499000,
           subAgents: [
@@ -306,7 +304,7 @@ class AgentModel {
           catalogId: 'canonical_maliki',
           status: 'active',
           sortOrder: 4,
-          price1m: 50000,
+          price1m: 49000,
           price6m: 299000,
           price1y: 499000,
           subAgents: [
@@ -354,7 +352,7 @@ class AgentModel {
           catalogId: 'canonical_hanbali',
           status: 'active',
           sortOrder: 5,
-          price1m: 50000,
+          price1m: 49000,
           price6m: 299000,
           price1y: 499000,
           subAgents: [
@@ -387,14 +385,14 @@ class AgentModel {
         ),
         AgentModel(
           id: 'fiqh_muqaran',
-          title: 'Perbandingan Mazhab',
-          titleArabic: 'الفقه المقارن',
+          title: 'Perbandingan Mazhab & Fatwa',
+          titleArabic: 'الفقه المقارن والفتاوى',
           description:
-              'Bandingkan dalil dan pandangan mazhab Hanafi, Maliki, Syafi\'i, dan Hanbali.',
+              'Bandingkan dalil dan konstruksi hukum antarmazhab melalui Al-Isyraf dan Al-Awsath karya Ibnu al-Mundzir serta Al-Fiqh al-Islami wa Adillatuh. Telusuri fatwa dan nawazil, siyasah syar\'iyyah, serta pembagian faraidh.',
           emoji: '⚖️',
           category: 'Fikih',
           fieldId: 'fiqh',
-          subtitleAcademic: 'Perbandingan Mazhab Empat & Tarjih Dalil',
+          subtitleAcademic: 'Perbandingan Mazhab, Fatwa & Nawazil',
           suggestedPrompts: [
             'Bagaimana pandangan empat mazhab mengenai rukun nikah?',
             'Apa dalil perbedaan ulama tentang batas menyentuh bukan mahram?',
@@ -403,7 +401,7 @@ class AgentModel {
           catalogId: 'canonical_fiqh_muqaran',
           status: 'active',
           sortOrder: 6,
-          price1m: 50000,
+          price1m: 49000,
           price6m: 299000,
           price1y: 499000,
           subAgents: [
@@ -419,11 +417,10 @@ class AgentModel {
           ],
           referenceBooks: [
             BookModel(
-              title: 'Bidayatul Mujtahid wa Nihayatul Muqtashid',
-              titleArabic: 'بداية المجتهد ونهاية المقتصد',
-              author: 'Ibnu Rusyd Al-Hafid',
-              description:
-                  'Kajian perbandingan mazhab empat beserta analisis dalil dan sebab perbedaan hukum.',
+              title: 'Al-Isyraf \'ala Madzahib Al-\'Ulama',
+              titleArabic: 'الإشراف على مذاهب العلماء',
+              author: 'Ibnu Al-Mundzir',
+              description: 'Himpunan pendapat para ulama dalam masalah fikih.',
             ),
             BookModel(
               title: 'Al-Fiqh Al-Islami wa Adillatuh',
@@ -438,7 +435,7 @@ class AgentModel {
         // ── 2. HADIS ──────────────────────────────────────────
         AgentModel(
           id: 'hadits',
-          title: 'Matan Hadits',
+          title: 'Hadits',
           titleArabic: 'الحديث الشريف',
           description:
               'Telusuri hadis, sanad, perawi, dan penjelasannya dalam kitab rujukan.',
@@ -454,7 +451,7 @@ class AgentModel {
           catalogId: 'canonical_hadits',
           status: 'active',
           sortOrder: 7,
-          price1m: 50000,
+          price1m: 49000,
           price6m: 299000,
           price1y: 499000,
           subAgents: [
@@ -489,8 +486,8 @@ class AgentModel {
         // ── 3. TAFSIR ─────────────────────────────────────────
         AgentModel(
           id: 'tafsir',
-          title: 'Tafsir Al-Qur\'an',
-          titleArabic: 'تفسير القرآن',
+          title: 'Tafsir',
+          titleArabic: 'التفسير وعلوم القرآن',
           description:
               'Telusuri makna ayat, sebab turunnya, hubungan antarayat, dan penjelasan para mufasir.',
           emoji: '🌟',
@@ -505,7 +502,7 @@ class AgentModel {
           catalogId: 'canonical_tafsir',
           status: 'active',
           sortOrder: 8,
-          price1m: 50000,
+          price1m: 49000,
           price6m: 299000,
           price1y: 499000,
           subAgents: [
@@ -541,14 +538,14 @@ class AgentModel {
         // ── 4. USUL FIQH ──────────────────────────────────────
         AgentModel(
           id: 'ushul_fiqh',
-          title: 'Usul Fikih',
-          titleArabic: 'أصول الفقه',
+          title: 'Ushul & Kaidah Fikih',
+          titleArabic: 'أصول الفقه والقواعد الفقهية',
           description:
-              'Pelajari kaidah penggalian hukum, dalil, dan maqashid syariah melalui kitab usul fikih.',
+              'Kaji dalalatul alfaz, qiyas, dan metode istinbath melalui Al-Mustashfa, Al-Luma\', dan Al-Burhan, beserta kaidah fikih dan Al-Asybah wan-Nazha\'ir.',
           emoji: '📐',
           category: 'Usul Fikih',
           fieldId: 'usul',
-          subtitleAcademic: 'Kaidah Istinbath & Maqashid Syariah',
+          subtitleAcademic: 'Kaidah Istinbath & Qawa\'id Fiqhiyyah',
           suggestedPrompts: [
             'Apa perbedaan Mafhum Mukhalafah dan Mafhum Muwafaqah?',
             'Bagaimana kaidah "Al-Amru ba\'dan-nahyi yufidul ibahah"?',
@@ -557,7 +554,7 @@ class AgentModel {
           catalogId: 'canonical_ushul_fikih',
           status: 'active',
           sortOrder: 9,
-          price1m: 50000,
+          price1m: 49000,
           price6m: 299000,
           price1y: 499000,
           subAgents: [
@@ -609,7 +606,7 @@ class AgentModel {
           catalogId: 'canonical_bahasa_arab',
           status: 'active',
           sortOrder: 10,
-          price1m: 50000,
+          price1m: 49000,
           price6m: 299000,
           price1y: 499000,
           subAgents: [
@@ -655,7 +652,7 @@ class AgentModel {
         // ── 6. AQIDAH ─────────────────────────────────────────
         AgentModel(
           id: 'aqidah',
-          title: 'Akidah',
+          title: 'Aqidah',
           titleArabic: 'العقيدة والتوحيد',
           description:
               'Pembahasan ushuluddin, tauhid sifat dua puluh, dan manhaj Ahlussunnah wal Jama\'ah.',
@@ -671,7 +668,7 @@ class AgentModel {
           catalogId: 'canonical_akidah',
           status: 'active',
           sortOrder: 11,
-          price1m: 50000,
+          price1m: 49000,
           price6m: 299000,
           price1y: 499000,
         ),
@@ -695,14 +692,14 @@ class AgentModel {
           catalogId: 'canonical_tarikh',
           status: 'active',
           sortOrder: 12,
-          price1m: 50000,
+          price1m: 49000,
           price6m: 299000,
           price1y: 499000,
         ),
 
         AgentModel(
           id: 'tasawwuf',
-          title: 'Tasawwuf & Adzkar',
+          title: 'Tasawuf',
           titleArabic: 'التصوف والأذكار',
           description:
               'Telaah adab, tazkiyatun nafs, dan wirid dalam kitab rujukan.',
@@ -713,132 +710,36 @@ class AgentModel {
           catalogId: 'canonical_tasawuf',
           status: 'active',
           sortOrder: 13,
-          price1m: 50000,
+          price1m: 49000,
         ),
 
-        // ── 8. TASAWUF & ULAMA ────────────────────────────────
-        AgentModel(
-          id: 'habib_umar',
-          title: 'Habib Umar bin Hafizh',
-          titleArabic: 'الحبيب عمر بن حفيظ',
-          description:
-              'Telusuri fatwa, khutbah, tulisan, dan nasihat dakwah Habib Umar bin Hafizh.',
-          emoji: '🕌',
-          category: 'Khazanah Ulama',
-          kind: CorpusKind.scholar,
-          scholarIds: const ['habib_umar'],
-          disciplineIds: const ['tasawwuf'],
-          fieldId: 'tasawwuf',
-          subtitleAcademic: 'Kitab & Ribuan Muhadharah Tarim',
-          suggestedPrompts: [
-            'Nasihat Habib Umar mengenai adab menuntut ilmu di era fitnah digital.',
-            'Kutipan dari kitab Taujih Al-Nabih tentang penyucian hati.',
-            'Amalan wirid harian dan dzikir yang diajarkan di Darul Musthafa.',
-          ],
-          catalogId: 'canonical_tasawuf',
-          status: 'active',
-          sortOrder: 13,
-          price1m: 50000,
-          price6m: 299000,
-          price1y: 499000,
-        ),
-        AgentModel(
-          id: 'imam_ghazali',
-          title: 'Imam Al-Ghazali',
-          titleArabic: 'حجة الإسلام الغزالي',
-          description:
-              'Pelajari tasawuf, akhlak, dan usul fikih dalam karya-karya Imam Al-Ghazali, termasuk Ihya Ulumiddin.',
-          emoji: '🕯️',
-          category: 'Khazanah Ulama',
-          kind: CorpusKind.scholar,
-          scholarIds: const ['imam_ghazali'],
-          disciplineIds: const ['tasawwuf', 'usul', 'aqidah'],
-          fieldId: 'tasawwuf',
-          subtitleAcademic: 'Ihya Ulumiddin & Naskah Hujjatul Islam',
-          suggestedPrompts: [
-            'Bagaimana pembagian ilmu terpuji dan tercela dalam Kitab Al-Ilm Ihya Ulumiddin?',
-            'Penjelasan konsep qalb dan ruh menurut Imam Al-Ghazali.',
-            'Kaidah maslahah mursalah dan maqashid syariah dalam Al-Mustashfa.',
-          ],
-          catalogId: 'canonical_tasawuf',
-          status: 'active',
-          sortOrder: 14,
-          price1m: 50000,
-          price6m: 299000,
-          price1y: 499000,
-        ),
 
         // ── 9. SPESIALIS TAMBAHAN KATALOG MASTER ───────────────
         AgentModel(
-          id: 'qawaid_fiqhiyyah',
-          title: 'Qawaid Fiqhiyyah',
-          titleArabic: 'القواعد الفقهية',
-          description:
-              'Pendalaman kaidah-kaidah asasiyah fikih, kulliyyah, dan furu\'iyyah lintas mazhab.',
-          emoji: '⚖️',
-          category: 'Usul Fikih',
-          fieldId: 'usul',
-          subtitleAcademic: 'Asybah wan-Nazhair & Kaidah Asasiyyah',
-          suggestedPrompts: [
-            'Bagaimana lima kaidah asasiyah (al-qawa\'id al-kubra) dalam fikih beserta contoh penerapannya?',
-            'Bagaimana kaidah "Al-Yaqinu la yazulu bisy-syakk" diterapkan dalam shalat?',
-            'Kutipan dari Al-Asybah wan-Nazhair Imam As-Suyuthi.',
-          ],
-          catalogId: 'canonical_qawaid_fiqhiyyah',
-          status: 'active',
-          sortOrder: 15,
-          price1m: 50000,
-          price6m: 299000,
-          price1y: 499000,
-        ),
-        AgentModel(
-          id: 'fatawa_masail',
-          title: 'Fatawa & Masail Fiqhiyyah',
-          titleArabic: 'الفتاوى والمسائل الفقهية',
-          description:
-              'Kompilasi fatwa ulama kibar dan pemecahan masail waqi\'iyyah kekinian.',
-          emoji: '📜',
-          category: 'Fikih',
-          fieldId: 'fiqh',
-          subtitleAcademic: 'Fatawa Kubra & Nawadzil Mu\'ashirah',
-          suggestedPrompts: [
-            'Bagaimana fatwa ulama tentang hukum transaksi online dan e-wallet?',
-            'Penjelasan fatwa kontemporer mengenai rekayasa genetika dan bioetika.',
-            'Bagaimana kompilasi fatwa Fatawa Al-Kubra Ibnu Taimiyyah dan Ibnu Hajar?',
-          ],
-          catalogId: 'canonical_fatawa_masail',
-          status: 'active',
-          sortOrder: 16,
-          price1m: 50000,
-          price6m: 299000,
-          price1y: 499000,
-        ),
-        AgentModel(
           id: 'tajwid_qiraat',
-          title: 'Tajwid & Qiraat',
+          title: 'Tajwid & Qira\'at',
           titleArabic: 'التجويد والقراءات',
           description:
               'Kaidah makhorijul huruf, shifat, tajwid, dan khazanah Qira\'at Asyrah.',
           emoji: '📖',
           category: 'Tafsir',
           fieldId: 'tafsir',
-          subtitleAcademic:
-              'Al-Jazariyyah, Asy-Syathibiyyah & Qira\'at Sab\'ah',
+          subtitleAcademic: 'Syarah Asy-Syathibiyyah & Qira\'at Sab\'ah',
           suggestedPrompts: [
-            'Bagaimana makharijul huruf dan sifat lazimah menurut Matan Al-Jazariyyah?',
+            'Bagaimana makharijul huruf dan sifat lazimah dijelaskan dalam kitab tajwid?',
             'Apa perbedaan bacaan Imam Hafsh dan Warsy dalam Surah Al-Fatihah?',
             'Bagaimana kaidah hukum nun sukun dan tanwin dijelaskan para imam qiraat?',
           ],
           catalogId: 'canonical_ulumul_quran',
           status: 'active',
           sortOrder: 17,
-          price1m: 50000,
+          price1m: 49000,
           price6m: 299000,
           price1y: 499000,
         ),
         AgentModel(
           id: 'musthalah_hadits',
-          title: 'Musthalah Hadis',
+          title: 'Ilmu Hadits',
           titleArabic: 'مصطلح الحديث',
           description:
               'Metodologi kritik sanad, derajat hadis (shahih, hasan, dha\'if), dan ilmu Jarh wat Ta\'dil.',
@@ -854,13 +755,13 @@ class AgentModel {
           catalogId: 'canonical_musthalah_hadits',
           status: 'active',
           sortOrder: 18,
-          price1m: 50000,
+          price1m: 49000,
           price6m: 299000,
           price1y: 499000,
         ),
         AgentModel(
           id: 'syarah_hadits',
-          title: 'Syarah Hadis',
+          title: 'Syarah Hadits',
           titleArabic: 'شروح الحديث النبوي',
           description:
               'Ensiklopedia syarah hadis Nabawi (Fathul Bari, Syarah Shahih Muslim, Umdatul Qari).',
@@ -877,13 +778,13 @@ class AgentModel {
           catalogId: 'canonical_syarah_hadits',
           status: 'active',
           sortOrder: 19,
-          price1m: 50000,
+          price1m: 49000,
           price6m: 299000,
           price1y: 499000,
         ),
         AgentModel(
           id: 'thabaqat_rijal',
-          title: 'Thabaqat & Rijalul Hadis',
+          title: 'Rijal & Biografi Ulama',
           titleArabic: 'طبقات المحدثين ورجال الأسانيد',
           description:
               'Biografi perawi, silsilah sanad, dan thabaqat ulama hadis dan fikih.',
@@ -899,20 +800,20 @@ class AgentModel {
           catalogId: 'canonical_thabaqat_tarajim',
           status: 'active',
           sortOrder: 20,
-          price1m: 50000,
+          price1m: 49000,
           price6m: 299000,
           price1y: 499000,
         ),
         AgentModel(
           id: 'bibliografi_faharis',
-          title: 'Bibliografi & Faharis',
+          title: 'Bibliografi Kitab',
           titleArabic: 'فهارس التراث والببليوغرافيا',
           description:
               'Katalog induk kitab, manuskrip turath, indeks tema, dan biografi pengarang.',
           emoji: '📑',
           category: 'Bibliografi',
           fieldId: 'bibliografi',
-          subtitleAcademic: 'Kasyfuzh Zhunun, Mu\'jamul Mushannifin & Faharis',
+          subtitleAcademic: 'Kasyfuzh Zhunun & Faharis',
           suggestedPrompts: [
             'Apa saja kitab rujukan utama dalam mazhab Syafi\'i menurut Kasyfuzh Zhunun?',
             'Telusuri edisi cetak dan manuskrip terbaik untuk kitab Al-Umm.',
@@ -921,7 +822,7 @@ class AgentModel {
           catalogId: 'canonical_bibliografi',
           status: 'active',
           sortOrder: 21,
-          price1m: 50000,
+          price1m: 49000,
           price6m: 299000,
           price1y: 499000,
         ),

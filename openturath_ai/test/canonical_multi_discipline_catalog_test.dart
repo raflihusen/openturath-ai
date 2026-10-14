@@ -7,16 +7,28 @@ import 'package:openturath_ai/services/canonical_library_service.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  group('Canonical Multi-Discipline Catalog Integration (2,226 Kitab)', () {
-    test('All 6 JSON catalog asset files exist and parse exactly 2,226 books', () {
+  group('Canonical Multi-Discipline Catalog Integration (V9.2, 5.384 Kitab)', () {
+    test('All 18 V9.2 catalog asset files exist and parse exactly 5,384 books', () {
       const baseDir = 'assets/data';
       final files = {
-        '01_KATALOG_FIKIH_SYAFII.json': 87,
-        '02_KATALOG_HADITS_DAN_SYARAH.json': 1173,
-        '03_KATALOG_USHUL_FIKIH.json': 241,
-        '04_KATALOG_BAHASA_DAN_SASTRA_ARAB.json': 449,
-        '05_KATALOG_TAFSIR_DAN_ULUMUL_QURAN.json': 218,
+        '01_KATALOG_FIKIH_SYAFII.json': 104,
+        '02_KATALOG_HADITS_DAN_SYARAH.json': 1138,
+        '03_KATALOG_USHUL_FIKIH.json': 180,
+        '04_KATALOG_BAHASA_DAN_SASTRA_ARAB.json': 847,
+        '05_KATALOG_TAFSIR_DAN_ULUMUL_QURAN.json': 274,
         '06_KATALOG_FIKIH_TAHAWWULAT.json': 58,
+        '07_KATALOG_TARIKH_DAN_SIRAH_NABAWIYYAH.json': 378,
+        '08_KATALOG_FIKIH_MUQARAN_DAN_UMUM.json': 210,
+        '10_KATALOG_SYARAH_HADITS.json': 133,
+        '11_KATALOG_FIKIH_HANAFI.json': 82,
+        '12_KATALOG_FIKIH_MALIKI.json': 77,
+        '13_KATALOG_FIKIH_HANBALI.json': 68,
+        '14_KATALOG_TASAWWUF_DAN_ADZKAR.json': 747,
+        '15_KATALOG_TAJWID_DAN_QIRAAT.json': 38,
+        '17_KATALOG_MUSTHALAH_DAN_ULUMUL_HADITS.json': 226,
+        '18_KATALOG_AQIDAH_DAN_USHULUDDIN.json': 411,
+        '19_KATALOG_THABAQAT_DAN_TARAJIM.json': 381,
+        '26_KATALOG_BIBLIOGRAFI_DAN_FAHARIS.json': 32,
       };
 
       int totalCount = 0;
@@ -29,7 +41,14 @@ void main() {
         totalCount += books.length;
       }
 
-      expect(totalCount, equals(2226));
+      expect(totalCount, equals(5384));
+      for (final gone in const [
+        '09_KATALOG_FATAWA_DAN_MASAIL_FIQHIYYAH.json',
+        '16_KATALOG_QAWAID_FIQHIYYAH.json',
+        '21_KATALOG_ADAB_DAN_BALAGHAH.json',
+      ]) {
+        expect(File('$baseDir/$gone').existsSync(), isFalse, reason: '$gone sudah dilebur');
+      }
     });
 
     test('All 6 active specialist agents have catalogId set for Pustaka button', () {

@@ -1556,9 +1556,9 @@ const copyCatalog = <String, List<String>>{
   "ui_e84b97b822": ["AKTIF", "ACTIVE", "فعّال"],
   "ui_71c772586f": ["PREMIUM", "SPECIAL COLLECTION", "خزانة خاصة"],
   "ui_91abbb166e": [
-    "Ketentuan pembayaran DOKU dan pengembalian dana",
-    "DOKU Payment & Refund Terms",
-    "شروط الدفع عبر DOKU والاسترداد"
+    "Ketentuan pembayaran Midtrans dan pengembalian dana",
+    "Midtrans Payment & Refund Terms",
+    "شروط الدفع عبر Midtrans والاسترداد"
   ],
   "ui_9f7ecdca34": [
     "Etika telaah dan adab keilmuan",

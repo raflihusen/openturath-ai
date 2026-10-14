@@ -13,8 +13,6 @@ abstract final class ArabicUiLabels {
         'aqidah': 'العقيدة',
         'nahwu_sharaf': 'علوم العربية',
         'ushul_fiqh': 'أصول الفقه',
-        'qawaid_fiqhiyyah': 'القواعد',
-        'fatawa_masail': 'الفتاوى',
         'tarikh': 'التاريخ',
         'tasawwuf': 'التصوف',
         'musthalah_hadits': 'مصطلح الحديث',
@@ -22,8 +20,6 @@ abstract final class ArabicUiLabels {
         'thabaqat_rijal': 'الرجال',
         'tajwid_qiraat': 'القراءات',
         'bibliografi_faharis': 'الفهارس',
-        'habib_umar': 'عمر بن حفيظ',
-        'imam_ghazali': 'الغزالي',
       }[id] ??
       fallback;
   static String forField(String id, String fallback) =>

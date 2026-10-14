@@ -7,17 +7,16 @@ import 'package:openturath_ai/core/theme.dart';
 
 void main() {
   group('Fikih Specialists & Theme Verification', () {
-    test('FieldModel fiqh has 6 specialists and fiqh_tahawwulat is independent field', () {
+    test('FieldModel fiqh has 5 specialists (Fatawa dilebur ke Perbandingan Mazhab) and fiqh_tahawwulat is independent field', () {
       final fiqhField = FieldModel.getById('fiqh');
-      expect(fiqhField.specialistCount, 6);
-      expect(fiqhField.agentIds.length, 6);
+      expect(fiqhField.specialistCount, 5);
+      expect(fiqhField.agentIds.length, 5);
       expect(fiqhField.agentIds, containsAll([
         'fiqh_syafii',
         'fiqh_hanafi',
         'fiqh_maliki',
         'fiqh_hanbali',
         'fiqh_muqaran',
-        'fatawa_masail',
       ]));
 
       final tahawwulatField = FieldModel.getById('fiqh_tahawwulat');
@@ -27,7 +26,8 @@ void main() {
 
     test('AgentModel defaultAgents contains standard fiqh specialists and independent tahawwulat', () {
       final fiqhAgents = AgentModel.defaultAgents.where((a) => a.fieldId == 'fiqh').toList();
-      expect(fiqhAgents.length, 6);
+      expect(fiqhAgents.length, 5);
+      expect(fiqhAgents.map((a) => a.id), isNot(contains('fatawa_masail')));
 
       final fiqhIds = fiqhAgents.map((a) => a.id).toSet();
       expect(fiqhIds, containsAll([
@@ -36,7 +36,6 @@ void main() {
         'fiqh_maliki',
         'fiqh_hanbali',
         'fiqh_muqaran',
-        'fatawa_masail',
       ]));
 
       // Check all fiqh specialists have titles
@@ -54,7 +53,10 @@ void main() {
 
     test('AgentModel defaultAgents contains valid active specialists', () {
       final activeAgents = AgentModel.defaultAgents.where((a) => a.isActive).toList();
-      expect(activeAgents.length, equals(22));
+      // V9.2: 18 AI sesuai 18 notebook; Habib Umar, Al-Ghazali, Qawa'id, dan Fatawa dihapus/dilebur.
+      expect(activeAgents.length, equals(18));
+      expect(activeAgents.map((a) => a.id), isNot(contains('habib_umar')));
+      expect(activeAgents.map((a) => a.id), isNot(contains('qawaid_fiqhiyyah')));
       expect(activeAgents.map((a) => a.id), contains('fiqh_tahawwulat'));
       expect(activeAgents.map((a) => a.id), contains('hadits'));
       expect(activeAgents.map((a) => a.id), contains('tasawwuf'));

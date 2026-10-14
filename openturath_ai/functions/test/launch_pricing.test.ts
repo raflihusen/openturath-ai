@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {loadBackend} from './audit_harness.ts';
 
+// Termasuk id lama (fatawa_masail, qawaid_fiqhiyyah) agar langganan lama tetap terlayani.
 const specialists = ['fiqh_syafii','fiqh_hanafi','fiqh_maliki','fiqh_hanbali',
   'fiqh_muqaran','fatawa_masail','qawaid_fiqhiyyah','hadits','syarah_hadits',
   'musthalah_hadits','tafsir','tajwid_qiraat','ushul_fiqh','tarikh',
@@ -11,7 +12,7 @@ test('all 19 published disciplines resolve to the launch price without global ac
   const {api} = loadBackend();
   for (const agent of specialists) {
     const offer = api.resolvePlanPricing(agent, 'tholib_1m');
-    assert.equal(offer.amount, 50000, agent);
+    assert.equal(offer.amount, 49000, agent);
     assert.equal(offer.durationMonths, 1, agent);
     assert.ok(!['all_access','all_ai'].includes(offer.entitlementKey), agent);
   }
@@ -32,14 +33,14 @@ test('stale offer is rejected before invoice creation or gateway calls', async (
   const {api,db,sent} = loadBackend();
   await assert.rejects(api.createCheckout({agentId:'fiqh_syafii',plan:'tholib_1m',
     name:'Reader',email:'reader@example.test',phone:'+628123456789',
-    expectedAmount:49000,pricingRevision:'perdana-2026-09-20'}, {auth:{uid:'reader'}}),
+    expectedAmount:50000,pricingRevision:'harga-v92-2026-10-14'}, {auth:{uid:'reader'}}),
     (error:any) => error.code === 'failed-precondition');
   assert.equal([...db.docs.keys()].filter(k=>k.startsWith('transactions/')).length,0);
   assert.equal(sent.length,0);
 });
 test('old pricing revision and noninteger expected prices are rejected', async () => {
   const {api,db} = loadBackend();
-  for (const [amount,revision] of [[50000,'old'],['50000','perdana-2026-09-20'],[NaN,'perdana-2026-09-20']]) {
+  for (const [amount,revision] of [[49000,'perdana-2026-09-20'],['49000','harga-v92-2026-10-14'],[NaN,'harga-v92-2026-10-14']]) {
     await assert.rejects(api.createCheckout({agentId:'fiqh_syafii',plan:'tholib_1m',
       name:'Reader',email:'reader@example.test',expectedAmount:amount,pricingRevision:revision},
       {auth:{uid:'reader'}}));

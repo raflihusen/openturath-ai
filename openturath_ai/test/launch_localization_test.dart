@@ -48,9 +48,9 @@ void main() {
     expect(BookStudyLevel.fromMetadata('A Commentary on Trade'), BookStudyLevel.unclassified);
     expect(BookStudyLevel.fromMetadata(''), BookStudyLevel.unclassified);
   });
-  test('catalog exposes 19 independent disciplines plus Tahawwulat', () {
+  test('catalog exposes 17 independent disciplines plus Tahawwulat', () {
     final disciplines = AgentModel.defaultAgents.where((a) => a.kind == CorpusKind.discipline);
-    expect(disciplines.where((a) => a.id != 'fiqh_tahawwulat').length, 19);
+    expect(disciplines.where((a) => a.id != 'fiqh_tahawwulat').length, 17);
     expect(disciplines.where((a) => a.id == 'fiqh_tahawwulat').length, 1);
   });
   testWidgets('Arabic price and English labels rebuild without remounting the screen', (tester) async {

@@ -110,7 +110,7 @@ class OpenTurathCatalogRepository {
     'tarikh_sirah': 'assets/data/07_KATALOG_TARIKH_DAN_SIRAH_NABAWIYYAH.json',
     'fiqh_muqaran': 'assets/data/08_KATALOG_FIKIH_MUQARAN_DAN_UMUM.json',
     'fiqh_muqaran_muhaqqiq': 'assets/data/08_KATALOG_FIKIH_MUQARAN_DAN_UMUM.json',
-    'fatawa_masail': 'assets/data/09_KATALOG_FATAWA_DAN_MASAIL_FIQHIYYAH.json',
+    'fatawa_masail': 'assets/data/08_KATALOG_FIKIH_MUQARAN_DAN_UMUM.json',
     'syarah_hadits': 'assets/data/10_KATALOG_SYARAH_HADITS.json',
     'fiqh_hanafi': 'assets/data/11_KATALOG_FIKIH_HANAFI.json',
     'fiqh_hanafi_muhaqqiq': 'assets/data/11_KATALOG_FIKIH_HANAFI.json',
@@ -122,13 +122,13 @@ class OpenTurathCatalogRepository {
     'habib_umar': 'assets/data/14_KATALOG_TASAWWUF_DAN_ADZKAR.json',
     'imam_ghazali': 'assets/data/14_KATALOG_TASAWWUF_DAN_ADZKAR.json',
     'tajwid_qiraat': 'assets/data/15_KATALOG_TAJWID_DAN_QIRAAT.json',
-    'qawaid_fiqhiyyah': 'assets/data/16_KATALOG_QAWAID_FIQHIYYAH.json',
+    'qawaid_fiqhiyyah': 'assets/data/03_KATALOG_USHUL_FIKIH.json',
     'musthalah_hadits':
         'assets/data/17_KATALOG_MUSTHALAH_DAN_ULUMUL_HADITS.json',
     'aqidah': 'assets/data/18_KATALOG_AQIDAH_DAN_USHULUDDIN.json',
     'thabaqat_tarajim': 'assets/data/19_KATALOG_THABAQAT_DAN_TARAJIM.json',
     'thabaqat_rijal': 'assets/data/19_KATALOG_THABAQAT_DAN_TARAJIM.json',
-    'adab_balaghah': 'assets/data/21_KATALOG_ADAB_DAN_BALAGHAH.json',
+    'adab_balaghah': 'assets/data/04_KATALOG_BAHASA_DAN_SASTRA_ARAB.json',
     'bibliografi_faharis':
         'assets/data/26_KATALOG_BIBLIOGRAFI_DAN_FAHARIS.json',
   };

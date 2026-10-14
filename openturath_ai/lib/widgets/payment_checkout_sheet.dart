@@ -349,14 +349,6 @@ class _PaymentCheckoutSheetState extends State<PaymentCheckoutSheet> {
       return true;
     }
 
-    // Domain resmi payment gateway DOKU & sandbox
-    if (host == 'doku.com' ||
-        host.endsWith('.doku.com') ||
-        host == 'doku.id' ||
-        host.endsWith('.doku.id')) {
-      return true;
-    }
-
     // Platform checkout resmi GoAkal & Midtrans
     if (host == 'goakal.com' ||
         host.endsWith('.goakal.com') ||

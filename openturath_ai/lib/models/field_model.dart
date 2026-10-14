@@ -34,14 +34,13 @@ class FieldModel {
       name: 'Fikih & Fatwa',
       description: 'Hukum ibadah, muamalah, fatwa kontemporer, dan perbandingan mazhab mu\'tabar.',
       icon: Icons.balance_rounded,
-      specialistCount: 6,
+      specialistCount: 5,
       agentIds: [
         'fiqh_syafii',
         'fiqh_hanafi',
         'fiqh_maliki',
         'fiqh_hanbali',
         'fiqh_muqaran',
-        'fatawa_masail',
       ],
     ),
     FieldModel(
@@ -82,10 +81,9 @@ class FieldModel {
       name: 'Usul Fikih & Kaidah',
       description: 'Kaidah istinbath hukum, dalil ijmali, maqashid syariah, dan qawaid fiqhiyyah.',
       icon: Icons.architecture_rounded,
-      specialistCount: 2,
+      specialistCount: 1,
       agentIds: [
         'ushul_fiqh',
-        'qawaid_fiqhiyyah',
       ],
     ),
     FieldModel(
@@ -114,10 +112,9 @@ class FieldModel {
       name: 'Tasawuf & Akhlak',
       description: 'Penyucian jiwa (tazkiyatun nafs), adab suluk, dan hikmah ulama salafush shalih.',
       icon: Icons.spa_rounded,
-      specialistCount: 2,
+      specialistCount: 1,
       agentIds: [
-        'habib_umar',
-        'imam_ghazali',
+        'tasawwuf',
       ],
     ),
     FieldModel(
