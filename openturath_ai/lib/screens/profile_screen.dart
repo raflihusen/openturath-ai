@@ -287,11 +287,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
   static String _entitlementTitle(String key) => Loc.text(switch (key) {
         'fiqh_tahawwulat' => 'Fikih Tahawwulat',
         'fiqh_syafii' => "Fikih Syafi'i",
-        'nahwu' => 'Bahasa Arab',
+        'fiqh_hanafi' => 'Fikih Hanafi',
+        'fiqh_maliki' => 'Fikih Maliki',
+        'fiqh_hanbali' => 'Fikih Hanbali',
+        'fiqh_muqaran' => 'Perbandingan Mazhab',
+        'fiqh' => 'Fatawa & Masail Fiqhiyyah',
         'ushul_fiqh' => 'Usul Fikih',
-        'tafsir' => 'Tafsir',
-        'hadits' => 'Hadis',
+        'nahwu' => 'Bahasa Arab',
+        'tafsir' => "Tafsir Al-Qur'an",
+        'hadits' => 'Matan Hadits',
         'aqidah' => 'Akidah',
+        'tarikh' => 'Sejarah & Sirah',
+        'tasawwuf' => 'Tasawwuf & Adzkar',
+        'bibliografi_faharis' => 'Bibliografi & Faharis',
         _ => AppCopy.navStudies,
       });
 

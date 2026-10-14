@@ -3,9 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../core/design/ot_motion.dart';
 import '../core/design/ot_typography.dart';
+import '../core/entitlement_keys.dart';
 import '../core/hijri_date_utils.dart';
+import '../core/routes.dart';
 import '../models/agent_model.dart';
 import '../services/agent_session_manager.dart';
+import '../services/auth_service.dart';
 
 import 'package:openturath_ai/core/design/ot_radius.dart';
 import 'package:openturath_ai/core/design/ot_colors.dart';
@@ -70,29 +73,27 @@ class ExclusiveActivationDialog extends StatelessWidget {
 
   void _handleStartStudy(BuildContext context) {
     HapticFeedback.mediumImpact();
-    Navigator.of(context).pop();
+    final nav = Navigator.of(context);
+    nav.popUntil((route) =>
+        route.settings.name == AppRoutes.dashboard || route.isFirst);
 
-    // Jika ada agent spesifik yang diaktifkan, buka langsung tab studinya
-    if (agentId != null && agentId!.isNotEmpty) {
-      final matched =
-          AgentModel.defaultAgents.where((a) => a.id == agentId).firstOrNull;
-      if (matched != null) {
-        AgentSessionManager.instance.openAgent(matched);
-      }
-    } else {
-      // Default: buka Fikih Syafi'i atau agen pertama
-      final defaultAgent = AgentModel.defaultAgents.firstWhere(
-        (a) => a.id == 'fiqh_syafii' || a.id == 'fiqh_tahawwulat',
-        orElse: () => AgentModel.defaultAgents.first,
-      );
-      AgentSessionManager.instance.openAgent(defaultAgent);
+    AgentModel? matched;
+    if (agentId != null && agentId!.isNotEmpty && agentId != 'all_access') {
+      matched = AgentModel.defaultAgents
+          .where((a) =>
+              a.id == agentId ||
+              (entitlementKeys[a.id] ?? a.id) == agentId)
+          .firstOrNull;
     }
-
-    // Jika dialog dipanggil dari dalam layar Langganan, tutup layar langganan agar langsung ke ruang telaah
-    final navigator = Navigator.of(context);
-    if (navigator.canPop()) {
-      navigator.pop(true);
-    }
+    final targetAgent = matched ??
+        AgentModel.defaultAgents.firstWhere(
+          (a) => a.id == 'fiqh_tahawwulat' || a.id == 'fiqh_syafii',
+          orElse: () => AgentModel.defaultAgents.first,
+        );
+    AgentSessionManager.instance.openAgent(
+      targetAgent,
+      user: AuthService().cachedCurrentUser,
+    );
   }
 
   @override

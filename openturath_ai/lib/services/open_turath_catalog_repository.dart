@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/services.dart';
+import '../core/entitlement_keys.dart';
 import '../models/open_turath_book.dart';
 
 /// Data model metadata pelatihan modul AI OpenTurath
@@ -87,22 +88,36 @@ class OpenTurathCatalogRepository {
     'fiqh_syafii_muhaqqiq': 'assets/data/01_KATALOG_FIKIH_SYAFII.json',
     'hadits': 'assets/data/02_KATALOG_HADITS_DAN_SYARAH.json',
     'hadits_nabawi': 'assets/data/02_KATALOG_HADITS_DAN_SYARAH.json',
+    'hadits_muhaqqiq': 'assets/data/02_KATALOG_HADITS_DAN_SYARAH.json',
     'ushul_fiqh': 'assets/data/03_KATALOG_USHUL_FIKIH.json',
+    'ushul_muhaqqiq': 'assets/data/03_KATALOG_USHUL_FIKIH.json',
     'bahasa_arab': 'assets/data/04_KATALOG_BAHASA_DAN_SASTRA_ARAB.json',
     'lughah_balaghah': 'assets/data/04_KATALOG_BAHASA_DAN_SASTRA_ARAB.json',
     'nahwu_sharaf': 'assets/data/04_KATALOG_BAHASA_DAN_SASTRA_ARAB.json',
+    'nahwu_sharaf_muerib': 'assets/data/04_KATALOG_BAHASA_DAN_SASTRA_ARAB.json',
+    'nahwu_sharaf_tashrif': 'assets/data/04_KATALOG_BAHASA_DAN_SASTRA_ARAB.json',
     'tafsir': 'assets/data/05_KATALOG_TAFSIR_DAN_ULUMUL_QURAN.json',
+    'tafsir_muhaqqiq': 'assets/data/05_KATALOG_TAFSIR_DAN_ULUMUL_QURAN.json',
     'tafsir_ulumul_quran':
         'assets/data/05_KATALOG_TAFSIR_DAN_ULUMUL_QURAN.json',
     'fiqh_tahawwulat': 'assets/data/06_KATALOG_FIKIH_TAHAWWULAT.json',
+    'fiqh_tahawwulat_muhaqqiq': 'assets/data/06_KATALOG_FIKIH_TAHAWWULAT.json',
+    'fiqh_tahawwulat_bayan': 'assets/data/06_KATALOG_FIKIH_TAHAWWULAT.json',
+    'fiqh_tahawwulat_mukhtabir': 'assets/data/06_KATALOG_FIKIH_TAHAWWULAT.json',
+    'fiqh_tahawwulat_habib': 'assets/data/06_KATALOG_FIKIH_TAHAWWULAT.json',
+    'fiqh_tahawwulat_khatib': 'assets/data/06_KATALOG_FIKIH_TAHAWWULAT.json',
     'tarikh': 'assets/data/07_KATALOG_TARIKH_DAN_SIRAH_NABAWIYYAH.json',
     'tarikh_sirah': 'assets/data/07_KATALOG_TARIKH_DAN_SIRAH_NABAWIYYAH.json',
     'fiqh_muqaran': 'assets/data/08_KATALOG_FIKIH_MUQARAN_DAN_UMUM.json',
+    'fiqh_muqaran_muhaqqiq': 'assets/data/08_KATALOG_FIKIH_MUQARAN_DAN_UMUM.json',
     'fatawa_masail': 'assets/data/09_KATALOG_FATAWA_DAN_MASAIL_FIQHIYYAH.json',
     'syarah_hadits': 'assets/data/10_KATALOG_SYARAH_HADITS.json',
     'fiqh_hanafi': 'assets/data/11_KATALOG_FIKIH_HANAFI.json',
+    'fiqh_hanafi_muhaqqiq': 'assets/data/11_KATALOG_FIKIH_HANAFI.json',
     'fiqh_maliki': 'assets/data/12_KATALOG_FIKIH_MALIKI.json',
+    'fiqh_maliki_muhaqqiq': 'assets/data/12_KATALOG_FIKIH_MALIKI.json',
     'fiqh_hanbali': 'assets/data/13_KATALOG_FIKIH_HANBALI.json',
+    'fiqh_hanbali_muhaqqiq': 'assets/data/13_KATALOG_FIKIH_HANBALI.json',
     'tasawwuf': 'assets/data/14_KATALOG_TASAWWUF_DAN_ADZKAR.json',
     'habib_umar': 'assets/data/14_KATALOG_TASAWWUF_DAN_ADZKAR.json',
     'imam_ghazali': 'assets/data/14_KATALOG_TASAWWUF_DAN_ADZKAR.json',
@@ -171,7 +186,26 @@ class OpenTurathCatalogRepository {
   /// Memuat daftar kitab untuk modul atau asisten tertentu dari katalog JSON
   Future<List<OpenTurathBook>> loadBooksForModule(String moduleKey) async {
     final cleanKey = moduleKey.replaceAll('-', '_').toLowerCase();
-    final catalogPath = _moduleToCatalogFile[cleanKey];
+    var catalogPath = _moduleToCatalogFile[cleanKey];
+
+    // Fallback resolusi menggunakan mapping entitlementKeys
+    if (catalogPath == null) {
+      final mappedKey = entitlementKeys[cleanKey];
+      if (mappedKey != null) {
+        catalogPath = _moduleToCatalogFile[mappedKey];
+      }
+    }
+
+    // Fallback resolusi berdasarkan prefix modul
+    if (catalogPath == null) {
+      for (final entry in _moduleToCatalogFile.entries) {
+        if (cleanKey.startsWith(entry.key) || entry.key.startsWith(cleanKey)) {
+          catalogPath = entry.value;
+          break;
+        }
+      }
+    }
+
     if (catalogPath == null) {
       throw ArgumentError.value(
           moduleKey, 'moduleKey', 'No catalog registered');

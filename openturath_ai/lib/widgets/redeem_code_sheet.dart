@@ -70,7 +70,7 @@ class _RedeemCodeSheetState extends State<RedeemCodeSheet> {
   }
 
   Future<void> _handleRedeem() async {
-    final code = _codeController.text.trim();
+    final code = _codeController.text.replaceAll(RegExp(r'\s+'), '').trim();
     if (code.isEmpty) {
       setState(() => _inlineError = 'Masukkan kode voucher');
       return;
@@ -170,8 +170,8 @@ class _RedeemCodeSheetState extends State<RedeemCodeSheet> {
               enabled: !_isLoading,
               textCapitalization: TextCapitalization.characters,
               inputFormatters: [
-                FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z0-9\-_]')),
-                LengthLimitingTextInputFormatter(25),
+                FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z0-9\-\s_]')),
+                LengthLimitingTextInputFormatter(64),
               ],
               onChanged: (_) {
                 if (_inlineError != null) setState(() => _inlineError = null);
