@@ -12,9 +12,9 @@ void main() {
           File('assets/data/metadata_training_seluruh_ai.json').readAsStringSync())
       as Map<String, dynamic>;
 
-  test('info AI V9.2: 18 AI, 5.384 kitab, sama dengan metadata pustaka', () {
+  test('info AI V9.2: 18 AI, 5.383 kitab, sama dengan metadata pustaka', () {
     expect(info.length, 18);
-    expect(info.fold<int>(0, (n, e) => n + (e['isi']['jumlah_kitab'] as int)), 5384);
+    expect(info.fold<int>(0, (n, e) => n + (e['isi']['jumlah_kitab'] as int)), 5383);
     expect(metadata.length, 18);
     for (final key in metadata.keys) {
       final m = AiLibraryMetadata.fromJson(key, metadata[key] as Map<String, dynamic>);

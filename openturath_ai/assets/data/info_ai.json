@@ -95,7 +95,7 @@
     "baru": 9121,
     "shamela4": 8598
    },
-   "karya_diblok_semua_ilmu": 3272,
+   "karya_diblok_semua_ilmu": 3273,
    "karya_ditahan_semua_ilmu": 10918,
    "karya_termuat_semua_ilmu": 1456,
    "rekaman_digabung_ke_kitab_ini": null,
@@ -233,7 +233,7 @@
     "baru": 9121,
     "shamela4": 8598
    },
-   "karya_diblok_semua_ilmu": 3272,
+   "karya_diblok_semua_ilmu": 3273,
    "karya_ditahan_semua_ilmu": 10918,
    "karya_termuat_semua_ilmu": 1456,
    "rekaman_digabung_ke_kitab_ini": 337,
@@ -371,7 +371,7 @@
     "baru": 9121,
     "shamela4": 8598
    },
-   "karya_diblok_semua_ilmu": 3272,
+   "karya_diblok_semua_ilmu": 3273,
    "karya_ditahan_semua_ilmu": 10918,
    "karya_termuat_semua_ilmu": 1456,
    "rekaman_digabung_ke_kitab_ini": 210,
@@ -509,7 +509,7 @@
     "baru": 9121,
     "shamela4": 8598
    },
-   "karya_diblok_semua_ilmu": 3272,
+   "karya_diblok_semua_ilmu": 3273,
    "karya_ditahan_semua_ilmu": 10918,
    "karya_termuat_semua_ilmu": 1456,
    "rekaman_digabung_ke_kitab_ini": 247,
@@ -643,7 +643,7 @@
     "baru": 9121,
     "shamela4": 8598
    },
-   "karya_diblok_semua_ilmu": 3272,
+   "karya_diblok_semua_ilmu": 3273,
    "karya_ditahan_semua_ilmu": 10918,
    "karya_termuat_semua_ilmu": 1456,
    "rekaman_digabung_ke_kitab_ini": 216,
@@ -797,7 +797,7 @@
     "baru": 9121,
     "shamela4": 8598
    },
-   "karya_diblok_semua_ilmu": 3272,
+   "karya_diblok_semua_ilmu": 3273,
    "karya_ditahan_semua_ilmu": 10918,
    "karya_termuat_semua_ilmu": 1456,
    "rekaman_digabung_ke_kitab_ini": 534,
@@ -943,7 +943,7 @@
     "baru": 9121,
     "shamela4": 8598
    },
-   "karya_diblok_semua_ilmu": 3272,
+   "karya_diblok_semua_ilmu": 3273,
    "karya_ditahan_semua_ilmu": 10918,
    "karya_termuat_semua_ilmu": 1456,
    "rekaman_digabung_ke_kitab_ini": 627,
@@ -1097,7 +1097,7 @@
     "baru": 9121,
     "shamela4": 8598
    },
-   "karya_diblok_semua_ilmu": 3272,
+   "karya_diblok_semua_ilmu": 3273,
    "karya_ditahan_semua_ilmu": 10918,
    "karya_termuat_semua_ilmu": 1456,
    "rekaman_digabung_ke_kitab_ini": 3756,
@@ -1227,7 +1227,7 @@
     "baru": 9121,
     "shamela4": 8598
    },
-   "karya_diblok_semua_ilmu": 3272,
+   "karya_diblok_semua_ilmu": 3273,
    "karya_ditahan_semua_ilmu": 10918,
    "karya_termuat_semua_ilmu": 1456,
    "rekaman_digabung_ke_kitab_ini": 365,
@@ -1377,7 +1377,7 @@
     "baru": 9121,
     "shamela4": 8598
    },
-   "karya_diblok_semua_ilmu": 3272,
+   "karya_diblok_semua_ilmu": 3273,
    "karya_ditahan_semua_ilmu": 10918,
    "karya_termuat_semua_ilmu": 1456,
    "rekaman_digabung_ke_kitab_ini": 865,
@@ -1531,7 +1531,7 @@
     "baru": 9121,
     "shamela4": 8598
    },
-   "karya_diblok_semua_ilmu": 3272,
+   "karya_diblok_semua_ilmu": 3273,
    "karya_ditahan_semua_ilmu": 10918,
    "karya_termuat_semua_ilmu": 1456,
    "rekaman_digabung_ke_kitab_ini": 1303,
@@ -1673,7 +1673,7 @@
     "baru": 9121,
     "shamela4": 8598
    },
-   "karya_diblok_semua_ilmu": 3272,
+   "karya_diblok_semua_ilmu": 3273,
    "karya_ditahan_semua_ilmu": 10918,
    "karya_termuat_semua_ilmu": 1456,
    "rekaman_digabung_ke_kitab_ini": 1039,
@@ -1811,7 +1811,7 @@
     "baru": 9121,
     "shamela4": 8598
    },
-   "karya_diblok_semua_ilmu": 3272,
+   "karya_diblok_semua_ilmu": 3273,
    "karya_ditahan_semua_ilmu": 10918,
    "karya_termuat_semua_ilmu": 1456,
    "rekaman_digabung_ke_kitab_ini": 79,
@@ -1858,17 +1858,17 @@
     },
     {
      "nama_katalog": "العقيدة وأصول الدين",
-     "jumlah": 365
+     "jumlah": 364
     },
     {
      "nama_katalog": "-",
      "jumlah": 46
     }
    ],
-   "jumlah_kitab": 411,
-   "jumlah_jilid": 380,
-   "jumlah_halaman": 75256,
-   "jumlah_kata": 15945433,
+   "jumlah_kitab": 410,
+   "jumlah_jilid": 379,
+   "jumlah_halaman": 75233,
+   "jumlah_kata": 15939653,
    "rentang_wafat_pengarang": {
     "awal": 150,
     "akhir": 1439,
@@ -1938,7 +1938,7 @@
    ],
    "perpustakaan_asal": {
     "hazmi": 32,
-    "baru": 276,
+    "baru": 275,
     "shamela4": 103
    }
   },
@@ -1949,10 +1949,10 @@
     "baru": 9121,
     "shamela4": 8598
    },
-   "karya_diblok_semua_ilmu": 3272,
+   "karya_diblok_semua_ilmu": 3273,
    "karya_ditahan_semua_ilmu": 10918,
    "karya_termuat_semua_ilmu": 1456,
-   "rekaman_digabung_ke_kitab_ini": 807,
+   "rekaman_digabung_ke_kitab_ini": 806,
    "berkas_notebooklm": 249,
    "uji": [
     "Penyaringan manhaj pengarang, pensyarah, dan muhaqqiq",
@@ -2099,7 +2099,7 @@
     "baru": 9121,
     "shamela4": 8598
    },
-   "karya_diblok_semua_ilmu": 3272,
+   "karya_diblok_semua_ilmu": 3273,
    "karya_ditahan_semua_ilmu": 10918,
    "karya_termuat_semua_ilmu": 1456,
    "rekaman_digabung_ke_kitab_ini": 1257,
@@ -2257,7 +2257,7 @@
     "baru": 9121,
     "shamela4": 8598
    },
-   "karya_diblok_semua_ilmu": 3272,
+   "karya_diblok_semua_ilmu": 3273,
    "karya_ditahan_semua_ilmu": 10918,
    "karya_termuat_semua_ilmu": 1456,
    "rekaman_digabung_ke_kitab_ini": 2117,
@@ -2411,7 +2411,7 @@
     "baru": 9121,
     "shamela4": 8598
    },
-   "karya_diblok_semua_ilmu": 3272,
+   "karya_diblok_semua_ilmu": 3273,
    "karya_ditahan_semua_ilmu": 10918,
    "karya_termuat_semua_ilmu": 1456,
    "rekaman_digabung_ke_kitab_ini": 1097,
@@ -2549,7 +2549,7 @@
     "baru": 9121,
     "shamela4": 8598
    },
-   "karya_diblok_semua_ilmu": 3272,
+   "karya_diblok_semua_ilmu": 3273,
    "karya_ditahan_semua_ilmu": 10918,
    "karya_termuat_semua_ilmu": 1456,
    "rekaman_digabung_ke_kitab_ini": 98,
