@@ -419,9 +419,19 @@ const notebookUiScript = r'''
       mat-button-toggle-group, .mat-button-toggle-group, .mat-mdc-button-toggle-group,
       .tab-bar, app-tab-bar, .tabs-container, nav[class*="tab" i], div[class*="tab-bar" i],
       mat-tab-header, .mat-mdc-tab-header, .mobile-tab-bar, .mobile-tabs, .mobile-navigation,
+      button:has(mat-icon[fonticon="add"]),
+      button:has(mat-icon[data-mat-icon-name="add"]),
+      button:has(svg path[d*="M19 13"]),
+      button:has(svg path[d*="M12 4v16m8-8H4"]),
       button[aria-label*="Add source" i], button[aria-label*="Tambah sumber" i],
+      button[aria-label*="Add" i], button[aria-label*="Tambah" i],
+      button[aria-label*="Insert" i], button[aria-label*="Sisipkan" i],
       button[aria-label*="Upload" i], button[aria-label*="Unggah" i],
       button[aria-label*="Share" i], button[aria-label*="Bagikan" i],
+      .add-source-button, [class*="add-source" i],
+      .sources-panel-header, .sources-header, [class*="sources-header" i],
+      [class*="sources-panel" i] button, [class*="source-list" i] button,
+      mat-sidenav button:has(mat-icon), .sources-container button,
       app-chat-empty-state h1, app-chat-empty-state h2, app-chat-empty-state h3,
       app-chat-empty-state mat-icon, app-chat-empty-state img, app-chat-empty-state svg,
       app-empty-state h1, app-empty-state h2, app-empty-state h3,
@@ -461,6 +471,43 @@ const notebookUiScript = r'''
         visibility: visible !important;
         opacity: 1 !important;
         pointer-events: auto !important;
+      }
+
+      /* Sembunyikan tombol penghitung sumber / pemilih sumber di dalam maupun di luar bilah obrolan */
+      app-chat-input button:not([type="submit"]):not([aria-label*="send" i]):not([aria-label*="kirim" i]):has(mat-icon[fonticon*="source"], mat-icon[data-mat-icon-name*="source"], mat-icon[fonticon*="filter"], mat-icon[data-mat-icon-name*="filter"]),
+      app-chat-input button[aria-label*="source" i],
+      app-chat-input button[aria-label*="sumber" i],
+      app-chat-input button[aria-label*="filter" i],
+      app-chat-input .sources-button,
+      app-chat-input [class*="source-button" i],
+      app-chat-input [class*="sources-button" i],
+      app-chat-input [class*="source-pill" i],
+      app-chat-input [class*="source-count" i],
+      app-chat-input [class*="sources-count" i],
+      app-chat-input [class*="sources-chip" i],
+      app-chat-input [class*="source-chip" i],
+      app-chat-input [class*="sources-badge" i],
+      app-chat-input [class*="source-badge" i],
+      app-chat-input mat-chip,
+      app-chat-input mat-chip-set,
+      .chat-input-container button[aria-label*="source" i],
+      .chat-input-container button[aria-label*="sumber" i],
+      .chat-input-container [class*="source-count" i],
+      .chat-input-container [class*="source-pill" i] {
+        display: none !important;
+        visibility: hidden !important;
+        opacity: 0 !important;
+        pointer-events: none !important;
+        width: 0 !important;
+        height: 0 !important;
+        min-width: 0 !important;
+        min-height: 0 !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        border: none !important;
+        overflow: hidden !important;
+        position: absolute !important;
+        left: -9999px !important;
       }
 
       .chat-message-pair, .to-user-container, .to-model-container {
@@ -511,10 +558,10 @@ const notebookUiScript = r'''
     });
 
     // Preserve response menus, citation actions, and keyboard-accessible controls.
-    // Sembunyikan tombol opsi titik tiga (more_vert / more_horiz / options) di luar balon pesan obrolan
-    document.querySelectorAll('mat-icon, [data-mat-icon-name]').forEach(icon => {
+    // Sembunyikan tombol opsi titik tiga (more_vert / more_horiz / options) dan tombol Add (+) di luar balon pesan obrolan
+    document.querySelectorAll('mat-icon, [data-mat-icon-name], svg').forEach(icon => {
       const name = (icon.getAttribute('data-mat-icon-name') || icon.getAttribute('fonticon') || icon.textContent || '').trim().toLowerCase();
-      if (name === 'more_vert' || name === 'more_horiz') {
+      if (name === 'more_vert' || name === 'more_horiz' || name === 'add' || name === 'plus' || name === 'note_add' || name === 'post_add') {
         if (icon.closest('.chat-message, .model-message, .user-message, [role="article"], .rendered-markdown, app-chat-response')) {
           return;
         }
@@ -523,6 +570,42 @@ const notebookUiScript = r'''
         btn.style.setProperty('visibility', 'hidden', 'important');
         btn.style.setProperty('opacity', '0', 'important');
         btn.style.setProperty('pointer-events', 'none', 'important');
+      }
+    });
+
+    // Sembunyikan tombol apapun yang berdiri sendiri di luar form yang hanya berisi teks "+"
+    document.querySelectorAll('button, [role="button"]').forEach(btn => {
+      if (btn.closest('textarea, [contenteditable="true"]')) return;
+      if (btn.closest('.chat-message, .model-message, .user-message, app-chat-response')) return;
+      const txt = (btn.textContent || '').trim();
+      if (txt === '+' || txt === '＋') {
+        btn.style.setProperty('display', 'none', 'important');
+        btn.style.setProperty('visibility', 'hidden', 'important');
+        btn.style.setProperty('opacity', '0', 'important');
+        btn.style.setProperty('pointer-events', 'none', 'important');
+      }
+    });
+
+    // Sembunyikan tombol/elemen penghitung jumlah sumber di dalam bilah obrolan (mis. "(240)", "240 sources", dsb)
+    document.querySelectorAll('app-chat-input button, .chat-input-container button, form button').forEach(btn => {
+      if (btn.getAttribute('type') === 'submit' || btn.matches('[aria-label*="send" i], [aria-label*="kirim" i], [class*="send" i]')) {
+        return;
+      }
+      if (btn.querySelector('mat-icon[fonticon*="send"], mat-icon[data-mat-icon-name*="send"], svg path[d*="M2.01 21L23 12 2.01 3"]')) {
+        return;
+      }
+      const txt = (btn.textContent || '').trim();
+      const aria = (btn.getAttribute('aria-label') || '').toLowerCase();
+      const isSourceCounter = /^\(?\d+\)?$/.test(txt) ||
+                              /\(\d+\)/.test(txt) ||
+                              /\d+\s*(sumber|source|sources|مصدر|مصادر)/i.test(txt) ||
+                              aria.includes('source') || aria.includes('sumber') || aria.includes('filter');
+      if (isSourceCounter) {
+        btn.style.setProperty('display', 'none', 'important');
+        btn.style.setProperty('visibility', 'hidden', 'important');
+        btn.style.setProperty('opacity', '0', 'important');
+        btn.style.setProperty('pointer-events', 'none', 'important');
+        btn.style.setProperty('width', '0px', 'important');
       }
     });
 

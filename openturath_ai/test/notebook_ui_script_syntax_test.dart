@@ -54,4 +54,12 @@ void main() {
     expect(notebookUiScript.contains('isSourceCount'), isTrue);
     expect(notebookUiScript.contains('target.style.setProperty(\'display\', \'none\', \'important\')'), isTrue);
   });
+
+  test('notebookUiScript suppresses standalone plus button and source count pill in chat input', () {
+    expect(notebookUiScript.contains('button:has(mat-icon[fonticon="add"])'), isTrue);
+    expect(notebookUiScript.contains('.add-source-button'), isTrue);
+    expect(notebookUiScript.contains('isSourceCounter'), isTrue);
+    expect(notebookUiScript.contains('app-chat-input [class*="source-count" i]'), isTrue);
+    expect(notebookUiScript.contains('app-chat-input .sources-button'), isTrue);
+  });
 }
