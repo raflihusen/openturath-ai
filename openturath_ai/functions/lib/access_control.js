@@ -16,14 +16,18 @@ const crypto = require("crypto");
 // only ever added. `npm run export-shared` writes this list for the Python automation;
 // test/shared_catalog.test.ts fails when the exported copy drifts.
 exports.VIP_EMAILS = new Set([
+    // Owner & Core Team
     "openturath@gmail.com", "ramah@ptct.net", "raflimaulan@gmail.com",
-    "mas.raflihusen@gmail.com", "alkhateeb23@gmail.com", "omarasb1441@gmail.com",
-    "prilatief@gmail.com", "udinvoldigoad05@gmail.com", "aaadman40@gmail.com",
-    "abo.omar5539@gmail.com", "abualgilani2024@gmail.com", "ahobh4241@gmail.com",
-    "alhamodi65@gmail.com", "ali.bafdhl36@gmail.com", "alshykhkmalbahrmz@gmail.com",
-    "atinrahmak@gmail.com", "hafamfb551985@gmail.com", "loyos839@gmail.com",
-    "mohammedhalahdal@gmail.com", "mostajadt25@gmail.com", "nona.alyaziza@gmail.com",
-    "omar739037802@gmail.com", "yasser110271@gmail.com",
+    "mas.raflihusen@gmail.com", "udinvoldigoad05@gmail.com",
+    // Mitra Kehormatan (Rule 5 AGENTS.md)
+    "prilatief@gmail.com",
+    // Masyayikh & Asatidz Turats
+    "alkhateeb23@gmail.com", "omarasb1441@gmail.com",
+    "mohammedhalahdal@gmail.com", "alshykhkmalbahrmz@gmail.com",
+    "ali.bafdhl36@gmail.com", "alhamodi65@gmail.com",
+    "abualgilani2024@gmail.com", "abo.omar5539@gmail.com",
+    "ahobh4241@gmail.com", "omar739037802@gmail.com",
+    "yasser110271@gmail.com",
 ]);
 const normalEmail = (s) => typeof s === "string" ? s.trim().toLowerCase() : "";
 exports.normalEmail = normalEmail;

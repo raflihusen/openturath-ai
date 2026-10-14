@@ -16,7 +16,7 @@ ACTIVE_TX = {"SUCCESS", "PAID", "SETTLED", "TRANSFERRED", "COMPLETED", "ACTIVE"}
 ENDED_TX = {"EXPIRED", "FAILED", "CANCELLED"}
 ALL_ACCESS = {"all_access", "all_ai"}
 VIP_ROLES = {"vip", "admin", "guru", "special"}
-ANNUAL_HINTS = ("1y", "year", "tahun", "annual", "bahits_1y", "all_ai")
+ALL_ACCESS_PLAN_HINTS = ("all_ai", "all_access", "all-access", "full", "sultan")
 
 
 def billing_expiry(start: datetime, months: int) -> datetime:
@@ -90,12 +90,14 @@ def classify(transactions, users, akal_active, vip, modules, now):
             continue
         status = str(tx.get("status") or "").upper()
         scopes = _tx_scopes(tx)
-        annual = any(hint in plan.lower() for hint in ANNUAL_HINTS)
+        is_all_access = any(s in ALL_ACCESS for s in scopes) or any(hint in plan.lower() for hint in ALL_ACCESS_PLAN_HINTS)
         if status in ACTIVE_TX and ends and ends > now:
-            # An unexpired annual / all-access / unscoped purchase covers every module.
-            mark(active, modules if (annual or not scopes) else scopes, email)
+            # An unexpired all-access or unscoped purchase covers every module; scoped purchases cover only their modules.
+            mark(active, modules if (is_all_access or not scopes) else scopes, email)
         elif (status in ACTIVE_TX and ends and ends <= now) or status in ENDED_TX:
-            if scopes:
+            if is_all_access or not scopes:
+                mark(expired, modules, email)
+            elif scopes:
                 mark(expired, scopes, email)
             elif "tholib" in plan.lower():
                 mark(expired, ["fiqh_tahawwulat", "fiqh_syafii"], email)

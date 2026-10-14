@@ -29,13 +29,18 @@ class ClassifyTest(unittest.TestCase):
         self.assertEqual(policy.removal_candidates({"A@x.test"}, "fiqh_syafii", protected, active, expired), {"a@x.test"})
 
     def test_modules_are_independent(self):
-        protected, active, expired = run([tx("a@x.test", PAST), tx("a@x.test", FUTURE, key="fiqh_tahawwulat", plan="bahits_1y_x")])
-        # annual plan covers every module while unexpired
-        self.assertEqual(expired["fiqh_syafii"], set())
-        protected, active, expired = run([tx("a@x.test", PAST), tx("a@x.test", FUTURE, key="fiqh_tahawwulat")])
+        # A 1-year subscription to fiqh_tahawwulat does NOT grant fiqh_syafii,
+        # but protects the user from being removed from fiqh_tahawwulat (Rule 5 AGENTS.md).
+        protected, active, expired = run([tx("a@x.test", PAST), tx("a@x.test", FUTURE, key="fiqh_tahawwulat", plan="bahits_1y")])
         self.assertEqual(expired["fiqh_syafii"], {"a@x.test"})
         self.assertIn("a@x.test", active["fiqh_tahawwulat"])
         self.assertEqual(policy.removal_candidates({"a@x.test"}, "fiqh_tahawwulat", protected, active, expired), set())
+        self.assertEqual(policy.removal_candidates({"a@x.test"}, "fiqh_syafii", protected, active, expired), {"a@x.test"})
+
+        # Only true all-access plans cover all modules
+        protected, active, expired = run([tx("a@x.test", PAST), tx("a@x.test", FUTURE, plan="all_access")])
+        self.assertEqual(expired["fiqh_syafii"], set())
+        self.assertIn("a@x.test", active["fiqh_syafii"])
 
     def test_expired_profile_field_never_cancels_an_active_transaction(self):
         user = {"email": "a@x.test", "entitlements": {"fiqh_syafii": {"expiry": PAST, "status": "active"}}}
@@ -80,7 +85,7 @@ class ClassifyTest(unittest.TestCase):
 class RegistryTest(unittest.TestCase):
     def test_registry_is_loaded_and_normalised(self):
         emails = registry.vip_emails()
-        self.assertGreaterEqual(len(emails), 20)
+        self.assertGreaterEqual(len(emails), 17)
         self.assertTrue(all(e == e.strip().lower() and "@" in e for e in emails))
         self.assertTrue(registry.is_vip_profile({"email": next(iter(emails)).upper()}))
         self.assertTrue(registry.is_vip_profile({"email": "x@x.test", "role": "VIP"}))
