@@ -155,14 +155,22 @@ class PersistentGoogleSession {
   /// suntikkan kembali dari brankas lokal.
   Future<bool> restoreSessionIfAvailable(String email) async {
     final cleanEmail = email.trim().toLowerCase();
+    if (cleanEmail.isEmpty) return false;
     try {
       final prefs = await SharedPreferences.getInstance();
       final savedOwner =
           (prefs.getString(_ownerKey) ?? '').trim().toLowerCase();
 
-      if (cleanEmail.isNotEmpty &&
-          savedOwner.isNotEmpty &&
-          savedOwner != cleanEmail) {
+      if (savedOwner.isEmpty || savedOwner != cleanEmail) {
+        return false;
+      }
+
+      final raw = prefs.getString(_vaultKey);
+      if (raw == null || raw.isEmpty) return false;
+
+      final decoded = jsonDecode(raw) as Map<String, dynamic>;
+      final vaultOwner = (decoded['owner'] as String? ?? '').toLowerCase();
+      if (vaultOwner != cleanEmail) {
         return false;
       }
 
@@ -179,17 +187,6 @@ class PersistentGoogleSession {
       if (hasLive) {
         await lockAndPersistCookies(null, cleanEmail);
         return true;
-      }
-
-      final raw = prefs.getString(_vaultKey);
-      if (raw == null || raw.isEmpty) return false;
-
-      final decoded = jsonDecode(raw) as Map<String, dynamic>;
-      final vaultOwner = (decoded['owner'] as String? ?? '').toLowerCase();
-      if (cleanEmail.isNotEmpty &&
-          vaultOwner.isNotEmpty &&
-          vaultOwner != cleanEmail) {
-        return false;
       }
 
       final List<dynamic> list =

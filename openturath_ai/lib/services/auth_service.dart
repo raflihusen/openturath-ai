@@ -398,8 +398,7 @@ class AuthService {
       final prefs = await SharedPreferences.getInstance();
       final owner =
           (prefs.getString(webSessionOwnerKey) ?? '').trim().toLowerCase();
-      if (owner.isEmpty || owner == current) {
-        await prefs.setString(webSessionOwnerKey, current);
+      if (owner.isNotEmpty && owner == current) {
         await PersistentGoogleSession.instance.restoreSessionIfAvailable(current);
         return;
       }

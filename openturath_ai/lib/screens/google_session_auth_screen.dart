@@ -62,26 +62,6 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
   @override
   void initState() {
     super.initState();
-    _tryAutoRestoreSession();
-  }
-
-  Future<void> _tryAutoRestoreSession() async {
-    final email = (AuthService().cachedCurrentUser?.email ??
-            AuthService().currentUser?.email ??
-            '')
-        .trim()
-        .toLowerCase();
-    if (email.isNotEmpty) {
-      final restored = await PersistentGoogleSession.instance
-          .restoreSessionIfAvailable(email);
-      if (restored && mounted) {
-        if (Navigator.canPop(context)) {
-          Navigator.pop(context, true);
-        } else {
-          Navigator.pushReplacementNamed(context, AppRoutes.dashboard);
-        }
-      }
-    }
   }
 
   @override
@@ -184,11 +164,6 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
       // Email Google cocok
       await _onSessionAuthenticated();
       return;
-    }
-
-    final hasSessionCookie = await _hasGoogleSession();
-    if (hasSessionCookie == true && mounted && !_isSessionReady) {
-      await _onSessionAuthenticated();
     }
   }
 
