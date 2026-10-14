@@ -189,7 +189,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
         decoration: BoxDecoration(
           color: OTColors.surface(dark),
           borderRadius: BorderRadius.circular(OTRadius.card),
-          border: Border.all(color: OTColors.borderStrong(dark), width: 1.5),
+          border: Border.all(color: OTColors.tahawwulat.withValues(alpha: 0.6)),
         ),
         padding: const EdgeInsets.all(20),
         child: child,
@@ -220,8 +220,8 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
           colors: [OTExpressive.black, OTExpressive.ink],
         ),
         borderRadius: OTRadius.cardBorder,
-        border: Border.all(
-            color: OTExpressive.whiteMuted.withValues(alpha: 0.24)),
+        border:
+            Border.all(color: OTExpressive.whiteMuted.withValues(alpha: 0.24)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -241,7 +241,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       const Icon(Icons.workspace_premium_rounded,
-                          size: 14, color: OTExpressive.black),
+                          size: 14, color: OTColors.tahawwulat),
                       const SizedBox(width: 6),
                       Flexible(
                         child: Text(
@@ -501,19 +501,11 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
           if (agentId == flagship.id)
             _flagshipHeader(label, title, flagship)
           else
-            Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                    color: OTColors.surfaceSubtle(dark),
-                    borderRadius: OTRadius.cardBorder),
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(label, style: OTTypography.caption(color: muted)),
-                      const SizedBox(height: 8),
-                      Text(title, style: OTTypography.screenTitle(color: ink)),
-                    ])),
+            Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text(label, style: OTTypography.captionMedium(color: muted)),
+              const SizedBox(height: 4),
+              Text(title, style: OTTypography.pageTitle(color: ink)),
+            ]),
           const SizedBox(height: 12),
           Text(description,
               style: OTTypography.body(color: muted).copyWith(height: 1.45)),
@@ -784,10 +776,13 @@ class _TierSelector extends StatelessWidget {
               textAlign: TextAlign.center,
               style: OTTypography.captionMedium(color: textColor)),
           const SizedBox(height: 2),
-          Text(Loc.tr('saving', ['${offers[i].savingsPercent}']),
-              textAlign: TextAlign.center,
-              style: OTTypography.metadataTag(
-                  color: textColor.withValues(alpha: 0.72))),
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text(ProductPricing.rupiah(offers[i].amount),
+                textAlign: TextAlign.center,
+                style: OTTypography.caption(
+                    color: textColor.withValues(alpha: 0.72))),
+          ),
         ],
       );
       return Semantics(
