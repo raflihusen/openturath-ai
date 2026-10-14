@@ -102,6 +102,22 @@ const copyCatalog = <String, List<String>>{
     "Material for da'wah and sermons",
     "مادة الدعوة والخطب"
   ],
+  "subHeadline": [
+    "Lanjutkan telaah bersama kitab-kitabnya",
+    "Keep studying with the books themselves",
+    "تابع المطالعة مع الكتب نفسها"
+  ],
+  "subHeadlineNamed": [
+    "{0}, lanjutkan telaah bersama kitab-kitabnya",
+    "{0}, keep studying with the books themselves",
+    "{0}، تابع المطالعة مع الكتب نفسها"
+  ],
+  "termSavingVsMonthly": [
+    "Hemat {0}% dari bulanan",
+    "Save {0}% vs monthly",
+    "وفّر {0}٪ مقارنة بالشهري"
+  ],
+  "planStartTerm": ["Mulai {0} · {1}", "Start {0} · {1}", "ابدأ {0} · {1}"],
   "planTrustNote": [
     "Sekali bayar · tanpa perpanjangan otomatis",
     "One-time payment · no automatic renewal",
@@ -2402,9 +2418,9 @@ const copyCatalog = <String, List<String>>{
   ],
   "payAmount": ["Bayar {0}", "Pay {0}", "ادفع {0}"],
   "monthlyEquivalent": [
-    "Setara {0}/bulan · dibayar sekaligus",
-    "Equivalent to {0}/month · paid upfront",
-    "ما يعادل {0} شهريًا · يُدفع كاملًا"
+    "Sekitar {0}/bulan · dibayar sekaligus",
+    "About {0}/month · paid upfront",
+    "نحو {0} شهريًا · يُدفع كاملًا"
   ],
   "chatPurpose": [
     "Ruang telaah naskah & kajian komparatif berbasis turats.",

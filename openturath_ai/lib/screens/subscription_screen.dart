@@ -21,6 +21,8 @@ import '../widgets/redeem_code_sheet.dart';
 import '../core/app_platform.dart';
 import '../services/auth_service.dart';
 import '../services/telemetry_service.dart';
+import '../services/open_turath_catalog_repository.dart';
+import 'package:intl/intl.dart' show NumberFormat;
 
 import 'package:openturath_ai/core/design/ot_radius.dart';
 import 'package:openturath_ai/core/design/ot_buttons.dart';
@@ -35,7 +37,7 @@ class SubscriptionScreen extends StatefulWidget {
 class _SubscriptionScreenState extends State<SubscriptionScreen> {
   final _service = SubscriptionService();
   String _selectedAgentId = 'fiqh_syafii';
-  int _tahawwulatIndex = 0;
+  int _tahawwulatIndex = 2;
   int _specialistIndex = 0;
   bool _processing = false;
   bool _initialized = false;
@@ -89,6 +91,23 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
         ),
       ),
     );
+  }
+
+  /// Kalimat pembuka yang menyebut hasil, dengan nama depan pengguna bila ada.
+  String _headline() {
+    var name = '';
+    try {
+      name = (AuthService().cachedCurrentUser?.name ??
+              AuthService().currentUser?.displayName ??
+              '')
+          .trim();
+    } catch (_) {
+      // Tanpa sesi (atau di pratinjau), judul tetap tampil tanpa nama.
+    }
+    final first = name.isEmpty ? '' : name.split(RegExp(r'\s+')).first;
+    return first.isEmpty
+        ? Loc.tr('subHeadline')
+        : Loc.tr('subHeadlineNamed', [first]);
   }
 
   List<AgentModel> get _specialists => AgentModel.defaultAgents
@@ -240,7 +259,6 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
   /// Kepala paket utama: panel gelap bergradasi dengan lencana eksklusif,
   /// agar terbaca sebagai koleksi istimewa, bukan sekadar kartu kedua.
   Widget _flagshipHeader(String label, String title, AgentModel agent) {
-    final subtitle = agent.subtitleAcademic;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -269,20 +287,8 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
           ),
         ),
         const SizedBox(height: 20),
-        if (!Loc.isArabic && agent.titleArabic.isNotEmpty)
-          Text(
-            agent.titleArabic,
-            textDirection: TextDirection.rtl,
-            style: OTTypography.arabicIbarah(
-                color: OTColors.tahawwulat, height: 1.3),
-          ),
         Text(title,
             style: OTTypography.displayLarge(color: OTExpressive.white)),
-        if (subtitle.isNotEmpty) ...[
-          const SizedBox(height: 4),
-          Text(Loc.text(subtitle),
-              style: OTTypography.caption(color: OTExpressive.whiteMuted)),
-        ],
       ],
     );
   }
@@ -490,14 +496,21 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
 
     final single = ProductPricing.specialists[_specialistIndex];
 
-    Widget cta(VoidCallback onPressed, int amount, {bool onInk = false}) =>
+    Widget cta(VoidCallback onPressed, SubscriptionOffer offer,
+            {bool onInk = false}) =>
         SizedBox(
           width: double.infinity,
           height: 48,
           child: FilledButton(
             onPressed: _processing ? null : onPressed,
             style: onInk ? OTButtons.onInk() : null,
-            child: Text(Loc.tr('payAmount', [ProductPricing.rupiah(amount)])),
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(Loc.tr('planStartTerm', [
+                offer.title.toLowerCase(),
+                ProductPricing.rupiah(offer.amount)
+              ])),
+            ),
           ),
         );
 
@@ -525,9 +538,10 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
           _flagshipHeader(label, title, flagship)
         else
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text(label, style: OTTypography.captionMedium(color: muted)),
-            const SizedBox(height: 4),
-            Text(title, style: OTTypography.pageTitle(color: ink)),
+            Text(label.toUpperCase(),
+                style: OTTypography.sectionHeading(color: muted)),
+            const SizedBox(height: 8),
+            Text(title, style: OTTypography.editorialHero(color: ink)),
           ]),
         const SizedBox(height: 16),
         Text(description,
@@ -567,19 +581,19 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
         Divider(color: cLine, height: 1),
         const SizedBox(height: 16),
         for (final benefit in benefits)
-          _benefitRow(benefit, cInk,
-              checkColor: f ? OTColors.tahawwulat : null),
+          _benefitRow(benefit, cInk, checkColor: null),
         if (wide) const Spacer() else const SizedBox(height: 8),
         const SizedBox(height: 8),
         if (price.months > 1) ...[
           Text(
               Loc.tr('monthlyEquivalent', [
-                ProductPricing.rupiah((price.amount / price.months).round())
+                ProductPricing.rupiah(
+                    ((price.amount / price.months) / 1000).round() * 1000)
               ]),
               style: OTTypography.caption(color: cMuted)),
           const SizedBox(height: 12),
         ],
-        cta(onCheckout, price.amount, onInk: f),
+        cta(onCheckout, price, onInk: f),
         _trustNote(cMuted),
         _checkoutNotice(agentId, ink: cInk),
       ];
@@ -590,8 +604,10 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     final flagshipScope = Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(Loc.tr('planFeaturedIncludes', ['${subAgents.length}']),
-            style: OTTypography.captionMedium(color: OTExpressive.white)),
+        Text(
+            Loc.tr('planFeaturedIncludes', ['${subAgents.length}'])
+                .toUpperCase(),
+            style: OTTypography.sectionHeading(color: OTExpressive.whiteMuted)),
         const SizedBox(height: 12),
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
@@ -612,15 +628,10 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(sub.nameArabic,
-                          textDirection: TextDirection.rtl,
-                          style: OTTypography.arabicQuote(
-                              color: OTColors.tahawwulat, height: 1.4)),
-                      const SizedBox(height: 4),
                       Text(Loc.isArabic ? sub.nameArabic : sub.name,
-                          style: OTTypography.captionMedium(
+                          style: OTTypography.bodyMedium(
                               color: OTExpressive.white)),
-                      const SizedBox(height: 2),
+                      const SizedBox(height: 4),
                       Text(_roleOf(sub),
                           style: OTTypography.caption(
                                   color: OTExpressive.whiteMuted)
@@ -758,15 +769,13 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    Text(
-                      Loc.tr('launchOffer'),
-                      style: ScholarlyFonts.outfit(
-                        fontSize: OTFontSize.s22,
-                        fontWeight: FontWeight.w600,
-                        letterSpacing: -0.4,
-                        color: ink,
-                      ),
-                    ),
+                    Text(Loc.tr('launchOffer').toUpperCase(),
+                        style: OTTypography.sectionHeading(color: muted)),
+                    const SizedBox(height: 12),
+                    Text(_headline(),
+                        style: OTTypography.editorialHero(color: ink)),
+                    const SizedBox(height: 8),
+                    _LibraryProof(ink: ink, muted: muted),
                     const SizedBox(height: 20),
                     if (wide)
                       IntrinsicHeight(
@@ -846,6 +855,17 @@ class _TierSelector extends StatelessWidget {
     final thumbLine = onInk ? OTColors.tahawwulat : ink;
     final reduced = MediaQuery.disableAnimationsOf(context);
     final n = offers.length;
+    // Di layar sempit, tulis hemat tanpa "dari bulanan" agar tetap terbaca.
+    final narrow = MediaQuery.sizeOf(context).width < 600;
+    // Hemat dihitung terhadap membayar bulanan selama masa yang sama.
+    final monthly = offers.first.amount;
+    final savings = [
+      for (final o in offers)
+        o.months <= 1
+            ? 0
+            : ((monthly * o.months - o.amount) * 100 / (monthly * o.months))
+                .round(),
+    ];
 
     Widget segment(int i) {
       final active = selected == i;
@@ -871,6 +891,17 @@ class _TierSelector extends StatelessWidget {
                       style: OTTypography.caption(color: muted).copyWith(
                           fontFeatures: const [FontFeature.tabularFigures()])),
                 ),
+                if (savings[i] >= 5) ...[
+                  const SizedBox(height: 4),
+                  FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Text(
+                        Loc.tr(narrow ? 'saving' : 'termSavingVsMonthly',
+                            ['${savings[i]}']),
+                        style: OTTypography.metadataTag(
+                            color: onInk ? OTColors.tahawwulat : ink)),
+                  ),
+                ],
               ],
             ),
           ),
@@ -959,4 +990,45 @@ class _KhatamPatternPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(_KhatamPatternPainter oldDelegate) => false;
+}
+
+/// Angka pustaka yang sama dengan layar masuk: bidang ilmu, entri kitab,
+/// dan perkiraan halaman. Tidak tampil bila katalog belum termuat.
+class _LibraryProof extends StatelessWidget {
+  const _LibraryProof({required this.ink, required this.muted});
+
+  final Color ink;
+  final Color muted;
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<Map<String, AiLibraryMetadata>>(
+      future: OpenTurathCatalogRepository.instance.loadAllMetadata(),
+      builder: (context, snapshot) {
+        final all = snapshot.data ?? const <String, AiLibraryMetadata>{};
+        if (all.isEmpty) return const SizedBox.shrink();
+        final number = NumberFormat.decimalPattern(Loc.language);
+        final entries =
+            all.values.fold<int>(0, (sum, item) => sum + item.totalKitab);
+        final pages =
+            all.values.fold<int>(0, (sum, item) => sum + item.totalHalaman);
+        final strong = OTTypography.captionMedium(color: ink)
+            .copyWith(fontFeatures: const [FontFeature.tabularFigures()]);
+        final plain = OTTypography.caption(color: muted);
+        return Text.rich(TextSpan(style: plain, children: [
+          TextSpan(text: number.format(all.length), style: strong),
+          TextSpan(text: ' ${Loc.tr('loginStatLibraries')}  ·  '),
+          TextSpan(
+              text: Loc.atLeast(number.format(entries ~/ 100 * 100)),
+              style: strong),
+          TextSpan(text: ' ${Loc.tr('loginStatEntries')}  ·  '),
+          TextSpan(
+              text: Loc.atLeast(
+                  number.format(pages ~/ 100000 / 10), Loc.tr('unitMillion')),
+              style: strong),
+          TextSpan(text: ' ${Loc.tr('loginStatPages')}'),
+        ]));
+      },
+    );
+  }
 }
