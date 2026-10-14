@@ -168,7 +168,7 @@ function getEntitlementAccess(userData: FirebaseFirestore.DocumentData, entitlem
     ? userData.subscription_expiry.toDate() : new Date(userData.subscription_expiry ?? "");
   const isGlobalExpiryValid = Number.isFinite(expiry.getTime()) && expiry.getTime() > now;
 
-  const globalPlanPattern = /^(all_access|all_ai.*|full|sultan|tholib.*|bahits.*|premium|pro|custom|voucher.*|redeem.*)$/;
+  const globalPlanPattern = /^(all_access|all_ai.*|full|sultan)$/;
   const isGlobalPlan = typeof userData.plan === "string" && globalPlanPattern.test(userData.plan);
 
   if (isGlobalPlan && isGlobalExpiryValid) {
@@ -179,8 +179,18 @@ function getEntitlementAccess(userData: FirebaseFirestore.DocumentData, entitlem
     return { premiumPlan: !!specific, active: false };
   }
 
-  const legacy = ["all_access", "all_ai_1m", "all_ai_6m", "all_ai_1y", "all_ai", "full", "sultan", "tholib_1m", "tholib_6m", "bahits_1y", "tholib", "bahits", "premium", "pro", "custom"].includes(userData.plan);
-  return { premiumPlan: legacy, active: legacy && isGlobalExpiryValid };
+  // Legacy single module plan fallback: only grant if user's scope or active_module matches
+  const userScope = String(userData.active_module || userData.scope || userData.entitlement_key || "").toLowerCase();
+  const isMatchingModule = userScope === entitlementKey ||
+    (entitlementKey === "fiqh_syafii" && (!userScope || userScope.includes("syafi")));
+
+  const legacySinglePlan = ["tholib_1m", "tholib_6m", "bahits_1y", "tholib", "bahits"].includes(userData.plan);
+  if (legacySinglePlan && isMatchingModule && isGlobalExpiryValid) {
+    return { premiumPlan: true, active: true };
+  }
+
+  const legacyGlobal = ["all_access", "all_ai_1m", "all_ai_6m", "all_ai_1y", "all_ai", "full", "sultan"].includes(userData.plan);
+  return { premiumPlan: legacyGlobal, active: legacyGlobal && isGlobalExpiryValid };
 }
 
 // ================================================================
@@ -2007,17 +2017,26 @@ export const dailyRevoke = functions
       const txVip = d.is_vip === true || plan.includes("vip") || (expDate && expDate.getFullYear() >= 2030);
       if (txVip || isVip({email})) continue;
 
-      const isYearly = ["1y", "year", "tahun", "annual", "bahits_1y"].some(y => plan.includes(y));
       const entKey = d.entitlement_key;
+      const isGlobalPlan = entKey === "all_access" || entKey === "all_ai" ||
+        (!entKey && /all_ai|all_access|full|sultan/.test(plan));
 
       if (expDate && expDate > now) {
-        if (isYearly || entKey === "all_access" || entKey === "all_ai" || !entKey) {
+        if (isGlobalPlan) {
           allActiveEmails.add(email);
           for (const k of PROVISIONABLE_SCOPES) {
             activeEmailsByEntitlement.get(k)?.add(email);
           }
-        } else if (activeEmailsByEntitlement.has(entKey)) {
+        } else if (entKey && activeEmailsByEntitlement.has(entKey)) {
           activeEmailsByEntitlement.get(entKey)?.add(email);
+        } else if (!entKey) {
+          if (plan.includes("tahawwulat")) {
+            activeEmailsByEntitlement.get("fiqh_tahawwulat")?.add(email);
+          } else if (plan.includes("syafi") || plan.includes("tholib")) {
+            activeEmailsByEntitlement.get("fiqh_syafii")?.add(email);
+          } else if (plan.includes("nahwu") || plan.includes("bahasa arab")) {
+            activeEmailsByEntitlement.get("nahwu")?.add(email);
+          }
         }
       }
     }

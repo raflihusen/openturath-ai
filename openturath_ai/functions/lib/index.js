@@ -161,7 +161,7 @@ function getEntitlementAccess(userData, entitlementKey) {
     const expiry = ((_b = userData.subscription_expiry) === null || _b === void 0 ? void 0 : _b.toDate)
         ? userData.subscription_expiry.toDate() : new Date((_c = userData.subscription_expiry) !== null && _c !== void 0 ? _c : "");
     const isGlobalExpiryValid = Number.isFinite(expiry.getTime()) && expiry.getTime() > now;
-    const globalPlanPattern = /^(all_access|all_ai.*|full|sultan|tholib.*|bahits.*|premium|pro|custom|voucher.*|redeem.*)$/;
+    const globalPlanPattern = /^(all_access|all_ai.*|full|sultan)$/;
     const isGlobalPlan = typeof userData.plan === "string" && globalPlanPattern.test(userData.plan);
     if (isGlobalPlan && isGlobalExpiryValid) {
         return { premiumPlan: true, active: true };
@@ -169,8 +169,16 @@ function getEntitlementAccess(userData, entitlementKey) {
     if (userData.plan === "single") {
         return { premiumPlan: !!specific, active: false };
     }
-    const legacy = ["all_access", "all_ai_1m", "all_ai_6m", "all_ai_1y", "all_ai", "full", "sultan", "tholib_1m", "tholib_6m", "bahits_1y", "tholib", "bahits", "premium", "pro", "custom"].includes(userData.plan);
-    return { premiumPlan: legacy, active: legacy && isGlobalExpiryValid };
+    // Legacy single module plan fallback: only grant if user's scope or active_module matches
+    const userScope = String(userData.active_module || userData.scope || userData.entitlement_key || "").toLowerCase();
+    const isMatchingModule = userScope === entitlementKey ||
+        (entitlementKey === "fiqh_syafii" && (!userScope || userScope.includes("syafi")));
+    const legacySinglePlan = ["tholib_1m", "tholib_6m", "bahits_1y", "tholib", "bahits"].includes(userData.plan);
+    if (legacySinglePlan && isMatchingModule && isGlobalExpiryValid) {
+        return { premiumPlan: true, active: true };
+    }
+    const legacyGlobal = ["all_access", "all_ai_1m", "all_ai_6m", "all_ai_1y", "all_ai", "full", "sultan"].includes(userData.plan);
+    return { premiumPlan: legacyGlobal, active: legacyGlobal && isGlobalExpiryValid };
 }
 // ================================================================
 // FUNCTION 1: getAgentUrl
@@ -1717,7 +1725,7 @@ exports.dailyRevoke = functions
     .runWith({ serviceAccount: "open-turath@appspot.gserviceaccount.com", timeoutSeconds: 300 })
     .pubsub.schedule("every 1 hours")
     .onRun(async () => {
-    var _a, _b, _c, _d;
+    var _a, _b, _c, _d, _e, _f, _g;
     if (((_a = (await db.collection("access_control").doc("runtime").get()).data()) === null || _a === void 0 ? void 0 : _a.writer) === "vps-v2")
         return null;
     const revokedSummary = [];
@@ -1827,17 +1835,29 @@ exports.dailyRevoke = functions
         const txVip = d.is_vip === true || plan.includes("vip") || (expDate && expDate.getFullYear() >= 2030);
         if (txVip || (0, access_control_1.isVip)({ email }))
             continue;
-        const isYearly = ["1y", "year", "tahun", "annual", "bahits_1y"].some(y => plan.includes(y));
         const entKey = d.entitlement_key;
+        const isGlobalPlan = entKey === "all_access" || entKey === "all_ai" ||
+            (!entKey && /all_ai|all_access|full|sultan/.test(plan));
         if (expDate && expDate > now) {
-            if (isYearly || entKey === "all_access" || entKey === "all_ai" || !entKey) {
+            if (isGlobalPlan) {
                 allActiveEmails.add(email);
                 for (const k of access_catalog_1.PROVISIONABLE_SCOPES) {
                     (_b = activeEmailsByEntitlement.get(k)) === null || _b === void 0 ? void 0 : _b.add(email);
                 }
             }
-            else if (activeEmailsByEntitlement.has(entKey)) {
+            else if (entKey && activeEmailsByEntitlement.has(entKey)) {
                 (_c = activeEmailsByEntitlement.get(entKey)) === null || _c === void 0 ? void 0 : _c.add(email);
+            }
+            else if (!entKey) {
+                if (plan.includes("tahawwulat")) {
+                    (_d = activeEmailsByEntitlement.get("fiqh_tahawwulat")) === null || _d === void 0 ? void 0 : _d.add(email);
+                }
+                else if (plan.includes("syafi") || plan.includes("tholib")) {
+                    (_e = activeEmailsByEntitlement.get("fiqh_syafii")) === null || _e === void 0 ? void 0 : _e.add(email);
+                }
+                else if (plan.includes("nahwu") || plan.includes("bahasa arab")) {
+                    (_f = activeEmailsByEntitlement.get("nahwu")) === null || _f === void 0 ? void 0 : _f.add(email);
+                }
             }
         }
     }
@@ -1871,7 +1891,7 @@ exports.dailyRevoke = functions
                 : (String(d.plan || "").toLowerCase().includes("tholib") ? ["fiqh_tahawwulat", "fiqh_syafii"] : access_catalog_1.PROVISIONABLE_SCOPES);
             const expiredKeysToRevoke = [];
             for (const k of targetKeys) {
-                if (allActiveEmails.has(email) || ((_d = activeEmailsByEntitlement.get(k)) === null || _d === void 0 ? void 0 : _d.has(email)))
+                if (allActiveEmails.has(email) || ((_g = activeEmailsByEntitlement.get(k)) === null || _g === void 0 ? void 0 : _g.has(email)))
                     continue;
                 // Independent per-module evaluation: a still-active entitlement for
                 // this module survives the expiry of an older or unrelated transaction.
