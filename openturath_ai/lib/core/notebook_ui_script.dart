@@ -296,7 +296,7 @@ const notebookUiScript = r'''
         overflow-y: auto !important;
         -webkit-overflow-scrolling: touch !important;
         box-sizing: border-box !important;
-        padding-bottom: 120px !important;
+        padding-bottom: 150px !important;
       }
       .chat-panel-content, .chat-view, .conversation-container, .message-list, [role="log"] {
         position: relative !important;
@@ -308,7 +308,7 @@ const notebookUiScript = r'''
         overflow-y: auto !important;
         -webkit-overflow-scrolling: touch !important;
         box-sizing: border-box !important;
-        padding-bottom: 120px !important;
+        padding-bottom: 150px !important;
       }
       main, [role="main"], app-chat-view, app-conversation, app-chat-panel, .chat-panel, app-chat {
         position: relative !important;
@@ -346,7 +346,7 @@ const notebookUiScript = r'''
       chat-turn:last-child,
       .chat-message:last-child,
       [role="article"]:last-child {
-        margin-bottom: 120px !important;
+        margin-bottom: 150px !important;
         padding-bottom: 24px !important;
       }
       .ot-chat-composer {
@@ -416,10 +416,12 @@ const notebookUiScript = r'''
       [class*="overview-card" i],
       /* Sembunyikan bilah tab Sources | Chat | Studio dan tombol add/upload non-obrolan */
       [role="tablist"],
+      mat-button-toggle-group, .mat-button-toggle-group, .mat-mdc-button-toggle-group,
       .tab-bar, app-tab-bar, .tabs-container, nav[class*="tab" i], div[class*="tab-bar" i],
       mat-tab-header, .mat-mdc-tab-header, .mobile-tab-bar, .mobile-tabs, .mobile-navigation,
       button[aria-label*="Add source" i], button[aria-label*="Tambah sumber" i],
       button[aria-label*="Upload" i], button[aria-label*="Unggah" i],
+      button[aria-label*="Share" i], button[aria-label*="Bagikan" i],
       app-chat-empty-state h1, app-chat-empty-state h2, app-chat-empty-state h3,
       app-chat-empty-state mat-icon, app-chat-empty-state img, app-chat-empty-state svg,
       app-empty-state h1, app-empty-state h2, app-empty-state h3,
@@ -498,6 +500,8 @@ const notebookUiScript = r'''
       'labs-tailwind-logo', 'a.logo-link', 'a[aria-label*="NotebookLM" i]', 'svg[aria-label*="NotebookLM" i]',
       'button[aria-label*="Settings" i]', 'button[aria-label*="Setelan" i]',
       'button[aria-label*="Pengaturan" i]', 'button[aria-label*="Notebook settings" i]',
+      'button[aria-label*="Share" i]', 'button[aria-label*="Bagikan" i]',
+      'mat-button-toggle-group',
       '.pro-badge', '[class*="pro-badge" i]', '[class*="tier-badge" i]'
     ];
     selectors.forEach(sel => {
@@ -538,7 +542,8 @@ const notebookUiScript = r'''
         const txt = (el.innerText || el.textContent || '').trim().toLowerCase();
         const hasShared = txt.includes('shared') || txt.includes('dibagikan');
         const hasAvatar = el.querySelector('app-user-avatar, [aria-label*="Google Account" i]');
-        if ((hasShared || hasAvatar) && !el.querySelector('textarea, [contenteditable="true"], form')) {
+        const hasModeTabs = (txt.includes('sources') || txt.includes('sumber')) && (txt.includes('studio') || txt.includes('chat'));
+        if ((hasShared || hasAvatar || hasModeTabs) && !el.querySelector('textarea, [contenteditable="true"], form')) {
           if (!el.matches('.chat-view, .chat-panel-content, main, [role="main"], app-root')) {
             el.style.setProperty('display', 'none', 'important');
           }
@@ -621,7 +626,7 @@ const notebookUiScript = r'''
 
     // 3. Pastikan tab Chat selalu aktif jika antarmuka mobile/tab NotebookLM terbuka
     try {
-      const tabs = document.querySelectorAll('[role="tab"], button, a');
+      const tabs = document.querySelectorAll('[role="tab"], button, a, [role="button"]');
       for (const tab of tabs) {
         if (isComposerOrInput(tab) || isMessageOrBubble(tab)) continue;
         const txt = (tab.innerText || tab.textContent || '').trim().toLowerCase();
@@ -1162,7 +1167,7 @@ let userPausedFollow = false;
 let followScheduled = false;
 
 function chatScrollHost() {
-  const candidates = document.querySelectorAll('.ot-chat-transcript, .chat-panel-content, .chat-view, .conversation-container, .message-list, [role="log"], main');
+  const candidates = document.querySelectorAll('.ot-chat-transcript, .chat-panel-content, .chat-view, .conversation-container, .message-list, [role="log"], mat-sidenav-content, main');
   for (const candidate of candidates) {
     if (candidate.scrollHeight > candidate.clientHeight + 24) return candidate;
   }
