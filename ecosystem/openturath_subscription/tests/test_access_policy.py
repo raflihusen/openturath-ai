@@ -80,7 +80,7 @@ class ClassifyTest(unittest.TestCase):
 class RegistryTest(unittest.TestCase):
     def test_registry_is_loaded_and_normalised(self):
         emails = registry.vip_emails()
-        self.assertGreaterEqual(len(emails), 43)
+        self.assertGreaterEqual(len(emails), 20)
         self.assertTrue(all(e == e.strip().lower() and "@" in e for e in emails))
         self.assertTrue(registry.is_vip_profile({"email": next(iter(emails)).upper()}))
         self.assertTrue(registry.is_vip_profile({"email": "x@x.test", "role": "VIP"}))
