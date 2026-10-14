@@ -158,14 +158,6 @@ const notebookUiScript = r'''
       labs-tailwind-logo, a.logo-link, a[aria-label*="NotebookLM" i], svg[aria-label*="NotebookLM" i],
       button[aria-label*="Settings" i], button[aria-label*="Setelan" i],
       button[aria-label*="Pengaturan" i], button[aria-label*="Notebook settings" i],
-      button[aria-label*="Share" i], button[aria-label*="Bagikan" i],
-      button[aria-label*="Add source" i], button[aria-label*="Tambah sumber" i],
-      button:has(mat-icon[data-mat-icon-name="share"]),
-      button:has(mat-icon[fonticon="share"]),
-      button:has(mat-icon[data-mat-icon-name="add"]),
-      button:has(mat-icon[fonticon="add"]),
-      button:has(mat-icon[data-mat-icon-name="person_add"]),
-      button:has(mat-icon[fonticon="person_add"]),
       .project-header button, app-project-header button,
       mat-toolbar button, .top-bar button,
       /* Sembunyikan badge PRO */
@@ -259,7 +251,6 @@ const notebookUiScript = r'''
         min-height: 100% !important;
         overflow: auto !important;
         box-sizing: border-box !important;
-        padding-bottom: 180px !important;
       }
 
 
@@ -305,7 +296,7 @@ const notebookUiScript = r'''
         overflow-y: auto !important;
         -webkit-overflow-scrolling: touch !important;
         box-sizing: border-box !important;
-        padding-bottom: 180px !important;
+        padding-bottom: 120px !important;
       }
       .chat-panel-content, .chat-view, .conversation-container, .message-list, [role="log"] {
         position: relative !important;
@@ -317,7 +308,7 @@ const notebookUiScript = r'''
         overflow-y: auto !important;
         -webkit-overflow-scrolling: touch !important;
         box-sizing: border-box !important;
-        padding-bottom: 180px !important;
+        padding-bottom: 120px !important;
       }
       main, [role="main"], app-chat-view, app-conversation, app-chat-panel, .chat-panel, app-chat {
         position: relative !important;
@@ -354,14 +345,9 @@ const notebookUiScript = r'''
       app-chat-turn:last-child,
       chat-turn:last-child,
       .chat-message:last-child,
-      [role="article"]:last-child,
-      .chat-turn-footer,
-      .turn-footer,
-      .message-footer,
-      [class*="timestamp"],
-      [class*="turn-footer"] {
-        margin-bottom: 180px !important;
-        padding-bottom: 32px !important;
+      [role="article"]:last-child {
+        margin-bottom: 120px !important;
+        padding-bottom: 24px !important;
       }
       .ot-chat-composer {
         position: fixed !important;
@@ -430,17 +416,10 @@ const notebookUiScript = r'''
       [class*="overview-card" i],
       /* Sembunyikan bilah tab Sources | Chat | Studio dan tombol add/upload non-obrolan */
       [role="tablist"],
-      mat-button-toggle-group, .mat-button-toggle-group, .mat-mdc-button-toggle-group,
-      mat-button-toggle, .mat-button-toggle,
-      nav:not(.ot-chat-path),
-      app-navigation-bar, app-top-nav, app-mode-toggle,
-      [class*="mode-toggle" i], [class*="view-toggle" i], [class*="view-selector" i],
-      [class*="segmented" i], [class*="navigation-bar" i], [class*="top-nav" i], [class*="tab-group" i],
       .tab-bar, app-tab-bar, .tabs-container, nav[class*="tab" i], div[class*="tab-bar" i],
       mat-tab-header, .mat-mdc-tab-header, .mobile-tab-bar, .mobile-tabs, .mobile-navigation,
       button[aria-label*="Add source" i], button[aria-label*="Tambah sumber" i],
       button[aria-label*="Upload" i], button[aria-label*="Unggah" i],
-      button[aria-label*="Share" i], button[aria-label*="Bagikan" i],
       app-chat-empty-state h1, app-chat-empty-state h2, app-chat-empty-state h3,
       app-chat-empty-state mat-icon, app-chat-empty-state img, app-chat-empty-state svg,
       app-empty-state h1, app-empty-state h2, app-empty-state h3,
@@ -493,24 +472,6 @@ const notebookUiScript = r'''
       .chat-panel-content, .chat-view, .conversation-container { scrollbar-width: thin; }
       .rendered-markdown { max-width: 720px; margin-inline: auto; }
       .rendered-markdown p, .rendered-markdown li { unicode-bidi: plaintext; }
-
-      /* Tabel Markdown yang rapi dan elegan */
-      .rendered-markdown table {
-        border-collapse: collapse !important;
-        width: 100% !important;
-        margin: 16px 0 !important;
-        border-radius: 6px !important;
-        overflow: hidden !important;
-      }
-      .rendered-markdown th, .rendered-markdown td {
-        padding: 8px 12px !important;
-        border: 1px solid rgba(255, 255, 255, 0.12) !important;
-        text-align: right !important;
-      }
-      .rendered-markdown th {
-        background: rgba(255, 255, 255, 0.05) !important;
-        font-weight: 600 !important;
-      }
 
       /* Sembunyikan dialog / pop-up selamat datang dan intro Gemini Notebook */
       app-welcome-dialog, app-onboarding-dialog,
@@ -571,54 +532,16 @@ const notebookUiScript = r'''
       }
     });
 
-    // Sembunyikan baris header atas spesifik
-    document.querySelectorAll('header, [role="banner"], app-top-bar, .top-bar, app-header, mat-toolbar, app-project-header, app-notebook-header').forEach(el => {
-      if (el.querySelector('textarea, [contenteditable="true"], form')) return;
-      if (el.matches('.chat-view, .chat-panel-content, main, [role="main"], app-root')) return;
-      el.style.setProperty('display', 'none', 'important');
-      el.style.setProperty('visibility', 'hidden', 'important');
-      el.style.setProperty('height', '0px', 'important');
-      el.style.setProperty('overflow', 'hidden', 'important');
-    });
-
-    // Sembunyikan bilah navigasi mode switcher Sources | Chat | Studio
-    document.querySelectorAll('header, nav, [role="navigation"], [role="toolbar"], [role="tablist"], [role="group"], mat-button-toggle-group, .mat-button-toggle-group, mat-toolbar, div').forEach(el => {
-      if (el.children.length === 0 || el.children.length > 20) return;
-      if (el.querySelector('textarea, [contenteditable="true"], form, app-chat-input')) return;
-      if (el.matches('main, [role="main"], app-chat, app-chat-view, app-chat-panel, .chat-view, .chat-panel-content, .message-list, [role="log"]')) return;
-      if (el.closest('.chat-message, .model-message, .user-message, [role="article"], .rendered-markdown, app-chat-response')) return;
-      const txt = (el.innerText || el.textContent || '').trim().toLowerCase();
-      const hasSources = txt.includes('sources') || txt.includes('sumber');
-      const hasStudio = txt.includes('studio');
-      const hasChat = txt.includes('chat') || txt.includes('obrolan');
-      if (hasSources && (hasStudio || hasChat)) {
-        el.style.setProperty('display', 'none', 'important');
-        el.style.setProperty('visibility', 'hidden', 'important');
-        el.style.setProperty('height', '0px', 'important');
-        el.style.setProperty('overflow', 'hidden', 'important');
-      }
-    });
-
-    // Sembunyikan tombol Share dan tombol Add (+) di luar balon pesan obrolan
-    document.querySelectorAll('button, [role="button"], a').forEach(btn => {
-      if (btn.closest('.chat-message, .model-message, .user-message, [role="article"], .rendered-markdown, app-chat-response, .ot-chat-composer')) return;
-      const aria = (btn.getAttribute('aria-label') || btn.getAttribute('title') || '').toLowerCase();
-      if (aria.includes('share') || aria.includes('bagikan') || aria.includes('add source') || aria.includes('tambah sumber') || aria === 'add' || aria === 'tambah') {
-        btn.style.setProperty('display', 'none', 'important');
-        btn.style.setProperty('visibility', 'hidden', 'important');
-        btn.style.setProperty('height', '0px', 'important');
-        btn.style.setProperty('width', '0px', 'important');
-        btn.style.setProperty('overflow', 'hidden', 'important');
-      }
-      const icon = btn.querySelector('mat-icon, [data-mat-icon-name], svg');
-      if (icon) {
-        const iconName = (icon.getAttribute('data-mat-icon-name') || icon.getAttribute('fonticon') || icon.textContent || '').trim().toLowerCase();
-        if (iconName === 'share' || iconName === 'add' || iconName === 'person_add' || iconName === 'ios_share') {
-          btn.style.setProperty('display', 'none', 'important');
-          btn.style.setProperty('visibility', 'hidden', 'important');
-          btn.style.setProperty('height', '0px', 'important');
-          btn.style.setProperty('width', '0px', 'important');
-          btn.style.setProperty('overflow', 'hidden', 'important');
+    // Sembunyikan baris header atas spesifik tanpa forced layout loop
+    document.querySelectorAll('header, [role="banner"], app-top-bar, .top-bar, app-header, mat-toolbar').forEach(el => {
+      if (el.children.length > 0 && el.children.length <= 10) {
+        const txt = (el.innerText || el.textContent || '').trim().toLowerCase();
+        const hasShared = txt.includes('shared') || txt.includes('dibagikan');
+        const hasAvatar = el.querySelector('app-user-avatar, [aria-label*="Google Account" i]');
+        if ((hasShared || hasAvatar) && !el.querySelector('textarea, [contenteditable="true"], form')) {
+          if (!el.matches('.chat-view, .chat-panel-content, main, [role="main"], app-root')) {
+            el.style.setProperty('display', 'none', 'important');
+          }
         }
       }
     });
@@ -698,16 +621,14 @@ const notebookUiScript = r'''
 
     // 3. Pastikan tab Chat selalu aktif jika antarmuka mobile/tab NotebookLM terbuka
     try {
-      const tabs = document.querySelectorAll('[role="tab"], button, a, mat-button-toggle, [role="button"]');
+      const tabs = document.querySelectorAll('[role="tab"], button, a');
       for (const tab of tabs) {
         if (isComposerOrInput(tab) || isMessageOrBubble(tab)) continue;
         const txt = (tab.innerText || tab.textContent || '').trim().toLowerCase();
         if (txt === 'chat' || txt === 'obrolan' || txt === 'percakapan') {
           const isSelected = tab.getAttribute('aria-selected') === 'true' ||
-                             tab.getAttribute('aria-checked') === 'true' ||
                              tab.classList.contains('active') ||
                              tab.classList.contains('selected') ||
-                             tab.classList.contains('mat-button-toggle-checked') ||
                              tab.classList.contains('mat-mdc-tab-active');
           if (!isSelected) {
             tab.click?.();
@@ -952,23 +873,6 @@ const notebookUiScript = r'''
     transcriptPaths.forEach(node => node.classList.add('ot-chat-transcript-path'));
     if (composer) composer.classList.add('ot-chat-composer');
     document.body?.classList.toggle('ot-chat-layout', !!composer);
-    // Pastikan spacer bawah otomatis terbentuk di dalam setiap panel transkrip obrolan
-    try {
-      transcripts.forEach(scroller => {
-        let spacer = scroller.querySelector('.ot-bottom-scroll-spacer');
-        if (!spacer) {
-          spacer = document.createElement('div');
-          spacer.className = 'ot-bottom-scroll-spacer';
-          spacer.setAttribute('style', 'height: 180px !important; min-height: 180px !important; width: 100% !important; flex-shrink: 0 !important; pointer-events: none !important; display: block !important;');
-          scroller.appendChild(spacer);
-        } else if (scroller.lastElementChild !== spacer) {
-          scroller.appendChild(spacer);
-        }
-      });
-      if (transcripts.size === 0) {
-        document.querySelectorAll('.ot-bottom-scroll-spacer').forEach(el => el.remove());
-      }
-    } catch (_) {}
     const height = window.visualViewport ? window.visualViewport.height : window.innerHeight;
     const value = height + 'px';
     if (document.documentElement.style.getPropertyValue('--ot-chat-height') !== value) {
@@ -1258,7 +1162,7 @@ let userPausedFollow = false;
 let followScheduled = false;
 
 function chatScrollHost() {
-  const candidates = document.querySelectorAll('.ot-chat-transcript, .chat-panel-content, .chat-view, .conversation-container, .message-list, [role="log"], mat-sidenav-content, main, [role="main"], app-chat-view');
+  const candidates = document.querySelectorAll('.ot-chat-transcript, .chat-panel-content, .chat-view, .conversation-container, .message-list, [role="log"], main');
   for (const candidate of candidates) {
     if (candidate.scrollHeight > candidate.clientHeight + 24) return candidate;
   }
