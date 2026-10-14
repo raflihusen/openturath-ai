@@ -209,73 +209,58 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
   /// Kepala paket utama: panel gelap bergradasi dengan lencana eksklusif,
   /// agar terbaca sebagai koleksi istimewa, bukan sekadar kartu kedua.
   Widget _flagshipHeader(String label, String title, AgentModel agent) {
+    final dark = Theme.of(context).brightness == Brightness.dark;
+    final ink = OTColors.textPrimary(dark);
+    final muted = OTColors.textSecondary(dark);
     final subtitle = agent.subtitleAcademic;
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          begin: AlignmentDirectional.topStart,
-          end: AlignmentDirectional.bottomEnd,
-          colors: [OTExpressive.black, OTExpressive.ink],
-        ),
-        borderRadius: OTRadius.cardBorder,
-        border:
-            Border.all(color: OTExpressive.whiteMuted.withValues(alpha: 0.24)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+          decoration: BoxDecoration(
+            color: OTColors.tahawwulat.withValues(alpha: 0.12),
+            borderRadius: OTRadius.chipBorder,
+            border:
+                Border.all(color: OTColors.tahawwulat.withValues(alpha: 0.6)),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
             children: [
+              const Icon(Icons.workspace_premium_rounded,
+                  size: 14, color: OTColors.tahawwulat),
+              const SizedBox(width: 6),
               Flexible(
-                child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: OTExpressive.white,
-                    borderRadius: OTRadius.chipBorder,
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Icon(Icons.workspace_premium_rounded,
-                          size: 14, color: OTColors.tahawwulat),
-                      const SizedBox(width: 6),
-                      Flexible(
-                        child: Text(
-                          label,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: OTTypography.captionMedium(
-                              color: OTExpressive.black),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                child: Text(label,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: OTTypography.captionMedium(color: ink)),
               ),
-              if (!Loc.isArabic && agent.titleArabic.isNotEmpty) ...[
-                const SizedBox(width: 12),
-                Text(
-                  agent.titleArabic,
-                  textDirection: TextDirection.rtl,
-                  style: OTTypography.arabicQuote(
-                      color: OTExpressive.whiteMuted, height: 1.2),
-                ),
-              ],
             ],
           ),
-          const SizedBox(height: 20),
-          Text(title, style: OTTypography.pageTitle(color: OTExpressive.white)),
-          if (subtitle.isNotEmpty) ...[
-            const SizedBox(height: 4),
-            Text(Loc.text(subtitle),
-                style: OTTypography.caption(color: OTExpressive.whiteMuted)),
+        ),
+        const SizedBox(height: 16),
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Expanded(
+              child: Text(title, style: OTTypography.pageTitle(color: ink)),
+            ),
+            if (!Loc.isArabic && agent.titleArabic.isNotEmpty) ...[
+              const SizedBox(width: 12),
+              Text(
+                agent.titleArabic,
+                textDirection: TextDirection.rtl,
+                style: OTTypography.arabicIbarah(color: muted, height: 1.3),
+              ),
+            ],
           ],
+        ),
+        if (subtitle.isNotEmpty) ...[
+          const SizedBox(height: 4),
+          Text(Loc.text(subtitle), style: OTTypography.caption(color: muted)),
         ],
-      ),
+      ],
     );
   }
 
@@ -506,19 +491,20 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
               const SizedBox(height: 4),
               Text(title, style: OTTypography.pageTitle(color: ink)),
             ]),
-          const SizedBox(height: 12),
+          const SizedBox(height: 16),
           Text(description,
               style: OTTypography.body(color: muted).copyWith(height: 1.45)),
-          const SizedBox(height: 16),
-          scope,
-          const SizedBox(height: 16),
-          tiers,
           const SizedBox(height: 20),
+          scope,
+          const SizedBox(height: 20),
+          tiers,
+          const SizedBox(height: 24),
           PromoPrice(
             amount: price.amount,
             regularAmount: price.regularAmount,
             period: price.period,
             display: agentId == flagship.id,
+            inlineSaving: true,
           ),
           const SizedBox(height: 16),
           Divider(color: border, height: 1),
@@ -699,9 +685,6 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                         color: ink,
                       ),
                     ),
-                    const SizedBox(height: 6),
-                    Text(AppCopy.manualRenewalNotice,
-                        style: OTTypography.body(color: muted)),
                     const SizedBox(height: 20),
                     if (wide)
                       IntrinsicHeight(
@@ -768,7 +751,7 @@ class _TierSelector extends StatelessWidget {
     final stacked = MediaQuery.textScalerOf(context).scale(16) > 24;
     Widget option(int i) {
       final active = selected == i;
-      final textColor = active ? OTColors.canvas(dark) : ink;
+      final textColor = ink;
       final title = Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -795,8 +778,14 @@ class _TierSelector extends StatelessWidget {
             duration: OTMotion.fast,
             padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
             decoration: BoxDecoration(
-              color: active ? ink : OTColors.surfaceSubtle(dark),
+              color: active
+                  ? OTColors.surface(dark)
+                  : OTColors.surfaceSubtle(dark),
               borderRadius: BorderRadius.circular(OTRadius.input),
+              border: Border.all(
+                color: active ? ink : OTExpressive.transparent,
+                width: 1.5,
+              ),
             ),
             child: Center(child: title),
           ),

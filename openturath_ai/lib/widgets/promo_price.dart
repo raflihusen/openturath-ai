@@ -6,7 +6,8 @@ import '../core/product_pricing.dart';
 
 class PromoPrice extends StatelessWidget {
   const PromoPrice({super.key, required this.amount, required this.regularAmount,
-    this.period = '', this.compact = false, this.display = false, this.foregroundColor,
+    this.period = '', this.compact = false, this.display = false,
+    this.inlineSaving = false, this.foregroundColor,
     this.secondaryColor});
   final int amount;
   final int regularAmount;
@@ -14,6 +15,8 @@ class PromoPrice extends StatelessWidget {
   final bool compact;
   /// Harga utama layar: satu kali per layar, untuk paket unggulan.
   final bool display;
+  /// Persen hemat ditulis di samping harga coret, tanpa baris "Harga perdana".
+  final bool inlineSaving;
   final Color? foregroundColor;
   final Color? secondaryColor;
 
@@ -27,16 +30,20 @@ class PromoPrice extends StatelessWidget {
     final foreground = foregroundColor ?? OTColors.textPrimary(dark);
     final secondary = secondaryColor ?? OTColors.textSecondary(dark);
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      if (regularAmount > amount) Text(ProductPricing.rupiah(regularAmount),
-        semanticsLabel: Loc.tr('normalPrice', [ProductPricing.rupiah(regularAmount)]),
-        style: OTTypography.caption(color: secondary)
-          .copyWith(decoration: TextDecoration.lineThrough)),
+      if (regularAmount > amount) Wrap(spacing: 8, crossAxisAlignment: WrapCrossAlignment.center, children: [
+        Text(ProductPricing.rupiah(regularAmount),
+          semanticsLabel: Loc.tr('normalPrice', [ProductPricing.rupiah(regularAmount)]),
+          style: OTTypography.caption(color: secondary)
+            .copyWith(decoration: TextDecoration.lineThrough)),
+        if (inlineSaving) Text(Loc.tr('saving', ['$saving']),
+          style: OTTypography.captionMedium(color: foreground)),
+      ]),
       Wrap(crossAxisAlignment: WrapCrossAlignment.center, spacing: 6, children: [
         Directionality(textDirection: TextDirection.ltr, child: Text(ProductPricing.rupiah(amount),
           style: OTTypography.price(color: foreground).copyWith(fontSize: compact ? OTFontSize.s18 : display ? OTFontSize.s36 : OTFontSize.s26))),
         Text(period, style: OTTypography.caption(color: secondary)),
       ]),
-      if (regularAmount > amount && !compact) Padding(
+      if (regularAmount > amount && !compact && !inlineSaving) Padding(
         padding: const EdgeInsets.only(top: 4),
         child: Text('${Loc.tr('launchOffer')} · ${Loc.tr('saving', ['$saving'])}',
           style: OTTypography.captionMedium(color: secondary))),
