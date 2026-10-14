@@ -28,6 +28,7 @@ import '../models/agent_model.dart';
 import '../services/agent_service.dart';
 import '../services/agent_session_manager.dart';
 import '../services/auth_service.dart';
+import '../services/persistent_google_session.dart';
 import '../services/bookmark_service.dart';
 import '../services/native_agent_launcher.dart';
 import '../widgets/app_error_state.dart';
@@ -962,6 +963,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
   Timer? _inputRetryTimer;
   DateTime? _loadingStarted;
   int _readySamples = 0;
+  int _accessDeniedRetryCount = 0;
   bool _checkingReady = false;
   bool? _lastIsDark;
   DateTime? _lastCopiedToastAt;
@@ -986,10 +988,22 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
       _inputRetryTimer?.cancel();
       _inputRetryTimer = null;
       _loadingStarted = null;
+      try {
+        widget.session.webController?.evaluateJavascript(
+          source:
+              'window.otSetBackgroundPaused && window.otSetBackgroundPaused(true);',
+        );
+      } catch (_) {}
     } else if (widget.isActive &&
         !widget.session.isSessionReady &&
         _readinessTimer == null) {
       // Room dibuka kembali dan sesi belum siap: lanjutkan polling kesiapan
+      try {
+        widget.session.webController?.evaluateJavascript(
+          source:
+              'window.otSetBackgroundPaused && window.otSetBackgroundPaused(false);',
+        );
+      } catch (_) {}
       _startReadinessCheck();
     }
   }
@@ -998,13 +1012,25 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
   void didUpdateWidget(_SingleAgentTabWebView oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.isActive && !widget.isActive) {
-      // Tab ini beralih ke background: hentikan polling
+      // Tab ini beralih ke background: hentikan polling dan bekukan observer DOM
       _readinessTimer?.cancel();
       _readinessTimer = null;
       _inputRetryTimer?.cancel();
       _inputRetryTimer = null;
+      try {
+        widget.session.webController?.evaluateJavascript(
+          source:
+              'window.otSetBackgroundPaused && window.otSetBackgroundPaused(true);',
+        );
+      } catch (_) {}
     } else if (!oldWidget.isActive && widget.isActive) {
       _verifySurfaceHealth();
+      try {
+        widget.session.webController?.evaluateJavascript(
+          source:
+              'window.otSetBackgroundPaused && window.otSetBackgroundPaused(false);',
+        );
+      } catch (_) {}
       if (!widget.session.isSessionReady &&
           AgentSessionManager.instance.isOpen) {
         _startReadinessCheck();
@@ -1156,6 +1182,23 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
   }
 
   void _handleAccessDenied(AgentSessionTab session) {
+    final user = AuthService().cachedCurrentUser;
+    final hasActiveEntitlement = user != null &&
+        (user.isVip ||
+            (user.isSubscriptionActive &&
+                user.isAgentSubscriptionActive(session.agent.id)));
+
+    if (hasActiveEntitlement && _accessDeniedRetryCount < 5) {
+      _accessDeniedRetryCount++;
+      _readinessTimer?.cancel();
+      Future.delayed(const Duration(seconds: 4), () {
+        if (!mounted) return;
+        session.webController?.reload();
+        _startReadinessCheck();
+      });
+      return;
+    }
+
     _readinessTimer?.cancel();
     _loadingStarted = null;
     if (mounted) {
@@ -1165,8 +1208,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
         session.isGooglePermissionError = true;
         session.isPaywallRequired = false;
         session.isTimeoutError = false;
-        session.errorMessage =
-            Loc.tr('roomGooglePermissionDetail');
+        session.errorMessage = Loc.tr('roomGooglePermissionDetail');
       });
     }
   }
@@ -1551,9 +1593,31 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
           icon: Icons.account_circle_outlined,
           title: Loc.tr('roomPermissionTitle'),
           message: Loc.tr('roomPermissionBody'),
-          retryLabel: Loc.tr('roomOpenInBrowser'),
-          retryIcon: Icons.open_in_new_rounded,
-          onRetry: session.resolvedUrl == null ? null : openInBrowser,
+          retryLabel: Loc.tr('ui_f9d6eb247c'),
+          retryIcon: Icons.switch_account_outlined,
+          onRetry: () async {
+            await PersistentGoogleSession.instance.clearOnSignOut();
+            if (context.mounted) {
+              await Navigator.pushNamed(context, AppRoutes.googleSessionAuth);
+              if (!mounted) return;
+              if (session.resolvedUrl != null) {
+                setState(() {
+                  session.errorMessage = null;
+                  session.isGooglePermissionError = false;
+                  session.isGoogleAuthPage = false;
+                  session.isWebLoading = true;
+                  session.isSessionReady = false;
+                });
+                _loadingStarted = null;
+                session.webController?.loadUrl(
+                  urlRequest: URLRequest(url: WebUri(session.resolvedUrl!)),
+                );
+                _startReadinessCheck();
+              }
+            }
+          },
+          secondaryLabel: Loc.tr('roomOpenInBrowser'),
+          onSecondary: session.resolvedUrl == null ? null : openInBrowser,
           onBack: close,
           backLabel: Loc.tr('back'),
         );

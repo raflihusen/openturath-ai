@@ -14,6 +14,7 @@ import '../core/scholarly_fonts.dart';
 import '../core/theme.dart';
 import '../services/auth_service.dart';
 import '../services/desktop_webview_runtime.dart';
+import '../services/persistent_google_session.dart';
 import '../widgets/app_loader.dart';
 
 import 'package:openturath_ai/core/design/ot_typography.dart';
@@ -61,14 +62,26 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
   @override
   void initState() {
     super.initState();
-    _resetPendingSession();
+    _tryAutoRestoreSession();
   }
 
-  Future<void> _resetPendingSession() async {
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setBool('google_session_ready', false);
-    } catch (_) {}
+  Future<void> _tryAutoRestoreSession() async {
+    final email = (AuthService().cachedCurrentUser?.email ??
+            AuthService().currentUser?.email ??
+            '')
+        .trim()
+        .toLowerCase();
+    if (email.isNotEmpty) {
+      final restored = await PersistentGoogleSession.instance
+          .restoreSessionIfAvailable(email);
+      if (restored && mounted) {
+        if (Navigator.canPop(context)) {
+          Navigator.pop(context, true);
+        } else {
+          Navigator.pushReplacementNamed(context, AppRoutes.dashboard);
+        }
+      }
+    }
   }
 
   @override
@@ -158,6 +171,9 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
         .trim()
         .toLowerCase();
 
+    await Future.delayed(const Duration(milliseconds: 900));
+    if (!mounted || _isSessionReady) return;
+
     final detectedEmail = await _detectGoogleEmail(controller);
     if (detectedEmail != null && detectedEmail.isNotEmpty) {
       if (currentEmail.isNotEmpty && detectedEmail != currentEmail) {
@@ -166,6 +182,12 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
         return;
       }
       // Email Google cocok
+      await _onSessionAuthenticated();
+      return;
+    }
+
+    final hasSessionCookie = await _hasGoogleSession();
+    if (hasSessionCookie == true && mounted && !_isSessionReady) {
       await _onSessionAuthenticated();
     }
   }
@@ -463,6 +485,8 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
       if (email.isNotEmpty) {
         await prefs.setString('google_session_email', email);
         await prefs.setString('notebook_google_email', email);
+        await PersistentGoogleSession.instance
+            .lockAndPersistCookies(_webController, email);
       }
     } catch (_) {}
     await AuthService.rememberWebSessionOwner(

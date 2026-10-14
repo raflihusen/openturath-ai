@@ -10,8 +10,8 @@ import '../models/user_model.dart';
 import '../core/constants.dart';
 import 'agent_session_manager.dart';
 import 'session_user_stream.dart';
-import 'desktop_webview_runtime.dart';
 import 'browser_companion_chat_service.dart';
+import 'persistent_google_session.dart';
 
 class AuthService {
   // Ditunda sampai dipakai, agar layar bisa dirender tanpa Firebase (pratinjau, tes).
@@ -209,10 +209,14 @@ class AuthService {
       if (effectiveEmail != null && effectiveEmail.isNotEmpty) {
         try {
           final prefs = await SharedPreferences.getInstance();
+          final previousOwner =
+              (prefs.getString(webSessionOwnerKey) ?? '').trim().toLowerCase();
           await prefs.setString('current_user_uid', firebaseUser.uid);
           await prefs.setString('google_session_email', effectiveEmail);
           await prefs.setString('notebook_google_email', effectiveEmail);
-          // Sesi kuki WebView Google (Langkah 2) WAJIB diselesaikan via GoogleSessionAuthScreen
+          if (previousOwner.isEmpty) {
+            await prefs.setString(webSessionOwnerKey, effectiveEmail);
+          }
         } catch (_) {}
       }
       return userModel;
@@ -392,18 +396,15 @@ class AuthService {
     if (current.isEmpty) return;
     try {
       final prefs = await SharedPreferences.getInstance();
-      final owner = (prefs.getString(webSessionOwnerKey) ?? '').trim().toLowerCase();
-      // Hanya hapus sesi bila terbukti ada pemilik sebelumnya yang BERBEDA.
-      // Jika owner kosong (misal instalasi baru atau sesi pertama), jangan hapus
-      // cookie Google WebView yang mungkin sudah aktif dan valid.
-      if (owner.isNotEmpty && owner != current) {
-        await DesktopWebViewRuntime.clearSession();
-        await prefs.remove(webSessionOwnerKey);
-        await prefs.setBool('google_session_ready', false);
-        await prefs.remove('google_session_email');
-      } else if (owner.isEmpty) {
+      final owner =
+          (prefs.getString(webSessionOwnerKey) ?? '').trim().toLowerCase();
+      if (owner.isEmpty || owner == current) {
         await prefs.setString(webSessionOwnerKey, current);
+        await PersistentGoogleSession.instance.restoreSessionIfAvailable(current);
+        return;
       }
+      await PersistentGoogleSession.instance.clearOnSignOut();
+      await prefs.setString(webSessionOwnerKey, current);
     } catch (_) {}
   }
 
@@ -417,10 +418,9 @@ class AuthService {
       AgentSessionManager.instance.closeAll();
     } catch (_) {}
 
-    // Sesi Google di WebView sengaja dipertahankan saat keluar: cookie
-    // "perangkat tepercaya" ikut tersimpan di sana, sehingga verifikasi dua
-    // langkah tidak diminta ulang setiap kali masuk. Sesi itu dihapus oleh
-    // [reconcileWebSession] bila akun berikutnya berbeda.
+    try {
+      await PersistentGoogleSession.instance.clearOnSignOut();
+    } catch (_) {}
 
     try {
       if (kIsWeb || defaultTargetPlatform != TargetPlatform.windows) {
@@ -481,7 +481,7 @@ class AuthService {
     }
     AgentSessionManager.instance.closeAll();
     try {
-      await DesktopWebViewRuntime.clearSession();
+      await PersistentGoogleSession.instance.clearOnSignOut();
     } catch (_) {}
 
     // 4. Bersihkan ONLY preferensi spesifik user UID ini (F08 & F41: dilarang prefs.clear())

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../core/design/ot_colors.dart';
 import '../core/design/ot_motion.dart';
 import '../core/routes.dart';
 import '../services/auth_service.dart';
+import '../services/persistent_google_session.dart';
 import '../widgets/ot_arch_motion.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -39,18 +39,15 @@ class _SplashScreenState extends State<SplashScreen> {
         final firebaseUser = FirebaseAuth.instance.currentUser;
         if (restoredUser != null ||
             (firebaseUser != null && !firebaseUser.isAnonymous)) {
-          final prefs = await SharedPreferences.getInstance();
-          final sessionReady = prefs.getBool('google_session_ready') ?? false;
-          final sessionEmail = prefs.getString('google_session_email') ?? '';
-          final currentEmail = (firebaseUser?.email ?? restoredUser?.email ?? '')
-              .trim()
-              .toLowerCase();
-          if (sessionReady &&
-              (currentEmail.isEmpty || sessionEmail.isEmpty || sessionEmail == currentEmail)) {
-            targetRoute = AppRoutes.dashboard;
-          } else {
-            targetRoute = AppRoutes.googleSessionAuth;
+          final currentEmail =
+              (firebaseUser?.email ?? restoredUser?.email ?? '')
+                  .trim()
+                  .toLowerCase();
+          if (currentEmail.isNotEmpty) {
+            await PersistentGoogleSession.instance
+                .restoreSessionIfAvailable(currentEmail);
           }
+          targetRoute = AppRoutes.dashboard;
         }
       }
     } catch (_) {

@@ -69,7 +69,8 @@ class AgentSessionManager extends ChangeNotifier {
   static final AgentSessionManager instance = AgentSessionManager._();
   AgentSessionManager._();
 
-  static const int maxTabs = 3;
+  static int get maxTabs =>
+      (!kIsWeb && defaultTargetPlatform == TargetPlatform.macOS) ? 2 : 3;
 
   final List<AgentSessionTab> _tabs = [];
   int _activeIndex = 0;

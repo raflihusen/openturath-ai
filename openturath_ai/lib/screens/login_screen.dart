@@ -14,12 +14,12 @@ import '../core/design/ot_colors.dart';
 import '../widgets/ot_motion_widgets.dart';
 import '../core/app_snackbar.dart';
 import '../services/auth_service.dart';
+import '../services/persistent_google_session.dart';
 import '../widgets/openturath_brand.dart';
 import '../widgets/language_switcher.dart';
 import '../widgets/arch_echo_canvas.dart';
 import '../services/open_turath_catalog_repository.dart';
 import 'package:intl/intl.dart' show NumberFormat;
-import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:openturath_ai/core/design/ot_typography.dart';
 import 'package:openturath_ai/core/design/ot_radius.dart';
@@ -81,20 +81,15 @@ class _LoginScreenState extends State<LoginScreen> {
       final user = await _authService.signInWithGoogle();
 
       if (user != null && mounted) {
-        final prefs = await SharedPreferences.getInstance();
-        if (!mounted) return;
-        final sessionReady = prefs.getBool('google_session_ready') ?? false;
-        final sessionEmail = prefs.getString('google_session_email') ?? '';
         final userEmail = user.email.trim().toLowerCase();
         await AuthService.reconcileWebSession(userEmail);
-        await AuthService.rememberWebSessionOwner(userEmail);
+        final sessionReady = await PersistentGoogleSession.instance
+            .restoreSessionIfAvailable(userEmail);
         if (!mounted) return;
-
-        if (sessionReady && userEmail.isNotEmpty && sessionEmail == userEmail) {
-          Navigator.pushReplacementNamed(context, AppRoutes.dashboard);
-        } else {
-          Navigator.pushReplacementNamed(context, AppRoutes.googleSessionAuth);
-        }
+        Navigator.pushReplacementNamed(
+          context,
+          sessionReady ? AppRoutes.dashboard : AppRoutes.googleSessionAuth,
+        );
         return;
       }
     } catch (e) {

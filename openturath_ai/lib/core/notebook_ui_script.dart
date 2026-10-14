@@ -1336,6 +1336,7 @@ let _otBackgroundPaused = false;
 window.otSetBackgroundPaused = function(paused) {
   _otBackgroundPaused = !!paused;
 };
+window.otSetSuspended = window.otSetBackgroundPaused;
 
 // Gunakan debounce 300ms dan childList saja (tanpa characterData) untuk menghemat baterai & CPU
 const observer = new MutationObserver(() => {
