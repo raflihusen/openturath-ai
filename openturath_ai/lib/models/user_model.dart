@@ -199,8 +199,7 @@ class UserModel {
       final cleanPlan = plan.toLowerCase();
       final cleanKey = mappedKey.toLowerCase();
       if (cleanPlan == cleanKey ||
-          cleanPlan.startsWith('${cleanKey}_') ||
-          cleanPlan.contains(cleanKey)) {
+          cleanPlan.startsWith('${cleanKey}_')) {
         return true;
       }
     }
@@ -233,6 +232,12 @@ class UserModel {
     return 0;
   }
 
+  static const _canonicalVipEmails = {
+    'prilatief@gmail.com',
+    'alkhateeb23@gmail.com',
+    'omarasb1441@gmail.com',
+  };
+
   factory UserModel.fromMap(String uid, Map<String, dynamic> data) {
     // Parse entitlements map
     final Map<String, ModuleEntitlement> parsedEntitlements = {};
@@ -257,6 +262,8 @@ class UserModel {
       }
     }
 
+    final rawEmail = (data['email'] ?? '').toString().trim().toLowerCase();
+
     return UserModel(
       uid: uid,
       name: data['name'] ?? '',
@@ -267,6 +274,7 @@ class UserModel {
       subscriptionExpiry: expiry,
       entitlements: parsedEntitlements,
       isVip: data['is_vip'] == true ||
+          _canonicalVipEmails.contains(rawEmail) ||
           ['vip', 'admin', 'guru', 'special'].contains(
             (data['role'] ?? '').toString().toLowerCase()),
     );

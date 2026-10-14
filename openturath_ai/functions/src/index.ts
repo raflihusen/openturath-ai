@@ -2219,6 +2219,86 @@ export const processProvisioningOutbox = functions
   });
 
 // ================================================================
+// FUNCTION 4b-instant: onProvisioningOutboxCreated (Firestore Trigger — < 1s)
+// Mengaktifkan sharing NotebookLM seketika saat order/voucher dibuat
+// ================================================================
+export const onProvisioningOutboxCreated = functions
+  .runWith({ serviceAccount: "open-turath@appspot.gserviceaccount.com", timeoutSeconds: 120 })
+  .firestore.document("provisioning_outbox/{jobId}")
+  .onCreate(async (snap, context) => {
+    if ((await db.collection("access_control").doc("runtime").get()).data()?.writer === "vps-v2") return null;
+    const candidateData = snap.data();
+    if (!candidateData || !["pending", "retry"].includes(candidateData.status)) return null;
+    const uid = candidateData.uid || candidateData.email;
+    if (typeof uid !== "string" || !uid) return null;
+
+    const token = crypto.randomUUID();
+    const lease = db.collection("provisioning_leases").doc(uid);
+
+    const job = await db.runTransaction(async t => {
+      const currentSnap = await t.get(snap.ref);
+      const lock = await t.get(lease);
+      const data = currentSnap.data();
+      if (!data || !["pending", "retry"].includes(data.status)) return null;
+      if ((lock.data()?.until?.toMillis?.() || 0) > Date.now()) return null;
+      if ((data.attempts || 0) >= 8) return null;
+      t.set(lease, {token, until: admin.firestore.Timestamp.fromMillis(Date.now() + 330000)});
+      t.update(snap.ref, {status: "processing", attempts: (data.attempts || 0) + 1, lease_token: token});
+      return data;
+    });
+
+    if (!job) return null;
+    let status = "completed";
+    let error = "";
+    try {
+      const userDoc = candidateData.uid && !candidateData.uid.includes("@")
+        ? await db.collection("users").doc(candidateData.uid).get()
+        : null;
+      const data = userDoc && userDoc.exists ? userDoc.data() : null;
+      const email = (data?.email || job.email || (uid.includes("@") ? uid : "")).trim().toLowerCase();
+      if (!email.includes("@")) throw new Error("Invalid provisioning email");
+      const scope = job.entitlement_key;
+      const keys = scope === "all_access" || scope === "all_ai" ? PROVISIONABLE_SCOPES : [scope];
+      const protectedOwner = isVip({...(data || {}), email}) ||
+        (await db.collection("access_vip_registry").doc(keyOf(email)).get()).exists;
+      for (const key of keys) {
+        if (!PROVISIONABLE_SCOPES.includes(key)) throw new Error("Unsupported provisioning scope");
+        const entitled = Boolean(data && getEntitlementAccess(data, key).active);
+        const desired = protectedOwner || (job.action === "add" ? (data ? entitled : true) : entitled);
+        await notifySubscriptionServer(email, data?.name || job.name || "Peneliti", desired ? "premium" : "trial",
+          desired ? "add" : "remove", getServiceTitleForEntitlement(key), key);
+      }
+      if (job.action === "remove") {
+        await sendTelegramNotification(
+          `🗑️ <b>[DEPROVISIONING NOTEBOOKLM SELESAI]</b>\n` +
+          `🕌 OpenTurath AI Server\n` +
+          `👤 Email: <code>${esc(email)}</code>\n` +
+          `📦 Produk: <b>${esc(getServiceTitleForEntitlement(job.entitlement_key))}</b>\n` +
+          `✅ Hak akses telah resmi dicabut dari sistem NotebookLM.`
+        );
+      }
+      if (data && candidateData.uid && job.action !== "remove") {
+        const after = await db.collection("users").doc(candidateData.uid).get();
+        if (entitlementRevision(data) !== entitlementRevision(after.data())) {
+          status = "retry";
+          error = "Entitlements changed during delivery";
+        }
+      }
+    } catch (err: any) {
+      status = "retry";
+      error = String(err.message || "Provisioning failure").slice(0, 300);
+    }
+    await db.runTransaction(async t => {
+      const lock = await t.get(lease);
+      const currentSnap = await t.get(snap.ref);
+      if (lock.data()?.token !== token || currentSnap.data()?.lease_token !== token) return;
+      t.update(snap.ref, {status, last_error: error, last_attempt_at: admin.firestore.FieldValue.serverTimestamp()});
+      t.delete(lease);
+    });
+    return null;
+  });
+
+// ================================================================
 // FUNCTION 4c: cleanupOrphanedDeletions (Cron Harian — jam 03.00 WIB)
 // Membersihkan dokumen user yang bertanda pending_deletion jika akun Auth sudah terhapus
 // ================================================================
