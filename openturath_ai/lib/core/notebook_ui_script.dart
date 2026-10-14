@@ -183,6 +183,25 @@ const notebookUiScript = r'''
         margin: 0 !important;
       }
 
+      /* Sembunyikan bilah tajuk atas, header obrolan, dan scrim semi-transparan */
+      app-chat-header, .chat-header, [class*="chat-header" i],
+      app-conversation-header, .conversation-header, [class*="conversation-header" i],
+      app-chat-panel-header, .chat-panel-header, [class*="chat-panel-header" i],
+      app-top-bar, .top-bar, [class*="top-bar" i],
+      .chat-top-bar, [class*="chat-top-bar" i],
+      .top-scrim, .header-scrim, .scroll-scrim, [class*="scrim" i],
+      [class*="top-gradient" i], [class*="scroll-gradient" i], [class*="header-gradient" i],
+      [class*="fade-overlay" i], [class*="scroll-overlay" i],
+      /* Sembunyikan bilah aksi pesan & tombol copy yang dinonaktifkan pemilik */
+      .message-actions, .chat-actions, .turn-actions,
+      app-chat-actions, app-message-actions,
+      [class*="message-actions" i], [class*="chat-actions" i], [class*="turn-actions" i],
+      [class*="actions-container" i], .chat-action-bar, [class*="action-bar" i],
+      button[aria-label*="copy" i], button[aria-label*="salin" i],
+      button[title*="copy" i], button[title*="salin" i],
+      button:has(mat-icon[fonticon*="copy" i]), button:has(mat-icon[data-mat-icon-name*="copy" i]),
+      .copy-button, [class*="copy-button" i],
+      mat-tooltip-component, .cdk-overlay-pane:has(mat-tooltip-component), .mat-mdc-tooltip,
       /* Sembunyikan tombol opsi titik tiga di dalam webview obrolan */
       app-chat-header button,
       .chat-header button,
@@ -308,7 +327,22 @@ const notebookUiScript = r'''
         overflow-y: auto !important;
         -webkit-overflow-scrolling: touch !important;
         box-sizing: border-box !important;
+        padding-top: 8px !important;
         padding-bottom: 150px !important;
+        -webkit-mask-image: none !important;
+        mask-image: none !important;
+      }
+      .chat-panel-content::before, .chat-panel-content::after,
+      .chat-view::before, .chat-view::after,
+      app-chat-panel::before, app-chat-panel::after,
+      app-chat-view::before, app-chat-view::after,
+      .conversation-container::before, .conversation-container::after,
+      mat-sidenav-content::before, mat-sidenav-content::after {
+        display: none !important;
+        content: none !important;
+        background: none !important;
+        opacity: 0 !important;
+        height: 0 !important;
       }
       main, [role="main"], app-chat-view, app-conversation, app-chat-panel, .chat-panel, app-chat {
         position: relative !important;
@@ -540,6 +574,13 @@ const notebookUiScript = r'''
       'mat-toolbar', 'mat-toolbar-row', '.notebook-header', 'app-notebook-header',
       '.project-header', 'app-project-header', 'header', '[role="banner"]',
       'app-chat-header', 'chat-header', '.chat-header', 'app-top-bar', '.mobile-header',
+      'app-conversation-header', '.conversation-header', 'app-chat-panel-header', '.chat-panel-header',
+      '.top-scrim', '.header-scrim', '.scroll-scrim', '[class*="scrim" i]',
+      '[class*="top-gradient" i]', '[class*="scroll-gradient" i]', '[class*="header-gradient" i]',
+      '[class*="fade-overlay" i]', '[class*="scroll-overlay" i]',
+      '.message-actions', '.chat-actions', '.turn-actions', 'app-chat-actions', 'app-message-actions',
+      '[class*="message-actions" i]', '[class*="chat-actions" i]', '[class*="turn-actions" i]',
+      '.copy-button', 'button[aria-label*="copy" i]', 'button[aria-label*="salin" i]',
       'app-user-avatar', 'div[class*="gb_"]', '#gb', '#gbwa',
       '[aria-label*="Google apps" i]', '[aria-label*="Aplikasi Google" i]',
       '[aria-label*="Google Account" i]', '[aria-label*="Akun Google" i]',
@@ -561,7 +602,7 @@ const notebookUiScript = r'''
     // Sembunyikan tombol opsi titik tiga (more_vert / more_horiz / options) dan tombol Add (+) di luar balon pesan obrolan
     document.querySelectorAll('mat-icon, [data-mat-icon-name], svg').forEach(icon => {
       const name = (icon.getAttribute('data-mat-icon-name') || icon.getAttribute('fonticon') || icon.textContent || '').trim().toLowerCase();
-      if (name === 'more_vert' || name === 'more_horiz' || name === 'add' || name === 'plus' || name === 'note_add' || name === 'post_add') {
+      if (name === 'more_vert' || name === 'more_horiz' || name === 'add' || name === 'plus' || name === 'note_add' || name === 'post_add' || name === 'content_copy' || name === 'copy') {
         if (icon.closest('.chat-message, .model-message, .user-message, [role="article"], .rendered-markdown, app-chat-response')) {
           return;
         }
