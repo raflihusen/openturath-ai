@@ -77,6 +77,31 @@ const copyCatalog = <String, List<String>>{
     "{0} assistants in one plan",
     "{0} مساعدين في باقة واحدة"
   ],
+  "tahawwulatRole_muhaqqiq": [
+    "Matan dan ibarah langsung dari kitab",
+    "Source texts and passages from the works",
+    "المتون والعبارات من مصادرها"
+  ],
+  "tahawwulatRole_bayan": [
+    "Konsep dan istilah, dijelaskan sederhana",
+    "Concepts and terms, explained plainly",
+    "المفاهيم والمصطلحات بشرح ميسّر"
+  ],
+  "tahawwulatRole_mukhtabir": [
+    "Uji pemahaman lewat tanya jawab",
+    "Tests your understanding by questions",
+    "اختبار الفهم بالسؤال والجواب"
+  ],
+  "tahawwulatRole_habib": [
+    "Arsip muhadharah Habib Abu Bakar",
+    "Lecture archive of Habib Abu Bakr",
+    "أرشيف محاضرات الحبيب أبي بكر"
+  ],
+  "tahawwulatRole_khatib": [
+    "Bahan dakwah dan khutbah",
+    "Material for da'wah and sermons",
+    "مادة الدعوة والخطب"
+  ],
   "planTrustNote": [
     "Sekali bayar · tanpa perpanjangan otomatis",
     "One-time payment · no automatic renewal",

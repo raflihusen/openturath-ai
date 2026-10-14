@@ -60,7 +60,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     }
   }
 
-  Widget _checkoutNotice(String agentId) {
+  Widget _checkoutNotice(String agentId, {Color? ink}) {
     final message = _checkoutAgentId == agentId ? _checkoutError : null;
     if (message == null) return const SizedBox.shrink();
     final dark = Theme.of(context).brightness == Brightness.dark;
@@ -81,7 +81,8 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
             const SizedBox(width: 10),
             Expanded(
               child: Text(message,
-                  style: OTTypography.caption(color: OTColors.textPrimary(dark))
+                  style: OTTypography.caption(
+                          color: ink ?? OTColors.textPrimary(dark))
                       .copyWith(height: 1.4)),
             ),
           ],
@@ -185,14 +186,44 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     final dark = Theme.of(context).brightness == Brightness.dark;
     final border = OTColors.surface(dark);
     if (flagship) {
-      return Container(
-        decoration: BoxDecoration(
-          color: OTColors.surface(dark),
-          borderRadius: BorderRadius.circular(OTRadius.card),
-          border: Border.all(color: OTColors.tahawwulat.withValues(alpha: 0.6)),
+      final direction = Directionality.of(context);
+      // Kartu utama selalu bertinta gelap dengan pola bintang delapan yang
+      // memudar dari sudut atas, supaya terbaca sebagai koleksi istimewa.
+      return ClipRRect(
+        borderRadius: BorderRadius.circular(OTRadius.card),
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              begin: AlignmentDirectional.topStart,
+              end: AlignmentDirectional.bottomEnd,
+              colors: [OTExpressive.ink, OTExpressive.black],
+            ),
+            borderRadius: BorderRadius.circular(OTRadius.card),
+            border:
+                Border.all(color: OTColors.tahawwulat.withValues(alpha: 0.55)),
+          ),
+          child: Stack(
+            children: [
+              Positioned.fill(
+                child: IgnorePointer(
+                  child: ExcludeSemantics(
+                    child: ShaderMask(
+                      blendMode: BlendMode.dstIn,
+                      shaderCallback: (rect) => const LinearGradient(
+                        begin: AlignmentDirectional.topEnd,
+                        end: AlignmentDirectional.bottomStart,
+                        stops: [0, 0.55],
+                        colors: [OTExpressive.white, OTExpressive.transparent],
+                      ).createShader(rect, textDirection: direction),
+                      child: CustomPaint(painter: _KhatamPatternPainter()),
+                    ),
+                  ),
+                ),
+              ),
+              Padding(padding: const EdgeInsets.all(24), child: child),
+            ],
+          ),
         ),
-        padding: const EdgeInsets.all(20),
-        child: child,
       );
     }
     return Container(
@@ -209,9 +240,6 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
   /// Kepala paket utama: panel gelap bergradasi dengan lencana eksklusif,
   /// agar terbaca sebagai koleksi istimewa, bukan sekadar kartu kedua.
   Widget _flagshipHeader(String label, String title, AgentModel agent) {
-    final dark = Theme.of(context).brightness == Brightness.dark;
-    final ink = OTColors.textPrimary(dark);
-    final muted = OTColors.textSecondary(dark);
     final subtitle = agent.subtitleAcademic;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -219,10 +247,10 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
           decoration: BoxDecoration(
-            color: OTColors.tahawwulat.withValues(alpha: 0.12),
+            color: OTColors.tahawwulat.withValues(alpha: 0.16),
             borderRadius: OTRadius.chipBorder,
             border:
-                Border.all(color: OTColors.tahawwulat.withValues(alpha: 0.6)),
+                Border.all(color: OTColors.tahawwulat.withValues(alpha: 0.7)),
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
@@ -234,34 +262,38 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                 child: Text(label,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: OTTypography.captionMedium(color: ink)),
+                    style:
+                        OTTypography.captionMedium(color: OTExpressive.white)),
               ),
             ],
           ),
         ),
-        const SizedBox(height: 16),
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            Expanded(
-              child: Text(title, style: OTTypography.pageTitle(color: ink)),
-            ),
-            if (!Loc.isArabic && agent.titleArabic.isNotEmpty) ...[
-              const SizedBox(width: 12),
-              Text(
-                agent.titleArabic,
-                textDirection: TextDirection.rtl,
-                style: OTTypography.arabicIbarah(color: muted, height: 1.3),
-              ),
-            ],
-          ],
-        ),
+        const SizedBox(height: 20),
+        if (!Loc.isArabic && agent.titleArabic.isNotEmpty)
+          Text(
+            agent.titleArabic,
+            textDirection: TextDirection.rtl,
+            style: OTTypography.arabicIbarah(
+                color: OTColors.tahawwulat, height: 1.3),
+          ),
+        Text(title,
+            style: OTTypography.displayLarge(color: OTExpressive.white)),
         if (subtitle.isNotEmpty) ...[
           const SizedBox(height: 4),
-          Text(Loc.text(subtitle), style: OTTypography.caption(color: muted)),
+          Text(Loc.text(subtitle),
+              style: OTTypography.caption(color: OTExpressive.whiteMuted)),
         ],
       ],
     );
+  }
+
+  /// Peran tiap AI Fikih Tahawwulat; kembali ke deskripsi model bila
+  /// naskahnya belum ada.
+  String _roleOf(SubAgentModel sub) {
+    final key = 'tahawwulatRole_${sub.id.split('_').last}';
+    final copy = Loc.tr(key);
+    if (copy != key) return copy;
+    return Loc.isArabic ? sub.descriptionArabic : sub.description;
   }
 
   Widget _trustNote(Color color) => Padding(
@@ -280,7 +312,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
         ),
       );
 
-  Widget _benefitRow(String text, Color textColor) {
+  Widget _benefitRow(String text, Color textColor, {Color? checkColor}) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
       child: Row(
@@ -291,7 +323,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
             child: Icon(
               Icons.check_rounded,
               size: 16,
-              color: textColor.withValues(alpha: 0.8),
+              color: checkColor ?? textColor.withValues(alpha: 0.8),
             ),
           ),
           const SizedBox(width: 10),
@@ -458,11 +490,13 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
 
     final single = ProductPricing.specialists[_specialistIndex];
 
-    Widget cta(VoidCallback onPressed, int amount) => SizedBox(
+    Widget cta(VoidCallback onPressed, int amount, {bool onInk = false}) =>
+        SizedBox(
           width: double.infinity,
           height: 48,
           child: FilledButton(
             onPressed: _processing ? null : onPressed,
+            style: onInk ? OTButtons.onInk() : null,
             child: Text(Loc.tr('payAmount', [ProductPricing.rupiah(amount)])),
           ),
         );
@@ -481,49 +515,75 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
       required List<String> benefits,
       required VoidCallback onCheckout,
       required String agentId,
-    }) =>
-        [
-          if (agentId == flagship.id)
-            _flagshipHeader(label, title, flagship)
-          else
-            Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text(label, style: OTTypography.captionMedium(color: muted)),
-              const SizedBox(height: 4),
-              Text(title, style: OTTypography.pageTitle(color: ink)),
-            ]),
-          const SizedBox(height: 16),
-          Text(description,
-              style: OTTypography.body(color: muted).copyWith(height: 1.45)),
-          const SizedBox(height: 20),
-          scope,
-          const SizedBox(height: 20),
-          tiers,
-          const SizedBox(height: 24),
-          PromoPrice(
+    }) {
+      final f = agentId == flagship.id;
+      final cInk = f ? OTExpressive.white : ink;
+      final cMuted = f ? OTExpressive.whiteMuted : muted;
+      final cLine = f ? OTExpressive.white.withValues(alpha: 0.14) : border;
+      return [
+        if (agentId == flagship.id)
+          _flagshipHeader(label, title, flagship)
+        else
+          Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text(label, style: OTTypography.captionMedium(color: muted)),
+            const SizedBox(height: 4),
+            Text(title, style: OTTypography.pageTitle(color: ink)),
+          ]),
+        const SizedBox(height: 16),
+        Text(description,
+            style: OTTypography.body(color: cMuted).copyWith(height: 1.45)),
+        const SizedBox(height: 20),
+        scope,
+        const SizedBox(height: 20),
+        tiers,
+        const SizedBox(height: 24),
+        AnimatedSwitcher(
+          duration: OTMotion.normal,
+          switchInCurve: Curves.easeOutCubic,
+          transitionBuilder: (child, animation) => FadeTransition(
+            opacity: animation,
+            child: SlideTransition(
+              position: Tween(begin: const Offset(0, 0.12), end: Offset.zero)
+                  .animate(animation),
+              child: child,
+            ),
+          ),
+          layoutBuilder: (current, previous) => Stack(
+            alignment: AlignmentDirectional.topStart,
+            children: [...previous, if (current != null) current],
+          ),
+          child: PromoPrice(
+            key: ValueKey('$agentId-${price.amount}'),
             amount: price.amount,
             regularAmount: price.regularAmount,
             period: price.period,
-            display: agentId == flagship.id,
+            display: f,
             inlineSaving: true,
+            foregroundColor: cInk,
+            secondaryColor: cMuted,
           ),
-          const SizedBox(height: 16),
-          Divider(color: border, height: 1),
-          const SizedBox(height: 16),
-          for (final benefit in benefits) _benefitRow(benefit, ink),
-          if (wide) const Spacer() else const SizedBox(height: 8),
-          const SizedBox(height: 8),
-          if (price.months > 1) ...[
-            Text(
-                Loc.tr('monthlyEquivalent', [
-                  ProductPricing.rupiah((price.amount / price.months).round())
-                ]),
-                style: OTTypography.caption(color: muted)),
-            const SizedBox(height: 12),
-          ],
-          cta(onCheckout, price.amount),
-          _trustNote(muted),
-          _checkoutNotice(agentId),
-        ];
+        ),
+        const SizedBox(height: 16),
+        Divider(color: cLine, height: 1),
+        const SizedBox(height: 16),
+        for (final benefit in benefits)
+          _benefitRow(benefit, cInk,
+              checkColor: f ? OTColors.tahawwulat : null),
+        if (wide) const Spacer() else const SizedBox(height: 8),
+        const SizedBox(height: 8),
+        if (price.months > 1) ...[
+          Text(
+              Loc.tr('monthlyEquivalent', [
+                ProductPricing.rupiah((price.amount / price.months).round())
+              ]),
+              style: OTTypography.caption(color: cMuted)),
+          const SizedBox(height: 12),
+        ],
+        cta(onCheckout, price.amount, onInk: f),
+        _trustNote(cMuted),
+        _checkoutNotice(agentId, ink: cInk),
+      ];
+    }
 
     // Cakupan paket utama: lima asisten, sebagai teks.
     final subAgents = flagship.subAgents ?? const <SubAgentModel>[];
@@ -531,25 +591,46 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(Loc.tr('planFeaturedIncludes', ['${subAgents.length}']),
-            style: OTTypography.captionMedium(color: ink)),
-        const SizedBox(height: 8),
-        Wrap(
-          spacing: 8,
-          runSpacing: 8,
-          children: [
-            for (final sub in subAgents)
-              Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                decoration: BoxDecoration(
-                  color: OTColors.surfaceSubtle(dark),
-                  borderRadius: OTRadius.chipBorder,
-                  border: Border.all(color: border),
+            style: OTTypography.captionMedium(color: OTExpressive.white)),
+        const SizedBox(height: 12),
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              for (final (i, sub) in subAgents.indexed) ...[
+                if (i > 0) const SizedBox(width: 8),
+                Container(
+                  width: 148,
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: OTExpressive.white.withValues(alpha: 0.05),
+                    borderRadius: OTRadius.xsBorder,
+                    border: Border.all(
+                        color: OTExpressive.white.withValues(alpha: 0.12)),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(sub.nameArabic,
+                          textDirection: TextDirection.rtl,
+                          style: OTTypography.arabicQuote(
+                              color: OTColors.tahawwulat, height: 1.4)),
+                      const SizedBox(height: 4),
+                      Text(Loc.isArabic ? sub.nameArabic : sub.name,
+                          style: OTTypography.captionMedium(
+                              color: OTExpressive.white)),
+                      const SizedBox(height: 2),
+                      Text(_roleOf(sub),
+                          style: OTTypography.caption(
+                                  color: OTExpressive.whiteMuted)
+                              .copyWith(height: 1.4)),
+                    ],
+                  ),
                 ),
-                child: Text(Loc.isArabic ? sub.nameArabic : sub.name,
-                    style: OTTypography.caption(color: ink)),
-              ),
-          ],
+              ],
+            ],
+          ),
         ),
       ],
     );
@@ -625,6 +706,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
               description: Loc.tr('planFeaturedDescription'),
               scope: flagshipScope,
               tiers: _TierSelector(
+                onInk: true,
                 offers: ProductPricing.tahawwulat,
                 selected: _tahawwulatIndex,
                 onSelect: _processing
@@ -691,16 +773,18 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
-                            Expanded(child: featuredPlan),
+                            Expanded(
+                                child: OTReveal(index: 0, child: featuredPlan)),
                             const SizedBox(width: 16),
-                            Expanded(child: singlePlan),
+                            Expanded(
+                                child: OTReveal(index: 1, child: singlePlan)),
                           ],
                         ),
                       )
                     else ...[
-                      featuredPlan,
+                      OTReveal(index: 0, child: featuredPlan),
                       const SizedBox(height: 16),
-                      singlePlan,
+                      OTReveal(index: 1, child: singlePlan),
                     ],
                     const SizedBox(height: 12),
                     if (_processing)
@@ -732,81 +816,147 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
   }
 }
 
-/// Pilihan masa akses satu paket: masa, harga, dan setara per bulan.
+/// Pilihan masa akses: satu lintasan dengan penanda yang bergeser ke masa
+/// terpilih. Tiap segmen memuat masa dan harganya.
 class _TierSelector extends StatelessWidget {
   const _TierSelector({
     required this.offers,
     required this.selected,
     required this.onSelect,
+    this.onInk = false,
   });
 
   final List<SubscriptionOffer> offers;
   final int selected;
   final ValueChanged<int>? onSelect;
+  final bool onInk;
 
   @override
   Widget build(BuildContext context) {
     final dark = Theme.of(context).brightness == Brightness.dark;
-    final ink = OTColors.textPrimary(dark);
-    final stacked = MediaQuery.textScalerOf(context).scale(16) > 24;
-    Widget option(int i) {
+    final ink = onInk ? OTExpressive.white : OTColors.textPrimary(dark);
+    final muted =
+        onInk ? OTExpressive.whiteMuted : OTColors.textSecondary(dark);
+    final track = onInk
+        ? OTExpressive.white.withValues(alpha: 0.06)
+        : OTColors.surfaceSubtle(dark);
+    final thumb = onInk
+        ? OTExpressive.white.withValues(alpha: 0.12)
+        : OTColors.surface(dark);
+    final thumbLine = onInk ? OTColors.tahawwulat : ink;
+    final reduced = MediaQuery.disableAnimationsOf(context);
+    final n = offers.length;
+
+    Widget segment(int i) {
       final active = selected == i;
-      final textColor = ink;
-      final title = Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(offers[i].title,
-              textAlign: TextAlign.center,
-              style: OTTypography.captionMedium(color: textColor)),
-          const SizedBox(height: 2),
-          FittedBox(
-            fit: BoxFit.scaleDown,
-            child: Text(ProductPricing.rupiah(offers[i].amount),
-                textAlign: TextAlign.center,
-                style: OTTypography.caption(
-                    color: textColor.withValues(alpha: 0.72))),
-          ),
-        ],
-      );
       return Semantics(
         button: true,
         selected: active,
         child: InkWell(
           onTap: onSelect == null ? null : () => onSelect!(i),
-          borderRadius: BorderRadius.circular(OTRadius.input),
-          child: AnimatedContainer(
-            duration: OTMotion.fast,
+          borderRadius: OTRadius.chipBorder,
+          child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
-            decoration: BoxDecoration(
-              color: active
-                  ? OTColors.surface(dark)
-                  : OTColors.surfaceSubtle(dark),
-              borderRadius: BorderRadius.circular(OTRadius.input),
-              border: Border.all(
-                color: active ? ink : OTExpressive.transparent,
-                width: 1.5,
-              ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(offers[i].title,
+                    textAlign: TextAlign.center,
+                    style: OTTypography.captionMedium(
+                        color: active ? ink : muted)),
+                const SizedBox(height: 2),
+                FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(ProductPricing.rupiah(offers[i].amount),
+                      style: OTTypography.caption(color: muted).copyWith(
+                          fontFeatures: const [FontFeature.tabularFigures()])),
+                ),
+              ],
             ),
-            child: Center(child: title),
           ),
         ),
       );
     }
 
-    if (stacked) {
+    if (MediaQuery.textScalerOf(context).scale(16) > 24) {
       return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-        for (var i = 0; i < offers.length; i++) ...[
+        for (var i = 0; i < n; i++) ...[
           if (i > 0) const SizedBox(height: 8),
-          option(i),
+          DecoratedBox(
+            decoration: BoxDecoration(
+              color: selected == i ? thumb : track,
+              borderRadius: OTRadius.chipBorder,
+              border: Border.all(
+                  color: selected == i ? thumbLine : OTExpressive.transparent,
+                  width: 1.5),
+            ),
+            child: segment(i),
+          ),
         ],
       ]);
     }
-    return IntrinsicHeight(
-        child: Row(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-      for (var i = 0; i < offers.length; i++) ...[
-        if (i > 0) const SizedBox(width: 8),
-        Expanded(child: option(i)),
-      ],
-    ]));
+    return Container(
+      padding: const EdgeInsets.all(4),
+      decoration:
+          BoxDecoration(color: track, borderRadius: OTRadius.chipBorder),
+      child: Stack(
+        children: [
+          Positioned.fill(
+            child: AnimatedAlign(
+              duration: reduced ? Duration.zero : OTMotion.normal,
+              curve: Curves.easeOutCubic,
+              alignment: AlignmentDirectional(
+                  n == 1 ? 0 : -1 + 2 * selected / (n - 1), 0),
+              child: FractionallySizedBox(
+                widthFactor: 1 / n,
+                heightFactor: 1,
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    color: thumb,
+                    borderRadius: OTRadius.chipBorder,
+                    border: Border.all(color: thumbLine, width: 1.5),
+                  ),
+                ),
+              ),
+            ),
+          ),
+          Row(children: [
+            for (var i = 0; i < n; i++) Expanded(child: segment(i)),
+          ]),
+        ],
+      ),
+    );
   }
+}
+
+/// Pola bintang delapan (khatam): dua bujur sangkar bertumpuk per petak,
+/// garis tipis putih yang dipudarkan oleh kartu pemanggilnya.
+class _KhatamPatternPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    const cell = 36.0;
+    const half = 9.0;
+    final paint = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 0.8
+      ..color = OTExpressive.white.withValues(alpha: 0.10);
+    for (var y = cell / 2; y < size.height + cell; y += cell) {
+      for (var x = cell / 2; x < size.width + cell; x += cell) {
+        final square = Rect.fromCenter(
+            center: Offset(x, y), width: half * 2, height: half * 2);
+        canvas.drawRect(square, paint);
+        canvas.save();
+        canvas.translate(x, y);
+        canvas.rotate(0.7853981633974483);
+        canvas.drawRect(
+            Rect.fromCenter(
+                center: Offset.zero, width: half * 2, height: half * 2),
+            paint);
+        canvas.restore();
+      }
+    }
+  }
+
+  @override
+  bool shouldRepaint(_KhatamPatternPainter oldDelegate) => false;
 }
