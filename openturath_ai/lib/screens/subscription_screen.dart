@@ -218,8 +218,8 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
               colors: [OTExpressive.ink, OTExpressive.black],
             ),
             borderRadius: BorderRadius.circular(OTRadius.card),
-            border:
-                Border.all(color: OTColors.tahawwulat.withValues(alpha: 0.55)),
+            border: Border.all(
+                color: OTExpressive.white.withValues(alpha: 0.16)),
           ),
           child: Stack(
             children: [
@@ -265,16 +265,16 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
           decoration: BoxDecoration(
-            color: OTColors.tahawwulat.withValues(alpha: 0.16),
+            color: OTExpressive.white.withValues(alpha: 0.08),
             borderRadius: OTRadius.chipBorder,
             border:
-                Border.all(color: OTColors.tahawwulat.withValues(alpha: 0.7)),
+                Border.all(color: OTExpressive.white.withValues(alpha: 0.22)),
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(Icons.workspace_premium_rounded,
-                  size: 14, color: OTColors.tahawwulat),
+              const Icon(Icons.workspace_premium_outlined,
+                  size: 14, color: OTExpressive.white),
               const SizedBox(width: 6),
               Flexible(
                 child: Text(label,
@@ -852,7 +852,7 @@ class _TierSelector extends StatelessWidget {
     final thumb = onInk
         ? OTExpressive.white.withValues(alpha: 0.12)
         : OTColors.surface(dark);
-    final thumbLine = onInk ? OTColors.tahawwulat : ink;
+    final thumbLine = onInk ? OTExpressive.white : ink;
     final reduced = MediaQuery.disableAnimationsOf(context);
     final n = offers.length;
     // Di layar sempit, tulis hemat tanpa "dari bulanan" agar tetap terbaca.
@@ -899,7 +899,7 @@ class _TierSelector extends StatelessWidget {
                         Loc.tr(narrow ? 'saving' : 'termSavingVsMonthly',
                             ['${savings[i]}']),
                         style: OTTypography.metadataTag(
-                            color: onInk ? OTColors.tahawwulat : ink)),
+                            color: onInk ? OTExpressive.whiteMuted : ink)),
                   ),
                 ],
               ],
