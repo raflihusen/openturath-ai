@@ -8,7 +8,8 @@
     "deploy": "npm run build && firebase deploy --only functions",
     "test": "cd .. && node --test --experimental-transform-types functions/test/*.test.ts",
     "check": "tsc --noEmit",
-    "export-shared": "npm run build && node tool/export_shared.cjs"
+    "export-shared": "npm run build && node tool/export_shared.cjs",
+    "scrub-vip": "node tool/scrub_vip_registry.cjs"
   },
   "dependencies": {
     "axios": "^1.7.2",
