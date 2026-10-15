@@ -7,8 +7,8 @@ import 'package:openturath_ai/services/canonical_library_service.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  group('Canonical Multi-Discipline Catalog Integration (V9.2, 5.383 Kitab)', () {
-    test('All 18 V9.2 catalog asset files exist and parse exactly 5,383 books', () {
+  group('Canonical Multi-Discipline Catalog Integration (V9.2, 5.382 Kitab)', () {
+    test('All 18 V9.2 catalog asset files exist and parse exactly 5,382 books', () {
       const baseDir = 'assets/data';
       final files = {
         '01_KATALOG_FIKIH_SYAFII.json': 104,
@@ -26,7 +26,7 @@ void main() {
         '14_KATALOG_TASAWWUF_DAN_ADZKAR.json': 747,
         '15_KATALOG_TAJWID_DAN_QIRAAT.json': 38,
         '17_KATALOG_MUSTHALAH_DAN_ULUMUL_HADITS.json': 226,
-        '18_KATALOG_AQIDAH_DAN_USHULUDDIN.json': 410,
+        '18_KATALOG_AQIDAH_DAN_USHULUDDIN.json': 409,
         '19_KATALOG_THABAQAT_DAN_TARAJIM.json': 381,
         '26_KATALOG_BIBLIOGRAFI_DAN_FAHARIS.json': 32,
       };
@@ -41,7 +41,7 @@ void main() {
         totalCount += books.length;
       }
 
-      expect(totalCount, equals(5383));
+      expect(totalCount, equals(5382));
       for (final gone in const [
         '09_KATALOG_FATAWA_DAN_MASAIL_FIQHIYYAH.json',
         '16_KATALOG_QAWAID_FIQHIYYAH.json',

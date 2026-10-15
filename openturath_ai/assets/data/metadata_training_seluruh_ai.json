@@ -173,14 +173,14 @@
   "id_modul": "18",
   "nama_tampilan": "AI Aqidah",
   "nama_arab": "العقيدة وأصول الدين",
-  "total_kitab": 410,
-  "total_jilid_fisik": "379 jilid",
-  "total_halaman_fisik": 75233,
-  "total_kata_bersih": 15939653,
-  "total_partisi_notebooklm": 249,
+  "total_kitab": 409,
+  "total_jilid_fisik": "378 jilid",
+  "total_halaman_fisik": 75171,
+  "total_kata_bersih": 15928514,
+  "total_partisi_notebooklm": 248,
   "rentang_masa": "w. 150 H – w. 1439 H",
   "badge_otoritas": "",
-  "headline_aplikasi": "410 kitab, 15,9 juta kata, dari tiga perpustakaan digital; cetakan dipilih dan diperiksa per kitab."
+  "headline_aplikasi": "409 kitab, 15,9 juta kata, dari tiga perpustakaan digital; cetakan dipilih dan diperiksa per kitab."
  },
  "tasawwuf": {
   "id_modul": "14",
