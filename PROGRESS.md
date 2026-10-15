@@ -348,10 +348,26 @@ Berdasarkan `AUDIT_OPENTURATH_AI.md`, dokumen perancangan pustaka, dan keluhan k
   2. Kompilasi biner rilis macOS universal arm64+x86_64 berhasil.
   3. Pembuatan `OpenTurath_AI_macOS.dmg` (48 MB) dan pembaruan `/Applications/OpenTurath AI.app` terpasang.
 
+### Fasa 29: Standar Sakral Sesi Google Anti-Tamper, Gold Standard Bebas Bar Syafi'i, & Hak 5 Tab macOS
+- **Standar Sakral Sesi Google & Anti-Tamper Cookie**:
+  1. *Akar Masalah Logout*: Modifikasi paksa pada rolling session cookies Google (`__Secure-1PSIDTS`, `SID`) dengan atribut buatan (`180-day expiry`, `SameSite=None`) memicu mekanisme Google DBSC/edge revocation sehingga server mencabut sesi akun ("Signed out"). Selain itu, pemanggilan keliru `clearOnSignOut()` saat `owner.isEmpty` menghapus cookie aktif.
+  2. *Solusi*: Menghentikan penimpaan cookie aktif di WebKit (`lockAndPersistCookies()` membiarkan cookie asli WebKit). Di `reconcileWebSession()`, pembersihan hanya dilakukan jika akun riil berganti (`owner.isNotEmpty && owner != current`).
+- **Standar Bebas Bar & Scrim WebView (Gold Standard Syafi'i)**:
+  1. *Akar Masalah Kotak Putih 66px*: Aturan CSS header (`app-chat-header`, `app-conversation-header`, `.top-scrim`, `[class*="scrim"]`) sebelumnya digabung dengan selektor `:has(...)`, menyebabkan WebKit mendrop seluruh blok aturan CSS. Tab Tahawwulat yang dibuka belakangan juga tidak memicu CSS cleanup.
+  2. *Solusi*: Selektor dipisahkan menjadi aturan murni non-`:has()` berdimensi nol (`height: 0 !important; margin: 0 !important; padding: 0 !important;`). Menghilangkan `-webkit-mask-image` pada parent container obrolan, serta memicu pembersihan instan `clean()` otomatis saat pergantian tab aktif di `agent_session_manager.dart` dan `agent_multi_tab_room.dart`.
+- **Hak Multi-Tab macOS (Maksimal 5 Tab)**:
+  1. Batas tab di macOS dinaikkan dari 2 menjadi 5 (`maxTabs = 5`) untuk mendukung telaah komparatif lintas kitab turats tanpa menutup tab sebelumnya secara paksa.
+- **Paten ke AGENTS.md**: Aturan 6 (Bebas Bar Syafi'i), Aturan 7 (Multi-Tab macOS), Aturan 8 (Anti-Tamper Cookie Google), dan Aturan 9 (Monokrom Obsidian) dipatenkan ke aturan sakral workspace.
+- **Verifikasi & Build**:
+  1. 406/406 Flutter unit tests lolos 100%.
+  2. Kompilasi biner rilis macOS universal arm64+x86_64 selesai.
+  3. DMG rilis `OpenTurath_AI_macOS.dmg` (48 MB) dan `/Applications/OpenTurath AI.app` diperbarui dan siap digunakan.
+
 ---
 
 ## 5. Agenda & Fokus Selanjutnya
 1. **Verifikasi Runtime Sesi macOS**:
-   - Menjalankan uji buka/tutup dingin (cold quit & reopen) pada macOS untuk memvalidasi bahwa sesi akun pengguna tetap bertahan langsung di Dashboard.
+   - Memastikan sesi akun Google bertahan permanen tanpa ter-logout lagi.
 2. **Katalog & Spesialis**:
    - Memastikan ke-21 spesialis memiliki keterhubungan yang mulus antara ruang dialog telaah dengan pustaka kitab referensinya.
+
