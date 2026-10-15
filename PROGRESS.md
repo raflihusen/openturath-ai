@@ -363,11 +363,26 @@ Berdasarkan `AUDIT_OPENTURATH_AI.md`, dokumen perancangan pustaka, dan keluhan k
   2. Kompilasi biner rilis macOS universal arm64+x86_64 selesai.
   3. DMG rilis `OpenTurath_AI_macOS.dmg` (48 MB) dan `/Applications/OpenTurath AI.app` diperbarui dan siap digunakan.
 
+### Fasa 30: Penjarak Fisik DOM Bawah (.ot-bottom-spacer 180px) & Pencegahan Teks Terpotong Kapsul Input
+- **Akar Masalah**:
+  1. Kapsul input pertanyaan (`.ot-chat-composer`) menggunakan `position: fixed` setinggi ~70px di dasar jendela.
+  2. Selektor CSS `:last-child` untuk `margin-bottom: 150px` gugur karena di bawah balon pesan Google selalu terdapat elemen anak tersembunyi (`.turn-actions`, `app-suggested-actions`, div scroll-anchor). Elemen `display: none` tetap dihitung sebagai anak dalam spesifikasi CSS sehingga balon pesan tidak pernah dianggap `:last-child`.
+  3. Mesin WebKit flexbox mengabaikan `padding-bottom` pada kalkulasi `scrollHeight` overflow.
+- **Solusi Baku & Permanen**:
+  1. *Injeksi Elemen Fisik DOM*: Fungsi `ensureBottomSpacer` secara dinamis menyuntikkan atau memastikan keberadaan `<div class="ot-bottom-spacer">` setinggi 180px di dasar kontainer pesan.
+  2. *CSS 180px Clearance*: Menetapkan `padding-bottom: 180px !important;` pada seluruh rantai kontainer scroll (`.ot-chat-transcript`, `.chat-panel-content`, `mat-sidenav-content`), serta menandai pesan terakhir dengan `.ot-last-turn` (`margin-bottom: 180px !important;`).
+  3. *Verifikasi & Penguncian*: Unit test baru di `notebook_ui_script_syntax_test.dart` memvalidasi keberadaan aturan penjarak 180px ini. Dipatenkan ke `AGENTS.md` (Aturan 6), `STANDAR_IDEAL_WEBVIEW.md`, dan knowledge base global.
+- **Verifikasi & Build**:
+  1. 407/407 Flutter unit tests lolos 100%.
+  2. Kompilasi biner rilis macOS universal arm64+x86_64 selesai.
+  3. DMG rilis `OpenTurath_AI_macOS.dmg` (48 MB) dan `/Applications/OpenTurath AI.app` terpasang biner terbaru.
+
 ---
 
 ## 5. Agenda & Fokus Selanjutnya
 1. **Verifikasi Runtime Sesi macOS**:
-   - Memastikan sesi akun Google bertahan permanen tanpa ter-logout lagi.
+   - Memastikan sesi akun Google bertahan permanen tanpa ter-logout lagi dan teks terbawah selalu terbaca lega di atas kapsul input.
 2. **Katalog & Spesialis**:
    - Memastikan ke-21 spesialis memiliki keterhubungan yang mulus antara ruang dialog telaah dengan pustaka kitab referensinya.
+
 
