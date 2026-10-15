@@ -30,4 +30,23 @@
 - **Sinkronisasi Master Notebook:** Skrip reaper WAJIB memantau Master Notebook aktif `01 - FIKIH SYAFII (MASTER)` (`c89d09ca-4b48-4000-a98d-59e532607fb6`), bukan hanya notebook legacy.
 - Dokumen rujukan permanen: `DOKUMENTASI_KECACATAN_SISTEM_DAN_ATURAN_VIP.md`.
 
+## 6. Standar Baku Bebas Bar & Scrim WebView — Gold Standard Syafi'i (MANDATORY)
+- **TOLOK UKUR IDEAL TAMPILAN WEBVIEW ADALAH FIKIH SYAFI'I.** Teks dan tabel obrolan WAJIB rapat ke bawah bilah tab Flutter (0px celah putih, tanpa jeda bar kosong 64px, tanpa top scrim pudar).
+- Seluruh elemen header Google/NotebookLM (`app-chat-header`, `app-conversation-header`, `app-chat-panel-header`, `mat-toolbar`, `top-bar`, `.top-scrim`, `.scroll-scrim`, `[class*="scrim" i]`, `[class*="gradient" i]`, `[class*="fade-overlay" i]`, `mat-tab-header`) WAJIB dieliminasi dengan aturan CSS independen murni berdimensi nol (`display: none !important; height: 0 !important; padding: 0 !important; margin: 0 !important;`).
+- Dilarang menggabungkan selektor `:has(...)` ke dalam blok koma aturan penghilang bilah utama karena kegagalan parsing mesin WebKit akan menggugurkan seluruh aturan penyembunyian.
+- Setiap pergantian tab aktif WAJIB memanggil pembersihan instan `clean()` agar tab yang baru aktif langsung rapat dan bebas bar.
+
+## 7. Hak Multi-Tab & Non-Destructive Session (MANDATORY)
+- Pada lingkungan desktop (macOS), aplikasi WAJIB mengizinkan hingga **minimal 5 tab aktif bersamaan** (`maxTabs = 5`) untuk mendukung komparasi lintas disiplin/kitab turats.
+- DILARANG KERAS menutup paksa tab yang sedang dibuka pengguna secara senyap (*silent auto-eviction*) di bawah batas maksimum.
+
+## 8. Standar Sakral Sesi Google & Anti-Tamper Cookie (MANDATORY)
+- Mesin WebKit macOS (`WKHTTPCookieStore`) mengelola persistensi cookie Google ke disk secara bawaan dan permanen.
+- DILARANG KERAS menimpa (*overwrite/tamper*) token sesi Google yang sedang aktif di WebKit (khususnya `__Secure-1PSIDTS`, `__Secure-3PSIDTS`, `SID`, `HSID`) dengan atribut buatan (`expiresDate` palsu atau `SameSite=None`), karena memicu mekanisme pertahanan DBSC Google Frontend yang mencabut sesi dan memaksa status *Signed out* pada semua akun.
+- Pembersihan sesi global (`deleteAllCookies` / `clearSession`) HANYA BOLEH dijalankan ketika pengguna secara sadar dan eksplisit menekan tombol **Log Out / Keluar** di Pengaturan Akun. Dilarang membersihkan cookie saat inisialisasi aplikasi atau saat membuka tab baru.
+
+## 9. Hak Paten Desain Hitam-Putih Monokrom (MANDATORY)
+- Bahasa desain OpenTurath AI adalah **Monochrome Editorial — The Quiet Islamic Scholar**.
+- Seluruh elemen antarmuka (kartu langganan *Bithāqah Al-Intisāb*, dialog, tombol, dan lembar pembayaran) WAJIB mempertahankan estetika monokrom obsidian murni (#09090B, #18181B, #27272A, #FAFAFA). Dilarang menyisipkan aksen warna oranye, kuning, atau warna kontras lain yang merusak keheningan visual scholarly.
+
 

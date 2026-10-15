@@ -70,7 +70,7 @@ class AgentSessionManager extends ChangeNotifier {
   AgentSessionManager._();
 
   static int get maxTabs =>
-      (!kIsWeb && defaultTargetPlatform == TargetPlatform.macOS) ? 2 : 3;
+      (!kIsWeb && defaultTargetPlatform == TargetPlatform.macOS) ? 5 : 3;
 
   final List<AgentSessionTab> _tabs = [];
   int _activeIndex = 0;
@@ -100,7 +100,7 @@ class AgentSessionManager extends ChangeNotifier {
         _activeIndex = existingIndex;
         try {
           _tabs[_activeIndex].webController?.evaluateJavascript(
-            source: 'window.otSetBackgroundPaused && window.otSetBackgroundPaused(false);',
+            source: 'window.otSetBackgroundPaused && window.otSetBackgroundPaused(false); window.otNotebook && window.otNotebook.clean && window.otNotebook.clean();',
           );
         } catch (_) {}
       }
@@ -128,7 +128,7 @@ class AgentSessionManager extends ChangeNotifier {
       _activeIndex = index;
       try {
         _tabs[_activeIndex].webController?.evaluateJavascript(
-          source: 'window.otSetBackgroundPaused && window.otSetBackgroundPaused(false);',
+          source: 'window.otSetBackgroundPaused && window.otSetBackgroundPaused(false); window.otNotebook && window.otNotebook.clean && window.otNotebook.clean();',
         );
       } catch (_) {}
       notifyListeners();

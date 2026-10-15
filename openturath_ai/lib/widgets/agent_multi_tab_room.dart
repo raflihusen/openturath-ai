@@ -1028,7 +1028,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
       try {
         widget.session.webController?.evaluateJavascript(
           source:
-              'window.otSetBackgroundPaused && window.otSetBackgroundPaused(false);',
+              'window.otSetBackgroundPaused && window.otSetBackgroundPaused(false); window.otNotebook && window.otNotebook.clean && window.otNotebook.clean();',
         );
       } catch (_) {}
       if (!widget.session.isSessionReady &&

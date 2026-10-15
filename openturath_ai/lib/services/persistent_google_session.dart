@@ -62,7 +62,7 @@ class PersistentGoogleSession {
       expiresDate: expiresDate,
       isSecure: isSecurePrefix ? true : isSecure,
       isHttpOnly: isHttpOnly,
-      sameSite: HTTPCookieSameSitePolicy.NONE,
+      sameSite: isHostPrefix ? HTTPCookieSameSitePolicy.LAX : null,
     );
   }
 
@@ -104,17 +104,8 @@ class PersistentGoogleSession {
                     ? c.expiresDate!
                     : pinnedExpiry;
 
-            await _setCookieSafely(
-              cookieManager,
-              name: c.name,
-              value: value,
-              rawDomain: rawDomain,
-              rawPath: rawPath,
-              expiresDate: effectiveExpiry,
-              isSecure: c.isSecure ?? true,
-              isHttpOnly: c.isHttpOnly ?? true,
-            );
-
+            // Catat salinan cookie ke brankas tanpa memodifikasi / mengotak-atik
+            // cookie hidup di WebKit agar tidak memicu deteksi manipulasi token Google.
             vaultMap['$rawDomain|$rawPath|${c.name}'] = {
               'name': c.name,
               'value': value,
@@ -165,17 +156,10 @@ class PersistentGoogleSession {
         return false;
       }
 
-      final raw = prefs.getString(_vaultKey);
-      if (raw == null || raw.isEmpty) return false;
-
-      final decoded = jsonDecode(raw) as Map<String, dynamic>;
-      final vaultOwner = (decoded['owner'] as String? ?? '').toLowerCase();
-      if (vaultOwner != cleanEmail) {
-        return false;
-      }
-
       final cookieManager = DesktopWebViewRuntime.cookies;
 
+      // Jika cookie aktif Google sudah hidup di WebKit, pertahankan secara organik
+      // dan jangan sentuh atau timpa token hidup tersebut.
       final liveCookies = await cookieManager.getCookies(
         url: WebUri(NotebookNavigation.canonicalOrigin),
       );
@@ -185,8 +169,17 @@ class PersistentGoogleSession {
             (c.value?.toString().isNotEmpty ?? false),
       );
       if (hasLive) {
-        await lockAndPersistCookies(null, cleanEmail);
+        await prefs.setBool(_readyKey, true);
         return true;
+      }
+
+      final raw = prefs.getString(_vaultKey);
+      if (raw == null || raw.isEmpty) return false;
+
+      final decoded = jsonDecode(raw) as Map<String, dynamic>;
+      final vaultOwner = (decoded['owner'] as String? ?? '').toLowerCase();
+      if (vaultOwner != cleanEmail) {
+        return false;
       }
 
       final List<dynamic> list =

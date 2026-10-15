@@ -398,12 +398,16 @@ class AuthService {
       final prefs = await SharedPreferences.getInstance();
       final owner =
           (prefs.getString(webSessionOwnerKey) ?? '').trim().toLowerCase();
-      if (owner.isNotEmpty && owner == current) {
+      if (owner == current) {
         await PersistentGoogleSession.instance.restoreSessionIfAvailable(current);
         return;
       }
-      await PersistentGoogleSession.instance.clearOnSignOut();
+      if (owner.isNotEmpty && owner != current) {
+        // Hanya bersihkan sesi jika pengguna secara eksplisit berganti ke akun lain
+        await PersistentGoogleSession.instance.clearOnSignOut();
+      }
       await prefs.setString(webSessionOwnerKey, current);
+      await PersistentGoogleSession.instance.restoreSessionIfAvailable(current);
     } catch (_) {}
   }
 

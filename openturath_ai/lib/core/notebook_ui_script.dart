@@ -137,61 +137,64 @@ const notebookUiScript = r'''
       (document.head || document.documentElement).appendChild(style);
     }
     style.textContent = `
-      /* Sembunyikan SEMUA bilah header/navigasi NotebookLM dan Google */
+      /* Sembunyikan SEMUA bilah header/navigasi/top-bar NotebookLM dan Google */
       body > header,
-      top-bar, .top-bar,
-      app-header, .app-header,
+      top-bar, .top-bar, [class*="top-bar" i],
+      app-header, .app-header, [class*="app-header" i],
       mat-toolbar, mat-toolbar-row,
-      .notebook-header, app-notebook-header,
-      .project-header, app-project-header,
-      app-chat-header, chat-header, .chat-header,
-      app-top-bar, .mobile-header,
+      .notebook-header, app-notebook-header, [class*="notebook-header" i],
+      .project-header, app-project-header, [class*="project-header" i],
+      app-chat-header, chat-header, .chat-header, [class*="chat-header" i],
+      app-conversation-header, .conversation-header, [class*="conversation-header" i],
+      app-chat-panel-header, .chat-panel-header, [class*="chat-panel-header" i],
+      app-top-bar, .mobile-header, [class*="mobile-header" i],
+      .chat-top-bar, [class*="chat-top-bar" i],
       header, [role="banner"],
       .title-container, .title-bar, .notebook-title, .project-title,
       [class*="title-bar" i], [class*="header-row" i],
       [class*="title-container" i], [class*="notebook-title" i], [class*="project-title" i],
-      /* Sembunyikan elemen di dalam header */
-      app-user-avatar, div[class*="gb_"], #gb, #gbwa,
-      [aria-label*="Google apps" i], [aria-label*="Aplikasi Google" i],
-      [aria-label*="Google Account" i], [aria-label*="Akun Google" i],
-      a[href*="myaccount.google.com"], button:has(app-user-avatar),
-      labs-tailwind-logo, a.logo-link, a[aria-label*="NotebookLM" i], svg[aria-label*="NotebookLM" i],
-      button[aria-label*="Settings" i], button[aria-label*="Setelan" i],
-      button[aria-label*="Pengaturan" i], button[aria-label*="Notebook settings" i],
-      .project-header button, app-project-header button,
-      mat-toolbar button, .top-bar button,
-      /* Sembunyikan badge PRO */
-      .pro-badge, [class*="pro-badge" i], [class*="tier-badge" i],
-      /* Sembunyikan SEMUA elemen dan container loading internal NotebookLM */
+      .top-scrim, .header-scrim, .scroll-scrim, [class*="scrim" i],
+      [class*="top-gradient" i], [class*="scroll-gradient" i], [class*="header-gradient" i],
+      [class*="fade-overlay" i], [class*="scroll-overlay" i],
+      mat-tab-header, .mat-mdc-tab-header, .mobile-tab-bar, .mobile-tabs, .mobile-navigation,
       app-loading-screen, .loading-screen, .loading-container,
       [class*="loading-screen" i], [class*="notebook-loading" i], [class*="project-loading" i],
-      .cdk-overlay-backdrop:has(mat-spinner), .cdk-overlay-pane:has(mat-spinner),
       mat-spinner, mat-progress-spinner, mat-progress-bar, [role="progressbar"],
-      /* Sembunyikan chip saran prompt agar area obrolan bersih */
       button[class*="suggestion" i], [class*="chip" i], [class*="prompt-chip" i], mat-chip, mat-chip-set,
       app-suggested-actions, .suggested-actions, [class*="suggested-actions" i],
       app-suggestion-chips, .suggestion-chips, [class*="prompt-chips" i], [class*="prompt-card" i],
-      /* Sembunyikan Disclaimer Bawah Secara Total */
       .disclaimer, [class*="disclaimer" i], footer, [role="contentinfo"] {
         display: none !important;
         visibility: hidden !important;
         height: 0 !important;
         min-height: 0 !important;
         max-height: 0 !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        border: none !important;
         overflow: hidden !important;
+        opacity: 0 !important;
+        pointer-events: none !important;
+      }
+
+      /* Sembunyikan elemen internal di dalam header */
+      app-user-avatar, div[class*="gb_"], #gb, #gbwa,
+      [aria-label*="Google apps" i], [aria-label*="Aplikasi Google" i],
+      [aria-label*="Google Account" i], [aria-label*="Akun Google" i],
+      a[href*="myaccount.google.com"],
+      labs-tailwind-logo, a.logo-link, a[aria-label*="NotebookLM" i], svg[aria-label*="NotebookLM" i],
+      button[aria-label*="Settings" i], button[aria-label*="Setelan" i],
+      button[aria-label*="Pengaturan" i], button[aria-label*="Notebook settings" i],
+      .project-header button, app-project-header button,
+      mat-toolbar button, .top-bar button,
+      .pro-badge, [class*="pro-badge" i], [class*="tier-badge" i] {
+        display: none !important;
+        visibility: hidden !important;
+        height: 0 !important;
         padding: 0 !important;
         margin: 0 !important;
       }
 
-      /* Sembunyikan bilah tajuk atas, header obrolan, dan scrim semi-transparan */
-      app-chat-header, .chat-header, [class*="chat-header" i],
-      app-conversation-header, .conversation-header, [class*="conversation-header" i],
-      app-chat-panel-header, .chat-panel-header, [class*="chat-panel-header" i],
-      app-top-bar, .top-bar, [class*="top-bar" i],
-      .chat-top-bar, [class*="chat-top-bar" i],
-      .top-scrim, .header-scrim, .scroll-scrim, [class*="scrim" i],
-      [class*="top-gradient" i], [class*="scroll-gradient" i], [class*="header-gradient" i],
-      [class*="fade-overlay" i], [class*="scroll-overlay" i],
       /* Sembunyikan bilah aksi pesan & tombol copy yang dinonaktifkan pemilik */
       .message-actions, .chat-actions, .turn-actions,
       app-chat-actions, app-message-actions,
@@ -199,9 +202,8 @@ const notebookUiScript = r'''
       [class*="actions-container" i], .chat-action-bar, [class*="action-bar" i],
       button[aria-label*="copy" i], button[aria-label*="salin" i],
       button[title*="copy" i], button[title*="salin" i],
-      button:has(mat-icon[fonticon*="copy" i]), button:has(mat-icon[data-mat-icon-name*="copy" i]),
       .copy-button, [class*="copy-button" i],
-      mat-tooltip-component, .cdk-overlay-pane:has(mat-tooltip-component), .mat-mdc-tooltip,
+      mat-tooltip-component, .mat-mdc-tooltip,
       /* Sembunyikan tombol opsi titik tiga di dalam webview obrolan */
       app-chat-header button,
       .chat-header button,
@@ -223,24 +225,36 @@ const notebookUiScript = r'''
       .chat-options-button,
       [class*="chat-options" i],
       [class*="chat-actions" i],
-      .conversation-actions,
-      button:has(mat-icon[data-mat-icon-name="more_vert"]),
-      button:has(mat-icon[data-mat-icon-name="more_horiz"]),
-      button:has(mat-icon[fonticon="more_vert"]),
-      button:has(mat-icon[fonticon="more_horiz"]) {
+      .conversation-actions {
         display: none !important;
         opacity: 0 !important;
         pointer-events: none !important;
-        position: absolute !important;
-        left: -9999px !important;
-        top: -9999px !important;
         width: 0 !important;
         height: 0 !important;
-        min-width: 0 !important;
-        min-height: 0 !important;
         padding: 0 !important;
         margin: 0 !important;
         border: none !important;
+        overflow: hidden !important;
+      }
+
+      /* Selektor :has terisolasi agar tidak menggugurkan aturan CSS inti */
+      button:has(app-user-avatar),
+      button:has(mat-icon[fonticon*="copy" i]),
+      button:has(mat-icon[data-mat-icon-name*="copy" i]),
+      button:has(mat-icon[data-mat-icon-name="more_vert"]),
+      button:has(mat-icon[data-mat-icon-name="more_horiz"]),
+      button:has(mat-icon[fonticon="more_vert"]),
+      button:has(mat-icon[fonticon="more_horiz"]),
+      .cdk-overlay-pane:has(mat-tooltip-component),
+      .cdk-overlay-backdrop:has(mat-spinner),
+      .cdk-overlay-pane:has(mat-spinner) {
+        display: none !important;
+        opacity: 0 !important;
+        pointer-events: none !important;
+        width: 0 !important;
+        height: 0 !important;
+        padding: 0 !important;
+        margin: 0 !important;
         overflow: hidden !important;
       }
 
@@ -317,6 +331,15 @@ const notebookUiScript = r'''
         box-sizing: border-box !important;
         padding-bottom: 150px !important;
       }
+      .chat-panel-content, .chat-view, .conversation-container, .message-list, [role="log"],
+      app-chat-view, app-chat-panel, app-chat, app-conversation,
+      .ot-chat-transcript, .ot-chat-path, .ot-chat-transcript-path,
+      mat-sidenav-content, main, [role="main"],
+      cdk-virtual-scroll-viewport, .cdk-virtual-scroll-viewport {
+        box-sizing: border-box !important;
+        -webkit-mask-image: none !important;
+        mask-image: none !important;
+      }
       .chat-panel-content, .chat-view, .conversation-container, .message-list, [role="log"] {
         position: relative !important;
         display: flex !important;
@@ -329,20 +352,24 @@ const notebookUiScript = r'''
         box-sizing: border-box !important;
         padding-top: 8px !important;
         padding-bottom: 150px !important;
-        -webkit-mask-image: none !important;
-        mask-image: none !important;
       }
       .chat-panel-content::before, .chat-panel-content::after,
       .chat-view::before, .chat-view::after,
       app-chat-panel::before, app-chat-panel::after,
       app-chat-view::before, app-chat-view::after,
+      app-chat::before, app-chat::after,
+      app-conversation::before, app-conversation::after,
       .conversation-container::before, .conversation-container::after,
-      mat-sidenav-content::before, mat-sidenav-content::after {
+      mat-sidenav-content::before, mat-sidenav-content::after,
+      .ot-chat-transcript::before, .ot-chat-transcript::after,
+      [role="log"]::before, [role="log"]::after,
+      main::before, main::after {
         display: none !important;
         content: none !important;
         background: none !important;
         opacity: 0 !important;
         height: 0 !important;
+        width: 0 !important;
       }
       main, [role="main"], app-chat-view, app-conversation, app-chat-panel, .chat-panel, app-chat {
         position: relative !important;
@@ -595,6 +622,15 @@ const notebookUiScript = r'''
     selectors.forEach(sel => {
       document.querySelectorAll(sel).forEach(el => {
         el.style.setProperty('display', 'none', 'important');
+        el.style.setProperty('visibility', 'hidden', 'important');
+        el.style.setProperty('height', '0px', 'important');
+        el.style.setProperty('min-height', '0px', 'important');
+        el.style.setProperty('max-height', '0px', 'important');
+        el.style.setProperty('margin', '0px', 'important');
+        el.style.setProperty('padding', '0px', 'important');
+        el.style.setProperty('overflow', 'hidden', 'important');
+        el.style.setProperty('opacity', '0', 'important');
+        el.style.setProperty('pointer-events', 'none', 'important');
       });
     });
 
@@ -1376,6 +1412,10 @@ window.addEventListener('keydown', function(event) {
 let _otBackgroundPaused = false;
 window.otSetBackgroundPaused = function(paused) {
   _otBackgroundPaused = !!paused;
+  if (!paused) {
+    clean();
+    scheduleConversationLayout();
+  }
 };
 window.otSetSuspended = window.otSetBackgroundPaused;
 
