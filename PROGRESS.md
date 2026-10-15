@@ -409,6 +409,29 @@ Berdasarkan `AUDIT_OPENTURATH_AI.md`, dokumen perancangan pustaka, dan keluhan k
      - Pembaruan aplikasi `/Applications/OpenTurath AI.app` berhasil disinkronkan.
      - 411/411 unit dan widget tests lolos 100%.
 
+### Fasa 33: Perbaikan Checkout Midtrans (Anti-Premature Dismissal VIP), OTA Pricing Map & Presisi Tengah Input Composer
+- **Masalah yang Ditemukan & Akar Masalah**:
+  1. *Midtrans Tidak Muncul & Langsung Muncul 'Pembayaran Berhasil'*:
+     - Di `PaymentCheckoutSheet`, listener stream user memiliki logika: `if (user.isVip || user.isSubscriptionActive) _triggerSuccess();`.
+     - Akun pengujian yang berstatus VIP langsung memicu `_triggerSuccess()` dalam 400ms saat modal dibuka, menutup WebView Midtrans sebelum sempat termuat, dan menampilkan dialog keberhasilan semu untuk transaksi berstatus `pending`.
+  2. *Harga Masih Rp 49.000 (Bukan Rp 1.000)*:
+     - `manage_ota.py` sebelumnya menulis field datar (`tholib_1m: 1000`) di `app_config/pricing`, sementara parser Cloud Functions dan Flutter mencari peta bersarang `plans.specialists.tholib_1m.amount`. Akibatnya, sistem jatuh ke harga bawaan (*fallback default*).
+  3. *Kolom Input Miring ke Kiri (~110px)*:
+     - Aturan `left: 50% !important; transform: translateX(-50%) !important; margin-left: 0 !important;` pada kontainer flexbox menyebabkan WebKit membenturkan elemen anak berlebar 561px ke sisi kiri.
+- **Solusi Baku & Implementasi**:
+  1. *Listener Entitlement Berbasis Transaksi Nyata*:
+     - Listener di `PaymentCheckoutSheet` hanya memicu penyelesaian jika ada entitlement dengan `sourceTransactionId == widget.invoiceNumber` atau `widget.trxId`. Akun VIP tidak lagi menutup modal pembayaran baru secara prematur.
+  2. *Standardisasi Skema OTA Pricing*:
+     - `manage_ota.py` menyusun peta bersarang lengkap (`plans.specialists` dan `plans.fiqh_tahawwulat`).
+     - `ProductPricing` di Flutter dan `resolvePlanPricing` di Cloud Functions diberi fallback toleran untuk membaca field flat jika map `plans` tidak tersedia.
+     - Fungsi `createCheckout` berhasil dikompilasi ulang dan diunggah ke Firebase Cloud Functions (`us-central1`).
+  3. *Presisi Tengah Alami Composer (Matematika Simetris 720px)*:
+     - Menggantikan `left: 50%` dengan `margin-inline: auto !important; margin-left: auto !important; margin-right: auto !important; align-self: center !important; left: auto !important; transform: none !important; max-width: 720px !important; display: flex !important; flex-direction: column !important; align-items: center !important;` pada `.ot-chat-composer` dan wadah anaknya, serasi dengan lebar kolom baca `.rendered-markdown`.
+  4. *Kompilasi Biner & Pembaruan DMG*:
+     - `flutter build macos --release` Universal arm64+x86_64 sukses 100%.
+     - `OpenTurath_AI_macOS.dmg` (48 MB, UDZO) diperbarui beserta `/Applications/OpenTurath AI.app`.
+     - 411/411 unit dan widget tests lolos 100%.
+
 ---
 
 ## 5. Agenda & Fokus Selanjutnya
