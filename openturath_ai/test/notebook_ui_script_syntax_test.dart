@@ -62,4 +62,13 @@ void main() {
     expect(notebookUiScript.contains('app-chat-input [class*="source-count" i]'), isTrue);
     expect(notebookUiScript.contains('app-chat-input .sources-button'), isTrue);
   });
+
+  test('notebookUiScript provides physical ot-bottom-spacer and 180px bottom padding to prevent message clipping behind floating composer', () {
+    expect(notebookUiScript.contains('.ot-bottom-spacer'), isTrue);
+    expect(notebookUiScript.contains('ensureBottomSpacer'), isTrue);
+    expect(notebookUiScript.contains('.ot-last-turn'), isTrue);
+    expect(notebookUiScript.contains('height: 180px !important;'), isTrue);
+    expect(notebookUiScript.contains('padding-bottom: 180px !important;'), isTrue);
+  });
 }
+

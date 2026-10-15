@@ -108,7 +108,15 @@ main::before, main::after {
 }
 ```
 
-### D. Pembersihan Instan Saat Pergantian Tab (*Dynamic Tab Cleanup*)
+### D. Penjarak Fisik Bawah (.ot-bottom-spacer & 180px Padding)
+* Kapsul input pertanyaan (`.ot-chat-composer`) melayang di dasar jendela (`position: fixed; bottom: 22px;`) setinggi ~70px.
+* Agar baris teks jawaban terakhir tidak tertutup atau terpotong di balik kapsul saat pengguna scroll mentok ke bawah:
+  1. Skrip JavaScript secara dinamis menyuntikkan elemen fisik `.ot-bottom-spacer` setinggi **180px** di dasar wadah pesan.
+  2. Seluruh container scrolling (`.ot-chat-transcript`, `.chat-panel-content`, `mat-sidenav-content`, dll) menerapkan `padding-bottom: 180px !important;`.
+  3. Turn pesan terakhir ditandai dengan `.ot-last-turn` dan diberikan `margin-bottom: 180px !important;`.
+  4. Penggunaan elemen DOM fisik ini menjamin `scrollHeight` selalu bertambah +180px dan kebal terhadap bug CSS `:last-child` (akibat hidden action buttons Google) maupun bug WebKit flexbox padding.
+
+### E. Pembersihan Instan Saat Pergantian Tab (*Dynamic Tab Cleanup*)
 * Setiap kali pengguna beralih antar-tab atau membuka tab yang sudah ada, aplikasi wajib mengeksekusi:
 ```javascript
 window.otSetBackgroundPaused && window.otSetBackgroundPaused(false);

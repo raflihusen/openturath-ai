@@ -329,7 +329,7 @@ const notebookUiScript = r'''
         overflow-y: auto !important;
         -webkit-overflow-scrolling: touch !important;
         box-sizing: border-box !important;
-        padding-bottom: 150px !important;
+        padding-bottom: 180px !important;
       }
       .chat-panel-content, .chat-view, .conversation-container, .message-list, [role="log"],
       app-chat-view, app-chat-panel, app-chat, app-conversation,
@@ -351,7 +351,7 @@ const notebookUiScript = r'''
         -webkit-overflow-scrolling: touch !important;
         box-sizing: border-box !important;
         padding-top: 8px !important;
-        padding-bottom: 150px !important;
+        padding-bottom: 180px !important;
       }
       .chat-panel-content::before, .chat-panel-content::after,
       .chat-view::before, .chat-view::after,
@@ -406,9 +406,28 @@ const notebookUiScript = r'''
       app-chat-turn:last-child,
       chat-turn:last-child,
       .chat-message:last-child,
-      [role="article"]:last-child {
-        margin-bottom: 150px !important;
+      [role="article"]:last-child,
+      .ot-last-turn,
+      .ot-last-turn .rendered-markdown,
+      .ot-last-turn app-chat-response {
+        margin-bottom: 180px !important;
         padding-bottom: 24px !important;
+      }
+
+      /* Spacer fisik di akhir transkrip agar teks tidak tertutup kapsul input pertanyaan */
+      .ot-bottom-spacer {
+        display: block !important;
+        width: 100% !important;
+        height: 180px !important;
+        min-height: 180px !important;
+        max-height: 180px !important;
+        flex: 0 0 180px !important;
+        pointer-events: none !important;
+        visibility: hidden !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        border: none !important;
+        box-sizing: border-box !important;
       }
       .ot-chat-composer {
         position: fixed !important;
@@ -933,6 +952,36 @@ const notebookUiScript = r'''
     } catch (_) {}
   }
 
+  function ensureBottomSpacer(transcripts) {
+    const allMessages = [...document.querySelectorAll(answerSelector + ',' + questionSelector)].filter(visible);
+    document.querySelectorAll('.ot-last-turn').forEach(el => el.classList.remove('ot-last-turn'));
+    if (allMessages.length > 0) {
+      const lastMsg = allMessages[allMessages.length - 1];
+      const lastTurn = lastMsg.closest('app-chat-turn, chat-turn, .chat-message-pair, app-chat-response, .model-message, [role="article"]') || lastMsg;
+      lastTurn.classList.add('ot-last-turn');
+
+      const container = lastTurn.parentElement || (transcripts && transcripts.size > 0 ? [...transcripts][0] : null);
+      if (container) {
+        let spacer = null;
+        for (let i = 0; i < container.children.length; i++) {
+          const child = container.children[i];
+          if (child && child.classList && child.classList.contains('ot-bottom-spacer')) {
+            spacer = child;
+            break;
+          }
+        }
+        if (!spacer) {
+          spacer = document.createElement('div');
+          spacer.className = 'ot-bottom-spacer';
+          spacer.setAttribute('aria-hidden', 'true');
+          container.appendChild(spacer);
+        } else if (container.lastElementChild !== spacer) {
+          container.appendChild(spacer);
+        }
+      }
+    }
+  }
+
   function anchorConversationInput() {
     // A disabled input still owns the layout while NotebookLM generates a response.
     const inputs = [...document.querySelectorAll('textarea, [contenteditable="true"], [role="textbox"]')];
@@ -1038,6 +1087,10 @@ const notebookUiScript = r'''
     transcriptPaths.forEach(node => node.classList.add('ot-chat-transcript-path'));
     if (composer) composer.classList.add('ot-chat-composer');
     document.body?.classList.toggle('ot-chat-layout', !!composer);
+
+    // Pastikan teks pesan terakhir memiliki ruang lega fisik di atas kapsul input
+    ensureBottomSpacer(transcripts);
+
     const height = window.visualViewport ? window.visualViewport.height : window.innerHeight;
     const value = height + 'px';
     if (document.documentElement.style.getPropertyValue('--ot-chat-height') !== value) {
@@ -1071,6 +1124,7 @@ const notebookUiScript = r'''
     removeTopToolbars();
     removeHeroCard();
     anchorConversationInput();
+    ensureBottomSpacer();
     dismissPopups();
   }
 

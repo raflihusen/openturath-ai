@@ -35,6 +35,7 @@
 - Seluruh elemen header Google/NotebookLM (`app-chat-header`, `app-conversation-header`, `app-chat-panel-header`, `mat-toolbar`, `top-bar`, `.top-scrim`, `.scroll-scrim`, `[class*="scrim" i]`, `[class*="gradient" i]`, `[class*="fade-overlay" i]`, `mat-tab-header`) WAJIB dieliminasi dengan aturan CSS independen murni berdimensi nol (`display: none !important; height: 0 !important; padding: 0 !important; margin: 0 !important;`).
 - Dilarang menggabungkan selektor `:has(...)` ke dalam blok koma aturan penghilang bilah utama karena kegagalan parsing mesin WebKit akan menggugurkan seluruh aturan penyembunyian.
 - Wadah percakapan (`app-chat-view`, `main`, dll) WAJIB menonaktifkan `-webkit-mask-image: none !important; mask-image: none !important;` serta pseudo-elemen `::before`/`::after` untuk mencegah teks atas pudar terpotong.
+- Wadah transkrip obrolan WAJIB mempertahankan penjarak fisik bawah (`.ot-bottom-spacer`) setinggi 180px dan `padding-bottom: 180px` agar baris teks jawaban terakhir tidak tertutup atau terpotong di balik kapsul kolom isi pertanyaan (`.ot-chat-composer`) saat discroll mentok ke bawah.
 - Setiap pergantian tab aktif WAJIB memanggil pembersihan instan `clean()` agar tab yang baru aktif langsung rapat dan bebas bar.
 - Dokumen rujukan teknis mutlak: `openturath_ai/docs/STANDAR_IDEAL_WEBVIEW.md`.
 
