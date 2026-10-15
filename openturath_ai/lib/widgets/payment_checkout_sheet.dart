@@ -169,9 +169,19 @@ class _PaymentCheckoutSheetState extends State<PaymentCheckoutSheet> {
     }
 
     // 2. Real-time User Entitlements Listener: mendeteksi aktivasi instan dari webhook server
+    // HANYA dipicu jika ada entitlement baru yang memiliki sourceTransactionId cocok dengan invoice/trxId ini.
+    // DILARANG keras memicu _triggerSuccess hanya karena user sudah berstatus VIP atau memiliki paket lain,
+    // karena hal tersebut akan menutup checkout secara instan sebelum Midtrans sempat terbuka!
     _userSubscription = AuthService().userStream.listen((user) {
       if (user != null && !_isSuccess && mounted) {
-        if (user.isVip || user.isSubscriptionActive) {
+        final matchesThisTx = user.entitlements.values.any((e) =>
+            (e.sourceTransactionId != null &&
+                e.sourceTransactionId!.isNotEmpty &&
+                (e.sourceTransactionId == widget.invoiceNumber ||
+                    (widget.trxId != null &&
+                        widget.trxId!.isNotEmpty &&
+                        e.sourceTransactionId == widget.trxId))));
+        if (matchesThisTx) {
           _triggerSuccess();
         }
       }

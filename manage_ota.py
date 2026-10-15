@@ -129,19 +129,30 @@ def parse_firestore_fields(fields_dict):
             out[k] = float(v["doubleValue"])
         elif "booleanValue" in v:
             out[k] = v["booleanValue"]
+        elif "mapValue" in v:
+            out[k] = parse_firestore_fields(v["mapValue"].get("fields", {}))
         elif "arrayValue" in v:
             arr = []
             for item in v["arrayValue"].get("values", []):
                 if "stringValue" in item:
                     arr.append(item["stringValue"])
+                elif "mapValue" in item:
+                    arr.append(parse_firestore_fields(item["mapValue"].get("fields", {})))
             out[k] = arr
     return out
 
 
 def to_firestore_pricing_fields(pricing_dict, revision, note=""):
     now_iso = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    tholib_1m = pricing_dict.get("tholib_1m", 49000)
+    tholib_6m = pricing_dict.get("tholib_6m", 299000)
+    bahits_1y = pricing_dict.get("bahits_1y", 499000)
+    t_1m = pricing_dict.get("tahawwulat_1m", 1000 if tholib_1m == 1000 else 300000)
+    t_6m = pricing_dict.get("tahawwulat_6m", 1499000)
+    t_1y = pricing_dict.get("tahawwulat_1y", 1999000)
+
     return {
-        "tholib_1m": {"integerValue": str(pricing_dict.get("tholib_1m", 300000))},
+        "tholib_1m": {"integerValue": str(tholib_1m)},
         "mustawa_1y": {"integerValue": str(pricing_dict.get("mustawa_1y", 1500000))},
         "bithaqah_lifetime": {
             "integerValue": str(pricing_dict.get("bithaqah_lifetime", 5000000))
@@ -152,6 +163,72 @@ def to_firestore_pricing_fields(pricing_dict, revision, note=""):
         "revision": {"stringValue": revision},
         "updated_at": {"stringValue": now_iso},
         "note": {"stringValue": note},
+        "plans": {
+            "mapValue": {
+                "fields": {
+                    "fiqh_tahawwulat": {
+                        "mapValue": {
+                            "fields": {
+                                "tholib_1m": {
+                                    "mapValue": {
+                                        "fields": {
+                                            "amount": {"integerValue": str(t_1m)},
+                                            "regularAmount": {"integerValue": "1000000"},
+                                        }
+                                    }
+                                },
+                                "tholib_6m": {
+                                    "mapValue": {
+                                        "fields": {
+                                            "amount": {"integerValue": str(t_6m)},
+                                            "regularAmount": {"integerValue": "2995000"},
+                                        }
+                                    }
+                                },
+                                "bahits_1y": {
+                                    "mapValue": {
+                                        "fields": {
+                                            "amount": {"integerValue": str(t_1y)},
+                                            "regularAmount": {"integerValue": "4995000"},
+                                        }
+                                    }
+                                },
+                            }
+                        }
+                    },
+                    "specialists": {
+                        "mapValue": {
+                            "fields": {
+                                "tholib_1m": {
+                                    "mapValue": {
+                                        "fields": {
+                                            "amount": {"integerValue": str(tholib_1m)},
+                                            "regularAmount": {"integerValue": "300000"},
+                                        }
+                                    }
+                                },
+                                "tholib_6m": {
+                                    "mapValue": {
+                                        "fields": {
+                                            "amount": {"integerValue": str(tholib_6m)},
+                                            "regularAmount": {"integerValue": "1200000"},
+                                        }
+                                    }
+                                },
+                                "bahits_1y": {
+                                    "mapValue": {
+                                        "fields": {
+                                            "amount": {"integerValue": str(bahits_1y)},
+                                            "regularAmount": {"integerValue": "2400000"},
+                                        }
+                                    }
+                                },
+                            }
+                        }
+                    },
+                }
+            }
+        },
     }
 
 

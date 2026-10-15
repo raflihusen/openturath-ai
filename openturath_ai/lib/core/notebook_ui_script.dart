@@ -307,12 +307,15 @@ const notebookUiScript = r'''
       .ot-chat-composer-path {
         display: flex !important;
         flex-direction: column !important;
+        align-items: center !important;
+        justify-content: flex-end !important;
         flex: 0 0 auto !important;
         height: auto !important;
         min-height: 0 !important;
         max-height: none !important;
         padding: 0 !important;
-        margin: 0 !important;
+        margin: 0 auto !important;
+        margin-inline: auto !important;
         overflow: visible !important;
         width: 100% !important;
         box-sizing: border-box !important;
@@ -425,25 +428,41 @@ const notebookUiScript = r'''
       /* Tata letak alami (Natural Flexbox): composer berada di bawah transkrip tanpa mengambang/floating, presisi tengah */
       .ot-chat-composer {
         position: relative !important;
-        left: 50% !important;
-        transform: translateX(-50%) !important;
+        left: auto !important;
+        right: auto !important;
+        transform: none !important;
         flex: 0 0 auto !important;
         width: calc(100% - 32px) !important;
-        max-width: 768px !important;
+        max-width: 720px !important;
         margin-top: 8px !important;
         margin-bottom: max(18px, env(safe-area-inset-bottom, 0px)) !important;
-        margin-left: 0 !important;
-        margin-right: 0 !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+        margin-inline: auto !important;
+        align-self: center !important;
         box-sizing: border-box !important;
         z-index: 10 !important;
         pointer-events: auto !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
       }
       .ot-chat-composer > *,
       .ot-chat-composer form,
       .ot-chat-composer .chat-input-container,
-      .ot-chat-composer .query-box-container {
+      .ot-chat-composer .query-box-container,
+      .ot-chat-composer [class*="query-box" i],
+      .ot-chat-composer [class*="pill" i],
+      .ot-chat-composer [class*="input-container" i],
+      .ot-chat-composer form > div,
+      .ot-chat-composer .query-box-container > div {
         width: 100% !important;
-        max-width: 768px !important;
+        max-width: 720px !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+        margin-inline: auto !important;
+        align-self: center !important;
         box-sizing: border-box !important;
       }
       .ot-chat-composer textarea::placeholder,
@@ -1052,6 +1071,20 @@ const notebookUiScript = r'''
         composer.querySelectorAll('mat-label, .mat-mdc-floating-label, [data-placeholder]').forEach(label => {
           if (/^ajukan pertanyaan atau buat konten[.\s]*$/i.test(text(label))) label.style.setProperty('display', 'none', 'important');
         });
+        composer.style.setProperty('margin-left', 'auto', 'important');
+        composer.style.setProperty('margin-right', 'auto', 'important');
+        composer.style.setProperty('align-self', 'center', 'important');
+        composer.style.setProperty('left', 'auto', 'important');
+        composer.style.setProperty('right', 'auto', 'important');
+        composer.style.setProperty('transform', 'none', 'important');
+        composer.style.setProperty('max-width', '720px', 'important');
+        composer.style.setProperty('width', 'calc(100% - 32px)', 'important');
+        composer.querySelectorAll('form, .chat-input-container, .query-box-container, [class*="query-box" i], [class*="pill" i]').forEach(child => {
+          child.style.setProperty('margin-left', 'auto', 'important');
+          child.style.setProperty('margin-right', 'auto', 'important');
+          child.style.setProperty('align-self', 'center', 'important');
+          child.style.setProperty('max-width', '720px', 'important');
+        });
       }
     }
     // Reconcile every pass, including empty -> messages -> cleared / replaced DOM.
@@ -1064,7 +1097,15 @@ const notebookUiScript = r'''
     });
     path.forEach(node => node.classList.add('ot-chat-path'));
     transcripts.forEach(node => node.classList.add('ot-chat-transcript'));
-    composerPaths.forEach(node => node.classList.add('ot-chat-composer-path'));
+    composerPaths.forEach(node => {
+      node.classList.add('ot-chat-composer-path');
+      node.style.setProperty('display', 'flex', 'important');
+      node.style.setProperty('flex-direction', 'column', 'important');
+      node.style.setProperty('align-items', 'center', 'important');
+      node.style.setProperty('width', '100%', 'important');
+      node.style.setProperty('margin-left', 'auto', 'important');
+      node.style.setProperty('margin-right', 'auto', 'important');
+    });
     transcriptPaths.forEach(node => node.classList.add('ot-chat-transcript-path'));
     if (composer) composer.classList.add('ot-chat-composer');
     document.body?.classList.toggle('ot-chat-layout', !!composer);

@@ -430,7 +430,7 @@ async function getActiveAgentIds() {
     ]);
 }
 async function resolvePlanPricing(agentId, plan) {
-    var _a, _b, _c, _d, _e, _f;
+    var _a, _b, _c, _d, _e, _f, _g, _h;
     const isAllAi = agentId === "all_ai" || agentId === "all_access" || plan.startsWith("all_ai") || plan.startsWith("all_access");
     if (isAllAi) {
         throw new functions.https.HttpsError("failed-precondition", "Paket Semua AI sementara dinonaktifkan. Silakan pilih paket per modul spesialis.");
@@ -462,7 +462,7 @@ async function resolvePlanPricing(agentId, plan) {
         };
         const tTier = tahawwulatTiers[plan];
         if (tTier) {
-            const dynamicAmount = (_c = (_b = (_a = dynamicConfig === null || dynamicConfig === void 0 ? void 0 : dynamicConfig.plans) === null || _a === void 0 ? void 0 : _a.fiqh_tahawwulat) === null || _b === void 0 ? void 0 : _b[plan]) === null || _c === void 0 ? void 0 : _c.amount;
+            const dynamicAmount = (_d = (_c = (_b = (_a = dynamicConfig === null || dynamicConfig === void 0 ? void 0 : dynamicConfig.plans) === null || _a === void 0 ? void 0 : _a.fiqh_tahawwulat) === null || _b === void 0 ? void 0 : _b[plan]) === null || _c === void 0 ? void 0 : _c.amount) !== null && _d !== void 0 ? _d : dynamicConfig === null || dynamicConfig === void 0 ? void 0 : dynamicConfig[plan];
             const finalAmount = (typeof dynamicAmount === "number" && Number.isSafeInteger(dynamicAmount) && dynamicAmount > 0)
                 ? dynamicAmount
                 : tTier.amount;
@@ -483,7 +483,7 @@ async function resolvePlanPricing(agentId, plan) {
     if (!entitlementKey || entitlementKey === "all_access" || entitlementKey === "all_ai") {
         throw new functions.https.HttpsError("failed-precondition", "Entitlement untuk modul ini tidak valid atau dinonaktifkan.");
     }
-    const dynamicSpecAmount = (_f = (_e = (_d = dynamicConfig === null || dynamicConfig === void 0 ? void 0 : dynamicConfig.plans) === null || _d === void 0 ? void 0 : _d.specialists) === null || _e === void 0 ? void 0 : _e[plan]) === null || _f === void 0 ? void 0 : _f.amount;
+    const dynamicSpecAmount = (_h = (_g = (_f = (_e = dynamicConfig === null || dynamicConfig === void 0 ? void 0 : dynamicConfig.plans) === null || _e === void 0 ? void 0 : _e.specialists) === null || _f === void 0 ? void 0 : _f[plan]) === null || _g === void 0 ? void 0 : _g.amount) !== null && _h !== void 0 ? _h : dynamicConfig === null || dynamicConfig === void 0 ? void 0 : dynamicConfig[plan];
     const finalSpecAmount = (typeof dynamicSpecAmount === "number" && Number.isSafeInteger(dynamicSpecAmount) && dynamicSpecAmount > 0)
         ? dynamicSpecAmount
         : tier.amount;

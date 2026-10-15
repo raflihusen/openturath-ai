@@ -530,7 +530,7 @@ async function resolvePlanPricing(agentId: string, plan: string): Promise<{ amou
     };
     const tTier = tahawwulatTiers[plan];
     if (tTier) {
-      const dynamicAmount = dynamicConfig?.plans?.fiqh_tahawwulat?.[plan]?.amount;
+      const dynamicAmount = dynamicConfig?.plans?.fiqh_tahawwulat?.[plan]?.amount ?? (dynamicConfig as any)?.[plan];
       const finalAmount = (typeof dynamicAmount === "number" && Number.isSafeInteger(dynamicAmount) && dynamicAmount > 0)
         ? dynamicAmount
         : tTier.amount;
@@ -561,7 +561,7 @@ async function resolvePlanPricing(agentId: string, plan: string): Promise<{ amou
     );
   }
 
-  const dynamicSpecAmount = dynamicConfig?.plans?.specialists?.[plan]?.amount;
+  const dynamicSpecAmount = dynamicConfig?.plans?.specialists?.[plan]?.amount ?? (dynamicConfig as any)?.[plan];
   const finalSpecAmount = (typeof dynamicSpecAmount === "number" && Number.isSafeInteger(dynamicSpecAmount) && dynamicSpecAmount > 0)
     ? dynamicSpecAmount
     : tier.amount;

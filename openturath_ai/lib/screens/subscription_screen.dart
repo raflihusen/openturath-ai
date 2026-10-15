@@ -47,7 +47,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
   @override
   void initState() {
     super.initState();
-    ProductPricingService.syncPricing().then((_) {
+    ProductPricingService.syncPricing(forceRefresh: true).then((_) {
       if (mounted) setState(() {});
     });
   }

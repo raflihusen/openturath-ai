@@ -140,6 +140,23 @@ class ProductPricingService {
             specialists = Map<String, dynamic>.from(plans['specialists'] as Map);
           }
         }
+        // Fallback jika dokumen Firestore menggunakan format datar (flat keys)
+        if (specialists == null && data['tholib_1m'] != null) {
+          final p1m = data['tholib_1m'] is int
+              ? data['tholib_1m'] as int
+              : int.tryParse(data['tholib_1m'].toString()) ?? 49000;
+          specialists = {
+            'tholib_1m': {'amount': p1m, 'regularAmount': 300000},
+          };
+        }
+        if (tahawwulat == null && (data['tahawwulat_1m'] != null || data['tholib_1m'] != null)) {
+          final t1m = (data['tahawwulat_1m'] ?? data['tholib_1m']) is int
+              ? (data['tahawwulat_1m'] ?? data['tholib_1m']) as int
+              : int.tryParse((data['tahawwulat_1m'] ?? data['tholib_1m']).toString()) ?? 300000;
+          tahawwulat = {
+            'tholib_1m': {'amount': t1m, 'regularAmount': 1000000},
+          };
+        }
         ProductPricing.updateOffers(
           revision: revision,
           tahawwulatMap: tahawwulat,

@@ -67,8 +67,9 @@ void main() {
     // Composer must dock naturally via position: relative, not fixed floating
     expect(notebookUiScript.contains('position: relative !important;'), isTrue);
     expect(notebookUiScript.contains('position: fixed !important;'), isFalse);
-    expect(notebookUiScript.contains('left: 50% !important;'), isTrue);
-    expect(notebookUiScript.contains('transform: translateX(-50%) !important;'), isTrue);
+    expect(notebookUiScript.contains('align-self: center !important;'), isTrue);
+    expect(notebookUiScript.contains('margin-inline: auto !important;'), isTrue);
+    expect(notebookUiScript.contains('max-width: 720px !important;'), isTrue);
     expect(notebookUiScript.contains('.ot-chat-composer'), isTrue);
     expect(notebookUiScript.contains('.ot-chat-composer-path'), isTrue);
     expect(notebookUiScript.contains('removeLegacySpacers'), isTrue);
