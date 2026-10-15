@@ -34,7 +34,9 @@
 - **TOLOK UKUR IDEAL TAMPILAN WEBVIEW ADALAH FIKIH SYAFI'I.** Teks dan tabel obrolan WAJIB rapat ke bawah bilah tab Flutter (0px celah putih, tanpa jeda bar kosong 64px, tanpa top scrim pudar).
 - Seluruh elemen header Google/NotebookLM (`app-chat-header`, `app-conversation-header`, `app-chat-panel-header`, `mat-toolbar`, `top-bar`, `.top-scrim`, `.scroll-scrim`, `[class*="scrim" i]`, `[class*="gradient" i]`, `[class*="fade-overlay" i]`, `mat-tab-header`) WAJIB dieliminasi dengan aturan CSS independen murni berdimensi nol (`display: none !important; height: 0 !important; padding: 0 !important; margin: 0 !important;`).
 - Dilarang menggabungkan selektor `:has(...)` ke dalam blok koma aturan penghilang bilah utama karena kegagalan parsing mesin WebKit akan menggugurkan seluruh aturan penyembunyian.
+- Wadah percakapan (`app-chat-view`, `main`, dll) WAJIB menonaktifkan `-webkit-mask-image: none !important; mask-image: none !important;` serta pseudo-elemen `::before`/`::after` untuk mencegah teks atas pudar terpotong.
 - Setiap pergantian tab aktif WAJIB memanggil pembersihan instan `clean()` agar tab yang baru aktif langsung rapat dan bebas bar.
+- Dokumen rujukan teknis mutlak: `openturath_ai/docs/STANDAR_IDEAL_WEBVIEW.md`.
 
 ## 7. Hak Multi-Tab & Non-Destructive Session (MANDATORY)
 - Pada lingkungan desktop (macOS), aplikasi WAJIB mengizinkan hingga **minimal 5 tab aktif bersamaan** (`maxTabs = 5`) untuk mendukung komparasi lintas disiplin/kitab turats.
