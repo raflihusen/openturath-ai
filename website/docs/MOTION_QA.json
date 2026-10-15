@@ -1,5 +1,5 @@
 {
-  "browser": "155.0.8059.39",
+  "browser": "153.0.8010.0",
   "checks": [
     "True-white initial theme, black original logo, desktop corpus number at least 150px",
     "Independent hero layers respond to fine pointer movement",

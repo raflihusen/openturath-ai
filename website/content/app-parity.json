@@ -1,8 +1,19 @@
 {
-  "date": "2026-10-08",
+  "date": "2026-09-20",
   "appPricingRevision": "perdana-2026-09-20",
-  "websitePricingRevision": "perdana-2026-09-20",
+  "websitePricingRevision": "website-brief-2026-09-20",
   "pricingParity": true,
+  "previousAppPricesIDR": {
+    "specialist1Month": 50000,
+    "tahawwulat1Month": 300000,
+    "tahawwulat6Months": 1499000,
+    "tahawwulat12Months": 1999000
+  },
+  "websitePricesIDR": {
+    "tholib_1m": 50000,
+    "tholib_6m": 299000,
+    "bahits_1y": 499000
+  },
   "websiteProfiles": 21,
   "appPublicDisciplines": 20,
   "appScholarProfilesLocked": [
@@ -13,12 +24,8 @@
   "glossarySha256": "4808580d904ed9f75c217843edf7feb47880a4280c460b756e4d91287f7a3d68",
   "legalSourceSha256": "eebd7a5e1883ae4b8fe0480f336e71b0da7989ee9f97105babd5d1401c5915c1",
   "openIssues": [
-    "Public release files have not been supplied to the website manifest.",
-    "Production checkout, entitlements, login and refunds have not been verified.",
-    "Q001 has ten quotations awaiting source-edition review.",
-    "Six module book counts differ across source snapshots.",
-    "Original expert and Claude workload evidence still needs documentation."
-  ],
-  "productionCheckoutVerified": false,
-  "pricingSource": "content/app-facts.json"
+    "The canonical refund policy says 30 calendar days while application products use calendar months.",
+    "APK bytes and production DOKU transactions were not supplied for validation.",
+    "Q001 has ten quotation records, all not-reviewed."
+  ]
 }

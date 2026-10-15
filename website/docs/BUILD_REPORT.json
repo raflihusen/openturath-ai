@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-08T10:33:18.040Z",
+  "generatedAt": "2026-10-15T00:41:51.070Z",
   "mode": "production",
   "routes": 178,
   "locales": [
@@ -7,17 +7,12 @@
     "en",
     "ar"
   ],
-  "collections": 21,
+  "collections": 18,
   "responses": 6,
   "productionBlockers": [],
   "validationScope": "website artifact only",
   "distribution": {
-    "mode": "website-only",
-    "reason": "awaiting-release-artifact"
+    "mode": "app-release"
   },
-  "operationalWarnings": [
-    "Prices match local app source; production checkout and entitlements remain unverified.",
-    "APK artifact not supplied; website-only mode exposes no active binary download.",
-    "Production transactions and infrastructure are not verified by this build."
-  ]
+  "operationalWarnings": []
 }

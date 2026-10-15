@@ -1,1443 +1,791 @@
 {
-  "browser": "155.0.8059.39",
+  "browser": "153.0.8010.0",
   "pages": [
     {
       "locale": "id",
-      "width": 1440,
       "route": "",
+      "width": 1440,
       "overflow": false,
-      "h1": 1,
       "dir": "ltr",
-      "brokenImages": 0,
-      "missingAlt": 0
+      "h1": 1
     },
     {
       "locale": "id",
-      "width": 1440,
-      "route": "tahawwulat/",
-      "overflow": false,
-      "h1": 1,
-      "dir": "ltr",
-      "brokenImages": 0,
-      "missingAlt": 0
-    },
-    {
-      "locale": "id",
-      "width": 1440,
       "route": "library/",
+      "width": 1440,
       "overflow": false,
-      "h1": 1,
       "dir": "ltr",
-      "brokenImages": 0,
-      "missingAlt": 0
+      "h1": 1
     },
     {
       "locale": "id",
-      "width": 1440,
-      "route": "library/fiqh-tahawwulat/",
-      "overflow": false,
-      "h1": 1,
-      "dir": "ltr",
-      "brokenImages": 0,
-      "missingAlt": 0
-    },
-    {
-      "locale": "id",
-      "width": 1440,
       "route": "access/",
+      "width": 1440,
       "overflow": false,
-      "h1": 1,
       "dir": "ltr",
-      "brokenImages": 0,
-      "missingAlt": 0
+      "h1": 1
     },
     {
       "locale": "id",
-      "width": 1440,
       "route": "download/",
+      "width": 1440,
       "overflow": false,
-      "h1": 1,
       "dir": "ltr",
-      "brokenImages": 0,
-      "missingAlt": 0
+      "h1": 1
     },
     {
       "locale": "id",
-      "width": 1440,
-      "route": "about/",
-      "overflow": false,
-      "h1": 1,
-      "dir": "ltr",
-      "brokenImages": 0,
-      "missingAlt": 0
-    },
-    {
-      "locale": "id",
-      "width": 1440,
-      "route": "privacy/",
-      "overflow": false,
-      "h1": 1,
-      "dir": "ltr",
-      "brokenImages": 0,
-      "missingAlt": 0
-    },
-    {
-      "locale": "id",
-      "width": 1440,
       "route": "terms/",
+      "width": 1440,
       "overflow": false,
-      "h1": 1,
       "dir": "ltr",
-      "brokenImages": 0,
-      "missingAlt": 0
+      "h1": 1
     },
     {
       "locale": "id",
+      "route": "privacy/",
       "width": 1440,
-      "route": "research/",
       "overflow": false,
-      "h1": 1,
       "dir": "ltr",
-      "brokenImages": 0,
-      "missingAlt": 0
+      "h1": 1
     },
     {
       "locale": "id",
+      "route": "billing/",
       "width": 1440,
+      "overflow": false,
+      "dir": "ltr",
+      "h1": 1
+    },
+    {
+      "locale": "id",
+      "route": "ai-guidelines/",
+      "width": 1440,
+      "overflow": false,
+      "dir": "ltr",
+      "h1": 1
+    },
+    {
+      "locale": "id",
+      "route": "report/",
+      "width": 1440,
+      "overflow": false,
+      "dir": "ltr",
+      "h1": 1
+    },
+    {
+      "locale": "id",
       "route": "research/q001/",
-      "overflow": false,
-      "h1": 1,
-      "dir": "ltr",
-      "brokenImages": 0,
-      "missingAlt": 0
-    },
-    {
-      "locale": "id",
       "width": 1440,
-      "route": "research/corpus/",
       "overflow": false,
-      "h1": 1,
       "dir": "ltr",
-      "brokenImages": 0,
-      "missingAlt": 0
+      "h1": 1
     },
     {
       "locale": "id",
-      "width": 1440,
-      "route": "contact/",
-      "overflow": false,
-      "h1": 1,
-      "dir": "ltr",
-      "brokenImages": 0,
-      "missingAlt": 0
-    },
-    {
-      "locale": "id",
-      "width": 390,
       "route": "",
+      "width": 390,
       "overflow": false,
-      "h1": 1,
       "dir": "ltr",
-      "brokenImages": 0,
-      "missingAlt": 0
+      "h1": 1
     },
     {
       "locale": "id",
-      "width": 390,
-      "route": "tahawwulat/",
-      "overflow": false,
-      "h1": 1,
-      "dir": "ltr",
-      "brokenImages": 0,
-      "missingAlt": 0
-    },
-    {
-      "locale": "id",
-      "width": 390,
       "route": "library/",
+      "width": 390,
       "overflow": false,
-      "h1": 1,
       "dir": "ltr",
-      "brokenImages": 0,
-      "missingAlt": 0
+      "h1": 1
     },
     {
       "locale": "id",
-      "width": 390,
-      "route": "library/fiqh-tahawwulat/",
-      "overflow": false,
-      "h1": 1,
-      "dir": "ltr",
-      "brokenImages": 0,
-      "missingAlt": 0
-    },
-    {
-      "locale": "id",
-      "width": 390,
       "route": "access/",
+      "width": 390,
       "overflow": false,
-      "h1": 1,
       "dir": "ltr",
-      "brokenImages": 0,
-      "missingAlt": 0
+      "h1": 1
     },
     {
       "locale": "id",
-      "width": 390,
       "route": "download/",
+      "width": 390,
       "overflow": false,
-      "h1": 1,
       "dir": "ltr",
-      "brokenImages": 0,
-      "missingAlt": 0
+      "h1": 1
     },
     {
       "locale": "id",
-      "width": 390,
-      "route": "about/",
-      "overflow": false,
-      "h1": 1,
-      "dir": "ltr",
-      "brokenImages": 0,
-      "missingAlt": 0
-    },
-    {
-      "locale": "id",
-      "width": 390,
-      "route": "privacy/",
-      "overflow": false,
-      "h1": 1,
-      "dir": "ltr",
-      "brokenImages": 0,
-      "missingAlt": 0
-    },
-    {
-      "locale": "id",
-      "width": 390,
       "route": "terms/",
+      "width": 390,
       "overflow": false,
-      "h1": 1,
       "dir": "ltr",
-      "brokenImages": 0,
-      "missingAlt": 0
+      "h1": 1
     },
     {
       "locale": "id",
+      "route": "privacy/",
       "width": 390,
-      "route": "research/",
       "overflow": false,
-      "h1": 1,
       "dir": "ltr",
-      "brokenImages": 0,
-      "missingAlt": 0
+      "h1": 1
     },
     {
       "locale": "id",
+      "route": "billing/",
       "width": 390,
+      "overflow": false,
+      "dir": "ltr",
+      "h1": 1
+    },
+    {
+      "locale": "id",
+      "route": "ai-guidelines/",
+      "width": 390,
+      "overflow": false,
+      "dir": "ltr",
+      "h1": 1
+    },
+    {
+      "locale": "id",
+      "route": "report/",
+      "width": 390,
+      "overflow": false,
+      "dir": "ltr",
+      "h1": 1
+    },
+    {
+      "locale": "id",
       "route": "research/q001/",
-      "overflow": false,
-      "h1": 1,
-      "dir": "ltr",
-      "brokenImages": 0,
-      "missingAlt": 0
-    },
-    {
-      "locale": "id",
       "width": 390,
-      "route": "research/corpus/",
       "overflow": false,
-      "h1": 1,
       "dir": "ltr",
-      "brokenImages": 0,
-      "missingAlt": 0
+      "h1": 1
     },
     {
       "locale": "id",
-      "width": 390,
-      "route": "contact/",
-      "overflow": false,
-      "h1": 1,
-      "dir": "ltr",
-      "brokenImages": 0,
-      "missingAlt": 0
-    },
-    {
-      "locale": "id",
-      "width": 320,
       "route": "",
+      "width": 320,
       "overflow": false,
-      "h1": 1,
       "dir": "ltr",
-      "brokenImages": 0,
-      "missingAlt": 0
+      "h1": 1
     },
     {
       "locale": "id",
-      "width": 320,
-      "route": "tahawwulat/",
-      "overflow": false,
-      "h1": 1,
-      "dir": "ltr",
-      "brokenImages": 0,
-      "missingAlt": 0
-    },
-    {
-      "locale": "id",
-      "width": 320,
       "route": "library/",
+      "width": 320,
       "overflow": false,
-      "h1": 1,
       "dir": "ltr",
-      "brokenImages": 0,
-      "missingAlt": 0
+      "h1": 1
     },
     {
       "locale": "id",
-      "width": 320,
-      "route": "library/fiqh-tahawwulat/",
-      "overflow": false,
-      "h1": 1,
-      "dir": "ltr",
-      "brokenImages": 0,
-      "missingAlt": 0
-    },
-    {
-      "locale": "id",
-      "width": 320,
       "route": "access/",
+      "width": 320,
       "overflow": false,
-      "h1": 1,
       "dir": "ltr",
-      "brokenImages": 0,
-      "missingAlt": 0
+      "h1": 1
     },
     {
       "locale": "id",
-      "width": 320,
       "route": "download/",
+      "width": 320,
       "overflow": false,
-      "h1": 1,
       "dir": "ltr",
-      "brokenImages": 0,
-      "missingAlt": 0
+      "h1": 1
     },
     {
       "locale": "id",
-      "width": 320,
-      "route": "about/",
-      "overflow": false,
-      "h1": 1,
-      "dir": "ltr",
-      "brokenImages": 0,
-      "missingAlt": 0
-    },
-    {
-      "locale": "id",
-      "width": 320,
-      "route": "privacy/",
-      "overflow": false,
-      "h1": 1,
-      "dir": "ltr",
-      "brokenImages": 0,
-      "missingAlt": 0
-    },
-    {
-      "locale": "id",
-      "width": 320,
       "route": "terms/",
+      "width": 320,
       "overflow": false,
-      "h1": 1,
       "dir": "ltr",
-      "brokenImages": 0,
-      "missingAlt": 0
+      "h1": 1
     },
     {
       "locale": "id",
+      "route": "privacy/",
       "width": 320,
-      "route": "research/",
       "overflow": false,
-      "h1": 1,
       "dir": "ltr",
-      "brokenImages": 0,
-      "missingAlt": 0
+      "h1": 1
     },
     {
       "locale": "id",
+      "route": "billing/",
       "width": 320,
+      "overflow": false,
+      "dir": "ltr",
+      "h1": 1
+    },
+    {
+      "locale": "id",
+      "route": "ai-guidelines/",
+      "width": 320,
+      "overflow": false,
+      "dir": "ltr",
+      "h1": 1
+    },
+    {
+      "locale": "id",
+      "route": "report/",
+      "width": 320,
+      "overflow": false,
+      "dir": "ltr",
+      "h1": 1
+    },
+    {
+      "locale": "id",
       "route": "research/q001/",
-      "overflow": false,
-      "h1": 1,
-      "dir": "ltr",
-      "brokenImages": 0,
-      "missingAlt": 0
-    },
-    {
-      "locale": "id",
       "width": 320,
-      "route": "research/corpus/",
       "overflow": false,
-      "h1": 1,
       "dir": "ltr",
-      "brokenImages": 0,
-      "missingAlt": 0
-    },
-    {
-      "locale": "id",
-      "width": 320,
-      "route": "contact/",
-      "overflow": false,
-      "h1": 1,
-      "dir": "ltr",
-      "brokenImages": 0,
-      "missingAlt": 0
+      "h1": 1
     },
     {
       "locale": "en",
-      "width": 1440,
       "route": "",
+      "width": 1440,
       "overflow": false,
-      "h1": 1,
       "dir": "ltr",
-      "brokenImages": 0,
-      "missingAlt": 0
+      "h1": 1
     },
     {
       "locale": "en",
-      "width": 1440,
-      "route": "tahawwulat/",
-      "overflow": false,
-      "h1": 1,
-      "dir": "ltr",
-      "brokenImages": 0,
-      "missingAlt": 0
-    },
-    {
-      "locale": "en",
-      "width": 1440,
       "route": "library/",
+      "width": 1440,
       "overflow": false,
-      "h1": 1,
       "dir": "ltr",
-      "brokenImages": 0,
-      "missingAlt": 0
+      "h1": 1
     },
     {
       "locale": "en",
-      "width": 1440,
-      "route": "library/fiqh-tahawwulat/",
-      "overflow": false,
-      "h1": 1,
-      "dir": "ltr",
-      "brokenImages": 0,
-      "missingAlt": 0
-    },
-    {
-      "locale": "en",
-      "width": 1440,
       "route": "access/",
+      "width": 1440,
       "overflow": false,
-      "h1": 1,
       "dir": "ltr",
-      "brokenImages": 0,
-      "missingAlt": 0
+      "h1": 1
     },
     {
       "locale": "en",
-      "width": 1440,
       "route": "download/",
+      "width": 1440,
       "overflow": false,
-      "h1": 1,
       "dir": "ltr",
-      "brokenImages": 0,
-      "missingAlt": 0
+      "h1": 1
     },
     {
       "locale": "en",
-      "width": 1440,
-      "route": "about/",
-      "overflow": false,
-      "h1": 1,
-      "dir": "ltr",
-      "brokenImages": 0,
-      "missingAlt": 0
-    },
-    {
-      "locale": "en",
-      "width": 1440,
-      "route": "privacy/",
-      "overflow": false,
-      "h1": 1,
-      "dir": "ltr",
-      "brokenImages": 0,
-      "missingAlt": 0
-    },
-    {
-      "locale": "en",
-      "width": 1440,
       "route": "terms/",
+      "width": 1440,
       "overflow": false,
-      "h1": 1,
       "dir": "ltr",
-      "brokenImages": 0,
-      "missingAlt": 0
+      "h1": 1
     },
     {
       "locale": "en",
+      "route": "privacy/",
       "width": 1440,
-      "route": "research/",
       "overflow": false,
-      "h1": 1,
       "dir": "ltr",
-      "brokenImages": 0,
-      "missingAlt": 0
+      "h1": 1
     },
     {
       "locale": "en",
+      "route": "billing/",
       "width": 1440,
+      "overflow": false,
+      "dir": "ltr",
+      "h1": 1
+    },
+    {
+      "locale": "en",
+      "route": "ai-guidelines/",
+      "width": 1440,
+      "overflow": false,
+      "dir": "ltr",
+      "h1": 1
+    },
+    {
+      "locale": "en",
+      "route": "report/",
+      "width": 1440,
+      "overflow": false,
+      "dir": "ltr",
+      "h1": 1
+    },
+    {
+      "locale": "en",
       "route": "research/q001/",
-      "overflow": false,
-      "h1": 1,
-      "dir": "ltr",
-      "brokenImages": 0,
-      "missingAlt": 0
-    },
-    {
-      "locale": "en",
       "width": 1440,
-      "route": "research/corpus/",
       "overflow": false,
-      "h1": 1,
       "dir": "ltr",
-      "brokenImages": 0,
-      "missingAlt": 0
+      "h1": 1
     },
     {
       "locale": "en",
-      "width": 1440,
-      "route": "contact/",
-      "overflow": false,
-      "h1": 1,
-      "dir": "ltr",
-      "brokenImages": 0,
-      "missingAlt": 0
-    },
-    {
-      "locale": "en",
-      "width": 390,
       "route": "",
+      "width": 390,
       "overflow": false,
-      "h1": 1,
       "dir": "ltr",
-      "brokenImages": 0,
-      "missingAlt": 0
+      "h1": 1
     },
     {
       "locale": "en",
-      "width": 390,
-      "route": "tahawwulat/",
-      "overflow": false,
-      "h1": 1,
-      "dir": "ltr",
-      "brokenImages": 0,
-      "missingAlt": 0
-    },
-    {
-      "locale": "en",
-      "width": 390,
       "route": "library/",
+      "width": 390,
       "overflow": false,
-      "h1": 1,
       "dir": "ltr",
-      "brokenImages": 0,
-      "missingAlt": 0
+      "h1": 1
     },
     {
       "locale": "en",
-      "width": 390,
-      "route": "library/fiqh-tahawwulat/",
-      "overflow": false,
-      "h1": 1,
-      "dir": "ltr",
-      "brokenImages": 0,
-      "missingAlt": 0
-    },
-    {
-      "locale": "en",
-      "width": 390,
       "route": "access/",
+      "width": 390,
       "overflow": false,
-      "h1": 1,
       "dir": "ltr",
-      "brokenImages": 0,
-      "missingAlt": 0
+      "h1": 1
     },
     {
       "locale": "en",
-      "width": 390,
       "route": "download/",
+      "width": 390,
       "overflow": false,
-      "h1": 1,
       "dir": "ltr",
-      "brokenImages": 0,
-      "missingAlt": 0
+      "h1": 1
     },
     {
       "locale": "en",
-      "width": 390,
-      "route": "about/",
-      "overflow": false,
-      "h1": 1,
-      "dir": "ltr",
-      "brokenImages": 0,
-      "missingAlt": 0
-    },
-    {
-      "locale": "en",
-      "width": 390,
-      "route": "privacy/",
-      "overflow": false,
-      "h1": 1,
-      "dir": "ltr",
-      "brokenImages": 0,
-      "missingAlt": 0
-    },
-    {
-      "locale": "en",
-      "width": 390,
       "route": "terms/",
+      "width": 390,
       "overflow": false,
-      "h1": 1,
       "dir": "ltr",
-      "brokenImages": 0,
-      "missingAlt": 0
+      "h1": 1
     },
     {
       "locale": "en",
+      "route": "privacy/",
       "width": 390,
-      "route": "research/",
       "overflow": false,
-      "h1": 1,
       "dir": "ltr",
-      "brokenImages": 0,
-      "missingAlt": 0
+      "h1": 1
     },
     {
       "locale": "en",
+      "route": "billing/",
       "width": 390,
+      "overflow": false,
+      "dir": "ltr",
+      "h1": 1
+    },
+    {
+      "locale": "en",
+      "route": "ai-guidelines/",
+      "width": 390,
+      "overflow": false,
+      "dir": "ltr",
+      "h1": 1
+    },
+    {
+      "locale": "en",
+      "route": "report/",
+      "width": 390,
+      "overflow": false,
+      "dir": "ltr",
+      "h1": 1
+    },
+    {
+      "locale": "en",
       "route": "research/q001/",
-      "overflow": false,
-      "h1": 1,
-      "dir": "ltr",
-      "brokenImages": 0,
-      "missingAlt": 0
-    },
-    {
-      "locale": "en",
       "width": 390,
-      "route": "research/corpus/",
       "overflow": false,
-      "h1": 1,
       "dir": "ltr",
-      "brokenImages": 0,
-      "missingAlt": 0
+      "h1": 1
     },
     {
       "locale": "en",
-      "width": 390,
-      "route": "contact/",
-      "overflow": false,
-      "h1": 1,
-      "dir": "ltr",
-      "brokenImages": 0,
-      "missingAlt": 0
-    },
-    {
-      "locale": "en",
-      "width": 320,
       "route": "",
+      "width": 320,
       "overflow": false,
-      "h1": 1,
       "dir": "ltr",
-      "brokenImages": 0,
-      "missingAlt": 0
+      "h1": 1
     },
     {
       "locale": "en",
-      "width": 320,
-      "route": "tahawwulat/",
-      "overflow": false,
-      "h1": 1,
-      "dir": "ltr",
-      "brokenImages": 0,
-      "missingAlt": 0
-    },
-    {
-      "locale": "en",
-      "width": 320,
       "route": "library/",
+      "width": 320,
       "overflow": false,
-      "h1": 1,
       "dir": "ltr",
-      "brokenImages": 0,
-      "missingAlt": 0
+      "h1": 1
     },
     {
       "locale": "en",
-      "width": 320,
-      "route": "library/fiqh-tahawwulat/",
-      "overflow": false,
-      "h1": 1,
-      "dir": "ltr",
-      "brokenImages": 0,
-      "missingAlt": 0
-    },
-    {
-      "locale": "en",
-      "width": 320,
       "route": "access/",
+      "width": 320,
       "overflow": false,
-      "h1": 1,
       "dir": "ltr",
-      "brokenImages": 0,
-      "missingAlt": 0
+      "h1": 1
     },
     {
       "locale": "en",
-      "width": 320,
       "route": "download/",
+      "width": 320,
       "overflow": false,
-      "h1": 1,
       "dir": "ltr",
-      "brokenImages": 0,
-      "missingAlt": 0
+      "h1": 1
     },
     {
       "locale": "en",
-      "width": 320,
-      "route": "about/",
-      "overflow": false,
-      "h1": 1,
-      "dir": "ltr",
-      "brokenImages": 0,
-      "missingAlt": 0
-    },
-    {
-      "locale": "en",
-      "width": 320,
-      "route": "privacy/",
-      "overflow": false,
-      "h1": 1,
-      "dir": "ltr",
-      "brokenImages": 0,
-      "missingAlt": 0
-    },
-    {
-      "locale": "en",
-      "width": 320,
       "route": "terms/",
+      "width": 320,
       "overflow": false,
-      "h1": 1,
       "dir": "ltr",
-      "brokenImages": 0,
-      "missingAlt": 0
+      "h1": 1
     },
     {
       "locale": "en",
+      "route": "privacy/",
       "width": 320,
-      "route": "research/",
       "overflow": false,
-      "h1": 1,
       "dir": "ltr",
-      "brokenImages": 0,
-      "missingAlt": 0
+      "h1": 1
     },
     {
       "locale": "en",
+      "route": "billing/",
       "width": 320,
+      "overflow": false,
+      "dir": "ltr",
+      "h1": 1
+    },
+    {
+      "locale": "en",
+      "route": "ai-guidelines/",
+      "width": 320,
+      "overflow": false,
+      "dir": "ltr",
+      "h1": 1
+    },
+    {
+      "locale": "en",
+      "route": "report/",
+      "width": 320,
+      "overflow": false,
+      "dir": "ltr",
+      "h1": 1
+    },
+    {
+      "locale": "en",
       "route": "research/q001/",
-      "overflow": false,
-      "h1": 1,
-      "dir": "ltr",
-      "brokenImages": 0,
-      "missingAlt": 0
-    },
-    {
-      "locale": "en",
       "width": 320,
-      "route": "research/corpus/",
       "overflow": false,
-      "h1": 1,
       "dir": "ltr",
-      "brokenImages": 0,
-      "missingAlt": 0
-    },
-    {
-      "locale": "en",
-      "width": 320,
-      "route": "contact/",
-      "overflow": false,
-      "h1": 1,
-      "dir": "ltr",
-      "brokenImages": 0,
-      "missingAlt": 0
+      "h1": 1
     },
     {
       "locale": "ar",
-      "width": 1440,
       "route": "",
+      "width": 1440,
       "overflow": false,
-      "h1": 1,
       "dir": "rtl",
-      "brokenImages": 0,
-      "missingAlt": 0
+      "h1": 1
     },
     {
       "locale": "ar",
-      "width": 1440,
-      "route": "tahawwulat/",
-      "overflow": false,
-      "h1": 1,
-      "dir": "rtl",
-      "brokenImages": 0,
-      "missingAlt": 0
-    },
-    {
-      "locale": "ar",
-      "width": 1440,
       "route": "library/",
+      "width": 1440,
       "overflow": false,
-      "h1": 1,
       "dir": "rtl",
-      "brokenImages": 0,
-      "missingAlt": 0
+      "h1": 1
     },
     {
       "locale": "ar",
-      "width": 1440,
-      "route": "library/fiqh-tahawwulat/",
-      "overflow": false,
-      "h1": 1,
-      "dir": "rtl",
-      "brokenImages": 0,
-      "missingAlt": 0
-    },
-    {
-      "locale": "ar",
-      "width": 1440,
       "route": "access/",
+      "width": 1440,
       "overflow": false,
-      "h1": 1,
       "dir": "rtl",
-      "brokenImages": 0,
-      "missingAlt": 0
+      "h1": 1
     },
     {
       "locale": "ar",
-      "width": 1440,
       "route": "download/",
+      "width": 1440,
       "overflow": false,
-      "h1": 1,
       "dir": "rtl",
-      "brokenImages": 0,
-      "missingAlt": 0
+      "h1": 1
     },
     {
       "locale": "ar",
-      "width": 1440,
-      "route": "about/",
-      "overflow": false,
-      "h1": 1,
-      "dir": "rtl",
-      "brokenImages": 0,
-      "missingAlt": 0
-    },
-    {
-      "locale": "ar",
-      "width": 1440,
-      "route": "privacy/",
-      "overflow": false,
-      "h1": 1,
-      "dir": "rtl",
-      "brokenImages": 0,
-      "missingAlt": 0
-    },
-    {
-      "locale": "ar",
-      "width": 1440,
       "route": "terms/",
+      "width": 1440,
       "overflow": false,
-      "h1": 1,
       "dir": "rtl",
-      "brokenImages": 0,
-      "missingAlt": 0
+      "h1": 1
     },
     {
       "locale": "ar",
+      "route": "privacy/",
       "width": 1440,
-      "route": "research/",
       "overflow": false,
-      "h1": 1,
       "dir": "rtl",
-      "brokenImages": 0,
-      "missingAlt": 0
+      "h1": 1
     },
     {
       "locale": "ar",
+      "route": "billing/",
       "width": 1440,
+      "overflow": false,
+      "dir": "rtl",
+      "h1": 1
+    },
+    {
+      "locale": "ar",
+      "route": "ai-guidelines/",
+      "width": 1440,
+      "overflow": false,
+      "dir": "rtl",
+      "h1": 1
+    },
+    {
+      "locale": "ar",
+      "route": "report/",
+      "width": 1440,
+      "overflow": false,
+      "dir": "rtl",
+      "h1": 1
+    },
+    {
+      "locale": "ar",
       "route": "research/q001/",
-      "overflow": false,
-      "h1": 1,
-      "dir": "rtl",
-      "brokenImages": 0,
-      "missingAlt": 0
-    },
-    {
-      "locale": "ar",
       "width": 1440,
-      "route": "research/corpus/",
       "overflow": false,
-      "h1": 1,
       "dir": "rtl",
-      "brokenImages": 0,
-      "missingAlt": 0
+      "h1": 1
     },
     {
       "locale": "ar",
-      "width": 1440,
-      "route": "contact/",
-      "overflow": false,
-      "h1": 1,
-      "dir": "rtl",
-      "brokenImages": 0,
-      "missingAlt": 0
-    },
-    {
-      "locale": "ar",
-      "width": 390,
       "route": "",
+      "width": 390,
       "overflow": false,
-      "h1": 1,
       "dir": "rtl",
-      "brokenImages": 0,
-      "missingAlt": 0
+      "h1": 1
     },
     {
       "locale": "ar",
-      "width": 390,
-      "route": "tahawwulat/",
-      "overflow": false,
-      "h1": 1,
-      "dir": "rtl",
-      "brokenImages": 0,
-      "missingAlt": 0
-    },
-    {
-      "locale": "ar",
-      "width": 390,
       "route": "library/",
+      "width": 390,
       "overflow": false,
-      "h1": 1,
       "dir": "rtl",
-      "brokenImages": 0,
-      "missingAlt": 0
+      "h1": 1
     },
     {
       "locale": "ar",
-      "width": 390,
-      "route": "library/fiqh-tahawwulat/",
-      "overflow": false,
-      "h1": 1,
-      "dir": "rtl",
-      "brokenImages": 0,
-      "missingAlt": 0
-    },
-    {
-      "locale": "ar",
-      "width": 390,
       "route": "access/",
+      "width": 390,
       "overflow": false,
-      "h1": 1,
       "dir": "rtl",
-      "brokenImages": 0,
-      "missingAlt": 0
+      "h1": 1
     },
     {
       "locale": "ar",
-      "width": 390,
       "route": "download/",
+      "width": 390,
       "overflow": false,
-      "h1": 1,
       "dir": "rtl",
-      "brokenImages": 0,
-      "missingAlt": 0
+      "h1": 1
     },
     {
       "locale": "ar",
-      "width": 390,
-      "route": "about/",
-      "overflow": false,
-      "h1": 1,
-      "dir": "rtl",
-      "brokenImages": 0,
-      "missingAlt": 0
-    },
-    {
-      "locale": "ar",
-      "width": 390,
-      "route": "privacy/",
-      "overflow": false,
-      "h1": 1,
-      "dir": "rtl",
-      "brokenImages": 0,
-      "missingAlt": 0
-    },
-    {
-      "locale": "ar",
-      "width": 390,
       "route": "terms/",
+      "width": 390,
       "overflow": false,
-      "h1": 1,
       "dir": "rtl",
-      "brokenImages": 0,
-      "missingAlt": 0
+      "h1": 1
     },
     {
       "locale": "ar",
+      "route": "privacy/",
       "width": 390,
-      "route": "research/",
       "overflow": false,
-      "h1": 1,
       "dir": "rtl",
-      "brokenImages": 0,
-      "missingAlt": 0
+      "h1": 1
     },
     {
       "locale": "ar",
+      "route": "billing/",
       "width": 390,
+      "overflow": false,
+      "dir": "rtl",
+      "h1": 1
+    },
+    {
+      "locale": "ar",
+      "route": "ai-guidelines/",
+      "width": 390,
+      "overflow": false,
+      "dir": "rtl",
+      "h1": 1
+    },
+    {
+      "locale": "ar",
+      "route": "report/",
+      "width": 390,
+      "overflow": false,
+      "dir": "rtl",
+      "h1": 1
+    },
+    {
+      "locale": "ar",
       "route": "research/q001/",
-      "overflow": false,
-      "h1": 1,
-      "dir": "rtl",
-      "brokenImages": 0,
-      "missingAlt": 0
-    },
-    {
-      "locale": "ar",
       "width": 390,
-      "route": "research/corpus/",
       "overflow": false,
-      "h1": 1,
       "dir": "rtl",
-      "brokenImages": 0,
-      "missingAlt": 0
+      "h1": 1
     },
     {
       "locale": "ar",
-      "width": 390,
-      "route": "contact/",
-      "overflow": false,
-      "h1": 1,
-      "dir": "rtl",
-      "brokenImages": 0,
-      "missingAlt": 0
-    },
-    {
-      "locale": "ar",
-      "width": 320,
       "route": "",
+      "width": 320,
       "overflow": false,
-      "h1": 1,
       "dir": "rtl",
-      "brokenImages": 0,
-      "missingAlt": 0
+      "h1": 1
     },
     {
       "locale": "ar",
-      "width": 320,
-      "route": "tahawwulat/",
-      "overflow": false,
-      "h1": 1,
-      "dir": "rtl",
-      "brokenImages": 0,
-      "missingAlt": 0
-    },
-    {
-      "locale": "ar",
-      "width": 320,
       "route": "library/",
+      "width": 320,
       "overflow": false,
-      "h1": 1,
       "dir": "rtl",
-      "brokenImages": 0,
-      "missingAlt": 0
+      "h1": 1
     },
     {
       "locale": "ar",
-      "width": 320,
-      "route": "library/fiqh-tahawwulat/",
-      "overflow": false,
-      "h1": 1,
-      "dir": "rtl",
-      "brokenImages": 0,
-      "missingAlt": 0
-    },
-    {
-      "locale": "ar",
-      "width": 320,
       "route": "access/",
+      "width": 320,
       "overflow": false,
-      "h1": 1,
       "dir": "rtl",
-      "brokenImages": 0,
-      "missingAlt": 0
+      "h1": 1
     },
     {
       "locale": "ar",
-      "width": 320,
       "route": "download/",
+      "width": 320,
       "overflow": false,
-      "h1": 1,
       "dir": "rtl",
-      "brokenImages": 0,
-      "missingAlt": 0
+      "h1": 1
     },
     {
       "locale": "ar",
-      "width": 320,
-      "route": "about/",
-      "overflow": false,
-      "h1": 1,
-      "dir": "rtl",
-      "brokenImages": 0,
-      "missingAlt": 0
-    },
-    {
-      "locale": "ar",
-      "width": 320,
-      "route": "privacy/",
-      "overflow": false,
-      "h1": 1,
-      "dir": "rtl",
-      "brokenImages": 0,
-      "missingAlt": 0
-    },
-    {
-      "locale": "ar",
-      "width": 320,
       "route": "terms/",
+      "width": 320,
       "overflow": false,
-      "h1": 1,
       "dir": "rtl",
-      "brokenImages": 0,
-      "missingAlt": 0
+      "h1": 1
     },
     {
       "locale": "ar",
+      "route": "privacy/",
       "width": 320,
-      "route": "research/",
       "overflow": false,
-      "h1": 1,
       "dir": "rtl",
-      "brokenImages": 0,
-      "missingAlt": 0
+      "h1": 1
     },
     {
       "locale": "ar",
+      "route": "billing/",
       "width": 320,
+      "overflow": false,
+      "dir": "rtl",
+      "h1": 1
+    },
+    {
+      "locale": "ar",
+      "route": "ai-guidelines/",
+      "width": 320,
+      "overflow": false,
+      "dir": "rtl",
+      "h1": 1
+    },
+    {
+      "locale": "ar",
+      "route": "report/",
+      "width": 320,
+      "overflow": false,
+      "dir": "rtl",
+      "h1": 1
+    },
+    {
+      "locale": "ar",
       "route": "research/q001/",
-      "overflow": false,
-      "h1": 1,
-      "dir": "rtl",
-      "brokenImages": 0,
-      "missingAlt": 0
-    },
-    {
-      "locale": "ar",
       "width": 320,
-      "route": "research/corpus/",
       "overflow": false,
-      "h1": 1,
       "dir": "rtl",
-      "brokenImages": 0,
-      "missingAlt": 0
-    },
-    {
-      "locale": "ar",
-      "width": 320,
-      "route": "contact/",
-      "overflow": false,
-      "h1": 1,
-      "dir": "rtl",
-      "brokenImages": 0,
-      "missingAlt": 0
+      "h1": 1
     }
   ],
   "interactions": [
-    "Arabic search and discipline filter",
-    "Research route, flagship anchor and keyboard framework selection",
-    "App-scoped prices and access contact route",
-    "Pending distribution has no false download action or QR loop",
-    "Source pending status, focus return, and keyboard FAQ",
-    "Dark preference persists",
-    "Language switch preserves flagship route and anchor",
-    "Arabic mobile flagship navigation",
-    "Report draft downloads without claiming submission",
-    "No-JavaScript flagship and root fallback"
+    "Arabic diacritic search, discipline filter, empty state, reset, URL state",
+    "Desktop Indonesian hero description occupies two lines",
+    "Source dialog opens, Escape closes, keyboard focus restored",
+    "Theme persists after reload",
+    "Language switch preserves route, query and fragment",
+    "Arabic mobile menu navigation",
+    "Unavailable platforms expose no download links",
+    "Mobile first viewport contains a working accessible download link",
+    "Ten real FAQ answers toggle with Enter and Space, preserving focus",
+    "Six computed metadata totals appear immediately after the hero",
+    "Report saved through real local API with report ID",
+    "Failed report retains content and offers draft download",
+    "Mobile archive tabs and reading mode",
+    "Reduced-motion preference disables parallax",
+    "Core Arabic content and navigation available without JavaScript"
   ],
   "accessibility": [
     {
-      "theme": "light",
       "locale": "id",
       "route": "",
       "violations": []
     },
     {
-      "theme": "light",
-      "locale": "id",
-      "route": "tahawwulat/",
-      "violations": []
-    },
-    {
-      "theme": "light",
       "locale": "id",
       "route": "access/",
       "violations": []
     },
     {
-      "theme": "light",
       "locale": "id",
-      "route": "research/corpus/",
+      "route": "report/",
       "violations": []
     },
     {
-      "theme": "light",
-      "locale": "id",
-      "route": "contact/",
-      "violations": []
-    },
-    {
-      "theme": "light",
-      "locale": "id",
-      "route": "privacy/",
-      "violations": []
-    },
-    {
-      "theme": "light",
-      "locale": "id",
-      "route": "research/q001/",
-      "violations": []
-    },
-    {
-      "theme": "light",
       "locale": "en",
       "route": "",
       "violations": []
     },
     {
-      "theme": "light",
-      "locale": "en",
-      "route": "tahawwulat/",
-      "violations": []
-    },
-    {
-      "theme": "light",
       "locale": "en",
       "route": "access/",
       "violations": []
     },
     {
-      "theme": "light",
       "locale": "en",
-      "route": "research/corpus/",
+      "route": "report/",
       "violations": []
     },
     {
-      "theme": "light",
-      "locale": "en",
-      "route": "contact/",
-      "violations": []
-    },
-    {
-      "theme": "light",
-      "locale": "en",
-      "route": "privacy/",
-      "violations": []
-    },
-    {
-      "theme": "light",
-      "locale": "en",
-      "route": "research/q001/",
-      "violations": []
-    },
-    {
-      "theme": "light",
       "locale": "ar",
       "route": "",
       "violations": []
     },
     {
-      "theme": "light",
-      "locale": "ar",
-      "route": "tahawwulat/",
-      "violations": []
-    },
-    {
-      "theme": "light",
       "locale": "ar",
       "route": "access/",
       "violations": []
     },
     {
-      "theme": "light",
       "locale": "ar",
-      "route": "research/corpus/",
-      "violations": []
-    },
-    {
-      "theme": "light",
-      "locale": "ar",
-      "route": "contact/",
-      "violations": []
-    },
-    {
-      "theme": "light",
-      "locale": "ar",
-      "route": "privacy/",
-      "violations": []
-    },
-    {
-      "theme": "light",
-      "locale": "ar",
-      "route": "research/q001/",
-      "violations": []
-    },
-    {
-      "theme": "dark",
-      "locale": "id",
-      "route": "",
-      "violations": []
-    },
-    {
-      "theme": "dark",
-      "locale": "id",
-      "route": "tahawwulat/",
-      "violations": []
-    },
-    {
-      "theme": "dark",
-      "locale": "id",
-      "route": "access/",
-      "violations": []
-    },
-    {
-      "theme": "dark",
-      "locale": "id",
-      "route": "research/corpus/",
-      "violations": []
-    },
-    {
-      "theme": "dark",
-      "locale": "id",
-      "route": "contact/",
-      "violations": []
-    },
-    {
-      "theme": "dark",
-      "locale": "id",
-      "route": "privacy/",
-      "violations": []
-    },
-    {
-      "theme": "dark",
-      "locale": "id",
-      "route": "research/q001/",
-      "violations": []
-    },
-    {
-      "theme": "dark",
-      "locale": "en",
-      "route": "",
-      "violations": []
-    },
-    {
-      "theme": "dark",
-      "locale": "en",
-      "route": "tahawwulat/",
-      "violations": []
-    },
-    {
-      "theme": "dark",
-      "locale": "en",
-      "route": "access/",
-      "violations": []
-    },
-    {
-      "theme": "dark",
-      "locale": "en",
-      "route": "research/corpus/",
-      "violations": []
-    },
-    {
-      "theme": "dark",
-      "locale": "en",
-      "route": "contact/",
-      "violations": []
-    },
-    {
-      "theme": "dark",
-      "locale": "en",
-      "route": "privacy/",
-      "violations": []
-    },
-    {
-      "theme": "dark",
-      "locale": "en",
-      "route": "research/q001/",
-      "violations": []
-    },
-    {
-      "theme": "dark",
-      "locale": "ar",
-      "route": "",
-      "violations": []
-    },
-    {
-      "theme": "dark",
-      "locale": "ar",
-      "route": "tahawwulat/",
-      "violations": []
-    },
-    {
-      "theme": "dark",
-      "locale": "ar",
-      "route": "access/",
-      "violations": []
-    },
-    {
-      "theme": "dark",
-      "locale": "ar",
-      "route": "research/corpus/",
-      "violations": []
-    },
-    {
-      "theme": "dark",
-      "locale": "ar",
-      "route": "contact/",
-      "violations": []
-    },
-    {
-      "theme": "dark",
-      "locale": "ar",
-      "route": "privacy/",
-      "violations": []
-    },
-    {
-      "theme": "dark",
-      "locale": "ar",
-      "route": "research/q001/",
+      "route": "report/",
       "violations": []
     }
   ],
   "errors": [],
-  "scope": "Local website artifact; no external account, payment or message submission"
+  "accessibilityMode": "Stable rendering with reduced motion; motion tested separately"
 }

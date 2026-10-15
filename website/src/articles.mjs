@@ -1,4 +1,4 @@
-// Website information; the original app v1.0 document remains a historical record.
+// Editorial articles; the canonical application policy remains separately linked.
 export const articles = {
   "how-it-works": {
     "key": "how",
@@ -79,99 +79,51 @@ export const articles = {
           "Record the text, edition, reviewer, and review date before marking a reference as verified. This record makes your findings reproducible.",
           "دوّن النص والطبعة واسم المراجع وتاريخ المقابلة قبل إثبات التحقّق من الإحالة. بهذا السجل يمكن إعادة تتبّع نتائج البحث."
         ]
-      },
-      {
-        "heading": [
-          "Layanan dan batasnya",
-          "Services and their limits",
-          "الخدمات وحدودها"
-        ],
-        "body": [
-          "Percakapan aplikasi menggunakan NotebookLM, sedangkan OpenTurath menyediakan pemilihan disiplin, katalog, dan alur telaah. Pencarian judul Arab pada katalog berbeda dari penelusuran seluruh teks kitab. Rujukan dari jawaban belum dianggap terverifikasi sebelum dibandingkan dengan edisi sumber.",
-          "App conversations use NotebookLM, while OpenTurath provides discipline selection, catalogues, and study workflows. Arabic title search differs from full-text book retrieval. Answer references are not treated as verified until compared with source editions.",
-          "تستخدم محادثات التطبيق NotebookLM، ويقدّم OpenTurath اختيار المجالات والفهارس ومسارات المطالعة. يختلف البحث في العناوين عن استرجاع النص الكامل. ولا تُعد إحالات الإجابة متحقّقًا منها قبل مقابلة المصادر."
-        ]
       }
     ]
   },
   "about": {
     "key": "about",
     "intro": [
-      "Infrastruktur riset turats, dengan sumber diutamakan.",
-      "Research infrastructure for classical texts, with sources first.",
-      "بنية بحثية للتراث تُقدّم المصدر."
+      "Ilmu lebih dekat. Adab tetap dijaga.",
+      "Knowledge within reach. Adab preserved.",
+      "العلم أقرب. والأدب محفوظ."
     ],
     "blocks": [
       {
         "heading": [
-          "Mengapa OpenTurath dibangun",
-          "Why OpenTurath is being built",
-          "لماذا يُطوَّر OpenTurath"
+          "Ruang telaah turats",
+          "A space for turath study",
+          "مساحة لمطالعة التراث"
         ],
         "body": [
-          "Penelitian turats menghubungkan ibarah, konteks, dan pendapat ulama dengan kitab serta edisinya. OpenTurath dikembangkan untuk membantu pekerjaan ini melalui katalog disiplin ilmu, asisten kajian, dan pencatatan rujukan.",
-          "Research connects Arabic passages, context, and scholarly positions with books and editions. OpenTurath is being developed to support this work through discipline catalogues, study assistants, and reference records.",
-          "يربط البحث التراثي العبارات والسياق وأقوال العلماء بالكتب وطبعاتها. يُطوَّر OpenTurath لخدمة هذا العمل بفهرسة المجالات ومساعدي المطالعة وتسجيل الإحالات."
+          "OpenTurath membantu penelusuran literatur Islam, pembacaan ibarah, dan penyimpanan Catatan lokal. AI membantu persiapan belajar, sedangkan pemahaman mendalam tetap membutuhkan guru dan sumber asli.",
+          "OpenTurath supports Islamic literature research, close reading, and local Notes. AI assists study preparation, while deeper understanding still requires teachers and original sources.",
+          "يعين OpenTurath على البحث في الكتب الإسلامية وقراءة العبارات وحفظ الملاحظات محليًا. ويساعد الذكاء الاصطناعي في الإعداد للدراسة مع بقاء الحاجة إلى أهل العلم والمصادر الأصلية."
         ]
       },
       {
         "heading": [
-          "Mengapa sumber perlu diperiksa",
-          "Why sources need review",
-          "لماذا تُراجع المصادر"
+          "Katalog dan ketersediaan",
+          "Catalogue and availability",
+          "الفهرس والإتاحة"
         ],
         "body": [
-          "AI dapat menghasilkan teks yang fasih sekaligus salah menisbahkan pendapat atau menyebut halaman yang tidak cocok. Karena itu, rujukan perlu diperiksa pada edisi sumber dan dipahami bersama konteksnya. Katalog dan jawaban AI membantu telaah, bukan menetapkan otoritas ilmiah.",
-          "AI can produce fluent text while misattributing opinions or citing a mismatched page. References need review against source editions and their context. Catalogues and AI answers support study; they do not establish scholarly authority.",
-          "قد يصوغ الذكاء الاصطناعي نصًّا بليغًا مع خطأ في العزو أو الصفحة. لذلك تُراجع الإحالة في طبعتها وسياقها. وتعين الفهارس والإجابات على المطالعة دون أن تُثبت حجية علمية."
+          "Dua puluh disiplin keilmuan, dari fikih mazhab hingga tahqiq naskah. Temukan khadim yang memahami bidang telaah Anda. Akumulasi metadata 20 modul aplikasi · 21 profil khadim, termasuk 1 dalam persiapan.",
+          "Twenty scholarly disciplines, from the schools of fiqh to manuscript study. Find an assistant dedicated to your field. Combined metadata from 20 app modules · 21 assistant profiles, including 1 in preparation.",
+          "عشرون تخصصًا علميًّا، من فقه المذاهب إلى تحقيق النصوص. اختر المساعد المختص بمجال بحثك. مجموع بيانات ٢٠ وحدة في التطبيق · ٢١ ملف مساعد، منها ملف واحد قيد الإعداد."
         ]
       },
       {
         "heading": [
-          "Yang tersedia dan yang masih dikembangkan",
-          "Available work and ongoing development",
-          "العمل المتاح وما يجري تطويره"
+          "Pengelola dan bantuan",
+          "Operator and support",
+          "الجهة المشغلة والدعم"
         ],
         "body": [
-          "Kode aplikasi memuat katalog 20 bidang, ruang Fikih Tahawwulat dengan lima pilihan asisten, catatan, bookmark, dan pengelolaan akses. Website menampilkan katalog dan arsip perbandingan Q001. Distribusi publik aplikasi serta pemeriksaan lengkap sumber dalam arsip belum tersedia di situs ini.",
-          "The app code includes 20 study fields, a Fiqh Tahawwulat space with five assistants, notes, bookmarks, and access management. This website presents the catalogue and Q001 comparison archive. Public app distribution and completed source reviews are not yet available on this site.",
-          "يتضمن كود التطبيق ٢٠ مجالًا ومساحة لفقه التحولات بخمسة مساعدين وملاحظات وعلامات وإدارة وصول. يعرض الموقع الفهرس وأرشيف Q001؛ ولا تتوفر فيه بعد تنزيلات عامة أو مراجعة مكتملة لمصادر الأرشيف."
-        ]
-      },
-      {
-        "heading": [
-          "Claude dalam pengembangan",
-          "Claude in development",
-          "Claude في التطوير"
-        ],
-        "body": [
-          "Pengelola melaporkan penggunaan Claude Code dalam pekerjaan pengembangan dan riset OpenTurath. Bukti penggunaan ini perlu dipisahkan dari integrasi API pada layanan percakapan. Pemrosesan corpus, evaluasi kutipan, dan kapasitas API menjadi arah pengembangan yang perlu didokumentasikan melalui contoh kerja serta ukuran beban yang jelas.",
-          "The operator reports using Claude Code in OpenTurath development and research. This use should be distinguished from API integration in the conversation service. Corpus processing, quotation evaluation, and API capacity are development directions requiring documented examples and workload measurements.",
-          "تذكر الجهة المشغّلة استخدام Claude Code في تطوير OpenTurath والبحث. ويختلف ذلك عن دمج API في خدمة المحادثة. تحتاج معالجة المجموعة وتقييم النصوص وتوسعة API إلى أمثلة موثّقة وقياسات لحجم العمل."
-        ]
-      },
-      {
-        "heading": [
-          "Pemeriksaan ilmiah",
-          "Scholarly review",
-          "المراجعة العلمية"
-        ],
-        "body": [
-          "Arsip Q001 mencatat satu pertanyaan, enam jawaban, dan sepuluh kutipan yang belum diperiksa terhadap edisi sumber. Belum tersedia catatan publik mengenai peserta pengujian ahli, tugas, atau hasil penilaiannya. Koreksi dapat dikirim melalui email dengan identitas kitab, edisi, dan halaman; status pemeriksaan diperbarui setelah bukti ditelaah.",
-          "Q001 records one question, six answers, and ten quotations awaiting source-edition review. Public records of expert participants, tasks, or assessment results are not yet available. Corrections can be emailed with the book, edition, and page; review status is updated after evidence is examined.",
-          "يسجّل Q001 سؤالًا وست إجابات وعشرة نصوص تنتظر مقابلة المصادر. لم تتوفر بعد سجلات عامة للمراجعين ومهامهم ونتائجهم. تُرسل التصحيحات بالبريد مع الكتاب والطبعة والصفحة، وتُحدّث الحالة بعد فحص الأدلة."
-        ]
-      },
-      {
-        "heading": [
-          "Pengelola, Tata Kelola & Bantuan",
-          "Operator, Governance and Support",
-          "الجهة المشغلة والحوكمة والدعم"
-        ],
-        "body": [
-          "Pengelola OpenTurath, Indonesia. Dikelola dengan komitmen menjaga integritas ilmiah, adab transmisi keilmuan, dan keterbukaan metodologis. Kontak resmi: openturath@gmail.com. Jam layanan Senin sampai Jumat, 09.00 sampai 17.00 WIB (UTC+7). Tanggapan awal diupayakan dalam 2 hari kerja.",
-          "Pengelola OpenTurath, Indonesia. Governed by a steadfast commitment to scholarly integrity, the adab of knowledge transmission, and methodological transparency. Official contact: openturath@gmail.com. Service hours: Monday to Friday, 09:00 to 17:00 WIB (UTC+7). Initial response is targeted within 2 business days.",
-          "الجهة المشغلة: Pengelola OpenTurath، إندونيسيا. تُدار المنصة بالتزام راسخ بصيانة الأمانة العلمية، وآداب حمل العلم، والشفافية المنهجية. للتواصل الرسمي: openturath@gmail.com. ساعات الخدمة: من الاثنين إلى الجمعة، ٠٩:٠٠ إلى ١٧:٠٠ بتوقيت جاكرتا (UTC+7). ويُستهدف الرد الأولي خلال يومي عمل."
+          "Pengelola OpenTurath, Indonesia. Kontak resmi openturath@gmail.com. Jam layanan Senin sampai Jumat, 09.00 sampai 17.00 WIB. Tanggapan awal diupayakan dalam 2 hari kerja.",
+          "Pengelola OpenTurath, Indonesia. Official contact: openturath@gmail.com. Service hours are Monday to Friday, 09:00 to 17:00 WIB (UTC+7). Initial support response is targeted within 2 business days.",
+          "الجهة المشغلة: Pengelola OpenTurath، إندونيسيا. التواصل: openturath@gmail.com. ساعات الخدمة من الاثنين إلى الجمعة، من ٠٩:٠٠ إلى ١٧:٠٠ بتوقيت جاكرتا (UTC+7). الرد الأولي خلال يومي عمل."
         ]
       }
     ]
@@ -239,21 +191,21 @@ export const articles = {
           "٥. الباقات والدفع ومدة الوصول"
         ],
         "body": [
-          "Harga, cakupan asisten, masa akses, batas penggunaan, kebutuhan akun pihak ketiga, serta biaya yang berlaku ditampilkan sebelum Anda membayar.\n\nLangganan diperpanjang secara manual. Kami tidak melakukan penagihan berulang otomatis (auto-debit) dari pembelian paket ini.\n\nMasa akses dimulai ketika aktivasi berhasil dan tanggal berakhir ditampilkan pada akun. Pembayaran diproses melalui Midtrans menurut metode yang tersedia pada saat transaksi. Keberhasilan pembayaran dan aktivasi akses adalah dua status yang berbeda. Jika dana telah dibayarkan namun langganan belum aktif, hubungi bantuan dengan nomor transaksi.",
-          "Prices, assistant scope, access duration, usage limits, third-party account requirements, and applicable fees are clearly displayed before you pay.\n\nSubscriptions are renewed manually. We do not perform recurring automatic billing (auto-debit) for purchases of these plans.\n\nThe access period begins upon successful activation, and the expiration date is displayed in your account. Payments are processed through Midtrans using methods available at transaction time. Payment success and access activation are two distinct statuses. If funds have been deducted but access remains inactive, contact support with your transaction number.",
-          "تُعرض الأسعار ونطاق المساعدين ومدة الوصول وحدود الاستخدام ومتطلبات حسابات الأطراف الثالثة والرسوم بوضوح قبل إتمام الدفع.\n\nتُجدد الاشتراكات يدويًا دون أي خصم تلقائي متكرر (auto-debit).\n\nتبدأ مدة الوصول فور اكتمال التفعيل ويظهر تاريخ الانتهاء في حسابك. تعالج المدفوعات عبر Midtrans وفق الوسائل المتاحة وقت المعاملة. نجاح الدفع وتفعيل الوصول مرحلتان منفصلتان؛ فإذا خُصم المبلغ ولم يُفعّل الاشتراك، فتواصل مع الدعم برقم المعاملة."
+          "Harga, cakupan asisten, masa akses, batas penggunaan, kebutuhan akun pihak ketiga, serta biaya yang berlaku ditampilkan sebelum Anda membayar.\n\nLangganan diperpanjang secara manual. Kami tidak melakukan penagihan berulang otomatis (auto-debit) dari pembelian paket ini.\n\nMasa akses dimulai ketika aktivasi berhasil dan tanggal berakhir ditampilkan pada akun. Pembayaran diproses melalui DOKU menurut metode yang tersedia pada saat transaksi. Keberhasilan pembayaran dan aktivasi akses adalah dua status yang berbeda. Jika dana telah dibayarkan namun langganan belum aktif, hubungi bantuan dengan nomor transaksi.",
+          "Prices, assistant scope, access duration, usage limits, third-party account requirements, and applicable fees are clearly displayed before you pay.\n\nSubscriptions are renewed manually. We do not perform recurring automatic billing (auto-debit) for purchases of these plans.\n\nThe access period begins upon successful activation, and the expiration date is displayed in your account. Payments are processed through DOKU using methods available at transaction time. Payment success and access activation are two distinct statuses. If funds have been deducted but access remains inactive, contact support with your transaction number.",
+          "تُعرض الأسعار ونطاق المساعدين ومدة الوصول وحدود الاستخدام ومتطلبات حسابات الأطراف الثالثة والرسوم بوضوح قبل إتمام الدفع.\n\nتُجدد الاشتراكات يدويًا دون أي خصم تلقائي متكرر (auto-debit).\n\nتبدأ مدة الوصول فور اكتمال التفعيل ويظهر تاريخ الانتهاء في حسابك. تعالج المدفوعات عبر DOKU وفق الوسائل المتاحة وقت المعاملة. نجاح الدفع وتفعيل الوصول مرحلتان منفصلتان؛ فإذا خُصم المبلغ ولم يُفعّل الاشتراك، فتواصل مع الدعم برقم المعاملة."
         ]
       },
       {
         "heading": [
-          "6. Layanan Pihak Ketiga (Infrastruktur Pemrosesan)",
-          "6. Third-Party Services (Processing Infrastructure)",
-          "٦. خدمات الأطراف الثالثة (البنية التحتية للمعالجة)"
+          "6. Layanan Pihak Ketiga (Google NotebookLM)",
+          "6. Third-Party Services (Google NotebookLM)",
+          "٦. خدمات الأطراف الثالثة (Google NotebookLM)"
         ],
         "body": [
-          "Percakapan dalam aplikasi menggunakan sesi Google NotebookLM melalui WebView atau jalur bridge. Teks pertanyaan, jawaban, dan konteks dokumen dapat diproses oleh layanan tersebut. Kebijakan serta pengaturan akun penyedia berlaku; penggunaan Claude Code dalam pengembangan tidak berarti percakapan pengguna diproses oleh Claude. OpenTurath tidak menggunakan materi pengguna untuk melatih model publik. Jangan memasukkan informasi rahasia ke percakapan.",
-          "App conversations use Google NotebookLM sessions through a WebView or bridge path. Questions, answers, and document context may be processed by that service. Provider policies and account settings apply; Claude Code use in development does not mean user conversations are processed by Claude. OpenTurath does not use user material to train public models. Do not submit confidential information.",
-          "تستخدم محادثات التطبيق جلسات Google NotebookLM عبر WebView أو bridge، وقد تعالج الخدمة الأسئلة والإجابات وسياق المستندات. تسري سياسات المزوّد وإعدادات الحساب؛ واستخدام Claude Code للتطوير لا يعني معالجة محادثات المستخدمين به. لا يستخدم OpenTurath مواد المستخدم لتدريب نماذج عامة. تجنّب المعلومات السرية."
+          "Fitur percakapan menggunakan NotebookLM dari Google. Aksesnya dapat bergantung pada akun, wilayah, batas penggunaan, dan ketentuan penyedia yang berlaku untuk Anda. Pembelian OpenTurath tidak dengan sendirinya mengubah jenis langganan atau hak akses akun Google Anda.\n\nJika perubahan layanan pihak ketiga menyebabkan fitur berbayar tidak dapat diberikan sesuai yang ditawarkan, kami akan menilai pemulihan akses, penggantian layanan yang Anda setujui, atau pengembalian dana sesuai hak Anda.",
+          "Conversational features utilize Google NotebookLM. Access may depend on your account, geographic region, rate limits, and provider terms applicable to you. Purchasing OpenTurath does not alter your Google subscription tier or Google account privileges.\n\nIf third-party service modifications prevent paid features from being delivered as offered, we will assess access restoration, an agreed alternative service, or a refund in accordance with your rights.",
+          "تعتمد ميزة المحادثة على Google NotebookLM، وقد يرتبط الوصول إليها بحسابك ونطاقك الجغرافي وحدود الاستخدام وشروط المزود. شراء OpenTurath لا يغيّر باقة Google أو حقوق حسابك لديها.\n\nإذا طرأت تغييرات لدى الطرف الثالث حالت دون تقديم الخدمة المدفوعة كما وُعدت، فسنقيم سبل استعادة الوصول، أو تقديم خدمة بديلة متفق عليها، أو استرداد المبلغ وفق حقوقك المقررة."
         ]
       },
       {
@@ -275,9 +227,9 @@ export const articles = {
           "٨. ملاحظات المستخدم ومواده الخاصة"
         ],
         "body": [
-          "Research Notes disimpan lokal di perangkat. Bookmark dan jawaban yang disimpan dapat disinkronkan ke Firestore ketika Anda login, termasuk kutipan dan rujukannya. Periksa jenis penyimpanan sebelum memasukkan materi pribadi.",
-          "Research Notes are stored locally. Saved bookmarks and answers can sync to Firestore when you sign in, including quotations and references. Check the storage type before entering private material.",
-          "تُحفظ Research Notes محليًّا. ويمكن مزامنة العلامات والإجابات المحفوظة مع Firestore عند تسجيل الدخول، بما فيها النصوص والإحالات. راجع نوع التخزين قبل إدخال مواد خاصة."
+          "Hak atas tulisan atau catatan yang Anda buat tetap berada pada Anda. Anda memberi izin terbatas kepada kami untuk memproses dan menyimpan materi tersebut semata-mata untuk menjalankan fitur yang Anda pilih. Izin ini tidak memindahkan kepemilikan dan kami tidak menjual atau menerbitkan catatan pribadi Anda.\n\nCatatan disimpan secara lokal pada perangkat Anda melalui penyimpanan aplikasi. Gunakan fitur salin atau berbagi yang tersedia untuk mencadangkan materi penting.",
+          "You retain ownership of any writings or notes you create. You grant us a limited license to process and store such materials solely to execute the features you select. This license does not transfer ownership, and we do not sell or publish your personal notes.\n\nNotes are stored locally on your device via application storage. Use the available copy or export features to back up critical materials.",
+          "تبقى ملكية ما تدونه من كتابات وملاحظات خالصة لك. وتمنحنا ترخيصًا محدودًا بمعالجتها وتخزينها بالقدر اللازم لتشغيل الميزات التي تختارها دون نقل للملكية، ونحن لا نبيع ملاحظاتك ولا ننشرها.\n\nتُحفظ الملاحظات محليًا في جهازك عبر ذاكرة التطبيق؛ لذا يرجى استخدام أدوات النسخ أو التصدير المتاحة للاحتفاظ بنسخ احتياطية."
         ]
       },
       {
@@ -347,9 +299,9 @@ export const articles = {
           "١٤. تعديل الشروط وبيانات التواصل"
         ],
         "body": [
-          "Informasi website diperbarui 8 Oktober 2026. Naskah aplikasi v1.0 bertanggal 13 September 2026 tersedia sebagai dokumen sebelumnya. Untuk pertanyaan tentang layanan, pemrosesan data, atau hak privasi: openturath@gmail.com. Pengelola OpenTurath, Indonesia.",
-          "Website information updated 8 October 2026. The app v1.0 text dated 13 September 2026 is available as an earlier document. For questions about services, data processing, or privacy rights: openturath@gmail.com. Pengelola OpenTurath, Indonesia.",
-          "حُدّثت معلومات الموقع في ٨ أكتوبر ٢٠٢٦. يتوفر نص التطبيق v1.0 المؤرّخ في ١٣ سبتمبر ٢٠٢٦ كوثيقة سابقة. للاستفسار عن الخدمات والبيانات وحقوق الخصوصية: openturath@gmail.com. الجهة المشغّلة في إندونيسيا."
+          "Versi dokumen: 1.0 (Berlaku sejak 13 September 2026).\n\nPerubahan penting akan diberitahukan sebelum berlaku dan tidak berlaku surut untuk menghilangkan hak yang telah timbul.\n\nPengelola: Pengelola OpenTurath\nAlamat: Indonesia\nBantuan: openturath@gmail.com\nPrivasi: openturath@gmail.com\nHak Cipta: openturath@gmail.com",
+          "Document version: 1.0 (Effective from 13 September 2026).\n\nMaterial amendments will be notified prior to becoming effective and will not apply retroactively to eliminate existing rights.\n\nOperator: Pengelola OpenTurath\nAddress: Indonesia\nSupport: openturath@gmail.com\nPrivacy: openturath@gmail.com\nCopyright: openturath@gmail.com",
+          "نسخة الوثيقة: ١.٠ (سارية من ١٣ سبتمبر ٢٠٢٦).\n\nيُشعر بالتعديلات الجوهرية قبل سريانها ولا تطبق بأثر رجعي لإسقاط حقوق مكتسبة.\n\nالمشغّل: Pengelola OpenTurath\nالعنوان: إندونيسيا\nالدعم: openturath@gmail.com\nالخصوصية: openturath@gmail.com\nحقوق النشر: openturath@gmail.com"
         ]
       }
     ],
@@ -382,9 +334,9 @@ export const articles = {
           "٢. البيانات التي تتم معالجتها"
         ],
         "body": [
-          "Kami memproses data sesuai fitur yang Anda gunakan:\n• Akun: Nama, alamat email, dan identitas profil dari akun autentikasi untuk verifikasi dan personalisasi.\n• Langganan: Paket yang dipilih, status, masa aktif, dan penggunaan voucher.\n• Pembayaran: Nomor transaksi, jumlah pembayaran, metode, waktu, dan status dari penyedia Midtrans.\n• Kontak Transaksi: Nomor WhatsApp/telepon yang Anda berikan saat pembayaran untuk pengiriman informasi aktivasi.\n• Percakapan: Pertanyaan, jawaban, dan konteks telaah yang diproses melalui sesi komputasi riset terisolasi.\n• Catatan: Catatan, kutipan, dan rujukan yang Anda simpan pada penyimpanan lokal perangkat.\n• Bantuan: Alamat kontak, isi pengaduan, nomor transaksi, dan lampiran tangkapan layar untuk penanganan masalah.\n• Sesi Teknis: Token sesi autentikasi yang aman untuk mempertahankan login di perangkat.\nResearch Notes disimpan lokal di perangkat. Bookmark dan jawaban yang disimpan dapat disinkronkan ke Firestore ketika Anda login, termasuk kutipan dan rujukannya. Periksa jenis penyimpanan sebelum memasukkan materi pribadi.",
-          "We process data based on features you use:\n• Account: Name, email address, and profile identifier from the authentication account for verification and personalization.\n• Subscription: Selected plan, status, validity dates, and voucher usage.\n• Payment: Transaction ID, payment amount, method, timestamp, and status from provider Midtrans.\n• Transaction Contact: WhatsApp/phone number provided during checkout for activation notices.\n• Conversations: Prompts, responses, and study context processed via isolated research compute sessions.\n• Notes: Notes, quotations, and locators stored in device local storage.\n• Support: Contact address, inquiry details, transaction ID, and screenshots for troubleshooting.\n• Technical Sessions: Secure authentication session tokens to maintain login on your device.\nResearch Notes are stored locally. Saved bookmarks and answers can sync to Firestore when you sign in, including quotations and references. Check the storage type before entering private material.",
-          "نعالج البيانات بحسب الميزات المستخدمة:\n• الحساب: الاسم والبريد الإلكتروني والصورة العامة من حساب المصادقة للتحقق والتخصيص.\n• الاشتراك: الباقة المختارة، وحالتها، وفترة الصلاحية، واستخدام القسائم.\n• المدفوعات: رقم المعاملة والمبلغ والوسيلة والوقت والحالة من مزود الدفع Midtrans.\n• بيانات التواصل للمعاملات: رقم الهاتف/واتساب المدخل عند الدفع لإشعار التفعيل.\n• المحادثات: الأسئلة والأجوبة وسياق المطالعة المعالج عبر جلسات حوسبة بحثية معزولة.\n• الملاحظات: الملاحظات والنقول والمراجع المحفوظة محليًا على جهازك.\n• الدعم الفني: وسيلة الاتصال وفحوى البلاغ ورقم المعاملة والصور المرفقة.\n• الجلسات الفنية: رموز الجلسات الآمنة للحفاظ على تسجيل الدخول.\nتُحفظ Research Notes محليًّا. ويمكن مزامنة العلامات والإجابات المحفوظة مع Firestore عند تسجيل الدخول، بما فيها النصوص والإحالات. راجع نوع التخزين قبل إدخال مواد خاصة."
+          "Kami memproses data sesuai fitur yang Anda gunakan:\n• Akun: Nama, alamat email, dan identitas profil publik dari akun Google untuk autentikasi dan personalisasi.\n• Langganan: Paket yang dipilih, status, masa aktif, dan penggunaan voucher.\n• Pembayaran: Nomor transaksi, jumlah pembayaran, metode, waktu, dan status dari penyedia DOKU.\n• Kontak Transaksi: Nomor WhatsApp/telepon yang Anda berikan saat pembayaran untuk pengiriman informasi aktivasi.\n• Percakapan: Pertanyaan, jawaban, dan konteks percakapan yang diproses melalui sesi Google NotebookLM.\n• Catatan: Catatan, kutipan, dan rujukan yang Anda simpan pada penyimpanan lokal perangkat.\n• Bantuan: Alamat kontak, isi pengaduan, nomor transaksi, dan lampiran tangkapan layar untuk penanganan masalah.\n• Sesi Teknis: Token sesi autentikasi yang aman untuk mempertahankan login di perangkat.",
+          "We process data based on features you use:\n• Account: Name, email address, and public profile identifier from Google for authentication and personalization.\n• Subscription: Selected plan, status, validity dates, and voucher usage.\n• Payment: Transaction ID, payment amount, method, timestamp, and status from provider DOKU.\n• Transaction Contact: WhatsApp/phone number provided during checkout for activation notices.\n• Conversations: Prompts, responses, and session context processed via Google NotebookLM.\n• Notes: Notes, quotations, and locators stored in device local storage.\n• Support: Contact address, inquiry details, transaction ID, and screenshots for troubleshooting.\n• Technical Sessions: Secure authentication session tokens to maintain login on your device.",
+          "نعالج البيانات بحسب الميزات المستخدمة:\n• الحساب: الاسم والبريد الإلكتروني والصورة العامة من حساب Google للمصادقة.\n• الاشتراك: الباقة المختارة، وحالتها، وفترة الصلاحية، واستخدام القسائم.\n• المدفوعات: رقم المعاملة والمبلغ والوسيلة والوقت والحالة من مزود الدفع DOKU.\n• بيانات التواصل للمعاملات: رقم الهاتف/واتساب المدخل عند الدفع لإشعار التفعيل.\n• المحادثات: الأسئلة والأجوبة وسياق الجلسات المعالج عبر Google NotebookLM.\n• الملاحظات: الملاحظات والنقول والمراجع المحفوظة محليًا على جهازك.\n• الدعم الفني: وسيلة الاتصال وفحوى البلاغ ورقم المعاملة والصور المرفقة.\n• الجلسات الفنية: رموز الجلسات الآمنة للحفاظ على تسجيل الدخول."
         ]
       },
       {
@@ -401,26 +353,26 @@ export const articles = {
       },
       {
         "heading": [
-          "4. Percakapan AI dan Infrastruktur Komputasi",
-          "4. AI Conversations and Computing Infrastructure",
-          "٤. محادثات الذكاء الاصطناعي والبنية التحتية الحاسوبية"
+          "4. Percakapan AI dan Peran Google",
+          "4. AI Conversations and Google NotebookLM",
+          "٤. محادثات الذكاء الاصطناعي ودور Google"
         ],
         "body": [
-          "Percakapan dalam aplikasi menggunakan sesi Google NotebookLM melalui WebView atau jalur bridge. Teks pertanyaan, jawaban, dan konteks dokumen dapat diproses oleh layanan tersebut. Kebijakan serta pengaturan akun penyedia berlaku; penggunaan Claude Code dalam pengembangan tidak berarti percakapan pengguna diproses oleh Claude. OpenTurath tidak menggunakan materi pengguna untuk melatih model publik. Jangan memasukkan informasi rahasia ke percakapan.",
-          "App conversations use Google NotebookLM sessions through a WebView or bridge path. Questions, answers, and document context may be processed by that service. Provider policies and account settings apply; Claude Code use in development does not mean user conversations are processed by Claude. OpenTurath does not use user material to train public models. Do not submit confidential information.",
-          "تستخدم محادثات التطبيق جلسات Google NotebookLM عبر WebView أو bridge، وقد تعالج الخدمة الأسئلة والإجابات وسياق المستندات. تسري سياسات المزوّد وإعدادات الحساب؛ واستخدام Claude Code للتطوير لا يعني معالجة محادثات المستخدمين به. لا يستخدم OpenTurath مواد المستخدم لتدريب نماذج عامة. تجنّب المعلومات السرية."
+          "Ketika Anda mengirim pertanyaan melalui fitur percakapan, teks dan konteks diproses melalui layanan Google NotebookLM. Kebijakan pemrosesan Google mengikuti Kebijakan Privasi Google dan ketentuan NotebookLM.\n\nAplikasi OpenTurath tidak menggunakan isi percakapan atau catatan pribadi pengguna untuk melatih model kecerdasan buatan publik. Hindari memasukkan informasi pribadi sensitif atau rahasia ke dalam percakapan.",
+          "When you submit questions in conversation features, text and context are processed through Google NotebookLM. Google processing is governed by Google's Privacy Policy and NotebookLM terms.\n\nOpenTurath does not utilize user conversation contents or personal notes to train public artificial intelligence models. Avoid submitting sensitive personal or confidential information into conversations.",
+          "عند إرسال أسئلة في المحادثة، يُعالج النص وسياقه عبر خدمة Google NotebookLM وفق سياسة خصوصية Google وشروط NotebookLM.\n\nلا تستخدم OpenTurath محتوى محادثاتك أو ملاحظاتك الشخصية لتدريب نماذج الذكاء الاصطناعي العامة. يُرجى تجنب إدخال معلومات حساسة أو سرية في المحادثات."
         ]
       },
       {
         "heading": [
-          "5. Catatan lokal dan bookmark cloud",
-          "5. Local notes and cloud bookmarks",
-          "٥. الملاحظات المحلية والعلامات السحابية"
+          "5. Catatan dan Penyimpanan Perangkat",
+          "5. Device Local Storage for Notes",
+          "٥. التخزين المحلي للملاحظات على الجهاز"
         ],
         "body": [
-          "Research Notes disimpan lokal di perangkat. Bookmark dan jawaban yang disimpan dapat disinkronkan ke Firestore ketika Anda login, termasuk kutipan dan rujukannya. Periksa jenis penyimpanan sebelum memasukkan materi pribadi.",
-          "Research Notes are stored locally. Saved bookmarks and answers can sync to Firestore when you sign in, including quotations and references. Check the storage type before entering private material.",
-          "تُحفظ Research Notes محليًّا. ويمكن مزامنة العلامات والإجابات المحفوظة مع Firestore عند تسجيل الدخول، بما فيها النصوص والإحالات. راجع نوع التخزين قبل إدخال مواد خاصة."
+          "Catatan, kutipan ibarah, dan penanda rujukan disimpan secara lokal di perangkat Anda menggunakan penyimpanan aplikasi. Jika Anda membersihkan data aplikasi atau mencopot pemasangan aplikasi, catatan lokal dapat terhapus. Gunakan fitur salin teks atau bagikan catatan untuk mencadangkan catatan penting Anda ke tempat penyimpanan lain.",
+          "Notes, text citations, and reference markers are stored locally on your device using application storage. Clearing application data or uninstalling the app may permanently remove local notes. Use copy text or export features to back up important materials to external storage.",
+          "تُحفظ الملاحظات والنقول وإشارات المراجع محليًا على جهازك داخل ذاكرة التطبيق. مسح بيانات التطبيق أو إلغاء تثبيته قد يؤدي إلى حذف الملاحظات المحلية. استخدم ميزة نسخ النصوص أو التصدير للاحتفاظ بنسخ احتياطية في مكان آمن."
         ]
       },
       {
@@ -430,9 +382,9 @@ export const articles = {
           "٦. مزودو الخدمات والجهات المستلمة للبيانات"
         ],
         "body": [
-          "Google/Firebase: autentikasi, akun, transaksi, hak akses, dan sinkronisasi bookmark yang dipilih pengguna. Google NotebookLM: sesi percakapan dan pemrosesan konteks dokumen. Midtrans: pembayaran. Hosting/CDN, termasuk Cloudflare pada domain publik: penyajian website dan data teknis koneksi; beacon performa dapat aktif pada konfigurasi CDN. Website tidak memuat percakapan aplikasi.",
-          "Google/Firebase: authentication, accounts, transactions, entitlements, and user-selected bookmark sync. Google NotebookLM: conversations and document context processing. Midtrans: payments. Hosting/CDN, including Cloudflare on the public domain: site delivery and technical connection data; performance beacons may be enabled by CDN configuration. This site does not host app conversations.",
-          "Google/Firebase للمصادقة والحسابات والمعاملات والصلاحيات ومزامنة العلامات المختارة. Google NotebookLM للمحادثات وسياق المستندات. Midtrans للدفع. الاستضافة وCDN ومنها Cloudflare لتقديم الموقع وبيانات الاتصال؛ وقد تُفعّل قياسات الأداء في CDN. لا يستضيف الموقع محادثات التطبيق."
+          "Data dibagikan hanya sebatas yang diperlukan untuk menjalankan layanan:\n• Google: Untuk proses masuk autentikasi dan pemrosesan sesi percakapan NotebookLM.\n• DOKU: Lembaga pembayaran resmi untuk memproses transaksi perbankan, dompet digital, atau QRIS.\n• Firebase / Google Cloud: Pengelolaan database transaksi dan status hak akses akun yang aman.\n\nSeluruh penyedia bekerja berdasarkan standar keamanan dan enkripsi industri.",
+          "Data is shared strictly to the extent necessary to provide the service:\n• Google: For authentication sign-in and NotebookLM conversation processing.\n• DOKU: Licensed payment institution to process banking, digital wallet, or QRIS transactions.\n• Firebase / Google Cloud: Secure database management of transactions and account entitlement statuses.\n\nAll service providers operate under recognized industry security and encryption standards.",
+          "تتم مشاركة البيانات بالقدر الضروري فقط لتشغيل الخدمة:\n• Google: للمصادقة وتسجيل الدخول ومعالجة جلسات محادثات NotebookLM.\n• DOKU: مؤسسة الدفع الرسمية لمعالجة المعاملات المصرفية والمحافظ الإلكترونية وQRIS.\n• Firebase / Google Cloud: لإدارة قواعد بيانات المعاملات وحالات صلاحيات الحسابات بأمان.\n\nيعمل جميع المزودين وفق أعلى معايير الأمان والتشفير المعتمدة عالميًا."
         ]
       },
       {
@@ -442,9 +394,9 @@ export const articles = {
           "٧. سياسة الإعلانات والتحليلات والترويج"
         ],
         "body": [
-          "Website tidak menampilkan iklan pihak ketiga. OpenTurath tidak menjual data pribadi. Domain publik menggunakan Cloudflare; pengukuran performa website dapat berjalan melalui beacon CDN, terpisah dari isi percakapan aplikasi. Pengelola perlu menjaga konfigurasi CDN selaras dengan informasi ini.",
-          "The website does not show third-party advertisements. OpenTurath does not sell personal data. The public domain uses Cloudflare; CDN beacons may measure site performance, separately from app conversation content. The operator must keep CDN settings aligned with this information.",
-          "لا يعرض الموقع إعلانات من أطراف ثالثة ولا يبيع OpenTurath البيانات الشخصية. يستخدم النطاق العام Cloudflare، وقد يقيس beacon أداء الموقع بمعزل عن محادثات التطبيق. تُراعى مطابقة إعدادات CDN لهذه المعلومات."
+          "OpenTurath bebas dari iklan pihak ketiga dan tidak menjual data pribadi Anda. Pemberitahuan transaksi dan pembaruan layanan dikirimkan semata-mata untuk keperluan operasional akun Anda.",
+          "OpenTurath is free from third-party advertising and does not sell your personal data. Transaction notices and service updates are sent solely for account operational purposes.",
+          "تطبيق OpenTurath خالٍ تمامًا من إعلانات الأطراف الثالثة ولا يبيع بياناتك. وتُرسل إشعارات المعاملات وتحديثات الخدمة للأغراض التشغيلية المرتبطة بحسابك فقط."
         ]
       },
       {
@@ -454,9 +406,9 @@ export const articles = {
           "٨. المعالجة الدولية للبيانات"
         ],
         "body": [
-          "Data akun, transaksi, dan bookmark tersinkron diproses melalui layanan Google/Firebase. Sesi NotebookLM mengikuti layanan dan pengaturan akun Google. Lokasi pemrosesan serta retensi mengikuti ketentuan penyedia masing-masing; tanyakan pengelola bila Anda membutuhkan informasi sebelum memakai layanan.",
-          "Accounts, transactions, and synced bookmarks are processed through Google/Firebase. NotebookLM sessions follow Google services and account settings. Processing locations and retention follow each provider’s terms; ask the operator for information before using a service.",
-          "تُعالج الحسابات والمعاملات والعلامات المتزامنة عبر Google/Firebase. وتتبع جلسات NotebookLM خدمات Google وإعدادات الحساب. تخضع مواقع المعالجة ومدد الاحتفاظ لشروط كل مزوّد؛ استفسر قبل استخدام الخدمة."
+          "Infrastruktur autentikasi Google dan basis data cloud dapat memproses sebagian data teknis di pusat data yang aman di dalam maupun luar wilayah Indonesia, dengan perlindungan enkripsi transit dan at-rest berstandar global.",
+          "Google authentication infrastructure and cloud databases may process certain technical data in secure data centers inside or outside Indonesia, protected by global transit and at-rest encryption standards.",
+          "قد تعالج البنية التحتية لمصادقة Google وقواعد البيانات السحابية بعض البيانات الفنية في مراكز بيانات آمنة داخل إندونيسيا أو خارجها، مع تطبيق معايير التشفير العالمية أثناء النقل والتخزين."
         ]
       },
       {
@@ -466,9 +418,9 @@ export const articles = {
           "٩. فترات الاحتفاظ بالبيانات"
         ],
         "body": [
-          "• Data Akun: Disimpan selama akun aktif, dan dihapus setelah permohonan penutupan akun disetujui.\n• Data Transaksi: Disimpan selama batas waktu yang diwajibkan oleh ketentuan perpajakan dan hukum transaksi keuangan Republik Indonesia.\n• Catatan Pengguna: Disimpan di perangkat Anda hingga Anda menghapusnya sendiri atau mencopot aplikasi.\n• Pengaduan Bantuan: Disimpan selama proses penyelesaian masalah dan pengarsipan layanan.\nBookmark tersinkron disimpan pada akun cloud sampai dihapus melalui fitur yang tersedia. Pertanyaan tentang penghapusan atau retensi layanan pihak ketiga dapat diajukan ke pengelola.",
-          "• Account Data: Retained while the account is active, and deleted upon approved account closure requests.\n• Transaction Data: Retained for periods required by statutory taxation and financial regulations of Indonesia.\n• User Notes: Retained on your device until deleted by you or the app is uninstalled.\n• Support Inquiries: Retained during problem resolution and customer service archiving.\nSynced bookmarks remain in the cloud account until deleted using available features. Ask the operator about deletion or third-party retention.",
-          "• بيانات الحساب: تُحفظ طوال مدة نشاط الحساب، وتُحذف فور قبول طلب إغلاق الحساب.\n• بيانات المعاملات: تُحفظ للمدة التي توجبها القوانين الضريبية والمالية في إندونيسيا.\n• ملاحظات المستخدم: تبقى في جهازك إلى أن تحذفها يدويًا أو تلغي تثبيت التطبيق.\n• بلاغات الدعم: تُحفظ خلال مدة معالجة المشكلة والتوثيق الخدمي.\nتبقى العلامات المتزامنة في الحساب السحابي حتى حذفها بالميزات المتاحة. استفسر عن الحذف أو احتفاظ خدمات الطرف الثالث لدى الجهة المشغّلة."
+          "• Data Akun: Disimpan selama akun aktif, dan dihapus setelah permohonan penutupan akun disetujui.\n• Data Transaksi: Disimpan selama batas waktu yang diwajibkan oleh ketentuan perpajakan dan hukum transaksi keuangan Republik Indonesia.\n• Catatan Pengguna: Disimpan di perangkat Anda hingga Anda menghapusnya sendiri atau mencopot aplikasi.\n• Pengaduan Bantuan: Disimpan selama proses penyelesaian masalah dan pengarsipan layanan.",
+          "• Account Data: Retained while the account is active, and deleted upon approved account closure requests.\n• Transaction Data: Retained for periods required by statutory taxation and financial regulations of Indonesia.\n• User Notes: Retained on your device until deleted by you or the app is uninstalled.\n• Support Inquiries: Retained during problem resolution and customer service archiving.",
+          "• بيانات الحساب: تُحفظ طوال مدة نشاط الحساب، وتُحذف فور قبول طلب إغلاق الحساب.\n• بيانات المعاملات: تُحفظ للمدة التي توجبها القوانين الضريبية والمالية في إندونيسيا.\n• ملاحظات المستخدم: تبقى في جهازك إلى أن تحذفها يدويًا أو تلغي تثبيت التطبيق.\n• بلاغات الدعم: تُحفظ خلال مدة معالجة المشكلة والتوثيق الخدمي."
         ]
       },
       {
@@ -514,9 +466,9 @@ export const articles = {
           "١٣. التواصل وتحديثات السياسة"
         ],
         "body": [
-          "Informasi website diperbarui 8 Oktober 2026. Naskah aplikasi v1.0 bertanggal 13 September 2026 tersedia sebagai dokumen sebelumnya. Untuk pertanyaan tentang layanan, pemrosesan data, atau hak privasi: openturath@gmail.com. Pengelola OpenTurath, Indonesia.",
-          "Website information updated 8 October 2026. The app v1.0 text dated 13 September 2026 is available as an earlier document. For questions about services, data processing, or privacy rights: openturath@gmail.com. Pengelola OpenTurath, Indonesia.",
-          "حُدّثت معلومات الموقع في ٨ أكتوبر ٢٠٢٦. يتوفر نص التطبيق v1.0 المؤرّخ في ١٣ سبتمبر ٢٠٢٦ كوثيقة سابقة. للاستفسار عن الخدمات والبيانات وحقوق الخصوصية: openturath@gmail.com. الجهة المشغّلة في إندونيسيا."
+          "Versi dokumen: 1.0 (Berlaku sejak 13 September 2026).\n\nUntuk pertanyaan atau permohonan hak privasi, hubungi:\nEmail: openturath@gmail.com\nPengelola: Pengelola OpenTurath (Indonesia)",
+          "Document version: 1.0 (Effective from 13 September 2026).\n\nFor questions or exercising privacy rights, contact:\nEmail: openturath@gmail.com\nOperator: Pengelola OpenTurath (Indonesia)",
+          "نسخة الوثيقة: ١.٠ (سارية من ١٣ سبتمبر ٢٠٢٦).\n\nللاستفسارات وممارسة حقوق الخصوصية، يرجى التواصل عبر:\nالبريد الإلكتروني: openturath@gmail.com\nالمشغّل: Pengelola OpenTurath (إندونيسيا)"
         ]
       }
     ],
@@ -549,9 +501,9 @@ export const articles = {
           "٢. الدفع وتفعيل الوصول"
         ],
         "body": [
-          "Pembayaran diproses melalui gerbang pembayaran resmi Midtrans dengan metode QRIS, transfer bank (virtual account), maupun dompet digital.\n\nBukti pembayaran resmi dikirimkan melalui notifikasi Midtrans dan email akun Anda. Masa akses aktif seketika transaksi dinyatakan berhasil dan tersinkronisasi. Jika dana telah terpotong namun status belum aktif, jangan melakukan pembayaran ulang; hubungi openturath@gmail.com dengan menyertakan nomor transaksi.",
-          "Payments are processed through the official Midtrans gateway using QRIS, bank transfer (virtual account), or digital wallets.\n\nOfficial payment receipts are delivered via Midtrans notifications and your account email. Access activates immediately once the transaction is confirmed successful and synced. If funds were deducted but access is not activated, do not repay; contact openturath@gmail.com with your transaction ID.",
-          "تتم معالجة المدفوعات عبر بوابة Midtrans الرسمية بواسطة QRIS أو التحويل البنكي (الحساب الافتراضي) أو المحافظ الإلكترونية.\n\nيُرسل إيصال الدفع عبر إشعارات Midtrans وبريد حسابك. يُفعّل الوصول فور تأكيد نجاح المعاملة، وإذا خُصم المبلغ دون تفعيل فامتنع عن إعادة الدفع وتواصل مع openturath@gmail.com برقم المعاملة."
+          "Pembayaran diproses melalui gerbang pembayaran resmi DOKU dengan metode QRIS, transfer bank (virtual account), maupun dompet digital.\n\nBukti pembayaran resmi dikirimkan melalui notifikasi DOKU dan email akun Anda. Masa akses aktif seketika transaksi dinyatakan berhasil dan tersinkronisasi. Jika dana telah terpotong namun status belum aktif, jangan melakukan pembayaran ulang; hubungi openturath@gmail.com dengan menyertakan nomor transaksi.",
+          "Payments are processed through the official DOKU gateway using QRIS, bank transfer (virtual account), or digital wallets.\n\nOfficial payment receipts are delivered via DOKU notifications and your account email. Access activates immediately once the transaction is confirmed successful and synced. If funds were deducted but access is not activated, do not repay; contact openturath@gmail.com with your transaction ID.",
+          "تتم معالجة المدفوعات عبر بوابة DOKU الرسمية بواسطة QRIS أو التحويل البنكي (الحساب الافتراضي) أو المحافظ الإلكترونية.\n\nيُرسل إيصال الدفع عبر إشعارات DOKU وبريد حسابك. يُفعّل الوصول فور تأكيد نجاح المعاملة، وإذا خُصم المبلغ دون تفعيل فامتنع عن إعادة الدفع وتواصل مع openturath@gmail.com برقم المعاملة."
         ]
       },
       {
@@ -727,21 +679,81 @@ export const articles = {
   "tahawwulat": {
     "key": "tahawwulat",
     "intro": [
-      "AI Fikih Tahawwulat",
-      "Fiqh Tahawwulat AI",
-      "الذكاء الاصطناعي لفقه التحولات"
+      "Fikih Tahawwulat. Navigasi Kenabian.",
+      "Fiqh Tahawwulat. Prophetic Navigation.",
+      "فقه التحولات. بوصلة النبوة."
     ],
     "blocks": [
       {
         "heading": [
-          "Ruang kajian khusus",
-          "A dedicated study space",
-          "مساحة متخصصة للمطالعة"
+          "Hakikat Fikih Tahawwulat & Rukun Keempat Agama",
+          "Essence of Fiqh Tahawwulat and the Fourth Pillar",
+          "حقيقة فقه التحولات والركن الرابع للدين"
         ],
         "body": [
-          "Lima pilihan asisten dan susunan kitab mengikuti pengantar dalam aplikasi OpenTurath.",
-          "Five assistant choices and the book sequence follow the OpenTurath app introduction.",
-          "يتبع اختيار المساعدين الخمسة وتسلسل الكتب المدخل في تطبيق OpenTurath."
+          "Fikih Tahawwulat dikodifikasi oleh Al-Musnid Al-Allamah Al-Habib Abu Bakar Al-Adni bin Ali Al-Masyhur (1366–1444 H / 1947–2022 M) sebagai kompas navigasi kenabian. Berlandaskan Hadits Jibril yang memuat empat rukun agama: Al-Islam (syariat), Al-Iman (akidah), Al-Ihsan (tasawuf/tazkiyah), dan Fiqh Asyrat as-Sa'ah (tanda-tanda kiamat dan perubahan zaman). Disiplin ini membaca dinamika peradaban dengan bimbingan nubuwwah.",
+          "Fiqh Tahawwulat was codified by Al-Musnid Al-Allamah Al-Habib Abu Bakr Al-Adni bin Ali Al-Mashhur (1366–1444 AH / 1947–2022 CE) as a prophetic navigation compass. Grounded in the Hadith of Jibril comprising the four pillars of religion: Al-Islam (law), Al-Iman (creed), Al-Ihsan (spiritual purification), and Fiqh Ashrat as-Sa'ah (signs of the Hour and civilizational shifts). It reads world developments through prophetic guidance.",
+          "أسّس فقه التحولات المسند العلامة الحبيب أبو بكر العدني بن علي المشهور (١٣٦٦–١٤٤٤ هـ / ١٩٤٧–٢٠٢٢ م) بوصلةً نبوية لقراءة المتغيرات. ويستند إلى حديث جبريل بأركان الدين الأربعة: الإسلام والإيمان والإحسان وفقه أشراط الساعة وتحولات الزمان، لقراءة أحوال الحضارة بنور النبوة."
+        ]
+      },
+      {
+        "heading": [
+          "Sunnatul Mulaimah dan Manhaj Salamah",
+          "Sunnatul Mulaimah and the Method of Peace",
+          "سنة الملاءمة ومنهج السلامة"
+        ],
+        "body": [
+          "Kaidah utama Fikih Tahawwulat bertumpu pada Sunnatul Mulaimah (kebijaksanaan merangkul dan mencari titik temu dalam dakwah) serta menjauhi Sunnatul Mukhalaqah (sikap konfrontatif yang memicu perpecahan). Manhaj keselamatan (Salamatus Shadr wal Lisan) membimbing penuntut ilmu untuk menjaga kesucian hati dari kebencian dan lisan dari celaan di tengah fitnah akhir zaman.",
+          "The central principle of Fiqh Tahawwulat rests upon Sunnatul Mulaimah (embracing wisdom, reconciliation, and constructive dialogue in da'wah) while averting Sunnatul Mukhalaqah (confrontational discord). The Method of Peace (Salamatus Sadr wal Lisan) guides students of knowledge to protect hearts from malice and tongues from slander amidst end-times tribulations.",
+          "تقوم قواعد فقه التحولات على \"سنة الملاءمة\" بالحكمة والاحتواء في الدعوة وتجنب \"سنة المخالقة\" المورثة للنزاع والفرقة. ويعصم \"منهج السلامة\" (سلامة الصدر واللسان) طالب العلم من الضغينة والطعن وسط فتن الزمان المتلاطمة."
+        ]
+      },
+      {
+        "heading": [
+          "Nushush Da'wah vs Nushush Ahkam",
+          "Texts of Da'wah and Texts of Legal Rulings",
+          "نصوص الدعوة ونصوص الأحكام"
+        ],
+        "body": [
+          "Fikih Tahawwulat membedakan secara cermat antara Nushush Ahkam (teks hukum fikih yang bersifat mengikat dan memiliki syarat ketat penetapan) dan Nushush Da'wah (teks seruan etis, peringatan kenabian, dan kabar masa depan). Pemisahan ini mencegah kecerobohan memfatwakan persoalan sosial yang rumit tanpa memahami realitas sejarah.",
+          "Fiqh Tahawwulat draws a careful distinction between Nusus Ahkam (normative legal texts requiring strict juridical conditions) and Nusus Da'wah (ethical exhortations, prophetic warnings, and foresights of historical shifts). This demarcation prevents hasty rulings on complex societal crises without understanding their historical context.",
+          "يفرّق فقه التحولات بدقة بين \"نصوص الأحكام\" الفقهية الملزمة بشروط استنباطها، و\"نصوص الدعوة\" المتضمنة البلاغ الإرشادي والتحذيرات النبوية من الفتن، لمنع استعجال الفتوى في النوازل المعقدة بغير فقه للواقع."
+        ]
+      },
+      {
+        "heading": [
+          "Lima Bilik Khadim AI Spesialis",
+          "Five Specialized Assistant Chambers",
+          "خمس غرف للمساعدين المتخصصين"
+        ],
+        "body": [
+          "Khadim Fikih Tahawwulat dirancang dalam lima bilik spesialis: Al-Muhaqqiq (penelusuran matan dan tahkik teks kanonis), Al-Bayan (penjelasan konsep, istilah, dan kaidah peradaban), Al-Mukhtabir (latihan pemahaman dan uji daya kritis telaah), Al-Habib (eksplorasi arsip muhadharah dan pemikiran Habib Abu Bakar), serta Al-Khatib (penyusunan bahan khutbah dan pesan dakwah yang menyejukkan).",
+          "The Fiqh Tahawwulat assistant suite operates through five specialized chambers: Al-Muhaqqiq (passage verification and canonical text study), Al-Bayan (concept clarification and civilizational terminology), Al-Mukhtabir (comprehension exercises and critical review), Al-Habib (exploration of Habib Abu Bakr's lecture archives), and Al-Khatib (sermon curation and constructive outreach material).",
+          "صُممت غرف خادم فقه التحولات في خمسة اختصاصات: المحقق (لدراسة المتون والتحقيق التراثي)، والبيان (لإيضاح المصطلحات والقواعد الحضارية)، والمختبر (لاختبار الفهم والمدارسة)، والحبيب (لتصفح المحاضرات التوجيهية وتراث الحبيب أبي بكر)، والخطيب (لإعداد خطب ومواعظ تسعى للإصلاح)."
+        ]
+      },
+      {
+        "heading": [
+          "Korpus Mahkota 58 Kitab Kanonik",
+          "Sovereign Corpus of 58 Canonical Books",
+          "المدونة الجامعة من ٥٨ مصنفًا"
+        ],
+        "body": [
+          "Korpus telaah mencakup 58 karya monumental Habib Abu Bakar Al-Adni, antara lain Al-Usus wal-Munthalaqat, An-Nabdzah As-Sughra, Al-Muthala'ah al-Ula, Al-Arba'un al-Habibiyyah, Khidmatul Asyirah, Saif al-Muqallad, dan Taisir Fiqh at-Tahawwulat. Seluruh kitab ditata secara berjenjang dari mukadimah, pendalaman kaidah, hingga risalah dakwah kontemporer.",
+          "The study corpus encompasses 58 foundational works by Habib Abu Bakr Al-Adni, including Al-Usus wal-Muntalaqat, An-Nabdhah As-Sughra, Al-Mutala'ah al-Ula, Al-Arba'un al-Habibiyyah, Khidmatul Ashirah, Sayf al-Muqallad, and Taysir Fiqh at-Tahawwulat, systematically structured from introductory primers to advanced treatises.",
+          "تضم المدونة المعتمدة ٥٨ مصنفًا مؤسسًا للحبيب أبي بكر المشهور، منها: الأسس والمنطلقات، والنبذة الصغرى، والمطالعة الأولى، والأربعون الحبيبية، وخدمة العشيرة، وسيف المقلد، وتيسير فقه التحولات، مرتبةً تدرجيًا من المقدمات إلى الأصول التطبيقية."
+        ]
+      },
+      {
+        "heading": [
+          "Etika Telaah dan Batas Teknologi",
+          "Study Ethics and Technological Boundaries",
+          "آداب المدارسة وحدود التقنية"
+        ],
+        "body": [
+          "Asisten AI Fikih Tahawwulat dihadirkan semata-mata sebagai sarana pembantu indeksasi dan pemetaan naskah di perpustakaan digital. Layanan ini bukan syekh murabbi, tidak memberikan sertifikasi sanad, dan tidak menggantikan tradisi mulia talaqqi langsung kepada para guru dan masyaikh yang memiliki mata rantai keilmuan bersambung.",
+          "The Fiqh Tahawwulat AI assistant serves solely as an indexation and literature exploration tool within a digital library. It is not a spiritual master, does not confer scholarly licenses (ijazah/sanad), and does not replace the venerable tradition of face-to-face talaqqi under authenticated living scholars.",
+          "إن مساعد فقه التحولات وسيلة تقنية للمطالعة وفهرسة النصوص التراثية فحسب؛ فليس شيخًا مربيًا، ولا يمنح إجازة أو سندًا علميًا، ولا يغني عن التلقي والمشافهة بين يدي أهل العلم أصحاب السند المتصل."
         ]
       }
     ]
@@ -749,45 +761,45 @@ export const articles = {
   "research/methodology": {
     "key": "methods",
     "intro": [
-      "Metode pemeriksaan dan batas arsip.",
-      "Review method and archive boundaries.",
-      "منهج المراجعة وحدود الأرشيف."
+      "Bukti yang dapat ditelaah.",
+      "Evidence open to examination.",
+      "أدلة قابلة للمراجعة."
     ],
     "blocks": [
       {
         "heading": [
-          "Tujuh dimensi pemeriksaan",
-          "Seven review dimensions",
-          "سبعة جوانب للمراجعة"
+          "Arsip terbatas",
+          "A limited archive",
+          "أرشيف محدود"
         ],
         "body": [
-          "Pemeriksaan membedakan: kecocokan kutipan, ketepatan bibliografi, dukungan terhadap klaim, ketepatan pemahaman, kelengkapan, kesesuaian cakupan, dan ketahanan. Nilai tiap dimensi belum tersedia untuk enam jawaban Q001. Kecocokan teks tidak otomatis membuktikan ketepatan pemahaman atau hukum.",
-          "Review distinguishes quotation match, bibliographic accuracy, support for claims, interpretive accuracy, completeness, scope alignment, and robustness. Assessments are not yet available for the six Q001 answers. A textual match does not by itself establish interpretive or legal accuracy.",
-          "تُميّز المراجعة بين مطابقة النص ودقة الإحالة وإسناد الادعاء ودقة الفهم والاكتمال وموافقة النطاق والمتانة. لم تتوفر تقييمات إجابات Q001 الست؛ ولا تثبت مطابقة النص وحدها صحة الفهم أو الحكم."
+          "Q001 menyimpan satu pertanyaan dan enam jawaban asli. Tanggal uji, versi model, paket, dan kondisi lengkap tidak tercatat. Arsip ini tidak membuktikan keunggulan menyeluruh suatu layanan.",
+          "Q001 preserves one question and six original answers. Test date, model versions, plans, and full conditions were not recorded. This archive does not prove a service’s overall superiority.",
+          "يحفظ Q001 سؤالًا واحدًا وست إجابات أصلية. لم تُسجّل تواريخ الاختبار وإصدارات النماذج والباقات والظروف الكاملة. لا يثبت الأرشيف تفوق خدمة بصورة عامة."
         ]
       },
       {
         "heading": [
-          "Integritas arsip dan verifikasi sumber",
-          "Archive integrity and source verification",
-          "سلامة الأرشيف والتحقّق من المصدر"
+          "Status sepuluh kutipan",
+          "Status of ten quotations",
+          "حالة النقول العشرة"
         ],
         "body": [
-          "Hash SHA-256 menjaga agar teks jawaban yang diarsipkan tidak berubah. Hash tidak membuktikan bahwa kutipan cocok dengan kitab. Semua sepuluh kutipan Q001 masih menunggu identitas edisi, teks pembanding, penelaah, serta tanggal pemeriksaan. Model, tanggal uji, paket, dan kondisi pengujian belum tercatat lengkap; arsip ini bukan benchmark terkontrol.",
-          "SHA-256 hashes protect archived answer text from change. A hash does not prove a quotation matches a book. All ten Q001 quotations await edition identity, comparison text, reviewer, and review date. Model, test date, plan, and conditions are not fully recorded; this archive is not a controlled benchmark.",
-          "تحمي بصمات SHA-256 نصوص الإجابات من التغيير، ولا تثبت مطابقة النص للكتاب. تنتظر النصوص العشرة الطبعة والنص المقابل والمراجع والتاريخ. لم تُسجّل ظروف الاختبار كاملة؛ فليس الأرشيف اختبار أداء مضبوطًا."
+          "Sepuluh kutipan memiliki status belum ditelaah. Teks pembanding edisi, nomor halaman cetak, penelaah, dan tanggal verifikasi belum tersedia. Hash arsip menjaga integritas teks tersimpan, bukan membuktikan kebenarannya.",
+          "Ten quotations remain not reviewed. Edition comparison text, verified print pages, reviewer, and verification date are not available. Archive hashes protect saved-text integrity, not factual accuracy.",
+          "النقول العشرة لم تُراجع بعد. ولا تتوفر نصوص المقابلة والصفحات المحققة والمراجع وتاريخ التحقّق. تحمي البصمات سلامة النص المحفوظ ولا تثبت صحته العلمية."
         ]
       },
       {
         "heading": [
-          "Mengirim koreksi",
-          "Sending corrections",
-          "إرسال التصحيحات"
+          "Koreksi yang terdokumentasi",
+          "Documented corrections",
+          "التصحيحات الموثقة"
         ],
         "body": [
-          "Kirim koreksi ke openturath@gmail.com dengan kitab, penerbit, edisi, jilid, halaman, dan catatan pembanding. Formulir website hanya membantu membuat salinan laporan; unduhan file tidak mengirim laporan. Teks jawaban asli dipertahankan terpisah dari catatan penelaah.",
-          "Email corrections to openturath@gmail.com with the book, publisher, edition, volume, page, and comparison notes. The website form prepares a report copy; downloading that file does not submit it. Original answers remain separate from reviewer notes.",
-          "أرسل التصحيح إلى openturath@gmail.com مع الكتاب والناشر والطبعة والجزء والصفحة والملاحظات. يُعدّ نموذج الموقع نسخة للبلاغ؛ وتنزيلها لا يرسله. تبقى الإجابة الأصلية منفصلة عن ملاحظات المراجع."
+          "Koreksi perlu menyertakan sumber edisi dan alasan perubahan. Teks jawaban asli dipertahankan agar riwayat dapat diperiksa. Gunakan formulir laporan untuk mengirim temuan.",
+          "Corrections need an edition source and a reason for the change. Original answers are preserved for an inspectable history. Use the report form to submit findings.",
+          "يلزم للتصحيح مصدر الطبعة وسبب التغيير. تُحفظ الإجابات الأصلية لإتاحة مراجعة التاريخ. أرسل الملاحظات عبر نموذج البلاغ."
         ]
       }
     ]
@@ -928,14 +940,14 @@ export const articles = {
       },
       {
         "heading": [
-          "Midtrans dan aktivasi",
-          "Midtrans and activation",
-          "Midtrans والتفعيل"
+          "DOKU dan aktivasi",
+          "DOKU and activation",
+          "DOKU والتفعيل"
         ],
         "body": [
-          "Pembayaran memakai Midtrans melalui QRIS, Virtual Account, atau E-Wallet yang tersedia pada checkout. Status dibayar dan status akses aktif perlu dikonfirmasi terpisah. Jika dana terpotong tetapi akses belum aktif, hubungi bantuan dengan nomor transaksi sebelum membayar ulang.",
-          "Payments use available Midtrans methods such as QRIS, Virtual Account, or E-Wallet. Payment status and active access must be confirmed separately. If funds are deducted but access is inactive, contact support with the transaction number before paying again.",
-          "تتم المدفوعات عبر وسائل Midtrans المتاحة مثل QRIS والحساب الافتراضي والمحفظة الإلكترونية. تُراجع حالة الدفع وتفعيل الوصول كلٌّ على حدة. إذا خُصم المبلغ دون تفعيل، تواصل مع الدعم برقم المعاملة قبل إعادة الدفع."
+          "Pembayaran memakai DOKU melalui QRIS, Virtual Account, atau E-Wallet yang tersedia pada checkout. Status dibayar dan status akses aktif perlu dikonfirmasi terpisah. Jika dana terpotong tetapi akses belum aktif, hubungi bantuan dengan nomor transaksi sebelum membayar ulang.",
+          "Payments use available DOKU methods such as QRIS, Virtual Account, or E-Wallet. Payment status and active access must be confirmed separately. If funds are deducted but access is inactive, contact support with the transaction number before paying again.",
+          "تتم المدفوعات عبر وسائل DOKU المتاحة مثل QRIS والحساب الافتراضي والمحفظة الإلكترونية. تُراجع حالة الدفع وتفعيل الوصول كلٌّ على حدة. إذا خُصم المبلغ دون تفعيل، تواصل مع الدعم برقم المعاملة قبل إعادة الدفع."
         ]
       },
       {
@@ -1047,9 +1059,9 @@ export const articles = {
           "البيانات في مواضع مختلفة"
         ],
         "body": [
-          "Cadangkan Catatan lokal sebelum menghapus data aplikasi. Penghapusan akun OpenTurath tidak otomatis menghapus data pada akun atau sesi pihak ketiga eksternal. Data transaksi yang wajib disimpan secara hukum dapat dikecualikan dari penghapusan langsung.",
-          "Back up local Notes before deleting app data. Deleting OpenTurath does not automatically delete data in external third-party accounts or sessions. Transaction records legally required for retention may be exempt from immediate deletion.",
-          "انسخ الملاحظات المحلية قبل حذف بيانات التطبيق. لا يحذف حذف حساب OpenTurath البيانات في الحسابات أو الجلسات الخارجية للأطراف الثالثة تلقائيًا. وقد تُستثنى سجلات المعاملات الواجب حفظها قانونًا من الحذف الفوري."
+          "Cadangkan Catatan lokal sebelum menghapus data aplikasi. Penghapusan akun OpenTurath tidak otomatis menghapus data pada akun Google/NotebookLM. Data transaksi yang wajib disimpan secara hukum dapat dikecualikan dari penghapusan langsung.",
+          "Back up local Notes before deleting app data. Deleting OpenTurath does not automatically delete data in your Google/NotebookLM account. Transaction records legally required for retention may be exempt from immediate deletion.",
+          "انسخ الملاحظات المحلية قبل حذف بيانات التطبيق. لا يحذف حذف حساب OpenTurath بيانات Google/NotebookLM تلقائيًا. وقد تُستثنى سجلات المعاملات الواجب حفظها قانونًا من الحذف الفوري."
         ]
       }
     ],

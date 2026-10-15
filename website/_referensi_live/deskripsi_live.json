@@ -1,0 +1,296 @@
+{
+ "fiqh-syafii": {
+  "id": [
+   "Fikih Syafi'i",
+   "Telaah fikih Syafi’i melalui Al-Umm, Minhajuth Thalibin, Tuhfatul Muhtaj, dan Nihayatul Muhtaj. Temukan ibarah, perincian hukum, serta rujukan jilid dan halamannya."
+  ],
+  "en": [
+   "Shāfiʿī Fiqh",
+   "Study Shāfiʿī law through Al-Umm, Minhāj al-Ṭālibīn, Tuḥfat al-Muḥtāj, and Nihāyat al-Muḥtāj. Explore source passages, legal distinctions, and volume and page references."
+  ],
+  "ar": [
+   "الفقه الشافعي المعتمد",
+   "طالع الفقه الشافعي في الأم ومنهاج الطالبين وتحفة المحتاج ونهاية المحتاج، وتتبّع العبارات وتفصيل الأحكام وإحالات الأجزاء والصفحات."
+  ]
+ },
+ "hadits": {
+  "id": [
+   "Kutubus Sunnah & Matan Hadis",
+   "Telusuri matan dan jalur sanad dalam Kutubus Sittah, musnad, dan kitab hadis induk. Bandingkan lafaz riwayat, letak bab, dan penomoran hadis."
+  ],
+  "en": [
+   "Hadith Collections",
+   "Trace texts and chains of transmission in the Six Books, musnad collections, and major hadith sources. Compare wording, chapter placement, and hadith numbering."
+  ],
+  "ar": [
+   "متون الحديث النبوي وكتب السنة",
+   "تتبّع المتون والأسانيد في الكتب الستة والمسانيد وأمهات كتب الحديث، وقارن ألفاظ الروايات وأبوابها وأرقامها."
+  ]
+ },
+ "ushul-fiqh": {
+  "id": [
+   "Usul Fikih 4 Mazhab",
+   "Kaji dalalatul alfaz, qiyas, dan metode istinbath lintas empat mazhab. Baca pembahasan ushul melalui Al-Mustashfa, Al-Luma’, dan Al-Burhan."
+  ],
+  "en": [
+   "Principles of Islamic Law",
+   "Examine textual indications, analogy, and methods of legal inference across the four schools, with discussions from Al-Mustaṣfā, Al-Lumaʿ, and Al-Burhān."
+  ],
+  "ar": [
+   "أصول الفقه المقارن وقواعد الاستنباط",
+   "ادرس دلالات الألفاظ والقياس ومناهج الاستنباط في المذاهب الأربعة، من خلال مباحث المستصفى واللمع والبرهان."
+  ]
+ },
+ "bahasa-arab": {
+  "id": [
+   "Bahasa Arab & Ilmu Alat",
+   "Bedah struktur ibarah melalui nahwu, sharaf, balaghah, mantiq, dan mu’jam. Telusuri pemakaian lafaz serta nuansa makna dalam bahasa dan sastra Arab."
+  ],
+  "en": [
+   "Arabic Language & Literature",
+   "Read passages through grammar, morphology, rhetoric, logic, and lexicons. Trace word usage and shades of meaning across Arabic language and literature."
+  ],
+  "ar": [
+   "علوم الآلة واللغة والأدب والنحو والبلاغة والمنطق",
+   "حلّل بنية العبارة بالنحو والصرف والبلاغة والمنطق والمعاجم، وتتبّع استعمال الألفاظ ودقائق المعاني في اللغة والأدب العربي."
+  ]
+ },
+ "tafsir": {
+  "id": [
+   "Tafsir & 'Ulumul Qur'an",
+   "Telaah ayat melalui Tafsir Ath-Thabari, Ibnu Katsir, dan Al-Qurthubi. Hubungkan penjelasan bil-ma’tsur dan dirayah dengan asbabun nuzul, nasikh-mansukh, serta kaidah tafsir."
+  ],
+  "en": [
+   "Tafsir & Qur’anic Studies",
+   "Study verses through the commentaries of al-Ṭabarī, Ibn Kathīr, and al-Qurṭubī. Connect transmitted and analytical interpretation with occasions of revelation, abrogation, and principles of tafsir."
+  ],
+  "ar": [
+   "التفسير المأثور وعلوم القرآن والتأويل",
+   "طالع الآيات في تفاسير الطبري وابن كثير والقرطبي، واربط التفسير بالمأثور والدراية بأسباب النزول والناسخ والمنسوخ وقواعد التفسير."
+  ]
+ },
+ "fiqh-tahawwulat": {
+  "id": [
+   "Fikih Tahawwulat",
+   "Dalami karya Habib Abu Bakar Al-Adni Al-Masyhur tentang tanda-tanda zaman, pergeseran peradaban, dan sunanul mughayyarat, melalui kitab serta arsip muhadharah."
+  ],
+  "en": [
+   "Fiqh al-Tahawwulat",
+   "Explore Habib Abu Bakr al-Adni al-Mashhur’s works on signs of the times, civilizational change, and sunan al-mughayyarāt through books and lecture archives."
+  ],
+  "ar": [
+   "فقه التحولات وسنن المتغيرات",
+   "تعمّق في مؤلفات الحبيب أبي بكر العدني المشهور عن علامات الزمان وتحولات الحضارات وسنن المتغيرات، من خلال الكتب وأرشيف المحاضرات."
+  ]
+ },
+ "tarikh-sirah": {
+  "id": [
+   "Tarikh & Sirah Nabawiyyah",
+   "Ikuti sirah Nabi, masa khulafaur rasyidin, dan perkembangan peradaban Islam. Telaah urutan peristiwa, jalur riwayat, serta konteks tempat dan zamannya."
+  ],
+  "en": [
+   "History & Prophetic Biography",
+   "Follow the Prophet’s biography, the rightly guided caliphs, and the development of Islamic civilization. Examine chronology, transmitted accounts, and geographical and historical context."
+  ],
+  "ar": [
+   "التاريخ الإسلامي والسيرة والبلدان والرحلات والأنساب",
+   "تتبّع السيرة النبوية وعصر الخلفاء الراشدين وتطور الحضارة الإسلامية، وادرس تسلسل الوقائع وطرق الرواية وسياق المكان والزمان."
+  ]
+ },
+ "fiqh-muqaran": {
+  "id": [
+   "Fikih Muqaran & Siyasah",
+   "Bandingkan dalil dan konstruksi hukum antarmazhab. Perluas telaah ke siyasah syar’iyyah, tata kelola negara, serta pembahasan sengketa dan persoalan kontemporer."
+  ],
+  "en": [
+   "Comparative Fiqh",
+   "Compare evidence and legal reasoning across schools. Extend your study to Islamic governance, public institutions, disputes, and contemporary legal questions."
+  ],
+  "ar": [
+   "الفقه المقارن والسياسة الشرعية وقسمة الفرائض",
+   "قارن الأدلة وبناء الأحكام بين المذاهب، ووسّع المطالعة إلى السياسة الشرعية ونظم الحكم ومباحث المنازعات والمسائل المعاصرة."
+  ]
+ },
+ "fatawa-masail": {
+  "id": [
+   "Fatawa & Masail Fiqhiyyah",
+   "Telusuri fatwa ulama klasik dan kontemporer beserta konteks pertanyaannya. Kaji nawazil, pertimbangan hukum, dan ragam jawaban atas persoalan masyarakat."
+  ],
+  "en": [
+   "Fatwas & Legal Questions",
+   "Explore classical and contemporary fatwas alongside the questions that prompted them. Study new cases, legal considerations, and differing responses to community issues."
+  ],
+  "ar": [
+   "الفتاوى الكبرى والنوازل الفقهية",
+   "تتبّع فتاوى العلماء المتقدمين والمعاصرين مع سياق أسئلتها، وادرس النوازل واعتبارات الحكم وتنوع الأجوبة عن قضايا المجتمع."
+  ]
+ },
+ "syarah-hadits": {
+  "id": [
+   "Syarah Hadis Nabawi",
+   "Dalami kandungan hadis melalui Fathul Bari, Syarah Shahih Muslim, dan Nailul Authar. Temukan penjelasan lafaz, faedah hukum, dan perbedaan pembacaan para pensyarah."
+  ],
+  "en": [
+   "Hadith Commentaries",
+   "Study hadith through Fatḥ al-Bārī, the commentary on Ṣaḥīḥ Muslim, and Nayl al-Awṭār. Explore wording, legal lessons, and differences among commentators."
+  ],
+  "ar": [
+   "شروح الحديث النبوي وفقه الآثار",
+   "تعمّق في معاني الحديث من خلال فتح الباري وشرح صحيح مسلم ونيل الأوطار، وتعرّف إلى شرح الألفاظ والفوائد الفقهية واختلاف أنظار الشُرّاح."
+  ]
+ },
+ "fiqh-hanafi": {
+  "id": [
+   "Fikih Hanafi",
+   "Telaah tradisi fikih Hanafi dari Zhahirur Riwayah hingga Al-Hidayah dan Raddul Muhtar. Ikuti hubungan matan, syarah, dan fatwa dalam perincian masalah mazhab."
+  ],
+  "en": [
+   "Hanafi Fiqh",
+   "Explore Hanafi jurisprudence from Ẓāhir al-Riwāyah to Al-Hidāyah and Radd al-Muḥtār. Follow the relationship between foundational texts, commentaries, and fatwas."
+  ],
+  "ar": [
+   "الفقه الحنفي المعتمد وظاهر الرواية",
+   "طالع الفقه الحنفي من ظاهر الرواية إلى الهداية ورد المحتار، وتتبّع صلة المتون والشروح والفتاوى بتفصيل مسائل المذهب."
+  ]
+ },
+ "fiqh-maliki": {
+  "id": [
+   "Fikih Maliki",
+   "Jelajahi fikih Maliki melalui Al-Mudawwanah, Mukhtashar Khalil, dan tradisi fatwa ulama Maghribi. Perhatikan dasar riwayat, amalan, dan rincian pendapat mazhab."
+  ],
+  "en": [
+   "Maliki Fiqh",
+   "Explore Maliki law through Al-Mudawwanah, Mukhtaṣar Khalīl, and the Maghribi fatwa tradition, attending to transmitted positions, practice, and distinctions within the school."
+  ],
+  "ar": [
+   "الفقه المالكي المعتمد ومدونة سحنون",
+   "استكشف الفقه المالكي في المدونة ومختصر خليل وتراث فتاوى علماء المغرب، مع العناية بالروايات والعمل وتفصيل أقوال المذهب."
+  ]
+ },
+ "fiqh-hanbali": {
+  "id": [
+   "Fikih Hanbali",
+   "Telusuri Al-Mughni, Al-Muqni’, dan Al-Inshaf untuk membaca fikih Hanbali. Bandingkan riwayat Imam Ahmad, wajah pendapat, serta penjelasan ulama mazhab."
+  ],
+  "en": [
+   "Hanbali Fiqh",
+   "Read Hanbali law through Al-Mughnī, Al-Muqniʿ, and Al-Inṣāf. Compare reports from Imam Aḥmad, legal positions, and explanations by the school’s scholars."
+  ],
+  "ar": [
+   "الفقه الحنبلي المعتمد ومسائل الإمام أحمد",
+   "تتبّع الفقه الحنبلي في المغني والمقنع والإنصاف، وقارن الروايات عن الإمام أحمد والأوجه الفقهية وبيان علماء المذهب."
+  ]
+ },
+ "tasawwuf": {
+  "id": [
+   "Tasawuf & Adzkar",
+   "Pelajari tazkiyatun nufus, adab suluk, wirid, dan ratib dalam tradisi ulama. Telaah Ihya’ ‘Ulumiddin dan Al-Adzkar untuk menghubungkan ilmu, amal, serta pembinaan hati."
+  ],
+  "en": [
+   "Spirituality & Remembrance",
+   "Study purification of the soul, spiritual discipline, litanies, and remembrance. Read Iḥyāʾ ʿUlūm al-Dīn and Al-Adhkār to connect knowledge, practice, and cultivation of the heart."
+  ],
+  "ar": [
+   "التصوف السني والتزكية والأذكار النبوية",
+   "ادرس تزكية النفوس وآداب السلوك والأوراد والأذكار في تراث العلماء، وطالع إحياء علوم الدين والأذكار لربط العلم بالعمل وتربية القلب."
+  ]
+ },
+ "tajwid-qiraat": {
+  "id": [
+   "Tajwid & Qira'at",
+   "Kaji makharijul huruf, sifat huruf, dan kaidah tartil. Kenali perbedaan qira’at sepuluh, jalur periwayatan, serta landasan bacaan untuk mendampingi talaqqi."
+  ],
+  "en": [
+   "Tajwid & Qur’anic Readings",
+   "Study articulation, letter qualities, and principles of measured recitation. Explore the ten readings, their transmission paths, and their textual foundations alongside oral instruction."
+  ],
+  "ar": [
+   "التجويد والقراءات المتواترة ورسم المصحف",
+   "ادرس مخارج الحروف وصفاتها وأحكام الترتيل، وتعرّف إلى أوجه القراءات العشر وطرقها وأصولها بما يعين على التلقّي والمشافهة."
+  ]
+ },
+ "qawaid-fiqhiyyah": {
+  "id": [
+   "Qawa'id Fiqhiyyah",
+   "Susun peta hukum melalui kaidah asasiyyah, kaidah furu’iyyah, dan dhowabith. Hubungkan pembahasan al-asybah wan-nazha’ir dengan contoh penerapan serta pengecualiannya."
+  ],
+  "en": [
+   "Legal Maxims",
+   "Organize legal questions through overarching maxims, subsidiary rules, and disciplinary principles. Connect al-ashbāh wa-l-naẓāʾir with applications and exceptions."
+  ],
+  "ar": [
+   "القواعد الفقهية والأشباه والنظائر والفروق",
+   "نظّم المسائل بالقواعد الكبرى والقواعد الفرعية والضوابط، واربط مباحث الأشباه والنظائر بتطبيقاتها واستثناءاتها."
+  ]
+ },
+ "musthalah-hadits": {
+  "id": [
+   "'Ulumul Hadis & Musthalah",
+   "Pelajari kritik sanad, klasifikasi hadis, jarh wa ta’dil, dan ‘ilal. Telusuri landasan metodologinya melalui Muqaddimah Ibnu Shalah dan Tadribur Rawi."
+  ],
+  "en": [
+   "Hadith Sciences",
+   "Study isnad criticism, hadith classification, narrator evaluation, and hidden defects through the methodological discussions of Ibn al-Ṣalāḥ’s introduction and Tadrīb al-Rāwī."
+  ],
+  "ar": [
+   "علوم الحديث ومصطلحه ومناهج التخريج والعلل",
+   "ادرس نقد الأسانيد وأقسام الحديث والجرح والتعديل والعلل، وتتبّع أصول المنهج في مقدمة ابن الصلاح وتدريب الراوي."
+  ]
+ },
+ "aqidah": {
+  "id": [
+   "Akidah & Ushuluddin",
+   "Telaah akidah Ahlussunnah wal Jama’ah dalam tradisi Asy’ariyyah dan Maturidiyyah. Kaji dalil aqli-naqli, istilah ushuluddin, serta jawaban ulama terhadap persoalan pemikiran."
+  ],
+  "en": [
+   "Theology",
+   "Study Sunni creed in the Ashʿari and Maturidi traditions. Examine rational and transmitted evidence, theological terminology, and scholarly responses to questions of belief."
+  ],
+  "ar": [
+   "العقيدة وأصول الدين والمذاهب والفرق الإسلامية",
+   "طالع عقيدة أهل السنة والجماعة في المدرستين الأشعرية والماتريدية، وادرس الأدلة العقلية والنقلية ومصطلحات أصول الدين وأجوبة العلماء عن مسائل الاعتقاد."
+  ]
+ },
+ "thabaqat-tarajim": {
+  "id": [
+   "Thabaqat & Rijalul Hadis",
+   "Kenali perawi, fuqaha, dan ulama melalui kitab thabaqat serta tarajim. Telusuri Tahdzibut Tahdzib dan Siyar A’lamin Nubala untuk membaca jaringan guru-murid dan catatan perawi."
+  ],
+  "en": [
+   "Biographical Literature",
+   "Explore narrators, jurists, and scholars through biographical dictionaries. Read Tahdhīb al-Tahdhīb and Siyar Aʿlām al-Nubalāʾ for teaching networks and narrator assessments."
+  ],
+  "ar": [
+   "التراجم والطبقات ورجال الحديث والجرح والتعديل",
+   "تعرّف إلى الرواة والفقهاء والعلماء في كتب الطبقات والتراجم، واستعن بتهذيب التهذيب وسير أعلام النبلاء في تتبّع الشيوخ والتلاميذ وأحوال الرواة."
+  ]
+ },
+ "bibliografi-faharis": {
+  "id": [
+   "Bibliografi & Tahqiq Turath",
+   "Telusuri judul, pengarang, manuskrip, dan riwayat cetakan melalui Kasyfuz Zhunun serta kamus bibliografi. Pelajari metode tahqiq dan pemeriksaan penisbatan karya."
+  ],
+  "en": [
+   "Bibliography & Textual Editing",
+   "Trace titles, authors, manuscripts, and publication histories through Kashf al-Ẓunūn and bibliographical dictionaries. Study textual editing and the assessment of authorship."
+  ],
+  "ar": [
+   "فهارس الكتب والأدلة والمخطوطات ومناهج التحقيق",
+   "تتبّع العناوين والمؤلفين والمخطوطات وتاريخ الطبعات في كشف الظنون والمعاجم الببليوغرافية، وادرس مناهج التحقيق وفحص نسبة المؤلفات."
+  ]
+ },
+ "habib-umar": {
+  "id": [
+   "Khazanah Habib Umar",
+   "Khazanah dars, fatwa, risalah dakwah, dan mutaba’ah ilmiah Al-Habib Umar bin Hafidz dari Tarim, Hadramaut. Koleksi sedang dipersiapkan untuk telaah yang tertata."
+  ],
+  "en": [
+   "Habib Umar Collection",
+   "Lessons, fatwas, writings on daʿwah, and scholarly guidance from Habib Umar bin Hafiz of Tarim, Hadramaut. The collection is being prepared for structured study."
+  ],
+  "ar": [
+   "خزانة الحبيب عمر",
+   "خزانة الدروس والفتاوى ورسائل الدعوة والمتابعات العلمية للحبيب عمر بن حفيظ بتريم، حضرموت. يجري إعداد المجموعة للمطالعة المنظمة."
+  ]
+ }
+}

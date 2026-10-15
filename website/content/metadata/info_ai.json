@@ -1,0 +1,2577 @@
+[
+ {
+  "id": "fiqh_tahawwulat",
+  "judul": "AI Fikih Tahawwulat",
+  "subjudul": "Kitab karya Habib Abu Bakar al-Masyhur · Muhadharah tiga kanal",
+  "nama_arab": "فقه التحولات",
+  "tentang": "",
+  "isi": {
+   "cabang_ilmu": [
+    {
+     "nama": "Kitab karya Habib Abu Bakar al-Masyhur",
+     "jumlah": null
+    },
+    {
+     "nama": "Muhadharah tiga kanal",
+     "jumlah": null
+    }
+   ],
+   "jumlah_kitab": 58,
+   "jumlah_muhadharah": 3001,
+   "jumlah_jilid": null,
+   "jumlah_kata": 6292565,
+   "rentang_wafat_pengarang": null,
+   "kitab_induk": [
+    {
+     "judul": "احياء لغة الإسلام العالمية في فقه التحولات وسنن المواقف",
+     "pengarang": "الحبيب أبو بكر العدني بن علي المشهور",
+     "wafat": 1443,
+     "jilid": null
+    },
+    {
+     "judul": "الاحاطة والاحتياط في فقه التحولات وسنن المواقف",
+     "pengarang": "الحبيب أبو بكر العدني بن علي المشهور",
+     "wafat": 1443,
+     "jilid": null
+    },
+    {
+     "judul": "الاستعداد الحثيثة في فقه التحولات وسنن المواقف",
+     "pengarang": "الحبيب أبو بكر العدني بن علي المشهور",
+     "wafat": 1443,
+     "jilid": null
+    },
+    {
+     "judul": "الاطروحة في فقه التحولات وسنن المواقف",
+     "pengarang": "الحبيب أبو بكر العدني بن علي المشهور",
+     "wafat": 1443,
+     "jilid": null
+    },
+    {
+     "judul": "الإقليد في فتح أبواب العلوم الخمسة المرتبطة بفقه التحولات التليد",
+     "pengarang": "الحبيب أبو بكر العدني بن علي المشهور",
+     "wafat": 1443,
+     "jilid": null
+    },
+    {
+     "judul": "الأبنية الفكرية في فقه التحولات وسنن المواقف",
+     "pengarang": "الحبيب أبو بكر العدني بن علي المشهور",
+     "wafat": 1443,
+     "jilid": null
+    },
+    {
+     "judul": "الأسس والمنطلقات",
+     "pengarang": "الحبيب أبو بكر العدني بن علي المشهور",
+     "wafat": 1443,
+     "jilid": null
+    },
+    {
+     "judul": "الإجابات الواعية على أسئلة المرحلة الغثائية المتداعية في فقه التحولات وسنن المواقف",
+     "pengarang": "الحبيب أبو بكر العدني بن علي المشهور",
+     "wafat": 1443,
+     "jilid": null
+    },
+    {
+     "judul": "الإنسان في القرآن في فقه التحولات وسنن المواقف",
+     "pengarang": "الحبيب أبو بكر العدني بن علي المشهور",
+     "wafat": 1443,
+     "jilid": null
+    },
+    {
+     "judul": "الإيضاح والإشارة في فقه التحولات وسنن المواقف",
+     "pengarang": "الحبيب أبو بكر العدني بن علي المشهور",
+     "wafat": 1443,
+     "jilid": null
+    }
+   ],
+   "perpustakaan_asal": {
+    "modul_06_kitab": 58,
+    "youtube_tiga_kanal": 3001
+   }
+  },
+  "cara_disusun": {
+   "rekaman_diperiksa_semua_ilmu": 46048,
+   "rekaman_per_perpustakaan": {
+    "hazmi": 28329,
+    "baru": 9121,
+    "shamela4": 8598
+   },
+   "karya_diblok_semua_ilmu": 3273,
+   "karya_ditahan_semua_ilmu": 10918,
+   "karya_termuat_semua_ilmu": 1456,
+   "rekaman_digabung_ke_kitab_ini": null,
+   "berkas_notebooklm": 17,
+   "uji": [
+    "Penyaringan manhaj pengarang, pensyarah, dan muhaqqiq",
+    "Deteksi kitab kembar lewat sidik isi",
+    "Pemilihan cetakan terbaik per kitab",
+    "Verifikasi tahun wafat dari sumber berdokumen",
+    "Uji 12 butir katalog",
+    "Uji mutu berkas: batas 497.000 kata, urutan halaman, kebersihan teks"
+   ],
+   "catatan_penyusun": ""
+  },
+  "batasan": [
+   "Hanya memuat kitab ulama Ahlussunnah wal Jama'ah; karya, pensyarah, dan muhaqqiq Wahabi/salafi diblok.",
+   "Kitab yang cetakannya hanya tersedia dengan tahqiq salafi dimuat matannya saja; muqaddimah dan catatan kaki muhaqqiq dibuang.",
+   "Jawaban bersumber dari kitab yang dimuat saja; AI tidak memberi fatwa pribadi.",
+   "Rujukan ditulis sebagai [judul singkat jilid/halaman] sesuai cetakan sumber; [حاشية jilid/halaman] menandai catatan kaki muhaqqiq.",
+   "Teks berasal dari salinan digital (Maktabah Syamilah dan turunannya); kesalahan ketik sumber dapat terbawa."
+  ],
+  "contoh_tanya_jawab": [],
+  "katalog": "assets/data/katalog/fiqh_tahawwulat.json"
+ },
+ {
+  "id": "fiqh_syafii",
+  "judul": "AI Fikih Syafi'i",
+  "subjudul": "Matan · Syarah · Hasyiyah",
+  "nama_arab": "الفقه الشافعي",
+  "tentang": "",
+  "isi": {
+   "cabang_ilmu": [
+    {
+     "nama": "Matan",
+     "jumlah": null
+    },
+    {
+     "nama": "Syarah",
+     "jumlah": null
+    },
+    {
+     "nama": "Hasyiyah",
+     "jumlah": null
+    },
+    {
+     "nama_katalog": "الفقه الشافعي",
+     "jumlah": 97
+    },
+    {
+     "nama_katalog": "-",
+     "jumlah": 7
+    }
+   ],
+   "jumlah_kitab": 104,
+   "jumlah_jilid": 299,
+   "jumlah_halaman": 247369,
+   "jumlah_kata": 56025818,
+   "rentang_wafat_pengarang": {
+    "awal": 204,
+    "akhir": 1407,
+    "sebelum_hijrah": 0
+   },
+   "kitab_induk": [
+    {
+     "judul": "تحفة المحتاج في شرح المنهاج",
+     "pengarang": "ابن حجر الهيتمي",
+     "wafat": 974,
+     "jilid": 46
+    },
+    {
+     "judul": "المجموع شرح المهذب - شجرة العناوين",
+     "pengarang": "النووي",
+     "wafat": 676,
+     "jilid": 20
+    },
+    {
+     "judul": "نهاية المطلب في دراية المذهب",
+     "pengarang": "الجويني، أبو المعالي",
+     "wafat": 478,
+     "jilid": null
+    },
+    {
+     "judul": "الحاوي الكبير",
+     "pengarang": "الماوردي",
+     "wafat": 450,
+     "jilid": null
+    },
+    {
+     "judul": "نهاية المحتاج إلى شرح المنهاج",
+     "pengarang": "شمس الدين الرملي",
+     "wafat": 1004,
+     "jilid": 29
+    },
+    {
+     "judul": "العزيز شرح الوجيز = الشرح الكبير للرافعي - ط العلمية",
+     "pengarang": "الرافعي",
+     "wafat": 623,
+     "jilid": null
+    },
+    {
+     "judul": "بحر المذهب للروياني",
+     "pengarang": "عَبْد الواحِد الرُّوْياني",
+     "wafat": 502,
+     "jilid": null
+    },
+    {
+     "judul": "كفاية النبيه في شرح التنبيه",
+     "pengarang": "ابن الرفعة",
+     "wafat": 710,
+     "jilid": null
+    },
+    {
+     "judul": "أسنى المطالب في شرح روض الطالب - ط العلمية",
+     "pengarang": "زكريا الأنصاري",
+     "wafat": 926,
+     "jilid": null
+    },
+    {
+     "judul": "الغرر البهية في شرح البهجة الوردية",
+     "pengarang": "زكريا الأنصاري",
+     "wafat": 926,
+     "jilid": null
+    }
+   ],
+   "perpustakaan_asal": {
+    "hazmi": 16,
+    "baru": 46,
+    "shamela4": 54
+   }
+  },
+  "cara_disusun": {
+   "rekaman_diperiksa_semua_ilmu": 46048,
+   "rekaman_per_perpustakaan": {
+    "hazmi": 28329,
+    "baru": 9121,
+    "shamela4": 8598
+   },
+   "karya_diblok_semua_ilmu": 3273,
+   "karya_ditahan_semua_ilmu": 10918,
+   "karya_termuat_semua_ilmu": 1456,
+   "rekaman_digabung_ke_kitab_ini": 337,
+   "berkas_notebooklm": 217,
+   "uji": [
+    "Penyaringan manhaj pengarang, pensyarah, dan muhaqqiq",
+    "Deteksi kitab kembar lewat sidik isi",
+    "Pemilihan cetakan terbaik per kitab",
+    "Verifikasi tahun wafat dari sumber berdokumen",
+    "Uji 12 butir katalog",
+    "Uji mutu berkas: batas 497.000 kata, urutan halaman, kebersihan teks"
+   ],
+   "catatan_penyusun": ""
+  },
+  "batasan": [
+   "Hanya memuat kitab ulama Ahlussunnah wal Jama'ah; karya, pensyarah, dan muhaqqiq Wahabi/salafi diblok.",
+   "Kitab yang cetakannya hanya tersedia dengan tahqiq salafi dimuat matannya saja; muqaddimah dan catatan kaki muhaqqiq dibuang.",
+   "Jawaban bersumber dari kitab yang dimuat saja; AI tidak memberi fatwa pribadi.",
+   "Rujukan ditulis sebagai [judul singkat jilid/halaman] sesuai cetakan sumber; [حاشية jilid/halaman] menandai catatan kaki muhaqqiq.",
+   "Teks berasal dari salinan digital (Maktabah Syamilah dan turunannya); kesalahan ketik sumber dapat terbawa."
+  ],
+  "contoh_tanya_jawab": [],
+  "katalog": "assets/data/katalog/fiqh_syafii.json"
+ },
+ {
+  "id": "fiqh_hanafi",
+  "judul": "AI Fikih Hanafi",
+  "subjudul": "Zhahir ar-riwayah · Mutun · Syuruh",
+  "nama_arab": "الفقه الحنفي",
+  "tentang": "",
+  "isi": {
+   "cabang_ilmu": [
+    {
+     "nama": "Zhahir ar-riwayah",
+     "jumlah": null
+    },
+    {
+     "nama": "Mutun",
+     "jumlah": null
+    },
+    {
+     "nama": "Syuruh",
+     "jumlah": null
+    },
+    {
+     "nama_katalog": "الفقه الحنفي",
+     "jumlah": 73
+    },
+    {
+     "nama_katalog": "-",
+     "jumlah": 9
+    }
+   ],
+   "jumlah_kitab": 82,
+   "jumlah_jilid": 91,
+   "jumlah_halaman": 126591,
+   "jumlah_kata": 33490252,
+   "rentang_wafat_pengarang": {
+    "awal": 182,
+    "akhir": 1306,
+    "sebelum_hijrah": 0
+   },
+   "kitab_induk": [
+    {
+     "judul": "البناية شرح الهداية",
+     "pengarang": "بدر الدين العيني",
+     "wafat": 855,
+     "jilid": null
+    },
+    {
+     "judul": "المبسوط للسرخسي",
+     "pengarang": "شمس الأئمة السرخسي",
+     "wafat": 483,
+     "jilid": null
+    },
+    {
+     "judul": "البحر الرائق شرح كنز الدقائق ومنحة الخالق وتكملة الطوري",
+     "pengarang": "زين الدين ابن نجيم",
+     "wafat": 970,
+     "jilid": null
+    },
+    {
+     "judul": "فتح القدير",
+     "pengarang": "الكمال بن الهمام",
+     "wafat": 861,
+     "jilid": 24
+    },
+    {
+     "judul": "معراج الدراية في شرح الهداية",
+     "pengarang": "الكاكي",
+     "wafat": 749,
+     "jilid": null
+    },
+    {
+     "judul": "الأصل لمحمد بن الحسن - ت بوينوكالن",
+     "pengarang": "محمد بن الحسن الشيباني",
+     "wafat": 189,
+     "jilid": null
+    },
+    {
+     "judul": "المحيط البرهاني",
+     "pengarang": "برهان الدين ابن مازه البخاري",
+     "wafat": 616,
+     "jilid": null
+    },
+    {
+     "judul": "تبيين الحقائق شرح كنز الدقائق وحاشية الشلبي",
+     "pengarang": "الفخر الزيلعي",
+     "wafat": 743,
+     "jilid": null
+    },
+    {
+     "judul": "بدائع الصنائع في ترتيب الشرائع",
+     "pengarang": "الكاساني",
+     "wafat": 587,
+     "jilid": null
+    },
+    {
+     "judul": "العناية شرح الهداية",
+     "pengarang": "البابرتي",
+     "wafat": 786,
+     "jilid": 16
+    }
+   ],
+   "perpustakaan_asal": {
+    "hazmi": 9,
+    "baru": 10,
+    "shamela4": 63
+   }
+  },
+  "cara_disusun": {
+   "rekaman_diperiksa_semua_ilmu": 46048,
+   "rekaman_per_perpustakaan": {
+    "hazmi": 28329,
+    "baru": 9121,
+    "shamela4": 8598
+   },
+   "karya_diblok_semua_ilmu": 3273,
+   "karya_ditahan_semua_ilmu": 10918,
+   "karya_termuat_semua_ilmu": 1456,
+   "rekaman_digabung_ke_kitab_ini": 210,
+   "berkas_notebooklm": 142,
+   "uji": [
+    "Penyaringan manhaj pengarang, pensyarah, dan muhaqqiq",
+    "Deteksi kitab kembar lewat sidik isi",
+    "Pemilihan cetakan terbaik per kitab",
+    "Verifikasi tahun wafat dari sumber berdokumen",
+    "Uji 12 butir katalog",
+    "Uji mutu berkas: batas 497.000 kata, urutan halaman, kebersihan teks"
+   ],
+   "catatan_penyusun": ""
+  },
+  "batasan": [
+   "Hanya memuat kitab ulama Ahlussunnah wal Jama'ah; karya, pensyarah, dan muhaqqiq Wahabi/salafi diblok.",
+   "Kitab yang cetakannya hanya tersedia dengan tahqiq salafi dimuat matannya saja; muqaddimah dan catatan kaki muhaqqiq dibuang.",
+   "Jawaban bersumber dari kitab yang dimuat saja; AI tidak memberi fatwa pribadi.",
+   "Rujukan ditulis sebagai [judul singkat jilid/halaman] sesuai cetakan sumber; [حاشية jilid/halaman] menandai catatan kaki muhaqqiq.",
+   "Teks berasal dari salinan digital (Maktabah Syamilah dan turunannya); kesalahan ketik sumber dapat terbawa."
+  ],
+  "contoh_tanya_jawab": [],
+  "katalog": "assets/data/katalog/fiqh_hanafi.json"
+ },
+ {
+  "id": "fiqh_maliki",
+  "judul": "AI Fikih Maliki",
+  "subjudul": "Mudawwanah · Mukhtashar Khalil · Syuruh",
+  "nama_arab": "الفقه المالكي",
+  "tentang": "",
+  "isi": {
+   "cabang_ilmu": [
+    {
+     "nama": "Mudawwanah",
+     "jumlah": null
+    },
+    {
+     "nama": "Mukhtashar Khalil",
+     "jumlah": null
+    },
+    {
+     "nama": "Syuruh",
+     "jumlah": null
+    },
+    {
+     "nama_katalog": "الفقه المالكي",
+     "jumlah": 76
+    },
+    {
+     "nama_katalog": "-",
+     "jumlah": 1
+    }
+   ],
+   "jumlah_kitab": 77,
+   "jumlah_jilid": 127,
+   "jumlah_halaman": 170518,
+   "jumlah_kata": 39418285,
+   "rentang_wafat_pengarang": {
+    "awal": 179,
+    "akhir": 1397,
+    "sebelum_hijrah": 0
+   },
+   "kitab_induk": [
+    {
+     "judul": "البيان والتحصيل",
+     "pengarang": "ابن رشد الجد",
+     "wafat": 520,
+     "jilid": 18
+    },
+    {
+     "judul": "شرح الخرشي على مختصر خليل - ومعه حاشية العدوي",
+     "pengarang": "الخرشي = الخراشي",
+     "wafat": 1101,
+     "jilid": null
+    },
+    {
+     "judul": "شرح الزرقاني على مختصر خليل وحاشية البناني",
+     "pengarang": "الزرقاني، عبد الباقي",
+     "wafat": 1099,
+     "jilid": null
+    },
+    {
+     "judul": "النوادر والزيادات على ما في المدونة من غيرها من الأمهات",
+     "pengarang": "ابن أبي زيد القيرواني",
+     "wafat": 386,
+     "jilid": null
+    },
+    {
+     "judul": "مواهب الجليل لشرح مختصر الخليل",
+     "pengarang": "الحطاب",
+     "wafat": 954,
+     "jilid": 8
+    },
+    {
+     "judul": "الجامع لمسائل المدونة",
+     "pengarang": "ابن يونس الصقلي",
+     "wafat": 451,
+     "jilid": null
+    },
+    {
+     "judul": "المختصر الفقهي لابن عرفة",
+     "pengarang": "ابن عرفة",
+     "wafat": 803,
+     "jilid": null
+    },
+    {
+     "judul": "التبصرة للخمي",
+     "pengarang": "اللخمي، أبو الحسن",
+     "wafat": 478,
+     "jilid": null
+    },
+    {
+     "judul": "الاستذكار الجامع لمذاهب فقهاء الأمصار 463",
+     "pengarang": "ابن عبد البر",
+     "wafat": 463,
+     "jilid": 27
+    },
+    {
+     "judul": "الذخيرة للقرافي",
+     "pengarang": "القرافي",
+     "wafat": 684,
+     "jilid": null
+    }
+   ],
+   "perpustakaan_asal": {
+    "hazmi": 13,
+    "baru": 7,
+    "shamela4": 57
+   }
+  },
+  "cara_disusun": {
+   "rekaman_diperiksa_semua_ilmu": 46048,
+   "rekaman_per_perpustakaan": {
+    "hazmi": 28329,
+    "baru": 9121,
+    "shamela4": 8598
+   },
+   "karya_diblok_semua_ilmu": 3273,
+   "karya_ditahan_semua_ilmu": 10918,
+   "karya_termuat_semua_ilmu": 1456,
+   "rekaman_digabung_ke_kitab_ini": 247,
+   "berkas_notebooklm": 142,
+   "uji": [
+    "Penyaringan manhaj pengarang, pensyarah, dan muhaqqiq",
+    "Deteksi kitab kembar lewat sidik isi",
+    "Pemilihan cetakan terbaik per kitab",
+    "Verifikasi tahun wafat dari sumber berdokumen",
+    "Uji 12 butir katalog",
+    "Uji mutu berkas: batas 497.000 kata, urutan halaman, kebersihan teks"
+   ],
+   "catatan_penyusun": ""
+  },
+  "batasan": [
+   "Hanya memuat kitab ulama Ahlussunnah wal Jama'ah; karya, pensyarah, dan muhaqqiq Wahabi/salafi diblok.",
+   "Kitab yang cetakannya hanya tersedia dengan tahqiq salafi dimuat matannya saja; muqaddimah dan catatan kaki muhaqqiq dibuang.",
+   "Jawaban bersumber dari kitab yang dimuat saja; AI tidak memberi fatwa pribadi.",
+   "Rujukan ditulis sebagai [judul singkat jilid/halaman] sesuai cetakan sumber; [حاشية jilid/halaman] menandai catatan kaki muhaqqiq.",
+   "Teks berasal dari salinan digital (Maktabah Syamilah dan turunannya); kesalahan ketik sumber dapat terbawa."
+  ],
+  "contoh_tanya_jawab": [],
+  "katalog": "assets/data/katalog/fiqh_maliki.json"
+ },
+ {
+  "id": "fiqh_hanbali",
+  "judul": "AI Fikih Hanbali",
+  "subjudul": "Masa'il Ahmad · Mutun · Syuruh",
+  "nama_arab": "الفقه الحنبلي",
+  "tentang": "",
+  "isi": {
+   "cabang_ilmu": [
+    {
+     "nama": "Masa'il Ahmad",
+     "jumlah": null
+    },
+    {
+     "nama": "Mutun",
+     "jumlah": null
+    },
+    {
+     "nama": "Syuruh",
+     "jumlah": null
+    },
+    {
+     "nama_katalog": "الفقه الحنبلي",
+     "jumlah": 68
+    }
+   ],
+   "jumlah_kitab": 68,
+   "jumlah_jilid": 69,
+   "jumlah_halaman": 128428,
+   "jumlah_kata": 20490525,
+   "rentang_wafat_pengarang": {
+    "awal": 241,
+    "akhir": 1335,
+    "sebelum_hijrah": 0
+   },
+   "kitab_induk": [
+    {
+     "judul": "الشرح الكبير على المقنع - ت التركي",
+     "pengarang": "ابن أبي عمر",
+     "wafat": 682,
+     "jilid": null
+    },
+    {
+     "judul": "المغني لابن قدامة - ت التركي",
+     "pengarang": "ابن قدامة",
+     "wafat": 620,
+     "jilid": null
+    },
+    {
+     "judul": "كشاف القناع عن متن الإقناع - ط وزارة العدل",
+     "pengarang": "البهوتي",
+     "wafat": 1051,
+     "jilid": null
+    },
+    {
+     "judul": "الإنصاف في معرفة الراجح من الخلاف - ت التركي",
+     "pengarang": "المرداوي",
+     "wafat": 885,
+     "jilid": null
+    },
+    {
+     "judul": "المبدع شرح المقنع - ط ركائز",
+     "pengarang": "برهان الدين ابن مفلح",
+     "wafat": 884,
+     "jilid": null
+    },
+    {
+     "judul": "شرح منتهى الإرادات لابن النجار = معونة أولي النهى",
+     "pengarang": "ابن النجار الفتوحي",
+     "wafat": 972,
+     "jilid": null
+    },
+    {
+     "judul": "الفروع وتصحيح الفروع",
+     "pengarang": "ابن مفلح",
+     "wafat": 763,
+     "jilid": null
+    },
+    {
+     "judul": "شرح منتهى الإرادات",
+     "pengarang": "البهوتي",
+     "wafat": 1051,
+     "jilid": 13
+    },
+    {
+     "judul": "حاشية الخلوتي على منتهى الإرادات",
+     "pengarang": "الخلوتي",
+     "wafat": 1088,
+     "jilid": null
+    },
+    {
+     "judul": "الممتع في شرح المقنع ت ابن دهيش ط 3",
+     "pengarang": "ابن المُنجَى، أبو البركات",
+     "wafat": 695,
+     "jilid": 4
+    }
+   ],
+   "perpustakaan_asal": {
+    "hazmi": 10,
+    "baru": 8,
+    "shamela4": 50
+   }
+  },
+  "cara_disusun": {
+   "rekaman_diperiksa_semua_ilmu": 46048,
+   "rekaman_per_perpustakaan": {
+    "hazmi": 28329,
+    "baru": 9121,
+    "shamela4": 8598
+   },
+   "karya_diblok_semua_ilmu": 3273,
+   "karya_ditahan_semua_ilmu": 10918,
+   "karya_termuat_semua_ilmu": 1456,
+   "rekaman_digabung_ke_kitab_ini": 216,
+   "berkas_notebooklm": 101,
+   "uji": [
+    "Penyaringan manhaj pengarang, pensyarah, dan muhaqqiq",
+    "Deteksi kitab kembar lewat sidik isi",
+    "Pemilihan cetakan terbaik per kitab",
+    "Verifikasi tahun wafat dari sumber berdokumen",
+    "Uji 12 butir katalog",
+    "Uji mutu berkas: batas 497.000 kata, urutan halaman, kebersihan teks"
+   ],
+   "catatan_penyusun": ""
+  },
+  "batasan": [
+   "Hanya memuat kitab ulama Ahlussunnah wal Jama'ah; karya, pensyarah, dan muhaqqiq Wahabi/salafi diblok.",
+   "Kitab yang cetakannya hanya tersedia dengan tahqiq salafi dimuat matannya saja; muqaddimah dan catatan kaki muhaqqiq dibuang.",
+   "Jawaban bersumber dari kitab yang dimuat saja; AI tidak memberi fatwa pribadi.",
+   "Rujukan ditulis sebagai [judul singkat jilid/halaman] sesuai cetakan sumber; [حاشية jilid/halaman] menandai catatan kaki muhaqqiq.",
+   "Teks berasal dari salinan digital (Maktabah Syamilah dan turunannya); kesalahan ketik sumber dapat terbawa."
+  ],
+  "contoh_tanya_jawab": [],
+  "katalog": "assets/data/katalog/fiqh_hanbali.json"
+ },
+ {
+  "id": "fiqh_muqaran",
+  "judul": "AI Perbandingan Mazhab & Fatwa",
+  "subjudul": "Fikih muqaran · Fatawa dan nawazil · Siyasah syar'iyyah · Faraidh",
+  "nama_arab": "الفقه المقارن والفتاوى",
+  "tentang": "",
+  "isi": {
+   "cabang_ilmu": [
+    {
+     "nama": "Fikih muqaran",
+     "jumlah": null
+    },
+    {
+     "nama": "Fatawa dan nawazil",
+     "jumlah": null
+    },
+    {
+     "nama": "Siyasah syar'iyyah",
+     "jumlah": null
+    },
+    {
+     "nama": "Faraidh",
+     "jumlah": null
+    },
+    {
+     "nama_katalog": "الفقه المقارن والعام",
+     "jumlah": 130
+    },
+    {
+     "nama_katalog": "السياسة الشرعية والقضاء",
+     "jumlah": 64
+    },
+    {
+     "nama_katalog": "-",
+     "jumlah": 11
+    },
+    {
+     "nama_katalog": "التخريج والأطراف والعلل",
+     "jumlah": 3
+    },
+    {
+     "nama_katalog": "الأدب والبلاغة والشعر",
+     "jumlah": 2
+    }
+   ],
+   "jumlah_kitab": 210,
+   "jumlah_jilid": 140,
+   "jumlah_halaman": 97915,
+   "jumlah_kata": 21542684,
+   "rentang_wafat_pengarang": {
+    "awal": 182,
+    "akhir": 1436,
+    "sebelum_hijrah": 0
+   },
+   "kitab_induk": [
+    {
+     "judul": "الفتاوى العالمكيرية = الفتاوى الهندية",
+     "pengarang": "محمد أورنك عالم كير",
+     "wafat": 1118,
+     "jilid": null
+    },
+    {
+     "judul": "الأوسط من السنن والإجماع والاختلاف - ط الفلاح",
+     "pengarang": "ابن المنذر",
+     "wafat": 319,
+     "jilid": null
+    },
+    {
+     "judul": "المحلى بالآثار",
+     "pengarang": "ابن حزم",
+     "wafat": 456,
+     "jilid": null
+    },
+    {
+     "judul": "الإعلام بفوائد عمدة الأحكام",
+     "pengarang": "ابن الملقن",
+     "wafat": 804,
+     "jilid": null
+    },
+    {
+     "judul": "الفتاوى الكبرى الفقهية",
+     "pengarang": "ابن حجر الهيتمي",
+     "wafat": 974,
+     "jilid": null
+    },
+    {
+     "judul": "قاضي إمام فخر الدين خان",
+     "pengarang": "فخر الدين قاضي خان الحسن بن منصور الأوزجندي",
+     "wafat": 592,
+     "jilid": 3
+    },
+    {
+     "judul": "الأحكام الكبرى",
+     "pengarang": "عبد الحق الإشبيلي",
+     "wafat": 581,
+     "jilid": 4
+    },
+    {
+     "judul": "السنن والأحكام عن المصطفى عليه أفضل الصلاة والسلام",
+     "pengarang": "ضياء الدين المقدسي",
+     "wafat": 643,
+     "jilid": null
+    },
+    {
+     "judul": "شرح السير الكبير",
+     "pengarang": "شمس الأئمة السرخسي",
+     "wafat": 483,
+     "jilid": 6
+    },
+    {
+     "judul": "الإشراف على مذاهب العلماء لابن المنذر",
+     "pengarang": "ابن المنذر",
+     "wafat": 319,
+     "jilid": null
+    }
+   ],
+   "perpustakaan_asal": {
+    "hazmi": 46,
+    "baru": 38,
+    "shamela4": 126
+   }
+  },
+  "cara_disusun": {
+   "rekaman_diperiksa_semua_ilmu": 46048,
+   "rekaman_per_perpustakaan": {
+    "hazmi": 28329,
+    "baru": 9121,
+    "shamela4": 8598
+   },
+   "karya_diblok_semua_ilmu": 3273,
+   "karya_ditahan_semua_ilmu": 10918,
+   "karya_termuat_semua_ilmu": 1456,
+   "rekaman_digabung_ke_kitab_ini": 534,
+   "berkas_notebooklm": 234,
+   "uji": [
+    "Penyaringan manhaj pengarang, pensyarah, dan muhaqqiq",
+    "Deteksi kitab kembar lewat sidik isi",
+    "Pemilihan cetakan terbaik per kitab",
+    "Verifikasi tahun wafat dari sumber berdokumen",
+    "Uji 12 butir katalog",
+    "Uji mutu berkas: batas 497.000 kata, urutan halaman, kebersihan teks"
+   ],
+   "catatan_penyusun": ""
+  },
+  "batasan": [
+   "Hanya memuat kitab ulama Ahlussunnah wal Jama'ah; karya, pensyarah, dan muhaqqiq Wahabi/salafi diblok.",
+   "Kitab yang cetakannya hanya tersedia dengan tahqiq salafi dimuat matannya saja; muqaddimah dan catatan kaki muhaqqiq dibuang.",
+   "Jawaban bersumber dari kitab yang dimuat saja; AI tidak memberi fatwa pribadi.",
+   "Rujukan ditulis sebagai [judul singkat jilid/halaman] sesuai cetakan sumber; [حاشية jilid/halaman] menandai catatan kaki muhaqqiq.",
+   "Teks berasal dari salinan digital (Maktabah Syamilah dan turunannya); kesalahan ketik sumber dapat terbawa."
+  ],
+  "contoh_tanya_jawab": [],
+  "katalog": "assets/data/katalog/fiqh_muqaran.json"
+ },
+ {
+  "id": "ushul_fiqh",
+  "judul": "AI Ushul & Kaidah Fikih",
+  "subjudul": "Ushul fikih · Maqashid · Qawa'id fiqhiyyah · Asybah wa nazha'ir",
+  "nama_arab": "أصول الفقه والقواعد الفقهية",
+  "tentang": "",
+  "isi": {
+   "cabang_ilmu": [
+    {
+     "nama": "Ushul fikih",
+     "jumlah": null
+    },
+    {
+     "nama": "Maqashid",
+     "jumlah": null
+    },
+    {
+     "nama": "Qawa'id fiqhiyyah",
+     "jumlah": null
+    },
+    {
+     "nama": "Asybah wa nazha'ir",
+     "jumlah": null
+    },
+    {
+     "nama_katalog": "أصول الفقه",
+     "jumlah": 176
+    },
+    {
+     "nama_katalog": "-",
+     "jumlah": 3
+    },
+    {
+     "nama_katalog": "التخريج والأطراف والعلل",
+     "jumlah": 1
+    }
+   ],
+   "jumlah_kitab": 180,
+   "jumlah_jilid": 190,
+   "jumlah_halaman": 140895,
+   "jumlah_kata": 25334882,
+   "rentang_wafat_pengarang": {
+    "awal": 204,
+    "akhir": 1430,
+    "sebelum_hijrah": 0
+   },
+   "kitab_induk": [
+    {
+     "judul": "كشف الأسرار عن أصول البزدوي",
+     "pengarang": "علاء الدين عبد العزيز البخاري",
+     "wafat": 730,
+     "jilid": 4
+    },
+    {
+     "judul": "أنوار البروق فى أنواع الفروق ( مع الهوامش )",
+     "pengarang": "القرافي",
+     "wafat": 684,
+     "jilid": 9
+    },
+    {
+     "judul": "رفع الحاجب عن مختصر ابن الحاجب",
+     "pengarang": "تاج الدين ابن السبكي",
+     "wafat": 771,
+     "jilid": null
+    },
+    {
+     "judul": "نفائس الأصول في شرح المحصول",
+     "pengarang": "القرافي",
+     "wafat": 684,
+     "jilid": null
+    },
+    {
+     "judul": "الإبهاج في شرح المنهاج - ط دبي",
+     "pengarang": "تاج الدين ابن السبكي",
+     "wafat": 771,
+     "jilid": null
+    },
+    {
+     "judul": "التحبير شرح التحرير",
+     "pengarang": "المرداوي",
+     "wafat": 885,
+     "jilid": 8
+    },
+    {
+     "judul": "شرح العضد على مختصر المنتهى الأصولي ومعه حاشية السعد والجرجاني",
+     "pengarang": "عضد الدين الإيجي",
+     "wafat": 756,
+     "jilid": 3
+    },
+    {
+     "judul": "التقرير والتحبير على كتاب التحرير",
+     "pengarang": "ابن أمير حاج",
+     "wafat": 879,
+     "jilid": null
+    },
+    {
+     "judul": "تيسير التحرير",
+     "pengarang": "أمير باد شاه",
+     "wafat": 972,
+     "jilid": 4
+    },
+    {
+     "judul": "البحر المحيط",
+     "pengarang": "بدر الدين الزركشي",
+     "wafat": 794,
+     "jilid": 4
+    }
+   ],
+   "perpustakaan_asal": {
+    "hazmi": 40,
+    "baru": 26,
+    "shamela4": 114
+   }
+  },
+  "cara_disusun": {
+   "rekaman_diperiksa_semua_ilmu": 46048,
+   "rekaman_per_perpustakaan": {
+    "hazmi": 28329,
+    "baru": 9121,
+    "shamela4": 8598
+   },
+   "karya_diblok_semua_ilmu": 3273,
+   "karya_ditahan_semua_ilmu": 10918,
+   "karya_termuat_semua_ilmu": 1456,
+   "rekaman_digabung_ke_kitab_ini": 627,
+   "berkas_notebooklm": 198,
+   "uji": [
+    "Penyaringan manhaj pengarang, pensyarah, dan muhaqqiq",
+    "Deteksi kitab kembar lewat sidik isi",
+    "Pemilihan cetakan terbaik per kitab",
+    "Verifikasi tahun wafat dari sumber berdokumen",
+    "Uji 12 butir katalog",
+    "Uji mutu berkas: batas 497.000 kata, urutan halaman, kebersihan teks"
+   ],
+   "catatan_penyusun": ""
+  },
+  "batasan": [
+   "Hanya memuat kitab ulama Ahlussunnah wal Jama'ah; karya, pensyarah, dan muhaqqiq Wahabi/salafi diblok.",
+   "Kitab yang cetakannya hanya tersedia dengan tahqiq salafi dimuat matannya saja; muqaddimah dan catatan kaki muhaqqiq dibuang.",
+   "Jawaban bersumber dari kitab yang dimuat saja; AI tidak memberi fatwa pribadi.",
+   "Rujukan ditulis sebagai [judul singkat jilid/halaman] sesuai cetakan sumber; [حاشية jilid/halaman] menandai catatan kaki muhaqqiq.",
+   "Teks berasal dari salinan digital (Maktabah Syamilah dan turunannya); kesalahan ketik sumber dapat terbawa."
+  ],
+  "contoh_tanya_jawab": [],
+  "katalog": "assets/data/katalog/ushul_fiqh.json"
+ },
+ {
+  "id": "hadits",
+  "judul": "AI Hadits",
+  "subjudul": "Kutub as-sunnah · Masanid · Ma'ajim · Ajza'",
+  "nama_arab": "الحديث الشريف",
+  "tentang": "",
+  "isi": {
+   "cabang_ilmu": [
+    {
+     "nama": "Kutub as-sunnah",
+     "jumlah": null
+    },
+    {
+     "nama": "Masanid",
+     "jumlah": null
+    },
+    {
+     "nama": "Ma'ajim",
+     "jumlah": null
+    },
+    {
+     "nama": "Ajza'",
+     "jumlah": null
+    },
+    {
+     "nama_katalog": "الحديث الشريف وشروحه",
+     "jumlah": 1068
+    },
+    {
+     "nama_katalog": "التخريج والأطراف والعلل",
+     "jumlah": 51
+    },
+    {
+     "nama_katalog": "البلدان والرحلات",
+     "jumlah": 8
+    },
+    {
+     "nama_katalog": "-",
+     "jumlah": 8
+    },
+    {
+     "nama_katalog": "الأدب والبلاغة والشعر",
+     "jumlah": 3
+    }
+   ],
+   "jumlah_kitab": 1138,
+   "jumlah_jilid": 594,
+   "jumlah_halaman": 546385,
+   "jumlah_kata": 71237384,
+   "rentang_wafat_pengarang": {
+    "awal": 110,
+    "akhir": 1413,
+    "sebelum_hijrah": 0
+   },
+   "kitab_induk": [
+    {
+     "judul": "جمع الجوامع المعروف بـ «الجامع الكبير»",
+     "pengarang": "الجلال السيوطي",
+     "wafat": 911,
+     "jilid": 24
+    },
+    {
+     "judul": "جامع الأصول في أحاديث الرسول",
+     "pengarang": "ابن الأثير، مجد الدين أبو السعادات",
+     "wafat": 606,
+     "jilid": 12
+    },
+    {
+     "judul": "السنن الكبرى - البيهقي - ت التركي",
+     "pengarang": "أبو بكر البيهقي",
+     "wafat": 458,
+     "jilid": null
+    },
+    {
+     "judul": "صحيح البخاري - بحاشية السهارنفوري - ت الندوي",
+     "pengarang": "البخاري",
+     "wafat": 256,
+     "jilid": null
+    },
+    {
+     "judul": "مستخرج أبي عوانة - ط الجامعة الإسلامية",
+     "pengarang": "أبو عوانة",
+     "wafat": 316,
+     "jilid": null
+    },
+    {
+     "judul": "مسند أحمد",
+     "pengarang": "أحمد بن حنبل",
+     "wafat": 241,
+     "jilid": 6
+    },
+    {
+     "judul": "كنز العمال في سنن الأقوال والأفعال",
+     "pengarang": "المتقي الهندي",
+     "wafat": 975,
+     "jilid": 16
+    },
+    {
+     "judul": "المعجم الكبير الطبراني",
+     "pengarang": "الطبراني",
+     "wafat": 360,
+     "jilid": 20
+    },
+    {
+     "judul": "شعب الإيمان - البيهقي",
+     "pengarang": "أبو بكر البيهقي",
+     "wafat": 458,
+     "jilid": 7
+    },
+    {
+     "judul": "جامع المسانيد والسنن",
+     "pengarang": "ابن كثير",
+     "wafat": 774,
+     "jilid": null
+    }
+   ],
+   "perpustakaan_asal": {
+    "hazmi": 263,
+    "baru": 34,
+    "shamela4": 841
+   }
+  },
+  "cara_disusun": {
+   "rekaman_diperiksa_semua_ilmu": 46048,
+   "rekaman_per_perpustakaan": {
+    "hazmi": 28329,
+    "baru": 9121,
+    "shamela4": 8598
+   },
+   "karya_diblok_semua_ilmu": 3273,
+   "karya_ditahan_semua_ilmu": 10918,
+   "karya_termuat_semua_ilmu": 1456,
+   "rekaman_digabung_ke_kitab_ini": 3756,
+   "berkas_notebooklm": 269,
+   "uji": [
+    "Penyaringan manhaj pengarang, pensyarah, dan muhaqqiq",
+    "Deteksi kitab kembar lewat sidik isi",
+    "Pemilihan cetakan terbaik per kitab",
+    "Verifikasi tahun wafat dari sumber berdokumen",
+    "Uji 12 butir katalog",
+    "Uji mutu berkas: batas 497.000 kata, urutan halaman, kebersihan teks"
+   ],
+   "catatan_penyusun": ""
+  },
+  "batasan": [
+   "Hanya memuat kitab ulama Ahlussunnah wal Jama'ah; karya, pensyarah, dan muhaqqiq Wahabi/salafi diblok.",
+   "Kitab yang cetakannya hanya tersedia dengan tahqiq salafi dimuat matannya saja; muqaddimah dan catatan kaki muhaqqiq dibuang.",
+   "Jawaban bersumber dari kitab yang dimuat saja; AI tidak memberi fatwa pribadi.",
+   "Rujukan ditulis sebagai [judul singkat jilid/halaman] sesuai cetakan sumber; [حاشية jilid/halaman] menandai catatan kaki muhaqqiq.",
+   "Teks berasal dari salinan digital (Maktabah Syamilah dan turunannya); kesalahan ketik sumber dapat terbawa."
+  ],
+  "contoh_tanya_jawab": [],
+  "katalog": "assets/data/katalog/hadits.json"
+ },
+ {
+  "id": "syarah_hadits",
+  "judul": "AI Syarah Hadits",
+  "subjudul": "Syarah kitab-kitab hadits",
+  "nama_arab": "شروح الحديث",
+  "tentang": "",
+  "isi": {
+   "cabang_ilmu": [
+    {
+     "nama": "Syarah kitab-kitab hadits",
+     "jumlah": null
+    },
+    {
+     "nama_katalog": "شروح الحديث",
+     "jumlah": 128
+    },
+    {
+     "nama_katalog": "-",
+     "jumlah": 5
+    }
+   ],
+   "jumlah_kitab": 133,
+   "jumlah_jilid": 199,
+   "jumlah_halaman": 389377,
+   "jumlah_kata": 84703253,
+   "rentang_wafat_pengarang": {
+    "awal": 204,
+    "akhir": 1430,
+    "sebelum_hijrah": 0
+   },
+   "kitab_induk": [
+    {
+     "judul": "نجاح القاري لصحيح البخاري",
+     "pengarang": "يوسف أفندي زاده الأماسي",
+     "wafat": 1167,
+     "jilid": 1
+    },
+    {
+     "judul": "عمدة القاري شرح صحيح البخاري",
+     "pengarang": "بدر الدين العيني",
+     "wafat": 855,
+     "jilid": null
+    },
+    {
+     "judul": "التوضيح لشرح الجامع الصحيح",
+     "pengarang": "ابن الملقن",
+     "wafat": 804,
+     "jilid": null
+    },
+    {
+     "judul": "فتح الباري - ابن حجر",
+     "pengarang": "ابن حجر العسقلاني",
+     "wafat": 852,
+     "jilid": 13
+    },
+    {
+     "judul": "إرشاد الساري لشرح صحيح البخاري - ط عطاءات العلم",
+     "pengarang": "القسطلاني",
+     "wafat": 923,
+     "jilid": null
+    },
+    {
+     "judul": "شرح سنن أبي داود لابن رسلان",
+     "pengarang": "ابن رسلان",
+     "wafat": 844,
+     "jilid": 19
+    },
+    {
+     "judul": "مرقاة المفاتيح شرح مشكاة المصابيح",
+     "pengarang": "الملا على القاري",
+     "wafat": 1014,
+     "jilid": null
+    },
+    {
+     "judul": "فتح القريب المجيب على الترغيب والترهيب",
+     "pengarang": "حسن بن علي الفيومي",
+     "wafat": 870,
+     "jilid": null
+    },
+    {
+     "judul": "نخب الأفكار في تنقيح مباني الأخبار في شرح معاني الآثار",
+     "pengarang": "بدر الدين العيني",
+     "wafat": 855,
+     "jilid": null
+    },
+    {
+     "judul": "التلقيح لفهم قارئ الصحيح",
+     "pengarang": "برهان الدين إبراهيم بن محمد بن خليل سبط ابن العجمي (البرهان الحلبي)",
+     "wafat": 841,
+     "jilid": 1
+    }
+   ],
+   "perpustakaan_asal": {
+    "hazmi": 21,
+    "baru": 21,
+    "shamela4": 91
+   }
+  },
+  "cara_disusun": {
+   "rekaman_diperiksa_semua_ilmu": 46048,
+   "rekaman_per_perpustakaan": {
+    "hazmi": 28329,
+    "baru": 9121,
+    "shamela4": 8598
+   },
+   "karya_diblok_semua_ilmu": 3273,
+   "karya_ditahan_semua_ilmu": 10918,
+   "karya_termuat_semua_ilmu": 1456,
+   "rekaman_digabung_ke_kitab_ini": 365,
+   "berkas_notebooklm": 287,
+   "uji": [
+    "Penyaringan manhaj pengarang, pensyarah, dan muhaqqiq",
+    "Deteksi kitab kembar lewat sidik isi",
+    "Pemilihan cetakan terbaik per kitab",
+    "Verifikasi tahun wafat dari sumber berdokumen",
+    "Uji 12 butir katalog",
+    "Uji mutu berkas: batas 497.000 kata, urutan halaman, kebersihan teks"
+   ],
+   "catatan_penyusun": ""
+  },
+  "batasan": [
+   "Hanya memuat kitab ulama Ahlussunnah wal Jama'ah; karya, pensyarah, dan muhaqqiq Wahabi/salafi diblok.",
+   "Kitab yang cetakannya hanya tersedia dengan tahqiq salafi dimuat matannya saja; muqaddimah dan catatan kaki muhaqqiq dibuang.",
+   "Jawaban bersumber dari kitab yang dimuat saja; AI tidak memberi fatwa pribadi.",
+   "Rujukan ditulis sebagai [judul singkat jilid/halaman] sesuai cetakan sumber; [حاشية jilid/halaman] menandai catatan kaki muhaqqiq.",
+   "Teks berasal dari salinan digital (Maktabah Syamilah dan turunannya); kesalahan ketik sumber dapat terbawa."
+  ],
+  "contoh_tanya_jawab": [],
+  "katalog": "assets/data/katalog/syarah_hadits.json"
+ },
+ {
+  "id": "musthalah_hadits",
+  "judul": "AI Ilmu Hadits",
+  "subjudul": "Musthalah · Takhrij · 'Ilal · Athraf",
+  "nama_arab": "مصطلح الحديث وعلومه",
+  "tentang": "",
+  "isi": {
+   "cabang_ilmu": [
+    {
+     "nama": "Musthalah",
+     "jumlah": null
+    },
+    {
+     "nama": "Takhrij",
+     "jumlah": null
+    },
+    {
+     "nama": "'Ilal",
+     "jumlah": null
+    },
+    {
+     "nama": "Athraf",
+     "jumlah": null
+    },
+    {
+     "nama_katalog": "التخريج والأطراف والعلل",
+     "jumlah": 118
+    },
+    {
+     "nama_katalog": "مصطلح الحديث وعلومه",
+     "jumlah": 103
+    },
+    {
+     "nama_katalog": "-",
+     "jumlah": 4
+    },
+    {
+     "nama_katalog": "الأدب والبلاغة والشعر",
+     "jumlah": 1
+    }
+   ],
+   "jumlah_kitab": 226,
+   "jumlah_jilid": 150,
+   "jumlah_halaman": 178450,
+   "jumlah_kata": 23763963,
+   "rentang_wafat_pengarang": {
+    "awal": 233,
+    "akhir": 1442,
+    "sebelum_hijrah": 0
+   },
+   "kitab_induk": [
+    {
+     "judul": "إتحاف المهرة لابن حجر",
+     "pengarang": "ابن حجر العسقلاني",
+     "wafat": 852,
+     "jilid": 19
+    },
+    {
+     "judul": "تحفة الأشراف بمعرفة الأطراف",
+     "pengarang": "المزي، جمال الدين",
+     "wafat": 742,
+     "jilid": null
+    },
+    {
+     "judul": "البدر المنير في تخريج الأحاديث والأثار الواقعة في الشرح الكبير",
+     "pengarang": "ابن الملقن",
+     "wafat": 804,
+     "jilid": 9
+    },
+    {
+     "judul": "منار الإسلام بترتيب كتاب الوهم والإيهام",
+     "pengarang": "علاء الدين مغلطاي",
+     "wafat": 762,
+     "jilid": null
+    },
+    {
+     "judul": "العلل لابن أبي حاتم ت الحميد",
+     "pengarang": "ابن أبي حاتم",
+     "wafat": 327,
+     "jilid": null
+    },
+    {
+     "judul": "المقاصد الحسنة في بيان كثير من الأحاديث المشتهرة على الألسنة - ط الميمنة",
+     "pengarang": "السخاوي",
+     "wafat": 902,
+     "jilid": null
+    },
+    {
+     "judul": "مختصر تلخيص الذهبي لمستدرك الحاكم",
+     "pengarang": "ابن الملقن",
+     "wafat": 804,
+     "jilid": null
+    },
+    {
+     "judul": "نصب الراية",
+     "pengarang": "الجمال الزيلعي",
+     "wafat": 762,
+     "jilid": null
+    },
+    {
+     "judul": "الإيماء إلى أطراف أحاديث كتاب الموطأ",
+     "pengarang": "أبو العباس الداني",
+     "wafat": 532,
+     "jilid": 5
+    },
+    {
+     "judul": "علل الدارقطني = العلل الواردة في الأحاديث النبوية",
+     "pengarang": "الدارقطني",
+     "wafat": 385,
+     "jilid": null
+    }
+   ],
+   "perpustakaan_asal": {
+    "hazmi": 64,
+    "baru": 19,
+    "shamela4": 143
+   }
+  },
+  "cara_disusun": {
+   "rekaman_diperiksa_semua_ilmu": 46048,
+   "rekaman_per_perpustakaan": {
+    "hazmi": 28329,
+    "baru": 9121,
+    "shamela4": 8598
+   },
+   "karya_diblok_semua_ilmu": 3273,
+   "karya_ditahan_semua_ilmu": 10918,
+   "karya_termuat_semua_ilmu": 1456,
+   "rekaman_digabung_ke_kitab_ini": 865,
+   "berkas_notebooklm": 253,
+   "uji": [
+    "Penyaringan manhaj pengarang, pensyarah, dan muhaqqiq",
+    "Deteksi kitab kembar lewat sidik isi",
+    "Pemilihan cetakan terbaik per kitab",
+    "Verifikasi tahun wafat dari sumber berdokumen",
+    "Uji 12 butir katalog",
+    "Uji mutu berkas: batas 497.000 kata, urutan halaman, kebersihan teks"
+   ],
+   "catatan_penyusun": ""
+  },
+  "batasan": [
+   "Hanya memuat kitab ulama Ahlussunnah wal Jama'ah; karya, pensyarah, dan muhaqqiq Wahabi/salafi diblok.",
+   "Kitab yang cetakannya hanya tersedia dengan tahqiq salafi dimuat matannya saja; muqaddimah dan catatan kaki muhaqqiq dibuang.",
+   "Jawaban bersumber dari kitab yang dimuat saja; AI tidak memberi fatwa pribadi.",
+   "Rujukan ditulis sebagai [judul singkat jilid/halaman] sesuai cetakan sumber; [حاشية jilid/halaman] menandai catatan kaki muhaqqiq.",
+   "Teks berasal dari salinan digital (Maktabah Syamilah dan turunannya); kesalahan ketik sumber dapat terbawa."
+  ],
+  "contoh_tanya_jawab": [],
+  "katalog": "assets/data/katalog/musthalah_hadits.json"
+ },
+ {
+  "id": "thabaqat_tarajim",
+  "judul": "AI Rijal & Biografi Ulama",
+  "subjudul": "Jarh wa ta'dil · Thabaqat · Tarajim",
+  "nama_arab": "الطبقات والتراجم",
+  "tentang": "",
+  "isi": {
+   "cabang_ilmu": [
+    {
+     "nama": "Jarh wa ta'dil",
+     "jumlah": null
+    },
+    {
+     "nama": "Thabaqat",
+     "jumlah": null
+    },
+    {
+     "nama": "Tarajim",
+     "jumlah": null
+    },
+    {
+     "nama_katalog": "الطبقات والتراجم والأنساب",
+     "jumlah": 337
+    },
+    {
+     "nama_katalog": "التخريج والأطراف والعلل",
+     "jumlah": 17
+    },
+    {
+     "nama_katalog": "البلدان والرحلات",
+     "jumlah": 12
+    },
+    {
+     "nama_katalog": "الأدب والبلاغة والشعر",
+     "jumlah": 8
+    },
+    {
+     "nama_katalog": "-",
+     "jumlah": 6
+    },
+    {
+     "nama_katalog": "السياسة الشرعية والقضاء",
+     "jumlah": 1
+    }
+   ],
+   "jumlah_kitab": 381,
+   "jumlah_jilid": 269,
+   "jumlah_halaman": 446758,
+   "jumlah_kata": 82191041,
+   "rentang_wafat_pengarang": {
+    "awal": 214,
+    "akhir": 1434,
+    "sebelum_hijrah": 0
+   },
+   "kitab_induk": [
+    {
+     "judul": "تاريخ دمشق لابن عساكر",
+     "pengarang": "أبو القاسم ابن عساكر",
+     "wafat": 571,
+     "jilid": null
+    },
+    {
+     "judul": "تهذيب الكمال 742",
+     "pengarang": "المزي، جمال الدين",
+     "wafat": 742,
+     "jilid": 35
+    },
+    {
+     "judul": "سير أعلام النبلاء - ط الرسالة",
+     "pengarang": "شمس الدين الذهبي",
+     "wafat": 748,
+     "jilid": null
+    },
+    {
+     "judul": "تهذيب التهذيب - ط دبي",
+     "pengarang": "ابن حجر العسقلاني",
+     "wafat": 852,
+     "jilid": null
+    },
+    {
+     "judul": "تاريخ بغداد - ط العلمية",
+     "pengarang": "الخطيب البغدادي",
+     "wafat": 463,
+     "jilid": null
+    },
+    {
+     "judul": "الوافي بالوفيات",
+     "pengarang": "الصفدي",
+     "wafat": 764,
+     "jilid": null
+    },
+    {
+     "judul": "الطبقات الكبرى لابن سعد",
+     "pengarang": "ابن سعد",
+     "wafat": 230,
+     "jilid": 8
+    },
+    {
+     "judul": "بغية الطلب في تاريخ حلب",
+     "pengarang": "كمال الدين ابن العديم",
+     "wafat": 660,
+     "jilid": 12
+    },
+    {
+     "judul": "الإصابة في تمييز الصحابة",
+     "pengarang": "ابن حجر العسقلاني",
+     "wafat": 852,
+     "jilid": null
+    },
+    {
+     "judul": "الضوء اللامع لأهل القرن التاسع",
+     "pengarang": "السخاوي",
+     "wafat": 902,
+     "jilid": null
+    }
+   ],
+   "perpustakaan_asal": {
+    "hazmi": 58,
+    "baru": 31,
+    "shamela4": 292
+   }
+  },
+  "cara_disusun": {
+   "rekaman_diperiksa_semua_ilmu": 46048,
+   "rekaman_per_perpustakaan": {
+    "hazmi": 28329,
+    "baru": 9121,
+    "shamela4": 8598
+   },
+   "karya_diblok_semua_ilmu": 3273,
+   "karya_ditahan_semua_ilmu": 10918,
+   "karya_termuat_semua_ilmu": 1456,
+   "rekaman_digabung_ke_kitab_ini": 1303,
+   "berkas_notebooklm": 275,
+   "uji": [
+    "Penyaringan manhaj pengarang, pensyarah, dan muhaqqiq",
+    "Deteksi kitab kembar lewat sidik isi",
+    "Pemilihan cetakan terbaik per kitab",
+    "Verifikasi tahun wafat dari sumber berdokumen",
+    "Uji 12 butir katalog",
+    "Uji mutu berkas: batas 497.000 kata, urutan halaman, kebersihan teks"
+   ],
+   "catatan_penyusun": ""
+  },
+  "batasan": [
+   "Hanya memuat kitab ulama Ahlussunnah wal Jama'ah; karya, pensyarah, dan muhaqqiq Wahabi/salafi diblok.",
+   "Kitab yang cetakannya hanya tersedia dengan tahqiq salafi dimuat matannya saja; muqaddimah dan catatan kaki muhaqqiq dibuang.",
+   "Jawaban bersumber dari kitab yang dimuat saja; AI tidak memberi fatwa pribadi.",
+   "Rujukan ditulis sebagai [judul singkat jilid/halaman] sesuai cetakan sumber; [حاشية jilid/halaman] menandai catatan kaki muhaqqiq.",
+   "Teks berasal dari salinan digital (Maktabah Syamilah dan turunannya); kesalahan ketik sumber dapat terbawa."
+  ],
+  "contoh_tanya_jawab": [],
+  "katalog": "assets/data/katalog/thabaqat_tarajim.json"
+ },
+ {
+  "id": "tafsir",
+  "judul": "AI Tafsir",
+  "subjudul": "Tafsir · Ulumul Qur'an",
+  "nama_arab": "التفسير وعلوم القرآن",
+  "tentang": "",
+  "isi": {
+   "cabang_ilmu": [
+    {
+     "nama": "Tafsir",
+     "jumlah": null
+    },
+    {
+     "nama": "Ulumul Qur'an",
+     "jumlah": null
+    },
+    {
+     "nama_katalog": "التفسير وعلوم القرآن",
+     "jumlah": 264
+    },
+    {
+     "nama_katalog": "-",
+     "jumlah": 6
+    },
+    {
+     "nama_katalog": "التخريج والأطراف والعلل",
+     "jumlah": 2
+    },
+    {
+     "nama_katalog": "الأدب والبلاغة والشعر",
+     "jumlah": 2
+    }
+   ],
+   "jumlah_kitab": 274,
+   "jumlah_jilid": 573,
+   "jumlah_halaman": 494348,
+   "jumlah_kata": 113863231,
+   "rentang_wafat_pengarang": {
+    "awal": 68,
+    "akhir": 1442,
+    "sebelum_hijrah": 0
+   },
+   "kitab_induk": [
+    {
+     "judul": "اللباب في علوم الكتاب",
+     "pengarang": "ابن عادل",
+     "wafat": 775,
+     "jilid": 20
+    },
+    {
+     "judul": "تفسير الثعلبي = الكشف والبيان عن تفسير القرآن ط دار التفسير",
+     "pengarang": "الثعلبي",
+     "wafat": 427,
+     "jilid": null
+    },
+    {
+     "judul": "تفسير الطبري 310 (دار هجر)",
+     "pengarang": "ابن جرير الطبري",
+     "wafat": 310,
+     "jilid": 24
+    },
+    {
+     "judul": "مفاتيح الغيب ـ نسخة محققة",
+     "pengarang": "الفخر الرازي",
+     "wafat": 606,
+     "jilid": 32
+    },
+    {
+     "judul": "التفسير البسيط",
+     "pengarang": "الواحدي",
+     "wafat": 468,
+     "jilid": null
+    },
+    {
+     "judul": "البحر المحيط ـ نسخة محققة",
+     "pengarang": "أبو حيان الأندلسي",
+     "wafat": 745,
+     "jilid": 11
+    },
+    {
+     "judul": "روح البيان",
+     "pengarang": "إسماعيل حقي",
+     "wafat": 1127,
+     "jilid": null
+    },
+    {
+     "judul": "الجامع لأحكام القرآن",
+     "pengarang": "القرطبي",
+     "wafat": 671,
+     "jilid": 20
+    },
+    {
+     "judul": "نظم الدرر فى تناسب الآيات والسور",
+     "pengarang": "برهان الدين البقاعي",
+     "wafat": 885,
+     "jilid": 8
+    },
+    {
+     "judul": "فتوح الغيب في الكشف عن قناع الريب (حاشية الطيبي على الكشاف)",
+     "pengarang": "الطيبي",
+     "wafat": 743,
+     "jilid": null
+    }
+   ],
+   "perpustakaan_asal": {
+    "hazmi": 76,
+    "baru": 24,
+    "shamela4": 174
+   }
+  },
+  "cara_disusun": {
+   "rekaman_diperiksa_semua_ilmu": 46048,
+   "rekaman_per_perpustakaan": {
+    "hazmi": 28329,
+    "baru": 9121,
+    "shamela4": 8598
+   },
+   "karya_diblok_semua_ilmu": 3273,
+   "karya_ditahan_semua_ilmu": 10918,
+   "karya_termuat_semua_ilmu": 1456,
+   "rekaman_digabung_ke_kitab_ini": 1039,
+   "berkas_notebooklm": 263,
+   "uji": [
+    "Penyaringan manhaj pengarang, pensyarah, dan muhaqqiq",
+    "Deteksi kitab kembar lewat sidik isi",
+    "Pemilihan cetakan terbaik per kitab",
+    "Verifikasi tahun wafat dari sumber berdokumen",
+    "Uji 12 butir katalog",
+    "Uji mutu berkas: batas 497.000 kata, urutan halaman, kebersihan teks"
+   ],
+   "catatan_penyusun": ""
+  },
+  "batasan": [
+   "Hanya memuat kitab ulama Ahlussunnah wal Jama'ah; karya, pensyarah, dan muhaqqiq Wahabi/salafi diblok.",
+   "Kitab yang cetakannya hanya tersedia dengan tahqiq salafi dimuat matannya saja; muqaddimah dan catatan kaki muhaqqiq dibuang.",
+   "Jawaban bersumber dari kitab yang dimuat saja; AI tidak memberi fatwa pribadi.",
+   "Rujukan ditulis sebagai [judul singkat jilid/halaman] sesuai cetakan sumber; [حاشية jilid/halaman] menandai catatan kaki muhaqqiq.",
+   "Teks berasal dari salinan digital (Maktabah Syamilah dan turunannya); kesalahan ketik sumber dapat terbawa."
+  ],
+  "contoh_tanya_jawab": [],
+  "katalog": "assets/data/katalog/tafsir.json"
+ },
+ {
+  "id": "tajwid_qiraat",
+  "judul": "AI Tajwid & Qira'at",
+  "subjudul": "Tajwid · Qira'at · Rasm",
+  "nama_arab": "التجويد والقراءات",
+  "tentang": "",
+  "isi": {
+   "cabang_ilmu": [
+    {
+     "nama": "Tajwid",
+     "jumlah": null
+    },
+    {
+     "nama": "Qira'at",
+     "jumlah": null
+    },
+    {
+     "nama": "Rasm",
+     "jumlah": null
+    },
+    {
+     "nama_katalog": "التجويد والقراءات",
+     "jumlah": 34
+    },
+    {
+     "nama_katalog": "-",
+     "jumlah": 4
+    }
+   ],
+   "jumlah_kitab": 38,
+   "jumlah_jilid": 14,
+   "jumlah_halaman": 24518,
+   "jumlah_kata": 3556131,
+   "rentang_wafat_pengarang": {
+    "awal": 189,
+    "akhir": 1380,
+    "sebelum_hijrah": 0
+   },
+   "kitab_induk": [
+    {
+     "judul": "لطائف الإشارات لفنون القراءات",
+     "pengarang": "القسطلاني",
+     "wafat": 923,
+     "jilid": null
+    },
+    {
+     "judul": "البدور الزاهرة في القراءات العشر المتواترة - النشار",
+     "pengarang": "أبو حفص النشار",
+     "wafat": 938,
+     "jilid": null
+    },
+    {
+     "judul": "شرح طيبة النشر للنويري",
+     "pengarang": "النويري، محب الدين",
+     "wafat": 857,
+     "jilid": null
+    },
+    {
+     "judul": "مختصر التبيين لهجاء التنزيل",
+     "pengarang": "سليمان بن نجاح",
+     "wafat": 496,
+     "jilid": 6
+    },
+    {
+     "judul": "المشيخة البغدادية لأبي طاهر السلفي (1 - 35) ت المزيدي",
+     "pengarang": "أبو طاهر السلفي",
+     "wafat": 576,
+     "jilid": null
+    },
+    {
+     "judul": "منار الهدى في بيان الوقف والابتدا ومعه المقصد لتلخيص ما في المرشد",
+     "pengarang": "الأُشْمُوني، المقرئ",
+     "wafat": 1100,
+     "jilid": null
+    },
+    {
+     "judul": "الكشف عن وجوه القراءات السبع وعللها وحججها",
+     "pengarang": "مكي بن أبي طالب",
+     "wafat": 437,
+     "jilid": null
+    },
+    {
+     "judul": "شرح الشاطبية فتح الوصيد في شرح القصيد - ت أحمد الزعبي",
+     "pengarang": "علم الدين السخاوي المقرئ",
+     "wafat": 643,
+     "jilid": null
+    },
+    {
+     "judul": "المحتسب في تبيين وجوه شواذ القراءات والإيضاح عنها - ط المجلس الأعلى",
+     "pengarang": "ابن جني",
+     "wafat": 392,
+     "jilid": null
+    },
+    {
+     "judul": "الدر النثير والعذب النمير",
+     "pengarang": "المالقي، أبو محمد",
+     "wafat": 705,
+     "jilid": null
+    }
+   ],
+   "perpustakaan_asal": {
+    "hazmi": 1,
+    "baru": 7,
+    "shamela4": 30
+   }
+  },
+  "cara_disusun": {
+   "rekaman_diperiksa_semua_ilmu": 46048,
+   "rekaman_per_perpustakaan": {
+    "hazmi": 28329,
+    "baru": 9121,
+    "shamela4": 8598
+   },
+   "karya_diblok_semua_ilmu": 3273,
+   "karya_ditahan_semua_ilmu": 10918,
+   "karya_termuat_semua_ilmu": 1456,
+   "rekaman_digabung_ke_kitab_ini": 79,
+   "berkas_notebooklm": 42,
+   "uji": [
+    "Penyaringan manhaj pengarang, pensyarah, dan muhaqqiq",
+    "Deteksi kitab kembar lewat sidik isi",
+    "Pemilihan cetakan terbaik per kitab",
+    "Verifikasi tahun wafat dari sumber berdokumen",
+    "Uji 12 butir katalog",
+    "Uji mutu berkas: batas 497.000 kata, urutan halaman, kebersihan teks"
+   ],
+   "catatan_penyusun": ""
+  },
+  "batasan": [
+   "Hanya memuat kitab ulama Ahlussunnah wal Jama'ah; karya, pensyarah, dan muhaqqiq Wahabi/salafi diblok.",
+   "Kitab yang cetakannya hanya tersedia dengan tahqiq salafi dimuat matannya saja; muqaddimah dan catatan kaki muhaqqiq dibuang.",
+   "Jawaban bersumber dari kitab yang dimuat saja; AI tidak memberi fatwa pribadi.",
+   "Rujukan ditulis sebagai [judul singkat jilid/halaman] sesuai cetakan sumber; [حاشية jilid/halaman] menandai catatan kaki muhaqqiq.",
+   "Teks berasal dari salinan digital (Maktabah Syamilah dan turunannya); kesalahan ketik sumber dapat terbawa."
+  ],
+  "contoh_tanya_jawab": [],
+  "katalog": "assets/data/katalog/tajwid_qiraat.json"
+ },
+ {
+  "id": "aqidah",
+  "judul": "AI Aqidah",
+  "subjudul": "Ushuluddin · Kalam · Firaq",
+  "nama_arab": "العقيدة وأصول الدين",
+  "tentang": "",
+  "isi": {
+   "cabang_ilmu": [
+    {
+     "nama": "Ushuluddin",
+     "jumlah": null
+    },
+    {
+     "nama": "Kalam",
+     "jumlah": null
+    },
+    {
+     "nama": "Firaq",
+     "jumlah": null
+    },
+    {
+     "nama_katalog": "العقيدة وأصول الدين",
+     "jumlah": 364
+    },
+    {
+     "nama_katalog": "-",
+     "jumlah": 46
+    }
+   ],
+   "jumlah_kitab": 410,
+   "jumlah_jilid": 379,
+   "jumlah_halaman": 75233,
+   "jumlah_kata": 15939653,
+   "rentang_wafat_pengarang": {
+    "awal": 150,
+    "akhir": 1439,
+    "sebelum_hijrah": 0
+   },
+   "kitab_induk": [
+    {
+     "judul": "المطالب العالية من العلم الإلهي (606)",
+     "pengarang": "أبو عبد الله محمد بن عمر بن الحسن بن الحسين التيمي الرازي الملقب بفخر الدين الرازي خطيب الري (المتوفى: 606 هـ)",
+     "wafat": 606,
+     "jilid": 9
+    },
+    {
+     "judul": "أبكار الأفكار للآمدي (631)",
+     "pengarang": "أبو الحسن علي بن أبي علي محمد الآمدي (المتوفى: 631 هـ)",
+     "wafat": 631,
+     "jilid": 5
+    },
+    {
+     "judul": "المواقف للعضد الإيجي",
+     "pengarang": "عبد الرحمن بن أحمد بن عبد الغفار، أبو الفضل، عضد الدين الإيجي (المتوفى: 756هـ)",
+     "wafat": 756,
+     "jilid": 3
+    },
+    {
+     "judul": "إزالة الخفاء عن خلافة الخلفاء - شاه ولي الله دهلوي",
+     "pengarang": "ولي الله الدهلوي",
+     "wafat": 1176,
+     "jilid": 6
+    },
+    {
+     "judul": "المنهاج في شعب الإيمان",
+     "pengarang": "الحليمي",
+     "wafat": 403,
+     "jilid": null
+    },
+    {
+     "judul": "الاعتصام للشاطبي ت الشقير والحميد والصيني",
+     "pengarang": "الشاطبي الأصولي النحوي",
+     "wafat": 790,
+     "jilid": null
+    },
+    {
+     "judul": "الفصل في الملل والأهواء والنحل",
+     "pengarang": "ابن حزم",
+     "wafat": 456,
+     "jilid": null
+    },
+    {
+     "judul": "التحرير والتحبير في شرح رسالة ابن أبي زيد القيرواني للفاكهاني",
+     "pengarang": "أبو حفص عمر بن علي بن سالم بن صدقة اللخمي الإسكندري المالكي، تاج الدين الفاكهاني الأشعري (المتوفى: 734 هـ)",
+     "wafat": 734,
+     "jilid": 1
+    },
+    {
+     "judul": "لوامع الأنوار البهية",
+     "pengarang": "السفاريني",
+     "wafat": 1188,
+     "jilid": 2
+    },
+    {
+     "judul": "شرح المقاصد في علم الكلام للتفتازاني",
+     "pengarang": "سعد الدين مسعود بن عمر بن عبد الله التفتازاني الشافعي (المتوفى: 793هـ)",
+     "wafat": 793,
+     "jilid": 2
+    }
+   ],
+   "perpustakaan_asal": {
+    "hazmi": 32,
+    "baru": 275,
+    "shamela4": 103
+   }
+  },
+  "cara_disusun": {
+   "rekaman_diperiksa_semua_ilmu": 46048,
+   "rekaman_per_perpustakaan": {
+    "hazmi": 28329,
+    "baru": 9121,
+    "shamela4": 8598
+   },
+   "karya_diblok_semua_ilmu": 3273,
+   "karya_ditahan_semua_ilmu": 10918,
+   "karya_termuat_semua_ilmu": 1456,
+   "rekaman_digabung_ke_kitab_ini": 806,
+   "berkas_notebooklm": 249,
+   "uji": [
+    "Penyaringan manhaj pengarang, pensyarah, dan muhaqqiq",
+    "Deteksi kitab kembar lewat sidik isi",
+    "Pemilihan cetakan terbaik per kitab",
+    "Verifikasi tahun wafat dari sumber berdokumen",
+    "Uji 12 butir katalog",
+    "Uji mutu berkas: batas 497.000 kata, urutan halaman, kebersihan teks"
+   ],
+   "catatan_penyusun": ""
+  },
+  "batasan": [
+   "Hanya memuat kitab ulama Ahlussunnah wal Jama'ah; karya, pensyarah, dan muhaqqiq Wahabi/salafi diblok.",
+   "Kitab yang cetakannya hanya tersedia dengan tahqiq salafi dimuat matannya saja; muqaddimah dan catatan kaki muhaqqiq dibuang.",
+   "Jawaban bersumber dari kitab yang dimuat saja; AI tidak memberi fatwa pribadi.",
+   "Rujukan ditulis sebagai [judul singkat jilid/halaman] sesuai cetakan sumber; [حاشية jilid/halaman] menandai catatan kaki muhaqqiq.",
+   "Teks berasal dari salinan digital (Maktabah Syamilah dan turunannya); kesalahan ketik sumber dapat terbawa."
+  ],
+  "contoh_tanya_jawab": [],
+  "katalog": "assets/data/katalog/aqidah.json"
+ },
+ {
+  "id": "tasawwuf",
+  "judul": "AI Tasawuf",
+  "subjudul": "Tazkiyah · Suluk · Adzkar",
+  "nama_arab": "التصوف والتزكية والأذكار",
+  "tentang": "",
+  "isi": {
+   "cabang_ilmu": [
+    {
+     "nama": "Tazkiyah",
+     "jumlah": null
+    },
+    {
+     "nama": "Suluk",
+     "jumlah": null
+    },
+    {
+     "nama": "Adzkar",
+     "jumlah": null
+    },
+    {
+     "nama_katalog": "التصوف والتزكية والأذكار",
+     "jumlah": 632
+    },
+    {
+     "nama_katalog": "-",
+     "jumlah": 101
+    },
+    {
+     "nama_katalog": "الأدب والبلاغة والشعر",
+     "jumlah": 9
+    },
+    {
+     "nama_katalog": "التخريج والأطراف والعلل",
+     "jumlah": 3
+    },
+    {
+     "nama_katalog": "البلدان والرحلات",
+     "jumlah": 2
+    }
+   ],
+   "jumlah_kitab": 747,
+   "jumlah_jilid": 726,
+   "jumlah_halaman": 122712,
+   "jumlah_kata": 33132593,
+   "rentang_wafat_pengarang": {
+    "awal": 110,
+    "akhir": 1441,
+    "sebelum_hijrah": 0
+   },
+   "kitab_induk": [
+    {
+     "judul": "حسن التنبه لما ورد في التشبه",
+     "pengarang": "نجم الدين الغزي",
+     "wafat": 1061,
+     "jilid": 13
+    },
+    {
+     "judul": "إحياء علوم الدين",
+     "pengarang": "أبو حامد الغزالي",
+     "wafat": 505,
+     "jilid": 4
+    },
+    {
+     "judul": "الجامع لعلوم الإمام أحمد - الفقه",
+     "pengarang": "أحمد بن حنبل",
+     "wafat": 241,
+     "jilid": null
+    },
+    {
+     "judul": "الفتوحات الربانية على الأذكار النواوية",
+     "pengarang": "ابن علان",
+     "wafat": 1057,
+     "jilid": 7
+    },
+    {
+     "judul": "نتائج الأفكار القدسية في بيان معاني شرح الرسالة القشيرية",
+     "pengarang": "عبد الكريم بن هوازن بن عبد الملك القشيري (المتوفى: 465 هـ)",
+     "wafat": 465,
+     "jilid": 4
+    },
+    {
+     "judul": "بريقة محمودية في شرح طريقة محمدية وشريعة نبوية في سيرة أحمدية",
+     "pengarang": "محمد الخادمي",
+     "wafat": 1156,
+     "jilid": null
+    },
+    {
+     "judul": "قوت القلوب في معاملة المحبوب ووصف طريق المريد إلى مقام التوحيد",
+     "pengarang": "أبو طالب المكي",
+     "wafat": 386,
+     "jilid": 2
+    },
+    {
+     "judul": "حدائق الأولياء",
+     "pengarang": "ابن الملقن",
+     "wafat": 804,
+     "jilid": null
+    },
+    {
+     "judul": "سراج المريدين فى سبيل الدين",
+     "pengarang": "أبو بكر ابن العربي",
+     "wafat": 543,
+     "jilid": null
+    },
+    {
+     "judul": "مجموعه آثار أبو عبد الرحمن سلمي",
+     "pengarang": "محمد بن الحسين بن محمد بن موسى بن خالد بن سالم النيسابوري، أبو عبد الرحمن السلمي (المتوفى: 412 هـ)",
+     "wafat": 412,
+     "jilid": 4
+    }
+   ],
+   "perpustakaan_asal": {
+    "hazmi": 38,
+    "baru": 590,
+    "shamela4": 119
+   }
+  },
+  "cara_disusun": {
+   "rekaman_diperiksa_semua_ilmu": 46048,
+   "rekaman_per_perpustakaan": {
+    "hazmi": 28329,
+    "baru": 9121,
+    "shamela4": 8598
+   },
+   "karya_diblok_semua_ilmu": 3273,
+   "karya_ditahan_semua_ilmu": 10918,
+   "karya_termuat_semua_ilmu": 1456,
+   "rekaman_digabung_ke_kitab_ini": 1257,
+   "berkas_notebooklm": 268,
+   "uji": [
+    "Penyaringan manhaj pengarang, pensyarah, dan muhaqqiq",
+    "Deteksi kitab kembar lewat sidik isi",
+    "Pemilihan cetakan terbaik per kitab",
+    "Verifikasi tahun wafat dari sumber berdokumen",
+    "Uji 12 butir katalog",
+    "Uji mutu berkas: batas 497.000 kata, urutan halaman, kebersihan teks"
+   ],
+   "catatan_penyusun": ""
+  },
+  "batasan": [
+   "Hanya memuat kitab ulama Ahlussunnah wal Jama'ah; karya, pensyarah, dan muhaqqiq Wahabi/salafi diblok.",
+   "Kitab yang cetakannya hanya tersedia dengan tahqiq salafi dimuat matannya saja; muqaddimah dan catatan kaki muhaqqiq dibuang.",
+   "Jawaban bersumber dari kitab yang dimuat saja; AI tidak memberi fatwa pribadi.",
+   "Rujukan ditulis sebagai [judul singkat jilid/halaman] sesuai cetakan sumber; [حاشية jilid/halaman] menandai catatan kaki muhaqqiq.",
+   "Teks berasal dari salinan digital (Maktabah Syamilah dan turunannya); kesalahan ketik sumber dapat terbawa."
+  ],
+  "contoh_tanya_jawab": [],
+  "katalog": "assets/data/katalog/tasawwuf.json"
+ },
+ {
+  "id": "nahwu_sharaf",
+  "judul": "AI Bahasa Arab",
+  "subjudul": "Nahwu · Sharaf · Kamus · Balaghah · Adab · Mantiq",
+  "nama_arab": "اللغة العربية وآدابها",
+  "tentang": "",
+  "isi": {
+   "cabang_ilmu": [
+    {
+     "nama": "Nahwu",
+     "jumlah": null
+    },
+    {
+     "nama": "Sharaf",
+     "jumlah": null
+    },
+    {
+     "nama": "Kamus",
+     "jumlah": null
+    },
+    {
+     "nama": "Balaghah",
+     "jumlah": null
+    },
+    {
+     "nama": "Adab",
+     "jumlah": null
+    },
+    {
+     "nama": "Mantiq",
+     "jumlah": null
+    },
+    {
+     "nama_katalog": "الأدب والبلاغة والشعر",
+     "jumlah": 502
+    },
+    {
+     "nama_katalog": "اللغة العربية وعلومها",
+     "jumlah": 314
+    },
+    {
+     "nama_katalog": "-",
+     "jumlah": 28
+    },
+    {
+     "nama_katalog": "البلدان والرحلات",
+     "jumlah": 3
+    }
+   ],
+   "jumlah_kitab": 847,
+   "jumlah_jilid": 505,
+   "jumlah_halaman": 514765,
+   "jumlah_kata": 99515358,
+   "rentang_wafat_pengarang": {
+    "awal": 11,
+    "akhir": 1437,
+    "sebelum_hijrah": 8
+   },
+   "kitab_induk": [
+    {
+     "judul": "لسان العرب - ط المعارف",
+     "pengarang": "ابن منظور",
+     "wafat": 711,
+     "jilid": 6
+    },
+    {
+     "judul": "نهاية الأرب في فنون الأدب ـ موافق للمطبوع",
+     "pengarang": "النويري، شهاب الدين",
+     "wafat": 733,
+     "jilid": 33
+    },
+    {
+     "judul": "تمهيد القواعد بشرح تسهيل الفوائد",
+     "pengarang": "ناظر الجيش",
+     "wafat": 778,
+     "jilid": null
+    },
+    {
+     "judul": "تهذيب اللغة ـ موافقا للمطبوع",
+     "pengarang": "الأزهري",
+     "wafat": 370,
+     "jilid": 15
+    },
+    {
+     "judul": "الأغاني",
+     "pengarang": "أبو الفرج الاصفهاني ، علي بن الحسين (المتوفى : 356هـ)",
+     "wafat": 356,
+     "jilid": 24
+    },
+    {
+     "judul": "صبح الأعشى",
+     "pengarang": "القلقشندي",
+     "wafat": 821,
+     "jilid": 14
+    },
+    {
+     "judul": "شمس العلوم ودواء كلام العرب من الكلوم",
+     "pengarang": "نشوان الحميري",
+     "wafat": 573,
+     "jilid": null
+    },
+    {
+     "judul": "الدر الفريد وبيت القصيد",
+     "pengarang": "محمد بن أيدمر",
+     "wafat": 710,
+     "jilid": 11
+    },
+    {
+     "judul": "المحكم والمحيط الأعظم",
+     "pengarang": "ابن سيده",
+     "wafat": 458,
+     "jilid": null
+    },
+    {
+     "judul": "شرح ألفية ابن مالك للشاطبي = المقاصد الشافية",
+     "pengarang": "الشاطبي الأصولي النحوي",
+     "wafat": 790,
+     "jilid": 9
+    }
+   ],
+   "perpustakaan_asal": {
+    "hazmi": 167,
+    "baru": 118,
+    "shamela4": 562
+   }
+  },
+  "cara_disusun": {
+   "rekaman_diperiksa_semua_ilmu": 46048,
+   "rekaman_per_perpustakaan": {
+    "hazmi": 28329,
+    "baru": 9121,
+    "shamela4": 8598
+   },
+   "karya_diblok_semua_ilmu": 3273,
+   "karya_ditahan_semua_ilmu": 10918,
+   "karya_termuat_semua_ilmu": 1456,
+   "rekaman_digabung_ke_kitab_ini": 2117,
+   "berkas_notebooklm": 236,
+   "uji": [
+    "Penyaringan manhaj pengarang, pensyarah, dan muhaqqiq",
+    "Deteksi kitab kembar lewat sidik isi",
+    "Pemilihan cetakan terbaik per kitab",
+    "Verifikasi tahun wafat dari sumber berdokumen",
+    "Uji 12 butir katalog",
+    "Uji mutu berkas: batas 497.000 kata, urutan halaman, kebersihan teks"
+   ],
+   "catatan_penyusun": ""
+  },
+  "batasan": [
+   "Hanya memuat kitab ulama Ahlussunnah wal Jama'ah; karya, pensyarah, dan muhaqqiq Wahabi/salafi diblok.",
+   "Kitab yang cetakannya hanya tersedia dengan tahqiq salafi dimuat matannya saja; muqaddimah dan catatan kaki muhaqqiq dibuang.",
+   "Jawaban bersumber dari kitab yang dimuat saja; AI tidak memberi fatwa pribadi.",
+   "Rujukan ditulis sebagai [judul singkat jilid/halaman] sesuai cetakan sumber; [حاشية jilid/halaman] menandai catatan kaki muhaqqiq.",
+   "Teks berasal dari salinan digital (Maktabah Syamilah dan turunannya); kesalahan ketik sumber dapat terbawa."
+  ],
+  "contoh_tanya_jawab": [],
+  "katalog": "assets/data/katalog/nahwu_sharaf.json"
+ },
+ {
+  "id": "tarikh",
+  "judul": "AI Sejarah & Sirah",
+  "subjudul": "Tarikh · Sirah Nabawiyyah · Buldan · Ansab · Thibb",
+  "nama_arab": "التاريخ والسيرة النبوية",
+  "tentang": "",
+  "isi": {
+   "cabang_ilmu": [
+    {
+     "nama": "Tarikh",
+     "jumlah": null
+    },
+    {
+     "nama": "Sirah Nabawiyyah",
+     "jumlah": null
+    },
+    {
+     "nama": "Buldan",
+     "jumlah": null
+    },
+    {
+     "nama": "Ansab",
+     "jumlah": null
+    },
+    {
+     "nama": "Thibb",
+     "jumlah": null
+    },
+    {
+     "nama_katalog": "التاريخ والسيرة النبوية",
+     "jumlah": 236
+    },
+    {
+     "nama_katalog": "البلدان والرحلات",
+     "jumlah": 98
+    },
+    {
+     "nama_katalog": "-",
+     "jumlah": 31
+    },
+    {
+     "nama_katalog": "الأدب والبلاغة والشعر",
+     "jumlah": 13
+    }
+   ],
+   "jumlah_kitab": 378,
+   "jumlah_jilid": 305,
+   "jumlah_halaman": 358270,
+   "jumlah_kata": 77355501,
+   "rentang_wafat_pengarang": {
+    "awal": 110,
+    "akhir": 1434,
+    "sebelum_hijrah": 0
+   },
+   "kitab_induk": [
+    {
+     "judul": "تاريخ الإسلام - ت تدمري",
+     "pengarang": "شمس الدين الذهبي",
+     "wafat": 748,
+     "jilid": null
+    },
+    {
+     "judul": "مرآة الزمان في تواريخ الأعيان",
+     "pengarang": "سبط ابن الجوزي",
+     "wafat": 654,
+     "jilid": 23
+    },
+    {
+     "judul": "مسالك الأبصار في ممالك الأمصار - ط العلمية",
+     "pengarang": "ابن فضل الله العمري",
+     "wafat": 749,
+     "jilid": null
+    },
+    {
+     "judul": "(م م)مختصر تاريخ دمشق",
+     "pengarang": "ابن منظور",
+     "wafat": 711,
+     "jilid": 29
+    },
+    {
+     "judul": "البداية والنهاية - ت التركي",
+     "pengarang": "ابن كثير",
+     "wafat": 774,
+     "jilid": null
+    },
+    {
+     "judul": "شرح الزرقاني على المواهب اللدنية بالمنح المحمدية",
+     "pengarang": "الزرقاني، محمد بن عبد الباقي",
+     "wafat": 1122,
+     "jilid": null
+    },
+    {
+     "judul": "المنتظم في تاريخ الملوك والأمم",
+     "pengarang": "ابن الجوزي",
+     "wafat": 597,
+     "jilid": null
+    },
+    {
+     "judul": "سبل الهدى والرشاد في سيرة خير العباد",
+     "pengarang": "الصالحي الشامي",
+     "wafat": 942,
+     "jilid": null
+    },
+    {
+     "judul": "تاريخ ابن خلدون",
+     "pengarang": "ابن خلدون",
+     "wafat": 808,
+     "jilid": null
+    },
+    {
+     "judul": "تاريخ الطبري = تاريخ الرسل والملوك، وصلة تاريخ الطبري",
+     "pengarang": "ابن جرير الطبري",
+     "wafat": 310,
+     "jilid": null
+    }
+   ],
+   "perpustakaan_asal": {
+    "hazmi": 52,
+    "baru": 81,
+    "shamela4": 246
+   }
+  },
+  "cara_disusun": {
+   "rekaman_diperiksa_semua_ilmu": 46048,
+   "rekaman_per_perpustakaan": {
+    "hazmi": 28329,
+    "baru": 9121,
+    "shamela4": 8598
+   },
+   "karya_diblok_semua_ilmu": 3273,
+   "karya_ditahan_semua_ilmu": 10918,
+   "karya_termuat_semua_ilmu": 1456,
+   "rekaman_digabung_ke_kitab_ini": 1097,
+   "berkas_notebooklm": 268,
+   "uji": [
+    "Penyaringan manhaj pengarang, pensyarah, dan muhaqqiq",
+    "Deteksi kitab kembar lewat sidik isi",
+    "Pemilihan cetakan terbaik per kitab",
+    "Verifikasi tahun wafat dari sumber berdokumen",
+    "Uji 12 butir katalog",
+    "Uji mutu berkas: batas 497.000 kata, urutan halaman, kebersihan teks"
+   ],
+   "catatan_penyusun": ""
+  },
+  "batasan": [
+   "Hanya memuat kitab ulama Ahlussunnah wal Jama'ah; karya, pensyarah, dan muhaqqiq Wahabi/salafi diblok.",
+   "Kitab yang cetakannya hanya tersedia dengan tahqiq salafi dimuat matannya saja; muqaddimah dan catatan kaki muhaqqiq dibuang.",
+   "Jawaban bersumber dari kitab yang dimuat saja; AI tidak memberi fatwa pribadi.",
+   "Rujukan ditulis sebagai [judul singkat jilid/halaman] sesuai cetakan sumber; [حاشية jilid/halaman] menandai catatan kaki muhaqqiq.",
+   "Teks berasal dari salinan digital (Maktabah Syamilah dan turunannya); kesalahan ketik sumber dapat terbawa."
+  ],
+  "contoh_tanya_jawab": [],
+  "katalog": "assets/data/katalog/tarikh.json"
+ },
+ {
+  "id": "bibliografi_faharis",
+  "judul": "AI Bibliografi Kitab",
+  "subjudul": "Faharis · Atsbat · Petunjuk kitab",
+  "nama_arab": "المصادر والفهارس والأثبات",
+  "tentang": "",
+  "isi": {
+   "cabang_ilmu": [
+    {
+     "nama": "Faharis",
+     "jumlah": null
+    },
+    {
+     "nama": "Atsbat",
+     "jumlah": null
+    },
+    {
+     "nama": "Petunjuk kitab",
+     "jumlah": null
+    },
+    {
+     "nama_katalog": "المصادر والفهارس والأثبات",
+     "jumlah": 31
+    },
+    {
+     "nama_katalog": "-",
+     "jumlah": 1
+    }
+   ],
+   "jumlah_kitab": 32,
+   "jumlah_jilid": 10,
+   "jumlah_halaman": 21150,
+   "jumlah_kata": 4748213,
+   "rentang_wafat_pengarang": {
+    "awal": 380,
+    "akhir": 1380,
+    "sebelum_hijrah": 0
+   },
+   "kitab_induk": [
+    {
+     "judul": "كشف الظنون عن أسامي الكتب والفنون - ط الفرقان",
+     "pengarang": "حاجي خليفة",
+     "wafat": 1067,
+     "jilid": null
+    },
+    {
+     "judul": "كشاف اصطلاحات الفنون والعلوم",
+     "pengarang": "محمد أعلى التهانوي",
+     "wafat": 1191,
+     "jilid": null
+    },
+    {
+     "judul": "المعجم المفهرس = تجريد أسانيد الكتب المشهورة والأجزاء المنثورة",
+     "pengarang": "ابن حجر العسقلاني",
+     "wafat": 852,
+     "jilid": null
+    },
+    {
+     "judul": "أنشاب الكثب في أنساب الكتب",
+     "pengarang": "الجلال السيوطي",
+     "wafat": 911,
+     "jilid": null
+    },
+    {
+     "judul": "الفهرست - ت رضا تجدد",
+     "pengarang": "ابن النديم",
+     "wafat": 380,
+     "jilid": null
+    },
+    {
+     "judul": "فهرسة ابن خير - ط العلمية",
+     "pengarang": "ابن خير الإشبيلي",
+     "wafat": 575,
+     "jilid": null
+    },
+    {
+     "judul": "صلة الخلف بموصول السلف",
+     "pengarang": "الروداني، محمد بن سليمان المغربي",
+     "wafat": 1094,
+     "jilid": null
+    },
+    {
+     "judul": "ثبت أبي جعفر أحمد بن علي",
+     "pengarang": "أبو جعفر البلوي",
+     "wafat": 938,
+     "jilid": null
+    },
+    {
+     "judul": "إتمام الدراية لقراء النقاية",
+     "pengarang": "الجلال السيوطي",
+     "wafat": 911,
+     "jilid": null
+    },
+    {
+     "judul": "النهاية في اتصال الرواية",
+     "pengarang": "ابن المبرد",
+     "wafat": 909,
+     "jilid": null
+    }
+   ],
+   "perpustakaan_asal": {
+    "hazmi": 1,
+    "baru": 7,
+    "shamela4": 24
+   }
+  },
+  "cara_disusun": {
+   "rekaman_diperiksa_semua_ilmu": 46048,
+   "rekaman_per_perpustakaan": {
+    "hazmi": 28329,
+    "baru": 9121,
+    "shamela4": 8598
+   },
+   "karya_diblok_semua_ilmu": 3273,
+   "karya_ditahan_semua_ilmu": 10918,
+   "karya_termuat_semua_ilmu": 1456,
+   "rekaman_digabung_ke_kitab_ini": 98,
+   "berkas_notebooklm": 39,
+   "uji": [
+    "Penyaringan manhaj pengarang, pensyarah, dan muhaqqiq",
+    "Deteksi kitab kembar lewat sidik isi",
+    "Pemilihan cetakan terbaik per kitab",
+    "Verifikasi tahun wafat dari sumber berdokumen",
+    "Uji 12 butir katalog",
+    "Uji mutu berkas: batas 497.000 kata, urutan halaman, kebersihan teks"
+   ],
+   "catatan_penyusun": ""
+  },
+  "batasan": [
+   "Hanya memuat kitab ulama Ahlussunnah wal Jama'ah; karya, pensyarah, dan muhaqqiq Wahabi/salafi diblok.",
+   "Kitab yang cetakannya hanya tersedia dengan tahqiq salafi dimuat matannya saja; muqaddimah dan catatan kaki muhaqqiq dibuang.",
+   "Jawaban bersumber dari kitab yang dimuat saja; AI tidak memberi fatwa pribadi.",
+   "Rujukan ditulis sebagai [judul singkat jilid/halaman] sesuai cetakan sumber; [حاشية jilid/halaman] menandai catatan kaki muhaqqiq.",
+   "Teks berasal dari salinan digital (Maktabah Syamilah dan turunannya); kesalahan ketik sumber dapat terbawa."
+  ],
+  "contoh_tanya_jawab": [],
+  "katalog": "assets/data/katalog/bibliografi_faharis.json"
+ }
+]

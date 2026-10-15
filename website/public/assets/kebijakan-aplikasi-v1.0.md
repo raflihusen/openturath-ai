@@ -38,13 +38,13 @@ Harga, cakupan asisten, masa akses, batas penggunaan, kebutuhan akun pihak ketig
 
 Langganan diperpanjang secara manual. Kami tidak melakukan penagihan berulang otomatis (auto-debit) dari pembelian paket ini.
 
-Masa akses dimulai ketika aktivasi berhasil dan tanggal berakhir ditampilkan pada akun. Pembayaran diproses melalui Midtrans menurut metode yang tersedia pada saat transaksi. Keberhasilan pembayaran dan aktivasi akses adalah dua status yang berbeda. Jika dana telah dibayarkan namun langganan belum aktif, hubungi bantuan dengan nomor transaksi.
+Masa akses dimulai ketika aktivasi berhasil dan tanggal berakhir ditampilkan pada akun. Pembayaran hanya diproses melalui Midtrans. Keberhasilan pembayaran dan aktivasi akses adalah dua status yang berbeda. Jika dana telah dibayarkan namun langganan belum aktif, hubungi bantuan dengan nomor transaksi.
 
-### 6. Layanan Pihak Ketiga (Infrastruktur Pemrosesan)
+### 6. Layanan Pihak Ketiga (Google NotebookLM)
 
-Fitur percakapan memanfaatkan infrastruktur komputasi riset terkelola untuk pemrosesan konteks dokumen. Aksesnya dapat bergantung pada akun, wilayah, batas komputasi, dan ketentuan operasional yang berlaku untuk Anda. Pembelian OpenTurath tidak dengan sendirinya mengubah jenis langganan atau hak akses akun eksternal Anda.
+Fitur percakapan menggunakan NotebookLM dari Google. Aksesnya dapat bergantung pada akun, wilayah, batas penggunaan, dan ketentuan penyedia yang berlaku untuk Anda. Pembelian OpenTurath tidak dengan sendirinya mengubah jenis langganan atau hak akses akun Google Anda.
 
-Jika perubahan layanan infrastruktur pihak ketiga menyebabkan fitur berbayar tidak dapat diberikan sesuai yang ditawarkan, kami akan menilai pemulihan akses, penggantian layanan yang Anda setujui, atau pengembalian dana sesuai hak Anda.
+Jika perubahan layanan pihak ketiga menyebabkan fitur berbayar tidak dapat diberikan sesuai yang ditawarkan, kami akan menilai pemulihan akses, penggantian layanan yang Anda setujui, atau pengembalian dana sesuai hak Anda.
 
 ### 7. Penggunaan yang Diperbolehkan dan Dilarang
 
@@ -115,9 +115,9 @@ Untuk pertanyaan privasi, hubungi openturath@gmail.com.
 Kami memproses data sesuai fitur yang Anda gunakan:
 • Akun: Nama, alamat email, dan identitas profil publik dari akun Google untuk autentikasi dan personalisasi.
 • Langganan: Paket yang dipilih, status, masa aktif, dan penggunaan voucher.
-• Pembayaran: Nomor transaksi, jumlah pembayaran, metode, waktu, dan status dari penyedia Midtrans.
+• Pembayaran: Nomor transaksi, jumlah pembayaran, metode, waktu, dan status dari penyedia pembayaran Midtrans.
 • Kontak Transaksi: Nomor WhatsApp/telepon yang Anda berikan saat pembayaran untuk pengiriman informasi aktivasi.
-• Percakapan: Pertanyaan, jawaban, dan konteks telaah yang diproses melalui sesi komputasi riset terisolasi.
+• Percakapan: Pertanyaan, jawaban, dan konteks percakapan yang diproses melalui sesi Google NotebookLM.
 • Catatan: Catatan, kutipan, dan rujukan yang Anda simpan pada penyimpanan lokal perangkat.
 • Bantuan: Alamat kontak, isi pengaduan, nomor transaksi, dan lampiran tangkapan layar untuk penanganan masalah.
 • Sesi Teknis: Token sesi autentikasi yang aman untuk mempertahankan login di perangkat.
@@ -128,9 +128,9 @@ Data akun dan transaksi diproses untuk menyediakan layanan yang Anda minta, meng
 
 Kami tidak menjual data pribadi Anda kepada pihak ketiga manapun, dan tidak menggunakan percakapan Anda untuk iklan bertarget.
 
-### 4. Percakapan AI dan Infrastruktur Komputasi
+### 4. Percakapan AI dan Peran Google
 
-Ketika Anda mengirim pertanyaan melalui fitur percakapan, teks dan konteks telaah diproses melalui sesi komputasi riset terisolasi dengan proteksi privasi ketat.
+Ketika Anda mengirim pertanyaan melalui fitur percakapan, teks dan konteks diproses melalui layanan Google NotebookLM. Kebijakan pemrosesan Google mengikuti Kebijakan Privasi Google dan ketentuan NotebookLM.
 
 Aplikasi OpenTurath tidak menggunakan isi percakapan atau catatan pribadi pengguna untuk melatih model kecerdasan buatan publik. Hindari memasukkan informasi pribadi sensitif atau rahasia ke dalam percakapan.
 
@@ -141,8 +141,8 @@ Catatan, kutipan ibarah, dan penanda rujukan disimpan secara lokal di perangkat 
 ### 6. Penerima dan Penyedia Layanan
 
 Data dibagikan hanya sebatas yang diperlukan untuk menjalankan layanan:
-• Infrastruktur Autentikasi & Komputasi: Untuk proses masuk yang aman dan eksekusi sesi telaah dokumen terisolasi.
-• Midtrans: Lembaga pembayaran resmi untuk memproses transaksi perbankan, dompet digital, atau QRIS.
+• Google: Untuk proses masuk autentikasi dan pemrosesan sesi percakapan NotebookLM.
+• Midtrans: Gerbang pembayaran resmi untuk memproses transaksi.
 • Firebase / Google Cloud: Pengelolaan database transaksi dan status hak akses akun yang aman.
 
 Seluruh penyedia bekerja berdasarkan standar keamanan dan enkripsi industri.
@@ -196,7 +196,7 @@ Durasi paket 30 hari dihitung sebagai 30 hari kalender penuh sejak aktivasi berh
 
 ### 2. Pembayaran dan Aktivasi Akses
 
-Pembayaran diproses melalui gerbang pembayaran resmi Midtrans dengan metode QRIS, transfer bank (virtual account), maupun dompet digital.
+Pembayaran hanya diproses melalui gerbang pembayaran resmi Midtrans.
 
 Bukti pembayaran resmi dikirimkan melalui notifikasi Midtrans dan email akun Anda. Masa akses aktif seketika transaksi dinyatakan berhasil dan tersinkronisasi. Jika dana telah terpotong namun status belum aktif, jangan melakukan pembayaran ulang; hubungi openturath@gmail.com dengan menyertakan nomor transaksi.
 

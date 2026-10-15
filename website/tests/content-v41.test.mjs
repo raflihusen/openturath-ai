@@ -9,33 +9,30 @@ import {releaseIssues} from '../src/core.mjs';
 import {downloadIntegrityIssues} from '../scripts/download-integrity.mjs';
 const read=async p=>JSON.parse(await fs.readFile(new URL('../'+p,import.meta.url),'utf8'));
 const catalog=await read('content/catalog.json');
-const modules=await read('content/metadata/metadata_modul_lengkap.json');
-const training=await read('content/metadata/metadata_training_seluruh_ai.json');
+const infoAi=await read('content/metadata/info_ai.json');
 const config=await read('site.config.json');
 
-test('collection totals match all 20 module snapshots and never include preparing profiles',()=>{
- assert.deepEqual(collectionTotals(catalog),{disciplines:20,books:5370,volumes:11901,pages:4182803,words:1148410539,partitions:2876,volumesLowerBound:true});
- for(const c of catalog.filter(c=>c.status==='active')){
-  const m=modules[c.appAgentId]||modules[c.metadataKey]||Object.values(modules).find(m=>m.nama===c.name.id);
-  assert.ok(m,`Source metadata for ${c.id}`);
-  assert.equal(c.metadata.books,m.total_kitab);assert.equal(c.metadata.pages,m.total_halaman);assert.equal(c.metadata.words,m.total_kata);
- }
- assert.equal(Object.values(training).reduce((n,m)=>n+(m.total_partisi_notebooklm||0),0),collectionTotals(catalog).partitions);
- const preparing=catalog.find(c=>c.status==='preparing');
- assert.equal(collectionMetadata('id',preparing),'');
+test('V7: collection totals equal the 18 AI records in the app (info_ai.json)',()=>{
+ const sum=k=>infoAi.reduce((n,x)=>n+(k(x)||0),0);
+ assert.deepEqual(collectionTotals(catalog),{disciplines:18,books:sum(x=>x.isi.jumlah_kitab),words:sum(x=>x.isi.jumlah_kata),lectures:sum(x=>x.isi.jumlah_muhadharah),partitions:sum(x=>x.cara_disusun.berkas_notebooklm),records:46048});
+ assert.deepEqual([collectionTotals(catalog).books,collectionTotals(catalog).words,collectionTotals(catalog).lectures,collectionTotals(catalog).partitions],[5383,812601332,3001,3500]);
+ assert.ok(catalog.every(c=>c.status==='active'));
 });
 test('each discipline has distinct substantial descriptions and real metadata in three languages',()=>{
+ const t=collectionTotals(catalog);
  for(const locale of ['id','en','ar']){
-  assert.equal(new Set(catalog.map(c=>c.description[locale])).size,21);
-  for(const c of catalog){assert.ok(c.description[locale].length>90);if(c.status==='active')assert.ok(collectionMetadata(locale,c).includes('collection-metrics'));}
+  assert.equal(new Set(catalog.map(c=>c.description[locale])).size,18);
+  for(const c of catalog){assert.ok(c.description[locale].length>90);assert.ok(collectionMetadata(locale,c).includes('collection-metrics'));}
   const stats=collectionStats(locale,catalog);
-  for(const amount of [5370,11901,4182803,1148410539,2876])assert.ok(stats.includes(`data-value="${amount}"`));
+  for(const amount of [t.books,t.words,t.lectures,t.records,t.partitions])assert.ok(stats.includes(`data-value="${amount}"`));
  }
 });
-test('FAQ asks real questions in all locales and covers the full adoption journey',()=>{
+test('FAQ asks real questions in all locales and keeps the Habib Umar entry hidden',()=>{
  assert.equal(new Set(faq.map(f=>f.id)).size,faq.length);
- for(const id of ['teacher','verification','edition','sources','payment','notes','availability','platforms','refund','account'])assert.ok(faq.some(f=>f.id===id));
+ for(const id of ['teacher','verification','edition','sources','payment','notes','platforms','refund','account'])assert.ok(faq.some(f=>f.id===id));
+ assert.ok(!faq.some(f=>f.id==='availability'||/Habib Umar|الحبيب عمر/.test(f.q.join(' ')+f.a.join(' '))));
  for(const f of faq)for(let i=0;i<3;i++){assert.match(f.q[i],/[?؟]$/);assert.ok(f.a[i].length>100);}
+ const pay=faq.find(f=>f.id==='payment');assert.ok(pay.a[0].includes('Rp 49.000'));assert.ok(pay.a[1].includes('IDR 49,000'));assert.ok(pay.a[2].includes('٤٩٬٠٠٠'));
 });
 test('website-only release is explicit and cannot silently publish an active download',()=>{
  const draft=structuredClone(config);
@@ -54,16 +51,15 @@ test('release integrity blocks missing bytes and mismatched APK hashes or sizes'
   Object.assign(c.downloads[0],{comingSoon:false,sha256:'0'.repeat(64),sizeBytes:100});
   assert.ok((await downloadIntegrityIssues(c,root)).some(e=>e.includes('unavailable')));
   await fs.mkdir(path.join(root,'public/downloads'),{recursive:true});
-  await fs.writeFile(path.join(root,'public',new URL(c.downloads[0].url).pathname),'invalid test fixture');
+  await fs.writeFile(path.join(root,'public/downloads/openturath-v1.0.51.apk'),'invalid test fixture');
   const issues=await downloadIntegrityIssues(c,root);
   assert.ok(issues.some(e=>e.includes('SHA-256 mismatch')));assert.ok(issues.some(e=>e.includes('byte size mismatch')));assert.ok(issues.some(e=>e.includes('not a ZIP')));
  }finally{await fs.rm(root,{recursive:true,force:true});}
 });
 
-test('metadata drift and duplicate modules fail validation before a build',()=>{
- assert.deepEqual(validateCatalogMetadata(catalog,modules,training),[]);
- const changed=structuredClone(catalog);changed[0].metadata.books=87;
- assert.ok(validateCatalogMetadata(changed,modules,training).some(e=>e.includes('fiqh-syafii.books')));
- changed[1].metadataKey=changed[0].metadataKey;
- assert.ok(validateCatalogMetadata(changed,modules,training).some(e=>e.includes('Duplicate module')));
+test('metadata drift against the app fails validation before a build',()=>{
+ assert.deepEqual(validateCatalogMetadata(catalog,infoAi),[]);
+ const changed=structuredClone(catalog);changed[1].metadata.books=87;
+ assert.ok(validateCatalogMetadata(changed,infoAi).some(e=>e.includes(changed[1].id)));
+ assert.ok(validateCatalogMetadata(changed.slice(1),infoAi).some(e=>e.includes('Jumlah AI')));
 });

@@ -1,8 +1,9 @@
 {
   "hosting": {
-    "site": "openturath-landing",
+    "site": "openturath",
     "public": "dist",
-    "trailingSlash": true,
+    "cleanUrls": true,
+    "trailingSlash": false,
     "ignore": [
       "**/.*"
     ],

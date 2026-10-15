@@ -3,7 +3,7 @@ import {spawn} from 'node:child_process';
 import fs from 'node:fs/promises';
 import assert from 'node:assert/strict';
 const {chromium}=await import(process.env.PLAYWRIGHT_MODULE||'playwright');
-const root=path.resolve(import.meta.dirname,'..'),out=root+'/docs/previews/refined-motion';
+const root=path.resolve(import.meta.dirname,'..'),out=root+'/docs/previews/v6';
 await fs.mkdir(out,{recursive:true});
 const server=spawn('python3',[root+'/tests/browser_server.py']);
 const origin=await new Promise((resolve,reject)=>{server.stdout.once('data',d=>resolve(d.toString().trim()));server.once('exit',c=>reject(Error('Fixture exited '+c)));});
@@ -33,7 +33,7 @@ try{
  measurements.cardSecondary=await page.locator('.collection-metrics li:nth-child(3) bdi').first().evaluate(e=>parseFloat(getComputedStyle(e).fontSize));assert.ok(measurements.cardSecondary>=26);
  checks.push('Featured card numbers retain at least 100px primary and 26px secondary hierarchy');
  await go('.collection-card');await page.locator('.collection-card').first().hover();await page.waitForTimeout(100);assert.notEqual(await page.locator('.collection-card').first().evaluate(e=>e.style.getPropertyValue('--mouse-x')),'');checks.push('Catalogue spotlight responds inside the actual card');
- await page.goto(origin+'/id/library/');await page.locator('[data-filter=hadith]').click();assert.equal(await page.locator('[data-search-item]:visible').count(),3);await page.locator('[type=reset]').click();checks.push('Filtering and resetting preserve usable bento layout');await page.goto(origin+'/id/');await page.waitForTimeout(1200);
+ await page.locator('[data-filter=hadith]').click();assert.equal(await page.locator('[data-search-item]:visible').count(),3);await page.locator('[type=reset]').click();checks.push('Filtering and resetting preserve usable bento layout');
  for(let i=0;i<4;i++){await go(`[data-method-step="${i}"]`);await page.waitForTimeout(800);assert.equal(await page.locator('.method-sheet').getAttribute('data-stage'),String(i));await page.screenshot({path:out+`/method-${i+1}.png`});}
  checks.push('All four manuscript stages update with the corresponding scroll step');
  await go('.home-faq');await page.locator('.home-faq summary').first().click();await page.waitForTimeout(500);assert.equal(await page.locator('.home-faq details').first().evaluate(e=>e.open),true);await page.screenshot({path:out+'/faq-open.png'});checks.push('FAQ opens smoothly while preserving native details state');

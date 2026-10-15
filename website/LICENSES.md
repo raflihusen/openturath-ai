@@ -12,7 +12,7 @@ Aset font lama dipertahankan sebagai riwayat dan tidak dimuat pada halaman V6:
 
 - Inter: `public/assets/fonts/Inter-OFL.txt`.
 - Cormorant: `public/assets/fonts/Cormorant-OFL.txt`.
-- Amiri: `public/assets/fonts/Amiri-OFL.txt`.
+- Amiri: dihapus pada V7 (font Arab hanya Scheherazade New).
 
 QR encoder disertakan dengan atribusi dan MIT license di `scripts/vendor/LICENSE-QR.txt`; pemberitahuan sumber asli dipertahankan. Encoder tersebut bekerja offline dan tidak mengirim URL ke generator QR eksternal.
 

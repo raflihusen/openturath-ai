@@ -13,69 +13,53 @@
     {
       "platform": "Android",
       "type": "apk",
-      "version": "1.0.63",
+      "version": "1.0.51",
       "date": "2026-09-20",
-      "minimumOS": "Android 7.0+",
-      "url": "https://openturath.id/downloads/openturath-v1.0.63.apk",
-      "comingSoon": true,
-      "unavailableReason": "awaiting-public-release"
+      "minimumOS": "Android 8.0+",
+      "url": "https://openturath.id/downloads/openturath-v1.0.51.apk",
+      "comingSoon": false,
+      "sha256": "d217a551514f5efa7ca852209dbd8dd412de6f01f0776a1e52db6c57950c12f5",
+      "sizeBytes": 62682302,
+      "size": "62.7 MB"
     },
     {
       "platform": "macOS",
       "type": "web",
-      "version": "1.0.63",
+      "version": "1.0.51",
       "date": "2026-09-20",
       "minimumOS": "macOS 13+",
       "url": "https://openturath.id/download",
-      "comingSoon": true,
-      "unavailableReason": "awaiting-public-release"
+      "comingSoon": true
     },
     {
       "platform": "Windows",
       "type": "web",
-      "version": "1.0.63",
+      "version": "1.0.51",
       "date": "2026-09-20",
       "minimumOS": "Windows 10+",
       "url": "https://openturath.id/download",
-      "comingSoon": true,
-      "unavailableReason": "awaiting-public-release"
+      "comingSoon": true
+    },
+    {
+      "platform": "iOS",
+      "type": "web",
+      "version": "1.0.51",
+      "date": "2026-09-20",
+      "minimumOS": "iOS",
+      "url": "https://openturath.id/download",
+      "comingSoon": true
     }
   ],
   "plans": [
     {
-      "renewal": {
-        "id": "Perpanjangan manual. Tanpa auto-debit.",
-        "en": "Manual renewal. No automatic debit.",
-        "ar": "تجديد يدوي. دون خصم تلقائي."
-      },
-      "refund": {
-        "id": "Permohonan refund ditinjau paling lambat 7 hari kerja setelah data lengkap. Jika disetujui, pemrosesan paling lambat 7 hari kerja berikutnya, mengikuti penyedia pembayaran.",
-        "en": "Refund requests are reviewed within 7 business days of complete information. Approved refunds are processed within a further 7 business days, subject to the payment provider.",
-        "ar": "تُراجع طلبات الاسترداد خلال ٧ أيام عمل من اكتمال البيانات. وبعد الموافقة تُعالج خلال ٧ أيام عمل أخرى، وفق مزود الدفع."
-      },
-      "taxes": {
-        "id": "Metode yang tersedia mengikuti checkout Midtrans. Jumlah akhir dan tanggal berakhir akses ditampilkan sebelum transaksi.",
-        "en": "Available methods depend on Midtrans checkout. The final amount and access expiry are shown before the transaction.",
-        "ar": "تعتمد الوسائل المتاحة على صفحة الدفع لدى Midtrans. يُعرض المبلغ النهائي وتاريخ انتهاء الوصول قبل المعاملة."
-      },
-      "cancellation": {
-        "id": "Akses berakhir sesuai tanggal pada akun. Tidak ada perpanjangan otomatis.",
-        "en": "Access ends on the date shown in your account. No automatic renewal.",
-        "ar": "ينتهي الوصول في التاريخ المبيّن في حسابك. لا تجديد تلقائي."
-      },
-      "paymentLocation": {
-        "id": "Melalui checkout Midtrans resmi di aplikasi.",
-        "en": "Through official Midtrans checkout in the app.",
-        "ar": "عبر صفحة الدفع الرسمية لدى Midtrans في التطبيق."
-      },
       "id": "tholib",
-      "price": 50000,
+      "price": 49000,
       "currency": "IDR",
       "months": 1,
       "name": {
-        "id": "Asisten bidang umum",
-        "en": "General-field assistant",
-        "ar": "مساعد المجال العام"
+        "id": "Paket Tholib (1 Bulan)",
+        "en": "Tholib Plan (1 Month)",
+        "ar": "باقة الطالب (شهر)"
       },
       "period": {
         "id": "1 bulan",
@@ -83,12 +67,10 @@
         "ar": "شهر واحد"
       },
       "coverage": {
-        "id": "Satu asisten bidang umum yang dipilih. Fikih Tahawwulat memiliki paket tersendiri.",
-        "en": "One selected general-field assistant. Fiqh Tahawwulat has a separate package.",
-        "ar": "مساعد واحد في المجال العام المختار؛ ولفقه التحولات باقة مستقلة."
-      }
-    },
-    {
+        "id": "Satu asisten spesialis pilihan sesuai cakupan pada checkout.",
+        "en": "One selected specialist assistant, as specified at checkout.",
+        "ar": "مساعد متخصص واحد تختاره وفق النطاق المبيّن عند الدفع."
+      },
       "renewal": {
         "id": "Perpanjangan manual. Tanpa auto-debit.",
         "en": "Manual renewal. No automatic debit.",
@@ -100,9 +82,9 @@
         "ar": "تُراجع طلبات الاسترداد خلال ٧ أيام عمل من اكتمال البيانات. وبعد الموافقة تُعالج خلال ٧ أيام عمل أخرى، وفق مزود الدفع."
       },
       "taxes": {
-        "id": "Metode yang tersedia mengikuti checkout Midtrans. Jumlah akhir dan tanggal berakhir akses ditampilkan sebelum transaksi.",
-        "en": "Available methods depend on Midtrans checkout. The final amount and access expiry are shown before the transaction.",
-        "ar": "تعتمد الوسائل المتاحة على صفحة الدفع لدى Midtrans. يُعرض المبلغ النهائي وتاريخ انتهاء الوصول قبل المعاملة."
+        "id": "Metode yang tersedia mengikuti checkout DOKU. Jumlah akhir dan tanggal berakhir akses ditampilkan sebelum transaksi.",
+        "en": "Available methods depend on DOKU checkout. The final amount and access expiry are shown before the transaction.",
+        "ar": "تعتمد الوسائل المتاحة على صفحة الدفع لدى DOKU. يُعرض المبلغ النهائي وتاريخ انتهاء الوصول قبل المعاملة."
       },
       "cancellation": {
         "id": "Akses berakhir sesuai tanggal pada akun. Tidak ada perpanjangan otomatis.",
@@ -110,18 +92,20 @@
         "ar": "ينتهي الوصول في التاريخ المبيّن في حسابك. لا تجديد تلقائي."
       },
       "paymentLocation": {
-        "id": "Melalui checkout Midtrans resmi di aplikasi.",
-        "en": "Through official Midtrans checkout in the app.",
-        "ar": "عبر صفحة الدفع الرسمية لدى Midtrans في التطبيق."
-      },
-      "id": "tematik",
+        "id": "Melalui checkout DOKU resmi di aplikasi.",
+        "en": "Through official DOKU checkout in the app.",
+        "ar": "عبر صفحة الدفع الرسمية لدى DOKU في التطبيق."
+      }
+    },
+    {
+      "id": "tholib_6m",
       "price": 299000,
       "currency": "IDR",
       "months": 6,
       "name": {
-        "id": "Asisten bidang umum",
-        "en": "General-field assistant",
-        "ar": "مساعد المجال العام"
+        "id": "Paket Tholib (6 Bulan)",
+        "en": "Tholib Plan (6 Months)",
+        "ar": "باقة الطالب (٦ أشهر)"
       },
       "period": {
         "id": "6 bulan",
@@ -129,12 +113,10 @@
         "ar": "٦ أشهر"
       },
       "coverage": {
-        "id": "Satu asisten bidang umum yang dipilih. Fikih Tahawwulat memiliki paket tersendiri.",
-        "en": "One selected general-field assistant. Fiqh Tahawwulat has a separate package.",
-        "ar": "مساعد واحد في المجال العام المختار؛ ولفقه التحولات باقة مستقلة."
-      }
-    },
-    {
+        "id": "Satu asisten spesialis pilihan selama 6 bulan akses penuh.",
+        "en": "One selected specialist assistant for 6 months full access.",
+        "ar": "مساعد متخصص واحد تختاره لمدة ٦ أشهر كاملة."
+      },
       "renewal": {
         "id": "Perpanjangan manual. Tanpa auto-debit.",
         "en": "Manual renewal. No automatic debit.",
@@ -146,9 +128,9 @@
         "ar": "تُراجع طلبات الاسترداد خلال ٧ أيام عمل من اكتمال البيانات. وبعد الموافقة تُعالج خلال ٧ أيام عمل أخرى، وفق مزود الدفع."
       },
       "taxes": {
-        "id": "Metode yang tersedia mengikuti checkout Midtrans. Jumlah akhir dan tanggal berakhir akses ditampilkan sebelum transaksi.",
-        "en": "Available methods depend on Midtrans checkout. The final amount and access expiry are shown before the transaction.",
-        "ar": "تعتمد الوسائل المتاحة على صفحة الدفع لدى Midtrans. يُعرض المبلغ النهائي وتاريخ انتهاء الوصول قبل المعاملة."
+        "id": "Metode yang tersedia mengikuti checkout DOKU. Jumlah akhir dan tanggal berakhir akses ditampilkan sebelum transaksi.",
+        "en": "Available methods depend on DOKU checkout. The final amount and access expiry are shown before the transaction.",
+        "ar": "تعتمد الوسائل المتاحة على صفحة الدفع لدى DOKU. يُعرض المبلغ النهائي وتاريخ انتهاء الوصول قبل المعاملة."
       },
       "cancellation": {
         "id": "Akses berakhir sesuai tanggal pada akun. Tidak ada perpanjangan otomatis.",
@@ -156,28 +138,55 @@
         "ar": "ينتهي الوصول في التاريخ المبيّن في حسابك. لا تجديد تلقائي."
       },
       "paymentLocation": {
-        "id": "Melalui checkout Midtrans resmi di aplikasi.",
-        "en": "Through official Midtrans checkout in the app.",
-        "ar": "عبر صفحة الدفع الرسمية لدى Midtrans في التطبيق."
-      },
-      "id": "sultan",
+        "id": "Melalui checkout DOKU resmi di aplikasi.",
+        "en": "Through official DOKU checkout in the app.",
+        "ar": "عبر صفحة الدفع الرسمية لدى DOKU في التطبيق."
+      }
+    },
+    {
+      "id": "bahits",
       "price": 499000,
       "currency": "IDR",
       "months": 12,
       "name": {
-        "id": "Asisten bidang umum",
-        "en": "General-field assistant",
-        "ar": "مساعد المجال العام"
+        "id": "Paket Bahits (1 Tahun)",
+        "en": "Bahits Plan (1 Year)",
+        "ar": "باقة الباحث (سنة)"
       },
       "period": {
-        "id": "12 bulan",
-        "en": "12 months",
-        "ar": "١٢ شهرًا"
+        "id": "1 tahun",
+        "en": "1 year",
+        "ar": "سنة واحدة"
       },
       "coverage": {
-        "id": "Satu asisten bidang umum yang dipilih. Fikih Tahawwulat memiliki paket tersendiri.",
-        "en": "One selected general-field assistant. Fiqh Tahawwulat has a separate package.",
-        "ar": "مساعد واحد في المجال العام المختار؛ ولفقه التحولات باقة مستقلة."
+        "id": "Satu asisten spesialis pilihan selama 1 tahun penuh telaah.",
+        "en": "One selected specialist assistant for 1 full year of study.",
+        "ar": "مساعد متخصص واحد تختاره لسنة كاملة من البحث."
+      },
+      "renewal": {
+        "id": "Perpanjangan manual. Tanpa auto-debit.",
+        "en": "Manual renewal. No automatic debit.",
+        "ar": "تجديد يدوي. دون خصم تلقائي."
+      },
+      "refund": {
+        "id": "Permohonan refund ditinjau paling lambat 7 hari kerja setelah data lengkap. Jika disetujui, pemrosesan paling lambat 7 hari kerja berikutnya, mengikuti penyedia pembayaran.",
+        "en": "Refund requests are reviewed within 7 business days of complete information. Approved refunds are processed within a further 7 business days, subject to the payment provider.",
+        "ar": "تُراجع طلبات الاسترداد خلال ٧ أيام عمل من اكتمال البيانات. وبعد الموافقة تُعالج خلال ٧ أيام عمل أخرى، وفق مزود الدفع."
+      },
+      "taxes": {
+        "id": "Metode yang tersedia mengikuti checkout DOKU. Jumlah akhir dan tanggal berakhir akses ditampilkan sebelum transaksi.",
+        "en": "Available methods depend on DOKU checkout. The final amount and access expiry are shown before the transaction.",
+        "ar": "تعتمد الوسائل المتاحة على صفحة الدفع لدى DOKU. يُعرض المبلغ النهائي وتاريخ انتهاء الوصول قبل المعاملة."
+      },
+      "cancellation": {
+        "id": "Akses berakhir sesuai tanggal pada akun. Tidak ada perpanjangan otomatis.",
+        "en": "Access ends on the date shown in your account. No automatic renewal.",
+        "ar": "ينتهي الوصول في التاريخ المبيّن في حسابك. لا تجديد تلقائي."
+      },
+      "paymentLocation": {
+        "id": "Melalui checkout DOKU resmi di aplikasi.",
+        "en": "Through official DOKU checkout in the app.",
+        "ar": "عبر صفحة الدفع الرسمية لدى DOKU في التطبيق."
       }
     }
   ],
@@ -186,14 +195,14 @@
       "version": "1.0.63",
       "date": "2026-10-04",
       "summary": {
-        "id": "Tampilan yang lebih seragam, huruf yang lebih tajam, dan layar pembuka baru.",
-        "en": "A more consistent interface, sharper type, and a new opening screen.",
-        "ar": "واجهة أكثر اتساقًا وخطوط أوضح وشاشة افتتاح جديدة."
+        "id": "Antarmuka trilingual, katalog asisten, dan Catatan lokal.",
+        "en": "Trilingual interface, assistant catalogue, and local Notes.",
+        "ar": "واجهة بثلاث لغات وفهرس المساعدين وملاحظات محلية."
       },
       "body": {
-        "id": "- Tombol, chip, dan judul halaman kini seragam di semua layar.\n- Huruf tebal dan teks Arab tampil lebih tajam.\n- Layar pembuka, tanda memuat, dan layar masuk yang baru.\n- Detail kitab menampilkan identitas edisi dalam satu tabel.",
-        "en": "- Buttons, chips, and page titles are now consistent across screens.\n- Bold text and Arabic type render more sharply.\n- New opening screen, loading indicator, and sign-in screen.\n- Book details show the edition record in a single table.",
-        "ar": "- توحيد الأزرار والشرائح وعناوين الصفحات في جميع الشاشات.\n- وضوح أفضل للخط العريض والنص العربي.\n- شاشة افتتاح ومؤشر تحميل وشاشة دخول جديدة.\n- عرض بيانات الطبعة في جدول واحد ضمن تفاصيل الكتاب."
+        "id": "Versi aplikasi yang tercantum dalam konfigurasi pengelola adalah 1.0.51. Ketersediaan asisten mengikuti status pada aplikasi. Catatan disimpan lokal pada perangkat. Referensi dan hasil AI tetap memerlukan pemeriksaan.",
+        "en": "The app version listed in the publisher configuration is 1.0.51. Assistant availability follows the status in the app. Notes are stored locally on the device. References and AI outputs still require review.",
+        "ar": "إصدار التطبيق المبيّن في إعدادات الجهة المشغلة هو 1.0.51. تتبع إتاحة المساعدين حالتهم في التطبيق. تُحفظ الملاحظات محليًا على الجهاز، وتظل المراجع ومخرجات الذكاء الاصطناعي محتاجة إلى المراجعة."
       }
     },
     {
@@ -215,37 +224,19 @@
   "catalogReviewed": true,
   "comparisonRightsConfirmed": true,
   "reports": {
-    "enabled": false,
+    "enabled": true,
     "retentionDays": 30
   },
   "analytics": {
     "enabled": false
   },
   "appDeepLinkBase": "",
-  "commercialRevision": "perdana-2026-09-20",
-  "appCommercialParity": "matched-source-unverified-production",
+  "commercialRevision": "website-brief-2026-09-20",
+  "appCommercialParity": "aligned-with-app-v1.0",
   "policyVersion": "1.0",
   "policyEffectiveDate": "2026-09-13",
   "distribution": {
-    "mode": "website-only",
-    "reason": "awaiting-release-artifact"
+    "mode": "app-release"
   },
-  "websiteVersion": "6.0.0",
-  "tahawwulatPlans": [
-    {
-      "months": 1,
-      "amount": 300000,
-      "regular": 1000000
-    },
-    {
-      "months": 6,
-      "amount": 1499000,
-      "regular": 2995000
-    },
-    {
-      "months": 12,
-      "amount": 1999000,
-      "regular": 4995000
-    }
-  ]
+  "websiteVersion": "6.0.0"
 }

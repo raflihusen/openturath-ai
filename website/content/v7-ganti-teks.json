@@ -1,0 +1,161 @@
+{
+ "_keterangan": "Penggantian teks pada SEMUA halaman live (pasangan [lama, baru] per bahasa, diterapkan persis). Angka dari data aplikasi V9.2 (5.383 kitab termasuk 58 kitab Fikih Tahawwulat; 812,6 juta kata teks; 18 AI).",
+ "id": [
+  [
+   "Akses satu asisten mulai dari Rp 50.000 per bulan, dengan pilihan masa 1, 6, atau 12 bulan. Pilih masa akses dan lakukan aktivasi di aplikasi melalui Midtrans. QRIS, Virtual Account, dan E-Wallet tersedia sesuai pilihan pada halaman pembayaran.",
+   "Akses satu asisten mulai dari Rp 49.000 per bulan. Pilih masa akses dan lakukan aktivasi di aplikasi; pembayaran hanya melalui Midtrans."
+  ],
+  [
+   "<bdi>Midtrans</bdi><span>QRIS</span><span>Rekening virtual</span><span>Dompet digital</span>",
+   "<bdi>Midtrans</bdi>"
+  ],
+  [
+   "Pembayaran diproses melalui gerbang pembayaran resmi Midtrans dengan metode QRIS, transfer bank (virtual account), maupun dompet digital.",
+   "Pembayaran hanya diproses melalui gerbang pembayaran resmi Midtrans."
+  ],
+  [
+   "Penawaran resmi adalah Paket Tholib Rp 50.000 untuk 1 bulan, Paket Tholib Rp 299.000 untuk 6 bulan, dan Paket Bahits Rp 499.000 untuk 1 tahun. Khusus rumpun Fikih Tahawwulat Sovereign tersedia paket 1 bulan Rp 300.000, 6 bulan Rp 1.499.000, dan 1 tahun Rp 1.999.000.",
+   "Akses mulai dari Rp 49.000 per bulan."
+  ],
+  [
+   "Pembayaran memakai Midtrans melalui QRIS, Virtual Account, atau E-Wallet yang tersedia pada checkout.",
+   "Pembayaran hanya melalui Midtrans."
+  ],
+  [
+   "Lembaga pembayaran resmi untuk memproses transaksi perbankan, dompet digital, atau QRIS.",
+   "Gerbang pembayaran resmi untuk memproses transaksi."
+  ],
+  [
+   "Dua puluh disiplin keilmuan, dari fikih mazhab hingga tahqiq naskah. Temukan asisten yang memahami bidang telaah Anda.",
+   "Delapan belas AI spesialis, dari fikih mazhab hingga bibliografi kitab. Temukan asisten yang memahami bidang telaah Anda."
+  ],
+  [
+   "Angka khazanah bersumber dari metadata modul aplikasi. Status ketersediaan ditampilkan pada setiap koleksi.",
+   "Angka dihitung otomatis dari data aplikasi: hanya kitab yang lolos kurasi Ahlussunnah wal Jama'ah."
+  ],
+  [
+   "Rp 50.000",
+   "Rp 49.000"
+  ],
+  [
+   "mulai dari Rp 49.000 per bulan",
+   "mulai dari Rp 49.000 per bulan"
+  ],
+  [
+   "(1366–1444 H / 1947–2022 M)",
+   "(1366–1443 H / 1947–2022 M)"
+  ],
+  [
+   "mengindeks 5.370 karya, 11.901+ jilid, 4,18 juta halaman, dan 1,148 miliar kata lintas 20 disiplin keilmuan",
+   "mengindeks 5.383 kitab dan 812,6 juta kata teks dalam 18 AI spesialis"
+  ],
+  [
+   "Paket Tholib Rp 50.000 untuk 1 bulan",
+   "Paket Tholib Rp 49.000 untuk 1 bulan"
+  ],
+  [
+   "Pilih khadim sesuai disiplin ilmu",
+   "Pilih asisten sesuai disiplin ilmu"
+  ]
+ ],
+ "en": [
+  [
+   "Access to one assistant starts at IDR 50,000 per month, for 1, 6, or 12 months. Choose a period and activate it in the app through Midtrans. QRIS, Virtual Account, and E-Wallet options depend on the payment screen.",
+   "Access to one assistant starts at IDR 49,000 per month. Choose a period and activate it in the app; payments are made through Midtrans only."
+  ],
+  [
+   "<span>QRIS</span><span>Virtual Account</span><span>E-Wallet</span>",
+   ""
+  ],
+  [
+   "Payments are processed through the official Midtrans gateway using QRIS, bank transfer (virtual account), or digital wallets.",
+   "Payments are processed only through the official Midtrans gateway."
+  ],
+  [
+   "Official offers are Tholib Plan at IDR 50,000 for 1 month, Tholib Plan at IDR 299,000 for 6 months, and Bahits Plan at IDR 499,000 for 1 year. The dedicated Fiqh Tahawwulat Sovereign tier offers 1 month at IDR 300,000, 6 months at IDR 1,499,000, and 1 year at IDR 1,999,000.",
+   "Access starts at IDR 49,000 per month."
+  ],
+  [
+   "Payments use available Midtrans methods such as QRIS, Virtual Account, or E-Wallet.",
+   "Payments are made through Midtrans only."
+  ],
+  [
+   "Licensed payment institution to process banking, digital wallet, or QRIS transactions.",
+   "Licensed payment gateway that processes transactions."
+  ],
+  [
+   "Twenty scholarly disciplines, from the schools of fiqh to manuscript study. Find an assistant dedicated to your field.",
+   "Eighteen specialist AIs, from the schools of fiqh to bibliography. Find an assistant dedicated to your field."
+  ],
+  [
+   "Collection figures come from the app’s module metadata. Each collection displays its availability.",
+   "Figures are computed automatically from the app’s data and include only works that passed the Ahl al-Sunna wa-l-Jamāʿa curation."
+  ],
+  [
+   "50,000 IDR",
+   "49,000 IDR"
+  ],
+  [
+   "IDR 50,000",
+   "IDR 49,000"
+  ],
+  [
+   "(1366–1444 AH / 1947–2022 CE)",
+   "(1366–1443 AH / 1947–2022 CE)"
+  ],
+  [
+   "indexing 5,370 works, 11,901+ volumes, 4.18 million pages, and 1.148 billion words across 20 distinct disciplines",
+   "indexing 5,383 works and 812.6 million words of text across 18 specialist AIs"
+  ],
+  [
+   "Tholib Plan at IDR 50,000 for 1 month",
+   "Tholib Plan at IDR 49,000 for 1 month"
+  ]
+ ],
+ "ar": [
+  [
+   "يبدأ الوصول إلى مساعد واحد من ٥٠٬٠٠٠ روبية إندونيسية شهريًّا، لمدة شهر أو ٦ أشهر أو ١٢ شهرًا. اختر المدة وفعّلها داخل التطبيق عبر Midtrans، باستخدام QRIS أو الحساب الافتراضي أو المحفظة الإلكترونية بحسب الخيارات المعروضة.",
+   "يبدأ الوصول إلى مساعد واحد من ٤٩٬٠٠٠ روبية إندونيسية شهريًّا. اختر المدة وفعّلها داخل التطبيق، ويتم الدفع عبر Midtrans فقط."
+  ],
+  [
+   "<span>QRIS</span><span>الحساب الافتراضي</span><span>المحفظة الإلكترونية</span>",
+   ""
+  ],
+  [
+   "تتم معالجة المدفوعات عبر بوابة Midtrans الرسمية بواسطة QRIS أو التحويل البنكي (الحساب الافتراضي) أو المحافظ الإلكترونية.",
+   "تتم معالجة المدفوعات عبر بوابة Midtrans الرسمية فقط."
+  ],
+  [
+   "العروض الرسمية: باقة الطالب بسعر ٥٠٬٠٠٠ روبية لشهر، وباقة الطالب بسعر ٢٩٩٬٠٠٠ لستة أشهر، وباقة الباحث بسعر ٤٩٩٬٠٠٠ لسنة كاملة. ولباقة فقه التحولات السيادية الخاصة: شهر بسعر ٣٠٠٬٠٠٠، و٦ أشهر بسعر ١٬٤٩٩٬٠٠٠، وسنة بسعر ١٬٩٩٩٬٠٠٠.",
+   "يبدأ الوصول من ٤٩٬٠٠٠ روبية شهريًّا."
+  ],
+  [
+   "تتم المدفوعات عبر وسائل Midtrans المتاحة مثل QRIS والحساب الافتراضي والمحفظة الإلكترونية.",
+   "تتم المدفوعات عبر Midtrans فقط."
+  ],
+  [
+   "مؤسسة الدفع الرسمية لمعالجة المعاملات المصرفية والمحافظ الإلكترونية وQRIS.",
+   "بوابة الدفع الرسمية لمعالجة المعاملات."
+  ],
+  [
+   "عشرون تخصصًا علميًّا، من فقه المذاهب إلى تحقيق النصوص. اختر المساعد المختص بمجال بحثك.",
+   "ثمانية عشر مساعدًا متخصصًا، من فقه المذاهب إلى فهارس الكتب. اختر المساعد المختص بمجال بحثك."
+  ],
+  [
+   "أعداد الخزانة مأخوذة من بيانات وحدات التطبيق، وتُبيّن كل مجموعة حالة إتاحتها.",
+   "تُحسب الأعداد آليًّا من بيانات التطبيق، وتشمل الكتب التي اجتازت تنقيح أهل السنة والجماعة فقط."
+  ],
+  [
+   "٥٠٬٠٠٠",
+   "٤٩٬٠٠٠"
+  ],
+  [
+   "(١٣٦٦–١٤٤٤ هـ / ١٩٤٧–٢٠٢٢ م)",
+   "(١٣٦٦–١٤٤٣ هـ / ١٩٤٧–٢٠٢٢ م)"
+  ],
+  [
+   "تفهرس ٥٫٣٧٠ مصنفًا، وأكثر من ١١٫٩٠١ مجلد، و٤٫١٨ مليون صفحة، و١٫١٤٨ مليار كلمة عبر عشرين فنًّا وتخصصًا علميًا",
+   "تفهرس ٥٬٣٨٣ كتابًا و٨١٢٫٦ مليون كلمة من نصوص الكتب في ثمانية عشر مساعدًا متخصصًا"
+  ]
+ ]
+}

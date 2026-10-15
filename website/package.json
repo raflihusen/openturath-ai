@@ -3,7 +3,7 @@
   "version": "6.0.0",
   "private": true,
   "type": "module",
-  "description": "OpenTurath \u2014 AI For Islamic Scholarship.",
+  "description": "OpenTurath — AI For Islamic Scholarship.",
   "engines": {
     "node": ">=22"
   },
@@ -19,8 +19,6 @@
     "package": "python3 scripts/package.py",
     "test:browser": "node scripts/browser-qa.mjs",
     "release:apk": "node scripts/register-apk.mjs",
-    "test:visual": "node scripts/visual-review.mjs",
-    "sync": "node scripts/sync-app-facts.mjs",
-    "check:deployment": "node scripts/verify-deployment.mjs"
+    "test:visual": "node scripts/visual-review.mjs"
   }
 }

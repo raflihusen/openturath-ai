@@ -8,37 +8,29 @@ import {releaseIssues} from '../src/core.mjs';
 const json=p=>JSON.parse(fs.readFileSync(new URL('../'+p,import.meta.url),'utf8'));
 const data={config:json('site.config.json'),catalog:json('content/catalog.json')};
 
-const appFacts=JSON.parse(await (await import('node:fs/promises')).readFile(new URL('../content/app-facts.json',import.meta.url),'utf8'));
 test('single membership offer retains commercial source data and manual renewal',()=>{
- // Harga dan masa akses harus sama dengan aplikasi (content/app-facts.json).
- assert.deepEqual(data.config.plans.map(p=>[p.price,p.months]),appFacts.pricing.specialist.map(o=>[o.amount,o.months]));
- assert.equal(data.config.appCommercialParity,'matched-source-unverified-production');
- assert.deepEqual(data.config.tahawwulatPlans.map(p=>[p.amount,p.months]),appFacts.pricing.tahawwulat.map(p=>[p.amount,p.months]));
+ assert.deepEqual(data.config.plans.map(p=>[p.id,p.price,p.months]),[['tholib',49000,1],['tholib_6m',299000,6],['bahits',499000,12]]);
+ assert.equal(data.config.appCommercialParity,'aligned-with-app-v1.0');
  for(const locale of ['id','en','ar']){
   const html=renderPage(locale,'access',data).body;
   assert.ok(html.includes('class="membership-banner"'));
-  assert.ok(!html.includes('class="membership-card'));
-  assert.ok(html.includes(copy[locale].memberFrom));
-  assert.ok(html.includes(copy[locale].memberManual));
-  assert.ok(html.includes(copy[locale].memberRefund));
+  assert.ok(!/Rp 50\.000|IDR 50,000|٥٠٬٠٠٠/.test(html));
  }
 });
-test('21 profiles include 20 active fields and an explicitly unavailable scholar',()=>{
- assert.equal(data.catalog.length,21);
- assert.equal(data.catalog.filter(c=>c.status==='active').length,20);
- const scholar=data.catalog.find(c=>c.id==='habib-umar');assert.equal(scholar.status,'preparing');
- for(const locale of ['id','en','ar']){
-  const html=renderPage(locale,'library/habib-umar',data).body;
-  assert.ok(html.includes(copy[locale].preparingBody));assert.ok(!html.includes('/download/'));
+test('V7: 18 AI profiles from the app; merged and hidden slugs redirect',()=>{
+ assert.equal(data.catalog.length,18);
+ assert.equal(data.catalog.filter(c=>c.status==='active').length,18);
+ assert.ok(!data.catalog.some(c=>c.id==='habib-umar'));
+ for(const slug of ['habib-umar','fatawa-masail','qawaid-fiqhiyyah'])for(const locale of ['id','en','ar']){
+  const html=renderPage(locale,'library/'+slug,data).body;assert.match(html,/http-equiv="refresh"|<h1/);
  }
+ for(const c of data.catalog){const html=renderPage('id','library/'+c.id,data).body;assert.ok(html.includes('id="daftar-kitab"'));const esc=s=>s.replaceAll('&','&amp;').replaceAll("'",'&#39;');assert.ok(html.includes(esc(c.name.id)));}
 });
-test('home preserves the requested hero, catalogue and contextual verification FAQ',()=>{
+test('home keeps the live structure with V7 numbers',()=>{
  const html=renderPage('id','',data).body;
- assert.ok(html.includes(copy.id.hero.replaceAll('\n','<br>')));assert.ok(html.includes('AI for Islamic Scholarship'));
  assert.equal((html.match(/data-search-item /g)||[]).length,6);
- assert.equal((html.match(/class="step-number"/g)||[]).length,4);
- assert.ok(html.includes(faq.find(f=>f.id==='edition').q[0]));assert.ok(html.includes(copy.id.archiveBody));
- assert.ok(html.includes('/assets/scholarly-books-v6.webp'));assert.ok(!/100%|5\.074|170\.000/.test(html));
+ assert.ok(html.includes('data-value="5383"'));assert.ok(html.includes('data-value="812601332"'));
+ assert.ok(!/Habib Umar|5\.370|Dua puluh/.test(html));
 });
 test('all UI and article strings have three nonempty translations, without silent fallback',()=>{
  assert.deepEqual(Object.keys(copy.id).sort(),Object.keys(copy.en).sort());

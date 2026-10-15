@@ -1,4 +1,3 @@
-import {releaseManifest} from './publication-integrity.mjs';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import {createHash} from 'node:crypto';
@@ -27,6 +26,5 @@ android.url=new URL('/downloads/'+fileName,config.canonicalUrl).href;
 android.comingSoon=false;delete android.unavailableReason;
 config.distribution={mode:'app-release'};
 await fs.writeFile(configPath,JSON.stringify(config,null,2)+'\n');
-await fs.writeFile(path.join(root,'content/releases.json'),JSON.stringify(releaseManifest(config),null,2)+'\n');
 console.log(`Registered ${fileName}: ${bytes.length} bytes. SHA-256 ${android.sha256}`);
 console.log('Run npm test and npm run build:release. Confirm APK version and signing certificate on a device before distributing.');

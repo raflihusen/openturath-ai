@@ -1,0 +1,259 @@
+/* OpenTurath V7 — lapisan desain yang mengikuti token aplikasi (lib/core/theme.dart).
+   Terang: kanvas putih, tinta #18181B, garis #E5E7EB, pil aksi hitam.
+   Gelap: kanvas #0E0E10, kartu #18181B, garis #27272A, aksen sian #22D3EE.
+   Huruf: Outfit, Newsreader, Scheherazade New (sama dengan website live). */
+:root,:root[data-theme=light] {
+  --paper:#fff;
+  --surface:#f4f4f5;
+  --ink:#18181b;
+  --muted:#71717a;
+  --faint:#a1a1aa;
+  --line:#e5e7eb;
+  --line-soft:#f1f5f9;
+  --hover:#f4f4f5;
+  --chip:#f1f5f9;
+  --chip-ink:#18181b;
+  --accent:#18181b;
+  --pill:#18181b;
+  --pill-ink:#fff;
+  --card-radius:20px}
+
+:root[data-theme=dark] {
+  --paper:#0e0e10;
+  --surface:#18181b;
+  --ink:#fafafa;
+  --muted:#a1a1aa;
+  --faint:#71717a;
+  --line:#27272a;
+  --line-soft:#1e1e22;
+  --hover:#1e1e22;
+  --chip:#1e1e22;
+  --chip-ink:#67e8f9;
+  --accent:#22d3ee;
+  --pill:#fff;
+  --pill-ink:#18181b}
+
+/* Tombol: pil padat seperti tombol aksi aplikasi */
+.button {
+  background:var(--pill);
+  color:var(--pill-ink);
+  border-color:var(--pill)}
+.button-secondary {
+  background:transparent;
+  color:var(--ink);
+  border-color:var(--line)}
+.button-secondary:hover {
+  background:var(--hover)}
+:root[data-theme=dark] a:not(.button):not(.wordmark):hover {
+  color:var(--accent)}
+:focus-visible {
+  outline:2px solid var(--accent);
+  outline-offset:3px}
+
+/* ---------- Halaman AI (library/<slug>) ---------- */
+.ai-info .container>*:not(.ai-metrics):not(.ai-induk),.ai-catalog .container>*:not(.kitab-list) {
+  max-width:880px}
+.ai-info h2,.ai-catalog h2 {
+  margin:56px 0 18px;
+  font-size:clamp(28px,4vw,40px)}
+.ai-info h2:first-of-type {
+  margin-top:8px}
+.ai-info h3 {
+  margin:36px 0 12px;
+  font:600 15px/1.4 var(--body);
+  letter-spacing:.02em;
+  color:var(--muted)}
+.ai-arabic {
+  margin:0 0 28px;
+  font:400 clamp(30px,5vw,44px)/1.5 'Scheherazade New',serif;
+  color:var(--muted)}
+.ai-metrics {
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+  gap:12px;
+  margin:0 0 20px}
+.ai-metrics>div {
+  display:flex;
+  flex-direction:column-reverse;
+  gap:4px;
+  padding:20px 22px;
+  border:1px solid var(--line);
+  border-radius:var(--card-radius);
+  background:var(--paper)}
+.ai-metrics dd {
+  margin:0;
+  font:400 clamp(30px,4vw,40px)/1.1 var(--display);
+  font-variant-numeric:tabular-nums}
+.ai-metrics dt {
+  font-size:14px;
+  color:var(--muted)}
+.ai-row {
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:space-between;
+  gap:6px 24px;
+  margin:0;
+  padding:14px 0;
+  border-bottom:1px solid var(--line)}
+.ai-row>span:first-child {
+  color:var(--muted)}
+.ai-chips {
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin:22px 0 0;
+  padding:0;
+  list-style:none}
+.ai-chips li {
+  padding:6px 14px;
+  border-radius:999px;
+  background:var(--chip);
+  color:var(--chip-ink);
+  font-size:14px}
+.ai-induk {
+  margin:0 0 24px;
+  padding:0;
+  list-style:none;
+  border:1px solid var(--line);
+  border-radius:var(--card-radius);
+  overflow:hidden;
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(320px,1fr))}
+.ai-induk li {
+  display:flex;
+  flex-direction:column;
+  gap:2px;
+  padding:14px 20px;
+  border-bottom:1px solid var(--line)}
+.ai-induk li {
+  margin-bottom:-1px}
+.ai-induk span {
+  font:400 21px/1.6 'Scheherazade New',serif}
+.ai-induk small {
+  font:400 16px/1.5 'Scheherazade New',serif;
+  color:var(--muted)}
+.ai-facts {
+  margin:0 0 12px;
+  border-top:1px solid var(--line)}
+.ai-facts>div {
+  display:flex;
+  justify-content:space-between;
+  align-items:baseline;
+  gap:24px;
+  padding:14px 0;
+  border-bottom:1px solid var(--line)}
+.ai-facts dt {
+  color:var(--muted)}
+.ai-facts dd {
+  margin:0;
+  font-weight:500;
+  font-variant-numeric:tabular-nums;
+  white-space:nowrap}
+.ai-limits {
+  display:grid;
+  gap:10px;
+  margin:0 0 32px;
+  padding:0;
+  list-style:none;
+  counter-reset:batas}
+.ai-limits li {
+  position:relative;
+  padding:16px 20px 16px 56px;
+  border-radius:16px;
+  background:var(--surface);
+  counter-increment:batas}
+.ai-limits li::before {
+  content:counter(batas);
+  position:absolute;
+  inset-inline-start:20px;
+  top:16px;
+  width:24px;
+  height:24px;
+  border-radius:50%;
+  background:var(--pill);
+  color:var(--pill-ink);
+  font:600 13px/24px var(--body);
+  text-align:center}
+[dir=rtl] .ai-limits li {
+  padding:16px 56px 16px 20px}
+.ai-qa {
+  margin:0 0 32px;
+  padding:20px 22px;
+  border:1px solid var(--line);
+  border-radius:var(--card-radius)}
+
+/* Daftar kitab lengkap */
+.ai-catalog {
+  border-top:1px solid var(--line)}
+.ai-catalog .search-form {
+  position:sticky;
+  top:76px;
+  z-index:3;
+  padding:10px 0;
+  background:var(--paper)}
+.kitab-list {
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(360px,1fr));
+  column-gap:40px;
+  margin:16px 0 0;
+  padding:0;
+  list-style:none}
+.kitab-row {
+  padding:16px 0;
+  border-bottom:1px solid var(--line);
+  content-visibility:auto;
+  contain-intrinsic-size:auto 96px}
+.kitab-title {
+  margin:0;
+  font:400 21px/1.6 'Scheherazade New',serif}
+.kitab-meta {
+  margin:2px 0 0;
+  font:400 16px/1.6 'Scheherazade New',serif;
+  color:var(--muted)}
+.kitab-edition {
+  display:flex;
+  flex-wrap:wrap;
+  gap:4px 18px;
+  margin:6px 0 0;
+  font:400 15px/1.6 'Scheherazade New',serif;
+  color:var(--muted)}
+.kitab-edition:empty {
+  display:none}
+.kitab-edition>div {
+  display:flex;
+  gap:6px}
+.kitab-edition dt {
+  color:var(--faint)}
+.kitab-edition dd {
+  margin:0}
+.kitab-note {
+  margin:6px 0 0;
+  font-size:14px;
+  color:var(--muted)}
+.kitab-row a {
+  color:var(--accent);
+  text-underline-offset:3px}
+
+/* Halaman Kurasi */
+.kurasi-list {
+  display:grid;
+  gap:10px;
+  padding:0;
+  list-style:none}
+.kurasi-list li {
+  padding:16px 20px;
+  border:1px solid var(--line);
+  border-radius:16px}
+.kurasi-angka dd {
+  font-size:20px}
+
+@media (max-width:640px) {
+  .ai-info h2,.ai-catalog h2 {
+    margin-top:44px}
+  .ai-facts>div {
+    flex-direction:column;
+    gap:2px}
+  .ai-catalog .search-form {
+    top:64px}
+  .kitab-title,.ai-induk span {
+    font-size:19px}}
