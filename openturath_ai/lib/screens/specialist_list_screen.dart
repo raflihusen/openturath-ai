@@ -7,7 +7,6 @@ import '../core/scholarly_fonts.dart';
 import '../core/app_copy.dart';
 import '../core/arabic_utils.dart';
 import '../core/routes.dart';
-import '../core/app_snackbar.dart';
 import '../core/design/ot_colors.dart';
 import '../core/design/ot_radius.dart';
 import '../core/design/ot_typography.dart';
@@ -29,6 +28,7 @@ import '../widgets/apple_interactive_wrapper.dart';
 import 'main_shell_screen.dart';
 import '../widgets/ot_motion_widgets.dart';
 import '../widgets/assistant_grid_card.dart';
+import '../widgets/tahqiq_khazanah_dialog.dart';
 import '../services/open_turath_catalog_repository.dart';
 
 class SpecialistListScreen extends StatefulWidget {
@@ -131,10 +131,7 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
   void _openAgent(AgentModel agent) {
     OTMotion.light();
     if (agent.isComingSoon) {
-      AppSnackBar.warning(
-        context,
-        AppCopy.preparingModule(agent.title),
-      );
+      TahqiqKhazanahDialog.show(context, agent: agent);
       return;
     }
 

@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import '../core/notebook_navigation.dart';
 import '../models/agent_model.dart';
@@ -10,9 +12,76 @@ class AgentService {
 
   final CallableGateway _functions;
 
-  // ── Ambil daftar semua agent dari Firestore / model lokal ────
-  Future<List<AgentModel>> getAgents() async {
-    return AgentModel.defaultAgents;
+  static Set<String>? _cachedActiveIds;
+  static DateTime? _lastAgentsFetch;
+
+  /// Whitelist peluncuran perdana bawaan: Hanya Fikih Tahawwulat & Fikih Syafi'i (dan subagennya).
+  static const defaultLaunchActiveIds = <String>{
+    'fiqh_tahawwulat',
+    'fiqh_tahawwulat_muhaqqiq',
+    'fiqh_tahawwulat_bayan',
+    'fiqh_tahawwulat_mukhtabir',
+    'fiqh_tahawwulat_habib',
+    'fiqh_tahawwulat_khatib',
+    'fiqh_syafii',
+    'fiqh_syafii_muhaqqiq',
+  };
+
+  // ── Ambil daftar semua agent dari Firestore / model lokal dengan filtering OTA ────
+  Future<List<AgentModel>> getAgents({
+    bool forceRefresh = false,
+    FirebaseFirestore? firestore,
+  }) async {
+    final baseAgents = AgentModel.defaultAgents;
+    Set<String> activeIds = _cachedActiveIds ?? defaultLaunchActiveIds;
+    final now = DateTime.now();
+
+    final shouldFetch = forceRefresh ||
+        _cachedActiveIds == null ||
+        _lastAgentsFetch == null ||
+        now.difference(_lastAgentsFetch!).inSeconds >= 60;
+
+    if (shouldFetch) {
+      try {
+        final db = firestore ??
+            (Firebase.apps.isNotEmpty ? FirebaseFirestore.instance : null);
+        if (db != null) {
+          final doc = await db
+              .collection('app_config')
+              .doc('agents')
+              .get(const GetOptions(source: Source.serverAndCache))
+              .timeout(const Duration(seconds: 3));
+
+          if (doc.exists && doc.data() != null) {
+            final raw = doc.data()!['active_agent_ids'];
+            if (raw is List) {
+              final list = List<String>.from(raw.whereType<String>());
+              if (list.isNotEmpty) {
+                activeIds = list.toSet();
+                _cachedActiveIds = activeIds;
+                _lastAgentsFetch = now;
+              }
+            }
+          }
+        }
+      } catch (_) {
+        // Fail-safe: Tetap gunakan activeIds (default launch whitelist / cached)
+      }
+    }
+
+    return baseAgents.map((agent) {
+      final isDirectActive = activeIds.contains(agent.id);
+      final isParentActive = (agent.id.startsWith('fiqh_tahawwulat') &&
+              activeIds.contains('fiqh_tahawwulat')) ||
+          (agent.id.startsWith('fiqh_syafii') &&
+              activeIds.contains('fiqh_syafii'));
+
+      if (isDirectActive || isParentActive) {
+        return agent.copyWith(status: 'active');
+      } else {
+        return agent.copyWith(status: 'coming_soon');
+      }
+    }).toList();
   }
 
   static final _notebookPath = RegExp(

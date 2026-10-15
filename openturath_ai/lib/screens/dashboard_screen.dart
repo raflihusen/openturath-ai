@@ -32,6 +32,9 @@ import '../widgets/update_ready_banner.dart';
 import '../widgets/update_ready_dialog.dart';
 import '../widgets/specialist_card.dart';
 import '../widgets/library_bottom_sheet.dart';
+import '../widgets/tahqiq_khazanah_dialog.dart';
+import '../widgets/tahawwulat_hero.dart';
+import '../core/product_pricing.dart';
 import 'main_shell_screen.dart';
 import '../services/bookmark_service.dart';
 import '../models/bookmark_model.dart';
@@ -104,7 +107,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     super.dispose();
   }
 
-  Future<void> _loadData() async {
+  Future<void> _loadData([bool forceRefresh = false]) async {
     try {
       // 1. Dapatkan profil pengguna: memory -> disk cache -> restoreSession
       var user = _authService.currentUser != null
@@ -121,11 +124,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
       }
 
       final results = await Future.wait([
-        user != null ? Future.value(user) : _authService.getCurrentUserModel(),
-        _agentService.getAgents(),
+        user != null && !forceRefresh
+            ? Future.value(user)
+            : _authService.getCurrentUserModel(),
+        _agentService.getAgents(forceRefresh: forceRefresh),
+        ProductPricingService.syncPricing(forceRefresh: forceRefresh),
       ]).timeout(
         const Duration(seconds: 4),
-        onTimeout: () => [user, AgentModel.defaultAgents],
+        onTimeout: () => [user, AgentModel.defaultAgents, null],
       );
 
       if (!mounted) return;
@@ -142,10 +148,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       return;
     }
     if (agent.isComingSoon) {
-      AppSnackBar.warning(
-        context,
-        Loc.tr('collectionPreparing', [agent.title]),
-      );
+      TahqiqKhazanahDialog.show(context, agent: agent);
       return;
     }
 
@@ -221,7 +224,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           body: SafeArea(
             bottom: false,
             child: RefreshIndicator(
-              onRefresh: _loadData,
+              onRefresh: () => _loadData(true),
               color: accent,
               // Rata atas-awal: konten pendek tidak lagi melayang di tengah layar.
               child: Align(
@@ -249,9 +252,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                 final active = AgentSessionManager
                                     .instance.activeTab?.agent;
                                 final last = _agents
-                                    .where((a) => a.id == _lastOpenedAgentId)
+                                    .where((a) => a.id == _lastOpenedAgentId && a.isActive)
                                     .firstOrNull;
-                                final target = active ?? last;
+                                final fallbackActive = _agents.where((a) => a.isActive).firstOrNull;
+                                final target = (active != null && active.isActive)
+                                    ? active
+                                    : (last ?? fallbackActive);
                                 void open() {
                                   if (target != null) {
                                     _openNotebook(target, user);
@@ -446,8 +452,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                     fieldId: agent.fieldId,
                                     scopeLabel: null,
                                     statusLabel: agent.isComingSoon
-                                        ? AppCopy.comingSoon
+                                        ? reviewCopy('Tahqiq Khazanah', 'قيد التحقيق', 'Under Verification')
                                         : null,
+                                    isLocked: agent.isComingSoon,
                                     onOpen: () => _openNotebook(agent, user),
                                     onOpenLibrary: agent.catalogId != null
                                         ? () => showResearchLibrary(context,
@@ -532,13 +539,17 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                     itemCount: _curatedDisciplines.length,
                                     itemBuilder: (context, index) {
                                       final disc = _curatedDisciplines[index];
-                                      // Jumlah dihitung dari daftar asisten, bukan angka tetap.
+                                      // Jumlah dihitung dari daftar asisten aktif, bukan angka semu.
                                       final members = _agents
                                           .where((agent) =>
                                               agent.kind ==
                                                   CorpusKind.discipline &&
                                               agent.fieldId == disc.fieldId)
                                           .toList();
+                                      final activeMembers = members.where((agent) => agent.isActive).toList();
+                                      final countText = activeMembers.isNotEmpty
+                                          ? AppCopy.assistantsAvailableCount(activeMembers.length)
+                                          : reviewCopy('Tahqiq Khazanah', 'قيد التحقيق', 'Under Verification');
                                       return OTReveal(
                                         index: index + 2,
                                         child: OTInkCard(
@@ -582,12 +593,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                                           OTExpressive.white)),
                                               const SizedBox(height: 8),
                                               Text(
-                                                  AppCopy
-                                                      .assistantsAvailableCount(
-                                                          members.isEmpty
-                                                              ? disc
-                                                                  .specialistCount
-                                                              : members.length),
+                                                  countText,
                                                   style: OTTypography.caption(
                                                       color: OTExpressive
                                                           .whiteMuted)),

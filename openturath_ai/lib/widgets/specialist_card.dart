@@ -21,6 +21,7 @@ class SpecialistCard extends StatelessWidget {
     this.emoji,
     this.icon,
     this.statusLabel,
+    this.isLocked = false,
     this.onOpenLibrary,
   });
 
@@ -32,6 +33,7 @@ class SpecialistCard extends StatelessWidget {
   final String? emoji;
   final IconData? icon;
   final String? statusLabel;
+  final bool isLocked;
   final VoidCallback? onOpen;
   final VoidCallback? onOpenLibrary;
 
@@ -102,6 +104,14 @@ class SpecialistCard extends StatelessWidget {
                   ],
                 ),
               ),
+              if (isLocked || (statusLabel?.isNotEmpty ?? false)) ...[
+                const SizedBox(width: 12),
+                Icon(
+                  Icons.lock_outline_rounded,
+                  size: 20,
+                  color: muted.withValues(alpha: 0.7),
+                ),
+              ],
             ],
           ),
         ),

@@ -66,6 +66,59 @@ class AgentModel {
 
   bool get isActive => status == 'active';
   bool get isComingSoon => status == 'coming_soon';
+  bool get isLocked => isComingSoon;
+
+  AgentModel copyWith({
+    String? id,
+    String? title,
+    String? titleArabic,
+    String? description,
+    String? emoji,
+    String? category,
+    String? status,
+    int? sortOrder,
+    String? subtitleAcademic,
+    String? fieldId,
+    List<String>? suggestedPrompts,
+    List<SubAgentModel>? subAgents,
+    List<BookModel>? referenceBooks,
+    String? akalUrl1m,
+    String? akalUrl6m,
+    String? akalUrl1y,
+    int? price1m,
+    int? price6m,
+    int? price1y,
+    CorpusKind? kind,
+    List<String>? disciplineIds,
+    List<String>? scholarIds,
+    String? catalogId,
+  }) {
+    return AgentModel(
+      id: id ?? this.id,
+      title: title ?? _title,
+      titleArabic: titleArabic ?? this.titleArabic,
+      description: description ?? this.description,
+      emoji: emoji ?? this.emoji,
+      category: category ?? this.category,
+      status: status ?? this.status,
+      sortOrder: sortOrder ?? this.sortOrder,
+      subtitleAcademic: subtitleAcademic ?? _subtitleAcademic,
+      fieldId: fieldId ?? this.fieldId,
+      suggestedPrompts: suggestedPrompts ?? this.suggestedPrompts,
+      subAgents: subAgents ?? this.subAgents,
+      referenceBooks: referenceBooks ?? this.referenceBooks,
+      akalUrl1m: akalUrl1m ?? this.akalUrl1m,
+      akalUrl6m: akalUrl6m ?? this.akalUrl6m,
+      akalUrl1y: akalUrl1y ?? this.akalUrl1y,
+      price1m: price1m ?? this.price1m,
+      price6m: price6m ?? this.price6m,
+      price1y: price1y ?? this.price1y,
+      kind: kind ?? this.kind,
+      disciplineIds: disciplineIds ?? this.disciplineIds,
+      scholarIds: scholarIds ?? this.scholarIds,
+      catalogId: catalogId ?? this.catalogId,
+    );
+  }
 
   factory AgentModel.fromFirestore(DocumentSnapshot doc) {
     final data = doc.data() as Map<String, dynamic>;

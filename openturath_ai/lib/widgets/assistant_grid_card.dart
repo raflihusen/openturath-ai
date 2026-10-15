@@ -58,7 +58,9 @@ class AssistantGridCard extends StatelessWidget {
     const ink = OTExpressive.white;
     const muted = OTExpressive.whiteMuted;
     final stats = LibraryStat.from(metadata).take(2).toList();
-    final openLabel = Loc.tr('openNamedAI', [Loc.text(agent.title)]);
+    final openLabel = agent.isComingSoon
+        ? Loc.tr('comingSoon')
+        : Loc.tr('openNamedAI', [Loc.text(agent.title)]);
     return OTInkCard(
       watermark: ArabicUiLabels.forAgent(agent.id, agent.titleArabic),
       child: Column(
@@ -92,11 +94,19 @@ class AssistantGridCard extends StatelessWidget {
                     child: FilledButton(
                         onPressed: onOpen,
                         style: FilledButton.styleFrom(
-                            backgroundColor: ink,
-                            foregroundColor: OTExpressive.hero,
+                            backgroundColor: agent.isComingSoon
+                                ? ink.withValues(alpha: .14)
+                                : ink,
+                            foregroundColor: agent.isComingSoon
+                                ? ink
+                                : OTExpressive.hero,
                             padding: EdgeInsets.zero),
-                        child: Icon(Icons.chat_bubble_outline_rounded,
-                            semanticLabel: openLabel, size: 24)))),
+                        child: Icon(
+                            agent.isComingSoon
+                                ? Icons.lock_outline_rounded
+                                : Icons.chat_bubble_outline_rounded,
+                            semanticLabel: openLabel,
+                            size: 24)))),
             if (onOpenLibrary != null) ...[
               const SizedBox(width: 8),
               Tooltip(

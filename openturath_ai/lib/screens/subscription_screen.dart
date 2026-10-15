@@ -44,6 +44,14 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
   String? _checkoutError;
   String? _checkoutAgentId;
 
+  @override
+  void initState() {
+    super.initState();
+    ProductPricingService.syncPricing().then((_) {
+      if (mounted) setState(() {});
+    });
+  }
+
   String _checkoutErrorMessage(FirebaseFunctionsException error) {
     switch (error.code.toLowerCase()) {
       case 'unauthenticated':
@@ -160,7 +168,8 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
       if (!mounted) return;
       // An old backend or stale quote must never open a differently priced checkout.
       if (result['amount'] != offer.amount ||
-          result['pricingRevision'] != ProductPricing.revision) {
+          (result['pricingRevision'] != ProductPricing.revision &&
+           result['pricingRevision'] != ProductPricing.defaultRevision)) {
         setState(() => _checkoutError = Loc.tr('priceChanged'));
         return;
       }

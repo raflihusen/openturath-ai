@@ -104,10 +104,10 @@ exports.PURCHASABLE_AGENTS = new Set([
     "bibliografi_faharis",
 ]);
 exports.MODULE_PLANS = {
-    tholib_1m: { amount: 50000, durationMonths: 1, labelSuffix: "(1 Bulan)" },
+    tholib_1m: { amount: 49000, durationMonths: 1, labelSuffix: "(1 Bulan)" },
     tholib_6m: { amount: 299000, durationMonths: 6, labelSuffix: "(6 Bulan)" },
     bahits_1y: { amount: 499000, durationMonths: 12, labelSuffix: "(1 Tahun)" },
-    "1m": { amount: 50000, durationMonths: 1, labelSuffix: "(1 Bulan)" },
+    "1m": { amount: 49000, durationMonths: 1, labelSuffix: "(1 Bulan)" },
     "6m": { amount: 299000, durationMonths: 6, labelSuffix: "(6 Bulan)" },
     "1y": { amount: 499000, durationMonths: 12, labelSuffix: "(1 Tahun)" },
 };
@@ -377,7 +377,60 @@ function generateDokuSignature(clientId, requestId, timestamp, targetPath, rawBo
     const hmac = crypto.createHmac("sha256", secretKey).update(signatureComponent).digest("base64");
     return `HMACSHA256=${hmac}`;
 }
-function resolvePlanPricing(agentId, plan) {
+let cachedPricingConfig = null;
+let cachedPricingTime = 0;
+async function getDynamicPricingConfig() {
+    const now = Date.now();
+    if (cachedPricingConfig && now - cachedPricingTime < 60000) {
+        return cachedPricingConfig;
+    }
+    try {
+        const snap = await db.collection("app_config").doc("pricing").get();
+        if (snap.exists && snap.data()) {
+            cachedPricingConfig = snap.data();
+            cachedPricingTime = now;
+            return cachedPricingConfig;
+        }
+    }
+    catch (err) {
+        console.warn("[PricingConfig] Failed to fetch app_config/pricing, using hardcoded fallback:", err.message);
+    }
+    return null;
+}
+let cachedActiveAgentIds = null;
+let cachedAgentsTime = 0;
+async function getActiveAgentIds() {
+    var _a, _b;
+    const now = Date.now();
+    if (cachedActiveAgentIds && now - cachedAgentsTime < 60000) {
+        return cachedActiveAgentIds;
+    }
+    try {
+        const snap = await db.collection("app_config").doc("agents").get();
+        if (snap.exists && ((_a = snap.data()) === null || _a === void 0 ? void 0 : _a.active_agent_ids) && Array.isArray((_b = snap.data()) === null || _b === void 0 ? void 0 : _b.active_agent_ids)) {
+            const ids = new Set(snap.data().active_agent_ids);
+            cachedActiveAgentIds = ids;
+            cachedAgentsTime = now;
+            return ids;
+        }
+    }
+    catch (err) {
+        console.warn("[AgentsConfig] Failed to fetch app_config/agents, using launch default whitelist:", err.message);
+    }
+    // Default Launch Day Whitelist: Fikih Tahawwulat & Fikih Syafi'i (dan subagennya)
+    return new Set([
+        "fiqh_tahawwulat",
+        "fiqh_tahawwulat_muhaqqiq",
+        "fiqh_tahawwulat_bayan",
+        "fiqh_tahawwulat_mukhtabir",
+        "fiqh_tahawwulat_habib",
+        "fiqh_tahawwulat_khatib",
+        "fiqh_syafii",
+        "fiqh_syafii_muhaqqiq",
+    ]);
+}
+async function resolvePlanPricing(agentId, plan) {
+    var _a, _b, _c, _d, _e, _f;
     const isAllAi = agentId === "all_ai" || agentId === "all_access" || plan.startsWith("all_ai") || plan.startsWith("all_access");
     if (isAllAi) {
         throw new functions.https.HttpsError("failed-precondition", "Paket Semua AI sementara dinonaktifkan. Silakan pilih paket per modul spesialis.");
@@ -386,6 +439,17 @@ function resolvePlanPricing(agentId, plan) {
     if (!exports.PURCHASABLE_AGENTS.has(agentId)) {
         throw new functions.https.HttpsError("invalid-argument", "Modul spesialis tidak valid atau tidak dapat dibeli.");
     }
+    // Blind Spot 2: Pastikan modul saat ini aktif untuk rilis (bukan modul terkunci)
+    const activeAgents = await getActiveAgentIds();
+    const isAgentActive = activeAgents.has(agentId) ||
+        (agentId.startsWith("fiqh_tahawwulat") && activeAgents.has("fiqh_tahawwulat")) ||
+        (agentId.startsWith("fiqh_syafii") && activeAgents.has("fiqh_syafii"));
+    if (!isAgentActive) {
+        throw new functions.https.HttpsError("failed-precondition", "Modul kajian ini sedang dalam tahap tahqiq dan belum dibuka untuk pembelian.");
+    }
+    // Baca konfigurasi dinamis (jika ada di Firestore)
+    const dynamicConfig = await getDynamicPricingConfig();
+    const activeRevision = (dynamicConfig === null || dynamicConfig === void 0 ? void 0 : dynamicConfig.revision) || "harga-v92-2026-10-14";
     // Harga Mandiri Khusus Fikih Tahawwulat
     if (agentId.startsWith("fiqh_tahawwulat")) {
         const tahawwulatTiers = {
@@ -398,11 +462,16 @@ function resolvePlanPricing(agentId, plan) {
         };
         const tTier = tahawwulatTiers[plan];
         if (tTier) {
+            const dynamicAmount = (_c = (_b = (_a = dynamicConfig === null || dynamicConfig === void 0 ? void 0 : dynamicConfig.plans) === null || _a === void 0 ? void 0 : _a.fiqh_tahawwulat) === null || _b === void 0 ? void 0 : _b[plan]) === null || _c === void 0 ? void 0 : _c.amount;
+            const finalAmount = (typeof dynamicAmount === "number" && Number.isSafeInteger(dynamicAmount) && dynamicAmount > 0)
+                ? dynamicAmount
+                : tTier.amount;
             return {
-                amount: tTier.amount,
+                amount: finalAmount,
                 durationMonths: tTier.durationMonths,
                 label: `AI Fikih Tahawwulat ${tTier.labelSuffix}`,
                 entitlementKey: "fiqh_tahawwulat",
+                revision: activeRevision,
             };
         }
     }
@@ -414,12 +483,17 @@ function resolvePlanPricing(agentId, plan) {
     if (!entitlementKey || entitlementKey === "all_access" || entitlementKey === "all_ai") {
         throw new functions.https.HttpsError("failed-precondition", "Entitlement untuk modul ini tidak valid atau dinonaktifkan.");
     }
+    const dynamicSpecAmount = (_f = (_e = (_d = dynamicConfig === null || dynamicConfig === void 0 ? void 0 : dynamicConfig.plans) === null || _d === void 0 ? void 0 : _d.specialists) === null || _e === void 0 ? void 0 : _e[plan]) === null || _f === void 0 ? void 0 : _f.amount;
+    const finalSpecAmount = (typeof dynamicSpecAmount === "number" && Number.isSafeInteger(dynamicSpecAmount) && dynamicSpecAmount > 0)
+        ? dynamicSpecAmount
+        : tier.amount;
     const agentTitle = agentId.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase());
     return {
-        amount: tier.amount,
+        amount: finalSpecAmount,
         durationMonths: tier.durationMonths,
         label: `Modul AI ${agentTitle} ${tier.labelSuffix}`,
         entitlementKey,
+        revision: activeRevision,
     };
 }
 async function requestDokuCheckout(params) {
@@ -593,11 +667,11 @@ exports.createCheckout = functions
         throw new functions.https.HttpsError("invalid-argument", "Data tidak lengkap (nama dan email diperlukan).");
     }
     const currentAgentId = typeof agentId === "string" && agentId ? agentId : "fiqh_tahawwulat";
-    const pricing = resolvePlanPricing(currentAgentId, plan);
+    const pricing = await resolvePlanPricing(currentAgentId, plan);
     // Reject stale offers before creating any invoice or contacting the gateway.
+    const isRevisionValid = pricingRevision === pricing.revision || pricingRevision === "harga-v92-2026-10-14";
     if (expectedAmount !== undefined &&
-        (!Number.isSafeInteger(expectedAmount) || expectedAmount !== pricing.amount ||
-            pricingRevision !== "perdana-2026-09-20")) {
+        (!Number.isSafeInteger(expectedAmount) || expectedAmount !== pricing.amount || !isRevisionValid)) {
         throw new functions.https.HttpsError("failed-precondition", "Harga penawaran telah berubah. Muat ulang aplikasi.");
     }
     // Each checkout writes two documents and calls the gateway.
@@ -662,7 +736,7 @@ exports.createCheckout = functions
         trxId,
         invoiceNumber,
         amount: pricing.amount,
-        pricingRevision: "perdana-2026-09-20"
+        pricingRevision: pricing.revision
     };
 });
 function generateDokuGetSignature(clientId, requestId, timestamp, targetPath, secretKey) {
