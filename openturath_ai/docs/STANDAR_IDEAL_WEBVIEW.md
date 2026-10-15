@@ -108,17 +108,19 @@ main::before, main::after {
 }
 ```
 
-### D. Tata Letak Alami Kolom Input (*Natural Flexbox Docking*)
+### D. Tata Letak Alami Kolom Input (*Natural Flexbox Docking & Presisi Tengah*)
 * Kapsul input pertanyaan (`.ot-chat-composer`) terpasang secara alami di dasar kolom percakapan (*in-flow flexbox child*):
-  - `position: relative !important; flex: 0 0 auto !important; width: calc(100% - 32px) !important; max-width: 768px !important; margin: 8px auto max(18px, env(safe-area-inset-bottom, 0px)) auto !important;`
+  - `position: relative !important; left: 50% !important; transform: translateX(-50%) !important; flex: 0 0 auto !important; width: calc(100% - 32px) !important; max-width: 768px !important; margin-top: 8px !important; margin-bottom: max(18px, env(safe-area-inset-bottom, 0px)) !important; margin-left: 0 !important; margin-right: 0 !important;`
+  - Seluruh elemen anak langsung (`.ot-chat-composer > *`, `form`, `.chat-input-container`, `.query-box-container`) dipastikan berdimensi penuh: `width: 100% !important; max-width: 768px !important; box-sizing: border-box !important;`.
 * Wadah transkrip pesan (`.ot-chat-transcript` dan `.chat-panel-content`):
   - `flex: 1 1 0px !important; min-height: 0 !important; overflow-y: auto !important; padding-bottom: 24px !important;`
 * Wadah induk (`.ot-chat-path`, `mat-sidenav-content`, `app-chat-view`):
   - `overflow: hidden !important; min-height: 0 !important;`
 * Keunggulan Tata Letak Alami:
   1. **Bebas Clipping & Teks Tertutup**: Kapsul input bukan lagi overlay mengambang (`position: fixed`), sehingga tidak menutupi pesan terakhir.
-  2. **Scroll Murni**: Ketika pengguna scroll mentok ke bawah, baris pesan paling akhir berhenti tepat di atas kapsul input dengan jarak aman 24px padding + 8px margin.
-  3. **Tanpa Injeksi Spacer Buatan**: Tidak memerlukan elemen `.ot-bottom-spacer` buatan yang rapuh terhadap rekonsiliasi DOM Angular. Elemen spacer lama otomatis dibersihkan oleh `removeLegacySpacers()`.
+  2. **Presisi Tengah Mutlak**: Kombinasi `left: 50%` dan `transform: translateX(-50%)` pada elemen `position: relative` menjamin kapsul berada persis di tengah bidang baca tanpa terpengaruh bug margin flexbox WebKit yang menyebabkannya miring ke kiri.
+  3. **Scroll Murni**: Ketika pengguna scroll mentok ke bawah, baris pesan paling akhir berhenti tepat di atas kapsul input dengan jarak aman 24px padding + 8px margin.
+  4. **Tanpa Injeksi Spacer Buatan**: Tidak memerlukan elemen `.ot-bottom-spacer` buatan yang rapuh terhadap rekonsiliasi DOM Angular. Elemen spacer lama otomatis dibersihkan oleh `removeLegacySpacers()`.
 
 ### E. Pembersihan Instan Saat Pergantian Tab (*Dynamic Tab Cleanup*)
 * Setiap kali pengguna beralih antar-tab atau membuka tab yang sudah ada, aplikasi wajib mengeksekusi:

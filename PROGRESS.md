@@ -387,6 +387,7 @@ Berdasarkan `AUDIT_OPENTURATH_AI.md`, dokumen perancangan pustaka, dan keluhan k
   3. *Parent Overflow Containment*: Seluruh rantai wadah induk (`.ot-chat-path`, `mat-sidenav-content`, `app-chat-view`) dikunci dengan `overflow: hidden !important; min-height: 0 !important;` sehingga kapsul input tetap terkunci di bawah tanpa pernah ikut tergulung ke luar layar.
   4. *Clean Cleanup*: Menghapus fungsi `ensureBottomSpacer` dan menyertakan `removeLegacySpacers()` yang secara otomatis menyapu elemen `.ot-bottom-spacer` lama dari DOM.
   5. *Pembaruan Standar & Test*: Menyesuaikan unit test di `notebook_ui_script_syntax_test.dart` dan mematenkan layout alami ini ke `AGENTS.md` (Aturan 6), `STANDAR_IDEAL_WEBVIEW.md`, dan knowledge item global.
+  6. *Presisi Tengah Mutlak (Anti-Miring Kiri)*: Mengatasi kecenderungan WebKit flexbox yang merapatkan elemen anak berkekangan `max-width` ke sisi kiri (*flex-start clamp*). Kapsul input kini dikunci mutlak ke tengah melalui `position: relative !important; left: 50% !important; transform: translateX(-50%) !important; width: calc(100% - 32px) !important; max-width: 768px !important;` dengan elemen pembungkus anak (`form`, `.chat-input-container`, `.query-box-container`) berlebar 100%. Biner rilis macOS dan DMG installer `OpenTurath_AI_macOS.dmg` (50.7 MB) telah berhasil diperbarui dan dipasang di `/Applications/OpenTurath AI.app`.
 
 ---
 
