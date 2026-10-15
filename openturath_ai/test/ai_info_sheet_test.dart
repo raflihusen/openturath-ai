@@ -22,6 +22,13 @@ void main() {
     }
   });
 
+  test('setiap AI punya Tentang dan minimal 6 ide pertanyaan', () {
+    for (final e in info) {
+      expect((e['tentang'] as String).length, greaterThan(150), reason: e['id'] as String);
+      expect((e['contoh_pertanyaan'] as List).length, greaterThanOrEqualTo(6), reason: e['id'] as String);
+    }
+  });
+
   for (final e in info) {
     testWidgets('lembar info ${e['id']} tampil tanpa galat', (tester) async {
       tester.view.physicalSize = const Size(390 * 3, 844 * 3);
@@ -30,6 +37,7 @@ void main() {
       await tester.pumpWidget(MaterialApp(home: Scaffold(body: AiInfoSheet(info: e))));
       expect(find.text(e['judul'] as String), findsOneWidget);
       expect(find.text('Batasan'), findsOneWidget);
+      expect(find.text('Coba tanyakan'), findsOneWidget);
       expect(tester.takeException(), isNull);
     });
   }

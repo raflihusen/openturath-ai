@@ -422,16 +422,29 @@ const notebookUiScript = r'''
         padding-bottom: 8px !important;
       }
 
-      /* Tata letak alami (Natural Flexbox): composer berada di bawah transkrip tanpa mengambang/floating */
+      /* Tata letak alami (Natural Flexbox): composer berada di bawah transkrip tanpa mengambang/floating, presisi tengah */
       .ot-chat-composer {
         position: relative !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
         flex: 0 0 auto !important;
         width: calc(100% - 32px) !important;
         max-width: 768px !important;
-        margin: 8px auto max(18px, env(safe-area-inset-bottom, 0px)) auto !important;
+        margin-top: 8px !important;
+        margin-bottom: max(18px, env(safe-area-inset-bottom, 0px)) !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
         box-sizing: border-box !important;
         z-index: 10 !important;
         pointer-events: auto !important;
+      }
+      .ot-chat-composer > *,
+      .ot-chat-composer form,
+      .ot-chat-composer .chat-input-container,
+      .ot-chat-composer .query-box-container {
+        width: 100% !important;
+        max-width: 768px !important;
+        box-sizing: border-box !important;
       }
       .ot-chat-composer textarea::placeholder,
       .ot-chat-composer input::placeholder { color: transparent !important; }

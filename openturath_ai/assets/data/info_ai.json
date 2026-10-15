@@ -4,7 +4,7 @@
   "judul": "AI Fikih Tahawwulat",
   "subjudul": "Kitab karya Habib Abu Bakar al-Masyhur · Muhadharah tiga kanal",
   "nama_arab": "فقه التحولات",
-  "tentang": "",
+  "tentang": "Berisi kitab-kitab Habib Abu Bakar al-Adni bin Ali al-Masyhur tentang fikih tahawwulat dan sunan al-mawaqif, ditambah arsip muhadharah beliau dari tiga kanal resmi. Fikih tahawwulat membaca perubahan zaman dengan kacamata hadis-hadis tanda zaman, lalu menurunkannya menjadi sikap dan langkah. Gunakan AI ini untuk menemukan ibarah asli beliau, judul muhadharah yang membahas suatu tema, dan tautan videonya pada menit yang tepat.",
   "isi": {
    "cabang_ilmu": [
     {
@@ -117,6 +117,36 @@
    "Rujukan ditulis sebagai [judul singkat jilid/halaman] sesuai cetakan sumber; [حاشية jilid/halaman] menandai catatan kaki muhaqqiq.",
    "Teks berasal dari salinan digital (Maktabah Syamilah dan turunannya); kesalahan ketik sumber dapat terbawa."
   ],
+  "contoh_pertanyaan": [
+   {
+    "jenis": "Memahami istilah",
+    "teks": "Apa yang dimaksud fikih tahawwulat dan apa bedanya dengan fikih biasa?"
+   },
+   {
+    "jenis": "Mencari ibarah",
+    "teks": "Tunjukkan ibarah dalam al-Marshad an-Nabawi tentang tanda-tanda zaman."
+   },
+   {
+    "jenis": "Ringkasan",
+    "teks": "Ringkas pokok-pokok kitab al-Asas wal-Munthalaqat."
+   },
+   {
+    "jenis": "Muhadharah",
+    "teks": "Muhadharah mana yang membahas sikap seorang Muslim di masa fitnah? Sertakan judul dan tautannya."
+   },
+   {
+    "jenis": "Kasus sehari-hari",
+    "teks": "Bagaimana fikih tahawwulat memandang derasnya arus media sosial bagi pemuda?"
+   },
+   {
+    "jenis": "Hubungan konsep",
+    "teks": "Bagaimana hubungan antara sunan al-mawaqif dan rukun agama yang keempat?"
+   },
+   {
+    "jenis": "Dalam bahasa Arab",
+    "teks": "ما المقصود بالمرحلة الغثائية في كتب الحبيب أبي بكر المشهور؟"
+   }
+  ],
   "contoh_tanya_jawab": [],
   "katalog": "assets/data/katalog/fiqh_tahawwulat.json"
  },
@@ -125,7 +155,7 @@
   "judul": "AI Fikih Syafi'i",
   "subjudul": "Matan · Syarah · Hasyiyah",
   "nama_arab": "الفقه الشافعي",
-  "tentang": "",
+  "tentang": "Berisi kitab-kitab mazhab Syafi'i dari al-Umm karya Imam asy-Syafi'i hingga syarah dan hasyiyah muta'akhkhirin, seperti Nihayatul Mathlab, al-Majmu', Tuhfatul Muhtaj, dan Nihayatul Muhtaj. Inilah rantai rujukan yang dipakai pesantren dan para mufti Syafi'iyyah untuk mengetahui pendapat mu'tamad. Gunakan AI ini untuk menemukan ibarah, membandingkan pendapat Ibnu Hajar dan ar-Ramli, dan menelusuri jilid serta halamannya.",
   "isi": {
    "cabang_ilmu": [
     {
@@ -255,6 +285,40 @@
    "Rujukan ditulis sebagai [judul singkat jilid/halaman] sesuai cetakan sumber; [حاشية jilid/halaman] menandai catatan kaki muhaqqiq.",
    "Teks berasal dari salinan digital (Maktabah Syamilah dan turunannya); kesalahan ketik sumber dapat terbawa."
   ],
+  "contoh_pertanyaan": [
+   {
+    "jenis": "Mencari ibarah",
+    "teks": "Tunjukkan ibarah Tuhfatul Muhtaj tentang batas aurat laki-laki dalam salat."
+   },
+   {
+    "jenis": "Membandingkan pendapat",
+    "teks": "Apa perbedaan Ibnu Hajar dalam Tuhfah dan ar-Ramli dalam Nihayah tentang air musta'mal?"
+   },
+   {
+    "jenis": "Pendapat mu'tamad",
+    "teks": "Mana pendapat mu'tamad mazhab Syafi'i tentang menyentuh lawan jenis bukan mahram?"
+   },
+   {
+    "jenis": "Dalil",
+    "teks": "Apa dalil yang disebut an-Nawawi dalam al-Majmu' untuk kewajiban niat wudu?"
+   },
+   {
+    "jenis": "Rujukan jilid & halaman",
+    "teks": "Di jilid dan halaman berapa al-Majmu' membahas qunut subuh?"
+   },
+   {
+    "jenis": "Kasus sehari-hari",
+    "teks": "Bagaimana hukum menjamak salat karena hujan menurut Minhajut Thalibin dan syarahnya?"
+   },
+   {
+    "jenis": "Istilah mazhab",
+    "teks": "Apa makna istilah al-ashah dan al-azhar dalam Minhajut Thalibin?"
+   },
+   {
+    "jenis": "Dalam bahasa Arab",
+    "teks": "ما حكم قضاء الصلاة الفائتة بغير عذر عند الشافعية مع ذكر المرجع؟"
+   }
+  ],
   "contoh_tanya_jawab": [],
   "katalog": "assets/data/katalog/fiqh_syafii.json"
  },
@@ -263,7 +327,7 @@
   "judul": "AI Fikih Hanafi",
   "subjudul": "Zhahir ar-riwayah · Mutun · Syuruh",
   "nama_arab": "الفقه الحنفي",
-  "tentang": "",
+  "tentang": "Berisi kitab-kitab mazhab Hanafi dari al-Ashl karya Muhammad bin al-Hasan, al-Mabsuth as-Sarakhsi, dan Bada'i' ash-Shana'i', hingga al-Hidayah beserta syarahnya dan Hasyiyah Ibnu 'Abidin. Rangkaian ini memperlihatkan jalan mazhab dari zhahir ar-riwayah sampai fatwa muta'akhkhirin. Gunakan AI ini untuk menelusuri ibarah, alasan hukum, dan pendapat yang difatwakan dalam mazhab.",
   "isi": {
    "cabang_ilmu": [
     {
@@ -393,6 +457,36 @@
    "Rujukan ditulis sebagai [judul singkat jilid/halaman] sesuai cetakan sumber; [حاشية jilid/halaman] menandai catatan kaki muhaqqiq.",
    "Teks berasal dari salinan digital (Maktabah Syamilah dan turunannya); kesalahan ketik sumber dapat terbawa."
   ],
+  "contoh_pertanyaan": [
+   {
+    "jenis": "Mencari ibarah",
+    "teks": "Tunjukkan ibarah al-Hidayah tentang batalnya wudu karena darah yang mengalir."
+   },
+   {
+    "jenis": "Pendapat yang difatwakan",
+    "teks": "Menurut Hasyiyah Ibnu 'Abidin, pendapat mana yang difatwakan dalam masalah ini?"
+   },
+   {
+    "jenis": "Membandingkan pendapat",
+    "teks": "Apa perbedaan Abu Hanifah dan kedua muridnya tentang zakat madu menurut al-Mabsuth?"
+   },
+   {
+    "jenis": "Alasan hukum",
+    "teks": "Bagaimana Bada'i' ash-Shana'i' menjelaskan illat larangan riba fadhl?"
+   },
+   {
+    "jenis": "Istilah mazhab",
+    "teks": "Apa yang dimaksud zhahir ar-riwayah dan nawadir dalam mazhab Hanafi?"
+   },
+   {
+    "jenis": "Rujukan jilid & halaman",
+    "teks": "Di mana Fath al-Qadir membahas istihsan dalam akad istishna'?"
+   },
+   {
+    "jenis": "Dalam bahasa Arab",
+    "teks": "ما حكم الوتر عند الحنفية وما دليلهم كما في البحر الرائق؟"
+   }
+  ],
   "contoh_tanya_jawab": [],
   "katalog": "assets/data/katalog/fiqh_hanafi.json"
  },
@@ -401,7 +495,7 @@
   "judul": "AI Fikih Maliki",
   "subjudul": "Mudawwanah · Mukhtashar Khalil · Syuruh",
   "nama_arab": "الفقه المالكي",
-  "tentang": "",
+  "tentang": "Berisi kitab-kitab mazhab Maliki dari al-Mudawwanah dan riwayat-riwayat Imam Malik, hingga Mukhtashar Khalil beserta syarah-syarahnya seperti Mawahib al-Jalil, ditambah al-Bayan wat-Tahshil dan adz-Dzakhirah. Di dalamnya juga ada Bidayatul Mujtahid karya Ibnu Rusyd. Gunakan AI ini untuk menelusuri ibarah, amal ahli Madinah, dan pendapat masyhur mazhab.",
   "isi": {
    "cabang_ilmu": [
     {
@@ -531,6 +625,36 @@
    "Rujukan ditulis sebagai [judul singkat jilid/halaman] sesuai cetakan sumber; [حاشية jilid/halaman] menandai catatan kaki muhaqqiq.",
    "Teks berasal dari salinan digital (Maktabah Syamilah dan turunannya); kesalahan ketik sumber dapat terbawa."
   ],
+  "contoh_pertanyaan": [
+   {
+    "jenis": "Mencari ibarah",
+    "teks": "Tunjukkan ibarah al-Mudawwanah tentang sujud sahwi sebelum atau sesudah salam."
+   },
+   {
+    "jenis": "Pendapat masyhur",
+    "teks": "Apa pendapat masyhur mazhab Maliki tentang membaca basmalah dalam salat fardu?"
+   },
+   {
+    "jenis": "Syarah matan",
+    "teks": "Bagaimana Mawahib al-Jalil menjelaskan ungkapan Khalil dalam bab bersuci?"
+   },
+   {
+    "jenis": "Membandingkan pendapat",
+    "teks": "Menurut Bidayatul Mujtahid, apa sebab perbedaan ulama tentang menyentuh kemaluan?"
+   },
+   {
+    "jenis": "Kaidah",
+    "teks": "Bagaimana adz-Dzakhirah menerapkan kaidah sadd adz-dzari'ah dalam jual beli?"
+   },
+   {
+    "jenis": "Istilah mazhab",
+    "teks": "Apa makna istilah al-masyhur dan ar-rajih menurut ulama Malikiyyah?"
+   },
+   {
+    "jenis": "Dalam bahasa Arab",
+    "teks": "ما حكم إسدال اليدين في الصلاة عند المالكية مع ذكر المرجع؟"
+   }
+  ],
   "contoh_tanya_jawab": [],
   "katalog": "assets/data/katalog/fiqh_maliki.json"
  },
@@ -539,7 +663,7 @@
   "judul": "AI Fikih Hanbali",
   "subjudul": "Masa'il Ahmad · Mutun · Syuruh",
   "nama_arab": "الفقه الحنبلي",
-  "tentang": "",
+  "tentang": "Berisi kitab-kitab mazhab Hanbali dari al-Muqni' dan al-Mughni karya Ibnu Qudamah, asy-Syarh al-Kabir, al-Furu', dan al-Inshaf, hingga Kasysyaf al-Qina' dan Syarh Muntaha al-Iradat yang menjadi pegangan fatwa muta'akhkhirin. Gunakan AI ini untuk menelusuri riwayat-riwayat dari Imam Ahmad, pendapat yang dipilih mazhab, dan ibarah para pensyarah.",
   "isi": {
    "cabang_ilmu": [
     {
@@ -665,6 +789,32 @@
    "Rujukan ditulis sebagai [judul singkat jilid/halaman] sesuai cetakan sumber; [حاشية jilid/halaman] menandai catatan kaki muhaqqiq.",
    "Teks berasal dari salinan digital (Maktabah Syamilah dan turunannya); kesalahan ketik sumber dapat terbawa."
   ],
+  "contoh_pertanyaan": [
+   {
+    "jenis": "Mencari ibarah",
+    "teks": "Tunjukkan ibarah al-Mughni tentang hukum salat berjamaah."
+   },
+   {
+    "jenis": "Riwayat imam",
+    "teks": "Ada berapa riwayat dari Imam Ahmad tentang batalnya wudu karena makan daging unta, menurut al-Inshaf?"
+   },
+   {
+    "jenis": "Pendapat mazhab",
+    "teks": "Mana pendapat yang dipilih dalam Kasysyaf al-Qina' tentang zakat perhiasan?"
+   },
+   {
+    "jenis": "Membandingkan pendapat",
+    "teks": "Bagaimana Ibnu Qudamah membandingkan pendapat empat mazhab tentang talak tiga sekaligus?"
+   },
+   {
+    "jenis": "Istilah mazhab",
+    "teks": "Apa yang dimaksud istilah al-madzhab dan ar-riwayah dalam kitab-kitab Hanabilah?"
+   },
+   {
+    "jenis": "Dalam bahasa Arab",
+    "teks": "ما المعتمد عند الحنابلة في حكم صلاة الكسوف كما في شرح منتهى الإرادات؟"
+   }
+  ],
   "contoh_tanya_jawab": [],
   "katalog": "assets/data/katalog/fiqh_hanbali.json"
  },
@@ -673,7 +823,7 @@
   "judul": "AI Perbandingan Mazhab & Fatwa",
   "subjudul": "Fikih muqaran · Fatawa dan nawazil · Siyasah syar'iyyah · Faraidh",
   "nama_arab": "الفقه المقارن والفتاوى",
-  "tentang": "",
+  "tentang": "Berisi kitab perbandingan mazhab seperti al-Isyraf dan al-Awsath karya Ibnu al-Mundzir serta al-Fiqh al-Islami wa Adillatuh, kumpulan fatwa seperti al-Fatawa al-Hindiyyah, al-Fatawa al-Kubra al-Fiqhiyyah, dan Fatawa as-Subki, kitab siyasah syar'iyyah seperti al-Ahkam as-Sulthaniyyah, serta kitab faraidh. Gunakan AI ini untuk melihat peta pendapat ulama dalam satu masalah, dalil masing-masing, dan bagaimana para mufti menjawab persoalan.",
   "isi": {
    "cabang_ilmu": [
     {
@@ -819,6 +969,36 @@
    "Rujukan ditulis sebagai [judul singkat jilid/halaman] sesuai cetakan sumber; [حاشية jilid/halaman] menandai catatan kaki muhaqqiq.",
    "Teks berasal dari salinan digital (Maktabah Syamilah dan turunannya); kesalahan ketik sumber dapat terbawa."
   ],
+  "contoh_pertanyaan": [
+   {
+    "jenis": "Peta pendapat",
+    "teks": "Bagaimana pendapat empat mazhab tentang zakat penghasilan, beserta dalilnya?"
+   },
+   {
+    "jenis": "Ijmak & khilaf",
+    "teks": "Menurut al-Isyraf karya Ibnu al-Mundzir, masalah apa saja dalam bab puasa yang disepakati ulama?"
+   },
+   {
+    "jenis": "Fatwa",
+    "teks": "Bagaimana al-Fatawa al-Kubra al-Fiqhiyyah menjawab pertanyaan tentang wakaf masjid?"
+   },
+   {
+    "jenis": "Siyasah",
+    "teks": "Apa syarat-syarat seorang qadhi menurut al-Ahkam as-Sulthaniyyah karya al-Mawardi?"
+   },
+   {
+    "jenis": "Faraidh",
+    "teks": "Bagaimana pembagian warisan bila ahli warisnya istri, ibu, dan dua saudara perempuan kandung?"
+   },
+   {
+    "jenis": "Kasus kontemporer",
+    "teks": "Bagaimana al-Fiqh al-Islami wa Adillatuh membahas jual beli secara angsuran dengan harga lebih tinggi?"
+   },
+   {
+    "jenis": "Dalam bahasa Arab",
+    "teks": "ما أقوال العلماء في حكم التسعير وما أدلتهم؟"
+   }
+  ],
   "contoh_tanya_jawab": [],
   "katalog": "assets/data/katalog/fiqh_muqaran.json"
  },
@@ -827,7 +1007,7 @@
   "judul": "AI Ushul & Kaidah Fikih",
   "subjudul": "Ushul fikih · Maqashid · Qawa'id fiqhiyyah · Asybah wa nazha'ir",
   "nama_arab": "أصول الفقه والقواعد الفقهية",
-  "tentang": "",
+  "tentang": "Berisi kitab-kitab ushul fikih lintas mazhab, seperti al-Mustashfa, al-Burhan, al-Luma', Kasyf al-Asrar, dan al-Bahr al-Muhith, serta kitab kaidah fikih seperti al-Asybah wan-Nazha'ir dan al-Furuq karya al-Qarafi. Ilmu ini menjelaskan bagaimana hukum digali dari dalil, sehingga pembaca memahami alasan di balik perbedaan pendapat. Gunakan AI ini untuk memahami istilah, kaidah, dan contoh penerapannya.",
   "isi": {
    "cabang_ilmu": [
     {
@@ -965,6 +1145,36 @@
    "Rujukan ditulis sebagai [judul singkat jilid/halaman] sesuai cetakan sumber; [حاشية jilid/halaman] menandai catatan kaki muhaqqiq.",
    "Teks berasal dari salinan digital (Maktabah Syamilah dan turunannya); kesalahan ketik sumber dapat terbawa."
   ],
+  "contoh_pertanyaan": [
+   {
+    "jenis": "Memahami istilah",
+    "teks": "Apa perbedaan mafhum muwafaqah dan mafhum mukhalafah, beserta contohnya?"
+   },
+   {
+    "jenis": "Kaidah fikih",
+    "teks": "Apa saja lima kaidah besar fikih dan contoh penerapannya menurut al-Asybah wan-Nazha'ir?"
+   },
+   {
+    "jenis": "Membandingkan metode",
+    "teks": "Bagaimana perbedaan metode mutakallimin dan Hanafiyyah dalam menulis ushul fikih?"
+   },
+   {
+    "jenis": "Mencari ibarah",
+    "teks": "Tunjukkan ibarah al-Mustashfa tentang maslahah mursalah."
+   },
+   {
+    "jenis": "Pemula",
+    "teks": "Jelaskan pembagian hukum taklifi menurut matan al-Waraqat dengan bahasa sederhana."
+   },
+   {
+    "jenis": "Membedakan masalah",
+    "teks": "Apa perbedaan antara kaidah fikih dan dhabith fikih menurut al-Qarafi dalam al-Furuq?"
+   },
+   {
+    "jenis": "Dalam bahasa Arab",
+    "teks": "هل الأمر بعد الحظر يفيد الإباحة؟ اذكر أقوال الأصوليين."
+   }
+  ],
   "contoh_tanya_jawab": [],
   "katalog": "assets/data/katalog/ushul_fiqh.json"
  },
@@ -973,7 +1183,7 @@
   "judul": "AI Hadits",
   "subjudul": "Kutub as-sunnah · Masanid · Ma'ajim · Ajza'",
   "nama_arab": "الحديث الشريف",
-  "tentang": "",
+  "tentang": "Berisi kitab-kitab hadis induk dan pendukungnya: Shahih al-Bukhari, Shahih Muslim, Sunan Abi Dawud, Musnad Ahmad, as-Sunan al-Kubra karya al-Baihaqi, al-Mu'jam al-Kabir karya ath-Thabarani, ensiklopedi seperti Jami' al-Ushul dan Kanz al-'Ummal, serta ratusan juz dan masyikhah. Gunakan AI ini untuk menemukan matan hadis, membandingkan lafaz antar-riwayat, dan menelusuri sanad serta letaknya dalam kitab.",
   "isi": {
    "cabang_ilmu": [
     {
@@ -1101,7 +1311,7 @@
    "karya_ditahan_semua_ilmu": 10919,
    "karya_termuat_semua_ilmu": 1456,
    "rekaman_digabung_ke_kitab_ini": 3756,
-   "berkas_notebooklm": 269,
+   "berkas_notebooklm": 267,
    "uji": [
     "Penyaringan manhaj pengarang, pensyarah, dan muhaqqiq",
     "Deteksi kitab kembar lewat sidik isi",
@@ -1119,6 +1329,36 @@
    "Rujukan ditulis sebagai [judul singkat jilid/halaman] sesuai cetakan sumber; [حاشية jilid/halaman] menandai catatan kaki muhaqqiq.",
    "Teks berasal dari salinan digital (Maktabah Syamilah dan turunannya); kesalahan ketik sumber dapat terbawa."
   ],
+  "contoh_pertanyaan": [
+   {
+    "jenis": "Mencari hadis",
+    "teks": "Carikan hadis tentang keutamaan salat berjamaah beserta riwayat-riwayatnya."
+   },
+   {
+    "jenis": "Membandingkan lafaz",
+    "teks": "Bandingkan lafaz hadis 'innamal a'malu bin-niyyat' dalam al-Bukhari dan Muslim."
+   },
+   {
+    "jenis": "Sanad",
+    "teks": "Siapa saja perawi dalam sanad hadis ini menurut Musnad Ahmad?"
+   },
+   {
+    "jenis": "Letak hadis",
+    "teks": "Di bab apa al-Bukhari meletakkan hadis tentang siwak?"
+   },
+   {
+    "jenis": "Tema",
+    "teks": "Kumpulkan hadis tentang adab menuntut ilmu dari Kanz al-'Ummal."
+   },
+   {
+    "jenis": "Potongan matan",
+    "teks": "Saya hanya ingat potongan hadis 'ad-dinu an-nashihah'. Di kitab mana saja hadis itu diriwayatkan?"
+   },
+   {
+    "jenis": "Dalam bahasa Arab",
+    "teks": "اذكر الأحاديث الواردة في فضل صيام ست من شوال مع مواضعها."
+   }
+  ],
   "contoh_tanya_jawab": [],
   "katalog": "assets/data/katalog/hadits.json"
  },
@@ -1127,7 +1367,7 @@
   "judul": "AI Syarah Hadits",
   "subjudul": "Syarah kitab-kitab hadits",
   "nama_arab": "شروح الحديث",
-  "tentang": "",
+  "tentang": "Berisi syarah-syarah hadis yang besar, seperti Fath al-Bari karya Ibnu Hajar, 'Umdat al-Qari karya al-'Aini, Irsyad as-Sari karya al-Qasthallani, Syarah an-Nawawi atas Shahih Muslim, Mirqat al-Mafatih, dan Syarah Sunan Abi Dawud karya Ibnu Raslan. Para pensyarah menjelaskan makna lafaz, faedah hukum, dan cara mengompromikan hadis yang tampak berbeda. Gunakan AI ini untuk memahami sebuah hadis secara mendalam dan melihat perbedaan pembacaan para pensyarah.",
   "isi": {
    "cabang_ilmu": [
     {
@@ -1249,6 +1489,32 @@
    "Rujukan ditulis sebagai [judul singkat jilid/halaman] sesuai cetakan sumber; [حاشية jilid/halaman] menandai catatan kaki muhaqqiq.",
    "Teks berasal dari salinan digital (Maktabah Syamilah dan turunannya); kesalahan ketik sumber dapat terbawa."
   ],
+  "contoh_pertanyaan": [
+   {
+    "jenis": "Penjelasan hadis",
+    "teks": "Bagaimana Ibnu Hajar dalam Fath al-Bari menjelaskan hadis Jibril tentang Islam, iman, dan ihsan?"
+   },
+   {
+    "jenis": "Membandingkan pensyarah",
+    "teks": "Apa perbedaan penjelasan Ibnu Hajar dan al-'Aini tentang hadis niat?"
+   },
+   {
+    "jenis": "Faedah hukum",
+    "teks": "Faedah fikih apa saja yang diambil an-Nawawi dari hadis tentang orang yang lupa dalam salat?"
+   },
+   {
+    "jenis": "Makna lafaz",
+    "teks": "Apa makna kata 'al-ihsan' menurut para pensyarah Shahih al-Bukhari?"
+   },
+   {
+    "jenis": "Kompromi hadis",
+    "teks": "Bagaimana para pensyarah mengompromikan hadis larangan minum sambil berdiri dengan hadis yang membolehkannya?"
+   },
+   {
+    "jenis": "Dalam bahasa Arab",
+    "teks": "ما معنى حديث «لا عدوى ولا طيرة» عند شراح الحديث؟"
+   }
+  ],
   "contoh_tanya_jawab": [],
   "katalog": "assets/data/katalog/syarah_hadits.json"
  },
@@ -1257,7 +1523,7 @@
   "judul": "AI Ilmu Hadits",
   "subjudul": "Musthalah · Takhrij · 'Ilal · Athraf",
   "nama_arab": "مصطلح الحديث وعلومه",
-  "tentang": "",
+  "tentang": "Berisi kitab ilmu hadis seperti Muqaddimah Ibnu ash-Shalah, Tadrib ar-Rawi, dan Nuzhat an-Nazhar, kitab takhrij seperti Nashb ar-Rayah dan al-Badr al-Munir, kitab athraf seperti Tuhfat al-Asyraf, kitab 'ilal seperti 'Ilal ad-Daraquthni, serta al-Maqashid al-Hasanah tentang hadis-hadis yang masyhur di lisan. Gunakan AI ini untuk memahami istilah ilmu hadis, mencari takhrij sebuah hadis, dan mengetahui penilaian para ulama.",
   "isi": {
    "cabang_ilmu": [
     {
@@ -1381,7 +1647,7 @@
    "karya_ditahan_semua_ilmu": 10919,
    "karya_termuat_semua_ilmu": 1456,
    "rekaman_digabung_ke_kitab_ini": 865,
-   "berkas_notebooklm": 251,
+   "berkas_notebooklm": 250,
    "uji": [
     "Penyaringan manhaj pengarang, pensyarah, dan muhaqqiq",
     "Deteksi kitab kembar lewat sidik isi",
@@ -1399,6 +1665,36 @@
    "Rujukan ditulis sebagai [judul singkat jilid/halaman] sesuai cetakan sumber; [حاشية jilid/halaman] menandai catatan kaki muhaqqiq.",
    "Teks berasal dari salinan digital (Maktabah Syamilah dan turunannya); kesalahan ketik sumber dapat terbawa."
   ],
+  "contoh_pertanyaan": [
+   {
+    "jenis": "Memahami istilah",
+    "teks": "Apa perbedaan hadis mursal, munqathi', dan mu'dhal?"
+   },
+   {
+    "jenis": "Takhrij",
+    "teks": "Bagaimana takhrij hadis 'tuntutlah ilmu walau ke negeri Cina' menurut al-Maqashid al-Hasanah?"
+   },
+   {
+    "jenis": "Takhrij fikih",
+    "teks": "Hadis apa saja yang dijadikan dalil mazhab Hanafi dalam bab salat, dan bagaimana takhrijnya dalam Nashb ar-Rayah?"
+   },
+   {
+    "jenis": "Syarat",
+    "teks": "Apa syarat hadis sahih menurut Muqaddimah Ibnu ash-Shalah?"
+   },
+   {
+    "jenis": "'Ilal",
+    "teks": "Apa 'illat yang disebut ad-Daraquthni pada hadis ini?"
+   },
+   {
+    "jenis": "Pemula",
+    "teks": "Jelaskan pembagian hadis dari segi jumlah perawinya dengan bahasa sederhana."
+   },
+   {
+    "jenis": "Dalam bahasa Arab",
+    "teks": "ما الفرق بين الشاذ والمنكر عند المحدثين؟"
+   }
+  ],
   "contoh_tanya_jawab": [],
   "katalog": "assets/data/katalog/musthalah_hadits.json"
  },
@@ -1407,7 +1703,7 @@
   "judul": "AI Rijal & Biografi Ulama",
   "subjudul": "Jarh wa ta'dil · Thabaqat · Tarajim",
   "nama_arab": "الطبقات والتراجم",
-  "tentang": "",
+  "tentang": "Berisi kitab-kitab rijal, tarajim, dan thabaqat: Tahdzib al-Kamal dan Tahdzib at-Tahdzib, Siyar A'lam an-Nubala', al-Ishabah tentang para sahabat, ath-Thabaqat al-Kubra karya Ibnu Sa'd, Tarikh Baghdad, Tarikh Dimasyq karya Ibnu 'Asakir, hingga adh-Dhau' al-Lami' tentang ulama abad kesembilan. Gunakan AI ini untuk mengenal biografi seorang perawi atau ulama, guru dan muridnya, serta penilaian para kritikus hadis terhadapnya.",
   "isi": {
    "cabang_ilmu": [
     {
@@ -1553,6 +1849,36 @@
    "Rujukan ditulis sebagai [judul singkat jilid/halaman] sesuai cetakan sumber; [حاشية jilid/halaman] menandai catatan kaki muhaqqiq.",
    "Teks berasal dari salinan digital (Maktabah Syamilah dan turunannya); kesalahan ketik sumber dapat terbawa."
   ],
+  "contoh_pertanyaan": [
+   {
+    "jenis": "Biografi",
+    "teks": "Bagaimana biografi Imam asy-Syafi'i dalam Siyar A'lam an-Nubala'?"
+   },
+   {
+    "jenis": "Penilaian perawi",
+    "teks": "Bagaimana penilaian para ulama terhadap perawi Ibnu Lahi'ah menurut Tahdzib at-Tahdzib?"
+   },
+   {
+    "jenis": "Guru & murid",
+    "teks": "Siapa saja guru dan murid Sufyan ats-Tsauri menurut Tahdzib al-Kamal?"
+   },
+   {
+    "jenis": "Sahabat",
+    "teks": "Siapa sahabat bernama Abu Thalhah al-Anshari menurut al-Ishabah?"
+   },
+   {
+    "jenis": "Tahun wafat",
+    "teks": "Kapan Imam al-Baihaqi wafat dan di mana, menurut kitab-kitab tarajim?"
+   },
+   {
+    "jenis": "Membedakan nama",
+    "teks": "Bagaimana membedakan dua perawi bernama Hammad: Hammad bin Zaid dan Hammad bin Salamah?"
+   },
+   {
+    "jenis": "Dalam bahasa Arab",
+    "teks": "من هم شيوخ الإمام مالك وتلاميذه كما في كتب التراجم؟"
+   }
+  ],
   "contoh_tanya_jawab": [],
   "katalog": "assets/data/katalog/thabaqat_tarajim.json"
  },
@@ -1561,7 +1887,7 @@
   "judul": "AI Tafsir",
   "subjudul": "Tafsir · Ulumul Qur'an",
   "nama_arab": "التفسير وعلوم القرآن",
-  "tentang": "",
+  "tentang": "Berisi kitab-kitab tafsir dan ulumul Qur'an, dari tafsir riwayat seperti Tafsir ath-Thabari dan Tafsir Ibnu Katsir, tafsir hukum seperti al-Jami' li Ahkam al-Qur'an karya al-Qurthubi, tafsir dirayah seperti Mafatih al-Ghaib dan al-Bahr al-Muhith, hingga tafsir munasabah seperti Nazhm ad-Durar dan tafsir isyari seperti Ruh al-Bayan. Gunakan AI ini untuk membandingkan penafsiran sebuah ayat, mencari asbabun nuzul, dan menggali hukum dari ayat.",
   "isi": {
    "cabang_ilmu": [
     {
@@ -1695,6 +2021,36 @@
    "Rujukan ditulis sebagai [judul singkat jilid/halaman] sesuai cetakan sumber; [حاشية jilid/halaman] menandai catatan kaki muhaqqiq.",
    "Teks berasal dari salinan digital (Maktabah Syamilah dan turunannya); kesalahan ketik sumber dapat terbawa."
   ],
+  "contoh_pertanyaan": [
+   {
+    "jenis": "Membandingkan tafsir",
+    "teks": "Bagaimana ath-Thabari dan Ibnu Katsir menafsirkan ayat kursi?"
+   },
+   {
+    "jenis": "Asbabun nuzul",
+    "teks": "Apa sebab turunnya surah al-Kautsar?"
+   },
+   {
+    "jenis": "Hukum dari ayat",
+    "teks": "Hukum apa saja yang diambil al-Qurthubi dari ayat wudu dalam surah al-Ma'idah ayat 6?"
+   },
+   {
+    "jenis": "Munasabah",
+    "teks": "Apa hubungan surah al-Fatihah dengan awal surah al-Baqarah menurut Nazhm ad-Durar?"
+   },
+   {
+    "jenis": "Bahasa ayat",
+    "teks": "Bagaimana Abu Hayyan dalam al-Bahr al-Muhith menjelaskan i'rab 'iyyaka na'budu'?"
+   },
+   {
+    "jenis": "Ulumul Qur'an",
+    "teks": "Apa perbedaan makki dan madani menurut al-Itqan karya as-Suyuthi?"
+   },
+   {
+    "jenis": "Dalam bahasa Arab",
+    "teks": "ما أقوال المفسرين في معنى «الصراط المستقيم»؟"
+   }
+  ],
   "contoh_tanya_jawab": [],
   "katalog": "assets/data/katalog/tafsir.json"
  },
@@ -1703,7 +2059,7 @@
   "judul": "AI Tajwid & Qira'at",
   "subjudul": "Tajwid · Qira'at · Rasm",
   "nama_arab": "التجويد والقراءات",
-  "tentang": "",
+  "tentang": "Berisi kitab tajwid dan qira'at, seperti Syarah asy-Syathibiyyah Fath al-Washid, al-Budur az-Zahirah tentang qira'at sepuluh, Syarah Thayyibat an-Nasyr karya an-Nuwairi, Manar al-Huda tentang waqaf dan ibtida', al-Kasyf 'an Wujuh al-Qira'at, dan al-Muhtasab tentang qira'at syadzdzah. Gunakan AI ini untuk mengetahui perbedaan bacaan para imam qira'at, alasan bahasanya, dan hukum-hukum tajwid. Bacaan tetap perlu ditalaqqi langsung kepada guru.",
   "isi": {
    "cabang_ilmu": [
     {
@@ -1833,6 +2189,32 @@
    "Rujukan ditulis sebagai [judul singkat jilid/halaman] sesuai cetakan sumber; [حاشية jilid/halaman] menandai catatan kaki muhaqqiq.",
    "Teks berasal dari salinan digital (Maktabah Syamilah dan turunannya); kesalahan ketik sumber dapat terbawa."
   ],
+  "contoh_pertanyaan": [
+   {
+    "jenis": "Perbedaan bacaan",
+    "teks": "Bagaimana perbedaan bacaan 'maliki yaumid din' di antara qira'at sepuluh?"
+   },
+   {
+    "jenis": "Alasan bacaan",
+    "teks": "Apa alasan bahasa untuk bacaan 'malik' dan 'malik' menurut al-Kasyf 'an Wujuh al-Qira'at?"
+   },
+   {
+    "jenis": "Waqaf",
+    "teks": "Di mana tempat waqaf yang baik dalam ayat ini menurut Manar al-Huda?"
+   },
+   {
+    "jenis": "Hukum tajwid",
+    "teks": "Apa hukum nun mati bertemu huruf ba dan bagaimana cara membacanya?"
+   },
+   {
+    "jenis": "Imam & rawi",
+    "teks": "Siapa dua rawi Imam 'Ashim dan apa perbedaan bacaan keduanya?"
+   },
+   {
+    "jenis": "Dalam bahasa Arab",
+    "teks": "ما مذهب ورش في المد المنفصل؟"
+   }
+  ],
   "contoh_tanya_jawab": [],
   "katalog": "assets/data/katalog/tajwid_qiraat.json"
  },
@@ -1841,7 +2223,7 @@
   "judul": "AI Aqidah",
   "subjudul": "Ushuluddin · Kalam · Firaq",
   "nama_arab": "العقيدة وأصول الدين",
-  "tentang": "",
+  "tentang": "Berisi kitab-kitab akidah Ahlussunnah wal Jama'ah dalam tradisi Asy'ariyyah dan Maturidiyyah, dari matan untuk pemula seperti Matn as-Sanusiyyah dan syarah Jauharat at-Tauhid, hingga kitab kalam yang besar seperti al-Mawaqif, Syarh al-Maqashid karya at-Taftazani, dan Abkar al-Afkar karya al-Amidi. Gunakan AI ini untuk memahami sifat-sifat Allah, kenabian, dan perkara gaib dengan dalil aqli dan naqli, serta jawaban ulama terhadap berbagai syubhat.",
   "isi": {
    "cabang_ilmu": [
     {
@@ -1971,6 +2353,36 @@
    "Rujukan ditulis sebagai [judul singkat jilid/halaman] sesuai cetakan sumber; [حاشية jilid/halaman] menandai catatan kaki muhaqqiq.",
    "Teks berasal dari salinan digital (Maktabah Syamilah dan turunannya); kesalahan ketik sumber dapat terbawa."
   ],
+  "contoh_pertanyaan": [
+   {
+    "jenis": "Pemula",
+    "teks": "Apa saja sifat wajib bagi Allah menurut Matn as-Sanusiyyah, beserta maknanya?"
+   },
+   {
+    "jenis": "Dalil aqli",
+    "teks": "Bagaimana dalil aqli tentang barunya alam menurut kitab-kitab kalam?"
+   },
+   {
+    "jenis": "Istilah",
+    "teks": "Apa yang dimaksud sifat ma'ani dan sifat ma'nawiyyah?"
+   },
+   {
+    "jenis": "Membandingkan aliran",
+    "teks": "Apa perbedaan Asy'ariyyah dan Maturidiyyah dalam masalah takwin?"
+   },
+   {
+    "jenis": "Menjawab syubhat",
+    "teks": "Bagaimana para ulama menjawab pertanyaan: jika Allah Maha Kuasa, mengapa ada keburukan?"
+   },
+   {
+    "jenis": "Syarah matan",
+    "teks": "Bagaimana penjelasan bait Jauharat at-Tauhid tentang kewajiban mengenal Allah?"
+   },
+   {
+    "jenis": "Dalam bahasa Arab",
+    "teks": "ما معنى الكسب عند الأشاعرة؟"
+   }
+  ],
   "contoh_tanya_jawab": [],
   "katalog": "assets/data/katalog/aqidah.json"
  },
@@ -1979,7 +2391,7 @@
   "judul": "AI Tasawuf",
   "subjudul": "Tazkiyah · Suluk · Adzkar",
   "nama_arab": "التصوف والتزكية والأذكار",
-  "tentang": "",
+  "tentang": "Berisi kitab-kitab tasawuf, adab, dan dzikir: Ihya' 'Ulumiddin karya al-Ghazali, Qut al-Qulub karya Abu Thalib al-Makki, al-Adzkar karya an-Nawawi beserta syarahnya al-Futuhat ar-Rabbaniyyah, ar-Risalah al-Qusyairiyyah, al-Hikam, dan risalah-risalah Imam al-Haddad, serta wirid dan karya-karya ulama tarekat. Gunakan AI ini untuk menelusuri adab, penyakit hati dan obatnya, serta dzikir dan doa beserta sumbernya.",
   "isi": {
    "cabang_ilmu": [
     {
@@ -2121,6 +2533,36 @@
    "Rujukan ditulis sebagai [judul singkat jilid/halaman] sesuai cetakan sumber; [حاشية jilid/halaman] menandai catatan kaki muhaqqiq.",
    "Teks berasal dari salinan digital (Maktabah Syamilah dan turunannya); kesalahan ketik sumber dapat terbawa."
   ],
+  "contoh_pertanyaan": [
+   {
+    "jenis": "Penyakit hati",
+    "teks": "Bagaimana al-Ghazali dalam Ihya' menjelaskan obat penyakit riya'?"
+   },
+   {
+    "jenis": "Dzikir & doa",
+    "teks": "Apa dzikir pagi dan petang yang disebut an-Nawawi dalam al-Adzkar?"
+   },
+   {
+    "jenis": "Istilah",
+    "teks": "Apa makna maqam tawakal dan ridha menurut ar-Risalah al-Qusyairiyyah?"
+   },
+   {
+    "jenis": "Mencari ibarah",
+    "teks": "Tunjukkan ibarah Risalah al-Mu'awanah karya Imam al-Haddad tentang menjaga waktu."
+   },
+   {
+    "jenis": "Hikmah",
+    "teks": "Apa makna hikmah pertama dalam al-Hikam dan bagaimana para pensyarah menjelaskannya?"
+   },
+   {
+    "jenis": "Kasus sehari-hari",
+    "teks": "Bagaimana para ulama tasawuf menasihati orang yang mudah marah?"
+   },
+   {
+    "jenis": "Dalam bahasa Arab",
+    "teks": "ما آداب طالب العلم مع شيخه كما في كتب التصوف؟"
+   }
+  ],
   "contoh_tanya_jawab": [],
   "katalog": "assets/data/katalog/tasawwuf.json"
  },
@@ -2129,7 +2571,7 @@
   "judul": "AI Bahasa Arab",
   "subjudul": "Nahwu · Sharaf · Kamus · Balaghah · Adab · Mantiq",
   "nama_arab": "اللغة العربية وآدابها",
-  "tentang": "",
+  "tentang": "Berisi kitab-kitab bahasa dan sastra Arab: kamus besar seperti Lisan al-'Arab dan Tahdzib al-Lughah, kitab nahwu dan sharaf seperti Alfiyyah Ibnu Malik dan Syarah Ibnu 'Aqil, kitab balaghah seperti Asrar al-Balaghah, kitab al-Khasha'ish karya Ibnu Jinni, serta diwan-diwan syair dan kitab adab seperti al-Aghani. Gunakan AI ini untuk mencari makna kata, i'rab sebuah kalimat, kaidah nahwu dan sharaf, serta syawahid syair.",
   "isi": {
    "cabang_ilmu": [
     {
@@ -2279,6 +2721,36 @@
    "Rujukan ditulis sebagai [judul singkat jilid/halaman] sesuai cetakan sumber; [حاشية jilid/halaman] menandai catatan kaki muhaqqiq.",
    "Teks berasal dari salinan digital (Maktabah Syamilah dan turunannya); kesalahan ketik sumber dapat terbawa."
   ],
+  "contoh_pertanyaan": [
+   {
+    "jenis": "Makna kata",
+    "teks": "Apa makna kata 'al-ihsan' dan asal katanya menurut Lisan al-'Arab?"
+   },
+   {
+    "jenis": "I'rab",
+    "teks": "Bagaimana i'rab kalimat 'la ilaha illallah'?"
+   },
+   {
+    "jenis": "Kaidah nahwu",
+    "teks": "Bagaimana Syarah Ibnu 'Aqil menjelaskan bait Alfiyyah tentang kana dan saudara-saudaranya?"
+   },
+   {
+    "jenis": "Sharaf",
+    "teks": "Apa faedah wazan if'al dan taf'il, beserta contohnya?"
+   },
+   {
+    "jenis": "Balaghah",
+    "teks": "Apa perbedaan isti'arah dan tasybih menurut Asrar al-Balaghah?"
+   },
+   {
+    "jenis": "Syawahid",
+    "teks": "Carikan syair Arab yang dijadikan syahid untuk penggunaan huruf 'hatta'."
+   },
+   {
+    "jenis": "Dalam bahasa Arab",
+    "teks": "ما الفرق بين الحال والتمييز مع الأمثلة؟"
+   }
+  ],
   "contoh_tanya_jawab": [],
   "katalog": "assets/data/katalog/nahwu_sharaf.json"
  },
@@ -2287,7 +2759,7 @@
   "judul": "AI Sejarah & Sirah",
   "subjudul": "Tarikh · Sirah Nabawiyyah · Buldan · Ansab · Thibb",
   "nama_arab": "التاريخ والسيرة النبوية",
-  "tentang": "",
+  "tentang": "Berisi kitab sejarah dan sirah: Sirah Ibnu Hisyam, Subul al-Huda war-Rasyad, Syarah az-Zurqani atas al-Mawahib, Tarikh ath-Thabari, al-Bidayah wan-Nihayah, Tarikh al-Islam, dan Tarikh Ibnu Khaldun, ditambah kitab geografi dan perjalanan seperti Mu'jam al-Buldan. Gunakan AI ini untuk menelusuri peristiwa sirah Nabi dan sejarah Islam, urutan kejadian, jalur riwayatnya, serta nama tempat dan wilayah.",
   "isi": {
    "cabang_ilmu": [
     {
@@ -2433,6 +2905,36 @@
    "Rujukan ditulis sebagai [judul singkat jilid/halaman] sesuai cetakan sumber; [حاشية jilid/halaman] menandai catatan kaki muhaqqiq.",
    "Teks berasal dari salinan digital (Maktabah Syamilah dan turunannya); kesalahan ketik sumber dapat terbawa."
   ],
+  "contoh_pertanyaan": [
+   {
+    "jenis": "Sirah",
+    "teks": "Bagaimana kronologi Perang Badar menurut Sirah Ibnu Hisyam?"
+   },
+   {
+    "jenis": "Membandingkan riwayat",
+    "teks": "Bagaimana riwayat ath-Thabari dan Ibnu Katsir tentang peristiwa Saqifah Bani Sa'idah?"
+   },
+   {
+    "jenis": "Tokoh",
+    "teks": "Bagaimana masa kekhalifahan Umar bin Abdul Aziz menurut al-Bidayah wan-Nihayah?"
+   },
+   {
+    "jenis": "Tempat",
+    "teks": "Di mana letak Tabuk dan bagaimana Mu'jam al-Buldan menggambarkannya?"
+   },
+   {
+    "jenis": "Peradaban",
+    "teks": "Bagaimana Ibnu Khaldun menjelaskan sebab-sebab runtuhnya sebuah negara?"
+   },
+   {
+    "jenis": "Peristiwa & tahun",
+    "teks": "Peristiwa penting apa saja yang terjadi pada tahun 8 Hijriyah?"
+   },
+   {
+    "jenis": "Dalam bahasa Arab",
+    "teks": "ما قصة الهجرة إلى الحبشة كما في كتب السيرة؟"
+   }
+  ],
   "contoh_tanya_jawab": [],
   "katalog": "assets/data/katalog/tarikh.json"
  },
@@ -2441,7 +2943,7 @@
   "judul": "AI Bibliografi Kitab",
   "subjudul": "Faharis · Atsbat · Petunjuk kitab",
   "nama_arab": "المصادر والفهارس والأثبات",
-  "tentang": "",
+  "tentang": "Berisi kitab bibliografi dan fahrasah, seperti Kasyf azh-Zhunun karya Hajji Khalifah, Kasysyaf Isthilahat al-Funun, al-Fihrist karya Ibnu an-Nadim, Fahrasat Ibnu Khair, al-Mu'jam al-Mufahras karya Ibnu Hajar, dan kitab-kitab tsabat yang mencatat sanad para ulama. Gunakan AI ini untuk mengetahui kitab-kitab dalam suatu ilmu, syarah dan ringkasan sebuah kitab, istilah dalam berbagai disiplin, serta jalur sanad periwayatan kitab.",
   "isi": {
    "cabang_ilmu": [
     {
@@ -2570,6 +3072,32 @@
    "Jawaban bersumber dari kitab yang dimuat saja; AI tidak memberi fatwa pribadi.",
    "Rujukan ditulis sebagai [judul singkat jilid/halaman] sesuai cetakan sumber; [حاشية jilid/halaman] menandai catatan kaki muhaqqiq.",
    "Teks berasal dari salinan digital (Maktabah Syamilah dan turunannya); kesalahan ketik sumber dapat terbawa."
+  ],
+  "contoh_pertanyaan": [
+   {
+    "jenis": "Peta kitab",
+    "teks": "Kitab-kitab apa saja yang disebut Kasyf azh-Zhunun sebagai syarah atas Minhaj ath-Thalibin?"
+   },
+   {
+    "jenis": "Istilah",
+    "teks": "Apa makna istilah 'al-istihsan' menurut Kasysyaf Isthilahat al-Funun?"
+   },
+   {
+    "jenis": "Pengarang",
+    "teks": "Karya-karya apa saja yang dinisbatkan kepada al-Ghazali menurut kitab-kitab bibliografi?"
+   },
+   {
+    "jenis": "Sanad kitab",
+    "teks": "Bagaimana sanad Ibnu Hajar kepada Shahih al-Bukhari menurut al-Mu'jam al-Mufahras?"
+   },
+   {
+    "jenis": "Sejarah ilmu",
+    "teks": "Bagaimana Ibnu an-Nadim dalam al-Fihrist menggambarkan para ahli nahwu generasi awal?"
+   },
+   {
+    "jenis": "Dalam bahasa Arab",
+    "teks": "ما الكتب المصنفة في علم أصول الفقه على مذهب الحنفية؟"
+   }
   ],
   "contoh_tanya_jawab": [],
   "katalog": "assets/data/katalog/bibliografi_faharis.json"

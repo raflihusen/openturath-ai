@@ -444,7 +444,7 @@ class AgentModel {
           fieldId: 'hadith',
           subtitleAcademic: 'Kutubus Sittah · Takhrij & Rijal',
           suggestedPrompts: [
-            'Bagaimana penjelasan hadis tentang niat dalam Fatḥ al-Bārī?',
+            'Bandingkan lafaz hadis niat dalam Shahih al-Bukhari dan Shahih Muslim.',
             'Bagaimana menilai sanad riwayat ini?',
             'Bagaimana status perawi hadis talqin dalam Kutubus Sittah?',
           ],

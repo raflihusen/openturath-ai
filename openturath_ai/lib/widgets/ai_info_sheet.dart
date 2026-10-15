@@ -6,6 +6,7 @@ import '../core/design/ot_colors.dart';
 import '../core/design/ot_radius.dart';
 import '../core/design/ot_spacing.dart';
 import '../core/design/ot_typography.dart';
+import '../core/app_snackbar.dart';
 import '../core/localization.dart';
 import '../core/scholarly_fonts.dart';
 import 'adaptive_sheet.dart';
@@ -95,6 +96,8 @@ class AiInfoSheet extends StatelessWidget {
     final examples = ((info['contoh_tanya_jawab'] ?? []) as List)
         .cast<Map<String, dynamic>>();
     final about = (info['tentang'] ?? '').toString();
+    final questions = ((info['contoh_pertanyaan'] ?? []) as List)
+        .cast<Map<String, dynamic>>();
     final note = (method['catatan_penyusun'] ?? '').toString();
     final range = content['rentang_wafat_pengarang'];
     final largest = ((content['kitab_induk'] ?? []) as List)
@@ -174,6 +177,48 @@ class AiInfoSheet extends StatelessWidget {
               Text(about,
                   style: ScholarlyFonts.outfit(
                       fontSize: OTFontSize.s14, height: 1.55, color: ink)),
+            ],
+            if (questions.isNotEmpty) ...[
+              heading('Coba tanyakan'),
+              for (final q in questions)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: OTSpacing.sm),
+                  child: InkWell(
+                    borderRadius: OTRadius.xsBorder,
+                    onTap: () {
+                      Clipboard.setData(
+                          ClipboardData(text: q['teks']?.toString() ?? ''));
+                      AppSnackBar.show(context, message: 'Pertanyaan disalin');
+                    },
+                    child: Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(OTSpacing.md),
+                      decoration: BoxDecoration(
+                          color: surface, borderRadius: OTRadius.xsBorder),
+                      child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(q['jenis']?.toString() ?? '',
+                                style: ScholarlyFonts.outfit(
+                                    fontSize: OTFontSize.s12, color: muted)),
+                            const SizedBox(height: OTSpacing.xxs),
+                            Text(q['teks']?.toString() ?? '',
+                                textDirection: RegExp(r'^[\u0600-\u06FF]')
+                                        .hasMatch(q['teks']?.toString() ?? '')
+                                    ? TextDirection.rtl
+                                    : TextDirection.ltr,
+                                style: RegExp(r'^[\u0600-\u06FF]').hasMatch(
+                                        q['teks']?.toString() ?? '')
+                                    ? ScholarlyFonts.scheherazadeNew(
+                                        fontSize: OTFontSize.s16, color: ink)
+                                    : ScholarlyFonts.outfit(
+                                        fontSize: OTFontSize.s14,
+                                        height: 1.45,
+                                        color: ink)),
+                          ]),
+                    ),
+                  ),
+                ),
             ],
             heading('Isi'),
             Wrap(spacing: 8, runSpacing: 8, children: [
