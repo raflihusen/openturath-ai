@@ -421,7 +421,69 @@ function generateDokuSignature(
   return `HMACSHA256=${hmac}`;
 }
 
-function resolvePlanPricing(agentId: string, plan: string): { amount: number; durationMonths: number; label: string; entitlementKey: string } {
+interface DynamicPricingConfig {
+  revision?: string;
+  updated_at?: string;
+  plans?: {
+    fiqh_tahawwulat?: Record<string, { amount: number; regularAmount?: number; label?: string }>;
+    specialists?: Record<string, { amount: number; regularAmount?: number; label?: string }>;
+  };
+}
+
+let cachedPricingConfig: DynamicPricingConfig | null = null;
+let cachedPricingTime = 0;
+
+async function getDynamicPricingConfig(): Promise<DynamicPricingConfig | null> {
+  const now = Date.now();
+  if (cachedPricingConfig && now - cachedPricingTime < 60000) {
+    return cachedPricingConfig;
+  }
+  try {
+    const snap = await db.collection("app_config").doc("pricing").get();
+    if (snap.exists && snap.data()) {
+      cachedPricingConfig = snap.data() as DynamicPricingConfig;
+      cachedPricingTime = now;
+      return cachedPricingConfig;
+    }
+  } catch (err: any) {
+    console.warn("[PricingConfig] Failed to fetch app_config/pricing, using hardcoded fallback:", err.message);
+  }
+  return null;
+}
+
+let cachedActiveAgentIds: Set<string> | null = null;
+let cachedAgentsTime = 0;
+
+async function getActiveAgentIds(): Promise<Set<string>> {
+  const now = Date.now();
+  if (cachedActiveAgentIds && now - cachedAgentsTime < 60000) {
+    return cachedActiveAgentIds;
+  }
+  try {
+    const snap = await db.collection("app_config").doc("agents").get();
+    if (snap.exists && snap.data()?.active_agent_ids && Array.isArray(snap.data()?.active_agent_ids)) {
+      const ids = new Set<string>(snap.data()!.active_agent_ids);
+      cachedActiveAgentIds = ids;
+      cachedAgentsTime = now;
+      return ids;
+    }
+  } catch (err: any) {
+    console.warn("[AgentsConfig] Failed to fetch app_config/agents, using launch default whitelist:", err.message);
+  }
+  // Default Launch Day Whitelist: Fikih Tahawwulat & Fikih Syafi'i (dan subagennya)
+  return new Set([
+    "fiqh_tahawwulat",
+    "fiqh_tahawwulat_muhaqqiq",
+    "fiqh_tahawwulat_bayan",
+    "fiqh_tahawwulat_mukhtabir",
+    "fiqh_tahawwulat_habib",
+    "fiqh_tahawwulat_khatib",
+    "fiqh_syafii",
+    "fiqh_syafii_muhaqqiq",
+  ]);
+}
+
+async function resolvePlanPricing(agentId: string, plan: string): Promise<{ amount: number; durationMonths: number; label: string; entitlementKey: string; revision: string }> {
   const isAllAi = agentId === "all_ai" || agentId === "all_access" || plan.startsWith("all_ai") || plan.startsWith("all_access");
 
   if (isAllAi) {
@@ -439,6 +501,23 @@ function resolvePlanPricing(agentId: string, plan: string): { amount: number; du
     );
   }
 
+  // Blind Spot 2: Pastikan modul saat ini aktif untuk rilis (bukan modul terkunci)
+  const activeAgents = await getActiveAgentIds();
+  const isAgentActive = activeAgents.has(agentId) ||
+    (agentId.startsWith("fiqh_tahawwulat") && activeAgents.has("fiqh_tahawwulat")) ||
+    (agentId.startsWith("fiqh_syafii") && activeAgents.has("fiqh_syafii"));
+
+  if (!isAgentActive) {
+    throw new functions.https.HttpsError(
+      "failed-precondition",
+      "Modul kajian ini sedang dalam tahap tahqiq dan belum dibuka untuk pembelian."
+    );
+  }
+
+  // Baca konfigurasi dinamis (jika ada di Firestore)
+  const dynamicConfig = await getDynamicPricingConfig();
+  const activeRevision = dynamicConfig?.revision || "harga-v92-2026-10-14";
+
   // Harga Mandiri Khusus Fikih Tahawwulat
   if (agentId.startsWith("fiqh_tahawwulat")) {
     const tahawwulatTiers: Record<string, { amount: number; durationMonths: number; labelSuffix: string }> = {
@@ -451,11 +530,17 @@ function resolvePlanPricing(agentId: string, plan: string): { amount: number; du
     };
     const tTier = tahawwulatTiers[plan];
     if (tTier) {
+      const dynamicAmount = dynamicConfig?.plans?.fiqh_tahawwulat?.[plan]?.amount;
+      const finalAmount = (typeof dynamicAmount === "number" && Number.isSafeInteger(dynamicAmount) && dynamicAmount > 0)
+        ? dynamicAmount
+        : tTier.amount;
+
       return {
-        amount: tTier.amount,
+        amount: finalAmount,
         durationMonths: tTier.durationMonths,
         label: `AI Fikih Tahawwulat ${tTier.labelSuffix}`,
         entitlementKey: "fiqh_tahawwulat",
+        revision: activeRevision,
       };
     }
   }
@@ -476,12 +561,18 @@ function resolvePlanPricing(agentId: string, plan: string): { amount: number; du
     );
   }
 
+  const dynamicSpecAmount = dynamicConfig?.plans?.specialists?.[plan]?.amount;
+  const finalSpecAmount = (typeof dynamicSpecAmount === "number" && Number.isSafeInteger(dynamicSpecAmount) && dynamicSpecAmount > 0)
+    ? dynamicSpecAmount
+    : tier.amount;
+
   const agentTitle = agentId.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase());
   return {
-    amount: tier.amount,
+    amount: finalSpecAmount,
     durationMonths: tier.durationMonths,
     label: `Modul AI ${agentTitle} ${tier.labelSuffix}`,
     entitlementKey,
+    revision: activeRevision,
   };
 }
 
@@ -708,11 +799,11 @@ export const createCheckout = functions
     }
 
     const currentAgentId = typeof agentId === "string" && agentId ? agentId : "fiqh_tahawwulat";
-    const pricing = resolvePlanPricing(currentAgentId, plan as string);
+    const pricing = await resolvePlanPricing(currentAgentId, plan as string);
     // Reject stale offers before creating any invoice or contacting the gateway.
+    const isRevisionValid = pricingRevision === pricing.revision || pricingRevision === "harga-v92-2026-10-14";
     if (expectedAmount !== undefined &&
-        (!Number.isSafeInteger(expectedAmount) || expectedAmount !== pricing.amount ||
-         pricingRevision !== "harga-v92-2026-10-14")) {
+        (!Number.isSafeInteger(expectedAmount) || expectedAmount !== pricing.amount || !isRevisionValid)) {
       throw new functions.https.HttpsError("failed-precondition", "Harga penawaran telah berubah. Muat ulang aplikasi.");
     }
     // Each checkout writes two documents and calls the gateway.
@@ -789,7 +880,7 @@ export const createCheckout = functions
       trxId,
       invoiceNumber,
       amount: pricing.amount,
-      pricingRevision: "harga-v92-2026-10-14"
+      pricingRevision: pricing.revision
     };
   });
 
