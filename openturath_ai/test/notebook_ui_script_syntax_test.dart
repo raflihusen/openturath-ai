@@ -63,12 +63,15 @@ void main() {
     expect(notebookUiScript.contains('app-chat-input .sources-button'), isTrue);
   });
 
-  test('notebookUiScript provides physical ot-bottom-spacer and 180px bottom padding to prevent message clipping behind floating composer', () {
-    expect(notebookUiScript.contains('.ot-bottom-spacer'), isTrue);
-    expect(notebookUiScript.contains('ensureBottomSpacer'), isTrue);
-    expect(notebookUiScript.contains('.ot-last-turn'), isTrue);
-    expect(notebookUiScript.contains('height: 180px !important;'), isTrue);
-    expect(notebookUiScript.contains('padding-bottom: 180px !important;'), isTrue);
+  test('notebookUiScript docks chat composer naturally via flexbox without fixed positioning clipping', () {
+    // Composer must dock naturally via position: relative, not fixed floating
+    expect(notebookUiScript.contains('position: relative !important;'), isTrue);
+    expect(notebookUiScript.contains('position: fixed !important;'), isFalse);
+    expect(notebookUiScript.contains('.ot-chat-composer'), isTrue);
+    expect(notebookUiScript.contains('.ot-chat-composer-path'), isTrue);
+    expect(notebookUiScript.contains('removeLegacySpacers'), isTrue);
+    expect(notebookUiScript.contains('flex: 0 0 auto !important;'), isTrue);
+    expect(notebookUiScript.contains('padding-bottom: 24px !important;'), isTrue);
   });
 }
 

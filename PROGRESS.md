@@ -377,6 +377,17 @@ Berdasarkan `AUDIT_OPENTURATH_AI.md`, dokumen perancangan pustaka, dan keluhan k
   2. Kompilasi biner rilis macOS universal arm64+x86_64 selesai.
   3. DMG rilis `OpenTurath_AI_macOS.dmg` (48 MB) dan `/Applications/OpenTurath AI.app` terpasang biner terbaru.
 
+### Fasa 31: Transisi Layout Alami Kolom Input (Natural Flexbox Docking) — Eliminasi Floating Fixed & Spacer Buatan
+- **Akar Evaluasi**:
+  1. Pengguna menginginkan tampilan dan perilaku alami (*native*) seperti desain asli antarmuka NotebookLM, tanpa injeksi spacer DOM fisik (`<div class="ot-bottom-spacer">`) yang berpotensi menjadi rapuh terhadap siklus render Angular SPA.
+  2. Pendekatan `position: fixed` sebelumnya mencabut kapsul input dari aliran tata letak dokumen (*document layout flow*), memaksanya melayang di atas konten teks.
+- **Solusi Baku & Permanen**:
+  1. *Natural Flexbox In-Flow Docking*: Mengubah `.ot-chat-composer` menjadi `position: relative !important; flex: 0 0 auto !important; width: calc(100% - 32px) !important; max-width: 768px !important; margin: 8px auto max(18px, env(safe-area-inset-bottom, 0px)) auto !important; z-index: 10 !important;`.
+  2. *Independent Scrolling Transcript*: Wadah transkrip pesan (`.ot-chat-transcript` dan `.chat-panel-content`) menggunakan `flex: 1 1 0px !important; min-height: 0 !important; overflow-y: auto !important; padding-bottom: 24px !important;`.
+  3. *Parent Overflow Containment*: Seluruh rantai wadah induk (`.ot-chat-path`, `mat-sidenav-content`, `app-chat-view`) dikunci dengan `overflow: hidden !important; min-height: 0 !important;` sehingga kapsul input tetap terkunci di bawah tanpa pernah ikut tergulung ke luar layar.
+  4. *Clean Cleanup*: Menghapus fungsi `ensureBottomSpacer` dan menyertakan `removeLegacySpacers()` yang secara otomatis menyapu elemen `.ot-bottom-spacer` lama dari DOM.
+  5. *Pembaruan Standar & Test*: Menyesuaikan unit test di `notebook_ui_script_syntax_test.dart` dan mematenkan layout alami ini ke `AGENTS.md` (Aturan 6), `STANDAR_IDEAL_WEBVIEW.md`, dan knowledge item global.
+
 ---
 
 ## 5. Agenda & Fokus Selanjutnya
@@ -384,5 +395,6 @@ Berdasarkan `AUDIT_OPENTURATH_AI.md`, dokumen perancangan pustaka, dan keluhan k
    - Memastikan sesi akun Google bertahan permanen tanpa ter-logout lagi dan teks terbawah selalu terbaca lega di atas kapsul input.
 2. **Katalog & Spesialis**:
    - Memastikan ke-21 spesialis memiliki keterhubungan yang mulus antara ruang dialog telaah dengan pustaka kitab referensinya.
+
 
 

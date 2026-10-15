@@ -108,13 +108,17 @@ main::before, main::after {
 }
 ```
 
-### D. Penjarak Fisik Bawah (.ot-bottom-spacer & 180px Padding)
-* Kapsul input pertanyaan (`.ot-chat-composer`) melayang di dasar jendela (`position: fixed; bottom: 22px;`) setinggi ~70px.
-* Agar baris teks jawaban terakhir tidak tertutup atau terpotong di balik kapsul saat pengguna scroll mentok ke bawah:
-  1. Skrip JavaScript secara dinamis menyuntikkan elemen fisik `.ot-bottom-spacer` setinggi **180px** di dasar wadah pesan.
-  2. Seluruh container scrolling (`.ot-chat-transcript`, `.chat-panel-content`, `mat-sidenav-content`, dll) menerapkan `padding-bottom: 180px !important;`.
-  3. Turn pesan terakhir ditandai dengan `.ot-last-turn` dan diberikan `margin-bottom: 180px !important;`.
-  4. Penggunaan elemen DOM fisik ini menjamin `scrollHeight` selalu bertambah +180px dan kebal terhadap bug CSS `:last-child` (akibat hidden action buttons Google) maupun bug WebKit flexbox padding.
+### D. Tata Letak Alami Kolom Input (*Natural Flexbox Docking*)
+* Kapsul input pertanyaan (`.ot-chat-composer`) terpasang secara alami di dasar kolom percakapan (*in-flow flexbox child*):
+  - `position: relative !important; flex: 0 0 auto !important; width: calc(100% - 32px) !important; max-width: 768px !important; margin: 8px auto max(18px, env(safe-area-inset-bottom, 0px)) auto !important;`
+* Wadah transkrip pesan (`.ot-chat-transcript` dan `.chat-panel-content`):
+  - `flex: 1 1 0px !important; min-height: 0 !important; overflow-y: auto !important; padding-bottom: 24px !important;`
+* Wadah induk (`.ot-chat-path`, `mat-sidenav-content`, `app-chat-view`):
+  - `overflow: hidden !important; min-height: 0 !important;`
+* Keunggulan Tata Letak Alami:
+  1. **Bebas Clipping & Teks Tertutup**: Kapsul input bukan lagi overlay mengambang (`position: fixed`), sehingga tidak menutupi pesan terakhir.
+  2. **Scroll Murni**: Ketika pengguna scroll mentok ke bawah, baris pesan paling akhir berhenti tepat di atas kapsul input dengan jarak aman 24px padding + 8px margin.
+  3. **Tanpa Injeksi Spacer Buatan**: Tidak memerlukan elemen `.ot-bottom-spacer` buatan yang rapuh terhadap rekonsiliasi DOM Angular. Elemen spacer lama otomatis dibersihkan oleh `removeLegacySpacers()`.
 
 ### E. Pembersihan Instan Saat Pergantian Tab (*Dynamic Tab Cleanup*)
 * Setiap kali pengguna beralih antar-tab atau membuka tab yang sudah ada, aplikasi wajib mengeksekusi:

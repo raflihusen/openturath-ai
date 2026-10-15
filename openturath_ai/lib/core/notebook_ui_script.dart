@@ -281,8 +281,8 @@ const notebookUiScript = r'''
         display: flex !important;
         flex-direction: column !important;
         height: 100% !important;
-        min-height: 100% !important;
-        overflow: auto !important;
+        min-height: 0 !important;
+        overflow: hidden !important;
         box-sizing: border-box !important;
       }
 
@@ -293,8 +293,8 @@ const notebookUiScript = r'''
       .ot-chat-path {
         display: flex !important;
         flex-direction: column !important;
-        flex: 1 1 auto !important;
-        min-height: 100% !important;
+        flex: 1 1 0px !important;
+        min-height: 0 !important;
         min-width: 0 !important;
         height: 100% !important;
         align-items: stretch !important;
@@ -302,34 +302,42 @@ const notebookUiScript = r'''
         box-sizing: border-box !important;
         padding-top: 0 !important;
         margin-top: 0 !important;
+        overflow: hidden !important;
       }
       .ot-chat-composer-path {
+        display: flex !important;
+        flex-direction: column !important;
         flex: 0 0 auto !important;
         height: auto !important;
         min-height: 0 !important;
         max-height: none !important;
         padding: 0 !important;
         margin: 0 !important;
+        overflow: visible !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
       }
       .ot-chat-transcript-path {
         display: flex !important;
         flex-direction: column !important;
-        flex: 1 1 auto !important;
-        min-height: 100% !important;
+        flex: 1 1 0px !important;
+        min-height: 0 !important;
         height: 100% !important;
         max-height: none !important;
+        overflow: hidden !important;
+        box-sizing: border-box !important;
       }
       .ot-chat-transcript {
         display: flex !important;
         flex-direction: column !important;
         height: 100% !important;
-        min-height: 100% !important;
+        min-height: 0 !important;
         max-height: none !important;
-        flex: 1 1 auto !important;
+        flex: 1 1 0px !important;
         overflow-y: auto !important;
         -webkit-overflow-scrolling: touch !important;
         box-sizing: border-box !important;
-        padding-bottom: 180px !important;
+        padding-bottom: 24px !important;
       }
       .chat-panel-content, .chat-view, .conversation-container, .message-list, [role="log"],
       app-chat-view, app-chat-panel, app-chat, app-conversation,
@@ -345,13 +353,13 @@ const notebookUiScript = r'''
         display: flex !important;
         flex-direction: column !important;
         height: 100% !important;
-        min-height: 100% !important;
-        flex: 1 1 auto !important;
+        min-height: 0 !important;
+        flex: 1 1 0px !important;
         overflow-y: auto !important;
         -webkit-overflow-scrolling: touch !important;
         box-sizing: border-box !important;
         padding-top: 8px !important;
-        padding-bottom: 180px !important;
+        padding-bottom: 24px !important;
       }
       .chat-panel-content::before, .chat-panel-content::after,
       .chat-view::before, .chat-view::after,
@@ -410,35 +418,19 @@ const notebookUiScript = r'''
       .ot-last-turn,
       .ot-last-turn .rendered-markdown,
       .ot-last-turn app-chat-response {
-        margin-bottom: 180px !important;
-        padding-bottom: 24px !important;
+        margin-bottom: 0 !important;
+        padding-bottom: 8px !important;
       }
 
-      /* Spacer fisik di akhir transkrip agar teks tidak tertutup kapsul input pertanyaan */
-      .ot-bottom-spacer {
-        display: block !important;
-        width: 100% !important;
-        height: 180px !important;
-        min-height: 180px !important;
-        max-height: 180px !important;
-        flex: 0 0 180px !important;
-        pointer-events: none !important;
-        visibility: hidden !important;
-        margin: 0 !important;
-        padding: 0 !important;
-        border: none !important;
-        box-sizing: border-box !important;
-      }
+      /* Tata letak alami (Natural Flexbox): composer berada di bawah transkrip tanpa mengambang/floating */
       .ot-chat-composer {
-        position: fixed !important;
-        bottom: max(22px, env(safe-area-inset-bottom, 0px)) !important;
-        left: 50% !important;
-        transform: translateX(-50%) !important;
+        position: relative !important;
+        flex: 0 0 auto !important;
         width: calc(100% - 32px) !important;
         max-width: 768px !important;
+        margin: 8px auto max(18px, env(safe-area-inset-bottom, 0px)) auto !important;
         box-sizing: border-box !important;
-        margin: 0 !important;
-        z-index: 1000 !important;
+        z-index: 10 !important;
         pointer-events: auto !important;
       }
       .ot-chat-composer textarea::placeholder,
@@ -952,34 +944,10 @@ const notebookUiScript = r'''
     } catch (_) {}
   }
 
-  function ensureBottomSpacer(transcripts) {
-    const allMessages = [...document.querySelectorAll(answerSelector + ',' + questionSelector)].filter(visible);
-    document.querySelectorAll('.ot-last-turn').forEach(el => el.classList.remove('ot-last-turn'));
-    if (allMessages.length > 0) {
-      const lastMsg = allMessages[allMessages.length - 1];
-      const lastTurn = lastMsg.closest('app-chat-turn, chat-turn, .chat-message-pair, app-chat-response, .model-message, [role="article"]') || lastMsg;
-      lastTurn.classList.add('ot-last-turn');
-
-      const container = lastTurn.parentElement || (transcripts && transcripts.size > 0 ? [...transcripts][0] : null);
-      if (container) {
-        let spacer = null;
-        for (let i = 0; i < container.children.length; i++) {
-          const child = container.children[i];
-          if (child && child.classList && child.classList.contains('ot-bottom-spacer')) {
-            spacer = child;
-            break;
-          }
-        }
-        if (!spacer) {
-          spacer = document.createElement('div');
-          spacer.className = 'ot-bottom-spacer';
-          spacer.setAttribute('aria-hidden', 'true');
-          container.appendChild(spacer);
-        } else if (container.lastElementChild !== spacer) {
-          container.appendChild(spacer);
-        }
-      }
-    }
+  function removeLegacySpacers() {
+    try {
+      document.querySelectorAll('.ot-bottom-spacer').forEach(el => el.remove());
+    } catch (_) {}
   }
 
   function anchorConversationInput() {
@@ -1088,8 +1056,8 @@ const notebookUiScript = r'''
     if (composer) composer.classList.add('ot-chat-composer');
     document.body?.classList.toggle('ot-chat-layout', !!composer);
 
-    // Pastikan teks pesan terakhir memiliki ruang lega fisik di atas kapsul input
-    ensureBottomSpacer(transcripts);
+    // Pastikan DOM bersih dari elemen spacer buatan masa lalu
+    removeLegacySpacers();
 
     const height = window.visualViewport ? window.visualViewport.height : window.innerHeight;
     const value = height + 'px';
@@ -1124,7 +1092,7 @@ const notebookUiScript = r'''
     removeTopToolbars();
     removeHeroCard();
     anchorConversationInput();
-    ensureBottomSpacer();
+    removeLegacySpacers();
     dismissPopups();
   }
 
