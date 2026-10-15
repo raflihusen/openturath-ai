@@ -391,11 +391,28 @@ Berdasarkan `AUDIT_OPENTURATH_AI.md`, dokumen perancangan pustaka, dan keluhan k
 
 ---
 
+### Fasa 32: Arsitektur Over-The-Air (OTA) Dynamic Pricing, Remote Agent Locking & Rilis Universal macOS DMG (`1c88f31b`, `7ab0f944`)
+- **Pencapaian & Implementasi Inti**:
+  1. *OTA Dynamic Pricing Real Midtrans Production*:
+     - Konfigurasi harga dapat diubah seketika over-the-air via Firestore `app_config/pricing`.
+     - Mode testing aktif pada nominal Rp 1.000 via QRIS Midtrans Production (limit nominal terkecil yang didukung oleh ASPI/BI) dan langsung masuk ke saldo merchant pemilik.
+     - Backend Cloud Functions `createCheckout` dan Flutter `SubscriptionScreen` secara dinamis membaca dan memvalidasi `revision` harga tanpa perlu pembaruan aplikasi.
+  2. *Remote Dynamic Agent Locking (Kesiapan Peluncuran)*:
+     - 19 AI spesialis dikunci dengan ikon gembok (`Icons.lock_outline_rounded`) dan modal ilmiah *Tahqiq Khazanah* (`TahqiqKhazanahDialog`) berestetika Monochrome Obsidian (#09090B).
+     - Hanya *Fikih Syafi'i* dan *Fikih Tahawwulat* yang aktif terbuka untuk peluncuran.
+     - Pembukaan gembok dapat dilakukan jarak jauh kapan saja via Firestore `app_config/agents` tanpa perlu update aplikasi.
+  3. *CLI Pengendali OTA (`manage_ota.py`)*:
+     - Disediakan CLI lengkap (`status`, `set-pricing --mode test/production`, `unlock-agent`, `lock-agent`, `seed`).
+  4. *Kompilasi Biner & Pembuatan DMG Installer macOS*:
+     - Kompilasi `flutter build macos --release` Universal arm64+x86_64 sukses 100%.
+     - Pembuatan DMG `OpenTurath_AI_macOS.dmg` (48 MB, UDZO format, SHA-256 terverifikasi) via `tool/package_macos.sh`.
+     - Pembaruan aplikasi `/Applications/OpenTurath AI.app` berhasil disinkronkan.
+     - 411/411 unit dan widget tests lolos 100%.
+
+---
+
 ## 5. Agenda & Fokus Selanjutnya
-1. **Verifikasi Runtime Sesi macOS**:
-   - Memastikan sesi akun Google bertahan permanen tanpa ter-logout lagi dan teks terbawah selalu terbaca lega di atas kapsul input.
-2. **Katalog & Spesialis**:
-   - Memastikan ke-21 spesialis memiliki keterhubungan yang mulus antara ruang dialog telaah dengan pustaka kitab referensinya.
-
-
-
+1. **Pengujian Transaksi Real Midtrans (Rp 1.000)**:
+   - Pengujian live checkout QRIS Rp 1.000 di aplikasi desktop macOS dan ponsel.
+2. **Kesiapan Rilis Publik & Broadcast Update**:
+   - Membuka gembok agen berikutnya secara bertahap via `manage_ota.py unlock-agent <id>`.
