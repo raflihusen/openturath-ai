@@ -3,7 +3,7 @@
 **OpenTurath Research Lab**  
 *Pre-print Manuscript — Scheduled for arXiv (cs.AI / cs.CL / cs.IR)*  
 *Date: September 2026*  
-*Correspondence: openturath@gmail.com | Website: https://openturath.web.app*
+*Correspondence: support@openturath.id | Website: https://openturath.id*
 
 ---
 

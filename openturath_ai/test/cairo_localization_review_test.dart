@@ -15,9 +15,9 @@ void main() {
   test(
       'Arabic display isolation preserves canonical contact and regulation text',
       () {
-    const source = 'البريد openturath@gmail.com والنظام 8/1999';
+    const source = 'البريد support@openturath.id والنظام 8/1999';
     final display = LocalizedLegal.displayBody(source, locale: 'ar');
-    expect(display, contains('\u2066openturath@gmail.com\u2069'));
+    expect(display, contains('\u2066support@openturath.id\u2069'));
     expect(display.replaceAll(RegExp('[\u2066\u2069]'), ''), source);
     expect(LocalizedLegal.displayBody(source, locale: 'en'), source);
   });
@@ -40,8 +40,8 @@ void main() {
             expect(
                 RegExp(r'[\u0600-\u06ff]').hasMatch(section.content), isTrue);
           }
-          if (source.sections[n].content.contains('openturath@gmail.com')) {
-            expect(section.content, contains('openturath@gmail.com'));
+          if (source.sections[n].content.contains('support@openturath.id')) {
+            expect(section.content, contains('support@openturath.id'));
           }
           for (final name in [
             'Midtrans',

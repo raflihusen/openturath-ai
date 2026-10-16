@@ -3,7 +3,7 @@ const legalEnglish = <String, List<(String, String)>>{
   'terms': [
     (
       '1. Operator and scope',
-      '''OpenTurath is operated by Pengelola OpenTurath, based in Indonesia, referred to as “we”. Application users are referred to as “you”. Support is available at openturath@gmail.com.
+      '''OpenTurath is operated by Pengelola OpenTurath, based in Indonesia, referred to as “we”. Application users are referred to as “you”. Support is available at support@openturath.id.
 
 These terms govern accounts, AI, reference catalogs, Notes, and paid features provided through OpenTurath. Package information shown before purchase, the Payment and Refund Policy, and the AI Use and Reference Verification Guide form part of the relevant terms of use.'''
     ),
@@ -17,7 +17,7 @@ Self-registration is not currently open to users under 18. If acting for an inst
       '3. Accounts and access security',
       '''Use accurate account information and sign-in access that belongs to you. Accounts are personal unless a package explicitly provides in writing for multiple users.
 
-Protect your device and sign-in access. Do not share passwords or one-time codes. Report suspected unauthorized use to openturath@gmail.com. Account takeover reports will be assessed in light of the circumstances and available evidence.'''
+Protect your device and sign-in access. Do not share passwords or one-time codes. Report suspected unauthorized use to support@openturath.id. Account takeover reports will be assessed in light of the circumstances and available evidence.'''
     ),
     (
       '4. Service purpose and AI limitations',
@@ -71,7 +71,7 @@ Changes that materially reduce the benefits of a paid package will be accompanie
       '11. Access restrictions and account closure',
       '''We may restrict access when there is reasonable basis to suspect a serious violation, security risk, or unauthorized use. Measures are proportionate to the issue, ranging from warnings and temporary suspension to account closure.
 
-Where circumstances permit, we explain the reasons and provide an opportunity for clarification through openturath@gmail.com.'''
+Where circumstances permit, we explain the reasons and provide an opportunity for clarification through support@openturath.id.'''
     ),
     (
       '12. Responsibilities and user rights',
@@ -81,7 +81,7 @@ You are responsible for assessing whether results suit your purpose and checking
     ),
     (
       '13. Complaints and consultation',
-      '''Contact openturath@gmail.com with a description of the problem and relevant information. We record complaints, provide an update on their handling within 2 (two) business days, and seek resolution through consultation.
+      '''Contact support@openturath.id with a description of the problem and relevant information. We record complaints, provide an update on their handling within 2 (two) business days, and seek resolution through consultation.
 
 These terms are governed by the laws of the Republic of Indonesia.'''
     ),
@@ -93,9 +93,9 @@ Important changes will be communicated before taking effect and will not apply r
 
 Operator: Pengelola OpenTurath
 Address: Indonesia
-Support: openturath@gmail.com
-Privacy: openturath@gmail.com
-Copyright: openturath@gmail.com'''
+Support: support@openturath.id
+Privacy: support@openturath.id
+Copyright: support@openturath.id'''
     ),
   ],
   'privacy': [
@@ -103,7 +103,7 @@ Copyright: openturath@gmail.com'''
       '1. Data controller and scope',
       '''This Privacy Policy explains personal data processing when you use OpenTurath, payments, and support. Pengelola OpenTurath (Indonesia) is responsible for processing whose purposes and means are determined by OpenTurath, in accordance with Indonesia's Law No. 27 of 2022 on Personal Data Protection.
 
-For privacy questions, contact openturath@gmail.com.'''
+For privacy questions, contact support@openturath.id.'''
     ),
     (
       '2. Data processed',
@@ -167,18 +167,18 @@ All providers operate under industry security and encryption standards.'''
 • Access and obtain information about personal data processed.
 • Update or correct inaccurate profile data.
 • Request deletion of your account and personal data at any time through the application.
-• Raise privacy objections or questions at openturath@gmail.com.'''
+• Raise privacy objections or questions at support@openturath.id.'''
     ),
     (
       '12. Users under 18',
-      '''Independent account registration is intended for users aged 18 and above. If you are a parent or guardian and find an account opened without the required authorization, contact openturath@gmail.com for handling and data deletion.'''
+      '''Independent account registration is intended for users aged 18 and above. If you are a parent or guardian and find an account opened without the required authorization, contact support@openturath.id for handling and data deletion.'''
     ),
     (
       '13. Contact and policy updates',
       '''Document version: 1.0 (effective 13 September 2026).
 
 For privacy questions or rights requests, contact:
-Email: openturath@gmail.com
+Email: support@openturath.id
 Operator: Pengelola OpenTurath (Indonesia)'''
     ),
   ],
@@ -193,7 +193,7 @@ A 30-day package lasts 30 full calendar days from successful activation. Future 
       '2. Payment and access activation',
       '''Payments are processed through the official Midtrans gateway by QRIS, bank transfer (virtual account), or digital wallet.
 
-Official payment evidence is sent through Midtrans notifications and your account email. Access becomes active once the transaction is confirmed successful and synchronized. If funds are deducted but access is not active, do not pay again; contact openturath@gmail.com with the transaction number.'''
+Official payment evidence is sent through Midtrans notifications and your account email. Access becomes active once the transaction is confirmed successful and synchronized. If funds are deducted but access is not active, do not pay again; contact support@openturath.id with the transaction number.'''
     ),
     (
       '3. Manual renewal without direct debit',
@@ -214,7 +214,7 @@ Resolution may include access restoration, a validity-period adjustment you appr
     ),
     (
       '6. Refund process and timeframes',
-      '''Send your request to openturath@gmail.com with:
+      '''Send your request to support@openturath.id with:
 1. Your OpenTurath account email.
 2. The transaction number / payment invoice.
 3. Official bank or digital-wallet payment evidence.
@@ -225,7 +225,7 @@ Receipt is acknowledged within at most 2 (two) business days. Review and the ref
     (
       '7. Transaction support',
       '''Payment and transaction problems are monitored on business days, Monday–Friday, 09:00–17:00 WIB.
-Transaction support email: openturath@gmail.com'''
+Transaction support email: support@openturath.id'''
     ),
   ],
   'guideline': [
@@ -281,7 +281,7 @@ Let knowledge bring calm, unite the community, and increase reverence for Allah.
       'Conduct 8 · Offer corrections courteously',
       '''If you find an Arabic text error, incorrect author attribution, or inaccurate information in a displayed text, offer corrections courteously and with scholarly evidence.
 
-Corrections can be submitted through the official channel, openturath@gmail.com, to preserve the authenticity of the classical library.'''
+Corrections can be submitted through the official channel, support@openturath.id, to preserve the authenticity of the classical library.'''
     ),
   ],
   'contact': [
@@ -291,9 +291,9 @@ Corrections can be submitted through the official channel, openturath@gmail.com,
     ),
     (
       '2. Official communication channels',
-      '''• Support and transactions: openturath@gmail.com
-• Privacy and data requests: openturath@gmail.com
-• Copyright reports: openturath@gmail.com
+      '''• Support and transactions: support@openturath.id
+• Privacy and data requests: support@openturath.id
+• Copyright reports: support@openturath.id
 • Business address: Indonesia
 • Operating hours: Monday–Friday, 09:00–17:00 WIB
 • Response target: at most 2 (two) business days'''

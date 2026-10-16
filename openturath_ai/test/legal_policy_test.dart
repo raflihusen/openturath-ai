@@ -5,7 +5,9 @@ import 'package:openturath_ai/widgets/legal_document_sheet.dart';
 
 void main() {
   group('Audit Integritas Legal & Kebijakan OpenTurath', () {
-    test('Semua placeholder [[...]] wajib telah diselesaikan (bebas dari kurung siku ganda)', () {
+    test(
+        'Semua placeholder [[...]] wajib telah diselesaikan (bebas dari kurung siku ganda)',
+        () {
       final placeholderRegex = RegExp(r'\[\[.+?\]\]');
 
       // 1. Cek Identitas & Bab 1.2
@@ -15,63 +17,86 @@ void main() {
 
       // 2. Cek Bab 2: Ketentuan Layanan
       for (final sec in LegalCopy.termsSections) {
-        expect(placeholderRegex.hasMatch(sec.title), isFalse, reason: 'Placeholder ditemukan di judul: ${sec.title}');
-        expect(placeholderRegex.hasMatch(sec.content), isFalse, reason: 'Placeholder ditemukan di pasal: ${sec.title}');
+        expect(placeholderRegex.hasMatch(sec.title), isFalse,
+            reason: 'Placeholder ditemukan di judul: ${sec.title}');
+        expect(placeholderRegex.hasMatch(sec.content), isFalse,
+            reason: 'Placeholder ditemukan di pasal: ${sec.title}');
       }
 
       // 3. Cek Bab 3: Kebijakan Privasi
       for (final sec in LegalCopy.privacySections) {
-        expect(placeholderRegex.hasMatch(sec.title), isFalse, reason: 'Placeholder ditemukan di judul: ${sec.title}');
-        expect(placeholderRegex.hasMatch(sec.content), isFalse, reason: 'Placeholder ditemukan di pasal: ${sec.title}');
+        expect(placeholderRegex.hasMatch(sec.title), isFalse,
+            reason: 'Placeholder ditemukan di judul: ${sec.title}');
+        expect(placeholderRegex.hasMatch(sec.content), isFalse,
+            reason: 'Placeholder ditemukan di pasal: ${sec.title}');
       }
 
       // 4. Cek Bab 4: Pembayaran & Refund
       for (final sec in LegalCopy.refundSections) {
-        expect(placeholderRegex.hasMatch(sec.title), isFalse, reason: 'Placeholder ditemukan di judul: ${sec.title}');
-        expect(placeholderRegex.hasMatch(sec.content), isFalse, reason: 'Placeholder ditemukan di pasal: ${sec.title}');
+        expect(placeholderRegex.hasMatch(sec.title), isFalse,
+            reason: 'Placeholder ditemukan di judul: ${sec.title}');
+        expect(placeholderRegex.hasMatch(sec.content), isFalse,
+            reason: 'Placeholder ditemukan di pasal: ${sec.title}');
       }
 
       // 5. Cek Bab 7: Panduan AI
       for (final sec in LegalCopy.aiGuidelineSections) {
-        expect(placeholderRegex.hasMatch(sec.title), isFalse, reason: 'Placeholder ditemukan di judul: ${sec.title}');
-        expect(placeholderRegex.hasMatch(sec.content), isFalse, reason: 'Placeholder ditemukan di pasal: ${sec.title}');
+        expect(placeholderRegex.hasMatch(sec.title), isFalse,
+            reason: 'Placeholder ditemukan di judul: ${sec.title}');
+        expect(placeholderRegex.hasMatch(sec.content), isFalse,
+            reason: 'Placeholder ditemukan di pasal: ${sec.title}');
       }
 
       // 6. Cek Bab 9: Bantuan & Kontak
       for (final sec in LegalCopy.contactSections) {
-        expect(placeholderRegex.hasMatch(sec.title), isFalse, reason: 'Placeholder ditemukan di judul: ${sec.title}');
-        expect(placeholderRegex.hasMatch(sec.content), isFalse, reason: 'Placeholder ditemukan di pasal: ${sec.title}');
+        expect(placeholderRegex.hasMatch(sec.title), isFalse,
+            reason: 'Placeholder ditemukan di judul: ${sec.title}');
+        expect(placeholderRegex.hasMatch(sec.content), isFalse,
+            reason: 'Placeholder ditemukan di pasal: ${sec.title}');
       }
 
       // 7. Cek Teks Hapus Akun Kanonik
-      expect(placeholderRegex.hasMatch(LegalCopy.deleteAccountConfirmationBody), isFalse);
+      expect(placeholderRegex.hasMatch(LegalCopy.deleteAccountConfirmationBody),
+          isFalse);
     });
 
-    test('Etika The Quiet Scholar: Bebas tanda seru (!) pada seluruh dokumen hukum dan kebijakan', () {
+    test(
+        'Etika The Quiet Scholar: Bebas tanda seru (!) pada seluruh dokumen hukum dan kebijakan',
+        () {
       // Periksa semua bagian di LegalCopy
       for (final sec in LegalCopy.termsSections) {
-        expect(sec.title.contains('!'), isFalse, reason: 'Tanda seru di judul: ${sec.title}');
-        expect(sec.content.contains('!'), isFalse, reason: 'Tanda seru di isi: ${sec.title}');
+        expect(sec.title.contains('!'), isFalse,
+            reason: 'Tanda seru di judul: ${sec.title}');
+        expect(sec.content.contains('!'), isFalse,
+            reason: 'Tanda seru di isi: ${sec.title}');
       }
 
       for (final sec in LegalCopy.privacySections) {
-        expect(sec.title.contains('!'), isFalse, reason: 'Tanda seru di judul: ${sec.title}');
-        expect(sec.content.contains('!'), isFalse, reason: 'Tanda seru di isi: ${sec.title}');
+        expect(sec.title.contains('!'), isFalse,
+            reason: 'Tanda seru di judul: ${sec.title}');
+        expect(sec.content.contains('!'), isFalse,
+            reason: 'Tanda seru di isi: ${sec.title}');
       }
 
       for (final sec in LegalCopy.refundSections) {
-        expect(sec.title.contains('!'), isFalse, reason: 'Tanda seru di judul: ${sec.title}');
-        expect(sec.content.contains('!'), isFalse, reason: 'Tanda seru di isi: ${sec.title}');
+        expect(sec.title.contains('!'), isFalse,
+            reason: 'Tanda seru di judul: ${sec.title}');
+        expect(sec.content.contains('!'), isFalse,
+            reason: 'Tanda seru di isi: ${sec.title}');
       }
 
       for (final sec in LegalCopy.aiGuidelineSections) {
-        expect(sec.title.contains('!'), isFalse, reason: 'Tanda seru di judul: ${sec.title}');
-        expect(sec.content.contains('!'), isFalse, reason: 'Tanda seru di isi: ${sec.title}');
+        expect(sec.title.contains('!'), isFalse,
+            reason: 'Tanda seru di judul: ${sec.title}');
+        expect(sec.content.contains('!'), isFalse,
+            reason: 'Tanda seru di isi: ${sec.title}');
       }
 
       for (final sec in LegalCopy.contactSections) {
-        expect(sec.title.contains('!'), isFalse, reason: 'Tanda seru di judul: ${sec.title}');
-        expect(sec.content.contains('!'), isFalse, reason: 'Tanda seru di isi: ${sec.title}');
+        expect(sec.title.contains('!'), isFalse,
+            reason: 'Tanda seru di judul: ${sec.title}');
+        expect(sec.content.contains('!'), isFalse,
+            reason: 'Tanda seru di isi: ${sec.title}');
       }
 
       expect(LegalCopy.deleteAccountConfirmationBody.contains('!'), isFalse);
@@ -84,10 +109,10 @@ void main() {
       expect(LegalCopy.aiGuidelineSections.length, equals(9));
       expect(LegalCopy.contactSections.length, equals(3));
 
-      // Verifikasi saluran email resmi openturath@gmail.com
-      expect(LegalCopy.contactSupportEmail, equals('openturath@gmail.com'));
-      expect(LegalCopy.contactPrivacyEmail, equals('openturath@gmail.com'));
-      expect(LegalCopy.contactCopyrightEmail, equals('openturath@gmail.com'));
+      // Verifikasi saluran email resmi support@openturath.id
+      expect(LegalCopy.contactSupportEmail, equals('support@openturath.id'));
+      expect(LegalCopy.contactPrivacyEmail, equals('support@openturath.id'));
+      expect(LegalCopy.contactCopyrightEmail, equals('support@openturath.id'));
 
       // Verifikasi penegasan manual renewal tanpa auto-debit
       final manualRenewalText = LegalCopy.refundSections[2].content;
@@ -95,7 +120,9 @@ void main() {
       expect(manualRenewalText.toLowerCase(), contains('tanpa'));
     });
 
-    testWidgets('LegalDocumentSheet dapat ditampilkan tanpa crash untuk setiap dokumen', (tester) async {
+    testWidgets(
+        'LegalDocumentSheet dapat ditampilkan tanpa crash untuk setiap dokumen',
+        (tester) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
