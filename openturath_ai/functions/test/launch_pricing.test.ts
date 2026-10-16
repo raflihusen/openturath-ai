@@ -8,22 +8,23 @@ const specialists = ['fiqh_syafii','fiqh_hanafi','fiqh_maliki','fiqh_hanbali',
   'musthalah_hadits','tafsir','tajwid_qiraat','ushul_fiqh','tarikh',
   'thabaqat_rijal','tasawwuf','aqidah','nahwu_sharaf','bibliografi_faharis'];
 
-test('all 19 published disciplines resolve to the launch price without global access', () => {
-  const {api} = loadBackend();
+test('all 19 published disciplines resolve to the launch price without global access', async () => {
+  const {api, db} = loadBackend();
+  db.seed('app_config/agents', {active_agent_ids: specialists});
   for (const agent of specialists) {
-    const offer = api.resolvePlanPricing(agent, 'tholib_1m');
+    const offer = await api.resolvePlanPricing(agent, 'tholib_1m');
     assert.equal(offer.amount, 49000, agent);
     assert.equal(offer.durationMonths, 1, agent);
     assert.ok(!['all_access','all_ai'].includes(offer.entitlementKey), agent);
   }
 });
-test('Tahawwulat duration prices and aliases retain the correct calendar months', () => {
+test('Tahawwulat duration prices and aliases retain the correct calendar months', async () => {
   const {api} = loadBackend();
   for (const [plan, amount, months] of [
     ['tholib_1m',300000,1], ['tholib_6m',1499000,6], ['bahits_1y',1999000,12],
     ['1m',300000,1], ['6m',1499000,6], ['1y',1999000,12],
   ] as const) {
-    const offer = api.resolvePlanPricing('fiqh_tahawwulat', plan);
+    const offer = await api.resolvePlanPricing('fiqh_tahawwulat', plan);
     assert.equal(offer.amount, amount);
     assert.equal(offer.durationMonths, months);
     assert.equal(offer.entitlementKey, 'fiqh_tahawwulat');
@@ -47,9 +48,9 @@ test('old pricing revision and noninteger expected prices are rejected', async (
   }
   assert.equal(db.docs.size,0);
 });
-test('hidden all-access and unknown products remain unavailable for checkout', () => {
+test('hidden all-access and unknown products remain unavailable for checkout', async () => {
   const {api} = loadBackend();
   for (const id of ['all_ai','all_access','unknown','fiqh_syafii_evil']) {
-    assert.throws(()=>api.resolvePlanPricing(id,'tholib_1m'));
+    await assert.rejects(async () => api.resolvePlanPricing(id, 'tholib_1m'));
   }
 });
