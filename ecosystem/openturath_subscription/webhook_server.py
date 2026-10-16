@@ -335,9 +335,60 @@ def process_firestore_updates(email: str, name: str, plan: str, duration_months:
     })
     logger.info("Saved Akal transaction %s.", transaction_id)
 
+    grant_ids = []
+    for scope in scopes:
+        grant_id = f"goakal_{transaction_id}_{scope}"
+        grant_ref = db.collection("access_grants").document(grant_id)
+        grant_ref.set({
+            "uid": user_doc.id if user_doc else f"legacy_{hashlib.sha256(email.encode()).hexdigest()[:16]}",
+            "email": email,
+            "scope": scope,
+            "kind": "payment",
+            "status": "active",
+            "amount": amount,
+            "provider": "goakal",
+            "source": "akal_webhook",
+            "transaction_id": transaction_id,
+            "starts_ms": int(base_date.timestamp() * 1000),
+            "expires_ms": int(expiry_date.timestamp() * 1000),
+            "created_ms": int(now.timestamp() * 1000),
+        }, merge=True)
+        grant_ids.append(grant_id)
+
+    digest = hashlib.sha256(json.dumps([str(transaction_id), "PAID", email, service_name, amount, str(base_date)], separators=(",", ":")).encode()).hexdigest()
+    try:
+        db.collection("access_legacy_events").document(digest).set({
+            "email": email,
+            "service": service_name,
+            "payment_status": "PAID",
+            "plan": plan,
+            "amount": amount,
+            "transaction_id": transaction_id,
+            "paid_at": str(base_date),
+            "status": "granted",
+            "grant_ids": grant_ids,
+            "processed_at": now,
+        }, merge=True)
+    except Exception as e:
+        logger.warning("Could not set access_legacy_events: %s", e)
+
     if not user_doc:
-        logger.info("Pembeli %s belum terdaftar; akses ditautkan saat ia mendaftar.", mask_email(email))
+        legacy_uid = f"legacy_{hashlib.sha256(email.encode()).hexdigest()[:16]}"
+        legacy_owner_ref = db.collection("access_legacy_owners").document(legacy_uid)
+        try:
+            existing_grants = (legacy_owner_ref.get().to_dict() or {}).get("access_grant_ids", [])
+        except Exception:
+            existing_grants = []
+        legacy_owner_ref.set({
+            "email": email,
+            "legacy_revoke_only": False,
+            "access_grant_ids": list(set(existing_grants + grant_ids)),
+            "updated_at": now,
+            "access_version": 2,
+        }, merge=True)
+        logger.info("Pembeli %s belum terdaftar; akses dicatat di access_legacy_owners.", mask_email(email))
         return
+
     updates = {}
     for scope in scopes:
         current = entitlements.get(scope)
@@ -348,6 +399,8 @@ def process_firestore_updates(email: str, name: str, plan: str, duration_months:
             "plan": plan, "status": "active", "expiry": expiry_date, "source": "goakal",
             "source_transaction_id": transaction_id, "updated_at": now,
         }
+    existing_grants = (user_doc.to_dict() or {}).get("access_grant_ids", [])
+    updates["access_grant_ids"] = list(set(existing_grants + grant_ids))
     if updates:
         user_doc.reference.update(updates)
         logger.info("Updated %s: %s until %s", mask_email(email), ", ".join(scopes), expiry_date.date())
@@ -401,9 +454,8 @@ async def process_webhook(payload: dict, internal: bool = False) -> dict:
         logger.info("🧪 Test webhook diterima dari Akal. Membalas sukses.")
         return {"success": True, "action": "test_connection", "message": "Connection test successful"}
 
-    if vps_writer_active():
-        # After cutover the VPS worker is the only writer of NotebookLM sharing.
-        return {"success": True, "action": "vps_writer_active"} if internal else queue_legacy_event(payload)
+    if vps_writer_active() and internal:
+        return {"success": True, "action": "vps_writer_active"}
     if internal:
         return await process_internal_provisioning(payload)
 
@@ -412,6 +464,9 @@ async def process_webhook(payload: dict, internal: bool = False) -> dict:
     # Legacy writers cannot atomically verify all VIP/grant sources before
     # external removal. Hand off negative events instead of revoking directly.
     if status in INACTIVE_STATUSES:
+        if is_protected_owner(email):
+            logger.info("🛡️ SKIP CABUT AKSES: %s adalah VIP permanen.", mask_email(email))
+            return {"success": True, "action": "ignored_permanent_vip"}
         return queue_legacy_event(payload)
     if status in IGNORED_STATUSES:
         logger.info("   ⏭️  Status '%s' diabaikan (PENDING = belum bayar)", status)
@@ -448,8 +503,8 @@ async def process_webhook(payload: dict, internal: bool = False) -> dict:
     success = bool(results) and all(r.get("success", False) for r in results)
 
     send_telegram_message(
-        f"🔔 <b>[AKSES DITAMBAHKAN]</b>\n"
-        f"🕌 OpenTurath AI\n"
+        f"🔔 <b>[PEMBELIAN GOAKAL BERHASIL]</b>\n"
+        f"🕌 <b>OpenTurath AI</b>\n"
         f"📧 Email: <code>{escape_html(email)}</code>\n"
         f"👤 Nama: <b>{escape_html(user_name or 'N/A')}</b>\n"
         f"📦 Produk: <b>{escape_html(service_name)}</b>\n"

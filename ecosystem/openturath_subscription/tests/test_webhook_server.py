@@ -200,12 +200,16 @@ class WebhookTest(unittest.TestCase):
         with self.assertRaises(RuntimeError):
             server.is_protected_owner("someone@example.test")
 
-    def test_after_cutover_this_server_writes_nothing_to_notebooklm(self):
+    def test_after_cutover_internal_and_negative_events_defer_to_vps_but_purchases_are_provisioned(self):
         self.db.docs["access_control/runtime"] = {"writer": "vps-v2"}
         self.assertEqual(self.run_hook(internal("PAID"), internal_call=True)["action"], "vps_writer_active")
-        self.assertEqual(self.run_hook(akal())["action"], "durable_vps_handoff")
-        self.assertEqual(self.nlm.added, [])
-        self.assertEqual(self.db.docs["users/u"]["entitlements"], {})
+        self.assertEqual(self.run_hook(akal(status="EXPIRED"))["action"], "durable_vps_handoff")
+        # Real purchases must NEVER be dropped or delayed; they are immediately provisioned
+        result = self.run_hook(akal())
+        self.assertEqual(result["action"], "provisioned")
+        self.assertTrue(result["success"])
+        self.assertIn("fiqh_hanafi", self.db.docs["users/u"]["entitlements"])
+        self.assertEqual([n for n, _ in self.nlm.added], registry.masters_for_scope("fiqh_hanafi"))
 
 
 class BillingPeriodTest(unittest.TestCase):

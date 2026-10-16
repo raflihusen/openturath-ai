@@ -471,7 +471,7 @@ async function consumeLegacyEvents() {
             }
             const ownerRef = ((_a = matches.docs[0]) === null || _a === void 0 ? void 0 : _a.ref) || db.collection("access_legacy_owners").doc(`legacy_${(0, access_control_1.keyOf)(decision.email)}`);
             if (!matches.size)
-                await ownerRef.set({ email: decision.email, legacy_revoke_only: true, access_due_ms: Date.now() }, { merge: true });
+                await ownerRef.set({ email: decision.email, legacy_revoke_only: false, access_due_ms: Date.now() }, { merge: true });
             const granted = [];
             for (const scope of decision.scopes) {
                 const ref = db.collection("access_grants").doc((0, access_control_1.keyOf)("goakal", decision.transactionId, scope));
