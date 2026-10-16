@@ -1,0 +1,5 @@
+Contact: mailto:support@openturath.id
+Expires: 2027-10-16T00:00:00.000Z
+Preferred-Languages: id, en, ar
+Canonical: https://openturath.id/.well-known/security.txt
+Policy: https://openturath.id/id/security/
