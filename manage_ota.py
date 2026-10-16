@@ -53,17 +53,31 @@ ALL_KNOWN_AGENTS = [
 DEFAULT_ACTIVE_AGENTS = ["fiqh_tahawwulat", "fiqh_syafii"]
 
 PRODUCTION_PRICES = {
-    "tholib_1m": 300000,
+    # Modul Spesialis Per Bidang Ilmu (Fikih Syafi'i, Hadis, dll.)
+    "tholib_1m": 49000,
+    "tholib_6m": 299000,
+    "bahits_1y": 499000,
+    # Modul Khusus Fikih Tahawwulat (5 Bilik AI Terpadu)
+    "tahawwulat_1m": 300000,
+    "tahawwulat_6m": 1499000,
+    "tahawwulat_1y": 1999000,
+    # Paket Kehormatan & Add-on
     "mustawa_1y": 1500000,
     "bithaqah_lifetime": 5000000,
-    "specialist_add_on": 300000,
+    "specialist_add_on": 49000,
 }
 
 TEST_PRICES = {
-    "tholib_1m": 1000,  # Rp 1.000 (Minimum limit QRIS Nasional Midtrans Production)
+    # Mode Pengujian QRIS Midtrans Production (Rp 1.000)
+    "tholib_1m": 1000,
+    "tholib_6m": 299000,
+    "bahits_1y": 499000,
+    "tahawwulat_1m": 1000,
+    "tahawwulat_6m": 1499000,
+    "tahawwulat_1y": 1999000,
     "mustawa_1y": 1500000,
     "bithaqah_lifetime": 5000000,
-    "specialist_add_on": 300000,
+    "specialist_add_on": 1000,
 }
 
 
@@ -253,14 +267,16 @@ def cmd_status(token):
     pricing_doc = rest_get("pricing", token)
     if pricing_doc and "fields" in pricing_doc:
         p_data = parse_firestore_fields(pricing_doc["fields"])
-        print(f"   • Tholib 1 Bulan     : Rp {p_data.get('tholib_1m', 0):,}")
+        spec_1m = p_data.get("plans", {}).get("specialists", {}).get("tholib_1m", {}).get("amount", p_data.get("tholib_1m", 0))
+        tahawwulat_1m = p_data.get("plans", {}).get("fiqh_tahawwulat", {}).get("tholib_1m", {}).get("amount", 300000)
+        print(f"   • Spesialis 1 Bulan  : Rp {spec_1m:,}")
+        print(f"   • Tahawwulat 1 Bulan : Rp {tahawwulat_1m:,}")
         print(f"   • Mustawa 1 Tahun    : Rp {p_data.get('mustawa_1y', 0):,}")
         print(f"   • Bithāqah Lifetime  : Rp {p_data.get('bithaqah_lifetime', 0):,}")
-        print(f"   • Specialist Add-On  : Rp {p_data.get('specialist_add_on', 0):,}")
         print(f"   • Revision ID        : {p_data.get('revision', '-')}")
         print(f"   • Terakhir Diubah    : {p_data.get('updated_at', '-')}")
         print(f"   • Catatan            : {p_data.get('note', '-')}")
-        if p_data.get("tholib_1m") == 1000:
+        if spec_1m == 1000 or p_data.get("tholib_1m") == 1000:
             print("   ⚠️ MODE AKTIF: [TESTING MIDTRANS PRODUCTION - Rp 1.000 QRIS]")
         else:
             print("   ✅ MODE AKTIF: [HARGA PRODUKSI RESMI]")

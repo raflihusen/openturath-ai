@@ -97,20 +97,66 @@ Future<void> main() async {
         ? AppCopy.deviceNotSupportedMessage
         : AppCopy.cannotConnectMessage;
 
-    runApp(MaterialApp(
+    runApp(_InitializationFailureApp(
+      title: title,
+      message: message,
+    ));
+  }
+}
+
+class _InitializationFailureApp extends StatefulWidget {
+  final String title;
+  final String message;
+
+  const _InitializationFailureApp({
+    required this.title,
+    required this.message,
+  });
+
+  @override
+  State<_InitializationFailureApp> createState() =>
+      _InitializationFailureAppState();
+}
+
+class _InitializationFailureAppState extends State<_InitializationFailureApp> {
+  bool _retrying = false;
+
+  Future<void> _retry() async {
+    if (_retrying) return;
+    setState(() => _retrying = true);
+    try {
+      await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform,
+      );
+      TelemetryService.instance.init();
+      runApp(const OpenTurathApp());
+    } catch (e, st) {
+      TelemetryService.instance.reportError(
+        e,
+        st,
+        context: 'firebase_init_retry_failure',
+        severity: 'critical',
+      );
+      if (mounted) setState(() => _retrying = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: AppTheme.darkTheme,
       home: Scaffold(
         backgroundColor: AppTheme.canvasDark,
         body: SafeArea(
           child: AppErrorState(
-            title: title,
-            message: message,
-            onRetry: () => main(),
+            title: widget.title,
+            message: widget.message,
+            onRetry: _retrying ? null : _retry,
           ),
         ),
       ),
-    ));
+    );
   }
 }
 

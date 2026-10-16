@@ -672,10 +672,17 @@ class _PaymentCheckoutSheetState extends State<PaymentCheckoutSheet> {
                       onCreateWindow: (controller, createWindowAction) async {
                         final targetUrl = createWindowAction.request.url;
                         if (targetUrl != null) {
-                          await controller.loadUrl(
-                            urlRequest: URLRequest(url: targetUrl),
-                          );
-                          return true;
+                          final uri = targetUrl.uriValue;
+                          if (_isAllowedPaymentDestination(uri)) {
+                            await controller.loadUrl(
+                              urlRequest: URLRequest(url: targetUrl),
+                            );
+                            return true;
+                          } else {
+                            debugPrint(
+                                '[PaymentCheckout] Blocked popup window to untrusted origin: $uri');
+                            return false;
+                          }
                         }
                         return false;
                       },
