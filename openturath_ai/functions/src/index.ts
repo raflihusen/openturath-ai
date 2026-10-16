@@ -1387,6 +1387,13 @@ export const midtransWebhook = functions
         return;
       }
 
+      // Handle synthetic test notification from Midtrans Dashboard (Test notification URL button)
+      if (String(orderId).startsWith("payment_notif_test_")) {
+        console.log(`[Midtrans Webhook] Test notification verified successfully for order: ${orderId}`);
+        res.status(200).json({ status: "OK", message: "Test notification received successfully" });
+        return;
+      }
+
       // Notification signature does not authenticate all status fields. Always
       // inquire using the server key before deciding access, including refunds.
       const inquiry = await axios.get(`${cfg.apiUrl}/${encodeURIComponent(String(orderId))}/status`, {
