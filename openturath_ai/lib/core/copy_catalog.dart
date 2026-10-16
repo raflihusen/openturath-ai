@@ -570,11 +570,7 @@ const copyCatalog = <String, List<String>>{
     "Must sign in with the same Google account to access AI assistants.",
     "يجب تسجيل الدخول بنفس حساب Google لفتح الوصول إلى المساعدين."
   ],
-  "stepTwoOfTwo": [
-    "LANGKAH 2 DARI 2",
-    "STEP 2 OF 2",
-    "الخطوة ٢ من ٢"
-  ],
+  "stepTwoOfTwo": ["LANGKAH 2 DARI 2", "STEP 2 OF 2", "الخطوة ٢ من ٢"],
   "confirmGoogleAccountTitle": [
     "Konfirmasi Akun Google",
     "Confirm Google Account",
@@ -585,11 +581,7 @@ const copyCatalog = <String, List<String>>{
     "Make sure you have signed in to Google with:",
     "تأكد من تسجيل الدخول إلى Google باستخدام:"
   ],
-  "sameAccountFallback": [
-    "Akun yang sama",
-    "Same account",
-    "الحساب نفسه"
-  ],
+  "sameAccountFallback": ["Akun yang sama", "Same account", "الحساب نفسه"],
   "pleaseSignInSameAccount": [
     "Silakan login ke Google menggunakan akun yang sama.",
     "Please sign in to Google using the same account.",
@@ -600,11 +592,7 @@ const copyCatalog = <String, List<String>>{
     "Please complete Google sign-in first.",
     "يرجى إكمال تسجيل الدخول إلى Google أولاً."
   ],
-  "checkAgain": [
-    "Periksa Lagi",
-    "Check Again",
-    "تحقق مجددًا"
-  ],
+  "checkAgain": ["Periksa Lagi", "Check Again", "تحقق مجددًا"],
   "yesAlreadySignedIn": [
     "Ya, Sudah Masuk",
     "Yes, Signed In",
@@ -2164,6 +2152,17 @@ const copyCatalog = <String, List<String>>{
     "الملاحظات المحفوظة على الجهاز بانتظار الاتصال: {0}"
   ],
   "syncNow": ["Sinkronkan", "Sync now", "مزامنة"],
+  "notesSyncing": ["Menyinkronkan…", "Syncing…", "جارٍ المزامنة…"],
+  "notesSyncSuccess": [
+    "Catatan berhasil disinkronkan ke cloud.",
+    "Notes synced to cloud successfully.",
+    "تمت مزامنة الملاحظات مع السحابة بنجاح."
+  ],
+  "notesSyncFailed": [
+    "Belum dapat menyinkronkan catatan. Periksa koneksi internet.",
+    "Unable to sync notes. Check internet connection.",
+    "تعذرت مزامنة الملاحظات. تحقق من الاتصال بالإنترنت."
+  ],
   "corpusDisciplineTab": ["Bidang ilmu", "Disciplines", "الفنون"],
   "corpusScholarTab": ["Khazanah ulama", "Scholars", "خزانة العلماء"],
   "loginTitle": [

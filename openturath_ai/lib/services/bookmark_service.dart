@@ -162,16 +162,18 @@ class BookmarkService extends ChangeNotifier {
     }
   }
 
+  bool get isSyncing => _isSyncing;
+
   /// Bidirectional smart synchronization between local storage and Firestore.
   /// Reconciles differences, migrates legacy offline notes, and ensures zero data loss.
-  Future<void> syncWithCloud({String? userId}) async {
+  Future<bool> syncWithCloud({String? userId}) async {
     final effectiveUid = userId ?? _activeAuth?.currentUser?.uid;
-    if (effectiveUid == null || effectiveUid.isEmpty) return;
+    if (effectiveUid == null || effectiveUid.isEmpty) return false;
 
     if (_isSyncing) {
       // Jangan buang permintaan: jalankan ulang setelah sinkronisasi berjalan selesai.
       _resyncRequested = true;
-      return;
+      return true;
     }
     _isSyncing = true;
 
@@ -195,7 +197,7 @@ class BookmarkService extends ChangeNotifier {
 
       final db = _db;
       if (db == null && _readCloudOverride == null) {
-        return;
+        return false;
       }
 
       // Fetch remotely before acquiring the local write lock.
@@ -250,8 +252,10 @@ class BookmarkService extends ChangeNotifier {
       await Future.wait(
           toPush.map((bookmark) => _pushToCloud(bookmark, effectiveUid)));
       notifyListeners();
+      return _pendingPushIds.isEmpty;
     } catch (e) {
       debugPrint('[BookmarkService] syncWithCloud failed: $e');
+      return false;
     } finally {
       _isSyncing = false;
       if (_resyncRequested) {

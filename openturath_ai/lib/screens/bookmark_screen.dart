@@ -29,6 +29,7 @@ import 'package:openturath_ai/core/design/ot_typography.dart';
 import 'package:openturath_ai/core/design/ot_buttons.dart';
 
 import '../widgets/ot_components.dart';
+
 class BookmarkScreen extends StatefulWidget {
   const BookmarkScreen({super.key});
 
@@ -90,9 +91,30 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
     _bookmarkService.syncWithCloud();
   }
 
+  bool _isManualSyncing = false;
+
   Future<void> _syncBookmarks() async {
-    await _bookmarkService.syncWithCloud();
-    await _loadBookmarks();
+    if (_isManualSyncing) return;
+    setState(() => _isManualSyncing = true);
+    try {
+      final success = await _bookmarkService.syncWithCloud();
+      await _loadBookmarks();
+      if (!mounted) return;
+      if (success) {
+        OTMotion.success();
+        AppSnackBar.success(context, Loc.tr('notesSyncSuccess'));
+      } else {
+        AppSnackBar.warning(context, Loc.tr('notesSyncFailed'));
+      }
+    } catch (_) {
+      if (mounted) {
+        AppSnackBar.error(context, Loc.tr('notesSyncFailed'));
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isManualSyncing = false);
+      }
+    }
   }
 
   void _onBookmarksChanged() {
@@ -465,8 +487,26 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                               ),
                             ),
                             TextButton(
-                              onPressed: _syncBookmarks,
-                              child: Text(Loc.tr('syncNow')),
+                              onPressed: _isManualSyncing ? null : _syncBookmarks,
+                              child: _isManualSyncing
+                                  ? Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        SizedBox(
+                                          width: 14,
+                                          height: 14,
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 2,
+                                            valueColor:
+                                                AlwaysStoppedAnimation<Color>(
+                                                    textSecondary),
+                                          ),
+                                        ),
+                                        const SizedBox(width: OTSpacing.xs),
+                                        Text(Loc.tr('notesSyncing')),
+                                      ],
+                                    )
+                                  : Text(Loc.tr('syncNow')),
                             ),
                           ],
                         ),
@@ -883,8 +923,8 @@ class _BookmarkCardState extends State<_BookmarkCard> {
                 crossAxisAlignment: WrapCrossAlignment.center,
                 children: [
                   Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 8, vertical: 2),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                     decoration: BoxDecoration(
                       color: OTColors.primaryContainer(isDark),
                       borderRadius: OTRadius.chipBorder,
