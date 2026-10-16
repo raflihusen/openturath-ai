@@ -550,6 +550,66 @@ const copyCatalog = <String, List<String>>{
     "Google session active",
     "جلسة Google نشطة"
   ],
+  "googleAccountMismatchTitle": [
+    "Akun Google Tidak Cocok",
+    "Google Account Mismatch",
+    "حساب Google غير متطابق"
+  ],
+  "googleAccountMismatchApp": [
+    "Anda login di aplikasi dengan akun:",
+    "You signed into the app with:",
+    "سجلت الدخول في التطبيق باستخدام:"
+  ],
+  "googleAccountMismatchBrowser": [
+    "Namun di browser Anda masuk dengan akun:",
+    "However in browser you signed in with:",
+    "لكنك في المتصفح سجلت الدخول باستخدام:"
+  ],
+  "googleAccountMismatchMustMatch": [
+    "Wajib masuk dengan akun Google yang sama agar akses asisten AI dapat dibuka.",
+    "Must sign in with the same Google account to access AI assistants.",
+    "يجب تسجيل الدخول بنفس حساب Google لفتح الوصول إلى المساعدين."
+  ],
+  "stepTwoOfTwo": [
+    "LANGKAH 2 DARI 2",
+    "STEP 2 OF 2",
+    "الخطوة ٢ من ٢"
+  ],
+  "confirmGoogleAccountTitle": [
+    "Konfirmasi Akun Google",
+    "Confirm Google Account",
+    "تأكيد حساب Google"
+  ],
+  "confirmGoogleAccountDesc": [
+    "Pastikan Anda telah masuk ke Google dengan akun:",
+    "Make sure you have signed in to Google with:",
+    "تأكد من تسجيل الدخول إلى Google باستخدام:"
+  ],
+  "sameAccountFallback": [
+    "Akun yang sama",
+    "Same account",
+    "الحساب نفسه"
+  ],
+  "pleaseSignInSameAccount": [
+    "Silakan login ke Google menggunakan akun yang sama.",
+    "Please sign in to Google using the same account.",
+    "يرجى تسجيل الدخول إلى Google باستخدام الحساب نفسه."
+  ],
+  "pleaseFinishGoogleLogin": [
+    "Harap selesaikan proses login Google terlebih dahulu.",
+    "Please complete Google sign-in first.",
+    "يرجى إكمال تسجيل الدخول إلى Google أولاً."
+  ],
+  "checkAgain": [
+    "Periksa Lagi",
+    "Check Again",
+    "تحقق مجددًا"
+  ],
+  "yesAlreadySignedIn": [
+    "Ya, Sudah Masuk",
+    "Yes, Signed In",
+    "نعم، تم تسجيل الدخول"
+  ],
   "continueWithGoogle": [
     "Lanjutkan dengan Google",
     "Continue with Google",

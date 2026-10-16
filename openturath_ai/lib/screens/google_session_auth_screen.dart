@@ -190,7 +190,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
             const SizedBox(width: 8),
             Expanded(
               child: Text(
-                'Akun Google Tidak Cocok',
+                Loc.tr('googleAccountMismatchTitle'),
                 style: ScholarlyFonts.outfit(
                   fontSize: OTFontSize.s16,
                   fontWeight: FontWeight.w700,
@@ -205,7 +205,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Anda login di aplikasi dengan akun:',
+              Loc.tr('googleAccountMismatchApp'),
               style: ScholarlyFonts.outfit(
                 fontSize: OTFontSize.s12,
                 color: OTColors.textSecondary(isDark),
@@ -230,7 +230,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
             ),
             const SizedBox(height: 12),
             Text(
-              'Namun di browser Anda masuk dengan akun:',
+              Loc.tr('googleAccountMismatchBrowser'),
               style: ScholarlyFonts.outfit(
                 fontSize: OTFontSize.s12,
                 color: OTColors.textSecondary(isDark),
@@ -255,7 +255,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
             ),
             const SizedBox(height: 14),
             Text(
-              'Wajib masuk dengan akun Google yang sama agar akses asisten AI dapat dibuka.',
+              Loc.tr('googleAccountMismatchMustMatch'),
               style: ScholarlyFonts.outfit(
                 fontSize: OTFontSize.s12,
                 height: 1.4,
@@ -289,7 +289,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
               }
             },
             child: Text(
-              'Ganti Akun Google',
+              Loc.tr('ui_f9d6eb247c'),
               style: ScholarlyFonts.outfit(fontWeight: FontWeight.w600),
             ),
           ),
@@ -331,7 +331,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
       if (mounted) {
         AppSnackBar.warning(
           context,
-          'Harap selesaikan proses login Google terlebih dahulu.',
+          Loc.tr('pleaseFinishGoogleLogin'),
         );
       }
       return;
@@ -364,7 +364,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
       if (mounted) {
         AppSnackBar.warning(
           context,
-          'Harap selesaikan proses login Google terlebih dahulu.',
+          Loc.tr('pleaseFinishGoogleLogin'),
         );
       }
       return;
@@ -382,7 +382,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
           side: BorderSide(color: OTColors.border(isDark)),
         ),
         title: Text(
-          'Konfirmasi Akun Google',
+          Loc.tr('confirmGoogleAccountTitle'),
           style: ScholarlyFonts.outfit(
             fontWeight: FontWeight.w700,
             fontSize: OTFontSize.s16,
@@ -394,7 +394,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Pastikan Anda telah masuk ke Google dengan akun:',
+              Loc.tr('confirmGoogleAccountDesc'),
               style: ScholarlyFonts.outfit(
                 fontSize: OTFontSize.s14,
                 color: OTColors.textSecondary(isDark),
@@ -409,7 +409,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
                 border: Border.all(color: OTColors.border(isDark)),
               ),
               child: Text(
-                currentEmail.isNotEmpty ? currentEmail : 'Akun yang sama',
+                currentEmail.isNotEmpty ? currentEmail : Loc.tr('sameAccountFallback'),
                 style: ScholarlyFonts.outfit(
                   fontSize: OTFontSize.s14,
                   fontWeight: FontWeight.w600,
@@ -423,7 +423,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
             child: Text(
-              'Periksa Lagi',
+              Loc.tr('checkAgain'),
               style: ScholarlyFonts.outfit(
                   color: OTColors.textSecondary(isDark)),
             ),
@@ -431,7 +431,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
           FilledButton(
             onPressed: () => Navigator.pop(ctx, true),
             child: Text(
-              'Ya, Sudah Masuk',
+              Loc.tr('yesAlreadySignedIn'),
               style: ScholarlyFonts.outfit(fontWeight: FontWeight.w600),
             ),
           ),
@@ -632,7 +632,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
               TextButton(
                 onPressed: _handleManualContinue,
                 child: Text(
-                  'Lanjutkan',
+                  Loc.tr('ui_5bcbc797a7'),
                   style: OTTypography.button(color: textPrimary),
                 ),
               ),
@@ -691,7 +691,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
                               ),
                             ),
                             child: Text(
-                              'LANGKAH 2 DARI 2',
+                              Loc.tr('stepTwoOfTwo'),
                               style: ScholarlyFonts.outfit(
                                 fontSize: OTFontSize.s11,
                                 fontWeight: FontWeight.w700,
@@ -719,8 +719,8 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
                       // Cukup bilang login dengan akun yang sama
                       Text(
                         currentEmail.isNotEmpty
-                            ? 'Silakan login ke Google menggunakan akun yang sama: $currentEmail'
-                            : 'Silakan login ke Google menggunakan akun yang sama.',
+                            ? '${Loc.tr('pleaseSignInSameAccount')}: $currentEmail'
+                            : Loc.tr('pleaseSignInSameAccount'),
                         style: ScholarlyFonts.outfit(
                           fontSize: OTFontSize.s12,
                           height: 1.4,

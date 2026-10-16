@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../core/scholarly_fonts.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../core/app_copy.dart';
 import '../core/login_error_message.dart';
@@ -24,6 +23,7 @@ import 'package:intl/intl.dart' show NumberFormat;
 import 'package:openturath_ai/core/design/ot_typography.dart';
 import 'package:openturath_ai/core/design/ot_radius.dart';
 
+import '../widgets/legal_document_sheet.dart';
 import '../widgets/app_loader.dart';
 import '../core/design/ot_motion.dart';
 
@@ -46,9 +46,13 @@ class _LoginScreenState extends State<LoginScreen> {
   void initState() {
     super.initState();
     _termsRecognizer = TapGestureRecognizer()
-      ..onTap = () => _openLegalUrl('https://openturath.id/terms.html');
+      ..onTap = () {
+        if (mounted) LegalDocumentSheet.showTermsOfService(context);
+      };
     _privacyRecognizer = TapGestureRecognizer()
-      ..onTap = () => _openLegalUrl('https://openturath.id/privacy.html');
+      ..onTap = () {
+        if (mounted) LegalDocumentSheet.showPrivacyPolicy(context);
+      };
   }
 
   @override
@@ -56,19 +60,6 @@ class _LoginScreenState extends State<LoginScreen> {
     _termsRecognizer.dispose();
     _privacyRecognizer.dispose();
     super.dispose();
-  }
-
-  Future<void> _openLegalUrl(String url) async {
-    final uri = Uri.parse(url);
-    try {
-      if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
-        await launchUrl(uri, mode: LaunchMode.platformDefault);
-      }
-    } catch (_) {
-      if (mounted) {
-        AppSnackBar.error(context, Loc.tr('ui_0fb589d0e6'));
-      }
-    }
   }
 
   Future<void> _signIn() async {
