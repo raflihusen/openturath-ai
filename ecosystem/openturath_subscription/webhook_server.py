@@ -496,6 +496,21 @@ async def process_webhook(payload: dict, internal: bool = False) -> dict:
     process_firestore_updates(email, user_name, plan, duration_months, amount, transaction_id,
                               scopes, service_name, paid_at_str)
 
+    if vps_writer_active():
+        queue_result = queue_legacy_event(payload)
+        send_telegram_message(
+            f"🔔 <b>[PEMBELIAN GOAKAL BERHASIL]</b>\n"
+            f"🕌 <b>OpenTurath AI</b>\n"
+            f"📧 Email: <code>{escape_html(email)}</code>\n"
+            f"👤 Nama: <b>{escape_html(user_name or 'N/A')}</b>\n"
+            f"📦 Produk: <b>{escape_html(service_name)}</b>\n"
+            f"🏷️ Plan: <b>{escape_html(plan.upper())}</b> ({duration_months} bln)\n"
+            f"💰 Nominal: <code>Rp {amount:,.0f}</code>\n"
+            f"🆔 Trx: <code>{escape_html(transaction_id)}</code>\n"
+            f"✅ Status: <b>Sukses diproses via VPS Worker ({len(notebook_ids)} notebook).</b>"
+        )
+        return {"success": True, "action": "provisioned", "event_id": queue_result.get("event_id")}
+
     results = []
     for nid in notebook_ids:
         results.append(await nlm.add_viewer(nid, email, user_name))

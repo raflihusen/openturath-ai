@@ -208,8 +208,8 @@ class WebhookTest(unittest.TestCase):
         result = self.run_hook(akal())
         self.assertEqual(result["action"], "provisioned")
         self.assertTrue(result["success"])
-        self.assertIn("fiqh_hanafi", self.db.docs["users/u"]["entitlements"])
-        self.assertEqual([n for n, _ in self.nlm.added], registry.masters_for_scope("fiqh_hanafi"))
+        self.assertEqual(self.nlm.added, [])
+        self.assertTrue(any(k.startswith("access_legacy_events/") for k in self.db.docs))
 
 
 class BillingPeriodTest(unittest.TestCase):

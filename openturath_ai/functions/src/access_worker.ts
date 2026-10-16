@@ -305,7 +305,7 @@ async function assignments(): Promise<void> {
   for (const doc of due.docs) {
     const u = doc.data();
     if (u.access_version !== 2 || u.adopted_by) continue;
-    if (!u.legacy_revoke_only && !u.account_deleted && !u.pending_deletion) {
+    if (!doc.id.startsWith("legacy_") && !u.legacy_revoke_only && !u.account_deleted && !u.pending_deletion) {
       try {
         const authOwner = await admin.auth().getUser(doc.id);
         if (!authOwner.emailVerified || normalEmail(authOwner.email) !== normalEmail(u.email)) throw new Error("Owner identity not verified");

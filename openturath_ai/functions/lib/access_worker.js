@@ -386,7 +386,7 @@ async function assignments() {
         const u = doc.data();
         if (u.access_version !== 2 || u.adopted_by)
             continue;
-        if (!u.legacy_revoke_only && !u.account_deleted && !u.pending_deletion) {
+        if (!doc.id.startsWith("legacy_") && !u.legacy_revoke_only && !u.account_deleted && !u.pending_deletion) {
             try {
                 const authOwner = await admin.auth().getUser(doc.id);
                 if (!authOwner.emailVerified || (0, access_control_1.normalEmail)(authOwner.email) !== (0, access_control_1.normalEmail)(u.email))
