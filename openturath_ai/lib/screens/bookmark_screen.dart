@@ -783,24 +783,16 @@ class _BookmarkCardState extends State<_BookmarkCard> {
         ));
       }
       final matchedPart = text.substring(m.start, m.end);
+      // Untuk teks Arab dan Latin, gunakan TextSpan dengan background
+      // agar tidak memotong ligatur huruf sambung (cursive shaping) teks Arab.
       spans.add(
-        WidgetSpan(
-          alignment: PlaceholderAlignment.middle,
-          child: Container(
-            margin: const EdgeInsets.symmetric(horizontal: 2),
-            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-            decoration: BoxDecoration(
-              color: isDark ? OTColors.surfaceLight : OTColors.surfaceDark,
-              borderRadius: BorderRadius.circular(OTRadius.xs),
-            ),
-            child: Text(
-              matchedPart,
-              textDirection: isRtl ? TextDirection.rtl : null,
-              style: baseStyle.copyWith(
-                color: isDark ? OTColors.surfaceDark : OTColors.surfaceLight,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
+        TextSpan(
+          text: matchedPart,
+          style: baseStyle.copyWith(
+            color: isDark ? OTColors.surfaceDark : OTColors.surfaceLight,
+            backgroundColor:
+                isDark ? OTColors.surfaceLight : OTColors.surfaceDark,
+            fontWeight: FontWeight.w700,
           ),
         ),
       );

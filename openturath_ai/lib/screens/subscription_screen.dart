@@ -212,7 +212,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
 
   Widget _card({required Widget child, bool flagship = false}) {
     final dark = Theme.of(context).brightness == Brightness.dark;
-    final border = OTColors.surface(dark);
+    final border = OTColors.border(dark);
     if (flagship) {
       final direction = Directionality.of(context);
       // Kartu utama selalu bertinta gelap dengan pola bintang delapan yang

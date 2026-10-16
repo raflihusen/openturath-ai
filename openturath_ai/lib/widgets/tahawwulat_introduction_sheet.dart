@@ -482,18 +482,23 @@ class _TahawwulatIntroductionSheetState
         child: Row(children: [
           for (var k = 0; k < _bab.length; k++)
             Expanded(
-              child: GestureDetector(
-                behavior: HitTestBehavior.opaque,
-                onTap: () => _ke(k),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: OTSpacing.xxs, vertical: OTSpacing.sm),
-                  child: AnimatedContainer(
-                    duration: OTMotion.normal,
-                    height: 2,
-                    color: k <= _i
-                        ? OTColors.textPrimary(isDark)
-                        : OTColors.border(isDark),
+              child: Semantics(
+                label: 'Bab ${k + 1}: ${_bab[k].label}',
+                button: true,
+                selected: k == _i,
+                child: GestureDetector(
+                  behavior: HitTestBehavior.opaque,
+                  onTap: () => _ke(k),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: OTSpacing.xxs, vertical: OTSpacing.sm),
+                    child: AnimatedContainer(
+                      duration: OTMotion.normal,
+                      height: 2,
+                      color: k <= _i
+                          ? OTColors.textPrimary(isDark)
+                          : OTColors.border(isDark),
+                    ),
                   ),
                 ),
               ),

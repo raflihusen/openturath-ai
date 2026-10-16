@@ -295,10 +295,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
         'ushul_fiqh' => 'Usul Fikih',
         'nahwu' => 'Bahasa Arab',
         'tafsir' => "Tafsir Al-Qur'an",
-        'hadits' => 'Matan Hadits',
+        'hadits' => 'Matan Hadis',
         'aqidah' => 'Akidah',
         'tarikh' => 'Sejarah & Sirah',
-        'tasawwuf' => 'Tasawwuf & Adzkar',
+        'tasawwuf' => 'Tasawuf & Adzkar',
         'bibliografi_faharis' => 'Bibliografi & Faharis',
         _ => AppCopy.navStudies,
       });
@@ -369,7 +369,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       decoration: BoxDecoration(
                         color: surface,
                         borderRadius: OTRadius.cardBorder,
-                        border: Border.all(color: surface),
+                        border: Border.all(color: border),
                       ),
                       child: Column(
                         children: [
@@ -515,7 +515,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       decoration: BoxDecoration(
                         color: surface,
                         borderRadius: OTRadius.cardBorder,
-                        border: Border.all(color: surface),
+                        border: Border.all(color: border),
                       ),
                       child: Column(
                         children: [

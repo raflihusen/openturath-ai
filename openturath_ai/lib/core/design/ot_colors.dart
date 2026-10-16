@@ -56,9 +56,9 @@ class OTColors {
   static const Color marjaDark =
       Color(0xFFC4C4C4); // Tinta status di mode gelap
 
-  // Penanda Fikih Tahawwulat (token `tahawwulat` design system): hanya untuk
-  // garis, ikon, dan lencana, tidak untuk teks panjang.
-  static const Color tahawwulat = Color(0xFFD97706);
+  // Penanda Fikih Tahawwulat (Monochrome Editorial):
+  // Menjaga kepatuhan Aturan Sakral #9 AGENTS.md (zero amber/orange/yellow).
+  static const Color tahawwulat = textPrimaryLight;
 
   // ── 6. Status kritis — satu-satunya warna di luar tinta dan kertas ──
   // Merah hanya untuk galat dan aksi permanen, selalu bersama ikon dan pesan.
