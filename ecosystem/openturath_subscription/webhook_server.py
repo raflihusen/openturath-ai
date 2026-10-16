@@ -250,7 +250,7 @@ def is_protected_owner(email: str) -> bool:
             return True
     return False
 
-def determine_plan_and_expiry(price_scheme_name: str, service_name: str) -> tuple[str, int]:
+def determine_plan_and_expiry(price_scheme_name: str, service_name: str, amount: float = 0.0) -> tuple[str, int]:
     # Default to 1 month tholib
     plan = "tholib_1m"
     duration_months = 1
@@ -278,6 +278,30 @@ def determine_plan_and_expiry(price_scheme_name: str, service_name: str) -> tupl
         else:
             plan = "tholib_1m"
             duration_months = 1
+
+    # Sanity guard against amount mismatch (cegah kebocoran nominal kecil mendapatkan durasi panjang)
+    if amount and amount > 0:
+        is_tahawwulat = "tahawwulat" in service_name_lower
+        if is_tahawwulat:
+            # Tahawwulat: 1M ~ Rp 300.000, 6M ~ Rp 1.499.000, 1Y ~ Rp 1.999.000
+            if duration_months == 12 and amount < 1000000:
+                logger.warning("🚨 [FRAUD/MISMATCH GUARD] Nominal Rp %s terlalu kecil untuk Tahawwulat 12 bln. Downgrade ke 1 bln.", amount)
+                plan = "tholib_1m"
+                duration_months = 1
+            elif duration_months == 6 and amount < 600000:
+                logger.warning("🚨 [FRAUD/MISMATCH GUARD] Nominal Rp %s terlalu kecil untuk Tahawwulat 6 bln. Downgrade ke 1 bln.", amount)
+                plan = "tholib_1m"
+                duration_months = 1
+        else:
+            # Spesialis: 1M ~ Rp 49.000-99.000, 6M ~ Rp 299.000, 1Y ~ Rp 499.000
+            if duration_months == 12 and amount < 350000:
+                logger.warning("🚨 [FRAUD/MISMATCH GUARD] Nominal Rp %s terlalu kecil untuk Spesialis 12 bln. Downgrade ke 1 bln.", amount)
+                plan = "tholib_1m"
+                duration_months = 1
+            elif duration_months == 6 and amount < 200000:
+                logger.warning("🚨 [FRAUD/MISMATCH GUARD] Nominal Rp %s terlalu kecil untuk Spesialis 6 bln. Downgrade ke 1 bln.", amount)
+                plan = "tholib_1m"
+                duration_months = 1
             
     return plan, duration_months
 
@@ -489,7 +513,7 @@ async def process_webhook(payload: dict, internal: bool = False) -> dict:
         logger.error("❌ Produk '%s' tidak ada di katalog. Transaksi dikarantina.", service_name)
         return queue_legacy_event(payload, "unknown_service")
 
-    plan, duration_months = determine_plan_and_expiry(price_scheme_name, service_name)
+    plan, duration_months = determine_plan_and_expiry(price_scheme_name, service_name, amount)
     notebook_ids = masters_for_scopes([s for s in scopes if s not in ALL_ACCESS_SCOPES])
     logger.info("   ✅ TAMBAH akses: %s → %s (%d notebook)", mask_email(email), service_name, len(notebook_ids))
 

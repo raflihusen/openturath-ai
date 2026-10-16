@@ -222,6 +222,27 @@ class BillingPeriodTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             access_policy.billing_expiry(start, 0)
 
+    def test_determine_plan_nominal_mismatch_guard(self):
+        # Rp 99.000 for Tahawwulat cannot be 12 months (downgraded to 1 month)
+        plan, months = server.determine_plan_and_expiry("12 bulan", "AI Fikih Tahawwulat", 99000)
+        self.assertEqual(plan, "tholib_1m")
+        self.assertEqual(months, 1)
+
+        # Rp 1.999.000 for Tahawwulat is legitimately 12 months
+        plan, months = server.determine_plan_and_expiry("12 bulan", "AI Fikih Tahawwulat", 1999000)
+        self.assertEqual(plan, "bahits_1y")
+        self.assertEqual(months, 12)
+
+        # Rp 99.000 for Specialist cannot be 12 months (downgraded to 1 month)
+        plan, months = server.determine_plan_and_expiry("12 bulan", "AI Fikih Syafi'i", 99000)
+        self.assertEqual(plan, "tholib_1m")
+        self.assertEqual(months, 1)
+
+        # Rp 499.000 for Specialist is legitimately 12 months
+        plan, months = server.determine_plan_and_expiry("12 bulan", "AI Fikih Syafi'i", 499000)
+        self.assertEqual(plan, "bahits_1y")
+        self.assertEqual(months, 12)
+
 
 if __name__ == "__main__":
     unittest.main()
