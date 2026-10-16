@@ -20,9 +20,9 @@ abstract final class LegalCopy {
   static const effectiveDate = '13 September 2026';
   static const managerName = 'Pengelola OpenTurath';
   static const managerAddress = 'Indonesia';
-  static const contactSupportEmail = 'openturath@gmail.com';
-  static const contactPrivacyEmail = 'openturath@gmail.com';
-  static const contactCopyrightEmail = 'openturath@gmail.com';
+  static const contactSupportEmail = 'support@openturath.id';
+  static const contactPrivacyEmail = 'support@openturath.id';
+  static const contactCopyrightEmail = 'support@openturath.id';
   static const serviceHours = 'Senin – Jumat, 09.00 – 17.00 WIB';
   static const supportSla = '2 (dua) hari kerja';
   static const refundSla = '7 (tujuh) hari kerja';

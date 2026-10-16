@@ -121,9 +121,9 @@ export const articles = {
           "الجهة المشغلة والدعم"
         ],
         "body": [
-          "Pengelola OpenTurath, Indonesia. Kontak resmi openturath@gmail.com. Jam layanan Senin sampai Jumat, 09.00 sampai 17.00 WIB. Tanggapan awal diupayakan dalam 2 hari kerja.",
-          "Pengelola OpenTurath, Indonesia. Official contact: openturath@gmail.com. Service hours are Monday to Friday, 09:00 to 17:00 WIB (UTC+7). Initial support response is targeted within 2 business days.",
-          "الجهة المشغلة: Pengelola OpenTurath، إندونيسيا. التواصل: openturath@gmail.com. ساعات الخدمة من الاثنين إلى الجمعة، من ٠٩:٠٠ إلى ١٧:٠٠ بتوقيت جاكرتا (UTC+7). الرد الأولي خلال يومي عمل."
+          "Pengelola OpenTurath, Indonesia. Kontak resmi support@openturath.id. Jam layanan Senin sampai Jumat, 09.00 sampai 17.00 WIB. Tanggapan awal diupayakan dalam 2 hari kerja.",
+          "Pengelola OpenTurath, Indonesia. Official contact: support@openturath.id. Service hours are Monday to Friday, 09:00 to 17:00 WIB (UTC+7). Initial support response is targeted within 2 business days.",
+          "الجهة المشغلة: Pengelola OpenTurath، إندونيسيا. التواصل: support@openturath.id. ساعات الخدمة من الاثنين إلى الجمعة، من ٠٩:٠٠ إلى ١٧:٠٠ بتوقيت جاكرتا (UTC+7). الرد الأولي خلال يومي عمل."
         ]
       }
     ]
@@ -143,9 +143,9 @@ export const articles = {
           "١. المشغّل ونطاق الشروط"
         ],
         "body": [
-          "OpenTurath dikelola oleh Pengelola OpenTurath, beralamat di Indonesia, selanjutnya disebut \"kami\". Pengguna aplikasi disebut \"Anda\". Kontak layanan tersedia melalui openturath@gmail.com.\n\nKetentuan ini mengatur penggunaan akun, asisten AI, katalog rujukan, Catatan, dan fitur berbayar yang disediakan melalui OpenTurath. Informasi paket yang ditampilkan sebelum pembelian, Kebijakan Pembayaran dan Pengembalian Dana, serta Panduan Penggunaan AI dan Pemeriksaan Rujukan menjadi bagian dari ketentuan penggunaan yang relevan.",
-          "OpenTurath is operated by Pengelola OpenTurath, located in Indonesia, hereinafter referred to as \"we\" or \"us\". Users of the application are referred to as \"you\". Service contact is available via openturath@gmail.com.\n\nThese terms govern the use of accounts, AI assistants, reference catalogs, Notes, and paid features provided through OpenTurath. Plan details displayed prior to purchase, the Payment and Refund Policy, and the AI Guidelines and Reference Verification Guide form part of the applicable terms of use.",
-          "تُدار منصة OpenTurath بواسطة Pengelola OpenTurath، ومقرها في إندونيسيا، ويُشار إليها لاحقًا بـ \"نحن\". ويُشار إلى مستخدمي التطبيق بـ \"أنت\". يتوفر التواصل عبر openturath@gmail.com.\n\nتنظم هذه الشروط استخدام الحسابات، ومساعدي الذكاء الاصطناعي، وفهرس المراجع، وميزة الملاحظات، والخدمات المدفوعة المقدمة عبر OpenTurath. وتُعد تفاصيل الباقات المعروضة قبل الشراء، وسياسة الدفع واسترداد الأموال، ودليل استخدام الذكاء الاصطناعي ومراجعة النقول جزءًا لا يتجزأ من هذه الشروط."
+          "OpenTurath dikelola oleh Pengelola OpenTurath, beralamat di Indonesia, selanjutnya disebut \"kami\". Pengguna aplikasi disebut \"Anda\". Kontak layanan tersedia melalui support@openturath.id.\n\nKetentuan ini mengatur penggunaan akun, asisten AI, katalog rujukan, Catatan, dan fitur berbayar yang disediakan melalui OpenTurath. Informasi paket yang ditampilkan sebelum pembelian, Kebijakan Pembayaran dan Pengembalian Dana, serta Panduan Penggunaan AI dan Pemeriksaan Rujukan menjadi bagian dari ketentuan penggunaan yang relevan.",
+          "OpenTurath is operated by Pengelola OpenTurath, located in Indonesia, hereinafter referred to as \"we\" or \"us\". Users of the application are referred to as \"you\". Service contact is available via support@openturath.id.\n\nThese terms govern the use of accounts, AI assistants, reference catalogs, Notes, and paid features provided through OpenTurath. Plan details displayed prior to purchase, the Payment and Refund Policy, and the AI Guidelines and Reference Verification Guide form part of the applicable terms of use.",
+          "تُدار منصة OpenTurath بواسطة Pengelola OpenTurath، ومقرها في إندونيسيا، ويُشار إليها لاحقًا بـ \"نحن\". ويُشار إلى مستخدمي التطبيق بـ \"أنت\". يتوفر التواصل عبر support@openturath.id.\n\nتنظم هذه الشروط استخدام الحسابات، ومساعدي الذكاء الاصطناعي، وفهرس المراجع، وميزة الملاحظات، والخدمات المدفوعة المقدمة عبر OpenTurath. وتُعد تفاصيل الباقات المعروضة قبل الشراء، وسياسة الدفع واسترداد الأموال، ودليل استخدام الذكاء الاصطناعي ومراجعة النقول جزءًا لا يتجزأ من هذه الشروط."
         ]
       },
       {
@@ -167,9 +167,9 @@ export const articles = {
           "٣. الحساب وأمن الوصول"
         ],
         "body": [
-          "Gunakan informasi akun yang benar dan akses masuk yang menjadi hak Anda. Akun bersifat pribadi, kecuali suatu paket secara tertulis menyediakan penggunaan untuk beberapa orang.\n\nJaga perangkat dan akses masuk Anda. Jangan memberikan kata sandi atau kode sekali pakai kepada pihak lain. Laporkan dugaan penggunaan tanpa izin melalui openturath@gmail.com. Laporan pengambilalihan akun akan diperiksa berdasarkan keadaan dan bukti yang tersedia.",
-          "Provide accurate account information and use credentials that you are authorized to use. Accounts are personal, unless a specific plan expressly provides for multi-user access in writing.\n\nSafeguard your device and login credentials. Do not share your password or one-time codes with others. Report any suspected unauthorized access to openturath@gmail.com. Account takeover reports will be investigated based on the circumstances and available evidence.",
-          "يجب استخدام بيانات صحيحة وبيانات دخول مخولة لك قانونًا. الحساب شخصي وخاص، ما لم تنص باقة معينة صراحةً على استخدام متعدد. حافظ على جهازك وبيانات دخولك، ولا تشارك كلمة المرور أو رموز التحقق لمرة واحدة مع أي طرف. أبلغ عن أي اشتباه في استخدام غير مصرح به عبر openturath@gmail.com، وستتم مراجعة البلاغات بناءً على الوقائع والأدلة المتاحة."
+          "Gunakan informasi akun yang benar dan akses masuk yang menjadi hak Anda. Akun bersifat pribadi, kecuali suatu paket secara tertulis menyediakan penggunaan untuk beberapa orang.\n\nJaga perangkat dan akses masuk Anda. Jangan memberikan kata sandi atau kode sekali pakai kepada pihak lain. Laporkan dugaan penggunaan tanpa izin melalui support@openturath.id. Laporan pengambilalihan akun akan diperiksa berdasarkan keadaan dan bukti yang tersedia.",
+          "Provide accurate account information and use credentials that you are authorized to use. Accounts are personal, unless a specific plan expressly provides for multi-user access in writing.\n\nSafeguard your device and login credentials. Do not share your password or one-time codes with others. Report any suspected unauthorized access to support@openturath.id. Account takeover reports will be investigated based on the circumstances and available evidence.",
+          "يجب استخدام بيانات صحيحة وبيانات دخول مخولة لك قانونًا. الحساب شخصي وخاص، ما لم تنص باقة معينة صراحةً على استخدام متعدد. حافظ على جهازك وبيانات دخولك، ولا تشارك كلمة المرور أو رموز التحقق لمرة واحدة مع أي طرف. أبلغ عن أي اشتباه في استخدام غير مصرح به عبر support@openturath.id، وستتم مراجعة البلاغات بناءً على الوقائع والأدلة المتاحة."
         ]
       },
       {
@@ -263,9 +263,9 @@ export const articles = {
           "١١. تعليق الحساب وإغلاقه"
         ],
         "body": [
-          "Kami dapat membatasi akses jika terdapat dasar yang wajar mengenai pelanggaran serius, risiko keamanan, atau penggunaan tanpa hak. Tindakan disesuaikan dengan tingkat masalah, mulai dari peringatan, penghentian sementara, hingga penutupan akun.\n\nJika keadaan memungkinkan, kami menyampaikan alasan dan memberi kesempatan klarifikasi melalui openturath@gmail.com.",
-          "We may restrict access if there are reasonable grounds regarding serious violations, security risks, or unauthorized usage. Actions are proportionate to the severity, ranging from notices and temporary suspension to account termination.\n\nWhere practicable, we communicate the reasons and provide an opportunity for clarification via openturath@gmail.com.",
-          "يجوز تقييد الوصول عند وجود أسباب وجيهة لمخالفة جسيمة أو خطر أمني أو استخدام غير مشروع. وتتدرج الإجراءات تناسبًا من الإنذار والتعليق المؤقت إلى الإغلاق التام.\n\nومتى أمكن، نوضح الأسباب ونمنح فرصة لتقديم الإيضاحات عبر openturath@gmail.com."
+          "Kami dapat membatasi akses jika terdapat dasar yang wajar mengenai pelanggaran serius, risiko keamanan, atau penggunaan tanpa hak. Tindakan disesuaikan dengan tingkat masalah, mulai dari peringatan, penghentian sementara, hingga penutupan akun.\n\nJika keadaan memungkinkan, kami menyampaikan alasan dan memberi kesempatan klarifikasi melalui support@openturath.id.",
+          "We may restrict access if there are reasonable grounds regarding serious violations, security risks, or unauthorized usage. Actions are proportionate to the severity, ranging from notices and temporary suspension to account termination.\n\nWhere practicable, we communicate the reasons and provide an opportunity for clarification via support@openturath.id.",
+          "يجوز تقييد الوصول عند وجود أسباب وجيهة لمخالفة جسيمة أو خطر أمني أو استخدام غير مشروع. وتتدرج الإجراءات تناسبًا من الإنذار والتعليق المؤقت إلى الإغلاق التام.\n\nومتى أمكن، نوضح الأسباب ونمنح فرصة لتقديم الإيضاحات عبر support@openturath.id."
         ]
       },
       {
@@ -287,9 +287,9 @@ export const articles = {
           "١٣. الشكاوى وتسوية النزاعات"
         ],
         "body": [
-          "Hubungi openturath@gmail.com dengan penjelasan masalah dan informasi yang relevan. Kami akan mencatat pengaduan, menyampaikan perkembangan penanganan dalam 2 (dua) hari kerja, dan mengupayakan penyelesaian secara musyawarah.\n\nKetentuan ini tunduk pada hukum Republik Indonesia.",
-          "Contact openturath@gmail.com with a clear description of the issue and relevant information. We will log your complaint, provide an initial update within 2 (two) business days, and seek amicable resolution.\n\nThese terms are governed by the laws of the Republic of Indonesia.",
-          "تواصل عبر openturath@gmail.com مع بيان المشكلة والبيانات المتعلقة بها. سنقيد الشكوى ونقدم تحديثًا أوليًا خلال يومي (٢) عمل، مع السعي للحل الودي.\n\nتخضع هذه الشروط لقوانين جمهورية إندونيسيا."
+          "Hubungi support@openturath.id dengan penjelasan masalah dan informasi yang relevan. Kami akan mencatat pengaduan, menyampaikan perkembangan penanganan dalam 2 (dua) hari kerja, dan mengupayakan penyelesaian secara musyawarah.\n\nKetentuan ini tunduk pada hukum Republik Indonesia.",
+          "Contact support@openturath.id with a clear description of the issue and relevant information. We will log your complaint, provide an initial update within 2 (two) business days, and seek amicable resolution.\n\nThese terms are governed by the laws of the Republic of Indonesia.",
+          "تواصل عبر support@openturath.id مع بيان المشكلة والبيانات المتعلقة بها. سنقيد الشكوى ونقدم تحديثًا أوليًا خلال يومي (٢) عمل، مع السعي للحل الودي.\n\nتخضع هذه الشروط لقوانين جمهورية إندونيسيا."
         ]
       },
       {
@@ -299,9 +299,9 @@ export const articles = {
           "١٤. تعديل الشروط وبيانات التواصل"
         ],
         "body": [
-          "Versi dokumen: 1.0 (Berlaku sejak 13 September 2026).\n\nPerubahan penting akan diberitahukan sebelum berlaku dan tidak berlaku surut untuk menghilangkan hak yang telah timbul.\n\nPengelola: Pengelola OpenTurath\nAlamat: Indonesia\nBantuan: openturath@gmail.com\nPrivasi: openturath@gmail.com\nHak Cipta: openturath@gmail.com",
-          "Document version: 1.0 (Effective from 13 September 2026).\n\nMaterial amendments will be notified prior to becoming effective and will not apply retroactively to eliminate existing rights.\n\nOperator: Pengelola OpenTurath\nAddress: Indonesia\nSupport: openturath@gmail.com\nPrivacy: openturath@gmail.com\nCopyright: openturath@gmail.com",
-          "نسخة الوثيقة: ١.٠ (سارية من ١٣ سبتمبر ٢٠٢٦).\n\nيُشعر بالتعديلات الجوهرية قبل سريانها ولا تطبق بأثر رجعي لإسقاط حقوق مكتسبة.\n\nالمشغّل: Pengelola OpenTurath\nالعنوان: إندونيسيا\nالدعم: openturath@gmail.com\nالخصوصية: openturath@gmail.com\nحقوق النشر: openturath@gmail.com"
+          "Versi dokumen: 1.0 (Berlaku sejak 13 September 2026).\n\nPerubahan penting akan diberitahukan sebelum berlaku dan tidak berlaku surut untuk menghilangkan hak yang telah timbul.\n\nPengelola: Pengelola OpenTurath\nAlamat: Indonesia\nBantuan: support@openturath.id\nPrivasi: support@openturath.id\nHak Cipta: support@openturath.id",
+          "Document version: 1.0 (Effective from 13 September 2026).\n\nMaterial amendments will be notified prior to becoming effective and will not apply retroactively to eliminate existing rights.\n\nOperator: Pengelola OpenTurath\nAddress: Indonesia\nSupport: support@openturath.id\nPrivacy: support@openturath.id\nCopyright: support@openturath.id",
+          "نسخة الوثيقة: ١.٠ (سارية من ١٣ سبتمبر ٢٠٢٦).\n\nيُشعر بالتعديلات الجوهرية قبل سريانها ولا تطبق بأثر رجعي لإسقاط حقوق مكتسبة.\n\nالمشغّل: Pengelola OpenTurath\nالعنوان: إندونيسيا\nالدعم: support@openturath.id\nالخصوصية: support@openturath.id\nحقوق النشر: support@openturath.id"
         ]
       }
     ],
@@ -322,9 +322,9 @@ export const articles = {
           "١. مسؤول معالجة البيانات ونطاق السياسة"
         ],
         "body": [
-          "Kebijakan Privasi ini menjelaskan pemrosesan data pribadi saat Anda menggunakan aplikasi OpenTurath, pembayaran, dan bantuan layanan. Pengelola OpenTurath (Indonesia) bertanggung jawab atas pemrosesan data yang tujuan dan caranya ditentukan oleh OpenTurath, sesuai UU Nomor 27 Tahun 2022 tentang Pelindungan Data Pribadi.\n\nUntuk pertanyaan privasi, hubungi openturath@gmail.com.",
-          "This Privacy Policy explains personal data processing when you use OpenTurath applications, payments, and customer support. Pengelola OpenTurath (Indonesia) is the data controller responsible for determining purposes and means of processing, pursuant to Law No. 27 of 2022 on Personal Data Protection (UU PDP).\n\nFor privacy inquiries, contact openturath@gmail.com.",
-          "توضح سياسة الخصوصية هذه معالجة البيانات الشخصية عند استخدام تطبيقات OpenTurath وخدمات الدفع والدعم. وتعد Pengelola OpenTurath في إندونيسيا هي الجهة المسؤولة عن تحديد أغراض المعالجة ووسائلها وفق قانون حماية البيانات الشخصية الإندونيسي (القانون رقم ٢٧ لسنة ٢٠٢٢).\n\nللاستفسارات المتعلقة بالخصوصية: openturath@gmail.com."
+          "Kebijakan Privasi ini menjelaskan pemrosesan data pribadi saat Anda menggunakan aplikasi OpenTurath, pembayaran, dan bantuan layanan. Pengelola OpenTurath (Indonesia) bertanggung jawab atas pemrosesan data yang tujuan dan caranya ditentukan oleh OpenTurath, sesuai UU Nomor 27 Tahun 2022 tentang Pelindungan Data Pribadi.\n\nUntuk pertanyaan privasi, hubungi support@openturath.id.",
+          "This Privacy Policy explains personal data processing when you use OpenTurath applications, payments, and customer support. Pengelola OpenTurath (Indonesia) is the data controller responsible for determining purposes and means of processing, pursuant to Law No. 27 of 2022 on Personal Data Protection (UU PDP).\n\nFor privacy inquiries, contact support@openturath.id.",
+          "توضح سياسة الخصوصية هذه معالجة البيانات الشخصية عند استخدام تطبيقات OpenTurath وخدمات الدفع والدعم. وتعد Pengelola OpenTurath في إندونيسيا هي الجهة المسؤولة عن تحديد أغراض المعالجة ووسائلها وفق قانون حماية البيانات الشخصية الإندونيسي (القانون رقم ٢٧ لسنة ٢٠٢٢).\n\nللاستفسارات المتعلقة بالخصوصية: support@openturath.id."
         ]
       },
       {
@@ -442,9 +442,9 @@ export const articles = {
           "١١. حقوق أصحاب البيانات"
         ],
         "body": [
-          "Sesuai UU Perlindungan Data Pribadi, Anda berhak:\n• Mengakses dan memperoleh informasi mengenai data pribadi yang diproses.\n• Memperbarui atau memperbaiki data profil yang keliru.\n• Meminta penghapusan akun dan data pribadi Anda kapan saja melalui aplikasi.\n• Menyampaikan keberatan atau pertanyaan seputar privasi ke openturath@gmail.com.",
-          "Pursuant to the Personal Data Protection Law, you have the right to:\n• Access and obtain information regarding your processed personal data.\n• Update or correct inaccurate profile data.\n• Request deletion of your account and personal data at any time via the application.\n• Submit objections or privacy questions to openturath@gmail.com.",
-          "وفقًا لقانون حماية البيانات الشخصية، يحق لك:\n• الاطلاع على بياناتك الشخصية المعالجة والحصول على معلومات عنها.\n• تحديث البيانات غير الدقيقة أو تصحيحها.\n• طلب حذف حسابك وبياناتك الشخصية في أي وقت من خلال التطبيق.\n• تقديم أي استفسار أو اعتراض عبر openturath@gmail.com."
+          "Sesuai UU Perlindungan Data Pribadi, Anda berhak:\n• Mengakses dan memperoleh informasi mengenai data pribadi yang diproses.\n• Memperbarui atau memperbaiki data profil yang keliru.\n• Meminta penghapusan akun dan data pribadi Anda kapan saja melalui aplikasi.\n• Menyampaikan keberatan atau pertanyaan seputar privasi ke support@openturath.id.",
+          "Pursuant to the Personal Data Protection Law, you have the right to:\n• Access and obtain information regarding your processed personal data.\n• Update or correct inaccurate profile data.\n• Request deletion of your account and personal data at any time via the application.\n• Submit objections or privacy questions to support@openturath.id.",
+          "وفقًا لقانون حماية البيانات الشخصية، يحق لك:\n• الاطلاع على بياناتك الشخصية المعالجة والحصول على معلومات عنها.\n• تحديث البيانات غير الدقيقة أو تصحيحها.\n• طلب حذف حسابك وبياناتك الشخصية في أي وقت من خلال التطبيق.\n• تقديم أي استفسار أو اعتراض عبر support@openturath.id."
         ]
       },
       {
@@ -454,9 +454,9 @@ export const articles = {
           "١٢. المستخدمون القاصرون"
         ],
         "body": [
-          "Pendaftaran akun mandiri ditujukan bagi pengguna berusia 18 tahun ke atas. Jika Anda orang tua atau wali dan mendapati akun dibuka tanpa izin yang diperlukan, hubungi openturath@gmail.com untuk penanganan dan penghapusan data.",
-          "Self-registration is intended for users who are 18 years of age or older. If you are a parent or guardian and discover that an account was created without necessary authorization, contact openturath@gmail.com for prompt resolution and data deletion.",
-          "التسجيل الذاتي مخصص لمن أتم ثمانية عشر (١٨) عامًا فما فوق. وإذا كنت ولي أمر أو وصيًا واكتشفت إنشاء حساب دون إذن، فتواصل معنا عبر openturath@gmail.com للتعامل مع الحالة وحذف البيانات فورًا."
+          "Pendaftaran akun mandiri ditujukan bagi pengguna berusia 18 tahun ke atas. Jika Anda orang tua atau wali dan mendapati akun dibuka tanpa izin yang diperlukan, hubungi support@openturath.id untuk penanganan dan penghapusan data.",
+          "Self-registration is intended for users who are 18 years of age or older. If you are a parent or guardian and discover that an account was created without necessary authorization, contact support@openturath.id for prompt resolution and data deletion.",
+          "التسجيل الذاتي مخصص لمن أتم ثمانية عشر (١٨) عامًا فما فوق. وإذا كنت ولي أمر أو وصيًا واكتشفت إنشاء حساب دون إذن، فتواصل معنا عبر support@openturath.id للتعامل مع الحالة وحذف البيانات فورًا."
         ]
       },
       {
@@ -466,9 +466,9 @@ export const articles = {
           "١٣. التواصل وتحديثات السياسة"
         ],
         "body": [
-          "Versi dokumen: 1.0 (Berlaku sejak 13 September 2026).\n\nUntuk pertanyaan atau permohonan hak privasi, hubungi:\nEmail: openturath@gmail.com\nPengelola: Pengelola OpenTurath (Indonesia)",
-          "Document version: 1.0 (Effective from 13 September 2026).\n\nFor questions or exercising privacy rights, contact:\nEmail: openturath@gmail.com\nOperator: Pengelola OpenTurath (Indonesia)",
-          "نسخة الوثيقة: ١.٠ (سارية من ١٣ سبتمبر ٢٠٢٦).\n\nللاستفسارات وممارسة حقوق الخصوصية، يرجى التواصل عبر:\nالبريد الإلكتروني: openturath@gmail.com\nالمشغّل: Pengelola OpenTurath (إندونيسيا)"
+          "Versi dokumen: 1.0 (Berlaku sejak 13 September 2026).\n\nUntuk pertanyaan atau permohonan hak privasi, hubungi:\nEmail: support@openturath.id\nPengelola: Pengelola OpenTurath (Indonesia)",
+          "Document version: 1.0 (Effective from 13 September 2026).\n\nFor questions or exercising privacy rights, contact:\nEmail: support@openturath.id\nOperator: Pengelola OpenTurath (Indonesia)",
+          "نسخة الوثيقة: ١.٠ (سارية من ١٣ سبتمبر ٢٠٢٦).\n\nللاستفسارات وممارسة حقوق الخصوصية، يرجى التواصل عبر:\nالبريد الإلكتروني: support@openturath.id\nالمشغّل: Pengelola OpenTurath (إندونيسيا)"
         ]
       }
     ],
@@ -501,9 +501,9 @@ export const articles = {
           "٢. الدفع وتفعيل الوصول"
         ],
         "body": [
-          "Pembayaran diproses melalui gerbang pembayaran resmi Midtrans dengan metode QRIS, transfer bank (virtual account), maupun dompet digital.\n\nBukti pembayaran resmi dikirimkan melalui notifikasi Midtrans dan email akun Anda. Masa akses aktif seketika transaksi dinyatakan berhasil dan tersinkronisasi. Jika dana telah terpotong namun status belum aktif, jangan melakukan pembayaran ulang; hubungi openturath@gmail.com dengan menyertakan nomor transaksi.",
-          "Payments are processed through the official Midtrans gateway using QRIS, bank transfer (virtual account), or digital wallets.\n\nOfficial payment receipts are delivered via Midtrans notifications and your account email. Access activates immediately once the transaction is confirmed successful and synced. If funds were deducted but access is not activated, do not repay; contact openturath@gmail.com with your transaction ID.",
-          "تتم معالجة المدفوعات عبر بوابة Midtrans الرسمية بواسطة QRIS أو التحويل البنكي (الحساب الافتراضي) أو المحافظ الإلكترونية.\n\nيُرسل إيصال الدفع عبر إشعارات Midtrans وبريد حسابك. يُفعّل الوصول فور تأكيد نجاح المعاملة، وإذا خُصم المبلغ دون تفعيل فامتنع عن إعادة الدفع وتواصل مع openturath@gmail.com برقم المعاملة."
+          "Pembayaran diproses melalui gerbang pembayaran resmi Midtrans dengan metode QRIS, transfer bank (virtual account), maupun dompet digital.\n\nBukti pembayaran resmi dikirimkan melalui notifikasi Midtrans dan email akun Anda. Masa akses aktif seketika transaksi dinyatakan berhasil dan tersinkronisasi. Jika dana telah terpotong namun status belum aktif, jangan melakukan pembayaran ulang; hubungi support@openturath.id dengan menyertakan nomor transaksi.",
+          "Payments are processed through the official Midtrans gateway using QRIS, bank transfer (virtual account), or digital wallets.\n\nOfficial payment receipts are delivered via Midtrans notifications and your account email. Access activates immediately once the transaction is confirmed successful and synced. If funds were deducted but access is not activated, do not repay; contact support@openturath.id with your transaction ID.",
+          "تتم معالجة المدفوعات عبر بوابة Midtrans الرسمية بواسطة QRIS أو التحويل البنكي (الحساب الافتراضي) أو المحافظ الإلكترونية.\n\nيُرسل إيصال الدفع عبر إشعارات Midtrans وبريد حسابك. يُفعّل الوصول فور تأكيد نجاح المعاملة، وإذا خُصم المبلغ دون تفعيل فامتنع عن إعادة الدفع وتواصل مع support@openturath.id برقم المعاملة."
         ]
       },
       {
@@ -549,9 +549,9 @@ export const articles = {
           "٦. إجراءات الاسترداد والمدد الزمنية"
         ],
         "body": [
-          "Kirim permohonan ke openturath@gmail.com dengan menyertakan:\n1. Alamat email akun OpenTurath.\n2. Nomor transaksi / invoice pembayaran.\n3. Bukti pembayaran resmi dari bank/e-wallet.\n4. Penjelasan kendala yang dialami.\n\nKonfirmasi penerimaan dikirimkan maksimal dalam 2 (dua) hari kerja. Pemeriksaan dan keputusan pengembalian dana diselesaikan dalam 7 (tujuh) hari kerja. Jika disetujui, pengembalian dana diproses ke rekening atau dompet asal sesuai ketentuan perbankan (7 (tujuh) hari kerja).",
-          "Submit your request to openturath@gmail.com with:\n1. OpenTurath account email address.\n2. Transaction / invoice reference number.\n3. Official receipt from bank or digital wallet.\n4. Description of the issue encountered.\n\nReceipt confirmation is sent within 2 (two) business days. Investigation and refund determinations are completed within 7 (seven) business days. If approved, refunds are credited to the source account or wallet subject to banking processing timeframes (7 (seven) business days).",
-          "أرسل الطلب إلى openturath@gmail.com متضمنًا:\n١. بريد حساب OpenTurath.\n٢. رقم المعاملة أو الفاتورة.\n٣. إيصال الدفع البنكي أو المحفظة الإلكترونية.\n٤. بيان الخلل الحاصل.\n\nيُؤكد استلام الطلب خلال يومي (٢) عمل، وتُستكمل المراجعة والبت في القرار خلال سبعة (٧) أيام عمل. وفي حال الموافقة يُعاد المبلغ إلى الحساب أو المحفظة الأصلية وفق الإجراءات المصرفية (٧ أيام عمل)."
+          "Kirim permohonan ke support@openturath.id dengan menyertakan:\n1. Alamat email akun OpenTurath.\n2. Nomor transaksi / invoice pembayaran.\n3. Bukti pembayaran resmi dari bank/e-wallet.\n4. Penjelasan kendala yang dialami.\n\nKonfirmasi penerimaan dikirimkan maksimal dalam 2 (dua) hari kerja. Pemeriksaan dan keputusan pengembalian dana diselesaikan dalam 7 (tujuh) hari kerja. Jika disetujui, pengembalian dana diproses ke rekening atau dompet asal sesuai ketentuan perbankan (7 (tujuh) hari kerja).",
+          "Submit your request to support@openturath.id with:\n1. OpenTurath account email address.\n2. Transaction / invoice reference number.\n3. Official receipt from bank or digital wallet.\n4. Description of the issue encountered.\n\nReceipt confirmation is sent within 2 (two) business days. Investigation and refund determinations are completed within 7 (seven) business days. If approved, refunds are credited to the source account or wallet subject to banking processing timeframes (7 (seven) business days).",
+          "أرسل الطلب إلى support@openturath.id متضمنًا:\n١. بريد حساب OpenTurath.\n٢. رقم المعاملة أو الفاتورة.\n٣. إيصال الدفع البنكي أو المحفظة الإلكترونية.\n٤. بيان الخلل الحاصل.\n\nيُؤكد استلام الطلب خلال يومي (٢) عمل، وتُستكمل المراجعة والبت في القرار خلال سبعة (٧) أيام عمل. وفي حال الموافقة يُعاد المبلغ إلى الحساب أو المحفظة الأصلية وفق الإجراءات المصرفية (٧ أيام عمل)."
         ]
       },
       {
@@ -561,9 +561,9 @@ export const articles = {
           "٧. قنوات دعم المعاملات"
         ],
         "body": [
-          "Kendala pembayaran dan transaksi dipantau setiap hari kerja (Senin – Jumat, 09.00 – 17.00 WIB).\nEmail layanan transaksi: openturath@gmail.com",
-          "Payment and transaction issues are monitored during business hours (Monday – Friday, 09:00 – 17:00 WIB).\nTransaction support email: openturath@gmail.com",
-          "تتم متابعة مشكلات الدفع والمعاملات خلال أيام العمل (من الاثنين إلى الجمعة، ٠٩:٠٠ – ١٧:٠٠ بتوقيت جاكرتا).\nبريد دعم المعاملات: openturath@gmail.com"
+          "Kendala pembayaran dan transaksi dipantau setiap hari kerja (Senin – Jumat, 09.00 – 17.00 WIB).\nEmail layanan transaksi: support@openturath.id",
+          "Payment and transaction issues are monitored during business hours (Monday – Friday, 09:00 – 17:00 WIB).\nTransaction support email: support@openturath.id",
+          "تتم متابعة مشكلات الدفع والمعاملات خلال أيام العمل (من الاثنين إلى الجمعة، ٠٩:٠٠ – ١٧:٠٠ بتوقيت جاكرتا).\nبريد دعم المعاملات: support@openturath.id"
         ]
       }
     ],
@@ -991,9 +991,9 @@ export const articles = {
           "النسبة وطلبات التصحيح"
         ],
         "body": [
-          "Cantumkan karya, pengarang, dan edisi yang digunakan. Pemegang hak dapat menghubungi openturath@gmail.com dengan identitas karya, lokasi materi, bukti hak, dan permintaan yang jelas.",
-          "Credit the work, author, and edition used. Rights holders can contact openturath@gmail.com with the work’s identity, material location, rights evidence, and a clear request.",
-          "اذكر العمل والمؤلف والطبعة المستخدمة. يمكن لأصحاب الحقوق التواصل عبر openturath@gmail.com مع هوية العمل وموقع المادة وإثبات الحق وطلب واضح."
+          "Cantumkan karya, pengarang, dan edisi yang digunakan. Pemegang hak dapat menghubungi support@openturath.id dengan identitas karya, lokasi materi, bukti hak, dan permintaan yang jelas.",
+          "Credit the work, author, and edition used. Rights holders can contact support@openturath.id with the work’s identity, material location, rights evidence, and a clear request.",
+          "اذكر العمل والمؤلف والطبعة المستخدمة. يمكن لأصحاب الحقوق التواصل عبر support@openturath.id مع هوية العمل وموقع المادة وإثبات الحق وطلب واضح."
         ]
       }
     ]
@@ -1047,9 +1047,9 @@ export const articles = {
           "تقديم طلب"
         ],
         "body": [
-          "Gunakan fitur penghapusan akun dalam aplikasi atau hubungi openturath@gmail.com dari email akun. Pengelola dapat meminta verifikasi kepemilikan yang proporsional. Jangan mengirim kata sandi atau OTP.",
-          "Use account deletion in the app or contact openturath@gmail.com from your account email. The operator may request proportionate ownership verification. Never send a password or OTP.",
-          "استخدم حذف الحساب داخل التطبيق أو راسل openturath@gmail.com من بريد الحساب. قد يُطلب تحقّق متناسب من الملكية. لا ترسل كلمة مرور أو رمز تحقّق."
+          "Gunakan fitur penghapusan akun dalam aplikasi atau hubungi support@openturath.id dari email akun. Pengelola dapat meminta verifikasi kepemilikan yang proporsional. Jangan mengirim kata sandi atau OTP.",
+          "Use account deletion in the app or contact support@openturath.id from your account email. The operator may request proportionate ownership verification. Never send a password or OTP.",
+          "استخدم حذف الحساب داخل التطبيق أو راسل support@openturath.id من بريد الحساب. قد يُطلب تحقّق متناسب من الملكية. لا ترسل كلمة مرور أو رمز تحقّق."
         ]
       },
       {
@@ -1094,9 +1094,9 @@ export const articles = {
           "بلاغات الثغرات"
         ],
         "body": [
-          "Kirim deskripsi kerentanan dan langkah reproduksi minimum ke openturath@gmail.com. Hindari mengambil data pengguna lain atau mengganggu layanan. Pengamanan operasional, cadangan, dan pemantauan tetap menjadi tanggung jawab pengelola deployment.",
-          "Send a vulnerability description and minimal reproduction steps to openturath@gmail.com. Avoid accessing other users’ data or disrupting service. Operational security, backups, and monitoring remain the deployment operator’s responsibility.",
-          "أرسل وصف الثغرة وخطوات إعادة إنتاج محدودة إلى openturath@gmail.com. تجنّب الوصول إلى بيانات الآخرين أو تعطيل الخدمة. تبقى الحماية التشغيلية والنسخ الاحتياطية والمراقبة مسؤولية مشغّل النشر."
+          "Kirim deskripsi kerentanan dan langkah reproduksi minimum ke support@openturath.id. Hindari mengambil data pengguna lain atau mengganggu layanan. Pengamanan operasional, cadangan, dan pemantauan tetap menjadi tanggung jawab pengelola deployment.",
+          "Send a vulnerability description and minimal reproduction steps to support@openturath.id. Avoid accessing other users’ data or disrupting service. Operational security, backups, and monitoring remain the deployment operator’s responsibility.",
+          "أرسل وصف الثغرة وخطوات إعادة إنتاج محدودة إلى support@openturath.id. تجنّب الوصول إلى بيانات الآخرين أو تعطيل الخدمة. تبقى الحماية التشغيلية والنسخ الاحتياطية والمراقبة مسؤولية مشغّل النشر."
         ]
       }
     ]

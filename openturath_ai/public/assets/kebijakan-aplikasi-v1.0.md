@@ -8,7 +8,7 @@ Salinan sumber legal_copy.dart. Penawaran website terbaru dijelaskan pada halama
 
 ### 1. Pengelola dan Cakupan Ketentuan
 
-OpenTurath dikelola oleh Pengelola OpenTurath, beralamat di Indonesia, selanjutnya disebut "kami". Pengguna aplikasi disebut "Anda". Kontak layanan tersedia melalui openturath@gmail.com.
+OpenTurath dikelola oleh Pengelola OpenTurath, beralamat di Indonesia, selanjutnya disebut "kami". Pengguna aplikasi disebut "Anda". Kontak layanan tersedia melalui support@openturath.id.
 
 Ketentuan ini mengatur penggunaan akun, asisten AI, katalog rujukan, Catatan, dan fitur berbayar yang disediakan melalui OpenTurath. Informasi paket yang ditampilkan sebelum pembelian, Kebijakan Pembayaran dan Pengembalian Dana, serta Panduan Penggunaan AI dan Pemeriksaan Rujukan menjadi bagian dari ketentuan penggunaan yang relevan.
 
@@ -22,7 +22,7 @@ Akses bagi pengguna di bawah 18 tahun belum dibuka melalui pendaftaran mandiri. 
 
 Gunakan informasi akun yang benar dan akses masuk yang menjadi hak Anda. Akun bersifat pribadi, kecuali suatu paket secara tertulis menyediakan penggunaan untuk beberapa orang.
 
-Jaga perangkat dan akses masuk Anda. Jangan memberikan kata sandi atau kode sekali pakai kepada pihak lain. Laporkan dugaan penggunaan tanpa izin melalui openturath@gmail.com. Laporan pengambilalihan akun akan diperiksa berdasarkan keadaan dan bukti yang tersedia.
+Jaga perangkat dan akses masuk Anda. Jangan memberikan kata sandi atau kode sekali pakai kepada pihak lain. Laporkan dugaan penggunaan tanpa izin melalui support@openturath.id. Laporan pengambilalihan akun akan diperiksa berdasarkan keadaan dan bukti yang tersedia.
 
 ### 4. Fungsi Layanan dan Batas Jawaban AI
 
@@ -76,7 +76,7 @@ Perubahan yang secara material mengurangi manfaat paket berbayar akan disertai p
 
 Kami dapat membatasi akses jika terdapat dasar yang wajar mengenai pelanggaran serius, risiko keamanan, atau penggunaan tanpa hak. Tindakan disesuaikan dengan tingkat masalah, mulai dari peringatan, penghentian sementara, hingga penutupan akun.
 
-Jika keadaan memungkinkan, kami menyampaikan alasan dan memberi kesempatan klarifikasi melalui openturath@gmail.com.
+Jika keadaan memungkinkan, kami menyampaikan alasan dan memberi kesempatan klarifikasi melalui support@openturath.id.
 
 ### 12. Tanggung Jawab dan Hak Pengguna
 
@@ -86,7 +86,7 @@ Anda bertanggung jawab menilai kesesuaian hasil untuk tujuan penggunaannya dan m
 
 ### 13. Pengaduan dan Musyawarah
 
-Hubungi openturath@gmail.com dengan penjelasan masalah dan informasi yang relevan. Kami akan mencatat pengaduan, menyampaikan perkembangan penanganan dalam 2 (dua) hari kerja, dan mengupayakan penyelesaian secara musyawarah.
+Hubungi support@openturath.id dengan penjelasan masalah dan informasi yang relevan. Kami akan mencatat pengaduan, menyampaikan perkembangan penanganan dalam 2 (dua) hari kerja, dan mengupayakan penyelesaian secara musyawarah.
 
 Ketentuan ini tunduk pada hukum Republik Indonesia.
 
@@ -98,9 +98,9 @@ Perubahan penting akan diberitahukan sebelum berlaku dan tidak berlaku surut unt
 
 Pengelola: Pengelola OpenTurath
 Alamat: Indonesia
-Bantuan: openturath@gmail.com
-Privasi: openturath@gmail.com
-Hak Cipta: openturath@gmail.com
+Bantuan: support@openturath.id
+Privasi: support@openturath.id
+Hak Cipta: support@openturath.id
 
 ## Kebijakan Privasi
 
@@ -108,7 +108,7 @@ Hak Cipta: openturath@gmail.com
 
 Kebijakan Privasi ini menjelaskan pemrosesan data pribadi saat Anda menggunakan aplikasi OpenTurath, pembayaran, dan bantuan layanan. Pengelola OpenTurath (Indonesia) bertanggung jawab atas pemrosesan data yang tujuan dan caranya ditentukan oleh OpenTurath, sesuai UU Nomor 27 Tahun 2022 tentang Pelindungan Data Pribadi.
 
-Untuk pertanyaan privasi, hubungi openturath@gmail.com.
+Untuk pertanyaan privasi, hubungi support@openturath.id.
 
 ### 2. Data yang Diproses
 
@@ -172,18 +172,18 @@ Sesuai UU Perlindungan Data Pribadi, Anda berhak:
 • Mengakses dan memperoleh informasi mengenai data pribadi yang diproses.
 • Memperbarui atau memperbaiki data profil yang keliru.
 • Meminta penghapusan akun dan data pribadi Anda kapan saja melalui aplikasi.
-• Menyampaikan keberatan atau pertanyaan seputar privasi ke openturath@gmail.com.
+• Menyampaikan keberatan atau pertanyaan seputar privasi ke support@openturath.id.
 
 ### 12. Pengguna di Bawah Umur
 
-Pendaftaran akun mandiri ditujukan bagi pengguna berusia 18 tahun ke atas. Jika Anda orang tua atau wali dan mendapati akun dibuka tanpa izin yang diperlukan, hubungi openturath@gmail.com untuk penanganan dan penghapusan data.
+Pendaftaran akun mandiri ditujukan bagi pengguna berusia 18 tahun ke atas. Jika Anda orang tua atau wali dan mendapati akun dibuka tanpa izin yang diperlukan, hubungi support@openturath.id untuk penanganan dan penghapusan data.
 
 ### 13. Kontak dan Pembaruan Kebijakan
 
 Versi dokumen: 1.0 (Berlaku sejak 13 September 2026).
 
 Untuk pertanyaan atau permohonan hak privasi, hubungi:
-Email: openturath@gmail.com
+Email: support@openturath.id
 Pengelola: Pengelola OpenTurath (Indonesia)
 
 ## Pembayaran dan Pengembalian Dana
@@ -198,7 +198,7 @@ Durasi paket 30 hari dihitung sebagai 30 hari kalender penuh sejak aktivasi berh
 
 Pembayaran hanya diproses melalui gerbang pembayaran resmi Midtrans.
 
-Bukti pembayaran resmi dikirimkan melalui notifikasi Midtrans dan email akun Anda. Masa akses aktif seketika transaksi dinyatakan berhasil dan tersinkronisasi. Jika dana telah terpotong namun status belum aktif, jangan melakukan pembayaran ulang; hubungi openturath@gmail.com dengan menyertakan nomor transaksi.
+Bukti pembayaran resmi dikirimkan melalui notifikasi Midtrans dan email akun Anda. Masa akses aktif seketika transaksi dinyatakan berhasil dan tersinkronisasi. Jika dana telah terpotong namun status belum aktif, jangan melakukan pembayaran ulang; hubungi support@openturath.id dengan menyertakan nomor transaksi.
 
 ### 3. Perpanjangan Manual (Tanpa Auto-Debit)
 
@@ -219,7 +219,7 @@ Penyelesaian dapat berupa pemulihan akses, penyesuaian masa aktif yang Anda setu
 
 ### 6. Alur dan Waktu Penanganan Refund
 
-Kirim permohonan ke openturath@gmail.com dengan menyertakan:
+Kirim permohonan ke support@openturath.id dengan menyertakan:
 1. Alamat email akun OpenTurath.
 2. Nomor transaksi / invoice pembayaran.
 3. Bukti pembayaran resmi dari bank/e-wallet.
@@ -230,7 +230,7 @@ Konfirmasi penerimaan dikirimkan maksimal dalam 2 (dua) hari kerja. Pemeriksaan 
 ### 7. Saluran Bantuan Transaksi
 
 Kendala pembayaran dan transaksi dipantau setiap hari kerja (Senin – Jumat, 09.00 – 17.00 WIB).
-Email layanan transaksi: openturath@gmail.com
+Email layanan transaksi: support@openturath.id
 
 ## Panduan Penggunaan AI dan Rujukan
 
@@ -258,4 +258,4 @@ Bedakan dengan jujur antara naskah kitab asli, kutipan terjemahan, dan sintesis 
 
 ### 5. Melaporkan Kesalahan Teks atau Rujukan
 
-Apabila Anda menemukan kekeliruan kutipan teks Arab, salah atribusi pengarang, atau kesalahan jilid dan halaman, kirimkan laporan ke openturath@gmail.com dengan menyertakan nama kitab, pertanyaan, dan usulan koreksi yang benar.
+Apabila Anda menemukan kekeliruan kutipan teks Arab, salah atribusi pengarang, atau kesalahan jilid dan halaman, kirimkan laporan ke support@openturath.id dengan menyertakan nama kitab, pertanyaan, dan usulan koreksi yang benar.

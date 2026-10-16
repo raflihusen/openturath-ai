@@ -1,4 +1,2 @@
 User-agent: *
-Allow: /
-Disallow: /api/
-Sitemap: https://openturath.id/sitemap.xml
+Disallow: /

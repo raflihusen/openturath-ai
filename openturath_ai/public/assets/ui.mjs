@@ -896,9 +896,9 @@ export const faq = [
       "كيف أطلب استرداد المبلغ؟"
     ],
     "a": [
-      "Kirim nomor transaksi, bukti pembayaran, dan uraian kendala ke openturath@gmail.com. Permohonan ditinjau paling lambat 7 hari kerja setelah data lengkap. Jika disetujui, pengembalian diproses paling lambat 7 hari kerja berikutnya, mengikuti bank atau dompet asal. Ketentuan lengkap tersedia pada halaman Pembayaran dan Pengembalian Dana.",
-      "Send your transaction number, payment evidence, and a description of the issue to openturath@gmail.com. Requests are reviewed within 7 business days of complete information. Approved refunds are processed within a further 7 business days, subject to the original bank or wallet. See Payments and Refunds for the full terms.",
-      "أرسل رقم المعاملة وإثبات الدفع ووصف المشكلة إلى openturath@gmail.com. يُراجع الطلب خلال ٧ أيام عمل من اكتمال البيانات. وبعد الموافقة يُعالج الاسترداد خلال ٧ أيام عمل أخرى وفق البنك أو المحفظة الأصلية. راجع صفحة الدفع والاسترداد للتفاصيل."
+      "Kirim nomor transaksi, bukti pembayaran, dan uraian kendala ke support@openturath.id. Permohonan ditinjau paling lambat 7 hari kerja setelah data lengkap. Jika disetujui, pengembalian diproses paling lambat 7 hari kerja berikutnya, mengikuti bank atau dompet asal. Ketentuan lengkap tersedia pada halaman Pembayaran dan Pengembalian Dana.",
+      "Send your transaction number, payment evidence, and a description of the issue to support@openturath.id. Requests are reviewed within 7 business days of complete information. Approved refunds are processed within a further 7 business days, subject to the original bank or wallet. See Payments and Refunds for the full terms.",
+      "أرسل رقم المعاملة وإثبات الدفع ووصف المشكلة إلى support@openturath.id. يُراجع الطلب خلال ٧ أيام عمل من اكتمال البيانات. وبعد الموافقة يُعالج الاسترداد خلال ٧ أيام عمل أخرى وفق البنك أو المحفظة الأصلية. راجع صفحة الدفع والاسترداد للتفاصيل."
     ]
   },
   {
