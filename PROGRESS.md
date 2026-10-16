@@ -432,6 +432,26 @@ Berdasarkan `AUDIT_OPENTURATH_AI.md`, dokumen perancangan pustaka, dan keluhan k
      - `OpenTurath_AI_macOS.dmg` (48 MB, UDZO) diperbarui beserta `/Applications/OpenTurath AI.app`.
      - 411/411 unit dan widget tests lolos 100%.
 
+### Fasa 34: Remediasi Menyeluruh Audit Forensik Sistem (Keamanan, Tipografi Arab, Desain Monokrom & Lokalisasi) (`3f143edd`, `02f09fe9`, `2d7e30c7`)
+- **Latar Belakang & Ruang Lingkup**:
+  - Audit forensik komprehensif mengidentifikasi celah di 3 domain: (1) Keamanan & Integritas Transaksi, (2) Tipografi Arab & Sistem Desain Monokrom, serta (3) Lokalisasi & Sinkronisasi Gateway Website.
+  - Seluruh temuan diperbaiki secara sistematis dalam 3 paket terisolasi dengan verifikasi test suite 100% dan Git checkpoint otomatis.
+- **Paket 1: Keamanan & Integritas Transaksi (`3f143edd`)**:
+  1. *Sinkronisasi Harga Produksi OTA (`manage_ota.py`)*: Memperbaiki pemisahan `PRODUCTION_PRICES` di mana `tholib_1m = 49000` (spesialis) dan `tahawwulat_1m = 300000` (Tahawwulat). CLI `status` kini menampilkan kedua tier secara independen.
+  2. *Allowlist URL Checkout Popup (`payment_checkout_sheet.dart`)*: Menambahkan validasi `_isAllowedPaymentDestination(uri)` pada callback `onCreateWindow` untuk memblokir rogue popup ke domain luar.
+  3. *Preservasi Cookie Alami Anti-DBSC (`persistent_google_session.dart`)*: Menghentikan pemaksaan ekspirasi buatan 180 hari pada rotation token Google WebKit (`__Secure-1PSIDTS`, `__Secure-3PSIDTS`, `SIDCC`) sesuai Aturan 8. Payload sesi JSON dienkripsi Base64 saat disimpan.
+  4. *Eliminasi Rekursi `main()` (`main.dart`)*: Mengganti anti-pattern `onRetry: () => main()` dengan `_InitializationFailureApp` StatefulWidget untuk pemulihan inisialisasi yang aman.
+- **Paket 2: Tipografi Arab & Sistem Desain Monokrom (`02f09fe9`)**:
+  1. *Eliminasi Token Amber (`ot_colors.dart`)*: Mengganti warna oranye/kuning `tahawwulat = Color(0xFFD97706)` dengan monokrom `#171717` (`textPrimaryLight`) demi menegakkan Aturan 9 *The Quiet Islamic Scholar*.
+  2. *Preservasi Sambungan Kaligrafi Arab (`bookmark_screen.dart`)*: Mengganti `WidgetSpan(child: Container(...))` pada penanda pencarian dengan `TextSpan(backgroundColor: ...)`, sehingga sambungan ligatur huruf Arab (`ب-ت-ث-ي`) tidak lagi patah fisik.
+  3. *Border Kontras & Ejaan Baku KBBI*: Memperbaiki *invisible borders* (`border == surface`) di kartu langganan dan profil dengan `OTColors.border(dark)`. Membakukan ejaan "Hadis" dan "Tasawuf & Adzkar" sesuai KBBI.
+  4. *A11y Semantics & Sinkronisasi DESIGN.md*: Menambahkan `Semantics(label: ..., button: true, selected: ...)` pada indikator bab Tahawwulat. Menyelaraskan dokumen arsitektur `DESIGN.md` root dengan `openturath_ai/DESIGN.md`.
+- **Paket 3: Lokalisasi & Sinkronisasi Website (`2d7e30c7`)**:
+  1. *Dialog Hukum In-App (`login_screen.dart`)*: Menghubungkan teks "Ketentuan Layanan" dan "Kebijakan Privasi" di layar login ke `LegalDocumentSheet.showTermsOfService(context)` dan `showPrivacyPolicy(context)`, menghilangkan risiko 404 dari `terms.html`.
+  2. *Katalog Trilingual Google Session Auth (`copy_catalog.dart` & `google_session_auth_screen.dart`)*: Menggantikan seluruh teks hardcoded bahasa Indonesia pada dialog verifikasi email Google, tombol dialog, dan badge progres dengan `Loc.tr(...)` (ID/EN/AR).
+  3. *Sinkronisasi Gateway Website (`site.config.json`, `membership.mjs`, `articles.mjs`)*: Mengganti seluruh referensi legacy "DOKU" menjadi "Midtrans" di kebijakan privasi, syarat langganan, FAQ, dan banner keanggotaan. Menambahkan release note v1.0.67.
+  4. *Verifikasi Menyeluruh*: 23 Node tests & 13 Python tests di website lulus 100%. 411/411 unit dan widget test Flutter lulus 100%. `flutter analyze` 0 issues.
+
 ---
 
 ## 5. Agenda & Fokus Selanjutnya
@@ -439,3 +459,4 @@ Berdasarkan `AUDIT_OPENTURATH_AI.md`, dokumen perancangan pustaka, dan keluhan k
    - Pengujian live checkout QRIS Rp 1.000 di aplikasi desktop macOS dan ponsel.
 2. **Kesiapan Rilis Publik & Broadcast Update**:
    - Membuka gembok agen berikutnya secara bertahap via `manage_ota.py unlock-agent <id>`.
+
