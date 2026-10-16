@@ -19,7 +19,18 @@ class OpenTurathBook {
     required this.sourceFolder,
     required this.pages,
     this.textType = '',
+    this.supervisor = '',
+    this.bookType = '',
+    this.editionWarning = '',
+    this.deathText = '',
   });
+
+  /// Pembimbing risalah ilmiah (الإشراف), jenis kitab (رسالة علمية),
+  /// catatan edisi dari kartu (تنبيه), dan teks wafat apa adanya (mis. «معاصر»).
+  final String supervisor;
+  final String bookType;
+  final String editionWarning;
+  final String deathText;
 
   final String textType;
   BookStudyLevel get studyLevel => BookStudyLevel.fromMetadata(textType);
@@ -68,6 +79,10 @@ class OpenTurathBook {
       sourceFolder: _textValue(json['folder_sumber'] ?? json['source_folder']),
       pages:
           _textValue(json['عدد_الصفحات'] ?? json['pages'] ?? json['halaman']),
+      supervisor: _textValue(json['الإشراف']),
+      bookType: _textValue(json['نوع_الكتاب']),
+      editionWarning: _textValue(json['تنبيه_الطبعة']),
+      deathText: _textValue(json['سنة_الوفاة']),
     );
   }
 

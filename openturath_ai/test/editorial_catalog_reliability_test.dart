@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:openturath_ai/core/arabic_catalog.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -53,8 +54,8 @@ void main() {
     await tester.enterText(find.byType(TextField), 'كتاب الام');
     await tester.pump();
     expect(find.text(_book.title), findsOneWidget);
-    expect(find.byTooltip(Loc.tr('clearSearch')), findsOneWidget);
-    await tester.tap(find.byTooltip(Loc.tr('clearSearch')));
+    expect(find.byTooltip(ArabicCatalog.clearSearch), findsOneWidget);
+    await tester.tap(find.byTooltip(ArabicCatalog.clearSearch));
     await tester.pump();
     expect(
         tester.widget<TextField>(find.byType(TextField)).controller!.text, '');
@@ -69,9 +70,9 @@ void main() {
     try {
       await tester.pumpWidget(catalog());
       final multiple =
-          find.widgetWithText(ChoiceChip, Loc.tr('multipleVolumes'));
+          find.widgetWithText(ChoiceChip, ArabicCatalog.multiVolume);
       expect(multiple, findsOneWidget);
-      Focus.of(tester.element(find.text(Loc.tr('multipleVolumes'))))
+      Focus.of(tester.element(find.text(ArabicCatalog.multiVolume)))
           .requestFocus();
       await tester.pump();
       await tester.sendKeyEvent(LogicalKeyboardKey.space);
@@ -80,7 +81,7 @@ void main() {
       expect(
           tester.getSemantics(multiple),
           matchesSemantics(
-            label: Loc.tr('multipleVolumes'),
+            label: ArabicCatalog.multiVolume,
             isSelected: true,
             hasSelectedState: true,
             isEnabled: true,
@@ -92,7 +93,7 @@ void main() {
             hasFocusAction: true,
           ));
       expect(find.text(_book.title), findsNothing);
-      await tester.tap(find.text(Loc.tr('allBooks')));
+      await tester.tap(find.text(ArabicCatalog.allBooks));
       await tester.pumpAndSettle();
       expect(find.text(_book.title), findsOneWidget);
     } finally {

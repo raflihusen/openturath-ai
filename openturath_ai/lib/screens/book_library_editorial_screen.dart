@@ -2,13 +2,11 @@ import '../widgets/book_reading_rows.dart';
 import '../widgets/desktop_shortcuts.dart';
 import '../widgets/book_identity_card.dart';
 import 'package:flutter/material.dart';
-import '../core/design/native_design.dart';
 import 'package:flutter/services.dart';
 
 import '../core/app_snackbar.dart';
 import '../core/arabic_utils.dart';
-import '../core/answer_direction.dart';
-import '../widgets/tahawwulat_hero.dart';
+import '../core/arabic_catalog.dart';
 import '../core/design/ot_colors.dart';
 import '../widgets/ot_motion_widgets.dart';
 import '../core/design/ot_spacing.dart';
@@ -151,256 +149,286 @@ class _OpenTurathBookLibraryPageState extends State<OpenTurathBookLibraryPage> {
           : available >= 720
               ? 2
               : 1;
-      return Scaffold(
-        backgroundColor: canvas,
-        appBar: AppBar(
-          titleSpacing: otTitleSpacing(context),
-          backgroundColor: canvas,
-          title: Text(widget.collectionName),
-          actions: [
-            if (widget.metadata != null)
-              IconButton(
-                tooltip: 'Info AI',
-                icon: const Icon(Icons.info_outline_rounded),
-                onPressed: () =>
-                    AiInfoSheet.show(context, widget.metadata!.keyName),
-              ),
-          ],
-        ),
-        body: SafeArea(
-          child: CustomScrollView(
-            slivers: [
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: EdgeInsets.fromLTRB(pageInset, 8, pageInset, 0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      if (widget.metadata != null) ...[
-                        Text(
-                            '${Loc.tr('bookCount', [
-                                  '${widget.metadata!.totalKitab}'
-                                ])} · ${widget.metadata!.totalJilid}',
-                            style: OTTypography.caption(color: textSecondary)),
-                        const SizedBox(height: 12),
-                      ],
-                      // Search Bar
-                      TextField(
-                        controller: _searchController,
-                        focusNode: _searchFocusNode,
-                        style: ScholarlyFonts.outfit(
-                            color: ink, fontSize: OTFontSize.s14),
-                        decoration: InputDecoration(
-                          hintText: Loc.tr('ui_0ae09a2807'),
-                          hintStyle: ScholarlyFonts.outfit(
-                              color: textSecondary, fontSize: OTFontSize.s14),
-                          prefixIcon: Icon(Icons.search_rounded,
-                              color: textSecondary, size: 20),
-                          suffixIcon: _query.isNotEmpty
-                              ? IconButton(
-                                  tooltip: Loc.tr('clearSearch'),
-                                  icon: Icon(Icons.clear_rounded,
-                                      color: textSecondary, size: 18),
-                                  onPressed: () {
-                                    _searchController.clear();
-                                    _searchFocusNode.requestFocus();
-                                  },
-                                )
-                              : null,
-                          filled: true,
-                          fillColor: OTColors.surfaceSubtle(isDark),
-                          contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 12),
-                          border: OutlineInputBorder(
-                            borderRadius: OTRadius.inputBorder,
-                            borderSide: BorderSide.none,
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: OTRadius.inputBorder,
-                            borderSide: BorderSide.none,
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: OTRadius.inputBorder,
-                            borderSide: BorderSide(color: ink, width: 1.2),
+      return Theme(
+          data: ArabicCatalog.theme(Theme.of(context)),
+          child: Directionality(
+              textDirection: TextDirection.rtl,
+              child: Scaffold(
+                backgroundColor: canvas,
+                appBar: AppBar(
+                  titleSpacing: otTitleSpacing(context),
+                  backgroundColor: canvas,
+                  title: Text(
+                      (widget.metadata?.namaArab ?? '').trim().isNotEmpty
+                          ? widget.metadata!.namaArab
+                          : RegExp(r'[\u0600-\u06FF]')
+                                  .hasMatch(widget.collectionName)
+                              ? widget.collectionName
+                              : ArabicCatalog.catalogTitle,
+                      style: ScholarlyFonts.scheherazadeNew(
+                          fontSize: OTFontSize.s26,
+                          fontWeight: FontWeight.w700,
+                          color: ink)),
+                  actions: [
+                    if (widget.metadata != null)
+                      IconButton(
+                        tooltip: ArabicCatalog.aiInfo,
+                        icon: const Icon(Icons.info_outline_rounded),
+                        onPressed: () =>
+                            AiInfoSheet.show(context, widget.metadata!.keyName),
+                      ),
+                  ],
+                ),
+                body: SafeArea(
+                  child: CustomScrollView(
+                    slivers: [
+                      SliverToBoxAdapter(
+                        child: Padding(
+                          padding:
+                              EdgeInsets.fromLTRB(pageInset, 8, pageInset, 0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              if (widget.metadata != null) ...[
+                                Text(
+                                    ArabicCatalog.bookCount(
+                                        widget.metadata!.totalKitab),
+                                    style: ArabicCatalog.ui(
+                                        fontSize: OTFontSize.s12,
+                                        color: textSecondary)),
+                                const SizedBox(height: 12),
+                              ],
+                              // Search Bar
+                              TextField(
+                                controller: _searchController,
+                                focusNode: _searchFocusNode,
+                                style: ArabicCatalog.ui(
+                                    color: ink, fontSize: OTFontSize.s14),
+                                decoration: InputDecoration(
+                                  hintText: ArabicCatalog.searchHint,
+                                  hintStyle: ArabicCatalog.ui(
+                                      color: textSecondary,
+                                      fontSize: OTFontSize.s14),
+                                  prefixIcon: Icon(Icons.search_rounded,
+                                      color: textSecondary, size: 20),
+                                  suffixIcon: _query.isNotEmpty
+                                      ? IconButton(
+                                          tooltip: ArabicCatalog.clearSearch,
+                                          icon: Icon(Icons.clear_rounded,
+                                              color: textSecondary, size: 18),
+                                          onPressed: () {
+                                            _searchController.clear();
+                                            _searchFocusNode.requestFocus();
+                                          },
+                                        )
+                                      : null,
+                                  filled: true,
+                                  fillColor: OTColors.surfaceSubtle(isDark),
+                                  contentPadding: const EdgeInsets.symmetric(
+                                      horizontal: 16, vertical: 12),
+                                  border: OutlineInputBorder(
+                                    borderRadius: OTRadius.inputBorder,
+                                    borderSide: BorderSide.none,
+                                  ),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderRadius: OTRadius.inputBorder,
+                                    borderSide: BorderSide.none,
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderRadius: OTRadius.inputBorder,
+                                    borderSide:
+                                        BorderSide(color: ink, width: 1.2),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 12),
+                              // Filter Chips
+                              SingleChildScrollView(
+                                scrollDirection: Axis.horizontal,
+                                child: Row(
+                                  children: [
+                                    _FilterChip(
+                                      label: ArabicCatalog.allBooks,
+                                      isSelected:
+                                          _filter == _BookVolumeFilter.all,
+                                      onTap: () => setState(() =>
+                                          _filter = _BookVolumeFilter.all),
+                                    ),
+                                    const SizedBox(width: 8),
+                                    _FilterChip(
+                                      label: ArabicCatalog.singleVolume,
+                                      isSelected: _filter ==
+                                          _BookVolumeFilter.singleVolume,
+                                      onTap: () => setState(() => _filter =
+                                          _BookVolumeFilter.singleVolume),
+                                    ),
+                                    const SizedBox(width: 8),
+                                    _FilterChip(
+                                      label: ArabicCatalog.multiVolume,
+                                      isSelected: _filter ==
+                                          _BookVolumeFilter.multiVolume,
+                                      onTap: () => setState(() => _filter =
+                                          _BookVolumeFilter.multiVolume),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              Wrap(
+                                  spacing: 12,
+                                  runSpacing: 8,
+                                  crossAxisAlignment: WrapCrossAlignment.center,
+                                  children: [
+                                    SizedBox(
+                                        width: available < 240
+                                            ? available - 100
+                                            : 180,
+                                        child: DropdownButton<_BookSort>(
+                                            isExpanded: true,
+                                            value: _sort,
+                                            underline: const SizedBox.shrink(),
+                                            onChanged: (v) {
+                                              if (v != null) {
+                                                setState(() => _sort = v);
+                                              }
+                                            },
+                                            items: const [
+                                              DropdownMenuItem(
+                                                  value: _BookSort.title,
+                                                  child: Text(
+                                                      ArabicCatalog.sortTitle)),
+                                              DropdownMenuItem(
+                                                  value: _BookSort.author,
+                                                  child: Text(ArabicCatalog
+                                                      .sortAuthor)),
+                                              DropdownMenuItem(
+                                                  value: _BookSort.volumes,
+                                                  child: Text(ArabicCatalog
+                                                      .sortVolumes)),
+                                            ])),
+                                    IconButton.filledTonal(
+                                        tooltip: ArabicCatalog.cardView,
+                                        isSelected: !_list,
+                                        onPressed: () =>
+                                            setState(() => _list = false),
+                                        icon: const Icon(
+                                            Icons.grid_view_rounded)),
+                                    IconButton.filledTonal(
+                                        tooltip: ArabicCatalog.listView,
+                                        isSelected: _list,
+                                        onPressed: () =>
+                                            setState(() => _list = true),
+                                        icon: const Icon(
+                                            Icons.view_list_rounded)),
+                                  ]),
+                              const SizedBox(height: 8),
+                              Text(
+                                _query.isEmpty &&
+                                        _filter == _BookVolumeFilter.all
+                                    ? ArabicCatalog.bookCount(
+                                        visibleBooks.length)
+                                    : ArabicCatalog.shown(visibleBooks.length,
+                                        widget.books.length),
+                                style: ArabicCatalog.ui(
+                                  fontSize: OTFontSize.s12,
+                                  color: textSecondary,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ),
-                      const SizedBox(height: 12),
-                      // Filter Chips
-                      SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: Row(
-                          children: [
-                            _FilterChip(
-                              label: Loc.tr('allBooks'),
-                              isSelected: _filter == _BookVolumeFilter.all,
-                              onTap: () => setState(
-                                  () => _filter = _BookVolumeFilter.all),
+                      if (visibleBooks.isEmpty)
+                        SliverFillRemaining(
+                          hasScrollBody: false,
+                          child: Center(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(Icons.search_off_rounded,
+                                    size: 48, color: textSecondary),
+                                const SizedBox(height: 12),
+                                Text(
+                                  ArabicCatalog.noBooks,
+                                  style: ArabicCatalog.ui(
+                                    fontSize: OTFontSize.s16,
+                                    fontWeight: FontWeight.w400,
+                                    color: ink,
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  ArabicCatalog.tryAnother,
+                                  style: ArabicCatalog.ui(
+                                    fontSize: OTFontSize.s12,
+                                    color: textSecondary,
+                                  ),
+                                ),
+                              ],
                             ),
-                            const SizedBox(width: 8),
-                            _FilterChip(
-                              label: Loc.tr('singleVolume'),
-                              isSelected:
-                                  _filter == _BookVolumeFilter.singleVolume,
-                              onTap: () => setState(() =>
-                                  _filter = _BookVolumeFilter.singleVolume),
-                            ),
-                            const SizedBox(width: 8),
-                            _FilterChip(
-                              label: Loc.tr('multipleVolumes'),
-                              isSelected:
-                                  _filter == _BookVolumeFilter.multiVolume,
-                              onTap: () => setState(() =>
-                                  _filter = _BookVolumeFilter.multiVolume),
-                            ),
-                          ],
+                          ),
+                        )
+                      else
+                        SliverPadding(
+                          padding:
+                              EdgeInsets.fromLTRB(pageInset, 8, pageInset, 40),
+                          sliver: Builder(builder: (context) {
+                            final delegate =
+                                SliverChildBuilderDelegate((context, index) {
+                              final book = visibleBooks[index];
+                              return _BookEditorialItem(
+                                  book: book,
+                                  index: index + 1,
+                                  onTap: () async {
+                                    if (_opening) return;
+                                    if (widget.onOpenBook != null) {
+                                      widget.onOpenBook!(book);
+                                      return;
+                                    }
+                                    _opening = true;
+                                    try {
+                                      await Navigator.of(context).push(
+                                          MaterialPageRoute<void>(
+                                              builder: (_) =>
+                                                  OpenTurathBookDetailPage(
+                                                      book: book)));
+                                    } finally {
+                                      _opening = false;
+                                    }
+                                  });
+                            }, childCount: visibleBooks.length);
+                            if (_list || largeText || columns == 1) {
+                              final readingColumns =
+                                  bookReadingColumns(context, available);
+                              return SliverList(
+                                  delegate: SliverChildBuilderDelegate(
+                                      (context, row) => bookReadingRow(
+                                          context,
+                                          row,
+                                          readingColumns,
+                                          visibleBooks.length,
+                                          (context, index) => delegate.builder(
+                                              context, index)!),
+                                      childCount:
+                                          (visibleBooks.length / readingColumns)
+                                              .ceil()));
+                            }
+                            return SliverGrid(
+                                delegate: delegate,
+                                gridDelegate:
+                                    SliverGridDelegateWithFixedCrossAxisCount(
+                                        crossAxisCount: columns,
+                                        crossAxisSpacing: 16,
+                                        mainAxisSpacing: 16,
+                                        mainAxisExtent:
+                                            MediaQuery.textScalerOf(context)
+                                                .scale(280)));
+                          }),
                         ),
-                      ),
-                      const SizedBox(height: 8),
-                      Wrap(
-                          spacing: 12,
-                          runSpacing: 8,
-                          crossAxisAlignment: WrapCrossAlignment.center,
-                          children: [
-                            SizedBox(
-                                width: available < 240 ? available - 100 : 180,
-                                child: DropdownButton<_BookSort>(
-                                    isExpanded: true,
-                                    value: _sort,
-                                    underline: const SizedBox.shrink(),
-                                    onChanged: (v) {
-                                      if (v != null) setState(() => _sort = v);
-                                    },
-                                    items: [
-                                      DropdownMenuItem(
-                                          value: _BookSort.title,
-                                          child: Text(reviewCopy(
-                                              'Judul', 'العنوان', 'Title'))),
-                                      DropdownMenuItem(
-                                          value: _BookSort.author,
-                                          child: Text(reviewCopy('Pengarang',
-                                              'المؤلف', 'Author'))),
-                                      DropdownMenuItem(
-                                          value: _BookSort.volumes,
-                                          child: Text(reviewCopy('Jumlah jilid',
-                                              'عدد الأجزاء', 'Volumes'))),
-                                    ])),
-                            IconButton.filledTonal(
-                                tooltip: reviewCopy('Tampilan kartu',
-                                    'عرض البطاقات', 'Card view'),
-                                isSelected: !_list,
-                                onPressed: () => setState(() => _list = false),
-                                icon: const Icon(Icons.grid_view_rounded)),
-                            IconButton.filledTonal(
-                                tooltip: reviewCopy('Daftar ringkas',
-                                    'قائمة مختصرة', 'Compact list'),
-                                isSelected: _list,
-                                onPressed: () => setState(() => _list = true),
-                                icon: const Icon(Icons.view_list_rounded)),
-                          ]),
-                      const SizedBox(height: 8),
-                      Text(
-                        _query.isEmpty && _filter == _BookVolumeFilter.all
-                            ? Loc.tr('bookCount', ['${visibleBooks.length}'])
-                            : Loc.tr('booksShown', [
-                                '${visibleBooks.length}',
-                                '${widget.books.length}',
-                              ]),
-                        style: ScholarlyFonts.outfit(
-                          fontSize: OTFontSize.s12,
-                          color: textSecondary,
-                        ),
-                      ),
                     ],
                   ),
                 ),
-              ),
-              if (visibleBooks.isEmpty)
-                SliverFillRemaining(
-                  hasScrollBody: false,
-                  child: Center(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(Icons.search_off_rounded,
-                            size: 48, color: textSecondary),
-                        const SizedBox(height: 12),
-                        Text(
-                          Loc.tr('ui_54db73b3af'),
-                          style: ScholarlyFonts.outfit(
-                            fontSize: OTFontSize.s16,
-                            fontWeight: FontWeight.w400,
-                            color: ink,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          Loc.tr('ui_f7c779cb7d'),
-                          style: ScholarlyFonts.outfit(
-                            fontSize: OTFontSize.s12,
-                            color: textSecondary,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                )
-              else
-                SliverPadding(
-                  padding: EdgeInsets.fromLTRB(pageInset, 8, pageInset, 40),
-                  sliver: Builder(builder: (context) {
-                    final delegate =
-                        SliverChildBuilderDelegate((context, index) {
-                      final book = visibleBooks[index];
-                      return _BookEditorialItem(
-                          book: book,
-                          index: index + 1,
-                          onTap: () async {
-                            if (_opening) return;
-                            if (widget.onOpenBook != null) {
-                              widget.onOpenBook!(book);
-                              return;
-                            }
-                            _opening = true;
-                            try {
-                              await Navigator.of(context).push(
-                                  MaterialPageRoute<void>(
-                                      builder: (_) => OpenTurathBookDetailPage(
-                                          book: book)));
-                            } finally {
-                              _opening = false;
-                            }
-                          });
-                    }, childCount: visibleBooks.length);
-                    if (_list || largeText || columns == 1) {
-                      final readingColumns =
-                          bookReadingColumns(context, available);
-                      return SliverList(
-                          delegate: SliverChildBuilderDelegate(
-                              (context, row) => bookReadingRow(
-                                  context,
-                                  row,
-                                  readingColumns,
-                                  visibleBooks.length,
-                                  (context, index) =>
-                                      delegate.builder(context, index)!),
-                              childCount: (visibleBooks.length / readingColumns)
-                                  .ceil()));
-                    }
-                    return SliverGrid(
-                        delegate: delegate,
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: columns,
-                            crossAxisSpacing: 16,
-                            mainAxisSpacing: 16,
-                            mainAxisExtent:
-                                MediaQuery.textScalerOf(context).scale(280)));
-                  }),
-                ),
-            ],
-          ),
-        ),
-      );
+              )));
     });
   }
 }
@@ -430,11 +458,12 @@ class _BookEditorialItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) => BookIdentityCard(
         title: book.title,
-        author: book.author,
-        deathLabel: book.deathYear == null ? null : book.deathLabel,
-        facts: [book.volumeLabel, book.pagesLabel]
-            .where((v) => v != Loc.tr('unknownMetadata'))
-            .toList(),
+        author: ArabicCatalog.authorName(book.author),
+        deathLabel: ArabicCatalog.death(book.deathYear, book.deathText),
+        facts: [
+          ArabicCatalog.volumes(book.volumes),
+          ArabicCatalog.pages(book.pages)
+        ].whereType<String>().toList(),
         onTap: onTap,
       );
 }
@@ -447,6 +476,35 @@ class OpenTurathBookDetailPage extends StatelessWidget {
 
   final OpenTurathBook book;
 
+  static String _atau(String v) =>
+      v.trim().isEmpty || v.trim() == ArabicCatalog.notStated
+          ? ArabicCatalog.notStatedShort
+          : v.trim();
+
+  /// Teks rujukan Arab lengkap untuk disalin atau disimpan.
+  String get _citation {
+    final death = ArabicCatalog.death(book.deathYear, book.deathText);
+    final b = StringBuffer()
+      ..writeln('${ArabicCatalog.lTitle}: ${book.title}')
+      ..writeln(
+          '${ArabicCatalog.lAuthor}: ${ArabicCatalog.authorName(book.author)}'
+          '${death == null ? '' : ' ($death)'}')
+      ..writeln('${ArabicCatalog.lEditor}: ${_atau(book.editorName)}');
+    if (book.supervisor.isNotEmpty) {
+      b.writeln('${ArabicCatalog.lSupervisor}: ${book.supervisor}');
+    }
+    b
+      ..writeln('${ArabicCatalog.lPublisher}: ${_atau(book.publisher)}')
+      ..writeln('${ArabicCatalog.lEdition}: ${_atau(book.edition)}');
+    final facts = [
+      ArabicCatalog.volumes(book.volumes),
+      ArabicCatalog.pages(book.pages)
+    ].whereType<String>();
+    if (facts.isNotEmpty) b.writeln(facts.join(' · '));
+    b.write('${ArabicCatalog.lScience}: ${book.section}');
+    return b.toString();
+  }
+
   Future<void> _handleBookmark(BuildContext context) async {
     final uid = AuthService().currentUser?.uid;
     final bookmark = BookmarkModel(
@@ -457,12 +515,9 @@ class OpenTurathBookDetailPage extends StatelessWidget {
       fieldName: book.section,
       fieldId: 'pustaka',
       arabicExcerpt: book.title,
-      fullAnswer: '${book.title}. ${Loc.tr('authorCredit', [book.author])}. '
-          '${Loc.tr('editorCredit', [book.editor])}. '
-          '${Loc.tr('bookPublisher')}: ${book.publisher} (${book.edition}). '
-          '${book.volumeLabel}; ${book.pagesLabel}.',
-      bookReference: '${book.title} - ${book.author}',
-      pageNumber: book.pagesLabel,
+      fullAnswer: _citation,
+      bookReference: '${book.title} - ${ArabicCatalog.authorName(book.author)}',
+      pageNumber: ArabicCatalog.pages(book.pages) ?? '',
       author: book.author,
       createdAt: DateTime.now(),
       documentKind: BookmarkDocumentKind.bookReference,
@@ -472,25 +527,12 @@ class OpenTurathBookDetailPage extends StatelessWidget {
     );
 
     await BookmarkService().addBookmark(bookmark, userId: uid);
-    if (context.mounted) {
-      AppSnackBar.success(context, Loc.tr('ui_225b7ddde1'));
-    }
+    if (context.mounted) AppSnackBar.success(context, ArabicCatalog.saved);
   }
 
   Future<void> _handleCopyCitation(BuildContext context) async {
-    final citation = '''[OpenTurath AI]
-${Loc.tr('bookReferenceLabel')}: ${book.title}
-${Loc.tr('authorCredit', [book.author])} (${book.deathLabel})
-${Loc.tr('ui_ad39f1c3af')}: ${book.editorName.isEmpty ? Loc.tr('editorNotRecorded') : book.editorName}
-${book.editionNote.isEmpty ? '' : '${Loc.tr('editionNote')}: ${book.editionNote}'}
-${Loc.tr('bookPublisher')}: ${book.publisher} (${book.edition})
-${book.volumeLabel} | ${book.pagesLabel}
-${Loc.tr('bookScienceSection')}: ${book.section}''';
-
-    await Clipboard.setData(ClipboardData(text: citation));
-    if (context.mounted) {
-      AppSnackBar.success(context, Loc.tr('ui_e150b5de89'));
-    }
+    await Clipboard.setData(ClipboardData(text: '$_citation\n[OpenTurath]'));
+    if (context.mounted) AppSnackBar.success(context, ArabicCatalog.copied);
   }
 
   @override
@@ -500,224 +542,205 @@ ${Loc.tr('bookScienceSection')}: ${book.section}''';
     final canvas = OTColors.canvas(isDark);
     final ink = OTColors.textPrimary(isDark);
     final textSecondary = OTColors.textSecondary(isDark);
+    final death = ArabicCatalog.death(book.deathYear, book.deathText);
 
-    return Scaffold(
-      backgroundColor: canvas,
-      body: SafeArea(
-        child: CustomScrollView(
-          physics: const BouncingScrollPhysics(),
-          slivers: [
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
-                child: Row(
-                  children: [
-                    IconButton(
-                      icon:
-                          Icon(Icons.arrow_back_rounded, color: ink, size: 22),
-                      tooltip: Loc.tr('back'),
-                      onPressed: () => Navigator.of(context).maybePop(),
+    return Theme(
+      data: ArabicCatalog.theme(Theme.of(context)),
+      child: Directionality(
+        textDirection: TextDirection.rtl,
+        child: Scaffold(
+          backgroundColor: canvas,
+          body: SafeArea(
+            child: CustomScrollView(
+              physics: const BouncingScrollPhysics(),
+              slivers: [
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
+                    child: Row(
+                      children: [
+                        IconButton(
+                          icon: Icon(Icons.arrow_back_rounded,
+                              color: ink, size: 22),
+                          tooltip: ArabicCatalog.back,
+                          onPressed: () => Navigator.of(context).maybePop(),
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            ArabicCatalog.bookCard,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: ArabicCatalog.ui(
+                                fontSize: OTFontSize.s20,
+                                fontWeight: FontWeight.w700,
+                                color: ink),
+                          ),
+                        ),
+                      ],
                     ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: Text(
-                        Loc.tr('bookReferenceLabel'),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: OTTypography.screenTitle(color: ink),
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
-              ),
-            ),
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
-                child: Center(
-                    child: ConstrainedBox(
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
+                    child: Center(
+                      child: ConstrainedBox(
                         constraints: const BoxConstraints(maxWidth: 760),
                         child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
                             OTBentoTile(
-                                padding: const EdgeInsets.all(24),
-                                child: Directionality(
-                                    textDirection: answerDirection(book.title),
-                                    child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.stretch,
-                                        children: [
-                                          Text(book.title,
-                                              textDirection:
-                                                  answerDirection(book.title),
-                                              textAlign: TextAlign.start,
-                                              style: answerDirection(
-                                                          book.title) ==
-                                                      TextDirection.rtl
-                                                  ? ScholarlyFonts
-                                                      .scheherazadeNew(
-                                                          fontSize:
-                                                              OTFontSize.s36,
-                                                          fontWeight:
-                                                              FontWeight.w700,
-                                                          color: ink,
-                                                          height: 1.6)
-                                                  : OTTypography.pageTitle(
-                                                      color: ink)),
-                                          const SizedBox(height: 8),
-                                          Text(book.author,
-                                              textDirection:
-                                                  answerDirection(book.author),
-                                              textAlign: TextAlign.start,
-                                              style: ScholarlyFonts
-                                                  .scheherazadeNew(
-                                                      fontSize: OTFontSize.s18,
-                                                      color: textSecondary,
-                                                      height: 1.7)),
-                                          const SizedBox(height: 16),
-                                          Wrap(
-                                              spacing: 16,
-                                              runSpacing: 8,
-                                              children: [
-                                                Text(book.localizedSection,
-                                                    style: OTTypography.body(
-                                                        color: textSecondary)),
-                                                if (book.deathYear != null &&
-                                                    !RegExp(r'[0-9٠-٩]')
-                                                        .hasMatch(book.author))
-                                                  Text(book.deathLabel,
-                                                      textDirection:
-                                                          TextDirection.ltr,
-                                                      style: OTTypography.body(
-                                                          color: textSecondary))
-                                              ]),
-                                          const SizedBox(height: 20),
-                                          Wrap(
-                                              spacing: 12,
-                                              runSpacing: 8,
-                                              children: [
-                                                FilledButton.icon(
-                                                    onPressed: () =>
-                                                        _handleCopyCitation(
-                                                            context),
-                                                    icon: const Icon(
-                                                        Icons.copy_rounded,
-                                                        size: 18),
-                                                    label: Text(Loc.tr(
-                                                        'bookCitationCopy'))),
-                                                OutlinedButton.icon(
-                                                    onPressed: () =>
-                                                        _handleBookmark(
-                                                            context),
-                                                    icon: const Icon(
-                                                        Icons
-                                                            .bookmark_add_outlined,
-                                                        size: 18),
-                                                    label: Text(
-                                                        Loc.tr('bookSave'))),
-                                              ]),
-                                        ]))),
+                              padding: const EdgeInsets.all(24),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: [
+                                  Text(book.title,
+                                      textAlign: TextAlign.start,
+                                      style: ScholarlyFonts.scheherazadeNew(
+                                          fontSize: OTFontSize.s36,
+                                          fontWeight: FontWeight.w700,
+                                          color: ink,
+                                          height: 1.6)),
+                                  const SizedBox(height: 8),
+                                  Text(ArabicCatalog.authorName(book.author),
+                                      textAlign: TextAlign.start,
+                                      style: ScholarlyFonts.scheherazadeNew(
+                                          fontSize: OTFontSize.s20,
+                                          color: textSecondary,
+                                          height: 1.7)),
+                                  const SizedBox(height: 12),
+                                  Wrap(spacing: 16, runSpacing: 8, children: [
+                                    if (death != null)
+                                      Text(death,
+                                          style: ArabicCatalog.ui(
+                                              fontSize: OTFontSize.s14,
+                                              color: textSecondary)),
+                                    if (book.section.isNotEmpty)
+                                      Text(book.section,
+                                          style: ArabicCatalog.ui(
+                                              fontSize: OTFontSize.s14,
+                                              color: textSecondary)),
+                                  ]),
+                                  const SizedBox(height: 20),
+                                  Wrap(spacing: 12, runSpacing: 8, children: [
+                                    FilledButton.icon(
+                                        onPressed: () =>
+                                            _handleCopyCitation(context),
+                                        icon: const Icon(Icons.copy_rounded,
+                                            size: 18),
+                                        label: const Text(
+                                            ArabicCatalog.copyCitation)),
+                                    OutlinedButton.icon(
+                                        onPressed: () =>
+                                            _handleBookmark(context),
+                                        icon: const Icon(
+                                            Icons.bookmark_add_outlined,
+                                            size: 18),
+                                        label:
+                                            const Text(ArabicCatalog.saveNote)),
+                                  ]),
+                                ],
+                              ),
+                            ),
                             const SizedBox(height: OTSpacing.md),
                             _BookBentoGrid(book: book),
                             const SizedBox(height: OTSpacing.md),
-                            Text(Loc.tr('verificationNotice'),
-                                style:
-                                    OTTypography.caption(color: textSecondary)),
+                            Text(ArabicCatalog.notice,
+                                style: ArabicCatalog.ui(
+                                    fontSize: OTFontSize.s12,
+                                    color: textSecondary)),
                             if (book.needsMetadataReview)
                               Padding(
                                   padding:
                                       const EdgeInsets.only(top: OTSpacing.sm),
-                                  child: Text(Loc.tr('metadataReview'),
-                                      style:
-                                          OTTypography.bodyMedium(color: ink))),
+                                  child: Text(ArabicCatalog.reviewNotice,
+                                      style: ArabicCatalog.ui(
+                                          fontSize: OTFontSize.s14,
+                                          fontWeight: FontWeight.w600,
+                                          color: ink))),
                           ],
-                        ))),
-              ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );
   }
 }
 
-/// Data edisi kitab sebagai bento: fakta singkat di ubin kecil, teks panjang
-/// (muhaqqiq, penerbit) di ubin lebar. Ubin tanpa data tidak ditampilkan.
+/// Tabel بيانات الطبعة: satu permukaan dengan garis pemisah. Kolom yang tidak
+/// disebut sumber ditulis «غير مذكور في المصدر» (untuk المحقق/الناشر/الطبعة)
+/// atau tidak ditampilkan (kolom tambahan).
 class _BookBentoGrid extends StatelessWidget {
   const _BookBentoGrid({required this.book});
 
   final OpenTurathBook book;
 
-  static bool _has(String value) => value.trim().isNotEmpty && value != '-';
-
-  // Teks Arab atau panjang tidak muat sebagai angka besar di ubin kecil.
-  static bool _isLong(String value) =>
-      value.trim().length > 14 || RegExp(r'[\u0600-\u06FF]').hasMatch(value);
+  static bool _has(String value) =>
+      value.trim().isNotEmpty &&
+      value.trim() != '-' &&
+      value.trim() != ArabicCatalog.notStated;
 
   @override
   Widget build(BuildContext context) {
-    final facts = <_BentoTile>[
-      if (_has(book.volumes))
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final rows = <_BentoTile>[
+      if (ArabicCatalog.volumes(book.volumes) != null)
         _BentoTile(
-          icon: Icons.layers_outlined,
-          label: Loc.tr('bookVolumes'),
-          value: book.volumeLabel,
-        ),
-      if (_has(book.pages))
+            icon: Icons.layers_outlined,
+            label: ArabicCatalog.lVolumes,
+            value: ArabicCatalog.number(book.volumes)),
+      if (ArabicCatalog.pages(book.pages) != null)
         _BentoTile(
-          icon: Icons.description_outlined,
-          label: Loc.tr('bookPages'),
-          value: book.pagesLabel,
-        ),
-      if (_has(book.edition) && !_isLong(book.edition))
-        _BentoTile(
-          icon: Icons.bookmark_border_rounded,
-          label: Loc.tr('bookEdition'),
-          value: book.edition,
-        ),
-    ];
-    final wide = <_BentoTile>[
-      if (_has(book.edition) && _isLong(book.edition))
-        _BentoTile(
-          icon: Icons.bookmark_border_rounded,
-          label: Loc.tr('bookEdition'),
-          value: book.edition,
-          wide: true,
-        ),
+            icon: Icons.description_outlined,
+            label: ArabicCatalog.lPages,
+            value: ArabicCatalog.number(book.pages)),
       _BentoTile(
-        icon: Icons.edit_outlined,
-        label: Loc.tr('ui_ad39f1c3af'),
-        value: book.editorName.isEmpty
-            ? Loc.tr('editorNotRecorded')
-            : book.editorName,
-        wide: true,
-      ),
+          icon: Icons.edit_outlined,
+          label: ArabicCatalog.lEditor,
+          value: _has(book.editorName)
+              ? book.editorName
+              : ArabicCatalog.notStatedShort),
+      if (_has(book.supervisor))
+        _BentoTile(
+            icon: Icons.school_outlined,
+            label: ArabicCatalog.lSupervisor,
+            value: book.supervisor),
+      _BentoTile(
+          icon: Icons.apartment_outlined,
+          label: ArabicCatalog.lPublisher,
+          value: _has(book.publisher)
+              ? book.publisher
+              : ArabicCatalog.notStatedShort),
+      _BentoTile(
+          icon: Icons.bookmark_border_rounded,
+          label: ArabicCatalog.lEdition,
+          value: _has(book.edition)
+              ? ArabicCatalog.digits(book.edition)
+              : ArabicCatalog.notStatedShort),
+      if (_has(book.bookType))
+        _BentoTile(
+            icon: Icons.workspace_premium_outlined,
+            label: ArabicCatalog.lType,
+            value: book.bookType),
+      if (_has(book.editionWarning))
+        _BentoTile(
+            icon: Icons.info_outline_rounded,
+            label: ArabicCatalog.lWarning,
+            value: book.editionWarning),
       if (_has(book.editionNote))
         _BentoTile(
             icon: Icons.info_outline_rounded,
-            label: Loc.tr('editionNote'),
-            value: book.editionNote,
-            wide: true),
-      if (_has(book.publisher))
-        _BentoTile(
-          icon: Icons.apartment_outlined,
-          label: Loc.tr('bookPublisher'),
-          value: book.publisher,
-          wide: true,
-        ),
+            label: ArabicCatalog.lWarning,
+            value: book.editionNote),
     ];
-    if (facts.isEmpty && wide.isEmpty) {
-      return Padding(
-        padding: const EdgeInsets.symmetric(vertical: OTSpacing.md),
-        child: Text(Loc.tr('unknownMetadata')),
-      );
-    }
 
-    // Satu tabel identitas edisi: kartu hanya untuk benda yang bisa dibuka,
-    // jadi fakta-fakta ini berbagi satu permukaan dengan garis pemisah.
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final rows = [...facts, ...wide];
     return Container(
       padding: const EdgeInsets.fromLTRB(
           OTSpacing.base, OTSpacing.md, OTSpacing.base, OTSpacing.xs),
@@ -730,8 +753,10 @@ class _BookBentoGrid extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
-            NativeCopy.text('edition').toUpperCase(),
-            style: OTTypography.sectionHeading(
+            ArabicCatalog.edition,
+            style: ArabicCatalog.ui(
+                fontSize: OTFontSize.s14,
+                fontWeight: FontWeight.w700,
                 color: OTColors.textSecondary(isDark)),
           ),
           const SizedBox(height: OTSpacing.xs),
@@ -750,30 +775,26 @@ class _BentoTile extends StatelessWidget {
     required this.icon,
     required this.label,
     required this.value,
-    this.wide = false,
   });
 
   final IconData icon;
   final String label;
   final String value;
-  final bool wide;
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final ink = OTColors.textPrimary(isDark);
     final textSecondary = OTColors.textSecondary(isDark);
-    final displayValue = value.trim();
-    final isArabic = answerDirection(displayValue) == TextDirection.rtl;
+    final kosong = value == ArabicCatalog.notStatedShort;
 
     final valueText = Text(
-      displayValue,
-      textDirection: answerDirection(displayValue),
+      value.trim(),
       textAlign: TextAlign.start,
-      style: isArabic
-          ? ScholarlyFonts.scheherazadeNew(
-              fontSize: OTFontSize.s18, height: 1.7, color: ink)
-          : OTTypography.bodyMedium(color: ink),
+      style: kosong
+          ? ArabicCatalog.ui(fontSize: OTFontSize.s14, color: textSecondary)
+          : ScholarlyFonts.scheherazadeNew(
+              fontSize: OTFontSize.s20, height: 1.7, color: ink),
     );
     final labelRow = Row(
       mainAxisSize: MainAxisSize.min,
@@ -785,7 +806,8 @@ class _BentoTile extends StatelessWidget {
             label,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: OTTypography.caption(color: textSecondary),
+            style: ArabicCatalog.ui(
+                fontSize: OTFontSize.s14, color: textSecondary),
           ),
         ),
       ],
@@ -803,7 +825,7 @@ class _BentoTile extends StatelessWidget {
                 valueText
               ]);
         }
-        return Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        return Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
           SizedBox(width: 168, child: labelRow),
           const SizedBox(width: OTSpacing.lg),
           Expanded(child: valueText),

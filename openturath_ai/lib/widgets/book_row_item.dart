@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../core/localization.dart';
 import '../models/book_model.dart';
 import 'book_identity_card.dart';
+import '../core/arabic_catalog.dart';
 
 /// Item baris naskah kanonikal dengan desain minimalis terinspirasi dari lembar informasi Google Camera (Pixel EXIF card).
 /// Monokrom murni, tanpa aksen biru, dengan tipografi Arab proporsional dan strip metadata horizontal rapi.
@@ -20,43 +21,32 @@ class BookRowItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Loc.watch(context);
-    // Format jilid bersih tanpa duplikasi kata
-    String? formattedVolumes;
-    if (book.volumesDescription != null &&
-        book.volumesDescription!.trim().isNotEmpty &&
-        book.volumesDescription!.trim() != '-') {
-      final v = book.volumesDescription!.trim();
-      formattedVolumes = (v.contains('جزء') ||
-              v.contains('مجلد') ||
-              v.contains('jilid') ||
-              v.contains('Jilid'))
-          ? v
-          : Loc.tr('volumeCount', [v]);
+    // Katalog selalu berbahasa Arab (keputusan pemilik 2026-10-16).
+    String? volumes;
+    final vd = book.volumesDescription?.trim() ?? '';
+    if (vd.isNotEmpty && vd != '-') {
+      volumes = RegExp(r'^[0-9٠-٩]+$').hasMatch(vd)
+          ? ArabicCatalog.volumes(vd)
+          : ArabicCatalog.digits(vd);
     } else if (book.volumesCount != null && book.volumesCount! > 0) {
-      formattedVolumes = Loc.tr('volumeCount', ['${book.volumesCount}']);
+      volumes = ArabicCatalog.volumes('${book.volumesCount}');
     }
-
-    final pages = book.pagesDescription?.trim();
-    final pageLabel = pages == null || pages.isEmpty || pages == '-'
+    final pages = book.pagesDescription?.trim() ?? '';
+    final pageLabel = pages.isEmpty || pages == '-'
         ? null
         : RegExp(r'^[0-9٠-٩.,،\s]+$').hasMatch(pages)
-            ? Loc.tr('pageCount', [pages])
-            : pages;
+            ? ArabicCatalog.pages(pages.replaceAll(RegExp(r'[.,،\s]'), ''))
+            : ArabicCatalog.digits(pages);
     final facts = [
-      if (formattedVolumes != null) formattedVolumes,
+      if (volumes != null) volumes,
       if (pageLabel != null) pageLabel
     ];
 
-    final hasDeathYear =
-        book.verifiedDeathYearHijri != null && book.verifiedDeathYearHijri! > 0;
-
     return BookIdentityCard(
       title: book.titleArabic,
-      author: book.authorArabic,
+      author: ArabicCatalog.authorName(book.authorArabic),
       facts: facts.take(2).toList(),
-      deathLabel: hasDeathYear
-          ? Loc.tr('deathYear', ['${book.verifiedDeathYearHijri}'])
-          : null,
+      deathLabel: ArabicCatalog.death(book.verifiedDeathYearHijri),
       onTap: onTap,
     );
   }

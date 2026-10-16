@@ -25,7 +25,8 @@ void main() {
       volumesCount: 8,
     );
 
-    testWidgets('BookRowItem displays Arabic title in RTL and compact tags', (tester) async {
+    testWidgets('BookRowItem displays Arabic title in RTL and compact tags',
+        (tester) async {
       bool tapped = false;
       await tester.pumpWidget(
         MaterialApp(
@@ -41,9 +42,9 @@ void main() {
       // Verify Arabic Title and author
       expect(find.text('كتاب الأم'), findsOneWidget);
       expect(find.text('الإمام محمد بن إدريس الشافعي'), findsOneWidget);
-      expect(find.text('w. 204 H'), findsOneWidget);
+      expect(find.text('ت ٢٠٤ هـ'), findsOneWidget);
       // Daftar editorial menyimpan fakta inti; penerbit tetap pada detail.
-      expect(find.textContaining('8 jilid'), findsOneWidget);
+      expect(find.textContaining('المجلدات: ٨'), findsOneWidget);
       expect(find.textContaining('Darul Kutub Al-Ilmiyyah'), findsNothing);
 
       // Tap the item
@@ -51,7 +52,9 @@ void main() {
       expect(tapped, isTrue);
     });
 
-    testWidgets('BookDetailScreen follows Arabic locale and keeps source text RTL', (tester) async {
+    testWidgets(
+        'BookDetailScreen follows Arabic locale and keeps source text RTL',
+        (tester) async {
       AppConfig.localeNotifier.value = 'ar';
       addTearDown(() => AppConfig.localeNotifier.value = 'id');
       await tester.pumpWidget(
@@ -86,7 +89,8 @@ void main() {
       expect(find.text('Simpan ke Catatan Riset'), findsNothing);
     });
 
-    testWidgets('BookCatalogScreen displays title and search input', (tester) async {
+    testWidgets('BookCatalogScreen displays title and search input',
+        (tester) async {
       await tester.pumpWidget(
         const MaterialApp(
           home: BookCatalogScreen(),
@@ -98,7 +102,9 @@ void main() {
       expect(find.text('Semua kitab'), findsOneWidget);
     });
 
-    testWidgets('English book details localize chrome while preserving Arabic title', (tester) async {
+    testWidgets(
+        'English book details localize chrome while preserving Arabic title',
+        (tester) async {
       AppConfig.localeNotifier.value = 'en';
       addTearDown(() => AppConfig.localeNotifier.value = 'id');
       await tester.pumpWidget(
@@ -116,7 +122,8 @@ void main() {
           TextDirection.rtl);
     });
 
-    testWidgets('AppRoutes contains bookCatalog and bookDetail', (tester) async {
+    testWidgets('AppRoutes contains bookCatalog and bookDetail',
+        (tester) async {
       expect(AppRoutes.bookCatalog, equals('/catalog'));
       expect(AppRoutes.bookDetail, equals('/book_detail'));
     });

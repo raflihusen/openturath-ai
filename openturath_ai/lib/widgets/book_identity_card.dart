@@ -5,6 +5,7 @@ import '../core/scholarly_fonts.dart';
 import '../core/answer_direction.dart';
 import '../core/design/ot_radius.dart';
 import 'ot_motion_widgets.dart';
+import '../core/arabic_catalog.dart';
 
 /// One bibliographic identity, shared by the collection and canonical catalogs.
 class BookIdentityCard extends StatelessWidget {
@@ -75,14 +76,23 @@ class BookIdentityCard extends StatelessWidget {
                         borderRadius: OTRadius.chipBorder),
                     child: Text(fact,
                         textDirection: answerDirection(fact),
-                        style: OTTypography.caption(color: muted))),
+                        style: answerDirection(fact) == TextDirection.rtl
+                            ? ArabicCatalog.ui(
+                                fontSize: OTFontSize.s12, color: muted)
+                            : OTTypography.caption(color: muted))),
             ]);
         final dateView = deathLabel != null && !hasAuthorDate
             ? Padding(
                 padding: const EdgeInsets.only(top: 8),
                 child: Text(deathLabel!,
-                    textDirection: TextDirection.ltr,
-                    style: OTTypography.caption(color: muted)))
+                    textDirection: answerDirection(deathLabel!),
+                    textAlign: answerDirection(deathLabel!) == TextDirection.rtl
+                        ? TextAlign.right
+                        : TextAlign.left,
+                    style: answerDirection(deathLabel!) == TextDirection.rtl
+                        ? ArabicCatalog.ui(
+                            fontSize: OTFontSize.s12, color: muted)
+                        : OTTypography.caption(color: muted)))
             : const SizedBox.shrink();
         final textIdentity = Column(
             mainAxisSize: MainAxisSize.min,

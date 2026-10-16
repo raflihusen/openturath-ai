@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:openturath_ai/core/arabic_catalog.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:openturath_ai/core/app_config.dart';
@@ -140,9 +141,10 @@ void main() {
       const OpenTurathBookDetailPage(book: book),
     ));
 
-    expect(find.text('Book reference'), findsOneWidget);
+    // Katalog selalu berbahasa Arab, termasuk ketika aplikasi berbahasa Inggris.
+    expect(find.text(ArabicCatalog.bookCard), findsOneWidget);
     expect(find.text('فضائل مكة والسكن فيها'), findsOneWidget);
-    expect(find.text('Publisher'), findsOneWidget);
+    expect(find.text(ArabicCatalog.lPublisher), findsOneWidget);
     expect(find.text('Source collection'), findsNothing);
     expect(tester.takeException(), isNull);
   });
@@ -176,7 +178,7 @@ void main() {
         language,
         const OpenTurathBookDetailPage(book: book),
       ));
-      expect(find.text(Loc.tr('bookReferenceLabel')), findsOneWidget);
+      expect(find.text(ArabicCatalog.bookCard), findsOneWidget);
       expect(tester.takeException(), isNull);
     });
 
