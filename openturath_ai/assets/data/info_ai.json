@@ -19,7 +19,7 @@
    "jumlah_kitab": 58,
    "jumlah_muhadharah": 3001,
    "jumlah_jilid": null,
-   "jumlah_kata": 6293281,
+   "jumlah_kata": 6042413,
    "rentang_wafat_pengarang": null,
    "kitab_induk": [
     {
@@ -99,7 +99,7 @@
    "karya_ditahan_semua_ilmu": 10919,
    "karya_termuat_semua_ilmu": 1456,
    "rekaman_digabung_ke_kitab_ini": null,
-   "berkas_notebooklm": 17,
+   "berkas_notebooklm": 15,
    "uji": [
     "Penyaringan manhaj pengarang, pensyarah, dan muhaqqiq",
     "Deteksi kitab kembar lewat sidik isi",
