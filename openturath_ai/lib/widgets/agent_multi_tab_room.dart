@@ -434,8 +434,6 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
     );
   }
 
-
-
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -486,7 +484,6 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
             tooltip: AppCopy.referenceBooks,
             onPressed: () => _openLibrarySheet(context, activeTab.agent),
           ),
-
           PopupMenuButton<String>(
             icon: Icon(Icons.more_vert_rounded, color: textPrimary, size: 20),
             tooltip: AppCopy.studyOptions,
@@ -601,7 +598,6 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                     ],
                   ),
                 ),
-
             ],
           ),
           const SizedBox(width: 4),
@@ -1419,15 +1415,17 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
 
     // The server owns current rights; a stale local profile must not turn a
     // paid-but-provisioning assignment into a request to purchase again.
-    final openingUid = _authService.currentUser?.uid ??
-        _authService.cachedCurrentUser?.uid;
+    final openingUid =
+        _authService.currentUser?.uid ?? _authService.cachedCurrentUser?.uid;
 
     try {
       final url = await _agentService.getAgentUrl(session.agent.id);
-      final currentUid = _authService.currentUser?.uid ??
-          _authService.cachedCurrentUser?.uid;
+      final currentUid =
+          _authService.currentUser?.uid ?? _authService.cachedCurrentUser?.uid;
       if (!mounted ||
-          (openingUid != null && currentUid != null && currentUid != openingUid)) {
+          (openingUid != null &&
+              currentUid != null &&
+              currentUid != openingUid)) {
         return;
       }
       if (url != null && url.isNotEmpty) {
@@ -1449,10 +1447,12 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
         });
       }
     } catch (e) {
-      final currentUid = _authService.currentUser?.uid ??
-          _authService.cachedCurrentUser?.uid;
+      final currentUid =
+          _authService.currentUser?.uid ?? _authService.cachedCurrentUser?.uid;
       if (!mounted ||
-          (openingUid != null && currentUid != null && currentUid != openingUid)) {
+          (openingUid != null &&
+              currentUid != null &&
+              currentUid != openingUid)) {
         return;
       }
       final msg = e.toString().toLowerCase();
@@ -1728,8 +1728,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
                     session.isSessionReady = false;
                     session.isGooglePermissionError = true;
                     session.isPaywallRequired = false;
-                    session.errorMessage =
-                        Loc.tr('roomGooglePermissionDetail');
+                    session.errorMessage = Loc.tr('roomGooglePermissionDetail');
                   });
                 } else if (code != null && code >= 400) {
                   _readinessTimer?.cancel();

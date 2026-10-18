@@ -766,7 +766,6 @@ class AgentModel {
           price1m: 49000,
         ),
 
-
         // ── 9. SPESIALIS TAMBAHAN KATALOG MASTER ───────────────
         AgentModel(
           id: 'tajwid_qiraat',

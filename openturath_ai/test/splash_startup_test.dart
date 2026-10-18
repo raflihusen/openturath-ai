@@ -4,7 +4,6 @@ import 'package:openturath_ai/core/routes.dart';
 import 'package:openturath_ai/screens/splash_screen.dart';
 
 void main() {
-
   Future<void> startApp(
     WidgetTester tester,
     String Function() resolveRoute,

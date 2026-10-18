@@ -9,7 +9,8 @@ class LanguageSwitcher extends StatelessWidget {
   Widget build(BuildContext context) {
     Loc.watch(context);
     return PopupMenuButton<String>(
-      tooltip: Loc.tr('language'), initialValue: Loc.language,
+      tooltip: Loc.tr('language'),
+      initialValue: Loc.language,
       icon: const Icon(Icons.translate_rounded, size: 22),
       onSelected: (language) async {
         try {
@@ -18,10 +19,20 @@ class LanguageSwitcher extends StatelessWidget {
           // The chosen language remains active even if local persistence fails.
         }
       },
-      itemBuilder: (_) => Loc.languageNames.entries.map((entry) =>
-        CheckedPopupMenuItem(value: entry.key, checked: entry.key == Loc.language,
-          child: Text(entry.value, style: entry.key == 'ar' ? ScholarlyFonts.scheherazadeNew(height: 1.85) : null, textDirection: entry.key == 'ar' ? TextDirection.rtl : TextDirection.ltr)),
-      ).toList(),
+      itemBuilder: (_) => Loc.languageNames.entries
+          .map(
+            (entry) => CheckedPopupMenuItem(
+                value: entry.key,
+                checked: entry.key == Loc.language,
+                child: Text(entry.value,
+                    style: entry.key == 'ar'
+                        ? ScholarlyFonts.scheherazadeNew(height: 1.85)
+                        : null,
+                    textDirection: entry.key == 'ar'
+                        ? TextDirection.rtl
+                        : TextDirection.ltr)),
+          )
+          .toList(),
     );
   }
 }

@@ -8,7 +8,8 @@ void main() {
   });
 
   group('NavigationGuard Single-Flight Tests', () {
-    testWidgets('safePushNamed ignores concurrent duplicate navigation calls', (tester) async {
+    testWidgets('safePushNamed ignores concurrent duplicate navigation calls',
+        (tester) async {
       int pushCallCount = 0;
 
       final testApp = MaterialApp(
@@ -16,7 +17,8 @@ void main() {
           if (settings.name == '/test_sub') {
             pushCallCount++;
             return MaterialPageRoute(
-              builder: (context) => const Scaffold(body: Text('Subscription Page')),
+              builder: (context) =>
+                  const Scaffold(body: Text('Subscription Page')),
               settings: settings,
             );
           }
@@ -47,7 +49,9 @@ void main() {
       expect(pushCallCount, equals(1));
     });
 
-    testWidgets('safeNavigate executes only one action during concurrent invocations', (tester) async {
+    testWidgets(
+        'safeNavigate executes only one action during concurrent invocations',
+        (tester) async {
       int actionCount = 0;
 
       final testApp = MaterialApp(
@@ -77,7 +81,9 @@ void main() {
       expect(actionCount, equals(1));
     });
 
-    testWidgets('safePushNamed allows opening a child route while parent route is active on stack', (tester) async {
+    testWidgets(
+        'safePushNamed allows opening a child route while parent route is active on stack',
+        (tester) async {
       int subPageOpened = 0;
       int termsPageOpened = 0;
 

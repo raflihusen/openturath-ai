@@ -17,15 +17,24 @@ Stream<T?> sessionUserStream<T>({
     if (!current(token)) return;
     hasValue = true;
     last = value;
-    for (final listener in listeners.toList()) { listener.add(value); }
+    for (final listener in listeners.toList()) {
+      listener.add(value);
+    }
   }
+
   void error(int token, Object value, StackTrace stack) {
     if (!current(token)) return;
-    for (final listener in listeners.toList()) { listener.addError(value, stack); }
+    for (final listener in listeners.toList()) {
+      listener.addError(value, stack);
+    }
   }
+
   Future<void> cancel(StreamSubscription<dynamic>? sub) async {
-    try { await sub?.cancel(); } catch (_) { /* Generation already invalidates events. */ }
+    try {
+      await sub?.cancel();
+    } catch (_) {/* Generation already invalidates events. */}
   }
+
   Future<void> switchUser(String? uid) async {
     final token = ++generation;
     final previous = documentSub;
@@ -37,22 +46,25 @@ Stream<T?> sessionUserStream<T>({
       final value = await cached(uid).timeout(const Duration(seconds: 5));
       if (!current(token)) return;
       if (value != null) emit(token, value);
-    } catch (_) { /* Continue with the authoritative snapshot stream. */ }
+    } catch (_) {/* Continue with the authoritative snapshot stream. */}
     if (!current(token)) return;
     try {
       documentSub = watch(uid).listen(
         (value) => emit(token, value),
         onError: (Object e, StackTrace stack) => error(token, e, stack),
       );
-    } catch (e, stack) { error(token, e, stack); }
+    } catch (e, stack) {
+      error(token, e, stack);
+    }
   }
 
   return Stream<T?>.multi((listener) {
     listeners.add(listener);
     if (hasValue) listener.add(last);
     if (listeners.length == 1) {
-      authSub = auth.listen((uid) { unawaited(switchUser(uid)); },
-        onError: (Object e, StackTrace stack) => error(generation, e, stack));
+      authSub = auth.listen((uid) {
+        unawaited(switchUser(uid));
+      }, onError: (Object e, StackTrace stack) => error(generation, e, stack));
     }
     listener.onCancel = () async {
       listeners.remove(listener);

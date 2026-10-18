@@ -95,7 +95,8 @@ class OpenTurathCatalogRepository {
     'lughah_balaghah': 'assets/data/04_KATALOG_BAHASA_DAN_SASTRA_ARAB.json',
     'nahwu_sharaf': 'assets/data/04_KATALOG_BAHASA_DAN_SASTRA_ARAB.json',
     'nahwu_sharaf_muerib': 'assets/data/04_KATALOG_BAHASA_DAN_SASTRA_ARAB.json',
-    'nahwu_sharaf_tashrif': 'assets/data/04_KATALOG_BAHASA_DAN_SASTRA_ARAB.json',
+    'nahwu_sharaf_tashrif':
+        'assets/data/04_KATALOG_BAHASA_DAN_SASTRA_ARAB.json',
     'tafsir': 'assets/data/05_KATALOG_TAFSIR_DAN_ULUMUL_QURAN.json',
     'tafsir_muhaqqiq': 'assets/data/05_KATALOG_TAFSIR_DAN_ULUMUL_QURAN.json',
     'tafsir_ulumul_quran':
@@ -109,7 +110,8 @@ class OpenTurathCatalogRepository {
     'tarikh': 'assets/data/07_KATALOG_TARIKH_DAN_SIRAH_NABAWIYYAH.json',
     'tarikh_sirah': 'assets/data/07_KATALOG_TARIKH_DAN_SIRAH_NABAWIYYAH.json',
     'fiqh_muqaran': 'assets/data/08_KATALOG_FIKIH_MUQARAN_DAN_UMUM.json',
-    'fiqh_muqaran_muhaqqiq': 'assets/data/08_KATALOG_FIKIH_MUQARAN_DAN_UMUM.json',
+    'fiqh_muqaran_muhaqqiq':
+        'assets/data/08_KATALOG_FIKIH_MUQARAN_DAN_UMUM.json',
     'fatawa_masail': 'assets/data/08_KATALOG_FIKIH_MUQARAN_DAN_UMUM.json',
     'syarah_hadits': 'assets/data/10_KATALOG_SYARAH_HADITS.json',
     'fiqh_hanafi': 'assets/data/11_KATALOG_FIKIH_HANAFI.json',

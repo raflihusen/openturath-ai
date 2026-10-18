@@ -15,7 +15,8 @@ void main() {
   OTTypography.useSystemFontFallback = true;
 
   group('Resilience & Compliance Suite', () {
-    testWidgets('AppErrorState renders properly with retry and back buttons', (tester) async {
+    testWidgets('AppErrorState renders properly with retry and back buttons',
+        (tester) async {
       bool retried = false;
       bool backPressed = false;
 
@@ -34,7 +35,8 @@ void main() {
       );
 
       expect(find.text('Gagal Memuat Korpus'), findsOneWidget);
-      expect(find.text('Terjadi kendala koneksi saat menghubungi server.'), findsOneWidget);
+      expect(find.text('Terjadi kendala koneksi saat menghubungi server.'),
+          findsOneWidget);
       expect(find.text('Coba lagi'), findsOneWidget);
       expect(find.text('Kembali'), findsOneWidget);
 
@@ -45,7 +47,9 @@ void main() {
       expect(backPressed, isTrue);
     });
 
-    test('AgentModel defaultAgents have complete Arabic metadata and no null pointer risks', () {
+    test(
+        'AgentModel defaultAgents have complete Arabic metadata and no null pointer risks',
+        () {
       for (final agent in AgentModel.defaultAgents) {
         expect(agent.id, isNotEmpty);
         expect(agent.title, isNotEmpty);
@@ -94,17 +98,21 @@ void main() {
       expect(AppTheme.lmLightAccent, equals(AppTheme.accentLight));
     });
 
-    test('AgentAccessException encapsulates code, message, and string representation', () {
+    test(
+        'AgentAccessException encapsulates code, message, and string representation',
+        () {
       const exc = AgentAccessException(
         'permission-denied',
         'Batas uji coba 10 pertanyaan telah tercapai.',
       );
       expect(exc.code, equals('permission-denied'));
       expect(exc.message, contains('10 pertanyaan'));
-      expect(exc.toString(), contains('AgentAccessException(permission-denied)'));
+      expect(
+          exc.toString(), contains('AgentAccessException(permission-denied)'));
     });
 
-    test('UserModel hasAccessToAgent respects modular entitlements and expiry', () {
+    test('UserModel hasAccessToAgent respects modular entitlements and expiry',
+        () {
       final now = DateTime.now();
       final future = now.add(const Duration(days: 30));
       final past = now.subtract(const Duration(days: 1));
@@ -149,14 +157,18 @@ void main() {
 
     test('ThemeData dark and light include hardened component themes', () {
       final darkTheme = AppTheme.darkTheme;
-      expect(darkTheme.snackBarTheme.behavior, equals(SnackBarBehavior.floating));
+      expect(
+          darkTheme.snackBarTheme.behavior, equals(SnackBarBehavior.floating));
       expect(darkTheme.inputDecorationTheme.filled, isTrue);
-      expect(darkTheme.dialogTheme.backgroundColor, equals(AppTheme.surfaceCardDark));
+      expect(darkTheme.dialogTheme.backgroundColor,
+          equals(AppTheme.surfaceCardDark));
 
       final lightTheme = AppTheme.lightTheme;
-      expect(lightTheme.snackBarTheme.behavior, equals(SnackBarBehavior.floating));
+      expect(
+          lightTheme.snackBarTheme.behavior, equals(SnackBarBehavior.floating));
       expect(lightTheme.inputDecorationTheme.filled, isTrue);
-      expect(lightTheme.dialogTheme.backgroundColor, equals(AppTheme.surfaceCardLight));
+      expect(lightTheme.dialogTheme.backgroundColor,
+          equals(AppTheme.surfaceCardLight));
     });
 
     test('Localization contains valid cancel key in all three languages', () {

@@ -28,10 +28,14 @@ void main() {
     }
   });
 
-  test('notebookUiScript preserves message selectors and excludes composer from questions', () {
+  test(
+      'notebookUiScript preserves message selectors and excludes composer from questions',
+      () {
     // questionSelector should NOT loosely match [class*="query" i] or [class*="prompt" i]
     // because that matches .query-box-container and textarea
-    expect(notebookUiScript.contains(r'[class*="query" i], [class*="prompt" i]'), isFalse);
+    expect(
+        notebookUiScript.contains(r'[class*="query" i], [class*="prompt" i]'),
+        isFalse);
     expect(notebookUiScript.contains(r'[class*="user-query" i]'), isTrue);
     expect(notebookUiScript.contains(r'[class*="user-prompt" i]'), isTrue);
 
@@ -42,39 +46,56 @@ void main() {
     expect(notebookUiScript.contains('.conversation-intro'), isFalse);
 
     // message containers must maintain display block and visibility
-    expect(notebookUiScript.contains('.chat-message, .model-message, .user-message'), isTrue);
+    expect(
+        notebookUiScript
+            .contains('.chat-message, .model-message, .user-message'),
+        isTrue);
     expect(notebookUiScript.contains('display: block !important;'), isTrue);
-    expect(notebookUiScript.contains('visibility: visible !important;'), isTrue);
+    expect(
+        notebookUiScript.contains('visibility: visible !important;'), isTrue);
   });
 
-  test('notebookUiScript hides guide card, cover, and mobile tablist while keeping chat selected', () {
+  test(
+      'notebookUiScript hides guide card, cover, and mobile tablist while keeping chat selected',
+      () {
     expect(notebookUiScript.contains('app-notebook-guide'), isTrue);
     expect(notebookUiScript.contains('app-guide-card'), isTrue);
     expect(notebookUiScript.contains('[role="tablist"]'), isTrue);
     expect(notebookUiScript.contains('isSourceCount'), isTrue);
-    expect(notebookUiScript.contains('target.style.setProperty(\'display\', \'none\', \'important\')'), isTrue);
+    expect(
+        notebookUiScript.contains(
+            'target.style.setProperty(\'display\', \'none\', \'important\')'),
+        isTrue);
   });
 
-  test('notebookUiScript suppresses standalone plus button and source count pill in chat input', () {
-    expect(notebookUiScript.contains('button:has(mat-icon[fonticon="add"])'), isTrue);
+  test(
+      'notebookUiScript suppresses standalone plus button and source count pill in chat input',
+      () {
+    expect(notebookUiScript.contains('button:has(mat-icon[fonticon="add"])'),
+        isTrue);
     expect(notebookUiScript.contains('.add-source-button'), isTrue);
     expect(notebookUiScript.contains('isSourceCounter'), isTrue);
-    expect(notebookUiScript.contains('app-chat-input [class*="source-count" i]'), isTrue);
+    expect(
+        notebookUiScript.contains('app-chat-input [class*="source-count" i]'),
+        isTrue);
     expect(notebookUiScript.contains('app-chat-input .sources-button'), isTrue);
   });
 
-  test('notebookUiScript docks chat composer naturally via flexbox without fixed positioning clipping', () {
+  test(
+      'notebookUiScript docks chat composer naturally via flexbox without fixed positioning clipping',
+      () {
     // Composer must dock naturally via position: relative, not fixed floating
     expect(notebookUiScript.contains('position: relative !important;'), isTrue);
     expect(notebookUiScript.contains('position: fixed !important;'), isFalse);
     expect(notebookUiScript.contains('align-self: center !important;'), isTrue);
-    expect(notebookUiScript.contains('margin-inline: auto !important;'), isTrue);
+    expect(
+        notebookUiScript.contains('margin-inline: auto !important;'), isTrue);
     expect(notebookUiScript.contains('max-width: 720px !important;'), isTrue);
     expect(notebookUiScript.contains('.ot-chat-composer'), isTrue);
     expect(notebookUiScript.contains('.ot-chat-composer-path'), isTrue);
     expect(notebookUiScript.contains('removeLegacySpacers'), isTrue);
     expect(notebookUiScript.contains('flex: 0 0 auto !important;'), isTrue);
-    expect(notebookUiScript.contains('padding-bottom: 24px !important;'), isTrue);
+    expect(
+        notebookUiScript.contains('padding-bottom: 24px !important;'), isTrue);
   });
 }
-

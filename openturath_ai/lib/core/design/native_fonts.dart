@@ -24,7 +24,8 @@ abstract final class NativeFonts {
         fontStyle: fontStyle,
         letterSpacing: arabic ? 0 : letterSpacing,
         // Teks antarmuka Arab memakai font UI dengan tinggi baris wajar.
-        height: arabic ? (height == null || height < 1.4 ? 1.5 : height) : height,
+        height:
+            arabic ? (height == null || height < 1.4 ? 1.5 : height) : height,
         decoration: decoration);
   }
 
@@ -49,7 +50,8 @@ abstract final class NativeFonts {
         fontStyle: fontStyle,
         letterSpacing: arabic ? 0 : letterSpacing,
         // Teks antarmuka Arab memakai font UI dengan tinggi baris wajar.
-        height: arabic ? (height == null || height < 1.4 ? 1.5 : height) : height,
+        height:
+            arabic ? (height == null || height < 1.4 ? 1.5 : height) : height,
         decoration: decoration);
   }
 
@@ -97,7 +99,8 @@ abstract final class NativeFonts {
         fontStyle: fontStyle,
         letterSpacing: arabic ? 0 : letterSpacing,
         // Teks antarmuka Arab memakai font UI dengan tinggi baris wajar.
-        height: arabic ? (height == null || height < 1.4 ? 1.5 : height) : height,
+        height:
+            arabic ? (height == null || height < 1.4 ? 1.5 : height) : height,
         decoration: decoration);
   }
 
@@ -122,7 +125,8 @@ abstract final class NativeFonts {
         fontStyle: fontStyle,
         letterSpacing: arabic ? 0 : letterSpacing,
         // Teks antarmuka Arab memakai font UI dengan tinggi baris wajar.
-        height: arabic ? (height == null || height < 1.4 ? 1.5 : height) : height,
+        height:
+            arabic ? (height == null || height < 1.4 ? 1.5 : height) : height,
         decoration: decoration);
   }
 
@@ -147,7 +151,8 @@ abstract final class NativeFonts {
         fontStyle: fontStyle,
         letterSpacing: arabic ? 0 : letterSpacing,
         // Teks antarmuka Arab memakai font UI dengan tinggi baris wajar.
-        height: arabic ? (height == null || height < 1.4 ? 1.5 : height) : height,
+        height:
+            arabic ? (height == null || height < 1.4 ? 1.5 : height) : height,
         decoration: decoration);
   }
 }

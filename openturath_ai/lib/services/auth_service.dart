@@ -225,21 +225,20 @@ class AuthService {
       final code = e is PlatformException
           ? e.code
           : e is FirebaseAuthException
-          ? e.code
-          : e.runtimeType.toString();
+              ? e.code
+              : e.runtimeType.toString();
       final detail = e is PlatformException ? '${e.details}'.toLowerCase() : '';
       final category = detail.contains('keychain')
           ? 'keychain'
           : detail.contains('cancel')
-          ? 'cancelled'
-          : detail.contains('network')
-          ? 'network'
-          : detail.contains('configuration')
-          ? 'configuration'
-          : 'unspecified';
-      final safeCode = RegExp(r'^[a-zA-Z0-9_-]{1,80}$').hasMatch(code)
-          ? code
-          : 'unknown';
+              ? 'cancelled'
+              : detail.contains('network')
+                  ? 'network'
+                  : detail.contains('configuration')
+                      ? 'configuration'
+                      : 'unspecified';
+      final safeCode =
+          RegExp(r'^[a-zA-Z0-9_-]{1,80}$').hasMatch(code) ? code : 'unknown';
       // ignore: avoid_print
       print('OpenTurathAuth stage=$stage code=$safeCode category=$category');
       rethrow;
@@ -399,7 +398,8 @@ class AuthService {
       final owner =
           (prefs.getString(webSessionOwnerKey) ?? '').trim().toLowerCase();
       if (owner == current) {
-        await PersistentGoogleSession.instance.restoreSessionIfAvailable(current);
+        await PersistentGoogleSession.instance
+            .restoreSessionIfAvailable(current);
         return;
       }
       if (owner.isNotEmpty && owner != current) {

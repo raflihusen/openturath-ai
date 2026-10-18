@@ -53,7 +53,9 @@ class PaymentSuccessDialog extends StatelessWidget {
                 child: Icon(Icons.check_rounded,
                     size: 40, color: OTColors.canvas(dark)))),
         const SizedBox(height: 20),
-        Text(reviewCopy('Pembayaran berhasil', 'تم الدفع بنجاح', 'Payment successful'),
+        Text(
+            reviewCopy(
+                'Pembayaran berhasil', 'تم الدفع بنجاح', 'Payment successful'),
             textAlign: TextAlign.center,
             style: OTTypography.screenTitle(color: ink)),
         const SizedBox(height: 12),
@@ -94,7 +96,8 @@ class PaymentSuccessDialog extends StatelessWidget {
                   }
                 },
                 child: Text(agent != null
-                    ? reviewCopy('Mulai Telaah Sekarang', 'ابدأ الدراسة الآن', 'Start Study Now')
+                    ? reviewCopy('Mulai Telaah Sekarang', 'ابدأ الدراسة الآن',
+                        'Start Study Now')
                     : reviewCopy('Selesai', 'تم', 'Done')))),
       ]),
     );

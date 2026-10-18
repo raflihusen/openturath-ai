@@ -7,8 +7,10 @@ import 'package:openturath_ai/services/canonical_library_service.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  group('Canonical Multi-Discipline Catalog Integration (V9.2, 5.382 Kitab)', () {
-    test('All 18 V9.2 catalog asset files exist and parse exactly 5,382 books', () {
+  group('Canonical Multi-Discipline Catalog Integration (V9.2, 5.382 Kitab)',
+      () {
+    test('All 18 V9.2 catalog asset files exist and parse exactly 5,382 books',
+        () {
       const baseDir = 'assets/data';
       final files = {
         '01_KATALOG_FIKIH_SYAFII.json': 104,
@@ -37,7 +39,8 @@ void main() {
         expect(file.existsSync(), isTrue, reason: '${entry.key} must exist');
         final content = file.readAsStringSync();
         final books = parseSyamilahCatalog(content);
-        expect(books.length, equals(entry.value), reason: '${entry.key} count mismatch');
+        expect(books.length, equals(entry.value),
+            reason: '${entry.key} count mismatch');
         totalCount += books.length;
       }
 
@@ -47,20 +50,26 @@ void main() {
         '16_KATALOG_QAWAID_FIQHIYYAH.json',
         '21_KATALOG_ADAB_DAN_BALAGHAH.json',
       ]) {
-        expect(File('$baseDir/$gone').existsSync(), isFalse, reason: '$gone sudah dilebur');
+        expect(File('$baseDir/$gone').existsSync(), isFalse,
+            reason: '$gone sudah dilebur');
       }
     });
 
-    test('All 6 active specialist agents have catalogId set for Pustaka button', () {
-      final activeAgents = AgentModel.defaultAgents.where((a) => a.isActive).toList();
+    test('All 6 active specialist agents have catalogId set for Pustaka button',
+        () {
+      final activeAgents =
+          AgentModel.defaultAgents.where((a) => a.isActive).toList();
       expect(activeAgents.length, greaterThanOrEqualTo(6));
       for (final agent in activeAgents) {
-        expect(agent.catalogId, isNotNull, reason: 'Agent ${agent.id} must have catalogId');
+        expect(agent.catalogId, isNotNull,
+            reason: 'Agent ${agent.id} must have catalogId');
         expect(agent.catalogId, startsWith('canonical_'));
       }
     });
 
-    test('CanonicalBookPresentation parses Syamilah attributes and pagesDescription accurately', () {
+    test(
+        'CanonicalBookPresentation parses Syamilah attributes and pagesDescription accurately',
+        () {
       const sampleHadithJson = '''
       [
         {
@@ -97,7 +106,9 @@ void main() {
       expect(b.volumesCount, equals(9));
     });
 
-    test('CanonicalLibraryService filterBooks filters by century, section, and query with harakat', () {
+    test(
+        'CanonicalLibraryService filterBooks filters by century, section, and query with harakat',
+        () {
       final books = [
         const CanonicalBookPresentation(
           editionId: '1',
@@ -138,17 +149,20 @@ void main() {
       expect(r2.length, equals(2));
 
       // 3. Century Filter: Salaf (<= 300 H)
-      final r3 = service.filterBooks(books, '', centuryFilter: 'Salaf (≤ 300 H)');
+      final r3 =
+          service.filterBooks(books, '', centuryFilter: 'Salaf (≤ 300 H)');
       expect(r3.length, equals(1));
       expect(r3.first.editionId, equals('1'));
 
       // 4. Century Filter: Muta'akhkhirin (601-1100 H)
-      final r4 = service.filterBooks(books, '', centuryFilter: 'Muta\'akhkhirin (601-1100 H)');
+      final r4 = service.filterBooks(books, '',
+          centuryFilter: 'Muta\'akhkhirin (601-1100 H)');
       expect(r4.length, equals(1));
       expect(r4.first.editionId, equals('2'));
 
       // 5. Section filter
-      final r5 = service.filterBooks(books, '', sectionFilter: 'التفسير وعلوم القرآن (Balaghah)');
+      final r5 = service.filterBooks(books, '',
+          sectionFilter: 'التفسير وعلوم القرآن (Balaghah)');
       expect(r5.length, equals(1));
       expect(r5.first.editionId, equals('3'));
     });

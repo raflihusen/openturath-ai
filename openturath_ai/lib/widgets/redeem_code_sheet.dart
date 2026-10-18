@@ -96,7 +96,8 @@ class _RedeemCodeSheetState extends State<RedeemCodeSheet> {
           "Kajian Fikih Syafi'i: Al-Muhaqqiq";
       final durationDays = (result['durationDays'] as num?)?.toInt() ?? 7;
       final expiryRaw = result['expiry'] as String?;
-      final expiryDate = expiryRaw != null ? DateTime.tryParse(expiryRaw) : null;
+      final expiryDate =
+          expiryRaw != null ? DateTime.tryParse(expiryRaw) : null;
       final agentId = (result['entitlementKey'] as String?) ?? 'fiqh_syafii';
 
       final nav = Navigator.of(context);
@@ -131,11 +132,13 @@ class _RedeemCodeSheetState extends State<RedeemCodeSheet> {
       child: Container(
         decoration: BoxDecoration(
           color: bgSurface,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(OTRadius.dialog)),
+          borderRadius: const BorderRadius.vertical(
+              top: Radius.circular(OTRadius.dialog)),
           border: Border.all(color: borderColor, width: 0.8),
         ),
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
-        child: SingleChildScrollView(child: Column(
+        child: SingleChildScrollView(
+            child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -144,7 +147,8 @@ class _RedeemCodeSheetState extends State<RedeemCodeSheet> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Expanded(child: Text(
+                Expanded(
+                    child: Text(
                   Loc.tr('ui_6f8fc6f8d5'),
                   style: OTTypography.cardTitle(color: textPrimary).copyWith(
                     fontSize: OTFontSize.s18,

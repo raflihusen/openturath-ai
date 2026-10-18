@@ -23,8 +23,7 @@ void main() {
     });
 
     test('Notebook host with login path is recognized as authentication', () {
-      final notebookLoginUri =
-          Uri.parse('https://notebooklm.google.com/login');
+      final notebookLoginUri = Uri.parse('https://notebooklm.google.com/login');
       expect(NotebookNavigation.authentication(notebookLoginUri), isTrue);
       expect(NotebookNavigation.notebook(notebookLoginUri), isFalse);
       expect(NotebookNavigation.signInFlow(notebookLoginUri), isTrue);

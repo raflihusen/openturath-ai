@@ -52,8 +52,7 @@ class _BrowserWorkspaceScreenState extends State<BrowserWorkspaceScreen> {
                   Text(Loc.tr('workspaceHeadline'),
                       style: Theme.of(context).textTheme.titleLarge),
                   const SizedBox(height: 12),
-                  Text(
-                      Loc.tr('workspaceIntro')),
+                  Text(Loc.tr('workspaceIntro')),
                   const SizedBox(height: 28),
                   FilledButton.icon(
                     onPressed: _opening ? null : _open,
@@ -78,8 +77,7 @@ class _BrowserWorkspaceScreenState extends State<BrowserWorkspaceScreen> {
                     Text(_message!, style: TextStyle(color: colors.error)),
                   ],
                   const SizedBox(height: 24),
-                  Text(
-                      Loc.tr('workspaceSessionNote'),
+                  Text(Loc.tr('workspaceSessionNote'),
                       style: Theme.of(context).textTheme.bodySmall),
                 ],
               ),

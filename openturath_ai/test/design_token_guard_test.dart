@@ -34,8 +34,7 @@ void main() {
 
   test('tidak ada warna mentah di layar dan widget', () {
     expect(offenders(RegExp(r'\bColor\(0x')), isEmpty);
-    expect(
-        offenders(RegExp(r'\bColors\.(?!transparent\b)[a-zA-Z]')), isEmpty);
+    expect(offenders(RegExp(r'\bColors\.(?!transparent\b)[a-zA-Z]')), isEmpty);
   });
 
   test('layar tidak menata tombol sendiri; varian ada di OTButtons', () {
@@ -64,7 +63,7 @@ void main() {
   });
 
   test('hanya tiga bobot huruf: 400, 600, 700', () {
-    expect(offenders(RegExp(r'FontWeight\.(w[123589]00|bold|normal)\b')),
-        isEmpty);
+    expect(
+        offenders(RegExp(r'FontWeight\.(w[123589]00|bold|normal)\b')), isEmpty);
   });
 }

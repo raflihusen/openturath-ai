@@ -18,7 +18,8 @@ ParsedAiAnswerContent parseAiAnswerContent(String answer) {
   final lines = answer.split(RegExp(r'\r?\n'));
   final headingIndex = lines.indexWhere((line) {
     final clean = line.trim();
-    if (RegExp(r'^#{1,6}\s*percakapan\b', caseSensitive: false).hasMatch(clean)) {
+    if (RegExp(r'^#{1,6}\s*percakapan\b', caseSensitive: false)
+        .hasMatch(clean)) {
       return false;
     }
     return RegExp(r'^\s{0,3}#{1,6}\s+\S').hasMatch(line);

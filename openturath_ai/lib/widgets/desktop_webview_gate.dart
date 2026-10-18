@@ -38,10 +38,8 @@ class _DesktopWebViewGateState extends State<DesktopWebViewGate> {
                         }
                       } catch (_) {
                         if (context.mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                  content:
-                                      Text(Loc.tr('browserOpenFailed'))));
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                              content: Text(Loc.tr('browserOpenFailed'))));
                         }
                       }
                     },
@@ -62,8 +60,7 @@ class _DesktopWebViewGateState extends State<DesktopWebViewGate> {
                     } catch (_) {
                       if (context.mounted) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                              content: Text(Loc.tr('browserOpenFailed'))),
+                          SnackBar(content: Text(Loc.tr('browserOpenFailed'))),
                         );
                       }
                     }

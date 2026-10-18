@@ -166,7 +166,8 @@ class UpdateService extends ChangeNotifier {
         // Android installs a downloaded file, so the manifest must name the
         // exact binary. A release without a valid SHA-256 is never fetched.
         if (sha256Hash == null || sha256Hash.isEmpty) {
-          debugPrint('[UpdateService] Release manifest has no SHA-256; skipped.');
+          debugPrint(
+              '[UpdateService] Release manifest has no SHA-256; skipped.');
           _updateInfo = null;
           _status = UpdateStatus.idle;
           notifyListeners();
@@ -183,7 +184,8 @@ class UpdateService extends ChangeNotifier {
             if (cachedSha.toLowerCase() == sha256Hash.toLowerCase()) {
               isCachedValid = true;
             } else {
-              debugPrint('[UpdateService] Cached APK hash mismatch; discarded.');
+              debugPrint(
+                  '[UpdateService] Cached APK hash mismatch; discarded.');
               await localFile.delete();
             }
           } catch (e) {
@@ -228,7 +230,8 @@ class UpdateService extends ChangeNotifier {
     final deadline = DateTime.now().add(const Duration(minutes: 20));
     final tempFile = File('${targetFile.path}.tmp');
 
-    final client = HttpClient()..connectionTimeout = const Duration(seconds: 30);
+    final client = HttpClient()
+      ..connectionTimeout = const Duration(seconds: 30);
     try {
       _status = UpdateStatus.downloading;
       notifyListeners();
@@ -237,7 +240,8 @@ class UpdateService extends ChangeNotifier {
       await _cleanOldUpdates(targetFile.path);
 
       final request = await client.getUrl(Uri.parse(url));
-      final response = await request.close().timeout(const Duration(seconds: 30));
+      final response =
+          await request.close().timeout(const Duration(seconds: 30));
 
       if (response.statusCode != 200) {
         _status = UpdateStatus.idle;
@@ -259,7 +263,8 @@ class UpdateService extends ChangeNotifier {
       int receivedBytes = 0;
 
       try {
-        await for (final chunk in response.timeout(const Duration(seconds: 30))) {
+        await for (final chunk
+            in response.timeout(const Duration(seconds: 30))) {
           receivedBytes += chunk.length;
           if (receivedBytes > maxDownloadBytes) {
             throw const HttpException('Update exceeds download size limit');
@@ -292,7 +297,8 @@ class UpdateService extends ChangeNotifier {
       // SHA-256 wajib cocok dengan manifest app_config/version (F20)
       final calculatedSha256 = await _computeFileSha256(tempFile);
       if (calculatedSha256.toLowerCase() != expectedSha256.toLowerCase()) {
-        debugPrint('[UpdateService] SHA256 checksum mismatch; download discarded.');
+        debugPrint(
+            '[UpdateService] SHA256 checksum mismatch; download discarded.');
         if (await tempFile.exists()) await tempFile.delete();
         _status = UpdateStatus.idle;
         notifyListeners();

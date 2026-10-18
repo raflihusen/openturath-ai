@@ -125,7 +125,9 @@ List<CanonicalBookPresentation> parseSyamilahCatalog(String source) {
   final dynamic root = jsonDecode(source);
   final dynamic list = root is List
       ? root
-      : (root is Map<String, dynamic> ? (root['kitab'] ?? root['books']) : null);
+      : (root is Map<String, dynamic>
+          ? (root['kitab'] ?? root['books'])
+          : null);
   if (list is List) {
     return list
         .whereType<Map<String, dynamic>>()
@@ -133,7 +135,9 @@ List<CanonicalBookPresentation> parseSyamilahCatalog(String source) {
         .toList();
   } else if (root is Map<String, dynamic>) {
     final legacy = parseCanonicalCatalog(source);
-    return legacy.entries.map((e) => CanonicalBookPresentation.fromEntry(e)).toList();
+    return legacy.entries
+        .map((e) => CanonicalBookPresentation.fromEntry(e))
+        .toList();
   }
   return [];
 }
@@ -178,12 +182,16 @@ class CanonicalBookPresentation {
   List<String> get compactLabels => [
         if (sectionArabic != null && sectionArabic!.isNotEmpty) sectionArabic!,
         if (volumesDescription != null && volumesDescription!.isNotEmpty)
-          (volumesDescription!.contains('جزء') || volumesDescription!.contains('مجلد') || volumesDescription!.contains('Jilid')
+          (volumesDescription!.contains('جزء') ||
+                  volumesDescription!.contains('مجلد') ||
+                  volumesDescription!.contains('Jilid')
               ? volumesDescription!
               : '$volumesDescription Jilid')
         else if (volumesCount != null && volumesCount! > 1)
           '$volumesCount Jilid',
-        if (pagesDescription != null && pagesDescription!.isNotEmpty && pagesDescription != '-')
+        if (pagesDescription != null &&
+            pagesDescription!.isNotEmpty &&
+            pagesDescription != '-')
           '$pagesDescription Hlm',
         if (verifiedDeathYearHijri != null && verifiedDeathYearHijri! > 0)
           'ت $verifiedDeathYearHijri هـ',
@@ -195,7 +203,8 @@ class CanonicalBookPresentation {
       reviewedAuthorityLabel?.isNotEmpty == true &&
       authorityEvidence?.isNotEmpty == true;
 
-  factory CanonicalBookPresentation.fromSyamilahCard(Map<String, dynamic> json) {
+  factory CanonicalBookPresentation.fromSyamilahCard(
+      Map<String, dynamic> json) {
     final rawDeath = json['tahun_wafat'];
     int? deathYear;
     if (rawDeath is int) {
@@ -220,9 +229,16 @@ class CanonicalBookPresentation {
     }
 
     final rawPages = clean(json['عدد_الصفحات']);
-    final fullTitle = (json['الكتاب'] ?? json['full_title'] ?? '').toString().trim();
-    final shortTitle = clean(json['الاسم_المختصر'] ?? json['canonical_short_title']);
-    final author = (json['المؤلف'] ?? json['author_canonical'] ?? json['author_full'] ?? '').toString().trim();
+    final fullTitle =
+        (json['الكتاب'] ?? json['full_title'] ?? '').toString().trim();
+    final shortTitle =
+        clean(json['الاسم_المختصر'] ?? json['canonical_short_title']);
+    final author = (json['المؤلف'] ??
+            json['author_canonical'] ??
+            json['author_full'] ??
+            '')
+        .toString()
+        .trim();
     final section = clean(json['القسم']);
     final publisher = clean(json['الناشر'] ?? json['publisher']);
     final muhaqqiq = clean(json['المحقق_أو_المعتني'] ?? json['muhaqqiq']);
@@ -231,7 +247,8 @@ class CanonicalBookPresentation {
 
     return CanonicalBookPresentation(
       editionId: id,
-      titleArabic: fullTitle.isNotEmpty ? fullTitle : (shortTitle ?? 'بدون عنوان'),
+      titleArabic:
+          fullTitle.isNotEmpty ? fullTitle : (shortTitle ?? 'بدون عنوان'),
       shortTitleArabic: shortTitle,
       authorArabic: author.isNotEmpty ? author : 'غير معروف',
       sectionArabic: section,

@@ -20,7 +20,8 @@ class OTSpacing {
   static const EdgeInsets pageVertical = EdgeInsets.symmetric(vertical: base);
   static const EdgeInsets card = EdgeInsets.all(base);
   static const EdgeInsets cardCompact = EdgeInsets.all(md);
-  static const EdgeInsets row = EdgeInsets.symmetric(horizontal: base, vertical: md);
+  static const EdgeInsets row =
+      EdgeInsets.symmetric(horizontal: base, vertical: md);
 
   // ── Gap Widgets ──
   static const SizedBox gapXs = SizedBox(height: xs, width: xs);

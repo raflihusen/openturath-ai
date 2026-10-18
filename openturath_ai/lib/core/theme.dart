@@ -652,5 +652,4 @@ class AppTheme {
           letterSpacing: 0.2),
     );
   }
-
 }

@@ -25,7 +25,8 @@ void main() {
       expect(user.hasAccess, isFalse);
     });
 
-    test('User with active voucher trial entitlement has access and questions', () {
+    test('User with active voucher trial entitlement has access and questions',
+        () {
       final user = UserModel(
         uid: 'test_uid_trial',
         name: 'Peneliti Turats',
@@ -68,7 +69,8 @@ void main() {
       expect(user.hasAccess, isFalse);
     });
 
-    test('Modular entitlement gives exclusive access to entitled module only', () {
+    test('Modular entitlement gives exclusive access to entitled module only',
+        () {
       final futureExpiry = DateTime.now().add(const Duration(days: 30));
       final userWithTahawwulatOnly = UserModel(
         uid: 'test_uid_3',
@@ -87,17 +89,24 @@ void main() {
       );
 
       // Harusnya bisa akses Fikih Tahawwulat dan sub-agennya
-      expect(userWithTahawwulatOnly.hasAccessToAgent('fiqh_tahawwulat'), isTrue);
-      expect(userWithTahawwulatOnly.hasAccessToAgent('fiqh_tahawwulat_muhaqqiq'), isTrue);
-      expect(userWithTahawwulatOnly.hasAccessToAgent('fiqh_tahawwulat_bayan'), isTrue);
-      expect(userWithTahawwulatOnly.hasAccessToAgent('fiqh_tahawwulat_khatib'), isTrue);
+      expect(
+          userWithTahawwulatOnly.hasAccessToAgent('fiqh_tahawwulat'), isTrue);
+      expect(
+          userWithTahawwulatOnly.hasAccessToAgent('fiqh_tahawwulat_muhaqqiq'),
+          isTrue);
+      expect(userWithTahawwulatOnly.hasAccessToAgent('fiqh_tahawwulat_bayan'),
+          isTrue);
+      expect(userWithTahawwulatOnly.hasAccessToAgent('fiqh_tahawwulat_khatib'),
+          isTrue);
 
       // Tapi TIDAK BISA akses Fikih Syafi'i karena trial habis dan modul tidak dibeli
       expect(userWithTahawwulatOnly.hasAccessToAgent('fiqh_syafii'), isFalse);
       expect(userWithTahawwulatOnly.hasAccessToAgent('hadits'), isFalse);
     });
 
-    test('User with active Syafii subscription cannot access Tahawwulat even if subscriptionExpiry is active', () {
+    test(
+        'User with active Syafii subscription cannot access Tahawwulat even if subscriptionExpiry is active',
+        () {
       final futureExpiry = DateTime.now().add(const Duration(days: 30));
       final userSyafiiOnly = UserModel(
         uid: 'test_uid_syafii',
@@ -125,7 +134,8 @@ void main() {
 
       // Pastikan TIDAK BISA akses Fikih Tahawwulat ataupun sub-agennya
       expect(userSyafiiOnly.hasAccessToAgent('fiqh_tahawwulat'), isFalse);
-      expect(userSyafiiOnly.hasAccessToAgent('fiqh_tahawwulat_mukhtabir'), isFalse);
+      expect(userSyafiiOnly.hasAccessToAgent('fiqh_tahawwulat_mukhtabir'),
+          isFalse);
       expect(userSyafiiOnly.hasAccessToAgent('fiqh_tahawwulat_bayan'), isFalse);
       expect(userSyafiiOnly.hasAccessToAgent('hadits'), isFalse);
     });
@@ -166,13 +176,15 @@ void main() {
   });
 
   group('ResearchNote & Citation Generator Tests', () {
-    test('ResearchNote formats citation correctly with book, volume, and page', () {
+    test('ResearchNote formats citation correctly with book, volume, and page',
+        () {
       final note = ResearchNote(
         id: 'note_123',
         agentId: 'fiqh_tahawwulat',
         agentTitle: 'Fiqh Tahawwulat AI',
         title: 'Konsep Sunnah Mawaqif',
-        excerpt: 'Sunnah mawaqif adalah ketetapan sikap kenabian dalam menghadapi perubahan zaman.',
+        excerpt:
+            'Sunnah mawaqif adalah ketetapan sikap kenabian dalam menghadapi perubahan zaman.',
         bookTitle: 'Al-Bayan',
         bookVolume: '1',
         bookPage: '45',
@@ -195,7 +207,7 @@ void main() {
 
     test('ArabicUtils.matches matches plain query with harakat text', () {
       const sourceArabic = 'فِقْهُ التَّحَوُّلَاتِ وَسُنَّةُ الْمَوَاقِفِ';
-      
+
       // Pencarian tanpa harakat
       expect(ArabicUtils.matches(sourceArabic, 'فقه'), isTrue);
       expect(ArabicUtils.matches(sourceArabic, 'التحولات'), isTrue);
@@ -215,7 +227,9 @@ void main() {
   });
 
   group('Localization & AppConfig Tests', () {
-    test('Localization dictionary returns valid strings for all supported languages', () {
+    test(
+        'Localization dictionary returns valid strings for all supported languages',
+        () {
       expect(Loc.tr('app_name'), equals('OpenTurath'));
       expect(Loc.tr('choose_plan'), isNotEmpty);
       expect(Loc.tr('save'), isNotEmpty);

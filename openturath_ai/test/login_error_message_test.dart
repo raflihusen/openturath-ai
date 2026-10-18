@@ -29,7 +29,8 @@ void main() {
   });
   test('unknown SDK failures never expose their credential payloads', () {
     const sensitive = 'synthetic-secret-token';
-    final platform = PlatformException(code: 'sign_in_failed', details: sensitive);
+    final platform =
+        PlatformException(code: 'sign_in_failed', details: sensitive);
     final firebase = FirebaseAuthException(code: 'unknown', message: sensitive);
     expect(loginErrorMessage(platform), AppCopy.googleSignInFailed);
     expect(loginErrorMessage(firebase), AppCopy.googleSignInFailed);

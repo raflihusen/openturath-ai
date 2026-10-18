@@ -9,7 +9,9 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   group('Milestone 4: 14 Application States Verification', () {
-    testWidgets('State 2 & 3: AppLoader renders inline and fullscreen pulse states', (tester) async {
+    testWidgets(
+        'State 2 & 3: AppLoader renders inline and fullscreen pulse states',
+        (tester) async {
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -25,7 +27,9 @@ void main() {
       expect(find.text('Menghubungkan ke korpus kitab'), findsOneWidget);
     });
 
-    testWidgets('State 9: AppErrorState.network renders peaceful scholarly network error', (tester) async {
+    testWidgets(
+        'State 9: AppErrorState.network renders peaceful scholarly network error',
+        (tester) async {
       bool retried = false;
       await tester.pumpWidget(
         MaterialApp(
@@ -44,7 +48,9 @@ void main() {
       expect(retried, isTrue);
     });
 
-    testWidgets('State 10: AppErrorState.unauthorized renders locked module state', (tester) async {
+    testWidgets(
+        'State 10: AppErrorState.unauthorized renders locked module state',
+        (tester) async {
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -57,7 +63,9 @@ void main() {
       expect(find.byIcon(Icons.lock_outline_rounded), findsOneWidget);
     });
 
-    testWidgets('State 7 & 8: AppErrorState.empty renders scholarly empty state', (tester) async {
+    testWidgets(
+        'State 7 & 8: AppErrorState.empty renders scholarly empty state',
+        (tester) async {
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -70,7 +78,8 @@ void main() {
       expect(find.byIcon(Icons.find_in_page_outlined), findsOneWidget);
     });
 
-    testWidgets('State 11: AppErrorState.generic renders serene fallback state', (tester) async {
+    testWidgets('State 11: AppErrorState.generic renders serene fallback state',
+        (tester) async {
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -83,7 +92,9 @@ void main() {
       expect(find.byIcon(Icons.error_outline_rounded), findsOneWidget);
     });
 
-    test('State 13: Disabled/Locked entitlement check accurately enforces paywall', () {
+    test(
+        'State 13: Disabled/Locked entitlement check accurately enforces paywall',
+        () {
       final freeUser = UserModel(
         uid: 'user_free',
         name: 'Santri Pemula',
@@ -98,7 +109,9 @@ void main() {
       expect(freeUser.hasAccessToAgent('fiqh_syafii'), isFalse);
     });
 
-    test('State 12: Active selected agent entitlement check allows access for subscribed user', () {
+    test(
+        'State 12: Active selected agent entitlement check allows access for subscribed user',
+        () {
       final futureExpiry = DateTime.now().add(const Duration(days: 30));
       final fullUser = UserModel(
         uid: 'user_subscribed',

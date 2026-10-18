@@ -2,15 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AppConfig {
-  static final ValueNotifier<ThemeMode> themeNotifier = ValueNotifier(ThemeMode.system);
-  static final ValueNotifier<String> localeNotifier = ValueNotifier('id'); // 'id', 'en', 'ar'
+  static final ValueNotifier<ThemeMode> themeNotifier =
+      ValueNotifier(ThemeMode.system);
+  static final ValueNotifier<String> localeNotifier =
+      ValueNotifier('id'); // 'id', 'en', 'ar'
 
   static const String _themeKey = 'app_theme_mode';
   static const String _localeKey = 'app_locale';
 
   static Future<void> init() async {
     final prefs = await SharedPreferences.getInstance();
-    
+
     // Load Theme (Default: ThemeMode.system)
     final themeStr = prefs.getString(_themeKey);
     if (themeStr == 'light') {

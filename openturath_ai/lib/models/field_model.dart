@@ -22,7 +22,8 @@ class FieldModel {
     FieldModel(
       id: 'fiqh_tahawwulat',
       name: 'Fikih Tahawwulat',
-      description: 'Manhaj eskatologi Islam, rukun keempat, tanda-tanda zaman, dan sanad Al-Habib Abu Bakar Al-Masyhur.',
+      description:
+          'Manhaj eskatologi Islam, rukun keempat, tanda-tanda zaman, dan sanad Al-Habib Abu Bakar Al-Masyhur.',
       icon: Icons.hourglass_bottom_rounded,
       specialistCount: 1,
       agentIds: [
@@ -32,7 +33,8 @@ class FieldModel {
     FieldModel(
       id: 'fiqh',
       name: 'Fikih & Fatwa',
-      description: 'Hukum ibadah, muamalah, fatwa kontemporer, dan perbandingan mazhab mu\'tabar.',
+      description:
+          'Hukum ibadah, muamalah, fatwa kontemporer, dan perbandingan mazhab mu\'tabar.',
       icon: Icons.balance_rounded,
       specialistCount: 5,
       agentIds: [
@@ -46,7 +48,8 @@ class FieldModel {
     FieldModel(
       id: 'hadith',
       name: 'Hadis & Ulumul Hadis',
-      description: 'Takhrij sanad, kritik rijalul hadis, dan syarah ensiklopedis Kutubus Sittah.',
+      description:
+          'Takhrij sanad, kritik rijalul hadis, dan syarah ensiklopedis Kutubus Sittah.',
       icon: Icons.auto_stories_rounded,
       specialistCount: 3,
       agentIds: [
@@ -58,7 +61,8 @@ class FieldModel {
     FieldModel(
       id: 'tafsir',
       name: 'Tafsir & Qiraat',
-      description: 'Asbabun nuzul, munasabah, ilmu tajwid, dan khazanah eksegesis Al-Qur\'an.',
+      description:
+          'Asbabun nuzul, munasabah, ilmu tajwid, dan khazanah eksegesis Al-Qur\'an.',
       icon: Icons.menu_book_rounded,
       specialistCount: 2,
       agentIds: [
@@ -69,7 +73,8 @@ class FieldModel {
     FieldModel(
       id: 'aqidah',
       name: 'Akidah & Ushuluddin',
-      description: 'Kalam Asy\'ariyyah, Maturidiyyah, pembahasan ushuluddin, dan dalil aqli-naqli.',
+      description:
+          'Kalam Asy\'ariyyah, Maturidiyyah, pembahasan ushuluddin, dan dalil aqli-naqli.',
       icon: Icons.shield_outlined,
       specialistCount: 1,
       agentIds: [
@@ -79,7 +84,8 @@ class FieldModel {
     FieldModel(
       id: 'usul',
       name: 'Usul Fikih & Kaidah',
-      description: 'Kaidah istinbath hukum, dalil ijmali, maqashid syariah, dan qawaid fiqhiyyah.',
+      description:
+          'Kaidah istinbath hukum, dalil ijmali, maqashid syariah, dan qawaid fiqhiyyah.',
       icon: Icons.architecture_rounded,
       specialistCount: 1,
       agentIds: [
@@ -89,7 +95,8 @@ class FieldModel {
     FieldModel(
       id: 'lughah',
       name: 'Bahasa & Sastra Arab',
-      description: 'Nahwu, sharaf, balaghah, dan leksikografi kamus mu\'jam klasik.',
+      description:
+          'Nahwu, sharaf, balaghah, dan leksikografi kamus mu\'jam klasik.',
       icon: Icons.translate_rounded,
       specialistCount: 1,
       agentIds: [
@@ -99,7 +106,8 @@ class FieldModel {
     FieldModel(
       id: 'tarikh',
       name: 'Sejarah, Sirah & Rijal',
-      description: 'Sirah Nabawiyyah, khulafaur rasyidin, thabaqat ulama, dan peradaban Islam.',
+      description:
+          'Sirah Nabawiyyah, khulafaur rasyidin, thabaqat ulama, dan peradaban Islam.',
       icon: Icons.history_edu_rounded,
       specialistCount: 2,
       agentIds: [
@@ -110,7 +118,8 @@ class FieldModel {
     FieldModel(
       id: 'tasawwuf',
       name: 'Tasawuf & Akhlak',
-      description: 'Penyucian jiwa (tazkiyatun nafs), adab suluk, dan hikmah ulama salafush shalih.',
+      description:
+          'Penyucian jiwa (tazkiyatun nafs), adab suluk, dan hikmah ulama salafush shalih.',
       icon: Icons.spa_rounded,
       specialistCount: 1,
       agentIds: [
@@ -120,7 +129,8 @@ class FieldModel {
     FieldModel(
       id: 'bibliografi',
       name: 'Bibliografi & Faharis',
-      description: 'Indeks ensiklopedi, biografi manuskrip, dan katalog rujukan khazanah Turath Islam.',
+      description:
+          'Indeks ensiklopedi, biografi manuskrip, dan katalog rujukan khazanah Turath Islam.',
       icon: Icons.collections_bookmark_rounded,
       specialistCount: 1,
       agentIds: [
@@ -141,7 +151,8 @@ class FieldModel {
         const FieldModel(
           id: 'umum',
           name: 'Umum & Turats',
-          description: 'Pelajari berbagai bidang ilmu dari kitab-kitab rujukan.',
+          description:
+              'Pelajari berbagai bidang ilmu dari kitab-kitab rujukan.',
           icon: Icons.menu_book_rounded,
           specialistCount: 0,
           agentIds: [],

@@ -169,7 +169,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
       // An old backend or stale quote must never open a differently priced checkout.
       if (result['amount'] != offer.amount ||
           (result['pricingRevision'] != ProductPricing.revision &&
-           result['pricingRevision'] != ProductPricing.defaultRevision)) {
+              result['pricingRevision'] != ProductPricing.defaultRevision)) {
         setState(() => _checkoutError = Loc.tr('priceChanged'));
         return;
       }
@@ -227,8 +227,8 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
               colors: [OTExpressive.ink, OTExpressive.black],
             ),
             borderRadius: BorderRadius.circular(OTRadius.card),
-            border: Border.all(
-                color: OTExpressive.white.withValues(alpha: 0.16)),
+            border:
+                Border.all(color: OTExpressive.white.withValues(alpha: 0.16)),
           ),
           child: Stack(
             children: [

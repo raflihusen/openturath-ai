@@ -50,7 +50,10 @@ class TahawwulatArtwork extends StatelessWidget {
                               1
                             ]).createShader(rect),
                     child: image))
-            : ClipRRect(borderRadius: BorderRadius.circular(OTExpressive.compactHeroRadius), child: image));
+            : ClipRRect(
+                borderRadius:
+                    BorderRadius.circular(OTExpressive.compactHeroRadius),
+                child: image));
   }
 }
 

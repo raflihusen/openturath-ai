@@ -251,4 +251,3 @@ class _OrbitPainter extends CustomPainter {
   bool shouldRepaint(_OrbitPainter old) =>
       old.animation != animation || old.still != still || old.color != color;
 }
-

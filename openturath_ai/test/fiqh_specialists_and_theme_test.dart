@@ -7,36 +7,45 @@ import 'package:openturath_ai/core/theme.dart';
 
 void main() {
   group('Fikih Specialists & Theme Verification', () {
-    test('FieldModel fiqh has 5 specialists (Fatawa dilebur ke Perbandingan Mazhab) and fiqh_tahawwulat is independent field', () {
+    test(
+        'FieldModel fiqh has 5 specialists (Fatawa dilebur ke Perbandingan Mazhab) and fiqh_tahawwulat is independent field',
+        () {
       final fiqhField = FieldModel.getById('fiqh');
       expect(fiqhField.specialistCount, 5);
       expect(fiqhField.agentIds.length, 5);
-      expect(fiqhField.agentIds, containsAll([
-        'fiqh_syafii',
-        'fiqh_hanafi',
-        'fiqh_maliki',
-        'fiqh_hanbali',
-        'fiqh_muqaran',
-      ]));
+      expect(
+          fiqhField.agentIds,
+          containsAll([
+            'fiqh_syafii',
+            'fiqh_hanafi',
+            'fiqh_maliki',
+            'fiqh_hanbali',
+            'fiqh_muqaran',
+          ]));
 
       final tahawwulatField = FieldModel.getById('fiqh_tahawwulat');
       expect(tahawwulatField.specialistCount, 1);
       expect(tahawwulatField.agentIds, contains('fiqh_tahawwulat'));
     });
 
-    test('AgentModel defaultAgents contains standard fiqh specialists and independent tahawwulat', () {
-      final fiqhAgents = AgentModel.defaultAgents.where((a) => a.fieldId == 'fiqh').toList();
+    test(
+        'AgentModel defaultAgents contains standard fiqh specialists and independent tahawwulat',
+        () {
+      final fiqhAgents =
+          AgentModel.defaultAgents.where((a) => a.fieldId == 'fiqh').toList();
       expect(fiqhAgents.length, 5);
       expect(fiqhAgents.map((a) => a.id), isNot(contains('fatawa_masail')));
 
       final fiqhIds = fiqhAgents.map((a) => a.id).toSet();
-      expect(fiqhIds, containsAll([
-        'fiqh_syafii',
-        'fiqh_hanafi',
-        'fiqh_maliki',
-        'fiqh_hanbali',
-        'fiqh_muqaran',
-      ]));
+      expect(
+          fiqhIds,
+          containsAll([
+            'fiqh_syafii',
+            'fiqh_hanafi',
+            'fiqh_maliki',
+            'fiqh_hanbali',
+            'fiqh_muqaran',
+          ]));
 
       // Check all fiqh specialists have titles
       for (final agent in fiqhAgents) {
@@ -45,18 +54,21 @@ void main() {
       }
 
       // Sovereign Tahawwulat agent check
-      final tahawwulatAgent = AgentModel.defaultAgents.firstWhere((a) => a.id == 'fiqh_tahawwulat');
+      final tahawwulatAgent =
+          AgentModel.defaultAgents.firstWhere((a) => a.id == 'fiqh_tahawwulat');
       expect(tahawwulatAgent.fieldId, 'fiqh_tahawwulat');
       expect(tahawwulatAgent.price1m, 300000);
       expect(tahawwulatAgent.isActive, isTrue);
     });
 
     test('AgentModel defaultAgents contains valid active specialists', () {
-      final activeAgents = AgentModel.defaultAgents.where((a) => a.isActive).toList();
+      final activeAgents =
+          AgentModel.defaultAgents.where((a) => a.isActive).toList();
       // V9.2: 18 AI sesuai 18 notebook; Habib Umar, Al-Ghazali, Qawa'id, dan Fatawa dihapus/dilebur.
       expect(activeAgents.length, equals(18));
       expect(activeAgents.map((a) => a.id), isNot(contains('habib_umar')));
-      expect(activeAgents.map((a) => a.id), isNot(contains('qawaid_fiqhiyyah')));
+      expect(
+          activeAgents.map((a) => a.id), isNot(contains('qawaid_fiqhiyyah')));
       expect(activeAgents.map((a) => a.id), contains('fiqh_tahawwulat'));
       expect(activeAgents.map((a) => a.id), contains('hadits'));
       expect(activeAgents.map((a) => a.id), contains('tasawwuf'));
@@ -66,7 +78,9 @@ void main() {
       expect(AppConfig.themeNotifier.value, ThemeMode.system);
     });
 
-    test('AppTheme defines neutral monochrome accent and reading surface tokens', () {
+    test(
+        'AppTheme defines neutral monochrome accent and reading surface tokens',
+        () {
       expect(AppTheme.accentDark, const Color(0xFFF5F5F5));
       expect(AppTheme.accentLight, const Color(0xFF171717));
       expect(AppTheme.readingCanvasParchmentLight, const Color(0xFFFAFAFA));

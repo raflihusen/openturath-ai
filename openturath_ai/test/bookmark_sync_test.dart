@@ -55,7 +55,8 @@ void main() {
       expect(notificationCount, greaterThan(0));
     });
 
-    test('deleteBookmark removes item locally and notifies listeners', () async {
+    test('deleteBookmark removes item locally and notifies listeners',
+        () async {
       final service = BookmarkService();
       var notificationCount = 0;
       service.addListener(() => notificationCount++);
@@ -77,7 +78,8 @@ void main() {
 
     test('deleted note remains as a hidden sync tombstone', () async {
       final service = BookmarkService();
-      final bookmark = createSampleBookmark(id: 'tombstone', title: 'Hapus aman');
+      final bookmark =
+          createSampleBookmark(id: 'tombstone', title: 'Hapus aman');
       await service.addBookmark(bookmark, userId: 'user_tombstone');
       await service.deleteBookmark(bookmark.id, userId: 'user_tombstone');
 
@@ -91,7 +93,9 @@ void main() {
       expect(stored.deletedAt, isNotNull);
     });
 
-    test('syncWithCloud seamlessly migrates legacy anonymous bookmarks to logged-in user', () async {
+    test(
+        'syncWithCloud seamlessly migrates legacy anonymous bookmarks to logged-in user',
+        () async {
       final legacyBookmark = createSampleBookmark(
         id: 'legacy_1',
         title: 'Catatan Warisan Versi Lama',
@@ -108,14 +112,16 @@ void main() {
 
       final service = BookmarkService();
       // Initially, user_logged_in has no bookmarks
-      final initialUserList = await service.getBookmarks(userId: 'user_logged_in');
+      final initialUserList =
+          await service.getBookmarks(userId: 'user_logged_in');
       expect(initialUserList, isEmpty);
 
       // Trigger cloud sync for user_logged_in
       await service.syncWithCloud(userId: 'user_logged_in');
 
       // Now user_logged_in should have the migrated bookmark
-      final updatedUserList = await service.getBookmarks(userId: 'user_logged_in');
+      final updatedUserList =
+          await service.getBookmarks(userId: 'user_logged_in');
       expect(updatedUserList.length, 1);
       expect(updatedUserList.first.id, 'legacy_1');
       expect(updatedUserList.first.title, 'Catatan Warisan Versi Lama');
@@ -129,13 +135,18 @@ void main() {
         title: 'Cek Ada',
       );
 
-      expect(await service.isBookmarked('item_check', userId: 'user_x'), isFalse);
+      expect(
+          await service.isBookmarked('item_check', userId: 'user_x'), isFalse);
       await service.addBookmark(bookmark, userId: 'user_x');
-      expect(await service.isBookmarked('item_check', userId: 'user_x'), isTrue);
-      expect(await service.isBookmarked('item_check', userId: 'user_y'), isFalse);
+      expect(
+          await service.isBookmarked('item_check', userId: 'user_x'), isTrue);
+      expect(
+          await service.isBookmarked('item_check', userId: 'user_y'), isFalse);
     });
 
-    test('BookmarkModel serialization supports updatedAt and effectiveTime correctly', () {
+    test(
+        'BookmarkModel serialization supports updatedAt and effectiveTime correctly',
+        () {
       final t1 = DateTime(2026, 9, 10, 10, 0);
       final t2 = DateTime(2026, 9, 14, 12, 30);
 

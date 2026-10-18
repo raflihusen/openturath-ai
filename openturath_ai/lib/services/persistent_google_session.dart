@@ -55,9 +55,8 @@ class PersistentGoogleSession {
       url: WebUri('https://$targetHost'),
       name: name,
       value: value,
-      domain: isHostPrefix
-          ? null
-          : (rawDomain.isEmpty ? '.google.com' : rawDomain),
+      domain:
+          isHostPrefix ? null : (rawDomain.isEmpty ? '.google.com' : rawDomain),
       path: isHostPrefix ? '/' : (rawPath.isEmpty ? '/' : rawPath),
       expiresDate: expiresDate,
       isSecure: isSecurePrefix ? true : isSecure,

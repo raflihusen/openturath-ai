@@ -100,8 +100,8 @@ class AiInfoSheet extends StatelessWidget {
         .cast<Map<String, dynamic>>();
     final note = (method['catatan_penyusun'] ?? '').toString();
     final range = content['rentang_wafat_pengarang'];
-    final largest = ((content['kitab_induk'] ?? []) as List)
-        .cast<Map<String, dynamic>>();
+    final largest =
+        ((content['kitab_induk'] ?? []) as List).cast<Map<String, dynamic>>();
     final branches = ((content['cabang_ilmu'] ?? []) as List)
         .cast<Map<String, dynamic>>()
         .where((c) => c['nama'] != null)
@@ -113,26 +113,32 @@ class AiInfoSheet extends StatelessWidget {
     Text label(String t) => Text(t,
         style: ScholarlyFonts.outfit(
             fontSize: OTFontSize.s16, fontWeight: FontWeight.w700, color: ink));
-    Widget heading(String t) =>
-        Padding(padding: const EdgeInsets.only(top: OTSpacing.xl, bottom: OTSpacing.md), child: label(t));
+    Widget heading(String t) => Padding(
+        padding: const EdgeInsets.only(top: OTSpacing.xl, bottom: OTSpacing.md),
+        child: label(t));
     Widget row(String k, String v) => Padding(
           padding: const EdgeInsets.symmetric(vertical: OTSpacing.sm),
           child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Expanded(
                 child: Text(k,
-                    style: ScholarlyFonts.outfit(fontSize: OTFontSize.s14, color: muted))),
+                    style: ScholarlyFonts.outfit(
+                        fontSize: OTFontSize.s14, color: muted))),
             const SizedBox(width: OTSpacing.md),
             Flexible(
                 child: Text(v,
                     textAlign: TextAlign.end,
                     style: ScholarlyFonts.outfit(
-                        fontSize: OTFontSize.s14, fontWeight: FontWeight.w600, color: ink))),
+                        fontSize: OTFontSize.s14,
+                        fontWeight: FontWeight.w600,
+                        color: ink))),
           ]),
         );
     Widget point(String t) => Padding(
           padding: const EdgeInsets.only(bottom: OTSpacing.sm),
           child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text('•  ', style: ScholarlyFonts.outfit(fontSize: OTFontSize.s14, color: ink)),
+            Text('•  ',
+                style: ScholarlyFonts.outfit(
+                    fontSize: OTFontSize.s14, color: ink)),
             Expanded(
                 child: Text(t,
                     style: ScholarlyFonts.outfit(
@@ -146,12 +152,17 @@ class AiInfoSheet extends StatelessWidget {
               color: surface,
               borderRadius: OTRadius.xsBorder,
               border: Border.all(color: line)),
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          child:
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Text(v,
                 style: ScholarlyFonts.outfit(
-                    fontSize: OTFontSize.s18, fontWeight: FontWeight.w700, color: ink)),
+                    fontSize: OTFontSize.s18,
+                    fontWeight: FontWeight.w700,
+                    color: ink)),
             const SizedBox(height: OTSpacing.xxs),
-            Text(k, style: ScholarlyFonts.outfit(fontSize: OTFontSize.s12, color: muted)),
+            Text(k,
+                style: ScholarlyFonts.outfit(
+                    fontSize: OTFontSize.s12, color: muted)),
           ]),
         );
 
@@ -161,17 +172,22 @@ class AiInfoSheet extends StatelessWidget {
 
     return SafeArea(
       child: ConstrainedBox(
-        constraints:
-            BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.88),
+        constraints: BoxConstraints(
+            maxHeight: MediaQuery.of(context).size.height * 0.88),
         child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(OTSpacing.xl, 0, OTSpacing.xl, OTSpacing.xxl),
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          padding: const EdgeInsets.fromLTRB(
+              OTSpacing.xl, 0, OTSpacing.xl, OTSpacing.xxl),
+          child:
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Text(info['judul']?.toString() ?? '',
                 style: ScholarlyFonts.outfit(
-                    fontSize: OTFontSize.s20, fontWeight: FontWeight.w700, color: ink)),
+                    fontSize: OTFontSize.s20,
+                    fontWeight: FontWeight.w700,
+                    color: ink)),
             Text(info['nama_arab']?.toString() ?? '',
                 textDirection: TextDirection.rtl,
-                style: ScholarlyFonts.scheherazadeNew(fontSize: OTFontSize.s18, color: muted)),
+                style: ScholarlyFonts.scheherazadeNew(
+                    fontSize: OTFontSize.s18, color: muted)),
             if (about.isNotEmpty) ...[
               heading('Tentang'),
               Text(about,
@@ -207,8 +223,8 @@ class AiInfoSheet extends StatelessWidget {
                                         .hasMatch(q['teks']?.toString() ?? '')
                                     ? TextDirection.rtl
                                     : TextDirection.ltr,
-                                style: RegExp(r'^[\u0600-\u06FF]').hasMatch(
-                                        q['teks']?.toString() ?? '')
+                                style: RegExp(r'^[\u0600-\u06FF]')
+                                        .hasMatch(q['teks']?.toString() ?? '')
                                     ? ScholarlyFonts.scheherazadeNew(
                                         fontSize: OTFontSize.s16, color: ink)
                                     : ScholarlyFonts.outfit(
@@ -225,7 +241,8 @@ class AiInfoSheet extends StatelessWidget {
               stat(number(content['jumlah_kitab'] as num?), 'Kitab'),
               if (lectures != null) stat(number(lectures), 'Muhadharah'),
               stat(words(content['jumlah_kata'] as num?), 'Kata teks'),
-              stat(number(method['berkas_notebooklm'] as num?), 'Berkas terindeks'),
+              stat(number(method['berkas_notebooklm'] as num?),
+                  'Berkas terindeks'),
             ]),
             const SizedBox(height: OTSpacing.sm),
             if (rangeText != null) row('Rentang wafat pengarang', rangeText),
@@ -241,12 +258,13 @@ class AiInfoSheet extends StatelessWidget {
               Wrap(spacing: 6, runSpacing: 6, children: [
                 for (final b in branches)
                   Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: OTSpacing.md, vertical: OTSpacing.xs),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: OTSpacing.md, vertical: OTSpacing.xs),
                     decoration: BoxDecoration(
                         color: surface, borderRadius: OTRadius.chipBorder),
                     child: Text(b,
-                        style: ScholarlyFonts.outfit(fontSize: OTFontSize.s12, color: ink)),
+                        style: ScholarlyFonts.outfit(
+                            fontSize: OTFontSize.s12, color: ink)),
                   ),
               ]),
             ],
@@ -286,7 +304,8 @@ class AiInfoSheet extends StatelessWidget {
             row('Karya ganda atau termuat yang dibuang',
                 number(method['karya_termuat_semua_ilmu'] as num?)),
             const SizedBox(height: OTSpacing.sm),
-            for (final u in ((method['uji'] ?? []) as List)) point(u.toString()),
+            for (final u in ((method['uji'] ?? []) as List))
+              point(u.toString()),
             if (note.isNotEmpty) ...[
               const SizedBox(height: OTSpacing.sm),
               Text(note,
@@ -317,7 +336,9 @@ class AiInfoSheet extends StatelessWidget {
                         const SizedBox(height: OTSpacing.sm),
                         Text(c['jawab']?.toString() ?? '',
                             style: ScholarlyFonts.outfit(
-                                fontSize: OTFontSize.s14, height: 1.5, color: ink)),
+                                fontSize: OTFontSize.s14,
+                                height: 1.5,
+                                color: ink)),
                         if ((c['rujukan'] ?? '').toString().isNotEmpty)
                           Padding(
                             padding: const EdgeInsets.only(top: OTSpacing.sm),
@@ -385,7 +406,8 @@ class _TahawwulatLectureListPageState extends State<TahawwulatLectureListPage> {
           ? const Center(child: CircularProgressIndicator())
           : Column(children: [
               Padding(
-                padding: const EdgeInsets.fromLTRB(OTSpacing.base, OTSpacing.sm, OTSpacing.base, OTSpacing.sm),
+                padding: const EdgeInsets.fromLTRB(
+                    OTSpacing.base, OTSpacing.sm, OTSpacing.base, OTSpacing.sm),
                 child: TextField(
                   decoration: const InputDecoration(
                       prefixIcon: Icon(Icons.search_rounded),
@@ -395,7 +417,8 @@ class _TahawwulatLectureListPageState extends State<TahawwulatLectureListPage> {
               ),
               Expanded(
                 child: ListView.separated(
-                  padding: const EdgeInsets.fromLTRB(OTSpacing.base, 0, OTSpacing.base, OTSpacing.xl),
+                  padding: const EdgeInsets.fromLTRB(
+                      OTSpacing.base, 0, OTSpacing.base, OTSpacing.xl),
                   itemCount: visible.length,
                   separatorBuilder: (_, __) =>
                       Divider(height: 1, color: OTColors.border(isDark)),
@@ -403,7 +426,8 @@ class _TahawwulatLectureListPageState extends State<TahawwulatLectureListPage> {
                     final v = visible[i];
                     final url = Uri.tryParse(v['الرابط']?.toString() ?? '');
                     return ListTile(
-                      contentPadding: const EdgeInsets.symmetric(vertical: OTSpacing.xs),
+                      contentPadding:
+                          const EdgeInsets.symmetric(vertical: OTSpacing.xs),
                       title: Text(v['عنوان_المحاضرة']?.toString() ?? '',
                           textDirection: TextDirection.rtl,
                           style: ScholarlyFonts.scheherazadeNew(

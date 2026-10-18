@@ -34,11 +34,15 @@ void main() {
       const source = 'الإِمَامُ أَبُو حَامِدٍ الغَزَالِيُّ';
       expect(ArabicUtils.matches(source, 'الغزالي'), isTrue);
       expect(ArabicUtils.matches(source, 'أبو حامد'), isTrue);
-      expect(ArabicUtils.matches(source, 'ابو حامد'), isTrue); // Bare alif matches
-      expect(ArabicUtils.matches(source, 'الامام'), isTrue); // Bare alif matches
+      expect(
+          ArabicUtils.matches(source, 'ابو حامد'), isTrue); // Bare alif matches
+      expect(
+          ArabicUtils.matches(source, 'الامام'), isTrue); // Bare alif matches
     });
 
-    test('CanonicalLibraryService.filterBooks finds books with diacritic variations', () {
+    test(
+        'CanonicalLibraryService.filterBooks finds books with diacritic variations',
+        () {
       final books = [
         const CanonicalBookPresentation(
           editionId: 'umm',

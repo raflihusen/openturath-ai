@@ -12,16 +12,25 @@ class OpenTurathMark extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final dark = Theme.of(context).brightness == Brightness.dark;
-    return Semantics(label: Loc.tr('appName'), image: true,
-      child: SvgPicture.asset('assets/images/OpenTurath_logo_transparent.svg',
-        width: size, height: size, fit: BoxFit.contain,
-        excludeFromSemantics: true,
-        colorFilter: ColorFilter.mode(color ?? OTColors.textPrimary(dark), BlendMode.srcIn)));
+    return Semantics(
+        label: Loc.tr('appName'),
+        image: true,
+        child: SvgPicture.asset('assets/images/OpenTurath_logo_transparent.svg',
+            width: size,
+            height: size,
+            fit: BoxFit.contain,
+            excludeFromSemantics: true,
+            colorFilter: ColorFilter.mode(
+                color ?? OTColors.textPrimary(dark), BlendMode.srcIn)));
   }
 }
 
 class OpenTurathBrand extends StatelessWidget {
-  const OpenTurathBrand({super.key, this.compact = false, this.onDark = false, this.showSlogan = false});
+  const OpenTurathBrand(
+      {super.key,
+      this.compact = false,
+      this.onDark = false,
+      this.showSlogan = false});
   final bool compact;
   final bool onDark;
   final bool showSlogan;
@@ -30,15 +39,25 @@ class OpenTurathBrand extends StatelessWidget {
     Loc.watch(context);
     final dark = onDark || Theme.of(context).brightness == Brightness.dark;
     return Row(mainAxisSize: MainAxisSize.min, children: [
-      OpenTurathMark(size: compact ? 28 : 36, color: OTColors.textPrimary(dark)),
+      OpenTurathMark(
+          size: compact ? 28 : 36, color: OTColors.textPrimary(dark)),
       const SizedBox(width: 10),
-      Flexible(child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
-        // Latin wordmark is a brand asset, independent of interface direction.
-        Text('OpenTurath', textDirection: TextDirection.ltr,
-          style: OTTypography.brandLogo(color: OTColors.textPrimary(dark)).copyWith(fontSize: compact ? OTFontSize.s18 : OTFontSize.s22)),
-        if (showSlogan) Text(AppCopy.appTagline,
-          style: OTTypography.caption(color: OTColors.textSecondary(dark))),
-      ])),
+      Flexible(
+          child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+            // Latin wordmark is a brand asset, independent of interface direction.
+            Text('OpenTurath',
+                textDirection: TextDirection.ltr,
+                style: OTTypography.brandLogo(color: OTColors.textPrimary(dark))
+                    .copyWith(
+                        fontSize: compact ? OTFontSize.s18 : OTFontSize.s22)),
+            if (showSlogan)
+              Text(AppCopy.appTagline,
+                  style: OTTypography.caption(
+                      color: OTColors.textSecondary(dark))),
+          ])),
     ]);
   }
 }

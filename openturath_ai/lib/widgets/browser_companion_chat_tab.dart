@@ -13,7 +13,8 @@ class BrowserCompanionChatTab extends StatefulWidget {
   const BrowserCompanionChatTab({super.key, required this.session});
   final AgentSessionTab session;
   @override
-  State<BrowserCompanionChatTab> createState() => _BrowserCompanionChatTabState();
+  State<BrowserCompanionChatTab> createState() =>
+      _BrowserCompanionChatTabState();
 }
 
 class _BrowserCompanionChatTabState extends State<BrowserCompanionChatTab> {
@@ -24,22 +25,29 @@ class _BrowserCompanionChatTabState extends State<BrowserCompanionChatTab> {
   @override
   void initState() {
     super.initState();
-    _chat = NotebookChatController(agentId: widget.session.agent.id,
+    _chat = NotebookChatController(
+        agentId: widget.session.agent.id,
         currentUid: () => FirebaseAuth.instance.currentUser?.uid,
         service: BrowserCompanionChatService());
     BrowserCompanionChatService.runtime.addListener(_changed);
     unawaited(_start());
   }
 
-  void _changed() { if (mounted) setState(() {}); }
+  void _changed() {
+    if (mounted) setState(() {});
+  }
 
   Future<void> _start() async {
     if (_starting) return;
-    setState(() { _starting = true; _error = null; });
+    setState(() {
+      _starting = true;
+      _error = null;
+    });
     try {
       await BrowserCompanionChatService.start();
     } catch (_) {
-      _error = 'Penghubung memerlukan akun Google, aplikasi desktop, dan Google Chrome yang sudah disiapkan.';
+      _error =
+          'Penghubung memerlukan akun Google, aplikasi desktop, dan Google Chrome yang sudah disiapkan.';
     } finally {
       if (mounted) setState(() => _starting = false);
     }
@@ -54,19 +62,27 @@ class _BrowserCompanionChatTabState extends State<BrowserCompanionChatTab> {
 
   @override
   Widget build(BuildContext context) => Column(children: [
-    ListTile(dense: true,
-      leading: Icon(BrowserCompanionChatService.runtime.connected
-          ? Icons.check_circle_outline : Icons.link_outlined, size: 20),
-      title: Text(_error ?? (BrowserCompanionChatService.runtime.connected
-          ? 'Penghubung Chrome tersambung'
-          : 'Menunggu penghubung Google Chrome')),
-      subtitle: BrowserCompanionChatService.runtime.connected
-          ? Text(Loc.tr('companionSameAccountHint'))
-          : null,
-      trailing: BrowserCompanionChatService.runtime.connected ? null
-          : TextButton(onPressed: _starting ? null : _start,
-              child: Text(_starting ? 'Menghubungkan…' : 'Coba lagi'))),
-    Expanded(child: NotebookBackendChatTab(
-        session: widget.session, controller: _chat)),
-  ]);
+        ListTile(
+            dense: true,
+            leading: Icon(
+                BrowserCompanionChatService.runtime.connected
+                    ? Icons.check_circle_outline
+                    : Icons.link_outlined,
+                size: 20),
+            title: Text(_error ??
+                (BrowserCompanionChatService.runtime.connected
+                    ? 'Penghubung Chrome tersambung'
+                    : 'Menunggu penghubung Google Chrome')),
+            subtitle: BrowserCompanionChatService.runtime.connected
+                ? Text(Loc.tr('companionSameAccountHint'))
+                : null,
+            trailing: BrowserCompanionChatService.runtime.connected
+                ? null
+                : TextButton(
+                    onPressed: _starting ? null : _start,
+                    child: Text(_starting ? 'Menghubungkan…' : 'Coba lagi'))),
+        Expanded(
+            child: NotebookBackendChatTab(
+                session: widget.session, controller: _chat)),
+      ]);
 }

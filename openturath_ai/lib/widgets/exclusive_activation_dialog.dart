@@ -74,15 +74,14 @@ class ExclusiveActivationDialog extends StatelessWidget {
   void _handleStartStudy(BuildContext context) {
     HapticFeedback.mediumImpact();
     final nav = Navigator.of(context);
-    nav.popUntil((route) =>
-        route.settings.name == AppRoutes.dashboard || route.isFirst);
+    nav.popUntil(
+        (route) => route.settings.name == AppRoutes.dashboard || route.isFirst);
 
     AgentModel? matched;
     if (agentId != null && agentId!.isNotEmpty && agentId != 'all_access') {
       matched = AgentModel.defaultAgents
           .where((a) =>
-              a.id == agentId ||
-              (entitlementKeys[a.id] ?? a.id) == agentId)
+              a.id == agentId || (entitlementKeys[a.id] ?? a.id) == agentId)
           .firstOrNull;
     }
     final targetAgent = matched ??

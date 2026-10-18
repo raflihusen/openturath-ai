@@ -49,8 +49,7 @@ void main() {
 
     // Verifikasi teks instruksi akun yang sama
     expect(
-      find.textContaining(
-          'Silakan login ke Google menggunakan akun yang sama'),
+      find.textContaining('Silakan login ke Google menggunakan akun yang sama'),
       findsOneWidget,
     );
     expect(

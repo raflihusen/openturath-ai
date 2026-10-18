@@ -15,7 +15,9 @@ void main() {
   });
 
   group('Milestone 3: 3-Mode Theme & Dashboard Restructuring', () {
-    test('AppConfig supports ThemeMode.system, ThemeMode.light, and ThemeMode.dark', () async {
+    test(
+        'AppConfig supports ThemeMode.system, ThemeMode.light, and ThemeMode.dark',
+        () async {
       await AppConfig.setThemeMode(ThemeMode.light);
       expect(AppConfig.themeNotifier.value, ThemeMode.light);
 
@@ -26,7 +28,9 @@ void main() {
       expect(AppConfig.themeNotifier.value, ThemeMode.system);
     });
 
-    test('HijriDateUtils formatDualDate produces elegant scholarly date with H and M', () {
+    test(
+        'HijriDateUtils formatDualDate produces elegant scholarly date with H and M',
+        () {
       final now = DateTime(2026, 9, 12);
       final dual = HijriDateUtils.formatDualDate(now);
       expect(dual.contains('H'), isTrue);
@@ -43,17 +47,22 @@ void main() {
       expect(hijriOnly.isNotEmpty, isTrue);
     });
 
-    test('Dashboard resume session selects matching active agent when last opened exists', () {
+    test(
+        'Dashboard resume session selects matching active agent when last opened exists',
+        () {
       final agents = AgentModel.defaultAgents;
       final target = agents.firstWhere((a) => a.id == 'fiqh_syafii');
       final lastOpenedId = target.id;
 
-      final matched = agents.where((a) => a.id == lastOpenedId && a.isActive).firstOrNull;
+      final matched =
+          agents.where((a) => a.id == lastOpenedId && a.isActive).firstOrNull;
       expect(matched, isNotNull);
       expect(matched!.id, 'fiqh_syafii');
     });
 
-    test('Recent notes can store and format canonical book and ibarah citations', () {
+    test(
+        'Recent notes can store and format canonical book and ibarah citations',
+        () {
       final note1 = BookmarkModel(
         id: 'book_minhaj_al_talibin',
         title: 'منهاج الطالبين وعمدة المفتين',
@@ -74,7 +83,9 @@ void main() {
       expect(note1.bookReference, 'Minhaj al-Talibin');
     });
 
-    test('AgentSessionManager maxTabs is limited to 3 to prevent Android WebView memory bloat', () {
+    test(
+        'AgentSessionManager maxTabs is limited to 3 to prevent Android WebView memory bloat',
+        () {
       expect(AgentSessionManager.maxTabs, 3);
     });
   });

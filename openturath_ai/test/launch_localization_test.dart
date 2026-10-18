@@ -23,18 +23,23 @@ void main() {
     AppConfig.localeNotifier.value = 'id';
     OTTypography.useSystemFontFallback = false;
   });
-  test('every copy entry has three translations with identical placeholders', () {
+  test('every copy entry has three translations with identical placeholders',
+      () {
     final placeholder = RegExp(r'\{\d+\}');
     for (final entry in copyCatalog.entries) {
       expect(entry.value.length, 3, reason: entry.key);
-      final expected = placeholder.allMatches(entry.value.first).map((m) => m[0]).toSet();
+      final expected =
+          placeholder.allMatches(entry.value.first).map((m) => m[0]).toSet();
       for (final text in entry.value) {
         expect(text.trim(), isNotEmpty, reason: entry.key);
-        expect(placeholder.allMatches(text).map((m) => m[0]).toSet(), expected, reason: entry.key);
+        expect(placeholder.allMatches(text).map((m) => m[0]).toSet(), expected,
+            reason: entry.key);
       }
     }
   });
-  test('language survives reinitialization and invalid persisted values are rejected', () async {
+  test(
+      'language survives reinitialization and invalid persisted values are rejected',
+      () async {
     await AppConfig.setLocale('ar');
     AppConfig.localeNotifier.value = 'id';
     await AppConfig.init();
@@ -43,24 +48,33 @@ void main() {
     await AppConfig.setLocale('unsupported');
     expect(AppConfig.localeNotifier.value, 'ar');
   });
-  test('unknown classifications stay unknown rather than being inferred from a title', () {
+  test(
+      'unknown classifications stay unknown rather than being inferred from a title',
+      () {
     expect(BookStudyLevel.fromMetadata('hashiyah'), BookStudyLevel.hashiyah);
-    expect(BookStudyLevel.fromMetadata('A Commentary on Trade'), BookStudyLevel.unclassified);
+    expect(BookStudyLevel.fromMetadata('A Commentary on Trade'),
+        BookStudyLevel.unclassified);
     expect(BookStudyLevel.fromMetadata(''), BookStudyLevel.unclassified);
   });
   test('catalog exposes 17 independent disciplines plus Tahawwulat', () {
-    final disciplines = AgentModel.defaultAgents.where((a) => a.kind == CorpusKind.discipline);
+    final disciplines =
+        AgentModel.defaultAgents.where((a) => a.kind == CorpusKind.discipline);
     expect(disciplines.where((a) => a.id != 'fiqh_tahawwulat').length, 17);
     expect(disciplines.where((a) => a.id == 'fiqh_tahawwulat').length, 1);
   });
-  testWidgets('Arabic price and English labels rebuild without remounting the screen', (tester) async {
-    await tester.pumpWidget(ValueListenableBuilder<String>(valueListenable: AppConfig.localeNotifier,
-      builder: (_, language, __) => MaterialApp(locale: Locale(language),
-        supportedLocales: Loc.supportedLocales,
-        localizationsDelegates: GlobalMaterialLocalizations.delegates,
-        builder: (_, child) => LocaleScope(child: child!),
-        home: const Scaffold(body: PromoPrice(amount: 50000, regularAmount: 300000)),
-      )));
+  testWidgets(
+      'Arabic price and English labels rebuild without remounting the screen',
+      (tester) async {
+    await tester.pumpWidget(ValueListenableBuilder<String>(
+        valueListenable: AppConfig.localeNotifier,
+        builder: (_, language, __) => MaterialApp(
+              locale: Locale(language),
+              supportedLocales: Loc.supportedLocales,
+              localizationsDelegates: GlobalMaterialLocalizations.delegates,
+              builder: (_, child) => LocaleScope(child: child!),
+              home: const Scaffold(
+                  body: PromoPrice(amount: 50000, regularAmount: 300000)),
+            )));
     expect(find.text('Rp 300.000'), findsOneWidget);
     await AppConfig.setLocale('ar');
     await tester.pumpAndSettle();

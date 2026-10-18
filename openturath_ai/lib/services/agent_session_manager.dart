@@ -38,7 +38,8 @@ class AgentSessionTab {
   /// Lepaskan seluruh resource WebView dan handler JavaScript untuk mencegah kebocoran memori.
   Future<void> disposeWebResources() async {
     try {
-      await webController?.loadUrl(urlRequest: URLRequest(url: WebUri('about:blank')));
+      await webController?.loadUrl(
+          urlRequest: URLRequest(url: WebUri('about:blank')));
       await webController?.stopLoading();
       webController?.removeJavaScriptHandler(handlerName: 'otCopiedAnswer');
       webController?.removeJavaScriptHandler(handlerName: 'otAnswerState');
@@ -94,14 +95,16 @@ class AgentSessionManager extends ChangeNotifier {
       if (_activeIndex != existingIndex) {
         try {
           _tabs[_activeIndex].webController?.evaluateJavascript(
-            source: 'window.otSetBackgroundPaused && window.otSetBackgroundPaused(true);',
-          );
+                source:
+                    'window.otSetBackgroundPaused && window.otSetBackgroundPaused(true);',
+              );
         } catch (_) {}
         _activeIndex = existingIndex;
         try {
           _tabs[_activeIndex].webController?.evaluateJavascript(
-            source: 'window.otSetBackgroundPaused && window.otSetBackgroundPaused(false); window.otNotebook && window.otNotebook.clean && window.otNotebook.clean();',
-          );
+                source:
+                    'window.otSetBackgroundPaused && window.otSetBackgroundPaused(false); window.otNotebook && window.otNotebook.clean && window.otNotebook.clean();',
+              );
         } catch (_) {}
       }
     } else {
@@ -122,14 +125,16 @@ class AgentSessionManager extends ChangeNotifier {
     if (index >= 0 && index < _tabs.length && _activeIndex != index) {
       try {
         _tabs[_activeIndex].webController?.evaluateJavascript(
-          source: 'window.otSetBackgroundPaused && window.otSetBackgroundPaused(true);',
-        );
+              source:
+                  'window.otSetBackgroundPaused && window.otSetBackgroundPaused(true);',
+            );
       } catch (_) {}
       _activeIndex = index;
       try {
         _tabs[_activeIndex].webController?.evaluateJavascript(
-          source: 'window.otSetBackgroundPaused && window.otSetBackgroundPaused(false); window.otNotebook && window.otNotebook.clean && window.otNotebook.clean();',
-        );
+              source:
+                  'window.otSetBackgroundPaused && window.otSetBackgroundPaused(false); window.otNotebook && window.otNotebook.clean && window.otNotebook.clean();',
+            );
       } catch (_) {}
       notifyListeners();
     }

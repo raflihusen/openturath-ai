@@ -24,6 +24,7 @@ import 'promo_price.dart';
 
 import 'package:openturath_ai/core/design/ot_typography.dart';
 import 'package:openturath_ai/core/design/ot_radius.dart';
+
 /// PaymentCheckoutSheet: In-App Modal Pembayaran dengan Deteksi Otomatis
 /// Menampilkan halaman gateway di dalam modal aplikasi tanpa perlu terlempar ke Chrome.
 /// Dilengkapi background status synchronization (inquiry real-time) yang otomatis
@@ -271,7 +272,6 @@ class _PaymentCheckoutSheetState extends State<PaymentCheckoutSheet> {
     }
   }
 
-
   Future<bool> _handleWillPop() async {
     if (_isSuccess || _hasPopped) return false;
     if (_isShowingConfirmDialog) return false;
@@ -510,7 +510,8 @@ class _PaymentCheckoutSheetState extends State<PaymentCheckoutSheet> {
                             Container(
                               padding: const EdgeInsets.all(8),
                               decoration: BoxDecoration(
-                                color: OTColors.borderStrong(isDark).withAlpha(30),
+                                color:
+                                    OTColors.borderStrong(isDark).withAlpha(30),
                                 borderRadius:
                                     BorderRadius.circular(AppTheme.radiusXS),
                               ),
@@ -626,12 +627,11 @@ class _PaymentCheckoutSheetState extends State<PaymentCheckoutSheet> {
                       minHeight: 2.5,
                     ),
 
-
-
                   // WebView gateway pembayaran
                   Expanded(
                     child: InAppWebView(
-                      gestureRecognizers: <Factory<OneSequenceGestureRecognizer>>{
+                      gestureRecognizers: <Factory<
+                          OneSequenceGestureRecognizer>>{
                         Factory<OneSequenceGestureRecognizer>(
                           () => EagerGestureRecognizer(),
                         ),

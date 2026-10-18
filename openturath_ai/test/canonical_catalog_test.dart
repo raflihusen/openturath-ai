@@ -6,17 +6,21 @@ void main() {
   group('Canonical Syafi\'i Catalog Parser Tests', () {
     test('parses canonical_syafii.json correctly with 87 entries', () {
       final file = File('assets/data/canonical_syafii.json');
-      expect(file.existsSync(), isTrue, reason: 'assets/data/canonical_syafii.json must exist');
+      expect(file.existsSync(), isTrue,
+          reason: 'assets/data/canonical_syafii.json must exist');
 
       final content = file.readAsStringSync();
       final result = parseCanonicalCatalog(content);
 
       expect(result.entries.isNotEmpty, isTrue);
-      expect(result.entries.length, equals(87), reason: 'Expected 87 canonical books');
-      expect(result.issues.isEmpty, isTrue, reason: 'Expected 0 format issues in catalog: ${result.issues}');
+      expect(result.entries.length, equals(87),
+          reason: 'Expected 87 canonical books');
+      expect(result.issues.isEmpty, isTrue,
+          reason: 'Expected 0 format issues in catalog: ${result.issues}');
 
       // Verify sample entry: Al-Umm
-      final alUmm = result.entries.firstWhere((e) => e.shortTitleArabic == 'الأم');
+      final alUmm =
+          result.entries.firstWhere((e) => e.shortTitleArabic == 'الأم');
       expect(alUmm.titleArabic, equals('الأم'));
       expect(alUmm.authorArabic, equals('الإمام الشافعي'));
       expect(alUmm.recordedDeathYearHijri, equals(204));

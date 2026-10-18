@@ -14,6 +14,7 @@ import '../services/bookmark_service.dart';
 import '../services/research_notes_service.dart';
 
 import 'package:openturath_ai/core/design/ot_radius.dart';
+
 /// Halaman Detail Edisi Kitab Mandiri (Full-Screen Route).
 /// Chrome follows the app locale; source titles and names retain Arabic RTL.
 class BookDetailScreen extends StatefulWidget {
@@ -311,7 +312,8 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                               ),
                               decoration: BoxDecoration(
                                 color: OTColors.primaryContainer(isDark),
-                                borderRadius: BorderRadius.circular(OTRadius.input),
+                                borderRadius:
+                                    BorderRadius.circular(OTRadius.input),
                               ),
                               child: Text(
                                 widget.book.sectionArabic == null
@@ -461,7 +463,8 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                                   ),
                                   decoration: BoxDecoration(
                                     color: surfaceSubtle,
-                                    borderRadius: BorderRadius.circular(OTRadius.input),
+                                    borderRadius:
+                                        BorderRadius.circular(OTRadius.input),
                                   ),
                                   child: Text(
                                     widget.book.verifiedDeathYearHijri != null
@@ -674,7 +677,8 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
               style: (RegExp(r'[\u0600-\u06FF]').hasMatch(value)
                       ? OTTypography.arabicReading(color: textPrimary)
                       : ScholarlyFonts.outfit(color: textPrimary))
-                  .copyWith(fontSize: OTFontSize.s14, fontWeight: FontWeight.w600),
+                  .copyWith(
+                      fontSize: OTFontSize.s14, fontWeight: FontWeight.w600),
             ),
           ),
         ),

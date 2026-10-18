@@ -7,7 +7,8 @@ abstract final class AppCopy {
   static String get defaultFieldDesc => Loc.tr('defaultFieldDesc');
   static String get aboutTitle => Loc.tr('aboutTitle');
   static String get aboutDescription => Loc.tr('aboutDescription');
-  static String get aboutScholarlyPrinciple => Loc.tr('aboutScholarlyPrinciple');
+  static String get aboutScholarlyPrinciple =>
+      Loc.tr('aboutScholarlyPrinciple');
   static String get academicSlogan => Loc.tr('academicSlogan');
   static String get navHome => Loc.tr('navHome');
   static String get navStudies => Loc.tr('navStudies');
@@ -28,29 +29,37 @@ abstract final class AppCopy {
   static String get ahlanDefault => Loc.tr('ahlanDefault');
   static String get studyBookCategory => Loc.tr('studyBookCategory');
   static String get studyEntryDefaultTitle => Loc.tr('studyEntryDefaultTitle');
-  static String get studyEntryResumeSubtitle => Loc.tr('studyEntryResumeSubtitle');
-  static String get studyEntryHistorySubtitle => Loc.tr('studyEntryHistorySubtitle');
-  static String get studyEntryDefaultSubtitle => Loc.tr('studyEntryDefaultSubtitle');
+  static String get studyEntryResumeSubtitle =>
+      Loc.tr('studyEntryResumeSubtitle');
+  static String get studyEntryHistorySubtitle =>
+      Loc.tr('studyEntryHistorySubtitle');
+  static String get studyEntryDefaultSubtitle =>
+      Loc.tr('studyEntryDefaultSubtitle');
   static String get loadingReferences => Loc.tr('loadingReferences');
   static String get modulePreparing => Loc.tr('modulePreparing');
   static String get moduleUnavailable => Loc.tr('moduleUnavailable');
   static String get cannotLoad => Loc.tr('cannotLoad');
   static String get cannotLoadStudy => Loc.tr('cannotLoadStudy');
   static String get studyNotLoadedYet => Loc.tr('studyNotLoadedYet');
-  static String get subscriptionRequiredTitle => Loc.tr('subscriptionRequiredTitle');
-  static String get subscriptionRequiredShort => Loc.tr('subscriptionRequiredShort');
+  static String get subscriptionRequiredTitle =>
+      Loc.tr('subscriptionRequiredTitle');
+  static String get subscriptionRequiredShort =>
+      Loc.tr('subscriptionRequiredShort');
   static String get catalogLoadFailed => Loc.tr('catalogLoadFailed');
   static String get catalogPreparing => Loc.tr('catalogPreparing');
   static String get inputQuestionHint => Loc.tr('inputQuestionHint');
   static String get viewSubscription => Loc.tr('viewSubscription');
   static String get tryAgain => Loc.tr('tryAgain');
-  static String get sessionExpiredOrNoAccess => Loc.tr('sessionExpiredOrNoAccess');
+  static String get sessionExpiredOrNoAccess =>
+      Loc.tr('sessionExpiredOrNoAccess');
   static String get agentLoadFailed => Loc.tr('agentLoadFailed');
   static String get backToHome => Loc.tr('backToHome');
   static String get noAssistantsFound => Loc.tr('noAssistantsFound');
   static String get comingSoon => Loc.tr('comingSoon');
-  static String get deviceNotSupportedTitle => Loc.tr('deviceNotSupportedTitle');
-  static String get deviceNotSupportedMessage => Loc.tr('deviceNotSupportedMessage');
+  static String get deviceNotSupportedTitle =>
+      Loc.tr('deviceNotSupportedTitle');
+  static String get deviceNotSupportedMessage =>
+      Loc.tr('deviceNotSupportedMessage');
   static String get cannotConnectTitle => Loc.tr('cannotConnectTitle');
   static String get cannotConnectMessage => Loc.tr('cannotConnectMessage');
   static String get adabDialogTitle => Loc.tr('adabDialogTitle');
@@ -95,16 +104,22 @@ abstract final class AppCopy {
   static String get closeSearch => Loc.tr('closeSearch');
   static String get undo => Loc.tr('undo');
   static String get bookReferenceLabel => Loc.tr('bookReferenceLabel');
-  static String get googleSessionConnectTitle => Loc.tr('googleSessionConnectTitle');
-  static String get googleSessionConnectSubtitle => Loc.tr('googleSessionConnectSubtitle');
-  static String get googleSessionConnectDesc => Loc.tr('googleSessionConnectDesc');
-  static String get googleSessionSignInHint => Loc.tr('googleSessionSignInHint');
-  static String get googleSessionSignInSameAccountDesc => Loc.tr('googleSessionSignInSameAccountDesc');
+  static String get googleSessionConnectTitle =>
+      Loc.tr('googleSessionConnectTitle');
+  static String get googleSessionConnectSubtitle =>
+      Loc.tr('googleSessionConnectSubtitle');
+  static String get googleSessionConnectDesc =>
+      Loc.tr('googleSessionConnectDesc');
+  static String get googleSessionSignInHint =>
+      Loc.tr('googleSessionSignInHint');
+  static String get googleSessionSignInSameAccountDesc =>
+      Loc.tr('googleSessionSignInSameAccountDesc');
   static String get googleSessionConnected => Loc.tr('googleSessionConnected');
   static String get googleSessionPreparing => Loc.tr('googleSessionPreparing');
   static String get cancelSignIn => Loc.tr('cancelSignIn');
   static String get cancelSignInTitle => Loc.tr('cancelSignInTitle');
-  static String get connectingGoogleAccount => Loc.tr('connectingGoogleAccount');
+  static String get connectingGoogleAccount =>
+      Loc.tr('connectingGoogleAccount');
   static String get googleSessionFailed => Loc.tr('googleSessionFailed');
   static String get googleSessionActive => Loc.tr('googleSessionActive');
   static String get continueWithGoogle => Loc.tr('continueWithGoogle');
@@ -139,7 +154,8 @@ abstract final class AppCopy {
   static String get networkError => Loc.tr('networkError');
   static String get accountSection => Loc.tr('accountSection');
   static String get generalSettingsSection => Loc.tr('generalSettingsSection');
-  static String get supportAndPolicySection => Loc.tr('supportAndPolicySection');
+  static String get supportAndPolicySection =>
+      Loc.tr('supportAndPolicySection');
   static String get clearCache => Loc.tr('clearCache');
   static String get clearCacheSubtitle => Loc.tr('clearCacheSubtitle');
   static String get clearCacheDialogTitle => Loc.tr('clearCacheDialogTitle');
@@ -183,7 +199,8 @@ abstract final class AppCopy {
   static String get paymentSuccessRedirect => Loc.tr('paymentSuccessRedirect');
   static String get packagePerField => Loc.tr('packagePerField');
   static String get packageAllFields => Loc.tr('packageAllFields');
-  static String get packageAllFieldsPreparing => Loc.tr('packageAllFieldsPreparing');
+  static String get packageAllFieldsPreparing =>
+      Loc.tr('packageAllFieldsPreparing');
   static String get chooseFieldPlan => Loc.tr('chooseFieldPlan');
   static String get accessAllFields => Loc.tr('accessAllFields');
   static String get accessSingleField => Loc.tr('accessSingleField');
@@ -195,13 +212,20 @@ abstract final class AppCopy {
   static String get supportAndContact => Loc.tr('supportAndContact');
   static String get manualRenewalNotice => Loc.tr('manualRenewalNotice');
 
-  static String preparingModule(String module) => Loc.tr('preparingModule', [module]);
-  static String subscriptionRequiredFor(String module) => Loc.tr('subscriptionRequiredFor', [module]);
-  static String accessUnavailableFor(String module) => Loc.tr('accessUnavailableFor', [module]);
-  static String planWithAgent(String title, String duration) => '$title · $duration';
+  static String preparingModule(String module) =>
+      Loc.tr('preparingModule', [module]);
+  static String subscriptionRequiredFor(String module) =>
+      Loc.tr('subscriptionRequiredFor', [module]);
+  static String accessUnavailableFor(String module) =>
+      Loc.tr('accessUnavailableFor', [module]);
+  static String planWithAgent(String title, String duration) =>
+      '$title · $duration';
   static String trialDaysLeft(int days) => Loc.tr('trialDaysLeft', ['$days']);
-  static String assistantsAvailableCount(int count) => Loc.tr('assistantsAvailableCount', ['$count']);
-  static String savedNotesCount(int count) => Loc.tr('savedNotesCount', ['$count']);
-  static String versionWithTagline(String version) => Loc.tr('versionWithTagline', [version, appTagline]);
+  static String assistantsAvailableCount(int count) =>
+      Loc.tr('assistantsAvailableCount', ['$count']);
+  static String savedNotesCount(int count) =>
+      Loc.tr('savedNotesCount', ['$count']);
+  static String versionWithTagline(String version) =>
+      Loc.tr('versionWithTagline', [version, appTagline]);
   static String ahlanWithName(String name) => Loc.tr('ahlanWithName', [name]);
 }

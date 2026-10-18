@@ -6,7 +6,8 @@ import 'package:openturath_ai/services/agent_service.dart';
 void main() {
   group('OTA Dynamic Locking & Pricing Tests', () {
     test('AgentModel copyWith preserves fields and updates status', () {
-      final syafii = AgentModel.defaultAgents.firstWhere((a) => a.id == 'fiqh_syafii');
+      final syafii =
+          AgentModel.defaultAgents.firstWhere((a) => a.id == 'fiqh_syafii');
       expect(syafii.isActive, isTrue);
 
       final lockedCopy = syafii.copyWith(status: 'coming_soon');
@@ -43,7 +44,9 @@ void main() {
       expect(lockedAgents.map((a) => a.id), contains('tasawwuf'));
     });
 
-    test('ProductPricing updateOffers dynamically overrides nominal and revision', () {
+    test(
+        'ProductPricing updateOffers dynamically overrides nominal and revision',
+        () {
       // Default revision
       expect(ProductPricing.revision, isNotEmpty);
       final initialTahawwulat1m = ProductPricing.tahawwulat.first.amount;
@@ -61,7 +64,8 @@ void main() {
       final updatedOffer = ProductPricing.tahawwulat.first;
       expect(updatedOffer.amount, equals(1000));
       expect(updatedOffer.priceLabel, equals('Rp 1.000'));
-      expect(updatedOffer.savingsPercent, equals(100)); // 1.000 vs 1.000.000 = ~100%
+      expect(updatedOffer.savingsPercent,
+          equals(100)); // 1.000 vs 1.000.000 = ~100%
 
       // Restore to default official price
       ProductPricing.updateOffers(

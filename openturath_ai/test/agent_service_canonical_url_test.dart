@@ -30,7 +30,8 @@ void main() {
   const assignedUrl = 'https://notebooklm.google.com$path';
   const canonicalUrl = 'https://notebook.google.com$path';
 
-  test('preserves server notebook assignment while bypassing legacy host redirect',
+  test(
+      'preserves server notebook assignment while bypassing legacy host redirect',
       () async {
     final gateway = _Gateway(response: {'url': assignedUrl});
     final service = AgentService(functions: gateway);

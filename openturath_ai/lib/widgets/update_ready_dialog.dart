@@ -9,6 +9,7 @@ import '../core/localization.dart';
 
 import 'package:openturath_ai/core/design/ot_typography.dart';
 import 'package:openturath_ai/core/design/ot_radius.dart';
+
 /// Modal dialog elegan yang muncul otomatis saat pembaruan selesai diunduh di latar belakang
 class UpdateReadyDialog extends StatelessWidget {
   final UpdateService updateService;
@@ -41,8 +42,8 @@ class UpdateReadyDialog extends StatelessWidget {
     final isDesktop = !kIsWeb && !Platform.isAndroid && !Platform.isIOS;
     final info = updateService.updateInfo;
     final version = info?.latestVersion ?? '';
-    final releaseNotes = info?.releaseNotes ??
-        Loc.tr('updateReadyDefaultNotes');
+    final releaseNotes =
+        info?.releaseNotes ?? Loc.tr('updateReadyDefaultNotes');
 
     return Dialog(
       backgroundColor: surface,
@@ -93,8 +94,9 @@ class UpdateReadyDialog extends StatelessWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               decoration: BoxDecoration(
-                color:
-                    isDark ? OTColors.surfaceSubtleDark : OTColors.borderSubtleLight,
+                color: isDark
+                    ? OTColors.surfaceSubtleDark
+                    : OTColors.borderSubtleLight,
                 borderRadius: BorderRadius.circular(AppTheme.radiusPill),
               ),
               child: Text(
@@ -165,8 +167,7 @@ class UpdateReadyDialog extends StatelessWidget {
                     Navigator.of(context).pop();
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                      content: Text(
-                          Loc.tr('updateReadyOpenFailed')),
+                      content: Text(Loc.tr('updateReadyOpenFailed')),
                     ));
                   }
                 },

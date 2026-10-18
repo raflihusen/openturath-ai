@@ -23,6 +23,7 @@ class BookmarkModel {
   final String? author;
   final DateTime createdAt;
   final DateTime? updatedAt;
+
   /// Tombstone for conflict-safe offline deletion. It is synchronized so an
   /// older device cannot resurrect a note that was deliberately removed.
   final DateTime? deletedAt;

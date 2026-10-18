@@ -106,42 +106,47 @@ class UserModel {
   });
 
   // ── Global Legacy Helpers ──
-  bool get isTrial => !isVip && (plan == AppConstants.planTrial || plan == 'trial');
+  bool get isTrial =>
+      !isVip && (plan == AppConstants.planTrial || plan == 'trial');
   bool get isGuest => email.isEmpty || uid.startsWith('guest_');
-  bool get isPremium => isVip ||
+  bool get isPremium =>
+      isVip ||
       (plan != 'free' &&
-      (plan == AppConstants.planTholib1m ||
-          plan == AppConstants.planTholib6m ||
-          plan == AppConstants.planBahits1y ||
-          plan == 'tholib' ||
-          plan == 'bahits' ||
-          plan == 'all_ai_1m' ||
-          plan == 'all_ai_6m' ||
-          plan == 'all_ai_1y' ||
-          plan == 'all_access' ||
-          plan == 'all_ai' ||
-          plan == 'full' ||
-          plan == 'sultan' ||
-          plan == 'pro' ||
-          plan == 'premium' ||
-          plan.startsWith('all_ai') ||
-          plan.startsWith('redeem') ||
-          plan.startsWith('voucher') ||
-          plan == 'custom' ||
-          (subscriptionExpiry != null &&
-              subscriptionExpiry!.isAfter(DateTime.now()))));
+          (plan == AppConstants.planTholib1m ||
+              plan == AppConstants.planTholib6m ||
+              plan == AppConstants.planBahits1y ||
+              plan == 'tholib' ||
+              plan == 'bahits' ||
+              plan == 'all_ai_1m' ||
+              plan == 'all_ai_6m' ||
+              plan == 'all_ai_1y' ||
+              plan == 'all_access' ||
+              plan == 'all_ai' ||
+              plan == 'full' ||
+              plan == 'sultan' ||
+              plan == 'pro' ||
+              plan == 'premium' ||
+              plan.startsWith('all_ai') ||
+              plan.startsWith('redeem') ||
+              plan.startsWith('voucher') ||
+              plan == 'custom' ||
+              (subscriptionExpiry != null &&
+                  subscriptionExpiry!.isAfter(DateTime.now()))));
 
   /// Voucher trial dan paket berbayar memakai sumber masa berlaku yang sama.
   /// Jangan pernah menjadikan nama paket sebagai alasan menolak masa berlaku
   /// yang masih aktif dari server.
   bool get isSubscriptionActive =>
-      isVip || (subscriptionExpiry != null && subscriptionExpiry!.isAfter(DateTime.now()));
+      isVip ||
+      (subscriptionExpiry != null &&
+          subscriptionExpiry!.isAfter(DateTime.now()));
 
   /// Trial is an entitlement with an expiry supplied by the server voucher.
   /// A local question counter must never grant or revoke access.
-  bool get hasAccess => isSubscriptionActive ||
-      entitlements.values.any((entitlement) =>
-          entitlement.isActive && entitlement.isPremium);
+  bool get hasAccess =>
+      isSubscriptionActive ||
+      entitlements.values
+          .any((entitlement) => entitlement.isActive && entitlement.isPremium);
 
   /// Retained for legacy presentation only. Questions are no longer a quota.
   int get questionsRemaining => hasAccess ? 9999 : 0;
@@ -187,9 +192,9 @@ class UserModel {
       'full',
       'sultan',
     ];
-    final isGlobalPlan = (globalAllPlans.contains(plan) ||
-            plan.startsWith('all_ai')) &&
-        isSubscriptionActive;
+    final isGlobalPlan =
+        (globalAllPlans.contains(plan) || plan.startsWith('all_ai')) &&
+            isSubscriptionActive;
     if (isGlobalPlan) {
       return true;
     }
@@ -198,8 +203,7 @@ class UserModel {
     if (isSubscriptionActive) {
       final cleanPlan = plan.toLowerCase();
       final cleanKey = mappedKey.toLowerCase();
-      if (cleanPlan == cleanKey ||
-          cleanPlan.startsWith('${cleanKey}_')) {
+      if (cleanPlan == cleanKey || cleanPlan.startsWith('${cleanKey}_')) {
         return true;
       }
     }
@@ -275,8 +279,8 @@ class UserModel {
       entitlements: parsedEntitlements,
       isVip: data['is_vip'] == true ||
           _canonicalVipEmails.contains(rawEmail) ||
-          ['vip', 'admin', 'guru', 'special'].contains(
-            (data['role'] ?? '').toString().toLowerCase()),
+          ['vip', 'admin', 'guru', 'special']
+              .contains((data['role'] ?? '').toString().toLowerCase()),
     );
   }
 

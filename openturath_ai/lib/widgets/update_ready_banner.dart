@@ -8,6 +8,7 @@ import '../core/scholarly_fonts.dart';
 import '../core/localization.dart';
 
 import 'package:openturath_ai/core/design/ot_typography.dart';
+
 class UpdateReadyBanner extends StatelessWidget {
   const UpdateReadyBanner({super.key});
 
@@ -52,8 +53,8 @@ class UpdateReadyBanner extends StatelessWidget {
                 height: 40,
                 decoration: BoxDecoration(
                   color: isDark
-                    ? AppTheme.borderDark
-                    : AppTheme.pillSecondaryBgLight,
+                      ? AppTheme.borderDark
+                      : AppTheme.pillSecondaryBgLight,
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
@@ -98,8 +99,7 @@ class UpdateReadyBanner extends StatelessWidget {
                   final opened = await updateService.installNow();
                   if (!opened && context.mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                      content: Text(
-                          Loc.tr('updateReadyOpenFailed')),
+                      content: Text(Loc.tr('updateReadyOpenFailed')),
                     ));
                   }
                 },

@@ -49,7 +49,8 @@ class ScopedJsonListStore<T> {
   final Map<String, dynamic> Function(T) encode;
   static final Map<String, Future<void>> _tails = {};
 
-  ScopedJsonListStore({required this.storage, required this.decode, required this.encode});
+  ScopedJsonListStore(
+      {required this.storage, required this.decode, required this.encode});
 
   Future<R> _locked<R>(String key, Future<R> Function() action) async {
     final previous = _tails[key];
@@ -77,7 +78,8 @@ class ScopedJsonListStore<T> {
     } on Object {
       final digest = sha256.convert(utf8.encode(raw));
       final quarantine = '${key}_corrupt_$digest';
-      if (await storage.read(quarantine) != raw && !await storage.write(quarantine, raw)) {
+      if (await storage.read(quarantine) != raw &&
+          !await storage.write(quarantine, raw)) {
         throw StateError('Cannot preserve damaged saved data');
       }
       return <T>[];
@@ -94,13 +96,15 @@ class ScopedJsonListStore<T> {
     });
   }
 
-  Future<void> update(String key, List<T> Function(List<T>) edit) => _locked(key, () async {
-    final current = await _read(key);
-    await _write(key, edit(current));
-  });
+  Future<void> update(String key, List<T> Function(List<T>) edit) =>
+      _locked(key, () async {
+        final current = await _read(key);
+        await _write(key, edit(current));
+      });
 
   Future<void> _write(String key, List<T> items) async {
     final raw = jsonEncode(items.map(encode).toList());
-    if (!await storage.write(key, raw)) throw StateError('Saved data could not be written');
+    if (!await storage.write(key, raw))
+      throw StateError('Saved data could not be written');
   }
 }

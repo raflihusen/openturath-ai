@@ -7,7 +7,9 @@ void main() {
     final futureExpiry = DateTime.now().add(const Duration(days: 365));
     final pastExpiry = DateTime.now().subtract(const Duration(days: 1));
 
-    test('Active subscriber with plan tholib_1m has access to all agents even with empty entitlements', () {
+    test(
+        'Active subscriber with plan tholib_1m has access to all agents even with empty entitlements',
+        () {
       final user = UserModel(
         uid: 'user_active_tholib',
         name: 'Rafli Husen',
@@ -28,8 +30,15 @@ void main() {
       expect(user.hasAccessToAgent('nahwu_sharaf'), isTrue);
     });
 
-    test('Active subscriber with plan bahits_1y or tholib_6m has full access', () {
-      for (final planName in [AppConstants.planBahits1y, AppConstants.planTholib6m, 'sultan', 'all_ai_1m', 'full']) {
+    test('Active subscriber with plan bahits_1y or tholib_6m has full access',
+        () {
+      for (final planName in [
+        AppConstants.planBahits1y,
+        AppConstants.planTholib6m,
+        'sultan',
+        'all_ai_1m',
+        'full'
+      ]) {
         final user = UserModel(
           uid: 'user_full_$planName',
           name: 'Peneliti',
@@ -47,7 +56,7 @@ void main() {
       }
     });
 
-  test('Active subscriber with redeem voucher code has full access', () {
+    test('Active subscriber with redeem voucher code has full access', () {
       final user = UserModel(
         uid: 'user_redeem',
         name: 'Santri',

@@ -15,8 +15,7 @@ void main() {
         sourceId: '11111111-2222-3333-4444-555555555555',
         number: 1,
         excerpt: 'قال المصنف'),
-    AnswerCitation(
-        sourceId: '66666666-7777-8888-9999-000000000000', number: 2),
+    AnswerCitation(sourceId: '66666666-7777-8888-9999-000000000000', number: 2),
   ];
 
   test('Saved answer keeps its source locators through local storage',

@@ -26,7 +26,8 @@ class NavigationGuard {
     if (!context.mounted) return null;
 
     if (!_inFlightRoutes.add(routeName)) {
-      debugPrint('[NavigationGuard] Menolak push duplikat untuk "$routeName" (rute sedang in-flight)');
+      debugPrint(
+          '[NavigationGuard] Menolak push duplikat untuk "$routeName" (rute sedang in-flight)');
       return null;
     }
 
@@ -54,7 +55,8 @@ class NavigationGuard {
     Future<T?> Function() navigationAction,
   ) async {
     if (_isCustomNavigating) {
-      debugPrint('[NavigationGuard] Menolak navigasi duplikat (operasi navigasi sedang aktif)');
+      debugPrint(
+          '[NavigationGuard] Menolak navigasi duplikat (operasi navigasi sedang aktif)');
       return null;
     }
 

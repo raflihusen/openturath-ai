@@ -128,7 +128,8 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
   }
 
   /// Memverifikasi bahwa sesi di WebView telah selesai dan menggunakan akun yang sama
-  Future<void> _checkAccountVerification(InAppWebViewController controller) async {
+  Future<void> _checkAccountVerification(
+      InAppWebViewController controller) async {
     if (!mounted || _isSessionReady) return;
     final currentWebUrl = await controller.getUrl();
     if (currentWebUrl == null) return;
@@ -272,8 +273,8 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
             },
             child: Text(
               Loc.tr('exit'),
-              style: ScholarlyFonts.outfit(
-                  color: OTColors.textSecondary(isDark)),
+              style:
+                  ScholarlyFonts.outfit(color: OTColors.textSecondary(isDark)),
             ),
           ),
           FilledButton(
@@ -409,7 +410,9 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
                 border: Border.all(color: OTColors.border(isDark)),
               ),
               child: Text(
-                currentEmail.isNotEmpty ? currentEmail : Loc.tr('sameAccountFallback'),
+                currentEmail.isNotEmpty
+                    ? currentEmail
+                    : Loc.tr('sameAccountFallback'),
                 style: ScholarlyFonts.outfit(
                   fontSize: OTFontSize.s14,
                   fontWeight: FontWeight.w600,
@@ -424,8 +427,8 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
             onPressed: () => Navigator.pop(ctx, false),
             child: Text(
               Loc.tr('checkAgain'),
-              style: ScholarlyFonts.outfit(
-                  color: OTColors.textSecondary(isDark)),
+              style:
+                  ScholarlyFonts.outfit(color: OTColors.textSecondary(isDark)),
             ),
           ),
           FilledButton(

@@ -21,9 +21,10 @@ class MemoryStrings implements StringStore {
 
 void main() {
   ScopedJsonListStore<String> store(MemoryStrings io) => ScopedJsonListStore(
-    storage: io, decode: (map) => map['value'] as String,
-    encode: (value) => {'value': value},
-  );
+        storage: io,
+        decode: (map) => map['value'] as String,
+        encode: (value) => {'value': value},
+      );
   test('A07 values never cross account keys or caller mutation', () async {
     final io = MemoryStrings();
     final data = store(io);
@@ -33,7 +34,8 @@ void main() {
     a.clear();
     expect(await data.read('user-a'), ['private']);
   });
-  test('A08 parallel updates through separate instances preserve both records', () async {
+  test('A08 parallel updates through separate instances preserve both records',
+      () async {
     final io = MemoryStrings();
     final a = store(io);
     final b = store(io);
@@ -43,7 +45,8 @@ void main() {
     ]);
     expect(await a.read('notes'), ['A', 'B']);
   });
-  testWidgets('A08 slow write does not release exclusion after five seconds', (tester) async {
+  testWidgets('A08 slow write does not release exclusion after five seconds',
+      (tester) async {
     final io = MemoryStrings()..gate = Completer<void>();
     final data = store(io);
     final first = data.replace('slow', ['A']);
@@ -68,11 +71,18 @@ void main() {
     final io = MemoryStrings()..values['a'] = '[broken';
     final data = store(io);
     await data.update('a', (rows) => rows..add('new'));
-    expect(io.values.entries.where((e) => e.key.startsWith('a_corrupt_')).single.value, '[broken');
+    expect(
+        io.values.entries
+            .where((e) => e.key.startsWith('a_corrupt_'))
+            .single
+            .value,
+        '[broken');
     expect(await data.read('b'), isEmpty);
   });
   test('A07 failed quarantine prevents overwriting corrupt original', () async {
-    final io = MemoryStrings()..values['a'] = '[broken'..fail = true;
+    final io = MemoryStrings()
+      ..values['a'] = '[broken'
+      ..fail = true;
     await expectLater(store(io).replace('a', ['new']), throwsStateError);
     expect(io.values['a'], '[broken');
   });

@@ -11,7 +11,10 @@ void main() {
     final stream = sessionUserStream<String>(
       auth: auth.stream,
       cached: (uid) => oldCache.future,
-      watch: (uid) { watched.add(uid); return const Stream<String?>.empty(); },
+      watch: (uid) {
+        watched.add(uid);
+        return const Stream<String?>.empty();
+      },
     );
     final values = <String?>[];
     final sub = stream.listen(values.add);
@@ -27,12 +30,19 @@ void main() {
     await sub.cancel();
     await auth.close();
   });
-  test('A09 final cancellation invalidates pending cache and later listeners restart', () async {
+  test(
+      'A09 final cancellation invalidates pending cache and later listeners restart',
+      () async {
     final auth = StreamController<String?>.broadcast(sync: true);
     final cache = Completer<String?>();
     var watches = 0;
-    final stream = sessionUserStream<String>(auth: auth.stream, cached: (_) => cache.future,
-      watch: (_) { watches++; return const Stream<String?>.empty(); });
+    final stream = sessionUserStream<String>(
+        auth: auth.stream,
+        cached: (_) => cache.future,
+        watch: (_) {
+          watches++;
+          return const Stream<String?>.empty();
+        });
     final sub = stream.listen((_) {});
     auth.add('A');
     await tick();

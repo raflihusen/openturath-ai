@@ -34,8 +34,10 @@ class ResearchNote {
     buffer.write('Sumber: OpenTurath AI ($agentTitle)');
     if (bookTitle != null && bookTitle!.isNotEmpty) {
       buffer.write(', Kitab $bookTitle');
-      if (bookVolume != null && bookVolume!.isNotEmpty) buffer.write(' Juz $bookVolume');
-      if (bookPage != null && bookPage!.isNotEmpty) buffer.write(' Hal $bookPage');
+      if (bookVolume != null && bookVolume!.isNotEmpty)
+        buffer.write(' Juz $bookVolume');
+      if (bookPage != null && bookPage!.isNotEmpty)
+        buffer.write(' Hal $bookPage');
     }
     return buffer.toString();
   }
@@ -70,13 +72,17 @@ class ResearchNote {
 /// Service Penyimpanan Catatan & Bookmark Riset Lokal (Offline-first)
 class ResearchNotesService {
   final _store = ScopedJsonListStore<ResearchNote>(
-    storage: PreferencesStringStore(), decode: ResearchNote.fromMap,
+    storage: PreferencesStringStore(),
+    decode: ResearchNote.fromMap,
     encode: (note) => note.toMap(),
   );
   String _key(String? userId) {
     final uid = userId ?? FirebaseAuth.instance.currentUser?.uid;
-    return uid == null || uid.isEmpty ? 'openturath_research_notes_v1' : 'openturath_${uid}_research_notes_v1';
+    return uid == null || uid.isEmpty
+        ? 'openturath_research_notes_v1'
+        : 'openturath_${uid}_research_notes_v1';
   }
+
   Future<void> saveNote(ResearchNote note, {String? userId}) {
     final key = _key(userId);
     return _store.update(key, (notes) {
@@ -85,8 +91,10 @@ class ResearchNotesService {
       return notes;
     });
   }
+
   Future<void> deleteNote(String noteId, {String? userId}) {
     final key = _key(userId);
-    return _store.update(key, (notes) => notes..removeWhere((n) => n.id == noteId));
+    return _store.update(
+        key, (notes) => notes..removeWhere((n) => n.id == noteId));
   }
 }

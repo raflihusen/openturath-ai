@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../core/app_platform.dart';
 
 import 'package:openturath_ai/core/design/ot_radius.dart';
+
 /// Keeps mobile sheets while giving desktop forms a bounded, centered surface.
 Future<T?> showAdaptiveSheet<T>({
   required BuildContext context,
@@ -37,7 +38,8 @@ Future<T?> showAdaptiveSheet<T>({
       insetPadding: const EdgeInsets.all(24),
       constraints: const BoxConstraints(maxWidth: 560),
       // Dialog sungguhan di desktop: keempat sudut membulat dan isi diklip.
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(OTRadius.card)),
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(OTRadius.card)),
       clipBehavior: Clip.antiAlias,
       child: LayoutBuilder(builder: (context, constraints) {
         final media = MediaQuery.of(context);

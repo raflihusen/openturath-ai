@@ -5,9 +5,12 @@ import 'package:openturath_ai/services/agent_session_manager.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  final agentSyafii = AgentModel.defaultAgents.firstWhere((a) => a.id == 'fiqh_syafii');
-  final agentHanafi = AgentModel.defaultAgents.firstWhere((a) => a.id == 'fiqh_hanafi');
-  final agentMaliki = AgentModel.defaultAgents.firstWhere((a) => a.id == 'fiqh_maliki');
+  final agentSyafii =
+      AgentModel.defaultAgents.firstWhere((a) => a.id == 'fiqh_syafii');
+  final agentHanafi =
+      AgentModel.defaultAgents.firstWhere((a) => a.id == 'fiqh_hanafi');
+  final agentMaliki =
+      AgentModel.defaultAgents.firstWhere((a) => a.id == 'fiqh_maliki');
 
   setUp(() {
     AgentSessionManager.instance.closeAll();
@@ -35,7 +38,9 @@ void main() {
       expect(manager.activeTab?.agent.id, 'fiqh_syafii');
     });
 
-    test('Opening same agent twice switches to existing tab without reload or duplication', () {
+    test(
+        'Opening same agent twice switches to existing tab without reload or duplication',
+        () {
       final manager = AgentSessionManager.instance;
       manager.openAgent(agentSyafii);
       manager.openAgent(agentHanafi);
@@ -53,7 +58,9 @@ void main() {
       expect(manager.activeTab?.agent.id, 'fiqh_syafii');
     });
 
-    test('closeRoom() hides the room while preserving active tabs in background', () {
+    test(
+        'closeRoom() hides the room while preserving active tabs in background',
+        () {
       final manager = AgentSessionManager.instance;
       manager.openAgent(agentSyafii);
       manager.openAgent(agentMaliki);
@@ -103,7 +110,8 @@ void main() {
       expect(manager.isOpen, isFalse);
     });
 
-    test('closeAll() completely clears sessions and resets state on sign out', () {
+    test('closeAll() completely clears sessions and resets state on sign out',
+        () {
       final manager = AgentSessionManager.instance;
       manager.openAgent(agentSyafii);
       manager.openAgent(agentHanafi);
@@ -115,7 +123,9 @@ void main() {
       expect(manager.activeIndex, 0);
     });
 
-    test('Closing a tab to the left of activeIndex preserves the current active tab', () {
+    test(
+        'Closing a tab to the left of activeIndex preserves the current active tab',
+        () {
       final manager = AgentSessionManager.instance;
       // Urutan tab: [0: Syafii, 1: Hanafi, 2: Maliki]
       manager.openAgent(agentSyafii);
