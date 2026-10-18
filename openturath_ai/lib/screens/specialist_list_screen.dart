@@ -454,7 +454,8 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
                                                     _openTahawwulatSubAgent(
                                                         flagship, sub),
                                                 onOpenLibrary:
-                                                    flagship.catalogId != null
+                                                    (!flagship.isComingSoon &&
+                                                            flagship.catalogId != null)
                                                         ? () =>
                                                             showResearchLibrary(
                                                                 context,
@@ -482,14 +483,14 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
                                                   metadata: statsOf(agent),
                                                   onOpen: () =>
                                                       _openAgent(agent),
-                                                  onOpenLibrary: agent
-                                                              .catalogId !=
-                                                          null
-                                                      ? () =>
-                                                          showResearchLibrary(
-                                                              context,
-                                                              agent: agent)
-                                                      : null,
+                                                  onOpenLibrary:
+                                                      (!agent.isComingSoon &&
+                                                              agent.catalogId != null)
+                                                          ? () =>
+                                                              showResearchLibrary(
+                                                                  context,
+                                                                  agent: agent)
+                                                          : null,
                                                 ),
                                               );
                                             }

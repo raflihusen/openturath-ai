@@ -81,7 +81,8 @@ class SpecialistCard extends StatelessWidget {
                         color: ink,
                       ),
                     ),
-                    if (reference != null &&
+                    if (!isLocked &&
+                        reference != null &&
                         reference.isNotEmpty &&
                         onOpenLibrary != null) ...[
                       const SizedBox(height: 7),

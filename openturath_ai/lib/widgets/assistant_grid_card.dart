@@ -45,20 +45,23 @@ class AssistantGridCard extends StatelessWidget {
     required this.onOpen,
     this.metadata,
     this.onOpenLibrary,
+    this.isLocked,
   });
 
   final AgentModel agent;
   final AiLibraryMetadata? metadata;
   final VoidCallback onOpen;
   final VoidCallback? onOpenLibrary;
+  final bool? isLocked;
 
   @override
   Widget build(BuildContext context) {
     Loc.watch(context);
     const ink = OTExpressive.white;
     const muted = OTExpressive.whiteMuted;
+    final locked = isLocked ?? agent.isComingSoon;
     final stats = LibraryStat.from(metadata).take(2).toList();
-    final openLabel = agent.isComingSoon
+    final openLabel = locked
         ? Loc.tr('comingSoon')
         : Loc.tr('openNamedAI', [Loc.text(agent.title)]);
     return OTInkCard(
@@ -72,7 +75,7 @@ class AssistantGridCard extends StatelessWidget {
               maxLines: 2,
               style:
                   OTTypography.screenTitle(color: ink).copyWith(height: 1.25)),
-          if (agent.isComingSoon) ...[
+          if (locked) ...[
             const SizedBox(height: 8),
             Text(Loc.tr('comingSoon'),
                 style: OTTypography.caption(color: muted)),
@@ -94,20 +97,19 @@ class AssistantGridCard extends StatelessWidget {
                     child: FilledButton(
                         onPressed: onOpen,
                         style: FilledButton.styleFrom(
-                            backgroundColor: agent.isComingSoon
+                            backgroundColor: locked
                                 ? ink.withValues(alpha: .14)
                                 : ink,
-                            foregroundColor: agent.isComingSoon
-                                ? ink
-                                : OTExpressive.hero,
+                            foregroundColor:
+                                locked ? ink : OTExpressive.hero,
                             padding: EdgeInsets.zero),
                         child: Icon(
-                            agent.isComingSoon
+                            locked
                                 ? Icons.lock_outline_rounded
                                 : Icons.chat_bubble_outline_rounded,
                             semanticLabel: openLabel,
                             size: 24)))),
-            if (onOpenLibrary != null) ...[
+            if (!locked && onOpenLibrary != null) ...[
               const SizedBox(width: 8),
               Tooltip(
                   message:

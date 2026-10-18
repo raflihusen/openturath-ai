@@ -252,12 +252,17 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                 final active = AgentSessionManager
                                     .instance.activeTab?.agent;
                                 final last = _agents
-                                    .where((a) => a.id == _lastOpenedAgentId && a.isActive)
+                                    .where((a) =>
+                                        a.id == _lastOpenedAgentId &&
+                                        a.isActive)
                                     .firstOrNull;
-                                final fallbackActive = _agents.where((a) => a.isActive).firstOrNull;
-                                final target = (active != null && active.isActive)
-                                    ? active
-                                    : (last ?? fallbackActive);
+                                final fallbackActive = _agents
+                                    .where((a) => a.isActive)
+                                    .firstOrNull;
+                                final target =
+                                    (active != null && active.isActive)
+                                        ? active
+                                        : (last ?? fallbackActive);
                                 void open() {
                                   if (target != null) {
                                     _openNotebook(target, user);
@@ -452,14 +457,17 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                     fieldId: agent.fieldId,
                                     scopeLabel: null,
                                     statusLabel: agent.isComingSoon
-                                        ? reviewCopy('Tahqiq Khazanah', 'قيد التحقيق', 'Under Verification')
+                                        ? reviewCopy('Tahqiq Khazanah',
+                                            'قيد التحقيق', 'Under Verification')
                                         : null,
                                     isLocked: agent.isComingSoon,
                                     onOpen: () => _openNotebook(agent, user),
-                                    onOpenLibrary: agent.catalogId != null
-                                        ? () => showResearchLibrary(context,
-                                            agent: agent)
-                                        : null,
+                                    onOpenLibrary:
+                                        (!agent.isComingSoon &&
+                                                agent.catalogId != null)
+                                            ? () => showResearchLibrary(context,
+                                                agent: agent)
+                                            : null,
                                   );
                                 },
                               );
@@ -546,10 +554,16 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                                   CorpusKind.discipline &&
                                               agent.fieldId == disc.fieldId)
                                           .toList();
-                                      final activeMembers = members.where((agent) => agent.isActive).toList();
+                                      final activeMembers = members
+                                          .where((agent) => agent.isActive)
+                                          .toList();
                                       final countText = activeMembers.isNotEmpty
-                                          ? AppCopy.assistantsAvailableCount(activeMembers.length)
-                                          : reviewCopy('Tahqiq Khazanah', 'قيد التحقيق', 'Under Verification');
+                                          ? AppCopy.assistantsAvailableCount(
+                                              activeMembers.length)
+                                          : reviewCopy(
+                                              'Tahqiq Khazanah',
+                                              'قيد التحقيق',
+                                              'Under Verification');
                                       return OTReveal(
                                         index: index + 2,
                                         child: OTInkCard(
@@ -592,8 +606,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                                       color:
                                                           OTExpressive.white)),
                                               const SizedBox(height: 8),
-                                              Text(
-                                                  countText,
+                                              Text(countText,
                                                   style: OTTypography.caption(
                                                       color: OTExpressive
                                                           .whiteMuted)),

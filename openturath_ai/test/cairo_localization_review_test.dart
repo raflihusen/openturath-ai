@@ -122,4 +122,23 @@ void main() {
     expect(references, 1);
     semantics.dispose();
   });
+
+  testWidgets('Locked AI card hides library references button', (tester) async {
+    final lockedAgent = AgentModel.defaultAgents.firstWhere(
+      (a) => a.isComingSoon,
+      orElse: () =>
+          AgentModel.defaultAgents.first.copyWith(status: 'coming_soon'),
+    );
+    await tester.pumpWidget(MaterialApp(
+      home: Scaffold(
+        body: AssistantGridCard(
+          agent: lockedAgent,
+          onOpen: () {},
+          onOpenLibrary: () {},
+        ),
+      ),
+    ));
+    expect(find.byIcon(Icons.lock_outline_rounded), findsOneWidget);
+    expect(find.byIcon(Icons.auto_stories_outlined), findsNothing);
+  });
 }
