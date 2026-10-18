@@ -1,0 +1,907 @@
+{
+ "judul": "Mengenal Fikih Tahawwulat",
+ "video": "assets/video/pengantar_tahawwulat.mp4",
+ "total_ms": 565000,
+ "bab": [
+  {
+   "no": 0,
+   "judul": "Pembuka"
+  },
+  {
+   "no": 1,
+   "judul": "Arti nama"
+  },
+  {
+   "no": 2,
+   "judul": "Hadis Jibril"
+  },
+  {
+   "no": 3,
+   "judul": "Tetap dan berubah"
+  },
+  {
+   "no": 4,
+   "judul": "Wadah dan dua tugas"
+  },
+  {
+   "no": 5,
+   "judul": "Dua isyarat"
+  },
+  {
+   "no": 6,
+   "judul": "Zaman buih"
+  },
+  {
+   "no": 7,
+   "judul": "Luka dari dalam"
+  },
+  {
+   "no": 8,
+   "judul": "Fitnah Dajjal"
+  },
+  {
+   "no": 9,
+   "judul": "Sikap seorang muslim"
+  },
+  {
+   "no": 10,
+   "judul": "Manfaat"
+  },
+  {
+   "no": 11,
+   "judul": "Mulai belajar"
+  }
+ ],
+ "slide": [
+  {
+   "id": "sampul",
+   "bab": 0,
+   "judul": "Mengenal Fikih Tahawwulat",
+   "sub": "Peta dan kompas kenabian untuk membaca perubahan zaman",
+   "arab": "فِقْهُ التَّحَوُّلَاتِ",
+   "mulai_ms": 0,
+   "durasi_ms": 7000
+  },
+  {
+   "id": "zaman",
+   "bab": 0,
+   "judul": "Dunia bergerak sangat cepat",
+   "poin": [
+    "Berita datang silih berganti",
+    "Kabar bohong menyebar dalam hitungan detik",
+    "Perdebatan tidak pernah selesai",
+    "Teknologi melaju lebih cepat dari adab"
+   ],
+   "kunci": "Bagaimana seorang muslim semestinya membaca zaman seperti ini?",
+   "mulai_ms": 7000,
+   "durasi_ms": 11000
+  },
+  {
+   "id": "kompas",
+   "bab": 0,
+   "judul": "Seperti GPS di tengah badai malam",
+   "poin": [
+    "Rasulullah ﷺ tidak meninggalkan umatnya tanpa petunjuk",
+    "Petunjuk itu menjaga iman tetap teguh, lisan tidak mudah mencaci, dan hati tetap tenang"
+   ],
+   "kunci": "Fikih Tahawwulat adalah ilmu navigasi kenabian untuk memahami perubahan zaman.",
+   "mulai_ms": 18000,
+   "durasi_ms": 11000
+  },
+  {
+   "id": "perintis",
+   "bab": 0,
+   "judul": "Siapa yang merintisnya?",
+   "nama": "Al-Habib Abu Bakar al-'Adni bin Ali al-Masyhur",
+   "arab": "الحبيب أبو بكر العدني بن علي المشهور",
+   "poin": [
+    "Menyusun Fikih Tahawwulat sebagai ilmu yang berdiri sendiri",
+    "Tujuannya menjawab kebingungan umat di zaman modern"
+   ],
+   "mulai_ms": 29000,
+   "durasi_ms": 10000
+  },
+  {
+   "id": "fikih",
+   "bab": 1,
+   "judul": "Fikih: paham sampai ke dasar",
+   "arab": "فِقْه",
+   "poin": [
+    "Bukan sekadar tahu di permukaan",
+    "Bukan hanya hukum sah dan batal ibadah",
+    "Pemahaman yang dalam tentang maksud wahyu"
+   ],
+   "ibarah": "مَنْ يُرِدِ اللهُ بِهِ خَيْرًا يُفَقِّهْهُ فِي الدِّينِ",
+   "makna": "Siapa yang Allah kehendaki kebaikan, Allah pahamkan ia dalam agama.",
+   "sumber": "HR. al-Bukhari dan Muslim",
+   "mulai_ms": 39000,
+   "durasi_ms": 11000
+  },
+  {
+   "id": "tahawwul",
+   "bab": 1,
+   "judul": "Tahawwulat: perubahan-perubahan",
+   "arab": "تَحَوُّل ← تَحَوُّلَات",
+   "poin": [
+    "Tahawwul berarti berubah, bergeser dari satu keadaan ke keadaan lain",
+    "Tahawwulat adalah bentuk jamaknya: rangkaian perubahan dalam sejarah manusia"
+   ],
+   "mulai_ms": 50000,
+   "durasi_ms": 10000
+  },
+  {
+   "id": "gabungan",
+   "bab": 1,
+   "judul": "Kalau digabung",
+   "kunci": "Fikih Tahawwulat = pemahaman syariat untuk membaca dinamika zaman.",
+   "poin": [
+    "Sejarah",
+    "Budaya",
+    "Ilmu dan teknologi",
+    "Peristiwa dunia",
+    "Fitnah akhir zaman"
+   ],
+   "mulai_ms": 60000,
+   "durasi_ms": 10000
+  },
+  {
+   "id": "definisi",
+   "bab": 1,
+   "judul": "Definisi dari beliau sendiri",
+   "ibarah": "هُوَ الْفَهْمُ الشَّرْعِيُّ لِمَا يَقْضِي اللهُ وَيُدَبِّرُ فِي الْعَالَمِ الْأَزَلِيِّ، وَمَا جَرَى وَيَجْرِي مِنْ سُنَنِ التَّغَيُّرَاتِ وَالْمُتَغَيِّرَاتِ فِي الْحَيَاةِ الْإِنْسَانِيَّةِ وَالْكَوْنِيَّةِ، وَمَا طَرَأَ وَيَطْرَأُ مِنْ مُسْتَجَدَّاتِ الْعِلْمِ النَّظَرِيِّ وَالتَّطْبِيقِيِّ وَالثَّقَافَةِ وَالْحَوَادِثِ وَالْفِتَنِ ... إِلَى قِيَامِ السَّاعَةِ",
+   "makna": "Pemahaman syar'i tentang ketetapan Allah, dan tentang hukum-hukum perubahan yang telah dan sedang terjadi dalam kehidupan manusia dan alam, termasuk ilmu, budaya, peristiwa, dan fitnah, sampai hari kiamat.",
+   "sumber": "An-Nubdzah ash-Shughra, hlm. 17",
+   "mulai_ms": 70000,
+   "durasi_ms": 14000
+  },
+  {
+   "id": "bukanramalan",
+   "bab": 1,
+   "judul": "Ini bukan ramalan",
+   "poin": [
+    "Tidak menebak tanggal kiamat",
+    "Tidak menunjuk nama orang atau tokoh",
+    "Tidak untuk menakut-nakuti"
+   ],
+   "kunci": "Yang dipelajari adalah pola perubahan, dibaca dari teks Al-Qur'an dan Sunnah, bukan dari dugaan akal.",
+   "mulai_ms": 84000,
+   "durasi_ms": 11000
+  },
+  {
+   "id": "jibril",
+   "bab": 2,
+   "judul": "Suatu hari, Jibril datang bertanya",
+   "poin": [
+    "Islam",
+    "Iman",
+    "Ihsan",
+    "Hari kiamat dan tanda-tandanya"
+   ],
+   "sub": "Malaikat Jibril datang dalam rupa seorang laki-laki, duduk di hadapan Nabi ﷺ, lalu bertanya empat hal.",
+   "sumber": "Hadis Jibril, HR. Muslim",
+   "mulai_ms": 95000,
+   "durasi_ms": 12000
+  },
+  {
+   "id": "dinukum",
+   "bab": 2,
+   "judul": "Keempatnya disebut \"agama kalian\"",
+   "ibarah": "فَإِنَّهُ جِبْرِيلُ أَتَاكُمْ يُعَلِّمُكُمْ دِينَكُمْ",
+   "makna": "Sesungguhnya ia adalah Jibril, datang untuk mengajarkan agama kalian.",
+   "kunci": "Kata \"agama kalian\" mencakup keempat pertanyaan sekaligus, termasuk yang terakhir.",
+   "sumber": "Hadis Jibril, HR. Muslim",
+   "mulai_ms": 107000,
+   "durasi_ms": 11000
+  },
+  {
+   "id": "empatrukun",
+   "bab": 2,
+   "judul": "Empat rukun agama",
+   "rukun": [
+    {
+     "nama": "Islam",
+     "arab": "الإسلام",
+     "ilmu": "Fikih"
+    },
+    {
+     "nama": "Iman",
+     "arab": "الإيمان",
+     "ilmu": "Akidah"
+    },
+    {
+     "nama": "Ihsan",
+     "arab": "الإحسان",
+     "ilmu": "Tasawuf"
+    },
+    {
+     "nama": "Tanda-tanda kiamat",
+     "arab": "علامات الساعة",
+     "ilmu": "Fikih Tahawwulat"
+    }
+   ],
+   "ibarah": "عُرِفَ مِنْ حَدِيثِ جِبْرِيلَ عَلَيْهِ السَّلَامُ أَنَّ الرُّكْنَ الرَّابِعَ مِنْ أَرْكَانِ الدِّينِ هُوَ الْعِلْمُ بِعَلَامَاتِ السَّاعَةِ",
+   "sumber": "An-Nubdzah ash-Shughra, hlm. 14",
+   "mulai_ms": 118000,
+   "durasi_ms": 12000
+  },
+  {
+   "id": "rukunkeempat",
+   "bab": 2,
+   "judul": "Mengapa rukun keempat perlu perhatian khusus?",
+   "poin": [
+    "Tiga rukun pertama sudah lama dibukukan dan dipelajari",
+    "Rukun keempat lama hanya menjadi bab kecil di dalam pembahasan iman kepada hari akhir"
+   ],
+   "ibarah": "لِأَنَّ الْأَرْكَانَ الثَّلَاثَةَ قَدْ خُدِمَتْ وَحُفِظَتْ وَقُرِّرَتْ",
+   "makna": "Karena tiga rukun itu telah dilayani, dijaga, dan ditetapkan.",
+   "sumber": "Al-Usus wal-Munthalaqat, hlm. 24",
+   "mulai_ms": 130000,
+   "durasi_ms": 11000
+  },
+  {
+   "id": "tetapberubah",
+   "bab": 3,
+   "judul": "Ada yang tetap, ada yang berubah",
+   "kiri": {
+    "judul": "Yang tetap",
+    "arab": "الثوابت",
+    "isi": [
+     "Salat dan wudu",
+     "Pokok akidah",
+     "Halal dan haram"
+    ]
+   },
+   "kanan": {
+    "judul": "Yang berubah",
+    "arab": "المتغيرات",
+    "isi": [
+     "Teknologi",
+     "Media",
+     "Politik",
+     "Ekonomi"
+    ]
+   },
+   "ibarah": "وَالْأَخْذُ بِالثَّلَاثِ مَظْهَرُ الثَّبَاتِ ۝ أَمَّا الْأَخِيرُ مَظْهَرُ التَّحَوُّلَاتِ",
+   "makna": "Berpegang pada tiga rukun adalah wujud keteguhan; rukun terakhir adalah wujud perubahan.",
+   "sumber": "At-Talid wath-Tharif, hlm. 33",
+   "mulai_ms": 141000,
+   "durasi_ms": 13000
+  },
+  {
+   "id": "duasalah",
+   "bab": 3,
+   "judul": "Dua kekeliruan yang perlu dihindari",
+   "kiri": {
+    "judul": "Terlalu kaku",
+    "arab": "الإفراط",
+    "isi": [
+     "Memaksakan dalil untuk perkara tetap pada persoalan yang berubah",
+     "Mudah memvonis tanpa memahami keadaan"
+    ]
+   },
+   "kanan": {
+    "judul": "Terlalu longgar",
+    "arab": "التفريط",
+    "isi": [
+     "Mengubah ibadah demi mengikuti tren",
+     "Menganggap agama tidak relevan"
+    ]
+   },
+   "kunci": "Ibadah tetap terjaga, cara membaca zaman tetap cerdas.",
+   "mulai_ms": 154000,
+   "durasi_ms": 12000
+  },
+  {
+   "id": "wadah",
+   "bab": 4,
+   "judul": "Isi dan wadahnya",
+   "poin": [
+    "Islam, iman, dan ihsan adalah isinya",
+    "Rukun keempat adalah wadahnya",
+    "Isi yang baik bisa tumpah bila wadahnya retak"
+   ],
+   "arab": "وِعَاءُ الْمَادَّةِ",
+   "sumber": "Al-Usus wal-Munthalaqat, hlm. 24",
+   "mulai_ms": 166000,
+   "durasi_ms": 11000
+  },
+  {
+   "id": "wadahretak",
+   "bab": 4,
+   "judul": "Ketika wadahnya retak",
+   "poin": [
+    "Agama dijadikan alat kepentingan politik",
+    "Ibadah sekadar basa-basi dan kepura-puraan",
+    "Ajaran dicampur kebohongan para penipu"
+   ],
+   "ibarah": "مُعَادِلٌ ضَرُورِيٌّ وَإِيجَابِيٌّ لِحِفْظِ شَرَفِ الْأَرْكَانِ الثَّلَاثَةِ وَصِيَانَتِهَا مِنْ عَبَثِ الْعَابِثِينَ وَدَجَلِ الدَّجَاجِلَةِ",
+   "makna": "Penyeimbang yang mutlak perlu untuk menjaga kemuliaan tiga rukun dari permainan orang-orang yang bermain-main dan kebohongan para dajjal.",
+   "sumber": "Al-Iqlid, hlm. 15",
+   "mulai_ms": 177000,
+   "durasi_ms": 13000
+  },
+  {
+   "id": "duatugas",
+   "bab": 4,
+   "judul": "Dua tugas Fikih Tahawwulat",
+   "kiri": {
+    "judul": "Menjaga yang tetap",
+    "arab": "صيانة الثوابت",
+    "isi": [
+     "Melindungi ilmu Islam, iman, dan ihsan dari perusakan"
+    ]
+   },
+   "kanan": {
+    "judul": "Memperbarui bahasa dakwah",
+    "arab": "تجديد لغة الدعوة",
+    "isi": [
+     "Agar pesan agama sampai kepada manusia di zamannya"
+    ]
+   },
+   "ibarah": "الْأُولَى تَجْدِيدُ لُغَةِ فِقْهِ الدَّعْوَةِ إِلَى اللهِ، وَالثَّانِيَةُ صِيَانَةُ عُلُومِ الثَّوَابِتِ",
+   "sumber": "Muhadharah, Kitab Audio An-Nubdzah ash-Shughra, pelajaran 2",
+   "mulai_ms": 190000,
+   "durasi_ms": 12000
+  },
+  {
+   "id": "tigaperusak",
+   "bab": 4,
+   "judul": "Menjaga dari tiga perusak",
+   "rukun": [
+    {
+     "nama": "Pengubahan orang yang berlebihan",
+     "arab": "تحريف الغالين",
+     "ilmu": "Agama dipahami secara keras dan sempit"
+    },
+    {
+     "nama": "Klaim orang yang batil",
+     "arab": "انتحال المبطلين",
+     "ilmu": "Agama diaku-aku untuk tujuan yang salah"
+    },
+    {
+     "nama": "Tafsiran orang yang tidak paham",
+     "arab": "تأويل الجاهلين",
+     "ilmu": "Agama ditafsirkan tanpa ilmu dan sanad"
+    }
+   ],
+   "sumber": "Muhadharah Fikih Tahawwulat, pelajaran 25",
+   "mulai_ms": 202000,
+   "durasi_ms": 12000
+  },
+  {
+   "id": "bahasa",
+   "bab": 4,
+   "judul": "Yang diperbarui bahasanya, bukan agamanya",
+   "poin": [
+    "Mimbar",
+    "Kitab",
+    "Radio",
+    "Layar",
+    "AI"
+   ],
+   "kunci": "Isi ajaran tetap. Sarana dan cara menyampaikannya mengikuti zaman.",
+   "mulai_ms": 214000,
+   "durasi_ms": 11000
+  },
+  {
+   "id": "duatanda",
+   "bab": 5,
+   "judul": "Dua tanda dalam Hadis Jibril",
+   "ibarah": "أَنْ تَلِدَ الْأَمَةُ رَبَّتَهَا، وَأَنْ تَرَى الْحُفَاةَ الْعُرَاةَ الْعَالَةَ رِعَاءَ الشَّاءِ يَتَطَاوَلُونَ فِي الْبُنْيَانِ",
+   "makna": "Seorang budak perempuan melahirkan tuannya, dan engkau melihat penggembala miskin tanpa alas kaki berlomba meninggikan bangunan.",
+   "sumber": "Hadis Jibril, HR. Muslim",
+   "mulai_ms": 225000,
+   "durasi_ms": 11000
+  },
+  {
+   "id": "tandailmu",
+   "bab": 5,
+   "judul": "Tanda pertama: urusan ilmu dan akidah",
+   "arab": "قرار العلم والاعتقاد",
+   "poin": [
+    "Yang semestinya belajar justru mendikte",
+    "Adab kepada guru dan orang tua goyah",
+    "Agama ditafsirkan dangkal oleh yang tidak berilmu"
+   ],
+   "ibarah": "نَصٌّ اسْتِبَاقِيٌّ فِي تَرْمِيزٍ بَلَاغِيٍّ لِمَا سَيَحْصُلُ مِنْ تَغَيُّرٍ وَخَلَلٍ فِي قَرَارِ الْعِلْمِ وَالِاعْتِقَادِ",
+   "makna": "Teks yang mendahului peristiwa, dengan perlambang, tentang perubahan dan kerusakan pada keputusan ilmu dan akidah.",
+   "sumber": "Muhadharah, Kitab Audio An-Nubdzah ash-Shughra, pelajaran 2",
+   "mulai_ms": 236000,
+   "durasi_ms": 13000
+  },
+  {
+   "id": "tandakuasa",
+   "bab": 5,
+   "judul": "Tanda kedua: urusan kekuasaan dan ekonomi",
+   "arab": "قرار الحكم والاقتصاد",
+   "poin": [
+    "Ukuran kemuliaan bergeser ke kemegahan bangunan",
+    "Kekuasaan dan harta dipegang yang tidak amanah",
+    "Bangunan menjulang, jiwa justru miskin"
+   ],
+   "ibarah": "وَالرُّكْنُ الثَّانِي نَصٌّ اسْتِبَاقِيٌّ ... لِمَا سَيَحْصُلُ مِنْ تَغَيُّرٍ وَفَسَادٍ فِي قَرَارِ الْحُكْمِ وَالِاقْتِصَادِ",
+   "sumber": "Muhadharah, Kitab Audio An-Nubdzah ash-Shughra, pelajaran 2",
+   "mulai_ms": 249000,
+   "durasi_ms": 13000
+  },
+  {
+   "id": "duakeputusan",
+   "bab": 5,
+   "judul": "Semua tanda bermuara pada dua hal",
+   "kiri": {
+    "judul": "Siapa yang memegang ilmu",
+    "arab": "العلم",
+    "isi": []
+   },
+   "kanan": {
+    "judul": "Siapa yang memegang kekuasaan",
+    "arab": "الحكم",
+    "isi": []
+   },
+   "kunci": "Nabi ﷺ telah memetakan krisis pemikiran dan ketimpangan ekonomi sejak empat belas abad lalu.",
+   "mulai_ms": 262000,
+   "durasi_ms": 10000
+  },
+  {
+   "id": "buih",
+   "bab": 6,
+   "judul": "Banyak, tetapi seperti buih",
+   "sub": "Nabi ﷺ mengabarkan bangsa-bangsa akan mengerumuni umat ini seperti orang mengerumuni hidangan. Para sahabat bertanya: apakah karena kami sedikit?",
+   "ibarah": "بَلْ أَنْتُمْ يَوْمَئِذٍ كَثِيرٌ، وَلَكِنَّكُمْ غُثَاءٌ كَغُثَاءِ السَّيْلِ",
+   "makna": "Bahkan jumlah kalian ketika itu banyak, tetapi kalian seperti buih di aliran banjir.",
+   "sumber": "HR. Abu Dawud",
+   "mulai_ms": 272000,
+   "durasi_ms": 13000
+  },
+  {
+   "id": "wahn",
+   "bab": 6,
+   "judul": "Penyakitnya bernama al-wahn",
+   "kiri": {
+    "judul": "Cinta dunia",
+    "arab": "حب الدنيا",
+    "isi": []
+   },
+   "kanan": {
+    "judul": "Takut mati",
+    "arab": "كراهية الموت",
+    "isi": []
+   },
+   "kunci": "Habib Abu Bakar menamai masa ini zaman buih (al-ghutsa'iyyah): keputusan umat berpindah ke tangan bangsa lain.",
+   "sumber": "HR. Abu Dawud",
+   "mulai_ms": 285000,
+   "durasi_ms": 11000
+  },
+  {
+   "id": "limababak",
+   "bab": 6,
+   "judul": "Lima babak zaman buih",
+   "rukun": [
+    {
+     "nama": "Dominasi",
+     "arab": "الاستكبار",
+     "ilmu": "Bangsa industri mendominasi; orientalisme memetakan negeri muslim. Fitnah al-Ahlas"
+    },
+    {
+     "nama": "Penjajahan",
+     "arab": "الاستعمار",
+     "ilmu": "Negeri muslim dijajah; sekularisme masuk. Fitnah as-Sarra'"
+    },
+    {
+     "nama": "Peremehan",
+     "arab": "الاستهتار",
+     "ilmu": "Ideologi impor menggeser agama. Fitnah ad-Duhaima'"
+    },
+    {
+     "nama": "Eksploitasi",
+     "arab": "الاستثمار",
+     "ilmu": "Globalisasi pasar. Fitnah keempat yang buta dan tuli"
+    },
+    {
+     "nama": "Mobilisasi",
+     "arab": "الاستنفار",
+     "ilmu": "Benturan besar menuju puncak krisis (ash-shailam)"
+    }
+   ],
+   "kunci": "Peta ini untuk memahami arah, bukan untuk menebak waktu.",
+   "sumber": "Al-Marshad an-Nabawi 1/124; Muhadharah Al-Usus wal-Munthalaqat, pelajaran 25",
+   "mulai_ms": 296000,
+   "durasi_ms": 15000
+  },
+  {
+   "id": "istihtar",
+   "bab": 6,
+   "judul": "Contoh satu babak: al-istihtar",
+   "poin": [
+    "Sesudah penjajahan fisik, pemikiran yang dijajah",
+    "Pemuda pulang membawa ideologi Barat dan Timur",
+    "Umat bertikai demi ideologi yang tak berhubungan dengan Islam"
+   ],
+   "ibarah": "فَصَارَ الصِّرَاعُ بَيْنَ فِكْرَيْنِ وَلَا عَلَاقَةَ لَهُ بِالْإِسْلَامِ، حَتَّى صَارَ الْإِسْلَامُ ضَحِيَّةً وَالْمُسْلِمُونَ ضَحِيَّةً",
+   "makna": "Pertarungan terjadi antara dua pemikiran yang tak berhubungan dengan Islam, sampai Islam dan kaum muslimin menjadi korban.",
+   "sumber": "Muhadharah Al-Bushlah asy-Syar'iyyah, episode 5",
+   "mulai_ms": 311000,
+   "durasi_ms": 13000
+  },
+  {
+   "id": "tahrisy",
+   "bab": 7,
+   "judul": "Retak karena hal-hal kecil",
+   "poin": [
+    "Menggunjing",
+    "Membawa omongan",
+    "Berdusta dan menuduh",
+    "Berprasangka buruk",
+    "Umat terpecah"
+   ],
+   "sub": "Bahan bakar perpecahan adalah at-tahrisy, adu domba.",
+   "ibarah": "فِي هَذَا الْعِلْمِ سَدُّ كَافَّةِ الثَّغَرَاتِ الَّتِي دَخَلَ مِنْهَا تَحْرِيشُ الشَّيْطَانِ بَيْنَ الْمُصَلِّينَ",
+   "makna": "Ilmu ini menutup semua celah tempat masuknya adu domba setan di antara orang-orang yang salat.",
+   "sumber": "Al-Usus wal-Munthalaqat, hlm. 27",
+   "mulai_ms": 324000,
+   "durasi_ms": 14000
+  },
+  {
+   "id": "airmakanan",
+   "bab": 7,
+   "judul": "Lebih mendesak dari air, makanan, dan obat",
+   "poin": [
+    "Air",
+    "Makanan",
+    "Obat"
+   ],
+   "ibarah": "وَكَأَنَّنَا فِي حَاجَتِنَا لِهَذَا الْعِلْمِ الْيَوْمَ أَكْثَرُ مِنْ حَاجَتِنَا لِلْمَاءِ وَالْغِذَاءِ وَالدَّوَاءِ",
+   "makna": "Seakan-akan kebutuhan kita kepada ilmu ini hari ini melebihi kebutuhan kita kepada air, makanan, dan obat.",
+   "sumber": "Al-Usus wal-Munthalaqat, hlm. 26",
+   "mulai_ms": 338000,
+   "durasi_ms": 12000
+  },
+  {
+   "id": "marham",
+   "bab": 7,
+   "judul": "Seperti salep untuk luka",
+   "poin": [
+    "Pendidikan",
+    "Ekonomi",
+    "Akidah",
+    "Pembinaan keluarga",
+    "Media"
+   ],
+   "sub": "Menurut beliau, semua sendi ini sedang terluka. Ilmu ini mencari obat yang tepat untuk luka yang tepat.",
+   "ibarah": "إِنَّ هَذَا الْعِلْمَ يُتَابِعُ الْعِلَلَ، أَشْبَهُ مَا يَكُونُ بِالْمَرْهَمِ",
+   "makna": "Ilmu ini menelusuri penyakit; ia paling mirip dengan salep.",
+   "sumber": "Muhadharah Al-Mashfufah al-Umm, kajian 3",
+   "mulai_ms": 350000,
+   "durasi_ms": 13000
+  },
+  {
+   "id": "dajjal",
+   "bab": 8,
+   "judul": "Fitnah Dajjal: sosok dan sistem",
+   "rukun": [
+    {
+     "nama": "Ad-Dajjal",
+     "arab": "الدجال",
+     "ilmu": "Sosok yang dikabarkan muncul di akhir zaman"
+    },
+    {
+     "nama": "Ad-Dajal",
+     "arab": "الدجل",
+     "ilmu": "Cara kerjanya: kebohongan yang sistematis"
+    },
+    {
+     "nama": "Ad-Dajajilah",
+     "arab": "الدجاجلة",
+     "ilmu": "Para pendusta yang menyiapkan jalannya"
+    }
+   ],
+   "kunci": "Fitnah ini disiapkan lama sebelum sosoknya muncul.",
+   "sumber": "Al-Iqlid, hlm. 15; Baina Yaday ad-Dajjal, hlm. 19",
+   "mulai_ms": 363000,
+   "durasi_ms": 13000
+  },
+  {
+   "id": "rekayasa",
+   "bab": 8,
+   "judul": "Dunia direkayasa sebelum ia datang",
+   "poin": [
+    "Ekonomi",
+    "Akidah",
+    "Pendidikan",
+    "Media",
+    "Keluarga",
+    "Anak"
+   ],
+   "ibarah": "الْأَئِمَّةُ الْمُضِلُّونَ الَّذِينَ يُهَنْدِسُونَ الْعَالَمَ قَبْلَ أَنْ يَأْتِيَ الدَّجَّالُ",
+   "makna": "Para pemimpin yang menyesatkan, yang merekayasa dunia sebelum Dajjal datang.",
+   "sumber": "Muhadharah Habib Abu Bakar al-Masyhur tentang politik global",
+   "mulai_ms": 376000,
+   "durasi_ms": 13000
+  },
+  {
+   "id": "vaksin",
+   "bab": 8,
+   "judul": "Ilmu ini seperti vaksin",
+   "poin": [
+    "Tidak mudah terseret ajakan kekerasan",
+    "Tidak mudah goyah oleh keraguan terhadap syariat",
+    "Tidak mudah dicuci oleh opini yang menyesatkan"
+   ],
+   "ibarah": "يَا عِبَادَ اللهِ فَاثْبُتُوا",
+   "makna": "Wahai hamba-hamba Allah, teguhlah.",
+   "sumber": "HR. Muslim; dikutip dalam At-Tabshirah ad-Da'awiyyah, hlm. 216",
+   "mulai_ms": 389000,
+   "durasi_ms": 12000
+  },
+  {
+   "id": "duasunnah",
+   "bab": 9,
+   "judul": "Dua sunnah sebagai pegangan",
+   "kiri": {
+    "judul": "Sunnah al-mawaqif",
+    "arab": "سنة المواقف",
+    "isi": [
+     "Teladan Nabi ﷺ dan para sahabat dalam bersikap, terutama ketika terjadi perselisihan"
+    ]
+   },
+   "kanan": {
+    "judul": "Sunnah ad-dalalah",
+    "arab": "سنة الدلالة",
+    "isi": [
+     "Patokan syariat untuk menimbang sarana dakwah: dipakai atau ditinggalkan"
+    ]
+   },
+   "sumber": "Al-Usus wal-Munthalaqat, hlm. 94",
+   "mulai_ms": 401000,
+   "durasi_ms": 12000
+  },
+  {
+   "id": "hasan",
+   "bab": 9,
+   "judul": "Teladan Sayyidina Hasan bin Ali",
+   "poin": [
+    "Kekuasaan itu sebenarnya haknya",
+    "Beliau melepaskannya demi menjaga darah kaum muslimin",
+    "Dua barisan yang hampir berperang kembali bersatu"
+   ],
+   "kunci": "Mengalah demi persaudaraan lebih mulia daripada memenangkan pertikaian.",
+   "mulai_ms": 413000,
+   "durasi_ms": 12000
+  },
+  {
+   "id": "salamah",
+   "bab": 9,
+   "judul": "Kaidah emas keselamatan",
+   "ibarah": "سَالِمًا بِاللِّسَانِ مِنَ الذَّمِّ، وَسَالِمًا بِالْأَرْكَانِ مِنَ الدَّمِّ",
+   "makna": "Lisannya selamat dari mencela, anggota badannya selamat dari menumpahkan darah.",
+   "kiri": {
+    "judul": "Jaga lisan dan jari",
+    "arab": "حفظ اللسان",
+    "isi": [
+     "Tidak mencela, memfitnah, atau mengafirkan"
+    ]
+   },
+   "kanan": {
+    "judul": "Jaga tangan",
+    "arab": "حفظ اليد",
+    "isi": [
+     "Tidak terlibat kekerasan dan pertumpahan darah"
+    ]
+   },
+   "sumber": "Manhaj as-Salamah",
+   "mulai_ms": 425000,
+   "durasi_ms": 13000
+  },
+  {
+   "id": "namath",
+   "bab": 9,
+   "judul": "Berdiri di jalan tengah",
+   "ibarah": "خَيْرُ النَّاسِ هَذَا النَّمَطُ الْأَوْسَطُ، يَلْحَقُ بِهِمُ التَّالِي، وَيَرْجِعُ إِلَيْهِمُ الْغَالِي",
+   "makna": "Sebaik-baik manusia adalah kelompok tengah ini. Yang tertinggal menyusul mereka, yang berlebihan kembali kepada mereka.",
+   "sub": "Ahlun-namath al-awsath: para imam, ulama, Ahlul Bait, sahabat, dan yang mengikuti mereka dengan baik.",
+   "sumber": "Ucapan Sayyidina Ali; Al-Usus wal-Munthalaqat, hlm. 111",
+   "mulai_ms": 438000,
+   "durasi_ms": 13000
+  },
+  {
+   "id": "khuwaishah",
+   "bab": 9,
+   "judul": "Al-Khuwaishah: rawat lingkaran terdekat",
+   "ibarah": "فَعَلَيْكَ بِخَاصَّةِ نَفْسِكَ، وَدَعْ عَنْكَ أَمْرَ الْعَوَامِّ",
+   "makna": "Jagalah dirimu sendiri, dan tinggalkan urusan orang banyak.",
+   "poin": [
+    "Puasa media: kurangi debat dan kabar bohong",
+    "Benteng rumah: dampingi keluarga dengan kasih sayang dan adab",
+    "Perbanyak zikir dan selawat"
+   ],
+   "sumber": "HR. Abu Dawud dan at-Tirmidzi",
+   "mulai_ms": 451000,
+   "durasi_ms": 14000
+  },
+  {
+   "id": "teknologi",
+   "bab": 9,
+   "judul": "Teknologi: alat fitnah atau mimbar petunjuk?",
+   "poin": [
+    "Ponsel, internet, dan AI pada dasarnya alat",
+    "Tidak menolak membabi buta, tidak pula larut tanpa saringan",
+    "Gunakan untuk menyebarkan ilmu dan dakwah yang menenangkan"
+   ],
+   "arab": "تحديث الوسائل وتأصيل البدائل",
+   "mulai_ms": 465000,
+   "durasi_ms": 12000
+  },
+  {
+   "id": "sejarah",
+   "bab": 9,
+   "judul": "Membaca sejarah dengan hati bersih",
+   "poin": [
+    "Sejarah dibaca dengan timbangan teks kenabian, bukan emosi",
+    "Hati tetap bersih kepada seluruh sahabat dan Ahlul Bait",
+    "Ulama terdahulu dihormati, bukan dijadikan bahan pertikaian"
+   ],
+   "mulai_ms": 477000,
+   "durasi_ms": 11000
+  },
+  {
+   "id": "tenang",
+   "bab": 9,
+   "judul": "Tidak cemas, tetap menanam",
+   "ibarah": "إِنْ قَامَتِ السَّاعَةُ وَفِي يَدِ أَحَدِكُمْ فَسِيلَةٌ، فَإِنِ اسْتَطَاعَ أَنْ لَا يَقُومَ حَتَّى يَغْرِسَهَا فَلْيَغْرِسْهَا",
+   "makna": "Jika kiamat terjadi dan di tangan salah seorang dari kalian ada bibit kurma, bila ia mampu menanamnya sebelum berdiri, hendaklah ia menanamnya.",
+   "kunci": "Kabar akhir zaman bukan untuk membuat putus asa, tetapi untuk memacu amal.",
+   "sumber": "HR. Ahmad",
+   "mulai_ms": 488000,
+   "durasi_ms": 13000
+  },
+  {
+   "id": "manfaat",
+   "bab": 10,
+   "judul": "Enam manfaat mempelajarinya",
+   "rukun": [
+    {
+     "nama": "Kompas batin",
+     "arab": "البوصلة الشرعية",
+     "ilmu": "Tidak panik di tengah banjir informasi"
+    },
+    {
+     "nama": "Vaksin pemikiran",
+     "arab": "فقه وقائي",
+     "ilmu": "Kebal dari ekstremisme dan sekularisme"
+    },
+    {
+     "nama": "Damai dengan sesama",
+     "arab": "منهج السلامة",
+     "ilmu": "Lisan dan tangan terjaga"
+    },
+    {
+     "nama": "Agama lebih utuh",
+     "arab": "وعاء المادة",
+     "ilmu": "Ibadah tidak mudah diperalat"
+    },
+    {
+     "nama": "Bijak pada teknologi",
+     "arab": "تحديث الوسائل",
+     "ilmu": "Teknologi menjadi mimbar petunjuk"
+    },
+    {
+     "nama": "Jernih membaca sejarah",
+     "arab": "ربط الديانة بالتاريخ",
+     "ilmu": "Hati bersih kepada salaf saleh"
+    }
+   ],
+   "mulai_ms": 501000,
+   "durasi_ms": 14000
+  },
+  {
+   "id": "sebelumsesudah",
+   "bab": 10,
+   "judul": "Sebelum dan sesudah mengenalnya",
+   "rukun": [
+    {
+     "nama": "Membaca berita",
+     "arab": "",
+     "ilmu": "Panik dan ikut menyebar|Tenang dan menimbang"
+    },
+    {
+     "nama": "Berbeda pendapat",
+     "arab": "",
+     "ilmu": "Mencaci dan memvonis|Menjaga lisan"
+    },
+    {
+     "nama": "Teknologi",
+     "arab": "",
+     "ilmu": "Menolak total atau larut|Dipakai untuk kebaikan"
+    },
+    {
+     "nama": "Keluarga",
+     "arab": "",
+     "ilmu": "Terabaikan oleh debat|Dirawat lebih dulu"
+    },
+    {
+     "nama": "Masa depan",
+     "arab": "",
+     "ilmu": "Cemas dan putus asa|Tenang dan terus beramal"
+    }
+   ],
+   "mulai_ms": 515000,
+   "durasi_ms": 14000
+  },
+  {
+   "id": "kitab",
+   "bab": 11,
+   "judul": "Belajar bertahap: urutan kitab",
+   "rukun": [
+    {
+     "nama": "An-Nubdzah ash-Shughra",
+     "arab": "النبذة الصغرى",
+     "ilmu": "Ringkas, disusun beliau untuk pemula"
+    },
+    {
+     "nama": "Dawa'ir al-I'adah",
+     "arab": "دوائر الإعادة",
+     "ilmu": "Keterpaduan empat rukun agama"
+    },
+    {
+     "nama": "Al-Iqlid",
+     "arab": "الإقليد",
+     "ilmu": "Kunci lima cabang ilmu ini"
+    },
+    {
+     "nama": "Al-Usus wal-Munthalaqat",
+     "arab": "الأسس والمنطلقات",
+     "ilmu": "Kitab induk dasar-dasar Fikih Tahawwulat"
+    }
+   ],
+   "ibarah": "فَهَذِهِ نُبْذَةٌ مُخْتَصَرَةٌ، جَمَعْتُهَا لِلْمُبْتَدِئِينَ مِنْ طُلَّابِ وَطَالِبَاتِ الْعِلْمِ",
+   "makna": "Ini ringkasan singkat yang saya himpun untuk para pemula, pelajar laki-laki dan perempuan.",
+   "sumber": "An-Nubdzah ash-Shughra, hlm. 8",
+   "mulai_ms": 529000,
+   "durasi_ms": 13000
+  },
+  {
+   "id": "limaai",
+   "bab": 11,
+   "judul": "Belajar sambil bertanya: lima AI",
+   "rukun": [
+    {
+     "nama": "Al-Bayan",
+     "arab": "البيان",
+     "ilmu": "Penjelasan sederhana dan perumpamaan"
+    },
+    {
+     "nama": "Al-Muhaqqiq",
+     "arab": "المحقق",
+     "ilmu": "Ibarah asli lengkap dengan kitab dan halaman"
+    },
+    {
+     "nama": "Al-Mukhtabir",
+     "arab": "المختبر",
+     "ilmu": "Menguji pemahaman lewat tanya jawab"
+    },
+    {
+     "nama": "Al-Habib",
+     "arab": "الحبيب",
+     "ilmu": "Menelusuri muhadharah beliau"
+    },
+    {
+     "nama": "Al-Khatib",
+     "arab": "الخطيب",
+     "ilmu": "Menyusun khutbah dan materi dakwah"
+    }
+   ],
+   "kunci": "Kelimanya membaca kitab dan muhadharah yang sama. Kalau baru mulai, cobalah Al-Bayan.",
+   "mulai_ms": 542000,
+   "durasi_ms": 13000
+  },
+  {
+   "id": "penutup",
+   "bab": 11,
+   "judul": "Memahami zaman, menjaga iman, menyebar kedamaian",
+   "sub": "Fikih Tahawwulat tidak hadir untuk membuat kita cemas, tetapi untuk melatih kita menjadi pribadi yang teduh, beradab, dan paham arah keselamatan.",
+   "arab": "فِقْهُ التَّحَوُّلَاتِ",
+   "mulai_ms": 555000,
+   "durasi_ms": 10000
+  }
+ ]
+}

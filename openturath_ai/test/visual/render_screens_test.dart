@@ -181,17 +181,17 @@ void main() {
     for (final locale in ['id', 'ar']) {
       await _shot(tester, 'login_$locale', const LoginScreen(), locale: locale);
       await _shot(tester, 'tahawwulat_$locale',
-          const TahawwulatIntroductionSheet(asPage: true),
+          const TahawwulatIntroductionSheet(asPage: true, videoEnabled: false),
           size: const Size(1280, 1500), locale: locale);
     }
     await _shot(tester, 'tahawwulat_long',
-        const TahawwulatIntroductionSheet(asPage: true),
+        const TahawwulatIntroductionSheet(asPage: true, videoEnabled: false),
         size: const Size(1280, 3600));
     await _shot(tester, 'tahawwulat_window',
-        const TahawwulatIntroductionSheet(asPage: true),
+        const TahawwulatIntroductionSheet(asPage: true, videoEnabled: false),
         size: const Size(850, 860));
     await _shot(tester, 'tahawwulat_phone',
-        const Scaffold(body: TahawwulatIntroductionSheet()),
+        const Scaffold(body: TahawwulatIntroductionSheet(videoEnabled: false)),
         size: const Size(390, 844));
     for (final locale in ['en', 'ar']) {
       for (final id in LegalDocumentId.values) {
