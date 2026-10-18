@@ -452,6 +452,20 @@ Berdasarkan `AUDIT_OPENTURATH_AI.md`, dokumen perancangan pustaka, dan keluhan k
   3. *Sinkronisasi Gateway Website (`site.config.json`, `membership.mjs`, `articles.mjs`)*: Mengganti seluruh referensi legacy "DOKU" menjadi "Midtrans" di kebijakan privasi, syarat langganan, FAQ, dan banner keanggotaan. Menambahkan release note v1.0.67.
   4. *Verifikasi Menyeluruh*: 23 Node tests & 13 Python tests di website lulus 100%. 411/411 unit dan widget test Flutter lulus 100%. `flutter analyze` 0 issues.
 
+### Fasa 35: Eliminasi Tombol Pustaka pada AI Terkunci, Bundling Video Mengenal Fikih Tahawwulat & Kompilasi Universal DMG macOS (`43ee356f`, `c7b5b2cd`)
+- **Ruang Lingkup & Latar Belakang**:
+  1. *Penyembunyian Tombol Pustaka pada AI Terkunci (Gembok)*:
+     - Pada kartu asisten (`AssistantGridCard`), asisten AI yang berstatus terkunci/belum rilis (`agent.isComingSoon` / `locked`) menampilkan ikon gembok (`Icons.lock_outline_rounded`), namun sebelumnya tombol pustaka referensi (`Icons.auto_stories_outlined` / `onOpenLibrary`) masih tetap muncul di sampingnya.
+     - Perbaikan diterapkan di `AssistantGridCard`, `specialist_list_screen.dart`, `specialist_card.dart`, dan `dashboard_screen.dart` sehingga tombol pustaka referensi secara konsisten disembunyikan jika AI berada dalam status terkunci.
+     - Ditambahkan unit test verifikasi `Locked AI card hides library references button` di `test/cairo_localization_review_test.dart` (420/420 tests passed).
+  2. *Verifikasi Video Mengenal Fikih Tahawwulat*:
+     - File video pengantar resolusi tinggi `assets/video/pengantar_tahawwulat.mp4` (12 MB) telah terintegrasi di `pubspec.yaml`, dipasangkan dengan metadata bab/slide `assets/data/pengantar_tahawwulat.json` pada `TahawwulatIntroductionSheet`, dan terverifikasi ter-bundle penuh ke dalam `.app`.
+  3. *Kompilasi Biner & Pembuatan DMG Installer macOS*:
+     - Kompilasi biner `flutter build macos --release` Universal arm64+x86_64 tuntas 100% (142.2 MB .app).
+     - Pembuatan DMG installer `OpenTurath_AI_macOS.dmg` (59 MB, UDZO) via `tool/package_macos.sh` dengan SHA-256 checksum terverifikasi.
+     - File DMG mutakhir dan berkas checksum telah disalin ke `/Users/apple/Downloads/ramadhan/OpenTurath_AI_macOS.dmg`.
+     - Instalasi `/Applications/OpenTurath AI.app` telah diperbarui dan diluncurkan ulang secara aktif.
+
 ---
 
 ## 5. Agenda & Fokus Selanjutnya
@@ -459,4 +473,5 @@ Berdasarkan `AUDIT_OPENTURATH_AI.md`, dokumen perancangan pustaka, dan keluhan k
    - Pengujian live checkout QRIS Rp 1.000 di aplikasi desktop macOS dan ponsel.
 2. **Kesiapan Rilis Publik & Broadcast Update**:
    - Membuka gembok agen berikutnya secara bertahap via `manage_ota.py unlock-agent <id>`.
+
 
