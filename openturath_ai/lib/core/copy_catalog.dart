@@ -61,9 +61,9 @@ const copyCatalog = <String, List<String>>{
   "assistantMore": ["AI lainnya", "Other assistants", "مساعدون آخرون"],
   "assistantAvailable": ["Tersedia", "Available", "متاح"],
   "assistantSearch": [
-    "Cari AI atau kitab rujukan",
-    "Search assistants or references",
-    "ابحث عن مساعد أو كتاب مرجعي"
+    "Cari AI",
+    "Search AI",
+    "ابحث عن مساعد ذكي"
   ],
   "clearSearch": ["Hapus pencarian", "Clear search", "مسح البحث"],
   "assistantLibrary": ["Lihat pustaka", "View library", "عرض المكتبة"],
@@ -2337,9 +2337,9 @@ const copyCatalog = <String, List<String>>{
     "حساب Google للمساعد"
   ],
   "googleAccountDialogDesc": [
-    "Pastikan email ini sesuai dengan akun Google yang memiliki akses ke modul atau notebook turats Anda. Browser akan langsung memilih akun ini.",
-    "Ensure this email matches the Google account with access to your turath modules or notebooks. The browser will select this account directly.",
-    "تأكد من مطابقة هذا البريد الإلكتروني لحساب Google المصرّح له بالوصول إلى دفاتر التراث. سيختار المتصفح هذا الحساب مباشرة."
+    "Pastikan email ini sesuai dengan akun Google yang memiliki akses ke modul kajian turats Anda. Browser akan langsung memilih akun ini.",
+    "Ensure this email matches the Google account with access to your turath study modules. The browser will select this account directly.",
+    "تأكد من مطابقة هذا البريد الإلكتروني لحساب Google المصرّح له بالوصول إلى وحدات التراث. سيختار المتصفح هذا الحساب مباشرة."
   ],
   "usePrimaryAccount": [
     "Pakai Akun Utama",
@@ -2505,9 +2505,9 @@ const copyCatalog = <String, List<String>>{
   ],
   "roomLoginNow": ["Login Sekarang", "Sign in now", "سجّل الدخول الآن"],
   "roomGooglePermissionDetail": [
-    "Akun Google yang aktif belum dapat membuka notebook ini. Periksa akun Google yang digunakan dan izin Viewer pada notebook.",
-    "The active Google account cannot open this notebook yet. Check which Google account is in use and its Viewer permission on the notebook.",
-    "لا يستطيع حساب Google النشط فتح هذا الدفتر بعد. تحقق من حساب Google المستخدم ومن إذن المشاهدة على الدفتر."
+    "Akun Google yang aktif belum dapat membuka ruang kajian ini. Periksa akun Google yang digunakan dan izin akses Anda.",
+    "The active Google account cannot open this study room yet. Check which Google account is in use and your access permissions.",
+    "لا يستطيع حساب Google النشط فتح غرفة الدراسة هذه بعد. تحقق من حساب Google المستخدم ومن إذن الوصول."
   ],
   "errSignInAgain": [
     "Silakan masuk kembali ke akun Anda.",

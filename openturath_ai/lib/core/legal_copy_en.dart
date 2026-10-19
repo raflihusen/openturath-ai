@@ -36,8 +36,8 @@ Subscriptions are renewed manually. This package purchase does not authorize aut
 Access starts after successful activation, and its expiry is displayed in your account. Payments are processed through Midtrans using methods available at the time of the transaction. Successful payment and access activation are distinct statuses. If you have paid but the subscription is not active, contact support with the transaction number.'''
     ),
     (
-      '6. Third-party services: Google NotebookLM',
-      '''Conversation features use Google's NotebookLM. Access may depend on your account, region, usage limits, and the provider's applicable terms. Purchasing OpenTurath does not itself change your Google subscription or account entitlements.
+      '6. Third-party services: Google Infrastructure',
+      '''Conversation features use Google's research computing technology. Access may depend on your account, region, usage limits, and the provider's applicable terms. Purchasing OpenTurath does not itself change your Google subscription or account entitlements.
 
 If changes to a third-party service prevent a paid feature from being provided as offered, we will assess restoration of access, a replacement service you approve, or a refund in accordance with your rights.'''
     ),
@@ -112,7 +112,7 @@ For privacy questions, contact support@openturath.id.'''
 • Subscription: selected package, status, validity period, and voucher use.
 • Payment: transaction number, amount, method, time, and status from Midtrans.
 • Transaction contact: WhatsApp/telephone number supplied at checkout to send activation information.
-• Conversation: questions, answers, and conversation context processed through Google NotebookLM sessions.
+• Conversation: questions, answers, and study context processed through Google research computing sessions.
 • Notes: notes, quotations, and references saved in local device storage.
 • Support: contact details, complaint contents, transaction numbers, and screenshot attachments for resolving problems.
 • Technical sessions: secure authentication session tokens to maintain device sign-in.'''
@@ -125,7 +125,7 @@ We do not sell your personal data to any third party and do not use your convers
     ),
     (
       "4. AI conversations and Google's role",
-      '''When you send a question through the conversation feature, its text and context are processed through Google NotebookLM. Google's processing follows its Privacy Policy and NotebookLM terms.
+      '''When you send a question through the conversation feature, its text and context are processed through Google research computing technology. Google's processing follows its Privacy Policy and service terms.
 
 OpenTurath does not use conversation contents or users' private notes to train public AI models. Avoid entering sensitive personal or confidential information into conversations.'''
     ),
@@ -136,7 +136,7 @@ OpenTurath does not use conversation contents or users' private notes to train p
     (
       '6. Recipients and service providers',
       '''Data is shared only to the extent needed to operate the service:
-• Google: sign-in authentication and NotebookLM conversation sessions.
+• Google: sign-in authentication and Google research computing conversation sessions.
 • Midtrans: the official payment provider for bank transactions, digital wallets, or QRIS.
 • Firebase / Google Cloud: secure transaction databases and account entitlement management.
 

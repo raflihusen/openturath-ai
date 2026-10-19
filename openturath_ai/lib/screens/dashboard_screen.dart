@@ -457,8 +457,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                     fieldId: agent.fieldId,
                                     scopeLabel: null,
                                     statusLabel: agent.isComingSoon
-                                        ? reviewCopy('Tahqiq Khazanah',
-                                            'قيد التحقيق', 'Under Verification')
+                                        ? reviewCopy('Belum tersedia',
+                                            'غير متاح حالياً', 'Coming Soon')
                                         : null,
                                     isLocked: agent.isComingSoon,
                                     onOpen: () => _openNotebook(agent, user),
@@ -561,9 +561,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                           ? AppCopy.assistantsAvailableCount(
                                               activeMembers.length)
                                           : reviewCopy(
-                                              'Tahqiq Khazanah',
-                                              'قيد التحقيق',
-                                              'Under Verification');
+                                              'Belum tersedia',
+                                              'غير متاح حالياً',
+                                              'Coming Soon');
                                       return OTReveal(
                                         index: index + 2,
                                         child: OTInkCard(

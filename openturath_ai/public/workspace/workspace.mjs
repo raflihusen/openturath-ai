@@ -48,7 +48,7 @@ function renderCatalog() {
     const title = document.createElement('h2');
     title.textContent = item.title;
     const description = document.createElement('p');
-    description.textContent = 'Telaah sumber dan ajukan pertanyaan di NotebookLM.';
+    description.textContent = 'Telaah sumber dan ajukan pertanyaan melalui ruang kajian interaktif Google.';
     const button = document.createElement('button');
     button.type = 'button';
     button.textContent = 'Buka kajian';

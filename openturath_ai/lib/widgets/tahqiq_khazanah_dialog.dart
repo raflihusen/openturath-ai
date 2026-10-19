@@ -85,9 +85,9 @@ class TahqiqKhazanahDialog extends StatelessWidget {
           // Subjudul
           Text(
             reviewCopy(
-              'Tahqiq Rujukan & Digitalisasi Sanad',
-              'تحقيق المراجع ورقمنة الأسانيد',
-              'Reference Verification & Isnad Digitization',
+              'Belum Tersedia',
+              'غير متاح حالياً',
+              'Coming Soon',
             ),
             textAlign: TextAlign.center,
             style: ScholarlyFonts.outfit(
@@ -99,7 +99,7 @@ class TahqiqKhazanahDialog extends StatelessWidget {
           ),
           const SizedBox(height: 16),
 
-          // Deskripsi Ilmiah
+          // Deskripsi
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
@@ -109,9 +109,9 @@ class TahqiqKhazanahDialog extends StatelessWidget {
             ),
             child: Text(
               reviewCopy(
-                'Khazanah kitab mu\'tabarah untuk disiplin ini sedang dalam tahap tahqiq dan digitalisasi komprehensif oleh tim peneliti OpenTurath. Akses akan dibuka secara bertahap tanpa memerlukan pembaruan aplikasi.',
-                'كتب هذا الفن التراثية المعتمدة قيد التحقيق والرقمنة الشاملة من قبل باحثي التراث. سيتم إتاحة الوصول تدريجيًا دون الحاجة لتحديث التطبيق.',
-                'The authoritative turath texts for this discipline are undergoing scholarly verification and digitization by the OpenTurath team. Access will be unlocked phased without requiring app updates.',
+                'AI ini sedang dalam tahap pengembangan. Akses akan dibuka secara bertahap saat siap digunakan tanpa memerlukan pembaruan aplikasi.',
+                'هذا الذكاء الاصطناعي قيد التطوير حالياً. سيتم إتاحة الوصول تدريجياً فور اكتماله دون الحاجة لتحديث التطبيق.',
+                'This AI is currently under development. Access will be unlocked gradually without requiring app updates.',
               ),
               textAlign: TextAlign.center,
               style: ScholarlyFonts.outfit(

@@ -98,9 +98,9 @@ abstract final class LegalCopy {
     ),
     LegalSection(
       id: 'terms_06',
-      title: '6. Layanan Pihak Ketiga (Google NotebookLM)',
+      title: '6. Layanan Pihak Ketiga (Infrastruktur Google)',
       content:
-          'Fitur percakapan menggunakan NotebookLM dari Google. Aksesnya dapat bergantung pada akun, wilayah, batas penggunaan, dan ketentuan penyedia yang berlaku untuk Anda. '
+          'Fitur percakapan menggunakan teknologi komputasi riset dari Google. Aksesnya dapat bergantung pada akun, wilayah, batas penggunaan, dan ketentuan penyedia yang berlaku untuk Anda. '
           'Pembelian OpenTurath tidak dengan sendirinya mengubah jenis langganan atau hak akses akun Google Anda.\n\n'
           'Jika perubahan layanan pihak ketiga menyebabkan fitur berbayar tidak dapat diberikan sesuai yang ditawarkan, kami akan menilai pemulihan akses, penggantian layanan yang Anda setujui, atau pengembalian dana sesuai hak Anda.',
     ),
@@ -198,7 +198,7 @@ abstract final class LegalCopy {
           '• Langganan: Paket yang dipilih, status, masa aktif, dan penggunaan voucher.\n'
           '• Pembayaran: Nomor transaksi, jumlah pembayaran, metode, waktu, dan status dari penyedia Midtrans.\n'
           '• Kontak Transaksi: Nomor WhatsApp/telepon yang Anda berikan saat pembayaran untuk pengiriman informasi aktivasi.\n'
-          '• Percakapan: Pertanyaan, jawaban, dan konteks percakapan yang diproses melalui sesi Google NotebookLM.\n'
+          '• Percakapan: Pertanyaan, jawaban, dan konteks telaah yang diproses melalui sesi komputasi riset Google.\n'
           '• Catatan: Catatan, kutipan, dan rujukan yang Anda simpan pada penyimpanan lokal perangkat.\n'
           '• Bantuan: Alamat kontak, isi pengaduan, nomor transaksi, dan lampiran tangkapan layar untuk penanganan masalah.\n'
           '• Sesi Teknis: Token sesi autentikasi yang aman untuk mempertahankan login di perangkat.',
@@ -215,8 +215,8 @@ abstract final class LegalCopy {
       id: 'privacy_04',
       title: '4. Percakapan AI dan Peran Google',
       content:
-          'Ketika Anda mengirim pertanyaan melalui fitur percakapan, teks dan konteks diproses melalui layanan Google NotebookLM. '
-          'Kebijakan pemrosesan Google mengikuti Kebijakan Privasi Google dan ketentuan NotebookLM.\n\n'
+          'Ketika Anda mengirim pertanyaan melalui fitur percakapan, teks dan konteks diproses melalui teknologi komputasi riset Google. '
+          'Kebijakan pemrosesan Google mengikuti Kebijakan Privasi Google dan ketentuan layanannya.\n\n'
           'Aplikasi OpenTurath tidak menggunakan isi percakapan atau catatan pribadi pengguna untuk melatih model kecerdasan buatan publik. '
           'Hindari memasukkan informasi pribadi sensitif atau rahasia ke dalam percakapan.',
     ),
@@ -233,7 +233,7 @@ abstract final class LegalCopy {
       title: '6. Penerima dan Penyedia Layanan',
       content:
           'Data dibagikan hanya sebatas yang diperlukan untuk menjalankan layanan:\n'
-          '• Google: Untuk proses masuk autentikasi dan pemrosesan sesi percakapan NotebookLM.\n'
+          '• Google: Untuk proses masuk autentikasi dan pemrosesan sesi percakapan komputasi riset Google.\n'
           '• Midtrans: Lembaga pembayaran resmi untuk memproses transaksi perbankan, dompet digital, atau QRIS.\n'
           '• Firebase / Google Cloud: Pengelolaan database transaksi dan status hak akses akun yang aman.\n\n'
           'Seluruh penyedia bekerja berdasarkan standar keamanan dan enkripsi industri.',

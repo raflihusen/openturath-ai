@@ -60,7 +60,6 @@ class AssistantGridCard extends StatelessWidget {
     const ink = OTExpressive.white;
     const muted = OTExpressive.whiteMuted;
     final locked = isLocked ?? agent.isComingSoon;
-    final stats = LibraryStat.from(metadata).take(2).toList();
     final openLabel = locked
         ? Loc.tr('comingSoon')
         : Loc.tr('openNamedAI', [Loc.text(agent.title)]);
@@ -78,12 +77,6 @@ class AssistantGridCard extends StatelessWidget {
           if (locked) ...[
             const SizedBox(height: 8),
             Text(Loc.tr('comingSoon'),
-                style: OTTypography.caption(color: muted)),
-          ],
-          if (stats.isNotEmpty) ...[
-            const SizedBox(height: 10),
-            Text(stats.map((s) => '${s.value} ${s.unit}').join(' · '),
-                textAlign: TextAlign.center,
                 style: OTTypography.caption(color: muted)),
           ],
           const SizedBox(height: 20),
