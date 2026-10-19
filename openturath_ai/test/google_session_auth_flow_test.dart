@@ -66,4 +66,43 @@ void main() {
 
     expect(tester.takeException(), isNull);
   });
+
+  testWidgets(
+      'GoogleSessionAuthScreen mempertahankan mount webview dan teks pelindung terdaftar di lokalisasi',
+      (tester) async {
+    AuthService.previewUser = UserModel(
+      uid: 'user_456',
+      name: 'Santri Nusantara',
+      email: 'santri.dua@gmail.com',
+      photoUrl: '',
+      plan: 'trial',
+      questionsUsed: 0,
+    );
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: GoogleSessionAuthScreen(
+          webViewBuilder: (context, settings, url) {
+            return const SizedBox(key: Key('shield_mock_webview'));
+          },
+        ),
+      ),
+    );
+    await tester.pump();
+
+    // Verifikasi mock webview tetap ter-mount
+    expect(find.byKey(const Key('shield_mock_webview')), findsOneWidget);
+
+    // Verifikasi teks lokalisasi pelindung visual tersedia di katalog
+    expect(
+      AppConfig.localeNotifier.value,
+      'id',
+    );
+    expect(
+      find.textContaining('santri.dua@gmail.com'),
+      findsWidgets,
+    );
+    expect(tester.takeException(), isNull);
+  });
 }
+

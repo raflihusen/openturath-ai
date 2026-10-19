@@ -570,6 +570,16 @@ const copyCatalog = <String, List<String>>{
     "Must sign in with the same Google account to access AI assistants.",
     "يجب تسجيل الدخول بنفس حساب Google لفتح الوصول إلى المساعدين."
   ],
+  "verifyingSessionTitle": [
+    "Menyelaraskan Sesi Akun Google...",
+    "Aligning Google Account Session...",
+    "جارٍ مواءمة جلسة حساب Google..."
+  ],
+  "verifyingSessionSubtitle": [
+    "Memastikan kesesuaian akun sebelum membuka ruang telaah.",
+    "Verifying account match before opening study space.",
+    "التحقق من تطابق الحساب قبل فتح مساحة المطالعة."
+  ],
   "stepTwoOfTwo": ["LANGKAH 2 DARI 2", "STEP 2 OF 2", "الخطوة ٢ من ٢"],
   "confirmGoogleAccountTitle": [
     "Konfirmasi Akun Google",

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:collection';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -47,6 +48,8 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
   bool _isSessionReady = false;
   final ValueNotifier<double> _loadProgress = ValueNotifier<double>(0.0);
   bool _isMismatchDialogOpen = false;
+  bool _isShieldActive = false;
+  bool _isCheckingAccount = false;
 
   String get _targetLoginUrl {
     final email = (AuthService().cachedCurrentUser?.email ??
@@ -57,6 +60,61 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
       return 'https://accounts.google.com/InteractiveLogin?continue=${NotebookNavigation.canonicalOrigin}/&login_hint=${Uri.encodeComponent(email)}';
     }
     return 'https://accounts.google.com/InteractiveLogin?continue=${NotebookNavigation.canonicalOrigin}/';
+  }
+
+  /// Skrip penyembunyi antarmuka NotebookLM di level mesin WebKit (Document Start Cloak).
+  /// Menjamin tidak ada 1 piksel pun antarmuka NotebookLM yang pernah digambar ke layar,
+  /// sementara struktur DOM dan objek JavaScript Google (WIZ_global_data) tetap utuh di memori.
+  static UserScript _buildStealthCloakScript(bool isDark) {
+    const script = '''
+      (function() {
+        try {
+          var host = (window.location.hostname || '').toLowerCase();
+          if (!host.includes('notebooklm.google.com') && !host.includes('notebook.google.com')) {
+            return;
+          }
+          var styleId = 'ot-stealth-auth-cloak';
+          var style = document.getElementById(styleId);
+          if (!style) {
+            style = document.createElement('style');
+            style.id = styleId;
+            (document.head || document.documentElement).appendChild(style);
+          }
+          style.textContent = 'html, body { background-color: #09090B !important; color: transparent !important; overflow: hidden !important; } body * { opacity: 0 !important; pointer-events: none !important; }';
+        } catch(e) {}
+      })();
+    ''';
+    return UserScript(
+      source: script,
+      injectionTime: UserScriptInjectionTime.AT_DOCUMENT_START,
+      forMainFrameOnly: true,
+    );
+  }
+
+  /// Menyelaraskan status pelindung visual (Visual Shield) dengan domain navigasi WebView
+  void _handleUrlNavigation(InAppWebViewController controller, WebUri? url) {
+    if (!mounted || url == null) return;
+    final uri = url.uriValue;
+    final isNotebook = NotebookNavigation.notebook(uri);
+    final isAuthFlow = NotebookNavigation.signInFlow(uri);
+
+    if (isNotebook) {
+      if (!_isShieldActive && mounted) {
+        setState(() => _isShieldActive = true);
+      }
+      // Suntikkan style pelindung cadangan untuk navigasi SPA sisi-klien
+      controller.evaluateJavascript(source: '''
+        try {
+          var styleId = 'ot-stealth-auth-cloak';
+          var style = document.getElementById(styleId) || document.createElement('style');
+          style.id = styleId;
+          style.textContent = 'html, body { background-color: #09090B !important; color: transparent !important; overflow: hidden !important; } body * { opacity: 0 !important; pointer-events: none !important; }';
+          (document.head || document.documentElement).appendChild(style);
+        } catch(_) {}
+      ''');
+    } else if (isAuthFlow && _isShieldActive && !_isMismatchDialogOpen) {
+      setState(() => _isShieldActive = false);
+    }
   }
 
   @override
@@ -111,7 +169,8 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
     // 3. Cek text di header / navbar
     var header = document.querySelector('header') || document.querySelector('nav');
     if (header) {
-      var m = (header.innerText || '').match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}/);
+      var raw = header.textContent || header.innerText || '';
+      var m = raw.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}/);
       if (m) return m[0].toLowerCase();
     }
     return null;
@@ -127,10 +186,11 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
     return null;
   }
 
-  /// Memverifikasi bahwa sesi di WebView telah selesai dan menggunakan akun yang sama
+  /// Memverifikasi bahwa sesi di WebView telah selesai dan menggunakan akun yang sama.
+  /// Dilengkapi mutex guard dan siklus polling adaptif untuk menjamin keandalan pada koneksi lambat.
   Future<void> _checkAccountVerification(
       InAppWebViewController controller) async {
-    if (!mounted || _isSessionReady) return;
+    if (!mounted || _isSessionReady || _isCheckingAccount) return;
     final currentWebUrl = await controller.getUrl();
     if (currentWebUrl == null) return;
     final urlStr = currentWebUrl.toString();
@@ -146,25 +206,39 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
       return;
     }
 
+    _isCheckingAccount = true;
+    if (!_isShieldActive && mounted) {
+      setState(() => _isShieldActive = true);
+    }
+
     final currentEmail = (AuthService().cachedCurrentUser?.email ??
             AuthService().currentUser?.email ??
             '')
         .trim()
         .toLowerCase();
 
-    await Future.delayed(const Duration(milliseconds: 900));
-    if (!mounted || _isSessionReady) return;
+    try {
+      // Siklus Polling Adaptif: periksa setiap 250ms hingga 15 kali (~3.75s)
+      const maxAttempts = 15;
+      for (var attempt = 0; attempt < maxAttempts; attempt++) {
+        if (!mounted || _isSessionReady) return;
 
-    final detectedEmail = await _detectGoogleEmail(controller);
-    if (detectedEmail != null && detectedEmail.isNotEmpty) {
-      if (currentEmail.isNotEmpty && detectedEmail != currentEmail) {
-        // Tampilkan peringatan jika akun Google berbeda
-        _showAccountMismatchDialog(detectedEmail, currentEmail);
-        return;
+        final detectedEmail = await _detectGoogleEmail(controller);
+        if (detectedEmail != null && detectedEmail.isNotEmpty) {
+          if (currentEmail.isNotEmpty && detectedEmail != currentEmail) {
+            // Tampilkan peringatan jika akun Google berbeda
+            await _showAccountMismatchDialog(detectedEmail, currentEmail);
+            return;
+          }
+          // Email Google cocok
+          await _onSessionAuthenticated();
+          return;
+        }
+
+        await Future.delayed(const Duration(milliseconds: 250));
       }
-      // Email Google cocok
-      await _onSessionAuthenticated();
-      return;
+    } finally {
+      _isCheckingAccount = false;
     }
   }
 
@@ -283,6 +357,9 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
               try {
                 await DesktopWebViewRuntime.cookies.deleteAllCookies();
               } catch (_) {}
+              if (mounted) {
+                setState(() => _isShieldActive = false);
+              }
               if (_webController != null) {
                 await _webController!.loadUrl(
                   urlRequest: URLRequest(url: WebUri(_targetLoginUrl)),
@@ -776,80 +853,166 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
                       border: Border.all(color: border, width: 1),
                     ),
                     clipBehavior: Clip.antiAlias,
-                    child: widget.webViewBuilder != null
-                        ? widget.webViewBuilder!(
-                            context,
-                            InAppWebViewSettings(
-                              incognito: false,
+                    child: Stack(
+                      children: [
+                        Positioned.fill(
+                          child: widget.webViewBuilder != null
+                              ? widget.webViewBuilder!(
+                                  context,
+                                  InAppWebViewSettings(
+                                    incognito: false,
+                                  ),
+                                  _targetLoginUrl,
+                                )
+                              : InAppWebView(
+                                  webViewEnvironment:
+                                      DesktopWebViewRuntime.environment,
+                                  initialUrlRequest:
+                                      URLRequest(url: WebUri(_targetLoginUrl)),
+                                  initialUserScripts: UnmodifiableListView([
+                                    _buildStealthCloakScript(isDark),
+                                  ]),
+                                  initialSettings: InAppWebViewSettings(
+                                    incognito: false,
+                                    javaScriptEnabled: true,
+                                    domStorageEnabled: true,
+                                    databaseEnabled: true,
+                                    useWideViewPort: false,
+                                    loadWithOverviewMode: false,
+                                    cacheEnabled: true,
+                                    clearCache: false,
+                                    transparentBackground: false,
+                                    allowsInlineMediaPlayback: true,
+                                    supportZoom: false,
+                                    displayZoomControls: false,
+                                    mixedContentMode:
+                                        MixedContentMode.MIXED_CONTENT_NEVER_ALLOW,
+                                    thirdPartyCookiesEnabled: true,
+                                    sharedCookiesEnabled: true,
+                                    hardwareAcceleration: true,
+                                    useHybridComposition: true,
+                                    useOnRenderProcessGone: true,
+                                    supportMultipleWindows: true,
+                                    javaScriptCanOpenWindowsAutomatically: true,
+                                    isInspectable: kDebugMode,
+                                    forceDark:
+                                        isDark ? ForceDark.ON : ForceDark.OFF,
+                                    forceDarkStrategy: ForceDarkStrategy
+                                        .PREFER_WEB_THEME_OVER_USER_AGENT_DARKENING,
+                                    algorithmicDarkeningAllowed: true,
+                                  ),
+                                  onCreateWindow:
+                                      (controller, createWindowAction) async {
+                                    final targetUrl =
+                                        createWindowAction.request.url;
+                                    if (targetUrl != null &&
+                                        (NotebookNavigation.signInFlow(
+                                                targetUrl.uriValue) ||
+                                            NotebookNavigation.allowed(
+                                                targetUrl.uriValue))) {
+                                      await controller.loadUrl(
+                                          urlRequest:
+                                              URLRequest(url: targetUrl));
+                                      return true;
+                                    }
+                                    return false;
+                                  },
+                                  onWebViewCreated: (controller) =>
+                                      _webController = controller,
+                                  onProgressChanged: (controller, progress) {
+                                    if (mounted) {
+                                      _loadProgress.value = progress / 100;
+                                    }
+                                  },
+                                  onLoadStart: (controller, url) {
+                                    _handleUrlNavigation(controller, url);
+                                  },
+                                  onLoadStop: (controller, url) async {
+                                    if (!mounted || url == null) return;
+                                    _handleUrlNavigation(controller, url);
+                                    await _checkAccountVerification(controller);
+                                  },
+                                  onUpdateVisitedHistory:
+                                      (controller, url, isReload) async {
+                                    if (!mounted || url == null) return;
+                                    _handleUrlNavigation(controller, url);
+                                    await _checkAccountVerification(controller);
+                                  },
+                                  onReceivedError:
+                                      (controller, request, error) {
+                                    debugPrint(
+                                        '[GoogleSessionAuth] WebView error: ${error.description}');
+                                  },
+                                ),
+                        ),
+                        if (_isShieldActive)
+                          Positioned.fill(
+                            child: ColoredBox(
+                              color: canvas,
+                              child: Center(
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Container(
+                                      width: 52,
+                                      height: 52,
+                                      decoration: BoxDecoration(
+                                        color: surface,
+                                        shape: BoxShape.circle,
+                                        border: Border.all(
+                                            color: border, width: 1.2),
+                                      ),
+                                      child: Center(
+                                        child: Icon(
+                                          Icons.verified_user_outlined,
+                                          size: 26,
+                                          color: textPrimary,
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(height: 18),
+                                    Text(
+                                      Loc.tr('verifyingSessionTitle'),
+                                      textAlign: TextAlign.center,
+                                      style: ScholarlyFonts.outfit(
+                                        fontSize: OTFontSize.s16,
+                                        fontWeight: FontWeight.w600,
+                                        color: textPrimary,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 8),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 32),
+                                      child: Text(
+                                        Loc.tr('verifyingSessionSubtitle'),
+                                        textAlign: TextAlign.center,
+                                        style: ScholarlyFonts.outfit(
+                                          fontSize: OTFontSize.s12,
+                                          height: 1.4,
+                                          color: textSecondary,
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(height: 20),
+                                    SizedBox(
+                                      width: 140,
+                                      child: LinearProgressIndicator(
+                                        backgroundColor:
+                                            border.withValues(alpha: 0.3),
+                                        valueColor:
+                                            AlwaysStoppedAnimation<Color>(
+                                                textPrimary),
+                                        minHeight: 2,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
                             ),
-                            _targetLoginUrl,
-                          )
-                        : InAppWebView(
-                            webViewEnvironment:
-                                DesktopWebViewRuntime.environment,
-                            initialUrlRequest:
-                                URLRequest(url: WebUri(_targetLoginUrl)),
-                            initialSettings: InAppWebViewSettings(
-                              incognito: false,
-                              javaScriptEnabled: true,
-                              domStorageEnabled: true,
-                              databaseEnabled: true,
-                              useWideViewPort: false,
-                              loadWithOverviewMode: false,
-                              cacheEnabled: true,
-                              clearCache: false,
-                              transparentBackground: false,
-                              allowsInlineMediaPlayback: true,
-                              supportZoom: false,
-                              displayZoomControls: false,
-                              mixedContentMode:
-                                  MixedContentMode.MIXED_CONTENT_NEVER_ALLOW,
-                              thirdPartyCookiesEnabled: true,
-                              sharedCookiesEnabled: true,
-                              hardwareAcceleration: true,
-                              useHybridComposition: true,
-                              useOnRenderProcessGone: true,
-                              supportMultipleWindows: true,
-                              javaScriptCanOpenWindowsAutomatically: true,
-                              isInspectable: kDebugMode,
-                              forceDark: isDark ? ForceDark.ON : ForceDark.OFF,
-                              forceDarkStrategy: ForceDarkStrategy
-                                  .PREFER_WEB_THEME_OVER_USER_AGENT_DARKENING,
-                              algorithmicDarkeningAllowed: true,
-                            ),
-                            onCreateWindow:
-                                (controller, createWindowAction) async {
-                              final targetUrl = createWindowAction.request.url;
-                              if (targetUrl != null &&
-                                  (NotebookNavigation.signInFlow(
-                                          targetUrl.uriValue) ||
-                                      NotebookNavigation.allowed(
-                                          targetUrl.uriValue))) {
-                                await controller.loadUrl(
-                                    urlRequest: URLRequest(url: targetUrl));
-                                return true;
-                              }
-                              return false;
-                            },
-                            onWebViewCreated: (controller) =>
-                                _webController = controller,
-                            onProgressChanged: (controller, progress) {
-                              if (mounted) _loadProgress.value = progress / 100;
-                            },
-                            onLoadStop: (controller, url) async {
-                              if (!mounted || url == null) return;
-                              await _checkAccountVerification(controller);
-                            },
-                            onUpdateVisitedHistory:
-                                (controller, url, isReload) async {
-                              if (!mounted || url == null) return;
-                              await _checkAccountVerification(controller);
-                            },
-                            onReceivedError: (controller, request, error) {
-                              debugPrint(
-                                  '[GoogleSessionAuth] WebView error: ${error.description}');
-                            },
                           ),
+                      ],
+                    ),
                   ),
                 ),
               ],
