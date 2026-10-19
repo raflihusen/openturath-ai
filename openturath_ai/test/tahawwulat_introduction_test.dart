@@ -15,12 +15,15 @@ void main() {
 
     test('video dan naskah dibundel', () {
       expect(File(n.video).existsSync(), isTrue);
-      expect(n.slide.length, greaterThanOrEqualTo(40));
+      expect(n.slide.length, greaterThanOrEqualTo(60));
     });
 
     test('waktu slide bersambung tanpa celah', () {
       for (var i = 1; i < n.slide.length; i++) {
-        expect(n.slide[i].mulai, n.slide[i - 1].akhir, reason: n.slide[i].id);
+        // Pembulatan milidetik per slide boleh berselisih paling banyak 1 ms.
+        expect((n.slide[i].mulai - n.slide[i - 1].akhir).inMilliseconds.abs(),
+            lessThanOrEqualTo(1),
+            reason: n.slide[i].id);
       }
     });
 
@@ -92,7 +95,7 @@ void main() {
     await tester.pumpWidget(MaterialApp(
         home: TahawwulatIntroductionSheet(videoEnabled: false, naskah: n)));
     await tester.pumpAndSettle();
-    final target = n.slide.indexWhere((s) => s.id == 'empatrukun');
+    final target = n.slide.indexWhere((s) => s.id == 'empat-rukun');
     await tester.tap(find.text(n.slide[target].judul).first);
     await tester.pumpAndSettle();
     expect(find.text('${target + 1} / ${n.slide.length}'), findsOneWidget);

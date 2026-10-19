@@ -2,7 +2,7 @@
 // 1. Encode ulang MP4 dengan keyframe tepat di awal tiap slide (lompat slide presisi).
 // 2. Tulis manifest slide (waktu mulai, bab, dan teks lengkap untuk aksesibilitas).
 //
-// Pakai: npx remotion render PengantarTahawwulat out/pengantar_tahawwulat.mp4 && node scripts/ekspor_tahawwulat.mjs
+// Pakai: npx remotion render PengantarTahawwulat out/pengantar_v2.mp4 && node scripts/ekspor_tahawwulat.mjs
 import { execFileSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
@@ -10,7 +10,7 @@ import path from "node:path";
 const FPS = 30;
 const akar = path.resolve(import.meta.dirname, "..");
 const app = path.resolve(akar, "../openturath_ai/assets");
-const naskah = JSON.parse(fs.readFileSync(path.join(akar, "src/tahawwulat/naskah.json"), "utf8"));
+const naskah = JSON.parse(fs.readFileSync(path.join(akar, "src/tahawwulat/naskah2.json"), "utf8"));
 
 let bingkai = 0;
 const slide = naskah.slide.map((s) => {
@@ -25,7 +25,7 @@ const slide = naskah.slide.map((s) => {
 });
 
 const keyframe = slide.map((s) => (s.mulai_ms / 1000).toFixed(3)).join(",");
-const masuk = path.join(akar, "out/pengantar_tahawwulat.mp4");
+const masuk = path.join(akar, "out/pengantar_v2.mp4");
 const keluar = path.join(app, "video/pengantar_tahawwulat.mp4");
 fs.mkdirSync(path.dirname(keluar), { recursive: true });
 execFileSync("ffmpeg", [

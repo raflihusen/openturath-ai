@@ -1,0 +1,663 @@
+{
+  "judul": "Mengenal Fikih Tahawwulat",
+  "bab": [
+    { "no": 0, "judul": "Pembuka" },
+    { "no": 1, "judul": "Perumpamaan" },
+    { "no": 2, "judul": "Dalil" },
+    { "no": 3, "judul": "Keberatan" },
+    { "no": 4, "judul": "Tetap dan berubah" },
+    { "no": 5, "judul": "Nama dan definisi" },
+    { "no": 6, "judul": "Tugasnya" },
+    { "no": 7, "judul": "Isinya" },
+    { "no": 8, "judul": "Waktunya" },
+    { "no": 9, "judul": "Peta perjalanan" },
+    { "no": 10, "judul": "Rambu" },
+    { "no": 11, "judul": "Sikap" },
+    { "no": 12, "judul": "Tujuh langkah" },
+    { "no": 13, "judul": "Mulai belajar" },
+    { "no": 14, "judul": "Penutup" }
+  ],
+  "slide": [
+    {
+      "id": "sampul",
+      "bab": 0,
+      "judul": "Mengenal Fikih Tahawwulat",
+      "sub": "Memahami perubahan zaman dengan petunjuk Nabi ﷺ",
+      "arab": "فِقْهُ التَّحَوُّلَاتِ",
+      "durasi": 200
+    },
+    {
+      "id": "takut",
+      "bab": 0,
+      "judul": "Banyak orang mengira ini menakutkan",
+      "kunci": "Membahas tanda kiamat sering dianggap hanya membuat cemas dan menjauh dari orang lain.",
+      "ibarah": "يعتقد البعض… بأن علامات الساعة سبب لإثارة الخوف من المستقبل… وسبيل إلى الإحباط والعزلة",
+      "sumber": "An-Nubdzah ash-Shughra, hlm. 55",
+      "durasi": 300
+    },
+    {
+      "id": "justru",
+      "bab": 0,
+      "judul": "Menurut beliau, justru sebaliknya",
+      "kunci": "Ilmu tanda kiamat adalah pelindung yang menunjukkan sikap yang benar saat keadaan membingungkan.",
+      "ibarah": "والصحيح… أن العلم بعلامات الساعة تحصين ووقاية شرعية… وتبين له الموقف المتخذ شرعا",
+      "sumber": "An-Nubdzah ash-Shughra, hlm. 55",
+      "durasi": 300
+    },
+    {
+      "id": "mobil",
+      "bab": 1,
+      "judul": "Agama itu seperti mobil berpenggerak empat roda",
+      "kunci": "Di jalan biasa, mode penggerak empat roda jarang dipakai. Ia disiapkan untuk keadaan darurat.",
+      "ibarah": "يمثل معنى الدفع الرباعي… ليس دائم الاستخدام، وإنما يتخذ للطوارئ",
+      "sumber": "Al-Ghirbal, hlm. 6",
+      "durasi": 300
+    },
+    {
+      "id": "lupa",
+      "bab": 1,
+      "judul": "Karena jarang dipakai, ia dilupakan",
+      "kunci": "Pemiliknya lupa, anak-anaknya tidak tahu, sampai ada yang menyangka fitur itu tidak pernah ada.",
+      "ibarah": "حتى صار من أولاده من لا يعرف عن ذلك شيئا، بل ربما… ينفي حقيقة وجوده",
+      "sumber": "Al-Ghirbal, hlm. 6",
+      "durasi": 300
+    },
+    {
+      "id": "lumpur",
+      "bab": 1,
+      "judul": "Sampai terjebak di jalan berlumpur",
+      "kunci": "Orang yang tidak tahu fiturnya akan kebingungan, padahal jalan keluar ada di mobilnya sendiri. Fitur itu adalah rukun keempat agama.",
+      "ibarah": "وهو لا يعلم أن علاج مشكلته يحمله معه في سيارته",
+      "sumber": "Al-Ghirbal, hlm. 6",
+      "durasi": 330
+    },
+    {
+      "id": "tamu",
+      "bab": 2,
+      "judul": "Suatu hari datang seorang tamu yang tidak dikenal",
+      "kunci": "Ia berpakaian sangat putih, tidak tampak bekas perjalanan, dan tidak seorang pun mengenalnya.",
+      "sumber": "Hadis Jibril, HR. Muslim no. 8; An-Nubdzah hlm. 9",
+      "durasi": 290
+    },
+    {
+      "id": "empat-pertanyaan",
+      "bab": 2,
+      "judul": "Ia bertanya empat hal",
+      "kunci": "Islam, iman, ihsan, lalu tentang kiamat dan tanda-tandanya. Semuanya dalam satu majelis.",
+      "poin": ["Islam", "Iman", "Ihsan", "Kiamat dan tanda-tandanya"],
+      "sumber": "An-Nubdzah ash-Shughra, hlm. 9",
+      "durasi": 320
+    },
+    {
+      "id": "dua-jawaban",
+      "bab": 2,
+      "judul": "Dua jawaban yang berbeda",
+      "kunci": "Tentang waktu kiamat Nabi menjawab tidak tahu. Tetapi tentang tanda-tandanya, beliau menjawab dengan jelas.",
+      "ibarah": "ما المسؤول عنها بأعلم من السائل… قال: فأخبرني عن أمارتها",
+      "sumber": "An-Nubdzah ash-Shughra, hlm. 9",
+      "durasi": 320
+    },
+    {
+      "id": "agama-kalian",
+      "bab": 2,
+      "judul": "Lalu beliau berkata: ia mengajarkan agama kalian",
+      "kunci": "Kata “agama kalian” diucapkan setelah keempat pertanyaan, termasuk pertanyaan tentang tanda kiamat.",
+      "ibarah": "فإنه جبريل أتاكم يعلمكم أمر دينكم",
+      "sumber": "An-Nubdzah ash-Shughra, hlm. 10",
+      "durasi": 310
+    },
+    {
+      "id": "empat-rukun",
+      "bab": 2,
+      "judul": "Karena itu rukun agama ada empat",
+      "kunci": "Islam bersambung dengan fikih, iman dengan akidah, ihsan dengan tasawuf, dan tanda kiamat dengan ilmu rukun keempat.",
+      "rukun": [
+        { "nama": "Islam", "arab": "الإسلام", "ilmu": "Fikih" },
+        { "nama": "Iman", "arab": "الإيمان", "ilmu": "Akidah" },
+        { "nama": "Ihsan", "arab": "الإحسان", "ilmu": "Tasawuf" },
+        { "nama": "Tanda kiamat", "arab": "علامات الساعة", "ilmu": "Ilmu rukun keempat" }
+      ],
+      "ibarah": "ويعلم من سياق الحديث أن أركان الدين أربعة",
+      "sumber": "An-Nubdzah ash-Shughra, hlm. 10",
+      "durasi": 380
+    },
+    {
+      "id": "bukhari",
+      "bab": 2,
+      "judul": "Imam al-Bukhari pun menyebutnya bersama",
+      "kunci": "Judul bab yang beliau tulis memuat iman, Islam, ihsan, dan ilmu tentang kiamat dalam satu rangkaian.",
+      "ibarah": "باب سؤال جبريل النبي ﷺ عن الإيمان والإسلام والإحسان وعلم الساعة… فجعل ذلك كله دينا",
+      "sumber": "An-Nubdzah ash-Shughra, hlm. 11–12",
+      "durasi": 330
+    },
+    {
+      "id": "beda",
+      "bab": 3,
+      "judul": "Kiamat dan tanda-tandanya adalah dua hal berbeda",
+      "kunci": "Kiamat adalah akhir alam; waktunya hanya Allah yang tahu. Tanda-tandanya terjadi di dunia, sebelum kiamat.",
+      "kiri": { "judul": "Kiamat", "arab": "الساعة", "isi": ["Akhir seluruh alam", "Waktunya hanya Allah yang tahu"] },
+      "kanan": { "judul": "Tanda-tandanya", "arab": "علاماتها", "isi": ["Terjadi di dunia", "Bisa dipelajari dari nash"] },
+      "sumber": "Al-Usus wal-Munthalaqat, hlm. 57–58",
+      "durasi": 340
+    },
+    {
+      "id": "rukun-terpisah",
+      "bab": 3,
+      "judul": "Karena wilayahnya berbeda, ilmunya berdiri sendiri",
+      "kunci": "Iman kepada hari akhir berbicara tentang setelah dunia berakhir. Tanda-tandanya berbicara tentang hidup kita sekarang.",
+      "ibarah": "ركن شرعي مستقل",
+      "sumber": "Al-Usus wal-Munthalaqat, hlm. 58",
+      "durasi": 310
+    },
+    {
+      "id": "tetap",
+      "bab": 4,
+      "judul": "Islam, iman, dan ihsan tidak berubah",
+      "kunci": "Salat, akidah, dan akhlak tetap sama di setiap zaman. Latar zamannya yang berganti.",
+      "ibarah": "الثوابت، وهو ما يترتب عليه معرفة علم الشريعة والعقيدة ومراتب السلوك",
+      "sumber": "An-Nubdzah ash-Shughra, hlm. 14",
+      "durasi": 320
+    },
+    {
+      "id": "berubah",
+      "bab": 4,
+      "judul": "Rukun keempat membaca yang berubah",
+      "kunci": "Yang dibaca adalah keadaan manusia yang berubah, yaitu keadaan yang sebab-sebabnya sudah disebut dalam wahyu.",
+      "ibarah": "والمتغيرات: هي الأحوال المتنوعة بالأسباب المنصوصة",
+      "sumber": "Al-Usus wal-Munthalaqat, hlm. 412",
+      "durasi": 320
+    },
+    {
+      "id": "bukan-agama",
+      "bab": 4,
+      "judul": "Yang berubah bukan agamanya",
+      "kunci": "Zaman berubah; agama tetap. Ilmu ini membaca zaman dengan agama yang tetap.",
+      "durasi": 280
+    },
+    {
+      "id": "tiga-nama",
+      "bab": 5,
+      "judul": "Satu ilmu, tiga nama",
+      "kunci": "Ilmu akhir zaman, ilmu tanda-tanda kiamat, dan Fikih Tahawwulat adalah satu ilmu yang sama.",
+      "ibarah": "علم آخر الزمان المسمى في نص حديث جبريل بالعلم بعلامات الساعة والمعروف اصطلاحا بفقه التحولات",
+      "sumber": "Al-Marja' at-Tarbawi, hlm. 4",
+      "durasi": 320
+    },
+    {
+      "id": "arti-nama",
+      "bab": 5,
+      "judul": "Arti namanya",
+      "kunci": "Fikih berarti paham sampai ke dasar. Tahawwulat berarti perubahan-perubahan. Jadi: memahami perubahan zaman.",
+      "kiri": { "judul": "Fikih", "arab": "فقه", "isi": ["Paham sampai ke dasar"] },
+      "kanan": { "judul": "Tahawwulat", "arab": "تحولات", "isi": ["Perubahan-perubahan"] },
+      "ibarah": "فقه التحولات… لفظة ليست معروفة في ألفاظ العلماء السابقة",
+      "sumber": "Muhadharah Syarh al-Usus, pertemuan 6",
+      "durasi": 330
+    },
+    {
+      "id": "definisi",
+      "bab": 5,
+      "judul": "Definisi beliau",
+      "kunci": "Lima hal dalam satu kalimat: pemahaman berdasar wahyu, dimulai dari ketetapan Allah, perubahan punya hukum, mencakup ilmu dan peristiwa, sampai kiamat.",
+      "ibarah": "هو الفهم الشرعي لما يقضي الله ويدبر في العالم الأزلي، وما جرى ويجري من سنن التغيرات والمتغيرات… إلى قيام الساعة",
+      "sumber": "An-Nubdzah ash-Shughra, hlm. 17",
+      "durasi": 390
+    },
+    {
+      "id": "pola",
+      "bab": 5,
+      "judul": "Perubahan itu punya pola",
+      "kunci": "Kata sunan berarti hukum-hukum. Perubahan zaman tidak acak, ia berjalan menurut ketetapan yang bisa dipelajari.",
+      "ibarah": "إن الله لا يغير ما بقوم حتى يغيروا ما بأنفسهم",
+      "sumber": "QS ar-Ra'd 11; dikutip Al-Usus hlm. 59",
+      "durasi": 310
+    },
+    {
+      "id": "dua-tugas",
+      "bab": 6,
+      "judul": "Rukun keempat punya dua tugas",
+      "kunci": "Memperbarui cara berdakwah, dan menjaga ilmu-ilmu yang tetap.",
+      "kiri": { "judul": "Menjaga", "arab": "صيانة الثوابت", "isi": ["Melindungi ilmu agama dari perusakan"] },
+      "kanan": { "judul": "Menyampaikan", "arab": "تجديد الدعوة", "isi": ["Memperbarui cara dakwah, bukan isinya"] },
+      "sumber": "An-Nubdzah ash-Shughra, hlm. 13",
+      "durasi": 330
+    },
+    {
+      "id": "cara",
+      "bab": 6,
+      "judul": "Tugas pertama: cara menyampaikan",
+      "kunci": "Dakwah disampaikan dengan hikmah dan nasihat yang baik, bersambung sanadnya, dan menjaga keselamatan.",
+      "ibarah": "القائم على الحكمة والموعظة الحسنة وتأصيل مبدأ السلامة والسند",
+      "sumber": "An-Nubdzah ash-Shughra, hlm. 13",
+      "durasi": 310
+    },
+    {
+      "id": "tiga-perusak",
+      "bab": 6,
+      "judul": "Tugas kedua: menjaga dari tiga perusak",
+      "kunci": "Ulama yang jujur di setiap generasi menjaga ilmu dari pemahaman berlebihan, kepalsuan atas nama agama, dan tafsir tanpa ilmu.",
+      "ibarah": "يرث هذا العلم من كل خلف عدوله؛ ينفون عنه تحريف الغالين، وانتحال المبطلين، وتأويل الجاهلين",
+      "sumber": "An-Nubdzah ash-Shughra, hlm. 13; al-Baihaqi 20911",
+      "durasi": 370
+    },
+    {
+      "id": "wadah",
+      "bab": 6,
+      "judul": "Isi dan wadahnya",
+      "kunci": "Islam, iman, dan ihsan adalah isinya. Isi dibawa oleh manusia dan lembaga, dan itu wadahnya. Ada wadah yang membawa agama tetapi tidak tulus.",
+      "ibarah": "أما علامات الساعة باعتبارها ركنا فهي وعاء المادة، وكم من وعاء… حامل لأركان الدين الثلاثة وهو لا يدين بها",
+      "sumber": "Al-Usus wal-Munthalaqat, hlm. 24",
+      "durasi": 350
+    },
+    {
+      "id": "kenali-wadah",
+      "bab": 6,
+      "judul": "Ilmu ini mengenali wadah",
+      "kunci": "Dengan tanda-tanda, kita belajar membedakan wadah yang jujur dari yang palsu.",
+      "ibarah": "نعرف بالعلامات تلكم الأوعية كما نعرف تصنيف العدالة من فاقديها",
+      "sumber": "Al-Usus wal-Munthalaqat, hlm. 24",
+      "durasi": 300
+    },
+    {
+      "id": "dua-tanda",
+      "bab": 7,
+      "judul": "Ketika ditanya tentang tanda kiamat, Nabi menyebut dua hal",
+      "kunci": "Seorang budak perempuan melahirkan tuannya; dan penggembala miskin berlomba meninggikan bangunan.",
+      "ibarah": "أن تلد الأمة ربتها، وأن ترى الحفاة العراة العالة رعاء الشاء يتطاولون في البنيان",
+      "sumber": "An-Nubdzah ash-Shughra, hlm. 15",
+      "durasi": 340
+    },
+    {
+      "id": "kode",
+      "bab": 7,
+      "judul": "Kalimat singkat, makna padat",
+      "kunci": "Beliau menyebutnya berita masa depan yang disampaikan dengan bahasa singkat penuh isyarat. Maknanya dibuka dengan kaidah, bukan tebakan.",
+      "ibarah": "نص استباقي في ترميز بلاغي",
+      "sumber": "An-Nubdzah ash-Shughra, hlm. 15",
+      "durasi": 310
+    },
+    {
+      "id": "kendali",
+      "bab": 7,
+      "judul": "Keduanya menunjuk dua kendali",
+      "kunci": "Kendali penentu: siapa yang menentukan arah ilmu, dan siapa yang menentukan arah kekuasaan dan harta.",
+      "ibarah": "القرار: هو القوة الفاعلة في شؤون الأمة",
+      "sumber": "Ihya' Manhajiyyat an-Namath al-Awsath, hlm. 107",
+      "durasi": 320
+    },
+    {
+      "id": "kendali-ilmu",
+      "bab": 7,
+      "judul": "Tanda pertama: kendali ilmu bergeser",
+      "kunci": "Yang semestinya diarahkan justru mengarahkan. Kendali ilmu dan keyakinan berpindah ke tangan yang belum berhak.",
+      "ibarah": "الركن الأول… لما سيحصل من تغير وخلل في قرار العلم والاعتقاد",
+      "sumber": "An-Nubdzah ash-Shughra, hlm. 15; al-Iqlid hlm. 12",
+      "durasi": 340
+    },
+    {
+      "id": "kendali-kuasa",
+      "bab": 7,
+      "judul": "Tanda kedua: kendali kuasa di tangan yang bukan ahlinya",
+      "kunci": "Ukuran kemuliaan bergeser ke kemegahan bangunan, dan urusan diserahkan kepada yang bukan ahlinya.",
+      "ibarah": "…تغير وفساد في قرار الحكم والاقتصاد",
+      "sumber": "An-Nubdzah ash-Shughra, hlm. 15; al-Iqlid hlm. 12",
+      "durasi": 340
+    },
+    {
+      "id": "dua-keranjang",
+      "bab": 7,
+      "judul": "Semua tanda kembali ke dua kendali ini",
+      "kunci": "Setelah menghimpun seluruh hadis tentang tanda kiamat, beliau mendapati semuanya kembali ke dua kendali ini.",
+      "ibarah": "تندرج تحت دراسة الركنين… كافة نماذج العلم بعلامات الساعة",
+      "sumber": "An-Nubdzah ash-Shughra, hlm. 16",
+      "durasi": 340
+    },
+    {
+      "id": "simpul",
+      "bab": 7,
+      "judul": "Bagaimana ikatan itu lepas satu per satu",
+      "kunci": "Yang pertama lepas adalah kendali kekuasaan; yang terakhir adalah salat, dalam arti pertikaian tentang salat.",
+      "ibarah": "لتنقضن عرى الإسلام عروة عروة… فأولهن نقضا الحكم، وآخرهن الصلاة",
+      "sumber": "An-Nubdzah ash-Shughra, hlm. 20–21; Ibnu Hibban 6715",
+      "durasi": 360
+    },
+    {
+      "id": "tiga-garis",
+      "bab": 8,
+      "judul": "Kecil, tengah, besar: soal waktu bukan soal penting",
+      "kunci": "Tanda kiamat dibagi tiga menurut kapan terjadinya, bukan menurut seberapa penting.",
+      "ibarah": "العلامات الحاملة صفة التوسط الزمني",
+      "sumber": "Al-Usus wal-Munthalaqat, hlm. 56",
+      "durasi": 320
+    },
+    {
+      "id": "garis-kecil",
+      "bab": 8,
+      "judul": "Tanda kecil: garis terpanjang",
+      "kunci": "Dimulai bahkan sebelum Nabi ﷺ lahir dan berlanjut sampai tiupan sangkakala. Ia berulang dan banyak ragamnya.",
+      "sumber": "An-Nubdzah ash-Shughra, hlm. 43, 50",
+      "durasi": 300
+    },
+    {
+      "id": "garis-tengah",
+      "bab": 8,
+      "judul": "Tanda tengah: peristiwa besar yang terjadi sekali",
+      "kunci": "Dari diutusnya Nabi ﷺ sampai munculnya Imam Mahdi: wafat Nabi, terbunuhnya Umar, Utsman, dan Ali, serta penyerahan kekuasaan oleh al-Hasan.",
+      "sumber": "An-Nubdzah ash-Shughra, hlm. 47–48",
+      "durasi": 330
+    },
+    {
+      "id": "garis-besar",
+      "bab": 8,
+      "judul": "Tanda besar: penutup",
+      "kunci": "Sepuluh tanda, dari munculnya Imam Mahdi sampai tiupan sangkakala.",
+      "poin": ["Imam Mahdi", "Dajjal", "Turunnya Nabi Isa", "Ya'juj dan Ma'juj", "Asap", "Tiga gerhana", "Api yang menggiring", "Binatang melata", "Matahari terbit dari barat", "Tiupan sangkakala"],
+      "sumber": "An-Nubdzah ash-Shughra, hlm. 46",
+      "durasi": 340
+    },
+    {
+      "id": "bertumpuk",
+      "bab": 8,
+      "judul": "Ketiganya berjalan bertumpuk",
+      "kunci": "Tiga jenis tanda itu berjalan saling tumpang-tindih di sepanjang zaman. Di satu titik waktu bisa ada lebih dari satu jenis.",
+      "ibarah": "وكلها تجري متداخلة في مسيرة الأزمنة والأمكنة",
+      "sumber": "An-Nubdzah ash-Shughra, hlm. 43",
+      "durasi": 310
+    },
+    {
+      "id": "jalan-umat",
+      "bab": 9,
+      "judul": "Perjalanan umat menurut Nabi ﷺ",
+      "kunci": "Kenabian, lalu khilafah, lalu kerajaan, lalu kekuasaan yang memaksa, lalu kembali kepada keadilan.",
+      "ibarah": "تكون النبوة… ثم تكون ملكا عاضا… ثم تكون ملكا جبرية… ثم تكون خلافة على منهاج النبوة",
+      "sumber": "Al-Usus wal-Munthalaqat, hlm. 175",
+      "durasi": 340
+    },
+    {
+      "id": "peta-fase",
+      "bab": 9,
+      "judul": "Peta fase beliau",
+      "kunci": "Jalan itu dirinci menjadi fase: kenabian, khilafah rasyidah, dua kerajaan, negeri terpecah, khilafah Utsmani, lalu zaman buih.",
+      "sumber": "An-Nubdzah ash-Shughra, hlm. 43–44",
+      "durasi": 330
+    },
+    {
+      "id": "payung",
+      "bab": 9,
+      "judul": "Setiap fase punya pelindung",
+      "kunci": "Keselamatan fase dijaga nash; keselamatan pribadi dijaga imunitas dari nash.",
+      "ibarah": "سلامة المرحلة بالنص، وسلامة الذوات بالحصانة",
+      "sumber": "Al-Usus wal-Munthalaqat, hlm. 98",
+      "durasi": 330
+    },
+    {
+      "id": "buih",
+      "bab": 9,
+      "judul": "Zaman buih",
+      "kunci": "Nabi mengabarkan suatu masa ketika umat banyak jumlahnya tetapi ringan, seperti buih di aliran banjir.",
+      "ibarah": "أنتم يومئذ كثير، ولكنكم غثاء كغثاء السيل",
+      "sumber": "HR. Abu Dawud 4297; An-Nubdzah hlm. 26",
+      "durasi": 330
+    },
+    {
+      "id": "wahn",
+      "bab": 9,
+      "judul": "Penyakitnya bernama al-wahn",
+      "kunci": "Bukan lemah badan, melainkan cinta dunia dan takut mati.",
+      "kiri": { "judul": "Cinta dunia", "arab": "حب الدنيا", "isi": [] },
+      "kanan": { "judul": "Takut mati", "arab": "كراهية الموت", "isi": [] },
+      "sumber": "HR. Abu Dawud; al-Marshad j.1 hlm. 37",
+      "durasi": 310
+    },
+    {
+      "id": "tanpa-payung",
+      "bab": 9,
+      "judul": "Tanpa payung, kecuali dua",
+      "kunci": "Di zaman buih tidak ada lagi pelindung bagi kendali ilmu dan kuasa. Yang tersisa: penjagaan Allah untuk umat, dan menjaga lingkaran terdekat.",
+      "ibarah": "ولا حصانة لمرحلة الغثاء… وإنما يبقى الحفظ العام للأمة… وعلى صفة الخويصة والخاصة",
+      "sumber": "Al-Usus wal-Munthalaqat, hlm. 16",
+      "durasi": 350
+    },
+    {
+      "id": "lima-babak",
+      "bab": 9,
+      "judul": "Lima babak zaman buih",
+      "kunci": "Nama-namanya diambil dari hadis tentang fitnah. Tiap babak menyiapkan babak berikutnya.",
+      "rukun": [
+        { "nama": "Ahlas", "arab": "الأحلاس", "ilmu": "Diincar diam-diam saat bangsa industri menguat" },
+        { "nama": "Sarra'", "arab": "السراء", "ilmu": "Dijajah dan dibagi-bagi" },
+        { "nama": "Duhaima'", "arab": "الدهيماء", "ilmu": "Umat terbelah dua kubu ideologi" },
+        { "nama": "Fitnah keempat", "arab": "الفتنة الرابعة", "ilmu": "Satu sistem dunia mengatur semuanya" },
+        { "nama": "Shailamah", "arab": "الصيلمة", "ilmu": "Rakyat bergejolak tetapi belum mampu mengubah" }
+      ],
+      "sumber": "An-Nubdzah hlm. 44–45, 48; Al-Usus hlm. 412",
+      "durasi": 440
+    },
+    {
+      "id": "satu-rangkaian",
+      "bab": 9,
+      "judul": "Satu rangkaian, satu arah",
+      "kunci": "Tiap babak menyiapkan babak berikutnya, dan arahnya satu: merebut kendali ilmu dan kuasa.",
+      "ibarah": "مرحلة الأحلاس تمهد لمرحلة السراء، ومرحلة السراء تمهد لمرحلة الدهيماء…",
+      "sumber": "Al-Usus wal-Munthalaqat, hlm. 216",
+      "durasi": 350
+    },
+    {
+      "id": "posisi-kita",
+      "bab": 9,
+      "judul": "Menurut beliau, kita di awal babak kelima",
+      "kunci": "Ini pembacaan beliau atas zamannya, bukan penentuan tanggal.",
+      "ibarah": "ما نحن اليوم فيه من بدايات مرحلة الاستنفار",
+      "sumber": "Al-Marshad j.1 hlm. 162",
+      "durasi": 320
+    },
+    {
+      "id": "terang",
+      "bab": 9,
+      "judul": "Setelah gelap, ada terang",
+      "kunci": "Sesudah masa sulit datang keadilan bersama Imam Mahdi dan Nabi Isa. Di setiap fase pun selalu ada jeda kebaikan.",
+      "ibarah": "تنفسات مرحلية",
+      "sumber": "Al-Usus hlm. 36; An-Nubdzah hlm. 47",
+      "durasi": 320
+    },
+    {
+      "id": "penggaris",
+      "bab": 10,
+      "judul": "Nash adalah penggaris, peristiwa yang diukur",
+      "kunci": "Ayat dan hadis menjadi ukuran, lalu peristiwa ditimbang dengannya, bukan sebaliknya.",
+      "ibarah": "…ثم عرض الأحداث والتحولات عليها… وليس العكس",
+      "sumber": "Al-Usus wal-Munthalaqat, hlm. 15",
+      "durasi": 330
+    },
+    {
+      "id": "tanpa-nama",
+      "bab": 10,
+      "judul": "Tanpa nama, tanpa tanggal",
+      "kunci": "Ilmu ini membaca pola. Ia tidak menunjuk orang tertentu dan tidak menentukan hari, bulan, atau tahun.",
+      "ibarah": "دون تحديد الأفراد أو التواريخ الزمنية باليوم والشهر والسنة… فالمعتمد ذكر الخبر تقريبيا",
+      "sumber": "Al-Usus wal-Munthalaqat, hlm. 80",
+      "durasi": 330
+    },
+    {
+      "id": "yang-tersembunyi",
+      "bab": 10,
+      "judul": "Yang disembunyikan Allah tidak perlu dicari",
+      "kunci": "Apa yang Allah kehendaki terhadap kita Dia sembunyikan. Apa yang Allah minta dari kita Dia jelaskan.",
+      "ibarah": "ما أراده بنا أخفاه عنا، وما أراده منا بينه لنا",
+      "sumber": "Ucapan Ja'far ash-Shadiq; dikutip Al-Usus hlm. 21",
+      "durasi": 320
+    },
+    {
+      "id": "merenung",
+      "bab": 10,
+      "judul": "Mengajak merenung, bukan memvonis",
+      "kunci": "Ilmu ini tidak menjatuhkan hukuman kepada siapa pun. Ia menjelaskan tanda dan mengajak berpikir.",
+      "ibarah": "لا يصدر الأحكام في منهجه بقدر ما يدعو إلى التأمل",
+      "sumber": "Al-Mashfufah al-Umm, hlm. 21",
+      "durasi": 320
+    },
+    {
+      "id": "jangan-tergesa",
+      "bab": 10,
+      "judul": "Jangan tergesa",
+      "kunci": "Kemiripan peristiwa bisa menjebak orang yang tergesa-gesa mencocokkan.",
+      "ibarah": "فإن تشابه الظواهر قد يوقع المستعجل في الخطأ",
+      "sumber": "Al-Usus wal-Munthalaqat, hlm. 351",
+      "durasi": 310
+    },
+    {
+      "id": "dua-pegangan",
+      "bab": 11,
+      "judul": "Dua pegangan",
+      "kunci": "Meneladani sikap Nabi dan para khalifah di saat genting, dan menimbang sarana baru dengan dalil.",
+      "sumber": "An-Nubdzah ash-Shughra, hlm. 8, 35–36",
+      "durasi": 320
+    },
+    {
+      "id": "hasan",
+      "bab": 11,
+      "judul": "Teladan al-Hasan bin Ali",
+      "kunci": "Beliau menyerahkan kekuasaan yang sebenarnya haknya, demi menjaga darah kaum muslimin.",
+      "ibarah": "وإني تركته حقنا لدماء المسلمين وطلبا لما عند الله",
+      "sumber": "Tarikh ath-Thabari; An-Nubdzah hlm. 40",
+      "durasi": 340
+    },
+    {
+      "id": "sarana",
+      "bab": 11,
+      "judul": "\"Ini tidak ada di zaman Nabi\" bukan alasan menolak",
+      "kunci": "Sarana baru boleh dipakai untuk agama, asalkan punya dasar dalil dan tidak melanggar syariat.",
+      "ibarah": "ومن ذلك خدمة الديانة بالوسائل الحديثة… في خدمة الدعوة إلى الله",
+      "sumber": "An-Nubdzah ash-Shughra, hlm. 36–37",
+      "durasi": 330
+    },
+    {
+      "id": "kaidah-selamat",
+      "bab": 11,
+      "judul": "Kaidah keselamatan",
+      "kunci": "Keluar sebagaimana masuk: lidah selamat dari mencela, tangan selamat dari darah. Kecuali dalam perkara yang Allah wajibkan.",
+      "kiri": { "judul": "Jaga lisan", "arab": "حفظ اللسان", "isi": [] },
+      "kanan": { "judul": "Jaga tangan", "arab": "حفظ اليد", "isi": [] },
+      "sumber": "An-Nubdzah ash-Shughra, hlm. 59, 13",
+      "durasi": 340
+    },
+    {
+      "id": "jalan-tengah",
+      "bab": 11,
+      "judul": "Jalan tengah",
+      "kunci": "Yang tertinggal menyusul, yang berlebihan kembali. Ukurannya ilmu bersanad dan akhlak Nabi, bukan posisi politik.",
+      "ibarah": "خير الناس هذا النمط الأوسط، يلحق بهم التالي، ويرجع إليهم الغالي",
+      "sumber": "Ucapan Ali; Al-Usus hlm. 111",
+      "durasi": 340
+    },
+    {
+      "id": "lingkaran",
+      "bab": 11,
+      "judul": "Rawat lingkaran terdekat",
+      "kunci": "Ketika kerakusan dituruti, hawa nafsu diikuti, dan setiap orang membanggakan pendapatnya, jagalah dirimu dan lingkaran terdekatmu.",
+      "ibarah": "فعليك بخويصة نفسك ودع عنك العوام",
+      "sumber": "An-Nubdzah ash-Shughra, hlm. 53",
+      "durasi": 340
+    },
+    {
+      "id": "tetap-dakwah",
+      "bab": 11,
+      "judul": "Bukan berarti berhenti berdakwah",
+      "kunci": "Tetap taat, tetap menyebarkan ilmu, tetap menasihati dengan hikmah, tanpa ikut ke tengah badai.",
+      "ibarah": "مع الاشتغال بطاعة الله ونشر العلم والدعوة إلى الله بالحكمة والموعظة الحسنة",
+      "sumber": "An-Nubdzah ash-Shughra, hlm. 54",
+      "durasi": 320
+    },
+    {
+      "id": "bukan-bola",
+      "bab": 11,
+      "judul": "Para sahabat bukan bola permainan",
+      "kunci": "Perselisihan di antara para sahabat sudah dimaafkan Allah. Jangan mewarisinya menjadi permusuhan.",
+      "ibarah": "سيكون بين أصحابي فتنة يغفرها الله لهم بصحبتهم إياي، ثم يستن بها قوم من بعدهم فيدخلون به النار",
+      "sumber": "An-Nubdzah ash-Shughra, hlm. 42; Al-Ijabat hlm. 57",
+      "durasi": 350
+    },
+    {
+      "id": "bersegera",
+      "bab": 12,
+      "judul": "Bersegeralah sebelum tujuh hal",
+      "kunci": "Nabi memerintahkan bersegera beramal sebelum tujuh hal datang. Beliau menamainya fikih bersegera.",
+      "ibarah": "بادروا بالأعمال سبعا: هل تنتظرون إلا فقرا منسيا، أو غنى مطغيا، أو مرضا مفسدا، أو هرما مفندا، أو موتا مجهزا، أو الدجال… أو الساعة",
+      "sumber": "An-Nubdzah ash-Shughra, hlm. 55",
+      "durasi": 370
+    },
+    {
+      "id": "tujuh-langkah",
+      "bab": 12,
+      "judul": "Tujuh langkah nyata",
+      "kunci": "Untuk tiap ancaman ada langkah yang bisa dikerjakan sekarang.",
+      "rukun": [
+        { "nama": "Kemiskinan", "arab": "فقر منسي", "ilmu": "Zakat, wakaf, saling menanggung, mandiri pangan" },
+        { "nama": "Kekayaan melalaikan", "arab": "غنى مطغي", "ilmu": "Menjauhi riba, tanggung jawab sosial" },
+        { "nama": "Penyakit", "arab": "مرض مفسد", "ilmu": "Kebersihan, menolak suap dan pilih kasih" },
+        { "nama": "Usia tua", "arab": "هرم مفند", "ilmu": "Berbakti kepada orang tua, menjaga keluarga" },
+        { "nama": "Kematian massal", "arab": "موت مجهز", "ilmu": "Menyebarkan perdamaian, menjauhi adu domba" },
+        { "nama": "Tipu daya Dajjal", "arab": "الدجال", "ilmu": "Menyebarkan ilmu ini, berdoa, awal al-Kahfi" },
+        { "nama": "Kiamat", "arab": "الساعة", "ilmu": "Beramal saleh dan kembali kepada Allah" }
+      ],
+      "sumber": "An-Nubdzah ash-Shughra, hlm. 56–57",
+      "durasi": 460
+    },
+    {
+      "id": "menanam",
+      "bab": 12,
+      "judul": "Tetap menanam",
+      "kunci": "Kabar akhir zaman tidak untuk membuat putus asa, tetapi untuk menyalakan semangat beramal.",
+      "ibarah": "إن قامت الساعة وبيد أحدكم فسيلة فاستطاع أن لا تقوم حتى يغرسها فليغرسها",
+      "sumber": "An-Nubdzah ash-Shughra, hlm. 57",
+      "durasi": 340
+    },
+    {
+      "id": "urutan-kitab",
+      "bab": 13,
+      "judul": "Mulai dari kitab kecil",
+      "kunci": "Beliau menulis an-Nubdzah ash-Shughra khusus untuk pemula, lalu menunjuk kitab lanjutannya.",
+      "rukun": [
+        { "nama": "An-Nubdzah ash-Shughra", "arab": "النبذة الصغرى", "ilmu": "Ringkas, untuk pemula" },
+        { "nama": "At-Talid wath-Tharif", "arab": "التليد والطارف", "ilmu": "Bait dan syarah" },
+        { "nama": "Dawa'ir al-I'adah", "arab": "دوائر الإعادة", "ilmu": "Menyatukan keempat rukun" },
+        { "nama": "Al-Usus wal-Munthalaqat", "arab": "الأسس والمنطلقات", "ilmu": "Kitab induk" }
+      ],
+      "ibarah": "جمعتها للمبتدئين",
+      "sumber": "An-Nubdzah ash-Shughra, hlm. 8, 61",
+      "durasi": 360
+    },
+    {
+      "id": "guru",
+      "bab": 13,
+      "judul": "Belajar kepada guru",
+      "kunci": "Ilmu ini diterima bersambung dari guru ke guru, dan hingga kini menjadi pelajaran tetap di ribath-ribath Arbithah at-Tarbiyah al-Islamiyyah.",
+      "ibarah": "مادة مقررة في مناهج الأربطة الإسلامية",
+      "sumber": "Al-Iqlid, hlm. 66",
+      "durasi": 330
+    },
+    {
+      "id": "lima-ai",
+      "bab": 13,
+      "judul": "Belajar sambil bertanya",
+      "kunci": "Lima AI membaca kitab dan ceramah beliau yang sama, dengan cara bantu yang berbeda. Kalau baru mulai, cobalah Al-Bayan.",
+      "rukun": [
+        { "nama": "Al-Bayan", "arab": "البيان", "ilmu": "Penjelasan sederhana dan perumpamaan" },
+        { "nama": "Al-Muhaqqiq", "arab": "المحقق", "ilmu": "Ibarah dan halaman kitab" },
+        { "nama": "Al-Mukhtabir", "arab": "المختبر", "ilmu": "Latihan dan tanya jawab" },
+        { "nama": "Al-Habib", "arab": "الحبيب", "ilmu": "Menelusuri ceramah beliau" },
+        { "nama": "Al-Khatib", "arab": "الخطيب", "ilmu": "Menyusun khutbah dan materi dakwah" }
+      ],
+      "sumber": "OpenTurath AI",
+      "durasi": 380
+    },
+    {
+      "id": "penutup",
+      "bab": 14,
+      "judul": "Penggerak keempat itu sudah ada",
+      "kunci": "Tugas kita mengenalnya, agar tidak bingung ketika jalan berlumpur.",
+      "arab": "فِقْهُ التَّحَوُّلَاتِ",
+      "durasi": 330
+    }
+  ]
+}
