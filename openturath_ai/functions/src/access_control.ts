@@ -78,7 +78,7 @@ export function classifyLegacyEvent(event: any, resolveScopes: (service: unknown
   const amount = Number(event.amount), paidMs = millis(event.paid_at), scopes = resolveScopes(event.service);
   if (event.reason) return {action: "review", reason: String(event.reason)};
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return {action: "review", reason: "invalid_email"};
-  if (!/^[A-Za-z0-9_-]{1,128}$/.test(id)) return {action: "review", reason: "invalid_transaction_id"};
+  if (!id || id.length > 255) return {action: "review", reason: "invalid_transaction_id"};
   if (!Number.isFinite(amount) || amount <= 0) return {action: "review", reason: "non_positive_amount"};
   if (!scopes.length) return {action: "review", reason: "unknown_service"};
   if (!Number.isFinite(paidMs)) return {action: "review", reason: "missing_payment_time"};

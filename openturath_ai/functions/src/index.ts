@@ -962,8 +962,9 @@ async function processSuccessfulPayment(invoiceNumber: string, paidAmount: unkno
 
     const receiptRef = gatewayEvidence ? db.collection("payment_receipts").doc(keyOf("midtrans", gatewayEvidence.transactionId)) : null;
     if (gatewayEvidence) {
+      const txId = typeof gatewayEvidence.transactionId === "string" ? gatewayEvidence.transactionId.trim() : "";
       if (gatewayEvidence.orderId !== invoiceNumber || (gatewayEvidence.currency && gatewayEvidence.currency !== "IDR") ||
-          typeof gatewayEvidence.transactionId !== "string" || !/^[a-zA-Z0-9_-]{1,128}$/.test(gatewayEvidence.transactionId)) throw new Error("Invalid gateway identity");
+          !txId || txId.length > 255) throw new Error("Invalid gateway identity");
       const receipt = (await t.get(receiptRef!)).data();
       if (receipt && receipt.invoice_number !== invoiceNumber) throw new Error("Gateway transaction already bound to another invoice");
     }

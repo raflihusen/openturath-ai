@@ -110,7 +110,7 @@ function classifyLegacyEvent(event, resolveScopes) {
         return { action: "review", reason: String(event.reason) };
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
         return { action: "review", reason: "invalid_email" };
-    if (!/^[A-Za-z0-9_-]{1,128}$/.test(id))
+    if (!id || id.length > 255)
         return { action: "review", reason: "invalid_transaction_id" };
     if (!Number.isFinite(amount) || amount <= 0)
         return { action: "review", reason: "non_positive_amount" };
