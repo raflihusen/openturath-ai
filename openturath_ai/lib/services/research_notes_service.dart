@@ -34,10 +34,12 @@ class ResearchNote {
     buffer.write('Sumber: OpenTurath AI ($agentTitle)');
     if (bookTitle != null && bookTitle!.isNotEmpty) {
       buffer.write(', Kitab $bookTitle');
-      if (bookVolume != null && bookVolume!.isNotEmpty)
+      if (bookVolume != null && bookVolume!.isNotEmpty) {
         buffer.write(' Juz $bookVolume');
-      if (bookPage != null && bookPage!.isNotEmpty)
+      }
+      if (bookPage != null && bookPage!.isNotEmpty) {
         buffer.write(' Hal $bookPage');
+      }
     }
     return buffer.toString();
   }

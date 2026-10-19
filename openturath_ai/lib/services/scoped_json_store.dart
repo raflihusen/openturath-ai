@@ -104,7 +104,8 @@ class ScopedJsonListStore<T> {
 
   Future<void> _write(String key, List<T> items) async {
     final raw = jsonEncode(items.map(encode).toList());
-    if (!await storage.write(key, raw))
+    if (!await storage.write(key, raw)) {
       throw StateError('Saved data could not be written');
+    }
   }
 }

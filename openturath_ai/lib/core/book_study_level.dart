@@ -18,11 +18,17 @@ enum BookStudyLevel {
   static BookStudyLevel fromMetadata(String value) {
     final normalized = value.toLowerCase().trim();
     if (const ['matan', 'matn', 'متن', 'المتون', 'matan dasar']
-        .contains(normalized)) return matan;
+        .contains(normalized)) {
+      return matan;
+    }
     if (const ['syarah', 'sharh', 'شرح', 'الشروح', "syarah mu'tamad"]
-        .contains(normalized)) return sharh;
+        .contains(normalized)) {
+      return sharh;
+    }
     if (const ['hasyiyah', 'hashiyah', 'حاشية', 'الحواشي', 'hasyiyah ilmiah']
-        .contains(normalized)) return hashiyah;
+        .contains(normalized)) {
+      return hashiyah;
+    }
     return unclassified;
   }
 }
