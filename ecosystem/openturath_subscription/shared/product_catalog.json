@@ -87,14 +87,14 @@
       "notebooks": [
         {
           "entity": "06.1_AL_MUHAQQIQ",
-          "master": "483d0291-0a70-411c-bff0-f1ea4b83b2fd",
+          "master": "dc7ee7e4-f4ad-4db6-9cd0-0013727abbe4",
           "legacy": [
             "67b65ed8-0d1e-4fb4-929c-4fcb735d3be3"
           ]
         },
         {
           "entity": "06.2_AL_BAYAN",
-          "master": "dc7ee7e4-f4ad-4db6-9cd0-0013727abbe4",
+          "master": "483d0291-0a70-411c-bff0-f1ea4b83b2fd",
           "legacy": [
             "75882649-638f-4729-97f8-19897d90b108"
           ]
