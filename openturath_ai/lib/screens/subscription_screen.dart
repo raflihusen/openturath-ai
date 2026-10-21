@@ -14,6 +14,7 @@ import '../core/localization.dart';
 import '../core/product_pricing.dart';
 import '../models/agent_model.dart';
 import '../models/sub_agent_model.dart';
+import '../services/agent_service.dart';
 import '../services/subscription_service.dart';
 import '../widgets/payment_checkout_sheet.dart';
 import '../widgets/promo_price.dart';
@@ -36,6 +37,8 @@ class SubscriptionScreen extends StatefulWidget {
 
 class _SubscriptionScreenState extends State<SubscriptionScreen> {
   final _service = SubscriptionService();
+  final _agentService = AgentService();
+  List<AgentModel>? _loadedAgents;
   String _selectedAgentId = 'fiqh_syafii';
   int _tahawwulatIndex = 2;
   int _specialistIndex = 0;
@@ -50,6 +53,9 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     ProductPricingService.syncPricing(forceRefresh: true).then((_) {
       if (mounted) setState(() {});
     });
+    _agentService.getAgents().then((agents) {
+      if (mounted) setState(() => _loadedAgents = agents);
+    }).catchError((_) {});
   }
 
   String _checkoutErrorMessage(FirebaseFunctionsException error) {
@@ -118,12 +124,16 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
         : Loc.tr('subHeadlineNamed', [first]);
   }
 
-  List<AgentModel> get _specialists => AgentModel.defaultAgents
-      .where((a) =>
-          a.kind == CorpusKind.discipline &&
-          a.isActive &&
-          a.id != 'fiqh_tahawwulat')
-      .toList();
+  List<AgentModel> get _specialists {
+    final list = _loadedAgents ?? AgentService.getActiveAgentsSync();
+    return list
+        .where((a) =>
+            a.kind == CorpusKind.discipline &&
+            a.isActive &&
+            !a.isComingSoon &&
+            a.id != 'fiqh_tahawwulat')
+        .toList();
+  }
 
   @override
   void didChangeDependencies() {
@@ -134,6 +144,8 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     final agent = args is Map ? args['agent'] : null;
     if (agent is AgentModel && _specialists.any((a) => a.id == agent.id)) {
       _selectedAgentId = agent.id;
+    } else if (_specialists.isNotEmpty) {
+      _selectedAgentId = _specialists.first.id;
     }
   }
 
@@ -376,9 +388,12 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
         var query = '';
         return StatefulBuilder(
           builder: (modalCtx, setModalState) {
+            final activeSpecialists = specialists
+                .where((a) => a.isActive && !a.isComingSoon)
+                .toList();
             final filtered = query.isEmpty
-                ? specialists
-                : specialists.where((a) {
+                ? activeSpecialists
+                : activeSpecialists.where((a) {
                     final q = query.toLowerCase();
                     return a.title.toLowerCase().contains(q) ||
                         a.titleArabic.contains(q) ||
@@ -500,8 +515,11 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
         AgentModel.defaultAgents.firstWhere((a) => a.id == 'fiqh_tahawwulat');
     final offer = ProductPricing.tahawwulat[_tahawwulatIndex];
     final specialists = _specialists;
-    final selected = specialists.firstWhere((a) => a.id == _selectedAgentId,
-        orElse: () => specialists.first);
+    final selected = specialists.isNotEmpty
+        ? specialists.firstWhere((a) => a.id == _selectedAgentId,
+            orElse: () => specialists.first)
+        : null;
+    final hasSpecialists = specialists.isNotEmpty && selected != null;
 
     final single = ProductPricing.specialists[_specialistIndex];
 
@@ -656,42 +674,49 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     );
 
     // Cakupan paket satu bidang: pemilih bidang.
-    final fieldPicker = Material(
-      color: OTColors.surfaceSubtle(dark),
-      borderRadius: BorderRadius.circular(OTRadius.input),
-      child: InkWell(
-        onTap: _processing
-            ? null
-            : () => _showDisciplinePickerModal(context, specialists),
-        borderRadius: BorderRadius.circular(OTRadius.input),
-        child: Padding(
-          padding: const EdgeInsetsDirectional.fromSTEB(20, 12, 16, 12),
-          child: Row(
-            children: [
-              Expanded(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
+    final fieldPicker = selected == null
+        ? const SizedBox.shrink()
+        : Material(
+            color: OTColors.surfaceSubtle(dark),
+            borderRadius: BorderRadius.circular(OTRadius.input),
+            child: InkWell(
+              onTap: (_processing || specialists.length <= 1)
+                  ? null
+                  : () => _showDisciplinePickerModal(context, specialists),
+              borderRadius: BorderRadius.circular(OTRadius.input),
+              child: Padding(
+                padding: const EdgeInsetsDirectional.fromSTEB(20, 12, 16, 12),
+                child: Row(
                   children: [
-                    Text(Loc.tr('chooseField'),
-                        style: ScholarlyFonts.outfit(
-                            fontSize: OTFontSize.s12, color: muted)),
-                    const SizedBox(height: 4),
-                    Text(
-                      Loc.text(selected.title),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: OTTypography.bodyMedium(color: ink),
+                    Expanded(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            specialists.length <= 1
+                                ? Loc.tr('discipline')
+                                : Loc.tr('chooseField'),
+                            style: ScholarlyFonts.outfit(
+                                fontSize: OTFontSize.s12, color: muted),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            Loc.text(selected.title),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: OTTypography.bodyMedium(color: ink),
+                          ),
+                        ],
+                      ),
                     ),
+                    if (specialists.length > 1)
+                      Icon(Icons.unfold_more_rounded, size: 20, color: muted),
                   ],
                 ),
               ),
-              Icon(Icons.unfold_more_rounded, size: 20, color: muted),
-            ],
-          ),
-        ),
-      ),
-    );
+            ),
+          );
 
     return Scaffold(
       backgroundColor: OTColors.canvas(dark),
@@ -744,37 +769,40 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
             ),
           );
 
-          final singlePlan = plan(
-            featured: false,
-            body: planBody(
-              wide: wide,
-              label: Loc.tr('planSingleLabel'),
-              title: Loc.tr('specialistAccess'),
-              description: Loc.tr('planSingleDescription'),
-              scope: fieldPicker,
-              tiers: _TierSelector(
-                offers: ProductPricing.specialists,
-                selected: _specialistIndex,
-                onSelect: _processing
-                    ? null
-                    : (i) => setState(() => _specialistIndex = i),
-              ),
-              price: single,
-              benefits: [
-                Loc.tr('planSingleBenefit1', [Loc.text(selected.title)]),
-                Loc.tr('planSingleBenefit2'),
-                Loc.tr('planSingleBenefit3'),
-              ],
-              onCheckout: () => _checkout(selected, single),
-              agentId: selected.id,
-            ),
-          );
+          final singlePlan = hasSpecialists
+              ? plan(
+                  featured: false,
+                  body: planBody(
+                    wide: wide,
+                    label: Loc.tr('planSingleLabel'),
+                    title: Loc.tr('specialistAccess'),
+                    description: Loc.tr('planSingleDescription'),
+                    scope: fieldPicker,
+                    tiers: _TierSelector(
+                      offers: ProductPricing.specialists,
+                      selected: _specialistIndex,
+                      onSelect: _processing
+                          ? null
+                          : (i) => setState(() => _specialistIndex = i),
+                    ),
+                    price: single,
+                    benefits: [
+                      Loc.tr('planSingleBenefit1', [Loc.text(selected.title)]),
+                      Loc.tr('planSingleBenefit2'),
+                      Loc.tr('planSingleBenefit3'),
+                    ],
+                    onCheckout: () => _checkout(selected, single),
+                    agentId: selected.id,
+                  ),
+                )
+              : null;
 
           return SingleChildScrollView(
             padding: const EdgeInsets.fromLTRB(20, 8, 20, 48),
             child: Center(
               child: ConstrainedBox(
-                constraints: BoxConstraints(maxWidth: wide ? 1040 : 640),
+                constraints: BoxConstraints(
+                    maxWidth: (wide && hasSpecialists) ? 1040 : 640),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
@@ -786,7 +814,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                     const SizedBox(height: 8),
                     _LibraryProof(ink: ink, muted: muted),
                     const SizedBox(height: 20),
-                    if (wide)
+                    if (wide && hasSpecialists && singlePlan != null)
                       IntrinsicHeight(
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -801,8 +829,10 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                       )
                     else ...[
                       OTReveal(index: 0, child: featuredPlan),
-                      const SizedBox(height: 16),
-                      OTReveal(index: 1, child: singlePlan),
+                      if (hasSpecialists && singlePlan != null) ...[
+                        const SizedBox(height: 16),
+                        OTReveal(index: 1, child: singlePlan),
+                      ],
                     ],
                     const SizedBox(height: 12),
                     if (_processing)

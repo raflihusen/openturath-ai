@@ -21,7 +21,6 @@ import '../models/agent_model.dart';
 import '../services/auth_service.dart';
 import '../core/navigation_guard.dart';
 import '../core/membership_pass_state.dart';
-import '../widgets/apple_interactive_wrapper.dart';
 import '../widgets/legal_document_sheet.dart';
 
 import 'package:openturath_ai/core/design/ot_buttons.dart';
@@ -983,29 +982,41 @@ class _SettingsTile extends StatelessWidget {
     final textPrimary = OTColors.textPrimary(isDark);
     final textSecondary = OTColors.textSecondary(isDark);
 
-    return AppleInteractiveWrapper(
+    return InkWell(
       onTap: onTap,
-      pressedScale: 0.985,
-      hapticType: HapticFeedbackType.light,
-      borderRadius: BorderRadius.circular(OTRadius.input),
-      child: ListTile(
-        onTap: onTap,
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: OTSpacing.base, vertical: 2),
-        leading: Icon(
-          icon,
-          size: 21,
-          color: textPrimary,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+            horizontal: OTSpacing.base, vertical: 12),
+        child: Row(
+          children: [
+            Icon(
+              icon,
+              size: 20,
+              color: textPrimary,
+            ),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    Loc.text(title),
+                    style: OTTypography.bodyMedium(color: textPrimary),
+                  ),
+                  if (subtitle.isNotEmpty) ...[
+                    const SizedBox(height: 2),
+                    Text(
+                      subtitle,
+                      style: OTTypography.caption(color: textSecondary),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+            if (trailing != null) trailing!,
+          ],
         ),
-        title: Text(
-          Loc.text(title),
-          style: OTTypography.bodyMedium(color: textPrimary),
-        ),
-        subtitle: Text(
-          subtitle,
-          style: OTTypography.caption(color: textSecondary),
-        ),
-        trailing: trailing,
       ),
     );
   }

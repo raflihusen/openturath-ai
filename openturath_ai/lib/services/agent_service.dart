@@ -27,6 +27,29 @@ class AgentService {
     'fiqh_syafii_muhaqqiq',
   };
 
+  static List<AgentModel> _applyActiveStatus(
+      List<AgentModel> baseAgents, Set<String> activeIds) {
+    return baseAgents.map((agent) {
+      final isDirectActive = activeIds.contains(agent.id);
+      final isParentActive = (agent.id.startsWith('fiqh_tahawwulat') &&
+              activeIds.contains('fiqh_tahawwulat')) ||
+          (agent.id.startsWith('fiqh_syafii') &&
+              activeIds.contains('fiqh_syafii'));
+
+      if (isDirectActive || isParentActive) {
+        return agent.copyWith(status: 'active');
+      } else {
+        return agent.copyWith(status: 'coming_soon');
+      }
+    }).toList();
+  }
+
+  /// Sinkronisasi instan daftar agen dengan status aktif/rilis saat ini
+  static List<AgentModel> getActiveAgentsSync() {
+    final activeIds = _cachedActiveIds ?? defaultLaunchActiveIds;
+    return _applyActiveStatus(AgentModel.defaultAgents, activeIds);
+  }
+
   // ── Ambil daftar semua agent dari Firestore / model lokal dengan filtering OTA ────
   Future<List<AgentModel>> getAgents({
     bool forceRefresh = false,
@@ -69,19 +92,7 @@ class AgentService {
       }
     }
 
-    return baseAgents.map((agent) {
-      final isDirectActive = activeIds.contains(agent.id);
-      final isParentActive = (agent.id.startsWith('fiqh_tahawwulat') &&
-              activeIds.contains('fiqh_tahawwulat')) ||
-          (agent.id.startsWith('fiqh_syafii') &&
-              activeIds.contains('fiqh_syafii'));
-
-      if (isDirectActive || isParentActive) {
-        return agent.copyWith(status: 'active');
-      } else {
-        return agent.copyWith(status: 'coming_soon');
-      }
-    }).toList();
+    return _applyActiveStatus(baseAgents, activeIds);
   }
 
   static final _notebookPath = RegExp(

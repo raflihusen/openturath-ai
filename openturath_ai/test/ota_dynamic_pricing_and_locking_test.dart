@@ -44,6 +44,34 @@ void main() {
       expect(lockedAgents.map((a) => a.id), contains('tasawwuf'));
     });
 
+    test('AgentService getActiveAgentsSync matches active whitelist and isolates unreleased agents', () {
+      final agents = AgentService.getActiveAgentsSync();
+      final active = agents.where((a) => a.isActive && !a.isComingSoon).toList();
+      final unreleased = agents.where((a) => a.isComingSoon).toList();
+
+      expect(active.map((a) => a.id), contains('fiqh_tahawwulat'));
+      expect(active.map((a) => a.id), contains('fiqh_syafii'));
+
+      // 16 disiplin unreleased harus berstatus coming_soon / locked
+      expect(unreleased.map((a) => a.id), contains('fiqh_hanafi'));
+      expect(unreleased.map((a) => a.id), contains('hadits'));
+      expect(unreleased.map((a) => a.id), contains('tafsir'));
+
+      // Filter spesialis untuk langganan hanya menyertakan yang aktif/rilis (bukan coming_soon dan bukan flagship)
+      final specialistsForSubscription = agents
+          .where((a) =>
+              a.kind == CorpusKind.discipline &&
+              a.isActive &&
+              !a.isComingSoon &&
+              a.id != 'fiqh_tahawwulat')
+          .toList();
+
+      expect(specialistsForSubscription.map((a) => a.id), contains('fiqh_syafii'));
+      expect(specialistsForSubscription.map((a) => a.id), isNot(contains('fiqh_hanafi')));
+      expect(specialistsForSubscription.map((a) => a.id), isNot(contains('hadits')));
+      expect(specialistsForSubscription.map((a) => a.id), isNot(contains('tafsir')));
+    });
+
     test(
         'ProductPricing updateOffers dynamically overrides nominal and revision',
         () {
