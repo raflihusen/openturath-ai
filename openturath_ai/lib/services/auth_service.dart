@@ -12,6 +12,7 @@ import 'agent_session_manager.dart';
 import 'session_user_stream.dart';
 import 'browser_companion_chat_service.dart';
 import 'persistent_google_session.dart';
+import 'desktop_auth_gateway.dart';
 
 class AuthService {
   // Ditunda sampai dipakai, agar layar bisa dirender tanpa Firebase (pratinjau, tes).
@@ -195,8 +196,22 @@ class AuthService {
       } else if (kIsWeb) {
         final result = await _auth.signInWithPopup(GoogleAuthProvider());
         firebaseUser = result.user;
+      } else if (defaultTargetPlatform == TargetPlatform.windows) {
+        // Platform desktop Windows: gunakan DesktopAuthGateway (Loopback + Firebase Web Auth)
+        stage = 'desktop-gateway';
+        final desktopAuth = await DesktopAuthGateway.signIn();
+        if (desktopAuth == null) return null; // Pengguna membatalkan login
+
+        stage = 'firebase-credential';
+        final credential = GoogleAuthProvider.credential(
+          accessToken: desktopAuth.accessToken,
+          idToken: desktopAuth.idToken,
+        );
+
+        final userCredential = await _auth.signInWithCredential(credential);
+        firebaseUser = userCredential.user;
       } else {
-        // Platform desktop lain (Windows/Linux) langsung via Firebase OAuth Provider
+        // Platform desktop lain (Linux) langsung via Firebase OAuth Provider
         final provider = GoogleAuthProvider();
         final userCredential = await _auth.signInWithProvider(provider);
         firebaseUser = userCredential.user;
