@@ -200,7 +200,7 @@ class AgentModel {
               id: 'fiqh_tahawwulat_mukhtabir',
               name: 'Al-Mukhtabir',
               nameArabic: 'المختبر',
-              description: 'Ujian Pemahaman Interaktif',
+              description: 'Uji Pemahaman Tanya Jawab',
               descriptionArabic: 'تقييم الفهم واختبار النوازل المعاصرة',
               emoji: '🎓',
               badge: 'Ujian Nalar',

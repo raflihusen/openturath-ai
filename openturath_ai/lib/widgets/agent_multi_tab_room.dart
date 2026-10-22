@@ -1212,7 +1212,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
   /// Halaman masuk Google ditampilkan apa adanya secara bersih tanpa banner.
   void _enterGoogleSignIn() {
     // Jangan batalkan _readinessTimer agar saat Google selesai redirect/autentikasi,
-    // kesiapan ruang asisten langsung terdeteksi otomatis.
+    // kesiapan sesi AI langsung terdeteksi otomatis.
     _inputRetryTimer?.cancel();
     _loadingStarted = null;
     if (!mounted) return;

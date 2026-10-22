@@ -90,7 +90,7 @@ class TahawwulatAiPicker {
                                                     const [
                                                       'Telusuri teks kitab dan ibarah rujukan.',
                                                       'Pahami konsep dan istilah dengan penjelasan ringkas.',
-                                                      'Uji pemahaman melalui latihan interaktif.',
+                                                      'Uji pemahaman lewat tanya jawab langsung.',
                                                       'Telusuri arsip muhadarah Habib Abu Bakar.',
                                                       'Susun bahan dakwah dan khutbah.'
                                                     ][i % 5],

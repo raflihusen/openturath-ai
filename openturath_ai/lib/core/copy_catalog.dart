@@ -167,9 +167,9 @@ const copyCatalog = <String, List<String>>{
     "احفظ نتائج المطالعة للرجوع إليها"
   ],
   "planFeaturedBenefit1": [
-    "Akses ruang kajian Fikih Tahawwulat",
-    "Access the Fiqh al-Tahawwulat study room",
-    "الوصول إلى مجلس فقه التحولات"
+    "Akses penuh 5 AI Fikih Tahawwulat",
+    "Full access to the 5 Fiqh al-Tahawwulat AIs",
+    "الوصول الكامل إلى 5 نماذج ذكاء اصطناعي لفقه التحولات"
   ],
   "planFeaturedBenefit2": [
     "Lima AI: Al-Muhaqqiq, Al-Bayan, Al-Mukhtabir, Al-Habib, dan Al-Khatib",
@@ -177,9 +177,9 @@ const copyCatalog = <String, List<String>>{
     "خمسة مساعدين: المحقق والبيان والمختبر والحبيب والخطيب"
   ],
   "planFeaturedBenefit3": [
-    "Uji pemahaman interaktif dan evaluasi mandiri",
-    "Interactive comprehension practice and self review",
-    "اختبار الفهم التفاعلي والمراجعة الذاتية"
+    "Uji pemahaman lewat tanya jawab langsung",
+    "Direct Q&A comprehension practice",
+    "اختبار الفهم عبر السؤال والجواب المباشر"
   ],
   "planFeaturedBenefit4": [
     "Arsip muhadharah dan transkrip sebagai rujukan tanya jawab",
@@ -521,9 +521,9 @@ const copyCatalog = <String, List<String>>{
     "تم ربط حساب Google"
   ],
   "googleSessionPreparing": [
-    "Menyiapkan ruang asisten…",
-    "Preparing your study room…",
-    "جارٍ تهيئة مجلس المطالعة…"
+    "Menyiapkan sesi AI…",
+    "Preparing your AI session…",
+    "جارٍ تهيئة جلسة الذكاء الاصطناعي…"
   ],
   "cancelSignIn": [
     "Batalkan proses masuk",
@@ -576,9 +576,9 @@ const copyCatalog = <String, List<String>>{
     "جارٍ مواءمة جلسة حساب Google..."
   ],
   "verifyingSessionSubtitle": [
-    "Memastikan kesesuaian akun sebelum membuka ruang asisten.",
-    "Verifying account match before opening study space.",
-    "التحقق من تطابق الحساب قبل فتح مساحة المطالعة."
+    "Memastikan kesesuaian akun sebelum membuka sesi AI.",
+    "Verifying account match before opening AI session.",
+    "التحقق من تطابق الحساب قبل فتح جلسة الذكاء الاصطناعي."
   ],
   "stepTwoOfTwo": ["LANGKAH 2 DARI 2", "STEP 2 OF 2", "الخطوة ٢ من ٢"],
   "confirmGoogleAccountTitle": [
@@ -948,14 +948,14 @@ const copyCatalog = <String, List<String>>{
     "مطالعة النصوص وأسانيد مباحث علامات الزمان ومؤلفات الحبيب أبي بكر العدني المشهور."
   ],
   "tahawwulatWelcome": [
-    "Majelis tanya jawab karya Al-Habib Abu Bakar Al-Adni Al-Masyhur. Bacalah ibarah bersama rujukannya dan diskusikan bersama guru.",
+    "Tanya jawab karya Al-Habib Abu Bakar Al-Adni Al-Masyhur bersama 5 AI. Bacalah ibarah bersama rujukannya dan diskusikan bersama guru.",
     "A study room for the works of al-Habib Abu Bakr al-Adni al-Mashhur. Read each passage alongside its source and discuss your findings with a teacher.",
-    "مجلس لمطالعة مؤلفات الحبيب أبي بكر العدني المشهور. اقرأ العبارة مع مرجعها واعرض ثمرة المطالعة على معلمك."
+    "مطالعة مؤلفات الحبيب أبي بكر العدني المشهور مع الذكاء الاصطناعي. اقرأ العبارة مع مرجعها واعرض ثمرة المطالعة على معلمك."
   ],
   "specialistAccess": [
-    "Akses satu AI",
-    "Single Assistant Access",
-    "الوصول إلى مساعد واحد"
+    "Akses 1 Bidang AI",
+    "Single Field AI Access",
+    "الوصول إلى ذكاء اصطناعي لمجال واحد"
   ],
   "scholarLibrary": ["Khazanah ulama", "خزانة العلماء", "خزانة العلماء"],
   "scholarPreparing": [
@@ -1861,9 +1861,9 @@ const copyCatalog = <String, List<String>>{
     "اقرأ النص في سياقه، وراجع ألفاظه واسم الكتاب والجزء والصفحة. ودراسة علامات الزمان تستلزم التثبت وإرشاد المعلمين وصيانة اللسان والعمل."
   ],
   "introRooms": [
-    "Lima ruang percakapan",
-    "Five Study Rooms",
-    "خمسة مجالس للمطالعة"
+    "Lima asisten AI",
+    "Five AI Assistants",
+    "خمسة نماذج ذكاء اصطناعي"
   ],
   "introReferences": [
     "Menelusuri karya dan rujukan",
@@ -1891,9 +1891,9 @@ const copyCatalog = <String, List<String>>{
     "تبسيط المفاهيم"
   ],
   "ui_9cabfc4bb1": [
-    "Uji pemahaman interaktif",
-    "Understanding & Review",
-    "اختبار الفهم والمراجعة"
+    "Uji pemahaman tanya jawab",
+    "Comprehension Q&A",
+    "اختبار الفهم بالسؤال والجواب"
   ],
   "ui_4837b8e469": [
     "Arsip muhadharah Habib Abu Bakar",
@@ -2049,9 +2049,9 @@ const copyCatalog = <String, List<String>>{
     "العصر الحديث (بعد 1100 هـ)"
   ],
   "desktopLoginIntro": [
-    "Ruang asisten cerdas untuk meneliti literatur turats klasik bersama AI.",
-    "Digital reading room for classical turath literature with study assistants.",
-    "غرفة القراءة الرقمية لدراسة التراث الإسلامي مع مساعدي المطالعة."
+    "Aplikasi penelusuran kitab turats dan tanya jawab berbasis AI.",
+    "Classical turath literature research and AI-powered inquiry.",
+    "تطبيق لبحث كتب التراث والمحاورة بالذكاء الاصطناعي."
   ],
   "desktopLoginTitle": [
     "Masuk ke Ruang Tanya Jawab",
@@ -2515,9 +2515,9 @@ const copyCatalog = <String, List<String>>{
   ],
   "roomLoginNow": ["Login Sekarang", "Sign in now", "سجّل الدخول الآن"],
   "roomGooglePermissionDetail": [
-    "Akun Google yang aktif belum dapat membuka ruang kajian ini. Periksa akun Google yang digunakan dan izin akses Anda.",
-    "The active Google account cannot open this study room yet. Check which Google account is in use and your access permissions.",
-    "لا يستطيع حساب Google النشط فتح غرفة الدراسة هذه بعد. تحقق من حساب Google المستخدم ومن إذن الوصول."
+    "Akun Google yang aktif belum dapat membuka sesi AI ini. Periksa akun Google yang digunakan dan izin akses Anda.",
+    "The active Google account cannot open this AI session yet. Check which Google account is in use and your access permissions.",
+    "لا يستطيع حساب Google النشط فتح جلسة الذكاء الاصطناعي هذه بعد. تحقق من حساب Google المستخدم ومن إذن الوصول."
   ],
   "errSignInAgain": [
     "Silakan masuk kembali ke akun Anda.",
@@ -2625,14 +2625,14 @@ const copyCatalog = <String, List<String>>{
     "افتح المساحة مرة أخرى"
   ],
   "workspaceOpen": [
-    "Buka ruang kajian",
-    "Open the study space",
-    "افتح مساحة الدراسة"
+    "Buka sesi AI",
+    "Open AI session",
+    "افتح جلسة الذكاء الاصطناعي"
   ],
   "workspaceOpened": [
-    "Ruang kajian telah dibuka di browser. Anda dapat menambahkan pintasannya ke layar utama.",
-    "The study space is open in your browser. You can add a shortcut to your home screen.",
-    "فُتحت مساحة الدراسة في المتصفح. يمكنك إضافة اختصار لها إلى الشاشة الرئيسية."
+    "Sesi AI telah dibuka di browser. Anda dapat menambahkan pintasannya ke layar utama.",
+    "The AI session is open in your browser. You can add a shortcut to your home screen.",
+    "فُتحت جلسة الذكاء الاصطناعي في المتصفح. يمكنك إضافة اختصار لها إلى الشاشة الرئيسية."
   ],
   "workspaceSessionNote": [
     "Sesi dipakai kembali per perangkat dan profil browser. Google tetap dapat meminta persetujuan atau verifikasi keamanan.",

@@ -168,7 +168,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       return;
     }
 
-    // Buka ruang kajian multi-tab secara seketika (0ms delay)
+    // Buka sesi AI multi-tab secara seketika (0ms delay)
     AgentSessionManager.instance.openAgent(agent, user: user);
   }
 

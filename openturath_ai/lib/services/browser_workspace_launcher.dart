@@ -31,7 +31,7 @@ class BrowserWorkspaceLauncher {
         uri.path != '/workspace/' ||
         uri.hasQuery ||
         uri.hasFragment) {
-      throw const WorkspaceLaunchException('Alamat ruang kajian tidak valid.');
+      throw const WorkspaceLaunchException('Alamat sesi AI tidak valid.');
     }
     if (agentId == null) return uri;
     if (!RegExp(r'^[a-z0-9_-]{1,80}$').hasMatch(agentId)) {

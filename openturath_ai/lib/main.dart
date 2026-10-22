@@ -237,7 +237,7 @@ class OpenTurathApp extends StatelessWidget {
                       break;
                     case AppRoutes.agentWebview:
                       // Jalur lama tetap kompatibel, tetapi selalu kembali ke
-                      // shell yang memiliki ruang kajian multi-tab persisten.
+                      // shell yang memiliki sesi AI multi-tab persisten.
                       // Ini mencegah dua WebView dengan perilaku copy/close
                       // yang berbeda hidup bersamaan.
                       page = const MainShellScreen();
