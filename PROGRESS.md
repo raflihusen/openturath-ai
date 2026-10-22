@@ -83,17 +83,17 @@ Berdasarkan `AUDIT_OPENTURATH_AI.md`, dokumen perancangan pustaka, dan keluhan k
   - Subscription Engine: **24 passed**, 0 failed
 - **Rilis Binary APK Terbaru (Lokal)**:
   - File: `/Users/apple/Downloads/ramadhan/app-release-latest.apk`
-  - Versi: `1.0.67+68`
-  - Ukuran: 67.9 MB (67.909.262 bytes)
-  - SHA-256: `f15767e48d762beeb31fdc2dce3f4982384beb3a386c3689ce33ee53c6681c60`
-  - Timestamp: 2026-10-14 05:32 WIB
-  - Status: Kompilasi Gradle selesai 100% (assembleRelease 291.2s).
+  - Versi: `1.0.68+69`
+  - Ukuran: 83.9 MB (83.934.052 bytes)
+  - SHA-256: `08567d69d916b0320be5a6a2ac037b264069e49814bb91d5e427fdf13b5ded5f`
+  - Timestamp: 2026-10-22 03:47 WIB
+  - Status: Kompilasi Gradle selesai 100% (assembleRelease).
 - **Rilis macOS DMG (Kompilasi Lokal Terbaru)**:
   - File: `/Users/apple/Downloads/ramadhan/OpenTurath_AI_macOS.dmg`
-  - Versi: `1.0.67+68`
-  - Ukuran: 48 MB
-  - SHA-256: `a622fdd664b3e895f1661eba83a5979b2b20d149c2fbf880cdf9afce8eb2ecb4`
-  - Timestamp: 2026-10-14 07:15 WIB
+  - Versi: `1.0.68+69`
+  - Ukuran: 64.1 MB (64.174.473 bytes)
+  - SHA-256: `4f6afcfb266c5e1f826cf9773a3659387dedc0f9ecaba3c058984ed9c807c580`
+  - Timestamp: 2026-10-22 03:25 WIB
   - Status: Kompilasi Xcode/macOS Release universal (arm64 + x86_64) selesai 100%, UDZO image terkemas rapi via `package_macos.sh`.
 - **Paket Distribusi Pekerja Akses VPS**:
   - File: `/Users/apple/Downloads/ramadhan/ecosystem/dist/openturath-access-20261014T035043Z-5b44945e.tar.gz`
