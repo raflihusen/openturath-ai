@@ -1989,7 +1989,8 @@ exports.dailyRevoke = functions
                 expDate = parsed;
         }
         const plan = String(d.plan || d.plan_id || "").toLowerCase();
-        const txVip = d.is_vip === true || plan.includes("vip") || (expDate && expDate.getFullYear() >= 2030);
+        // VIP status comes from explicit markers only; a far expiry date is just a long purchase.
+        const txVip = d.is_vip === true || plan.includes("vip");
         if (txVip || (0, access_control_1.isVip)({ email }))
             continue;
         const entKey = d.entitlement_key;

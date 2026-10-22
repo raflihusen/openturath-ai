@@ -110,5 +110,12 @@ class RegistryTest(unittest.TestCase):
         self.assertTrue(set(syafii) <= set(registry.notebooks_for_scope("all_access")))
 
 
+    def test_a_long_purchase_ending_after_2030_is_not_a_vip(self):
+        tx = {"customer_email": "b@x.test", "status": "SUCCESS", "plan": "bahits_1y", "entitlement_key": "fiqh_syafii",
+              "subscription_expires_at": datetime(2030, 2, 1, tzinfo=timezone.utc)}
+        protected, _, expired = policy.classify([tx], [], {}, set(), ["fiqh_syafii"], datetime(2030, 6, 1, tzinfo=timezone.utc))
+        self.assertNotIn("b@x.test", protected)
+        self.assertIn("b@x.test", expired["fiqh_syafii"])
+
 if __name__ == "__main__":
     unittest.main()

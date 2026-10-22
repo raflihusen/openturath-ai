@@ -85,7 +85,8 @@ def classify(transactions, users, akal_active, vip, modules, now):
             continue
         plan = str(tx.get("plan") or tx.get("plan_id") or "")
         ends = parse_dt(tx.get("subscription_expires_at") or tx.get("access_expires_at") or tx.get("expires_at"))
-        if tx.get("is_vip") is True or "VIP" in plan.upper() or (ends and ends.year >= 2030):
+        # VIP comes from explicit markers only; a far expiry is just a long purchase.
+        if tx.get("is_vip") is True or "VIP" in plan.upper():
             protected.add(email)
             continue
         status = str(tx.get("status") or "").upper()
