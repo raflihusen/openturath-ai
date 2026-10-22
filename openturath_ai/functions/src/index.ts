@@ -1328,7 +1328,7 @@ export const monitorAccessHealth = functions
           let seats=0;
           for(const id of [e.masterId,...e.clones.map(c=>c.id)]) {
             const n=books.get(id);
-            if(n?.status==="missing")missing++;
+            if(n?.status==="missing" || n?.status==="unverified" && (n.missing_count || 0)>=3)missing++;
             if(n?.status==="active" && n.is_public===false && n.healthy_until_ms>now)
               seats+=Math.max(0,Math.min(2000,n.admission_limit || 1995)-(n.occupied || 0));
           }

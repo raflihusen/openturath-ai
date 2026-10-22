@@ -1220,7 +1220,7 @@ exports.monitorAccessHealth = functions
                 let seats = 0;
                 for (const id of [e.masterId, ...e.clones.map(c => c.id)]) {
                     const n = books.get(id);
-                    if ((n === null || n === void 0 ? void 0 : n.status) === "missing")
+                    if ((n === null || n === void 0 ? void 0 : n.status) === "missing" || (n === null || n === void 0 ? void 0 : n.status) === "unverified" && (n.missing_count || 0) >= 3)
                         missing++;
                     if ((n === null || n === void 0 ? void 0 : n.status) === "active" && n.is_public === false && n.healthy_until_ms > now)
                         seats += Math.max(0, Math.min(2000, n.admission_limit || 1995) - (n.occupied || 0));

@@ -520,7 +520,8 @@ const MISSING_AFTER = 3;
 async function adoptNotebook(entity: Entity, n: {id: string; name: string; legacy?: boolean}, observed: ShareObservation): Promise<void> {
   const nr = db.collection("access_notebooks").doc(n.id);
   const created = await db.runTransaction(async t => {
-    if ((await t.get(nr)).exists) return false;
+    const existing = (await t.get(nr)).data();
+    if (existing && existing.status !== "unverified") return false;
     t.set(nr, {entity: entity.code, name: n.name, occupied: observed.emails.length, admission_limit: 1995, hard_limit: 2000,
       status: observed.isPublic ? "quarantined" : n.legacy ? "draining" : "active", is_public: observed.isPublic,
       healthy_until_ms: Date.now() + 86400000, observed_ms: Date.now(), adopted_ms: Date.now()});
@@ -534,11 +535,17 @@ async function adoptNotebook(entity: Entity, n: {id: string; name: string; legac
   }
   console.log(JSON.stringify({event: "notebook_adopted", notebook: n.id, entity: entity.code, viewers: observed.emails.length}));
 }
-async function markMissing(entity: Entity, id: string): Promise<void> {
+async function markMissing(entity: Entity, id: string, name: string): Promise<void> {
   const ref = db.collection("access_notebooks").doc(id);
   const missing = await db.runTransaction(async t => {
     const current = (await t.get(ref)).data();
-    if (!current) return false;
+    // A catalog notebook Google has never shown gets a record too, so the
+    // monitor can report it; "unverified" is never allocated.
+    if (!current) {
+      t.set(ref, {entity: entity.code, name, occupied: 0, admission_limit: 1995, hard_limit: 2000, status: "unverified",
+        is_public: false, missing_count: 1, last_missing_ms: Date.now()});
+      return false;
+    }
     const count = (current.missing_count || 0) + 1;
     t.update(ref, {missing_count: count, last_missing_ms: Date.now(), ...(count >= MISSING_AFTER ? {status: "missing"} : {})});
     return count >= MISSING_AFTER;
@@ -566,13 +573,13 @@ async function reconcile(): Promise<void> {
         let observation: ShareObservation;
         try { observation = await provider.observe(target.id); }
         catch (error: any) {
-          if (error.notFound && snapshot.exists) await markMissing(entity, target.id);
+          if (error.notFound) await markMissing(entity, target.id, target.name);
           throw error;
         }
         if (!observation.complete) throw new Error("Incomplete health observation");
         // A catalog notebook without a ledger record (a newly added clone) is
         // adopted only after Google has shown it to the owner account.
-        if (!snapshot.exists) await adoptNotebook(entity, target, observation);
+        if (!snapshot.exists || snapshot.data()?.status === "unverified") await adoptNotebook(entity, target, observation);
         else await refreshNotebook(target, ref, observation);
       }
     } catch (_) {console.error("Notebook reconciliation unavailable; retrying next target");}
