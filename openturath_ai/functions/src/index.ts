@@ -26,6 +26,19 @@ async function sendTelegramNotification(text: string, channel: "sales" | "alert"
     ? (process.env.TELEGRAM_ALERT_CHAT_ID || process.env.TELEGRAM_CHAT_ID)
     : process.env.TELEGRAM_CHAT_ID;
   if (!token || !chatId) return false;
+  if (channel === "sales") {
+    // The sales feed is informational: bound it so a launch-day burst cannot
+    // exhaust the bot's per-group quota, and never post full customer addresses.
+    try { await enforceRateLimit("telegram_sales_feed", 15, 60, "limited"); }
+    catch (_) {
+      try {
+        await db.collection("access_control").doc("telegram_delivery").set({
+          sales_suppressed: admin.firestore.FieldValue.increment(1), last_suppressed_ms: Date.now()}, {merge: true});
+      } catch (__) { /* telemetry only */ }
+      return false;
+    }
+    text = text.replace(/([A-Za-z0-9._%+-])[A-Za-z0-9._%+-]*@([A-Za-z0-9.-]+\.[A-Za-z]{2,})/g, "$1***@$2");
+  }
 
   try {
     const result=await axios.post(
@@ -205,6 +218,27 @@ function getEntitlementAccess(userData: FirebaseFirestore.DocumentData, entitlem
 }
 
 // ================================================================
+// APP CHECK GATE
+// Mode lives in access_control/security.app_check: "off" (default),
+// "monitor" (log calls without a valid token) or "enforce" (reject them).
+// Rolling out in stages lets old app builds keep working until updated.
+// ================================================================
+let appCheckMode = {value: "off", at: 0};
+async function appCheckGate(context: functions.https.CallableContext, fn: string): Promise<void> {
+  if (Date.now() - appCheckMode.at > 60000) {
+    try {
+      const mode = (await db.collection("access_control").doc("security").get()).data()?.app_check;
+      appCheckMode = {value: ["off", "monitor", "enforce"].includes(mode) ? mode : "off", at: Date.now()};
+    } catch (_) { appCheckMode = {value: appCheckMode.value, at: Date.now()}; }
+  }
+  if (context.app) return;
+  if (appCheckMode.value === "enforce") {
+    throw new functions.https.HttpsError("failed-precondition", "Versi aplikasi ini belum dikenali. Perbarui OpenTurath ke versi terbaru.");
+  }
+  if (appCheckMode.value === "monitor") console.warn(`[AppCheck] ${fn} called without a valid App Check token`);
+}
+
+// ================================================================
 // FUNCTION 1: getAgentUrl
 // Dipanggil oleh Flutter saat user membuka agent
 // ================================================================
@@ -217,6 +251,7 @@ export const getAgentUrl = functions
         "Login diperlukan untuk mengakses agent."
       );
     }
+    await appCheckGate(context, "getAgentUrl");
 
     const uid = context.auth.uid;
     await enforceRateLimit(
@@ -796,17 +831,25 @@ export const createCheckout = functions
         "Login diperlukan untuk melakukan transaksi."
       );
     }
+    await appCheckGate(context, "createCheckout");
     const { plan, agentId, expectedAmount, pricingRevision } = data || {};
     const text = (value: unknown, max: number): string => typeof value === "string" ? value.trim().slice(0, max) : "";
     const name = text(data?.name, 120);
-    const email = text(data?.email, 254).toLowerCase();
+    const typedEmail = text(data?.email, 254).toLowerCase();
     const phone = text(data?.phone, 20).replace(/[^0-9+]/g, "");
 
-    if (typeof plan !== "string" || !plan || !name || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    if (typeof plan !== "string" || !plan || !name || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(typedEmail)) {
       throw new functions.https.HttpsError(
         "invalid-argument",
         "Data tidak lengkap (nama dan email diperlukan)."
       );
+    }
+    // Access is delivered to the signed-in Google address (NotebookLM shares by
+    // email), so the receipt goes there too. A typed address is never trusted:
+    // it could not receive the seat, and it lets anyone attach invoices to others.
+    const email = context.auth.token?.email_verified === true ? String(context.auth.token.email || "").trim().toLowerCase() : "";
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      throw new functions.https.HttpsError("failed-precondition", "Masuk dengan akun Google terverifikasi sebelum berlangganan.");
     }
 
     const currentAgentId = typeof agentId === "string" && agentId ? agentId : "fiqh_tahawwulat";
@@ -1551,6 +1594,7 @@ export const checkPaymentStatus = functions
     if (!context.auth) {
       throw new functions.https.HttpsError("unauthenticated", "Login diperlukan untuk memeriksa status pembayaran.");
     }
+    await appCheckGate(context, "checkPaymentStatus");
 
     const callerUid = context.auth.uid;
     // F-02: Rate limit status inquiry (maksimal 15 panggilan per menit per UID)
@@ -1710,6 +1754,7 @@ export const redeemCode = functions
     if (!context.auth) {
       throw new functions.https.HttpsError("unauthenticated", "Login diperlukan untuk menukarkan kode akses.");
     }
+    await appCheckGate(context, "redeemCode");
 
     if (typeof data?.code !== "string" || data.code.length > 256) {
       throw new functions.https.HttpsError("invalid-argument", "Format kode akses tidak valid.");
@@ -1830,6 +1875,19 @@ export const redeemCode = functions
         rawCode.startsWith("TRIAL") ||
         rawCode.startsWith("WELCOME");
 
+      // A device ID is supplied by the client and can be forged, and every
+      // trial consumes a NotebookLM seat. One trial per verified Google
+      // address and promo family, whatever the device or account.
+      const trialClaimRef = db.collection("trial_claims").doc(keyOf(userEmail, promoFamily));
+      if (isTrialVoucher) {
+        if (!userEmail) {
+          throw new functions.https.HttpsError("failed-precondition", "Masuk dengan akun Google terverifikasi untuk mengaktifkan masa coba.");
+        }
+        if ((await transaction.get(trialClaimRef)).exists) {
+          throw new functions.https.HttpsError("already-exists", "Masa coba untuk akun Google ini sudah pernah diaktifkan.");
+        }
+      }
+
       // Ambil user saat ini
       const userRef = db.collection("users").doc(uid);
       const userDoc = await transaction.get(userRef);
@@ -1897,6 +1955,9 @@ export const redeemCode = functions
           redeemed_at: admin.firestore.FieldValue.serverTimestamp(),
         });
       }
+
+      if (isTrialVoucher) transaction.set(trialClaimRef, {uid, promo_family: promoFamily, code: rawCode,
+        redeemed_at: admin.firestore.FieldValue.serverTimestamp()});
 
       // 2. Increment pemakaian kode
       transaction.update(codeRef, {

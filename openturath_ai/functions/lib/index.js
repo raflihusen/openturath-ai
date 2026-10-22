@@ -26,6 +26,23 @@ async function sendTelegramNotification(text, channel = "sales") {
         : process.env.TELEGRAM_CHAT_ID;
     if (!token || !chatId)
         return false;
+    if (channel === "sales") {
+        // The sales feed is informational: bound it so a launch-day burst cannot
+        // exhaust the bot's per-group quota, and never post full customer addresses.
+        try {
+            await enforceRateLimit("telegram_sales_feed", 15, 60, "limited");
+        }
+        catch (_) {
+            try {
+                await db.collection("access_control").doc("telegram_delivery").set({
+                    sales_suppressed: admin.firestore.FieldValue.increment(1), last_suppressed_ms: Date.now()
+                }, { merge: true });
+            }
+            catch (__) { /* telemetry only */ }
+            return false;
+        }
+        text = text.replace(/([A-Za-z0-9._%+-])[A-Za-z0-9._%+-]*@([A-Za-z0-9.-]+\.[A-Za-z]{2,})/g, "$1***@$2");
+    }
     try {
         const result = await axios_1.default.post(`https://api.telegram.org/bot${token}/sendMessage`, {
             chat_id: chatId,
@@ -194,6 +211,32 @@ function getEntitlementAccess(userData, entitlementKey) {
     return { premiumPlan: legacyGlobal, active: legacyGlobal && isGlobalExpiryValid };
 }
 // ================================================================
+// APP CHECK GATE
+// Mode lives in access_control/security.app_check: "off" (default),
+// "monitor" (log calls without a valid token) or "enforce" (reject them).
+// Rolling out in stages lets old app builds keep working until updated.
+// ================================================================
+let appCheckMode = { value: "off", at: 0 };
+async function appCheckGate(context, fn) {
+    var _a;
+    if (Date.now() - appCheckMode.at > 60000) {
+        try {
+            const mode = (_a = (await db.collection("access_control").doc("security").get()).data()) === null || _a === void 0 ? void 0 : _a.app_check;
+            appCheckMode = { value: ["off", "monitor", "enforce"].includes(mode) ? mode : "off", at: Date.now() };
+        }
+        catch (_) {
+            appCheckMode = { value: appCheckMode.value, at: Date.now() };
+        }
+    }
+    if (context.app)
+        return;
+    if (appCheckMode.value === "enforce") {
+        throw new functions.https.HttpsError("failed-precondition", "Versi aplikasi ini belum dikenali. Perbarui OpenTurath ke versi terbaru.");
+    }
+    if (appCheckMode.value === "monitor")
+        console.warn(`[AppCheck] ${fn} called without a valid App Check token`);
+}
+// ================================================================
 // FUNCTION 1: getAgentUrl
 // Dipanggil oleh Flutter saat user membuka agent
 // ================================================================
@@ -203,6 +246,7 @@ exports.getAgentUrl = functions
     if (!context.auth) {
         throw new functions.https.HttpsError("unauthenticated", "Login diperlukan untuk mengakses agent.");
     }
+    await appCheckGate(context, "getAgentUrl");
     const uid = context.auth.uid;
     await enforceRateLimit(`agent_url_${uid}`, 60, 60, "Terlalu banyak permintaan membuka asisten. Silakan coba kembali sebentar lagi.");
     const agentId = data.agentId;
@@ -667,17 +711,25 @@ async function enforceRateLimit(key, limit, windowSeconds, errorMessage) {
 exports.createCheckout = functions
     .runWith({ serviceAccount: "open-turath@appspot.gserviceaccount.com" })
     .https.onCall(async (data, context) => {
-    var _a, _b, _c, _d, _e;
+    var _a, _b, _c, _d, _e, _f;
     if (!context.auth) {
         throw new functions.https.HttpsError("unauthenticated", "Login diperlukan untuk melakukan transaksi.");
     }
+    await appCheckGate(context, "createCheckout");
     const { plan, agentId, expectedAmount, pricingRevision } = data || {};
     const text = (value, max) => typeof value === "string" ? value.trim().slice(0, max) : "";
     const name = text(data === null || data === void 0 ? void 0 : data.name, 120);
-    const email = text(data === null || data === void 0 ? void 0 : data.email, 254).toLowerCase();
+    const typedEmail = text(data === null || data === void 0 ? void 0 : data.email, 254).toLowerCase();
     const phone = text(data === null || data === void 0 ? void 0 : data.phone, 20).replace(/[^0-9+]/g, "");
-    if (typeof plan !== "string" || !plan || !name || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    if (typeof plan !== "string" || !plan || !name || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(typedEmail)) {
         throw new functions.https.HttpsError("invalid-argument", "Data tidak lengkap (nama dan email diperlukan).");
+    }
+    // Access is delivered to the signed-in Google address (NotebookLM shares by
+    // email), so the receipt goes there too. A typed address is never trusted:
+    // it could not receive the seat, and it lets anyone attach invoices to others.
+    const email = ((_a = context.auth.token) === null || _a === void 0 ? void 0 : _a.email_verified) === true ? String(context.auth.token.email || "").trim().toLowerCase() : "";
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        throw new functions.https.HttpsError("failed-precondition", "Masuk dengan akun Google terverifikasi sebelum berlangganan.");
     }
     const currentAgentId = typeof agentId === "string" && agentId ? agentId : "fiqh_tahawwulat";
     const pricing = await resolvePlanPricing(currentAgentId, plan);
@@ -692,7 +744,7 @@ exports.createCheckout = functions
     const invoiceNumber = `OT-${crypto.randomUUID()}`;
     const trxRef = db.collection("transactions").doc();
     const trxId = trxRef.id;
-    const uid = ((_a = context.auth) === null || _a === void 0 ? void 0 : _a.uid) || null;
+    const uid = ((_b = context.auth) === null || _b === void 0 ? void 0 : _b.uid) || null;
     // F-07: Tulis dokumen transaksi berstatus pending SEBELUM memanggil gateway Midtrans
     await trxRef.set({
         uid,
@@ -735,10 +787,10 @@ exports.createCheckout = functions
         });
     }
     catch (err) {
-        console.error("[createCheckout] Midtrans checkout error:", ((_b = err.response) === null || _b === void 0 ? void 0 : _b.data) || err.message);
+        console.error("[createCheckout] Midtrans checkout error:", ((_c = err.response) === null || _c === void 0 ? void 0 : _c.data) || err.message);
         await trxRef.update({
             status: "failed",
-            error: ((_e = (_d = (_c = err.response) === null || _c === void 0 ? void 0 : _c.data) === null || _d === void 0 ? void 0 : _d.error_messages) === null || _e === void 0 ? void 0 : _e.join(", ")) || err.message || "Kendala teknis Midtrans",
+            error: ((_f = (_e = (_d = err.response) === null || _d === void 0 ? void 0 : _d.data) === null || _e === void 0 ? void 0 : _e.error_messages) === null || _f === void 0 ? void 0 : _f.join(", ")) || err.message || "Kendala teknis Midtrans",
             failed_at: admin.firestore.FieldValue.serverTimestamp(),
         }).catch(() => { });
         // No Snap session exists, so there is nothing for reconciliation to find.
@@ -1414,6 +1466,7 @@ exports.checkPaymentStatus = functions
     if (!context.auth) {
         throw new functions.https.HttpsError("unauthenticated", "Login diperlukan untuk memeriksa status pembayaran.");
     }
+    await appCheckGate(context, "checkPaymentStatus");
     const callerUid = context.auth.uid;
     // F-02: Rate limit status inquiry (maksimal 15 panggilan per menit per UID)
     await enforceRateLimit(`chk_${callerUid}`, 15, 60, "Terlalu banyak permintaan pemeriksaan status pembayaran.");
@@ -1557,6 +1610,7 @@ exports.redeemCode = functions
     if (!context.auth) {
         throw new functions.https.HttpsError("unauthenticated", "Login diperlukan untuk menukarkan kode akses.");
     }
+    await appCheckGate(context, "redeemCode");
     if (typeof (data === null || data === void 0 ? void 0 : data.code) !== "string" || data.code.length > 256) {
         throw new functions.https.HttpsError("invalid-argument", "Format kode akses tidak valid.");
     }
@@ -1645,6 +1699,18 @@ exports.redeemCode = functions
             rawCode.startsWith("PERDANA") ||
             rawCode.startsWith("TRIAL") ||
             rawCode.startsWith("WELCOME");
+        // A device ID is supplied by the client and can be forged, and every
+        // trial consumes a NotebookLM seat. One trial per verified Google
+        // address and promo family, whatever the device or account.
+        const trialClaimRef = db.collection("trial_claims").doc((0, access_control_1.keyOf)(userEmail, promoFamily));
+        if (isTrialVoucher) {
+            if (!userEmail) {
+                throw new functions.https.HttpsError("failed-precondition", "Masuk dengan akun Google terverifikasi untuk mengaktifkan masa coba.");
+            }
+            if ((await transaction.get(trialClaimRef)).exists) {
+                throw new functions.https.HttpsError("already-exists", "Masa coba untuk akun Google ini sudah pernah diaktifkan.");
+            }
+        }
         // Ambil user saat ini
         const userRef = db.collection("users").doc(uid);
         const userDoc = await transaction.get(userRef);
@@ -1704,6 +1770,9 @@ exports.redeemCode = functions
                 redeemed_at: admin.firestore.FieldValue.serverTimestamp(),
             });
         }
+        if (isTrialVoucher)
+            transaction.set(trialClaimRef, { uid, promo_family: promoFamily, code: rawCode,
+                redeemed_at: admin.firestore.FieldValue.serverTimestamp() });
         // 2. Increment pemakaian kode
         transaction.update(codeRef, {
             times_used: timesUsed + 1,

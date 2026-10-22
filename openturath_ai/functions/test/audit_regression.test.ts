@@ -21,12 +21,24 @@ test('PERDANA voucher grants time bound Pro trial using its server duration', as
   const {api,db}=loadBackend(root);
   db.seed('users/u',{email:'u@example.test',plan:'trial',entitlements:{}});
   db.seed('redeem_codes/PERDANA7',{type:'perdana',entitlement_key:'all_access',duration_days:7,max_uses:1,times_used:0});
-  await api.redeemCode({code:'PERDANA7',deviceId:'a'.repeat(64),isPhysicalDevice:true},{auth:{uid:'u',token:{email:'u@example.test'}}});
+  await api.redeemCode({code:'PERDANA7',deviceId:'a'.repeat(64),isPhysicalDevice:true},{auth:{uid:'u',token:{email:'u@example.test',email_verified:true}}});
   const trial=db.docs.get('users/u').entitlements.all_access;
   assert.equal(trial.plan,'trial');
   assert.equal(trial.status,'active');
   assert.equal(trial.trial_duration_days,7);
   assert.ok(trial.expiry.toMillis()>Date.now());
+});
+test('one trial per verified Google address, whatever the device or account', async () => {
+  const {api,db}=loadBackend(root);
+  db.seed('users/u',{email:'u@example.test',entitlements:{}});
+  db.seed('users/u2',{email:'u@example.test',entitlements:{}});
+  db.seed('redeem_codes/PERDANA7',{type:'perdana',entitlement_key:'fiqh_syafii',duration_days:7,max_uses:100,times_used:0});
+  const token={email:'u@example.test',email_verified:true};
+  await api.redeemCode({code:'PERDANA7',deviceId:'a'.repeat(64),isPhysicalDevice:true},{auth:{uid:'u',token}});
+  await assert.rejects(api.redeemCode({code:'PERDANA7',deviceId:'c'.repeat(64),isPhysicalDevice:true},{auth:{uid:'u2',token}}),
+    (e:any)=>e.code==='already-exists');
+  await assert.rejects(api.redeemCode({code:'PERDANA7',deviceId:'d'.repeat(64),isPhysicalDevice:true},{auth:{uid:'anon',token:{}}}),
+    (e:any)=>e.code==='failed-precondition');
 });
 test('a trial voucher starts at redemption and cannot silently stack', async () => {
   const {api,db}=loadBackend(root);

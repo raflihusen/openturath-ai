@@ -34,7 +34,7 @@ test('stale offer is rejected before invoice creation or gateway calls', async (
   const {api,db,sent} = loadBackend();
   await assert.rejects(api.createCheckout({agentId:'fiqh_syafii',plan:'tholib_1m',
     name:'Reader',email:'reader@example.test',phone:'+628123456789',
-    expectedAmount:50000,pricingRevision:'harga-v92-2026-10-14'}, {auth:{uid:'reader'}}),
+    expectedAmount:50000,pricingRevision:'harga-v92-2026-10-14'}, {auth:{uid:'reader',token:{email:'reader@example.test',email_verified:true}}}),
     (error:any) => error.code === 'failed-precondition');
   assert.equal([...db.docs.keys()].filter(k=>k.startsWith('transactions/')).length,0);
   assert.equal(sent.length,0);
@@ -44,7 +44,7 @@ test('old pricing revision and noninteger expected prices are rejected', async (
   for (const [amount,revision] of [[49000,'perdana-2026-09-20'],['49000','harga-v92-2026-10-14'],[NaN,'harga-v92-2026-10-14']]) {
     await assert.rejects(api.createCheckout({agentId:'fiqh_syafii',plan:'tholib_1m',
       name:'Reader',email:'reader@example.test',expectedAmount:amount,pricingRevision:revision},
-      {auth:{uid:'reader'}}));
+      {auth:{uid:'reader',token:{email:'reader@example.test',email_verified:true}}}));
   }
   assert.equal(db.docs.size,0);
 });
@@ -53,4 +53,12 @@ test('hidden all-access and unknown products remain unavailable for checkout', a
   for (const id of ['all_ai','all_access','unknown','fiqh_syafii_evil']) {
     await assert.rejects(async () => api.resolvePlanPricing(id, 'tholib_1m'));
   }
+});
+test('checkout requires a verified Google address and bills that address, not a typed one', async () => {
+  const {api,db} = loadBackend();
+  const offer = {agentId:'fiqh_syafii',plan:'tholib_1m',name:'Reader',email:'victim@example.test'};
+  await assert.rejects(api.createCheckout(offer,{auth:{uid:'anon',token:{}}}),(e:any)=>e.code==='failed-precondition');
+  await api.createCheckout(offer,{auth:{uid:'reader',token:{email:'Reader@Example.test',email_verified:true}}}).catch(()=>{});
+  const tx=[...db.docs.entries()].find(([k]:any)=>k.startsWith('transactions/'));
+  assert.equal(tx?.[1].customer_email,'reader@example.test');
 });
