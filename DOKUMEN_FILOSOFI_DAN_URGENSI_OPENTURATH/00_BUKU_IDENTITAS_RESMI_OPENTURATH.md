@@ -204,23 +204,23 @@ Seluruh berkas ada di [`aset_logo/`](./aset_logo/).
 > Catatan teknis: berkas vektor adalah hasil penelusuran bitmap (jalur dengan banyak titik kurva), bukan gambar konstruksi geometris. Cukup untuk pemakaian normal, tetapi bila ada kebutuhan papan reklame atau ukiran, gambar ulang simbol dengan geometri bersih (butir 7 pada §12.2).
 
 ### 5.2 Deskripsi simbol
-Simbol berupa **gerbang melengkung runcing** (lengkung mihrab) yang tersusun dari dua garis sejajar. Di dalamnya terdapat **sebuah kitab yang terbuka**: dua halaman melengkung ke atas dan bertemu di tulang punggung kitab di tengah. Ruang di atas kitab, di dalam lengkung, terisi hitam pekat berbentuk lengkung runcing yang lebih kecil. Seluruhnya satu warna.
+Simbol berupa **lengkung runcing dua lapis** (bentuk mihrab) yang menaungi **tiga bidang pekat**: satu bidang berbentuk kubah kecil di atas, dan dua bidang berbentuk halaman melengkung di bawahnya yang bertemu di satu celah tengah, sehingga juga terbaca sebagai kitab terbuka. Kaki lengkung terbuka di bagian bawah. Seluruhnya satu warna.
 
-### 5.3 Anatomi dan makna **[USUL]**
-Penafsiran berikut dirumuskan dari bentuk logo. Makna ini bersifat resmi setelah disahkan Pemilik.
-
-Dibaca dari luar ke dalam: ① dan ② lengkung berlapis, ③ bidang pekat di atas kitab, ④ dua halaman, ⑤ celah punggung kitab, ⑥ kaki lengkung yang terbuka di bawah.
+### 5.3 Anatomi dan makna **[TETAP: tafsir Pemilik]**
+Tafsir inti berikut berasal dari Pemilik: **tiga bidang di dalam melambangkan Islam, Iman, dan Ihsan; lengkung luar melambangkan Fikih Tahawwulat dan ilmu-ilmu yang menaungi dan menjaganya.** Perincian lain dirumuskan penyusun dari bentuk logo dan ditandai **[USUL]**.
 
 | # | Unsur | Makna |
 |:-:|:---|:---|
-| ① | **Lengkung runcing (mihrab)** | Ruang tempat menghadap. Dalam masjid, mihrab menandai arah. Di sini ia menandai arah belajar: menghadap kitab dan guru. Bentuk runcing menunjuk ke atas, kepada Yang Mahatahu. |
-| ② | **Dua garis lengkung sejajar** | Dua lapis penjagaan: lapisan luar adalah adab dan sanad ilmu yang melindungi; lapisan dalam adalah kitab yang dirujuk. Sekaligus menggambarkan rantai transmisi: ilmu sampai kepada kita lewat lapis demi lapis perawi dan pensyarah. |
-| ③ | **Bidang pekat bentuk kubah kecil** | Ruang yang dinaungi: isi yang dijaga. Dalam pembacaan lain, ia tampak seperti kubah di dalam kubah, yaitu pesan bahwa pemahaman berlapis dari matan ke syarah dan hasyiyah. |
-| ④ | **Kitab terbuka** | Inti identitas: yang dibuka adalah kitabnya. Halaman melengkung, bukan kaku, menandakan teks yang hidup dibaca. Dua halaman yang simetris menandai keseimbangan antara naskah asli dan penjelasannya. |
-| ⑤ | **Celah tipis di tengah** | Bukan sekadar garis punggung kitab. Ia mengantar mata ke bawah, ke tempat pembaca memulai. Dua halaman bertemu di satu titik: perbedaan pendapat ulama dijaga, tidak dilebur menjadi satu (menolak *talfiq*). |
-| ⑥ | **Kaki lengkung terbuka di bawah** | Inilah **"Open"**. Gerbang tidak punya ambang yang tertutup: siapa pun boleh masuk. Kaki-kaki itu menancap ke tanah, tanda bahwa ilmu berpijak pada tradisi, bukan melayang. |
+| ① | **Tiga bidang pekat di dalam** | **Islam, Iman, dan Ihsan**: tiga tingkatan agama dalam hadis Jibril. Tiga bidang berdiri berdampingan, tidak saling menumpuk, karena ketiganya utuh sebagai satu agama. |
+| ② | **Lengkung luar** | **Fikih Tahawwulat** dan ilmu-ilmu yang sejalan dengannya. Ia menaungi tiga bidang di dalam, selaras dengan penjelasan dok. 03: Rukun Keempat bukan mengatur tata cara ibadah, melainkan menjadi peta navigasi yang menjaga Islam, Iman, dan Ihsan tidak hancur oleh badai fitnah akhir zaman. |
+| ③ | **Dua garis pada lengkung** | **[USUL]** Dua lapis penjagaan: adab dan sanad ilmu di luar, kitab yang dirujuk di dalam. |
+| ④ | **Dua bidang bawah berbentuk halaman** | **[USUL]** Tiga bidang itu sekaligus terbaca sebagai kitab terbuka: agama yang dipelajari dari kitab dan guru, bukan dari kata orang. Dua halaman bertemu di satu celah: perbedaan pendapat ulama dijaga, tidak dilebur (menolak *talfiq*). |
+| ⑤ | **Lengkung runcing (mihrab)** | **[USUL]** Arah menghadap: belajar dengan menghadap kitab dan guru; runcing ke atas, kepada Yang Mahatahu. |
+| ⑥ | **Kaki lengkung terbuka di bawah** | **[USUL]** Inilah **"Open"**. Tidak ada ambang tertutup: siapa pun boleh masuk. Kaki yang menancap menandakan ilmu berpijak pada tradisi. |
 
-**Kesan keseluruhan:** *perpustakaan dan masjid bertemu dalam satu bentuk*. Bukan robot, bukan awan, bukan otak, bukan percikan cahaya, yaitu rupa yang biasa dipakai produk AI. Pilihan ini disengaja: OpenTurath adalah produk kitab yang kebetulan memakai AI, bukan produk AI yang kebetulan membahas kitab.
+> **Menunggu penegasan Pemilik:** bidang mana yang mewakili Islam, Iman, dan Ihsan. Usul penyusun: bidang kubah di atas = **Ihsan** (puncak tingkatan), halaman kiri = **Islam**, halaman kanan = **Iman**. Sampai ditegaskan, materi publik hanya menyebut "tiga bidang: Islam, Iman, Ihsan" tanpa menunjuk letaknya.
+
+**Kesan keseluruhan:** *perpustakaan dan masjid bertemu dalam satu bentuk*. Bukan robot, awan, otak, atau percikan cahaya, yaitu rupa yang lazim pada produk AI. Pilihan ini disengaja: OpenTurath adalah produk kitab yang kebetulan memakai AI, bukan produk AI yang kebetulan membahas kitab.
 
 ### 5.4 Mengapa tanpa warna, tanpa kilau
 1. Kitab klasik dicetak dengan satu tinta di atas kertas; simbol meminjam sifat itu.
@@ -258,7 +258,7 @@ Tidak ada versi berwarna. Jika perlu membuat versi lain (misalnya cap timbul), t
 1. Mengubah proporsi (menarik lebar atau tinggi).
 2. Memutar, memiringkan, atau memantulkan simbol.
 3. Menambahkan warna, gradien, bayangan, atau efek cahaya.
-4. Memberi garis tepi, tekstur, atau memisahkan lengkung dari kitab.
+4. Memberi garis tepi, tekstur, atau memisahkan lengkung dari tiga bidang di dalamnya.
 5. Menaruh simbol di atas gambar ramai tanpa lapisan peredam.
 6. Menulis nama sebagai "Open Turath", "OPENTURATH" (kecuali dalam huruf kapital kecil pada label), "Openturath", atau "openturath" pada teks formal.
 7. Memasang logo di samping logo Google atau pihak lain sehingga tampak sebagai satu merek.
@@ -421,15 +421,15 @@ Melalui asisten yang dikelompokkan menurut bidang ilmu, pengguna dapat mencari p
 
 OpenTurath menempatkan rujukan sebagai inti pengalaman belajar. Jawaban AI diperlakukan sebagai bahan untuk ditelusuri lebih lanjut, bukan sebagai fatwa, dan pembaca diajak membuka kembali kitab yang dirujuk serta bertanya kepada guru. Percakapan AI berjalan menggunakan NotebookLM dari Google; hal ini tidak menunjukkan kemitraan resmi.
 
-Logo OpenTurath, gerbang lengkung berisi kitab terbuka dalam satu warna, melambangkan ruang belajar yang terbuka bagi siapa saja, berpijak pada tradisi.
+Logo OpenTurath, tiga bidang (Islam, Iman, Ihsan) di bawah satu lengkung (Fikih Tahawwulat) dalam satu warna, melambangkan agama yang utuh dan terjaga, terbuka bagi siapa saja yang ingin belajar.
 
 Pengelola: [[NAMA_PENGELOLA]]. Kontak: [[EMAIL_BANTUAN]]. Situs: openturath.id.
 
-### 11.4 Penjelasan logo, versi pendek **[USUL]**
-> Gerbang melengkung dua lapis, berisi kitab yang terbuka. Gerbangnya terbuka di bawah, kitabnya terbuka di tengah: OpenTurath mengajak siapa pun masuk, membaca, dan memeriksa kembali.
+### 11.4 Penjelasan logo, versi pendek
+> Tiga bidang di dalam adalah Islam, Iman, dan Ihsan. Lengkung yang menaunginya adalah Fikih Tahawwulat dan ilmu-ilmu yang menjaganya. Kakinya terbuka di bawah: siapa pun boleh masuk dan belajar.
 
-### 11.5 Penjelasan logo, versi sedang **[USUL]**
-> Simbol OpenTurath berbentuk lengkung mihrab yang tersusun dari dua garis sejajar: lapis luar adalah adab dan sanad yang menjaga, lapis dalam adalah kitab yang dirujuk. Di dalamnya terbentang sebuah kitab terbuka dengan dua halaman yang bertemu di satu punggung, menandakan naskah asli dan penjelasannya yang berjalan seimbang. Kaki lengkung sengaja dibiarkan terbuka di bawah, itulah "Open" pada nama kami. Seluruhnya satu warna, seperti kitab yang dicetak dengan satu tinta.
+### 11.5 Penjelasan logo, versi sedang
+> Simbol OpenTurath adalah sebuah lengkung runcing dua lapis yang menaungi tiga bidang. Tiga bidang itu melambangkan Islam, Iman, dan Ihsan, tiga tingkatan agama dalam hadis Jibril. Lengkung di luarnya melambangkan Fikih Tahawwulat dan ilmu-ilmu yang sejalan dengannya: peta navigasi yang menjaga ketiganya di tengah badai zaman. Dua bidang bawah yang melengkung juga terbaca sebagai kitab terbuka, tanda bahwa agama dipelajari dari kitab bersama guru. Kaki lengkung sengaja terbuka di bawah, itulah "Open" pada nama kami. Seluruhnya satu warna, seperti kitab yang dicetak dengan satu tinta.
 
 ### 11.6 Pernyataan batas (bubuhkan pada materi yang menampilkan jawaban AI)
 > Jawaban AI dapat keliru atau kurang lengkap. Periksa kutipan pada kitab yang dirujuk dan bacalah bersama konteksnya. Untuk amal dan fatwa, tanyakan kepada guru atau ulama yang berkompeten.
@@ -448,7 +448,7 @@ Pengelola: [[NAMA_PENGELOLA]]. Kontak: [[EMAIL_BANTUAN]]. Situs: openturath.id.
 ### 12.2 Daftar yang perlu disahkan atau diisi Pemilik
 | # | Butir | Status |
 |:-:|:---|:---:|
-| 1 | Pengesahan filosofi logo (§5.3) dan arti nama (§1.2) | ☐ |
+| 1 | Penegasan bidang mana = Islam, Iman, Ihsan (§5.3), dan pengesahan arti nama (§1.2) | ☐ |
 | 2 | Pengesahan nilai ke-6 dan janji (§3.3, §3.4) | ☐ |
 | 3 | Nama badan hukum/pengelola, alamat, kontak | ☐ |
 | 4 | Daftar pengawas keilmuan dan izin penyebutan tokoh (§1.5, §9.3) | ☐ |
