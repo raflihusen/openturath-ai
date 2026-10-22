@@ -10,7 +10,22 @@ const notebook_catalog_1 = require("./notebook_catalog");
 const access_catalog_1 = require("./access_catalog");
 admin.initializeApp({ projectId: process.env.GOOGLE_CLOUD_PROJECT || "open-turath" });
 const db = admin.firestore();
-const telemetry = { last_provider_success_ms: 0, authentication_error: false, session_refreshes: 0 };
+const telemetry = { last_provider_success_ms: 0, authentication_error: false, session_refreshes: 0,
+    provider_calls: 0, provider_failures: 0, provider_p50_ms: 0, provider_p95_ms: 0 };
+// Rolling latency sample of real NotebookLM operations: the capacity plan
+// (jobs per hour) is derived from these numbers, not from guesses.
+const latencies = [];
+function recordLatency(ms, ok) {
+    telemetry.provider_calls++;
+    if (!ok)
+        telemetry.provider_failures++;
+    latencies.push(ms);
+    if (latencies.length > 200)
+        latencies.shift();
+    const sorted = [...latencies].sort((a, b) => a - b);
+    telemetry.provider_p50_ms = sorted[Math.floor(sorted.length * 0.5)];
+    telemetry.provider_p95_ms = sorted[Math.min(sorted.length - 1, Math.floor(sorted.length * 0.95))];
+}
 const execute = (0, util_1.promisify)(child_process_1.execFile);
 let refreshing, lastRefreshAttempt = 0;
 async function refreshConsentedSession() {
@@ -60,16 +75,28 @@ const requestProvider = (request) => new Promise((resolve, reject) => {
     });
     (_a = child.stdin) === null || _a === void 0 ? void 0 : _a.end(JSON.stringify(request));
 });
+async function timedProvider(request) {
+    const started = Date.now();
+    try {
+        const result = await requestProvider(request);
+        recordLatency(Date.now() - started, true);
+        return result;
+    }
+    catch (error) {
+        recordLatency(Date.now() - started, false);
+        throw error;
+    }
+}
 async function callProvider(request) {
     try {
-        return await requestProvider(request);
+        return await timedProvider(request);
     }
     catch (error) {
         if (!error.authentication)
             throw error;
         telemetry.authentication_error = true;
         await refreshConsentedSession();
-        return requestProvider(request);
+        return timedProvider(request);
     }
 }
 const provider = {
@@ -586,14 +613,35 @@ async function cycle() {
     stats.cycles++;
     await db.collection("access_control").doc("heartbeat").set(Object.assign(Object.assign(Object.assign(Object.assign({}, stats), { pending_jobs: jobs.data().count }), telemetry), { writer: "vps-v2" }));
 }
+// Jobs for different notebooks run side by side; jobs for one notebook stay in
+// order (the lock is per notebook+email, the observation is per notebook).
+// `provider_concurrency` in access_control/runtime bounds the parallel Google
+// sessions (default 2) so a launch-day queue does not trip provider rate limits.
 async function runJobs() {
-    var _a;
     while (true) {
         try {
-            if (((_a = (await runtime.get()).data()) === null || _a === void 0 ? void 0 : _a.writer) === "vps-v2") {
-                const jobs = await db.collection("access_jobs").where("due_ms", "<=", Date.now()).orderBy("due_ms").limit(20).get();
-                for (const job of jobs.docs)
-                    await engine.runJob(job.ref);
+            const cfg = (await runtime.get()).data();
+            if ((cfg === null || cfg === void 0 ? void 0 : cfg.writer) === "vps-v2") {
+                const concurrency = Number.isInteger(cfg.provider_concurrency) ? Math.max(1, Math.min(8, cfg.provider_concurrency)) : 2;
+                const jobs = await db.collection("access_jobs").where("due_ms", "<=", Date.now()).orderBy("due_ms").limit(60).get();
+                const byNotebook = new Map();
+                for (const job of jobs.docs) {
+                    const id = String(job.data().notebook_id || "");
+                    byNotebook.set(id, [...(byNotebook.get(id) || []), job]);
+                }
+                const lanes = [...byNotebook.values()];
+                let cursor = 0;
+                await Promise.all(Array.from({ length: Math.min(concurrency, lanes.length) }, async () => {
+                    while (cursor < lanes.length)
+                        for (const job of lanes[cursor++]) {
+                            try {
+                                await engine.runJob(job.ref);
+                            }
+                            catch (_) {
+                                console.error("Access job failed; it stays queued");
+                            }
+                        }
+                }));
             }
         }
         catch (_) {

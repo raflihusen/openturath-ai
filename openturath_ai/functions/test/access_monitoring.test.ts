@@ -36,3 +36,12 @@ test('a failed alert delivery is not falsely recorded as delivered and can be re
     if(oldChat===undefined)delete process.env.TELEGRAM_CHAT_ID;else process.env.TELEGRAM_CHAT_ID=oldChat;
   }
 });
+test('launch metrics: payment activation backlog and overdue access evaluation raise incidents',async()=>{
+  const {api,db}=setup();db.seed('access_control/monitor',{enabled:true,approved_by_owner:true});
+  await api.monitorAccessHealth();assert.equal(db.docs.get('access_control/monitor_health').issues.length,0);
+  db.docs.get('access_control/payment_heartbeat').oldest_activation_due_ms=Date.now()-20*60000;
+  db.seed('users/late',{email:'late@x.test',access_due_ms:Date.now()-3600000});
+  await api.monitorAccessHealth();
+  const issues=db.docs.get('access_control/monitor_health').issues;
+  assert.ok(issues.includes('payment_activation_backlog'));assert.ok(issues.includes('access_schedule_overdue'));
+});

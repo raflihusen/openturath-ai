@@ -1296,6 +1296,14 @@ export const monitorAccessHealth = functions
     if(now-(heart.last_success_ms || runtime.activated_ms || now)>300000)issues.push("worker_stale");
     if(heart.authentication_error || now-(heart.last_provider_success_ms || runtime.activated_ms || now)>300000)issues.push("sharing_provider_stale");
     if(now-(payment.checked_ms || started)>900000)issues.push("payment_reconciliation_stale");
+    // Launch metrics: unpaid-invoice checks falling behind, and accounts whose
+    // access evaluation is overdue (buyers waiting for a seat, expired seats kept).
+    if(Number.isFinite(payment.oldest_activation_due_ms) && now-payment.oldest_activation_due_ms>600000)issues.push("payment_activation_backlog");
+    try {
+      const [lateUsers,lateOwners]=await Promise.all(["users","access_legacy_owners"].map(c=>
+        db.collection(c).where("access_due_ms","<=",now-1800000).limit(1).get()));
+      if(!lateUsers.empty || !lateOwners.empty)issues.push("access_schedule_overdue");
+    } catch (_) {if(now-started>900000)issues.push("queue_observation_unavailable");}
     try {
       const pending=await db.collection("access_jobs").where("status","in",["pending","retry","processing"]).orderBy("queued_ms").limit(1).get();
       if(!pending.empty && now-pending.docs[0].data().queued_ms>900000)issues.push("access_queue_overdue");
@@ -1315,6 +1323,8 @@ export const monitorAccessHealth = functions
         sharing_provider_stale:"Koneksi NotebookLM belum terverifikasi; pemulihan sesi perlu diperiksa.",
         payment_reconciliation_stale:"Pemeriksaan pembayaran berkala belum berjalan sesuai jadwal.",
         access_queue_overdue:"Ada pekerjaan akses yang tertahan lebih dari 15 menit.",
+        payment_activation_backlog:"Pemeriksaan invoice Midtrans yang belum aktif tertinggal lebih dari 10 menit.",
+        access_schedule_overdue:"Ada akun yang evaluasi aksesnya terlambat lebih dari 30 menit (pembeli bisa belum mendapat notebook).",
         queue_observation_unavailable:"Antrean akses belum dapat diperiksa."};
       const text=issues.length?"⚠️ <b>Otomasi akses OpenTurath perlu perhatian</b>\n"+issues.map(i=>labels[i]).join("\n"):
         "✅ <b>Otomasi akses OpenTurath pulih.</b> Pemeriksaan worker, NotebookLM, dan pembayaran kembali berjalan.";
