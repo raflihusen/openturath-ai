@@ -11,7 +11,7 @@ void main() {
   });
 
   group('PromoCountdownBanner', () {
-    testWidgets('renders minimalist red countdown banner in Dark theme',
+    testWidgets('renders ultra-minimalist solid red countdown banner in Dark theme',
         (tester) async {
       await tester.pumpWidget(
         MaterialApp(
@@ -29,9 +29,8 @@ void main() {
 
       await tester.pump();
 
-      // Check header title and pill
+      // Check header title
       expect(find.text('MENUJU PELUNCURAN PROMO 10 HARI'), findsOneWidget);
-      expect(find.text('MULAI JUMAT 12:00 WIB'), findsOneWidget);
 
       // Check units
       expect(find.text('HARI'), findsOneWidget);
@@ -45,11 +44,19 @@ void main() {
         findsOneWidget,
       );
 
+      // Verify solid red container background (100% opacity)
+      final container = tester.widget<Container>(find.descendant(
+        of: find.byType(PromoCountdownBanner),
+        matching: find.byType(Container),
+      ));
+      final decoration = container.decoration as BoxDecoration;
+      expect(decoration.color, const Color(0xFFB91C1C));
+
       // Advance 1 second to verify timer ticks without crash
       await tester.pump(const Duration(seconds: 1));
     });
 
-    testWidgets('renders minimalist red countdown banner in Light theme',
+    testWidgets('renders ultra-minimalist solid red countdown banner in Light theme',
         (tester) async {
       await tester.pumpWidget(
         MaterialApp(
@@ -68,8 +75,14 @@ void main() {
       await tester.pump();
 
       expect(find.text('MENUJU PELUNCURAN PROMO 10 HARI'), findsOneWidget);
-      expect(find.text('MULAI JUMAT 12:00 WIB'), findsOneWidget);
       expect(find.text('HARI'), findsOneWidget);
+
+      final container = tester.widget<Container>(find.descendant(
+        of: find.byType(PromoCountdownBanner),
+        matching: find.byType(Container),
+      ));
+      final decoration = container.decoration as BoxDecoration;
+      expect(decoration.color, const Color(0xFFB91C1C));
 
       await tester.pump(const Duration(seconds: 1));
     });
@@ -94,7 +107,6 @@ void main() {
       await tester.pump();
 
       expect(find.text('10-DAY PROMO LAUNCH COUNTDOWN'), findsOneWidget);
-      expect(find.text('STARTS FRI 12:00 WIB'), findsOneWidget);
       expect(find.text('DAYS'), findsOneWidget);
       expect(find.text('HOURS'), findsOneWidget);
       expect(find.text('MINUTES'), findsOneWidget);

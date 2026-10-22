@@ -78,7 +78,7 @@ class _AppLoaderState extends State<AppLoader>
         state == null ||
         state == AppLifecycleState.resumed ||
         state == AppLifecycleState.inactive;
-    if (reduced || !TickerMode.valuesOf(context).enabled || !isForeground) {
+    if (reduced || !TickerMode.of(context) || !isForeground) {
       if (_controller.isAnimating) _controller.stop();
     } else if (!_controller.isAnimating) {
       _controller.repeat();

@@ -727,141 +727,168 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
         backgroundColor: OTColors.canvas(dark),
       ),
       body: SafeArea(
-        child: LayoutBuilder(builder: (context, viewport) {
-          final wide = viewport.maxWidth >= 1000;
+        child: Stack(
+          children: [
+            LayoutBuilder(builder: (context, viewport) {
+              final wide = viewport.maxWidth >= 1000;
 
-          Widget plan({required bool featured, required List<Widget> body}) =>
-              _card(
-                flagship: featured,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: body,
+              Widget plan(
+                      {required bool featured, required List<Widget> body}) =>
+                  _card(
+                    flagship: featured,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: body,
+                    ),
+                  );
+
+              final featuredPlan = plan(
+                featured: true,
+                body: planBody(
+                  wide: wide,
+                  label: Loc.isArabic
+                      ? 'حصري في OpenTurath · 5 AI'
+                      : Loc.language == 'en'
+                          ? 'Exclusive to OpenTurath · 5 AI'
+                          : 'Eksklusif di OpenTurath · 5 AI',
+                  title: AppCopy.planTahawwulat,
+                  description: Loc.tr('planFeaturedDescription'),
+                  scope: flagshipScope,
+                  tiers: _TierSelector(
+                    onInk: true,
+                    offers: ProductPricing.tahawwulat,
+                    selected: _tahawwulatIndex,
+                    onSelect: _processing
+                        ? null
+                        : (i) => setState(() => _tahawwulatIndex = i),
+                  ),
+                  price: offer,
+                  benefits: [
+                    Loc.tr('planFeaturedBenefit1'),
+                    Loc.tr('planFeaturedBenefit3'),
+                    Loc.tr('planFeaturedBenefit4'),
+                  ],
+                  onCheckout: () => _checkout(flagship, offer),
+                  agentId: flagship.id,
                 ),
               );
 
-          final featuredPlan = plan(
-            featured: true,
-            body: planBody(
-              wide: wide,
-              label: Loc.isArabic
-                  ? 'حصري في OpenTurath · 5 AI'
-                  : Loc.language == 'en'
-                      ? 'Exclusive to OpenTurath · 5 AI'
-                      : 'Eksklusif di OpenTurath · 5 AI',
-              title: AppCopy.planTahawwulat,
-              description: Loc.tr('planFeaturedDescription'),
-              scope: flagshipScope,
-              tiers: _TierSelector(
-                onInk: true,
-                offers: ProductPricing.tahawwulat,
-                selected: _tahawwulatIndex,
-                onSelect: _processing
-                    ? null
-                    : (i) => setState(() => _tahawwulatIndex = i),
-              ),
-              price: offer,
-              benefits: [
-                Loc.tr('planFeaturedBenefit1'),
-                Loc.tr('planFeaturedBenefit3'),
-                Loc.tr('planFeaturedBenefit4'),
-              ],
-              onCheckout: () => _checkout(flagship, offer),
-              agentId: flagship.id,
-            ),
-          );
+              final singlePlan = hasSpecialists
+                  ? plan(
+                      featured: false,
+                      body: planBody(
+                        wide: wide,
+                        label: Loc.tr('planSingleLabel'),
+                        title: Loc.tr('specialistAccess'),
+                        description: Loc.tr('planSingleDescription'),
+                        scope: fieldPicker,
+                        tiers: _TierSelector(
+                          offers: ProductPricing.specialists,
+                          selected: _specialistIndex,
+                          onSelect: _processing
+                              ? null
+                              : (i) => setState(() => _specialistIndex = i),
+                        ),
+                        price: single,
+                        benefits: [
+                          Loc.tr(
+                              'planSingleBenefit1', [Loc.text(selected.title)]),
+                          Loc.tr('planSingleBenefit2'),
+                          Loc.tr('planSingleBenefit3'),
+                        ],
+                        onCheckout: () => _checkout(selected, single),
+                        agentId: selected.id,
+                      ),
+                    )
+                  : null;
 
-          final singlePlan = hasSpecialists
-              ? plan(
-                  featured: false,
-                  body: planBody(
-                    wide: wide,
-                    label: Loc.tr('planSingleLabel'),
-                    title: Loc.tr('specialistAccess'),
-                    description: Loc.tr('planSingleDescription'),
-                    scope: fieldPicker,
-                    tiers: _TierSelector(
-                      offers: ProductPricing.specialists,
-                      selected: _specialistIndex,
-                      onSelect: _processing
-                          ? null
-                          : (i) => setState(() => _specialistIndex = i),
-                    ),
-                    price: single,
-                    benefits: [
-                      Loc.tr('planSingleBenefit1', [Loc.text(selected.title)]),
-                      Loc.tr('planSingleBenefit2'),
-                      Loc.tr('planSingleBenefit3'),
-                    ],
-                    onCheckout: () => _checkout(selected, single),
-                    agentId: selected.id,
-                  ),
-                )
-              : null;
-
-          return SingleChildScrollView(
-            padding: const EdgeInsets.fromLTRB(20, 8, 20, 48),
-            child: Center(
-              child: ConstrainedBox(
-                constraints: BoxConstraints(
-                    maxWidth: (wide && hasSpecialists) ? 1040 : 640),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Text(Loc.tr('launchOffer').toUpperCase(),
-                        style: OTTypography.sectionHeading(color: muted)),
-                    const SizedBox(height: 12),
-                    Text(_headline(),
-                        style: OTTypography.editorialHero(color: ink)),
-                    const SizedBox(height: 8),
-                    _LibraryProof(ink: ink, muted: muted),
-                    const SizedBox(height: 20),
-                    const _PromoCountdownBanner(),
-                    const SizedBox(height: 20),
-                    if (wide && hasSpecialists && singlePlan != null)
-                      IntrinsicHeight(
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            Expanded(
-                                child: OTReveal(index: 0, child: featuredPlan)),
-                            const SizedBox(width: 16),
-                            Expanded(
-                                child: OTReveal(index: 1, child: singlePlan)),
+              return SingleChildScrollView(
+                padding: const EdgeInsets.fromLTRB(20, 8, 20, 48),
+                child: Center(
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(
+                        maxWidth: (wide && hasSpecialists) ? 1040 : 640),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Text(Loc.tr('launchOffer').toUpperCase(),
+                            style: OTTypography.sectionHeading(color: muted)),
+                        const SizedBox(height: 12),
+                        Text(_headline(),
+                            style: OTTypography.editorialHero(color: ink)),
+                        const SizedBox(height: 8),
+                        _LibraryProof(ink: ink, muted: muted),
+                        const SizedBox(height: 20),
+                        const _PromoCountdownBanner(),
+                        const SizedBox(height: 20),
+                        if (wide && hasSpecialists && singlePlan != null)
+                          IntrinsicHeight(
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                Expanded(
+                                    child:
+                                        OTReveal(index: 0, child: featuredPlan)),
+                                const SizedBox(width: 16),
+                                Expanded(
+                                    child:
+                                        OTReveal(index: 1, child: singlePlan)),
+                              ],
+                            ),
+                          )
+                        else ...[
+                          OTReveal(index: 0, child: featuredPlan),
+                          if (hasSpecialists && singlePlan != null) ...[
+                            const SizedBox(height: 16),
+                            OTReveal(index: 1, child: singlePlan),
                           ],
+                        ],
+                        const SizedBox(height: 12),
+                        Center(
+                          child: TextButton.icon(
+                            onPressed: _processing
+                                ? null
+                                : () => RedeemCodeSheet.show(context),
+                            style: OTButtons.quiet(dark),
+                            icon: const Icon(Icons.confirmation_number_outlined,
+                                size: 18),
+                            label: Text(Loc.tr('redeemAccess')),
+                          ),
                         ),
-                      )
-                    else ...[
-                      OTReveal(index: 0, child: featuredPlan),
-                      if (hasSpecialists && singlePlan != null) ...[
-                        const SizedBox(height: 16),
-                        OTReveal(index: 1, child: singlePlan),
                       ],
-                    ],
-                    const SizedBox(height: 12),
-                    if (_processing)
-                      const Padding(
-                        padding: EdgeInsets.all(12),
-                        child: Center(
-                          child: AppLoader(),
-                        ),
-                      ),
-                    Center(
-                      child: TextButton.icon(
-                        onPressed: _processing
-                            ? null
-                            : () => RedeemCodeSheet.show(context),
-                        style: OTButtons.quiet(dark),
-                        icon: const Icon(Icons.confirmation_number_outlined,
-                            size: 18),
-                        label: Text(Loc.tr('redeemAccess')),
+                    ),
+                  ),
+                ),
+              );
+            }),
+            if (_processing)
+              Positioned.fill(
+                child: AbsorbPointer(
+                  absorbing: true,
+                  child: Container(
+                    color: (dark
+                            ? const Color(0xFF111111)
+                            : const Color(0xFFF6F6F6))
+                        .withValues(alpha: 0.88),
+                    child: Center(
+                      child: AppLoader.fullscreen(
+                        title: Loc.language == 'ar'
+                            ? 'جارٍ تهيئة عملية الدفع…'
+                            : (Loc.language == 'en'
+                                ? 'Preparing checkout…'
+                                : 'Menyiapkan pembayaran…'),
+                        subtitle: Loc.language == 'ar'
+                            ? 'يرجى الانتظار لحظة'
+                            : (Loc.language == 'en'
+                                ? 'Please wait a moment'
+                                : 'Mohon tunggu sebentar'),
                       ),
                     ),
-                  ],
+                  ),
                 ),
               ),
-            ),
-          );
-        }),
+          ],
+        ),
       ),
     );
   }
@@ -1078,9 +1105,9 @@ class _LibraryProof extends StatelessWidget {
 /// Banner hitung mundur penawaran perdana 10 hari yang dimulai pada
 /// Jumat pukul 12:00 WIB siang (23 Oktober 2026 12:00 WIB / 05:00 UTC).
 ///
-/// Dirancang secara minimalis dengan sudut membulat (rounded corner) dan
-/// aksen merah scholarly/crimson, menjadi satu-satunya elemen di halaman
-/// pembayaran yang memiliki aksen warna merah.
+/// Desain solid red 100% opacity (tanpa pengurangan transparansi) dengan
+/// tipografi putih bersih dan tata letak ultra-minimalis, selaras dengan
+/// bahasa desain scholarly.
 class PromoCountdownBanner extends StatefulWidget {
   const PromoCountdownBanner({super.key});
 
@@ -1115,7 +1142,6 @@ class _PromoCountdownBannerState extends State<_PromoCountdownBanner> {
 
   @override
   Widget build(BuildContext context) {
-    final dark = Theme.of(context).brightness == Brightness.dark;
     final nowUtc = DateTime.now().toUtc();
     final isBeforeStart = nowUtc.isBefore(promoStartUtc);
     final isEnded = nowUtc.isAfter(promoEndUtc);
@@ -1136,7 +1162,6 @@ class _PromoCountdownBannerState extends State<_PromoCountdownBanner> {
     // Lokalisasi teks terjemahan
     final lang = Loc.language;
     final String headerTitle;
-    final String pillLabel;
     final String bottomCaption;
     final String unitDays;
     final String unitHours;
@@ -1150,16 +1175,13 @@ class _PromoCountdownBannerState extends State<_PromoCountdownBanner> {
       unitSecs = 'ثوانٍ';
       if (isBeforeStart) {
         headerTitle = 'العد التنازلي لإطلاق عرض الـ 10 أيام';
-        pillLabel = 'يبدأ الجمعة 12:00 WIB';
         bottomCaption =
             'يبدأ الجمعة، 23 أكتوبر · 12:00 بتوقيت جاكرتا (نافذة 10 أيام)';
       } else if (isEnded) {
         headerTitle = 'انتهى العرض';
-        pillLabel = 'مغلق';
         bottomCaption = 'انتهت فترة عرض الإطلاق لـ 10 أيام';
       } else {
-        headerTitle = 'عرض الإطلاق المحدود';
-        pillLabel = '10 أيام';
+        headerTitle = 'عرض الإطلاق المحدود (10 أيام)';
         bottomCaption =
             'العرض متاح لمدة 10 أيام · ينتهي الإثنين، 2 نوفمبر 12:00 WIB';
       }
@@ -1170,16 +1192,13 @@ class _PromoCountdownBannerState extends State<_PromoCountdownBanner> {
       unitSecs = 'SECONDS';
       if (isBeforeStart) {
         headerTitle = '10-DAY PROMO LAUNCH COUNTDOWN';
-        pillLabel = 'STARTS FRI 12:00 WIB';
         bottomCaption =
             'Starts Friday, Oct 23 · 12:00 WIB (10-day promo window)';
       } else if (isEnded) {
         headerTitle = 'LAUNCH OFFER ENDED';
-        pillLabel = 'CLOSED';
         bottomCaption = 'The 10-day launch offer has ended';
       } else {
-        headerTitle = 'LIMITED LAUNCH OFFER';
-        pillLabel = '10 DAYS';
+        headerTitle = 'LIMITED 10-DAY LAUNCH OFFER';
         bottomCaption =
             'Offer active for 10 days · Ends Monday, Nov 2 at 12:00 WIB';
       }
@@ -1191,247 +1210,130 @@ class _PromoCountdownBannerState extends State<_PromoCountdownBanner> {
       unitSecs = 'DETIK';
       if (isBeforeStart) {
         headerTitle = 'MENUJU PELUNCURAN PROMO 10 HARI';
-        pillLabel = 'MULAI JUMAT 12:00 WIB';
         bottomCaption =
             'Mulai Jumat, 23 Okt · 12:00 WIB (durasi promo 10 hari)';
       } else if (isEnded) {
         headerTitle = 'PENAWARAN PERDANA TELAH SELESAI';
-        pillLabel = 'SELESAI';
         bottomCaption = 'Masa penawaran perdana 10 hari telah ditutup';
       } else {
-        headerTitle = 'PENAWARAN PERDANA TERBATAS';
-        pillLabel = '10 HARI';
+        headerTitle = 'PENAWARAN PERDANA TERBATAS (10 HARI)';
         bottomCaption =
             'Penawaran aktif selama 10 hari · Berakhir Senin, 2 Nov · 12:00 WIB';
       }
     }
 
-    // Palet warna merah minimalis yang selaras dengan The Quiet Islamic Scholar
-    final Color cardBg =
-        dark ? const Color(0xFF14080A) : const Color(0xFFFFF1F2);
-    final Color cardBorder = dark
-        ? const Color(0xFF991B1B).withValues(alpha: 0.45)
-        : const Color(0xFFFECDD3);
-    final Color redAccent =
-        dark ? const Color(0xFFEF4444) : const Color(0xFFDC2626);
-    final Color headerColor =
-        dark ? const Color(0xFFFCA5A5) : const Color(0xFF991B1B);
-    final Color digitBoxBg =
-        dark ? const Color(0xFF220C10) : const Color(0xFFFFFFFF);
-    final Color digitBoxBorder = dark
-        ? const Color(0xFF991B1B).withValues(alpha: 0.35)
-        : const Color(0xFFFECDD3);
-    final Color digitText =
-        dark ? const Color(0xFFFAFAFA) : const Color(0xFF18181B);
-    final Color captionText =
-        dark ? const Color(0xFFE4E4E7) : const Color(0xFF52525B);
+    // Warna merah solid 100% opacity (Crimson Red murni tanpa transparansi)
+    const Color solidRedBg = Color(0xFFB91C1C);
 
     return Container(
       decoration: BoxDecoration(
-        color: cardBg,
+        color: solidRedBg,
         borderRadius: BorderRadius.circular(OTRadius.card),
-        border: Border.all(color: cardBorder),
       ),
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 18),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // Baris Atas: Dot indikator aktif + Judul promo + Pill status
-          Row(
-            children: [
-              Container(
-                width: 8,
-                height: 8,
-                decoration: BoxDecoration(
-                  color: redAccent,
-                  shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: redAccent.withValues(alpha: 0.5),
-                      blurRadius: 4,
-                      spreadRadius: 1,
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: Text(
-                  headerTitle,
-                  style: ScholarlyFonts.outfit(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: 1.1,
-                    color: headerColor,
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-              const SizedBox(width: 8),
-              Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 3.5),
-                decoration: BoxDecoration(
-                  color: dark
-                      ? redAccent.withValues(alpha: 0.14)
-                      : const Color(0xFFFEE2E2),
-                  borderRadius: OTRadius.chipBorder,
-                  border: Border.all(
-                    color: dark
-                        ? redAccent.withValues(alpha: 0.28)
-                        : const Color(0xFFFECDD3),
-                  ),
-                ),
-                child: Text(
-                  pillLabel,
-                  style: ScholarlyFonts.outfit(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: 0.5,
-                    color: redAccent,
-                  ),
-                ),
-              ),
-            ],
+          // Header teks minimalis kapital
+          Text(
+            headerTitle,
+            textAlign: TextAlign.center,
+            style: ScholarlyFonts.outfit(
+              fontSize: 11.5,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 1.2,
+              color: Colors.white,
+            ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 14),
 
-          // Baris Tengah: 4 Kotak Digit Hitung Mundur Tabular
+          // Angka hitung mundur tabular bersih langsung di atas bidang merah solid
           FittedBox(
             fit: BoxFit.scaleDown,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                _buildDigitBlock(
+                _buildDigitColumn(
                   value: days.toString().padLeft(2, '0'),
                   label: unitDays,
-                  boxBg: digitBoxBg,
-                  boxBorder: digitBoxBorder,
-                  textColor: digitText,
-                  labelColor: headerColor,
                 ),
-                _buildColonSeparator(redAccent),
-                _buildDigitBlock(
+                _buildSeparator(),
+                _buildDigitColumn(
                   value: hours.toString().padLeft(2, '0'),
                   label: unitHours,
-                  boxBg: digitBoxBg,
-                  boxBorder: digitBoxBorder,
-                  textColor: digitText,
-                  labelColor: headerColor,
                 ),
-                _buildColonSeparator(redAccent),
-                _buildDigitBlock(
+                _buildSeparator(),
+                _buildDigitColumn(
                   value: minutes.toString().padLeft(2, '0'),
                   label: unitMins,
-                  boxBg: digitBoxBg,
-                  boxBorder: digitBoxBorder,
-                  textColor: digitText,
-                  labelColor: headerColor,
                 ),
-                _buildColonSeparator(redAccent),
-                _buildDigitBlock(
+                _buildSeparator(),
+                _buildDigitColumn(
                   value: seconds.toString().padLeft(2, '0'),
                   label: unitSecs,
-                  boxBg: digitBoxBg,
-                  boxBorder: digitBoxBorder,
-                  textColor: digitText,
-                  labelColor: headerColor,
                 ),
               ],
             ),
           ),
-          const SizedBox(height: 14),
+          const SizedBox(height: 12),
 
-          // Baris Bawah: Ikon penjelas jadwal & durasi
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                isBeforeStart
-                    ? Icons.schedule_rounded
-                    : (isEnded
-                        ? Icons.check_circle_outline
-                        : Icons.timer_outlined),
-                size: 14,
-                color: redAccent,
-              ),
-              const SizedBox(width: 6),
-              Flexible(
-                child: Text(
-                  bottomCaption,
-                  textAlign: TextAlign.center,
-                  style: ScholarlyFonts.outfit(
-                    fontSize: 11.5,
-                    fontWeight: FontWeight.w500,
-                    color: captionText,
-                  ),
-                ),
-              ),
-            ],
+          // Baris keterangan jadwal
+          Text(
+            bottomCaption,
+            textAlign: TextAlign.center,
+            style: ScholarlyFonts.outfit(
+              fontSize: 11.5,
+              fontWeight: FontWeight.w500,
+              color: Colors.white.withValues(alpha: 0.85),
+            ),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildDigitBlock({
+  Widget _buildDigitColumn({
     required String value,
     required String label,
-    required Color boxBg,
-    required Color boxBorder,
-    required Color textColor,
-    required Color labelColor,
   }) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Container(
-          constraints: const BoxConstraints(minWidth: 54),
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
-          decoration: BoxDecoration(
-            color: boxBg,
-            borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: boxBorder),
-          ),
-          child: Center(
-            child: Text(
-              value,
-              style: ScholarlyFonts.outfit(
-                textStyle: const TextStyle(
-                  fontFeatures: [FontFeature.tabularFigures()],
-                ),
-                fontSize: 22,
-                fontWeight: FontWeight.w700,
-                color: textColor,
-                height: 1.1,
-              ),
+        Text(
+          value,
+          style: ScholarlyFonts.outfit(
+            textStyle: const TextStyle(
+              fontFeatures: [FontFeature.tabularFigures()],
             ),
+            fontSize: 32,
+            fontWeight: FontWeight.w700,
+            color: Colors.white,
+            height: 1.0,
           ),
         ),
-        const SizedBox(height: 5),
+        const SizedBox(height: 6),
         Text(
           label,
           style: ScholarlyFonts.outfit(
             fontSize: 9.5,
             fontWeight: FontWeight.w700,
-            letterSpacing: 0.8,
-            color: labelColor.withValues(alpha: 0.85),
+            letterSpacing: 0.9,
+            color: Colors.white.withValues(alpha: 0.82),
           ),
         ),
       ],
     );
   }
 
-  Widget _buildColonSeparator(Color accentColor) {
+  Widget _buildSeparator() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 6).copyWith(bottom: 18),
+      padding: const EdgeInsets.symmetric(horizontal: 12).copyWith(bottom: 16),
       child: Text(
         ':',
         style: ScholarlyFonts.outfit(
-          fontSize: 20,
-          fontWeight: FontWeight.w700,
-          color: accentColor,
+          fontSize: 22,
+          fontWeight: FontWeight.w600,
+          color: Colors.white.withValues(alpha: 0.5),
           height: 1.0,
         ),
       ),
