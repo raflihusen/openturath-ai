@@ -1746,7 +1746,8 @@ exports.onUserCreate = functions.firestore
     // Only verified email users may claim historical transactions.
     const emailLower = user.email.toLowerCase().trim();
     if (((_a = (await db.collection("access_control").doc("runtime").get()).data()) === null || _a === void 0 ? void 0 : _a.writer) === "vps-v2") {
-        await snapshot.ref.update({ access_due_ms: Date.now() });
+        // No access_due_ms here: an account without purchases has nothing to
+        // provision, and a due marker on it would sit at the head of the worker queue.
         await db.collection("provisioning_outbox").doc(`v2_signup_${uid}`).set({ uid, email: user.email,
             action: "reconcile", status: "pending", created_at: admin.firestore.FieldValue.serverTimestamp() });
         return null;

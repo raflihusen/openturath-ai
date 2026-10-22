@@ -378,63 +378,101 @@ async function projectRights(doc, user, grants) {
             t.update(doc.ref, updates);
         });
 }
-async function assignments() {
-    const dueUsers = await db.collection("users").where("access_due_ms", "<=", Date.now()).orderBy("access_due_ms").limit(100).get();
-    const dueLegacy = await db.collection("access_legacy_owners").where("access_due_ms", "<=", Date.now()).orderBy("access_due_ms").limit(100).get();
-    const due = { docs: [...dueUsers.docs, ...dueLegacy.docs] };
-    for (const doc of due.docs) {
-        const u = doc.data();
-        if (u.access_version !== 2 || u.adopted_by)
+const HOUR = 3600000, DAY = 24 * HOUR;
+// Bounded parallelism: one slow account must not hold the whole batch.
+async function eachLimited(items, limit, visit) {
+    let cursor = 0;
+    await Promise.all(Array.from({ length: Math.min(limit, items.length) }, async () => {
+        while (cursor < items.length)
+            await visit(items[cursor++]);
+    }));
+}
+// Every exit path reschedules the document. A document that stays due without
+// being rescheduled sits at the head of the queue and starves every buyer behind it.
+async function reschedule(doc, seen, next) {
+    const ref = doc.ref;
+    await db.runTransaction(async (t) => {
+        const current = (await t.get(ref)).data();
+        if (current && current.access_due_ms === seen)
+            t.update(ref, { access_due_ms: next });
+    });
+}
+async function assignOne(doc) {
+    const u = doc.data();
+    // Adopted legacy owners and accounts without v2 evidence have nothing to
+    // schedule; payment, voucher, refund and import paths set a new due time.
+    if (u.adopted_by || u.access_version !== 2)
+        return reschedule(doc, u.access_due_ms, null);
+    if (!doc.id.startsWith("legacy_") && !u.legacy_revoke_only && !u.account_deleted && !u.pending_deletion) {
+        try {
+            const authOwner = await admin.auth().getUser(doc.id);
+            if (!authOwner.emailVerified || (0, access_control_1.normalEmail)(authOwner.email) !== (0, access_control_1.normalEmail)(u.email))
+                throw new Error("Owner identity not verified");
+        }
+        catch (_) {
+            await db.collection("access_reviews").doc((0, access_control_1.keyOf)(doc.id, "identity")).set({ uid: doc.id, code: "identity_review", updated_ms: Date.now() });
+            return reschedule(doc, u.access_due_ms, Date.now() + HOUR);
+        }
+    }
+    const effective = await engine.owner(doc.id), grants = effective.grants;
+    await projectRights(doc, u, grants);
+    const observed = await db.collection("access_memberships").where("email", "==", (0, access_control_1.normalEmail)(u.email)).get();
+    const existing = await db.collection("access_assignments").where("uid", "==", doc.id).get();
+    const relevant = new Set([...observed.docs.map(d => d.data().entity), ...existing.docs.map(d => d.data().entity)]);
+    const settled = new Set(existing.docs.filter(d => d.data().status === "revoked").map(d => d.data().entity));
+    let needsRetry = false, revocationPending = false;
+    for (const [entity, scope] of Object.entries(access_catalog_1.ENTITY_SCOPES)) {
+        if (!relevant.has(entity) && (u.legacy_revoke_only || !(0, access_control_1.rights)(effective.user, grants, scope)))
             continue;
-        if (!doc.id.startsWith("legacy_") && !u.legacy_revoke_only && !u.account_deleted && !u.pending_deletion) {
+        try {
+            await engine.importObserved(doc.id, entity, observed.docs);
+        }
+        catch (_) {
+            needsRetry = true;
+            continue;
+        }
+        if ((0, access_control_1.rights)(effective.user, grants, scope)) {
             try {
-                const authOwner = await admin.auth().getUser(doc.id);
-                if (!authOwner.emailVerified || (0, access_control_1.normalEmail)(authOwner.email) !== (0, access_control_1.normalEmail)(u.email))
-                    throw new Error("Owner identity not verified");
+                await engine.reserve(doc.id, entity);
             }
-            catch (_) {
-                await db.collection("access_reviews").doc((0, access_control_1.keyOf)(doc.id, "identity")).set({ uid: doc.id, code: "identity_review", updated_ms: Date.now() });
-                await doc.ref.update({ access_due_ms: Date.now() + 3600000 });
-                continue;
+            catch (e) {
+                needsRetry = true;
+                await db.collection("access_reviews").doc((0, access_control_1.keyOf)(doc.id, entity)).set({ uid: doc.id, entity,
+                    code: e.code || "unavailable", updated_ms: Date.now() }, { merge: true });
             }
         }
-        const effective = await engine.owner(doc.id), grants = effective.grants;
-        await projectRights(doc, u, grants);
-        const observed = await db.collection("access_memberships").where("email", "==", (0, access_control_1.normalEmail)(u.email)).get();
-        const existing = await db.collection("access_assignments").where("uid", "==", doc.id).get();
-        const relevant = new Set([...observed.docs.map(d => d.data().entity), ...existing.docs.map(d => d.data().entity)]);
-        let needsRetry = false;
-        for (const [entity, scope] of Object.entries(access_catalog_1.ENTITY_SCOPES)) {
-            if (!relevant.has(entity) && (u.legacy_revoke_only || !(0, access_control_1.rights)(effective.user, grants, scope)))
-                continue;
+        else if (!settled.has(entity)) {
+            revocationPending = true;
             try {
-                await engine.importObserved(doc.id, entity, observed.docs);
+                await engine.revoke(doc.id, entity);
             }
             catch (_) {
                 needsRetry = true;
-                continue;
             }
-            if ((0, access_control_1.rights)(effective.user, grants, scope)) {
-                try {
-                    await engine.reserve(doc.id, entity);
-                }
-                catch (e) {
-                    needsRetry = true;
-                    await db.collection("access_reviews").doc((0, access_control_1.keyOf)(doc.id, entity)).set({ uid: doc.id, entity,
-                        code: e.code || "unavailable", updated_ms: Date.now() }, { merge: true });
-                }
-            }
-            else
-                await engine.revoke(doc.id, entity);
         }
-        const expiry = grants.filter(g => g.status === "active" && g.expires_ms > Date.now()).map(g => g.expires_ms);
-        const next = Math.min(Date.now() + (needsRetry ? 60000 : 3600000), ...expiry);
-        await db.runTransaction(async (t) => {
-            const current = (await t.get(doc.ref)).data();
-            if ((current === null || current === void 0 ? void 0 : current.access_due_ms) === u.access_due_ms)
-                t.update(doc.ref, { access_due_ms: next });
-        });
     }
+    // Re-evaluate at the next expiry, daily as a safety net, every 6 hours while a
+    // removal is still waiting on a gate, and after a minute when something failed.
+    const expiry = grants.filter(g => g.status === "active" && g.expires_ms > Date.now()).map(g => g.expires_ms);
+    const next = Math.min(Date.now() + (needsRetry ? 60000 : revocationPending ? 6 * HOUR : DAY), ...expiry);
+    await reschedule(doc, u.access_due_ms, next);
+}
+async function assignments() {
+    const dueUsers = await db.collection("users").where("access_due_ms", "<=", Date.now()).orderBy("access_due_ms").limit(100).get();
+    const dueLegacy = await db.collection("access_legacy_owners").where("access_due_ms", "<=", Date.now()).orderBy("access_due_ms").limit(100).get();
+    await eachLimited([...dueUsers.docs, ...dueLegacy.docs], 8, async (doc) => {
+        try {
+            await assignOne(doc);
+        }
+        catch (_) {
+            // A poison account is parked with backoff and surfaced, never retried first forever.
+            const attempts = (doc.data().access_failures || 0) + 1;
+            await db.collection("access_reviews").doc((0, access_control_1.keyOf)(doc.id, "assignment_failure")).set({ uid: doc.id,
+                code: "assignment_failure", attempts, updated_ms: Date.now() }, { merge: true }).catch(() => { });
+            await doc.ref.update({ access_failures: attempts,
+                access_due_ms: Date.now() + Math.min(DAY, 60000 * 2 ** Math.min(attempts, 10)) }).catch(() => { });
+        }
+    });
 }
 async function settleRevokes() {
     const snap = await db.collection("access_assignments").where("status", "==", "revoking").get();

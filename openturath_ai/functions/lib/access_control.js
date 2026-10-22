@@ -309,7 +309,7 @@ class AccessControl {
                 access_legacy_audit_required: true,
                 access_revocation_hold: !!user.access_revocation_hold || !!prior.access_revocation_hold,
                 access_grant_ids: [...new Set([...(user.access_grant_ids || []), ...grants.map(g => g.id)])] });
-            t.update(legacyRef, { adopted_by: uid });
+            t.update(legacyRef, { adopted_by: uid, access_due_ms: null });
         });
     }
     async resolve(uid, entity) {

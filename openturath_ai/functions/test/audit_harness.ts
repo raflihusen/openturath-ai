@@ -46,19 +46,28 @@ export class MemoryDB {
   }
   collection(name: string): any {
     const db = this;
-    function query(filters: any[] = [], max = Infinity, cursor = ''): any {
+    // Range filters follow Firestore typing: a numeric bound only matches numbers,
+    // so null/missing values never satisfy `<=`. orderBy(field) sorts by that field.
+    const cmp = (op: string, a: any, b: any) => {
+      if (typeof a !== typeof b || a === null || a === undefined) return false;
+      return op === '<=' ? a <= b : op === '<' ? a < b : op === '>=' ? a >= b : a > b;
+    };
+    function query(filters: any[] = [], max = Infinity, cursor = '', order = ''): any {
       return {
         doc: (id = crypto.randomUUID()) => db.doc(name + '/' + id),
         add: async (data: any) => { const ref = db.doc(name + '/' + crypto.randomUUID()); await ref.set(data); return ref; },
-        where: (k: string, op: string, v: any) => query([...filters,[k,op,v]],max,cursor),
-        orderBy: () => query(filters,max,cursor),
-        startAfter: (snap: any) => query(filters,max,snap.id),
-        limit: (n: number) => query(filters,n,cursor),
+        where: (k: string, op: string, v: any) => query([...filters,[k,op,v]],max,cursor,order),
+        orderBy: (field?: any) => query(filters,max,cursor,typeof field === 'string' ? field : order),
+        startAfter: (snap: any) => query(filters,max,snap.id,order),
+        limit: (n: number) => query(filters,n,cursor,order),
+        count: () => ({get: async () => { const r = await query(filters,max,cursor,order).get(); return {data: () => ({count: r.size})}; }}),
         get: async () => {
           const docs = [...db.docs.entries()].filter(([k,v]) => {
             if (!k.startsWith(name + '/') || k.slice(name.length + 1).includes('/') || k.split('/').at(-1)! <= cursor) return false;
-            return filters.every(([field,op,expected]) => op === 'in' ? expected.includes(v[field]) : op === '==' ? v[field] === expected : true);
-          }).sort(([a],[b])=>a.localeCompare(b)).slice(0,max).map(([k])=>db.snapshot(k));
+            return filters.every(([field,op,expected]) => op === 'in' ? expected.includes(v[field]) : op === '==' ? v[field] === expected
+              : ['<=','<','>=','>'].includes(op) ? cmp(op, v[field], expected) : true);
+          }).sort(([a,va],[b,vb]) => order && va[order] !== vb[order] ? (va[order] < vb[order] ? -1 : 1) : a.localeCompare(b))
+            .slice(0,max).map(([k])=>db.snapshot(k));
           return { docs, empty: !docs.length, size: docs.length };
         }
       };
@@ -106,7 +115,7 @@ export function loadBackend(root = process.cwd()) {
   };
   const firestore: any = () => db;
   firestore.Timestamp = Stamp;
-  firestore.FieldValue = { serverTimestamp: () => Stamp.now(), delete: () => undefined };
+  firestore.FieldValue = { serverTimestamp: () => Stamp.now(), delete: () => undefined, increment: (n: number) => n };
   firestore.FieldPath = { documentId: () => '__name__' };
   const chain: any = {
     runWith: () => chain,
