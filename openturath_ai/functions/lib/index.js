@@ -1168,6 +1168,7 @@ exports.reconcileMidtransPayments = functions
 exports.monitorAccessHealth = functions
     .runWith({ serviceAccount: "open-turath@appspot.gserviceaccount.com", timeoutSeconds: 120 })
     .pubsub.schedule("every 1 minutes").onRun(async () => {
+    var _a;
     const runtime = (await db.collection("access_control").doc("runtime").get()).data();
     if ((runtime === null || runtime === void 0 ? void 0 : runtime.writer) !== "vps-v2")
         return null;
@@ -1206,13 +1207,48 @@ exports.monitorAccessHealth = functions
         if (now - started > 900000)
             issues.push("queue_observation_unavailable");
     }
+    // Seat capacity per module (master + clones), recomputed every 10 minutes.
+    // The allocator only fills healthy notebooks, so a module whose clones are
+    // missing silently caps at one notebook; this makes that visible early.
+    let capacity = prior.capacity || null;
+    try {
+        if (!(prior.capacity_checked_ms > now - 600000)) {
+            const books = new Map((await db.collection("access_notebooks").get()).docs.map(d => [d.id, d.data()]));
+            const low = [];
+            let missing = 0, free = 0;
+            for (const [code, e] of Object.entries(notebook_catalog_1.NOTEBOOK_ENTITIES)) {
+                let seats = 0;
+                for (const id of [e.masterId, ...e.clones.map(c => c.id)]) {
+                    const n = books.get(id);
+                    if ((n === null || n === void 0 ? void 0 : n.status) === "missing")
+                        missing++;
+                    if ((n === null || n === void 0 ? void 0 : n.status) === "active" && n.is_public === false && n.healthy_until_ms > now)
+                        seats += Math.max(0, Math.min(2000, n.admission_limit || 1995) - (n.occupied || 0));
+                }
+                free += seats;
+                if (seats < (Number.isInteger(cfg.min_free_seats) ? cfg.min_free_seats : 500))
+                    low.push(code);
+            }
+            capacity = { low, missing, free_seats: free, checked_ms: now };
+        }
+    }
+    catch (_) { /* keep the previous capacity reading */ }
+    if ((_a = capacity === null || capacity === void 0 ? void 0 : capacity.low) === null || _a === void 0 ? void 0 : _a.length)
+        issues.push("notebook_capacity_low");
+    if (capacity === null || capacity === void 0 ? void 0 : capacity.missing)
+        issues.push("notebooks_missing");
+    try {
+        if (!(await db.collection("access_reviews").where("code", "==", "resource-exhausted").limit(1).get()).empty)
+            issues.push("buyers_waiting_capacity");
+    }
+    catch (_) { /* reported through queue_observation_unavailable */ }
     const state = issues.length ? issues.join(",") : "healthy", token = crypto.randomUUID();
     const enabled = cfg.enabled === true && cfg.approved_by_owner === true;
     const notify = await db.runTransaction(async (t) => {
         const current = (await t.get(ref)).data() || {};
         const send = enabled && current.notified_state !== state &&
             (issues.length > 0 || current.notified_state && current.notified_state !== "healthy") && !(current.lease_until_ms > now);
-        t.set(ref, Object.assign(Object.assign(Object.assign({}, current), { started_ms: started, checked_ms: now, state, issues, notification_enabled: enabled }), (send ? { lease: token, lease_until_ms: now + 60000 } : {})));
+        t.set(ref, Object.assign(Object.assign(Object.assign({}, current), { started_ms: started, checked_ms: now, state, issues, notification_enabled: enabled, capacity, capacity_checked_ms: (capacity === null || capacity === void 0 ? void 0 : capacity.checked_ms) || null }), (send ? { lease: token, lease_until_ms: now + 60000 } : {})));
         return send;
     });
     if (notify) {
@@ -1222,6 +1258,9 @@ exports.monitorAccessHealth = functions
             access_queue_overdue: "Ada pekerjaan akses yang tertahan lebih dari 15 menit.",
             payment_activation_backlog: "Pemeriksaan invoice Midtrans yang belum aktif tertinggal lebih dari 10 menit.",
             access_schedule_overdue: "Ada akun yang evaluasi aksesnya terlambat lebih dari 30 menit (pembeli bisa belum mendapat notebook).",
+            notebook_capacity_low: "Kursi kosong di sebagian modul menipis (master + clone sehat). Tambah clone atau periksa clone yang hilang.",
+            notebooks_missing: "Ada notebook clone di katalog yang tidak lagi ditemukan di akun pemilik NotebookLM.",
+            buyers_waiting_capacity: "Ada pembeli yang sudah membayar tetapi menunggu kursi notebook (semua notebook modulnya penuh/tidak sehat).",
             queue_observation_unavailable: "Antrean akses belum dapat diperiksa." };
         const text = issues.length ? "⚠️ <b>Otomasi akses OpenTurath perlu perhatian</b>\n" + issues.map(i => labels[i]).join("\n") :
             "✅ <b>Otomasi akses OpenTurath pulih.</b> Pemeriksaan worker, NotebookLM, dan pembayaran kembali berjalan.";

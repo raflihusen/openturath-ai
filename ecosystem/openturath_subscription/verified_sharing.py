@@ -82,6 +82,10 @@ if __name__ == "__main__":
         # SDK exception strings can contain private payloads or session details.
         message = str(error).lower()
         auth_failure = any(term in message for term in ("csrf", "authentication", "session expired", "cookie expired"))
-        print(json.dumps({"error": "Sharing observation/operation failed", "category": type(error).__name__,
-                          "code": "authentication_unavailable" if auth_failure else "provider_unavailable"}))
+        # Google answered, but this account cannot see the notebook (deleted, or
+        # owned by another account). Distinct from an outage so the worker can
+        # stop allocating seats there instead of retrying forever.
+        not_found = getattr(error, "rpc_code", None) == 5 or "status code 5" in message
+        code = "notebook_not_found" if not_found else "authentication_unavailable" if auth_failure else "provider_unavailable"
+        print(json.dumps({"error": "Sharing observation/operation failed", "category": type(error).__name__, "code": code}))
         sys.exit(1)

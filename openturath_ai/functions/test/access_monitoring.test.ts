@@ -37,11 +37,22 @@ test('a failed alert delivery is not falsely recorded as delivered and can be re
   }
 });
 test('launch metrics: payment activation backlog and overdue access evaluation raise incidents',async()=>{
-  const {api,db}=setup();db.seed('access_control/monitor',{enabled:true,approved_by_owner:true});
+  const {api,db}=setup();db.seed('access_control/monitor',{enabled:true,approved_by_owner:true,min_free_seats:0});
   await api.monitorAccessHealth();assert.equal(db.docs.get('access_control/monitor_health').issues.length,0);
   db.docs.get('access_control/payment_heartbeat').oldest_activation_due_ms=Date.now()-20*60000;
   db.seed('users/late',{email:'late@x.test',access_due_ms:Date.now()-3600000});
   await api.monitorAccessHealth();
   const issues=db.docs.get('access_control/monitor_health').issues;
   assert.ok(issues.includes('payment_activation_backlog'));assert.ok(issues.includes('access_schedule_overdue'));
+});
+test('capacity metrics: low seats, missing clones and buyers waiting for a seat raise incidents',async()=>{
+  const {api,db}=setup();db.seed('access_control/monitor',{enabled:true,approved_by_owner:true,min_free_seats:100});
+  await api.monitorAccessHealth();
+  const first=db.docs.get('access_control/monitor_health');
+  assert.ok(first.issues.includes('notebook_capacity_low'));
+  assert.ok(first.capacity.low.length>=24);
+  db.seed('access_notebooks/x',{status:'missing'});
+  db.seed('access_reviews/w',{code:'resource-exhausted'});
+  await api.monitorAccessHealth();
+  assert.ok(db.docs.get('access_control/monitor_health').issues.includes('buyers_waiting_capacity'));
 });

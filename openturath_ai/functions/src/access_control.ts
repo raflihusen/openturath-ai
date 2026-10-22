@@ -422,13 +422,52 @@ export class AccessControl {
       if (!a || ["revoked", "revoking", "transferred"].includes(a.status)) return;
       const permanent = await t.get(this.db.collection("access_vip_registry").doc(keyOf(a.email)));
       if (isVip({email:a.email}, grants) || permanent.exists) return;
+      // A notebook Google no longer has cannot hold the viewer; a removal job
+      // there would retry forever and keep the assignment from settling.
+      const targets = [];
+      for (const notebook of a.history || [a.notebook_id])
+        if ((await t.get(this.db.collection("access_notebooks").doc(notebook))).data()?.status !== "missing") targets.push(notebook);
       const revision = a.revision + 1;
       t.update(ar, {status: "revoking", revision, updated_ms: this.clock()});
-      for (const notebook of a.history || [a.notebook_id]) {
+      for (const notebook of targets) {
         t.set(this.db.collection("access_jobs").doc(keyOf(uid, entity, String(revision), notebook)), {
           ...a, notebook_id: notebook, revision, desired: false, decision_fingerprint:assessment.fingerprint,
           decision_policy:REVOCATION_POLICY,status: "pending", attempts: 0, queued_ms:this.clock(), due_ms: this.clock()});
       }
+    });
+  }
+  // Moves a paying member off a notebook that Google no longer has onto the
+  // next healthy one (master first, then clones), the same waterfall as reserve.
+  async relocate(uid: string, entity: string): Promise<boolean> {
+    const {user, grants} = await this.owner(uid);
+    if (!rights(user, grants, this.scopes[entity], this.clock())) return false;
+    const e = this.entities[entity];
+    if (!e) return false;
+    const ar = this.assignmentRef(uid, entity);
+    return this.db.runTransaction(async (t: any) => {
+      const a = (await t.get(ar)).data();
+      if (!a || !["ready", "provisioning"].includes(a.status)) return false;
+      const current = (await t.get(this.db.collection("access_notebooks").doc(a.notebook_id))).data();
+      if (current?.status !== "missing") return false;
+      const candidates = [];
+      for (const id of [e.masterId, ...e.clones.map(c => c.id)]) {
+        if (id === a.notebook_id) continue;
+        const nr = this.db.collection("access_notebooks").doc(id), mr = this.db.collection("access_memberships").doc(keyOf(id, a.email));
+        candidates.push({id, nr, mr, n: (await t.get(nr)).data(), m: (await t.get(mr)).data()});
+      }
+      const found = candidates.find(c => c.n?.status === "active" && c.n?.is_public === false &&
+        c.n?.healthy_until_ms > this.clock() && c.n.occupied < Math.min(2000, c.n.admission_limit || 1995));
+      if (!found) throw new AccessFault("resource-exhausted", "paid_waiting_capacity");
+      const revision = a.revision + 1;
+      const moved = {...a, notebook_id: found.id, status: "provisioning", revision,
+        history: [...new Set([...(a.history || [a.notebook_id]), found.id])], relocated_from: a.notebook_id, updated_ms: this.clock()};
+      if (!found.m?.present) t.update(found.nr, {occupied: found.n.occupied + 1});
+      t.set(found.mr, {uid, entity, email: a.email, notebook_id: found.id, present: found.m?.present === true,
+        counted: true, revision, reserved_ms: this.clock()}, {merge: true});
+      t.set(ar, moved);
+      t.set(this.db.collection("access_jobs").doc(keyOf(uid, entity, String(revision))), {
+        ...moved, desired: true, status: "pending", attempts: 0, queued_ms: this.clock(), due_ms: this.clock()});
+      return true;
     });
   }
   async repair(uid: string, entity: string): Promise<void> {

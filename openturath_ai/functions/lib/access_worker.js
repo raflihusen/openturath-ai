@@ -63,6 +63,8 @@ const requestProvider = (request) => new Promise((resolve, reject) => {
             const data = JSON.parse(out);
             if (data.code === "authentication_unavailable")
                 return reject(Object.assign(new Error("Owner session unavailable"), { authentication: true }));
+            if (data.code === "notebook_not_found")
+                return reject(Object.assign(new Error("Notebook not found for the owner account"), { notFound: true }));
             if (error || data.error)
                 return reject(new Error("Sharing provider unavailable"));
             telemetry.last_provider_success_ms = Date.now();
@@ -460,7 +462,9 @@ async function assignOne(doc) {
         }
         if ((0, access_control_1.rights)(effective.user, grants, scope)) {
             try {
+                await engine.relocate(doc.id, entity);
                 await engine.reserve(doc.id, entity);
+                await db.collection("access_reviews").doc((0, access_control_1.keyOf)(doc.id, entity)).delete().catch(() => { });
             }
             catch (e) {
                 needsRetry = true;
@@ -502,11 +506,14 @@ async function assignments() {
     });
 }
 async function settleRevokes() {
+    var _a;
     const snap = await db.collection("access_assignments").where("status", "==", "revoking").get();
     for (const doc of snap.docs) {
         const a = doc.data();
         let absent = true;
         for (const id of a.history || [a.notebook_id]) {
+            if (((_a = (await db.collection("access_notebooks").doc(id).get()).data()) === null || _a === void 0 ? void 0 : _a.status) === "missing")
+                continue;
             const m = (await db.collection("access_memberships").doc((0, access_control_1.keyOf)(id, a.email)).get()).data();
             if (!m || m.present || !m.verified_ms)
                 absent = false;
@@ -650,40 +657,81 @@ async function runJobs() {
         await new Promise(resolve => setTimeout(resolve, 1000));
     }
 }
+// Consecutive "not found" answers before a notebook is declared missing. One
+// answer can be a transient account-routing glitch; three passes (~4 hours at
+// 15 s per notebook) cannot.
+const MISSING_AFTER = 3;
+async function adoptNotebook(entity, n, observed) {
+    const nr = db.collection("access_notebooks").doc(n.id);
+    const created = await db.runTransaction(async (t) => {
+        if ((await t.get(nr)).exists)
+            return false;
+        t.set(nr, { entity: entity.code, name: n.name, occupied: observed.emails.length, admission_limit: 1995, hard_limit: 2000,
+            status: observed.isPublic ? "quarantined" : n.legacy ? "draining" : "active", is_public: observed.isPublic,
+            healthy_until_ms: Date.now() + 86400000, observed_ms: Date.now(), adopted_ms: Date.now() });
+        return true;
+    });
+    if (!created)
+        return;
+    for (const email of observed.emails) {
+        const mr = db.collection("access_memberships").doc((0, access_control_1.keyOf)(n.id, (0, access_control_1.normalEmail)(email)));
+        if (!(await mr.get()).exists)
+            await mr.set({ notebook_id: n.id, entity: entity.code, email: (0, access_control_1.normalEmail)(email),
+                present: true, counted: true, verified_ms: Date.now(), imported: true });
+    }
+    console.log(JSON.stringify({ event: "notebook_adopted", notebook: n.id, entity: entity.code, viewers: observed.emails.length }));
+}
+async function markMissing(entity, id) {
+    const ref = db.collection("access_notebooks").doc(id);
+    const missing = await db.runTransaction(async (t) => {
+        const current = (await t.get(ref)).data();
+        if (!current)
+            return false;
+        const count = (current.missing_count || 0) + 1;
+        t.update(ref, Object.assign({ missing_count: count, last_missing_ms: Date.now() }, (count >= MISSING_AFTER ? { status: "missing" } : {})));
+        return count >= MISSING_AFTER;
+    });
+    if (!missing)
+        return;
+    console.log(JSON.stringify({ event: "notebook_missing", notebook: id, entity: entity.code }));
+    const seated = await db.collection("access_assignments").where("notebook_id", "==", id).get();
+    for (const a of seated.docs) {
+        try {
+            await engine.relocate(a.data().uid, a.data().entity);
+        }
+        catch (e) {
+            await db.collection("access_reviews").doc((0, access_control_1.keyOf)(a.data().uid, a.data().entity)).set({ uid: a.data().uid, entity: a.data().entity,
+                code: e.code || "unavailable", updated_ms: Date.now() }, { merge: true });
+        }
+    }
+}
 async function reconcile() {
     var _a;
-    const all = Object.values(notebook_catalog_1.NOTEBOOK_ENTITIES).flatMap(e => notebooks(e));
+    const all = Object.values(notebook_catalog_1.NOTEBOOK_ENTITIES).flatMap(e => notebooks(e).map(n => ({ entity: e, n })));
     let cursor = 0;
     while (true) {
         try {
             if (((_a = (await runtime.get()).data()) === null || _a === void 0 ? void 0 : _a.writer) === "vps-v2") {
-                const target = all[cursor++ % all.length];
+                const { entity, n: target } = all[cursor++ % all.length];
                 const ref = db.collection("access_notebooks").doc(target.id);
                 const snapshot = await ref.get();
-                if (snapshot.exists) {
-                    const observation = await provider.observe(target.id);
-                    if (!observation.complete)
-                        throw new Error("Incomplete health observation");
-                    const emails = new Set(observation.emails.map(access_control_1.normalEmail));
-                    const memberships = await db.collection("access_memberships").where("notebook_id", "==", target.id).get();
-                    const reserved = memberships.docs.filter(d => d.data().counted && !emails.has(d.data().email)).length;
-                    await db.runTransaction(async (t) => {
-                        const current = (await t.get(ref)).data();
-                        if (!current)
-                            return;
-                        // Account for reservations not yet observed by Google; an external
-                        // manual invite must not allow the allocator to overbook.
-                        t.update(ref, { occupied: Math.max(current.occupied, emails.size + reserved),
-                            observed_count: emails.size, observed_ms: Date.now(), healthy_until_ms: Date.now() + 86400000,
-                            is_public: observation.isPublic, status: observation.isPublic ? "quarantined" : current.status });
-                    });
-                    if (!observation.isPublic)
-                        for (const member of memberships.docs) {
-                            const m = member.data();
-                            if (m.uid && m.present && !emails.has(m.email))
-                                await engine.repair(m.uid, m.entity);
-                        }
+                let observation;
+                try {
+                    observation = await provider.observe(target.id);
                 }
+                catch (error) {
+                    if (error.notFound && snapshot.exists)
+                        await markMissing(entity, target.id);
+                    throw error;
+                }
+                if (!observation.complete)
+                    throw new Error("Incomplete health observation");
+                // A catalog notebook without a ledger record (a newly added clone) is
+                // adopted only after Google has shown it to the owner account.
+                if (!snapshot.exists)
+                    await adoptNotebook(entity, target, observation);
+                else
+                    await refreshNotebook(target, ref, observation);
             }
         }
         catch (_) {
@@ -691,6 +739,28 @@ async function reconcile() {
         }
         await new Promise(resolve => setTimeout(resolve, 15000));
     }
+}
+async function refreshNotebook(target, ref, observation) {
+    const emails = new Set(observation.emails.map(access_control_1.normalEmail));
+    const memberships = await db.collection("access_memberships").where("notebook_id", "==", target.id).get();
+    const reserved = memberships.docs.filter(d => d.data().counted && !emails.has(d.data().email)).length;
+    await db.runTransaction(async (t) => {
+        const current = (await t.get(ref)).data();
+        if (!current)
+            return;
+        const status = observation.isPublic ? "quarantined" : current.status === "missing" ? (target.legacy ? "draining" : "active") : current.status;
+        // Account for reservations not yet observed by Google; an external
+        // manual invite must not allow the allocator to overbook.
+        t.update(ref, { occupied: Math.max(current.occupied, emails.size + reserved),
+            observed_count: emails.size, observed_ms: Date.now(), healthy_until_ms: Date.now() + 86400000,
+            is_public: observation.isPublic, status, missing_count: 0 });
+    });
+    if (!observation.isPublic)
+        for (const member of memberships.docs) {
+            const m = member.data();
+            if (m.uid && m.present && !emails.has(m.email))
+                await engine.repair(m.uid, m.entity);
+        }
 }
 async function main() {
     var _a;
