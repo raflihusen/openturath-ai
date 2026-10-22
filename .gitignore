@@ -112,3 +112,4 @@ lib-cov/
 
 # Laporan migrasi akses (berisi data pelanggan)
 legacy_access_report_*.json
+legacy_access_decisions_*.json

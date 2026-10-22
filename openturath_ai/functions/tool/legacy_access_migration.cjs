@@ -13,7 +13,8 @@
 const fs = require("fs");
 const path = require("path");
 const admin = require("firebase-admin");
-const {VIP_EMAILS, normalEmail, keyOf, billingExpiry, hasLegacyAccessAdjustment, AccessControl, millis, REVOCATION_POLICY} = require("../lib/access_control.js");
+const {VIP_EMAILS, normalEmail, keyOf, billingExpiry, hasLegacyAccessAdjustment, AccessControl, millis, REVOCATION_POLICY, rights} = require("../lib/access_control.js");
+const {applyDecisions, certify} = require("./legacy_decisions.cjs");
 const {AKAL_SERVICES, ENTITY_SCOPES} = require("../lib/access_catalog.js");
 const {NOTEBOOK_ENTITIES} = require("../lib/notebook_catalog.js");
 
@@ -120,6 +121,10 @@ async function report(out) {
   const assignments = (await db.collection("access_assignments").get()).docs.map(d => d.data());
   const expiredStillSeated = [];
   for (const a of assignments.filter(a => ["ready", "provisioning", "revocation_review"].includes(a.status))) {
+    // Active rights first: the gate reports a hold before it looks at expiry,
+    // which would otherwise list paying members as expired.
+    const owner = await engine.owner(a.uid);
+    if (rights(owner.user, owner.grants, a.scope || ENTITY_SCOPES[a.entity], now)) continue;
     const assessment = await engine.assessRevocation(a.uid, a.scope || ENTITY_SCOPES[a.entity], a.email);
     if (assessment.reason === "active_scope" || assessment.reason === "permanent_vip") continue;
     expiredStillSeated.push({uid: a.uid, email: a.email, entity: a.entity, notebook: a.notebook_id,
@@ -195,7 +200,17 @@ async function apply(file) {
   console.log("Next: run `node lib/access_worker.js --import` on the VPS so holds backed by verified billing are lifted.");
 }
 
+// Owner decisions file: {"decisions": [...]} as documented in legacy_decisions.cjs.
+async function runDecisions(file, step) {
+  const db = init(), entries = JSON.parse(fs.readFileSync(file, "utf8")).decisions || [];
+  const engine = new AccessControl(db, NOTEBOOK_ENTITIES, ENTITY_SCOPES);
+  const log = step === "certify" ? await certify(db, entries, {engine}) : await applyDecisions(db, entries, {engine});
+  console.log(JSON.stringify(log, null, 1));
+}
+
 const [mode, arg] = process.argv.slice(2);
 (mode === "report" ? report(arg || `legacy_access_report_${new Date().toISOString().slice(0, 10)}.json`)
-  : mode === "apply" && arg ? apply(arg) : Promise.reject(new Error("usage: report [out.json] | apply <report.json>")))
+  : mode === "apply" && arg ? apply(arg)
+  : (mode === "apply-decisions" || mode === "certify") && arg ? runDecisions(arg, mode)
+  : Promise.reject(new Error("usage: report [out.json] | apply <report.json> | apply-decisions <decisions.json> | certify <decisions.json>")))
   .then(() => process.exit(0), e => { console.error(e.message); process.exit(1); });

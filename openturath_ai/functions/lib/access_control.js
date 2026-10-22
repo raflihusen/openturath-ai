@@ -191,7 +191,7 @@ class AccessControl {
         return { user, grants };
     }
     async assessRevocation(uid, scope, targetEmail) {
-        var _a, _b;
+        var _a;
         const { user, grants } = await this.owner(uid);
         const email = (0, exports.normalEmail)(targetEmail || (user === null || user === void 0 ? void 0 : user.email));
         const now = this.clock();
@@ -234,20 +234,7 @@ class AccessControl {
             !(g.kind === "payment" && g.amount > 0 || g.kind === "admin" && g.admin_verified === true || g.kind === "voucher")))
             return { allowed: false, reason: "invalid_scope_evidence" };
         const gateway = (t) => ["midtrans", "doku"].includes(String(t.gateway || "").toLowerCase());
-        const txs = new Map();
-        for (const [field, value] of [["uid", uid], ["customer_email", email], ["payer_email", email], ["email", email]]) {
-            const s = await this.db.collection("transactions").where(field, "==", value).get();
-            for (const d of s.docs) {
-                const t = d.data();
-                // An unpaid gateway checkout proves nothing, and anyone can open one
-                // with someone else's address; it must not churn the decision.
-                if (gateway(t) && t.activation_applied !== true)
-                    continue;
-                const scopes = legacyTransactionScopes(t);
-                if (!scopes.length || scopes.some(s => [scope, "all_access", "all_ai"].includes(s)))
-                    txs.set(d.id, Object.assign({ id: d.id }, t));
-            }
-        }
+        const txs = await this.scopeTransactions(uid, scope, email);
         // Legacy evidence blocks automated removal only while it could still be
         // live. An unverified provider period is trusted for at least 13 months
         // from its start, because its recorded duration may have been guessed.
@@ -264,11 +251,7 @@ class AccessControl {
             (0, exports.millis)(e.expiry) > now && !selected.some(g => g.status === "active" && g.expires_ms >= (0, exports.millis)(e.expiry)));
         const legacy = !deleted && (selected.some(unverifiedLive) || unbackedProfile ||
             [...txs.values()].some(t => hasLegacyAccessAdjustment(t) || !gateway(t) && txMayBeLive(t)));
-        const fingerprint = evidenceHash({ policy: exports.REVOCATION_POLICY, uid, email, scope,
-            owner: { account_deleted: !!user.account_deleted, pending_deletion: !!user.pending_deletion,
-                adopted_by: user.adopted_by || null, entitlement: ((_a = user.entitlements) === null || _a === void 0 ? void 0 : _a[scope]) || null },
-            grants: [...selected].sort((a, b) => String(a.id).localeCompare(String(b.id))),
-            transactions: [...txs.values()].sort((a, b) => a.id.localeCompare(b.id)) });
+        const fingerprint = this.fingerprint(uid, scope, email, user, selected, txs);
         if (legacy) {
             const certificate = (await this.db.collection("access_legacy_audits").doc((0, exports.keyOf)(uid, scope)).get()).data();
             if ((certificate === null || certificate === void 0 ? void 0 : certificate.status) !== "approved" || certificate.policy !== exports.REVOCATION_POLICY ||
@@ -277,7 +260,7 @@ class AccessControl {
                 return { allowed: false, reason: "legacy_audit_missing_or_stale", fingerprint, legacy: true };
             for (const tx of txs.values())
                 if (hasLegacyAccessAdjustment(tx)) {
-                    const decision = (_b = certificate.adjustments) === null || _b === void 0 ? void 0 : _b[tx.id];
+                    const decision = (_a = certificate.adjustments) === null || _a === void 0 ? void 0 : _a[tx.id];
                     const explicit = (0, exports.millis)(tx.subscription_expires_at || tx.access_expires_at || tx.expires_at);
                     const honored = selected.find(g => g.id === (decision === null || decision === void 0 ? void 0 : decision.grant_id) && g.kind === "admin" && g.admin_verified === true &&
                         g.source_transaction === tx.id && Number.isFinite(explicit) && g.expires_ms >= explicit);
@@ -291,6 +274,45 @@ class AccessControl {
                 }
         }
         return { allowed: true, reason: deleted ? "account_deleted" : "verified_scope_expired", category, fingerprint, legacy: !!legacy };
+    }
+    // Billing evidence for one scope, shared by the revocation gate and by the
+    // owner certificate tooling so both always hash exactly the same records.
+    async scopeTransactions(uid, scope, email) {
+        const gateway = (t) => ["midtrans", "doku"].includes(String(t.gateway || "").toLowerCase());
+        const txs = new Map();
+        for (const [field, value] of [["uid", uid], ["customer_email", email], ["payer_email", email], ["email", email]]) {
+            const s = await this.db.collection("transactions").where(field, "==", value).get();
+            for (const d of s.docs) {
+                const t = d.data();
+                // An unpaid gateway checkout proves nothing, and anyone can open one
+                // with someone else's address; it must not churn the decision.
+                if (gateway(t) && t.activation_applied !== true)
+                    continue;
+                const scopes = legacyTransactionScopes(t);
+                if (!scopes.length || scopes.some(s => [scope, "all_access", "all_ai"].includes(s)))
+                    txs.set(d.id, Object.assign({ id: d.id }, t));
+            }
+        }
+        return txs;
+    }
+    fingerprint(uid, scope, email, user, selected, txs) {
+        var _a;
+        return evidenceHash({ policy: exports.REVOCATION_POLICY, uid, email, scope,
+            owner: { account_deleted: !!user.account_deleted, pending_deletion: !!user.pending_deletion,
+                adopted_by: user.adopted_by || null, entitlement: ((_a = user.entitlements) === null || _a === void 0 ? void 0 : _a[scope]) || null },
+            grants: [...selected].sort((a, b) => String(a.id).localeCompare(String(b.id))),
+            transactions: [...txs.values()].sort((a, b) => a.id.localeCompare(b.id)) });
+    }
+    // The fingerprint a revocation of (uid, scope) will be checked against, even
+    // while the scope is still active or revocations are paused.
+    async revocationFingerprint(uid, scope) {
+        const { user, grants } = await this.owner(uid);
+        const email = (0, exports.normalEmail)(user === null || user === void 0 ? void 0 : user.email);
+        if (!user || !email)
+            return null;
+        const selected = grants.filter(g => [scope, "all_access", "all_ai"].includes(g.scope));
+        const txs = await this.scopeTransactions(uid, scope, email);
+        return { email, fingerprint: this.fingerprint(uid, scope, email, user, selected, txs), txs, grants };
     }
     async adoptLegacy(uid, legacyUid) {
         const current = await this.db.collection("users").doc(uid).get();
