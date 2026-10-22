@@ -52,3 +52,50 @@ test('partial refunds require policy review; mismatched transaction IDs cannot r
   await assert.rejects(api.applyMidtransRefund('INV-1',verified('refund',{transaction_id:'another-transaction'})),/identity mismatch/);
   assert.equal([...db.docs.values()].find(x=>x.transaction_id==='transaction-1'&&x.kind==='payment').status,'active');
 }));
+const HOUR=3600000,DAY=24*HOUR;
+async function at(ms:number,fn:()=>Promise<void>) {
+  const real=Date.now;Date.now=()=>ms;try{await fn();}finally{Date.now=real;}
+}
+const notFound=async()=>{throw Object.assign(Error('404'),{response:{status:404,data:{status_code:'404',status_message:"Transaction doesn't exist."}}});};
+test('a checkout abandoned before choosing a payment method becomes final after 24 hours',async()=>configured(async()=>{
+  const {api,db,axios}=fixture();axios.get=notFound;
+  const start=Date.now();db.docs.get('payment_reconciliation/INV-1').created_ms=start;
+  await at(start+HOUR,()=>api.reconcileMidtransPayments());
+  assert.ok(db.docs.get('payment_reconciliation/INV-1').due_ms<start+2*HOUR,'young invoices keep being checked often');
+  db.docs.get('payment_reconciliation/INV-1').due_ms=0;
+  await at(start+25*HOUR,()=>api.reconcileMidtransPayments());
+  const job=db.docs.get('payment_reconciliation/INV-1');
+  assert.equal(job.state,'abandoned');assert.equal(job.due_ms,8640000000000000);
+  assert.equal(db.docs.get('transactions/t').status,'abandoned');
+}));
+test('legacy reconciliation rows without created_ms age from the transaction document',async()=>configured(async()=>{
+  const {api,db,axios}=fixture();axios.get=notFound;
+  db.docs.get('transactions/t').created_at={toMillis:()=>Date.now()-3*DAY};
+  await api.reconcileMidtransPayments();
+  assert.equal(db.docs.get('payment_reconciliation/INV-1').state,'abandoned');
+}));
+test('a paid invoice is audited for refunds on day 1, 7 and 30, then leaves the queue',async()=>configured(async()=>{
+  const {api,db,axios}=fixture();axios.get=async()=>({data:verified()});
+  const start=Date.now();
+  await at(start,()=>api.reconcileMidtransPayments());
+  const due=()=>db.docs.get('payment_reconciliation/INV-1').due_ms;
+  const seen=[];
+  for (let i=0;i<5 && due()<8640000000000000;i++) {seen.push(Math.round((due()-start)/DAY));await at(due(),()=>api.reconcileMidtransPayments());}
+  assert.deepEqual(seen,[1,7,30]);
+  assert.equal(due(),8640000000000000);
+}));
+test('unpaid invoices are checked before refund audits when the queue is long',async()=>configured(async()=>{
+  const {api,db,axios}=fixture();
+  for (let i=0;i<400;i++) db.seed(`payment_reconciliation/AUD-${String(i).padStart(3,'0')}`,{invoice_number:`AUD-${i}`,state:'paid',gateway:'midtrans',due_ms:0,paid_ms:Date.now()-DAY,audits:0,attempts:0});
+  db.docs.get('payment_reconciliation/INV-1').due_ms=Date.now();
+  axios.get=async(url:string)=>url.includes('INV-1')?{data:verified()}:{data:{order_id:url.split('/').at(-2),transaction_status:'settlement',currency:'IDR'}};
+  await api.reconcileMidtransPayments();
+  assert.equal(db.docs.get('transactions/t').activation_applied,true);
+}));
+test('a checkout whose gateway call failed is closed immediately',async()=>configured(async()=>{
+  const {api,db,axios}=fixture();
+  axios.post=async()=>{throw Error('gateway down');};
+  await assert.rejects(api.createCheckout({plan:'1m',agentId:'fiqh_syafii',name:'U',email:'u@example.test'},{auth:{uid:'u',token:{email:'u@example.test',email_verified:true}}}));
+  const jobs=[...db.docs.entries()].filter(([k,v]:any)=>k.startsWith('payment_reconciliation/OT-'));
+  assert.equal(jobs.length,1);assert.equal(jobs[0][1].state,'failed_final');assert.equal(jobs[0][1].due_ms,8640000000000000);
+}));

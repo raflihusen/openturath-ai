@@ -848,8 +848,9 @@ export const createCheckout = functions
       created_at: admin.firestore.FieldValue.serverTimestamp(),
     });
 
-    await db.collection("payment_reconciliation").doc(invoiceNumber).set({invoice_number:invoiceNumber,
-      transaction_document:trxId,uid,gateway:"midtrans",state:"pending",due_ms:Date.now()+60000,attempts:0});
+    const reconciliationRef = db.collection("payment_reconciliation").doc(invoiceNumber);
+    await reconciliationRef.set({invoice_number:invoiceNumber,
+      transaction_document:trxId,uid,gateway:"midtrans",state:"pending",created_ms:Date.now(),due_ms:Date.now()+60000,attempts:0});
     let paymentUrl = "";
     let snapToken = "";
     try {
@@ -878,6 +879,8 @@ export const createCheckout = functions
         error: err.response?.data?.error_messages?.join(", ") || err.message || "Kendala teknis Midtrans",
         failed_at: admin.firestore.FieldValue.serverTimestamp(),
       }).catch(() => {});
+      // No Snap session exists, so there is nothing for reconciliation to find.
+      await reconciliationRef.update({state:"failed_final",due_ms:RECONCILIATION_DONE,lease:null}).catch(() => {});
       throw new functions.https.HttpsError(
         "internal",
         "Sesi pembayaran belum dapat dibuat. Silakan coba lagi sebentar lagi."
@@ -1001,7 +1004,8 @@ async function processSuccessfulPayment(invoiceNumber: string, paidAmount: unkno
     if (receiptRef) t.set(receiptRef, {invoice_number: invoiceNumber, uid, transaction_id: gatewayEvidence!.transactionId});
     if (txData.gateway === "midtrans") t.set(db.collection("payment_reconciliation").doc(invoiceNumber), {
       invoice_number:invoiceNumber,transaction_document:txDocRef.id,uid,gateway:"midtrans",state:"paid",
-      lease:null,expires_ms:expiryDate.getTime(),due_ms:Date.now()+6*3600000}, {merge:true});
+      lease:null,expires_ms:expiryDate.getTime(),paid_ms:Date.now(),audits:0,
+      due_ms:Date.now()+REFUND_AUDIT_DAYS[0]*86400000}, {merge:true});
     t.set(db.collection("access_grants").doc(grantId), {
       uid, scope: entitlementKey, kind: "payment", status: "active", amount,
       invoice_number: invoiceNumber, transaction_document: txDocRef.id,
@@ -1138,51 +1142,100 @@ async function applyMidtransRefund(invoice: string, verified: any): Promise<void
 }
 
 // A missing webhook or closed app must not leave a paid invoice unprovisioned.
-// The queue also rechecks active payments for refunds that were not delivered.
+// Two queues share one collection: unpaid invoices (activation, checked first)
+// and paid invoices re-checked for refunds on day 1, 7 and 30 only; refunds also
+// arrive by webhook. Every job reaches a final state, so the queue cannot grow
+// without bound from abandoned checkouts.
+const RECONCILIATION_DONE = 8640000000000000;
+const REFUND_AUDIT_DAYS = [1, 7, 30];
+const ABANDON_AFTER_MS = 24 * 3600000;
+function gatewayNotFound(error: any, body?: any): boolean {
+  return error?.response?.status === 404 || String(error?.response?.data?.status_code ?? body?.status_code ?? "") === "404";
+}
+async function reconcileOne(doc: FirebaseFirestore.QueryDocumentSnapshot, cfg: ReturnType<typeof getMidtransConfig>): Promise<boolean> {
+  const token=crypto.randomUUID();
+  const job=await db.runTransaction(async t=>{
+    const current=(await t.get(doc.ref)).data();
+    if (!current || current.due_ms>Date.now()) return null;
+    t.update(doc.ref,{lease:token,due_ms:Date.now()+300000,attempts:(current.attempts || 0)+1});
+    return current;
+  });
+  if (!job) return true;
+  const attempts=(job.attempts || 0)+1, paidQueue=job.state==="paid";
+  let due=Date.now()+Math.min(15*60000,60000*2**Math.min(attempts,4)), extra:Record<string,any>={}, ok=true;
+  try {
+    let verified:any;
+    try {
+      verified=(await axios.get(`${cfg.apiUrl}/${encodeURIComponent(job.invoice_number)}/status`,{
+        headers:{Authorization:`Basic ${Buffer.from(`${cfg.serverKey}:`).toString("base64")}`},timeout:15000})).data;
+    } catch (error) {
+      if (!gatewayNotFound(error)) throw error;
+      verified={status_code:"404"};
+    }
+    if (gatewayNotFound(null,verified)) {
+      // Midtrans never saw a payment attempt for this Snap session.
+      if (paidQueue) throw new Error("Paid invoice missing at gateway");
+      const tx=job.transaction_document ? await db.collection("transactions").doc(job.transaction_document).get() : null;
+      const created=Number.isFinite(job.created_ms) ? job.created_ms : millis(tx?.data()?.created_at);
+      if (Number.isFinite(created) && Date.now()-created>ABANDON_AFTER_MS) {
+        if (tx?.exists) await db.runTransaction(async t=>{const c=await t.get(tx.ref);
+          if (c.exists && !c.data()?.activation_applied) t.update(tx.ref,{status:"abandoned",updated_at:admin.firestore.FieldValue.serverTimestamp()});});
+        due=RECONCILIATION_DONE;extra={state:"abandoned"};
+      }
+      return ok;
+    }
+    const status=verified.transaction_status;
+    if (verified.order_id!==job.invoice_number || verified.currency && verified.currency!=="IDR") throw new Error("Gateway order mismatch");
+    if (status==="settlement" || status==="capture" && verified.fraud_status==="accept") {
+      if (!paidQueue) {
+        // Activation rewrites this job (state "paid", audit schedule, lease cleared).
+        await processSuccessfulPayment(job.invoice_number,verified.gross_amount,{transactionId:verified.transaction_id,
+          orderId:verified.order_id,currency:verified.currency});
+      }
+      const audits=paidQueue ? (job.audits || 0)+1 : (job.audits || 0);
+      const paidAt=Number.isFinite(job.paid_ms) ? job.paid_ms : Date.now();
+      due=audits>=REFUND_AUDIT_DAYS.length || (job.expires_ms && job.expires_ms<Date.now())
+        ? RECONCILIATION_DONE : paidAt+REFUND_AUDIT_DAYS[audits]*86400000;
+      extra={state:"paid",audits,paid_ms:paidAt};
+    } else if (["refund","partial_refund","chargeback","partial_chargeback"].includes(status)) {
+      await applyMidtransRefund(job.invoice_number,verified);
+      due=String(status).startsWith("partial")?Date.now()+86400000:RECONCILIATION_DONE;
+    } else if (["expire","deny","cancel","failure"].includes(status)) {
+      const tx=await db.collection("transactions").doc(job.transaction_document).get();
+      if (tx.exists && !tx.data()?.activation_applied) {
+        await db.runTransaction(async t=>{const current=await t.get(tx.ref);if(current.exists&&!current.data()?.activation_applied)t.update(tx.ref,{status});});
+        due=RECONCILIATION_DONE;extra={state:"closed"};
+      }
+    }
+  } catch (_) {
+    ok=false;
+    due=Date.now()+Math.min(paidQueue?6*3600000:3600000,60000*2**Math.min(attempts,12));
+  } finally {
+    await db.runTransaction(async t=>{const current=(await t.get(doc.ref)).data();
+      if(current?.lease===token)t.update(doc.ref,{...extra,due_ms:due,lease:null,last_checked_ms:Date.now()});});
+  }
+  return ok;
+}
 export const reconcileMidtransPayments = functions
   .runWith({serviceAccount:"open-turath@appspot.gserviceaccount.com",timeoutSeconds:300})
-  .pubsub.schedule("every 5 minutes").onRun(async()=>{
-    if ((await db.collection("access_control").doc("runtime").get()).data()?.writer !== "vps-v2") return null;
-    const cfg=getMidtransConfig(), jobs=await db.collection("payment_reconciliation").where("due_ms","<=",Date.now()).orderBy("due_ms").limit(200).get();
+  .pubsub.schedule("every 2 minutes").onRun(async()=>{
+    // Runs regardless of the access writer: activation only touches the ledger,
+    // which both the legacy and the VPS writers read.
+    const cfg=getMidtransConfig(), now=Date.now(), started=now;
+    const queue=(states:string[],n:number)=>db.collection("payment_reconciliation").where("state","in",states)
+      .where("due_ms","<=",now).orderBy("due_ms").limit(n).get();
+    const [activation,audit]=await Promise.all([queue(["pending"],300),queue(["paid","partial_refund"],100)]);
+    const docs=[...activation.docs,...audit.docs];
     let cursor=0, completed=0, failed=0;
-    const started=Date.now();
     const run=async()=>{
-      while(cursor<jobs.docs.length && Date.now()-started<240000) {
-        const doc=jobs.docs[cursor++], token=crypto.randomUUID();
-        const job=await db.runTransaction(async t=>{
-          const current=(await t.get(doc.ref)).data();
-          if (!current || current.due_ms>Date.now()) return null;
-          t.update(doc.ref,{lease:token,due_ms:Date.now()+300000,attempts:(current.attempts || 0)+1});
-          return current;
-        });
-        if (!job) continue;
-        let due=Date.now()+60000;
-        try {
-          const response=await axios.get(`${cfg.apiUrl}/${encodeURIComponent(job.invoice_number)}/status`,{
-            headers:{Authorization:`Basic ${Buffer.from(`${cfg.serverKey}:`).toString("base64")}`},timeout:15000});
-          const verified=response.data, status=verified.transaction_status;
-          if (verified.order_id!==job.invoice_number || verified.currency && verified.currency!=="IDR") throw new Error("Gateway order mismatch");
-          if (status==="settlement" || status==="capture" && verified.fraud_status==="accept") {
-            await processSuccessfulPayment(job.invoice_number,verified.gross_amount,{transactionId:verified.transaction_id,
-              orderId:verified.order_id,currency:verified.currency});
-            due=job.expires_ms && job.expires_ms<Date.now()?8640000000000000:Date.now()+6*3600000;
-          } else if (["refund","partial_refund","chargeback","partial_chargeback"].includes(status)) {
-            await applyMidtransRefund(job.invoice_number,verified);due=String(status).startsWith("partial")?Date.now()+6*3600000:8640000000000000;
-          } else if (["expire","deny","cancel","failure"].includes(status)) {
-            const tx=await db.collection("transactions").doc(job.transaction_document).get();
-            if (tx.exists && !tx.data()?.activation_applied) {
-              await db.runTransaction(async t=>{const current=await t.get(tx.ref);if(current.exists&&!current.data()?.activation_applied)t.update(tx.ref,{status});});
-              due=8640000000000000;
-            }
-          }
-          completed++;
-        } catch (_) {failed++;due=Date.now()+Math.min(6*3600000,60000*2**Math.min(job.attempts || 0,12));}
-        await db.runTransaction(async t=>{const current=(await t.get(doc.ref)).data();
-          if(current?.lease===token)t.update(doc.ref,{due_ms:due,lease:null,last_checked_ms:Date.now()});});
+      while(cursor<docs.length && Date.now()-started<100000) {
+        if (await reconcileOne(docs[cursor++],cfg)) completed++; else failed++;
       }
     };
-    await Promise.all([run(),run(),run(),run(),run()]);
-    await db.collection("access_control").doc("payment_heartbeat").set({completed,failed,checked_ms:Date.now()});
+    await Promise.all([run(),run(),run(),run(),run(),run(),run(),run()]);
+    const oldestPending=activation.docs.length ? activation.docs[0].data().due_ms : null;
+    await db.collection("access_control").doc("payment_heartbeat").set({completed,failed,checked_ms:Date.now(),
+      activation_backlog:activation.size,oldest_activation_due_ms:oldestPending});
     return null;
   });
 
