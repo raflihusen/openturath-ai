@@ -48,6 +48,17 @@ if [ "$healthy" != 1 ]; then
   exit 1
 fi
 
+# The owner bot is optional: it runs only once its secrets file exists.
+if [ -f "$BASE/secrets/owner_bot.env" ]; then
+  sudo install -m 0644 "$RELEASE/openturath-owner-bot.service" /etc/systemd/system/openturath-owner-bot.service
+  sudo systemctl daemon-reload
+  sudo systemctl enable --now openturath-owner-bot >/dev/null 2>&1 || true
+  sudo systemctl restart openturath-owner-bot
+  echo "==> Owner bot: $(systemctl is-active openturath-owner-bot)"
+else
+  echo "==> Owner bot skipped (no $BASE/secrets/owner_bot.env)"
+fi
+
 # Keep the five newest releases.
 ls -1dt "$BASE"/releases/openturath-access-* | tail -n +6 | xargs -r rm -rf
 echo "==> $NAME is live ($(curl -s --max-time 5 http://127.0.0.1:8091/ | python3 -c 'import json,sys; print("mode:", json.load(sys.stdin).get("mode"))'))"

@@ -1,0 +1,29 @@
+[Unit]
+Description=OpenTurath owner Telegram bot (customer & access management)
+After=network-online.target openturath-access.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=ubuntu
+Group=ubuntu
+WorkingDirectory=/home/ubuntu/openturath-access/releases/current
+Environment=GOOGLE_CLOUD_PROJECT=open-turath
+Environment=GOOGLE_APPLICATION_CREDENTIALS=/home/ubuntu/openturath-access/secrets/firestore-key.json
+Environment=NODE_ENV=production
+# TELEGRAM_BOT_TOKEN, OWNER_TELEGRAM_IDS, LLM_BASE_URL, LLM_MODEL, LLM_API_KEY
+EnvironmentFile=/home/ubuntu/openturath-access/secrets/owner_bot.env
+ExecStart=/usr/bin/node /home/ubuntu/openturath-access/releases/current/lib/owner_bot_service.js
+Restart=always
+RestartSec=10
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=read-only
+ReadWritePaths=/home/ubuntu/openturath-access
+UMask=0077
+MemoryMax=300M
+CPUQuota=25%
+
+[Install]
+WantedBy=multi-user.target
