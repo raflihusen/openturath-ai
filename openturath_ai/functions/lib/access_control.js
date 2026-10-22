@@ -199,7 +199,12 @@ class AccessControl {
         const selected = grants.filter(g => [scope, "all_access", "all_ai"].includes(g.scope));
         const deleted = (user === null || user === void 0 ? void 0 : user.account_deleted) === true;
         const refunded = selected.some(g => g.status === "revoked" && /refund|chargeback/.test(String(g.payment_status || "")));
-        const category = deleted ? "account_deleted" : refunded ? "refund" : "expiry";
+        // An owner revocation is the latest decision only while no grant was
+        // issued after it; a later purchase or grant takes over again.
+        const ownerRevokedMs = Math.max(0, ...selected.filter(g => g.revoked_by_owner === true).map(g => Number(g.revoked_ms) || 0));
+        const ownerRevoked = ownerRevokedMs > 0 && selected.every(g => g.revoked_by_owner === true ||
+            Math.max(Number(g.created_ms) || 0, Number(g.starts_ms) || 0) <= ownerRevokedMs);
+        const category = deleted ? "account_deleted" : ownerRevoked ? "owner_revoke" : refunded ? "refund" : "expiry";
         // `revocation_pause` pauses one category at a time (refunds and deleted
         // accounts keep flowing while ordinary expiry is under review). The kill
         // switch and the legacy all-or-nothing flag still stop everything.
@@ -211,7 +216,9 @@ class AccessControl {
         const permanent = await this.db.collection("access_vip_registry").doc((0, exports.keyOf)(email)).get();
         if ((0, exports.isVip)(Object.assign(Object.assign({}, user), { email }), grants) || permanent.exists)
             return { allowed: false, reason: "permanent_vip" };
-        if (user.access_revocation_hold)
+        // A migration hold protects against automated mistakes; the owner's own
+        // explicit revocation overrides it.
+        if (user.access_revocation_hold && !ownerRevoked)
             return { allowed: false, reason: "owner_hold" };
         // The same Google address now belongs to a newer account; its seat moved there.
         for (const [entity, entityScope] of Object.entries(this.scopes)) {
@@ -229,7 +236,7 @@ class AccessControl {
         // exception: its owner asked for the account, and its access, to end.
         if (!deleted && !selected.length)
             return { allowed: false, reason: "missing_scope_evidence" };
-        if (!deleted && selected.some(g => !Number.isFinite(g.expires_ms) ||
+        if (!deleted && !ownerRevoked && selected.some(g => !Number.isFinite(g.expires_ms) ||
             !["active", "revoked"].includes(g.status) ||
             !(g.kind === "payment" && g.amount > 0 || g.kind === "admin" && g.admin_verified === true || g.kind === "voucher")))
             return { allowed: false, reason: "invalid_scope_evidence" };
@@ -249,7 +256,7 @@ class AccessControl {
         const profile = [scope, "all_access", "all_ai"].map(k => { var _a; return (_a = user.entitlements) === null || _a === void 0 ? void 0 : _a[k]; }).filter(Boolean);
         const unbackedProfile = profile.some((e) => e.source !== "access_ledger" && !["expired", "revoked"].includes(e.status) &&
             (0, exports.millis)(e.expiry) > now && !selected.some(g => g.status === "active" && g.expires_ms >= (0, exports.millis)(e.expiry)));
-        const legacy = !deleted && (selected.some(unverifiedLive) || unbackedProfile ||
+        const legacy = !deleted && !ownerRevoked && (selected.some(unverifiedLive) || unbackedProfile ||
             [...txs.values()].some(t => hasLegacyAccessAdjustment(t) || !gateway(t) && txMayBeLive(t)));
         const fingerprint = this.fingerprint(uid, scope, email, user, selected, txs);
         if (legacy) {
@@ -273,7 +280,7 @@ class AccessControl {
                         return { allowed: false, reason: "active_owner_adjustment", fingerprint, legacy: true };
                 }
         }
-        return { allowed: true, reason: deleted ? "account_deleted" : "verified_scope_expired", category, fingerprint, legacy: !!legacy };
+        return { allowed: true, reason: deleted ? "account_deleted" : ownerRevoked ? "owner_revoke" : "verified_scope_expired", category, fingerprint, legacy: !!legacy };
     }
     // Billing evidence for one scope, shared by the revocation gate and by the
     // owner certificate tooling so both always hash exactly the same records.
