@@ -194,9 +194,18 @@ class AccessControl {
         var _a, _b;
         const { user, grants } = await this.owner(uid);
         const email = (0, exports.normalEmail)(targetEmail || (user === null || user === void 0 ? void 0 : user.email));
+        const now = this.clock();
         const runtime = (await this.db.collection("access_control").doc("runtime").get()).data() || {};
-        if (runtime.revocations_paused === true)
-            return { allowed: false, reason: "incident_pause" };
+        const selected = grants.filter(g => [scope, "all_access", "all_ai"].includes(g.scope));
+        const deleted = (user === null || user === void 0 ? void 0 : user.account_deleted) === true;
+        const refunded = selected.some(g => g.status === "revoked" && /refund|chargeback/.test(String(g.payment_status || "")));
+        const category = deleted ? "account_deleted" : refunded ? "refund" : "expiry";
+        // `revocation_pause` pauses one category at a time (refunds and deleted
+        // accounts keep flowing while ordinary expiry is under review). The kill
+        // switch and the legacy all-or-nothing flag still stop everything.
+        const pauses = runtime.revocation_pause && typeof runtime.revocation_pause === "object" ? runtime.revocation_pause : null;
+        if (runtime.revocation_kill_switch === true || (pauses ? pauses[category] === true : runtime.revocations_paused === true))
+            return { allowed: false, reason: "incident_pause", category };
         if (!user || !email || (0, exports.normalEmail)(user.email) !== email)
             return { allowed: false, reason: "identity_unresolved" };
         const permanent = await this.db.collection("access_vip_registry").doc((0, exports.keyOf)(email)).get();
@@ -204,30 +213,57 @@ class AccessControl {
             return { allowed: false, reason: "permanent_vip" };
         if (user.access_revocation_hold)
             return { allowed: false, reason: "owner_hold" };
-        if (user.account_deleted || user.pending_deletion)
+        // The same Google address now belongs to a newer account; its seat moved there.
+        for (const [entity, entityScope] of Object.entries(this.scopes)) {
+            if (entityScope !== scope)
+                continue;
+            const bound = (await this.db.collection("access_identities").doc((0, exports.keyOf)(email, entity)).get()).data();
+            if ((bound === null || bound === void 0 ? void 0 : bound.uid) && bound.uid !== uid)
+                return { allowed: false, reason: "identity_rebound", category };
+        }
+        if (user.pending_deletion && !deleted)
             return { allowed: false, reason: "deletion_requires_separate_review" };
-        if (rights(user, grants, scope, this.clock()))
+        if (!deleted && rights(user, grants, scope, now))
             return { allowed: false, reason: "active_scope" };
-        const selected = grants.filter(g => [scope, "all_access", "all_ai"].includes(g.scope));
-        // Absence of evidence is not proof of expiry. Deletion requires its own
-        // reviewed path; an absent user document never authorizes removal.
-        if (!selected.length)
+        // Absence of evidence is not proof of expiry. A deleted account is the
+        // exception: its owner asked for the account, and its access, to end.
+        if (!deleted && !selected.length)
             return { allowed: false, reason: "missing_scope_evidence" };
-        if (selected.some(g => !Number.isFinite(g.expires_ms) ||
+        if (!deleted && selected.some(g => !Number.isFinite(g.expires_ms) ||
             !["active", "revoked"].includes(g.status) ||
             !(g.kind === "payment" && g.amount > 0 || g.kind === "admin" && g.admin_verified === true || g.kind === "voucher")))
             return { allowed: false, reason: "invalid_scope_evidence" };
+        const gateway = (t) => ["midtrans", "doku"].includes(String(t.gateway || "").toLowerCase());
         const txs = new Map();
         for (const [field, value] of [["uid", uid], ["customer_email", email], ["payer_email", email], ["email", email]]) {
             const s = await this.db.collection("transactions").where(field, "==", value).get();
             for (const d of s.docs) {
-                const scopes = legacyTransactionScopes(d.data());
+                const t = d.data();
+                // An unpaid gateway checkout proves nothing, and anyone can open one
+                // with someone else's address; it must not churn the decision.
+                if (gateway(t) && t.activation_applied !== true)
+                    continue;
+                const scopes = legacyTransactionScopes(t);
                 if (!scopes.length || scopes.some(s => [scope, "all_access", "all_ai"].includes(s)))
-                    txs.set(d.id, Object.assign({ id: d.id }, d.data()));
+                    txs.set(d.id, Object.assign({ id: d.id }, t));
             }
         }
-        const legacy = user.legacy_revoke_only || user.access_legacy_audit_required || selected.some(g => g.provider === "goakal" || g.imported) ||
-            [...txs.values()].some(t => hasLegacyAccessAdjustment(t) || !["midtrans", "doku"].includes(String(t.gateway || "").toLowerCase()));
+        // Legacy evidence blocks automated removal only while it could still be
+        // live. An unverified provider period is trusted for at least 13 months
+        // from its start, because its recorded duration may have been guessed.
+        const TRUST_MS = 395 * 86400000;
+        const unverifiedLive = (g) => (g.provider === "goakal" || g.imported) && g.provider_verified !== true &&
+            Math.max(Number(g.expires_ms) || 0, (Number(g.starts_ms) || Number(g.paid_ms) || Number(g.created_ms) || 0) + TRUST_MS) > now;
+        const txMayBeLive = (t) => {
+            const paid = (0, exports.millis)(t.paid_at || t.completed_at || t.paid_ms || t.created_at);
+            const explicit = (0, exports.millis)(t.subscription_expires_at || t.access_expires_at || t.expires_at);
+            return !Number.isFinite(paid) || Math.max(Number.isFinite(explicit) ? explicit : 0, paid + TRUST_MS) > now;
+        };
+        const profile = [scope, "all_access", "all_ai"].map(k => { var _a; return (_a = user.entitlements) === null || _a === void 0 ? void 0 : _a[k]; }).filter(Boolean);
+        const unbackedProfile = profile.some((e) => e.source !== "access_ledger" && !["expired", "revoked"].includes(e.status) &&
+            (0, exports.millis)(e.expiry) > now && !selected.some(g => g.status === "active" && g.expires_ms >= (0, exports.millis)(e.expiry)));
+        const legacy = !deleted && (selected.some(unverifiedLive) || unbackedProfile ||
+            [...txs.values()].some(t => hasLegacyAccessAdjustment(t) || !gateway(t) && txMayBeLive(t)));
         const fingerprint = evidenceHash({ policy: exports.REVOCATION_POLICY, uid, email, scope,
             owner: { account_deleted: !!user.account_deleted, pending_deletion: !!user.pending_deletion,
                 adopted_by: user.adopted_by || null, entitlement: ((_a = user.entitlements) === null || _a === void 0 ? void 0 : _a[scope]) || null },
@@ -254,7 +290,7 @@ class AccessControl {
                         return { allowed: false, reason: "active_owner_adjustment", fingerprint, legacy: true };
                 }
         }
-        return { allowed: true, reason: "verified_scope_expired", fingerprint, legacy: !!legacy };
+        return { allowed: true, reason: deleted ? "account_deleted" : "verified_scope_expired", category, fingerprint, legacy: !!legacy };
     }
     async adoptLegacy(uid, legacyUid) {
         const current = await this.db.collection("users").doc(uid).get();
@@ -376,8 +412,13 @@ class AccessControl {
             var _a, _b;
             const existing = (await t.get(ar)).data();
             const bound = (await t.get(identity)).data();
-            if (bound && bound.uid !== uid)
-                throw new AccessFault("failed-precondition", "Google identity requires ownership recovery");
+            if (bound && bound.uid !== uid) {
+                // The previous owner of this address deleted their account; the
+                // address may start over. Any other conflict needs a human.
+                const previous = (await t.get(this.db.collection("access_legacy_owners").doc(bound.uid))).data();
+                if (!((previous === null || previous === void 0 ? void 0 : previous.account_deleted) === true && (0, exports.normalEmail)(previous.email) === email))
+                    throw new AccessFault("failed-precondition", "Google identity requires ownership recovery");
+            }
             if (existing && existing.email !== email)
                 throw new AccessFault("failed-precondition", "Email change requires verified migration");
             if (existing && ["ready", "provisioning"].includes(existing.status))
@@ -444,6 +485,14 @@ class AccessControl {
     }
     async revoke(uid, entity) {
         const assessment = await this.assessRevocation(uid, this.scopes[entity]);
+        if (assessment.reason === "identity_rebound") {
+            await this.db.runTransaction(async (t) => {
+                const ar = this.assignmentRef(uid, entity), a = (await t.get(ar)).data();
+                if (a && !["revoked", "transferred"].includes(a.status))
+                    t.update(ar, { status: "transferred", updated_ms: this.clock() });
+            });
+            return;
+        }
         if (!assessment.allowed) {
             if (!["active_scope", "permanent_vip", "incident_pause"].includes(assessment.reason))
                 await this.db.collection("access_reviews").doc((0, exports.keyOf)(uid, entity, "revocation_gate")).set({ uid, entity, scope: this.scopes[entity],
@@ -456,7 +505,7 @@ class AccessControl {
         const ar = this.assignmentRef(uid, entity);
         await this.db.runTransaction(async (t) => {
             const a = (await t.get(ar)).data();
-            if (!a || ["revoked", "revoking"].includes(a.status))
+            if (!a || ["revoked", "revoking", "transferred"].includes(a.status))
                 return;
             const permanent = await t.get(this.db.collection("access_vip_registry").doc((0, exports.keyOf)(a.email)));
             if ((0, exports.isVip)({ email: a.email }, grants) || permanent.exists)
@@ -566,6 +615,10 @@ class AccessControl {
                     return;
                 }
                 job.original_present = before.emails.map(exports.normalEmail).includes(job.email);
+                if (job.original_present && !(await this.takeRevocationSlot())) {
+                    await ref.update({ status: "retry", last_error: "revocation_hourly_quota", due_ms: this.clock() + 600000, updated_ms: this.clock() });
+                    return;
+                }
                 if (job.original_present) {
                     // Persist intent before the external side effect. The flag is only
                     // cleared with verified completion or verified safety restoration.
@@ -648,6 +701,21 @@ class AccessControl {
                     t.delete(job.lockRef);
             });
         }
+    }
+    // At most `revocation_hourly_limit` (default 200) removals per clock hour, so
+    // a wrong ledger state can never empty the notebooks in one sweep.
+    async takeRevocationSlot() {
+        const runtime = (await this.db.collection("access_control").doc("runtime").get()).data() || {};
+        const limit = Number.isInteger(runtime.revocation_hourly_limit) && runtime.revocation_hourly_limit >= 0 ? runtime.revocation_hourly_limit : 200;
+        const ref = this.db.collection("access_control").doc("revocation_quota");
+        return this.db.runTransaction(async (t) => {
+            const q = (await t.get(ref)).data() || {}, hour = Math.floor(this.clock() / 3600000);
+            const used = q.hour === hour ? q.used || 0 : 0;
+            if (used >= limit)
+                return false;
+            t.set(ref, { hour, used: used + 1 });
+            return true;
+        });
     }
     validateObservation(s, id) {
         if (s.notebookId !== id || !s.complete || s.isPublic || !Array.isArray(s.emails) || s.emails.some(e => !(0, exports.normalEmail)(e).includes("@"))) {

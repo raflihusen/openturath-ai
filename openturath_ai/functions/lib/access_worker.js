@@ -419,7 +419,7 @@ async function assignOne(doc) {
     const observed = await db.collection("access_memberships").where("email", "==", (0, access_control_1.normalEmail)(u.email)).get();
     const existing = await db.collection("access_assignments").where("uid", "==", doc.id).get();
     const relevant = new Set([...observed.docs.map(d => d.data().entity), ...existing.docs.map(d => d.data().entity)]);
-    const settled = new Set(existing.docs.filter(d => d.data().status === "revoked").map(d => d.data().entity));
+    const settled = new Set(existing.docs.filter(d => ["revoked", "transferred"].includes(d.data().status)).map(d => d.data().entity));
     let needsRetry = false, revocationPending = false;
     for (const [entity, scope] of Object.entries(access_catalog_1.ENTITY_SCOPES)) {
         if (!relevant.has(entity) && (u.legacy_revoke_only || !(0, access_control_1.rights)(effective.user, grants, scope)))

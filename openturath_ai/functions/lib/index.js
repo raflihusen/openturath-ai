@@ -2294,7 +2294,7 @@ async function deleteUserData(uid, authEmail = "") {
     const ref = db.collection("users").doc(uid);
     let targetEmail = authEmail;
     await db.runTransaction(async (t) => {
-        var _a;
+        var _a, _b;
         const user = await t.get(ref);
         const email = authEmail || ((_a = user.data()) === null || _a === void 0 ? void 0 : _a.email) || "";
         targetEmail = email;
@@ -2305,6 +2305,12 @@ async function deleteUserData(uid, authEmail = "") {
         }
         if (user.exists)
             t.update(ref, { account_deleted: true });
+        // Tombstone outlives the profile so the access worker can still prove who
+        // owned the seats and remove them (the profile is deleted just below).
+        if (email)
+            t.set(db.collection("access_legacy_owners").doc(uid), { email: String(email).trim().toLowerCase(),
+                account_deleted: true, deleted_ms: Date.now(), access_version: 2, access_due_ms: Date.now(),
+                access_revocation_hold: ((_b = user.data()) === null || _b === void 0 ? void 0 : _b.access_revocation_hold) === true }, { merge: true });
         for (const job of jobs) {
             if (job.snap.exists)
                 continue;

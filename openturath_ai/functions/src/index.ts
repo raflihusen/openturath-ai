@@ -2479,6 +2479,11 @@ async function deleteUserData(uid: string, authEmail = ""): Promise<void> {
       jobs.push({ref:job,snap:await t.get(job),key});
     }
     if (user.exists) t.update(ref,{account_deleted:true});
+    // Tombstone outlives the profile so the access worker can still prove who
+    // owned the seats and remove them (the profile is deleted just below).
+    if (email) t.set(db.collection("access_legacy_owners").doc(uid), {email:String(email).trim().toLowerCase(),
+      account_deleted:true, deleted_ms:Date.now(), access_version:2, access_due_ms:Date.now(),
+      access_revocation_hold:user.data()?.access_revocation_hold === true}, {merge:true});
     for (const job of jobs) {
       if (job.snap.exists) continue;
       t.set(job.ref, {uid,email,entitlement_key:job.key,action:"remove",status:"pending",attempts:0,
