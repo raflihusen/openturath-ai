@@ -77,3 +77,36 @@ Semua langkah ini keputusan pemilik; tidak ada yang otomatis.
 Tanpa `REAPER_APPLY=1` reaper hanya melaporkan calon pencabutan (dry-run).
 Ia batal total bila Firestore atau GoAkal tidak terbaca, tidak pernah
 menyentuh VIP, dan berhenti bila calon melebihi `REAPER_MAX_REMOVALS` (20).
+
+## Saklar runtime (`access_control/runtime`)
+
+| Field | Arti | Default |
+|---|---|---|
+| `writer` | `"vps-v2"` = worker ini satu-satunya penulis | — |
+| `revocation_pause` | Pause per kategori: `{expiry, refund, account_deleted}` (true = ditahan). Bila ada, menggantikan `revocations_paused`. | tidak ada |
+| `revocations_paused` | Pause lama untuk semua kategori; hanya berlaku bila `revocation_pause` tidak ada | — |
+| `revocation_kill_switch` | Hentikan semua pencabutan saat insiden, termasuk refund | false |
+| `revocation_hourly_limit` | Batas pencabutan NotebookLM per jam | 200 |
+| `provider_concurrency` | Sesi NotebookLM paralel (1–8) | 2 |
+
+Contoh pembukaan bertahap: `revocation_pause: {expiry: true, refund: false, account_deleted: false}`,
+`revocation_hourly_limit: 10`, lalu naikkan setelah laporan harian bersih.
+
+`access_control/security.app_check`: `off` | `monitor` | `enforce`. Karena APK dibagikan di luar
+Play Store dan ada versi Windows, `enforce` akan menolak pengguna sah; gunakan `monitor`.
+
+## Migrasi data lama (GoAkal & manual)
+
+```bash
+cd openturath_ai/functions && npm run build
+node tool/legacy_access_migration.cjs report ../../legacy_access_report_<tanggal>.json   # read-only
+# tinjau: set "owner_approved": true per grant, isi "decision" tiap manual_adjustments
+node tool/legacy_access_migration.cjs apply ../../legacy_access_report_<tanggal>.json
+# lalu di VPS: node lib/access_worker.js --import
+```
+
+## Pensiun
+
+GoAkal (`akalWebhook`, `syncAkalPurchases`) sudah dihapus dari Cloud Functions. Server Python
+Cloud Run (`webhook_server.py`) dan reaper lama tidak lagi diperlukan; hentikan layanan Cloud Run
+`openturath-subscription` setelah deploy.
