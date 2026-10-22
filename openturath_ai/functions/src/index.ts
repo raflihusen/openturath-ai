@@ -1027,7 +1027,7 @@ async function processSuccessfulPayment(invoiceNumber: string, paidAmount: unkno
     }
     const userRef = db.collection("users").doc(uid);
     const uSnap = await t.get(userRef);
-    if (!uSnap.exists) throw new Error("Payment owner profile is missing");
+    if (!uSnap.exists) throw Object.assign(new Error("Payment owner profile is missing"), {code: "owner_missing"});
     const uData = uSnap.data()!;
     const entitlements = (uData.entitlements || {}) as Record<string, any>;
 
@@ -1250,9 +1250,17 @@ async function reconcileOne(doc: FirebaseFirestore.QueryDocumentSnapshot, cfg: R
         due=RECONCILIATION_DONE;extra={state:"closed"};
       }
     }
-  } catch (_) {
-    ok=false;
-    due=Date.now()+Math.min(paidQueue?6*3600000:3600000,60000*2**Math.min(attempts,12));
+  } catch (error: any) {
+    if (error?.code === "owner_missing") {
+      // Paid, but the account was deleted before activation: nothing can be
+      // provisioned, so the money needs a human (refund), not endless retries.
+      await db.collection("access_reviews").doc(keyOf("refund_required", job.invoice_number)).set({
+        invoice_number:job.invoice_number,uid:job.uid || null,code:"paid_after_account_deletion",updated_ms:Date.now()},{merge:true});
+      due=RECONCILIATION_DONE;extra={state:"owner_missing"};
+    } else {
+      ok=false;
+      due=Date.now()+Math.min(paidQueue?6*3600000:3600000,60000*2**Math.min(attempts,12));
+    }
   } finally {
     await db.runTransaction(async t=>{const current=(await t.get(doc.ref)).data();
       if(current?.lease===token)t.update(doc.ref,{...extra,due_ms:due,lease:null,last_checked_ms:Date.now()});});

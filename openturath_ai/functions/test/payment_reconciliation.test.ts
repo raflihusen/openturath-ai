@@ -99,3 +99,11 @@ test('a checkout whose gateway call failed is closed immediately',async()=>confi
   const jobs=[...db.docs.entries()].filter(([k,v]:any)=>k.startsWith('payment_reconciliation/OT-'));
   assert.equal(jobs.length,1);assert.equal(jobs[0][1].state,'failed_final');assert.equal(jobs[0][1].due_ms,8640000000000000);
 }));
+test('a payment that settles after the account was deleted goes to refund review, not endless retries',async()=>configured(async()=>{
+  const {api,db,axios}=fixture();axios.get=async()=>({data:verified()});
+  db.docs.delete('users/u');
+  await api.reconcileMidtransPayments();
+  const job=db.docs.get('payment_reconciliation/INV-1');
+  assert.equal(job.state,'owner_missing');assert.equal(job.due_ms,8640000000000000);
+  assert.ok([...db.docs.values()].some((x:any)=>x.code==='paid_after_account_deletion'));
+}));

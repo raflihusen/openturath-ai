@@ -882,7 +882,7 @@ async function processSuccessfulPayment(invoiceNumber, paidAmount, gatewayEviden
         const userRef = db.collection("users").doc(uid);
         const uSnap = await t.get(userRef);
         if (!uSnap.exists)
-            throw new Error("Payment owner profile is missing");
+            throw Object.assign(new Error("Payment owner profile is missing"), { code: "owner_missing" });
         const uData = uSnap.data();
         const entitlements = (uData.entitlements || {});
         // Only ledger-backed grants extend a paid period. Profile expiry is a projection.
@@ -1116,9 +1116,20 @@ async function reconcileOne(doc, cfg) {
             }
         }
     }
-    catch (_) {
-        ok = false;
-        due = Date.now() + Math.min(paidQueue ? 6 * 3600000 : 3600000, 60000 * 2 ** Math.min(attempts, 12));
+    catch (error) {
+        if ((error === null || error === void 0 ? void 0 : error.code) === "owner_missing") {
+            // Paid, but the account was deleted before activation: nothing can be
+            // provisioned, so the money needs a human (refund), not endless retries.
+            await db.collection("access_reviews").doc((0, access_control_1.keyOf)("refund_required", job.invoice_number)).set({
+                invoice_number: job.invoice_number, uid: job.uid || null, code: "paid_after_account_deletion", updated_ms: Date.now()
+            }, { merge: true });
+            due = RECONCILIATION_DONE;
+            extra = { state: "owner_missing" };
+        }
+        else {
+            ok = false;
+            due = Date.now() + Math.min(paidQueue ? 6 * 3600000 : 3600000, 60000 * 2 ** Math.min(attempts, 12));
+        }
     }
     finally {
         await db.runTransaction(async (t) => {
