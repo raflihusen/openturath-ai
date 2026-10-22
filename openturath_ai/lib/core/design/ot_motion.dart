@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 /// OpenTurath Design System v2 — Quiet Motion & Haptics
-/// Gerakan tenang yang tidak mendominasi konsentrasi telaah ilmiah santri.
+/// Gerakan tenang yang tidak mendominasi konsentrasi dialog ilmiah santri.
 class OTMotion {
   static const Duration fast = Duration(milliseconds: 180);
   static const Duration normal = Duration(milliseconds: 220);

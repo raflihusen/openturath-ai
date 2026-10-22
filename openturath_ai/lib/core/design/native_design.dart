@@ -219,7 +219,7 @@ abstract final class NativeCopy {
     'collection': ['Koleksi istimewa', 'Special collection', 'مجموعة خاصة'],
     'exclusive': ['Koleksi istimewa', 'Special collection', 'مجموعة خاصة'],
     'fivePaths': [
-      'Lima pintu telaah',
+      'Lima pintu tanya jawab',
       'Five paths of study',
       'خمسة مسارات للدراسة'
     ],
@@ -247,12 +247,12 @@ abstract final class NativeCopy {
       'مؤلفات الحبيب أبي بكر العدني المشهور'
     ],
     'collectionBody': [
-      'Telaah naskah, pahami konsep, dan telusuri khazanah Fikih Tahawwulat bersama lima AI khusus.',
+      'Tanya jawab naskah, pahami konsep, dan telusuri khazanah Fikih Tahawwulat bersama lima AI khusus.',
       'Study texts, explore concepts, and discover the heritage of Fiqh al-Tahawwulat with five dedicated assistants.',
       'طالع النصوص وافهم المفاهيم واستكشف تراث فقه التحولات مع خمسة مساعدين متخصصين.'
     ],
     'muhaqqiq': [
-      'Telaah matan, ibarah, dan rujukannya.',
+      'Kaji matan, ibarah, dan rujukannya.',
       'Study source texts, passages, and references.',
       'مطالعة المتون والعبارات ومراجعها.'
     ],
@@ -338,7 +338,7 @@ abstract final class NativeCopy {
     'scholars': ['Khazanah ulama', 'Scholarly collections', 'تراث العلماء'],
     'yourStudy': ['Ruang belajar Anda', 'Your study space', 'مساحة دراستك'],
     'readAgain': [
-      'Buka kembali hasil telaah Anda.',
+      'Buka kembali catatan tanya jawab Anda.',
       'Return to your study notes.',
       'عُد إلى ملاحظات دراستك.'
     ],
@@ -369,7 +369,7 @@ abstract final class NativeCopy {
       'يشمل المساعدين المتخصصين الخمسة.'
     ],
     'studyReminder': [
-      'Periksa hasil telaah pada sumbernya dan diskusikan bersama guru.',
+      'Periksa jawaban AI pada sumbernya dan diskusikan bersama guru.',
       'Check your findings against the sources and discuss them with a teacher.',
       'راجع نتائج دراستك في مصادرها وناقشها مع معلمك.'
     ],

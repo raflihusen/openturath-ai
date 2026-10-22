@@ -414,7 +414,7 @@ class AgentModel {
               name: 'Al-Muhaqqiq',
               nameArabic: 'المحقق',
               description:
-                  'Telaah Al-Mughni dan perbandingan riwayat Imam Ahmad.',
+                  'Kajian Al-Mughni dan perbandingan riwayat Imam Ahmad.',
               descriptionArabic: 'تحقيق المعتمد في المذهب الحنبلي',
               emoji: '⚖️',
               badge: 'Fikih Hanbali',
@@ -513,7 +513,7 @@ class AgentModel {
               name: 'Al-Muhaqqiq',
               nameArabic: 'المحقق',
               description:
-                  'Membantu takhrij hadis, telaah rijalul hadis, dan derajat kesahihan sanad.',
+                  'Membantu takhrij hadis, penelitian rijalul hadis, dan derajat kesahihan sanad.',
               descriptionArabic: 'تخريج الحديث ودراسة الأسانيد والرجال',
               emoji: '🔍',
               badge: 'Takhrij & Rijal',
@@ -755,7 +755,7 @@ class AgentModel {
           title: 'Tasawuf',
           titleArabic: 'التصوف والأذكار',
           description:
-              'Telaah adab, tazkiyatun nafs, dan wirid dalam kitab rujukan.',
+              'Tanya jawab seputar adab, tazkiyatun nafs, dan wirid dalam kitab rujukan.',
           emoji: '📖',
           category: 'Tasawwuf',
           fieldId: 'tasawwuf',

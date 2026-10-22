@@ -367,7 +367,7 @@ class DesktopAuthGateway {
       <circle cx="24" cy="28" r="3" fill="#FAFAFA"/>
     </svg>
     <h1>Masuk ke OpenTurath</h1>
-    <p class="subtitle">Hubungkan akun Google Anda untuk melanjutkan telaah kitab turats di aplikasi desktop.</p>
+    <p class="subtitle">Hubungkan akun Google Anda untuk melanjutkan percakapan kitab turats di aplikasi desktop.</p>
 
     <button id="loginBtn" class="btn-google" onclick="startSignIn()">
       <svg class="g-icon" viewBox="0 0 24 24">

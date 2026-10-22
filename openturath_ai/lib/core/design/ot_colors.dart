@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 /// OpenTurath Design System — Monochrome Editorial Palette
-/// Prinsip Karakter Visual: Perpustakaan digital turath, ruang telaah akademik, dan katalog kitab modern.
+/// Prinsip Karakter Visual: Perpustakaan digital turath, ruang dialog ilmiah, dan katalog kitab modern.
 /// Bukan: SaaS generik, fintech, AI neon/gradient, ataupun kartu warna-warni.
 /// Kedalaman dibangun melalui kontras, tipografi, ruang kosong, hairline border, dan tekstur kertas arsip.
 ///
@@ -10,7 +10,7 @@ import 'package:flutter/material.dart';
 class OTColors {
   // ── 1. Light Mode (Neutral Paper) ──
   static const Color canvasLight =
-      Color(0xFFF6F6F6); // Kertas hangat untuk ruang telaah
+      Color(0xFFF6F6F6); // Kertas hangat untuk ruang dialog ilmiah
   static const Color surfaceLight = Color(
       0xFFFFFFFF); // Panel utama, bottom sheet, dialog, kartu, input field
   static const Color surfaceSubtleLight =

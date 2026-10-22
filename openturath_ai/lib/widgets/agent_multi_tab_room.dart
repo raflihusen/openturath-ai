@@ -2089,7 +2089,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
               }
 
               // 4. Jika tautan eksternal diklik di main frame (misal referensi di luar Google),
-              // buka di browser bawaan sistem agar tidak mengganggu ruang telaah asisten.
+              // buka di browser bawaan sistem agar tidak mengganggu ruang percakapan asisten.
               try {
                 if (await canLaunchUrl(uri.uriValue)) {
                   await launchUrl(uri.uriValue,

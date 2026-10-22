@@ -135,7 +135,7 @@ class ExclusiveActivationDialog extends StatelessWidget {
             const SizedBox(height: 16),
             Text(
                 reviewCopy(
-                    'Anda dapat membuka AI dan menyimpan hasil telaah ke Catatan.',
+                    'Anda dapat membuka AI dan menyimpan jawaban ke Catatan.',
                     'يمكنك فتح الذكاء الاصطناعي وحفظ نتائج الدراسة في الملاحظات.',
                     'You can open the AI and save study results to Notes.'),
                 style: OTTypography.body(color: muted)),

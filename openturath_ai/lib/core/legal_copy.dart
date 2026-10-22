@@ -198,7 +198,7 @@ abstract final class LegalCopy {
           '• Langganan: Paket yang dipilih, status, masa aktif, dan penggunaan voucher.\n'
           '• Pembayaran: Nomor transaksi, jumlah pembayaran, metode, waktu, dan status dari penyedia Midtrans.\n'
           '• Kontak Transaksi: Nomor WhatsApp/telepon yang Anda berikan saat pembayaran untuk pengiriman informasi aktivasi.\n'
-          '• Percakapan: Pertanyaan, jawaban, dan konteks telaah yang diproses melalui sesi komputasi riset Google.\n'
+          '• Percakapan: Pertanyaan, jawaban, dan konteks percakapan yang diproses melalui sesi komputasi riset Google.\n'
           '• Catatan: Catatan, kutipan, dan rujukan yang Anda simpan pada penyimpanan lokal perangkat.\n'
           '• Bantuan: Alamat kontak, isi pengaduan, nomor transaksi, dan lampiran tangkapan layar untuk penanganan masalah.\n'
           '• Sesi Teknis: Token sesi autentikasi yang aman untuk mempertahankan login di perangkat.',
@@ -393,7 +393,7 @@ abstract final class LegalCopy {
       id: 'guideline_04',
       title: "Adab 3 · Menghormati mazhab dan para ahli",
       content:
-          "Jangan mempergunakan hasil telaah untuk memicu perdebatan (jidal), menyudutkan pihak lain, atau menghakimi pandangan ulama. "
+          "Jangan mempergunakan jawaban AI untuk memicu perdebatan (jidal), menyudutkan pihak lain, atau menghakimi pandangan ulama. "
           "Penjelasan perbandingan pendapat yang ditampilkan AI tidak otomatis merangkum seluruh kekayaan khazanah fukaha.\n\n"
           "Penetapan hukum dan penilaian derajat riwayat merupakan wewenang para pakar yang memiliki keahlian ilmiah mendalam.",
     ),
@@ -401,9 +401,9 @@ abstract final class LegalCopy {
       id: 'guideline_05',
       title: "Adab 4 · Kejujuran dan amanah ilmiah",
       content:
-          "Jangan memberi kesan telah membaca suatu kitab secara utuh apabila telaah baru dilakukan melalui ringkasan mesin pencari. "
+          "Jangan memberi kesan telah membaca suatu kitab secara utuh apabila penelusuran baru dilakukan melalui ringkasan mesin pencari. "
           "Nisbatkan dan kutip hanya naskah yang telah Anda periksa dan baca sendiri secara langsung.\n\n"
-          "Kejujuran ilmiah adalah mahkota bagi penuntut ilmu dan penjaga keberkahan telaah turats.",
+          "Kejujuran ilmiah adalah mahkota bagi penuntut ilmu dan penjaga keberkahan belajar turats.",
     ),
     LegalSection(
       id: 'guideline_06',

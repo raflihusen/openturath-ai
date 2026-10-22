@@ -46,7 +46,7 @@ class TahawwulatAiPicker {
                     const SizedBox(height: 8),
                     Text(
                         reviewCopy(
-                            'Pilih AI sesuai tujuan telaah Anda.',
+                            'Pilih AI sesuai kebutuhan tanya jawab Anda.',
                             'اختر الأداة المناسبة لغرض دراستك.',
                             'Choose an AI for your study purpose.'),
                         style: OTTypography.body(

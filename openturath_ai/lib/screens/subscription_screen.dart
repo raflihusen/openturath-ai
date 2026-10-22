@@ -866,10 +866,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                 child: AbsorbPointer(
                   absorbing: true,
                   child: Container(
-                    color: (dark
-                            ? const Color(0xFF111111)
-                            : const Color(0xFFF6F6F6))
-                        .withValues(alpha: 0.88),
+                    color: OTColors.canvas(dark).withValues(alpha: 0.88),
                     child: Center(
                       child: AppLoader.fullscreen(
                         title: Loc.language == 'ar'
@@ -1223,14 +1220,14 @@ class _PromoCountdownBannerState extends State<_PromoCountdownBanner> {
     }
 
     // Warna merah solid 100% opacity (Crimson Red murni tanpa transparansi)
-    const Color solidRedBg = Color(0xFFB91C1C);
+    const solidRedBg = OTColors.errorLight;
 
     return Container(
       decoration: BoxDecoration(
         color: solidRedBg,
         borderRadius: BorderRadius.circular(OTRadius.card),
       ),
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 18),
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -1239,10 +1236,10 @@ class _PromoCountdownBannerState extends State<_PromoCountdownBanner> {
             headerTitle,
             textAlign: TextAlign.center,
             style: ScholarlyFonts.outfit(
-              fontSize: 11.5,
+              fontSize: OTFontSize.s11,
               fontWeight: FontWeight.w700,
               letterSpacing: 1.2,
-              color: Colors.white,
+              color: OTExpressive.white,
             ),
           ),
           const SizedBox(height: 14),
@@ -1282,9 +1279,9 @@ class _PromoCountdownBannerState extends State<_PromoCountdownBanner> {
             bottomCaption,
             textAlign: TextAlign.center,
             style: ScholarlyFonts.outfit(
-              fontSize: 11.5,
-              fontWeight: FontWeight.w500,
-              color: Colors.white.withValues(alpha: 0.85),
+              fontSize: OTFontSize.s11,
+              fontWeight: FontWeight.w400,
+              color: OTExpressive.white.withValues(alpha: 0.85),
             ),
           ),
         ],
@@ -1305,9 +1302,9 @@ class _PromoCountdownBannerState extends State<_PromoCountdownBanner> {
             textStyle: const TextStyle(
               fontFeatures: [FontFeature.tabularFigures()],
             ),
-            fontSize: 32,
+            fontSize: OTFontSize.calendarDay,
             fontWeight: FontWeight.w700,
-            color: Colors.white,
+            color: OTExpressive.white,
             height: 1.0,
           ),
         ),
@@ -1315,10 +1312,10 @@ class _PromoCountdownBannerState extends State<_PromoCountdownBanner> {
         Text(
           label,
           style: ScholarlyFonts.outfit(
-            fontSize: 9.5,
+            fontSize: OTFontSize.s11,
             fontWeight: FontWeight.w700,
             letterSpacing: 0.9,
-            color: Colors.white.withValues(alpha: 0.82),
+            color: OTExpressive.white.withValues(alpha: 0.82),
           ),
         ),
       ],
@@ -1331,9 +1328,9 @@ class _PromoCountdownBannerState extends State<_PromoCountdownBanner> {
       child: Text(
         ':',
         style: ScholarlyFonts.outfit(
-          fontSize: 22,
+          fontSize: OTFontSize.s22,
           fontWeight: FontWeight.w600,
-          color: Colors.white.withValues(alpha: 0.5),
+          color: OTExpressive.white.withValues(alpha: 0.5),
           height: 1.0,
         ),
       ),

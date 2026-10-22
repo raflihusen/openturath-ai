@@ -25,7 +25,7 @@ class DesktopWebViewRuntime {
           .timeout(const Duration(seconds: 10));
       if (version == null || version.isEmpty) {
         problem =
-            'Pasang Microsoft Edge WebView2 Runtime untuk membuka ruang telaah di aplikasi.';
+            'Pasang Microsoft Edge WebView2 Runtime untuk membuka ruang percakapan di aplikasi.';
         return;
       }
       final support = await getApplicationSupportDirectory();

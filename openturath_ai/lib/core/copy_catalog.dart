@@ -31,7 +31,7 @@ const copyCatalog = <String, List<String>>{
   "navHome": ["Beranda", "Home", "الرئيسية"],
   "navStudies": ["AI", "AI", "AI"],
   "assistantIntro": [
-    "Pilih bidang, lalu kenali mandat dan rujukan setiap AI sebelum memulai telaah.",
+    "Pilih bidang, lalu kenali mandat dan rujukan setiap AI sebelum mulai bertanya.",
     "Choose a field, then review each assistant's scope and sources before you begin.",
     "اختر مجالًا ثم اطّلع على اختصاص كل مساعد ومراجعه قبل بدء المطالعة."
   ],
@@ -43,7 +43,7 @@ const copyCatalog = <String, List<String>>{
   ],
   "assistantFeatured": ["KOLEKSI KHUSUS", "SPECIAL COLLECTION", "مجموعة خاصة"],
   "assistantFeaturedDesc": [
-    "Lima jalan telaah untuk matan, konsep, latihan, muhadharah, dan dakwah.",
+    "Lima jalan percakapan untuk matan, konsep, latihan, muhadharah, dan dakwah.",
     "Five study paths for source texts, concepts, practice, lectures, and teaching.",
     "خمسة مسارات لمطالعة المتون والمفاهيم والتدريب والمحاضرات والدعوة."
   ],
@@ -103,12 +103,12 @@ const copyCatalog = <String, List<String>>{
     "مادة الدعوة والخطب"
   ],
   "subHeadline": [
-    "Lanjutkan telaah bersama kitab-kitabnya",
+    "Lanjutkan tanya jawab bersama kitab-kitabnya",
     "Keep studying with the books themselves",
     "تابع المطالعة مع الكتب نفسها"
   ],
   "subHeadlineNamed": [
-    "{0}, lanjutkan telaah bersama kitab-kitabnya",
+    "{0}, lanjutkan tanya jawab bersama kitab-kitabnya",
     "{0}, keep studying with the books themselves",
     "{0}، تابع المطالعة مع الكتب نفسها"
   ],
@@ -137,7 +137,7 @@ const copyCatalog = <String, List<String>>{
   "flagshipPremium": ["PREMIUM", "PREMIUM", "مميّز"],
   "planExclusive": ["Eksklusif", "Exclusive", "حصري"],
   "planFeaturedDescription": [
-    "Lima AI untuk menelaah Fikih Tahawwulat, didukung kitab rujukan dan arsip muhadharah.",
+    "Lima AI untuk mendalami Fikih Tahawwulat, didukung kitab rujukan dan arsip muhadharah.",
     "Five assistants for studying Fiqh al-Tahawwulat, supported by source works and a lecture archive.",
     "خمسة مساعدين لدراسة فقه التحولات مع الكتب المرجعية وأرشيف المحاضرات."
   ],
@@ -162,7 +162,7 @@ const copyCatalog = <String, List<String>>{
     "اقرأ إحالات الكتب والأجزاء والصفحات عند توفرها"
   ],
   "planSingleBenefit4": [
-    "Simpan hasil telaah untuk dibaca kembali",
+    "Simpan jawaban AI untuk dibaca kembali",
     "Save your study results for later reading",
     "احفظ نتائج المطالعة للرجوع إليها"
   ],
@@ -182,7 +182,7 @@ const copyCatalog = <String, List<String>>{
     "اختبار الفهم التفاعلي والمراجعة الذاتية"
   ],
   "planFeaturedBenefit4": [
-    "Arsip muhadharah dan transkrip sebagai bahan telaah",
+    "Arsip muhadharah dan transkrip sebagai rujukan tanya jawab",
     "Lecture archive and transcripts for study",
     "أرشيف المحاضرات ونصوصها للمطالعة"
   ],
@@ -229,15 +229,15 @@ const copyCatalog = <String, List<String>>{
   "chooseField": ["Pilih bidang", "Choose a discipline", "اختر مجال العلم"],
   "allCategories": ["Semua bidang", "All disciplines", "جميع المجالات"],
   "searchResults": ["Hasil pencarian", "Search results", "نتائج البحث"],
-  "continueStudy": ["Lanjutkan telaah", "Continue reading", "متابعة المطالعة"],
-  "startStudy": ["Mulai telaah", "Begin your study", "ابدأ المطالعة"],
+  "continueStudy": ["Lanjutkan percakapan", "Continue conversation", "متابعة المحادثة"],
+  "startStudy": ["Mulai bertanya", "Ask a question", "ابدأ السؤال"],
   "dashboardSearchHint": [
     "Cari AI atau bidang keilmuan…",
     "Search assistants or disciplines…",
     "ابحث عن المساعد أو المجال العلمي…"
   ],
   "ahlanDefault": ["Ahlan", "Welcome", "أهلًا وسهلًا"],
-  "studyBookCategory": ["TELAAH KITAB", "TEXTUAL STUDIES", "مطالعة الكتب"],
+  "studyBookCategory": ["TANYA KITAB", "TEXTUAL INQUIRY", "مطالعة الكتب"],
   "studyEntryDefaultTitle": [
     "Mulai dari satu pertanyaan",
     "Start with a question",
@@ -309,7 +309,7 @@ const copyCatalog = <String, List<String>>{
     "فهرس الكتب قيد الإعداد."
   ],
   "inputQuestionHint": [
-    "Tulis pertanyaan atau ibarah yang ingin ditelaah…",
+    "Tulis pertanyaan atau ibarah kitab di sini…",
     "Enter a scholarly inquiry or a passage to study…",
     "اكتب المسألة أو العبارة التي تريد مطالعتها…"
   ],
@@ -320,12 +320,12 @@ const copyCatalog = <String, List<String>>{
   ],
   "tryAgain": ["Coba lagi", "Try again", "إعادة المحاولة"],
   "sessionExpiredOrNoAccess": [
-    "Sesi berakhir, atau akses ke ruang telaah ini belum aktif.",
+    "Sesi berakhir, atau akses ke percakapan ini belum aktif.",
     "Your session has ended or access to this study room is inactive.",
     "انتهت جلستك أو لم يُفعّل وصولك إلى هذا المجلس."
   ],
   "agentLoadFailed": [
-    "Ruang telaah belum bisa dimuat. Coba lagi sebentar.",
+    "Percakapan belum bisa dimuat. Coba lagi sebentar.",
     "The study room could not be loaded. Please try again shortly.",
     "تعذر تحميل المجلس. حاول بعد قليل."
   ],
@@ -357,13 +357,13 @@ const copyCatalog = <String, List<String>>{
     "تعذر الاتصال بأوبن تراث. تحقق من اتصالك بالإنترنت وأعد المحاولة."
   ],
   "adabDialogTitle": [
-    "Catatan sebelum telaah",
+    "Catatan sebelum bertanya",
     "Before beginning your study",
     "قبل الشروع في المطالعة"
   ],
   "adabAcknowledgeButton": ["Saya mengerti", "I understand", "فهمت"],
   "adabDialogLead": [
-    "OpenTurath membantu mencari kutipan dan menelaah ibarah dalam kitab. Cocokkan kembali rujukan pada kitab rujukan, dan tetaplah bertalaqqi kepada guru serta masyayikh yang berkompeten.",
+    "OpenTurath membantu mencari kutipan dan memahami ibarah dalam kitab. Cocokkan kembali rujukan pada kitab rujukan, dan tetaplah bertalaqqi kepada guru serta masyayikh yang berkompeten.",
     "OpenTurath helps you find quotations and study passages. Verify references in the source works and continue learning with qualified teachers and scholars.",
     "يساعدك أوبن تراث في تتبع النقول ومطالعة العبارات. راجع الإحالات في مصادرها وواصل التلقي عن المعلمين والمشايخ المؤهلين."
   ],
@@ -373,7 +373,7 @@ const copyCatalog = <String, List<String>>{
     "تتبع العبارات في المصادر"
   ],
   "adabBody1": [
-    "Gunakan OpenTurath untuk mencari ibarah dan menelaah penjelasan ulama dalam kitab. Verifikasi hasilnya langsung dengan naskah kitab rujukan.",
+    "Gunakan OpenTurath untuk mencari ibarah dan membaca penjelasan ulama dalam kitab. Verifikasi hasilnya langsung dengan naskah kitab rujukan.",
     "Use OpenTurath to find passages and scholarly explanations. Verify the results directly in the source text.",
     "استعن بأوبن تراث لتتبع العبارات وشروح العلماء، وراجع النتائج في النص الأصلي."
   ],
@@ -403,13 +403,13 @@ const copyCatalog = <String, List<String>>{
     "لا يوجد جواب لنسخه بعد."
   ],
   "noConversationToCopy": [
-    "Belum ada catatan telaah untuk disalin.",
+    "Belum ada percakapan untuk disalin.",
     "There are no study notes to copy yet.",
     "لا توجد ملاحظات مطالعة لنسخها بعد."
   ],
   "answerCopied": ["Jawaban disalin.", "Answer copied.", "نُسخ الجواب."],
   "conversationCopied": [
-    "Catatan telaah disalin dan tersimpan ke Catatan.",
+    "Percakapan disalin dan tersimpan ke Catatan.",
     "Study notes copied and saved.",
     "نُسخت ملاحظات المطالعة وحُفظت."
   ],
@@ -468,7 +468,7 @@ const copyCatalog = <String, List<String>>{
   "shareReferenceTooltip": ["Bagikan catatan", "Share note", "مشاركة الملاحظة"],
   "copyAnswerAction": ["Salin jawaban", "Copy answer", "نسخ الجواب"],
   "copyConversationAction": [
-    "Salin catatan telaah",
+    "Salin percakapan",
     "Copy study notes",
     "نسخ ملاحظات المطالعة"
   ],
@@ -496,12 +496,12 @@ const copyCatalog = <String, List<String>>{
     "تسجيل الدخول إلى Google"
   ],
   "googleSessionConnectSubtitle": [
-    "Siapkan akun untuk ruang telaah Anda",
+    "Siapkan akun untuk asisten AI Anda",
     "Prepare your account for textual study",
     "هيّئ حسابك لمطالعة النصوص"
   ],
   "googleSessionConnectDesc": [
-    "Setelah masuk, Anda langsung kembali ke ruang telaah.",
+    "Setelah masuk, Anda langsung kembali ke percakapan.",
     "After signing in, you will return to your study room automatically.",
     "ستعود إلى مجلس المطالعة تلقائيًا بعد تسجيل الدخول."
   ],
@@ -511,7 +511,7 @@ const copyCatalog = <String, List<String>>{
     "استخدم حساب Google نفسه لمتابعة المطالعة دون تسجيل الدخول مجددًا."
   ],
   "googleSessionSignInSameAccountDesc": [
-    "Gunakan akun Google yang sama agar akses telaah terbuka tanpa masuk ulang.",
+    "Gunakan akun Google yang sama agar akses AI terbuka tanpa masuk ulang.",
     "Use the same Google account to open your study room without signing in again.",
     "استخدم حساب Google نفسه لفتح مجلسك دون تسجيل الدخول مجددًا."
   ],
@@ -521,7 +521,7 @@ const copyCatalog = <String, List<String>>{
     "تم ربط حساب Google"
   ],
   "googleSessionPreparing": [
-    "Menyiapkan ruang telaah…",
+    "Menyiapkan ruang asisten…",
     "Preparing your study room…",
     "جارٍ تهيئة مجلس المطالعة…"
   ],
@@ -576,7 +576,7 @@ const copyCatalog = <String, List<String>>{
     "جارٍ مواءمة جلسة حساب Google..."
   ],
   "verifyingSessionSubtitle": [
-    "Memastikan kesesuaian akun sebelum membuka ruang telaah.",
+    "Memastikan kesesuaian akun sebelum membuka ruang asisten.",
     "Verifying account match before opening study space.",
     "التحقق من تطابق الحساب قبل فتح مساحة المطالعة."
   ],
@@ -790,7 +790,7 @@ const copyCatalog = <String, List<String>>{
     "إعادة محاولة الدفع"
   ],
   "chooseAssistantAndPlan": [
-    "Pilih bidang dan masa akses untuk memulai telaah.",
+    "Pilih bidang dan masa akses untuk mulai bertanya.",
     "Choose a discipline and access period to begin your study.",
     "اختر مجالًا ومدة وصول لبدء المطالعة."
   ],
@@ -943,12 +943,12 @@ const copyCatalog = <String, List<String>>{
     "الركن الرابع · سياج التراث"
   ],
   "tahawwulatBenefit": [
-    "Telaah naskah, sanad pembahasan tanda zaman, dan karya Al-Habib Abu Bakar Al-Adni Al-Masyhur.",
+    "Pelajari naskah, sanad pembahasan tanda zaman, dan karya Al-Habib Abu Bakar Al-Adni Al-Masyhur.",
     "Study texts, transmitted accounts of the signs of the times, and the works of al-Habib Abu Bakr al-Adni al-Mashhur.",
     "مطالعة النصوص وأسانيد مباحث علامات الزمان ومؤلفات الحبيب أبي بكر العدني المشهور."
   ],
   "tahawwulatWelcome": [
-    "Majelis telaah karya Al-Habib Abu Bakar Al-Adni Al-Masyhur. Bacalah ibarah bersama rujukannya dan bawalah hasil telaah kepada guru.",
+    "Majelis tanya jawab karya Al-Habib Abu Bakar Al-Adni Al-Masyhur. Bacalah ibarah bersama rujukannya dan diskusikan bersama guru.",
     "A study room for the works of al-Habib Abu Bakr al-Adni al-Mashhur. Read each passage alongside its source and discuss your findings with a teacher.",
     "مجلس لمطالعة مؤلفات الحبيب أبي بكر العدني المشهور. اقرأ العبارة مع مرجعها واعرض ثمرة المطالعة على معلمك."
   ],
@@ -1490,7 +1490,7 @@ const copyCatalog = <String, List<String>>{
     "الرمز غير صحيح أو منتهي الصلاحية"
   ],
   "ui_76fa6fcef2": [
-    "Voucher aktif. Akses telaah sudah dibuka.",
+    "Voucher aktif. Akses tanya jawab sudah dibuka.",
     "Code redeemed. Your study access is open.",
     "استُخدم الرمز وفُتح الوصول إلى المطالعة."
   ],
@@ -1619,7 +1619,7 @@ const copyCatalog = <String, List<String>>{
     "شروط الدفع عبر Midtrans والاسترداد"
   ],
   "ui_9f7ecdca34": [
-    "Etika telaah dan adab keilmuan",
+    "Etika bertanya dan adab keilmuan",
     "Study Ethics, Context, and Scholarly Etiquette",
     "أخلاقيات المطالعة وفهم السياق وآداب العلم"
   ],
@@ -1851,7 +1851,7 @@ const copyCatalog = <String, List<String>>{
     "يدرس فقه التحولات، في إطار الحبيب أبي بكر العدني المشهور، تغيرات الزمان لصيانة الإسلام والإيمان والإحسان. ويُفهم وصف الركن الرابع ضمن هذا الإطار العلمي."
   ],
   "introMethod": [
-    "Adab dan cara menelaah",
+    "Adab dan cara berdialog",
     "Scholarly Etiquette and Method",
     "آداب المطالعة ومنهجها"
   ],
@@ -1861,7 +1861,7 @@ const copyCatalog = <String, List<String>>{
     "اقرأ النص في سياقه، وراجع ألفاظه واسم الكتاب والجزء والصفحة. ودراسة علامات الزمان تستلزم التثبت وإرشاد المعلمين وصيانة اللسان والعمل."
   ],
   "introRooms": [
-    "Lima ruang telaah",
+    "Lima ruang percakapan",
     "Five Study Rooms",
     "خمسة مجالس للمطالعة"
   ],
@@ -1937,7 +1937,7 @@ const copyCatalog = <String, List<String>>{
     "التحديث v{0} جاهز للتثبيت"
   ],
   "openNamedStudy": [
-    "Buka ruang telaah {0}",
+    "Buka percakapan {0}",
     "Open {0} study room",
     "فتح مجلس {0}"
   ],
@@ -2049,17 +2049,17 @@ const copyCatalog = <String, List<String>>{
     "العصر الحديث (بعد 1100 هـ)"
   ],
   "desktopLoginIntro": [
-    "Ruang baca digital untuk meneliti literatur turats klasik bersama pendamping telaah.",
+    "Ruang asisten cerdas untuk meneliti literatur turats klasik bersama AI.",
     "Digital reading room for classical turath literature with study assistants.",
     "غرفة القراءة الرقمية لدراسة التراث الإسلامي مع مساعدي المطالعة."
   ],
   "desktopLoginTitle": [
-    "Masuk ke Ruang Telaah",
+    "Masuk ke Ruang Tanya Jawab",
     "Sign in to Study Room",
     "الدخول إلى غرفة المطالعة"
   ],
   "desktopLoginHelp": [
-    "Gunakan akun Google Anda untuk membuka akses telaah kitab dan AI riset.",
+    "Gunakan akun Google Anda untuk membuka akses tanya jawab kitab dan AI.",
     "Use your Google account to unlock access to books and study assistants.",
     "استخدم حساب جوجل لفتح دراسة الكتب ومساعدي البحث."
   ],
@@ -2181,7 +2181,7 @@ const copyCatalog = <String, List<String>>{
     "تسجيل الدخول إلى أوبن تراث"
   ],
   "loginSubtitle": [
-    "Lanjutkan telaah kitab dengan akun Google Anda.",
+    "Lanjutkan percakapan dengan akun Google Anda.",
     "Continue your study with your Google account.",
     "تابع مطالعتك بحساب Google."
   ],
@@ -2211,7 +2211,7 @@ const copyCatalog = <String, List<String>>{
     "لكل مساعد مكتبة يمكنك مراجعتها."
   ],
   "loginFeatureNotes": [
-    "Catatan telaah tersimpan",
+    "Catatan tersimpan",
     "Study notes, kept",
     "ملاحظات المطالعة محفوظة"
   ],
@@ -2413,7 +2413,7 @@ const copyCatalog = <String, List<String>>{
     "اكتمل تنزيل التحديث في الخلفية بهدوء. اضغط أدناه للتثبيت وإعادة التشغيل."
   ],
   "updateReadyDefaultNotes": [
-    "Penyempurnaan stabilitas telaah dan sistem keilmuan.",
+    "Penyempurnaan stabilitas sistem dan keilmuan.",
     "Refinements for study stability and scholarly systems.",
     "تحسينات لاستقرار المطالعة والمنظومة العلمية."
   ],
@@ -2492,7 +2492,7 @@ const copyCatalog = <String, List<String>>{
     "نحو {0} شهريًا · يُدفع كاملًا"
   ],
   "chatPurpose": [
-    "Ruang telaah naskah & kajian komparatif berbasis turats.",
+    "Ruang tanya jawab naskah & kajian komparatif berbasis turats.",
     "Study source texts and compare scholarly explanations.",
     "مجلس لمطالعة نصوص التراث ومقارنة الشروح العلمية."
   ],

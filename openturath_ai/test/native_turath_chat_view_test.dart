@@ -68,7 +68,7 @@ void main() {
       );
 
       expect(find.text(agentSyafii.title), findsOneWidget);
-      expect(find.textContaining('Ruang telaah naskah'), findsOneWidget);
+      expect(find.textContaining('Ruang tanya jawab naskah'), findsOneWidget);
       expect(find.byType(TextField), findsOneWidget);
     });
 
