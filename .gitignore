@@ -38,13 +38,15 @@ reports/
 openturath_ai/reports/
 .claude/
 
-# Compiled Binaries (APK, AAB, DMG, ZIP) & Archive
+# Compiled Binaries (APK, AAB, DMG, ZIP, EXE) & Archive
 *.apk
 *.aab
 *.apkm
 *.dmg
 *.zip
 *.sha256
+*.exe
+OpenTurath_AI_Windows/
 binaries_archive/
 archive_experiments/
 data_corpus/
