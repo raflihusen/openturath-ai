@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.onClientErrorLogged = exports.akalWebhook = exports.syncAkalPurchases = exports.cleanupOrphanedDeletions = exports.onUserDeleted = exports.onProvisioningOutboxCreated = exports.processProvisioningOutbox = exports.dailyRevoke = exports.onUserCreate = exports.redeemCode = exports.checkPaymentStatus = exports.midtransWebhook = exports.dokuWebhook = exports.monitorAccessHealth = exports.reconcileMidtransPayments = exports.createCheckout = exports.askAgent = exports.recordQuestion = exports.getAgentUrl = exports.MODULE_PLANS = exports.PURCHASABLE_AGENTS = void 0;
+exports.onClientErrorLogged = exports.cleanupOrphanedDeletions = exports.onUserDeleted = exports.onProvisioningOutboxCreated = exports.processProvisioningOutbox = exports.dailyRevoke = exports.onUserCreate = exports.redeemCode = exports.checkPaymentStatus = exports.midtransWebhook = exports.dokuWebhook = exports.monitorAccessHealth = exports.reconcileMidtransPayments = exports.createCheckout = exports.askAgent = exports.recordQuestion = exports.getAgentUrl = exports.MODULE_PLANS = exports.PURCHASABLE_AGENTS = void 0;
 exports.addCalendarMonthsClamped = addCalendarMonthsClamped;
 const functions = require("firebase-functions");
 const admin = require("firebase-admin");
@@ -15,10 +15,15 @@ const db = admin.firestore();
 // ================================================================
 // TELEGRAM NOTIFICATION HELPER
 // ================================================================
-async function sendTelegramNotification(text) {
+// Two channels: "alert" (operator incidents) and "sales" (purchase/voucher
+// feed). Bots are limited to ~20 messages/minute per group, so a launch-day
+// sales burst must never share a group with the incident alerts.
+async function sendTelegramNotification(text, channel = "sales") {
     var _a;
     const token = process.env.TELEGRAM_BOT_TOKEN;
-    const chatId = process.env.TELEGRAM_CHAT_ID;
+    const chatId = channel === "alert"
+        ? (process.env.TELEGRAM_ALERT_CHAT_ID || process.env.TELEGRAM_CHAT_ID)
+        : process.env.TELEGRAM_CHAT_ID;
     if (!token || !chatId)
         return false;
     try {
@@ -27,12 +32,20 @@ async function sendTelegramNotification(text) {
             text,
             parse_mode: "HTML",
         }, { timeout: 5000 });
-        return ((_a = result.data) === null || _a === void 0 ? void 0 : _a.ok) === true;
+        if (((_a = result.data) === null || _a === void 0 ? void 0 : _a.ok) === true)
+            return true;
     }
     catch (_) {
         console.error("[Telegram] Notification delivery failed; credentials redacted.");
-        return false;
     }
+    // A dropped notification is itself an operational signal; keep a durable count.
+    try {
+        await db.collection("access_control").doc("telegram_delivery").set({
+            [`${channel}_failed`]: admin.firestore.FieldValue.increment(1), last_failed_ms: Date.now(),
+        }, { merge: true });
+    }
+    catch (_) { /* never let telemetry break the caller */ }
+    return false;
 }
 // Telegram messages use parse_mode HTML; every value that originates from a
 // user, a payment provider or a client device must pass through this.
@@ -1072,7 +1085,7 @@ exports.monitorAccessHealth = functions
             queue_observation_unavailable: "Antrean akses belum dapat diperiksa." };
         const text = issues.length ? "⚠️ <b>Otomasi akses OpenTurath perlu perhatian</b>\n" + issues.map(i => labels[i]).join("\n") :
             "✅ <b>Otomasi akses OpenTurath pulih.</b> Pemeriksaan worker, NotebookLM, dan pembayaran kembali berjalan.";
-        const delivered = await sendTelegramNotification(text);
+        const delivered = await sendTelegramNotification(text, "alert");
         await db.runTransaction(async (t) => {
             const current = (await t.get(ref)).data();
             if ((current === null || current === void 0 ? void 0 : current.lease) === token)
@@ -2321,292 +2334,9 @@ async function notifySubscriptionServer(email, name, plan, action, serviceName, 
         }
     }
 }
-function getAkalApiKey() {
-    var _a;
-    const runtimeConfigKey = (_a = functions.config().akal) === null || _a === void 0 ? void 0 : _a.api_key;
-    return process.env.AKAL_API_KEY || runtimeConfigKey || "";
-}
-function detectDurationMonths(priceSchemeTitle, serviceTitle) {
-    return (0, access_control_1.akalDurationMonths)(priceSchemeTitle, serviceTitle);
-}
-function akalTransactionId(raw, fallback) {
-    const id = typeof raw === "string" ? raw.trim() : "";
-    return /^[A-Za-z0-9_-]{1,128}$/.test(id) ? id : `akal_${(0, access_control_1.keyOf)("akal", ...fallback).slice(0, 40)}`;
-}
-// Evidence that cannot be granted automatically (zero amount, missing ID,
-// unknown product) is kept for the operator and never extends access.
-async function quarantineAkalEvidence(evidence, reason) {
-    const eventKey = (0, access_control_1.keyOf)("akal_quarantine", JSON.stringify(evidence), reason);
-    await db.collection("access_legacy_events").doc(eventKey).set(Object.assign(Object.assign({}, evidence), { status: "verification_required", reason, received_at: admin.firestore.FieldValue.serverTimestamp() }), { merge: true });
-}
-// Idempotent per provider transaction: the period is fixed the first time the
-// transaction is recorded, a replay never extends it, and an existing longer
-// entitlement is never shortened. Only the purchased scopes are touched.
-async function applyAkalPurchase(p) {
-    const txRef = db.collection("transactions").doc(p.transactionId);
-    let userRef = p.uid ? db.collection("users").doc(p.uid) : null;
-    if (!userRef) {
-        const matches = await db.collection("users").where("email", "==", p.email).limit(2).get();
-        // Two profiles claiming one email is an identity problem, not a billing one.
-        if (matches.size === 1)
-            userRef = matches.docs[0].ref;
-    }
-    return db.runTransaction(async (t) => {
-        var _a;
-        const txSnap = await t.get(txRef);
-        const prior = txSnap.data();
-        if ((prior === null || prior === void 0 ? void 0 : prior.uid) && userRef && prior.uid !== userRef.id)
-            throw new Error("GoAkal transaction belongs to another account");
-        const userSnap = userRef ? await t.get(userRef) : null;
-        const grantRefs = p.scopes.map(scope => db.collection("access_grants").doc((0, access_control_1.keyOf)("goakal", p.transactionId, scope)));
-        const grantSnaps = [];
-        for (const ref of grantRefs)
-            grantSnaps.push(await t.get(ref));
-        const paidMs = Number.isFinite(prior === null || prior === void 0 ? void 0 : prior.paid_ms) ? prior.paid_ms : p.paidMs;
-        // A renewal paid before the previous paid period ends continues from that
-        // end. Only other ledger grants count, and only when first recorded.
-        let startsMs = Number.isFinite(prior === null || prior === void 0 ? void 0 : prior.starts_ms) ? prior.starts_ms : Math.max(paidMs, (_a = p.startsMs) !== null && _a !== void 0 ? _a : paidMs);
-        if (!Number.isFinite(prior === null || prior === void 0 ? void 0 : prior.expires_ms) && (userSnap === null || userSnap === void 0 ? void 0 : userSnap.exists)) {
-            for (const id of userSnap.data().access_grant_ids || []) {
-                const g = (await t.get(db.collection("access_grants").doc(id))).data();
-                if (g && g.kind === "payment" && g.status === "active" && p.scopes.includes(g.scope) &&
-                    g.transaction_id !== p.transactionId && g.starts_ms <= paidMs && g.expires_ms > startsMs)
-                    startsMs = g.expires_ms;
-            }
-        }
-        const expiresMs = Number.isFinite(prior === null || prior === void 0 ? void 0 : prior.expires_ms) ? prior.expires_ms : (0, access_control_1.billingExpiry)(startsMs, p.months);
-        const expiry = admin.firestore.Timestamp.fromMillis(expiresMs);
-        const linked = Boolean(userRef && (userSnap === null || userSnap === void 0 ? void 0 : userSnap.exists));
-        t.set(txRef, Object.assign(Object.assign({}, (linked ? { uid: userRef.id } : {})), { customer_email: p.email, customer_name: p.name, plan: p.plan, amount: p.amount, duration_months: p.months, status: "success", source: "goakal", service_name: p.serviceTitle, entitlement_key: p.scopes[0], entitlement_keys: p.scopes, paid_ms: paidMs, starts_ms: startsMs, expires_ms: expiresMs, paid_at: admin.firestore.Timestamp.fromMillis(paidMs), subscription_expires_at: expiry, synced_at: admin.firestore.FieldValue.serverTimestamp() }), { merge: true });
-        if (!linked)
-            return { expiresMs, linked };
-        const user = userSnap.data();
-        const entitlements = Object.assign({}, (user.entitlements || {}));
-        const grantIds = new Set(user.access_grant_ids || []);
-        p.scopes.forEach((scope, index) => {
-            if (!grantSnaps[index].exists) {
-                t.set(grantRefs[index], {
-                    uid: userRef.id, email: p.email, scope, kind: "payment", status: "active", amount: p.amount,
-                    provider: "goakal", transaction_id: p.transactionId, transaction_document: p.transactionId,
-                    starts_ms: startsMs, expires_ms: expiresMs, created_ms: Date.now(),
-                });
-                if (access_catalog_1.PROVISIONABLE_SCOPES.includes(scope)) {
-                    t.set(db.collection("provisioning_outbox").doc(`akal_${p.transactionId}_${scope}`), {
-                        uid: userRef.id, email: p.email, name: user.name || p.name, entitlement_key: scope, plan: p.plan,
-                        action: "add", status: "pending", attempts: 0, source: "goakal",
-                        created_at: admin.firestore.FieldValue.serverTimestamp(),
-                    });
-                }
-            }
-            grantIds.add(grantRefs[index].id);
-            const current = entitlements[scope];
-            const currentMs = (current === null || current === void 0 ? void 0 : current.status) === "active" || (current === null || current === void 0 ? void 0 : current.status) === undefined ? (0, access_control_1.millis)(current === null || current === void 0 ? void 0 : current.expiry) : NaN;
-            if (!(Number.isFinite(currentMs) && currentMs >= expiresMs)) {
-                entitlements[scope] = {
-                    plan: p.plan, status: "active", expiry, source: "goakal",
-                    source_transaction_id: p.transactionId,
-                    updated_at: admin.firestore.FieldValue.serverTimestamp(),
-                };
-            }
-        });
-        t.set(userRef, {
-            entitlements,
-            access_grant_ids: [...grantIds],
-            access_due_ms: Date.now(),
-            updated_at: admin.firestore.FieldValue.serverTimestamp(),
-        }, { merge: true });
-        return { expiresMs, linked };
-    });
-}
-// ================================================================
-// FUNCTION: syncAkalPurchases (Otomasi Sinkronisasi Pembelian GoAkal)
-// ================================================================
-exports.syncAkalPurchases = functions
-    .runWith({ serviceAccount: "open-turath@appspot.gserviceaccount.com", timeoutSeconds: 60 })
-    .https.onCall(async (data, context) => {
-    if (!context.auth) {
-        throw new functions.https.HttpsError("unauthenticated", "Login diperlukan untuk sinkronisasi.");
-    }
-    const uid = context.auth.uid;
-    const email = (context.auth.token.email || "").toLowerCase().trim();
-    // Pembelian diklaim berdasarkan email, jadi email wajib sudah diverifikasi penyedia identitas.
-    if (!email || context.auth.token.email_verified !== true) {
-        throw new functions.https.HttpsError("failed-precondition", "Akun Google Anda tidak memiliki alamat email yang valid.");
-    }
-    const apiKey = getAkalApiKey();
-    if (!apiKey) {
-        throw new functions.https.HttpsError("internal", "Kunci API GoAkal belum dikonfigurasi di server.");
-    }
-    // One sync fans out to every GoAkal service; bound it per account.
-    await enforceRateLimit(`akal_sync_${uid}`, 3, 600, "Sinkronisasi baru saja dijalankan.");
-    const now = Date.now();
-    const deadline = now + 45000;
-    const syncedServices = [];
-    const ownRows = async (cuid) => {
-        var _a;
-        const rows = [];
-        for (const status of ["PAID", "SETTLED"]) {
-            for (let page = 1; page <= 4 && Date.now() < deadline; page++) {
-                const apiUrl = `https://goakal.com/service/api/v1/services/${cuid}/transactions?status=${status}&pageSize=100&page=${page}`;
-                let txns;
-                try {
-                    const response = await axios_1.default.get(apiUrl, { headers: { "X-Api-Key": apiKey }, timeout: 8000 });
-                    txns = Array.isArray((_a = response.data) === null || _a === void 0 ? void 0 : _a.data) ? response.data.data : [];
-                }
-                catch (e) {
-                    console.warn(`[syncAkalPurchases] Query failed for one service page: ${e.message}`);
-                    break;
-                }
-                rows.push(...txns.filter(t => String((t === null || t === void 0 ? void 0 : t.payerEmail) || "").trim().toLowerCase() === email));
-                if (txns.length < 100)
-                    break;
-            }
-        }
-        return rows;
-    };
-    const syncService = async (service) => {
-        var _a;
-        let applied = false;
-        for (const cuid of [service.cuid, ...service.fallbacks]) {
-            const rows = (await ownRows(cuid))
-                .map(t => ({ t, paidMs: (0, access_control_1.millis)(t.paidAt || t.createdAt) }))
-                .filter(r => Number.isFinite(r.paidMs))
-                .sort((a, b) => a.paidMs - b.paidMs);
-            let chainEnd = 0;
-            for (const { t, paidMs } of rows) {
-                const months = detectDurationMonths(t.priceSchemeTitle || "", t.serviceTitle || "");
-                const rawId = typeof t.id === "string" && t.id.trim() ? t.id : t.paymentId;
-                const amount = Number((_a = t.incomingAmount) !== null && _a !== void 0 ? _a : t.amount);
-                const valid = typeof rawId === "string" && rawId.trim() && Number.isFinite(amount) && amount > 0;
-                // The provider's invoice expiry is not the subscription period. A
-                // renewal paid before the previous period ended continues from it.
-                const startsMs = valid ? Math.max(paidMs, chainEnd) : paidMs;
-                const expiresMs = (0, access_control_1.billingExpiry)(startsMs, months);
-                if (valid)
-                    chainEnd = expiresMs;
-                if (expiresMs <= now)
-                    continue;
-                if (!valid) {
-                    await quarantineAkalEvidence({
-                        email, uid, service: service.name, transaction_id: typeof rawId === "string" ? rawId : "",
-                        amount: Number.isFinite(amount) ? amount : null, paid_at: String(t.paidAt || t.createdAt || ""),
-                    }, "invalid_billing_identity_or_amount");
-                    continue;
-                }
-                await applyAkalPurchase({
-                    uid, email, name: String(t.payerName || "Santri Peneliti").slice(0, 120),
-                    transactionId: akalTransactionId(rawId, [email, service.cuid, String(paidMs)]),
-                    amount, scopes: service.scopes,
-                    plan: months === 12 ? "bahits_1y" : (months === 6 ? "tholib_6m" : "tholib_1m"),
-                    months, paidMs, startsMs, serviceTitle: String(t.serviceTitle || service.name).slice(0, 200),
-                });
-                applied = true;
-            }
-        }
-        if (applied)
-            syncedServices.push(service.name);
-    };
-    let cursor = 0;
-    const worker = async () => { while (cursor < access_catalog_1.AKAL_SERVICES.length && Date.now() < deadline)
-        await syncService(access_catalog_1.AKAL_SERVICES[cursor++]); };
-    await Promise.all([worker(), worker(), worker(), worker(), worker(), worker()]);
-    syncedServices.sort();
-    if (syncedServices.length > 0) {
-        await sendTelegramNotification(`🔄 <b>[SINKRONISASI GOAKAL OTOMATIS]</b>\n` +
-            `👤 Pengguna: <code>${esc(email)}</code>\n` +
-            `📚 Hak Akses Aktif: <b>${esc(syncedServices.join(", "))}</b>`);
-    }
-    return {
-        success: true,
-        synced: syncedServices,
-        count: syncedServices.length,
-        message: syncedServices.length > 0
-            ? `Alhamdulillah! Akses aktif berhasil disinkronkan: ${syncedServices.join(", ")}.`
-            : "Belum ditemukan transaksi aktif di GoAkal untuk email ini. Pastikan Anda menggunakan email akun Google yang sama saat membayar di GoAkal.",
-    };
-});
-// ================================================================
-// FUNCTION: akalWebhook (Webhook Receiver HTTP dari GoAkal)
-// ================================================================
-exports.akalWebhook = functions
-    .runWith({ serviceAccount: "open-turath@appspot.gserviceaccount.com" })
-    .https.onRequest(async (req, res) => {
-    var _a;
-    if (req.method !== "POST") {
-        res.status(405).send("Method Not Allowed");
-        return;
-    }
-    const payload = req.body || {};
-    // Fail-closed: tanpa secret terkonfigurasi, webhook menolak semua request.
-    const akalSecret = process.env.AKAL_WEBHOOK_SECRET || "";
-    if (akalSecret.length < 32) {
-        console.error("[Akal Webhook] AKAL_WEBHOOK_SECRET is not configured; rejecting request.");
-        res.status(503).json({ error: "Webhook not configured" });
-        return;
-    }
-    // Verifikasi token dari Akal (di dalam body JSON payload.token atau payload.data.token)
-    const token = payload.token || ((_a = payload.data) === null || _a === void 0 ? void 0 : _a.token) || req.headers["x-akal-token"];
-    if (typeof token !== "string" || !safeTimingEqual(token, akalSecret)) {
-        console.warn("[Akal Webhook] Signature verification failed or missing token.");
-        res.status(401).json({ error: "Unauthorized" });
-        return;
-    }
-    const data = payload.data || payload;
-    const status = String(data.status || "").toUpperCase().trim();
-    if (!["PAID", "SETTLED"].includes(status)) {
-        console.log(`[Akal Webhook] Transaction status is '${status}'. Acknowledging receipt.`);
-        res.status(200).json({ received: true, status });
-        return;
-    }
-    const payer = data.payer || data.user || {};
-    const email = String(payer.email || "").trim().toLowerCase();
-    const name = String(payer.name || "").trim().slice(0, 120) || "Santri Peneliti";
-    const service = data.service || {};
-    const serviceTitle = String(service.name || service.title || "").trim().slice(0, 200);
-    const priceScheme = data.priceScheme || {};
-    const priceSchemeTitle = String(priceScheme.name || priceScheme.title || "").trim();
-    const rawTxnId = typeof data.id === "string" ? data.id.trim() : "";
-    const amount = Number(data.amount);
-    const scopes = (0, access_catalog_1.resolveAkalScopes)(serviceTitle);
-    const paidMs = data.paidAt ? (0, access_control_1.millis)(data.paidAt) : Date.now();
-    const evidence = { email, service: serviceTitle, transaction_id: rawTxnId, payment_status: status,
-        amount: Number.isFinite(amount) ? amount : null, paid_at: String(data.paidAt || "") };
-    if (!email) {
-        res.status(400).json({ error: "Missing payer email" });
-        return;
-    }
-    // Preserve invalid evidence for operator verification; never auto-extend
-    // and never guess which module an unknown product should unlock.
-    const reason = !rawTxnId || !Number.isFinite(amount) || amount <= 0 ? "invalid_billing_identity_or_amount"
-        : !scopes.length ? "unknown_service"
-            : !Number.isFinite(paidMs) ? "invalid_payment_time" : "";
-    if (reason) {
-        await quarantineAkalEvidence(evidence, reason);
-        res.status(200).json({ received: true, verification_required: true });
-        return;
-    }
-    const months = detectDurationMonths(priceSchemeTitle, serviceTitle);
-    const plan = months === 12 ? "bahits_1y" : (months === 6 ? "tholib_6m" : "tholib_1m");
-    const txnId = akalTransactionId(rawTxnId, [email, serviceTitle, priceSchemeTitle, String(data.paidAt || ""), String(amount)]);
-    let result;
-    try {
-        result = await applyAkalPurchase({ email, name, transactionId: txnId, amount, scopes, plan, months, paidMs, serviceTitle });
-    }
-    catch (err) {
-        console.error("[Akal Webhook] Purchase could not be applied:", err.message);
-        res.status(500).json({ error: "Internal error" });
-        return;
-    }
-    await sendTelegramNotification(`⚡ <b>[WEBHOOK GOAKAL REALTIME]</b>\n` +
-        `👤 Pembeli: <code>${esc(email)}</code> (${esc(name)})\n` +
-        `📦 Layanan: <b>${esc(serviceTitle)}</b>\n` +
-        `⏳ Paket: ${esc(plan)} (${months} bulan)\n` +
-        `🔑 Entitlement: <code>${esc(scopes.join(", "))}</code>\n` +
-        `💰 Nominal: Rp ${amount.toLocaleString("id-ID")}\n` +
-        `📅 Masa Aktif: s/d ${new Date(result.expiresMs).toISOString().split("T")[0]}` +
-        (result.linked ? "" : `\nℹ️ Pembeli belum terdaftar di aplikasi; akses ditautkan saat ia mendaftar.`));
-    res.status(200).json({ success: true, txnId, entitlementKeys: scopes });
-});
+// GoAkal billing (akalWebhook, syncAkalPurchases) was retired on 2026-10-22:
+// payments are Midtrans-only. Historical GoAkal grants stay in the ledger and
+// are handled by the access worker; nothing here can mint new ones.
 // ================================================================
 // TELEMETRY CLOUD FUNCTION: Forward critical errors to Telegram
 // ================================================================

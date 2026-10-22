@@ -359,10 +359,8 @@ class _PaymentCheckoutSheetState extends State<PaymentCheckoutSheet> {
       return true;
     }
 
-    // Platform checkout resmi GoAkal & Midtrans
-    if (host == 'goakal.com' ||
-        host.endsWith('.goakal.com') ||
-        host == 'midtrans.com' ||
+    // Platform checkout resmi Midtrans
+    if (host == 'midtrans.com' ||
         host.endsWith('.midtrans.com') ||
         host == 'veritrans.co.id' ||
         host.endsWith('.veritrans.co.id')) {
