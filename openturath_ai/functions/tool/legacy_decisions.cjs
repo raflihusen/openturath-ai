@@ -9,11 +9,13 @@
 //                                          record an owner bonus / gift / transfer as a verified admin grant
 //   end_access {uid, scope, reason}        owner confirms the right ended (e.g. transferred away)
 //   lift_hold {uid}                        release access_revocation_hold once the evidence is settled
+//   create_legacy_owner {uid, email}       give seats held by an address without a login account an
+//                                          owner record (uid = legacy_<keyOf(email)>) so the worker can expire them
 // After the actions, a revocation certificate is issued per (uid, scope) whose
 // manual adjustments all have a decision, using the fingerprint at that moment.
 const {VIP_EMAILS, normalEmail, keyOf, hasLegacyAccessAdjustment, millis, REVOCATION_POLICY, legacyTransactionScopes} = require("../lib/access_control.js");
 
-const ACTIONS = new Set(["link_orphan_grant", "honor_until", "end_access", "lift_hold", "no_action"]);
+const ACTIONS = new Set(["link_orphan_grant", "honor_until", "end_access", "lift_hold", "create_legacy_owner", "no_action"]);
 
 async function ownerRef(db, uid) {
   for (const c of ["users", "access_legacy_owners"]) {
@@ -33,6 +35,18 @@ async function applyDecisions(db, entries, {engine, now = Date.now()}) {
   for (const entry of entries) {
     if (entry.approved !== true || entry.action === "no_action") continue;
     if (!ACTIONS.has(entry.action) || typeof entry.uid !== "string" || !entry.uid) { note(entry, "invalid"); continue; }
+    if (entry.action === "create_legacy_owner") {
+      const email = normalEmail(entry.email);
+      if (!email.includes("@") || entry.uid !== `legacy_${keyOf(email)}`) { note(entry, "invalid"); continue; }
+      if (await isProtected(db, email)) { note(entry, "vip_untouched"); continue; }
+      const ref = db.collection("access_legacy_owners").doc(entry.uid);
+      note(entry, await db.runTransaction(async t => {
+        if ((await t.get(ref)).exists) return "already_exists";
+        t.set(ref, {email, legacy_revoke_only: false, access_version: 2, access_due_ms: now, created_by: "owner_decision", created_ms: now});
+        return "applied";
+      }));
+      continue;
+    }
     const ref = await ownerRef(db, entry.uid);
     if (!ref) { note(entry, "owner_missing"); continue; }
     const email = normalEmail((await ref.get()).data().email);

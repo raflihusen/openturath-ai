@@ -89,3 +89,22 @@ test('unapproved entries and VIP accounts are never changed', async () => {
   assert.equal(db.docs.get('users/v').access_revocation_hold, true);
   assert.equal(db.docs.get('users/w').access_revocation_hold, true);
 });
+
+test('seats held by an address without a login get an owner record and an honored end date', async () => {
+  const {db, engine} = setup();
+  const uid = `legacy_${keyOf('n@x.test')}`;
+  db.seed('transactions/akal_n', {customer_email: 'n@x.test', source: 'manual_override', status: 'success', amount: 0,
+    entitlement_key: 'fiqh_tahawwulat', subscription_expires_at: now + 30 * DAY});
+  const decisions = [
+    {approved: true, action: 'create_legacy_owner', uid, email: 'n@x.test'},
+    {approved: true, action: 'honor_until', uid, scope: 'fiqh_tahawwulat', until_ms: now + 30 * DAY, source_transaction: 'akal_n', reason: 'hadiah'},
+  ];
+  const log = await applyDecisions(db, decisions, {engine, now});
+  assert.ok(log.every((l: any) => l.result === 'applied'));
+  assert.equal(db.docs.get(`access_legacy_owners/${uid}`).access_version, 2);
+  assert.equal((await engine.assessRevocation(uid, 'fiqh_tahawwulat')).reason, 'active_scope');
+  const after = new AccessControl(db, engine.entities, engine.scopes, undefined, () => now + 31 * DAY);
+  assert.equal((await certify(db, decisions, {engine: after, now: now + 31 * DAY}))[0].result, 'issued');
+  assert.equal((await after.assessRevocation(uid, 'fiqh_tahawwulat')).allowed, true);
+  assert.equal((await applyDecisions(db, [{approved: true, action: 'create_legacy_owner', uid: 'legacy_wrong', email: 'n@x.test'}], {engine, now}))[0].result, 'invalid');
+});
