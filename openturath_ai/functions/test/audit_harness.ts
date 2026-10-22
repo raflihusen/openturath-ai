@@ -119,6 +119,7 @@ export function loadBackend(root = process.cwd()) {
   firestore.FieldPath = { documentId: () => '__name__' };
   const chain: any = {
     runWith: () => chain,
+    region: () => chain,
     https: { onCall: (fn: any) => fn, onRequest: (fn: any) => fn,
       HttpsError: class extends Error { code: string; constructor(code: string,msg: string){super(msg);this.code=code;} } },
     firestore: { document: () => ({onCreate:(fn: any)=>fn}) },

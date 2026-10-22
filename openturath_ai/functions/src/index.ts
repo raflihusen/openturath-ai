@@ -2591,7 +2591,10 @@ async function deleteUserData(uid: string, authEmail = ""): Promise<void> {
   }
 }
 
+// Deployed in us-east1 since 2026-09; pinned so a deploy updates it in place
+// instead of creating a second copy in the default region.
 export const onUserDeleted = functions
+  .region("us-east1")
   .runWith({ serviceAccount:"open-turath@appspot.gserviceaccount.com",timeoutSeconds:300,failurePolicy:true })
   .auth.user().onDelete(async user => {
     await deleteUserData(user.uid,user.email || "");

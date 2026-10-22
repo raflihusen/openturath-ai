@@ -2435,7 +2435,10 @@ async function deleteUserData(uid, authEmail = "") {
             `⚠️ Akun pengguna dihapus permanen. Seluruh hak akses turats dicabut.`);
     }
 }
+// Deployed in us-east1 since 2026-09; pinned so a deploy updates it in place
+// instead of creating a second copy in the default region.
 exports.onUserDeleted = functions
+    .region("us-east1")
     .runWith({ serviceAccount: "open-turath@appspot.gserviceaccount.com", timeoutSeconds: 300, failurePolicy: true })
     .auth.user().onDelete(async (user) => {
     await deleteUserData(user.uid, user.email || "");
