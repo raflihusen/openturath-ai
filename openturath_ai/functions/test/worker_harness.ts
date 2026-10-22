@@ -18,10 +18,11 @@ export const CATALOG = CAT;
 export const SCOPES = MAP;
 
 // `mode` is the worker CLI flag, e.g. "--prepare-assignments" runs one assignments() pass.
-export async function runWorker(db: MemoryDB, authUsers: Map<string, any>, mode = '--prepare-assignments', settleMs = 100) {
+export async function runWorker(db: MemoryDB, authUsers: Map<string, any>, mode = '--prepare-assignments', settleMs = 0) {
   const src = fs.readFileSync(path.join(SRC, 'access_worker.ts'), 'utf8')
     .replace(/^import \* as admin from "firebase-admin";/m, 'const admin = deps.admin;')
-    .replace(/^import \{([\s\S]*?)\} from "([^"]+)";/gm, "const {$1} = deps['$2'];");
+    .replace(/^import \{([\s\S]*?)\} from "([^"]+)";/gm, "const {$1} = deps['$2'];")
+    .replace(/^main\(\)\.catch\(/m, 'globalThis.__done = main(); globalThis.__done.catch(');
   const admin = {
     initializeApp() {},
     firestore: Object.assign(() => db, {FieldPath: {documentId: () => '__name__'},
@@ -39,6 +40,7 @@ export async function runWorker(db: MemoryDB, authUsers: Map<string, any>, mode 
   const ctx: any = {deps, process: {env: {}, argv: ['node', 'worker', mode], exitCode: 0}, console: {log() {}, error() {}},
     Date, setTimeout, JSON, Math, Promise, Object, Array, Set, Map, Number, String, Error};
   vm.runInNewContext(stripTypeScriptTypes(src, {mode: 'transform'}), ctx);
+  await ctx.__done;
   await new Promise(r => setTimeout(r, settleMs));
 }
 
