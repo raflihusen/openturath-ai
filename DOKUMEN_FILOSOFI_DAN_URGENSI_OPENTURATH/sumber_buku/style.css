@@ -1,0 +1,56 @@
+@font-face{font-family:"OT Outfit";src:url("FONTDIR/NativeOutfit.ttf");font-weight:400}
+@font-face{font-family:"OT Outfit";src:url("FONTDIR/NativeOutfit-600.ttf");font-weight:600}
+@font-face{font-family:"OT Outfit";src:url("FONTDIR/NativeOutfit-700.ttf");font-weight:700}
+@font-face{font-family:"OT Newsreader";src:url("FONTDIR/NativeNewsreader.ttf");font-weight:400 700}
+@font-face{font-family:"OT Newsreader";src:url("FONTDIR/NativeNewsreader-400.ttf");font-weight:400;font-style:italic}
+@font-face{font-family:"OT Cairo";src:url("FONTDIR/Cairo-400.ttf");font-weight:400}
+@font-face{font-family:"OT Cairo";src:url("FONTDIR/Cairo-600.ttf");font-weight:600}
+@font-face{font-family:"OT Cairo";src:url("FONTDIR/Cairo-700.ttf");font-weight:700}
+:root{--ink:#100F0E;--paper:#F6F6F3;--obs:#09090B;--obs2:#18181B;--obs3:#27272A;--bone:#FAFAFA;--g1:#171717;--g2:#606060;--g3:#DADADA;--g4:#EDEDED;--g5:#F6F6F6}
+@page{size:297mm 210mm;margin:0}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:#fff}
+body{font-family:"OT Outfit",sans-serif;color:var(--ink);font-size:10.5pt;line-height:1.5;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.pg{width:297mm;height:210mm;overflow:hidden;position:relative;page-break-after:always;break-after:page;padding:18mm 20mm 16mm;background:var(--paper)}
+.pg.dark{background:var(--obs);color:var(--bone)}
+.pg.white{background:#fff}
+.pn{position:absolute;bottom:8mm;left:20mm;right:20mm;display:flex;justify-content:space-between;font-size:7.5pt;letter-spacing:.12em;text-transform:uppercase;color:var(--g2)}
+.dark .pn{color:#8a8a8a}
+.kick{font-size:8pt;letter-spacing:.2em;text-transform:uppercase;color:var(--g2);margin-bottom:5mm;font-weight:600}
+.dark .kick{color:#9a9a9a}
+h1,h2,h3,.serif{font-family:"OT Newsreader",Georgia,serif;font-weight:500;letter-spacing:-.01em}
+h1{font-size:40pt;line-height:1.05;margin-bottom:6mm}
+h2{font-size:25pt;line-height:1.15;margin-bottom:5mm}
+h3{font-size:13.5pt;line-height:1.25;margin-bottom:2mm}
+p{margin-bottom:3mm;max-width:150mm}
+.lead{font-family:"OT Newsreader",serif;font-size:17pt;line-height:1.4;max-width:190mm}
+.small{font-size:8.5pt;color:var(--g2)}
+.dark .small{color:#9a9a9a}
+.row{display:flex;gap:8mm}
+.col{flex:1}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:6mm}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:6mm}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:5mm}
+.card{background:#fff;border:.4mm solid var(--g3);border-radius:4mm;padding:6mm}
+.dark .card{background:var(--obs2);border-color:var(--obs3)}
+.num{font-family:"OT Newsreader",serif;font-size:24pt;color:var(--g2)}
+.hr{border-top:.3mm solid var(--ink);margin:5mm 0}
+.dark .hr{border-color:#444}
+svg.lg{display:block}
+.wm{font-family:"OT Outfit";font-weight:600;letter-spacing:-.01em}
+.lock{display:flex;align-items:center}
+table{border-collapse:collapse;width:100%;font-size:9pt}
+th,td{text-align:left;padding:2.2mm 3mm;border-bottom:.3mm solid var(--g3);vertical-align:top}
+th{font-size:7.5pt;letter-spacing:.14em;text-transform:uppercase;color:var(--g2);font-weight:600}
+.tag{display:inline-block;font-size:7.5pt;letter-spacing:.12em;text-transform:uppercase;border:.3mm solid currentColor;border-radius:10mm;padding:.6mm 2.6mm;font-weight:600}
+.yes,.no{font-size:7.5pt;letter-spacing:.14em;text-transform:uppercase;font-weight:700;margin-bottom:2mm;display:block}
+.no{color:var(--g2)}
+.tile{border-radius:4mm;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.cap{font-size:8pt;margin-top:2mm;color:var(--g2)}
+.cross::after{content:"";position:absolute;left:3mm;top:3mm;width:5mm;height:5mm;border-radius:50%;background:var(--ink);box-shadow:inset 0 0 0 .4mm #fff}
+.ar{font-family:"Scheherazade New",serif;direction:rtl}
+.sw{border-radius:3.5mm;padding:5mm;display:flex;flex-direction:column;justify-content:flex-end;height:46mm;border:.3mm solid rgba(0,0,0,.12)}
+.sw b{font-size:11pt;font-weight:600}.sw span{font-size:8pt;opacity:.8;line-height:1.5}
+.arch{border:.5mm solid var(--ink);border-radius:50% 50% 0 0/22% 22% 0 0}
+.in{height:100%;display:flex;flex-direction:column;justify-content:center;padding-bottom:6mm}
+svg.lg{fill:currentColor}

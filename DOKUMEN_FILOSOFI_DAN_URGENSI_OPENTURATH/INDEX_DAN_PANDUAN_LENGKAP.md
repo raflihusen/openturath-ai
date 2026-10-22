@@ -28,7 +28,7 @@ Kumpulan dokumen di dalam folder ini merangkum satu benang merah penting mengapa
 
 | No | Nama Berkas | Sumber Asli & Konteks Pembahasan |
 |:---:|:---|:---|
-| **00** | [`00_BUKU_IDENTITAS_RESMI_OPENTURATH.md`](./00_BUKU_IDENTITAS_RESMI_OPENTURATH.md) | **Rujukan tertinggi identitas:** siapa kami, arti nama, visi-misi-nilai, logo dan filosofinya, suara merek, ketentuan pemakaian, naskah baku. Aset logo di [`aset_logo/`](./aset_logo/). |
+| **00** | [`OpenTurath_Buku_Identitas.pdf`](./OpenTurath_Buku_Identitas.pdf) | **Buku Identitas (brand guidelines):** siapa kami, fondasi, nama, logo dan filosofinya, warna, huruf, suara, citra, tata letak, penerapan. Dibangun dari [`sumber_buku/build_buku.py`](./sumber_buku/build_buku.py); aset logo di [`aset_logo/`](./aset_logo/). |
 | **01** | [`01_AUDIT_STERILISASI_DAN_ROADMAP_OPENTURATH.md`](./01_AUDIT_STERILISASI_DAN_ROADMAP_OPENTURATH.md) | **Sumber:** `/Volumes/Husen/AKSARAMAH DEV/`<br>Menjelaskan 3 pilar kemurnian sanad, penolakan naskah infiltrasi, dan penjagaan akidah Aswaja. |
 | **02** | [`02_DOKUMENTASI_CACAT_METODOLOGI_V7_DAN_SOLUSI_REKONSTRUKSI_V8.md`](./02_DOKUMENTASI_CACAT_METODOLOGI_V7_DAN_SOLUSI_REKONSTRUKSI_V8.md) | **Sumber:** `/Volumes/Husen/AKSARAMAH DEV/`<br>Dokumentasi forensik mengapa struktur pemotongan data lama cacat dan bagaimana rekonstruksi *Arsitektur Tahqiq Mutlak (ATA)* mengatasinya. |
 | **03** | [`03_MENGENAL_FIKIH_TAHAWWULAT_DAN_OPENTURATH_AI.md`](./03_MENGENAL_FIKIH_TAHAWWULAT_DAN_OPENTURATH_AI.md) | **Sumber:** `/Users/apple/Downloads/ramadhan/`<br>**Bab 5 & Bab 12**: Menguraikan tantangan mempelajari Fikih Tahawwulat, urgensi menghadapi disrupsi zaman, dan desain arsitektur Super AI 4 Bilik. |
