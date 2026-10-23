@@ -769,3 +769,7 @@ html[lang="ar"] .two .k,html[lang="ar"] .tl3 .k{letter-spacing:.02em;text-transf
 .stat.big .num{font-size:clamp(56px,6.8vw,124px)}
 nav.main a,nav.main .navbtn{white-space:nowrap}
 @media (max-width:1120px){.hbar nav.main{display:none}.menu-btn{display:grid}.hactions .btn{display:none}.drop.fields{display:none}}
+/* V7.11: latar abstrak rak kitab pada kartu gelap */
+.stat.big .bk{position:absolute;inset-inline-end:-2%;top:0;width:96%;height:auto;max-height:72%;color:var(--surface);opacity:.2;pointer-events:none;mask-image:linear-gradient(to bottom,#000 55%,transparent 100%);-webkit-mask-image:linear-gradient(to bottom,#000 55%,transparent 100%)}
+[dir="rtl"] .stat.big .bk{transform:scaleX(-1)}
+.stat.big .sic,.stat.big>div{position:relative;z-index:1}
