@@ -662,3 +662,73 @@ html[lang="ar"] .q1 .tag{letter-spacing:.02em;text-transform:none;font-size:14px
 .task-plus .ic{border:4px solid var(--inv-bg,#121317)}
 @media (max-width:760px){.tasks-g{grid-template-columns:1fr}.task-plus{position:static;transform:none!important;margin:-32px auto;width:auto}[dir="rtl"] .task-plus{transform:none}}
 .contact3{grid-template-columns:repeat(auto-fit,minmax(250px,1fr))}
+
+/* V7.5: kartu berbingkai tebal tanpa isi */
+.sec:not(.band) .case,.sec:not(.band) .pillar,.sec:not(.band) .trio>div,.sec:not(.band) .eco a,.sec:not(.band) .eco .e,.sec:not(.band) .steps6>div,.sec:not(.band) .quad>div:not(.principle),.sec:not(.band) .trio3>div,.sec:not(.band) .acard:not([aria-pressed="true"]),.sec:not(.band) .detail,.sec:not(.band) .fx-card,.sec:not(.band) .eline:not(.big),.sec:not(.band) .steps4 li,.sec:not(.band) .adab8>div,.sec:not(.band) .journey li,.sec:not(.band) .q1 .qbox,.sec:not(.band) .q1 .refs,.sec:not(.band) .plat,.sec:not(.band) .contact3>div,.sec:not(.band) .stat:not(.big),.sec:not(.band) .ol,.sec:not(.band) .tl3>div,.sec:not(.band) .two>div,.sec:not(.band) .names>div{background:transparent;border:2px solid var(--on-surface);box-shadow:none}
+.sec:not(.band) .case:hover,.sec:not(.band) .pillar:hover,.sec:not(.band) .eco a:hover,.sec:not(.band) .eco .e:hover,.sec:not(.band) .acard:hover{background:transparent;transform:translateY(-3px)}
+.sec:not(.band) .acard[aria-pressed="true"]{border:2px solid var(--on-surface)}
+.sec:not(.band) .plat.rec{box-shadow:none}
+
+.plat-top{flex-direction:column;gap:12px;align-items:center}
+.plat-top .rec-badge{white-space:normal;text-align:center}
+/* angka */
+.stats{display:grid;grid-template-columns:1.1fr 1fr 1fr;grid-template-rows:1fr 1fr;gap:20px}
+.stat{border-radius:var(--corner-xl);padding:clamp(24px,3vw,38px);display:flex;flex-direction:column;justify-content:space-between;gap:28px;min-height:200px;position:relative;overflow:hidden}
+.stat .num{font-size:clamp(44px,5vw,76px);font-weight:500;letter-spacing:-.05em;line-height:1}
+.stat .lab{font-size:17px;color:var(--on-variant);line-height:1.4}
+.stat .sub{font-size:13.5px;color:var(--on-variant);margin-top:6px}
+.stat.big{grid-row:1/3;background:var(--on-surface);color:var(--surface);justify-content:flex-end}
+.stat.big .num{font-size:clamp(64px,9vw,132px)}
+.stat.big .lab{color:inherit;opacity:.8;font-size:20px}
+.stat.big .wm{position:absolute;inset-inline-start:-6px;bottom:-30px;font-family:var(--naskh);font-size:clamp(120px,16vw,220px);opacity:.07;line-height:1;direction:rtl;pointer-events:none}
+@media (max-width:900px){.stats{grid-template-columns:1fr 1fr}.stat.big{grid-column:1/-1;grid-row:auto;min-height:260px}}
+@media (max-width:480px){.stats{grid-template-columns:1fr}.stat{min-height:150px}}
+/* mengenal fikih tahawwulat */
+.story{display:grid;gap:20px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.two>div,.tl3>div,.names>div{border-radius:var(--corner-xl);padding:clamp(26px,3vw,40px)}
+.two .k,.tl3 .k{font-size:12.5px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--on-variant);margin-bottom:18px;display:block}
+html[lang="ar"] .two .k,html[lang="ar"] .tl3 .k{letter-spacing:.02em;text-transform:none;font-size:14px}
+.two h3,.tl3 h3,.names h3{font-size:clamp(22px,2.2vw,30px);font-weight:450;letter-spacing:-.025em;line-height:1.2;margin:0 0 12px}
+.two p,.tl3 p,.names p{margin:0;line-height:1.65;color:var(--on-variant)}
+.two .dark{background:var(--on-surface)!important;color:var(--surface);border-color:var(--on-surface)!important}
+.two .dark p,.two .dark .k{color:inherit;opacity:.82}
+.quote-ar{font-family:var(--naskh);font-size:clamp(22px,2.4vw,30px);line-height:1.9;direction:rtl;text-align:start;margin:18px 0 6px}
+.quote-src{font-size:13.5px;opacity:.7}
+.carbox{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border:2px solid var(--on-surface);border-radius:var(--corner-xl);overflow:hidden}
+.carbox>div{padding:clamp(22px,2.6vw,34px);border-inline-end:2px solid var(--on-surface)}
+.carbox>div:last-child{border-inline-end:0}
+.carbox .st{font-size:12.5px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--on-variant);margin-bottom:34px;display:block}
+.carbox h3{margin:0 0 8px;font-size:21px;font-weight:500;letter-spacing:-.015em}
+.carbox p{margin:0;color:var(--on-variant);line-height:1.6}
+.carbox .em{background:var(--on-surface);color:var(--surface)}
+.carbox .em .st,.carbox .em p{color:inherit;opacity:.82}
+.qs{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(4,1fr);gap:16px;counter-reset:q}
+.qs li{border:2px solid var(--on-surface);border-radius:var(--corner-xl);padding:24px 22px;display:flex;flex-direction:column;gap:8px}
+.qs li.last{background:var(--on-surface);color:var(--surface)}
+.qs .no{font-size:13px;font-weight:600;letter-spacing:.12em;opacity:.65}
+.qs h3{margin:18px 0 0;font-size:22px;font-weight:450;letter-spacing:-.02em}
+.qs p{margin:0;font-size:14.5px;opacity:.75}
+.qs .ar{font-size:22px;margin-top:auto;padding-top:14px}
+.tl3{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.names{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.defn{font-size:clamp(20px,2.1vw,28px);line-height:1.5;letter-spacing:-.015em;max-width:60ch;margin:0}
+.road{margin:0 0 6px;display:grid;grid-template-columns:repeat(3,1fr);gap:14px;align-items:end}
+.road span{display:block;height:46px;border-radius:999px;border:2px solid var(--on-surface);padding:0 18px;line-height:42px;font-size:14px;font-weight:550;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.road span:nth-child(2){background:var(--on-surface);color:var(--surface)}
+@media (max-width:900px){.two,.carbox,.tl3,.names{grid-template-columns:1fr}.carbox>div{border-inline-end:0;border-bottom:2px solid var(--on-surface)}.carbox>div:last-child{border-bottom:0}.qs{grid-template-columns:1fr 1fr}}
+@media (max-width:560px){.qs{grid-template-columns:1fr}.road{display:none}}
+.task-ic .ic{display:none}
+.task-ic{justify-content:flex-end}
+.task-ic{margin-bottom:clamp(14px,2vw,24px)}.task-n{font-size:clamp(36px,4vw,52px)}
+.stat.big .num{font-size:clamp(52px,6.2vw,96px)}
+.sec:not(.band) .rumpun button:not([aria-pressed="true"]){background:transparent;border:2px solid var(--on-surface);color:var(--on-surface)}
+.sec:not(.band) .rumpun button[aria-pressed="true"]{border:2px solid var(--on-surface)}
+.welcome h1.hero:not(.ar){font-size:clamp(28px,8.6vw,92px)}
+@media (max-width:400px){.plat{padding:26px 18px}.plat .btn{white-space:normal;text-align:center}.welcome .cta-row .btn{max-width:100%}}
+@media (max-width:380px){.hactions{gap:6px}.langbtn{padding:0 10px;gap:5px}.langbtn .ic{width:16px;height:16px}.wordmark span{font-size:19px}.hbar{gap:8px}}
+@media (max-width:420px){.btn{white-space:normal;text-align:center;height:auto;min-height:48px;padding-block:12px;max-width:100%}.statement{padding:30px 20px}.statement>div{min-width:0}}
+.plat-top .status{position:static}
+.plat-top .rec-badge[hidden]{display:none}
+.plat-top{flex-direction:column-reverse;gap:14px}
+.plat-top .p-ic{margin:0}
