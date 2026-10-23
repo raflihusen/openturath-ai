@@ -42,7 +42,7 @@
     var io = new IntersectionObserver(function (es) {
       es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
     }, { rootMargin: '0px 0px -6% 0px', threshold: .06 });
-    rv.forEach(function (n) { io.observe(n); });
+    rv.forEach(function (n) { if (n.closest('.welcome') && !/[?&]nofx=1/.test(location.search)) return; io.observe(n); });
   } else rv.forEach(function (n) { n.classList.add('in'); });
 
   /* demo jawaban */
@@ -167,7 +167,7 @@
     var sx = 0, sy = 0, gx = 0, gy = 0, act = 0, tact = 0, ready = false;
     var draw = function (now) {
       var t = (now - t0) / 1000;
-      var e = reduce ? 1 : 1 - Math.pow(1 - Math.min(1, t / 2.2), 3), col = color(), mv = reduce ? 0 : 1, reach = e * (Math.hypot(W, H) + 60);
+      var e = 1, col = color(), mv = 0, reach = 1e9, fi = reduce ? 1 : (1 - Math.pow(1 - Math.min(1, t / 1.6), 3));
       var R = W < 760 ? 150 : 230, rmax = Math.hypot(W, H) / 2;
       if (!ready) { sx = W / 2; sy = H / 2; gx = sx; gy = sy; ready = true; }
       var tx = mx > -900 ? mx : W / 2, ty = my > -900 ? my : H / 2; tact = mx > -900 ? 1 : 0;
@@ -180,21 +180,22 @@
         var x = cx + Math.cos(p.a) * rad + offx * depth, y = cy + Math.sin(p.a) * rad + offy * depth;
         var dx = x - gx, dy = y - gy, g = Math.exp(-(dx * dx + dy * dy) / (R * R)) * act;
         var fade = Math.min(1, p.r / 150), edge = Math.min(1, (reach - p.r) / 90), sz = (.9 + p.r / 900 + (w + 1) * .45) * (W < 760 ? .85 : 1) * (1 + g * .8);
-        var al = Math.min(1, .2 + (w + 1) * .26 + g * .5) * fade * edge * shade(x, y);
+        var al = Math.min(1, .2 + (w + 1) * .26 + g * .5) * fade * edge * shade(x, y) * fi;
         ctx.fillStyle = rgba(col, al); ctx.beginPath(); ctx.arc(cx + (x - cx) * e, cy + (y - cy) * e, sz, 0, 6.2832); ctx.fill();
       }
     };
-    var loop = function (now) { if (!running) return; draw(now); raf = requestAnimationFrame(loop); };
-    var start = function () { layout(); draw(performance.now()); if (!reduce && 'IntersectionObserver' in window) new IntersectionObserver(function (es) { var on = es[0].isIntersecting; if (on && !running) { running = true; raf = requestAnimationFrame(loop); } if (!on) { running = false; cancelAnimationFrame(raf); } }).observe(cv); };
+    var loop = function (now) { if (!running) return; draw(now); if ((now - t0) / 1000 > 1.8) { running = false; draw(now); return; } raf = requestAnimationFrame(loop); };
+    var start = function () { layout(); t0 = performance.now() + 300; cv.classList.add('show'); draw(performance.now()); if (!reduce && 'IntersectionObserver' in window) new IntersectionObserver(function (es) { var on = es[0].isIntersecting; if (on && !running) { running = true; raf = requestAnimationFrame(loop); } if (!on) { running = false; cancelAnimationFrame(raf); } }).observe(cv); };
     (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(start);
-    if (document.fonts && document.fonts.addEventListener) document.fonts.addEventListener('loadingdone', function () { layout(); if (reduce) draw(performance.now()); });
-    var rt; addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(function () { layout(); if (reduce) draw(performance.now()); }, 150); });
-    if (matchMedia('(pointer: fine)').matches) {
+    if (document.fonts && document.fonts.addEventListener) document.fonts.addEventListener('loadingdone', function () { layout(); draw(performance.now()); });
+    var rt; addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(function () { layout(); draw(performance.now()); }, 150); });
+    if (false) {
       hero.addEventListener('pointermove', function (e) { var r = hero.getBoundingClientRect(); mx = e.clientX - r.left; my = e.clientY - r.top; if (reduce) draw(performance.now()); });
       hero.addEventListener('pointerleave', function () { mx = my = -999; if (reduce) draw(performance.now()); });
     }
-    /* paralaks halus saat gulir */
-    if (!reduce) addEventListener('scroll', function () { var y = scrollY; if (y < H) { hero.style.setProperty('--sy', Math.min(y, 600)); } }, { passive: true });
+    new MutationObserver(function () { draw(performance.now()); }).observe(root, { attributes: true, attributeFilter: ['data-theme'] });
+    /* paralaks dimatikan: titik menetap */
+    
   }
 
   /* sorotan mengikuti kursor pada kartu */
@@ -239,4 +240,67 @@
   if (reset) reset.addEventListener('click', function () { apply(''); });
   var open = function () { var h = decodeURIComponent(location.hash.slice(1)), el = h && d.getElementById(h); if (el && el.tagName === 'DETAILS') { el.hidden = false; el.open = true; var s = el.closest('.qsec'); if (s) s.hidden = false; } };
   open(); addEventListener('hashchange', open);
+})();
+
+/* Teks diketik, tombol muncul perlahan */
+(function () {
+  var d = document, root = d.documentElement, $ = function (s, c) { return (c || d).querySelector(s); }, $$ = function (s, c) { return Array.prototype.slice.call((c || d).querySelectorAll(s)); };
+  var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches, nofx = /[?&]nofx=1/.test(location.search) || root.classList.contains('nofx');
+  if (nofx) root.classList.add('nofx');
+  var byWord = root.lang === 'ar';
+  var prep = function (el) {
+    if (el._ch) return el._ch;
+    el.setAttribute('aria-label', el.textContent.replace(/\s+/g, ' ').trim());
+    var chars = [];
+    var walk = function (node) {
+      Array.prototype.slice.call(node.childNodes).forEach(function (n) {
+        if (n.nodeType === 3) {
+          var frag = d.createDocumentFragment(), parts = n.nodeValue.split(/(\s+)/);
+          parts.forEach(function (p) {
+            if (!p) return;
+            if (/^\s+$/.test(p)) { frag.appendChild(d.createTextNode(p)); return; }
+            var w = d.createElement('span'); w.setAttribute('aria-hidden', 'true'); w.style.whiteSpace = 'nowrap';
+            if (byWord) { var s = d.createElement('span'); s.className = 'ch'; s.textContent = p; w.appendChild(s); chars.push(s); }
+            else Array.prototype.forEach.call(p, function (c) { var s = d.createElement('span'); s.className = 'ch'; s.textContent = c; w.appendChild(s); chars.push(s); });
+            frag.appendChild(w);
+          });
+          node.replaceChild(frag, n);
+        } else if (n.nodeType === 1) walk(n);
+      });
+    };
+    walk(el); el._ch = chars; return chars;
+  };
+  var type = function (el, ms, cb) {
+    var chars = prep(el), i = 0, per = Math.max(10, Math.min(ms, 1500 / Math.max(1, chars.length)));
+    var tick = function () { var n = byWord ? 1 : 2; for (var k = 0; k < n && i < chars.length; k++) chars[i++].classList.add('on'); if (i < chars.length) setTimeout(tick, per * (byWord ? 6 : 1.6)); else if (cb) cb(); };
+    tick();
+  };
+  var heads = $$('.sec-head h2, .phead h1, h1.hero, .welcome .lede');
+  if (reduce || nofx) { return; }
+  // tombol di dalam bagian: muncul perlahan saat digulir
+  $$('main .btn').forEach(function (b) { if (!b.closest('.rv') && !b.closest('.welcome')) b.classList.add('rv'); });
+  if (!window.IntersectionObserver) return;
+  root.classList.add('typing');
+  var hero = $('#hero');
+  heads.forEach(function (h) { if (!(hero && hero.contains(h))) prep(h); });
+  if (hero) {
+    var seq = [['.eyebrow-brand', 0], ['.hero-mark', 150]];
+    var show = function (sel, delay) { var e = $(sel, hero); if (e) setTimeout(function () { e.classList.add('in'); }, delay); };
+    var h1 = $('h1.hero', hero), lede = $('.lede', hero);
+    if (h1) prep(h1); if (lede) prep(lede);
+    show('.eyebrow-brand', 250); show('.hero-mark', 450);
+    setTimeout(function () {
+      if (h1) { h1.classList.add('in'); type(h1, 38, function () {
+        if (lede) { lede.classList.add('in'); type(lede, 12, function () { show('.cta-row', 150); show('.meta-row', 650); }); } else { show('.cta-row', 100); show('.meta-row', 500); }
+      }); }
+    }, 800);
+  }
+  var io = new IntersectionObserver(function (es) {
+    es.forEach(function (e) {
+      if (!e.isIntersecting) return; io.unobserve(e.target);
+      var h = e.target, box = h.closest('.sec-head, .phead');
+      type(h, 26, function () { if (box) box.classList.add('typed'); });
+    });
+  }, { threshold: .6, rootMargin: '0px 0px -8% 0px' });
+  heads.forEach(function (h) { if (!(hero && hero.contains(h))) io.observe(h); });
 })();
