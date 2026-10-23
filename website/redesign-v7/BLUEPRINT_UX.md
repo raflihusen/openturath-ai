@@ -145,3 +145,11 @@ Chrome: sembilan halaman, tiga bahasa, terang dan gelap, 1440 dan 390 px; panel 
 2. Ejaan surel/domain `support@openturath.id` menunggu konfirmasi Pemilik.
 3. Deteksi IP belum aktif (butuh keputusan hosting).
 4. Frasa "pertama di dunia" tidak dipakai sampai teks penghargaan 7 Mei 2026 dikonfirmasi.
+
+## Addendum V7.3 (23 Oktober 2026, malam)
+- **Tagline:** "Menjaga warisan, membuka cakrawala." (EN: Rooted in heritage. Open to new horizons.), dua baris di hero: "Menjaga warisan," dan "membuka cakrawala."
+- **Hero:** konstelasi nama ilmu diganti medan titik simetris (cincin konsentris dari logo, gelombang keluar, tolak-kursor). Titik meredup di belakang teks.
+- **Header:** tombol bahasa, tema, dan menu kini pil 40 px bergaris sama.
+- **Masalah vs jawaban:** tiga kartu masalah AI umum, lalu blok gelap terpisah "Cara OpenTurath menjawabnya" agar jawaban tidak terbaca sebagai poin negatif keempat.
+- **Pedoman AI dan Ekosistem:** didesain ulang (empat langkah, delapan adab, bento empat lini dengan "Bagaimana idealnya", perjalanan penuntut ilmu).
+- **Hukum:** pasal pelengkap (penafian, batas tanggung jawab, ganti rugi, force majeure, hukum dan sengketa, UU PDP, hak cipta, pembayaran) di `legal_plus.py`. Perlu ditinjau advokat sebelum dianggap mengikat; teks di aplikasi belum diselaraskan.
