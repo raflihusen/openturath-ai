@@ -372,7 +372,7 @@
     {
      "id": "Fikih Fitnah dan Penjagaan Diri",
      "en": "Fiqh of Fitna and Self-Protection",
-     "ar": "فقه النواقض والنقائض"
+     "ar": "فقه النواقض والنقائض ومضلّات الفتن وسبل الوقاية منها"
     },
     {
      "id": "Mengenali hal yang merusak agama dan cara menyelamatkan diri darinya.",
@@ -390,14 +390,13 @@
       "en": "How do I avoid being dragged into fitna?",
       "ar": "كيف لا أنجرّ إلى الفتنة؟"
      }
-    ],
-    "فقه النواقض والنقائض"
+    ]
    ],
    [
     {
      "id": "Fikih Isyarat, Kabar Gembira, dan Perlindungan",
      "en": "Fiqh of Signals, Glad Tidings, and Protection",
-     "ar": "فقه الإشارات والبشارات"
+     "ar": "فقه الإشارات والبشارات والنذارات والحصانات والأسانيد"
     },
     {
      "id": "Pesan-pesan kasih sayang Nabi untuk umatnya, termasuk pentingnya guru yang bersanad.",
@@ -415,14 +414,13 @@
       "en": "Are there glad tidings for this Ummah?",
       "ar": "هل من بشائر لهذه الأمة؟"
      }
-    ],
-    "فقه الإشارات والبشارات"
+    ]
    ],
    [
     {
      "id": "Fikih Sains, Teknologi, dan Budaya Baru",
      "en": "Fiqh of Science, Technology, and New Culture",
-     "ar": "فقه مستجدات العلوم"
+     "ar": "فقه مستجدات العلوم والثقافات والتقنيات"
     },
     {
      "id": "Cara menimbang penemuan dan tren baru dengan timbangan agama.",
@@ -440,14 +438,13 @@
       "en": "What is scientific miracle and where is its limit?",
       "ar": "ما الإعجاز العلمي وأين حدّه؟"
      }
-    ],
-    "فقه مستجدات العلوم"
+    ]
    ],
    [
     {
      "id": "Fikih Tanda Alam dan Peristiwa Besar",
      "en": "Fiqh of Natural Signs and Great Events",
-     "ar": "فقه الأشراط الكونية"
+     "ar": "فقه الأشراط الكونية والأحداث الكبرى"
     },
     {
      "id": "Tanda kecil, tengah, dan besar menjelang kiamat, dipahami tertib tanpa spekulasi.",
@@ -465,8 +462,7 @@
       "en": "How should we respond to disasters?",
       "ar": "كيف نتعامل مع الكوارث؟"
      }
-    ],
-    "فقه الأشراط الكونية"
+    ]
    ],
    [
     {
@@ -490,8 +486,7 @@
       "en": "Why is the Ummah likened to foam?",
       "ar": "لماذا شُبّهت الأمة بالغثاء؟"
      }
-    ],
-    "فقه الربط بين الديانة والتاريخ"
+    ]
    ]
   ]
  },

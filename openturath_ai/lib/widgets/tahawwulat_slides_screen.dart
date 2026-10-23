@@ -469,12 +469,18 @@ class _SlideBody extends StatelessWidget {
                   backgroundColor: OTColors.inverseSurface(dark),
                   side: BorderSide.none),
             )),
-          r(Directionality(
-            textDirection: TextDirection.rtl,
-            child: Text(data['ar'] as String,
-                style: OTTypography.arabicDisplay(color: sub)),
-          )),
-          r(Text(data['name'] as String, style: hero)),
+          if (Loc.isArabic)
+            r(Text(data['ar'] as String,
+                style: OTTypography.arabicDisplay(color: fg)
+                    .copyWith(fontSize: OTFontSize.s36)))
+          else ...[
+            r(Directionality(
+              textDirection: TextDirection.rtl,
+              child: Text(data['ar'] as String,
+                  style: OTTypography.arabicDisplay(color: sub)),
+            )),
+            r(Text(data['name'] as String, style: hero)),
+          ],
           gap(OTSpacing.xs),
           r(Text(t(data['role']).toUpperCase(),
               style: OTTypography.metadataTag(color: sub))),

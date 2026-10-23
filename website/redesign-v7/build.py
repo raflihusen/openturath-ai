@@ -713,9 +713,9 @@ def page_mengenal():
     # 4 cabang
     br = M["branch"]
     rows = ""
-    for i, (t, d, qs, arn) in enumerate(br["items"]):
+    for i, (t, d, qs) in enumerate(br["items"]):
         chips = "".join(f'<li>{E(g(x))}</li>' for x in qs)
-        barn = '' if LANG == 'ar' else '<span class="barn" lang="ar" dir="rtl">' + E(arn) + '</span>'
+        barn = ''
         rows += f'<div class="brow rv"><div class="n">{i+1}</div><div class="bt"><h3>{E(g(t))}</h3>{barn}<p>{E(g(d))}</p></div><div class="bq"><span>{L("Bisa menjawab","Can answer","يجيب عن")}</span><ul>{chips}</ul></div></div>'
     body += sec(shead(g(br["kicker"]), g(br["title"]), g(br["lead"])) + f'<div class="brows">{rows}</div>')
     # 5 beda

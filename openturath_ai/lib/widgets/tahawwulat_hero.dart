@@ -97,8 +97,10 @@ class TahawwulatHero extends StatelessWidget {
                           foregroundColor: OTExpressive.white,
                           padding: const EdgeInsets.symmetric(
                               horizontal: 16, vertical: 16)),
-                      child: Text(reviewCopy('Mengenal Fikih Tahawwulat',
-                          'تعرّف على فقه التحولات', 'About Fiqh Tahawwulat'))),
+                      child: Text(reviewCopy(
+                          'Mengenal Fikih Tahawwulat',
+                          'التعرّف على فقه التحولات',
+                          'Getting to know Fiqh al-Tahawwulat'))),
               ]),
             ]);
         return TahawwulatHeroSurface(
