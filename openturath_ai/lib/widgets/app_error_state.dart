@@ -22,7 +22,7 @@ class AppErrorState extends StatelessWidget {
     super.key,
     this.title = 'Koneksi terputus',
     this.message =
-        'Tidak dapat memuat data saat ini. Periksa koneksi internet lalu coba lagi.',
+        'Data belum bisa dimuat. Periksa koneksi internet, lalu coba lagi.',
     this.icon = Icons.wifi_off_rounded,
     this.onRetry,
     this.retryLabel = 'Coba lagi',
@@ -37,7 +37,7 @@ class AppErrorState extends StatelessWidget {
     super.key,
     this.title = 'Koneksi terputus',
     this.message =
-        'Tidak dapat memuat data rujukan saat ini. Periksa koneksi internet lalu coba lagi.',
+        'Data rujukan belum bisa dimuat. Periksa koneksi internet, lalu coba lagi.',
     this.icon = Icons.wifi_off_rounded,
     this.onRetry,
     this.retryLabel = 'Coba lagi',
@@ -76,8 +76,8 @@ class AppErrorState extends StatelessWidget {
 
   const AppErrorState.generic({
     super.key,
-    this.title = 'Terjadi kendala teknis',
-    this.message = 'AI belum dapat dimuat. Coba lagi sebentar.',
+    this.title = 'Ada gangguan teknis',
+    this.message = 'AI belum bisa dibuka. Coba lagi sebentar.',
     this.icon = Icons.error_outline_rounded,
     this.onRetry,
     this.retryLabel = 'Muat ulang',

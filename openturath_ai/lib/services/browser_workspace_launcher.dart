@@ -35,7 +35,7 @@ class BrowserWorkspaceLauncher {
     }
     if (agentId == null) return uri;
     if (!RegExp(r'^[a-z0-9_-]{1,80}$').hasMatch(agentId)) {
-      throw const WorkspaceLaunchException('Bidang kajian tidak valid.');
+      throw const WorkspaceLaunchException('Bidang tidak valid.');
     }
     return uri.replace(queryParameters: {'agent': agentId});
   }

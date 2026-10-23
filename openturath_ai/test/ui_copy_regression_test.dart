@@ -12,7 +12,7 @@ void main() {
     expect(SubscriptionService.redeemErrorMessage('already-exists'),
         contains('sudah pernah'));
     expect(SubscriptionService.redeemErrorMessage('unauthenticated'),
-        contains('masuk'));
+        contains('Masuk'));
   });
   test(
       'All science AI titles have the requested prefix without changing entitlement IDs',

@@ -42,14 +42,14 @@ void main() {
 
     // Verifikasi banner langkah 2 dari 2
     expect(find.text('LANGKAH 2 DARI 2'), findsOneWidget);
-    expect(find.text('Login dengan Akun yang Sama'), findsWidgets);
+    expect(find.text('Masuk dengan akun yang sama'), findsWidgets);
 
     // Verifikasi email akun yang sama tampil di layar
     expect(find.text('santri.openturath@gmail.com'), findsOneWidget);
 
     // Verifikasi teks instruksi akun yang sama
     expect(
-      find.textContaining('Silakan login ke Google menggunakan akun yang sama'),
+      find.textContaining('Masuk ke Google dengan akun yang sama'),
       findsOneWidget,
     );
     expect(

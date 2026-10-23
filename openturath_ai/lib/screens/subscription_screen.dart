@@ -186,7 +186,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
           amount: offer.amount,
           name: user.displayName ??
               user.email?.split('@').first ??
-              AppCopy.ahlanDefault,
+              'Pengguna OpenTurath',
           email: user.email ?? '',
           phone: user.phoneNumber ?? '');
       if (!mounted) return;

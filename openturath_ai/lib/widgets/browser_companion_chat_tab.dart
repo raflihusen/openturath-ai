@@ -47,7 +47,7 @@ class _BrowserCompanionChatTabState extends State<BrowserCompanionChatTab> {
       await BrowserCompanionChatService.start();
     } catch (_) {
       _error =
-          'Penghubung memerlukan akun Google, aplikasi desktop, dan Google Chrome yang sudah disiapkan.';
+          'Fitur ini memerlukan akun Google, aplikasi desktop, dan Google Chrome.';
     } finally {
       if (mounted) setState(() => _starting = false);
     }

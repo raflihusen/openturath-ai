@@ -1442,8 +1442,8 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
           session.isUrlLoading = false;
           session.isPaywallRequired = !isVip;
           session.errorMessage = isVip
-              ? 'Sesi AI sedang dipersiapkan oleh server. Silakan coba lagi.'
-              : 'Untuk membuka dan menelaah kitab bersama ${session.agent.title}, silakan aktifkan paket langganan Anda.';
+              ? 'Sesi AI sedang disiapkan. Coba lagi sebentar.'
+              : 'Aktifkan paket langganan untuk membuka ${session.agent.title}.';
         });
       }
     } catch (e) {
@@ -1477,9 +1477,9 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
         session.isUrlLoading = false;
         session.isPaywallRequired = isPaywall;
         session.errorMessage = isPaywall
-            ? 'Untuk membuka dan menelaah kitab bersama ${session.agent.title}, silakan aktifkan paket langganan Anda.'
+            ? 'Aktifkan paket langganan untuk membuka ${session.agent.title}.'
             : isAuthError
-                ? 'Sesi login Anda belum terhubung. Silakan muat ulang atau masuk kembali.'
+                ? 'Sesi masuk Anda belum terhubung. Muat ulang atau masuk kembali.'
                 : e is AgentAccessException && e.code == 'failed-precondition'
                     ? e.message
                     : 'AI belum bisa dihubungkan. Coba lagi.';

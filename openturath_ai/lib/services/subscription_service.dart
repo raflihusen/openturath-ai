@@ -88,7 +88,7 @@ class SubscriptionService {
     } catch (e) {
       return {
         'success': false,
-        'message': 'Koneksi bermasalah. Periksa internet Anda lalu coba lagi.'
+        'message': Loc.tr('networkError')
       };
     }
   }

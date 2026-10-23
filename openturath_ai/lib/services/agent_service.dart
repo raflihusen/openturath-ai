@@ -1,3 +1,4 @@
+import '../core/localization.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_functions/cloud_functions.dart';
@@ -136,11 +137,11 @@ class AgentService {
       if (e.code == 'permission-denied') {
         throw AgentAccessException(
           'permission-denied',
-          e.message ?? 'Langganan diperlukan untuk membuka AI ini.',
+          e.message ?? Loc.tr('ui_5d804a44a9'),
         );
       }
       throw AgentAccessException(
-          e.code, e.message ?? 'Tidak dapat terhubung ke server.');
+          e.code, e.message ?? Loc.tr('errServiceUnavailable'));
     } catch (e) {
       if (e is AgentAccessException) rethrow;
       throw AgentAccessException('unknown-error', e.toString());

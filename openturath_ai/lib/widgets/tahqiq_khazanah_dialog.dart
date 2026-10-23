@@ -85,9 +85,9 @@ class TahqiqKhazanahDialog extends StatelessWidget {
           // Subjudul ringkas
           Text(
             reviewCopy(
-              'Bagian ini masih disiapkan',
-              'هذا القسم قيد الإعداد',
-              'This section is being prepared',
+              'Segera hadir',
+              'قريبًا',
+              'Coming soon',
             ),
             textAlign: TextAlign.center,
             style: ScholarlyFonts.outfit(

@@ -203,7 +203,7 @@ class AgentModel {
               description: 'Uji Pemahaman & Nalar',
               descriptionArabic: 'تقييم الفهم واختبار النوازل المعاصرة',
               emoji: '🎓',
-              badge: 'Ujian Nalar',
+              badge: 'Uji Pemahaman',
             ),
             SubAgentModel(
               id: 'fiqh_tahawwulat_habib',
@@ -212,7 +212,7 @@ class AgentModel {
               description: 'Arsip Muhadharah Habib Abu Bakar',
               descriptionArabic: 'مستودع المحاضرات والتسجيلات الشفهية',
               emoji: '🎙️',
-              badge: 'Khazanah Lisan',
+              badge: 'Arsip Muhadharah',
             ),
             SubAgentModel(
               id: 'fiqh_tahawwulat_khatib',
@@ -251,7 +251,7 @@ class AgentModel {
           disciplineIds: const ['fiqh'],
           catalogId: 'canonical_syafii',
           fieldId: 'fiqh',
-          subtitleAcademic: 'Matan · Syarah · Hasyiyah Mu\'tabarah',
+          subtitleAcademic: 'Matan, syarah, dan hasyiyah',
           suggestedPrompts: [
             'Apa rukun wudu menurut pendapat mu\'tamad dalam mazhab Syafi\'i?',
             'Apa syarat sah salat berjamaah menurut Minhāj al-Ṭālibīn?',

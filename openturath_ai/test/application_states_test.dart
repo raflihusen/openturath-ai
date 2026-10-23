@@ -88,7 +88,7 @@ void main() {
         ),
       );
 
-      expect(find.text('Terjadi kendala teknis'), findsOneWidget);
+      expect(find.text('Ada gangguan teknis'), findsOneWidget);
       expect(find.byIcon(Icons.error_outline_rounded), findsOneWidget);
     });
 

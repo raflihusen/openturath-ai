@@ -23,7 +23,7 @@ class FieldModel {
       id: 'fiqh_tahawwulat',
       name: 'Fikih Tahawwulat',
       description:
-          'Manhaj eskatologi Islam, rukun keempat, tanda-tanda zaman, dan sanad Al-Habib Abu Bakar Al-Masyhur.',
+          'Rukun keempat dan tanda-tanda zaman dalam karya Al-Habib Abu Bakar Al-Masyhur.',
       icon: Icons.hourglass_bottom_rounded,
       specialistCount: 1,
       agentIds: [
@@ -34,7 +34,7 @@ class FieldModel {
       id: 'fiqh',
       name: 'Fikih & Fatwa',
       description:
-          'Hukum ibadah, muamalah, fatwa kontemporer, dan perbandingan mazhab mu\'tabar.',
+          'Hukum ibadah dan muamalah, fatwa masa kini, dan perbandingan mazhab.',
       icon: Icons.balance_rounded,
       specialistCount: 5,
       agentIds: [
@@ -49,7 +49,7 @@ class FieldModel {
       id: 'hadith',
       name: 'Hadis & Ulumul Hadis',
       description:
-          'Takhrij sanad, kritik rijalul hadis, dan syarah ensiklopedis Kutubus Sittah.',
+          'Hadis, ilmu hadis, biografi perawi, dan syarah Kutubus Sittah.',
       icon: Icons.auto_stories_rounded,
       specialistCount: 3,
       agentIds: [
@@ -62,7 +62,7 @@ class FieldModel {
       id: 'tafsir',
       name: 'Tafsir & Qiraat',
       description:
-          'Asbabun nuzul, munasabah, ilmu tajwid, dan khazanah eksegesis Al-Qur\'an.',
+          'Tafsir, asbabun nuzul, tajwid, dan qira\'at Al-Qur\'an.',
       icon: Icons.menu_book_rounded,
       specialistCount: 2,
       agentIds: [
@@ -74,7 +74,7 @@ class FieldModel {
       id: 'aqidah',
       name: 'Akidah & Ushuluddin',
       description:
-          'Kalam Asy\'ariyyah, Maturidiyyah, pembahasan ushuluddin, dan dalil aqli-naqli.',
+          'Akidah Asy\'ariyyah dan Maturidiyyah, ilmu kalam, dan dalilnya.',
       icon: Icons.shield_outlined,
       specialistCount: 1,
       agentIds: [
@@ -85,7 +85,7 @@ class FieldModel {
       id: 'usul',
       name: 'Usul Fikih & Kaidah',
       description:
-          'Kaidah istinbath hukum, dalil ijmali, maqashid syariah, dan qawaid fiqhiyyah.',
+          'Cara menggali hukum dari dalil, maqashid syariah, dan kaidah fikih.',
       icon: Icons.architecture_rounded,
       specialistCount: 1,
       agentIds: [
@@ -96,7 +96,7 @@ class FieldModel {
       id: 'lughah',
       name: 'Bahasa & Sastra Arab',
       description:
-          'Nahwu, sharaf, balaghah, dan leksikografi kamus mu\'jam klasik.',
+          'Nahwu, sharaf, balaghah, dan kamus bahasa Arab klasik.',
       icon: Icons.translate_rounded,
       specialistCount: 1,
       agentIds: [
@@ -107,7 +107,7 @@ class FieldModel {
       id: 'tarikh',
       name: 'Sejarah, Sirah & Rijal',
       description:
-          'Sirah Nabawiyyah, khulafaur rasyidin, thabaqat ulama, dan peradaban Islam.',
+          'Sirah Nabi, khulafaur rasyidin, riwayat hidup ulama, dan sejarah Islam.',
       icon: Icons.history_edu_rounded,
       specialistCount: 2,
       agentIds: [
@@ -119,7 +119,7 @@ class FieldModel {
       id: 'tasawwuf',
       name: 'Tasawuf & Akhlak',
       description:
-          'Penyucian jiwa (tazkiyatun nafs), adab suluk, dan hikmah ulama salafush shalih.',
+          'Penyucian jiwa, adab, dan hikmah para ulama terdahulu.',
       icon: Icons.spa_rounded,
       specialistCount: 1,
       agentIds: [

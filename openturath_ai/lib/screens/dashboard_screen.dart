@@ -927,16 +927,16 @@ class _DashboardAnnouncementCarouselState
     _AnnouncementSlide(
       badge: 'ADAB BELAJAR',
       title: 'Tetap Belajar Bersama Guru',
-      summary: 'Belajarlah dengan bimbingan guru dan ulama yang bersanad.',
+      summary: 'Bimbingan guru yang bersanad tetap diperlukan.',
       detailedContent:
           'AI membantu mencari ibarah dan membandingkan penjelasan dalam kitab. Untuk memahami fikih dan fatwa, tetaplah belajar kepada guru dan ulama yang bersanad.',
     ),
     _AnnouncementSlide(
       badge: 'PERIKSA SUMBER',
-      title: 'Cocokkan dengan Kitab Asal',
+      title: 'Cocokkan dengan kitab asal',
       summary: 'Periksa kembali kutipan di Maktabah Syamilah atau kitab cetak.',
       detailedContent:
-          'Baca ibarah beserta konteksnya pada kitab cetak yang dirujuk sebelum menarik kesimpulan atau membagikan hasil kajian.',
+          'Baca ibarah beserta konteksnya pada kitab cetak yang dirujuk sebelum menarik kesimpulan atau membagikan hasilnya.',
     ),
     _AnnouncementSlide(
       badge: 'AMANAH ILMIAH',

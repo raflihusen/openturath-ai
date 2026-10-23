@@ -295,13 +295,13 @@ class AiInfoSheet extends StatelessWidget {
             row('Rekaman diperiksa (semua ilmu)',
                 number(method['rekaman_diperiksa_semua_ilmu'] as num?)),
             if (method['rekaman_digabung_ke_kitab_ini'] != null)
-              row('Rekaman & cetakan dibandingkan untuk AI ini',
+              row('Rekaman dan cetakan yang dibandingkan untuk AI ini',
                   number(method['rekaman_digabung_ke_kitab_ini'] as num?)),
-            row('Karya diblok (semua ilmu)',
+            row('Karya yang tidak dipakai (semua ilmu)',
                 number(method['karya_diblok_semua_ilmu'] as num?)),
-            row('Karya ditahan karena belum terbukti',
+            row('Karya yang ditahan sampai terverifikasi',
                 number(method['karya_ditahan_semua_ilmu'] as num?)),
-            row('Karya ganda atau termuat yang dibuang',
+            row('Duplikat yang disaring',
                 number(method['karya_termuat_semua_ilmu'] as num?)),
             const SizedBox(height: OTSpacing.sm),
             for (final u in ((method['uji'] ?? []) as List))

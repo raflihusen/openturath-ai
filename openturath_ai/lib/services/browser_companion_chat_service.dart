@@ -138,7 +138,7 @@ class BrowserCompanionChatService extends NotebookChatService {
       _checkOwner(expectedUid, ownerKey, generation);
       if (url == null) {
         throw const AgentAccessException(
-            'failed-precondition', 'Alamat kajian belum tersedia.');
+            'failed-precondition', 'Alamat AI belum tersedia.');
       }
       final notebookId =
           Uri.parse(url).pathSegments.where((p) => p.isNotEmpty).last;
