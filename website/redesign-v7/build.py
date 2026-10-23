@@ -241,9 +241,9 @@ def tasks_html():
             "Protecting the honour of integrity and chains of transmission from the disorder of change and misleading trials, in the sciences of creed, law, and spiritual conduct.",
             "حفظ شرف العدالة والأسانيد من عبث المتغيرات ومضلات الفتن في علوم العقيدة والشريعة ومراتب السلوك."))
     src = L("An-Nubdzah ash-Shughra, hlm. 13", "An-Nubdhah al-Sughra, p. 13", "النبذة الصغرى، ص ١٣")
-    cell = lambda n, icon, t: f'<div class="task"><div class="task-ic"><span class="task-n">{n}</span></div><h4>{t[0]}</h4><p>{t[1]}</p></div>'
+    cell = lambda n, icon, t: f'<div class="task"><h4>{t[0]}</h4><p>{t[1]}</p></div>'
     return (f'<div class="tasks"><div class="tasks-hd"><b>{L("Dua tugas rukun keempat","The two tasks of the fourth pillar","مهمتان للركن الرابع")}</b><span class="small">{src}</span></div>'
-            f'<div class="tasks-g">{cell("1", "sparkle", t1)}<span class="task-plus" aria-hidden="true">{ic("plus")}</span>{cell("2", "scale", t2)}</div></div>')
+            f'<div class="tasks-g">{cell("1", "sparkle", t1)}{cell("2", "scale", t2)}</div></div>')
 
 def branches_html():
     B = [("المحقق", "Al-Muhaqqiq", L("Sang pentahkik", "The verifier", "المحقِّق"), L("Mencari dan memeriksa ibarah asli beserta sumbernya.", "Finds and checks the original passage with its source.", "يبحث عن العبارة الأصلية ويتحقق منها مع مصدرها.")),
