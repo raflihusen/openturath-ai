@@ -167,7 +167,7 @@
     var sx = 0, sy = 0, gx = 0, gy = 0, act = 0, tact = 0, ready = false;
     var draw = function (now) {
       var t = (now - t0) / 1000;
-      var e = 1, col = color(), mv = 0, reach = 1e9, fi = reduce ? 1 : (1 - Math.pow(1 - Math.min(1, t / 1.6), 3));
+      var e = 1, col = color(), mv = reduce ? 0 : 1, reach = 1e9, fi = reduce ? 1 : (1 - Math.pow(1 - Math.min(1, t / 1.6), 3));
       var R = W < 760 ? 150 : 230, rmax = Math.hypot(W, H) / 2;
       if (!ready) { sx = W / 2; sy = H / 2; gx = sx; gy = sy; ready = true; }
       var tx = mx > -900 ? mx : W / 2, ty = my > -900 ? my : H / 2; tact = mx > -900 ? 1 : 0;
@@ -184,12 +184,12 @@
         ctx.fillStyle = rgba(col, al); ctx.beginPath(); ctx.arc(cx + (x - cx) * e, cy + (y - cy) * e, sz, 0, 6.2832); ctx.fill();
       }
     };
-    var loop = function (now) { if (!running) return; draw(now); if ((now - t0) / 1000 > 1.8) { running = false; draw(now); return; } raf = requestAnimationFrame(loop); };
+    var loop = function (now) { if (!running) return; draw(now); raf = requestAnimationFrame(loop); };
     var start = function () { layout(); t0 = performance.now() + 300; cv.classList.add('show'); draw(performance.now()); if (!reduce && 'IntersectionObserver' in window) new IntersectionObserver(function (es) { var on = es[0].isIntersecting; if (on && !running) { running = true; raf = requestAnimationFrame(loop); } if (!on) { running = false; cancelAnimationFrame(raf); } }).observe(cv); };
     (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(start);
     if (document.fonts && document.fonts.addEventListener) document.fonts.addEventListener('loadingdone', function () { layout(); draw(performance.now()); });
     var rt; addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(function () { layout(); draw(performance.now()); }, 150); });
-    if (false) {
+    if (matchMedia('(pointer: fine)').matches) {
       hero.addEventListener('pointermove', function (e) { var r = hero.getBoundingClientRect(); mx = e.clientX - r.left; my = e.clientY - r.top; if (reduce) draw(performance.now()); });
       hero.addEventListener('pointerleave', function () { mx = my = -999; if (reduce) draw(performance.now()); });
     }
