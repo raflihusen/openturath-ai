@@ -365,7 +365,7 @@ def page_bidang():
 # ======================= FIKIH TAHAWWULAT =======================
 def tahaw_story():
     Q = lambda ar, src: f'<p class="quote-ar">{ar}</p><p class="quote-src">{src}</p>'
-    NUB = lambda p: L(f"An-Nubdzah ash-Shughra, hlm. {p}", f"An-Nubdhah al-Sughra, p. {p}", f"النبذة الصغرى، ص {p}")
+    NUB = lambda p: L(f"An-Nubdzah ash-Shughra, hlm. {p.translate(str.maketrans('٠١٢٣٤٥٦٧٨٩', '0123456789'))}", f"An-Nubdhah al-Sughra, p. {p.translate(str.maketrans('٠١٢٣٤٥٦٧٨٩', '0123456789'))}", f"النبذة الصغرى، ص {p}")
     s1 = (shead(L("Mulai dari sini","Start here","ابدأ من هنا"), L("Membahas tanda kiamat, bukankah menakutkan?","Isn't talking about the signs of the Hour frightening?","أليس الحديث عن علامات الساعة مخيفًا؟"),
                 L("Pertanyaan itu wajar. Di sinilah Al-Habib Abu Bakar Al-Adni memulai.","It is a fair question. This is where Al-Habib Abu Bakr al-Adni begins.","السؤال مشروع، ومنه يبدأ الحبيب أبو بكر العدني.")) +
           f'<div class="two rv"><div class="ol"><span class="k">{L("Anggapan umum","A common belief","ظن شائع")}</span><h3>{L("Ilmu ini hanya menebar takut dan membuat orang menjauh.","This knowledge only spreads fear and makes people withdraw.","هذا العلم لا يورث إلا الخوف والعزلة.")}</h3>{Q("«يعتقد البعض… بأن علامات الساعة سبب لإثارة الخوف من المستقبل… وسبيل إلى الإحباط والعزلة»", NUB("٥٥"))}</div>'
