@@ -370,9 +370,9 @@
   "items": [
    [
     {
-     "id": "Fitnah dan cara menjaga diri",
-     "en": "Fitna and how to stay safe",
-     "ar": "الفتن وطرق الوقاية"
+     "id": "Fikih Fitnah dan Penjagaan Diri",
+     "en": "Fiqh of Fitna and Self-Protection",
+     "ar": "فقه النواقض والنقائض"
     },
     {
      "id": "Mengenali hal yang merusak agama dan cara menyelamatkan diri darinya.",
@@ -390,13 +390,14 @@
       "en": "How do I avoid being dragged into fitna?",
       "ar": "كيف لا أنجرّ إلى الفتنة؟"
      }
-    ]
+    ],
+    "فقه النواقض والنقائض"
    ],
    [
     {
-     "id": "Isyarat, kabar gembira, peringatan, dan perlindungan",
-     "en": "Signals, glad tidings, warnings, and protection",
-     "ar": "الإشارات والبشارات والنذارات والحصانات"
+     "id": "Fikih Isyarat, Kabar Gembira, dan Perlindungan",
+     "en": "Fiqh of Signals, Glad Tidings, and Protection",
+     "ar": "فقه الإشارات والبشارات"
     },
     {
      "id": "Pesan-pesan kasih sayang Nabi untuk umatnya, termasuk pentingnya guru yang bersanad.",
@@ -414,13 +415,14 @@
       "en": "Are there glad tidings for this Ummah?",
       "ar": "هل من بشائر لهذه الأمة؟"
      }
-    ]
+    ],
+    "فقه الإشارات والبشارات"
    ],
    [
     {
-     "id": "Sains, teknologi, dan budaya baru",
-     "en": "Science, technology, and new cultures",
-     "ar": "العلوم والتقنية والثقافات الجديدة"
+     "id": "Fikih Sains, Teknologi, dan Budaya Baru",
+     "en": "Fiqh of Science, Technology, and New Culture",
+     "ar": "فقه مستجدات العلوم"
     },
     {
      "id": "Cara menimbang penemuan dan tren baru dengan timbangan agama.",
@@ -438,13 +440,14 @@
       "en": "What is scientific miracle and where is its limit?",
       "ar": "ما الإعجاز العلمي وأين حدّه؟"
      }
-    ]
+    ],
+    "فقه مستجدات العلوم"
    ],
    [
     {
-     "id": "Tanda alam dan peristiwa besar",
-     "en": "Natural signs and great events",
-     "ar": "الأشراط الكونية والأحداث الكبرى"
+     "id": "Fikih Tanda Alam dan Peristiwa Besar",
+     "en": "Fiqh of Natural Signs and Great Events",
+     "ar": "فقه الأشراط الكونية"
     },
     {
      "id": "Tanda kecil, tengah, dan besar menjelang kiamat, dipahami tertib tanpa spekulasi.",
@@ -462,13 +465,14 @@
       "en": "How should we respond to disasters?",
       "ar": "كيف نتعامل مع الكوارث؟"
      }
-    ]
+    ],
+    "فقه الأشراط الكونية"
    ],
    [
     {
-     "id": "Agama dan sejarah",
-     "en": "Religion and history",
-     "ar": "الدين والتاريخ"
+     "id": "Fikih Menautkan Agama dan Sejarah",
+     "en": "Fiqh of Linking Religion and History",
+     "ar": "فقه الربط بين الديانة والتاريخ"
     },
     {
      "id": "Membaca perjalanan umat dari masa Nabi sampai hari ini dengan kacamata wahyu.",
@@ -486,7 +490,8 @@
       "en": "Why is the Ummah likened to foam?",
       "ar": "لماذا شُبّهت الأمة بالغثاء؟"
      }
-    ]
+    ],
+    "فقه الربط بين الديانة والتاريخ"
    ]
   ]
  },

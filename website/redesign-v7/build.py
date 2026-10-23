@@ -713,16 +713,19 @@ def page_mengenal():
     # 4 cabang
     br = M["branch"]
     rows = ""
-    for i, (t, d, qs) in enumerate(br["items"]):
+    for i, (t, d, qs, arn) in enumerate(br["items"]):
         chips = "".join(f'<li>{E(g(x))}</li>' for x in qs)
-        rows += f'<div class="brow rv"><div class="n">{i+1}</div><div class="bt"><h3>{E(g(t))}</h3><p>{E(g(d))}</p></div><div class="bq"><span>{L("Bisa menjawab","Can answer","يجيب عن")}</span><ul>{chips}</ul></div></div>'
+        barn = '' if LANG == 'ar' else '<span class="barn" lang="ar" dir="rtl">' + E(arn) + '</span>'
+        rows += f'<div class="brow rv"><div class="n">{i+1}</div><div class="bt"><h3>{E(g(t))}</h3>{barn}<p>{E(g(d))}</p></div><div class="bq"><span>{L("Bisa menjawab","Can answer","يجيب عن")}</span><ul>{chips}</ul></div></div>'
     body += sec(shead(g(br["kicker"]), g(br["title"]), g(br["lead"])) + f'<div class="brows">{rows}</div>')
     # 5 beda
     d = M["diff"]
-    trs = "".join(f'<tr><th scope="row">{E(g(a))}</th><td>{E(g(x))}</td><td class="on">{E(g(y))}</td></tr>' for a, x, y in d["rows"])
+    c0, c1 = g(d["cols"][0]), g(d["cols"][1])
+    vs = (f'<div class="vs rv"><div class="vs-h"><span></span><b>{E(c0)}</b><b class="on">{E(c1)}</b></div>' +
+          "".join(f'<div class="vs-r"><span class="vs-l">{E(g(a))}</span><p data-t="{E(c0)}">{E(g(x))}</p><p class="on" data-t="{E(c1)}">{E(g(y))}</p></div>' for a, x, y in d["rows"]) + '</div>')
     uniq = "".join(f'<li>{ic("check")}<span>{E(g(u))}</span></li>' for u in d["unique"])
     body += sec(shead(g(d["kicker"]), g(d["title"]), g(d["lead"])) +
-                f'<div class="cmp rv"><table class="tbl"><thead><tr><th></th><th>{E(g(d["cols"][0]))}</th><th class="on">{E(g(d["cols"][1]))}</th></tr></thead><tbody>{trs}</tbody></table></div>')
+                vs)
     body += (f'<section class="sec band"><div class="wrap">{shead(L("Keunikan","Distinctive","التميّز"), g(d["unique_title"]))}<ul class="uniq rv">{uniq}</ul></div></section>')
     # 6 mulai
     s = M["start"]

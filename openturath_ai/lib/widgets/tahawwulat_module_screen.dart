@@ -232,6 +232,15 @@ class _TahawwulatModuleScreenState extends State<TahawwulatModuleScreen> {
             Text('$n', style: OTTypography.captionMedium(color: sub)),
             const SizedBox(height: OTSpacing.xs),
             Text(_t(it[0]), style: OTTypography.cardTitle(color: fg)),
+            if (!Loc.isArabic && (it as List).length > 3) ...[
+              const SizedBox(height: OTSpacing.xs),
+              Directionality(
+                textDirection: TextDirection.rtl,
+                child: Text(it[3] as String,
+                    style: OTTypography.arabicDisplay(color: sub)
+                        .copyWith(fontSize: OTFontSize.s18)),
+              ),
+            ],
             const SizedBox(height: OTSpacing.xs),
             Text(_t(it[1]), style: OTTypography.body(color: sub)),
             const SizedBox(height: OTSpacing.md),
