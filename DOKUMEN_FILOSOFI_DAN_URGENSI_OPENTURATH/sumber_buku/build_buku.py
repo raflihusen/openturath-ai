@@ -43,7 +43,7 @@ def sec(no, name): return f'<div class="kick">{no} &mdash; {name}</div>'
 
 # ---------- 1 Sampul ----------
 pg(f'''<div style="height:100%;display:flex;flex-direction:column;justify-content:space-between">
-<div style="display:flex;justify-content:space-between;font-size:8pt;letter-spacing:.2em;text-transform:uppercase;color:#9a9a9a"><span>Buku Identitas</span><span>Versi 1.1 &middot; 23 Oktober 2026</span></div>
+<div style="display:flex;justify-content:space-between;font-size:8pt;letter-spacing:.2em;text-transform:uppercase;color:#9a9a9a"><span>Buku Identitas</span><span>Versi 1.2 &middot; 23 Oktober 2026</span></div>
 <div style="display:flex;align-items:center;gap:22mm">{logo(62,"var(--bone)")}
 <div><h1 style="font-size:64pt;margin:0 0 4mm">OpenTurath</h1>
 <div class="lead" style="color:#cfcfcf;font-style:italic">Setiap jawaban, berpijak pada turath.</div></div></div>
@@ -53,16 +53,15 @@ pg(f'''<div style="height:100%;display:flex;flex-direction:column;justify-conten
 # ---------- 2 Daftar isi ----------
 toc = [("01","Pengantar","Untuk apa buku ini dan siapa yang memakainya"),
        ("02","Siapa Kami","Perintis, cerita, tonggak, ekosistem, dan untuk siapa"),
-       ("03","Fondasi","Visi, misi, nilai, manhaj kurasi, posisi, dan kepribadian"),
+       ("03","Fondasi","Visi, misi, nilai, wasathiyyah syar'iyyah, dan posisi"),
        ("04","Nama","Arti, penulisan, dan susunan nama"),
        ("05","Logo","Filosofi, versi, ruang aman, dan penggunaan"),
        ("06","Warna","Palet monokrom dan cara memakainya"),
        ("07","Huruf","Empat keluarga huruf dan hierarkinya"),
-       ("08","Suara","Cara OpenTurath berbicara dan menulis"),
-       ("09","Citra","Ilustrasi, ikon, motif, dan gerak"),
-       ("10","Tata Letak","Grid, jarak, sudut, dan komponen"),
-       ("11","Penerapan","Aplikasi, website, media sosial, dan dokumen"),
-       ("12","Penggunaan Bersama","Aturan bagi pihak lain dan tata kelola")]
+       ("08","Citra","Ilustrasi, ikon, motif, dan gerak"),
+       ("09","Tata Letak","Grid, jarak, sudut, dan komponen"),
+       ("10","Penerapan","Aplikasi, website, media sosial, dan dokumen"),
+       ("11","Penggunaan Bersama","Aturan bagi pihak lain dan tata kelola")]
 rows = "".join(f'<div style="display:flex;gap:6mm;padding:2.6mm 0;border-bottom:.3mm solid var(--g3)"><span class="serif" style="width:12mm;color:var(--g2);font-size:13pt">{a}</span><span style="width:52mm;font-weight:600">{b}</span><span class="small" style="padding-top:.5mm">{c}</span></div>' for a,b,c in toc)
 pg(f'''{sec("","Isi")}<h2>Daftar isi</h2><div style="max-width:200mm">{rows}</div>''', title="Isi")
 
@@ -72,10 +71,10 @@ pg(f'''{sec("01","Pengantar")}<h1 style="max-width:230mm">Satu buku untuk membua
 <p class="lead">Aplikasi, website, poster, video, surat, presentasi: semuanya harus terasa datang dari satu tempat yang sama.</p>
 <p>Buku ini menetapkan siapa OpenTurath, bagaimana ia terlihat, dan bagaimana ia berbicara. Isinya cukup rinci agar perancang, pengembang, dan penulis dapat bekerja tanpa harus bertanya, dan cukup ringkas agar mudah dibuka kembali di tengah pekerjaan.</p></div>
 <div class="col"><div class="card"><h3>Cara memakainya</h3>
-<table><tr><td style="width:36mm"><b>Perancang</b></td><td>Bab 05 sampai 10: logo, warna, huruf, citra, tata letak.</td></tr>
-<tr><td><b>Pengembang</b></td><td>Bab 06, 07, dan 10: token warna, huruf, jarak, sudut, komponen.</td></tr>
-<tr><td><b>Penulis</b></td><td>Bab 02, 03, 04, dan 08: cerita, nilai, nama, suara.</td></tr>
-<tr><td><b>Mitra dan media</b></td><td>Bab 02, 04, 05, dan 12: cara menyebut dan menampilkan OpenTurath.</td></tr></table></div></div></div>''', title="Pengantar")
+<table><tr><td style="width:36mm"><b>Perancang</b></td><td>Bab 05 sampai 09: logo, warna, huruf, citra, tata letak.</td></tr>
+<tr><td><b>Pengembang</b></td><td>Bab 06, 07, dan 09: token warna, huruf, jarak, sudut, komponen.</td></tr>
+<tr><td><b>Penulis</b></td><td>Bab 02, 03, dan 04: cerita, nilai, nama.</td></tr>
+<tr><td><b>Mitra dan media</b></td><td>Bab 02, 04, 05, dan 11: cara menyebut dan menampilkan OpenTurath.</td></tr></table></div></div></div>''', title="Pengantar")
 
 # ---------- 4 Siapa kami ----------
 pg(f'''{sec("02","Siapa Kami")}<h2 style="font-size:31pt;max-width:245mm">OpenTurath adalah AI Islami berbasis turath: setiap jawabannya berpijak pada kitab dan ceramah para ulama.</h2>
@@ -88,37 +87,45 @@ pg(f'''{sec("02","Siapa Kami")}<h2 style="font-size:31pt;max-width:245mm">OpenTu
 <div class="card" style="margin-top:6mm;display:flex;gap:8mm;align-items:center"><span class="tag">Tagline</span><span class="serif" style="font-size:20pt;font-style:italic">Setiap jawaban, berpijak pada turath.</span><span class="small" style="margin-left:auto">Penjelas: pendamping belajar kitab &middot; openturath.id</span></div>''', title="Siapa Kami")
 
 # ---------- 5a Perintis ----------
-pg(f'''{sec("02","Perintis")}<div class="row" style="gap:16mm"><div style="width:100mm"><h1 style="font-size:48pt">Rafli Husen</h1><p class="lead">Santri, mahasiswa S2 di Yaman, dan satu-satunya orang di balik OpenTurath.</p></div>
+pg(f'''{sec("02","Perintis")}<div class="row" style="gap:16mm"><div style="width:100mm"><h1 style="font-size:48pt">Rafli Husen</h1><p class="lead">Santri, mahasiswa pascasarjana di Yaman, dan satu-satunya orang di balik OpenTurath.</p></div>
 <div class="col"><p>Ia berguru langsung kepada Al-Habib Abu Bakar Al-Adni bin Ali Al-Masyhur rahimahullah dan para ulama Hadramaut. Sebagai santri, ia merasakan sendiri apa yang dibutuhkan para penuntut ilmu.</p>
 <p>Di OpenTurath, ia adalah inisiator, pengembang, perancang, sekaligus pemasar. Ia mengerjakannya seorang diri, dengan para ulama yang memeriksa isi keilmuannya.</p>
-<table style="margin-top:4mm"><tr><td style="width:36mm"><b>Pengelola</b></td><td>Perorangan: Rafli Husen</td></tr><tr><td><b>Berkantor di</b></td><td>Bogor, Indonesia</td></tr><tr><td><b>Studi</b></td><td>Pascasarjana (S2), Yaman</td></tr><tr><td><b>Media sosial</b></td><td>@rafli_husen</td></tr></table></div></div>''', title="Perintis")
+<table style="margin-top:4mm"><tr><td style="width:36mm"><b>Pengelola</b></td><td>Perorangan: Rafli Husen</td></tr><tr><td><b>Berkantor di</b></td><td>Bogor, Indonesia</td></tr><tr><td><b>Pendidikan</b></td><td>S1 dan S2; kini menulis tugas akhir S2 di Yaman</td></tr><tr><td><b>Media sosial</b></td><td>@rafli_husen</td></tr></table></div></div>''', title="Perintis")
 
 # ---------- 5b Cerita ----------
 pg(f'''{sec("02","Cerita Kami")}<div class="row" style="gap:12mm"><div style="width:84mm"><h2>Satu halaman, satu jam, dan air mata yang nyaris jatuh.</h2><div style="margin-top:6mm">{logo(30)}</div></div>
-<div class="col" style="padding-top:1mm"><p style="font-size:10pt">Suatu hari, saat murajaah seorang diri, Rafli membaca salah satu kitab terbesar Fikih Tahawwulat dan menerjemahkannya kata demi kata. Satu halaman menghabiskan sekitar satu jam. Setelah dibaca ulang, ia tetap belum paham, hingga hampir menangis karena sulitnya.</p>
-<p style="font-size:10pt">Dari situ ia bertekad mengumpulkan seluruh kitab Fikih Tahawwulat dan muhadharah Al-Habib Abu Bakar dalam satu AI, supaya penuntut ilmu lain tidak harus melewati kesulitan yang sama.</p>
-<p style="font-size:10pt">Gagasannya sendiri sudah tumbuh sejak 2023, ketika AI mulai ramai: bagaimana kalau AI dapat menyebut rujukan dengan akurat dan terhubung ke maktabah? Pada saat yang sama AI sering berhalusinasi, dari ayat, kitab, hingga ibarah, padahal banyak muslim bertanya perkara agama kepadanya.</p>
-<p style="font-size:10pt">Maka OpenTurath dibangun agar setiap jawaban punya rujukannya dan tidak pernah sekadar jawaban kosong.</p>
-<div class="card" style="padding:4mm 5mm;margin-top:2mm"><p style="font-size:9pt;margin:0;max-width:none">Ketika ia menyederhanakan ilmu mantik dengan tabel, Al-Habib Abu Bakar menuliskan komentar yang kurang lebih mendoakan agar ia dimudahkan meneruskan kemampuannya untuk berkhidmah kepada ilmu-ilmu Islam.</p></div>
-<p class="serif" style="font-size:13pt;font-style:italic;margin-top:4mm">Dibuat oleh pelajar, untuk para pelajar.</p></div></div>''', title="Cerita")
+<div class="col" style="padding-top:1mm"><p style="font-size:10.3pt">Suatu hari, saat murajaah seorang diri, Rafli membaca salah satu kitab terbesar Fikih Tahawwulat dan menerjemahkannya kata demi kata. Satu halaman menghabiskan sekitar satu jam. Setelah dibaca ulang, ia tetap belum paham, hingga hampir menangis karena sulitnya.</p>
+<p style="font-size:10.3pt">Dari kesulitan itu lahir satu pertanyaan: bagaimana memudahkan penuntut ilmu menerjemahkan dan memahami kitab-kitab Fikih Tahawwulat, terutama istilah-istilahnya?</p>
+<p style="font-size:10.3pt">Jawabannya ia cari lewat teknologi. Sejak 2023, ketika AI mulai ramai, ia membayangkan AI yang dapat menyebut rujukan dengan akurat dan terhubung ke maktabah. Namun AI umum sering berhalusinasi, dari ayat, kitab, hingga ibarah, padahal banyak muslim bertanya perkara agama kepadanya.</p>
+<p style="font-size:10.3pt">Maka OpenTurath dibangun agar setiap jawaban punya rujukannya, dan penuntut ilmu terbantu memahami kitab tanpa kehilangan jalan menuju gurunya.</p>
+<div style="display:inline-block;margin-top:5mm;border:.5mm solid var(--ink);border-radius:2.2mm;padding:2.6mm 6mm;font-weight:700;font-size:12pt;letter-spacing:.01em">Dibuat oleh pelajar, untuk para pelajar.</div></div></div>''', title="Cerita")
 
 # ---------- 5c Tonggak ----------
 def tl(d, t, x): return f'<div style="display:flex;gap:7mm;padding:5mm 0;border-bottom:.3mm solid var(--g3)"><div class="serif" style="width:42mm;font-size:15pt">{d}</div><div><b style="font-size:11pt">{t}</b><p class="small" style="color:var(--ink);margin:1mm 0 0;max-width:170mm">{x}</p></div></div>'
 pg(f'''{sec("02","Tonggak")}<h2>Dari satu gagasan sampai rilis perdana.</h2><div style="max-width:235mm;margin-top:2mm">
 {tl("2023","Gagasan lahir","Saat AI mulai populer, muncul pertanyaan: bagaimana jika AI dapat menyebut rujukan dengan sangat akurat dan terhubung ke maktabah?")}
-{tl("2023 sampai 2026","Penyempurnaan metode","Format RAG diuji berulang kali hingga lebih dari sembilan revisi, untuk mencari susunan yang paling tepat agar rujukan akurat.")}
+{tl("2023 sampai 2026","Belajar dan membangun","Tiga tahun mempelajari AI dan cara membuat aplikasi secara mendalam, serta semua yang dibutuhkan untuk mencapai tujuan ini, termasuk menguji format RAG berulang kali hingga lebih dari sembilan revisi.")}
 {tl("7 Mei 2026","Diumumkan di Hadramaut","Di Universitas Al-Wasatiyah, Hadramaut, Yaman, di hadapan para ulama, saat Rafli menerima penghargaan atas AI Fikih Tahawwulat pertama. Di sinilah visi OpenTurath dipaparkan untuk pertama kalinya.")}
 {tl("23 Oktober 2026","Rilis publik perdana","OpenTurath AI dibuka untuk publik.")}</div>''', title="Tonggak")
 
 # ---------- 5d Ekosistem ----------
-def eco(t, st, d): return f'<div class="card"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2mm"><h3 style="margin:0">{t}</h3><span class="tag">{st}</span></div><p class="small" style="color:var(--ink);font-size:9.3pt;margin:0">{d}</p></div>'
+ICON = lambda body, c="currentColor": f'<svg viewBox="0 0 48 48" width="26" height="26" fill="none" stroke="{c}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">{body}</svg>'
+ic_book = '<rect x="7" y="10" width="9" height="28" rx="1.5"/><rect x="18" y="14" width="9" height="24" rx="1.5"/><path d="M30 38 L36 12 L44 14 L38 40 Z"/><path d="M5 43H45"/>'
+ic_ms = '<path d="M13 6h20a4 4 0 0 1 4 4v14"/><path d="M13 6a4 4 0 0 0-4 4v28a4 4 0 0 0 4 4h14"/><path d="M16 15h16M16 22h16M16 29h8"/><path d="M30 42l11-11 3.5 3.5-11 11-5 1.5z"/>'
+ic_cap = '<path d="M3 19 L24 8 L45 19 L24 30 Z"/><path d="M11 24v10c0 3.5 6 7 13 7s13-3.5 13-7V24"/><path d="M45 19v13"/>'
+def eco(n, icon, dark, t, st, d):
+    chip = f'<span class="tag" style="margin-left:auto;{"color:#cfcfcf" if dark else ""}">{st}</span>'
+    box = f'width:15mm;height:15mm;border-radius:4mm;display:flex;align-items:center;justify-content:center;{"background:#FAFAFA;color:#100F0E" if dark else "background:#100F0E;color:#FAFAFA"}'
+    st_card = "background:#100F0E;color:#FAFAFA;border:none" if dark else ""
+    sub = "#bdbdbd" if dark else "#606060"
+    return f'<div class="card" style="padding:7mm;{st_card}"><div style="display:flex;align-items:center;gap:5mm;margin-bottom:5mm"><div style="{box}">{icon}</div><div><div style="font-size:7.5pt;letter-spacing:.2em;color:{sub};font-weight:600">LINI {n}</div><h3 style="margin:0;font-size:15pt">{t}</h3></div>{chip}</div><p style="font-size:10pt;margin:0;max-width:none;color:{sub if dark else "var(--ink)"}">{d}</p></div>'
 pg(f'''{sec("02","Ekosistem")}<h2>OpenTurath lebih besar dari satu aplikasi.</h2>
-<div class="grid2" style="margin-top:3mm">
-{eco("OpenTurath AI","Rilis 23 Okt 2026","AI Islami berbasis turath. Setiap bidang ilmu punya asisten dan metodologinya sendiri, dan setiap jawaban disertai rujukan.")}
-{eco("Maktabah AI","Dibangun","Tempat unduh kitab yang menyatukan semua cetakan dan banyak sumber unduh dalam satu halaman, supaya tidak lagi tercecer di berbagai tempat.")}
-{eco("AI Manuskrip","Tahap uji","Membantu membaca dan menahkik manuskrip: memberi makna bahasa, menjelaskan tokoh yang dimaksud, serta hadis atau ayat yang dikutip.")}
-{eco("Kelas OpenTurath","Rencana","Cara memakai AI bagi penuntut ilmu dalam empat tahap: percakapan, gambar dan video untuk dakwah, membuat aplikasi, dan membuat AI agent.")}</div>
-<p class="small" style="margin-top:5mm;max-width:240mm">Cakupan ilmu akan terus meluas dari Fikih Tahawwulat ke nahwu, sharaf, bahasa Arab, fikih, ushul fikih, dan seluruh bidang ilmu Islam. Kelak, turath para ulama juga akan dihidupkan melalui kitab dan ceramah mereka, dengan izin yang semestinya. Tujuannya satu: menjadi rumah baru bagi seluruh penuntut ilmu.</p>''', title="Ekosistem")
+<p class="lead" style="font-size:13pt;margin-bottom:5mm">Satu merek, empat lini yang saling menguatkan.</p>
+<div class="grid2" style="gap:5mm">
+{eco("01", logo(8,"#100F0E"), True, "OpenTurath AI","Rilis 23 Okt 2026","AI Islami berbasis turath yang mencakup semua bidang ilmu dan khazanah para ulama. Tiap bidang punya asisten dan metodologinya sendiri, dan setiap jawaban disertai rujukan.")}
+{eco("02", ICON(ic_book), False, "Maktabah OpenTurath","Dibangun","Pusat unduh kitab yang menyatukan semua cetakan dan banyak sumber unduh dalam satu halaman, supaya tidak lagi tercecer di berbagai tempat.")}
+{eco("03", ICON(ic_ms), False, "AI Manuskrip","Tahap uji","Membantu membaca dan menahkik manuskrip: memberi makna bahasa, menjelaskan tokoh yang dimaksud, serta hadis atau ayat yang dikutip.")}
+{eco("04", ICON(ic_cap), False, "Akademi OpenTurath","Rencana","Belajar memakai AI bagi penuntut ilmu dalam empat tahap: percakapan, gambar dan video untuk dakwah, membuat aplikasi, dan membuat AI agent.")}</div>''', title="Ekosistem")
 
 # ---------- 6 Apa yang kami bangun ----------
 def feat(t, d): return f'<div class="card"><h3>{t}</h3><p class="small" style="color:var(--ink);font-size:9.5pt">{d}</p></div>'
@@ -148,7 +155,7 @@ pg(f'''{sec("03","Fondasi")}<div class="row" style="gap:14mm"><div class="col"><
 <div class="col"><div class="tag">Misi</div><div style="margin-top:6mm">
 <div style="display:flex;gap:5mm;margin-bottom:4mm"><span class="num">1</span><p style="margin:0">Memudahkan orang memahami kitab.</p></div>
 <div style="display:flex;gap:5mm;margin-bottom:4mm"><span class="num">2</span><p style="margin:0">Mempercepat pencarian rujukan dan ibarah bagi penuntut ilmu, pemberi fatwa, penceramah, dan khatib.</p></div>
-<div style="display:flex;gap:5mm;margin-bottom:4mm"><span class="num">3</span><p style="margin:0">Membangun AI per bidang dengan metodologi masing-masing, dikurasi dengan manhaj jalan tengah, dan ditinjau para ulama.</p></div>
+<div style="display:flex;gap:5mm;margin-bottom:4mm"><span class="num">3</span><p style="margin:0">Membangun AI per bidang dengan metodologi masing-masing, dikurasi dengan wasathiyyah syar'iyyah, dan ditinjau para ulama.</p></div>
 <div style="display:flex;gap:5mm;margin-bottom:4mm"><span class="num">4</span><p style="margin:0">Meluaskan cakupan dari Fikih Tahawwulat ke seluruh ilmu Islam, dan menghidupkan turath para ulama.</p></div>
 <div style="display:flex;gap:5mm"><span class="num">5</span><p style="margin:0">Menjadi alat bantu yang tidak pernah menggantikan guru.</p></div></div></div></div>''', title="Fondasi")
 
@@ -156,24 +163,23 @@ pg(f'''{sec("03","Fondasi")}<div class="row" style="gap:14mm"><div class="col"><
 vals = [("Kembali kepada sumber","Setiap jawaban berpijak pada kitab dan ceramah ulama. Rujukan adalah bagian dari jawaban, bukan hiasannya."),
         ("Kembali berguru","AI hanyalah alat. Ia tidak menggantikan guru, dan selalu mengingatkan agar pembelajaran diteruskan kepada guru."),
         ("Amanah","Menjaga ketepatan ibarah, jujur tentang batas kemampuan, dan tidak mengatasnamakan ulama tanpa izin."),
-        ("Wasathiyyah","Kurasi dengan jalan tengah yang sadar: tidak berlebihan, tidak meremehkan, tidak dipakai untuk menjatuhkan kelompok lain."),
+        ("Wasathiyyah syar'iyyah","Kurasi yang tidak berlebihan dan tidak meremehkan, serta tidak dipakai untuk menjatuhkan kelompok lain."),
         ("Metodologi tiap ilmu dijaga","Fikih punya metodenya, hadis punya metodenya. Tidak dicampur menjadi satu jawaban yang berantakan."),
         ("Sarana baru, esensi terjaga","Memperbarui cara belajar tanpa merusak inti ajaran dan tradisi keilmuan.")]
 cards = "".join(f'<div class="card"><div class="num">{i+1:02d}</div><h3 style="margin-top:2mm">{t}</h3><p class="small" style="color:var(--ink);font-size:9.5pt;margin:0">{d}</p></div>' for i,(t,d) in enumerate(vals))
 pg(f'''{sec("03","Enam Nilai")}<h2>Nilai yang memandu setiap keputusan.</h2><div class="grid3" style="margin-top:5mm">{cards}</div>''', title="Nilai")
 
-# ---------- 9b Manhaj ----------
-def ring(n, t, d): return f'<div class="card"><div class="num">{n}</div><h3 style="margin-top:1mm">{t}</h3><p class="small" style="color:var(--ink);font-size:9.3pt;margin:0">{d}</p></div>'
-pg(f'''{sec("03","Manhaj Kurasi")}<div class="row" style="gap:10mm;align-items:flex-start"><div style="width:100mm"><h2>Kurasi dengan jalan tengah.</h2>
-<div class="ar" style="font-size:22pt;line-height:1.7;margin-bottom:2mm">الوسطية الشرعية والاعتدال الواعي</div>
-<p class="small" style="margin-bottom:4mm">Al-Wasathiyyah Asy-Syar'iyyah wal-I'tidal Al-Wa'i</p>
-<p style="font-size:9.8pt">Manhaj ini bukan kompromi mekanis atau titik tengah politis. Ia bertumpu pada Al-Qur'an, sunnah, dan akhlak kenabian, dan menjaga dari dua jurang: berlebihan (<i>ifrath</i>) dan meremehkan (<i>tafrith</i>). Kitab-kitab dalam OpenTurath dikurasi dengannya, agar keilmuan tidak terpolitisasi dan tidak dimanfaatkan satu kelompok untuk menjatuhkan kelompok lain.</p>
-<div class="ar" style="font-size:12pt;line-height:1.9;color:var(--g2)">يَرِثُ هَذَا الْعِلْمَ مِنْ كُلِّ خَلَفٍ عُدُولُهُ، يَنْفُونَ عَنْهُ تَحْرِيفَ الْغَالِينَ، وَانْتِحَالَ الْمُبْطِلِينَ، وَتَأْوِيلَ الْجَاهِلِينَ</div></div>
-<div class="col"><div class="small" style="letter-spacing:.14em;text-transform:uppercase;font-weight:600;margin-bottom:3mm">Kerangka tiga ring</div>
+# ---------- 9b Wasathiyyah ----------
+def ring(n, t, d): return f'<div style="display:flex;gap:6mm;padding:4.5mm 0;border-bottom:.3mm solid var(--g3)"><div class="serif" style="font-size:26pt;width:12mm;color:var(--g2);line-height:1">{n}</div><div><h3 style="margin:0 0 1mm">{t}</h3><p style="font-size:9.6pt;margin:0;max-width:none">{d}</p></div></div>'
+pg(f'''{sec("03","Wasathiyyah Syar'iyyah")}<div class="row" style="gap:16mm;align-items:center"><div style="width:100mm"><h2 style="font-size:27pt">Ukuran kami memilih kitab.</h2>
+<div class="ar" style="font-size:25pt;line-height:1.7;margin:1mm 0 1mm">الوسطية الشرعية والاعتدال الواعي</div>
+<p class="small" style="margin-bottom:5mm">Al-Wasathiyyah Asy-Syar'iyyah wal-I'tidal Al-Wa'i</p>
+<p style="font-size:10pt">Wasathiyyah syar'iyyah bukan kompromi mekanis atau titik tengah politis. Ia bertumpu pada Al-Qur'an, sunnah, dan akhlak kenabian, dan menjaga dari dua jurang: berlebihan dan meremehkan. Dengannya kitab-kitab OpenTurath dikurasi, agar keilmuan tidak terpolitisasi dan tidak dipakai satu kelompok untuk menjatuhkan kelompok lain.</p></div>
+<div class="col"><div class="small" style="letter-spacing:.14em;text-transform:uppercase;font-weight:600;margin-bottom:1mm">Tiga lapis kurasi</div>
 {ring("1","Inti","Kitab induk bersanad yang menjadi dasar jawaban: mazhab fikih empat, akidah Asy'ari dan Maturidi, tasawuf yang lurus, dan Fikih Tahawwulat.")}
-<div style="height:3mm"></div>{ring("2","Pembanding terbatas","Pandangan yang tajam atau diperselisihkan disimpan hanya sebagai pembanding, tidak menjadi dasar hukum atau jawaban otomatis.")}
-<div style="height:3mm"></div>{ring("3","Dikecualikan","Naskah propaganda kekerasan, adu domba antar muslim, dan tulisan yang dirancang merusak akidah serta kehormatan ulama.")}
-<div style="display:flex;gap:4mm;margin-top:4mm"><div class="card" style="flex:1;padding:3.5mm 5mm"><b>Salamatul lisan</b><div class="small" style="color:var(--ink)">AI tidak mencela, mengkafirkan, atau menyesatkan sesama muslim.</div></div><div class="card" style="flex:1;padding:3.5mm 5mm"><b>Salamatul yad</b><div class="small" style="color:var(--ink)">AI tidak memprovokasi kekerasan atau pertumpahan darah.</div></div></div></div></div>''', title="Manhaj Kurasi")
+{ring("2","Pembanding terbatas","Pandangan yang tajam atau diperselisihkan disimpan hanya sebagai pembanding, tidak menjadi dasar hukum atau jawaban otomatis.")}
+{ring("3","Dikecualikan","Naskah propaganda kekerasan, adu domba antar muslim, dan tulisan yang dirancang merusak akidah serta kehormatan ulama.")}
+<div style="display:flex;gap:4mm;margin-top:5mm"><div style="flex:1;background:var(--ink);color:var(--bone);border-radius:3mm;padding:4mm 5mm"><b>Salamatul lisan</b><div style="font-size:8.6pt;opacity:.8;margin-top:1mm">AI tidak mencela, mengkafirkan, atau menyesatkan sesama muslim.</div></div><div style="flex:1;background:var(--ink);color:var(--bone);border-radius:3mm;padding:4mm 5mm"><b>Salamatul yad</b><div style="font-size:8.6pt;opacity:.8;margin-top:1mm">AI tidak memprovokasi kekerasan atau pertumpahan darah.</div></div></div></div></div>''', title="Wasathiyyah Syar'iyyah")
 
 # ---------- 10 Posisi ----------
 pg(f'''{sec("03","Posisi")}<div class="row" style="gap:12mm"><div class="col"><h2>Di mana OpenTurath berdiri.</h2>
@@ -183,7 +189,7 @@ pg(f'''{sec("03","Posisi")}<div class="row" style="gap:12mm"><div class="col"><h
 <tr><td>AI Islami berbasis turath</td><td>Pemberi fatwa</td></tr>
 <tr><td>Alat bantu yang menghemat waktu mencari ibarah</td><td>Pengganti guru dan ulama</td></tr>
 <tr><td>Satu asisten, satu metodologi bidang</td><td>Mesin pencari yang mencampur semua kitab</td></tr>
-<tr><td>Dikurasi dengan jalan tengah</td><td>Alat kelompok untuk menjatuhkan kelompok lain</td></tr>
+<tr><td>Dikurasi dengan wasathiyyah syar'iyyah</td><td>Alat kelompok untuk menjatuhkan kelompok lain</td></tr>
 <tr><td>Dibangun dan ditinjau bersama ulama</td><td>Lembaga yang mengatasnamakan ulama</td></tr>
 <tr><td>Layanan mandiri</td><td>Produk resmi Google</td></tr></table></div></div>''', title="Posisi")
 
@@ -192,18 +198,10 @@ def why(t, d): return f'<div class="card"><h3>{t}</h3><p class="small" style="co
 pg(f'''{sec("03","Mengapa Jawaban Kami Berbeda")}<h2>Kualitas jawaban, bukan jumlah kitab.</h2>
 <div class="grid2" style="margin-top:4mm">
 {why("Satu bidang, satu metodologi","Banyak AI menjawab dari ribuan kitab sekaligus. Itu baik untuk kelengkapan, tetapi tidak untuk metodologi. Fikih Syafi'i dan hadis punya cara kerja yang berbeda; mencampurnya membuat jawaban tidak rapi. Karena itu tiap asisten OpenTurath bekerja dengan metodologinya sendiri.")}
-{why("Kurasi, bukan pengumpulan","Setiap kitab dipilih satu per satu dengan manhaj jalan tengah. Jumlah kitab bukan ukuran. Yang diukur adalah ketepatan jawaban.")}
+{why("Kurasi, bukan pengumpulan","Setiap kitab dipilih satu per satu dengan wasathiyyah syar'iyyah. Jumlah kitab bukan ukuran. Yang diukur adalah ketepatan jawaban.")}
 {why("Ditinjau para ulama","Para ulama diberi akses untuk memeriksa isi OpenTurath di bidangnya: fikih, Fikih Tahawwulat, hadis, bahasa Arab, dan lainnya. Pakar juga mengarahkan metodologi.")}
 {why("Ibarah lebih dulu","Ketepatan ibarah dan rujukan adalah prioritas utama dan dalam pengujian berulang kami hasilnya sangat tinggi. Penjelasan AI tetap perlu diverifikasi kepada guru.")}</div>
 <p class="small" style="margin-top:5mm">Perbandingan dengan sejumlah AI kelas dunia untuk ilmu agama Islam dapat dilihat di openturath.id.</p>''', title="Pembeda")
-
-# ---------- 11 Kepribadian ----------
-def slider(a, b, pos):
-    return f'<div style="margin-bottom:6mm"><div style="display:flex;justify-content:space-between;font-size:9pt;font-weight:600"><span>{a}</span><span style="color:var(--g2)">{b}</span></div><div style="height:.4mm;background:var(--ink);position:relative;margin-top:3mm"><span style="position:absolute;left:{pos}%;top:-2mm;width:4.4mm;height:4.4mm;border-radius:50%;background:var(--ink);transform:translateX(-50%)"></span></div></div>'
-pg(f'''{sec("03","Kepribadian")}<div class="row" style="gap:16mm"><div style="width:100mm"><h2>Seperti perpustakaan manuskrip yang hening.</h2>
-<p>OpenTurath meminjam karakter seorang pendamping yang sabar: tidak tergesa, tidak menggurui, tidak mengaku lebih tahu daripada gurunya.</p>
-<p class="serif" style="font-size:16pt;font-style:italic">The Quiet Islamic Scholar</p></div>
-<div class="col" style="padding-top:3mm">{slider("Tenang","Ramai",12)}{slider("Teliti","Serampangan",14)}{slider("Rendah hati","Menggurui",16)}{slider("Hangat","Kaku",30)}{slider("Klasik","Kekinian",32)}</div></div>''', title="Kepribadian")
 
 # ---------- 12 Nama ----------
 pg(f'''{sec("04","Nama")}<div class="row" style="gap:14mm"><div class="col"><h1 style="font-size:46pt">OpenTurath</h1>
@@ -228,9 +226,9 @@ def lvl(t, d, ind=0, dark=False):
 pg(f'''{sec("04","Susunan Nama")}<h2>Satu merek induk, empat lini, nama yang sederhana.</h2>
 <div style="margin-top:4mm">{lvl("OpenTurath","Merek induk. Dipakai di semua materi.",0,True)}
 {lvl("OpenTurath AI","Aplikasi AI Islami berbasis turath. Nama di toko aplikasi. Dalam teks cukup tulis OpenTurath bila sudah jelas.",12)}
-{lvl("Maktabah AI","Pusat unduh kitab. Dalam pembangunan.",12)}
+{lvl("Maktabah OpenTurath","Pusat unduh kitab. Dalam pembangunan.",12)}
 {lvl("AI Manuskrip","Pembaca dan penahkik manuskrip. Nama produk akan ditetapkan sebelum rilis.",12)}
-{lvl("Kelas OpenTurath","Kelas menggunakan AI bagi penuntut ilmu.",12)}
+{lvl("Akademi OpenTurath","Pembelajaran menggunakan AI bagi penuntut ilmu.",12)}
 {lvl("Asisten + nama bidang","Contoh: Asisten Fikih Syafi'i, Asisten Hadis.",12)}
 {lvl("Cabang Fikih Tahawwulat","Al-Muhaqqiq, Al-Bayan, Al-Mukhtabir, Al-Habib, Al-Khatib.",24)}
 {lvl("openturath.id","Alamat website resmi. Selalu huruf kecil.",12)}</div>
@@ -367,49 +365,9 @@ pg(f'''{sec("07","Hierarki")}<div class="row" style="gap:14mm"><div class="col" 
 <tr><td>Cetak miring</td><td>Istilah asing dan tagline.</td></tr>
 <tr><td>Harakat</td><td>Dipertahankan bila sumbernya berharakat.</td></tr></table></div></div></div>''', title="Hierarki")
 
-# ---------- 24 Suara ----------
-pg(f'''{sec("08","Suara")}<h2>Cara OpenTurath berbicara.</h2>
-<div class="grid4" style="margin-top:4mm">
-<div class="card"><h3>Tenang</h3><p class="small" style="color:var(--ink);margin:0">Kalimat pendek dan lapang. Tidak ada tanda seru berlebihan, tidak ada desakan.</p></div>
-<div class="card"><h3>Teliti</h3><p class="small" style="color:var(--ink);margin:0">Menyebut sumber, menjaga istilah, dan konsisten dalam ejaan.</p></div>
-<div class="card"><h3>Rendah hati</h3><p class="small" style="color:var(--ink);margin:0">Berkata &ldquo;mari kita lihat kitabnya&rdquo;, bukan &ldquo;pokoknya begini&rdquo;.</p></div>
-<div class="card"><h3>Hangat</h3><p class="small" style="color:var(--ink);margin:0">Menyapa seperti teman belajar yang sabar, bukan layanan pelanggan yang kaku.</p></div></div>
-<div class="grid2" style="margin-top:6mm"><div class="card"><span class="yes">Kami menulis seperti ini</span><p class="serif" style="font-size:13pt;margin:0;max-width:none">&ldquo;Berikut pembahasan yang kami temukan. Buka kitabnya untuk membaca konteks lengkapnya.&rdquo;</p></div>
-<div class="card"><span class="no">Kami tidak menulis seperti ini</span><p class="serif" style="font-size:13pt;margin:0;max-width:none;color:var(--g2)">&ldquo;Ini dia jawabannya! Pasti benar dan terpercaya 100%!&rdquo;</p></div></div>''', title="Suara")
-
-# ---------- 25 Nada menurut situasi + kosakata ----------
-pg(f'''{sec("08","Nada dan Kosakata")}<div class="row" style="gap:10mm"><div class="col" style="flex:1.1"><h3>Nada menurut situasi</h3><table>
-<tr><th>Situasi</th><th>Contoh</th></tr>
-<tr><td>Selamat datang</td><td>Pilih bidang yang ingin dipelajari.</td></tr>
-<tr><td>Rujukan belum ketemu</td><td>Kami belum menemukan rujukan yang jelas. Coba ubah kata kunci, atau tanyakan kepada guru Anda.</td></tr>
-<tr><td>Galat</td><td>Percakapan belum bisa dibuka. Periksa koneksi, lalu coba lagi.</td></tr>
-<tr><td>Akses berakhir</td><td>Masa akses modul ini telah berakhir. Anda dapat memperpanjang kapan saja.</td></tr>
-<tr><td>Berhasil</td><td>Tersimpan di Catatan.</td></tr></table>
-<p class="small" style="margin-top:3mm">Tanpa emoji dan tanpa tanda seru beruntun di antarmuka dan materi resmi.</p></div>
-<div class="col"><h3>Kosakata</h3><table><tr><th>Pakai</th><th>Hindari</th></tr>
-<tr><td>menelusuri, mencari rujukan</td><td>memutuskan hukum, mengeluarkan fatwa</td></tr>
-<tr><td>tanya jawab, percakapan</td><td>telaah, ruang kajian</td></tr>
-<tr><td>ibarah dan rujukan disajikan teliti; penjelasan AI perlu diverifikasi kepada guru</td><td>dijamin benar, akurat 100%</td></tr>
-<tr><td>AI sebagai alat bantu</td><td>AI yang menggantikan guru</td></tr>
-<tr><td>asisten bidang</td><td>ustaz AI, ulama digital</td></tr>
-<tr><td>ditinjau para ulama (tanpa nama, kecuali berizin tertulis)</td><td>didukung atau disahkan ulama tertentu</td></tr>
-<tr><td>teknologi Google; layanan mandiri</td><td>menyebut nama produk atau model AI pihak lain</td></tr>
-<tr><td>Anda</td><td>kamu, lo, gue (kecuali di media sosial santai)</td></tr></table></div></div>''', title="Nada dan Kosakata")
-
-# ---------- 26 Menulis ----------
-pg(f'''{sec("08","Menulis dengan Rapi")}<div class="row" style="gap:12mm"><div class="col"><h2>Ejaan dan istilah.</h2>
-<table><tr><th>Tulis</th><th>Bukan</th></tr>
-<tr><td>Syafi'i</td><td>Syafii, Shafi'i</td></tr><tr><td>fikih</td><td>fiqh, fiqih</td></tr><tr><td>hadis</td><td>hadits</td></tr>
-<tr><td>Al-Qur'an</td><td>Alquran, Quran</td></tr><tr><td>ibarah</td><td>ibaroh</td></tr><tr><td>turath</td><td>turats, turost</td></tr>
-<tr><td>Fikih Tahawwulat</td><td>Fiqh Tahawulat</td></tr></table>
-<p class="small" style="margin-top:3mm">Satu ejaan di seluruh materi. Istilah Arab diberi penjelasan singkat pada kemunculan pertama.</p></div>
-<div class="col"><h2>Pernyataan baku.</h2>
-<div class="card" style="margin-bottom:4mm"><div class="small">Catatan pada jawaban AI</div><p class="serif" style="font-size:12pt;margin:1mm 0 0;max-width:none">Ibarah dan rujukan disajikan dengan ketelitian tinggi. Penjelasan AI tetap perlu diverifikasi kepada guru, terutama untuk amal dan fatwa. OpenTurath adalah alat bantu, bukan pengganti guru.</p></div>
-<div class="card"><div class="small">Hubungan dengan Google</div><p class="serif" style="font-size:12pt;margin:1mm 0 0;max-width:none">OpenTurath memanfaatkan teknologi Google dan merupakan layanan mandiri. OpenTurath tidak berafiliasi dengan, didukung oleh, atau disahkan oleh Google.</p></div></div></div>''', title="Menulis")
-
 # ---------- 27 Citra ----------
 arch = lambda w,h,extra="": f'<div class="arch" style="width:{w}mm;height:{h}mm;{extra}"></div>'
-pg(f'''{sec("09","Citra")}<h2>Lengkung, garis halus, dan ruang kosong.</h2>
+pg(f'''{sec("08","Citra")}<h2>Lengkung, garis halus, dan ruang kosong.</h2>
 <div class="grid4" style="margin-top:4mm">
 <div><div class="tile" style="height:56mm;background:#fff;border:.3mm solid var(--g3);align-items:flex-end">{arch(34,44)}</div><div class="cap"><b>Motif lengkung</b><br>Bingkai kartu kitab dan penanda bab, dipakai hemat. Bukan pola latar yang ramai.</div></div>
 <div><div class="tile" style="height:56mm;background:#fff;border:.3mm solid var(--g3);flex-direction:column;gap:2.5mm;padding:8mm"><div style="width:100%;height:.3mm;background:#100F0E"></div><div style="width:100%;height:.3mm;background:#DADADA"></div><div style="width:100%;height:.3mm;background:#DADADA"></div><div style="width:60%;height:.3mm;background:#DADADA;align-self:flex-start"></div></div><div class="cap"><b>Garis halus</b><br>Garis 0,5 sampai 1 px menggantikan bayangan tebal.</div></div>
@@ -419,7 +377,7 @@ pg(f'''{sec("09","Citra")}<h2>Lengkung, garis halus, dan ruang kosong.</h2>
 <div class="card" style="padding:4mm 6mm"><b>Gerak</b><p class="small" style="margin:1mm 0 0;color:var(--ink)">Pendek, halus, dan fungsional: pudar masuk dan geser kecil. Tanpa partikel, kilau, atau efek cahaya. Video memakai simbol apa adanya.</p></div></div>''', title="Citra")
 
 # ---------- 28 Tata letak ----------
-pg(f'''{sec("10","Tata Letak dan Komponen")}<div class="row" style="gap:10mm"><div class="col"><h2>Ritme jarak dan sudut.</h2>
+pg(f'''{sec("09","Tata Letak dan Komponen")}<div class="row" style="gap:10mm"><div class="col"><h2>Ritme jarak dan sudut.</h2>
 <table><tr><th>Token</th><th>Nilai</th><th>Kegunaan</th></tr>
 <tr><td>Jarak</td><td>kelipatan 4 px</td><td>4, 8, 12, 16, 24, 32</td></tr>
 <tr><td>Sudut kartu</td><td>16 px</td><td>Kartu, panel, dialog</td></tr>
@@ -439,7 +397,7 @@ def phone(inner, bg="#F6F6F6"):
 scr1 = f'<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:4mm;text-align:center">{logo(16)}<div class="wm" style="font-size:13pt">OpenTurath</div><div style="font-size:6.5pt;color:#606060;font-style:italic">Setiap jawaban, berpijak pada turath.</div><div style="background:#171717;color:#fff;border-radius:3mm;padding:2.5mm 0;width:100%;font-size:7pt;font-weight:600;margin-top:4mm">Masuk dengan Google</div></div>'
 scr2 = '<div style="font-size:6pt;letter-spacing:.14em;text-transform:uppercase;color:#606060;font-weight:600">Beranda</div><div class="serif" style="font-size:12pt;margin:1mm 0 3mm">Pilih bidang</div>' + "".join(f'<div style="background:#fff;border:.25mm solid #DADADA;border-radius:2.5mm;padding:2.5mm;margin-bottom:2mm"><div style="font-size:7.5pt;font-weight:600">{t}</div><div style="font-size:5.5pt;color:#606060">{d}</div></div>' for t,d in [("Fikih Syafi'i","Mazhab Imam Asy-Syafi'i"),("Hadis","Kitab induk hadis"),("Tafsir","Eksegesis Al-Qur'an"),("Fikih Tahawwulat","Lima cabang khusus")])
 scr3 = '<div style="font-size:7pt;font-weight:600;margin-bottom:3mm">Fikih Syafi\'i</div><div style="background:#EDEDED;border-radius:2.5mm;padding:2.5mm;font-size:6pt;margin-bottom:2mm">Apa syarat sah wudhu?</div><div style="background:#fff;border:.25mm solid #DADADA;border-radius:2.5mm;padding:2.5mm;font-size:6pt;line-height:1.5">Pembahasan ditemukan pada bab thaharah.<div class="ar" style="font-size:9pt;margin-top:1.5mm">فُرُوضُ الْوُضُوءِ سِتَّةٌ</div><div style="color:#606060;margin-top:1.5mm">Buka kitab untuk membaca konteksnya.</div></div>'
-pg(f'''{sec("11","Penerapan: Aplikasi")}<div class="row" style="gap:12mm;align-items:center"><div style="width:80mm"><h2>Aplikasi OpenTurath AI</h2><p>Satu logo per layar. Latar kanvas tenang, kartu putih bergaris halus, satu tombol utama berwarna Tinta.</p><p class="small">Ikon aplikasi memakai versi kotak membulat. Nama di toko aplikasi: <b>OpenTurath AI</b>.</p></div>
+pg(f'''{sec("10","Penerapan: Aplikasi")}<div class="row" style="gap:12mm;align-items:center"><div style="width:80mm"><h2>Aplikasi OpenTurath AI</h2><p>Satu logo per layar. Latar kanvas tenang, kartu putih bergaris halus, satu tombol utama berwarna Tinta.</p><p class="small">Ikon aplikasi memakai versi kotak membulat. Nama di toko aplikasi: <b>OpenTurath AI</b>.</p></div>
 <div class="row" style="gap:8mm">{phone(scr1)}{phone(scr2)}{phone(scr3)}</div></div>''', title="Aplikasi")
 
 # ---------- 30 Penerapan: website & sosial ----------
@@ -447,7 +405,7 @@ site = f'''<div style="width:150mm;border:.4mm solid #100F0E;border-radius:3mm;o
 <div style="padding:12mm 10mm 10mm"><div class="serif" style="font-size:25pt;line-height:1.05">Setiap jawaban,<br>berpijak pada turath.</div><p style="font-size:8pt;color:#606060;margin:4mm 0;max-width:90mm">OpenTurath membantu penuntut ilmu memahami kitab dan menemukan rujukan ibarahnya, dengan tetap kembali kepada guru.</p><div style="display:flex;gap:3mm"><span style="background:#171717;color:#fff;border-radius:2.5mm;padding:2mm 5mm;font-size:8pt;font-weight:600">Jelajahi asisten</span><span style="border:.3mm solid #767676;border-radius:2.5mm;padding:2mm 5mm;font-size:8pt;font-weight:600;background:#fff">Lihat kitab rujukan</span></div></div></div>'''
 post = f'<div style="width:50mm;height:62mm;background:#09090B;color:#FAFAFA;border-radius:2mm;padding:6mm;display:flex;flex-direction:column;justify-content:space-between"><div>{logo(8,"#FAFAFA")}</div><div class="serif" style="font-size:14pt;line-height:1.15">Kembali kepada sumber. Kembali berguru.</div><div style="font-size:5.5pt;letter-spacing:.14em;color:#999">OPENTURATH.ID</div></div>'
 avatar = f'<div style="width:24mm;height:24mm;border-radius:50%;background:#F6F6F3;display:flex;align-items:center;justify-content:center;border:.3mm solid #ccc">{logo(11)}</div>'
-pg(f'''{sec("11","Penerapan: Website dan Media Sosial")}<div class="row" style="gap:10mm;align-items:flex-start;margin-top:3mm"><div>{site}<div class="cap">Header memakai gabungan horizontal. Judul memakai tagline resmi.</div></div>
+pg(f'''{sec("10","Penerapan: Website dan Media Sosial")}<div class="row" style="gap:10mm;align-items:flex-start;margin-top:3mm"><div>{site}<div class="cap">Header memakai gabungan horizontal. Judul memakai tagline resmi.</div></div>
 <div><div style="display:flex;gap:6mm;align-items:flex-end">{post}<div>{avatar}<div class="cap">Avatar: ikon aplikasi</div></div></div>
 <div class="card" style="margin-top:5mm;padding:4mm 5mm;width:98mm"><div class="small">Biografi (di bawah 150 karakter)</div><p style="font-size:9pt;margin:1mm 0 0">Setiap jawaban, berpijak pada turath. AI Islami berbasis kitab dan ulama. openturath.id</p></div></div></div>''', title="Website dan Sosial")
 
@@ -455,12 +413,12 @@ pg(f'''{sec("11","Penerapan: Website dan Media Sosial")}<div class="row" style="
 letter = f'<div style="width:78mm;height:104mm;background:#fff;border:.3mm solid #ccc;padding:7mm;position:relative">{lockup(8)}<div style="height:.3mm;background:#100F0E;margin:3mm 0 5mm"></div><div style="font-size:5.5pt;color:#606060;margin-bottom:3mm">22 Oktober 2026 &middot; No. OT-SRT-001</div><div style="font-size:6pt;line-height:1.7;color:#333">Yth. Bapak/Ibu,<br><br>Dengan hormat, kami menyampaikan...<br><div style="height:.25mm;background:#ddd;margin:2mm 0"></div><div style="height:.25mm;background:#ddd;margin:2mm 0"></div><div style="height:.25mm;background:#ddd;margin:2mm 0;width:70%"></div></div><div style="position:absolute;bottom:5mm;left:7mm;right:7mm;font-size:5pt;color:#606060;border-top:.25mm solid #ddd;padding-top:2mm;display:flex;justify-content:space-between"><span>openturath.id</span><span>Halaman 1</span></div></div>'
 slide = f'<div style="width:96mm;height:54mm;background:#09090B;color:#FAFAFA;border-radius:1.5mm;padding:7mm;position:relative"><div style="position:absolute;top:6mm;right:7mm">{logo(7,"#FAFAFA")}</div><div class="kick" style="font-size:5.5pt;color:#999;margin-bottom:3mm">BAB 01</div><div class="serif" style="font-size:17pt;line-height:1.1;max-width:60mm">Mengapa belajar kitab terasa berat?</div></div>'
 slide2 = f'<div style="width:96mm;height:54mm;background:#F6F6F3;border-radius:1.5mm;padding:7mm;border:.3mm solid #ccc"><div class="serif" style="font-size:12pt;margin-bottom:3mm">Tiga langkah memulai</div><div style="display:flex;gap:3mm">' + "".join(f'<div style="flex:1;background:#fff;border:.25mm solid #DADADA;border-radius:2mm;padding:3mm"><div class="num" style="font-size:12pt">{i}</div><div style="font-size:6pt">{t}</div></div>' for i,t in [(1,"Pilih bidang ilmu"),(2,"Ajukan pertanyaan"),(3,"Buka kitab rujukan")]) + '</div></div>'
-pg(f'''{sec("11","Penerapan: Dokumen dan Presentasi")}<div class="row" style="gap:12mm;align-items:flex-start"><div>{letter}<div class="cap">Kop surat: gabungan horizontal, garis tipis, tanpa warna.</div></div>
+pg(f'''{sec("10","Penerapan: Dokumen dan Presentasi")}<div class="row" style="gap:12mm;align-items:flex-start"><div>{letter}<div class="cap">Kop surat: gabungan horizontal, garis tipis, tanpa warna.</div></div>
 <div><div style="display:flex;flex-direction:column;gap:5mm">{slide}{slide2}</div><div class="cap">Slide: judul Newsreader, latar Obsidian atau Kertas, logo di sudut.</div></div>
 <div class="col"><div class="card"><h3>Penomoran dokumen</h3><p class="small" style="color:var(--ink)">Format <code>OT-JENIS-NNN</code>, contoh <code>OT-ID-001</code> untuk buku ini dan <code>OT-SRT-001</code> untuk surat.</p><h3 style="margin-top:4mm">Tanda tangan surel</h3><p class="small" style="color:var(--ink);margin:0">Nama, jabatan<br><b>OpenTurath</b><br>openturath.id</p></div></div></div>''', title="Dokumen")
 
 # ---------- 32 Penggunaan bersama ----------
-pg(f'''{sec("12","Penggunaan Bersama")}<div class="row" style="gap:10mm"><div class="col"><h2>Bagi pihak di luar OpenTurath.</h2>
+pg(f'''{sec("11","Penggunaan Bersama")}<div class="row" style="gap:10mm"><div class="col"><h2>Bagi pihak di luar OpenTurath.</h2>
 <div class="card" style="margin-bottom:4mm"><span class="yes">Boleh tanpa izin</span><p style="font-size:9.5pt;margin:0">Menyebut nama OpenTurath secara wajar dalam berita, ulasan, dan tulisan. Menampilkan logo apa adanya untuk mengarahkan pembaca ke OpenTurath.</p></div>
 <div class="card"><span class="no" style="color:var(--ink)">Perlu izin tertulis</span><p style="font-size:9.5pt;margin:0">Memakai nama atau logo pada produk atau layanan lain; menyiratkan kemitraan atau dukungan; membuat turunan logo, akun, atau domain yang tampak resmi; memakai logo untuk kegiatan komersial atau penggalangan dana. Izin diberikan hanya oleh Rafli Husen.</p></div></div>
 <div class="col"><h2>Tata kelola.</h2><table>
@@ -468,7 +426,7 @@ pg(f'''{sec("12","Penggunaan Bersama")}<div class="row" style="gap:10mm"><div cl
 <tr><td><b>Kontak</b></td><td>support@openturath.id</td></tr>
 <tr><td><b>Merek</b></td><td>Belum didaftarkan. Jangan memakai tanda &reg; pada logo atau nama.</td></tr>
 <tr><td><b>Kerja sama</b></td><td>Belum ada kerja sama resmi. Jangan menyiratkan adanya kemitraan.</td></tr>
-<tr><td><b>Versi</b></td><td>1.1, 23 Oktober 2026. Kecil (typo): 1.1.x. Isi: 1.x. Logo, nama, atau nilai: versi mayor.</td></tr>
+<tr><td><b>Versi</b></td><td>1.2, 23 Oktober 2026. Kecil (typo): 1.2.x. Isi: 1.x. Logo, nama, atau nilai: versi mayor.</td></tr>
 <tr><td><b>Berkas</b></td><td>Aset logo di <code>aset_logo</code>. Buku dibangun dari <code>sumber_buku/build_buku.py</code>.</td></tr></table></div></div>''', title="Penggunaan Bersama")
 
 # ---------- 33 Penutup ----------

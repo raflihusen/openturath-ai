@@ -6,26 +6,26 @@ Sumber kebenaran untuk menyusun Buku Identitas. Dirangkum dari jawaban lisan Pem
 - Nama: **Rafli Husen** (media sosial: `@rafli_husen`).
 - Peran: pendiri, pengembang, desainer, pemasar. **Seorang diri.**
 - Bentuk hukum: **perorangan**. Kantor/domisili usaha: **Bogor, Indonesia**.
-- Santri; kini **mahasiswa S2 di Yaman**. "Dibuat oleh pelajar, untuk pelajar" tetap dipakai.
+- Santri; kini **S1 dan S2; sedang menulis tugas akhir S2 di Yaman**. "Dibuat oleh pelajar, untuk pelajar" tetap dipakai.
 - Berguru langsung kepada **Al-Habib Abu Bakar Al-Adni bin Ali Al-Masyhur** (telah wafat, rahimahullah) dan ulama Hadramaut lain; sering hadir majelis Al-Habib Umar (bukan guru langsung). **Nama guru lain tidak disebut** agar menjangkau semua kalangan.
 - **Penegasan keras:** jangan ada diksi yang menyiratkan beliau belajar sendirian. Yang tepat: murajaah sendirian.
 
 ## Tonggak
 - **2023:** gagasan, ketika AI mulai populer: AI yang menyebut rujukan akurat dan terhubung dengan maktabah.
-- Pengembangan RAG hingga **revisi ke-9 lebih**.
+- 2023 sampai 2026: belajar mendalam tentang AI dan pembuatan aplikasi, termasuk menguji RAG hingga **revisi ke-9 lebih**.
 - **7 Mei 2026:** diumumkan di Universitas Al-Wasatiyah, Hadramaut, Yaman, di hadapan para ulama, saat menerima penghargaan atas AI Fikih Tahawwulat pertama di dunia (menurut Pemilik).
 - **23 Oktober 2026:** rilis publik perdana.
 
 ## Cerita asal (yang benar)
 - Membaca salah satu kitab terbesar Fikih Tahawwulat, menerjemahkan kata demi kata; satu halaman sekitar 1 jam; dibaca ulang tetap belum paham, hampir menangis.
-- Dari situ ia membuat AI yang mengumpulkan kitab Fikih Tahawwulat dan muhadharah Al-Habib Abu Bakar.
+- Pertanyaan awalnya: bagaimana memudahkan penuntut ilmu menerjemahkan dan memahami kitab Fikih Tahawwulat, terutama istilah-istilahnya. AI hanyalah sarana yang dipilih. Kenangan tentang ilmu mantik **tidak dicantumkan** di buku.
 - Motivasi: AI sering berhalusinasi (ayat, kitab, referensi, ibarah) sementara banyak muslim bertanya agama kepada AI.
 - Kenangan: Al-Habib Abu Bakar senang atas ilmu mantik yang ia sederhanakan dengan tabel, dan menulis komentar yang kurang lebih mendoakan agar ia dimudahkan meneruskan kemampuannya untuk berkhidmah kepada ilmu-ilmu Islam.
 - Prinsip dari Fikih Tahawwulat: memperbarui sarana tanpa merusak esensi (istilah Arab persisnya belum dikonfirmasi).
 
 ## Visi besar
 - Bukan hanya Fikih Tahawwulat: nahwu, sharaf, bahasa Arab, fikih, ushul fikih, seluruh ilmu Islam.
-- Menghidupkan turath para ulama lewat kitab dan ceramah (pengkajian pemikiran ulama lewat AI). **Nama tokoh tidak dipublikasikan tanpa izin.**
+- Menghidupkan turath para ulama lewat kitab dan ceramah (pengkajian pemikiran ulama lewat AI). Sumbernya ceramah di YouTube; Pemilik memutuskan tidak perlu menulis soal izin di buku (nama tokoh tetap tidak disebut).
 - "Rumah baru bagi seluruh penuntut ilmu."
 - "Open" juga berarti padanan di ranah Islam bagi AI terdepan dunia (frontier AI Islami), berbasis turath pada setiap jawaban (kitab atau ulama).
 
@@ -40,9 +40,9 @@ Sumber kebenaran untuk menyusun Buku Identitas. Dirangkum dari jawaban lisan Pem
 
 ## Ekosistem OpenTurath (empat lini)
 1. **OpenTurath AI**: rilis perdana 23 Oktober 2026.
-2. **Maktabah AI**: pusat unduh kitab terlengkap (semua cetakan, banyak sumber unduh: Telegram, arsip, situs lain), terinspirasi agregator tiket; sedang dibangun.
+2. **Maktabah OpenTurath** (bukan "Maktabah AI"): pusat unduh kitab terlengkap (semua cetakan, banyak sumber unduh: Telegram, arsip, situs lain), terinspirasi agregator tiket; sedang dibangun.
 3. **AI Manuskrip**: membaca dan menahkik manuskrip (makna bahasa, konteks tokoh, hadis, ayat); sudah diuji, akurasi sangat tinggi menurut Pemilik; nama produk belum ditetapkan ("OpenTurath Write" disebut sepintas).
-4. **Kelas OpenTurath**: cara memakai AI bagi penuntut ilmu dalam empat tahap: AI percakapan; gambar, logo, video untuk dakwah; membuat aplikasi; membuat AI agent.
+4. **Akademi OpenTurath** (bukan "Kelas"): cara memakai AI bagi penuntut ilmu dalam empat tahap: AI percakapan; gambar, logo, video untuk dakwah; membuat aplikasi; membuat AI agent.
 
 ## Produk
 - Pembaca: empat jenis sudah benar; boleh ditambah (penuntut ilmu, pemberi fatwa, ustaz kampung, khatib/penceramah).
@@ -68,3 +68,8 @@ Sumber kebenaran untuk menyusun Buku Identitas. Dirangkum dari jawaban lisan Pem
 4. Kata-kata penghargaan 7 Mei 2026 (frasa "pertama di dunia" perlu sesuai teks penghargaan).
 5. Tiga ring kurasi: apakah sesuai praktik kurasi saat ini.
 6. Nasib dokumen 01 sampai 09 (belum dijawab).
+
+## Keputusan 23 Oktober 2026 (sore)
+- Buku desain tidak memuat bab Suara, Nada, Kosakata, dan Kepribadian; materi itu pindah ke dokumen identitas terpisah.
+- Istilah "manhaj jalan tengah" diganti "wasathiyyah syar'iyyah" di seluruh buku; hadis dicabut dari halamannya.
+- "Dibuat oleh pelajar, untuk para pelajar" tampil tebal dalam pil bersudut minimalis.
