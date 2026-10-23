@@ -1,0 +1,12 @@
+{
+  "bpm": 120,
+  "beats": 28,
+  "morphs": { "btn": 0, "loader": 2, "check": 4, "island": 5, "answer": 7, "player": 11, "slider": 14.5, "toggle": 17, "tabs": 19, "chart": 21, "key": 24, "cmdk": 24.5, "toast": 26, "back": 27.0 },
+  "clicks": [1.75, 6.75, 11.75, 17.9, 20.0],
+  "holds": [[13.0, 14.1], [15.0, 16.4]],
+  "typeQ": [7.25, 9.25],
+  "typeK": [24.75, 25.4],
+  "flip": 18.0,
+  "enter": 25.6,
+  "hover": [[22.25, 22.95], [23.0, 23.9]]
+}
