@@ -202,7 +202,7 @@ const drawShadow = (pose, cx, cy, hw, hh, z, rad) => {
   const X0 = cx + ox - hw - m, X1 = cx + ox + hw + m, Y0 = cy + oy - hh - m, Y1 = cy + oy + hh + m;
   setCam(pShadow, pose);
   gl.uniform2f(U(pShadow, "u_bh"), hw, hh); gl.uniform2f(U(pShadow, "u_tot"), X1 - X0, Y1 - Y0);
-  gl.uniform1f(U(pShadow, "u_rad"), rad); gl.uniform1f(U(pShadow, "u_sig"), sig); gl.uniform1f(U(pShadow, "u_op"), 0.17);
+  gl.uniform1f(U(pShadow, "u_rad"), rad); gl.uniform1f(U(pShadow, "u_sig"), sig); gl.uniform1f(U(pShadow, "u_op"), 0.12);
   drawQuad(pShadow, [[X0, -Y0, 0.2], [X1, -Y0, 0.2], [X0, -Y1, 0.2], [X1, -Y1, 0.2]], [[0, 0], [1, 0], [0, 1], [1, 1]]);
 };
 
@@ -214,7 +214,7 @@ const KIND = {
 const FLY = (t) => 1 - sm((t - 7.9) / 1.15); // rata kembali saat naik
 const liftOf = (l, t) => {
   const K = { ...KIND[l.kind] }; const yc = l.y + l.h / 2; let q;
-  if (l.id.startsWith("hero")) { q = sm((t - 0.1) / 1.25); if (l.id.startsWith("hero-chip")) { K.peak = 70; } }
+  if (l.id.startsWith("hero")) { q = sm((t - 0.1) / 1.25); if (l.id === "hero-mark-0") { K.peak = 26; K.stand = 0; } if (l.id.startsWith("hero-btn")) { K.peak = 14; K.stand = 0; } if (l.id.startsWith("hero-chip")) { K.peak = 12; K.stand = 0; } }
   else { const ahead = 900; q = sm((Yview(t) - (yc - ahead)) / (ahead - 80)); if (l.id.startsWith("answer-chip")) { K.peak = 200; K.stand = 54; } }
   const g = FLY(t);
   const z = (K.rest + (K.peak - K.rest) * q) * (0.4 + 0.6 * g) + 0 * g;
@@ -264,8 +264,8 @@ const focusAt = (t, pose) => {
 };
 
 // ---------- gambar satu subframe ----------
-const TITLE = { badge: 10.02, l1: 10.12, tail: 10.36 };
-const L1 = ["Segera", "hadir,", "26", "Oktober."], L2 = ["Menjaga", "warisan,", "membuka", "cakrawala."];
+const TITLE = { badge: 10.02, l1: 10.12, tail: 10.34 };
+const L1 = ["Segera", "hadir"], L2 = ["Menjaga", "warisan,", "membuka", "cakrawala."];
 const drawOverlay = (t) => {
   oc.setTransform(1, 0, 0, 1, 0, 0); oc.clearRect(0, 0, W, H); oc.filter = "none";
   if (t < TITLE.badge - 0.01) { gl.bindTexture(gl.TEXTURE_2D, ovlTex); gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, ovl); return false; }
@@ -285,7 +285,12 @@ const drawOverlay = (t) => {
     });
   };
   words(L1, '500 74px GSF', "#111111", 124, TITLE.l1, 0.06);
-  words(L2, 'italic 400 82px "Hoefler Text"', "#8b8b92", 216, TITLE.tail, 0.05);
+  { const p = eo3((t - TITLE.tail) / 0.5); if (p > 0) {
+    oc.save(); oc.globalAlpha = p; oc.translate(0, (1 - p) * 14); oc.font = '500 40px GSF'; oc.textBaseline = "middle";
+    try { oc.letterSpacing = "3px"; } catch (e) {}
+    const tw = oc.measureText("26.10.2026").width, bw = tw + 84, bh = 70, cy = 212;
+    oc.fillStyle = "#111111"; oc.beginPath(); oc.roundRect(720 - bw / 2, cy - bh / 2, bw, bh, 22); oc.fill();
+    oc.fillStyle = "#fafafa"; oc.fillText("26.10.2026", 720 - tw / 2 + 1, cy + 2); oc.restore(); } }
   gl.bindTexture(gl.TEXTURE_2D, ovlTex); gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, ovl); return true;
 };
 
@@ -334,7 +339,7 @@ const renderScene = (t, pose) => {
       drawQuad(pLayer, corners, upg);
     }
     // ubin logo
-    for (let i = 0; i < 4; i++) {
+    for (let i = 0; i < 0; i++) {
       if (i >= 2 && t > 9.3) continue;
       const s = tileState(i, t); const hw = s.s / 2;
       const corners = rotQuad(s.X, s.Y, hw, hw, s.z, s.tilt); const upg2 = [[0, 0], [1, 0], [0, 1], [1, 1]];

@@ -85,52 +85,15 @@ def when(y):
         else: hi = m
     return hi
 
-# ---- 0-1.4 s: potongan hero terangkat ----
-place(page(0.9, 0.20, 5200, 900), 0.12, -0.1, 1, 0.25)
-for k, (f, t0, pan) in enumerate([(587.33, 0.22, -0.35), (880.0, 0.40, 0.3), (698.46, 0.58, -0.1), (1174.66, 0.74, 0.4)]):
-    place(bell(f, 1.8, 0.10, 0.7), t0, pan, 1, 0.5)
-# ubin logo keluar sudut
-place(air(1.5, 500, 4200, 0.35, 0.12), 1.15, 0, 1, 0.3)
-for f, t0, pan in [(1396.9, 1.38, -0.8), (1760.0, 1.46, 0.8), (1174.66, 1.54, 0.7), (1568.0, 1.62, -0.7)]:
-    place(bell(f, 1.6, 0.06, 0.5), t0, pan, 1, 0.55)
-
-# ---- perjalanan: angin halus + desir halaman setiap kartu terangkat ----
-tt = np.arange(int(5.9 * SR)) / SR + 1.5
-wind = fft_filter(noise(5.9), 260, 1500) * (0.55 + 0.45 * np.sin(2 * np.pi * tt / 2.4))
-wind *= np.minimum(1, np.minimum((tt - 1.5) / 0.8, (7.4 - tt) / 1.0)); place(wind / np.abs(wind).max() * 0.075, 1.5, 0, 1, 0.2)
-PENTA = [587.33, 659.25, 698.46, 880.0, 987.77, 1174.66]
-ev = []
-for l in meta["layers"]:
-    if l["kind"] in ("card", "photo", "testimonial") and not l["id"].startswith("hero"):
-        yc = l["y"] + l["h"] / 2; ev.append((when(yc - 900 + 410), l["kind"], l["id"]))
-ev.sort(); last = -1; ni = 0
-for t0, kind, _id in ev:
-    if t0 - last < 0.32 or t0 > 7.6: continue
-    last = t0; pan = (-0.45, 0.4, -0.15, 0.5)[ni % 4]
-    place(page(0.42 if kind != "photo" else 0.55, 0.30, 6500, 1100), t0 - 0.12, pan, 1, 0.3)
-    place(bell(PENTA[(ni * 2 + (ni // 3)) % 6], 2.2, 0.14, 0.8), t0 + 0.02, pan * 0.7, 1, 0.55); ni += 1
-
-# ---- naik ke atas (7.75-9.25) ----
-place(swell_tone(73.4, 293.7, 1.55, 0.20), 7.72, 0, 1, 0.35)
-place(air(1.6, 700, 6500, 0.72, 0.30, 2.6), 7.75, -0.1, 1, 0.5)
-place(air(0.9, 1500, 9000, 0.6, 0.20, 2.2), 8.55, 0.1, 1, 0.5)
-for f, t0, pan in [(1174.66, 8.74, -0.5), (1568.0, 8.9, 0.5), (1760.0, 9.06, -0.3)]: place(bell(f, 1.9, 0.07, 0.6), t0, pan, 1, 0.6)
-# ---- menukik (9.47-9.97) ----
-place(air(0.58, 900, 11000, 0.86, 0.50, 3.2), 9.42, 0, 1, 0.45)
-place(swell_tone(146.8, 587.3, 0.55, 0.30, 0.95), 9.44, 0, 1, 0.3)
-# ---- dentum judul (9.97) ----
-place(thump(0.95), 9.97, 0, 1, 0.22)
-for f, g, dly in [(587.33, 0.20, 0), (880.0, 0.17, 0.015), (1174.66, 0.15, 0.03), (1396.91, 0.10, 0.05)]:
-    place(bell(f, 4.0, g, 1.0, 1.1), 9.98 + dly, 0, 1, 0.7)
-place(air(1.4, 3500, 11000, 0.2, 0.10, 1.4), 9.98, 0, 1, 0.6)
-# kata demi kata: kerlip kaca halus
-for i in range(4): place(bell([1760.0, 1976.0, 2349.3, 2637.0][i], 1.2, 0.045, 0.4), 10.12 + 0.06 * i, -0.3 + 0.2 * i, 1, 0.6)
-for i in range(4): place(bell([1568.0, 1396.9, 1174.66, 1046.5][i], 1.6, 0.04, 0.4), 10.36 + 0.05 * i, 0.3 - 0.2 * i, 1, 0.65)
-place(bell(2349.3, 2.2, 0.05, 0.3), 10.02, 0, 1, 0.6)
-# alas udara sangat tipis di kartu akhir
-tail = fft_filter(noise(4.3), 180, 900) * np.linspace(0, 1, int(4.3 * SR)) ** 2 * np.linspace(1, 0.4, int(4.3 * SR))
-place(tail / np.abs(tail).max() * 0.03, 10.2, 0, 1, 0.3)
-
+# ---- minimalis: desir halaman, satu napas udara, satu dentum, satu lonceng ----
+place(page(0.9, 0.16, 5200, 900), 0.12, -0.1, 1, 0.25)
+for ni, (t0, kind, _id) in enumerate(sorted((when(l["y"] + l["h"] / 2 - 490), l["kind"], l["id"]) for l in meta["layers"] if l["kind"] in ("card", "photo", "testimonial") and not l["id"].startswith("hero"))):
+    if t0 > 7.4 or t0 < 1.2: continue
+    place(page(0.5, 0.18, 6000, 1200), t0 - 0.1, (-0.3, 0.3)[ni % 2], 1, 0.3)
+place(air(1.7, 600, 5200, 0.7, 0.16, 2.6), 7.75, 0, 1, 0.45)
+place(air(0.55, 900, 9000, 0.86, 0.22, 3.0), 9.42, 0, 1, 0.4)
+place(thump(0.62), 9.97, 0, 1, 0.2)
+place(bell(1174.66, 4.2, 0.09, 0.8, 1.2), 9.99, 0, 1, 0.75)
 # ---- gema: IR sintetis ----
 IRN = int(3.2 * SR); irt = np.arange(IRN) / SR
 ir = []
