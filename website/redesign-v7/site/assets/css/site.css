@@ -374,3 +374,81 @@ footer.site{border-top:1px solid var(--outline-variant);padding-top:64px;margin-
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.001s!important;transition-duration:.001s!important}}
 
 .nofx .rv{opacity:1!important;transform:none!important;transition:none!important}
+
+/* ===== V7.1: tiga bahasa, lengkung bersarang, perataan tengah, penjelasan ===== */
+@font-face{font-family:"OT Cairo";src:url("../fonts/Cairo-400.ttf") format("truetype");font-weight:400;font-display:swap}
+@font-face{font-family:"OT Cairo";src:url("../fonts/Cairo-600.ttf") format("truetype");font-weight:600;font-display:swap}
+@font-face{font-family:"OT Cairo";src:url("../fonts/Cairo-700.ttf") format("truetype");font-weight:700;font-display:swap}
+:root{--inv-card:rgba(248,249,252,.08);--inv-card-hover:rgba(248,249,252,.14)}
+:root[data-theme="dark"]{--inv-card:rgba(18,19,23,.07);--inv-card-hover:rgba(18,19,23,.12)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--inv-card:rgba(18,19,23,.07);--inv-card-hover:rgba(18,19,23,.12)}}
+.br{background:var(--inv-card)}.br:hover{background:var(--inv-card-hover)}
+.band .plat{background:var(--inv-card)}.tasks{background:var(--inv-card)}
+html[lang="ar"]{--sans:"OT Cairo","Google Sans Flex",system-ui,sans-serif}
+html[lang="ar"] body{letter-spacing:0;font-variation-settings:normal;line-height:1.7}
+html[lang="ar"] h1,html[lang="ar"] h2,html[lang="ar"] h3,html[lang="ar"] h4,html[lang="ar"] .kicker,html[lang="ar"] .btn,html[lang="ar"] .fx-item,html[lang="ar"] .rk .tt{letter-spacing:0!important;font-variation-settings:normal;font-weight:600;line-height:1.3}
+html[lang="ar"] h1.hero{font-size:clamp(36px,5.4vw,78px);line-height:1.25;max-width:20ch}
+html[lang="ar"] .phead h1{font-size:clamp(36px,5vw,72px);line-height:1.25}
+html[lang="ar"] .kicker{text-transform:none;font-size:14px}
+html[lang="ar"] .ftag{font-size:22px;line-height:1.4}
+html[dir="rtl"] .btn:hover .arr{transform:scaleX(-1) translateX(3px)}
+.faq .a{padding:0 0 26px;padding-inline-end:48px}
+.tbl th{padding:12px 0;padding-inline-end:16px}.tbl td{padding:22px 0;padding-inline-end:16px}
+.tbl td.c{text-align:center}.tbl td.c .ar{text-align:center;color:var(--inverse-variant)}
+
+/* hero: lengkung bersarang (gerbang pada logo) + judul kitab sebagai catatan tepi */
+.welcome{min-height:min(880px,calc(100svh - 40px));display:flex;flex-direction:column;align-items:center;justify-content:center}
+.arches{position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;color:var(--on-surface)}
+.ag{translate:calc(var(--px,0)*var(--d)*6px) 0;transition:translate .6s var(--ease);transform-box:fill-box;transform-origin:50% 100%;animation:breathe 10s ease-in-out infinite;animation-delay:calc(var(--i)*-1.4s)}
+.al{fill:none;stroke:currentColor;stroke-width:1.3;stroke-dasharray:1;stroke-dashoffset:1;animation:draw 2.4s var(--quart) forwards;animation-delay:calc(var(--i)*.16s)}
+.ktxt{font-family:var(--naskh);font-size:21px;fill:currentColor;opacity:0;animation:fadek 2.4s 1.6s forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+@keyframes fadek{to{opacity:.34}}
+@keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.014)}}
+.welcome>*:not(.arches){position:relative;z-index:1}
+@media (prefers-reduced-motion:reduce){.al{stroke-dashoffset:0;animation:none}.ktxt{opacity:.34;animation:none}.ag{animation:none}}
+.nofx .al{stroke-dashoffset:0;animation:none}.nofx .ktxt{opacity:.34;animation:none}.nofx .ag{animation:none}
+
+/* perataan tengah untuk pasangan Arab + Latin */
+.acard{align-items:center;justify-content:center;text-align:center;gap:6px}
+.acard .a{text-align:center}
+.detail .ar,.detail h3,.detail .sub{text-align:center}
+.detail h3{margin-top:2px}
+.br{align-items:center;text-align:center}
+.br .ar,.br b,.br i,.br span{text-align:center}
+.br i{font-style:normal;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--inverse-variant)}
+.sec-head.center{text-align:center;margin-inline:auto}.sec-head.center .lead{margin-inline:auto}
+.bigname{text-align:center;font-size:clamp(64px,10vw,140px);line-height:1.3;margin-top:12px}
+.bigname.sm{font-size:clamp(34px,4vw,56px);text-align:start;line-height:1.6;margin:0 0 6px}
+.phead .lead + .bigname{margin-top:28px}
+
+/* penjelasan rukun, tugas, cabang */
+.tasks{margin-top:40px;border-radius:var(--corner-xl);padding:clamp(24px,3vw,40px)}
+.tasks-hd{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:22px;font-size:18px}
+.tasks-hd .small{color:var(--inverse-variant)}
+.tasks-g{display:grid;grid-template-columns:1fr 1fr;gap:clamp(20px,3vw,40px)}
+.tasks h4{font-size:21px;font-weight:500;margin-bottom:8px;letter-spacing:-.01em}
+.tasks p{color:var(--inverse-variant);font-size:16px;line-height:1.6}
+@media (max-width:760px){.tasks-g{grid-template-columns:1fr}}
+.branches-hd{text-align:center;margin-top:clamp(40px,5vw,64px)}
+.branches-hd h3{font-size:clamp(26px,3vw,38px);font-weight:450;letter-spacing:-.03em}
+.branches-hd p{color:var(--inverse-variant);margin-top:8px}
+.branches{margin-top:28px}
+
+/* lain-lain */
+.searchbox{width:100%;min-height:52px;padding:0 22px;border-radius:var(--pill);border:1px solid var(--outline);background:var(--surface);color:var(--on-surface);font:inherit;margin-bottom:16px}
+.chip.big{height:auto;padding:10px 16px;border-radius:12px;font-size:14px;line-height:1.45;font-weight:500;text-align:start}
+.chip-row{margin-bottom:20px}
+.drop .alllink{border-top:1px solid var(--outline-variant);border-radius:0 0 16px 16px;margin-top:6px;padding-top:16px}
+.pillars.three{grid-template-columns:repeat(3,1fr)}
+@media (max-width:900px){.pillars.three{grid-template-columns:1fr 1fr}}
+@media (max-width:620px){.pillars.three{grid-template-columns:1fr}}
+.cols3{columns:3 240px;column-gap:40px}
+.plat-top{display:flex;justify-content:space-between;align-items:center}
+.small-li li{font-size:15px;padding:12px 4px}
+.more{margin-top:32px}
+.lini{padding-block:clamp(36px,5vw,64px);border-top:1px solid var(--outline-variant)}
+.sec-head.center .kicker{justify-content:center}
+
+.salam{font-family:var(--naskh);font-size:.6em;vertical-align:.12em;font-weight:400}
+.detail .btn{margin-top:22px}
