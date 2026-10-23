@@ -917,6 +917,11 @@ const copyCatalog = <String, List<String>>{
     "الإصدار {0} · {1}"
   ],
   "ahlanWithName": ["Halo, {0}", "Welcome, {0}", "أهلًا، {0}"],
+  "moduleClose": ["Tutup", "Close", "إغلاق"],
+  "modulePrev": ["Sebelumnya", "Previous", "السابق"],
+  "moduleNext": ["Berikutnya", "Next", "التالي"],
+  "moduleStartHere": ["Mulai dari sini", "Start here", "ابدأ من هنا"],
+  "moduleExample": ["Contoh pertanyaan", "Sample question", "سؤال توضيحي"],
   "moduleWatchVideo": [
     "Tonton video pengantar",
     "Watch the introduction video",

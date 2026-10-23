@@ -1,0 +1,1538 @@
+{
+ "bab": [
+  {
+   "id": "Pembuka",
+   "en": "Opening",
+   "ar": "تمهيد"
+  },
+  {
+   "id": "Hadis Jibril",
+   "en": "The Hadith of Jibril",
+   "ar": "حديث جبريل"
+  },
+  {
+   "id": "Kesatuan agama",
+   "en": "One religion, one whole",
+   "ar": "وحدة الدين"
+  },
+  {
+   "id": "Fikih Tahawwulat",
+   "en": "Fiqh al-Tahawwulat",
+   "ar": "فقه التحولات"
+  },
+  {
+   "id": "Lima asisten",
+   "en": "Five assistants",
+   "ar": "المساعدون الخمسة"
+  }
+ ],
+ "slides": [
+  {
+   "type": "title",
+   "bab": 0,
+   "kicker": {
+    "id": "Mengenal",
+    "en": "Getting to know",
+    "ar": "التعرّف على"
+   },
+   "title": {
+    "id": "Fikih Tahawwulat",
+    "en": "Fiqh al-Tahawwulat",
+    "ar": "فقه التحولات"
+   },
+   "sub": {
+    "id": "Ilmu untuk memahami zaman yang terus berubah.",
+    "en": "A knowledge for understanding a changing age.",
+    "ar": "علم لفهم زمان يتغيّر."
+   },
+   "hint": {
+    "id": "Geser atau ketuk untuk melanjutkan.",
+    "en": "Swipe or tap to continue.",
+    "ar": "اسحب أو انقر للمتابعة."
+   }
+  },
+  {
+   "type": "lines",
+   "bab": 0,
+   "lines": [
+    {
+     "id": "Pernahkah Anda bertanya-tanya,",
+     "en": "Have you ever wondered,",
+     "ar": "هل تساءلتَ يومًا،"
+    },
+    {
+     "id": "kenapa dunia terasa makin kacau?",
+     "en": "why the world feels more chaotic?",
+     "ar": "لماذا يبدو العالم أكثر اضطرابًا؟"
+    },
+    {
+     "id": "Apakah semua ini sudah dikabarkan Nabi ﷺ?",
+     "en": "Did the Prophet ﷺ already tell us of all this?",
+     "ar": "وهل أخبر النبي ﷺ بهذا كله؟"
+    },
+    {
+     "id": "Lalu, apa yang harus saya lakukan?",
+     "en": "And then, what should I do?",
+     "ar": "وماذا عليّ أن أفعل؟"
+    }
+   ]
+  },
+  {
+   "type": "text",
+   "bab": 0,
+   "title": {
+    "id": "Jawabannya ada.",
+    "en": "The answer is there.",
+    "ar": "الجواب موجود."
+   },
+   "lines": [
+    {
+     "id": "Dan ia berawal dari satu peristiwa di Madinah, ketika seorang asing datang menemui Rasulullah ﷺ.",
+     "en": "And it begins with one event in Madinah, when a stranger came to the Messenger ﷺ.",
+     "ar": "وبدايته حادثة واحدة في المدينة، حين جاء غريب إلى رسول الله ﷺ."
+    }
+   ]
+  },
+  {
+   "type": "title",
+   "bab": 1,
+   "kicker": {
+    "id": "Bab 1",
+    "en": "Chapter 1",
+    "ar": "الباب 1"
+   },
+   "title": {
+    "id": "Hadis Jibril",
+    "en": "The Hadith of Jibril",
+    "ar": "حديث جبريل"
+   },
+   "sub": {
+    "id": "Satu hadis yang memuat seluruh agama.",
+    "en": "One hadith that holds the whole religion.",
+    "ar": "حديث واحد يجمع الدين كله."
+   }
+  },
+  {
+   "type": "text",
+   "bab": 1,
+   "kicker": {
+    "id": "Suatu hari",
+    "en": "One day",
+    "ar": "ذات يوم"
+   },
+   "title": {
+    "id": "Seorang asing datang.",
+    "en": "A stranger arrives.",
+    "ar": "جاء رجل غريب."
+   },
+   "lines": [
+    {
+     "id": "Para sahabat sedang duduk bersama Rasulullah ﷺ. Tiba-tiba datang seorang laki-laki.",
+     "en": "The Companions were sitting with the Messenger ﷺ. Suddenly a man came.",
+     "ar": "كان الصحابة جلوسًا مع رسول الله ﷺ، فإذا برجل يُقبل."
+    },
+    {
+     "id": "Pakaiannya sangat putih. Rambutnya sangat hitam. Tak tampak bekas perjalanan, dan tak seorang pun mengenalnya.",
+     "en": "His clothes were very white. His hair was very black. No sign of travel, and no one knew him.",
+     "ar": "شديد بياض الثياب، شديد سواد الشعر، لا يظهر عليه أثر السفر، ولا يعرفه أحد."
+    }
+   ]
+  },
+  {
+   "type": "text",
+   "bab": 1,
+   "title": {
+    "id": "Ia duduk di hadapan Nabi ﷺ.",
+    "en": "He sat before the Prophet ﷺ.",
+    "ar": "جلس بين يدي النبي ﷺ."
+   },
+   "lines": [
+    {
+     "id": "Lututnya menyentuh lutut beliau, kedua tangannya di atas paha. Lalu ia mulai bertanya.",
+     "en": "His knees touched the Prophet's knees, his hands on his thighs. Then he began to ask.",
+     "ar": "ألصق ركبتيه بركبتيه ووضع كفيه على فخذيه، ثم بدأ يسأل."
+    }
+   ],
+   "note": {
+    "id": "Diriwayatkan Imam Muslim dari Umar bin Khattab, dan Imam Bukhari dari Abu Hurairah.",
+    "en": "Reported by Imam Muslim from 'Umar ibn al-Khattab, and by Imam al-Bukhari from Abu Hurayrah.",
+    "ar": "رواه مسلم عن عمر بن الخطاب، والبخاري عن أبي هريرة."
+   }
+  },
+  {
+   "type": "dialog",
+   "bab": 1,
+   "kicker": {
+    "id": "Pertanyaan pertama",
+    "en": "First question",
+    "ar": "السؤال الأول"
+   },
+   "asker": {
+    "id": "“Kabarkan kepadaku tentang Islam.”",
+    "en": "“Tell me about Islam.”",
+    "ar": "«أخبرني عن الإسلام.»"
+   },
+   "answer": {
+    "id": "Islam: bersaksi tiada tuhan selain Allah dan Muhammad utusan-Nya, mendirikan salat, menunaikan zakat, berpuasa Ramadan, dan berhaji bila mampu.",
+    "en": "Islam: to bear witness that there is no god but Allah and Muhammad is His messenger, to establish prayer, pay zakat, fast Ramadan, and perform hajj if able.",
+    "ar": "الإسلام: أن تشهد أن لا إله إلا الله وأن محمدًا رسول الله، وتقيم الصلاة، وتؤتي الزكاة، وتصوم رمضان، وتحج البيت إن استطعت إليه سبيلًا."
+   },
+   "note": {
+    "id": "Orang itu berkata, “Engkau benar.” Para sahabat heran: ia bertanya, lalu membenarkan.",
+    "en": "The man said, “You have spoken truly.” The Companions were amazed: he asks, then confirms.",
+    "ar": "قال: «صدقت». فعجبوا: يسأله ويصدّقه."
+   }
+  },
+  {
+   "type": "dialog",
+   "bab": 1,
+   "kicker": {
+    "id": "Pertanyaan kedua",
+    "en": "Second question",
+    "ar": "السؤال الثاني"
+   },
+   "asker": {
+    "id": "“Kabarkan kepadaku tentang Iman.”",
+    "en": "“Tell me about Iman.”",
+    "ar": "«أخبرني عن الإيمان.»"
+   },
+   "answer": {
+    "id": "Iman: engkau percaya kepada Allah, malaikat-Nya, kitab-kitab-Nya, rasul-rasul-Nya, hari akhir, dan takdir yang baik maupun yang buruk.",
+    "en": "Iman: that you believe in Allah, His angels, His books, His messengers, the Last Day, and in divine decree, its good and its bad.",
+    "ar": "الإيمان: أن تؤمن بالله وملائكته وكتبه ورسله واليوم الآخر، وتؤمن بالقدر خيره وشره."
+   }
+  },
+  {
+   "type": "dialog",
+   "bab": 1,
+   "kicker": {
+    "id": "Pertanyaan ketiga",
+    "en": "Third question",
+    "ar": "السؤال الثالث"
+   },
+   "asker": {
+    "id": "“Kabarkan kepadaku tentang Ihsan.”",
+    "en": "“Tell me about Ihsan.”",
+    "ar": "«أخبرني عن الإحسان.»"
+   },
+   "answer": {
+    "id": "Ihsan: engkau beribadah kepada Allah seakan-akan melihat-Nya. Bila engkau tidak melihat-Nya, sesungguhnya Dia melihatmu.",
+    "en": "Ihsan: that you worship Allah as if you see Him; and if you do not see Him, He sees you.",
+    "ar": "الإحسان: أن تعبد الله كأنك تراه، فإن لم تكن تراه فإنه يراك."
+   }
+  },
+  {
+   "type": "cards",
+   "bab": 1,
+   "title": {
+    "id": "Tiga pertanyaan, tiga jawaban.",
+    "en": "Three questions, three answers.",
+    "ar": "ثلاثة أسئلة وثلاثة أجوبة."
+   },
+   "items": [
+    {
+     "t": {
+      "id": "Islam",
+      "en": "Islam",
+      "ar": "الإسلام"
+     },
+     "d": {
+      "id": "Amal anggota tubuh",
+      "en": "The deeds of the limbs",
+      "ar": "عمل الجوارح"
+     }
+    },
+    {
+     "t": {
+      "id": "Iman",
+      "en": "Iman",
+      "ar": "الإيمان"
+     },
+     "d": {
+      "id": "Keyakinan akal dan hati",
+      "en": "The conviction of mind and heart",
+      "ar": "اعتقاد العقل والقلب"
+     }
+    },
+    {
+     "t": {
+      "id": "Ihsan",
+      "en": "Ihsan",
+      "ar": "الإحسان"
+     },
+     "d": {
+      "id": "Kesadaran dan kebersihan jiwa",
+      "en": "Awareness and purity of soul",
+      "ar": "حضور القلب وصفاء النفس"
+     }
+    }
+   ]
+  },
+  {
+   "type": "question",
+   "bab": 1,
+   "q": {
+    "id": "Apakah hadisnya berhenti di sini?",
+    "en": "Does the hadith stop here?",
+    "ar": "هل ينتهي الحديث هنا؟"
+   },
+   "hint": {
+    "id": "Pikirkan sejenak, lalu lanjut.",
+    "en": "Think for a moment, then continue.",
+    "ar": "تأمّل لحظة ثم تابع."
+   }
+  },
+  {
+   "type": "text",
+   "bab": 1,
+   "title": {
+    "id": "Belum.",
+    "en": "Not yet.",
+    "ar": "لا بعد."
+   },
+   "lines": [
+    {
+     "id": "Orang asing itu masih punya satu pertanyaan lagi.",
+     "en": "The stranger still had one more question.",
+     "ar": "كان لدى الغريب سؤال آخر."
+    }
+   ]
+  },
+  {
+   "type": "dialog",
+   "bab": 1,
+   "kicker": {
+    "id": "Pertanyaan keempat",
+    "en": "Fourth question",
+    "ar": "السؤال الرابع"
+   },
+   "asker": {
+    "id": "“Kabarkan kepadaku tentang hari kiamat.”",
+    "en": "“Tell me about the Hour.”",
+    "ar": "«أخبرني عن الساعة.»"
+   },
+   "answer": {
+    "id": "“Yang ditanya tidak lebih tahu daripada yang bertanya.”",
+    "en": "“The one asked knows no more than the one asking.”",
+    "ar": "«ما المسؤول عنها بأعلم من السائل.»"
+   },
+   "note": {
+    "id": "Waktunya rahasia Allah. Nabi menutup pintu tebak-tebakan.",
+    "en": "Its time is God's secret. The Prophet closes the door on guessing.",
+    "ar": "وقتها سرّ الله. فأغلق النبي ﷺ باب التخمين."
+   }
+  },
+  {
+   "type": "dialog",
+   "bab": 1,
+   "kicker": {
+    "id": "Pertanyaan keempat, lanjutan",
+    "en": "Fourth question, continued",
+    "ar": "تتمة السؤال الرابع"
+   },
+   "asker": {
+    "id": "“Kalau begitu, kabarkan kepadaku tanda-tandanya.”",
+    "en": "“Then tell me its signs.”",
+    "ar": "«فأخبرني عن أماراتها.»"
+   },
+   "answer": {
+    "id": "“Budak perempuan melahirkan tuannya, dan engkau melihat orang-orang yang dahulu bertelanjang kaki, miskin, dan menggembala kambing, berlomba meninggikan bangunan.”",
+    "en": "“That the slave woman gives birth to her mistress, and that you see the barefoot, scantily clad, poor shepherds competing in raising tall buildings.”",
+    "ar": "«أن تلد الأمة ربّتها، وأن ترى الحفاة العراة العالة رعاء الشاء يتطاولون في البنيان.»"
+   },
+   "note": {
+    "id": "Untuk tanda-tanda, Nabi ﷺ menjawab dengan jelas.",
+    "en": "On the signs, the Prophet ﷺ answered clearly.",
+    "ar": "أما العلامات فأجاب عنها النبي ﷺ بوضوح."
+   }
+  },
+  {
+   "type": "question",
+   "bab": 1,
+   "q": {
+    "id": "Bila bagian keempat bukan bagian dari agama, mengapa Nabi ﷺ menjawabnya?",
+    "en": "If the fourth part is not part of religion, why did the Prophet ﷺ answer it?",
+    "ar": "إن لم يكن الجزء الرابع من الدين، فلماذا أجاب عنه النبي ﷺ؟"
+   }
+  },
+  {
+   "type": "text",
+   "bab": 1,
+   "title": {
+    "id": "Orang itu pun pergi.",
+    "en": "Then the man left.",
+    "ar": "ثم انصرف الرجل."
+   },
+   "lines": [
+    {
+     "id": "Umar menunggu beberapa saat. Lalu Nabi ﷺ bertanya, “Wahai Umar, tahukah engkau siapa yang bertanya tadi?”",
+     "en": "'Umar waited a while. Then the Prophet ﷺ asked, “O 'Umar, do you know who the questioner was?”",
+     "ar": "مكث عمر مليًّا، ثم قال له النبي ﷺ: «يا عمر، أتدري من السائل؟»"
+    },
+    {
+     "id": "“Allah dan Rasul-Nya lebih tahu,” jawab Umar.",
+     "en": "“Allah and His Messenger know best,” said 'Umar.",
+     "ar": "قال: «الله ورسوله أعلم»."
+    }
+   ]
+  },
+  {
+   "type": "question",
+   "bab": 1,
+   "q": {
+    "id": "Apa kata Nabi ﷺ tentang seluruh pertanyaan tadi?",
+    "en": "What did the Prophet ﷺ say about all those questions?",
+    "ar": "ماذا قال النبي ﷺ عن تلك الأسئلة كلها؟"
+   }
+  },
+  {
+   "type": "quote",
+   "bab": 1,
+   "arabic": "هَذَا جِبْرِيلُ أَتَاكُمْ يُعَلِّمُكُمْ دِينَكُمْ",
+   "translation": {
+    "id": "“Itu Jibril. Ia datang kepada kalian untuk mengajarkan agama kalian.”",
+    "en": "“That was Jibril. He came to you to teach you your religion.”",
+    "ar": "«هذا جبريل أتاكم يعلّمكم دينكم.»"
+   },
+   "source": {
+    "id": "HR. Muslim",
+    "en": "Reported by Muslim",
+    "ar": "رواه مسلم"
+   }
+  },
+  {
+   "type": "question",
+   "bab": 1,
+   "q": {
+    "id": "Apakah Nabi ﷺ berkata bahwa bagian keempat itu bukan bagian dari agama?",
+    "en": "Did the Prophet ﷺ say that the fourth part is not part of religion?",
+    "ar": "هل قال النبي ﷺ إن الجزء الرابع ليس من الدين؟"
+   }
+  },
+  {
+   "type": "cards",
+   "bab": 1,
+   "title": {
+    "id": "Tidak. Beliau menyebut semuanya: “agama kalian”.",
+    "en": "No. He called all of it “your religion”.",
+    "ar": "لا. بل سمّاها كلها «دينكم»."
+   },
+   "items": [
+    {
+     "t": {
+      "id": "Islam",
+      "en": "Islam",
+      "ar": "الإسلام"
+     }
+    },
+    {
+     "t": {
+      "id": "Iman",
+      "en": "Iman",
+      "ar": "الإيمان"
+     }
+    },
+    {
+     "t": {
+      "id": "Ihsan",
+      "en": "Ihsan",
+      "ar": "الإحسان"
+     }
+    },
+    {
+     "t": {
+      "id": "Tanda-tanda zaman",
+      "en": "Signs of the times",
+      "ar": "علامات الساعة"
+     },
+     "hl": true
+    }
+   ],
+   "note": {
+    "id": "Empat pertanyaan. Satu pelajaran. Satu sebutan dari Nabi ﷺ: agama kalian.",
+    "en": "Four questions. One lesson. One name from the Prophet ﷺ: your religion.",
+    "ar": "أربعة أسئلة، ودرس واحد، وتسمية واحدة من النبي ﷺ: دينكم."
+   }
+  },
+  {
+   "type": "title",
+   "bab": 2,
+   "kicker": {
+    "id": "Bab 2",
+    "en": "Chapter 2",
+    "ar": "الباب 2"
+   },
+   "title": {
+    "id": "Satu hadis, satu kesatuan.",
+    "en": "One hadith, one whole.",
+    "ar": "حديث واحد، ووحدة واحدة."
+   },
+   "sub": {
+    "id": "Mengapa empat pertanyaan itu tidak bisa dipisah-pisah.",
+    "en": "Why the four questions cannot be separated.",
+    "ar": "لماذا لا يمكن فصل الأسئلة الأربعة؟"
+   }
+  },
+  {
+   "type": "text",
+   "bab": 2,
+   "title": {
+    "id": "“Ibu dari sunnah.”",
+    "en": "“The mother of the Sunnah.”",
+    "ar": "«أمّ السنّة»."
+   },
+   "lines": [
+    {
+     "id": "Para ulama menyebut Hadis Jibril Ummus Sunnah, karena seluruh pokok agama terangkum dalam dialog singkat ini.",
+     "en": "Scholars call the Hadith of Jibril Umm as-Sunnah, because the whole core of religion is gathered in this short dialogue.",
+     "ar": "يسمّي العلماء حديث جبريل «أمّ السنة» لأن أصول الدين كلها مجموعة في هذا الحوار الموجز."
+    }
+   ]
+  },
+  {
+   "type": "list",
+   "bab": 2,
+   "title": {
+    "id": "Mengapa ia satu kesatuan?",
+    "en": "Why is it one whole?",
+    "ar": "لماذا هو وحدة واحدة؟"
+   },
+   "items": [
+    {
+     "t": {
+      "id": "Satu majelis",
+      "en": "One gathering",
+      "ar": "مجلس واحد"
+     },
+     "d": {
+      "id": "Empat pertanyaan diajukan berurutan dalam satu pertemuan.",
+      "en": "Four questions asked one after another in a single meeting.",
+      "ar": "أربعة أسئلة متتابعة في لقاء واحد."
+     }
+    },
+    {
+     "t": {
+      "id": "Satu guru",
+      "en": "One teacher",
+      "ar": "معلّم واحد"
+     },
+     "d": {
+      "id": "Penanyanya Jibril, malaikat pembawa wahyu, yang datang untuk mengajar.",
+      "en": "The questioner is Jibril, the angel of revelation, who came to teach.",
+      "ar": "السائل جبريل، ملَك الوحي، جاء ليعلّم."
+     }
+    },
+    {
+     "t": {
+      "id": "Satu penutup",
+      "en": "One conclusion",
+      "ar": "خاتمة واحدة"
+     },
+     "d": {
+      "id": "Nabi ﷺ menyimpulkan semuanya sekaligus: “agama kalian”.",
+      "en": "The Prophet ﷺ sums it all up at once: “your religion”.",
+      "ar": "ختمها النبي ﷺ بجملة واحدة: «دينكم»."
+     }
+    }
+   ]
+  },
+  {
+   "type": "question",
+   "bab": 2,
+   "q": {
+    "id": "Bayangkan seorang guru menyerahkan buku berisi empat bab dan berkata, “Ini pelajaran kalian.” Bolehkah murid berkata, “Bab keempat bukan pelajaran”?",
+    "en": "Imagine a teacher hands over a book of four chapters and says, “This is your lesson.” May a student say, “The fourth chapter is not part of the lesson”?",
+    "ar": "تخيّل معلّمًا سلّم كتابًا من أربعة أبواب وقال: «هذا درسكم». هل يجوز للطالب أن يقول: «الباب الرابع ليس من الدرس»؟"
+   }
+  },
+  {
+   "type": "list",
+   "bab": 2,
+   "title": {
+    "id": "Empat bukti bahwa bagian keempat adalah agama",
+    "en": "Four proofs that the fourth part is religion",
+    "ar": "أربعة أدلة على أن الجزء الرابع من الدين"
+   },
+   "items": [
+    {
+     "t": {
+      "id": "1. Disebut “agama kalian”",
+      "en": "1. Called “your religion”",
+      "ar": "1. سُمّي «دينكم»"
+     },
+     "d": {
+      "id": "Nabi ﷺ menyebut seluruh isi dialog, termasuk bagian keempat.",
+      "en": "The Prophet ﷺ named the whole dialogue, the fourth part included.",
+      "ar": "سمّى النبي ﷺ الحوار كله ومنه الجزء الرابع."
+     }
+    },
+    {
+     "t": {
+      "id": "2. Dijawab, tidak ditolak",
+      "en": "2. Answered, not refused",
+      "ar": "2. أُجيب ولم يُرفض"
+     },
+     "d": {
+      "id": "Waktu kiamat dirahasiakan, tetapi tanda-tandanya dijelaskan.",
+      "en": "The time of the Hour is kept secret, but its signs are explained.",
+      "ar": "وقت الساعة مكتوم، أما علاماتها فمبيَّنة."
+     }
+    },
+    {
+     "t": {
+      "id": "3. Ditanyakan oleh Jibril",
+      "en": "3. Asked by Jibril",
+      "ar": "3. سأل عنه جبريل"
+     },
+     "d": {
+      "id": "Malaikat pembawa wahyu datang khusus untuk mengajarkannya.",
+      "en": "The angel of revelation came especially to teach it.",
+      "ar": "ملَك الوحي جاء ليعلّمه."
+     }
+    },
+    {
+     "t": {
+      "id": "4. Hadis yang merangkum agama",
+      "en": "4. A hadith that sums up religion",
+      "ar": "4. حديث يجمع الدين"
+     },
+     "d": {
+      "id": "Bila satu bagian dibuang, “agama kalian” tidak lagi utuh.",
+      "en": "Remove one part and “your religion” is no longer whole.",
+      "ar": "إن أُسقط جزء لم يبقَ «دينكم» كاملًا."
+     }
+    }
+   ]
+  },
+  {
+   "type": "cards",
+   "bab": 2,
+   "title": {
+    "id": "Setiap pertanyaan melahirkan satu ilmu.",
+    "en": "Each question gave birth to a science.",
+    "ar": "كل سؤال أنشأ علمًا."
+   },
+   "items": [
+    {
+     "t": {
+      "id": "Islam",
+      "en": "Islam",
+      "ar": "الإسلام"
+     },
+     "d": {
+      "id": "melahirkan Fikih",
+      "en": "gave rise to Fiqh",
+      "ar": "أنشأ الفقه"
+     }
+    },
+    {
+     "t": {
+      "id": "Iman",
+      "en": "Iman",
+      "ar": "الإيمان"
+     },
+     "d": {
+      "id": "melahirkan Akidah dan Tauhid",
+      "en": "gave rise to Creed and Tawhid",
+      "ar": "أنشأ العقيدة والتوحيد"
+     }
+    },
+    {
+     "t": {
+      "id": "Ihsan",
+      "en": "Ihsan",
+      "ar": "الإحسان"
+     },
+     "d": {
+      "id": "melahirkan Tasawuf dan Akhlak",
+      "en": "gave rise to Tasawwuf and Ethics",
+      "ar": "أنشأ التصوف والأخلاق"
+     }
+    },
+    {
+     "t": {
+      "id": "Tanda-tanda zaman",
+      "en": "Signs of the times",
+      "ar": "علامات الساعة"
+     },
+     "d": {
+      "id": "melahirkan Fikih Tahawwulat",
+      "en": "gave rise to Fiqh al-Tahawwulat",
+      "ar": "أنشأ فقه التحولات"
+     },
+     "hl": true
+    }
+   ]
+  },
+  {
+   "type": "question",
+   "bab": 2,
+   "q": {
+    "id": "Tiga ilmu pertama sudah kita kenal sejak lama. Mengapa yang keempat terasa asing?",
+    "en": "We have known the first three sciences for a long time. Why does the fourth feel unfamiliar?",
+    "ar": "العلوم الثلاثة الأولى معروفة منذ زمن. فلماذا يبدو الرابع غريبًا؟"
+   }
+  },
+  {
+   "type": "text",
+   "bab": 2,
+   "title": {
+    "id": "Karena ia “disimpan”.",
+    "en": "Because it was “stored away”.",
+    "ar": "لأنه كان «مدّخرًا»."
+   },
+   "lines": [
+    {
+     "id": "Dahulu bagian keempat tersimpan di bab-bab hadis tentang fitnah dan peristiwa besar. Ketika tanda-tandanya mulai tampak, Al-Habib Abu Bakar Al-Masyhur menatanya menjadi satu ilmu yang bisa dipelajari: Fikih Tahawwulat.",
+     "en": "The fourth part was kept in the hadith chapters on trials and great events. When its signs began to appear, Al-Habib Abu Bakar Al-Masyhur arranged it into one science that can be studied: Fiqh al-Tahawwulat.",
+     "ar": "كان الجزء الرابع محفوظًا في أبواب الفتن والملاحم من كتب الحديث. فلما بدت علاماته رتّبه الحبيب أبو بكر المشهور علمًا يُدرَس: فقه التحولات."
+    }
+   ]
+  },
+  {
+   "type": "text",
+   "bab": 2,
+   "title": {
+    "id": "Apakah rukun Islam dan Iman berubah?",
+    "en": "Do the pillars of Islam and Iman change?",
+    "ar": "هل تتغيّر أركان الإسلام والإيمان؟"
+   },
+   "lines": [
+    {
+     "id": "Tidak. Rukun Islam tetap lima. Rukun Iman tetap enam.",
+     "en": "No. The pillars of Islam stay five. The pillars of Iman stay six.",
+     "ar": "لا. أركان الإسلام خمسة، وأركان الإيمان ستة."
+    },
+    {
+     "id": "“Empat rukun agama” hanyalah cara mengelompokkan empat pertanyaan Jibril.",
+     "en": "“The four pillars of religion” is only a way to group Jibril's four questions.",
+     "ar": "و«أركان الدين الأربعة» مجرد تصنيف لأسئلة جبريل الأربعة."
+    }
+   ]
+  },
+  {
+   "type": "question",
+   "bab": 2,
+   "q": {
+    "id": "Bukankah kiamat hanya Allah yang tahu? Lalu mengapa kita membahas tandanya?",
+    "en": "Isn't it only Allah who knows the Hour? Then why discuss its signs?",
+    "ar": "أليس الله وحده يعلم الساعة؟ فلماذا نبحث في علاماتها؟"
+   }
+  },
+  {
+   "type": "compare",
+   "bab": 2,
+   "cols": [
+    {
+     "id": "Waktu kiamat",
+     "en": "The time of the Hour",
+     "ar": "وقت الساعة"
+    },
+    {
+     "id": "Tanda-tandanya",
+     "en": "Its signs",
+     "ar": "علاماتها"
+    }
+   ],
+   "rows": [
+    [
+     {
+      "id": "Siapa yang tahu",
+      "en": "Who knows",
+      "ar": "من يعلم"
+     },
+     {
+      "id": "Hanya Allah",
+      "en": "Only Allah",
+      "ar": "الله وحده"
+     },
+     {
+      "id": "Diajarkan Nabi ﷺ",
+      "en": "Taught by the Prophet ﷺ",
+      "ar": "علّمها النبي ﷺ"
+     }
+    ],
+    [
+     {
+      "id": "Sikap kita",
+      "en": "Our stance",
+      "ar": "موقفنا"
+     },
+     {
+      "id": "Dilarang menebak",
+      "en": "No guessing",
+      "ar": "لا تخمين"
+     },
+     {
+      "id": "Dipelajari agar iman selamat",
+      "en": "Studied so faith stays safe",
+      "ar": "تُدرس ليسلم الإيمان"
+     }
+    ]
+   ]
+  },
+  {
+   "type": "text",
+   "bab": 2,
+   "title": {
+    "id": "Pagar dan radar.",
+    "en": "A fence and a radar.",
+    "ar": "سياج ورادار."
+   },
+   "lines": [
+    {
+     "id": "Fungsi rukun keempat: menjaga tiga rukun lainnya agar tidak rusak, dipalsukan, atau ditinggalkan ketika zaman berguncang.",
+     "en": "The fourth pillar's role: to guard the other three so they are not spoiled, falsified, or abandoned when the age shakes.",
+     "ar": "وظيفة الركن الرابع: حفظ الثلاثة الأخرى كي لا تفسد أو تُزوَّر أو تُترك حين يضطرب الزمان."
+    }
+   ]
+  },
+  {
+   "type": "list",
+   "bab": 2,
+   "title": {
+    "id": "Dua tugasnya",
+    "en": "Its two tasks",
+    "ar": "مهمتاه"
+   },
+   "items": [
+    {
+     "t": {
+      "id": "Memperbarui cara dakwah",
+      "en": "Renewing the way of calling",
+      "ar": "تجديد وسائل الدعوة"
+     },
+     "d": {
+      "id": "Dengan hikmah dan nasihat yang baik, menjaga lisan dari mencela dan tangan dari menumpahkan darah.",
+      "en": "With wisdom and good counsel, guarding the tongue from reviling and the hand from bloodshed.",
+      "ar": "بالحكمة والموعظة الحسنة، مع حفظ اللسان من الذم واليد من الدم."
+     }
+    },
+    {
+     "t": {
+      "id": "Menjaga ilmu yang tetap",
+      "en": "Guarding the constant sciences",
+      "ar": "صيانة علوم الثوابت"
+     },
+     "d": {
+      "id": "Dari tiga perusak: sikap berlebihan, kepalsuan, dan tafsir orang yang tidak berilmu.",
+      "en": "From three corruptors: excess, falsehood, and interpretation by the unlearned.",
+      "ar": "من ثلاثة مفسدات: الغلو، والانتحال، وتأويل الجاهلين."
+     }
+    }
+   ]
+  },
+  {
+   "type": "compare",
+   "bab": 2,
+   "title": {
+    "id": "Dua tanda, dua kendali",
+    "en": "Two signs, two controls",
+    "ar": "علامتان وقراران"
+   },
+   "cols": [
+    {
+     "id": "Tanda dalam hadis",
+     "en": "The sign",
+     "ar": "العلامة"
+    },
+    {
+     "id": "Yang bergeser",
+     "en": "What shifts",
+     "ar": "ما يتحوّل"
+    }
+   ],
+   "rows": [
+    [
+     {
+      "id": "Budak perempuan melahirkan tuannya",
+      "en": "The slave woman gives birth to her mistress",
+      "ar": "أن تلد الأمة ربّتها"
+     },
+     {
+      "id": "Kendali ilmu dan keyakinan",
+      "en": "Control of knowledge and belief",
+      "ar": "قرار العلم والاعتقاد"
+     },
+     {
+      "id": "Urusan ilmu dipegang yang belum berhak",
+      "en": "Knowledge handed to those unfit",
+      "ar": "يُسند أمر العلم لغير أهله"
+     }
+    ],
+    [
+     {
+      "id": "Berlomba meninggikan bangunan",
+      "en": "Competing to raise tall buildings",
+      "ar": "التطاول في البنيان"
+     },
+     {
+      "id": "Kendali kekuasaan dan harta",
+      "en": "Control of power and wealth",
+      "ar": "قرار الحكم والاقتصاد"
+     },
+     {
+      "id": "Kekuasaan dan harta dipegang yang belum berhak",
+      "en": "Power and wealth handed to those unfit",
+      "ar": "يُسند الحكم والمال لغير أهله"
+     }
+    ]
+   ]
+  },
+  {
+   "type": "title",
+   "bab": 3,
+   "kicker": {
+    "id": "Bab 3",
+    "en": "Chapter 3",
+    "ar": "الباب 3"
+   },
+   "title": {
+    "id": "Apa itu Fikih Tahawwulat?",
+    "en": "What is Fiqh al-Tahawwulat?",
+    "ar": "ما هو فقه التحولات؟"
+   },
+   "sub": {
+    "id": "Dengan kata paling sederhana.",
+    "en": "In the simplest words.",
+    "ar": "بأبسط عبارة."
+   }
+  },
+  {
+   "type": "lines",
+   "bab": 3,
+   "lines": [
+    {
+     "id": "Fikih: pemahaman yang dalam.",
+     "en": "Fiqh: deep understanding.",
+     "ar": "الفقه: الفهم العميق."
+    },
+    {
+     "id": "Tahawwulat: perubahan-perubahan.",
+     "en": "Tahawwulat: the changes.",
+     "ar": "التحولات: التغيّرات."
+    },
+    {
+     "id": "Fikih Tahawwulat: ilmu memahami perubahan zaman dengan petunjuk Al-Qur'an dan hadis, supaya kita tahu sikap yang paling selamat.",
+     "en": "Fiqh al-Tahawwulat: the knowledge of understanding the changes of the age by the guidance of the Qur'an and hadith, so we know the safest stance.",
+     "ar": "فقه التحولات: علم فهم تغيّرات الزمان بهدي القرآن والحديث، لنعرف الموقف الأسلم."
+    }
+   ]
+  },
+  {
+   "type": "compare",
+   "bab": 3,
+   "cols": [
+    {
+     "id": "Fikih yang biasa menjawab",
+     "en": "Ordinary fiqh answers",
+     "ar": "الفقه المعتاد يجيب"
+    },
+    {
+     "id": "Fikih Tahawwulat menjawab",
+     "en": "Fiqh al-Tahawwulat answers",
+     "ar": "فقه التحولات يجيب"
+    }
+   ],
+   "rows": [
+    [
+     {
+      "id": "Pertanyaan",
+      "en": "The question",
+      "ar": "السؤال"
+     },
+     {
+      "id": "“Bagaimana salat dan zakat saya sah?”",
+      "en": "“How are my prayer and zakat valid?”",
+      "ar": "«كيف تصحّ صلاتي وزكاتي؟»"
+     },
+     {
+      "id": "“Bagaimana saya menjaga agama ketika zaman berubah dan penuh ujian?”",
+      "en": "“How do I protect my faith when the age changes and is full of trials?”",
+      "ar": "«كيف أحفظ ديني حين يتغيّر الزمان وتكثر الابتلاءات؟»"
+     }
+    ]
+   ]
+  },
+  {
+   "type": "lines",
+   "bab": 3,
+   "kicker": {
+    "id": "Pertanyaan yang kini sulit dijawab",
+    "en": "Questions that are hard to answer today",
+    "ar": "أسئلة يصعب أن نجد لها جوابًا اليوم"
+   },
+   "lines": [
+    {
+     "id": "Saya capek dengan berita buruk. Haruskah saya terus mengikutinya?",
+     "en": "I am tired of bad news. Must I keep following it?",
+     "ar": "تعبتُ من الأخبار السيئة. هل يلزمني متابعتها؟"
+    },
+    {
+     "id": "Kenapa iman saya naik turun dan susah istikamah?",
+     "en": "Why does my faith rise and fall?",
+     "ar": "لماذا يعلو إيماني ويهبط؟"
+    },
+    {
+     "id": "Bagaimana membedakan ustaz yang tepercaya dari yang bukan?",
+     "en": "How do I tell a trustworthy teacher from one who is not?",
+     "ar": "كيف أميّز المعلم الموثوق من غيره؟"
+    },
+    {
+     "id": "Apa yang harus saya lakukan dengan hoaks agama di grup keluarga?",
+     "en": "What should I do with religious hoaxes in the family group chat?",
+     "ar": "ماذا أفعل بالأخبار الدينية المكذوبة في مجموعة الأسرة؟"
+    }
+   ]
+  },
+  {
+   "type": "lines",
+   "bab": 3,
+   "kicker": {
+    "id": "Pertanyaan yang kini sulit dijawab",
+    "en": "Questions that are hard to answer today",
+    "ar": "أسئلة يصعب أن نجد لها جوابًا اليوم"
+   },
+   "lines": [
+    {
+     "id": "Bagaimana menjaga iman anak di zaman layar?",
+     "en": "How do I protect my child's faith in the age of screens?",
+     "ar": "كيف أحفظ إيمان ابني في زمن الشاشات؟"
+    },
+    {
+     "id": "Kenapa umat Islam banyak, tetapi terasa lemah?",
+     "en": "Why are Muslims many, yet feel weak?",
+     "ar": "لماذا المسلمون كثيرون ومع ذلك يشعرون بالضعف؟"
+    },
+    {
+     "id": "Bagaimana agama menyikapi AI, internet, dan budaya baru?",
+     "en": "How does religion treat AI, the internet, and new cultures?",
+     "ar": "كيف يتعامل الدين مع الذكاء الاصطناعي والإنترنت والثقافات الجديدة؟"
+    },
+    {
+     "id": "Bolehkah menebak tahun kiamat? Apakah tokoh tertentu itu tanda kiamat?",
+     "en": "May we guess the year of the Hour? Is a certain figure a sign of it?",
+     "ar": "هل يجوز تخمين سنة الساعة؟ وهل شخص معيّن من أشراطها؟"
+    }
+   ],
+   "note": {
+    "id": "Pertanyaan-pertanyaan ini sengaja tidak dijawab di sini. Jawabannya ada di kitab, dan bisa Anda tanyakan di OpenTurath AI.",
+    "en": "These questions are left unanswered here on purpose. The answers are in the books, and you can ask OpenTurath AI.",
+    "ar": "تُركت هذه الأسئلة دون جواب هنا عمدًا. فأجوبتها في الكتب، ويمكنك أن تسأل OpenTurath AI."
+   }
+  },
+  {
+   "type": "cards",
+   "bab": 3,
+   "title": {
+    "id": "Faedahnya dalam hidup sehari-hari",
+    "en": "What it gives you day to day",
+    "ar": "فوائده في الحياة اليومية"
+   },
+   "items": [
+    {
+     "t": {
+      "id": "Hati lebih tenang",
+      "en": "A calmer heart",
+      "ar": "قلب أهدأ"
+     },
+     "d": {
+      "id": "Tahu gambaran besar zaman, dan tahu kapan cukup mengikuti berita.",
+      "en": "You know the big picture, and when it is enough to follow the news.",
+      "ar": "تعرف الصورة العامة ومتى يكفي أن تتابع الأخبار."
+     }
+    },
+    {
+     "t": {
+      "id": "Tidak mudah tertipu",
+      "en": "Not easily fooled",
+      "ar": "لا تنخدع بسهولة"
+     },
+     "d": {
+      "id": "Tiga rambu: tidak menebak tahun, tidak menunjuk orang, tidak memaksakan hadis pada politik harian.",
+      "en": "Three signposts: no guessing years, no pointing at people, no forcing hadith onto daily politics.",
+      "ar": "ثلاث علامات: لا تخمين للسنوات، ولا إشارة إلى أشخاص، ولا إسقاط الحديث على السياسة اليومية."
+     }
+    },
+    {
+     "t": {
+      "id": "Tahu apa yang dikerjakan",
+      "en": "Knowing what to do",
+      "ar": "تعرف ما تفعل"
+     },
+     "d": {
+      "id": "Cemas diganti langkah: salat, nafkah halal, lisan terjaga, kebaikan terdekat.",
+      "en": "Worry becomes steps: prayer, lawful income, a guarded tongue, nearby good.",
+      "ar": "يتحوّل القلق إلى خطوات: الصلاة، والرزق الحلال، وحفظ اللسان، والخير القريب."
+     }
+    },
+    {
+     "t": {
+      "id": "Rumah lebih rukun",
+      "en": "A more peaceful home",
+      "ar": "بيت أكثر سكينة"
+     },
+     "d": {
+      "id": "Ikatan keluarga yang pasti lebih utama daripada debat yang belum pasti.",
+      "en": "A sure family bond outranks an uncertain argument.",
+      "ar": "رابطة الأسرة أولى من جدال غير مؤكد."
+     }
+    }
+   ]
+  },
+  {
+   "type": "cards",
+   "bab": 3,
+   "title": {
+    "id": "Faedahnya, lanjutan",
+    "en": "What it gives you, continued",
+    "ar": "فوائده، تتمة"
+   },
+   "items": [
+    {
+     "t": {
+      "id": "Jeli memilih guru",
+      "en": "Sharp in choosing teachers",
+      "ar": "أدق في اختيار المعلم"
+     },
+     "d": {
+      "id": "Sanad jelas, adab baik, tidak jadi alat politik sesaat.",
+      "en": "A clear chain, good manners, not a tool of passing politics.",
+      "ar": "سند واضح وأدب حسن، لا أداة لسياسة عابرة."
+     }
+    },
+    {
+     "t": {
+      "id": "Bijak bermedia dan berteknologi",
+      "en": "Wise with media and technology",
+      "ar": "حكيم مع الإعلام والتقنية"
+     },
+     "d": {
+      "id": "Ambil yang bermanfaat, tolak yang merusak.",
+      "en": "Take what helps, reject what harms.",
+      "ar": "خذ النافع وردّ الضار."
+     }
+    },
+    {
+     "t": {
+      "id": "Mendidik anak dengan hangat",
+      "en": "Raising children warmly",
+      "ar": "تربية الأبناء بدفء"
+     },
+     "d": {
+      "id": "Rumah menjadi benteng kasih sayang dan teladan.",
+      "en": "The home becomes a fortress of love and example.",
+      "ar": "يصير البيت حصنًا من المحبة والقدوة."
+     }
+    },
+    {
+     "t": {
+      "id": "Menjelaskan tanpa bertengkar",
+      "en": "Explaining without a quarrel",
+      "ar": "تشرح دون خصام"
+     },
+     "d": {
+      "id": "Punya bahasa yang sejuk untuk menasihati.",
+      "en": "A gentle language for advising.",
+      "ar": "لغة لطيفة للنصح."
+     }
+    }
+   ]
+  },
+  {
+   "type": "cards",
+   "bab": 3,
+   "title": {
+    "id": "Lima cabang ilmunya",
+    "en": "Its five branches",
+    "ar": "فروعه الخمسة"
+   },
+   "items": [
+    {
+     "t": {
+      "id": "Fikih Fitnah dan Penjagaan Diri",
+      "en": "Fiqh of Fitna and Self-Protection",
+      "ar": "فقه النواقض والنقائض"
+     },
+     "d": {
+      "id": "Mengenali yang merusak agama dan cara selamat darinya.",
+      "en": "Recognizing what harms religion and how to stay safe.",
+      "ar": "معرفة ما يفسد الدين وكيف ننجو منه."
+     }
+    },
+    {
+     "t": {
+      "id": "Fikih Isyarat, Kabar Gembira, dan Perlindungan",
+      "en": "Fiqh of Signals, Glad Tidings, and Protection",
+      "ar": "فقه الإشارات والبشارات"
+     },
+     "d": {
+      "id": "Pesan kasih sayang Nabi ﷺ, termasuk pentingnya guru bersanad.",
+      "en": "The Prophet's loving messages, including the importance of a teacher with a chain.",
+      "ar": "رسائل الرحمة النبوية ومنها أهمية المعلم المسنَد."
+     }
+    },
+    {
+     "t": {
+      "id": "Fikih Sains, Teknologi, dan Budaya Baru",
+      "en": "Fiqh of Science, Technology, and New Culture",
+      "ar": "فقه مستجدات العلوم"
+     },
+     "d": {
+      "id": "Menimbang penemuan dan tren baru dengan timbangan agama.",
+      "en": "Weighing new discoveries and trends by religion's scale.",
+      "ar": "وزن المستجدات والاتجاهات بميزان الدين."
+     }
+    },
+    {
+     "t": {
+      "id": "Fikih Tanda Alam dan Peristiwa Besar",
+      "en": "Fiqh of Natural Signs and Great Events",
+      "ar": "فقه الأشراط الكونية"
+     },
+     "d": {
+      "id": "Tanda kecil, tengah, dan besar, tanpa spekulasi.",
+      "en": "Minor, middle, and major signs, without speculation.",
+      "ar": "الأشراط الصغرى والوسطى والكبرى دون تخمين."
+     }
+    },
+    {
+     "t": {
+      "id": "Fikih Menautkan Agama dan Sejarah",
+      "en": "Fiqh of Linking Religion and History",
+      "ar": "فقه الربط بين الديانة والتاريخ"
+     },
+     "d": {
+      "id": "Membaca perjalanan umat dengan kacamata wahyu.",
+      "en": "Reading the Ummah's journey through revelation.",
+      "ar": "قراءة مسيرة الأمة بعين الوحي."
+     }
+    }
+   ]
+  },
+  {
+   "type": "question",
+   "bab": 3,
+   "q": {
+    "id": "Apakah ini sama dengan ilmu akhir zaman yang sering beredar?",
+    "en": "Is this the same as the end-times talk that often circulates?",
+    "ar": "هل هو نفسه حديث آخر الزمان المتداول؟"
+   }
+  },
+  {
+   "type": "compare",
+   "bab": 3,
+   "cols": [
+    {
+     "id": "Yang sering beredar",
+     "en": "Often circulating",
+     "ar": "المتداول كثيرًا"
+    },
+    {
+     "id": "Fikih Tahawwulat",
+     "en": "Fiqh al-Tahawwulat",
+     "ar": "فقه التحولات"
+    }
+   ],
+   "rows": [
+    [
+     {
+      "id": "Tujuan",
+      "en": "Aim",
+      "ar": "الغاية"
+     },
+     {
+      "id": "Menebak dan mencocokkan peristiwa",
+      "en": "Guessing and matching events",
+      "ar": "التخمين ومطابقة الأحداث"
+     },
+     {
+      "id": "Membekali sikap yang selamat",
+      "en": "Equipping a safe stance",
+      "ar": "تزويد الإنسان بالموقف الأسلم"
+     }
+    ],
+    [
+     {
+      "id": "Tahun dan tokoh",
+      "en": "Dates and figures",
+      "ar": "السنوات والأشخاص"
+     },
+     {
+      "id": "Sering mematok tahun dan menunjuk orang",
+      "en": "Often fixes years and points at people",
+      "ar": "كثيرًا ما تُحدَّد سنوات ويُشار إلى أشخاص"
+     },
+     {
+      "id": "Melarang keduanya",
+      "en": "Forbids both",
+      "ar": "يمنع الأمرين"
+     }
+    ],
+    [
+     {
+      "id": "Nada",
+      "en": "Tone",
+      "ar": "النبرة"
+     },
+     {
+      "id": "Menakut-nakuti, memancing marah",
+      "en": "Frightening, stirring anger",
+      "ar": "تخويف وإثارة غضب"
+     },
+     {
+      "id": "Tenang, penuh harapan dan langkah amal",
+      "en": "Calm, hopeful, with steps to act",
+      "ar": "هادئة، فيها رجاء وخطوات عمل"
+     }
+    ],
+    [
+     {
+      "id": "Akibatnya",
+      "en": "The effect",
+      "ar": "الأثر"
+     },
+     {
+      "id": "Cemas dan saling curiga",
+      "en": "Anxiety and mutual suspicion",
+      "ar": "قلق وارتياب"
+     },
+     {
+      "id": "Hati tenang dan amal nyata",
+      "en": "A calm heart and real deeds",
+      "ar": "قلب مطمئن وعمل ملموس"
+     }
+    ]
+   ]
+  },
+  {
+   "type": "list",
+   "bab": 3,
+   "title": {
+    "id": "Yang khas dari Fikih Tahawwulat",
+    "en": "What is distinctive",
+    "ar": "ما يميّزه"
+   },
+   "items": [
+    {
+     "t": {
+      "id": "Bagian dari agama itu sendiri",
+      "en": "Part of religion itself",
+      "ar": "جزء من الدين نفسه"
+     },
+     "d": {
+      "id": "Rukun keempat dalam Hadis Jibril.",
+      "en": "The fourth pillar in the Hadith of Jibril.",
+      "ar": "الركن الرابع في حديث جبريل."
+     }
+    },
+    {
+     "t": {
+      "id": "Fikih sikap, bukan sekadar daftar tanda",
+      "en": "A fiqh of stances, not just a list of signs",
+      "ar": "فقه مواقف لا قائمة علامات"
+     },
+     "d": {
+      "id": "Apa yang dilakukan muslim, keluarga, dan ulama di tiap tahap.",
+      "en": "What a Muslim, a family, and scholars do at each stage.",
+      "ar": "ماذا يفعل المسلم والأسرة والعلماء في كل مرحلة."
+     }
+    },
+    {
+     "t": {
+      "id": "Berbeda dari ramalan dan teori konspirasi",
+      "en": "Unlike fortune-telling and conspiracy theories",
+      "ar": "يختلف عن التنجيم ونظريات المؤامرة"
+     },
+     "d": {
+      "id": "Ia mengajak memperbaiki diri lebih dulu, dan berujung pada jalan selamat: hati, lisan, dan tangan terjaga.",
+      "en": "It invites you to mend yourself first, and ends in the safe way: heart, tongue, and hands guarded.",
+      "ar": "يدعو إلى إصلاح النفس أولًا، وينتهي إلى منهج السلامة: سلامة القلب واللسان واليد."
+     }
+    }
+   ]
+  },
+  {
+   "type": "title",
+   "bab": 4,
+   "kicker": {
+    "id": "Bab 4",
+    "en": "Chapter 4",
+    "ar": "الباب 4"
+   },
+   "title": {
+    "id": "Lima asisten untuk mempelajarinya",
+    "en": "Five assistants to study it",
+    "ar": "خمسة مساعدين لدراسته"
+   },
+   "sub": {
+    "id": "Kitab dan muhadharah yang sama, lima cara belajar.",
+    "en": "The same books and lectures, five ways to learn.",
+    "ar": "الكتب والمحاضرات نفسها، وخمس طرق للتعلّم."
+   }
+  },
+  {
+   "type": "assistant",
+   "bab": 4,
+   "ar": "المحقق",
+   "name": "Al-Muhaqqiq",
+   "role": {
+    "id": "Peneliti teks",
+    "en": "The text researcher",
+    "ar": "باحث النصوص"
+   },
+   "desc": {
+    "id": "Mencari matan dan ibarah asli beserta sumbernya, lalu memeriksanya dengan teliti.",
+    "en": "Finds the original text and passage with its source, then checks it carefully.",
+    "ar": "يبحث عن المتن والعبارة الأصلية مع مصدرها ثم يدققها."
+   },
+   "ask": {
+    "id": "“Di mana Al-Habib menyebut dua keruntuhan peradaban? Tampilkan ibarahnya.”",
+    "en": "“Where does Al-Habib mention the two collapses of civilization? Show me the passage.”",
+    "ar": "«أين يذكر الحبيب الانهيارين الحضاريين؟ أرني العبارة.»"
+   }
+  },
+  {
+   "type": "assistant",
+   "bab": 4,
+   "ar": "البيان",
+   "name": "Al-Bayan",
+   "role": {
+    "id": "Penjelas yang sederhana",
+    "en": "The simple explainer",
+    "ar": "الشارح المبسِّط"
+   },
+   "desc": {
+    "id": "Menjelaskan dengan bahasa yang mudah dipahami. Cocok untuk pemula, dan tempat terbaik untuk mulai.",
+    "en": "Explains in easy language. Suited to beginners, and the best place to start.",
+    "ar": "يشرح بلغة سهلة. مناسب للمبتدئين، وهو أفضل مكان للبداية."
+   },
+   "ask": {
+    "id": "“Jelaskan al-ghutsa'iyyah dengan bahasa sederhana.”",
+    "en": "“Explain al-ghuthaiyya in simple words.”",
+    "ar": "«اشرح الغثائية بعبارة مبسّطة.»"
+   },
+   "start": true
+  },
+  {
+   "type": "assistant",
+   "bab": 4,
+   "ar": "المختبر",
+   "name": "Al-Mukhtabir",
+   "role": {
+    "id": "Penguji pemahaman",
+    "en": "The understanding tester",
+    "ar": "مختبِر الفهم"
+   },
+   "desc": {
+    "id": "AI bertanya, Anda menjawab, lalu ia menilai di mana jawaban Anda sudah baik, di mana lemah, dan memberi jawaban idealnya.",
+    "en": "The AI asks, you answer, then it judges where your answer is strong and where weak, and gives the ideal answer.",
+    "ar": "يسألك الذكاء الاصطناعي فتجيب، ثم يقيّم جوابك: مواطن الإحسان ومواطن الضعف، ويعطيك الجواب المثالي."
+   },
+   "ask": {
+    "id": "“Uji saya: apa itu al-ghutsa'iyyah?”",
+    "en": "“Test me: what is al-ghuthaiyya?”",
+    "ar": "«اختبرني: ما الغثائية؟»"
+   }
+  },
+  {
+   "type": "assistant",
+   "bab": 4,
+   "ar": "الحبيب",
+   "name": "Al-Habib",
+   "role": {
+    "id": "Muhadharah Al-Habib",
+    "en": "Al-Habib's lectures",
+    "ar": "محاضرات الحبيب"
+   },
+   "desc": {
+    "id": "Berisi muhadharah Al-Habib Abu Bakar, dan menjawab dengan diksi beliau sendiri.",
+    "en": "Holds the lectures of Al-Habib Abu Bakar, and answers in his own wording.",
+    "ar": "فيه محاضرات الحبيب أبي بكر، ويجيب بألفاظه هو."
+   },
+   "ask": {
+    "id": "“Bagaimana Al-Habib menjelaskan sikap saat masa fitnah?”",
+    "en": "“How does Al-Habib explain conduct in times of trial?”",
+    "ar": "«كيف يشرح الحبيب الموقف زمن الفتن؟»"
+   }
+  },
+  {
+   "type": "assistant",
+   "bab": 4,
+   "ar": "الخطيب",
+   "name": "Al-Khatib",
+   "role": {
+    "id": "Penyusun khutbah",
+    "en": "The sermon writer",
+    "ar": "معدّ الخطب"
+   },
+   "desc": {
+    "id": "Menyusun khutbah, bahan ceramah, dan materi dakwah lainnya.",
+    "en": "Drafts sermons, talk material, and other da'wa content.",
+    "ar": "يُعدّ الخطب والمواد الوعظية وسائر المواد الدعوية."
+   },
+   "ask": {
+    "id": "“Susun kerangka khutbah tentang sikap saat masa fitnah.”",
+    "en": "“Outline a sermon on conduct in times of trial.”",
+    "ar": "«ضع هيكل خطبة عن الموقف زمن الفتن.»"
+   }
+  },
+  {
+   "type": "end",
+   "bab": 4,
+   "title": {
+    "id": "Mulai dari mana?",
+    "en": "Where to start?",
+    "ar": "من أين أبدأ؟"
+   },
+   "items": [
+    {
+     "t": {
+      "id": "Pilih satu pertanyaan yang paling mengganjal",
+      "en": "Pick the question that troubles you most",
+      "ar": "اختر السؤال الذي يشغلك أكثر"
+     },
+     "d": {
+      "id": "Dari daftar tadi.",
+      "en": "From the list you just saw.",
+      "ar": "من القائمة التي رأيتها."
+     }
+    },
+    {
+     "t": {
+      "id": "Tanyakan kepada Al-Bayan",
+      "en": "Ask Al-Bayan",
+      "ar": "اسأل «البيان»"
+     },
+     "d": {
+      "id": "Bahasanya paling sederhana.",
+      "en": "His language is the simplest.",
+      "ar": "لغته أبسط ما يكون."
+     }
+    },
+    {
+     "t": {
+      "id": "Periksa ibarahnya, tanyakan kepada guru",
+      "en": "Check the passage, ask a teacher",
+      "ar": "تحقّق من العبارة واسأل معلمك"
+     },
+     "d": {
+      "id": "Terutama untuk urusan amal.",
+      "en": "Especially for matters of practice.",
+      "ar": "خاصة في مسائل العمل."
+     }
+    }
+   ],
+   "cta": {
+    "id": "Mulai bertanya",
+    "en": "Start asking",
+    "ar": "ابدأ بالسؤال"
+   },
+   "cta2": {
+    "id": "Baca sebagai teks",
+    "en": "Read as text",
+    "ar": "اقرأ نصًّا"
+   }
+  }
+ ]
+}

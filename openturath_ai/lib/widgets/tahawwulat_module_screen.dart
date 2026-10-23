@@ -9,7 +9,6 @@ import '../core/design/ot_spacing.dart';
 import '../core/design/ot_typography.dart';
 import '../core/localization.dart';
 import 'tahawwulat_artwork.dart';
-import 'tahawwulat_introduction_sheet.dart';
 
 /// Modul "Mengenal Fikih Tahawwulat" untuk orang awam. Isinya satu sumber
 /// dengan halaman web (assets/data/modul_mengenal.json).
@@ -125,8 +124,6 @@ class _TahawwulatModuleScreenState extends State<TahawwulatModuleScreen> {
         Text(_t(h['title']), style: OTTypography.pageTitle(color: fg)),
         const SizedBox(height: OTSpacing.md),
         Text(_t(h['lead']), style: OTTypography.body(color: sub)),
-        const SizedBox(height: OTSpacing.base),
-        _videoButton(isDark),
       ]),
     ));
 
@@ -324,10 +321,4 @@ class _TahawwulatModuleScreenState extends State<TahawwulatModuleScreen> {
     ));
     return w;
   }
-
-  Widget _videoButton(bool isDark) => OutlinedButton.icon(
-        onPressed: () => TahawwulatIntroductionSheet.show(context),
-        icon: const Icon(Icons.play_circle_outline_rounded),
-        label: Text(Loc.tr('moduleWatchVideo'), style: OTTypography.button()),
-      );
 }
