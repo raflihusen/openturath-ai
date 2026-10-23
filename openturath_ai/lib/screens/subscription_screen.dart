@@ -1,6 +1,7 @@
 import 'dart:async';
 import '../widgets/app_loader.dart';
 import '../widgets/adaptive_sheet.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import '../widgets/ot_motion_widgets.dart';
@@ -17,6 +18,7 @@ import '../models/agent_model.dart';
 import '../models/sub_agent_model.dart';
 import '../services/agent_service.dart';
 import '../services/subscription_service.dart';
+import '../widgets/legal_document_sheet.dart';
 import '../widgets/payment_checkout_sheet.dart';
 import '../widgets/promo_price.dart';
 import '../widgets/redeem_code_sheet.dart';
@@ -45,6 +47,17 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
   bool _initialized = false;
   String? _checkoutError;
   String? _checkoutAgentId;
+  late final TapGestureRecognizer _termsTap = TapGestureRecognizer()
+    ..onTap = () => LegalDocumentSheet.showTermsOfService(context);
+  late final TapGestureRecognizer _refundTap = TapGestureRecognizer()
+    ..onTap = () => LegalDocumentSheet.showRefundPolicy(context);
+
+  @override
+  void dispose() {
+    _termsTap.dispose();
+    _refundTap.dispose();
+    super.dispose();
+  }
 
   @override
   void initState() {
@@ -338,6 +351,34 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
         ),
       );
 
+  /// Persetujuan sebelum membayar: tautan ke Ketentuan Layanan dan kebijakan
+  /// pembayaran, supaya pengguna tahu syaratnya sebelum menekan tombol.
+  Widget _consentNote(Color color) {
+    final base = OTTypography.caption(color: color).copyWith(height: 1.5);
+    final link = base.copyWith(
+        decoration: TextDecoration.underline, color: color.withValues(alpha: 1));
+    final parts = Loc.tr('planConsent').split(RegExp(r'(\{0\}|\{1\})'));
+    final firstIsTerms = Loc.tr('planConsent').indexOf('{0}') <
+        Loc.tr('planConsent').indexOf('{1}');
+    final termsSpan = TextSpan(
+        text: Loc.tr('planConsentTerms'), style: link, recognizer: _termsTap);
+    final refundSpan = TextSpan(
+        text: Loc.tr('planConsentRefund'), style: link, recognizer: _refundTap);
+    return Padding(
+      padding: const EdgeInsets.only(top: 12),
+      child: Text.rich(
+        TextSpan(style: base, children: [
+          TextSpan(text: parts[0]),
+          if (firstIsTerms) termsSpan else refundSpan,
+          TextSpan(text: parts.length > 1 ? parts[1] : ''),
+          if (firstIsTerms) refundSpan else termsSpan,
+          TextSpan(text: parts.length > 2 ? parts[2] : ''),
+        ]),
+        textAlign: TextAlign.center,
+      ),
+    );
+  }
+
   Widget _benefitRow(String text, Color textColor, {Color? checkColor}) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
@@ -522,22 +563,38 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
 
     final single = ProductPricing.specialists[_specialistIndex];
 
+    // Ringkasan total di atas tombol, lalu satu tombol tanpa teks yang
+    // menyusut: harga tampil sekali, tombolnya menyebut langkah berikutnya.
     Widget cta(VoidCallback onPressed, SubscriptionOffer offer,
             {bool onInk = false}) =>
-        SizedBox(
-          width: double.infinity,
-          height: 48,
-          child: FilledButton(
-            onPressed: _processing ? null : onPressed,
-            style: onInk ? OTButtons.onInk() : null,
-            child: FittedBox(
-              fit: BoxFit.scaleDown,
-              child: Text(Loc.tr('planStartTerm', [
-                offer.title.toLowerCase(),
-                ProductPricing.rupiah(offer.amount)
-              ])),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: Text('${Loc.tr('planTotalLabel')} · ${offer.title}',
+                      style: OTTypography.caption(
+                          color: onInk ? OTExpressive.whiteMuted : muted)),
+                ),
+                Text(ProductPricing.rupiah(offer.amount),
+                    style: OTTypography.bodyMedium(
+                            color: onInk ? OTExpressive.white : ink)
+                        .copyWith(
+                            fontWeight: FontWeight.w600,
+                            fontFeatures: const [FontFeature.tabularFigures()])),
+              ],
             ),
-          ),
+            const SizedBox(height: 12),
+            SizedBox(
+              height: 52,
+              child: FilledButton(
+                onPressed: _processing ? null : onPressed,
+                style: onInk ? OTButtons.onInk() : null,
+                child: Text(Loc.tr('planContinue')),
+              ),
+            ),
+          ],
         );
 
     // Dua kartu memakai urutan bagian yang sama agar sejajar saat
@@ -621,6 +678,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
         ],
         cta(onCheckout, price, onInk: f),
         _trustNote(cMuted),
+        _consentNote(cMuted),
         _checkoutNotice(agentId, ink: cInk),
       ];
     }
@@ -744,11 +802,8 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                 featured: true,
                 body: planBody(
                   wide: wide,
-                  label: Loc.isArabic
-                      ? 'حصري في OpenTurath · 5 AI'
-                      : Loc.language == 'en'
-                          ? 'Exclusive to OpenTurath · 5 AI'
-                          : 'Eksklusif di OpenTurath · 5 AI',
+                  label: Loc.tr('planFeaturedBadge',
+                      ['${(flagship.subAgents ?? const []).length}']),
                   title: AppCopy.planTahawwulat,
                   description: Loc.tr('planFeaturedDescription'),
                   scope: flagshipScope,
@@ -865,16 +920,8 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                     color: OTColors.canvas(dark).withValues(alpha: 0.88),
                     child: Center(
                       child: AppLoader.fullscreen(
-                        title: Loc.language == 'ar'
-                            ? 'جارٍ تهيئة عملية الدفع…'
-                            : (Loc.language == 'en'
-                                ? 'Preparing checkout…'
-                                : 'Menyiapkan pembayaran…'),
-                        subtitle: Loc.language == 'ar'
-                            ? 'يرجى الانتظار لحظة'
-                            : (Loc.language == 'en'
-                                ? 'Please wait a moment'
-                                : 'Mohon tunggu sebentar'),
+                        title: Loc.tr('checkoutPreparing'),
+                        subtitle: Loc.tr('checkoutPleaseWait'),
                       ),
                     ),
                   ),
@@ -917,8 +964,6 @@ class _TierSelector extends StatelessWidget {
     final thumbLine = onInk ? OTExpressive.white : ink;
     final reduced = MediaQuery.disableAnimationsOf(context);
     final n = offers.length;
-    // Di layar sempit, tulis hemat tanpa "dari bulanan" agar tetap terbaca.
-    final narrow = MediaQuery.sizeOf(context).width < 600;
     // Hemat dihitung terhadap membayar bulanan selama masa yang sama.
     final monthly = offers.first.amount;
     final savings = [
@@ -953,17 +998,19 @@ class _TierSelector extends StatelessWidget {
                       style: OTTypography.caption(color: muted).copyWith(
                           fontFeatures: const [FontFeature.tabularFigures()])),
                 ),
-                if (savings[i] >= 5) ...[
-                  const SizedBox(height: 4),
-                  FittedBox(
-                    fit: BoxFit.scaleDown,
-                    child: Text(
-                        Loc.tr(narrow ? 'saving' : 'termSavingVsMonthly',
-                            ['${savings[i]}']),
-                        style: OTTypography.metadataTag(
-                            color: onInk ? OTExpressive.whiteMuted : ink)),
-                  ),
-                ],
+                // Baris hemat selalu disediakan agar tinggi tiap segmen sama.
+                const SizedBox(height: 4),
+                SizedBox(
+                  height: 16,
+                  child: savings[i] >= 5
+                      ? FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: Text(Loc.tr('saving', ['${savings[i]}']),
+                              style: OTTypography.metadataTag(
+                                  color: onInk ? OTExpressive.whiteMuted : ink)),
+                        )
+                      : null,
+                ),
               ],
             ),
           ),
@@ -1062,7 +1109,11 @@ class _KhatamPatternPainter extends CustomPainter {
 /// tipografi putih bersih dan tata letak ultra-minimalis, selaras dengan
 /// bahasa desain scholarly.
 class PromoCountdownBanner extends StatefulWidget {
-  const PromoCountdownBanner({super.key});
+  const PromoCountdownBanner({super.key, this.clock});
+
+  /// Jam acuan; hanya diganti pada pengujian agar hasilnya tidak bergantung
+  /// pada waktu sebenarnya.
+  final DateTime Function()? clock;
 
   @override
   State<PromoCountdownBanner> createState() => _PromoCountdownBannerState();
@@ -1095,152 +1146,108 @@ class _PromoCountdownBannerState extends State<_PromoCountdownBanner> {
 
   @override
   Widget build(BuildContext context) {
-    final nowUtc = DateTime.now().toUtc();
+    Loc.watch(context);
+    final nowUtc = (widget.clock?.call() ?? DateTime.now()).toUtc();
     final isBeforeStart = nowUtc.isBefore(promoStartUtc);
     final isEnded = nowUtc.isAfter(promoEndUtc);
 
-    // Hitung mundur:
-    // Sebelum mulai -> countdown menuju Jumat 12:00 WIB
-    // Selama berlangsung -> countdown 10 hari hingga batas akhir Senin 12:00 WIB
-    // Setelah selesai -> 0
+    // Sebelum mulai: menuju Jumat 12:00 WIB. Berlangsung: 10 hari hingga
+    // Senin 12:00 WIB. Setelah selesai: nol.
     final Duration remaining = isBeforeStart
         ? promoStartUtc.difference(nowUtc)
         : (isEnded ? Duration.zero : promoEndUtc.difference(nowUtc));
 
-    final int days = remaining.inDays;
-    final int hours = remaining.inHours % 24;
-    final int minutes = remaining.inMinutes % 60;
-    final int seconds = remaining.inSeconds % 60;
+    final days = remaining.inDays;
+    final hours = remaining.inHours % 24;
+    final minutes = remaining.inMinutes % 60;
+    final seconds = remaining.inSeconds % 60;
 
-    // Lokalisasi teks terjemahan
-    final lang = Loc.language;
-    final String headerTitle;
-    final String bottomCaption;
-    final String unitDays;
-    final String unitHours;
-    final String unitMins;
-    final String unitSecs;
+    final headerTitle = Loc.tr(isBeforeStart
+        ? 'promoHeadBefore'
+        : (isEnded ? 'promoHeadEnded' : 'promoHeadLive'));
+    final bottomCaption = Loc.tr(isBeforeStart
+        ? 'promoCapBefore'
+        : (isEnded ? 'promoCapEnded' : 'promoCapLive'));
 
-    if (lang == 'ar') {
-      unitDays = 'أيام';
-      unitHours = 'ساعات';
-      unitMins = 'دقائق';
-      unitSecs = 'ثوانٍ';
-      if (isBeforeStart) {
-        headerTitle = 'العد التنازلي لإطلاق عرض الـ 10 أيام';
-        bottomCaption =
-            'يبدأ الجمعة، 23 أكتوبر · 12:00 بتوقيت جاكرتا (نافذة 10 أيام)';
-      } else if (isEnded) {
-        headerTitle = 'انتهى العرض';
-        bottomCaption = 'انتهت فترة عرض الإطلاق لـ 10 أيام';
-      } else {
-        headerTitle = 'عرض الإطلاق المحدود (10 أيام)';
-        bottomCaption =
-            'العرض متاح لمدة 10 أيام · ينتهي الإثنين، 2 نوفمبر 12:00 WIB';
-      }
-    } else if (lang == 'en') {
-      unitDays = 'DAYS';
-      unitHours = 'HOURS';
-      unitMins = 'MINUTES';
-      unitSecs = 'SECONDS';
-      if (isBeforeStart) {
-        headerTitle = '10-DAY PROMO LAUNCH COUNTDOWN';
-        bottomCaption =
-            'Starts Friday, Oct 23 · 12:00 WIB (10-day promo window)';
-      } else if (isEnded) {
-        headerTitle = 'LAUNCH OFFER ENDED';
-        bottomCaption = 'The 10-day launch offer has ended';
-      } else {
-        headerTitle = 'LIMITED 10-DAY LAUNCH OFFER';
-        bottomCaption =
-            'Offer active for 10 days · Ends Monday, Nov 2 at 12:00 WIB';
-      }
-    } else {
-      // Default: Bahasa Indonesia
-      unitDays = 'HARI';
-      unitHours = 'JAM';
-      unitMins = 'MENIT';
-      unitSecs = 'DETIK';
-      if (isBeforeStart) {
-        headerTitle = 'MENUJU PELUNCURAN PROMO 10 HARI';
-        bottomCaption =
-            'Mulai Jumat, 23 Okt · 12:00 WIB (durasi promo 10 hari)';
-      } else if (isEnded) {
-        headerTitle = 'PENAWARAN PERDANA TELAH SELESAI';
-        bottomCaption = 'Masa penawaran perdana 10 hari telah ditutup';
-      } else {
-        headerTitle = 'PENAWARAN PERDANA TERBATAS (10 HARI)';
-        bottomCaption =
-            'Penawaran aktif selama 10 hari · Berakhir Senin, 2 Nov · 12:00 WIB';
-      }
-    }
-
-    // Warna merah solid 100% opacity (Crimson Red murni tanpa transparansi)
+    // Warna merah solid tanpa transparansi, sesuai keputusan desain peluncuran.
     const solidRedBg = OTColors.errorLight;
 
-    return Container(
-      decoration: BoxDecoration(
-        color: solidRedBg,
-        borderRadius: BorderRadius.circular(OTRadius.card),
-      ),
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          // Header teks minimalis kapital
-          Text(
-            headerTitle,
-            textAlign: TextAlign.center,
-            style: ScholarlyFonts.outfit(
-              fontSize: OTFontSize.s11,
-              fontWeight: FontWeight.w700,
-              letterSpacing: 1.2,
-              color: OTExpressive.white,
-            ),
+    final digits = Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        _buildDigitColumn(
+            value: days.toString().padLeft(2, '0'),
+            label: Loc.tr('promoUnitDays')),
+        _buildSeparator(),
+        _buildDigitColumn(
+            value: hours.toString().padLeft(2, '0'),
+            label: Loc.tr('promoUnitHours')),
+        _buildSeparator(),
+        _buildDigitColumn(
+            value: minutes.toString().padLeft(2, '0'),
+            label: Loc.tr('promoUnitMins')),
+        _buildSeparator(),
+        _buildDigitColumn(
+            value: seconds.toString().padLeft(2, '0'),
+            label: Loc.tr('promoUnitSecs')),
+      ],
+    );
+    final titleBlock = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          headerTitle,
+          style: ScholarlyFonts.outfit(
+            fontSize: OTFontSize.s11,
+            fontWeight: FontWeight.w700,
+            letterSpacing: 1.2,
+            color: OTExpressive.white,
           ),
-          const SizedBox(height: 14),
+        ),
+        const SizedBox(height: 6),
+        Text(
+          bottomCaption,
+          style: ScholarlyFonts.outfit(
+            fontSize: OTFontSize.s11,
+            fontWeight: FontWeight.w400,
+            color: OTExpressive.white.withValues(alpha: 0.85),
+          ),
+        ),
+      ],
+    );
 
-          // Angka hitung mundur tabular bersih langsung di atas bidang merah solid
-          FittedBox(
-            fit: BoxFit.scaleDown,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+    return Semantics(
+      container: true,
+      label: '$headerTitle, $days ${Loc.tr('promoUnitDays')}, '
+          '$hours ${Loc.tr('promoUnitHours')}, $minutes ${Loc.tr('promoUnitMins')}',
+      child: Container(
+        decoration: BoxDecoration(
+          color: solidRedBg,
+          borderRadius: BorderRadius.circular(OTRadius.card),
+        ),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+        // Lebar: judul di kiri, angka di kanan, satu baris pendek.
+        // Sempit: judul lalu angka, rata kiri.
+        child: LayoutBuilder(builder: (context, box) {
+          if (box.maxWidth >= 560) {
+            return Row(
               children: [
-                _buildDigitColumn(
-                  value: days.toString().padLeft(2, '0'),
-                  label: unitDays,
-                ),
-                _buildSeparator(),
-                _buildDigitColumn(
-                  value: hours.toString().padLeft(2, '0'),
-                  label: unitHours,
-                ),
-                _buildSeparator(),
-                _buildDigitColumn(
-                  value: minutes.toString().padLeft(2, '0'),
-                  label: unitMins,
-                ),
-                _buildSeparator(),
-                _buildDigitColumn(
-                  value: seconds.toString().padLeft(2, '0'),
-                  label: unitSecs,
-                ),
+                Expanded(child: titleBlock),
+                const SizedBox(width: 16),
+                digits,
               ],
-            ),
-          ),
-          const SizedBox(height: 12),
-
-          // Baris keterangan jadwal
-          Text(
-            bottomCaption,
-            textAlign: TextAlign.center,
-            style: ScholarlyFonts.outfit(
-              fontSize: OTFontSize.s11,
-              fontWeight: FontWeight.w400,
-              color: OTExpressive.white.withValues(alpha: 0.85),
-            ),
-          ),
-        ],
+            );
+          }
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              titleBlock,
+              const SizedBox(height: 12),
+              FittedBox(fit: BoxFit.scaleDown, child: digits),
+            ],
+          );
+        }),
       ),
     );
   }
@@ -1258,15 +1265,15 @@ class _PromoCountdownBannerState extends State<_PromoCountdownBanner> {
             textStyle: const TextStyle(
               fontFeatures: [FontFeature.tabularFigures()],
             ),
-            fontSize: OTFontSize.calendarDay,
+            fontSize: OTFontSize.s22,
             fontWeight: FontWeight.w700,
             color: OTExpressive.white,
             height: 1.0,
           ),
         ),
-        const SizedBox(height: 6),
+        const SizedBox(height: 4),
         Text(
-          label,
+          label.toUpperCase(),
           style: ScholarlyFonts.outfit(
             fontSize: OTFontSize.s11,
             fontWeight: FontWeight.w700,
@@ -1280,11 +1287,11 @@ class _PromoCountdownBannerState extends State<_PromoCountdownBanner> {
 
   Widget _buildSeparator() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 12).copyWith(bottom: 16),
+      padding: const EdgeInsets.symmetric(horizontal: 8).copyWith(bottom: 16),
       child: Text(
         ':',
         style: ScholarlyFonts.outfit(
-          fontSize: OTFontSize.s22,
+          fontSize: OTFontSize.s16,
           fontWeight: FontWeight.w600,
           color: OTExpressive.white.withValues(alpha: 0.5),
           height: 1.0,

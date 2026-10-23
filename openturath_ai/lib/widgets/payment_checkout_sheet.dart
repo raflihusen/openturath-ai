@@ -137,6 +137,7 @@ class _PaymentCheckoutSheetState extends State<PaymentCheckoutSheet> {
   int _pollAttempts = 0;
   bool _isShowingConfirmDialog = false;
   bool _hasPopped = false;
+  bool _pollExhausted = false;
   final _completion = CheckoutCompletion();
   BuildContext? _confirmationContext;
 
@@ -249,6 +250,8 @@ class _PaymentCheckoutSheetState extends State<PaymentCheckoutSheet> {
     // F33: Batas maksimal polling 150 kali (5 menit) agar tidak memboroskan sumber daya
     if (_pollAttempts > 60) {
       _pollTimer?.cancel();
+      // Pengguna perlu tahu bahwa pemeriksaan otomatis berhenti.
+      if (mounted && !_pollExhausted) setState(() => _pollExhausted = true);
       return;
     }
 
@@ -616,6 +619,19 @@ class _PaymentCheckoutSheetState extends State<PaymentCheckoutSheet> {
                     ),
                   ),
 
+                  if (_pollExhausted && !_isSuccess)
+                    Container(
+                      width: double.infinity,
+                      color: OTColors.surfaceSubtle(isDark),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 12),
+                      child: Text(Loc.tr('checkoutStillWaiting'),
+                          style: ScholarlyFonts.outfit(
+                              fontSize: OTFontSize.s12,
+                              height: 1.4,
+                              color: textSecondary)),
+                    ),
+
                   // Linear Progress Bar saat memuat halaman WebView
                   if (_loadProgress < 1.0)
                     LinearProgressIndicator(
@@ -821,144 +837,71 @@ class _CelebratorySuccessView extends StatelessWidget {
     required this.accent,
   });
 
+  /// Satu gerak masuk yang tenang: memudar sambil naik sedikit. Lencana
+  /// memakai bentuk dan warna yang sama dengan dialog keberhasilan, jadi
+  /// kedua layar terbaca sebagai satu rangkaian.
   @override
   Widget build(BuildContext context) {
     Loc.watch(context);
+    final reduced = MediaQuery.disableAnimationsOf(context);
     return TweenAnimationBuilder<double>(
-      tween: Tween<double>(begin: 0.0, end: 1.0),
-      duration: const Duration(milliseconds: 400),
+      tween: Tween<double>(begin: reduced ? 1.0 : 0.0, end: 1.0),
+      duration: reduced ? Duration.zero : const Duration(milliseconds: 450),
       curve: Curves.easeOutCubic,
-      builder: (context, opacity, child) {
-        return Opacity(
-          opacity: opacity,
-          child: Container(
-            color: surfaceColor,
-            width: double.infinity,
-            height: double.infinity,
-            child: Center(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 32),
+      builder: (context, t, _) => Opacity(
+        opacity: t,
+        child: Container(
+          color: surfaceColor,
+          width: double.infinity,
+          height: double.infinity,
+          child: Center(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 32),
+              child: Transform.translate(
+                offset: Offset(0, (1 - t) * 12),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    // Spring bounce scale for the checkmark badge
-                    TweenAnimationBuilder<double>(
-                      tween: Tween<double>(begin: 0.0, end: 1.0),
-                      duration: const Duration(milliseconds: 750),
-                      curve: Curves.elasticOut,
-                      builder: (context, scale, _) {
-                        return Transform.scale(
-                          scale: scale,
-                          child: Container(
-                            width: 88,
-                            height: 88,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: OTColors.borderStrongLight
-                                  .withValues(alpha: 0.16),
-                              border: Border.all(
-                                color: OTColors.borderStrongLight,
-                                width: 3,
-                              ),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: OTColors.borderStrongLight
-                                      .withValues(alpha: 0.3),
-                                  blurRadius: 28,
-                                  spreadRadius: 4,
-                                ),
-                              ],
-                            ),
-                            child: const Icon(
-                              Icons.check_rounded,
-                              size: 50,
-                              color: OTColors.borderStrongLight,
-                            ),
-                          ),
-                        );
-                      },
+                    Container(
+                      width: 72,
+                      height: 72,
+                      decoration: BoxDecoration(
+                        color: textPrimary,
+                        borderRadius: BorderRadius.circular(OTRadius.card),
+                      ),
+                      child: Icon(Icons.check_rounded,
+                          size: 38, color: surfaceColor),
+                    ),
+                    const SizedBox(height: 24),
+                    Text(
+                      Loc.tr('ui_109055bfcd'),
+                      textAlign: TextAlign.center,
+                      style: ScholarlyFonts.outfit(
+                        fontWeight: FontWeight.w700,
+                        fontSize: OTFontSize.s26,
+                        letterSpacing: -0.5,
+                        color: textPrimary,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    Text(
+                      Loc.tr('ui_1408872bee'),
+                      textAlign: TextAlign.center,
+                      style: ScholarlyFonts.outfit(
+                        fontSize: OTFontSize.s14,
+                        color: textSecondary,
+                        height: 1.45,
+                      ),
                     ),
                     const SizedBox(height: 28),
-                    // "Alhamdulillah!" with fade-up
-                    TweenAnimationBuilder<double>(
-                      tween: Tween<double>(begin: 0.0, end: 1.0),
-                      duration: const Duration(milliseconds: 500),
-                      curve: Curves.easeOutCubic,
-                      builder: (context, value, _) {
-                        return Opacity(
-                          opacity: value.clamp(0.0, 1.0),
-                          child: Transform.translate(
-                            offset: Offset(0, (1.0 - value) * 16),
-                            child: Text(
-                              Loc.tr('ui_28654608b2'),
-                              style: ScholarlyFonts.outfit(
-                                fontWeight: FontWeight.w700,
-                                fontSize: OTFontSize.s26,
-                                letterSpacing: -0.5,
-                                color: textPrimary,
-                              ),
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                    const SizedBox(height: 8),
-                    // "Pembayaran Berhasil Diverifikasi"
-                    TweenAnimationBuilder<double>(
-                      tween: Tween<double>(begin: 0.0, end: 1.0),
-                      duration: const Duration(milliseconds: 600),
-                      curve: Curves.easeOutCubic,
-                      builder: (context, value, _) {
-                        return Opacity(
-                          opacity: value.clamp(0.0, 1.0),
-                          child: Transform.translate(
-                            offset: Offset(0, (1.0 - value) * 14),
-                            child: Text(
-                              Loc.tr('ui_109055bfcd'),
-                              style: ScholarlyFonts.outfit(
-                                fontWeight: FontWeight.w600,
-                                fontSize: OTFontSize.s16,
-                                color: OTColors.borderStrongLight,
-                              ),
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                    const SizedBox(height: 12),
-                    // Description
-                    TweenAnimationBuilder<double>(
-                      tween: Tween<double>(begin: 0.0, end: 1.0),
-                      duration: const Duration(milliseconds: 700),
-                      curve: Curves.easeOutCubic,
-                      builder: (context, value, _) {
-                        return Opacity(
-                          opacity: value.clamp(0.0, 1.0),
-                          child: Transform.translate(
-                            offset: Offset(0, (1.0 - value) * 12),
-                            child: Text(
-                              Loc.tr('ui_1408872bee'),
-                              textAlign: TextAlign.center,
-                              style: ScholarlyFonts.outfit(
-                                fontSize: OTFontSize.s14,
-                                color: textSecondary,
-                                height: 1.45,
-                              ),
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                    const SizedBox(height: 32),
-                    // Unified AppLoader
                     AppLoader(color: accent, dotSize: 8, spacing: 4),
                   ],
                 ),
               ),
             ),
           ),
-        );
-      },
+        ),
+      ),
     );
   }
 }

@@ -5,6 +5,10 @@ import 'package:openturath_ai/core/app_config.dart';
 import 'package:openturath_ai/core/localization.dart';
 import 'package:openturath_ai/screens/subscription_screen.dart';
 
+DateTime _beforeLaunch() => DateTime.utc(2026, 10, 20, 5);
+DateTime _duringOffer() => DateTime.utc(2026, 10, 25, 5);
+DateTime _afterOffer() => DateTime.utc(2026, 11, 3);
+
 void main() {
   setUp(() {
     AppConfig.localeNotifier.value = 'id';
@@ -19,9 +23,9 @@ void main() {
           locale: const Locale('id'),
           supportedLocales: Loc.supportedLocales,
           localizationsDelegates: GlobalMaterialLocalizations.delegates,
-          home: const Scaffold(
+          home: Scaffold(
             body: Center(
-              child: PromoCountdownBanner(),
+              child: PromoCountdownBanner(clock: _beforeLaunch),
             ),
           ),
         ),
@@ -64,9 +68,9 @@ void main() {
           locale: const Locale('id'),
           supportedLocales: Loc.supportedLocales,
           localizationsDelegates: GlobalMaterialLocalizations.delegates,
-          home: const Scaffold(
+          home: Scaffold(
             body: Center(
-              child: PromoCountdownBanner(),
+              child: PromoCountdownBanner(clock: _beforeLaunch),
             ),
           ),
         ),
@@ -96,9 +100,9 @@ void main() {
           locale: const Locale('en'),
           supportedLocales: Loc.supportedLocales,
           localizationsDelegates: GlobalMaterialLocalizations.delegates,
-          home: const Scaffold(
+          home: Scaffold(
             body: Center(
-              child: PromoCountdownBanner(),
+              child: PromoCountdownBanner(clock: _beforeLaunch),
             ),
           ),
         ),
@@ -117,6 +121,27 @@ void main() {
       );
 
       await tester.pump(const Duration(seconds: 1));
+    });
+    testWidgets('shows the live offer and the ended state by the clock',
+        (tester) async {
+      Future<void> pumpAt(DateTime Function() clock) async {
+        await tester.pumpWidget(MaterialApp(
+          theme: ThemeData.light(),
+          locale: const Locale('id'),
+          supportedLocales: Loc.supportedLocales,
+          localizationsDelegates: GlobalMaterialLocalizations.delegates,
+          home: Scaffold(body: Center(child: PromoCountdownBanner(clock: clock))),
+        ));
+        await tester.pump();
+      }
+
+      await pumpAt(_duringOffer);
+      expect(find.text('PENAWARAN PERDANA TERBATAS (10 HARI)'), findsOneWidget);
+      expect(find.textContaining('Berakhir Senin, 2 Nov'), findsOneWidget);
+
+      await pumpAt(_afterOffer);
+      expect(find.text('PENAWARAN PERDANA TELAH SELESAI'), findsOneWidget);
+      expect(find.text('00'), findsNWidgets(4));
     });
   });
 }

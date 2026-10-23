@@ -544,17 +544,28 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 ? null
                                 : _logout,
                           ),
-                          Divider(height: 1, color: border),
-                          _AccountActionRow(
-                            icon: Icons.delete_outline_rounded,
-                            label: AppCopy.deleteAccountButton,
-                            color: OTColors.textPrimary(isDark),
-                            busy: _isDeletingAccount,
-                            onTap: (_isLoggingOut || _isDeletingAccount)
-                                ? null
-                                : _deleteAccount,
-                          ),
                         ],
+                      ),
+                    ),
+
+                    // Tindakan yang tidak bisa dibatalkan dipisah dari "Keluar"
+                    // dan diberi warna peringatan, supaya tidak tersentuh keliru.
+                    const SizedBox(height: 16),
+                    Container(
+                      clipBehavior: Clip.antiAlias,
+                      decoration: BoxDecoration(
+                        color: surface,
+                        borderRadius: OTRadius.cardBorder,
+                        border: Border.all(color: border),
+                      ),
+                      child: _AccountActionRow(
+                        icon: Icons.delete_outline_rounded,
+                        label: AppCopy.deleteAccountButton,
+                        color: OTColors.destructive(isDark),
+                        busy: _isDeletingAccount,
+                        onTap: (_isLoggingOut || _isDeletingAccount)
+                            ? null
+                            : _deleteAccount,
                       ),
                     ),
                   ],

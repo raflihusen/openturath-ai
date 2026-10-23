@@ -22,28 +22,28 @@ class SubscriptionService {
       }
     }
     if (c.contains('not-found')) {
-      return 'Kode voucher tidak ditemukan. Periksa kembali penulisan kode Anda.';
+      return Loc.tr('redeemNotFound');
     }
     if (c.contains('already-exists') || c.contains('already-used')) {
-      return 'Kode ini sudah pernah ditukarkan sebelumnya.';
+      return Loc.tr('redeemUsed');
     }
     if (c.contains('deadline-exceeded') || c.contains('expired')) {
-      return 'Masa berlaku kode voucher ini telah berakhir.';
+      return Loc.tr('redeemExpired');
     }
     if (c.contains('failed-precondition')) {
       if (serverMessage != null && serverMessage.contains('ponsel')) {
         return serverMessage;
       }
-      return 'Kode voucher ini sudah tidak aktif.';
+      return Loc.tr('redeemInactive');
     }
     if (c.contains('resource-exhausted') || c.contains('quota')) {
-      return 'Kuota penukaran untuk kode voucher ini sudah habis.';
+      return Loc.tr('redeemQuota');
     }
     if (c.contains('unauthenticated')) {
       return Loc.tr('redeemSignInFirst');
     }
     if (c.contains('invalid-argument')) {
-      return 'Format penulisan kode voucher belum sesuai.';
+      return Loc.tr('redeemBadFormat');
     }
     if (c.contains('permission-denied')) {
       return Loc.tr('redeemNotForAccount');

@@ -1122,7 +1122,7 @@ const copyCatalog = <String, List<String>>{
     "تعذر فتح الصفحة."
   ],
   "ui_0ae09a2807": [
-    "Cari judul kitab, pengarang, muhaqqiq, atau bidang...",
+    "Cari judul kitab, pengarang, muhaqqiq, atau bidang…",
     "Search titles, authors, editors, or disciplines…",
     "ابحث عن عنوان أو مؤلف أو محقق أو مجال…"
   ],
@@ -1181,7 +1181,7 @@ const copyCatalog = <String, List<String>>{
   "ui_88bddfe74a": ["ID edisi", "Edition ID", "معرّف الطبعة"],
   "ui_9f0b5b5d87": ["Pustaka Rujukan", "Reference Library", "مكتبة المراجع"],
   "ui_c8c23c3325": [
-    "Cari judul kitab atau pengarang...",
+    "Cari judul kitab atau pengarang…",
     "Search titles or authors…",
     "ابحث عن عنوان أو مؤلف…"
   ],
@@ -1385,7 +1385,7 @@ const copyCatalog = <String, List<String>>{
     "مراجع المذهب الشافعي"
   ],
   "ui_5ed90ac17a": [
-    "Cari judul, pengarang, penerbit, atau tahkik...",
+    "Cari judul, pengarang, penerbit, atau tahkik…",
     "Search titles, authors, publishers, or editors…",
     "ابحث عن عنوان أو مؤلف أو ناشر أو محقق…"
   ],
@@ -1511,8 +1511,8 @@ const copyCatalog = <String, List<String>>{
   ],
   "ui_56a2f9f730": [
     "Tutup halaman pembayaran?",
-    "Close payment page",
-    "إغلاق صفحة الدفع"
+    "Close the payment page?",
+    "إغلاق صفحة الدفع؟"
   ],
   "ui_85f60bf7af": [
     "Menutup halaman ini tidak otomatis membatalkan transaksi jika pembayaran telah diproses. Transaksi Anda tetap tercatat di sistem.",
@@ -1545,7 +1545,7 @@ const copyCatalog = <String, List<String>>{
   ],
   "ui_dc885de9d1": ["Catatan Pribadi", "Personal Note", "ملاحظة شخصية"],
   "ui_bdbc1bc83d": ["Catatan baru", "New note", "ملاحظة جديدة"],
-  "ui_38329dceb2": ["Menyimpan draf...", "Saving draft…", "جارٍ حفظ المسودة…"],
+  "ui_38329dceb2": ["Menyimpan draf…", "Saving draft…", "جارٍ حفظ المسودة…"],
   "ui_9e29bfcc3a": ["Draf dipulihkan", "Draft restored", "استُعيدت المسودة"],
   "ui_4d08ace78e": ["Draf tersimpan", "Draft saved", "حُفظت المسودة"],
   "ui_d1d150c064": ["Tulis", "Write", "كتابة"],
@@ -2643,5 +2643,130 @@ const copyCatalog = <String, List<String>>{
     "Sesi dipakai kembali per perangkat dan profil browser. Google tetap dapat meminta persetujuan atau verifikasi keamanan.",
     "The session is reused per device and browser profile. Google may still ask for consent or a security check.",
     "تُعاد استخدام الجلسة لكل جهاز وملف متصفح. وقد يطلب Google الموافقة أو التحقق الأمني."
+  ],
+  "promoUnitDays": [
+    "hari",
+    "days",
+    "أيام"
+  ],
+  "promoUnitHours": [
+    "jam",
+    "hours",
+    "ساعات"
+  ],
+  "promoUnitMins": [
+    "menit",
+    "minutes",
+    "دقائق"
+  ],
+  "promoUnitSecs": [
+    "detik",
+    "seconds",
+    "ثوانٍ"
+  ],
+  "promoHeadBefore": [
+    "MENUJU PELUNCURAN PROMO 10 HARI",
+    "10-DAY PROMO LAUNCH COUNTDOWN",
+    "العد التنازلي لإطلاق عرض الـ 10 أيام"
+  ],
+  "promoCapBefore": [
+    "Mulai Jumat, 23 Okt · 12:00 WIB (durasi promo 10 hari)",
+    "Starts Friday, Oct 23 · 12:00 WIB (10-day promo window)",
+    "يبدأ الجمعة، 23 أكتوبر · 12:00 بتوقيت جاكرتا (نافذة 10 أيام)"
+  ],
+  "promoHeadLive": [
+    "PENAWARAN PERDANA TERBATAS (10 HARI)",
+    "LIMITED 10-DAY LAUNCH OFFER",
+    "عرض الإطلاق المحدود (10 أيام)"
+  ],
+  "promoCapLive": [
+    "Penawaran aktif selama 10 hari · Berakhir Senin, 2 Nov · 12:00 WIB",
+    "Offer active for 10 days · Ends Monday, Nov 2 at 12:00 WIB",
+    "العرض متاح لمدة 10 أيام · ينتهي الإثنين، 2 نوفمبر 12:00 WIB"
+  ],
+  "promoHeadEnded": [
+    "PENAWARAN PERDANA TELAH SELESAI",
+    "LAUNCH OFFER ENDED",
+    "انتهى العرض"
+  ],
+  "promoCapEnded": [
+    "Masa penawaran perdana 10 hari telah ditutup",
+    "The 10-day launch offer has ended",
+    "انتهت فترة عرض الإطلاق لـ 10 أيام"
+  ],
+  "planContinue": [
+    "Lanjut ke pembayaran",
+    "Continue to payment",
+    "المتابعة إلى الدفع"
+  ],
+  "planTotalLabel": [
+    "Total",
+    "Total",
+    "الإجمالي"
+  ],
+  "planConsent": [
+    "Dengan melanjutkan, Anda menyetujui {0} dan {1}.",
+    "By continuing, you agree to the {0} and the {1}.",
+    "بالمتابعة فإنك توافق على {0} و{1}."
+  ],
+  "planConsentTerms": [
+    "Ketentuan Layanan",
+    "Terms of Service",
+    "شروط الخدمة"
+  ],
+  "planConsentRefund": [
+    "Pembayaran dan Pengembalian Dana",
+    "Payments and Refunds",
+    "الدفع واسترداد المبالغ"
+  ],
+  "planFeaturedBadge": [
+    "Eksklusif di OpenTurath · {0} AI",
+    "Exclusive to OpenTurath · {0} AI",
+    "حصري في OpenTurath · {0} AI"
+  ],
+  "checkoutPreparing": [
+    "Menyiapkan pembayaran…",
+    "Preparing checkout…",
+    "جارٍ تهيئة عملية الدفع…"
+  ],
+  "checkoutPleaseWait": [
+    "Mohon tunggu sebentar",
+    "Please wait a moment",
+    "يرجى الانتظار لحظة"
+  ],
+  "checkoutStillWaiting": [
+    "Belum terdeteksi? Ketuk ikon segarkan untuk memeriksa pembayaran.",
+    "Not detected yet? Tap refresh to check your payment.",
+    "لم يُرصد بعد؟ اضغط على التحديث لفحص الدفع."
+  ],
+  "redeemNotFound": [
+    "Kode voucher tidak ditemukan. Periksa kembali penulisan kode Anda.",
+    "Voucher code not found. Please check how you typed it.",
+    "لم يُعثر على رمز القسيمة. تحقق من كتابته."
+  ],
+  "redeemUsed": [
+    "Kode ini sudah pernah ditukarkan sebelumnya.",
+    "This code has already been redeemed.",
+    "سبق استبدال هذا الرمز."
+  ],
+  "redeemExpired": [
+    "Masa berlaku kode voucher ini telah berakhir.",
+    "This voucher code has expired.",
+    "انتهت صلاحية رمز القسيمة هذا."
+  ],
+  "redeemInactive": [
+    "Kode voucher ini sudah tidak aktif.",
+    "This voucher code is no longer active.",
+    "رمز القسيمة هذا لم يعد فعالًا."
+  ],
+  "redeemQuota": [
+    "Kuota penukaran untuk kode voucher ini sudah habis.",
+    "The redemption limit for this voucher code has been reached.",
+    "استُنفدت حصة الاستبدال لهذا الرمز."
+  ],
+  "redeemBadFormat": [
+    "Format penulisan kode voucher belum sesuai.",
+    "The voucher code format is not valid.",
+    "صيغة رمز القسيمة غير صحيحة."
   ],
 };
