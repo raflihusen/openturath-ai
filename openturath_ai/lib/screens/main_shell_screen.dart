@@ -198,9 +198,9 @@ class _MainShellScreenState extends State<MainShellScreen> {
                               label: Text(Loc.tr('navHome')),
                             ),
                             NavigationRailDestination(
-                              icon: const Icon(Icons.auto_stories_outlined),
+                              icon: const Icon(Icons.auto_awesome_outlined),
                               selectedIcon:
-                                  const Icon(Icons.auto_stories_rounded),
+                                  const Icon(Icons.auto_awesome_rounded),
                               label: Text(Loc.tr('navStudies')),
                             ),
                             NavigationRailDestination(
@@ -253,8 +253,8 @@ class _MainShellScreenState extends State<MainShellScreen> {
                   label: Loc.tr('navHome'),
                 ),
                 NavigationDestination(
-                  icon: const Icon(Icons.auto_stories_outlined),
-                  selectedIcon: const Icon(Icons.auto_stories_rounded),
+                  icon: const Icon(Icons.auto_awesome_outlined),
+                  selectedIcon: const Icon(Icons.auto_awesome_rounded),
                   label: Loc.tr('navStudies'),
                 ),
                 NavigationDestination(

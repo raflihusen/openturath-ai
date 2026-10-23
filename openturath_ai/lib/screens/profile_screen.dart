@@ -870,7 +870,7 @@ class _MembershipPass extends StatelessWidget {
             IconButton(
                 tooltip: Loc.tr('viewAccessList'),
                 onPressed: onViewAccess,
-                icon: Icon(Icons.auto_stories_outlined, size: 20, color: ink)),
+                icon: Icon(Icons.auto_awesome_outlined, size: 20, color: ink)),
         ]),
         const SizedBox(height: 16),
         Divider(height: 1, color: OTColors.borderSubtle(isDark)),

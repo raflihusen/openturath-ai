@@ -103,14 +103,14 @@ const copyCatalog = <String, List<String>>{
     "مادة الدعوة والخطب"
   ],
   "subHeadline": [
-    "Lanjutkan tanya jawab bersama kitab-kitabnya",
-    "Keep studying with the books themselves",
-    "تابع المطالعة مع الكتب نفسها"
+    "Pilih paket langganan",
+    "Choose your subscription plan",
+    "اختر باقة الاشتراك"
   ],
   "subHeadlineNamed": [
-    "{0}, lanjutkan tanya jawab bersama kitab-kitabnya",
-    "{0}, keep studying with the books themselves",
-    "{0}، تابع المطالعة مع الكتب نفسها"
+    "{0}, pilih paket langganan Anda",
+    "{0}, choose your subscription plan",
+    "{0}، اختر باقة اشتراكك"
   ],
   "termSavingVsMonthly": [
     "Hemat {0}% dari bulanan",
@@ -246,7 +246,7 @@ const copyCatalog = <String, List<String>>{
   "studyEntryResumeSubtitle": [
     "Sesi terakhir Anda masih terbuka.",
     "Your last session is still open.",
-    "مجلس مطالعتك جاهز للمتابعة."
+    "جلستك الأخيرة لا تزال مفتوحة."
   ],
   "studyEntryHistorySubtitle": [
     "Lanjutkan dari AI yang terakhir Anda buka.",
@@ -264,9 +264,9 @@ const copyCatalog = <String, List<String>>{
     "جارٍ تهيئة المساعد…"
   ],
   "modulePreparing": [
-    "sedang disiapkan.",
-    "is being prepared.",
-    "قيد الإعداد."
+    "Bagian ini masih disiapkan",
+    "This section is being prepared",
+    "هذا القسم قيد الإعداد"
   ],
   "moduleUnavailable": [
     "AI ini belum tersedia. Coba lagi nanti.",
@@ -320,14 +320,14 @@ const copyCatalog = <String, List<String>>{
   ],
   "tryAgain": ["Coba lagi", "Try again", "إعادة المحاولة"],
   "sessionExpiredOrNoAccess": [
-    "Sesi berakhir, atau akses ke percakapan ini belum aktif.",
-    "Your session has ended or access to this study room is inactive.",
-    "انتهت جلستك أو لم يُفعّل وصولك إلى هذا المجلس."
+    "Sesi berakhir, atau akses ke AI ini belum aktif.",
+    "Your session has ended or access to this AI is inactive.",
+    "انتهت الجلسة أو لم يُفعّل وصولك إلى هذا الذكاء الاصطناعي."
   ],
   "agentLoadFailed": [
-    "Percakapan belum bisa dimuat. Coba lagi sebentar.",
-    "The study room could not be loaded. Please try again shortly.",
-    "تعذر تحميل المجلس. حاول بعد قليل."
+    "AI belum bisa dimuat. Coba lagi sebentar.",
+    "The AI could not be loaded. Please try again shortly.",
+    "تعذر تحميل الذكاء الاصطناعي. حاول بعد قليل."
   ],
   "backToHome": ["Kembali ke beranda", "Return home", "العودة إلى الرئيسية"],
   "noAssistantsFound": [
@@ -501,9 +501,9 @@ const copyCatalog = <String, List<String>>{
     "هيّئ حسابك لمطالعة النصوص"
   ],
   "googleSessionConnectDesc": [
-    "Setelah masuk, Anda langsung kembali ke percakapan.",
-    "After signing in, you will return to your study room automatically.",
-    "ستعود إلى مجلس المطالعة تلقائيًا بعد تسجيل الدخول."
+    "Setelah masuk, Anda langsung kembali ke AI.",
+    "After signing in, you will return to AI automatically.",
+    "ستعود إلى الذكاء الاصطناعي تلقائيًا بعد تسجيل الدخول."
   ],
   "googleSessionSignInHint": [
     "Gunakan akun Google yang sama supaya tidak perlu masuk ulang.",
@@ -512,8 +512,8 @@ const copyCatalog = <String, List<String>>{
   ],
   "googleSessionSignInSameAccountDesc": [
     "Gunakan akun Google yang sama agar akses AI terbuka tanpa masuk ulang.",
-    "Use the same Google account to open your study room without signing in again.",
-    "استخدم حساب Google نفسه لفتح مجلسك دون تسجيل الدخول مجددًا."
+    "Use the same Google account to open AI without signing in again.",
+    "استخدم حساب Google نفسه لفتح الذكاء الاصطناعي دون تسجيل الدخول مجددًا."
   ],
   "googleSessionConnected": [
     "Akun Google terhubung",
@@ -957,16 +957,21 @@ const copyCatalog = <String, List<String>>{
     "Single Field AI Access",
     "الوصول إلى ذكاء اصطناعي لمجال واحد"
   ],
+  "discipline": [
+    "Bidang ilmu",
+    "Field of study",
+    "المجال العلمي"
+  ],
   "scholarLibrary": ["Khazanah ulama", "خزانة العلماء", "خزانة العلماء"],
   "scholarPreparing": [
-    "Khazanah ulama sedang disiapkan",
-    "Scholars’ Collection is being prepared",
-    "خزانة العلماء قيد الإعداد"
+    "Bagian ini masih disiapkan",
+    "This section is being prepared",
+    "هذا القسم قيد الإعداد"
   ],
   "scholarPreparingBody": [
-    "Biografi dan keterangan sanad ulama Nusantara dan Haramain sedang dirapikan. Koleksi ini belum dibuka untuk umum.",
-    "Biographies and transmission records of scholars from Nusantara and the Haramain are being reviewed. This collection is not yet open to the public.",
-    "تجري مراجعة تراجم علماء نوسانتارا والحرمين وبيانات أسانيدهم. لم تُفتح هذه الخزانة للعامة بعد."
+    "Bagian ini masih disiapkan",
+    "This section is being prepared",
+    "هذا القسم قيد الإعداد"
   ],
   "digitalStudentCard": [
     "Kartu santri digital",
@@ -1937,9 +1942,9 @@ const copyCatalog = <String, List<String>>{
     "التحديث v{0} جاهز للتثبيت"
   ],
   "openNamedStudy": [
-    "Buka percakapan {0}",
-    "Open {0} study room",
-    "فتح مجلس {0}"
+    "Buka AI {0}",
+    "Open {0} AI",
+    "فتح الذكاء الاصطناعي {0}"
   ],
   "policyOriginal": [
     "Naskah kebijakan resmi berbahasa Indonesia.",
@@ -2049,19 +2054,19 @@ const copyCatalog = <String, List<String>>{
     "العصر الحديث (بعد 1100 هـ)"
   ],
   "desktopLoginIntro": [
-    "Aplikasi penelusuran kitab turats dan tanya jawab berbasis AI.",
-    "Classical turath literature research and AI-powered inquiry.",
-    "تطبيق لبحث كتب التراث والمحاورة بالذكاء الاصطناعي."
+    "Aplikasi penelusuran kitab turats berbasis AI.",
+    "Classical turath literature research powered by AI.",
+    "تطبيق لبحث كتب التراث بالذكاء الاصطناعي."
   ],
   "desktopLoginTitle": [
-    "Masuk ke Ruang Tanya Jawab",
-    "Sign in to Study Room",
-    "الدخول إلى غرفة المطالعة"
+    "Masuk dengan Akun Google",
+    "Sign in with Google",
+    "تسجيل الدخول عبر جوجل"
   ],
   "desktopLoginHelp": [
-    "Gunakan akun Google Anda untuk membuka akses tanya jawab kitab dan AI.",
-    "Use your Google account to unlock access to books and study assistants.",
-    "استخدم حساب جوجل لفتح دراسة الكتب ومساعدي البحث."
+    "Gunakan akun Google Anda untuk membuka akses AI dan katalog turats.",
+    "Use your Google account to access OpenTurath AI and the turath catalog.",
+    "استخدم حساب جوجل للوصول إلى الذكاء الاصطناعي ومكتبة التراث."
   ],
   "desktopConnectingGoogle": [
     "Menghubungkan ke Google…",
@@ -2492,9 +2497,9 @@ const copyCatalog = <String, List<String>>{
     "نحو {0} شهريًا · يُدفع كاملًا"
   ],
   "chatPurpose": [
-    "Ruang tanya jawab naskah & kajian komparatif berbasis turats.",
-    "Study source texts and compare scholarly explanations.",
-    "مجلس لمطالعة نصوص التراث ومقارنة الشروح العلمية."
+    "Penelusuran teks turats dan komparasi kajian berbasis AI.",
+    "Turath text research and AI-powered comparative study.",
+    "بحث نصوص التراث والمقارنة العلمية بالذكاء الاصطناعي."
   ],
   "sendQuestion": ["Kirim pertanyaan", "Send question", "أرسل السؤال"],
   "retryCatalog": ["Coba lagi", "Try again", "حاول مجددًا"],
@@ -2605,24 +2610,24 @@ const copyCatalog = <String, List<String>>{
     "طابِق مع الكتاب الأصل"
   ],
   "workspaceHeadline": [
-    "Satu ruang untuk kajian Anda.",
-    "One space for your studies.",
-    "مساحة واحدة لدراستك."
+    "Akses AI OpenTurath.",
+    "Access OpenTurath AI.",
+    "الوصول إلى OpenTurath AI."
   ],
   "workspaceIntro": [
-    "Masuk dengan Google dari ruang browser, lalu buka ruang AI di browser dan profil yang sama. Tidak ada login Google di WebView aplikasi.",
-    "Sign in with Google from the browser space, then open the AI space in the same browser and profile. There is no Google sign-in inside the app WebView.",
-    "سجّل الدخول بحساب Google من مساحة المتصفح، ثم افتح مساحة الذكاء الاصطناعي في المتصفح والملف الشخصي نفسيهما. لا يوجد تسجيل دخول إلى Google داخل WebView التطبيق."
+    "Masuk dengan Google di browser, lalu buka AI di browser dan profil yang sama. Tidak ada login Google di WebView aplikasi.",
+    "Sign in with Google in your browser, then open AI in the same browser and profile. There is no Google sign-in inside the app WebView.",
+    "سجّل الدخول بحساب Google في المتصفح، ثم افتح الذكاء الاصطناعي في المتصفح والملف الشخصي نفسيهما. لا يوجد تسجيل دخول إلى Google داخل WebView التطبيق."
   ],
   "workspaceOpening": [
-    "Membuka ruang…",
-    "Opening the space…",
-    "جارٍ فتح المساحة…"
+    "Membuka AI…",
+    "Opening AI…",
+    "جارٍ فتح الذكاء الاصطناعي…"
   ],
   "workspaceReopen": [
-    "Buka ruang kembali",
-    "Open the space again",
-    "افتح المساحة مرة أخرى"
+    "Buka AI kembali",
+    "Open AI again",
+    "افتح الذكاء الاصطناعي مرة أخرى"
   ],
   "workspaceOpen": [
     "Buka sesi AI",

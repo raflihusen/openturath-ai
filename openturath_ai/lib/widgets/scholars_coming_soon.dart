@@ -30,10 +30,6 @@ class ScholarsComingSoon extends StatelessWidget {
                 textAlign: TextAlign.center,
                 style:
                     OTTypography.pageTitle(color: OTColors.textPrimary(dark))),
-            const SizedBox(height: 12),
-            Text(Loc.tr('scholarPreparingBody'),
-                textAlign: TextAlign.center,
-                style: OTTypography.body(color: OTColors.textSecondary(dark))),
           ]),
         ),
       ),

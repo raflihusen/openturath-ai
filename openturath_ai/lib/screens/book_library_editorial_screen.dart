@@ -21,7 +21,6 @@ import '../services/bookmark_service.dart';
 
 import 'package:openturath_ai/core/design/ot_typography.dart';
 import '../widgets/ot_components.dart';
-import '../widgets/ai_info_sheet.dart';
 
 /// Halaman Katalog Kitab Editorial OpenTurath (Monochrome Editorial)
 class OpenTurathBookLibraryPage extends StatefulWidget {
@@ -169,15 +168,6 @@ class _OpenTurathBookLibraryPageState extends State<OpenTurathBookLibraryPage> {
                           fontSize: OTFontSize.s26,
                           fontWeight: FontWeight.w700,
                           color: ink)),
-                  actions: [
-                    if (widget.metadata != null)
-                      IconButton(
-                        tooltip: ArabicCatalog.aiInfo,
-                        icon: const Icon(Icons.info_outline_rounded),
-                        onPressed: () =>
-                            AiInfoSheet.show(context, widget.metadata!.keyName),
-                      ),
-                  ],
                 ),
                 body: SafeArea(
                   child: CustomScrollView(

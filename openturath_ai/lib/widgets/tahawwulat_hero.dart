@@ -19,6 +19,10 @@ class TahawwulatHero extends StatelessWidget {
       required this.onIntroduction,
       this.facts = const [],
       this.onOpenLibrary});
+  /// Saklar pengendali tombol pengenalan (default: sembunyi).
+  /// Dapat diaktifkan secara real-time kapan saja (`TahawwulatHero.showIntroduction = true`).
+  static bool showIntroduction = false;
+
   final VoidCallback onOpen;
   final VoidCallback? onOpenLibrary;
   final VoidCallback onIntroduction;
@@ -32,7 +36,7 @@ class TahawwulatHero extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Row(children: [
-                const Icon(Icons.auto_stories_rounded,
+                const Icon(Icons.auto_awesome_rounded,
                     color: OTExpressive.whiteMuted, size: 20),
                 const SizedBox(width: 10),
                 Expanded(
@@ -85,14 +89,15 @@ class TahawwulatHero extends StatelessWidget {
                               foregroundColor: OTExpressive.white),
                           icon: Icon(Icons.auto_stories_outlined,
                               semanticLabel: Loc.tr('viewReferences')))),
-                TextButton(
-                    onPressed: onIntroduction,
-                    style: TextButton.styleFrom(
-                        foregroundColor: OTExpressive.white,
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 16)),
-                    child: Text(reviewCopy('Mengenal Fikih Tahawwulat',
-                        'تعرّف على فقه التحولات', 'About Fiqh Tahawwulat'))),
+                if (showIntroduction)
+                  TextButton(
+                      onPressed: onIntroduction,
+                      style: TextButton.styleFrom(
+                          foregroundColor: OTExpressive.white,
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 16)),
+                      child: Text(reviewCopy('Mengenal Fikih Tahawwulat',
+                          'تعرّف على فقه التحولات', 'About Fiqh Tahawwulat'))),
               ]),
             ]);
         return TahawwulatHeroSurface(

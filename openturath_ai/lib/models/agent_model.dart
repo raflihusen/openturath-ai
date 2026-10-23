@@ -200,7 +200,7 @@ class AgentModel {
               id: 'fiqh_tahawwulat_mukhtabir',
               name: 'Al-Mukhtabir',
               nameArabic: 'المختبر',
-              description: 'Uji Pemahaman Tanya Jawab',
+              description: 'Uji Pemahaman & Nalar',
               descriptionArabic: 'تقييم الفهم واختبار النوازل المعاصرة',
               emoji: '🎓',
               badge: 'Ujian Nalar',
@@ -755,7 +755,7 @@ class AgentModel {
           title: 'Tasawuf',
           titleArabic: 'التصوف والأذكار',
           description:
-              'Tanya jawab seputar adab, tazkiyatun nafs, dan wirid dalam kitab rujukan.',
+              'Kajian adab, tazkiyatun nafs, dan wirid dalam kitab rujukan.',
           emoji: '📖',
           category: 'Tasawwuf',
           fieldId: 'tasawwuf',

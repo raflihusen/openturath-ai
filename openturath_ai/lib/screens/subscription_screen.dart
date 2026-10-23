@@ -23,8 +23,6 @@ import '../widgets/redeem_code_sheet.dart';
 import '../core/app_platform.dart';
 import '../services/auth_service.dart';
 import '../services/telemetry_service.dart';
-import '../services/open_turath_catalog_repository.dart';
-import 'package:intl/intl.dart' show NumberFormat;
 
 import 'package:openturath_ai/core/design/ot_radius.dart';
 import 'package:openturath_ai/core/design/ot_buttons.dart';
@@ -816,8 +814,6 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                         const SizedBox(height: 12),
                         Text(_headline(),
                             style: OTTypography.editorialHero(color: ink)),
-                        const SizedBox(height: 8),
-                        _LibraryProof(ink: ink, muted: muted),
                         const SizedBox(height: 20),
                         const _PromoCountdownBanner(),
                         const SizedBox(height: 20),
@@ -1058,46 +1054,6 @@ class _KhatamPatternPainter extends CustomPainter {
   bool shouldRepaint(_KhatamPatternPainter oldDelegate) => false;
 }
 
-/// Angka pustaka yang sama dengan layar masuk: bidang ilmu, entri kitab,
-/// dan perkiraan halaman. Tidak tampil bila katalog belum termuat.
-class _LibraryProof extends StatelessWidget {
-  const _LibraryProof({required this.ink, required this.muted});
-
-  final Color ink;
-  final Color muted;
-
-  @override
-  Widget build(BuildContext context) {
-    return FutureBuilder<Map<String, AiLibraryMetadata>>(
-      future: OpenTurathCatalogRepository.instance.loadAllMetadata(),
-      builder: (context, snapshot) {
-        final all = snapshot.data ?? const <String, AiLibraryMetadata>{};
-        if (all.isEmpty) return const SizedBox.shrink();
-        final number = NumberFormat.decimalPattern(Loc.language);
-        final entries =
-            all.values.fold<int>(0, (sum, item) => sum + item.totalKitab);
-        final pages =
-            all.values.fold<int>(0, (sum, item) => sum + item.totalHalaman);
-        final strong = OTTypography.captionMedium(color: ink)
-            .copyWith(fontFeatures: const [FontFeature.tabularFigures()]);
-        final plain = OTTypography.caption(color: muted);
-        return Text.rich(TextSpan(style: plain, children: [
-          TextSpan(text: number.format(all.length), style: strong),
-          TextSpan(text: ' ${Loc.tr('loginStatLibraries')}  ·  '),
-          TextSpan(
-              text: Loc.atLeast(number.format(entries ~/ 100 * 100)),
-              style: strong),
-          TextSpan(text: ' ${Loc.tr('loginStatEntries')}  ·  '),
-          TextSpan(
-              text: Loc.atLeast(
-                  number.format(pages ~/ 100000 / 10), Loc.tr('unitMillion')),
-              style: strong),
-          TextSpan(text: ' ${Loc.tr('loginStatPages')}'),
-        ]));
-      },
-    );
-  }
-}
 
 /// Banner hitung mundur penawaran perdana 10 hari yang dimulai pada
 /// Jumat pukul 12:00 WIB siang (23 Oktober 2026 12:00 WIB / 05:00 UTC).

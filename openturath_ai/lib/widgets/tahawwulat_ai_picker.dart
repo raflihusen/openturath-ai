@@ -46,9 +46,9 @@ class TahawwulatAiPicker {
                     const SizedBox(height: 8),
                     Text(
                         reviewCopy(
-                            'Pilih AI sesuai kebutuhan tanya jawab Anda.',
-                            'اختر الأداة المناسبة لغرض دراستك.',
-                            'Choose an AI for your study purpose.'),
+                            'Pilih AI sesuai kebutuhan penelusuran Anda.',
+                            'اختر الأداة المناسبة لغرض بحثك.',
+                            'Choose an AI for your research purpose.'),
                         style: OTTypography.body(
                             color: OTColors.textSecondary(dark))),
                     const SizedBox(height: 24),
@@ -90,7 +90,7 @@ class TahawwulatAiPicker {
                                                     const [
                                                       'Telusuri teks kitab dan ibarah rujukan.',
                                                       'Pahami konsep dan istilah dengan penjelasan ringkas.',
-                                                      'Uji pemahaman lewat tanya jawab langsung.',
+                                                      'Uji pemahaman lewat evaluasi konsep.',
                                                       'Telusuri arsip muhadarah Habib Abu Bakar.',
                                                       'Susun bahan dakwah dan khutbah.'
                                                     ][i % 5],

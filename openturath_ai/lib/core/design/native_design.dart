@@ -219,9 +219,9 @@ abstract final class NativeCopy {
     'collection': ['Koleksi istimewa', 'Special collection', 'مجموعة خاصة'],
     'exclusive': ['Koleksi istimewa', 'Special collection', 'مجموعة خاصة'],
     'fivePaths': [
-      'Lima pintu tanya jawab',
-      'Five paths of study',
-      'خمسة مسارات للدراسة'
+      'Lima spesialisasi AI',
+      'Five AI specializations',
+      'خمسة تخصصات ذكاء اصطناعي'
     ],
     'chooseRole': [
       'Pilih AI sesuai kebutuhan kajian Anda.',
@@ -247,9 +247,9 @@ abstract final class NativeCopy {
       'مؤلفات الحبيب أبي بكر العدني المشهور'
     ],
     'collectionBody': [
-      'Tanya jawab naskah, pahami konsep, dan telusuri khazanah Fikih Tahawwulat bersama lima AI khusus.',
-      'Study texts, explore concepts, and discover the heritage of Fiqh al-Tahawwulat with five dedicated assistants.',
-      'طالع النصوص وافهم المفاهيم واستكشف تراث فقه التحولات مع خمسة مساعدين متخصصين.'
+      'Kaji naskah, pahami konsep, dan telusuri khazanah Fikih Tahawwulat bersama lima AI khusus.',
+      'Study texts, explore concepts, and discover the heritage of Fiqh al-Tahawwulat with five dedicated AI models.',
+      'طالع النصوص وافهم المفاهيم واستكشف تراث فقه التحولات مع خمسة نماذج ذكاء اصطناعي.'
     ],
     'muhaqqiq': [
       'Kaji matan, ibarah, dan rujukannya.',
@@ -262,9 +262,9 @@ abstract final class NativeCopy {
       'فهم المفاهيم والمصطلحات خطوة بخطوة.'
     ],
     'mukhtabir': [
-      'Uji pemahaman melalui tanya jawab.',
-      'Test your understanding through questions and answers.',
-      'اختبار الفهم من خلال الأسئلة والأجوبة.'
+      'Uji pemahaman melalui evaluasi konsep.',
+      'Test your understanding through conceptual evaluation.',
+      'اختبار الفهم عبر تقييم المفاهيم.'
     ],
     'habib': [
       'Telusuri materi muhadharah Habib Abu Bakar.',

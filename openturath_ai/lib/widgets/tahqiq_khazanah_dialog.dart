@@ -82,43 +82,18 @@ class TahqiqKhazanahDialog extends StatelessWidget {
           ),
           const SizedBox(height: 6),
 
-          // Subjudul
+          // Subjudul ringkas
           Text(
             reviewCopy(
-              'Belum Tersedia',
-              'غير متاح حالياً',
-              'Coming Soon',
+              'Bagian ini masih disiapkan',
+              'هذا القسم قيد الإعداد',
+              'This section is being prepared',
             ),
             textAlign: TextAlign.center,
             style: ScholarlyFonts.outfit(
-              fontSize: OTFontSize.s12,
-              fontWeight: FontWeight.w600,
+              fontSize: OTFontSize.s14,
+              fontWeight: FontWeight.w400,
               color: muted,
-              letterSpacing: 0.2,
-            ),
-          ),
-          const SizedBox(height: 16),
-
-          // Deskripsi
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: OTColors.canvas(isDark),
-              borderRadius: BorderRadius.circular(OTRadius.button),
-              border: Border.all(color: border.withValues(alpha: 0.5)),
-            ),
-            child: Text(
-              reviewCopy(
-                'AI ini sedang dalam tahap pengembangan. Akses akan dibuka secara bertahap saat siap digunakan tanpa memerlukan pembaruan aplikasi.',
-                'هذا الذكاء الاصطناعي قيد التطوير حالياً. سيتم إتاحة الوصول تدريجياً فور اكتماله دون الحاجة لتحديث التطبيق.',
-                'This AI is currently under development. Access will be unlocked gradually without requiring app updates.',
-              ),
-              textAlign: TextAlign.center,
-              style: ScholarlyFonts.outfit(
-                fontSize: OTFontSize.s14,
-                height: 1.5,
-                color: ink.withValues(alpha: 0.85),
-              ),
             ),
           ),
           const SizedBox(height: 24),
