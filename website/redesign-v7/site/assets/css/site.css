@@ -912,3 +912,32 @@ html[lang="ar"] .xb{letter-spacing:.02em;text-transform:none;font-size:15px}
 @media (max-width:900px){.tahaw.tsc{grid-template-columns:1fr}}
 
 .sec:not(.band) .gate svg{color:var(--on-surface)}
+
+/* rujukan sebagian + perbandingan */
+.q1 .reflist{grid-template-columns:1fr}
+.q1 .ref .quote{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;font-size:18px;line-height:1.9}
+.q1 .refmore{margin-top:14px;display:flex;flex-direction:column;gap:12px;align-items:flex-start;padding:18px;border-radius:20px;border:1px dashed var(--outline)}
+.q1 .refmore span{font-size:14.5px;color:var(--on-variant)}
+.qcard{background:var(--container);border-radius:var(--corner-xl);padding:clamp(24px,3vw,36px)}
+.qcard .tag{display:inline-block;font-size:12.5px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--on-variant);margin-bottom:12px}
+.qcard p{margin:0;font-size:clamp(19px,2vw,24px);line-height:1.45;letter-spacing:-.015em}
+.cnote{margin-top:14px;font-size:14.5px;color:var(--on-variant);line-height:1.6;max-width:820px}
+.ctabs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:24px}
+.ctab{height:44px;padding:0 20px;border-radius:var(--pill);background:var(--container-low);color:var(--on-surface);font-size:15px;font-weight:550;border:1px solid var(--outline-variant);transition:background .25s var(--ease),color .25s}
+.ctab:hover{background:var(--container-high)}
+.ctab[aria-selected="true"]{background:var(--on-surface);color:var(--surface);border-color:transparent}
+.cpanel{background:var(--container);border-radius:var(--corner-2xl);padding:clamp(24px,3.4vw,48px);margin-bottom:20px}
+.cpanel[hidden]{display:none}
+.cpanel>header{display:flex;flex-wrap:wrap;align-items:center;gap:14px;padding-bottom:22px;margin-bottom:26px;border-bottom:1px solid var(--outline)}
+.cpanel>header h3{font-size:clamp(24px,2.6vw,34px);font-weight:450;letter-spacing:-.025em;margin:0}
+.cpanel>header .btn{margin-inline-start:auto}
+.cbody{max-width:860px}
+.cbody h4,.cbody h5,.cbody h6{margin:30px 0 12px;font-size:20px;font-weight:600;letter-spacing:-.01em}
+.cbody p{margin:0 0 14px;line-height:1.75}
+.cbody ul,.cbody ol{margin:0 0 16px;padding-inline-start:1.3em;line-height:1.7}
+.cbody ul{list-style:disc}.cbody li{margin-top:8px}
+.cbody hr{border:0;border-top:1px solid var(--outline);margin:28px 0}
+.cbody sup{font-size:.7em;color:var(--num)}
+.cbody .arq{display:block;direction:rtl;text-align:start;font-family:"OT Naskh","Scheherazade New",serif;font-size:21px;line-height:2;margin:10px 0;padding:14px 18px;border-radius:16px;background:var(--surface);border:1px solid var(--outline-variant)}
+@media (max-width:640px){.cpanel>header .btn{margin-inline-start:0}}
+.ctabs{display:none}.ctabbed .ctabs{display:flex}

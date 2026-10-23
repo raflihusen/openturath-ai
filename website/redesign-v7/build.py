@@ -102,7 +102,7 @@ def shell(fname, title, desc, body, current=""):
 <main id="main">{body}</main>
 <footer class="site"><div class="wrap"><div class="fgrid"><div class="fbrand"><a class="wordmark" href="index.html">{mark(34)}<span>OpenTurath</span></a></div>
 <div><h4>{L("Produk","Product","المنتج")}</h4><ul><li><a href="bidang.html">OpenTurath AI</a></li><li><a href="bidang.html">{L("Bidang ilmu","Fields of knowledge","المجالات العلمية")}</a></li><li><a href="fikih-tahawwulat.html">{L("Fikih Tahawwulat","Fiqh al-Tahawwulat","فقه التحولات")}</a></li><li><a href="unduh.html">{unduh}</a></li></ul></div>
-<div><h4>{L("Pelajari","Learn","تعرّف")}</h4><ul><li><a href="mengenal-fikih-tahawwulat.html">{L("Mengenal Fikih Tahawwulat","Getting to know Fiqh al-Tahawwulat","التعرّف على فقه التحولات")}</a></li><li><a href="cara-kerja.html">{L("Cara kerja","How it works","كيف يعمل")}</a></li><li><a href="pedoman.html">{L("Pedoman keilmuan","Scholarly guidelines","الضوابط العلمية")}</a></li><li><a href="ekosistem.html">{L("Ekosistem","Ecosystem","المنظومة")}</a></li><li><a href="tentang.html">{L("Tentang","About","عن OpenTurath")}</a></li></ul></div>
+<div><h4>{L("Pelajari","Learn","تعرّف")}</h4><ul><li><a href="perbandingan.html">{L("Perbandingan AI","AI comparison","مقارنة الذكاءات")}</a></li><li><a href="mengenal-fikih-tahawwulat.html">{L("Mengenal Fikih Tahawwulat","Getting to know Fiqh al-Tahawwulat","التعرّف على فقه التحولات")}</a></li><li><a href="cara-kerja.html">{L("Cara kerja","How it works","كيف يعمل")}</a></li><li><a href="pedoman.html">{L("Pedoman keilmuan","Scholarly guidelines","الضوابط العلمية")}</a></li><li><a href="ekosistem.html">{L("Ekosistem","Ecosystem","المنظومة")}</a></li><li><a href="tentang.html">{L("Tentang","About","عن OpenTurath")}</a></li></ul></div>
 <div><h4>{L("Bantuan","Help","المساعدة")}</h4><ul><li><a href="bantuan.html">{L("Bantuan dan FAQ","Help and FAQ","المساعدة والأسئلة الشائعة")}</a></li><li><a href="bantuan.html#lapor">{L("Laporkan kesalahan","Report an error","الإبلاغ عن خطأ")}</a></li><li><a href="ketentuan.html">{L("Ketentuan dan privasi","Terms and privacy","الشروط والخصوصية")}</a></li><li class="flink"><a href="mailto:support@openturath.id">{ic("mail")}<bdi class="ltr">support@openturath.id</bdi></a></li><li class="flink"><a href="https://instagram.com/openturath.id" target="_blank" rel="noopener">{ic("instagram")}<bdi class="ltr">@openturath.id</bdi></a></li></ul></div></div>
 <div class="legal-links">{legal_row}</div>
 <div class="fbar"><span>&copy; OpenTurath</span><span>openturath.id</span></div></div></footer>
@@ -179,10 +179,10 @@ def demo():
              "<p>In the Shafi'i school, skin meeting skin between a man and a non-mahram woman <b>breaks wudu</b>, for the one who touches and the one touched, with or without desire, intended or not. The basis is the verse &ldquo;aw lamastumun nisa'&rdquo; (An-Nisa' 4:43, Al-Ma'idah 5:6).</p><h4>Five conditions</h4><ul><li>Different sexes</li><li>Both have reached the age of desire</li><li>Skin meets skin</li><li>No barrier</li><li>Not a mahram</li></ul><h4>What does not break it</h4><ul><li>Touching a mahram or a small child</li><li>Touching hair, nails, or teeth</li><li>A barrier, even a thin one</li><li>Doubt whether it was skin</li></ul>",
              "<p>عند الشافعية، التقاء بشرتي الرجل والمرأة الأجنبية <b>ينقض الوضوء</b> للامس والملموس، بشهوة وبغير شهوة، قصدًا وبغير قصد. ودليله قوله تعالى «أو لامستم النساء» (النساء: 43، المائدة: 6).</p><h4>شروطه الخمسة</h4><ul><li>اختلاف الجنس</li><li>بلوغ حدّ الشهوة</li><li>التقاء البشرتين</li><li>عدم الحائل</li><li>أن لا تكون محرمًا</li></ul><h4>ما لا ينقض</h4><ul><li>لمس المحرم والصغيرة</li><li>لمس الشعر والظفر والسن</li><li>وجود حائل ولو رقيقًا</li><li>الشك في كونه بشرة</li></ul>")
     rows = ""
-    for e in EVID:
+    for e in EVID[:3]:
         rows += f'<div class="ref"><div class="rh"><span class="no">{e["number"]}</span><span class="loc">{E(e["locator"])}</span></div><div class="quote">{E(e["quote"])}</div></div>'
     return (f'<div class="q1"><div class="qbox"><span class="tag">{L("Pertanyaan","Question","السؤال")}</span><p class="asked">{E(asked)}</p><span class="tag">{L("Jawaban ringkas","Short answer","الجواب مختصرًا")}</span><div class="sum">{summ}</div></div>'
-            f'<div class="refs"><h3>{L("Sepuluh rujukan di jawaban aslinya","The ten references in the original answer","المراجع العشرة في الجواب الأصلي")}</h3><p>{L("Setiap rujukan lengkap dengan nash Arabnya.","Each reference comes with its Arabic text.","كل مرجع مع نصه العربي.")}</p><div class="reflist">{rows}</div>'
+            f'<div class="refs"><h3>{L("Sebagian dari sepuluh rujukan","Some of the ten references","بعض المراجع العشرة")}</h3><p>{L("Tiga yang pertama, lengkap dengan nash Arabnya.","The first three, with their Arabic text.","الثلاثة الأولى مع نصها العربي.")}</p><div class="reflist">{rows}</div><div class="refmore"><span>{L("Masih ada " + str(len(EVID) - 3) + " rujukan lagi di jawaban lengkap.", "There are " + str(len(EVID) - 3) + " more references in the full answer.", "ثمة " + str(len(EVID) - 3) + " مراجع أخرى في الجواب الكامل.")}</span><a class="btn primary sm" href="perbandingan.html">{L("Lihat jawaban lengkap dan perbandingan dengan AI lain", "See the full answer and the comparison with other AIs", "اطّلع على الجواب الكامل والمقارنة مع غيره")}{ic("arrow","arr")}</a></div>'
             f'<div class="proof">{ic("check")}<span>{L("Kesepuluh rujukan ini dicek satu per satu oleh pendiri pada Maktabah Syamilah, dan semuanya dapat diverifikasi di sana.","The founder checked each of these ten references one by one in the Maktabah Shamila, and all can be verified there.","راجع المؤسس هذه المراجع العشرة واحدًا واحدًا في المكتبة الشاملة، وكلها يمكن التحقق منها هناك.")}</span></div></div></div>')
 
 def FAQ_MAIN(): return [
@@ -736,11 +736,35 @@ def page_mengenal():
     write("mengenal-fikih-tahawwulat.html", L("Mengenal Fikih Tahawwulat: OpenTurath", "Getting to know Fiqh al-Tahawwulat: OpenTurath", "التعرّف على فقه التحولات: OpenTurath"),
           L("Jawaban untuk pertanyaan yang paling sering muncul tentang Fikih Tahawwulat, dengan lima jalur bacaan dan rujukan ke kitab.", "Answers to the most common questions about Fiqh al-Tahawwulat, with five reading paths and references to the book.", "أجوبة عن أكثر الأسئلة شيوعًا حول فقه التحولات، مع خمسة مسارات للقراءة وإحالات إلى الكتاب."), body, "")
 
+
+import compare as CMP
+def page_perbandingan():
+    q, runs = CMP.load()
+    names = [r["name"] for r in runs]
+    tabs = "".join(f'<button type="button" class="ctab" role="tab" data-c="{r["id"]}" aria-selected="{"true" if i == 0 else "false"}">{E(r["name"])}</button>' for i, r in enumerate(runs))
+    panels = ""
+    for i, r in enumerate(runs):
+        src = (f'<a class="btn tonal sm" href="{E(r["url"])}" target="_blank" rel="noopener">{L("Buka percakapan asli", "Open the original chat", "افتح المحادثة الأصلية")}{ic("arrow","arr")}</a>' if r["url"] else "")
+        panels += (f'<article class="cpanel" role="tabpanel" id="c-{r["id"]}" data-c="{r["id"]}">'
+                   f'<header><h3>{E(r["name"])}</h3><span class="small">{L("Jawaban asli, tidak diubah", "Original answer, unchanged", "الجواب الأصلي دون تعديل")}</span>{src}</header>'
+                   f'<div class="cbody">{CMP.md_full(r["text"])}</div></article>')
+    rows = "".join(f'<tr><td><b>{E(r["name"])}</b></td><td class="num">{r["words"]:,}</td><td class="num">{r["arq"]}</td></tr>'.replace(",", ".") for r in runs)
+    body = head(L("Perbandingan", "Comparison", "المقارنة"), L("Satu pertanyaan, enam AI.", "One question, six AIs.", "سؤال واحد، وستة ذكاءات اصطناعية."),
+                L("Pertanyaan fikih yang sama diajukan ke OpenTurath dan lima AI Islam lain. Jawaban asli ditampilkan apa adanya, tanpa diubah.", "The same fiqh question was put to OpenTurath and five other Islamic AIs. Each original answer is shown as it was, unchanged.", "طُرح سؤال فقهي واحد على OpenTurath وخمسة ذكاءات اصطناعية إسلامية أخرى. وتُعرض الإجابات الأصلية كما هي دون تعديل."))
+    body += sec(f'<div class="qcard rv"><span class="tag">{L("Pertanyaan", "Question", "السؤال")}</span><p>{E(q)}</p></div>'
+                f'<div class="cnote rv">{L("Hasil ini tidak mewakili seluruh kemampuan setiap produk, dan belum diperiksa oleh pemeriksa independen. Jawaban pembanding dipertahankan dalam bahasa aslinya (Indonesia).", "These results do not represent every product’s full ability and have not been checked by an independent reviewer. The answers are kept in their original language (Indonesian).", "لا تمثّل هذه النتائج كامل قدرات كل منتج، ولم يراجعها مراجع مستقل. وتبقى الإجابات بلغتها الأصلية (الإندونيسية).")}</div>', "sec-tight")
+    body += sec(f'<div class="ctabs" role="tablist" aria-label="{L("Pilih jawaban", "Choose an answer", "اختر جوابًا")}">{tabs}</div>{panels}', "sec-tight")
+    body += sec(shead(L("Sekilas", "At a glance", "نظرة سريعة"), L("Angka yang bisa dihitung.", "What can be counted.", "ما يمكن عدّه."), L("Dihitung otomatis dari teks jawaban. Ini bukan penilaian mutu.", "Counted automatically from the answer text. This is not a quality judgment.", "محسوبة آليًّا من نص الجواب. وهي ليست حكمًا على الجودة.")) +
+                f'<table class="tbl rv"><thead><tr><th>{L("AI", "AI", "الذكاء")}</th><th>{L("Jumlah kata", "Words", "عدد الكلمات")}</th><th>{L("Kutipan Arab", "Arabic quotations", "النصوص العربية المنقولة")}</th></tr></thead><tbody>{rows}</tbody></table>', "sec-tight")
+    body += sec(f'<div class="cta-row"><a class="btn primary" href="unduh.html">{ic("download")}{L("Unduh aplikasi", "Download the app", "تحميل التطبيق")}</a><a class="btn tonal" href="panduan-ai.html">{L("Cara memeriksa kutipan", "How to check a quotation", "كيف تتحقق من النص")}</a></div>', "sec-tight")
+    write("perbandingan.html", L("Perbandingan: OpenTurath", "Comparison: OpenTurath", "المقارنة: OpenTurath"),
+          L("Satu pertanyaan fikih, enam AI: jawaban asli OpenTurath dan lima AI Islam lain, berdampingan.", "One fiqh question, six AIs: the original answers of OpenTurath and five other Islamic AIs, side by side.", "سؤال فقهي واحد وستة ذكاءات اصطناعية: الإجابات الأصلية لـ OpenTurath وخمسة غيره."), body, "")
+
 # ======================= UTAMA =======================
-PAGES = ["index", "bidang", "fikih-tahawwulat", "cara-kerja", "pedoman", "ekosistem", "tentang", "unduh", "bantuan", "ketentuan", "privasi", "pembayaran", "panduan-ai", "hak-cipta", "hapus-akun", "mengenal-fikih-tahawwulat"]
+PAGES = ["index", "bidang", "fikih-tahawwulat", "cara-kerja", "pedoman", "ekosistem", "tentang", "unduh", "bantuan", "ketentuan", "privasi", "pembayaran", "panduan-ai", "hak-cipta", "hapus-akun", "mengenal-fikih-tahawwulat", "perbandingan"]
 for _l in LANGS:
     LANG = _l
-    page_home(); page_bidang(); page_tahaw(); page_cara(); page_pedoman(); page_eko(); page_tentang(); page_unduh(); page_bantuan(); page_legal_all(); page_mengenal()
+    page_home(); page_bidang(); page_tahaw(); page_cara(); page_pedoman(); page_eko(); page_tentang(); page_unduh(); page_bantuan(); page_legal_all(); page_mengenal(); page_perbandingan()
 
 # pengalih bahasa di akar situs (tanpa halaman pilihan bahasa; skrip eksternal karena CSP)
 (OUT / "index.html").write_text('''<!doctype html><html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>OpenTurath</title>

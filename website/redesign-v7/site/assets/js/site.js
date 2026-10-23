@@ -305,3 +305,17 @@
   }, { threshold: .6, rootMargin: '0px 0px -8% 0px' });
   heads.forEach(function (h) { if (!(hero && hero.contains(h))) io.observe(h); });
 })();
+
+/* Perbandingan: pilih jawaban */
+(function () {
+  var d = document, tabs = Array.prototype.slice.call(d.querySelectorAll('.ctab')); if (!tabs.length) return;
+  var panels = Array.prototype.slice.call(d.querySelectorAll('.cpanel'));
+  d.documentElement.classList.add('ctabbed');
+  var first = tabs[0].dataset.c;
+  var pick = function (id) {
+    tabs.forEach(function (t) { t.setAttribute('aria-selected', String(t.dataset.c === id)); });
+    panels.forEach(function (p) { p.hidden = p.dataset.c !== id; });
+  };
+  tabs.forEach(function (t) { t.addEventListener('click', function () { pick(t.dataset.c); }); });
+  var h = (location.hash || '').replace('#c-', ''); pick(h && d.getElementById('c-' + h) ? h : first);
+})();
