@@ -1951,42 +1951,42 @@ const copyCatalog = <String, List<String>>{
     "المتون والعبارات"
   ],
   "ui_87343cd230": [
-    "Penyederhanaan Konsep",
-    "Explaining Concepts",
-    "تبسيط المفاهيم"
+    "Peta Konsep & Taksonomi",
+    "Concept Maps & Taxonomy",
+    "الخرائط المفهومية والتصنيف"
   ],
   "ui_9cabfc4bb1": [
-    "Uji pemahaman tanya jawab",
-    "Comprehension Q&A",
-    "اختبار الفهم بالسؤال والجواب"
+    "Uji Kabar & Tafsir",
+    "Testing Reports & Readings",
+    "اختبار الأخبار والتأويلات"
   ],
   "ui_4837b8e469": [
-    "Arsip muhadharah Habib Abu Bakar",
-    "Lectures of Habib Abu Bakr",
-    "محاضرات الحبيب أبي بكر"
+    "Bimbingan Hati & Sikap",
+    "Guidance for Heart & Stance",
+    "إرشاد القلب والموقف"
   ],
   "ui_b8d36541c3": [
-    "Materi dakwah & khutbah",
-    "Sermon & Teaching Preparation",
-    "إعداد مواد الدعوة والخطب"
+    "Nasihat Praktis & Kabar Gembira",
+    "Practical Counsel & Glad Tidings",
+    "النصيحة العملية والبشارات"
   ],
   "ui_7004b5d8ff": ["Matan & Ibarah", "Texts & Passages", "المتون والعبارات"],
   "ui_87d9751aa5": [
-    "Konsep & Istilah",
-    "Concepts & Terms",
-    "المفاهيم والمصطلحات"
+    "Peta Konsep",
+    "Concept Maps",
+    "الخرائط المفهومية"
   ],
   "ui_b75ba44465": [
-    "Uji Pemahaman",
-    "Understanding Check",
-    "اختبار الفهم"
+    "Uji Kabar",
+    "Report Check",
+    "اختبار الأخبار"
   ],
   "ui_e5ad7cb376": [
-    "Arsip Muhadharah",
-    "Lecture Archive",
-    "أرشيف المحاضرات"
+    "Hati & Sikap",
+    "Heart & Stance",
+    "القلب والموقف"
   ],
-  "ui_44aa1b83f5": ["Dakwah & Khutbah", "Teaching & Sermons", "الدعوة والخطب"],
+  "ui_44aa1b83f5": ["Nasihat & Harapan", "Counsel & Hope", "النصيحة والرجاء"],
   "booksShown": [
     "Menampilkan {0} dari {1} kitab",
     "Showing {0} of {1} books",
