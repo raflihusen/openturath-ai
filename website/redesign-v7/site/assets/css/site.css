@@ -783,3 +783,31 @@ nav.main a,nav.main .navbtn{white-space:nowrap}
 /* V7.13: gelap obsidian netral, kartu dipisah garis tipis */
 :root[data-theme="dark"] .sec:not(.band) .case,:root[data-theme="dark"] .sec:not(.band) .pillar,:root[data-theme="dark"] .sec:not(.band) .trio>div,:root[data-theme="dark"] .sec:not(.band) .eco a,:root[data-theme="dark"] .sec:not(.band) .eco .e,:root[data-theme="dark"] .sec:not(.band) .steps6>div,:root[data-theme="dark"] .sec:not(.band) .quad>div:not(.principle),:root[data-theme="dark"] .sec:not(.band) .trio3>div,:root[data-theme="dark"] .sec:not(.band) .two>div.ol,:root[data-theme="dark"] .sec:not(.band) .stat:not(.big),:root[data-theme="dark"] .sec:not(.band) .acard:not([aria-pressed="true"]),:root[data-theme="dark"] .sec:not(.band) .detail,:root[data-theme="dark"] .sec:not(.band) .fx-card,:root[data-theme="dark"] .sec:not(.band) .eline:not(.big),:root[data-theme="dark"] .sec:not(.band) .steps4 li,:root[data-theme="dark"] .sec:not(.band) .journey li,:root[data-theme="dark"] .sec:not(.band) .q1 .qbox,:root[data-theme="dark"] .sec:not(.band) .q1 .refs,:root[data-theme="dark"] .sec:not(.band) .plat,:root[data-theme="dark"] .sec:not(.band) .contact3>div,:root[data-theme="dark"] .sec:not(.band) .qs li:not(.last),:root[data-theme="dark"] .sec:not(.band) .names .ol,:root[data-theme="dark"] .sec:not(.band) .tl3 .ol{border:1px solid rgba(250,250,250,.1)}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .sec:not(.band) .case,:root:not([data-theme="light"]) .sec:not(.band) .pillar,:root:not([data-theme="light"]) .sec:not(.band) .trio>div,:root:not([data-theme="light"]) .sec:not(.band) .eco a,:root:not([data-theme="light"]) .sec:not(.band) .eco .e,:root:not([data-theme="light"]) .sec:not(.band) .steps6>div,:root:not([data-theme="light"]) .sec:not(.band) .quad>div:not(.principle),:root:not([data-theme="light"]) .sec:not(.band) .trio3>div,:root:not([data-theme="light"]) .sec:not(.band) .two>div.ol,:root:not([data-theme="light"]) .sec:not(.band) .stat:not(.big),:root:not([data-theme="light"]) .sec:not(.band) .acard:not([aria-pressed="true"]),:root:not([data-theme="light"]) .sec:not(.band) .detail,:root:not([data-theme="light"]) .sec:not(.band) .fx-card,:root:not([data-theme="light"]) .sec:not(.band) .eline:not(.big),:root:not([data-theme="light"]) .sec:not(.band) .steps4 li,:root:not([data-theme="light"]) .sec:not(.band) .journey li,:root:not([data-theme="light"]) .sec:not(.band) .q1 .qbox,:root:not([data-theme="light"]) .sec:not(.band) .q1 .refs,:root:not([data-theme="light"]) .sec:not(.band) .plat,:root:not([data-theme="light"]) .sec:not(.band) .contact3>div,:root:not([data-theme="light"]) .sec:not(.band) .qs li:not(.last),:root:not([data-theme="light"]) .sec:not(.band) .names .ol,:root:not([data-theme="light"]) .sec:not(.band) .tl3 .ol{border:1px solid rgba(250,250,250,.1)}}
+
+/* V7.14: bagian pendiri dirapikan, kontak berikon di paling bawah */
+.founder{grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);align-items:start;row-gap:clamp(28px,4vw,48px)}
+.founder .fcol{display:flex;flex-direction:column;align-items:flex-start;min-width:0}
+.founder .pill{border-radius:var(--pill);padding:9px 20px;font-size:14.5px;line-height:1.2;white-space:nowrap}
+.founder blockquote{margin-top:24px;max-width:18ch}
+.founder .lead{margin:0 0 22px;max-width:46ch}
+.founder .chip-row{margin:0}
+.founder .chip.big{border-radius:var(--corner-lg);padding:14px 20px;background:var(--surface);border:1px solid var(--outline-variant);line-height:1.5;color:var(--on-surface)}
+.founder .fbottom{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;border-top:1px solid var(--outline);padding-top:clamp(22px,3vw,32px)}
+.founder .fbottom .link{margin:0}
+.cpills{display:flex;gap:10px;flex-wrap:wrap}
+.cpill{display:inline-flex;align-items:center;gap:10px;height:44px;padding:0 18px;border-radius:var(--pill);border:1px solid var(--outline);background:var(--surface);font-size:14.5px;font-weight:550;transition:background .25s var(--ease),border-color .25s}
+.cpill:hover{background:var(--container-low);border-color:var(--on-surface)}
+.cpill .ic{width:19px;height:19px}
+.statement .stk{display:flex;flex-direction:column;align-items:flex-start;gap:16px}
+.statement .cpill{background:transparent;border-color:var(--inverse-variant);color:var(--inverse-on)}
+.statement .cpill:hover{background:rgba(248,249,252,.08);border-color:var(--inverse-on)}
+:root[data-theme="dark"] .statement .cpill:hover{background:rgba(9,9,11,.08)}
+footer.site .flink a{display:inline-flex;align-items:center;gap:9px}
+footer.site .flink .ic{width:17px;height:17px;flex:none}
+.contact3 .cline{display:flex;align-items:center;gap:10px}
+.contact3 .cline .ic{width:19px;height:19px}
+@media (max-width:860px){.founder{grid-template-columns:1fr}.founder blockquote{max-width:none}.founder .pill{white-space:normal}}
+.fgrid>div{min-width:0}
+footer.site .flink a{min-width:0}
+footer.site .flink bdi{overflow-wrap:anywhere}
+@media (max-width:520px){.fgrid{grid-template-columns:1fr 1fr}.fgrid>.fbrand{grid-column:1/-1}.fgrid>div:last-child{grid-column:1/-1}}
