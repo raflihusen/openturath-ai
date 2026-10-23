@@ -75,6 +75,6 @@ Sumber kebenaran untuk menyusun Buku Identitas. Dirangkum dari jawaban lisan Pem
 - "Dibuat oleh pelajar, untuk para pelajar" tampil tebal dalam pil bersudut minimalis.
 
 ## Keputusan tagline (23 Oktober 2026)
-- **Tagline OpenTurath (induk):** "Menjaga asal, membuka kemungkinan." Arab: رسوخٌ في الأصول، وانفتاحٌ على الآفاق. Inggris: Rooted in origins. Open to possibility.
+- **Tagline OpenTurath (induk):** "Menjaga asal, membuka cakrawala." Arab: رسوخٌ في الأصول، وانفتاحٌ على الآفاق. Inggris: Rooted in origins. Open to new horizons.
 - Istilah Arab prinsip pembaruan sarana terjawab: **تحديث الوسائل وتأصيل البدائل** (butir konfirmasi no. 2 selesai).
 - Tagline lama "Membaca kitab, menelusuri ibarah" dan "Setiap jawaban, berpijak pada turath" tidak dipakai sebagai tagline induk.

@@ -46,7 +46,7 @@ pg(f'''<div style="height:100%;display:flex;flex-direction:column;justify-conten
 <div style="display:flex;justify-content:space-between;font-size:8pt;letter-spacing:.2em;text-transform:uppercase;color:#9a9a9a"><span>Buku Identitas</span><span>Versi 1.3 &middot; 23 Oktober 2026</span></div>
 <div style="display:flex;align-items:center;gap:22mm">{logo(62,"var(--bone)")}
 <div><h1 style="font-size:64pt;margin:0 0 4mm">OpenTurath</h1>
-<div class="lead" style="color:#cfcfcf;font-style:italic">Menjaga asal, membuka kemungkinan.</div><div class="ar" style="font-size:17pt;color:#9a9a9a;margin-top:3mm;text-align:left;direction:rtl">رسوخٌ في الأصول، وانفتاحٌ على الآفاق</div></div></div>
+<div class="lead" style="color:#cfcfcf;font-style:italic">Menjaga asal, membuka cakrawala.</div><div class="ar" style="font-size:17pt;color:#9a9a9a;margin-top:3mm;text-align:left;direction:rtl">رسوخٌ في الأصول، وانفتاحٌ على الآفاق</div></div></div>
 <div style="font-size:8pt;letter-spacing:.2em;text-transform:uppercase;color:#9a9a9a;display:flex;justify-content:space-between"><span>Pedoman resmi nama, logo, warna, huruf, suara, dan penerapan</span><span>openturath.id</span></div>
 </div>''', "dark", foot=False)
 
@@ -84,7 +84,7 @@ pg(f'''{sec("02","Siapa Kami")}<h2 style="font-size:31pt;max-width:245mm">OpenTu
 <div class="card"><div class="small">Berkantor di</div><h3 style="margin:1mm 0 0">Bogor, Indonesia</h3></div>
 <div class="card"><div class="small">Rilis publik perdana</div><h3 style="margin:1mm 0 0">23 Oktober 2026</h3></div>
 <div class="card"><div class="small">Kontak</div><h3 style="margin:1mm 0 0">support@openturath.id</h3></div></div>
-<div class="card" style="margin-top:6mm;display:flex;gap:8mm;align-items:center"><span class="tag">Tagline</span><span class="serif" style="font-size:20pt;font-style:italic">Menjaga asal, membuka kemungkinan.</span><span class="small" style="margin-left:auto">Penjelas: AI Islami berbasis turath &middot; openturath.id</span></div>''', title="Siapa Kami")
+<div class="card" style="margin-top:6mm;display:flex;gap:8mm;align-items:center"><span class="tag">Tagline</span><span class="serif" style="font-size:20pt;font-style:italic">Menjaga asal, membuka cakrawala.</span><span class="small" style="margin-left:auto">Penjelas: AI Islami berbasis turath &middot; openturath.id</span></div>''', title="Siapa Kami")
 
 # ---------- 5a Perintis ----------
 pg(f'''{sec("02","Perintis")}<div class="row" style="gap:16mm"><div style="width:100mm"><h1 style="font-size:48pt">Rafli Husen</h1><p class="lead">Santri, mahasiswa pascasarjana di Yaman, dan satu-satunya orang di balik OpenTurath.</p></div>
@@ -236,12 +236,12 @@ pg(f'''{sec("04","Susunan Nama")}<h2>Satu merek induk, empat lini, nama yang sed
 
 # ---------- 13b Tagline ----------
 pg(f'''{sec("04","Tagline")}<div class="row" style="gap:14mm;align-items:center"><div class="col" style="flex:1.25">
-<h1 style="font-size:40pt;margin-bottom:5mm">Menjaga asal,<br>membuka kemungkinan.</h1>
+<h1 style="font-size:40pt;margin-bottom:5mm">Menjaga asal,<br>membuka cakrawala.</h1>
 <div class="ar" style="font-size:25pt;line-height:1.7;margin-bottom:2mm;text-align:right;direction:rtl;max-width:140mm">رسوخٌ في الأصول، وانفتاحٌ على الآفاق</div>
-<p class="serif" style="font-size:15pt;font-style:italic;color:var(--g2)">Rooted in origins. Open to possibility.</p></div>
+<p class="serif" style="font-size:15pt;font-style:italic;color:var(--g2)">Rooted in origins. Open to new horizons.</p></div>
 <div class="col"><div class="card"><h3>Dua bagian, satu napas</h3>
 <p style="font-size:9.8pt"><b>Menjaga asal</b> berarti setia pada sumber: Al-Qur'an, sunnah, dan turath para ulama. Itulah yang tidak berubah.</p>
-<p style="font-size:9.8pt"><b>Membuka kemungkinan</b> berarti memanfaatkan teknologi paling mutakhir sebagai sarana, supaya turath dapat dijangkau, dipahami, dan dikembangkan lebih jauh. Itulah &ldquo;Open&rdquo;.</p>
+<p style="font-size:9.8pt"><b>Membuka cakrawala</b> berarti memanfaatkan teknologi paling mutakhir sebagai sarana, supaya turath dapat dijangkau, dipahami, dan dikembangkan lebih jauh. Itulah &ldquo;Open&rdquo;.</p>
 <p class="small" style="margin:0">Sejalan dengan prinsip memperbarui sarana tanpa merusak esensi.</p></div>
 <table style="margin-top:4mm"><tr><th>Aturan pemakaian</th></tr>
 <tr><td>Selalu bersama nama OpenTurath, tidak berdiri sendiri.</td></tr>
@@ -409,7 +409,7 @@ pg(f'''{sec("09","Tata Letak dan Komponen")}<div class="row" style="gap:10mm"><d
 # ---------- 29 Penerapan: aplikasi ----------
 def phone(inner, bg="#F6F6F6"):
     return f'<div style="width:50mm;height:104mm;border-radius:8mm;border:1.2mm solid #100F0E;background:{bg};padding:5mm 4mm;overflow:hidden;position:relative">{inner}</div>'
-scr1 = f'<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:4mm;text-align:center">{logo(16)}<div class="wm" style="font-size:13pt">OpenTurath</div><div style="font-size:6.5pt;color:#606060;font-style:italic">Menjaga asal, membuka kemungkinan.</div><div style="background:#171717;color:#fff;border-radius:3mm;padding:2.5mm 0;width:100%;font-size:7pt;font-weight:600;margin-top:4mm">Masuk dengan Google</div></div>'
+scr1 = f'<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:4mm;text-align:center">{logo(16)}<div class="wm" style="font-size:13pt">OpenTurath</div><div style="font-size:6.5pt;color:#606060;font-style:italic">Menjaga asal, membuka cakrawala.</div><div style="background:#171717;color:#fff;border-radius:3mm;padding:2.5mm 0;width:100%;font-size:7pt;font-weight:600;margin-top:4mm">Masuk dengan Google</div></div>'
 scr2 = '<div style="font-size:6pt;letter-spacing:.14em;text-transform:uppercase;color:#606060;font-weight:600">Beranda</div><div class="serif" style="font-size:12pt;margin:1mm 0 3mm">Pilih bidang</div>' + "".join(f'<div style="background:#fff;border:.25mm solid #DADADA;border-radius:2.5mm;padding:2.5mm;margin-bottom:2mm"><div style="font-size:7.5pt;font-weight:600">{t}</div><div style="font-size:5.5pt;color:#606060">{d}</div></div>' for t,d in [("Fikih Syafi'i","Mazhab Imam Asy-Syafi'i"),("Hadis","Kitab induk hadis"),("Tafsir","Eksegesis Al-Qur'an"),("Fikih Tahawwulat","Lima cabang khusus")])
 scr3 = '<div style="font-size:7pt;font-weight:600;margin-bottom:3mm">Fikih Syafi\'i</div><div style="background:#EDEDED;border-radius:2.5mm;padding:2.5mm;font-size:6pt;margin-bottom:2mm">Apa syarat sah wudhu?</div><div style="background:#fff;border:.25mm solid #DADADA;border-radius:2.5mm;padding:2.5mm;font-size:6pt;line-height:1.5">Pembahasan ditemukan pada bab thaharah.<div class="ar" style="font-size:9pt;margin-top:1.5mm">فُرُوضُ الْوُضُوءِ سِتَّةٌ</div><div style="color:#606060;margin-top:1.5mm">Buka kitab untuk membaca konteksnya.</div></div>'
 pg(f'''{sec("10","Penerapan: Aplikasi")}<div class="row" style="gap:12mm;align-items:center"><div style="width:80mm"><h2>Aplikasi OpenTurath AI</h2><p>Satu logo per layar. Latar kanvas tenang, kartu putih bergaris halus, satu tombol utama berwarna Tinta.</p><p class="small">Ikon aplikasi memakai versi kotak membulat. Nama di toko aplikasi: <b>OpenTurath AI</b>.</p></div>
@@ -417,12 +417,12 @@ pg(f'''{sec("10","Penerapan: Aplikasi")}<div class="row" style="gap:12mm;align-i
 
 # ---------- 30 Penerapan: website & sosial ----------
 site = f'''<div style="width:150mm;border:.4mm solid #100F0E;border-radius:3mm;overflow:hidden;background:#F6F6F6"><div style="background:#fff;border-bottom:.3mm solid #DADADA;padding:3mm 5mm;display:flex;justify-content:space-between;align-items:center">{lockup(7)}<div style="font-size:7pt;display:flex;gap:5mm;color:#606060"><span>Asisten</span><span>Kitab rujukan</span><span>Harga</span><span style="background:#171717;color:#fff;border-radius:2mm;padding:1mm 3mm">Masuk</span></div></div>
-<div style="padding:12mm 10mm 10mm"><div class="serif" style="font-size:25pt;line-height:1.05">Menjaga asal,<br>membuka kemungkinan.</div><p style="font-size:8pt;color:#606060;margin:4mm 0;max-width:90mm">OpenTurath membantu penuntut ilmu memahami kitab dan menemukan rujukan ibarahnya, dengan tetap kembali kepada guru.</p><div style="display:flex;gap:3mm"><span style="background:#171717;color:#fff;border-radius:2.5mm;padding:2mm 5mm;font-size:8pt;font-weight:600">Jelajahi asisten</span><span style="border:.3mm solid #767676;border-radius:2.5mm;padding:2mm 5mm;font-size:8pt;font-weight:600;background:#fff">Lihat kitab rujukan</span></div></div></div>'''
-post = f'<div style="width:50mm;height:62mm;background:#09090B;color:#FAFAFA;border-radius:2mm;padding:6mm;display:flex;flex-direction:column;justify-content:space-between"><div>{logo(8,"#FAFAFA")}</div><div class="serif" style="font-size:14pt;line-height:1.15">Menjaga asal, membuka kemungkinan.</div><div style="font-size:5.5pt;letter-spacing:.14em;color:#999">OPENTURATH.ID</div></div>'
+<div style="padding:12mm 10mm 10mm"><div class="serif" style="font-size:25pt;line-height:1.05">Menjaga asal,<br>membuka cakrawala.</div><p style="font-size:8pt;color:#606060;margin:4mm 0;max-width:90mm">OpenTurath membantu penuntut ilmu memahami kitab dan menemukan rujukan ibarahnya, dengan tetap kembali kepada guru.</p><div style="display:flex;gap:3mm"><span style="background:#171717;color:#fff;border-radius:2.5mm;padding:2mm 5mm;font-size:8pt;font-weight:600">Jelajahi asisten</span><span style="border:.3mm solid #767676;border-radius:2.5mm;padding:2mm 5mm;font-size:8pt;font-weight:600;background:#fff">Lihat kitab rujukan</span></div></div></div>'''
+post = f'<div style="width:50mm;height:62mm;background:#09090B;color:#FAFAFA;border-radius:2mm;padding:6mm;display:flex;flex-direction:column;justify-content:space-between"><div>{logo(8,"#FAFAFA")}</div><div class="serif" style="font-size:14pt;line-height:1.15">Menjaga asal, membuka cakrawala.</div><div style="font-size:5.5pt;letter-spacing:.14em;color:#999">OPENTURATH.ID</div></div>'
 avatar = f'<div style="width:24mm;height:24mm;border-radius:50%;background:#F6F6F3;display:flex;align-items:center;justify-content:center;border:.3mm solid #ccc">{logo(11)}</div>'
 pg(f'''{sec("10","Penerapan: Website dan Media Sosial")}<div class="row" style="gap:10mm;align-items:flex-start;margin-top:3mm"><div>{site}<div class="cap">Header memakai gabungan horizontal. Judul memakai tagline resmi.</div></div>
 <div><div style="display:flex;gap:6mm;align-items:flex-end">{post}<div>{avatar}<div class="cap">Avatar: ikon aplikasi</div></div></div>
-<div class="card" style="margin-top:5mm;padding:4mm 5mm;width:98mm"><div class="small">Biografi (di bawah 150 karakter)</div><p style="font-size:9pt;margin:1mm 0 0">Menjaga asal, membuka kemungkinan. AI Islami berbasis kitab dan ulama. openturath.id</p></div></div></div>''', title="Website dan Sosial")
+<div class="card" style="margin-top:5mm;padding:4mm 5mm;width:98mm"><div class="small">Biografi (di bawah 150 karakter)</div><p style="font-size:9pt;margin:1mm 0 0">Menjaga asal, membuka cakrawala. AI Islami berbasis kitab dan ulama. openturath.id</p></div></div></div>''', title="Website dan Sosial")
 
 # ---------- 31 Penerapan: dokumen ----------
 letter = f'<div style="width:78mm;height:104mm;background:#fff;border:.3mm solid #ccc;padding:7mm;position:relative">{lockup(8)}<div style="height:.3mm;background:#100F0E;margin:3mm 0 5mm"></div><div style="font-size:5.5pt;color:#606060;margin-bottom:3mm">22 Oktober 2026 &middot; No. OT-SRT-001</div><div style="font-size:6pt;line-height:1.7;color:#333">Yth. Bapak/Ibu,<br><br>Dengan hormat, kami menyampaikan...<br><div style="height:.25mm;background:#ddd;margin:2mm 0"></div><div style="height:.25mm;background:#ddd;margin:2mm 0"></div><div style="height:.25mm;background:#ddd;margin:2mm 0;width:70%"></div></div><div style="position:absolute;bottom:5mm;left:7mm;right:7mm;font-size:5pt;color:#606060;border-top:.25mm solid #ddd;padding-top:2mm;display:flex;justify-content:space-between"><span>openturath.id</span><span>Halaman 1</span></div></div>'
@@ -446,8 +446,8 @@ pg(f'''{sec("11","Penggunaan Bersama")}<div class="row" style="gap:10mm"><div cl
 
 # ---------- 33 Penutup ----------
 pg(f'''<div style="height:100%;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;gap:10mm">{logo(26,"var(--bone)")}
-<div class="serif" style="font-size:21pt;line-height:1.5;max-width:200mm;font-style:italic">Kami menjaga asal, dan membuka kemungkinan. Setiap jawaban berpijak pada turath, dan alat ini tidak pernah menggantikan guru.</div>
-<div style="font-size:8pt;letter-spacing:.2em;color:#9a9a9a">OPENTURATH &middot; MENJAGA ASAL, MEMBUKA KEMUNGKINAN &middot; OPENTURATH.ID</div></div>''', "dark", foot=False)
+<div class="serif" style="font-size:21pt;line-height:1.5;max-width:200mm;font-style:italic">Kami menjaga asal, dan membuka cakrawala. Setiap jawaban berpijak pada turath, dan alat ini tidak pernah menggantikan guru.</div>
+<div style="font-size:8pt;letter-spacing:.2em;color:#9a9a9a">OPENTURATH &middot; MENJAGA ASAL, MEMBUKA CAKRAWALA &middot; OPENTURATH.ID</div></div>''', "dark", foot=False)
 
 # ---------- rakit ----------
 css = (HERE / "style.css").read_text().replace("FONTDIR", FONTDIR.as_posix())
