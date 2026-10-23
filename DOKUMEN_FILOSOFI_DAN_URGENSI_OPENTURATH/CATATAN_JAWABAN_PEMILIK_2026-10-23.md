@@ -73,3 +73,8 @@ Sumber kebenaran untuk menyusun Buku Identitas. Dirangkum dari jawaban lisan Pem
 - Buku desain tidak memuat bab Suara, Nada, Kosakata, dan Kepribadian; materi itu pindah ke dokumen identitas terpisah.
 - Istilah "manhaj jalan tengah" diganti "wasathiyyah syar'iyyah" di seluruh buku; hadis dicabut dari halamannya.
 - "Dibuat oleh pelajar, untuk para pelajar" tampil tebal dalam pil bersudut minimalis.
+
+## Keputusan tagline (23 Oktober 2026)
+- **Tagline OpenTurath (induk):** "Menjaga asal, membuka kemungkinan." Arab: رسوخٌ في الأصول، وانفتاحٌ على الآفاق. Inggris: Rooted in origins. Open to possibility.
+- Istilah Arab prinsip pembaruan sarana terjawab: **تحديث الوسائل وتأصيل البدائل** (butir konfirmasi no. 2 selesai).
+- Tagline lama "Membaca kitab, menelusuri ibarah" dan "Setiap jawaban, berpijak pada turath" tidak dipakai sebagai tagline induk.
