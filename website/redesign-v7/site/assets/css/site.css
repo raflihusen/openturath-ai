@@ -773,3 +773,9 @@ nav.main a,nav.main .navbtn{white-space:nowrap}
 .stat.big .bk{position:absolute;inset-inline-end:-2%;top:0;width:96%;height:auto;max-height:72%;color:var(--surface);opacity:.2;pointer-events:none;mask-image:linear-gradient(to bottom,#000 55%,transparent 100%);-webkit-mask-image:linear-gradient(to bottom,#000 55%,transparent 100%)}
 [dir="rtl"] .stat.big .bk{transform:scaleX(-1)}
 .stat.big .sic,.stat.big>div{position:relative;z-index:1}
+/* V7.12: rak kitab menempel di sisi kanan saat kartu melebar */
+@media (max-width:900px){
+  .stat.big .bk{top:0;bottom:0;inset-inline-end:0;width:62%;height:100%;max-height:none;opacity:.22;-webkit-mask-image:linear-gradient(to left,#000 55%,transparent 100%);mask-image:linear-gradient(to left,#000 55%,transparent 100%)}
+  [dir="rtl"] .stat.big .bk{-webkit-mask-image:linear-gradient(to right,#000 55%,transparent 100%);mask-image:linear-gradient(to right,#000 55%,transparent 100%)}
+}
+@media (max-width:480px){.stat.big .bk{width:80%;opacity:.16}}
