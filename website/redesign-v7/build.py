@@ -41,7 +41,7 @@ ICONS = {
   "library": '<rect x="4" y="5" width="4" height="15" rx="1"/><rect x="10" y="8" width="4" height="12" rx="1"/><path d="M16.5 20L19 6l3 .6L19.5 20.6zM2 22h20"/>',
   "scroll": '<path d="M7 3h11a2 2 0 0 1 2 2v13a3 3 0 0 1-3 3H8M7 3a2 2 0 0 0-2 2v13a3 3 0 0 0 3 3M9 8h7M9 12h7M9 16h4"/>',
   "cap": '<path d="M2 9l10-5 10 5-10 5zM6 11.5V16c0 1.5 3 3 6 3s6-1.5 6-3v-4.5M22 9v6"/>',
-  "sparkle": '<path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8zM19 16l.8 2.2L22 19l-2.2.8L19 22l-.8-2.2L16 19l2.2-.8z"/>', "plus": '<path d="M12 5v14M5 12h14"/>',
+  "sparkle": '<path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8zM19 16l.8 2.2L22 19l-2.2.8L19 22l-.8-2.2L16 19l2.2-.8z"/>', "plus": '<path d="M12 5v14M5 12h14"/>', "mic": '<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/>',
 }
 def ic(name, cls=""):
     return f'<svg class="ic {cls}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">{ICONS[name]}</svg>'
@@ -290,11 +290,11 @@ def page_home():
 <div class="case rv d2">{ic("scroll")}<h3>{L("Pengajar, penceramah, khatib","Teachers, preachers, khatibs","المعلمون والدعاة والخطباء")}</h3><p>{L("Siapkan materi, periksa dalil dan ibarah, lalu sampaikan dengan lebih yakin.","Prepare material, check the evidence and passages, then deliver with more confidence.","أعدّ المادة، وتحقق من الدليل والعبارة، ثم ألقِها بثقة أكبر.")}</p><div class="q"><span><b>{L("Tanyakan:","Ask:","اسأل:")}</b> {L("Susun kerangka khutbah tentang sikap saat masa fitnah.","Outline a sermon on conduct in times of trial.","ضع هيكل خطبة عن الموقف زمن الفتن.")}</span></div></div></div></div></section>
 
 <section class="sec" id="angka"><div class="wrap">{shead(L("Dalam angka","In numbers","بالأرقام"), L("Fondasinya dibangun dari kitab.","Its foundation is built from books.","أساسه مبني من الكتب."), L("Sebagian angka dari data aplikasi versi rilis perdana. Angka terus bertambah seiring penambahan kitab.","Some figures from the data of the first public release. They keep growing as books are added.","بعض الأرقام من بيانات الإصدار الأول، وهي تزداد مع إضافة الكتب."))}
-<div class="stats rv"><div class="stat big"><span class="wm" aria-hidden="true">كتب</span><div><div class="num">5.300+</div><div class="lab">{L("Kitab turats","Turath books","كتاب تراثي")}</div></div></div>
-<div class="stat"><div class="num">800+ {L("juta","million","مليون")}</div><div><div class="lab">{L("Kata teks kitab","Words of book text","كلمة من نصوص الكتب")}</div></div></div>
-<div class="stat"><div class="num">28.000+</div><div><div class="lab">{L("Muhadharah","Lectures","محاضرة")}</div></div></div>
-<div class="stat"><div class="num">46.000+</div><div><div class="lab">{L("Rekaman diperiksa","Records reviewed","تسجيلًا مفحوصًا")}</div></div></div>
-<div class="stat"><div class="num">18</div><div><div class="lab">{L("AI spesialis","Specialist AIs","ذكاءً اصطناعيًا متخصصًا")}</div></div></div></div></div></section>
+<div class="stats rv"><div class="stat big"><div class="sic">{ic("library")}</div><div><div class="num">5.300+</div><div class="lab">{L("Kitab turats","Turath books","كتاب تراثي")}</div></div></div>
+<div class="stat"><div class="sic">{ic("scroll")}</div><div class="num">800+<small> {L("juta","million","مليون")}</small></div><div><div class="lab">{L("Kata teks kitab","Words of book text","كلمة من نصوص الكتب")}</div></div></div>
+<div class="stat"><div class="sic">{ic("mic")}</div><div class="num">28.000+</div><div><div class="lab">{L("Muhadharah","Lectures","محاضرة")}</div></div></div>
+<div class="stat"><div class="sic">{ic("check")}</div><div class="num">46.000+</div><div><div class="lab">{L("Rekaman diperiksa","Records reviewed","تسجيلًا مفحوصًا")}</div></div></div>
+<div class="stat"><div class="sic">{ic("layers")}</div><div class="num">18</div><div><div class="lab">{L("AI spesialis","Specialist AIs","ذكاءً اصطناعيًا متخصصًا")}</div></div></div></div></div></section>
 
 <section class="sec" id="bidang"><div class="wrap">{shead(L("Bidang ilmu","Fields of knowledge","المجالات العلمية"), L("Satu ilmu, satu asisten.","One discipline, one assistant.","علم واحد، ومساعد واحد."), L("Tiap asisten hanya memegang kitab bidangnya dan berpegang pada manhaj dan kaidah bidang itu, jadi jawabannya tidak tercampur.","Each assistant holds only the books of its field and works the way that field works, so answers do not blend.","يلتزم كل مساعد بكتب مجاله وحده ويعمل بطريقة ذلك المجال، فلا تختلط إجاباته."))}<div class="rv">{explorer("fikih")}</div>
 <p class="more"><a class="link" href="bidang.html">{L("Lihat semua bidang","See all fields","عرض كل المجالات")}{ic("arrow","arr")}</a></p></div></section>

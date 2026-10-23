@@ -756,3 +756,16 @@ html[lang="ar"] .two .k,html[lang="ar"] .tl3 .k{letter-spacing:.02em;text-transf
 .plat .btn{white-space:normal;text-align:center;max-width:100%;min-height:52px;height:auto;padding-block:12px}
 .plat h3,.plat .req{overflow-wrap:anywhere}
 @media (max-width:860px){.platforms{grid-template-columns:1fr}}
+/* V7.10: ikon kartu angka */
+.stat .sic{width:48px;height:48px;border-radius:16px;display:grid;place-items:center;background:var(--surface);color:var(--on-surface);box-shadow:var(--shadow);flex:none}
+.stat .sic .ic{width:24px;height:24px}
+.stat.big .sic{background:color-mix(in srgb,var(--surface) 14%,transparent);color:var(--surface);box-shadow:none;margin-bottom:auto}
+.stat.big .wm{display:none}
+.stat .num{white-space:nowrap}
+.stat .num small{font-size:.42em;font-weight:500;letter-spacing:-.02em}
+.stat{justify-content:flex-start;gap:0}
+.stat .sic{margin-bottom:clamp(18px,2.4vw,30px)}
+.stat .lab{margin-top:10px}
+.stat.big .num{font-size:clamp(56px,6.8vw,124px)}
+nav.main a,nav.main .navbtn{white-space:nowrap}
+@media (max-width:1120px){.hbar nav.main{display:none}.menu-btn{display:grid}.hactions .btn{display:none}.drop.fields{display:none}}
