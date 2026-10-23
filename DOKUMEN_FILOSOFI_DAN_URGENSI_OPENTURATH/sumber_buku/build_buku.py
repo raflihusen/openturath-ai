@@ -47,7 +47,7 @@ pg(f'''<div style="height:100%;display:flex;flex-direction:column;justify-conten
 <div style="display:flex;align-items:center;gap:22mm">{logo(62,"var(--bone)")}
 <div><h1 style="font-size:64pt;margin:0 0 4mm">OpenTurath</h1>
 <div class="lead" style="color:#cfcfcf;font-style:italic">Menjaga asal, membuka cakrawala.</div></div></div>
-<div style="font-size:8pt;letter-spacing:.2em;text-transform:uppercase;color:#9a9a9a;display:flex;justify-content:space-between"><span>Pedoman resmi nama, logo, warna, huruf, suara, dan penerapan</span><span>openturath.id</span></div>
+<div style="font-size:8pt;letter-spacing:.2em;text-transform:uppercase;color:#9a9a9a;display:flex;justify-content:space-between"><span>Pedoman resmi nama, logo, warna, huruf, dan penerapan</span><span>openturath.id</span></div>
 </div>''', "dark", foot=False)
 
 # ---------- 2 Daftar isi ----------
