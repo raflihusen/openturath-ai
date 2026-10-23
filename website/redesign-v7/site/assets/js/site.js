@@ -157,34 +157,30 @@
         for (i = 0; i < n; i++) {
           a = i / n * 6.2832 + (k % 2 ? 3.1416 / n : 0); x = cx + Math.cos(a) * rr; y = cy + Math.sin(a) * rr;
           if (x < -4 || x > W + 4 || y < -4 || y > H + 4) continue;
-          DOTS.push({ a: a, r: rr, k: k, x: x, y: y, ox: 0, oy: 0, vx: 0, vy: 0 });
+          DOTS.push({ a: a, r: rr, k: k, x: x, y: y });
         }
       }
     };
     var shade = function (x, y) {
       var f = 1; for (var i = 0; i < AV.length; i++) { var q = AV[i]; if (x > q.l && x < q.r && y > q.t && y < q.b) { f = .12; break; } } return f;
     };
-    var RP = [], lastX = -999, lastY = -999, lastEmit = 0, lt = 0;
+    var sx = 0, sy = 0, gx = 0, gy = 0, act = 0, tact = 0, ready = false;
     var draw = function (now) {
-      var t = (now - t0) / 1000, dt = Math.min(.05, Math.max(.008, t - lt)); lt = t;
+      var t = (now - t0) / 1000;
       var e = reduce ? 1 : 1 - Math.pow(1 - Math.min(1, t / 2.2), 3), col = color(), mv = reduce ? 0 : 1, reach = e * (Math.hypot(W, H) + 60);
-      var R = W < 760 ? 150 : 250, sc = dt * 60;
-      RP = RP.filter(function (q) { return t - q.t < 2.6; });
+      var R = W < 760 ? 150 : 230, rmax = Math.hypot(W, H) / 2;
+      if (!ready) { sx = W / 2; sy = H / 2; gx = sx; gy = sy; ready = true; }
+      var tx = mx > -900 ? mx : W / 2, ty = my > -900 ? my : H / 2; tact = mx > -900 ? 1 : 0;
+      sx += (tx - sx) * .07; sy += (ty - sy) * .07; gx += (tx - gx) * .16; gy += (ty - gy) * .16; act += (tact - act) * .06;
+      var offx = (sx - W / 2) / W * -22 * mv, offy = (sy - H / 2) / H * -22 * mv;
       ctx.clearRect(0, 0, W, H);
       for (var i = 0; i < DOTS.length; i++) {
         var p = DOTS[i]; if (p.r > reach) continue;
-        var w = Math.sin(p.r * .021 - t * 1.25 * mv), rad = p.r + w * 3.2 * mv, bx = cx + Math.cos(p.a) * rad, by = cy + Math.sin(p.a) * rad;
-        var x = bx + p.ox, y = by + p.oy, fx = 0, fy = 0, near = 0;
-        if (mx > -900) { var dx = x - mx, dy = y - my, d2 = dx * dx + dy * dy, d = Math.sqrt(d2) || 1, g = Math.exp(-d2 / (R * R)); fx += dx / d * g * 2.4; fy += dy / d * g * 2.4; near = g; }
-        for (var k = 0; k < RP.length; k++) {
-          var q = RP[k], age = t - q.t, rx = x - q.x, ry = y - q.y, rd = Math.sqrt(rx * rx + ry * ry) || 1, front = age * 340, dd = (rd - front) / 70;
-          var amp = q.a * Math.exp(-age * 1.5) * Math.exp(-dd * dd);
-          fx += rx / rd * amp * 3.2; fy += ry / rd * amp * 3.2; near += amp * .5;
-        }
-        p.vx = (p.vx + fx * sc - p.ox * .045 * sc) * Math.pow(.9, sc); p.vy = (p.vy + fy * sc - p.oy * .045 * sc) * Math.pow(.9, sc);
-        p.ox += p.vx * sc; p.oy += p.vy * sc; x = bx + p.ox; y = by + p.oy;
-        var fade = Math.min(1, p.r / 150), edge = Math.min(1, (reach - p.r) / 90), sz = (.9 + p.r / 900 + (w + 1) * .45) * (W < 760 ? .85 : 1) * (1 + Math.min(near, 1) * .9);
-        var al = Math.min(1, (.2 + (w + 1) * .26 + Math.min(near, 1) * .45)) * fade * edge * shade(x, y);
+        var w = Math.sin(p.r * .021 - t * 1.25 * mv), rad = p.r + w * 3.2 * mv, depth = .35 + p.r / rmax;
+        var x = cx + Math.cos(p.a) * rad + offx * depth, y = cy + Math.sin(p.a) * rad + offy * depth;
+        var dx = x - gx, dy = y - gy, g = Math.exp(-(dx * dx + dy * dy) / (R * R)) * act;
+        var fade = Math.min(1, p.r / 150), edge = Math.min(1, (reach - p.r) / 90), sz = (.9 + p.r / 900 + (w + 1) * .45) * (W < 760 ? .85 : 1) * (1 + g * .8);
+        var al = Math.min(1, .2 + (w + 1) * .26 + g * .5) * fade * edge * shade(x, y);
         ctx.fillStyle = rgba(col, al); ctx.beginPath(); ctx.arc(cx + (x - cx) * e, cy + (y - cy) * e, sz, 0, 6.2832); ctx.fill();
       }
     };
@@ -194,14 +190,8 @@
     if (document.fonts && document.fonts.addEventListener) document.fonts.addEventListener('loadingdone', function () { layout(); if (reduce) draw(performance.now()); });
     var rt; addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(function () { layout(); if (reduce) draw(performance.now()); }, 150); });
     if (matchMedia('(pointer: fine)').matches) {
-      hero.addEventListener('pointermove', function (e) {
-        var r = hero.getBoundingClientRect(); mx = e.clientX - r.left; my = e.clientY - r.top;
-        var now = performance.now(), sp = Math.hypot(mx - lastX, my - lastY);
-        if (lastX > -900 && sp > 24 && now - lastEmit > 70 && !reduce) { RP.push({ x: mx, y: my, t: (now - t0) / 1000, a: Math.min(1, sp / 90) }); lastEmit = now; if (RP.length > 14) RP.shift(); }
-        lastX = mx; lastY = my; if (reduce) draw(now);
-      });
-      hero.addEventListener('pointerleave', function () { mx = my = lastX = lastY = -999; if (reduce) draw(performance.now()); });
-      hero.addEventListener('pointerdown', function (e) { var r = hero.getBoundingClientRect(); RP.push({ x: e.clientX - r.left, y: e.clientY - r.top, t: (performance.now() - t0) / 1000, a: 1.6 }); });
+      hero.addEventListener('pointermove', function (e) { var r = hero.getBoundingClientRect(); mx = e.clientX - r.left; my = e.clientY - r.top; if (reduce) draw(performance.now()); });
+      hero.addEventListener('pointerleave', function () { mx = my = -999; if (reduce) draw(performance.now()); });
     }
     /* paralaks halus saat gulir */
     if (!reduce) addEventListener('scroll', function () { var y = scrollY; if (y < H) { hero.style.setProperty('--sy', Math.min(y, 600)); } }, { passive: true });
