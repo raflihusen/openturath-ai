@@ -72,8 +72,8 @@ abstract final class LocalizedLegal {
         names[i],
         [
           'Versi ${LegalCopy.documentVersion} · Berlaku mulai ${LegalCopy.effectiveDate}',
-          'Version ${LegalCopy.documentVersion} · Effective 13 September 2026',
-          'الإصدار ${LegalCopy.documentVersion} · نافذ منذ 13 سبتمبر 2026',
+          'Version ${LegalCopy.documentVersion} · Effective 23 October 2026',
+          'الإصدار ${LegalCopy.documentVersion} · نافذ منذ 23 أكتوبر 2026',
         ][i],
         i == 0
             ? source

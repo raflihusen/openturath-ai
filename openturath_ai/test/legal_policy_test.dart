@@ -103,10 +103,10 @@ void main() {
     });
 
     test('Keutuhan struktur dan pasal-pasal kanonik', () {
-      expect(LegalCopy.termsSections.length, equals(14));
-      expect(LegalCopy.privacySections.length, equals(13));
-      expect(LegalCopy.refundSections.length, equals(7));
-      expect(LegalCopy.aiGuidelineSections.length, equals(9));
+      expect(LegalCopy.termsSections.length, equals(23));
+      expect(LegalCopy.privacySections.length, equals(18));
+      expect(LegalCopy.refundSections.length, equals(11));
+      expect(LegalCopy.aiGuidelineSections.length, equals(11));
       expect(LegalCopy.contactSections.length, equals(3));
 
       // Verifikasi saluran email resmi support@openturath.id

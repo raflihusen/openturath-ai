@@ -97,6 +97,58 @@ Support: support@openturath.id
 Privacy: support@openturath.id
 Copyright: support@openturath.id'''
     ),
+    (
+      '15. Disclaimer and Service As Is',
+      '''The service is provided as is and as available. To the extent the law allows, we do not guarantee that AI answers are free of error, complete, always available, or fit for a particular purpose.
+
+Statements on this site about accuracy, testing, and scholarly review describe our efforts, not a guarantee for every answer.''',
+    ),
+    (
+      '16. Not a Fatwa and Not Professional Advice',
+      '''The content of the service is not a fatwa, a legal ruling, advice on positive law, health advice, financial advice, or any other professional advice.
+
+For matters with real consequences, such as inheritance, disputes, divorce, large transactions, or emergencies, you must ask a competent and authorised scholar or professional.''',
+    ),
+    (
+      '17. Responsibility for Using Results',
+      '''You are responsible for how you use, copy, teach, publish, or circulate the results. You may not present them as an official fatwa, as a binding opinion of OpenTurath, or speak in OpenTurath's name without written permission.
+
+You must check any quotation against the book and edition you hold before relying on it in writing, teaching, or decisions.''',
+    ),
+    (
+      '18. Limitation of Liability',
+      '''To the extent permitted by applicable law, the Operator is not liable for indirect or unforeseeable loss, loss of profit, loss of data beyond our reasonable control, or loss resulting from decisions made solely on an AI answer without checking the source.
+
+For direct loss for which we remain liable under the law, compensation is limited to the amount you paid for paid features in the 12 (twelve) months before the event.
+
+This clause does not limit liability that cannot lawfully be excluded, and does not remove your rights as a consumer under applicable law.''',
+    ),
+    (
+      '19. Indemnity for User Breach',
+      '''If your breach of these terms, including misuse of the service, infringement of others' rights, or misleading circulation of results, causes a claim or loss to the Operator, you agree to bear the loss to the extent it is shown to have been caused by that breach.''',
+    ),
+    (
+      '20. Events Beyond Our Control (Force Majeure)',
+      '''We are not liable for delay or failure caused by events beyond our reasonable control, such as natural disasters, power or network failure, failure of third-party infrastructure providers, cyberattacks, government action, or changes to app store policy.
+
+In such cases we will restore the service as quickly as is reasonable and share information through official channels.''',
+    ),
+    (
+      '21. Use from Outside Indonesia',
+      '''The service is operated from Indonesia. If you access it from elsewhere, you are responsible for complying with the local law that applies to you.''',
+    ),
+    (
+      '22. Governing Law and Disputes',
+      '''These terms are governed by the law of the Republic of Indonesia.
+
+Differences are first sought to be settled amicably through support@openturath.id within 30 (thirty) days of the complaint being received. If no agreement is reached, the dispute is settled in the competent district court at the Operator's domicile in Bogor, without prejudice to the consumer's right to use other dispute resolution routes provided by law.''',
+    ),
+    (
+      '23. Final Provisions',
+      '''If any provision is held invalid or unenforceable, the others remain in force. Our failure to enforce a provision is not a waiver of that right.
+
+These terms, together with the Privacy Policy and the Payments and Refunds terms, are the entire agreement between you and the Operator about the service. If a translation differs from the Indonesian version, the Indonesian version prevails.''',
+    ),
   ],
   'privacy': [
     (
@@ -181,6 +233,30 @@ For privacy questions or rights requests, contact:
 Email: support@openturath.id
 Operator: Pengelola OpenTurath (Indonesia)'''
     ),
+    (
+      '14. Legal Basis and Our Role',
+      '''The Operator acts as the personal data controller for OpenTurath and processes data in line with Indonesian Law No. 27 of 2022 on Personal Data Protection and its implementing regulations. Processing is done only for the purposes we describe, on the basis of your consent, performance of the service agreement, or legal obligation.''',
+    ),
+    (
+      '15. This Website',
+      '''The openturath.id site sets no tracking cookies and uses no third-party analytics or advertising. Your browser stores only your theme and language choice in the device's local storage so that it is remembered; this data is not sent to us.
+
+If you contact us by email, we process your email address and message solely to reply to you.''',
+    ),
+    (
+      '16. Security Incident Notice',
+      '''If a failure of personal data protection puts you at risk, we will notify you and the authorities in writing within 3 x 24 hours at the latest after we become aware of it, stating the data exposed, the time and cause known, and the steps taken to handle and recover.''',
+    ),
+    (
+      '17. How to Use Your Rights',
+      '''You may request access, correction, deletion, restriction, objection, or withdrawal of consent through support@openturath.id. We may ask for proof of account ownership to protect you from false requests. We acknowledge a request within 3 x 24 hours at the latest and complete it within the period set by regulation.
+
+Withdrawing consent does not affect processing that was lawful before the withdrawal, and may mean we can no longer provide some features.''',
+    ),
+    (
+      '18. Limits of Protection',
+      '''No system is entirely immune. We apply reasonable technical and organisational measures but cannot guarantee absolute security. Please also protect your Google account and device, and avoid entering sensitive personal data, such as identity numbers, health data, or other people's secrets, into questions to the AI.''',
+    ),
   ],
   'refund': [
     (
@@ -226,6 +302,22 @@ Receipt is acknowledged within at most 2 (two) business days. Review and the ref
       '7. Transaction support',
       '''Payment and transaction problems are monitored on business days, Monday–Friday, 09:00–17:00 WIB.
 Transaction support email: support@openturath.id'''
+    ),
+    (
+      '8. Prices, Tax, and Currency',
+      '''The price and currency shown on the purchase page or the platform's payment sheet are those in force at the time of the transaction. Taxes and platform fees, if any, follow the payment provider's terms and applicable regulation. A price change does not apply retroactively to a plan you have already bought.''',
+    ),
+    (
+      '9. Payment Through Third Parties',
+      '''Payments are processed by a payment provider or an app distribution platform. We do not store your card number or payment credentials. Billing disputes with the payment provider are also subject to that provider's terms.''',
+    ),
+    (
+      '10. Misuse and Unusual Transactions',
+      '''We may refuse, hold, or cancel a transaction reasonably suspected to be fraudulent, unlawful, or made with another person's payment method without right, and suspend access obtained from it, with notice and a chance to clarify where circumstances allow.''',
+    ),
+    (
+      '11. Relationship with Other Terms',
+      '''This part supplements the parts above. If they differ, the term more favourable to the consumer under applicable law applies.''',
     ),
   ],
   'guideline': [
@@ -282,6 +374,16 @@ Let knowledge bring calm, unite the community, and increase reverence for Allah.
       '''If you find an Arabic text error, incorrect author attribution, or inaccurate information in a displayed text, offer corrections courteously and with scholarly evidence.
 
 Corrections can be submitted through the official channel, support@openturath.id, to preserve the authenticity of the classical library.'''
+    ),
+    (
+      'Limits of Safe Use',
+      '''Do not use OpenTurath AI as the only basis for matters with real consequences for you or others, such as inheritance, divorce, disputes, or legal decisions. Treat the AI's answer as a starting point, then take it to a competent teacher or scholar.
+
+Do not enter sensitive personal data of your own or others into your questions.''',
+    ),
+    (
+      'When You Share the Results',
+      '''Sharing AI results means sharing the trust that comes with them. Check the passage in the book, state the source and edition, and do not call it an OpenTurath fatwa. If you find an error, correct it openly and tell us.''',
     ),
   ],
   'contact': [

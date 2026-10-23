@@ -18,8 +18,8 @@ class LegalSection {
 
 abstract final class LegalCopy {
   // ── Identitas & Versi Kebijakan ────────────────────────────────
-  static const documentVersion = '1.0';
-  static const effectiveDate = '13 September 2026';
+  static const documentVersion = '1.1';
+  static const effectiveDate = '23 Oktober 2026';
   static const managerName = 'Pengelola OpenTurath';
   static const managerAddress = 'Indonesia';
   static const contactSupportEmail = 'support@openturath.id';
@@ -176,6 +176,60 @@ abstract final class LegalCopy {
           'Privasi: $contactPrivacyEmail\n'
           'Hak Cipta: $contactCopyrightEmail',
     ),
+    LegalSection(
+      id: 'terms_15',
+      title: '15. Penafian dan Layanan Apa Adanya',
+      content:
+          'Layanan disediakan sebagaimana adanya dan sebagaimana tersedia. Sepanjang diizinkan hukum, kami tidak menjamin bahwa jawaban AI bebas dari kekeliruan, lengkap, selalu tersedia, atau cocok untuk tujuan tertentu.\n\nKeterangan tentang akurasi, pengujian, dan peninjauan ulama pada situs ini menggambarkan upaya kami, bukan jaminan hasil pada setiap jawaban.',
+    ),
+    LegalSection(
+      id: 'terms_16',
+      title: '16. Bukan Fatwa dan Bukan Nasihat Profesional',
+      content:
+          'Isi layanan bukan fatwa, putusan hukum, nasihat hukum positif, nasihat kesehatan, nasihat keuangan, maupun nasihat profesional lain.\n\nUntuk perkara yang berakibat nyata, seperti waris, sengketa, talak, muamalah bernilai besar, atau keadaan darurat, Anda wajib bertanya kepada ulama atau ahli yang berkompeten dan berwenang.',
+    ),
+    LegalSection(
+      id: 'terms_17',
+      title: '17. Tanggung Jawab atas Penggunaan Hasil',
+      content:
+          'Anda bertanggung jawab atas cara Anda memakai, menyalin, mengajarkan, menerbitkan, atau menyebarkan hasil layanan. Anda tidak boleh menyajikan hasil layanan sebagai fatwa resmi, sebagai pendapat OpenTurath yang mengikat, atau mengatasnamakan OpenTurath tanpa izin tertulis.\n\nAnda wajib memeriksa kutipan pada kitab dan edisi yang Anda pegang sebelum menjadikannya dasar tulisan, pengajaran, atau keputusan.',
+    ),
+    LegalSection(
+      id: 'terms_18',
+      title: '18. Pembatasan Tanggung Jawab',
+      content:
+          'Sepanjang diizinkan hukum yang berlaku, Pengelola tidak bertanggung jawab atas kerugian tidak langsung, kerugian yang tidak dapat diperkirakan, kehilangan keuntungan, kehilangan data di luar kendali wajar kami, maupun kerugian akibat keputusan yang Anda ambil hanya berdasarkan jawaban AI tanpa memeriksa sumber.\n\nUntuk kerugian langsung yang tetap menjadi tanggung jawab kami menurut hukum, jumlah ganti rugi dibatasi sebesar biaya yang telah Anda bayarkan untuk layanan berbayar dalam 12 (dua belas) bulan terakhir sebelum kejadian.\n\nKetentuan ini tidak membatasi tanggung jawab yang menurut hukum tidak dapat dikecualikan, dan tidak meniadakan hak Anda sebagai konsumen menurut peraturan perundang-undangan yang berlaku.',
+    ),
+    LegalSection(
+      id: 'terms_19',
+      title: '19. Ganti Rugi atas Pelanggaran oleh Pengguna',
+      content:
+          'Apabila pelanggaran Anda terhadap ketentuan ini, termasuk penyalahgunaan layanan, pelanggaran hak pihak lain, atau penyebaran hasil layanan secara menyesatkan, menimbulkan tuntutan atau kerugian bagi Pengelola, Anda bersedia menanggung kerugian yang timbul sepanjang kerugian itu terbukti disebabkan oleh pelanggaran tersebut.',
+    ),
+    LegalSection(
+      id: 'terms_20',
+      title: '20. Keadaan di Luar Kendali (Force Majeure)',
+      content:
+          'Kami tidak bertanggung jawab atas keterlambatan atau kegagalan layanan yang disebabkan keadaan di luar kendali wajar kami, antara lain bencana alam, gangguan listrik atau jaringan, gangguan penyedia infrastruktur pihak ketiga, serangan siber, tindakan pemerintah, atau perubahan kebijakan platform distribusi aplikasi.\n\nDalam keadaan itu kami akan berupaya memulihkan layanan secepat yang wajar dan menyampaikan informasi melalui saluran resmi.',
+    ),
+    LegalSection(
+      id: 'terms_21',
+      title: '21. Pemakaian dari Luar Indonesia',
+      content:
+          'Layanan dikelola dari Indonesia. Bila Anda mengakses dari wilayah lain, Anda bertanggung jawab mematuhi hukum setempat yang berlaku bagi Anda.',
+    ),
+    LegalSection(
+      id: 'terms_22',
+      title: '22. Hukum yang Berlaku dan Penyelesaian Sengketa',
+      content:
+          'Ketentuan ini tunduk pada hukum Republik Indonesia.\n\nPerbedaan pendapat diupayakan lebih dulu diselesaikan secara musyawarah melalui support@openturath.id selama 30 (tiga puluh) hari sejak pengaduan diterima. Bila tidak tercapai kesepakatan, sengketa diselesaikan melalui pengadilan negeri yang berwenang di wilayah domisili Pengelola di Bogor, tanpa mengurangi hak konsumen untuk menempuh jalur penyelesaian lain yang disediakan undang-undang.',
+    ),
+    LegalSection(
+      id: 'terms_23',
+      title: '23. Ketentuan Penutup',
+      content:
+          'Bila suatu ketentuan dinyatakan tidak sah atau tidak dapat dilaksanakan, ketentuan lain tetap berlaku. Kelalaian kami menegakkan suatu ketentuan tidak berarti kami melepaskan hak itu.\n\nKetentuan ini beserta Kebijakan Privasi serta Pembayaran dan Pengembalian Dana merupakan keseluruhan kesepakatan antara Anda dan Pengelola mengenai layanan. Bila terjemahan berbeda dengan versi bahasa Indonesia, versi bahasa Indonesia yang berlaku.',
+    ),
   ];
 
   // ── Bab 3: Kebijakan Privasi (Privacy Policy) ──────────────────
@@ -292,6 +346,36 @@ abstract final class LegalCopy {
           'Email: $contactPrivacyEmail\n'
           'Pengelola: $managerName ($managerAddress)',
     ),
+    LegalSection(
+      id: 'privacy_14',
+      title: '14. Dasar Hukum dan Peran Kami',
+      content:
+          'Pengelola bertindak sebagai pengendali data pribadi untuk layanan OpenTurath dan memproses data sesuai Undang-Undang Nomor 27 Tahun 2022 tentang Pelindungan Data Pribadi serta peraturan pelaksanaannya. Pemrosesan hanya dilakukan untuk tujuan yang kami jelaskan, berdasarkan persetujuan Anda, pelaksanaan perjanjian layanan, atau kewajiban hukum.',
+    ),
+    LegalSection(
+      id: 'privacy_15',
+      title: '15. Situs Web Ini',
+      content:
+          'Situs openturath.id tidak memasang cookie pelacak dan tidak memakai layanan analitik atau iklan pihak ketiga. Peramban Anda hanya menyimpan pilihan tema dan bahasa di penyimpanan lokal perangkat Anda agar pilihan itu diingat, dan data itu tidak dikirim kepada kami.\n\nBila Anda menghubungi kami lewat surel, kami memproses alamat surel dan isi pesan semata-mata untuk menjawab Anda.',
+    ),
+    LegalSection(
+      id: 'privacy_16',
+      title: '16. Pemberitahuan Insiden Keamanan',
+      content:
+          'Bila terjadi kegagalan pelindungan data pribadi yang berisiko terhadap Anda, kami akan memberitahukan Anda dan pihak berwenang secara tertulis dalam waktu paling lama 3 x 24 jam setelah kami mengetahuinya, memuat data yang terungkap, waktu dan penyebab yang diketahui, serta langkah penanganan dan pemulihan.',
+    ),
+    LegalSection(
+      id: 'privacy_17',
+      title: '17. Cara Menggunakan Hak Anda',
+      content:
+          'Anda dapat meminta akses, perbaikan, penghapusan, pembatasan, keberatan, atau penarikan persetujuan melalui support@openturath.id. Kami dapat meminta bukti kepemilikan akun untuk melindungi Anda dari permintaan palsu. Kami menanggapi dalam waktu paling lama 3 x 24 jam untuk konfirmasi penerimaan dan menyelesaikan permintaan dalam jangka waktu yang ditentukan peraturan.\n\nPenarikan persetujuan tidak memengaruhi pemrosesan yang sah sebelum penarikan itu, dan dapat membuat sebagian fitur tidak lagi dapat kami sediakan.',
+    ),
+    LegalSection(
+      id: 'privacy_18',
+      title: '18. Batas Pelindungan',
+      content:
+          'Tidak ada sistem yang sepenuhnya kebal. Kami menerapkan langkah teknis dan organisasi yang wajar, namun tidak dapat menjamin keamanan mutlak. Anda turut menjaga kerahasiaan akun Google dan perangkat Anda, dan sebaiknya tidak memasukkan data pribadi sensitif, seperti nomor identitas, data kesehatan, atau rahasia pihak lain, ke dalam pertanyaan kepada AI.',
+    ),
   ];
 
   // ── Bab 4: Langganan, Pembayaran, dan Pengembalian Dana ────────
@@ -357,6 +441,30 @@ abstract final class LegalCopy {
       content:
           'Kendala pembayaran dan transaksi dipantau setiap hari kerja ($serviceHours).\n'
           'Email layanan transaksi: $contactSupportEmail',
+    ),
+    LegalSection(
+      id: 'refund_08',
+      title: '8. Harga, Pajak, dan Mata Uang',
+      content:
+          'Harga dan mata uang yang tampil pada halaman pembelian atau lembar pembayaran platform adalah harga yang berlaku saat transaksi. Pajak dan biaya platform, bila ada, mengikuti ketentuan penyedia pembayaran dan peraturan yang berlaku. Perubahan harga tidak berlaku surut untuk paket yang sudah Anda beli.',
+    ),
+    LegalSection(
+      id: 'refund_09',
+      title: '9. Pembayaran Melalui Pihak Ketiga',
+      content:
+          'Pembayaran diproses oleh penyedia pembayaran atau platform distribusi aplikasi. Kami tidak menyimpan nomor kartu atau kredensial pembayaran Anda. Sengketa mengenai penagihan oleh penyedia pembayaran tunduk juga pada ketentuan penyedia tersebut.',
+    ),
+    LegalSection(
+      id: 'refund_10',
+      title: '10. Penyalahgunaan dan Transaksi Tidak Wajar',
+      content:
+          'Kami dapat menolak, menahan, atau membatalkan transaksi yang patut diduga curang, melanggar hukum, atau dilakukan dengan sarana pembayaran milik orang lain tanpa hak, dan menangguhkan akses yang diperoleh darinya, dengan pemberitahuan dan kesempatan klarifikasi bila keadaan memungkinkan.',
+    ),
+    LegalSection(
+      id: 'refund_11',
+      title: '11. Hubungan dengan Ketentuan Lain',
+      content:
+          'Bagian ini melengkapi bagian di atas. Bila terjadi perbedaan, berlaku ketentuan yang lebih melindungi konsumen menurut undang-undang yang berlaku.',
     ),
   ];
 
@@ -434,6 +542,18 @@ abstract final class LegalCopy {
       content:
           "Apabila Anda mendapati kekeliruan teks Arab, salah atribusi pengarang, atau ketidaktepatan informasi dalam naskah yang ditampilkan, sampaikan koreksi secara santun dan ilmiah.\n\n"
           "Laporan perbaikan dapat dikirimkan melalui saluran resmi ($contactSupportEmail) agar khazanah kitab tetap terjaga keasliannya.",
+    ),
+    LegalSection(
+      id: 'guideline_10',
+      title: 'Batas Pemakaian yang Aman',
+      content:
+          'Jangan memakai OpenTurath AI sebagai satu-satunya dasar untuk perkara yang berakibat nyata bagi diri atau orang lain, seperti penetapan waris, talak, sengketa, atau keputusan hukum. Jadikan jawaban AI sebagai bahan awal, lalu bawa kepada guru atau ulama yang berkompeten.\n\nJangan memasukkan data pribadi sensitif milik Anda atau orang lain ke dalam pertanyaan.',
+    ),
+    LegalSection(
+      id: 'guideline_11',
+      title: 'Bila Anda Menyebarkan Hasilnya',
+      content:
+          'Menyebarkan hasil AI berarti ikut menanggung amanahnya. Periksa ibarah pada kitab, sebutkan sumber dan edisinya, dan jangan menyebutnya sebagai fatwa OpenTurath. Bila ditemukan kekeliruan, koreksi secara terbuka dan beri tahu kami.',
     ),
   ];
 
