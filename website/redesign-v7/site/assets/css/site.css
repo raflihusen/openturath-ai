@@ -737,3 +737,13 @@ html[lang="ar"] .two .k,html[lang="ar"] .tl3 .k{letter-spacing:.02em;text-transf
 .kicker{display:inline-block;padding:7px 18px;border:2px solid currentColor;border-radius:var(--pill);line-height:1.2}
 .sec:not(.band) .kicker,.phead .kicker{color:var(--on-surface)}
 .task{justify-content:flex-start}.task h4{margin-top:0}
+/* V7.7: angka lebih besar, kotak lebih ringkas */
+.stats{gap:16px}
+.stat{min-height:0;padding:clamp(22px,2.4vw,32px);gap:14px}
+.stat .num{font-size:clamp(46px,5.6vw,88px)}
+.stat .lab{font-size:clamp(16px,1.4vw,19px)}
+.stat.big .num{font-size:clamp(64px,8.2vw,124px)}
+.stat.big{min-height:0}
+.stat.big .wm{bottom:auto;top:-4px;font-size:clamp(100px,13vw,190px)}
+@media (max-width:900px){.stat.big{min-height:0}.stat.big .wm{top:0}}
+@media (max-width:480px){.stat{min-height:0}.stat .num{font-size:clamp(46px,16vw,72px)}}
