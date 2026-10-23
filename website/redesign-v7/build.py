@@ -71,7 +71,7 @@ def shell(fname, title, desc, body, current=""):
     cur = ' aria-current="page"'
     links = "".join(f'<a href="{h}"{cur if h == current else ""}>{t}</a>' for h, t in NAV())
     bid = L("Bidang", "Fields", "المجالات")
-    sheet = f'<a class="l" href="bidang.html">{L("Bidang ilmu","Fields of knowledge","المجالات العلمية")}</a>' + "".join(f'<a class="l" href="{h}">{t}</a>' for h, t in NAV())
+    sheet = "".join(f'<a class="l" href="{h}">{t}</a>' for h, t in NAV())
     drop = "".join(f'<a href="bidang.html#{g}">{ic(i)}<span><b>{t}</b><span class="d">{d}</span></span></a>' for g, (t, d, i) in RUMPUN().items())
     names = {"id": "Bahasa Indonesia", "en": "English", "ar": "العربية"}
     cur2 = ' aria-current="true"'
@@ -92,12 +92,11 @@ def shell(fname, title, desc, body, current=""):
 <script src="../assets/js/boot.js"></script></head>
 <body>{SPRITE}<a class="skip" href="#main">{L("Lewati ke konten","Skip to content","تخطَّ إلى المحتوى")}</a>
 <header class="site"><div class="hbar"><a class="wordmark" href="index.html" aria-label="OpenTurath"><span>OpenTurath</span></a>
-<nav class="main" aria-label="{L("Utama","Main","الرئيسية")}"><button class="navbtn" data-drop="fieldsDrop" aria-expanded="false" aria-controls="fieldsDrop">{bid}{ic("chev")}</button>{links}</nav>
+<nav class="main" aria-label="{L("Utama","Main","الرئيسية")}">{links}</nav>
 <div class="hactions"><button class="langbtn" data-drop="langDrop" aria-expanded="false" aria-controls="langDrop" aria-label="{L("Pilih bahasa","Choose language","اختر اللغة")}">{ic("globe")}<span>{LANG.upper()}</span></button>
 <button class="iconbtn theme-btn" aria-label="{L("Ganti tema terang atau gelap","Switch light or dark theme","تبديل المظهر الفاتح أو الداكن")}"><span class="sun">{ic("sun")}</span><span class="moon">{ic("moon")}</span></button>
 <a class="btn primary sm hideS" href="unduh.html">{ic("download")}{unduh}</a>
 <button class="iconbtn menu-btn" aria-label="{L("Buka menu","Open menu","افتح القائمة")}" aria-expanded="false">{ic("menu")}</button></div></div>
-<div class="drop fields" id="fieldsDrop">{drop}<a href="bidang.html" class="alllink">{ic("arrow","arr")}<span><b>{L("Lihat semua bidang","See all fields","عرض كل المجالات")}</b></span></a></div>
 <div class="drop lang" id="langDrop">{langrows}</div></header>
 <div class="sheet" id="sheet">{sheet}<a class="btn primary" href="unduh.html">{ic("download")}{L("Unduh aplikasi","Download the app","تحميل التطبيق")}</a></div>
 <main id="main">{body}</main>
@@ -321,7 +320,7 @@ def page_home():
 <div class="rv">{tasks_html()}</div>
 <div class="branches-hd rv"><h3>{L("Lima cabang AI Fikih Tahawwulat","The five branches of AI Fiqh al-Tahawwulat","الفروع الخمسة لـ AI فقه التحولات")}</h3><p>{L("Satu bidang dengan lima asisten, masing-masing dengan tugasnya.","One field with five assistants, each with its own job.","مجال واحد وخمسة مساعدين، ولكل منهم مهمته.")}</p></div>
 <div class="rv">{branches_html()}</div>
-<p style="margin-top:40px;text-align:center"><a class="btn primary" href="fikih-tahawwulat.html">{L("Kenali Fikih Tahawwulat","Get to know Fiqh al-Tahawwulat","تعرّف على فقه التحولات")}{ic("arrow","arr")}</a></p></div></section>
+<p style="margin-top:40px;display:flex;flex-wrap:wrap;gap:12px;justify-content:center"><a class="btn primary" href="mengenal-fikih-tahawwulat.html">{L("Mengenal Fikih Tahawwulat","Getting to know Fiqh al-Tahawwulat","التعرّف على فقه التحولات")}{ic("arrow","arr")}</a><a class="btn inv-o" href="fikih-tahawwulat.html">{L("Tentang ilmunya","About the science","عن هذا العلم")}</a></p></div></section>
 
 <section class="sec"><div class="wrap">{shead(L("Cara kami menjaga","How we safeguard","كيف نحفظ"), L("Cara kami menjaga mutu jawaban.","How we keep answers sound.","كيف نحفظ سلامة الإجابات."))}
 <div class="pillars">

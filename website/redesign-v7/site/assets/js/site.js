@@ -278,7 +278,8 @@
   var heads = $$('.sec-head h2, .phead h1, h1.hero, .welcome .lede');
   if (reduce || nofx) { return; }
   // tombol di dalam bagian: muncul perlahan saat digulir
-  $$('main .btn').forEach(function (b) { if (!b.closest('.rv') && !b.closest('.welcome')) b.classList.add('rv'); });
+  var late = []; $$('main .btn').forEach(function (b) { if (!b.closest('.rv') && !b.closest('.welcome')) { b.classList.add('rv'); late.push(b); } });
+  if (window.IntersectionObserver) { var lio = new IntersectionObserver(function (es) { es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('in'); lio.unobserve(e.target); } }); }, { threshold: .2 }); late.forEach(function (b) { lio.observe(b); }); } else late.forEach(function (b) { b.classList.add('in'); });
   if (!window.IntersectionObserver) return;
   root.classList.add('typing');
   var hero = $('#hero');

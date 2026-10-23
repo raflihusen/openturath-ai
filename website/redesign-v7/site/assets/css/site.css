@@ -910,3 +910,5 @@ html[lang="ar"] .xb{letter-spacing:.02em;text-transform:none;font-size:15px}
 .sculpt{margin:0;border-radius:var(--corner-2xl);overflow:hidden;box-shadow:0 40px 90px -30px rgba(0,0,0,.7),0 0 0 1px rgba(248,249,252,.12);background:#0c0c0e}
 .sculpt img{display:block;width:100%;height:auto;aspect-ratio:1}
 @media (max-width:900px){.tahaw.tsc{grid-template-columns:1fr}}
+
+.sec:not(.band) .gate svg{color:var(--on-surface)}
