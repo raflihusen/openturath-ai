@@ -747,3 +747,6 @@ html[lang="ar"] .two .k,html[lang="ar"] .tl3 .k{letter-spacing:.02em;text-transf
 .stat.big .wm{bottom:auto;top:-4px;font-size:clamp(100px,13vw,190px)}
 @media (max-width:900px){.stat.big{min-height:0}.stat.big .wm{top:0}}
 @media (max-width:480px){.stat{min-height:0}.stat .num{font-size:clamp(46px,16vw,72px)}}
+/* V7.8: kitab tetap di bawah, naik sedikit supaya utuh */
+.stat.big .wm{top:auto;bottom:14px;font-size:clamp(90px,11vw,160px);line-height:.9}
+@media (max-width:900px){.stat.big .wm{top:auto;bottom:14px}}
