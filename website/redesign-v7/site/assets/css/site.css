@@ -750,3 +750,9 @@ html[lang="ar"] .two .k,html[lang="ar"] .tl3 .k{letter-spacing:.02em;text-transf
 /* V7.8: kitab tetap di bawah, naik sedikit supaya utuh */
 .stat.big .wm{top:auto;bottom:14px;font-size:clamp(90px,11vw,160px);line-height:.9}
 @media (max-width:900px){.stat.big .wm{top:auto;bottom:14px}}
+/* V7.9: kartu unduh tidak meluap di lebar menengah */
+.platforms{grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr))}
+.plat{min-width:0}
+.plat .btn{white-space:normal;text-align:center;max-width:100%;min-height:52px;height:auto;padding-block:12px}
+.plat h3,.plat .req{overflow-wrap:anywhere}
+@media (max-width:860px){.platforms{grid-template-columns:1fr}}
