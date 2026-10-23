@@ -60,11 +60,7 @@ const copyCatalog = <String, List<String>>{
   ],
   "assistantMore": ["AI lainnya", "Other assistants", "مساعدون آخرون"],
   "assistantAvailable": ["Tersedia", "Available", "متاح"],
-  "assistantSearch": [
-    "Cari AI",
-    "Search AI",
-    "ابحث عن مساعد ذكي"
-  ],
+  "assistantSearch": ["Cari AI", "Search AI", "ابحث عن مساعد ذكي"],
   "clearSearch": ["Hapus pencarian", "Clear search", "مسح البحث"],
   "assistantLibrary": ["Lihat pustaka", "View library", "عرض المكتبة"],
   "planFeaturedLabel": [
@@ -229,23 +225,19 @@ const copyCatalog = <String, List<String>>{
   "chooseField": ["Pilih bidang", "Choose a discipline", "اختر مجال العلم"],
   "allCategories": ["Semua bidang", "All disciplines", "جميع المجالات"],
   "searchResults": ["Hasil pencarian", "Search results", "نتائج البحث"],
-  "continueStudy": ["Lanjutkan percakapan", "Continue conversation", "متابعة المحادثة"],
+  "continueStudy": [
+    "Lanjutkan percakapan",
+    "Continue conversation",
+    "متابعة المحادثة"
+  ],
   "startStudy": ["Mulai bertanya", "Ask a question", "ابدأ السؤال"],
   "dashboardSearchHint": [
     "Cari AI atau bidang keilmuan…",
     "Search assistants or disciplines…",
     "ابحث عن المساعد أو المجال العلمي…"
   ],
-  "ahlanDefault": [
-    "Halo",
-    "Welcome",
-    "أهلًا وسهلًا"
-  ],
-  "studyBookCategory": [
-    "TANYA KITAB",
-    "ASK THE BOOKS",
-    "مطالعة الكتب"
-  ],
+  "ahlanDefault": ["Halo", "Welcome", "أهلًا وسهلًا"],
+  "studyBookCategory": ["TANYA KITAB", "ASK THE BOOKS", "مطالعة الكتب"],
   "studyEntryDefaultTitle": [
     "Mulai dari satu pertanyaan",
     "Start with a question",
@@ -610,11 +602,7 @@ const copyCatalog = <String, List<String>>{
     "Please complete Google sign-in first.",
     "يرجى إكمال تسجيل الدخول إلى Google أولاً."
   ],
-  "checkAgain": [
-    "Periksa lagi",
-    "Check Again",
-    "تحقق مجددًا"
-  ],
+  "checkAgain": ["Periksa lagi", "Check Again", "تحقق مجددًا"],
   "yesAlreadySignedIn": [
     "Ya, sudah masuk",
     "Yes, Signed In",
@@ -928,10 +916,37 @@ const copyCatalog = <String, List<String>>{
     "Version {0} · {1}",
     "الإصدار {0} · {1}"
   ],
-  "ahlanWithName": [
-    "Halo, {0}",
-    "Welcome, {0}",
-    "أهلًا، {0}"
+  "ahlanWithName": ["Halo, {0}", "Welcome, {0}", "أهلًا، {0}"],
+  "logoPhilosophyRow": [
+    "Filosofi lambang",
+    "Meaning of the mark",
+    "فلسفة الشعار"
+  ],
+  "logoPhilosophyRowSub": [
+    "Tiga ruang di bawah satu lengkung",
+    "Three spaces under one arch",
+    "ثلاثة فراغات تحت قوس واحد"
+  ],
+  "logoPhilosophyLead": [
+    "Dalam hadis Jibril, Nabi menjawab empat pertanyaan. Tiga yang pertama adalah ilmu yang tetap. Yang keempat membahas yang berubah dan menjaga ketiganya. Itulah yang tergambar pada lambang OpenTurath.",
+    "In the hadith of Jibril, the Prophet answered four questions. The first three are the constant sciences. The fourth deals with what changes and guards the other three. That is what the OpenTurath mark draws.",
+    "في حديث جبريل أجاب النبي عن أربعة أسئلة. الثلاثة الأولى علوم الثوابت، والرابع يبحث في المتغيرات ويحفظ الثلاثة. وذلك ما يرسمه شعار OpenTurath."
+  ],
+  "logoPart1": ["Islam · Fikih", "Islam · Fiqh", "الإسلام · الفقه"],
+  "logoPart1Sub": ["Rukun yang tetap", "A constant pillar", "من الثوابت"],
+  "logoPart2": ["Iman · Akidah", "Iman · Creed", "الإيمان · العقيدة"],
+  "logoPart2Sub": ["Rukun yang tetap", "A constant pillar", "من الثوابت"],
+  "logoPart3": ["Ihsan · Tasawuf", "Ihsan · Tasawwuf", "الإحسان · التصوف"],
+  "logoPart3Sub": ["Rukun yang tetap", "A constant pillar", "من الثوابت"],
+  "logoPart4": [
+    "Lengkung · Fikih Tahawwulat",
+    "The arch · Fiqh al-Tahawwulat",
+    "القوس · فقه التحولات"
+  ],
+  "logoPart4Sub": [
+    "Membahas yang berubah dan menjaga tiga rukun di bawahnya",
+    "Studies what changes and guards the three pillars beneath it",
+    "يبحث في المتغيرات ويحفظ الأركان الثلاثة تحته"
   ],
   "brandPhilosophyTitle": [
     "Lambang OpenTurath",
@@ -953,11 +968,7 @@ const copyCatalog = <String, List<String>>{
   "perMonth": ["/bulan", "/month", "/شهر"],
   "perSixMonths": ["/6 bulan", "/6 months", "/ستة أشهر"],
   "perYear": ["/tahun", "/year", "/سنة"],
-  "tahawwulatHonor": [
-    "Rukun Keempat",
-    "The Fourth Pillar",
-    "الركن الرابع"
-  ],
+  "tahawwulatHonor": ["Rukun Keempat", "The Fourth Pillar", "الركن الرابع"],
   "tahawwulatBenefit": [
     "Pelajari naskah dan tanda-tanda zaman dalam karya Al-Habib Abu Bakar Al-Adni Al-Masyhur.",
     "Study texts, transmitted accounts of the signs of the times, and the works of al-Habib Abu Bakr al-Adni al-Mashhur.",
@@ -973,17 +984,9 @@ const copyCatalog = <String, List<String>>{
     "Single Field AI Access",
     "الوصول إلى ذكاء اصطناعي لمجال واحد"
   ],
-  "discipline": [
-    "Bidang ilmu",
-    "Field of study",
-    "المجال العلمي"
-  ],
+  "discipline": ["Bidang ilmu", "Field of study", "المجال العلمي"],
   "scholarLibrary": ["Khazanah ulama", "خزانة العلماء", "خزانة العلماء"],
-  "scholarPreparing": [
-    "Segera hadir",
-    "Coming soon",
-    "قريبًا"
-  ],
+  "scholarPreparing": ["Segera hadir", "Coming soon", "قريبًا"],
   "scholarPreparingBody": [
     "Bagian ini sedang disiapkan.",
     "This section is being prepared",
@@ -994,11 +997,7 @@ const copyCatalog = <String, List<String>>{
     "Digital Scholar Card",
     "بطاقة طالب العلم الرقمية"
   ],
-  "activeResearcher": [
-    "Pengguna aktif",
-    "Active Researcher",
-    "باحث فعّال"
-  ],
+  "activeResearcher": ["Pengguna aktif", "Active Researcher", "باحث فعّال"],
   "studentOfTurath": [
     "Penuntut ilmu",
     "Student of the Classics",
@@ -1044,21 +1043,9 @@ const copyCatalog = <String, List<String>>{
     "ابحث عن عنوان أو مؤلف أو مجال…"
   ],
   "allBooks": ["Semua kitab", "All books", "جميع الكتب"],
-  "matan": [
-    "Matan",
-    "Foundational Texts",
-    "المتون"
-  ],
-  "sharh": [
-    "Syarah",
-    "Authoritative Commentaries",
-    "الشروح"
-  ],
-  "hashiyah": [
-    "Hasyiyah",
-    "Hashiyah (glosses)",
-    "الحواشي"
-  ],
+  "matan": ["Matan", "Foundational Texts", "المتون"],
+  "sharh": ["Syarah", "Authoritative Commentaries", "الشروح"],
+  "hashiyah": ["Hasyiyah", "Hashiyah (glosses)", "الحواشي"],
   "unclassified": [
     "Belum diklasifikasikan",
     "Not yet classified",
@@ -1181,11 +1168,7 @@ const copyCatalog = <String, List<String>>{
     "Book citation copied",
     "نُسخ توثيق الكتاب"
   ],
-  "ui_8529af5e96": [
-    "Salin rujukan",
-    "Copy citation",
-    "نسخ التوثيق"
-  ],
+  "ui_8529af5e96": ["Salin rujukan", "Copy citation", "نسخ التوثيق"],
   "ui_f8f8446f44": [
     "METADATA NASKAH RUJUKAN",
     "REFERENCE RECORD",
@@ -1197,11 +1180,7 @@ const copyCatalog = <String, List<String>>{
   "ui_7e06fac12c": ["Jumlah Jilid", "Volumes", "عدد الأجزاء"],
   "ui_02c2d79961": ["Jumlah Halaman", "Pages", "عدد الصفحات"],
   "ui_119fdd76dd": ["Koleksi sumber", "Source collection", "مجموعة المصادر"],
-  "ui_3f42b695cf": [
-    "Salin rujukan",
-    "Copy citation",
-    "نسخ التوثيق الكامل"
-  ],
+  "ui_3f42b695cf": ["Salin rujukan", "Copy citation", "نسخ التوثيق الكامل"],
   "ui_55fddd168e": [
     "Cari AI atau ulama…",
     "Search study guides…",
@@ -1237,11 +1216,7 @@ const copyCatalog = <String, List<String>>{
     "الوصول الفعّال في هذا الحساب."
   ],
   "ui_b236ca6182": ["Semua AI", "All assistants", "جميع المساعدين"],
-  "ui_f2dfc4506e": [
-    "AI",
-    "Study guide",
-    "خادم المطالعة"
-  ],
+  "ui_f2dfc4506e": ["AI", "Study guide", "خادم المطالعة"],
   "ui_c720f7612f": ["Pengguna", "Reader", "القارئ"],
   "ui_26894b3c65": [
     "Ganti ke tema terang",
@@ -1335,11 +1310,7 @@ const copyCatalog = <String, List<String>>{
     "Read the passage in its context in the cited edition before drawing conclusions or sharing your findings.",
     "اقرأ العبارة في سياقها في الطبعة المحال إليها قبل الاستنتاج أو نشر نتائج المطالعة."
   ],
-  "ui_2705ede796": [
-    "AMANAH ILMIAH",
-    "CITE YOUR SOURCES",
-    "الأمانة العلمية"
-  ],
+  "ui_2705ede796": ["AMANAH ILMIAH", "CITE YOUR SOURCES", "الأمانة العلمية"],
   "ui_09ea45b2e2": [
     "Cantumkan rujukan saat mengutip",
     "Cite Your Sources",
@@ -1662,11 +1633,7 @@ const copyCatalog = <String, List<String>>{
     "Open in al-Maktabah al-Shamilah",
     "فتح في المكتبة الشاملة"
   ],
-  "ui_9a30ee772c": [
-    "Salin rujukan",
-    "Copy reference",
-    "نسخ الإحالة العلمية"
-  ],
+  "ui_9a30ee772c": ["Salin rujukan", "Copy reference", "نسخ الإحالة العلمية"],
   "ui_d67287e521": ["KOLEKSI UTAMA", "FEATURED COLLECTION", "المجموعة المميزة"],
   "ui_e84b97b822": ["AKTIF", "ACTIVE", "فعّال"],
   "ui_71c772586f": ["PREMIUM", "SPECIAL COLLECTION", "خزانة خاصة"],
@@ -1685,11 +1652,7 @@ const copyCatalog = <String, List<String>>{
     "Official Contacts & Service Complaints",
     "قنوات التواصل الرسمية وشكاوى الخدمة"
   ],
-  "ui_73d11e46c9": [
-    "Kembali ke beranda",
-    "Return home",
-    "العودة إلى الرئيسية"
-  ],
+  "ui_73d11e46c9": ["Kembali ke beranda", "Return home", "العودة إلى الرئيسية"],
   "ui_2b3aa03422": ["Ukuran huruf", "Text size", "حجم الخط"],
   "ui_1781d557ab": [
     "Akun Google ini belum dapat membuka AI. Gunakan akun Google yang sudah dihubungkan dengan OpenTurath.",
@@ -1751,11 +1714,7 @@ const copyCatalog = <String, List<String>>{
   "ui_6d6b866be5": ["Fikih Maliki", "Maliki Fiqh", "الفقه المالكي"],
   "ui_9954541c39": ["Fikih Hanbali", "Hanbali Fiqh", "الفقه الحنبلي"],
   "ui_2b90583ab7": ["Perbandingan Mazhab", "Comparative Fiqh", "الفقه المقارن"],
-  "ui_bb6b589ac6": [
-    "Matan Hadis",
-    "Matan Hadith",
-    "متن الحديث"
-  ],
+  "ui_bb6b589ac6": ["Matan Hadis", "Matan Hadith", "متن الحديث"],
   "ui_34fc2f7f7b": ["Tafsir Al-Qur'an", "Qur’anic Exegesis", "تفسير القرآن"],
   "ui_703ae50c4d": [
     "Sejarah & Sirah",
@@ -1971,21 +1930,9 @@ const copyCatalog = <String, List<String>>{
     "النصيحة العملية والبشارات"
   ],
   "ui_7004b5d8ff": ["Matan & Ibarah", "Texts & Passages", "المتون والعبارات"],
-  "ui_87d9751aa5": [
-    "Peta Konsep",
-    "Concept Maps",
-    "الخرائط المفهومية"
-  ],
-  "ui_b75ba44465": [
-    "Uji Kabar",
-    "Report Check",
-    "اختبار الأخبار"
-  ],
-  "ui_e5ad7cb376": [
-    "Hati & Sikap",
-    "Heart & Stance",
-    "القلب والموقف"
-  ],
+  "ui_87d9751aa5": ["Peta Konsep", "Concept Maps", "الخرائط المفهومية"],
+  "ui_b75ba44465": ["Uji Kabar", "Report Check", "اختبار الأخبار"],
+  "ui_e5ad7cb376": ["Hati & Sikap", "Heart & Stance", "القلب والموقف"],
   "ui_44aa1b83f5": ["Nasihat & Harapan", "Counsel & Hope", "النصيحة والرجاء"],
   "booksShown": [
     "Menampilkan {0} dari {1} kitab",
@@ -2009,11 +1956,7 @@ const copyCatalog = <String, List<String>>{
     "Update v{0} ready to install",
     "التحديث v{0} جاهز للتثبيت"
   ],
-  "openNamedStudy": [
-    "Buka AI {0}",
-    "Open {0} AI",
-    "فتح الذكاء الاصطناعي {0}"
-  ],
+  "openNamedStudy": ["Buka AI {0}", "Open {0} AI", "فتح الذكاء الاصطناعي {0}"],
   "policyOriginal": [
     "Naskah kebijakan resmi berbahasa Indonesia.",
     "The official policy text is in Indonesian.",
@@ -2083,27 +2026,15 @@ const copyCatalog = <String, List<String>>{
     "Remove from Notes",
     "إزالة من الملاحظات"
   ],
-  "bookCitationCopy": [
-    "Salin rujukan",
-    "Copy citation",
-    "نسخ التوثيق"
-  ],
-  "bookTypeWork": [
-    "Karya",
-    "Work",
-    "مصنف علمي"
-  ],
+  "bookCitationCopy": ["Salin rujukan", "Copy citation", "نسخ التوثيق"],
+  "bookTypeWork": ["Karya", "Work", "مصنف علمي"],
   "bookTypeMatn": ["Matan", "Base text", "متن"],
   "bookTypeSharh": ["Syarah", "Commentary", "شرح"],
   "bookTypeHashiyah": ["Hasyiyah", "Marginal commentary", "حاشية"],
   "bookTypeSummary": ["Mukhtasar", "Abridgment", "مختصر"],
   "bookTypeEncyclopedia": ["Ensiklopedia", "Encyclopedia", "موسوعة"],
   "bookTypePoem": ["Manzhumah", "Didactic poem", "منظومة"],
-  "bookEraHeritage": [
-    "Khazanah Islam",
-    "Islamic heritage",
-    "التراث الإسلامي"
-  ],
+  "bookEraHeritage": ["Khazanah Islam", "Islamic heritage", "التراث الإسلامي"],
   "bookEraEarly": ["Mutaqaddimin", "Early scholars", "المتقدمون"],
   "bookEraMiddle": ["Mutawassithin", "Middle period scholars", "المتوسطون"],
   "bookEraLate": ["Muta'akhkhirin", "Later scholars", "المتأخرون"],
@@ -2477,11 +2408,7 @@ const copyCatalog = <String, List<String>>{
     "Update Available",
     "تحديث متاح"
   ],
-  "updateReadyTitleMobile": [
-    "Pembaruan siap",
-    "Update Ready",
-    "التحديث جاهز"
-  ],
+  "updateReadyTitleMobile": ["Pembaruan siap", "Update Ready", "التحديث جاهز"],
   "updateReadyVersion": ["Versi {0}", "Version {0}", "الإصدار {0}"],
   "updateReadyDescDesktop": [
     "Versi desktop terbaru sudah tersedia. Buka tautan untuk memperbarui.",
@@ -2508,11 +2435,7 @@ const copyCatalog = <String, List<String>>{
     "Install & Reload Now",
     "تثبيت وإعادة تشغيل الآن"
   ],
-  "updateReadyLater": [
-    "Nanti saja",
-    "Later",
-    "لاحقًا"
-  ],
+  "updateReadyLater": ["Nanti saja", "Later", "لاحقًا"],
   "updateReadyOpenFailed": [
     "Pembaruan belum bisa dibuka. Coba lagi.",
     "Could not open update. Please try again.",
@@ -2598,11 +2521,7 @@ const copyCatalog = <String, List<String>>{
     "Please sign in to Google with the same account.",
     "يُرجى تسجيل الدخول إلى Google بالحساب نفسه."
   ],
-  "roomLoginNow": [
-    "Masuk sekarang",
-    "Sign in now",
-    "سجّل الدخول الآن"
-  ],
+  "roomLoginNow": ["Masuk sekarang", "Sign in now", "سجّل الدخول الآن"],
   "roomGooglePermissionDetail": [
     "Akun Google yang aktif belum dapat membuka sesi AI ini. Periksa akun Google yang digunakan dan izin akses Anda.",
     "The active Google account cannot open this AI session yet. Check which Google account is in use and your access permissions.",
@@ -2728,26 +2647,10 @@ const copyCatalog = <String, List<String>>{
     "The session is reused per device and browser profile. Google may still ask for consent or a security check.",
     "تُعاد استخدام الجلسة لكل جهاز وملف متصفح. وقد يطلب Google الموافقة أو التحقق الأمني."
   ],
-  "promoUnitDays": [
-    "hari",
-    "days",
-    "أيام"
-  ],
-  "promoUnitHours": [
-    "jam",
-    "hours",
-    "ساعات"
-  ],
-  "promoUnitMins": [
-    "menit",
-    "minutes",
-    "دقائق"
-  ],
-  "promoUnitSecs": [
-    "detik",
-    "seconds",
-    "ثوانٍ"
-  ],
+  "promoUnitDays": ["hari", "days", "أيام"],
+  "promoUnitHours": ["jam", "hours", "ساعات"],
+  "promoUnitMins": ["menit", "minutes", "دقائق"],
+  "promoUnitSecs": ["detik", "seconds", "ثوانٍ"],
   "promoHeadBefore": [
     "MENUJU PELUNCURAN PROMO 10 HARI",
     "10-DAY PROMO LAUNCH COUNTDOWN",
@@ -2783,21 +2686,13 @@ const copyCatalog = <String, List<String>>{
     "Continue to payment",
     "المتابعة إلى الدفع"
   ],
-  "planTotalLabel": [
-    "Total",
-    "Total",
-    "الإجمالي"
-  ],
+  "planTotalLabel": ["Total", "Total", "الإجمالي"],
   "planConsent": [
     "Dengan melanjutkan, Anda menyetujui {0} dan {1}.",
     "By continuing, you agree to the {0} and the {1}.",
     "بالمتابعة فإنك توافق على {0} و{1}."
   ],
-  "planConsentTerms": [
-    "Ketentuan Layanan",
-    "Terms of Service",
-    "شروط الخدمة"
-  ],
+  "planConsentTerms": ["Ketentuan Layanan", "Terms of Service", "شروط الخدمة"],
   "planConsentRefund": [
     "Pembayaran dan Pengembalian Dana",
     "Payments and Refunds",

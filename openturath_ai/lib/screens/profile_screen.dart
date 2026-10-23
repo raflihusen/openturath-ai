@@ -534,6 +534,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ),
                           ),
                           Divider(height: 1, color: border),
+                          _SettingsTile(
+                            leading: const OpenTurathMark(size: 26),
+                            icon: Icons.info_outline_rounded,
+                            title: Loc.tr('logoPhilosophyRow'),
+                            subtitle: Loc.tr('logoPhilosophyRowSub'),
+                            trailing: Icon(Icons.chevron_right_rounded,
+                                color: textSecondary, size: 20),
+                            onTap: () => _showLogoPhilosophy(context,
+                                textPrimary, textSecondary, surface, border),
+                          ),
+                          Divider(height: 1, color: border),
                           _AccountActionRow(
                             icon: Icons.logout_rounded,
                             label: _isLoggingOut
@@ -575,6 +586,85 @@ class _ProfileScreenState extends State<ProfileScreen> {
           },
         ),
       ),
+    );
+  }
+
+  void _showLogoPhilosophy(BuildContext context, Color textPrimary,
+      Color textSecondary, Color surface, Color border) {
+    final parts = [
+      ['logoPart1', 'logoPart1Sub'],
+      ['logoPart2', 'logoPart2Sub'],
+      ['logoPart3', 'logoPart3Sub'],
+      ['logoPart4', 'logoPart4Sub'],
+    ];
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: surface,
+      shape: const RoundedRectangleBorder(
+          borderRadius:
+              BorderRadius.vertical(top: Radius.circular(OTRadius.dialog))),
+      builder: (ctx) {
+        Loc.watch(ctx);
+        return Directionality(
+          textDirection: Loc.isArabic ? TextDirection.rtl : TextDirection.ltr,
+          child: SafeArea(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.fromLTRB(
+                  OTSpacing.xl, OTSpacing.xxl, OTSpacing.xl, OTSpacing.xl),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Center(child: OpenTurathMark(size: 88)),
+                  const SizedBox(height: 20),
+                  Text(Loc.tr('brandPhilosophyTitle'),
+                      style: OTTypography.screenTitle(color: textPrimary)
+                          .copyWith(fontSize: OTFontSize.s20)),
+                  const SizedBox(height: 12),
+                  Text(Loc.tr('logoPhilosophyLead'),
+                      style: OTTypography.body(color: textSecondary)),
+                  const SizedBox(height: 20),
+                  for (var i = 0; i < parts.length; i++) ...[
+                    Container(
+                      width: double.infinity,
+                      margin: const EdgeInsets.only(bottom: OTSpacing.sm),
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(OTRadius.xs * 2),
+                        border: Border.all(color: border),
+                      ),
+                      child: Row(children: [
+                        Text('0${i + 1}',
+                            style: OTTypography.captionMedium(
+                                color: textSecondary)),
+                        const SizedBox(width: 14),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(Loc.tr(parts[i][0]),
+                                  style: OTTypography.cardTitle(
+                                      color: textPrimary)),
+                              const SizedBox(height: 2),
+                              Text(Loc.tr(parts[i][1]),
+                                  style: OTTypography.caption(
+                                      color: textSecondary)),
+                            ],
+                          ),
+                        ),
+                      ]),
+                    ),
+                  ],
+                  const SizedBox(height: 6),
+                  Text(Loc.tr('brandPhilosophy'),
+                      style: OTTypography.caption(color: textSecondary)),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 
@@ -624,17 +714,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       style: OTTypography.caption(color: textSecondary),
                     ),
                     const SizedBox(height: 16),
-                    ExpansionTile(
-                      tilePadding: EdgeInsets.zero,
-                      childrenPadding: const EdgeInsets.only(bottom: 16),
-                      leading: const OpenTurathMark(size: 32),
-                      title: Text(Loc.tr('brandPhilosophyTitle'),
-                          style: OTTypography.cardTitle(color: textPrimary)),
-                      children: [
-                        Text(Loc.tr('brandPhilosophy'),
-                            style: OTTypography.body(color: textSecondary)),
-                      ],
-                    ),
                     const SizedBox(height: 16),
                     Divider(height: 1, color: border),
                     const SizedBox(height: 8),
@@ -918,7 +997,8 @@ class _AccountActionRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MouseRegion(
-      cursor: onTap != null ? SystemMouseCursors.click : SystemMouseCursors.basic,
+      cursor:
+          onTap != null ? SystemMouseCursors.click : SystemMouseCursors.basic,
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTap: onTap,
@@ -931,13 +1011,15 @@ class _AccountActionRow extends StatelessWidget {
                 SizedBox(
                   width: 20,
                   height: 20,
-                  child: CircularProgressIndicator(strokeWidth: 2, color: color),
+                  child:
+                      CircularProgressIndicator(strokeWidth: 2, color: color),
                 )
               else
                 Icon(icon, size: 20, color: color),
               const SizedBox(width: 14),
               Expanded(
-                child: Text(label, style: OTTypography.bodyMedium(color: color)),
+                child:
+                    Text(label, style: OTTypography.bodyMedium(color: color)),
               ),
             ],
           ),
@@ -977,12 +1059,14 @@ class _AccessPortfolioRow extends StatelessWidget {
 
 class _SettingsTile extends StatelessWidget {
   final IconData icon;
+  final Widget? leading;
   final String title;
   final String subtitle;
   final Widget? trailing;
   final VoidCallback? onTap;
 
   const _SettingsTile({
+    this.leading,
     required this.icon,
     required this.title,
     required this.subtitle,
@@ -998,7 +1082,8 @@ class _SettingsTile extends StatelessWidget {
     final textSecondary = OTColors.textSecondary(isDark);
 
     return MouseRegion(
-      cursor: onTap != null ? SystemMouseCursors.click : SystemMouseCursors.basic,
+      cursor:
+          onTap != null ? SystemMouseCursors.click : SystemMouseCursors.basic,
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTap: onTap,
@@ -1007,11 +1092,12 @@ class _SettingsTile extends StatelessWidget {
               horizontal: OTSpacing.base, vertical: 12),
           child: Row(
             children: [
-              Icon(
-                icon,
-                size: 20,
-                color: textPrimary,
-              ),
+              leading ??
+                  Icon(
+                    icon,
+                    size: 20,
+                    color: textPrimary,
+                  ),
               const SizedBox(width: 14),
               Expanded(
                 child: Column(
