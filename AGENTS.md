@@ -51,5 +51,4 @@
 ## 9. Hak Paten Desain Hitam-Putih Monokrom (MANDATORY)
 - Bahasa desain OpenTurath AI adalah **Monochrome Editorial — The Quiet Islamic Scholar**.
 - Seluruh elemen antarmuka (kartu langganan *Bithāqah Al-Intisāb*, dialog, tombol, dan lembar pembayaran) WAJIB mempertahankan estetika monokrom obsidian murni (#09090B, #18181B, #27272A, #FAFAFA). Dilarang menyisipkan aksen warna oranye, kuning, atau warna kontras lain yang merusak keheningan visual scholarly.
-
-
+- **Pengecualian tunggal (keputusan Pemilik, 23 Oktober 2026):** banner hitung mundur penawaran perdana di layar langganan (`PromoCountdownBanner`) tetap berwarna merah solid `OTColors.errorLight`. Tidak ada elemen lain yang boleh berwarna.
