@@ -930,3 +930,45 @@ html[lang="ar"] .xb{letter-spacing:.02em;text-transform:none;font-size:15px}
 .cbody .arq{display:block;direction:rtl;text-align:start;font-family:"OT Naskh","Scheherazade New",serif;font-size:21px;line-height:2;margin:10px 0;padding:14px 18px;border-radius:16px;background:var(--surface);border:1px solid var(--outline-variant)}
 @media (max-width:640px){.cpanel>header .btn{margin-inline-start:0}}
 .ctabs{display:none}.ctabbed .ctabs{display:flex}
+
+/* modul Mengenal */
+.qgroups{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.qg{background:var(--container);border-radius:var(--corner-xl);padding:clamp(24px,2.6vw,34px)}
+.qg h3{font-size:14px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--num);margin:0 0 16px}
+.qg ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:14px}
+.qg li{position:relative;padding-inline-start:30px;font-size:17px;line-height:1.5;letter-spacing:-.005em}
+.qg li::before{content:"?";position:absolute;inset-inline-start:0;top:1px;width:20px;height:20px;border-radius:50%;background:var(--on-surface);color:var(--surface);font-size:12px;font-weight:700;display:grid;place-items:center}
+html[lang="ar"] .qg h3{letter-spacing:.02em;text-transform:none;font-size:15px}
+.contrast{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:clamp(32px,4vw,56px)}
+.contrast>div{border-radius:var(--corner-xl);padding:clamp(24px,3vw,36px);background:var(--container)}
+.contrast .on{background:var(--on-surface);color:var(--surface)}
+.contrast span{display:block;font-size:13px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;opacity:.65;margin-bottom:12px}
+.contrast p{margin:0;font-size:clamp(20px,2.2vw,28px);line-height:1.35;letter-spacing:-.02em}
+html[lang="ar"] .contrast span{letter-spacing:.02em;text-transform:none;font-size:15px}
+.whatgrid{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1fr);gap:clamp(24px,4vw,64px);align-items:center}
+.whatgrid .sculpt{border-radius:var(--corner-2xl)}
+.wpts{display:flex;flex-direction:column;gap:14px}
+.wp{display:flex;gap:18px;padding:22px 24px;border-radius:var(--corner-lg);background:var(--container)}
+.wp .n,.bcard .n,.brow .n{flex:none;font-size:13px;font-weight:600;letter-spacing:.06em;color:var(--num);min-width:28px}
+.wp h3{font-size:20px;font-weight:550;margin:0 0 6px;letter-spacing:-.01em}
+.wp p{margin:0;color:var(--on-variant);line-height:1.6;font-size:16px}
+.bgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.bcard{background:var(--container);border-radius:var(--corner-xl);padding:26px 26px 30px;display:flex;flex-direction:column;gap:10px}
+.bcard h3{font-size:19px;font-weight:550;letter-spacing:-.01em;margin:6px 0 0;line-height:1.3}
+.bcard p{margin:0;color:var(--on-variant);font-size:15.5px;line-height:1.6}
+.brows{display:flex;flex-direction:column;gap:14px}
+.brow{display:grid;grid-template-columns:40px minmax(0,1fr) minmax(0,1fr);gap:clamp(16px,3vw,40px);align-items:start;background:var(--container);border-radius:var(--corner-xl);padding:clamp(22px,2.6vw,32px)}
+.brow h3{font-size:22px;font-weight:550;letter-spacing:-.015em;margin:0 0 8px}
+.brow .bt p{margin:0;color:var(--on-variant);line-height:1.6}
+.bq span{display:block;font-size:12.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--num);margin-bottom:10px}
+html[lang="ar"] .bq span{letter-spacing:.02em;text-transform:none;font-size:14px}
+.bq ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.bq li{padding:10px 16px;border-radius:var(--corner-md);background:var(--surface);border:1px solid var(--outline-variant);font-size:15.5px;line-height:1.45}
+.cmp .tbl th.on,.cmp .tbl td.on{background:var(--on-surface);color:var(--surface)}
+.cmp .tbl th[scope="row"]{font-weight:600;white-space:nowrap}
+.uniq{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:14px 40px;max-width:1100px}
+.uniq li{display:flex;gap:14px;align-items:flex-start;font-size:18px;line-height:1.55}
+.uniq .ic{flex:none;width:22px;height:22px;margin-top:3px}
+@media (max-width:1180px){.bgrid{grid-template-columns:repeat(2,1fr)}.qgroups{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:900px){.contrast,.whatgrid,.uniq{grid-template-columns:1fr}.brow{grid-template-columns:28px 1fr}.brow .bq{grid-column:1/-1}}
+@media (max-width:640px){.bgrid,.qgroups{grid-template-columns:1fr}}

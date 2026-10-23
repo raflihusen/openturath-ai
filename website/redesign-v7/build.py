@@ -675,7 +675,6 @@ def contact_block():
 
 
 # ======================= MENGENAL FIKIH TAHAWWULAT =======================
-import mengenal as MG
 M_SECT = {
  "id": {"A": "Kegelisahan sehari-hari", "B": "Apa itu Fikih Tahawwulat?", "C": "Tempatnya dalam agama", "D": "Yang tetap dan yang berubah", "E": "Dua tugas rukun keempat", "F": "Dua tanda dan dua kendali",
         "G": "Tanda-tanda kiamat", "H": "Perjalanan zaman dan keadaan umat", "I": "Fitnah dan sikap yang selamat", "J": "Penerapan dalam hidup modern", "K": "Keraguan dan keberatan yang wajar", "L": "Cara belajar dan memakai AI"},
@@ -691,51 +690,47 @@ def M_TRACKS(): return {
  4: (L("Mahasiswa dan akademisi", "Students and academics", "الطلبة والباحثون"), L("Cara membaca sejarah, sains dan AI, nash yang mendahului, dan keberatan kritis.", "How to read history, science and AI, forward-looking texts, and critical objections.", "قراءة التاريخ والعلم والذكاء الاصطناعي والنصوص الاستباقية والاعتراضات النقدية.")),
  5: (L("Pengajar dan dai", "Teachers and preachers", "المعلمون والدعاة"), L("Berdakwah dengan hikmah, memperbarui cara, dan meredam provokasi.", "Calling with wisdom, renewing the means, and calming provocation.", "الدعوة بالحكمة وتجديد الوسائل وتهدئة التحريش.")),
 }
+import modul as MOD
 def page_mengenal():
-    if not (HERE / 'content' / f'mengenal_{LANG}.md').exists(): return
-    secs = MG.parse(LANG)
-    T = M_TRACKS()
-    names = M_SECT[LANG]
-    total = sum(len(s["items"]) for s in secs)
-    def tracks_of(k, n): return " ".join(str(t) for t in MG.TRACKS if MG.track_has(t, k, n))
-    cards = ""
-    for t, (name, focus) in T.items():
-        order = MG.TRACKS[t][0]
-        seq = '<span class="arrow">&rarr;</span>'.join(f'<a href="#{k}">{k}</a>' for k in order)
-        cards += (f'<div class="jalur rv"><button type="button" class="jbtn" data-t="{t}" aria-pressed="false"><span class="jn">0{t}</span><b>{name}</b><span class="jf">{focus}</span></button>'
-                  f'<div class="jseq" aria-label="{L("Urutan bagian","Order of parts","ترتيب الأقسام")}">{seq}</div></div>')
-    idx = "".join(f'<a class="chip" href="#{s["k"]}"><b>{s["k"]}</b>&nbsp;{E(names[s["k"]])}</a>' for s in secs)
-    prin = [
-      (L("Bahasa membumi, akar kokoh", "Plain words, firm roots", "عبارة قريبة وجذر راسخ"), L("Jawaban memakai bahasa sehari-hari, tetapi setiap kalimatnya bersandar pada pelajaran dalam An-Nubdzah ash-Shughra.", "Answers use everyday language, yet each sentence rests on a lesson in An-Nubdhah al-Sughra.", "الأجوبة بلغة يومية، وكل جملة فيها قائمة على درس من النبذة الصغرى.")),
-      (L("Hati-hati pada yang di luar teks", "Care beyond the core text", "الحذر فيما وراء النص"), L("Pertanyaan yang melampaui An-Nubdzah dijawab dari kitab-kitab syarah beliau, tanpa klaim baru.", "Questions beyond An-Nubdhah are answered from the author's own commentaries, with no new claims.", "ما جاوز النبذة يُجاب عنه من شروح المؤلف دون دعوى جديدة.")),
-      (L("Pantang yang sensitif", "What is left out", "ما يُجتنب"), L("Tidak menyerang kelompok mana pun, tidak mematok tahun, dan tidak menarik pembaca ke politik praktis.", "No attacks on any group, no dates, and no pull into partisan politics.", "لا هجوم على جماعة، ولا تحديد سنوات، ولا استدراج إلى سياسة حزبية.")),
-    ]
-    pr = "".join(f'<li class="rv d{i}"><div class="num">0{i+1}</div><h3>{t}</h3><p>{d}</p></li>' for i, (t, d) in enumerate(prin))
-    body = head(L("Mengenal Fikih Tahawwulat", "Getting to know Fiqh al-Tahawwulat", "التعرّف على فقه التحولات"),
-                L("Jawaban untuk pertanyaan yang paling sering muncul.", "Answers to the questions people ask most.", "أجوبة عن أكثر الأسئلة تكرارًا."),
-                L(f"{total} pertanyaan dan jawaban dalam bahasa sehari-hari, dengan rujukan ke kitab. Pilih jalur bacaan yang paling dekat dengan Anda, atau baca dari awal.",
-                  f"{total} questions and answers in everyday language, each pointing to the book. Pick the reading path closest to you, or read from the start.",
-                  f"{total} سؤالًا وجوابًا بلغة قريبة، مع الإحالة إلى الكتاب. اختر مسار القراءة الأقرب إليك أو اقرأ من البداية."))
-    body += sec(shead(L("Jalur bacaan", "Reading paths", "مسارات القراءة"), L("Mulai dari yang paling dekat dengan Anda.", "Start where it matters to you.", "ابدأ من الأقرب إليك."),
-                      L("Pilih satu jalur untuk menyaring halaman ini. Urutan huruf menunjukkan urutan baca yang kami sarankan.", "Choose a path to filter this page. The letters show the order we suggest.", "اختر مسارًا لتصفية الصفحة. تدل الحروف على الترتيب المقترح.")) +
-               f'<div class="jalur-grid">{cards}</div><div class="jstate" id="jstate" hidden><span id="jtext"></span><button type="button" class="btn tonal sm" id="jreset">{L("Tampilkan semua","Show all","عرض الكل")}</button></div>', "sec-tight")
-    body += sec(f'<nav class="chips-idx" aria-label="{L("Bagian","Parts","الأقسام")}">{idx}</nav>', "sec-tight")
-    for s in secs:
-        k = s["k"]; lessons = ""
-        det = ""
-        for e in s["items"]:
-            ref = f'<p class="ref"><span>{L("Rujukan","Reference","المرجع")}:</span> {MG.inline(e["ref"])}</p>' if e["ref"] else ""
-            det += (f'<details id="{k}{e["n"]}" data-t="{tracks_of(k, e["n"])}"><summary><span><b class="qn">{k}{e["n"]}</b>{E(e["q"])}</span><span class="pm" aria-hidden="true"></span></summary>'
-                    f'<div class="a">{MG.render_answer(e["a"])}{ref}</div></details>')
-        ts = " ".join(str(t) for t in MG.TRACKS if k in MG.TRACKS[t][0])
-        body += (f'<section class="sec qsec" id="{k}" data-t="{ts}"><div class="wrap">{shead(L("Bagian","Part","القسم") + " " + k, E(names[k]))}'
-                 f'<div class="faq">{det}</div></div></section>')
-    body += (f'<section class="sec band"><div class="wrap">{shead(L("Sebelum Anda menutup halaman ini","Before you close this page","قبل أن تغلق هذه الصفحة"), L("AI membantu membaca, guru yang menuntun.", "The AI helps you read; a teacher guides you.", "الذكاء الاصطناعي يعين على القراءة، والمعلم يوجّه."), L("OpenTurath AI tidak mengeluarkan fatwa dan tidak menggantikan guru bersanad. Untuk persoalan pribadi yang berakibat nyata, tanyakan kepada ulama yang Anda percaya.", "OpenTurath AI issues no fatwas and does not replace a teacher with a chain of transmission. For personal matters with real consequences, ask a scholar you trust.", "لا يصدر OpenTurath AI فتاوى ولا يغني عن معلم مسنَد. وفي المسائل الشخصية ذات الأثر الفعلي اسأل عالمًا تثق به."))}'
-             f'<div class="cta-row"><a class="btn primary" href="unduh.html">{ic("download")}{L("Unduh aplikasi","Download the app","تحميل التطبيق")}</a><a class="btn tonal" href="panduan-ai.html">{L("Panduan memakai AI","Guide to using the AI","دليل استعمال الذكاء الاصطناعي")}</a><a class="btn tonal" href="fikih-tahawwulat.html">{L("Tentang Fikih Tahawwulat","About Fiqh al-Tahawwulat","عن فقه التحولات")}</a></div></div></section>')
-    body += sec(f'<div class="prin3"><ol class="steps4">{pr}</ol></div>', "sec-tight")
+    M = MOD.MODUL
+    g = lambda t: t[LANG]
+    h = M["head"]
+    body = head(g(h["kicker"]), g(h["title"]), g(h["lead"]))
+    # 1 pertanyaan
+    q = M["q"]
+    groups = "".join(f'<div class="qg rv"><h3>{E(g(t))}</h3><ul>' + "".join(f'<li>{E(g(x))}</li>' for x in qs) + '</ul></div>' for t, qs in q["groups"])
+    body += sec(shead(g(q["kicker"]), g(q["title"]), g(q["lead"])) + f'<div class="qgroups">{groups}</div>')
+    # 2 apa itu
+    w = M["what"]; c = w["contrast"]
+    pts = "".join(f'<div class="wp rv"><div class="n">0{i+1}</div><div><h3>{E(g(t))}</h3><p>{E(g(d))}</p></div></div>' for i, (t, d) in enumerate(w["points"]))
+    body += sec(shead(g(w["kicker"]), g(w["title"]), g(w["lead"])) +
+                f'<div class="contrast rv"><div><span>{E(g(c[0]))}</span><p>{E(g(c[1]))}</p></div><div class="on"><span>{E(g(c[2]))}</span><p>{E(g(c[3]))}</p></div></div>'
+                f'<div class="whatgrid">{sculpt()}<div class="wpts">{pts}</div></div>')
+    # 3 faedah
+    bf = M["benefit"]
+    cards = "".join(f'<div class="bcard rv"><div class="n">{i+1:02d}</div><h3>{E(g(t))}</h3><p>{E(g(d))}</p></div>' for i, (t, d) in enumerate(bf["items"]))
+    body += sec(shead(g(bf["kicker"]), g(bf["title"]), g(bf["lead"])) + f'<div class="bgrid">{cards}</div>', "sec")
+    # 4 cabang
+    br = M["branch"]
+    rows = ""
+    for i, (t, d, qs) in enumerate(br["items"]):
+        chips = "".join(f'<li>{E(g(x))}</li>' for x in qs)
+        rows += f'<div class="brow rv"><div class="n">{i+1}</div><div class="bt"><h3>{E(g(t))}</h3><p>{E(g(d))}</p></div><div class="bq"><span>{L("Bisa menjawab","Can answer","يجيب عن")}</span><ul>{chips}</ul></div></div>'
+    body += sec(shead(g(br["kicker"]), g(br["title"]), g(br["lead"])) + f'<div class="brows">{rows}</div>')
+    # 5 beda
+    d = M["diff"]
+    trs = "".join(f'<tr><th scope="row">{E(g(a))}</th><td>{E(g(x))}</td><td class="on">{E(g(y))}</td></tr>' for a, x, y in d["rows"])
+    uniq = "".join(f'<li>{ic("check")}<span>{E(g(u))}</span></li>' for u in d["unique"])
+    body += sec(shead(g(d["kicker"]), g(d["title"]), g(d["lead"])) +
+                f'<div class="cmp rv"><table class="tbl"><thead><tr><th></th><th>{E(g(d["cols"][0]))}</th><th class="on">{E(g(d["cols"][1]))}</th></tr></thead><tbody>{trs}</tbody></table></div>')
+    body += (f'<section class="sec band"><div class="wrap">{shead(L("Keunikan","Distinctive","التميّز"), g(d["unique_title"]))}<ul class="uniq rv">{uniq}</ul></div></section>')
+    # 6 mulai
+    s = M["start"]
+    st = "".join(f'<li class="rv d{i}"><div class="num">0{i+1}</div><h3>{E(g(t))}</h3><p>{E(g(x))}</p></li>' for i, (t, x) in enumerate(s["steps"]))
+    body += sec(shead(g(s["kicker"]), g(s["title"])) + f'<ol class="steps4">{st}</ol>'
+                f'<div class="cta-row" style="margin-top:36px"><a class="btn primary" href="unduh.html">{ic("download")}{E(g(s["cta"]))}</a><a class="btn tonal" href="fikih-tahawwulat.html">{E(g(s["cta2"]))}</a><a class="btn tonal" href="perbandingan.html">{L("Lihat perbandingan AI","See the AI comparison","اطّلع على مقارنة الذكاءات")}</a></div>', "sec")
     write("mengenal-fikih-tahawwulat.html", L("Mengenal Fikih Tahawwulat: OpenTurath", "Getting to know Fiqh al-Tahawwulat: OpenTurath", "التعرّف على فقه التحولات: OpenTurath"),
-          L("Jawaban untuk pertanyaan yang paling sering muncul tentang Fikih Tahawwulat, dengan lima jalur bacaan dan rujukan ke kitab.", "Answers to the most common questions about Fiqh al-Tahawwulat, with five reading paths and references to the book.", "أجوبة عن أكثر الأسئلة شيوعًا حول فقه التحولات، مع خمسة مسارات للقراءة وإحالات إلى الكتاب."), body, "")
-
+          L("Panduan singkat untuk orang awam: pertanyaan yang dijawabnya, manfaat nyata, lima cabang ilmunya, dan bedanya dengan pembahasan akhir zaman yang beredar.", "A short guide for everyone: the questions it answers, real benefits, its five branches, and how it differs from circulating end-times talk.", "دليل موجز لعامة القرّاء: الأسئلة التي يجيب عنها، وفوائده الملموسة، وفروعه الخمسة، وبماذا يختلف عن حديث آخر الزمان المتداول."), body, "")
 
 import compare as CMP
 def page_perbandingan():
