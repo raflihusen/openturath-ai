@@ -717,7 +717,7 @@
 
 ### L3. What can I ask the Fiqh al-Tahawwulat AI?
 
-* **Answer:** You can ask for: **(1)** the meaning of terms in Fiqh al-Tahawwulat in easy language, **(2)** an explanation of a chapter or sentence from the books of al-Habib Abu Bakar al-Masyhur, **(3)** a search for a verse, hadith, or rule of Fiqh al-Tahawwulat with the book's page number and the lecture it comes from, **(4)** guidance on a calm stance (*Manhaj Salamah*) in family matters, raising children, and social media in the modern age, and **(5)** a check of end-times reports that are circulating: whether they match the books or are only guesswork matching (*cocoklogi*).
+* **Answer:** You can ask for: **(1)** the meaning of terms in Fiqh al-Tahawwulat in easy language, **(2)** an explanation of a chapter or sentence from the books of al-Habib Abu Bakar al-Masyhur, **(3)** a search for a verse, hadith, or rule of Fiqh al-Tahawwulat with the book's page number and the lecture it comes from, **(4)** guidance on a calm stance (*Manhaj Salamah*) in family matters, raising children, and social media in the modern age, and **(5)** a practice test of your understanding: the AI asks, you answer, then it judges your answer.
 * **Reference:** The assistants and sources of OpenTurath AI.
 
 ### L4. Where do the AI's answers come from: the books or the lectures?
@@ -732,12 +732,12 @@
 
 ### L6. What is the difference between the five AIs (Al-Muhaqqiq, Al-Bayan, Al-Mukhtabir, Al-Habib, Al-Khatib)?
 
-* **Answer:** The five assistants use the same books, but each answers in a different way and for a different purpose:
-  1. **Al-Muhaqqiq (*the text researcher*):** finds the original Arabic quotation, page number, and basis of a term or ruling, then checks that quotation carefully. Suited to students, university students, and teachers.
-  2. **Al-Bayan (*the concept mapper*):** arranges divisions and links between ideas, for example minor, middle, and major signs, the stages of time, and the difference between vessel and content. Suited when you want the big picture first.
-  3. **Al-Mukhtabir (*the tester of reports and interpretations*):** cross-tests reports that seem to conflict and filters circulating end-times reports: which rest on the books and which are only guesswork matching, including date guessing and naming of figures.
-  4. **Al-Habib (*the guide of heart and stance*):** gives guidance on calm of heart, stance in fitna, and guarding tongue and hands, drawn from his books and lectures.
-  5. **Al-Khatib (*the bearer of counsel and hope*):** conveys practical counsel and prophetic glad tidings, with concrete steps to protect the family at home, in language that is easy to take in.
+* **Answer:** The five assistants use the same books, but each has its own task:
+  1. **Al-Muhaqqiq (*the text researcher*):** finds the original text and passage with its source, then checks it carefully. Suited to students, university students, and teachers.
+  2. **Al-Bayan (*the simple explainer*):** explains in language that is easy to follow. Best suited to beginners.
+  3. **Al-Mukhtabir (*the understanding tester*):** the AI asks, you answer, then it judges your answer: where it is already good, where it is still weak, and what the ideal answer looks like. Suited to going deeper and testing yourself.
+  4. **Al-Habib (*the lectures of Al-Habib Abu Bakar*):** holds his lectures and answers in Al-Habib Abu Bakar's own wording.
+  5. **Al-Khatib (*the sermon writer*):** drafts sermons, talk material, and other da'wa content.
 * **Reference:** The division of tasks of the five assistants in the OpenTurath app.
 
 ### L7. How do I check a quotation the AI gives against the original book?

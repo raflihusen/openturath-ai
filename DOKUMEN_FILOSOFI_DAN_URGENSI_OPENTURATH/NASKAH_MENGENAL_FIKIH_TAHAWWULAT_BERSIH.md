@@ -772,7 +772,7 @@
 
 ### L3. Apa saja yang bisa saya tanyakan kepada AI Fikih Tahawwulat?
 
-* **Jawaban Awam:** Anda bisa menanyakan: **(1)** arti istilah-istilah dalam Fikih Tahawwulat dengan bahasa yang mudah dipahami, **(2)** penjelasan isi bab atau kalimat tertentu dari kitab-kitab Al-Habib Abu Bakar Al-Masyhur, **(3)** pencarian dalil ayat Al-Qur'an, hadis, atau kaidah Fikih Tahawwulat beserta nomor halaman kitab dan rujukan videonya, **(4)** panduan sikap tenang (*Manhaj Salamah*) dalam menghadapi persoalan keluarga, pendidikan anak, dan media sosial di zaman modern, serta **(5)** pemeriksaan kabar akhir zaman yang beredar: apakah sesuai dengan kitab atau hanya cocok-cocokan (*cocoklogi*).
+* **Jawaban Awam:** Anda bisa menanyakan: **(1)** arti istilah-istilah dalam Fikih Tahawwulat dengan bahasa yang mudah dipahami, **(2)** penjelasan isi bab atau kalimat tertentu dari kitab-kitab Al-Habib Abu Bakar Al-Masyhur, **(3)** pencarian dalil ayat Al-Qur'an, hadis, atau kaidah Fikih Tahawwulat beserta nomor halaman kitab dan rujukan videonya, **(4)** panduan sikap tenang (*Manhaj Salamah*) dalam menghadapi persoalan keluarga, pendidikan anak, dan media sosial di zaman modern, serta **(5)** latihan menguji pemahaman: AI bertanya, Anda menjawab, lalu ia menilai jawaban Anda.
 
 ### L4. Dari mana jawaban AI ini diambil: kitab atau muhadharah?
 
@@ -784,12 +784,12 @@
 
 ### L6. Apa beda lima AI di dalamnya (Al-Muhaqqiq, Al-Bayan, Al-Mukhtabir, Al-Habib, Al-Khatib)?
 
-* **Jawaban Awam:** Kelima asisten memakai kitab yang sama, tetapi masing-masing menjawab dengan cara dan tujuan yang berbeda:  
-  1. **Al-Muhaqqiq (*Peneliti Teks*):** mencari kutipan Arab asli, nomor halaman, dan dasar sebuah istilah atau hukum, lalu memeriksa kutipan itu dengan teliti. Cocok untuk santri, mahasiswa, dan pengajar.  
-  2. **Al-Bayan (*Penyusun Peta Konsep*):** menyusun pembagian dan hubungan antargagasan, misalnya tanda kecil, tengah, dan besar, tahap-tahap zaman, serta perbedaan antara wadah dan isi. Cocok bila Anda ingin melihat gambaran besarnya lebih dulu.  
-  3. **Al-Mukhtabir (*Penguji Kabar dan Tafsir*):** menguji silang riwayat yang tampak bertentangan dan menyaring kabar akhir zaman yang beredar: mana yang berdasar kitab, mana yang hanya cocok-cocokan, termasuk tebakan waktu dan penunjukan tokoh.  
-  4. **Al-Habib (*Pembimbing Hati dan Sikap*):** menyajikan bimbingan ketenangan hati, sikap saat fitnah, dan cara menjaga lisan serta tangan, bersumber dari kitab dan ceramah beliau.  
-  5. **Al-Khatib (*Penyampai Nasihat dan Harapan*):** menyampaikan nasihat praktis dan kabar gembira nabawi, serta langkah nyata menjaga keluarga di rumah, dengan bahasa yang mudah dicerna.  
+* **Jawaban Awam:** Kelima asisten memakai kitab yang sama, tetapi masing-masing punya tugas sendiri:  
+  1. **Al-Muhaqqiq (*Peneliti Teks*):** mencari matan dan ibarah asli beserta sumbernya, lalu memeriksanya dengan teliti. Cocok untuk santri, mahasiswa, dan pengajar.  
+  2. **Al-Bayan (*Penjelas yang Sederhana*):** menjelaskan dengan bahasa yang mudah dipahami. Paling cocok untuk pemula.  
+  3. **Al-Mukhtabir (*Penguji Pemahaman*):** AI bertanya, Anda menjawab, lalu ia menilai jawaban Anda: di mana sudah baik, di mana masih lemah, dan seperti apa jawaban idealnya. Cocok untuk mendalami dan menguji diri.  
+  4. **Al-Habib (*Muhadharah Al-Habib Abu Bakar*):** berisi muhadharah beliau, dan menjawab dengan diksi Al-Habib Abu Bakar sendiri.  
+  5. **Al-Khatib (*Penyusun Khutbah*):** menyusun khutbah, bahan ceramah, dan materi dakwah lainnya.  
 * **Rujukan Kitab:** pembagian tugas kelima asisten pada aplikasi OpenTurath.
 
 ### L7. Bagaimana memeriksa kutipan yang diberikan AI pada kitab aslinya?
