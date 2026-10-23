@@ -72,11 +72,12 @@ uniform sampler2D u_tex; uniform float u_op; uniform float u_haze;
 void main(){ vec4 t=texture(u_tex,v_uv); vec3 hz=vec3(0.9765,0.9843,0.9843)*t.a; vec4 r=vec4(mix(t.rgb,hz,u_haze),t.a)*u_op; o=r; }`;
 const FS_SHADOW = `#version 300 es
 precision highp float; in vec2 v_uv; in float v_zc; in vec3 v_w; layout(location=0) out vec4 o;
-uniform sampler2D u_tex; uniform float u_lod, u_op, u_rad;
-float A(vec2 uv){ if(uv.x<0.0||uv.x>1.0||uv.y<0.0||uv.y>1.0) return 0.0; return textureLod(u_tex,uv,u_lod).a; }
-void main(){ float a=A(v_uv)*0.2; float w=0.8/12.0;
-  for(int i=0;i<12;i++){ float t=float(i)*0.5235988; float r=u_rad*(i%2==0?1.0:0.5); a+=A(v_uv+vec2(cos(t),sin(t))*r)*w; }
-  vec3 c=vec3(0.1020,0.1294,0.2); o=vec4(c*a,a)*u_op; }`;
+uniform vec2 u_bh; uniform vec2 u_tot; uniform float u_rad, u_sig, u_op;
+float sdb(vec2 p, vec2 h, float r){ vec2 q=abs(p)-h+vec2(r); return length(max(q,0.0))+min(max(q.x,q.y),0.0)-r; }
+void main(){ vec2 p=(v_uv-0.5)*u_tot; float d=sdb(p,u_bh,u_rad);
+  float soft=1.0-smoothstep(-u_sig*0.6,u_sig*1.4,d); soft*=soft*(3.0-2.0*soft)*0.0+soft;
+  float tight=1.0-smoothstep(-u_sig*0.12,u_sig*0.38,d);
+  float a=clamp(soft*0.7+tight*0.3,0.0,1.0)*u_op; vec3 c=vec3(0.1020,0.1294,0.2); o=vec4(c*a,a); }`;
 const FS_DEPTH = `#version 300 es
 precision highp float; in vec2 v_uv; in float v_zc; in vec3 v_w; layout(location=0) out vec4 o;
 uniform sampler2D u_tex; uniform float u_use; uniform vec4 u_rect; uniform float u_rad; ${sdRR}
@@ -88,7 +89,7 @@ in vec2 a_p; out vec2 v_uv; void main(){ v_uv=a_p*0.5+0.5; gl_Position=vec4(a_p,
 const FS_DOF = `#version 300 es
 precision highp float; in vec2 v_uv; out vec4 o;
 uniform sampler2D u_col; uniform sampler2D u_dep; uniform float u_focus; uniform float u_near; uniform vec2 u_size;
-float coc(float z){ if(z>=1.0e8) return 0.0; float r = z<u_focus ? u_near*(u_focus-z)/z : 6.0*(z-u_focus)/z; return min(120.0,r); }
+float coc(float z){ if(z>=1.0e8) return 0.0; float r = z<u_focus ? u_near*(u_focus-z)/z : 3.0*(z-u_focus)/z; return min(48.0,r); }
 void main(){ ivec2 ip=ivec2(gl_FragCoord.xy); float z=texelFetch(u_dep,ip,0).r; float R=coc(z);
   vec3 acc=texture(u_col,v_uv).rgb; float wsum=1.0;
   if(R>0.6){ float lod=max(0.0,log2(R*2.4/6.3));
@@ -158,22 +159,20 @@ const trap = (t) => { // kecepatan trapesium 7.75-9.25, luas 1
   if (t < c) return v * (b - a) / 2 + v * (t - b);
   const x = t - c, L = e - c; return v * (b - a) / 2 + v * (c - b) + v * (x - (x * x) / (2 * L));
 };
+const q5 = (x) => { x = cl(x); return x * x * x * (x * (x * 6 - 15) + 10); };
 const camera = (t) => {
   if (t < 7.75) return poseOf(Yview(t), dGlide(t), TILT);
+  const Pa = Yview(7.75), da = dGlide(7.75);
   if (t < 9.25) {
-    const d0 = dGlide(7.75), logd = Math.log(d0) + (Math.log(D_OVER) - Math.log(d0)) * trap(t), d = Math.exp(logd);
-    const tilt = TILT * (1 - sm((t - 8.15) / 0.8));
-    const glide = Yview(Math.min(t, 8.6));
-    const solved = solveBottom(d, tilt, H - 42);
-    const k = sm((t - 8.3) / 0.35);
-    return poseOf(mixf(glide, solved, k), d, tilt);
+    const u = q5((t - 7.75) / 1.5);
+    return poseOf(mixf(Pa, PH / 2, u), Math.exp(mixf(Math.log(da), Math.log(D_OVER), u)), TILT * (1 - u));
   }
   if (t < 9.47) { const u = sm((t - 9.25) / 0.22); return poseOf(PH / 2, D_OVER * (1 - 0.035 * u), 0); }
   const dA = D_OVER * 0.965;
-  let d, ytop;
-  if (t < 9.97) { const u = (t - 9.47) / 0.5, q = u < 0.5 ? 2 * u * u : 1 - 2 * (1 - u) * (1 - u); d = Math.exp(mixf(Math.log(dA), Math.log(D_END), q)); ytop = 283 * sm((t - 9.7) / 0.27); }
-  else { d = D_END / (1 + 0.02 * sm((t - 10.6) / 3.9)); ytop = 283; }
-  const s = F / d; return poseOf((CY - ytop) / s, d, 0);
+  let d, ytop, w;
+  if (t < 9.97) { const u = (t - 9.47) / 0.5, q = q5(u); d = Math.exp(mixf(Math.log(dA), Math.log(D_END), q)); ytop = 283 * sm((t - 9.7) / 0.27); w = q; }
+  else { d = D_END / (1 + 0.02 * sm((t - 10.6) / 3.9)); ytop = 283; w = 1; }
+  const sc = F / d; return poseOf(mixf(PH / 2, (CY - ytop) / sc, w), d, 0);
 };
 
 // ---------- geometri bidang ----------
@@ -196,6 +195,16 @@ const setCam = (program, pose) => {
   gl.uniform1f(gl.getUniformLocation(program, "u_f"), F); gl.uniform2f(gl.getUniformLocation(program, "u_half"), W / 2, H / 2);
 };
 const U = (p, n) => gl.getUniformLocation(p, n);
+const drawShadow = (pose, cx, cy, hw, hh, z, rad) => {
+  if (window.NOSH) return; if (window.LOGSH) window.LOGSH.push([cx|0,cy|0,hw|0,hh|0,z|0,rad|0]);
+  rad = Math.min(rad, hw, hh);
+  const sig = Math.min(46, 5 + 0.34 * z), ox = Math.min(0.12 * z, 24), oy = Math.min(3 + 0.3 * z, 36), m = sig * 2.6;
+  const X0 = cx + ox - hw - m, X1 = cx + ox + hw + m, Y0 = cy + oy - hh - m, Y1 = cy + oy + hh + m;
+  setCam(pShadow, pose);
+  gl.uniform2f(U(pShadow, "u_bh"), hw, hh); gl.uniform2f(U(pShadow, "u_tot"), X1 - X0, Y1 - Y0);
+  gl.uniform1f(U(pShadow, "u_rad"), rad); gl.uniform1f(U(pShadow, "u_sig"), sig); gl.uniform1f(U(pShadow, "u_op"), 0.17);
+  drawQuad(pShadow, [[X0, -Y0, 0.2], [X1, -Y0, 0.2], [X0, -Y1, 0.2], [X1, -Y1, 0.2]], [[0, 0], [1, 0], [0, 1], [1, 1]]);
+};
 
 // ---------- linimasa angkat ----------
 const KIND = {
@@ -227,7 +236,7 @@ const tileState = (i, t) => {
   let X = mixf(a[1], b[1], u), Y = mixf(a[2], b[2], u), z = mixf(a[3], b[3], u), s = mixf(a[4], b[4], u);
   // setelah penerbangan: ikut kamera menuju posisi akhir
   const e = sm((t - 8.2) / 1.3);
-  const fin = [[300, 270, 220, 150], [1160, 286, 140, 120], [-380, 1100, 1900, 340], [1820, 1120, 2100, 380]][i];
+  const fin = [[300, 270, 190, 150], [1160, 286, 130, 120], [-380, 1100, 240, 340], [1820, 1120, 260, 380]][i];
   if (e > 0) { X = mixf(X, fin[0], e); Y = mixf(Y, fin[1], e); z = mixf(z, fin[2], e); s = mixf(s, fin[3], e); }
   const drift = Math.sin(t * 0.9 + i * 1.7) * 3 * sm((t - 10.6) / 1); X += drift; Y += Math.cos(t * 0.7 + i) * 2.5 * sm((t - 10.6) / 1);
   return { X, Y, z, s, tilt: 0.35 * (1 - e) + 0.12 };
@@ -299,7 +308,7 @@ const renderScene = (t, pose) => {
     const floor = [[-BIG, BIG, 0], [BIG, BIG, 0], [-BIG, -BIG, 0], [BIG, -BIG, 0]];
     const uvf = [[0, 0], [1, 0], [0, 1], [1, 1]];
     if (ps.depthPass) { setCam(pDepth, pose); gl.uniform1f(U(pDepth, "u_use"), 0); drawQuad(pDepth, floor.map((c) => [c[0], c[1], -1]), uvf); }
-    else { setCam(pFloor, pose); gl.uniform4fv(U(pFloor, "u_rect"), rect); gl.uniform1f(U(pFloor, "u_rad"), rad); gl.uniform1f(U(pFloor, "u_shAmt"), 1); drawQuad(pFloor, floor.map((c) => [c[0], c[1], -1]), uvf); }
+    else { setCam(pFloor, pose); gl.uniform4fv(U(pFloor, "u_rect"), rect); gl.uniform1f(U(pFloor, "u_rad"), rad); gl.uniform1f(U(pFloor, "u_shAmt"), window.NOFL ? 0 : 1); drawQuad(pFloor, floor.map((c) => [c[0], c[1], -1]), uvf); }
     // halaman
     const pg = [[0, 0, 0], [1440, 0, 0], [0, -PH, 0], [1440, -PH, 0]]; const upg = [[0, 0], [1, 0], [0, 1], [1, 1]];
     if (ps.depthPass) { setCam(pDepth, pose); gl.uniform1f(U(pDepth, "u_use"), -1); gl.uniform4fv(U(pDepth, "u_rect"), rect); gl.uniform1f(U(pDepth, "u_rad"), rad); drawQuad(pDepth, pg.map((c) => [c[0], c[1], c[2] + 0]), upg); }
@@ -318,14 +327,7 @@ const renderScene = (t, pose) => {
       const op = 1 - heroCut * 0;
       const corners = rotQuad(cx, cy, hw, hh, z, stand);
       if (ps.depthPass) { setCam(pDepth, pose); gl.bindTexture(gl.TEXTURE_2D, l.tex); gl.uniform1i(U(pDepth, "u_tex"), 0); gl.uniform1f(U(pDepth, "u_use"), 1); drawQuad(pDepth, corners, upg); continue; }
-      // bayangan pada apa yang ada di bawah
-      const blur = 7 + 0.5 * z, off = [0.10 * z, 4 + 0.36 * z], m = blur * 1.6;
-      const sc = [cx + off[0], cy + off[1]]; const sq = [[sc[0] - hw - m, -(sc[1] - hh - m), 0.2], [sc[0] + hw + m, -(sc[1] - hh - m), 0.2], [sc[0] - hw - m, -(sc[1] + hh + m), 0.2], [sc[0] + hw + m, -(sc[1] + hh + m), 0.2]];
-      const u0 = -m / (2 * hw), u1 = 1 + m / (2 * hw), v0 = -m / (2 * hh), v1 = 1 + m / (2 * hh);
-      setCam(pShadow, pose); gl.bindTexture(gl.TEXTURE_2D, l.tex); gl.uniform1i(U(pShadow, "u_tex"), 0);
-      const texPerPage = l.iw / (2 * hw); const lod = Math.min(5, Math.max(0, Math.log2(Math.max(1, blur * 0.45 * texPerPage))));
-      gl.uniform1f(U(pShadow, "u_lod"), lod); gl.uniform1f(U(pShadow, "u_rad"), (blur * 0.5) / (2 * hw)); gl.uniform1f(U(pShadow, "u_op"), 0.26);
-      drawQuad(pShadow, sq, [[u0, v0], [u1, v0], [u0, v1], [u1, v1]]);
+      if (!l.id.startsWith('hero-chip')) drawShadow(pose, cx, cy, hw, hh, z, (l.kind === 'chip' || l.radius >= 999 || !l.radius) ? Math.min(hw, hh) : l.radius);
       setCam(pLayer, pose); gl.bindTexture(gl.TEXTURE_2D, l.tex); gl.uniform1i(U(pLayer, "u_tex"), 0); gl.uniform1f(U(pLayer, "u_op"), op); gl.uniform1f(U(pLayer, "u_haze"), 0);
       // tepi putih tebal pada testimonial
       if (l.kind === "testimonial" && stand > 0.02) { const th = 34 * (stand / ((30 * Math.PI) / 180)); for (let s = 14; s >= 1; s--) { const c2 = rotQuad(cx, cy, hw, hh, z - (th * s) / 14, stand); setCam(pLayer, pose); gl.uniform1f(U(pLayer, "u_haze"), 0.9); drawQuad(pLayer, c2, upg); } gl.uniform1f(U(pLayer, "u_haze"), 0); }
@@ -333,15 +335,11 @@ const renderScene = (t, pose) => {
     }
     // ubin logo
     for (let i = 0; i < 4; i++) {
+      if (i >= 2 && t > 9.3) continue;
       const s = tileState(i, t); const hw = s.s / 2;
       const corners = rotQuad(s.X, s.Y, hw, hw, s.z, s.tilt); const upg2 = [[0, 0], [1, 0], [0, 1], [1, 1]];
       if (ps.depthPass) { setCam(pDepth, pose); gl.bindTexture(gl.TEXTURE_2D, tileTex); gl.uniform1i(U(pDepth, "u_tex"), 0); gl.uniform1f(U(pDepth, "u_use"), 1); drawQuad(pDepth, corners, upg2); continue; }
-      const blur = 7 + 0.5 * s.z, m = blur * 1.6, sc = [s.X + 0.10 * s.z, s.Y + 4 + 0.36 * s.z];
-      const sq = [[sc[0] - hw - m, -(sc[1] - hw - m), 0.2], [sc[0] + hw + m, -(sc[1] - hw - m), 0.2], [sc[0] - hw - m, -(sc[1] + hw + m), 0.2], [sc[0] + hw + m, -(sc[1] + hw + m), 0.2]];
-      const u0 = -m / (2 * hw), u1 = 1 + m / (2 * hw);
-      setCam(pShadow, pose); gl.bindTexture(gl.TEXTURE_2D, tileTex); gl.uniform1i(U(pShadow, "u_tex"), 0);
-      gl.uniform1f(U(pShadow, "u_lod"), Math.min(5, Math.max(0, Math.log2(Math.max(1, blur * 0.45 * 512 / (2 * hw)))))); gl.uniform1f(U(pShadow, "u_rad"), (blur * 0.55) / (2 * hw)); gl.uniform1f(U(pShadow, "u_op"), 0.26);
-      drawQuad(pShadow, sq, [[u0, u0], [u1, u0], [u0, u1], [u1, u1]]);
+      drawShadow(pose, s.X, s.Y, hw, hw, s.z, hw * 0.47);
       setCam(pLayer, pose); gl.bindTexture(gl.TEXTURE_2D, tileTex); gl.uniform1i(U(pLayer, "u_tex"), 0); gl.uniform1f(U(pLayer, "u_op"), 1); gl.uniform1f(U(pLayer, "u_haze"), 0);
       drawQuad(pLayer, corners, upg2);
     }
@@ -363,7 +361,7 @@ window.renderFrame = (tc, quality = 0.93) => {
     gl.bindFramebuffer(gl.FRAMEBUFFER, dofT.f); gl.viewport(0, 0, W, H); gl.useProgram(pDof);
     gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, scene.t); gl.uniform1i(U(pDof, "u_col"), 0);
     gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D, depth.t); gl.uniform1i(U(pDof, "u_dep"), 1);
-    gl.uniform1f(U(pDof, "u_focus"), focus); gl.uniform1f(U(pDof, "u_near"), mixf(75, 10, sm((t - 9.5) / 0.4))); gl.uniform2f(U(pDof, "u_size"), W, H); quad(pDof); gl.activeTexture(gl.TEXTURE0);
+    gl.uniform1f(U(pDof, "u_focus"), focus); gl.uniform1f(U(pDof, "u_near"), mixf(15, 6, sm((t - 9.5) / 0.4))); gl.uniform2f(U(pDof, "u_size"), W, H); quad(pDof); gl.activeTexture(gl.TEXTURE0);
     // judul di atas hasil DoF
     const hasOv = drawOverlay(t);
     if (hasOv) { gl.enable(gl.BLEND); gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA); gl.useProgram(pOvl); gl.bindTexture(gl.TEXTURE_2D, ovlTex); gl.uniform1i(U(pOvl, "u_t"), 0); quad(pOvl); gl.disable(gl.BLEND); }
@@ -375,5 +373,6 @@ window.renderFrame = (tc, quality = 0.93) => {
   gl.bindTexture(gl.TEXTURE_2D, accT.t); gl.uniform1i(U(pOut, "u_t"), 0); quad(pOut);
   return document.getElementById("gl").toDataURL("image/jpeg", quality);
 };
+window.dbg = (t) => { const P = camera(t); return { y: screenY(P, 720, 2000), y2: screenY(P, 720, 5000), d: P.d, py: P.Py, tilt: P.tilt }; };
 window.ready = true;
 </script></body></html>
