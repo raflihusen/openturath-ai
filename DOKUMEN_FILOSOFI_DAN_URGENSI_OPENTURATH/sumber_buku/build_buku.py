@@ -46,7 +46,7 @@ pg(f'''<div style="height:100%;display:flex;flex-direction:column;justify-conten
 <div style="display:flex;justify-content:space-between;font-size:8pt;letter-spacing:.2em;text-transform:uppercase;color:#9a9a9a"><span>Buku Identitas</span><span>Versi 1.3 &middot; 23 Oktober 2026</span></div>
 <div style="display:flex;align-items:center;gap:22mm">{logo(62,"var(--bone)")}
 <div><h1 style="font-size:64pt;margin:0 0 4mm">OpenTurath</h1>
-<div class="lead" style="color:#cfcfcf;font-style:italic">Menjaga asal, membuka cakrawala.</div><div class="ar" style="font-size:17pt;color:#9a9a9a;margin-top:3mm;text-align:left;direction:rtl">رسوخٌ في الأصول، وانفتاحٌ على الآفاق</div></div></div>
+<div class="lead" style="color:#cfcfcf;font-style:italic">Menjaga asal, membuka cakrawala.</div></div></div>
 <div style="font-size:8pt;letter-spacing:.2em;text-transform:uppercase;color:#9a9a9a;display:flex;justify-content:space-between"><span>Pedoman resmi nama, logo, warna, huruf, suara, dan penerapan</span><span>openturath.id</span></div>
 </div>''', "dark", foot=False)
 
@@ -237,7 +237,6 @@ pg(f'''{sec("04","Susunan Nama")}<h2>Satu merek induk, empat lini, nama yang sed
 # ---------- 13b Tagline ----------
 pg(f'''{sec("04","Tagline")}<div class="row" style="gap:14mm;align-items:center"><div class="col" style="flex:1.25">
 <h1 style="font-size:40pt;margin-bottom:5mm">Menjaga asal,<br>membuka cakrawala.</h1>
-<div class="ar" style="font-size:25pt;line-height:1.7;margin-bottom:2mm;text-align:right;direction:rtl;max-width:140mm">رسوخٌ في الأصول، وانفتاحٌ على الآفاق</div>
 <p class="serif" style="font-size:15pt;font-style:italic;color:var(--g2)">Rooted in origins. Open to new horizons.</p></div>
 <div class="col"><div class="card"><h3>Dua bagian, satu napas</h3>
 <p style="font-size:9.8pt"><b>Menjaga asal</b> berarti setia pada sumber: Al-Qur'an, sunnah, dan turath para ulama. Itulah yang tidak berubah.</p>
@@ -246,8 +245,8 @@ pg(f'''{sec("04","Tagline")}<div class="row" style="gap:14mm;align-items:center"
 <table style="margin-top:4mm"><tr><th>Aturan pemakaian</th></tr>
 <tr><td>Selalu bersama nama OpenTurath, tidak berdiri sendiri.</td></tr>
 <tr><td>Jangan diubah, dipotong, atau diganti urutannya.</td></tr>
-<tr><td>Teks Arab memakai Scheherazade New; Latin memakai Newsreader miring.</td></tr>
-<tr><td>Pada materi satu bahasa, pakai versi bahasa itu; pada materi internasional, boleh ketiganya.</td></tr></table></div></div>''', title="Tagline")
+<tr><td>Tagline tidak diterjemahkan ke bahasa Arab; pada materi berbahasa Arab, pakai nama OpenTurath tanpa tagline.</td></tr>
+<tr><td>Versi bahasa Inggris boleh dipakai pada materi internasional.</td></tr></table></div></div>''', title="Tagline")
 
 # ---------- 14 Logo: simbol ----------
 pg(f'''<div style="display:flex;height:100%;align-items:center;gap:26mm"><div style="width:110mm;display:flex;justify-content:center">{logo(95)}</div>
