@@ -104,7 +104,7 @@ def shell(fname, title, desc, body, current=""):
 <main id="main">{body}</main>
 <footer class="site"><div class="wrap"><div class="fgrid"><div class="fbrand"><a class="wordmark" href="index.html">{mark(34)}<span>OpenTurath</span></a></div>
 <div><h4>{L("Produk","Product","المنتج")}</h4><ul><li><a href="bidang.html">OpenTurath AI</a></li><li><a href="bidang.html">{L("Bidang ilmu","Fields of knowledge","المجالات العلمية")}</a></li><li><a href="fikih-tahawwulat.html">{L("Fikih Tahawwulat","Fiqh al-Tahawwulat","فقه التحولات")}</a></li><li><a href="unduh.html">{unduh}</a></li></ul></div>
-<div><h4>{L("Pelajari","Learn","تعرّف")}</h4><ul><li><a href="cara-kerja.html">{L("Cara kerja","How it works","كيف يعمل")}</a></li><li><a href="pedoman.html">{L("Pedoman keilmuan","Scholarly guidelines","الضوابط العلمية")}</a></li><li><a href="ekosistem.html">{L("Ekosistem","Ecosystem","المنظومة")}</a></li><li><a href="tentang.html">{L("Tentang","About","عن OpenTurath")}</a></li></ul></div>
+<div><h4>{L("Pelajari","Learn","تعرّف")}</h4><ul><li><a href="mengenal-fikih-tahawwulat.html">{L("Mengenal Fikih Tahawwulat","Getting to know Fiqh al-Tahawwulat","التعرّف على فقه التحولات")}</a></li><li><a href="cara-kerja.html">{L("Cara kerja","How it works","كيف يعمل")}</a></li><li><a href="pedoman.html">{L("Pedoman keilmuan","Scholarly guidelines","الضوابط العلمية")}</a></li><li><a href="ekosistem.html">{L("Ekosistem","Ecosystem","المنظومة")}</a></li><li><a href="tentang.html">{L("Tentang","About","عن OpenTurath")}</a></li></ul></div>
 <div><h4>{L("Bantuan","Help","المساعدة")}</h4><ul><li><a href="bantuan.html">{L("Bantuan dan FAQ","Help and FAQ","المساعدة والأسئلة الشائعة")}</a></li><li><a href="bantuan.html#lapor">{L("Laporkan kesalahan","Report an error","الإبلاغ عن خطأ")}</a></li><li><a href="ketentuan.html">{L("Ketentuan dan privasi","Terms and privacy","الشروط والخصوصية")}</a></li><li class="flink"><a href="mailto:support@openturath.id">{ic("mail")}<bdi class="ltr">support@openturath.id</bdi></a></li><li class="flink"><a href="https://instagram.com/openturath.id" target="_blank" rel="noopener">{ic("instagram")}<bdi class="ltr">@openturath.id</bdi></a></li></ul></div></div>
 <div class="legal-links">{legal_row}</div>
 <div class="fbar"><span>&copy; OpenTurath</span><span>openturath.id</span></div></div></footer>
@@ -411,10 +411,10 @@ def page_tahaw():
     bab = "".join(f'<li><b>{b["no"]:02d}</b> {E({"id": b["judul"], "en": bab_en[b["judul"]], "ar": bab_ar[b["judul"]]}[LANG])}</li>' for b in PENG["bab"])
     ib = SL["empat-rukun"]
     rows = [("Al-Muhaqqiq", "المحقق", L("Teks matan dan ibarah", "Texts and passages", "النصوص والعبارات"), L("Mencari, memeriksa, dan mengaitkan teks dengan sumbernya.", "Finds, checks, and links texts to their sources.", "يبحث ويتحقق ويربط النص بمصدره."), L("Apa yang dimaksud Rukun Keempat dalam Fikih Tahawwulat?", "What is meant by the Fourth Pillar in Fiqh al-Tahawwulat?", "ما المقصود بالركن الرابع في فقه التحولات؟")),
-            ("Al-Bayan", "البيان", L("Penyederhanaan konsep", "Simplifying concepts", "تبسيط المفاهيم"), L("Menjelaskan konsep dan istilah dengan bahasa sederhana secara metodis.", "Explains concepts and terms in plain language, step by step.", "يشرح المفاهيم والمصطلحات بلغة بسيطة ومنهجية."), L("Bagaimana penjelasan al-ghutsa'iyyah dalam kitab?", "How do the books explain al-ghuthaiyya?", "كيف تشرح الكتب مفهوم الغثائية؟")),
-            ("Al-Mukhtabir", "المختبر", L("Uji pemahaman dan nalar", "Testing understanding", "اختبار الفهم والنظر"), L("Menilai pemahaman dan menguji persoalan kontemporer.", "Assesses understanding and tests contemporary issues.", "يقيّم الفهم ويختبر النوازل المعاصرة."), L("Uji pemahaman saya tentang rukun agama yang empat.", "Test my understanding of the four pillars of religion.", "اختبر فهمي لأركان الدين الأربعة.")),
-            ("Al-Habib", "الحبيب", L("Arsip muhadharah", "Lecture archive", "أرشيف المحاضرات"), L("Gudang ceramah dan rekaman Al-Habib Abu Bakar, dengan tautan video pada menit yang tepat.", "The store of Al-Habib Abu Bakr's lectures and recordings, linked to the exact minute.", "مستودع محاضرات الحبيب أبي بكر وتسجيلاته، مع رابط المقطع في الدقيقة المناسبة."), L("Muhadharah mana yang membahas sikap saat masa fitnah?", "Which lecture discusses conduct in times of trial?", "أي محاضرة تتناول الموقف زمن الفتن؟")),
-            ("Al-Khatib", "الخطيب", L("Materi dakwah dan khutbah", "Da'wa and sermon material", "المواد الدعوية والخطب"), L("Menyusun khutbah dan materi ceramah serta mengarahkan persoalan dakwah.", "Drafts sermons and talks and guides da'wa questions.", "يُعدّ الخطب والمحاضرات ويوجّه المسائل الدعوية."), L("Susun kerangka khutbah tentang sikap saat masa fitnah.", "Outline a sermon on conduct in times of trial.", "ضع هيكل خطبة عن الموقف زمن الفتن."))]
+            ("Al-Bayan", "البيان", L("Peta konsep", "Concept maps", "الخرائط المفهومية"), L("Menyusun pembagian dan hubungan antargagasan: tanda kecil, tengah, dan besar, tahap zaman, serta wadah dan isi.", "Lays out the divisions and links between ideas: minor, middle, and major signs, the stages of time, and vessel and content.", "يرتّب التقسيمات والعلاقات بين الأفكار: الأشراط الصغرى والوسطى والكبرى ومراحل الزمان والوعاء والمضمون."), L("Bagaimana penjelasan al-ghutsa'iyyah dalam kitab?", "How do the books explain al-ghuthaiyya?", "كيف تشرح الكتب مفهوم الغثائية؟")),
+            ("Al-Mukhtabir", "المختبر", L("Uji kabar dan tafsir", "Testing reports and readings", "اختبار الأخبار والتأويلات"), L("Menguji silang riwayat dan menyaring kabar akhir zaman yang beredar: mana yang berdasar kitab, mana yang hanya cocok-cocokan.", "Cross-tests reports and filters circulating end-times claims: which rest on the books and which are only guesswork matching.", "يختبر الروايات ويغربل أخبار آخر الزمان المتداولة: ما قام منها على الكتب وما كان تطبيقًا عشوائيًّا."), L("Apakah kabar akhir zaman yang sedang beredar ini sesuai dengan kitab?", "Does this circulating end-times claim match the books?", "هل ما يُتداول من أخبار آخر الزمان موافق للكتب؟")),
+            ("Al-Habib", "الحبيب", L("Bimbingan hati dan sikap", "Guidance for heart and stance", "إرشاد القلب والموقف"), L("Membimbing ketenangan hati, sikap saat fitnah, serta penjagaan lisan dan tangan, bersumber dari kitab dan ceramah beliau.", "Guides calm of heart, conduct in times of trial, and guarding the tongue and hands, drawn from his books and lectures.", "يُرشد إلى طمأنينة القلب والموقف عند الفتن وحفظ اللسان واليد، من كتبه ومحاضراته."), L("Bagaimana menjaga hati tetap tenang saat fitnah ramai?", "How do I keep my heart calm when fitna is everywhere?", "كيف أحفظ قلبي مطمئنًا حين تكثر الفتن؟")),
+            ("Al-Khatib", "الخطيب", L("Nasihat dan harapan", "Counsel and hope", "النصيحة والرجاء"), L("Menyampaikan nasihat praktis, kabar gembira nabawi, dan langkah nyata menjaga keluarga di rumah.", "Gives practical counsel, prophetic glad tidings, and concrete steps to protect the family at home.", "يبلّغ النصيحة العملية والبشارات النبوية وخطوات ملموسة لحماية الأسرة في البيت."), L("Apa langkah nyata menjaga iman keluarga di zaman layar ini?", "What concrete steps protect a family's faith in the age of screens?", "ما الخطوات العملية لحفظ إيمان الأسرة في زمن الشاشات؟"))]
     brt = "".join(f'<tr><td class="c"><b>{a}</b><div class="ar">{b}</div></td><td>{c}</td><td>{d}</td><td><span class="small">&ldquo;{e}&rdquo;</span></td></tr>' for a, b, c, d, e in rows)
     th = (L("Peran", "Role", "الدور"), L("Fungsi", "What it does", "الوظيفة"), L("Contoh pertanyaan", "Sample question", "سؤال توضيحي"), L("Asisten", "Assistant", "المساعد"))
     defn = L("Pemahaman syar'i atas ketetapan Allah dan sunnah-sunnah perubahan dalam kehidupan manusia dan alam, serta hal-hal baru dalam ilmu, budaya, peristiwa, dan fitnah sepanjang masa umat hingga kiamat.",
@@ -427,6 +427,7 @@ def page_tahaw():
             sec(S1) + sec(S2) + sec(S3) +
             f'<section class="sec band"><div class="wrap">{shead(L("Rukun keempat","The fourth pillar","الركن الرابع"), L("Penjaga tiga rukun yang lain.","Guardian of the other three.","حارس الأركان الثلاثة الأخرى."))}<div class="tahaw rv"><div class="gate" data-hl="">{gate_svg()}</div>{rukun_html()}</div><div class="rv">{tasks_html()}</div></div></section>' +
             sec(S4) + sec(S5) + sec(S6) + sec(S7) +
+            sec(f'<div class="rv" style="display:flex;flex-wrap:wrap;gap:16px;align-items:center;justify-content:space-between"><p class="lead" style="margin:0;max-width:640px">{L("Punya pertanyaan yang lebih sederhana? Seratus tiga puluh tiga jawaban singkat menunggu Anda.","Have simpler questions? One hundred and thirty-three short answers are waiting.","هل لديك أسئلة أبسط؟ ثلاث وثلاثون ومئة إجابة موجزة في انتظارك.")}</p><a class="btn primary" href="mengenal-fikih-tahawwulat.html">{L("Mengenal Fikih Tahawwulat","Getting to know Fiqh al-Tahawwulat","التعرّف على فقه التحولات")}{ic("arrow","arr")}</a></div>', "sec-tight") +
             f'<section class="sec band"><div class="wrap">{shead(L("Lima asisten","Five assistants","خمسة مساعدين"), L("Satu bidang, lima cara belajar.","One field, five ways to learn.","مجال واحد، وخمس طرق للتعلّم."), L("Isinya adalah kitab karya Al-Habib Abu Bakar Al-Adni bin Ali Al-Masyhur dan arsip muhadharah beliau. Lima asisten membagi disiplin ini menurut kebutuhan pembelajar. Satu akses membuka kelimanya.","The collection is made up of the books of Al-Habib Abu Bakr al-Adni ibn Ali al-Mashhur and his lecture archive. Five assistants divide the discipline by the learner’s need. One access opens all five.","مدوّنتها كتب الحبيب أبي بكر العدني بن علي المشهور وأرشيف محاضراته. ويقسّم خمسة مساعدين هذا العلم بحسب حاجة المتعلّم. وبوصول واحد تُفتح الخمسة جميعًا."))}{branches_html()}'
             f'<table class="tbl rv" style="margin-top:48px"><thead><tr><th>{th[3]}</th><th>{th[0]}</th><th>{th[1]}</th><th>{th[2]}</th></tr></thead><tbody>{brt}</tbody></table></div></section>' +
             sec(shead(L("Pengantar", "Introduction", "مدخل"), L("Mulai dari video pengantar.", "Start with the introductory video.", "ابدأ بالفيديو التمهيدي."), L("Di dalam aplikasi, video pengantar sekitar dua belas menit menuntun Anda lewat lima belas bab, lengkap dengan ibarah dan sumbernya.", "Inside the app, an introductory video of about twelve minutes walks you through fifteen chapters, with passages and sources.", "داخل التطبيق فيديو تمهيدي مدته نحو اثنتي عشرة دقيقة يمرّ بك على خمسة عشر بابًا، مع العبارات ومصادرها.")) + f'<ul class="list-clean rv cols3">{bab}</ul><p style="margin-top:36px"><a class="btn primary" href="unduh.html">{ic("download")}{L("Unduh aplikasi","Download the app","تحميل التطبيق")}</a></p>'))
@@ -659,11 +660,74 @@ def contact_block():
     cards += f'<div class="rv"><h3>{L("Media sosial","Social media","وسائل التواصل")}</h3><div class="ctext"><p class="cline">'+ic("instagram")+'<a href="'+IG+'" target="_blank" rel="noopener"><bdi class="ltr">@openturath.id</bdi></a></p></div></div>'
     return f'<div class="contact3">{cards}</div>'
 
+
+# ======================= MENGENAL FIKIH TAHAWWULAT =======================
+import mengenal as MG
+M_SECT = {
+ "id": {"A": "Kegelisahan sehari-hari", "B": "Apa itu Fikih Tahawwulat?", "C": "Tempatnya dalam agama", "D": "Yang tetap dan yang berubah", "E": "Dua tugas rukun keempat", "F": "Dua tanda dan dua kendali",
+        "G": "Tanda-tanda kiamat", "H": "Perjalanan zaman dan keadaan umat", "I": "Fitnah dan sikap yang selamat", "J": "Penerapan dalam hidup modern", "K": "Keraguan dan keberatan yang wajar", "L": "Cara belajar dan memakai AI"},
+ "en": {"A": "Everyday unease", "B": "What is Fiqh al-Tahawwulat?", "C": "Its place in the religion", "D": "What stays and what changes", "E": "The two tasks of the fourth pillar", "F": "Two signs and two controls",
+        "G": "Signs of the Hour", "H": "The journey of the ages and the state of the Ummah", "I": "Fitna and the safe way through", "J": "Living it in the modern world", "K": "Honest doubts and objections", "L": "How to study and use the AI"},
+ "ar": {"A": "قلق الحياة اليومية", "B": "ما هو فقه التحولات؟", "C": "موضعه من الدين", "D": "الثوابت والمتغيرات", "E": "مهمتا الركن الرابع", "F": "علامتان وقراران",
+        "G": "أشراط الساعة", "H": "مراحل الزمان وأحوال الأمة", "I": "الفتن ومنهج السلامة", "J": "التطبيق في الحياة المعاصرة", "K": "الشبهات والاعتراضات المشروعة", "L": "كيفية التعلّم واستعمال الذكاء الاصطناعي"},
+}
+def M_TRACKS(): return {
+ 1: (L("Orang awam", "General reader", "عامة القرّاء"), L("Ketenangan hati, jawaban atas kegelisahan, dan langkah amal nyata.", "Peace of heart, answers to everyday unease, and practical steps.", "طمأنينة القلب وأجوبة القلق وخطوات عملية.")),
+ 2: (L("Keluarga", "Family", "الأسرة"), L("Menjaga iman anak, adab media sosial, dan rumah yang rukun saat berbeda pendapat.", "Protecting children's faith, social-media adab, and a peaceful home when views differ.", "حفظ إيمان الأبناء وآداب وسائل التواصل وسكينة البيت عند الاختلاف.")),
+ 3: (L("Santri", "Student of knowledge", "طالب العلم"), L("Hadis Jibril, empat rukun agama, sanad, dan pembagian tanda kiamat.", "The Hadith of Jibril, the four pillars, chains of transmission, and the division of the signs.", "حديث جبريل وأركان الدين الأربعة والإسناد وأقسام الأشراط.")),
+ 4: (L("Mahasiswa dan akademisi", "Students and academics", "الطلبة والباحثون"), L("Cara membaca sejarah, sains dan AI, nash yang mendahului, dan keberatan kritis.", "How to read history, science and AI, forward-looking texts, and critical objections.", "قراءة التاريخ والعلم والذكاء الاصطناعي والنصوص الاستباقية والاعتراضات النقدية.")),
+ 5: (L("Pengajar dan dai", "Teachers and preachers", "المعلمون والدعاة"), L("Berdakwah dengan hikmah, memperbarui cara, dan meredam provokasi.", "Calling with wisdom, renewing the means, and calming provocation.", "الدعوة بالحكمة وتجديد الوسائل وتهدئة التحريش.")),
+}
+def page_mengenal():
+    if not (HERE / 'content' / f'mengenal_{LANG}.md').exists(): return
+    secs = MG.parse(LANG)
+    T = M_TRACKS()
+    names = M_SECT[LANG]
+    total = sum(len(s["items"]) for s in secs)
+    def tracks_of(k, n): return " ".join(str(t) for t in MG.TRACKS if MG.track_has(t, k, n))
+    cards = ""
+    for t, (name, focus) in T.items():
+        order = MG.TRACKS[t][0]
+        seq = '<span class="arrow">&rarr;</span>'.join(f'<a href="#{k}">{k}</a>' for k in order)
+        cards += (f'<div class="jalur rv"><button type="button" class="jbtn" data-t="{t}" aria-pressed="false"><span class="jn">0{t}</span><b>{name}</b><span class="jf">{focus}</span></button>'
+                  f'<div class="jseq" aria-label="{L("Urutan bagian","Order of parts","ترتيب الأقسام")}">{seq}</div></div>')
+    idx = "".join(f'<a class="chip" href="#{s["k"]}"><b>{s["k"]}</b>&nbsp;{E(names[s["k"]])}</a>' for s in secs)
+    prin = [
+      (L("Bahasa membumi, akar kokoh", "Plain words, firm roots", "عبارة قريبة وجذر راسخ"), L("Jawaban memakai bahasa sehari-hari, tetapi setiap kalimatnya bersandar pada pelajaran dalam An-Nubdzah ash-Shughra.", "Answers use everyday language, yet each sentence rests on a lesson in An-Nubdhah al-Sughra.", "الأجوبة بلغة يومية، وكل جملة فيها قائمة على درس من النبذة الصغرى.")),
+      (L("Hati-hati pada yang di luar teks", "Care beyond the core text", "الحذر فيما وراء النص"), L("Pertanyaan yang melampaui An-Nubdzah dijawab dari kitab-kitab syarah beliau, tanpa klaim baru.", "Questions beyond An-Nubdhah are answered from the author's own commentaries, with no new claims.", "ما جاوز النبذة يُجاب عنه من شروح المؤلف دون دعوى جديدة.")),
+      (L("Pantang yang sensitif", "What is left out", "ما يُجتنب"), L("Tidak menyerang kelompok mana pun, tidak mematok tahun, dan tidak menarik pembaca ke politik praktis.", "No attacks on any group, no dates, and no pull into partisan politics.", "لا هجوم على جماعة، ولا تحديد سنوات، ولا استدراج إلى سياسة حزبية.")),
+    ]
+    pr = "".join(f'<li class="rv d{i}"><div class="num">0{i+1}</div><h3>{t}</h3><p>{d}</p></li>' for i, (t, d) in enumerate(prin))
+    body = head(L("Mengenal Fikih Tahawwulat", "Getting to know Fiqh al-Tahawwulat", "التعرّف على فقه التحولات"),
+                L("Jawaban untuk pertanyaan yang paling sering muncul.", "Answers to the questions people ask most.", "أجوبة عن أكثر الأسئلة تكرارًا."),
+                L(f"{total} pertanyaan dan jawaban dalam bahasa sehari-hari, dengan rujukan ke kitab. Pilih jalur bacaan yang paling dekat dengan Anda, atau baca dari awal.",
+                  f"{total} questions and answers in everyday language, each pointing to the book. Pick the reading path closest to you, or read from the start.",
+                  f"{total} سؤالًا وجوابًا بلغة قريبة، مع الإحالة إلى الكتاب. اختر مسار القراءة الأقرب إليك أو اقرأ من البداية."))
+    body += sec(shead(L("Jalur bacaan", "Reading paths", "مسارات القراءة"), L("Mulai dari yang paling dekat dengan Anda.", "Start where it matters to you.", "ابدأ من الأقرب إليك."),
+                      L("Pilih satu jalur untuk menyaring halaman ini. Urutan huruf menunjukkan urutan baca yang kami sarankan.", "Choose a path to filter this page. The letters show the order we suggest.", "اختر مسارًا لتصفية الصفحة. تدل الحروف على الترتيب المقترح.")) +
+               f'<div class="jalur-grid">{cards}</div><div class="jstate" id="jstate" hidden><span id="jtext"></span><button type="button" class="btn tonal sm" id="jreset">{L("Tampilkan semua","Show all","عرض الكل")}</button></div>', "sec-tight")
+    body += sec(f'<nav class="chips-idx" aria-label="{L("Bagian","Parts","الأقسام")}">{idx}</nav>', "sec-tight")
+    for s in secs:
+        k = s["k"]; lessons = ""
+        det = ""
+        for e in s["items"]:
+            ref = f'<p class="ref"><span>{L("Rujukan","Reference","المرجع")}:</span> {MG.inline(e["ref"])}</p>' if e["ref"] else ""
+            det += (f'<details id="{k}{e["n"]}" data-t="{tracks_of(k, e["n"])}"><summary><span><b class="qn">{k}{e["n"]}</b>{E(e["q"])}</span><span class="pm" aria-hidden="true"></span></summary>'
+                    f'<div class="a">{MG.render_answer(e["a"])}{ref}</div></details>')
+        ts = " ".join(str(t) for t in MG.TRACKS if k in MG.TRACKS[t][0])
+        body += (f'<section class="sec qsec" id="{k}" data-t="{ts}"><div class="wrap">{shead(L("Bagian","Part","القسم") + " " + k, E(names[k]))}'
+                 f'<div class="faq">{det}</div></div></section>')
+    body += (f'<section class="sec band"><div class="wrap">{shead(L("Sebelum Anda menutup halaman ini","Before you close this page","قبل أن تغلق هذه الصفحة"), L("AI membantu membaca, guru yang menuntun.", "The AI helps you read; a teacher guides you.", "الذكاء الاصطناعي يعين على القراءة، والمعلم يوجّه."), L("OpenTurath AI tidak mengeluarkan fatwa dan tidak menggantikan guru bersanad. Untuk persoalan pribadi yang berakibat nyata, tanyakan kepada ulama yang Anda percaya.", "OpenTurath AI issues no fatwas and does not replace a teacher with a chain of transmission. For personal matters with real consequences, ask a scholar you trust.", "لا يصدر OpenTurath AI فتاوى ولا يغني عن معلم مسنَد. وفي المسائل الشخصية ذات الأثر الفعلي اسأل عالمًا تثق به."))}'
+             f'<div class="cta-row"><a class="btn primary" href="unduh.html">{ic("download")}{L("Unduh aplikasi","Download the app","تحميل التطبيق")}</a><a class="btn tonal" href="panduan-ai.html">{L("Panduan memakai AI","Guide to using the AI","دليل استعمال الذكاء الاصطناعي")}</a><a class="btn tonal" href="fikih-tahawwulat.html">{L("Tentang Fikih Tahawwulat","About Fiqh al-Tahawwulat","عن فقه التحولات")}</a></div></div></section>')
+    body += sec(f'<div class="prin3"><ol class="steps4">{pr}</ol></div>', "sec-tight")
+    write("mengenal-fikih-tahawwulat.html", L("Mengenal Fikih Tahawwulat: OpenTurath", "Getting to know Fiqh al-Tahawwulat: OpenTurath", "التعرّف على فقه التحولات: OpenTurath"),
+          L("Jawaban untuk pertanyaan yang paling sering muncul tentang Fikih Tahawwulat, dengan lima jalur bacaan dan rujukan ke kitab.", "Answers to the most common questions about Fiqh al-Tahawwulat, with five reading paths and references to the book.", "أجوبة عن أكثر الأسئلة شيوعًا حول فقه التحولات، مع خمسة مسارات للقراءة وإحالات إلى الكتاب."), body, "")
+
 # ======================= UTAMA =======================
-PAGES = ["index", "bidang", "fikih-tahawwulat", "cara-kerja", "pedoman", "ekosistem", "tentang", "unduh", "bantuan", "ketentuan", "privasi", "pembayaran", "panduan-ai", "hak-cipta", "hapus-akun"]
+PAGES = ["index", "bidang", "fikih-tahawwulat", "cara-kerja", "pedoman", "ekosistem", "tentang", "unduh", "bantuan", "ketentuan", "privasi", "pembayaran", "panduan-ai", "hak-cipta", "hapus-akun", "mengenal-fikih-tahawwulat"]
 for _l in LANGS:
     LANG = _l
-    page_home(); page_bidang(); page_tahaw(); page_cara(); page_pedoman(); page_eko(); page_tentang(); page_unduh(); page_bantuan(); page_legal_all()
+    page_home(); page_bidang(); page_tahaw(); page_cara(); page_pedoman(); page_eko(); page_tentang(); page_unduh(); page_bantuan(); page_legal_all(); page_mengenal()
 
 # pengalih bahasa di akar situs (tanpa halaman pilihan bahasa; skrip eksternal karena CSP)
 (OUT / "index.html").write_text('''<!doctype html><html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>OpenTurath</title>

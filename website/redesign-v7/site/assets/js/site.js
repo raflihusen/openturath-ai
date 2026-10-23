@@ -221,3 +221,22 @@
   /* ingat pilihan bahasa */
   $$('#langDrop a').forEach(function (a) { a.addEventListener('click', function () { try { localStorage.setItem('ot-lang', a.getAttribute('hreflang')); } catch (e) {} }); });
 })();
+
+/* Mengenal Fikih Tahawwulat: saring per jalur, buka tautan dalam */
+(function () {
+  var d = document, $$ = function (s) { return Array.prototype.slice.call(d.querySelectorAll(s)); };
+  var btns = $$('.jbtn'); if (!btns.length) return;
+  var state = d.getElementById('jstate'), txt = d.getElementById('jtext'), reset = d.getElementById('jreset');
+  var apply = function (t) {
+    btns.forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.t === t)); });
+    $$('.qsec').forEach(function (s) {
+      var on = !t || (' ' + s.dataset.t + ' ').indexOf(' ' + t + ' ') > -1; s.hidden = !on;
+      $$('#' + s.id + ' details').forEach(function (x) { x.hidden = !!t && (' ' + x.dataset.t + ' ').indexOf(' ' + t + ' ') < 0; });
+    });
+    if (t) { var b = btns.filter(function (x) { return x.dataset.t === t; })[0]; txt.textContent = b.querySelector('b').textContent; state.hidden = false; } else state.hidden = true;
+  };
+  btns.forEach(function (b) { b.addEventListener('click', function () { var t = b.getAttribute('aria-pressed') === 'true' ? '' : b.dataset.t; apply(t); if (t) state.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); }); });
+  if (reset) reset.addEventListener('click', function () { apply(''); });
+  var open = function () { var h = decodeURIComponent(location.hash.slice(1)), el = h && d.getElementById(h); if (el && el.tagName === 'DETAILS') { el.hidden = false; el.open = true; var s = el.closest('.qsec'); if (s) s.hidden = false; } };
+  open(); addEventListener('hashchange', open);
+})();
