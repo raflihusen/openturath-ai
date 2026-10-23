@@ -452,3 +452,78 @@ html[dir="rtl"] .btn:hover .arr{transform:scaleX(-1) translateX(3px)}
 
 .salam{font-family:var(--naskh);font-size:.6em;vertical-align:.12em;font-weight:400}
 .detail .btn{margin-top:22px}
+
+/* ===== V7.2: konstelasi ilmu di hero, masalah ilmiah, hukum, imersif ===== */
+@view-transition{navigation:auto}
+#ring{position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;transform:none;left:0;top:0}
+.welcome{position:relative;min-height:min(900px,calc(100svh - 40px));padding-top:56px}
+.welcome .hero-mark{margin:0 auto 34px}
+.eyebrow-brand{position:relative;z-index:1;font-size:13px;letter-spacing:.24em;text-transform:uppercase;font-weight:600;color:var(--on-variant);margin-bottom:26px}
+html[lang="ar"] .eyebrow-brand{letter-spacing:.04em;text-transform:none;font-size:15px}
+.welcome h1.hero{text-shadow:0 0 28px var(--surface),0 0 12px var(--surface)}
+.welcome .lede,.welcome .meta-row{text-shadow:0 0 18px var(--surface)}
+.progress{position:fixed;inset-inline:0;top:0;height:2px;background:var(--on-surface);transform-origin:0 50%;transform:scaleX(0);z-index:300;pointer-events:none}
+[dir="rtl"] .progress{transform-origin:100% 50%}
+
+/* masalah ilmiah dan akurasi */
+.quad{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+.quad>div{background:var(--container);border-radius:var(--corner-xl);padding:34px 30px;display:flex;flex-direction:column;position:relative;overflow:hidden;transition:background .3s var(--ease),transform .3s var(--ease)}
+.quad>div:hover{background:var(--container-low);transform:translateY(-3px)}
+.quad .n{font-family:var(--mono);font-size:12.5px;color:var(--num);letter-spacing:.08em;margin-bottom:26px}
+.quad h3{margin-bottom:12px;font-size:clamp(20px,1.7vw,24px)}
+.quad p{color:var(--on-variant);font-size:15.5px;line-height:1.62}
+.quad .principle{background:var(--inverse-surface);color:var(--inverse-on)}
+.quad .principle:hover{background:var(--inverse-surface)}
+.quad .principle p,.quad .principle .n{color:var(--inverse-variant)}
+@media (max-width:1100px){.quad{grid-template-columns:1fr 1fr}}
+@media (max-width:620px){.quad{grid-template-columns:1fr}.quad>div{padding:28px}}
+
+/* sorotan kartu */
+.case,.pillar,.trio>div,.eco a,.eco .e,.steps6>div,.plat,.quad>div{position:relative}
+.case::after,.pillar::after,.trio>div::after,.eco a::after,.eco .e::after,.steps6>div::after,.plat::after,.quad>div:not(.principle)::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;opacity:0;transition:opacity .3s;background:radial-gradient(260px circle at var(--mx,50%) var(--my,50%),color-mix(in srgb,var(--on-surface) 7%,transparent),transparent 70%)}
+.case:hover::after,.pillar:hover::after,.trio>div:hover::after,.eco a:hover::after,.eco .e:hover::after,.steps6>div:hover::after,.plat:hover::after,.quad>div:hover::after{opacity:1}
+
+/* kartu unduh di tengah */
+.plat{align-items:center;text-align:center}
+.plat .p-ic{margin-inline:auto}
+.plat-top{justify-content:center;position:relative;width:100%}
+.plat-top .status{position:absolute;inset-inline-end:0;top:0}
+.plat .list-clean{width:100%;text-align:center}
+.plat .list-clean li{padding-inline:0}
+
+/* chip rumpun di panel rincian */
+.detail .group-chip{display:flex;justify-content:center;margin-bottom:22px}
+.detail .group-chip .chip{background:var(--surface)}
+
+/* footer sederhana */
+footer.site .fbrand{display:flex;align-items:center}
+.legal-links{display:flex;flex-wrap:wrap;gap:8px 22px;margin-top:6px}
+.legal-links a{font-size:13.5px;color:var(--num)}
+.legal-links a:hover{color:var(--on-surface)}
+
+/* halaman hukum */
+.legal{display:grid;grid-template-columns:minmax(220px,300px) minmax(0,1fr);gap:clamp(32px,5vw,72px);align-items:start}
+.legal .toc{position:sticky;top:96px;display:flex;flex-direction:column;border-top:1px solid var(--outline-variant)}
+.legal .toc a{padding:11px 4px;border-bottom:1px solid var(--outline-variant);font-size:14.5px;color:var(--on-variant);line-height:1.4;transition:color .2s,padding-inline-start .25s var(--ease)}
+.legal .toc a:hover,.legal .toc a.on{color:var(--on-surface);padding-inline-start:12px}
+.legal-meta{background:var(--container);border-radius:var(--corner-lg);padding:20px 24px;margin-bottom:36px;font-size:15px;color:var(--on-variant);line-height:1.6}
+.legal-meta b{color:var(--on-surface);font-weight:600}
+.legal article section{padding-block:28px;border-top:1px solid var(--outline-variant);scroll-margin-top:96px}
+.legal article section:first-of-type{border-top:0;padding-top:0}
+.legal article h2{font-size:clamp(22px,2.2vw,28px);margin-bottom:14px;letter-spacing:-.02em}
+.legal article p{font-size:16.5px;line-height:1.72;margin-bottom:14px;max-width:72ch}
+.legal article ul{list-style:none;margin:0 0 14px;max-width:72ch}
+.legal article li{position:relative;padding-inline-start:20px;margin-bottom:8px;font-size:16.5px;line-height:1.65}
+.legal article li::before{content:"";position:absolute;inset-inline-start:2px;top:.72em;width:5px;height:5px;border-radius:50%;background:var(--on-surface)}
+.legal article a{border-bottom:1px solid var(--outline)}
+.legal-end{display:flex;flex-wrap:wrap;gap:12px;margin-top:40px}
+@media (max-width:900px){.legal{grid-template-columns:1fr}.legal .toc{position:static}}
+html[lang="ar"] .legal article p,html[lang="ar"] .legal article li{line-height:1.95}
+bdi.ltr{unicode-bidi:isolate;direction:ltr;display:inline-block}
+.nofx .progress{display:none}
+.contact3{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.contact3>div{background:var(--container);border-radius:var(--corner-xl);padding:30px}
+.contact3 h3{font-size:21px;margin-bottom:12px}
+.contact3 p{font-size:15.5px;line-height:1.65;color:var(--on-variant);margin-bottom:10px}
+.contact3 a{border-bottom:1px solid var(--outline)}
+@media (max-width:900px){.contact3{grid-template-columns:1fr}}

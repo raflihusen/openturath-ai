@@ -126,3 +126,22 @@ Token abu netral (terang `#FFFFFF/#F8F9FC/#EFF2F7`, gelap `#121317/#18191D/#2122
 ## 10. Diuji
 
 Chrome: sembilan halaman, tiga bahasa, terang dan gelap, 1440 dan 390 px; panel Bidang, tab demo, filter, pemilih bahasa, tombol tema, sorotan logo; tanpa galat konsol; tanpa luapan horizontal pada ponsel (ID dan AR). Belum: Safari, Firefox, tablet, pembaca layar, kinerja.
+
+---
+
+## Addendum V7.2 (23 Oktober 2026)
+
+**Perubahan.**
+- Hero: lengkung diganti konstelasi nama ilmu berhuruf Arab (tetap Arab di ID/EN/AR) yang bergaris ke logo. Urutan: eyebrow "AI for Islamic Scholarship", logo, tagline. Teks, eyebrow, dan tombol menjadi zona hindar; tata letak dihitung ulang setelah semua font termuat.
+- Bagian "Masalah ilmiah dan akurasi" menggantikan "Kitabnya agung"; frasa Matan, Syarah, Hasyiyah dihapus; nama pribadi diganti "sang perintis".
+- Kartu unduh rata tengah; footer hanya logo dan tautan; halaman kebijakan lengkap (ketentuan, privasi, pembayaran dan pengembalian dana, sumber dan hak cipta, penghapusan akun dan data, panduan AI) bersumber dari teks aplikasi, tanpa tautan ke situs lama.
+
+**Deteksi bahasa.** Berbasis zona waktu peramban (zona Arab menuju AR, selainnya ID), pilihan manual selalu menang dan diingat. Ini bukan deteksi IP: CSP `connect-src 'self'` melarang layanan geolokasi pihak ketiga. Deteksi IP sungguhan memerlukan sisi server (lihat `deploy/GEO-LANGUAGE.md`).
+
+**Audit sisi pengguna.** 2.346 tautan internal diperiksa, 0 rusak; tanpa skrip sebaris (patuh CSP); ponsel 375 px tanpa luapan horizontal; menu ponsel berfungsi; tanpa galat konsol.
+
+**Blind spot yang masih terbuka.**
+1. Terjemahan EN/AR perlu ditinjau penutur ahli.
+2. Ejaan surel/domain `support@openturath.id` menunggu konfirmasi Pemilik.
+3. Deteksi IP belum aktif (butuh keputusan hosting).
+4. Frasa "pertama di dunia" tidak dipakai sampai teks penghargaan 7 Mei 2026 dikonfirmasi.

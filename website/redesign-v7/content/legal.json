@@ -1,0 +1,764 @@
+{
+ "meta": {
+  "version": "1.0",
+  "effective": "13 September 2026",
+  "email": "support@openturath.id",
+  "hours": "Senin – Jumat, 09.00 – 17.00 WIB",
+  "support_sla": "2 (dua) hari kerja",
+  "refund_sla": "7 (tujuh) hari kerja"
+ },
+ "app": {
+  "id": {
+   "terms": [
+    {
+     "title": "1. Pengelola dan Cakupan Ketentuan",
+     "content": "OpenTurath dikelola oleh Pengelola OpenTurath, beralamat di Indonesia, selanjutnya disebut \"kami\". Pengguna aplikasi disebut \"Anda\". Kontak layanan tersedia melalui support@openturath.id.\n\nKetentuan ini mengatur penggunaan akun, AI, katalog rujukan, Catatan, dan fitur berbayar yang disediakan melalui OpenTurath. Informasi paket yang ditampilkan sebelum pembelian, Kebijakan Pembayaran dan Pengembalian Dana, serta Panduan Penggunaan AI dan Pemeriksaan Rujukan menjadi bagian dari ketentuan penggunaan yang relevan."
+    },
+    {
+     "title": "2. Persetujuan dan Persyaratan Pengguna",
+     "content": "Sebelum membuat akun atau membeli paket, Anda diberi kesempatan membaca ketentuan yang berlaku. Penggunaan mandiri OpenTurath ditujukan bagi pengguna berusia sekurang-kurangnya 18 tahun. Anda juga harus memiliki kecakapan atau kewenangan yang diperlukan untuk membuat perjanjian dan melakukan pembayaran.\n\nAkses bagi pengguna di bawah 18 tahun belum dibuka melalui pendaftaran mandiri. Jika bertindak untuk lembaga, Anda harus berwenang mewakilinya. Pembelian individu tidak otomatis memberikan hak penggunaan bersama untuk seluruh anggota lembaga."
+    },
+    {
+     "title": "3. Akun dan Keamanan Akses",
+     "content": "Gunakan informasi akun yang benar dan akses masuk yang menjadi hak Anda. Akun bersifat pribadi, kecuali suatu paket secara tertulis menyediakan penggunaan untuk beberapa orang.\n\nJaga perangkat dan akses masuk Anda. Jangan memberikan kata sandi atau kode sekali pakai kepada pihak lain. Laporkan dugaan penggunaan tanpa izin melalui support@openturath.id. Laporan pengambilalihan akun akan diperiksa berdasarkan keadaan dan bukti yang tersedia."
+    },
+    {
+     "title": "4. Fungsi Layanan dan Batas Jawaban AI",
+     "content": "OpenTurath membantu penelusuran literatur, pembacaan kutipan, dan penyusunan bahan belajar. Jawaban dapat mengandung kesalahan pada penjelasan, atribusi, terjemahan, atau keterangan rujukan.\n\nPeriksa kutipan pada kitab dan edisi yang digunakan sebelum menjadikannya dasar tulisan, pengajaran, keputusan, atau penyampaian hukum kepada orang lain. Nomor halaman pada satu edisi tidak selalu sama dengan edisi lain.\n\nJawaban AI bukan merupakan fatwa resmi, penetapan hukum yang mengikat, atau pengganti bimbingan guru dan ulama yang berkompeten. Tidak ditemukannya rujukan dalam hasil pencarian berarti layanan belum menemukannya pada penelusuran tersebut, bukan bukti bahwa pembahasannya tidak ada."
+    },
+    {
+     "title": "5. Paket, Pembayaran, dan Masa Akses",
+     "content": "Harga, cakupan AI, masa akses, batas penggunaan, kebutuhan akun pihak ketiga, serta biaya yang berlaku ditampilkan sebelum Anda membayar.\n\nLangganan diperpanjang secara manual. Kami tidak melakukan penagihan berulang otomatis (auto-debit) dari pembelian paket ini.\n\nMasa akses dimulai ketika aktivasi berhasil dan tanggal berakhir ditampilkan pada akun. Pembayaran diproses melalui Midtrans menurut metode yang tersedia pada saat transaksi. Keberhasilan pembayaran dan aktivasi akses adalah dua status yang berbeda. Jika dana telah dibayarkan namun langganan belum aktif, hubungi bantuan dengan nomor transaksi."
+    },
+    {
+     "title": "6. Layanan Pihak Ketiga (Infrastruktur Google)",
+     "content": "Fitur percakapan menggunakan teknologi komputasi riset dari Google. Aksesnya dapat bergantung pada akun, wilayah, batas penggunaan, dan ketentuan penyedia yang berlaku untuk Anda. Pembelian OpenTurath tidak dengan sendirinya mengubah jenis langganan atau hak akses akun Google Anda.\n\nJika perubahan layanan pihak ketiga menyebabkan fitur berbayar tidak dapat diberikan sesuai yang ditawarkan, kami akan menilai pemulihan akses, penggantian layanan yang Anda setujui, atau pengembalian dana sesuai hak Anda."
+    },
+    {
+     "title": "7. Penggunaan yang Diperbolehkan dan Dilarang",
+     "content": "Anda dapat menggunakan layanan untuk belajar, menyiapkan pengajaran, dan melakukan penelusuran sesuai paket yang dimiliki. Penggunaan hasilnya tetap harus memperhatikan hak cipta, ketepatan atribusi, serta adab keilmuan.\n\nDilarang menggunakan OpenTurath untuk mengambil alih akun, menghindari pembatasan akses secara tidak sah, menyebarkan perangkat lunak berbahaya, atau menjual kembali akses berbayar kepada pihak lain.\n\nDilarang membuat atau menyebarkan kutipan yang sengaja dipalsukan dan diatasnamakan kepada ulama atau sumber tertentu. Pembahasan ilmiah yang sah, termasuk perbedaan pendapat dan kritik terhadap suatu penafsiran, tidak dengan sendirinya merupakan pelanggaran."
+    },
+    {
+     "title": "8. Catatan dan Materi Pengguna",
+     "content": "Hak atas tulisan atau catatan yang Anda buat tetap berada pada Anda. Anda memberi izin terbatas kepada kami untuk memproses dan menyimpan materi tersebut semata-mata untuk menjalankan fitur yang Anda pilih. Izin ini tidak memindahkan kepemilikan dan kami tidak menjual atau menerbitkan catatan pribadi Anda.\n\nCatatan disimpan secara lokal pada perangkat Anda melalui penyimpanan aplikasi. Gunakan fitur salin atau berbagi yang tersedia untuk mencadangkan materi penting."
+    },
+    {
+     "title": "9. Hak atas Aplikasi dan Kitab",
+     "content": "Hak atas perangkat lunak, tampilan, dan merek OpenTurath tetap berada pada pemegang haknya. Materi kitab, terjemahan, dan tahkik mengikuti status hak masing-masing.\n\nAkses berbayar tidak memindahkan hak cipta atas kitab atau memberi izin umum untuk menyebarluaskan seluruh isi kitab secara komersial. Penggunaan kutipan harus memperhatikan batas penggunaan wajar dan kewajiban atribusi."
+    },
+    {
+     "title": "10. Ketersediaan dan Perubahan Fitur",
+     "content": "Layanan dapat mengalami pemeliharaan berkala atau pembaruan teknis. Kami berupaya memberi pemberitahuan mengenai pemeliharaan terencana.\n\nPerubahan yang secara material mengurangi manfaat paket berbayar akan disertai pilihan penyelesaian yang wajar. Kami tidak menggunakan perubahan ketentuan untuk menghapus hak yang sudah timbul dari pembelian Anda."
+    },
+    {
+     "title": "11. Pembatasan dan Penutupan Akun",
+     "content": "Kami dapat membatasi akses jika terdapat dasar yang wajar mengenai pelanggaran serius, risiko keamanan, atau penggunaan tanpa hak. Tindakan disesuaikan dengan tingkat masalah, mulai dari peringatan, penghentian sementara, hingga penutupan akun.\n\nJika keadaan memungkinkan, kami menyampaikan alasan dan memberi kesempatan klarifikasi melalui support@openturath.id."
+    },
+    {
+     "title": "12. Tanggung Jawab dan Hak Pengguna",
+     "content": "Kami bertanggung jawab menyediakan layanan sesuai perjanjian dan hukum yang berlaku. Penjelasan mengenai keterbatasan AI tidak menghapus kewajiban kami untuk memberikan informasi yang benar, menangani keluhan, atau menyelesaikan layanan berbayar.\n\nAnda bertanggung jawab menilai kesesuaian hasil untuk tujuan penggunaannya dan memeriksa sumber sebelum mengambil kesimpulan. Tidak ada ketentuan yang meniadakan hak konsumen yang dilindungi undang-undang."
+    },
+    {
+     "title": "13. Pengaduan dan Musyawarah",
+     "content": "Hubungi support@openturath.id dengan penjelasan masalah dan informasi yang relevan. Kami akan mencatat pengaduan, menyampaikan perkembangan penanganan dalam 2 (dua) hari kerja, dan mengupayakan penyelesaian secara musyawarah.\n\nKetentuan ini tunduk pada hukum Republik Indonesia."
+    },
+    {
+     "title": "14. Perubahan Ketentuan dan Kontak",
+     "content": "Versi dokumen: 1.0 (Berlaku sejak 13 September 2026).\n\nPerubahan penting akan diberitahukan sebelum berlaku dan tidak berlaku surut untuk menghilangkan hak yang telah timbul.\n\nPengelola: Pengelola OpenTurath\nAlamat: Indonesia\nBantuan: support@openturath.id\nPrivasi: support@openturath.id\nHak Cipta: support@openturath.id"
+    }
+   ],
+   "privacy": [
+    {
+     "title": "1. Pengelola Data dan Ruang Lingkup",
+     "content": "Kebijakan Privasi ini menjelaskan pemrosesan data pribadi saat Anda menggunakan aplikasi OpenTurath, pembayaran, dan bantuan layanan. Pengelola OpenTurath (Indonesia) bertanggung jawab atas pemrosesan data yang tujuan dan caranya ditentukan oleh OpenTurath, sesuai UU Nomor 27 Tahun 2022 tentang Pelindungan Data Pribadi.\n\nUntuk pertanyaan privasi, hubungi support@openturath.id."
+    },
+    {
+     "title": "2. Data yang Diproses",
+     "content": "Kami memproses data sesuai fitur yang Anda gunakan:\n• Akun: Nama, alamat email, dan identitas profil publik dari akun Google untuk autentikasi dan personalisasi.\n• Langganan: Paket yang dipilih, status, masa aktif, dan penggunaan voucher.\n• Pembayaran: Nomor transaksi, jumlah pembayaran, metode, waktu, dan status dari penyedia Midtrans.\n• Kontak Transaksi: Nomor WhatsApp/telepon yang Anda berikan saat pembayaran untuk pengiriman informasi aktivasi.\n• Percakapan: Pertanyaan, jawaban, dan konteks percakapan yang diproses melalui sesi komputasi riset Google.\n• Catatan: Catatan, kutipan, dan rujukan yang Anda simpan pada penyimpanan lokal perangkat.\n• Bantuan: Alamat kontak, isi pengaduan, nomor transaksi, dan lampiran tangkapan layar untuk penanganan masalah.\n• Sesi Teknis: Token sesi autentikasi yang aman untuk mempertahankan login di perangkat."
+    },
+    {
+     "title": "3. Tujuan dan Dasar Pemrosesan",
+     "content": "Data akun dan transaksi diproses untuk menyediakan layanan yang Anda minta, mengelola langganan, dan melaksanakan perjanjian. Pencatatan transaksi juga diperlukan untuk memenuhi kewajiban hukum administrasi perpajakan dan transaksi keuangan.\n\nKami tidak menjual data pribadi Anda kepada pihak ketiga manapun, dan tidak menggunakan percakapan Anda untuk iklan bertarget."
+    },
+    {
+     "title": "4. Percakapan AI dan Peran Google",
+     "content": "Ketika Anda mengirim pertanyaan melalui fitur percakapan, teks dan konteks diproses melalui teknologi komputasi riset Google. Kebijakan pemrosesan Google mengikuti Kebijakan Privasi Google dan ketentuan layanannya.\n\nAplikasi OpenTurath tidak menggunakan isi percakapan atau catatan pribadi pengguna untuk melatih model kecerdasan buatan publik. Hindari memasukkan informasi pribadi sensitif atau rahasia ke dalam percakapan."
+    },
+    {
+     "title": "5. Catatan dan Penyimpanan Perangkat",
+     "content": "Catatan, kutipan ibarah, dan penanda rujukan disimpan secara lokal di perangkat Anda menggunakan penyimpanan aplikasi. Jika Anda membersihkan data aplikasi atau mencopot pemasangan aplikasi, catatan lokal dapat terhapus. Gunakan fitur salin teks atau bagikan catatan untuk mencadangkan catatan penting Anda ke tempat penyimpanan lain."
+    },
+    {
+     "title": "6. Penerima dan Penyedia Layanan",
+     "content": "Data dibagikan hanya sebatas yang diperlukan untuk menjalankan layanan:\n• Google: Untuk proses masuk autentikasi dan pemrosesan sesi percakapan komputasi riset Google.\n• Midtrans: Lembaga pembayaran resmi untuk memproses transaksi perbankan, dompet digital, atau QRIS.\n• Firebase / Google Cloud: Pengelolaan database transaksi dan status hak akses akun yang aman.\n\nSeluruh penyedia bekerja berdasarkan standar keamanan dan enkripsi industri."
+    },
+    {
+     "title": "7. Kebijakan Iklan, Analitik, dan Promosi",
+     "content": "OpenTurath bebas dari iklan pihak ketiga dan tidak menjual data pribadi Anda. Pemberitahuan transaksi dan pembaruan layanan dikirimkan semata-mata untuk keperluan operasional akun Anda."
+    },
+    {
+     "title": "8. Pemrosesan Data Lintas Wilayah",
+     "content": "Infrastruktur autentikasi Google dan basis data cloud dapat memproses sebagian data teknis di pusat data yang aman di dalam maupun luar wilayah Indonesia, dengan perlindungan enkripsi transit dan at-rest berstandar global."
+    },
+    {
+     "title": "9. Masa Penyimpanan Data (Retensi)",
+     "content": "• Data Akun: Disimpan selama akun aktif, dan dihapus setelah permohonan penutupan akun disetujui.\n• Data Transaksi: Disimpan selama batas waktu yang diwajibkan oleh ketentuan perpajakan dan hukum transaksi keuangan Republik Indonesia.\n• Catatan Pengguna: Disimpan di perangkat Anda hingga Anda menghapusnya sendiri atau mencopot aplikasi.\n• Pengaduan Bantuan: Disimpan selama proses penyelesaian masalah dan pengarsipan layanan."
+    },
+    {
+     "title": "10. Keamanan dan Perlindungan Data",
+     "content": "Kami menerapkan langkah-langkah pengamanan teknis, termasuk komunikasi terenkripsi SSL/TLS, pembatasan akses data, dan perlindungan token sesi. Kata sandi akun Google Anda tidak pernah disimpan di server OpenTurath."
+    },
+    {
+     "title": "11. Hak Subjek Data Pengguna",
+     "content": "Sesuai UU Perlindungan Data Pribadi, Anda berhak:\n• Mengakses dan memperoleh informasi mengenai data pribadi yang diproses.\n• Memperbarui atau memperbaiki data profil yang keliru.\n• Meminta penghapusan akun dan data pribadi Anda kapan saja melalui aplikasi.\n• Menyampaikan keberatan atau pertanyaan seputar privasi ke support@openturath.id."
+    },
+    {
+     "title": "12. Pengguna di Bawah Umur",
+     "content": "Pendaftaran akun mandiri ditujukan bagi pengguna berusia 18 tahun ke atas. Jika Anda orang tua atau wali dan mendapati akun dibuka tanpa izin yang diperlukan, hubungi support@openturath.id untuk penanganan dan penghapusan data."
+    },
+    {
+     "title": "13. Kontak dan Pembaruan Kebijakan",
+     "content": "Versi dokumen: 1.0 (Berlaku sejak 13 September 2026).\n\nUntuk pertanyaan atau permohonan hak privasi, hubungi:\nEmail: support@openturath.id\nPengelola: Pengelola OpenTurath (Indonesia)"
+    }
+   ],
+   "refund": [
+    {
+     "title": "1. Informasi Sebelum Pembelian",
+     "content": "Sebelum melakukan pembayaran, rincian harga total, cakupan modul AI, durasi masa akses, dan metode pembayaran ditampilkan secara jelas pada halaman langganan.\n\nDurasi paket 30 hari dihitung sebagai 30 hari kalender penuh sejak aktivasi berhasil. Perubahan harga di masa mendatang tidak akan memengaruhi paket yang sedang berjalan."
+    },
+    {
+     "title": "2. Pembayaran dan Aktivasi Akses",
+     "content": "Pembayaran diproses melalui gerbang pembayaran resmi Midtrans dengan metode QRIS, transfer bank (virtual account), maupun dompet digital.\n\nBukti pembayaran resmi dikirimkan melalui notifikasi Midtrans dan email akun Anda. Masa akses aktif seketika transaksi dinyatakan berhasil dan tersinkronisasi. Jika dana telah terpotong namun status belum aktif, jangan melakukan pembayaran ulang; hubungi support@openturath.id dengan menyertakan nomor transaksi."
+    },
+    {
+     "title": "3. Perpanjangan Manual (Tanpa Auto-Debit)",
+     "content": "Seluruh paket langganan OpenTurath diperpanjang secara manual tanpa penagihan berulang otomatis (tanpa auto-debit). Setelah masa aktif berakhir, akses berbayar akan berhenti dengan sendirinya kecuali Anda memilih untuk memperpanjang secara sadar."
+    },
+    {
+     "title": "4. Ketentuan Voucher",
+     "content": "Voucher promosi atau mitra mengikuti masa berlaku, cakupan AI, dan batas penukaran yang tercantum saat diterbitkan. Voucher tidak dapat diuangkan dan berlaku untuk satu kali penukaran pada akun yang berhak."
+    },
+    {
+     "title": "5. Dasar Pengajuan Pengembalian Dana (Refund)",
+     "content": "Anda berhak mengajukan pemeriksaan dan pengembalian dana apabila terjadi:\n• Pembayaran ganda akibat kendala teknis pada sistem transaksi.\n• Dana telah terpotong namun hak akses tidak aktif setelah dilakukan verifikasi.\n• Gangguan teknis berkepanjangan pada layanan inti berbayar yang tidak dapat dipulihkan.\n\nPenyelesaian dapat berupa pemulihan akses, penyesuaian masa aktif yang Anda setujui, atau pengembalian dana penuh."
+    },
+    {
+     "title": "6. Alur dan Waktu Penanganan Refund",
+     "content": "Kirim permohonan ke support@openturath.id dengan menyertakan:\n1. Alamat email akun OpenTurath.\n2. Nomor transaksi / invoice pembayaran.\n3. Bukti pembayaran resmi dari bank/e-wallet.\n4. Penjelasan kendala yang dialami.\n\nKonfirmasi penerimaan dikirimkan maksimal dalam 2 (dua) hari kerja. Pemeriksaan dan keputusan pengembalian dana diselesaikan dalam 7 (tujuh) hari kerja. Jika disetujui, pengembalian dana diproses ke rekening atau dompet asal sesuai ketentuan perbankan (7 (tujuh) hari kerja)."
+    },
+    {
+     "title": "7. Saluran Bantuan Transaksi",
+     "content": "Kendala pembayaran dan transaksi dipantau setiap hari kerja (Senin – Jumat, 09.00 – 17.00 WIB).\nEmail layanan transaksi: support@openturath.id"
+    }
+   ],
+   "guideline": [
+    {
+     "title": "Prinsip dan Adab Menuntut Ilmu",
+     "content": "Teknologi kecerdasan buatan hadir sebagai sarana penunjang bacaan dan pemetaan pembahasan turats. AI adalah alat bantu penelusuran teks, sedangkan pemahaman agama yang mendalam, ketersambungan sanad, dan penyucian jiwa hanya diperoleh melalui tradisi talaqqi kepada guru dan ulama yang berkompeten.\n\nBerikut adalah pedoman adab yang perlu dijaga oleh setiap penuntut ilmu saat menelaah naskah bersama OpenTurath."
+    },
+    {
+     "title": "Adab 1 · AI adalah alat bantu, bukan guru",
+     "content": "Gunakan AI untuk memperluas pembacaan, memetakan letak bab pembahasan, dan merumuskan pertanyaan sebelum diajukan kepada guru. AI bukan syekh murabbi, tidak berwenang berfatwa, dan tidak menggantikan kehadiran di majelis ilmu.\n\nKesimpulan atau penjelasan dari AI adalah bahan kajian awal yang perlu diteliti kembali kepada ulama yang berkompeten."
+    },
+    {
+     "title": "Adab 2 · Meneliti teks dan konteksnya",
+     "content": "Ketika menemukan suatu kutipan ibarah, bacalah bagian sebelum dan sesudahnya secara utuh untuk memahami konteks permasalahan (siyaq an-nash). Perhatikan syarat, pengecualian, serta batasan hukum pada naskah aslinya.\n\nBedakan secara cermat antara tiga perkara: naskah asli kitab, terjemahan makna, dan kesimpulan bahasa mesin."
+    },
+    {
+     "title": "Adab 3 · Menghormati mazhab dan para ahli",
+     "content": "Jangan mempergunakan jawaban AI untuk memicu perdebatan (jidal), menyudutkan pihak lain, atau menghakimi pandangan ulama. Penjelasan perbandingan pendapat yang ditampilkan AI tidak otomatis merangkum seluruh kekayaan khazanah fukaha.\n\nPenetapan hukum dan penilaian derajat riwayat merupakan wewenang para pakar yang memiliki keahlian ilmiah mendalam."
+    },
+    {
+     "title": "Adab 4 · Kejujuran dan amanah ilmiah",
+     "content": "Jangan memberi kesan telah membaca suatu kitab secara utuh apabila penelusuran baru dilakukan melalui ringkasan mesin pencari. Nisbatkan dan kutip hanya naskah yang telah Anda periksa dan baca sendiri secara langsung.\n\nKejujuran ilmiah adalah mahkota bagi penuntut ilmu dan penjaga keberkahan belajar turats."
+    },
+    {
+     "title": "Adab 5 · Waspada terhadap kekeliruan mesin",
+     "content": "Susunan kalimat yang terdengar fasih, rapi, dan meyakinkan tidak menjadi jaminan atas kebenaran hakiki. Kehadiran judul kitab atau penomoran bab belum membuktikan bahwa seluruh uraian bebas dari kesalahan tafsir.\n\nTimbang setiap jawaban dengan kaidah Al-Qur'an, sunnah, dan penjelasan para ulama; jangan tergesa-gesa mengambil kesimpulan hanya karena kecepatan mesin."
+    },
+    {
+     "title": "Adab 6 · Menjaga kemuliaan sanad dan talaqqi",
+     "content": "Ilmu agama diwariskan dari generasi ke generasi oleh para ulama yang terpercaya dan memiliki integritas moral. Kecerdasan buatan mengolah data secara mekanis tanpa ruh: ia tidak memiliki sanad keilmuan, sifat adil ('adalah), maupun ijazah pengajaran.\n\nPosisikan teknologi ini semata-mata sebagai sarana pembantu penelusuran di perpustakaan, bukan sebagai pemikul amanah agama."
+    },
+    {
+     "title": "Adab 7 · Menjaga lisan dan tangan",
+     "content": "Sesuai manhaj keselamatan (salamatus shadr wal lisan), jangan menggunakan kutipan untuk mencela ulama, merendahkan sesama muslim, menyebarkan prasangka, atau menyalakan permusuhan.\n\nJadikanlah ilmu sebagai sarana yang menyejukkan hati, menyatukan umat, dan menambah rasa takut kepada Allah."
+    },
+    {
+     "title": "Adab 8 · Sikap santun dalam menyampaikan koreksi",
+     "content": "Apabila Anda mendapati kekeliruan teks Arab, salah atribusi pengarang, atau ketidaktepatan informasi dalam naskah yang ditampilkan, sampaikan koreksi secara santun dan ilmiah.\n\nLaporan perbaikan dapat dikirimkan melalui saluran resmi (support@openturath.id) agar khazanah kitab tetap terjaga keasliannya."
+    }
+   ],
+   "contact": [
+    {
+     "title": "1. Layanan Bantuan dan Pengaduan",
+     "content": "Tim OpenTurath siap membantu kendala akun, aktivasi langganan, pembayaran, penggunaan Catatan, serta laporan koreksi naskah kitab rujukan."
+    },
+    {
+     "title": "2. Saluran Komunikasi Resmi",
+     "content": "• Bantuan & Transaksi: support@openturath.id\n• Permintaan Privasi & Data: support@openturath.id\n• Laporan Hak Cipta: support@openturath.id\n• Alamat Usaha: Indonesia\n• Waktu Operasional: Senin – Jumat, 09.00 – 17.00 WIB\n• Target Tanggapan: Maksimal 2 (dua) hari kerja"
+    },
+    {
+     "title": "3. Keamanan Informasi",
+     "content": "Jangan pernah mengirimkan kata sandi, kode OTP, atau informasi kartu pembayaran rahasia kepada siapapun, termasuk pihak yang mengaku sebagai tim OpenTurath. Gunakan hanya saluran email resmi yang tercantum di atas."
+    }
+   ]
+  },
+  "en": {
+   "terms": [
+    {
+     "title": "1. Operator and scope",
+     "content": "OpenTurath is operated by Pengelola OpenTurath, based in Indonesia, referred to as “we”. Application users are referred to as “you”. Support is available at support@openturath.id.\n\nThese terms govern accounts, AI, reference catalogs, Notes, and paid features provided through OpenTurath. Package information shown before purchase, the Payment and Refund Policy, and the AI Use and Reference Verification Guide form part of the relevant terms of use."
+    },
+    {
+     "title": "2. Agreement and eligibility",
+     "content": "You have an opportunity to read the applicable terms before creating an account or purchasing a package. Independent use of OpenTurath is intended for users aged at least 18. You must also have the capacity or authority required to enter into agreements and make payments.\n\nSelf-registration is not currently open to users under 18. If acting for an institution, you must be authorized to represent it. An individual purchase does not automatically grant shared use to all members of an institution."
+    },
+    {
+     "title": "3. Accounts and access security",
+     "content": "Use accurate account information and sign-in access that belongs to you. Accounts are personal unless a package explicitly provides in writing for multiple users.\n\nProtect your device and sign-in access. Do not share passwords or one-time codes. Report suspected unauthorized use to support@openturath.id. Account takeover reports will be assessed in light of the circumstances and available evidence."
+    },
+    {
+     "title": "4. Service purpose and AI limitations",
+     "content": "OpenTurath assists with literature searches, reading quotations, and preparing study materials. Answers may contain errors in explanations, attribution, translation, or reference details.\n\nCheck quotations against the work and edition used before relying on them in writing, teaching, decisions, or communicating religious rulings. Page numbers may differ between editions.\n\nAI answers are not official fatwas, binding legal rulings, or substitutes for guidance from qualified teachers and scholars. A reference absent from a search means the service did not find it in that search; it does not prove that the discussion does not exist."
+    },
+    {
+     "title": "5. Packages, payments, and access periods",
+     "content": "Prices, AI coverage, access duration, usage limits, third-party account requirements, and applicable charges are shown before payment.\n\nSubscriptions are renewed manually. This package purchase does not authorize automatic recurring charges or direct debits.\n\nAccess starts after successful activation, and its expiry is displayed in your account. Payments are processed through Midtrans using methods available at the time of the transaction. Successful payment and access activation are distinct statuses. If you have paid but the subscription is not active, contact support with the transaction number."
+    },
+    {
+     "title": "6. Third-party services: Google Infrastructure",
+     "content": "Conversation features use Google's research computing technology. Access may depend on your account, region, usage limits, and the provider's applicable terms. Purchasing OpenTurath does not itself change your Google subscription or account entitlements.\n\nIf changes to a third-party service prevent a paid feature from being provided as offered, we will assess restoration of access, a replacement service you approve, or a refund in accordance with your rights."
+    },
+    {
+     "title": "7. Permitted and prohibited use",
+     "content": "You may use the service to study, prepare teaching, and conduct research within your package. Use of results must respect copyright, accurate attribution, and scholarly conduct.\n\nUsing OpenTurath to take over accounts, unlawfully evade access restrictions, distribute malicious software, or resell paid access is prohibited.\n\nCreating or distributing deliberately fabricated quotations attributed to scholars or particular sources is prohibited. Legitimate scholarly discussion, including disagreement and criticism of interpretations, is not in itself a violation."
+    },
+    {
+     "title": "8. Notes and user materials",
+     "content": "You retain rights to writings and notes you create. You grant us limited permission to process and store those materials solely to operate the features you select. This permission does not transfer ownership; we do not sell or publish your private notes.\n\nNotes are stored locally on your device through application storage. Use available copy or share features to back up important materials."
+    },
+    {
+     "title": "9. Rights to the application and works",
+     "content": "Rights to OpenTurath software, design, and branding remain with their respective holders. Works, translations, and critical editions retain their individual rights status.\n\nPaid access does not transfer copyright in works or grant general permission to commercially distribute their full contents. Quotations must respect fair-use limits and attribution requirements."
+    },
+    {
+     "title": "10. Availability and feature changes",
+     "content": "The service may undergo periodic maintenance or technical updates. We endeavor to notify you of planned maintenance.\n\nChanges that materially reduce the benefits of a paid package will be accompanied by reasonable resolution options. We do not use changes to these terms to remove rights already arising from your purchase."
+    },
+    {
+     "title": "11. Access restrictions and account closure",
+     "content": "We may restrict access when there is reasonable basis to suspect a serious violation, security risk, or unauthorized use. Measures are proportionate to the issue, ranging from warnings and temporary suspension to account closure.\n\nWhere circumstances permit, we explain the reasons and provide an opportunity for clarification through support@openturath.id."
+    },
+    {
+     "title": "12. Responsibilities and user rights",
+     "content": "We are responsible for providing the service in accordance with the agreement and applicable law. Explaining AI limitations does not remove our obligations to provide accurate information, handle complaints, or resolve issues with paid services.\n\nYou are responsible for assessing whether results suit your purpose and checking sources before drawing conclusions. No provision removes consumer rights protected by law."
+    },
+    {
+     "title": "13. Complaints and consultation",
+     "content": "Contact support@openturath.id with a description of the problem and relevant information. We record complaints, provide an update on their handling within 2 (two) business days, and seek resolution through consultation.\n\nThese terms are governed by the laws of the Republic of Indonesia."
+    },
+    {
+     "title": "14. Updates and contact details",
+     "content": "Document version: 1.0 (effective 13 September 2026).\n\nImportant changes will be communicated before taking effect and will not apply retroactively to remove rights already acquired.\n\nOperator: Pengelola OpenTurath\nAddress: Indonesia\nSupport: support@openturath.id\nPrivacy: support@openturath.id\nCopyright: support@openturath.id"
+    }
+   ],
+   "privacy": [
+    {
+     "title": "1. Data controller and scope",
+     "content": "This Privacy Policy explains personal data processing when you use OpenTurath, payments, and support. Pengelola OpenTurath (Indonesia) is responsible for processing whose purposes and means are determined by OpenTurath, in accordance with Indonesia's Law No. 27 of 2022 on Personal Data Protection.\n\nFor privacy questions, contact support@openturath.id."
+    },
+    {
+     "title": "2. Data processed",
+     "content": "We process data according to the features you use:\n• Account: name, email address, and public Google profile identity for authentication and personalization.\n• Subscription: selected package, status, validity period, and voucher use.\n• Payment: transaction number, amount, method, time, and status from Midtrans.\n• Transaction contact: WhatsApp/telephone number supplied at checkout to send activation information.\n• Conversation: questions, answers, and study context processed through Google research computing sessions.\n• Notes: notes, quotations, and references saved in local device storage.\n• Support: contact details, complaint contents, transaction numbers, and screenshot attachments for resolving problems.\n• Technical sessions: secure authentication session tokens to maintain device sign-in."
+    },
+    {
+     "title": "3. Purposes and grounds for processing",
+     "content": "Account and transaction data are processed to provide the requested service, manage subscriptions, and perform the agreement. Transaction records are also required to meet legal tax-administration and financial-transaction obligations.\n\nWe do not sell your personal data to any third party and do not use your conversations for targeted advertising."
+    },
+    {
+     "title": "4. AI conversations and Google's role",
+     "content": "When you send a question through the conversation feature, its text and context are processed through Google research computing technology. Google's processing follows its Privacy Policy and service terms.\n\nOpenTurath does not use conversation contents or users' private notes to train public AI models. Avoid entering sensitive personal or confidential information into conversations."
+    },
+    {
+     "title": "5. Notes and device storage",
+     "content": "Notes, source quotations, and reference bookmarks are stored locally on your device using application storage. Clearing application data or uninstalling may delete local notes. Use text-copying or note-sharing features to back up important notes to another location."
+    },
+    {
+     "title": "6. Recipients and service providers",
+     "content": "Data is shared only to the extent needed to operate the service:\n• Google: sign-in authentication and Google research computing conversation sessions.\n• Midtrans: the official payment provider for bank transactions, digital wallets, or QRIS.\n• Firebase / Google Cloud: secure transaction databases and account entitlement management.\n\nAll providers operate under industry security and encryption standards."
+    },
+    {
+     "title": "7. Advertising, analytics, and promotion",
+     "content": "OpenTurath is free of third-party advertising and does not sell your personal data. Transaction notifications and service updates are sent solely for account operations."
+    },
+    {
+     "title": "8. Cross-border processing",
+     "content": "Google authentication infrastructure and cloud databases may process some technical data in secure data centers inside or outside Indonesia, protected by global-standard encryption in transit and at rest."
+    },
+    {
+     "title": "9. Data retention",
+     "content": "• Account data: retained while the account is active and deleted after an account-closure request is approved.\n• Transaction data: retained for the period required by Indonesian tax and financial-transaction laws.\n• User notes: kept on your device until you delete them or uninstall the application.\n• Support complaints: retained during problem resolution and service archiving."
+    },
+    {
+     "title": "10. Data security",
+     "content": "We apply technical safeguards including encrypted SSL/TLS communications, restricted data access, and session-token protection. Your Google account password is never stored on OpenTurath servers."
+    },
+    {
+     "title": "11. Data subject rights",
+     "content": "Under personal data protection law, you have the right to:\n• Access and obtain information about personal data processed.\n• Update or correct inaccurate profile data.\n• Request deletion of your account and personal data at any time through the application.\n• Raise privacy objections or questions at support@openturath.id."
+    },
+    {
+     "title": "12. Users under 18",
+     "content": "Independent account registration is intended for users aged 18 and above. If you are a parent or guardian and find an account opened without the required authorization, contact support@openturath.id for handling and data deletion."
+    },
+    {
+     "title": "13. Contact and policy updates",
+     "content": "Document version: 1.0 (effective 13 September 2026).\n\nFor privacy questions or rights requests, contact:\nEmail: support@openturath.id\nOperator: Pengelola OpenTurath (Indonesia)"
+    }
+   ],
+   "refund": [
+    {
+     "title": "1. Information before purchase",
+     "content": "The total price, AI module coverage, access duration, and payment methods are clearly displayed on the subscription page before payment.\n\nA 30-day package lasts 30 full calendar days from successful activation. Future price changes do not affect a package already in progress."
+    },
+    {
+     "title": "2. Payment and access activation",
+     "content": "Payments are processed through the official Midtrans gateway by QRIS, bank transfer (virtual account), or digital wallet.\n\nOfficial payment evidence is sent through Midtrans notifications and your account email. Access becomes active once the transaction is confirmed successful and synchronized. If funds are deducted but access is not active, do not pay again; contact support@openturath.id with the transaction number."
+    },
+    {
+     "title": "3. Manual renewal without direct debit",
+     "content": "All OpenTurath subscriptions are renewed manually, without automatic recurring charges or direct debit. Paid access ends automatically when its validity expires unless you intentionally choose to renew."
+    },
+    {
+     "title": "4. Vouchers",
+     "content": "Promotional or partner vouchers follow the expiry, AI coverage, and redemption limits stated when issued. Vouchers cannot be exchanged for cash and are valid for one redemption by an eligible account."
+    },
+    {
+     "title": "5. Grounds for refund requests",
+     "content": "You may request review and a refund in cases of:\n• Duplicate payment caused by a technical transaction-system problem.\n• Funds deducted but access not activated after verification.\n• Prolonged technical disruption to the core paid service that cannot be restored.\n\nResolution may include access restoration, a validity-period adjustment you approve, or a full refund."
+    },
+    {
+     "title": "6. Refund process and timeframes",
+     "content": "Send your request to support@openturath.id with:\n1. Your OpenTurath account email.\n2. The transaction number / payment invoice.\n3. Official bank or digital-wallet payment evidence.\n4. A description of the problem.\n\nReceipt is acknowledged within at most 2 (two) business days. Review and the refund decision are completed within 7 (seven) business days. If approved, refunds are processed to the originating bank account or wallet according to banking rules (7 business days)."
+    },
+    {
+     "title": "7. Transaction support",
+     "content": "Payment and transaction problems are monitored on business days, Monday–Friday, 09:00–17:00 WIB.\nTransaction support email: support@openturath.id"
+    }
+   ],
+   "guideline": [
+    {
+     "title": "Principles and conduct in seeking knowledge",
+     "content": "AI technology supports reading and mapping discussions in classical Islamic works. AI assists text searches; deep religious understanding, continuity of scholarly transmission, and spiritual purification are obtained through direct learning from qualified teachers and scholars.\n\nThe following guidelines describe the conduct students should maintain when studying texts with OpenTurath."
+    },
+    {
+     "title": "Conduct 1 · AI assists; it is not a teacher",
+     "content": "Use AI to broaden reading, locate discussions, and formulate questions before presenting them to a teacher. AI is not a spiritual guide, has no authority to issue fatwas, and does not replace attendance at gatherings of knowledge.\n\nAI conclusions and explanations are preliminary study materials that require further examination with qualified scholars."
+    },
+    {
+     "title": "Conduct 2 · Examine text and context",
+     "content": "When finding a source quotation, read the preceding and following passages in full to understand its context. Observe conditions, exceptions, and legal limitations in the original text.\n\nCarefully distinguish the original work, a translation of its meaning, and machine-generated conclusions."
+    },
+    {
+     "title": "Conduct 3 · Respect schools and specialists",
+     "content": "Do not use study results to provoke disputes, attack others, or pass judgment on scholars' views. AI comparisons do not automatically cover the full richness of juristic scholarship.\n\nDetermining legal rulings and assessing the grading of transmitted reports are the responsibility of specialists with deep scholarly expertise."
+    },
+    {
+     "title": "Conduct 4 · Honesty and scholarly trust",
+     "content": "Do not imply that you have read an entire work when your study has only used search-engine summaries. Attribute and quote only texts that you have personally examined and read directly.\n\nScholarly honesty is the student's crown and preserves the blessing of studying classical works."
+    },
+    {
+     "title": "Conduct 5 · Beware of machine errors",
+     "content": "Fluent, polished, convincing language is no guarantee of actual correctness. A work title or chapter number does not establish that an explanation is free from interpretive errors.\n\nWeigh every answer against the Qur'an, Sunnah, and scholars' explanations. Do not rush to conclusions simply because the machine responds quickly."
+    },
+    {
+     "title": "Conduct 6 · Honor transmission and direct learning",
+     "content": "Religious knowledge is passed between generations by trustworthy scholars with moral integrity. AI processes data mechanically, without a soul: it has no scholarly chain of transmission, moral probity, or teaching authorization.\n\nTreat this technology solely as a library-search aid, not as a bearer of religious responsibility."
+    },
+    {
+     "title": "Conduct 7 · Guard speech and action",
+     "content": "In accordance with the approach of preserving a sound heart and tongue, do not use quotations to insult scholars, demean fellow Muslims, spread suspicion, or inflame hostility.\n\nLet knowledge bring calm, unite the community, and increase reverence for Allah."
+    },
+    {
+     "title": "Conduct 8 · Offer corrections courteously",
+     "content": "If you find an Arabic text error, incorrect author attribution, or inaccurate information in a displayed text, offer corrections courteously and with scholarly evidence.\n\nCorrections can be submitted through the official channel, support@openturath.id, to preserve the authenticity of the classical library."
+    }
+   ],
+   "contact": [
+    {
+     "title": "1. Support and complaints",
+     "content": "The OpenTurath team assists with account problems, subscription activation, payments, Notes, and corrections to reference-work texts."
+    },
+    {
+     "title": "2. Official communication channels",
+     "content": "• Support and transactions: support@openturath.id\n• Privacy and data requests: support@openturath.id\n• Copyright reports: support@openturath.id\n• Business address: Indonesia\n• Operating hours: Monday–Friday, 09:00–17:00 WIB\n• Response target: at most 2 (two) business days"
+    },
+    {
+     "title": "3. Information security",
+     "content": "Never send passwords, OTP codes, or confidential payment-card information to anyone, including people claiming to be OpenTurath staff. Use only the official email channels listed above."
+    }
+   ]
+  },
+  "ar": {
+   "terms": [
+    {
+     "title": "١. الجهة المشغلة ونطاق الشروط",
+     "content": "يتولى تشغيل OpenTurath مدير الخدمة Pengelola OpenTurath، ومقره إندونيسيا، ويشار إليه هنا بـ«نحن». ويشار إلى مستخدم التطبيق بـ«أنت». ويمكن التواصل مع الدعم عبر support@openturath.id.\n\nتنظم هذه الشروط استخدام الحساب والذكاء الاصطناعي وفهارس المراجع والملاحظات والميزات المدفوعة في OpenTurath. وتعد معلومات الباقة المعروضة قبل الشراء، وسياسة الدفع والاسترداد، ودليل استخدام الذكاء الاصطناعي والتحقق من المراجع جزءاً من شروط الاستخدام ذات الصلة."
+    },
+    {
+     "title": "٢. الموافقة وأهلية المستخدم",
+     "content": "تتاح لك قراءة الشروط السارية قبل إنشاء حساب أو شراء باقة. ويخصص الاستخدام المستقل لـOpenTurath لمن بلغوا 18 عاماً على الأقل. كما يجب أن تتوافر لديك الأهلية أو الصلاحية اللازمة لإبرام الاتفاقات وإجراء المدفوعات.\n\nالتسجيل الذاتي غير متاح حالياً لمن هم دون 18 عاماً. وإذا كنت تتصرف نيابة عن مؤسسة، فيجب أن تكون مخولاً بتمثيلها. ولا يمنح الشراء الفردي تلقائياً حق الاستخدام المشترك لجميع أعضاء المؤسسة."
+    },
+    {
+     "title": "٣. الحساب وأمن الوصول",
+     "content": "استخدم معلومات حساب صحيحة ووسيلة دخول يحق لك استخدامها. والحساب شخصي، ما لم تنص باقة كتابةً على إتاحة الاستخدام لعدة أشخاص.\n\nاحفظ جهازك ووسيلة دخولك. ولا تشارك كلمة المرور أو رمز الاستخدام الواحد مع غيرك. وأبلغ عن الاشتباه في الاستخدام غير المصرح به عبر support@openturath.id. وتراجع بلاغات الاستيلاء على الحساب بحسب الظروف والأدلة المتاحة."
+    },
+    {
+     "title": "٤. وظيفة الخدمة وحدود إجابات الذكاء الاصطناعي",
+     "content": "يساعد OpenTurath في البحث في المؤلفات وقراءة الاقتباسات وإعداد مواد الدراسة. وقد تتضمن الإجابات أخطاء في الشرح أو النسبة أو الترجمة أو بيانات المراجع.\n\nتحقق من الاقتباس في الكتاب والطبعة المستخدمة قبل اعتماده في الكتابة أو التدريس أو القرارات أو نقل الأحكام إلى الآخرين. وقد تختلف أرقام الصفحات بين الطبعات.\n\nليست إجابات الذكاء الاصطناعي فتاوى رسمية أو أحكاماً ملزمة أو بديلاً عن إرشاد المعلمين والعلماء المؤهلين. وعدم العثور على مرجع في نتيجة البحث يعني أن الخدمة لم تعثر عليه في ذلك البحث، ولا يثبت عدم وجود المسألة."
+    },
+    {
+     "title": "٥. الباقات والدفع ومدة الوصول",
+     "content": "تعرض قبل الدفع الأسعار ونطاق أدوات الذكاء الاصطناعي ومدة الوصول وحدود الاستخدام ومتطلبات حسابات الجهات الأخرى والرسوم السارية.\n\nتجدد الاشتراكات يدوياً. ولا نجري خصماً تلقائياً متكرراً بسبب شراء هذه الباقة.\n\nتبدأ مدة الوصول عند نجاح التفعيل، ويظهر تاريخ الانتهاء في الحساب. وتعالج المدفوعات عبر Midtrans بالطرق المتاحة وقت المعاملة. ونجاح الدفع وتفعيل الوصول حالتان منفصلتان. فإذا تم الدفع ولم ينشط الاشتراك، فتواصل مع الدعم وأرفق رقم المعاملة."
+    },
+    {
+     "title": "٦. خدمات الجهات الأخرى: البنية التحتية لـ Google",
+     "content": "تستخدم المحادثات تقنية الحوسبة البحثية من Google. وقد يعتمد الوصول على حسابك ومنطقتك وحدود الاستخدام وشروط المزود السارية عليك. ولا يغير شراء OpenTurath تلقائياً نوع اشتراك Google أو حقوق الوصول في حسابك.\n\nإذا أدت تغييرات خدمة خارجية إلى تعذر تقديم ميزة مدفوعة كما عرضت، فسنبحث إعادة الوصول أو خدمة بديلة توافق عليها أو استرداد المبلغ وفقاً لحقوقك."
+    },
+    {
+     "title": "٧. الاستخدام المسموح والممنوع",
+     "content": "يمكنك استخدام الخدمة للتعلم وإعداد التدريس والبحث ضمن الباقة التي تملكها. ويجب مراعاة حقوق النشر وصحة النسبة وآداب العلم عند استخدام النتائج.\n\nيحظر استخدام OpenTurath للاستيلاء على الحسابات أو تجاوز قيود الوصول بصورة غير مشروعة أو نشر البرمجيات الضارة أو إعادة بيع الوصول المدفوع للآخرين.\n\nويحظر إنشاء أو نشر اقتباسات ملفقة عمداً ونسبتها إلى العلماء أو مصادر محددة. ولا يعد النقاش العلمي المشروع، بما فيه اختلاف الرأي ونقد تفسير معين، مخالفة في ذاته."
+    },
+    {
+     "title": "٨. ملاحظات المستخدم ومواده",
+     "content": "تبقى حقوق كتاباتك وملاحظاتك لك. وتمنحنا إذناً محدوداً بمعالجة هذه المواد وحفظها حصراً لتشغيل الميزات التي تختارها. ولا ينقل هذا الإذن الملكية، ولا نبيع ملاحظاتك الخاصة أو ننشرها.\n\nتحفظ الملاحظات محلياً في جهازك عبر تخزين التطبيق. واستخدم ميزات النسخ أو المشاركة المتاحة للاحتفاظ بنسخة احتياطية من المواد المهمة."
+    },
+    {
+     "title": "٩. حقوق التطبيق والكتب",
+     "content": "تبقى حقوق برنامج OpenTurath وتصميمه وعلامته لأصحابها. وتخضع مواد الكتب والترجمات والتحقيقات لحالة حقوق كل منها.\n\nولا ينقل الوصول المدفوع حقوق نشر الكتب، ولا يمنح إذناً عاماً بتوزيع محتوياتها كاملةً تجارياً. ويجب أن يراعي الاقتباس حدود الاستخدام العادل ووجوب النسبة."
+    },
+    {
+     "title": "١٠. الإتاحة وتغييرات الميزات",
+     "content": "قد تخضع الخدمة لصيانة دورية أو تحديثات تقنية. ونسعى إلى الإشعار بالصيانة المخططة.\n\nتصاحب التغييرات التي تقلل بصورة جوهرية منفعة باقة مدفوعة خيارات معالجة معقولة. ولا نستخدم تعديل الشروط لإلغاء حقوق نشأت بالفعل عن شرائك."
+    },
+    {
+     "title": "١١. تقييد الوصول وإغلاق الحساب",
+     "content": "يجوز تقييد الوصول عند وجود أساس معقول لوقوع مخالفة جسيمة أو خطر أمني أو استخدام بغير حق. وتتناسب الإجراءات مع مستوى المشكلة، من التنبيه والتعليق المؤقت إلى إغلاق الحساب.\n\nوعندما تسمح الظروف، نبين الأسباب ونتيح فرصة الإيضاح عبر support@openturath.id."
+    },
+    {
+     "title": "١٢. المسؤوليات وحقوق المستخدم",
+     "content": "نحن مسؤولون عن تقديم الخدمة وفق الاتفاق والقانون الساري. وبيان حدود الذكاء الاصطناعي لا يعفينا من تقديم معلومات صحيحة أو معالجة الشكاوى أو تسوية مشكلات الخدمة المدفوعة.\n\nوأنت مسؤول عن تقييم ملاءمة النتائج لغرضك والتحقق من المصادر قبل الاستنتاج. ولا يلغي أي شرط حقوق المستهلك التي يحميها القانون."
+    },
+    {
+     "title": "١٣. الشكاوى والتشاور",
+     "content": "تواصل عبر support@openturath.id مع شرح المشكلة والمعلومات ذات الصلة. ونسجل الشكوى ونقدم تحديثاً بشأن معالجتها خلال يومي عمل، ونسعى إلى الحل بالتشاور.\n\nتخضع هذه الشروط لقانون جمهورية إندونيسيا."
+    },
+    {
+     "title": "١٤. تعديل الشروط وبيانات التواصل",
+     "content": "إصدار الوثيقة: 1.0، نافذ منذ 13 سبتمبر 2026.\n\nيعلن عن التغييرات المهمة قبل نفاذها، ولا تطبق بأثر رجعي لإلغاء حقوق سبق نشوؤها.\n\nالجهة المشغلة: Pengelola OpenTurath\nالعنوان: إندونيسيا\nالدعم: support@openturath.id\nالخصوصية: support@openturath.id\nحقوق النشر: support@openturath.id"
+    }
+   ],
+   "privacy": [
+    {
+     "title": "١. المسؤول عن البيانات ونطاق السياسة",
+     "content": "توضح هذه السياسة معالجة البيانات الشخصية عند استخدام تطبيق OpenTurath والدفع ودعم الخدمة. ويتولى Pengelola OpenTurath في إندونيسيا مسؤولية المعالجة التي يحدد OpenTurath أغراضها ووسائلها، وفق القانون الإندونيسي رقم 27 لسنة 2022 بشأن حماية البيانات الشخصية.\n\nللاستفسار عن الخصوصية، تواصل عبر support@openturath.id."
+    },
+    {
+     "title": "٢. البيانات التي تعالج",
+     "content": "نعالج البيانات بحسب الميزات التي تستخدمها:\n• الحساب: الاسم والبريد الإلكتروني وبيانات الملف العام لحساب Google للمصادقة وتخصيص التجربة.\n• الاشتراك: الباقة المختارة والحالة ومدة الصلاحية واستخدام القسائم.\n• الدفع: رقم المعاملة والمبلغ والطريقة والوقت والحالة الواردة من Midtrans.\n• التواصل بشأن المعاملة: رقم WhatsApp أو الهاتف الذي تقدمه عند الدفع لإرسال معلومات التفعيل.\n• المحادثات: الأسئلة والإجابات وسياق الدراسة المعالج عبر جلسات الحوسبة البحثية لـ Google.\n• الملاحظات: الملاحظات والاقتباسات والمراجع المحفوظة محلياً في الجهاز.\n• الدعم: بيانات التواصل ومحتوى الشكوى ورقم المعاملة ومرفقات لقطات الشاشة لمعالجة المشكلة.\n• الجلسات التقنية: رموز جلسات مصادقة آمنة للحفاظ على الدخول في الجهاز."
+    },
+    {
+     "title": "٣. أغراض المعالجة وأساسها",
+     "content": "تعالج بيانات الحساب والمعاملات لتقديم الخدمة التي طلبتها وإدارة الاشتراكات وتنفيذ الاتفاق. كما تلزم سجلات المعاملات للوفاء بالالتزامات القانونية المتعلقة بالإدارة الضريبية والمعاملات المالية.\n\nلا نبيع بياناتك الشخصية لأي طرف ثالث، ولا نستخدم محادثاتك للإعلانات الموجهة."
+    },
+    {
+     "title": "٤. محادثات الذكاء الاصطناعي ودور Google",
+     "content": "عند إرسال سؤال عبر المحادثة، يعالج النص والسياق عبر تقنية الحوسبة البحثية لـ Google. وتخضع معالجة Google لسياسة خصوصيتها وشروط خدمتها.\n\nلا يستخدم تطبيق OpenTurath محتويات المحادثات أو ملاحظات المستخدمين الخاصة لتدريب نماذج ذكاء اصطناعي عامة. وتجنب إدخال معلومات شخصية حساسة أو سرية في المحادثات."
+    },
+    {
+     "title": "٥. الملاحظات وتخزين الجهاز",
+     "content": "تحفظ الملاحظات واقتباسات العبارات وعلامات المراجع محلياً في جهازك باستخدام تخزين التطبيق. وقد تحذف الملاحظات المحلية عند مسح بيانات التطبيق أو إلغاء تثبيته. واستخدم نسخ النص أو مشاركة الملاحظات للاحتفاظ بنسخة من الملاحظات المهمة في موضع آخر."
+    },
+    {
+     "title": "٦. الجهات المستلمة ومزودو الخدمة",
+     "content": "تشارك البيانات بالقدر اللازم لتشغيل الخدمة فقط:\n• Google: مصادقة الدخول ومعالجة جلسات الحوسبة البحثية لـ Google.\n• Midtrans: جهة الدفع الرسمية لمعالجة التحويلات المصرفية والمحافظ الرقمية أو QRIS.\n• Firebase / Google Cloud: إدارة قواعد بيانات المعاملات وحالة حقوق الوصول للحساب بأمان.\n\nتعمل جميع الجهات المزودة وفق معايير الأمن والتشفير المعمول بها في القطاع."
+    },
+    {
+     "title": "٧. الإعلانات والتحليلات والترويج",
+     "content": "يخلو OpenTurath من إعلانات الجهات الأخرى، ولا يبيع بياناتك الشخصية. وترسل إشعارات المعاملات وتحديثات الخدمة لأغراض تشغيل حسابك حصراً."
+    },
+    {
+     "title": "٨. معالجة البيانات عبر الحدود",
+     "content": "قد تعالج بنية مصادقة Google وقواعد البيانات السحابية بعض البيانات التقنية في مراكز آمنة داخل إندونيسيا أو خارجها، مع تشفير أثناء النقل والتخزين وفق المعايير العالمية."
+    },
+    {
+     "title": "٩. مدة الاحتفاظ بالبيانات",
+     "content": "• بيانات الحساب: تحفظ ما دام الحساب نشطاً، وتحذف بعد الموافقة على طلب إغلاقه.\n• بيانات المعاملات: تحفظ للمدة التي تفرضها أحكام الضرائب وقوانين المعاملات المالية في جمهورية إندونيسيا.\n• ملاحظات المستخدم: تبقى في جهازك إلى أن تحذفها أو تلغي تثبيت التطبيق.\n• شكاوى الدعم: تحفظ خلال معالجة المشكلة وأرشفة الخدمة."
+    },
+    {
+     "title": "١٠. أمن البيانات وحمايتها",
+     "content": "نطبق تدابير أمنية تقنية، منها اتصالات SSL/TLS المشفرة وتقييد الوصول إلى البيانات وحماية رموز الجلسات. ولا تحفظ كلمة مرور حساب Google مطلقاً على خوادم OpenTurath."
+    },
+    {
+     "title": "١١. حقوق صاحب البيانات",
+     "content": "بموجب قانون حماية البيانات الشخصية، يحق لك:\n• الوصول إلى بياناتك الشخصية المعالجة والحصول على معلومات عنها.\n• تحديث بيانات الملف الخاطئة أو تصحيحها.\n• طلب حذف الحساب والبيانات الشخصية في أي وقت عبر التطبيق.\n• تقديم اعتراضات أو أسئلة بشأن الخصوصية إلى support@openturath.id."
+    },
+    {
+     "title": "١٢. المستخدمون دون السن المحددة",
+     "content": "التسجيل الذاتي مخصص لمن بلغوا 18 عاماً فأكثر. وإذا كنت ولياً أو وصياً وعثرت على حساب فتح دون الإذن المطلوب، فتواصل عبر support@openturath.id لمعالجة الحالة وحذف البيانات."
+    },
+    {
+     "title": "١٣. التواصل وتحديث السياسة",
+     "content": "إصدار الوثيقة: 1.0، نافذ منذ 13 سبتمبر 2026.\n\nللاستفسارات أو طلبات ممارسة حقوق الخصوصية:\nالبريد: support@openturath.id\nالجهة المشغلة: Pengelola OpenTurath، إندونيسيا"
+    }
+   ],
+   "refund": [
+    {
+     "title": "١. المعلومات قبل الشراء",
+     "content": "تعرض تفاصيل السعر الإجمالي ونطاق وحدات الذكاء الاصطناعي ومدة الوصول وطرق الدفع بوضوح في صفحة الاشتراك قبل الدفع.\n\nتحسب باقة 30 يوماً على أساس 30 يوماً تقويمياً كاملاً من نجاح التفعيل. ولا تؤثر تغييرات الأسعار المستقبلية في باقة جارية."
+    },
+    {
+     "title": "٢. الدفع وتفعيل الوصول",
+     "content": "تعالج المدفوعات عبر بوابة Midtrans الرسمية باستخدام QRIS أو التحويل المصرفي إلى حساب افتراضي أو المحافظ الرقمية.\n\nيرسل إثبات الدفع الرسمي عبر إشعارات Midtrans وبريد حسابك. وينشط الوصول بمجرد تأكيد نجاح المعاملة ومزامنتها. وإذا خصم المبلغ ولم ينشط الوصول، فلا تدفع مرة أخرى؛ وتواصل عبر support@openturath.id مع رقم المعاملة."
+    },
+    {
+     "title": "٣. التجديد اليدوي دون خصم تلقائي",
+     "content": "تجدد جميع باقات OpenTurath يدوياً دون فواتير متكررة أو خصم تلقائي. وينتهي الوصول المدفوع تلقائياً عند انتهاء الصلاحية، ما لم تختر التجديد بإرادتك."
+    },
+    {
+     "title": "٤. أحكام القسائم",
+     "content": "تخضع القسائم الترويجية أو قسائم الشركاء لمدة الصلاحية ونطاق أدوات الذكاء الاصطناعي وحدود الاستبدال المعلنة عند إصدارها. ولا تستبدل بنقد، وتصلح لاستبدال واحد في حساب مستحق."
+    },
+    {
+     "title": "٥. أسباب طلب الاسترداد",
+     "content": "يحق لك طلب المراجعة واسترداد المبلغ عند:\n• تكرار الدفع نتيجة خلل تقني في نظام المعاملات.\n• خصم المبلغ وعدم تفعيل الوصول بعد التحقق.\n• تعطل تقني مطول في الخدمة المدفوعة الأساسية لا يمكن إصلاحه.\n\nوقد تكون المعالجة بإعادة الوصول أو تعديل مدة الصلاحية بموافقتك أو رد المبلغ كاملاً."
+    },
+    {
+     "title": "٦. إجراءات الاسترداد ومدده",
+     "content": "أرسل الطلب إلى support@openturath.id وأرفق:\n1. بريد حساب OpenTurath.\n2. رقم المعاملة أو فاتورة الدفع.\n3. إثبات الدفع الرسمي من المصرف أو المحفظة.\n4. شرح المشكلة.\n\nيرسل تأكيد استلام الطلب خلال يومي عمل كحد أقصى. وتكتمل المراجعة وقرار الاسترداد خلال سبعة أيام عمل. وعند الموافقة، يرد المبلغ إلى الحساب أو المحفظة الأصلية وفق الإجراءات المصرفية، خلال سبعة أيام عمل."
+    },
+    {
+     "title": "٧. دعم المعاملات",
+     "content": "تتابع مشكلات الدفع والمعاملات في أيام العمل، من الاثنين إلى الجمعة، 09:00–17:00 بتوقيت غرب إندونيسيا WIB.\nبريد دعم المعاملات: support@openturath.id"
+    }
+   ],
+   "guideline": [
+    {
+     "title": "أصول طلب العلم وآدابه",
+     "content": "تساند تقنية الذكاء الاصطناعي قراءة كتب التراث ورسم خريطة مباحثها. وهي أداة للبحث في النصوص، أما التعمق في فهم الدين واتصال السند وتزكية النفس فلا تنال إلا بالتلقي عن المعلمين والعلماء المؤهلين.\n\nفيما يأتي آداب ينبغي لطالب العلم مراعاتها عند دراسة النصوص مع OpenTurath."
+    },
+    {
+     "title": "الأدب ١ · الذكاء الاصطناعي أداة مساعدة وليس معلماً",
+     "content": "استخدمه لتوسيع القراءة وتحديد مواضع المباحث وصياغة الأسئلة قبل عرضها على المعلم. وليس الذكاء الاصطناعي شيخاً مربياً، ولا يملك صلاحية الإفتاء، ولا يغني عن حضور مجالس العلم.\n\nاستنتاجاته وشروحه مواد أولية للدراسة تحتاج إلى مراجعة العلماء المؤهلين."
+    },
+    {
+     "title": "الأدب ٢ · التحقق من النص وسياقه",
+     "content": "عند العثور على اقتباس، اقرأ ما قبله وما بعده كاملاً لفهم سياق النص. وراع الشروط والاستثناءات وحدود الأحكام في الأصل.\n\nوميز بدقة بين نص الكتاب الأصلي وترجمة المعنى والاستنتاج الذي تنتجه الآلة."
+    },
+    {
+     "title": "الأدب ٣ · احترام المذاهب وأهل الاختصاص",
+     "content": "لا تستخدم نتائج الدراسة لإثارة الجدل أو التضييق على الآخرين أو الحكم على آراء العلماء. ولا تستوعب مقارنات الذكاء الاصطناعي تلقائياً جميع ثراء تراث الفقهاء.\n\nفتقرير الأحكام وتقييم درجات الروايات من شأن المتخصصين ذوي المعرفة العلمية العميقة."
+    },
+    {
+     "title": "الأدب ٤ · الصدق والأمانة العلمية",
+     "content": "لا توهم أنك قرأت كتاباً كاملاً إذا اقتصرت دراستك على ملخصات محرك البحث. ولا تنسب أو تقتبس إلا النصوص التي تحققت منها وقرأتها بنفسك مباشرةً.\n\nفالصدق العلمي تاج طالب العلم وحافظ بركة دراسة التراث."
+    },
+    {
+     "title": "الأدب ٥ · الحذر من أخطاء الآلة",
+     "content": "فصاحة العبارة وترتيبها وقوة إقناعها ليست ضماناً لصحتها. وورود عنوان كتاب أو رقم باب لا يثبت خلو الشرح من أخطاء الفهم.\n\nزن كل جواب بقواعد القرآن والسنة وشروح العلماء، ولا تتعجل الاستنتاج لمجرد سرعة الآلة."
+    },
+    {
+     "title": "الأدب ٦ · حفظ مكانة السند والتلقي",
+     "content": "يتوارث العلم الديني علماء موثوقون تتوافر فيهم النزاهة. ويعالج الذكاء الاصطناعي البيانات آلياً بلا روح، فلا يملك سنداً علمياً أو عدالة أو إجازة تعليم.\n\nاجعل هذه التقنية مجرد مساعد للبحث في المكتبة، لا حاملاً لأمانة الدين."
+    },
+    {
+     "title": "الأدب ٧ · حفظ اللسان واليد",
+     "content": "وفق منهج سلامة الصدر واللسان، لا تستخدم الاقتباسات لذم العلماء أو احتقار المسلمين أو نشر الظنون أو إشعال العداوة.\n\nواجعل العلم سبباً لطمأنينة القلوب وجمع الأمة وزيادة الخشية من الله."
+    },
+    {
+     "title": "الأدب ٨ · الرفق عند التصحيح",
+     "content": "إذا وجدت خطأ في النص العربي أو نسبة المؤلف أو المعلومات المعروضة، فقدم التصحيح بأدب ودليل علمي.\n\nترسل تقارير التصحيح إلى القناة الرسمية support@openturath.id حفاظاً على أصالة تراث الكتب."
+    }
+   ],
+   "contact": [
+    {
+     "title": "١. الدعم والشكاوى",
+     "content": "يساعد فريق OpenTurath في مشكلات الحساب وتفعيل الاشتراك والدفع واستخدام الملاحظات، ويستقبل تصحيحات نصوص الكتب المرجعية."
+    },
+    {
+     "title": "٢. قنوات التواصل الرسمية",
+     "content": "• الدعم والمعاملات: support@openturath.id\n• طلبات الخصوصية والبيانات: support@openturath.id\n• بلاغات حقوق النشر: support@openturath.id\n• عنوان النشاط: إندونيسيا\n• ساعات العمل: الاثنين–الجمعة، 09:00–17:00 بتوقيت غرب إندونيسيا WIB\n• المدة المستهدفة للرد: يومان من أيام العمل كحد أقصى"
+    },
+    {
+     "title": "٣. أمن المعلومات",
+     "content": "لا ترسل كلمات المرور أو رموز OTP أو بيانات بطاقات الدفع السرية لأي شخص، بما في ذلك من يدعي الانتماء إلى فريق OpenTurath. واستخدم قنوات البريد الرسمية المذكورة أعلاه فقط."
+    }
+   ]
+  }
+ },
+ "site": {
+  "id": {
+   "sources-and-rights": {
+    "title": "Sumber dan hak penggunaan.",
+    "sections": [
+     {
+      "title": "Hak setiap edisi",
+      "content": "Karya klasik tidak otomatis membuat semua tahkik, terjemahan, atau reproduksi modern bebas hak cipta. Akses aplikasi tidak memberikan izin umum untuk menyalin atau menjual isi kitab."
+     },
+     {
+      "title": "Atribusi dan permohonan koreksi",
+      "content": "Cantumkan karya, pengarang, dan edisi yang digunakan. Pemegang hak dapat menghubungi support@openturath.id dengan identitas karya, lokasi materi, bukti hak, dan permintaan yang jelas."
+     }
+    ]
+   },
+   "account-deletion": {
+    "title": "Penghapusan akun dan data.",
+    "sections": [
+     {
+      "title": "Mengajukan permohonan",
+      "content": "Gunakan fitur penghapusan akun dalam aplikasi atau hubungi support@openturath.id dari email akun. Pengelola dapat meminta verifikasi kepemilikan yang proporsional. Jangan mengirim kata sandi atau OTP."
+     },
+     {
+      "title": "Data yang berbeda tempat penyimpanan",
+      "content": "Cadangkan Catatan lokal sebelum menghapus data aplikasi. Penghapusan akun OpenTurath tidak otomatis menghapus data pada akun atau sesi pihak ketiga eksternal. Data transaksi yang wajib disimpan secara hukum dapat dikecualikan dari penghapusan langsung."
+     }
+    ]
+   },
+   "security": {
+    "title": "Keamanan dan pelaporan.",
+    "sections": [
+     {
+      "title": "Melindungi akses",
+      "content": "Jangan membagikan kata sandi, kode sekali pakai, atau tautan akun pribadi. Gunakan perangkat yang tepercaya dan periksa alamat resmi sebelum masuk atau membayar."
+     },
+     {
+      "title": "Laporan kerentanan",
+      "content": "Kirim deskripsi kerentanan dan langkah reproduksi minimum ke support@openturath.id. Hindari mengambil data pengguna lain atau mengganggu layanan. Pengamanan operasional, cadangan, dan pemantauan tetap menjadi tanggung jawab pengelola deployment."
+     }
+    ]
+   },
+   "accessibility": {
+    "title": "Dapat dibaca, dapat digunakan.",
+    "sections": [
+     {
+      "title": "Navigasi dan preferensi",
+      "content": "Gunakan tautan lewati ke isi, navigasi papan ketik, dan kontrol ukuran teks pada arsip telaah. Dialog dapat ditutup dengan Escape. Tema dan bahasa disimpan pada perangkat jika penyimpanan diizinkan."
+     },
+     {
+      "title": "Arab dan pengurangan gerak",
+      "content": "Halaman Arab menggunakan RTL dan font Arab lokal. Efek paralaks mengikuti preferensi pengurangan gerak. Konten utama tetap tersedia tanpa JavaScript. Laporkan hambatan akses melalui halaman kontak."
+     }
+    ]
+   }
+  },
+  "en": {
+   "sources-and-rights": {
+    "title": "Sources and usage rights.",
+    "sections": [
+     {
+      "title": "Rights in each edition",
+      "content": "A classical work does not automatically place modern editions, translations, or reproductions in the public domain. App access does not grant blanket permission to copy or sell book contents."
+     },
+     {
+      "title": "Attribution and correction requests",
+      "content": "Credit the work, author, and edition used. Rights holders can contact support@openturath.id with the work’s identity, material location, rights evidence, and a clear request."
+     }
+    ]
+   },
+   "account-deletion": {
+    "title": "Delete your account and data.",
+    "sections": [
+     {
+      "title": "Make a request",
+      "content": "Use account deletion in the app or contact support@openturath.id from your account email. The operator may request proportionate ownership verification. Never send a password or OTP."
+     },
+     {
+      "title": "Data stored in different places",
+      "content": "Back up local Notes before deleting app data. Deleting OpenTurath does not automatically delete data in external third-party accounts or sessions. Transaction records legally required for retention may be exempt from immediate deletion."
+     }
+    ]
+   },
+   "security": {
+    "title": "Security and reporting.",
+    "sections": [
+     {
+      "title": "Protecting access",
+      "content": "Do not share passwords, one-time codes, or private account links. Use trusted devices and check official addresses before signing in or paying."
+     },
+     {
+      "title": "Vulnerability reports",
+      "content": "Send a vulnerability description and minimal reproduction steps to support@openturath.id. Avoid accessing other users’ data or disrupting service. Operational security, backups, and monitoring remain the deployment operator’s responsibility."
+     }
+    ]
+   },
+   "accessibility": {
+    "title": "Readable and usable.",
+    "sections": [
+     {
+      "title": "Navigation and preferences",
+      "content": "Use the skip link, keyboard navigation, and reading-size controls in the study archive. Close dialogs with Escape. Theme and language preferences are stored on your device when storage is allowed."
+     },
+     {
+      "title": "Arabic and reduced motion",
+      "content": "Arabic pages use RTL and locally served Arabic fonts. Parallax respects reduced-motion preferences. Core content remains available without JavaScript. Report accessibility barriers through Contact."
+     }
+    ]
+   }
+  },
+  "ar": {
+   "sources-and-rights": {
+    "title": "المصادر وحقوق الاستخدام.",
+    "sections": [
+     {
+      "title": "حقوق كل طبعة",
+      "content": "لا يجعل قِدم المؤلف كل تحقيق أو ترجمة أو تصوير حديث مباح الحقوق. ولا يمنح الوصول إلى التطبيق إذنًا عامًا بنسخ الكتب أو بيعها."
+     },
+     {
+      "title": "النسبة وطلبات التصحيح",
+      "content": "اذكر العمل والمؤلف والطبعة المستخدمة. يمكن لأصحاب الحقوق التواصل عبر support@openturath.id مع هوية العمل وموقع المادة وإثبات الحق وطلب واضح."
+     }
+    ]
+   },
+   "account-deletion": {
+    "title": "حذف الحساب والبيانات.",
+    "sections": [
+     {
+      "title": "تقديم طلب",
+      "content": "استخدم حذف الحساب داخل التطبيق أو راسل support@openturath.id من بريد الحساب. قد يُطلب تحقّق متناسب من الملكية. لا ترسل كلمة مرور أو رمز تحقّق."
+     },
+     {
+      "title": "البيانات في مواضع مختلفة",
+      "content": "انسخ الملاحظات المحلية قبل حذف بيانات التطبيق. لا يحذف حذف حساب OpenTurath البيانات في الحسابات أو الجلسات الخارجية للأطراف الثالثة تلقائيًا. وقد تُستثنى سجلات المعاملات الواجب حفظها قانونًا من الحذف الفوري."
+     }
+    ]
+   },
+   "security": {
+    "title": "الأمن والإبلاغ.",
+    "sections": [
+     {
+      "title": "حماية الوصول",
+      "content": "لا تشارك كلمات المرور أو الرموز المؤقتة أو روابط الحساب الخاصة. استخدم أجهزة موثوقة وتحقّق من العنوان الرسمي قبل الدخول أو الدفع."
+     },
+     {
+      "title": "بلاغات الثغرات",
+      "content": "أرسل وصف الثغرة وخطوات إعادة إنتاج محدودة إلى support@openturath.id. تجنّب الوصول إلى بيانات الآخرين أو تعطيل الخدمة. تبقى الحماية التشغيلية والنسخ الاحتياطية والمراقبة مسؤولية مشغّل النشر."
+     }
+    ]
+   },
+   "accessibility": {
+    "title": "قابل للقراءة والاستخدام.",
+    "sections": [
+     {
+      "title": "التنقل والتفضيلات",
+      "content": "استخدم رابط تجاوز التنقل ولوحة المفاتيح وضوابط حجم النص في الأرشيف. أغلق الحوارات بزر Escape. تُحفظ تفضيلات المظهر واللغة على الجهاز عند السماح بالتخزين."
+     },
+     {
+      "title": "العربية وتقليل الحركة",
+      "content": "تستخدم الصفحات العربية اتجاه RTL وخطوطًا عربية محلية. تراعي الحركة تفضيل تقليلها. يبقى المحتوى الأساسي متاحًا دون JavaScript. أبلغ عن عوائق الاستخدام عبر التواصل."
+     }
+    ]
+   }
+  }
+ }
+}
