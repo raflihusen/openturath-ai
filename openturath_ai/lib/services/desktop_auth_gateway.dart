@@ -65,7 +65,8 @@ class DesktopAuthGateway {
 
     // Token acak (CSRF protection) 128-bit
     final random = Random.secure();
-    final state = List.generate(32, (_) => random.nextInt(16).toRadixString(16)).join();
+    final state =
+        List.generate(32, (_) => random.nextInt(16).toRadixString(16)).join();
 
     final htmlContent = overrideHtml ?? _buildAuthHtml(server.port, state);
 
@@ -103,7 +104,8 @@ class DesktopAuthGateway {
 
           if (data['state'] != state) {
             request.response.statusCode = HttpStatus.forbidden;
-            request.response.write(jsonEncode({'error': 'State mismatch (CSRF guard)'}));
+            request.response
+                .write(jsonEncode({'error': 'State mismatch (CSRF guard)'}));
             await request.response.close();
             return;
           }
@@ -111,7 +113,8 @@ class DesktopAuthGateway {
           final idToken = (data['idToken'] as String?)?.trim() ?? '';
           if (idToken.isEmpty) {
             request.response.statusCode = HttpStatus.badRequest;
-            request.response.write(jsonEncode({'error': 'idToken is required'}));
+            request.response
+                .write(jsonEncode({'error': 'idToken is required'}));
             await request.response.close();
             return;
           }
@@ -178,7 +181,8 @@ class DesktopAuthGateway {
       await cancel();
       throw PlatformException(
         code: 'browser_launch_failed',
-        message: 'Tidak dapat membuka browser sistem untuk otorisasi Google: $e',
+        message:
+            'Tidak dapat membuka browser sistem untuk otorisasi Google: $e',
       );
     }
 

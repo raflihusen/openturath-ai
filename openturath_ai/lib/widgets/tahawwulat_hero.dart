@@ -19,6 +19,7 @@ class TahawwulatHero extends StatelessWidget {
       required this.onIntroduction,
       this.facts = const [],
       this.onOpenLibrary});
+
   /// Saklar pengendali tombol pengenalan (default: sembunyi).
   /// Dapat diaktifkan secara real-time kapan saja (`TahawwulatHero.showIntroduction = true`).
   static bool showIntroduction = false;

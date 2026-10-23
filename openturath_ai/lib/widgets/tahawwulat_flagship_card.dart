@@ -6,7 +6,7 @@ import '../services/open_turath_catalog_repository.dart';
 import 'assistant_grid_card.dart';
 import 'tahawwulat_hero.dart';
 import 'tahawwulat_ai_picker.dart';
-import 'tahawwulat_introduction_sheet.dart';
+import 'tahawwulat_module_screen.dart';
 
 class TahawwulatFlagshipCard extends StatelessWidget {
   const TahawwulatFlagshipCard(
@@ -36,10 +36,7 @@ class TahawwulatFlagshipCard extends StatelessWidget {
           onOpen: choose,
           onOpenLibrary: onOpenLibrary,
           onIntroduction: onOpenIntroduction ??
-              () => TahawwulatIntroductionSheet.show(context,
-                  agent: agent,
-                  onSelectSubAgent: onOpenSubAgent,
-                  onOpenMain: choose),
+              () => TahawwulatModuleScreen.show(context, onAsk: choose),
           facts: LibraryStat.from(metadata)
               .map((s) => '${s.value} ${s.unit}')
               .toList()),

@@ -44,9 +44,12 @@ void main() {
       expect(lockedAgents.map((a) => a.id), contains('tasawwuf'));
     });
 
-    test('AgentService getActiveAgentsSync matches active whitelist and isolates unreleased agents', () {
+    test(
+        'AgentService getActiveAgentsSync matches active whitelist and isolates unreleased agents',
+        () {
       final agents = AgentService.getActiveAgentsSync();
-      final active = agents.where((a) => a.isActive && !a.isComingSoon).toList();
+      final active =
+          agents.where((a) => a.isActive && !a.isComingSoon).toList();
       final unreleased = agents.where((a) => a.isComingSoon).toList();
 
       expect(active.map((a) => a.id), contains('fiqh_tahawwulat'));
@@ -66,10 +69,14 @@ void main() {
               a.id != 'fiqh_tahawwulat')
           .toList();
 
-      expect(specialistsForSubscription.map((a) => a.id), contains('fiqh_syafii'));
-      expect(specialistsForSubscription.map((a) => a.id), isNot(contains('fiqh_hanafi')));
-      expect(specialistsForSubscription.map((a) => a.id), isNot(contains('hadits')));
-      expect(specialistsForSubscription.map((a) => a.id), isNot(contains('tafsir')));
+      expect(
+          specialistsForSubscription.map((a) => a.id), contains('fiqh_syafii'));
+      expect(specialistsForSubscription.map((a) => a.id),
+          isNot(contains('fiqh_hanafi')));
+      expect(specialistsForSubscription.map((a) => a.id),
+          isNot(contains('hadits')));
+      expect(specialistsForSubscription.map((a) => a.id),
+          isNot(contains('tafsir')));
     });
 
     test(

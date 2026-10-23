@@ -61,8 +61,7 @@ class FieldModel {
     FieldModel(
       id: 'tafsir',
       name: 'Tafsir & Qiraat',
-      description:
-          'Tafsir, asbabun nuzul, tajwid, dan qira\'at Al-Qur\'an.',
+      description: 'Tafsir, asbabun nuzul, tajwid, dan qira\'at Al-Qur\'an.',
       icon: Icons.menu_book_rounded,
       specialistCount: 2,
       agentIds: [
@@ -95,8 +94,7 @@ class FieldModel {
     FieldModel(
       id: 'lughah',
       name: 'Bahasa & Sastra Arab',
-      description:
-          'Nahwu, sharaf, balaghah, dan kamus bahasa Arab klasik.',
+      description: 'Nahwu, sharaf, balaghah, dan kamus bahasa Arab klasik.',
       icon: Icons.translate_rounded,
       specialistCount: 1,
       agentIds: [
@@ -118,8 +116,7 @@ class FieldModel {
     FieldModel(
       id: 'tasawwuf',
       name: 'Tasawuf & Akhlak',
-      description:
-          'Penyucian jiwa, adab, dan hikmah para ulama terdahulu.',
+      description: 'Penyucian jiwa, adab, dan hikmah para ulama terdahulu.',
       icon: Icons.spa_rounded,
       specialistCount: 1,
       agentIds: [

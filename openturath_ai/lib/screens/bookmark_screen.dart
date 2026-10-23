@@ -487,7 +487,8 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                               ),
                             ),
                             TextButton(
-                              onPressed: _isManualSyncing ? null : _syncBookmarks,
+                              onPressed:
+                                  _isManualSyncing ? null : _syncBookmarks,
                               child: _isManualSyncing
                                   ? Row(
                                       mainAxisSize: MainAxisSize.min,

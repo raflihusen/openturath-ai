@@ -1,0 +1,718 @@
+{
+ "head": {
+  "kicker": {
+   "id": "Mengenal Fikih Tahawwulat",
+   "en": "Getting to know Fiqh al-Tahawwulat",
+   "ar": "التعرّف على فقه التحولات"
+  },
+  "title": {
+   "id": "Ilmu untuk memahami zaman yang terus berubah.",
+   "en": "A knowledge for understanding a changing age.",
+   "ar": "علم لفهم زمان يتغيّر."
+  },
+  "lead": {
+   "id": "Panduan singkat untuk orang awam: ilmu apa ini, apa gunanya dalam hidup Anda, dan apa bedanya dengan pembahasan akhir zaman yang sering beredar.",
+   "en": "A short guide for everyone: what this knowledge is, what it is good for in your life, and how it differs from the end-times talk that circulates.",
+   "ar": "دليل موجز لعامة القرّاء: ما هذا العلم، وما فائدته في حياتك، وبماذا يختلف عن حديث آخر الزمان المتداول."
+  }
+ },
+ "q": {
+  "kicker": {
+   "id": "Mengapa ilmu ini ada",
+   "en": "Why this knowledge exists",
+   "ar": "لماذا وُجد هذا العلم"
+  },
+  "title": {
+   "id": "Pertanyaan yang kini sulit mendapat jawaban.",
+   "en": "Questions that are hard to answer today.",
+   "ar": "أسئلة يصعب أن نجد لها جوابًا اليوم."
+  },
+  "lead": {
+   "id": "Banyak orang membawa pertanyaan ini diam-diam. Fikih Tahawwulat hadir untuk menjawab pertanyaan seperti ini dengan petunjuk Al-Qur'an dan hadis. Di sini kami hanya menunjukkan pertanyaannya. Jawabannya ada di kitab dan bisa Anda tanyakan kepada OpenTurath AI.",
+   "en": "Many people carry these questions quietly. Fiqh al-Tahawwulat exists to answer questions like these by the guidance of the Qur'an and hadith. Here we only show the questions. The answers are in the books, and you can ask OpenTurath AI.",
+   "ar": "يحمل كثيرون هذه الأسئلة في صمت. وقد وُجد فقه التحولات ليجيب عن مثلها بهدي القرآن والحديث. نعرض هنا الأسئلة فقط، أما الأجوبة ففي الكتب، ويمكنك أن تسأل OpenTurath AI."
+  },
+  "groups": [
+   [
+    {
+     "id": "Tentang hati dan berita",
+     "en": "About the heart and the news",
+     "ar": "عن القلب والأخبار"
+    },
+    [
+     {
+      "id": "Kenapa dunia terasa makin kacau? Apakah semua ini sudah dikabarkan Nabi?",
+      "en": "Why does the world feel more chaotic? Did the Prophet already tell us of this?",
+      "ar": "لماذا يبدو العالم أكثر اضطرابًا؟ وهل أخبر النبي ﷺ بهذا؟"
+     },
+     {
+      "id": "Saya capek dengan berita buruk. Haruskah saya terus mengikuti semuanya?",
+      "en": "I am tired of bad news. Must I keep following all of it?",
+      "ar": "تعبتُ من الأخبار السيئة. هل يلزمني متابعتها كلها؟"
+     },
+     {
+      "id": "Kenapa iman saya naik turun dan susah istikamah?",
+      "en": "Why does my faith rise and fall, and why is steadfastness so hard?",
+      "ar": "لماذا يعلو إيماني ويهبط، ويصعب عليّ الثبات؟"
+     }
+    ]
+   ],
+   [
+    {
+     "id": "Tentang ilmu dan guru",
+     "en": "About knowledge and teachers",
+     "ar": "عن العلم والمعلمين"
+    },
+    [
+     {
+      "id": "Kenapa orang yang tidak berilmu justru paling didengar di media sosial?",
+      "en": "Why are people without knowledge the ones most heard on social media?",
+      "ar": "لماذا يُسمع في وسائل التواصل من لا علم له أكثر من غيره؟"
+     },
+     {
+      "id": "Bagaimana membedakan ustaz yang tepercaya dari yang bukan?",
+      "en": "How do I tell a trustworthy teacher from one who is not?",
+      "ar": "كيف أميّز المعلم الموثوق من غيره؟"
+     },
+     {
+      "id": "Apa yang harus saya lakukan dengan hoaks agama di grup keluarga?",
+      "en": "What should I do with religious hoaxes in the family group chat?",
+      "ar": "ماذا أفعل بالأخبار الدينية المكذوبة في مجموعة الأسرة؟"
+     }
+    ]
+   ],
+   [
+    {
+     "id": "Tentang keluarga",
+     "en": "About the family",
+     "ar": "عن الأسرة"
+    },
+    [
+     {
+      "id": "Bagaimana menjaga iman anak di zaman layar?",
+      "en": "How do I protect my child's faith in the age of screens?",
+      "ar": "كيف أحفظ إيمان ابني في زمن الشاشات؟"
+     },
+     {
+      "id": "Bagaimana bersikap bila keluarga berbeda pandangan soal politik dan fitnah?",
+      "en": "How should I act when family members differ on politics and trials?",
+      "ar": "كيف أتصرف إذا اختلف أهلي في السياسة والفتن؟"
+     }
+    ]
+   ],
+   [
+    {
+     "id": "Tentang umat",
+     "en": "About the Ummah",
+     "ar": "عن الأمة"
+    },
+    [
+     {
+      "id": "Kenapa umat Islam banyak jumlahnya, tetapi terasa lemah?",
+      "en": "Why are Muslims so many, yet feel weak?",
+      "ar": "لماذا المسلمون كثيرون ومع ذلك يشعرون بالضعف؟"
+     },
+     {
+      "id": "Bagaimana bersikap saat melihat perpecahan dan saling caci?",
+      "en": "How should I act when I see division and mutual cursing?",
+      "ar": "كيف أتصرف حين أرى الفرقة والتسابّ؟"
+     }
+    ]
+   ],
+   [
+    {
+     "id": "Tentang zaman baru",
+     "en": "About the new age",
+     "ar": "عن الزمان الجديد"
+    },
+    [
+     {
+      "id": "Bagaimana agama menyikapi AI, internet, dan budaya baru?",
+      "en": "How does religion treat AI, the internet, and new cultures?",
+      "ar": "كيف يتعامل الدين مع الذكاء الاصطناعي والإنترنت والثقافات الجديدة؟"
+     },
+     {
+      "id": "Bagaimana sikap kita terhadap bencana alam dan wabah?",
+      "en": "How should we respond to natural disasters and epidemics?",
+      "ar": "كيف نتعامل مع الكوارث الطبيعية والأوبئة؟"
+     }
+    ]
+   ],
+   [
+    {
+     "id": "Tentang akhir zaman",
+     "en": "About the end of time",
+     "ar": "عن آخر الزمان"
+    },
+    [
+     {
+      "id": "Bolehkah menebak tahun kiamat?",
+      "en": "May we guess the year of the Hour?",
+      "ar": "هل يجوز تخمين سنة قيام الساعة؟"
+     },
+     {
+      "id": "Apakah tokoh atau peristiwa tertentu itu tanda kiamat?",
+      "en": "Is this or that figure or event a sign of the Hour?",
+      "ar": "هل هذا الشخص أو هذا الحدث من أشراط الساعة؟"
+     }
+    ]
+   ]
+  ]
+ },
+ "what": {
+  "kicker": {
+   "id": "Apa itu",
+   "en": "What it is",
+   "ar": "ما هو"
+  },
+  "title": {
+   "id": "Fikih Tahawwulat, dengan kata paling sederhana.",
+   "en": "Fiqh al-Tahawwulat, in the simplest words.",
+   "ar": "فقه التحولات بأبسط عبارة."
+  },
+  "lead": {
+   "id": "Fikih artinya paham yang dalam. Tahawwulat artinya perubahan-perubahan. Jadi Fikih Tahawwulat adalah ilmu untuk memahami perubahan zaman dengan petunjuk Al-Qur'an dan hadis, supaya kita tahu sikap yang paling selamat.",
+   "en": "Fiqh means deep understanding. Tahawwulat means changes. So Fiqh al-Tahawwulat is the knowledge of understanding the changes of the age by the guidance of the Qur'an and hadith, so we know the safest stance.",
+   "ar": "الفقه هو الفهم العميق، والتحولات هي التغيّرات. فـ«فقه التحولات» علم فهم تغيّرات الزمان بهدي القرآن والحديث، لنعرف الموقف الأسلم."
+  },
+  "contrast": [
+   {
+    "id": "Fikih yang biasa menjawab:",
+    "en": "Ordinary fiqh answers:",
+    "ar": "الفقه المعتاد يجيب:"
+   },
+   {
+    "id": "“Bagaimana salat dan zakat saya sah?”",
+    "en": "“How are my prayer and zakat valid?”",
+    "ar": "«كيف تصحّ صلاتي وزكاتي؟»"
+   },
+   {
+    "id": "Fikih Tahawwulat menjawab:",
+    "en": "Fiqh al-Tahawwulat answers:",
+    "ar": "وفقه التحولات يجيب:"
+   },
+   {
+    "id": "“Bagaimana saya menjaga agama saya ketika zaman berubah dan penuh ujian?”",
+    "en": "“How do I protect my faith when the age changes and is full of trials?”",
+    "ar": "«كيف أحفظ ديني حين يتغيّر الزمان وتكثر الابتلاءات؟»"
+   }
+  ],
+  "points": [
+   [
+    {
+     "id": "Bukan ilmu baru yang dibuat-buat",
+     "en": "Not an invented science",
+     "ar": "ليس علمًا مبتدعًا"
+    },
+    {
+     "id": "Dasarnya Hadis Jibril. Malaikat Jibril bertanya empat hal: Islam, Iman, Ihsan, dan tanda-tanda zaman. Fikih Tahawwulat adalah penjelasan tertata atas bagian keempat.",
+     "en": "Its basis is the Hadith of Jibril. The angel asked four things: Islam, Iman, Ihsan, and the signs of the times. Fiqh al-Tahawwulat is the organized explanation of the fourth.",
+     "ar": "أصله حديث جبريل، وفيه أربعة أسئلة: الإسلام والإيمان والإحسان وعلامات الساعة. وفقه التحولات هو الشرح المنظّم للرابع."
+    }
+   ],
+   [
+    {
+     "id": "Pagar bagi tiga ilmu lainnya",
+     "en": "A fence around the other three",
+     "ar": "سياج للعلوم الثلاثة الأخرى"
+    },
+    {
+     "id": "Islam, Iman, dan Ihsan adalah yang tetap. Bagian keempat menjaganya agar tidak rusak atau ditinggalkan ketika zaman berguncang.",
+     "en": "Islam, Iman, and Ihsan are what stays. The fourth guards them so they are not spoiled or abandoned when the age shakes.",
+     "ar": "الإسلام والإيمان والإحسان هي الثوابت، والرابع يحفظها كي لا تفسد أو تُترك حين يضطرب الزمان."
+    }
+   ],
+   [
+    {
+     "id": "Disusun oleh Al-Habib Abu Bakar",
+     "en": "Composed by Al-Habib Abu Bakar",
+     "ar": "صاغه الحبيب أبو بكر"
+    },
+    {
+     "id": "Ulama Hadramaut yang merapikan warisan para ulama terdahulu menjadi satu bidang ilmu yang mudah dipelajari.",
+     "en": "A Hadrami scholar who arranged the legacy of earlier scholars into one field that is easy to study.",
+     "ar": "عالم حضرمي رتّب ميراث العلماء السابقين في علم واحد ميسَّر للدراسة."
+    }
+   ]
+  ]
+ },
+ "benefit": {
+  "kicker": {
+   "id": "Faedahnya",
+   "en": "What it gives you",
+   "ar": "فوائده"
+  },
+  "title": {
+   "id": "Manfaat nyata dalam hidup sehari-hari.",
+   "en": "Real benefits in everyday life.",
+   "ar": "فوائد ملموسة في الحياة اليومية."
+  },
+  "lead": {
+   "id": "Ilmu ini bukan bahan hafalan. Inilah yang bisa terasa dalam keseharian Anda.",
+   "en": "This is not material to memorize. This is what you can feel in your daily life.",
+   "ar": "هذا العلم ليس للحفظ فحسب. وهذا ما يمكن أن تشعر به في يومك."
+  },
+  "items": [
+   [
+    {
+     "id": "Hati lebih tenang saat membaca berita",
+     "en": "A calmer heart when reading the news",
+     "ar": "قلب أهدأ عند قراءة الأخبار"
+    },
+    {
+     "id": "Anda tahu gambaran besar zaman, jadi tidak mudah panik. Anda juga tahu kapan cukup dan boleh berhenti mengikuti.",
+     "en": "You know the big picture of the age, so you do not panic easily. You also know when it is enough to stop following.",
+     "ar": "تعرف الصورة العامة للزمان فلا تفزع بسهولة، وتعرف متى يكفي أن تتوقف عن المتابعة."
+    }
+   ],
+   [
+    {
+     "id": "Tidak mudah tertipu ramalan dan hoaks",
+     "en": "Not easily fooled by predictions and hoaxes",
+     "ar": "لا تنخدع بسهولة بالتنبؤات والأخبار المكذوبة"
+    },
+    {
+     "id": "Anda punya tiga rambu: tidak menebak tahun, tidak menunjuk orang atau kelompok, dan tidak memaksakan hadis pada politik harian.",
+     "en": "You hold three signposts: no guessing years, no pointing at people or groups, and no forcing hadith onto daily politics.",
+     "ar": "لديك ثلاث علامات: لا تخمين للسنوات، ولا إشارة إلى أشخاص أو جماعات، ولا إسقاط للحديث على السياسة اليومية."
+    }
+   ],
+   [
+    {
+     "id": "Tahu apa yang harus dikerjakan",
+     "en": "Knowing what to do",
+     "ar": "معرفة ما يجب فعله"
+    },
+    {
+     "id": "Cemas diganti langkah: jaga salat, pastikan nafkah halal, tahan lisan, dan perbanyak kebaikan di lingkungan terdekat.",
+     "en": "Worry is replaced by steps: keep prayer, make income lawful, hold your tongue, and do more good close to you.",
+     "ar": "يُستبدل القلق بخطوات: حافظ على الصلاة، وتحرَّ الحلال في الرزق، وأمسك لسانك، وأكثر الخير حولك."
+    }
+   ],
+   [
+    {
+     "id": "Rumah lebih rukun saat beda pendapat",
+     "en": "A more peaceful home when views differ",
+     "ar": "بيت أكثر سكينة عند الاختلاف"
+    },
+    {
+     "id": "Anda memegang prinsip: ikatan keluarga yang pasti lebih utama daripada debat yang belum pasti.",
+     "en": "You hold the principle: a sure family bond outranks an uncertain argument.",
+     "ar": "تتمسّك بمبدأ: رابطة الأسرة القائمة أولى من جدال غير مؤكَّد."
+    }
+   ],
+   [
+    {
+     "id": "Lebih jeli memilih guru dan sumber",
+     "en": "Sharper in choosing teachers and sources",
+     "ar": "أدق في اختيار المعلم والمصدر"
+    },
+    {
+     "id": "Anda tahu ukurannya: sanad yang jelas, adab yang baik, dan tidak dijadikan alat politik sesaat.",
+     "en": "You know the measure: a clear chain of learning, good manners, and no use as a tool of passing politics.",
+     "ar": "تعرف المعيار: سند واضح، وأدب حسن، وعدم اتخاذ العلم أداة لسياسة عابرة."
+    }
+   ],
+   [
+    {
+     "id": "Bijak memakai media sosial dan teknologi",
+     "en": "Wise with social media and technology",
+     "ar": "حكيم في وسائل التواصل والتقنية"
+    },
+    {
+     "id": "Anda punya saringan: ambil yang bermanfaat, tolak yang merusak, dan tidak menjadikan mesin sebagai pengganti guru.",
+     "en": "You have a filter: take what helps, reject what harms, and do not make a machine a replacement for a teacher.",
+     "ar": "لديك مصفاة: خذ النافع وردّ الضار، ولا تجعل الآلة بديلًا عن المعلم."
+    }
+   ],
+   [
+    {
+     "id": "Mendidik anak dengan hangat",
+     "en": "Raising children warmly",
+     "ar": "تربية الأبناء بدفء"
+    },
+    {
+     "id": "Bukan hanya melarang. Anda belajar menjadikan rumah benteng kasih sayang dan teladan.",
+     "en": "Not only forbidding. You learn to make the home a fortress of love and example.",
+     "ar": "ليس بالمنع وحده، بل بجعل البيت حصنًا من المحبة والقدوة."
+    }
+   ],
+   [
+    {
+     "id": "Bisa menjelaskan zaman ini tanpa bertengkar",
+     "en": "Able to explain this age without a quarrel",
+     "ar": "قدرة على شرح هذا الزمان دون خصام"
+    },
+    {
+     "id": "Anda punya bahasa yang sejuk untuk menasihati dan menjawab kegelisahan orang lain.",
+     "en": "You have a gentle language for advising and answering other people's unease.",
+     "ar": "تملك لغة لطيفة للنصح والإجابة عن قلق الآخرين."
+    }
+   ]
+  ]
+ },
+ "branch": {
+  "kicker": {
+   "id": "Cabang ilmunya",
+   "en": "Its branches",
+   "ar": "فروعه"
+  },
+  "title": {
+   "id": "Lima cabang, dan apa yang bisa dijawab.",
+   "en": "Five branches, and what each can answer.",
+   "ar": "خمسة فروع وما تجيب عنه."
+  },
+  "lead": {
+   "id": "Fikih Tahawwulat bukan satu topik. Ia terdiri dari lima cabang, masing-masing menjawab jenis pertanyaan yang berbeda.",
+   "en": "Fiqh al-Tahawwulat is not a single topic. It has five branches, each answering a different kind of question.",
+   "ar": "فقه التحولات ليس موضوعًا واحدًا، بل خمسة فروع، يجيب كل منها عن نوع من الأسئلة."
+  },
+  "items": [
+   [
+    {
+     "id": "Fitnah dan cara menjaga diri",
+     "en": "Fitna and how to stay safe",
+     "ar": "الفتن وطرق الوقاية"
+    },
+    {
+     "id": "Mengenali hal yang merusak agama dan cara menyelamatkan diri darinya.",
+     "en": "Recognizing what harms religion and how to save yourself from it.",
+     "ar": "معرفة ما يفسد الدين وكيف ينجو الإنسان منه."
+    },
+    [
+     {
+      "id": "Kenapa sesama yang salat saling menyalahkan?",
+      "en": "Why do people who pray together blame each other?",
+      "ar": "لماذا يلوم المصلّون بعضهم بعضًا؟"
+     },
+     {
+      "id": "Bagaimana agar tidak terseret fitnah?",
+      "en": "How do I avoid being dragged into fitna?",
+      "ar": "كيف لا أنجرّ إلى الفتنة؟"
+     }
+    ]
+   ],
+   [
+    {
+     "id": "Isyarat, kabar gembira, peringatan, dan perlindungan",
+     "en": "Signals, glad tidings, warnings, and protection",
+     "ar": "الإشارات والبشارات والنذارات والحصانات"
+    },
+    {
+     "id": "Pesan-pesan kasih sayang Nabi untuk umatnya, termasuk pentingnya guru yang bersanad.",
+     "en": "The loving messages of the Prophet to his Ummah, including the importance of a teacher with a chain of learning.",
+     "ar": "رسائل الرحمة من النبي ﷺ لأمته، ومنها أهمية المعلم المسنَد."
+    },
+    [
+     {
+      "id": "Apa yang melindungi iman kita sekarang?",
+      "en": "What protects our faith now?",
+      "ar": "ما الذي يحمي إيماننا اليوم؟"
+     },
+     {
+      "id": "Adakah kabar gembira bagi umat ini?",
+      "en": "Are there glad tidings for this Ummah?",
+      "ar": "هل من بشائر لهذه الأمة؟"
+     }
+    ]
+   ],
+   [
+    {
+     "id": "Sains, teknologi, dan budaya baru",
+     "en": "Science, technology, and new cultures",
+     "ar": "العلوم والتقنية والثقافات الجديدة"
+    },
+    {
+     "id": "Cara menimbang penemuan dan tren baru dengan timbangan agama.",
+     "en": "How to weigh new discoveries and trends by the scale of religion.",
+     "ar": "كيف نزن المكتشفات والاتجاهات الجديدة بميزان الدين."
+    },
+    [
+     {
+      "id": "Bagaimana sikap kita pada AI?",
+      "en": "What is our stance on AI?",
+      "ar": "ما موقفنا من الذكاء الاصطناعي؟"
+     },
+     {
+      "id": "Apa itu mukjizat ilmiah dan di mana batasnya?",
+      "en": "What is scientific miracle and where is its limit?",
+      "ar": "ما الإعجاز العلمي وأين حدّه؟"
+     }
+    ]
+   ],
+   [
+    {
+     "id": "Tanda alam dan peristiwa besar",
+     "en": "Natural signs and great events",
+     "ar": "الأشراط الكونية والأحداث الكبرى"
+    },
+    {
+     "id": "Tanda kecil, tengah, dan besar menjelang kiamat, dipahami tertib tanpa spekulasi.",
+     "en": "The minor, middle, and major signs before the Hour, understood in order and without speculation.",
+     "ar": "الأشراط الصغرى والوسطى والكبرى قبل الساعة، تُفهم بترتيب ودون تخمين."
+    },
+    [
+     {
+      "id": "Apa beda tanda kecil, tengah, dan besar?",
+      "en": "What is the difference between minor, middle, and major signs?",
+      "ar": "ما الفرق بين الأشراط الصغرى والوسطى والكبرى؟"
+     },
+     {
+      "id": "Bagaimana menyikapi bencana?",
+      "en": "How should we respond to disasters?",
+      "ar": "كيف نتعامل مع الكوارث؟"
+     }
+    ]
+   ],
+   [
+    {
+     "id": "Agama dan sejarah",
+     "en": "Religion and history",
+     "ar": "الدين والتاريخ"
+    },
+    {
+     "id": "Membaca perjalanan umat dari masa Nabi sampai hari ini dengan kacamata wahyu.",
+     "en": "Reading the journey of the Ummah from the Prophet's time to today through the lens of revelation.",
+     "ar": "قراءة مسيرة الأمة من عهد النبي ﷺ إلى اليوم بعين الوحي."
+    },
+    [
+     {
+      "id": "Bagaimana perjalanan zaman umat ini?",
+      "en": "How has the Ummah's journey unfolded?",
+      "ar": "كيف كانت مسيرة هذه الأمة؟"
+     },
+     {
+      "id": "Kenapa umat disebut seperti buih?",
+      "en": "Why is the Ummah likened to foam?",
+      "ar": "لماذا شُبّهت الأمة بالغثاء؟"
+     }
+    ]
+   ]
+  ]
+ },
+ "diff": {
+  "kicker": {
+   "id": "Apa bedanya",
+   "en": "How it differs",
+   "ar": "ما الفرق"
+  },
+  "title": {
+   "id": "Apakah sama dengan ilmu akhir zaman yang beredar?",
+   "en": "Is it the same as the end-times talk that circulates?",
+   "ar": "هل هو نفسه حديث آخر الزمان المتداول؟"
+  },
+  "lead": {
+   "id": "Keduanya sama-sama membahas hadis tentang tanda kiamat, tetapi cara pandang dan tujuannya berbeda. Berikut perbandingannya.",
+   "en": "Both discuss hadith about the signs of the Hour, but their approach and aim differ. Here is the comparison.",
+   "ar": "كلاهما يتناول أحاديث أشراط الساعة، لكن المنهج والغاية مختلفان. وهذه المقارنة."
+  },
+  "cols": [
+   {
+    "id": "Pembahasan akhir zaman yang sering beredar",
+    "en": "End-times talk that often circulates",
+    "ar": "حديث آخر الزمان الذي يكثر تداوله"
+   },
+   {
+    "id": "Fikih Tahawwulat",
+    "en": "Fiqh al-Tahawwulat",
+    "ar": "فقه التحولات"
+   }
+  ],
+  "rows": [
+   [
+    {
+     "id": "Tujuan",
+     "en": "Aim",
+     "ar": "الغاية"
+    },
+    {
+     "id": "Menebak dan mencocokkan peristiwa",
+     "en": "Guessing and matching events",
+     "ar": "التخمين ومطابقة الأحداث"
+    },
+    {
+     "id": "Membekali sikap yang selamat",
+     "en": "Equipping a safe stance",
+     "ar": "تزويد الإنسان بالموقف الأسلم"
+    }
+   ],
+   [
+    {
+     "id": "Soal tahun",
+     "en": "Dates",
+     "ar": "السنوات"
+    },
+    {
+     "id": "Sering mematok tahun",
+     "en": "Often fixes years",
+     "ar": "كثيرًا ما تُحدَّد سنوات"
+    },
+    {
+     "id": "Melarang menebak tahun",
+     "en": "Forbids guessing years",
+     "ar": "يمنع تخمين السنوات"
+    }
+   ],
+   [
+    {
+     "id": "Soal tokoh",
+     "en": "Figures",
+     "ar": "الأشخاص"
+    },
+    {
+     "id": "Sering menunjuk orang atau kelompok",
+     "en": "Often points at people or groups",
+     "ar": "كثيرًا ما يُشار إلى أشخاص وجماعات"
+    },
+    {
+     "id": "Melarang menunjuk orang atau kelompok",
+     "en": "Forbids pointing at people or groups",
+     "ar": "يمنع الإشارة إلى أشخاص أو جماعات"
+    }
+   ],
+   [
+    {
+     "id": "Nada",
+     "en": "Tone",
+     "ar": "النبرة"
+    },
+    {
+     "id": "Menakut-nakuti, memancing marah",
+     "en": "Frightening, stirring anger",
+     "ar": "تخويف وإثارة غضب"
+    },
+    {
+     "id": "Tenang, memberi harapan dan langkah amal",
+     "en": "Calm, giving hope and steps to act",
+     "ar": "هادئة، تمنح الرجاء وخطوات العمل"
+    }
+   ],
+   [
+    {
+     "id": "Sumber",
+     "en": "Sources",
+     "ar": "المصادر"
+    },
+    {
+     "id": "Bercampur, sering tanpa diperiksa",
+     "en": "Mixed, often unchecked",
+     "ar": "مختلطة وكثيرًا ما لا تُفحص"
+    },
+    {
+     "id": "Al-Qur'an dan hadis sahih, dibaca bersama kitab para ulama",
+     "en": "The Qur'an and authentic hadith, read with the books of scholars",
+     "ar": "القرآن والحديث الصحيح، يُقرآن مع كتب العلماء"
+    }
+   ],
+   [
+    {
+     "id": "Akibat pada pendengar",
+     "en": "Effect on the listener",
+     "ar": "الأثر في السامع"
+    },
+    {
+     "id": "Cemas dan saling curiga",
+     "en": "Anxiety and mutual suspicion",
+     "ar": "قلق وارتياب متبادل"
+    },
+    {
+     "id": "Hati tenang dan amal nyata",
+     "en": "A calm heart and real deeds",
+     "ar": "قلب مطمئن وعمل ملموس"
+    }
+   ]
+  ],
+  "unique_title": {
+   "id": "Yang khas dari Fikih Tahawwulat",
+   "en": "What is distinctive about it",
+   "ar": "ما يميّز فقه التحولات"
+  },
+  "unique": [
+   {
+    "id": "Ia bagian dari agama itu sendiri: rukun keempat dalam Hadis Jibril.",
+    "en": "It is part of religion itself: the fourth pillar in the Hadith of Jibril.",
+    "ar": "هو جزء من الدين نفسه: الركن الرابع في حديث جبريل."
+   },
+   {
+    "id": "Ia bukan sekadar daftar tanda, tetapi fikih sikap: apa yang dilakukan seorang muslim, keluarga, dan ulama di tiap tahap.",
+    "en": "It is not just a list of signs but a fiqh of stances: what a Muslim, a family, and scholars should do at each stage.",
+    "ar": "ليس مجرد قائمة علامات، بل فقه مواقف: ماذا يفعل المسلم والأسرة والعلماء في كل مرحلة."
+   },
+   {
+    "id": "Ia tersusun sebagai ilmu, dengan lima cabang dan kaidah yang bisa dipelajari bertahap.",
+    "en": "It is organized as a science, with five branches and rules that can be studied step by step.",
+    "ar": "هو منظَّم علمًا، بخمسة فروع وقواعد تُدرس بالتدرج."
+   },
+   {
+    "id": "Ia berujung pada jalan selamat: hati, lisan, dan tangan terjaga.",
+    "en": "It ends in the safe way: heart, tongue, and hands guarded.",
+    "ar": "ينتهي إلى منهج السلامة: سلامة القلب واللسان واليد."
+   },
+   {
+    "id": "Ia berbeda dari ramalan dan teori konspirasi: ramalan menebak nasib, teori konspirasi membuat musuh terasa maha kuasa, sedangkan ia mengajak memperbaiki diri lebih dulu.",
+    "en": "It differs from fortune-telling and conspiracy theories: fortune-telling guesses fate, conspiracy theories make the enemy seem all-powerful, while it invites you to mend yourself first.",
+    "ar": "يختلف عن التنجيم ونظريات المؤامرة: فالتنجيم تخمين للمصير، والمؤامرة تجعل العدو قادرًا على كل شيء، أما هو فيدعو إلى إصلاح النفس أولًا."
+   }
+  ]
+ },
+ "start": {
+  "kicker": {
+   "id": "Mulai dari mana",
+   "en": "Where to start",
+   "ar": "من أين أبدأ"
+  },
+  "title": {
+   "id": "Tiga langkah pertama.",
+   "en": "Your first three steps.",
+   "ar": "خطواتك الثلاث الأولى."
+  },
+  "steps": [
+   [
+    {
+     "id": "Tonton video pengantarnya",
+     "en": "Watch the introduction",
+     "ar": "شاهد الفيديو التمهيدي"
+    },
+    {
+     "id": "Sekitar dua belas menit, lima belas bab, tersedia di aplikasi.",
+     "en": "About twelve minutes, fifteen chapters, available in the app.",
+     "ar": "نحو اثنتي عشرة دقيقة وخمسة عشر بابًا، متاح في التطبيق."
+    }
+   ],
+   [
+    {
+     "id": "Tanyakan yang paling mengganjal",
+     "en": "Ask what troubles you most",
+     "ar": "اسأل عما يشغلك أكثر"
+    },
+    {
+     "id": "Pilih satu pertanyaan dari daftar di atas dan tanyakan kepada Al-Bayan, yang menjelaskan dengan bahasa sederhana.",
+     "en": "Pick one question from the list above and ask Al-Bayan, who explains in simple language.",
+     "ar": "اختر سؤالًا من القائمة أعلاه واسأل «البيان» الذي يشرح بلغة مبسّطة."
+    }
+   ],
+   [
+    {
+     "id": "Periksa dan tanyakan kepada guru",
+     "en": "Check it and ask a teacher",
+     "ar": "تحقّق واسأل معلمك"
+    },
+    {
+     "id": "Buka ibarah yang dikutip dan, untuk urusan amal, tanyakan kepada guru yang Anda percaya.",
+     "en": "Open the quoted passage and, for matters of practice, ask a teacher you trust.",
+     "ar": "افتح العبارة المنقولة، وفي مسائل العمل اسأل معلمًا تثق به."
+    }
+   ]
+  ],
+  "cta": {
+   "id": "Tanya OpenTurath AI",
+   "en": "Ask OpenTurath AI",
+   "ar": "اسأل OpenTurath AI"
+  },
+  "cta2": {
+   "id": "Tentang ilmunya",
+   "en": "About the knowledge",
+   "ar": "عن هذا العلم"
+  }
+ }
+}

@@ -86,10 +86,7 @@ class SubscriptionService {
         'message': redeemErrorMessage(e.code, serverMsg)
       };
     } catch (e) {
-      return {
-        'success': false,
-        'message': Loc.tr('networkError')
-      };
+      return {'success': false, 'message': Loc.tr('networkError')};
     }
   }
 

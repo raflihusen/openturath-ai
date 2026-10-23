@@ -15,7 +15,8 @@ void main() {
   });
 
   group('PromoCountdownBanner', () {
-    testWidgets('renders ultra-minimalist solid red countdown banner in Dark theme',
+    testWidgets(
+        'renders ultra-minimalist solid red countdown banner in Dark theme',
         (tester) async {
       await tester.pumpWidget(
         MaterialApp(
@@ -60,7 +61,8 @@ void main() {
       await tester.pump(const Duration(seconds: 1));
     });
 
-    testWidgets('renders ultra-minimalist solid red countdown banner in Light theme',
+    testWidgets(
+        'renders ultra-minimalist solid red countdown banner in Light theme',
         (tester) async {
       await tester.pumpWidget(
         MaterialApp(
@@ -130,7 +132,8 @@ void main() {
           locale: const Locale('id'),
           supportedLocales: Loc.supportedLocales,
           localizationsDelegates: GlobalMaterialLocalizations.delegates,
-          home: Scaffold(body: Center(child: PromoCountdownBanner(clock: clock))),
+          home:
+              Scaffold(body: Center(child: PromoCountdownBanner(clock: clock))),
         ));
         await tester.pump();
       }

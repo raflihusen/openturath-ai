@@ -90,11 +90,9 @@ class AssistantGridCard extends StatelessWidget {
                     child: FilledButton(
                         onPressed: onOpen,
                         style: FilledButton.styleFrom(
-                            backgroundColor: locked
-                                ? ink.withValues(alpha: .14)
-                                : ink,
-                            foregroundColor:
-                                locked ? ink : OTExpressive.hero,
+                            backgroundColor:
+                                locked ? ink.withValues(alpha: .14) : ink,
+                            foregroundColor: locked ? ink : OTExpressive.hero,
                             padding: EdgeInsets.zero),
                         child: Icon(
                             locked

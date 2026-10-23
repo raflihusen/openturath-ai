@@ -885,8 +885,8 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
                                     allowsInlineMediaPlayback: true,
                                     supportZoom: false,
                                     displayZoomControls: false,
-                                    mixedContentMode:
-                                        MixedContentMode.MIXED_CONTENT_NEVER_ALLOW,
+                                    mixedContentMode: MixedContentMode
+                                        .MIXED_CONTENT_NEVER_ALLOW,
                                     thirdPartyCookiesEnabled: true,
                                     sharedCookiesEnabled: true,
                                     hardwareAcceleration: true,

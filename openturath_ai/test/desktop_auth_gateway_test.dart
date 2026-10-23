@@ -39,7 +39,9 @@ void main() {
       await future;
     });
 
-    test('POST /auth-callback completes with DesktopAuthResult when state matches', () async {
+    test(
+        'POST /auth-callback completes with DesktopAuthResult when state matches',
+        () async {
       final uriCompleter = Completer<Uri>();
       final future = DesktopAuthGateway.signIn(
         timeout: const Duration(seconds: 5),
@@ -77,7 +79,9 @@ void main() {
       expect(result.displayName, 'Islamic Scholar');
     });
 
-    test('POST /auth-callback rejects request with mismatched state (CSRF attack)', () async {
+    test(
+        'POST /auth-callback rejects request with mismatched state (CSRF attack)',
+        () async {
       final uriCompleter = Completer<Uri>();
       final future = DesktopAuthGateway.signIn(
         timeout: const Duration(seconds: 5),
@@ -121,7 +125,8 @@ void main() {
       final port = openedUri.port;
       final state = openedUri.queryParameters['state'];
 
-      final response = await http.get(Uri.parse('http://localhost:$port/cancel?state=$state'));
+      final response = await http
+          .get(Uri.parse('http://localhost:$port/cancel?state=$state'));
       expect(response.statusCode, 200);
       expect(jsonDecode(response.body)['canceled'], isTrue);
 

@@ -462,12 +462,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                         : null,
                                     isLocked: agent.isComingSoon,
                                     onOpen: () => _openNotebook(agent, user),
-                                    onOpenLibrary:
-                                        (!agent.isComingSoon &&
-                                                agent.catalogId != null)
-                                            ? () => showResearchLibrary(context,
-                                                agent: agent)
-                                            : null,
+                                    onOpenLibrary: (!agent.isComingSoon &&
+                                            agent.catalogId != null)
+                                        ? () => showResearchLibrary(context,
+                                            agent: agent)
+                                        : null,
                                   );
                                 },
                               );
@@ -560,10 +559,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                       final countText = activeMembers.isNotEmpty
                                           ? AppCopy.assistantsAvailableCount(
                                               activeMembers.length)
-                                          : reviewCopy(
-                                              'Belum tersedia',
-                                              'غير متاح حالياً',
-                                              'Coming Soon');
+                                          : reviewCopy('Belum tersedia',
+                                              'غير متاح حالياً', 'Coming Soon');
                                       return OTReveal(
                                         index: index + 2,
                                         child: OTInkCard(

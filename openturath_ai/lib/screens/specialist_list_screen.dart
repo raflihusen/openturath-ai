@@ -453,14 +453,14 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
                                                 onOpenSubAgent: (sub) =>
                                                     _openTahawwulatSubAgent(
                                                         flagship, sub),
-                                                onOpenLibrary:
-                                                    (!flagship.isComingSoon &&
-                                                            flagship.catalogId != null)
-                                                        ? () =>
-                                                            showResearchLibrary(
-                                                                context,
-                                                                agent: flagship)
-                                                        : null,
+                                                onOpenLibrary: (!flagship
+                                                            .isComingSoon &&
+                                                        flagship.catalogId !=
+                                                            null)
+                                                    ? () => showResearchLibrary(
+                                                        context,
+                                                        agent: flagship)
+                                                    : null,
                                               ),
                                             ),
                                             const SizedBox(
@@ -483,14 +483,15 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
                                                   metadata: statsOf(agent),
                                                   onOpen: () =>
                                                       _openAgent(agent),
-                                                  onOpenLibrary:
-                                                      (!agent.isComingSoon &&
-                                                              agent.catalogId != null)
-                                                          ? () =>
-                                                              showResearchLibrary(
-                                                                  context,
-                                                                  agent: agent)
-                                                          : null,
+                                                  onOpenLibrary: (!agent
+                                                              .isComingSoon &&
+                                                          agent.catalogId !=
+                                                              null)
+                                                      ? () =>
+                                                          showResearchLibrary(
+                                                              context,
+                                                              agent: agent)
+                                                      : null,
                                                 ),
                                               );
                                             }

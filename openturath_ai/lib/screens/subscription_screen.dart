@@ -356,7 +356,8 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
   Widget _consentNote(Color color) {
     final base = OTTypography.caption(color: color).copyWith(height: 1.5);
     final link = base.copyWith(
-        decoration: TextDecoration.underline, color: color.withValues(alpha: 1));
+        decoration: TextDecoration.underline,
+        color: color.withValues(alpha: 1));
     final parts = Loc.tr('planConsent').split(RegExp(r'(\{0\}|\{1\})'));
     final firstIsTerms = Loc.tr('planConsent').indexOf('{0}') <
         Loc.tr('planConsent').indexOf('{1}');
@@ -582,7 +583,9 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                             color: onInk ? OTExpressive.white : ink)
                         .copyWith(
                             fontWeight: FontWeight.w600,
-                            fontFeatures: const [FontFeature.tabularFigures()])),
+                            fontFeatures: const [
+                          FontFeature.tabularFigures()
+                        ])),
               ],
             ),
             const SizedBox(height: 12),
@@ -878,8 +881,8 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                               crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: [
                                 Expanded(
-                                    child:
-                                        OTReveal(index: 0, child: featuredPlan)),
+                                    child: OTReveal(
+                                        index: 0, child: featuredPlan)),
                                 const SizedBox(width: 16),
                                 Expanded(
                                     child:
@@ -1007,7 +1010,8 @@ class _TierSelector extends StatelessWidget {
                           fit: BoxFit.scaleDown,
                           child: Text(Loc.tr('saving', ['${savings[i]}']),
                               style: OTTypography.metadataTag(
-                                  color: onInk ? OTExpressive.whiteMuted : ink)),
+                                  color:
+                                      onInk ? OTExpressive.whiteMuted : ink)),
                         )
                       : null,
                 ),
@@ -1100,7 +1104,6 @@ class _KhatamPatternPainter extends CustomPainter {
   @override
   bool shouldRepaint(_KhatamPatternPainter oldDelegate) => false;
 }
-
 
 /// Banner hitung mundur penawaran perdana 10 hari yang dimulai pada
 /// Jumat pukul 12:00 WIB siang (23 Oktober 2026 12:00 WIB / 05:00 UTC).

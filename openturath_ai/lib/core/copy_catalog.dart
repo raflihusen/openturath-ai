@@ -917,6 +917,16 @@ const copyCatalog = <String, List<String>>{
     "الإصدار {0} · {1}"
   ],
   "ahlanWithName": ["Halo, {0}", "Welcome, {0}", "أهلًا، {0}"],
+  "moduleWatchVideo": [
+    "Tonton video pengantar",
+    "Watch the introduction video",
+    "شاهد الفيديو التمهيدي"
+  ],
+  "moduleLoadFailed": [
+    "Belum dapat memuat modul.",
+    "The module could not be loaded.",
+    "تعذّر تحميل الوحدة."
+  ],
   "logoPhilosophyRow": [
     "Filosofi lambang",
     "Meaning of the mark",
@@ -1935,16 +1945,8 @@ const copyCatalog = <String, List<String>>{
     "Concepts & Terms",
     "المفاهيم والمصطلحات"
   ],
-  "ui_b75ba44465": [
-    "Uji Pemahaman",
-    "Understanding Check",
-    "اختبار الفهم"
-  ],
-  "ui_e5ad7cb376": [
-    "Arsip Muhadharah",
-    "Lecture Archive",
-    "أرشيف المحاضرات"
-  ],
+  "ui_b75ba44465": ["Uji Pemahaman", "Understanding Check", "اختبار الفهم"],
+  "ui_e5ad7cb376": ["Arsip Muhadharah", "Lecture Archive", "أرشيف المحاضرات"],
   "ui_44aa1b83f5": ["Dakwah & Khutbah", "Teaching & Sermons", "الدعوة والخطب"],
   "booksShown": [
     "Menampilkan {0} dari {1} kitab",
