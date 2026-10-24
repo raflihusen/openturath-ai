@@ -59,9 +59,9 @@ class OnboardingCopy {
           _l('Kalimat dipotong dari konteksnya',
               'Sentences cut from their context', 'جمل مقتطعة من سياقها'),
           _l(
-              'Kitab dipilih dan ditinjau ulama',
-              'Books chosen and reviewed by scholars',
-              'كتب مختارة يراجعها العلماء'),
+              'Ibarah Arab diambil dari kitab, tidak dikarang',
+              'Arabic passages come from the books, never invented',
+              'العبارات العربية منقولة من الكتب، لا مختلَقة'),
         ),
       ];
 
