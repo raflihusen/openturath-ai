@@ -34,7 +34,7 @@ void main() {
     AppConfig.localeNotifier.value = lang;
     for (final wide in [false, true]) {
       tester.view.physicalSize =
-          wide ? const Size(1280, 800) : const Size(390, 844);
+          wide ? const Size(980, 960) : const Size(390, 844);
       tester.view.devicePixelRatio = 1;
       await tester.pumpWidget(RepaintBoundary(
           key: _key,

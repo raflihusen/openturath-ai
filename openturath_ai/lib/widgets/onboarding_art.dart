@@ -13,9 +13,8 @@ double obPhase(double ms, double a, double b,
         [Curve curve = Curves.easeOutCubic]) =>
     curve.transform(((ms - a) / (b - a)).clamp(0.0, 1.0));
 
-/// Garis waktu gambar pengenalan: satu putaran awal ([ms], dari 0 sampai
-/// [introMs]) lalu gerak pelan berulang ([loop], 0..1). Gerak dikurangi:
-/// langsung bingkai akhir tanpa pengulangan.
+/// Garis waktu gambar pengenalan: satu putaran ([ms], dari 0 sampai
+/// [introMs]), lalu diam. Tidak ada gerak berulang; [loop] selalu 0.
 class OnboardingTimeline extends StatefulWidget {
   const OnboardingTimeline(
       {super.key, required this.builder, this.introMs = 5200});
@@ -44,7 +43,6 @@ class _OnboardingTimelineState extends State<OnboardingTimeline>
       _in.value = 1;
     } else {
       _in.forward();
-      _loop.repeat();
     }
   }
 
@@ -111,7 +109,7 @@ Widget _mark(bool check, double progress, Color color, {double size = 24}) =>
         dimension: size,
         child: CustomPaint(painter: _Mark(check, progress, color)));
 
-// ───────────────────────── Slide 1: logo, cincin, titik mengorbit
+// ───────────────────────── Slide 1: kitab naik, lengkung menaungi, logo menyala
 
 class OnboardingLogoArt extends StatelessWidget {
   const OnboardingLogoArt({super.key, required this.dark});
@@ -127,19 +125,22 @@ class OnboardingLogoArt extends StatelessWidget {
         child: SizedBox.square(
           dimension: side,
           child: OnboardingTimeline(
+            introMs: 3600,
             builder: (c, ms, loop) {
-              final logo = obPhase(ms, 900, 1900, Curves.easeOutBack);
-              return Stack(alignment: Alignment.center, children: [
+              final logo = obPhase(ms, 2300, 3100, Curves.easeOutBack);
+              return Stack(alignment: Alignment.topCenter, children: [
                 RepaintBoundary(
                   child: CustomPaint(
-                      size: Size.square(side),
-                      painter: _LogoPainter(ms, loop, ink)),
+                      size: Size.square(side), painter: _ShelfPainter(ms, ink)),
                 ),
-                Opacity(
-                  opacity: obPhase(ms, 900, 1500).clamp(0.0, 1.0),
-                  child: Transform.scale(
-                    scale: 0.7 + 0.3 * logo,
-                    child: OpenTurathMark(size: side * 0.27, color: ink),
+                Positioned(
+                  top: side * 0.2,
+                  child: Opacity(
+                    opacity: obPhase(ms, 2300, 2900),
+                    child: Transform.scale(
+                      scale: 0.7 + 0.3 * logo,
+                      child: OpenTurathMark(size: side * 0.2, color: ink),
+                    ),
                   ),
                 ),
               ]);
@@ -151,68 +152,87 @@ class OnboardingLogoArt extends StatelessWidget {
   }
 }
 
-class _LogoPainter extends CustomPainter {
-  _LogoPainter(this.ms, this.loop, this.ink);
-  final double ms, loop;
+/// Rak kitab di dalam lengkung: punggung kitab naik satu per satu ("bersumber
+/// dari kitab"), lengkung digambar menaunginya, lalu logo menyala di puncak.
+class _ShelfPainter extends CustomPainter {
+  _ShelfPainter(this.ms, this.ink);
+  final double ms;
   final Color ink;
 
-  Paint _line(double a, [double w = 1.3]) => Paint()
+  static const _h = [0.34, 0.46, 0.4, 0.52, 0.44, 0.5, 0.38, 0.46, 0.36];
+
+  Paint _line(double a, [double w = 1.5]) => Paint()
     ..style = PaintingStyle.stroke
     ..strokeWidth = w
     ..strokeCap = StrokeCap.round
+    ..strokeJoin = StrokeJoin.round
     ..color = ink.withValues(alpha: a);
 
   @override
   void paint(Canvas c, Size s) {
-    final ctr = s.center(Offset.zero);
-    final R = s.width / 2;
+    final baseY = s.height * 0.9;
+    final left = s.width * 0.2, right = s.width * 0.8;
+    final cx = s.width / 2;
 
-    // Gelombang awal: tiga denyut keluar dari tengah.
-    for (var i = 0; i < 3; i++) {
-      final t = obPhase(ms, 100 + i * 260, 1500 + i * 260, Curves.easeOutQuart);
-      if (t <= 0 || t >= 1) continue;
-      c.drawCircle(ctr, R * 0.95 * t, _line(0.32 * (1 - t), 1.6));
-    }
+    // Alas rak.
+    c.drawLine(
+        Offset(s.width * 0.14, baseY),
+        Offset(s.width * 0.14 + s.width * 0.72 * obPhase(ms, 0, 500), baseY),
+        _line(0.45));
 
-    // Cincin tetap digambar berurutan.
-    const radii = [0.4, 0.6, 0.8];
-    for (var i = 0; i < radii.length; i++) {
-      final t =
-          obPhase(ms, 500 + i * 260, 1800 + i * 260, Curves.easeInOutCubic);
-      c.drawArc(Rect.fromCircle(center: ctr, radius: R * radii[i]),
-          -math.pi / 2, 2 * math.pi * t, false, _line(0.42 - i * 0.08));
-      if (t >= 1) {
-        final dir = i.isEven ? 1.0 : -1.0;
-        final a =
-            -math.pi / 2 + dir * loop * 2 * math.pi * (1 + i * 0.5) + i * 2.1;
-        final pos = ctr + Offset(math.cos(a), math.sin(a)) * (R * radii[i]);
-        c.drawCircle(pos, 3.6, Paint()..color = ink.withValues(alpha: 0.9));
-        c.drawCircle(pos, 10, Paint()..color = ink.withValues(alpha: 0.07));
+    // Punggung kitab.
+    final n = _h.length;
+    final gap = s.width * 0.008;
+    final w = (right - left - gap * (n - 1)) / n;
+    for (var i = 0; i < n; i++) {
+      final t = obPhase(ms, 350 + i * 130, 950 + i * 130, Curves.easeOutCubic);
+      if (t <= 0) continue;
+      final hh = s.height * _h[i] * t;
+      final x = left + i * (w + gap);
+      final r = RRect.fromRectAndCorners(Rect.fromLTWH(x, baseY - hh, w, hh),
+          topLeft: const Radius.circular(OTRadius.xs / 2),
+          topRight: const Radius.circular(OTRadius.xs / 2));
+      c.drawRRect(
+          r, Paint()..color = ink.withValues(alpha: 0.1 + 0.07 * (i % 3)));
+      c.drawRRect(r, _line(0.55, 1.2));
+      // Dua pita pada punggung kitab.
+      if (t > 0.8) {
+        for (final f in [0.22, 0.34]) {
+          c.drawLine(Offset(x + 2, baseY - hh * f),
+              Offset(x + w - 2, baseY - hh * f), _line(0.35, 1));
+        }
       }
     }
 
-    // Garis ukur tipis di tepi, seperti pinggir naskah.
-    const ticks = 72;
-    final tickT = obPhase(ms, 700, 2600, Curves.easeInOut);
-    for (var i = 0; i < ticks; i++) {
-      if (i / ticks > tickT) break;
-      final a = -math.pi / 2 + 2 * math.pi * i / ticks;
-      final long = i % 6 == 0;
-      final r1 = R * 0.93, r2 = R * (long ? 0.865 : 0.9);
-      c.drawLine(
-          ctr + Offset(math.cos(a), math.sin(a)) * r1,
-          ctr + Offset(math.cos(a), math.sin(a)) * r2,
-          _line(long ? 0.5 : 0.22, 1));
+    // Lengkung runcing yang menaungi rak.
+    final t = obPhase(ms, 1500, 2500, Curves.easeInOutCubic);
+    if (t > 0) {
+      final halfW = s.width * 0.33;
+      final spring = s.height * 0.36;
+      final apex = s.height * 0.3;
+      final path = Path()
+        ..moveTo(cx - halfW, baseY)
+        ..lineTo(cx - halfW, baseY - spring)
+        ..cubicTo(cx - halfW, baseY - spring - apex * 0.55, cx - halfW * 0.35,
+            baseY - spring - apex * 0.86, cx, baseY - spring - apex)
+        ..cubicTo(cx + halfW * 0.35, baseY - spring - apex * 0.86, cx + halfW,
+            baseY - spring - apex * 0.55, cx + halfW, baseY - spring)
+        ..lineTo(cx + halfW, baseY);
+      final total =
+          path.computeMetrics().fold<double>(0, (a, m) => a + m.length);
+      var left2 = total * t;
+      for (final m in path.computeMetrics()) {
+        if (left2 <= 0) break;
+        final take = math.min(left2, m.length);
+        c.drawPath(m.extractPath(0, take), _line(0.9, 2));
+        left2 -= take;
+      }
     }
-
-    // Napas halus di sekeliling logo.
-    final breath = 0.5 + 0.5 * math.sin(loop * 2 * math.pi * 4);
-    c.drawCircle(ctr, R * (0.24 + 0.02 * breath) * obPhase(ms, 1200, 2000),
-        _line(0.12 + 0.12 * breath, 1.2));
   }
 
   @override
-  bool shouldRepaint(covariant _LogoPainter old) => true;
+  bool shouldRepaint(covariant _ShelfPainter old) =>
+      old.ms != ms || old.ink != ink;
 }
 
 // ───────────────────────── Slide 2: AI umum lawan OpenTurath
@@ -234,39 +254,41 @@ class OnboardingVersusArt extends StatelessWidget {
     final ink = OTColors.textPrimary(dark),
         muted = OTColors.textSecondary(dark);
     final inv = OTColors.textPrimary(!dark);
-    return Align(
-      alignment: Alignment.topCenter,
-      child: FittedBox(
-        fit: BoxFit.scaleDown,
-        child: SizedBox(
-          width: 352,
-          child: OnboardingTimeline(
-            introMs: 600 + rows.length * 1250 + 800,
-            builder: (c, ms, loop) {
-              final legend = obPhase(ms, 0, 500);
-              return Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Opacity(
-                    opacity: legend,
-                    child: Wrap(
-                        spacing: OTSpacing.sm,
-                        runSpacing: OTSpacing.sm,
-                        children: [
-                          _legend(false, left, muted,
-                              OTColors.borderStrong(dark), null, 1),
-                          _legend(true, right, inv, ink, ink, 1),
-                        ]),
-                  ),
-                  const SizedBox(height: OTSpacing.lg),
-                  for (var i = 0; i < rows.length; i++) ...[
-                    _group(rows[i], ms, 600.0 + i * 1250, ink, muted, inv),
-                    const SizedBox(height: OTSpacing.base),
+    return Center(
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 560, maxHeight: 720),
+        child: FittedBox(
+          fit: BoxFit.contain,
+          child: SizedBox(
+            width: 352,
+            child: OnboardingTimeline(
+              introMs: 600 + rows.length * 1250 + 800,
+              builder: (c, ms, loop) {
+                final legend = obPhase(ms, 0, 500);
+                return Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Opacity(
+                      opacity: legend,
+                      child: Wrap(
+                          spacing: OTSpacing.sm,
+                          runSpacing: OTSpacing.sm,
+                          children: [
+                            _legend(false, left, muted,
+                                OTColors.borderStrong(dark), null, 1),
+                            _legend(true, right, inv, ink, ink, 1),
+                          ]),
+                    ),
+                    const SizedBox(height: OTSpacing.lg),
+                    for (var i = 0; i < rows.length; i++) ...[
+                      _group(rows[i], ms, 600.0 + i * 1250, ink, muted, inv),
+                      const SizedBox(height: OTSpacing.base),
+                    ],
                   ],
-                ],
-              );
-            },
+                );
+              },
+            ),
           ),
         ),
       ),
@@ -387,10 +409,15 @@ class OnboardingFieldsArt extends StatelessWidget {
         child: SizedBox.square(
           dimension: side,
           child: OnboardingTimeline(
+            introMs: 5200,
             builder: (c, ms, loop) {
-              // Sorotan berpindah tiap ±1,9 detik setelah gambar jadi.
-              final cycle = (loop * 14000 / 1900).floor() % n;
-              final hl = ms < 3000 ? -1 : cycle;
+              // Sorotan menyusuri bidang satu kali, lalu berhenti pada yang
+              // eksklusif (Fikih Tahawwulat).
+              const order = [0, 2, 3, 4, 1];
+              final hl = ms < 1900
+                  ? -1
+                  : order[
+                      math.min(order.length - 1, ((ms - 1900) / 650).floor())];
               return Stack(children: [
                 RepaintBoundary(
                   child: CustomPaint(
@@ -506,7 +533,7 @@ class _FieldsPainter extends CustomPainter {
       c.drawLine(ctr, end, _line(i == hl ? 0.7 : 0.2));
       // Denyut cahaya menyusuri garis cabang yang menyala.
       if (i == hl) {
-        final k = (loop * 14000 % 1900) / 1900;
+        final k = ((ms - 1900) % 650) / 650;
         final p = ctr + (pts[i] - ctr) * Curves.easeInOut.transform(k);
         c.drawCircle(p, 4, Paint()..color = ink);
         c.drawCircle(p, 11, Paint()..color = ink.withValues(alpha: 0.08));
@@ -518,7 +545,7 @@ class _FieldsPainter extends CustomPainter {
       final lit = i == hl;
       final r = nr * (lit ? 1.25 : 1) * t;
       if (lit) {
-        final pulse = 0.5 + 0.5 * math.sin(loop * 2 * math.pi * 7);
+        final pulse = 0.5 + 0.5 * math.sin(ms * 0.012);
         c.drawCircle(pts[i], r + 8 + 7 * pulse,
             Paint()..color = ink.withValues(alpha: 0.05 + 0.05 * pulse));
         c.drawCircle(pts[i], r, Paint()..color = ink);
@@ -553,78 +580,82 @@ class OnboardingAskArt extends StatelessWidget {
         muted = OTColors.textSecondary(dark);
     final inv = OTColors.textPrimary(!dark);
     return Center(
-      child: FittedBox(
-        fit: BoxFit.scaleDown,
-        child: SizedBox(
-          width: 340,
-          child: OnboardingTimeline(
-            introMs: 6200,
-            builder: (c, ms, loop) {
-              final qIn = obPhase(ms, 200, 600);
-              final typed = obPhase(ms, 500, 1700, Curves.linear);
-              final chars = (question.characters.length * typed).round();
-              final shown = question.characters.take(chars).toString();
-              final cursor = typed < 1 && (ms ~/ 330).isEven;
-              final dots =
-                  obPhase(ms, 1800, 2000) * (1 - obPhase(ms, 2900, 3100));
-              final card = obPhase(ms, 2900, 3500);
-              return Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Align(
-                    alignment: AlignmentDirectional.centerEnd,
-                    child: Opacity(
-                      opacity: qIn,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: OTSpacing.base, vertical: OTSpacing.md),
-                        decoration: BoxDecoration(
-                          color: ink,
-                          borderRadius: OTRadius.cardBorder,
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 560, maxHeight: 720),
+        child: FittedBox(
+          fit: BoxFit.contain,
+          child: SizedBox(
+            width: 340,
+            child: OnboardingTimeline(
+              introMs: 6200,
+              builder: (c, ms, loop) {
+                final qIn = obPhase(ms, 200, 600);
+                final typed = obPhase(ms, 500, 1700, Curves.linear);
+                final chars = (question.characters.length * typed).round();
+                final shown = question.characters.take(chars).toString();
+                final cursor = typed < 1 && (ms ~/ 330).isEven;
+                final dots =
+                    obPhase(ms, 1800, 2000) * (1 - obPhase(ms, 2900, 3100));
+                final card = obPhase(ms, 2900, 3500);
+                return Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Align(
+                      alignment: AlignmentDirectional.centerEnd,
+                      child: Opacity(
+                        opacity: qIn,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: OTSpacing.base,
+                              vertical: OTSpacing.md),
+                          decoration: BoxDecoration(
+                            color: ink,
+                            borderRadius: OTRadius.cardBorder,
+                          ),
+                          child: Text('$shown${cursor ? '▍' : ''}',
+                              style: OTTypography.bodyMedium(color: inv)),
                         ),
-                        child: Text('$shown${cursor ? '▍' : ''}',
-                            style: OTTypography.bodyMedium(color: inv)),
                       ),
                     ),
-                  ),
-                  const SizedBox(height: OTSpacing.base),
-                  SizedBox(
-                    height: OTSpacing.xl,
-                    child: Opacity(
-                      opacity: dots,
-                      child: Row(children: [
-                        for (var i = 0; i < 3; i++)
-                          Padding(
-                            padding: const EdgeInsetsDirectional.only(
-                                end: OTSpacing.xs),
-                            child: Transform.translate(
-                              offset: Offset(
-                                  0,
-                                  -4 *
-                                      math.max(
-                                          0, math.sin(ms * 0.012 - i * 0.9))),
-                              child: Container(
-                                width: 8,
-                                height: 8,
-                                decoration: BoxDecoration(
-                                    shape: BoxShape.circle, color: muted),
+                    const SizedBox(height: OTSpacing.base),
+                    SizedBox(
+                      height: OTSpacing.xl,
+                      child: Opacity(
+                        opacity: dots,
+                        child: Row(children: [
+                          for (var i = 0; i < 3; i++)
+                            Padding(
+                              padding: const EdgeInsetsDirectional.only(
+                                  end: OTSpacing.xs),
+                              child: Transform.translate(
+                                offset: Offset(
+                                    0,
+                                    -4 *
+                                        math.max(
+                                            0, math.sin(ms * 0.012 - i * 0.9))),
+                                child: Container(
+                                  width: 8,
+                                  height: 8,
+                                  decoration: BoxDecoration(
+                                      shape: BoxShape.circle, color: muted),
+                                ),
                               ),
                             ),
-                          ),
-                      ]),
+                        ]),
+                      ),
                     ),
-                  ),
-                  Opacity(
-                    opacity: card,
-                    child: Transform.translate(
-                      offset: Offset(0, (1 - card) * 18),
-                      child: _answer(ms, ink, muted, inv),
+                    Opacity(
+                      opacity: card,
+                      child: Transform.translate(
+                        offset: Offset(0, (1 - card) * 18),
+                        child: _answer(ms, ink, muted, inv),
+                      ),
                     ),
-                  ),
-                ],
-              );
-            },
+                  ],
+                );
+              },
+            ),
           ),
         ),
       ),

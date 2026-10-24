@@ -299,23 +299,28 @@ class _OnboardingPage extends StatelessWidget {
     );
 
     if (wide) {
-      return Center(
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 1180),
-          child: Row(children: [
-            Expanded(
-                flex: 5,
-                child: Padding(
-                    padding: const EdgeInsets.all(OTSpacing.xxl),
-                    child: SingleChildScrollView(child: textBlock))),
-            Expanded(
-                flex: 6,
-                child: Padding(
-                    padding: const EdgeInsets.all(OTSpacing.xl),
-                    child: ExcludeSemantics(child: art))),
-          ]),
-        ),
-      );
+      // Jendela lebar: huruf sedikit lebih besar agar isi tidak mengambang.
+      final mq = MediaQuery.of(context);
+      return MediaQuery(
+          data: mq.copyWith(
+              textScaler: TextScaler.linear(mq.textScaler.scale(1) * 1.12)),
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 1180),
+              child: Row(children: [
+                Expanded(
+                    flex: 5,
+                    child: Padding(
+                        padding: const EdgeInsets.all(OTSpacing.xxl),
+                        child: SingleChildScrollView(child: textBlock))),
+                Expanded(
+                    flex: 6,
+                    child: Padding(
+                        padding: const EdgeInsets.all(OTSpacing.xl),
+                        child: ExcludeSemantics(child: art))),
+              ]),
+            ),
+          ));
     }
     final artBox = Expanded(
       flex: artFlex,
