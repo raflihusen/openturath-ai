@@ -127,7 +127,7 @@ class _OTSplashIntroState extends State<OTSplashIntro>
       builder: (context, _) {
         final ms = still ? total.toDouble() : _controller.value * total;
         const s = _markH / _vbH;
-        final markW = _vbW * s;
+        const markW = _vbW * s;
         final fill = _phase(ms, OTMotion.splashFillStartMs,
             OTMotion.splashFillEndMs, Curves.easeInOutCubic);
         final dome = _phase(ms, OTMotion.splashDomeStartMs,
@@ -144,7 +144,7 @@ class _OTSplashIntroState extends State<OTSplashIntro>
                 .copyWith(fontSize: OTFontSize.s16, fontWeight: FontWeight.w400)
             : OTTypography.caption(color: ink.withValues(alpha: 0.72))
                 .copyWith(letterSpacing: 0.6);
-        final canvasW = markW * 2.9, canvasH = _markH * 2.1;
+        const canvasW = markW * 2.9, canvasH = _markH * 2.1;
         return Semantics(
             label: '${Loc.tr('appName')}. ${Loc.tr('splashTagline')}',
             container: true,
@@ -164,7 +164,7 @@ class _OTSplashIntroState extends State<OTSplashIntro>
                                 ms: ms,
                                 ink: ink,
                                 markRect: Rect.fromCenter(
-                                    center: Offset(canvasW / 2, canvasH * 0.55),
+                                    center: const Offset(canvasW / 2, canvasH * 0.55),
                                     width: markW,
                                     height: (833 - _y0) * s))),
                       ),
@@ -218,7 +218,7 @@ class _OTSplashIntroState extends State<OTSplashIntro>
                   child: Transform.translate(
                     offset: Offset(0, (1 - tag) * 8),
                     child: ConstrainedBox(
-                      constraints: BoxConstraints(maxWidth: canvasW),
+                      constraints: const BoxConstraints(maxWidth: canvasW),
                       child: Text(
                         Loc.tr('splashTagline'),
                         textAlign: TextAlign.center,

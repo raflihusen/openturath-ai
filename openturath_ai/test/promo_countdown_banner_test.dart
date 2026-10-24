@@ -24,7 +24,7 @@ void main() {
           locale: const Locale('id'),
           supportedLocales: Loc.supportedLocales,
           localizationsDelegates: GlobalMaterialLocalizations.delegates,
-          home: Scaffold(
+          home: const Scaffold(
             body: Center(
               child: PromoCountdownBanner(clock: _beforeLaunch),
             ),
@@ -70,7 +70,7 @@ void main() {
           locale: const Locale('id'),
           supportedLocales: Loc.supportedLocales,
           localizationsDelegates: GlobalMaterialLocalizations.delegates,
-          home: Scaffold(
+          home: const Scaffold(
             body: Center(
               child: PromoCountdownBanner(clock: _beforeLaunch),
             ),
@@ -102,7 +102,7 @@ void main() {
           locale: const Locale('en'),
           supportedLocales: Loc.supportedLocales,
           localizationsDelegates: GlobalMaterialLocalizations.delegates,
-          home: Scaffold(
+          home: const Scaffold(
             body: Center(
               child: PromoCountdownBanner(clock: _beforeLaunch),
             ),
