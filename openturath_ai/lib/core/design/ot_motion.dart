@@ -23,9 +23,6 @@ class OTMotion {
 
   // Urutan (ms): lengkung digambar, terisi, kubah naik, dua halaman terbuka,
   // wordmark huruf demi huruf, garis tipis, lalu semboyan.
-  static const int splashEchoEndMs = 1000;
-  static const int splashEchoStaggerMs = 140;
-  static const int splashEchoCount = 3;
   static const int splashDrawEndMs = 650;
   static const int splashFillStartMs = 550;
   static const int splashFillEndMs = 950;

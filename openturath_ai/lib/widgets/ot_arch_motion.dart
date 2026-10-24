@@ -39,8 +39,7 @@ Path _segment(Path path, double from, double to) {
       (to * metric.length).clamp(0.0, metric.length));
 }
 
-/// Pembuka aplikasi: lengkung logo digambar dengan gema yang menetap di
-/// sekelilingnya, terisi, kubah naik, dua halaman terbuka, lalu wordmark
+/// Pembuka aplikasi: lengkung logo digambar, terisi, kubah naik, dua halaman terbuka, lalu wordmark
 /// ditulis huruf demi huruf dan semboyan menyusul. Diputar sekali; ketuk atau
 /// [skip] melompat ke bingkai akhir. Gerak dikurangi: langsung bingkai akhir.
 class OTSplashIntro extends StatefulWidget {
@@ -144,7 +143,8 @@ class _OTSplashIntroState extends State<OTSplashIntro>
                 .copyWith(fontSize: OTFontSize.s16, fontWeight: FontWeight.w400)
             : OTTypography.caption(color: ink.withValues(alpha: 0.72))
                 .copyWith(letterSpacing: 0.6);
-        const canvasW = markW * 2.9, canvasH = _markH * 2.1;
+        const outlineH = (833 - _y0) * s;
+        const canvasW = markW * 2.9, canvasH = _markH;
         return Semantics(
             label: '${Loc.tr('appName')}. ${Loc.tr('splashTagline')}',
             container: true,
@@ -164,14 +164,14 @@ class _OTSplashIntroState extends State<OTSplashIntro>
                                 ms: ms,
                                 ink: ink,
                                 markRect: Rect.fromCenter(
-                                    center: const Offset(
-                                        canvasW / 2, canvasH * 0.55),
+                                    center:
+                                        const Offset(canvasW / 2, outlineH / 2),
                                     width: markW,
-                                    height: (833 - _y0) * s))),
+                                    height: outlineH))),
                       ),
                       Positioned(
                         left: (canvasW - markW) / 2,
-                        top: canvasH * 0.55 - (833 - _y0) * s / 2,
+                        top: 0,
                         width: markW,
                         height: _markH,
                         child: Stack(clipBehavior: Clip.none, children: [
@@ -199,7 +199,7 @@ class _OTSplashIntroState extends State<OTSplashIntro>
                     ],
                   ),
                 ),
-                const SizedBox(height: OTSpacing.md),
+                const SizedBox(height: OTSpacing.base),
                 Directionality(
                   textDirection: TextDirection.ltr,
                   child: Row(mainAxisSize: MainAxisSize.min, children: [
@@ -213,7 +213,7 @@ class _OTSplashIntroState extends State<OTSplashIntro>
                   height: 1,
                   color: ink.withValues(alpha: 0.35),
                 ),
-                const SizedBox(height: OTSpacing.base),
+                const SizedBox(height: OTSpacing.lg),
                 Opacity(
                   opacity: tag,
                   child: Transform.translate(
@@ -261,36 +261,6 @@ class _SplashArchPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final outline = otArchPath(markRect, open: true);
-    final origin = Offset(markRect.center.dx, markRect.bottom);
-
-    // Gema: lengkung yang lebih besar digambar berurutan, lalu menetap samar.
-    for (var i = 0; i < OTMotion.splashEchoCount; i++) {
-      final start = i * OTMotion.splashEchoStaggerMs;
-      final t = _phase(
-          ms,
-          start,
-          OTMotion.splashEchoEndMs + i * OTMotion.splashEchoStaggerMs,
-          OTMotion.sheetCurve);
-      if (t <= 0) continue;
-      final scale = 1.32 + 0.38 * i;
-      final settled = _phase(ms, OTMotion.splashEchoEndMs,
-          OTMotion.splashEchoEndMs + 500, Curves.easeOut);
-      final alpha = (0.26 - 0.07 * i) * (1 - 0.45 * settled);
-      canvas
-        ..save()
-        ..translate(origin.dx, origin.dy)
-        ..scale(scale)
-        ..translate(-origin.dx, -origin.dy)
-        ..drawPath(
-          _segment(outline, 0, t),
-          Paint()
-            ..style = PaintingStyle.stroke
-            ..strokeWidth = 1 / scale
-            ..strokeCap = StrokeCap.round
-            ..color = ink.withValues(alpha: alpha),
-        )
-        ..restore();
-    }
 
     // Garis lengkung logo: digambar, lalu melebur ke bentuk terisi.
     final drawn = _phase(ms, 0, OTMotion.splashDrawEndMs, OTMotion.curve);
