@@ -10,6 +10,7 @@ BAB = [
   T("Hadis Jibril", "The Hadith of Jibril", "حديث جبريل"),
   T("Kesatuan agama", "One religion, one whole", "وحدة الدين"),
   T("Fikih Tahawwulat", "Fiqh al-Tahawwulat", "فقه التحولات"),
+  T("Lima cabang ilmu", "Five branches", "الفروع الخمسة"),
   T("Lima asisten", "Five assistants", "المساعدون الخمسة"),
 ]
 
@@ -91,27 +92,35 @@ A(S("cards", bab=2, title=T("Setiap pertanyaan melahirkan satu ilmu.", "Each que
 A(S("question", bab=2, q=T("Tiga ilmu pertama sudah kita kenal sejak lama. Mengapa yang keempat terasa asing?", "We have known the first three sciences for a long time. Why does the fourth feel unfamiliar?", "العلوم الثلاثة الأولى معروفة منذ زمن. فلماذا يبدو الرابع غريبًا؟")))
 A(S("text", bab=2, title=T("Karena ia “disimpan”.", "Because it was “stored away”.", "لأنه كان «مدّخرًا»."),
     lines=[T("Dahulu bagian keempat tersimpan di bab-bab hadis tentang fitnah dan peristiwa besar. Ketika tanda-tandanya mulai tampak, Al-Habib Abu Bakar Al-Masyhur menatanya menjadi satu ilmu yang bisa dipelajari: Fikih Tahawwulat.", "The fourth part was kept in the hadith chapters on trials and great events. When its signs began to appear, Al-Habib Abu Bakar Al-Masyhur arranged it into one science that can be studied: Fiqh al-Tahawwulat.", "كان الجزء الرابع محفوظًا في أبواب الفتن والملاحم من كتب الحديث. فلما بدت علاماته رتّبه الحبيب أبو بكر المشهور علمًا يُدرَس: فقه التحولات.")]))
-A(S("text", bab=2, title=T("Apakah rukun Islam dan Iman berubah?", "Do the pillars of Islam and Iman change?", "هل تتغيّر أركان الإسلام والإيمان؟"),
-    lines=[T("Tidak. Rukun Islam tetap lima. Rukun Iman tetap enam.", "No. The pillars of Islam stay five. The pillars of Iman stay six.", "لا. أركان الإسلام خمسة، وأركان الإيمان ستة."),
+A(S("stats", bab=2, title=T("Apakah rukun Islam, Iman, dan Ihsan berubah?", "Do the pillars of Islam, Iman, and Ihsan change?", "هل تتغيّر أركان الإسلام والإيمان والإحسان؟"),
+    items=[{"n": 5, "t": T("Rukun Islam", "Pillars of Islam", "أركان الإسلام"), "d": T("tetap lima", "stay five", "خمسة لا تتغيّر")},
+           {"n": 6, "t": T("Rukun Iman", "Pillars of Iman", "أركان الإيمان"), "d": T("tetap enam", "stay six", "ستة لا تتغيّر")},
+           {"n": 2, "t": T("Rukun Ihsan", "Pillars of Ihsan", "أركان الإحسان"), "d": T("tetap dua", "stay two", "ركنان لا يتغيّران")}],
+    lines=[T("Tidak. Rukun Islam tetap lima. Rukun Iman tetap enam. Rukun Ihsan tetap dua.", "No. The pillars of Islam stay five. The pillars of Iman stay six. The pillars of Ihsan stay two.", "لا. أركان الإسلام خمسة، وأركان الإيمان ستة، وللإحسان ركنان."),
            T("“Empat rukun agama” hanyalah cara mengelompokkan empat pertanyaan Jibril.", "“The four pillars of religion” is only a way to group Jibril's four questions.", "و«أركان الدين الأربعة» مجرد تصنيف لأسئلة جبريل الأربعة.")]))
 A(S("question", bab=2, q=T("Bukankah kiamat hanya Allah yang tahu? Lalu mengapa kita membahas tandanya?", "Isn't it only Allah who knows the Hour? Then why discuss its signs?", "أليس الله وحده يعلم الساعة؟ فلماذا نبحث في علاماتها؟")))
-A(S("compare", bab=2, cols=(T("Waktu kiamat", "The time of the Hour", "وقت الساعة"), T("Tanda-tandanya", "Its signs", "علاماتها")),
+A(S("compare", bab=2, title=T("Waktunya rahasia, tandanya diajarkan.", "The time is secret; the signs are taught.", "الوقت مكتوم، والعلامات مُعلَّمة."), cols=(T("Waktu kiamat", "The time of the Hour", "وقت الساعة"), T("Tanda-tandanya", "Its signs", "علاماتها")),
     rows=[(T("Siapa yang tahu", "Who knows", "من يعلم"), T("Hanya Allah", "Only Allah", "الله وحده"), T("Diajarkan Nabi ﷺ", "Taught by the Prophet ﷺ", "علّمها النبي ﷺ")),
           (T("Sikap kita", "Our stance", "موقفنا"), T("Dilarang menebak", "No guessing", "لا تخمين"), T("Dipelajari agar iman selamat", "Studied so faith stays safe", "تُدرس ليسلم الإيمان"))]))
 A(S("text", bab=2, title=T("Pagar dan radar.", "A fence and a radar.", "سياج ورادار."),
     lines=[T("Fungsi rukun keempat: menjaga tiga rukun lainnya agar tidak rusak, dipalsukan, atau ditinggalkan ketika zaman berguncang.", "The fourth pillar's role: to guard the other three so they are not spoiled, falsified, or abandoned when the age shakes.", "وظيفة الركن الرابع: حفظ الثلاثة الأخرى كي لا تفسد أو تُزوَّر أو تُترك حين يضطرب الزمان.")]))
-A(S("list", bab=2, title=T("Dua tugasnya", "Its two tasks", "مهمتاه"),
+A(S("list", bab=2, title=T("Dua tugas utamanya", "Its two main tasks", "مهمتاه الرئيستان"),
     items=[{"t": T("Memperbarui cara dakwah", "Renewing the way of calling", "تجديد وسائل الدعوة"), "d": T("Dengan hikmah dan nasihat yang baik, menjaga lisan dari mencela dan tangan dari menumpahkan darah.", "With wisdom and good counsel, guarding the tongue from reviling and the hand from bloodshed.", "بالحكمة والموعظة الحسنة، مع حفظ اللسان من الذم واليد من الدم.")},
            {"t": T("Menjaga ilmu yang tetap", "Guarding the constant sciences", "صيانة علوم الثوابت"), "d": T("Dari tiga perusak: sikap berlebihan, kepalsuan, dan tafsir orang yang tidak berilmu.", "From three corruptors: excess, falsehood, and interpretation by the unlearned.", "من ثلاثة مفسدات: الغلو، والانتحال، وتأويل الجاهلين.")}]))
-A(S("compare", bab=2, title=T("Dua tanda, dua kendali", "Two signs, two controls", "علامتان وقراران"), cols=(T("Tanda dalam hadis", "The sign", "العلامة"), T("Yang bergeser", "What shifts", "ما يتحوّل")),
-    rows=[(T("Budak perempuan melahirkan tuannya", "The slave woman gives birth to her mistress", "أن تلد الأمة ربّتها"), T("Kendali ilmu dan keyakinan", "Control of knowledge and belief", "قرار العلم والاعتقاد"), T("Urusan ilmu dipegang yang belum berhak", "Knowledge handed to those unfit", "يُسند أمر العلم لغير أهله")),
-          (T("Berlomba meninggikan bangunan", "Competing to raise tall buildings", "التطاول في البنيان"), T("Kendali kekuasaan dan harta", "Control of power and wealth", "قرار الحكم والاقتصاد"), T("Kekuasaan dan harta dipegang yang belum berhak", "Power and wealth handed to those unfit", "يُسند الحكم والمال لغير أهله"))]))
+A(S("signs", bab=2, title=T("Dua tanda, dua kendali", "Two signs, two controls", "علامتان وقراران"),
+    cols=(T("Tanda dalam hadis", "The sign in the hadith", "العلامة في الحديث"), T("Yang bergeser", "What shifts", "ما يتحوّل")),
+    items=[{"sign": T("Budak perempuan melahirkan tuannya", "The slave woman gives birth to her mistress", "أن تلد الأمة ربّتها"), "signAr": "أَنْ تَلِدَ الْأَمَةُ رَبَّتَهَا",
+            "ar": "قرار العلم والاعتقاد", "tr": "Qararul ‘ilmi wal i‘tiqad", "name": T("Otoritas ilmu dan akidah", "Authority over knowledge and creed", "قرار العلم والاعتقاد"),
+            "d": T("Urusan ilmu dipegang yang belum berhak", "Knowledge handed to those unfit", "يُسند أمر العلم لغير أهله")},
+           {"sign": T("Berlomba meninggikan bangunan", "Competing to raise tall buildings", "التطاول في البنيان"), "signAr": "يَتَطَاوَلُونَ فِي الْبُنْيَانِ",
+            "ar": "قرار الحكم والاقتصاد", "tr": "Qararul hukmi wal iqtisad", "name": T("Otoritas hukum dan ekonomi", "Legal and economic authority", "قرار الحكم والاقتصاد"),
+            "d": T("Kekuasaan dan harta dipegang yang belum berhak", "Power and wealth handed to those unfit", "يُسند الحكم والمال لغير أهله")}]))
 
 # ───────────── Bab 3: Fikih Tahawwulat
 A(S("title", bab=3, kicker=T("Bab 3", "Chapter 3", "الباب 3"), title=T("Apa itu Fikih Tahawwulat?", "What is Fiqh al-Tahawwulat?", "ما هو فقه التحولات؟"), sub=T("Dengan kata paling sederhana.", "In the simplest words.", "بأبسط عبارة.")))
 A(S("lines", bab=3, lines=[T("Fikih: pemahaman yang dalam.", "Fiqh: deep understanding.", "الفقه: الفهم العميق."), T("Tahawwulat: perubahan-perubahan.", "Tahawwulat: the changes.", "التحولات: التغيّرات."),
     T("Fikih Tahawwulat: ilmu memahami perubahan zaman dengan petunjuk Al-Qur'an dan hadis, supaya kita tahu sikap yang paling selamat.", "Fiqh al-Tahawwulat: the knowledge of understanding the changes of the age by the guidance of the Qur'an and hadith, so we know the safest stance.", "فقه التحولات: علم فهم تغيّرات الزمان بهدي القرآن والحديث، لنعرف الموقف الأسلم.")]))
-A(S("compare", bab=3, cols=(T("Fikih yang biasa menjawab", "Ordinary fiqh answers", "الفقه المعتاد يجيب"), T("Fikih Tahawwulat menjawab", "Fiqh al-Tahawwulat answers", "فقه التحولات يجيب")),
+A(S("compare", bab=3, title=T("Dua jenis pertanyaan", "Two kinds of question", "نوعان من الأسئلة"), cols=(T("Fikih yang biasa menjawab", "Ordinary fiqh answers", "الفقه المعتاد يجيب"), T("Fikih Tahawwulat menjawab", "Fiqh al-Tahawwulat answers", "فقه التحولات يجيب")),
     rows=[(T("Pertanyaan", "The question", "السؤال"), T("“Bagaimana salat dan zakat saya sah?”", "“How are my prayer and zakat valid?”", "«كيف تصحّ صلاتي وزكاتي؟»"), T("“Bagaimana saya menjaga agama ketika zaman berubah dan penuh ujian?”", "“How do I protect my faith when the age changes and is full of trials?”", "«كيف أحفظ ديني حين يتغيّر الزمان وتكثر الابتلاءات؟»"))]))
 A(S("lines", bab=3, kicker=T("Pertanyaan yang kini sulit dijawab", "Questions that are hard to answer today", "أسئلة يصعب أن نجد لها جوابًا اليوم"),
     lines=[T("Saya capek dengan berita buruk. Haruskah saya terus mengikutinya?", "I am tired of bad news. Must I keep following it?", "تعبتُ من الأخبار السيئة. هل يلزمني متابعتها؟"),
@@ -134,14 +143,8 @@ A(S("cards", bab=3, title=T("Faedahnya, lanjutan", "What it gives you, continued
            {"t": T("Bijak bermedia dan berteknologi", "Wise with media and technology", "حكيم مع الإعلام والتقنية"), "d": T("Ambil yang bermanfaat, tolak yang merusak.", "Take what helps, reject what harms.", "خذ النافع وردّ الضار.")},
            {"t": T("Mendidik anak dengan hangat", "Raising children warmly", "تربية الأبناء بدفء"), "d": T("Rumah menjadi benteng kasih sayang dan teladan.", "The home becomes a fortress of love and example.", "يصير البيت حصنًا من المحبة والقدوة.")},
            {"t": T("Menjelaskan tanpa bertengkar", "Explaining without a quarrel", "تشرح دون خصام"), "d": T("Punya bahasa yang sejuk untuk menasihati.", "A gentle language for advising.", "لغة لطيفة للنصح.")}]))
-A(S("cards", bab=3, title=T("Lima cabang ilmunya", "Its five branches", "فروعه الخمسة"),
-    items=[{"t": T("Fikih Fitnah dan Penjagaan Diri", "Fiqh of Fitna and Self-Protection", "فقه النواقض والنقائض ومضلّات الفتن وسبل الوقاية منها"), "d": T("Mengenali yang merusak agama dan cara selamat darinya.", "Recognizing what harms religion and how to stay safe.", "معرفة ما يفسد الدين وكيف ننجو منه.")},
-           {"t": T("Fikih Isyarat, Kabar Gembira, dan Perlindungan", "Fiqh of Signals, Glad Tidings, and Protection", "فقه الإشارات والبشارات والنذارات والحصانات والأسانيد"), "d": T("Pesan kasih sayang Nabi ﷺ, termasuk pentingnya guru bersanad.", "The Prophet's loving messages, including the importance of a teacher with a chain.", "رسائل الرحمة النبوية ومنها أهمية المعلم المسنَد.")},
-           {"t": T("Fikih Sains, Teknologi, dan Budaya Baru", "Fiqh of Science, Technology, and New Culture", "فقه مستجدات العلوم والثقافات والتقنيات"), "d": T("Menimbang penemuan dan tren baru dengan timbangan agama.", "Weighing new discoveries and trends by religion's scale.", "وزن المستجدات والاتجاهات بميزان الدين.")},
-           {"t": T("Fikih Tanda Alam dan Peristiwa Besar", "Fiqh of Natural Signs and Great Events", "فقه الأشراط الكونية والأحداث الكبرى"), "d": T("Tanda kecil, tengah, dan besar, tanpa spekulasi.", "Minor, middle, and major signs, without speculation.", "الأشراط الصغرى والوسطى والكبرى دون تخمين.")},
-           {"t": T("Fikih Menautkan Agama dan Sejarah", "Fiqh of Linking Religion and History", "فقه الربط بين الديانة والتاريخ"), "d": T("Membaca perjalanan umat dengan kacamata wahyu.", "Reading the Ummah's journey through revelation.", "قراءة مسيرة الأمة بعين الوحي.")}]))
 A(S("question", bab=3, q=T("Apakah ini sama dengan ilmu akhir zaman yang sering beredar?", "Is this the same as the end-times talk that often circulates?", "هل هو نفسه حديث آخر الزمان المتداول؟")))
-A(S("compare", bab=3, cols=(T("Yang sering beredar", "Often circulating", "المتداول كثيرًا"), T("Fikih Tahawwulat", "Fiqh al-Tahawwulat", "فقه التحولات")),
+A(S("compare", bab=3, title=T("Dibandingkan dengan yang sering beredar", "Compared with what often circulates", "مقارنة بما يُتداول كثيرًا"), cols=(T("Yang sering beredar", "Often circulating", "المتداول كثيرًا"), T("Fikih Tahawwulat", "Fiqh al-Tahawwulat", "فقه التحولات")),
     rows=[(T("Tujuan", "Aim", "الغاية"), T("Menebak dan mencocokkan peristiwa", "Guessing and matching events", "التخمين ومطابقة الأحداث"), T("Membekali sikap yang selamat", "Equipping a safe stance", "تزويد الإنسان بالموقف الأسلم")),
           (T("Tahun dan tokoh", "Dates and figures", "السنوات والأشخاص"), T("Sering mematok tahun dan menunjuk orang", "Often fixes years and points at people", "كثيرًا ما تُحدَّد سنوات ويُشار إلى أشخاص"), T("Melarang keduanya", "Forbids both", "يمنع الأمرين")),
           (T("Nada", "Tone", "النبرة"), T("Menakut-nakuti, memancing marah", "Frightening, stirring anger", "تخويف وإثارة غضب"), T("Tenang, penuh harapan dan langkah amal", "Calm, hopeful, with steps to act", "هادئة، فيها رجاء وخطوات عمل")),
@@ -151,30 +154,92 @@ A(S("list", bab=3, title=T("Yang khas dari Fikih Tahawwulat", "What is distincti
            {"t": T("Fikih sikap, bukan sekadar daftar tanda", "A fiqh of stances, not just a list of signs", "فقه مواقف لا قائمة علامات"), "d": T("Apa yang dilakukan muslim, keluarga, dan ulama di tiap tahap.", "What a Muslim, a family, and scholars do at each stage.", "ماذا يفعل المسلم والأسرة والعلماء في كل مرحلة.")},
            {"t": T("Berbeda dari ramalan dan teori konspirasi", "Unlike fortune-telling and conspiracy theories", "يختلف عن التنجيم ونظريات المؤامرة"), "d": T("Ia mengajak memperbaiki diri lebih dulu, dan berujung pada jalan selamat: hati, lisan, dan tangan terjaga.", "It invites you to mend yourself first, and ends in the safe way: heart, tongue, and hands guarded.", "يدعو إلى إصلاح النفس أولًا، وينتهي إلى منهج السلامة: سلامة القلب واللسان واليد.")}]))
 
-# ───────────── Bab 4: lima asisten
-A(S("title", bab=4, kicker=T("Bab 4", "Chapter 4", "الباب 4"), title=T("Lima asisten untuk mempelajarinya", "Five assistants to study it", "خمسة مساعدين لدراسته"),
+# ───────────── Bab 4: lima cabang ilmu
+BR = [
+ dict(name=T("Fikih Fitnah dan Penjagaan Diri", "Fiqh of Fitna and Self-Protection", "فقه النواقض والنقائض ومضلّات الفتن وسبل الوقاية منها"),
+      short=T("Fitnah dan penjagaan diri", "Fitna and self-protection", "النواقض والنقائض"),
+      desc=T("Mengenali hal-hal yang merusak agama, dan cara menyelamatkan diri darinya.", "Recognizing what harms religion, and how to keep yourself safe from it.", "معرفة ما يفسد الدين، وكيف ينجو الإنسان منه."),
+      qs=[T("Iman saya naik turun. Apa yang merusaknya, dan bagaimana menjaganya?", "My faith rises and falls. What damages it, and how do I guard it?", "إيماني يعلو ويهبط. ما الذي يفسده وكيف أحفظه؟"),
+          T("Bagaimana menyikapi hoaks agama di grup keluarga?", "How should I treat religious hoaxes in the family group chat?", "كيف أتعامل مع الأخبار الدينية المكذوبة في مجموعة الأسرة؟"),
+          T("Saya lelah dengan berita buruk. Haruskah terus mengikutinya?", "I am tired of bad news. Must I keep following it?", "تعبتُ من الأخبار السيئة. هل يلزمني متابعتها؟")]),
+ dict(name=T("Fikih Isyarat, Kabar Gembira, dan Perlindungan", "Fiqh of Signals, Glad Tidings, and Protection", "فقه الإشارات والبشارات والنذارات والحصانات والأسانيد"),
+      short=T("Isyarat dan perlindungan", "Signals and protection", "الإشارات والبشارات"),
+      desc=T("Mengenali pesan-pesan Nabi ﷺ tentang tempat, masa, kabar baik, dan peringatan bahaya, serta pentingnya belajar dari guru yang bersanad.", "Recognizing the Prophet's ﷺ messages about places, times, glad tidings, and warnings, and the importance of learning from a teacher with a chain.", "معرفة رسائل النبي ﷺ عن الأماكن والأزمنة والبشارات والنذارات، وأهمية التعلّم من معلّم مسنَد."),
+      qs=[T("Bagaimana membedakan guru yang tepercaya dari yang bukan?", "How do I tell a trustworthy teacher from one who is not?", "كيف أميّز المعلم الموثوق من غيره؟"),
+          T("Mengapa sanad penting dalam belajar agama?", "Why does a chain of transmission matter in learning religion?", "لماذا يهم السند في تعلّم الدين؟"),
+          T("Kabar gembira apa yang disampaikan Nabi ﷺ untuk umatnya?", "What glad tidings did the Prophet ﷺ give his Ummah?", "ما البشارات التي بشّر بها النبي ﷺ أمّته؟")]),
+ dict(name=T("Fikih Sains, Teknologi, dan Budaya Baru", "Fiqh of Science, Technology, and New Culture", "فقه مستجدات العلوم والثقافات والتقنيات"),
+      short=T("Sains, teknologi, budaya baru", "Science, technology, new culture", "مستجدات العلوم والتقنيات"),
+      desc=T("Menyikapi penemuan modern dan tren budaya baru dengan timbangan agama. Islam tidak memusuhi sains dan teknologi.", "Treating modern discoveries and new cultural trends by religion's scale. Islam is not hostile to science and technology.", "التعامل مع المستجدات والاتجاهات الثقافية بميزان الدين. فالإسلام لا يعادي العلم والتقنية."),
+      qs=[T("Bagaimana agama menyikapi AI dan internet?", "How does religion treat AI and the internet?", "كيف يتعامل الدين مع الذكاء الاصطناعي والإنترنت؟"),
+          T("Bagaimana menjaga iman anak di zaman layar?", "How do I protect my child's faith in the age of screens?", "كيف أحفظ إيمان ابني في زمن الشاشات؟"),
+          T("Bagaimana menimbang budaya dan tren baru?", "How do I weigh new cultures and trends?", "كيف أزن الثقافات والاتجاهات الجديدة؟")]),
+ dict(name=T("Fikih Tanda Alam dan Peristiwa Besar", "Fiqh of Natural Signs and Great Events", "فقه الأشراط الكونية والأحداث الكبرى"),
+      short=T("Tanda alam dan peristiwa besar", "Signs and great events", "الأشراط والأحداث الكبرى"),
+      desc=T("Memahami tanda kecil, tengah, dan besar secara tertib, tanpa spekulasi.", "Understanding the minor, middle, and major signs in order, without speculation.", "فهم الأشراط الصغرى والوسطى والكبرى بترتيب ودون تخمين."),
+      qs=[T("Apa beda tanda kecil, tengah, dan besar?", "What separates the minor, middle, and major signs?", "ما الفرق بين الأشراط الصغرى والوسطى والكبرى؟"),
+          T("Siapa Imam Mahdi, Dajjal, dan Nabi Isa menurut urutannya?", "Who are Imam al-Mahdi, the Dajjal, and Prophet Isa, in order?", "من المهدي والدجال وعيسى عليه السلام، وبأي ترتيب؟"),
+          T("Bolehkah menebak tahun kiamat?", "May we guess the year of the Hour?", "هل يجوز تخمين سنة الساعة؟")],
+      note=T("Di sinilah Imam Mahdi dan Dajjal dibahas, sebagai bagian dari tanda-tanda besar.", "This is where Imam al-Mahdi and the Dajjal are discussed, as part of the major signs.", "وهنا يُبحث المهدي والدجال، ضمن الأشراط الكبرى.")),
+ dict(name=T("Fikih Menautkan Agama dan Sejarah", "Fiqh of Linking Religion and History", "فقه الربط بين الديانة والتاريخ"),
+      short=T("Agama dan sejarah", "Religion and history", "الديانة والتاريخ"),
+      desc=T("Membaca perjalanan umat dari masa ke masa dalam bingkai wahyu, agar kita tahu di mana kita berdiri.", "Reading the Ummah's journey through the ages in the frame of revelation, so we know where we stand.", "قراءة مسيرة الأمة عبر العصور في إطار الوحي، لنعرف أين نقف."),
+      qs=[T("Bagaimana membaca sejarah umat dengan petunjuk wahyu?", "How do I read the Ummah's history by the guidance of revelation?", "كيف أقرأ تاريخ الأمة بهدي الوحي؟"),
+          T("Mengapa umat Islam banyak, tetapi terasa lemah?", "Why are Muslims many, yet feel weak?", "لماذا المسلمون كثيرون ومع ذلك يشعرون بالضعف؟"),
+          T("Apa hubungan perjalanan sejarah dengan sikap kita hari ini?", "How does the course of history relate to our stance today?", "ما صلة مسيرة التاريخ بموقفنا اليوم؟")]),
+]
+A(S("title", bab=4, kicker=T("Bab 4", "Chapter 4", "الباب 4"), title=T("Lima cabang ilmunya", "Its five branches", "فروعه الخمسة"),
+    sub=T("Bukan hanya tentang Imam Mahdi dan Dajjal.", "Not only about Imam al-Mahdi and the Dajjal.", "ليس عن المهدي والدجال فقط."), art="radial"))
+A(S("question", bab=4, q=T("Apakah Fikih Tahawwulat hanya membahas Imam Mahdi dan Dajjal?", "Does Fiqh al-Tahawwulat only discuss Imam al-Mahdi and the Dajjal?", "هل يقتصر فقه التحولات على الحديث عن المهدي والدجال؟"), art="radial"))
+A(S("text", bab=4, title=T("Tidak. Itu hanya sebagian kecil dari satu cabang.", "No. That is a small part of one branch.", "لا. هذا جزء يسير من فرع واحد."),
+    lines=[T("Kisah Imam Mahdi dan Dajjal termasuk tanda-tanda besar. Dan tanda-tanda besar hanyalah satu bagian dari satu cabang.", "The accounts of Imam al-Mahdi and the Dajjal belong to the major signs. And the major signs are only one part of one branch.", "خبر المهدي والدجال من الأشراط الكبرى، والأشراط الكبرى جزء واحد من فرع واحد."),
+           T("Ilmu ini punya lima cabang. Masing-masing menjawab jenis pertanyaan yang berbeda.", "This science has five branches. Each answers a different kind of question.", "لهذا العلم خمسة فروع، ولكل فرع نوع مختلف من الأسئلة.")], art="radial", hl=3))
+A(S("branchmap", bab=4, title=T("Lima cabang, satu peta", "Five branches, one map", "خمسة فروع، وخريطة واحدة"),
+    items=[{"n": i + 1, "t": b["name"], "s": b["short"]} for i, b in enumerate(BR)],
+    note=T("Ketuk atau geser untuk melihat tiap cabang.", "Swipe on to see each branch.", "اسحب لترى كل فرع."), art="radial"))
+for i, b in enumerate(BR):
+    A(S("branch", bab=4, n=i + 1, name=b["name"], desc=b["desc"], qs=b["qs"], note=b.get("note"), art="radial", hl=i))
+A(S("text", bab=4, title=T("Lima cabang, satu tujuan.", "Five branches, one aim.", "خمسة فروع، وغاية واحدة."),
+    lines=[T("Semuanya bermuara pada satu hal: sikap yang paling selamat di tengah perubahan zaman.", "All of them lead to one thing: the safest stance amid the changes of the age.", "كلها تصبّ في أمر واحد: الموقف الأسلم في خضمّ تغيّر الزمان."),
+           T("Itulah mengapa ia bukan sekadar ilmu tentang akhir zaman. Ia ilmu untuk hidup hari ini.", "That is why it is not merely a science of the end of time. It is a science for living today.", "ولهذا ليس مجرد علم عن آخر الزمان؛ بل علم للحياة اليوم.")], art="radial", hl=-1))
+
+# ───────────── Bab 5: lima asisten
+A(S("title", bab=5, kicker=T("Bab 5", "Chapter 5", "الباب 5"), title=T("Lima asisten untuk mempelajarinya", "Five assistants to study it", "خمسة مساعدين لدراسته"),
     sub=T("Kitab dan ceramah yang sama, lima cara belajar.", "The same books and lectures, five ways to learn.", "الكتب والمحاضرات نفسها، وخمس طرق للتعلّم.")))
-A(S("assistant", bab=4, ar="المحقق", name="Al-Muhaqqiq", role=T("Peneliti teks", "The text researcher", "باحث النصوص"),
+A(S("assistant", bab=5, ar="المحقق", name="Al-Muhaqqiq", role=T("Peneliti teks", "The text researcher", "باحث النصوص"),
     desc=T("Mencari matan dan ibarah asli beserta sumbernya, lalu memeriksanya dengan teliti.", "Finds the original text and passage with its source, then checks it carefully.", "يبحث عن المتن والعبارة الأصلية مع مصدرها ثم يدققها."),
     ask=T("“Di mana Al-Habib menyebut dua keruntuhan peradaban? Tampilkan ibarahnya.”", "“Where does Al-Habib mention the two collapses of civilization? Show me the passage.”", "«أين يذكر الحبيب الانهيارين الحضاريين؟ أرني العبارة.»")))
-A(S("assistant", bab=4, ar="البيان", name="Al-Bayan", role=T("Penjelas yang sederhana", "The simple explainer", "الشارح المبسِّط"),
+A(S("assistant", bab=5, ar="البيان", name="Al-Bayan", role=T("Penjelas yang sederhana", "The simple explainer", "الشارح المبسِّط"),
     desc=T("Menjelaskan dengan bahasa yang mudah dipahami. Cocok untuk pemula, dan tempat terbaik untuk mulai.", "Explains in easy language. Suited to beginners, and the best place to start.", "يشرح بلغة سهلة. مناسب للمبتدئين، وهو أفضل مكان للبداية."),
     ask=T("“Jelaskan al-ghutsa'iyyah dengan bahasa sederhana.”", "“Explain al-ghuthaiyya in simple words.”", "«اشرح الغثائية بعبارة مبسّطة.»"), start=True))
-A(S("assistant", bab=4, ar="المختبر", name="Al-Mukhtabir", role=T("Penguji pemahaman", "The understanding tester", "مختبِر الفهم"),
+A(S("assistant", bab=5, ar="المختبر", name="Al-Mukhtabir", role=T("Penguji pemahaman", "The understanding tester", "مختبِر الفهم"),
     desc=T("AI bertanya, Anda menjawab, lalu ia menilai di mana jawaban Anda sudah baik, di mana lemah, dan memberi jawaban idealnya.", "The AI asks, you answer, then it judges where your answer is strong and where weak, and gives the ideal answer.", "يسألك الذكاء الاصطناعي فتجيب، ثم يقيّم جوابك: مواطن الإحسان ومواطن الضعف، ويعطيك الجواب المثالي."),
     ask=T("“Uji saya: apa itu al-ghutsa'iyyah?”", "“Test me: what is al-ghuthaiyya?”", "«اختبرني: ما الغثائية؟»")))
-A(S("assistant", bab=4, ar="الحبيب", name="Al-Habib", role=T("Ceramah Al-Habib", "Al-Habib's lectures", "محاضرات الحبيب"),
+A(S("assistant", bab=5, ar="الحبيب", name="Al-Habib", role=T("Ceramah Al-Habib", "Al-Habib's lectures", "محاضرات الحبيب"),
     desc=T("Berisi ceramah Al-Habib Abu Bakar, dan menjawab dengan diksi beliau sendiri.", "Holds the lectures of Al-Habib Abu Bakar, and answers in his own wording.", "فيه محاضرات الحبيب أبي بكر، ويجيب بألفاظه هو."),
     ask=T("“Bagaimana Al-Habib menjelaskan sikap saat masa fitnah?”", "“How does Al-Habib explain conduct in times of trial?”", "«كيف يشرح الحبيب الموقف زمن الفتن؟»")))
-A(S("assistant", bab=4, ar="الخطيب", name="Al-Khatib", role=T("Penyusun khutbah", "The sermon writer", "معدّ الخطب"),
+A(S("assistant", bab=5, ar="الخطيب", name="Al-Khatib", role=T("Penyusun khutbah", "The sermon writer", "معدّ الخطب"),
     desc=T("Menyusun khutbah, bahan ceramah, dan materi dakwah lainnya.", "Drafts sermons, talk material, and other da'wa content.", "يُعدّ الخطب والمواد الوعظية وسائر المواد الدعوية."),
     ask=T("“Susun kerangka khutbah tentang sikap saat masa fitnah.”", "“Outline a sermon on conduct in times of trial.”", "«ضع هيكل خطبة عن الموقف زمن الفتن.»")))
-A(S("end", bab=4, title=T("Mulai dari mana?", "Where to start?", "من أين أبدأ؟"),
+A(S("end", bab=5, title=T("Mulai dari mana?", "Where to start?", "من أين أبدأ؟"),
     items=[{"t": T("Pilih satu pertanyaan yang paling mengganjal", "Pick the question that troubles you most", "اختر السؤال الذي يشغلك أكثر"), "d": T("Dari daftar tadi.", "From the list you just saw.", "من القائمة التي رأيتها.")},
            {"t": T("Tanyakan kepada Al-Bayan", "Ask Al-Bayan", "اسأل «البيان»"), "d": T("Bahasanya paling sederhana.", "His language is the simplest.", "لغته أبسط ما يكون.")},
            {"t": T("Periksa ibarahnya, tanyakan kepada guru", "Check the passage, ask a teacher", "تحقّق من العبارة واسأل معلمك"), "d": T("Terutama untuk urusan amal.", "Especially for matters of practice.", "خاصة في مسائل العمل.")}],
     cta=T("Mulai bertanya", "Start asking", "ابدأ بالسؤال"), cta2=T("Baca sebagai teks", "Read as text", "اقرأ نصًّا")))
 
+PIL = [T("Islam", "Islam", "الإسلام"), T("Iman", "Iman", "الإيمان"), T("Ihsan", "Ihsan", "الإحسان"), T("Tanda zaman", "Signs", "الأشراط")]
+_k = 0
+_as = 0
+for _s in SL:
+    if _s["bab"] == 1 and _s["type"] == "dialog":
+        _s["art"] = "pillars"; _s["hl"] = min(_k, 3); _s["labels"] = PIL; _k += 1
+    if _s["bab"] == 1 and _s["type"] == "cards" and len(_s["items"]) == 4:
+        _s["art"] = "pillars"; _s["hl"] = 3; _s["labels"] = PIL
+    if _s["bab"] == 2 and _s["type"] in ("cards", "list", "text", "question"):
+        _s["art"] = "pillars"; _s["hl"] = 3; _s["labels"] = PIL
+    if _s["type"] == "assistant":
+        _s["art"] = "radial"; _s["hl"] = _as; _as += 1
+        _s["labels"] = [T(x, x, x) for x in ("المحقق", "البيان", "المختبر", "الحبيب", "الخطيب")]
 out = {"bab": BAB, "slides": SL}
 if __name__ == "__main__":
     p = Path(__file__).resolve().parents[2] / "openturath_ai" / "assets" / "data" / "slides_mengenal.json"

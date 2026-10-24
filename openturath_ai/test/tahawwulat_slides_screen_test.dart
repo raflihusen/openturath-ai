@@ -18,6 +18,8 @@ void main() {
         tester.view.devicePixelRatio = 1;
         await tester.pumpWidget(
             MaterialApp(home: TahawwulatSlidesScreen(onAsk: () {})));
+        await tester.runAsync(
+            () => Future<void>.delayed(const Duration(milliseconds: 400)));
         for (var k = 0; k < 20; k++) {
           await tester.pump(const Duration(milliseconds: 100));
         }

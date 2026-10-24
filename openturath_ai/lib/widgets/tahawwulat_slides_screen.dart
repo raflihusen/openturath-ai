@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../core/arabic_catalog.dart';
 import '../core/design/ot_colors.dart';
 import '../core/design/ot_motion.dart';
 import '../core/design/ot_radius.dart';
@@ -10,6 +11,8 @@ import '../core/design/ot_spacing.dart';
 import '../core/design/ot_typography.dart';
 import '../core/localization.dart';
 import 'tahawwulat_module_screen.dart';
+import 'tahawwulat_slide_art.dart';
+import 'tahawwulat_slide_motion.dart';
 
 /// Slide "Mengenal Fikih Tahawwulat": Hadis Jibril, kesatuan agama, lalu
 /// pengenalan ilmu dan lima asisten. Satu naskah untuk ponsel dan desktop
@@ -152,8 +155,18 @@ class _TahawwulatSlidesScreenState extends State<TahawwulatSlidesScreen> {
 
   Widget _top(bool dark, Color fg, Color sub) {
     final cur = (_slides[_i] as Map)['bab'] as int;
+    int inBab(int b) => _slides.where((e) => (e as Map)['bab'] == b).length;
+    final pos = _slides
+        .sublist(0, _i + 1)
+        .where((e) => (e as Map)['bab'] == cur)
+        .length;
+    double fill(int b) => b < cur
+        ? 1
+        : b == cur
+            ? pos / inBab(b)
+            : 0;
     return Padding(
-      padding: const EdgeInsets.fromLTRB(
+      padding: const EdgeInsetsDirectional.fromSTEB(
           OTSpacing.base, OTSpacing.sm, OTSpacing.sm, 0),
       child: Row(children: [
         Expanded(
@@ -161,13 +174,22 @@ class _TahawwulatSlidesScreenState extends State<TahawwulatSlidesScreen> {
             for (var b = 0; b < _bab.length; b++)
               Expanded(
                 child: Padding(
-                  padding: const EdgeInsets.only(right: OTSpacing.xs),
-                  child: AnimatedContainer(
-                    duration: OTMotion.fast,
-                    height: OTSpacing.xs,
-                    decoration: BoxDecoration(
-                      borderRadius: OTRadius.chipBorder,
-                      color: b <= cur ? fg : OTColors.border(dark),
+                  padding: const EdgeInsetsDirectional.only(end: OTSpacing.xs),
+                  child: ClipRRect(
+                    borderRadius: OTRadius.chipBorder,
+                    child: TweenAnimationBuilder<double>(
+                      tween: Tween(end: fill(b)),
+                      duration: OTMotion.transition,
+                      curve: OTMotion.curve,
+                      builder: (_, v, __) => Stack(children: [
+                        Container(
+                            height: OTSpacing.xs, color: OTColors.border(dark)),
+                        FractionallySizedBox(
+                          widthFactor: v,
+                          alignment: AlignmentDirectional.centerStart,
+                          child: Container(height: OTSpacing.xs, color: fg),
+                        ),
+                      ]),
                     ),
                   ),
                 ),
@@ -199,7 +221,10 @@ class _TahawwulatSlidesScreenState extends State<TahawwulatSlidesScreen> {
         ),
         Expanded(
           child: Center(
-            child: Text('${_i + 1} / $total',
+            child: Text(
+                Loc.isArabic
+                    ? '${ArabicCatalog.digits('${_i + 1}')} من ${ArabicCatalog.digits('$total')}'
+                    : '${_i + 1} / $total',
                 style: OTTypography.captionMedium(color: sub)),
           ),
         ),
@@ -215,55 +240,14 @@ class _TahawwulatSlidesScreenState extends State<TahawwulatSlidesScreen> {
   }
 }
 
-/// Muncul pelan: pudar dan naik sedikit, berurutan. Gerak dikurangi: langsung.
-class _Reveal extends StatefulWidget {
-  const _Reveal({required this.step, required this.child});
-  final int step;
-  final Widget child;
-  @override
-  State<_Reveal> createState() => _RevealState();
-}
+const _fullWidth = {'compare', 'signs', 'stats'};
+const _compactStage = {'title', 'branch', 'assistant', 'dialog'};
 
-class _RevealState extends State<_Reveal> with SingleTickerProviderStateMixin {
-  late final Duration _delay = OTMotion.fast * (1 + widget.step * 2);
-  late final AnimationController _c =
-      AnimationController(vsync: this, duration: _delay + OTMotion.transition);
-  bool _started = false;
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    if (_started) return;
-    _started = true;
-    if (MediaQuery.of(context).disableAnimations) {
-      _c.value = 1;
-    } else {
-      _c.forward();
-    }
-  }
-
-  @override
-  void dispose() {
-    _c.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final total = (_delay + OTMotion.transition).inMilliseconds;
-    final a = CurvedAnimation(
-        parent: _c,
-        curve:
-            Interval(_delay.inMilliseconds / total, 1, curve: OTMotion.curve));
-    return FadeTransition(
-      opacity: a,
-      child: SlideTransition(
-        position: Tween<Offset>(begin: const Offset(0, 0.06), end: Offset.zero)
-            .animate(a),
-        child: widget.child,
-      ),
-    );
-  }
+String _defaultArt(String type, int bab) {
+  if (type == 'end') return 'arch';
+  if (bab == 1) return 'arch';
+  if (bab == 4 || bab == 5) return 'radial';
+  return 'rings';
 }
 
 class _SlideBody extends StatelessWidget {
@@ -280,17 +264,33 @@ class _SlideBody extends StatelessWidget {
   final VoidCallback? onAsk;
   final VoidCallback onText;
 
+  String _l(String id, String en, String ar) => switch (Loc.language) {
+        'en' => en,
+        'ar' => ar,
+        _ => id,
+      };
+
   @override
   Widget build(BuildContext context) {
     final fg = OTColors.textPrimary(dark), sub = OTColors.textSecondary(dark);
     final wide = MediaQuery.of(context).size.width >= 880;
-    final big = wide
-        ? OTTypography.displayLarge(color: fg)
-        : OTTypography.pageTitle(color: fg);
-    final hero = OTTypography.displayLarge(color: fg);
+    final ar = Loc.isArabic;
     final type = data['type'] as String;
+    final bab = data['bab'] as int;
+
+    TextStyle serif(Color c, double size) => ar
+        ? OTTypography.arabicDisplay(color: c).copyWith(fontSize: size)
+        : OTTypography.editorialHero(color: c).copyWith(fontSize: size);
+    final hero = serif(fg, OTFontSize.s36);
+    final big = serif(fg, wide ? OTFontSize.s36 : OTFontSize.s26);
+    final lead = OTTypography.body(color: fg)
+        .copyWith(fontSize: OTFontSize.s18, height: 1.6);
+
     var step = 0;
-    Widget r(Widget w) => _Reveal(step: step++, child: w);
+    Widget r(Widget w, {double dx = 0}) =>
+        SlideReveal(step: step++, dx: dx, child: w);
+    Widget words(String text, TextStyle style, {TextAlign? align}) =>
+        SlideWords(text, style: style, step: step++, textAlign: align);
     Widget gap([double h = OTSpacing.base]) => SizedBox(height: h);
     Widget kick() => data['kicker'] == null
         ? const SizedBox.shrink()
@@ -304,15 +304,23 @@ class _SlideBody extends StatelessWidget {
             padding: const EdgeInsets.only(top: OTSpacing.lg),
             child: Text(t(data['note']),
                 style: OTTypography.caption(color: sub))));
+    Widget index(int n) => SizedBox(
+        width: OTSpacing.jumbo - OTSpacing.base,
+        child: Text(ar ? ArabicCatalog.digits('0${n + 1}') : '0${n + 1}',
+            style: OTTypography.captionMedium(color: sub)));
 
     final children = <Widget>[];
+    var fullWidth = _fullWidth.contains(type);
+    var centered = false;
+    var split = true;
+
     switch (type) {
       case 'title':
         children.addAll([
           kick(),
-          r(Text(t(data['title']), style: hero)),
+          words(t(data['title']), hero),
           gap(OTSpacing.md),
-          r(Text(t(data['sub']), style: OTTypography.body(color: sub))),
+          r(Text(t(data['sub']), style: lead.copyWith(color: sub))),
           if (data['hint'] != null) ...[
             gap(OTSpacing.xl),
             r(Text(t(data['hint']), style: OTTypography.caption(color: sub))),
@@ -321,12 +329,10 @@ class _SlideBody extends StatelessWidget {
       case 'text':
         children.addAll([
           kick(),
-          if (data['title'] != null) r(Text(t(data['title']), style: big)),
+          if (data['title'] != null) words(t(data['title']), big),
           gap(OTSpacing.base),
           for (final l in (data['lines'] ?? const []) as List) ...[
-            r(Text(t(l),
-                style: OTTypography.body(color: fg)
-                    .copyWith(fontSize: OTFontSize.s18, height: 1.6))),
+            words(t(l), lead),
             gap(OTSpacing.md),
           ],
           note(),
@@ -335,22 +341,16 @@ class _SlideBody extends StatelessWidget {
         children.addAll([
           kick(),
           for (final l in data['lines'] as List) ...[
-            r(Text(t(l),
-                style: OTTypography.editorialHero(color: fg).copyWith(
-                    fontSize: wide ? OTFontSize.s36 : OTFontSize.s26))),
+            words(t(l), big),
             gap(OTSpacing.md),
           ],
           note(),
         ]);
       case 'question':
+        centered = true;
+        split = false;
         children.addAll([
-          r(Icon(Icons.help_outline_rounded,
-              size: OTSpacing.massive, color: sub)),
-          gap(OTSpacing.lg),
-          r(Text(t(data['q']),
-              textAlign: TextAlign.center,
-              style: OTTypography.editorialHero(color: fg)
-                  .copyWith(fontSize: wide ? OTFontSize.s36 : OTFontSize.s26))),
+          words(t(data['q']), big, align: TextAlign.center),
           if (data['hint'] != null) ...[
             gap(OTSpacing.lg),
             r(Text(t(data['hint']), style: OTTypography.caption(color: sub))),
@@ -359,103 +359,318 @@ class _SlideBody extends StatelessWidget {
       case 'dialog':
         children.addAll([
           kick(),
-          r(_bubble(t(data['asker']), false, fg, sub)),
+          r(_bubble(Text(t(data['asker']), style: lead), false, fg), dx: -0.04),
           gap(OTSpacing.md),
-          r(_bubble(t(data['answer']), true, fg, sub)),
+          r(
+              _bubble(
+                  SlideWords(t(data['answer']),
+                      style: lead.copyWith(color: OTColors.textPrimary(!dark)),
+                      step: step + 1),
+                  true,
+                  fg),
+              dx: 0.04),
           note(),
         ]);
       case 'quote':
+        centered = true;
+        split = false;
         children.addAll([
-          r(Directionality(
+          Directionality(
             textDirection: TextDirection.rtl,
-            child: Text(data['arabic'] as String,
+            child: SlideWords(data['arabic'] as String,
+                step: step++,
                 textAlign: TextAlign.center,
                 style: OTTypography.arabicDisplay(color: fg).copyWith(
                     fontSize: wide ? OTFontSize.s36 : OTFontSize.s26)),
-          )),
+          ),
           gap(OTSpacing.lg),
-          r(Text(t(data['translation']),
-              textAlign: TextAlign.center,
-              style: OTTypography.body(color: fg)
-                  .copyWith(fontSize: OTFontSize.s18))),
+          words(t(data['translation']), lead, align: TextAlign.center),
           gap(OTSpacing.sm),
           r(Text(t(data['source']), style: OTTypography.caption(color: sub))),
         ]);
       case 'list':
+        final items = data['items'] as List;
+        fullWidth = data['art'] == null;
         children.addAll([
-          r(Text(t(data['title']), style: big)),
+          words(t(data['title']), big),
           gap(OTSpacing.lg),
-          for (final it in data['items'] as List) ...[
-            r(_card(
-                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Text(t(it['t']), style: OTTypography.cardTitle(color: fg)),
-                  if (it['d'] != null) ...[
-                    const SizedBox(height: OTSpacing.xs),
-                    Text(t(it['d']), style: OTTypography.body(color: sub)),
-                  ],
-                ]),
-                false)),
-          ],
+          r(LayoutBuilder(builder: (ctx, box) {
+            final cols = box.maxWidth >= 720 && items.length >= 4 ? 2 : 1;
+            final w = (box.maxWidth - (cols - 1) * OTSpacing.md) / cols;
+            return Wrap(spacing: OTSpacing.md, children: [
+              for (var n = 0; n < items.length; n++)
+                SizedBox(
+                  width: w,
+                  child: _card(
+                      Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            index(n),
+                            Expanded(
+                              child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(t(items[n]['t']),
+                                        style:
+                                            OTTypography.cardTitle(color: fg)),
+                                    if (items[n]['d'] != null) ...[
+                                      const SizedBox(height: OTSpacing.xs),
+                                      Text(t(items[n]['d']),
+                                          style: OTTypography.body(color: sub)),
+                                    ],
+                                  ]),
+                            ),
+                          ]),
+                      false),
+                ),
+            ]);
+          })),
           note(),
         ]);
       case 'cards':
         final items = data['items'] as List;
+        fullWidth = data['art'] == null;
         children.addAll([
-          r(Text(t(data['title']), style: big)),
+          words(t(data['title']), big),
           gap(OTSpacing.lg),
-          r(LayoutBuilder(builder: (ctx, box) {
-            final cols = box.maxWidth >= 640 ? 2 : 1;
+          LayoutBuilder(builder: (ctx, box) {
+            final cols = box.maxWidth >= 900 && items.length >= 4
+                ? 4
+                : box.maxWidth >= 720 && items.length == 3
+                    ? 3
+                    : box.maxWidth >= 560
+                        ? 2
+                        : 1;
             final w = (box.maxWidth - (cols - 1) * OTSpacing.md) / cols;
             return Wrap(spacing: OTSpacing.md, children: [
-              for (final it in items)
+              for (var n = 0; n < items.length; n++)
                 SizedBox(
                   width: w,
-                  child: _card(
-                      Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(t(it['t']),
-                                style: OTTypography.cardTitle(
-                                    color: it['hl'] == true
-                                        ? OTColors.textPrimary(!dark)
-                                        : fg)),
-                            if (it['d'] != null) ...[
-                              const SizedBox(height: OTSpacing.xs),
-                              Text(t(it['d']),
-                                  style: OTTypography.body(
-                                      color: it['hl'] == true
+                  child: SlideReveal(
+                    step: step + n,
+                    child: _card(
+                        Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                  ar
+                                      ? ArabicCatalog.digits('0${n + 1}')
+                                      : '0${n + 1}',
+                                  style: OTTypography.metadataTag(
+                                      color: items[n]['hl'] == true
                                           ? OTColors.textSecondary(!dark)
                                           : sub)),
-                            ],
-                          ]),
-                      it['hl'] == true),
+                              const SizedBox(height: OTSpacing.md),
+                              Text(t(items[n]['t']),
+                                  style: OTTypography.cardTitle(
+                                      color: items[n]['hl'] == true
+                                          ? OTColors.textPrimary(!dark)
+                                          : fg)),
+                              if (items[n]['d'] != null) ...[
+                                const SizedBox(height: OTSpacing.xs),
+                                Text(t(items[n]['d']),
+                                    style: OTTypography.body(
+                                        color: items[n]['hl'] == true
+                                            ? OTColors.textSecondary(!dark)
+                                            : sub)),
+                              ],
+                            ]),
+                        items[n]['hl'] == true),
+                  ),
                 ),
             ]);
-          })),
+          }),
           note(),
         ]);
       case 'compare':
         final cols = data['cols'] as List;
         children.addAll([
           if (data['title'] != null) ...[
-            r(Text(t(data['title']), style: big)),
+            words(t(data['title']), big),
             gap(OTSpacing.lg),
           ],
-          for (final row in data['rows'] as List)
-            r(_card(
-                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Text(t(row[0]).toUpperCase(),
-                      style: OTTypography.metadataTag(color: sub)),
-                  const SizedBox(height: OTSpacing.md),
-                  Text(t(cols[0]),
-                      style: OTTypography.captionMedium(color: sub)),
-                  Text(t(row[1]), style: OTTypography.body(color: sub)),
-                  const SizedBox(height: OTSpacing.md),
-                  Text(t(cols[1]),
-                      style: OTTypography.captionMedium(color: fg)),
-                  Text(t(row[2]), style: OTTypography.bodyMedium(color: fg)),
-                ]),
-                false)),
+          if (wide)
+            r(Padding(
+              padding: const EdgeInsets.only(bottom: OTSpacing.md),
+              child: Row(children: [
+                Expanded(
+                    child: Text(t(cols[0]),
+                        style: OTTypography.captionMedium(color: sub))),
+                const SizedBox(width: OTSpacing.md),
+                Expanded(
+                    child: Text(t(cols[1]),
+                        style: OTTypography.captionMedium(color: fg))),
+              ]),
+            )),
+          for (var n = 0; n < (data['rows'] as List).length; n++)
+            _versus((data['rows'] as List)[n], cols, wide, step + n * 3),
+        ]);
+      case 'stats':
+        final items = data['items'] as List;
+        children.addAll([
+          words(t(data['title']), big),
+          gap(OTSpacing.xl),
+          LayoutBuilder(builder: (ctx, box) {
+            final row = box.maxWidth >= 640;
+            final cards = [
+              for (var n = 0; n < items.length; n++)
+                SlideReveal(
+                  step: step + n,
+                  child: _card(
+                      Column(children: [
+                        SlideRing(
+                          fraction: (items[n]['n'] as int) / 6,
+                          ink: fg,
+                          size: 132,
+                          step: step + n,
+                          child: SlideCount(items[n]['n'] as int,
+                              step: step + n,
+                              style: OTTypography.displayLarge(color: fg)),
+                        ),
+                        const SizedBox(height: OTSpacing.base),
+                        Text(t(items[n]['t']),
+                            textAlign: TextAlign.center,
+                            style: OTTypography.cardTitle(color: fg)),
+                        Text(t(items[n]['d']),
+                            textAlign: TextAlign.center,
+                            style: OTTypography.body(color: sub)),
+                      ]),
+                      false),
+                ),
+            ];
+            return row
+                ? IntrinsicHeight(
+                    child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                        for (var n = 0; n < cards.length; n++) ...[
+                          if (n > 0) const SizedBox(width: OTSpacing.md),
+                          Expanded(child: cards[n]),
+                        ]
+                      ]))
+                : Column(children: cards);
+          }),
+          gap(OTSpacing.base),
+          for (final l in data['lines'] as List) ...[
+            words(t(l), lead),
+            gap(OTSpacing.sm),
+          ],
+        ]);
+      case 'signs':
+        final items = data['items'] as List;
+        final cols = data['cols'] as List;
+        children.addAll([
+          words(t(data['title']), big),
+          gap(OTSpacing.xl),
+          LayoutBuilder(builder: (ctx, box) {
+            final row = box.maxWidth >= 720;
+            final cols2 = [
+              for (var n = 0; n < items.length; n++)
+                _signColumn(items[n] as Map, cols, step + n * 3, fg, sub),
+            ];
+            return row
+                ? Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                    for (var n = 0; n < cols2.length; n++) ...[
+                      if (n > 0) const SizedBox(width: OTSpacing.base),
+                      Expanded(child: cols2[n]),
+                    ]
+                  ])
+                : Column(children: [
+                    for (var n = 0; n < cols2.length; n++) ...[
+                      if (n > 0) const SizedBox(height: OTSpacing.lg),
+                      cols2[n],
+                    ]
+                  ]);
+          }),
+        ]);
+      case 'branchmap':
+        final items = data['items'] as List;
+        split = false;
+        fullWidth = true;
+        final list =
+            Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          words(t(data['title']), big),
+          gap(OTSpacing.lg),
+          for (var n = 0; n < items.length; n++)
+            r(Padding(
+              padding: const EdgeInsets.only(bottom: OTSpacing.md),
+              child:
+                  Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                _badge(n + 1, false, fg),
+                const SizedBox(width: OTSpacing.md),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: OTSpacing.sm),
+                    child: Text(t(items[n]['t']),
+                        style: OTTypography.cardTitle(color: fg)),
+                  ),
+                ),
+              ]),
+            )),
+          note(),
+        ]);
+        children.add(wide
+            ? Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+                Expanded(
+                    flex: 5,
+                    child: SizedBox(
+                        height: 420,
+                        child:
+                            SlideStage(kind: SlideArtKind.radial, dark: dark))),
+                const SizedBox(width: OTSpacing.xxl),
+                Expanded(flex: 6, child: list),
+              ])
+            : Column(children: [
+                SizedBox(
+                    height: 220,
+                    child: SlideStage(kind: SlideArtKind.radial, dark: dark)),
+                gap(OTSpacing.base),
+                list,
+              ]));
+      case 'branch':
+        final n = data['n'] as int;
+        final qs = data['qs'] as List;
+        children.addAll([
+          r(Padding(
+            padding: const EdgeInsets.only(bottom: OTSpacing.md),
+            child: Row(children: [
+              _badge(n, true, fg),
+              const SizedBox(width: OTSpacing.md),
+              Text(
+                  _l('Cabang $n dari 5', 'Branch $n of 5',
+                          'الفرع ${ArabicCatalog.digits('$n')} من ${ArabicCatalog.digits('5')}')
+                      .toUpperCase(),
+                  style: OTTypography.metadataTag(color: sub)),
+            ]),
+          )),
+          words(t(data['name']), big),
+          gap(OTSpacing.md),
+          words(t(data['desc']), lead.copyWith(color: sub)),
+          gap(OTSpacing.lg),
+          r(Text(Loc.tr('moduleExample').toUpperCase(),
+              style: OTTypography.metadataTag(color: sub))),
+          gap(OTSpacing.sm),
+          for (final q in qs)
+            r(Container(
+              width: double.infinity,
+              margin: const EdgeInsets.only(bottom: OTSpacing.sm),
+              padding: const EdgeInsets.symmetric(
+                  horizontal: OTSpacing.base, vertical: OTSpacing.md),
+              decoration: BoxDecoration(
+                borderRadius: OTRadius.cardBorder,
+                border: Border.all(color: OTColors.border(dark)),
+                color: OTColors.surface(dark),
+              ),
+              child: Row(children: [
+                Icon(Icons.chat_bubble_outline_rounded,
+                    size: OTSpacing.lg, color: sub),
+                const SizedBox(width: OTSpacing.md),
+                Expanded(
+                    child:
+                        Text(t(q), style: OTTypography.bodyMedium(color: fg))),
+              ]),
+            )),
+          note(),
         ]);
       case 'assistant':
         children.addAll([
@@ -469,25 +684,21 @@ class _SlideBody extends StatelessWidget {
                   backgroundColor: OTColors.inverseSurface(dark),
                   side: BorderSide.none),
             )),
-          if (Loc.isArabic)
-            r(Text(data['ar'] as String,
-                style: OTTypography.arabicDisplay(color: fg)
-                    .copyWith(fontSize: OTFontSize.s36)))
+          if (ar)
+            words(data['ar'] as String, hero)
           else ...[
             r(Directionality(
               textDirection: TextDirection.rtl,
               child: Text(data['ar'] as String,
                   style: OTTypography.arabicDisplay(color: sub)),
             )),
-            r(Text(data['name'] as String, style: hero)),
+            words(data['name'] as String, hero),
           ],
           gap(OTSpacing.xs),
           r(Text(t(data['role']).toUpperCase(),
               style: OTTypography.metadataTag(color: sub))),
           gap(OTSpacing.base),
-          r(Text(t(data['desc']),
-              style: OTTypography.body(color: fg)
-                  .copyWith(fontSize: OTFontSize.s18, height: 1.6))),
+          words(t(data['desc']), lead),
           gap(OTSpacing.lg),
           r(_card(
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -499,24 +710,22 @@ class _SlideBody extends StatelessWidget {
               false)),
         ]);
       case 'end':
+        final items = data['items'] as List;
         children.addAll([
-          r(Text(t(data['title']), style: big)),
+          words(t(data['title']), big),
           gap(OTSpacing.lg),
-          for (var n = 0; n < (data['items'] as List).length; n++)
+          for (var n = 0; n < items.length; n++)
             r(_card(
                 Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  SizedBox(
-                      width: OTSpacing.xl + OTSpacing.sm,
-                      child: Text('0${n + 1}',
-                          style: OTTypography.captionMedium(color: sub))),
+                  index(n),
                   Expanded(
                     child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(t((data['items'] as List)[n]['t']),
+                          Text(t(items[n]['t']),
                               style: OTTypography.cardTitle(color: fg)),
                           const SizedBox(height: OTSpacing.xs),
-                          Text(t((data['items'] as List)[n]['d']),
+                          Text(t(items[n]['d']),
                               style: OTTypography.body(color: sub)),
                         ]),
                   ),
@@ -538,12 +747,27 @@ class _SlideBody extends StatelessWidget {
         ]);
     }
 
-    final centered = type == 'question' || type == 'quote';
-    return Center(
-      child: ConstrainedBox(
-        constraints: BoxConstraints(maxWidth: wide ? 820 : 640),
-        child: LayoutBuilder(builder: (ctx, box) {
-          final scroll = SingleChildScrollView(
+    final artKey = data['art'] as String? ??
+        (fullWidth && type != 'branchmap' ? null : _defaultArt(type, bab));
+    final kind = slideArtOf(artKey);
+    final labels = [
+      for (final x in (data['labels'] as List? ?? const [])) t(x)
+    ];
+    final hl = (data['hl'] as int?) ?? -1;
+
+    Widget stage({double? height}) {
+      final s = SlideStage(
+          key: ValueKey('stage${data['type']}$hl$bab'),
+          kind: kind,
+          dark: dark,
+          hl: hl,
+          labels: labels);
+      return height == null ? s : SizedBox(height: height, child: s);
+    }
+
+    Widget scroller(List<Widget> kids, {required bool center}) =>
+        LayoutBuilder(builder: (ctx, box) {
+          return SingleChildScrollView(
             padding: const EdgeInsets.symmetric(
                 horizontal: OTSpacing.lg, vertical: OTSpacing.base),
             child: ConstrainedBox(
@@ -551,23 +775,215 @@ class _SlideBody extends StatelessWidget {
                   BoxConstraints(minHeight: box.maxHeight - OTSpacing.xxl),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: centered
+                crossAxisAlignment: center
                     ? CrossAxisAlignment.center
                     : CrossAxisAlignment.start,
-                children: children,
+                children: kids,
               ),
             ),
           );
-          return scroll;
-        }),
+        });
+
+    if (type == 'question' || type == 'quote') {
+      return Stack(children: [
+        if (kind != SlideArtKind.none)
+          Positioned.fill(
+            child: Padding(
+              padding: const EdgeInsets.all(OTSpacing.xl),
+              child: Opacity(opacity: wide ? 0.5 : 0.28, child: stage()),
+            ),
+          ),
+        Center(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(maxWidth: wide ? 900 : 640),
+            child: scroller(children, center: true),
+          ),
+        ),
+      ]);
+    }
+
+    if (wide && split && !fullWidth && kind != SlideArtKind.none) {
+      return Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 1180),
+          child: Row(children: [
+            Expanded(flex: 6, child: scroller(children, center: false)),
+            const SizedBox(width: OTSpacing.xl),
+            Expanded(
+              flex: 5,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: OTSpacing.lg, vertical: OTSpacing.xl),
+                child: stage(),
+              ),
+            ),
+          ]),
+        ),
+      );
+    }
+
+    final kids = [
+      if (!wide &&
+          split &&
+          kind != SlideArtKind.none &&
+          _compactStage.contains(type)) ...[
+        r(stage(height: 150)),
+        gap(OTSpacing.base),
+      ],
+      ...children,
+    ];
+    return Center(
+      child: ConstrainedBox(
+        constraints:
+            BoxConstraints(maxWidth: wide ? (fullWidth ? 1080 : 820) : 640),
+        child: scroller(kids, center: centered),
       ),
     );
   }
 
-  Widget _bubble(String text, bool answer, Color fg, Color sub) {
+  Widget _badge(int n, bool lit, Color fg) => Container(
+        width: OTSpacing.massive - OTSpacing.sm,
+        height: OTSpacing.massive - OTSpacing.sm,
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: lit ? fg : OTColors.surface(dark),
+          border: Border.all(color: lit ? fg : OTColors.borderStrong(dark)),
+        ),
+        child: Text(Loc.isArabic ? ArabicCatalog.digits('$n') : '$n',
+            style: OTTypography.cardTitle(
+                color: lit ? OTColors.canvas(dark) : fg)),
+      );
+
+  Widget _versus(dynamic row, List cols, bool wide, int step) {
+    final fg = OTColors.textPrimary(dark), sub = OTColors.textSecondary(dark);
+    final inv = OTColors.textPrimary(!dark);
+    final left = _card(
+        Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          if (!wide)
+            Text(t(cols[0]), style: OTTypography.captionMedium(color: sub)),
+          Text(t(row[1]),
+              style: OTTypography.body(color: sub).copyWith(
+                  fontSize: wide ? OTFontSize.s18 : null, height: 1.5)),
+        ]),
+        false,
+        bottom: wide ? 0 : OTSpacing.sm);
+    final right = _card(
+        Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          if (!wide)
+            Text(t(cols[1]),
+                style: OTTypography.captionMedium(
+                    color: OTColors.textSecondary(!dark))),
+          Text(t(row[2]),
+              style: OTTypography.bodyMedium(color: inv).copyWith(
+                  fontSize: wide ? OTFontSize.s18 : null, height: 1.5)),
+        ]),
+        true,
+        bottom: wide ? 0 : OTSpacing.md);
+    return Padding(
+      padding: const EdgeInsets.only(bottom: OTSpacing.base),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        SlideReveal(
+            step: step,
+            child: Padding(
+              padding: const EdgeInsets.only(bottom: OTSpacing.sm),
+              child: Text(t(row[0]).toUpperCase(),
+                  style: OTTypography.metadataTag(color: fg)),
+            )),
+        if (wide)
+          IntrinsicHeight(
+            child:
+                Row(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+              Expanded(
+                  child: SlideReveal(step: step + 1, dx: -0.03, child: left)),
+              const SizedBox(width: OTSpacing.md),
+              Expanded(
+                  child: SlideReveal(step: step + 2, dx: 0.03, child: right)),
+            ]),
+          )
+        else ...[
+          SlideReveal(step: step + 1, child: left),
+          SlideReveal(step: step + 2, child: right),
+        ],
+      ]),
+    );
+  }
+
+  Widget _signColumn(Map item, List cols, int step, Color fg, Color sub) {
+    final ar = Loc.isArabic;
+    final inv = OTColors.textPrimary(!dark);
+    final invSub = OTColors.textSecondary(!dark);
+    return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+      SlideReveal(
+        step: step,
+        child: _card(
+            Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text(t(cols[0]).toUpperCase(),
+                  style: OTTypography.metadataTag(color: sub)),
+              const SizedBox(height: OTSpacing.md),
+              Directionality(
+                textDirection: TextDirection.rtl,
+                child: SizedBox(
+                  width: double.infinity,
+                  child: Text(item['signAr'] as String,
+                      textAlign: ar ? TextAlign.start : TextAlign.end,
+                      style: OTTypography.arabicReading(color: fg)
+                          .copyWith(fontSize: OTFontSize.s22)),
+                ),
+              ),
+              if (!ar) ...[
+                const SizedBox(height: OTSpacing.xs),
+                Text(t(item['sign']),
+                    style: OTTypography.bodyMedium(color: fg)),
+              ],
+            ]),
+            false,
+            bottom: 0),
+      ),
+      SlideReveal(
+        step: step + 1,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: OTSpacing.sm),
+          child: Icon(Icons.south_rounded, color: sub),
+        ),
+      ),
+      SlideReveal(
+        step: step + 2,
+        child: _card(
+            Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text(t(cols[1]).toUpperCase(),
+                  style: OTTypography.metadataTag(color: invSub)),
+              const SizedBox(height: OTSpacing.md),
+              Directionality(
+                textDirection: TextDirection.rtl,
+                child: SizedBox(
+                  width: double.infinity,
+                  child: Text(item['ar'] as String,
+                      textAlign: ar ? TextAlign.start : TextAlign.end,
+                      style: OTTypography.arabicDisplay(color: inv)
+                          .copyWith(fontSize: OTFontSize.s36)),
+                ),
+              ),
+              if (!ar) ...[
+                Text(item['tr'] as String,
+                    style: OTTypography.caption(color: invSub)
+                        .copyWith(fontStyle: FontStyle.italic)),
+                const SizedBox(height: OTSpacing.md),
+                Text(t(item['name']),
+                    style: OTTypography.cardTitle(color: inv)),
+              ],
+              const SizedBox(height: OTSpacing.xs),
+              Text(t(item['d']), style: OTTypography.body(color: invSub)),
+            ]),
+            true,
+            bottom: 0),
+      ),
+    ]);
+  }
+
+  Widget _bubble(Widget child, bool answer, Color fg) {
     final fill =
         answer ? OTColors.inverseSurface(dark) : OTColors.surface(dark);
-    final ink = answer ? OTColors.textPrimary(!dark) : fg;
     return Align(
       alignment: answer
           ? AlignmentDirectional.centerEnd
@@ -580,16 +996,15 @@ class _SlideBody extends StatelessWidget {
           borderRadius: OTRadius.cardBorder,
           border: answer ? null : Border.all(color: OTColors.border(dark)),
         ),
-        child: Text(text,
-            style: OTTypography.body(color: ink)
-                .copyWith(fontSize: OTFontSize.s18, height: 1.55)),
+        child: child,
       ),
     );
   }
 
-  Widget _card(Widget child, bool inverse) => Container(
+  Widget _card(Widget child, bool inverse, {double bottom = OTSpacing.md}) =>
+      Container(
         width: double.infinity,
-        margin: const EdgeInsets.only(bottom: OTSpacing.md),
+        margin: EdgeInsets.only(bottom: bottom),
         padding: const EdgeInsets.all(OTSpacing.lg),
         decoration: BoxDecoration(
           color:

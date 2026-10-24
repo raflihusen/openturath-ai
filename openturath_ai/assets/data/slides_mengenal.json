@@ -21,6 +21,11 @@
    "ar": "فقه التحولات"
   },
   {
+   "id": "Lima cabang ilmu",
+   "en": "Five branches",
+   "ar": "الفروع الخمسة"
+  },
+  {
    "id": "Lima asisten",
    "en": "Five assistants",
    "ar": "المساعدون الخمسة"
@@ -181,7 +186,31 @@
     "id": "Orang itu berkata, “Engkau benar.” Para sahabat heran: ia bertanya, lalu membenarkan.",
     "en": "The man said, “You have spoken truly.” The Companions were amazed: he asks, then confirms.",
     "ar": "قال: «صدقت». فعجبوا: يسأله ويصدّقه."
-   }
+   },
+   "art": "pillars",
+   "hl": 0,
+   "labels": [
+    {
+     "id": "Islam",
+     "en": "Islam",
+     "ar": "الإسلام"
+    },
+    {
+     "id": "Iman",
+     "en": "Iman",
+     "ar": "الإيمان"
+    },
+    {
+     "id": "Ihsan",
+     "en": "Ihsan",
+     "ar": "الإحسان"
+    },
+    {
+     "id": "Tanda zaman",
+     "en": "Signs",
+     "ar": "الأشراط"
+    }
+   ]
   },
   {
    "type": "dialog",
@@ -200,7 +229,31 @@
     "id": "Iman: engkau percaya kepada Allah, malaikat-Nya, kitab-kitab-Nya, rasul-rasul-Nya, hari akhir, dan takdir yang baik maupun yang buruk.",
     "en": "Iman: that you believe in Allah, His angels, His books, His messengers, the Last Day, and in divine decree, its good and its bad.",
     "ar": "الإيمان: أن تؤمن بالله وملائكته وكتبه ورسله واليوم الآخر، وتؤمن بالقدر خيره وشره."
-   }
+   },
+   "art": "pillars",
+   "hl": 1,
+   "labels": [
+    {
+     "id": "Islam",
+     "en": "Islam",
+     "ar": "الإسلام"
+    },
+    {
+     "id": "Iman",
+     "en": "Iman",
+     "ar": "الإيمان"
+    },
+    {
+     "id": "Ihsan",
+     "en": "Ihsan",
+     "ar": "الإحسان"
+    },
+    {
+     "id": "Tanda zaman",
+     "en": "Signs",
+     "ar": "الأشراط"
+    }
+   ]
   },
   {
    "type": "dialog",
@@ -219,7 +272,31 @@
     "id": "Ihsan: engkau beribadah kepada Allah seakan-akan melihat-Nya. Bila engkau tidak melihat-Nya, sesungguhnya Dia melihatmu.",
     "en": "Ihsan: that you worship Allah as if you see Him; and if you do not see Him, He sees you.",
     "ar": "الإحسان: أن تعبد الله كأنك تراه، فإن لم تكن تراه فإنه يراك."
-   }
+   },
+   "art": "pillars",
+   "hl": 2,
+   "labels": [
+    {
+     "id": "Islam",
+     "en": "Islam",
+     "ar": "الإسلام"
+    },
+    {
+     "id": "Iman",
+     "en": "Iman",
+     "ar": "الإيمان"
+    },
+    {
+     "id": "Ihsan",
+     "en": "Ihsan",
+     "ar": "الإحسان"
+    },
+    {
+     "id": "Tanda zaman",
+     "en": "Signs",
+     "ar": "الأشراط"
+    }
+   ]
   },
   {
    "type": "cards",
@@ -320,7 +397,31 @@
     "id": "Waktunya rahasia Allah. Nabi menutup pintu tebak-tebakan.",
     "en": "Its time is God's secret. The Prophet closes the door on guessing.",
     "ar": "وقتها سرّ الله. فأغلق النبي ﷺ باب التخمين."
-   }
+   },
+   "art": "pillars",
+   "hl": 3,
+   "labels": [
+    {
+     "id": "Islam",
+     "en": "Islam",
+     "ar": "الإسلام"
+    },
+    {
+     "id": "Iman",
+     "en": "Iman",
+     "ar": "الإيمان"
+    },
+    {
+     "id": "Ihsan",
+     "en": "Ihsan",
+     "ar": "الإحسان"
+    },
+    {
+     "id": "Tanda zaman",
+     "en": "Signs",
+     "ar": "الأشراط"
+    }
+   ]
   },
   {
    "type": "dialog",
@@ -344,7 +445,31 @@
     "id": "Untuk tanda-tanda, Nabi ﷺ menjawab dengan jelas.",
     "en": "On the signs, the Prophet ﷺ answered clearly.",
     "ar": "أما العلامات فأجاب عنها النبي ﷺ بوضوح."
-   }
+   },
+   "art": "pillars",
+   "hl": 3,
+   "labels": [
+    {
+     "id": "Islam",
+     "en": "Islam",
+     "ar": "الإسلام"
+    },
+    {
+     "id": "Iman",
+     "en": "Iman",
+     "ar": "الإيمان"
+    },
+    {
+     "id": "Ihsan",
+     "en": "Ihsan",
+     "ar": "الإحسان"
+    },
+    {
+     "id": "Tanda zaman",
+     "en": "Signs",
+     "ar": "الأشراط"
+    }
+   ]
   },
   {
    "type": "question",
@@ -452,7 +577,31 @@
     "id": "Empat pertanyaan. Satu pelajaran. Satu sebutan dari Nabi ﷺ: agama kalian.",
     "en": "Four questions. One lesson. One name from the Prophet ﷺ: your religion.",
     "ar": "أربعة أسئلة، ودرس واحد، وتسمية واحدة من النبي ﷺ: دينكم."
-   }
+   },
+   "art": "pillars",
+   "hl": 3,
+   "labels": [
+    {
+     "id": "Islam",
+     "en": "Islam",
+     "ar": "الإسلام"
+    },
+    {
+     "id": "Iman",
+     "en": "Iman",
+     "ar": "الإيمان"
+    },
+    {
+     "id": "Ihsan",
+     "en": "Ihsan",
+     "ar": "الإحسان"
+    },
+    {
+     "id": "Tanda zaman",
+     "en": "Signs",
+     "ar": "الأشراط"
+    }
+   ]
   },
   {
    "type": "title",
@@ -486,6 +635,30 @@
      "id": "Para ulama menyebut Hadis Jibril Ummus Sunnah, karena seluruh pokok agama terangkum dalam dialog singkat ini.",
      "en": "Scholars call the Hadith of Jibril Umm as-Sunnah, because the whole core of religion is gathered in this short dialogue.",
      "ar": "يسمّي العلماء حديث جبريل «أمّ السنة» لأن أصول الدين كلها مجموعة في هذا الحوار الموجز."
+    }
+   ],
+   "art": "pillars",
+   "hl": 3,
+   "labels": [
+    {
+     "id": "Islam",
+     "en": "Islam",
+     "ar": "الإسلام"
+    },
+    {
+     "id": "Iman",
+     "en": "Iman",
+     "ar": "الإيمان"
+    },
+    {
+     "id": "Ihsan",
+     "en": "Ihsan",
+     "ar": "الإحسان"
+    },
+    {
+     "id": "Tanda zaman",
+     "en": "Signs",
+     "ar": "الأشراط"
     }
    ]
   },
@@ -534,6 +707,30 @@
       "ar": "ختمها النبي ﷺ بجملة واحدة: «دينكم»."
      }
     }
+   ],
+   "art": "pillars",
+   "hl": 3,
+   "labels": [
+    {
+     "id": "Islam",
+     "en": "Islam",
+     "ar": "الإسلام"
+    },
+    {
+     "id": "Iman",
+     "en": "Iman",
+     "ar": "الإيمان"
+    },
+    {
+     "id": "Ihsan",
+     "en": "Ihsan",
+     "ar": "الإحسان"
+    },
+    {
+     "id": "Tanda zaman",
+     "en": "Signs",
+     "ar": "الأشراط"
+    }
    ]
   },
   {
@@ -543,7 +740,31 @@
     "id": "Bayangkan seorang guru menyerahkan buku berisi empat bab dan berkata, “Ini pelajaran kalian.” Bolehkah murid berkata, “Bab keempat bukan pelajaran”?",
     "en": "Imagine a teacher hands over a book of four chapters and says, “This is your lesson.” May a student say, “The fourth chapter is not part of the lesson”?",
     "ar": "تخيّل معلّمًا سلّم كتابًا من أربعة أبواب وقال: «هذا درسكم». هل يجوز للطالب أن يقول: «الباب الرابع ليس من الدرس»؟"
-   }
+   },
+   "art": "pillars",
+   "hl": 3,
+   "labels": [
+    {
+     "id": "Islam",
+     "en": "Islam",
+     "ar": "الإسلام"
+    },
+    {
+     "id": "Iman",
+     "en": "Iman",
+     "ar": "الإيمان"
+    },
+    {
+     "id": "Ihsan",
+     "en": "Ihsan",
+     "ar": "الإحسان"
+    },
+    {
+     "id": "Tanda zaman",
+     "en": "Signs",
+     "ar": "الأشراط"
+    }
+   ]
   },
   {
    "type": "list",
@@ -601,6 +822,30 @@
       "en": "Remove one part and “your religion” is no longer whole.",
       "ar": "إن أُسقط جزء لم يبقَ «دينكم» كاملًا."
      }
+    }
+   ],
+   "art": "pillars",
+   "hl": 3,
+   "labels": [
+    {
+     "id": "Islam",
+     "en": "Islam",
+     "ar": "الإسلام"
+    },
+    {
+     "id": "Iman",
+     "en": "Iman",
+     "ar": "الإيمان"
+    },
+    {
+     "id": "Ihsan",
+     "en": "Ihsan",
+     "ar": "الإحسان"
+    },
+    {
+     "id": "Tanda zaman",
+     "en": "Signs",
+     "ar": "الأشراط"
     }
    ]
   },
@@ -662,6 +907,30 @@
      },
      "hl": true
     }
+   ],
+   "art": "pillars",
+   "hl": 3,
+   "labels": [
+    {
+     "id": "Islam",
+     "en": "Islam",
+     "ar": "الإسلام"
+    },
+    {
+     "id": "Iman",
+     "en": "Iman",
+     "ar": "الإيمان"
+    },
+    {
+     "id": "Ihsan",
+     "en": "Ihsan",
+     "ar": "الإحسان"
+    },
+    {
+     "id": "Tanda zaman",
+     "en": "Signs",
+     "ar": "الأشراط"
+    }
    ]
   },
   {
@@ -671,7 +940,31 @@
     "id": "Tiga ilmu pertama sudah kita kenal sejak lama. Mengapa yang keempat terasa asing?",
     "en": "We have known the first three sciences for a long time. Why does the fourth feel unfamiliar?",
     "ar": "العلوم الثلاثة الأولى معروفة منذ زمن. فلماذا يبدو الرابع غريبًا؟"
-   }
+   },
+   "art": "pillars",
+   "hl": 3,
+   "labels": [
+    {
+     "id": "Islam",
+     "en": "Islam",
+     "ar": "الإسلام"
+    },
+    {
+     "id": "Iman",
+     "en": "Iman",
+     "ar": "الإيمان"
+    },
+    {
+     "id": "Ihsan",
+     "en": "Ihsan",
+     "ar": "الإحسان"
+    },
+    {
+     "id": "Tanda zaman",
+     "en": "Signs",
+     "ar": "الأشراط"
+    }
+   ]
   },
   {
    "type": "text",
@@ -687,21 +980,86 @@
      "en": "The fourth part was kept in the hadith chapters on trials and great events. When its signs began to appear, Al-Habib Abu Bakar Al-Masyhur arranged it into one science that can be studied: Fiqh al-Tahawwulat.",
      "ar": "كان الجزء الرابع محفوظًا في أبواب الفتن والملاحم من كتب الحديث. فلما بدت علاماته رتّبه الحبيب أبو بكر المشهور علمًا يُدرَس: فقه التحولات."
     }
+   ],
+   "art": "pillars",
+   "hl": 3,
+   "labels": [
+    {
+     "id": "Islam",
+     "en": "Islam",
+     "ar": "الإسلام"
+    },
+    {
+     "id": "Iman",
+     "en": "Iman",
+     "ar": "الإيمان"
+    },
+    {
+     "id": "Ihsan",
+     "en": "Ihsan",
+     "ar": "الإحسان"
+    },
+    {
+     "id": "Tanda zaman",
+     "en": "Signs",
+     "ar": "الأشراط"
+    }
    ]
   },
   {
-   "type": "text",
+   "type": "stats",
    "bab": 2,
    "title": {
-    "id": "Apakah rukun Islam dan Iman berubah?",
-    "en": "Do the pillars of Islam and Iman change?",
-    "ar": "هل تتغيّر أركان الإسلام والإيمان؟"
+    "id": "Apakah rukun Islam, Iman, dan Ihsan berubah?",
+    "en": "Do the pillars of Islam, Iman, and Ihsan change?",
+    "ar": "هل تتغيّر أركان الإسلام والإيمان والإحسان؟"
    },
+   "items": [
+    {
+     "n": 5,
+     "t": {
+      "id": "Rukun Islam",
+      "en": "Pillars of Islam",
+      "ar": "أركان الإسلام"
+     },
+     "d": {
+      "id": "tetap lima",
+      "en": "stay five",
+      "ar": "خمسة لا تتغيّر"
+     }
+    },
+    {
+     "n": 6,
+     "t": {
+      "id": "Rukun Iman",
+      "en": "Pillars of Iman",
+      "ar": "أركان الإيمان"
+     },
+     "d": {
+      "id": "tetap enam",
+      "en": "stay six",
+      "ar": "ستة لا تتغيّر"
+     }
+    },
+    {
+     "n": 2,
+     "t": {
+      "id": "Rukun Ihsan",
+      "en": "Pillars of Ihsan",
+      "ar": "أركان الإحسان"
+     },
+     "d": {
+      "id": "tetap dua",
+      "en": "stay two",
+      "ar": "ركنان لا يتغيّران"
+     }
+    }
+   ],
    "lines": [
     {
-     "id": "Tidak. Rukun Islam tetap lima. Rukun Iman tetap enam.",
-     "en": "No. The pillars of Islam stay five. The pillars of Iman stay six.",
-     "ar": "لا. أركان الإسلام خمسة، وأركان الإيمان ستة."
+     "id": "Tidak. Rukun Islam tetap lima. Rukun Iman tetap enam. Rukun Ihsan tetap dua.",
+     "en": "No. The pillars of Islam stay five. The pillars of Iman stay six. The pillars of Ihsan stay two.",
+     "ar": "لا. أركان الإسلام خمسة، وأركان الإيمان ستة، وللإحسان ركنان."
     },
     {
      "id": "“Empat rukun agama” hanyalah cara mengelompokkan empat pertanyaan Jibril.",
@@ -717,11 +1075,40 @@
     "id": "Bukankah kiamat hanya Allah yang tahu? Lalu mengapa kita membahas tandanya?",
     "en": "Isn't it only Allah who knows the Hour? Then why discuss its signs?",
     "ar": "أليس الله وحده يعلم الساعة؟ فلماذا نبحث في علاماتها؟"
-   }
+   },
+   "art": "pillars",
+   "hl": 3,
+   "labels": [
+    {
+     "id": "Islam",
+     "en": "Islam",
+     "ar": "الإسلام"
+    },
+    {
+     "id": "Iman",
+     "en": "Iman",
+     "ar": "الإيمان"
+    },
+    {
+     "id": "Ihsan",
+     "en": "Ihsan",
+     "ar": "الإحسان"
+    },
+    {
+     "id": "Tanda zaman",
+     "en": "Signs",
+     "ar": "الأشراط"
+    }
+   ]
   },
   {
    "type": "compare",
    "bab": 2,
+   "title": {
+    "id": "Waktunya rahasia, tandanya diajarkan.",
+    "en": "The time is secret; the signs are taught.",
+    "ar": "الوقت مكتوم، والعلامات مُعلَّمة."
+   },
    "cols": [
     {
      "id": "Waktu kiamat",
@@ -785,15 +1172,39 @@
      "en": "The fourth pillar's role: to guard the other three so they are not spoiled, falsified, or abandoned when the age shakes.",
      "ar": "وظيفة الركن الرابع: حفظ الثلاثة الأخرى كي لا تفسد أو تُزوَّر أو تُترك حين يضطرب الزمان."
     }
+   ],
+   "art": "pillars",
+   "hl": 3,
+   "labels": [
+    {
+     "id": "Islam",
+     "en": "Islam",
+     "ar": "الإسلام"
+    },
+    {
+     "id": "Iman",
+     "en": "Iman",
+     "ar": "الإيمان"
+    },
+    {
+     "id": "Ihsan",
+     "en": "Ihsan",
+     "ar": "الإحسان"
+    },
+    {
+     "id": "Tanda zaman",
+     "en": "Signs",
+     "ar": "الأشراط"
+    }
    ]
   },
   {
    "type": "list",
    "bab": 2,
    "title": {
-    "id": "Dua tugasnya",
-    "en": "Its two tasks",
-    "ar": "مهمتاه"
+    "id": "Dua tugas utamanya",
+    "en": "Its two main tasks",
+    "ar": "مهمتاه الرئيستان"
    },
    "items": [
     {
@@ -820,10 +1231,34 @@
       "ar": "من ثلاثة مفسدات: الغلو، والانتحال، وتأويل الجاهلين."
      }
     }
+   ],
+   "art": "pillars",
+   "hl": 3,
+   "labels": [
+    {
+     "id": "Islam",
+     "en": "Islam",
+     "ar": "الإسلام"
+    },
+    {
+     "id": "Iman",
+     "en": "Iman",
+     "ar": "الإيمان"
+    },
+    {
+     "id": "Ihsan",
+     "en": "Ihsan",
+     "ar": "الإحسان"
+    },
+    {
+     "id": "Tanda zaman",
+     "en": "Signs",
+     "ar": "الأشراط"
+    }
    ]
   },
   {
-   "type": "compare",
+   "type": "signs",
    "bab": 2,
    "title": {
     "id": "Dua tanda, dua kendali",
@@ -833,8 +1268,8 @@
    "cols": [
     {
      "id": "Tanda dalam hadis",
-     "en": "The sign",
-     "ar": "العلامة"
+     "en": "The sign in the hadith",
+     "ar": "العلامة في الحديث"
     },
     {
      "id": "Yang bergeser",
@@ -842,41 +1277,47 @@
      "ar": "ما يتحوّل"
     }
    ],
-   "rows": [
-    [
-     {
+   "items": [
+    {
+     "sign": {
       "id": "Budak perempuan melahirkan tuannya",
       "en": "The slave woman gives birth to her mistress",
       "ar": "أن تلد الأمة ربّتها"
      },
-     {
-      "id": "Kendali ilmu dan keyakinan",
-      "en": "Control of knowledge and belief",
+     "signAr": "أَنْ تَلِدَ الْأَمَةُ رَبَّتَهَا",
+     "ar": "قرار العلم والاعتقاد",
+     "tr": "Qararul ‘ilmi wal i‘tiqad",
+     "name": {
+      "id": "Otoritas ilmu dan akidah",
+      "en": "Authority over knowledge and creed",
       "ar": "قرار العلم والاعتقاد"
      },
-     {
+     "d": {
       "id": "Urusan ilmu dipegang yang belum berhak",
       "en": "Knowledge handed to those unfit",
       "ar": "يُسند أمر العلم لغير أهله"
      }
-    ],
-    [
-     {
+    },
+    {
+     "sign": {
       "id": "Berlomba meninggikan bangunan",
       "en": "Competing to raise tall buildings",
       "ar": "التطاول في البنيان"
      },
-     {
-      "id": "Kendali kekuasaan dan harta",
-      "en": "Control of power and wealth",
+     "signAr": "يَتَطَاوَلُونَ فِي الْبُنْيَانِ",
+     "ar": "قرار الحكم والاقتصاد",
+     "tr": "Qararul hukmi wal iqtisad",
+     "name": {
+      "id": "Otoritas hukum dan ekonomi",
+      "en": "Legal and economic authority",
       "ar": "قرار الحكم والاقتصاد"
      },
-     {
+     "d": {
       "id": "Kekuasaan dan harta dipegang yang belum berhak",
       "en": "Power and wealth handed to those unfit",
       "ar": "يُسند الحكم والمال لغير أهله"
      }
-    ]
+    }
    ]
   },
   {
@@ -922,6 +1363,11 @@
   {
    "type": "compare",
    "bab": 3,
+   "title": {
+    "id": "Dua jenis pertanyaan",
+    "en": "Two kinds of question",
+    "ar": "نوعان من الأسئلة"
+   },
    "cols": [
     {
      "id": "Fikih yang biasa menjawab",
@@ -1140,77 +1586,6 @@
    ]
   },
   {
-   "type": "cards",
-   "bab": 3,
-   "title": {
-    "id": "Lima cabang ilmunya",
-    "en": "Its five branches",
-    "ar": "فروعه الخمسة"
-   },
-   "items": [
-    {
-     "t": {
-      "id": "Fikih Fitnah dan Penjagaan Diri",
-      "en": "Fiqh of Fitna and Self-Protection",
-      "ar": "فقه النواقض والنقائض ومضلّات الفتن وسبل الوقاية منها"
-     },
-     "d": {
-      "id": "Mengenali yang merusak agama dan cara selamat darinya.",
-      "en": "Recognizing what harms religion and how to stay safe.",
-      "ar": "معرفة ما يفسد الدين وكيف ننجو منه."
-     }
-    },
-    {
-     "t": {
-      "id": "Fikih Isyarat, Kabar Gembira, dan Perlindungan",
-      "en": "Fiqh of Signals, Glad Tidings, and Protection",
-      "ar": "فقه الإشارات والبشارات والنذارات والحصانات والأسانيد"
-     },
-     "d": {
-      "id": "Pesan kasih sayang Nabi ﷺ, termasuk pentingnya guru bersanad.",
-      "en": "The Prophet's loving messages, including the importance of a teacher with a chain.",
-      "ar": "رسائل الرحمة النبوية ومنها أهمية المعلم المسنَد."
-     }
-    },
-    {
-     "t": {
-      "id": "Fikih Sains, Teknologi, dan Budaya Baru",
-      "en": "Fiqh of Science, Technology, and New Culture",
-      "ar": "فقه مستجدات العلوم والثقافات والتقنيات"
-     },
-     "d": {
-      "id": "Menimbang penemuan dan tren baru dengan timbangan agama.",
-      "en": "Weighing new discoveries and trends by religion's scale.",
-      "ar": "وزن المستجدات والاتجاهات بميزان الدين."
-     }
-    },
-    {
-     "t": {
-      "id": "Fikih Tanda Alam dan Peristiwa Besar",
-      "en": "Fiqh of Natural Signs and Great Events",
-      "ar": "فقه الأشراط الكونية والأحداث الكبرى"
-     },
-     "d": {
-      "id": "Tanda kecil, tengah, dan besar, tanpa spekulasi.",
-      "en": "Minor, middle, and major signs, without speculation.",
-      "ar": "الأشراط الصغرى والوسطى والكبرى دون تخمين."
-     }
-    },
-    {
-     "t": {
-      "id": "Fikih Menautkan Agama dan Sejarah",
-      "en": "Fiqh of Linking Religion and History",
-      "ar": "فقه الربط بين الديانة والتاريخ"
-     },
-     "d": {
-      "id": "Membaca perjalanan umat dengan kacamata wahyu.",
-      "en": "Reading the Ummah's journey through revelation.",
-      "ar": "قراءة مسيرة الأمة بعين الوحي."
-     }
-    }
-   ]
-  },
-  {
    "type": "question",
    "bab": 3,
    "q": {
@@ -1222,6 +1597,11 @@
   {
    "type": "compare",
    "bab": 3,
+   "title": {
+    "id": "Dibandingkan dengan yang sering beredar",
+    "en": "Compared with what often circulates",
+    "ar": "مقارنة بما يُتداول كثيرًا"
+   },
    "cols": [
     {
      "id": "Yang sering beredar",
@@ -1361,6 +1741,343 @@
     "ar": "الباب 4"
    },
    "title": {
+    "id": "Lima cabang ilmunya",
+    "en": "Its five branches",
+    "ar": "فروعه الخمسة"
+   },
+   "sub": {
+    "id": "Bukan hanya tentang Imam Mahdi dan Dajjal.",
+    "en": "Not only about Imam al-Mahdi and the Dajjal.",
+    "ar": "ليس عن المهدي والدجال فقط."
+   },
+   "art": "radial"
+  },
+  {
+   "type": "question",
+   "bab": 4,
+   "q": {
+    "id": "Apakah Fikih Tahawwulat hanya membahas Imam Mahdi dan Dajjal?",
+    "en": "Does Fiqh al-Tahawwulat only discuss Imam al-Mahdi and the Dajjal?",
+    "ar": "هل يقتصر فقه التحولات على الحديث عن المهدي والدجال؟"
+   },
+   "art": "radial"
+  },
+  {
+   "type": "text",
+   "bab": 4,
+   "title": {
+    "id": "Tidak. Itu hanya sebagian kecil dari satu cabang.",
+    "en": "No. That is a small part of one branch.",
+    "ar": "لا. هذا جزء يسير من فرع واحد."
+   },
+   "lines": [
+    {
+     "id": "Kisah Imam Mahdi dan Dajjal termasuk tanda-tanda besar. Dan tanda-tanda besar hanyalah satu bagian dari satu cabang.",
+     "en": "The accounts of Imam al-Mahdi and the Dajjal belong to the major signs. And the major signs are only one part of one branch.",
+     "ar": "خبر المهدي والدجال من الأشراط الكبرى، والأشراط الكبرى جزء واحد من فرع واحد."
+    },
+    {
+     "id": "Ilmu ini punya lima cabang. Masing-masing menjawab jenis pertanyaan yang berbeda.",
+     "en": "This science has five branches. Each answers a different kind of question.",
+     "ar": "لهذا العلم خمسة فروع، ولكل فرع نوع مختلف من الأسئلة."
+    }
+   ],
+   "art": "radial",
+   "hl": 3
+  },
+  {
+   "type": "branchmap",
+   "bab": 4,
+   "title": {
+    "id": "Lima cabang, satu peta",
+    "en": "Five branches, one map",
+    "ar": "خمسة فروع، وخريطة واحدة"
+   },
+   "items": [
+    {
+     "n": 1,
+     "t": {
+      "id": "Fikih Fitnah dan Penjagaan Diri",
+      "en": "Fiqh of Fitna and Self-Protection",
+      "ar": "فقه النواقض والنقائض ومضلّات الفتن وسبل الوقاية منها"
+     },
+     "s": {
+      "id": "Fitnah dan penjagaan diri",
+      "en": "Fitna and self-protection",
+      "ar": "النواقض والنقائض"
+     }
+    },
+    {
+     "n": 2,
+     "t": {
+      "id": "Fikih Isyarat, Kabar Gembira, dan Perlindungan",
+      "en": "Fiqh of Signals, Glad Tidings, and Protection",
+      "ar": "فقه الإشارات والبشارات والنذارات والحصانات والأسانيد"
+     },
+     "s": {
+      "id": "Isyarat dan perlindungan",
+      "en": "Signals and protection",
+      "ar": "الإشارات والبشارات"
+     }
+    },
+    {
+     "n": 3,
+     "t": {
+      "id": "Fikih Sains, Teknologi, dan Budaya Baru",
+      "en": "Fiqh of Science, Technology, and New Culture",
+      "ar": "فقه مستجدات العلوم والثقافات والتقنيات"
+     },
+     "s": {
+      "id": "Sains, teknologi, budaya baru",
+      "en": "Science, technology, new culture",
+      "ar": "مستجدات العلوم والتقنيات"
+     }
+    },
+    {
+     "n": 4,
+     "t": {
+      "id": "Fikih Tanda Alam dan Peristiwa Besar",
+      "en": "Fiqh of Natural Signs and Great Events",
+      "ar": "فقه الأشراط الكونية والأحداث الكبرى"
+     },
+     "s": {
+      "id": "Tanda alam dan peristiwa besar",
+      "en": "Signs and great events",
+      "ar": "الأشراط والأحداث الكبرى"
+     }
+    },
+    {
+     "n": 5,
+     "t": {
+      "id": "Fikih Menautkan Agama dan Sejarah",
+      "en": "Fiqh of Linking Religion and History",
+      "ar": "فقه الربط بين الديانة والتاريخ"
+     },
+     "s": {
+      "id": "Agama dan sejarah",
+      "en": "Religion and history",
+      "ar": "الديانة والتاريخ"
+     }
+    }
+   ],
+   "note": {
+    "id": "Ketuk atau geser untuk melihat tiap cabang.",
+    "en": "Swipe on to see each branch.",
+    "ar": "اسحب لترى كل فرع."
+   },
+   "art": "radial"
+  },
+  {
+   "type": "branch",
+   "bab": 4,
+   "n": 1,
+   "name": {
+    "id": "Fikih Fitnah dan Penjagaan Diri",
+    "en": "Fiqh of Fitna and Self-Protection",
+    "ar": "فقه النواقض والنقائض ومضلّات الفتن وسبل الوقاية منها"
+   },
+   "desc": {
+    "id": "Mengenali hal-hal yang merusak agama, dan cara menyelamatkan diri darinya.",
+    "en": "Recognizing what harms religion, and how to keep yourself safe from it.",
+    "ar": "معرفة ما يفسد الدين، وكيف ينجو الإنسان منه."
+   },
+   "qs": [
+    {
+     "id": "Iman saya naik turun. Apa yang merusaknya, dan bagaimana menjaganya?",
+     "en": "My faith rises and falls. What damages it, and how do I guard it?",
+     "ar": "إيماني يعلو ويهبط. ما الذي يفسده وكيف أحفظه؟"
+    },
+    {
+     "id": "Bagaimana menyikapi hoaks agama di grup keluarga?",
+     "en": "How should I treat religious hoaxes in the family group chat?",
+     "ar": "كيف أتعامل مع الأخبار الدينية المكذوبة في مجموعة الأسرة؟"
+    },
+    {
+     "id": "Saya lelah dengan berita buruk. Haruskah terus mengikutinya?",
+     "en": "I am tired of bad news. Must I keep following it?",
+     "ar": "تعبتُ من الأخبار السيئة. هل يلزمني متابعتها؟"
+    }
+   ],
+   "note": null,
+   "art": "radial",
+   "hl": 0
+  },
+  {
+   "type": "branch",
+   "bab": 4,
+   "n": 2,
+   "name": {
+    "id": "Fikih Isyarat, Kabar Gembira, dan Perlindungan",
+    "en": "Fiqh of Signals, Glad Tidings, and Protection",
+    "ar": "فقه الإشارات والبشارات والنذارات والحصانات والأسانيد"
+   },
+   "desc": {
+    "id": "Mengenali pesan-pesan Nabi ﷺ tentang tempat, masa, kabar baik, dan peringatan bahaya, serta pentingnya belajar dari guru yang bersanad.",
+    "en": "Recognizing the Prophet's ﷺ messages about places, times, glad tidings, and warnings, and the importance of learning from a teacher with a chain.",
+    "ar": "معرفة رسائل النبي ﷺ عن الأماكن والأزمنة والبشارات والنذارات، وأهمية التعلّم من معلّم مسنَد."
+   },
+   "qs": [
+    {
+     "id": "Bagaimana membedakan guru yang tepercaya dari yang bukan?",
+     "en": "How do I tell a trustworthy teacher from one who is not?",
+     "ar": "كيف أميّز المعلم الموثوق من غيره؟"
+    },
+    {
+     "id": "Mengapa sanad penting dalam belajar agama?",
+     "en": "Why does a chain of transmission matter in learning religion?",
+     "ar": "لماذا يهم السند في تعلّم الدين؟"
+    },
+    {
+     "id": "Kabar gembira apa yang disampaikan Nabi ﷺ untuk umatnya?",
+     "en": "What glad tidings did the Prophet ﷺ give his Ummah?",
+     "ar": "ما البشارات التي بشّر بها النبي ﷺ أمّته؟"
+    }
+   ],
+   "note": null,
+   "art": "radial",
+   "hl": 1
+  },
+  {
+   "type": "branch",
+   "bab": 4,
+   "n": 3,
+   "name": {
+    "id": "Fikih Sains, Teknologi, dan Budaya Baru",
+    "en": "Fiqh of Science, Technology, and New Culture",
+    "ar": "فقه مستجدات العلوم والثقافات والتقنيات"
+   },
+   "desc": {
+    "id": "Menyikapi penemuan modern dan tren budaya baru dengan timbangan agama. Islam tidak memusuhi sains dan teknologi.",
+    "en": "Treating modern discoveries and new cultural trends by religion's scale. Islam is not hostile to science and technology.",
+    "ar": "التعامل مع المستجدات والاتجاهات الثقافية بميزان الدين. فالإسلام لا يعادي العلم والتقنية."
+   },
+   "qs": [
+    {
+     "id": "Bagaimana agama menyikapi AI dan internet?",
+     "en": "How does religion treat AI and the internet?",
+     "ar": "كيف يتعامل الدين مع الذكاء الاصطناعي والإنترنت؟"
+    },
+    {
+     "id": "Bagaimana menjaga iman anak di zaman layar?",
+     "en": "How do I protect my child's faith in the age of screens?",
+     "ar": "كيف أحفظ إيمان ابني في زمن الشاشات؟"
+    },
+    {
+     "id": "Bagaimana menimbang budaya dan tren baru?",
+     "en": "How do I weigh new cultures and trends?",
+     "ar": "كيف أزن الثقافات والاتجاهات الجديدة؟"
+    }
+   ],
+   "note": null,
+   "art": "radial",
+   "hl": 2
+  },
+  {
+   "type": "branch",
+   "bab": 4,
+   "n": 4,
+   "name": {
+    "id": "Fikih Tanda Alam dan Peristiwa Besar",
+    "en": "Fiqh of Natural Signs and Great Events",
+    "ar": "فقه الأشراط الكونية والأحداث الكبرى"
+   },
+   "desc": {
+    "id": "Memahami tanda kecil, tengah, dan besar secara tertib, tanpa spekulasi.",
+    "en": "Understanding the minor, middle, and major signs in order, without speculation.",
+    "ar": "فهم الأشراط الصغرى والوسطى والكبرى بترتيب ودون تخمين."
+   },
+   "qs": [
+    {
+     "id": "Apa beda tanda kecil, tengah, dan besar?",
+     "en": "What separates the minor, middle, and major signs?",
+     "ar": "ما الفرق بين الأشراط الصغرى والوسطى والكبرى؟"
+    },
+    {
+     "id": "Siapa Imam Mahdi, Dajjal, dan Nabi Isa menurut urutannya?",
+     "en": "Who are Imam al-Mahdi, the Dajjal, and Prophet Isa, in order?",
+     "ar": "من المهدي والدجال وعيسى عليه السلام، وبأي ترتيب؟"
+    },
+    {
+     "id": "Bolehkah menebak tahun kiamat?",
+     "en": "May we guess the year of the Hour?",
+     "ar": "هل يجوز تخمين سنة الساعة؟"
+    }
+   ],
+   "note": {
+    "id": "Di sinilah Imam Mahdi dan Dajjal dibahas, sebagai bagian dari tanda-tanda besar.",
+    "en": "This is where Imam al-Mahdi and the Dajjal are discussed, as part of the major signs.",
+    "ar": "وهنا يُبحث المهدي والدجال، ضمن الأشراط الكبرى."
+   },
+   "art": "radial",
+   "hl": 3
+  },
+  {
+   "type": "branch",
+   "bab": 4,
+   "n": 5,
+   "name": {
+    "id": "Fikih Menautkan Agama dan Sejarah",
+    "en": "Fiqh of Linking Religion and History",
+    "ar": "فقه الربط بين الديانة والتاريخ"
+   },
+   "desc": {
+    "id": "Membaca perjalanan umat dari masa ke masa dalam bingkai wahyu, agar kita tahu di mana kita berdiri.",
+    "en": "Reading the Ummah's journey through the ages in the frame of revelation, so we know where we stand.",
+    "ar": "قراءة مسيرة الأمة عبر العصور في إطار الوحي، لنعرف أين نقف."
+   },
+   "qs": [
+    {
+     "id": "Bagaimana membaca sejarah umat dengan petunjuk wahyu?",
+     "en": "How do I read the Ummah's history by the guidance of revelation?",
+     "ar": "كيف أقرأ تاريخ الأمة بهدي الوحي؟"
+    },
+    {
+     "id": "Mengapa umat Islam banyak, tetapi terasa lemah?",
+     "en": "Why are Muslims many, yet feel weak?",
+     "ar": "لماذا المسلمون كثيرون ومع ذلك يشعرون بالضعف؟"
+    },
+    {
+     "id": "Apa hubungan perjalanan sejarah dengan sikap kita hari ini?",
+     "en": "How does the course of history relate to our stance today?",
+     "ar": "ما صلة مسيرة التاريخ بموقفنا اليوم؟"
+    }
+   ],
+   "note": null,
+   "art": "radial",
+   "hl": 4
+  },
+  {
+   "type": "text",
+   "bab": 4,
+   "title": {
+    "id": "Lima cabang, satu tujuan.",
+    "en": "Five branches, one aim.",
+    "ar": "خمسة فروع، وغاية واحدة."
+   },
+   "lines": [
+    {
+     "id": "Semuanya bermuara pada satu hal: sikap yang paling selamat di tengah perubahan zaman.",
+     "en": "All of them lead to one thing: the safest stance amid the changes of the age.",
+     "ar": "كلها تصبّ في أمر واحد: الموقف الأسلم في خضمّ تغيّر الزمان."
+    },
+    {
+     "id": "Itulah mengapa ia bukan sekadar ilmu tentang akhir zaman. Ia ilmu untuk hidup hari ini.",
+     "en": "That is why it is not merely a science of the end of time. It is a science for living today.",
+     "ar": "ولهذا ليس مجرد علم عن آخر الزمان؛ بل علم للحياة اليوم."
+    }
+   ],
+   "art": "radial",
+   "hl": -1
+  },
+  {
+   "type": "title",
+   "bab": 5,
+   "kicker": {
+    "id": "Bab 5",
+    "en": "Chapter 5",
+    "ar": "الباب 5"
+   },
+   "title": {
     "id": "Lima asisten untuk mempelajarinya",
     "en": "Five assistants to study it",
     "ar": "خمسة مساعدين لدراسته"
@@ -1373,7 +2090,7 @@
   },
   {
    "type": "assistant",
-   "bab": 4,
+   "bab": 5,
    "ar": "المحقق",
    "name": "Al-Muhaqqiq",
    "role": {
@@ -1390,11 +2107,40 @@
     "id": "“Di mana Al-Habib menyebut dua keruntuhan peradaban? Tampilkan ibarahnya.”",
     "en": "“Where does Al-Habib mention the two collapses of civilization? Show me the passage.”",
     "ar": "«أين يذكر الحبيب الانهيارين الحضاريين؟ أرني العبارة.»"
-   }
+   },
+   "art": "radial",
+   "hl": 0,
+   "labels": [
+    {
+     "id": "المحقق",
+     "en": "المحقق",
+     "ar": "المحقق"
+    },
+    {
+     "id": "البيان",
+     "en": "البيان",
+     "ar": "البيان"
+    },
+    {
+     "id": "المختبر",
+     "en": "المختبر",
+     "ar": "المختبر"
+    },
+    {
+     "id": "الحبيب",
+     "en": "الحبيب",
+     "ar": "الحبيب"
+    },
+    {
+     "id": "الخطيب",
+     "en": "الخطيب",
+     "ar": "الخطيب"
+    }
+   ]
   },
   {
    "type": "assistant",
-   "bab": 4,
+   "bab": 5,
    "ar": "البيان",
    "name": "Al-Bayan",
    "role": {
@@ -1412,11 +2158,40 @@
     "en": "“Explain al-ghuthaiyya in simple words.”",
     "ar": "«اشرح الغثائية بعبارة مبسّطة.»"
    },
-   "start": true
+   "start": true,
+   "art": "radial",
+   "hl": 1,
+   "labels": [
+    {
+     "id": "المحقق",
+     "en": "المحقق",
+     "ar": "المحقق"
+    },
+    {
+     "id": "البيان",
+     "en": "البيان",
+     "ar": "البيان"
+    },
+    {
+     "id": "المختبر",
+     "en": "المختبر",
+     "ar": "المختبر"
+    },
+    {
+     "id": "الحبيب",
+     "en": "الحبيب",
+     "ar": "الحبيب"
+    },
+    {
+     "id": "الخطيب",
+     "en": "الخطيب",
+     "ar": "الخطيب"
+    }
+   ]
   },
   {
    "type": "assistant",
-   "bab": 4,
+   "bab": 5,
    "ar": "المختبر",
    "name": "Al-Mukhtabir",
    "role": {
@@ -1433,11 +2208,40 @@
     "id": "“Uji saya: apa itu al-ghutsa'iyyah?”",
     "en": "“Test me: what is al-ghuthaiyya?”",
     "ar": "«اختبرني: ما الغثائية؟»"
-   }
+   },
+   "art": "radial",
+   "hl": 2,
+   "labels": [
+    {
+     "id": "المحقق",
+     "en": "المحقق",
+     "ar": "المحقق"
+    },
+    {
+     "id": "البيان",
+     "en": "البيان",
+     "ar": "البيان"
+    },
+    {
+     "id": "المختبر",
+     "en": "المختبر",
+     "ar": "المختبر"
+    },
+    {
+     "id": "الحبيب",
+     "en": "الحبيب",
+     "ar": "الحبيب"
+    },
+    {
+     "id": "الخطيب",
+     "en": "الخطيب",
+     "ar": "الخطيب"
+    }
+   ]
   },
   {
    "type": "assistant",
-   "bab": 4,
+   "bab": 5,
    "ar": "الحبيب",
    "name": "Al-Habib",
    "role": {
@@ -1454,11 +2258,40 @@
     "id": "“Bagaimana Al-Habib menjelaskan sikap saat masa fitnah?”",
     "en": "“How does Al-Habib explain conduct in times of trial?”",
     "ar": "«كيف يشرح الحبيب الموقف زمن الفتن؟»"
-   }
+   },
+   "art": "radial",
+   "hl": 3,
+   "labels": [
+    {
+     "id": "المحقق",
+     "en": "المحقق",
+     "ar": "المحقق"
+    },
+    {
+     "id": "البيان",
+     "en": "البيان",
+     "ar": "البيان"
+    },
+    {
+     "id": "المختبر",
+     "en": "المختبر",
+     "ar": "المختبر"
+    },
+    {
+     "id": "الحبيب",
+     "en": "الحبيب",
+     "ar": "الحبيب"
+    },
+    {
+     "id": "الخطيب",
+     "en": "الخطيب",
+     "ar": "الخطيب"
+    }
+   ]
   },
   {
    "type": "assistant",
-   "bab": 4,
+   "bab": 5,
    "ar": "الخطيب",
    "name": "Al-Khatib",
    "role": {
@@ -1475,11 +2308,40 @@
     "id": "“Susun kerangka khutbah tentang sikap saat masa fitnah.”",
     "en": "“Outline a sermon on conduct in times of trial.”",
     "ar": "«ضع هيكل خطبة عن الموقف زمن الفتن.»"
-   }
+   },
+   "art": "radial",
+   "hl": 4,
+   "labels": [
+    {
+     "id": "المحقق",
+     "en": "المحقق",
+     "ar": "المحقق"
+    },
+    {
+     "id": "البيان",
+     "en": "البيان",
+     "ar": "البيان"
+    },
+    {
+     "id": "المختبر",
+     "en": "المختبر",
+     "ar": "المختبر"
+    },
+    {
+     "id": "الحبيب",
+     "en": "الحبيب",
+     "ar": "الحبيب"
+    },
+    {
+     "id": "الخطيب",
+     "en": "الخطيب",
+     "ar": "الخطيب"
+    }
+   ]
   },
   {
    "type": "end",
-   "bab": 4,
+   "bab": 5,
    "title": {
     "id": "Mulai dari mana?",
     "en": "Where to start?",
