@@ -10,12 +10,16 @@ class OTMotion {
   static const Duration transition = Duration(milliseconds: 320);
 
   // ── Gerak pembuka, memuat, dan login ──
-  // Dicerminkan dari `motion/src/spec.ts` (Remotion). Ubah keduanya bersama.
+  // Loader dan login dicerminkan dari `motion/src/spec.ts` (Remotion). Splash
+  // kini hanya didefinisikan di sini; konstanta SPLASH di Remotion arsip lama.
   static const int splashTotalMs = 2300;
   static const Duration splashTotal = Duration(milliseconds: splashTotalMs);
 
   /// Splash tidak menahan navigasi lebih lama dari ini; ketuk untuk melewati.
   static const Duration splashHold = Duration(milliseconds: splashTotalMs);
+
+  /// Gerak dikurangi: hanya bingkai akhir, tahan sebentar.
+  static const Duration splashHoldStill = Duration(milliseconds: 700);
 
   // Urutan (ms): lengkung digambar, terisi, kubah naik, dua halaman terbuka,
   // wordmark huruf demi huruf, garis tipis, lalu semboyan.

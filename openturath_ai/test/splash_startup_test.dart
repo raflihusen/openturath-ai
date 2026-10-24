@@ -44,4 +44,44 @@ void main() {
     expect(find.byType(SplashScreen), findsNothing);
     expect(tester.takeException(), isNull);
   });
+
+  testWidgets('ketuk melewati splash tanpa menunggu seluruh urutan',
+      (tester) async {
+    await tester.pumpWidget(MaterialApp(
+      initialRoute: AppRoutes.splash,
+      routes: {
+        AppRoutes.splash: (_) =>
+            SplashScreen(resolveInitialRoute: () => AppRoutes.login),
+        AppRoutes.login: (_) => const Scaffold(body: Text('Login destination')),
+      },
+    ));
+    await tester.pump(const Duration(milliseconds: 400));
+    expect(find.byType(SplashScreen), findsOneWidget);
+    await tester.tap(find.byType(SplashScreen));
+    await tester.pump(const Duration(milliseconds: 50));
+    await tester.pump(const Duration(milliseconds: 400));
+    expect(find.text('Login destination'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('gerak dikurangi: bingkai akhir langsung, ditahan singkat',
+      (tester) async {
+    await tester.pumpWidget(MediaQuery(
+      data: const MediaQueryData(disableAnimations: true),
+      child: MaterialApp(
+        initialRoute: AppRoutes.splash,
+        routes: {
+          AppRoutes.splash: (_) =>
+              SplashScreen(resolveInitialRoute: () => AppRoutes.login),
+          AppRoutes.login: (_) =>
+              const Scaffold(body: Text('Login destination')),
+        },
+      ),
+    ));
+    await tester.pump(const Duration(milliseconds: 100));
+    expect(find.byType(SplashScreen), findsOneWidget);
+    await tester.pump(const Duration(milliseconds: 900));
+    await tester.pump(const Duration(milliseconds: 400));
+    expect(find.text('Login destination'), findsOneWidget);
+  });
 }

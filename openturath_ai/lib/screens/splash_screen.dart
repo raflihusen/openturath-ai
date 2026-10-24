@@ -21,16 +21,23 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen> {
   final ValueNotifier<bool> _skip = ValueNotifier<bool>(false);
-  final Completer<void> _skipped = Completer<void>();
+  final Completer<void> _held = Completer<void>();
+  Timer? _holdTimer;
+
+  void _release() {
+    _holdTimer?.cancel();
+    if (!_held.isCompleted) _held.complete();
+  }
 
   void _onTap() {
-    if (_skipped.isCompleted) return;
+    if (_held.isCompleted) return;
     _skip.value = true;
-    _skipped.complete();
+    _release();
   }
 
   @override
   void dispose() {
+    _holdTimer?.cancel();
     _skip.dispose();
     super.dispose();
   }
@@ -46,8 +53,10 @@ class _SplashScreenState extends State<SplashScreen> {
 
   Future<void> _checkAuthAndNavigate() async {
     // Pembuka terlihat sejenak, tetapi tidak pernah menahan lebih lama.
-    final hold = Future.any<void>(
-        [Future<void>.delayed(OTMotion.splashHold), _skipped.future]);
+    final still = mounted && MediaQuery.disableAnimationsOf(context);
+    _holdTimer =
+        Timer(still ? OTMotion.splashHoldStill : OTMotion.splashHold, _release);
+    final hold = _held.future;
     var targetRoute = AppRoutes.login;
     try {
       if (widget.resolveInitialRoute != null) {

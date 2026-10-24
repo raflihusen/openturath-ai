@@ -63,10 +63,29 @@ class _OTSplashIntroState extends State<OTSplashIntro>
     if (widget.skip?.value == true) _controller.value = 1;
   }
 
+  bool _feltFill = false, _feltEnd = false;
+
+  /// Dua sentuhan halus: saat logo selesai terbentuk dan saat semboyan tuntas.
+  void _haptics() {
+    final ms = _controller.value * OTMotion.splashTotalMs;
+    if (!_feltFill && ms >= OTMotion.splashPagesEndMs) {
+      _feltFill = true;
+      OTMotion.light();
+    }
+    if (!_feltEnd && _controller.isCompleted && widget.skip?.value != true) {
+      _feltEnd = true;
+      OTMotion.selection();
+    }
+  }
+
   @override
   void initState() {
     super.initState();
     widget.skip?.addListener(_onSkip);
+    if (!WidgetsBinding
+        .instance.platformDispatcher.accessibilityFeatures.disableAnimations) {
+      _controller.addListener(_haptics);
+    }
   }
 
   @override
@@ -120,87 +139,96 @@ class _OTSplashIntroState extends State<OTSplashIntro>
         final tag = _phase(ms, OTMotion.splashTagStartMs,
             OTMotion.splashTagEndMs, OTMotion.curve);
         const word = 'OpenTurath';
+        final tagStyle = Loc.isArabic
+            ? OTTypography.arabicReading(color: ink.withValues(alpha: 0.72))
+                .copyWith(fontSize: OTFontSize.s16, fontWeight: FontWeight.w400)
+            : OTTypography.caption(color: ink.withValues(alpha: 0.72))
+                .copyWith(letterSpacing: 0.6);
         final canvasW = markW * 2.9, canvasH = _markH * 2.1;
-        return Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            SizedBox(
-              width: canvasW,
-              height: canvasH,
-              child: Stack(
-                alignment: Alignment.center,
-                clipBehavior: Clip.none,
-                children: [
-                  Positioned.fill(
-                    child: CustomPaint(
-                        painter: _SplashArchPainter(
-                            ms: ms,
-                            ink: ink,
-                            markRect: Rect.fromCenter(
-                                center: Offset(canvasW / 2, canvasH * 0.55),
-                                width: markW,
-                                height: (833 - _y0) * s))),
+        return Semantics(
+            label: '${Loc.tr('appName')}. ${Loc.tr('splashTagline')}',
+            container: true,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                SizedBox(
+                  width: canvasW,
+                  height: canvasH,
+                  child: Stack(
+                    alignment: Alignment.center,
+                    clipBehavior: Clip.none,
+                    children: [
+                      Positioned.fill(
+                        child: CustomPaint(
+                            painter: _SplashArchPainter(
+                                ms: ms,
+                                ink: ink,
+                                markRect: Rect.fromCenter(
+                                    center: Offset(canvasW / 2, canvasH * 0.55),
+                                    width: markW,
+                                    height: (833 - _y0) * s))),
+                      ),
+                      Positioned(
+                        left: (canvasW - markW) / 2,
+                        top: canvasH * 0.55 - (833 - _y0) * s / 2,
+                        width: markW,
+                        height: _markH,
+                        child: Stack(clipBehavior: Clip.none, children: [
+                          Opacity(opacity: fill, child: _part('arch', ink, s)),
+                          Opacity(
+                            opacity: dome,
+                            child: Transform.translate(
+                                offset: Offset(0, (1 - dome) * 22 * s),
+                                child: _part('dome', ink, s)),
+                          ),
+                          Opacity(
+                            opacity: pages,
+                            child: Transform.translate(
+                                offset: Offset(-(1 - pages) * 38 * s * -1, 0),
+                                child: _part('left', ink, s)),
+                          ),
+                          Opacity(
+                            opacity: pages,
+                            child: Transform.translate(
+                                offset: Offset(-(1 - pages) * 38 * s, 0),
+                                child: _part('right', ink, s)),
+                          ),
+                        ]),
+                      ),
+                    ],
                   ),
-                  Positioned(
-                    left: (canvasW - markW) / 2,
-                    top: canvasH * 0.55 - (833 - _y0) * s / 2,
-                    width: markW,
-                    height: _markH,
-                    child: Stack(clipBehavior: Clip.none, children: [
-                      Opacity(opacity: fill, child: _part('arch', ink, s)),
-                      Opacity(
-                        opacity: dome,
-                        child: Transform.translate(
-                            offset: Offset(0, (1 - dome) * 22 * s),
-                            child: _part('dome', ink, s)),
-                      ),
-                      Opacity(
-                        opacity: pages,
-                        child: Transform.translate(
-                            offset: Offset(-(1 - pages) * 38 * s * -1, 0),
-                            child: _part('left', ink, s)),
-                      ),
-                      Opacity(
-                        opacity: pages,
-                        child: Transform.translate(
-                            offset: Offset(-(1 - pages) * 38 * s, 0),
-                            child: _part('right', ink, s)),
-                      ),
-                    ]),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: OTSpacing.md),
-            Directionality(
-              textDirection: TextDirection.ltr,
-              child: Row(mainAxisSize: MainAxisSize.min, children: [
-                for (var i = 0; i < word.length; i++)
-                  _letter(word[i], i, ms, ink),
-              ]),
-            ),
-            const SizedBox(height: OTSpacing.base),
-            Container(
-              width: OTSpacing.jumbo * rule,
-              height: 1,
-              color: ink.withValues(alpha: 0.35),
-            ),
-            const SizedBox(height: OTSpacing.base),
-            Opacity(
-              opacity: tag,
-              child: Transform.translate(
-                offset: Offset(0, (1 - tag) * 8),
-                child: Text(
-                  Loc.tr('splashTagline'),
-                  textAlign: TextAlign.center,
-                  style:
-                      OTTypography.caption(color: ink.withValues(alpha: 0.72))
-                          .copyWith(letterSpacing: Loc.isArabic ? 0 : 0.6),
                 ),
-              ),
-            ),
-          ],
-        );
+                const SizedBox(height: OTSpacing.md),
+                Directionality(
+                  textDirection: TextDirection.ltr,
+                  child: Row(mainAxisSize: MainAxisSize.min, children: [
+                    for (var i = 0; i < word.length; i++)
+                      _letter(word[i], i, ms, ink),
+                  ]),
+                ),
+                const SizedBox(height: OTSpacing.base),
+                Container(
+                  width: OTSpacing.jumbo * rule,
+                  height: 1,
+                  color: ink.withValues(alpha: 0.35),
+                ),
+                const SizedBox(height: OTSpacing.base),
+                Opacity(
+                  opacity: tag,
+                  child: Transform.translate(
+                    offset: Offset(0, (1 - tag) * 8),
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(maxWidth: canvasW),
+                      child: Text(
+                        Loc.tr('splashTagline'),
+                        textAlign: TextAlign.center,
+                        style: tagStyle,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ));
       },
     );
   }

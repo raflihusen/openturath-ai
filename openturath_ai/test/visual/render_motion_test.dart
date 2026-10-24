@@ -17,9 +17,17 @@ final _dir = Platform.environment['OT_SNAPSHOT_DIR'];
 final _key = GlobalKey();
 
 Future<void> _fonts() async {
-  final brand = FontLoader('NativeNewsreader')
-    ..addFont(rootBundle.load('assets/native_fonts/NativeNewsreader.ttf'));
-  await brand.load();
+  for (final f in {
+    'NativeNewsreader': 'NativeNewsreader.ttf',
+    'Newsreader': 'NativeNewsreader.ttf',
+    'Outfit': 'NativeOutfit.ttf',
+    'NativeOutfit': 'NativeOutfit.ttf',
+    'NativeArabicUI': 'NativeArabic.ttf',
+  }.entries) {
+    final loader = FontLoader(f.key)
+      ..addFont(rootBundle.load('assets/native_fonts/${f.value}'));
+    await loader.load();
+  }
 }
 
 Future<void> _save(WidgetTester tester, String name) async {
