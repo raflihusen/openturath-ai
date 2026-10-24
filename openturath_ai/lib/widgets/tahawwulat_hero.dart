@@ -20,9 +20,9 @@ class TahawwulatHero extends StatelessWidget {
       this.facts = const [],
       this.onOpenLibrary});
 
-  /// Saklar pengendali tombol pengenalan (default: sembunyi).
-  /// Dapat diaktifkan secara real-time kapan saja (`TahawwulatHero.showIntroduction = true`).
-  static bool showIntroduction = false;
+  /// Saklar tombol "Mengenal Fikih Tahawwulat" (default: tampil, membuka slide
+  /// pengenalan). Dapat dimatikan dengan `TahawwulatHero.showIntroduction = false`.
+  static bool showIntroduction = true;
 
   final VoidCallback onOpen;
   final VoidCallback? onOpenLibrary;
