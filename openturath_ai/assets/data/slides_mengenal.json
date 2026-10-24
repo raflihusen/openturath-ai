@@ -850,6 +850,22 @@
    ]
   },
   {
+   "type": "quote",
+   "bab": 2,
+   "art": "arch",
+   "arabic": "وَالسَّاعَةُ مِنَ الدِّينِ",
+   "translation": {
+    "id": "“Dan hari kiamat termasuk agama.”",
+    "en": "“And the Hour is part of religion.”",
+    "ar": "«علم الساعة من الدين.»"
+   },
+   "source": {
+    "id": "Isyarat Imam Al-Bukhari dalam judul bab Hadis Jibril (Shahih al-Bukhari no. 50). Beliau menutupnya dengan sabda Nabi ﷺ “agama kalian”: فَجَعَلَ كُلَّ ذَلِكَ دِينًا. Dikutip At-Talid hlm. 25.",
+    "en": "Imam al-Bukhari's hint in his chapter heading on the Hadith of Jibril (Sahih al-Bukhari no. 50). He closes with the Prophet's ﷺ words “your religion”: فَجَعَلَ كُلَّ ذَلِكَ دِينًا. Cited in At-Talid, p. 25.",
+    "ar": "إشارة الإمام البخاري في تبويب حديث جبريل (صحيح البخاري رقم 50)، ثم قوله: «فجعل كل ذلك دينًا». أورده «التليد والطارف» ص٢٥."
+   }
+  },
+  {
    "type": "cards",
    "bab": 2,
    "title": {
@@ -976,11 +992,21 @@
    },
    "lines": [
     {
-     "id": "Dahulu bagian keempat tersimpan di bab-bab hadis tentang fitnah dan peristiwa besar. Ketika tanda-tandanya mulai tampak, Al-Habib Abu Bakar Al-Masyhur menatanya menjadi satu ilmu yang bisa dipelajari: Fikih Tahawwulat.",
-     "en": "The fourth part was kept in the hadith chapters on trials and great events. When its signs began to appear, Al-Habib Abu Bakar Al-Masyhur arranged it into one science that can be studied: Fiqh al-Tahawwulat.",
-     "ar": "كان الجزء الرابع محفوظًا في أبواب الفتن والملاحم من كتب الحديث. فلما بدت علاماته رتّبه الحبيب أبو بكر المشهور علمًا يُدرَس: فقه التحولات."
+     "id": "Para ulama menulis banyak tentang tiga rukun pertama. Rukun keempat umumnya dibahas terpisah, sebagai “tanda-tanda kiamat”, bukan sebagai bagian dari rukun agama.",
+     "en": "Scholars wrote at length on the first three pillars. The fourth was usually treated apart, as “signs of the Hour”, not as a pillar of religion.",
+     "ar": "صنّف العلماء كثيرًا في الأركان الثلاثة الأولى، أما الرابع فتناولوه منفصلًا باسم «علامات الساعة»، لا ركنًا من أركان الدين."
+    },
+    {
+     "id": "Ketika tanda-tandanya mulai tampak, Al-Habib Abu Bakar Al-Masyhur menatanya menjadi satu ilmu yang bisa dipelajari: Fikih Tahawwulat.",
+     "en": "When its signs began to appear, Al-Habib Abu Bakar Al-Masyhur arranged it into one science that can be studied: Fiqh al-Tahawwulat.",
+     "ar": "فلما بدت علاماته رتّبه الحبيب أبو بكر المشهور علمًا يُدرَس: فقه التحولات."
     }
    ],
+   "note": {
+    "id": "At-Talid wath-Tharif, hlm. 25.",
+    "en": "At-Talid wath-Tharif, p. 25.",
+    "ar": "التليد والطارف، ص٢٥."
+   },
    "art": "pillars",
    "hl": 3,
    "labels": [
@@ -1004,6 +1030,146 @@
      "en": "Signs",
      "ar": "الأشراط"
     }
+   ]
+  },
+  {
+   "type": "quote",
+   "bab": 2,
+   "art": "arch",
+   "arabic": "حَفِظْتُ مِنْ رَسُولِ اللَّهِ ﷺ وِعَاءَيْنِ: فَأَمَّا أَحَدُهُمَا فَبَثَثْتُهُ، وَأَمَّا الْآخَرُ فَلَوْ بَثَثْتُهُ لَقُطِعَ مِنِّي هَذَا الْبُلْعُومُ",
+   "translation": {
+    "id": "“Aku menghafal dua wadah ilmu dari Rasulullah ﷺ. Yang satu telah kusebarkan. Yang lain, seandainya kusebarkan, niscaya leherku ini dipotong.”",
+    "en": "“I memorized two vessels of knowledge from the Messenger of Allah ﷺ. One I have spread. The other, if I spread it, this throat would be cut.”",
+    "ar": "«وعاءان: بثّ أحدهما، وكتم الآخر خشية الفتنة.»"
+   },
+   "source": {
+    "id": "Abu Hurairah, Shahih al-Bukhari no. 120",
+    "en": "Abu Hurayrah, Sahih al-Bukhari no. 120",
+    "ar": "أبو هريرة، صحيح البخاري رقم 120"
+   }
+  },
+  {
+   "type": "text",
+   "bab": 2,
+   "title": {
+    "id": "Mengapa sebagian ilmu itu disimpan?",
+    "en": "Why was part of this knowledge kept back?",
+    "ar": "لماذا كُتم بعض هذا العلم؟"
+   },
+   "lines": [
+    {
+     "id": "Menurut At-Talid, para sahabat mengetahui ilmu ini dan menyimpannya dari orang awam, karena menyebarkannya saat itu bisa memicu fitnah yang luas.",
+     "en": "By At-Talid, the Companions knew this knowledge and kept it from the common people, since spreading it then could have caused wide fitna.",
+     "ar": "كان الصحابة على علم واسع بهذا الركن ويكتمون سره عن العامة، لما يترتب على نشره في ذلك العصر من فتنة واسعة."
+    },
+    {
+     "id": "Tetapi ketika terus terpendam, generasi sesudahnya mudah keliru, dan orang yang tidak berilmu tampak seperti ulama.",
+     "en": "But as it stayed buried, later generations slipped easily, and the unlearned came to look like scholars.",
+     "ar": "ولكن هذا العزل جعل الأجيال ترتكس في الخطأ، وأظهر السفهاء بمظهر العلماء."
+    }
+   ],
+   "note": {
+    "id": "At-Talid wath-Tharif, hlm. 26–27.",
+    "en": "At-Talid wath-Tharif, pp. 26–27.",
+    "ar": "التليد والطارف، ص٢٦–٢٧."
+   },
+   "art": "pillars",
+   "hl": 3,
+   "labels": [
+    {
+     "id": "Islam",
+     "en": "Islam",
+     "ar": "الإسلام"
+    },
+    {
+     "id": "Iman",
+     "en": "Iman",
+     "ar": "الإيمان"
+    },
+    {
+     "id": "Ihsan",
+     "en": "Ihsan",
+     "ar": "الإحسان"
+    },
+    {
+     "id": "Tanda zaman",
+     "en": "Signs",
+     "ar": "الأشراط"
+    }
+   ]
+  },
+  {
+   "type": "compare",
+   "bab": 2,
+   "title": {
+    "id": "Tiga yang tetap, satu yang berubah",
+    "en": "Three that stay, one that changes",
+    "ar": "ثلاثة ثوابت وركن متغيّر"
+   },
+   "cols": [
+    {
+     "id": "Tiga rukun pertama",
+     "en": "The first three pillars",
+     "ar": "الأركان الثلاثة الأولى"
+    },
+    {
+     "id": "Rukun keempat",
+     "en": "The fourth pillar",
+     "ar": "الركن الرابع"
+    }
+   ],
+   "rows": [
+    [
+     {
+      "id": "Sifatnya",
+      "en": "Its nature",
+      "ar": "طبيعته"
+     },
+     {
+      "id": "Tetap: maknanya jelas dan tidak berganti",
+      "en": "Constant: its meaning is clear and does not shift",
+      "ar": "ثابتة المدلول واضحة البيان"
+     },
+     {
+      "id": "Berubah: terkait peristiwa yang terus bergerak",
+      "en": "Changing: tied to events that keep moving",
+      "ar": "متغيّر: يتعلق بالحوادث المتجددة"
+     }
+    ],
+    [
+     {
+      "id": "Isinya",
+      "en": "Its content",
+      "ar": "مضمونه"
+     },
+     {
+      "id": "Akidah, syariat, dan tingkatan suluk",
+      "en": "Creed, law, and the stations of conduct",
+      "ar": "شؤون العقيدة والشريعة ومراتب السلوك"
+     },
+     {
+      "id": "Peristiwa dan sebab-sebabnya, isyarat dan tanda dari Nabi ﷺ, serta keadaan orang-orang yang merusak agama",
+      "en": "Events and their causes, the Prophet's ﷺ signals and signs, and the state of those who corrupt religion",
+      "ar": "الحوادث وأسبابها، والإشارات والعلامات النبوية، وأحوال المفسدين في الدين"
+     }
+    ],
+    [
+     {
+      "id": "Gunanya",
+      "en": "Its purpose",
+      "ar": "وظيفته"
+     },
+     {
+      "id": "Membina generasi dan umat dalam ilmu yang wajib",
+      "en": "Raising generations and the Ummah in the knowledge that is obligatory",
+      "ar": "تنشأ عليها الأجيال وتفهم الأمة علمها الفرضي الواجب"
+     },
+     {
+      "id": "Memahami perubahan, dan tahu sikap yang selamat di dalamnya",
+      "en": "Understanding the change, and knowing the safe stance within it",
+      "ar": "فهم التحولات ومعرفة الموقف السليم فيها"
+     }
+    ]
    ]
   },
   {
@@ -1321,6 +1487,22 @@
    ]
   },
   {
+   "type": "quote",
+   "bab": 2,
+   "art": "arch",
+   "arabic": "لَتُنْقَضَنَّ عُرَى الْإِسْلَامِ عُرْوَةً عُرْوَةً، كُلَّمَا انْتَقَضَتْ عُرْوَةٌ تَمَسَّكَ النَّاسُ بِالَّتِي تَلِيهَا، أَوَّلُهُنَّ نَقْضًا الْحُكْمُ وَآخِرُهُنَّ الصَّلَاةُ",
+   "translation": {
+    "id": "“Ikatan-ikatan Islam akan terurai satu demi satu. Setiap kali satu terurai, orang berpegang pada yang berikutnya. Yang pertama terurai adalah hukum, dan yang terakhir adalah salat.”",
+    "en": "“The bonds of Islam will be undone one by one. Each time one is undone, people hold to the next. The first undone is rule, and the last is prayer.”",
+    "ar": "«أول العُرى نقضًا الحكم، وآخرها الصلاة.»"
+   },
+   "source": {
+    "id": "HR. Ahmad dari Abu Umamah; Al-Hakim menshahihkannya. Dikutip At-Talid hlm. 31 untuk menggambarkan jatuhnya otoritas hukum dan otoritas ilmu.",
+    "en": "Reported by Ahmad from Abu Umamah; al-Hakim graded it sound. Cited in At-Talid, p. 31, to describe the fall of the authority of rule and of knowledge.",
+    "ar": "رواه أحمد عن أبي أمامة وصححه الحاكم. أورده «التليد والطارف» ص٣١ في سقوط قرار الحكم وقرار العلم."
+   }
+  },
+  {
    "type": "title",
    "bab": 3,
    "kicker": {
@@ -1384,9 +1566,9 @@
      "ar": "اليوم يُفهم لفظ الفقه مباشرةً على أنه علم أحكام العبادات والمعاملات: الصلاة والزكاة والبيع والنكاح."
     },
     {
-     "id": "Padahal itu makna khusus yang mengemuka kemudian. Makna asal kata ini jauh lebih luas.",
-     "en": "Yet that is a specialized meaning that came to the fore later. The word's original meaning is far wider.",
-     "ar": "وهذا معنى مخصوص اشتهر لاحقًا، أما أصل الكلمة فأوسع بكثير."
+     "id": "Padahal itu makna yang menyempit. Makna asal kata ini jauh lebih luas.",
+     "en": "Yet that is a narrowed meaning. The word's original sense is far wider.",
+     "ar": "وهذا معنى مضيَّق، أما أصل الكلمة فأوسع بكثير."
     }
    ]
   },
@@ -1394,63 +1576,76 @@
    "type": "cards",
    "bab": 3,
    "title": {
-    "id": "Fikih menurut bahasa",
-    "en": "Fiqh in the language",
-    "ar": "الفقه في اللغة"
+    "id": "Apa arti fikih sebenarnya?",
+    "en": "What does fiqh really mean?",
+    "ar": "ما معنى الفقه حقًّا؟"
    },
    "items": [
     {
      "t": {
-      "id": "Paham",
-      "en": "To understand",
-      "ar": "الفهم"
+      "id": "Dalam bahasa: paham",
+      "en": "In language: understanding",
+      "ar": "في اللغة: الفهم"
      },
      "d": {
-      "id": "Dalam bahasa Arab, fakih berarti paham. Akar katanya menunjuk pada mengetahui sesuatu dan mengerti maksudnya.",
-      "en": "In Arabic, faqih means one who understands. The root points to knowing a thing and grasping its meaning.",
-      "ar": "الفقه في اللغة: الفهم. وأصل مادته يدل على إدراك الشيء والعلم به."
+      "id": "Fikih menurut bahasa adalah fahm, paham.",
+      "en": "Fiqh in the language is fahm: understanding.",
+      "ar": "الفقه في اللغة: هو الفهم."
      }
     },
     {
      "t": {
-      "id": "Paham yang menembus",
-      "en": "Understanding that reaches in",
-      "ar": "فهم يبلغ الأعماق"
+      "id": "Dalam istilah umum: menangkap maksud",
+      "en": "In the general sense: grasping the intended meaning",
+      "ar": "في الاصطلاح العام: إدراك المقصود"
      },
      "d": {
-      "id": "Bukan sekadar mendengar atau menghafal, tetapi menangkap maksud dan dasar sesuatu.",
-      "en": "Not merely hearing or memorizing, but grasping the intent and the foundation of a thing.",
-      "ar": "لا مجرد السماع أو الحفظ، بل إدراك المقصود والأصل."
+      "id": "Menangkap maksud sebuah ilmu, entah fikih, nahwu, hadis, tafsir, atau yang lain.",
+      "en": "Grasping the intended meaning of a science, whether jurisprudence, grammar, hadith, exegesis, or any other.",
+      "ar": "إدراك المقصود المترتب على نوع العلم المقرر فقهًا أو نحوًا أو حديثًا أو تفسيرًا أو غير ذلك."
      }
     },
     {
      "t": {
-      "id": "Untuk apa saja",
-      "en": "For anything",
-      "ar": "في كل باب"
+      "id": "Lebih luas dari semua ilmu",
+      "en": "Wider than all the sciences",
+      "ar": "أوسع من العلوم كلها"
      },
      "d": {
-      "id": "Kata ini dipakai untuk memahami perkataan, perkara, dan agama. Ia tidak terikat pada satu bidang.",
-      "en": "The word is used for understanding speech, affairs, and religion. It is not tied to a single field.",
-      "ar": "يُستعمل في فهم الكلام والأمور والدين، ولا يختص بباب واحد."
+      "id": "Sampai kepada pendengar yang menangkap maksud sebuah ucapan atau perintah yang ditujukan kepadanya.",
+      "en": "Reaching even the listener who grasps the meaning of a statement or command addressed to him.",
+      "ar": "بل يتعدى العلوم كلها إلى فهم السامع المقصود من الكلام أو الأمر المخاطَب به."
      }
     }
-   ]
+   ],
+   "note": {
+    "id": "Rujukan: At-Talid wath-Tharif, hlm. 24.",
+    "en": "Source: At-Talid wath-Tharif, p. 24.",
+    "ar": "المرجع: التليد والطارف، ص٢٤."
+   }
   },
   {
-   "type": "quote",
+   "type": "dialog",
    "bab": 3,
-   "art": "arch",
-   "arabic": "يَفْقَهُوا قَوْلِي",
-   "translation": {
-    "id": "“Agar mereka paham perkataanku.”",
-    "en": "“That they may understand my speech.”",
-    "ar": "«أي: يفهموا كلامي.»"
+   "kicker": {
+    "id": "Contoh dari zaman Nabi ﷺ",
+    "en": "An example from the Prophet's ﷺ time",
+    "ar": "مثال من زمن النبي ﷺ"
    },
-   "source": {
-    "id": "QS. Thaha: 28. Kata yang sama, dipakai untuk memahami ucapan.",
-    "en": "Qur'an, Ta-Ha: 28. The same word, used for understanding speech.",
-    "ar": "سورة طه: 28. اللفظ نفسه بمعنى فهم الكلام."
+   "asker": {
+    "id": "Seorang lelaki meminta dibacakan Al-Qur'an. Nabi ﷺ membacakan Surah Az-Zalzalah, lalu hendak mengulang. Ia berkata, “Cukup. Satu ayat sudah mencukupiku.” Ayat itu: فَمَن يَعْمَلْ مِثْقَالَ ذَرَّةٍ خَيْرًا يَرَهُ / وَمَن يَعْمَلْ مِثْقَالَ ذَرَّةٍ شَرًّا يَرَهُ",
+    "en": "A man asked for the Qur'an to be recited. The Prophet ﷺ recited Surat az-Zalzalah, then meant to begin again. He said, “Enough. One verse has been enough for me.” The verse: فَمَن يَعْمَلْ مِثْقَالَ ذَرَّةٍ خَيْرًا يَرَهُ / وَمَن يَعْمَلْ مِثْقَالَ ذَرَّةٍ شَرًّا يَرَهُ",
+    "ar": "طلب رجل أن يُقرأ عليه القرآن، فقرأ عليه النبي ﷺ سورة الزلزلة، ثم أراد أن يستأنف، فقال: «حسبك، لقد قرأتَ عليَّ آية كفتني». وهي: فَمَن يَعْمَلْ مِثْقَالَ ذَرَّةٍ خَيْرًا يَرَهُ / وَمَن يَعْمَلْ مِثْقَالَ ذَرَّةٍ شَرًّا يَرَهُ"
+   },
+   "answer": {
+    "id": "«فَقِهَ الرَّجُلُ». Orang itu telah paham.",
+    "en": "«فَقِهَ الرَّجُلُ». The man has understood.",
+    "ar": "«فقه الرجل»."
+   },
+   "note": {
+    "id": "Ia menangkap maksud ayat itu. Itulah fikih. Dikutip At-Talid hlm. 24 dari Faidh al-Qadir karya Al-Munawi (5: 455).",
+    "en": "He grasped the meaning of the verse. That is fiqh. Cited in At-Talid, p. 24, from al-Munawi's Fayd al-Qadir (5: 455).",
+    "ar": "أدرك مقصود الآية، وهذا هو الفقه. أورده «التليد والطارف» ص٢٤ عن «فيض القدير» للمناوي (5: 455)."
    }
   },
   {
@@ -1488,67 +1683,36 @@
    },
    "lines": [
     {
-     "id": "Hadis ini berkata “dalam agama”, bukan “dalam hukum-hukum amalan”.",
-     "en": "The hadith says “in the religion”, not “in the rulings of deeds”.",
-     "ar": "قال الحديث: «في الدين» ولم يقل: «في أحكام الأعمال»."
+     "id": "Menurut At-Talid, kata “agama” dalam hadis ini menunjukkan makna yang luas, mencakup seluruh ilmu keagamaan dan keberagamaan di bawah rukun-rukun agama.",
+     "en": "By At-Talid, the word “religion” in this hadith points to a wide meaning, covering all the sciences of religion and religiosity under the pillars of religion.",
+     "ar": "تدل كلمة «الدين» في الحديث على سعة المعنى، ليشمل كافة علوم الديانة والتدين المنطوية تحت أركان الدين."
     },
     {
-     "id": "Dan agama, menurut Hadis Jibril tadi, terdiri dari Islam, Iman, Ihsan, dan tanda-tanda zaman. Maka paham dalam agama berarti paham seluruh bagiannya.",
-     "en": "And religion, by the Hadith of Jibril, is Islam, Iman, Ihsan, and the signs of the times. So understanding the religion means understanding all its parts.",
-     "ar": "والدين في حديث جبريل: الإسلام والإيمان والإحسان وعلامات الساعة. فالفقه في الدين فهمٌ لأجزائه كلها."
-    }
-   ]
-  },
-  {
-   "type": "cards",
-   "bab": 3,
-   "title": {
-    "id": "Para ulama terdahulu memakainya luas",
-    "en": "Earlier scholars used it broadly",
-    "ar": "استعمله العلماء الأوائل استعمالًا واسعًا"
-   },
-   "items": [
-    {
-     "t": {
-      "id": "Abu Hanifah",
-      "en": "Abu Hanifa",
-      "ar": "أبو حنيفة"
-     },
-     "d": {
-      "id": "Mendefinisikan fikih sebagai mengenal apa yang menjadi hak dan kewajiban diri. Cakupannya melampaui hukum amalan.",
-      "en": "Defined fiqh as knowing what is for oneself and what is against oneself. A scope wider than rulings of deeds.",
-      "ar": "عرّف الفقه بأنه «معرفة النفس ما لها وما عليها»، وهو أوسع من أحكام الأعمال."
-     }
-    },
-    {
-     "t": {
-      "id": "Al-Fiqh al-Akbar",
-      "en": "Al-Fiqh al-Akbar",
-      "ar": "الفقه الأكبر"
-     },
-     "d": {
-      "id": "Judul karya yang dinisbatkan kepada Abu Hanifah, dan isinya akidah. Dahulu fikih juga berarti paham pokok-pokok agama.",
-      "en": "The title of a work attributed to Abu Hanifa, on creed. In earlier times fiqh also meant understanding the fundamentals of religion.",
-      "ar": "كتاب منسوب إلى أبي حنيفة في العقيدة، فكان الفقه يشمل فهم أصول الدين."
-     }
-    },
-    {
-     "t": {
-      "id": "Al-Hasan al-Bashri",
-      "en": "Al-Hasan al-Basri",
-      "ar": "الحسن البصري"
-     },
-     "d": {
-      "id": "Menyifati orang yang faqih sebagai yang zuhud terhadap dunia, melihat agamanya dengan jelas, dan tekun beribadah. Fikih di sini menyentuh hati dan laku.",
-      "en": "Described the faqih as one who is detached from the world, clear-sighted in his religion, and constant in worship. Here fiqh touches heart and conduct.",
-      "ar": "وصف الفقيه بأنه «الزاهد في الدنيا، البصير بدينه، المداوم على عبادة ربه». فالفقه هنا يمسّ القلب والسلوك."
-     }
+     "id": "Dan agama, menurut Hadis Jibril, terdiri dari Islam, Iman, Ihsan, dan tanda-tanda zaman.",
+     "en": "And religion, by the Hadith of Jibril, is Islam, Iman, Ihsan, and the signs of the times.",
+     "ar": "والدين في حديث جبريل: الإسلام والإيمان والإحسان وعلامات الساعة."
     }
    ],
    "note": {
-    "id": "Pembahasan makna kata fikih ini juga dibuka di halaman-halaman awal kitab At-Talid wath-Tharif.",
-    "en": "This discussion of the word fiqh also opens the first pages of At-Talid wath-Tharif.",
-    "ar": "ويُفتتح الكلام على معنى كلمة الفقه كذلك في الصفحات الأولى من كتاب «التليد والطارف»."
+    "id": "At-Talid wath-Tharif, hlm. 24.",
+    "en": "At-Talid wath-Tharif, p. 24.",
+    "ar": "التليد والطارف، ص٢٤."
+   }
+  },
+  {
+   "type": "quote",
+   "bab": 3,
+   "art": "arch",
+   "arabic": "إِنَّ الدِّينَ عِندَ اللَّهِ الْإِسْلَامُ",
+   "translation": {
+    "id": "“Sesungguhnya agama di sisi Allah ialah Islam.”",
+    "en": "“Indeed, the religion in the sight of Allah is Islam.”",
+    "ar": "«الإسلام هنا: كل ما جاءت به الرسالة المحمدية.»"
+   },
+   "source": {
+    "id": "QS. Ali Imran: 19. Islam di sini lebih luas dari rukun Islam: ia mencakup semua yang dibawa risalah Nabi ﷺ (At-Talid hlm. 24).",
+    "en": "Qur'an, Al Imran: 19. Islam here is wider than the pillar of Islam: it covers all that the Prophet's ﷺ message brought (At-Talid, p. 24).",
+    "ar": "آل عمران: 19. الإسلام هنا أوسع من ركن الإسلام، يشمل كل ما جاءت به الرسالة (التليد والطارف، ص٢٤)."
    }
   },
   {
@@ -1561,241 +1725,21 @@
    },
    "lines": [
     {
-     "id": "Tahawwulat berarti perpindahan dari satu keadaan ke keadaan lain. Fikih Tahawwulat adalah paham yang dalam tentang perubahan zaman, dari sisi akidah, hukum, akhlak, dan sikap.",
-     "en": "Tahawwulat means moving from one state to another. Fiqh al-Tahawwulat is deep understanding of the changes of the age, in creed, rulings, ethics, and stance.",
-     "ar": "التحولات: الانتقال من حال إلى حال. وفقه التحولات فهم عميق لتغيّر الزمان، في العقيدة والحكم والأخلاق والموقف."
+     "id": "Memahami hukum-hukum perubahan dan peristiwa pada masa yang bergejolak, apa akibatnya berupa kebaikan atau kerusakan, dan seberapa cocok semua itu dengan nash Al-Qur'an dan sunnah.",
+     "en": "Understanding the laws of change and events in turbulent times, what follows from them of good or corruption, and how far they match the texts of the Qur'an and the Sunnah.",
+     "ar": "فهم ما يجري من سنن التغيرات والحوادث في المراحل المتقلبة وما ترتب عليها من نقض وقبض وصلاح أو فساد، وما تطابق من هذه التحولات مع نصوص الكتاب أو السنة."
     },
     {
-     "id": "Karena itu ia tidak berhenti pada hukum, dan tidak berhenti pada ramalan.",
-     "en": "That is why it stops neither at rulings nor at prediction.",
-     "ar": "ولهذا لا يقف عند الأحكام، ولا يقف عند التنبؤ."
-    }
-   ]
-  },
-  {
-   "type": "compare",
-   "bab": 3,
-   "title": {
-    "id": "Dua jenis pertanyaan",
-    "en": "Two kinds of question",
-    "ar": "نوعان من الأسئلة"
-   },
-   "cols": [
-    {
-     "id": "Fikih hukum amalan menjawab",
-     "en": "Fiqh of rulings answers",
-     "ar": "فقه الأحكام يجيب"
-    },
-    {
-     "id": "Fikih Tahawwulat menjawab",
-     "en": "Fiqh al-Tahawwulat answers",
-     "ar": "فقه التحولات يجيب"
-    }
-   ],
-   "rows": [
-    [
-     {
-      "id": "Pertanyaan",
-      "en": "The question",
-      "ar": "السؤال"
-     },
-     {
-      "id": "“Bagaimana salat dan zakat saya sah?”",
-      "en": "“How are my prayer and zakat valid?”",
-      "ar": "«كيف تصحّ صلاتي وزكاتي؟»"
-     },
-     {
-      "id": "“Bagaimana saya menjaga agama ketika zaman berubah dan penuh ujian?”",
-      "en": "“How do I protect my faith when the age changes and is full of trials?”",
-      "ar": "«كيف أحفظ ديني حين يتغيّر الزمان وتكثر الابتلاءات؟»"
-     }
-    ]
-   ]
-  },
-  {
-   "type": "lines",
-   "bab": 3,
-   "kicker": {
-    "id": "Pertanyaan yang kini sulit dijawab",
-    "en": "Questions that are hard to answer today",
-    "ar": "أسئلة يصعب أن نجد لها جوابًا اليوم"
-   },
-   "lines": [
-    {
-     "id": "Saya capek dengan berita buruk. Haruskah saya terus mengikutinya?",
-     "en": "I am tired of bad news. Must I keep following it?",
-     "ar": "تعبتُ من الأخبار السيئة. هل يلزمني متابعتها؟"
-    },
-    {
-     "id": "Kenapa iman saya naik turun dan susah istikamah?",
-     "en": "Why does my faith rise and fall?",
-     "ar": "لماذا يعلو إيماني ويهبط؟"
-    },
-    {
-     "id": "Bagaimana membedakan ustaz yang tepercaya dari yang bukan?",
-     "en": "How do I tell a trustworthy teacher from one who is not?",
-     "ar": "كيف أميّز المعلم الموثوق من غيره؟"
-    },
-    {
-     "id": "Apa yang harus saya lakukan dengan hoaks agama di grup keluarga?",
-     "en": "What should I do with religious hoaxes in the family group chat?",
-     "ar": "ماذا أفعل بالأخبار الدينية المكذوبة في مجموعة الأسرة؟"
-    }
-   ]
-  },
-  {
-   "type": "lines",
-   "bab": 3,
-   "kicker": {
-    "id": "Pertanyaan yang kini sulit dijawab",
-    "en": "Questions that are hard to answer today",
-    "ar": "أسئلة يصعب أن نجد لها جوابًا اليوم"
-   },
-   "lines": [
-    {
-     "id": "Bagaimana menjaga iman anak di zaman layar?",
-     "en": "How do I protect my child's faith in the age of screens?",
-     "ar": "كيف أحفظ إيمان ابني في زمن الشاشات؟"
-    },
-    {
-     "id": "Kenapa umat Islam banyak, tetapi terasa lemah?",
-     "en": "Why are Muslims many, yet feel weak?",
-     "ar": "لماذا المسلمون كثيرون ومع ذلك يشعرون بالضعف؟"
-    },
-    {
-     "id": "Bagaimana agama menyikapi AI, internet, dan budaya baru?",
-     "en": "How does religion treat AI, the internet, and new cultures?",
-     "ar": "كيف يتعامل الدين مع الذكاء الاصطناعي والإنترنت والثقافات الجديدة؟"
-    },
-    {
-     "id": "Bolehkah menebak tahun kiamat? Apakah tokoh tertentu itu tanda kiamat?",
-     "en": "May we guess the year of the Hour? Is a certain figure a sign of it?",
-     "ar": "هل يجوز تخمين سنة الساعة؟ وهل شخص معيّن من أشراطها؟"
+     "id": "Karena “agama” itu luas, perubahan zaman pun pantas disebut fikih dan bagian dari agama.",
+     "en": "Because “religion” is wide, the changes of the age rightly count as fiqh and as part of religion.",
+     "ar": "ولأن الدين واسع، يصح أن يُطلق على التحولات فقهًا ودينًا."
     }
    ],
    "note": {
-    "id": "Pertanyaan-pertanyaan ini sengaja tidak dijawab di sini. Jawabannya ada di kitab, dan bisa Anda tanyakan di OpenTurath AI.",
-    "en": "These questions are left unanswered here on purpose. The answers are in the books, and you can ask OpenTurath AI.",
-    "ar": "تُركت هذه الأسئلة دون جواب هنا عمدًا. فأجوبتها في الكتب، ويمكنك أن تسأل OpenTurath AI."
+    "id": "At-Talid wath-Tharif, hlm. 24.",
+    "en": "At-Talid wath-Tharif, p. 24.",
+    "ar": "التليد والطارف، ص٢٤."
    }
-  },
-  {
-   "type": "cards",
-   "bab": 3,
-   "title": {
-    "id": "Faedahnya dalam hidup sehari-hari",
-    "en": "What it gives you day to day",
-    "ar": "فوائده في الحياة اليومية"
-   },
-   "items": [
-    {
-     "t": {
-      "id": "Hati lebih tenang",
-      "en": "A calmer heart",
-      "ar": "قلب أهدأ"
-     },
-     "d": {
-      "id": "Tahu gambaran besar zaman, dan tahu kapan cukup mengikuti berita.",
-      "en": "You know the big picture, and when it is enough to follow the news.",
-      "ar": "تعرف الصورة العامة ومتى يكفي أن تتابع الأخبار."
-     }
-    },
-    {
-     "t": {
-      "id": "Tidak mudah tertipu",
-      "en": "Not easily fooled",
-      "ar": "لا تنخدع بسهولة"
-     },
-     "d": {
-      "id": "Tiga rambu: tidak menebak tahun, tidak menunjuk orang, tidak memaksakan hadis pada politik harian.",
-      "en": "Three signposts: no guessing years, no pointing at people, no forcing hadith onto daily politics.",
-      "ar": "ثلاث علامات: لا تخمين للسنوات، ولا إشارة إلى أشخاص، ولا إسقاط الحديث على السياسة اليومية."
-     }
-    },
-    {
-     "t": {
-      "id": "Tahu apa yang dikerjakan",
-      "en": "Knowing what to do",
-      "ar": "تعرف ما تفعل"
-     },
-     "d": {
-      "id": "Cemas diganti langkah: salat, nafkah halal, lisan terjaga, kebaikan terdekat.",
-      "en": "Worry becomes steps: prayer, lawful income, a guarded tongue, nearby good.",
-      "ar": "يتحوّل القلق إلى خطوات: الصلاة، والرزق الحلال، وحفظ اللسان، والخير القريب."
-     }
-    },
-    {
-     "t": {
-      "id": "Rumah lebih rukun",
-      "en": "A more peaceful home",
-      "ar": "بيت أكثر سكينة"
-     },
-     "d": {
-      "id": "Ikatan keluarga yang pasti lebih utama daripada debat yang belum pasti.",
-      "en": "A sure family bond outranks an uncertain argument.",
-      "ar": "رابطة الأسرة أولى من جدال غير مؤكد."
-     }
-    }
-   ]
-  },
-  {
-   "type": "cards",
-   "bab": 3,
-   "title": {
-    "id": "Faedahnya, lanjutan",
-    "en": "What it gives you, continued",
-    "ar": "فوائده، تتمة"
-   },
-   "items": [
-    {
-     "t": {
-      "id": "Jeli memilih guru",
-      "en": "Sharp in choosing teachers",
-      "ar": "أدق في اختيار المعلم"
-     },
-     "d": {
-      "id": "Sanad jelas, adab baik, tidak jadi alat politik sesaat.",
-      "en": "A clear chain, good manners, not a tool of passing politics.",
-      "ar": "سند واضح وأدب حسن، لا أداة لسياسة عابرة."
-     }
-    },
-    {
-     "t": {
-      "id": "Bijak bermedia dan berteknologi",
-      "en": "Wise with media and technology",
-      "ar": "حكيم مع الإعلام والتقنية"
-     },
-     "d": {
-      "id": "Ambil yang bermanfaat, tolak yang merusak.",
-      "en": "Take what helps, reject what harms.",
-      "ar": "خذ النافع وردّ الضار."
-     }
-    },
-    {
-     "t": {
-      "id": "Mendidik anak dengan hangat",
-      "en": "Raising children warmly",
-      "ar": "تربية الأبناء بدفء"
-     },
-     "d": {
-      "id": "Rumah menjadi benteng kasih sayang dan teladan.",
-      "en": "The home becomes a fortress of love and example.",
-      "ar": "يصير البيت حصنًا من المحبة والقدوة."
-     }
-    },
-    {
-     "t": {
-      "id": "Menjelaskan tanpa bertengkar",
-      "en": "Explaining without a quarrel",
-      "ar": "تشرح دون خصام"
-     },
-     "d": {
-      "id": "Punya bahasa yang sejuk untuk menasihati.",
-      "en": "A gentle language for advising.",
-      "ar": "لغة لطيفة للنصح."
-     }
-    }
-   ]
   },
   {
    "type": "question",
@@ -1943,6 +1887,152 @@
      }
     }
    ]
+  },
+  {
+   "type": "cards",
+   "bab": 3,
+   "title": {
+    "id": "Dari mana ilmu ini bersumber?",
+    "en": "Where does this knowledge come from?",
+    "ar": "من أين يستمد هذا العلم؟"
+   },
+   "items": [
+    {
+     "t": {
+      "id": "Al-Qur'an",
+      "en": "The Qur'an",
+      "ar": "القرآن العظيم"
+     },
+     "d": {
+      "id": "Sumber pertama. Banyak ayat dan sebagian surah membahas perubahan dan sejarah umat.",
+      "en": "The first source. Many verses and some surahs deal with change and the history of nations.",
+      "ar": "المصدر الأول، ومعظم آياته وبعض سوره تعنى بالتحولات وتاريخ الأمم."
+     }
+    },
+    {
+     "t": {
+      "id": "Sunnah",
+      "en": "The Sunnah",
+      "ar": "السنة الشريفة"
+     },
+     "d": {
+      "id": "Sumber kedua, memuat tanda, isyarat, dan sikap Nabi ﷺ.",
+      "en": "The second source, holding the Prophet's ﷺ signs, signals, and stances.",
+      "ar": "المصدر الثاني، وفيه العلامات والإشارات والمواقف النبوية."
+     }
+    },
+    {
+     "t": {
+      "id": "Sejarah dan riwayat yang terpercaya",
+      "en": "Reliable history and reports",
+      "ar": "السير والآثار والأخبار الموثّقة"
+     },
+     "d": {
+      "id": "Sirah, atsar, dan kabar yang dicatat para ulama dengan sanad yang dapat dipercaya.",
+      "en": "Sirah, athar, and reports recorded by scholars with trustworthy chains.",
+      "ar": "ما وثّقه العلماء من السير والآثار والأخبار."
+     }
+    },
+    {
+     "t": {
+      "id": "Peristiwa masa kini",
+      "en": "Events of today",
+      "ar": "مجريات الزمان الحاضر"
+     },
+     "d": {
+      "id": "Diukur dengan sumber-sumber tadi, supaya terlihat mana yang selamat dan mana yang menyimpang.",
+      "en": "Measured against those sources, so it shows what is sound and what strays.",
+      "ar": "تُقابل بما ورد في الأصلين ليبرز موقعها من السلامة أو الفساد."
+     }
+    }
+   ],
+   "note": {
+    "id": "Surah Al-Kahf dianjurkan dibaca tiap Jumat. Menurut At-Talid, ia memuat banyak bab Fikih Tahawwulat. Hlm. 40–42.",
+    "en": "Surat al-Kahf is recommended every Friday. By At-Talid it holds many chapters of Fiqh al-Tahawwulat. Pp. 40–42.",
+    "ar": "ندب الإسلام تكرار سورة الكهف كل جمعة، وهي تحتوي على فصول من فقه التحولات. التليد والطارف ص٤٠–٤٢."
+   }
+  },
+  {
+   "type": "quote",
+   "bab": 3,
+   "art": "arch",
+   "arabic": "عَلَيْكُمْ بِسُنَّتِي وَسُنَّةِ الْخُلَفَاءِ الرَّاشِدِينَ الْمَهْدِيِّينَ مِنْ بَعْدِي، عَضُّوا عَلَيْهَا بِالنَّوَاجِذِ",
+   "translation": {
+    "id": "“Berpegang teguhlah pada sunahku dan sunah para khalifah yang lurus dan mendapat petunjuk sesudahku. Gigitlah ia dengan gigi geraham.”",
+    "en": "“Hold to my Sunnah and the Sunnah of the rightly guided caliphs after me. Bite onto it with your molars.”",
+    "ar": "«تمسّكوا بها تمسّكًا شديدًا.»"
+   },
+   "source": {
+    "id": "HR. At-Tirmidzi, Abu Dawud, Ibnu Majah, dan Ahmad, dari Al-‘Irbadh bin Sariyah. Dikutip At-Talid hlm. 27.",
+    "en": "Reported by at-Tirmidhi, Abu Dawud, Ibn Majah, and Ahmad, from al-'Irbad ibn Sariyah. Cited in At-Talid, p. 27.",
+    "ar": "رواه الترمذي وأبو داود وابن ماجه وأحمد عن العرباض بن سارية. أورده «التليد والطارف» ص٢٧."
+   }
+  },
+  {
+   "type": "text",
+   "bab": 3,
+   "title": {
+    "id": "Sunnah yang berupa sikap.",
+    "en": "A Sunnah of stances.",
+    "ar": "سنّة المواقف."
+   },
+   "lines": [
+    {
+     "id": "Menurut At-Talid, “sunnah” dalam hadis ini mencakup sikap Nabi ﷺ dan para khalifah yang lurus dalam menghadapi perubahan dan fitnah. Inilah yang disebut sunnah al-mawaqif.",
+     "en": "By At-Talid, the “Sunnah” in this hadith covers the stances of the Prophet ﷺ and the rightly guided caliphs toward change and fitna. This is called sunnat al-mawaqif.",
+     "ar": "السنة هنا، عند صاحب «التليد والطارف»، هي مواقف النبي ﷺ وخلفائه الراشدين المهديين تجاه التحولات والفتن، وهذا ما يُسمّى «سنة المواقف»."
+    },
+    {
+     "id": "Maka mempelajari Fikih Tahawwulat berarti belajar bersikap, bukan hanya mengetahui.",
+     "en": "So studying Fiqh al-Tahawwulat means learning how to stand, not only to know.",
+     "ar": "فدراسة فقه التحولات تعلّمٌ للموقف، لا مجرد معرفة."
+    }
+   ],
+   "note": {
+    "id": "At-Talid wath-Tharif, hlm. 27–28.",
+    "en": "At-Talid wath-Tharif, pp. 27–28.",
+    "ar": "التليد والطارف، ص٢٧–٢٨."
+   }
+  },
+  {
+   "type": "cards",
+   "bab": 3,
+   "title": {
+    "id": "Contoh sikap yang dikutip At-Talid",
+    "en": "Examples of stances cited by At-Talid",
+    "ar": "نماذج من المواقف في «التليد والطارف»"
+   },
+   "items": [
+    {
+     "t": {
+      "id": "Al-Hasan bin Ali berdamai",
+      "en": "Al-Hasan ibn Ali makes peace",
+      "ar": "صلح الحسن بن علي"
+     },
+     "d": {
+      "id": "Memilih mencegah pertumpahan darah. Nabi ﷺ bersabda: «إِنَّ ابْنِي هَذَا سَيِّدٌ وَسَيُصْلِحُ اللَّهُ بِهِ بَيْنَ فِئَتَيْنِ مِنَ الْمُسْلِمِينَ». HR. Bukhari.",
+      "en": "Chose to prevent bloodshed. The Prophet ﷺ said: «إِنَّ ابْنِي هَذَا سَيِّدٌ وَسَيُصْلِحُ اللَّهُ بِهِ بَيْنَ فِئَتَيْنِ مِنَ الْمُسْلِمِينَ». Reported by al-Bukhari.",
+      "ar": "اتخذ موقفًا يحقن الدماء، وقال النبي ﷺ: «إِنَّ ابْنِي هَذَا سَيِّدٌ وَسَيُصْلِحُ اللَّهُ بِهِ بَيْنَ فِئَتَيْنِ مِنَ الْمُسْلِمِينَ». رواه البخاري."
+     }
+    },
+    {
+     "t": {
+      "id": "Kembali kepada yang ahli",
+      "en": "Returning to those who know",
+      "ar": "الرجوع إلى أهل الاختصاص"
+     },
+     "d": {
+      "id": "Para sahabat besar dalam ilmu ini kembali kepada orang yang dikenal menguasainya. Umar meminta pertimbangan Hudzaifah bin Al-Yaman.",
+      "en": "The senior Companions returned, in this knowledge, to whoever was known for it. 'Umar consulted Hudhayfah ibn al-Yaman.",
+      "ar": "كان كبار الصحابة يعودون في هذا الفقه إلى من عُرف تخصصه فيه، وكان عمر يستشير حذيفة بن اليمان."
+     }
+    }
+   ],
+   "note": {
+    "id": "At-Talid wath-Tharif, hlm. 28.",
+    "en": "At-Talid wath-Tharif, p. 28.",
+    "ar": "التليد والطارف، ص٢٨."
+   }
   },
   {
    "type": "title",
