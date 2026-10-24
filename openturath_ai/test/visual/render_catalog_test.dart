@@ -10,7 +10,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:openturath_ai/core/app_config.dart';
 import 'package:openturath_ai/core/theme.dart';
 import 'package:openturath_ai/models/open_turath_book.dart';
+import 'package:openturath_ai/screens/book_detail_screen.dart';
 import 'package:openturath_ai/screens/book_library_editorial_screen.dart';
+import 'package:openturath_ai/models/book_model.dart';
 
 final _dir = Platform.environment['OT_SNAPSHOT_DIR'];
 final _key = GlobalKey();
@@ -127,6 +129,22 @@ void main() {
           OpenTurathBookDetailPage(book: _books[0]),
           const Size(1280, 900),
           dark);
+      const canon = CanonicalBookPresentation(
+        editionId: 'x',
+        titleArabic: 'أهل البيت النبوي: طائفة مباركة ممدوحة بالألسن والأقلام',
+        authorArabic: 'عبد الوهاب بن علي الحسيني',
+        verifiedDeathYearHijri: 204,
+        reviewedTypeLabel: 'Asal Mazhab',
+        reviewedEraLabel: 'Mutaqaddimin',
+        publisher: 'دار الكتب العلمية',
+        muhaqqiq: 'رفعت فوزي عبد المطلب',
+        volumesCount: 8,
+        pagesDescription: '1250',
+      );
+      await shot('canon_wide_$t', const BookDetailScreen(book: canon),
+          const Size(1280, 900), dark);
+      await shot('canon_phone_$t', const BookDetailScreen(book: canon),
+          const Size(390, 900), dark);
       await shot(
           'cat_detail_phone_$t',
           OpenTurathBookDetailPage(book: _books[1]),
