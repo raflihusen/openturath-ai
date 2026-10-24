@@ -917,6 +917,11 @@ const copyCatalog = <String, List<String>>{
     "الإصدار {0} · {1}"
   ],
   "ahlanWithName": ["Halo, {0}", "Welcome, {0}", "أهلًا، {0}"],
+  "splashTagline": [
+    "Menjaga warisan, membuka cakrawala.",
+    "Rooted in heritage. Open to new horizons.",
+    "ذكاء اصطناعي إسلامي قائم على التراث"
+  ],
   "moduleClose": ["Tutup", "Close", "إغلاق"],
   "modulePrev": ["Sebelumnya", "Previous", "السابق"],
   "moduleNext": ["Berikutnya", "Next", "التالي"],

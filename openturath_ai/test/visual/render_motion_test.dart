@@ -57,7 +57,7 @@ void main() {
       await tester.pumpWidget(frame(
           OTSplashIntro(key: ValueKey(tag), ink: OTColors.textPrimary(dark))));
       var elapsed = 0;
-      for (final at in [370, 670, 1400]) {
+      for (final at in [300, 700, 1000, 1300, 1600, 2300]) {
         await tester.pump(Duration(milliseconds: at - elapsed));
         elapsed = at;
         await _save(tester, 'splash_${tag}_$at');

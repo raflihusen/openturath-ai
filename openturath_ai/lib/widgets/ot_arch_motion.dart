@@ -1,6 +1,10 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import '../core/design/ot_motion.dart';
+import '../core/design/ot_spacing.dart';
+import '../core/localization.dart';
 import '../core/design/ot_typography.dart';
 import 'openturath_brand.dart';
 
@@ -35,12 +39,15 @@ Path _segment(Path path, double from, double to) {
       (to * metric.length).clamp(0.0, metric.length));
 }
 
-/// Pembuka aplikasi: garis lengkung ditulis, tanda logo muncul di dalamnya,
-/// tiga gema merambat ke luar, lalu wordmark naik. Diputar sekali.
+/// Pembuka aplikasi: lengkung logo digambar dengan gema yang menetap di
+/// sekelilingnya, terisi, kubah naik, dua halaman terbuka, lalu wordmark
+/// ditulis huruf demi huruf dan semboyan menyusul. Diputar sekali; ketuk atau
+/// [skip] melompat ke bingkai akhir. Gerak dikurangi: langsung bingkai akhir.
 class OTSplashIntro extends StatefulWidget {
-  const OTSplashIntro({super.key, required this.ink});
+  const OTSplashIntro({super.key, required this.ink, this.skip});
 
   final Color ink;
+  final ValueListenable<bool>? skip;
 
   @override
   State<OTSplashIntro> createState() => _OTSplashIntroState();
@@ -52,61 +59,143 @@ class _OTSplashIntroState extends State<OTSplashIntro>
       AnimationController(vsync: this, duration: OTMotion.splashTotal)
         ..forward();
 
+  void _onSkip() {
+    if (widget.skip?.value == true) _controller.value = 1;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    widget.skip?.addListener(_onSkip);
+  }
+
   @override
   void dispose() {
+    widget.skip?.removeListener(_onSkip);
     _controller.dispose();
     super.dispose();
   }
 
+  static const _markH = 128.0;
+  static const _vbW = 616.0,
+      _vbH = 674.0,
+      _box = 1024.0,
+      _x0 = 204.0,
+      _y0 = 175.0;
+
+  Widget _part(String name, Color ink, double s) =>
+      Stack(clipBehavior: Clip.none, children: [
+        Positioned(
+          left: -_x0 * s,
+          top: -_y0 * s,
+          width: _box * s,
+          height: _box * s,
+          child: SvgPicture.asset('assets/images/logo_part_$name.svg',
+              fit: BoxFit.fill,
+              excludeFromSemantics: true,
+              colorFilter: ColorFilter.mode(ink, BlendMode.srcIn)),
+        ),
+      ]);
+
   @override
   Widget build(BuildContext context) {
+    Loc.watch(context);
     final still = MediaQuery.disableAnimationsOf(context);
+    final ink = widget.ink;
     const total = OTMotion.splashTotalMs;
     return AnimatedBuilder(
       animation: _controller,
       builder: (context, _) {
         final ms = still ? total.toDouble() : _controller.value * total;
-        final mark = _phase(ms, OTMotion.splashMarkStartMs,
-            OTMotion.splashMarkEndMs, OTMotion.curve);
-        final word = _phase(ms, OTMotion.splashWordStartMs,
-            OTMotion.splashWordEndMs, OTMotion.curve);
+        const s = _markH / _vbH;
+        final markW = _vbW * s;
+        final fill = _phase(ms, OTMotion.splashFillStartMs,
+            OTMotion.splashFillEndMs, Curves.easeInOutCubic);
+        final dome = _phase(ms, OTMotion.splashDomeStartMs,
+            OTMotion.splashDomeEndMs, OTMotion.curve);
+        final pages = _phase(ms, OTMotion.splashPagesStartMs,
+            OTMotion.splashPagesEndMs, OTMotion.curve);
+        final rule = _phase(ms, OTMotion.splashRuleStartMs,
+            OTMotion.splashRuleEndMs, OTMotion.curve);
+        final tag = _phase(ms, OTMotion.splashTagStartMs,
+            OTMotion.splashTagEndMs, OTMotion.curve);
+        const word = 'OpenTurath';
+        final canvasW = markW * 2.9, canvasH = _markH * 2.1;
         return Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             SizedBox(
-              width: 92,
-              height: 112,
+              width: canvasW,
+              height: canvasH,
               child: Stack(
+                alignment: Alignment.center,
                 clipBehavior: Clip.none,
                 children: [
                   Positioned.fill(
                     child: CustomPaint(
-                        painter: _SplashArchPainter(ms: ms, ink: widget.ink)),
+                        painter: _SplashArchPainter(
+                            ms: ms,
+                            ink: ink,
+                            markRect: Rect.fromCenter(
+                                center: Offset(canvasW / 2, canvasH * 0.55),
+                                width: markW,
+                                height: (833 - _y0) * s))),
                   ),
                   Positioned(
-                    left: 22,
-                    top: 46,
-                    child: Opacity(
-                      opacity: mark,
-                      child: Transform.scale(
-                        scale: 0.9 + 0.1 * mark,
-                        child: OpenTurathMark(size: 48, color: widget.ink),
+                    left: (canvasW - markW) / 2,
+                    top: canvasH * 0.55 - (833 - _y0) * s / 2,
+                    width: markW,
+                    height: _markH,
+                    child: Stack(clipBehavior: Clip.none, children: [
+                      Opacity(opacity: fill, child: _part('arch', ink, s)),
+                      Opacity(
+                        opacity: dome,
+                        child: Transform.translate(
+                            offset: Offset(0, (1 - dome) * 22 * s),
+                            child: _part('dome', ink, s)),
                       ),
-                    ),
+                      Opacity(
+                        opacity: pages,
+                        child: Transform.translate(
+                            offset: Offset(-(1 - pages) * 38 * s * -1, 0),
+                            child: _part('left', ink, s)),
+                      ),
+                      Opacity(
+                        opacity: pages,
+                        child: Transform.translate(
+                            offset: Offset(-(1 - pages) * 38 * s, 0),
+                            child: _part('right', ink, s)),
+                      ),
+                    ]),
                   ),
                 ],
               ),
             ),
-            const SizedBox(height: 28),
+            const SizedBox(height: OTSpacing.md),
+            Directionality(
+              textDirection: TextDirection.ltr,
+              child: Row(mainAxisSize: MainAxisSize.min, children: [
+                for (var i = 0; i < word.length; i++)
+                  _letter(word[i], i, ms, ink),
+              ]),
+            ),
+            const SizedBox(height: OTSpacing.base),
+            Container(
+              width: OTSpacing.jumbo * rule,
+              height: 1,
+              color: ink.withValues(alpha: 0.35),
+            ),
+            const SizedBox(height: OTSpacing.base),
             Opacity(
-              opacity: word,
+              opacity: tag,
               child: Transform.translate(
-                offset: Offset(0, (1 - word) * OTMotion.splashWordShift),
+                offset: Offset(0, (1 - tag) * 8),
                 child: Text(
-                  'OpenTurath',
-                  textDirection: TextDirection.ltr,
-                  style: OTTypography.brandLogo(color: widget.ink)
-                      .copyWith(fontSize: OTFontSize.s36, letterSpacing: -0.6),
+                  Loc.tr('splashTagline'),
+                  textAlign: TextAlign.center,
+                  style:
+                      OTTypography.caption(color: ink.withValues(alpha: 0.72))
+                          .copyWith(letterSpacing: Loc.isArabic ? 0 : 0.6),
                 ),
               ),
             ),
@@ -115,59 +204,87 @@ class _OTSplashIntroState extends State<OTSplashIntro>
       },
     );
   }
+
+  Widget _letter(String ch, int i, double ms, Color ink) {
+    final start = OTMotion.splashWordStartMs + i * OTMotion.splashWordStaggerMs;
+    final t =
+        _phase(ms, start, start + OTMotion.splashWordLetterMs, OTMotion.curve);
+    return Opacity(
+      opacity: t,
+      child: Transform.translate(
+        offset: Offset(0, (1 - t) * 8),
+        child: Text(ch,
+            style: OTTypography.brandLogo(color: ink)
+                .copyWith(fontSize: OTFontSize.s36, letterSpacing: -0.6)),
+      ),
+    );
+  }
 }
 
 class _SplashArchPainter extends CustomPainter {
-  _SplashArchPainter({required this.ms, required this.ink});
+  _SplashArchPainter(
+      {required this.ms, required this.ink, required this.markRect});
 
   final double ms;
   final Color ink;
+  final Rect markRect;
 
   @override
   void paint(Canvas canvas, Size size) {
-    final outline = otArchPath(Offset.zero & size, open: true);
-    final origin = Offset(size.width / 2, size.height * 0.62);
+    final outline = otArchPath(markRect, open: true);
+    final origin = Offset(markRect.center.dx, markRect.bottom);
 
+    // Gema: lengkung yang lebih besar digambar berurutan, lalu menetap samar.
     for (var i = 0; i < OTMotion.splashEchoCount; i++) {
-      final start =
-          OTMotion.splashEchoStartMs + i * OTMotion.splashEchoStaggerMs;
-      final t = (ms - start) / OTMotion.splashEchoDurationMs;
-      if (t <= 0 || t >= 1) continue;
-      final scale = 1 + (0.45 + 0.4 * i) * OTMotion.sheetCurve.transform(t);
-      final peak = 0.34 - 0.08 * i;
-      final alpha = t < 0.13 ? peak * t / 0.13 : peak * (1 - (t - 0.13) / 0.87);
+      final start = i * OTMotion.splashEchoStaggerMs;
+      final t = _phase(
+          ms,
+          start,
+          OTMotion.splashEchoEndMs + i * OTMotion.splashEchoStaggerMs,
+          OTMotion.sheetCurve);
+      if (t <= 0) continue;
+      final scale = 1.32 + 0.38 * i;
+      final settled = _phase(ms, OTMotion.splashEchoEndMs,
+          OTMotion.splashEchoEndMs + 500, Curves.easeOut);
+      final alpha = (0.26 - 0.07 * i) * (1 - 0.45 * settled);
       canvas
         ..save()
         ..translate(origin.dx, origin.dy)
         ..scale(scale)
         ..translate(-origin.dx, -origin.dy)
         ..drawPath(
-          outline,
+          _segment(outline, 0, t),
           Paint()
             ..style = PaintingStyle.stroke
             ..strokeWidth = 1 / scale
+            ..strokeCap = StrokeCap.round
             ..color = ink.withValues(alpha: alpha),
         )
         ..restore();
     }
 
-    final drawn = _phase(ms, OTMotion.splashDrawStartMs,
-        OTMotion.splashDrawEndMs, OTMotion.curve);
-    if (drawn > 0) {
+    // Garis lengkung logo: digambar, lalu melebur ke bentuk terisi.
+    final drawn = _phase(ms, 0, OTMotion.splashDrawEndMs, OTMotion.curve);
+    final fade = 1 -
+        _phase(ms, OTMotion.splashFillStartMs, OTMotion.splashFillEndMs,
+            Curves.easeIn);
+    if (drawn > 0 && fade > 0) {
       canvas.drawPath(
         _segment(outline, 0, drawn),
         Paint()
           ..style = PaintingStyle.stroke
           ..strokeWidth = 1.5
           ..strokeCap = StrokeCap.round
-          ..color = ink,
+          ..color = ink.withValues(alpha: fade),
       );
     }
   }
 
   @override
   bool shouldRepaint(_SplashArchPainter oldDelegate) =>
-      oldDelegate.ms != ms || oldDelegate.ink != ink;
+      oldDelegate.ms != ms ||
+      oldDelegate.ink != ink ||
+      oldDelegate.markRect != markRect;
 }
 
 /// Tanda memuat layar penuh: logo diam, satu cahaya menyusuri garis lengkung.

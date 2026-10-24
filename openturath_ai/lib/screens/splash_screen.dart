@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -18,6 +20,21 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+  final ValueNotifier<bool> _skip = ValueNotifier<bool>(false);
+  final Completer<void> _skipped = Completer<void>();
+
+  void _onTap() {
+    if (_skipped.isCompleted) return;
+    _skip.value = true;
+    _skipped.complete();
+  }
+
+  @override
+  void dispose() {
+    _skip.dispose();
+    super.dispose();
+  }
+
   @override
   void initState() {
     super.initState();
@@ -29,7 +46,8 @@ class _SplashScreenState extends State<SplashScreen> {
 
   Future<void> _checkAuthAndNavigate() async {
     // Pembuka terlihat sejenak, tetapi tidak pernah menahan lebih lama.
-    final hold = Future<void>.delayed(OTMotion.splashHold);
+    final hold = Future.any<void>(
+        [Future<void>.delayed(OTMotion.splashHold), _skipped.future]);
     var targetRoute = AppRoutes.login;
     try {
       if (widget.resolveInitialRoute != null) {
@@ -75,7 +93,13 @@ class _SplashScreenState extends State<SplashScreen> {
       ),
       child: Scaffold(
         backgroundColor: bg,
-        body: Center(child: OTSplashIntro(ink: OTColors.textPrimary(dark))),
+        body: GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTap: _onTap,
+          child: Center(
+              child:
+                  OTSplashIntro(ink: OTColors.textPrimary(dark), skip: _skip)),
+        ),
       ),
     );
   }
