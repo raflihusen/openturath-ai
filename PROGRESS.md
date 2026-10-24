@@ -466,6 +466,25 @@ Berdasarkan `AUDIT_OPENTURATH_AI.md`, dokumen perancangan pustaka, dan keluhan k
      - File DMG mutakhir dan berkas checksum telah disalin ke `/Users/apple/Downloads/ramadhan/OpenTurath_AI_macOS.dmg`.
      - Instalasi `/Applications/OpenTurath AI.app` telah diperbarui dan diluncurkan ulang secara aktif.
 
+### Fasa 36: Audit Forensik VIP vs Berlangganan & Kompilasi Rilis DMG macOS v1.0.73+74 (`4a94a6c2`)
+- **Ruang Lingkup & Latar Belakang**:
+  1. *Audit Forensik Komprehensif Akun VIP vs Berlangganan*:
+     - Melakukan audit menyeluruh terhadap 17 akun pengguna di live Firestore (`users`, `transactions`, `access_vip_registry`, `access_grants`) untuk membedakan VIP murni dan pelanggan berbayar.
+     - Mengonfirmasi 14 akun VIP permanen (termasuk Atin Rahma `atinrahmak@gmail.com` dan Hafamfb `hafamfb551985@gmail.com` sesuai mandat prerogatif Pemilik).
+     - Mengonfirmasi status Alya Aziza (`nonaalyaziza@gmail.com`): Berlangganan Paket 1 Tahun AI Fikih Tahawwulat via GoAkal (`AKL-723r7ae-MMBR`, Rp 999.000, aktif s/d 23 Februari 2027).
+     - Mengonfirmasi status `mostajadt25@gmail.com`: Pergantian email dari Moh. Ibrahiem (`nst275642@gmail.com`) atas transaksi Paket 1 Tahun AI Fikih Tahawwulat (`AKL-qdf7ndp-MMBR`, Rp 999.000, aktif s/d 23 Februari 2027).
+     - Mengonfirmasi 10 transaksi pada 16–21 Februari 2026 bertepatan dengan momentum 1 Ramaḍān 1447 H (18 Feb 2026).
+     - Mengonfirmasi status Loyos (`loyos839@gmail.com`): Paket 6 Bulan habis sejak 26 Agustus 2026.
+  2. *Kompilasi Biner & Pembuatan DMG Installer macOS v1.0.73+74*:
+     - Penegasan target platform: Desktop macOS DMG installer (bukan Android APK).
+     - Bump versi aplikasi menjadi `1.0.73+74` di `openturath_ai/pubspec.yaml`.
+     - Seluruh test suite lolos 100%: 440/440 Flutter unit/widget tests dan 199/199 Cloud Functions tests.
+     - Kompilasi biner `flutter build macos --release` Universal arm64+x86_64 tuntas 100% (144.6 MB .app).
+     - Pembuatan DMG installer `OpenTurath_AI_macOS.dmg` (61 MB, format UDZO terkompresi) via `tool/package_macos.sh`.
+     - Verifikasi checksum SHA-256: `92bc7b0eaf39cbdba12ba249f9e1e1e9f331bd7eb94d9829320e5edd2218e952`.
+     - File DMG dan checksum disalin ke root: `/Users/apple/Downloads/ramadhan/OpenTurath_AI_macOS.dmg`.
+     - Instalasi `/Applications/OpenTurath AI.app` diperbarui dan aplikasi telah berjalan aktif di macOS.
+
 ---
 
 ## 5. Agenda & Fokus Selanjutnya
@@ -473,5 +492,6 @@ Berdasarkan `AUDIT_OPENTURATH_AI.md`, dokumen perancangan pustaka, dan keluhan k
    - Pengujian live checkout QRIS Rp 1.000 di aplikasi desktop macOS dan ponsel.
 2. **Kesiapan Rilis Publik & Broadcast Update**:
    - Membuka gembok agen berikutnya secara bertahap via `manage_ota.py unlock-agent <id>`.
+
 
 
