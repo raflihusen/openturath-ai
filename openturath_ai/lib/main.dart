@@ -1,4 +1,5 @@
 import 'core/app_platform.dart';
+import 'screens/onboarding_screen.dart';
 import 'screens/browser_workspace_screen.dart';
 import 'services/desktop_webview_runtime.dart';
 import 'services/agent_session_manager.dart';
@@ -222,6 +223,13 @@ class OpenTurathApp extends StatelessWidget {
                       break;
                     case AppRoutes.login:
                       page = const LoginScreen();
+                      break;
+                    case AppRoutes.onboarding:
+                      page = OnboardingScreen(
+                        next: settings.arguments is String
+                            ? settings.arguments as String
+                            : AppRoutes.login,
+                      );
                       break;
                     case AppRoutes.dashboard:
                       page = const MainShellScreen();

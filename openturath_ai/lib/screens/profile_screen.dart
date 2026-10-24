@@ -1,3 +1,5 @@
+import '../core/onboarding_copy.dart';
+import 'onboarding_screen.dart';
 import '../widgets/adaptive_sheet.dart';
 import '../core/localization.dart';
 import 'package:flutter/material.dart';
@@ -518,6 +520,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                       child: Column(
                         children: [
+                          _SettingsTile(
+                            icon: Icons.slideshow_rounded,
+                            title: OnboardingCopy.replayTitle,
+                            subtitle: OnboardingCopy.replaySubtitle,
+                            trailing: Icon(Icons.chevron_right_rounded,
+                                color: textSecondary, size: 20),
+                            onTap: () => Navigator.of(context).push(
+                                MaterialPageRoute<void>(
+                                    builder: (_) =>
+                                        const OnboardingScreen(replay: true))),
+                          ),
+                          Divider(height: 1, color: border),
                           _SettingsTile(
                             icon: Icons.info_outline_rounded,
                             title: AppCopy.aboutTitle,

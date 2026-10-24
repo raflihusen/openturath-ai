@@ -7,6 +7,7 @@ import '../core/design/ot_colors.dart';
 import '../core/design/ot_motion.dart';
 import '../core/routes.dart';
 import '../services/auth_service.dart';
+import '../services/onboarding_gate.dart';
 import '../services/persistent_google_session.dart';
 import '../widgets/ot_arch_motion.dart';
 
@@ -81,9 +82,19 @@ class _SplashScreenState extends State<SplashScreen> {
       // Reading auth state may fail, but must not leave an endless splash.
       targetRoute = AppRoutes.login;
     }
+    // Pemasangan baru (belum masuk akun): perkenalkan aplikasi sekali dulu.
+    var showIntro = false;
+    if (widget.resolveInitialRoute == null && targetRoute == AppRoutes.login) {
+      showIntro = !await OnboardingGate.seen();
+    }
     await hold;
     if (!mounted) return;
-    Navigator.pushReplacementNamed(context, targetRoute);
+    if (showIntro) {
+      Navigator.pushReplacementNamed(context, AppRoutes.onboarding,
+          arguments: targetRoute);
+    } else {
+      Navigator.pushReplacementNamed(context, targetRoute);
+    }
   }
 
   @override
