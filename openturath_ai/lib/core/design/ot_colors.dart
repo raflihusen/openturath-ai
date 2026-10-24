@@ -94,6 +94,14 @@ class OTColors {
       isDark ? primaryContainerDark : primaryContainerLight;
   static Color onPrimaryContainer(bool isDark) =>
       isDark ? onPrimaryContainerDark : onPrimaryContainerLight;
+
+  /// Blok terbalik: hitam di mode terang, putih di mode gelap. Teks di
+  /// atasnya memakai [onInverted] dan [onInvertedMuted].
+  static Color inverted(bool isDark) => textPrimary(isDark);
+  static Color onInverted(bool isDark) => canvas(isDark);
+  static Color onInvertedMuted(bool isDark) =>
+      canvas(isDark).withValues(alpha: 0.72);
+
   static Color inverseSurface(bool isDark) =>
       isDark ? inverseSurfaceDark : inverseSurfaceLight;
   static Color marja(bool isDark) => isDark ? marjaDark : marjaLight;

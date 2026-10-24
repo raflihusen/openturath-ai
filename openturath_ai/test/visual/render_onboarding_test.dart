@@ -51,7 +51,8 @@ void main() {
               _key.currentContext!.findRenderObject()! as RenderRepaintBoundary;
           final image = await b.toImage();
           final bytes = await image.toByteData(format: ui.ImageByteFormat.png);
-          File('$_dir/ob${page + 1}_${lang}_${dark ? 'd' : 'l'}_${wide ? 'w' : 'p'}.png')
+          File(
+              '$_dir/ob${page + 1}_${lang}_${dark ? 'd' : 'l'}_${wide ? 'w' : 'p'}.png')
             ..createSync(recursive: true)
             ..writeAsBytesSync(bytes!.buffer.asUint8List());
         });

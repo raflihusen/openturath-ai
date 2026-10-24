@@ -11,11 +11,11 @@ import '../core/app_copy.dart';
 import '../widgets/payment_success_dialog.dart';
 import '../core/design/ot_colors.dart';
 import '../core/design/ot_expressive.dart';
+import '../core/design/ot_spacing.dart';
 import '../core/design/ot_typography.dart';
 import '../core/localization.dart';
 import '../core/product_pricing.dart';
 import '../models/agent_model.dart';
-import '../models/sub_agent_model.dart';
 import '../services/agent_service.dart';
 import '../services/subscription_service.dart';
 import '../widgets/legal_document_sheet.dart';
@@ -41,8 +41,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
   final _agentService = AgentService();
   List<AgentModel>? _loadedAgents;
   String _selectedAgentId = 'fiqh_syafii';
-  int _tahawwulatIndex = 2;
-  int _specialistIndex = 0;
+  int _periodIndex = 2;
   bool _processing = false;
   bool _initialized = false;
   String? _checkoutError;
@@ -234,105 +233,178 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     }
   }
 
-  Widget _card({required Widget child, bool flagship = false}) {
+  /// Kartu paket: satu susunan untuk kedua paket supaya sejajar.
+  /// Paket utama berupa blok terbalik rata (tanpa pola dan gradasi), paket
+  /// satu bidang berupa kartu bergaris tipis, seperti di web.
+  Widget _planCard({
+    required bool inverse,
+    required bool wide,
+    required String label,
+    required String title,
+    required String description,
+    required Widget field,
+    required SubscriptionOffer price,
+    required List<SubscriptionOffer> offers,
+    required List<String> benefits,
+    required VoidCallback onCheckout,
+    required String agentId,
+  }) {
     final dark = Theme.of(context).brightness == Brightness.dark;
-    final border = OTColors.border(dark);
-    if (flagship) {
-      final direction = Directionality.of(context);
-      // Kartu utama selalu bertinta gelap dengan pola bintang delapan yang
-      // memudar dari sudut atas, supaya terbaca sebagai koleksi istimewa.
-      return ClipRRect(
-        borderRadius: BorderRadius.circular(OTRadius.card),
-        child: DecoratedBox(
-          decoration: BoxDecoration(
-            gradient: const LinearGradient(
-              begin: AlignmentDirectional.topStart,
-              end: AlignmentDirectional.bottomEnd,
-              colors: [OTExpressive.ink, OTExpressive.black],
-            ),
-            borderRadius: BorderRadius.circular(OTRadius.card),
-            border:
-                Border.all(color: OTExpressive.white.withValues(alpha: 0.16)),
-          ),
-          child: Stack(
-            children: [
-              Positioned.fill(
-                child: IgnorePointer(
-                  child: ExcludeSemantics(
-                    child: ShaderMask(
-                      blendMode: BlendMode.dstIn,
-                      shaderCallback: (rect) => const LinearGradient(
-                        begin: AlignmentDirectional.topEnd,
-                        end: AlignmentDirectional.bottomStart,
-                        stops: [0, 0.55],
-                        colors: [OTExpressive.white, OTExpressive.transparent],
-                      ).createShader(rect, textDirection: direction),
-                      child: CustomPaint(painter: _KhatamPatternPainter()),
-                    ),
-                  ),
-                ),
-              ),
-              Padding(padding: const EdgeInsets.all(24), child: child),
-            ],
-          ),
-        ),
-      );
-    }
+    final fg = inverse ? OTColors.onInverted(dark) : OTColors.textPrimary(dark);
+    final sub =
+        inverse ? OTColors.onInvertedMuted(dark) : OTColors.textSecondary(dark);
+    final line = inverse ? fg.withValues(alpha: 0.18) : OTColors.border(dark);
+    final pad = wide ? OTSpacing.xxl : OTSpacing.xl;
+    final ar = Loc.isArabic;
+    final titleStyle = (ar
+            ? OTTypography.arabicDisplay(color: fg)
+            : OTTypography.editorialHero(color: fg))
+        .copyWith(fontSize: wide ? OTFontSize.s36 : OTFontSize.s26);
+
+    final monthly = offers.first.amount;
+    final saving = price.months <= 1
+        ? 0
+        : ((monthly * price.months - price.amount) *
+                100 /
+                (monthly * price.months))
+            .round();
+    final perMonth = price.months > 1
+        ? Loc.tr('monthlyEquivalent', [
+            ProductPricing.rupiah(
+                ((price.amount / price.months) / 1000).round() * 1000)
+          ])
+        : '';
+
     return Container(
+      padding: EdgeInsets.all(pad),
       decoration: BoxDecoration(
-        color: OTColors.surface(dark),
-        borderRadius: BorderRadius.circular(OTRadius.card),
-        border: Border.all(color: border),
+        color: inverse ? OTColors.inverted(dark) : OTColors.surface(dark),
+        borderRadius: BorderRadius.circular(OTRadius.hero),
+        border: inverse ? null : Border.all(color: line),
       ),
-      padding: const EdgeInsets.all(20),
-      child: child,
-    );
-  }
-
-  /// Kepala paket utama: panel gelap bergradasi dengan lencana eksklusif,
-  /// agar terbaca sebagai koleksi istimewa, bukan sekadar kartu kedua.
-  Widget _flagshipHeader(String label, String title, AgentModel agent) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-          decoration: BoxDecoration(
-            color: OTExpressive.white.withValues(alpha: 0.08),
-            borderRadius: OTRadius.chipBorder,
-            border:
-                Border.all(color: OTExpressive.white.withValues(alpha: 0.22)),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _pill(label, fg),
+          const SizedBox(height: OTSpacing.lg),
+          Text(title, style: titleStyle),
+          const SizedBox(height: OTSpacing.md),
+          ConstrainedBox(
+            constraints: BoxConstraints(minHeight: wide ? 48 : 0),
+            child: Text(description,
+                style: OTTypography.body(color: sub).copyWith(height: 1.5)),
           ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Icon(Icons.workspace_premium_outlined,
-                  size: 14, color: OTExpressive.white),
-              const SizedBox(width: 6),
-              Flexible(
-                child: Text(label,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style:
-                        OTTypography.captionMedium(color: OTExpressive.white)),
+          const SizedBox(height: OTSpacing.xl),
+          field,
+          const SizedBox(height: OTSpacing.xl),
+          AnimatedSwitcher(
+            duration: OTMotion.normal,
+            switchInCurve: Curves.easeOutCubic,
+            transitionBuilder: (child, animation) => FadeTransition(
+              opacity: animation,
+              child: SlideTransition(
+                position: Tween(begin: const Offset(0, 0.1), end: Offset.zero)
+                    .animate(animation),
+                child: child,
               ),
-            ],
+            ),
+            layoutBuilder: (current, previous) => Stack(
+              alignment: AlignmentDirectional.topStart,
+              children: [...previous, if (current != null) current],
+            ),
+            child: PromoPrice(
+              key: ValueKey('$agentId-${price.amount}'),
+              amount: price.amount,
+              regularAmount: price.regularAmount,
+              period: price.period,
+              display: true,
+              inlineSaving: true,
+              foregroundColor: fg,
+              secondaryColor: sub,
+            ),
           ),
-        ),
-        const SizedBox(height: 20),
-        Text(title,
-            style: OTTypography.displayLarge(color: OTExpressive.white)),
-      ],
+          const SizedBox(height: OTSpacing.sm),
+          if (perMonth.isNotEmpty)
+            Wrap(
+              spacing: OTSpacing.sm,
+              children: [
+                Text(perMonth, style: OTTypography.caption(color: sub)),
+                if (saving >= 5)
+                  Text(Loc.tr('saving', ['$saving']),
+                      style: OTTypography.captionMedium(color: fg)),
+              ],
+            ),
+          const SizedBox(height: OTSpacing.base),
+          Divider(color: line, height: 1),
+          const SizedBox(height: OTSpacing.lg),
+          for (final benefit in benefits) _benefitRow(benefit, fg),
+          if (wide) const Spacer() else const SizedBox(height: OTSpacing.base),
+          const SizedBox(height: OTSpacing.base),
+          SizedBox(
+            width: double.infinity,
+            height: 52,
+            child: FilledButton(
+              onPressed: _processing ? null : onCheckout,
+              style: inverse ? OTButtons.onInverse(dark) : null,
+              child: Text(Loc.tr('planContinue')),
+            ),
+          ),
+          _checkoutNotice(agentId, ink: fg),
+        ],
+      ),
     );
   }
 
-  /// Peran tiap AI Fikih Tahawwulat; kembali ke deskripsi model bila
-  /// naskahnya belum ada.
-  String _roleOf(SubAgentModel sub) {
-    final key = 'tahawwulatRole_${sub.id.split('_').last}';
-    final copy = Loc.tr(key);
-    if (copy != key) return copy;
-    return Loc.isArabic ? sub.descriptionArabic : sub.description;
+  /// Kapsul label, sama dengan label bagian di web.
+  Widget _pill(String text, Color color) => Container(
+        padding: const EdgeInsets.symmetric(
+            horizontal: OTSpacing.base, vertical: OTSpacing.xs),
+        decoration: BoxDecoration(
+          borderRadius: OTRadius.chipBorder,
+          border: Border.all(color: color.withValues(alpha: 0.3)),
+        ),
+        child: Text(text.toUpperCase(),
+            style: OTTypography.metadataTag(color: color)),
+      );
+
+  /// Bidang ilmu: baris kapsul. Dapat diketuk bila ada lebih dari satu bidang.
+  Widget _fieldRow({
+    required String label,
+    required String name,
+    required bool inverse,
+    VoidCallback? onTap,
+  }) {
+    final dark = Theme.of(context).brightness == Brightness.dark;
+    final fg = inverse ? OTColors.onInverted(dark) : OTColors.textPrimary(dark);
+    final sub =
+        inverse ? OTColors.onInvertedMuted(dark) : OTColors.textSecondary(dark);
+    return Material(
+      color: inverse ? fg.withValues(alpha: 0.1) : OTColors.surfaceSubtle(dark),
+      borderRadius: OTRadius.chipBorder,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: OTRadius.chipBorder,
+        child: Padding(
+          padding: const EdgeInsetsDirectional.fromSTEB(
+              OTSpacing.xl, OTSpacing.md, OTSpacing.base, OTSpacing.md),
+          child: Row(children: [
+            Text(Loc.tr('discipline'), style: OTTypography.caption(color: sub)),
+            const SizedBox(width: OTSpacing.md),
+            Expanded(
+              child: Text(name,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.end,
+                  style: OTTypography.bodyMedium(color: fg)),
+            ),
+            if (onTap != null) ...[
+              const SizedBox(width: OTSpacing.sm),
+              Icon(Icons.unfold_more_rounded, size: 20, color: sub),
+            ],
+          ]),
+        ),
+      ),
+    );
   }
 
   Widget _trustNote(Color color) => Padding(
@@ -380,28 +452,22 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     );
   }
 
-  Widget _benefitRow(String text, Color textColor, {Color? checkColor}) {
+  Widget _benefitRow(String text, Color textColor) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.only(bottom: OTSpacing.md),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
             padding: const EdgeInsets.only(top: 2),
-            child: Icon(
-              Icons.check_rounded,
-              size: 16,
-              color: checkColor ?? textColor.withValues(alpha: 0.8),
-            ),
+            child: Icon(Icons.check_rounded, size: 18, color: textColor),
           ),
-          const SizedBox(width: 10),
+          const SizedBox(width: OTSpacing.md),
           Expanded(
             child: Text(
               text,
-              style: OTTypography.body(color: textColor).copyWith(
-                fontSize: OTFontSize.s14,
-                height: 1.45,
-              ),
+              style: OTTypography.body(color: textColor)
+                  .copyWith(fontSize: OTFontSize.s16, height: 1.45),
             ),
           ),
         ],
@@ -550,233 +616,20 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     Loc.watch(context);
     final dark = Theme.of(context).brightness == Brightness.dark;
     final ink = OTColors.textPrimary(dark);
-    final muted = OTColors.textSecondary(dark);
-    final border = OTColors.border(dark);
     final flagship =
         AgentModel.defaultAgents.firstWhere((a) => a.id == 'fiqh_tahawwulat');
-    final offer = ProductPricing.tahawwulat[_tahawwulatIndex];
     final specialists = _specialists;
     final selected = specialists.isNotEmpty
         ? specialists.firstWhere((a) => a.id == _selectedAgentId,
             orElse: () => specialists.first)
         : null;
     final hasSpecialists = specialists.isNotEmpty && selected != null;
-
-    final single = ProductPricing.specialists[_specialistIndex];
-
-    // Ringkasan total di atas tombol, lalu satu tombol tanpa teks yang
-    // menyusut: harga tampil sekali, tombolnya menyebut langkah berikutnya.
-    Widget cta(VoidCallback onPressed, SubscriptionOffer offer,
-            {bool onInk = false}) =>
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Row(
-              children: [
-                Expanded(
-                  child: Text('${Loc.tr('planTotalLabel')} · ${offer.title}',
-                      style: OTTypography.caption(
-                          color: onInk ? OTExpressive.whiteMuted : muted)),
-                ),
-                Text(ProductPricing.rupiah(offer.amount),
-                    style: OTTypography.bodyMedium(
-                            color: onInk ? OTExpressive.white : ink)
-                        .copyWith(
-                            fontWeight: FontWeight.w600,
-                            fontFeatures: const [
-                          FontFeature.tabularFigures()
-                        ])),
-              ],
-            ),
-            const SizedBox(height: 12),
-            SizedBox(
-              height: 52,
-              child: FilledButton(
-                onPressed: _processing ? null : onPressed,
-                style: onInk ? OTButtons.onInk() : null,
-                child: Text(Loc.tr('planContinue')),
-              ),
-            ),
-          ],
-        );
-
-    // Dua kartu memakai urutan bagian yang sama agar sejajar saat
-    // berdampingan: label, judul, keterangan, cakupan, masa akses, harga,
-    // manfaat, tombol.
-    List<Widget> planBody({
-      required bool wide,
-      required String label,
-      required String title,
-      required String description,
-      required Widget scope,
-      required Widget tiers,
-      required SubscriptionOffer price,
-      required List<String> benefits,
-      required VoidCallback onCheckout,
-      required String agentId,
-    }) {
-      final f = agentId == flagship.id;
-      final cInk = f ? OTExpressive.white : ink;
-      final cMuted = f ? OTExpressive.whiteMuted : muted;
-      final cLine = f ? OTExpressive.white.withValues(alpha: 0.14) : border;
-      return [
-        if (agentId == flagship.id)
-          _flagshipHeader(label, title, flagship)
-        else
-          Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text(label.toUpperCase(),
-                style: OTTypography.sectionHeading(color: muted)),
-            const SizedBox(height: 8),
-            Text(title, style: OTTypography.editorialHero(color: ink)),
-          ]),
-        const SizedBox(height: 16),
-        Text(description,
-            style: OTTypography.body(color: cMuted).copyWith(height: 1.45)),
-        const SizedBox(height: 20),
-        scope,
-        const SizedBox(height: 20),
-        tiers,
-        const SizedBox(height: 24),
-        AnimatedSwitcher(
-          duration: OTMotion.normal,
-          switchInCurve: Curves.easeOutCubic,
-          transitionBuilder: (child, animation) => FadeTransition(
-            opacity: animation,
-            child: SlideTransition(
-              position: Tween(begin: const Offset(0, 0.12), end: Offset.zero)
-                  .animate(animation),
-              child: child,
-            ),
-          ),
-          layoutBuilder: (current, previous) => Stack(
-            alignment: AlignmentDirectional.topStart,
-            children: [...previous, if (current != null) current],
-          ),
-          child: PromoPrice(
-            key: ValueKey('$agentId-${price.amount}'),
-            amount: price.amount,
-            regularAmount: price.regularAmount,
-            period: price.period,
-            display: f,
-            inlineSaving: true,
-            foregroundColor: cInk,
-            secondaryColor: cMuted,
-          ),
-        ),
-        const SizedBox(height: 16),
-        Divider(color: cLine, height: 1),
-        const SizedBox(height: 16),
-        for (final benefit in benefits)
-          _benefitRow(benefit, cInk, checkColor: null),
-        if (wide) const Spacer() else const SizedBox(height: 8),
-        const SizedBox(height: 8),
-        if (price.months > 1) ...[
-          Text(
-              Loc.tr('monthlyEquivalent', [
-                ProductPricing.rupiah(
-                    ((price.amount / price.months) / 1000).round() * 1000)
-              ]),
-              style: OTTypography.caption(color: cMuted)),
-          const SizedBox(height: 12),
-        ],
-        cta(onCheckout, price, onInk: f),
-        _trustNote(cMuted),
-        _consentNote(cMuted),
-        _checkoutNotice(agentId, ink: cInk),
-      ];
-    }
-
-    // Cakupan paket utama: lima asisten, sebagai teks.
-    final subAgents = flagship.subAgents ?? const <SubAgentModel>[];
-    final flagshipScope = Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-            Loc.tr('planFeaturedIncludes', ['${subAgents.length}'])
-                .toUpperCase(),
-            style: OTTypography.sectionHeading(color: OTExpressive.whiteMuted)),
-        const SizedBox(height: 12),
-        SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              for (final (i, sub) in subAgents.indexed) ...[
-                if (i > 0) const SizedBox(width: 8),
-                Container(
-                  width: 148,
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: OTExpressive.white.withValues(alpha: 0.05),
-                    borderRadius: OTRadius.xsBorder,
-                    border: Border.all(
-                        color: OTExpressive.white.withValues(alpha: 0.12)),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(Loc.isArabic ? sub.nameArabic : sub.name,
-                          style: OTTypography.bodyMedium(
-                              color: OTExpressive.white)),
-                      const SizedBox(height: 4),
-                      Text(_roleOf(sub),
-                          style: OTTypography.caption(
-                                  color: OTExpressive.whiteMuted)
-                              .copyWith(height: 1.4)),
-                    ],
-                  ),
-                ),
-              ],
-            ],
-          ),
-        ),
-      ],
-    );
-
-    // Cakupan paket satu bidang: pemilih bidang.
-    final fieldPicker = selected == null
-        ? const SizedBox.shrink()
-        : Material(
-            color: OTColors.surfaceSubtle(dark),
-            borderRadius: BorderRadius.circular(OTRadius.input),
-            child: InkWell(
-              onTap: (_processing || specialists.length <= 1)
-                  ? null
-                  : () => _showDisciplinePickerModal(context, specialists),
-              borderRadius: BorderRadius.circular(OTRadius.input),
-              child: Padding(
-                padding: const EdgeInsetsDirectional.fromSTEB(20, 12, 16, 12),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            specialists.length <= 1
-                                ? Loc.tr('discipline')
-                                : Loc.tr('chooseField'),
-                            style: ScholarlyFonts.outfit(
-                                fontSize: OTFontSize.s12, color: muted),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            Loc.text(selected.title),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: OTTypography.bodyMedium(color: ink),
-                          ),
-                        ],
-                      ),
-                    ),
-                    if (specialists.length > 1)
-                      Icon(Icons.unfold_more_rounded, size: 20, color: muted),
-                  ],
-                ),
-              ),
-            ),
-          );
+    final flagshipOffers = ProductPricing.tahawwulat;
+    final singleOffers = ProductPricing.specialists;
+    final fi = _periodIndex.clamp(0, flagshipOffers.length - 1);
+    final si = _periodIndex.clamp(0, singleOffers.length - 1);
+    final flagshipOffer = flagshipOffers[fi];
+    final singleOffer = singleOffers[si];
 
     return Scaffold(
       backgroundColor: OTColors.canvas(dark),
@@ -789,93 +642,101 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
         child: Stack(
           children: [
             LayoutBuilder(builder: (context, viewport) {
-              final wide = viewport.maxWidth >= 1000;
+              final wide = viewport.maxWidth >= 820;
+              final twoUp = wide && hasSpecialists;
 
-              Widget plan(
-                      {required bool featured, required List<Widget> body}) =>
-                  _card(
-                    flagship: featured,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: body,
-                    ),
-                  );
-
-              final featuredPlan = plan(
-                featured: true,
-                body: planBody(
-                  wide: wide,
-                  label: Loc.tr('planFeaturedBadge',
-                      ['${(flagship.subAgents ?? const []).length}']),
-                  title: AppCopy.planTahawwulat,
-                  description: Loc.tr('planFeaturedDescription'),
-                  scope: flagshipScope,
-                  tiers: _TierSelector(
-                    onInk: true,
-                    offers: ProductPricing.tahawwulat,
-                    selected: _tahawwulatIndex,
-                    onSelect: _processing
-                        ? null
-                        : (i) => setState(() => _tahawwulatIndex = i),
-                  ),
-                  price: offer,
-                  benefits: [
-                    Loc.tr('planFeaturedBenefit1'),
-                    Loc.tr('planFeaturedBenefit3'),
-                    Loc.tr('planFeaturedBenefit4'),
-                  ],
-                  onCheckout: () => _checkout(flagship, offer),
-                  agentId: flagship.id,
-                ),
+              final featuredPlan = _planCard(
+                inverse: true,
+                wide: twoUp,
+                label: Loc.tr('planFeaturedBadge'),
+                title: AppCopy.planTahawwulat,
+                description: Loc.tr('planFeaturedDescription'),
+                field: _fieldRow(
+                    label: Loc.tr('planIncludes'),
+                    name: Loc.tr('planFeaturedScope'),
+                    inverse: true),
+                price: flagshipOffer,
+                offers: flagshipOffers,
+                benefits: [
+                  Loc.tr('planFeaturedBenefit1'),
+                  Loc.tr('planFeaturedBenefit3'),
+                  Loc.tr('planFeaturedBenefit4'),
+                ],
+                onCheckout: () => _checkout(flagship, flagshipOffer),
+                agentId: flagship.id,
               );
 
               final singlePlan = hasSpecialists
-                  ? plan(
-                      featured: false,
-                      body: planBody(
-                        wide: wide,
-                        label: Loc.tr('planSingleLabel'),
-                        title: Loc.tr('specialistAccess'),
-                        description: Loc.tr('planSingleDescription'),
-                        scope: fieldPicker,
-                        tiers: _TierSelector(
-                          offers: ProductPricing.specialists,
-                          selected: _specialistIndex,
-                          onSelect: _processing
-                              ? null
-                              : (i) => setState(() => _specialistIndex = i),
-                        ),
-                        price: single,
-                        benefits: [
-                          Loc.tr(
-                              'planSingleBenefit1', [Loc.text(selected.title)]),
-                          Loc.tr('planSingleBenefit2'),
-                          Loc.tr('planSingleBenefit3'),
-                        ],
-                        onCheckout: () => _checkout(selected, single),
-                        agentId: selected.id,
+                  ? _planCard(
+                      inverse: false,
+                      wide: twoUp,
+                      label: Loc.tr('planSingleLabel'),
+                      title: Loc.tr('specialistAccess'),
+                      description: Loc.tr('planSingleDescription'),
+                      field: _fieldRow(
+                        label: Loc.tr('discipline'),
+                        name: Loc.text(selected.title),
+                        inverse: false,
+                        onTap: (_processing || specialists.length <= 1)
+                            ? null
+                            : () => _showDisciplinePickerModal(
+                                context, specialists),
                       ),
+                      price: singleOffer,
+                      offers: singleOffers,
+                      benefits: [
+                        Loc.tr(
+                            'planSingleBenefit1', [Loc.text(selected.title)]),
+                        Loc.tr('planSingleBenefit2'),
+                        Loc.tr('planSingleBenefit3'),
+                      ],
+                      onCheckout: () => _checkout(selected, singleOffer),
+                      agentId: selected.id,
                     )
                   : null;
 
               return SingleChildScrollView(
-                padding: const EdgeInsets.fromLTRB(20, 8, 20, 48),
+                padding: EdgeInsets.fromLTRB(
+                    wide ? OTSpacing.xxl : OTSpacing.lg,
+                    OTSpacing.sm,
+                    wide ? OTSpacing.xxl : OTSpacing.lg,
+                    OTSpacing.jumbo),
                 child: Center(
                   child: ConstrainedBox(
-                    constraints: BoxConstraints(
-                        maxWidth: (wide && hasSpecialists) ? 1040 : 640),
+                    constraints: BoxConstraints(maxWidth: twoUp ? 1040 : 560),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        Text(Loc.tr('launchOffer').toUpperCase(),
-                            style: OTTypography.sectionHeading(color: muted)),
-                        const SizedBox(height: 12),
+                        Align(
+                          alignment: AlignmentDirectional.centerStart,
+                          child: _pill(Loc.tr('launchOffer'), ink),
+                        ),
+                        const SizedBox(height: OTSpacing.lg),
                         Text(_headline(),
-                            style: OTTypography.editorialHero(color: ink)),
-                        const SizedBox(height: 20),
+                            style: (Loc.isArabic
+                                    ? OTTypography.arabicDisplay(color: ink)
+                                    : OTTypography.editorialHero(color: ink))
+                                .copyWith(
+                                    fontSize: wide
+                                        ? OTFontSize.s36
+                                        : OTFontSize.s26)),
+                        const SizedBox(height: OTSpacing.xl),
                         const _PromoCountdownBanner(),
-                        const SizedBox(height: 20),
-                        if (wide && hasSpecialists && singlePlan != null)
+                        const SizedBox(height: OTSpacing.xl),
+                        Center(
+                          child: ConstrainedBox(
+                            constraints: const BoxConstraints(maxWidth: 440),
+                            child: _PeriodSwitch(
+                              titles: [for (final o in flagshipOffers) o.title],
+                              selected: fi,
+                              onSelect: _processing
+                                  ? null
+                                  : (i) => setState(() => _periodIndex = i),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: OTSpacing.xl),
+                        if (twoUp && singlePlan != null)
                           IntrinsicHeight(
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -883,7 +744,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                                 Expanded(
                                     child: OTReveal(
                                         index: 0, child: featuredPlan)),
-                                const SizedBox(width: 16),
+                                const SizedBox(width: OTSpacing.base),
                                 Expanded(
                                     child:
                                         OTReveal(index: 1, child: singlePlan)),
@@ -892,12 +753,15 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                           )
                         else ...[
                           OTReveal(index: 0, child: featuredPlan),
-                          if (hasSpecialists && singlePlan != null) ...[
-                            const SizedBox(height: 16),
+                          if (singlePlan != null) ...[
+                            const SizedBox(height: OTSpacing.base),
                             OTReveal(index: 1, child: singlePlan),
                           ],
                         ],
-                        const SizedBox(height: 12),
+                        const SizedBox(height: OTSpacing.xl),
+                        _trustNote(OTColors.textSecondary(dark)),
+                        _consentNote(OTColors.textSecondary(dark)),
+                        const SizedBox(height: OTSpacing.base),
                         Center(
                           child: TextButton.icon(
                             onPressed: _processing
@@ -937,112 +801,33 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
   }
 }
 
-/// Pilihan masa akses: satu lintasan dengan penanda yang bergeser ke masa
-/// terpilih. Tiap segmen memuat masa dan harganya.
-class _TierSelector extends StatelessWidget {
-  const _TierSelector({
-    required this.offers,
+/// Pilihan masa akses untuk kedua paket sekaligus: satu kapsul, penanda hitam
+/// yang bergeser ke masa terpilih.
+class _PeriodSwitch extends StatelessWidget {
+  const _PeriodSwitch({
+    required this.titles,
     required this.selected,
     required this.onSelect,
-    this.onInk = false,
   });
 
-  final List<SubscriptionOffer> offers;
+  final List<String> titles;
   final int selected;
   final ValueChanged<int>? onSelect;
-  final bool onInk;
 
   @override
   Widget build(BuildContext context) {
     final dark = Theme.of(context).brightness == Brightness.dark;
-    final ink = onInk ? OTExpressive.white : OTColors.textPrimary(dark);
-    final muted =
-        onInk ? OTExpressive.whiteMuted : OTColors.textSecondary(dark);
-    final track = onInk
-        ? OTExpressive.white.withValues(alpha: 0.06)
-        : OTColors.surfaceSubtle(dark);
-    final thumb = onInk
-        ? OTExpressive.white.withValues(alpha: 0.12)
-        : OTColors.surface(dark);
-    final thumbLine = onInk ? OTExpressive.white : ink;
+    final ink = OTColors.textPrimary(dark);
+    final onInk = OTColors.textPrimary(!dark);
+    final muted = OTColors.textSecondary(dark);
     final reduced = MediaQuery.disableAnimationsOf(context);
-    final n = offers.length;
-    // Hemat dihitung terhadap membayar bulanan selama masa yang sama.
-    final monthly = offers.first.amount;
-    final savings = [
-      for (final o in offers)
-        o.months <= 1
-            ? 0
-            : ((monthly * o.months - o.amount) * 100 / (monthly * o.months))
-                .round(),
-    ];
-
-    Widget segment(int i) {
-      final active = selected == i;
-      return Semantics(
-        button: true,
-        selected: active,
-        child: InkWell(
-          onTap: onSelect == null ? null : () => onSelect!(i),
-          borderRadius: OTRadius.chipBorder,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(offers[i].title,
-                    textAlign: TextAlign.center,
-                    style: OTTypography.captionMedium(
-                        color: active ? ink : muted)),
-                const SizedBox(height: 2),
-                FittedBox(
-                  fit: BoxFit.scaleDown,
-                  child: Text(ProductPricing.rupiah(offers[i].amount),
-                      style: OTTypography.caption(color: muted).copyWith(
-                          fontFeatures: const [FontFeature.tabularFigures()])),
-                ),
-                // Baris hemat selalu disediakan agar tinggi tiap segmen sama.
-                const SizedBox(height: 4),
-                SizedBox(
-                  height: 16,
-                  child: savings[i] >= 5
-                      ? FittedBox(
-                          fit: BoxFit.scaleDown,
-                          child: Text(Loc.tr('saving', ['${savings[i]}']),
-                              style: OTTypography.metadataTag(
-                                  color:
-                                      onInk ? OTExpressive.whiteMuted : ink)),
-                        )
-                      : null,
-                ),
-              ],
-            ),
-          ),
-        ),
-      );
-    }
-
-    if (MediaQuery.textScalerOf(context).scale(16) > 24) {
-      return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-        for (var i = 0; i < n; i++) ...[
-          if (i > 0) const SizedBox(height: 8),
-          DecoratedBox(
-            decoration: BoxDecoration(
-              color: selected == i ? thumb : track,
-              borderRadius: OTRadius.chipBorder,
-              border: Border.all(
-                  color: selected == i ? thumbLine : OTExpressive.transparent,
-                  width: 1.5),
-            ),
-            child: segment(i),
-          ),
-        ],
-      ]);
-    }
+    final n = titles.length;
     return Container(
-      padding: const EdgeInsets.all(4),
-      decoration:
-          BoxDecoration(color: track, borderRadius: OTRadius.chipBorder),
+      padding: const EdgeInsets.all(OTSpacing.xs),
+      decoration: BoxDecoration(
+        color: OTColors.surfaceSubtle(dark),
+        borderRadius: OTRadius.chipBorder,
+      ),
       child: Stack(
         children: [
           Positioned.fill(
@@ -1056,53 +841,42 @@ class _TierSelector extends StatelessWidget {
                 heightFactor: 1,
                 child: DecoratedBox(
                   decoration: BoxDecoration(
-                    color: thumb,
+                    color: ink,
                     borderRadius: OTRadius.chipBorder,
-                    border: Border.all(color: thumbLine, width: 1.5),
                   ),
                 ),
               ),
             ),
           ),
           Row(children: [
-            for (var i = 0; i < n; i++) Expanded(child: segment(i)),
+            for (var i = 0; i < n; i++)
+              Expanded(
+                child: Semantics(
+                  button: true,
+                  selected: selected == i,
+                  child: InkWell(
+                    onTap: onSelect == null ? null : () => onSelect!(i),
+                    borderRadius: OTRadius.chipBorder,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: OTSpacing.md, horizontal: OTSpacing.sm),
+                      child: Center(
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: Text(titles[i],
+                              style: OTTypography.bodyMedium(
+                                  color: selected == i ? onInk : muted)),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
           ]),
         ],
       ),
     );
   }
-}
-
-/// Pola bintang delapan (khatam): dua bujur sangkar bertumpuk per petak,
-/// garis tipis putih yang dipudarkan oleh kartu pemanggilnya.
-class _KhatamPatternPainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    const cell = 36.0;
-    const half = 9.0;
-    final paint = Paint()
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 0.8
-      ..color = OTExpressive.white.withValues(alpha: 0.10);
-    for (var y = cell / 2; y < size.height + cell; y += cell) {
-      for (var x = cell / 2; x < size.width + cell; x += cell) {
-        final square = Rect.fromCenter(
-            center: Offset(x, y), width: half * 2, height: half * 2);
-        canvas.drawRect(square, paint);
-        canvas.save();
-        canvas.translate(x, y);
-        canvas.rotate(0.7853981633974483);
-        canvas.drawRect(
-            Rect.fromCenter(
-                center: Offset.zero, width: half * 2, height: half * 2),
-            paint);
-        canvas.restore();
-      }
-    }
-  }
-
-  @override
-  bool shouldRepaint(_KhatamPatternPainter oldDelegate) => false;
 }
 
 /// Banner hitung mundur penawaran perdana 10 hari yang dimulai pada

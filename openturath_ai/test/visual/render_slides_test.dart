@@ -35,8 +35,13 @@ void main() {
         .toList();
     final lang = Platform.environment['OT_LANG'] ?? 'id';
     AppConfig.localeNotifier.value = lang;
-    for (final wide in [true, false]) {
-      final size = wide ? const Size(1280, 800) : const Size(390, 844);
+    final sizes = (Platform.environment['OT_SIZES'] ?? 'w,p').split(',');
+    for (final tag in sizes) {
+      final size = switch (tag) {
+        'p' => const Size(390, 844),
+        'xl' => const Size(1700, 1750),
+        _ => const Size(1280, 800),
+      };
       tester.view.physicalSize = size;
       tester.view.devicePixelRatio = 1;
       for (final i in idx) {
@@ -44,7 +49,9 @@ void main() {
             key: _key,
             child: MaterialApp(
                 debugShowCheckedModeBanner: false,
-                theme: AppTheme.lightTheme,
+                theme: Platform.environment['OT_DARK'] == '1'
+                    ? AppTheme.darkTheme
+                    : AppTheme.lightTheme,
                 home: TahawwulatSlidesScreen(initialPage: i))));
         await tester.runAsync(
             () => Future<void>.delayed(const Duration(milliseconds: 400)));
@@ -57,7 +64,7 @@ void main() {
               _key.currentContext!.findRenderObject()! as RenderRepaintBoundary;
           final image = await b.toImage();
           final bytes = await image.toByteData(format: ui.ImageByteFormat.png);
-          File('$_dir/s${i}_${lang}_${wide ? 'w' : 'p'}.png')
+          File('$_dir/s${i}_${lang}_$tag.png')
             ..createSync(recursive: true)
             ..writeAsBytesSync(bytes!.buffer.asUint8List());
         });

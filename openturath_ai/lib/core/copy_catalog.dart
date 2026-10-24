@@ -63,11 +63,7 @@ const copyCatalog = <String, List<String>>{
   "assistantSearch": ["Cari AI", "Search AI", "ابحث عن مساعد ذكي"],
   "clearSearch": ["Hapus pencarian", "Clear search", "مسح البحث"],
   "assistantLibrary": ["Lihat pustaka", "View library", "عرض المكتبة"],
-  "planFeaturedLabel": [
-    "Paket utama",
-    "Main collection · 5 assistants",
-    "المجموعة الرئيسية · 5 مساعدين"
-  ],
+  "planFeaturedLabel": ["Paket utama", "Main collection", "المجموعة الرئيسية"],
   "planFeaturedIncludes": [
     "{0} AI dalam satu paket",
     "{0} assistants in one plan",
@@ -133,9 +129,9 @@ const copyCatalog = <String, List<String>>{
   "flagshipPremium": ["PREMIUM", "PREMIUM", "مميّز"],
   "planExclusive": ["Eksklusif", "Exclusive", "حصري"],
   "planFeaturedDescription": [
-    "Lima AI untuk mendalami Fikih Tahawwulat, didukung kitab rujukan dan arsip ceramah.",
-    "Five assistants for studying Fiqh al-Tahawwulat, supported by source works and a lecture archive.",
-    "خمسة مساعدين لدراسة فقه التحولات مع الكتب المرجعية وأرشيف المحاضرات."
+    "Ilmu untuk memahami perubahan zaman, dengan kitab rujukan dan arsip ceramah.",
+    "The science of understanding the changes of the age, with source books and a lecture archive.",
+    "علم فهم تغيّر الزمان، مع الكتب المرجعية وأرشيف المحاضرات."
   ],
   "planSingleDescription": [
     "Akses satu bidang keilmuan beserta kitab rujukannya.",
@@ -2722,10 +2718,16 @@ const copyCatalog = <String, List<String>>{
     "Payments and Refunds",
     "الدفع واسترداد المبالغ"
   ],
+  "planIncludes": ["Mencakup", "Includes", "يشمل"],
+  "planFeaturedScope": [
+    "Kitab dan arsip ceramah",
+    "Books and lecture archive",
+    "الكتب وأرشيف المحاضرات"
+  ],
   "planFeaturedBadge": [
-    "Eksklusif di OpenTurath · {0} AI",
-    "Exclusive to OpenTurath · {0} AI",
-    "حصري في OpenTurath · {0} AI"
+    "Eksklusif di OpenTurath",
+    "Exclusive to OpenTurath",
+    "حصري في OpenTurath"
   ],
   "checkoutPreparing": [
     "Menyiapkan pembayaran…",

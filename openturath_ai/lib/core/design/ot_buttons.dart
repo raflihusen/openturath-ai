@@ -20,6 +20,12 @@ abstract final class OTButtons {
         foregroundColor: OTColors.textPrimaryLight,
       );
 
+  /// Tombol di atas kartu terbalik (hitam di mode terang, terang di mode gelap).
+  static ButtonStyle onInverse(bool dark) => FilledButton.styleFrom(
+        backgroundColor: OTColors.onInverted(dark),
+        foregroundColor: OTColors.textPrimary(dark),
+      );
+
   /// Aksi teks yang sengaja diredam (mis. "Gunakan voucher").
   static ButtonStyle quiet(bool dark) => TextButton.styleFrom(
         foregroundColor: OTColors.textSecondary(dark),

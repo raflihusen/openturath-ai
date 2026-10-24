@@ -88,9 +88,7 @@ class _TahawwulatModuleScreenState extends State<TahawwulatModuleScreen> {
         margin: const EdgeInsets.only(bottom: OTSpacing.md),
         padding: const EdgeInsets.all(OTSpacing.lg),
         decoration: BoxDecoration(
-          color: inverse
-              ? OTColors.inverseSurface(isDark)
-              : OTColors.surface(isDark),
+          color: inverse ? OTColors.inverted(isDark) : OTColors.surface(isDark),
           borderRadius: OTRadius.cardBorder,
           border: Border.all(color: OTColors.border(isDark)),
         ),
@@ -171,11 +169,11 @@ class _TahawwulatModuleScreenState extends State<TahawwulatModuleScreen> {
         Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Text(_t(c[2]),
               style: OTTypography.captionMedium(
-                  color: OTColors.textSecondary(!isDark))),
+                  color: OTColors.onInvertedMuted(isDark))),
           const SizedBox(height: OTSpacing.xs),
           Text(_t(c[3]),
               style:
-                  OTTypography.cardTitle(color: OTColors.textPrimary(!isDark))),
+                  OTTypography.cardTitle(color: OTColors.onInverted(isDark))),
         ]),
         inverse: true));
     w.add(const Padding(

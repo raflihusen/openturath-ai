@@ -8,7 +8,8 @@ import 'package:openturath_ai/services/onboarding_gate.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
-  testWidgets('pengenalan empat slide tanpa overflow (id/en/ar, ponsel/desktop)',
+  testWidgets(
+      'pengenalan empat slide tanpa overflow (id/en/ar, ponsel/desktop)',
       (tester) async {
     addTearDown(() {
       tester.view.reset();

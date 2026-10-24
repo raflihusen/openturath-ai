@@ -380,7 +380,7 @@ class _SlideBody extends StatelessWidget {
           r(
               _bubble(
                   SlideWords(t(data['answer']),
-                      style: lead.copyWith(color: OTColors.textPrimary(!dark)),
+                      style: lead.copyWith(color: OTColors.onInverted(dark)),
                       step: step + 1),
                   true,
                   fg),
@@ -471,20 +471,20 @@ class _SlideBody extends StatelessWidget {
                                     : '0${n + 1}',
                                 style: OTTypography.metadataTag(
                                     color: items[n]['hl'] == true
-                                        ? OTColors.textSecondary(!dark)
+                                        ? OTColors.onInvertedMuted(dark)
                                         : sub)),
                             const SizedBox(height: OTSpacing.md),
                             Text(t(items[n]['t']),
                                 style: OTTypography.cardTitle(
                                     color: items[n]['hl'] == true
-                                        ? OTColors.textPrimary(!dark)
+                                        ? OTColors.onInverted(dark)
                                         : fg)),
                             if (items[n]['d'] != null) ...[
                               const SizedBox(height: OTSpacing.xs),
                               Text(t(items[n]['d']),
                                   style: OTTypography.body(
                                       color: items[n]['hl'] == true
-                                          ? OTColors.textSecondary(!dark)
+                                          ? OTColors.onInvertedMuted(dark)
                                           : sub)),
                             ],
                           ]),
@@ -712,8 +712,8 @@ class _SlideBody extends StatelessWidget {
               child: Chip(
                   label: Text(Loc.tr('moduleStartHere'),
                       style: OTTypography.captionMedium(
-                          color: OTColors.textPrimary(!dark))),
-                  backgroundColor: OTColors.inverseSurface(dark),
+                          color: OTColors.onInverted(dark))),
+                  backgroundColor: OTColors.inverted(dark),
                   side: BorderSide.none),
             )),
           if (ar)
@@ -892,7 +892,7 @@ class _SlideBody extends StatelessWidget {
 
   Widget _versus(dynamic row, List cols, bool wide, int step) {
     final fg = OTColors.textPrimary(dark), sub = OTColors.textSecondary(dark);
-    final inv = OTColors.textPrimary(!dark);
+    final inv = OTColors.onInverted(dark);
     final left = _card(
         Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           if (!wide)
@@ -908,7 +908,7 @@ class _SlideBody extends StatelessWidget {
           if (!wide)
             Text(t(cols[1]),
                 style: OTTypography.captionMedium(
-                    color: OTColors.textSecondary(!dark))),
+                    color: OTColors.onInvertedMuted(dark))),
           Text(t(row[2]),
               style: OTTypography.bodyMedium(color: inv).copyWith(
                   fontSize: wide ? OTFontSize.s18 : null, height: 1.5)),
@@ -946,8 +946,8 @@ class _SlideBody extends StatelessWidget {
 
   Widget _signColumn(Map item, List cols, int step, Color fg, Color sub) {
     final ar = Loc.isArabic;
-    final inv = OTColors.textPrimary(!dark);
-    final invSub = OTColors.textSecondary(!dark);
+    final inv = OTColors.onInverted(dark);
+    final invSub = OTColors.onInvertedMuted(dark);
     return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
       SlideReveal(
         step: step,
@@ -1017,8 +1017,7 @@ class _SlideBody extends StatelessWidget {
   }
 
   Widget _bubble(Widget child, bool answer, Color fg) {
-    final fill =
-        answer ? OTColors.inverseSurface(dark) : OTColors.surface(dark);
+    final fill = answer ? OTColors.inverted(dark) : OTColors.surface(dark);
     return Align(
       alignment: answer
           ? AlignmentDirectional.centerEnd
@@ -1042,8 +1041,7 @@ class _SlideBody extends StatelessWidget {
         margin: EdgeInsets.only(bottom: bottom),
         padding: const EdgeInsets.all(OTSpacing.lg),
         decoration: BoxDecoration(
-          color:
-              inverse ? OTColors.inverseSurface(dark) : OTColors.surface(dark),
+          color: inverse ? OTColors.inverted(dark) : OTColors.surface(dark),
           borderRadius: OTRadius.cardBorder,
           border: Border.all(color: OTColors.border(dark)),
         ),
