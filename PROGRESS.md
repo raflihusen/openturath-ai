@@ -90,10 +90,10 @@ Berdasarkan `AUDIT_OPENTURATH_AI.md`, dokumen perancangan pustaka, dan keluhan k
   - Status: Kompilasi Gradle selesai 100% (assembleRelease).
 - **Rilis macOS DMG (Kompilasi Lokal Terbaru)**:
   - File: `/Users/apple/Downloads/ramadhan/OpenTurath_AI_macOS.dmg`
-  - Versi: `1.0.71+72`
-  - Ukuran: 61.4 MB (64.382.976 bytes)
-  - SHA-256: `4fa04e36a349e4d05882403461bac85f82bf6ab83aa328ed693050b01c543433`
-  - Timestamp: 2026-10-24 08:43 WIB
+  - Versi: `1.0.72+73`
+  - Ukuran: 61.6 MB (64.677.888 bytes)
+  - SHA-256: `000d20f55d4248987bde6cce22521078cc9b5a175c541973cfe64923e2684544`
+  - Timestamp: 2026-10-24 13:52 WIB
   - Status: Kompilasi Xcode/macOS Release universal (arm64 + x86_64) selesai 100%, UDZO image terkemas rapi via `package_macos.sh`, `/Applications/OpenTurath AI.app` terpasang biner terbaru.
 - **Paket Distribusi Pekerja Akses VPS**:
   - File: `/Users/apple/Downloads/ramadhan/ecosystem/dist/openturath-access-20261014T035043Z-5b44945e.tar.gz`
