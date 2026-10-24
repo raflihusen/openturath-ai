@@ -49,6 +49,37 @@ void main() {
     await tester.runAsync(_fonts);
     tester.view.physicalSize = const Size(390, 844);
     tester.view.devicePixelRatio = 1;
+    final only = Platform.environment['OT_SPLASH_SIZES'];
+    if (only != null) {
+      for (final spec in only.split(',')) {
+        final wh = spec.split('x').map(double.parse).toList();
+        tester.view.physicalSize = Size(wh[0], wh[1]);
+        for (final dark in [false, true]) {
+          final tag = dark ? 'dark' : 'light';
+          await tester.pumpWidget(RepaintBoundary(
+            key: _key,
+            child: MaterialApp(
+              debugShowCheckedModeBanner: false,
+              theme: dark ? AppTheme.darkTheme : AppTheme.lightTheme,
+              home: Scaffold(
+                backgroundColor: OTColors.canvas(dark),
+                body: Center(
+                    child: OTSplashIntro(
+                        key: ValueKey('$spec$tag'),
+                        ink: OTColors.textPrimary(dark))),
+              ),
+            ),
+          ));
+          var elapsed = 0;
+          for (final at in [300, 700, 1000, 1300, 1700, 2700]) {
+            await tester.pump(Duration(milliseconds: at - elapsed));
+            elapsed = at;
+            await _save(tester, 'sp_${spec}_${tag}_$at');
+          }
+        }
+      }
+      return;
+    }
     for (final dark in [false, true]) {
       final tag = dark ? 'dark' : 'light';
       Widget frame(Widget child) => RepaintBoundary(

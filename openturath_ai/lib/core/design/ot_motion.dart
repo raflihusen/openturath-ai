@@ -12,7 +12,7 @@ class OTMotion {
   // ── Gerak pembuka, memuat, dan login ──
   // Loader dan login dicerminkan dari `motion/src/spec.ts` (Remotion). Splash
   // kini hanya didefinisikan di sini; konstanta SPLASH di Remotion arsip lama.
-  static const int splashTotalMs = 2300;
+  static const int splashTotalMs = 2700;
   static const Duration splashTotal = Duration(milliseconds: splashTotalMs);
 
   /// Splash tidak menahan navigasi lebih lama dari ini; ketuk untuk melewati.
@@ -21,22 +21,26 @@ class OTMotion {
   /// Gerak dikurangi: hanya bingkai akhir, tahan sebentar.
   static const Duration splashHoldStill = Duration(milliseconds: 700);
 
-  // Urutan (ms): lengkung digambar, terisi, kubah naik, dua halaman terbuka,
-  // wordmark huruf demi huruf, garis tipis, lalu semboyan.
-  static const int splashDrawEndMs = 650;
-  static const int splashFillStartMs = 550;
-  static const int splashFillEndMs = 950;
-  static const int splashDomeStartMs = 750;
-  static const int splashDomeEndMs = 1200;
-  static const int splashPagesStartMs = 950;
-  static const int splashPagesEndMs = 1400;
-  static const int splashWordStartMs = 1250;
+  // Urutan (ms): kitab naik satu per satu, lengkung digambar menaunginya,
+  // kitab melebur menjadi logo (lengkung terisi, kubah naik, dua halaman
+  // terbuka), wordmark huruf demi huruf, garis tipis, lalu semboyan.
+  static const int splashShelfStaggerMs = 80;
+  static const int splashShelfRiseMs = 520;
+  static const int splashDrawStartMs = 450;
+  static const int splashDrawEndMs = 1050;
+  static const int splashFillStartMs = 950;
+  static const int splashFillEndMs = 1300;
+  static const int splashDomeStartMs = 1100;
+  static const int splashDomeEndMs = 1500;
+  static const int splashPagesStartMs = 1300;
+  static const int splashPagesEndMs = 1700;
+  static const int splashWordStartMs = 1500;
   static const int splashWordLetterMs = 360;
   static const int splashWordStaggerMs = 45;
-  static const int splashRuleStartMs = 1650;
-  static const int splashRuleEndMs = 2000;
-  static const int splashTagStartMs = 1800;
-  static const int splashTagEndMs = 2300;
+  static const int splashRuleStartMs = 1950;
+  static const int splashRuleEndMs = 2300;
+  static const int splashTagStartMs = 2100;
+  static const int splashTagEndMs = 2700;
 
   static const Duration loaderLoop = Duration(milliseconds: 1800);
   static const double loaderSweep = 0.22;

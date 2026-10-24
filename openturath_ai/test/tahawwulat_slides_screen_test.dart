@@ -12,9 +12,10 @@ void main() {
       AppConfig.localeNotifier.value = 'id';
     });
     for (final lang in ['id', 'en', 'ar']) {
-      for (final width in [360.0, 1280.0]) {
+      for (final width in [320.0, 360.0, 768.0, 980.0, 1280.0]) {
         AppConfig.localeNotifier.value = lang;
-        tester.view.physicalSize = Size(width, width < 600 ? 760 : 800);
+        tester.view.physicalSize =
+            Size(width, width < 600 ? 760 : (width < 1000 ? 960 : 800));
         tester.view.devicePixelRatio = 1;
         await tester.pumpWidget(
             MaterialApp(home: TahawwulatSlidesScreen(onAsk: () {})));

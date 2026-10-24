@@ -113,7 +113,7 @@ Layar tidak menulis `styleFrom` sendiri; tes penjaga menolaknya.
 
 ## 6. Gerak dan sentuhan
 
-Angka gerak loader dan login dirancang di `motion/src/spec.ts` (Remotion) dan dicerminkan di `OTMotion`. Splash didefinisikan hanya di `OTMotion` (sekitar 2,3 detik): lengkung logo digambar tanpa gema, logo terbentuk (lengkung, kubah, dua halaman), wordmark huruf demi huruf, garis tipis, lalu semboyan tiga bahasa. Ketuk melompat ke akhir; gerak dikurangi menampilkan bingkai akhir 700 ms. Warna layar luncur bawaan (Android `launch_background_color`, iOS `LaunchBackground`) wajib sama dengan `canvasLight` (#F6F6F6) dan `canvasDark` (#151515).
+Angka gerak loader dan login dirancang di `motion/src/spec.ts` (Remotion) dan dicerminkan di `OTMotion`. Splash didefinisikan hanya di `OTMotion` (sekitar 2,3 detik): tujuh punggung kitab naik satu per satu, lengkung digambar menaunginya, kitab melebur menjadi logo (lengkung, kubah, dua halaman); seluruh susunan membesar mengikuti sisi terpendek layar (1× sampai 2×), wordmark huruf demi huruf, garis tipis, lalu semboyan tiga bahasa. Ketuk melompat ke akhir; gerak dikurangi menampilkan bingkai akhir 700 ms. Warna layar luncur bawaan (Android `launch_background_color`, iOS `LaunchBackground`) wajib sama dengan `canvasLight` (#F6F6F6) dan `canvasDark` (#151515).
 
 Cepat 180ms, normal 220ms, lembar 280ms, transisi 320ms; kurva `easeOutCubic` (lembar: `easeOutQuart`). Elemen yang ditekan mengecil ke 0,985. Status memuat memakai indikator dan teks yang sesuai konteks; katalog menyediakan aksi mencoba kembali. Getar: `selection()` untuk tab dan chip, `light()` untuk kartu dan tombol, `success()` saat menyimpan catatan.
 

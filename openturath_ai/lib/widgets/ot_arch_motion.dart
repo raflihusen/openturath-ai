@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../core/design/ot_motion.dart';
+import '../core/design/ot_radius.dart';
 import '../core/design/ot_spacing.dart';
 import '../core/localization.dart';
 import '../core/design/ot_typography.dart';
@@ -145,91 +146,99 @@ class _OTSplashIntroState extends State<OTSplashIntro>
                 .copyWith(letterSpacing: 0.6);
         const outlineH = (833 - _y0) * s;
         const canvasW = markW * 2.9, canvasH = _markH;
+        // Kunci berukuran tetap, diperbesar mengikuti sisi terpendek layar
+        // (ponsel kecil tetap 1×, tablet dan desktop sampai 2×).
+        final shortest = MediaQuery.sizeOf(context).shortestSide;
+        final scale = (shortest / 390).clamp(1.0, 2.0);
         return Semantics(
             label: '${Loc.tr('appName')}. ${Loc.tr('splashTagline')}',
             container: true,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                SizedBox(
-                  width: canvasW,
-                  height: canvasH,
-                  child: Stack(
-                    alignment: Alignment.center,
-                    clipBehavior: Clip.none,
-                    children: [
-                      Positioned.fill(
-                        child: CustomPaint(
-                            painter: _SplashArchPainter(
-                                ms: ms,
-                                ink: ink,
-                                markRect: Rect.fromCenter(
-                                    center:
-                                        const Offset(canvasW / 2, outlineH / 2),
-                                    width: markW,
-                                    height: outlineH))),
-                      ),
-                      Positioned(
-                        left: (canvasW - markW) / 2,
-                        top: 0,
-                        width: markW,
-                        height: _markH,
-                        child: Stack(clipBehavior: Clip.none, children: [
-                          Opacity(opacity: fill, child: _part('arch', ink, s)),
-                          Opacity(
-                            opacity: dome,
-                            child: Transform.translate(
-                                offset: Offset(0, (1 - dome) * 22 * s),
-                                child: _part('dome', ink, s)),
+            child: Transform.scale(
+                scale: scale,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    SizedBox(
+                      width: canvasW,
+                      height: canvasH,
+                      child: Stack(
+                        alignment: Alignment.center,
+                        clipBehavior: Clip.none,
+                        children: [
+                          Positioned.fill(
+                            child: CustomPaint(
+                                painter: _SplashArchPainter(
+                                    ms: ms,
+                                    ink: ink,
+                                    markRect: Rect.fromCenter(
+                                        center: const Offset(
+                                            canvasW / 2, outlineH / 2),
+                                        width: markW,
+                                        height: outlineH))),
                           ),
-                          Opacity(
-                            opacity: pages,
-                            child: Transform.translate(
-                                offset: Offset(-(1 - pages) * 38 * s * -1, 0),
-                                child: _part('left', ink, s)),
+                          Positioned(
+                            left: (canvasW - markW) / 2,
+                            top: 0,
+                            width: markW,
+                            height: _markH,
+                            child: Stack(clipBehavior: Clip.none, children: [
+                              Opacity(
+                                  opacity: fill, child: _part('arch', ink, s)),
+                              Opacity(
+                                opacity: dome,
+                                child: Transform.translate(
+                                    offset: Offset(0, (1 - dome) * 22 * s),
+                                    child: _part('dome', ink, s)),
+                              ),
+                              Opacity(
+                                opacity: pages,
+                                child: Transform.translate(
+                                    offset:
+                                        Offset(-(1 - pages) * 38 * s * -1, 0),
+                                    child: _part('left', ink, s)),
+                              ),
+                              Opacity(
+                                opacity: pages,
+                                child: Transform.translate(
+                                    offset: Offset(-(1 - pages) * 38 * s, 0),
+                                    child: _part('right', ink, s)),
+                              ),
+                            ]),
                           ),
-                          Opacity(
-                            opacity: pages,
-                            child: Transform.translate(
-                                offset: Offset(-(1 - pages) * 38 * s, 0),
-                                child: _part('right', ink, s)),
-                          ),
-                        ]),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: OTSpacing.base),
-                Directionality(
-                  textDirection: TextDirection.ltr,
-                  child: Row(mainAxisSize: MainAxisSize.min, children: [
-                    for (var i = 0; i < word.length; i++)
-                      _letter(word[i], i, ms, ink),
-                  ]),
-                ),
-                const SizedBox(height: OTSpacing.base),
-                Container(
-                  width: OTSpacing.jumbo * rule,
-                  height: 1,
-                  color: ink.withValues(alpha: 0.35),
-                ),
-                const SizedBox(height: OTSpacing.lg),
-                Opacity(
-                  opacity: tag,
-                  child: Transform.translate(
-                    offset: Offset(0, (1 - tag) * 8),
-                    child: ConstrainedBox(
-                      constraints: const BoxConstraints(maxWidth: canvasW),
-                      child: Text(
-                        Loc.tr('splashTagline'),
-                        textAlign: TextAlign.center,
-                        style: tagStyle,
+                        ],
                       ),
                     ),
-                  ),
-                ),
-              ],
-            ));
+                    const SizedBox(height: OTSpacing.base),
+                    Directionality(
+                      textDirection: TextDirection.ltr,
+                      child: Row(mainAxisSize: MainAxisSize.min, children: [
+                        for (var i = 0; i < word.length; i++)
+                          _letter(word[i], i, ms, ink),
+                      ]),
+                    ),
+                    const SizedBox(height: OTSpacing.base),
+                    Container(
+                      width: OTSpacing.jumbo * rule,
+                      height: 1,
+                      color: ink.withValues(alpha: 0.35),
+                    ),
+                    const SizedBox(height: OTSpacing.lg),
+                    Opacity(
+                      opacity: tag,
+                      child: Transform.translate(
+                        offset: Offset(0, (1 - tag) * 8),
+                        child: ConstrainedBox(
+                          constraints: const BoxConstraints(maxWidth: canvasW),
+                          child: Text(
+                            Loc.tr('splashTagline'),
+                            textAlign: TextAlign.center,
+                            style: tagStyle,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                )));
       },
     );
   }
@@ -262,8 +271,47 @@ class _SplashArchPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final outline = otArchPath(markRect, open: true);
 
+    // Rak kitab di dalam lengkung: naik satu per satu, lalu melebur menjadi
+    // logo saat lengkung terisi ("bersumber dari kitab").
+    final melt = 1 -
+        _phase(ms, OTMotion.splashFillStartMs - 100,
+            OTMotion.splashFillEndMs - 150, Curves.easeIn);
+    if (melt > 0) {
+      const heights = [0.5, 0.72, 0.6, 0.84, 0.64, 0.76, 0.54];
+      final n = heights.length;
+      final shelfW = markRect.width * 0.62;
+      final left = markRect.center.dx - shelfW / 2;
+      final gap = shelfW * 0.035;
+      final w = (shelfW - gap * (n - 1)) / n;
+      final base = markRect.bottom;
+      for (var i = 0; i < n; i++) {
+        final t = _phase(
+            ms,
+            i * OTMotion.splashShelfStaggerMs,
+            i * OTMotion.splashShelfStaggerMs + OTMotion.splashShelfRiseMs,
+            OTMotion.curve);
+        if (t <= 0) continue;
+        final h = markRect.height * 0.62 * heights[i] * t;
+        final x = left + i * (w + gap);
+        final r = RRect.fromRectAndCorners(Rect.fromLTWH(x, base - h, w, h),
+            topLeft: const Radius.circular(OTRadius.xs / 4),
+            topRight: const Radius.circular(OTRadius.xs / 4));
+        canvas.drawRRect(
+            r,
+            Paint()
+              ..color = ink.withValues(alpha: (0.14 + 0.06 * (i % 3)) * melt));
+        canvas.drawRRect(
+            r,
+            Paint()
+              ..style = PaintingStyle.stroke
+              ..strokeWidth = 1.1
+              ..color = ink.withValues(alpha: 0.6 * melt));
+      }
+    }
+
     // Garis lengkung logo: digambar, lalu melebur ke bentuk terisi.
-    final drawn = _phase(ms, 0, OTMotion.splashDrawEndMs, OTMotion.curve);
+    final drawn = _phase(ms, OTMotion.splashDrawStartMs,
+        OTMotion.splashDrawEndMs, OTMotion.curve);
     final fade = 1 -
         _phase(ms, OTMotion.splashFillStartMs, OTMotion.splashFillEndMs,
             Curves.easeIn);
