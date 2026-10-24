@@ -43,7 +43,7 @@ const copyCatalog = <String, List<String>>{
   ],
   "assistantFeatured": ["KOLEKSI KHUSUS", "SPECIAL COLLECTION", "مجموعة خاصة"],
   "assistantFeaturedDesc": [
-    "Lima AI untuk matan, konsep, latihan, muhadharah, dan dakwah.",
+    "Lima AI untuk matan, konsep, latihan, ceramah, dan dakwah.",
     "Five study paths for source texts, concepts, practice, lectures, and teaching.",
     "خمسة مسارات لمطالعة المتون والمفاهيم والتدريب والمحاضرات والدعوة."
   ],
@@ -89,7 +89,7 @@ const copyCatalog = <String, List<String>>{
     "اختبار الفهم بالسؤال والجواب"
   ],
   "tahawwulatRole_habib": [
-    "Arsip muhadharah Habib Abu Bakar",
+    "Arsip ceramah Habib Abu Bakar",
     "Lecture archive of Habib Abu Bakr",
     "أرشيف محاضرات الحبيب أبي بكر"
   ],
@@ -133,7 +133,7 @@ const copyCatalog = <String, List<String>>{
   "flagshipPremium": ["PREMIUM", "PREMIUM", "مميّز"],
   "planExclusive": ["Eksklusif", "Exclusive", "حصري"],
   "planFeaturedDescription": [
-    "Lima AI untuk mendalami Fikih Tahawwulat, didukung kitab rujukan dan arsip muhadharah.",
+    "Lima AI untuk mendalami Fikih Tahawwulat, didukung kitab rujukan dan arsip ceramah.",
     "Five assistants for studying Fiqh al-Tahawwulat, supported by source works and a lecture archive.",
     "خمسة مساعدين لدراسة فقه التحولات مع الكتب المرجعية وأرشيف المحاضرات."
   ],
@@ -178,7 +178,7 @@ const copyCatalog = <String, List<String>>{
     "اختبار الفهم عبر السؤال والجواب المباشر"
   ],
   "planFeaturedBenefit4": [
-    "Arsip muhadharah dan transkrip sebagai rujukan tanya jawab",
+    "Arsip ceramah dan transkrip sebagai rujukan tanya jawab",
     "Lecture archive and transcripts for study",
     "أرشيف المحاضرات ونصوصها للمطالعة"
   ],
@@ -1915,7 +1915,7 @@ const copyCatalog = <String, List<String>>{
     "تتبع المؤلفات والمراجع"
   ],
   "introReferencesBody": [
-    "Koleksi mempertemukan karya tulis dan materi muhadharah yang tercatat dalam katalog. Setiap jawaban tetap perlu dicocokkan dengan sumbernya.",
+    "Koleksi mempertemukan karya tulis dan materi ceramah yang tercatat dalam katalog. Setiap jawaban tetap perlu dicocokkan dengan sumbernya.",
     "The collection brings together written works and lecture material recorded in the catalog. Each answer should still be checked against its source.",
     "تجمع المجموعة المؤلفات ومواد المحاضرات المسجلة في الفهرس. وتبقى مراجعة كل جواب في مصدره لازمة."
   ],
@@ -1940,7 +1940,7 @@ const copyCatalog = <String, List<String>>{
     "اختبار الفهم بالسؤال والجواب"
   ],
   "ui_4837b8e469": [
-    "Arsip muhadharah Habib Abu Bakar",
+    "Arsip ceramah Habib Abu Bakar",
     "Lectures of Habib Abu Bakr",
     "محاضرات الحبيب أبي بكر"
   ],
@@ -1956,7 +1956,7 @@ const copyCatalog = <String, List<String>>{
     "المفاهيم والمصطلحات"
   ],
   "ui_b75ba44465": ["Uji Pemahaman", "Understanding Check", "اختبار الفهم"],
-  "ui_e5ad7cb376": ["Arsip Muhadharah", "Lecture Archive", "أرشيف المحاضرات"],
+  "ui_e5ad7cb376": ["Arsip Ceramah", "Lecture Archive", "أرشيف المحاضرات"],
   "ui_44aa1b83f5": ["Dakwah & Khutbah", "Teaching & Sermons", "الدعوة والخطب"],
   "booksShown": [
     "Menampilkan {0} dari {1} kitab",
@@ -2270,7 +2270,7 @@ const copyCatalog = <String, List<String>>{
   "unitBooks": ["kitab", "works", "كتابًا"],
   "unitVolumes": ["jilid", "volumes", "مجلدًا"],
   "unitPages": ["halaman", "pages", "صفحة"],
-  "unitLectures": ["muhadharah", "lectures", "محاضرة"],
+  "unitLectures": ["ceramah", "lectures", "محاضرة"],
   "flagshipPositioning": [
     "AI yang dibangun khusus untuk Fikih Tahawwulat.",
     "An AI assistant built specifically for Fiqh al-Tahawwulat.",

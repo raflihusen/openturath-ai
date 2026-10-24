@@ -1366,7 +1366,7 @@
     "ar": "خمسة مساعدين لدراسته"
    },
    "sub": {
-    "id": "Kitab dan muhadharah yang sama, lima cara belajar.",
+    "id": "Kitab dan ceramah yang sama, lima cara belajar.",
     "en": "The same books and lectures, five ways to learn.",
     "ar": "الكتب والمحاضرات نفسها، وخمس طرق للتعلّم."
    }
@@ -1441,12 +1441,12 @@
    "ar": "الحبيب",
    "name": "Al-Habib",
    "role": {
-    "id": "Muhadharah Al-Habib",
+    "id": "Ceramah Al-Habib",
     "en": "Al-Habib's lectures",
     "ar": "محاضرات الحبيب"
    },
    "desc": {
-    "id": "Berisi muhadharah Al-Habib Abu Bakar, dan menjawab dengan diksi beliau sendiri.",
+    "id": "Berisi ceramah Al-Habib Abu Bakar, dan menjawab dengan diksi beliau sendiri.",
     "en": "Holds the lectures of Al-Habib Abu Bakar, and answers in his own wording.",
     "ar": "فيه محاضرات الحبيب أبي بكر، ويجيب بألفاظه هو."
    },

@@ -5,7 +5,7 @@
 **Rujukan Utama:**
 
 1. *An-Nubdzah ash-Shughra fi Ma‘rifati ‘Alamat as-Sa‘ah al-Wustha wa ash-Shughra wa al-Kubra* (`[D1]` s/d `[D25]`) karya Al-‘Allamah al-Habib Abu Bakar al-‘Adni bin ‘Ali al-Masyhur.  
-2. Kitab-kitab Penguat untuk Pertanyaan Bertanda `(?)`: *Al-Iqlid li-Ma‘ani An-Nubdzah ash-Shughra*, *Al-Usus wa al-Munthalaqat*, *Al-Bayariq an-Nabawiyyah*, *Ihya’ Lughat al-Islam al-‘Alamiyyah*, *Dawa’ir al-I‘adah*, dan *Ensiklopedia Lisan 3.001 Muhadharah*.
+2. Kitab-kitab Penguat untuk Pertanyaan Bertanda `(?)`: *Al-Iqlid li-Ma‘ani An-Nubdzah ash-Shughra*, *Al-Usus wa al-Munthalaqat*, *Al-Bayariq an-Nabawiyyah*, *Ihya’ Lughat al-Islam al-‘Alamiyyah*, *Dawa’ir al-I‘adah*, dan *Ensiklopedia Lisan 3.001 Ceramah*.
 
 ---
 
@@ -143,7 +143,7 @@
 ### B8. Apa bedanya dengan teori konspirasi yang ramai di internet? `[D8, D25]` `(?)`
 
 * **Jawaban Awam:** Teori konspirasi biasanya membuat orang merasa musuh begitu maha kuasa, memicu rasa curiga berlebihan (paranoid), menyalahkan pihak luar semata, dan berujung pada keputusasaan atau kemarahan tanpa solusi amal. Sebaliknya, Fikih Tahawwulat mengajarkan bahwa **segala sesuatu berjalan di bawah takdir dan pengawasan Allah**, mengajak kita memperbaiki kelemahan di dalam diri kita sendiri terlebih dahulu sebelum menyalahkan pihak luar, dan selalu menutup pembahasan dengan amal nyata yang menenangkan hati.  
-* **Rujukan Kitab & Korpus `(?)`:** `[D8]`, `[D25]`, serta kaidah lisan Al-Habib Abu Bakar dalam muhadharah beliau: mengamankan masyarakat dimulai dengan mendiagnosis penyakit internal sebelum menyalahkan musuh eksternal.
+* **Rujukan Kitab & Korpus `(?)`:** `[D8]`, `[D25]`, serta kaidah lisan Al-Habib Abu Bakar dalam ceramah beliau: mengamankan masyarakat dimulai dengan mendiagnosis penyakit internal sebelum menyalahkan musuh eksternal.
 
 ### B9. Apakah ini ilmu politik? Atau ilmu sejarah? `[D15]`
 
@@ -739,7 +739,7 @@
 ### K6. Apakah ilmu ini bisa dipakai untuk menghakimi kelompok tertentu? `[D25]`
 
 * **Jawaban Awam:** Tidak boleh. Dalam kaidah Al-Habib Abu Bakar Al-Masyhur, Fikih Tahawwulat adalah **alat untuk mendiagnosis penyakit zaman dan mengobati diri sendiri**, bukan palu hakim untuk memvonis sesat atau memvonis neraka kepada kelompok muslim lainnya. Beliau selalu mengingatkan bahwa surga bukan milik kelompok tertentu; kita semua adalah umat Nabi Muhammad ﷺ.  
-* **Rujukan Kitab:** `[D25]` (Jalan Selamat) dan kaidah lisan beliau dalam muhadharah.
+* **Rujukan Kitab:** `[D25]` (Jalan Selamat) dan kaidah lisan beliau dalam ceramah.
 
 ### K7. Bagaimana membedakan kehati-hatian dengan paranoid? `[D25]`
 
@@ -774,9 +774,9 @@
 
 * **Jawaban Awam:** Anda bisa menanyakan: **(1)** arti istilah-istilah dalam Fikih Tahawwulat dengan bahasa yang mudah dipahami, **(2)** penjelasan isi bab atau kalimat tertentu dari kitab-kitab Al-Habib Abu Bakar Al-Masyhur, **(3)** pencarian dalil ayat Al-Qur'an, hadis, atau kaidah Fikih Tahawwulat beserta nomor halaman kitab dan rujukan videonya, **(4)** panduan sikap tenang (*Manhaj Salamah*) dalam menghadapi persoalan keluarga, pendidikan anak, dan media sosial di zaman modern, serta **(5)** latihan menguji pemahaman: AI bertanya, Anda menjawab, lalu ia menilai jawaban Anda.
 
-### L4. Dari mana jawaban AI ini diambil: kitab atau muhadharah?
+### L4. Dari mana jawaban AI ini diambil: kitab atau ceramah?
 
-* **Jawaban Awam:** Jawaban AI ini diambil dari **kumpulan kitab dan rekaman yang telah dihimpun** dan memuat **58 kitab tertulis** karya Al-Habib Abu Bakar Al-Masyhur (`95.141` baris teks asli) serta **3.001 transkrip rekaman ceramah/muhadharah** beliau (`134.901` baris). Setiap jawaban selalu disertakan rujukan kitab atau rekaman ceramahnya agar jelas sumbernya.
+* **Jawaban Awam:** Jawaban AI ini diambil dari **kumpulan kitab dan rekaman yang telah dihimpun** dan memuat **58 kitab tertulis** karya Al-Habib Abu Bakar Al-Masyhur (`95.141` baris teks asli) serta **3.001 transkrip rekaman ceramah/ceramah** beliau (`134.901` baris). Setiap jawaban selalu disertakan rujukan kitab atau rekaman ceramahnya agar jelas sumbernya.
 
 ### L5. Apakah AI ini mengeluarkan fatwa? Kapan saya harus bertanya kepada guru?
 
@@ -788,7 +788,7 @@
   1. **Al-Muhaqqiq (*Peneliti Teks*):** mencari matan dan ibarah asli beserta sumbernya, lalu memeriksanya dengan teliti. Cocok untuk santri, mahasiswa, dan pengajar.  
   2. **Al-Bayan (*Penjelas yang Sederhana*):** menjelaskan dengan bahasa yang mudah dipahami. Paling cocok untuk pemula.  
   3. **Al-Mukhtabir (*Penguji Pemahaman*):** AI bertanya, Anda menjawab, lalu ia menilai jawaban Anda: di mana sudah baik, di mana masih lemah, dan seperti apa jawaban idealnya. Cocok untuk mendalami dan menguji diri.  
-  4. **Al-Habib (*Muhadharah Al-Habib Abu Bakar*):** berisi muhadharah beliau, dan menjawab dengan diksi Al-Habib Abu Bakar sendiri.  
+  4. **Al-Habib (*Ceramah Al-Habib Abu Bakar*):** berisi ceramah beliau, dan menjawab dengan diksi Al-Habib Abu Bakar sendiri.  
   5. **Al-Khatib (*Penyusun Khutbah*):** menyusun khutbah, bahan ceramah, dan materi dakwah lainnya.  
 * **Rujukan Kitab:** pembagian tugas kelima asisten pada aplikasi OpenTurath.
 

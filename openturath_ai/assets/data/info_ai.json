@@ -2,9 +2,9 @@
  {
   "id": "fiqh_tahawwulat",
   "judul": "AI Fikih Tahawwulat",
-  "subjudul": "Kitab karya Habib Abu Bakar al-Masyhur · Muhadharah tiga kanal",
+  "subjudul": "Kitab karya Habib Abu Bakar al-Masyhur · Ceramah tiga kanal",
   "nama_arab": "فقه التحولات",
-  "tentang": "Berisi kitab-kitab Habib Abu Bakar al-Adni bin Ali al-Masyhur tentang fikih tahawwulat dan sunan al-mawaqif, ditambah arsip muhadharah beliau dari tiga kanal resmi. Fikih tahawwulat membaca perubahan zaman dengan kacamata hadis-hadis tanda zaman, lalu menurunkannya menjadi sikap dan langkah. Gunakan AI ini untuk menemukan ibarah asli beliau, judul muhadharah yang membahas suatu tema, dan tautan videonya pada menit yang tepat.",
+  "tentang": "Berisi kitab-kitab Habib Abu Bakar al-Adni bin Ali al-Masyhur tentang fikih tahawwulat dan sunan al-mawaqif, ditambah arsip ceramah beliau dari tiga kanal resmi. Fikih tahawwulat membaca perubahan zaman dengan kacamata hadis-hadis tanda zaman, lalu menurunkannya menjadi sikap dan langkah. Gunakan AI ini untuk menemukan ibarah asli beliau, judul ceramah yang membahas suatu tema, dan tautan videonya pada menit yang tepat.",
   "isi": {
    "cabang_ilmu": [
     {
@@ -12,7 +12,7 @@
      "jumlah": null
     },
     {
-     "nama": "Muhadharah tiga kanal",
+     "nama": "Ceramah tiga kanal",
      "jumlah": null
     }
    ],
@@ -131,8 +131,8 @@
     "teks": "Ringkas pokok-pokok kitab al-Asas wal-Munthalaqat."
    },
    {
-    "jenis": "Muhadharah",
-    "teks": "Muhadharah mana yang membahas sikap seorang Muslim di masa fitnah? Sertakan judul dan tautannya."
+    "jenis": "Ceramah",
+    "teks": "Ceramah mana yang membahas sikap seorang Muslim di masa fitnah? Sertakan judul dan tautannya."
    },
    {
     "jenis": "Kasus sehari-hari",

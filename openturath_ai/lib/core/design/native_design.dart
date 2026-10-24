@@ -267,7 +267,7 @@ abstract final class NativeCopy {
       'اختبار الفهم عبر تقييم المفاهيم.'
     ],
     'habib': [
-      'Telusuri materi muhadharah Habib Abu Bakar.',
+      'Telusuri materi ceramah Habib Abu Bakar.',
       'Explore Habib Abu Bakr’s lecture materials.',
       'استكشاف مواد محاضرات الحبيب أبي بكر.'
     ],

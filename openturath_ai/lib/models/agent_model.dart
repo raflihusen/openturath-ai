@@ -209,10 +209,10 @@ class AgentModel {
               id: 'fiqh_tahawwulat_habib',
               name: 'Al-Habib',
               nameArabic: 'الحبيب',
-              description: 'Arsip Muhadharah Habib Abu Bakar',
+              description: 'Arsip Ceramah Habib Abu Bakar',
               descriptionArabic: 'مستودع المحاضرات والتسجيلات الشفهية',
               emoji: '🎙️',
-              badge: 'Arsip Muhadharah',
+              badge: 'Arsip Ceramah',
             ),
             SubAgentModel(
               id: 'fiqh_tahawwulat_khatib',

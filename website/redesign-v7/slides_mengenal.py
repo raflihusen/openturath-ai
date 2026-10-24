@@ -153,7 +153,7 @@ A(S("list", bab=3, title=T("Yang khas dari Fikih Tahawwulat", "What is distincti
 
 # ───────────── Bab 4: lima asisten
 A(S("title", bab=4, kicker=T("Bab 4", "Chapter 4", "الباب 4"), title=T("Lima asisten untuk mempelajarinya", "Five assistants to study it", "خمسة مساعدين لدراسته"),
-    sub=T("Kitab dan muhadharah yang sama, lima cara belajar.", "The same books and lectures, five ways to learn.", "الكتب والمحاضرات نفسها، وخمس طرق للتعلّم.")))
+    sub=T("Kitab dan ceramah yang sama, lima cara belajar.", "The same books and lectures, five ways to learn.", "الكتب والمحاضرات نفسها، وخمس طرق للتعلّم.")))
 A(S("assistant", bab=4, ar="المحقق", name="Al-Muhaqqiq", role=T("Peneliti teks", "The text researcher", "باحث النصوص"),
     desc=T("Mencari matan dan ibarah asli beserta sumbernya, lalu memeriksanya dengan teliti.", "Finds the original text and passage with its source, then checks it carefully.", "يبحث عن المتن والعبارة الأصلية مع مصدرها ثم يدققها."),
     ask=T("“Di mana Al-Habib menyebut dua keruntuhan peradaban? Tampilkan ibarahnya.”", "“Where does Al-Habib mention the two collapses of civilization? Show me the passage.”", "«أين يذكر الحبيب الانهيارين الحضاريين؟ أرني العبارة.»")))
@@ -163,8 +163,8 @@ A(S("assistant", bab=4, ar="البيان", name="Al-Bayan", role=T("Penjelas yan
 A(S("assistant", bab=4, ar="المختبر", name="Al-Mukhtabir", role=T("Penguji pemahaman", "The understanding tester", "مختبِر الفهم"),
     desc=T("AI bertanya, Anda menjawab, lalu ia menilai di mana jawaban Anda sudah baik, di mana lemah, dan memberi jawaban idealnya.", "The AI asks, you answer, then it judges where your answer is strong and where weak, and gives the ideal answer.", "يسألك الذكاء الاصطناعي فتجيب، ثم يقيّم جوابك: مواطن الإحسان ومواطن الضعف، ويعطيك الجواب المثالي."),
     ask=T("“Uji saya: apa itu al-ghutsa'iyyah?”", "“Test me: what is al-ghuthaiyya?”", "«اختبرني: ما الغثائية؟»")))
-A(S("assistant", bab=4, ar="الحبيب", name="Al-Habib", role=T("Muhadharah Al-Habib", "Al-Habib's lectures", "محاضرات الحبيب"),
-    desc=T("Berisi muhadharah Al-Habib Abu Bakar, dan menjawab dengan diksi beliau sendiri.", "Holds the lectures of Al-Habib Abu Bakar, and answers in his own wording.", "فيه محاضرات الحبيب أبي بكر، ويجيب بألفاظه هو."),
+A(S("assistant", bab=4, ar="الحبيب", name="Al-Habib", role=T("Ceramah Al-Habib", "Al-Habib's lectures", "محاضرات الحبيب"),
+    desc=T("Berisi ceramah Al-Habib Abu Bakar, dan menjawab dengan diksi beliau sendiri.", "Holds the lectures of Al-Habib Abu Bakar, and answers in his own wording.", "فيه محاضرات الحبيب أبي بكر، ويجيب بألفاظه هو."),
     ask=T("“Bagaimana Al-Habib menjelaskan sikap saat masa fitnah?”", "“How does Al-Habib explain conduct in times of trial?”", "«كيف يشرح الحبيب الموقف زمن الفتن؟»")))
 A(S("assistant", bab=4, ar="الخطيب", name="Al-Khatib", role=T("Penyusun khutbah", "The sermon writer", "معدّ الخطب"),
     desc=T("Menyusun khutbah, bahan ceramah, dan materi dakwah lainnya.", "Drafts sermons, talk material, and other da'wa content.", "يُعدّ الخطب والمواد الوعظية وسائر المواد الدعوية."),

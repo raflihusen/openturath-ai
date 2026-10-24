@@ -239,7 +239,7 @@ class AiInfoSheet extends StatelessWidget {
             heading('Isi'),
             Wrap(spacing: 8, runSpacing: 8, children: [
               stat(number(content['jumlah_kitab'] as num?), 'Kitab'),
-              if (lectures != null) stat(number(lectures), 'Muhadharah'),
+              if (lectures != null) stat(number(lectures), 'Ceramah'),
               stat(words(content['jumlah_kata'] as num?), 'Kata teks'),
               stat(number(method['berkas_notebooklm'] as num?),
                   'Berkas terindeks'),
@@ -286,7 +286,7 @@ class AiInfoSheet extends StatelessWidget {
               const SizedBox(height: OTSpacing.sm),
               OutlinedButton.icon(
                 icon: const Icon(Icons.play_circle_outline_rounded, size: 18),
-                label: Text('Daftar ${number(lectures)} muhadharah'),
+                label: Text('Daftar ${number(lectures)} ceramah'),
                 onPressed: () => Navigator.of(context).push(MaterialPageRoute(
                     builder: (_) => const TahawwulatLectureListPage())),
               ),
@@ -356,7 +356,7 @@ class AiInfoSheet extends StatelessWidget {
   }
 }
 
-/// Daftar muhadharah Fikih Tahawwulat: judul apa adanya dari sumber, kanal, durasi, tautan YouTube.
+/// Daftar ceramah Fikih Tahawwulat: judul apa adanya dari sumber, kanal, durasi, tautan YouTube.
 class TahawwulatLectureListPage extends StatefulWidget {
   const TahawwulatLectureListPage({super.key});
 
@@ -401,7 +401,7 @@ class _TahawwulatLectureListPageState extends State<TahawwulatLectureListPage> {
       backgroundColor: OTColors.canvas(isDark),
       appBar: AppBar(
           backgroundColor: OTColors.canvas(isDark),
-          title: const Text('Muhadharah Fikih Tahawwulat')),
+          title: const Text('Ceramah Fikih Tahawwulat')),
       body: !_ready
           ? const Center(child: CircularProgressIndicator())
           : Column(children: [
@@ -411,7 +411,7 @@ class _TahawwulatLectureListPageState extends State<TahawwulatLectureListPage> {
                 child: TextField(
                   decoration: const InputDecoration(
                       prefixIcon: Icon(Icons.search_rounded),
-                      hintText: 'Cari judul muhadharah'),
+                      hintText: 'Cari judul ceramah'),
                   onChanged: (v) => setState(() => _query = v.trim()),
                 ),
               ),
