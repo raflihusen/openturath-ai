@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:openturath_ai/core/arabic_catalog.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:openturath_ai/core/app_copy.dart';
 import 'package:openturath_ai/core/app_config.dart';
@@ -97,9 +98,10 @@ void main() {
         ),
       );
 
-      expect(find.text(AppCopy.referenceBooks), findsOneWidget);
-      expect(find.text(Loc.tr('bookCatalog')), findsOneWidget);
-      expect(find.text('Semua kitab'), findsOneWidget);
+      // Katalog selalu Arab dan RTL, apa pun bahasa aplikasi.
+      // Judul dan subjudul pra-muat sama-sama menampilkan "فهرس الكتب".
+      expect(find.text(ArabicCatalog.catalogTitle), findsNWidgets(2));
+      expect(find.text(Loc.trAr('allBooks')), findsOneWidget);
     });
 
     testWidgets(

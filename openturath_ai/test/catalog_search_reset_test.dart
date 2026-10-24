@@ -10,11 +10,11 @@ void main() {
       home: BookCatalogScreen(initialQuery: 'الأم'),
     ));
     await tester.enterText(find.byType(TextField), 'بحث جديد');
-    await tester.tap(find.byIcon(Icons.close_rounded));
+    await tester.tap(find.byIcon(Icons.clear_rounded));
     await tester.pump(const Duration(milliseconds: 250));
     expect(
         tester.widget<TextField>(find.byType(TextField)).controller!.text, '');
-    expect(find.byIcon(Icons.close_rounded), findsNothing);
+    expect(find.byIcon(Icons.clear_rounded), findsNothing);
     await tester.pumpWidget(const SizedBox.shrink());
   });
 }

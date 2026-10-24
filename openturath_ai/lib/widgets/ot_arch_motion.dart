@@ -164,7 +164,8 @@ class _OTSplashIntroState extends State<OTSplashIntro>
                                 ms: ms,
                                 ink: ink,
                                 markRect: Rect.fromCenter(
-                                    center: const Offset(canvasW / 2, canvasH * 0.55),
+                                    center: const Offset(
+                                        canvasW / 2, canvasH * 0.55),
                                     width: markW,
                                     height: (833 - _y0) * s))),
                       ),

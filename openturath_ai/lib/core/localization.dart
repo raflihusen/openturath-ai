@@ -71,6 +71,24 @@ abstract final class Loc {
     return text;
   }
 
+  /// Seperti [tr], tetapi selalu Arab (katalog kitab selalu Arab dan RTL).
+  static String trAr(String key, [List<String>? args]) {
+    final values = copyCatalog[_aliases[key] ?? key];
+    var text = (values != null && values.length > 2) ? values[2] : key;
+    if (args != null) {
+      for (var i = 0; i < args.length; i++) {
+        text = text.replaceAll('{$i}', args[i]);
+      }
+    }
+    return text;
+  }
+
+  /// Seperti [text], tetapi selalu Arab.
+  static String textAr(String source) {
+    final key = _sourceKeys[source];
+    return key == null ? source : trAr(key);
+  }
+
   /// Terjemahkan label katalog statis. Naskah sumber dan nama kitab dipertahankan.
   static String text(String source) {
     final key = _sourceKeys[source];

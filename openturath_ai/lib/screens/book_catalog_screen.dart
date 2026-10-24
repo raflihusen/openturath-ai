@@ -3,10 +3,9 @@ import '../widgets/desktop_shortcuts.dart';
 import '../widgets/adaptive_sheet.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart' show NumberFormat;
 
 import '../widgets/ot_motion_widgets.dart';
-import '../core/app_copy.dart';
+import '../core/arabic_catalog.dart';
 import '../core/catalog_section_label.dart';
 import '../core/localization.dart';
 import '../core/navigation_guard.dart';
@@ -143,7 +142,7 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
       if (!mounted) return;
       setState(() {
         _isLoading = false;
-        _errorMessage = AppCopy.catalogLoadFailed;
+        _errorMessage = Loc.trAr('catalogLoadFailed');
       });
     }
   }
@@ -210,9 +209,7 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
     );
   }
 
-  String _formatNumber(int number) {
-    return NumberFormat.decimalPattern(Loc.language).format(number);
-  }
+  String _formatNumber(int number) => ArabicCatalog.number('$number');
 
   String _cleanSectionLabel(String full) {
     return CatalogSectionLabel.of(full);
@@ -221,9 +218,11 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
   String _resolveSubtitle() {
     final count = _allBooks?.length;
     final label = count == null
-        ? Loc.tr('bookCatalog')
-        : Loc.tr('bookCount', [_formatNumber(count)]);
-    return widget.agent == null ? label : '$label · ${widget.agent!.title}';
+        ? Loc.trAr('bookCatalog')
+        : Loc.trAr('bookCount', [_formatNumber(count)]);
+    return widget.agent == null
+        ? label
+        : '$label · ${widget.agent!.titleArabic}';
   }
 
   @override
@@ -233,7 +232,13 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
           _clearSearch();
           _searchFocusNode.unfocus();
         },
-        child: _buildScreen(context),
+        child: Theme(
+          data: ArabicCatalog.theme(Theme.of(context)),
+          child: Directionality(
+            textDirection: TextDirection.rtl,
+            child: _buildScreen(context),
+          ),
+        ),
       );
 
   Widget _buildScreen(BuildContext context) {
@@ -256,7 +261,11 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(AppCopy.referenceBooks),
+            Text(ArabicCatalog.catalogTitle,
+                style: ScholarlyFonts.scheherazadeNew(
+                    fontSize: OTFontSize.s26,
+                    fontWeight: FontWeight.w700,
+                    color: textPrimary)),
             Text(
               _resolveSubtitle(),
               style: OTTypography.caption(color: textSecondary)
@@ -269,7 +278,7 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
             TextButton(
               onPressed: _clearFilters,
               child: Text(
-                Loc.tr('ui_ae4f9663d7'),
+                Loc.trAr('ui_ae4f9663d7'),
                 style: OTTypography.button(color: primaryAccent)
                     .copyWith(fontSize: OTFontSize.s14),
               ),
@@ -287,51 +296,39 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
                 horizontal: OTSpacing.lg,
                 vertical: OTSpacing.sm,
               ),
-              child: Container(
-                height: 48,
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                decoration: BoxDecoration(
-                  color: surface,
-                  borderRadius: BorderRadius.circular(OTRadius.chip),
-                  border: Border.all(color: border, width: 0.8),
-                ),
-                child: Row(
-                  children: [
-                    Icon(Icons.search_rounded, size: 20, color: textSecondary),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: TextField(
-                        controller: _searchCtrl,
-                        focusNode: _searchFocusNode,
-                        onChanged: _onSearchChanged,
-                        style: ScholarlyFonts.outfit(
-                            fontSize: OTFontSize.s14, color: textPrimary),
-                        decoration: InputDecoration(
-                          hintText: Loc.tr('ui_214d016291'),
-                          hintStyle: ScholarlyFonts.outfit(
-                            fontSize: OTFontSize.s14,
-                            color: textSecondary.withValues(alpha: 0.7),
-                          ),
-                          border: InputBorder.none,
-                          enabledBorder: InputBorder.none,
-                          focusedBorder: InputBorder.none,
-                          disabledBorder: InputBorder.none,
-                          errorBorder: InputBorder.none,
-                          focusedErrorBorder: InputBorder.none,
-                          filled: false,
-                          isDense: true,
-                          contentPadding: EdgeInsets.zero,
-                        ),
-                      ),
-                    ),
-                    if (_searchQuery.isNotEmpty)
-                      IconButton(
-                        tooltip: Loc.tr('clearSearch'),
-                        onPressed: _clearSearch,
-                        icon: Icon(Icons.close_rounded,
-                            size: 18, color: textSecondary),
-                      ),
-                  ],
+              child: TextField(
+                controller: _searchCtrl,
+                focusNode: _searchFocusNode,
+                onChanged: _onSearchChanged,
+                style: ArabicCatalog.ui(
+                    color: textPrimary, fontSize: OTFontSize.s14),
+                decoration: InputDecoration(
+                  hintText: ArabicCatalog.searchHint,
+                  hintStyle: ArabicCatalog.ui(
+                      color: textSecondary, fontSize: OTFontSize.s14),
+                  prefixIcon: Icon(Icons.search_rounded,
+                      color: textSecondary, size: 20),
+                  suffixIcon: _searchQuery.isNotEmpty
+                      ? IconButton(
+                          tooltip: ArabicCatalog.clearSearch,
+                          icon: Icon(Icons.clear_rounded,
+                              color: textSecondary, size: 18),
+                          onPressed: _clearSearch,
+                        )
+                      : null,
+                  filled: true,
+                  fillColor: OTColors.surfaceSubtle(isDark),
+                  contentPadding: const EdgeInsets.symmetric(
+                      horizontal: OTSpacing.base, vertical: OTSpacing.md),
+                  border: OutlineInputBorder(
+                      borderRadius: OTRadius.inputBorder,
+                      borderSide: BorderSide.none),
+                  enabledBorder: OutlineInputBorder(
+                      borderRadius: OTRadius.inputBorder,
+                      borderSide: BorderSide.none),
+                  focusedBorder: OutlineInputBorder(
+                      borderRadius: OTRadius.inputBorder,
+                      borderSide: BorderSide(color: textPrimary, width: 1.2)),
                 ),
               ),
             ),
@@ -358,14 +355,14 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
                 child: Row(
                   children: [
                     Text(
-                      Loc.tr('booksShown', [
+                      Loc.trAr('booksShown', [
                         _formatNumber(_filteredBooks!.length),
                         _formatNumber(_allBooks!.length),
                       ]),
-                      style:
-                          OTTypography.caption(color: textSecondary).copyWith(
-                        fontSize: OTFontSize.s12,
-                        fontWeight: FontWeight.w400,
+                      style: ArabicCatalog.ui(
+                        fontSize: OTFontSize.s14,
+                        fontWeight: FontWeight.w600,
+                        color: textPrimary,
                       ),
                     ),
                     const Spacer(),
@@ -385,8 +382,9 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
                           [
                             if (_selectedSection != null)
                               _cleanSectionLabel(_selectedSection!),
-                            if (_selectedEra != null) Loc.text(_selectedEra!),
-                            if (_selectedType != null) Loc.text(_selectedType!),
+                            if (_selectedEra != null) Loc.textAr(_selectedEra!),
+                            if (_selectedType != null)
+                              Loc.textAr(_selectedType!),
                             if (_selectedCentury != null) _selectedCentury!,
                           ].join(' · '),
                           style: OTTypography.caption(color: primaryAccent)
@@ -431,7 +429,8 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
       child: Row(
         children: [
           _filterChip(
-            label: hasFilters ? Loc.tr('ui_c0c96d1d9a') : Loc.tr('allBooks'),
+            label:
+                hasFilters ? Loc.trAr('ui_c0c96d1d9a') : Loc.trAr('allBooks'),
             isSelected: !hasFilters,
             onTap: hasFilters ? _clearFilters : () {},
             isDark: isDark,
@@ -445,7 +444,7 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
             onPressed: () => _showFilterSheet(
                 isDark, surface, border, textPrimary, textSecondary),
             icon: const Icon(Icons.tune_rounded, size: 16),
-            label: Text(Loc.tr('ui_d7decf1aa2')),
+            label: Text(Loc.trAr('ui_d7decf1aa2')),
             style: OTButtons.compactOutlined(isDark),
           ),
         ],
@@ -472,11 +471,11 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
             child: ListView(
               shrinkWrap: true,
               children: [
-                Text(Loc.tr('ui_ac03e7c93b'),
+                Text(Loc.trAr('ui_ac03e7c93b'),
                     style: OTTypography.screenTitle(color: textPrimary)),
                 const SizedBox(height: 16),
                 if (_availableSections.length > 1) ...[
-                  Text(Loc.tr('ui_8b71077ed7'),
+                  Text(Loc.trAr('ui_8b71077ed7'),
                       style: OTTypography.captionMedium(color: textSecondary)),
                   Wrap(
                       spacing: 8,
@@ -496,13 +495,13 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
                           .toList()),
                   const SizedBox(height: 16),
                 ],
-                Text(Loc.tr('ui_f37a89cbd1'),
+                Text(Loc.trAr('ui_f37a89cbd1'),
                     style: OTTypography.captionMedium(color: textSecondary)),
                 Wrap(
                     spacing: 8,
                     children: eraChoices
                         .map((era) => ChoiceChip(
-                            label: Text(Loc.text(era)),
+                            label: Text(Loc.textAr(era)),
                             selected:
                                 _selectedCentury == era || _selectedEra == era,
                             onSelected: (_) {
@@ -523,13 +522,13 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
                         .toList()),
                 if (_hasTypes) ...[
                   const SizedBox(height: 16),
-                  Text(Loc.tr('ui_47b35543e3'),
+                  Text(Loc.trAr('ui_47b35543e3'),
                       style: OTTypography.captionMedium(color: textSecondary)),
                   Wrap(
                       spacing: 8,
                       children: _types
                           .map((type) => ChoiceChip(
-                              label: Text(Loc.text(type)),
+                              label: Text(Loc.textAr(type)),
                               selected: _selectedType == type,
                               onSelected: (_) {
                                 setState(() {
@@ -547,7 +546,7 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
                       _clearFilters();
                       Navigator.pop(sheetContext);
                     },
-                    child: Text(Loc.tr('ui_a74cf8b9bd'))),
+                    child: Text(Loc.trAr('ui_a74cf8b9bd'))),
               ],
             ),
           ),
@@ -599,7 +598,7 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
                     borderRadius: BorderRadius.circular(OTRadius.input),
                   ),
                   child: Text(
-                    AppCopy.tryAgain,
+                    Loc.trAr('tryAgain'),
                     style:
                         OTTypography.button(color: OTColors.onAccent(isDark)),
                   ),
@@ -621,14 +620,14 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
               Icon(Icons.search_off_rounded, size: 48, color: textSecondary),
               const SizedBox(height: 12),
               Text(
-                Loc.tr('ui_022c202d54'),
+                Loc.trAr('ui_022c202d54'),
                 style: OTTypography.bodyMedium(color: textPrimary).copyWith(
                   fontWeight: FontWeight.w600,
                 ),
               ),
               const SizedBox(height: 4),
               Text(
-                Loc.tr('ui_6e35db0b1e'),
+                Loc.trAr('ui_6e35db0b1e'),
                 textAlign: TextAlign.center,
                 style: OTTypography.caption(color: textSecondary),
               ),
@@ -644,7 +643,7 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
                       borderRadius: BorderRadius.circular(OTRadius.xs),
                     ),
                     child: Text(
-                      Loc.tr('ui_ae4f9663d7'),
+                      Loc.trAr('ui_ae4f9663d7'),
                       style: OTTypography.button(color: textPrimary)
                           .copyWith(fontSize: OTFontSize.s14),
                     ),
