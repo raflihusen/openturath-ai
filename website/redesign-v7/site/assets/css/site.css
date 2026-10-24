@@ -458,8 +458,8 @@ html[dir="rtl"] .btn:hover .arr{transform:scaleX(-1) translateX(3px)}
 #ring{position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;transform:none;left:0;top:0}
 .welcome{position:relative;min-height:min(900px,calc(100svh - 40px));padding-top:56px}
 .welcome .hero-mark{margin:0 auto 34px}
-.eyebrow-brand{position:relative;z-index:1;font-size:13px;letter-spacing:.24em;text-transform:uppercase;font-weight:600;color:var(--on-variant);margin-bottom:26px}
-html[lang="ar"] .eyebrow-brand{letter-spacing:.04em;text-transform:none;font-size:15px}
+.eyebrow-brand{position:relative;z-index:1;display:inline-flex;align-items:center;font-size:13px;letter-spacing:.24em;text-transform:uppercase;font-weight:600;color:var(--on-variant);margin-bottom:26px;padding:9px 18px 9px 20px;border:1px solid var(--container-highest);border-radius:999px;background:color-mix(in srgb,var(--surface) 70%,transparent)}
+html[lang="ar"] .eyebrow-brand{letter-spacing:.04em;text-transform:none;font-size:15px;padding:8px 20px}
 .welcome h1.hero{text-shadow:0 0 28px var(--surface),0 0 12px var(--surface)}
 .welcome .lede,.welcome .meta-row{text-shadow:0 0 18px var(--surface)}
 .progress{position:fixed;inset-inline:0;top:0;height:2px;background:var(--on-surface);transform-origin:0 50%;transform:scaleX(0);z-index:300;pointer-events:none}
