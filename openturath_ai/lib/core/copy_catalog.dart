@@ -2270,7 +2270,7 @@ const copyCatalog = <String, List<String>>{
   "unitBooks": ["kitab", "works", "كتابًا"],
   "unitVolumes": ["jilid", "volumes", "مجلدًا"],
   "unitPages": ["halaman", "pages", "صفحة"],
-  "unitLectures": ["ceramah", "lectures", "محاضرة"],
+  "unitLectures": ["arsip ceramah", "lecture archives", "أرشيف محاضرات"],
   "flagshipPositioning": [
     "AI yang dibangun khusus untuk Fikih Tahawwulat.",
     "An AI assistant built specifically for Fiqh al-Tahawwulat.",
