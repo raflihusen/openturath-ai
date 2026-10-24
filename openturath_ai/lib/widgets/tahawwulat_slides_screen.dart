@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:ui' show PointerDeviceKind;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -131,18 +132,27 @@ class _TahawwulatSlidesScreenState extends State<TahawwulatSlidesScreen> {
                 : Column(children: [
                     _top(dark, fg, sub),
                     Expanded(
-                      child: PageView.builder(
-                        controller: _page,
-                        itemCount: total,
-                        onPageChanged: (v) => setState(() => _i = v),
-                        itemBuilder: (_, k) => _SlideBody(
-                            key: ValueKey('slide$k'),
-                            data: _slides[k] as Map<String, dynamic>,
-                            t: _t,
-                            dark: dark,
-                            onAsk: widget.onAsk,
-                            onText: () => TahawwulatModuleScreen.show(context,
-                                onAsk: widget.onAsk)),
+                      child: ScrollConfiguration(
+                        behavior: ScrollConfiguration.of(context)
+                            .copyWith(dragDevices: {
+                          PointerDeviceKind.touch,
+                          PointerDeviceKind.mouse,
+                          PointerDeviceKind.trackpad,
+                          PointerDeviceKind.stylus,
+                        }),
+                        child: PageView.builder(
+                          controller: _page,
+                          itemCount: total,
+                          onPageChanged: (v) => setState(() => _i = v),
+                          itemBuilder: (_, k) => _SlideBody(
+                              key: ValueKey('slide$k'),
+                              data: _slides[k] as Map<String, dynamic>,
+                              t: _t,
+                              dark: dark,
+                              onAsk: widget.onAsk,
+                              onText: () => TahawwulatModuleScreen.show(context,
+                                  onAsk: widget.onAsk)),
+                        ),
                       ),
                     ),
                     _bottom(dark, fg, sub, total),
@@ -197,7 +207,13 @@ class _TahawwulatSlidesScreenState extends State<TahawwulatSlidesScreen> {
           ]),
         ),
         const SizedBox(width: OTSpacing.md),
-        Text(_t(_bab[cur]), style: OTTypography.captionMedium(color: sub)),
+        ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 112),
+          child: Text(_t(_bab[cur]),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: OTTypography.captionMedium(color: sub)),
+        ),
         IconButton(
           tooltip: Loc.tr('moduleClose'),
           onPressed: () => Navigator.of(context).maybePop(),
@@ -441,41 +457,57 @@ class _SlideBody extends StatelessWidget {
                     : box.maxWidth >= 560
                         ? 2
                         : 1;
-            final w = (box.maxWidth - (cols - 1) * OTSpacing.md) / cols;
-            return Wrap(spacing: OTSpacing.md, children: [
+            final tiles = <Widget>[
               for (var n = 0; n < items.length; n++)
-                SizedBox(
-                  width: w,
-                  child: SlideReveal(
-                    step: step + n,
-                    child: _card(
-                        Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                  ar
-                                      ? ArabicCatalog.digits('0${n + 1}')
-                                      : '0${n + 1}',
-                                  style: OTTypography.metadataTag(
+                SlideReveal(
+                  step: step + n,
+                  child: _card(
+                      Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                                ar
+                                    ? ArabicCatalog.digits('0${n + 1}')
+                                    : '0${n + 1}',
+                                style: OTTypography.metadataTag(
+                                    color: items[n]['hl'] == true
+                                        ? OTColors.textSecondary(!dark)
+                                        : sub)),
+                            const SizedBox(height: OTSpacing.md),
+                            Text(t(items[n]['t']),
+                                style: OTTypography.cardTitle(
+                                    color: items[n]['hl'] == true
+                                        ? OTColors.textPrimary(!dark)
+                                        : fg)),
+                            if (items[n]['d'] != null) ...[
+                              const SizedBox(height: OTSpacing.xs),
+                              Text(t(items[n]['d']),
+                                  style: OTTypography.body(
                                       color: items[n]['hl'] == true
                                           ? OTColors.textSecondary(!dark)
                                           : sub)),
-                              const SizedBox(height: OTSpacing.md),
-                              Text(t(items[n]['t']),
-                                  style: OTTypography.cardTitle(
-                                      color: items[n]['hl'] == true
-                                          ? OTColors.textPrimary(!dark)
-                                          : fg)),
-                              if (items[n]['d'] != null) ...[
-                                const SizedBox(height: OTSpacing.xs),
-                                Text(t(items[n]['d']),
-                                    style: OTTypography.body(
-                                        color: items[n]['hl'] == true
-                                            ? OTColors.textSecondary(!dark)
-                                            : sub)),
-                              ],
-                            ]),
-                        items[n]['hl'] == true),
+                            ],
+                          ]),
+                      items[n]['hl'] == true),
+                ),
+            ];
+            if (cols == 1) return Column(children: tiles);
+            return Column(children: [
+              for (var r0 = 0; r0 < tiles.length; r0 += cols)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: OTSpacing.md),
+                  child: IntrinsicHeight(
+                    child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          for (var c0 = 0; c0 < cols; c0++) ...[
+                            if (c0 > 0) const SizedBox(width: OTSpacing.md),
+                            Expanded(
+                                child: r0 + c0 < tiles.length
+                                    ? tiles[r0 + c0]
+                                    : const SizedBox.shrink()),
+                          ]
+                        ]),
                   ),
                 ),
             ]);
@@ -762,7 +794,8 @@ class _SlideBody extends StatelessWidget {
           dark: dark,
           hl: hl,
           labels: labels);
-      return height == null ? s : SizedBox(height: height, child: s);
+      final art = ExcludeSemantics(child: s);
+      return height == null ? art : SizedBox(height: height, child: art);
     }
 
     Widget scroller(List<Widget> kids, {required bool center}) =>
@@ -790,7 +823,9 @@ class _SlideBody extends StatelessWidget {
           Positioned.fill(
             child: Padding(
               padding: const EdgeInsets.all(OTSpacing.xl),
-              child: Opacity(opacity: wide ? 0.5 : 0.28, child: stage()),
+              child: Opacity(
+                  opacity: type == 'quote' ? 0.18 : (wide ? 0.5 : 0.28),
+                  child: stage()),
             ),
           ),
         Center(

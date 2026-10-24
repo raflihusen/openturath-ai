@@ -51,9 +51,9 @@
     "ar": "علم لفهم زمان يتغيّر."
    },
    "hint": {
-    "id": "Geser atau ketuk untuk melanjutkan.",
-    "en": "Swipe or tap to continue.",
-    "ar": "اسحب أو انقر للمتابعة."
+    "id": "Geser atau tekan tombol panah untuk melanjutkan.",
+    "en": "Swipe or press the arrow button to continue.",
+    "ar": "اسحب أو اضغط زر السهم للمتابعة."
    }
   },
   {
@@ -1361,6 +1361,218 @@
    ]
   },
   {
+   "type": "question",
+   "bab": 3,
+   "q": {
+    "id": "Apakah “fikih” hanya berarti hukum halal dan haram?",
+    "en": "Does “fiqh” only mean rulings on the lawful and the forbidden?",
+    "ar": "هل «الفقه» يعني أحكام الحلال والحرام فقط؟"
+   }
+  },
+  {
+   "type": "text",
+   "bab": 3,
+   "title": {
+    "id": "Itu makna yang paling dikenal sekarang, bukan satu-satunya.",
+    "en": "That is the best-known meaning today, not the only one.",
+    "ar": "هذا أشهر معانيه اليوم، لكنه ليس الوحيد."
+   },
+   "lines": [
+    {
+     "id": "Hari ini, kata fikih biasanya langsung dipahami sebagai ilmu hukum amalan: salat, zakat, jual beli, nikah.",
+     "en": "Today the word fiqh is usually taken at once as the science of legal rulings: prayer, zakat, trade, marriage.",
+     "ar": "اليوم يُفهم لفظ الفقه مباشرةً على أنه علم أحكام العبادات والمعاملات: الصلاة والزكاة والبيع والنكاح."
+    },
+    {
+     "id": "Padahal itu makna khusus yang mengemuka kemudian. Makna asal kata ini jauh lebih luas.",
+     "en": "Yet that is a specialized meaning that came to the fore later. The word's original meaning is far wider.",
+     "ar": "وهذا معنى مخصوص اشتهر لاحقًا، أما أصل الكلمة فأوسع بكثير."
+    }
+   ]
+  },
+  {
+   "type": "cards",
+   "bab": 3,
+   "title": {
+    "id": "Fikih menurut bahasa",
+    "en": "Fiqh in the language",
+    "ar": "الفقه في اللغة"
+   },
+   "items": [
+    {
+     "t": {
+      "id": "Paham",
+      "en": "To understand",
+      "ar": "الفهم"
+     },
+     "d": {
+      "id": "Dalam bahasa Arab, fakih berarti paham. Akar katanya menunjuk pada mengetahui sesuatu dan mengerti maksudnya.",
+      "en": "In Arabic, faqih means one who understands. The root points to knowing a thing and grasping its meaning.",
+      "ar": "الفقه في اللغة: الفهم. وأصل مادته يدل على إدراك الشيء والعلم به."
+     }
+    },
+    {
+     "t": {
+      "id": "Paham yang menembus",
+      "en": "Understanding that reaches in",
+      "ar": "فهم يبلغ الأعماق"
+     },
+     "d": {
+      "id": "Bukan sekadar mendengar atau menghafal, tetapi menangkap maksud dan dasar sesuatu.",
+      "en": "Not merely hearing or memorizing, but grasping the intent and the foundation of a thing.",
+      "ar": "لا مجرد السماع أو الحفظ، بل إدراك المقصود والأصل."
+     }
+    },
+    {
+     "t": {
+      "id": "Untuk apa saja",
+      "en": "For anything",
+      "ar": "في كل باب"
+     },
+     "d": {
+      "id": "Kata ini dipakai untuk memahami perkataan, perkara, dan agama. Ia tidak terikat pada satu bidang.",
+      "en": "The word is used for understanding speech, affairs, and religion. It is not tied to a single field.",
+      "ar": "يُستعمل في فهم الكلام والأمور والدين، ولا يختص بباب واحد."
+     }
+    }
+   ]
+  },
+  {
+   "type": "quote",
+   "bab": 3,
+   "art": "arch",
+   "arabic": "يَفْقَهُوا قَوْلِي",
+   "translation": {
+    "id": "“Agar mereka paham perkataanku.”",
+    "en": "“That they may understand my speech.”",
+    "ar": "«أي: يفهموا كلامي.»"
+   },
+   "source": {
+    "id": "QS. Thaha: 28. Kata yang sama, dipakai untuk memahami ucapan.",
+    "en": "Qur'an, Ta-Ha: 28. The same word, used for understanding speech.",
+    "ar": "سورة طه: 28. اللفظ نفسه بمعنى فهم الكلام."
+   }
+  },
+  {
+   "type": "quote",
+   "bab": 3,
+   "art": "arch",
+   "arabic": "مَنْ يُرِدِ اللَّهُ بِهِ خَيْرًا يُفَقِّهْهُ فِي الدِّينِ",
+   "translation": {
+    "id": "“Barang siapa dikehendaki Allah kebaikan baginya, Dia pahamkan ia dalam agama.”",
+    "en": "“Whoever Allah wishes good for, He grants deep understanding of the religion.”",
+    "ar": "«يرزقه الله الفهم العميق في الدين.»"
+   },
+   "source": {
+    "id": "HR. Bukhari dan Muslim",
+    "en": "Reported by al-Bukhari and Muslim",
+    "ar": "رواه البخاري ومسلم"
+   }
+  },
+  {
+   "type": "question",
+   "bab": 3,
+   "q": {
+    "id": "Apakah “paham dalam agama” di hadis ini hanya soal hukum salat dan jual beli?",
+    "en": "Does “understanding in religion” in this hadith only mean the rulings of prayer and trade?",
+    "ar": "هل «الفقه في الدين» في هذا الحديث مقصور على أحكام الصلاة والبيع؟"
+   }
+  },
+  {
+   "type": "text",
+   "bab": 3,
+   "title": {
+    "id": "Tidak. Yang dipahamkan adalah agama, seluruhnya.",
+    "en": "No. What is granted is understanding of religion, all of it.",
+    "ar": "لا. المقصود الفقه في الدين كله."
+   },
+   "lines": [
+    {
+     "id": "Hadis ini berkata “dalam agama”, bukan “dalam hukum-hukum amalan”.",
+     "en": "The hadith says “in the religion”, not “in the rulings of deeds”.",
+     "ar": "قال الحديث: «في الدين» ولم يقل: «في أحكام الأعمال»."
+    },
+    {
+     "id": "Dan agama, menurut Hadis Jibril tadi, terdiri dari Islam, Iman, Ihsan, dan tanda-tanda zaman. Maka paham dalam agama berarti paham seluruh bagiannya.",
+     "en": "And religion, by the Hadith of Jibril, is Islam, Iman, Ihsan, and the signs of the times. So understanding the religion means understanding all its parts.",
+     "ar": "والدين في حديث جبريل: الإسلام والإيمان والإحسان وعلامات الساعة. فالفقه في الدين فهمٌ لأجزائه كلها."
+    }
+   ]
+  },
+  {
+   "type": "cards",
+   "bab": 3,
+   "title": {
+    "id": "Para ulama terdahulu memakainya luas",
+    "en": "Earlier scholars used it broadly",
+    "ar": "استعمله العلماء الأوائل استعمالًا واسعًا"
+   },
+   "items": [
+    {
+     "t": {
+      "id": "Abu Hanifah",
+      "en": "Abu Hanifa",
+      "ar": "أبو حنيفة"
+     },
+     "d": {
+      "id": "Mendefinisikan fikih sebagai mengenal apa yang menjadi hak dan kewajiban diri. Cakupannya melampaui hukum amalan.",
+      "en": "Defined fiqh as knowing what is for oneself and what is against oneself. A scope wider than rulings of deeds.",
+      "ar": "عرّف الفقه بأنه «معرفة النفس ما لها وما عليها»، وهو أوسع من أحكام الأعمال."
+     }
+    },
+    {
+     "t": {
+      "id": "Al-Fiqh al-Akbar",
+      "en": "Al-Fiqh al-Akbar",
+      "ar": "الفقه الأكبر"
+     },
+     "d": {
+      "id": "Judul karya yang dinisbatkan kepada Abu Hanifah, dan isinya akidah. Dahulu fikih juga berarti paham pokok-pokok agama.",
+      "en": "The title of a work attributed to Abu Hanifa, on creed. In earlier times fiqh also meant understanding the fundamentals of religion.",
+      "ar": "كتاب منسوب إلى أبي حنيفة في العقيدة، فكان الفقه يشمل فهم أصول الدين."
+     }
+    },
+    {
+     "t": {
+      "id": "Al-Hasan al-Bashri",
+      "en": "Al-Hasan al-Basri",
+      "ar": "الحسن البصري"
+     },
+     "d": {
+      "id": "Menyifati orang yang faqih sebagai yang zuhud terhadap dunia, melihat agamanya dengan jelas, dan tekun beribadah. Fikih di sini menyentuh hati dan laku.",
+      "en": "Described the faqih as one who is detached from the world, clear-sighted in his religion, and constant in worship. Here fiqh touches heart and conduct.",
+      "ar": "وصف الفقيه بأنه «الزاهد في الدنيا، البصير بدينه، المداوم على عبادة ربه». فالفقه هنا يمسّ القلب والسلوك."
+     }
+    }
+   ],
+   "note": {
+    "id": "Pembahasan makna kata fikih ini juga dibuka di halaman-halaman awal kitab At-Talid wath-Tharif.",
+    "en": "This discussion of the word fiqh also opens the first pages of At-Talid wath-Tharif.",
+    "ar": "ويُفتتح الكلام على معنى كلمة الفقه كذلك في الصفحات الأولى من كتاب «التليد والطارف»."
+   }
+  },
+  {
+   "type": "text",
+   "bab": 3,
+   "title": {
+    "id": "Fikih Tahawwulat kembali ke makna yang luas ini.",
+    "en": "Fiqh al-Tahawwulat returns to this wide meaning.",
+    "ar": "وفقه التحولات يعود إلى هذا المعنى الواسع."
+   },
+   "lines": [
+    {
+     "id": "Tahawwulat berarti perpindahan dari satu keadaan ke keadaan lain. Fikih Tahawwulat adalah paham yang dalam tentang perubahan zaman, dari sisi akidah, hukum, akhlak, dan sikap.",
+     "en": "Tahawwulat means moving from one state to another. Fiqh al-Tahawwulat is deep understanding of the changes of the age, in creed, rulings, ethics, and stance.",
+     "ar": "التحولات: الانتقال من حال إلى حال. وفقه التحولات فهم عميق لتغيّر الزمان، في العقيدة والحكم والأخلاق والموقف."
+    },
+    {
+     "id": "Karena itu ia tidak berhenti pada hukum, dan tidak berhenti pada ramalan.",
+     "en": "That is why it stops neither at rulings nor at prediction.",
+     "ar": "ولهذا لا يقف عند الأحكام، ولا يقف عند التنبؤ."
+    }
+   ]
+  },
+  {
    "type": "compare",
    "bab": 3,
    "title": {
@@ -1370,9 +1582,9 @@
    },
    "cols": [
     {
-     "id": "Fikih yang biasa menjawab",
-     "en": "Ordinary fiqh answers",
-     "ar": "الفقه المعتاد يجيب"
+     "id": "Fikih hukum amalan menjawab",
+     "en": "Fiqh of rulings answers",
+     "ar": "فقه الأحكام يجيب"
     },
     {
      "id": "Fikih Tahawwulat menjawab",
@@ -2068,6 +2280,77 @@
    ],
    "art": "radial",
    "hl": -1
+  },
+  {
+   "type": "list",
+   "bab": 4,
+   "title": {
+    "id": "Ringkasannya",
+    "en": "In short",
+    "ar": "الخلاصة"
+   },
+   "items": [
+    {
+     "t": {
+      "id": "Agama itu utuh",
+      "en": "Religion is whole",
+      "ar": "الدين وحدة كاملة"
+     },
+     "d": {
+      "id": "Islam, Iman, Ihsan, dan tanda-tanda zaman, dalam satu Hadis Jibril.",
+      "en": "Islam, Iman, Ihsan, and the signs of the times, in one Hadith of Jibril.",
+      "ar": "الإسلام والإيمان والإحسان وعلامات الساعة في حديث جبريل."
+     }
+    },
+    {
+     "t": {
+      "id": "Fikih itu paham yang dalam",
+      "en": "Fiqh is deep understanding",
+      "ar": "الفقه فهم عميق"
+     },
+     "d": {
+      "id": "Bukan hanya hukum halal dan haram.",
+      "en": "Not only rulings on the lawful and the forbidden.",
+      "ar": "لا أحكام الحلال والحرام وحدها."
+     }
+    },
+    {
+     "t": {
+      "id": "Tahawwulat itu perubahan zaman",
+      "en": "Tahawwulat is the change of the age",
+      "ar": "التحولات تغيّر الزمان"
+     },
+     "d": {
+      "id": "Dipahami dengan petunjuk Al-Qur'an dan hadis.",
+      "en": "Understood by the guidance of the Qur'an and hadith.",
+      "ar": "تُفهم بهدي القرآن والحديث."
+     }
+    },
+    {
+     "t": {
+      "id": "Lima cabang, bukan hanya Mahdi dan Dajjal",
+      "en": "Five branches, not only al-Mahdi and the Dajjal",
+      "ar": "خمسة فروع، لا المهدي والدجال فقط"
+     },
+     "d": {
+      "id": "Fitnah, isyarat dan perlindungan, sains dan teknologi, tanda alam, serta sejarah.",
+      "en": "Fitna, signals and protection, science and technology, natural signs, and history.",
+      "ar": "الفتن، والإشارات والحصانات، والعلوم والتقنيات، والأشراط الكونية، والتاريخ."
+     }
+    },
+    {
+     "t": {
+      "id": "Hasilnya sikap yang selamat",
+      "en": "The result is a safe stance",
+      "ar": "الثمرة موقف سليم"
+     },
+     "d": {
+      "id": "Bukan ramalan, bukan tebakan tahun, bukan menunjuk tokoh.",
+      "en": "Not prediction, not guessing years, not pointing at people.",
+      "ar": "لا تنبؤ، ولا تخمين سنوات، ولا إشارة إلى أشخاص."
+     }
+    }
+   ]
   },
   {
    "type": "title",

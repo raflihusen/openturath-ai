@@ -5,13 +5,13 @@ import 'package:openturath_ai/widgets/tahawwulat_slides_screen.dart';
 
 void main() {
   testWidgets(
-      'slide Mengenal Fikih Tahawwulat tanpa overflow (id/ar, ponsel/desktop)',
+      'slide Mengenal Fikih Tahawwulat tanpa overflow (id/en/ar, ponsel/desktop)',
       (tester) async {
     addTearDown(() {
       tester.view.reset();
       AppConfig.localeNotifier.value = 'id';
     });
-    for (final lang in ['id', 'ar']) {
+    for (final lang in ['id', 'en', 'ar']) {
       for (final width in [360.0, 1280.0]) {
         AppConfig.localeNotifier.value = lang;
         tester.view.physicalSize = Size(width, width < 600 ? 760 : 800);
@@ -34,7 +34,7 @@ void main() {
           await tester.pump(const Duration(milliseconds: 400));
           n++;
         }
-        expect(n, greaterThan(40), reason: '$lang $width');
+        expect(n, greaterThan(60), reason: '$lang $width');
         await tester.pumpWidget(const SizedBox());
       }
     }
