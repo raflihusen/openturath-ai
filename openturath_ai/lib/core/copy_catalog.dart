@@ -2719,6 +2719,15 @@ const copyCatalog = <String, List<String>>{
     "الدفع واسترداد المبالغ"
   ],
   "planIncludes": ["Mencakup", "Includes", "يشمل"],
+  "planActive": ["Aktif", "Active", "فعّال"],
+  "planRenew": ["Perpanjang akses", "Renew access", "تجديد الوصول"],
+  "savingUpTo": ["Hemat hingga {0}%", "Save up to {0}%", "وفّر حتى {0}٪"],
+  "planPeriodLabel": ["Masa akses", "Access period", "مدة الوصول"],
+  "planSingleScope": [
+    "Kitab rujukan bidang ini",
+    "Reference books of this field",
+    "الكتب المرجعية لهذا المجال"
+  ],
   "planFeaturedScope": [
     "Kitab dan arsip ceramah",
     "Books and lecture archive",

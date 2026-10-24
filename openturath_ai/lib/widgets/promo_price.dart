@@ -59,13 +59,18 @@ class PromoPrice extends StatelessWidget {
           children: [
             Directionality(
                 textDirection: TextDirection.ltr,
-                child: Text(ProductPricing.rupiah(amount),
-                    style: OTTypography.price(color: foreground).copyWith(
-                        fontSize: compact
-                            ? OTFontSize.s18
-                            : display
-                                ? OTFontSize.s36
-                                : OTFontSize.s26))),
+                // Harga tidak pernah terbelah antar baris: mengecil bila sempit.
+                child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    alignment: AlignmentDirectional.centerStart,
+                    child: Text(ProductPricing.rupiah(amount),
+                        maxLines: 1,
+                        style: OTTypography.price(color: foreground).copyWith(
+                            fontSize: compact
+                                ? OTFontSize.s18
+                                : display
+                                    ? OTFontSize.s36
+                                    : OTFontSize.s26)))),
             Text(period, style: OTTypography.caption(color: secondary)),
           ]),
       if (regularAmount > amount && !compact && !inlineSaving)

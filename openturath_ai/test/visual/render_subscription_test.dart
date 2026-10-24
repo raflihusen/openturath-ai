@@ -161,6 +161,18 @@ void main() {
       questionsUsed: 0,
     );
     final tag = Platform.environment['OT_TAG'] ?? 'now';
+    if (Platform.environment['OT_CASES'] == '1') {
+      const sub = SubscriptionScreen();
+      await _shot(tester, 'sub_${tag}_1bulan', sub,
+          size: const Size(980, 1300), tap: '1 Bulan');
+      await _shot(tester, 'sub_${tag}_scale16', sub,
+          size: const Size(390, 2600), textScale: 1.6);
+      await _shot(tester, 'sub_${tag}_320', sub, size: const Size(320, 2200));
+      await _shot(tester, 'sub_${tag}_ar_p', sub,
+          size: const Size(390, 1900), locale: 'ar');
+      await _shot(tester, 'sub_${tag}_850', sub, size: const Size(850, 1400));
+      return;
+    }
     final sizes = {
       'u': const Size(980, 1500),
       'w': const Size(1280, 1500),

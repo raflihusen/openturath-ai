@@ -42,6 +42,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
   List<AgentModel>? _loadedAgents;
   String _selectedAgentId = 'fiqh_syafii';
   int _periodIndex = 2;
+  bool _pricingReady = false;
   bool _processing = false;
   bool _initialized = false;
   String? _checkoutError;
@@ -61,8 +62,10 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
   @override
   void initState() {
     super.initState();
-    ProductPricingService.syncPricing(forceRefresh: true).then((_) {
-      if (mounted) setState(() {});
+    // Harga tidak ditampilkan sebelum sinkronisasi selesai, supaya angka
+    // bawaan tidak sempat berganti di depan pengguna.
+    ProductPricingService.syncPricing(forceRefresh: true).whenComplete(() {
+      if (mounted) setState(() => _pricingReady = true);
     });
     _agentService.getAgents().then((agents) {
       if (mounted) setState(() => _loadedAgents = agents);
@@ -91,26 +94,25 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     final message = _checkoutAgentId == agentId ? _checkoutError : null;
     if (message == null) return const SizedBox.shrink();
     final dark = Theme.of(context).brightness == Brightness.dark;
-    final color = OTColors.destructive(dark);
+    final color = ink ?? OTColors.textPrimary(dark);
     return Padding(
-      padding: const EdgeInsets.only(top: 12),
+      padding: const EdgeInsets.only(top: OTSpacing.md),
       child: Container(
-        padding: const EdgeInsets.all(12),
+        padding: const EdgeInsets.all(OTSpacing.md),
         decoration: BoxDecoration(
-          color: color.withValues(alpha: 0.09),
+          color: color.withValues(alpha: 0.08),
           borderRadius: BorderRadius.circular(OTRadius.input),
-          border: Border.all(color: color.withValues(alpha: 0.35)),
+          border: Border.all(color: color.withValues(alpha: 0.3)),
         ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Icon(Icons.info_outline_rounded, size: 18, color: color),
-            const SizedBox(width: 10),
+            const SizedBox(width: OTSpacing.md),
             Expanded(
               child: Text(message,
-                  style: OTTypography.caption(
-                          color: ink ?? OTColors.textPrimary(dark))
-                      .copyWith(height: 1.4)),
+                  style:
+                      OTTypography.caption(color: color).copyWith(height: 1.4)),
             ),
           ],
         ),
@@ -133,6 +135,33 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     return first.isEmpty
         ? Loc.tr('subHeadline')
         : Loc.tr('subHeadlineNamed', [first]);
+  }
+
+  /// Hemat terbesar di antara kedua paket untuk masa ke-[i], terhadap
+  /// membayar bulanan selama masa yang sama.
+  int _bestSaving(int i) {
+    int of(List<SubscriptionOffer> offers) {
+      if (offers.isEmpty) return 0;
+      final k = i.clamp(0, offers.length - 1);
+      final o = offers[k];
+      if (o.months <= 1) return 0;
+      final monthly = offers.first.amount;
+      return ((monthly * o.months - o.amount) * 100 / (monthly * o.months))
+          .round();
+    }
+
+    final a = of(ProductPricing.tahawwulat), b = of(ProductPricing.specialists);
+    return a > b ? a : b;
+  }
+
+  /// Pengguna saat ini bila ada; tanpa sesi (atau di pratinjau) kosong.
+  bool _hasAccess(String agentId) {
+    try {
+      return AuthService().cachedCurrentUser?.hasAccessToAgent(agentId) ??
+          false;
+    } catch (_) {
+      return false;
+    }
   }
 
   List<AgentModel> get _specialists {
@@ -248,6 +277,8 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     required List<String> benefits,
     required VoidCallback onCheckout,
     required String agentId,
+    bool active = false,
+    bool exclusive = false,
   }) {
     final dark = Theme.of(context).brightness == Brightness.dark;
     final fg = inverse ? OTColors.onInverted(dark) : OTColors.textPrimary(dark);
@@ -285,7 +316,14 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _pill(label, fg),
+          Wrap(
+            spacing: OTSpacing.sm,
+            runSpacing: OTSpacing.sm,
+            children: [
+              _pill(label, fg, filled: exclusive, icon: exclusive),
+              if (active) _pill(Loc.tr('planActive'), fg, filled: true),
+            ],
+          ),
           const SizedBox(height: OTSpacing.lg),
           Text(title, style: titleStyle),
           const SizedBox(height: OTSpacing.md),
@@ -297,34 +335,37 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
           const SizedBox(height: OTSpacing.xl),
           field,
           const SizedBox(height: OTSpacing.xl),
-          AnimatedSwitcher(
-            duration: OTMotion.normal,
-            switchInCurve: Curves.easeOutCubic,
-            transitionBuilder: (child, animation) => FadeTransition(
-              opacity: animation,
-              child: SlideTransition(
-                position: Tween(begin: const Offset(0, 0.1), end: Offset.zero)
-                    .animate(animation),
-                child: child,
+          if (!_pricingReady)
+            _priceSkeleton(sub)
+          else
+            AnimatedSwitcher(
+              duration: OTMotion.normal,
+              switchInCurve: Curves.easeOutCubic,
+              transitionBuilder: (child, animation) => FadeTransition(
+                opacity: animation,
+                child: SlideTransition(
+                  position: Tween(begin: const Offset(0, 0.1), end: Offset.zero)
+                      .animate(animation),
+                  child: child,
+                ),
+              ),
+              layoutBuilder: (current, previous) => Stack(
+                alignment: AlignmentDirectional.topStart,
+                children: [...previous, if (current != null) current],
+              ),
+              child: PromoPrice(
+                key: ValueKey('$agentId-${price.amount}'),
+                amount: price.amount,
+                regularAmount: price.regularAmount,
+                period: price.period,
+                display: true,
+                inlineSaving: true,
+                foregroundColor: fg,
+                secondaryColor: sub,
               ),
             ),
-            layoutBuilder: (current, previous) => Stack(
-              alignment: AlignmentDirectional.topStart,
-              children: [...previous, if (current != null) current],
-            ),
-            child: PromoPrice(
-              key: ValueKey('$agentId-${price.amount}'),
-              amount: price.amount,
-              regularAmount: price.regularAmount,
-              period: price.period,
-              display: true,
-              inlineSaving: true,
-              foregroundColor: fg,
-              secondaryColor: sub,
-            ),
-          ),
           const SizedBox(height: OTSpacing.sm),
-          if (perMonth.isNotEmpty)
+          if (_pricingReady && perMonth.isNotEmpty)
             Wrap(
               spacing: OTSpacing.sm,
               children: [
@@ -344,9 +385,25 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
             width: double.infinity,
             height: 52,
             child: FilledButton(
-              onPressed: _processing ? null : onCheckout,
+              onPressed: (_processing || !_pricingReady) ? null : onCheckout,
               style: inverse ? OTButtons.onInverse(dark) : null,
-              child: Text(Loc.tr('planContinue')),
+              child: Text(Loc.tr(active ? 'planRenew' : 'planContinue')),
+            ),
+          ),
+          // Jaminan tepat di bawah tombol, tempat keraguan biasanya muncul.
+          Padding(
+            padding: const EdgeInsets.only(top: OTSpacing.md),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.lock_outline_rounded, size: 14, color: sub),
+                const SizedBox(width: OTSpacing.xs),
+                Flexible(
+                  child: Text(Loc.tr('planTrustNote'),
+                      textAlign: TextAlign.center,
+                      style: OTTypography.caption(color: sub)),
+                ),
+              ],
             ),
           ),
           _checkoutNotice(agentId, ink: fg),
@@ -355,16 +412,55 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     );
   }
 
-  /// Kapsul label, sama dengan label bagian di web.
-  Widget _pill(String text, Color color) => Container(
+  /// Pengganti harga selama sinkronisasi: dua batang tenang.
+  Widget _priceSkeleton(Color color) {
+    Widget bar(double w, double h) => Container(
+          width: w,
+          height: h,
+          decoration: BoxDecoration(
+            color: color.withValues(alpha: 0.18),
+            borderRadius: OTRadius.chipBorder,
+          ),
+        );
+    return Semantics(
+      label: Loc.tr('checkoutPleaseWait'),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          bar(96, 12),
+          const SizedBox(height: OTSpacing.md),
+          bar(220, 36),
+        ],
+      ),
+    );
+  }
+
+  /// Kapsul label, sama dengan label bagian di web. [filled] untuk penanda
+  /// yang lebih tegas (eksklusif, aktif).
+  Widget _pill(String text, Color color,
+          {bool filled = false, bool icon = false}) =>
+      Container(
         padding: const EdgeInsets.symmetric(
             horizontal: OTSpacing.base, vertical: OTSpacing.xs),
         decoration: BoxDecoration(
+          color: filled ? color.withValues(alpha: 0.14) : null,
           borderRadius: OTRadius.chipBorder,
-          border: Border.all(color: color.withValues(alpha: 0.3)),
+          border:
+              Border.all(color: color.withValues(alpha: filled ? 0.0 : 0.3)),
         ),
-        child: Text(text.toUpperCase(),
-            style: OTTypography.metadataTag(color: color)),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (icon) ...[
+              Icon(Icons.workspace_premium_outlined, size: 14, color: color),
+              const SizedBox(width: OTSpacing.xs),
+            ],
+            Flexible(
+              child: Text(text.toUpperCase(),
+                  style: OTTypography.metadataTag(color: color)),
+            ),
+          ],
+        ),
       );
 
   /// Bidang ilmu: baris kapsul. Dapat diketuk bila ada lebih dari satu bidang.
@@ -388,12 +484,12 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
           padding: const EdgeInsetsDirectional.fromSTEB(
               OTSpacing.xl, OTSpacing.md, OTSpacing.base, OTSpacing.md),
           child: Row(children: [
-            Text(Loc.tr('discipline'), style: OTTypography.caption(color: sub)),
+            Flexible(
+              child: Text(label, style: OTTypography.caption(color: sub)),
+            ),
             const SizedBox(width: OTSpacing.md),
             Expanded(
               child: Text(name,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
                   textAlign: TextAlign.end,
                   style: OTTypography.bodyMedium(color: fg)),
             ),
@@ -406,22 +502,6 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
       ),
     );
   }
-
-  Widget _trustNote(Color color) => Padding(
-        padding: const EdgeInsets.only(top: 12),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.lock_outline_rounded, size: 14, color: color),
-            const SizedBox(width: 6),
-            Flexible(
-              child: Text(Loc.tr('planTrustNote'),
-                  textAlign: TextAlign.center,
-                  style: OTTypography.caption(color: color)),
-            ),
-          ],
-        ),
-      );
 
   /// Persetujuan sebelum membayar: tautan ke Ketentuan Layanan dan kebijakan
   /// pembayaran, supaya pengguna tahu syaratnya sebelum menekan tombol.
@@ -458,9 +538,12 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Padding(
-            padding: const EdgeInsets.only(top: 2),
-            child: Icon(Icons.check_rounded, size: 18, color: textColor),
+          SizedBox(
+            height:
+                MediaQuery.textScalerOf(context).scale(OTFontSize.s16) * 1.45,
+            child: Center(
+              child: Icon(Icons.check_rounded, size: 18, color: textColor),
+            ),
           ),
           const SizedBox(width: OTSpacing.md),
           Expanded(
@@ -629,6 +712,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     final fi = _periodIndex.clamp(0, flagshipOffers.length - 1);
     final si = _periodIndex.clamp(0, singleOffers.length - 1);
     final flagshipOffer = flagshipOffers[fi];
+    final flagshipActive = _hasAccess(flagship.id);
     final singleOffer = singleOffers[si];
 
     return Scaffold(
@@ -649,6 +733,8 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                 inverse: true,
                 wide: twoUp,
                 label: Loc.tr('planFeaturedBadge'),
+                exclusive: true,
+                active: flagshipActive,
                 title: AppCopy.planTahawwulat,
                 description: Loc.tr('planFeaturedDescription'),
                 field: _fieldRow(
@@ -671,17 +757,23 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                       inverse: false,
                       wide: twoUp,
                       label: Loc.tr('planSingleLabel'),
-                      title: Loc.tr('specialistAccess'),
+                      active: _hasAccess(selected.id),
+                      title: Loc.text(selected.title),
                       description: Loc.tr('planSingleDescription'),
-                      field: _fieldRow(
-                        label: Loc.tr('discipline'),
-                        name: Loc.text(selected.title),
-                        inverse: false,
-                        onTap: (_processing || specialists.length <= 1)
-                            ? null
-                            : () => _showDisciplinePickerModal(
-                                context, specialists),
-                      ),
+                      field: specialists.length > 1
+                          ? _fieldRow(
+                              label: Loc.tr('chooseField'),
+                              name: Loc.text(selected.title),
+                              inverse: false,
+                              onTap: _processing
+                                  ? null
+                                  : () => _showDisciplinePickerModal(
+                                      context, specialists),
+                            )
+                          : _fieldRow(
+                              label: Loc.tr('planIncludes'),
+                              name: Loc.tr('planSingleScope'),
+                              inverse: false),
                       price: singleOffer,
                       offers: singleOffers,
                       benefits: [
@@ -727,7 +819,15 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                           child: ConstrainedBox(
                             constraints: const BoxConstraints(maxWidth: 440),
                             child: _PeriodSwitch(
+                              label: Loc.tr('planPeriodLabel'),
                               titles: [for (final o in flagshipOffers) o.title],
+                              notes: [
+                                for (var i = 0; i < flagshipOffers.length; i++)
+                                  _bestSaving(i) >= 5
+                                      ? Loc.tr(
+                                          'savingUpTo', ['${_bestSaving(i)}'])
+                                      : '',
+                              ],
                               selected: fi,
                               onSelect: _processing
                                   ? null
@@ -759,7 +859,6 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                           ],
                         ],
                         const SizedBox(height: OTSpacing.xl),
-                        _trustNote(OTColors.textSecondary(dark)),
                         _consentNote(OTColors.textSecondary(dark)),
                         const SizedBox(height: OTSpacing.base),
                         Center(
@@ -802,15 +901,18 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
 }
 
 /// Pilihan masa akses untuk kedua paket sekaligus: satu kapsul, penanda hitam
-/// yang bergeser ke masa terpilih.
+/// yang bergeser ke masa terpilih. Segmen boleh membawa catatan hemat.
 class _PeriodSwitch extends StatelessWidget {
   const _PeriodSwitch({
+    required this.label,
     required this.titles,
+    required this.notes,
     required this.selected,
     required this.onSelect,
   });
 
-  final List<String> titles;
+  final String label;
+  final List<String> titles, notes;
   final int selected;
   final ValueChanged<int>? onSelect;
 
@@ -818,62 +920,86 @@ class _PeriodSwitch extends StatelessWidget {
   Widget build(BuildContext context) {
     final dark = Theme.of(context).brightness == Brightness.dark;
     final ink = OTColors.textPrimary(dark);
-    final onInk = OTColors.textPrimary(!dark);
+    final onInk = OTColors.onInverted(dark);
     final muted = OTColors.textSecondary(dark);
     final reduced = MediaQuery.disableAnimationsOf(context);
     final n = titles.length;
-    return Container(
-      padding: const EdgeInsets.all(OTSpacing.xs),
-      decoration: BoxDecoration(
-        color: OTColors.surfaceSubtle(dark),
-        borderRadius: OTRadius.chipBorder,
-      ),
-      child: Stack(
-        children: [
-          Positioned.fill(
-            child: AnimatedAlign(
-              duration: reduced ? Duration.zero : OTMotion.normal,
-              curve: Curves.easeOutCubic,
-              alignment: AlignmentDirectional(
-                  n == 1 ? 0 : -1 + 2 * selected / (n - 1), 0),
-              child: FractionallySizedBox(
-                widthFactor: 1 / n,
-                heightFactor: 1,
-                child: DecoratedBox(
-                  decoration: BoxDecoration(
-                    color: ink,
-                    borderRadius: OTRadius.chipBorder,
+    final hasNotes = notes.any((e) => e.isNotEmpty);
+    return Semantics(
+      container: true,
+      label: label,
+      child: Container(
+        padding: const EdgeInsets.all(OTSpacing.xs),
+        decoration: BoxDecoration(
+          color: OTColors.surfaceSubtle(dark),
+          borderRadius: OTRadius.chipBorder,
+        ),
+        child: Stack(
+          children: [
+            Positioned.fill(
+              child: AnimatedAlign(
+                duration: reduced ? Duration.zero : OTMotion.normal,
+                curve: Curves.easeOutCubic,
+                alignment: AlignmentDirectional(
+                    n == 1 ? 0 : -1 + 2 * selected / (n - 1), 0),
+                child: FractionallySizedBox(
+                  widthFactor: 1 / n,
+                  heightFactor: 1,
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      color: ink,
+                      borderRadius: OTRadius.chipBorder,
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
-          Row(children: [
-            for (var i = 0; i < n; i++)
-              Expanded(
-                child: Semantics(
-                  button: true,
-                  selected: selected == i,
-                  child: InkWell(
-                    onTap: onSelect == null ? null : () => onSelect!(i),
-                    borderRadius: OTRadius.chipBorder,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: OTSpacing.md, horizontal: OTSpacing.sm),
-                      child: Center(
-                        child: FittedBox(
-                          fit: BoxFit.scaleDown,
-                          child: Text(titles[i],
-                              style: OTTypography.bodyMedium(
-                                  color: selected == i ? onInk : muted)),
+            Row(children: [
+              for (var i = 0; i < n; i++)
+                Expanded(
+                  child: Semantics(
+                    button: true,
+                    selected: selected == i,
+                    child: InkWell(
+                      onTap: onSelect == null ? null : () => onSelect!(i),
+                      borderRadius: OTRadius.chipBorder,
+                      focusColor: ink.withValues(alpha: 0.12),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: OTSpacing.md, horizontal: OTSpacing.sm),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: Text(titles[i],
+                                  style: OTTypography.bodyMedium(
+                                      color: selected == i ? onInk : muted)),
+                            ),
+                            if (hasNotes)
+                              SizedBox(
+                                height: OTSpacing.base,
+                                child: notes[i].isEmpty
+                                    ? null
+                                    : FittedBox(
+                                        fit: BoxFit.scaleDown,
+                                        child: Text(notes[i],
+                                            style: OTTypography.metadataTag(
+                                                color: selected == i
+                                                    ? OTColors.onInvertedMuted(
+                                                        dark)
+                                                    : muted)),
+                                      ),
+                              ),
+                          ],
                         ),
                       ),
                     ),
                   ),
                 ),
-              ),
-          ]),
-        ],
+            ]),
+          ],
+        ),
       ),
     );
   }
