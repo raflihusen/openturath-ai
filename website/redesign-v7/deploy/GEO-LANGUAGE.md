@@ -1,3 +1,5 @@
+> **Diperbarui 24 Oktober 2026 (keputusan Pemilik):** bahasa bawaan situs selalu Indonesia. Tebakan wilayah dari zona waktu dihapus dari `lang.js`. Pengunjung mengganti bahasa lewat tombol globe, dan pilihannya diingat (`ot-lang`). Bagian di bawah ini hanya catatan historis.
+
 # Deteksi bahasa otomatis
 
 **Aturan produk:** wilayah Arab membuka bahasa Arab; selain itu bahasa Indonesia (bawaan). Tidak ada halaman pilihan bahasa saat masuk. Pilihan manual pengguna selalu mengalahkan perkiraan otomatis.
