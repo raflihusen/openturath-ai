@@ -194,7 +194,7 @@ void main() {
         language,
         const BookDetailScreen(book: canonicalBook),
       ));
-      expect(find.text(Loc.tr('bookDetails')), findsOneWidget);
+      expect(find.text(ArabicCatalog.bookCard), findsOneWidget);
       expect(find.text(canonicalBook.titleArabic), findsOneWidget);
       expect(tester.takeException(), isNull);
     });

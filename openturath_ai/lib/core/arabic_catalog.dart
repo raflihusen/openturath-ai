@@ -95,6 +95,7 @@ abstract final class ArabicCatalog {
   static const edition = 'بيانات الطبعة';
   static const copyCitation = 'نسخ الإحالة';
   static const saveNote = 'حفظ في الملاحظات';
+  static const removeNote = 'إزالة من الملاحظات';
   static const copied = 'تم نسخ الإحالة';
   static const saved = 'تم الحفظ في الملاحظات';
   static const lTitle = 'الكتاب';

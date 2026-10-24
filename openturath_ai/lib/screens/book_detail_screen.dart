@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../core/app_snackbar.dart';
+import '../core/arabic_catalog.dart';
 import '../core/localization.dart';
+import '../widgets/book_detail_parts.dart';
+import '../widgets/ot_motion_widgets.dart';
 import '../core/catalog_section_label.dart';
 import '../core/scholarly_fonts.dart';
 import '../core/design/ot_colors.dart';
@@ -12,8 +15,6 @@ import '../models/book_model.dart';
 import '../models/bookmark_model.dart';
 import '../services/bookmark_service.dart';
 import '../services/research_notes_service.dart';
-
-import 'package:openturath_ai/core/design/ot_radius.dart';
 
 /// Halaman Detail Edisi Kitab Mandiri (Full-Screen Route).
 /// Chrome follows the app locale; source titles and names retain Arabic RTL.
@@ -66,7 +67,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
             _isSaved = false;
             _isSaving = false;
           });
-          AppSnackBar.show(context, message: Loc.tr('bookmarkDeleted'));
+          AppSnackBar.show(context, message: Loc.trAr('bookmarkDeleted'));
         }
       } else {
         final agent = _resolveTargetAgent();
@@ -125,13 +126,13 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
             _isSaving = false;
           });
           HapticFeedback.mediumImpact();
-          AppSnackBar.success(context, Loc.tr('savedSuccess'));
+          AppSnackBar.success(context, Loc.trAr('savedSuccess'));
         }
       }
     } catch (e) {
       if (mounted) {
         setState(() => _isSaving = false);
-        AppSnackBar.error(context, Loc.tr('saveFailed'));
+        AppSnackBar.error(context, Loc.trAr('saveFailed'));
       }
     }
   }
@@ -173,516 +174,257 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
 
     Clipboard.setData(ClipboardData(text: citation));
     HapticFeedback.selectionClick();
-    AppSnackBar.success(context, Loc.tr('ui_e150b5de89'));
+    AppSnackBar.success(context, Loc.trAr('ui_e150b5de89'));
   }
 
   String _translateType(String? type) {
-    if (type == null || type.isEmpty) return Loc.tr('bookTypeWork');
+    if (type == null || type.isEmpty) return Loc.trAr('bookTypeWork');
     final l = type.toLowerCase();
     if (l.contains('matn') || l.contains('matan')) {
-      return Loc.tr('bookTypeMatn');
+      return Loc.trAr('bookTypeMatn');
     }
     if (l.contains('syarah') || l.contains('sharh')) {
-      return Loc.tr('bookTypeSharh');
+      return Loc.trAr('bookTypeSharh');
     }
     if (l.contains('hasyiyah') || l.contains('hashiyah')) {
-      return Loc.tr('bookTypeHashiyah');
+      return Loc.trAr('bookTypeHashiyah');
     }
     if (l.contains('mukhtasar') || l.contains('ringkasan')) {
-      return Loc.tr('bookTypeSummary');
+      return Loc.trAr('bookTypeSummary');
     }
     if (l.contains('ensiklopedia') || l.contains('mausuah')) {
-      return Loc.tr('bookTypeEncyclopedia');
+      return Loc.trAr('bookTypeEncyclopedia');
     }
     if (l.contains('manzhumah') || l.contains('nazham')) {
-      return Loc.tr('bookTypePoem');
+      return Loc.trAr('bookTypePoem');
     }
-    return Loc.text(type);
+    return Loc.textAr(type);
   }
 
   String _translateEra(String? era) {
-    if (era == null || era.isEmpty) return Loc.tr('bookEraHeritage');
+    if (era == null || era.isEmpty) return Loc.trAr('bookEraHeritage');
     final l = era.toLowerCase();
     if (l.contains('mutaqaddim') || l.contains('awal')) {
-      return Loc.tr('bookEraEarly');
+      return Loc.trAr('bookEraEarly');
     }
     if (l.contains('mutawassith') || l.contains('pertengahan')) {
-      return Loc.tr('bookEraMiddle');
+      return Loc.trAr('bookEraMiddle');
     }
     if (l.contains('muta\'akhkhir') ||
         l.contains('mutaakhir') ||
         l.contains('lanjut')) {
-      return Loc.tr('bookEraLate');
+      return Loc.trAr('bookEraLate');
     }
     if (l.contains('mu\'ashir') ||
         l.contains('kontemporer') ||
         l.contains('modern')) {
-      return Loc.tr('bookEraModern');
+      return Loc.trAr('bookEraModern');
     }
-    return Loc.text(era);
+    return Loc.textAr(era);
   }
 
-  String _formatVolumes() {
-    final vd = widget.book.volumesDescription;
-    if (vd != null && vd.isNotEmpty) {
-      return (vd.contains('جزء') ||
-              vd.contains('مجلد') ||
-              vd.toLowerCase().contains('jilid'))
-          ? vd
-          : Loc.tr('volumeCount', [vd]);
+  String? _volumes() {
+    final vd = widget.book.volumesDescription?.trim() ?? '';
+    if (vd.isNotEmpty && vd != '-') {
+      return RegExp(r'^[0-9٠-٩]+$').hasMatch(vd)
+          ? ArabicCatalog.number(vd)
+          : ArabicCatalog.digits(vd);
     }
     final count = widget.book.volumesCount;
-    if (count != null && count > 0) {
-      return Loc.tr('volumeCount', ['$count']);
-    }
-    return Loc.tr('unknownMetadata');
+    if (count != null && count > 0) return ArabicCatalog.number('$count');
+    return null;
+  }
+
+  String? _pages() {
+    final p = widget.book.pagesDescription?.trim() ?? '';
+    if (p.isEmpty || p == '-') return null;
+    return RegExp(r'^[0-9٠-٩.,،\s]+$').hasMatch(p)
+        ? ArabicCatalog.number(p.replaceAll(RegExp(r'[.,،\s]'), ''))
+        : ArabicCatalog.digits(p);
   }
 
   @override
   Widget build(BuildContext context) {
     Loc.watch(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final surface = OTColors.surface(isDark);
     final background = OTColors.canvas(isDark);
-    final border = OTColors.border(isDark);
     final textPrimary = OTColors.textPrimary(isDark);
     final textSecondary = OTColors.textSecondary(isDark);
-    final surfaceSubtle = OTColors.surfaceSubtle(isDark);
+    final book = widget.book;
+    final death = ArabicCatalog.death(book.verifiedDeathYearHijri);
+    final volumes = _volumes(), pages = _pages();
+    final section = book.sectionArabic == null || book.sectionArabic!.isEmpty
+        ? null
+        : CatalogSectionLabel.of(book.sectionArabic!);
+    const none = ArabicCatalog.notStatedShort;
 
-    return Directionality(
-      textDirection: Loc.isArabic ? TextDirection.rtl : TextDirection.ltr,
-      child: Scaffold(
-        backgroundColor: background,
-        appBar: AppBar(
+    return Theme(
+      data: ArabicCatalog.theme(Theme.of(context)),
+      child: Directionality(
+        textDirection: TextDirection.rtl,
+        child: Scaffold(
           backgroundColor: background,
-          surfaceTintColor: Colors.transparent,
-          elevation: 0,
-          leading: BackButton(
-            color: textPrimary,
-            onPressed: () => Navigator.pop(context),
+          appBar: AppBar(
+            backgroundColor: background,
+            surfaceTintColor: Colors.transparent,
+            elevation: 0,
+            leading: BackButton(
+              color: textPrimary,
+              onPressed: () => Navigator.pop(context),
+            ),
+            title: Text(ArabicCatalog.bookCard,
+                style: ArabicCatalog.ui(
+                    fontSize: OTFontSize.s20,
+                    fontWeight: FontWeight.w700,
+                    color: textPrimary)),
           ),
-          title: Text(
-            Loc.tr('bookDetails'),
-          ),
-          actions: [
-            IconButton(
-              icon: Icon(
-                _isSaved
-                    ? Icons.bookmark_rounded
-                    : Icons.bookmark_border_rounded,
-                color: _isSaved ? OTColors.accent(isDark) : textSecondary,
-              ),
-              tooltip: _isSaved ? Loc.tr('bookRemove') : Loc.tr('bookSave'),
-              onPressed: _toggleSaveBook,
-            ),
-            IconButton(
-              icon: Icon(Icons.share_outlined, color: textSecondary),
-              tooltip: Loc.tr('bookCitationCopy'),
-              onPressed: _copyScholarlyCitation,
-            ),
-            const SizedBox(width: 8),
-          ],
-        ),
-        body: SafeArea(
-          top: false,
-          child: SingleChildScrollView(
-            physics: const BouncingScrollPhysics(),
-            padding: const EdgeInsets.symmetric(
-              horizontal: OTSpacing.lg,
-              vertical: OTSpacing.md,
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                // ── KARTU 1: IDENTITAS KITAB (ARABIC HERO) ──
-                _buildCard(
-                  isDark: isDark,
-                  surface: surface,
-                  border: border,
+          body: SafeArea(
+            top: false,
+            child: SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
+              padding: const EdgeInsets.fromLTRB(
+                  OTSpacing.lg, OTSpacing.md, OTSpacing.lg, OTSpacing.xxl),
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 760),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      Row(
-                        children: [
-                          Flexible(
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 8,
-                                vertical: 4,
+                      OTBentoTile(
+                        padding: const EdgeInsets.all(OTSpacing.xl),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            if (section != null) ...[
+                              Text(section,
+                                  style: ArabicCatalog.ui(
+                                      fontSize: OTFontSize.s12,
+                                      fontWeight: FontWeight.w600,
+                                      color: textSecondary)),
+                              const SizedBox(height: OTSpacing.md),
+                            ],
+                            Text(book.titleArabic,
+                                textAlign: TextAlign.start,
+                                style: ScholarlyFonts.scheherazadeNew(
+                                    fontSize: OTFontSize.s26,
+                                    fontWeight: FontWeight.w400,
+                                    color: textPrimary,
+                                    height: 1.75)),
+                            if (book.shortTitleArabic != null &&
+                                book.shortTitleArabic!.isNotEmpty &&
+                                book.shortTitleArabic != book.titleArabic)
+                              Padding(
+                                padding:
+                                    const EdgeInsets.only(top: OTSpacing.xs),
+                                child: Text(book.shortTitleArabic!,
+                                    style: ScholarlyFonts.scheherazadeNew(
+                                        fontSize: OTFontSize.s16,
+                                        color: textSecondary,
+                                        height: 1.7)),
                               ),
-                              decoration: BoxDecoration(
-                                color: OTColors.primaryContainer(isDark),
-                                borderRadius:
-                                    BorderRadius.circular(OTRadius.input),
-                              ),
-                              child: Text(
-                                widget.book.sectionArabic == null
-                                    ? Loc.tr('unclassified')
-                                    : CatalogSectionLabel.of(
-                                        widget.book.sectionArabic!),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: OTTypography.caption(
-                                        color:
-                                            OTColors.onPrimaryContainer(isDark))
-                                    .copyWith(
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: OTFontSize.s11,
-                                ),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          Flexible(
-                            child: Directionality(
-                              textDirection: TextDirection.ltr,
-                              child: Text(
-                                widget.book.editionId,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                textAlign: TextAlign.end,
-                                style:
-                                    OTTypography.caption(color: textSecondary)
-                                        .copyWith(
-                                  fontFamily: 'Courier',
-                                  fontSize: OTFontSize.s11,
-                                ),
-                              ),
-                            ),
-                          ),
+                            const SizedBox(height: OTSpacing.sm),
+                            Text(ArabicCatalog.authorName(book.authorArabic),
+                                textAlign: TextAlign.start,
+                                style: ScholarlyFonts.scheherazadeNew(
+                                    fontSize: OTFontSize.s18,
+                                    color: textSecondary,
+                                    height: 1.7)),
+                            const SizedBox(height: OTSpacing.lg),
+                            LayoutBuilder(builder: (context, box) {
+                              final copy = FilledButton.icon(
+                                  onPressed: _copyScholarlyCitation,
+                                  icon:
+                                      const Icon(Icons.copy_rounded, size: 18),
+                                  label:
+                                      const Text(ArabicCatalog.copyCitation));
+                              final save = OutlinedButton.icon(
+                                  onPressed: _toggleSaveBook,
+                                  icon: Icon(
+                                      _isSaved
+                                          ? Icons.bookmark_rounded
+                                          : Icons.bookmark_add_outlined,
+                                      size: 18),
+                                  label: Text(_isSaved
+                                      ? ArabicCatalog.removeNote
+                                      : ArabicCatalog.saveNote));
+                              if (box.maxWidth < 420) {
+                                return Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.stretch,
+                                    children: [
+                                      copy,
+                                      const SizedBox(height: OTSpacing.sm),
+                                      save
+                                    ]);
+                              }
+                              return Row(children: [
+                                Expanded(child: copy),
+                                const SizedBox(width: OTSpacing.md),
+                                Expanded(child: save),
+                              ]);
+                            }),
+                          ],
+                        ),
+                      ),
+                      BookStatStrip(items: [
+                        if (volumes != null)
+                          BookStat(Icons.layers_outlined,
+                              ArabicCatalog.lVolumes, volumes),
+                        if (pages != null)
+                          BookStat(Icons.description_outlined,
+                              ArabicCatalog.lPages, pages),
+                        if (death != null)
+                          BookStat(
+                              Icons.history_edu_outlined,
+                              ArabicCatalog.lDeath,
+                              death.replaceFirst('ت ', '')),
+                      ]),
+                      BookFactsCard(
+                        title: Loc.trAr('bookClassification'),
+                        rows: [
+                          if (section != null)
+                            BookFact(Icons.category_outlined,
+                                Loc.trAr('bookScienceSection'), section),
+                          if (book.reviewedTypeLabel != null &&
+                              book.reviewedTypeLabel!.isNotEmpty)
+                            BookFact(
+                                Icons.menu_book_outlined,
+                                Loc.trAr('bookTextType'),
+                                _translateType(book.reviewedTypeLabel)),
+                          if (book.reviewedEraLabel != null &&
+                              book.reviewedEraLabel!.isNotEmpty)
+                            BookFact(
+                                Icons.history_edu_rounded,
+                                Loc.trAr('bookAuthorEra'),
+                                _translateEra(book.reviewedEraLabel)),
+                        ],
+                      ),
+                      BookFactsCard(
+                        title: ArabicCatalog.edition,
+                        rows: [
+                          BookFact(Icons.edit_outlined, ArabicCatalog.lEditor,
+                              book.muhaqqiq ?? none),
+                          BookFact(Icons.apartment_outlined,
+                              ArabicCatalog.lPublisher, book.publisher ?? none),
+                          if (book.printYear != null && book.printYear != '-')
+                            BookFact(
+                                Icons.bookmark_border_rounded,
+                                Loc.trAr('bookPrintYear'),
+                                ArabicCatalog.digits(book.printYear!)),
                         ],
                       ),
                       const SizedBox(height: OTSpacing.md),
-                      Directionality(
-                        textDirection: TextDirection.rtl,
-                        child: Text(
-                          widget.book.titleArabic,
-                          textAlign: TextAlign.start,
-                          style: OTTypography.arabicDisplay(color: textPrimary)
-                              .copyWith(
-                            fontSize: OTFontSize.s26,
-                            fontWeight: FontWeight.w700,
-                            height: 1.85,
-                          ),
-                        ),
-                      ),
-                      if (widget.book.shortTitleArabic != null &&
-                          widget.book.shortTitleArabic!.isNotEmpty &&
-                          widget.book.shortTitleArabic !=
-                              widget.book.titleArabic) ...[
-                        const SizedBox(height: 6),
-                        Directionality(
-                          textDirection: TextDirection.rtl,
-                          child: Text(
-                            widget.book.shortTitleArabic!,
-                            textAlign: TextAlign.start,
-                            style:
-                                OTTypography.arabicReading(color: textSecondary)
-                                    .copyWith(
-                              fontSize: OTFontSize.s14,
-                              fontWeight: FontWeight.w400,
-                            ),
-                          ),
-                        ),
-                      ],
-                      if (widget.book.titleLatin != null &&
-                          widget.book.titleLatin!.isNotEmpty) ...[
-                        const SizedBox(height: 8),
-                        Directionality(
-                          textDirection: TextDirection.ltr,
-                          child: Text(
-                            widget.book.titleLatin!,
-                            textAlign: TextAlign.start,
-                            style: OTTypography.body(color: textSecondary)
-                                .copyWith(
-                              fontStyle: FontStyle.italic,
-                              fontSize: OTFontSize.s14,
-                            ),
-                          ),
-                        ),
-                      ],
+                      Text(ArabicCatalog.notice,
+                          style: ArabicCatalog.ui(
+                              fontSize: OTFontSize.s12, color: textSecondary)),
                     ],
                   ),
                 ),
-
-                const SizedBox(height: OTSpacing.md),
-
-                // ── KARTU 2: MUALLIF / PENGARANG ──
-                _buildCard(
-                  isDark: isDark,
-                  surface: surface,
-                  border: border,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _buildSectionHeader(
-                          Loc.tr('bookAuthorDeath'), textSecondary),
-                      const SizedBox(height: 10),
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Icon(
-                            Icons.person_outline_rounded,
-                            size: 20,
-                            color: textSecondary,
-                          ),
-                          const SizedBox(width: 10),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Directionality(
-                                  textDirection: TextDirection.rtl,
-                                  child: Text(
-                                    widget.book.authorArabic,
-                                    textAlign: TextAlign.start,
-                                    style: OTTypography.arabicReading(
-                                            color: textPrimary)
-                                        .copyWith(
-                                      fontSize: OTFontSize.s18,
-                                      fontWeight: FontWeight.w700,
-                                    ),
-                                  ),
-                                ),
-                                if (widget.book.authorLatin != null) ...[
-                                  const SizedBox(height: 2),
-                                  Directionality(
-                                    textDirection: TextDirection.ltr,
-                                    child: Text(
-                                      widget.book.authorLatin!,
-                                      style: OTTypography.caption(
-                                          color: textSecondary),
-                                    ),
-                                  ),
-                                ],
-                                const SizedBox(height: 8),
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 8,
-                                    vertical: 4,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: surfaceSubtle,
-                                    borderRadius:
-                                        BorderRadius.circular(OTRadius.input),
-                                  ),
-                                  child: Text(
-                                    widget.book.verifiedDeathYearHijri != null
-                                        ? Loc.tr('deathYear', [
-                                            '${widget.book.verifiedDeathYearHijri}'
-                                          ])
-                                        : Loc.tr('unknownMetadata'),
-                                    style: ScholarlyFonts.outfit(
-                                            color: textSecondary)
-                                        .copyWith(
-                                      fontSize: OTFontSize.s12,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-
-                const SizedBox(height: OTSpacing.md),
-
-                // ── KARTU 3: SPESIFIKASI & KLASIFIKASI NASKAH ──
-                _buildCard(
-                  isDark: isDark,
-                  surface: surface,
-                  border: border,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _buildSectionHeader(
-                          Loc.tr('bookClassification'), textSecondary),
-                      const SizedBox(height: 12),
-                      if (widget.book.sectionArabic != null &&
-                          widget.book.sectionArabic!.isNotEmpty) ...[
-                        _buildMetaRow(
-                          icon: Icons.category_outlined,
-                          label: Loc.tr('bookScienceSection'),
-                          value: CatalogSectionLabel.of(
-                              widget.book.sectionArabic!),
-                          textPrimary: textPrimary,
-                          textSecondary: textSecondary,
-                        ),
-                        const Divider(height: 16, thickness: 0.5),
-                      ],
-                      if (widget.book.reviewedTypeLabel != null &&
-                          widget.book.reviewedTypeLabel!.isNotEmpty) ...[
-                        _buildMetaRow(
-                          icon: Icons.menu_book_outlined,
-                          label: Loc.tr('bookTextType'),
-                          value: _translateType(widget.book.reviewedTypeLabel),
-                          textPrimary: textPrimary,
-                          textSecondary: textSecondary,
-                        ),
-                        const Divider(height: 16, thickness: 0.5),
-                      ],
-                      if (widget.book.reviewedEraLabel != null &&
-                          widget.book.reviewedEraLabel!.isNotEmpty) ...[
-                        _buildMetaRow(
-                          icon: Icons.history_edu_rounded,
-                          label: Loc.tr('bookAuthorEra'),
-                          value: _translateEra(widget.book.reviewedEraLabel),
-                          textPrimary: textPrimary,
-                          textSecondary: textSecondary,
-                        ),
-                        const Divider(height: 16, thickness: 0.5),
-                      ],
-                      _buildMetaRow(
-                        icon: Icons.auto_stories_outlined,
-                        label: Loc.tr('bookVolumes'),
-                        value: _formatVolumes(),
-                        textPrimary: textPrimary,
-                        textSecondary: textSecondary,
-                      ),
-                      if (widget.book.pagesDescription != null &&
-                          widget.book.pagesDescription!.isNotEmpty &&
-                          widget.book.pagesDescription != '-') ...[
-                        const Divider(height: 16, thickness: 0.5),
-                        _buildMetaRow(
-                          icon: Icons.article_outlined,
-                          label: Loc.tr('bookPages'),
-                          value: Loc.tr(
-                              'pageCount', [widget.book.pagesDescription!]),
-                          textPrimary: textPrimary,
-                          textSecondary: textSecondary,
-                        ),
-                      ],
-                    ],
-                  ),
-                ),
-
-                const SizedBox(height: OTSpacing.md),
-
-                // ── KARTU 4: DATA EDISI & TAHQIQ ──
-                _buildCard(
-                  isDark: isDark,
-                  surface: surface,
-                  border: border,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _buildSectionHeader(
-                          Loc.tr('bookEditionData'), textSecondary),
-                      const SizedBox(height: 12),
-                      _buildMetaRow(
-                        icon: Icons.business_outlined,
-                        label: Loc.tr('bookPublisher'),
-                        value:
-                            widget.book.publisher ?? Loc.tr('unknownMetadata'),
-                        textPrimary: textPrimary,
-                        textSecondary: textSecondary,
-                      ),
-                      const Divider(height: 16, thickness: 0.5),
-                      _buildMetaRow(
-                        icon: Icons.edit_note_rounded,
-                        label: Loc.tr('ui_ad39f1c3af'),
-                        value:
-                            widget.book.muhaqqiq ?? Loc.tr('unknownMetadata'),
-                        textPrimary: textPrimary,
-                        textSecondary: textSecondary,
-                      ),
-                      if (widget.book.printYear != null &&
-                          widget.book.printYear != '-') ...[
-                        const Divider(height: 16, thickness: 0.5),
-                        _buildMetaRow(
-                          icon: Icons.calendar_today_outlined,
-                          label: Loc.tr('bookPrintYear'),
-                          value: widget.book.printYear!,
-                          textPrimary: textPrimary,
-                          textSecondary: textSecondary,
-                        ),
-                      ],
-                    ],
-                  ),
-                ),
-
-                const SizedBox(height: OTSpacing.xl),
-              ],
+              ),
             ),
           ),
         ),
       ),
-    );
-  }
-
-  Widget _buildCard({
-    required bool isDark,
-    required Color surface,
-    required Color border,
-    required Widget child,
-  }) {
-    return Container(
-      padding: const EdgeInsets.symmetric(
-          vertical: OTSpacing.md, horizontal: OTSpacing.xs),
-      decoration: BoxDecoration(
-        border: Border(
-            bottom:
-                BorderSide(color: border.withValues(alpha: .75), width: .8)),
-      ),
-      child: child,
-    );
-  }
-
-  Widget _buildSectionHeader(String title, Color color) {
-    return Text(
-      title,
-      style: ScholarlyFonts.outfit(color: color).copyWith(
-        fontSize: OTFontSize.s14,
-        fontWeight: FontWeight.w700,
-      ),
-    );
-  }
-
-  Widget _buildMetaRow({
-    required IconData icon,
-    required String label,
-    required String value,
-    required Color textPrimary,
-    required Color textSecondary,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(children: [
-          Icon(icon, size: 17, color: textSecondary),
-          const SizedBox(width: 8),
-          Expanded(
-              child: Text(
-            label,
-            style: ScholarlyFonts.outfit(color: textSecondary).copyWith(
-              fontSize: OTFontSize.s12,
-              fontWeight: FontWeight.w400,
-            ),
-          )),
-        ]),
-        const SizedBox(height: 6),
-        Padding(
-          padding: const EdgeInsetsDirectional.only(start: 24),
-          child: Directionality(
-            textDirection: RegExp(r'[\u0600-\u06FF]').hasMatch(value)
-                ? TextDirection.rtl
-                : Directionality.of(context),
-            child: Text(
-              value,
-              textAlign: TextAlign.start,
-              style: (RegExp(r'[\u0600-\u06FF]').hasMatch(value)
-                      ? OTTypography.arabicReading(color: textPrimary)
-                      : ScholarlyFonts.outfit(color: textPrimary))
-                  .copyWith(
-                      fontSize: OTFontSize.s14, fontWeight: FontWeight.w600),
-            ),
-          ),
-        ),
-      ],
     );
   }
 }
