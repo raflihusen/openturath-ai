@@ -12,7 +12,8 @@ import 'package:openturath_ai/services/auth_service.dart';
 void main() {
   testWidgets(
       'Langganan tanpa overflow di lima lebar, dua skala teks, tiga bahasa, '
-      'dua tema; harga tidak pecah dan lima AI tidak disebut', (tester) async {
+      'dua tema; harga tidak pecah dan lima asisten tampil rapat',
+      (tester) async {
     addTearDown(() {
       tester.view.reset();
       AppConfig.localeNotifier.value = 'id';
@@ -57,8 +58,10 @@ void main() {
             expect(tester.takeException(), isNull, reason: reason);
             // Dua tombol bayar (paket utama dan satu bidang).
             expect(find.byType(FilledButton), findsNWidgets(2), reason: reason);
-            expect(find.textContaining('5 AI'), findsNothing, reason: reason);
-            expect(find.textContaining('Al-Muhaqqiq'), findsNothing,
+            // Kolom paket utama memuat kelima asisten sebagai kapsul.
+            expect(
+                find.textContaining(locale == 'ar' ? 'المحقّق' : 'Al-Muhaqqiq'),
+                findsOneWidget,
                 reason: reason);
           }
         }

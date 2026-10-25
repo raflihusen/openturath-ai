@@ -23,6 +23,11 @@ void main() {
     expect(find.text('Rp 1.499.000'), findsOneWidget);
     expect(find.text('Paket 6 bulan'), findsOneWidget);
     expect(find.textContaining('sudah aktif'), findsNothing);
+    expect(find.textContaining('Menyiapkan akses'), findsOneWidget);
+    expect(find.text('Selesai'), findsNothing);
+    await tester.pump(const Duration(seconds: 31));
+    await tester.pumpAndSettle();
+    expect(find.textContaining('Menyiapkan akses'), findsNothing);
     await tester.tap(find.text('Selesai'));
     await tester.pumpAndSettle();
     expect(find.byType(PaymentSuccessDialog), findsNothing);

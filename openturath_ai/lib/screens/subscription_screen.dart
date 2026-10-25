@@ -9,6 +9,7 @@ import '../core/design/ot_motion.dart';
 import '../core/scholarly_fonts.dart';
 import '../core/app_copy.dart';
 import '../widgets/payment_success_dialog.dart';
+import '../core/arabic_catalog.dart';
 import '../core/design/ot_colors.dart';
 import '../core/design/ot_expressive.dart';
 import '../core/design/ot_spacing.dart';
@@ -486,24 +487,110 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
         borderRadius: BorderRadius.circular(OTRadius.input),
         child: Padding(
           padding: const EdgeInsetsDirectional.fromSTEB(
-              OTSpacing.xl, OTSpacing.md, OTSpacing.base, OTSpacing.md),
-          child: Row(children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(label, style: OTTypography.caption(color: sub)),
-                  const SizedBox(height: OTSpacing.xs),
-                  Text(name, style: OTTypography.bodyMedium(color: fg)),
-                ],
-              ),
-            ),
-            if (onTap != null) ...[
+              OTSpacing.base, OTSpacing.md, OTSpacing.md, OTSpacing.md),
+          child: Builder(builder: (context) {
+            // Satu baris bila muat; menumpuk di kolom sempit atau huruf besar.
+            final scale = MediaQuery.textScalerOf(context).scale(1);
+            final stacked =
+                MediaQuery.sizeOf(context).width < 400 || scale > 1.3;
+            final nameText = Text(name,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                textAlign: stacked ? TextAlign.start : TextAlign.end,
+                style: OTTypography.bodyMedium(color: fg));
+            final chevron = onTap != null
+                ? Icon(Icons.unfold_more_rounded, size: 20, color: sub)
+                : null;
+            if (stacked) {
+              return Row(children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(label, style: OTTypography.caption(color: sub)),
+                      nameText,
+                    ],
+                  ),
+                ),
+                if (chevron != null) chevron,
+              ]);
+            }
+            return Row(children: [
+              Text(label, style: OTTypography.caption(color: sub)),
               const SizedBox(width: OTSpacing.md),
-              Icon(Icons.unfold_more_rounded, size: 20, color: sub),
-            ],
-          ]),
+              Expanded(child: nameText),
+              if (chevron != null) ...[
+                const SizedBox(width: OTSpacing.xs),
+                chevron,
+              ],
+            ]);
+          }),
         ),
+      ),
+    );
+  }
+
+  /// Lima asisten di dalam paket utama: kapsul rapat yang muat di kolom
+  /// sesempit apa pun (turun baris bila perlu), selaras dengan [_fieldRow].
+  Widget _assistantsPanel() {
+    final dark = Theme.of(context).brightness == Brightness.dark;
+    final fg = OTColors.onInverted(dark);
+    final sub = OTColors.onInvertedMuted(dark);
+    final names = Loc.isArabic
+        ? const ['البيان', 'المحقّق', 'المختبِر', 'الحبيب', 'الخطيب']
+        : const [
+            'Al-Bayan',
+            'Al-Muhaqqiq',
+            'Al-Mukhtabir',
+            'Al-Habib',
+            'Al-Khatib'
+          ];
+    return Container(
+      padding: const EdgeInsets.all(OTSpacing.base),
+      decoration: BoxDecoration(
+        color: fg.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(OTRadius.input),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+              switch (Loc.language) {
+                'en' => 'Five assistants in one plan',
+                'ar' => 'خمسة مساعدين في باقة واحدة',
+                _ => 'Lima asisten dalam satu paket',
+              },
+              style: OTTypography.caption(color: sub)),
+          const SizedBox(height: OTSpacing.md),
+          Wrap(
+            spacing: OTSpacing.xs,
+            runSpacing: OTSpacing.xs,
+            children: [
+              for (var i = 0; i < names.length; i++)
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: OTSpacing.md, vertical: OTSpacing.xs),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(OTRadius.chip),
+                    border: Border.all(color: fg.withValues(alpha: 0.28)),
+                  ),
+                  child: Row(mainAxisSize: MainAxisSize.min, children: [
+                    Text(
+                        Loc.isArabic
+                            ? ArabicCatalog.digits('${i + 1}')
+                            : '${i + 1}',
+                        style: OTTypography.captionMedium(color: sub)),
+                    const SizedBox(width: OTSpacing.xs),
+                    Flexible(
+                        child: Text(names[i],
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: OTTypography.captionMedium(color: fg))),
+                  ]),
+                ),
+            ],
+          ),
+        ],
       ),
     );
   }
@@ -767,6 +854,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                 active: flagshipActive,
                 title: AppCopy.planTahawwulat,
                 description: Loc.tr('planFeaturedDescription'),
+                field: _assistantsPanel(),
                 price: flagshipOffer,
                 offers: flagshipOffers,
                 benefits: [

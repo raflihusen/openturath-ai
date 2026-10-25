@@ -564,12 +564,16 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                   value: 'delete_chat',
                   child: Row(
                     children: [
-                      const Icon(Icons.delete_outline_rounded,
-                          color: OTColors.borderStrongDark, size: 18),
+                      Icon(Icons.delete_outline_rounded,
+                          color: OTColors.destructive(
+                              Theme.of(ctx).brightness == Brightness.dark),
+                          size: 18),
                       const SizedBox(width: 12),
                       Text(Loc.tr('clearChatHistory'),
                           style: OTTypography.body(
-                              color: OTColors.borderStrongDark)),
+                              color: OTColors.destructive(
+                                  Theme.of(ctx).brightness ==
+                                      Brightness.dark))),
                     ],
                   ),
                 ),
