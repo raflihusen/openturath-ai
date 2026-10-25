@@ -23,7 +23,8 @@ const _serif = 'NativeNewsreader';
 const _sans = 'NativeOutfit';
 
 double _clamp(double v) => v.clamp(0.0, 1.0);
-double _ease(double v) => Curves.easeOutCubic.transform(_clamp(v));
+double _out(double v) => Curves.easeOutExpo.transform(_clamp(v));
+double _inOut(double v) => Curves.easeInOutCubic.transform(_clamp(v));
 
 class _Line {
   const _Line(this.text,
@@ -33,51 +34,48 @@ class _Line {
   final bool bold, dim;
 }
 
+/// Satu adegan = beberapa baris yang masuk dari bawah dengan kabur yang
+/// menajam, lalu keluar ke atas dengan kabur yang menebal. Adegan berikutnya
+/// mulai masuk saat adegan ini baru keluar, jadi tidak ada layar kosong.
 class _Scene {
-  const _Scene(this.start, this.end, this.lines);
-  final double start, end;
+  const _Scene(this.start, this.exit, this.lines);
+  final double start, exit;
   final List<_Line> lines;
 }
 
 const _scenes = [
-  _Scene(0.4, 3.6,
-      [_Line('Turath itu'), _Line('samudra.', size: 190, bold: true)]),
-  _Scene(3.8, 8.0, [
-    _Line('Satu ibarah'),
-    _Line('tersembunyi di antara', dim: true),
-    _Line('ribuan halaman.', bold: true),
+  _Scene(0.3, 2.45, [
+    _Line('Turath tidak', size: 150),
+    _Line('pernah sulit.', size: 150, bold: true),
   ]),
-  _Scene(8.2, 11.6, [
-    _Line('Berjam-jam'),
-    _Line('membuka kitab'),
-    _Line('satu per satu.', dim: true),
+  _Scene(2.95, 5.0, [
+    _Line('Mencarinya', size: 150),
+    _Line('yang sulit.', size: 150, bold: true),
   ]),
-  _Scene(11.8, 14.6, [
-    _Line('Sebentar lagi,'),
-    _Line('ada yang berbeda.', size: 130, bold: true),
-  ]),
-  _Scene(14.8, 19.0, [
-    _Line('Cara kita'),
-    _Line('mengkaji turath', bold: true),
-    _Line('dan menemukan ibarah', dim: true),
-    _Line('tidak akan sama lagi.'),
-  ]),
-  _Scene(19.2, 22.4, [
-    _Line('Berpijak pada kitab.'),
-    _Line('Dengan teks aslinya.', bold: true),
+  _Scene(5.5, 8.4, [
+    _Line('Itu berakhir', size: 130),
+    _Line('26 Oktober.', size: 170, bold: true),
+    _Line('Tanya. Temukan ibarahnya. Periksa kitabnya.', size: 56, dim: true),
   ]),
 ];
 
-const _splashStart = 22.6, _splashEnd = 27.0;
-const _finalStart = 27.2, _dateStart = 29.4, _total = 33.0;
+const _logoStart = 8.9; // animasi pembuka aplikasi, 2,7 dtk
+const _dateStart = 11.3;
+const _total = 15.2;
 
 class _Teaser extends StatelessWidget {
   const _Teaser({required this.t});
   final double t;
 
-  Widget _words(String text, double t0, _Line l, double sceneAlpha) {
+  Widget _blur(double sigma, Widget child) => sigma < 0.3
+      ? child
+      : ImageFiltered(
+          imageFilter: ui.ImageFilter.blur(
+              sigmaX: sigma, sigmaY: sigma, tileMode: TileMode.decal),
+          child: child);
+
+  Widget _line(String text, _Line l, double enterAt, double exitAt) {
     final words = text.split(' ');
-    // Satu baris utuh yang menyusut bila terlalu lebar, supaya tidak pecah baris.
     return FittedBox(
       fit: BoxFit.scaleDown,
       child: Row(
@@ -86,20 +84,27 @@ class _Teaser extends StatelessWidget {
           for (var i = 0; i < words.length; i++) ...[
             if (i > 0) SizedBox(width: l.size * 0.26),
             Builder(builder: (_) {
-              final a = _ease((t - t0 - i * 0.14) / 0.7);
+              final a = _out((t - enterAt - i * 0.09) / 1.0);
+              final x = _inOut((t - exitAt - i * 0.04) / 0.55);
+              final alpha = a * (1 - x) * (l.dim ? 0.55 : 1);
+              final dy = (1 - a) * 46 - x * 38;
+              final sigma = (1 - a) * 16 + x * 14;
               return Opacity(
-                opacity: a * sceneAlpha * (l.dim ? 0.55 : 1),
+                opacity: alpha,
                 child: Transform.translate(
-                  offset: Offset(0, (1 - a) * 34),
-                  child: Text(words[i],
-                      style: TextStyle(
-                          fontFamily: _serif,
-                          fontSize: l.size,
-                          height: 1.16,
-                          letterSpacing: -l.size * 0.012,
-                          fontWeight:
-                              l.bold ? FontWeight.w700 : FontWeight.w400,
-                          color: _ink)),
+                  offset: Offset(0, dy),
+                  child: _blur(
+                    sigma,
+                    Text(words[i],
+                        style: TextStyle(
+                            fontFamily: _serif,
+                            fontSize: l.size,
+                            height: 1.16,
+                            letterSpacing: -l.size * 0.012,
+                            fontWeight:
+                                l.bold ? FontWeight.w700 : FontWeight.w400,
+                            color: _ink)),
+                  ),
                 ),
               );
             }),
@@ -110,13 +115,12 @@ class _Teaser extends StatelessWidget {
   }
 
   Widget _sceneWidget(_Scene s) {
-    final fadeOut = 1 - _ease((t - (s.end - 0.55)) / 0.55);
-    if (t < s.start || t > s.end) return const SizedBox.shrink();
+    if (t < s.start || t > s.exit + 0.9) return const SizedBox.shrink();
     var delay = s.start;
     final children = <Widget>[];
     for (final l in s.lines) {
-      children.add(_words(l.text, delay, l, fadeOut));
-      delay += 0.5;
+      children.add(_line(l.text, l, delay, s.exit));
+      delay += 0.42;
     }
     return Center(
       child: Padding(
@@ -131,10 +135,13 @@ class _Teaser extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Cahaya lembut dari kanan atas, bergeser pelan sepanjang video.
     final drift = t / _total;
-    final splashFade = 1 - _ease((t - (_splashEnd - 0.5)) / 0.5);
-    final dateA = _ease((t - _dateStart) / 0.9);
+    // Kamera mendorong pelan sepanjang video; cahaya bergeser mengikuti.
+    final push = 1 + 0.05 * Curves.easeInOut.transform(drift);
+    // Logo dan tanggal menjadi satu kunci: logo naik sedikit saat tanggal tiba.
+    final dateA = _out((t - _dateStart) / 1.1);
+    final lift = _inOut((t - _dateStart) / 1.1) * 360;
+    final logoOn = t >= _logoStart;
     return Directionality(
       textDirection: TextDirection.ltr,
       child: ColoredBox(
@@ -144,71 +151,69 @@ class _Teaser extends StatelessWidget {
             child: DecoratedBox(
               decoration: BoxDecoration(
                 gradient: RadialGradient(
-                  center: Alignment(1.1 - drift * 0.5, -0.95 + drift * 0.3),
-                  radius: 1.25,
+                  center: Alignment(1.15 - drift * 0.7, -1.0 + drift * 0.5),
+                  radius: 1.3,
                   colors: [
-                    _ink.withValues(alpha: 0.12 + 0.05 * math.sin(t * 0.7)),
+                    _ink.withValues(alpha: 0.13 + 0.05 * math.sin(t * 0.6)),
                     _ink.withValues(alpha: 0),
                   ],
                 ),
               ),
             ),
           ),
-          for (final s in _scenes) _sceneWidget(s),
-          if (t >= _splashStart && t < _splashEnd)
-            Positioned.fill(
-              child: Opacity(
-                opacity: splashFade,
-                child: Center(
-                  child: Transform.scale(
-                    scale: 1.55,
-                    child: const OTSplashIntro(ink: _ink),
-                  ),
-                ),
-              ),
-            ),
-          if (t >= _finalStart) ...[
-            Positioned.fill(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 90),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Spacer(flex: 5),
-                    _words('Sesuatu yang lebih besar', _finalStart,
-                        const _Line('', size: 96), 1),
-                    const SizedBox(height: 8),
-                    _words('akan hadir.', _finalStart + 0.6,
-                        const _Line('', size: 130, bold: true), 1),
-                    const Spacer(flex: 3),
-                    Opacity(
-                      opacity: dateA,
-                      child: Column(children: [
-                        Container(
-                            width: 180 * dateA,
-                            height: 2,
-                            color: _ink.withValues(alpha: 0.5)),
-                        const SizedBox(height: 40),
-                        const Text('26.10.2026',
-                            style: TextStyle(
-                                fontFamily: _sans,
-                                fontSize: 120,
-                                fontWeight: FontWeight.w600,
-                                letterSpacing: 16,
-                                color: _ink)),
-                        const SizedBox(height: 40),
-                        Container(
-                            width: 180 * dateA,
-                            height: 2,
-                            color: _ink.withValues(alpha: 0.5)),
-                      ]),
+          Positioned.fill(
+            child: Transform.scale(
+              scale: push,
+              child: Stack(children: [
+                for (final s in _scenes) _sceneWidget(s),
+                if (logoOn)
+                  Positioned.fill(
+                    child: Transform.translate(
+                      offset: Offset(0, -lift),
+                      child: Center(
+                        child: Transform.scale(
+                          scale: 1.7,
+                          child: const OTSplashIntro(ink: _ink),
+                        ),
+                      ),
                     ),
-                    const Spacer(flex: 4),
-                  ],
-                ),
-              ),
+                  ),
+                if (t >= _dateStart)
+                  Positioned.fill(
+                    child: Align(
+                      alignment: const Alignment(0, 0.62),
+                      child: Opacity(
+                        opacity: dateA,
+                        child: Transform.translate(
+                          offset: Offset(0, (1 - dateA) * 30),
+                          child: _blur(
+                            (1 - dateA) * 10,
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 64, vertical: 30),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(999),
+                                border: Border.all(
+                                    color: _ink.withValues(alpha: 0.55),
+                                    width: 2.5),
+                                color: _ink.withValues(alpha: 0.06),
+                              ),
+                              child: const Text('26.10.2026',
+                                  style: TextStyle(
+                                      fontFamily: _sans,
+                                      fontSize: 104,
+                                      fontWeight: FontWeight.w600,
+                                      letterSpacing: 12,
+                                      color: _ink)),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+              ]),
             ),
-          ],
+          ),
         ]),
       ),
     );
