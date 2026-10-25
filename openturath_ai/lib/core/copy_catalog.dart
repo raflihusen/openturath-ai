@@ -2753,6 +2753,61 @@ const copyCatalog = <String, List<String>>{
     "Not detected yet? Tap refresh to check your payment.",
     "لم يُرصد بعد؟ اضغط على التحديث لفحص الدفع."
   ],
+  "redeemEnterCode": [
+    "Masukkan kode voucher",
+    "Enter the voucher code",
+    "أدخل رمز القسيمة"
+  ],
+  "redeemTrialActive": [
+    "Masa coba untuk akses ini masih aktif. Kode coba baru dapat dipakai setelah berakhir.",
+    "The trial for this access is still running. A new trial code can be used once it ends.",
+    "ما زالت الفترة التجريبية لهذا الوصول سارية. يمكن استخدام رمز تجريبي جديد بعد انتهائها."
+  ],
+  "redeemNeedsGoogle": [
+    "Masuk dengan akun Google terverifikasi untuk mengaktifkan masa coba.",
+    "Sign in with a verified Google account to start the trial.",
+    "سجّل الدخول بحساب جوجل موثّق لتفعيل الفترة التجريبية."
+  ],
+  "redeemTrialClaimed": [
+    "Masa coba untuk akun Google ini sudah pernah diaktifkan.",
+    "The trial for this Google account has already been used.",
+    "سبق تفعيل الفترة التجريبية لهذا الحساب."
+  ],
+  "redeemMisconfigured": [
+    "Kode ini belum diatur dengan benar. Hubungi admin OpenTurath.",
+    "This code is not set up correctly. Please contact OpenTurath.",
+    "لم يُعدّ هذا الرمز إعدادًا صحيحًا. تواصل مع OpenTurath."
+  ],
+  "redeemRateLimited": [
+    "Terlalu banyak percobaan. Coba lagi beberapa menit lagi.",
+    "Too many attempts. Please try again in a few minutes.",
+    "محاولات كثيرة. حاول مرة أخرى بعد دقائق."
+  ],
+  "redeemPhysicalOnly": [
+    "Kode ini hanya dapat diaktifkan dari ponsel fisik.",
+    "This code can only be activated from a physical phone.",
+    "لا يمكن تفعيل هذا الرمز إلا من هاتف حقيقي."
+  ],
+  "redeemDeviceUsed": [
+    "Kode ini hanya dapat diklaim sekali per perangkat, dan perangkat ini sudah pernah memakainya.",
+    "This code can be claimed once per device, and this device has already used it.",
+    "يمكن استخدام هذا الرمز مرة واحدة لكل جهاز، وقد استُخدم على هذا الجهاز."
+  ],
+  "redeemDeviceIdentity": [
+    "Identitas perangkat diperlukan untuk mengaktifkan kode ini.",
+    "A device identity is required to activate this code.",
+    "يلزم تعريف الجهاز لتفعيل هذا الرمز."
+  ],
+  "redeemFallbackTitle": [
+    "Akses dari voucher",
+    "Access from a voucher",
+    "وصول عبر قسيمة"
+  ],
+  "redeemFailedGeneric": [
+    "Kode belum bisa diaktifkan.",
+    "The code could not be activated.",
+    "تعذّر تفعيل الرمز."
+  ],
   "redeemNotFound": [
     "Kode voucher tidak ditemukan. Periksa kembali penulisan kode Anda.",
     "Voucher code not found. Please check how you typed it.",

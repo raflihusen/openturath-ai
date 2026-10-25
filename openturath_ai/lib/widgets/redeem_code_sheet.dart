@@ -43,36 +43,10 @@ class _RedeemCodeSheetState extends State<RedeemCodeSheet> {
     super.dispose();
   }
 
-  String _humanizeErrorMessage(String raw) {
-    final lower = raw.toLowerCase().replaceAll('_', '-');
-    if (lower.contains('perangkat') || lower.contains('ponsel')) {
-      return raw;
-    }
-    if (lower.contains('not-found')) {
-      return 'Kode voucher tidak ditemukan. Periksa kembali penulisan kode Anda.';
-    }
-    if (lower.contains('already-exists') || lower.contains('already-used')) {
-      return 'Kode ini sudah pernah ditukarkan sebelumnya.';
-    }
-    if (lower.contains('resource-exhausted') || lower.contains('quota')) {
-      return 'Kuota penukaran untuk kode voucher ini sudah habis.';
-    }
-    if (lower.contains('deadline-exceeded') || lower.contains('expired')) {
-      return 'Masa berlaku kode voucher ini telah berakhir.';
-    }
-    if (lower.contains('failed-precondition')) {
-      return 'Kode voucher ini sudah tidak aktif.';
-    }
-    if (lower.contains('invalid-argument')) {
-      return 'Format penulisan kode voucher belum sesuai.';
-    }
-    return raw;
-  }
-
   Future<void> _handleRedeem() async {
     final code = _codeController.text.replaceAll(RegExp(r'\s+'), '').trim();
     if (code.isEmpty) {
-      setState(() => _inlineError = 'Masukkan kode voucher');
+      setState(() => _inlineError = Loc.tr('redeemEnterCode'));
       return;
     }
 
@@ -86,19 +60,17 @@ class _RedeemCodeSheetState extends State<RedeemCodeSheet> {
     setState(() => _isLoading = false);
 
     final success = result['success'] == true;
-    final message = (result['message'] as String?) ??
-        (success
-            ? 'Akses berhasil diaktifkan'
-            : 'Kode tidak valid atau sudah kedaluwarsa');
 
     if (success) {
-      final serviceTitle = (result['serviceTitle'] as String?) ??
-          "Kajian Fikih Syafi'i: Al-Muhaqqiq";
-      final durationDays = (result['durationDays'] as num?)?.toInt() ?? 7;
+      // Isi dialog hanya dari jawaban server; tidak ada judul atau durasi
+      // karangan bila server tidak mengirimnya.
+      final serviceTitle =
+          (result['serviceTitle'] as String?) ?? Loc.tr('redeemFallbackTitle');
+      final durationDays = (result['durationDays'] as num?)?.toInt() ?? 0;
       final expiryRaw = result['expiry'] as String?;
       final expiryDate =
           expiryRaw != null ? DateTime.tryParse(expiryRaw) : null;
-      final agentId = (result['entitlementKey'] as String?) ?? 'fiqh_syafii';
+      final agentId = (result['entitlementKey'] as String?) ?? '';
 
       final nav = Navigator.of(context);
       widget.onSuccess?.call();
@@ -110,9 +82,12 @@ class _RedeemCodeSheetState extends State<RedeemCodeSheet> {
         durationDays: durationDays,
         expiryDate: expiryDate,
         agentId: agentId,
+        showValidity: expiryDate != null,
+        code: code,
       );
     } else {
-      setState(() => _inlineError = _humanizeErrorMessage(message));
+      setState(() => _inlineError =
+          (result['message'] as String?) ?? Loc.tr('redeemFailedGeneric'));
     }
   }
 

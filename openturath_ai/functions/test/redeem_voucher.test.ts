@@ -135,3 +135,21 @@ test('status kesiapan untuk pembayaran memeriksa kepemilikan invoice', async () 
   assert.equal((await api.getAccessReadiness({invoice: 'INV-1'}, caller())).ready, true);
   await rejectsWith(api.getAccessReadiness({invoice: 'INV-1'}, caller('x')), 'not-found');
 });
+
+test('galat penukaran membawa alasan terstruktur agar aplikasi dapat menerjemahkannya', async () => {
+  const {api, db} = fixture();
+  const reasonOf = async (p: Promise<any>) => { try { await p; } catch (e: any) { return e.details?.reason; } return 'tidak-ada-galat'; };
+  assert.equal(await reasonOf(api.redeemCode({code: 'TIDAKADA'}, caller())), 'not_found');
+  db.seed('redeem_codes/MATI', {is_active: false, max_uses: 1, times_used: 0, entitlement_key: 'hadits'});
+  assert.equal(await reasonOf(api.redeemCode({code: 'MATI'}, caller())), 'inactive');
+  db.seed('redeem_codes/HABIS', {max_uses: 1, times_used: 1, entitlement_key: 'hadits'});
+  assert.equal(await reasonOf(api.redeemCode({code: 'HABIS'}, caller())), 'quota');
+  db.seed('redeem_codes/RUSAK', {max_uses: 1, times_used: 0, entitlement_key: 'hadits', duration_days: 999});
+  assert.equal(await reasonOf(api.redeemCode({code: 'RUSAK'}, caller())), 'misconfigured');
+  db.seed('redeem_codes/ONCE', {max_uses: 5, times_used: 0, entitlement_key: 'hadits', duration_days: 7});
+  await api.redeemCode({code: 'ONCE'}, caller());
+  assert.equal(await reasonOf(api.redeemCode({code: 'ONCE'}, caller())), 'already_redeemed');
+  db.seed('redeem_codes/TRIALX', {type: 'trial', max_uses: 5, times_used: 0, entitlement_key: 'fiqh_syafii', duration_days: 7});
+  assert.equal(await reasonOf(api.redeemCode({code: 'TRIALX', deviceId: 'e'.repeat(64), isPhysicalDevice: true},
+    {auth: {uid: 'u', token: {}}})), 'needs_google');
+});

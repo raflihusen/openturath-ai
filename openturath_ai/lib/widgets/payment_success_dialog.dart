@@ -7,6 +7,7 @@ import '../core/routes.dart';
 import '../models/agent_model.dart';
 import '../services/agent_session_manager.dart';
 import '../services/auth_service.dart';
+import '../services/subscription_service.dart';
 import 'access_prepare_gate.dart';
 import 'tahawwulat_hero.dart';
 
@@ -44,6 +45,7 @@ class PaymentSuccessDialog extends StatelessWidget {
         muted = OTColors.textSecondary(dark);
     return AccessPrepareGate(
       seconds: prepareSeconds,
+      isReady: () => SubscriptionService().isAccessReady(invoice: invoice),
       builder: (context, done, left, panel) => PopScope(
         canPop: done,
         child: AlertDialog(

@@ -121,7 +121,7 @@ export function loadBackend(root = process.cwd()) {
     runWith: () => chain,
     region: () => chain,
     https: { onCall: (fn: any) => fn, onRequest: (fn: any) => fn,
-      HttpsError: class extends Error { code: string; constructor(code: string,msg: string){super(msg);this.code=code;} } },
+      HttpsError: class extends Error { code: string; details: any; constructor(code: string,msg: string,details?: any){super(msg);this.code=code;this.details=details;} } },
     firestore: { document: () => ({onCreate:(fn: any)=>fn}) },
     auth: { user: () => ({onDelete:(fn: any)=>fn}) },
     pubsub: { schedule: () => ({timeZone:()=>({onRun:(fn: any)=>fn}),onRun:(fn: any)=>fn}) },

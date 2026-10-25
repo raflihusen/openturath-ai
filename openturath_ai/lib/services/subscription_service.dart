@@ -13,8 +13,30 @@ class SubscriptionService {
     return input.trim().toUpperCase().replaceAll(RegExp(r'[\s-]'), '');
   }
 
-  static String redeemErrorMessage(String code, [String? serverMessage]) {
+  static String redeemErrorMessage(String code,
+      [String? serverMessage, Object? details]) {
     final c = code.toLowerCase().replaceAll('_', '-');
+    // Alasan terstruktur dari server didahulukan: pesan Indonesia dari server
+    // tidak ikut ditampilkan, dan satu kode galat tidak lagi menutupi sebab
+    // yang berbeda-beda.
+    final reason = details is Map ? details['reason'] : null;
+    final byReason = switch (reason) {
+      'not_found' => 'redeemNotFound',
+      'inactive' => 'redeemInactive',
+      'quota' => 'redeemQuota',
+      'expired' => 'redeemExpired',
+      'already_redeemed' => 'redeemUsed',
+      'trial_active' => 'redeemTrialActive',
+      'trial_claimed' => 'redeemTrialClaimed',
+      'needs_google' => 'redeemNeedsGoogle',
+      'misconfigured' => 'redeemMisconfigured',
+      'rate_limited' => 'redeemRateLimited',
+      'physical_device_only' => 'redeemPhysicalOnly',
+      'device_used' => 'redeemDeviceUsed',
+      'device_identity' => 'redeemDeviceIdentity',
+      _ => null,
+    };
+    if (byReason != null) return Loc.tr(byReason);
     if (serverMessage != null && serverMessage.isNotEmpty) {
       final lowerMsg = serverMessage.toLowerCase();
       if (lowerMsg.contains('perangkat') || lowerMsg.contains('ponsel')) {
@@ -73,7 +95,7 @@ class SubscriptionService {
       if (data is Map) {
         return Map<String, dynamic>.from(data);
       }
-      return {'success': true, 'message': 'Kode akses sudah aktif.'};
+      return {'success': true};
     } on FirebaseFunctionsException catch (e) {
       final serverMsg = e.message;
       if (serverMsg != null &&
@@ -83,10 +105,25 @@ class SubscriptionService {
       }
       return {
         'success': false,
-        'message': redeemErrorMessage(e.code, serverMsg)
+        'message': redeemErrorMessage(e.code, serverMsg, e.details)
       };
     } catch (e) {
       return {'success': false, 'message': Loc.tr('networkError')};
+    }
+  }
+
+  /// Apakah penyediaan akses (berbagi notebook) untuk penukaran [code] atau
+  /// pembayaran [invoice] milik pengguna sudah selesai. Galat apa pun dianggap
+  /// belum siap, sehingga penahan hitungan tetap berlaku sebagai cadangan.
+  Future<bool> isAccessReady({String? code, String? invoice}) async {
+    try {
+      final data = await const CallableGateway().call('getAccessReadiness', {
+        if (code != null) 'code': normalizeCode(code),
+        if (invoice != null) 'invoice': invoice,
+      });
+      return data is Map && data['ready'] == true;
+    } catch (_) {
+      return false;
     }
   }
 

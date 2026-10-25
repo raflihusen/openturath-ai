@@ -1693,7 +1693,12 @@ exports.redeemCode = functions
     const deviceModel = typeof (data === null || data === void 0 ? void 0 : data.deviceModel) === "string" ? data.deviceModel.slice(0, 100) : "";
     const deviceBrand = typeof (data === null || data === void 0 ? void 0 : data.deviceBrand) === "string" ? data.deviceBrand.slice(0, 100) : "";
     // F-03 & F-05: Rate limit penukaran voucher per UID (maksimal 8 percobaan per 15 menit)
-    await enforceRateLimit(`rdm_${uid}`, 8, 900, "Terlalu banyak percobaan penukaran kode redeem.");
+    try {
+        await enforceRateLimit(`rdm_${uid}`, 8, 900, "Terlalu banyak percobaan penukaran kode redeem.");
+    }
+    catch (error) {
+        throw new functions.https.HttpsError((error === null || error === void 0 ? void 0 : error.code) || "resource-exhausted", (error === null || error === void 0 ? void 0 : error.message) || "Terlalu banyak percobaan penukaran kode redeem.", { reason: "rate_limited" });
+    }
     // Email yang belum diverifikasi tidak boleh tercatat sebagai identitas pemilik akses.
     const userEmail = context.auth.token.email_verified === true
         ? (context.auth.token.email || "").trim().toLowerCase()
@@ -1712,19 +1717,19 @@ exports.redeemCode = functions
         const codeRef = db.collection("redeem_codes").doc(rawCode);
         const codeDoc = await transaction.get(codeRef);
         if (!codeDoc.exists) {
-            throw new functions.https.HttpsError("not-found", "Kode redeem tidak ditemukan atau salah.");
+            throw new functions.https.HttpsError("not-found", "Kode redeem tidak ditemukan atau salah.", { reason: "not_found" });
         }
         const codeData = codeDoc.data();
         if (codeData.is_active === false) {
-            throw new functions.https.HttpsError("failed-precondition", "Kode redeem ini sudah tidak aktif.");
+            throw new functions.https.HttpsError("failed-precondition", "Kode redeem ini sudah tidak aktif.", { reason: "inactive" });
         }
         const maxUses = codeData.max_uses || 1;
         const timesUsed = codeData.times_used || 0;
         if (timesUsed >= maxUses) {
-            throw new functions.https.HttpsError("resource-exhausted", "Batas pemakaian kode redeem ini sudah tercapai.");
+            throw new functions.https.HttpsError("resource-exhausted", "Batas pemakaian kode redeem ini sudah tercapai.", { reason: "quota" });
         }
         if (codeData.expires_at && codeData.expires_at.toDate() < new Date()) {
-            throw new functions.https.HttpsError("deadline-exceeded", "Masa berlaku penukaran kode ini telah kedaluwarsa.");
+            throw new functions.https.HttpsError("deadline-exceeded", "Masa berlaku penukaran kode ini telah kedaluwarsa.", { reason: "expired" });
         }
         // F-12: Enforce Single-Device Binding untuk kode keluarga promo / perdana
         const isSingleDeviceEnforced = codeData.one_per_device === true ||
@@ -1737,21 +1742,21 @@ exports.redeemCode = functions
         const deviceRedemptionRef = db.collection("device_redemptions").doc(deviceRedemptionKey);
         if (isSingleDeviceEnforced) {
             if (isPhysicalDevice === false) {
-                throw new functions.https.HttpsError("failed-precondition", "Kode ini hanya dapat diaktifkan melalui ponsel fisik asli.");
+                throw new functions.https.HttpsError("failed-precondition", "Kode ini hanya dapat diaktifkan melalui ponsel fisik asli.", { reason: "physical_device_only" });
             }
             if (!rawDeviceId || !/^[a-f0-9]{64}$/.test(rawDeviceId)) {
-                throw new functions.https.HttpsError("invalid-argument", "Identitas perangkat diperlukan untuk mengaktifkan kode ini.");
+                throw new functions.https.HttpsError("invalid-argument", "Identitas perangkat diperlukan untuk mengaktifkan kode ini.", { reason: "device_identity" });
             }
             const deviceRedemptionDoc = await transaction.get(deviceRedemptionRef);
             if (deviceRedemptionDoc.exists) {
-                throw new functions.https.HttpsError("already-exists", "Kode ini hanya dapat diklaim 1 kali per perangkat. Perangkat ini sudah pernah mengaktifkannya sebelumnya.");
+                throw new functions.https.HttpsError("already-exists", "Kode ini hanya dapat diklaim 1 kali per perangkat. Perangkat ini sudah pernah mengaktifkannya sebelumnya.", { reason: "device_used" });
             }
         }
         // Periksa apakah pengguna sudah pernah menukarkan kode ini
         const redemptionRef = codeRef.collection("redemptions").doc(uid);
         const redemptionDoc = await transaction.get(redemptionRef);
         if (redemptionDoc.exists) {
-            throw new functions.https.HttpsError("already-exists", "Kode ini sudah pernah ditukarkan sebelumnya.");
+            throw new functions.https.HttpsError("already-exists", "Kode ini sudah pernah ditukarkan sebelumnya.", { reason: "already_redeemed" });
         }
         // Satu kode dapat membuka satu, beberapa, atau semua AI. `entitlement_keys`
         // (daftar) didahulukan; `entitlement_key` (satu) tetap didukung. Alias
@@ -1765,7 +1770,7 @@ exports.redeemCode = functions
             const trimmed = typeof candidate === "string" ? candidate.trim() : "";
             const key = trimmed === "all_ai" ? "all_access" : trimmed;
             if (!key || !Object.prototype.hasOwnProperty.call(access_catalog_1.SCOPE_LABELS, key) || entitlementKeys.length >= 16) {
-                throw new functions.https.HttpsError("failed-precondition", "Kode ini dikonfigurasi dengan AI yang tidak dikenal. Hubungi admin.");
+                throw new functions.https.HttpsError("failed-precondition", "Kode ini dikonfigurasi dengan AI yang tidak dikenal. Hubungi admin.", { reason: "misconfigured" });
             }
             if (!entitlementKeys.includes(key))
                 entitlementKeys.push(key);
@@ -1787,7 +1792,7 @@ exports.redeemCode = functions
         if (requestedDuration !== undefined && requestedDuration !== null) {
             if (typeof requestedDuration !== "number" || !Number.isInteger(requestedDuration) ||
                 requestedDuration < 1 || requestedDuration > maxDuration) {
-                throw new functions.https.HttpsError("failed-precondition", "Durasi kode ini tidak valid. Hubungi admin.");
+                throw new functions.https.HttpsError("failed-precondition", "Durasi kode ini tidak valid. Hubungi admin.", { reason: "misconfigured" });
             }
             durationDays = requestedDuration;
         }
@@ -1797,10 +1802,10 @@ exports.redeemCode = functions
         const trialClaimRef = db.collection("trial_claims").doc((0, access_control_1.keyOf)(userEmail, promoFamily));
         if (isTrialVoucher) {
             if (!userEmail) {
-                throw new functions.https.HttpsError("failed-precondition", "Masuk dengan akun Google terverifikasi untuk mengaktifkan masa coba.");
+                throw new functions.https.HttpsError("failed-precondition", "Masuk dengan akun Google terverifikasi untuk mengaktifkan masa coba.", { reason: "needs_google" });
             }
             if ((await transaction.get(trialClaimRef)).exists) {
-                throw new functions.https.HttpsError("already-exists", "Masa coba untuk akun Google ini sudah pernah diaktifkan.");
+                throw new functions.https.HttpsError("already-exists", "Masa coba untuk akun Google ini sudah pernah diaktifkan.", { reason: "trial_claimed" });
             }
         }
         // Ambil user saat ini
@@ -1827,7 +1832,7 @@ exports.redeemCode = functions
                 const cur = entitlements[key];
                 const curExp = expiryOf(cur);
                 if ((cur === null || cur === void 0 ? void 0 : cur.plan) === "trial" && cur.status === "active" && curExp && curExp > redeemedAt) {
-                    throw new functions.https.HttpsError("failed-precondition", "Masa coba untuk akses ini masih aktif. Kode trial baru dapat digunakan setelah berakhir.");
+                    throw new functions.https.HttpsError("failed-precondition", "Masa coba untuk akses ini masih aktif. Kode trial baru dapat digunakan setelah berakhir.", { reason: "trial_active" });
                 }
             }
         }

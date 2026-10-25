@@ -13,11 +13,21 @@ import 'tahawwulat_hero.dart' show reviewCopy;
 /// [builder] menerima status selesai, sisa detik, dan panel progres + petunjuk.
 class AccessPrepareGate extends StatefulWidget {
   const AccessPrepareGate(
-      {super.key, required this.builder, this.seconds = 30});
+      {super.key,
+      required this.builder,
+      this.seconds = 30,
+      this.isReady,
+      this.minSeconds = 8});
 
   final Widget Function(BuildContext context, bool done, int left, Widget panel)
       builder;
   final int seconds;
+
+  /// Bila diberikan, dipanggil tiap 3 detik; begitu mengembalikan true dan
+  /// [minSeconds] sudah lewat, penahan dilepas lebih awal. Galat atau false
+  /// berarti terus menunggu sampai [seconds] habis.
+  final Future<bool> Function()? isReady;
+  final int minSeconds;
 
   static const int defaultSeconds = 30;
 
@@ -28,13 +38,33 @@ class AccessPrepareGate extends StatefulWidget {
 class _AccessPrepareGateState extends State<AccessPrepareGate> {
   late int _left = widget.seconds;
   Timer? _timer;
+  bool _ready = false, _polling = false;
+
+  Future<void> _poll() async {
+    final check = widget.isReady;
+    if (check == null || _polling || _ready) return;
+    _polling = true;
+    try {
+      _ready = await check();
+    } catch (_) {
+      _ready = false;
+    } finally {
+      _polling = false;
+    }
+  }
 
   @override
   void initState() {
     super.initState();
+    _poll();
     _timer = Timer.periodic(const Duration(seconds: 1), (t) {
       if (!mounted) return;
-      setState(() => _left = (_left - 1).clamp(0, widget.seconds));
+      final elapsed = widget.seconds - _left + 1;
+      if (elapsed % 3 == 0) _poll();
+      setState(() {
+        _left = (_left - 1).clamp(0, widget.seconds);
+        if (_ready && elapsed >= widget.minSeconds) _left = 0;
+      });
       if (_left == 0) t.cancel();
     });
   }

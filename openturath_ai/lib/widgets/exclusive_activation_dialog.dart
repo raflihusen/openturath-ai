@@ -9,6 +9,7 @@ import '../core/routes.dart';
 import '../models/agent_model.dart';
 import '../services/agent_session_manager.dart';
 import '../services/auth_service.dart';
+import '../services/subscription_service.dart';
 
 import 'package:openturath_ai/core/design/ot_radius.dart';
 import 'package:openturath_ai/core/design/ot_colors.dart';
@@ -24,12 +25,20 @@ class ExclusiveActivationDialog extends StatelessWidget {
   final DateTime? expiryDate;
   final String? agentId;
 
+  /// Tampilkan baris masa berlaku. False bila server tidak mengirim tanggal.
+  final bool showValidity;
+
+  /// Kode yang baru ditukar; dipakai untuk menanyakan kesiapan akses.
+  final String? code;
+
   const ExclusiveActivationDialog({
     super.key,
     required this.serviceTitle,
     required this.durationDays,
     this.expiryDate,
     this.agentId,
+    this.showValidity = true,
+    this.code,
   });
 
   static Future<void> show(
@@ -38,6 +47,8 @@ class ExclusiveActivationDialog extends StatelessWidget {
     required int durationDays,
     DateTime? expiryDate,
     String? agentId,
+    bool showValidity = true,
+    String? code,
   }) {
     OTMotion.success();
     return showGeneralDialog<void>(
@@ -51,6 +62,8 @@ class ExclusiveActivationDialog extends StatelessWidget {
         durationDays: durationDays,
         expiryDate: expiryDate,
         agentId: agentId,
+        showValidity: showValidity,
+        code: code,
       ),
       transitionBuilder: (ctx, anim1, anim2, child) {
         final curve =
@@ -106,6 +119,9 @@ class ExclusiveActivationDialog extends StatelessWidget {
             ? DateTime.now().add(Duration(days: durationDays))
             : null);
     return AccessPrepareGate(
+      isReady: code == null
+          ? null
+          : () => SubscriptionService().isAccessReady(code: code),
       builder: (context, done, left, panel) => PopScope(
         canPop: done,
         child: AlertDialog(
@@ -130,13 +146,15 @@ class ExclusiveActivationDialog extends StatelessWidget {
                           ? serviceTitle
                           : 'AI $serviceTitle',
                       style: OTTypography.bodyMedium(color: ink)),
-                  const SizedBox(height: 12),
-                  Text(
-                      expiry == null
-                          ? reviewCopy('Tanpa batas waktu', 'دون حد زمني',
-                              'No time limit')
-                          : '${reviewCopy('Berlaku hingga', 'صالح حتى', 'Valid until')} ${HijriDateUtils.formatMasehiOnly(expiry.toLocal())}',
-                      style: OTTypography.body(color: muted)),
+                  if (showValidity) ...[
+                    const SizedBox(height: 12),
+                    Text(
+                        expiry == null
+                            ? reviewCopy('Tanpa batas waktu', 'دون حد زمني',
+                                'No time limit')
+                            : '${reviewCopy('Berlaku hingga', 'صالح حتى', 'Valid until')} ${HijriDateUtils.formatMasehiOnly(expiry.toLocal())}',
+                        style: OTTypography.body(color: muted)),
+                  ],
                   const SizedBox(height: 16),
                   Text(
                       done
