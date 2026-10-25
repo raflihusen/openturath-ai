@@ -52,7 +52,7 @@ async function main() {
     if (!token || !owners.size)
         throw new Error("TELEGRAM_BOT_TOKEN and OWNER_TELEGRAM_IDS are required");
     const llm = process.env.LLM_BASE_URL ? openAiCompatible(process.env.LLM_BASE_URL, process.env.LLM_MODEL || "auto", process.env.LLM_API_KEY || "") : undefined;
-    const ops = new owner_ops_1.OwnerOps(db, notebook_catalog_1.NOTEBOOK_ENTITIES, access_catalog_1.ENTITY_SCOPES, access_catalog_1.SCOPE_LABELS);
+    const ops = new owner_ops_1.OwnerOps(db, notebook_catalog_1.NOTEBOOK_ENTITIES, access_catalog_1.ENTITY_SCOPES, access_catalog_1.SCOPE_LABELS, Date.now, (ms) => admin.firestore.Timestamp.fromMillis(ms));
     const bot = new owner_bot_1.OwnerBot({ db, ops, owners, telegram, llm });
     const state = db.collection("owner_bot").doc("state");
     if (process.env.OWNER_BOT_TAKE_OVER_WEBHOOK === "1")

@@ -1,3 +1,4 @@
+import * as crypto from "crypto";
 import {AccessControl, Entity, keyOf, millis, normalEmail, billingExpiry, rights, VIP_EMAILS} from "./access_control";
 
 // Owner prerogative operations (VIP, manual access, extension, revocation,
@@ -6,7 +7,13 @@ import {AccessControl, Entity, keyOf, millis, normalEmail, billingExpiry, rights
 // Callers (the owner bot) must show `preview()` to the owner and run
 // `execute()` only after an explicit confirmation of that exact preview.
 
+// Kode bonus sekali pakai untuk satu orang (mis. pengirim testimoni). Dibuat saat
+// konfirmasi; kodenya sendiri tidak ikut pratinjau karena acak.
+export interface VoucherAction {
+  type: "voucher"; kind: "story" | "feed" | "custom"; label: string; days?: number; scopes?: string[]; reason?: string;
+}
 export type OwnerAction =
+  | VoucherAction
   | {type: "grant"; email: string; scopes: string[]; duration: string; reason: string}
   | {type: "extend"; email: string; scope: string; duration: string; reason: string}
   | {type: "vip"; email: string; reason: string}
@@ -20,6 +27,12 @@ export interface Preview {
 }
 
 const DAY = 86400000;
+// Story hanya tampil 24 jam sehingga bonusnya lebih singkat; kiriman feed/reel/grup bertahan.
+export const BONUS_DAYS = {story: 3, feed: 7} as const;
+export const BONUS_SCOPES = ["fiqh_tahawwulat", "fiqh_syafii"];
+const BONUS_REDEEM_WINDOW_DAYS = 7;
+// Tanpa 0/O dan 1/I/L agar kode mudah dibaca dan diketik.
+const CODE_ALPHABET = "ABCDEFGHJKMNPQRSTUVWXYZ23456789";
 const PERMANENT_MS = Date.UTC(2125, 0, 1);
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const day = (ms: number) => new Date(ms).toISOString().slice(0, 10);
@@ -42,7 +55,9 @@ export function parseDuration(text: string, start: number): number {
 export class OwnerOps {
   engine: AccessControl;
   constructor(public db: any, public entities: Record<string, Entity>, public scopes: Record<string, string>,
-    public labels: Record<string, string>, public clock: () => number = Date.now) {
+    public labels: Record<string, string>, public clock: () => number = Date.now,
+    // Firestore menuntut Timestamp asli untuk expires_at; layanan VPS mengisinya.
+    public timestamp: (ms: number) => any = (ms: number) => ({toMillis: () => ms, toDate: () => new Date(ms)})) {
     this.engine = new AccessControl(db, entities, scopes, undefined, clock);
   }
   validScopes(): string[] { return [...new Set(Object.values(this.scopes))].sort(); }
@@ -130,8 +145,56 @@ export class OwnerOps {
     return out.sort((a, b) => a.ends.localeCompare(b.ends));
   }
 
+  voucherPlan(action: VoucherAction): {days: number; scopes: string[]; expiresMs: number; label: string} | string {
+    const label = String(action.label || "").trim().slice(0, 80);
+    if (label.length < 2) return "Sebutkan untuk siapa (akun IG atau nama), minimal 2 karakter";
+    let days: number;
+    if (action.kind === "story") days = BONUS_DAYS.story;
+    else if (action.kind === "feed") days = BONUS_DAYS.feed;
+    else {
+      days = Number(action.days);
+      if (!Number.isInteger(days) || days < 1 || days > 31) return "Untuk jenis custom, hari harus bilangan bulat 1-31";
+    }
+    const scopes = [...new Set((action.scopes?.length ? action.scopes : BONUS_SCOPES).map(x => x === "all" || x === "semua" ? "all_access" : x))];
+    const unknown = scopes.filter(x => x !== "all_access" && !this.validScopes().includes(x));
+    if (unknown.length) return `Modul tidak dikenal: ${unknown.join(", ")}`;
+    return {days, scopes, label, expiresMs: this.clock() + BONUS_REDEEM_WINDOW_DAYS * DAY};
+  }
+
+  async executeVoucher(action: VoucherAction, actor: string): Promise<string> {
+    const plan = this.voucherPlan(action);
+    if (typeof plan === "string") throw new Error(plan);
+    const now = this.clock();
+    for (let attempt = 0; attempt < 8; attempt++) {
+      let code = "BAGI";
+      for (let i = 0; i < 10; i++) code += CODE_ALPHABET[crypto.randomInt(CODE_ALPHABET.length)];
+      const ref = this.db.collection("redeem_codes").doc(code);
+      const created = await this.db.runTransaction(async (t: any) => {
+        if ((await t.get(ref)).exists) return false;
+        t.set(ref, {is_active: true, max_uses: 1, times_used: 0, duration_days: plan.days, type: "santri",
+          ...(plan.scopes.length === 1 ? {entitlement_key: plan.scopes[0]} : {entitlement_keys: plan.scopes}),
+          expires_at: this.timestamp(plan.expiresMs), note: `Bonus ${action.kind} ${plan.label}`.slice(0, 160),
+          created_by: "owner_bot", created_ms: now});
+        return true;
+      });
+      if (created) {
+        await this.db.collection("owner_audit").add({action: {...action, code_prefix: code.slice(0, 6)}, actor, executed_ms: now});
+        return code;
+      }
+    }
+    throw new Error("Gagal membuat kode unik; coba lagi");
+  }
+
   async preview(action: OwnerAction): Promise<Preview> {
     const fail = (error: string): Preview => ({ok: false, error, lines: [], affected: []});
+    if (action.type === "voucher") {
+      const plan = this.voucherPlan(action);
+      if (typeof plan === "string") return fail(plan);
+      return {ok: true, affected: [], lines: [`🎟️ Buat KODE BONUS sekali pakai`, `👤 Untuk: ${plan.label}`,
+        `📦 ${plan.scopes.map(x => this.label(x)).join(", ")}`,
+        `📅 ${plan.days} hari sejak ditukar; harus ditukar sebelum ${day(plan.expiresMs)}`,
+        `📝 ${String(action.reason || "Bonus cerita pengalaman").trim().slice(0, 120)}`]};
+    }
     const email = normalEmail(action.email);
     if (!EMAIL.test(email)) return fail("Email tidak valid");
     const reason = String((action as any).reason || "").trim();
@@ -184,6 +247,7 @@ export class OwnerOps {
   }
 
   async execute(action: OwnerAction, actor: string): Promise<string> {
+    if (action.type === "voucher") return this.executeVoucher(action, actor);
     const preview = await this.preview(action);
     if (!preview.ok) throw new Error(preview.error);
     const email = normalEmail(action.email), now = this.clock(), reason = String(action.reason).trim().slice(0, 300);

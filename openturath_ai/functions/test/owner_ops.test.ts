@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import vm from 'node:vm';
 import path from 'node:path';
+import nodeCrypto from 'node:crypto';
 import {stripTypeScriptTypes} from 'node:module';
 import * as AC from '../src/access_control.ts';
 import {MemoryDB} from './audit_harness.ts';
@@ -12,9 +13,10 @@ const {AccessControl, keyOf, rights} = AC;
 // evaluate it with the real module injected.
 const mod: any = {};
 vm.runInNewContext(stripTypeScriptTypes(fs.readFileSync(path.join(import.meta.dirname, '../src/owner_ops.ts'), 'utf8')
+  .replace(/^import \* as crypto from "crypto";/m, 'const crypto = CRYPTO;')
   .replace(/^import \{([^}]*)\} from "\.\/access_control";/m, 'const {$1} = AC;')
   .replace(/^export (class|function|const) /gm, '$1 '), {mode: 'transform'}) + '\nexports.OwnerOps = OwnerOps; exports.parseDuration = parseDuration;',
-  {AC, exports: mod, Date, Math, Number, String, Object, Array, Set, Map, Error, JSON, Promise});
+  {AC, CRYPTO: nodeCrypto, exports: mod, Date, Math, Number, String, Object, Array, Set, Map, Error, JSON, Promise});
 const {OwnerOps, parseDuration} = mod;
 
 const DAY = 86400000, now = 1_800_000_000_000;

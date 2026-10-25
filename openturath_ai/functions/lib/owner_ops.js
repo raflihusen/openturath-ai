@@ -1,9 +1,16 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.OwnerOps = void 0;
+exports.OwnerOps = exports.BONUS_SCOPES = exports.BONUS_DAYS = void 0;
 exports.parseDuration = parseDuration;
+const crypto = require("crypto");
 const access_control_1 = require("./access_control");
 const DAY = 86400000;
+// Story hanya tampil 24 jam sehingga bonusnya lebih singkat; kiriman feed/reel/grup bertahan.
+exports.BONUS_DAYS = { story: 3, feed: 7 };
+exports.BONUS_SCOPES = ["fiqh_tahawwulat", "fiqh_syafii"];
+const BONUS_REDEEM_WINDOW_DAYS = 7;
+// Tanpa 0/O dan 1/I/L agar kode mudah dibaca dan diketik.
+const CODE_ALPHABET = "ABCDEFGHJKMNPQRSTUVWXYZ23456789";
 const PERMANENT_MS = Date.UTC(2125, 0, 1);
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const day = (ms) => new Date(ms).toISOString().slice(0, 10);
@@ -26,12 +33,15 @@ function parseDuration(text, start) {
     return (0, access_control_1.billingExpiry)(start, months);
 }
 class OwnerOps {
-    constructor(db, entities, scopes, labels, clock = Date.now) {
+    constructor(db, entities, scopes, labels, clock = Date.now, 
+    // Firestore menuntut Timestamp asli untuk expires_at; layanan VPS mengisinya.
+    timestamp = (ms) => ({ toMillis: () => ms, toDate: () => new Date(ms) })) {
         this.db = db;
         this.entities = entities;
         this.scopes = scopes;
         this.labels = labels;
         this.clock = clock;
+        this.timestamp = timestamp;
         this.engine = new access_control_1.AccessControl(db, entities, scopes, undefined, clock);
     }
     validScopes() { return [...new Set(Object.values(this.scopes))].sort(); }
@@ -127,9 +137,62 @@ class OwnerOps {
         }
         return out.sort((a, b) => a.ends.localeCompare(b.ends));
     }
+    voucherPlan(action) {
+        var _a;
+        const label = String(action.label || "").trim().slice(0, 80);
+        if (label.length < 2)
+            return "Sebutkan untuk siapa (akun IG atau nama), minimal 2 karakter";
+        let days;
+        if (action.kind === "story")
+            days = exports.BONUS_DAYS.story;
+        else if (action.kind === "feed")
+            days = exports.BONUS_DAYS.feed;
+        else {
+            days = Number(action.days);
+            if (!Number.isInteger(days) || days < 1 || days > 31)
+                return "Untuk jenis custom, hari harus bilangan bulat 1-31";
+        }
+        const scopes = [...new Set((((_a = action.scopes) === null || _a === void 0 ? void 0 : _a.length) ? action.scopes : exports.BONUS_SCOPES).map(x => x === "all" || x === "semua" ? "all_access" : x))];
+        const unknown = scopes.filter(x => x !== "all_access" && !this.validScopes().includes(x));
+        if (unknown.length)
+            return `Modul tidak dikenal: ${unknown.join(", ")}`;
+        return { days, scopes, label, expiresMs: this.clock() + BONUS_REDEEM_WINDOW_DAYS * DAY };
+    }
+    async executeVoucher(action, actor) {
+        const plan = this.voucherPlan(action);
+        if (typeof plan === "string")
+            throw new Error(plan);
+        const now = this.clock();
+        for (let attempt = 0; attempt < 8; attempt++) {
+            let code = "BAGI";
+            for (let i = 0; i < 10; i++)
+                code += CODE_ALPHABET[crypto.randomInt(CODE_ALPHABET.length)];
+            const ref = this.db.collection("redeem_codes").doc(code);
+            const created = await this.db.runTransaction(async (t) => {
+                if ((await t.get(ref)).exists)
+                    return false;
+                t.set(ref, Object.assign(Object.assign({ is_active: true, max_uses: 1, times_used: 0, duration_days: plan.days, type: "santri" }, (plan.scopes.length === 1 ? { entitlement_key: plan.scopes[0] } : { entitlement_keys: plan.scopes })), { expires_at: this.timestamp(plan.expiresMs), note: `Bonus ${action.kind} ${plan.label}`.slice(0, 160), created_by: "owner_bot", created_ms: now }));
+                return true;
+            });
+            if (created) {
+                await this.db.collection("owner_audit").add({ action: Object.assign(Object.assign({}, action), { code_prefix: code.slice(0, 6) }), actor, executed_ms: now });
+                return code;
+            }
+        }
+        throw new Error("Gagal membuat kode unik; coba lagi");
+    }
     async preview(action) {
         var _a;
         const fail = (error) => ({ ok: false, error, lines: [], affected: [] });
+        if (action.type === "voucher") {
+            const plan = this.voucherPlan(action);
+            if (typeof plan === "string")
+                return fail(plan);
+            return { ok: true, affected: [], lines: [`🎟️ Buat KODE BONUS sekali pakai`, `👤 Untuk: ${plan.label}`,
+                    `📦 ${plan.scopes.map(x => this.label(x)).join(", ")}`,
+                    `📅 ${plan.days} hari sejak ditukar; harus ditukar sebelum ${day(plan.expiresMs)}`,
+                    `📝 ${String(action.reason || "Bonus cerita pengalaman").trim().slice(0, 120)}`] };
+        }
         const email = (0, access_control_1.normalEmail)(action.email);
         if (!EMAIL.test(email))
             return fail("Email tidak valid");
@@ -194,6 +257,8 @@ class OwnerOps {
             affected: [{ email, name, uid: owner.uid, scopes: targets, seats }] };
     }
     async execute(action, actor) {
+        if (action.type === "voucher")
+            return this.executeVoucher(action, actor);
         const preview = await this.preview(action);
         if (!preview.ok)
             throw new Error(preview.error);

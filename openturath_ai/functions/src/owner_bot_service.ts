@@ -47,7 +47,8 @@ function openAiCompatible(base: string, model: string, key: string): Llm {
 async function main(): Promise<void> {
   if (!token || !owners.size) throw new Error("TELEGRAM_BOT_TOKEN and OWNER_TELEGRAM_IDS are required");
   const llm = process.env.LLM_BASE_URL ? openAiCompatible(process.env.LLM_BASE_URL, process.env.LLM_MODEL || "auto", process.env.LLM_API_KEY || "") : undefined;
-  const ops = new OwnerOps(db, NOTEBOOK_ENTITIES, ENTITY_SCOPES, SCOPE_LABELS);
+  const ops = new OwnerOps(db, NOTEBOOK_ENTITIES, ENTITY_SCOPES, SCOPE_LABELS, Date.now,
+    (ms: number) => admin.firestore.Timestamp.fromMillis(ms));
   const bot = new OwnerBot({db, ops, owners, telegram, llm});
   const state = db.collection("owner_bot").doc("state");
   if (process.env.OWNER_BOT_TAKE_OVER_WEBHOOK === "1") await telegram("deleteWebhook", {drop_pending_updates: false});

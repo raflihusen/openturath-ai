@@ -19,7 +19,7 @@ function load(file: string, deps: any, names: string[]) {
     {deps, exports: out, Date, Math, Number, String, Object, Array, Set, Map, Error, JSON, Promise, RegExp});
   return out;
 }
-const OPS = load('owner_ops.ts', {access_control: AC}, ['OwnerOps']);
+const OPS = load('owner_ops.ts', {access_control: AC, crypto}, ['OwnerOps']);
 const BOT = load('owner_bot.ts', {crypto, owner_ops: OPS}, ['OwnerBot']);
 
 const DAY = 86400000, now = 1_800_000_000_000, OWNER = '111', CHAT = 111;
@@ -142,4 +142,42 @@ test('expired confirmations are refused', async () => {
   await bot.handleUpdate({callback_query: {id: 'q', data: `oa:${a.id}:y`, from: {id: 111}, message: {chat: {id: CHAT}, message_id: 1}}});
   assert.equal((await pending())[0].status, 'expired');
   assert.equal(db.docs.has(`access_vip_registry/${keyOf('syaikh@x.test')}`), false);
+});
+
+test('kode bonus satu orang: kode baru dibuat hanya setelah konfirmasi dan hanya ditampilkan kepada pemilik', async () => {
+  const {db, sent, msg, press, pending} = setup();
+  await msg('/kode story @budi hadits');
+  const [action] = await pending();
+  assert.equal(action.status, 'pending');
+  assert.equal(action.action.type, 'voucher');
+  assert.match(action.lines.join(' '), /3 hari/);
+  assert.equal((await db.collection('redeem_codes').get()).docs.length, 0, 'belum ada kode sebelum konfirmasi');
+  await press(action.id);
+  const codes = (await db.collection('redeem_codes').get()).docs;
+  assert.equal(codes.length, 1);
+  const doc = codes[0].data();
+  assert.match(codes[0].id, /^BAGI[A-HJKMNP-Z2-9]{10}$/);
+  assert.equal(doc.max_uses, 1);
+  assert.equal(doc.times_used, 0);
+  assert.equal(doc.duration_days, 3);
+  assert.equal(doc.entitlement_key, 'hadits');
+  assert.equal(doc.is_active, true);
+  assert.ok(doc.expires_at.toDate().getTime() - now > 6 * DAY);
+  const shown = sent.filter((x: any) => x.method === 'editMessageText').at(-1).text;
+  assert.ok(shown.includes(codes[0].id), 'pemilik melihat kodenya');
+  const stored = (await pending())[0];
+  assert.ok(!JSON.stringify(stored).includes(codes[0].id), 'kode tidak disimpan di catatan aksi');
+});
+
+test('kode bonus: jenis feed 7 hari, custom menuntut hari 1-31, modul asing ditolak, batal tidak membuat kode', async () => {
+  const {db, sent, msg, press, pending} = setup();
+  await msg('/kode feed @sari hadits');
+  await msg('/kode 40 @sari hadits');
+  await msg('/kode story @sari modulpalsu').catch(() => {});
+  await msg('/kode story x hadits');
+  assert.equal((await pending()).length, 1, 'hanya satu usulan sah');
+  assert.match((await pending())[0].lines.join(' '), /7 hari/);
+  assert.ok(sent.some((x: any) => /1-31/.test(x.text || '')));
+  await press((await pending())[0].id, false);
+  assert.equal((await db.collection('redeem_codes').get()).docs.length, 0);
 });
