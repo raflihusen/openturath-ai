@@ -158,6 +158,16 @@ const copyCatalog = <String, List<String>>{
     "Save your study results for later reading",
     "احفظ نتائج المطالعة للرجوع إليها"
   ],
+  "planSingleFieldNote": [
+    "Satu paket untuk satu bidang ilmu. Anda bisa berganti pilihan sebelum membayar, dan bidang lain akan segera hadir.",
+    "One plan covers one field. You can change your choice before paying, and more fields are coming soon.",
+    "الباقة الواحدة لعلم واحد. يمكنك تغيير اختيارك قبل الدفع، وستُضاف علوم أخرى قريبًا."
+  ],
+  "planSingleBenefit5": [
+    "Salin percakapan untuk dibaca kembali di tempat lain",
+    "Copy the conversation to read again elsewhere",
+    "انسخ المحادثة لتقرأها مرة أخرى في مكان آخر"
+  ],
   "planFeaturedBenefit1": [
     "Akses penuh ke AI Fikih Tahawwulat",
     "Full access to the Fiqh al-Tahawwulat AIs",

@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:math' as math;
 import '../widgets/app_loader.dart';
 import '../widgets/adaptive_sheet.dart';
 import 'package:flutter/gestures.dart';
@@ -596,102 +595,6 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     );
   }
 
-  /// Bidang yang tersedia sebagai kapsul yang bisa diketuk, melengkapi
-  /// [_fieldRow]. Mengisi ruang kartu satu bidang agar sejajar dengan kartu
-  /// paket utama yang memuat lima asisten.
-  Widget _fieldsPanel(List<AgentModel> specialists, AgentModel selected,
-      {required VoidCallback onMore}) {
-    final dark = Theme.of(context).brightness == Brightness.dark;
-    final fg = OTColors.textPrimary(dark);
-    final sub = OTColors.textSecondary(dark);
-    final ink = OTColors.inverted(dark);
-    final onInk = OTColors.onInverted(dark);
-    final available =
-        specialists.where((a) => a.isActive && !a.isComingSoon).toList();
-    const shown = 5;
-    final visible = available.take(shown).toList();
-    if (!visible.contains(selected) && available.contains(selected)) {
-      visible[visible.length - 1] = selected;
-    }
-    final more = available.length - visible.length;
-    // Bidang yang segera hadir tampil redup dan tidak bisa diketuk, supaya
-    // pengguna tahu daftarnya bertambah.
-    final soon = specialists
-        .where((a) =>
-            a.kind == CorpusKind.discipline &&
-            a.isComingSoon &&
-            a.id != 'fiqh_tahawwulat')
-        .take(math.max(0, 6 - visible.length - (more > 0 ? 1 : 0)))
-        .toList();
-    Widget chip(String text, {bool on = false, VoidCallback? onTap}) => InkWell(
-          onTap: _processing ? null : onTap,
-          borderRadius: BorderRadius.circular(OTRadius.chip),
-          child: Container(
-            padding: const EdgeInsets.symmetric(
-                horizontal: OTSpacing.md, vertical: OTSpacing.xs),
-            decoration: BoxDecoration(
-              color: on ? ink : null,
-              borderRadius: BorderRadius.circular(OTRadius.chip),
-              border: Border.all(color: on ? ink : fg.withValues(alpha: 0.28)),
-            ),
-            child: Text(text,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: OTTypography.captionMedium(color: on ? onInk : fg)),
-          ),
-        );
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(OTSpacing.base),
-      decoration: BoxDecoration(
-        color: OTColors.surfaceSubtle(dark),
-        borderRadius: BorderRadius.circular(OTRadius.input),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-              switch (Loc.language) {
-                'en' => 'Fields available',
-                'ar' => 'العلوم المتاحة',
-                _ => 'Bidang yang tersedia',
-              },
-              style: OTTypography.caption(color: sub)),
-          const SizedBox(height: OTSpacing.md),
-          Wrap(
-            spacing: OTSpacing.xs,
-            runSpacing: OTSpacing.xs,
-            children: [
-              for (final a in visible)
-                ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 220),
-                  child: chip(
-                      Loc.text(a.title).replaceFirst(RegExp(r'^AI\s+'), ''),
-                      on: a.id == selected.id,
-                      onTap: () => setState(() => _selectedAgentId = a.id)),
-                ),
-              for (final a in soon)
-                Opacity(
-                  opacity: 0.45,
-                  child: ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 220),
-                    child: chip(
-                        Loc.text(a.title).replaceFirst(RegExp(r'^AI\s+'), '')),
-                  ),
-                ),
-              if (more > 0)
-                chip(
-                    Loc.isArabic
-                        ? '+${ArabicCatalog.digits('$more')}'
-                        : '+$more',
-                    onTap: onMore),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
   /// Persetujuan sebelum membayar: tautan ke Ketentuan Layanan dan kebijakan
   /// pembayaran, supaya pengguna tahu syaratnya sebelum menekan tombol.
   Widget _consentNote(Color color) {
@@ -958,6 +861,8 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                   Loc.tr('planFeaturedBenefit1'),
                   Loc.tr('planFeaturedBenefit3'),
                   Loc.tr('planFeaturedBenefit4'),
+                  Loc.tr('planSingleBenefit3'),
+                  Loc.tr('planSingleBenefit4'),
                 ],
                 onCheckout: () => _checkout(flagship, flagshipOffer),
                 agentId: flagship.id,
@@ -971,21 +876,30 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                       active: _hasAccess(selected.id),
                       title: Loc.text(selected.title),
                       description: Loc.tr('planSingleDescription'),
-                      field: Column(children: [
-                        _fieldRow(
-                          label: Loc.tr('chooseField'),
-                          name: Loc.text(selected.title),
-                          inverse: false,
-                          onTap: _processing
-                              ? null
-                              : () => _showDisciplinePickerModal(
-                                  context, specialists),
-                        ),
-                        const SizedBox(height: OTSpacing.md),
-                        _fieldsPanel(specialists, selected,
-                            onMore: () => _showDisciplinePickerModal(
-                                context, specialists)),
-                      ]),
+                      field: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            _fieldRow(
+                              label: Loc.tr('chooseField'),
+                              name: Loc.text(selected.title),
+                              inverse: false,
+                              onTap: _processing
+                                  ? null
+                                  : () => _showDisciplinePickerModal(
+                                      context, specialists),
+                            ),
+                            const SizedBox(height: OTSpacing.md),
+                            Padding(
+                              padding: const EdgeInsetsDirectional.only(
+                                  start: OTSpacing.xs),
+                              child: Text(Loc.tr('planSingleFieldNote'),
+                                  style: OTTypography.caption(
+                                          color: OTColors.textSecondary(
+                                              Theme.of(context).brightness ==
+                                                  Brightness.dark))
+                                      .copyWith(height: 1.5)),
+                            ),
+                          ]),
                       price: singleOffer,
                       offers: singleOffers,
                       benefits: [
@@ -993,6 +907,8 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                             'planSingleBenefit1', [Loc.text(selected.title)]),
                         Loc.tr('planSingleBenefit2'),
                         Loc.tr('planSingleBenefit3'),
+                        Loc.tr('planSingleBenefit4'),
+                        Loc.tr('planSingleBenefit5'),
                       ],
                       onCheckout: () => _checkout(selected, singleOffer),
                       agentId: selected.id,
