@@ -57,7 +57,7 @@ void main() {
       final tahawwulatAgent =
           AgentModel.defaultAgents.firstWhere((a) => a.id == 'fiqh_tahawwulat');
       expect(tahawwulatAgent.fieldId, 'fiqh_tahawwulat');
-      expect(tahawwulatAgent.price1m, 300000);
+      expect(tahawwulatAgent.price1m, 299000);
       expect(tahawwulatAgent.isActive, isTrue);
     });
 

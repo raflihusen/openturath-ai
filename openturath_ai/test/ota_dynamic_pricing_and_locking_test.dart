@@ -85,7 +85,7 @@ void main() {
       // Default revision
       expect(ProductPricing.revision, isNotEmpty);
       final initialTahawwulat1m = ProductPricing.tahawwulat.first.amount;
-      expect(initialTahawwulat1m, equals(300000));
+      expect(initialTahawwulat1m, equals(299000));
 
       // Simulate OTA Firestore update with Rp 1.000 test pricing
       ProductPricing.updateOffers(
@@ -106,10 +106,10 @@ void main() {
       ProductPricing.updateOffers(
         revision: ProductPricing.defaultRevision,
         tahawwulatMap: {
-          'tholib_1m': {'amount': 300000, 'regularAmount': 1000000},
+          'tholib_1m': {'amount': 299000, 'regularAmount': 1000000},
         },
       );
-      expect(ProductPricing.tahawwulat.first.amount, equals(300000));
+      expect(ProductPricing.tahawwulat.first.amount, equals(299000));
       expect(ProductPricing.revision, equals(ProductPricing.defaultRevision));
     });
   });

@@ -174,7 +174,7 @@ class AgentModel {
           catalogId: 'canonical_tahawwulat',
           status: 'active',
           sortOrder: 1,
-          price1m: 300000,
+          price1m: 299000,
           price6m: 1499000,
           price1y: 1999000,
           subAgents: [

@@ -53,7 +53,7 @@ abstract final class ProductPricing {
   ];
   static const defaultTahawwulat = [
     SubscriptionOffer(
-        plan: 'tholib_1m', months: 1, regularAmount: 1000000, amount: 300000),
+        plan: 'tholib_1m', months: 1, regularAmount: 1000000, amount: 299000),
     SubscriptionOffer(
         plan: 'tholib_6m', months: 6, regularAmount: 2995000, amount: 1499000),
     SubscriptionOffer(
@@ -77,7 +77,7 @@ abstract final class ProductPricing {
     }
     if (tahawwulatMap != null) {
       _tahawwulat = [
-        _buildOffer('tholib_1m', 1, 1000000, 300000, tahawwulatMap),
+        _buildOffer('tholib_1m', 1, 1000000, 299000, tahawwulatMap),
         _buildOffer('tholib_6m', 6, 2995000, 1499000, tahawwulatMap),
         _buildOffer('bahits_1y', 12, 4995000, 1999000, tahawwulatMap),
       ];
@@ -179,7 +179,7 @@ class ProductPricingService {
               ? (data['tahawwulat_1m'] ?? data['tholib_1m']) as int
               : int.tryParse((data['tahawwulat_1m'] ?? data['tholib_1m'])
                       .toString()) ??
-                  300000;
+                  299000;
           tahawwulat = {
             'tholib_1m': {'amount': t1m, 'regularAmount': 1000000},
           };

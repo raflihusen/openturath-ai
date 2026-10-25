@@ -1114,8 +1114,9 @@ class _PeriodSwitch extends StatelessWidget {
   }
 }
 
-/// Banner hitung mundur penawaran perdana 10 hari yang dimulai pada
-/// Jumat pukul 12:00 WIB siang (23 Oktober 2026 12:00 WIB / 05:00 UTC).
+/// Banner hitung mundur penawaran perdana 10 hari yang dimulai Senin,
+/// 26 Oktober 2026 pukul 12:00 WIB (05:00 UTC) dan berakhir Kamis,
+/// 5 November 2026 pukul 12:00 WIB.
 ///
 /// Desain solid red 100% opacity (tanpa pengurangan transparansi) dengan
 /// tipografi putih bersih dan tata letak ultra-minimalis, selaras dengan
@@ -1136,11 +1137,11 @@ typedef _PromoCountdownBanner = PromoCountdownBanner;
 class _PromoCountdownBannerState extends State<_PromoCountdownBanner> {
   Timer? _timer;
 
-  // Jadwal Peluncuran: Jumat, 23 Oktober 2026, 12:00 WIB (UTC+7) = 05:00:00 UTC
-  static final DateTime promoStartUtc = DateTime.utc(2026, 10, 23, 5, 0, 0);
+  // Mulai: Senin, 26 Oktober 2026, 12:00 WIB (UTC+7) = 05:00:00 UTC
+  static final DateTime promoStartUtc = DateTime.utc(2026, 10, 26, 5, 0, 0);
 
-  // Batas Akhir Penawaran 10 Hari: Senin, 2 November 2026, 12:00 WIB (UTC+7) = 05:00:00 UTC
-  static final DateTime promoEndUtc = DateTime.utc(2026, 11, 2, 5, 0, 0);
+  // Berakhir (10 hari kemudian): Kamis, 5 November 2026, 12:00 WIB = 05:00:00 UTC
+  static final DateTime promoEndUtc = DateTime.utc(2026, 11, 5, 5, 0, 0);
 
   @override
   void initState() {
@@ -1184,24 +1185,14 @@ class _PromoCountdownBannerState extends State<_PromoCountdownBanner> {
     // Warna merah solid tanpa transparansi, sesuai keputusan desain peluncuran.
     const solidRedBg = OTColors.errorLight;
 
+    // Satu baris tenang: angka tebal, satuan kecil di sampingnya.
     final digits = Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        _buildDigitColumn(
-            value: days.toString().padLeft(2, '0'),
-            label: Loc.tr('promoUnitDays')),
-        _buildSeparator(),
-        _buildDigitColumn(
-            value: hours.toString().padLeft(2, '0'),
-            label: Loc.tr('promoUnitHours')),
-        _buildSeparator(),
-        _buildDigitColumn(
-            value: minutes.toString().padLeft(2, '0'),
-            label: Loc.tr('promoUnitMins')),
-        _buildSeparator(),
-        _buildDigitColumn(
-            value: seconds.toString().padLeft(2, '0'),
-            label: Loc.tr('promoUnitSecs')),
+        _unit(days, Loc.tr('promoUnitDays')),
+        _unit(hours, Loc.tr('promoUnitHours')),
+        _unit(minutes, Loc.tr('promoUnitMins')),
+        _unit(seconds, Loc.tr('promoUnitSecs'), last: true),
       ],
     );
     final titleBlock = Column(
@@ -1238,7 +1229,7 @@ class _PromoCountdownBannerState extends State<_PromoCountdownBanner> {
           color: solidRedBg,
           borderRadius: BorderRadius.circular(OTRadius.card),
         ),
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         // Lebar: judul di kiri, angka di kanan, satu baris pendek.
         // Sempit: judul lalu angka, rata kiri.
         child: LayoutBuilder(builder: (context, box) {
@@ -1247,7 +1238,8 @@ class _PromoCountdownBannerState extends State<_PromoCountdownBanner> {
               children: [
                 Expanded(child: titleBlock),
                 const SizedBox(width: 16),
-                digits,
+                Flexible(
+                    child: FittedBox(fit: BoxFit.scaleDown, child: digits)),
               ],
             );
           }
@@ -1264,50 +1256,31 @@ class _PromoCountdownBannerState extends State<_PromoCountdownBanner> {
     );
   }
 
-  Widget _buildDigitColumn({
-    required String value,
-    required String label,
-  }) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Text(
-          value,
-          style: ScholarlyFonts.outfit(
-            textStyle: const TextStyle(
-              fontFeatures: [FontFeature.tabularFigures()],
-            ),
-            fontSize: OTFontSize.s22,
-            fontWeight: FontWeight.w700,
-            color: OTExpressive.white,
-            height: 1.0,
-          ),
-        ),
-        const SizedBox(height: 4),
-        Text(
-          label.toUpperCase(),
-          style: ScholarlyFonts.outfit(
-            fontSize: OTFontSize.s11,
-            fontWeight: FontWeight.w700,
-            letterSpacing: 0.9,
-            color: OTExpressive.white.withValues(alpha: 0.82),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildSeparator() {
+  Widget _unit(int value, String label, {bool last = false}) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8).copyWith(bottom: 16),
-      child: Text(
-        ':',
-        style: ScholarlyFonts.outfit(
-          fontSize: OTFontSize.s16,
-          fontWeight: FontWeight.w600,
-          color: OTExpressive.white.withValues(alpha: 0.5),
-          height: 1.0,
-        ),
+      padding: EdgeInsetsDirectional.only(end: last ? 0 : 12),
+      child: Text.rich(
+        TextSpan(children: [
+          TextSpan(
+            text: value.toString().padLeft(2, '0'),
+            style: ScholarlyFonts.outfit(
+              textStyle:
+                  const TextStyle(fontFeatures: [FontFeature.tabularFigures()]),
+              fontSize: OTFontSize.s18,
+              fontWeight: FontWeight.w700,
+              color: OTExpressive.white,
+            ),
+          ),
+          TextSpan(
+            text: ' $label',
+            style: ScholarlyFonts.outfit(
+              fontSize: OTFontSize.s11,
+              fontWeight: FontWeight.w400,
+              color: OTExpressive.white.withValues(alpha: 0.8),
+            ),
+          ),
+        ]),
+        maxLines: 1,
       ),
     );
   }

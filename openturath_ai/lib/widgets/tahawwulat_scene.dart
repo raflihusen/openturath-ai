@@ -169,8 +169,11 @@ class ScenePainter extends CustomPainter {
       case Sk.disc:
         c.drawCircle(Offset(px, py), r * grow, fillP);
       case Sk.ring:
-        final p = Path()..addOval(Rect.fromCircle(center: Offset(px, py), radius: r));
-        if (o.fill) c.drawCircle(Offset(px, py), r, fillP..color = col.withValues(alpha: alpha * 0.18));
+        final p = Path()
+          ..addOval(Rect.fromCircle(center: Offset(px, py), radius: r));
+        if (o.fill)
+          c.drawCircle(Offset(px, py), r,
+              fillP..color = col.withValues(alpha: alpha * 0.18));
         strokePath(p);
       case Sk.line:
         final p = Path()
@@ -266,9 +269,8 @@ class ScenePainter extends CustomPainter {
           final u = i / steps;
           final xx = o.x + (o.x2 - o.x) * u + o.mx * mp * 0;
           final ph = u * o.n * 2 * math.pi;
-          final v = o.sharp
-              ? (2 / math.pi) * math.asin(math.sin(ph))
-              : math.sin(ph);
+          final v =
+              o.sharp ? (2 / math.pi) * math.asin(math.sin(ph)) : math.sin(ph);
           final yy = py + v * o.h;
           i == 0 ? p.moveTo(xx, yy) : p.lineTo(xx, yy);
         }
@@ -291,10 +293,12 @@ class ScenePainter extends CustomPainter {
         c.translate(-px, -py);
         final p = Path()
           ..moveTo(px, py - hh)
-          ..quadraticBezierTo(px + dpt * 0.1, py - hh, px + dpt * 0.1, py - hh * 0.8)
+          ..quadraticBezierTo(
+              px + dpt * 0.1, py - hh, px + dpt * 0.1, py - hh * 0.8)
           ..lineTo(px + dpt * 0.1, py - hh * 0.12)
           ..quadraticBezierTo(px + dpt * 0.1, py, px + dpt, py)
-          ..quadraticBezierTo(px + dpt * 0.1, py, px + dpt * 0.1, py + hh * 0.12)
+          ..quadraticBezierTo(
+              px + dpt * 0.1, py, px + dpt * 0.1, py + hh * 0.12)
           ..lineTo(px + dpt * 0.1, py + hh * 0.8)
           ..quadraticBezierTo(px + dpt * 0.1, py + hh, px, py + hh);
         strokePath(p);
@@ -330,8 +334,8 @@ class ScenePainter extends CustomPainter {
         const sweep = math.pi / 4 - gap * 2;
         final ro = r, ri = r - o.w;
         final p = Path()
-          ..arcTo(Rect.fromCircle(center: Offset(px, py), radius: ro), a0, sweep,
-              true)
+          ..arcTo(Rect.fromCircle(center: Offset(px, py), radius: ro), a0,
+              sweep, true)
           ..arcTo(Rect.fromCircle(center: Offset(px, py), radius: ri),
               a0 + sweep, -sweep, false)
           ..close();
@@ -433,7 +437,8 @@ class ScenePainter extends CustomPainter {
     }
   }
 
-  void _text(Canvas c, String s, Offset p, double size, Color col, double scale) {
+  void _text(
+      Canvas c, String s, Offset p, double size, Color col, double scale) {
     final ar = _arabic.hasMatch(s);
     final base = ar ? arabic : latin;
     final px = math.max(size, 11 / scale);
@@ -441,7 +446,10 @@ class ScenePainter extends CustomPainter {
       text: TextSpan(
           text: s,
           style: base.copyWith(
-              color: col, fontSize: px, height: 1.15, fontWeight: FontWeight.w600)),
+              color: col,
+              fontSize: px,
+              height: 1.15,
+              fontWeight: FontWeight.w600)),
       textDirection: ar ? TextDirection.rtl : TextDirection.ltr,
       textAlign: TextAlign.center,
     )..layout();
@@ -552,8 +560,8 @@ class _SceneViewState extends State<SceneView>
         child: AnimatedBuilder(
           animation: _c,
           builder: (_, __) => CustomPaint(
-            painter: ScenePainter(_ops ?? const [], _c.value * widget.def.dur,
-                fg, bg, latin, ar),
+            painter: ScenePainter(
+                _ops ?? const [], _c.value * widget.def.dur, fg, bg, latin, ar),
             size: Size.infinite,
           ),
         ),

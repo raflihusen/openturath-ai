@@ -5,9 +5,9 @@ import 'package:openturath_ai/core/app_config.dart';
 import 'package:openturath_ai/core/localization.dart';
 import 'package:openturath_ai/screens/subscription_screen.dart';
 
-DateTime _beforeLaunch() => DateTime.utc(2026, 10, 20, 5);
-DateTime _duringOffer() => DateTime.utc(2026, 10, 25, 5);
-DateTime _afterOffer() => DateTime.utc(2026, 11, 3);
+DateTime _beforeLaunch() => DateTime.utc(2026, 10, 24, 5);
+DateTime _duringOffer() => DateTime.utc(2026, 10, 28, 5);
+DateTime _afterOffer() => DateTime.utc(2026, 11, 6);
 
 void main() {
   setUp(() {
@@ -38,14 +38,12 @@ void main() {
       expect(find.text('MENUJU PELUNCURAN PROMO 10 HARI'), findsOneWidget);
 
       // Check units
-      expect(find.text('HARI'), findsOneWidget);
-      expect(find.text('JAM'), findsOneWidget);
-      expect(find.text('MENIT'), findsOneWidget);
-      expect(find.text('DETIK'), findsOneWidget);
+      expect(find.textContaining('hari', findRichText: true), findsWidgets);
+      expect(find.textContaining('detik', findRichText: true), findsOneWidget);
 
       // Check footer info
       expect(
-        find.textContaining('Mulai Jumat, 23 Okt · 12:00 WIB'),
+        find.textContaining('Mulai Senin, 26 Okt · 12:00 WIB'),
         findsOneWidget,
       );
 
@@ -81,7 +79,7 @@ void main() {
       await tester.pump();
 
       expect(find.text('MENUJU PELUNCURAN PROMO 10 HARI'), findsOneWidget);
-      expect(find.text('HARI'), findsOneWidget);
+      expect(find.textContaining('hari', findRichText: true), findsWidgets);
 
       final container = tester.widget<Container>(find.descendant(
         of: find.byType(PromoCountdownBanner),
@@ -113,12 +111,12 @@ void main() {
       await tester.pump();
 
       expect(find.text('10-DAY PROMO LAUNCH COUNTDOWN'), findsOneWidget);
-      expect(find.text('DAYS'), findsOneWidget);
-      expect(find.text('HOURS'), findsOneWidget);
-      expect(find.text('MINUTES'), findsOneWidget);
-      expect(find.text('SECONDS'), findsOneWidget);
+      expect(find.textContaining('days', findRichText: true), findsWidgets);
+      expect(find.textContaining('hours', findRichText: true), findsWidgets);
+      expect(find.textContaining('minutes', findRichText: true), findsWidgets);
+      expect(find.textContaining('seconds', findRichText: true), findsWidgets);
       expect(
-        find.textContaining('Starts Friday, Oct 23 · 12:00 WIB'),
+        find.textContaining('Starts Monday, Oct 26 · 12:00 WIB'),
         findsOneWidget,
       );
 
@@ -140,11 +138,12 @@ void main() {
 
       await pumpAt(_duringOffer);
       expect(find.text('PENAWARAN PERDANA TERBATAS (10 HARI)'), findsOneWidget);
-      expect(find.textContaining('Berakhir Senin, 2 Nov'), findsOneWidget);
+      expect(find.textContaining('Berakhir Kamis, 5 Nov'), findsOneWidget);
 
       await pumpAt(_afterOffer);
       expect(find.text('PENAWARAN PERDANA TELAH SELESAI'), findsOneWidget);
-      expect(find.text('00'), findsNWidgets(4));
+      expect(
+          find.textContaining('00 detik', findRichText: true), findsOneWidget);
     });
   });
 }

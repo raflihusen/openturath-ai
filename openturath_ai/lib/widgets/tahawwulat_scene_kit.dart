@@ -31,8 +31,22 @@ Op D(double x, double y,
         double out = -1,
         double r2 = -1}) =>
     Op(Sk.disc, x, y,
-        r: r, t: t, d: d, tone: tone, mx: mx, my: my, mt: mt, md: md, dx: dx,
-        dy: dy, shake: sh, st: st, sd: sd, idx: i, out: out, r2: r2);
+        r: r,
+        t: t,
+        d: d,
+        tone: tone,
+        mx: mx,
+        my: my,
+        mt: mt,
+        md: md,
+        dx: dx,
+        dy: dy,
+        shake: sh,
+        st: st,
+        sd: sd,
+        idx: i,
+        out: out,
+        r2: r2);
 
 Op R(double x, double y, double r,
         {double t = 0,
@@ -49,8 +63,20 @@ Op R(double x, double y, double r,
         double my = 0,
         double pulse = 0}) =>
     Op(Sk.ring, x, y,
-        r: r, t: t, d: d, tone: tone, r2: r2, mt: mt, md: md, fill: fill,
-        dash: dash, draw: draw, out: out, mx: mx, my: my, pulse: pulse);
+        r: r,
+        t: t,
+        d: d,
+        tone: tone,
+        r2: r2,
+        mt: mt,
+        md: md,
+        fill: fill,
+        dash: dash,
+        draw: draw,
+        out: out,
+        mx: mx,
+        my: my,
+        pulse: pulse);
 
 Op L(double x, double y, double x2, double y2,
         {double t = 0,
@@ -63,8 +89,18 @@ Op L(double x, double y, double x2, double y2,
         double md = 0.6,
         double out = -1}) =>
     Op(Sk.line, x, y,
-        x2: x2, y2: y2, t: t, d: d, tone: tone, draw: true, dash: dash, mx: mx,
-        my: my, mt: mt, md: md, out: out);
+        x2: x2,
+        y2: y2,
+        t: t,
+        d: d,
+        tone: tone,
+        draw: true,
+        dash: dash,
+        mx: mx,
+        my: my,
+        mt: mt,
+        md: md,
+        out: out);
 
 Op B(double x, double y, double w, double h,
         {double r = 1.2,
@@ -87,9 +123,27 @@ Op B(double x, double y, double w, double h,
         double sd = 0.6,
         int i = 0}) =>
     Op(Sk.rect, x, y,
-        w: w, h: h, r: r, fill: fill, t: t, d: d, tone: tone, dash: dash,
-        up: up, draw: draw, dx: dx, dy: dy, mx: mx, my: my, mt: mt, md: md,
-        out: out, shake: sh, st: st, sd: sd, idx: i);
+        w: w,
+        h: h,
+        r: r,
+        fill: fill,
+        t: t,
+        d: d,
+        tone: tone,
+        dash: dash,
+        up: up,
+        draw: draw,
+        dx: dx,
+        dy: dy,
+        mx: mx,
+        my: my,
+        mt: mt,
+        md: md,
+        out: out,
+        shake: sh,
+        st: st,
+        sd: sd,
+        idx: i);
 
 Op T(String s, double x, double y,
         {double t = 0,
@@ -103,8 +157,17 @@ Op T(String s, double x, double y,
         double mt = 0,
         double md = 0.6}) =>
     Op(Sk.text, x, y,
-        text: s, t: t, d: d, size: size, tone: tone, out: out, dy: dy, mx: mx,
-        my: my, mt: mt, md: md);
+        text: s,
+        t: t,
+        d: d,
+        size: size,
+        tone: tone,
+        out: out,
+        dy: dy,
+        mx: mx,
+        my: my,
+        mt: mt,
+        md: md);
 
 Op G(double x, double y, double r,
         {double t = 0, double d = 0.6, double tone = 0.9, double out = -1}) =>
@@ -117,8 +180,15 @@ Op W(double x, double x2, double y, double amp, int cycles,
         bool sharp = false,
         double out = -1}) =>
     Op(Sk.wave, x, y,
-        x2: x2, h: amp, n: cycles, t: t, d: d, tone: tone, sharp: sharp,
-        draw: true, out: out);
+        x2: x2,
+        h: amp,
+        n: cycles,
+        t: t,
+        d: d,
+        tone: tone,
+        sharp: sharp,
+        draw: true,
+        out: out);
 
 Op Pg(double x, double y, double r, int n,
         {double t = 0,
@@ -132,8 +202,19 @@ Op Pg(double x, double y, double r, int n,
         double md = 0.6,
         double out = -1}) =>
     Op(Sk.poly, x, y,
-        r: r, n: n, t: t, d: d, tone: tone, fill: fill, a0: rot, draw: !fill,
-        mx: mx, my: my, mt: mt, md: md, out: out);
+        r: r,
+        n: n,
+        t: t,
+        d: d,
+        tone: tone,
+        fill: fill,
+        a0: rot,
+        draw: !fill,
+        mx: mx,
+        my: my,
+        mt: mt,
+        md: md,
+        out: out);
 
 Op Ck(double x, double y, double r,
         {double t = 0, double d = 0.3, double tone = 1}) =>
@@ -190,7 +271,8 @@ List<Op> petak4(
         double w = 18}) =>
     [
       for (var i = 0; i < 4; i++) ...[
-        if (i < filled) B(petakX[i], y, w, h, fill: true, tone: 0.16, t: t + i * stag, d: d),
+        if (i < filled)
+          B(petakX[i], y, w, h, fill: true, tone: 0.16, t: t + i * stag, d: d),
         B(petakX[i], y, w, h,
             dash: i >= filled, t: t + i * stag, d: d, draw: i >= filled),
       ],
@@ -200,8 +282,13 @@ List<Op> petak4(
 List<Op> strip(int active, {double t = 0, double y = 6, int filled = 0}) => [
       for (var i = 0; i < 4; i++) ...[
         B(34.0 + i * 11, y, 9, 5.5,
-            r: 1.2, fill: i == active || i < filled, tone: i == active ? 1 : 0.5, t: t, d: 0.3),
-        if (i != active && i >= filled) B(34.0 + i * 11, y, 9, 5.5, r: 1.2, t: t, d: 0.3, tone: 0.5),
+            r: 1.2,
+            fill: i == active || i < filled,
+            tone: i == active ? 1 : 0.5,
+            t: t,
+            d: 0.3),
+        if (i != active && i >= filled)
+          B(34.0 + i * 11, y, 9, 5.5, r: 1.2, t: t, d: 0.3, tone: 0.5),
       ],
     ];
 
@@ -226,7 +313,9 @@ List<Op> majlis(
 
 /// Titik-titik sebaran bergetar pseudo-acak (deterministik).
 double jit(int i, int k, double amp) =>
-    (((math.sin(i * 12.9898 + k * 78.233) * 43758.5453).abs() % 1) - 0.5) * 2 * amp;
+    (((math.sin(i * 12.9898 + k * 78.233) * 43758.5453).abs() % 1) - 0.5) *
+    2 *
+    amp;
 
 /// Batang vertikal berdasar di [bottom], tumbuh naik sampai tinggi [h].
 Op Col(double x, double bottom, double w, double h,
@@ -236,7 +325,13 @@ Op Col(double x, double bottom, double w, double h,
         double out = -1,
         bool fill = true}) =>
     B(x, bottom - h / 2, w, h,
-        r: math.min(1, w / 2), fill: fill, up: true, t: t, d: d, tone: tone, out: out);
+        r: math.min(1, w / 2),
+        fill: fill,
+        up: true,
+        t: t,
+        d: d,
+        tone: tone,
+        out: out);
 
 /// Titik simpul ke-[i] Peta Segi Lima.
 Offset pentaPt(int i, double cx, double cy, double r) {
@@ -245,13 +340,19 @@ Offset pentaPt(int i, double cx, double cy, double r) {
 }
 
 /// Kompas Lingkar Pelindung: cincin pelindung, cincin arah, empat tanda, pusat.
-List<Op> compass(double x, double y, double r, {double t = 0, double d = 0.4, double stag = 0.12}) => [
+List<Op> compass(double x, double y, double r,
+        {double t = 0, double d = 0.4, double stag = 0.12}) =>
+    [
       G(x, y, r * 1.5, t: t + stag * 3, d: 0.5, tone: 0.7),
       R(x, y, r, t: t, d: d),
       R(x, y, r * 0.55, t: t + stag, d: d, tone: 0.7),
       for (var k = 0; k < 4; k++)
-        L(x + math.cos(k * math.pi / 2) * r * 0.55, y + math.sin(k * math.pi / 2) * r * 0.55,
-            x + math.cos(k * math.pi / 2) * r * 0.85, y + math.sin(k * math.pi / 2) * r * 0.85,
-            t: t + stag * 2, d: 0.25),
+        L(
+            x + math.cos(k * math.pi / 2) * r * 0.55,
+            y + math.sin(k * math.pi / 2) * r * 0.55,
+            x + math.cos(k * math.pi / 2) * r * 0.85,
+            y + math.sin(k * math.pi / 2) * r * 0.85,
+            t: t + stag * 2,
+            d: 0.25),
       D(x, y, r: r * 0.12, t: t + stag * 2, d: 0.3),
     ];

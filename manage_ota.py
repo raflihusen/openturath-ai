@@ -3,13 +3,13 @@
 manage_ota.py
 =============
 CLI Pengendali Over-The-Air (OTA) OpenTurath AI:
-1. Dynamic Pricing Control (Ubah nominal Rp 1.000 untuk tes QRIS real Midtrans Production atau Rp 300.000 resmi tanpa update aplikasi).
+1. Dynamic Pricing Control (Ubah nominal Rp 1.000 untuk tes QRIS real Midtrans Production atau Rp 299.000 (Fikih Tahawwulat) dan Rp 49.000 (AI per bidang) resmi tanpa update aplikasi).
 2. Remote Agent Unlocking / Locking (Buka gembok AI spesialis baru secara bertahap langsung dari Firestore).
 
 Penggunaan:
   python3 manage_ota.py status
   python3 manage_ota.py set-pricing --mode test         # Set Tholib 1 Bulan = Rp 1.000
-  python3 manage_ota.py set-pricing --mode production   # Set Tholib 1 Bulan = Rp 300.000
+  python3 manage_ota.py set-pricing --mode production   # Tahawwulat 1 Bulan = Rp 299.000, AI per bidang 1 Bulan = Rp 49.000
   python3 manage_ota.py unlock-agent hadith_kutub_sittah
   python3 manage_ota.py lock-agent hadith_kutub_sittah
   python3 manage_ota.py seed                            # Inisialisasi dokumen app_config
@@ -58,7 +58,7 @@ PRODUCTION_PRICES = {
     "tholib_6m": 299000,
     "bahits_1y": 499000,
     # Modul Khusus Fikih Tahawwulat (5 Bilik AI Terpadu)
-    "tahawwulat_1m": 300000,
+    "tahawwulat_1m": 299000,
     "tahawwulat_6m": 1499000,
     "tahawwulat_1y": 1999000,
     # Paket Kehormatan & Add-on
@@ -161,7 +161,7 @@ def to_firestore_pricing_fields(pricing_dict, revision, note=""):
     tholib_1m = pricing_dict.get("tholib_1m", 49000)
     tholib_6m = pricing_dict.get("tholib_6m", 299000)
     bahits_1y = pricing_dict.get("bahits_1y", 499000)
-    t_1m = pricing_dict.get("tahawwulat_1m", 1000 if tholib_1m == 1000 else 300000)
+    t_1m = pricing_dict.get("tahawwulat_1m", 1000 if tholib_1m == 1000 else 299000)
     t_6m = pricing_dict.get("tahawwulat_6m", 1499000)
     t_1y = pricing_dict.get("tahawwulat_1y", 1999000)
 
@@ -268,7 +268,7 @@ def cmd_status(token):
     if pricing_doc and "fields" in pricing_doc:
         p_data = parse_firestore_fields(pricing_doc["fields"])
         spec_1m = p_data.get("plans", {}).get("specialists", {}).get("tholib_1m", {}).get("amount", p_data.get("tholib_1m", 0))
-        tahawwulat_1m = p_data.get("plans", {}).get("fiqh_tahawwulat", {}).get("tholib_1m", {}).get("amount", 300000)
+        tahawwulat_1m = p_data.get("plans", {}).get("fiqh_tahawwulat", {}).get("tholib_1m", {}).get("amount", 299000)
         print(f"   • Spesialis 1 Bulan  : Rp {spec_1m:,}")
         print(f"   • Tahawwulat 1 Bulan : Rp {tahawwulat_1m:,}")
         print(f"   • Mustawa 1 Tahun    : Rp {p_data.get('mustawa_1y', 0):,}")
@@ -319,7 +319,7 @@ def cmd_set_pricing(mode, token):
         revision = f"rev-prod-300k-{now_ts}"
         note = "Harga Resmi Peluncuran OpenTurath AI"
         payload = to_firestore_pricing_fields(PRODUCTION_PRICES, revision, note)
-        print("🚀 Mengubah harga ke MODE PRODUKSI (Rp 300.000 untuk Tholib 1 Bulan)...")
+        print("🚀 Mengubah harga ke MODE PRODUKSI (Tahawwulat Rp 299.000, per bidang Rp 49.000, 1 Bulan)...")
     else:
         print(f"❌ Mode '{mode}' tidak dikenal. Pilih: test atau production.")
         return
@@ -417,7 +417,7 @@ def main():
         "--mode",
         choices=["test", "production"],
         required=True,
-        help="test (Rp 1.000 QRIS) atau production (Rp 300.000)",
+        help="test (Rp 1.000 QRIS) atau production (Rp 299.000 / Rp 49.000)",
     )
 
     # unlock-agent
