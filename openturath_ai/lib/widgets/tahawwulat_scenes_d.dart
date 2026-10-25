@@ -173,14 +173,13 @@ Map<String, SceneDef> scenesD() => {
             ...compass(50, 28, 13, t: 0.2, stag: 0.08),
           ], alt: 'Kompas Lingkar Pelindung'),
       's72': SceneDef(2.2, () => [
-            B(94, 28, 34, 56, fill: true, tone: 0.12, t: 0, d: 0.3, mx: -12, mt: 0.1, md: 1.2),
+            B(94, 28, 34, 56, fill: true, tone: 0.12, t: 0, d: 0.3, mx: -12, mt: 0.1, md: 1.2, out: 1.4),
             for (var i = 0; i < 5; i++)
               D(8.0 + i * 3, 28, r: 1.4, t: 0.2 + i * 0.1, d: 0.2,
                   mx: 42 + math.cos(i * 1.256 - 1.57) * 7 - (8.0 + i * 3 - 8), my: math.sin(i * 1.256 - 1.57) * 7,
                   mt: 0.4 + i * 0.1, md: 0.8),
             G(50, 28, 10, t: 1.0, d: 0.4),
             G(50, 28, 30, t: 1.1, d: 0.8, tone: 0.7),
-            B(106, 28, 34, 56, fill: true, tone: 0.12, t: 1.2, d: 0.01, mx: 14, mt: 1.2, md: 0.8, out: 2.0),
           ], alt: 'Lima amal saleh menyala menjadi lentera yang mengusir gelap'),
       's73': SceneDef(2.2, () => [
             W(4, 34, 28, 6, 4, t: 0, d: 0.5, sharp: true, out: 1.2),
