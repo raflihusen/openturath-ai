@@ -9,7 +9,6 @@ import '../core/design/ot_motion.dart';
 import '../core/scholarly_fonts.dart';
 import '../core/app_copy.dart';
 import '../widgets/payment_success_dialog.dart';
-import '../core/arabic_catalog.dart';
 import '../core/design/ot_colors.dart';
 import '../core/design/ot_expressive.dart';
 import '../core/design/ot_spacing.dart';
@@ -42,7 +41,8 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
   final _agentService = AgentService();
   List<AgentModel>? _loadedAgents;
   String _selectedAgentId = 'fiqh_syafii';
-  int _periodIndex = 2;
+  // Mulai dari 1 bulan: harga terendah dulu, supaya tidak terasa menekan.
+  int _periodIndex = 0;
   bool _pricingReady = false;
   bool _processing = false;
   bool _initialized = false;
@@ -530,71 +530,6 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     );
   }
 
-  /// Lima asisten di dalam paket utama: kapsul rapat yang muat di kolom
-  /// sesempit apa pun (turun baris bila perlu), selaras dengan [_fieldRow].
-  Widget _assistantsPanel() {
-    final dark = Theme.of(context).brightness == Brightness.dark;
-    final fg = OTColors.onInverted(dark);
-    final sub = OTColors.onInvertedMuted(dark);
-    final names = Loc.isArabic
-        ? const ['البيان', 'المحقّق', 'المختبِر', 'الحبيب', 'الخطيب']
-        : const [
-            'Al-Bayan',
-            'Al-Muhaqqiq',
-            'Al-Mukhtabir',
-            'Al-Habib',
-            'Al-Khatib'
-          ];
-    return Container(
-      padding: const EdgeInsets.all(OTSpacing.base),
-      decoration: BoxDecoration(
-        color: fg.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(OTRadius.input),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-              switch (Loc.language) {
-                'en' => 'Five assistants in one plan',
-                'ar' => 'خمسة مساعدين في باقة واحدة',
-                _ => 'Lima asisten dalam satu paket',
-              },
-              style: OTTypography.caption(color: sub)),
-          const SizedBox(height: OTSpacing.md),
-          Wrap(
-            spacing: OTSpacing.xs,
-            runSpacing: OTSpacing.xs,
-            children: [
-              for (var i = 0; i < names.length; i++)
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: OTSpacing.md, vertical: OTSpacing.xs),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(OTRadius.chip),
-                    border: Border.all(color: fg.withValues(alpha: 0.28)),
-                  ),
-                  child: Row(mainAxisSize: MainAxisSize.min, children: [
-                    Text(
-                        Loc.isArabic
-                            ? ArabicCatalog.digits('${i + 1}')
-                            : '${i + 1}',
-                        style: OTTypography.captionMedium(color: sub)),
-                    const SizedBox(width: OTSpacing.xs),
-                    Flexible(
-                        child: Text(names[i],
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: OTTypography.captionMedium(color: fg))),
-                  ]),
-                ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
   /// Persetujuan sebelum membayar: tautan ke Ketentuan Layanan dan kebijakan
   /// pembayaran, supaya pengguna tahu syaratnya sebelum menekan tombol.
   Widget _consentNote(Color color) {
@@ -854,7 +789,11 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                 active: flagshipActive,
                 title: AppCopy.planTahawwulat,
                 description: Loc.tr('planFeaturedDescription'),
-                field: _assistantsPanel(),
+                field: _fieldRow(
+                  label: Loc.tr('planFeaturedInside'),
+                  name: Loc.tr('planFeaturedInsideValue'),
+                  inverse: true,
+                ),
                 price: flagshipOffer,
                 offers: flagshipOffers,
                 benefits: [
@@ -876,30 +815,15 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                       active: _hasAccess(selected.id),
                       title: Loc.text(selected.title),
                       description: Loc.tr('planSingleDescription'),
-                      field: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            _fieldRow(
-                              label: Loc.tr('chooseField'),
-                              name: Loc.text(selected.title),
-                              inverse: false,
-                              onTap: _processing
-                                  ? null
-                                  : () => _showDisciplinePickerModal(
-                                      context, specialists),
-                            ),
-                            const SizedBox(height: OTSpacing.md),
-                            Padding(
-                              padding: const EdgeInsetsDirectional.only(
-                                  start: OTSpacing.xs),
-                              child: Text(Loc.tr('planSingleFieldNote'),
-                                  style: OTTypography.caption(
-                                          color: OTColors.textSecondary(
-                                              Theme.of(context).brightness ==
-                                                  Brightness.dark))
-                                      .copyWith(height: 1.5)),
-                            ),
-                          ]),
+                      field: _fieldRow(
+                        label: Loc.tr('chooseField'),
+                        name: Loc.text(selected.title),
+                        inverse: false,
+                        onTap: _processing
+                            ? null
+                            : () => _showDisciplinePickerModal(
+                                context, specialists),
+                      ),
                       price: singleOffer,
                       offers: singleOffers,
                       benefits: [

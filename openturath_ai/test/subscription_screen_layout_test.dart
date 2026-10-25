@@ -58,10 +58,17 @@ void main() {
             expect(tester.takeException(), isNull, reason: reason);
             // Dua tombol bayar (paket utama dan satu bidang).
             expect(find.byType(FilledButton), findsNWidgets(2), reason: reason);
-            // Kolom paket utama memuat kelima asisten sebagai kapsul.
+            // Kedua kartu punya satu baris pilihan yang simetris; paket utama
+            // menyebut "lima asisten" tanpa mendaftar namanya.
             expect(
-                find.textContaining(locale == 'ar' ? 'المحقّق' : 'Al-Muhaqqiq'),
+                find.text(locale == 'ar'
+                    ? 'خمسة مساعدين'
+                    : locale == 'en'
+                        ? 'Five AI assistants'
+                        : 'Lima asisten AI'),
                 findsOneWidget,
+                reason: reason);
+            expect(find.textContaining('Al-Muhaqqiq'), findsNothing,
                 reason: reason);
           }
         }

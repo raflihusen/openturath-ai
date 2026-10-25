@@ -158,6 +158,12 @@ const copyCatalog = <String, List<String>>{
     "Save your study results for later reading",
     "احفظ نتائج المطالعة للرجوع إليها"
   ],
+  "planFeaturedInside": ["Isi paket", "In this plan", "محتوى الباقة"],
+  "planFeaturedInsideValue": [
+    "Lima asisten AI",
+    "Five AI assistants",
+    "خمسة مساعدين"
+  ],
   "planSingleFieldNote": [
     "Satu paket untuk satu bidang ilmu. Anda bisa berganti pilihan sebelum membayar, dan bidang lain akan segera hadir.",
     "One plan covers one field. You can change your choice before paying, and more fields are coming soon.",
