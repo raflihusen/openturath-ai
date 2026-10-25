@@ -161,6 +161,13 @@ void main() {
       questionsUsed: 0,
     );
     final tag = Platform.environment['OT_TAG'] ?? 'now';
+    if (Platform.environment['OT_CASES'] == '2') {
+      await _shot(tester, 'sub_${tag}_picker', const SubscriptionScreen(),
+          size: const Size(980, 1100), tap: 'Pilih bidang');
+      await _shot(tester, 'sub_${tag}_picker_p', const SubscriptionScreen(),
+          size: const Size(390, 844), tap: 'Pilih bidang');
+      return;
+    }
     if (Platform.environment['OT_CASES'] == '1') {
       const sub = SubscriptionScreen();
       await _shot(tester, 'sub_${tag}_1bulan', sub,

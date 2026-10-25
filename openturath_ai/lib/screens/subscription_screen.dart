@@ -271,7 +271,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     required String label,
     required String title,
     required String description,
-    required Widget field,
+    Widget? field,
     required SubscriptionOffer price,
     required List<SubscriptionOffer> offers,
     required List<String> benefits,
@@ -332,9 +332,14 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
             child: Text(description,
                 style: OTTypography.body(color: sub).copyWith(height: 1.5)),
           ),
-          const SizedBox(height: OTSpacing.xl),
-          field,
-          const SizedBox(height: OTSpacing.xl),
+          if (field != null) ...[
+            const SizedBox(height: OTSpacing.xl),
+            field,
+          ],
+          // Berdampingan: harga, manfaat, dan tombol kedua kartu sejajar di
+          // bawah, berapa pun tinggi bagian atas.
+          if (wide) const Spacer() else const SizedBox(height: OTSpacing.xl),
+          if (wide) const SizedBox(height: OTSpacing.xl),
           if (!_pricingReady)
             _priceSkeleton(sub)
           else
@@ -379,8 +384,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
           Divider(color: line, height: 1),
           const SizedBox(height: OTSpacing.lg),
           for (final benefit in benefits) _benefitRow(benefit, fg),
-          if (wide) const Spacer() else const SizedBox(height: OTSpacing.base),
-          const SizedBox(height: OTSpacing.base),
+          const SizedBox(height: OTSpacing.lg),
           SizedBox(
             width: double.infinity,
             height: 52,
@@ -476,25 +480,26 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
         inverse ? OTColors.onInvertedMuted(dark) : OTColors.textSecondary(dark);
     return Material(
       color: inverse ? fg.withValues(alpha: 0.1) : OTColors.surfaceSubtle(dark),
-      borderRadius: OTRadius.chipBorder,
+      borderRadius: BorderRadius.circular(OTRadius.input),
       child: InkWell(
         onTap: onTap,
-        borderRadius: OTRadius.chipBorder,
+        borderRadius: BorderRadius.circular(OTRadius.input),
         child: Padding(
           padding: const EdgeInsetsDirectional.fromSTEB(
               OTSpacing.xl, OTSpacing.md, OTSpacing.base, OTSpacing.md),
           child: Row(children: [
-            Flexible(
-              child: Text(label, style: OTTypography.caption(color: sub)),
-            ),
-            const SizedBox(width: OTSpacing.md),
             Expanded(
-              child: Text(name,
-                  textAlign: TextAlign.end,
-                  style: OTTypography.bodyMedium(color: fg)),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(label, style: OTTypography.caption(color: sub)),
+                  const SizedBox(height: OTSpacing.xs),
+                  Text(name, style: OTTypography.bodyMedium(color: fg)),
+                ],
+              ),
             ),
             if (onTap != null) ...[
-              const SizedBox(width: OTSpacing.sm),
+              const SizedBox(width: OTSpacing.md),
               Icon(Icons.unfold_more_rounded, size: 20, color: sub),
             ],
           ]),
@@ -578,6 +583,14 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
         var query = '';
         return StatefulBuilder(
           builder: (modalCtx, setModalState) {
+            final soon = query.isNotEmpty
+                ? const <AgentModel>[]
+                : (_loadedAgents ?? AgentService.getActiveAgentsSync())
+                    .where((a) =>
+                        a.kind == CorpusKind.discipline &&
+                        a.isComingSoon &&
+                        a.id != 'fiqh_tahawwulat')
+                    .toList();
             final activeSpecialists = specialists
                 .where((a) => a.isActive && !a.isComingSoon)
                 .toList();
@@ -644,12 +657,29 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                       child: ListView.separated(
                         controller: scrollController,
                         padding: const EdgeInsets.fromLTRB(12, 0, 12, 16),
-                        itemCount: filtered.length,
+                        itemCount: filtered.length + soon.length,
                         separatorBuilder: (_, __) => Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 12),
                           child: Divider(height: 1, color: border),
                         ),
                         itemBuilder: (_, i) {
+                          if (i >= filtered.length) {
+                            final a = soon[i - filtered.length];
+                            return Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 12, vertical: 12),
+                              child: Row(children: [
+                                Expanded(
+                                  child: Text(Loc.text(a.title),
+                                      style: OTTypography.bodyMedium(
+                                          color: OTColors.textTertiary(dark))),
+                                ),
+                                Text(Loc.tr('comingSoon'),
+                                    style: OTTypography.caption(
+                                        color: OTColors.textTertiary(dark))),
+                              ]),
+                            );
+                          }
                           final a = filtered[i];
                           final isSelected = a.id == _selectedAgentId;
                           return InkWell(
@@ -737,10 +767,6 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                 active: flagshipActive,
                 title: AppCopy.planTahawwulat,
                 description: Loc.tr('planFeaturedDescription'),
-                field: _fieldRow(
-                    label: Loc.tr('planIncludes'),
-                    name: Loc.tr('planFeaturedScope'),
-                    inverse: true),
                 price: flagshipOffer,
                 offers: flagshipOffers,
                 benefits: [
@@ -760,20 +786,15 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                       active: _hasAccess(selected.id),
                       title: Loc.text(selected.title),
                       description: Loc.tr('planSingleDescription'),
-                      field: specialists.length > 1
-                          ? _fieldRow(
-                              label: Loc.tr('chooseField'),
-                              name: Loc.text(selected.title),
-                              inverse: false,
-                              onTap: _processing
-                                  ? null
-                                  : () => _showDisciplinePickerModal(
-                                      context, specialists),
-                            )
-                          : _fieldRow(
-                              label: Loc.tr('planIncludes'),
-                              name: Loc.tr('planSingleScope'),
-                              inverse: false),
+                      field: _fieldRow(
+                        label: Loc.tr('chooseField'),
+                        name: Loc.text(selected.title),
+                        inverse: false,
+                        onTap: _processing
+                            ? null
+                            : () => _showDisciplinePickerModal(
+                                context, specialists),
+                      ),
                       price: singleOffer,
                       offers: singleOffers,
                       benefits: [
