@@ -25,7 +25,7 @@ void main() {
           await tester.pump(const Duration(milliseconds: 100));
         }
         var n = 0;
-        while (n < 80) {
+        while (n < 100) {
           await tester.pump(const Duration(milliseconds: 1500));
           expect(tester.takeException(), isNull,
               reason: '$lang $width slide $n');
@@ -35,7 +35,7 @@ void main() {
           await tester.pump(const Duration(milliseconds: 400));
           n++;
         }
-        expect(n, greaterThan(60), reason: '$lang $width');
+        expect(n, greaterThan(80), reason: '$lang $width');
         await tester.pumpWidget(const SizedBox());
       }
     }

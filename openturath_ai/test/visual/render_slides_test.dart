@@ -39,7 +39,7 @@ void main() {
     for (final tag in sizes) {
       final size = switch (tag) {
         'p' => const Size(390, 844),
-        'xl' => const Size(1700, 1750),
+        'xl' => const Size(980, 960),
         _ => const Size(1280, 800),
       };
       tester.view.physicalSize = size;
