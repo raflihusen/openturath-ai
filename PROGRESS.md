@@ -497,6 +497,19 @@ Berdasarkan `AUDIT_OPENTURATH_AI.md`, dokumen perancangan pustaka, dan keluhan k
      - Kompilasi biner `flutter build macos --release` Universal arm64+x86_64 tuntas 100% (144.6 MB .app).
      - Pembuatan DMG installer `OpenTurath_AI_macOS.dmg` (61 MB, format UDZO terkompresi) via `tool/package_macos.sh`.
      - Verifikasi checksum SHA-256: `f392ea3f794188077e719cb58ba43bff0996d5e2f9c4f28d980c7714ebc024b7`.
+### Fasa 38: Slide Interaktif Tahawwulat, Layar Tunggu Transaksi & Kompilasi Rilis DMG macOS v1.0.75+76 (`1ab1495b`)
+- **Ruang Lingkup & Latar Belakang**:
+  1. *Pembaruan Fitur Terkini*:
+     - Rekonstruksi penuh 84 slide naskah *Mengenal Fikih Tahawwulat* dengan adegan animasi sekali putar per slide (Op Engine), penampil teks kaya, tabel, kutipan Arab, dan ringkasan Ighatsat (`fb2811a0`, `9c9600a1`).
+     - Dukungan multibahasa trilingual (ID, EN, AR) untuk seluruh slide pengantar Tahawwulat (`ea5b05e3`).
+     - Layar tunggu 30 detik pasca pembayaran sukses dengan panduan pemakaian dan visualisasi progres ramah (`29123036`).
+     - Penyesuaian katalog harga: Fikih Tahawwulat 1 bulan Rp 299.000, AI per bidang Rp 49.000, serta banner hitung mundur promo minimalis (`c873a94a`, `955bd6ec`).
+  2. *Kompilasi Biner & Pembuatan DMG Installer macOS v1.0.75+76*:
+     - Bump versi aplikasi menjadi `1.0.75+76` di `openturath_ai/pubspec.yaml` (`1ab1495b`).
+     - Seluruh test suite lolos 100%: 440/440 Flutter unit/widget tests.
+     - Kompilasi biner `flutter build macos --release` Universal arm64+x86_64 tuntas 100% (145.1 MB .app).
+     - Pembuatan DMG installer `OpenTurath_AI_macOS.dmg` (61 MB, format UDZO terkompresi) via `tool/package_macos.sh`.
+     - Verifikasi checksum SHA-256: `21d47a1e7f0fca1ce81351bc1743f169959195b4fcb32295dfb9aaf218d4bfbc`.
      - File DMG dan berkas checksum mutakhir disalin ke root: `/Users/apple/Downloads/ramadhan/OpenTurath_AI_macOS.dmg`.
      - Instalasi sistem `/Applications/OpenTurath AI.app` diperbarui dan aplikasi diluncurkan ulang secara aktif.
 
