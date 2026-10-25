@@ -485,6 +485,21 @@ Berdasarkan `AUDIT_OPENTURATH_AI.md`, dokumen perancangan pustaka, dan keluhan k
      - File DMG dan checksum disalin ke root: `/Users/apple/Downloads/ramadhan/OpenTurath_AI_macOS.dmg`.
      - Instalasi `/Applications/OpenTurath AI.app` diperbarui dan aplikasi telah berjalan aktif di macOS.
 
+### Fasa 37: Penyelarasan Kartu Langganan & Kompilasi Rilis DMG macOS v1.0.74+75 (`085d1977`, `d333b51f`)
+- **Ruang Lingkup & Latar Belakang**:
+  1. *Penyelarasan UI Layar Langganan (`subscription_screen.dart`)*:
+     - Mengeliminasi baris "Mencakup" pada kartu penawaran agar tata letak lebih bersih dan fokus pada nilai utama.
+     - Memulihkan tombol pemilih bidang turats ("Pilih bidang") dengan format dua baris yang selalu responsif, menampilkan bidang segera hadir dalam status nonaktif yang elegan.
+     - Menyelaraskan posisi vertikal blok harga dan tombol aksi di dasar kedua kartu langganan (*mathematical bottom alignment*), menjaga simetri visual monokrom.
+  2. *Kompilasi Biner & Pembuatan DMG Installer macOS v1.0.74+75*:
+     - Bump versi aplikasi menjadi `1.0.74+75` di `openturath_ai/pubspec.yaml`.
+     - Seluruh test suite lolos 100%: 440/440 Flutter unit/widget tests.
+     - Kompilasi biner `flutter build macos --release` Universal arm64+x86_64 tuntas 100% (144.6 MB .app).
+     - Pembuatan DMG installer `OpenTurath_AI_macOS.dmg` (61 MB, format UDZO terkompresi) via `tool/package_macos.sh`.
+     - Verifikasi checksum SHA-256: `f392ea3f794188077e719cb58ba43bff0996d5e2f9c4f28d980c7714ebc024b7`.
+     - File DMG dan berkas checksum mutakhir disalin ke root: `/Users/apple/Downloads/ramadhan/OpenTurath_AI_macOS.dmg`.
+     - Instalasi sistem `/Applications/OpenTurath AI.app` diperbarui dan aplikasi diluncurkan ulang secara aktif.
+
 ---
 
 ## 5. Agenda & Fokus Selanjutnya
@@ -492,6 +507,3 @@ Berdasarkan `AUDIT_OPENTURATH_AI.md`, dokumen perancangan pustaka, dan keluhan k
    - Pengujian live checkout QRIS Rp 1.000 di aplikasi desktop macOS dan ponsel.
 2. **Kesiapan Rilis Publik & Broadcast Update**:
    - Membuka gembok agen berikutnya secara bertahap via `manage_ota.py unlock-agent <id>`.
-
-
-
