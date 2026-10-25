@@ -1,7 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:openturath_ai/core/app_config.dart';
 import 'package:openturath_ai/core/membership_pass_state.dart';
-import 'package:openturath_ai/models/agent_model.dart';
 import 'package:openturath_ai/models/user_model.dart';
 import 'package:openturath_ai/services/agent_service.dart';
 

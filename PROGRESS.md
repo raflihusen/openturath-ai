@@ -521,9 +521,21 @@ Berdasarkan `AUDIT_OPENTURATH_AI.md`, dokumen perancangan pustaka, dan keluhan k
      - Seluruh test suite lolos 100%: 444/444 Flutter unit/widget tests.
      - Kompilasi biner `flutter build macos --release` Universal arm64+x86_64 tuntas 100% (145.1 MB .app).
      - Pembuatan DMG installer `OpenTurath_AI_macOS.dmg` (61 MB, format UDZO terkompresi) via `tool/package_macos.sh`.
-     - Verifikasi checksum SHA-256: `5872910d6d3e875b08d3a827d82b7849f9ed58684376a73be4054c6c328c7fee`.
-     - File DMG dan berkas checksum mutakhir disalin ke root: `/Users/apple/Downloads/ramadhan/OpenTurath_AI_macOS.dmg`.
-     - Instalasi sistem `/Applications/OpenTurath AI.app` diperbarui dan aplikasi diluncurkan ulang secara aktif.
+### Fasa 40: Arsitektur Edisi Guru & Kompilasi Rilis APK Android Ganda (Guru & Standar v1.0.76+77) (`3cd1770a`)
+- **Ruang Lingkup & Latar Belakang**:
+  1. *Arsitektur Edisi Guru (`--dart-define=APP_EDITION=guru`)*:
+     - Seluruh 21 asisten khazanah turats terbuka penuh tanpa gembok status segera hadir (`AgentService._applyActiveStatus`, `AgentModel.isComingSoon = false`).
+     - Eliminasi total antarmuka langganan: Tombol kelola langganan di layar profil dihilangkan, rute `AppRoutes.subscription` diarahkan kembali ke shell utama, paywall dialog dilewati seketika (0ms delay).
+     - Kartu keanggotaan terhormat Guru: Lencana `GURU` permanen, deskripsi "Akses Penuh Seluruh Khazanah Turats · Akses Khusus Kehormatan Guru", tanpa masa kedaluwarsa.
+     - Mode compile-time flavor menjaga basis kode sumber tunggal tetap murni, bersih, dan kompatibel 100% dengan rilis publik.
+  2. *Kompilasi Biner & Pembuatan APK Android Ganda*:
+     - Seluruh test suite lolos 100%: 445/445 Flutter unit/widget tests (termasuk `test/guru_edition_test.dart` pada kedua mode).
+     - **APK Edisi Guru**:
+       - Berkas: `/Users/apple/Downloads/ramadhan/OpenTurath_AI_Edisi_Guru.apk` (80 MB).
+       - SHA-256: `2ecec4fd91472305e893445c2299c187a12ee46b3e99b20aa4031af2555d3d86`.
+     - **APK Rilis Standar v1.0.76+77**:
+       - Berkas: `/Users/apple/Downloads/ramadhan/app-release-latest.apk` (81 MB).
+       - SHA-256: `65140eb441cad8dfcb6e36416d6f0b4539b0fab6f39fc561aadda26c152e2a66`.
 
 ---
 
