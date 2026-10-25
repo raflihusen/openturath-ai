@@ -163,7 +163,7 @@ export function loadBackend(root = process.cwd()) {
     .replace(/export (const|function|async function) /g,'$1 ');
   source += '\nexports.api = {' + [
     'getEntitlementAccess','processSuccessfulPayment','dokuWebhook','getDokuConfig','notifySubscriptionServer',
-    'onUserCreate','dailyRevoke','processProvisioningOutbox','cleanupOrphanedDeletions','redeemCode',
+    'onUserCreate','dailyRevoke','processProvisioningOutbox','cleanupOrphanedDeletions','redeemCode','getAccessReadiness',
     'addCalendarMonthsClamped','generateDokuSignature',
     'getAgentUrl','askAgent','checkPaymentStatus','syncAkalPurchases','akalWebhook','onClientErrorLogged','applyAkalPurchase','detectDurationMonths','resolvePlanPricing','createCheckout','reconcileMidtransPayments','applyMidtransRefund','monitorAccessHealth',
   ].map(n=>n+':typeof '+n+' === "undefined" ? undefined : '+n).join(',') + ', onUserDeleted: typeof onUserDeleted === "undefined" ? undefined : onUserDeleted};';

@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.onClientErrorLogged = exports.cleanupOrphanedDeletions = exports.onUserDeleted = exports.onProvisioningOutboxCreated = exports.processProvisioningOutbox = exports.dailyRevoke = exports.onUserCreate = exports.redeemCode = exports.checkPaymentStatus = exports.midtransWebhook = exports.dokuWebhook = exports.monitorAccessHealth = exports.reconcileMidtransPayments = exports.createCheckout = exports.askAgent = exports.recordQuestion = exports.getAgentUrl = exports.MODULE_PLANS = exports.PURCHASABLE_AGENTS = void 0;
+exports.onClientErrorLogged = exports.cleanupOrphanedDeletions = exports.onUserDeleted = exports.onProvisioningOutboxCreated = exports.processProvisioningOutbox = exports.dailyRevoke = exports.onUserCreate = exports.getAccessReadiness = exports.redeemCode = exports.checkPaymentStatus = exports.midtransWebhook = exports.dokuWebhook = exports.monitorAccessHealth = exports.reconcileMidtransPayments = exports.createCheckout = exports.askAgent = exports.recordQuestion = exports.getAgentUrl = exports.MODULE_PLANS = exports.PURCHASABLE_AGENTS = void 0;
 exports.addCalendarMonthsClamped = addCalendarMonthsClamped;
 const functions = require("firebase-functions");
 const admin = require("firebase-admin");
@@ -78,8 +78,9 @@ async function vpsWriterActive() {
 // an account to the ledger-only evaluator would silently drop those modules,
 // so the caller places it on a revocation hold for review instead.
 function unbackedLegacyScopes(entitlements, grants, skipScope, now) {
+    const skip = Array.isArray(skipScope) ? skipScope : [skipScope];
     return Object.entries(entitlements || {}).filter(([scope, ent]) => {
-        if (scope === skipScope || !ent || ent.status === "revoked" || ent.status === "expired")
+        if (skip.includes(scope) || !ent || ent.status === "revoked" || ent.status === "expired")
             return false;
         const expiry = (0, access_control_1.millis)(ent.expiry);
         if (!Number.isFinite(expiry) || expiry <= now)
@@ -1699,6 +1700,7 @@ exports.redeemCode = functions
         : "";
     let redeemResult = {
         entitlementKey: "fiqh_syafii",
+        entitlementKeys: ["fiqh_syafii"],
         durationDays: 7,
         expiryIso: "",
         email: userEmail,
@@ -1751,19 +1753,44 @@ exports.redeemCode = functions
         if (redemptionDoc.exists) {
             throw new functions.https.HttpsError("already-exists", "Kode ini sudah pernah ditukarkan sebelumnya.");
         }
-        const entitlementKey = codeData.entitlement_key || "fiqh_syafii";
-        const requestedDuration = codeData.duration_days;
-        const durationDays = typeof requestedDuration === "number" &&
-            Number.isInteger(requestedDuration) &&
-            requestedDuration >= 1 && requestedDuration <= 31
-            ? requestedDuration
-            : 7;
+        // Satu kode dapat membuka satu, beberapa, atau semua AI. `entitlement_keys`
+        // (daftar) didahulukan; `entitlement_key` (satu) tetap didukung. Alias
+        // all_ai disatukan ke all_access, dan kunci yang tidak dikenal ditolak
+        // sebelum ada yang ditulis, bukan disimpan sebagai akses yatim.
+        const rawKeys = Array.isArray(codeData.entitlement_keys) && codeData.entitlement_keys.length
+            ? codeData.entitlement_keys
+            : [codeData.entitlement_key || "fiqh_syafii"];
+        const entitlementKeys = [];
+        for (const candidate of rawKeys) {
+            const trimmed = typeof candidate === "string" ? candidate.trim() : "";
+            const key = trimmed === "all_ai" ? "all_access" : trimmed;
+            if (!key || !Object.prototype.hasOwnProperty.call(access_catalog_1.SCOPE_LABELS, key) || entitlementKeys.length >= 16) {
+                throw new functions.https.HttpsError("failed-precondition", "Kode ini dikonfigurasi dengan AI yang tidak dikenal. Hubungi admin.");
+            }
+            if (!entitlementKeys.includes(key))
+                entitlementKeys.push(key);
+        }
+        const multiKey = entitlementKeys.length > 1;
         const isTrialVoucher = codeData.is_trial === true ||
             codeData.type === "trial" ||
             codeData.type === "perdana" ||
             rawCode.startsWith("PERDANA") ||
             rawCode.startsWith("TRIAL") ||
             rawCode.startsWith("WELCOME");
+        // Durasi: tanpa nilai berarti 7 hari. Nilai yang ada namun tidak valid
+        // ditolak, bukan diam-diam menjadi 7 hari. Voucher biasa maksimal 31
+        // hari; voucher kehormatan (`type: "honor"` atau `allow_long_duration`)
+        // boleh sampai 400 hari. Trial selalu maksimal 31 hari.
+        const requestedDuration = codeData.duration_days;
+        const maxDuration = !isTrialVoucher && (codeData.allow_long_duration === true || codeData.type === "honor") ? 400 : 31;
+        let durationDays = 7;
+        if (requestedDuration !== undefined && requestedDuration !== null) {
+            if (typeof requestedDuration !== "number" || !Number.isInteger(requestedDuration) ||
+                requestedDuration < 1 || requestedDuration > maxDuration) {
+                throw new functions.https.HttpsError("failed-precondition", "Durasi kode ini tidak valid. Hubungi admin.");
+            }
+            durationDays = requestedDuration;
+        }
         // A device ID is supplied by the client and can be forged, and every
         // trial consumes a NotebookLM seat. One trial per verified Google
         // address and promo family, whatever the device or account.
@@ -1781,7 +1808,6 @@ exports.redeemCode = functions
         const userDoc = await transaction.get(userRef);
         const userData = userDoc.exists ? userDoc.data() : {};
         const entitlements = (userData.entitlements || {});
-        const currentEnt = entitlements[entitlementKey];
         const ownedGrants = [];
         for (const id of userData.access_grant_ids || []) {
             const g = (await transaction.get(db.collection("access_grants").doc(id))).data();
@@ -1790,37 +1816,27 @@ exports.redeemCode = functions
         }
         const ledgerWriter = ((_a = (await transaction.get(db.collection("access_control").doc("runtime"))).data()) === null || _a === void 0 ? void 0 : _a.writer) === "vps-v2";
         const redeemedAt = new Date();
-        const unbacked = unbackedLegacyScopes(entitlements, ownedGrants, entitlementKey, redeemedAt.getTime());
-        if (isTrialVoucher && (currentEnt === null || currentEnt === void 0 ? void 0 : currentEnt.plan) === "trial" &&
-            currentEnt.status === "active" && currentEnt.expiry) {
-            const currentTrialExpiry = currentEnt.expiry.toDate
-                ? currentEnt.expiry.toDate()
-                : new Date(currentEnt.expiry);
-            if (currentTrialExpiry > redeemedAt && codeData.allow_trial_extension !== true) {
-                throw new functions.https.HttpsError("failed-precondition", "Masa coba untuk akses ini masih aktif. Kode trial baru dapat digunakan setelah berakhir.");
+        const unbacked = unbackedLegacyScopes(entitlements, ownedGrants, entitlementKeys, redeemedAt.getTime());
+        const expiryOf = (ent) => {
+            if (!ent || !ent.expiry)
+                return null;
+            return ent.expiry.toDate ? ent.expiry.toDate() : new Date(ent.expiry);
+        };
+        if (isTrialVoucher && codeData.allow_trial_extension !== true) {
+            for (const key of entitlementKeys) {
+                const cur = entitlements[key];
+                const curExp = expiryOf(cur);
+                if ((cur === null || cur === void 0 ? void 0 : cur.plan) === "trial" && cur.status === "active" && curExp && curExp > redeemedAt) {
+                    throw new functions.https.HttpsError("failed-precondition", "Masa coba untuk akses ini masih aktif. Kode trial baru dapat digunakan setelah berakhir.");
+                }
             }
         }
-        // Trial selalu dihitung dari saat voucher diklaim. Perpanjangan hanya
-        // berlaku pada akses berbayar atau voucher yang diberi izin eksplisit.
-        let baseDate = redeemedAt;
-        if ((!isTrialVoucher || codeData.allow_trial_extension === true) &&
-            currentEnt && currentEnt.expiry && currentEnt.status === "active") {
-            const curExp = currentEnt.expiry.toDate ? currentEnt.expiry.toDate() : new Date(currentEnt.expiry);
-            if (curExp > baseDate) {
-                baseDate = curExp;
-            }
-        }
-        const newExpiry = new Date(baseDate.getTime() + durationDays * 24 * 60 * 60 * 1000);
-        const voucherGrantId = (0, access_control_1.keyOf)("voucher", rawCode, uid);
-        transaction.set(db.collection("access_grants").doc(voucherGrantId), {
-            uid, scope: entitlementKey, kind: "voucher", status: "active", redemption_code: rawCode,
-            starts_ms: redeemedAt.getTime(), expires_ms: newExpiry.getTime(), created_ms: redeemedAt.getTime(),
-        });
-        // 1. Simpan catatan penukaran
+        // 1. Catatan penukaran dan pemakaian kode
         transaction.set(redemptionRef, {
             uid,
             email: userEmail,
             device_id: rawDeviceId || null,
+            keys: entitlementKeys,
             redeemed_at: admin.firestore.FieldValue.serverTimestamp(),
         });
         if (isSingleDeviceEnforced && rawDeviceId) {
@@ -1838,12 +1854,42 @@ exports.redeemCode = functions
         if (isTrialVoucher)
             transaction.set(trialClaimRef, { uid, promo_family: promoFamily, code: rawCode,
                 redeemed_at: admin.firestore.FieldValue.serverTimestamp() });
-        // 2. Increment pemakaian kode
         transaction.update(codeRef, {
             times_used: timesUsed + 1,
         });
-        // 3. Update profil dan entitlement pengguna (F01: isolasi per modul)
-        const updatedEntitlements = Object.assign(Object.assign({}, entitlements), { [entitlementKey]: {
+        let globalExpiry = null;
+        // 2. Satu hibah, satu entitlement, dan satu pekerjaan penyediaan per AI
+        //    (F01: isolasi per modul). Id lama dipertahankan untuk kode satu AI.
+        const updatedEntitlements = Object.assign({}, entitlements);
+        const grantIds = [];
+        let primaryExpiry = redeemedAt;
+        for (const [index, entitlementKey] of entitlementKeys.entries()) {
+            const currentEnt = entitlements[entitlementKey];
+            const currentExp = expiryOf(currentEnt);
+            // Trial selalu dihitung dari saat voucher diklaim. Perpanjangan hanya
+            // berlaku pada akses berbayar atau voucher yang diberi izin eksplisit.
+            let baseDate = redeemedAt;
+            if ((!isTrialVoucher || codeData.allow_trial_extension === true) &&
+                currentEnt && currentEnt.status === "active" && currentExp && currentExp > baseDate) {
+                baseDate = currentExp;
+            }
+            const newExpiry = new Date(baseDate.getTime() + durationDays * 24 * 60 * 60 * 1000);
+            if (index === 0)
+                primaryExpiry = newExpiry;
+            const voucherGrantId = multiKey ? (0, access_control_1.keyOf)("voucher", rawCode, uid, entitlementKey) : (0, access_control_1.keyOf)("voucher", rawCode, uid);
+            grantIds.push(voucherGrantId);
+            transaction.set(db.collection("access_grants").doc(voucherGrantId), {
+                uid, scope: entitlementKey, kind: "voucher", status: "active", redemption_code: rawCode,
+                starts_ms: redeemedAt.getTime(), expires_ms: newExpiry.getTime(), created_ms: redeemedAt.getTime(),
+            });
+            // Akses berbayar yang masih berjalan pada AI yang sama dipertahankan
+            // apa adanya (paket, sumber, status bayar); voucher hanya menambah
+            // masa berlaku, tidak menurunkan statusnya menjadi voucher.
+            const paidActive = currentEnt && currentEnt.status === "active" && currentExp && currentExp > redeemedAt &&
+                currentEnt.plan !== "trial" && currentEnt.plan !== "voucher_access" &&
+                currentEnt.payment_status && currentEnt.payment_status !== "none";
+            updatedEntitlements[entitlementKey] = paidActive
+                ? Object.assign(Object.assign({}, currentEnt), { expiry: admin.firestore.Timestamp.fromDate(newExpiry), voucher_extended: true, updated_at: admin.firestore.FieldValue.serverTimestamp() }) : {
                 plan: isTrialVoucher ? "trial" : "voucher_access",
                 status: "active",
                 source: "redeem_code",
@@ -1853,12 +1899,32 @@ exports.redeemCode = functions
                 trial_duration_days: isTrialVoucher ? durationDays : null,
                 payment_status: "none",
                 updated_at: admin.firestore.FieldValue.serverTimestamp(),
-            } });
+            };
+            // F10: Rekam outbox job untuk provisioning NotebookLM
+            const outboxRef = db.collection("provisioning_outbox")
+                .doc(multiKey ? `redeem_${rawCode}_${uid}_${entitlementKey}` : `redeem_${rawCode}_${uid}`);
+            transaction.set(outboxRef, {
+                type: "redeem",
+                uid,
+                email: userEmail || userData.email || "",
+                name: userData.name || "Peneliti",
+                entitlement_key: entitlementKey,
+                plan: isTrialVoucher ? "trial" : "voucher_access",
+                action: "add",
+                status: "pending",
+                attempts: 0,
+                created_at: admin.firestore.FieldValue.serverTimestamp(),
+            });
+            // Hanya paket semua AI yang mengubah paket global.
+            if (entitlementKey === "all_access") {
+                globalExpiry = newExpiry;
+            }
+        }
         const userUpdate = {
             entitlements: updatedEntitlements,
             updated_at: admin.firestore.FieldValue.serverTimestamp(),
             access_due_ms: Date.now(),
-            access_grant_ids: [...new Set([...(userData.access_grant_ids || []), voucherGrantId])],
+            access_grant_ids: [...new Set([...(userData.access_grant_ids || []), ...grantIds])],
         };
         if (ledgerWriter) {
             userUpdate.access_version = 2;
@@ -1867,36 +1933,23 @@ exports.redeemCode = functions
                 userUpdate.access_legacy_audit_required = true;
             }
         }
-        // Hanya set plan global jika voucher adalah all_access
-        if (entitlementKey === "all_access") {
+        if (globalExpiry) {
             userUpdate.plan = isTrialVoucher ? "trial" : "voucher_access";
-            userUpdate.subscription_expiry = admin.firestore.Timestamp.fromDate(newExpiry);
+            userUpdate.subscription_expiry = admin.firestore.Timestamp.fromDate(globalExpiry);
         }
         if (!userData.email && userEmail) {
             userUpdate.email = userEmail;
         }
         transaction.set(userRef, userUpdate, { merge: true });
-        // F10: Rekam outbox job untuk provisioning NotebookLM
-        const outboxRef = db.collection("provisioning_outbox").doc(`redeem_${rawCode}_${uid}`);
-        transaction.set(outboxRef, {
-            type: "redeem",
-            uid,
-            email: userEmail || userData.email || "",
-            name: userData.name || "Peneliti",
-            entitlement_key: entitlementKey,
-            plan: isTrialVoucher ? "trial" : "voucher_access",
-            action: "add",
-            status: "pending",
-            attempts: 0,
-            created_at: admin.firestore.FieldValue.serverTimestamp(),
-        });
+        const titles = entitlementKeys.map(getServiceTitleForEntitlement);
         redeemResult = {
-            entitlementKey,
+            entitlementKey: entitlementKeys[0],
+            entitlementKeys,
             durationDays,
-            expiryIso: newExpiry.toISOString(),
+            expiryIso: primaryExpiry.toISOString(),
             email: userEmail || userData.email || "",
             name: userData.name || "Peneliti",
-            serviceTitle: getServiceTitleForEntitlement(entitlementKey),
+            serviceTitle: titles.length <= 3 ? titles.join(", ") : `${titles.length} AI`,
         };
     });
     // F63: Redaksi log kode voucher mentah
@@ -1921,9 +1974,63 @@ exports.redeemCode = functions
     return {
         success: true,
         entitlementKey: redeemResult.entitlementKey,
+        entitlementKeys: redeemResult.entitlementKeys,
+        serviceTitle: redeemResult.serviceTitle,
         durationDays: redeemResult.durationDays,
         expiry: redeemResult.expiryIso,
         message: `Kode diterima. Akses ke ${redeemResult.serviceTitle} sudah aktif.`,
+    };
+});
+// ================================================================
+// FUNCTION 2e: getAccessReadiness
+// Aplikasi bertanya apakah penyediaan akses (berbagi NotebookLM) untuk
+// penukaran voucher atau pembayaran miliknya sudah selesai. Hanya membaca
+// pekerjaan milik pemanggil; tidak mengubah apa pun.
+// ================================================================
+exports.getAccessReadiness = functions
+    .runWith({ serviceAccount: "open-turath@appspot.gserviceaccount.com" })
+    .https.onCall(async (data, context) => {
+    var _a, _b;
+    if (!context.auth) {
+        throw new functions.https.HttpsError("unauthenticated", "Login diperlukan.");
+    }
+    await appCheckGate(context, "getAccessReadiness");
+    const uid = context.auth.uid;
+    await enforceRateLimit(`rdy_${uid}`, 60, 300, "Terlalu banyak pemeriksaan status akses.");
+    let jobIds = [];
+    if (typeof (data === null || data === void 0 ? void 0 : data.code) === "string" && data.code.length <= 256) {
+        const rawCode = data.code.trim().toUpperCase().replace(/[\s-]/g, "");
+        if (!/^[A-Z0-9]{1,64}$/.test(rawCode)) {
+            throw new functions.https.HttpsError("invalid-argument", "Format kode tidak valid.");
+        }
+        const redemption = (await db.collection("redeem_codes").doc(rawCode).collection("redemptions").doc(uid).get());
+        if (!redemption.exists) {
+            throw new functions.https.HttpsError("not-found", "Penukaran tidak ditemukan.");
+        }
+        const keys = (_a = redemption.data()) === null || _a === void 0 ? void 0 : _a.keys;
+        jobIds = Array.isArray(keys) && keys.length > 1
+            ? keys.map((k) => `redeem_${rawCode}_${uid}_${k}`)
+            : [`redeem_${rawCode}_${uid}`];
+    }
+    else if (typeof (data === null || data === void 0 ? void 0 : data.invoice) === "string" && data.invoice.length <= 100) {
+        const invoice = data.invoice.trim();
+        const tx = await db.collection("transactions").where("invoice_number", "==", invoice).limit(1).get();
+        if (tx.empty || tx.docs[0].data().uid !== uid) {
+            throw new functions.https.HttpsError("not-found", "Transaksi tidak ditemukan.");
+        }
+        jobIds = [`job_${invoice}`];
+    }
+    else {
+        throw new functions.https.HttpsError("invalid-argument", "Sebutkan kode atau nomor invoice.");
+    }
+    const states = [];
+    for (const id of jobIds) {
+        const snap = await db.collection("provisioning_outbox").doc(id).get();
+        states.push(snap.exists ? String(((_b = snap.data()) === null || _b === void 0 ? void 0 : _b.status) || "pending") : "missing");
+    }
+    return {
+        ready: states.length > 0 && states.every((st) => st === "completed"),
+        failed: states.some((st) => st === "failed"),
     };
 });
 // ================================================================
