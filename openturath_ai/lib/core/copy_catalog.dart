@@ -949,6 +949,11 @@ const copyCatalog = <String, List<String>>{
     "The module could not be loaded.",
     "تعذّر تحميل الوحدة."
   ],
+  "logoutSub": [
+    "Anda bisa masuk kembali kapan saja",
+    "You can sign back in at any time",
+    "يمكنك الدخول مجددًا في أي وقت"
+  ],
   "logoPhilosophyRow": [
     "Filosofi lambang",
     "Meaning of the mark",

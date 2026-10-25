@@ -384,9 +384,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   children: [
                                     Row(
                                       children: [
-                                        Icon(Icons.palette_outlined,
-                                            size: 20, color: textSecondary),
-                                        const SizedBox(width: 10),
+                                        SizedBox(
+                                          width: 24,
+                                          child: Center(
+                                            child: Icon(Icons.palette_outlined,
+                                                size: 20, color: textSecondary),
+                                          ),
+                                        ),
+                                        const SizedBox(width: 14),
                                         Text(
                                           AppCopy.appearance,
                                           style: ScholarlyFonts.outfit(
@@ -465,9 +470,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Row(children: [
-                                      Icon(Icons.translate_rounded,
-                                          color: textSecondary),
-                                      const SizedBox(width: 12),
+                                      SizedBox(
+                                        width: 24,
+                                        child: Center(
+                                          child: Icon(Icons.translate_rounded,
+                                              size: 20, color: textSecondary),
+                                        ),
+                                      ),
+                                      const SizedBox(width: 14),
                                       Text(AppCopy.language,
                                           style: OTTypography.bodyMedium(
                                               color: textPrimary))
@@ -549,7 +559,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ),
                           Divider(height: 1, color: border),
                           _SettingsTile(
-                            leading: const OpenTurathMark(size: 26),
+                            leading: const OpenTurathMark(size: 22),
                             icon: Icons.info_outline_rounded,
                             title: Loc.tr('logoPhilosophyRow'),
                             subtitle: Loc.tr('logoPhilosophyRowSub'),
@@ -564,6 +574,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             label: _isLoggingOut
                                 ? AppCopy.loggingOut
                                 : AppCopy.logoutButton,
+                            subtitle: Loc.tr('logoutSub'),
                             color: textPrimary,
                             onTap: (_isLoggingOut || _isDeletingAccount)
                                 ? null
@@ -1000,10 +1011,12 @@ class _AccountActionRow extends StatelessWidget {
     required this.color,
     required this.onTap,
     this.busy = false,
+    this.subtitle = '',
   });
 
   final IconData icon;
   final String label;
+  final String subtitle;
   final Color color;
   final VoidCallback? onTap;
   final bool busy;
@@ -1021,19 +1034,36 @@ class _AccountActionRow extends StatelessWidget {
               horizontal: OTSpacing.base, vertical: 12),
           child: Row(
             children: [
-              if (busy)
-                SizedBox(
-                  width: 20,
-                  height: 20,
-                  child:
-                      CircularProgressIndicator(strokeWidth: 2, color: color),
-                )
-              else
-                Icon(icon, size: 20, color: color),
+              SizedBox(
+                width: 24,
+                child: Center(
+                  child: busy
+                      ? SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                              strokeWidth: 2, color: color),
+                        )
+                      : Icon(icon, size: 20, color: color),
+                ),
+              ),
               const SizedBox(width: 14),
               Expanded(
-                child:
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
                     Text(label, style: OTTypography.bodyMedium(color: color)),
+                    if (subtitle.isNotEmpty) ...[
+                      const SizedBox(height: 2),
+                      Text(subtitle,
+                          style: OTTypography.caption(
+                              color: OTColors.textSecondary(
+                                  Theme.of(context).brightness ==
+                                      Brightness.dark))),
+                    ],
+                  ],
+                ),
               ),
             ],
           ),
@@ -1106,12 +1136,18 @@ class _SettingsTile extends StatelessWidget {
               horizontal: OTSpacing.base, vertical: 12),
           child: Row(
             children: [
-              leading ??
-                  Icon(
-                    icon,
-                    size: 20,
-                    color: textPrimary,
-                  ),
+              // Kolom ikon selebar tetap, supaya teks semua baris lurus.
+              SizedBox(
+                width: 24,
+                child: Center(
+                  child: leading ??
+                      Icon(
+                        icon,
+                        size: 20,
+                        color: textPrimary,
+                      ),
+                ),
+              ),
               const SizedBox(width: 14),
               Expanded(
                 child: Column(
