@@ -13,6 +13,7 @@ import '../services/auth_service.dart';
 import 'package:openturath_ai/core/design/ot_radius.dart';
 import 'package:openturath_ai/core/design/ot_colors.dart';
 import '../core/localization.dart';
+import 'access_prepare_gate.dart';
 import 'tahawwulat_hero.dart';
 
 /// Dialog aktivasi eksklusif berlayar penuh / luas untuk penukaran kode perdana atau voucher santri.
@@ -104,50 +105,68 @@ class ExclusiveActivationDialog extends StatelessWidget {
         (durationDays > 0
             ? DateTime.now().add(Duration(days: durationDays))
             : null);
-    return AlertDialog(
-      backgroundColor: OTColors.surface(dark),
-      shape: RoundedRectangleBorder(borderRadius: OTRadius.dialogBorder),
-      title: Row(children: [
-        Icon(Icons.check_circle_outline_rounded, color: ink),
-        const SizedBox(width: 12),
-        Expanded(
-            child: Text(
-                reviewCopy(
-                    'Akses telah aktif', 'تم تفعيل الوصول', 'Access is active'),
-                style: OTTypography.screenTitle(color: ink))),
-      ]),
-      content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-                serviceTitle.startsWith('AI ')
-                    ? serviceTitle
-                    : 'AI $serviceTitle',
-                style: OTTypography.bodyMedium(color: ink)),
-            const SizedBox(height: 12),
-            Text(
-                expiry == null
-                    ? reviewCopy(
-                        'Tanpa batas waktu', 'دون حد زمني', 'No time limit')
-                    : '${reviewCopy('Berlaku hingga', 'صالح حتى', 'Valid until')} ${HijriDateUtils.formatMasehiOnly(expiry.toLocal())}',
-                style: OTTypography.body(color: muted)),
-            const SizedBox(height: 16),
-            Text(
-                reviewCopy(
-                    'Anda dapat membuka AI dan menyimpan jawaban ke Catatan.',
-                    'يمكنك فتح الذكاء الاصطناعي وحفظ نتائج الدراسة في الملاحظات.',
-                    'You can open the AI and save study results to Notes.'),
-                style: OTTypography.body(color: muted)),
+    return AccessPrepareGate(
+      builder: (context, done, left, panel) => PopScope(
+        canPop: done,
+        child: AlertDialog(
+          backgroundColor: OTColors.surface(dark),
+          shape: RoundedRectangleBorder(borderRadius: OTRadius.dialogBorder),
+          title: Row(children: [
+            Icon(Icons.check_circle_outline_rounded, color: ink),
+            const SizedBox(width: 12),
+            Expanded(
+                child: Text(
+                    reviewCopy('Akses telah aktif', 'تم تفعيل الوصول',
+                        'Access is active'),
+                    style: OTTypography.screenTitle(color: ink))),
           ]),
-      actions: [
-        TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: Text(MaterialLocalizations.of(context).closeButtonLabel)),
-        FilledButton(
-            onPressed: () => _handleStartStudy(context),
-            child: Text(Loc.tr('openAssistant'))),
-      ],
+          content: SingleChildScrollView(
+            child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                      serviceTitle.startsWith('AI ')
+                          ? serviceTitle
+                          : 'AI $serviceTitle',
+                      style: OTTypography.bodyMedium(color: ink)),
+                  const SizedBox(height: 12),
+                  Text(
+                      expiry == null
+                          ? reviewCopy('Tanpa batas waktu', 'دون حد زمني',
+                              'No time limit')
+                          : '${reviewCopy('Berlaku hingga', 'صالح حتى', 'Valid until')} ${HijriDateUtils.formatMasehiOnly(expiry.toLocal())}',
+                      style: OTTypography.body(color: muted)),
+                  const SizedBox(height: 16),
+                  Text(
+                      done
+                          ? reviewCopy(
+                              'Anda dapat membuka AI dan menyimpan jawaban ke Catatan.',
+                              'يمكنك فتح الذكاء الاصطناعي وحفظ نتائج الدراسة في الملاحظات.',
+                              'You can open the AI and save study results to Notes.')
+                          : reviewCopy(
+                              'Kode diterima. Akses sedang disiapkan, mohon tunggu sebentar.',
+                              'تم قبول الرمز. يجري تجهيز الوصول، يُرجى الانتظار قليلًا.',
+                              'Code accepted. Your access is being prepared; please wait a moment.'),
+                      style: OTTypography.body(color: muted)),
+                  const SizedBox(height: 16),
+                  panel,
+                ]),
+          ),
+          actions: [
+            TextButton(
+                onPressed: done ? () => Navigator.of(context).pop() : null,
+                child:
+                    Text(MaterialLocalizations.of(context).closeButtonLabel)),
+            FilledButton(
+                onPressed: done ? () => _handleStartStudy(context) : null,
+                child: Text(done
+                    ? Loc.tr('openAssistant')
+                    : reviewCopy('Menyiapkan akses… $left',
+                        'جارٍ التجهيز… $left', 'Preparing access… $left'))),
+          ],
+        ),
+      ),
     );
   }
 }

@@ -43,6 +43,12 @@ void main() {
     expect(find.textContaining('2040'), findsOneWidget);
     expect(find.textContaining('TERVERIFIKASI'), findsNothing);
     expect(find.textContaining('Tanpa Batas'), findsNothing);
+    // Selama 30 detik pertama akses disiapkan: tombol belum aktif.
+    expect(find.textContaining('Menyiapkan akses'), findsOneWidget);
+    expect(find.text('Buka AI'), findsNothing);
+    await tester.pump(const Duration(seconds: 31));
+    await tester.pumpAndSettle();
+    expect(find.textContaining('Menyiapkan akses'), findsNothing);
     expect(find.text('Buka AI'), findsOneWidget);
     expect(find.text('Tutup'), findsOneWidget);
 
