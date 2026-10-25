@@ -9,8 +9,8 @@ import 'tahawwulat_scene.dart';
 import 'tahawwulat_scenes.dart';
 import 'tahawwulat_slide_motion.dart';
 
-final _arRun = RegExp(
-    r'[«﴿\[]?[؀-ۿﭐ-﷿ﹰ-﻿]+(?:[\s«»﴿﴾\[\]:،]+[؀-ۿﭐ-﷿ﹰ-﻿]+)*[»﴾\]]?');
+final _arRun =
+    RegExp(r'[«﴿\[]?[؀-ۿﭐ-﷿ﹰ-﻿]+(?:[\s«»﴿﴾\[\]:،]+[؀-ۿﭐ-﷿ﹰ-﻿]+)*[»﴾\]]?');
 String _l(String id, String en, String ar) => switch (Loc.language) {
       'en' => en,
       'ar' => ar,
@@ -25,7 +25,9 @@ List<InlineSpan> richSpans(String s, TextStyle base, TextStyle arabic) {
   void plain(String t, TextStyle st) {
     var i = 0;
     for (final m in _arRun.allMatches(t)) {
-      if (m.start > i) out.add(TextSpan(text: t.substring(i, m.start), style: st));
+      if (m.start > i) {
+        out.add(TextSpan(text: t.substring(i, m.start), style: st));
+      }
       out.add(TextSpan(
           text: m.group(0),
           style: arabic.copyWith(
@@ -40,8 +42,10 @@ List<InlineSpan> richSpans(String s, TextStyle base, TextStyle arabic) {
     for (final m in _md.allMatches(t)) {
       if (m.start > i) plain(t.substring(i, m.start), st);
       if (m.group(1) != null) {
-        run(m.group(1)!,
-            st.copyWith(fontWeight: FontWeight.w700, fontStyle: FontStyle.italic));
+        run(
+            m.group(1)!,
+            st.copyWith(
+                fontWeight: FontWeight.w700, fontStyle: FontStyle.italic));
       } else if (m.group(2) != null) {
         run(m.group(2)!, st.copyWith(fontWeight: FontWeight.w700));
       } else {
@@ -77,6 +81,10 @@ class TahawwulatSlideView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final tr = (this.data['i18n'] as Map<String, dynamic>?)?[Loc.language];
+    final data = tr == null
+        ? this.data
+        : <String, dynamic>{...this.data, ...(tr as Map<String, dynamic>)};
     final fg = OTColors.textPrimary(dark);
     final sub = OTColors.textSecondary(dark);
     final ar = Loc.isArabic;
@@ -87,8 +95,8 @@ class TahawwulatSlideView extends StatelessWidget {
 
     return LayoutBuilder(builder: (context, box) {
       final wide = box.maxWidth >= 860 && !isText;
-      final textStyle =
-          OTTypography.body(color: fg).copyWith(fontSize: OTFontSize.s18, height: 1.65);
+      final textStyle = OTTypography.body(color: fg)
+          .copyWith(fontSize: OTFontSize.s18, height: 1.65);
       final arStyle = OTTypography.arabicReading(color: fg)
           .copyWith(fontSize: OTFontSize.s22, height: 1.9);
       final serif = ar
@@ -108,13 +116,16 @@ class TahawwulatSlideView extends StatelessWidget {
           r(Text(kicker.toUpperCase(),
               style: OTTypography.metadataTag(color: sub))),
           gap(OTSpacing.md),
-          r(Text(title, style: serif.copyWith(fontSize: wide ? OTFontSize.s36 : OTFontSize.s26, height: 1.15))),
+          r(Text(title,
+              style: serif.copyWith(
+                  fontSize: wide ? OTFontSize.s36 : OTFontSize.s26,
+                  height: 1.15))),
           if (sub0 != null) ...[
             gap(OTSpacing.md),
             r(Text.rich(
                 TextSpan(
-                    children:
-                        richSpans(sub0, textStyle.copyWith(color: sub), arStyle)),
+                    children: richSpans(
+                        sub0, textStyle.copyWith(color: sub), arStyle)),
                 style: textStyle)),
           ],
         ]);
@@ -132,8 +143,12 @@ class TahawwulatSlideView extends StatelessWidget {
               body.add(r(Text.rich(TextSpan(
                   children: richSpans(
                       txt.substring(2, txt.length - 2),
-                      serif.copyWith(fontSize: wide ? OTFontSize.s26 : OTFontSize.s22, height: 1.3),
-                      arStyle.copyWith(fontSize: wide ? OTFontSize.s26 : OTFontSize.s22))))));
+                      serif.copyWith(
+                          fontSize: wide ? OTFontSize.s26 : OTFontSize.s22,
+                          height: 1.3),
+                      arStyle.copyWith(
+                          fontSize:
+                              wide ? OTFontSize.s26 : OTFontSize.s22))))));
             } else {
               body.add(r(Text.rich(
                   TextSpan(children: richSpans(txt, textStyle, arStyle)))));
@@ -145,7 +160,9 @@ class TahawwulatSlideView extends StatelessWidget {
               body.add(r(Text(ls[k],
                   style: k == 0
                       ? textStyle.copyWith(color: sub)
-                      : serif.copyWith(fontSize: wide ? OTFontSize.s22 : OTFontSize.s20, height: 1.35))));
+                      : serif.copyWith(
+                          fontSize: wide ? OTFontSize.s22 : OTFontSize.s20,
+                          height: 1.35))));
               body.add(gap(k == 0 ? OTSpacing.md : OTSpacing.sm));
             }
           } else if (b['ul'] != null || b['ol'] != null) {
@@ -177,7 +194,8 @@ class TahawwulatSlideView extends StatelessWidget {
                       ),
                       Expanded(
                           child: Text.rich(TextSpan(
-                              children: richSpans(items[k], textStyle, arStyle)))),
+                              children:
+                                  richSpans(items[k], textStyle, arStyle)))),
                     ]),
               )));
             }
@@ -191,12 +209,13 @@ class TahawwulatSlideView extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(
                       horizontal: OTSpacing.base, vertical: OTSpacing.md),
                   decoration: BoxDecoration(
-                    border: BorderDirectional(
-                        end: BorderSide(color: fg, width: 2)),
+                    border:
+                        BorderDirectional(end: BorderSide(color: fg, width: 2)),
                   ),
                   child: Text(b['ar'] as String,
                       style: arStyle.copyWith(
-                          fontSize: wide ? OTFontSize.s26 : OTFontSize.s22, height: 1.9)),
+                          fontSize: wide ? OTFontSize.s26 : OTFontSize.s22,
+                          height: 1.9)),
                 ),
               ),
             )));
@@ -238,8 +257,8 @@ class TahawwulatSlideView extends StatelessWidget {
         ]);
       }
 
-      final text = Column(
-          crossAxisAlignment: CrossAxisAlignment.start, children: body);
+      final text =
+          Column(crossAxisAlignment: CrossAxisAlignment.start, children: body);
       final sceneWidget = scene == null
           ? null
           : AspectRatio(
@@ -271,7 +290,8 @@ class TahawwulatSlideView extends StatelessWidget {
         child: Center(
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 640),
-            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               if (sceneWidget != null) ...[sceneWidget, gap(OTSpacing.md)],
               text,
             ]),
@@ -284,7 +304,8 @@ class TahawwulatSlideView extends StatelessWidget {
   Widget _table(Map<String, dynamic> t, Color fg, Color sub, TextStyle ts,
       TextStyle arStyle) {
     final head = (t['head'] as List).cast<String>();
-    final rows = (t['rows'] as List).map((e) => (e as List).cast<String>()).toList();
+    final rows =
+        (t['rows'] as List).map((e) => (e as List).cast<String>()).toList();
     final small = ts.copyWith(fontSize: OTFontSize.s14, height: 1.5);
     Widget cell(String s, {bool header = false, bool first = false}) => Padding(
           padding: const EdgeInsets.symmetric(
@@ -294,9 +315,12 @@ class TahawwulatSlideView extends StatelessWidget {
                   s,
                   header
                       ? small.copyWith(
-                          color: sub, fontWeight: FontWeight.w600, fontSize: OTFontSize.s12)
+                          color: sub,
+                          fontWeight: FontWeight.w600,
+                          fontSize: OTFontSize.s12)
                       : small.copyWith(
-                          fontWeight: first ? FontWeight.w600 : FontWeight.w400),
+                          fontWeight:
+                              first ? FontWeight.w600 : FontWeight.w400),
                   arStyle.copyWith(fontSize: OTFontSize.s18)))),
         );
     return Container(
@@ -335,12 +359,13 @@ class TahawwulatSlideView extends StatelessWidget {
             border: Border.all(color: OTColors.border(dark)),
             borderRadius: OTRadius.xsBorder,
           ),
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text(m['t'] as String,
-                style: OTTypography.cardTitle(color: fg)),
+          child:
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text(m['t'] as String, style: OTTypography.cardTitle(color: fg)),
             const SizedBox(height: OTSpacing.xs),
             Text(m['b'] as String,
-                style: ts.copyWith(fontSize: OTFontSize.s14, color: sub, height: 1.5)),
+                style: ts.copyWith(
+                    fontSize: OTFontSize.s14, color: sub, height: 1.5)),
             const SizedBox(height: OTSpacing.md),
             Container(
               padding: const EdgeInsets.symmetric(
@@ -358,7 +383,8 @@ class TahawwulatSlideView extends StatelessWidget {
     return Column(children: [
       for (final m in items)
         Padding(
-            padding: const EdgeInsets.only(bottom: OTSpacing.sm), child: card(m)),
+            padding: const EdgeInsets.only(bottom: OTSpacing.sm),
+            child: card(m)),
     ]);
   }
 }

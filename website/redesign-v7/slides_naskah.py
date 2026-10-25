@@ -250,5 +250,37 @@ for key in ORDER:
         d["blocks"] = blocks
     slides.append(walk(d))
 
+# Terjemahan EN/AR (i18n/t*.py: indeks unit -> (en, ar); i18n/units.json: urutan unit Indonesia).
+import importlib.util
+UNITS = json.loads((HERE / "i18n" / "units.json").read_text("utf8"))
+TR = {}
+for n in range(4):
+    spec = importlib.util.spec_from_file_location(f"t{n}", HERE / "i18n" / f"t{n}.py")
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    TR.update(mod.T)
+assert len(TR) == len(UNITS), (len(TR), len(UNITS))
+BY = {u: TR[i] for i, u in enumerate(UNITS)}
+SKIP = {"scene", "bab", "lvl", "kind", "ar"}
+
+
+def tr(o, k):
+    if isinstance(o, str):
+        if o not in BY:
+            raise SystemExit("unit tanpa terjemahan: " + o[:60])
+        return clean(BY[o][k])
+    if isinstance(o, list):
+        return [tr(x, k) for x in o]
+    if isinstance(o, dict):
+        return {a: (b if a in SKIP else tr(b, k)) for a, b in o.items()}
+    return o
+
+
+for d in slides:
+    d["i18n"] = {
+        lang: {a: tr(b, k) for a, b in d.items() if a not in SKIP | {"i18n"}}
+        for lang, k in (("en", 0), ("ar", 1))
+    }
+
 OUT.write_text(json.dumps({"bab": BAB, "slides": slides}, ensure_ascii=False, indent=1), "utf8")
 print(len(slides), "slide ->", OUT)
