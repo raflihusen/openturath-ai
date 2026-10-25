@@ -510,6 +510,18 @@ Berdasarkan `AUDIT_OPENTURATH_AI.md`, dokumen perancangan pustaka, dan keluhan k
      - Kompilasi biner `flutter build macos --release` Universal arm64+x86_64 tuntas 100% (145.1 MB .app).
      - Pembuatan DMG installer `OpenTurath_AI_macOS.dmg` (61 MB, format UDZO terkompresi) via `tool/package_macos.sh`.
      - Verifikasi checksum SHA-256: `21d47a1e7f0fca1ce81351bc1743f169959195b4fcb32295dfb9aaf218d4bfbc`.
+### Fasa 39: Optimalisasi Pengaturan, Keselarasan Layar Langganan & Kompilasi Rilis DMG macOS v1.0.76+77 (`45d42005`)
+- **Ruang Lingkup & Latar Belakang**:
+  1. *Pembaruan Fitur Terkini*:
+     - Layar Pengaturan: Lebar kolom ikon dibuat tetap sehingga seluruh teks baris lurus dan presisi; baris 'Keluar' dilengkapi keterangan untuk tinggi yang serasi; unifikasi ikon Tampilan dan Bahasa (`719e15a0`).
+     - Layar Langganan: Pembukaan bawaan di periode 1 bulan; panel lima asisten diganti baris 'Isi paket' yang simetris dengan 'Pilih bidang'; tab periode bersih tanpa teks persen di tengah; penempatan harga efektif per hari dan persentase hemat di dekat angka harga (`2fc3205d`, `f17a36f0`, `a32f7101`).
+     - Portal Web: Rendering tabel markdown jawaban asli, penyempurnaan tanggal rilis 26 Oktober 2026, dan pelabelan AI Manuskrip sebagai segera hadir (`5f0dd08b`).
+  2. *Kompilasi Biner & Pembuatan DMG Installer macOS v1.0.76+77*:
+     - Bump versi aplikasi menjadi `1.0.76+77` di `openturath_ai/pubspec.yaml` (`45d42005`).
+     - Seluruh test suite lolos 100%: 444/444 Flutter unit/widget tests.
+     - Kompilasi biner `flutter build macos --release` Universal arm64+x86_64 tuntas 100% (145.1 MB .app).
+     - Pembuatan DMG installer `OpenTurath_AI_macOS.dmg` (61 MB, format UDZO terkompresi) via `tool/package_macos.sh`.
+     - Verifikasi checksum SHA-256: `5872910d6d3e875b08d3a827d82b7849f9ed58684376a73be4054c6c328c7fee`.
      - File DMG dan berkas checksum mutakhir disalin ke root: `/Users/apple/Downloads/ramadhan/OpenTurath_AI_macOS.dmg`.
      - Instalasi sistem `/Applications/OpenTurath AI.app` diperbarui dan aplikasi diluncurkan ulang secara aktif.
 
