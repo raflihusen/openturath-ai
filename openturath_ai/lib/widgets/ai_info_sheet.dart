@@ -292,7 +292,7 @@ class AiInfoSheet extends StatelessWidget {
               ),
             ],
             heading('Cara disusun'),
-            row('Rekaman diperiksa (semua ilmu)',
+            row('Judul kitab disaring (semua ilmu)',
                 number(method['rekaman_diperiksa_semua_ilmu'] as num?)),
             if (method['rekaman_digabung_ke_kitab_ini'] != null)
               row('Rekaman dan cetakan yang dibandingkan untuk AI ini',
