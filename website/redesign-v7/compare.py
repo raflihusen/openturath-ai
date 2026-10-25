@@ -21,7 +21,28 @@ def md_full(text):
     def close_to(ind):
         while stack and stack[-1][1] >= ind:
             out.append("</li></" + stack.pop()[0] + ">")
-    for raw in text.split("\n"):
+    def cells(row):
+        row = row.strip()
+        if row.startswith("|"): row = row[1:]
+        if row.endswith("|"): row = row[:-1]
+        return [c.strip() for c in row.split("|")]
+    def table(rows):
+        head, body = cells(rows[0]), [cells(r) for r in rows[2:]]
+        th = "".join(f"<th>{_inl(c)}</th>" for c in head)
+        tr = "".join("<tr>" + "".join(f"<td>{_inl(c)}</td>" for c in r) + "</tr>" for r in body)
+        return f'<div class="mdtbl"><table><thead><tr>{th}</tr></thead><tbody>{tr}</tbody></table></div>'
+    lines = text.split("\n")
+    grouped, i = [], 0
+    while i < len(lines):
+        if lines[i].strip().startswith("|") and i + 1 < len(lines) and re.match(r"^\s*\|?\s*:?-{3,}", lines[i + 1]):
+            j = i
+            while j < len(lines) and lines[j].strip().startswith("|"): j += 1
+            grouped.append(("table", lines[i:j])); i = j
+        else:
+            grouped.append(("line", lines[i])); i += 1
+    for kind, raw in grouped:
+        if kind == "table":
+            flush(); close_to(0); out.append(table(raw)); continue
         line = raw.rstrip()
         if not line.strip(): flush(); continue
         m = re.match(r"^(#{1,6})\s+(.*)$", line)
