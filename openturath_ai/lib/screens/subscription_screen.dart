@@ -138,23 +138,6 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
         : Loc.tr('subHeadlineNamed', [first]);
   }
 
-  /// Hemat terbesar di antara kedua paket untuk masa ke-[i], terhadap
-  /// membayar bulanan selama masa yang sama.
-  int _bestSaving(int i) {
-    int of(List<SubscriptionOffer> offers) {
-      if (offers.isEmpty) return 0;
-      final k = i.clamp(0, offers.length - 1);
-      final o = offers[k];
-      if (o.months <= 1) return 0;
-      final monthly = offers.first.amount;
-      return ((monthly * o.months - o.amount) * 100 / (monthly * o.months))
-          .round();
-    }
-
-    final a = of(ProductPricing.tahawwulat), b = of(ProductPricing.specialists);
-    return a > b ? a : b;
-  }
-
   /// Pengguna saat ini bila ada; tanpa sesi (atau di pratinjau) kosong.
   bool _hasAccess(String agentId) {
     try {
@@ -306,6 +289,11 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                 ((price.amount / price.months) / 1000).round() * 1000)
           ])
         : '';
+    // Harga efektif per hari: 12 bulan dihitung 365 hari, selebihnya 30 hari
+    // per bulan, dibulatkan ke ratusan terdekat. Ditampilkan sebagai "sekitar".
+    final days = price.months >= 12 ? 365 : price.months * 30;
+    final perDay = Loc.tr('perDayEquivalent',
+        [ProductPricing.rupiah(((price.amount / days) / 100).round() * 100)]);
 
     return Container(
       padding: EdgeInsets.all(pad),
@@ -371,11 +359,14 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
               ),
             ),
           const SizedBox(height: OTSpacing.sm),
-          if (_pricingReady && perMonth.isNotEmpty)
+          if (_pricingReady)
             Wrap(
               spacing: OTSpacing.sm,
+              runSpacing: OTSpacing.xs,
               children: [
-                Text(perMonth, style: OTTypography.caption(color: sub)),
+                Text(perDay, style: OTTypography.captionMedium(color: fg)),
+                if (perMonth.isNotEmpty)
+                  Text(perMonth, style: OTTypography.caption(color: sub)),
                 if (saving >= 5)
                   Text(Loc.tr('saving', ['$saving']),
                       style: OTTypography.captionMedium(color: fg)),
@@ -873,13 +864,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                             child: _PeriodSwitch(
                               label: Loc.tr('planPeriodLabel'),
                               titles: [for (final o in flagshipOffers) o.title],
-                              notes: [
-                                for (var i = 0; i < flagshipOffers.length; i++)
-                                  _bestSaving(i) >= 5
-                                      ? Loc.tr(
-                                          'savingUpTo', ['${_bestSaving(i)}'])
-                                      : '',
-                              ],
+                              notes: [for (final _ in flagshipOffers) ''],
                               selected: fi,
                               onSelect: _processing
                                   ? null

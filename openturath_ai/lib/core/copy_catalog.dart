@@ -2530,6 +2530,7 @@ const copyCatalog = <String, List<String>>{
     "جار إعداد الجواب…"
   ],
   "payAmount": ["Bayar {0}", "Pay {0}", "ادفع {0}"],
+  "perDayEquivalent": ["Sekitar {0}/hari", "About {0}/day", "نحو {0} في اليوم"],
   "monthlyEquivalent": [
     "Sekitar {0}/bulan · dibayar sekaligus",
     "About {0}/month · paid upfront",
