@@ -14,6 +14,7 @@ import '../core/scholarly_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../core/app_copy.dart';
+import '../core/app_config.dart';
 import '../core/constants.dart';
 import '../core/routes.dart';
 import '../core/design/ot_colors.dart';
@@ -147,7 +148,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       AppSnackBar.warning(context, Loc.tr('scholarPreparingBody'));
       return;
     }
-    if (agent.isComingSoon) {
+    if (!AppConfig.isGuruEdition && agent.isComingSoon) {
       TahqiqKhazanahDialog.show(context, agent: agent);
       return;
     }
@@ -159,7 +160,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
     }).catchError((_) {});
 
     // Cek akses pengguna ke agent (paywall)
-    if (user == null || !user.hasAccessToAgent(agent.id)) {
+    if (!AppConfig.isGuruEdition &&
+        (user == null || !user.hasAccessToAgent(agent.id))) {
       NavigationGuard.safePushNamed(
         context,
         AppRoutes.subscription,

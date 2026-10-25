@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AppConfig {
+  /// Edisi khusus Guru: membuka seluruh 21 AI turats tanpa pembatasan langganan.
+  static const bool isGuruEdition =
+      String.fromEnvironment('APP_EDITION') == 'guru';
+
   static final ValueNotifier<ThemeMode> themeNotifier =
       ValueNotifier(ThemeMode.system);
   static final ValueNotifier<String> localeNotifier =

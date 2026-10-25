@@ -545,7 +545,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           _SettingsTile(
                             icon: Icons.info_outline_rounded,
                             title: AppCopy.aboutTitle,
-                            subtitle: AppCopy.versionWithTagline(_appVersion),
+                            subtitle: AppConfig.isGuruEdition
+                                ? 'v$_appVersion · Edisi Guru'
+                                : AppCopy.versionWithTagline(_appVersion),
                             trailing: Icon(Icons.chevron_right_rounded,
                                 color: textSecondary, size: 20),
                             onTap: () => _showAboutModal(
@@ -987,18 +989,20 @@ class _MembershipPass extends StatelessWidget {
                 onPressed: onViewAccess,
                 icon: Icon(Icons.auto_awesome_outlined, size: 20, color: ink)),
         ]),
-        const SizedBox(height: 16),
-        Divider(height: 1, color: OTColors.borderSubtle(isDark)),
-        const SizedBox(height: 16),
-        SizedBox(
-          width: double.infinity,
-          child: FilledButton.icon(
-            key: const ValueKey('visible-subscription-button'),
-            onPressed: onManage,
-            icon: const Icon(Icons.card_membership_outlined, size: 20),
-            label: Text(AppCopy.subscription),
+        if (!AppConfig.isGuruEdition) ...[
+          const SizedBox(height: 16),
+          Divider(height: 1, color: OTColors.borderSubtle(isDark)),
+          const SizedBox(height: 16),
+          SizedBox(
+            width: double.infinity,
+            child: FilledButton.icon(
+              key: const ValueKey('visible-subscription-button'),
+              onPressed: onManage,
+              icon: const Icon(Icons.card_membership_outlined, size: 20),
+              label: Text(AppCopy.subscription),
+            ),
           ),
-        ),
+        ],
       ]),
     );
   }

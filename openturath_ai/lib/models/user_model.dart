@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../core/constants.dart';
 import '../core/entitlement_keys.dart';
+import '../core/app_config.dart';
 
 /// Model Hak Akses Per Modul Notebook / Kitab (Canonical Entitlement)
 class ModuleEntitlement {
@@ -137,6 +138,7 @@ class UserModel {
   /// Jangan pernah menjadikan nama paket sebagai alasan menolak masa berlaku
   /// yang masih aktif dari server.
   bool get isSubscriptionActive =>
+      AppConfig.isGuruEdition ||
       isVip ||
       (subscriptionExpiry != null &&
           subscriptionExpiry!.isAfter(DateTime.now()));
@@ -144,6 +146,7 @@ class UserModel {
   /// Trial is an entitlement with an expiry supplied by the server voucher.
   /// A local question counter must never grant or revoke access.
   bool get hasAccess =>
+      AppConfig.isGuruEdition ||
       isSubscriptionActive ||
       entitlements.values
           .any((entitlement) => entitlement.isActive && entitlement.isPremium);
@@ -156,6 +159,7 @@ class UserModel {
   // ── Modular Entitlement Helpers ──
 
   bool isAgentSubscriptionActive(String agentId) {
+    if (AppConfig.isGuruEdition) return true;
     // Owner-approved permanent VIP outranks expired or revoked paid packages.
     if (isVip) return true;
     final mappedKey = entitlementKeys[agentId] ?? agentId;

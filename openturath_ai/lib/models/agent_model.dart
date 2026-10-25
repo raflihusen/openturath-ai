@@ -1,4 +1,5 @@
 import '../core/localization.dart';
+import '../core/app_config.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'sub_agent_model.dart';
 import 'book_model.dart';
@@ -64,8 +65,8 @@ class AgentModel {
   })  : _title = title,
         _subtitleAcademic = subtitleAcademic;
 
-  bool get isActive => status == 'active';
-  bool get isComingSoon => status == 'coming_soon';
+  bool get isActive => AppConfig.isGuruEdition || status == 'active';
+  bool get isComingSoon => AppConfig.isGuruEdition ? false : status == 'coming_soon';
   bool get isLocked => isComingSoon;
 
   AgentModel copyWith({

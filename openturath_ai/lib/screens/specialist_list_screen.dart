@@ -5,6 +5,7 @@ import '../services/telemetry_service.dart';
 import '../core/scholarly_fonts.dart';
 
 import '../core/app_copy.dart';
+import '../core/app_config.dart';
 import '../core/arabic_utils.dart';
 import '../core/routes.dart';
 import '../core/design/ot_colors.dart';
@@ -130,13 +131,14 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
 
   void _openAgent(AgentModel agent) {
     OTMotion.light();
-    if (agent.isComingSoon) {
+    if (!AppConfig.isGuruEdition && agent.isComingSoon) {
       TahqiqKhazanahDialog.show(context, agent: agent);
       return;
     }
 
     final user = _authService.cachedCurrentUser;
-    if (user == null || !user.hasAccessToAgent(agent.id)) {
+    if (!AppConfig.isGuruEdition &&
+        (user == null || !user.hasAccessToAgent(agent.id))) {
       _openSubscriptionForAgent(agent, user: user);
       return;
     }
@@ -147,7 +149,8 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
   void _openTahawwulatSubAgent(AgentModel parentAgent, SubAgentModel subAgent) {
     OTMotion.light();
     final user = _authService.cachedCurrentUser;
-    if (user == null || !user.hasAccessToAgent(parentAgent.id)) {
+    if (!AppConfig.isGuruEdition &&
+        (user == null || !user.hasAccessToAgent(parentAgent.id))) {
       _openSubscriptionForAgent(parentAgent, user: user);
       return;
     }

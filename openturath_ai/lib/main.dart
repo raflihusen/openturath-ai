@@ -251,7 +251,9 @@ class OpenTurathApp extends StatelessWidget {
                       page = const MainShellScreen();
                       break;
                     case AppRoutes.subscription:
-                      page = const SubscriptionScreen();
+                      page = AppConfig.isGuruEdition
+                          ? const MainShellScreen()
+                          : const SubscriptionScreen();
                       break;
                     case AppRoutes.googleSessionAuth:
                       page = const GoogleSessionAuthScreen();

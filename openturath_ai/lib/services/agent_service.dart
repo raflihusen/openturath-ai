@@ -1,4 +1,5 @@
 import '../core/localization.dart';
+import '../core/app_config.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_functions/cloud_functions.dart';
@@ -30,6 +31,11 @@ class AgentService {
 
   static List<AgentModel> _applyActiveStatus(
       List<AgentModel> baseAgents, Set<String> activeIds) {
+    if (AppConfig.isGuruEdition) {
+      return baseAgents
+          .map((agent) => agent.copyWith(status: 'active'))
+          .toList();
+    }
     return baseAgents.map((agent) {
       final isDirectActive = activeIds.contains(agent.id);
       final isParentActive = (agent.id.startsWith('fiqh_tahawwulat') &&

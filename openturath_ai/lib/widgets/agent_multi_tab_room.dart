@@ -14,6 +14,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../models/turath_chat_message.dart';
 
 import '../core/app_copy.dart';
+import '../core/app_config.dart';
 import '../core/app_snackbar.dart';
 import '../core/navigation_guard.dart';
 import '../core/routes.dart';
@@ -1183,10 +1184,11 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
 
   void _handleAccessDenied(AgentSessionTab session) {
     final user = AuthService().cachedCurrentUser;
-    final hasActiveEntitlement = user != null &&
-        (user.isVip ||
-            (user.isSubscriptionActive &&
-                user.isAgentSubscriptionActive(session.agent.id)));
+    final hasActiveEntitlement = AppConfig.isGuruEdition ||
+        (user != null &&
+            (user.isVip ||
+                (user.isSubscriptionActive &&
+                    user.isAgentSubscriptionActive(session.agent.id))));
 
     if (hasActiveEntitlement && _accessDeniedRetryCount < 5) {
       _accessDeniedRetryCount++;
