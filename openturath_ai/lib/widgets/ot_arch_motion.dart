@@ -134,8 +134,6 @@ class _OTSplashIntroState extends State<OTSplashIntro>
             OTMotion.splashDomeEndMs, OTMotion.curve);
         final pages = _phase(ms, OTMotion.splashPagesStartMs,
             OTMotion.splashPagesEndMs, OTMotion.curve);
-        final rule = _phase(ms, OTMotion.splashRuleStartMs,
-            OTMotion.splashRuleEndMs, OTMotion.curve);
         final tag = _phase(ms, OTMotion.splashTagStartMs,
             OTMotion.splashTagEndMs, OTMotion.curve);
         const word = 'OpenTurath';
@@ -215,12 +213,6 @@ class _OTSplashIntroState extends State<OTSplashIntro>
                         for (var i = 0; i < word.length; i++)
                           _letter(word[i], i, ms, ink),
                       ]),
-                    ),
-                    const SizedBox(height: OTSpacing.base),
-                    Container(
-                      width: OTSpacing.jumbo * rule,
-                      height: 1,
-                      color: ink.withValues(alpha: 0.35),
                     ),
                     const SizedBox(height: OTSpacing.lg),
                     Opacity(
