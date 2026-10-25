@@ -9,6 +9,9 @@ fungsi `redeemCode`, sehingga kode yang dibuat tidak diam-diam gagal ditukar.
   python3 scripts/voucher_admin.py create --all --days 30 --max-uses 50 --note "Kelas Ramadan"
   python3 scripts/voucher_admin.py create --keys fiqh_syafii,hadits --days 14 --count 5
   python3 scripts/voucher_admin.py create --type honor --all --days 365 --prefix ASATIDZ
+  python3 scripts/voucher_admin.py bonus --feed --ig @namaakun --apply     # bonus testimoni 7 hari
+  python3 scripts/voucher_admin.py bonus --story --ig @namaakun --apply    # bonus story 3 hari
+  python3 scripts/voucher_admin.py limit KODE 150                          # ubah batas pemakaian
   python3 scripts/voucher_admin.py list
   python3 scripts/voucher_admin.py report KODE
   python3 scripts/voucher_admin.py deactivate KODE
@@ -43,6 +46,13 @@ TRIAL_PREFIXES = ("PERDANA", "TRIAL", "WELCOME")
 # Tanpa huruf/angka yang mudah tertukar (0/O, 1/I/L).
 ALPHABET = "ABCDEFGHJKMNPQRSTUVWXYZ23456789"
 WIB = timezone(timedelta(hours=7))
+# Paket bawaan untuk trial dan bonus testimoni: dua AI utama.
+FLAGSHIP_KEYS = ["fiqh_tahawwulat", "fiqh_syafii"]
+# Bonus testimoni: story hanya tampil 24 jam sehingga lebih singkat; unggahan feed,
+# reel, atau grup komunitas bertahan lama sehingga lebih panjang.
+BONUS_DAYS = {"story": 3, "feed": 7}
+# Kode bonus harus ditukar dalam sekian hari sejak diterbitkan.
+BONUS_REDEEM_WINDOW_DAYS = 7
 
 
 class VoucherError(ValueError):
@@ -160,7 +170,8 @@ def cmd_create(a):
     keys = ["all_access"] if a.all else (a.keys or "").split(",")
     plans = []
     for _ in range(a.count):
-        plans.append(build_voucher(keys, a.type, a.days, a.max_uses, a.prefix or "", a.expires, a.note or "", a.long))
+        plans.append(build_voucher(keys, a.type, a.days, a.max_uses, a.prefix or "", a.expires, a.note or "", a.long,
+                                   a.code if a.count == 1 else None))
     for code, doc in plans:
         scope = doc.get("entitlement_keys") or [doc["entitlement_key"]]
         print(f"{display(code):<22} {','.join(scope)}  {doc['duration_days']} hari  x{doc['max_uses']}  {doc['type']}")
@@ -172,6 +183,31 @@ def cmd_create(a):
         fields = {k: to_value(v) for k, v in {**doc, "created_at": datetime.now(timezone.utc)}.items()}
         call("POST", f"{BASE}/redeem_codes?documentId={code}", tok, {"fields": fields})
     print(f"\n{len(plans)} kode ditulis. Simpan daftar di atas; kode tidak bisa dibaca ulang dari aplikasi.")
+
+
+def cmd_bonus(a):
+    """Satu kode bonus sekali pakai untuk satu pengunggah testimoni."""
+    kind = "story" if a.story else "feed"
+    expires = (datetime.now(WIB) + timedelta(days=BONUS_REDEEM_WINDOW_DAYS)).strftime("%Y-%m-%d")
+    note = f"Bonus testimoni {kind} {a.ig or '-'}"
+    code, doc = build_voucher(FLAGSHIP_KEYS, "santri", BONUS_DAYS[kind], 1, "BAGI", expires, note)
+    print(f"{display(code)}  {BONUS_DAYS[kind]} hari  sekali pakai  tukar sebelum {expires}  ({note})")
+    if not a.apply:
+        print("Dry-run: tambahkan --apply untuk menyimpan.")
+        return
+    tok = token()
+    fields = {k: to_value(v) for k, v in {**doc, "created_at": datetime.now(timezone.utc)}.items()}
+    call("POST", f"{BASE}/redeem_codes?documentId={code}", tok, {"fields": fields})
+    print("Tersimpan. Kirim kode ini lewat DM ke pengunggah.")
+
+
+def cmd_limit(a):
+    code = re.sub(r"[\s-]", "", a.code).upper()
+    if a.max_uses < 1:
+        sys.exit("Batas minimal 1")
+    call("PATCH", f"{BASE}/redeem_codes/{code}?updateMask.fieldPaths=max_uses", token(),
+         {"fields": {"max_uses": {"integerValue": str(a.max_uses)}}})
+    print(f"Batas pemakaian {display(code)} menjadi {a.max_uses}.")
 
 
 def cmd_list(a):
@@ -220,10 +256,22 @@ def main(argv=None):
     c.add_argument("--type", default="santri", help="santri | trial | perdana | honor")
     c.add_argument("--long", action="store_true", help="izinkan durasi sampai 400 hari (bukan trial)")
     c.add_argument("--prefix", help="awalan kode, maks 8 huruf/angka")
+    c.add_argument("--code", help="kode tertentu (alih-alih acak), hanya bila --count 1")
     c.add_argument("--expires", help="batas penukaran YYYY-MM-DD (akhir hari WIB)")
     c.add_argument("--note")
     c.add_argument("--apply", action="store_true")
     c.set_defaults(fn=cmd_create)
+    b = sub.add_parser("bonus")
+    g = b.add_mutually_exclusive_group(required=True)
+    g.add_argument("--story", action="store_true", help="bonus 3 hari")
+    g.add_argument("--feed", action="store_true", help="bonus 7 hari (feed, reel, grup komunitas)")
+    b.add_argument("--ig", help="akun Instagram pengunggah, dicatat pada kode")
+    b.add_argument("--apply", action="store_true")
+    b.set_defaults(fn=cmd_bonus)
+    lim = sub.add_parser("limit")
+    lim.add_argument("code")
+    lim.add_argument("max_uses", type=int)
+    lim.set_defaults(fn=cmd_limit)
     sub.add_parser("list").set_defaults(fn=cmd_list)
     for name, fn in (("report", cmd_report), ("deactivate", cmd_deactivate)):
         s = sub.add_parser(name)

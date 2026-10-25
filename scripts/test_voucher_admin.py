@@ -3,7 +3,8 @@ import unittest
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
-from voucher_admin import VoucherError, build_voucher, display, generate_code  # noqa: E402
+from voucher_admin import (BONUS_DAYS, FLAGSHIP_KEYS, VoucherError, build_voucher, display,  # noqa: E402
+                           generate_code)
 
 
 class VoucherAdminTest(unittest.TestCase):
@@ -59,6 +60,22 @@ class VoucherAdminTest(unittest.TestCase):
             build_voucher(["hadits"], expires="31/12/2026")
         with self.assertRaises(VoucherError):
             build_voucher(["hadits"], max_uses=0)
+
+    def test_bonus_and_friend_codes_follow_the_plan(self):
+        self.assertEqual(BONUS_DAYS, {"story": 3, "feed": 7})
+        code, doc = build_voucher(FLAGSHIP_KEYS, "santri", BONUS_DAYS["story"], 1, "BAGI", "2026-11-12", "Bonus")
+        self.assertTrue(code.startswith("BAGI"))
+        self.assertEqual(doc["entitlement_keys"], ["fiqh_tahawwulat", "fiqh_syafii"])
+        self.assertEqual((doc["duration_days"], doc["max_uses"]), (3, 1))
+        self.assertNotIn("is_trial", doc)
+        ribath, friends = build_voucher(FLAGSHIP_KEYS, "santri", 30, 7, code="RIBATHNAMATALAWSAT")
+        self.assertEqual(ribath, "RIBATHNAMATALAWSAT")
+        self.assertEqual((friends["duration_days"], friends["max_uses"]), (30, 7))
+
+    def test_open_trial_code_is_a_bound_trial(self):
+        _, doc = build_voucher(FLAGSHIP_KEYS, "trial", 7, 100, code="TURATH7", expires="2026-11-30")
+        self.assertTrue(doc["is_trial"] and doc["one_per_device"])
+        self.assertEqual(doc["duration_days"], 7)
 
 
 if __name__ == "__main__":
