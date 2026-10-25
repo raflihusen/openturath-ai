@@ -190,20 +190,20 @@ class _Teaser extends StatelessWidget {
                             (1 - dateA) * 10,
                             Container(
                               padding: const EdgeInsets.symmetric(
-                                  horizontal: 64, vertical: 30),
+                                  horizontal: 46, vertical: 20),
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(999),
                                 border: Border.all(
                                     color: _ink.withValues(alpha: 0.55),
-                                    width: 2.5),
+                                    width: 2),
                                 color: _ink.withValues(alpha: 0.06),
                               ),
                               child: const Text('26.10.2026',
                                   style: TextStyle(
                                       fontFamily: _sans,
-                                      fontSize: 104,
+                                      fontSize: 70,
                                       fontWeight: FontWeight.w600,
-                                      letterSpacing: 12,
+                                      letterSpacing: 8,
                                       color: _ink)),
                             ),
                           ),
