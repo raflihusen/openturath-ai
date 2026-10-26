@@ -13,9 +13,20 @@ Penggunaan:
   python3 manage_ota.py unlock-agent hadith_kutub_sittah
   python3 manage_ota.py lock-agent hadith_kutub_sittah
   python3 manage_ota.py seed                            # Inisialisasi dokumen app_config
+
+Saklar fitur (app_config/features), tanpa update aplikasi:
+  python3 manage_ota.py features                        # Lihat status saklar fitur
+  python3 manage_ota.py soon-sub-agent fiqh_tahawwulat_khatib   # Tandai "segera hadir"
+  python3 manage_ota.py release-sub-agent fiqh_tahawwulat_khatib # Buka untuk semua pengguna
+  python3 manage_ota.py intro on|off                    # Tombol "Mengenal Fikih Tahawwulat"
+  (tambahkan --dry-run untuk melihat perubahan tanpa menulis ke Firestore)
+
+Pemeriksaan rilis (baca-saja, tidak mengubah apa pun):
+  python3 manage_ota.py verify-release
 """
 
 import sys
+import re
 import json
 import subprocess
 import urllib.request
@@ -51,6 +62,98 @@ ALL_KNOWN_AGENTS = [
 ]
 
 DEFAULT_ACTIVE_AGENTS = ["fiqh_tahawwulat", "fiqh_syafii"]
+
+# Saklar fitur (app_config/features). Nilai bawaan HARUS sama dengan
+# FeatureFlags.defaults (Flutter) dan DEFAULT_SOON_SUB_AGENTS (Cloud Functions).
+FEATURES_DOC = "features"
+KNOWN_SUB_AGENTS = [
+    "fiqh_tahawwulat_muhaqqiq",
+    "fiqh_tahawwulat_bayan",
+    "fiqh_tahawwulat_mukhtabir",
+    "fiqh_tahawwulat_habib",
+    "fiqh_tahawwulat_khatib",
+]
+DEFAULT_SOON_SUB_AGENTS = [
+    "fiqh_tahawwulat_khatib",
+    "fiqh_tahawwulat_habib",
+    "fiqh_tahawwulat_mukhtabir",
+]
+DEFAULT_INTRODUCTION_ENABLED = False
+MAX_SOON_IDS = 50
+SUB_AGENT_ID_PATTERN = re.compile(r"^[a-z][a-z0-9_]{0,79}$")
+
+
+class FeatureError(Exception):
+    """Perintah fitur tidak valid; pesannya aman ditampilkan ke operator."""
+
+
+def validate_sub_agent_id(agent_id):
+    """Id harus berformat benar dan termasuk sub-AI yang dikenal."""
+    agent_id = (agent_id or "").strip()
+    if not SUB_AGENT_ID_PATTERN.match(agent_id):
+        raise FeatureError(f"Id '{agent_id}' tidak valid (huruf kecil, angka, garis bawah).")
+    if agent_id not in KNOWN_SUB_AGENTS:
+        raise FeatureError(
+            f"'{agent_id}' bukan sub-AI yang dikenal. Pilihan: {', '.join(KNOWN_SUB_AGENTS)}"
+        )
+    return agent_id
+
+
+def read_features(fields):
+    """Membaca dokumen features dengan aturan yang SAMA dengan klien dan server."""
+    data = fields or {}
+    raw = data.get("soon_sub_agent_ids")
+    soon = list(DEFAULT_SOON_SUB_AGENTS)
+    if isinstance(raw, list):
+        ids = []
+        for item in raw:
+            if isinstance(item, str) and SUB_AGENT_ID_PATTERN.match(item.strip()):
+                if item.strip() not in ids:
+                    ids.append(item.strip())
+        if len(ids) <= MAX_SOON_IDS:
+            soon = ids
+    intro = data.get("introduction_enabled")
+    if not isinstance(intro, bool):
+        intro = DEFAULT_INTRODUCTION_ENABLED
+    return {"soon_sub_agent_ids": soon, "introduction_enabled": intro}
+
+
+def apply_feature_change(current, *, soon=None, release=None, intro=None):
+    """Mengembalikan keadaan baru. Tidak pernah mengubah `current` di tempat."""
+    soon_ids = list(current["soon_sub_agent_ids"])
+    intro_enabled = current["introduction_enabled"]
+    if soon is not None:
+        agent_id = validate_sub_agent_id(soon)
+        if agent_id not in soon_ids:
+            soon_ids.append(agent_id)
+    if release is not None:
+        agent_id = validate_sub_agent_id(release)
+        soon_ids = [a for a in soon_ids if a != agent_id]
+    if intro is not None:
+        if intro not in ("on", "off"):
+            raise FeatureError("Pilih: on atau off.")
+        intro_enabled = intro == "on"
+    return {"soon_sub_agent_ids": sorted(soon_ids), "introduction_enabled": intro_enabled}
+
+
+def same_features(a, b):
+    """Dua keadaan dianggap sama bila himpunan sub-AI dan saklar Mengenal sama (urutan tak berarti)."""
+    return (
+        set(a["soon_sub_agent_ids"]) == set(b["soon_sub_agent_ids"])
+        and a["introduction_enabled"] == b["introduction_enabled"]
+    )
+
+
+def to_firestore_features_fields(state, note=""):
+    now_iso = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    return {
+        "soon_sub_agent_ids": {
+            "arrayValue": {"values": [{"stringValue": a} for a in state["soon_sub_agent_ids"]]}
+        },
+        "introduction_enabled": {"booleanValue": bool(state["introduction_enabled"])},
+        "updated_at": {"stringValue": now_iso},
+        "note": {"stringValue": note},
+    }
 
 PRODUCTION_PRICES = {
     # Modul Spesialis Per Bidang Ilmu (Fikih Syafi'i, Hadis, dll.)
@@ -114,8 +217,12 @@ def rest_get(doc_name, token):
         raise e
 
 
-def rest_patch(doc_name, fields_payload, token):
+def rest_patch(doc_name, fields_payload, token, update_mask=None):
     url = f"{BASE_FIRESTORE_URL}/{doc_name}"
+    if update_mask:
+        # Hanya bidang yang disebut yang ditulis; bidang lain di dokumen dibiarkan.
+        query = "&".join(f"updateMask.fieldPaths={k}" for k in update_mask)
+        url = f"{url}?{query}"
     payload = {"fields": fields_payload}
     req = urllib.request.Request(
         url,
@@ -381,6 +488,81 @@ def cmd_lock_agent(agent_id, token):
     print(f"   Kartu modul akan menampilkan ikon gembok dan dialog Tahqiq Khazanah.")
 
 
+def _load_features(token):
+    doc = rest_get(FEATURES_DOC, token)
+    exists = bool(doc and "fields" in doc)
+    fields = parse_firestore_fields(doc["fields"]) if exists else {}
+    return read_features(fields), exists, fields
+
+
+def _print_features(state, exists):
+    print(f"   • Dokumen app_config/features : {'ada' if exists else 'BELUM ADA (memakai bawaan aplikasi)'}")
+    print(f"   • Mengenal Fikih Tahawwulat   : {'🟢 TAMPIL' if state['introduction_enabled'] else '⚪ DISEMBUNYIKAN'}")
+    print("   • Sub-AI Fikih Tahawwulat:")
+    for aid in KNOWN_SUB_AGENTS:
+        label = "⏳ SEGERA HADIR (tidak bisa dibuka)" if aid in state["soon_sub_agent_ids"] else "🟢 TERBUKA"
+        print(f"       - {aid:<28} : {label}")
+
+
+def cmd_features(token):
+    print("=" * 65)
+    print("🎛️  SAKLAR FITUR JARAK JAUH (app_config/features)")
+    print("=" * 65)
+    state, exists, _ = _load_features(token)
+    _print_features(state, exists)
+    print("\n   Catatan: aplikasi membaca saklar ini maksimal tiap 60 detik.")
+    print("   Versi aplikasi lama (sebelum saklar ini ada) tidak membacanya.")
+    print("=" * 65)
+
+
+def _write_features(new_state, current, exists, note, dry_run, token):
+    if exists and same_features(new_state, current):
+        print("ℹ️ Tidak ada perubahan; dokumen sudah dalam keadaan itu.")
+        return
+    print("Sesudah perubahan:")
+    _print_features(new_state, True)
+    if dry_run:
+        print("\n🧪 DRY-RUN: tidak ada yang ditulis ke Firestore.")
+        return
+    payload = to_firestore_features_fields(new_state, note)
+    # Hanya empat bidang milik saklar ini yang ditulis.
+    rest_patch(
+        FEATURES_DOC,
+        payload,
+        token,
+        update_mask=["soon_sub_agent_ids", "introduction_enabled", "updated_at", "note"],
+    )
+    print("\n✅ app_config/features DIPERBARUI. Pengguna melihatnya dalam maksimal 60 detik")
+    print("   (pengguna dengan aplikasi versi lama tidak terpengaruh).")
+
+
+def cmd_soon_sub_agent(agent_id, dry_run, token):
+    current, exists, _ = _load_features(token)
+    new_state = apply_feature_change(current, soon=agent_id)
+    if exists and same_features(new_state, current):
+        print(f"ℹ️ '{agent_id}' sudah berstatus segera hadir.")
+        return
+    _write_features(new_state, current, exists, f"Sub-AI {agent_id} ditandai segera hadir via OTA", dry_run, token)
+
+
+def cmd_release_sub_agent(agent_id, dry_run, token):
+    current, exists, _ = _load_features(token)
+    new_state = apply_feature_change(current, release=agent_id)
+    if exists and same_features(new_state, current):
+        print(f"ℹ️ '{agent_id}' sudah terbuka.")
+        return
+    _write_features(new_state, current, exists, f"Sub-AI {agent_id} dibuka untuk semua pengguna via OTA", dry_run, token)
+
+
+def cmd_intro(mode, dry_run, token):
+    current, exists, _ = _load_features(token)
+    new_state = apply_feature_change(current, intro=mode)
+    if exists and same_features(new_state, current):
+        print(f"ℹ️ Mengenal Fikih Tahawwulat sudah dalam keadaan '{mode}'.")
+        return
+    _write_features(new_state, current, exists, f"Mengenal Fikih Tahawwulat {mode} via OTA", dry_run, token)
+
+
 def cmd_seed(token):
     print("🌱 Menginisialisasi dokumen Firestore app_config/pricing dan app_config/agents...")
     now_ts = datetime.now(timezone.utc).strftime("%Y%m%d-%H%M%S")
@@ -428,6 +610,21 @@ def main():
     lock_p = subparsers.add_parser("lock-agent", help="Kunci kembali AI spesialis")
     lock_p.add_argument("agent_id", help="ID agen")
 
+    # features
+    subparsers.add_parser("features", help="Lihat saklar fitur jarak jauh (sub-AI, Mengenal)")
+
+    # soon-sub-agent / release-sub-agent / intro
+    for name, helptext in (
+        ("soon-sub-agent", "Tandai sub-AI Tahawwulat sebagai 'segera hadir'"),
+        ("release-sub-agent", "Buka sub-AI Tahawwulat untuk semua pengguna"),
+    ):
+        sp = subparsers.add_parser(name, help=helptext)
+        sp.add_argument("agent_id", help="ID sub-AI (misal: fiqh_tahawwulat_khatib)")
+        sp.add_argument("--dry-run", action="store_true", help="Tampilkan hasil tanpa menulis")
+    intro_p = subparsers.add_parser("intro", help="Tampilkan/sembunyikan tombol Mengenal Fikih Tahawwulat")
+    intro_p.add_argument("mode", choices=["on", "off"])
+    intro_p.add_argument("--dry-run", action="store_true", help="Tampilkan hasil tanpa menulis")
+
     args = parser.parse_args()
 
     if not args.command:
@@ -446,6 +643,19 @@ def main():
         cmd_unlock_agent(args.agent_id, token)
     elif args.command == "lock-agent":
         cmd_lock_agent(args.agent_id, token)
+    elif args.command == "features":
+        cmd_features(token)
+    elif args.command in ("soon-sub-agent", "release-sub-agent", "intro"):
+        try:
+            if args.command == "soon-sub-agent":
+                cmd_soon_sub_agent(args.agent_id, args.dry_run, token)
+            elif args.command == "release-sub-agent":
+                cmd_release_sub_agent(args.agent_id, args.dry_run, token)
+            else:
+                cmd_intro(args.mode, args.dry_run, token)
+        except FeatureError as exc:
+            print(f"❌ {exc}")
+            sys.exit(2)
 
 
 if __name__ == "__main__":
