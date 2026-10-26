@@ -1735,7 +1735,10 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
               useOnRenderProcessGone: true,
               supportMultipleWindows: true,
               javaScriptCanOpenWindowsAutomatically: true,
-              isInspectable: true,
+              // Inspektur WebView hanya untuk build debug: di rilis ia membuka
+              // DOM, skrip injeksi, dan sesi Google ke siapa pun yang
+              // menyambungkan perangkat ke DevTools/Safari Web Inspector.
+              isInspectable: kDebugMode,
               forceDark: isDark ? ForceDark.ON : ForceDark.OFF,
               forceDarkStrategy:
                   ForceDarkStrategy.PREFER_WEB_THEME_OVER_USER_AGENT_DARKENING,
