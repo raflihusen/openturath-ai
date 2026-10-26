@@ -170,21 +170,20 @@ Tersimpan di folder Downloads pengguna untuk diserahkan ke tim developer/pihak y
 
 ---
 
-## 3. Catatan Teknis: Mengapa Tombol "Save" Sempat Hilang
-- Pada dialog pengaturan Google di atas, tombol **Save** dibungkus dalam wadah:  
-  `<div class="save-container"><button type="submit" class="submit-button ...">Save</button></div>`
-- Jika tombol ini tidak tampak di layar, penyebabnya adalah:
-  1. CSS global menyembunyikan tombol dengan selektor umum tanpa mengecualikan dialog (`mat-dialog-container`), atau
-  2. Dimensi tinggi overlay modal terpotong oleh `overflow: hidden` pada container induk WebView.
-- Solusi CSS yang aman:
-  ```css
-  /* Pastikan tombol Save pada dialog pengaturan selalu muncul dan dapat diklik */
-  mat-dialog-container .save-container,
-  mat-dialog-container button.submit-button,
-  mat-dialog-container button[aria-label="Save settings"] {
-    display: flex !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-    pointer-events: auto !important;
-  }
-  ```
+## 3. Penyebab Pasti Tombol "Save" Hilang (terbukti dari DOM, 26 Okt 2026)
+- Tombol di dialog berlabel `aria-label="Save settings"` dan tombol tutup berlabel `aria-label="Close user settings"`.
+- Aturan penyembunyi di `notebook_ui_script.dart` (CSS `ensureStyles` dan daftar `removeTopToolbars` yang memberi gaya inline `!important`) memakai `button[aria-label*="Settings" i]`. Pencocokan "mengandung" itu ikut mengenai kedua tombol dialog, sehingga dialog tampil tanpa Save.
+- Perbaikan: keempat selektor (`Settings`, `Setelan`, `Pengaturan`, `Notebook settings`) kini memakai pencocokan tepat (`="..." i`). Tombol gigi di header Google berlabel persis `Settings`, jadi tetap tersembunyi.
+- Pencarian tombol pengaturan di `findSettingsButton()` tetap memakai `*=` karena hanya membaca, tidak menyembunyikan.
+
+## 4. Kulit OpenTurath (`lib/core/notebook_skin.dart`)
+- Satu `<style id="ot-skin">` yang menimpa token halaman (`--nlm-*`, `--mat-sys-*`) dengan palet monokrom aplikasi, memakai `light-dark()` sehingga mengikuti `color-scheme` yang sudah diatur skrip tema.
+- Tipografi: sans (Outfit/Inter/sistem) untuk antarmuka, serif (Newsreader/New York/Georgia) untuk jawaban, dan `@font-face "OT Arabic"` berbasis `local()` dengan `unicode-range` khusus aksara Arab.
+- Elemen yang dirapikan: kartu pertanyaan (garis tipis), jawaban tanpa kartu, `thinking-chain` (label "Proses berpikir"/"Berpikir…" lewat variabel CSS `--ot-label-*`, kilau Google dimatikan), `.input-group` (kolom tanya), tombol kirim, tombol turun, dialog Google. Penanda tanggal berbahasa Inggris, hitungan sumber, dan `chat-panel-top/bottom-fade` disembunyikan.
+- Placeholder kolom tanya sengaja tidak diubah: skrip inti menghapusnya dan mengamati atributnya, sehingga menimpanya akan membuat dua pengamat saling bertabrakan.
+- Bahasa label dibaca dari `window._otLang` (diisi `_buildCloakScript`), bawaan `id`.
+
+## 5. Penggantian Bahasa Jawaban Lewat Lembar Native
+- `window.otSetOutputLanguage(aliases)` membuka menu pengaturan, memilih opsi bahasa di `configure-user-settings mat-select`, menekan Save, lalu mengembalikan `{ok, reason}`. Selama berjalan, `html.ot-opening-language` menyembunyikan seluruh `.cdk-overlay-container`.
+- Bila gagal (menu, opsi, atau Save tidak ditemukan dalam 15 detik), kelas penyembunyi dilepas sehingga dialog Google terlihat (kini lengkap dengan Save), dan aplikasi menampilkan pesan.
+- Sisi Flutter: `lib/widgets/output_language_sheet.dart` (Indonesia, English, العربية) dan `_showOutputLanguage` di `agent_multi_tab_room.dart` (memakai `callAsyncJavaScript`). Pilihan terakhir disimpan di `SharedPreferences` kunci `ot_output_language`.

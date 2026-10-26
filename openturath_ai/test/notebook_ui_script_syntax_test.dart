@@ -1,8 +1,10 @@
 import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:openturath_ai/core/notebook_skin.dart';
 import 'package:openturath_ai/core/notebook_ui_script.dart';
 
 void main() {
+  notebookSkinTests();
   test('notebookUiScript defines valid wrapper and exports otNotebook', () {
     expect(notebookUiScript.isNotEmpty, isTrue);
     expect(notebookUiScript.contains('window.otNotebook = {'), isTrue);
@@ -97,5 +99,30 @@ void main() {
     expect(notebookUiScript.contains('flex: 0 0 auto !important;'), isTrue);
     expect(
         notebookUiScript.contains('padding-bottom: 24px !important;'), isTrue);
+  });
+}
+
+void notebookSkinTests() {
+  test('aturan penyembunyi tidak lagi mengenai tombol Save settings', () {
+    // Pencocokan `*=` pada "Settings" ikut menyembunyikan "Save settings" dan
+    // "Close user settings" di dialog bahasa NotebookLM.
+    expect(notebookUiScript.contains(r'''button[aria-label="Settings" i]'''),
+        isTrue);
+    expect(
+        notebookUiScript.contains(
+            '\n      button[aria-label*="Settings" i], button[aria-label*="Setelan" i],'),
+        isFalse);
+    expect(
+        notebookUiScript.contains(
+            r"""'button[aria-label*="Settings" i]', 'button[aria-label*="Setelan" i]',"""),
+        isFalse);
+  });
+
+  test('kulit OpenTurath menimpa token halaman tanpa selektor :has', () {
+    expect(notebookSkinScript.contains('--nlm-text-body-text'), isTrue);
+    expect(notebookSkinScript.contains('--mat-sys-primary'), isTrue);
+    expect(notebookSkinScript.contains('window.otSetOutputLanguage'), isTrue);
+    expect(notebookSkinScript.contains(':has('), isFalse);
+    expect(notebookUiScript.endsWith(notebookSkinScript), isTrue);
   });
 }

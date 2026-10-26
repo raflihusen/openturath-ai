@@ -2,7 +2,7 @@
 ///
 /// Murni aditif: satu blok `<style id="ot-skin">` yang menimpa token warna
 /// (`--nlm-*`, `--mat-sys-*`) dan tipografi bawaan halaman, ditambah beberapa
-/// penyesuaian kecil pada DOM (teks pengisi kolom tanya). Aturan
+/// label tahap berpikir lewat variabel CSS. Aturan
 /// penyembunyian inti, polling kesiapan, dan siklus hidup WebView di
 /// `notebook_ui_script.dart` dan `agent_multi_tab_room.dart` tidak disentuh.
 ///
@@ -14,9 +14,9 @@ const notebookSkinScript = r'''
   if (window.top !== window || !['notebooklm.google.com', 'notebook.google.com'].includes(location.hostname)) return;
 
   const LABELS = {
-    id: { ask: 'Tanyakan sesuatu', thinking: 'Berpikir…', thought: 'Proses berpikir' },
-    en: { ask: 'Ask something', thinking: 'Thinking…', thought: 'Reasoning' },
-    ar: { ask: 'اسأل سؤالك', thinking: 'جارٍ التفكير…', thought: 'مسار التفكير' }
+    id: { thinking: 'Berpikir…', thought: 'Proses berpikir' },
+    en: { thinking: 'Thinking…', thought: 'Reasoning' },
+    ar: { thinking: 'جارٍ التفكير…', thought: 'مسار التفكير' }
   };
   function lang() { return LABELS[window._otLang] ? window._otLang : 'id'; }
 
@@ -184,11 +184,6 @@ const notebookSkinScript = r'''
       color: var(--nlm-text-body-text) !important;
       caret-color: var(--nlm-text-titles-and-labels) !important;
     }
-    html body .ot-chat-composer textarea::placeholder,
-    html body .query-box-input::placeholder {
-      color: var(--nlm-text-ghost-text) !important;
-      opacity: 1 !important;
-    }
     html body .submit-button.nb-button-type-filled button {
       background: var(--nlm-ctas-buttons-primary) !important;
       color: var(--nlm-cta-text-and-icon-primary) !important;
@@ -234,16 +229,7 @@ const notebookSkinScript = r'''
     } catch (_) {}
   }
 
-  function applyDom() {
-    try {
-      const ask = LABELS[lang()].ask;
-      document.querySelectorAll('textarea.query-box-input').forEach(t => {
-        if (t.getAttribute('placeholder') !== ask) t.setAttribute('placeholder', ask);
-      });
-    } catch (_) {}
-  }
-
-  function apply() { applyStyle(); applyDom(); }
+  function apply() { applyStyle(); }
   window.otSkinApply = apply;
   apply();
 
