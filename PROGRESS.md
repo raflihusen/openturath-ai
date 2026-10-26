@@ -90,10 +90,10 @@ Berdasarkan `AUDIT_OPENTURATH_AI.md`, dokumen perancangan pustaka, dan keluhan k
   - Status: Kompilasi Gradle selesai 100% (assembleRelease).
 - **Rilis macOS DMG (Kompilasi Lokal Terbaru)**:
   - File: `/Users/apple/Downloads/ramadhan/OpenTurath_AI_macOS.dmg`
-  - Versi: `1.0.77+78`
-  - Ukuran: 61.7 MB (64.699.576 bytes)
-  - SHA-256: `25faace7461428ee63bbe9eb346e35a453a105950332eb86f2d9ea8ff42fc8dc`
-  - Timestamp: 2026-10-26 09:42 WIB
+  - Versi: `1.0.78+79`
+  - Ukuran: 61.7 MB (64.705.744 bytes)
+  - SHA-256: `76ba0a47ae834c49ffafad1e9955ca80f5accf7e3a0f95fb6e48d65077148ca4`
+  - Timestamp: 2026-10-26 12:18 WIB
   - Status: Kompilasi Xcode/macOS Release universal (arm64 + x86_64) selesai 100%, UDZO image terkemas rapi via `package_macos.sh`.
 - **Paket Distribusi Pekerja Akses VPS**:
   - File: `/Users/apple/Downloads/ramadhan/ecosystem/dist/openturath-access-20261014T035043Z-5b44945e.tar.gz`
@@ -589,6 +589,18 @@ Berdasarkan `AUDIT_OPENTURATH_AI.md`, dokumen perancangan pustaka, dan keluhan k
      - Kompilasi biner `flutter build macos --release` Universal arm64+x86_64 tuntas 100% (146.0 MB .app).
      - Pembuatan DMG installer `OpenTurath_AI_macOS.dmg` (61.7 MB, format UDZO terkompresi) via `tool/package_macos.sh`.
      - Verifikasi checksum SHA-256: `25faace7461428ee63bbe9eb346e35a453a105950332eb86f2d9ea8ff42fc8dc`.
+
+### Fasa 44: Lengkung Mihrab Berdenyut, Transisi Halus Kanvas & Rilis DMG macOS v1.0.78+79 (`04d4be02`)
+- **Ruang Lingkup & Latar Belakang**:
+  1. *Pembaruan Fitur Terkini*:
+     - Bilah Masukan Tanpa Sudut Bawah: Penghilangan sudut membulat pada dasar kolom tanya (omnibar dan composer) sehingga menyatu rata dan kokoh dengan bingkai bawah.
+     - Transisi Tema & Bahasa Halus: Animasi pudar lembut kanvas saat beralih antara mode terang/gelap serta bahasa aplikasi (menggunakan View Transitions dengan fallback transisi warna, tetap menghormati preferensi reduced-motion pengguna).
+     - Tombol Kirim Mihrab Berdenyut: Ikon kirim didesain dengan lengkung mihrab yang elegan dan berdenyut halus (*subtle pulse animation*) ketika jawaban AI sedang diproses/disusun.
+  2. *Kompilasi Biner & Pembuatan DMG Installer macOS v1.0.78+79*:
+     - Bump versi aplikasi menjadi `1.0.78+79` di `openturath_ai/pubspec.yaml`.
+     - Kompilasi biner `flutter build macos --release` Universal arm64+x86_64 tuntas 100% (146.0 MB .app).
+     - Pembuatan DMG installer `OpenTurath_AI_macOS.dmg` (61.7 MB, format UDZO terkompresi) via `tool/package_macos.sh`.
+     - Verifikasi checksum SHA-256: `76ba0a47ae834c49ffafad1e9955ca80f5accf7e3a0f95fb6e48d65077148ca4`.
 
 ---
 
