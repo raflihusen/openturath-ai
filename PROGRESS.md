@@ -685,25 +685,6 @@ Berdasarkan `AUDIT_OPENTURATH_AI.md`, dokumen perancangan pustaka, dan keluhan k
      - `https://openturath.id/RELEASE_MANIFEST.json`: HTTP 200 OK manifes sinkron versi `1.0.82+83`.
      - `https://openturath.id/midtrans-webhook`: HTTP 400 dengan Cloud Function execution ID valid (`jd7nd1imkvv9`).
 
-### Fasa 52: Rekonstruksi Jāmi‘ Khādim al-Ḥaramayn (Khademhrf) ke Flutter macOS & Mesin Takhrij Universal Ribuan Kitab (UATE)
-- **Akar Masalah & Tujuan**:
-  1. Aplikasi klasik *Jāmi‘ Khādim al-Ḥaramayn al-Sharīfayn li-l-Sunnah al-Nabawiyyah al-Muṭahharah* (`/Users/apple/Downloads/khademhrf`) terkunci pada teknologi lawas Windows 32-bit (`HadithEncyProj.exe`, MSXML/XSLT, Flash `Asanedviewer.swf`, Access Jet 4.0) dan hanya mendukung takhrij untuk **33 kitab statis** karena proses pengelompokan matan (*Jāmi‘ al-Matn* & *Majāmī‘ al-Takhrīj*), perbandingan 27 kaidah lafaz (*Muqāranat al-Mutūn*), serta pohon sanad (*Tasyjīr al-Asānīd*) dikerjakan secara semi-manual selama 6 tahun (130.000+ hari kerja).
-  2. Diperlukan arsitektur algoritmik murni di Flutter macOS dengan bahasa desain **OpenTurath Monochrome Editorial** yang mampu mengeksekusi ke-27 kaidah *Muqāranat al-Mutūn* secara deterministik dan memperluas cakupan takhrij ke **ribuan kitab turats** (*Mustakhrajāt*, *Zawā’id*, *Ajzā’ Ḥadītsiyyah*, *Amālī*, *Masyayakhāt*, dan *Syurūḥ*).
-- **Solusi & Artefak yang Dibangun**:
-  1. **Master Prompt & Laporan Bukti REA**:
-     - `MASTER_PROMPT_KHADEMHRF_OPENTURATH.md`: Panduan induk arsitektur 7-lapis, ke-27 aturan *Muqāranat al-Mutūn*, 5 daftar kata bantu, pengelompokan 2 tahap (80% otomatis & 50% penggabungan riwayat ringkas), serta kontrak desain OpenTurath.
-     - `PROGRESS_KHADEMHRF.md`: Tracker progres mandiri & *crash-recovery* untuk pengembangan berkelanjutan.
-     - `docs/REA_KHADEMHRF_EVIDENCE_LEDGER.md`: Bukti rekayasa balik biner PE/CLI (`Engine0200.dll`, `HarfMMMP01.dll`, `BuraqLib.dll`, `AsaneedReport.dll`, `HadithGraphSharp.dll`), kamus biner `Roots.bin`, dan logika XSLT.
-  2. **Universal Algorithmic Takhrij Engine (UATE) di `openturath_ai`**:
-     - `lib/models/hadith_takhrij_models.dart`: Model data kanonikal, `HadithBookTaxonomy` (pengganti hardcode `@BookID=26` dan 12 perawi *Zawā’id*), 27 kaidah `MatnComparisonRule`, `MadarAndIlalReport`, dan `MujammaCompositeMatn`.
-     - `lib/services/harf_morphology_service.dart`: Dekoder biner `Roots.bin` (CP1256) + penganalisis morfologi Arab (*sawābiq*, *lawāḥiq*, *jadzr*, *wazan*) + 5 daftar kata bantu Harf + pemotong segmen perbedaan kata ($\le 15$ kata).
-     - `lib/services/universal_takhrij_engine.dart`: Mesin 7-lapis mencakup *Inverted Root & Shingle Index*, *27-Rule Deterministic Matn Comparator*, *MSA Al-Matn al-Mujamma‘ Synthesizer*, *Automated Madār & ‘Ilal DAG Engine*, *Viterbi Muhmal Narrator Disambiguator*, dan *Automated Manuscript Takhrij Scanner* (`DocXSL.xsl` revival).
-  3. **Antarmuka Flutter macOS Berbahasa Desain OpenTurath**:
-     - `lib/widgets/hadith_isnad_dag_canvas.dart`: Kanvas vektor monokrom *Tasyjīr al-Asānīd* pengganti `HadithGraphSharp.dll` & `Asanedviewer.swf`.
-     - `lib/widgets/hadith_takhrij_components.dart`: Kartu *Al-Matn al-Mujamma‘*, kartu 27 kaidah *Muqāranat al-Mutūn*, dan panel *Tarjamat al-Rāwī & Jarḥ wa Ta‘dīl*.
-     - `lib/screens/hadith_takhrij_workspace_screen.dart`: Ruang kerja 3-kolom desktop macOS dengan dukungan maksimal 5 tab aktif (`_maxTabs = 5`), terintegrasi ke `lib/core/routes.dart`, `lib/main.dart`, dan `lib/screens/dashboard_screen.dart`.
-     - `test/universal_takhrij_engine_test.dart`: Pengujian unit komprehensif dan kepatuhan 100% terhadap 6 penjaga regex di `test/design_token_guard_test.dart`.
-
 ---
 
 ## 5. Agenda & Fokus Selanjutnya
