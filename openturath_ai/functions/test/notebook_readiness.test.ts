@@ -32,11 +32,21 @@ test('unrelated source-panel progress cannot block an enabled conversation input
   }), true);
 });
 
-test('notebookUiScript parses with valid JavaScript syntax without any unexpected tokens', () => {
-  const uiMatch = source.match(/const notebookUiScript = r'''([\s\S]*?)''';/);
-  assert.ok(uiMatch, 'Could not find notebookUiScript in source');
-  assert.doesNotThrow(() => {
-    new Function(uiMatch[1]);
-  }, 'notebookUiScript contains a JavaScript syntax error!');
-});
+// notebookUiScript = pembersih + font + kulit (tiga IIFE di tiga berkas Dart);
+// setiap bagian harus lolos sintaks, karena satu galat mematikan seluruh tampilan.
+const scriptParts: [string, string, string][] = [
+  ['lib/core/notebook_ui_script.dart', '_notebookCleanupScript', 'pembersih'],
+  ['lib/core/notebook_fonts.dart', 'notebookFontsScript', 'font'],
+  ['lib/core/notebook_skin.dart', 'notebookSkinScript', 'kulit'],
+];
+for (const [file, name, label] of scriptParts) {
+  test(`skrip WebView bagian ${label} (${name}) berkesintaks JavaScript valid`, () => {
+    const text = fs.readFileSync(path.join(root, file), 'utf8');
+    const match = text.match(new RegExp(`const ${name} = r'''([\\s\\S]*?)''';`));
+    assert.ok(match, `Could not find ${name} in ${file}`);
+    assert.doesNotThrow(() => {
+      new Function(match[1]);
+    }, `${name} contains a JavaScript syntax error!`);
+  });
+}
 

@@ -285,6 +285,14 @@ export const getAgentUrl = functions
     }
 
     const userData = userDoc.data()!;
+    // Sub-AI "segera hadir": ditolak untuk semua kecuali akun VIP sejati
+    // (Aturan 5: VIP tidak pernah diperlakukan sebagai galat akses).
+    if (!isVip(userData) && (await getSoonSubAgentIds()).has(agentId)) {
+      throw new functions.https.HttpsError(
+        "failed-precondition",
+        "AI ini segera hadir dan belum dibuka."
+      );
+    }
     // Until cutover no worker creates notebook assignments, so ledger-only
     // resolution would lock out every paying account. Legacy evaluation applies.
     const ledgerActive = userData.access_version === 2 && await vpsWriterActive();
@@ -399,7 +407,10 @@ export const askAgent = functions
           const key = getEntitlementKey(agentId);
           if (!key || !AGENT_URLS[agentId]) return false;
           const snapshot = await db.collection("users").doc(uid).get();
-          return snapshot.exists && getEntitlementAccess(snapshot.data()!, key).active;
+          if (!snapshot.exists) return false;
+          const user = snapshot.data()!;
+          if (!isVip(user) && (await getSoonSubAgentIds()).has(agentId)) return false;
+          return getEntitlementAccess(user, key).active;
         },
         rateLimit: uid => enforceRateLimit(`native_chat_${uid}`, 10, 60, "Terlalu banyak pertanyaan. Silakan tunggu sebentar."),
         ask: async request => {
@@ -496,6 +507,53 @@ async function getDynamicPricingConfig(): Promise<DynamicPricingConfig | null> {
     console.warn("[PricingConfig] Failed to fetch app_config/pricing, using hardcoded fallback:", err.message);
   }
   return null;
+}
+
+// ================================================================
+// SAKLAR FITUR JARAK JAUH — app_config/features
+// Sub-AI yang ditandai "segera hadir" tidak boleh dibuka, apa pun langganannya.
+// Aturan baca HARUS sama dengan FeatureFlags.parse di klien Flutter
+// (openturath_ai/lib/services/feature_flags.dart).
+// ================================================================
+const DEFAULT_SOON_SUB_AGENTS = [
+  "fiqh_tahawwulat_khatib",
+  "fiqh_tahawwulat_habib",
+  "fiqh_tahawwulat_mukhtabir",
+];
+const SOON_ID_PATTERN = /^[a-z][a-z0-9_]{0,79}$/;
+const MAX_SOON_IDS = 50;
+
+// Dokumen yang ada menentukan hasil secara deterministik: kunci hilang atau
+// rusak kembali ke bawaan. Daftar melewati batas dianggap salah ketik.
+function parseSoonSubAgentIds(data: unknown): Set<string> {
+  const fallback = new Set<string>(DEFAULT_SOON_SUB_AGENTS);
+  const raw = data && typeof data === "object" ? (data as Record<string, unknown>).soon_sub_agent_ids : undefined;
+  if (!Array.isArray(raw)) return fallback;
+  const ids = new Set<string>();
+  for (const item of raw) {
+    if (typeof item !== "string") continue;
+    const id = item.trim();
+    if (SOON_ID_PATTERN.test(id)) ids.add(id);
+  }
+  return ids.size <= MAX_SOON_IDS ? ids : fallback;
+}
+
+let cachedSoonSubAgents: Set<string> | null = null;
+let cachedSoonTime = 0;
+
+async function getSoonSubAgentIds(): Promise<Set<string>> {
+  const now = Date.now();
+  if (cachedSoonSubAgents && now - cachedSoonTime < 60000) return cachedSoonSubAgents;
+  try {
+    const snap = await db.collection("app_config").doc("features").get();
+    cachedSoonSubAgents = snap.exists ? parseSoonSubAgentIds(snap.data()) : new Set<string>(DEFAULT_SOON_SUB_AGENTS);
+    cachedSoonTime = now;
+    return cachedSoonSubAgents;
+  } catch (err: any) {
+    console.warn("[FeaturesConfig] Failed to fetch app_config/features:", err.message);
+    // Gagal baca: pertahankan nilai terakhir; bila belum ada, tertutup (bawaan).
+    return cachedSoonSubAgents ?? new Set<string>(DEFAULT_SOON_SUB_AGENTS);
+  }
 }
 
 let cachedActiveAgentIds: Set<string> | null = null;
