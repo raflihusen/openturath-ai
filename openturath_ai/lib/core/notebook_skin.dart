@@ -20,9 +20,21 @@ const notebookSkinScript = r'''
   if (window.top !== window || !['notebooklm.google.com', 'notebook.google.com'].includes(location.hostname)) return;
 
   const LABELS = {
-    id: { thinking: 'Berpikir…', thought: 'Proses berpikir', ibarah: 'Ibarah' },
-    en: { thinking: 'Thinking…', thought: 'Reasoning', ibarah: 'Passage' },
-    ar: { thinking: 'جارٍ التفكير…', thought: 'مسار التفكير', ibarah: 'عبارة' }
+    id: {
+      thought: 'Proses berpikir', ibarah: 'Ibarah', copy: 'Salin jawaban', copied: 'Tersalin',
+      disclaimer: 'OpenTurath AI bisa salah, maka verifikasi ulang jawabannya.',
+      stages: ['Mencari ibarah di kitab…', 'Membaca rujukan…', 'Menimbang pendapat dalam mazhab…', 'Menyusun jawaban…']
+    },
+    en: {
+      thought: 'Reasoning', ibarah: 'Passage', copy: 'Copy answer', copied: 'Copied',
+      disclaimer: 'OpenTurath AI can be wrong, so please verify its answers.',
+      stages: ['Looking for the passage in the books…', 'Reading the references…', 'Weighing the views within the school…', 'Writing the answer…']
+    },
+    ar: {
+      thought: 'مسار التفكير', ibarah: 'عبارة', copy: 'نسخ الجواب', copied: 'تم النسخ',
+      disclaimer: 'قد يخطئ OpenTurath AI، فتحقّق من الإجابات.',
+      stages: ['جارٍ البحث عن العبارة في الكتب…', 'قراءة المراجع…', 'الموازنة بين الأقوال في المذهب…', 'صياغة الجواب…']
+    }
   };
   function lang() { return LABELS[window._otLang] ? window._otLang : 'id'; }
 
@@ -44,6 +56,11 @@ const notebookSkinScript = r'''
       body += '</g>';
     }
     const svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 24" fill="none" stroke="#000" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">' + body + '</svg>';
+    return 'url("data:image/svg+xml,' + encodeURIComponent(svg) + '")';
+  }
+
+  function copyIcon() {
+    const svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2.5"/><path d="M5 15V6.5A2.5 2.5 0 0 1 7.5 4H15"/></svg>';
     return 'url("data:image/svg+xml,' + encodeURIComponent(svg) + '")';
   }
 
@@ -255,26 +272,50 @@ const notebookSkinScript = r'''
     html body .to-user-message-card-content li.ot-ibarah-item { list-style: none !important; }
     html body .to-user-message-card-content li.ot-ibarah-item::marker { content: "" !important; }
 
-    /* Tabel: hanya garis tipis, tanpa kotak. */
-    html body .to-user-message-card-content table { border-collapse: collapse !important; width: 100% !important; }
+    /* Tabel: sama dengan tabel di situs openturath.id (kotak 16, kepala tonal, garis tipis). */
+    html body .to-user-message-card-content table-element-view {
+      display: block !important;
+      overflow-x: auto !important;
+      margin: 18px 0 22px !important;
+      border: 1px solid var(--ot-line) !important;
+      border-radius: 16px !important;
+    }
+    html body .to-user-message-card-content table {
+      border-collapse: collapse !important;
+      width: 100% !important;
+      min-width: 560px !important;
+    }
     html body .to-user-message-card-content th {
-      font-family: var(--ot-sans) !important;
-      font-size: 11px !important;
-      font-weight: 600 !important;
-      letter-spacing: .08em !important;
-      text-transform: uppercase !important;
       text-align: start !important;
-      color: var(--ot-muted) !important;
+      padding: 12px 14px !important;
+      background: light-dark(rgba(23,23,23,.06), rgba(245,245,245,.07)) !important;
       border: none !important;
-      border-bottom: 1px solid var(--ot-line-strong) !important;
-      padding: 8px 12px 8px 0 !important;
+      border-bottom: 1px solid var(--ot-line) !important;
+      vertical-align: middle !important;
     }
     html body .to-user-message-card-content td {
+      padding: 14px !important;
+      vertical-align: top !important;
       border: none !important;
       border-bottom: 1px solid var(--ot-line-soft) !important;
-      padding: 10px 12px 10px 0 !important;
-      vertical-align: top !important;
-      font-size: calc(var(--ot-font-size, 15px) - 1px) !important;
+    }
+    html body .to-user-message-card-content tr:last-child td { border-bottom: 0 !important; }
+    html body .to-user-message-card-content th + th,
+    html body .to-user-message-card-content td + td { border-inline-start: 1px solid var(--ot-line-soft) !important; }
+    html body .to-user-message-card-content .paragraph.table-paragraph,
+    html body .to-user-message-card-content .paragraph.table-paragraph * {
+      margin: 0 !important;
+      font-size: 15px !important;
+      line-height: 1.6 !important;
+      text-transform: none !important;
+      letter-spacing: 0 !important;
+    }
+    html body .to-user-message-card-content th .paragraph.table-paragraph,
+    html body .to-user-message-card-content th .paragraph.table-paragraph * {
+      font-size: 12px !important;
+      font-weight: 600 !important;
+      letter-spacing: .08em !important;
+      color: var(--ot-muted) !important;
     }
 
     /* Rujukan di dalam jawaban. */
@@ -371,11 +412,101 @@ const notebookSkinScript = r'''
     html body .submit-button.nb-button-type-filled button mat-icon { color: var(--ot-on-ink) !important; }
     html body .submit-button.nb-button-disabled button { opacity: .25 !important; }
 
+    /* Tombol turun ke bawah: kapsul bulat dengan panah gambar sendiri (ikon font Google tidak dipakai). */
+    html body .jump-to-bottom-container,
+    html body .jump-to-bottom-button-container { margin-bottom: 10px !important; }
     html body .jump-to-bottom-button {
+      width: 36px !important;
+      height: 36px !important;
+      min-width: 0 !important;
+      padding: 0 !important;
+      border-radius: 999px !important;
       background: var(--ot-surface) !important;
       color: var(--ot-ink) !important;
       border: .8px solid var(--ot-line) !important;
       box-shadow: 0 4px 18px var(--ot-shadow) !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+    }
+    html body .jump-to-bottom-button mat-icon,
+    html body .jump-to-bottom-button .mat-icon,
+    html body .jump-to-bottom-button .mdc-button__label {
+      font-size: 0 !important;
+      width: 0 !important;
+      height: 0 !important;
+      overflow: hidden !important;
+      opacity: 0 !important;
+    }
+    html body .jump-to-bottom-button::after {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-right: 1.8px solid var(--ot-ink);
+      border-bottom: 1.8px solid var(--ot-ink);
+      transform: translateY(-2px) rotate(45deg);
+    }
+
+    /* Dasar kolom tanya: rata lurus di bawah transkrip, seperti bilah input chat native. */
+    html body .ot-chat-composer-path { background-color: var(--ot-canvas) !important; }
+    html body omnibar {
+      display: block !important;
+      background-color: var(--ot-canvas) !important;
+      padding-top: 10px !important;
+      border-top: 1px solid var(--ot-line-soft) !important;
+    }
+    html body .ot-chat-composer { margin-bottom: 4px !important; }
+
+    /* Catatan kaki: menggantikan teks Google. */
+    html body omnibar .disclaimer {
+      display: block !important;
+      visibility: visible !important;
+      height: auto !important;
+      min-height: 0 !important;
+      max-height: none !important;
+      opacity: 1 !important;
+      overflow: visible !important;
+      margin: 0 !important;
+      padding: 6px 16px max(10px, env(safe-area-inset-bottom, 0px)) !important;
+      font-size: 0 !important;
+      text-align: center !important;
+      pointer-events: none !important;
+    }
+    html body omnibar .disclaimer::after {
+      content: var(--ot-label-disclaimer, "");
+      font-family: var(--ot-sans);
+      font-size: 11px;
+      font-weight: 400;
+      line-height: 1.4;
+      color: var(--ot-faint);
+    }
+
+    /* Tombol salin di ujung setiap jawaban selesai (jempol atas/bawah dihapus). */
+    html body .ot-answer-actions { display: flex !important; margin-top: 4px !important; }
+    html body .ot-copy-answer {
+      display: inline-flex !important;
+      align-items: center !important;
+      gap: 6px !important;
+      padding: 6px 12px 6px 8px !important;
+      border-radius: 999px !important;
+      font-family: var(--ot-sans) !important;
+      font-size: 12px !important;
+      font-weight: 400 !important;
+      line-height: 1.4 !important;
+      color: var(--ot-muted) !important;
+      cursor: pointer !important;
+      user-select: none !important;
+      -webkit-user-select: none !important;
+    }
+    html body .ot-copy-answer:hover,
+    html body .ot-copy-answer:focus-visible { background: var(--ot-subtle) !important; color: var(--ot-ink) !important; outline: none !important; }
+    html body .ot-copy-answer::before {
+      content: "";
+      width: 16px;
+      height: 16px;
+      background: currentColor;
+      -webkit-mask: var(--ot-copy-icon) center / contain no-repeat;
+      mask: var(--ot-copy-icon) center / contain no-repeat;
     }
 
     /* ── Dialog dan menu Google yang sesekali tampil ── */
@@ -407,6 +538,35 @@ const notebookSkinScript = r'''
     document.querySelectorAll('.thinking-chain').forEach(chain => {
       toggle(chain, 'ot-thinking', !!chain.querySelector('.is-loading'));
     });
+    document.querySelectorAll('.to-user-container').forEach(box => {
+      const done = !!box.querySelector('chat-actions, .chat-actions');
+      let row = box.querySelector(':scope > .ot-answer-actions');
+      if (done && !row) {
+        row = document.createElement('div');
+        row.className = 'ot-answer-actions';
+        const btn = document.createElement('div');
+        btn.className = 'ot-copy-answer';
+        btn.setAttribute('role', 'button');
+        btn.setAttribute('tabindex', '0');
+        const label = document.createElement('span');
+        label.className = 'ot-copy-label';
+        btn.appendChild(label);
+        btn.addEventListener('click', () => {
+          label.textContent = LABELS[lang()].copied;
+          clearTimeout(btn.__otTimer);
+          btn.__otTimer = setTimeout(() => { label.textContent = LABELS[lang()].copy; }, 1800);
+        });
+        btn.addEventListener('keydown', e => {
+          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); btn.click(); }
+        });
+        row.appendChild(btn);
+        box.appendChild(row);
+      } else if (!done && row) {
+        row.remove();
+      }
+      const label = box.querySelector(':scope > .ot-answer-actions .ot-copy-label');
+      if (label && !label.textContent) label.textContent = LABELS[lang()].copy;
+    });
     document.querySelectorAll('.to-user-message-card-content .paragraph').forEach(el => {
       const text = el.textContent || '';
       if (el.__otLen === text.length) return;
@@ -414,7 +574,7 @@ const notebookSkinScript = r'''
 
       const ar = (text.match(AR) || []).length;
       const la = (text.match(LAT) || []).length;
-      const ibarah = ar >= 12 && ar / (ar + la) >= 0.6 && !el.querySelector('ul, ol, li');
+      const ibarah = ar >= 12 && ar / (ar + la) >= 0.6 && !el.querySelector('ul, ol, li') && !el.classList.contains('table-paragraph');
       toggle(el, 'ot-ibarah', ibarah);
       const item = el.closest('li');
       if (item) toggle(item, 'ot-ibarah-item', ibarah && item.querySelectorAll('.paragraph').length === 1);
@@ -453,7 +613,10 @@ const notebookSkinScript = r'''
       if (style.textContent !== CSS) style.textContent = CSS;
       const L = LABELS[lang()];
       const root = document.documentElement;
-      root.style.setProperty('--ot-label-thinking', JSON.stringify(L.thinking));
+      root.style.setProperty('--ot-label-disclaimer', JSON.stringify(L.disclaimer));
+      if (!root.style.getPropertyValue('--ot-label-thinking')) root.style.setProperty('--ot-label-thinking', JSON.stringify(L.stages[0]));
+      if (!window.__otCopyIcon) window.__otCopyIcon = copyIcon();
+      root.style.setProperty('--ot-copy-icon', window.__otCopyIcon);
       root.style.setProperty('--ot-label-thought', JSON.stringify(L.thought));
       root.style.setProperty('--ot-label-ibarah', JSON.stringify(L.ibarah));
       if (!window.__otArchSprite) window.__otArchSprite = archSprite();
@@ -461,9 +624,25 @@ const notebookSkinScript = r'''
     } catch (_) {}
   }
 
+  /* Status memuat bergilir selama jawaban disusun: kata-katanya menggambarkan tahap kerja,
+     dan berhenti di tahap terakhir sampai jawaban selesai. */
+  let stageStart = 0;
+  function updateStage() {
+    try {
+      const active = document.querySelector('.thinking-chain.ot-thinking');
+      const stages = LABELS[lang()].stages;
+      if (!active) { stageStart = 0; return; }
+      if (!stageStart) stageStart = Date.now();
+      const index = Math.min(Math.floor((Date.now() - stageStart) / 3200), stages.length - 1);
+      document.documentElement.style.setProperty('--ot-label-thinking', JSON.stringify(stages[index]));
+    } catch (_) {}
+  }
+  if (!window.__otStageTimer) window.__otStageTimer = setInterval(updateStage, 700);
+
   function apply() {
     applyStyle();
     try { tagAnswers(); } catch (_) {}
+    updateStage();
   }
   window.otSkinApply = apply;
   apply();

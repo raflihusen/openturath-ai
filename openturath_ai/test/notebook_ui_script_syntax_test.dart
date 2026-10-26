@@ -137,4 +137,18 @@ void notebookSkinTests() {
     expect(notebookSkinScript.contains('"OT Outfit"'), isTrue);
     expect(notebookUiScript.contains(notebookFontsScript), isTrue);
   });
+
+  test(
+      'kulit memuat tombol salin, status memuat bergilir, tabel dan catatan kaki',
+      () {
+    expect(notebookSkinScript.contains('ot-copy-answer'), isTrue);
+    expect(notebookSkinScript.contains('Mencari ibarah di kitab'), isTrue);
+    expect(notebookSkinScript.contains('table-element-view'), isTrue);
+    expect(
+        notebookSkinScript.contains(
+            'OpenTurath AI bisa salah, maka verifikasi ulang jawabannya.'),
+        isTrue);
+    // Tombol salin tidak boleh berlabel aria "copy/salin": skrip inti menyembunyikannya.
+    expect(notebookSkinScript.contains("setAttribute('aria-label'"), isFalse);
+  });
 }
