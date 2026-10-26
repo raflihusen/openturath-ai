@@ -40,7 +40,6 @@ dependencies:
   path_provider: ^2.1.6
   open_filex: ^4.7.0
   device_info_plus: ^12.4.0
-  video_player: ^2.11.1
   sensors_plus: ^7.1.1
 
 dev_dependencies:
@@ -89,4 +88,3 @@ flutter:
     - assets/native_fonts/Cairo-OFL.txt
     - assets/images/
     - assets/data/
-    - assets/video/

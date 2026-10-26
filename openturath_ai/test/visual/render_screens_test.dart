@@ -37,7 +37,6 @@ import 'package:openturath_ai/services/open_turath_catalog_repository.dart';
 import 'package:openturath_ai/widgets/exclusive_activation_dialog.dart';
 import 'package:openturath_ai/widgets/legal_document_sheet.dart';
 import 'package:openturath_ai/core/localized_legal.dart';
-import 'package:openturath_ai/widgets/tahawwulat_introduction_sheet.dart';
 
 final _dir = Platform.environment['OT_SNAPSHOT_DIR'];
 final _key = GlobalKey();
@@ -180,19 +179,7 @@ void main() {
     final flagship = agents.firstWhere((a) => a.id == 'fiqh_tahawwulat');
     for (final locale in ['id', 'ar']) {
       await _shot(tester, 'login_$locale', const LoginScreen(), locale: locale);
-      await _shot(tester, 'tahawwulat_$locale',
-          const TahawwulatIntroductionSheet(asPage: true, videoEnabled: false),
-          size: const Size(1280, 1500), locale: locale);
     }
-    await _shot(tester, 'tahawwulat_long',
-        const TahawwulatIntroductionSheet(asPage: true, videoEnabled: false),
-        size: const Size(1280, 3600));
-    await _shot(tester, 'tahawwulat_window',
-        const TahawwulatIntroductionSheet(asPage: true, videoEnabled: false),
-        size: const Size(850, 860));
-    await _shot(tester, 'tahawwulat_phone',
-        const Scaffold(body: TahawwulatIntroductionSheet(videoEnabled: false)),
-        size: const Size(390, 844));
     for (final locale in ['en', 'ar']) {
       for (final id in LegalDocumentId.values) {
         await _shot(tester, 'document_${id.name}_$locale',
