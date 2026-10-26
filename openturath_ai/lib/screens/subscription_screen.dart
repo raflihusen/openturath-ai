@@ -1135,7 +1135,8 @@ class _PromoCountdownBannerState extends State<_PromoCountdownBanner> {
           child: ExcludeSemantics(
             child: Container(
               width: double.infinity,
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+              padding: const EdgeInsets.symmetric(
+                  horizontal: OTSpacing.base, vertical: OTSpacing.md),
               decoration: BoxDecoration(
                 // Merah solid tanpa transparansi, sesuai keputusan desain peluncuran.
                 color: OTColors.errorLight,

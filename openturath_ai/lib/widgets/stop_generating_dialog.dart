@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 
 import '../core/design/ot_colors.dart';
 import '../core/design/ot_radius.dart';
+import '../core/design/ot_spacing.dart';
 import '../core/design/ot_typography.dart';
 import '../core/localization.dart';
 import '../core/scholarly_fonts.dart';
@@ -17,7 +18,7 @@ Future<bool> showStopGeneratingDialog(BuildContext context) async {
     context: context,
     barrierDismissible: true,
     barrierLabel: Loc.tr('stopGeneratingKeep'),
-    barrierColor: Colors.black.withValues(alpha: 0.42),
+    barrierColor: OTColors.shadow.withValues(alpha: 0.42),
     transitionDuration: const Duration(milliseconds: 220),
     pageBuilder: (_, __, ___) => const _StopGeneratingDialog(),
     transitionBuilder: (context, animation, _, child) {
@@ -55,7 +56,8 @@ class _StopGeneratingDialog extends StatelessWidget {
             side: BorderSide(color: OTColors.border(dark), width: 0.8),
           ),
           child: Padding(
-            padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
+            padding: const EdgeInsets.fromLTRB(
+                OTSpacing.xl, OTSpacing.xl, OTSpacing.xl, OTSpacing.base),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -64,14 +66,14 @@ class _StopGeneratingDialog extends StatelessWidget {
                   Loc.tr('stopGeneratingTitle'),
                   style: OTTypography.cardTitle(color: ink),
                 ),
-                const SizedBox(height: 24),
+                const SizedBox(height: OTSpacing.xl),
                 Align(
                   alignment: AlignmentDirectional.centerEnd,
                   child: Wrap(
                     alignment: WrapAlignment.end,
                     crossAxisAlignment: WrapCrossAlignment.center,
-                    spacing: 8,
-                    runSpacing: 8,
+                    spacing: OTSpacing.sm,
+                    runSpacing: OTSpacing.sm,
                     children: [
                       TextButton(
                         onPressed: () => Navigator.of(context).pop(false),
@@ -79,11 +81,12 @@ class _StopGeneratingDialog extends StatelessWidget {
                           foregroundColor: muted,
                           shape: const StadiumBorder(),
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 18, vertical: 12),
+                              horizontal: OTSpacing.lg, vertical: OTSpacing.md),
                         ),
                         child: Text(Loc.tr('stopGeneratingKeep'),
                             style: ScholarlyFonts.outfit(
-                                fontSize: 14, fontWeight: FontWeight.w600)),
+                                fontSize: OTFontSize.s14,
+                                fontWeight: FontWeight.w600)),
                       ),
                       FilledButton(
                         autofocus: true,
@@ -97,11 +100,12 @@ class _StopGeneratingDialog extends StatelessWidget {
                           elevation: 0,
                           shape: const StadiumBorder(),
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 22, vertical: 12),
+                              horizontal: OTSpacing.xl, vertical: OTSpacing.md),
                         ),
                         child: Text(Loc.tr('stopGeneratingConfirm'),
                             style: ScholarlyFonts.outfit(
-                                fontSize: 14, fontWeight: FontWeight.w600)),
+                                fontSize: OTFontSize.s14,
+                                fontWeight: FontWeight.w600)),
                       ),
                     ],
                   ),

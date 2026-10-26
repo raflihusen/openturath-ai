@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../core/design/ot_colors.dart';
 import '../core/design/ot_radius.dart';
+import '../core/design/ot_spacing.dart';
 
 /// Item menu popup gaya OpenTurath. Sorotan saat kursor di atasnya berbentuk
 /// kapsul inset (bukan persegi penuh yang menabrak sudut menu), berwarna
@@ -40,7 +41,8 @@ class _OTPopupMenuItemState<T> extends State<OTPopupMenuItem<T>> {
       button: true,
       enabled: widget.enabled,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
+        padding: const EdgeInsets.symmetric(
+            horizontal: OTSpacing.sm, vertical: OTSpacing.xxs),
         child: InkWell(
           onTap: widget.enabled
               ? () => Navigator.pop<T>(context, widget.value)
@@ -52,9 +54,10 @@ class _OTPopupMenuItemState<T> extends State<OTPopupMenuItem<T>> {
           highlightColor: ink.withValues(alpha: dark ? 0.12 : 0.08),
           splashColor: ink.withValues(alpha: dark ? 0.10 : 0.06),
           child: ConstrainedBox(
-            constraints: BoxConstraints(minHeight: widget.height - 2),
+            constraints:
+                BoxConstraints(minHeight: widget.height - OTSpacing.xxs * 2),
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 14),
+              padding: const EdgeInsets.symmetric(horizontal: OTSpacing.base),
               child: Align(
                 alignment: AlignmentDirectional.centerStart,
                 widthFactor: 1,
