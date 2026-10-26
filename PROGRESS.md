@@ -90,11 +90,11 @@ Berdasarkan `AUDIT_OPENTURATH_AI.md`, dokumen perancangan pustaka, dan keluhan k
   - Status: Kompilasi Gradle selesai 100% (assembleRelease).
 - **Rilis macOS DMG (Kompilasi Lokal Terbaru)**:
   - File: `/Users/apple/Downloads/ramadhan/OpenTurath_AI_macOS.dmg`
-  - Versi: `1.0.72+73`
-  - Ukuran: 61.6 MB (64.677.888 bytes)
-  - SHA-256: `000d20f55d4248987bde6cce22521078cc9b5a175c541973cfe64923e2684544`
-  - Timestamp: 2026-10-24 13:52 WIB
-  - Status: Kompilasi Xcode/macOS Release universal (arm64 + x86_64) selesai 100%, UDZO image terkemas rapi via `package_macos.sh`, `/Applications/OpenTurath AI.app` terpasang biner terbaru.
+  - Versi: `1.0.77+78`
+  - Ukuran: 61.7 MB (64.699.576 bytes)
+  - SHA-256: `25faace7461428ee63bbe9eb346e35a453a105950332eb86f2d9ea8ff42fc8dc`
+  - Timestamp: 2026-10-26 09:42 WIB
+  - Status: Kompilasi Xcode/macOS Release universal (arm64 + x86_64) selesai 100%, UDZO image terkemas rapi via `package_macos.sh`.
 - **Paket Distribusi Pekerja Akses VPS**:
   - File: `/Users/apple/Downloads/ramadhan/ecosystem/dist/openturath-access-20261014T035043Z-5b44945e.tar.gz`
   - SHA-256: Diverifikasi via `openturath-access-20261014T035043Z-5b44945e.tar.gz.sha256`
@@ -577,6 +577,18 @@ Berdasarkan `AUDIT_OPENTURATH_AI.md`, dokumen perancangan pustaka, dan keluhan k
      - `https://openturath.id/id`: HTTP 200, tautan navigasi dan tombol beranda kini `<a href="/id/cara-kerja">`, `<a href="/id/unduh">`, dll.
      - `https://openturath.id/id/cara-kerja`: HTTP 200 tanpa 404.
      - `https://openturath.id/id/unduh`: HTTP 200 tanpa 404.
+
+### Fasa 43: Kulit Tipografi Otentik WebView, Resolusi Dialog Bahasa & Rilis DMG macOS v1.0.77+78 (`72bab708`)
+- **Ruang Lingkup & Latar Belakang**:
+  1. *Pembaruan Fitur Terkini*:
+     - Kulit UI WebView OpenTurath: Injeksi token `--nlm`/`--mat-sys`, tipografi Arab naskah *Scheherazade New* dan Latin *Outfit* tertanam, bingkai naskah ganda untuk ibarah marja', status memuat bergilir hening, tombol salin jawaban mandiri di ujung teks balasan, catatan kaki adab turats, serta penataan rata kolom tanya (*in-flow docked composer*).
+     - Resolusi Dialog Konfigurasi Bahasa: Perbaikan selektor CSS agar tombol *Save* (`mat-dialog-container .save-container button.submit-button`) tidak tersembunyi lagi.
+     - Pemetaan DOM Komprehensif: Ekstraksi live DOM NotebookLM disimpan di `docs/DOKUMEN_STRUKTUR_DOM_LENGKAP_NOTEBOOKLM.md` dan folder Downloads.
+  2. *Kompilasi Biner & Pembuatan DMG Installer macOS v1.0.77+78*:
+     - Bump versi aplikasi menjadi `1.0.77+78` di `openturath_ai/pubspec.yaml`.
+     - Kompilasi biner `flutter build macos --release` Universal arm64+x86_64 tuntas 100% (146.0 MB .app).
+     - Pembuatan DMG installer `OpenTurath_AI_macOS.dmg` (61.7 MB, format UDZO terkompresi) via `tool/package_macos.sh`.
+     - Verifikasi checksum SHA-256: `25faace7461428ee63bbe9eb346e35a453a105950332eb86f2d9ea8ff42fc8dc`.
 
 ---
 
