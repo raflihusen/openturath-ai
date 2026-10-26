@@ -1,10 +1,10 @@
 {
-  "version": "1.0.68",
-  "buildNumber": 69,
-  "versionFull": "1.0.68+69",
-  "buildTimestamp": "2026-10-22T03:47:00+03:00",
-  "sha256": "08567d69d916b0320be5a6a2ac037b264069e49814bb91d5e427fdf13b5ded5f",
-  "fileSizeBytes": 83934052,
+  "version": "1.0.82",
+  "buildNumber": 83,
+  "versionFull": "1.0.82+83",
+  "buildTimestamp": "2026-10-26T18:16:00+03:00",
+  "sha256": "78ad843d162dd818f02538f2b2c455118c47b7323b283d67f19167976f414cd3",
+  "fileSizeBytes": 29166545,
   "apkArtifacts": [
     "/Users/apple/Downloads/ramadhan/app-release-latest.apk",
     "/Users/apple/Downloads/ramadhan/openturath_ai/public/app-release-latest.apk",

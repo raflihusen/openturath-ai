@@ -11,7 +11,9 @@ IG = "https://instagram.com/openturath.id"
 ROOT = HERE.parent.parent
 OUT = HERE / "site"
 INFO = {x["id"]: x for x in json.load(open(ROOT / "openturath_ai/assets/data/info_ai.json", encoding="utf8"))}
-PENG = json.load(open(ROOT / "openturath_ai/assets/data/pengantar_tahawwulat.json", encoding="utf8"))
+_peng_src = ROOT / "website/content/pengantar_tahawwulat.json"
+if not _peng_src.exists(): _peng_src = ROOT / "openturath_ai/assets/data/pengantar_tahawwulat.json"
+PENG = json.load(open(_peng_src, encoding="utf8"))
 ADAB = json.load(open(ROOT / "website/content/adab.json", encoding="utf8"))
 CAT = {x["appAgentId"]: x for x in json.load(open(ROOT / "website/content/catalog.json", encoding="utf8"))}
 SVG = (ROOT / "OpenTurath_logo_transparent.svg").read_text()
