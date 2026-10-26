@@ -39,8 +39,16 @@
   /* muncul perlahan */
   var rv = $$('.rv');
   if ('IntersectionObserver' in window && !reduce) {
+    var otg = window.otGate = window.otGate || { busy: 0, q: [] };
+    otg.reveal = function (n) { if (otg.busy > 0) otg.q.push(n); else n.classList.add('in'); };
+    otg.release = function () { if (otg.busy > 0) return; otg.q.splice(0).forEach(function (n) { n.classList.add('in'); }); };
     var io = new IntersectionObserver(function (es) {
-      es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+      es.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        io.unobserve(e.target);
+        /* beri kesempatan pada pengamat judul untuk mulai mengetik lebih dulu */
+        setTimeout(function () { otg.reveal(e.target); }, 80);
+      });
     }, { rootMargin: '0px 0px -6% 0px', threshold: .06 });
     rv.forEach(function (n) { if (n.closest('.welcome') && !/[?&]nofx=1/.test(location.search)) return; io.observe(n); });
   } else rv.forEach(function (n) { n.classList.add('in'); });
@@ -272,14 +280,20 @@
   };
   var type = function (el, ms, cb) {
     var chars = prep(el), i = 0, per = Math.max(10, Math.min(ms, 1500 / Math.max(1, chars.length)));
-    var tick = function () { var n = byWord ? 1 : 2; for (var k = 0; k < n && i < chars.length; k++) chars[i++].classList.add('on'); if (i < chars.length) setTimeout(tick, per * (byWord ? 6 : 1.6)); else if (cb) cb(); };
+    var otg = window.otGate = window.otGate || { busy: 0, q: [], reveal: function (n) { n.classList.add('in'); }, release: function () {} };
+    otg.busy++;
+    var tick = function () {
+      var n = byWord ? 1 : 2; for (var k = 0; k < n && i < chars.length; k++) chars[i++].classList.add('on');
+      if (i < chars.length) setTimeout(tick, per * (byWord ? 6 : 1.6));
+      else { if (cb) cb(); setTimeout(function () { otg.busy = Math.max(0, otg.busy - 1); otg.release(); }, 160); }
+    };
     tick();
   };
   var heads = $$('.sec-head h2, .phead h1, h1.hero, .welcome .lede');
   if (reduce || nofx) { return; }
   // tombol di dalam bagian: muncul perlahan saat digulir
   var late = []; $$('main .btn').forEach(function (b) { if (!b.closest('.rv') && !b.closest('.welcome')) { b.classList.add('rv'); late.push(b); } });
-  if (window.IntersectionObserver) { var lio = new IntersectionObserver(function (es) { es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('in'); lio.unobserve(e.target); } }); }, { threshold: .2 }); late.forEach(function (b) { lio.observe(b); }); } else late.forEach(function (b) { b.classList.add('in'); });
+  if (window.IntersectionObserver) { var lio = new IntersectionObserver(function (es) { es.forEach(function (e) { if (e.isIntersecting) { lio.unobserve(e.target); setTimeout(function () { (window.otGate && window.otGate.reveal ? window.otGate.reveal(e.target) : e.target.classList.add('in')); }, 80); } }); }, { threshold: .2 }); late.forEach(function (b) { lio.observe(b); }); } else late.forEach(function (b) { b.classList.add('in'); });
   if (!window.IntersectionObserver) return;
   root.classList.add('typing');
   var hero = $('#hero');
