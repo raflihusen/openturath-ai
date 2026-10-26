@@ -191,36 +191,41 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
   Future<void> _checkAccountVerification(
       InAppWebViewController controller) async {
     if (!mounted || _isSessionReady || _isCheckingAccount) return;
-    final currentWebUrl = await controller.getUrl();
-    if (currentWebUrl == null) return;
-    final urlStr = currentWebUrl.toString();
-
-    // Jangan lakukan verifikasi jika masih di formulir login Google
-    if (urlStr.contains('accounts.google') ||
-        urlStr.contains('InteractiveLogin') ||
-        urlStr.contains('ServiceLogin') ||
-        urlStr.contains('signin/v2') ||
-        urlStr.contains('identifier') ||
-        urlStr.contains('challenge') ||
-        !NotebookNavigation.notebook(currentWebUrl.uriValue)) {
-      return;
-    }
-
+    // Mutex dipasang sebelum `await` pertama. Sebelumnya dipasang sesudah
+    // `getUrl()`, sehingga onLoadStop dan onUpdateVisitedHistory yang datang
+    // nyaris bersamaan sama-sama lolos dan menjalankan dua siklus polling.
     _isCheckingAccount = true;
-    if (!_isShieldActive && mounted) {
-      setState(() => _isShieldActive = true);
-    }
-
-    final currentEmail = (AuthService().cachedCurrentUser?.email ??
-            AuthService().currentUser?.email ??
-            '')
-        .trim()
-        .toLowerCase();
+    var inconclusive = false;
 
     try {
-      // Siklus Polling Adaptif: periksa setiap 250ms hingga 15 kali (~3.75s)
-      const maxAttempts = 15;
-      for (var attempt = 0; attempt < maxAttempts; attempt++) {
+      final currentWebUrl = await controller.getUrl();
+      if (currentWebUrl == null) return;
+      final urlStr = currentWebUrl.toString();
+
+      // Jangan lakukan verifikasi jika masih di formulir login Google
+      if (urlStr.contains('accounts.google') ||
+          urlStr.contains('InteractiveLogin') ||
+          urlStr.contains('ServiceLogin') ||
+          urlStr.contains('signin/v2') ||
+          urlStr.contains('identifier') ||
+          urlStr.contains('challenge') ||
+          !NotebookNavigation.notebook(currentWebUrl.uriValue)) {
+        return;
+      }
+
+      if (!_isShieldActive && mounted) {
+        setState(() => _isShieldActive = true);
+      }
+
+      final currentEmail = (AuthService().cachedCurrentUser?.email ??
+              AuthService().currentUser?.email ??
+              '')
+          .trim()
+          .toLowerCase();
+
+      // Siklus polling: periksa setiap 250ms hingga 32 kali (~8s). WebView
+      // Android dengan tata letak seluler memuat SPA NotebookLM lebih lambat.
+      for (var attempt = 0; attempt < _maxVerificationAttempts; attempt++) {
         if (!mounted || _isSessionReady) return;
 
         final detectedEmail = await _detectGoogleEmail(controller);
@@ -237,8 +242,47 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
 
         await Future.delayed(const Duration(milliseconds: 250));
       }
+      inconclusive = true;
     } finally {
       _isCheckingAccount = false;
+    }
+
+    if (inconclusive) await _handleInconclusiveVerification(controller);
+  }
+
+  static const int _maxVerificationAttempts = 32;
+
+  /// Email Google tidak terbaca dari DOM sampai polling habis. Pelindung visual
+  /// menutup seluruh WebView, jadi tanpa jalur keluar di sini layar macet
+  /// selamanya pada "Menyelaraskan sesi akun Google...".
+  ///
+  /// - Tanpa cookie sesi Google: pengguna belum benar-benar masuk, arahkan
+  ///   kembali ke halaman login (pelindung turun otomatis di onLoadStart).
+  /// - Cookie ada (atau tidak bisa dibaca): minta konfirmasi akun yang sama
+  ///   secara eksplisit, seperti tombol Lanjutkan manual.
+  Future<void> _handleInconclusiveVerification(
+      InAppWebViewController controller) async {
+    if (!mounted || _isSessionReady || _isMismatchDialogOpen) return;
+    debugPrint(
+        '[GoogleSessionAuth] Email Google tidak terdeteksi setelah $_maxVerificationAttempts percobaan, memakai fallback.');
+
+    final hasSession = await _hasGoogleSession();
+    if (!mounted || _isSessionReady) return;
+
+    if (hasSession == false) {
+      await controller.loadUrl(
+        urlRequest: URLRequest(url: WebUri(_targetLoginUrl)),
+      );
+      return;
+    }
+
+    final confirmed = await _confirmSameAccount();
+    if (!mounted || _isSessionReady) return;
+    if (confirmed == true) {
+      await _onSessionAuthenticated();
+    } else if (confirmed == false) {
+      // "Periksa lagi": muat ulang agar onLoadStop memicu verifikasi baru.
+      await controller.reload();
     }
   }
 
@@ -394,65 +438,20 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
     }
   }
 
-  /// Tombol Lanjutkan manual untuk memeriksa login dan konfirmasi akun
-  Future<void> _handleManualContinue() async {
-    if (!mounted || _isSessionReady) return;
-    final controller = _webController;
-    final currentWebUrl = await controller?.getUrl();
-    final urlStr = currentWebUrl?.toString() ?? '';
-
-    if (urlStr.isEmpty ||
-        urlStr.contains('accounts.google') ||
-        urlStr.contains('InteractiveLogin') ||
-        urlStr.contains('ServiceLogin') ||
-        urlStr.contains('signin/v2')) {
-      if (mounted) {
-        AppSnackBar.warning(
-          context,
-          Loc.tr('pleaseFinishGoogleLogin'),
-        );
-      }
-      return;
-    }
-
+  /// Dialog konfirmasi akun yang sama. `true` = sudah masuk, `false` = periksa lagi.
+  Future<bool?> _confirmSameAccount() async {
+    if (!mounted) return null;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final currentEmail = (AuthService().cachedCurrentUser?.email ??
             AuthService().currentUser?.email ??
             '')
         .trim()
         .toLowerCase();
-
-    if (controller != null) {
-      final detectedEmail = await _detectGoogleEmail(controller);
-      if (!mounted) return;
-      if (detectedEmail != null && detectedEmail.isNotEmpty) {
-        if (currentEmail.isNotEmpty && detectedEmail != currentEmail) {
-          _showAccountMismatchDialog(detectedEmail, currentEmail);
-          return;
-        }
-        await _onSessionAuthenticated();
-        return;
-      }
-    }
-
-    if (!mounted) return;
-
-    // Konfirmasi manual hanya berlaku bila sesi Google benar-benar ada;
-    // tanpa itu ruang AI pasti gagal dibuka.
-    if (await _hasGoogleSession() == false) {
-      if (mounted) {
-        AppSnackBar.warning(
-          context,
-          Loc.tr('pleaseFinishGoogleLogin'),
-        );
-      }
-      return;
-    }
-    if (!mounted) return;
-
-    // Jika belum terbaca dari DOM, tampilkan konfirmasi akun sama
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final confirm = await showDialog<bool>(
+    return showDialog<bool>(
       context: context,
+      // Tidak boleh ditutup lewat tap di luar: hasil `null` akan membiarkan
+      // pelindung visual menutup WebView tanpa jalur keluar.
+      barrierDismissible: false,
       builder: (ctx) => AlertDialog(
         backgroundColor: OTColors.surface(isDark),
         shape: RoundedRectangleBorder(
@@ -518,9 +517,73 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
         ],
       ),
     );
+  }
 
-    if (confirm == true && mounted) {
+  /// Tombol Lanjutkan manual untuk memeriksa login dan konfirmasi akun
+  Future<void> _handleManualContinue() async {
+    if (!mounted || _isSessionReady) return;
+    final controller = _webController;
+    final currentWebUrl = await controller?.getUrl();
+    final urlStr = currentWebUrl?.toString() ?? '';
+
+    if (urlStr.isEmpty ||
+        urlStr.contains('accounts.google') ||
+        urlStr.contains('InteractiveLogin') ||
+        urlStr.contains('ServiceLogin') ||
+        urlStr.contains('signin/v2')) {
+      if (mounted) {
+        AppSnackBar.warning(
+          context,
+          Loc.tr('pleaseFinishGoogleLogin'),
+        );
+      }
+      return;
+    }
+
+    final currentEmail = (AuthService().cachedCurrentUser?.email ??
+            AuthService().currentUser?.email ??
+            '')
+        .trim()
+        .toLowerCase();
+
+    if (controller != null) {
+      final detectedEmail = await _detectGoogleEmail(controller);
+      if (!mounted) return;
+      if (detectedEmail != null && detectedEmail.isNotEmpty) {
+        if (currentEmail.isNotEmpty && detectedEmail != currentEmail) {
+          _showAccountMismatchDialog(detectedEmail, currentEmail);
+          return;
+        }
+        await _onSessionAuthenticated();
+        return;
+      }
+    }
+
+    if (!mounted) return;
+
+    // Konfirmasi manual hanya berlaku bila sesi Google benar-benar ada;
+    // tanpa itu ruang AI pasti gagal dibuka.
+    if (await _hasGoogleSession() == false) {
+      if (mounted) {
+        AppSnackBar.warning(
+          context,
+          Loc.tr('pleaseFinishGoogleLogin'),
+        );
+      }
+      return;
+    }
+    if (!mounted) return;
+
+    // Jika belum terbaca dari DOM, tampilkan konfirmasi akun sama
+    final confirm = await _confirmSameAccount();
+    if (!mounted) return;
+
+    if (confirm == true) {
       await _onSessionAuthenticated();
+    } else if (_isShieldActive) {
+      // "Periksa lagi": muat ulang agar onLoadStop menjalankan verifikasi
+      // otomatis kembali, bukan membiarkan layar tertutup pelindung.
+      await controller?.reload();
     }
   }
 
