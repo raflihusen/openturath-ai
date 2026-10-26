@@ -7,6 +7,23 @@
     "ignore": [
       "**/.*"
     ],
+    "redirects": [
+      {
+        "source": "/id/download",
+        "destination": "/id/unduh",
+        "type": 302
+      },
+      {
+        "source": "/en/download",
+        "destination": "/en/unduh",
+        "type": 302
+      },
+      {
+        "source": "/ar/download",
+        "destination": "/ar/unduh",
+        "type": 302
+      }
+    ],
     "rewrites": [
       {
         "source": "/doku-webhook",

@@ -36,6 +36,7 @@ def main():
     preserve_files = [
         "app-release-latest.apk",
         "OpenTurath_AI.apk",
+        "OpenTurath_AI_macOS.dmg",
         "RELEASE_MANIFEST.json",
     ]
     preserve_dirs = [
@@ -48,10 +49,15 @@ def main():
 
     # Pastikan file biner APK terbaru selalu diambil dari ROOT jika tersedia
     root_apk = ROOT / "app-release-latest.apk"
+    root_dmg = ROOT / "OpenTurath_AI_macOS.dmg"
     if root_apk.exists():
         shutil.copy2(root_apk, temp_backup / "app-release-latest.apk")
         shutil.copy2(root_apk, temp_backup / "OpenTurath_AI.apk")
         print(f"   [OK] Menggunakan biner APK terbaru dari root: {root_apk.stat().st_size:,} bytes")
+
+    if root_dmg.exists():
+        shutil.copy2(root_dmg, temp_backup / "OpenTurath_AI_macOS.dmg")
+        print(f"   [OK] Menggunakan biner DMG terbaru dari root: {root_dmg.stat().st_size:,} bytes")
         
         # Buat/perbarui RELEASE_MANIFEST.json sesuai biner terbaru
         import hashlib, json
@@ -149,6 +155,14 @@ def main():
         if (DIST / "RELEASE_MANIFEST.json").exists():
             shutil.copy2(DIST / "RELEASE_MANIFEST.json", APP_PUBLIC / "RELEASE_MANIFEST.json")
 
+    if root_dmg.exists():
+        shutil.copy2(root_dmg, APP_PUBLIC / "OpenTurath_AI_macOS.dmg")
+
+    # Pastikan rute legacy download/ memiliki tombol download aktif langsung
+    legacy_script = ROOT / ".gemini" / "antigravity-ide" / "brain" / "0142b6f4-f514-4a8b-a21f-93d6cd3dd073" / "scratch" / "update_legacy_download.py"
+    if legacy_script.exists():
+        subprocess.run(["python3", str(legacy_script)], cwd=str(ROOT), check=False)
+
     print("\nVerifikasi file penting di website/dist:")
     checks = [
         DIST / "index.html",
@@ -161,6 +175,7 @@ def main():
         DIST / "assets" / "js" / "lang.js",
         DIST / "downloads" / "openturath-v1.0.51.apk",
         DIST / "app-release-latest.apk",
+        DIST / "OpenTurath_AI_macOS.dmg",
         DIST / ".well-known" / "security.txt",
     ]
     all_ok = True
