@@ -231,5 +231,134 @@ class CommandFlowTest(unittest.TestCase):
         self.assertEqual(payload["soon_sub_agent_ids"]["arrayValue"]["values"], [])
 
 
+SHA_A, SHA_B = "a" * 64, "b" * 64
+APK = "https://openturath.web.app/app-release-latest.apk"
+DMG = "https://openturath.web.app/OpenTurath_AI_macOS.dmg"
+
+
+def release_doc(**over):
+    doc = {
+        "latest_version": "1.0.82", "latest_version_code": 83, "apk_url": APK, "sha256": SHA_A,
+        "platforms": {"macos": {"url": DMG, "build": 83, "version": "1.0.82", "sha256": SHA_A}},
+    }
+    doc.update(over)
+    return doc
+
+
+class ExtractReleaseTest(unittest.TestCase):
+    def test_android_reads_flat_fields_when_no_platform_block(self):
+        r = ota.extract_release(release_doc(), "android")
+        self.assertEqual((r["build"], r["version"], r["url"]), (83, "1.0.82", APK))
+
+    def test_macos_reads_platform_block_and_is_not_inherited_from_android(self):
+        self.assertEqual(ota.extract_release(release_doc(), "macos")["url"], DMG)
+        doc = release_doc()
+        del doc["platforms"]
+        self.assertIsNone(ota.extract_release(doc, "macos"), "desktop tidak boleh mewarisi data Android")
+
+    def test_unparseable_or_incomplete_returns_none(self):
+        for bad in ({"latest_version_code": "x"}, {"latest_version_code": 0}, {"latest_version_code": -3},
+                    {"apk_url": 5}, {"latest_version": ""}):
+            self.assertIsNone(ota.extract_release(release_doc(**bad), "android"), bad)
+
+
+class CheckEntryTest(unittest.TestCase):
+    def release(self, **over):
+        base = {"build": 90, "version": "1.0.9", "url": APK, "sha256": SHA_A}
+        base.update(over)
+        return base
+
+    def test_clean_release_has_no_problems(self):
+        self.assertEqual(ota.check_release_entry("android", self.release(), 83), [])
+
+    def test_older_build_than_the_app_is_flagged(self):
+        p = ota.check_release_entry("android", self.release(build=52), 83)
+        self.assertTrue(any("LAMA" in x for x in p), p)
+
+    def test_same_build_is_not_flagged(self):
+        self.assertEqual(ota.check_release_entry("android", self.release(build=83), 83), [])
+
+    def test_unknown_host_scheme_extension_are_flagged(self):
+        self.assertTrue(ota.check_release_entry("android", self.release(url="http://openturath.web.app/a.apk"), 1))
+        self.assertTrue(ota.check_release_entry("android", self.release(url="https://evil.example/a.apk"), 1))
+        self.assertTrue(ota.check_release_entry("android", self.release(url="https://openturath.web.app/a.exe"), 1))
+        self.assertTrue(ota.check_release_entry("android", self.release(url="https://openturath.web.app:8443/a.apk"), 1))
+        self.assertTrue(ota.check_release_entry("android", self.release(url="https://u:p@openturath.web.app/a.apk"), 1))
+
+    def test_android_requires_a_valid_sha256_but_desktop_does_not(self):
+        for bad in (None, "", "abc", "z" * 64):
+            self.assertTrue(ota.check_release_entry("android", self.release(sha256=bad), 1), bad)
+        self.assertEqual(ota.check_release_entry("macos", self.release(url=DMG, sha256=None), 1), [])
+        self.assertTrue(ota.check_release_entry("macos", self.release(url=DMG, sha256="abc"), 1))
+
+    def test_missing_release_is_reported(self):
+        self.assertTrue(ota.check_release_entry("android", None, 1))
+
+
+class VerifyReportTest(unittest.TestCase):
+    ok_probe = staticmethod(lambda url: (200, 1000, "application/octet-stream"))
+
+    def status_of(self, report):
+        return {p: s for p, s, _ in report}
+
+    def test_everything_good_passes_and_windows_is_skipped(self):
+        report = ota.verify_release_report(release_doc(), 83, probe=self.ok_probe)
+        self.assertEqual(self.status_of(report), {"android": "OK", "macos": "OK", "windows": "LEWAT"})
+
+    def test_404_is_reported_as_failure(self):
+        def probe(url):
+            return (404, None, "text/html") if url == DMG else (200, 10, "application/vnd.android.package-archive")
+        status = self.status_of(ota.verify_release_report(release_doc(), 83, probe=probe))
+        self.assertEqual(status["macos"], "GAGAL")
+        self.assertEqual(status["android"], "OK")
+
+    def test_html_masquerading_as_200_is_caught(self):
+        status = self.status_of(ota.verify_release_report(
+            release_doc(), 83, probe=lambda u: (200, 512, "text/html; charset=utf-8")))
+        self.assertEqual(status["android"], "GAGAL")
+
+    def test_network_failure_is_a_failure_not_a_crash(self):
+        status = self.status_of(ota.verify_release_report(
+            release_doc(), 83, probe=lambda u: (None, None, "Temporary failure in name resolution")))
+        self.assertEqual(status["android"], "GAGAL")
+
+    def test_old_build_in_document_fails_even_when_the_file_exists(self):
+        doc = release_doc(latest_version_code=52)
+        status = self.status_of(ota.verify_release_report(doc, 83, probe=self.ok_probe))
+        self.assertEqual(status["android"], "GAGAL")
+
+    def test_deep_check_catches_a_hash_mismatch(self):
+        report = ota.verify_release_report(
+            release_doc(), 83, probe=self.ok_probe, deep=True, hasher=lambda url: (SHA_B, 1000))
+        android = dict((p, (s, l)) for p, s, l in report)["android"]
+        self.assertEqual(android[0], "GAGAL")
+        self.assertTrue(any("TIDAK cocok" in x for x in android[1]), android[1])
+
+    def test_deep_check_passes_when_hash_matches(self):
+        report = ota.verify_release_report(
+            release_doc(), 83, probe=self.ok_probe, deep=True, hasher=lambda url: (SHA_A, 1000))
+        android = dict((p, (s, l)) for p, s, l in report)["android"]
+        self.assertEqual(android[0], "OK")
+        self.assertTrue(any("cocok" in x for x in android[1]))
+
+    def test_deep_check_is_skipped_unless_requested(self):
+        called = []
+        ota.verify_release_report(release_doc(), 83, probe=self.ok_probe,
+                                  hasher=lambda u: called.append(u) or (SHA_A, 1))
+        self.assertEqual(called, [], "tanpa --deep tidak boleh mengunduh apa pun")
+
+    def test_hasher_error_is_reported_not_raised(self):
+        def boom(url):
+            raise OSError("koneksi terputus")
+        status = self.status_of(ota.verify_release_report(
+            release_doc(), 83, probe=self.ok_probe, deep=True, hasher=boom))
+        self.assertEqual(status["android"], "GAGAL")
+
+    def test_verification_never_writes(self):
+        with mock.patch.object(ota, "rest_patch") as patch_:
+            ota.verify_release_report(release_doc(), 83, probe=self.ok_probe)
+        patch_.assert_not_called()
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)

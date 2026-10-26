@@ -144,6 +144,150 @@ def same_features(a, b):
     )
 
 
+# ---------------------------------------------------------------------------
+# verify-release: pemeriksaan BACA-SAJA atas dokumen app_config/version dan berkas
+# yang ditunjuknya. Tidak menulis apa pun.
+# ---------------------------------------------------------------------------
+RELEASE_PLATFORMS = {
+    "android": (".apk",),
+    "macos": (".dmg", ".pkg", ".zip"),
+    "windows": (".exe", ".msi", ".msix", ".msixbundle", ".zip"),
+}
+RELEASE_ALLOWED_HOSTS = {
+    "openturath.id", "www.openturath.id", "openturath.ai", "www.openturath.ai",
+    "openturath.web.app", "open-turath.web.app", "openturath-ai.web.app",
+    "openturath.firebaseapp.com", "open-turath.firebaseapp.com", "openturath-ai.firebaseapp.com",
+}
+SHA256_PATTERN = re.compile(r"^[a-fA-F0-9]{64}$")
+
+
+def extract_release(doc, platform):
+    """Meniru PlatformRelease.parse di klien: kembalikan dict rilis atau None."""
+    platforms = doc.get("platforms")
+    value = platforms.get(platform) if isinstance(platforms, dict) else doc.get(platform)
+    if isinstance(value, dict):
+        release = value
+    elif platform == "android":
+        release = doc  # kontrak dokumen produksi Android (bidang datar)
+    else:
+        return None
+    build = release.get("build", release.get("latest_version_code"))
+    url = release.get("url", release.get("apk_url"))
+    version = release.get("version", release.get("latest_version"))
+    try:
+        build = int(build)
+    except (TypeError, ValueError):
+        return None
+    if build <= 0 or not isinstance(url, str) or not isinstance(version, str) or not version:
+        return None
+    return {"build": build, "version": version, "url": url, "sha256": release.get("sha256")}
+
+
+def check_release_entry(platform, release, current_build):
+    """Daftar masalah yang bisa diketahui TANPA jaringan. Kosong berarti lolos tahap ini."""
+    problems = []
+    if release is None:
+        return ["Tidak ada rilis valid untuk platform ini di dokumen."]
+    from urllib.parse import urlparse
+    uri = urlparse(release["url"])
+    if uri.scheme != "https":
+        problems.append("URL harus https.")
+    if uri.hostname not in RELEASE_ALLOWED_HOSTS:
+        problems.append(f"Host '{uri.hostname}' tidak ada di daftar yang diizinkan aplikasi (pembaruan akan diabaikan).")
+    if uri.port not in (None, 443) or uri.username or uri.password:
+        problems.append("URL memakai port atau kredensial yang ditolak aplikasi.")
+    if not uri.path.lower().endswith(RELEASE_PLATFORMS[platform]):
+        problems.append(f"Ekstensi berkas harus salah satu dari {', '.join(RELEASE_PLATFORMS[platform])}.")
+    sha = release.get("sha256")
+    if platform == "android" and not (isinstance(sha, str) and SHA256_PATTERN.match(sha)):
+        problems.append("Android WAJIB punya SHA-256 valid; tanpa itu aplikasi menolak mengunduh.")
+    elif sha is not None and not (isinstance(sha, str) and SHA256_PATTERN.match(sha)):
+        problems.append("SHA-256 tidak berformat 64 karakter heksadesimal.")
+    if current_build is not None and release["build"] < current_build:
+        problems.append(f"Build di dokumen ({release['build']}) lebih LAMA dari build aplikasi sekarang ({current_build}).")
+    return problems
+
+
+def current_pubspec_build():
+    """Build aplikasi di pubspec.yaml (angka setelah tanda +), atau None."""
+    try:
+        with open("openturath_ai/pubspec.yaml", encoding="utf-8") as fh:
+            for line in fh:
+                if line.startswith("version:"):
+                    return int(line.split("+")[1].strip())
+    except (OSError, IndexError, ValueError):
+        pass
+    return None
+
+
+def probe_url(url, timeout=25):
+    """HEAD ke URL; kembalikan (status, content_length|None, content_type|None). Baca-saja."""
+    req = urllib.request.Request(url, method="HEAD", headers={"User-Agent": "openturath-verify-release"})
+    try:
+        with urllib.request.urlopen(req, timeout=timeout) as resp:
+            length = resp.headers.get("Content-Length")
+            return resp.status, int(length) if length and length.isdigit() else None, resp.headers.get("Content-Type")
+    except urllib.error.HTTPError as exc:
+        return exc.code, None, exc.headers.get("Content-Type") if exc.headers else None
+    except Exception as exc:  # jaringan putus, DNS, timeout
+        return None, None, str(exc)[:80]
+
+
+def sha256_of_url(url, timeout=120, limit=256 * 1024 * 1024):
+    """Unduh sebagai aliran dan hitung SHA-256 tanpa menyimpan berkas. Baca-saja."""
+    import hashlib
+    digest, total = hashlib.sha256(), 0
+    req = urllib.request.Request(url, headers={"User-Agent": "openturath-verify-release"})
+    with urllib.request.urlopen(req, timeout=timeout) as resp:
+        while True:
+            chunk = resp.read(1024 * 1024)
+            if not chunk:
+                break
+            total += len(chunk)
+            if total > limit:
+                raise ValueError("berkas melebihi batas pemeriksaan")
+            digest.update(chunk)
+    return digest.hexdigest(), total
+
+
+def verify_release_report(doc, current_build, *, probe=probe_url, hasher=sha256_of_url, deep=False):
+    """Menyusun laporan per platform. `probe` dan `hasher` bisa diganti di tes.
+
+    Mengembalikan daftar (platform, status, rincian) dengan status 'OK', 'PERINGATAN', atau 'GAGAL'.
+    """
+    report = []
+    for platform in ("android", "macos", "windows"):
+        release = extract_release(doc, platform)
+        if release is None and platform != "android":
+            report.append((platform, "LEWAT", ["Tidak ada rilis terdaftar untuk platform ini."]))
+            continue
+        problems = check_release_entry(platform, release, current_build)
+        details = []
+        if release is not None:
+            details.append(f"build {release['build']}, versi {release['version']}")
+            details.append(release["url"])
+            status, length, ctype = probe(release["url"])
+            if status != 200:
+                problems.append(f"Berkas TIDAK dapat diunduh (HTTP {status if status else 'gagal: ' + str(ctype)}).")
+            else:
+                details.append(f"HTTP 200, {length:,} byte" if length else "HTTP 200")
+                if ctype and "text/html" in ctype.lower():
+                    problems.append("Server mengembalikan halaman HTML, bukan berkas rilis (kemungkinan halaman 404).")
+                sha = release.get("sha256")
+                if deep and sha and not problems:
+                    try:
+                        actual, size = hasher(release["url"])
+                        if actual.lower() != sha.lower():
+                            problems.append(f"SHA-256 berkas ({actual[:12]}…) TIDAK cocok dengan dokumen ({sha[:12]}…).")
+                        else:
+                            details.append(f"SHA-256 cocok ({size:,} byte diperiksa)")
+                    except Exception as exc:
+                        problems.append(f"Gagal menghitung SHA-256: {str(exc)[:80]}")
+        # Masalah ditampilkan lebih dulu; rincian tetap disertakan agar mudah ditelusuri.
+        report.append((platform, "GAGAL" if problems else "OK", problems + details))
+    return report
+
+
 def to_firestore_features_fields(state, note=""):
     now_iso = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     return {
@@ -563,6 +707,33 @@ def cmd_intro(mode, dry_run, token):
     _write_features(new_state, current, exists, f"Mengenal Fikih Tahawwulat {mode} via OTA", dry_run, token)
 
 
+def cmd_verify_release(deep, token):
+    print("=" * 65)
+    print("🔎 PEMERIKSAAN RILIS (baca-saja)")
+    print("=" * 65)
+    doc = rest_get("version", token)
+    if not doc or "fields" not in doc:
+        print("❌ Dokumen app_config/version tidak ada.")
+        return 1
+    data = parse_firestore_fields(doc["fields"])
+    build = current_pubspec_build()
+    print(f"   Build aplikasi di pubspec.yaml : {build if build is not None else '(tidak terbaca)'}")
+    print(f"   Dokumen diubah terakhir         : {doc.get('updateTime', '-')}")
+    print(f"   Pemeriksaan SHA-256 mendalam    : {'ya' if deep else 'tidak (tambahkan --deep)'}\n")
+    failed = 0
+    for platform, status, lines in verify_release_report(data, build, deep=deep):
+        icon = {"OK": "🟢", "GAGAL": "🔴", "LEWAT": "⚪"}.get(status, "🟡")
+        print(f"{icon} {platform.upper():<8} {status}")
+        for line in lines:
+            print(f"      {line}")
+        if status == "GAGAL":
+            failed += 1
+    print("\n" + ("✅ Semua platform terdaftar lolos pemeriksaan." if not failed
+                   else f"⚠️ {failed} platform bermasalah. Pembaruan untuk platform itu TIDAK akan berfungsi."))
+    print("=" * 65)
+    return 1 if failed else 0
+
+
 def cmd_seed(token):
     print("🌱 Menginisialisasi dokumen Firestore app_config/pricing dan app_config/agents...")
     now_ts = datetime.now(timezone.utc).strftime("%Y%m%d-%H%M%S")
@@ -625,6 +796,9 @@ def main():
     intro_p.add_argument("mode", choices=["on", "off"])
     intro_p.add_argument("--dry-run", action="store_true", help="Tampilkan hasil tanpa menulis")
 
+    verify_p = subparsers.add_parser("verify-release", help="Periksa berkas rilis tiap platform (baca-saja)")
+    verify_p.add_argument("--deep", action="store_true", help="Unduh dan cocokkan SHA-256 (lambat, memakai kuota)")
+
     args = parser.parse_args()
 
     if not args.command:
@@ -645,6 +819,8 @@ def main():
         cmd_lock_agent(args.agent_id, token)
     elif args.command == "features":
         cmd_features(token)
+    elif args.command == "verify-release":
+        sys.exit(cmd_verify_release(args.deep, token))
     elif args.command in ("soon-sub-agent", "release-sub-agent", "intro"):
         try:
             if args.command == "soon-sub-agent":
