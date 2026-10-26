@@ -90,10 +90,10 @@ Berdasarkan `AUDIT_OPENTURATH_AI.md`, dokumen perancangan pustaka, dan keluhan k
   - Status: Kompilasi Gradle selesai 100% (assembleRelease).
 - **Rilis macOS DMG (Kompilasi Lokal Terbaru)**:
   - File: `/Users/apple/Downloads/ramadhan/OpenTurath_AI_macOS.dmg`
-  - Versi: `1.0.80+81`
-  - Ukuran: 61.7 MB (64.710.504 bytes)
-  - SHA-256: `ebb2f40d8fbef780c094265f8978b7352e83d156c0dd0c8455a2118e430270b7`
-  - Timestamp: 2026-10-26 13:56 WIB
+  - Versi: `1.0.81+82`
+  - Ukuran: 61.7 MB (64.709.360 bytes)
+  - SHA-256: `a10779f3dbe28f36126a2674541af12301aa4d95165e31e3c5b8409279b8f7df`
+  - Timestamp: 2026-10-26 14:27 WIB
   - Status: Kompilasi Xcode/macOS Release universal (arm64 + x86_64) selesai 100%, UDZO image terkemas rapi via `package_macos.sh`.
 - **Paket Distribusi Pekerja Akses VPS**:
   - File: `/Users/apple/Downloads/ramadhan/ecosystem/dist/openturath-access-20261014T035043Z-5b44945e.tar.gz`
@@ -626,6 +626,18 @@ Berdasarkan `AUDIT_OPENTURATH_AI.md`, dokumen perancangan pustaka, dan keluhan k
      - Kompilasi biner `flutter build macos --release` Universal arm64+x86_64 tuntas 100% (146.0 MB .app).
      - Pembuatan DMG installer `OpenTurath_AI_macOS.dmg` (61.7 MB, format UDZO terkompresi) via `tool/package_macos.sh`.
      - Verifikasi checksum SHA-256: `ebb2f40d8fbef780c094265f8978b7352e83d156c0dd0c8455a2118e430270b7`.
+
+### Fasa 47: Stabilisasi Pemilih Bahasa Jawaban & Rilis DMG macOS v1.0.81+82 (`f1554a20`)
+- **Ruang Lingkup & Latar Belakang**:
+  1. *Pembersihan Eksperimen & Stabilisasi*:
+     - Pembatalan fitur pembacaan dialog konfigurasi bahasa penuh (revert `c28529e5`) yang sebelumnya memicu tab AI tampil sebagai notebook kosong ("Let's start your notebook") tanpa kulit antarmuka OpenTurath.
+     - Pemilih bahasa jawaban kembali stabil menggunakan 3 bahasa utama kanonikal: Indonesia, Arab, dan Inggris.
+     - Dialog Hentikan Jawaban native OpenTurath (3 bahasa) dan sinkronisasi bahasa WebView tetap aktif dan terjaga.
+  2. *Kompilasi Biner & Pembuatan DMG Installer macOS v1.0.81+82*:
+     - Bump versi aplikasi menjadi `1.0.81+82` di `openturath_ai/pubspec.yaml`.
+     - Kompilasi biner `flutter build macos --release` Universal arm64+x86_64 tuntas 100% (145.9 MB .app).
+     - Pembuatan DMG installer `OpenTurath_AI_macOS.dmg` (61.7 MB, format UDZO terkompresi) via `tool/package_macos.sh`.
+     - Verifikasi checksum SHA-256: `a10779f3dbe28f36126a2674541af12301aa4d95165e31e3c5b8409279b8f7df`.
 
 ---
 
