@@ -36,7 +36,12 @@ const notebookSkinScript = r'''
       stages: ['جارٍ البحث عن العبارة في الكتب…', 'قراءة المراجع…', 'الموازنة بين الأقوال في المذهب…', 'صياغة الجواب…']
     }
   };
-  function lang() { return LABELS[window._otLang] ? window._otLang : 'id'; }
+  function lang() {
+    let saved = null;
+    try { saved = sessionStorage.getItem('ot_lang'); } catch (_) {}
+    if (LABELS[saved]) return saved;
+    return LABELS[window._otLang] ? window._otLang : 'id';
+  }
 
   /* Lengkung bersarang (logo, splash, situs): empat bingkai berdampingan.
      Bingkai 0-2 menyalakan satu lengkung bergantian, bingkai 3 menyalakan semuanya. */
@@ -613,9 +618,10 @@ const notebookSkinScript = r'''
         label.className = 'ot-copy-label';
         btn.appendChild(label);
         btn.addEventListener('click', () => {
+          btn.__otCopied = true;
           label.textContent = LABELS[lang()].copied;
           clearTimeout(btn.__otTimer);
-          btn.__otTimer = setTimeout(() => { label.textContent = LABELS[lang()].copy; }, 1800);
+          btn.__otTimer = setTimeout(() => { btn.__otCopied = false; label.textContent = LABELS[lang()].copy; }, 1800);
         });
         btn.addEventListener('keydown', e => {
           if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); btn.click(); }
@@ -626,7 +632,11 @@ const notebookSkinScript = r'''
         row.remove();
       }
       const label = box.querySelector(':scope > .ot-answer-actions .ot-copy-label');
-      if (label && !label.textContent) label.textContent = LABELS[lang()].copy;
+      if (label) {
+        const btn = label.closest('.ot-copy-answer');
+        const want = btn && btn.__otCopied ? LABELS[lang()].copied : LABELS[lang()].copy;
+        if (label.textContent !== want) label.textContent = want;
+      }
     });
     document.querySelectorAll('.to-user-message-card-content .paragraph').forEach(el => {
       const text = el.textContent || '';
@@ -675,7 +685,7 @@ const notebookSkinScript = r'''
       const L = LABELS[lang()];
       const root = document.documentElement;
       root.style.setProperty('--ot-label-disclaimer', JSON.stringify(L.disclaimer));
-      if (!root.style.getPropertyValue('--ot-label-thinking')) root.style.setProperty('--ot-label-thinking', JSON.stringify(L.stages[0]));
+      if (!stageStart || !root.style.getPropertyValue('--ot-label-thinking')) root.style.setProperty('--ot-label-thinking', JSON.stringify(L.stages[0]));
       if (!window.__otCopyIcon) window.__otCopyIcon = copyIcon();
       root.style.setProperty('--ot-copy-icon', window.__otCopyIcon);
       if (!window.__otSendIcon) window.__otSendIcon = sendIcon();
@@ -724,6 +734,15 @@ const notebookSkinScript = r'''
     updateStage();
   }
   window.otSkinApply = apply;
+  /* Dipanggil aplikasi saat bahasa aplikasi berganti: label di halaman ikut berganti
+     tanpa memuat ulang. Disimpan di sessionStorage agar tahan muat ulang halaman. */
+  window.otSetLang = function (code) {
+    if (!LABELS[code]) return false;
+    window._otLang = code;
+    try { sessionStorage.setItem('ot_lang', code); } catch (_) {}
+    apply();
+    return true;
+  };
   apply();
 
   if (!window.__otSkinObserver) {

@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+import '../core/app_config.dart';
 import '../models/agent_model.dart';
 import '../models/turath_chat_message.dart';
 import '../models/user_model.dart';
@@ -68,7 +69,26 @@ class AgentSessionTab {
 /// Keeps up to 3 specialists loaded in background memory like Google Chrome tabs.
 class AgentSessionManager extends ChangeNotifier {
   static final AgentSessionManager instance = AgentSessionManager._();
-  AgentSessionManager._();
+  AgentSessionManager._() {
+    AppConfig.localeNotifier.addListener(_pushLocale);
+  }
+
+  /// Bahasa aplikasi berganti: kirim ke setiap tab yang masih hidup supaya
+  /// catatan kaki dan label di halaman ikut berganti tanpa memuat ulang.
+  void _pushLocale() {
+    final code = AppConfig.localeNotifier.value;
+    for (final tab in _tabs) {
+      try {
+        tab.webController?.evaluateJavascript(
+          source:
+              'window._otLang = ${_jsString(code)}; window.otSetLang && window.otSetLang(${_jsString(code)});',
+        );
+      } catch (_) {}
+    }
+  }
+
+  static String _jsString(String value) =>
+      "'${value.replaceAll(r'\', r'\\').replaceAll("'", r"\'")}'";
 
   static int get maxTabs =>
       (!kIsWeb && defaultTargetPlatform == TargetPlatform.macOS) ? 5 : 3;

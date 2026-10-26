@@ -171,4 +171,12 @@ void notebookSkinTests() {
     expect(omnibar.contains('border-top: 1px'), isFalse);
     expect(omnibar.contains('--ot-canvas'), isFalse);
   });
+
+  test('bahasa aplikasi bisa dikirim ke halaman tanpa memuat ulang', () {
+    expect(notebookSkinScript.contains('window.otSetLang = function'), isTrue);
+    expect(notebookSkinScript.contains("sessionStorage.setItem('ot_lang'"),
+        isTrue);
+    expect(notebookSkinScript.contains("sessionStorage.getItem('ot_lang')"),
+        isTrue);
+  });
 }
