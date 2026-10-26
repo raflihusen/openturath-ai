@@ -176,11 +176,17 @@ Tersimpan di folder Downloads pengguna untuk diserahkan ke tim developer/pihak y
 - Perbaikan: keempat selektor (`Settings`, `Setelan`, `Pengaturan`, `Notebook settings`) kini memakai pencocokan tepat (`="..." i`). Tombol gigi di header Google berlabel persis `Settings`, jadi tetap tersembunyi.
 - Pencarian tombol pengaturan di `findSettingsButton()` tetap memakai `*=` karena hanya membaca, tidak menyembunyikan.
 
-## 4. Kulit OpenTurath (`lib/core/notebook_skin.dart`)
-- Satu `<style id="ot-skin">` yang menimpa token halaman (`--nlm-*`, `--mat-sys-*`) dengan palet monokrom aplikasi, memakai `light-dark()` sehingga mengikuti `color-scheme` yang sudah diatur skrip tema.
-- Tipografi: sans (Outfit/Inter/sistem) untuk antarmuka, serif (Newsreader/New York/Georgia) untuk jawaban, dan `@font-face "OT Arabic"` berbasis `local()` dengan `unicode-range` khusus aksara Arab.
-- Elemen yang dirapikan: kartu pertanyaan (garis tipis), jawaban tanpa kartu, `thinking-chain` (label "Proses berpikir"/"Berpikir…" lewat variabel CSS `--ot-label-*`, kilau Google dimatikan), `.input-group` (kolom tanya), tombol kirim, tombol turun, dialog Google. Penanda tanggal berbahasa Inggris, hitungan sumber, dan `chat-panel-top/bottom-fade` disembunyikan.
-- Placeholder kolom tanya sengaja tidak diubah: skrip inti menghapusnya dan mengamati atributnya, sehingga menimpanya akan membuat dua pengamat saling bertabrakan.
+## 4. Kulit OpenTurath (`lib/core/notebook_skin.dart`, `notebook_fonts.dart`)
+Mengikuti DESIGN.md: token warna `OTColors` (kanvas, permukaan, tonal, tinta, garis), Outfit untuk Latin, Scheherazade New untuk Arab, tanpa warna lain.
+- **Token:** satu `<style id="ot-skin">` menimpa `--nlm-*` dan `--mat-sys-*` dengan `light-dark()` mengikuti `color-scheme` yang diatur skrip tema.
+- **Huruf:** `notebook_fonts.dart` (dibuat oleh `tool/make_notebook_fonts.py`) menanam Outfit 400/600 dan Scheherazade New (subset woff2, ±130 KB) sebagai `@font-face` data URI dengan nama "OT Outfit" dan "OT Scheherazade". Outfit tidak punya glyph Arab, sehingga huruf Arab otomatis jatuh ke Scheherazade.
+- **Pertanyaan:** permukaan tonal, garis 0,8, sudut 24 dengan sudut bawah-ujung 8 (sama dengan chat native).
+- **Jawaban:** aliran terbuka tanpa kartu, Outfit `font-size-skala + 1`, mengikuti `--ot-font-size` dari penggeser ukuran huruf.
+- **Ibarah:** `tagAnswers()` menandai `.paragraph` yang ≥ 60% huruf Arab dengan kelas `ot-ibarah` (kelas saja, teks tidak diubah). Tampil sebagai lembar naskah: latar tonal, bingkai ganda tipis (jadwal), Scheherazade 1,45× dengan tinggi baris 1,9, label "Ibarah" di tepi atas. Penanda butir bawaan Google dimatikan.
+- **Kepala bagian** ("A. JAWABAN LANGSUNG:") menjadi label kapital kecil dengan garis pemisah (`ot-section`); **mode** ("▸Mode: …") menjadi pil (`ot-mode`).
+- **Tahap berpikir:** lengkung bersarang yang sama dengan logo, splash, dan situs, menyala bergantian saat `.is-loading` (kelas `ot-thinking`); label "Berpikir…" lalu "Proses berpikir".
+- **Kolom tanya** dan **tombol turun:** kapsul permukaan, garis 1,2, bayangan lembut seperti kolom tanya native. Penanda tanggal, hitungan sumber, dan fade atas-bawah disembunyikan.
+- Placeholder kolom tanya sengaja tidak diubah: skrip inti menghapusnya dan mengamati atributnya, sehingga menimpanya membuat dua pengamat saling bertabrakan.
 - Bahasa label dibaca dari `window._otLang` (diisi `_buildCloakScript`), bawaan `id`.
 
 ## 5. Penggantian Bahasa Jawaban Lewat Lembar Native

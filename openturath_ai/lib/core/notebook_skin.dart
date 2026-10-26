@@ -1,10 +1,16 @@
 /// Kulit OpenTurath untuk halaman obrolan NotebookLM di WebView.
 ///
 /// Murni aditif: satu blok `<style id="ot-skin">` yang menimpa token warna
-/// (`--nlm-*`, `--mat-sys-*`) dan tipografi bawaan halaman, ditambah beberapa
-/// label tahap berpikir lewat variabel CSS. Aturan
-/// penyembunyian inti, polling kesiapan, dan siklus hidup WebView di
+/// (`--nlm-*`, `--mat-sys-*`) dengan token aplikasi (`OTColors`), memakai
+/// huruf aplikasi (lihat `notebook_fonts.dart`), dan menandai bagian jawaban
+/// lewat kelas CSS saja (isi teks tidak pernah diubah). Aturan penyembunyian
+/// inti, polling kesiapan, dan siklus hidup WebView di
 /// `notebook_ui_script.dart` dan `agent_multi_tab_room.dart` tidak disentuh.
+///
+/// Ciri khas: ibarah Arab tampil sebagai lembar naskah berbingkai ganda
+/// (jadwal), kepala bagian jawaban menjadi label huruf kapital kecil, dan
+/// tahap berpikir memakai lengkung bersarang yang sama dengan logo, splash,
+/// dan situs.
 ///
 /// Selektor diambil dari DOM langsung NotebookLM (Angular, Okt 2026); lihat
 /// `docs/DOKUMEN_STRUKTUR_DOM_LENGKAP_NOTEBOOKLM.md`. Dilarang menggabungkan
@@ -14,61 +20,92 @@ const notebookSkinScript = r'''
   if (window.top !== window || !['notebooklm.google.com', 'notebook.google.com'].includes(location.hostname)) return;
 
   const LABELS = {
-    id: { thinking: 'Berpikir…', thought: 'Proses berpikir' },
-    en: { thinking: 'Thinking…', thought: 'Reasoning' },
-    ar: { thinking: 'جارٍ التفكير…', thought: 'مسار التفكير' }
+    id: { thinking: 'Berpikir…', thought: 'Proses berpikir', ibarah: 'Ibarah' },
+    en: { thinking: 'Thinking…', thought: 'Reasoning', ibarah: 'Passage' },
+    ar: { thinking: 'جارٍ التفكير…', thought: 'مسار التفكير', ibarah: 'عبارة' }
   };
   function lang() { return LABELS[window._otLang] ? window._otLang : 'id'; }
 
+  /* Lengkung bersarang (logo, splash, situs): empat bingkai berdampingan.
+     Bingkai 0-2 menyalakan satu lengkung bergantian, bingkai 3 menyalakan semuanya. */
+  function archSprite() {
+    const arches = [
+      'M3 22V11.5C3 7.5 7.5 3 12 2c4.5 1 9 5.5 9 9.5V22',
+      'M6.5 22V13c0-2.7 2.9-5.6 5.5-6.4 2.6.8 5.5 3.7 5.5 6.4v9',
+      'M10 22v-6c0-1.4 1-3 2-3.5 1 .5 2 2.1 2 3.5v6'
+    ];
+    let body = '';
+    for (let frame = 0; frame < 4; frame++) {
+      body += '<g transform="translate(' + frame * 24 + ' 0)">';
+      arches.forEach((d, i) => {
+        const o = frame === 3 ? 0.9 : (i === frame ? 1 : 0.22);
+        body += '<path d="' + d + '" stroke-opacity="' + o + '"/>';
+      });
+      body += '</g>';
+    }
+    const svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 24" fill="none" stroke="#000" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">' + body + '</svg>';
+    return 'url("data:image/svg+xml,' + encodeURIComponent(svg) + '")';
+  }
+
   const CSS = `
-    @font-face {
-      font-family: "OT Arabic";
-      src: local("Scheherazade New"), local("Geeza Pro"), local("Noto Naskh Arabic"), local("Amiri"), local("Al Nile");
-      unicode-range: U+0600-06FF, U+0750-077F, U+08A0-08FF, U+FB50-FDFF, U+FE70-FEFF;
-    }
-
-    /* Token warna dan huruf: satu sumber untuk seluruh halaman. */
+    /* ── Token: satu sumber dengan OTColors ── */
     html body, html body.luminous-ui {
-      --ot-sans: "OT Arabic", "Outfit", "Inter", "SF Pro Text", -apple-system, system-ui, "Segoe UI", sans-serif;
-      --ot-serif: "OT Arabic", "Newsreader", "Iowan Old Style", "New York", ui-serif, Georgia, "Times New Roman", serif;
+      --ot-sans: "OT Outfit", "OT Scheherazade", "Outfit", "Inter", "SF Pro Text", -apple-system, system-ui, "Segoe UI", sans-serif;
+      --ot-arabic: "OT Scheherazade", "Scheherazade New", "Geeza Pro", "Noto Naskh Arabic", "Amiri", serif;
+      --ot-canvas: light-dark(#F6F6F6, #151515);
+      --ot-surface: light-dark(#FFFFFF, #292929);
+      --ot-subtle: light-dark(#EDEDED, #353535);
+      --ot-ink: light-dark(#171717, #F5F5F5);
+      --ot-muted: light-dark(#606060, #B8B8B8);
+      --ot-faint: light-dark(#6B6B6B, #9A9A9A);
+      --ot-line: light-dark(#DADADA, #454545);
+      --ot-line-soft: light-dark(#EBEBEB, #2D2D2D);
+      --ot-line-strong: light-dark(#767676, #808080);
+      --ot-on-ink: light-dark(#FFFFFF, #171717);
+      --ot-shadow: light-dark(rgba(0,0,0,.05), rgba(0,0,0,.2));
       --nlm-font-family-sans: var(--ot-sans) !important;
-      --chat-panel-bg: light-dark(#FFFFFF, #18181B) !important;
-      --nlm-fills-surface-page: light-dark(#FFFFFF, #18181B) !important;
-      --nlm-fills-surface-panel: light-dark(#FFFFFF, #27272A) !important;
-      --nlm-fills-surface-container: light-dark(#F6F6F6, #27272A) !important;
-      --nlm-fills-ui-grey-fill: light-dark(#F0F0F0, #27272A) !important;
-      --nlm-fills-ui-blue-fill: light-dark(#F0F0F0, #27272A) !important;
-      --nlm-text-body-text: light-dark(#171717, #E4E4E7) !important;
-      --nlm-text-titles-and-labels: light-dark(#171717, #FAFAFA) !important;
-      --nlm-text-secondary-text: light-dark(#606060, #A1A1AA) !important;
-      --nlm-text-ghost-text: light-dark(#6B6B6B, #8A8A93) !important;
-      --nlm-stroke-default: light-dark(#DADADA, #3F3F46) !important;
-      --nlm-stroke-focus: light-dark(#767676, #71717A) !important;
-      --nlm-ctas-buttons-primary: light-dark(#171717, #FAFAFA) !important;
-      --nlm-cta-text-and-icon-primary: light-dark(#FFFFFF, #18181B) !important;
-      --nlm-states-on-primary-hover: light-dark(rgba(23,23,23,.06), rgba(250,250,250,.08)) !important;
-      --nlm-brand-blue: light-dark(#171717, #FAFAFA) !important;
-      --nlm-icons-blue: light-dark(#171717, #FAFAFA) !important;
-      --nlm-icons-default: light-dark(#171717, #E4E4E7) !important;
-      --mat-sys-primary: light-dark(#171717, #FAFAFA) !important;
-      --mat-sys-on-primary: light-dark(#FFFFFF, #18181B) !important;
-      --mat-sys-surface: light-dark(#FFFFFF, #18181B) !important;
-      --mat-sys-on-surface: light-dark(#171717, #E4E4E7) !important;
-      --mat-sys-on-surface-variant: light-dark(#606060, #A1A1AA) !important;
-      --mat-sys-surface-container-low: light-dark(#FFFFFF, #1F1F23) !important;
-      --mat-sys-surface-container: light-dark(#F6F6F6, #27272A) !important;
-      --mat-sys-surface-container-high: light-dark(#F0F0F0, #2E2E33) !important;
-      --mat-sys-surface-container-highest: light-dark(#EDEDED, #353535) !important;
-      --mat-sys-outline: light-dark(#767676, #71717A) !important;
-      --mat-sys-outline-variant: light-dark(#DADADA, #3F3F46) !important;
-      --mat-sys-secondary-container: light-dark(#F0F0F0, #353535) !important;
-      --mat-sys-on-secondary-container: light-dark(#171717, #FAFAFA) !important;
+      --chat-panel-bg: var(--ot-canvas) !important;
+      --nlm-fills-surface-page: var(--ot-canvas) !important;
+      --nlm-fills-surface-panel: var(--ot-surface) !important;
+      --nlm-fills-surface-container: var(--ot-subtle) !important;
+      --nlm-fills-ui-grey-fill: var(--ot-subtle) !important;
+      --nlm-fills-ui-blue-fill: var(--ot-subtle) !important;
+      --nlm-text-body-text: var(--ot-ink) !important;
+      --nlm-text-titles-and-labels: var(--ot-ink) !important;
+      --nlm-text-secondary-text: var(--ot-muted) !important;
+      --nlm-text-ghost-text: var(--ot-faint) !important;
+      --nlm-stroke-default: var(--ot-line) !important;
+      --nlm-stroke-focus: var(--ot-line-strong) !important;
+      --nlm-ctas-buttons-primary: var(--ot-ink) !important;
+      --nlm-cta-text-and-icon-primary: var(--ot-on-ink) !important;
+      --nlm-states-on-primary-hover: light-dark(rgba(23,23,23,.06), rgba(245,245,245,.08)) !important;
+      --nlm-brand-blue: var(--ot-ink) !important;
+      --nlm-icons-blue: var(--ot-ink) !important;
+      --nlm-icons-default: var(--ot-ink) !important;
+      --mat-sys-primary: var(--ot-ink) !important;
+      --mat-sys-on-primary: var(--ot-on-ink) !important;
+      --mat-sys-surface: var(--ot-canvas) !important;
+      --mat-sys-on-surface: var(--ot-ink) !important;
+      --mat-sys-on-surface-variant: var(--ot-muted) !important;
+      --mat-sys-surface-container-low: var(--ot-surface) !important;
+      --mat-sys-surface-container: var(--ot-subtle) !important;
+      --mat-sys-surface-container-high: var(--ot-subtle) !important;
+      --mat-sys-surface-container-highest: var(--ot-subtle) !important;
+      --mat-sys-outline: var(--ot-line-strong) !important;
+      --mat-sys-outline-variant: var(--ot-line) !important;
+      --mat-sys-secondary-container: var(--ot-subtle) !important;
+      --mat-sys-on-secondary-container: var(--ot-ink) !important;
       font-family: var(--ot-sans) !important;
+      background-color: var(--ot-canvas) !important;
     }
+    html { background-color: var(--ot-canvas) !important; }
     html body textarea, html body button, html body input { font-family: var(--ot-sans) !important; }
-    ::selection { background: light-dark(rgba(23,23,23,.14), rgba(250,250,250,.22)); }
+    ::selection { background: light-dark(rgba(23,23,23,.14), rgba(245,245,245,.22)); }
+    html body ::-webkit-scrollbar { width: 8px; height: 8px; }
+    html body ::-webkit-scrollbar-thumb { background: var(--ot-line); border-radius: 8px; }
+    html body ::-webkit-scrollbar-track { background: transparent; }
 
-    /* Kolom baca: satu lebar untuk pertanyaan dan jawaban, sejajar dengan kolom tanya. */
+    /* ── Kolom baca: sejajar dengan kolom tanya ── */
     html body chat-message.individual-message {
       display: block !important;
       width: 100% !important;
@@ -78,24 +115,25 @@ const notebookSkinScript = r'''
       box-sizing: border-box !important;
     }
 
-    /* Pertanyaan pengguna: kartu bergaris tipis, bukan gelembung abu. */
+    /* ── Pertanyaan: permukaan tonal, sudut ujung bawah dirapatkan (seperti chat native) ── */
     html body .from-user-container { padding-inline-start: 0 !important; }
     html body .from-user-message-card-content {
-      background: transparent !important;
+      background: var(--ot-subtle) !important;
       box-shadow: none !important;
-      border: 1px solid var(--nlm-stroke-default) !important;
-      border-radius: 14px !important;
-      max-width: min(88%, 560px) !important;
+      border: .8px solid var(--ot-line) !important;
+      border-radius: 24px !important;
+      border-end-end-radius: 8px !important;
+      max-width: min(82%, 580px) !important;
     }
     html body .from-user-message-card-content::after { display: none !important; }
-    html body .from-user-message-inner-content { padding: 10px 14px !important; }
+    html body .from-user-message-inner-content { padding: 12px 16px !important; }
     html body .from-user-message-card-content .md3-body-text,
     html body .from-user-message-card-content p {
       font-family: var(--ot-sans) !important;
-      color: var(--nlm-text-secondary-text) !important;
+      color: var(--ot-ink) !important;
     }
 
-    /* Jawaban: teks bersambung ala naskah, tanpa kartu. */
+    /* ── Jawaban: aliran terbuka tanpa kartu ── */
     html body .to-user-message-card-content {
       background: transparent !important;
       box-shadow: none !important;
@@ -107,43 +145,177 @@ const notebookSkinScript = r'''
     html body .to-user-message-card-content .paragraph,
     html body .to-user-message-card-content .paragraph span,
     html body .to-user-message-card-content li {
-      font-family: var(--ot-serif) !important;
-      color: var(--nlm-text-body-text) !important;
+      font-family: var(--ot-sans) !important;
+      color: var(--ot-ink) !important;
+    }
+    html body .to-user-message-card-content .paragraph,
+    html body .to-user-message-card-content li {
+      font-size: calc(var(--ot-font-size, 15px) + 1px) !important;
+      line-height: 1.7 !important;
     }
     html body .to-user-message-card-content b,
-    html body .to-user-message-card-content strong {
+    html body .to-user-message-card-content strong { font-weight: 600 !important; }
+    html body .to-user-message-card-content :is(h1, h2, h3, h4) {
+      font-family: var(--ot-sans) !important;
       font-weight: 600 !important;
-      color: var(--nlm-text-titles-and-labels) !important;
+      letter-spacing: -.01em !important;
+      color: var(--ot-ink) !important;
     }
     html body .to-user-message-card-content a {
       color: inherit !important;
       text-decoration: underline !important;
+      text-decoration-color: var(--ot-line-strong) !important;
       text-underline-offset: 3px !important;
     }
-    html body .to-user-message-card-content table { border-collapse: collapse !important; }
-    html body .to-user-message-card-content th,
-    html body .to-user-message-card-content td {
-      border: 1px solid var(--nlm-stroke-default) !important;
-      padding: 8px 12px !important;
-      font-family: var(--ot-sans) !important;
+    html body .to-user-message-card-content ul { list-style-type: disc !important; }
+    html body .to-user-message-card-content ul ul { list-style-type: "–  " !important; }
+    html body .to-user-message-card-content li::marker { color: var(--ot-faint) !important; }
+
+    /* Kepala bagian ("A. JAWABAN LANGSUNG:") menjadi label kapital kecil dengan garis tipis. */
+    html body .to-user-message-card-content .paragraph.ot-section {
+      margin-top: 28px !important;
+      padding-top: 16px !important;
+      border-top: 1px solid var(--ot-line-soft) !important;
+    }
+    html body .to-user-message-card-content .paragraph.ot-section > b:first-child {
+      display: block !important;
+      margin-bottom: 8px !important;
+      font-size: 11px !important;
+      font-weight: 600 !important;
+      letter-spacing: .14em !important;
+      text-transform: uppercase !important;
+      color: var(--ot-muted) !important;
+    }
+    html body .to-user-message-card-content .paragraph.ot-section > b:first-child + span,
+    html body .to-user-message-card-content .paragraph.ot-section > .ot-gap { display: none !important; }
+
+    /* Mode jawaban ("▸Mode: Syarah Masalah") menjadi pil kecil. */
+    html body .to-user-message-card-content .paragraph.ot-mode {
+      display: inline-flex !important;
+      width: fit-content !important;
+      margin-bottom: 8px !important;
+      padding: 4px 12px !important;
+      border-radius: 999px !important;
+      background: var(--ot-subtle) !important;
+      font-size: 0 !important;
+      line-height: 1 !important;
+    }
+    html body .to-user-message-card-content .paragraph.ot-mode * { display: none !important; }
+    html body .to-user-message-card-content .paragraph.ot-mode::before {
+      content: attr(data-ot-mode);
+      font-family: var(--ot-sans);
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--ot-muted);
     }
 
-    /* Rujukan di dalam jawaban: kapsul netral. */
+    /* Ibarah Arab: lembar naskah berbingkai ganda (jadwal), dibuka dengan label "Ibarah". */
+    html body .to-user-message-card-content .ot-ibarah {
+      position: relative !important;
+      margin-block: 14px !important;
+      padding: 16px 20px 14px !important;
+      background: var(--ot-subtle) !important;
+      border-radius: 8px !important;
+      outline: 1px solid var(--ot-line) !important;
+      outline-offset: -6px !important;
+      list-style: none !important;
+      font-family: var(--ot-arabic) !important;
+      font-size: calc(var(--ot-font-size, 15px) * 1.45) !important;
+      line-height: 1.9 !important;
+      letter-spacing: 0 !important;
+      font-synthesis: none !important;
+    }
+    html body .to-user-message-card-content .ot-ibarah * {
+      font-family: var(--ot-arabic) !important;
+      font-size: inherit !important;
+      line-height: inherit !important;
+      font-synthesis: none !important;
+    }
+    /* Penanda butir bawaan Google (::before) dimatikan; label "Ibarah" menempel di tepi atas bingkai. */
+    html body .to-user-message-card-content .ot-ibarah::before {
+      content: none !important;
+      display: none !important;
+    }
+    html body .to-user-message-card-content .ot-ibarah::after {
+      content: var(--ot-label-ibarah, "Ibarah") !important;
+      position: absolute !important;
+      top: -9px !important;
+      inset-inline-start: 18px !important;
+      padding: 1px 8px !important;
+      background: var(--ot-canvas) !important;
+      border-radius: 999px !important;
+      font-family: var(--ot-sans) !important;
+      font-size: 11px !important;
+      font-weight: 600 !important;
+      line-height: 1.4 !important;
+      letter-spacing: .14em !important;
+      text-transform: uppercase !important;
+      color: var(--ot-muted) !important;
+    }
+    html body .to-user-message-card-content li.ot-ibarah-item { list-style: none !important; }
+    html body .to-user-message-card-content li.ot-ibarah-item::marker { content: "" !important; }
+
+    /* Tabel: hanya garis tipis, tanpa kotak. */
+    html body .to-user-message-card-content table { border-collapse: collapse !important; width: 100% !important; }
+    html body .to-user-message-card-content th {
+      font-family: var(--ot-sans) !important;
+      font-size: 11px !important;
+      font-weight: 600 !important;
+      letter-spacing: .08em !important;
+      text-transform: uppercase !important;
+      text-align: start !important;
+      color: var(--ot-muted) !important;
+      border: none !important;
+      border-bottom: 1px solid var(--ot-line-strong) !important;
+      padding: 8px 12px 8px 0 !important;
+    }
+    html body .to-user-message-card-content td {
+      border: none !important;
+      border-bottom: 1px solid var(--ot-line-soft) !important;
+      padding: 10px 12px 10px 0 !important;
+      vertical-align: top !important;
+      font-size: calc(var(--ot-font-size, 15px) - 1px) !important;
+    }
+
+    /* Rujukan di dalam jawaban. */
     html body [class*="citation-marker" i],
     html body [class*="citation-button" i] {
-      background: light-dark(#F0F0F0, #353535) !important;
-      color: var(--nlm-text-secondary-text) !important;
-      border: 1px solid var(--nlm-stroke-default) !important;
+      background: var(--ot-subtle) !important;
+      color: var(--ot-muted) !important;
+      border: .8px solid var(--ot-line) !important;
       border-radius: 999px !important;
       font-family: var(--ot-sans) !important;
     }
 
-    /* Tahap berpikir: satu baris tenang, tanpa ikon dan kilau Google. */
+    /* ── Tahap berpikir: lengkung bersarang menyala bergantian ── */
     html body .thinking-chain__static-icon,
     html body .thinking-chain__lottie-icon { display: none !important; }
-    html body .thinking-chain { margin-block-end: .5rem !important; }
-    html body .thinking-chain__header { padding: 2px 0 !important; border-radius: 6px !important; }
+    html body .thinking-chain { margin-block-end: 10px !important; }
+    html body .thinking-chain__header {
+      gap: 8px !important;
+      padding: 2px 0 !important;
+      border-radius: 8px !important;
+    }
     html body .thinking-chain__header:hover { background: transparent !important; }
+    html body .thinking-chain__header::before {
+      content: "";
+      flex: none;
+      width: 20px;
+      height: 20px;
+      background: var(--ot-muted);
+      -webkit-mask: var(--ot-arch-sprite) 100% 0 / 400% 100% no-repeat;
+      mask: var(--ot-arch-sprite) 100% 0 / 400% 100% no-repeat;
+    }
+    html body .thinking-chain.ot-thinking .thinking-chain__header::before {
+      background: var(--ot-ink);
+      animation: ot-arch-echo 1.5s steps(1, end) infinite;
+    }
+    @keyframes ot-arch-echo {
+      0% { -webkit-mask-position: 0 0; mask-position: 0 0; }
+      33.33% { -webkit-mask-position: 33.333% 0; mask-position: 33.333% 0; }
+      66.66% { -webkit-mask-position: 66.667% 0; mask-position: 66.667% 0; }
+      100% { -webkit-mask-position: 0 0; mask-position: 0 0; }
+    }
     html body .thinking-chain__title {
       font-size: 0 !important;
       margin-inline-start: 0 !important;
@@ -155,63 +327,120 @@ const notebookSkinScript = r'''
       content: var(--ot-label-thought, "Proses berpikir");
       font-family: var(--ot-sans);
       font-size: 13px;
-      letter-spacing: .02em;
-      color: var(--nlm-text-secondary-text);
+      font-weight: 400;
+      letter-spacing: .01em;
+      color: var(--ot-muted);
     }
     html body .thinking-chain__title.is-loading::after {
       content: var(--ot-label-thinking, "Berpikir…");
-      animation: ot-breathe 1.8s ease-in-out infinite;
+      font-style: italic;
+      color: var(--ot-ink);
     }
-    @keyframes ot-breathe { 0%, 100% { opacity: .35; } 50% { opacity: .95; } }
-    html body .thinking-chain__expand-btn { opacity: .55 !important; transform: scale(.85); }
+    html body .thinking-chain__expand-btn { opacity: .5 !important; transform: scale(.8); }
 
-    /* Elemen khas Google yang tidak perlu. */
+    /* ── Elemen khas Google yang tidak perlu ── */
     html body .date-separator,
     html body .selected-num-container,
     html body .chat-panel-top-fade,
     html body .chat-panel-bottom-fade { display: none !important; }
 
-    /* Kolom tanya. */
+    /* ── Kolom tanya: kapsul permukaan seperti chat native ── */
     html body .input-group {
-      background: var(--nlm-fills-surface-panel) !important;
-      border: 1px solid var(--nlm-stroke-default) !important;
-      border-radius: 18px !important;
-      box-shadow: none !important;
+      background: var(--ot-surface) !important;
+      border: 1.2px solid var(--ot-line) !important;
+      border-radius: 24px !important;
+      box-shadow: 0 4px 18px var(--ot-shadow) !important;
+      padding-block: 6px !important;
+      padding-inline: 14px !important;
     }
-    html body .input-group:focus-within { border-color: var(--nlm-stroke-focus) !important; outline: none !important; }
+    html body .input-group:focus-within {
+      border-color: light-dark(rgba(23,23,23,.63), rgba(245,245,245,.63)) !important;
+      outline: none !important;
+    }
     html body .query-box-input {
       font-family: var(--ot-sans) !important;
-      color: var(--nlm-text-body-text) !important;
-      caret-color: var(--nlm-text-titles-and-labels) !important;
+      font-size: 14px !important;
+      color: var(--ot-ink) !important;
+      caret-color: var(--ot-ink) !important;
     }
     html body .submit-button.nb-button-type-filled button {
-      background: var(--nlm-ctas-buttons-primary) !important;
-      color: var(--nlm-cta-text-and-icon-primary) !important;
+      background: var(--ot-ink) !important;
+      color: var(--ot-on-ink) !important;
       border-radius: 999px !important;
     }
-    html body .submit-button.nb-button-type-filled button mat-icon { color: var(--nlm-cta-text-and-icon-primary) !important; }
-    html body .submit-button.nb-button-disabled button { opacity: .28 !important; }
+    html body .submit-button.nb-button-type-filled button mat-icon { color: var(--ot-on-ink) !important; }
+    html body .submit-button.nb-button-disabled button { opacity: .25 !important; }
 
-    /* Tombol turun ke bawah. */
     html body .jump-to-bottom-button {
-      background: var(--nlm-fills-surface-panel) !important;
-      color: var(--nlm-text-titles-and-labels) !important;
-      border: 1px solid var(--nlm-stroke-default) !important;
-      box-shadow: none !important;
+      background: var(--ot-surface) !important;
+      color: var(--ot-ink) !important;
+      border: .8px solid var(--ot-line) !important;
+      box-shadow: 0 4px 18px var(--ot-shadow) !important;
     }
 
-    /* Dialog dan menu bawaan Google yang sesekali tampil: serasi dengan aplikasi. */
-    html body .mat-mdc-dialog-surface { border-radius: 20px !important; box-shadow: none !important; border: 1px solid var(--nlm-stroke-default) !important; }
-    html body .configure-user-settings-container .header-title { font-family: var(--ot-serif) !important; }
+    /* ── Dialog dan menu Google yang sesekali tampil ── */
+    html body .mat-mdc-dialog-surface {
+      background: var(--ot-surface) !important;
+      border-radius: 28px !important;
+      box-shadow: 0 8px 32px var(--ot-shadow) !important;
+    }
+    html body .configure-user-settings-container .header-title { font-weight: 600 !important; }
     html body .configure-user-settings-container .submit-button {
-      background: var(--nlm-ctas-buttons-primary) !important;
-      color: var(--nlm-cta-text-and-icon-primary) !important;
+      background: var(--ot-ink) !important;
+      color: var(--ot-on-ink) !important;
       border-radius: 999px !important;
     }
 
     /* Saat OpenTurath mengganti bahasa lewat lembar native, dialog Google tidak boleh terlihat. */
     html.ot-opening-language .cdk-overlay-container { opacity: 0 !important; pointer-events: none !important; }
   `;
+
+  const AR = /[؀-ۿݐ-ݿࢠ-ࣿﭐ-﷿ﹰ-﻿]/g;
+  const LAT = /[A-Za-z]/g;
+
+  function toggle(el, name, on) {
+    if (el.classList.contains(name) !== on) el.classList.toggle(name, on);
+  }
+
+  /* Menandai bagian jawaban lewat kelas saja; teks tidak diubah. */
+  function tagAnswers() {
+    document.querySelectorAll('.thinking-chain').forEach(chain => {
+      toggle(chain, 'ot-thinking', !!chain.querySelector('.is-loading'));
+    });
+    document.querySelectorAll('.to-user-message-card-content .paragraph').forEach(el => {
+      const text = el.textContent || '';
+      if (el.__otLen === text.length) return;
+      el.__otLen = text.length;
+
+      const ar = (text.match(AR) || []).length;
+      const la = (text.match(LAT) || []).length;
+      const ibarah = ar >= 12 && ar / (ar + la) >= 0.6 && !el.querySelector('ul, ol, li');
+      toggle(el, 'ot-ibarah', ibarah);
+      const item = el.closest('li');
+      if (item) toggle(item, 'ot-ibarah-item', ibarah && item.querySelectorAll('.paragraph').length === 1);
+
+      let section = false;
+      const head = el.firstElementChild;
+      if (!ibarah && head && head.tagName === 'B' &&
+          /^[A-Z]\.\s+[A-Z0-9 ,&'’\/()\-–]+$/.test((head.textContent || '').trim()) &&
+          head.nextElementSibling && (head.nextElementSibling.textContent || '').trim() === ':') {
+        section = true;
+      }
+      toggle(el, 'ot-section', section);
+      if (section) {
+        const gap = head.nextElementSibling.nextElementSibling;
+        if (gap && (gap.textContent || '').trim() === '') toggle(gap, 'ot-gap', true);
+      }
+
+      const mode = /^\s*[▸▶►▷]?\s*Mode\s*:\s*(.+?)\s*$/i.exec(text);
+      if (mode && !ibarah) {
+        el.setAttribute('data-ot-mode', mode[1]);
+        toggle(el, 'ot-mode', true);
+      } else {
+        toggle(el, 'ot-mode', false);
+      }
+    });
+  }
 
   function applyStyle() {
     try {
@@ -226,10 +455,16 @@ const notebookSkinScript = r'''
       const root = document.documentElement;
       root.style.setProperty('--ot-label-thinking', JSON.stringify(L.thinking));
       root.style.setProperty('--ot-label-thought', JSON.stringify(L.thought));
+      root.style.setProperty('--ot-label-ibarah', JSON.stringify(L.ibarah));
+      if (!window.__otArchSprite) window.__otArchSprite = archSprite();
+      root.style.setProperty('--ot-arch-sprite', window.__otArchSprite);
     } catch (_) {}
   }
 
-  function apply() { applyStyle(); }
+  function apply() {
+    applyStyle();
+    try { tagAnswers(); } catch (_) {}
+  }
   window.otSkinApply = apply;
   apply();
 
@@ -238,10 +473,10 @@ const notebookSkinScript = r'''
     window.__otSkinObserver = new MutationObserver(() => {
       if (queued) return;
       queued = true;
-      requestAnimationFrame(() => { queued = false; apply(); });
+      setTimeout(() => { queued = false; apply(); }, 120);
     });
     const start = () => {
-      if (document.body) window.__otSkinObserver.observe(document.body, { childList: true, subtree: true });
+      if (document.body) window.__otSkinObserver.observe(document.body, { childList: true, subtree: true, characterData: true });
       else setTimeout(start, 50);
     };
     start();

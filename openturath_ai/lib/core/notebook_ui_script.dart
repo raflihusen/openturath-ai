@@ -1,8 +1,11 @@
+import 'notebook_fonts.dart';
 import 'notebook_skin.dart';
 
 /// Conversation cleanup and explicit copy capture, restricted to NotebookLM.
-/// Ditambah kulit OpenTurath ([notebookSkinScript]) sebagai IIFE terpisah.
-const notebookUiScript = _notebookCleanupScript + notebookSkinScript;
+/// Ditambah font aplikasi ([notebookFontsScript]) dan kulit OpenTurath
+/// ([notebookSkinScript]) sebagai IIFE terpisah.
+const notebookUiScript =
+    _notebookCleanupScript + notebookFontsScript + notebookSkinScript;
 
 const _notebookCleanupScript = r'''
 (function () {

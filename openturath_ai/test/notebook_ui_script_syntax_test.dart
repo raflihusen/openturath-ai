@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:openturath_ai/core/notebook_fonts.dart';
 import 'package:openturath_ai/core/notebook_skin.dart';
 import 'package:openturath_ai/core/notebook_ui_script.dart';
 
@@ -123,6 +124,17 @@ void notebookSkinTests() {
     expect(notebookSkinScript.contains('--mat-sys-primary'), isTrue);
     expect(notebookSkinScript.contains('window.otSetOutputLanguage'), isTrue);
     expect(notebookSkinScript.contains(':has('), isFalse);
+    expect(notebookSkinScript.contains('.ot-ibarah'), isTrue);
+    expect(notebookSkinScript.contains('ot-arch-echo'), isTrue);
     expect(notebookUiScript.endsWith(notebookSkinScript), isTrue);
+  });
+
+  test('font aplikasi tertanam di halaman dan skin memakainya', () {
+    expect(notebookFontsScript.contains('font-family:"OT Outfit"'), isTrue);
+    expect(
+        notebookFontsScript.contains('font-family:"OT Scheherazade"'), isTrue);
+    expect(notebookFontsScript.contains('data:font/woff2;base64,'), isTrue);
+    expect(notebookSkinScript.contains('"OT Outfit"'), isTrue);
+    expect(notebookUiScript.contains(notebookFontsScript), isTrue);
   });
 }
