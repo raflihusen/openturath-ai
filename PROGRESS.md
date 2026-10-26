@@ -618,7 +618,7 @@ Berdasarkan `AUDIT_OPENTURATH_AI.md`, dokumen perancangan pustaka, dan keluhan k
 - **Ruang Lingkup & Latar Belakang**:
   1. *Pembaruan Fitur Terkini*:
      - Dialog Hentikan Jawaban Native: Penggantian dialog pembatalan bawaan Google dengan modal konfirmasi native OpenTurath (3 bahasa: ID, EN, AR) dengan tombol bergaya monokrom editorial serta fallback aman.
-     - Pemilihan Bahasa Jawaban Kaya: Penambahan daftar bahasa komprehensif dari dialog konfigurasi dengan pencarian real-time dan pinning 3 bahasa utama (Arab, Indonesia, Inggris) di posisi teratas.
+      - ~~Pemilihan Bahasa Jawaban Kaya (daftar bahasa penuh dari dialog konfigurasi)~~: **DIBATALKAN** lewat revert `c28529e5`. Pembacaan daftar itu membuka dialog pengaturan NotebookLM di belakang layar, dan setelahnya tab AI tampil sebagai notebook kosong ("Let's start your notebook") tanpa kulit OpenTurath. Penyebab pastinya belum dipastikan. Pemilih bahasa jawaban kembali ke 3 bahasa (Indonesia, Inggris, Arab). Biner DMG v1.0.80+81 di bawah dibangun SEBELUM revert dan masih memuat fitur ini; jangan dirilis.
      - Sinkronisasi Bahasa WebView Dinamis: Catatan kaki adab dan label WebView sinkron secara otomatis mengikuti bahasa aplikasi via `otSetLang` dan `sessionStorage`.
      - Standardisasi Token Desain: Eliminasi nilai ukuran dan warna mentah dengan token kanonikal (`OTColors`, `OTTypography`) guna menjaga kepatuhan design token guard.
   2. *Kompilasi Biner & Pembuatan DMG Installer macOS v1.0.80+81*:
