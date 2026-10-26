@@ -537,6 +537,24 @@ Berdasarkan `AUDIT_OPENTURATH_AI.md`, dokumen perancangan pustaka, dan keluhan k
        - Berkas: `/Users/apple/Downloads/ramadhan/app-release-latest.apk` (81 MB).
        - SHA-256: `65140eb441cad8dfcb6e36416d6f0b4539b0fab6f39fc561aadda26c152e2a66`.
 
+### Fasa 41: Deployment Website V7 Baru ke Domain Publik openturath.id
+- **Ruang Lingkup & Latar Belakang**:
+  1. *Pembaruan & Arsitektur Website V7*:
+     - Seluruh rancangan website V7 tiga bahasa (ID, EN, AR) dengan hero baru: *"Waktu Anda untuk memahami, bukan untuk mencari. Pencarian, serahkan kepada kami."* (`cffc261d`, `3bf908e3`).
+     - Halaman unduh baru (`/id/unduh`, `/en/unduh`, `/ar/unduh`) dengan panduan Always Allow Keychain macOS dan Install Without Scanning Google Play Protect Android (`3d632a85`).
+     - Modul *Mengenal Fikih Tahawwulat* untuk orang awam (`6e97635b`), perbandingan 6 AI nyata (`5f0dd08b`), panduan adab AI (`panduan-ai.html`), dan dokumen legal lengkap.
+  2. *Keamanan Routing & Proteksi Webhook Pembayaran*:
+     - `website/firebase.json` dilengkapi Cloud Functions rewrites resmi: `/midtrans-webhook` -> `midtransWebhook`, `/midtransWebhook` -> `midtransWebhook`, dan `/doku-webhook` -> `dokuWebhook`.
+     - Memastikan integrasi pembayaran otomatis Midtrans tidak terputus saat deploy hosting.
+  3. *Eksekusi Rilis & Sinkronisasi*:
+     - Generator `website/scripts/prepare_release.py` membangun seluruh halaman statis, memindahkan ke `website/dist/`, mempertahankan biner APK (`app-release-latest.apk`, `OpenTurath_AI.apk`, `downloads/openturath-v1.0.51.apk`), manifes, dan `.well-known/security.txt`.
+     - Deployment sukses 100% via Firebase Hosting CLI (`firebase deploy --only hosting --project open-turath`) ke target site `openturath`.
+  4. *Verifikasi Live*:
+     - `https://openturath.id` & `https://openturath.id/id/`: HTTP 200 dengan hero V7 baru aktif.
+     - `https://openturath.id/midtrans-webhook`: HTTP 400 dengan Cloud Function execution ID valid (`0eaimeh4plk0`).
+     - `https://openturath.id/app-release-latest.apk`: HTTP 200 biner APK valid.
+     - `https://openturath.id/id/unduh`: HTTP 200 halaman unduh baru aktif.
+
 ---
 
 ## 5. Agenda & Fokus Selanjutnya
@@ -544,3 +562,4 @@ Berdasarkan `AUDIT_OPENTURATH_AI.md`, dokumen perancangan pustaka, dan keluhan k
    - Pengujian live checkout QRIS Rp 1.000 di aplikasi desktop macOS dan ponsel.
 2. **Kesiapan Rilis Publik & Broadcast Update**:
    - Membuka gembok agen berikutnya secara bertahap via `manage_ota.py unlock-agent <id>`.
+

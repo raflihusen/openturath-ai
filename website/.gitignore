@@ -3,6 +3,7 @@ server/data/
 __pycache__/
 *.pyc
 .env
+.firebase/
 .DS_Store
 node_modules/
 _referensi_live/halaman/

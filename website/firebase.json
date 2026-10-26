@@ -7,6 +7,20 @@
     "ignore": [
       "**/.*"
     ],
+    "rewrites": [
+      {
+        "source": "/doku-webhook",
+        "function": "dokuWebhook"
+      },
+      {
+        "source": "/midtrans-webhook",
+        "function": "midtransWebhook"
+      },
+      {
+        "source": "/midtransWebhook",
+        "function": "midtransWebhook"
+      }
+    ],
     "headers": [
       {
         "source": "**",
