@@ -416,20 +416,21 @@ const notebookSkinScript = r'''
       caret-color: var(--ot-ink) !important;
     }
     /* Tombol kirim: lingkaran obsidian dengan panah lengkung (ciri khas arch OpenTurath).
-       Ikon ligatur Google disembunyikan; tombol berhenti (Stop) dibiarkan apa adanya. */
-    html body .submit-button.nb-button-type-filled button:not([aria-label*="Stop" i]) {
+       Ikon ligatur Google disembunyikan. Saat jawaban disusun tombol yang sama menjadi
+       tombol berhenti (kotak membulat); kliknya dicegat dan memakai dialog OpenTurath. */
+    html body .submit-button.nb-button-type-filled button {
       position: relative !important;
       background: var(--ot-ink) !important;
       color: transparent !important;
       border-radius: 999px !important;
       transition: background-color .25s ease, transform .2s cubic-bezier(.22,.61,.36,1) !important;
     }
-    html body .submit-button.nb-button-type-filled button:not([aria-label*="Stop" i]) mat-icon,
-    html body .submit-button.nb-button-type-filled button:not([aria-label*="Stop" i]) .mat-icon {
+    html body .submit-button.nb-button-type-filled button mat-icon,
+    html body .submit-button.nb-button-type-filled button .mat-icon {
       font-size: 0 !important; width: 0 !important; height: 0 !important;
       overflow: hidden !important; opacity: 0 !important;
     }
-    html body .submit-button.nb-button-type-filled button:not([aria-label*="Stop" i])::after {
+    html body .submit-button.nb-button-type-filled button::after {
       content: "";
       width: 20px;
       height: 20px;
@@ -437,21 +438,29 @@ const notebookSkinScript = r'''
       -webkit-mask: var(--ot-send-icon) center / contain no-repeat;
       mask: var(--ot-send-icon) center / contain no-repeat;
     }
-    html body .submit-button.nb-button-type-filled button:not([aria-label*="Stop" i]):active { transform: scale(.92) !important; }
-    html body .submit-button.nb-button-disabled button:not([aria-label*="Stop" i]) {
+    html body .submit-button.nb-button-type-filled button:active { transform: scale(.92) !important; }
+    html body .submit-button.nb-button-disabled button {
       background: var(--ot-subtle) !important;
       box-shadow: inset 0 0 0 .8px var(--ot-line) !important;
     }
-    html body .submit-button.nb-button-disabled button:not([aria-label*="Stop" i])::after { background: var(--ot-faint); }
-    /* Saat jawaban sedang disusun: panah diganti lengkung yang berdenyut, sama seperti status memuat. */
-    html body.ot-generating .submit-button.nb-button-type-filled button:not([aria-label*="Stop" i])::after {
-      width: 20px;
-      height: 20px;
+    html body .submit-button.nb-button-disabled button::after { background: var(--ot-faint); }
+    /* Saat jawaban sedang disusun: panah diganti kotak berhenti membulat. */
+    html body.ot-generating .submit-button.nb-button-type-filled button::after,
+    html body.ot-generating .submit-button.nb-button-disabled button::after {
+      width: 12px;
+      height: 12px;
+      border-radius: 3.5px;
       background: var(--ot-on-ink);
-      -webkit-mask: var(--ot-arch-sprite) 100% 0 / 400% 100% no-repeat;
-      mask: var(--ot-arch-sprite) 100% 0 / 400% 100% no-repeat;
-      animation: ot-arch-echo 1.5s steps(1, end) infinite;
+      -webkit-mask: none;
+      mask: none;
     }
+    html body.ot-generating .submit-button button {
+      background: var(--ot-ink) !important;
+      box-shadow: none !important;
+      cursor: pointer !important;
+    }
+    /* Selagi konfirmasi berhenti diteruskan ke halaman, dialog Google tidak boleh terlihat. */
+    html.ot-stopping .cdk-overlay-container { opacity: 0 !important; pointer-events: none !important; }
 
     /* Tombol turun ke bawah: kapsul bulat dengan panah gambar sendiri (ikon font Google tidak dipakai). */
     html body .jump-to-bottom-container,
@@ -603,7 +612,11 @@ const notebookSkinScript = r'''
     document.querySelectorAll('.thinking-chain').forEach(chain => {
       toggle(chain, 'ot-thinking', !!chain.querySelector('.is-loading'));
     });
-    if (document.body) toggle(document.body, 'ot-generating', !!document.querySelector('.thinking-chain.ot-thinking'));
+    if (document.body) {
+      const stopLabeled = [...document.querySelectorAll('.submit-button button, app-chat-input button, .chat-input-container button')]
+        .some(b => /stop|hentikan|berhenti|إيقاف/i.test(b.getAttribute('aria-label') || '') && b.offsetParent !== null);
+      toggle(document.body, 'ot-generating', !!document.querySelector('.thinking-chain.ot-thinking') || stopLabeled);
+    }
     document.querySelectorAll('.to-user-container').forEach(box => {
       const done = !!box.querySelector('chat-actions, .chat-actions');
       let row = box.querySelector(':scope > .ot-answer-actions');
@@ -734,6 +747,85 @@ const notebookSkinScript = r'''
     updateStage();
   }
   window.otSkinApply = apply;
+
+  /* Tombol berhenti: dialog "Stop generating?" milik Google diganti dialog OpenTurath.
+     Klik dicegat; aplikasi bertanya ke pengguna; bila setuju, tombol asli ditekan dan
+     dialog Google disembunyikan lalu dikonfirmasi otomatis (berdasarkan posisi tombol,
+     bukan teks, supaya tidak bergantung pada bahasa antarmuka Google). Bila apa pun
+     gagal, klik diteruskan apa adanya agar pengguna tidak terjebak. */
+  (function () {
+    if (window.__otStopGuard) return;
+    window.__otStopGuard = true;
+    const STOP_LABEL = /stop|hentikan|berhenti|إيقاف|detener|arrêter|stopp/i;
+    let busy = false;
+    let passThrough = false;
+
+    function stopButtonFrom(target) {
+      const btn = target && target.closest && target.closest('button');
+      if (!btn) return null;
+      if (btn.closest('.submit-button') && document.body.classList.contains('ot-generating')) return btn;
+      const label = btn.getAttribute('aria-label') || '';
+      if (STOP_LABEL.test(label) && btn.closest('.ot-chat-composer, app-chat-input, .chat-input-container, form')) return btn;
+      return null;
+    }
+
+    function confirmGoogleDialog(done) {
+      const root = document.documentElement;
+      const deadline = Date.now() + 2500;
+      (function tick() {
+        const dialog = document.querySelector('mat-dialog-container, .mat-mdc-dialog-container, [role="alertdialog"], [role="dialog"]');
+        const buttons = dialog ? [...dialog.querySelectorAll('button')].filter(b => b.offsetParent !== null) : [];
+        if (buttons.length >= 2) {
+          const primary = dialog.querySelector('button.mat-mdc-unelevated-button, button[class*="filled" i]') || buttons[buttons.length - 1];
+          try { primary.click(); } catch (_) {}
+          setTimeout(done, 150);
+          return;
+        }
+        if (Date.now() > deadline) { root.classList.remove('ot-stopping'); done(); return; }
+        setTimeout(tick, 40);
+      })();
+    }
+
+    function proceed(btn) {
+      const root = document.documentElement;
+      root.classList.add('ot-stopping');
+      passThrough = true;
+      try { btn.click(); } catch (_) {}
+      passThrough = false;
+      confirmGoogleDialog(() => { root.classList.remove('ot-stopping'); busy = false; });
+    }
+
+    function passUntouched(btn) {
+      passThrough = true;
+      try { btn.click(); } catch (_) {}
+      passThrough = false;
+      busy = false;
+    }
+
+    window.addEventListener('click', function (e) {
+      if (passThrough) return;
+      const btn = stopButtonFrom(e.target);
+      if (!btn) return;
+      e.preventDefault();
+      e.stopPropagation();
+      if (typeof e.stopImmediatePropagation === 'function') e.stopImmediatePropagation();
+      if (busy) return;
+      busy = true;
+      const bridge = window.flutter_inappwebview;
+      if (!bridge || typeof bridge.callHandler !== 'function') { passUntouched(btn); return; }
+      let answered = false;
+      const guard = setTimeout(() => { if (!answered) { answered = true; passUntouched(btn); } }, 120000);
+      Promise.resolve(bridge.callHandler('otStopRequested')).then(ok => {
+        if (answered) return;
+        answered = true; clearTimeout(guard);
+        if (ok === true) proceed(btn); else busy = false;
+      }).catch(() => {
+        if (answered) return;
+        answered = true; clearTimeout(guard);
+        passUntouched(btn);
+      });
+    }, true);
+  })();
   /* Dipanggil aplikasi saat bahasa aplikasi berganti: label di halaman ikut berganti
      tanpa memuat ulang. Disimpan di sessionStorage agar tahan muat ulang halaman. */
   window.otSetLang = function (code) {

@@ -2143,6 +2143,13 @@ const copyCatalog = <String, List<String>>{
   ],
   "edit": ["Edit", "Edit", "تحرير"],
   "viewBook": ["Lihat kitab", "View book", "عرض الكتاب"],
+  "stopGeneratingTitle": [
+    "Hentikan jawaban?",
+    "Stop generating?",
+    "إيقاف الإنشاء؟"
+  ],
+  "stopGeneratingConfirm": ["Hentikan", "Stop", "إيقاف"],
+  "stopGeneratingKeep": ["Lanjutkan", "Keep generating", "متابعة"],
   "outputLanguage": ["Bahasa jawaban", "Answer language", "لغة الجواب"],
   "outputLanguageHint": [
     "Jawaban akan ditulis dalam bahasa yang Anda pilih.",

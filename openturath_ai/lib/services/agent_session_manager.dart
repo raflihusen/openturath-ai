@@ -46,6 +46,7 @@ class AgentSessionTab {
       webController?.removeJavaScriptHandler(handlerName: 'otAnswerState');
       webController?.removeJavaScriptHandler(handlerName: 'otAnswerChunk');
       webController?.removeJavaScriptHandler(handlerName: 'otDismissMenu');
+      webController?.removeJavaScriptHandler(handlerName: 'otStopRequested');
     } catch (_) {}
     if (webController != null) {
       // Dispose only after the corresponding platform view has left the tree.

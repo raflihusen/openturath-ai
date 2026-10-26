@@ -179,4 +179,17 @@ void notebookSkinTests() {
     expect(notebookSkinScript.contains("sessionStorage.getItem('ot_lang')"),
         isTrue);
   });
+
+  test('tombol berhenti dicegat dan dialog Google tidak terlihat', () {
+    expect(
+        notebookSkinScript.contains("callHandler('otStopRequested')"), isTrue);
+    expect(
+        notebookSkinScript.contains('html.ot-stopping .cdk-overlay-container'),
+        isTrue);
+    // Tombol berhenti tidak lagi dikecualikan dari gaya OpenTurath.
+    expect(
+        notebookSkinScript.contains(':not([aria-label*="Stop" i])'), isFalse);
+    // Fallback: bila bridge tidak ada, klik diteruskan agar pengguna tidak terjebak.
+    expect(notebookSkinScript.contains('passUntouched'), isTrue);
+  });
 }

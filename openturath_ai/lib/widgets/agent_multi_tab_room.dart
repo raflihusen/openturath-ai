@@ -9,6 +9,7 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'ot_popup_menu.dart';
+import 'stop_generating_dialog.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -1948,6 +1949,17 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
                       ));
                     }
                   });
+                },
+              );
+              controller.addJavaScriptHandler(
+                handlerName: 'otStopRequested',
+                callback: (args) async {
+                  // Hanya tab yang sedang tampil yang boleh menampilkan dialog.
+                  if (!mounted ||
+                      AgentSessionManager.instance.activeTab != session) {
+                    return false;
+                  }
+                  return showStopGeneratingDialog(context);
                 },
               );
               controller.addJavaScriptHandler(
