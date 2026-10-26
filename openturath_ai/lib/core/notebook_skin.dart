@@ -59,6 +59,12 @@ const notebookSkinScript = r'''
     return 'url("data:image/svg+xml,' + encodeURIComponent(svg) + '")';
   }
 
+  /* Panah kirim berbentuk lengkung mihrab: batang lurus dengan ujung melengkung seperti arch logo. */
+  function sendIcon() {
+    const svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V9"/><path d="M6.5 13.5C6.5 9.6 8.9 6.4 12 5.2c3.1 1.2 5.5 4.4 5.5 8.3"/></svg>';
+    return 'url("data:image/svg+xml,' + encodeURIComponent(svg) + '")';
+  }
+
   function copyIcon() {
     const svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2.5"/><path d="M5 15V6.5A2.5 2.5 0 0 1 7.5 4H15"/></svg>';
     return 'url("data:image/svg+xml,' + encodeURIComponent(svg) + '")';
@@ -404,13 +410,43 @@ const notebookSkinScript = r'''
       color: var(--ot-ink) !important;
       caret-color: var(--ot-ink) !important;
     }
-    html body .submit-button.nb-button-type-filled button {
+    /* Tombol kirim: lingkaran obsidian dengan panah lengkung (ciri khas arch OpenTurath).
+       Ikon ligatur Google disembunyikan; tombol berhenti (Stop) dibiarkan apa adanya. */
+    html body .submit-button.nb-button-type-filled button:not([aria-label*="Stop" i]) {
+      position: relative !important;
       background: var(--ot-ink) !important;
-      color: var(--ot-on-ink) !important;
+      color: transparent !important;
       border-radius: 999px !important;
+      transition: background-color .25s ease, transform .2s cubic-bezier(.22,.61,.36,1) !important;
     }
-    html body .submit-button.nb-button-type-filled button mat-icon { color: var(--ot-on-ink) !important; }
-    html body .submit-button.nb-button-disabled button { opacity: .25 !important; }
+    html body .submit-button.nb-button-type-filled button:not([aria-label*="Stop" i]) mat-icon,
+    html body .submit-button.nb-button-type-filled button:not([aria-label*="Stop" i]) .mat-icon {
+      font-size: 0 !important; width: 0 !important; height: 0 !important;
+      overflow: hidden !important; opacity: 0 !important;
+    }
+    html body .submit-button.nb-button-type-filled button:not([aria-label*="Stop" i])::after {
+      content: "";
+      width: 18px;
+      height: 18px;
+      background: var(--ot-on-ink);
+      -webkit-mask: var(--ot-send-icon) center / contain no-repeat;
+      mask: var(--ot-send-icon) center / contain no-repeat;
+    }
+    html body .submit-button.nb-button-type-filled button:not([aria-label*="Stop" i]):active { transform: scale(.92) !important; }
+    html body .submit-button.nb-button-disabled button:not([aria-label*="Stop" i]) {
+      background: var(--ot-subtle) !important;
+      box-shadow: inset 0 0 0 .8px var(--ot-line) !important;
+    }
+    html body .submit-button.nb-button-disabled button:not([aria-label*="Stop" i])::after { background: var(--ot-faint); }
+    /* Saat jawaban sedang disusun: panah diganti lengkung yang berdenyut, sama seperti status memuat. */
+    html body.ot-generating .submit-button.nb-button-type-filled button:not([aria-label*="Stop" i])::after {
+      width: 20px;
+      height: 20px;
+      background: var(--ot-on-ink);
+      -webkit-mask: var(--ot-arch-sprite) 100% 0 / 400% 100% no-repeat;
+      mask: var(--ot-arch-sprite) 100% 0 / 400% 100% no-repeat;
+      animation: ot-arch-echo 1.5s steps(1, end) infinite;
+    }
 
     /* Tombol turun ke bawah: kapsul bulat dengan panah gambar sendiri (ikon font Google tidak dipakai). */
     html body .jump-to-bottom-container,
@@ -550,6 +586,7 @@ const notebookSkinScript = r'''
     document.querySelectorAll('.thinking-chain').forEach(chain => {
       toggle(chain, 'ot-thinking', !!chain.querySelector('.is-loading'));
     });
+    if (document.body) toggle(document.body, 'ot-generating', !!document.querySelector('.thinking-chain.ot-thinking'));
     document.querySelectorAll('.to-user-container').forEach(box => {
       const done = !!box.querySelector('chat-actions, .chat-actions');
       let row = box.querySelector(':scope > .ot-answer-actions');
@@ -629,6 +666,8 @@ const notebookSkinScript = r'''
       if (!root.style.getPropertyValue('--ot-label-thinking')) root.style.setProperty('--ot-label-thinking', JSON.stringify(L.stages[0]));
       if (!window.__otCopyIcon) window.__otCopyIcon = copyIcon();
       root.style.setProperty('--ot-copy-icon', window.__otCopyIcon);
+      if (!window.__otSendIcon) window.__otSendIcon = sendIcon();
+      root.style.setProperty('--ot-send-icon', window.__otSendIcon);
       root.style.setProperty('--ot-label-thought', JSON.stringify(L.thought));
       root.style.setProperty('--ot-label-ibarah', JSON.stringify(L.ibarah));
       if (!window.__otArchSprite) window.__otArchSprite = archSprite();
