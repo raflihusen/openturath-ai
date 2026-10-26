@@ -484,14 +484,26 @@ const notebookSkinScript = r'''
     }
 
     /* Dasar kolom tanya: rata lurus di bawah transkrip, seperti bilah input chat native. */
-    html body .ot-chat-composer-path { background-color: var(--ot-canvas) !important; border-radius: 0 !important; }
+    /* Tanpa kotak: pembungkus kolom tanya transparan, tanpa garis, bayangan, atau sudut,
+       sehingga hanya kapsul input yang terlihat di atas halaman. */
+    html body .ot-chat-composer-path,
+    html body omnibar {
+      background: transparent !important;
+      background-color: transparent !important;
+      border: 0 !important;
+      border-top: 0 !important;
+      border-radius: 0 !important;
+      box-shadow: none !important;
+      outline: 0 !important;
+    }
     html body omnibar {
       display: block !important;
-      background-color: var(--ot-canvas) !important;
       padding-top: 10px !important;
-      border-top: 1px solid var(--ot-line-soft) !important;
-      border-radius: 0 !important;
     }
+    html body .ot-chat-composer-path::before,
+    html body .ot-chat-composer-path::after,
+    html body omnibar::before,
+    html body omnibar::after { content: none !important; display: none !important; }
     html body .ot-chat-composer { margin-bottom: 4px !important; }
 
     /* Catatan kaki: menggantikan teks Google. */

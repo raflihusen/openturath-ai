@@ -151,4 +151,20 @@ void notebookSkinTests() {
     // Tombol salin tidak boleh berlabel aria "copy/salin": skrip inti menyembunyikannya.
     expect(notebookSkinScript.contains("setAttribute('aria-label'"), isFalse);
   });
+
+  test('band di sekeliling kolom tanya transparan tanpa garis dan bayangan',
+      () {
+    final start = notebookSkinScript.indexOf('Tanpa kotak:');
+    expect(start, greaterThan(0));
+    final block = notebookSkinScript.substring(start, start + 900);
+    expect(block.contains('.ot-chat-composer-path'), isTrue);
+    expect(block.contains('omnibar'), isTrue);
+    expect(block.contains('background: transparent !important'), isTrue);
+    expect(block.contains('border-top: 0 !important'), isTrue);
+    expect(block.contains('box-shadow: none !important'), isTrue);
+    expect(
+        notebookSkinScript
+            .contains('border-top: 1px solid var(--ot-line-soft)'),
+        isFalse);
+  });
 }
