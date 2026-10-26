@@ -37,6 +37,18 @@ MANIFEST_PUBLIC = os.path.join(PUBLIC_DIR, 'RELEASE_MANIFEST.json')
 
 PROJECT_ID = 'open-turath'
 
+# Bidang dokumen app_config/version yang boleh ditulis skrip ini (Android).
+# Bidang lain (mis. `platforms`) tidak disentuh.
+ANDROID_VERSION_FIELDS = (
+    'latest_version',
+    'latest_version_code',
+    'min_supported_version_code',
+    'apk_url',
+    'sha256',
+    'release_notes',
+    'updated_at',
+)
+
 def parse_args():
     parser = argparse.ArgumentParser(description='Otomasi Rilis & Broadcast Pembaruan OpenTurath AI')
     parser.add_argument('--build', action='store_true', help='Kompilasi release APK terlebih dahulu (flutter build apk --release)')
@@ -94,6 +106,11 @@ def update_firestore_version(version_name, version_code, apk_url, sha256_hash, r
         }
     }
 
+    # updateMask: hanya bidang Android milik skrip ini yang ditulis. Tanpa mask,
+    # PATCH Firestore MENGGANTI seluruh dokumen dan menghapus bidang lain,
+    # termasuk `platforms.macos` / `platforms.windows` yang dikelola terpisah.
+    url = url + "?" + "&".join(f"updateMask.fieldPaths={k}" for k in ANDROID_VERSION_FIELDS)
+
     req = urllib.request.Request(
         url,
         data=json.dumps(payload).encode('utf-8'),
@@ -108,7 +125,7 @@ def update_firestore_version(version_name, version_code, apk_url, sha256_hash, r
     try:
         with urllib.request.urlopen(req) as resp:
             data = json.loads(resp.read().decode('utf-8'))
-            print("   [OK] Firestore 'app_config/version' berhasil diperbarui!")
+            print("   [OK] Firestore 'app_config/version' berhasil diperbarui (bidang Android saja)!")
             return True
     except Exception as e:
         print(f"   [!] Gagal update Firestore via REST API: {e}")
