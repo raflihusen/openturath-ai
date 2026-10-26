@@ -530,9 +530,10 @@ Berdasarkan `AUDIT_OPENTURATH_AI.md`, dokumen perancangan pustaka, dan keluhan k
      - Mode compile-time flavor menjaga basis kode sumber tunggal tetap murni, bersih, dan kompatibel 100% dengan rilis publik.
   2. *Kompilasi Biner & Pembuatan APK Android Ganda*:
      - Seluruh test suite lolos 100%: 445/445 Flutter unit/widget tests (termasuk `test/guru_edition_test.dart` pada kedua mode).
-     - **APK Edisi Guru**:
-       - Berkas: `/Users/apple/Downloads/ramadhan/OpenTurath_AI_Edisi_Guru.apk` (80 MB).
-       - SHA-256: `2ecec4fd91472305e893445c2299c187a12ee46b3e99b20aa4031af2555d3d86`.
+     - **APK Edisi Guru (Rilis Terkini - 26 Okt 2026 09:25 WIB)**:
+       - Berkas: `/Users/apple/Downloads/ramadhan/OpenTurath_AI_Edisi_Guru.apk` (81 MB).
+       - SHA-256: `8ffab0eb5d0bb75a3f1434b29361f1473f9a7848af2907470955413dec4d4992`.
+       - Catatan Pembaruan: Memuat seluruh revisi kulit WebView OpenTurath (font naskah ganda Scheherazade/Outfit, status memuat bergilir, tombol salin jawaban, perbaikan dialog bahasa Save button, perataan kolom tanya).
      - **APK Rilis Standar v1.0.76+77**:
        - Berkas: `/Users/apple/Downloads/ramadhan/app-release-latest.apk` (81 MB).
        - SHA-256: `65140eb441cad8dfcb6e36416d6f0b4539b0fab6f39fc561aadda26c152e2a66`.
