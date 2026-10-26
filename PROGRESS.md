@@ -668,6 +668,23 @@ Berdasarkan `AUDIT_OPENTURATH_AI.md`, dokumen perancangan pustaka, dan keluhan k
 - **Verifikasi**: `dart analyze` tanpa isu baru; suite Flutter 484 tes lolos; suite functions 229 tes lolos; `tsc --noEmit` bersih; 43 tes `manage_ota.py`, 6 tes `publish_auto_update.py`, dan 8 tes `voucher_admin.py` lolos. Seluruh pekerjaan dilakukan tanpa menyentuh Firestore produksi (hanya pembacaan dan `--dry-run`).
 - **BELUM DILAKUKAN (menunggu perintah Pemilik, sesuai Aturan 3)**: dokumen `app_config/features` belum dibuat; Cloud Functions belum di-deploy sehingga kunci server belum berlaku; belum ada build/rilis/siaran update. Hasil `verify-release` terhadap produksi saat ini: Android build 52 (jauh di bawah aplikasi build 83) dan macOS build 68 dengan berkas DMG 404; jalur update aplikasi belum berfungsi sampai dokumen versi dan berkas diperbaiki.
 
+### Fasa 51: Deployment Website V7 Baru & Distribusi APK Turbo 29MB ke openturath.id (`cd5003f9`)
+- **Ruang Lingkup & Latar Belakang**:
+  1. *Sinkronisasi Data & Kompilasi Website V7*:
+     - Perbaikan dependensi data `pengantar_tahawwulat.json` pada `website/redesign-v7/build.py` ke `website/content/`.
+     - Pembangunan ulang 17 halaman statis V7 dalam 3 bahasa (ID, EN, AR) menyerap seluruh perampingan slide 32 Mengenal Tahawwulat dan pembersihan tombol percakapan asli.
+  2. *Integrasi Biner APK Turbo 29MB*:
+     - Modifikasi `website/scripts/prepare_release.py` agar otomatis membaca APK root terbaru `app-release-latest.apk` (29.2 MB / 29.166.545 bytes, SHA-256 `78ad843d162dd818f02538f2b2c455118c47b7323b283d67f19167976f414cd3`) dan menyelaraskan `RELEASE_MANIFEST.json` versi `1.0.82+83`.
+     - Menggantikan berkas lama berukuran 80MB di `website/dist` dan `openturath_ai/public`.
+  3. *Eksekusi Deployment Firebase Hosting*:
+     - Menjalankan `firebase deploy --only hosting --project open-turath` mengunggah 285 berkas ke situs target `openturath`.
+     - Proteksi webhook Cloud Functions (`/midtrans-webhook`, `/doku-webhook`) tetap terjaga utuh.
+  4. *Verifikasi Live Online*:
+     - `https://openturath.id` & `/id`: HTTP 200 OK aktif.
+     - `https://openturath.id/app-release-latest.apk`: HTTP 200 OK biner APK valid (29.2 MB).
+     - `https://openturath.id/RELEASE_MANIFEST.json`: HTTP 200 OK manifes sinkron versi `1.0.82+83`.
+     - `https://openturath.id/midtrans-webhook`: HTTP 400 dengan Cloud Function execution ID valid (`jd7nd1imkvv9`).
+
 ---
 
 ## 5. Agenda & Fokus Selanjutnya
