@@ -272,7 +272,9 @@ def branches_html():
 # ======================= BERANDA =======================
 def page_home():
     CHK = ic("check")
-    h1 = L('<span class="tl">Menjaga warisan,</span> <span class="tl">membuka cakrawala.</span>', '<span class="tl">Rooted in heritage.</span> <span class="tl">Open to new horizons.</span>', "ذكاء اصطناعي إسلامي قائم على التراث")
+    h1 = L('<span class="tl">Waktu Anda untuk memahami, bukan untuk mencari.</span><span class="hero-sub">Pencarian, serahkan kepada kami.</span>',
+           '<span class="tl">Your time is for understanding, not for searching.</span><span class="hero-sub">Leave the searching to us.</span>',
+           '<span class="tl">وقتك للفهم، لا للبحث.</span><span class="hero-sub">اترك البحث لنا.</span>')
     lede = L("OpenTurath AI menemani penuntut ilmu membaca kitab. Anda bertanya, ia menjelaskan, lalu menunjukkan ibarah dan rujukannya dari kitab serta ceramah para ulama.",
              "OpenTurath AI keeps seekers of knowledge company as they read. You ask, it explains, then points you to the passage and its source in the books and lectures of the scholars.",
              "يرافق OpenTurath AI طالب العلم في قراءة الكتب: تسأل فيشرح، ثم يدلّك على العبارة ومرجعها في كتب العلماء ومحاضراتهم.")
@@ -280,7 +282,7 @@ def page_home():
 <section class="welcome" id="hero"><canvas id="ring" aria-hidden="true"></canvas>
 <p class="eyebrow-brand rv">{L("AI for Islamic Scholarship","AI for Islamic Scholarship","الذكاء الاصطناعي للعلوم الإسلامية")}</p>
 <div class="hero-mark rv">{mark(50)}</div>
-<h1 class="hero rv d1">{h1}</h1>
+<h1 class="hero hero-wide rv d1">{h1}</h1>
 <p class="lede rv d2">{lede}</p>
 <div class="cta-row rv d3"><a class="btn primary" href="unduh.html">{ic("download")}{L("Unduh aplikasi","Download the app","تحميل التطبيق")}</a><a class="btn tonal" href="cara-kerja.html">{L("Lihat cara kerja","See how it works","شاهد كيف يعمل")}</a></div>
 <div class="meta-row rv d3"><span>{CHK}{L("Ditinjau para ulama","Reviewed by scholars","مراجَع من العلماء")}</span><span>{CHK}{L("Dipilih dengan manhaj wasathiyyah syar'iyyah","Curated by the manhaj of al-wasatiyya al-shar'iyya","مُنتقى وفق منهج الوسطية الشرعية")}</span><span>{CHK}{L("Rujukan bisa dicek ke kitabnya","References you can check in the book","مراجع يمكن التحقق منها في الكتاب")}</span></div>
