@@ -77,6 +77,16 @@ class TahawwulatHeroSurface extends StatelessWidget {
                 child: ExcludeSemantics(
                     child: CustomPaint(painter: _QuietFoldsPainter()))),
             Padding(padding: padding, child: child),
+            // Garis tepi tipis di atas isi: di mode gelap kartu nyaris sewarna
+            // dengan latar, sehingga sudut membulatnya hilang tanpa ini.
+            Positioned.fill(
+                child: IgnorePointer(
+                    child: DecoratedBox(
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(radius),
+                            border: Border.all(
+                                color: OTExpressive.white
+                                    .withValues(alpha: 0.22)))))),
           ])));
 }
 

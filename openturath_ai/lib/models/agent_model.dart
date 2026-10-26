@@ -66,7 +66,8 @@ class AgentModel {
         _subtitleAcademic = subtitleAcademic;
 
   bool get isActive => AppConfig.isGuruEdition || status == 'active';
-  bool get isComingSoon => AppConfig.isGuruEdition ? false : status == 'coming_soon';
+  bool get isComingSoon =>
+      AppConfig.isGuruEdition ? false : status == 'coming_soon';
   bool get isLocked => isComingSoon;
 
   AgentModel copyWith({

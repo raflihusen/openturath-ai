@@ -9,6 +9,7 @@ import '../core/design/ot_motion.dart';
 import '../core/scholarly_fonts.dart';
 import '../core/app_copy.dart';
 import '../widgets/payment_success_dialog.dart';
+import '../widgets/promo_hourglass.dart';
 import '../core/design/ot_colors.dart';
 import '../core/design/ot_expressive.dart';
 import '../core/design/ot_spacing.dart';
@@ -265,9 +266,20 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     bool exclusive = false,
   }) {
     final dark = Theme.of(context).brightness == Brightness.dark;
-    final fg = inverse ? OTColors.onInverted(dark) : OTColors.textPrimary(dark);
-    final sub =
-        inverse ? OTColors.onInvertedMuted(dark) : OTColors.textSecondary(dark);
+    // Paket utama: terbalik (hitam di atas terang) di mode terang. Di mode
+    // gelap tetap hitam, tidak putih yang menyilaukan; ia dibedakan oleh
+    // garis tepi terang dan kilau lembut dari sudut kiri atas.
+    final darkFeatured = inverse && dark;
+    final fg = darkFeatured
+        ? OTColors.textPrimary(dark)
+        : inverse
+            ? OTColors.onInverted(dark)
+            : OTColors.textPrimary(dark);
+    final sub = darkFeatured
+        ? OTColors.textSecondary(dark)
+        : inverse
+            ? OTColors.onInvertedMuted(dark)
+            : OTColors.textSecondary(dark);
     final line = inverse ? fg.withValues(alpha: 0.18) : OTColors.border(dark);
     final pad = wide ? OTSpacing.xxl : OTSpacing.xl;
     final ar = Loc.isArabic;
@@ -298,9 +310,25 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     return Container(
       padding: EdgeInsets.all(pad),
       decoration: BoxDecoration(
-        color: inverse ? OTColors.inverted(dark) : OTColors.surface(dark),
+        color: darkFeatured
+            ? OTColors.canvas(dark)
+            : inverse
+                ? OTColors.inverted(dark)
+                : OTColors.surface(dark),
+        gradient: darkFeatured
+            ? LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [fg.withValues(alpha: 0.12), fg.withValues(alpha: 0)],
+                stops: const [0, 0.55],
+              )
+            : null,
         borderRadius: BorderRadius.circular(OTRadius.hero),
-        border: inverse ? null : Border.all(color: line),
+        border: darkFeatured
+            ? Border.all(color: fg.withValues(alpha: 0.85), width: 1.5)
+            : inverse
+                ? null
+                : Border.all(color: line),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -382,7 +410,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
             height: 52,
             child: FilledButton(
               onPressed: (_processing || !_pricingReady) ? null : onCheckout,
-              style: inverse ? OTButtons.onInverse(dark) : null,
+              style: inverse && !dark ? OTButtons.onInverse(dark) : null,
               child: Text(Loc.tr(active ? 'planRenew' : 'planContinue')),
             ),
           ),
@@ -467,9 +495,13 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     VoidCallback? onTap,
   }) {
     final dark = Theme.of(context).brightness == Brightness.dark;
-    final fg = inverse ? OTColors.onInverted(dark) : OTColors.textPrimary(dark);
-    final sub =
-        inverse ? OTColors.onInvertedMuted(dark) : OTColors.textSecondary(dark);
+    final onFeaturedDark = inverse && dark;
+    final fg = inverse && !onFeaturedDark
+        ? OTColors.onInverted(dark)
+        : OTColors.textPrimary(dark);
+    final sub = inverse && !onFeaturedDark
+        ? OTColors.onInvertedMuted(dark)
+        : OTColors.textSecondary(dark);
     return Material(
       color: inverse ? fg.withValues(alpha: 0.1) : OTColors.surfaceSubtle(dark),
       borderRadius: BorderRadius.circular(OTRadius.input),
@@ -791,8 +823,6 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                   Loc.tr('planFeaturedBenefit1'),
                   Loc.tr('planFeaturedBenefit3'),
                   Loc.tr('planFeaturedBenefit4'),
-                  Loc.tr('planSingleBenefit3'),
-                  Loc.tr('planSingleBenefit4'),
                 ],
                 onCheckout: () => _checkout(flagship, flagshipOffer),
                 agentId: flagship.id,
@@ -821,9 +851,6 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                         Loc.tr(
                             'planSingleBenefit1', [Loc.text(selected.title)]),
                         Loc.tr('planSingleBenefit2'),
-                        Loc.tr('planSingleBenefit3'),
-                        Loc.tr('planSingleBenefit4'),
-                        Loc.tr('planSingleBenefit5'),
                       ],
                       onCheckout: () => _checkout(selected, singleOffer),
                       agentId: selected.id,
@@ -1098,6 +1125,13 @@ class _PromoCountdownBannerState extends State<_PromoCountdownBanner> {
         ? promoStartUtc.difference(nowUtc)
         : (isEnded ? Duration.zero : promoEndUtc.difference(nowUtc));
 
+    // Bagian pasir yang masih di atas: penuh sebelum promo, habis di akhir.
+    final window = promoEndUtc.difference(promoStartUtc).inSeconds;
+    final sand =
+        isBeforeStart ? 1.0 : (isEnded ? 0.0 : remaining.inSeconds / window);
+    final hourglass =
+        PromoHourglass(remaining: sand, color: OTExpressive.white, height: 48);
+
     final days = remaining.inDays;
     final hours = remaining.inHours % 24;
     final minutes = remaining.inMinutes % 60;
@@ -1173,13 +1207,15 @@ class _PromoCountdownBannerState extends State<_PromoCountdownBanner> {
                             fit: BoxFit.scaleDown,
                             alignment: AlignmentDirectional.centerEnd,
                             child: digits))),
+                const SizedBox(width: 20),
+                hourglass,
               ],
             );
           }
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              titleBlock,
+              Row(children: [Expanded(child: titleBlock), hourglass]),
               const SizedBox(height: 12),
               FittedBox(fit: BoxFit.scaleDown, child: digits),
             ],
