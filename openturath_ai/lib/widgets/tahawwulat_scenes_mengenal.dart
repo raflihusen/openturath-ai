@@ -243,10 +243,10 @@ Map<String, SceneDef> scenesMengenal() => {
       // Empat bukti: tiap bukti menyalakan satu segmen, bernomor dan bernama.
       'm12': SceneDef(3.2, () {
         final names = [
-          L3('Dinamai Nabi', 'Named by the Prophet', 'سمّاه النبي'),
+          L3('Dinamai Nabi', 'Named by him ﷺ', 'سمّاه النبي'),
           L3('Dijawab rinci', 'Answered fully', 'أُجيب تفصيلًا'),
-          L3('Ditanya Jibril', 'Asked by Jibril', 'سأل عنه جبريل'),
-          L3('Sepakat ahli hadis', 'Hadith scholars agree', 'اتفق المحدّثون'),
+          L3('Ditanya Jibril', 'Asked by Jibril', 'سأل جبريل'),
+          L3('Sepakat ulama', 'Scholars agree', 'اتفق العلماء'),
         ];
         const xs = [14.0, 38.0, 62.0, 86.0];
         return [
@@ -263,8 +263,7 @@ Map<String, SceneDef> scenesMengenal() => {
           for (var i = 0; i < 4; i++) ...[
             _seg(i, 50, 34, 26, 9, t: 0.4 + i * 0.6, d: 0.3),
             Ck(xs[i], 45, 2.4, t: 0.8 + i * 0.6, d: 0.3),
-            T('${i + 1}  ${names[i]}', xs[i], 51,
-                t: 0.8 + i * 0.6, d: 0.3, size: 3.0),
+            T(names[i], xs[i], 51, t: 0.8 + i * 0.6, d: 0.3, size: 2.8),
           ],
         ];
       }, alt: 'Empat bukti menyalakan empat segmen bernomor'),
@@ -660,7 +659,7 @@ Map<String, SceneDef> scenesMengenal() => {
           for (var i = 0; i < 5; i++) ...[
             B(xs[i], 26, 16.5, 22, r: 3, t: i * 0.3, d: 0.4, dy: 6),
             D(xs[i], 19, r: 1.3, t: 0.2 + i * 0.3, d: 0.3),
-            T(names[i], xs[i], 29, t: 0.3 + i * 0.3, d: 0.3, size: 3.0),
+            T(names[i], xs[i], 29, t: 0.3 + i * 0.3, d: 0.3, size: 2.5),
           ],
           L(8, 47, 92, 47, t: 1.9, d: 0.6, tone: 0.5),
           Op(Sk.stack, 50, 53, w: 18, h: 2.4, t: 2.3, d: 0.3),

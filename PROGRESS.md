@@ -639,6 +639,15 @@ Berdasarkan `AUDIT_OPENTURATH_AI.md`, dokumen perancangan pustaka, dan keluhan k
      - Pembuatan DMG installer `OpenTurath_AI_macOS.dmg` (61.7 MB, format UDZO terkompresi) via `tool/package_macos.sh`.
      - Verifikasi checksum SHA-256: `a10779f3dbe28f36126a2674541af12301aa4d95165e31e3c5b8409279b8f7df`.
 
+### Fasa 48: Perampingan "Mengenal Fikih Tahawwulat" & Adegan Animasi Baru (`7baa568a`, `ff4b257a`)
+- **Latar Belakang**: Audit menemukan deck 84 slide (sekitar 4.600 kata, 23 menit baca) terlalu berat untuk judul "mengenal": definisi baru muncul di slide 40, Bab 4 memuat katalog istilah teknis (*Nawaqidh*, *Mudhillat al-Fitan*, empat alam, dst.), dan banyak adegan animasi abstrak yang tidak menjelaskan isi slide.
+- **Perubahan**:
+  1. *Deck ringkas 32 slide (sekitar 8 menit baca)*: `website/redesign-v7/slides_ringkas.py` merakit `assets/data/slides_mengenal.json` dari sumber lengkap `slides_mengenal_lengkap.json` (84 slide, tetap disimpan; dibuat `slides_naskah.py`). Teks tiap slide diambil apa adanya termasuk terjemahan EN/AR; hanya tiga slide yang dirakit (gabungan dua slide, peta lima cabang berisi nama saja, dan satu slide lima asisten). Bab 4 dipangkas dari 14 ke 3 slide dan Bab 2 dari 19 ke 4 slide. Konten sensitif dibiarkan sesuai keputusan Pemilik.
+  2. *32 adegan baru `m01`-`m32`* (`tahawwulat_scenes_mengenal.dart`): adegan yang sudah jelas dipakai ulang; yang kabur diganti dengan adegan berlabel (tatanan terbalik vs lomba bangunan, waktu rahasia Allah vs tanda yang diajarkan, sensasional vs tenang, tiga ciri, peta lima cabang bernama, lima kartu asisten, tiga langkah mulai). Adegan jaring konspirasi, neraca sains, dan tiga garis tanpa makna dibuang. Tombol "Mulai bertanya" kini mengikuti penanda `end` pada slide, bukan kunci adegan lama.
+  3. *Pengarsipan*: sheet pengantar 68 slide, JSON, video 14,8 MB, empat berkas adegan lama, dan tesnya dipindah ke `_archive_offline/tahawwulat_pengantar_68_slide_2026-10-26/` (folder ini di-`.gitignore`, jadi arsip hanya ada di mesin lokal dan riwayat git). Aset `assets/video/` dan dependensi `video_player` dihapus.
+- **Verifikasi**: `dart analyze` tanpa isu baru, suite penuh 462 tes lolos, termasuk `tahawwulat_deck_test.dart` baru (jumlah slide, setiap slide punya adegan, EN/AR sebentuk, hanya slide terakhir bertombol). Adegan dirender dan ditinjau di tiga bahasa.
+- **Belum diverifikasi**: gerak dan tempo animasi di aplikasi yang berjalan (render hanya satu frame per 25/50/75/100%), dan belum ada build/DMG baru untuk perubahan ini.
+
 ---
 
 ## 5. Agenda & Fokus Selanjutnya
