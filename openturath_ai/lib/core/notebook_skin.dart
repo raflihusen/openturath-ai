@@ -61,7 +61,7 @@ const notebookSkinScript = r'''
 
   /* Panah kirim berbentuk lengkung mihrab: batang lurus dengan ujung melengkung seperti arch logo. */
   function sendIcon() {
-    const svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V9"/><path d="M6.5 13.5C6.5 9.6 8.9 6.4 12 5.2c3.1 1.2 5.5 4.4 5.5 8.3"/></svg>';
+    const svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19.5V8"/><path d="M6.5 12.5C8.8 11 10.8 8.6 12 5.5c1.2 3.1 3.2 5.5 5.5 7"/></svg>';
     return 'url("data:image/svg+xml,' + encodeURIComponent(svg) + '")';
   }
 
@@ -426,8 +426,8 @@ const notebookSkinScript = r'''
     }
     html body .submit-button.nb-button-type-filled button:not([aria-label*="Stop" i])::after {
       content: "";
-      width: 18px;
-      height: 18px;
+      width: 20px;
+      height: 20px;
       background: var(--ot-on-ink);
       -webkit-mask: var(--ot-send-icon) center / contain no-repeat;
       mask: var(--ot-send-icon) center / contain no-repeat;
