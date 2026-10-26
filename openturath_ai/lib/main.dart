@@ -20,6 +20,7 @@ import 'screens/subscription_screen.dart';
 import 'screens/google_session_auth_screen.dart';
 import 'screens/book_catalog_screen.dart';
 import 'screens/book_detail_screen.dart';
+import 'screens/hadith_takhrij_workspace_screen.dart';
 import 'models/book_model.dart';
 import 'models/agent_model.dart';
 import 'firebase_options.dart';
@@ -272,6 +273,13 @@ class OpenTurathApp extends StatelessWidget {
                       final book =
                           settings.arguments as CanonicalBookPresentation;
                       page = BookDetailScreen(book: book);
+                      break;
+                    case AppRoutes.hadithTakhrijWorkspace:
+                      page = HadithTakhrijWorkspaceScreen(
+                        initialHadithUri: settings.arguments is String
+                            ? settings.arguments as String
+                            : null,
+                      );
                       break;
                     default:
                       page = const SplashScreen();

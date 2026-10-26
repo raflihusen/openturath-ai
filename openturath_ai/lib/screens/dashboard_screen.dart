@@ -618,6 +618,54 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                     },
                                   )),
                           const SizedBox(height: 12),
+                          OTBentoTile(
+                            padding: const EdgeInsets.all(OTSpacing.lg),
+                            onTap: () => NavigationGuard.safePushNamed(
+                              context,
+                              AppRoutes.hadithTakhrijWorkspace,
+                            ),
+                            semanticLabel:
+                                'Meja Telaah Hadis & Takhrij Ribuan Kitab',
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        'TAKHRIJ UNIVERSAL · 27 KAIDAH HARF',
+                                        style: OTTypography.sectionHeading(
+                                          color: textSecondary,
+                                        ),
+                                      ),
+                                      OTSpacing.gapXs,
+                                      Text(
+                                        'Meja Telaah Hadis & Tasyjīr Sanad (Ribuan Kitab)',
+                                        style: OTTypography.cardTitle(
+                                          color: textPrimary,
+                                        ),
+                                      ),
+                                      OTSpacing.gapXs,
+                                      Text(
+                                        'Rekonstruksi algoritmik Jāmi‘ Khādim al-Ḥaramayn: Muqāranat al-Mutūn, Al-Matn al-Mujamma‘, Pohon Sanad, & Takhrij Makalah.',
+                                        style: OTTypography.caption(
+                                          color: textSecondary,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Icon(
+                                  Icons.account_tree_outlined,
+                                  size: 22,
+                                  color: textPrimary,
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: 12),
                           const _RecentNoteTile(),
                           const SizedBox(height: 12),
                           const _LibraryNumbersTile(),
