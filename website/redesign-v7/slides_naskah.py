@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""Menyusun assets/data/slides_mengenal.json dari naskah Mengenal Fikih Tahawwulat.
+"""Menyusun slides_mengenal_lengkap.json (84 slide, ID/EN/AR) dari naskah Mengenal Fikih Tahawwulat.
+Deck ringkas untuk aplikasi dibuat oleh slides_ringkas.py dari berkas ini.
 
 Sumber: naskah_tahawwulat_blocks.json (hasil penguraian naskah storyboard
 84 slide milik Pemilik; slide 55-57 dan 69 memang sengaja dihapus Pemilik,
@@ -11,7 +12,7 @@ import re
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
-OUT = HERE.parent.parent / "openturath_ai" / "assets" / "data" / "slides_mengenal.json"
+OUT = HERE / "slides_mengenal_lengkap.json"  # sumber lengkap 84 slide; deck app dibuat slides_ringkas.py
 SRC = json.loads((HERE / "naskah_tahawwulat_blocks.json").read_text("utf8"))
 
 BAB = [
