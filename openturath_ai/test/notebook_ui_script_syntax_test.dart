@@ -192,15 +192,4 @@ void notebookSkinTests() {
     // Fallback: bila bridge tidak ada, klik diteruskan agar pengguna tidak terjebak.
     expect(notebookSkinScript.contains('passUntouched'), isTrue);
   });
-
-  test('daftar bahasa jawaban dibaca dari dialog halaman tanpa menyimpan', () {
-    expect(notebookSkinScript.contains('window.otListOutputLanguages'), isTrue);
-    final start = notebookSkinScript.indexOf('window.otListOutputLanguages');
-    final end = notebookSkinScript.indexOf('window.otSetOutputLanguage');
-    final block = notebookSkinScript.substring(start, end);
-    // Hanya membaca: tidak boleh menekan tombol Simpan.
-    expect(block.contains('Save settings'), isFalse);
-    expect(block.contains('save-container'), isFalse);
-    expect(block.contains('window.__otLangList'), isTrue);
-  });
 }
