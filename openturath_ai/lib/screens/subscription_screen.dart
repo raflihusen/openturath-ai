@@ -9,7 +9,6 @@ import '../core/design/ot_motion.dart';
 import '../core/scholarly_fonts.dart';
 import '../core/app_copy.dart';
 import '../widgets/payment_success_dialog.dart';
-import '../widgets/promo_hourglass.dart';
 import '../core/design/ot_colors.dart';
 import '../core/design/ot_expressive.dart';
 import '../core/design/ot_spacing.dart';
@@ -1073,13 +1072,10 @@ class _PeriodSwitch extends StatelessWidget {
   }
 }
 
-/// Banner hitung mundur penawaran perdana 10 hari yang dimulai Senin,
-/// 26 Oktober 2026 pukul 12:00 WIB (05:00 UTC) dan berakhir Kamis,
-/// 5 November 2026 pukul 12:00 WIB.
-///
-/// Desain solid red 100% opacity (tanpa pengurangan transparansi) dengan
-/// tipografi putih bersih dan tata letak ultra-minimalis, selaras dengan
-/// bahasa desain scholarly.
+/// Banner hitung mundur penawaran perdana 10 hari: hanya angka, selebar pil
+/// pilihan periode. Hitungan mulai berjalan Senin, 26 Oktober 2026 pukul
+/// 20:00 WIB (13:00 UTC) dan berakhir tepat 10 hari kemudian. Sebelum mulai,
+/// angka diam di 10 hari penuh; setelah berakhir, semuanya nol.
 class PromoCountdownBanner extends StatefulWidget {
   const PromoCountdownBanner({super.key, this.clock});
 
@@ -1096,11 +1092,11 @@ typedef _PromoCountdownBanner = PromoCountdownBanner;
 class _PromoCountdownBannerState extends State<_PromoCountdownBanner> {
   Timer? _timer;
 
-  // Mulai: Senin, 26 Oktober 2026, 12:00 WIB (UTC+7) = 05:00:00 UTC
-  static final DateTime promoStartUtc = DateTime.utc(2026, 10, 26, 5, 0, 0);
+  // Mulai: Senin, 26 Oktober 2026, 20:00 WIB (UTC+7) = 13:00:00 UTC
+  static final DateTime promoStartUtc = DateTime.utc(2026, 10, 26, 13, 0, 0);
 
-  // Berakhir (10 hari kemudian): Kamis, 5 November 2026, 12:00 WIB = 05:00:00 UTC
-  static final DateTime promoEndUtc = DateTime.utc(2026, 11, 5, 5, 0, 0);
+  // Berakhir (10 hari kemudian): Kamis, 5 November 2026, 20:00 WIB = 13:00:00 UTC
+  static final DateTime promoEndUtc = DateTime.utc(2026, 11, 5, 13, 0, 0);
 
   @override
   void initState() {
@@ -1118,142 +1114,51 @@ class _PromoCountdownBannerState extends State<_PromoCountdownBanner> {
 
   @override
   Widget build(BuildContext context) {
-    Loc.watch(context);
     final nowUtc = (widget.clock?.call() ?? DateTime.now()).toUtc();
-    final isBeforeStart = nowUtc.isBefore(promoStartUtc);
-    final isEnded = nowUtc.isAfter(promoEndUtc);
+    final Duration remaining = nowUtc.isBefore(promoStartUtc)
+        ? promoEndUtc.difference(promoStartUtc)
+        : (nowUtc.isAfter(promoEndUtc)
+            ? Duration.zero
+            : promoEndUtc.difference(nowUtc));
 
-    // Sebelum mulai: menuju Jumat 12:00 WIB. Berlangsung: 10 hari hingga
-    // Senin 12:00 WIB. Setelah selesai: nol.
-    final Duration remaining = isBeforeStart
-        ? promoStartUtc.difference(nowUtc)
-        : (isEnded ? Duration.zero : promoEndUtc.difference(nowUtc));
+    String two(int v) => v.toString().padLeft(2, '0');
+    final text = '${two(remaining.inDays)} : ${two(remaining.inHours % 24)} : '
+        '${two(remaining.inMinutes % 60)} : ${two(remaining.inSeconds % 60)}';
 
-    // Bagian pasir yang masih di atas: penuh sebelum promo, habis di akhir.
-    final window = promoEndUtc.difference(promoStartUtc).inSeconds;
-    final sand =
-        isBeforeStart ? 1.0 : (isEnded ? 0.0 : remaining.inSeconds / window);
-    final hourglass =
-        PromoHourglass(remaining: sand, color: OTExpressive.white, height: 48);
-
-    final days = remaining.inDays;
-    final hours = remaining.inHours % 24;
-    final minutes = remaining.inMinutes % 60;
-    final seconds = remaining.inSeconds % 60;
-
-    final headerTitle = Loc.tr(isBeforeStart
-        ? 'promoHeadBefore'
-        : (isEnded ? 'promoHeadEnded' : 'promoHeadLive'));
-    final bottomCaption = Loc.tr(isBeforeStart
-        ? 'promoCapBefore'
-        : (isEnded ? 'promoCapEnded' : 'promoCapLive'));
-
-    // Warna merah solid tanpa transparansi, sesuai keputusan desain peluncuran.
-    const solidRedBg = OTColors.errorLight;
-
-    // Satu baris tenang: angka tebal, satuan kecil di sampingnya.
-    final digits = Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        _unit(days, Loc.tr('promoUnitDays')),
-        _unit(hours, Loc.tr('promoUnitHours')),
-        _unit(minutes, Loc.tr('promoUnitMins')),
-        _unit(seconds, Loc.tr('promoUnitSecs'), last: true),
-      ],
-    );
-    final titleBlock = Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Text(
-          headerTitle,
-          style: ScholarlyFonts.outfit(
-            fontSize: OTFontSize.s11,
-            fontWeight: FontWeight.w700,
-            letterSpacing: 1.2,
-            color: OTExpressive.white,
-          ),
-        ),
-        const SizedBox(height: 6),
-        Text(
-          bottomCaption,
-          style: ScholarlyFonts.outfit(
-            fontSize: OTFontSize.s11,
-            fontWeight: FontWeight.w400,
-            color: OTExpressive.white.withValues(alpha: 0.85),
-          ),
-        ),
-      ],
-    );
-
-    return Semantics(
-      container: true,
-      label: '$headerTitle, $days ${Loc.tr('promoUnitDays')}, '
-          '$hours ${Loc.tr('promoUnitHours')}, $minutes ${Loc.tr('promoUnitMins')}',
-      child: Container(
-        decoration: BoxDecoration(
-          color: solidRedBg,
-          borderRadius: BorderRadius.circular(OTRadius.card),
-        ),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        // Lebar: judul di kiri, angka di kanan, satu baris pendek.
-        // Sempit: judul lalu angka, rata kiri.
-        child: LayoutBuilder(builder: (context, box) {
-          if (box.maxWidth >= 560) {
-            return Row(
-              children: [
-                Expanded(child: titleBlock),
-                const SizedBox(width: 16),
-                Flexible(
-                    child: Align(
-                        alignment: AlignmentDirectional.centerEnd,
-                        child: FittedBox(
-                            fit: BoxFit.scaleDown,
-                            alignment: AlignmentDirectional.centerEnd,
-                            child: digits))),
-                const SizedBox(width: 20),
-                hourglass,
-              ],
-            );
-          }
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(children: [Expanded(child: titleBlock), hourglass]),
-              const SizedBox(height: 12),
-              FittedBox(fit: BoxFit.scaleDown, child: digits),
-            ],
-          );
-        }),
-      ),
-    );
-  }
-
-  Widget _unit(int value, String label, {bool last = false}) {
-    return Padding(
-      padding: EdgeInsetsDirectional.only(end: last ? 0 : 12),
-      child: Text.rich(
-        TextSpan(children: [
-          TextSpan(
-            text: value.toString().padLeft(2, '0'),
-            style: ScholarlyFonts.outfit(
-              textStyle:
-                  const TextStyle(fontFeatures: [FontFeature.tabularFigures()]),
-              fontSize: OTFontSize.s18,
-              fontWeight: FontWeight.w700,
-              color: OTExpressive.white,
+    // Selebar pil 1/6/12 Bulan (maks 440), di tengah.
+    return Center(
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 440),
+        child: Semantics(
+          container: true,
+          label: text,
+          child: ExcludeSemantics(
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+              decoration: BoxDecoration(
+                // Merah solid tanpa transparansi, sesuai keputusan desain peluncuran.
+                color: OTColors.errorLight,
+                borderRadius: OTRadius.chipBorder,
+              ),
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(
+                  text,
+                  maxLines: 1,
+                  style: ScholarlyFonts.outfit(
+                    textStyle: const TextStyle(
+                        fontFeatures: [FontFeature.tabularFigures()]),
+                    fontSize: OTFontSize.s22,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 0.5,
+                    color: OTExpressive.white,
+                  ),
+                ),
+              ),
             ),
           ),
-          TextSpan(
-            text: ' $label',
-            style: ScholarlyFonts.outfit(
-              fontSize: OTFontSize.s11,
-              fontWeight: FontWeight.w400,
-              color: OTExpressive.white.withValues(alpha: 0.8),
-            ),
-          ),
-        ]),
-        maxLines: 1,
+        ),
       ),
     );
   }
