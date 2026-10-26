@@ -15,6 +15,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../core/app_copy.dart';
 import '../core/app_config.dart';
+import '../services/feature_flags.dart';
 import '../core/constants.dart';
 import '../core/routes.dart';
 import '../core/design/ot_colors.dart';
@@ -130,9 +131,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
             : _authService.getCurrentUserModel(),
         _agentService.getAgents(forceRefresh: forceRefresh),
         ProductPricingService.syncPricing(forceRefresh: forceRefresh),
+        FeatureFlagsService.sync(forceRefresh: forceRefresh),
       ]).timeout(
         const Duration(seconds: 4),
-        onTimeout: () => [user, AgentModel.defaultAgents, null],
+        onTimeout: () => [user, AgentModel.defaultAgents, null, null],
       );
 
       if (!mounted) return;

@@ -5,6 +5,7 @@ import '../core/localization.dart';
 import '../core/scholarly_fonts.dart';
 import 'tahawwulat_diagram.dart';
 import 'tahawwulat_artwork.dart';
+import '../services/feature_flags.dart';
 
 String reviewCopy(String id, String ar, String en) => Loc.isArabic
     ? ar
@@ -20,9 +21,17 @@ class TahawwulatHero extends StatelessWidget {
       this.facts = const [],
       this.onOpenLibrary});
 
-  /// Saklar tombol "Mengenal Fikih Tahawwulat" (default: tampil, membuka slide
-  /// pengenalan). Dapat dimatikan dengan `TahawwulatHero.showIntroduction = false`.
-  static bool showIntroduction = true;
+  /// Saklar tombol "Mengenal Fikih Tahawwulat". Nilainya mengikuti saklar jarak
+  /// jauh `app_config/features.introduction_enabled` (lihat `FeatureFlags`),
+  /// sehingga bisa dinyalakan atau dimatikan tanpa merilis aplikasi. Penimpaan
+  /// manual lewat `showIntroduction = true/false` tetap diutamakan (dipakai tes).
+  static bool? showIntroductionOverride;
+
+  /// Kompatibilitas dengan kode lama: membaca nilai efektif.
+  static bool get showIntroduction =>
+      showIntroductionOverride ??
+      FeatureFlagsService.current.introductionEnabled;
+  static set showIntroduction(bool value) => showIntroductionOverride = value;
 
   final VoidCallback onOpen;
   final VoidCallback? onOpenLibrary;

@@ -11,6 +11,10 @@ class TahawwulatAiPicker {
     BuildContext context, {
     required List<SubAgentModel> agents,
     required void Function(SubAgentModel) onSelect,
+
+    /// Sub-AI yang berstatus "segera hadir": tampil redup dengan penanda, tetap
+    /// bisa diketuk (keputusan akhir ada di [onSelect] milik pemanggil).
+    bool Function(SubAgentModel)? isSoon,
   }) =>
       showModalBottomSheet<void>(
         context: context,
@@ -67,49 +71,83 @@ class TahawwulatAiPicker {
                                 child: Padding(
                                     padding: const EdgeInsets.all(20),
                                     child: Row(children: [
-                                      Container(
-                                          padding: const EdgeInsets.all(12),
-                                          decoration: BoxDecoration(
-                                              color: OTColors.surface(dark),
-                                              borderRadius:
-                                                  OTRadius.inputBorder),
-                                          child: Icon(icons[i % icons.length],
-                                              color: ink)),
-                                      const SizedBox(width: 16),
                                       Expanded(
-                                          child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                            Text(agents[i].name,
-                                                style: OTTypography.bodyMedium(
-                                                    color: ink)),
-                                            const SizedBox(height: 4),
-                                            Text(
-                                                reviewCopy(
-                                                    const [
-                                                      'Telusuri teks kitab dan ibarah rujukan.',
-                                                      'Pahami konsep dan istilah dengan penjelasan ringkas.',
-                                                      'Uji pemahaman lewat evaluasi konsep.',
-                                                      'Telusuri arsip ceramah Habib Abu Bakar.',
-                                                      'Susun bahan dakwah dan khutbah.'
-                                                    ][i % 5],
-                                                    agents[i].descriptionArabic,
-                                                    const [
-                                                      'Explore source texts and book references.',
-                                                      'Understand concepts through concise explanations.',
-                                                      'Test your understanding with interactive exercises.',
-                                                      'Explore Habib Abu Bakar’s lecture archive.',
-                                                      'Prepare material for talks and sermons.'
-                                                    ][i % 5]),
+                                          child: Opacity(
+                                              opacity:
+                                                  isSoon?.call(agents[i]) ==
+                                                          true
+                                                      ? 0.55
+                                                      : 1,
+                                              child: Row(children: [
+                                                Container(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            12),
+                                                    decoration: BoxDecoration(
+                                                        color: OTColors.surface(
+                                                            dark),
+                                                        borderRadius: OTRadius
+                                                            .inputBorder),
+                                                    child: Icon(
+                                                        icons[i % icons.length],
+                                                        color: ink)),
+                                                const SizedBox(width: 16),
+                                                Expanded(
+                                                    child: Column(
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                      Text(agents[i].name,
+                                                          style: OTTypography
+                                                              .bodyMedium(
+                                                                  color: ink)),
+                                                      const SizedBox(height: 4),
+                                                      Text(
+                                                          reviewCopy(
+                                                              const [
+                                                                'Telusuri teks kitab dan ibarah rujukan.',
+                                                                'Pahami konsep dan istilah dengan penjelasan ringkas.',
+                                                                'Uji pemahaman lewat evaluasi konsep.',
+                                                                'Telusuri arsip ceramah Habib Abu Bakar.',
+                                                                'Susun bahan dakwah dan khutbah.'
+                                                              ][i % 5],
+                                                              agents[i]
+                                                                  .descriptionArabic,
+                                                              const [
+                                                                'Explore source texts and book references.',
+                                                                'Understand concepts through concise explanations.',
+                                                                'Test your understanding with interactive exercises.',
+                                                                'Explore Habib Abu Bakar’s lecture archive.',
+                                                                'Prepare material for talks and sermons.'
+                                                              ][i % 5]),
+                                                          style: OTTypography.caption(
+                                                              color: OTColors
+                                                                  .textSecondary(
+                                                                      dark))),
+                                                    ])),
+                                              ]))),
+                                      const SizedBox(width: 8),
+                                      if (isSoon?.call(agents[i]) == true)
+                                        Container(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 12, vertical: 4),
+                                            decoration: BoxDecoration(
+                                                borderRadius:
+                                                    OTRadius.chipBorder,
+                                                border: Border.all(
+                                                    color:
+                                                        OTColors.border(dark))),
+                                            child: Text(
+                                                reviewCopy('Segera hadir',
+                                                    'قريبًا', 'Coming soon'),
                                                 style: OTTypography.caption(
                                                     color:
                                                         OTColors.textSecondary(
-                                                            dark))),
-                                          ])),
-                                      const SizedBox(width: 8),
-                                      Icon(Icons.arrow_forward_rounded,
-                                          color: ink, size: 18),
+                                                            dark))))
+                                      else
+                                        Icon(Icons.arrow_forward_rounded,
+                                            color: ink, size: 18),
                                     ]))),
                           )),
                       if (i < agents.length - 1) const SizedBox(height: 12),

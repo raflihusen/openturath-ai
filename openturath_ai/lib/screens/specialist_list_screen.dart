@@ -17,6 +17,7 @@ import '../models/field_model.dart';
 import '../models/agent_model.dart';
 import '../models/user_model.dart';
 import '../services/agent_service.dart';
+import '../services/feature_flags.dart';
 import '../services/agent_session_manager.dart';
 import '../services/auth_service.dart';
 import '../core/navigation_guard.dart';
@@ -77,6 +78,8 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
   }
 
   Future<void> _loadAgents() async {
+    // Saklar fitur disegarkan bersama daftar agen; kegagalannya tidak menahan layar.
+    unawaited(FeatureFlagsService.sync());
     try {
       final agents = await _agentService.getAgents();
       if (mounted) {
@@ -148,6 +151,17 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
 
   void _openTahawwulatSubAgent(AgentModel parentAgent, SubAgentModel subAgent) {
     OTMotion.light();
+    // Sub-AI yang ditandai "segera hadir" dari jauh tidak dibuka siapa pun,
+    // termasuk pelanggan dan Edisi Guru; aplikasi hanya menjelaskannya.
+    if (gateSubAgent(subAgent.id, FeatureFlagsService.current) ==
+        SubAgentGate.comingSoon) {
+      TahqiqKhazanahDialog.show(context,
+          agent: parentAgent.copyWith(
+              title: 'Fikih Tahawwulat: ${subAgent.name}',
+              titleArabic:
+                  '${parentAgent.titleArabic}: ${subAgent.nameArabic}'));
+      return;
+    }
     final user = _authService.cachedCurrentUser;
     if (!AppConfig.isGuruEdition &&
         (user == null || !user.hasAccessToAgent(parentAgent.id))) {
