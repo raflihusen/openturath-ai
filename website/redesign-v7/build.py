@@ -272,8 +272,8 @@ def branches_html():
 # ======================= BERANDA =======================
 def page_home():
     CHK = ic("check")
-    h1 = L('<span class="tl">Waktu Anda untuk memahami, bukan untuk mencari.</span><span class="hero-sub">Pencarian, serahkan kepada kami.</span>',
-           '<span class="tl">Your time is for understanding, not for searching.</span><span class="hero-sub">Leave the searching to us.</span>',
+    h1 = L('<span class="tl">Waktu Anda untuk memahami,</span> <span class="tl">bukan untuk mencari.</span><span class="hero-sub">Pencarian, serahkan kepada kami.</span>',
+           '<span class="tl">Your time is for understanding,</span> <span class="tl">not for searching.</span><span class="hero-sub">Leave the searching to us.</span>',
            '<span class="tl">وقتك للفهم، لا للبحث.</span><span class="hero-sub">اترك البحث لنا.</span>')
     lede = L("OpenTurath AI menemani penuntut ilmu membaca kitab. Anda bertanya, ia menjelaskan, lalu menunjukkan ibarah dan rujukannya dari kitab serta ceramah para ulama.",
              "OpenTurath AI keeps seekers of knowledge company as they read. You ask, it explains, then points you to the passage and its source in the books and lectures of the scholars.",
