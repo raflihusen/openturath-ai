@@ -1,15 +1,7 @@
 import 'tahawwulat_scene.dart';
-import 'tahawwulat_scenes_a.dart';
-import 'tahawwulat_scenes_b.dart';
-import 'tahawwulat_scenes_c.dart';
-import 'tahawwulat_scenes_d.dart';
+import 'tahawwulat_scenes_mengenal.dart';
 
-final Map<String, SceneDef> _registry = {
-  ...scenesA(),
-  ...scenesB(),
-  ...scenesC(),
-  ...scenesD()
-};
+final Map<String, SceneDef> _registry = scenesMengenal();
 
-/// Adegan untuk kunci [id] (mis. `s7`), atau null bila slide hanya tipografi.
+/// Adegan untuk kunci [id] (mis. `m07`), atau null bila slide hanya tipografi.
 SceneDef? sceneFor(String id) => _registry[id];

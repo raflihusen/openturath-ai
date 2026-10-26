@@ -35,7 +35,7 @@ void main() {
           await tester.pump(const Duration(milliseconds: 400));
           n++;
         }
-        expect(n, greaterThan(80), reason: '$lang $width');
+        expect(n, 31, reason: '$lang $width: 32 slide, 31 kali maju');
         await tester.pumpWidget(const SizedBox());
       }
     }

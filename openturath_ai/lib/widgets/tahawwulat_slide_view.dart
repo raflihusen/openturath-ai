@@ -90,7 +90,7 @@ class TahawwulatSlideView extends StatelessWidget {
     final ar = Loc.isArabic;
     final scene = sceneFor(data['scene'] as String);
     final isTitle = data['kind'] == 'title';
-    final isEnd = data['scene'] == 's84';
+    final isEnd = data['end'] == true;
     final isText = data['lvl'] == 'text' || scene == null;
 
     return LayoutBuilder(builder: (context, box) {
