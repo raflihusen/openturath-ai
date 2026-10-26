@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'app_transition.dart';
+
 class AppConfig {
   /// Edisi khusus Guru: membuka seluruh 21 AI turats tanpa pembatasan langganan.
   static const bool isGuruEdition =
@@ -37,6 +39,9 @@ class AppConfig {
   }
 
   static Future<void> setThemeMode(ThemeMode mode) async {
+    if (mode != themeNotifier.value) {
+      await AppTransition.begin(AppTransitionKind.theme);
+    }
     themeNotifier.value = mode;
     final prefs = await SharedPreferences.getInstance();
     if (mode == ThemeMode.light) {
@@ -50,6 +55,9 @@ class AppConfig {
 
   static Future<void> setLocale(String langCode) async {
     if (!const ['id', 'en', 'ar'].contains(langCode)) return;
+    if (langCode != localeNotifier.value) {
+      await AppTransition.begin(AppTransitionKind.language);
+    }
     localeNotifier.value = langCode;
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(_localeKey, langCode);
