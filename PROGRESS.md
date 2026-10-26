@@ -83,11 +83,11 @@ Berdasarkan `AUDIT_OPENTURATH_AI.md`, dokumen perancangan pustaka, dan keluhan k
   - Subscription Engine: **24 passed**, 0 failed
 - **Rilis Binary APK Terbaru (Lokal)**:
   - File: `/Users/apple/Downloads/ramadhan/app-release-latest.apk`
-  - Versi: `1.0.68+69`
-  - Ukuran: 83.9 MB (83.934.052 bytes)
-  - SHA-256: `08567d69d916b0320be5a6a2ac037b264069e49814bb91d5e427fdf13b5ded5f`
-  - Timestamp: 2026-10-22 03:47 WIB
-  - Status: Kompilasi Gradle selesai 100% (assembleRelease).
+  - Versi: `1.0.82+83`
+  - Ukuran: 27.9 MB (29.209.166 bytes) — arsitektur arm64-v8a super ramping
+  - SHA-256: `78ad843d162dd818f02538f2b2c455118c47b7323b283d67f19167976f414cd3`
+  - Timestamp: 2026-10-26 18:16 WIB
+  - Status: Kompilasi Gradle selesai 100% (assembleRelease turbo parallel 8 workers).
 - **Rilis macOS DMG (Kompilasi Lokal Terbaru)**:
   - File: `/Users/apple/Downloads/ramadhan/OpenTurath_AI_macOS.dmg`
   - Versi: `1.0.82+83`
