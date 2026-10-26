@@ -8,6 +8,7 @@ import 'dart:collection';
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'ot_popup_menu.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -598,7 +599,7 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
             },
             itemBuilder: (ctx) => [
               if (!_nativeChat)
-                PopupMenuItem(
+                OTPopupMenuItem(
                   value: 'language',
                   child: Row(
                     children: [
@@ -611,7 +612,7 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                   ),
                 ),
               if (!_nativeChat)
-                PopupMenuItem(
+                OTPopupMenuItem(
                   value: 'delete_chat',
                   child: Row(
                     children: [
@@ -628,7 +629,7 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                     ],
                   ),
                 ),
-              PopupMenuItem(
+              OTPopupMenuItem(
                 value: 'conversation',
                 child: Row(
                   children: [
@@ -641,7 +642,7 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                 ),
               ),
               if (!_nativeChat)
-                PopupMenuItem(
+                OTPopupMenuItem(
                   value: 'font',
                   child: Row(
                     children: [

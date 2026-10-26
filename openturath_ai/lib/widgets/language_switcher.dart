@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../core/app_config.dart';
 import '../core/localization.dart';
 import '../core/scholarly_fonts.dart';
+import 'ot_popup_menu.dart';
 
 class LanguageSwitcher extends StatelessWidget {
   const LanguageSwitcher({super.key});
@@ -21,16 +22,22 @@ class LanguageSwitcher extends StatelessWidget {
       },
       itemBuilder: (_) => Loc.languageNames.entries
           .map(
-            (entry) => CheckedPopupMenuItem(
+            (entry) => OTPopupMenuItem<String>(
                 value: entry.key,
-                checked: entry.key == Loc.language,
-                child: Text(entry.value,
-                    style: entry.key == 'ar'
-                        ? ScholarlyFonts.scheherazadeNew(height: 1.85)
-                        : null,
-                    textDirection: entry.key == 'ar'
-                        ? TextDirection.rtl
-                        : TextDirection.ltr)),
+                child: Row(mainAxisSize: MainAxisSize.min, children: [
+                  SizedBox(
+                      width: 24,
+                      child: entry.key == Loc.language
+                          ? const Icon(Icons.check_rounded, size: 18)
+                          : null),
+                  Text(entry.value,
+                      style: entry.key == 'ar'
+                          ? ScholarlyFonts.scheherazadeNew(height: 1.85)
+                          : null,
+                      textDirection: entry.key == 'ar'
+                          ? TextDirection.rtl
+                          : TextDirection.ltr),
+                ])),
           )
           .toList(),
     );

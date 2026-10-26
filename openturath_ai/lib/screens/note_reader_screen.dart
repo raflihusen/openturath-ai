@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../widgets/ot_popup_menu.dart';
 import 'package:flutter/services.dart';
 import '../widgets/scholarly_answer.dart';
 import 'package:intl/intl.dart' show Bidi;
@@ -90,8 +91,8 @@ class _NoteReaderScreenState extends State<NoteReaderScreen> {
               if (value == 'delete') _delete();
             },
             itemBuilder: (_) => [
-              PopupMenuItem(value: 'edit', child: Text(AppCopy.editNote)),
-              PopupMenuItem(value: 'delete', child: Text(AppCopy.deleteNote)),
+              OTPopupMenuItem(value: 'edit', child: Text(AppCopy.editNote)),
+              OTPopupMenuItem(value: 'delete', child: Text(AppCopy.deleteNote)),
             ],
           ),
         ],

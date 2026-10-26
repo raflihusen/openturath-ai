@@ -150,7 +150,6 @@ class AppTheme {
           borderRadius: BorderRadius.circular(radiusL),
           side: const BorderSide(color: borderDark, width: 1),
         ),
-        clipBehavior: Clip.antiAlias,
       ),
       pageTransitionsTheme: _pageTransitions,
       filledButtonTheme: FilledButtonThemeData(
@@ -241,6 +240,17 @@ class AppTheme {
         textStyle: ScholarlyFonts.outfit(
           color: textPrimaryDark,
           fontSize: OTFontSize.s12,
+        ),
+      ),
+      popupMenuTheme: PopupMenuThemeData(
+        color: OTColors.surfaceDark,
+        surfaceTintColor: Colors.transparent,
+        elevation: 6,
+        shadowColor: const Color(0x66000000),
+        menuPadding: const EdgeInsets.symmetric(vertical: 6, horizontal: 6),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(OTRadius.card),
+          side: const BorderSide(color: OTColors.borderDark, width: 0.8),
         ),
       ),
       dialogTheme: DialogThemeData(
@@ -334,7 +344,6 @@ class AppTheme {
           borderRadius: BorderRadius.circular(radiusL),
           side: const BorderSide(color: borderLight, width: 1),
         ),
-        clipBehavior: Clip.antiAlias,
       ),
       pageTransitionsTheme: _pageTransitions,
       filledButtonTheme: FilledButtonThemeData(
@@ -423,6 +432,17 @@ class AppTheme {
         textStyle: ScholarlyFonts.outfit(
           color: Colors.white,
           fontSize: OTFontSize.s12,
+        ),
+      ),
+      popupMenuTheme: PopupMenuThemeData(
+        color: OTColors.surfaceLight,
+        surfaceTintColor: Colors.transparent,
+        elevation: 6,
+        shadowColor: const Color(0x1F000000),
+        menuPadding: const EdgeInsets.symmetric(vertical: 6, horizontal: 6),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(OTRadius.card),
+          side: const BorderSide(color: OTColors.borderLight, width: 0.8),
         ),
       ),
       dialogTheme: DialogThemeData(
