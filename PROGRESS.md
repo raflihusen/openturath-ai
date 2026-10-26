@@ -90,10 +90,10 @@ Berdasarkan `AUDIT_OPENTURATH_AI.md`, dokumen perancangan pustaka, dan keluhan k
   - Status: Kompilasi Gradle selesai 100% (assembleRelease).
 - **Rilis macOS DMG (Kompilasi Lokal Terbaru)**:
   - File: `/Users/apple/Downloads/ramadhan/OpenTurath_AI_macOS.dmg`
-  - Versi: `1.0.79+80`
-  - Ukuran: 61.7 MB (64.706.000 bytes)
-  - SHA-256: `1a57a428510972dc9cd06f6c99ae38fe642b9f3addffe5fec6f270bd661c01e4`
-  - Timestamp: 2026-10-26 13:02 WIB
+  - Versi: `1.0.80+81`
+  - Ukuran: 61.7 MB (64.710.504 bytes)
+  - SHA-256: `ebb2f40d8fbef780c094265f8978b7352e83d156c0dd0c8455a2118e430270b7`
+  - Timestamp: 2026-10-26 13:56 WIB
   - Status: Kompilasi Xcode/macOS Release universal (arm64 + x86_64) selesai 100%, UDZO image terkemas rapi via `package_macos.sh`.
 - **Paket Distribusi Pekerja Akses VPS**:
   - File: `/Users/apple/Downloads/ramadhan/ecosystem/dist/openturath-access-20261014T035043Z-5b44945e.tar.gz`
@@ -613,6 +613,19 @@ Berdasarkan `AUDIT_OPENTURATH_AI.md`, dokumen perancangan pustaka, dan keluhan k
      - Kompilasi biner `flutter build macos --release` Universal arm64+x86_64 tuntas 100% (146.0 MB .app).
      - Pembuatan DMG installer `OpenTurath_AI_macOS.dmg` (61.7 MB, format UDZO terkompresi) via `tool/package_macos.sh`.
      - Verifikasi checksum SHA-256: `1a57a428510972dc9cd06f6c99ae38fe642b9f3addffe5fec6f270bd661c01e4`.
+
+### Fasa 46: Dialog Hentikan Native, Sinkronisasi Bahasa WebView & Rilis DMG macOS v1.0.80+81 (`b95c50ef`)
+- **Ruang Lingkup & Latar Belakang**:
+  1. *Pembaruan Fitur Terkini*:
+     - Dialog Hentikan Jawaban Native: Penggantian dialog pembatalan bawaan Google dengan modal konfirmasi native OpenTurath (3 bahasa: ID, EN, AR) dengan tombol bergaya monokrom editorial serta fallback aman.
+     - Pemilihan Bahasa Jawaban Kaya: Penambahan daftar bahasa komprehensif dari dialog konfigurasi dengan pencarian real-time dan pinning 3 bahasa utama (Arab, Indonesia, Inggris) di posisi teratas.
+     - Sinkronisasi Bahasa WebView Dinamis: Catatan kaki adab dan label WebView sinkron secara otomatis mengikuti bahasa aplikasi via `otSetLang` dan `sessionStorage`.
+     - Standardisasi Token Desain: Eliminasi nilai ukuran dan warna mentah dengan token kanonikal (`OTColors`, `OTTypography`) guna menjaga kepatuhan design token guard.
+  2. *Kompilasi Biner & Pembuatan DMG Installer macOS v1.0.80+81*:
+     - Bump versi aplikasi menjadi `1.0.80+81` di `openturath_ai/pubspec.yaml`.
+     - Kompilasi biner `flutter build macos --release` Universal arm64+x86_64 tuntas 100% (146.0 MB .app).
+     - Pembuatan DMG installer `OpenTurath_AI_macOS.dmg` (61.7 MB, format UDZO terkompresi) via `tool/package_macos.sh`.
+     - Verifikasi checksum SHA-256: `ebb2f40d8fbef780c094265f8978b7352e83d156c0dd0c8455a2118e430270b7`.
 
 ---
 
