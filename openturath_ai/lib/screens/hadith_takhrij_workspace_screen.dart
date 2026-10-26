@@ -1,13 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../core/app_snackbar.dart';
 import '../core/design/ot_buttons.dart';
 import '../core/design/ot_colors.dart';
+import '../core/design/ot_motion.dart';
 import '../core/design/ot_radius.dart';
 import '../core/design/ot_spacing.dart';
 import '../core/design/ot_typography.dart';
+import '../models/bookmark_model.dart';
 import '../models/hadith_takhrij_models.dart';
+import '../services/bookmark_service.dart';
 import '../services/harf_morphology_service.dart';
+import '../services/research_notes_service.dart';
 import '../services/universal_takhrij_engine.dart';
 import '../widgets/hadith_isnad_dag_canvas.dart';
 import '../widgets/hadith_takhrij_components.dart';
@@ -27,29 +32,25 @@ enum HadithWorkspaceMode {
 class _HadithStudyTabSession {
   final String id;
   CanonicalHadithRecord activeHadith;
-  HadithWorkspaceMode mode;
-  TakhrijSortOrder sortOrder;
-  bool includeNonCore33Books;
+  HadithWorkspaceMode mode = HadithWorkspaceMode.takhrijAndMuqaranah;
+  TakhrijSortOrder sortOrder = TakhrijSortOrder.byCanonicalBookRank;
+  bool includeNonCore33Books = true;
   String? selectedRawiId;
+  MatnComparisonCategory? categoryFilter;
+  HadithBookTaxonomy? taxonomyFilter;
 
   _HadithStudyTabSession({
     required this.id,
     required this.activeHadith,
-    this.mode = HadithWorkspaceMode.takhrijAndMuqaranah,
-    this.sortOrder = TakhrijSortOrder.byCanonicalBookRank,
-    this.includeNonCore33Books = true,
     this.selectedRawiId,
   });
 }
 
 /// Meja Telaah Hadis & Takhrij Ribuan Kitab (Rekonstruksi macOS untuk Jāmi‘ Khādim al-Ḥaramayn / Khademhrf).
 ///
-/// Mematuhi 100% aturan `test/design_token_guard_test.dart`:
-/// - Tanpa angka mentah `fontSize:`
-/// - Tanpa angka mentah `circular(`
-/// - Tanpa warna mentah `Color(0x...)` atau `Colors.*` (kecuali `Colors.transparent`)
-/// - Tanpa `.styleFrom(` di dalam `lib/screens/`
-/// - Hanya menggunakan konstanta `OTSpacing` dan `FontWeight.w400/w600/w700`.
+/// Mengadopsi penuh bahasa desain Website V7 (`website/public/assets/v7.css` & `site.css`)
+/// dan aplikasi native terbaru (`BookDetailScreen`, `BookmarkScreen`, `SpecialistListScreen`).
+/// Mematuhi 100% aturan `test/design_token_guard_test.dart`.
 class HadithTakhrijWorkspaceScreen extends StatefulWidget {
   const HadithTakhrijWorkspaceScreen({
     super.key,
@@ -69,6 +70,8 @@ class _HadithTakhrijWorkspaceScreenState
 
   final UniversalTakhrijEngine _engine = UniversalTakhrijEngine.instance;
   final HarfMorphologyService _morph = HarfMorphologyService.instance;
+  final BookmarkService _bookmarkService = BookmarkService();
+  final ResearchNotesService _notesService = ResearchNotesService();
 
   final List<_HadithStudyTabSession> _tabs = [];
   int _activeTabIndex = 0;
@@ -87,7 +90,7 @@ class _HadithTakhrijWorkspaceScreenState
   String _selectedStudentId = 'rawi_humaidi';
   RawiBiographyRecord? _disambiguatedRawi;
   List<ManuscriptHadithDetection> _manuscriptDetections = const [];
-  String? _statusMessage;
+  final Set<String> _savedHadithUris = <String>{};
 
   @override
   void initState() {
@@ -95,6 +98,7 @@ class _HadithTakhrijWorkspaceScreenState
     _initDefaultTabs();
     _runMuhmalDisambiguation();
     _runManuscriptScanner();
+    _checkSavedStatus();
   }
 
   void _initDefaultTabs() {
@@ -122,6 +126,18 @@ class _HadithTakhrijWorkspaceScreenState
     );
   }
 
+  Future<void> _checkSavedStatus() async {
+    try {
+      for (final h in _engine.corpusHadiths) {
+        final noteId = 'takhrij_${h.uri.replaceAll(RegExp(r'[^a-zA-Z0-9_]'), '_')}';
+        if (await _bookmarkService.isBookmarked(noteId)) {
+          _savedHadithUris.add(h.uri);
+        }
+      }
+      if (mounted) setState(() {});
+    } catch (_) {}
+  }
+
   @override
   void dispose() {
     _searchController.dispose();
@@ -136,6 +152,10 @@ class _HadithTakhrijWorkspaceScreenState
     final words = record.rawMatn.split(RegExp(r'\s+'));
     final preview = words.take(4).join(' ');
     return '$preview (${record.bookTitleArabic})';
+  }
+
+  String _resolveRawiDisplayName(String rawiId) {
+    return _engine.getRawiById(rawiId)?.esmShuhra ?? rawiId;
   }
 
   List<CanonicalHadithRecord> _filteredCorpus(bool includeNonCore33) {
@@ -155,7 +175,9 @@ class _HadithTakhrijWorkspaceScreenState
     return baseList.where((h) {
       if (h.bookTitleArabic.contains(q) ||
           h.rawiAlaArabicName.contains(q) ||
-          h.rawMatn.contains(q)) {
+          h.rawMatn.contains(q) ||
+          (h.historicalDateLabel?.contains(q) ?? false) ||
+          h.thematicTags.any((tag) => tag.contains(q))) {
         return true;
       }
       final normMatn = _morph.normalizeArabicWord(h.effectiveMatnForIndexing);
@@ -174,8 +196,8 @@ class _HadithTakhrijWorkspaceScreenState
   }
 
   void _openHadith(CanonicalHadithRecord record, {bool inNewTab = false}) {
+    OTMotion.selection();
     setState(() {
-      _statusMessage = null;
       if (!inNewTab) {
         _activeTab.activeHadith = record;
         _activeTab.selectedRawiId = record.sanadChain.isNotEmpty
@@ -185,8 +207,10 @@ class _HadithTakhrijWorkspaceScreenState
       }
 
       if (_tabs.length >= _maxTabs) {
-        _statusMessage =
-            'Batas maksimal 5 tab aktif tercapai untuk menjaga fokus telaah.';
+        AppSnackBar.warning(
+          context,
+          'Batas maksimal 5 tab aktif tercapai untuk menjaga fokus telaah.',
+        );
         return;
       }
 
@@ -205,6 +229,7 @@ class _HadithTakhrijWorkspaceScreenState
 
   void _closeTab(int index) {
     if (_tabs.length <= 1) return;
+    OTMotion.light();
     setState(() {
       _tabs.removeAt(index);
       if (_activeTabIndex >= _tabs.length) {
@@ -233,10 +258,324 @@ class _HadithTakhrijWorkspaceScreenState
   }
 
   void _copyToClipboard(String text, String notice) {
+    OTMotion.light();
     Clipboard.setData(ClipboardData(text: text));
-    setState(() {
-      _statusMessage = notice;
-    });
+    AppSnackBar.success(context, notice);
+  }
+
+  /// Menyimpan hasil takhrij & analisis sanad ke dalam koleksi Tersimpan (BookmarkService & ResearchNotesService).
+  Future<void> _saveTakhrijToBookmarks(TakhrijClusterResult cluster) async {
+    OTMotion.light();
+    final origin = cluster.originHadith;
+    final noteId =
+        'takhrij_${origin.uri.replaceAll(RegExp(r'[^a-zA-Z0-9_]'), '_')}';
+    final alreadySaved = _savedHadithUris.contains(origin.uri);
+
+    try {
+      if (alreadySaved) {
+        await _notesService.deleteNote(noteId);
+        await _bookmarkService.deleteBookmark(noteId);
+        setState(() => _savedHadithUris.remove(origin.uri));
+        if (mounted) {
+          AppSnackBar.info(context, 'Catatan takhrij dihapus dari Tersimpan.');
+        }
+        return;
+      }
+
+      final fullReport =
+          '### المتن الأصلي\n«${origin.rawMatn}»\n\n### الصياغة العلمية للتخريج (٢٧ قاعدة)\n${cluster.formattedFullTakhrijArabicParagraph}\n\n### تقرير الإسناد والمدار\n${cluster.madarReport.automatedArabicReport}\n\n${cluster.madarReport.automatedIndonesianSummary}';
+
+      final note = ResearchNote(
+        id: noteId,
+        agentId: 'hadith_takhrij_uate',
+        agentTitle: 'Meja Telaah Hadis & Takhrij',
+        title: '${origin.bookTitleArabic} ${origin.formattedCitation}',
+        excerpt: origin.rawMatn,
+        bookTitle: origin.bookTitleArabic,
+        bookVolume: '${origin.partNumber}/${origin.pageNumber}',
+        tags: [
+          'تخريج الحديث',
+          origin.rawiAlaArabicName,
+          ...origin.thematicTags,
+        ],
+        createdAt: DateTime.now(),
+      );
+
+      final bookmark = BookmarkModel(
+        id: noteId,
+        title:
+            'تخريج: ${_shortHadithLabel(origin)} ${origin.formattedCitation}',
+        agentId: 'hadith_takhrij_uate',
+        agentTitle: 'Takhrij Hadis Universal',
+        fieldName: 'Hadis',
+        fieldId: 'hadith',
+        arabicExcerpt: origin.rawMatn,
+        fullAnswer: fullReport,
+        bookReference: origin.bookTitleArabic,
+        pageNumber: '${origin.partNumber}/${origin.pageNumber}',
+        author: cluster.originBook.authorArabic,
+        createdAt: DateTime.now(),
+        documentKind: BookmarkDocumentKind.bookReference,
+        verificationStatus: BookmarkVerificationStatus.needsReview,
+      );
+
+      await _notesService.saveNote(note);
+      await _bookmarkService.addBookmark(bookmark);
+      setState(() => _savedHadithUris.add(origin.uri));
+      if (mounted) {
+        AppSnackBar.success(
+          context,
+          'Hasil takhrij & sanad berhasil disimpan ke tab Tersimpan.',
+        );
+      }
+    } catch (_) {
+      if (mounted) {
+        AppSnackBar.error(context, 'Gagal menyimpan catatan takhrij.');
+      }
+    }
+  }
+
+  /// Dialog interaktif untuk menguji injeksi & pengindeksan riwayat baru dari ribuan kitab.
+  Future<void> _showAddCustomHadithDialog(bool isDark) async {
+    final bookTitleCtrl =
+        TextEditingController(text: 'مسند الشهاب القضاعي');
+    final authorCtrl = TextEditingController(text: 'القضاعي');
+    final partPageCtrl = TextEditingController(text: '1/45');
+    final numberCtrl = TextEditingController(text: '18');
+    final rawHadithCtrl = TextEditingController(
+      text:
+          'أخبرنا أبو محمد قال حدثنا يحيى بن سعيد الأنصاري عن محمد بن إبراهيم عن علقمة عن عمر بن الخطاب قال قال رسول الله ﷺ: «إنما الأعمال بالنية ولكل امرئ ما نوى»',
+    );
+    var selectedTaxonomy = HadithBookTaxonomy.musnadPrimary;
+
+    await showDialog<void>(
+      context: context,
+      builder: (dialogContext) {
+        final textPrimary = OTColors.textPrimary(isDark);
+        final textSecondary = OTColors.textSecondary(isDark);
+        final surface = OTColors.surface(isDark);
+
+        return StatefulBuilder(
+          builder: (context, setDialogState) {
+            return AlertDialog(
+              backgroundColor: surface,
+              shape: RoundedRectangleBorder(borderRadius: OTRadius.dialogBorder),
+              title: Text(
+                'Indeks Riwayat Baru ke Korpus Ribuan Kitab',
+                style: OTTypography.screenTitle(color: textPrimary),
+              ),
+              content: SizedBox(
+                width: 620,
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Text(
+                        'Masukkan teks hadis dari kitab mana pun (Musnad, Mustakhraj, Zawā’id, Juz’ Haditsi, atau Amālī). Mesin akan memisahkan sanad & matan, mengekstrak akar kata morfologis, dan langsung menjalankannya terhadap 27 kaidah Muqāranat al-Mutūn.',
+                        style: OTTypography.caption(color: textSecondary),
+                      ),
+                      OTSpacing.gapMd,
+                      Row(
+                        children: [
+                          Expanded(
+                            child: TextField(
+                              controller: bookTitleCtrl,
+                              textDirection: TextDirection.rtl,
+                              style:
+                                  OTTypography.arabicReading(color: textPrimary),
+                              decoration: InputDecoration(
+                                labelText: 'Nama Kitab (Arab)',
+                                labelStyle:
+                                    OTTypography.caption(color: textSecondary),
+                                isDense: true,
+                              ),
+                            ),
+                          ),
+                          OTSpacing.gapMd,
+                          Expanded(
+                            child: TextField(
+                              controller: authorCtrl,
+                              textDirection: TextDirection.rtl,
+                              style:
+                                  OTTypography.arabicReading(color: textPrimary),
+                              decoration: InputDecoration(
+                                labelText: 'Nama Mushannif',
+                                labelStyle:
+                                    OTTypography.caption(color: textSecondary),
+                                isDense: true,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      OTSpacing.gapMd,
+                      Row(
+                        children: [
+                          Expanded(
+                            child: TextField(
+                              controller: partPageCtrl,
+                              style: OTTypography.body(color: textPrimary),
+                              decoration: InputDecoration(
+                                labelText: 'Juz/Halaman (mis. 1/45)',
+                                labelStyle:
+                                    OTTypography.caption(color: textSecondary),
+                                isDense: true,
+                              ),
+                            ),
+                          ),
+                          OTSpacing.gapMd,
+                          Expanded(
+                            child: TextField(
+                              controller: numberCtrl,
+                              style: OTTypography.body(color: textPrimary),
+                              decoration: InputDecoration(
+                                labelText: 'Nomor Hadis',
+                                labelStyle:
+                                    OTTypography.caption(color: textSecondary),
+                                isDense: true,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      OTSpacing.gapMd,
+                      DropdownButtonFormField<HadithBookTaxonomy>(
+                        initialValue: selectedTaxonomy,
+                        dropdownColor: surface,
+                        style: OTTypography.body(color: textPrimary),
+                        decoration: InputDecoration(
+                          labelText: 'Taksonomi Kitab (Penentu أخرجه / أورده)',
+                          labelStyle:
+                              OTTypography.caption(color: textSecondary),
+                          isDense: true,
+                        ),
+                        items: const [
+                          DropdownMenuItem(
+                            value: HadithBookTaxonomy.musnadPrimary,
+                            child: Text('Kitab Musnad/Sunan/Ajzā’ Mandiri (أخرجه)'),
+                          ),
+                          DropdownMenuItem(
+                            value: HadithBookTaxonomy.mustakhraj,
+                            child: Text('Kitab Mustakhraj (أخرجه في مستخرجه)'),
+                          ),
+                          DropdownMenuItem(
+                            value: HadithBookTaxonomy.zawaidNarrator,
+                            child: Text('Zawā’id Perawi atas Kitab (في زوائده)'),
+                          ),
+                          DropdownMenuItem(
+                            value: HadithBookTaxonomy.secondaryCompilation,
+                            child: Text('Kompilasi Sekunder Tanpa Sanad (أورده)'),
+                          ),
+                        ],
+                        onChanged: (val) {
+                          if (val != null) {
+                            setDialogState(() => selectedTaxonomy = val);
+                          }
+                        },
+                      ),
+                      OTSpacing.gapMd,
+                      TextField(
+                        controller: rawHadithCtrl,
+                        maxLines: 4,
+                        textDirection: TextDirection.rtl,
+                        style: OTTypography.arabicReading(color: textPrimary),
+                        decoration: InputDecoration(
+                          labelText: 'Teks Lengkap Sanad & Matan Hadis',
+                          labelStyle:
+                              OTTypography.caption(color: textSecondary),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              actions: [
+                TextButton(
+                  style: OTButtons.quiet(isDark),
+                  onPressed: () => Navigator.of(dialogContext).pop(),
+                  child: const Text('Batal'),
+                ),
+                FilledButton(
+                  style: OTButtons.compactTonal(isDark),
+                  onPressed: () {
+                    final segmented = _engine
+                        .segmentRawHadithParagraph(rawHadithCtrl.text.trim());
+                    final customBookId =
+                        'custom_${DateTime.now().millisecondsSinceEpoch}';
+                    final newBook = HadithBookMetadata(
+                      id: customBookId,
+                      titleArabic: bookTitleCtrl.text.trim().isEmpty
+                          ? 'كتاب مضاف'
+                          : bookTitleCtrl.text.trim(),
+                      titleLatin: bookTitleCtrl.text.trim(),
+                      authorArabic: authorCtrl.text.trim().isEmpty
+                          ? 'المصنف'
+                          : authorCtrl.text.trim(),
+                      authorLatin: authorCtrl.text.trim(),
+                      deathYearHijri: 454,
+                      centuryHijri: 5,
+                      taxonomy: selectedTaxonomy,
+                      canonicalRank: _engine.registeredBooks.length + 1,
+                      primaryPrintEdition: 'طبعة محققة مدخلة',
+                      isCore33: false,
+                    );
+                    _engine.registerBook(newBook);
+
+                    final parts = partPageCtrl.text.split('/');
+                    final partNum =
+                        int.tryParse(parts.first.trim()) ?? 1;
+                    final pageNum = parts.length > 1
+                        ? (int.tryParse(parts[1].trim()) ?? 1)
+                        : 1;
+                    final printNo = numberCtrl.text.trim().isEmpty
+                        ? '1'
+                        : numberCtrl.text.trim();
+
+                    final parsedChain =
+                        _engine.parseSanadChainFromText(segmented.sanad);
+                    final resolvedAlaId = parsedChain.isNotEmpty
+                        ? (parsedChain.first.resolvedRawiId ?? 'rawi_umar')
+                        : 'rawi_umar';
+                    final resolvedAlaName = segmented.detectedRawiAlaName ??
+                        (parsedChain.isNotEmpty
+                            ? parsedChain.first.resolvedArabicName
+                            : 'عمر بن الخطاب');
+
+                    final newRecord = CanonicalHadithRecord(
+                      uri: 'ot://hadith/$customBookId/$printNo',
+                      bookId: customBookId,
+                      bookTitleArabic: newBook.titleArabic,
+                      harfNumber: _engine.corpusHadiths.length + 1,
+                      printNumber: printNo,
+                      partNumber: partNum,
+                      pageNumber: pageNum,
+                      sectionTitle: 'كتاب مدخل للتحقيق الآلي',
+                      chapterTitle: 'باب تخريج المتون والأسانيد',
+                      rawSanad: segmented.sanad,
+                      rawMatn: segmented.matn,
+                      rawiAlaId: resolvedAlaId,
+                      rawiAlaArabicName: resolvedAlaName,
+                      historicalDateLabel: 'مضاف للتحقيق الآلي',
+                      thematicTags: const ['الحديث المضاف'],
+                      sanadChain: parsedChain,
+                    );
+
+                    _engine.indexHadithRecord(newRecord);
+                    Navigator.of(dialogContext).pop();
+                    _openHadith(newRecord, inNewTab: false);
+                    AppSnackBar.success(
+                      this.context,
+                      'Riwayat baru dari "${newBook.titleArabic}" berhasil diindeks dan ditakhrij.',
+                    );
+                  },
+                  child: const Text('Indeks & Jalankan Takhrij'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
   }
 
   @override
@@ -256,9 +595,8 @@ class _HadithTakhrijWorkspaceScreenState
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            _buildTopWorkspaceHeader(context, isDark, session),
+            _buildTopWorkspaceHeader(context, isDark, session, clusterResult),
             _buildMultiTabStrip(context, isDark),
-            if (_statusMessage != null) _buildStatusNoticeBar(context, isDark),
             Expanded(
               child: LayoutBuilder(
                 builder: (context, constraints) {
@@ -290,7 +628,7 @@ class _HadithTakhrijWorkspaceScreenState
                     children: [
                       // Panel Kiri: Korpus Riwayat & Pencarian Morfologis (HarfMMMP)
                       SizedBox(
-                        width: 310,
+                        width: 320,
                         child: _buildLeftCorpusSidebar(
                           context,
                           isDark,
@@ -333,7 +671,7 @@ class _HadithTakhrijWorkspaceScreenState
                       ),
                       // Panel Kanan: Inspektor Biografi Perawi & Matriks 27 Kaidah
                       SizedBox(
-                        width: 350,
+                        width: 360,
                         child: _buildRightScholarlyInspector(
                           context,
                           isDark,
@@ -356,12 +694,14 @@ class _HadithTakhrijWorkspaceScreenState
     BuildContext context,
     bool isDark,
     _HadithStudyTabSession session,
+    TakhrijClusterResult clusterResult,
   ) {
     final textPrimary = OTColors.textPrimary(isDark);
     final textSecondary = OTColors.textSecondary(isDark);
     final totalBooks = _engine.registeredBooks.length;
     final coreBooks =
         _engine.registeredBooks.where((b) => b.isCore33).length;
+    final isSaved = _savedHadithUris.contains(session.activeHadith.uri);
 
     return Container(
       padding: OTSpacing.row,
@@ -384,7 +724,7 @@ class _HadithTakhrijWorkspaceScreenState
                 OutlinedButton(
                   style: OTButtons.compactOutlined(isDark),
                   onPressed: () => Navigator.of(context).pop(),
-                  child: const Text('← Beranda'),
+                  child: const Text('← Kembali'),
                 ),
                 OTSpacing.gapMd,
               ],
@@ -392,13 +732,13 @@ class _HadithTakhrijWorkspaceScreenState
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Meja Telaah Hadis & Takhrij Ribuan Kitab',
-                    style: OTTypography.screenTitle(color: textPrimary),
+                    'OPENTURATH V7 · UNIVERSAL ALGORITHMIC TAKHRIJ ENGINE',
+                    style: OTTypography.sectionHeading(color: textSecondary),
                   ),
                   OTSpacing.gapXs,
                   Text(
-                    'Rekonstruksi Jāmi‘ Khādim al-Ḥaramayn (27 Kaidah Muqāranat al-Mutūn · Tasyjīr Sanad · Al-Matn al-Mujamma‘)',
-                    style: OTTypography.caption(color: textSecondary),
+                    'Meja Telaah Hadis & Tasyjīr Sanad (Ribuan Kitab)',
+                    style: OTTypography.screenTitle(color: textPrimary),
                   ),
                 ],
               ),
@@ -407,9 +747,10 @@ class _HadithTakhrijWorkspaceScreenState
           Wrap(
             spacing: OTSpacing.sm,
             runSpacing: OTSpacing.xs,
+            crossAxisAlignment: WrapCrossAlignment.center,
             children: [
               OTChip(
-                label: '33 Kitab Inti Khademhrf ($coreBooks Sampel)',
+                label: '33 Kitab Inti ($coreBooks Sampel)',
                 selected: !session.includeNonCore33Books,
                 onSelected: () {
                   setState(() {
@@ -418,14 +759,25 @@ class _HadithTakhrijWorkspaceScreenState
                 },
               ),
               OTChip(
-                label:
-                    'Ekspansi Ribuan Kitab ($totalBooks Kitab: Mustakhraj · Zawā’id · Ajzā’)',
+                label: 'Ekspansi Ribuan Kitab ($totalBooks Kitab)',
                 selected: session.includeNonCore33Books,
                 onSelected: () {
                   setState(() {
                     session.includeNonCore33Books = true;
                   });
                 },
+              ),
+              OutlinedButton(
+                style: OTButtons.compactOutlined(isDark),
+                onPressed: () => _showAddCustomHadithDialog(isDark),
+                child: const Text('＋ Indeks Riwayat Baru'),
+              ),
+              FilledButton(
+                style: OTButtons.compactTonal(isDark),
+                onPressed: () => _saveTakhrijToBookmarks(clusterResult),
+                child: Text(
+                  isSaved ? '✓ Tersimpan di Koleksi' : 'Simpan Takhrij',
+                ),
               ),
             ],
           ),
@@ -467,6 +819,7 @@ class _HadithTakhrijWorkspaceScreenState
                         vertical: OTSpacing.sm,
                       ),
                       onTap: () {
+                        OTMotion.selection();
                         setState(() {
                           _activeTabIndex = index;
                         });
@@ -475,7 +828,7 @@ class _HadithTakhrijWorkspaceScreenState
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Text(
-                            '${index + 1}. ',
+                            '0${index + 1} · ',
                             style: OTTypography.captionMedium(
                               color: selected
                                   ? OTColors.onInverseSurface
@@ -521,44 +874,6 @@ class _HadithTakhrijWorkspaceScreenState
     );
   }
 
-  Widget _buildStatusNoticeBar(BuildContext context, bool isDark) {
-    return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: OTSpacing.base,
-        vertical: OTSpacing.sm,
-      ),
-      decoration: BoxDecoration(
-        color: OTColors.surface(isDark),
-        border: Border(
-          bottom: BorderSide(color: OTColors.borderStrong(isDark)),
-        ),
-      ),
-      child: Row(
-        children: [
-          Icon(
-            Icons.info_outline,
-            size: 16,
-            color: OTColors.textPrimary(isDark),
-          ),
-          OTSpacing.gapSm,
-          Expanded(
-            child: Text(
-              _statusMessage ?? '',
-              style: OTTypography.captionMedium(
-                color: OTColors.textPrimary(isDark),
-              ),
-            ),
-          ),
-          TextButton(
-            style: OTButtons.quiet(isDark),
-            onPressed: () => setState(() => _statusMessage = null),
-            child: const Text('Tutup'),
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _buildLeftCorpusSidebar(
     BuildContext context,
     bool isDark,
@@ -574,9 +889,18 @@ class _HadithTakhrijWorkspaceScreenState
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text(
-            'KORPUS RIWAYAT & INDEKS AKAR KATA',
-            style: OTTypography.sectionHeading(color: textSecondary),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'KORPUS RIWAYAT & INDEKS SHARFAH',
+                style: OTTypography.sectionHeading(color: textSecondary),
+              ),
+              Text(
+                '${filteredHadiths.length} hasil',
+                style: OTTypography.caption(color: textSecondary),
+              ),
+            ],
           ),
           OTSpacing.gapSm,
           TextField(
@@ -591,27 +915,32 @@ class _HadithTakhrijWorkspaceScreenState
                 size: 18,
                 color: textSecondary,
               ),
+              suffixIcon: _searchQuery.isNotEmpty
+                  ? GestureDetector(
+                      onTap: () {
+                        _searchController.clear();
+                        setState(() => _searchQuery = '');
+                      },
+                      child: Icon(
+                        Icons.close_rounded,
+                        size: 16,
+                        color: textSecondary,
+                      ),
+                    )
+                  : null,
               isDense: true,
               contentPadding: OTSpacing.cardCompact,
             ),
           ),
-          OTSpacing.gapMd,
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'Daftar Riwayat (${filteredHadiths.length})',
-                style: OTTypography.captionMedium(color: textSecondary),
-              ),
-              Text(
-                'Klik: Buka · +: Tab Baru',
-                style: OTTypography.caption(color: textSecondary),
-              ),
-            ],
+          OTSpacing.gapSm,
+          Text(
+            'Ketuk kartu untuk membuka · Ketuk [+] untuk membuka di tab baru',
+            style: OTTypography.caption(color: textSecondary),
           ),
           OTSpacing.gapSm,
           Expanded(
             child: ListView.separated(
+              physics: const BouncingScrollPhysics(),
               itemCount: filteredHadiths.length,
               separatorBuilder: (_, __) => OTSpacing.gapSm,
               itemBuilder: (context, index) {
@@ -631,8 +960,8 @@ class _HadithTakhrijWorkspaceScreenState
                         children: [
                           Text(
                             (book?.isCore33 ?? false)
-                                ? '33 Kitab Inti'
-                                : 'Ekspansi Ribuan Kitab',
+                                ? '0${index + 1} · 33 Kitab Inti'
+                                : '0${index + 1} · Ekspansi Ribuan Kitab',
                             style: OTTypography.metadataTag(
                               color: isSelected
                                   ? OTColors.onInverseSurface
@@ -721,23 +1050,23 @@ class _HadithTakhrijWorkspaceScreenState
     final modes = <(HadithWorkspaceMode, String)>[
       (
         HadithWorkspaceMode.takhrijAndMuqaranah,
-        'Takhrij & 27 Kaidah Lafaz ($totalComparisons)',
-      ),
-      (
-        HadithWorkspaceMode.matnAndMujamma,
-        'Matan, Sanad & Al-Matn al-Mujamma‘',
+        '01 · Takhrij & 27 Kaidah Lafaz ($totalComparisons)',
       ),
       (
         HadithWorkspaceMode.tasyjirAndIlal,
-        'Tasyjīr Sanad & Laporan ‘Ilal',
+        '02 · Tasyjīr Sanad & Laporan ‘Ilal (${clusterResult.madarReport.nodes.length})',
+      ),
+      (
+        HadithWorkspaceMode.matnAndMujamma,
+        '03 · Matan & Al-Matn al-Mujamma‘',
       ),
       (
         HadithWorkspaceMode.rijalAndMuhmal,
-        'Disambiguasi Rijal Muhmal',
+        '04 · Disambiguasi Rijal Muhmal',
       ),
       (
         HadithWorkspaceMode.manuscriptAutoTakhrij,
-        'Takhrij Otomatis Makalah',
+        '05 · Takhrij Otomatis Makalah',
       ),
     ];
 
@@ -809,7 +1138,7 @@ class _HadithTakhrijWorkspaceScreenState
     }
   }
 
-  /// Mode 1: Takhrij & 27 Kaidah Muqaranat al-Mutun
+  /// Mode 1: Takhrij & 27 Kaidah Muqaranat al-Mutun (dengan Filter Kategori & Taksonomi V7)
   Widget _buildTakhrijAndMuqaranahView(
     BuildContext context,
     bool isDark,
@@ -818,67 +1147,174 @@ class _HadithTakhrijWorkspaceScreenState
   ) {
     final textPrimary = OTColors.textPrimary(isDark);
     final textSecondary = OTColors.textSecondary(isDark);
+    final border = OTColors.border(isDark);
+    final borderSubtle = OTColors.borderSubtle(isDark);
+    final surface = OTColors.surface(isDark);
+
+    List<MatnComparisonOutcome> applyFilters(List<MatnComparisonOutcome> list) {
+      return list.where((item) {
+        if (session.categoryFilter != null &&
+            item.rule.category != session.categoryFilter) {
+          return false;
+        }
+        if (session.taxonomyFilter != null &&
+            item.targetBook.taxonomy != session.taxonomyFilter) {
+          return false;
+        }
+        return true;
+      }).toList();
+    }
+
+    final filteredTakhrij = applyFilters(clusterResult.takhrijOutcomes);
+    final filteredSyawahid = applyFilters(clusterResult.syawahidOutcomes);
 
     return ListView(
+      physics: const BouncingScrollPhysics(),
       padding: const EdgeInsets.all(OTSpacing.lg),
       children: [
-        // Naskah Takhrij Klasik Otomatis
-        OTBentoTile(
-          padding: const EdgeInsets.all(OTSpacing.lg),
+        // ── 1. Study Spread V7: Matan Asal & Paragraf Takhrij Klasik Otomatis ──
+        Container(
+          decoration: BoxDecoration(
+            color: surface,
+            borderRadius: OTRadius.cardBorder,
+            border: Border.all(color: border),
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'NASKAH TAKHRIJ KLASIK OTOMATIS (TAKHREEGXSL ENGINE)',
-                    style: OTTypography.sectionHeading(color: textSecondary),
-                  ),
-                  OutlinedButton(
-                    style: OTButtons.compactOutlined(isDark),
-                    onPressed: () => _copyToClipboard(
+              Padding(
+                padding: const EdgeInsets.all(OTSpacing.lg),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'AL-HADĪTS AL-AṢL · ${session.activeHadith.bookTitleArabic} ${session.activeHadith.formattedCitation}',
+                          style:
+                              OTTypography.sectionHeading(color: textSecondary),
+                        ),
+                        Wrap(
+                          spacing: OTSpacing.sm,
+                          children: [
+                            OutlinedButton(
+                              style: OTButtons.compactOutlined(isDark),
+                              onPressed: () {
+                                setState(() {
+                                  session.mode =
+                                      HadithWorkspaceMode.tasyjirAndIlal;
+                                });
+                              },
+                              child: const Text('Lihat Pohon Sanad ↗'),
+                            ),
+                            FilledButton(
+                              style: OTButtons.compactTonal(isDark),
+                              onPressed: () => _copyToClipboard(
+                                clusterResult
+                                    .formattedFullTakhrijArabicParagraph,
+                                'Naskah takhrij klasik berhasil disalin ke papan klip.',
+                              ),
+                              child: const Text('Salin Naskah Takhrij'),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    OTSpacing.gapMd,
+                    SelectableText(
+                      '« ${session.activeHadith.rawMatn} »',
+                      textDirection: TextDirection.rtl,
+                      style: OTTypography.arabicIbarah(color: textPrimary),
+                    ),
+                  ],
+                ),
+              ),
+              Container(height: 1, color: borderSubtle),
+              Padding(
+                padding: const EdgeInsets.all(OTSpacing.lg),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Text(
+                      'الصياغة العلمية الآلية للتخريج ومقارنة المتون (٢٧ قاعدة)',
+                      textDirection: TextDirection.rtl,
+                      style: OTTypography.cardTitle(color: textPrimary),
+                    ),
+                    OTSpacing.gapSm,
+                    SelectableText(
                       clusterResult.formattedFullTakhrijArabicParagraph,
-                      'Naskah takhrij klasik berhasil disalin ke papan klip.',
+                      textDirection: TextDirection.rtl,
+                      style: OTTypography.arabicReading(color: textPrimary),
                     ),
-                    child: const Text('Salin Naskah Takhrij'),
-                  ),
-                ],
+                  ],
+                ),
               ),
-              OTSpacing.gapMd,
-              SelectableText(
-                clusterResult.formattedFullTakhrijArabicParagraph,
-                textDirection: TextDirection.rtl,
-                style: OTTypography.arabicReading(color: textPrimary),
-              ),
-              OTSpacing.gapMd,
-              Wrap(
-                spacing: OTSpacing.sm,
-                runSpacing: OTSpacing.xs,
-                crossAxisAlignment: WrapCrossAlignment.center,
-                children: [
-                  Text(
-                    'Urutan Takhrij:',
-                    style: OTTypography.captionMedium(color: textSecondary),
-                  ),
-                  for (final order in TakhrijSortOrder.values)
-                    OTChip(
-                      label: '${order.indonesianLabel} (${order.arabicLabel})',
-                      selected: session.sortOrder == order,
-                      onSelected: () {
-                        setState(() {
-                          session.sortOrder = order;
-                        });
-                      },
+              Container(height: 1, color: borderSubtle),
+              // Bilah Urutan & Filter Kaidah Lafaz
+              Padding(
+                padding: const EdgeInsets.all(OTSpacing.base),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Wrap(
+                      spacing: OTSpacing.sm,
+                      runSpacing: OTSpacing.xs,
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      children: [
+                        Text(
+                          'Urutan Takhrij:',
+                          style:
+                              OTTypography.captionMedium(color: textSecondary),
+                        ),
+                        for (final order in TakhrijSortOrder.values)
+                          OTChip(
+                            label:
+                                '${order.indonesianLabel} (${order.arabicLabel})',
+                            selected: session.sortOrder == order,
+                            onSelected: () {
+                              setState(() {
+                                session.sortOrder = order;
+                              });
+                            },
+                          ),
+                      ],
                     ),
-                ],
+                    OTSpacing.gapSm,
+                    Wrap(
+                      spacing: OTSpacing.sm,
+                      runSpacing: OTSpacing.xs,
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      children: [
+                        Text(
+                          'Filter Kaidah Lafaz:',
+                          style:
+                              OTTypography.captionMedium(color: textSecondary),
+                        ),
+                        OTChip(
+                          label: 'Semua Kaidah',
+                          selected: session.categoryFilter == null,
+                          onSelected: () =>
+                              setState(() => session.categoryFilter = null),
+                        ),
+                        for (final cat in MatnComparisonCategory.values)
+                          OTChip(
+                            label: cat.arabicTitle,
+                            selected: session.categoryFilter == cat,
+                            onSelected: () =>
+                                setState(() => session.categoryFilter = cat),
+                          ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ],
           ),
         ),
         OTSpacing.gapLg,
 
-        // Bagian 1: Takhrij & Mutaba'at (Sahabat yang sama)
+        // ── 2. Bagian Takhrij & Mutaba'at (Ittihad al-Rawi al-A'la) ──
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -888,30 +1324,36 @@ class _HadithTakhrijWorkspaceScreenState
               style: OTTypography.bookTitle(color: textPrimary),
             ),
             Text(
-              '${clusterResult.takhrijOutcomes.length} Riwayat',
+              '${filteredTakhrij.length} Riwayat',
               style: OTTypography.captionMedium(color: textSecondary),
             ),
           ],
         ),
         OTSpacing.gapMd,
-        if (clusterResult.takhrijOutcomes.isEmpty)
-          Text(
-            'Tidak ditemukan jalur mutaba‘at lain pada cakupan korpus yang dipilih.',
-            style: OTTypography.body(color: textSecondary),
+        if (filteredTakhrij.isEmpty)
+          OTBentoTile(
+            padding: const EdgeInsets.all(OTSpacing.lg),
+            child: Text(
+              'Tidak ditemukan riwayat mutāba‘āt pada filter yang dipilih.',
+              style: OTTypography.body(color: textSecondary),
+            ),
           )
         else
-          for (final outcome in clusterResult.takhrijOutcomes) ...[
+          for (var i = 0; i < filteredTakhrij.length; i++) ...[
             MatnComparisonOutcomeCard(
-              outcome: outcome,
-              onTapBook: () =>
-                  _openHadith(outcome.targetHadith, inNewTab: true),
+              serialNumber: i + 1,
+              outcome: filteredTakhrij[i],
+              onTapBook: () => _openHadith(
+                filteredTakhrij[i].targetHadith,
+                inNewTab: true,
+              ),
             ),
             OTSpacing.gapMd,
           ],
 
         OTSpacing.gapLg,
 
-        // Bagian 2: Syawahid Lintas Sahabat (Jami' al-Matn)
+        // ── 3. Bagian Syawahid Lintas Sahabat (Jami' al-Matn) ──
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -921,23 +1363,29 @@ class _HadithTakhrijWorkspaceScreenState
               style: OTTypography.bookTitle(color: textPrimary),
             ),
             Text(
-              '${clusterResult.syawahidOutcomes.length} Syahid',
+              '${filteredSyawahid.length} Syāhid',
               style: OTTypography.captionMedium(color: textSecondary),
             ),
           ],
         ),
         OTSpacing.gapMd,
-        if (clusterResult.syawahidOutcomes.isEmpty)
-          Text(
-            'Tidak ditemukan syawahid lintas sahabat pada cakupan korpus ini.',
-            style: OTTypography.body(color: textSecondary),
+        if (filteredSyawahid.isEmpty)
+          OTBentoTile(
+            padding: const EdgeInsets.all(OTSpacing.lg),
+            child: Text(
+              'Tidak ditemukan syawāhid lintas sahabat pada filter ini.',
+              style: OTTypography.body(color: textSecondary),
+            ),
           )
         else
-          for (final outcome in clusterResult.syawahidOutcomes) ...[
+          for (var i = 0; i < filteredSyawahid.length; i++) ...[
             MatnComparisonOutcomeCard(
-              outcome: outcome,
-              onTapBook: () =>
-                  _openHadith(outcome.targetHadith, inNewTab: true),
+              serialNumber: i + 1,
+              outcome: filteredSyawahid[i],
+              onTapBook: () => _openHadith(
+                filteredSyawahid[i].targetHadith,
+                inNewTab: true,
+              ),
             ),
             OTSpacing.gapMd,
           ],
@@ -957,6 +1405,7 @@ class _HadithTakhrijWorkspaceScreenState
     final hadith = session.activeHadith;
 
     return ListView(
+      physics: const BouncingScrollPhysics(),
       padding: const EdgeInsets.all(OTSpacing.lg),
       children: [
         OTBentoTile(
@@ -972,10 +1421,18 @@ class _HadithTakhrijWorkspaceScreenState
                     textDirection: TextDirection.rtl,
                     style: OTTypography.bookTitle(color: textPrimary),
                   ),
-                  Text(
-                    hadith.elevationStatus.arabicLabel,
-                    textDirection: TextDirection.rtl,
-                    style: OTTypography.captionMedium(color: textSecondary),
+                  Wrap(
+                    spacing: OTSpacing.sm,
+                    children: [
+                      OutlinedButton(
+                        style: OTButtons.compactOutlined(isDark),
+                        onPressed: () => _copyToClipboard(
+                          '${hadith.rawSanad} «${hadith.rawMatn}» — ${hadith.bookTitleArabic} ${hadith.formattedCitation}',
+                          'Sanad & Matan hadis berhasil disalin.',
+                        ),
+                        child: const Text('Salin Sanad & Matan'),
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -1036,18 +1493,57 @@ class _HadithTakhrijWorkspaceScreenState
                   style: OTTypography.arabicReading(color: textSecondary),
                 ),
               ],
+              if (hadith.historicalDateLabel != null ||
+                  hadith.thematicTags.isNotEmpty) ...[
+                OTSpacing.gapMd,
+                Directionality(
+                  textDirection: TextDirection.rtl,
+                  child: Wrap(
+                    spacing: OTSpacing.sm,
+                    runSpacing: OTSpacing.xs,
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    children: [
+                      if (hadith.historicalDateLabel != null)
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: OTSpacing.md,
+                            vertical: OTSpacing.xxs,
+                          ),
+                          decoration: BoxDecoration(
+                            color: OTColors.surfaceSubtle(isDark),
+                            borderRadius: OTRadius.chipBorder,
+                            border: Border.all(color: OTColors.border(isDark)),
+                          ),
+                          child: Text(
+                            'تاريخ المتن: ${hadith.historicalDateLabel}',
+                            textDirection: TextDirection.rtl,
+                            style: OTTypography.captionMedium(
+                              color: textSecondary,
+                            ),
+                          ),
+                        ),
+                      for (final tag in hadith.thematicTags)
+                        OTChip(
+                          label: 'موضوع: $tag',
+                          selected: _searchQuery == tag,
+                          onSelected: () {
+                            _searchController.text = tag;
+                            setState(() {
+                              _searchQuery = tag;
+                            });
+                          },
+                        ),
+                    ],
+                  ),
+                ),
+              ],
             ],
           ),
         ),
         OTSpacing.gapLg,
         MujammaMatnCard(
           compositeMatn: clusterResult.mujammaMatn,
-          onSaveToMejaTelaah: () => _copyToClipboard(
-            clusterResult.mujammaMatn.segments
-                .map((s) => s.arabicText)
-                .join(' '),
-            'Matan komposit (Al-Matn al-Mujamma‘) disalin ke papan klip.',
-          ),
+          onSaveToMejaTelaah: () => _saveTakhrijToBookmarks(clusterResult),
         ),
         if (clusterResult.serviceReferences.isNotEmpty) ...[
           OTSpacing.gapLg,
@@ -1079,7 +1575,7 @@ class _HadithTakhrijWorkspaceScreenState
                     ],
                   ),
                   OTSpacing.gapSm,
-                  Text(
+                  SelectableText(
                     ref.excerptArabic,
                     textDirection: TextDirection.rtl,
                     style: OTTypography.arabicReading(color: textPrimary),
@@ -1094,7 +1590,7 @@ class _HadithTakhrijWorkspaceScreenState
     );
   }
 
-  /// Mode 3: Tasyjir al-Asanid & Deteksi 'Ilal / Madar
+  /// Mode 3: Tasyjir al-Asanid Minimalis & Deteksi 'Ilal / Madar
   Widget _buildTasyjirAndIlalView(
     BuildContext context,
     bool isDark,
@@ -1105,13 +1601,15 @@ class _HadithTakhrijWorkspaceScreenState
     final textSecondary = OTColors.textSecondary(isDark);
 
     return ListView(
+      physics: const BouncingScrollPhysics(),
       padding: const EdgeInsets.all(OTSpacing.lg),
       children: [
         HadithIsnadDagCanvas(
           report: clusterResult.madarReport,
+          selectedRawiId: session.selectedRawiId,
           onSelectRawi: (rawiId) {
             setState(() {
-              session.selectedRawiId = rawiId;
+              session.selectedRawiId = rawiId.isEmpty ? null : rawiId;
             });
           },
         ),
@@ -1145,7 +1643,7 @@ class _HadithTakhrijWorkspaceScreenState
                     ],
                   ),
                   OTSpacing.gapXs,
-                  Text(
+                  SelectableText(
                     '« ${j.judgmentArabicText} »',
                     textDirection: TextDirection.rtl,
                     style: OTTypography.arabicReading(color: textPrimary),
@@ -1171,6 +1669,7 @@ class _HadithTakhrijWorkspaceScreenState
     final allRawis = _engine.registeredRawis;
 
     return ListView(
+      physics: const BouncingScrollPhysics(),
       padding: const EdgeInsets.all(OTSpacing.lg),
       children: [
         OTBentoTile(
@@ -1208,7 +1707,7 @@ class _HadithTakhrijWorkspaceScreenState
                   SizedBox(
                     width: 240,
                     child: DropdownButtonFormField<String>(
-                      value: _selectedTeacherId,
+                      initialValue: _selectedTeacherId,
                       dropdownColor: OTColors.surface(isDark),
                       style: OTTypography.captionMedium(color: textPrimary),
                       decoration: InputDecoration(
@@ -1233,7 +1732,7 @@ class _HadithTakhrijWorkspaceScreenState
                   SizedBox(
                     width: 240,
                     child: DropdownButtonFormField<String>(
-                      value: _selectedStudentId,
+                      initialValue: _selectedStudentId,
                       dropdownColor: OTColors.surface(isDark),
                       style: OTTypography.captionMedium(color: textPrimary),
                       decoration: InputDecoration(
@@ -1266,6 +1765,15 @@ class _HadithTakhrijWorkspaceScreenState
                 OTSpacing.gapLg,
                 RawiBiographyInspectorCard(
                   rawi: _disambiguatedRawi!,
+                  resolveRawiName: _resolveRawiDisplayName,
+                  onSelectRelatedRawiId: (id) {
+                    if (_engine.getRawiById(id) != null) {
+                      setState(() {
+                        session.selectedRawiId = id;
+                        _disambiguatedRawi = _engine.getRawiById(id);
+                      });
+                    }
+                  },
                 ),
               ],
             ],
@@ -1280,6 +1788,14 @@ class _HadithTakhrijWorkspaceScreenState
         for (final rawi in allRawis) ...[
           RawiBiographyInspectorCard(
             rawi: rawi,
+            resolveRawiName: _resolveRawiDisplayName,
+            onSelectRelatedRawiId: (id) {
+              if (_engine.getRawiById(id) != null) {
+                setState(() {
+                  session.selectedRawiId = id;
+                });
+              }
+            },
           ),
           OTSpacing.gapMd,
         ],
@@ -1293,6 +1809,7 @@ class _HadithTakhrijWorkspaceScreenState
     final textSecondary = OTColors.textSecondary(isDark);
 
     return ListView(
+      physics: const BouncingScrollPhysics(),
       padding: const EdgeInsets.all(OTSpacing.lg),
       children: [
         OTBentoTile(
@@ -1323,7 +1840,14 @@ class _HadithTakhrijWorkspaceScreenState
                   ),
                   FilledButton(
                     style: OTButtons.compactTonal(isDark),
-                    onPressed: _runManuscriptScanner,
+                    onPressed: () {
+                      OTMotion.light();
+                      _runManuscriptScanner();
+                      AppSnackBar.success(
+                        context,
+                        'Pemindaian naskah selesai (${_manuscriptDetections.length} kutipan hadis ditemukan).',
+                      );
+                    },
                     child: const Text('Pindai & Takhrij Makalah'),
                   ),
                 ],
@@ -1379,24 +1903,37 @@ class _HadithTakhrijWorkspaceScreenState
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'Kutipan #${det.indexInManuscript}',
+                      '0${det.indexInManuscript} · Kutipan Terdeteksi',
                       style: OTTypography.captionMedium(color: textSecondary),
                     ),
-                    if (det.matchedCluster != null)
-                      OutlinedButton(
-                        style: OTButtons.compactOutlined(isDark),
-                        onPressed: () {
-                          _openHadith(
-                            det.matchedCluster!.originHadith,
-                            inNewTab: false,
-                          );
-                          setState(() {
-                            _activeTab.mode =
-                                HadithWorkspaceMode.takhrijAndMuqaranah;
-                          });
-                        },
-                        child: const Text('Buka di Meja Telaah'),
-                      ),
+                    Wrap(
+                      spacing: OTSpacing.xs,
+                      children: [
+                        OutlinedButton(
+                          style: OTButtons.compactOutlined(isDark),
+                          onPressed: () => _copyToClipboard(
+                            det.generatedFootnoteArabic,
+                            'Catatan kaki #${det.indexInManuscript} berhasil disalin.',
+                          ),
+                          child: const Text('Salin Catatan Kaki'),
+                        ),
+                        if (det.matchedCluster != null)
+                          FilledButton(
+                            style: OTButtons.compactTonal(isDark),
+                            onPressed: () {
+                              _openHadith(
+                                det.matchedCluster!.originHadith,
+                                inNewTab: false,
+                              );
+                              setState(() {
+                                _activeTab.mode =
+                                    HadithWorkspaceMode.takhrijAndMuqaranah;
+                              });
+                            },
+                            child: const Text('Buka di Meja Telaah ↗'),
+                          ),
+                      ],
+                    ),
                   ],
                 ),
                 OTSpacing.gapSm,
@@ -1444,6 +1981,7 @@ class _HadithTakhrijWorkspaceScreenState
       color: OTColors.surface(isDark),
       padding: OTSpacing.cardCompact,
       child: ListView(
+        physics: const BouncingScrollPhysics(),
         children: [
           Text(
             'INSPEKTOR RIJAL & METODOLOGI HARF',
@@ -1453,13 +1991,55 @@ class _HadithTakhrijWorkspaceScreenState
           if (selectedRawi != null)
             RawiBiographyInspectorCard(
               rawi: selectedRawi,
+              resolveRawiName: _resolveRawiDisplayName,
+              onSelectRelatedRawiId: (id) {
+                if (_engine.getRawiById(id) != null) {
+                  OTMotion.selection();
+                  setState(() {
+                    session.selectedRawiId = id;
+                  });
+                }
+              },
+              onClose: () {
+                setState(() {
+                  session.selectedRawiId = null;
+                });
+              },
             )
           else
             OTBentoTile(
-              padding: OTSpacing.cardCompact,
-              child: Text(
-                'Klik salah satu perawi pada sanad atau kanvas Tasyjīr untuk menampilkan biografi lengkap serta kutipan al-Jarḥ wa al-Ta‘dīl.',
-                style: OTTypography.caption(color: textSecondary),
+              padding: OTSpacing.card,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Pilih Perawi di Sanad atau Pohon Tasyjīr',
+                    style: OTTypography.cardTitle(color: textPrimary),
+                  ),
+                  OTSpacing.gapXs,
+                  Text(
+                    'Ketuk salah satu simpul perawi untuk menampilkan biografi lengkap, jaringan Guru–Murid, serta kutipan al-Jarḥ wa al-Ta‘dīl.',
+                    style: OTTypography.caption(color: textSecondary),
+                  ),
+                  OTSpacing.gapMd,
+                  Wrap(
+                    spacing: OTSpacing.xs,
+                    runSpacing: OTSpacing.xs,
+                    children: [
+                      for (final hop in session.activeHadith.sanadChain)
+                        if (hop.resolvedRawiId != null)
+                          OTChip(
+                            label: hop.resolvedArabicName,
+                            selected: false,
+                            onSelected: () {
+                              setState(() {
+                                session.selectedRawiId = hop.resolvedRawiId;
+                              });
+                            },
+                          ),
+                    ],
+                  ),
+                ],
               ),
             ),
           OTSpacing.gapMd,
@@ -1469,7 +2049,7 @@ class _HadithTakhrijWorkspaceScreenState
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'RINGKASAN 27 KAIDAH MUQĀRANAT AL-MUTŪN',
+                  '01 · MATRIKS 27 KAIDAH MUQĀRANAT AL-MUTŪN',
                   style: OTTypography.sectionHeading(color: textSecondary),
                 ),
                 OTSpacing.gapSm,
@@ -1478,7 +2058,7 @@ class _HadithTakhrijWorkspaceScreenState
                   '• Kaidah 8–16 (بمثله): Kecocokan ≥ 90% satu sisi, ≥ 65% sisi lain, sekuens ≥ 50%.\n'
                   '• Kaidah 17–23 (بنحوه): Kecocokan di bawah بمثله dengan sekuens ≥ 40%.\n'
                   '• Kaidah 24–27 (بمعناه): Kecocokan makna ≥ 20% dan sekuens ≥ 30%.\n'
-                  '• Pengelompokan 2 Tahap: Ambang otomatis 80% (Tahap 1) + penggabungan riwayat ringkas ≥ 50% (Tahap 3).',
+                  '• Klasterisasi 2 Tahap: Ambang otomatis 80% (Tahap 1) + penggabungan riwayat ringkas ≥ 50% (Tahap 3).',
                   style: OTTypography.caption(color: textPrimary),
                 ),
               ],
@@ -1491,13 +2071,13 @@ class _HadithTakhrijWorkspaceScreenState
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'RESOLUSI KITAB #26 & 12 PERAWI ZAWĀ’ID',
+                  '02 · RESOLUSI KITAB #26 & 12 PERAWI ZAWĀ’ID',
                   style: OTTypography.sectionHeading(color: textSecondary),
                 ),
                 OTSpacing.gapSm,
                 Text(
                   '• Mengganti hardcode @BookID=26 (al-Maṭālib al-‘Āliyah) di TakhreegXSL.xsl dengan taksonomi otomatis: kitab kompilasi sekunder menggunakan «أورده», sedangkan kitab musnad/mustakhraj menggunakan «أخرجه».\n'
-                  '• Mendukung atribusi otomatis 12 perawi Zawā’id (seperti ‘Abdullāh bin Aḥmad dan Abu al-Ḥasan al-Qaṭṭān).',
+                  '• Mendukung atribusi otomatis 12 perawi Zawā’id (seperti ‘Abdullāh bin Aḥmad dan Abū al-Ḥasan al-Qaṭṭān).',
                   style: OTTypography.caption(color: textPrimary),
                 ),
               ],

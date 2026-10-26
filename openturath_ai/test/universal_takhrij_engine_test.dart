@@ -103,5 +103,14 @@ void main() {
       expect(detections.isNotEmpty, isTrue);
       expect(detections.first.generatedFootnoteArabic, contains('البخاري'));
     });
+
+    test('Dynamic Sanad Parser extracts narrator hops in tabaqah order from raw Arabic sanad', () {
+      const sampleSanad =
+          'حدثنا الحميدي قال حدثنا سفيان بن عيينة عن يحيى بن سعيد الأنصاري عن محمد بن إبراهيم التيمي عن علقمة بن وقاص الليثي عن عمر بن الخطاب';
+      final hops = engine.parseSanadChainFromText(sampleSanad);
+
+      expect(hops.length, greaterThanOrEqualTo(4));
+      expect(hops.first.resolvedRawiId, equals('rawi_umar'));
+    });
   });
 }

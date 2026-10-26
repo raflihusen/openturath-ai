@@ -483,6 +483,74 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
                                             const SizedBox(
                                                 height: OTSpacing.md),
                                           ],
+                                          if (_selectedFieldId == null ||
+                                              _selectedFieldId == 'all' ||
+                                              _selectedFieldId == 'hadith') ...[
+                                            OTReveal(
+                                              child: OTBentoTile(
+                                                padding: const EdgeInsets.all(
+                                                    OTSpacing.lg),
+                                                onTap: () => NavigationGuard
+                                                    .safePushNamed(
+                                                  context,
+                                                  AppRoutes
+                                                      .hadithTakhrijWorkspace,
+                                                ),
+                                                semanticLabel:
+                                                    'Meja Telaah Hadis & Takhrij Ribuan Kitab',
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  children: [
+                                                    Expanded(
+                                                      child: Column(
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          Text(
+                                                            'TAKHRIJ UNIVERSAL · 27 KAIDAH HARF',
+                                                            style: OTTypography
+                                                                .sectionHeading(
+                                                              color:
+                                                                  textSecondary,
+                                                            ),
+                                                          ),
+                                                          OTSpacing.gapXs,
+                                                          Text(
+                                                            'Meja Telaah Hadis & Tasyjīr Sanad (Ribuan Kitab)',
+                                                            style: OTTypography
+                                                                .cardTitle(
+                                                              color:
+                                                                  textPrimary,
+                                                            ),
+                                                          ),
+                                                          OTSpacing.gapXs,
+                                                          Text(
+                                                            'Muqāranat al-Mutūn (27 Kaidah), Al-Matn al-Mujamma‘, Diagram Pohon Sanad, Disambiguasi Rijal, & Takhrij Makalah.',
+                                                            style: OTTypography
+                                                                .caption(
+                                                              color:
+                                                                  textSecondary,
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                    Icon(
+                                                      Icons
+                                                          .account_tree_outlined,
+                                                      size: 22,
+                                                      color: textPrimary,
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                            const SizedBox(
+                                                height: OTSpacing.md),
+                                          ],
                                           // Grid seragam: satu ketukan langsung membuka asisten.
                                           LayoutBuilder(
                                               builder: (context, box) {
