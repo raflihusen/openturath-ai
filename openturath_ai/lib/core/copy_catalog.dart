@@ -2144,6 +2144,21 @@ const copyCatalog = <String, List<String>>{
   "edit": ["Edit", "Edit", "تحرير"],
   "viewBook": ["Lihat kitab", "View book", "عرض الكتاب"],
   "outputLanguage": ["Bahasa jawaban", "Answer language", "لغة الجواب"],
+  "outputLanguageHint": [
+    "Jawaban akan ditulis dalam bahasa yang Anda pilih.",
+    "Answers will be written in the language you choose.",
+    "ستُكتب الإجابات باللغة التي تختارها."
+  ],
+  "outputLanguageChanged": [
+    "Bahasa jawaban diganti ke {0}.",
+    "Answer language changed to {0}.",
+    "تم تغيير لغة الجواب إلى {0}."
+  ],
+  "outputLanguageFailed": [
+    "Belum berhasil mengganti bahasa. Pilih bahasa di jendela yang terbuka.",
+    "Could not change the language. Choose it in the window that opened.",
+    "تعذّر تغيير اللغة. اخترها من النافذة المفتوحة."
+  ],
   "clearChatHistory": [
     "Hapus riwayat percakapan",
     "Clear chat history",

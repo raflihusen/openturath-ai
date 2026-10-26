@@ -1,5 +1,10 @@
+import 'notebook_skin.dart';
+
 /// Conversation cleanup and explicit copy capture, restricted to NotebookLM.
-const notebookUiScript = r'''
+/// Ditambah kulit OpenTurath ([notebookSkinScript]) sebagai IIFE terpisah.
+const notebookUiScript = _notebookCleanupScript + notebookSkinScript;
+
+const _notebookCleanupScript = r'''
 (function () {
   if (window.top !== window || !['notebooklm.google.com', 'notebook.google.com'].includes(location.hostname)) return;
   if (window.otNotebook) {
@@ -183,8 +188,8 @@ const notebookUiScript = r'''
       [aria-label*="Google Account" i], [aria-label*="Akun Google" i],
       a[href*="myaccount.google.com"],
       labs-tailwind-logo, a.logo-link, a[aria-label*="NotebookLM" i], svg[aria-label*="NotebookLM" i],
-      button[aria-label*="Settings" i], button[aria-label*="Setelan" i],
-      button[aria-label*="Pengaturan" i], button[aria-label*="Notebook settings" i],
+      button[aria-label="Settings" i], button[aria-label="Setelan" i],
+      button[aria-label="Pengaturan" i], button[aria-label="Notebook settings" i],
       .project-header button, app-project-header button,
       mat-toolbar button, .top-bar button,
       .pro-badge, [class*="pro-badge" i], [class*="tier-badge" i] {
@@ -656,8 +661,8 @@ const notebookUiScript = r'''
       '[aria-label*="Google Account" i]', '[aria-label*="Akun Google" i]',
       'a[href*="myaccount.google.com"]',
       'labs-tailwind-logo', 'a.logo-link', 'a[aria-label*="NotebookLM" i]', 'svg[aria-label*="NotebookLM" i]',
-      'button[aria-label*="Settings" i]', 'button[aria-label*="Setelan" i]',
-      'button[aria-label*="Pengaturan" i]', 'button[aria-label*="Notebook settings" i]',
+      'button[aria-label="Settings" i]', 'button[aria-label="Setelan" i]',
+      'button[aria-label="Pengaturan" i]', 'button[aria-label="Notebook settings" i]',
       'button[aria-label*="Share" i]', 'button[aria-label*="Bagikan" i]',
       'mat-button-toggle-group',
       '.pro-badge', '[class*="pro-badge" i]', '[class*="tier-badge" i]'

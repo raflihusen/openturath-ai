@@ -1,4 +1,5 @@
 import '../widgets/adaptive_sheet.dart';
+import 'output_language_sheet.dart';
 import '../services/desktop_webview_runtime.dart';
 import '../widgets/desktop_webview_gate.dart';
 import '../core/app_platform.dart';
@@ -241,6 +242,58 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
 
   void _openLibrarySheet(BuildContext context, AgentModel agent) {
     showResearchLibrary(context, agent: agent);
+  }
+
+  static const _outputLanguageKey = 'ot_output_language';
+
+  Future<void> _showOutputLanguage(
+      BuildContext context, AgentSessionTab session) async {
+    SharedPreferences? prefs;
+    try {
+      prefs = await SharedPreferences.getInstance();
+    } catch (_) {}
+    if (!context.mounted) return;
+    await showOutputLanguageSheet(
+      context,
+      current: prefs?.getString(_outputLanguageKey),
+      onSelect: (language) async {
+        final controller = session.webController;
+        if (controller == null) return false;
+        String reason = 'error';
+        try {
+          final result = await controller.callAsyncJavaScript(
+            functionBody: 'return await window.otSetOutputLanguage(aliases);',
+            arguments: {'aliases': language.aliases},
+          );
+          final value = result?.value;
+          if (value is Map) {
+            if (value['ok'] == true) {
+              try {
+                await prefs?.setString(_outputLanguageKey, language.code);
+              } catch (_) {}
+              if (mounted) {
+                AppSnackBar.show(this.context,
+                    message: Loc.tr('outputLanguageChanged', [language.label]),
+                    type: SnackType.success);
+              }
+              return true;
+            }
+            reason = '${value['reason']}';
+          }
+        } catch (_) {}
+        // Gagal: bila menu pengaturan belum terbuka, buka jendela bawaan halaman.
+        if (reason == 'menu' || reason == 'unsupported' || reason == 'error') {
+          unawaited(controller.evaluateJavascript(
+              source:
+                  'if (typeof window.otOpenLanguageSettings === "function") { window.otOpenLanguageSettings(); }'));
+        }
+        if (mounted) {
+          AppSnackBar.show(this.context,
+              message: Loc.tr('outputLanguageFailed'), type: SnackType.warning);
+        }
+        return false;
+      },
+    );
   }
 
   void _showFontScaleDialog(BuildContext context, AgentSessionTab session) {
@@ -536,10 +589,7 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
               if (val == 'conversation') {
                 _copyActiveConversation(activeTab);
               } else if (val == 'language') {
-                activeTab.webController?.evaluateJavascript(
-                  source:
-                      'if (typeof window.otOpenLanguageSettings === "function") { window.otOpenLanguageSettings(); } else if (typeof otOpenLanguageSettings === "function") { otOpenLanguageSettings(); }',
-                );
+                _showOutputLanguage(context, activeTab);
               } else if (val == 'delete_chat') {
                 _confirmDeleteChatHistory(context, activeTab);
               } else if (val == 'font') {
@@ -954,7 +1004,8 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
     ''';
 
     return UserScript(
-      source: '$_turatsMasterScript\n$notebookUiScript\n$themeInitScript',
+      source:
+          'window._otLang = "${Loc.language}";\n$_turatsMasterScript\n$notebookUiScript\n$themeInitScript',
       injectionTime: UserScriptInjectionTime.AT_DOCUMENT_START,
       forMainFrameOnly: true,
     );
