@@ -7,7 +7,9 @@ import 'package:flutter/foundation.dart';
 /// Dipakai agar status sebuah fitur bisa diubah tanpa merilis aplikasi:
 /// - [soonSubAgentIds]: id sub-AI yang berstatus "segera hadir" (tampil tetapi
 ///   tidak bisa dibuka), mis. `fiqh_tahawwulat_khatib`.
-/// - [introductionEnabled]: apakah tombol "Mengenal Fikih Tahawwulat" tampil.
+/// - [introductionEnabled]: apakah slide "Mengenal Fikih Tahawwulat" sudah boleh
+///   dibuka. Bila false, tombolnya TETAP tampil dengan penanda "Segera hadir"
+///   dan ketukannya hanya membuka dialog.
 ///
 /// Aturan keselamatan: bila dokumen belum ada, rusak, atau tidak terbaca,
 /// dipakai nilai terakhir yang diketahui, lalu [FeatureFlags.defaults]. Nilai

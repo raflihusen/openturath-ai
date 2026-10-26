@@ -1,5 +1,7 @@
 import '../core/design/ot_typography.dart';
 import '../core/design/ot_expressive.dart';
+import '../core/design/ot_radius.dart';
+import '../core/design/ot_spacing.dart';
 import 'package:flutter/material.dart';
 import '../core/localization.dart';
 import '../core/scholarly_fonts.dart';
@@ -21,17 +23,16 @@ class TahawwulatHero extends StatelessWidget {
       this.facts = const [],
       this.onOpenLibrary});
 
-  /// Saklar tombol "Mengenal Fikih Tahawwulat". Nilainya mengikuti saklar jarak
-  /// jauh `app_config/features.introduction_enabled` (lihat `FeatureFlags`),
-  /// sehingga bisa dinyalakan atau dimatikan tanpa merilis aplikasi. Penimpaan
-  /// manual lewat `showIntroduction = true/false` tetap diutamakan (dipakai tes).
-  static bool? showIntroductionOverride;
+  /// Apakah slide "Mengenal Fikih Tahawwulat" sudah boleh dibuka. Mengikuti
+  /// saklar jarak jauh `app_config/features.introduction_enabled` (lihat
+  /// `FeatureFlags`), sehingga bisa dinyalakan tanpa merilis aplikasi. Selama
+  /// belum siap, tombolnya TETAP tampil dengan penanda "Segera hadir".
+  /// Penimpaan manual `introductionReadyOverride` diutamakan (dipakai tes).
+  static bool? introductionReadyOverride;
 
-  /// Kompatibilitas dengan kode lama: membaca nilai efektif.
-  static bool get showIntroduction =>
-      showIntroductionOverride ??
+  static bool get introductionReady =>
+      introductionReadyOverride ??
       FeatureFlagsService.current.introductionEnabled;
-  static set showIntroduction(bool value) => showIntroductionOverride = value;
 
   final VoidCallback onOpen;
   final VoidCallback? onOpenLibrary;
@@ -99,17 +100,42 @@ class TahawwulatHero extends StatelessWidget {
                               foregroundColor: OTExpressive.white),
                           icon: Icon(Icons.auto_stories_outlined,
                               semanticLabel: Loc.tr('viewReferences')))),
-                if (showIntroduction)
-                  TextButton(
-                      onPressed: onIntroduction,
-                      style: TextButton.styleFrom(
-                          foregroundColor: OTExpressive.white,
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 16)),
-                      child: Text(reviewCopy(
-                          'Mengenal Fikih Tahawwulat',
-                          'التعرّف على فقه التحولات',
-                          'Getting to know Fiqh al-Tahawwulat'))),
+                TextButton(
+                    onPressed: onIntroduction,
+                    style: TextButton.styleFrom(
+                        foregroundColor: OTExpressive.white,
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 16)),
+                    // Wrap: penanda turun ke baris berikutnya bila tidak muat
+                    // (layar sempit atau teks besar), alih-alih meluap.
+                    child: Wrap(
+                        alignment: WrapAlignment.center,
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        spacing: OTSpacing.sm,
+                        runSpacing: OTSpacing.xs,
+                        children: [
+                          Opacity(
+                              opacity: introductionReady ? 1 : 0.7,
+                              child: Text(reviewCopy(
+                                  'Mengenal Fikih Tahawwulat',
+                                  'التعرّف على فقه التحولات',
+                                  'Getting to know Fiqh al-Tahawwulat'))),
+                          if (!introductionReady)
+                            Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: OTSpacing.md,
+                                    vertical: OTSpacing.xs),
+                                decoration: BoxDecoration(
+                                    borderRadius: OTRadius.chipBorder,
+                                    border: Border.all(
+                                        color: OTExpressive.whiteMuted)),
+                                child: Text(
+                                    reviewCopy('Segera hadir', 'قريبًا',
+                                        'Coming soon'),
+                                    style: ScholarlyFonts.outfit(
+                                        fontSize: OTFontSize.s11,
+                                        color: OTExpressive.whiteMuted))),
+                        ])),
               ]),
             ]);
         return TahawwulatHeroSurface(

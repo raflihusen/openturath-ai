@@ -8,6 +8,7 @@ import 'assistant_grid_card.dart';
 import 'tahawwulat_hero.dart';
 import 'tahawwulat_ai_picker.dart';
 import 'tahawwulat_slides_screen.dart';
+import 'tahqiq_khazanah_dialog.dart';
 
 class TahawwulatFlagshipCard extends StatelessWidget {
   const TahawwulatFlagshipCard(
@@ -44,8 +45,18 @@ class TahawwulatFlagshipCard extends StatelessWidget {
               TahawwulatHero(
                   onOpen: choose,
                   onOpenLibrary: onOpenLibrary,
-                  onIntroduction: onOpenIntroduction ??
-                      () => TahawwulatSlidesScreen.show(context, onAsk: choose),
+                  // Selama belum siap, ketukan membuka dialog "Segera hadir",
+                  // bukan slide.
+                  onIntroduction: !TahawwulatHero.introductionReady
+                      ? () => TahqiqKhazanahDialog.show(context,
+                          agent: agent,
+                          title: reviewCopy(
+                              'Mengenal Fikih Tahawwulat',
+                              'التعرّف على فقه التحولات',
+                              'Getting to know Fiqh al-Tahawwulat'))
+                      : onOpenIntroduction ??
+                          () => TahawwulatSlidesScreen.show(context,
+                              onAsk: choose),
                   facts: LibraryStat.from(metadata)
                       .map((s) => '${s.value} ${s.unit}')
                       .toList()),

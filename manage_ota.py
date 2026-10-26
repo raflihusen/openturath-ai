@@ -18,7 +18,7 @@ Saklar fitur (app_config/features), tanpa update aplikasi:
   python3 manage_ota.py features                        # Lihat status saklar fitur
   python3 manage_ota.py soon-sub-agent fiqh_tahawwulat_khatib   # Tandai "segera hadir"
   python3 manage_ota.py release-sub-agent fiqh_tahawwulat_khatib # Buka untuk semua pengguna
-  python3 manage_ota.py intro on|off                    # Tombol "Mengenal Fikih Tahawwulat"
+  python3 manage_ota.py intro on|off                    # Slide "Mengenal Fikih Tahawwulat": on = terbuka, off = tombol "Segera hadir"
   (tambahkan --dry-run untuk melihat perubahan tanpa menulis ke Firestore)
 
 Pemeriksaan rilis (baca-saja, tidak mengubah apa pun):
@@ -641,7 +641,7 @@ def _load_features(token):
 
 def _print_features(state, exists):
     print(f"   • Dokumen app_config/features : {'ada' if exists else 'BELUM ADA (memakai bawaan aplikasi)'}")
-    print(f"   • Mengenal Fikih Tahawwulat   : {'🟢 TAMPIL' if state['introduction_enabled'] else '⚪ DISEMBUNYIKAN'}")
+    print(f"   • Mengenal Fikih Tahawwulat   : {'🟢 SIAP (slide terbuka)' if state['introduction_enabled'] else '⏳ SEGERA HADIR (tombol tampil, slide tertutup)'}")
     print("   • Sub-AI Fikih Tahawwulat:")
     for aid in KNOWN_SUB_AGENTS:
         label = "⏳ SEGERA HADIR (tidak bisa dibuka)" if aid in state["soon_sub_agent_ids"] else "🟢 TERBUKA"
@@ -792,7 +792,7 @@ def main():
         sp = subparsers.add_parser(name, help=helptext)
         sp.add_argument("agent_id", help="ID sub-AI (misal: fiqh_tahawwulat_khatib)")
         sp.add_argument("--dry-run", action="store_true", help="Tampilkan hasil tanpa menulis")
-    intro_p = subparsers.add_parser("intro", help="Tampilkan/sembunyikan tombol Mengenal Fikih Tahawwulat")
+    intro_p = subparsers.add_parser("intro", help="Buka (on) atau jadikan Segera hadir (off) slide Mengenal Fikih Tahawwulat")
     intro_p.add_argument("mode", choices=["on", "off"])
     intro_p.add_argument("--dry-run", action="store_true", help="Tampilkan hasil tanpa menulis")
 

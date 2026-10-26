@@ -18,9 +18,9 @@ void main() {
   setUp(() {
     AppConfig.localeNotifier.value = 'id';
     FeatureFlagsService.resetForTest();
-    TahawwulatHero.showIntroductionOverride = null;
+    TahawwulatHero.introductionReadyOverride = null;
   });
-  tearDown(() => TahawwulatHero.showIntroductionOverride = null);
+  tearDown(() => TahawwulatHero.introductionReadyOverride = null);
 
   group('FeatureFlags.parse', () {
     test('bawaan: tiga sub-AI segera hadir dan Mengenal mati', () {
@@ -182,41 +182,87 @@ void main() {
   });
 
   group('Tombol Mengenal Fikih Tahawwulat', () {
-    test('mengikuti saklar jarak jauh', () {
-      expect(TahawwulatHero.showIntroduction, isFalse);
+    test('kesiapan mengikuti saklar jarak jauh', () {
+      expect(TahawwulatHero.introductionReady, isFalse);
       FeatureFlagsService.resetForTest(
           const FeatureFlags(soonSubAgentIds: {}, introductionEnabled: true));
-      expect(TahawwulatHero.showIntroduction, isTrue);
+      expect(TahawwulatHero.introductionReady, isTrue);
     });
 
     test('penimpaan manual mengalahkan saklar jarak jauh', () {
       FeatureFlagsService.resetForTest(
           const FeatureFlags(soonSubAgentIds: {}, introductionEnabled: true));
-      TahawwulatHero.showIntroduction = false;
-      expect(TahawwulatHero.showIntroduction, isFalse);
-      TahawwulatHero.showIntroductionOverride = null;
-      expect(TahawwulatHero.showIntroduction, isTrue);
+      TahawwulatHero.introductionReadyOverride = false;
+      expect(TahawwulatHero.introductionReady, isFalse);
+      TahawwulatHero.introductionReadyOverride = null;
+      expect(TahawwulatHero.introductionReady, isTrue);
     });
 
-    Widget frame() => MaterialApp(
+    Widget frame({VoidCallback? onIntroduction}) => MaterialApp(
         theme: AppTheme.lightTheme,
         builder: (context, child) => LocaleScope(child: child!),
         home: Scaffold(
             body: SingleChildScrollView(
-                child: TahawwulatHero(onOpen: () {}, onIntroduction: () {}))));
+                child: TahawwulatHero(
+                    onOpen: () {}, onIntroduction: onIntroduction ?? () {}))));
 
-    testWidgets('tersembunyi secara bawaan dan muncul saat dinyalakan',
+    testWidgets('selalu tampil; belum siap memberi penanda Segera hadir',
         (tester) async {
       tester.view.physicalSize = const Size(900, 900);
       tester.view.devicePixelRatio = 1;
       addTearDown(tester.view.reset);
       await tester.pumpWidget(frame());
-      expect(find.text('Mengenal Fikih Tahawwulat'), findsNothing);
+      expect(find.text('Mengenal Fikih Tahawwulat'), findsOneWidget);
+      expect(find.text('Segera hadir'), findsOneWidget);
 
       FeatureFlagsService.resetForTest(
           const FeatureFlags(soonSubAgentIds: {}, introductionEnabled: true));
       await tester.pumpWidget(frame());
       expect(find.text('Mengenal Fikih Tahawwulat'), findsOneWidget);
+      expect(find.text('Segera hadir'), findsNothing);
+    });
+
+    testWidgets('penanda berganti ke Inggris dan Arab', (tester) async {
+      tester.view.physicalSize = const Size(900, 900);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      AppConfig.localeNotifier.value = 'en';
+      await tester.pumpWidget(frame());
+      expect(find.text('Getting to know Fiqh al-Tahawwulat'), findsOneWidget);
+      expect(find.text('Coming soon'), findsOneWidget);
+      await tester.pumpWidget(const SizedBox());
+      AppConfig.localeNotifier.value = 'ar';
+      await tester.pumpWidget(frame());
+      expect(find.text('التعرّف على فقه التحولات'), findsOneWidget);
+      expect(find.text('قريبًا'), findsOneWidget);
+    });
+
+    testWidgets('layar sempit dan teks besar tidak meluap', (tester) async {
+      tester.view.physicalSize = const Size(320, 900);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      await tester.pumpWidget(MaterialApp(
+          theme: AppTheme.lightTheme,
+          builder: (context, child) => MediaQuery(
+              data: MediaQuery.of(context)
+                  .copyWith(textScaler: const TextScaler.linear(2)),
+              child: LocaleScope(child: child!)),
+          home: Scaffold(
+              body: SingleChildScrollView(
+                  child:
+                      TahawwulatHero(onOpen: () {}, onIntroduction: () {})))));
+      expect(tester.takeException(), isNull);
+      expect(find.text('Segera hadir'), findsOneWidget);
+    });
+
+    testWidgets('mengetuk tombol memanggil aksi pemanggil', (tester) async {
+      tester.view.physicalSize = const Size(900, 900);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      var taps = 0;
+      await tester.pumpWidget(frame(onIntroduction: () => taps++));
+      await tester.tap(find.text('Mengenal Fikih Tahawwulat'));
+      expect(taps, 1);
     });
   });
 

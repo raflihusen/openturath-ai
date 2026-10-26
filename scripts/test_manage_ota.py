@@ -52,6 +52,12 @@ class ReadFeaturesTest(unittest.TestCase):
         state = ota.read_features({"soon_sub_agent_ids": many})
         self.assertEqual(sorted(state["soon_sub_agent_ids"]), sorted(DEFAULTS["soon_sub_agent_ids"]))
 
+    def test_operator_labels_say_coming_soon_not_hidden(self):
+        # Mengenal tetap tampil sebagai "Segera hadir"; label operator tidak boleh bilang "disembunyikan".
+        src = (Path(__file__).resolve().parent.parent / "manage_ota.py").read_text("utf8")
+        self.assertIn("SEGERA HADIR (tombol tampil, slide tertutup)", src)
+        self.assertNotIn("DISEMBUNYIKAN", src)
+
     def test_defaults_match_the_other_two_implementations(self):
         # Dart dan TypeScript menyimpan bawaan yang sama; tes ini menjaga kesepakatan.
         root = Path(__file__).resolve().parent.parent

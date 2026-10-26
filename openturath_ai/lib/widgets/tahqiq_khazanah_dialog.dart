@@ -15,16 +15,22 @@ class TahqiqKhazanahDialog extends StatelessWidget {
   const TahqiqKhazanahDialog({
     super.key,
     required this.agent,
+    this.titleOverride,
   });
 
   final AgentModel agent;
 
-  static Future<void> show(BuildContext context, {required AgentModel agent}) {
+  /// Judul tampilan bila bukan nama agen (mis. fitur non-AI seperti
+  /// "Mengenal Fikih Tahawwulat"). Tanpa ini dipakai judul agen berawalan "AI".
+  final String? titleOverride;
+
+  static Future<void> show(BuildContext context,
+      {required AgentModel agent, String? title}) {
     OTMotion.light();
     return showDialog<void>(
       context: context,
       barrierColor: OTColors.shadow.withValues(alpha: 0.75),
-      builder: (_) => TahqiqKhazanahDialog(agent: agent),
+      builder: (_) => TahqiqKhazanahDialog(agent: agent, titleOverride: title),
     );
   }
 
@@ -37,9 +43,10 @@ class TahqiqKhazanahDialog extends StatelessWidget {
     final border = OTColors.border(isDark);
     final surface = OTColors.surface(isDark);
 
-    final displayTitle = Loc.isArabic && agent.titleArabic.isNotEmpty
-        ? agent.titleArabic
-        : Loc.text(agent.title);
+    final displayTitle = titleOverride ??
+        (Loc.isArabic && agent.titleArabic.isNotEmpty
+            ? agent.titleArabic
+            : Loc.text(agent.title));
 
     return AlertDialog(
       backgroundColor: surface,
