@@ -523,6 +523,17 @@ const notebookSkinScript = r'''
       border-radius: 999px !important;
     }
 
+    /* Pergantian tema dan bahasa: pudar halus (View Transitions bila didukung, transisi warna bila tidak). */
+    ::view-transition-old(root), ::view-transition-new(root) {
+      animation-duration: 420ms !important;
+      animation-timing-function: cubic-bezier(.22,.61,.36,1) !important;
+    }
+    html.ot-theme-fade, html.ot-theme-fade body,
+    html.ot-theme-fade body *:not(img):not(video):not(canvas):not(svg):not(svg *) {
+      transition: background-color .45s cubic-bezier(.22,.61,.36,1), color .45s cubic-bezier(.22,.61,.36,1),
+        border-color .45s cubic-bezier(.22,.61,.36,1), fill .45s ease, stroke .45s ease, box-shadow .45s ease !important;
+    }
+
     /* Saat OpenTurath mengganti bahasa lewat lembar native, dialog Google tidak boleh terlihat. */
     html.ot-opening-language .cdk-overlay-container { opacity: 0 !important; pointer-events: none !important; }
   `;
@@ -640,6 +651,22 @@ const notebookSkinScript = r'''
   }
   if (!window.__otStageTimer) window.__otStageTimer = setInterval(updateStage, 700);
 
+  /* Semua perubahan tampilan besar (tema terang/gelap, ganti bahasa) dijalankan lewat sini
+     agar berpindah dengan pudar halus. Memakai View Transitions bila tersedia; bila tidak,
+     memakai transisi warna CSS sementara. Menghormati prefers-reduced-motion. */
+  window.otRun = function (fn) {
+    const root = document.documentElement;
+    const reduce = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+    if (reduce) { fn(); return; }
+    if (typeof document.startViewTransition === 'function') {
+      try { document.startViewTransition(fn); return; } catch (_) {}
+    }
+    root.classList.add('ot-theme-fade');
+    clearTimeout(window.__otFadeTimer);
+    try { fn(); } catch (_) {}
+    window.__otFadeTimer = setTimeout(() => root.classList.remove('ot-theme-fade'), 520);
+  };
+
   function apply() {
     applyStyle();
     try { tagAnswers(); } catch (_) {}
@@ -723,7 +750,10 @@ const notebookSkinScript = r'''
                 save => {
                   setTimeout(() => {
                     click(save);
-                    waitFor(() => (document.querySelector('configure-user-settings') ? null : true), () => finish(true), 'save');
+                    waitFor(() => (document.querySelector('configure-user-settings') ? null : true), () => {
+                if (window.otRun) window.otRun(() => apply());
+                finish(true);
+              }, 'save');
                   }, 120);
                 },
                 'save-button'

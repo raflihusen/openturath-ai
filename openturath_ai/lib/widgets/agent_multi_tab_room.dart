@@ -1162,7 +1162,9 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
       final js = '''
         (function() {
           try {
+            var prev = window._otIsDark;
             window._otIsDark = $isDark;
+            var applyAll = function() {
             var meta = document.querySelector('meta[name="color-scheme"]');
             if (!meta) {
               meta = document.createElement('meta');
@@ -1198,6 +1200,12 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
 
             if (window.otNotebook && typeof window.otNotebook.setTheme === 'function') {
               window.otNotebook.setTheme($isDark);
+            }
+            };
+            if (typeof prev === 'boolean' && prev !== $isDark && window.otRun) {
+              window.otRun(applyAll);
+            } else {
+              applyAll();
             }
           } catch(e) {}
         })();

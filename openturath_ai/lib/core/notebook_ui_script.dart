@@ -109,7 +109,16 @@ const _notebookCleanupScript = r'''
         isDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
       }
     }
+    const prev = window._otIsDark;
     window._otIsDark = isDark;
+    if (typeof prev === 'boolean' && prev !== isDark && window.otRun) {
+      window.otRun(() => applyThemeNow(isDark));
+    } else {
+      applyThemeNow(isDark);
+    }
+  }
+  window.otApplyTheme = function (isDark) { applyThemeNow(isDark); };
+  function applyThemeNow(isDark) {
     try {
       var meta = document.querySelector('meta[name="color-scheme"]');
       if (!meta) {
