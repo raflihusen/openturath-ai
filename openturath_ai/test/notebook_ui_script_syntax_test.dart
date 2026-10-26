@@ -192,4 +192,19 @@ void notebookSkinTests() {
     // Fallback: bila bridge tidak ada, klik diteruskan agar pengguna tidak terjebak.
     expect(notebookSkinScript.contains('passUntouched'), isTrue);
   });
+
+  test('konfirmasi otomatis tidak menyentuh dialog penghapusan', () {
+    // Dialog "Stop generating?" milik Google sendiri memuat kata "remove", jadi
+    // pemeriksaannya harus lebih cerdas daripada mencocokkan satu kata.
+    expect(notebookSkinScript.contains('const STRONG_DESTRUCTIVE ='), isTrue);
+    expect(notebookSkinScript.contains('const STOP_DIALOG ='), isTrue);
+    expect(notebookSkinScript.contains('isDestructiveDialog(dialog)'), isTrue);
+    // Penutup popup selamat datang tidak boleh lagi mengklik ikon svg apa pun.
+    final start = notebookUiScript.indexOf('function dismissPopups()');
+    expect(start, greaterThan(0));
+    final body = notebookUiScript.substring(start, start + 4200);
+    expect(body.contains('mat-icon[fonticon="close"], svg'), isFalse);
+    expect(body.contains('hapus'), isTrue,
+        reason: 'dialog penghapusan harus dikecualikan');
+  });
 }

@@ -769,12 +769,33 @@ const notebookSkinScript = r'''
       return null;
     }
 
+    /* Dialog "Stop generating?" milik Google sendiri memuat kata "remove" ("remove it from the chat"),
+       jadi deteksi kata saja tidak cukup. Dialog Stop dikenali dari pola jelas (stop/hentikan + generating/
+       response/jawaban) DAN tidak memuat kata penghapusan yang kuat (delete/hapus/clear). Selain itu,
+       dialog apa pun yang memuat penghapusan kuat tidak dikonfirmasi otomatis. */
+    const STRONG_DESTRUCTIVE = /delet|clear|erase|discard|hapus|bersihkan|\u062d\u0630\u0641|\u0645\u0633\u062d/i;
+    const STOP_DIALOG = /(stop|hentikan|berhenti|\u0625\u064a\u0642\u0627\u0641).{0,40}(generat|respons|answer|jawab|\u0625\u0646\u0634\u0627\u0621)|(generat|respons|answer|jawab).{0,40}(stop|hentikan)/i;
+    function isDestructiveDialog(dialog) {
+      const text = (dialog && (dialog.textContent || '')) || '';
+      if (STRONG_DESTRUCTIVE.test(text)) return true;
+      // "remove"/"buang" lemah: hanya aman bila jelas dialog Stop; selain itu anggap destruktif.
+      if (/remov|buang|\u0625\u0632\u0627\u0644\u0629/i.test(text) && !STOP_DIALOG.test(text)) return true;
+      return false;
+    }
+    window.__otIsDestructiveDialog = isDestructiveDialog;
+
     function confirmGoogleDialog(done) {
       const root = document.documentElement;
       const deadline = Date.now() + 2500;
       (function tick() {
         const dialog = document.querySelector('mat-dialog-container, .mat-mdc-dialog-container, [role="alertdialog"], [role="dialog"]');
         const buttons = dialog ? [...dialog.querySelectorAll('button')].filter(b => b.offsetParent !== null) : [];
+        if (dialog && isDestructiveDialog(dialog)) {
+          // Dialog lain yang tampak (mis. hapus riwayat): jangan disentuh. Biarkan terlihat untuk pengguna.
+          root.classList.remove('ot-stopping');
+          done();
+          return;
+        }
         if (buttons.length >= 2) {
           const primary = dialog.querySelector('button.mat-mdc-unelevated-button, button[class*="filled" i]') || buttons[buttons.length - 1];
           try { primary.click(); } catch (_) {}

@@ -937,6 +937,10 @@ const _notebookCleanupScript = r'''
         }
 
         const fullText = (dialog.innerText || dialog.textContent || '').trim().toLowerCase();
+        // Jangan pernah mengklik atau menyembunyikan dialog penghapusan, walau memuat kata umum seperti "info terbaru".
+        if (/delet|clear|erase|discard|hapus|bersihkan|\u062d\u0630\u0641|\u0645\u0633\u062d/i.test(fullText)) {
+          return;
+        }
         const isWelcomeOrPromo =
           fullText.includes('selamat datang') ||
           fullText.includes('welcome') ||
@@ -957,7 +961,9 @@ const _notebookCleanupScript = r'''
           const buttons = dialog.querySelectorAll('button, [role="button"]');
           for (const btn of buttons) {
             const btnText = (btn.innerText || btn.textContent || btn.getAttribute('aria-label') || '').trim().toLowerCase();
-            const hasCloseIcon = !!btn.querySelector('mat-icon[data-mat-icon-name="close"], mat-icon[fonticon="close"], svg');
+            // Hanya ikon tutup yang jelas: ikon svg apa pun bisa milik tombol lain (mis. hapus).
+            const hasCloseIcon = !!btn.querySelector('mat-icon[data-mat-icon-name="close"], mat-icon[fonticon="close"]') ||
+              /^(close|tutup|dismiss|\u0625\u063a\u0644\u0627\u0642)$/i.test((btn.getAttribute('aria-label') || '').trim());
             if (btnText === 'oke' || btnText === 'ok' || btnText === 'mengerti' || btnText === 'got it' ||
                 btnText === 'close' || btnText === 'tutup' || btnText.includes('close') || hasCloseIcon ||
                 btnText === 'lanjutkan' || btnText === 'continue' || btnText === 'setuju' || btnText === 'agree' ||
