@@ -555,6 +555,28 @@ Berdasarkan `AUDIT_OPENTURATH_AI.md`, dokumen perancangan pustaka, dan keluhan k
      - `https://openturath.id/app-release-latest.apk`: HTTP 200 biner APK valid.
      - `https://openturath.id/id/unduh`: HTTP 200 halaman unduh baru aktif.
 
+### Fasa 42: Resolusi Total Galat Navigasi 404 Website & Normalisasi Rute Bersih
+- **Akar Masalah (Root Cause)**:
+  - Konfigurasi `website/firebase.json` mengaktifkan `"cleanUrls": true` dan `"trailingSlash": false`, sehingga URL `/id/index.html` dan `/id/` dinormalisasi oleh Firebase Hosting menjadi `/id` (tanpa garis miring penutup).
+  - Pada halaman yang di-generate sebelumnya, seluruh link internal ditulis sebagai path relatif datar tanpa awalan slash (contoh: `<a href="cara-kerja.html">`, `<a href="unduh.html">`).
+  - Sesuai standar resolusi URL (RFC 3986), saat peramban berada di URL `https://openturath.id/id`, link relatif di-resolve terhadap root domain menjadi `https://openturath.id/cara-kerja.html` (berkas tidak ada di root), yang memicu galat 404 "Halaman tidak ditemukan".
+- **Solusi Komprehensif & Implementasi**:
+  1. *Fungsi `rewrite_links` di `website/redesign-v7/build.py`*:
+     - Mentransformasi seluruh tautan internal HTML dan aset menjadi path absolut berbasis bahasa (`/{LANG}/{slug}` dan `/assets/...`).
+     - Tautan navigasi (`cara-kerja`, `unduh`, `tentang`, `pedoman`, `ekosistem`, `bidang`, dll.) dijamin selalu menuju ke `/{LANG}/{slug}` secara independen dari URL bar saat itu.
+     - Penanganan fragmen anchor (`#tahaw`, `#lapor`, `#main`) tetap presisi tanpa memicu reload halaman.
+     - Tag canonical dan alternate hreflang dimutakhirkan ke URL bersih (`https://openturath.id/{LANG}/{slug}`).
+  2. *Normalisasi Pengalih Bahasa (`lang.js`)*:
+     - `site/assets/js/lang.js` dan skrip pengalih akar `index.html` diarahkan langsung ke `location.replace('/' + l + location.search + location.hash)` (tanpa melompat ke `/index.html` yang memicu 301 berulang).
+     - Halaman `404.html` diperbarui mengarah ke rute bersih (`/id`, `/en`, `/ar`).
+  3. *Re-build & Deployment*:
+     - `build.py` dan `prepare_release.py` dijalankan ulang.
+     - `firebase deploy --only hosting --project open-turath` sukses merilis 285 berkas ke live domain `openturath.id`.
+  4. *Verifikasi Live*:
+     - `https://openturath.id/id`: HTTP 200, tautan navigasi dan tombol beranda kini `<a href="/id/cara-kerja">`, `<a href="/id/unduh">`, dll.
+     - `https://openturath.id/id/cara-kerja`: HTTP 200 tanpa 404.
+     - `https://openturath.id/id/unduh`: HTTP 200 tanpa 404.
+
 ---
 
 ## 5. Agenda & Fokus Selanjutnya

@@ -6,5 +6,5 @@
     var s = localStorage.getItem('ot-lang');
     if (s === 'id' || s === 'en' || s === 'ar') l = s;
   } catch (e) {}
-  location.replace(l + '/index.html' + location.search + location.hash);
+  location.replace('/' + l + location.search + location.hash);
 })();

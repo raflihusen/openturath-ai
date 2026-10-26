@@ -75,8 +75,10 @@ def shell(fname, title, desc, body, current=""):
     drop = "".join(f'<a href="bidang.html#{g}">{ic(i)}<span><b>{t}</b><span class="d">{d}</span></span></a>' for g, (t, d, i) in RUMPUN().items())
     names = {"id": "Bahasa Indonesia", "en": "English", "ar": "العربية"}
     cur2 = ' aria-current="true"'
+    clean_p = "" if fname == "index.html" else "/" + fname[:-5]
+    canon = f"{BASE}/{LANG}{clean_p}"
     langrows = "".join(f'<a class="row" href="../{l}/{fname}" hreflang="{l}"{cur2 if l == LANG else ""}><span>{names[l]}</span><span class="soon">{"✓" if l == LANG else l.upper()}</span></a>' for l in LANGS)
-    alts = "".join(f'<link rel="alternate" hreflang="{l}" href="{BASE}/{l}/{fname}">' for l in LANGS)
+    alts = "".join(f'<link rel="alternate" hreflang="{l}" href="{BASE}/{l}{clean_p}">' for l in LANGS)
     anno = L("<b>Baru:</b> OpenTurath AI, rilis perdana 26 Oktober 2026", "<b>New:</b> OpenTurath AI, first public release on 26 October 2026", "<b>جديد:</b> OpenTurath AI، الإطلاق الأول في 26 أكتوبر 2026")
     ftag = L("Menjaga warisan, membuka cakrawala.", "Rooted in heritage. Open to new horizons.", "ذكاء اصطناعي إسلامي قائم على التراث")
     pil = L("Dibuat oleh pelajar, untuk para pelajar.", "Made by a student, for students.", "من طالب علم، لطلاب العلم.")
@@ -86,7 +88,7 @@ def shell(fname, title, desc, body, current=""):
     return f'''<!doctype html><html lang="{LANG}" dir="{"rtl" if rtl else "ltr"}" class="no-js"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{E(title)}</title><meta name="description" content="{E(desc)}"><meta name="theme-color" content="#FFFFFF">
 <meta property="og:title" content="{E(title)}"><meta property="og:description" content="{E(desc)}"><meta property="og:type" content="website"><meta property="og:image" content="{BASE}/assets/og.png">
-<meta name="twitter:card" content="summary_large_image"><link rel="canonical" href="{BASE}/{LANG}/{fname}">{alts}
+<meta name="twitter:card" content="summary_large_image"><link rel="canonical" href="{canon}">{alts}
 <link rel="stylesheet" href="../assets/css/site.css"><link rel="icon" href="../assets/mark.svg" type="image/svg+xml">
 <link rel="preload" href="../assets/fonts/googlesansflex.woff2" as="font" type="font/woff2" crossorigin>
 <script src="../assets/js/boot.js"></script></head>
@@ -112,9 +114,29 @@ def contact_pills():
     return (f'<a class="cpill" href="mailto:support@openturath.id">{ic("mail")}<bdi class="ltr">support@openturath.id</bdi></a>'
             f'<a class="cpill" href="{IG}" target="_blank" rel="noopener">{ic("instagram")}<bdi class="ltr">@openturath.id</bdi></a>')
 
+def rewrite_links(html, lang):
+    html = re.sub(r'(href|src)=["\']\.\./assets/', r'\1="/assets/', html)
+    def _sub_lang(m):
+        target_lang = m.group(1)
+        target_file = m.group(2)
+        if target_file == "index":
+            return f'href="/{target_lang}"'
+        return f'href="/{target_lang}/{target_file}"'
+    html = re.sub(r'href=["\']\.\./(id|en|ar)/([a-zA-Z0-9_-]+)\.html["\']', _sub_lang, html)
+    def _sub_page(m):
+        page = m.group(1)
+        frag = m.group(2) or ""
+        if page == "index":
+            return f'href="/{lang}{frag}"'
+        return f'href="/{lang}/{page}{frag}"'
+    html = re.sub(r'href=["\']([a-zA-Z0-9_-]+)\.html(#?[^"\']*)["\']', _sub_page, html)
+    return html
+
 def write(name, title, desc, body, current=""):
     d = OUT / LANG; d.mkdir(parents=True, exist_ok=True)
-    (d / name).write_text(shell(name, title, desc, body, current), encoding="utf8")
+    html = shell(name, title, desc, body, current)
+    html = rewrite_links(html, LANG)
+    (d / name).write_text(html, encoding="utf8")
 
 # ---------- komponen ----------
 def head(kick, h1, lead, extra=""): return f'<section class="phead"><div class="wrap"><div class="kicker">{kick}</div><h1>{h1.replace("ﷺ", "<span class=salam>ﷺ</span>")}</h1><p class="lead">{lead}</p>{extra}</div></section>'
@@ -767,13 +789,13 @@ for _l in LANGS:
 
 # pengalih bahasa di akar situs (tanpa halaman pilihan bahasa; skrip eksternal karena CSP)
 (OUT / "index.html").write_text('''<!doctype html><html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>OpenTurath</title>
-<link rel="alternate" hreflang="id" href="id/index.html"><link rel="alternate" hreflang="en" href="en/index.html"><link rel="alternate" hreflang="ar" href="ar/index.html"><link rel="alternate" hreflang="x-default" href="id/index.html">
-<noscript><meta http-equiv="refresh" content="0;url=id/index.html"></noscript><script src="assets/js/lang.js"></script></head>
-<body style="font-family:system-ui;padding:40px"><p><a href="id/index.html">Bahasa Indonesia</a> · <a href="en/index.html">English</a> · <a href="ar/index.html">العربية</a></p></body></html>''', encoding="utf8")
-urls = "".join(f'<url><loc>{BASE}/{l}/{p}.html</loc>' + "".join(f'<xhtml:link rel="alternate" hreflang="{m}" href="{BASE}/{m}/{p}.html"/>' for m in LANGS) + '</url>' for l in LANGS for p in PAGES)
+<link rel="alternate" hreflang="id" href="id"><link rel="alternate" hreflang="en" href="en"><link rel="alternate" hreflang="ar" href="ar"><link rel="alternate" hreflang="x-default" href="id">
+<noscript><meta http-equiv="refresh" content="0;url=/id"></noscript><script src="/assets/js/lang.js"></script></head>
+<body style="font-family:system-ui;padding:40px"><p><a href="/id">Bahasa Indonesia</a> · <a href="/en">English</a> · <a href="/ar">العربية</a></p></body></html>''', encoding="utf8")
+urls = "".join(f'<url><loc>{BASE}/{l}{"" if p == "index" else "/" + p}</loc>' + "".join(f'<xhtml:link rel="alternate" hreflang="{m}" href="{BASE}/{m}{"" if m == "index" else "/" + p}"/>' for m in LANGS) + '</url>' for l in LANGS for p in PAGES)
 (OUT / "sitemap.xml").write_text(f'<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">{urls}</urlset>', encoding="utf8")
 (OUT / "robots.txt").write_text(f"User-agent: *\nAllow: /\nSitemap: {BASE}/sitemap.xml\n", encoding="utf8")
-(OUT / "404.html").write_text('''<!doctype html><html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>404 · OpenTurath</title><meta name="robots" content="noindex"></head><body style="font-family:system-ui;text-align:center;padding:96px 24px"><h1 style="font-weight:450;font-size:48px;letter-spacing:-.03em">Halaman tidak ditemukan.</h1><p style="margin:24px 0"><a href="/id/index.html">Kembali ke beranda</a> · <a href="/en/index.html">Home</a> · <a href="/ar/index.html">الرئيسية</a></p></body></html>''', encoding="utf8")
+(OUT / "404.html").write_text('''<!doctype html><html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>404 · OpenTurath</title><meta name="robots" content="noindex"></head><body style="font-family:system-ui;text-align:center;padding:96px 24px"><h1 style="font-weight:450;font-size:48px;letter-spacing:-.03em">Halaman tidak ditemukan.</h1><p style="margin:24px 0"><a href="/id">Kembali ke beranda</a> · <a href="/en">Home</a> · <a href="/ar">الرئيسية</a></p></body></html>''', encoding="utf8")
 (OUT / "assets" / "mark.svg").write_text('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 616 674"><g fill="#100F0E">' + "".join(f'<path transform="translate(-204,-175)" d="{d}"/>' for d in PATHS) + '</g></svg>')
 (HERE / "og.html").write_text('<!doctype html><meta charset="utf-8"><body style="margin:0;width:1200px;height:630px;background:#121317;color:#F8F9FC;font-family:system-ui;display:flex;align-items:center;gap:56px;padding:0 90px;box-sizing:border-box"><svg style="height:260px;color:#F8F9FC" viewBox="0 0 616 674"><g fill="currentColor">' + "".join(f'<path transform="translate(-204,-175)" d="{d}"/>' for d in PATHS) + '</g></svg><div><div style="font-size:84px;font-weight:600;letter-spacing:-2px">OpenTurath</div><div style="font-size:40px;color:#B2BBC5;margin-top:14px;letter-spacing:-.5px">Menjaga warisan, membuka cakrawala.</div></div></body>', encoding="utf8")
 print("dibangun:", {l: sorted(p.name for p in (OUT / l).glob("*.html")) for l in LANGS}["id"], "x3 bahasa")
