@@ -258,6 +258,23 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
     await showOutputLanguageSheet(
       context,
       current: prefs?.getString(_outputLanguageKey),
+      loadPageLanguages: () async {
+        final controller = session.webController;
+        if (controller == null) return const <String>[];
+        try {
+          final result = await controller.callAsyncJavaScript(
+            functionBody: 'return await window.otListOutputLanguages();',
+          );
+          final value = result?.value;
+          if (value is Map && value['languages'] is List) {
+            return [
+              for (final name in value['languages'] as List)
+                if (name is String) name
+            ];
+          }
+        } catch (_) {}
+        return const <String>[];
+      },
       onSelect: (language) async {
         final controller = session.webController;
         if (controller == null) return false;

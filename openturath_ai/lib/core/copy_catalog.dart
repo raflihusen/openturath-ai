@@ -2151,6 +2151,21 @@ const copyCatalog = <String, List<String>>{
   "stopGeneratingConfirm": ["Hentikan", "Stop", "إيقاف"],
   "stopGeneratingKeep": ["Lanjutkan", "Keep generating", "متابعة"],
   "outputLanguage": ["Bahasa jawaban", "Answer language", "لغة الجواب"],
+  "outputLanguageSearch": [
+    "Cari bahasa",
+    "Search languages",
+    "ابحث عن لغة"
+  ],
+  "outputLanguageEmpty": [
+    "Bahasa tidak ditemukan",
+    "No language found",
+    "لا توجد لغة مطابقة"
+  ],
+  "outputLanguageLoading": [
+    "Memuat daftar bahasa…",
+    "Loading languages…",
+    "جارٍ تحميل اللغات…"
+  ],
   "outputLanguageHint": [
     "Jawaban akan ditulis dalam bahasa yang Anda pilih.",
     "Answers will be written in the language you choose.",
