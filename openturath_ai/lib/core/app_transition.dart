@@ -9,7 +9,8 @@ enum AppTransitionKind {
   /// Terang/gelap: tampilan baru terungkap melingkar dari titik sentuhan.
   theme,
 
-  /// Bahasa: tampilan lama memudar halus di atas tampilan baru.
+  /// Bahasa: tampilan baru terungkap lewat sapuan berbulu searah baca
+  /// bahasa tujuan (kiri ke kanan, atau kanan ke kiri untuk Arab).
   language,
 }
 
@@ -24,10 +25,13 @@ abstract final class AppTransition {
 
   /// Panggil SEBELUM mengubah nilai tema/bahasa. Selesai setelah layar lama
   /// dipotret; tanpa host (mis. di pengujian) langsung kembali.
-  static Future<void> begin(AppTransitionKind kind) async {
+  ///
+  /// [rtl] hanya dipakai untuk [AppTransitionKind.language]: arah baca bahasa
+  /// tujuan, yang menentukan arah sapuan.
+  static Future<void> begin(AppTransitionKind kind, {bool rtl = false}) async {
     final host = _host;
     if (host == null) return;
-    await host._capture(kind);
+    await host._capture(kind, rtl: rtl);
   }
 }
 
@@ -51,6 +55,7 @@ class _AppTransitionHostState extends State<AppTransitionHost>
 
   ui.Image? _image;
   AppTransitionKind _kind = AppTransitionKind.theme;
+  bool _rtl = false;
   Offset _origin = Offset.zero;
   Offset? _lastPointer;
 
@@ -76,7 +81,7 @@ class _AppTransitionHostState extends State<AppTransitionHost>
     });
   }
 
-  Future<void> _capture(AppTransitionKind kind) async {
+  Future<void> _capture(AppTransitionKind kind, {bool rtl = false}) async {
     if (!mounted || MediaQuery.disableAnimationsOf(context)) return;
     final boundary = _boundaryKey.currentContext?.findRenderObject();
     if (boundary is! RenderRepaintBoundary || !boundary.hasSize) return;
@@ -92,11 +97,12 @@ class _AppTransitionHostState extends State<AppTransitionHost>
       setState(() {
         _image = image;
         _kind = kind;
+        _rtl = rtl;
         _origin = _lastPointer ?? boundary.size.center(Offset.zero);
       });
       previous?.dispose();
-      _controller.duration = Duration(
-          milliseconds: kind == AppTransitionKind.theme ? 720 : 460);
+      _controller.duration =
+          Duration(milliseconds: kind == AppTransitionKind.theme ? 720 : 650);
       _controller.forward(from: 0);
     } catch (_) {
       // Gagal memotret: perubahan tetap berlaku, hanya tanpa animasi.
@@ -126,10 +132,7 @@ class _AppTransitionHostState extends State<AppTransitionHost>
                     );
                     final t = _controller.value;
                     if (_kind == AppTransitionKind.language) {
-                      return Opacity(
-                        opacity: 1 - Curves.easeOutCubic.transform(t),
-                        child: snapshot,
-                      );
+                      return _sweep(snapshot, t);
                     }
                     return LayoutBuilder(builder: (context, box) {
                       final size = box.biggest;
@@ -153,6 +156,32 @@ class _AppTransitionHostState extends State<AppTransitionHost>
               ),
             ),
         ],
+      ),
+    );
+  }
+}
+
+extension on _AppTransitionHostState {
+  /// Sapuan berbulu: bagian potret lama yang sudah terlewati menghilang,
+  /// tepinya lembut, dan potret sedikit ikut terdorong searah sapuan.
+  Widget _sweep(Widget snapshot, double t) {
+    const feather = 0.32;
+    final eased = Curves.easeInOutCubic.transform(t);
+    final front = eased * (1 + feather);
+    final a = (front - feather).clamp(0.0, 1.0);
+    final b = front.clamp(0.0, 1.0);
+    final dir = _rtl ? -1.0 : 1.0;
+    return Transform.translate(
+      offset: Offset(dir * 22 * eased, 0),
+      child: ShaderMask(
+        blendMode: BlendMode.dstIn,
+        shaderCallback: (rect) => LinearGradient(
+          begin: _rtl ? Alignment.centerRight : Alignment.centerLeft,
+          end: _rtl ? Alignment.centerLeft : Alignment.centerRight,
+          colors: const [Color(0x00000000), Color(0xFF000000)],
+          stops: [a, b],
+        ).createShader(rect),
+        child: snapshot,
       ),
     );
   }

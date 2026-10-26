@@ -56,7 +56,8 @@ class AppConfig {
   static Future<void> setLocale(String langCode) async {
     if (!const ['id', 'en', 'ar'].contains(langCode)) return;
     if (langCode != localeNotifier.value) {
-      await AppTransition.begin(AppTransitionKind.language);
+      await AppTransition.begin(AppTransitionKind.language,
+          rtl: langCode == 'ar');
     }
     localeNotifier.value = langCode;
     final prefs = await SharedPreferences.getInstance();

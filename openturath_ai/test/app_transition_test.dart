@@ -35,16 +35,49 @@ void main() {
     expect(find.byType(RawImage), findsNothing);
   });
 
-  testWidgets('ganti bahasa memudar lalu melepas potret', (tester) async {
+  testWidgets('ganti bahasa menyapu lalu melepas potret', (tester) async {
     await tester.pumpWidget(const MaterialApp(
       home: AppTransitionHost(child: SizedBox.expand()),
     ));
     await tester.runAsync(() => AppConfig.setLocale('en'));
     await tester.pump();
     expect(find.byType(RawImage), findsOneWidget);
-    await tester.pump(const Duration(milliseconds: 500));
+    expect(find.byType(ShaderMask), findsOneWidget);
+    await tester.pump(const Duration(milliseconds: 300));
+    expect(find.byType(RawImage), findsOneWidget);
+    await tester.pump(const Duration(milliseconds: 400));
     expect(find.byType(RawImage), findsNothing);
     expect(AppConfig.localeNotifier.value, 'en');
+  });
+
+  testWidgets('sapuan bahasa Arab bergerak kanan ke kiri', (tester) async {
+    await tester.pumpWidget(const MaterialApp(
+      home: AppTransitionHost(child: SizedBox.expand()),
+    ));
+    await tester.runAsync(() => AppConfig.setLocale('ar'));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
+    final shift = tester.widget<Transform>(find
+        .ancestor(
+          of: find.byType(ShaderMask),
+          matching: find.byType(Transform),
+        )
+        .first);
+    expect(shift.transform.getTranslation().x, lessThan(0));
+    await tester.pump(const Duration(milliseconds: 500));
+    expect(find.byType(RawImage), findsNothing);
+
+    await tester.runAsync(() => AppConfig.setLocale('id'));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
+    final shiftLtr = tester.widget<Transform>(find
+        .ancestor(
+          of: find.byType(ShaderMask),
+          matching: find.byType(Transform),
+        )
+        .first);
+    expect(shiftLtr.transform.getTranslation().x, greaterThan(0));
+    await tester.pump(const Duration(milliseconds: 500));
   });
 
   testWidgets('tanpa host atau nilai sama tidak menahan perubahan',
