@@ -162,9 +162,13 @@ void notebookSkinTests() {
     expect(block.contains('background: transparent !important'), isTrue);
     expect(block.contains('border-top: 0 !important'), isTrue);
     expect(block.contains('box-shadow: none !important'), isTrue);
-    expect(
-        notebookSkinScript
-            .contains('border-top: 1px solid var(--ot-line-soft)'),
-        isFalse);
+    // Garis atas dan warna kanvas lama milik omnibar tidak boleh kembali.
+    // (Garis serupa pada kepala bagian jawaban sah, jadi hanya blok omnibar diperiksa.)
+    final omnibar = RegExp(r'omnibar \{[^}]*\}')
+        .allMatches(notebookSkinScript)
+        .map((m) => m.group(0)!)
+        .join();
+    expect(omnibar.contains('border-top: 1px'), isFalse);
+    expect(omnibar.contains('--ot-canvas'), isFalse);
   });
 }
