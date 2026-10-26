@@ -919,7 +919,6 @@ html[lang="ar"] .xb{letter-spacing:.02em;text-transform:none;font-size:15px}
 .cpanel[hidden]{display:none}
 .cpanel>header{display:flex;flex-wrap:wrap;align-items:center;gap:14px;padding-bottom:22px;margin-bottom:26px;border-bottom:1px solid var(--outline)}
 .cpanel>header h3{font-size:clamp(24px,2.6vw,34px);font-weight:450;letter-spacing:-.025em;margin:0}
-.cpanel>header .btn{margin-inline-start:auto}
 .cbody{max-width:860px}
 .cbody h4,.cbody h5,.cbody h6{margin:30px 0 12px;font-size:20px;font-weight:600;letter-spacing:-.01em}
 .cbody p{margin:0 0 14px;line-height:1.75}
@@ -928,7 +927,6 @@ html[lang="ar"] .xb{letter-spacing:.02em;text-transform:none;font-size:15px}
 .cbody hr{border:0;border-top:1px solid var(--outline);margin:28px 0}
 .cbody sup{font-size:.7em;color:var(--num)}
 .cbody .arq{display:block;direction:rtl;text-align:start;font-family:"OT Naskh","Scheherazade New",serif;font-size:21px;line-height:2;margin:10px 0;padding:14px 18px;border-radius:16px;background:var(--surface);border:1px solid var(--outline-variant)}
-@media (max-width:640px){.cpanel>header .btn{margin-inline-start:0}}
 .ctabs{display:none}.ctabbed .ctabs{display:flex}
 
 /* modul Mengenal */

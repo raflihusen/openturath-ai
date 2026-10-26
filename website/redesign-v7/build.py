@@ -768,9 +768,8 @@ def page_perbandingan():
     tabs = "".join(f'<button type="button" class="ctab" role="tab" data-c="{r["id"]}" aria-selected="{"true" if i == 0 else "false"}">{E(r["name"])}</button>' for i, r in enumerate(runs))
     panels = ""
     for i, r in enumerate(runs):
-        src = (f'<a class="btn tonal sm" href="{E(r["url"])}" target="_blank" rel="noopener">{L("Buka percakapan asli", "Open the original chat", "افتح المحادثة الأصلية")}{ic("arrow","arr")}</a>' if r["url"] else "")
         panels += (f'<article class="cpanel" role="tabpanel" id="c-{r["id"]}" data-c="{r["id"]}">'
-                   f'<header><h3>{E(r["name"])}</h3><span class="small">{L("Jawaban asli, tidak diubah", "Original answer, unchanged", "الجواب الأصلي دون تعديل")}</span>{src}</header>'
+                   f'<header><h3>{E(r["name"])}</h3><span class="small">{L("Jawaban asli, tidak diubah", "Original answer, unchanged", "الجواب الأصلي دون تعديل")}</span></header>'
                    f'<div class="cbody">{CMP.md_full(r["text"])}</div></article>')
     body = head(L("Perbandingan", "Comparison", "المقارنة"), L("Satu pertanyaan, enam AI.", "One question, six AIs.", "سؤال واحد، وستة ذكاءات اصطناعية."),
                 L("Pertanyaan fikih yang sama diajukan ke OpenTurath dan lima AI Islam lain. Jawaban asli ditampilkan apa adanya, tanpa diubah.", "The same fiqh question was put to OpenTurath and five other Islamic AIs. Each original answer is shown as it was, unchanged.", "طُرح سؤال فقهي واحد على OpenTurath وخمسة ذكاءات اصطناعية إسلامية أخرى. وتُعرض الإجابات الأصلية كما هي دون تعديل."))
