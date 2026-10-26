@@ -448,12 +448,13 @@ const notebookSkinScript = r'''
     }
 
     /* Dasar kolom tanya: rata lurus di bawah transkrip, seperti bilah input chat native. */
-    html body .ot-chat-composer-path { background-color: var(--ot-canvas) !important; }
+    html body .ot-chat-composer-path { background-color: var(--ot-canvas) !important; border-radius: 0 !important; }
     html body omnibar {
       display: block !important;
       background-color: var(--ot-canvas) !important;
       padding-top: 10px !important;
       border-top: 1px solid var(--ot-line-soft) !important;
+      border-radius: 0 !important;
     }
     html body .ot-chat-composer { margin-bottom: 4px !important; }
 
