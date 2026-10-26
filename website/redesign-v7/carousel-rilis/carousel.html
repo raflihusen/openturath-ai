@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>OpenTurath: Carousel Rilis (1080x1350)</title>
+<style>
+@font-face{font-family:"Google Sans Flex";font-weight:400 600;src:url("../site/assets/fonts/googlesansflex.woff2") format("woff2")}
+@font-face{font-family:"OT Naskh";font-weight:400;src:url("../site/assets/fonts/ScheherazadeNew-Regular.ttf") format("truetype")}
+@font-face{font-family:"OT Naskh";font-weight:700;src:url("../site/assets/fonts/ScheherazadeNew-Bold.ttf") format("truetype")}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:#2a2a2e}
+body{display:flex;flex-direction:column;align-items:center;gap:40px;padding:40px 0;font-family:"Google Sans Flex",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+
+/* ---------- token ---------- */
+.slide{--bg:#fff;--card:#F8F9FC;--card2:#EFF2F7;--on:#121317;--var:#45474D;--line:rgba(33,34,38,.14);--inv:#121317;--inv-on:#F8F9FC;--inv-var:#B2BBC5;
+  width:1080px;height:1350px;position:relative;overflow:hidden;padding:84px 80px 76px;display:flex;flex-direction:column;background:var(--bg);color:var(--on)}
+.slide.d{--bg:#09090B;--card:#18181B;--card2:#1F1F23;--on:#FAFAFA;--var:#A1A1AA;--line:rgba(250,250,250,.10);--inv:#FAFAFA;--inv-on:#09090B;--inv-var:#3F3F46}
+.slide>*{position:relative;z-index:1}
+
+/* ---------- kerangka tetap ---------- */
+.top{display:flex;justify-content:space-between;align-items:center}
+.kick{font-size:21px;letter-spacing:.16em;text-transform:uppercase;font-weight:600;padding:11px 28px;border:2.5px solid currentColor;border-radius:999px;line-height:1.2}
+.pg{font-size:22px;letter-spacing:.1em;color:var(--var);font-variant-numeric:tabular-nums}
+.bot{margin-top:auto;display:flex;justify-content:space-between;align-items:center;font-size:25px;color:var(--var);letter-spacing:.01em}
+.bot b{font-weight:600;color:var(--on)}
+.sw{width:68px;height:68px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center;color:var(--on)}
+.sw svg{width:30px;height:30px}
+.body{flex:1;display:flex;flex-direction:column;margin-top:52px;min-height:0}
+
+/* ---------- tipografi ---------- */
+.h{font-weight:450;letter-spacing:-.045em;line-height:1.02;text-wrap:balance}
+.h1{font-size:108px}.h2{font-size:84px}.h3{font-size:72px}
+.lead{font-size:33px;line-height:1.42;color:var(--var);text-wrap:pretty;letter-spacing:.005em}
+.small{font-size:24px;line-height:1.45;color:var(--var)}
+.ar{font-family:"OT Naskh","Scheherazade New",serif;direction:rtl;line-height:1.95}
+
+/* ---------- komponen ---------- */
+.card{background:var(--card);border-radius:36px;padding:34px 38px}
+.d .card{border:1px solid var(--line)}
+.card h4{font-size:34px;font-weight:500;letter-spacing:-.015em;line-height:1.2;margin-bottom:10px}
+.card p{font-size:26px;line-height:1.42;color:var(--var)}
+.inv{background:var(--inv);color:var(--inv-on);border-radius:44px;padding:44px 46px}
+.inv .small,.inv p{color:var(--inv-var)}
+.d .inv{border:0}
+.ico{width:64px;height:64px;border-radius:18px;display:grid;place-items:center;background:var(--bg);box-shadow:0 1px 2px rgba(18,19,23,.05),0 12px 28px -6px rgba(18,19,23,.10)}
+.d .ico{background:rgba(250,250,250,.08);box-shadow:none;border:1px solid var(--line)}
+.inv .ico{background:rgba(248,249,252,.14);box-shadow:none;border:0}
+.d .inv .ico{background:rgba(9,9,11,.08)}
+.ico svg{width:32px;height:32px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.chip{display:inline-flex;align-items:center;height:56px;padding:0 26px;border-radius:999px;font-size:25px;font-weight:550;border:1.5px solid var(--line);white-space:nowrap}
+.chip.f{background:var(--on);color:var(--bg);border-color:transparent}
+.pill{display:inline-flex;align-items:center;gap:14px;height:76px;padding:0 38px;border-radius:999px;background:var(--on);color:var(--bg);font-size:31px;font-weight:550;letter-spacing:-.005em}
+.pill.o{background:transparent;color:var(--on);border:2px solid var(--var)}
+.pill svg{width:30px;height:30px}
+.fn{font-size:19.5px;line-height:1.4;color:var(--var);max-width:900px}
+.logo{width:112px;height:112px;border-radius:32px;background:var(--card);display:grid;place-items:center;box-shadow:0 1px 2px rgba(0,0,0,.2),0 24px 48px -12px rgba(0,0,0,.5)}
+.d .logo{border:1px solid var(--line)}
+.logo img{width:50px;height:auto;display:block}
+.d .logo img{filter:invert(1)}
+.dots{position:absolute;inset:0;z-index:0;pointer-events:none}
+.num3{font-size:30px;font-weight:600;letter-spacing:.04em;color:var(--var);font-variant-numeric:tabular-nums}
+.row{display:flex;gap:20px}
+.col{display:flex;flex-direction:column;gap:20px}
+.g{flex:1}
+</style>
+</head>
+<body>
+
+<!-- ============ 01 · GELAP · PEMBUKA ============ -->
+<section class="slide d" id="s01">
+  <svg class="dots" id="dots1" viewBox="0 0 1080 1350" width="1080" height="1350"></svg>
+  <div class="top"><span class="kick">Baru rilis</span><span class="pg">01 / 10</span></div>
+  <div class="body" style="margin-top:62px">
+    <div class="logo"><img src="../site/assets/mark.svg" alt=""></div>
+    <h1 class="h h1" style="margin-top:64px;font-size:124px">Salah satu AI Islami nomor 1 di dunia.<span style="font-weight:400">*</span></h1>
+    <p class="lead" style="margin-top:34px;max-width:860px">Setiap jawabannya ada kitab dan halamannya. Buktinya bisa Anda cek sendiri di <b style="color:var(--on);font-weight:550">openturath.id</b></p>
+    <div class="row" style="margin-top:44px;flex-wrap:wrap;gap:14px">
+      <span class="chip">Android</span><span class="chip">Windows</span><span class="chip">macOS</span>
+    </div>
+    <p class="fn" style="margin-top:auto">*Berdasarkan perbandingan satu pertanyaan fikih terhadap lima AI Islami lain. Jawaban asli ditampilkan apa adanya di openturath.id.</p>
+  </div>
+  <div class="bot" style="margin-top:34px"><span>Baca sampai slide terakhir. <b>Ada bonus untuk Anda.</b></span><span class="sw"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></div>
+</section>
+
+<!-- ============ 02 · TERANG · MASALAH ============ -->
+<section class="slide l" id="s02">
+  <div class="top"><span class="kick">Masalahnya</span><span class="pg">02 / 10</span></div>
+  <div class="body">
+    <h2 class="h h2">Jawabannya meyakinkan. Kitabnya tidak ada.</h2>
+    <p class="lead" style="margin-top:28px;font-size:30px">Satu nisbah yang keliru bisa membuat seluruh pembahasan goyah. Ini yang paling sering terjadi pada AI umum.</p>
+    <div class="col" style="margin-top:36px;gap:16px">
+      <div class="card" style="padding:28px 38px"><div class="num3" style="font-size:24px">01</div><h4 style="margin-top:8px">Ulama dan mazhab tertukar</h4><p>Pendapat disandarkan ke ulama yang salah, atau mazhab dicampur jadi satu.</p></div>
+      <div class="card" style="padding:28px 38px"><div class="num3" style="font-size:24px">02</div><h4 style="margin-top:8px">Kitab dan halaman yang tidak ada</h4><p>Tampak meyakinkan. Dicari di kitab cetak, ternyata tidak ada.</p></div>
+      <div class="card" style="padding:28px 38px"><div class="num3" style="font-size:24px">03</div><h4 style="margin-top:8px">Kalimat dipotong dari konteksnya</h4><p>Hukum dikutip tanpa pengecualiannya, maksud penulis ikut berubah.</p></div>
+    </div>
+  </div>
+  <div class="bot" style="margin-top:30px"><span>openturath.id</span><span class="sw"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></div>
+</section>
+
+<!-- ============ 03 · GELAP · JAWABAN ============ -->
+<section class="slide d" id="s03">
+  <div class="top"><span class="kick">Jawabannya</span><span class="pg">03 / 10</span></div>
+  <div class="body">
+    <h2 class="h h1" style="font-size:96px">Bukan tebakan. Ada kitab dan halamannya.</h2>
+    <p class="lead" style="margin-top:32px">OpenTurath tidak meminta Anda percaya begitu saja. Ia mengantar Anda ke ibarah aslinya, supaya Anda sendiri yang memeriksa naskahnya.</p>
+    <div class="col" style="margin-top:48px">
+      <div class="card row" style="gap:28px;align-items:center"><div class="ico"><svg viewBox="0 0 24 24"><path d="M4 5a2 2 0 0 1 2-2h12v16H6a2 2 0 0 0-2 2z"/><path d="M4 21V5M9 8h5"/></svg></div><div><h4 style="margin-bottom:6px">Satu bidang, satu asisten</h4><p>Mazhab dan disiplin ilmu tidak tercampur.</p></div></div>
+      <div class="card row" style="gap:28px;align-items:center"><div class="ico"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h10M4 18h16"/></svg></div><div><h4 style="margin-bottom:6px">Ibarah dan rujukan di samping jawaban</h4><p>Teks Arabnya tampil, dan Anda tahu dari kitab mana.</p></div></div>
+      <div class="card row" style="gap:28px;align-items:center"><div class="ico"><svg viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/></svg></div><div><h4 style="margin-bottom:6px">Kitab dipilih dan ditinjau ulama</h4><p>Dengan manhaj wasathiyyah syar'iyyah.</p></div></div>
+    </div>
+  </div>
+  <div class="bot" style="margin-top:30px"><span>openturath.id</span><span class="sw"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></div>
+</section>
+
+<!-- ============ 04 · TERANG · BUKTI ============ -->
+<section class="slide l" id="s04">
+  <div class="top"><span class="kick">Buktinya</span><span class="pg">04 / 10</span></div>
+  <div class="body">
+    <h2 class="h h2" style="font-size:78px">Satu pertanyaan, enam AI. Semua jawabannya kami buka.<span style="font-weight:400">*</span></h2>
+    <div class="card" style="margin-top:36px;padding:30px 38px">
+      <div class="small" style="letter-spacing:.14em;text-transform:uppercase;font-weight:600;font-size:20px">Pertanyaan yang sama untuk keenamnya</div>
+      <p style="margin-top:12px;font-size:28px;line-height:1.4;color:var(--on)">Bagaimana mazhab Syafi'i menjelaskan hukum bersentuhan kulit laki-laki dan perempuan non-mahram dalam kaitannya dengan wudhu?</p>
+    </div>
+    <div class="inv" style="margin-top:16px;display:flex;align-items:flex-end;gap:36px;padding:36px 46px">
+      <div style="font-size:150px;font-weight:500;letter-spacing:-.06em;line-height:.85">10</div>
+      <div style="padding-bottom:6px"><div style="font-size:38px;font-weight:500;letter-spacing:-.02em;line-height:1.15">rujukan kitab</div><p style="font-size:25px;line-height:1.4;margin-top:8px">pada jawaban OpenTurath, lengkap dengan nash Arab dan nomor halaman.</p></div>
+    </div>
+    <div style="margin-top:28px;display:flex;align-items:center;gap:24px"><span class="pill" style="height:70px;font-size:29px">Lihat semua jawabannya</span></div>
+    <p class="small" style="margin-top:16px;font-size:23px">Buka <b style="color:var(--on);font-weight:600">openturath.id</b>, menu <b style="color:var(--on);font-weight:600">Perbandingan</b>.</p>
+    <p class="fn" style="margin-top:auto;padding-top:14px">*Berdasarkan perbandingan satu pertanyaan fikih terhadap lima AI Islami lain. Jawaban asli ditampilkan apa adanya.</p>
+  </div>
+  <div class="bot" style="margin-top:26px"><span>openturath.id</span><span class="sw"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></div>
+</section>
+
+<!-- ============ 05 · GELAP · CONTOH NYATA ============ -->
+<section class="slide d" id="s05">
+  <div class="top"><span class="kick">Contoh nyata</span><span class="pg">05 / 10</span></div>
+  <div class="body">
+    <h2 class="h h2">Beginilah rujukan itu ditunjukkan.</h2>
+    <div class="card" style="margin-top:44px;padding:44px 46px">
+      <div class="ar" style="font-size:45px;line-height:2.0">«وَإِذَا أَفْضَى الرَّجُلُ بِيَدِهِ إلَى امْرَأَتِهِ أَوْ بِبَعْضِ جَسَدِهِ إلَى بَعْضِ جَسَدِهَا لَا حَائِلَ بَيْنَهُ وَبَيْنَهَا بِشَهْوَةٍ أَوْ بِغَيْرِ شَهْوَةٍ وَجَبَ عَلَيْهِ الْوُضُوءُ وَوَجَبَ عَلَيْهَا…»</div>
+      <div class="ar" style="font-size:32px;color:var(--var);margin-top:14px;line-height:1.6">الأم ج١، ص٢٩-٣٠</div>
+    </div>
+    <div class="row" style="margin-top:20px;gap:20px">
+      <div class="card g" style="padding:30px 34px"><div class="small" style="font-size:20px;letter-spacing:.14em;text-transform:uppercase;font-weight:600">Jawaban ringkas</div><p style="margin-top:12px;color:var(--on);font-size:28px;line-height:1.4">Bertemunya kulit laki-laki dengan perempuan non-mahram membatalkan wudhu, menurut mazhab Syafi'i.</p></div>
+    </div>
+    <p class="lead" style="margin-top:34px;font-size:30px">Sepuluh rujukan pada jawaban ini dicek satu per satu di Maktabah Syamilah. Anda bisa mengeceknya juga.</p>
+  </div>
+  <div class="bot" style="margin-top:30px"><span>openturath.id</span><span class="sw"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></div>
+</section>
+
+<!-- ============ 06 · TERANG · ANGKA ============ -->
+<section class="slide l" id="s06">
+  <div class="top"><span class="kick">Dalam angka</span><span class="pg">06 / 10</span></div>
+  <div class="body">
+    <h2 class="h h2">Dibangun dari kitab dan khazanah para ulama.</h2>
+    <div class="inv" style="margin-top:44px;padding:48px 50px">
+      <div style="font-size:176px;font-weight:500;letter-spacing:-.06em;line-height:.9">5.300+</div>
+      <div style="font-size:38px;font-weight:500;letter-spacing:-.02em;margin-top:14px">kitab turats</div>
+    </div>
+    <div class="row" style="margin-top:20px">
+      <div class="card g" style="padding:30px 30px"><div style="font-size:50px;font-weight:500;letter-spacing:-.05em;line-height:1">800 juta+</div><p style="margin-top:10px;font-size:24px">kata teks kitab</p></div>
+      <div class="card g" style="padding:30px 30px"><div style="font-size:50px;font-weight:500;letter-spacing:-.05em;line-height:1">30.000+</div><p style="margin-top:10px;font-size:24px">arsip ceramah dan daurah</p></div>
+      <div class="card g" style="padding:30px 30px"><div style="font-size:50px;font-weight:500;letter-spacing:-.05em;line-height:1">18</div><p style="margin-top:10px;font-size:24px">AI spesialis</p></div>
+    </div>
+    <div style="margin-top:34px;display:flex;flex-wrap:wrap;gap:12px">
+      <span class="chip" style="height:50px;font-size:23px">Fikih Tahawwulat</span><span class="chip" style="height:50px;font-size:23px">Fikih</span><span class="chip" style="height:50px;font-size:23px">Ushul dan kaidah</span><span class="chip" style="height:50px;font-size:23px">Hadis</span><span class="chip" style="height:50px;font-size:23px">Al-Qur'an</span><span class="chip" style="height:50px;font-size:23px">Akidah dan tasawuf</span><span class="chip" style="height:50px;font-size:23px">Bahasa dan sejarah</span>
+    </div>
+    <p class="small" style="margin-top:auto;font-size:21px">Sebagian angka dirilis berkala, jadi yang tampil di aplikasi terus bertambah.</p>
+  </div>
+  <div class="bot" style="margin-top:22px"><span>openturath.id</span><span class="sw"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></div>
+</section>
+
+<!-- ============ 07 · GELAP · EKSKLUSIF ============ -->
+<section class="slide d" id="s07">
+  <div class="top"><span class="kick">Eksklusif</span><span class="pg">07 / 10</span></div>
+  <div class="body">
+    <div style="display:flex;flex-wrap:wrap;gap:12px">
+      <span class="chip f" style="height:54px;font-size:21px;letter-spacing:.12em;text-transform:uppercase;font-weight:650">Pertama di dunia</span>
+      <span class="chip" style="height:54px;font-size:21px;letter-spacing:.12em;text-transform:uppercase;font-weight:650">Eksklusif di OpenTurath</span>
+    </div>
+    <h2 class="h h1" style="margin-top:44px;font-size:100px">AI Fikih Tahawwulat pertama di dunia.</h2>
+    <div class="ar" style="font-size:70px;line-height:1.5;margin-top:14px;text-align:right;direction:rtl;color:var(--var)">فقه التحولات</div>
+    <p class="lead" style="margin-top:20px">Ilmu yang membaca perubahan zaman lewat hadis-hadis tanda zaman, lalu menurunkannya menjadi sikap dan langkah.</p>
+    <div class="col" style="margin-top:48px;gap:18px">
+      <div class="card row" style="padding:30px 36px;gap:22px;align-items:center"><span class="num3">01</span><p style="color:var(--on);font-size:28px">Menemukan ibarah asli dari kitab-kitabnya</p></div>
+      <div class="card row" style="padding:30px 36px;gap:22px;align-items:center"><span class="num3">02</span><p style="color:var(--on);font-size:28px">Judul ceramah yang membahas suatu tema</p></div>
+      <div class="card row" style="padding:30px 36px;gap:22px;align-items:center"><span class="num3">03</span><p style="color:var(--on);font-size:28px">Tautan video pada menit yang tepat</p></div>
+    </div>
+  </div>
+  <div class="bot" style="margin-top:26px"><span>openturath.id</span><span class="sw"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></div>
+</section>
+
+<!-- ============ 08 · TERANG · UNTUK SIAPA ============ -->
+<section class="slide l" id="s08">
+  <div class="top"><span class="kick">Untuk siapa</span><span class="pg">08 / 10</span></div>
+  <div class="body">
+    <h2 class="h h2">Untuk Anda yang ingin paham kitab.</h2>
+    <div class="col" style="margin-top:38px;gap:16px">
+      <div class="card" style="padding:28px 38px"><h4>Santri dan penuntut ilmu</h4><p>Mulai memahami kitab tanpa harus lebih dulu menaklukkan bahasa dan istilahnya.</p></div>
+      <div class="card" style="padding:28px 38px"><h4>Mahasiswa dan peneliti</h4><p>Cari pembahasan lintas kitab, bandingkan keterangan, simpan rujukan untuk tulisan.</p></div>
+      <div class="card" style="padding:28px 38px"><h4>Pengajar, penceramah, khatib</h4><p>Periksa dalil dan ibarah, lalu sampaikan dengan lebih yakin.</p></div>
+    </div>
+    <div class="inv" style="margin-top:16px;padding:34px 42px">
+      <p style="font-size:29px;line-height:1.38;color:var(--inv-on);letter-spacing:-.005em">Satu halaman kitab, satu jam, dan masih belum paham. Dari situlah OpenTurath bermula.</p>
+      <p style="font-size:22px;margin-top:10px">Dibuat oleh pelajar, untuk para pelajar.</p>
+    </div>
+  </div>
+  <div class="bot" style="margin-top:28px"><span>openturath.id</span><span class="sw"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></div>
+</section>
+
+<!-- ============ 09 · GELAP · UNDUH ============ -->
+<section class="slide d" id="s09">
+  <div class="top"><span class="kick">Mulai sekarang</span><span class="pg">09 / 10</span></div>
+  <div class="body">
+    <h2 class="h h1" style="font-size:96px">Bawa khazanahnya ke perangkat Anda.</h2>
+    <p class="lead" style="margin-top:28px">Tersedia untuk Android, Windows, dan macOS. Satu akun Google untuk semua perangkat.</p>
+    <div class="row" style="margin-top:44px">
+      <div class="card g" style="padding:34px 30px"><div class="ico"><svg viewBox="0 0 24 24"><rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M11 18.5h2"/></svg></div><h4 style="margin-top:22px;font-size:32px">Android</h4><p style="font-size:22px">Android 8.0 ke atas</p></div>
+      <div class="card g" style="padding:34px 30px"><div class="ico"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M2 20h20M9 16v4M15 16v4"/></svg></div><h4 style="margin-top:22px;font-size:32px">Windows</h4><p style="font-size:22px">Windows 10 ke atas</p></div>
+      <div class="card g" style="padding:34px 30px"><div class="ico"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg></div><h4 style="margin-top:22px;font-size:32px">macOS</h4><p style="font-size:22px">macOS 13 ke atas</p></div>
+    </div>
+    <div class="col" style="margin-top:34px;gap:0">
+      <div style="display:flex;gap:26px;align-items:baseline;padding:20px 0;border-top:1px solid var(--line)"><span class="num3">01</span><span style="font-size:30px">Masuk dengan akun Google</span></div>
+      <div style="display:flex;gap:26px;align-items:baseline;padding:20px 0;border-top:1px solid var(--line)"><span class="num3">02</span><span style="font-size:30px">Pilih bidang yang sedang Anda pelajari</span></div>
+      <div style="display:flex;gap:26px;align-items:baseline;padding:20px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)"><span class="num3">03</span><span style="font-size:30px">Bertanya dengan bahasa sehari-hari</span></div>
+    </div>
+    <div style="margin-top:auto;display:flex;align-items:center;gap:24px"><span class="pill">openturath.id</span><span class="small" style="font-size:22px;line-height:1.35">Perpanjangan manual,<br>tanpa auto-debit</span></div>
+  </div>
+  <div class="bot" style="margin-top:28px"><span>Menjaga warisan, membuka cakrawala.</span><span class="sw"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></div>
+</section>
+
+<!-- ============ 10 · TERANG · BONUS ============ -->
+<section class="slide l" id="s10">
+  <div class="top"><span class="kick">Bonus untuk Anda</span><span class="pg">10 / 10</span></div>
+  <div class="body">
+    <h2 class="h h1" style="font-size:100px">Komentar “OpenTurath”, dapatkan bonus trial.</h2>
+    <p class="lead" style="margin-top:30px">Tiga langkah saja.</p>
+    <div class="col" style="margin-top:32px;gap:0">
+      <div style="display:flex;gap:26px;align-items:baseline;padding:24px 0;border-top:1px solid var(--line)"><span class="num3">01</span><span style="font-size:33px;line-height:1.3">Tulis <b style="font-weight:600">OpenTurath</b> di kolom komentar postingan ini</span></div>
+      <div style="display:flex;gap:26px;align-items:baseline;padding:24px 0;border-top:1px solid var(--line)"><span class="num3">02</span><span style="font-size:33px;line-height:1.3">Kami kirimkan kode trial untuk Anda</span></div>
+      <div style="display:flex;gap:26px;align-items:baseline;padding:24px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)"><span class="num3">03</span><span style="font-size:33px;line-height:1.3">Unduh aplikasinya, lalu pakai kodenya</span></div>
+    </div>
+    <div class="inv" style="margin-top:auto;padding:42px 46px;display:flex;align-items:center;justify-content:space-between;gap:24px">
+      <div><div style="font-size:23px;letter-spacing:.14em;text-transform:uppercase;font-weight:600;color:var(--inv-var)">Unduh sekarang</div><div style="font-size:56px;font-weight:500;letter-spacing:-.04em;margin-top:8px;line-height:1">openturath.id</div><p style="font-size:24px;margin-top:12px">Android · Windows · macOS · tautan di bio</p></div>
+      <div class="logo" style="flex:none;width:104px;height:104px;background:rgba(248,249,252,.12);box-shadow:none;border:0"><img src="../site/assets/mark.svg" alt="" style="width:46px;filter:invert(1)"></div>
+    </div>
+  </div>
+  <div class="bot" style="margin-top:28px"><span>Menjaga warisan, membuka cakrawala.</span><b>OpenTurath</b></div>
+</section>
+
+<script>
+// medan titik: cincin konsentris dari logo, memudar ke luar (tenang, statis)
+(function(){
+  var svg=document.getElementById('dots1'),ns='http://www.w3.org/2000/svg',cx=540,cy=360,out='';
+  for(var r=70;r<980;r+=46){
+    var n=Math.max(10,Math.round(2*Math.PI*r/40)),a=Math.max(0,.55-(r/980)*.55);
+    for(var i=0;i<n;i++){
+      var t=i/n*2*Math.PI+(r%2?0:Math.PI/n),x=cx+r*Math.cos(t),y=cy+r*Math.sin(t);
+      if(x<-10||x>1090||y<-10||y>1360)continue;
+      out+='<circle cx="'+x.toFixed(1)+'" cy="'+y.toFixed(1)+'" r="2.2" fill="#FAFAFA" opacity="'+(a*.55).toFixed(3)+'"/>';
+    }
+  }
+  svg.innerHTML=out;
+})();
+</script>
+</body>
+</html>
