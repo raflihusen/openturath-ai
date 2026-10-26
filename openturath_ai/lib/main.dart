@@ -200,6 +200,10 @@ class OpenTurathApp extends StatelessWidget {
                 theme: AppTheme.lightTheme,
                 darkTheme: AppTheme.darkTheme,
                 themeMode: currentTheme,
+                // Perpindahan terang/gelap melerp seluruh ThemeData (warna, ikon, permukaan)
+                // alih-alih berganti seketika.
+                themeAnimationDuration: const Duration(milliseconds: 360),
+                themeAnimationCurve: Curves.easeOutCubic,
                 locale: Locale(currentLocale),
                 supportedLocales: Loc.supportedLocales,
                 localizationsDelegates: GlobalMaterialLocalizations.delegates,
@@ -208,7 +212,7 @@ class OpenTurathApp extends StatelessWidget {
                   textDirection: currentLocale == 'ar'
                       ? TextDirection.rtl
                       : TextDirection.ltr,
-                  child: child ?? const SizedBox.shrink(),
+                  child: _LocaleVeil(child: child ?? const SizedBox.shrink()),
                 )),
 
                 // ── Initial Route ──
@@ -309,6 +313,70 @@ class OpenTurathApp extends StatelessWidget {
           },
         );
       },
+    );
+  }
+}
+
+/// Lapisan kanvas yang memudar setiap bahasa aplikasi berganti. Teks dan arah
+/// (LTR/RTL) berubah seketika di balik kanvas, lalu kanvas memudar sehingga
+/// konten baru muncul dengan halus alih-alih berkedip.
+class _LocaleVeil extends StatefulWidget {
+  const _LocaleVeil({required this.child});
+
+  final Widget child;
+
+  @override
+  State<_LocaleVeil> createState() => _LocaleVeilState();
+}
+
+class _LocaleVeilState extends State<_LocaleVeil>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _veil = AnimationController(
+    vsync: this,
+    value: 0,
+  );
+  late String _locale = AppConfig.localeNotifier.value;
+
+  @override
+  void initState() {
+    super.initState();
+    AppConfig.localeNotifier.addListener(_onLocaleChanged);
+  }
+
+  @override
+  void dispose() {
+    AppConfig.localeNotifier.removeListener(_onLocaleChanged);
+    _veil.dispose();
+    super.dispose();
+  }
+
+  void _onLocaleChanged() {
+    final next = AppConfig.localeNotifier.value;
+    if (next == _locale) return;
+    _locale = next;
+    _veil.value = 1;
+    _veil.animateTo(
+      0,
+      duration: const Duration(milliseconds: 380),
+      curve: Curves.easeOutCubic,
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        widget.child,
+        FadeTransition(
+          opacity: _veil,
+          child: IgnorePointer(
+            child: ColoredBox(
+              color: Theme.of(context).scaffoldBackgroundColor,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
