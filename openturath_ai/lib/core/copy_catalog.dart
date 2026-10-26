@@ -169,6 +169,21 @@ const copyCatalog = <String, List<String>>{
     "One plan covers one field. You can change your choice before paying, and more fields are coming soon.",
     "الباقة الواحدة لعلم واحد. يمكنك تغيير اختيارك قبل الدفع، وستُضاف علوم أخرى قريبًا."
   ],
+  "planBenefitGrowth": [
+    "Kitab dan arsip ceramah baru ditambahkan berkala",
+    "New books and lecture archives are added regularly",
+    "تُضاف كتب وأرشيف محاضرات جديدة بصورة دورية"
+  ],
+  "planBenefitGrowthSingle": [
+    "Kitab baru ditambahkan berkala",
+    "New books are added regularly",
+    "تُضاف كتب جديدة بصورة دورية"
+  ],
+  "planBenefitUpdates": [
+    "Pembaruan aplikasi selama langganan aktif",
+    "App updates while your subscription is active",
+    "تحديثات التطبيق ما دام اشتراكك فعّالًا"
+  ],
   "planSingleBenefit5": [
     "Salin percakapan untuk dibaca kembali di tempat lain",
     "Copy the conversation to read again elsewhere",

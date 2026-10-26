@@ -823,6 +823,8 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                   Loc.tr('planFeaturedBenefit1'),
                   Loc.tr('planFeaturedBenefit3'),
                   Loc.tr('planFeaturedBenefit4'),
+                  Loc.tr('planBenefitGrowth'),
+                  Loc.tr('planBenefitUpdates'),
                 ],
                 onCheckout: () => _checkout(flagship, flagshipOffer),
                 agentId: flagship.id,
@@ -851,6 +853,8 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                         Loc.tr(
                             'planSingleBenefit1', [Loc.text(selected.title)]),
                         Loc.tr('planSingleBenefit2'),
+                        Loc.tr('planBenefitGrowthSingle'),
+                        Loc.tr('planBenefitUpdates'),
                       ],
                       onCheckout: () => _checkout(selected, singleOffer),
                       agentId: selected.id,
