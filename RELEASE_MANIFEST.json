@@ -1,10 +1,10 @@
 {
-  "version": "1.0.68",
-  "buildNumber": 69,
-  "versionFull": "1.0.68+69",
-  "buildTimestamp": "2026-10-22T08:48:00+03:00",
-  "sha256": "fca5ef688f38d7b4beacde7306d295a11d2f9060fd5eefc26fa4511668910c8c",
-  "fileSizeBytes": 83933824,
+  "version": "1.0.83",
+  "buildNumber": 84,
+  "versionFull": "1.0.83+84",
+  "buildTimestamp": "2026-10-27T13:14:05.687615",
+  "sha256": "cfad49a46d8b005839d7b045bcb1e55c23eacfc6756df00e90a90e167c4578f4",
+  "fileSizeBytes": 70353011,
   "apkArtifacts": [
     "/Users/apple/Downloads/ramadhan/app-release-latest.apk",
     "/Users/apple/Downloads/ramadhan/openturath_ai/public/app-release-latest.apk",
@@ -12,7 +12,7 @@
   ],
   "verification": {
     "gradleBuildStatus": "SUCCESS (100%)",
-    "flutterAnalyze": "0 issues found",
-    "flutterTest": "100% passed"
+    "speedMode": "Turbo M1 Max (Parallel 8 Workers, 4GB JVM)",
+    "daemonStopped": true
   }
 }
