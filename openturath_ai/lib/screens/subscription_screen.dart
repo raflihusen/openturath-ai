@@ -872,11 +872,6 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        Align(
-                          alignment: AlignmentDirectional.centerStart,
-                          child: _pill(Loc.tr('launchOffer'), ink),
-                        ),
-                        const SizedBox(height: OTSpacing.lg),
                         Text(_headline(),
                             style: (Loc.isArabic
                                     ? OTTypography.arabicDisplay(color: ink)
@@ -886,6 +881,16 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                                         ? OTFontSize.s36
                                         : OTFontSize.s26)),
                         const SizedBox(height: OTSpacing.xl),
+                        Center(
+                          child: ConstrainedBox(
+                            constraints: const BoxConstraints(maxWidth: 440),
+                            child: Align(
+                              alignment: AlignmentDirectional.centerStart,
+                              child: _pill(Loc.tr('launchOffer'), ink),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: OTSpacing.sm),
                         const _PromoCountdownBanner(),
                         const SizedBox(height: OTSpacing.xl),
                         Center(
@@ -1073,8 +1078,8 @@ class _PeriodSwitch extends StatelessWidget {
 }
 
 /// Banner hitung mundur penawaran perdana 10 hari: hanya angka, selebar pil
-/// pilihan periode. Hitungan mulai berjalan Senin, 26 Oktober 2026 pukul
-/// 20:00 WIB (13:00 UTC) dan berakhir tepat 10 hari kemudian. Sebelum mulai,
+/// pilihan periode. Hitungan mulai berjalan Selasa, 27 Oktober 2026 pukul
+/// 17:00 WIB (10:00 UTC) dan berakhir tepat 10 hari kemudian. Sebelum mulai,
 /// angka diam di 10 hari penuh; setelah berakhir, semuanya nol.
 class PromoCountdownBanner extends StatefulWidget {
   const PromoCountdownBanner({super.key, this.clock});
@@ -1092,11 +1097,11 @@ typedef _PromoCountdownBanner = PromoCountdownBanner;
 class _PromoCountdownBannerState extends State<_PromoCountdownBanner> {
   Timer? _timer;
 
-  // Mulai: Senin, 26 Oktober 2026, 20:00 WIB (UTC+7) = 13:00:00 UTC
-  static final DateTime promoStartUtc = DateTime.utc(2026, 10, 26, 13, 0, 0);
+  // Mulai (diundur): Selasa, 27 Oktober 2026, 17:00 WIB (UTC+7) = 10:00:00 UTC
+  static final DateTime promoStartUtc = DateTime.utc(2026, 10, 27, 10, 0, 0);
 
-  // Berakhir (10 hari kemudian): Kamis, 5 November 2026, 20:00 WIB = 13:00:00 UTC
-  static final DateTime promoEndUtc = DateTime.utc(2026, 11, 5, 13, 0, 0);
+  // Berakhir (10 hari kemudian): Jumat, 6 November 2026, 17:00 WIB = 10:00:00 UTC
+  static final DateTime promoEndUtc = DateTime.utc(2026, 11, 6, 10, 0, 0);
 
   @override
   void initState() {

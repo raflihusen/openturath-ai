@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:openturath_ai/screens/subscription_screen.dart';
 
-// Mulai berjalan: Senin, 26 Okt 2026, 20:00 WIB = 13:00 UTC.
-DateTime _beforeStart() => DateTime.utc(2026, 10, 26, 12, 59);
-DateTime _atStart() => DateTime.utc(2026, 10, 26, 13);
-DateTime _duringOffer() => DateTime.utc(2026, 10, 28, 5, 30, 15);
-DateTime _afterOffer() => DateTime.utc(2026, 11, 6);
+// Mulai berjalan: Selasa, 27 Okt 2026, 17:00 WIB = 10:00 UTC.
+DateTime _beforeStart() => DateTime.utc(2026, 10, 27, 9, 59);
+DateTime _atStart() => DateTime.utc(2026, 10, 27, 10);
+DateTime _duringOffer() => DateTime.utc(2026, 10, 29, 2, 30, 15);
+DateTime _afterOffer() => DateTime.utc(2026, 11, 7);
 
 Future<void> _pumpAt(WidgetTester tester, DateTime Function() clock,
     {double width = 800}) async {
@@ -33,7 +33,7 @@ void main() {
       expect(find.byType(Text), findsOneWidget);
     });
 
-    testWidgets('diam di 10 hari penuh sebelum pukul 20:00 WIB 26 Okt 2026',
+    testWidgets('diam di 10 hari penuh sebelum pukul 17:00 WIB 27 Okt 2026',
         (tester) async {
       await _pumpAt(tester, _beforeStart);
       expect(find.text('10 : 00 : 00 : 00'), findsOneWidget);

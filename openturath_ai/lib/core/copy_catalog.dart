@@ -2736,9 +2736,9 @@ const copyCatalog = <String, List<String>>{
     "العد التنازلي لإطلاق عرض الـ 10 أيام"
   ],
   "promoCapBefore": [
-    "Mulai Senin, 26 Okt · 12:00 WIB (durasi promo 10 hari)",
-    "Starts Monday, Oct 26 · 12:00 WIB (10-day promo window)",
-    "يبدأ الإثنين، 26 أكتوبر · 12:00 بتوقيت جاكرتا (نافذة 10 أيام)"
+    "Mulai Selasa, 27 Okt · 17:00 WIB (durasi promo 10 hari)",
+    "Starts Tuesday, Oct 27 · 17:00 WIB (10-day promo window)",
+    "يبدأ الثلاثاء، 27 أكتوبر · 17:00 بتوقيت جاكرتا (نافذة 10 أيام)"
   ],
   "promoHeadLive": [
     "PENAWARAN PERDANA TERBATAS (10 HARI)",
@@ -2746,9 +2746,9 @@ const copyCatalog = <String, List<String>>{
     "عرض الإطلاق المحدود (10 أيام)"
   ],
   "promoCapLive": [
-    "Aktif 10 hari · Berakhir Kamis, 5 Nov · 12:00 WIB",
-    "Active for 10 days · Ends Thursday, Nov 5 at 12:00 WIB",
-    "متاح 10 أيام · ينتهي الخميس، 5 نوفمبر 12:00 WIB"
+    "Aktif 10 hari · Berakhir Jumat, 6 Nov · 17:00 WIB",
+    "Active for 10 days · Ends Friday, Nov 6 at 17:00 WIB",
+    "متاح 10 أيام · ينتهي الجمعة، 6 نوفمبر 17:00 WIB"
   ],
   "promoHeadEnded": [
     "PENAWARAN PERDANA TELAH SELESAI",

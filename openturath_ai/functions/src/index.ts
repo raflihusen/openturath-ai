@@ -293,13 +293,18 @@ export const getAgentUrl = functions
         "AI ini segera hadir dan belum dibuka."
       );
     }
+    // Notebook dibagikan ke ALAMAT EMAIL, jadi identitas harus terverifikasi dan cocok dengan profil
+    // di semua cabang (legacy maupun ledger). VIP sejati dikecualikan dari pencocokan profil
+    // (Aturan 5) tetapi tetap wajib berupa sesi bertoken email terverifikasi.
+    const tokenEmail = String(context.auth.token?.email || "").trim().toLowerCase();
+    const profileEmail = String(userData.email || "").trim().toLowerCase();
+    if (context.auth.token?.email_verified !== true || !tokenEmail ||
+        (!isVip(userData) && tokenEmail !== profileEmail)) {
+      throw new functions.https.HttpsError("failed-precondition","Gunakan email terverifikasi yang terdaftar untuk akses notebook ini.");
+    }
     // Until cutover no worker creates notebook assignments, so ledger-only
     // resolution would lock out every paying account. Legacy evaluation applies.
     const ledgerActive = userData.access_version === 2 && await vpsWriterActive();
-    if (ledgerActive && (context.auth.token.email_verified !== true ||
-        String(context.auth.token.email || "").trim().toLowerCase() !== String(userData.email || "").trim().toLowerCase())) {
-      throw new functions.https.HttpsError("failed-precondition","Gunakan email terverifikasi yang terdaftar untuk akses notebook ini.");
-    }
     if (ledgerActive) {
       const entity = AGENT_TO_ENTITY[agentId];
       if (!entity) throw new functions.https.HttpsError("not-found", "Kajian tidak ditemukan.");
@@ -2022,10 +2027,15 @@ export const redeemCode = functions
       // trial consumes a NotebookLM seat. One trial per verified Google
       // address and promo family, whatever the device or account.
       const trialClaimRef = db.collection("trial_claims").doc(keyOf(userEmail, promoFamily));
+      // Semua voucher membagikan akses ke ALAMAT EMAIL: tanpa email terverifikasi kode tidak
+      // boleh terpakai (kuotanya hangus) dan tidak boleh ada pekerjaan berbagi untuk alamat kosong
+      // atau alamat dari profil lama.
+      if (!userEmail) {
+        throw new functions.https.HttpsError("failed-precondition", isTrialVoucher
+          ? "Masuk dengan akun Google terverifikasi untuk mengaktifkan masa coba."
+          : "Masuk dengan akun Google terverifikasi untuk menukar kode ini.", {reason: "needs_google"});
+      }
       if (isTrialVoucher) {
-        if (!userEmail) {
-          throw new functions.https.HttpsError("failed-precondition", "Masuk dengan akun Google terverifikasi untuk mengaktifkan masa coba.", {reason: "needs_google"});
-        }
         if ((await transaction.get(trialClaimRef)).exists) {
           throw new functions.https.HttpsError("already-exists", "Masa coba untuk akun Google ini sudah pernah diaktifkan.", {reason: "trial_claimed"});
         }
@@ -2150,7 +2160,7 @@ export const redeemCode = functions
         transaction.set(outboxRef, {
           type: "redeem",
           uid,
-          email: userEmail || userData.email || "",
+          email: userEmail,
           name: userData.name || "Peneliti",
           entitlement_key: entitlementKey,
           plan: isTrialVoucher ? "trial" : "voucher_access",
@@ -2196,7 +2206,7 @@ export const redeemCode = functions
         entitlementKeys,
         durationDays,
         expiryIso: primaryExpiry.toISOString(),
-        email: userEmail || userData.email || "",
+        email: userEmail,
         name: userData.name || "Peneliti",
         serviceTitle: titles.length <= 3 ? titles.join(", ") : `${titles.length} AI`,
       };
