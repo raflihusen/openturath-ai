@@ -963,32 +963,52 @@ class _MembershipPass extends StatelessWidget {
         const SizedBox(height: 16),
         Divider(height: 1, color: OTColors.borderSubtle(isDark)),
         const SizedBox(height: 16),
-        Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Icon(
-              summary.isOpen
-                  ? Icons.check_circle_outline_rounded
-                  : Icons.lock_outline_rounded,
-              size: 20,
-              color: muted),
-          const SizedBox(width: 10),
-          Expanded(
-              child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                Text(summary.accessLabel,
-                    style: OTTypography.captionMedium(color: ink)),
-                if (expiry != null) ...[
-                  const SizedBox(height: 4),
-                  Text(unlimited ? expiry : '${AppCopy.validUntil} $expiry',
-                      style: OTTypography.caption(color: muted)),
+        InkWell(
+          key: const ValueKey('access-list-row'),
+          onTap: onViewAccess,
+          borderRadius: OTRadius.xsBorder,
+          child: Semantics(
+            button: onViewAccess != null,
+            label: onViewAccess != null ? Loc.tr('viewAccessList') : null,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 4),
+              child:
+                  Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Icon(
+                    summary.isOpen
+                        ? Icons.check_circle_outline_rounded
+                        : Icons.lock_outline_rounded,
+                    size: 20,
+                    color: muted),
+                const SizedBox(width: 10),
+                Expanded(
+                    child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                      Text(summary.accessLabel,
+                          style: OTTypography.captionMedium(color: ink)),
+                      if (expiry != null) ...[
+                        const SizedBox(height: 4),
+                        Text(
+                            unlimited
+                                ? expiry
+                                : '${AppCopy.validUntil} $expiry',
+                            style: OTTypography.caption(color: muted)),
+                      ],
+                    ])),
+                if (onViewAccess != null) ...[
+                  const SizedBox(width: 8),
+                  Icon(
+                      Directionality.of(context) == TextDirection.rtl
+                          ? Icons.chevron_left_rounded
+                          : Icons.chevron_right_rounded,
+                      size: 22,
+                      color: muted),
                 ],
-              ])),
-          if (onViewAccess != null)
-            IconButton(
-                tooltip: Loc.tr('viewAccessList'),
-                onPressed: onViewAccess,
-                icon: Icon(Icons.auto_awesome_outlined, size: 20, color: ink)),
-        ]),
+              ]),
+            ),
+          ),
+        ),
         if (!AppConfig.isGuruEdition) ...[
           const SizedBox(height: 16),
           Divider(height: 1, color: OTColors.borderSubtle(isDark)),
