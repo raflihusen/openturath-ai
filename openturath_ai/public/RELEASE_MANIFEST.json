@@ -20,8 +20,8 @@
   "targetPlatform": "android-arm64",
   "architecture": "arm64-v8a (Modern 64-bit Android)",
   "dmg": {
-    "sha256": "6e453e9346943d770e779bbc3dc6de98159d841ea20f639445bb2660b8e5eb99",
-    "fileSizeBytes": 51149290,
+    "sha256": "c3783e70f1dd2a3f34dd0f675cfeeb27f165c478c557de5ef0c5eb87100104e6",
+    "fileSizeBytes": 51151053,
     "fileSizeMb": "48.78 MB",
     "fileName": "OpenTurath_AI_macOS.dmg",
     "platform": "macOS (Universal arm64 + x86_64)"
