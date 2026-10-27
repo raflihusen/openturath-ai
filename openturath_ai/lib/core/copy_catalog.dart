@@ -32,7 +32,7 @@ const copyCatalog = <String, List<String>>{
   "navStudies": ["AI", "AI", "AI"],
   "assistantIntro": [
     "Pilih bidang, lalu lihat kitab rujukan setiap AI sebelum mulai bertanya.",
-    "Choose a field, then review each assistant's scope and sources before you begin.",
+    "Choose a field, then review each AI's scope and sources before you begin.",
     "اختر مجالًا ثم اطّلع على اختصاص كل مساعد ومراجعه قبل بدء المطالعة."
   ],
   "assistantBrowse": ["Bidang ilmu", "Fields of study", "مجالات العلم"],
@@ -49,16 +49,16 @@ const copyCatalog = <String, List<String>>{
   ],
   "assistantFeaturedAction": [
     "Lihat lima AI",
-    "See five assistants",
-    "عرض المساعدين الخمسة"
+    "See five AIs",
+    "عرض الذكاءات الاصطناعية الخمسة"
   ],
-  "assistantSelected": ["AI terpilih", "Selected assistant", "مسار المطالعة"],
+  "assistantSelected": ["AI terpilih", "Selected AI", "مسار المطالعة"],
   "assistantSelectedHint": [
     "Cakupan dan rujukan",
     "Scope and references",
     "الاختصاص والمراجع"
   ],
-  "assistantMore": ["AI lainnya", "Other assistants", "مساعدون آخرون"],
+  "assistantMore": ["AI lainnya", "Other AIs", "ذكاءات اصطناعية أخرى"],
   "assistantAvailable": ["Tersedia", "Available", "متاح"],
   "assistantSearch": ["Cari AI", "Search AI", "ابحث عن مساعد ذكي"],
   "clearSearch": ["Hapus pencarian", "Clear search", "مسح البحث"],
@@ -66,8 +66,8 @@ const copyCatalog = <String, List<String>>{
   "planFeaturedLabel": ["Paket utama", "Main collection", "المجموعة الرئيسية"],
   "planFeaturedIncludes": [
     "{0} AI dalam satu paket",
-    "{0} assistants in one plan",
-    "{0} مساعدين في باقة واحدة"
+    "{0} AIs in one plan",
+    "{0} ذكاءات اصطناعية في باقة واحدة"
   ],
   "tahawwulatRole_muhaqqiq": [
     "Matan dan ibarah langsung dari kitab",
@@ -85,8 +85,8 @@ const copyCatalog = <String, List<String>>{
     "اختبار الفهم بالسؤال والجواب"
   ],
   "tahawwulatRole_habib": [
-    "Arsip ceramah Habib Abu Bakar",
-    "Lecture archive of Habib Abu Bakr",
+    "Arsip ceramah Habib Abu Bakar Al-Adni bin Ali Al-Masyhur",
+    "Lecture archive of Habib Abu Bakr al-Adni bin Ali al-Mashhur",
     "أرشيف محاضرات الحبيب أبي بكر"
   ],
   "tahawwulatRole_khatib": [
@@ -117,8 +117,8 @@ const copyCatalog = <String, List<String>>{
   ],
   "flagshipExplore": [
     "Jelajahi {0} AI",
-    "Explore {0} assistants",
-    "استكشف {0} مساعدين"
+    "Explore {0} AIs",
+    "استكشف {0} ذكاءات اصطناعية"
   ],
   "flagshipIntroduction": [
     "Mengenal Fikih Tahawwulat",
@@ -140,7 +140,7 @@ const copyCatalog = <String, List<String>>{
   ],
   "planSingleBenefit1": [
     "Akses {0}",
-    "Access the {0} study assistant",
+    "Access the {0} study AI",
     "الوصول إلى مساعد دراسة {0}"
   ],
   "planSingleBenefit2": [
@@ -159,11 +159,7 @@ const copyCatalog = <String, List<String>>{
     "احفظ نتائج المطالعة للرجوع إليها"
   ],
   "planFeaturedInside": ["Isi paket", "In this plan", "محتوى الباقة"],
-  "planFeaturedInsideValue": [
-    "Lima asisten AI",
-    "Five AI assistants",
-    "خمسة مساعدين"
-  ],
+  "planFeaturedInsideValue": ["Lima AI", "Five AIs", "خمسة ذكاءات اصطناعية"],
   "planSingleFieldNote": [
     "Satu paket untuk satu bidang ilmu. Anda bisa berganti pilihan sebelum membayar, dan bidang lain akan segera hadir.",
     "One plan covers one field. You can change your choice before paying, and more fields are coming soon.",
@@ -196,8 +192,8 @@ const copyCatalog = <String, List<String>>{
   ],
   "planFeaturedBenefit2": [
     "Lima AI: Al-Muhaqqiq, Al-Bayan, Al-Mukhtabir, Al-Habib, dan Al-Khatib",
-    "Five assistants: Al-Muhaqqiq, Al-Bayan, Al-Mukhtabir, Al-Habib, and Al-Khatib",
-    "خمسة مساعدين: المحقق والبيان والمختبر والحبيب والخطيب"
+    "Five AIs: Al-Muhaqqiq, Al-Bayan, Al-Mukhtabir, Al-Habib, and Al-Khatib",
+    "خمسة ذكاءات اصطناعية: المحقق والبيان والمختبر والحبيب والخطيب"
   ],
   "planFeaturedBenefit3": [
     "Uji pemahaman lewat tanya jawab langsung",
@@ -244,7 +240,7 @@ const copyCatalog = <String, List<String>>{
   "navSettings": ["Pengaturan", "Settings", "الإعدادات"],
   "membershipFor": ["Untuk", "For", "لصاحب الحساب"],
   "studySpace": ["Percakapan", "Conversation", "المحادثة"],
-  "openStudy": ["Membuka AI…", "Opening assistant…", "جارٍ فتح المساعد…"],
+  "openStudy": ["Membuka AI…", "Opening AI…", "جارٍ فتح المساعد…"],
   "studyOptions": ["Tampilan bacaan", "Reading options", "خيارات القراءة"],
   "referenceBooks": ["Kitab rujukan", "Reference books", "الكتب المرجعية"],
   "savedCollection": ["Catatan", "Notes", "الملاحظات"],
@@ -260,7 +256,7 @@ const copyCatalog = <String, List<String>>{
   "startStudy": ["Mulai bertanya", "Ask a question", "ابدأ السؤال"],
   "dashboardSearchHint": [
     "Cari AI atau bidang keilmuan…",
-    "Search assistants or disciplines…",
+    "Search AIs or disciplines…",
     "ابحث عن المساعد أو المجال العلمي…"
   ],
   "ahlanDefault": ["Halo", "Welcome", "أهلًا وسهلًا"],
@@ -277,17 +273,17 @@ const copyCatalog = <String, List<String>>{
   ],
   "studyEntryHistorySubtitle": [
     "Lanjutkan dari AI yang terakhir Anda buka.",
-    "Pick up with the assistant you opened last.",
+    "Pick up with the AI you opened last.",
     "عُد إلى مراجعك وملاحظاتك السابقة."
   ],
   "studyEntryDefaultSubtitle": [
     "Pilih AI, ajukan masalah, lalu periksa rujukannya di kitab.",
-    "Pick an assistant, ask your question, then check its references in the books.",
+    "Pick an AI, ask your question, then check its references in the books.",
     "اطرح مسألة وتتبع مباحثها في كتب التراث المعتمدة."
   ],
   "loadingReferences": [
     "Menyiapkan AI…",
-    "Preparing assistant…",
+    "Preparing AI…",
     "جارٍ تهيئة المساعد…"
   ],
   "modulePreparing": [
@@ -297,7 +293,7 @@ const copyCatalog = <String, List<String>>{
   ],
   "moduleUnavailable": [
     "AI ini belum tersedia. Coba lagi nanti.",
-    "This assistant is not yet available. Please try again later.",
+    "This AI is not yet available. Please try again later.",
     "هذا المساعد غير متاح حاليًا. حاول لاحقًا."
   ],
   "cannotLoad": [
@@ -307,7 +303,7 @@ const copyCatalog = <String, List<String>>{
   ],
   "cannotLoadStudy": [
     "AI belum bisa dibuka",
-    "The assistant could not be opened",
+    "The AI could not be opened",
     "تعذر فتح المساعد"
   ],
   "studyNotLoadedYet": [
@@ -594,8 +590,8 @@ const copyCatalog = <String, List<String>>{
   ],
   "googleAccountMismatchMustMatch": [
     "Masuk dengan akun Google yang sama agar AI bisa dibuka.",
-    "Must sign in with the same Google account to access AI assistants.",
-    "يجب تسجيل الدخول بنفس حساب Google لفتح الوصول إلى المساعدين."
+    "Must sign in with the same Google account to access AIs.",
+    "يجب تسجيل الدخول بنفس حساب Google لفتح الوصول إلى الذكاءات اصطناعية."
   ],
   "verifyingSessionTitle": [
     "Menyelaraskan sesi akun Google…",
@@ -770,8 +766,8 @@ const copyCatalog = <String, List<String>>{
   "activeUntil": ["Aktif hingga", "Active until", "فعّال حتى"],
   "allAssistantsAvailable": [
     "Akses semua AI",
-    "Access to all assistants",
-    "جميع المساعدين متاحون"
+    "Access to all AIs",
+    "جميع الذكاءات اصطناعية متاحون"
   ],
   "accessExpiringSoon": [
     "Masa akses hampir berakhir",
@@ -928,11 +924,7 @@ const copyCatalog = <String, List<String>>{
     "Trial access · {0} days",
     "وصول تجريبي · {0} يومًا"
   ],
-  "assistantsAvailableCount": [
-    "{0} AI",
-    "{0} assistants",
-    "المساعدون المتاحون: {0}"
-  ],
+  "assistantsAvailableCount": ["{0} AI", "{0} AIs", "المساعدون المتاحون: {0}"],
   "savedNotesCount": [
     "{0} catatan tersimpan",
     "{0} saved notes",
@@ -1267,7 +1259,7 @@ const copyCatalog = <String, List<String>>{
     "Active access on this account.",
     "الوصول الفعّال في هذا الحساب."
   ],
-  "ui_b236ca6182": ["Semua AI", "All assistants", "جميع المساعدين"],
+  "ui_b236ca6182": ["Semua AI", "All AIs", "جميع الذكاءات اصطناعية"],
   "ui_f2dfc4506e": ["AI", "Study guide", "خادم المطالعة"],
   "ui_c720f7612f": ["Pengguna", "Reader", "القارئ"],
   "ui_26894b3c65": [
@@ -1936,11 +1928,7 @@ const copyCatalog = <String, List<String>>{
     "Read each passage in context. Check its wording, title, volume, and page. Studying the signs of the times calls for care, guidance from teachers, and restraint in speech and action.",
     "اقرأ النص في سياقه، وراجع ألفاظه واسم الكتاب والجزء والصفحة. ودراسة علامات الزمان تستلزم التثبت وإرشاد المعلمين وصيانة اللسان والعمل."
   ],
-  "introRooms": [
-    "Lima asisten AI",
-    "Five AI Assistants",
-    "خمسة نماذج ذكاء اصطناعي"
-  ],
+  "introRooms": ["Lima AI", "Five AI AIs", "خمسة نماذج ذكاء اصطناعي"],
   "introReferences": [
     "Menelusuri karya dan rujukan",
     "Following the Works and References",
@@ -1972,8 +1960,8 @@ const copyCatalog = <String, List<String>>{
     "اختبار الفهم بالسؤال والجواب"
   ],
   "ui_4837b8e469": [
-    "Arsip ceramah Habib Abu Bakar",
-    "Lectures of Habib Abu Bakr",
+    "Arsip ceramah Habib Abu Bakar Al-Adni bin Ali Al-Masyhur",
+    "Lectures of Habib Abu Bakr al-Adni bin Ali al-Mashhur",
     "محاضرات الحبيب أبي بكر"
   ],
   "ui_b8d36541c3": [
@@ -2174,8 +2162,8 @@ const copyCatalog = <String, List<String>>{
   "fontSizeLabel": ["Ukuran huruf", "Text size", "حجم الخط"],
   "openAssistantSessions": [
     "Sesi terbuka ({0})",
-    "Open assistant sessions ({0})",
-    "جلسات المساعدين المفتوحة ({0})"
+    "Open AI sessions ({0})",
+    "جلسات الذكاءات اصطناعية المفتوحة ({0})"
   ],
   "closeSession": ["Tutup sesi", "Close session", "إغلاق الجلسة"],
   "openAnotherSpecialist": [
@@ -2242,7 +2230,7 @@ const copyCatalog = <String, List<String>>{
   ],
   "assistantGoogleAccountSet": [
     "Akun Google AI diatur ke: {0}",
-    "Assistant Google account set to: {0}",
+    "AI Google account set to: {0}",
     "حساب Google للمساعد: {0}"
   ],
   "noteSyncPending": ["Belum tersinkron", "Not synced yet", "لم تُزامَن بعد"],
@@ -2277,12 +2265,12 @@ const copyCatalog = <String, List<String>>{
   ],
   "loginAsideBody": [
     "Telusuri ibarah dan rujukan langsung dari kitab turats, dengan AI untuk tiap bidang ilmu.",
-    "Trace passages and references straight from the classical texts, with an assistant for each discipline.",
+    "Trace passages and references straight from the classical texts, with an AI for each discipline.",
     "تتبّع العبارات والمراجع من كتب التراث مباشرة، مع مساعد لكل فنّ."
   ],
   "loginFeatureAssistants": [
     "AI per bidang ilmu",
-    "An assistant for each discipline",
+    "An AI for each discipline",
     "مساعد لكل فنّ"
   ],
   "loginFeatureAssistantsBody": [
@@ -2297,7 +2285,7 @@ const copyCatalog = <String, List<String>>{
   ],
   "loginFeatureSourcesBody": [
     "Setiap AI punya pustaka kitab yang dapat Anda periksa.",
-    "Every assistant has a library of works you can inspect.",
+    "Every AI has a library of works you can inspect.",
     "لكل مساعد مكتبة يمكنك مراجعتها."
   ],
   "loginFeatureNotes": [
@@ -2316,18 +2304,14 @@ const copyCatalog = <String, List<String>>{
     "اضغط على البطاقة لقلبها"
   ],
   "recentNote": ["Catatan terakhir", "Latest note", "آخر ملاحظة"],
-  "viewAccessList": [
-    "Daftar AI aktif",
-    "Active assistants",
-    "المساعدون المفعّلون"
-  ],
+  "viewAccessList": ["Daftar AI aktif", "Active AIs", "المساعدون المفعّلون"],
   "unitBooks": ["kitab", "works", "كتابًا"],
   "unitVolumes": ["jilid", "volumes", "مجلدًا"],
   "unitPages": ["halaman", "pages", "صفحة"],
   "unitLectures": ["arsip ceramah", "lecture archives", "أرشيف محاضرات"],
   "flagshipPositioning": [
     "AI yang dibangun khusus untuk Fikih Tahawwulat.",
-    "An AI assistant built specifically for Fiqh al-Tahawwulat.",
+    "An AI built specifically for Fiqh al-Tahawwulat.",
     "مساعد ذكي بُني خصيصًا لفقه التحولات."
   ],
   "authorDeathLabel": ["Wafat pengarang", "Author died", "وفاة المؤلف"],
@@ -2375,12 +2359,12 @@ const copyCatalog = <String, List<String>>{
   ],
   "roomPermissionBody": [
     "Akun Google yang aktif belum bisa membuka AI ini. Periksa akun yang dipakai, lalu coba buka di browser.",
-    "The active Google account cannot open this assistant. Check which account is in use, then try opening it in your browser.",
+    "The active Google account cannot open this AI. Check which account is in use, then try opening it in your browser.",
     "حساب Google الحالي لا يستطيع فتح هذا المساعد. تحقق من الحساب المستخدم ثم جرّب فتحه في المتصفح."
   ],
   "roomLoadFailTitle": [
     "AI belum bisa dibuka",
-    "The assistant could not be opened",
+    "The AI could not be opened",
     "تعذّر فتح المساعد"
   ],
   "roomHttpFailure": [
@@ -2395,18 +2379,18 @@ const copyCatalog = <String, List<String>>{
   ],
   "roomLoadFailBody": [
     "Halaman AI gagal dimuat. Coba muat ulang; kegagalan ini dapat berasal dari halaman atau koneksi.",
-    "The assistant page failed to load. Check your internet connection and try again.",
+    "The AI page failed to load. Check your internet connection and try again.",
     "تعذّر تحميل صفحة المساعد. تحقق من اتصالك بالإنترنت ثم أعد المحاولة."
   ],
   "roomPaywallTitle": [
     "AI ini memerlukan langganan",
-    "This assistant requires a subscription",
+    "This AI requires a subscription",
     "هذا المساعد يتطلب اشتراكًا"
   ],
   "roomSeePlans": ["Lihat paket", "See plans", "عرض الباقات"],
   "roomPaywallBody": [
     "Aktifkan langganan untuk bertanya bersama AI {0}.",
-    "Activate a subscription to study with the {0} assistant.",
+    "Activate a subscription to study with the {0} AI.",
     "فعّل الاشتراك للمطالعة مع مساعد {0}."
   ],
   "planSingleLabel": [
@@ -2433,7 +2417,7 @@ const copyCatalog = <String, List<String>>{
   ],
   "googleAccountDialogTitle": [
     "Akun Google untuk AI",
-    "Google Account for Assistant",
+    "Google Account for AI",
     "حساب Google للمساعد"
   ],
   "googleAccountDialogDesc": [
@@ -2458,7 +2442,7 @@ const copyCatalog = <String, List<String>>{
   ],
   "clearChatHistoryDesc": [
     "Seluruh percakapan pada sesi AI ini akan dibersihkan dari layar.",
-    "All conversations in this assistant session will be cleared from the screen.",
+    "All conversations in this AI session will be cleared from the screen.",
     "سيتم مسح جميع المحادثات في جلسة هذا المساعد من الشاشة."
   ],
   "chatHistoryCleared": [
@@ -2473,12 +2457,12 @@ const copyCatalog = <String, List<String>>{
   ],
   "sessionSwitcherTitle": [
     "Sesi AI yang terbuka",
-    "Open Assistant Sessions",
+    "Open AI Sessions",
     "جلسات المساعد المفتوحة"
   ],
   "selectSessionToSwitch": [
     "Pilih AI untuk berpindah sesi.",
-    "Select an assistant to switch active study sessions.",
+    "Select an AI to switch active study sessions.",
     "اختر مساعدًا للتبديل إلى جلسة المطالعة النشطة."
   ],
   "updateReadyTitleDesktop": [

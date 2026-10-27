@@ -44,8 +44,8 @@ class OnboardingCopy {
         (
           _l('Ulama dan mazhab tercampur', 'Scholars and schools get mixed',
               'اختلاط أقوال العلماء والمذاهب'),
-          _l('Satu bidang, satu asisten', 'One field, one assistant',
-              'لكل علم مساعد خاص'),
+          _l('Satu bidang, satu AI', 'One field, one AI',
+              'لكل علم ذكاء اصطناعي خاص'),
         ),
         (
           _l('Kitab dan halaman yang tidak ada',
@@ -66,11 +66,11 @@ class OnboardingCopy {
       ];
 
   // ── Slide 3 ──
-  static String get p3Title => _l('Satu bidang ilmu, satu asisten.',
-      'One field of knowledge, one assistant.', 'لكل علم مساعد خاص.');
+  static String get p3Title => _l('Satu bidang ilmu, satu AI.',
+      'One field of knowledge, one AI.', 'لكل علم ذكاء اصطناعي خاص.');
   static String get p3Body => _l(
       'Pustaka kitab dikelompokkan per bidang. Setiap bidang punya asistennya sendiri, dan akan terus bertambah.',
-      'The library is grouped by field. Each field has its own assistant, and more are coming.',
+      'The library is grouped by field. Each field has its own AI, and more are coming.',
       'تُصنَّف المكتبة بحسب العلوم، ولكل علم مساعده الخاص، وستُضاف علوم أخرى.');
   static List<String> get p3Fields => [
         _l("Fikih Syafi'i", "Shafi'i Fiqh", 'الفقه الشافعي'),

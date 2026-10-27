@@ -62,10 +62,10 @@ void main() {
             // menyebut "lima asisten" tanpa mendaftar namanya.
             expect(
                 find.text(locale == 'ar'
-                    ? 'خمسة مساعدين'
+                    ? 'خمسة ذكاءات اصطناعية'
                     : locale == 'en'
-                        ? 'Five AI assistants'
-                        : 'Lima asisten AI'),
+                        ? 'Five AIs'
+                        : 'Lima AI'),
                 findsOneWidget,
                 reason: reason);
             expect(find.textContaining('Al-Muhaqqiq'), findsNothing,
