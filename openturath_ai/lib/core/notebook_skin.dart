@@ -755,6 +755,8 @@ const notebookSkinScript = r'''
      bukan teks, supaya tidak bergantung pada bahasa antarmuka Google). Bila apa pun
      gagal, klik diteruskan apa adanya agar pengguna tidak terjebak. */
   (function () {
+    /* Dimatikan sementara atas keputusan pemilik: tombol Stop memakai dialog bawaan Google. */
+    if (true) return;
     if (window.__otStopGuard) return;
     window.__otStopGuard = true;
     const STOP_LABEL = /stop|hentikan|berhenti|إيقاف|detener|arrêter|stopp/i;
