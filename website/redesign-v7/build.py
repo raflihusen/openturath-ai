@@ -365,7 +365,7 @@ def page_home():
 
 <section class="sec"><div class="wrap">{shead(L("Pertanyaan","Questions","أسئلة"), L("Jawaban singkat.","Short answers.","إجابات موجزة."))}<div class="rv">{faq(FAQ_MAIN())}</div><p class="more"><a class="link" href="bantuan.html">{L("Semua bantuan","All help","كل المساعدة")}{ic("arrow","arr")}</a></p></div></section>'''
     body += '<script type="application/ld+json">' + json.dumps({"@context": "https://schema.org", "@type": "SoftwareApplication", "name": "OpenTurath AI", "applicationCategory": "EducationalApplication", "operatingSystem": "Android, macOS, Windows", "inLanguage": ["id", "en", "ar"], "url": BASE + "/" + LANG + "/index.html", "description": "AI Islami berbasis turath untuk penuntut ilmu."}, ensure_ascii=False) + '</script>'
-    write("index.html", L("OpenTurath: Menjaga warisan, membuka cakrawala", "OpenTurath: Rooted in heritage. Open to new horizons.", "OpenTurath: ذكاء اصطناعي إسلامي قائم على التراث"),
+    write("index.html", L("OpenTurath", "OpenTurath", "OpenTurath"),
           L("OpenTurath AI membantu penuntut ilmu memahami kitab dan menemukan rujukan ibarahnya, bidang demi bidang. AI Islami berbasis turath.",
             "OpenTurath AI helps seekers of knowledge understand books and find the passages they cite. An Islamic AI grounded in turath.",
             "يساعد OpenTurath AI طالب العلم على فهم الكتب والوصول إلى العبارات التي تستند إليها. ذكاء اصطناعي إسلامي قائم على التراث."), body)
