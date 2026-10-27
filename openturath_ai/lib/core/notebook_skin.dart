@@ -579,6 +579,25 @@ const notebookSkinScript = r'''
       box-shadow: 0 8px 32px var(--ot-shadow) !important;
     }
     html body .configure-user-settings-container .header-title { font-weight: 600 !important; }
+    /* Tombol dialog Google (mis. "Stop generating?") hitam, hanya warna: perilaku tidak disentuh. */
+    html body mat-dialog-container .mat-mdc-unelevated-button,
+    html body mat-dialog-container .mat-mdc-raised-button,
+    html body .mat-mdc-dialog-surface .mat-mdc-unelevated-button,
+    html body .mat-mdc-dialog-surface .mat-mdc-raised-button {
+      --mdc-filled-button-container-color: var(--ot-ink) !important;
+      --mdc-filled-button-label-text-color: var(--ot-on-ink) !important;
+      --mat-button-filled-container-color: var(--ot-ink) !important;
+      --mat-button-filled-label-text-color: var(--ot-on-ink) !important;
+      background-color: var(--ot-ink) !important;
+      color: var(--ot-on-ink) !important;
+      border-radius: 999px !important;
+    }
+    html body mat-dialog-container .mat-mdc-button,
+    html body .mat-mdc-dialog-surface .mat-mdc-button {
+      --mdc-text-button-label-text-color: var(--ot-ink) !important;
+      --mat-button-text-label-text-color: var(--ot-ink) !important;
+      color: var(--ot-ink) !important;
+    }
     html body .configure-user-settings-container .submit-button {
       background: var(--ot-ink) !important;
       color: var(--ot-on-ink) !important;
