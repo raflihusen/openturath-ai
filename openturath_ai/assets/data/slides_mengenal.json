@@ -31,9 +31,9 @@
    "ar": "منهج السلامة"
   },
   {
-   "id": "Lima asisten",
-   "en": "Five assistants",
-   "ar": "المساعدون الخمسة"
+   "id": "Lima AI",
+   "en": "Five AIs",
+   "ar": "الذكاءات الاصطناعية الخمسة"
   }
  ],
  "slides": [
@@ -1297,17 +1297,17 @@
    "lvl": "full",
    "kind": "title",
    "kicker": "Bab 6",
-   "title": "Lima Asisten untuk Mempelajarinya",
+   "title": "Lima AI untuk Mempelajarinya",
    "sub": "Alat bantu digital berbasis kitab dan arsip resmi Al-Habib Abu Bakar Al-Masyhur.",
    "i18n": {
     "en": {
      "kicker": "Chapter 6",
-     "title": "Five Assistants to Study It",
+     "title": "Five AIs to Study It",
      "sub": "Digital aids built on the books and official archive of al-Habib Abu Bakr al-Masyhur."
     },
     "ar": {
      "kicker": "الباب ٦",
-     "title": "خمسة مساعدين لدراسته",
+     "title": "خمسة ذكاءات اصطناعية لدراسته",
      "sub": "أدوات رقمية مبنية على كتب الحبيب أبي بكر المشهور وأرشيفه الرسمي."
     }
    }
@@ -1319,21 +1319,21 @@
    "kind": "body",
    "blocks": [
     {
-     "p": "**Catatan penting sebelum memulai:** Kelima asisten AI ini **tidak mengeluarkan fatwa baru** dan **tidak menggantikan peran guru atau ulama bersanad**. Tugasnya menjadi **pemandu perpustakaan** yang memudahkan Anda mencari, memahami, dan menguji pelajaran dari **58 kitab tertulis** dan **arsip ceramah dan daurah** Al-Habib Abu Bakar Al-‘Adni Al-Masyhur."
+     "p": "**Catatan penting sebelum memulai:** Kelima AI ini **tidak mengeluarkan fatwa baru** dan **tidak menggantikan peran guru atau ulama bersanad**. Tugasnya menjadi **pemandu perpustakaan** yang memudahkan Anda mencari, memahami, dan menguji pelajaran dari **58 kitab tertulis** dan **arsip ceramah dan daurah** Al-Habib Abu Bakar Al-‘Adni Al-Masyhur."
     }
    ],
    "i18n": {
     "en": {
      "blocks": [
       {
-       "p": "**Important note before you begin:** These five AI assistants **do not issue new fatwas** and **do not replace teachers or scholars with a chain of transmission**. Their role is to be **a library guide** that helps you search, understand, and test lessons from **58 written books** and the **archive of lectures and daurahs** of al-Habib Abu Bakr al-‘Adni al-Masyhur."
+       "p": "**Important note before you begin:** These five AIs **do not issue new fatwas** and **do not replace teachers or scholars with a chain of transmission**. Their role is to be **a library guide** that helps you search, understand, and test lessons from **58 written books** and the **archive of lectures and daurahs** of al-Habib Abu Bakr al-‘Adni al-Masyhur."
       }
      ]
     },
     "ar": {
      "blocks": [
       {
-       "p": "**ملاحظة مهمة قبل البدء:** هؤلاء المساعدون الخمسة من الذكاء الاصطناعي **لا يصدرون فتاوى جديدة** و**لا يحلّون محلّ المعلّمين والعلماء أصحاب السند**. دورهم أن يكونوا **دليلًا للمكتبة** يعينك على البحث والفهم واختبار الدروس من **٥٨ كتابًا مكتوبًا** و**أرشيف المحاضرات والدورات** للحبيب أبي بكر العدني المشهور."
+       "p": "**ملاحظة مهمة قبل البدء:** هؤلاء الذكاءات الاصطناعية الخمسة من الذكاء الاصطناعي **لا يصدرون فتاوى جديدة** و**لا يحلّون محلّ المعلّمين والعلماء أصحاب السند**. دورهم أن يكونوا **دليلًا للمكتبة** يعينك على البحث والفهم واختبار الدروس من **٥٨ كتابًا مكتوبًا** و**أرشيف المحاضرات والدورات** للحبيب أبي بكر العدني المشهور."
       }
      ]
     }
@@ -1346,7 +1346,7 @@
    "kind": "body",
    "blocks": [
     {
-     "p": "**Lima asisten, lima cara membantu.**"
+     "p": "**Lima AI, lima cara membantu.**"
     },
     {
      "ol": [
@@ -1362,7 +1362,7 @@
     "en": {
      "blocks": [
       {
-       "p": "**Five assistants, five ways to help.**"
+       "p": "**Five AIs, five ways to help.**"
       },
       {
        "ol": [
@@ -1378,7 +1378,7 @@
     "ar": {
      "blocks": [
       {
-       "p": "**خمسة مساعدين، وخمس طرق للعون.**"
+       "p": "**خمسة ذكاءات اصطناعية، وخمس طرق للعون.**"
       },
       {
        "ol": [
@@ -1405,7 +1405,7 @@
     {
      "ol": [
       "**Pilih jalur belajar Anda:** Pemula/Awam, Keluarga, Santri, Mahasiswa, atau Pengajar.",
-      "**Mulai dari pertanyaan yang paling dekat dengan hati Anda** bersama asisten **Al-Bayan**.",
+      "**Mulai dari pertanyaan yang paling dekat dengan hati Anda** bersama AI **Al-Bayan**.",
       "**Amalkan satu langkah Jalan Selamat (*Manhaj Salamah*)** di rumah Anda hari ini, dan tetaplah terhubung dengan majelis ilmu para ulama bersanad."
      ]
     }
@@ -1419,7 +1419,7 @@
       {
        "ol": [
         "**Choose your learning path:** Beginner/General, Family, Student, University Student, or Teacher.",
-        "**Start from the question closest to your heart** with the assistant **Al-Bayan**.",
+        "**Start from the question closest to your heart** with the AI **Al-Bayan**.",
         "**Practise one step of the Safe Path (*Manhaj Salamah*)** in your home today, and stay connected to the gatherings of scholars with a chain of transmission."
        ]
       }
@@ -1433,7 +1433,7 @@
       {
        "ol": [
         "**اختر مسار تعلّمك:** مبتدئ/عامّة، أسرة، طالب علم، جامعي، أو معلّم.",
-        "**ابدأ من السؤال الأقرب إلى قلبك** مع المساعد **البيان**.",
+        "**ابدأ من السؤال الأقرب إلى قلبك** مع الذكاء الاصطناعي **البيان**.",
         "**طبّق خطوة واحدة من منهج السلامة (*منهج السلامة*)** في بيتك اليوم، وابقَ متصلًا بمجالس العلماء أصحاب السند."
        ]
       }

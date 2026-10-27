@@ -391,7 +391,7 @@ Mengapa demikian?
 ### 2. Jembatan Solusi: Hadirnya Super AI Fikih Tahawwulat Pertama di Dunia
 Melihat besarnya urgensi ilmu ini dan tingginya dinding kesulitan bagi para penuntut ilmu, **OpenTurath AI** mempersembahkan terobosan peradaban: **Super AI Fikih Tahawwulat Pertama di Dunia**.
 
-Super AI ini dirancang dan dilatih khusus dengan mengindeks secara komprehensif seluruh karya tulis primer Al-Habib Abu Bakar Al-Adni beserta arsip transkrip ribuan muhadharah beliau. Untuk memudahkan para pencari ilmu menelaah khazanah yang begitu luas ini, OpenTurath membaginya ke dalam **Empat Asisten Spesialis (4 Bilik Keilmuan)** dengan karakter dan fungsi yang saling melengkapi:
+Super AI ini dirancang dan dilatih khusus dengan mengindeks secara komprehensif seluruh karya tulis primer Al-Habib Abu Bakar Al-Adni beserta arsip transkrip ribuan muhadharah beliau. Untuk memudahkan para pencari ilmu menelaah khazanah yang begitu luas ini, OpenTurath membaginya ke dalam **Empat AI Spesialis (4 Bilik Keilmuan)** dengan karakter dan fungsi yang saling melengkapi:
 
 ```
 ┌────────────────────────────────────────────────────────────────────────┐

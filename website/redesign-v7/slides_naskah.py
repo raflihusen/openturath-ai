@@ -22,7 +22,7 @@ BAB = [
     {"id": "Fikih Tahawwulat", "en": "Fiqh al-Tahawwulat", "ar": "فقه التحولات"},
     {"id": "Lima cabang ilmu", "en": "Five branches", "ar": "الفروع الخمسة"},
     {"id": "Jalan selamat", "en": "The safe path", "ar": "منهج السلامة"},
-    {"id": "Lima asisten", "en": "Five assistants", "ar": "المساعدون الخمسة"},
+    {"id": "Lima AI", "en": "Five AIs", "ar": "الذكاءات الاصطناعية الخمسة"},
 ]
 
 
@@ -158,7 +158,7 @@ MANUAL = {
         ]},
     ]),
     78: dict(blocks=[
-        P("**Catatan penting sebelum memulai:** Kelima asisten AI ini **tidak mengeluarkan fatwa baru** dan "
+        P("**Catatan penting sebelum memulai:** Kelima AI ini **tidak mengeluarkan fatwa baru** dan "
           "**tidak menggantikan peran guru atau ulama bersanad**. Tugasnya menjadi **pemandu perpustakaan** "
           "yang memudahkan Anda mencari, memahami, dan menguji pelajaran dari **58 kitab tertulis** dan "
           "**arsip ceramah dan daurah** Al-Habib Abu Bakar Al-‘Adni Al-Masyhur."),
