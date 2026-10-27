@@ -614,7 +614,7 @@ const notebookSkinScript = r'''
     });
     if (document.body) {
       const stopLabeled = [...document.querySelectorAll('.submit-button button, app-chat-input button, .chat-input-container button')]
-        .some(b => /stop|hentikan|berhenti|إيقاف/i.test(b.getAttribute('aria-label') || '') && b.offsetParent !== null);
+        .some(b => ((window.__otIsStopButton && window.__otIsStopButton(b)) || /stop|hentikan|berhenti|إيقاف/i.test(b.getAttribute('aria-label') || '')) && b.offsetParent !== null);
       toggle(document.body, 'ot-generating', !!document.querySelector('.thinking-chain.ot-thinking') || stopLabeled);
     }
     document.querySelectorAll('.to-user-container').forEach(box => {
@@ -745,6 +745,7 @@ const notebookSkinScript = r'''
     applyStyle();
     try { tagAnswers(); } catch (_) {}
     updateStage();
+    try { if (window.__otWatchStop) window.__otWatchStop(); } catch (_) {}
   }
   window.otSkinApply = apply;
 
@@ -760,10 +761,18 @@ const notebookSkinScript = r'''
     let busy = false;
     let passThrough = false;
 
+    /* Ikon tombol kirim berubah menjadi "stop" begitu jawaban disusun, bahkan pada tahap awal
+       ("Analyzing your files...") sebelum elemen berpikir ada. Ikon itu ikut menentukan. */
+    const STOP_ICON = /^(stop|stop_circle|stop_circle_outlined|square|stop_fill)$/i;
+    function iconOf(btn) {
+      const ic = btn.querySelector('mat-icon, .mat-icon, [data-mat-icon-name], [fonticon]');
+      return ic ? (ic.getAttribute('data-mat-icon-name') || ic.getAttribute('fonticon') || ic.textContent || '').trim() : '';
+    }
+    window.__otIsStopButton = btn => !!btn && (STOP_ICON.test(iconOf(btn)) || STOP_LABEL.test(btn.getAttribute('aria-label') || ''));
     function stopButtonFrom(target) {
       const btn = target && target.closest && target.closest('button');
       if (!btn) return null;
-      if (btn.closest('.submit-button') && document.body.classList.contains('ot-generating')) return btn;
+      if (btn.closest('.submit-button') && (document.body.classList.contains('ot-generating') || window.__otIsStopButton(btn))) return btn;
       const label = btn.getAttribute('aria-label') || '';
       if (STOP_LABEL.test(label) && btn.closest('.ot-chat-composer, app-chat-input, .chat-input-container, form')) return btn;
       return null;
@@ -774,7 +783,7 @@ const notebookSkinScript = r'''
        response/jawaban) DAN tidak memuat kata penghapusan yang kuat (delete/hapus/clear). Selain itu,
        dialog apa pun yang memuat penghapusan kuat tidak dikonfirmasi otomatis. */
     const STRONG_DESTRUCTIVE = /delet|clear|erase|discard|hapus|bersihkan|\u062d\u0630\u0641|\u0645\u0633\u062d/i;
-    const STOP_DIALOG = /(stop|hentikan|berhenti|\u0625\u064a\u0642\u0627\u0641).{0,40}(generat|respons|answer|jawab|\u0625\u0646\u0634\u0627\u0621)|(generat|respons|answer|jawab).{0,40}(stop|hentikan)/i;
+    const STOP_DIALOG = /(stop|hentikan|berhenti|\u0625\u064a\u0642\u0627\u0641).{0,40}(generat|respons|answer|jawab|pembuat|\u0625\u0646\u0634\u0627\u0621)|(generat|respons|answer|jawab|pembuat).{0,40}(stop|hentikan)/i;
     function isDestructiveDialog(dialog) {
       const text = (dialog && (dialog.textContent || '')) || '';
       if (STRONG_DESTRUCTIVE.test(text)) return true;
@@ -823,6 +832,35 @@ const notebookSkinScript = r'''
       busy = false;
     }
 
+    /* Cadangan: bila dialog "Stop generating?" milik Google tetap muncul (klik tidak tercegat,
+       tombol dari papan ketik, tahap awal jawaban), dialog itu disembunyikan seketika dan
+       pertanyaannya diajukan oleh dialog OpenTurath. Jawaban pengguna diteruskan ke dialog Google. */
+    let watching = false;
+    window.__otWatchStop = function () {
+      if (busy || watching) return;
+      const dlg = [...document.querySelectorAll('mat-dialog-container, .mat-mdc-dialog-container, [role="alertdialog"], [role="dialog"]')]
+        .find(d => !d.__otHandled && STOP_DIALOG.test(d.textContent || '') && !STRONG_DESTRUCTIVE.test(d.textContent || ''));
+      if (!dlg) return;
+      dlg.__otHandled = true;
+      const root = document.documentElement;
+      const btns = [...dlg.querySelectorAll('button')];
+      if (btns.length < 2) return;
+      const keep = btns.find(b => /keep|lanjut|continue|batal|cancel|\u0645\u062a\u0627\u0628\u0639\u0629/i.test(b.textContent || '')) || btns[0];
+      const stop = btns.find(b => b !== keep) || btns[btns.length - 1];
+      const bridge = window.flutter_inappwebview;
+      if (!bridge || typeof bridge.callHandler !== 'function') return; // dialog Google tetap terlihat
+      watching = true;
+      root.classList.add('ot-stopping');
+      const finish = () => { root.classList.remove('ot-stopping'); watching = false; };
+      Promise.resolve(bridge.callHandler('otStopRequested')).then(ok => {
+        try { (ok === true ? stop : keep).click(); } catch (_) {}
+        setTimeout(finish, 250);
+      }).catch(() => {
+        try { keep.click(); } catch (_) {}
+        finish();
+      });
+    };
+
     window.addEventListener('click', function (e) {
       if (passThrough) return;
       const btn = stopButtonFrom(e.target);
@@ -863,10 +901,12 @@ const notebookSkinScript = r'''
     window.__otSkinObserver = new MutationObserver(() => {
       if (queued) return;
       queued = true;
-      setTimeout(() => { queued = false; apply(); }, 120);
+      const wait = Date.now() - (window.__otLastScroll || 0) < 250 ? 350 : 160;
+      setTimeout(() => { queued = false; apply(); }, wait);
     });
+    window.addEventListener('scroll', () => { window.__otLastScroll = Date.now(); }, { capture: true, passive: true });
     const start = () => {
-      if (document.body) window.__otSkinObserver.observe(document.body, { childList: true, subtree: true, characterData: true });
+      if (document.body) window.__otSkinObserver.observe(document.body, { childList: true, subtree: true });
       else setTimeout(start, 50);
     };
     start();

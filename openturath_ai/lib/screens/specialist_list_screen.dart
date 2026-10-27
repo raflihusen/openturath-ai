@@ -1,6 +1,7 @@
 import '../core/localization.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../services/telemetry_service.dart';
 import '../core/scholarly_fonts.dart';
 
@@ -169,24 +170,10 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
       return;
     }
 
-    final personaAgent = AgentModel(
-      id: subAgent.id,
-      title: 'Fikih Tahawwulat: ${subAgent.name}',
-      titleArabic: subAgent.nameArabic,
-      description: subAgent.description,
-      emoji: subAgent.emoji,
-      category: parentAgent.category,
-      status: 'active',
-      sortOrder: parentAgent.sortOrder,
-      fieldId: parentAgent.fieldId,
-      subtitleAcademic: subAgent.description,
-      suggestedPrompts: parentAgent.suggestedPrompts,
-      referenceBooks: parentAgent.referenceBooks,
-      catalogId: parentAgent.catalogId,
-      kind: parentAgent.kind,
-      disciplineIds: parentAgent.disciplineIds,
-      scholarIds: parentAgent.scholarIds,
-    );
+    final personaAgent = parentAgent.forSubAgent(subAgent);
+    SharedPreferences.getInstance().then((prefs) {
+      prefs.setString('last_opened_notebook_id', personaAgent.id);
+    }).catchError((_) {});
 
     AgentSessionManager.instance.openAgent(personaAgent, user: user);
   }

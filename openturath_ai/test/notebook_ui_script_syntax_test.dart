@@ -207,4 +207,16 @@ void notebookSkinTests() {
     expect(body.contains('hapus'), isTrue,
         reason: 'dialog penghapusan harus dikecualikan');
   });
+
+  test(
+      'tombol berhenti dikenali dari ikon, dan dialog Stop milik Google dicegat sebagai cadangan',
+      () {
+    expect(notebookSkinScript.contains('const STOP_ICON ='), isTrue);
+    expect(notebookSkinScript.contains('window.__otWatchStop'), isTrue);
+    // Pengamat tidak lagi memantau setiap perubahan teks (berat saat menggulir/streaming).
+    expect(
+        notebookSkinScript.contains(
+            'observe(document.body, { childList: true, subtree: true, characterData: true })'),
+        isFalse);
+  });
 }

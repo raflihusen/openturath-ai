@@ -70,6 +70,27 @@ class AgentModel {
       AppConfig.isGuruEdition ? false : status == 'coming_soon';
   bool get isLocked => isComingSoon;
 
+  /// Sesi untuk satu sub-AI (mis. Al-Muhaqqiq) dengan id dan judul miliknya sendiri,
+  /// sedangkan hak akses tetap mengikuti agen induk ini.
+  AgentModel forSubAgent(SubAgentModel subAgent) => AgentModel(
+        id: subAgent.id,
+        title: '$title: ${subAgent.name}',
+        titleArabic: subAgent.nameArabic,
+        description: subAgent.description,
+        emoji: subAgent.emoji,
+        category: category,
+        status: 'active',
+        sortOrder: sortOrder,
+        fieldId: fieldId,
+        subtitleAcademic: subAgent.description,
+        suggestedPrompts: suggestedPrompts,
+        referenceBooks: referenceBooks,
+        catalogId: catalogId,
+        kind: kind,
+        disciplineIds: disciplineIds,
+        scholarIds: scholarIds,
+      );
+
   AgentModel copyWith({
     String? id,
     String? title,

@@ -24,6 +24,7 @@ import '../widgets/ot_motion_widgets.dart';
 import '../core/design/ot_radius.dart';
 import '../core/app_snackbar.dart';
 import '../models/agent_model.dart';
+import '../models/sub_agent_model.dart';
 import '../models/user_model.dart';
 import '../services/agent_service.dart';
 import '../services/agent_session_manager.dart';
@@ -145,6 +146,28 @@ class _DashboardScreenState extends State<DashboardScreen> {
     } catch (_) {}
   }
 
+  /// Sesi terakhir yang dibuka: agen utama, atau sub-AI (mis. Al-Muhaqqiq) beserta judulnya.
+  AgentModel? _resolveLastOpened() {
+    final id = _lastOpenedAgentId;
+    if (id == null) return null;
+    for (final a in _agents) {
+      if (!a.isActive) continue;
+      if (a.id == id) return a;
+      for (final sub in a.subAgents ?? const <SubAgentModel>[]) {
+        if (sub.id == id) return a.forSubAgent(sub);
+      }
+    }
+    return null;
+  }
+
+  /// Agen induk untuk sub-AI; hak akses dicek pada induknya.
+  AgentModel? _parentOf(AgentModel agent) {
+    for (final a in _agents) {
+      if (a.subAgents?.any((s) => s.id == agent.id) ?? false) return a;
+    }
+    return null;
+  }
+
   void _openNotebook(AgentModel agent, UserModel? user) {
     if (agent.kind == CorpusKind.scholar) {
       AppSnackBar.warning(context, Loc.tr('scholarPreparingBody'));
@@ -162,12 +185,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
     }).catchError((_) {});
 
     // Cek akses pengguna ke agent (paywall)
+    final accessAgent = _parentOf(agent) ?? agent;
     if (!AppConfig.isGuruEdition &&
-        (user == null || !user.hasAccessToAgent(agent.id))) {
+        (user == null || !user.hasAccessToAgent(accessAgent.id))) {
       NavigationGuard.safePushNamed(
         context,
         AppRoutes.subscription,
-        arguments: {'user': user, 'agent': agent},
+        arguments: {'user': user, 'agent': accessAgent},
       );
       return;
     }
@@ -255,11 +279,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               builder: (context, _) {
                                 final active = AgentSessionManager
                                     .instance.activeTab?.agent;
-                                final last = _agents
-                                    .where((a) =>
-                                        a.id == _lastOpenedAgentId &&
-                                        a.isActive)
-                                    .firstOrNull;
+                                final last = _resolveLastOpened();
                                 final fallbackActive = _agents
                                     .where((a) => a.isActive)
                                     .firstOrNull;
