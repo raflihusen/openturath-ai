@@ -2,9 +2,9 @@
   "version": "1.0.83",
   "buildNumber": 84,
   "versionFull": "1.0.83+84",
-  "buildTimestamp": "2026-10-27T13:14:05.687615",
-  "sha256": "cfad49a46d8b005839d7b045bcb1e55c23eacfc6756df00e90a90e167c4578f4",
-  "fileSizeBytes": 70353011,
+  "buildTimestamp": "2026-10-27T13:40:36.998856",
+  "sha256": "7b2d584f9ef5c82aa53419092a2ba61ee796e1042e27603fd9173dcb47f35de0",
+  "fileSizeBytes": 28621585,
   "apkArtifacts": [
     "/Users/apple/Downloads/ramadhan/app-release-latest.apk",
     "/Users/apple/Downloads/ramadhan/openturath_ai/public/app-release-latest.apk",
@@ -12,7 +12,11 @@
   ],
   "verification": {
     "gradleBuildStatus": "SUCCESS (100%)",
+    "targetPlatform": "android-arm64",
     "speedMode": "Turbo M1 Max (Parallel 8 Workers, 4GB JVM)",
     "daemonStopped": true
-  }
+  },
+  "fileSizeMb": "27.30 MB",
+  "targetPlatform": "android-arm64",
+  "architecture": "arm64-v8a (Modern 64-bit Android)"
 }
