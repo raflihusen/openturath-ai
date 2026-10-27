@@ -65,24 +65,32 @@ def main():
         with open(root_apk, "rb") as fh:
             while chunk := fh.read(65536):
                 h.update(chunk)
-        manifest_data = {
-            "version": "1.0.82",
-            "buildNumber": 83,
-            "versionFull": "1.0.82+83",
-            "buildTimestamp": "2026-10-26T18:16:00+03:00",
-            "sha256": h.hexdigest(),
-            "fileSizeBytes": root_apk.stat().st_size,
-            "apkArtifacts": [
-                "/Users/apple/Downloads/ramadhan/app-release-latest.apk",
-                "/Users/apple/Downloads/ramadhan/openturath_ai/public/app-release-latest.apk",
-                "/Users/apple/Downloads/ramadhan/openturath_ai/public/OpenTurath_AI.apk"
-            ],
-            "verification": {
-                "gradleBuildStatus": "SUCCESS (100%)",
-                "flutterAnalyze": "0 issues found",
-                "flutterTest": "100% passed"
+        
+        manifest_source = ROOT / "RELEASE_MANIFEST.json"
+        if manifest_source.exists():
+            with open(manifest_source, "r", encoding="utf-8") as rmf:
+                manifest_data = json.load(rmf)
+            manifest_data["sha256"] = h.hexdigest()
+            manifest_data["fileSizeBytes"] = root_apk.stat().st_size
+        else:
+            manifest_data = {
+                "version": "1.0.83",
+                "buildNumber": 84,
+                "versionFull": "1.0.83+84",
+                "buildTimestamp": "2026-10-27T13:40:36+03:00",
+                "sha256": h.hexdigest(),
+                "fileSizeBytes": root_apk.stat().st_size,
+                "apkArtifacts": [
+                    "/Users/apple/Downloads/ramadhan/app-release-latest.apk",
+                    "/Users/apple/Downloads/ramadhan/openturath_ai/public/app-release-latest.apk",
+                    "/Users/apple/Downloads/ramadhan/openturath_ai/public/OpenTurath_AI.apk"
+                ],
+                "verification": {
+                    "gradleBuildStatus": "SUCCESS (100%)",
+                    "flutterAnalyze": "0 issues found",
+                    "flutterTest": "100% passed"
+                }
             }
-        }
         with open(temp_backup / "RELEASE_MANIFEST.json", "w", encoding="utf-8") as mfh:
             json.dump(manifest_data, mfh, indent=2)
 

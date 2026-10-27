@@ -2,8 +2,8 @@
   "version": "1.0.83",
   "buildNumber": 84,
   "versionFull": "1.0.83+84",
-  "buildTimestamp": "2026-10-27T13:40:36.998856",
-  "sha256": "7b2d584f9ef5c82aa53419092a2ba61ee796e1042e27603fd9173dcb47f35de0",
+  "buildTimestamp": "2026-10-27T15:29:03.439083",
+  "sha256": "a3269166eb11ac045b7041c287f1699c8cbe3976ea44406e9137f8461f72913a",
   "fileSizeBytes": 28621585,
   "apkArtifacts": [
     "/Users/apple/Downloads/ramadhan/app-release-latest.apk",
@@ -18,5 +18,12 @@
   },
   "fileSizeMb": "27.30 MB",
   "targetPlatform": "android-arm64",
-  "architecture": "arm64-v8a (Modern 64-bit Android)"
+  "architecture": "arm64-v8a (Modern 64-bit Android)",
+  "dmg": {
+    "sha256": "6e453e9346943d770e779bbc3dc6de98159d841ea20f639445bb2660b8e5eb99",
+    "fileSizeBytes": 51149290,
+    "fileSizeMb": "48.78 MB",
+    "fileName": "OpenTurath_AI_macOS.dmg",
+    "platform": "macOS (Universal arm64 + x86_64)"
+  }
 }
