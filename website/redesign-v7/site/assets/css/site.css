@@ -1034,3 +1034,6 @@ html,body{overflow-x:clip}
 .q1>.qbox,.q1>.refs{contain:inline-size;width:100%;max-width:100%}
 .q1 .ref .quote{display:block;-webkit-line-clamp:unset;max-height:5.8em;overflow:hidden;-webkit-mask-image:linear-gradient(#000 62%,transparent);mask-image:linear-gradient(#000 62%,transparent)}
 .q1 .reflist{min-width:0;width:100%}
+
+.pdate{display:inline-block;margin-left:10px;padding:3px 11px;border-radius:999px;border:1px solid currentColor;font-size:12px;font-weight:600;letter-spacing:.02em;white-space:nowrap}
+.plat-top .pdate{margin-left:0}
