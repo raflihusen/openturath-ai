@@ -171,9 +171,10 @@ class ScenePainter extends CustomPainter {
       case Sk.ring:
         final p = Path()
           ..addOval(Rect.fromCircle(center: Offset(px, py), radius: r));
-        if (o.fill)
+        if (o.fill) {
           c.drawCircle(Offset(px, py), r,
               fillP..color = col.withValues(alpha: alpha * 0.18));
+        }
         strokePath(p);
       case Sk.line:
         final p = Path()
