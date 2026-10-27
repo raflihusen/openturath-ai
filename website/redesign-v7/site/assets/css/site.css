@@ -1027,3 +1027,10 @@ html,body{overflow-x:clip}
 .claim-note{position:relative;z-index:1;max-width:62ch;margin:18px auto 0;padding-inline:16px;font-size:13.5px;line-height:1.55;color:var(--on-variant);text-align:center;text-wrap:balance}
 .claim-note .star{font-weight:600;margin-inline-end:2px}
 .claim-note .link{text-decoration:underline;text-underline-offset:3px}
+
+/* contoh: lebar kolom ditentukan induk, isi tidak boleh melebarkannya (peramban ponsel yang memakai
+   display:-webkit-box menghitung lebar minimum dari satu baris penuh) */
+.q1{width:100%;max-width:100%}
+.q1>.qbox,.q1>.refs{contain:inline-size;width:100%;max-width:100%}
+.q1 .ref .quote{display:block;-webkit-line-clamp:unset;max-height:5.8em;overflow:hidden;-webkit-mask-image:linear-gradient(#000 62%,transparent);mask-image:linear-gradient(#000 62%,transparent)}
+.q1 .reflist{min-width:0;width:100%}
