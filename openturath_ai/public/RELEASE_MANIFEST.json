@@ -1,14 +1,14 @@
 {
-  "version": "1.0.83",
-  "buildNumber": 84,
-  "versionFull": "1.0.83+84",
-  "buildTimestamp": "2026-10-27T15:59:51.002155",
-  "sha256": "1fc8f8247f1a653bc688c7b5ae13ac1f8a04dbbb53b5b8bb054121d78fd254dc",
+  "version": "1.0.84",
+  "buildNumber": 85,
+  "versionFull": "1.0.84+85",
+  "buildTimestamp": "2026-10-28T16:41:34.744019",
+  "sha256": "fee2db420cb7920154ec69042deaac22ffb6a02bdc269c0f202fff24343afbe7",
   "fileSizeBytes": 28621585,
   "apkArtifacts": [
-    "/Users/apple/Downloads/ramadhan/app-release-latest.apk",
-    "/Users/apple/Downloads/ramadhan/openturath_ai/public/app-release-latest.apk",
-    "/Users/apple/Downloads/ramadhan/openturath_ai/public/OpenTurath_AI.apk"
+    "/Users/apple/Downloads/ramadhan/openturath.apk",
+    "/Users/apple/Downloads/ramadhan/website/dist/openturath.apk",
+    "/Users/apple/Downloads/ramadhan/openturath_ai/public/openturath.apk"
   ],
   "verification": {
     "gradleBuildStatus": "SUCCESS (100%)",
@@ -20,10 +20,10 @@
   "targetPlatform": "android-arm64",
   "architecture": "arm64-v8a (Modern 64-bit Android)",
   "dmg": {
-    "sha256": "c3783e70f1dd2a3f34dd0f675cfeeb27f165c478c557de5ef0c5eb87100104e6",
-    "fileSizeBytes": 51151053,
-    "fileSizeMb": "48.78 MB",
-    "fileName": "OpenTurath_AI_macOS.dmg",
+    "sha256": "9176872b6a23b23940afa276edaedbe28f8552b731b1008647a24672bfcaf979",
+    "fileSizeBytes": 51528510,
+    "fileSizeMb": "49.14 MB",
+    "fileName": "openturath.dmg",
     "platform": "macOS (Universal arm64 + x86_64)"
   },
   "windows": {
@@ -42,5 +42,6 @@
     },
     "platform": "Windows 10 / 11 64-bit (x64 & ARM64)",
     "verification": "MSVC Visual Studio 2022 + Inno Setup SUCCESS"
-  }
+  },
+  "fileName": "openturath.apk"
 }
