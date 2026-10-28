@@ -27,11 +27,20 @@
     "platform": "macOS (Universal arm64 + x86_64)"
   },
   "windows": {
-    "sha256": "79135468b9c441e065dbfa625dfe0b1194577e9dff859ab1b30bb64a9fda07e7",
-    "fileSizeBytes": 23891904,
-    "fileSizeMb": "22.78 MB",
-    "fileName": "OpenTurath_AI_Windows.zip",
-    "platform": "Windows (x64 / ARM64 via Windows 11 emulation)",
-    "verification": "MSVC Visual Studio 2022 release build SUCCESS"
+    "installer": {
+      "fileName": "OpenTurath_AI_Windows_Setup.exe",
+      "sha256": "5c6e7a08e003c529262deb08cac31c0947b9ab01e6733e562c9214012e8cf4fd",
+      "fileSizeBytes": 18944251,
+      "fileSizeMb": "18.07 MB",
+      "type": "Wizard Setup Installer (Inno Setup)"
+    },
+    "portableZip": {
+      "fileName": "OpenTurath_AI_Windows.zip",
+      "sha256": "79135468b9c441e065dbfa625dfe0b1194577e9dff859ab1b30bb64a9fda07e7",
+      "fileSizeBytes": 23891904,
+      "fileSizeMb": "22.78 MB"
+    },
+    "platform": "Windows 10 / 11 64-bit (x64 & ARM64)",
+    "verification": "MSVC Visual Studio 2022 + Inno Setup SUCCESS"
   }
 }
