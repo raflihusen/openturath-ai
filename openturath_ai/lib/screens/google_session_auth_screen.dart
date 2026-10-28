@@ -50,6 +50,8 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
   bool _isMismatchDialogOpen = false;
   bool _isShieldActive = false;
   bool _isCheckingAccount = false;
+  bool _isConfirmOpen = false;
+  Timer? _watchdog;
 
   String get _targetLoginUrl {
     final email = (AuthService().cachedCurrentUser?.email ??
@@ -112,7 +114,10 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
           (document.head || document.documentElement).appendChild(style);
         } catch(_) {}
       ''');
-    } else if (isAuthFlow && _isShieldActive && !_isMismatchDialogOpen) {
+    } else if ((isAuthFlow || !isNotebook) &&
+        _isShieldActive &&
+        !_isMismatchDialogOpen &&
+        !_isConfirmOpen) {
       setState(() => _isShieldActive = false);
     }
   }
@@ -120,10 +125,38 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
   @override
   void initState() {
     super.initState();
+    // Verifikasi tidak boleh bergantung pada peristiwa pemuatan halaman saja: SPA
+    // NotebookLM bisa selesai tanpa peristiwa baru, dan satu panggilan JavaScript yang
+    // menggantung menahan kunci verifikasi. Penjaga ini memeriksa ulang secara berkala.
+    _watchdog =
+        Timer.periodic(const Duration(seconds: 3), (_) => _watchdogTick());
+  }
+
+  Future<void> _watchdogTick() async {
+    final controller = _webController;
+    if (!mounted ||
+        controller == null ||
+        _isSessionReady ||
+        _isCheckingAccount ||
+        _isConfirmOpen ||
+        _isMismatchDialogOpen) {
+      return;
+    }
+    try {
+      final url = await controller.getUrl().timeout(const Duration(seconds: 3));
+      if (!mounted || url == null || _isSessionReady) return;
+      if (NotebookNavigation.notebook(url.uriValue)) {
+        await _checkAccountVerification(controller);
+      } else if (_isShieldActive) {
+        // Halaman perantara Google di bawah pelindung: tampilkan agar pengguna bisa melanjutkan.
+        setState(() => _isShieldActive = false);
+      }
+    } catch (_) {}
   }
 
   @override
   void dispose() {
+    _watchdog?.cancel();
     _loadProgress.dispose();
     _webController = null;
     super.dispose();
@@ -178,7 +211,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
     return null;
   }
 })();
-''');
+''').timeout(const Duration(seconds: 3));
       if (result != null && result is String && result.trim().contains('@')) {
         return result.trim().toLowerCase();
       }
@@ -447,6 +480,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
             '')
         .trim()
         .toLowerCase();
+    _isConfirmOpen = true;
     return showDialog<bool>(
       context: context,
       // Tidak boleh ditutup lewat tap di luar: hasil `null` akan membiarkan
@@ -516,7 +550,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
           ),
         ],
       ),
-    );
+    ).whenComplete(() => _isConfirmOpen = false);
   }
 
   /// Tombol Lanjutkan manual untuk memeriksa login dan konfirmasi akun
