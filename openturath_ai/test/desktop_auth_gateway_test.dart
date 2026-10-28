@@ -39,6 +39,49 @@ void main() {
       await future;
     });
 
+    test('halaman login memakai token Google asli, bukan token ID Firebase',
+        () async {
+      final uriCompleter = Completer<Uri>();
+      final future = DesktopAuthGateway.signIn(
+        timeout: const Duration(seconds: 5),
+        urlLauncher: (uri) async {
+          uriCompleter.complete(uri);
+          return true;
+        },
+      );
+      final openedUri = await uriCompleter.future;
+      final page =
+          await http.get(Uri.parse('http://localhost:${openedUri.port}/'));
+      expect(page.body.contains('credential.idToken'), isTrue);
+      expect(page.body.contains('getIdToken'), isFalse);
+      await DesktopAuthGateway.cancel();
+      await future;
+    });
+
+    test('callback hanya dengan accessToken tetap diterima', () async {
+      final uriCompleter = Completer<Uri>();
+      final future = DesktopAuthGateway.signIn(
+        timeout: const Duration(seconds: 5),
+        urlLauncher: (uri) async {
+          uriCompleter.complete(uri);
+          return true;
+        },
+      );
+      final openedUri = await uriCompleter.future;
+      final response = await http.post(
+        Uri.parse('http://localhost:${openedUri.port}/auth-callback'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'state': openedUri.queryParameters['state'],
+          'accessToken': 'only-access-token',
+        }),
+      );
+      expect(response.statusCode, 200);
+      final result = await future;
+      expect(result!.idToken, isNull);
+      expect(result.accessToken, 'only-access-token');
+    });
+
     test(
         'POST /auth-callback completes with DesktopAuthResult when state matches',
         () async {

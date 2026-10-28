@@ -10,14 +10,14 @@ import 'package:url_launcher/url_launcher.dart';
 /// Hasil otorisasi Google OAuth dari browser desktop untuk dioper ke Firebase Auth.
 class DesktopAuthResult {
   const DesktopAuthResult({
-    required this.idToken,
+    this.idToken,
     this.accessToken,
     this.email,
     this.displayName,
     this.photoUrl,
   });
 
-  final String idToken;
+  final String? idToken;
   final String? accessToken;
   final String? email;
   final String? displayName;
@@ -111,17 +111,18 @@ class DesktopAuthGateway {
           }
 
           final idToken = (data['idToken'] as String?)?.trim() ?? '';
-          if (idToken.isEmpty) {
+          final accessToken = (data['accessToken'] as String?)?.trim() ?? '';
+          if (idToken.isEmpty && accessToken.isEmpty) {
             request.response.statusCode = HttpStatus.badRequest;
-            request.response
-                .write(jsonEncode({'error': 'idToken is required'}));
+            request.response.write(
+                jsonEncode({'error': 'idToken or accessToken is required'}));
             await request.response.close();
             return;
           }
 
           final result = DesktopAuthResult(
-            idToken: idToken,
-            accessToken: data['accessToken'] as String?,
+            idToken: idToken.isEmpty ? null : idToken,
+            accessToken: accessToken.isEmpty ? null : accessToken,
             email: data['email'] as String?,
             displayName: data['displayName'] as String?,
             photoUrl: data['photoURL'] as String?,
@@ -434,8 +435,11 @@ class DesktopAuthGateway {
       try {
         const result = await signInWithPopup(auth, provider);
         const credential = GoogleAuthProvider.credentialFromResult(result);
-        const idToken = await result.user.getIdToken();
+        // Token Google asli (bukan token ID Firebase): hanya itu yang diterima
+        // signInWithCredential di aplikasi. Token ID Firebase ditolak sebagai idp tidak sah.
+        const idToken = credential ? credential.idToken : null;
         const accessToken = credential ? credential.accessToken : null;
+        if (!idToken && !accessToken) throw new Error('Google tidak mengembalikan kredensial.');
 
         btn.innerHTML = 'Memverifikasi sesi...';
 
