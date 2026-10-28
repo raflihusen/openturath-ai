@@ -27,8 +27,8 @@
     "platform": "macOS (Universal arm64 + x86_64)"
   },
   "windows": {
-    "sha256": "8045219d892163b8de38b4ebaafa8793e619b224258eeaff5c3d22d01af77b7a",
-    "fileSizeBytes": 23891418,
+    "sha256": "79135468b9c441e065dbfa625dfe0b1194577e9dff859ab1b30bb64a9fda07e7",
+    "fileSizeBytes": 23891904,
     "fileSizeMb": "22.78 MB",
     "fileName": "OpenTurath_AI_Windows.zip",
     "platform": "Windows (x64 / ARM64 via Windows 11 emulation)",
