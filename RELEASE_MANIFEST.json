@@ -25,5 +25,13 @@
     "fileSizeMb": "48.78 MB",
     "fileName": "OpenTurath_AI_macOS.dmg",
     "platform": "macOS (Universal arm64 + x86_64)"
+  },
+  "windows": {
+    "sha256": "5ca8932132e0108c9d8c778f0c0c0d0feb677917a842e1b9c714dc0c5365bad0",
+    "fileSizeBytes": 23903447,
+    "fileSizeMb": "22.80 MB",
+    "fileName": "OpenTurath_AI_Windows.zip",
+    "platform": "Windows (x64 / ARM64 via Windows 11 emulation)",
+    "verification": "MSVC Visual Studio 2022 release build SUCCESS"
   }
 }
