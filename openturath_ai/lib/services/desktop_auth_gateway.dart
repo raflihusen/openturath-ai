@@ -3,9 +3,13 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 
+import 'package:crypto/crypto.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
+
+import '../core/desktop_oauth_config.dart';
 
 /// Hasil otorisasi Google OAuth dari browser desktop untuk dioper ke Firebase Auth.
 class DesktopAuthResult {
@@ -24,161 +28,172 @@ class DesktopAuthResult {
   final String? photoUrl;
 }
 
-/// Gerbang otorisasi Google OAuth khusus platform desktop (Windows) menggunakan
-/// RFC 8252 (Loopback Browser flow) yang terhubung ke Firebase Web Auth.
-///
-/// Mekanisme ini memecahkan ketiadaan browser popup interaktif pada biner desktop
-/// FlutterFire C++ Windows, tanpa memerlukan eksposur `client_secret` atau
-/// konfigurasi manual Google Cloud Console Desktop Client ID yang rumit.
+/// Gerbang login Google untuk desktop (Windows): OAuth 2.0 kode otorisasi + PKCE
+/// dengan redirect loopback (RFC 8252). Peramban langsung membuka halaman Google;
+/// tidak ada halaman perantara dan tidak memakai Firebase Web SDK.
 class DesktopAuthGateway {
   static HttpServer? _activeServer;
   static Completer<DesktopAuthResult?>? _activeCompleter;
 
-  /// Memulai alur autentikasi Google melalui peramban bawaan desktop.
+  static const _authEndpoint = 'https://accounts.google.com/o/oauth2/v2/auth';
+  static const _tokenEndpoint = 'https://oauth2.googleapis.com/token';
+
+  static String _randomUrlSafe(int bytes) {
+    final random = Random.secure();
+    return base64UrlEncode(List.generate(bytes, (_) => random.nextInt(256)))
+        .replaceAll('=', '');
+  }
+
+  static String pkceChallenge(String verifier) =>
+      base64UrlEncode(sha256.convert(ascii.encode(verifier)).bytes)
+          .replaceAll('=', '');
+
+  /// Menukar kode otorisasi dengan token di Google. Dapat diganti saat pengujian.
+  static Future<Map<String, dynamic>> _exchangeCode(
+      Map<String, String> form) async {
+    final response = await http
+        .post(Uri.parse(_tokenEndpoint), body: form)
+        .timeout(const Duration(seconds: 30));
+    final body = jsonDecode(response.body) as Map<String, dynamic>;
+    if (response.statusCode != 200) {
+      throw PlatformException(
+        code: 'desktop_token_exchange_failed',
+        message:
+            'Google menolak penukaran kode: ${body['error'] ?? response.statusCode}',
+      );
+    }
+    return body;
+  }
+
+  static Map<String, dynamic> _idTokenClaims(String? idToken) {
+    try {
+      final parts = idToken!.split('.');
+      final payload =
+          utf8.decode(base64Url.decode(base64Url.normalize(parts[1])));
+      return jsonDecode(payload) as Map<String, dynamic>;
+    } catch (_) {
+      return const {};
+    }
+  }
+
+  /// Memulai login Google melalui peramban bawaan. Mengembalikan `null` bila dibatalkan.
   static Future<DesktopAuthResult?> signIn({
     Duration timeout = const Duration(minutes: 3),
-    @visibleForTesting String? overrideHtml,
     @visibleForTesting Future<bool> Function(Uri url)? urlLauncher,
+    @visibleForTesting
+    Future<Map<String, dynamic>> Function(Map<String, String> form)?
+        tokenExchange,
   }) async {
-    await cancel(); // Bersihkan server sebelumnya jika masih menggantung
+    await cancel();
 
     final completer = Completer<DesktopAuthResult?>();
     _activeCompleter = completer;
 
     HttpServer server;
     try {
-      server = await HttpServer.bind(
-        InternetAddress.loopbackIPv4,
-        0, // Pilih port lokal dinamis yang tersedia
-      );
+      server = await HttpServer.bind(InternetAddress.loopbackIPv4, 0);
     } catch (e) {
-      completer.completeError(
-        PlatformException(
-          code: 'desktop_loopback_failed',
-          message: 'Gagal menginisialisasi server loopback lokal Windows: $e',
-        ),
+      _activeCompleter = null;
+      throw PlatformException(
+        code: 'desktop_loopback_failed',
+        message: 'Gagal menginisialisasi server loopback lokal Windows: $e',
       );
-      return completer.future;
     }
-
     _activeServer = server;
 
-    // Token acak (CSRF protection) 128-bit
-    final random = Random.secure();
-    final state =
-        List.generate(32, (_) => random.nextInt(16).toRadixString(16)).join();
-
-    final htmlContent = overrideHtml ?? _buildAuthHtml(server.port, state);
+    final state = _randomUrlSafe(24);
+    final verifier = _randomUrlSafe(48);
+    final redirectUri = 'http://127.0.0.1:${server.port}/oauth2callback';
 
     late final StreamSubscription<HttpRequest> sub;
-    sub = server.listen((HttpRequest request) async {
-      final path = request.uri.path;
-      final query = request.uri.queryParameters;
-
-      // Handle CORS Preflight
-      if (request.method == 'OPTIONS') {
-        request.response.headers
-          ..add('Access-Control-Allow-Origin', '*')
-          ..add('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
-          ..add('Access-Control-Allow-Headers', 'Content-Type');
-        request.response.statusCode = HttpStatus.noContent;
+    sub = server.listen((request) async {
+      if (request.method != 'GET' || request.uri.path != '/oauth2callback') {
+        request.response.statusCode = HttpStatus.notFound;
         await request.response.close();
         return;
       }
-
-      // 1. Laman Utama Otorisasi
-      if (request.method == 'GET' && (path == '/' || path == '/index.html')) {
+      final query = request.uri.queryParameters;
+      Future<void> reply(bool ok, String message) async {
         request.response.headers
           ..contentType = ContentType.html
-          ..add('Cache-Control', 'no-cache, no-store, must-revalidate');
-        request.response.write(htmlContent);
+          ..add('Cache-Control', 'no-store');
+        request.response.write(_resultPage(ok, message));
         await request.response.close();
-        return;
       }
 
-      // 2. Callback Pengiriman Kredensial Token
-      if (request.method == 'POST' && path == '/auth-callback') {
-        try {
-          final bodyStr = await utf8.decoder.bind(request).join();
-          final data = jsonDecode(bodyStr) as Map<String, dynamic>;
-
-          if (data['state'] != state) {
-            request.response.statusCode = HttpStatus.forbidden;
-            request.response
-                .write(jsonEncode({'error': 'State mismatch (CSRF guard)'}));
-            await request.response.close();
-            return;
-          }
-
-          final idToken = (data['idToken'] as String?)?.trim() ?? '';
-          final accessToken = (data['accessToken'] as String?)?.trim() ?? '';
-          if (idToken.isEmpty && accessToken.isEmpty) {
-            request.response.statusCode = HttpStatus.badRequest;
-            request.response.write(
-                jsonEncode({'error': 'idToken or accessToken is required'}));
-            await request.response.close();
-            return;
-          }
-
-          final result = DesktopAuthResult(
-            idToken: idToken.isEmpty ? null : idToken,
-            accessToken: accessToken.isEmpty ? null : accessToken,
-            email: data['email'] as String?,
-            displayName: data['displayName'] as String?,
-            photoUrl: data['photoURL'] as String?,
-          );
-
-          request.response.headers
-            ..contentType = ContentType.json
-            ..add('Access-Control-Allow-Origin', '*');
-          request.response.write(jsonEncode({'ok': true}));
-          await request.response.close();
-
-          if (!completer.isCompleted) {
-            completer.complete(result);
-          }
-        } catch (e) {
-          request.response.statusCode = HttpStatus.internalServerError;
-          request.response.write(jsonEncode({'error': e.toString()}));
-          await request.response.close();
-          if (!completer.isCompleted) {
-            completer.completeError(e);
-          }
-        } finally {
-          _scheduleServerShutdown();
-        }
+      if (query['state'] != state) {
+        request.response.statusCode = HttpStatus.forbidden;
+        await reply(false,
+            'Permintaan tidak dikenali. Tutup tab ini dan coba lagi dari aplikasi.');
         return;
       }
-
-      // 3. Pembatalan dari Peramban
-      if (request.method == 'GET' && path == '/cancel') {
-        if (query['state'] == state && !completer.isCompleted) {
-          completer.complete(null);
+      if (query['error'] != null) {
+        await reply(false,
+            'Proses masuk dibatalkan. Anda dapat menutup tab ini dan mencoba lagi di aplikasi.');
+        if (!completer.isCompleted) completer.complete(null);
+        return;
+      }
+      final code = query['code'];
+      if (code == null || code.isEmpty) {
+        request.response.statusCode = HttpStatus.badRequest;
+        await reply(false, 'Google tidak mengirim kode otorisasi.');
+        return;
+      }
+      try {
+        final tokens = await (tokenExchange ?? _exchangeCode)({
+          'code': code,
+          'client_id': DesktopOAuthConfig.clientId,
+          'client_secret': DesktopOAuthConfig.clientSecret,
+          'code_verifier': verifier,
+          'redirect_uri': redirectUri,
+          'grant_type': 'authorization_code',
+        });
+        final idToken = tokens['id_token'] as String?;
+        final accessToken = tokens['access_token'] as String?;
+        if ((idToken ?? '').isEmpty && (accessToken ?? '').isEmpty) {
+          throw PlatformException(
+              code: 'desktop_no_token',
+              message: 'Google tidak mengembalikan token.');
         }
-        request.response.headers
-          ..contentType = ContentType.json
-          ..add('Access-Control-Allow-Origin', '*');
-        request.response.write(jsonEncode({'canceled': true}));
-        await request.response.close();
+        final claims = _idTokenClaims(idToken);
+        await reply(true,
+            'Akun berhasil dihubungkan. Anda dapat menutup tab ini dan kembali ke aplikasi OpenTurath AI.');
+        if (!completer.isCompleted) {
+          completer.complete(DesktopAuthResult(
+            idToken: idToken,
+            accessToken: accessToken,
+            email: claims['email'] as String?,
+            displayName: claims['name'] as String?,
+            photoUrl: claims['picture'] as String?,
+          ));
+        }
+      } catch (e) {
+        await reply(false,
+            'Gagal menyelesaikan proses masuk. Kembali ke aplikasi dan coba lagi.');
+        if (!completer.isCompleted) completer.completeError(e);
+      } finally {
         _scheduleServerShutdown();
-        return;
       }
-
-      // Endpoint tidak dikenal
-      request.response.statusCode = HttpStatus.notFound;
-      await request.response.close();
     });
 
-    // Luncurkan URL di browser eksternal default Windows
-    final authUrl = 'http://localhost:${server.port}/?state=$state';
+    final authUrl = Uri.parse(_authEndpoint).replace(queryParameters: {
+      'client_id': DesktopOAuthConfig.clientId,
+      'redirect_uri': redirectUri,
+      'response_type': 'code',
+      'scope': 'openid email profile',
+      'state': state,
+      'code_challenge': pkceChallenge(verifier),
+      'code_challenge_method': 'S256',
+      'prompt': 'select_account',
+    });
     try {
       final launcher = urlLauncher ??
           (uri) => launchUrl(uri, mode: LaunchMode.externalApplication);
-      final launched = await launcher(Uri.parse(authUrl));
-      if (!launched) {
+      if (!await launcher(authUrl)) {
         throw Exception('Gagal membuka peramban bawaan sistem.');
       }
     } catch (e) {
+      await sub.cancel();
       await cancel();
       throw PlatformException(
         code: 'browser_launch_failed',
@@ -187,14 +202,10 @@ class DesktopAuthGateway {
       );
     }
 
-    // Timeout guard: Jangan biarkan aplikasi menggantung tanpa batas jika browser ditutup
-    return completer.future.timeout(
-      timeout,
-      onTimeout: () {
-        cancel();
-        return null;
-      },
-    ).whenComplete(() {
+    return completer.future.timeout(timeout, onTimeout: () {
+      cancel();
+      return null;
+    }).whenComplete(() {
       sub.cancel();
       _scheduleServerShutdown();
     });
@@ -225,275 +236,19 @@ class DesktopAuthGateway {
     });
   }
 
-  /// Membangun antarmuka web autentikasi mandiri bertema Monochrome Editorial.
-  static String _buildAuthHtml(int port, String state) {
+  static String _resultPage(bool ok, String message) {
+    final title = ok ? 'Berhasil' : 'Tidak dapat melanjutkan';
+    final mark = ok ? '✓' : '!';
     return '''<!DOCTYPE html>
-<html lang="id">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Masuk ke OpenTurath AI</title>
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      background-color: #09090B;
-      color: #FAFAFA;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 24px;
-      -webkit-font-smoothing: antialiased;
-    }
-    .card {
-      background-color: #18181B;
-      border: 1px solid #27272A;
-      border-radius: 12px;
-      width: 100%;
-      max-width: 440px;
-      padding: 36px 32px;
-      text-align: center;
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
-    }
-    .brand-mark {
-      width: 44px;
-      height: 44px;
-      margin: 0 auto 20px;
-      display: block;
-    }
-    h1 {
-      font-size: 22px;
-      font-weight: 600;
-      letter-spacing: -0.02em;
-      margin-bottom: 8px;
-      color: #FAFAFA;
-    }
-    p.subtitle {
-      font-size: 14px;
-      color: #A1A1AA;
-      line-height: 1.5;
-      margin-bottom: 28px;
-    }
-    .btn-google {
-      width: 100%;
-      background-color: #FAFAFA;
-      color: #09090B;
-      border: none;
-      border-radius: 8px;
-      font-size: 15px;
-      font-weight: 600;
-      padding: 14px 20px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 12px;
-      transition: background-color 0.15s ease, transform 0.1s ease;
-    }
-    .btn-google:hover:not(:disabled) {
-      background-color: #E4E4E7;
-    }
-    .btn-google:active:not(:disabled) {
-      transform: scale(0.99);
-    }
-    .btn-google:disabled {
-      opacity: 0.7;
-      cursor: not-allowed;
-    }
-    .g-icon {
-      width: 20px;
-      height: 20px;
-      flex-shrink: 0;
-    }
-    .spinner {
-      width: 18px;
-      height: 18px;
-      border: 2px solid rgba(0,0,0,0.15);
-      border-top-color: #09090B;
-      border-radius: 50%;
-      animation: spin 0.7s linear infinite;
-    }
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-    .error-box {
-      margin-top: 18px;
-      padding: 12px 14px;
-      background-color: rgba(239, 68, 68, 0.1);
-      border: 1px solid rgba(239, 68, 68, 0.3);
-      border-radius: 6px;
-      color: #FCA5A5;
-      font-size: 13px;
-      line-height: 1.4;
-      display: none;
-      text-align: left;
-    }
-    .cancel-link {
-      margin-top: 22px;
-      display: inline-block;
-      font-size: 13px;
-      color: #71717A;
-      text-decoration: none;
-      cursor: pointer;
-      transition: color 0.15s ease;
-    }
-    .cancel-link:hover {
-      color: #A1A1AA;
-      text-decoration: underline;
-    }
-    .success-icon {
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-      background-color: rgba(255, 255, 255, 0.1);
-      border: 1px solid #27272A;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto 18px;
-      font-size: 22px;
-      color: #FAFAFA;
-    }
-    .muted-footer {
-      font-size: 12px;
-      color: #71717A;
-      margin-top: 14px;
-      line-height: 1.4;
-    }
-    #card-success, #card-cancel { display: none; }
-  </style>
-</head>
-<body>
-  <div class="card" id="card-main">
-    <svg class="brand-mark" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M24 4C14.0589 4 6 12.0589 6 22V44H42V22C42 12.0589 33.9411 4 24 4Z" stroke="#FAFAFA" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-      <path d="M24 14C18.4772 14 14 18.4772 14 24V44H34V24C34 18.4772 29.5228 14 24 14Z" stroke="#FAFAFA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-      <circle cx="24" cy="28" r="3" fill="#FAFAFA"/>
-    </svg>
-    <h1>Masuk ke OpenTurath</h1>
-    <p class="subtitle">Hubungkan akun Google Anda untuk melanjutkan percakapan kitab turats di aplikasi desktop.</p>
-
-    <button id="loginBtn" class="btn-google" onclick="startSignIn()">
-      <svg class="g-icon" viewBox="0 0 24 24">
-        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
-        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
-      </svg>
-      <span>Lanjutkan dengan Google</span>
-    </button>
-
-    <div id="errorBox" class="error-box"></div>
-    <div>
-      <a class="cancel-link" onclick="cancelSignIn()">Batalkan proses masuk</a>
-    </div>
-  </div>
-
-  <div class="card" id="card-success">
-    <div class="success-icon">✓</div>
-    <h1>Otorisasi Berhasil</h1>
-    <p class="subtitle" style="margin-bottom: 12px;">Akun <strong id="userEmailDisplay" style="color:#FAFAFA;"></strong> berhasil dihubungkan.</p>
-    <p class="muted-footer">Anda dapat menutup tab peramban ini dan kembali ke aplikasi OpenTurath AI Desktop.</p>
-  </div>
-
-  <div class="card" id="card-cancel">
-    <h1>Otorisasi Dibatalkan</h1>
-    <p class="subtitle" style="margin-bottom: 8px;">Proses masuk dibatalkan oleh pengguna.</p>
-    <p class="muted-footer">Anda dapat menutup jendela ini dan mencoba kembali di aplikasi.</p>
-  </div>
-
-  <script type="module">
-    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js';
-    import { getAuth, signInWithPopup, GoogleAuthProvider } from 'https://www.gstatic.com/firebasejs/10.14.0/firebase-auth.js';
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyC9b5YVceixZZL6AkLnsroBC9qvSt06bQ0",
-      authDomain: "open-turath.firebaseapp.com",
-      projectId: "open-turath",
-      storageBucket: "open-turath.firebasestorage.app",
-      messagingSenderId: "255541559800",
-      appId: "1:255541559800:web:a1f71cf6ae35aa2ed2960d"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const provider = new GoogleAuthProvider();
-    provider.addScope('email');
-    provider.addScope('profile');
-    provider.addScope('openid');
-
-    const expectedState = "$state";
-
-    window.startSignIn = async function() {
-      const btn = document.getElementById('loginBtn');
-      const errorBox = document.getElementById('errorBox');
-      errorBox.style.display = 'none';
-      btn.disabled = true;
-      btn.innerHTML = '<span class="spinner"></span> Menghubungkan Google...';
-
-      try {
-        const result = await signInWithPopup(auth, provider);
-        const credential = GoogleAuthProvider.credentialFromResult(result);
-        // Token Google asli (bukan token ID Firebase): hanya itu yang diterima
-        // signInWithCredential di aplikasi. Token ID Firebase ditolak sebagai idp tidak sah.
-        const idToken = credential ? credential.idToken : null;
-        const accessToken = credential ? credential.accessToken : null;
-        if (!idToken && !accessToken) throw new Error('Google tidak mengembalikan kredensial.');
-
-        btn.innerHTML = 'Memverifikasi sesi...';
-
-        const res = await fetch('/auth-callback', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            state: expectedState,
-            idToken: idToken,
-            accessToken: accessToken,
-            email: result.user.email,
-            displayName: result.user.displayName,
-            photoURL: result.user.photoURL
-          })
-        });
-
-        if (res.ok) {
-          document.getElementById('card-main').style.display = 'none';
-          document.getElementById('card-success').style.display = 'block';
-          document.getElementById('userEmailDisplay').textContent = result.user.email || 'Google';
-          setTimeout(() => { try { window.close(); } catch (_) {} }, 3500);
-        } else {
-          throw new Error('Gagal mengirim kredensial otorisasi ke aplikasi desktop.');
-        }
-      } catch (err) {
-        btn.disabled = false;
-        btn.innerHTML = `
-          <svg class="g-icon" viewBox="0 0 24 24">
-            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
-            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
-          </svg>
-          <span>Lanjutkan dengan Google</span>`;
-
-        if (err.code === 'auth/popup-closed-by-user' || err.code === 'auth/cancelled-popup-request') {
-          errorBox.textContent = 'Jendela login Google ditutup. Silakan klik tombol di atas untuk mengulangi.';
-        } else {
-          errorBox.textContent = err.message || 'Gagal masuk dengan Google.';
-        }
-        errorBox.style.display = 'block';
-      }
-    };
-
-    window.cancelSignIn = async function() {
-      try {
-        await fetch('/cancel?state=' + encodeURIComponent(expectedState));
-      } catch (_) {}
-      document.getElementById('card-main').style.display = 'none';
-      document.getElementById('card-cancel').style.display = 'block';
-      setTimeout(() => { try { window.close(); } catch (_) {} }, 2500);
-    };
-  </script>
-</body>
-</html>''';
+<html lang="id"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OpenTurath AI</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#09090B;color:#FAFAFA;font-family:"Segoe UI",system-ui,sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
+.card{background:#18181B;border:1px solid #27272A;border-radius:12px;max-width:420px;width:100%;padding:36px 32px;text-align:center}
+.mark{width:48px;height:48px;border-radius:50%;border:1px solid #27272A;background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;margin:0 auto 18px;font-size:22px}
+h1{font-size:21px;font-weight:600;margin-bottom:10px}
+p{font-size:14px;color:#A1A1AA;line-height:1.55}
+</style></head><body><div class="card"><div class="mark">$mark</div><h1>$title</h1><p>$message</p></div></body></html>''';
   }
 }

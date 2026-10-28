@@ -5,176 +5,126 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:openturath_ai/services/desktop_auth_gateway.dart';
 
+String _jwt(Map<String, dynamic> claims) {
+  String enc(Object o) =>
+      base64Url.encode(utf8.encode(jsonEncode(o))).replaceAll('=', '');
+  return '${enc({'alg': 'none'})}.${enc(claims)}.sig';
+}
+
 void main() {
-  group('DesktopAuthGateway RFC 8252 Loopback Server', () {
+  group('DesktopAuthGateway OAuth loopback + PKCE', () {
     tearDown(() async {
       await DesktopAuthGateway.cancel();
     });
 
-    test('Serves standalone auth HTML on GET / with state parameter', () async {
-      final uriCompleter = Completer<Uri>();
+    Future<(Future<DesktopAuthResult?>, Uri)> start({
+      Future<Map<String, dynamic>> Function(Map<String, String>)? exchange,
+    }) async {
+      final opened = Completer<Uri>();
       final future = DesktopAuthGateway.signIn(
         timeout: const Duration(seconds: 5),
         urlLauncher: (uri) async {
-          uriCompleter.complete(uri);
+          opened.complete(uri);
           return true;
         },
+        tokenExchange: exchange,
       );
+      return (future, await opened.future);
+    }
 
-      final openedUri = await uriCompleter.future;
-      final port = openedUri.port;
-      final state = openedUri.queryParameters['state'];
-      expect(state, isNotNull);
-      expect(state!.length, 32);
-
-      // Verifikasi request GET / mengembalikan HTML bertema OpenTurath
-      final response = await http.get(Uri.parse('http://localhost:$port/'));
-      expect(response.statusCode, 200);
-      expect(response.headers['content-type'], contains('text/html'));
-      expect(response.body, contains('Masuk ke OpenTurath'));
-      expect(response.body, contains('open-turath.firebaseapp.com'));
-      expect(response.body, contains(state));
-
+    test('membuka halaman Google langsung dengan PKCE S256 dan state',
+        () async {
+      final (future, url) = await start();
+      expect(url.host, 'accounts.google.com');
+      expect(url.queryParameters['response_type'], 'code');
+      expect(url.queryParameters['code_challenge_method'], 'S256');
+      expect(url.queryParameters['code_challenge'], isNotEmpty);
+      expect(url.queryParameters['scope'], 'openid email profile');
+      expect(url.queryParameters['state'], isNotEmpty);
+      final redirect = Uri.parse(url.queryParameters['redirect_uri']!);
+      expect(redirect.host, '127.0.0.1');
+      expect(redirect.path, '/oauth2callback');
       await DesktopAuthGateway.cancel();
       await future;
     });
 
-    test('halaman login memakai token Google asli, bukan token ID Firebase',
+    test('kode otorisasi ditukar dengan verifier yang cocok dengan challenge',
         () async {
-      final uriCompleter = Completer<Uri>();
-      final future = DesktopAuthGateway.signIn(
-        timeout: const Duration(seconds: 5),
-        urlLauncher: (uri) async {
-          uriCompleter.complete(uri);
-          return true;
-        },
-      );
-      final openedUri = await uriCompleter.future;
-      final page =
-          await http.get(Uri.parse('http://localhost:${openedUri.port}/'));
-      expect(page.body.contains('credential.idToken'), isTrue);
-      expect(page.body.contains('getIdToken'), isFalse);
-      await DesktopAuthGateway.cancel();
-      await future;
-    });
-
-    test('callback hanya dengan accessToken tetap diterima', () async {
-      final uriCompleter = Completer<Uri>();
-      final future = DesktopAuthGateway.signIn(
-        timeout: const Duration(seconds: 5),
-        urlLauncher: (uri) async {
-          uriCompleter.complete(uri);
-          return true;
-        },
-      );
-      final openedUri = await uriCompleter.future;
-      final response = await http.post(
-        Uri.parse('http://localhost:${openedUri.port}/auth-callback'),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          'state': openedUri.queryParameters['state'],
-          'accessToken': 'only-access-token',
-        }),
-      );
-      expect(response.statusCode, 200);
-      final result = await future;
-      expect(result!.idToken, isNull);
-      expect(result.accessToken, 'only-access-token');
-    });
-
-    test(
-        'POST /auth-callback completes with DesktopAuthResult when state matches',
-        () async {
-      final uriCompleter = Completer<Uri>();
-      final future = DesktopAuthGateway.signIn(
-        timeout: const Duration(seconds: 5),
-        urlLauncher: (uri) async {
-          uriCompleter.complete(uri);
-          return true;
-        },
-      );
-
-      final openedUri = await uriCompleter.future;
-      final port = openedUri.port;
-      final state = openedUri.queryParameters['state'];
-
-      // Kirim callback token valid
-      final response = await http.post(
-        Uri.parse('http://localhost:$port/auth-callback'),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          'state': state,
-          'idToken': 'mock-id-token-12345',
-          'accessToken': 'mock-access-token-67890',
-          'email': 'scholar@openturath.ai',
-          'displayName': 'Islamic Scholar',
-        }),
-      );
-
-      expect(response.statusCode, 200);
-      expect(jsonDecode(response.body)['ok'], isTrue);
+      Map<String, String>? sent;
+      final (future, url) = await start(exchange: (form) async {
+        sent = form;
+        return {
+          'id_token': _jwt({
+            'email': 'scholar@openturath.ai',
+            'name': 'Islamic Scholar',
+            'picture': 'https://x/y.png'
+          }),
+          'access_token': 'at-123',
+        };
+      });
+      final redirect = Uri.parse(url.queryParameters['redirect_uri']!);
+      final res = await http.get(redirect.replace(queryParameters: {
+        'code': 'abc',
+        'state': url.queryParameters['state']!,
+      }));
+      expect(res.statusCode, 200);
+      expect(res.body, contains('Berhasil'));
 
       final result = await future;
-      expect(result, isNotNull);
-      expect(result!.idToken, 'mock-id-token-12345');
-      expect(result.accessToken, 'mock-access-token-67890');
+      expect(result!.accessToken, 'at-123');
       expect(result.email, 'scholar@openturath.ai');
       expect(result.displayName, 'Islamic Scholar');
+      expect(sent!['code'], 'abc');
+      expect(sent!['redirect_uri'], redirect.toString());
+      expect(sent!['grant_type'], 'authorization_code');
+      expect(DesktopAuthGateway.pkceChallenge(sent!['code_verifier']!),
+          url.queryParameters['code_challenge']);
     });
 
-    test(
-        'POST /auth-callback rejects request with mismatched state (CSRF attack)',
-        () async {
-      final uriCompleter = Completer<Uri>();
-      final future = DesktopAuthGateway.signIn(
-        timeout: const Duration(seconds: 5),
-        urlLauncher: (uri) async {
-          uriCompleter.complete(uri);
-          return true;
-        },
-      );
-
-      final openedUri = await uriCompleter.future;
-      final port = openedUri.port;
-
-      // Kirim callback dengan state palsu
-      final response = await http.post(
-        Uri.parse('http://localhost:$port/auth-callback'),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          'state': 'attacker-fake-state',
-          'idToken': 'stolen-token',
-        }),
-      );
-
-      expect(response.statusCode, 403);
-      expect(response.body, contains('State mismatch'));
-
+    test('state palsu ditolak dan tidak menyelesaikan login', () async {
+      var exchanged = false;
+      final (future, url) = await start(exchange: (_) async {
+        exchanged = true;
+        return {'access_token': 'x'};
+      });
+      final redirect = Uri.parse(url.queryParameters['redirect_uri']!);
+      final res = await http.get(
+          redirect.replace(queryParameters: {'code': 'abc', 'state': 'palsu'}));
+      expect(res.statusCode, 403);
+      expect(exchanged, isFalse);
       await DesktopAuthGateway.cancel();
-      await future;
+      expect(await future, isNull);
     });
 
-    test('GET /cancel completes with null when user cancels flow', () async {
-      final uriCompleter = Completer<Uri>();
-      final future = DesktopAuthGateway.signIn(
-        timeout: const Duration(seconds: 5),
-        urlLauncher: (uri) async {
-          uriCompleter.complete(uri);
-          return true;
-        },
+    test('pengguna menolak di Google: hasil null', () async {
+      final (future, url) = await start();
+      final redirect = Uri.parse(url.queryParameters['redirect_uri']!);
+      await http.get(redirect.replace(queryParameters: {
+        'error': 'access_denied',
+        'state': url.queryParameters['state']!,
+      }));
+      expect(await future, isNull);
+    });
+
+    test('penukaran kode gagal diteruskan sebagai galat', () async {
+      final (future, url) = await start(exchange: (_) async {
+        throw Exception('invalid_grant');
+      });
+      final failure = expectLater(future, throwsException);
+      final redirect = Uri.parse(url.queryParameters['redirect_uri']!);
+      final res = await http.get(redirect.replace(queryParameters: {
+        'code': 'abc',
+        'state': url.queryParameters['state']!,
+      }));
+      expect(res.body, contains('Gagal'));
+      await failure;
+    });
+
+    test('peramban gagal dibuka: galat dan server ditutup', () async {
+      await expectLater(
+        DesktopAuthGateway.signIn(urlLauncher: (_) async => false),
+        throwsA(isA<Exception>()),
       );
-
-      final openedUri = await uriCompleter.future;
-      final port = openedUri.port;
-      final state = openedUri.queryParameters['state'];
-
-      final response = await http
-          .get(Uri.parse('http://localhost:$port/cancel?state=$state'));
-      expect(response.statusCode, 200);
-      expect(jsonDecode(response.body)['canceled'], isTrue);
-
-      final result = await future;
-      expect(result, isNull);
     });
   });
 }
