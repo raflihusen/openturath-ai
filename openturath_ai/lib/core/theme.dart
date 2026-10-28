@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
 import 'scholarly_fonts.dart';
 import 'design/ot_colors.dart';
 import 'design/ot_radius.dart';
