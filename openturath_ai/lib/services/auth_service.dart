@@ -491,7 +491,15 @@ class AuthService {
             rethrow;
           }
         } else {
-          rethrow;
+          // Windows: login ulang lewat peramban (OAuth loopback) lalu hapus akun.
+          final desktopAuth = await DesktopAuthGateway.signIn();
+          if (desktopAuth == null) rethrow;
+          final credential = GoogleAuthProvider.credential(
+            accessToken: desktopAuth.accessToken,
+            idToken: desktopAuth.idToken,
+          );
+          await user.reauthenticateWithCredential(credential);
+          await user.delete();
         }
       } else {
         rethrow;
