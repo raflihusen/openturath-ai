@@ -34,9 +34,15 @@ def main():
     temp_backup.mkdir(parents=True, exist_ok=True)
 
     preserve_files = [
+        "openturath.apk",
+        "openturath.dmg",
         "app-release-latest.apk",
         "OpenTurath_AI.apk",
         "OpenTurath_AI_macOS.dmg",
+        "OpenTurath_AI_Windows_Setup.exe",
+        "OpenTurath_AI_Windows.zip",
+        "openturath.apk.sha256",
+        "openturath.dmg.sha256",
         "RELEASE_MANIFEST.json",
     ]
     preserve_dirs = [
@@ -47,17 +53,34 @@ def main():
         "ar/download",
     ]
 
-    # Pastikan file biner APK terbaru selalu diambil dari ROOT jika tersedia
-    root_apk = ROOT / "app-release-latest.apk"
-    root_dmg = ROOT / "OpenTurath_AI_macOS.dmg"
+    # Pastikan file biner APK dan DMG terbaru selalu diambil dari ROOT jika tersedia
+    root_apk = ROOT / "openturath.apk"
+    if not root_apk.exists():
+        root_apk = ROOT / "app-release-latest.apk"
+    root_dmg = ROOT / "openturath.dmg"
+    if not root_dmg.exists():
+        root_dmg = ROOT / "OpenTurath_AI_macOS.dmg"
+    root_win_setup = ROOT / "OpenTurath_AI_Windows_Setup.exe"
+    root_win_zip = ROOT / "OpenTurath_AI_Windows.zip"
+
     if root_apk.exists():
+        shutil.copy2(root_apk, temp_backup / "openturath.apk")
         shutil.copy2(root_apk, temp_backup / "app-release-latest.apk")
         shutil.copy2(root_apk, temp_backup / "OpenTurath_AI.apk")
         print(f"   [OK] Menggunakan biner APK terbaru dari root: {root_apk.stat().st_size:,} bytes")
 
     if root_dmg.exists():
+        shutil.copy2(root_dmg, temp_backup / "openturath.dmg")
         shutil.copy2(root_dmg, temp_backup / "OpenTurath_AI_macOS.dmg")
         print(f"   [OK] Menggunakan biner DMG terbaru dari root: {root_dmg.stat().st_size:,} bytes")
+
+    if root_win_setup.exists():
+        shutil.copy2(root_win_setup, temp_backup / "OpenTurath_AI_Windows_Setup.exe")
+        print(f"   [OK] Menggunakan biner Windows Setup terbaru dari root: {root_win_setup.stat().st_size:,} bytes")
+
+    if root_win_zip.exists():
+        shutil.copy2(root_win_zip, temp_backup / "OpenTurath_AI_Windows.zip")
+        print(f"   [OK] Menggunakan biner Windows Zip terbaru dari root: {root_win_zip.stat().st_size:,} bytes")
         
         # Buat/perbarui RELEASE_MANIFEST.json sesuai biner terbaru
         import hashlib, json
@@ -158,13 +181,21 @@ def main():
     # Salin halaman HTML V7, assets, index, sitemap, robots, 404 ke openturath_ai/public
     shutil.copytree(REDESIGN_SITE, APP_PUBLIC, dirs_exist_ok=True)
     if root_apk.exists():
+        shutil.copy2(root_apk, APP_PUBLIC / "openturath.apk")
         shutil.copy2(root_apk, APP_PUBLIC / "app-release-latest.apk")
         shutil.copy2(root_apk, APP_PUBLIC / "OpenTurath_AI.apk")
         if (DIST / "RELEASE_MANIFEST.json").exists():
             shutil.copy2(DIST / "RELEASE_MANIFEST.json", APP_PUBLIC / "RELEASE_MANIFEST.json")
 
     if root_dmg.exists():
+        shutil.copy2(root_dmg, APP_PUBLIC / "openturath.dmg")
         shutil.copy2(root_dmg, APP_PUBLIC / "OpenTurath_AI_macOS.dmg")
+
+    if root_win_setup.exists():
+        shutil.copy2(root_win_setup, APP_PUBLIC / "OpenTurath_AI_Windows_Setup.exe")
+
+    if root_win_zip.exists():
+        shutil.copy2(root_win_zip, APP_PUBLIC / "OpenTurath_AI_Windows.zip")
 
     # Pastikan rute legacy download/ memiliki tombol download aktif langsung
     legacy_script = ROOT / ".gemini" / "antigravity-ide" / "brain" / "0142b6f4-f514-4a8b-a21f-93d6cd3dd073" / "scratch" / "update_legacy_download.py"
@@ -181,7 +212,8 @@ def main():
         DIST / "assets" / "css" / "site.css",
         DIST / "assets" / "js" / "site.js",
         DIST / "assets" / "js" / "lang.js",
-        DIST / "downloads" / "openturath-v1.0.51.apk",
+        DIST / "openturath.apk",
+        DIST / "openturath.dmg",
         DIST / "app-release-latest.apk",
         DIST / "OpenTurath_AI_macOS.dmg",
         DIST / ".well-known" / "security.txt",
