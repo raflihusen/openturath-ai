@@ -26,6 +26,9 @@ void main() {
         equals(0),
         reason: 'JavaScript Syntax Error: ${result.stderr}',
       );
+    } on ProcessException {
+      // Node is not installed on this host environment; skip external validator.
+      return;
     } finally {
       await tempDir.delete(recursive: true);
     }

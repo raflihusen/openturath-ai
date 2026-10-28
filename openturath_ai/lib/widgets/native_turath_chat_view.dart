@@ -347,17 +347,20 @@ class _NativeTurathChatViewState extends State<NativeTurathChatView>
                 text: msg.text, ink: textPrimary, muted: textSecondary),
 
             if (msg.citations.isNotEmpty)
-              ExpansionTile(
-                title: Text(Loc.tr('sourceReferences')),
-                tilePadding: EdgeInsets.zero,
-                children: [
-                  for (final citation in msg.citations)
-                    Padding(
-                        padding: const EdgeInsets.only(bottom: 8),
-                        child: Align(
-                            alignment: Alignment.centerLeft,
-                            child: SelectableText(citation))),
-                ],
+              Material(
+                type: MaterialType.transparency,
+                child: ExpansionTile(
+                  title: Text(Loc.tr('sourceReferences')),
+                  tilePadding: EdgeInsets.zero,
+                  children: [
+                    for (final citation in msg.citations)
+                      Padding(
+                          padding: const EdgeInsets.only(bottom: 8),
+                          child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: SelectableText(citation))),
+                  ],
+                ),
               ),
 
             const SizedBox(height: 10),
