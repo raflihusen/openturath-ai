@@ -1576,14 +1576,6 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
     if (session.errorMessage != null) {
       void close() => AgentSessionManager.instance.closeRoom();
 
-      Future<void> openInBrowser() async {
-        final url = session.resolvedUrl;
-        if (url == null) return;
-        final email = await NativeAgentLauncher.getActiveNotebookEmail();
-        await NativeAgentLauncher.launchNotebook(url,
-            email: email.isNotEmpty ? email : null);
-      }
-
       void retry() {
         setState(() {
           session.errorMessage = null;
@@ -1650,8 +1642,6 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
               _startReadinessCheck();
             }
           },
-          secondaryLabel: Loc.tr('roomOpenInBrowser'),
-          onSecondary: session.resolvedUrl == null ? null : openInBrowser,
           onBack: close,
           backLabel: Loc.tr('back'),
         );
@@ -1683,8 +1673,6 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
               }
             }
           },
-          secondaryLabel: Loc.tr('roomOpenInBrowser'),
-          onSecondary: session.resolvedUrl == null ? null : openInBrowser,
           onBack: close,
           backLabel: Loc.tr('back'),
         );
@@ -1792,14 +1780,10 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
                   mounted &&
                   NotebookNavigation.notebook(requestUri)) {
                 if (code == 403) {
-                  _readinessTimer?.cancel();
-                  setState(() {
-                    session.isWebLoading = false;
-                    session.isSessionReady = false;
-                    session.isGooglePermissionError = true;
-                    session.isPaywallRequired = false;
-                    session.errorMessage = Loc.tr('roomGooglePermissionDetail');
-                  });
+                  // Sama seperti layar "akses ditolak" dari halaman: pengguna
+                  // berhak diberi beberapa kali coba ulang dulu, karena izin
+                  // notebook bisa terlambat sampai ke akun Google.
+                  _handleAccessDenied(session);
                 } else if (code != null && code >= 400) {
                   _readinessTimer?.cancel();
                   _inputRetryTimer?.cancel();

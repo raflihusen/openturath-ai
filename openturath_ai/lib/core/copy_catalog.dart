@@ -2358,9 +2358,9 @@ const copyCatalog = <String, List<String>>{
     "حساب Google لا يملك الإذن"
   ],
   "roomPermissionBody": [
-    "Akun Google yang aktif belum bisa membuka AI ini. Periksa akun yang dipakai, lalu coba buka di browser.",
-    "The active Google account cannot open this AI. Check which account is in use, then try opening it in your browser.",
-    "حساب Google الحالي لا يستطيع فتح هذا المساعد. تحقق من الحساب المستخدم ثم جرّب فتحه في المتصفح."
+    "Akun Google yang aktif belum bisa membuka AI ini. Periksa akun yang dipakai, lalu coba lagi.",
+    "The active Google account cannot open this AI. Check which account is in use, then try again.",
+    "حساب Google الحالي لا يستطيع فتح هذا المساعد. تحقق من الحساب المستخدم ثم أعد المحاولة."
   ],
   "roomLoadFailTitle": [
     "AI belum bisa dibuka",
