@@ -11,6 +11,7 @@ fungsi `redeemCode`, sehingga kode yang dibuat tidak diam-diam gagal ditukar.
   python3 scripts/voucher_admin.py create --type honor --all --days 365 --prefix ASATIDZ
   python3 scripts/voucher_admin.py bonus --feed --ig @namaakun --apply     # bonus testimoni 7 hari
   python3 scripts/voucher_admin.py bonus --story --ig @namaakun --apply    # bonus story 3 hari
+  python3 scripts/voucher_admin.py access KODE --all                       # ubah AI yang dibuka kode
   python3 scripts/voucher_admin.py limit KODE 150                          # ubah batas pemakaian
   python3 scripts/voucher_admin.py list
   python3 scripts/voucher_admin.py report KODE
@@ -210,6 +211,20 @@ def cmd_limit(a):
     print(f"Batas pemakaian {display(code)} menjadi {a.max_uses}.")
 
 
+def cmd_access(a):
+    """Ubah AI yang dibuka sebuah kode yang sudah ada (--all = semua AI, termasuk yang menyusul)."""
+    code = re.sub(r"[\s-]", "", a.code).upper()
+    keys = ["all_access"] if a.all else [k.strip() for k in (a.keys or "").split(",") if k.strip()]
+    if not keys:
+        sys.exit("Sebutkan AI: --keys a,b atau --all")
+    unknown = [k for k in keys if k not in KNOWN_SCOPES]
+    if unknown:
+        sys.exit(f"Kunci AI tidak dikenal: {', '.join(unknown)}")
+    call("PATCH", f"{BASE}/redeem_codes/{code}?updateMask.fieldPaths=entitlement_keys", token(),
+         {"fields": {"entitlement_keys": to_value(keys)}})
+    print(f"Akses {display(code)} sekarang: {', '.join(keys)}. Penukaran yang sudah terjadi tidak berubah.")
+
+
 def cmd_list(a):
     tok = token()
     data = call("GET", f"{BASE}/redeem_codes?pageSize=300", tok)
@@ -272,6 +287,11 @@ def main(argv=None):
     lim.add_argument("code")
     lim.add_argument("max_uses", type=int)
     lim.set_defaults(fn=cmd_limit)
+    ac = sub.add_parser("access")
+    ac.add_argument("code")
+    ac.add_argument("--all", action="store_true", help="semua AI (all_access)")
+    ac.add_argument("--keys", help="daftar kunci AI dipisah koma")
+    ac.set_defaults(fn=cmd_access)
     sub.add_parser("list").set_defaults(fn=cmd_list)
     for name, fn in (("report", cmd_report), ("deactivate", cmd_deactivate)):
         s = sub.add_parser(name)
