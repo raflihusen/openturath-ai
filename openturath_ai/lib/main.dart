@@ -11,6 +11,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'core/theme.dart';
 import 'core/routes.dart';
 import 'screens/splash_screen.dart';
+import 'screens/language_screen.dart';
 import 'screens/login_screen.dart';
 import 'screens/main_shell_screen.dart';
 import 'screens/specialist_list_screen.dart';
@@ -226,6 +227,13 @@ class OpenTurathApp extends StatelessWidget {
                       break;
                     case AppRoutes.login:
                       page = const LoginScreen();
+                      break;
+                    case AppRoutes.language:
+                      page = LanguageScreen(
+                        next: settings.arguments is String
+                            ? settings.arguments as String
+                            : AppRoutes.login,
+                      );
                       break;
                     case AppRoutes.onboarding:
                       page = OnboardingScreen(
