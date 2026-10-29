@@ -27,7 +27,7 @@ if ($LASTEXITCODE -ne 0) { throw "ISCC gagal pada installer_core.iss" }
 
 Write-Host "2/4 Layar pemasang (Flutter)..." -ForegroundColor Cyan
 Push-Location $uiProject
-flutter build windows --release
+flutter build windows --release --target-platform windows-x64
 if ($LASTEXITCODE -ne 0) { throw "flutter build windows gagal" }
 Pop-Location
 $uiRelease = Join-Path $uiProject 'build\windows\x64\runner\Release'
