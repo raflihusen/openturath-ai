@@ -4,7 +4,7 @@ Situs statis satu halaman. Tanpa framework, tanpa langkah build.
 
 - `index.html`: seluruh naskah halaman.
 - `assets/css/site.css`: salinan gaya situs utama (token, tombol, FAQ, footer). `assets/css/m.css`: tambahan khusus halaman ini.
-- `assets/js/site.js`, `boot.js`: salinan dari situs utama (tema, menu, efek muncul/ketik). `assets/js/m.js`: slider, titik jadi baris, kalkulator, form.
+- `assets/js/site.js`, `boot.js`: salinan dari situs utama (tema, menu, efek muncul/ketik). `assets/js/m.js`: slider, animasi naskah ditulis (kanvas), kalkulator per kata, form.
 - `assets/img/scan-p7.webp`, `hasil-p7.webp`: halaman contoh كشف الحجاب (scan dan hasil, tidak diubah). `og.png`: gambar pratinjau tautan.
 
 Uji lokal: `python3 -m http.server 8778` di folder ini, lalu buka `http://localhost:8778/`.
