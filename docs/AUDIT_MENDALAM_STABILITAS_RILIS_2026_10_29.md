@@ -137,7 +137,7 @@ Pengecekan sesi hidup hanya memeriksa SID/1PSID pada satu origin. Cookie yang ad
 
 **Perbaikan.** Andalkan persistensi profil cookie bawaan WebKit/WebView2. Hentikan perpanjangan expiry dan injeksi ulang cookie autentikasi Google. Migrasikan penghentian vault lokal tanpa menghapus cookie OS yang sedang aktif. Gunakan pemeriksaan sesi/identitas yang tidak mengubah token. Jangan mengubah polling kesiapan, tampilan error, atau siklus hidup di dua berkas WebView yang dilindungi.
 
-**Kriteria lulus.** Tidak ada pemanggilan setCookie untuk memulihkan/memanjangkan token Google. Login, tutup/buka, restart OS, dan minimal lima tab tetap diuji. Sesi kadaluwarsa menghasilkan reautentikasi yang jelas, bukan replay snapshot.
+**Kriteria lulus.** Tidak ada pemanggilan setCookie untuk memulihkan/memanjangkan token Google. Login, tutup/buka, restart OS, dan minimal lima tab pada macOS tetap diuji. Sesi kadaluwarsa menghasilkan reautentikasi yang jelas, bukan replay snapshot.
 
 ### A06 — P1: sesi Google dihapus di luar tombol Log Out
 
@@ -364,7 +364,7 @@ Rilis berikutnya memakai nomor build lebih tinggi dari 86, identitas source/bina
 | Windows bersih, runtime belum terpasang | Setup menyelesaikan prasyarat, aplikasi tampil, login dan AI berhasil |
 | Mac dari unduhan browser dengan Gatekeeper aktif | Tanda tangan/notarisasi diterima; close/reopen dan update mempertahankan sesi |
 | Firebase null, profil cache ada | UI tidak mengaku terautentikasi; masuk kembali memulihkan hak yang sama |
-| Tutup/buka, restart OS, lima tab | Tidak ada clear cookie atau replay token buatan; sesi dapat dipulihkan lewat alur resmi |
+| Tutup/buka, restart OS, minimal lima tab pada macOS | Tidak ada clear cookie atau replay token buatan; sesi dapat dipulihkan lewat alur resmi |
 | Akun Firebase dan sesi AI berbeda | Penyebab dapat dijelaskan dan akun dapat dipilih ulang tanpa reset global |
 | Dua HP identik dan dua browser ber-UA sama | Tidak ada penolakan lintas pengguna akibat collision fingerprint |
 | Tahawwulat hanya 1/5 asisten siap | UI tetap menunggu; monitor mendeteksi empat entity yang belum siap |
