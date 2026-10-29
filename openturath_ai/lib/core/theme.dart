@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'scholarly_fonts.dart';
 import 'design/ot_colors.dart';

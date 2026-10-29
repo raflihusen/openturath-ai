@@ -279,15 +279,21 @@ def main():
         subprocess.run(['cp', apk_source, TARGET_APK_PUBLIC], check=True)
         subprocess.run(['cp', apk_source, TARGET_APK_LEGACY], check=True)
         subprocess.run(['cp', apk_source, os.path.join(BASE_DIR, 'app-release-latest.apk')], check=True)
-        manifest_data = {
-            "version": version_name,
-            "version_code": version_code,
-            "sha256": sha256_hash,
-            "apk_url": apk_live_url,
-            "size_bytes": apk_size,
-            "updated_at": now_iso,
-            "release_notes": release_notes,
-        }
+        if os.path.exists(MANIFEST_PUBLIC):
+            try:
+                with open(MANIFEST_PUBLIC, 'r', encoding='utf-8') as mf:
+                    manifest_data = json.load(mf)
+            except Exception:
+                manifest_data = {}
+        else:
+            manifest_data = {}
+        manifest_data["version"] = version_name
+        manifest_data["version_code"] = version_code
+        manifest_data["sha256"] = sha256_hash
+        manifest_data["apk_url"] = apk_live_url
+        manifest_data["size_bytes"] = apk_size
+        manifest_data["updated_at"] = now_iso
+        manifest_data["release_notes"] = release_notes
         with open(MANIFEST_PUBLIC, 'w', encoding='utf-8') as f:
             json.dump(manifest_data, f, indent=2)
         print("   [OK] APK berversi, salinan latest, dan RELEASE_MANIFEST.json siap!")
