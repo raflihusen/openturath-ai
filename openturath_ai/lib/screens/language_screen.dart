@@ -107,7 +107,7 @@ class _LanguageScreenState extends State<LanguageScreen> {
                     child: Text('اختر اللغة',
                         textAlign: TextAlign.center,
                         style: ScholarlyFonts.scheherazadeNew(
-                            height: 1.6, color: sub, fontSize: 18)),
+                            height: 1.6, color: sub, fontSize: OTFontSize.s18)),
                   ),
                   const SizedBox(height: OTSpacing.xxl),
                   for (final code in Loc.supportedCodes) ...[
@@ -180,7 +180,7 @@ class _Tile extends StatelessWidget {
                   textDirection: ar ? TextDirection.rtl : TextDirection.ltr,
                   style: ar
                       ? ScholarlyFonts.scheherazadeNew(
-                          height: 1.6, color: fg, fontSize: 20)
+                          height: 1.6, color: fg, fontSize: OTFontSize.s20)
                       : OTTypography.bodyMedium(color: fg),
                 ),
               ),
