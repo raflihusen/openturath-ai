@@ -102,10 +102,10 @@
   })();
 
   /* ================= LATAR HERO: ARTEFAK NASKAH ================= */
-  // Dua lapis. Lapis bawah (#dots-bg, digambar sekali): kisi bintang khatam dan cincin astrolab.
-  // Lapis atas (#dots, bergerak): lembaran kitab, lembar berhias, medali syamsah, astrolab, dan
-  // ubin bintang yang melayang pelan. Palet mengikuti tema: lembaran putih dan tinta hitam (terang)
-  // atau abu pudar (gelap). Bagian tengah dipudarkan lewat CSS agar teks tetap terbaca.
+  // Dua lapis. Lapis bawah (#dots-bg, digambar sekali): baris coretan tipis yang sejajar dan beberapa sapuan pena besar.
+  // Lapis atas (#dots, bergerak): lembar penuh coretan tangan rapi, lembar bergaris, dan sapuan pena lepas yang melayang
+  // pelan. Abstrak tetapi teratur: tanpa bintang atau medali. Palet mengikuti tema (putih/hitam, abu pudar di gelap).
+  // Bagian tengah dipudarkan lewat CSS agar teks tetap terbaca.
   (function () {
     var cv = $('#dots'); if (!cv) return;
     var ctx = cv.getContext('2d'); if (!ctx) return;
@@ -129,15 +129,6 @@
         ? { p0: '#FFFFFF', p1: '#ECECEC', edge: 'rgba(24,24,27,0.38)', ink: 'rgba(24,24,27,0.6)', gold: 'rgba(24,24,27,0.55)', goldFill: 'rgba(24,24,27,0.07)', line: 'rgba(0,0,0,0.07)', shadow: 'rgba(0,0,0,0.25)', shade: '0,0,0' }
         : { p0: 'rgba(255,255,255,0.05)', p1: 'rgba(255,255,255,0.03)', edge: 'rgba(255,255,255,0.14)', ink: 'rgba(250,250,250,0.24)', gold: 'rgba(250,250,250,0.22)', goldFill: 'rgba(255,255,255,0.05)', line: 'rgba(255,255,255,0.06)', shadow: 'transparent', shade: '0,0,0' };
     }
-    function star(g, cx, cy, R, r, n, rot) {
-      g.beginPath();
-      for (var i = 0; i < n * 2; i++) {
-        var a = rot + Math.PI * i / n, rr = i % 2 ? r : R;
-        g[i ? 'lineTo' : 'moveTo'](cx + Math.cos(a) * rr, cy + Math.sin(a) * rr);
-      }
-      g.closePath();
-    }
-    function ring(g, cx, cy, r) { g.beginPath(); g.arc(cx, cy, r, 0, TAU); }
     function rrect(g, x, y, w, h, r) {
       g.beginPath(); g.moveTo(x + r, y); g.arcTo(x + w, y, x + w, y + h, r); g.arcTo(x + w, y + h, x, y + h, r); g.arcTo(x, y + h, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath();
     }
@@ -145,73 +136,77 @@
       var pg = g.createLinearGradient(x, y, x + w, y + h); pg.addColorStop(0, pal.p0); pg.addColorStop(1, pal.p1);
       rrect(g, x, y, w, h, Math.min(w, h) * 0.05); g.fillStyle = pg; g.fill(); g.lineWidth = 1.2; g.strokeStyle = pal.edge; g.stroke();
     }
-    function textBlock(g, x, y, w, h, size) {
-      g.direction = 'rtl'; g.textAlign = 'right'; g.textBaseline = 'alphabetic';
-      g.fillStyle = pal.ink; g.font = size + 'px "OT Naskh", "Scheherazade New", serif';
-      var lh = size * 1.9, yy = y + size, wi = Math.floor(rnd() * WORDS.length);
-      while (yy < y + h) {
-        var xx = x + w, left = x + rnd() * w * 0.12;
-        while (true) {
-          var word = WORDS[wi++ % WORDS.length], mw = g.measureText(word).width;
-          if (xx - mw < left) break;
-          g.fillText(word, xx, yy + (rnd() - 0.5) * 1.6); xx -= mw + size * 0.35;
+    // Satu baris coretan tangan: kata-kata gelombang kecil dari kanan ke kiri, amplitudo dan jarak teratur.
+    function scribbleLine(g, x0, x1, y, amp) {
+      var x = x1;
+      g.beginPath();
+      while (x > x0 + 6) {
+        var end = Math.max(x0, x - (22 + rnd() * 54)), k = 0, first = true, ph = rnd() * TAU;
+        for (var xx = x; xx > end; xx -= 2.4, k++) {
+          var yy = y + Math.sin(k * 1.35 + ph) * amp * (0.55 + 0.45 * Math.sin(k * 0.33 + ph * 2));
+          if (first) { g.moveTo(xx, yy); first = false; } else g.lineTo(xx, yy);
         }
-        yy += lh;
+        x = end - (8 + rnd() * 7);
       }
+      g.stroke();
+    }
+    function scribbleBlock(g, x, y, w, h, gap) {
+      g.strokeStyle = pal.ink; g.lineWidth = 1.3; g.lineCap = 'round'; g.lineJoin = 'round';
+      for (var yy = y + gap; yy < y + h; yy += gap) {
+        var right = x + w, left = x + (rnd() < 0.3 ? rnd() * w * 0.22 : 0); // sesekali baris pendek, selebihnya rata
+        scribbleLine(g, left, right, yy, gap * 0.2);
+      }
+    }
+    // Sapuan pena meruncing: bentuk terisi di sepanjang kurva kuadrat dengan lebar sinus.
+    function swoosh(g, x1, y1, x2, y2, bend, wmax) {
+      var mx = (x1 + x2) / 2 - (y2 - y1) * bend, my = (y1 + y2) / 2 + (x2 - x1) * bend, L = [], R = [], n = 28;
+      for (var i = 0; i <= n; i++) {
+        var t = i / n, u = 1 - t;
+        var px = u * u * x1 + 2 * u * t * mx + t * t * x2, py = u * u * y1 + 2 * u * t * my + t * t * y2;
+        var dx = 2 * u * (mx - x1) + 2 * t * (x2 - mx), dy = 2 * u * (my - y1) + 2 * t * (y2 - my), dl = Math.sqrt(dx * dx + dy * dy) || 1;
+        var wv = wmax * Math.pow(Math.sin(Math.PI * t), 0.8) / 2;
+        L.push([px - dy / dl * wv, py + dx / dl * wv]); R.push([px + dy / dl * wv, py - dx / dl * wv]);
+      }
+      g.beginPath(); g.moveTo(L[0][0], L[0][1]);
+      for (i = 1; i <= n; i++) g.lineTo(L[i][0], L[i][1]);
+      for (i = n; i >= 0; i--) g.lineTo(R[i][0], R[i][1]);
+      g.closePath(); g.fill();
     }
     // Satu artefak. Mengembalikan kanvas berbantalan (untuk bayangan yang sudah dipanggang) dan ukuran logisnya.
     function sprite(kind, w, h) {
       var pad = light ? 26 : 4, q = Math.max(0.5, dpr * 0.55), tw = w + pad * 2, th = h + pad * 2;
       var c = d.createElement('canvas'); c.width = Math.ceil(tw * q); c.height = Math.ceil(th * q);
       var g = c.getContext('2d'); g.setTransform(q, 0, 0, q, 0, 0); g.translate(pad, pad);
-      if (light) { g.shadowColor = pal.shadow; g.shadowBlur = 16; g.shadowOffsetY = 8; }
-      var cx = w / 2, cy = h / 2, R = Math.min(w, h) / 2;
-      if (kind === 'page') {
+      if (light && kind !== 'strokes') { g.shadowColor = pal.shadow; g.shadowBlur = 16; g.shadowOffsetY = 8; }
+      if (kind === 'page') { // lembar penuh coretan rapi
         paper(g, 0, 0, w, h); g.shadowColor = 'transparent';
-        textBlock(g, w * 0.1, w * 0.1, w * 0.8, h - w * 0.2, w / 11);
-      } else if (kind === 'illum') { // lembar berhias: bingkai ganda, kepala lengkung dengan rosetta
+        scribbleBlock(g, w * 0.1, w * 0.08, w * 0.8, h - w * 0.16, w / 9);
+      } else if (kind === 'ruled') { // lembar bergaris dengan satu coretan judul dan garis bawah
         paper(g, 0, 0, w, h); g.shadowColor = 'transparent';
-        g.strokeStyle = pal.gold; g.lineWidth = 1.4; rrect(g, w * 0.06, w * 0.06, w * 0.88, h - w * 0.12, 4); g.stroke();
-        g.lineWidth = 0.8; rrect(g, w * 0.095, w * 0.095, w * 0.81, h - w * 0.19, 3); g.stroke();
-        var hy = w * 0.3; g.fillStyle = pal.goldFill; g.beginPath(); g.moveTo(w * 0.2, hy + w * 0.12); g.lineTo(w * 0.2, hy); g.arc(cx, hy, w * 0.3, Math.PI, 0); g.lineTo(w * 0.8, hy + w * 0.12); g.closePath(); g.fill(); g.stroke();
-        star(g, cx, hy, w * 0.13, w * 0.065, 12, 0); g.fillStyle = pal.goldFill; g.fill(); g.stroke(); ring(g, cx, hy, w * 0.028); g.stroke();
-        textBlock(g, w * 0.14, hy + w * 0.3, w * 0.72, h - hy - w * 0.4, w / 12);
-      } else if (kind === 'medal') { // syamsah: medali bulat bintang 16
-        ring(g, cx, cy, R * 0.98); var mg = g.createLinearGradient(0, 0, w, h); mg.addColorStop(0, pal.p0); mg.addColorStop(1, pal.p1); g.fillStyle = mg; g.fill(); g.shadowColor = 'transparent';
-        g.strokeStyle = pal.edge; g.lineWidth = 1.2; g.stroke(); g.strokeStyle = pal.gold; g.lineWidth = 1.2; ring(g, cx, cy, R * 0.9); g.stroke();
-        star(g, cx, cy, R * 0.86, R * 0.6, 16, 0); g.fillStyle = pal.goldFill; g.fill(); g.stroke();
-        star(g, cx, cy, R * 0.5, R * 0.3, 8, Math.PI / 8); g.fill(); g.stroke(); ring(g, cx, cy, R * 0.16); g.stroke(); ring(g, cx, cy, R * 0.07); g.fillStyle = pal.gold; g.fill();
-      } else if (kind === 'astro') { // cakram astrolab: skala derajat, salib, dan cakram rete
-        ring(g, cx, cy, R * 0.98); g.fillStyle = pal.p0; g.fill(); g.shadowColor = 'transparent';
-        g.strokeStyle = pal.edge; g.lineWidth = 1.4; g.stroke(); ring(g, cx, cy, R * 0.86); g.strokeStyle = pal.gold; g.lineWidth = 1; g.stroke();
-        for (var i = 0; i < 72; i++) { var a = TAU * i / 72, l = i % 6 ? 0.04 : 0.09; g.beginPath(); g.moveTo(cx + Math.cos(a) * R * 0.86, cy + Math.sin(a) * R * 0.86); g.lineTo(cx + Math.cos(a) * R * (0.86 + l), cy + Math.sin(a) * R * (0.86 + l)); g.stroke(); }
-        g.beginPath(); g.moveTo(cx - R * 0.8, cy); g.lineTo(cx + R * 0.8, cy); g.moveTo(cx, cy - R * 0.8); g.lineTo(cx, cy + R * 0.8); g.stroke();
-        ring(g, cx, cy, R * 0.55); g.stroke(); ring(g, cx + R * 0.14, cy - R * 0.08, R * 0.5); g.stroke();
-        star(g, cx - R * 0.3, cy + R * 0.2, R * 0.1, R * 0.04, 4, 0.4); g.fillStyle = pal.gold; g.fill(); star(g, cx + R * 0.35, cy - R * 0.32, R * 0.08, R * 0.03, 4, 0); g.fill(); ring(g, cx, cy, R * 0.05); g.fill();
-      } else { // ubin bintang khatam
-        paper(g, 0, 0, w, h); g.shadowColor = 'transparent';
-        g.strokeStyle = pal.gold; g.lineWidth = 1.2; g.fillStyle = pal.goldFill;
-        star(g, cx, cy, R * 0.9, R * 0.5, 8, Math.PI / 8); g.fill(); g.stroke();
-        star(g, cx, cy, R * 0.55, R * 0.3, 8, 0); g.stroke(); ring(g, cx, cy, R * 0.1); g.stroke();
-        for (var k = 0; k < 4; k++) { ring(g, k % 2 ? w * 0.9 : w * 0.1, k < 2 ? h * 0.1 : h * 0.9, w * 0.05); g.stroke(); }
+        g.strokeStyle = pal.line; g.lineWidth = 1;
+        for (var yy = w * 0.34; yy < h - w * 0.1; yy += w / 8) { g.beginPath(); g.moveTo(w * 0.1, yy); g.lineTo(w * 0.9, yy); g.stroke(); }
+        g.strokeStyle = pal.ink; g.lineWidth = 1.8; g.lineCap = 'round'; scribbleLine(g, w * 0.3, w * 0.9, w * 0.2, w * 0.045);
+        g.fillStyle = pal.ink; swoosh(g, w * 0.28, w * 0.27, w * 0.9, w * 0.27, 0.0, 3);
+        scribbleBlock(g, w * 0.1, w * 0.3, w * 0.8, h - w * 0.42, w / 8);
+      } else { // 'strokes': sapuan pena lepas tanpa kertas, sudut dan jarak teratur
+        g.fillStyle = pal.ink;
+        var k = 4, sp = h / (k + 1);
+        for (var i = 1; i <= k; i++) swoosh(g, w * 0.06, sp * i, w * 0.94, sp * i - w * 0.05, 0.16 * (i % 2 ? 1 : -1), 2.4 + (i % 3) * 1.1);
       }
       return { img: c, w: w, h: h, tw: tw, th: th, pad: pad };
     }
-    // Lapis tetap: kisi khatam dan cincin astrolab besar di sudut-sudut.
+    // Lapis tetap: baris-baris coretan sangat tipis yang sejajar dan teratur, ditambah beberapa sapuan besar.
     function backdrop() {
       bgc.width = Math.round(W * dpr); bgc.height = Math.round(H * dpr);
       var g = bgc.getContext('2d'); g.setTransform(dpr, 0, 0, dpr, 0, 0); g.clearRect(0, 0, W, H);
-      g.strokeStyle = pal.line; g.lineWidth = 1;
-      var c = clamp(W / 13, 72, 120), s = c * 0.36;
-      for (var y = c / 2; y < H + c; y += c) for (var x = c / 2 + ((Math.round(y / c) % 2) ? c / 2 : 0); x < W + c; x += c) {
-        star(g, x, y, s, s * 0.62, 8, Math.PI / 8); g.stroke(); ring(g, x, y, s * 0.2); g.stroke();
-      }
-      g.lineWidth = 1.2;
-      [[0.03, 0.15, 0.6], [0.98, 0.9, 0.68]].forEach(function (a) {
-        var cx = W * a[0], cy = H * a[1], R = Math.min(W, H) * a[2];
-        for (var k = 1; k <= 4; k++) { ring(g, cx, cy, R * (1 - k * 0.12)); g.stroke(); }
-        for (var i = 0; i < 120; i++) { var an = TAU * i / 120, l = i % 5 ? 0.012 : 0.03; g.beginPath(); g.moveTo(cx + Math.cos(an) * R, cy + Math.sin(an) * R); g.lineTo(cx + Math.cos(an) * R * (1 + l), cy + Math.sin(an) * R * (1 + l)); g.stroke(); }
-      });
+      var rs = rnd; rnd = (function (seed) { return function () { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; }; })(7);
+      g.strokeStyle = pal.line; g.lineWidth = 1.1; g.lineCap = 'round'; g.lineJoin = 'round';
+      var gap = clamp(W / 18, 34, 52);
+      for (var y = gap * 0.7; y < H; y += gap) scribbleLine(g, 0, W, y, gap * 0.16);
+      g.fillStyle = pal.line;
+      swoosh(g, -W * 0.05, H * 0.9, W * 0.55, H * 0.2, 0.22, 7);
+      swoosh(g, W * 0.45, H * 1.05, W * 1.05, H * 0.35, -0.2, 7);
+      rnd = rs;
     }
     function build() {
       palette();
@@ -219,11 +214,11 @@
       dpr = Math.min(1.5, window.devicePixelRatio || 1);
       cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
       backdrop();
-      var n = W < 600 ? 7 : 12, kinds = ['page', 'page', 'page', 'page', 'page', 'illum', 'illum', 'medal', 'astro', 'tile'];
+      var n = W < 600 ? 7 : 12, kinds = ['page', 'page', 'page', 'ruled', 'ruled', 'strokes'];
       sheets = [];
       for (var i = 0; i < n; i++) {
         var kind = kinds[Math.floor(rnd() * kinds.length)], depth = 0.45 + rnd() * 0.75;
-        var base = clamp(W * 0.2, 130, 250) * depth, w = (kind === 'medal' || kind === 'astro') ? base * 0.9 : base, h = (kind === 'medal' || kind === 'astro') ? w : (kind === 'tile' ? w : w * 1.34);
+        var base = clamp(W * 0.2, 130, 250) * depth, w = kind === 'strokes' ? base * 1.1 : base, h = kind === 'strokes' ? w * 0.7 : w * 1.34;
         sheets.push({
           s: sprite(kind, w, h), kind: kind, depth: depth,
           x0: rnd() * W, y0: rnd() * (H + h) - h / 2,
@@ -246,7 +241,7 @@
         ctx.rotate(p.rot + p.vr * t); ctx.scale(sx, 1);
         ctx.drawImage(S.img, -S.tw / 2, -S.th / 2, S.tw, S.th);
         var sh = (1 - sx) * (light ? 1.3 : 0.9); // sisi yang miring lebih gelap: kesan lengkung
-        if (sh > 0.02 && (p.kind === 'page' || p.kind === 'illum' || p.kind === 'tile')) {
+        if (sh > 0.02 && p.kind !== 'strokes') {
           ctx.fillStyle = 'rgba(' + pal.shade + ',' + sh + ')'; ctx.fillRect(-S.w / 2, -S.h / 2, S.w, S.h);
         }
       }
