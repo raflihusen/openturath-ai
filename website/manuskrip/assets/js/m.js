@@ -101,91 +101,84 @@
     }
   })();
 
-  /* ================= NASKAH DITULIS ================= */
-  // Halaman naskah Arab yang "ditulis" dari kanan ke kiri dengan kalam, baris demi baris,
-  // lalu sorot pemindai menyapu halaman. Kata-kata diambil dari halaman contoh di bawah.
+  /* ================= LEMBARAN NASKAH MELAYANG ================= */
+  // Lembaran kitab abstrak yang melayang pelan dan berputar di belakang hero, seperti
+  // tumpukan halaman yang dibalik. Sengaja pudar dan kabur (blur CSS) agar tak mengganggu bacaan.
   (function () {
     var cv = $('#dots'); if (!cv) return;
     var ctx = cv.getContext('2d'); if (!ctx) return;
     var WORDS = ('العلم هذا شريف ولا شيء أشرف منه وقال الله تعالى ثلث بأهل العلم والإنسان يمتثل الأوامر ويجتنب النواهي ' +
       'إذا جاء في المذاكرة شيء من سير السلف فاكتبوه إذا ما انتفعتم به أنتم انتفع به غيركم دونوا سير سلفهم ' +
       'تفوت كرامات الرجال شواردا إذا لم تقيدها علينا الدفاتر وهذا أوان الشروع في المقصود فأقول قال سيدي رضي الله عنه').split(' ');
-    var W = 0, H = 0, dpr = 1, rgb = '0,0,0', lines = [], page = null, raf = 0, t0 = 0, running = false, visible = true, ready = false;
-    var rnd = (function (seed) { return function () { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; }; })(20261029);
-    var WRITE = 900, GAP = 420, HOLD = 2600; // ms per baris, jeda antar baris, tahan sebelum mengulang
+    var W = 0, H = 0, dpr = 1, rgb = '0,0,0', sheets = [], raf = 0, last = 0, running = false, visible = true, simT = 0;
+    var rnd = (function (seed) { return function () { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; }; })(1369);
 
     function readColor() {
       var c = getComputedStyle(cv).color.match(/[\d.]+/g);
       if (c && c.length >= 3) rgb = c[0] + ',' + c[1] + ',' + c[2];
     }
+    // Satu lembar: kartu bersudut membulat berisi baris-baris Arab dari kanan ke kiri.
+    function sprite(w, h) {
+      var q = Math.max(0.5, dpr * 0.55); // resolusi rendah: lembar tampak lembut tanpa filter yang berat
+      var c = document.createElement('canvas'); c.width = Math.ceil(w * q); c.height = Math.ceil(h * q);
+      var g = c.getContext('2d'); g.setTransform(q, 0, 0, q, 0, 0);
+      var r = Math.min(w, h) * 0.05;
+      g.beginPath(); g.moveTo(r, 0); g.arcTo(w, 0, w, h, r); g.arcTo(w, h, 0, h, r); g.arcTo(0, h, 0, 0, r); g.arcTo(0, 0, w, 0, r); g.closePath();
+      g.fillStyle = 'rgba(' + rgb + ',0.07)'; g.fill();
+      g.lineWidth = 1.2; g.strokeStyle = 'rgba(' + rgb + ',0.22)'; g.stroke();
+      g.direction = 'rtl'; g.textAlign = 'right'; g.textBaseline = 'alphabetic';
+      var size = w / 11, lh = size * 1.9, pad = w * 0.1, y = pad + size, wi = Math.floor(rnd() * WORDS.length);
+      g.fillStyle = 'rgba(' + rgb + ',0.5)'; g.font = size + 'px "OT Naskh", "Scheherazade New", serif';
+      while (y < h - pad * 0.8) {
+        var x = w - pad, left = pad + rnd() * w * 0.12;
+        while (true) {
+          var word = WORDS[wi++ % WORDS.length], mw = g.measureText(word).width;
+          if (x - mw < left) break;
+          g.fillText(word, x, y + (rnd() - 0.5) * 1.6); x -= mw + size * 0.35;
+        }
+        y += lh;
+      }
+      return c;
+    }
     function build() {
       var r = cv.getBoundingClientRect(); W = Math.max(1, r.width); H = Math.max(1, r.height);
-      dpr = Math.min(2, window.devicePixelRatio || 1);
+      dpr = Math.min(1.5, window.devicePixelRatio || 1);
       cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
-      page = document.createElement('canvas'); page.width = cv.width; page.height = cv.height;
-      var g = page.getContext('2d'); g.setTransform(dpr, 0, 0, dpr, 0, 0);
-      g.direction = 'rtl'; g.textAlign = 'right'; g.textBaseline = 'alphabetic';
-      var size = clamp(W / 26, 20, 40), lh = size * 1.95, rows = Math.max(4, Math.floor((H * 0.86) / lh));
-      var left = W * 0.06, right = W * 0.94, top = H * 0.08 + lh * 0.8;
-      lines = []; var wi = Math.floor(rnd() * WORDS.length), marked = 0;
-      for (var i = 0; i < rows; i++) {
-        var y = top + i * lh + (rnd() - 0.5) * 3, x = right, tilt = (rnd() - 0.5) * 0.012, startX = x, gapW = size * 0.34;
-        g.save(); g.translate(0, y); g.rotate(tilt); g.translate(0, -y);
-        while (true) {
-          var w = WORDS[wi++ % WORDS.length], sz = size * (0.94 + rnd() * 0.14);
-          g.font = sz + 'px "OT Naskh", "Scheherazade New", serif';
-          var mw = g.measureText(w).width;
-          if (x - mw < left) break;
-          var dy = (rnd() - 0.5) * 3.2, a = 0.55 + rnd() * 0.4;
-          g.fillStyle = 'rgba(' + rgb + ',' + a + ')'; g.fillText(w, x, y + dy);
-          // satu kata di beberapa baris diberi kotak putus: bagian tak terbaca ditandai, tidak ditebak.
-          if (i % 3 === 1 && marked < 3 && x < W * 0.55 && rnd() < 0.18) {
-            marked++; g.save(); g.strokeStyle = 'rgba(' + rgb + ',0.7)'; g.lineWidth = 1.2; g.setLineDash([4, 3]);
-            g.strokeRect(x - mw - 3, y - sz * 0.82, mw + 6, sz * 1.25); g.restore();
-          }
-          x -= mw + gapW * (0.8 + rnd() * 0.7);
-        }
-        g.restore();
-        lines.push({ y: y, h: lh, x0: startX, x1: x + gapW, t: i * (WRITE + GAP) });
+      var n = W < 600 ? 7 : 11; sheets = [];
+      for (var i = 0; i < n; i++) {
+        var depth = 0.45 + rnd() * 0.75, w = clamp(W * 0.22, 150, 260) * depth, h = w * 1.34;
+        sheets.push({
+          img: sprite(w, h), w: w, h: h, depth: depth,
+          x0: rnd() * W, y0: rnd() * (H + h) - h / 2,
+          vx: (rnd() - 0.5) * 7 * depth, vy: -(5 + rnd() * 9) * depth, // px per detik, naik perlahan
+          rot: (rnd() - 0.5) * 0.9, vr: (rnd() - 0.5) * 0.035, flip: rnd() * 6.283, vf: 0.12 + rnd() * 0.18
+        });
       }
-      ready = true;
     }
-    function total() { return lines.length ? lines[lines.length - 1].t + WRITE + HOLD : 1; }
-    function frame(now, freeze) {
-      if (!ready) return;
-      if (!t0) t0 = now;
-      var t = freeze ? 1e9 : (now - t0) % (total() + 1600);
+    function drawAt(t) {
       ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.clearRect(0, 0, cv.width, cv.height);
-      var pen = null, endAll = lines.length ? lines[lines.length - 1].t + WRITE : 0;
-      // pudar halus di akhir putaran sebelum menulis ulang
-      var fade = freeze ? 1 : (t > endAll + HOLD ? 1 - clamp((t - endAll - HOLD) / 1400, 0, 1) : 1);
-      ctx.globalAlpha = fade;
-      for (var i = 0; i < lines.length; i++) {
-        var L = lines[i], k = freeze ? 1 : clamp((t - L.t) / WRITE, 0, 1); if (k <= 0) continue;
-        var e = 1 - Math.pow(1 - k, 2), span = L.x0 - L.x1, cut = L.x0 - span * e; // tepi kiri bagian yang sudah tertulis
-        ctx.save(); ctx.beginPath(); ctx.rect(cut * dpr, (L.y - L.h * 0.78) * dpr, (L.x0 - cut + 8) * dpr, L.h * dpr); ctx.clip();
-        ctx.drawImage(page, 0, 0); ctx.restore();
-        if (k < 1) pen = { x: cut, y: L.y };
-      }
-      if (pen) { // ujung kalam: titik tinta kecil dengan cahaya
+      for (var i = 0; i < sheets.length; i++) {
+        var p = sheets[i], span = H + p.h * 2;
+        var y = ((p.y0 + p.vy * t + p.h) % span + span) % span - p.h;
+        var x = p.x0 + p.vx * t + Math.sin(t * 0.25 + i) * 14 * p.depth;
+        var sx = 0.78 + 0.22 * Math.cos(p.flip + t * p.vf); // lembar seperti perlahan dibalik
+        ctx.globalAlpha = clamp(0.35 + p.depth * 0.5, 0, 0.95);
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-        var gr = ctx.createRadialGradient(pen.x, pen.y - 6, 0, pen.x, pen.y - 6, 16);
-        gr.addColorStop(0, 'rgba(' + rgb + ',0.55)'); gr.addColorStop(1, 'rgba(' + rgb + ',0)');
-        ctx.fillStyle = gr; ctx.fillRect(pen.x - 16, pen.y - 22, 32, 32);
-        ctx.fillStyle = 'rgba(' + rgb + ',0.9)'; ctx.beginPath(); ctx.arc(pen.x, pen.y - 6, 2.2, 0, 6.283); ctx.fill();
-      } else if (!freeze && t > endAll && t < endAll + HOLD) { // sorot pemindai menyapu halaman dari kanan ke kiri
-        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-        var sx = W * 1.05 - (t - endAll) / HOLD * W * 1.1;
-        var sg = ctx.createLinearGradient(sx - 90, 0, sx + 90, 0);
-        sg.addColorStop(0, 'rgba(' + rgb + ',0)'); sg.addColorStop(0.5, 'rgba(' + rgb + ',0.14)'); sg.addColorStop(1, 'rgba(' + rgb + ',0)');
-        ctx.fillStyle = sg; ctx.fillRect(sx - 90, 0, 180, H);
+        ctx.translate(((x % (W + p.w)) + W + p.w) % (W + p.w) - p.w / 2, y);
+        ctx.rotate(p.rot + p.vr * t); ctx.scale(sx, 1);
+        ctx.drawImage(p.img, -p.w / 2, -p.h / 2, p.w, p.h);
       }
       ctx.globalAlpha = 1;
-      if (running && visible && !freeze) raf = requestAnimationFrame(frame);
     }
-    function start() { if (running || still) return; running = true; raf = requestAnimationFrame(frame); }
+    function frame(now) {
+      if (!last) last = now;
+      simT += Math.min(0.05, (now - last) / 1000); last = now;
+      drawAt(simT);
+      if (running && visible) raf = requestAnimationFrame(frame);
+    }
+    function start() { if (running || still) return; running = true; last = 0; raf = requestAnimationFrame(frame); }
     function pause() { running = false; cancelAnimationFrame(raf); }
-    function draw() { build(); if (still) frame(0, true); else { t0 = 0; start(); } }
+    function draw() { build(); if (still) drawAt(40); else start(); }
 
     readColor();
     var go = function () { draw(); };
