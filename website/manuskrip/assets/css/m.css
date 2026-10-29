@@ -154,3 +154,5 @@ h3.sub{font-size:17px;margin:0 0 6px}
 :root{--hero-wash:#FAFAFA}
 :root[data-theme="dark"]{--hero-wash:#09090B}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--hero-wash:#09090B}}
+
+.theme-btn{display:none!important}
