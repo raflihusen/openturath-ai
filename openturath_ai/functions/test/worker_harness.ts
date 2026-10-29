@@ -5,6 +5,7 @@ import path from 'node:path';
 import {stripTypeScriptTypes} from 'node:module';
 import * as AC from '../src/access_control.ts';
 import * as CAT from '../src/notebook_catalog.ts';
+import * as WL from '../src/worker_lease.ts';
 import {MemoryDB, Stamp} from './audit_harness.ts';
 
 const SRC = path.join(import.meta.dirname, '../src');
@@ -36,7 +37,7 @@ export async function runWorker(db: MemoryDB, authUsers: Map<string, any>, mode 
     }}),
   };
   const deps: any = {admin, child_process: {execFile() {}}, http: {createServer: () => ({listen() {}})},
-    'fs/promises': {}, util: {promisify: (f: any) => f}, './access_control': AC, './notebook_catalog': CAT, './access_catalog': MAP};
+    'fs/promises': {}, util: {promisify: (f: any) => f}, './access_control': AC, './notebook_catalog': CAT, './access_catalog': MAP, './worker_lease': WL};
   const ctx: any = {deps, process: {env: {}, argv: ['node', 'worker', mode], exitCode: 0}, console: {log() {}, error() {}},
     Date, setTimeout, JSON, Math, Promise, Object, Array, Set, Map, Number, String, Error};
   vm.runInNewContext(stripTypeScriptTypes(src, {mode: 'transform'}), ctx);

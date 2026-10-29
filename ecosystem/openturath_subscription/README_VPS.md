@@ -64,6 +64,16 @@ Semua langkah ini keputusan pemilik; tidak ada yang otomatis.
 5. Setelah beberapa hari stabil dan daftar calon pencabutan ditinjau, set
    `revocations_paused: false`.
 
+## Penulis tunggal dan komputer cadangan
+
+Hanya pemegang sewa `access_control/writer_lease` yang boleh menulis ke NotebookLM.
+VPS berjalan sebagai `primary` (bawaan) dan merebut kembali sewa kapan pun. Komputer
+cadangan dijalankan dengan `ACCESS_WORKER_ROLE=standby`: ia hanya mengambil alih bila
+sewa VPS mati lebih dari 3 menit, dan berhenti menulis segera setelah VPS kembali.
+Kedua penjalan memakai kode yang sama. Skrip lama (`notebooklm_manager.py`, dan
+`manual_sync.py` lewat itu) menolak menulis selama `writer = vps-v2`; pengecualian
+darurat yang disengaja: `OPENTURATH_LEGACY_WRITE_OVERRIDE=1`.
+
 ## Pemantauan
 
 - `curl -s http://127.0.0.1:8091/` di VPS — status worker

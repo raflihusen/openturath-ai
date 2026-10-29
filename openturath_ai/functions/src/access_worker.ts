@@ -6,9 +6,12 @@ import {promisify} from "util";
 import {AccessControl, Entity, Provider, ShareObservation, isVip, keyOf, millis, normalEmail, rights, billingExpiry, verifiedAkalPeriods, hasLegacyAccessAdjustment, classifyLegacyEvent, REVOCATION_POLICY} from "./access_control";
 import {NOTEBOOK_ENTITIES} from "./notebook_catalog";
 import {ENTITY_SCOPES, AGENT_ENTITLEMENTS, resolveAkalScopes} from "./access_catalog";
+import {WorkerLease} from "./worker_lease";
 
 admin.initializeApp({projectId: process.env.GOOGLE_CLOUD_PROJECT || "open-turath"});
 const db = admin.firestore();
+const lease = new WorkerLease(db, `${process.env.HOSTNAME || "worker"}-${process.pid}`,
+  process.env.ACCESS_WORKER_ROLE === "standby" ? "standby" : "primary");
 const telemetry = {last_provider_success_ms:0, authentication_error:false, session_refreshes:0,
   provider_calls:0, provider_failures:0, provider_p50_ms:0, provider_p95_ms:0};
 // Rolling latency sample of real NotebookLM operations: the capacity plan
@@ -453,6 +456,7 @@ async function cycle(): Promise<void> {
   stats.mode = cfg?.writer === "vps-v2" ? "active" : "shadow";
   stats.revocations_paused = cfg?.revocations_paused === true;
   if (cfg?.writer !== "vps-v2") return; // Installed shadow mode until explicit cutover.
+  if (!lease.holds()) { stats.mode = "standby"; return; } // Another worker owns the writer lease.
   // Consume source jobs incrementally rather than scanning every account/tx.
   const source = await db.collection("provisioning_outbox").where("status", "in", ["pending", "retry", "processing", "failed"]).limit(100).get();
   for (const job of source.docs) {
@@ -493,7 +497,7 @@ async function runJobs(): Promise<void> {
   while (true) {
     try {
       const cfg = (await runtime.get()).data();
-      if (cfg?.writer === "vps-v2") {
+      if (cfg?.writer === "vps-v2" && lease.holds()) {
         const concurrency = Number.isInteger(cfg.provider_concurrency) ? Math.max(1, Math.min(8, cfg.provider_concurrency)) : 2;
         const jobs = await db.collection("access_jobs").where("due_ms", "<=", Date.now()).orderBy("due_ms").limit(60).get();
         const byNotebook = new Map<string, any[]>();
@@ -566,7 +570,7 @@ async function reconcile(): Promise<void> {
   let cursor = 0;
   while (true) {
     try {
-      if ((await runtime.get()).data()?.writer === "vps-v2") {
+      if ((await runtime.get()).data()?.writer === "vps-v2" && lease.holds()) {
         const {entity, n: target} = all[cursor++ % all.length];
         const ref = db.collection("access_notebooks").doc(target.id);
         const snapshot = await ref.get();
@@ -620,12 +624,15 @@ async function main(): Promise<void> {
     console.log(JSON.stringify({job_status:(await ref.get()).data()?.status,...telemetry}));
     return;
   }
-  if (mode === "--once") return cycle();
+  if (mode === "--once") { await lease.renew(); return cycle(); }
   createServer((_, res) => {res.setHeader("Content-Type", "application/json");
     const providerStale = stats.mode === "active" && Date.now()-telemetry.last_provider_success_ms > 300000;
     res.statusCode = stats.error || telemetry.authentication_error || providerStale ? 503 : 200;
-    res.end(JSON.stringify({...stats,...telemetry}));
+    res.end(JSON.stringify({...stats,...telemetry,lease_role:lease.role,lease_held:lease.holds()}));
   }).listen(8091, "127.0.0.1");
+  await lease.renew();
+  setInterval(() => { void lease.renew(); }, 5000);
+  process.on("SIGTERM", () => { void lease.release().finally(() => process.exit(0)); });
   void runJobs(); // Separate from scheduler: a slow provider cannot postpone expiry discovery.
   void reconcile();
   while (true) {

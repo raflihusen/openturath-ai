@@ -8,8 +8,10 @@ const util_1 = require("util");
 const access_control_1 = require("./access_control");
 const notebook_catalog_1 = require("./notebook_catalog");
 const access_catalog_1 = require("./access_catalog");
+const worker_lease_1 = require("./worker_lease");
 admin.initializeApp({ projectId: process.env.GOOGLE_CLOUD_PROJECT || "open-turath" });
 const db = admin.firestore();
+const lease = new worker_lease_1.WorkerLease(db, `${process.env.HOSTNAME || "worker"}-${process.pid}`, process.env.ACCESS_WORKER_ROLE === "standby" ? "standby" : "primary");
 const telemetry = { last_provider_success_ms: 0, authentication_error: false, session_refreshes: 0,
     provider_calls: 0, provider_failures: 0, provider_p50_ms: 0, provider_p95_ms: 0 };
 // Rolling latency sample of real NotebookLM operations: the capacity plan
@@ -579,6 +581,10 @@ async function cycle() {
     stats.revocations_paused = (cfg === null || cfg === void 0 ? void 0 : cfg.revocations_paused) === true;
     if ((cfg === null || cfg === void 0 ? void 0 : cfg.writer) !== "vps-v2")
         return; // Installed shadow mode until explicit cutover.
+    if (!lease.holds()) {
+        stats.mode = "standby";
+        return;
+    } // Another worker owns the writer lease.
     // Consume source jobs incrementally rather than scanning every account/tx.
     const source = await db.collection("provisioning_outbox").where("status", "in", ["pending", "retry", "processing", "failed"]).limit(100).get();
     for (const job of source.docs) {
@@ -628,7 +634,7 @@ async function runJobs() {
     while (true) {
         try {
             const cfg = (await runtime.get()).data();
-            if ((cfg === null || cfg === void 0 ? void 0 : cfg.writer) === "vps-v2") {
+            if ((cfg === null || cfg === void 0 ? void 0 : cfg.writer) === "vps-v2" && lease.holds()) {
                 const concurrency = Number.isInteger(cfg.provider_concurrency) ? Math.max(1, Math.min(8, cfg.provider_concurrency)) : 2;
                 const jobs = await db.collection("access_jobs").where("due_ms", "<=", Date.now()).orderBy("due_ms").limit(60).get();
                 const byNotebook = new Map();
@@ -717,7 +723,7 @@ async function reconcile() {
     let cursor = 0;
     while (true) {
         try {
-            if (((_a = (await runtime.get()).data()) === null || _a === void 0 ? void 0 : _a.writer) === "vps-v2") {
+            if (((_a = (await runtime.get()).data()) === null || _a === void 0 ? void 0 : _a.writer) === "vps-v2" && lease.holds()) {
                 const { entity, n: target } = all[cursor++ % all.length];
                 const ref = db.collection("access_notebooks").doc(target.id);
                 const snapshot = await ref.get();
@@ -790,14 +796,19 @@ async function main() {
         console.log(JSON.stringify(Object.assign({ job_status: (_a = (await ref.get()).data()) === null || _a === void 0 ? void 0 : _a.status }, telemetry)));
         return;
     }
-    if (mode === "--once")
+    if (mode === "--once") {
+        await lease.renew();
         return cycle();
+    }
     (0, http_1.createServer)((_, res) => {
         res.setHeader("Content-Type", "application/json");
         const providerStale = stats.mode === "active" && Date.now() - telemetry.last_provider_success_ms > 300000;
         res.statusCode = stats.error || telemetry.authentication_error || providerStale ? 503 : 200;
-        res.end(JSON.stringify(Object.assign(Object.assign({}, stats), telemetry)));
+        res.end(JSON.stringify(Object.assign(Object.assign(Object.assign({}, stats), telemetry), { lease_role: lease.role, lease_held: lease.holds() })));
     }).listen(8091, "127.0.0.1");
+    await lease.renew();
+    setInterval(() => { void lease.renew(); }, 5000);
+    process.on("SIGTERM", () => { void lease.release().finally(() => process.exit(0)); });
     void runJobs(); // Separate from scheduler: a slow provider cannot postpone expiry discovery.
     void reconcile();
     while (true) {

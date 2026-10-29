@@ -1,9 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.onClientErrorLogged = exports.reportAuthFailure = exports.monitorPaidWithoutAccess = exports.AUTH_FAILURE_FIELD = exports.cleanupOrphanedDeletions = exports.onUserDeleted = exports.onProvisioningOutboxCreated = exports.processProvisioningOutbox = exports.dailyRevoke = exports.onUserCreate = exports.getAccessReadiness = exports.redeemCode = exports.checkPaymentStatus = exports.midtransWebhook = exports.dokuWebhook = exports.monitorAccessHealth = exports.reconcileMidtransPayments = exports.createCheckout = exports.askAgent = exports.recordQuestion = exports.getAgentUrl = exports.MODULE_PLANS = exports.PURCHASABLE_AGENTS = void 0;
+exports.onClientErrorLogged = exports.reportAuthFailure = exports.auditMidtransLedger = exports.monitorPaidWithoutAccess = exports.AUTH_FAILURE_FIELD = exports.cleanupOrphanedDeletions = exports.onUserDeleted = exports.onProvisioningOutboxCreated = exports.processProvisioningOutbox = exports.dailyRevoke = exports.onUserCreate = exports.getAccessReadiness = exports.redeemCode = exports.checkPaymentStatus = exports.midtransWebhook = exports.dokuWebhook = exports.monitorAccessHealth = exports.reconcileMidtransPayments = exports.createCheckout = exports.askAgent = exports.recordQuestion = exports.getAgentUrl = exports.MODULE_PLANS = exports.PURCHASABLE_AGENTS = void 0;
 exports.addCalendarMonthsClamped = addCalendarMonthsClamped;
 exports.deviceRedemptionFailure = deviceRedemptionFailure;
 exports.ledgerScopesReady = ledgerScopesReady;
+exports.midtransLedgerMismatch = midtransLedgerMismatch;
 const functions = require("firebase-functions");
 const admin = require("firebase-admin");
 const axios_1 = require("axios");
@@ -2817,6 +2818,54 @@ exports.monitorPaidWithoutAccess = functions
             `📦 Produk: <b>${esc(String(t.entitlement_key))}</b>\n` +
             `🧾 Invoice: <code>${esc(String(t.invoice_number || tx.id))}</code>\n` +
             `⏱️ Lewat ${Math.round((now - paidMs) / 60000)} menit. Penilaian akses sudah dipercepat; periksa bila belum teratasi.`, "alert");
+    }
+    return null;
+});
+// ================================================================
+// REKONSILIASI HARIAN MIDTRANS: transaksi 7 hari terakhir yang bagi kita belum
+// `paid` ditanyakan langsung ke Midtrans. Selisih (Midtrans lunas, kita belum)
+// dilaporkan, dicatat di `payment_audit`, dan tidak diubah otomatis.
+// ================================================================
+function midtransLedgerMismatch(local, remote, localAmount, remoteAmount) {
+    const settled = remote === "settlement" || remote === "capture";
+    if (!settled || local === "paid" || local === "success")
+        return null;
+    const a = Number(localAmount), b = Number(remoteAmount);
+    return Number.isFinite(a) && Number.isFinite(b) && Math.round(a) !== Math.round(b) ? "paid_amount_differs" : "paid_at_midtrans_not_locally";
+}
+exports.auditMidtransLedger = functions
+    .runWith({ serviceAccount: "open-turath@appspot.gserviceaccount.com", timeoutSeconds: 300 })
+    .pubsub.schedule("15 2 * * *").timeZone("Asia/Jakarta").onRun(async () => {
+    var _a, _b;
+    const cfg = getMidtransConfig();
+    const auth = "Basic " + Buffer.from(cfg.serverKey + ":").toString("base64");
+    const since = admin.firestore.Timestamp.fromMillis(Date.now() - 7 * 86400000);
+    const snap = await db.collection("transactions").where("gateway", "==", "midtrans").where("created_at", ">=", since).limit(300).get();
+    const started = Date.now();
+    const mismatches = [];
+    let checked = 0, failed = 0;
+    for (const doc of snap.docs) {
+        if (Date.now() - started > 250000)
+            break;
+        const t = doc.data();
+        if (t.status === "paid" || !t.invoice_number)
+            continue;
+        try {
+            const r = await axios_1.default.get(`${cfg.apiUrl}/${encodeURIComponent(t.invoice_number)}/status`, { headers: { Authorization: auth, Accept: "application/json" }, timeout: 10000 });
+            checked++;
+            const kind = midtransLedgerMismatch(t.status, (_a = r.data) === null || _a === void 0 ? void 0 : _a.transaction_status, t.amount, (_b = r.data) === null || _b === void 0 ? void 0 : _b.gross_amount);
+            if (kind)
+                mismatches.push({ invoice: t.invoice_number, local: t.status, kind });
+        }
+        catch (_) {
+            failed++;
+        }
+    }
+    const day = new Date().toISOString().slice(0, 10);
+    await db.collection("payment_audit").doc(day).set({ checked, failed, mismatches, at: Date.now() });
+    if (mismatches.length) {
+        await sendTelegramNotification(`⚠️ <b>[SELISIH MIDTRANS]</b> ${mismatches.length} transaksi lunas di Midtrans tetapi belum lunas di sistem:\n` +
+            mismatches.slice(0, 10).map((m) => `• <code>${esc(String(m.invoice))}</code> (${esc(m.kind)})`).join("\n"), "alert");
     }
     return null;
 });

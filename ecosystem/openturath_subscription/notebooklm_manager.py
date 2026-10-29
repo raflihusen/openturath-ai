@@ -12,6 +12,13 @@ from typing import Any
 
 logger = logging.getLogger(__name__)
 
+from writer_guard import assert_legacy_writes_allowed, LegacyWriterBlocked
+
+
+def _blocked(action: str, email: str, exc: Exception) -> dict:
+    logger.error("Penulisan %s ditolak: %s", action, exc)
+    return {"success": False, "action": action, "email": email, "error": str(exc)}
+
 
 # ─────────────────────────────────────────────
 # LAZY IMPORT — hanya import jika notebooklm-py ada
@@ -81,6 +88,10 @@ async def add_viewer(notebook_id: str, email: str, user_name: str = "") -> dict[
     Returns:
         dict dengan success/error dan detail
     """
+    try:
+        assert_legacy_writes_allowed()
+    except LegacyWriterBlocked as exc:
+        return _blocked("add_viewer", email, exc)
     await _ensure_fresh_cookies()
     NotebookLMClient = _get_client()
     storage_path = _get_storage_path()
@@ -139,6 +150,10 @@ async def remove_viewer(notebook_id: str, email: str) -> dict[str, Any]:
     Returns:
         dict dengan success/error dan detail
     """
+    try:
+        assert_legacy_writes_allowed()
+    except LegacyWriterBlocked as exc:
+        return _blocked("remove_viewer", email, exc)
     await _ensure_fresh_cookies()
     NotebookLMClient = _get_client()
     storage_path = _get_storage_path()
