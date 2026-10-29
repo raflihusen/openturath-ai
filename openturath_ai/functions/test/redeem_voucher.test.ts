@@ -153,3 +153,26 @@ test('galat penukaran membawa alasan terstruktur agar aplikasi dapat menerjemahk
   assert.equal(await reasonOf(api.redeemCode({code: 'TRIALX', deviceId: 'e'.repeat(64), isPhysicalDevice: true},
     {auth: {uid: 'u', token: {}}})), 'needs_google');
 });
+
+const DEVICE = 'a'.repeat(64);
+const detailsOf = (p: Promise<any>) => p.then(() => null, (e: any) => ({code: e.code, reason: e.details?.reason, message: e.message}));
+
+test('akun yang sama mengulang klaim trial mendengar "sudah aktif", bukan tuduhan perangkat', async () => {
+  const {api, db} = fixture();
+  db.seed('redeem_codes/TRIAL7', {max_uses: 100, times_used: 1, duration_days: 7, entitlement_key: 'hadits'});
+  db.seed('redeem_codes/TRIAL7/redemptions/u', {uid: 'u'});
+  db.seed(`device_redemptions/dev_${DEVICE}_trial_default`, {uid: 'u', email: 'u@example.test'});
+  const r = await detailsOf(api.redeemCode({code: 'TRIAL7', deviceId: DEVICE}, caller()));
+  assert.equal(r?.reason, 'already_redeemed');
+  assert.match(r!.message, /sudah aktif di akun Anda/);
+});
+
+test('perangkat dipakai akun lain: pesan jelas dengan petunjuk akun tersamar', async () => {
+  const {api, db} = fixture();
+  db.seed('redeem_codes/TRIAL7', {max_uses: 100, times_used: 1, duration_days: 7, entitlement_key: 'hadits'});
+  db.seed(`device_redemptions/dev_${DEVICE}_trial_default`, {uid: 'lain', email: 'budi.santoso@example.test'});
+  const r = await detailsOf(api.redeemCode({code: 'TRIAL7', deviceId: DEVICE}, caller()));
+  assert.equal(r?.reason, 'device_used');
+  assert.match(r!.message, /bu\*\*\*/);
+  assert.doesNotMatch(r!.message, /budi\.santoso|example\.test/);
+});

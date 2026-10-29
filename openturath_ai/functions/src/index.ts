@@ -1861,6 +1861,26 @@ export const checkPaymentStatus = functions
 // Menukarkan Kode Redeem Santri (Voucher Akses 7 Hari, dsb)
 // Mengaktifkan entitlement berbatas waktu & trigger email sharing
 // ================================================================
+
+const ALREADY_ACTIVE_MESSAGE = "Kode ini sudah aktif di akun Anda. Tidak perlu menukarkannya lagi.";
+
+function maskEmailHint(email: unknown): string {
+  const local = typeof email === "string" ? email.split("@")[0].trim() : "";
+  return local.length >= 2 ? `${local.slice(0, 2)}***` : "";
+}
+
+// Sebab penolakan kode per-perangkat. Sengaja murni agar bisa diuji tanpa Firestore.
+export function deviceRedemptionFailure(existing: any, uid: string): {reason: string; message: string} {
+  if (existing?.uid === uid) return {reason: "already_redeemed", message: ALREADY_ACTIVE_MESSAGE};
+  const hint = maskEmailHint(existing?.email);
+  return {
+    reason: "device_used",
+    message: "Perangkat ini sudah pernah dipakai mengaktifkan kode serupa" +
+      (hint ? ` oleh akun ${hint}.` : " oleh akun lain.") +
+      " Masuk dengan akun tersebut, atau hubungi admin bila ini keliru.",
+  };
+}
+
 export const redeemCode = functions
   .runWith({ serviceAccount: "open-turath@appspot.gserviceaccount.com", timeoutSeconds: 120 })
   .https.onCall(async (data, context) => {
@@ -1967,13 +1987,16 @@ export const redeemCode = functions
           );
         }
 
+        // Akun yang sama yang mengulang klaim harus mendengar "sudah aktif di akun Anda",
+        // bukan tuduhan bahwa perangkatnya sudah dipakai.
+        const redemptionDoc0 = await transaction.get(codeRef.collection("redemptions").doc(uid));
+        if (redemptionDoc0.exists) {
+          throw new functions.https.HttpsError("already-exists", ALREADY_ACTIVE_MESSAGE, {reason: "already_redeemed"});
+        }
         const deviceRedemptionDoc = await transaction.get(deviceRedemptionRef);
         if (deviceRedemptionDoc.exists) {
-          throw new functions.https.HttpsError(
-            "already-exists",
-            "Kode ini hanya dapat diklaim 1 kali per perangkat. Perangkat ini sudah pernah mengaktifkannya sebelumnya.",
-            {reason: "device_used"}
-          );
+          const failure = deviceRedemptionFailure(deviceRedemptionDoc.data(), uid);
+          throw new functions.https.HttpsError("already-exists", failure.message, {reason: failure.reason});
         }
       }
 
@@ -1981,7 +2004,7 @@ export const redeemCode = functions
       const redemptionRef = codeRef.collection("redemptions").doc(uid);
       const redemptionDoc = await transaction.get(redemptionRef);
       if (redemptionDoc.exists) {
-        throw new functions.https.HttpsError("already-exists", "Kode ini sudah pernah ditukarkan sebelumnya.", {reason: "already_redeemed"});
+        throw new functions.https.HttpsError("already-exists", ALREADY_ACTIVE_MESSAGE, {reason: "already_redeemed"});
       }
 
       // Satu kode dapat membuka satu, beberapa, atau semua AI. `entitlement_keys`
