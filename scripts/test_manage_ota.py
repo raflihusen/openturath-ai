@@ -268,6 +268,34 @@ class ExtractReleaseTest(unittest.TestCase):
             self.assertIsNone(ota.extract_release(release_doc(**bad), "android"), bad)
 
 
+class GuruEditionTest(unittest.TestCase):
+    GURU = {"build": 77, "version": "1.0.76", "url": "https://openturath.web.app/OpenTurath_Guru_v77.apk", "sha256": SHA_A}
+
+    def doc(self):
+        return release_doc(editions={"guru": dict(self.GURU)})
+
+    def test_guru_reads_only_editions_guru(self):
+        self.assertEqual(ota.extract_release(self.doc(), "guru")["build"], 77)
+        self.assertIsNone(ota.extract_release(release_doc(), "guru"), "Guru tidak boleh mewarisi rilis standar")
+        self.assertIsNone(ota.extract_release(release_doc(editions="x"), "guru"))
+
+    def test_older_guru_build_is_not_flagged_against_standard_pubspec(self):
+        r = ota.extract_release(self.doc(), "guru")
+        self.assertEqual(ota.check_release_entry("guru", r, 85), [])
+
+    def test_guru_still_requires_valid_sha256_and_host(self):
+        r = ota.extract_release(self.doc(), "guru")
+        self.assertTrue(ota.check_release_entry("guru", dict(r, sha256=None), 85))
+        self.assertTrue(ota.check_release_entry("guru", dict(r, url="https://evil.example/a.apk"), 85))
+
+    def test_report_skips_guru_when_absent_and_lists_it_when_present(self):
+        ok = lambda url: (200, 10, "application/vnd.android.package-archive")
+        names = {p: st for p, st, _ in ota.verify_release_report(release_doc(), 83, probe=ok)}
+        self.assertEqual(names["guru"], "LEWAT")
+        names = {p: st for p, st, _ in ota.verify_release_report(self.doc(), 83, probe=ok)}
+        self.assertEqual(names["guru"], "OK")
+
+
 class CheckEntryTest(unittest.TestCase):
     def release(self, **over):
         base = {"build": 90, "version": "1.0.9", "url": APK, "sha256": SHA_A}
@@ -309,7 +337,7 @@ class VerifyReportTest(unittest.TestCase):
 
     def test_everything_good_passes_and_windows_is_skipped(self):
         report = ota.verify_release_report(release_doc(), 83, probe=self.ok_probe)
-        self.assertEqual(self.status_of(report), {"android": "OK", "macos": "OK", "windows": "LEWAT"})
+        self.assertEqual(self.status_of(report), {"android": "OK", "guru": "LEWAT", "macos": "OK", "windows": "LEWAT"})
 
     def test_404_is_reported_as_failure(self):
         def probe(url):

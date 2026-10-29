@@ -163,14 +163,21 @@ SHA256_PATTERN = re.compile(r"^[a-fA-F0-9]{64}$")
 
 def extract_release(doc, platform):
     """Meniru PlatformRelease.parse di klien: kembalikan dict rilis atau None."""
-    platforms = doc.get("platforms")
-    value = platforms.get(platform) if isinstance(platforms, dict) else doc.get(platform)
-    if isinstance(value, dict):
-        release = value
-    elif platform == "android":
-        release = doc  # kontrak dokumen produksi Android (bidang datar)
+    if platform == "guru":
+        # Edisi Guru hanya dari editions.guru; tidak pernah jatuh ke rilis standar (sama seperti klien).
+        editions = doc.get("editions")
+        release = editions.get("guru") if isinstance(editions, dict) else None
+        if not isinstance(release, dict):
+            return None
     else:
-        return None
+        platforms = doc.get("platforms")
+        value = platforms.get(platform) if isinstance(platforms, dict) else doc.get(platform)
+        if isinstance(value, dict):
+            release = value
+        elif platform == "android":
+            release = doc  # kontrak dokumen produksi Android (bidang datar)
+        else:
+            return None
     build = release.get("build", release.get("latest_version_code"))
     url = release.get("url", release.get("apk_url"))
     version = release.get("version", release.get("latest_version"))
@@ -188,6 +195,10 @@ def check_release_entry(platform, release, current_build):
     problems = []
     if release is None:
         return ["Tidak ada rilis valid untuk platform ini di dokumen."]
+    edition_guru = platform == "guru"
+    if edition_guru:
+        platform = "android"
+        current_build = None  # Guru sengaja punya build sendiri, tidak dibandingkan dengan pubspec standar
     from urllib.parse import urlparse
     uri = urlparse(release["url"])
     if uri.scheme != "https":
@@ -256,7 +267,7 @@ def verify_release_report(doc, current_build, *, probe=probe_url, hasher=sha256_
     Mengembalikan daftar (platform, status, rincian) dengan status 'OK', 'PERINGATAN', atau 'GAGAL'.
     """
     report = []
-    for platform in ("android", "macos", "windows"):
+    for platform in ("android", "guru", "macos", "windows"):
         release = extract_release(doc, platform)
         if release is None and platform != "android":
             report.append((platform, "LEWAT", ["Tidak ada rilis terdaftar untuk platform ini."]))
