@@ -1,5 +1,6 @@
 import 'package:path/path.dart' as p;
 import '../core/app_platform.dart';
+import '../core/app_config.dart';
 import '../core/platform_release.dart';
 import 'dart:async';
 import 'dart:io';
@@ -129,7 +130,9 @@ class UpdateService extends ChangeNotifier {
       }
 
       final data = doc.data()!;
-      final release = PlatformRelease.parse(data, defaultTargetPlatform);
+      const edition = AppConfig.isGuruEdition ? 'guru' : 'standard';
+      final release =
+          PlatformRelease.parse(data, defaultTargetPlatform, edition: edition);
       if (release == null) {
         _updateInfo = null;
         _status = UpdateStatus.idle;
@@ -175,7 +178,7 @@ class UpdateService extends ChangeNotifier {
         }
 
         // Android: Periksa apakah APK versi tersebut SUDAH pernah terunduh di cache (F44)
-        final localFile = await _getLocalApkFile(latestCode);
+        final localFile = await _getLocalApkFile(latestCode, edition);
         bool isCachedValid = false;
         if (await localFile.exists() &&
             (await localFile.length()) > 5 * 1024 * 1024) {
@@ -354,13 +357,14 @@ class UpdateService extends ChangeNotifier {
   }
 
   /// Lokasi file APK di penyimpanan privat aplikasi
-  Future<File> _getLocalApkFile(int versionCode) async {
+  Future<File> _getLocalApkFile(int versionCode, String edition) async {
     final dir = await getApplicationSupportDirectory();
     final updateDir = Directory(p.join(dir.path, 'updates'));
     if (!await updateDir.exists()) {
       await updateDir.create(recursive: true);
     }
-    return File(p.join(updateDir.path, 'OpenTurath_v$versionCode.apk'));
+    final tag = edition == 'standard' ? '' : '_$edition';
+    return File(p.join(updateDir.path, 'OpenTurath${tag}_v$versionCode.apk'));
   }
 
   /// Tombol "Pasang Sekarang" dipanggil:

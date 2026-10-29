@@ -27,8 +27,13 @@ class PlatformRelease {
     'openturath-ai.firebaseapp.com',
   };
 
+  /// [edition] memisahkan aliran rilis Android: edisi Guru hanya membaca
+  /// `editions.guru` dan TIDAK PERNAH jatuh ke rilis standar, sebab APK standar
+  /// memakai paket yang sama dan akan menimpa edisi Guru. Edisi standar
+  /// mengabaikan `editions`.
   static PlatformRelease? parse(
-      Map<String, dynamic> data, TargetPlatform platform) {
+      Map<String, dynamic> data, TargetPlatform platform,
+      {String edition = 'standard'}) {
     final key = switch (platform) {
       TargetPlatform.android => 'android',
       TargetPlatform.macOS => 'macos',
@@ -37,7 +42,14 @@ class PlatformRelease {
     };
     if (key == null) return null;
     final platforms = data['platforms'];
-    final value = platforms is Map ? platforms[key] : data[key];
+    final Object? value;
+    if (platform == TargetPlatform.android && edition != 'standard') {
+      final editions = data['editions'];
+      value = editions is Map ? editions[edition] : null;
+      if (value is! Map) return null;
+    } else {
+      value = platforms is Map ? platforms[key] : data[key];
+    }
     final Map release;
     if (value is Map) {
       release = value;
