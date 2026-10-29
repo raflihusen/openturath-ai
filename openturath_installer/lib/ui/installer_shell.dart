@@ -63,6 +63,7 @@ class _InstallerShellState extends State<InstallerShell>
   );
   StreamSubscription<InstallProgress>? _sub;
   bool _reduce = false;
+  final ValueNotifier<Offset> _look = ValueNotifier(Offset.zero);
 
   @override
   void initState() {
@@ -96,6 +97,7 @@ class _InstallerShellState extends State<InstallerShell>
     _level.dispose();
     _burst.dispose();
     _dir.dispose();
+    _look.dispose();
     super.dispose();
   }
 
@@ -154,113 +156,148 @@ class _InstallerShellState extends State<InstallerShell>
               final markSize = math.min(170.0, c.maxHeight * 0.32);
               final markTop = math.max(28.0, c.maxHeight * 0.08);
               final center = Offset(c.maxWidth / 2, markTop + markSize / 2);
-              return Stack(
-                children: [
-                  // Gema arch di belakang.
-                  Positioned.fill(
-                    child: IgnorePointer(
-                      child: AnimatedBuilder(
-                        animation: Listenable.merge([_echo, _level, _burst]),
-                        builder: (_, _) => CustomPaint(
-                          painter: EchoPainter(
-                            phase: _echo.value,
-                            center: center,
-                            intensity: switch (_stage) {
-                              _Stage.installing => 0.5 + 0.5 * _level.value,
-                              _Stage.done => 1 - _burst.value * 0.7,
-                              _ => 0.15 * _intro.value,
-                            },
-                          ),
-                        ),
+              return MouseRegion(
+                onHover: (e) => _look.value = _reduce
+                    ? Offset.zero
+                    : Offset(
+                        (e.localPosition.dx / c.maxWidth - .5) * 2,
+                        (e.localPosition.dy / c.maxHeight - .5) * 2,
                       ),
-                    ),
-                  ),
-                  // Tanda.
-                  Positioned(
-                    top: markTop,
-                    left: 0,
-                    right: 0,
-                    height: markSize,
-                    child: AnimatedBuilder(
-                      animation: Listenable.merge([_intro, _level, _burst]),
-                      builder: (_, _) {
-                        final trace = Curves.easeInOutCubic.transform(
-                          (_intro.value / 0.62).clamp(0, 1),
-                        );
-                        final fillIn = ((_intro.value - 0.55) / 0.35).clamp(
-                          0.0,
-                          1.0,
-                        );
-                        final working = _stage == _Stage.installing;
-                        final done = _stage == _Stage.done;
-                        final pulse = done
-                            ? 1 + 0.045 * math.sin(_burst.value * math.pi)
-                            : 1.0;
-                        return Transform.scale(
-                          scale: pulse,
-                          child: CustomPaint(
-                            painter: MarkPainter(
-                              trace: working || done ? 1 : trace,
-                              fill: working
-                                  ? 0
-                                  : (_stage == _Stage.error ? 0.35 : fillIn),
-                              level: working || done ? _level.value : 0,
+                onExit: (_) => _look.value = Offset.zero,
+                child: Stack(
+                  children: [
+                    // Gema arch di belakang.
+                    Positioned.fill(
+                      child: IgnorePointer(
+                        child: _Parallax(
+                          look: _look,
+                          depth: 14,
+                          child: AnimatedBuilder(
+                            animation: Listenable.merge([
+                              _echo,
+                              _level,
+                              _burst,
+                            ]),
+                            builder: (_, _) => CustomPaint(
+                              painter: EchoPainter(
+                                phase: _echo.value,
+                                center: center,
+                                shock: _stage == _Stage.done ? _burst.value : 0,
+                                intensity: switch (_stage) {
+                                  _Stage.installing => 0.5 + 0.5 * _level.value,
+                                  _Stage.done => 1 - _burst.value * 0.7,
+                                  _ => 0.15 * _intro.value,
+                                },
+                              ),
                             ),
                           ),
-                        );
-                      },
-                    ),
-                  ),
-                  // Isi bertahap.
-                  Positioned.fill(
-                    top: markTop + markSize + 18,
-                    child: AnimatedSwitcher(
-                      duration: const Duration(milliseconds: 420),
-                      switchInCurve: OT.ease,
-                      transitionBuilder: (child, a) => FadeTransition(
-                        opacity: a,
-                        child: SlideTransition(
-                          position: Tween(
-                            begin: const Offset(0, .04),
-                            end: Offset.zero,
-                          ).animate(a),
-                          child: child,
                         ),
                       ),
-                      child: KeyedSubtree(
-                        key: ValueKey(_stage),
-                        child: SingleChildScrollView(
-                          padding: const EdgeInsets.only(bottom: 44),
-                          child: Center(
-                            child: switch (_stage) {
-                              _Stage.welcome => _welcome(),
-                              _Stage.installing => _installing(),
-                              _Stage.done => _done(),
-                              _Stage.error => _error(),
-                            },
+                    ),
+                    // Tanda.
+                    Positioned(
+                      top: markTop,
+                      left: 0,
+                      right: 0,
+                      height: markSize,
+                      child: _Parallax(
+                        look: _look,
+                        depth: 6,
+                        child: AnimatedBuilder(
+                          animation: Listenable.merge([
+                            _intro,
+                            _level,
+                            _burst,
+                            _echo,
+                          ]),
+                          builder: (_, _) {
+                            final trace = Curves.easeInOutCubic.transform(
+                              (_intro.value / 0.62).clamp(0, 1),
+                            );
+                            final fillIn = ((_intro.value - 0.55) / 0.35).clamp(
+                              0.0,
+                              1.0,
+                            );
+                            final working = _stage == _Stage.installing;
+                            final done = _stage == _Stage.done;
+                            final pulse = done
+                                ? 1 + 0.045 * math.sin(_burst.value * math.pi)
+                                : 1.0;
+                            final breathe =
+                                _stage == _Stage.welcome && _intro.value >= 1
+                                ? 1 +
+                                      0.012 *
+                                          math.sin(_echo.value * math.pi * 6)
+                                : 1.0;
+                            return Transform.scale(
+                              scale: pulse * breathe,
+                              child: CustomPaint(
+                                painter: MarkPainter(
+                                  trace: working || done ? 1 : trace,
+                                  fill: working
+                                      ? 0
+                                      : (_stage == _Stage.error
+                                            ? 0.35
+                                            : fillIn),
+                                  level: working || done ? _level.value : 0,
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                    // Isi bertahap.
+                    Positioned.fill(
+                      top: markTop + markSize + 18,
+                      child: AnimatedSwitcher(
+                        duration: const Duration(milliseconds: 420),
+                        switchInCurve: OT.ease,
+                        transitionBuilder: (child, a) => FadeTransition(
+                          opacity: a,
+                          child: SlideTransition(
+                            position: Tween(
+                              begin: const Offset(0, .04),
+                              end: Offset.zero,
+                            ).animate(a),
+                            child: child,
+                          ),
+                        ),
+                        child: KeyedSubtree(
+                          key: ValueKey(_stage),
+                          child: SingleChildScrollView(
+                            padding: const EdgeInsets.only(bottom: 44),
+                            child: Center(
+                              child: switch (_stage) {
+                                _Stage.welcome => _welcome(),
+                                _Stage.installing => _installing(),
+                                _Stage.done => _done(),
+                                _Stage.error => _error(),
+                              },
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                  // Bilah atas.
-                  Positioned(top: 10, left: 14, right: 14, child: _topBar()),
-                  Positioned(
-                    bottom: 14,
-                    left: 0,
-                    right: 0,
-                    child: Center(
-                      child: Text(
-                        'openturath.id  ·  ${_s.privacy}',
-                        style: const TextStyle(
-                          fontSize: 11,
-                          color: OT.sub,
-                          letterSpacing: .2,
+                    // Bilah atas.
+                    Positioned(top: 10, left: 14, right: 14, child: _topBar()),
+                    Positioned(
+                      bottom: 14,
+                      left: 0,
+                      right: 0,
+                      child: Center(
+                        child: Text(
+                          'openturath.id  ·  ${_s.privacy}',
+                          style: const TextStyle(
+                            fontSize: 11,
+                            color: OT.sub,
+                            letterSpacing: .2,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               );
             },
           ),
@@ -290,52 +327,72 @@ class _InstallerShellState extends State<InstallerShell>
   );
 
   // ── Layar-layar ──
+  Widget _titleText(String t) => AnimatedSwitcher(
+    duration: const Duration(milliseconds: 260),
+    child: Text(
+      t,
+      key: ValueKey('${_s.code}$t'),
+      textAlign: TextAlign.center,
+      style: TextStyle(
+        fontFamily: _s.rtl ? OT.arabic : OT.serif,
+        fontSize: 40,
+        height: 1.1,
+        letterSpacing: -.5,
+      ),
+    ),
+  );
+
+  Widget _subText(String t) => AnimatedSwitcher(
+    duration: const Duration(milliseconds: 260),
+    child: Text(
+      t,
+      key: ValueKey('${_s.code}$t'),
+      textAlign: TextAlign.center,
+      style: const TextStyle(fontSize: 16, color: OT.sub, height: 1.5),
+    ),
+  );
+
   Widget _title(String t, {String? sub}) => Column(
     children: [
-      Text(
-        t,
-        textAlign: TextAlign.center,
-        style: TextStyle(
-          fontFamily: _s.rtl ? OT.arabic : OT.serif,
-          fontSize: 40,
-          height: 1.1,
-          letterSpacing: -.5,
-        ),
-      ),
-      if (sub != null) ...[
-        const SizedBox(height: 10),
-        Text(
-          sub,
-          textAlign: TextAlign.center,
-          style: const TextStyle(fontSize: 16, color: OT.sub, height: 1.5),
-        ),
-      ],
+      _titleText(t),
+      if (sub != null) ...[const SizedBox(height: 10), _subText(sub)],
     ],
   );
 
-  Widget _welcome() => _Reveal(
-    controller: _intro,
-    child: Column(
-      children: [
-        _title('OpenTurath AI', sub: _s.tagline),
-        const SizedBox(height: 26),
-        _Primary(label: _s.install, onTap: _start),
-        const SizedBox(height: 14),
-        _Quiet(
+  Widget _welcome() => Column(
+    children: [
+      _Reveal(
+        controller: _intro,
+        from: .56,
+        child: _titleText('OpenTurath AI'),
+      ),
+      const SizedBox(height: 10),
+      _Reveal(controller: _intro, from: .64, child: _subText(_s.tagline)),
+      const SizedBox(height: 26),
+      _Reveal(
+        controller: _intro,
+        from: .72,
+        child: _Primary(label: _s.install, onTap: _start),
+      ),
+      const SizedBox(height: 14),
+      _Reveal(
+        controller: _intro,
+        from: .80,
+        child: _Quiet(
           label: _s.options,
           open: _optionsOpen,
           onTap: () => setState(() => _optionsOpen = !_optionsOpen),
         ),
-        AnimatedSize(
-          duration: const Duration(milliseconds: 320),
-          curve: OT.ease,
-          alignment: Alignment.topCenter,
-          child: _optionsOpen
-              ? _optionsPanel()
-              : const SizedBox(width: double.infinity),
-        ),
-      ],
-    ),
+      ),
+      AnimatedSize(
+        duration: const Duration(milliseconds: 320),
+        curve: OT.ease,
+        alignment: Alignment.topCenter,
+        child: _optionsOpen
+            ? _optionsPanel()
+            : const SizedBox(width: double.infinity),
+      ),
+    ],
   );
 
   Widget _optionsPanel() => Padding(
@@ -501,15 +558,20 @@ class _InstallerShellState extends State<InstallerShell>
 
 /// Menampilkan anak dengan jeda setelah gambar tanda selesai ditelusuri.
 class _Reveal extends StatelessWidget {
-  const _Reveal({required this.controller, required this.child});
+  const _Reveal({
+    required this.controller,
+    required this.child,
+    this.from = 0.6,
+  });
   final AnimationController controller;
+  final double from;
   final Widget child;
   @override
   Widget build(BuildContext context) => AnimatedBuilder(
     animation: controller,
     builder: (_, c) {
       final t = Curves.easeOutCubic.transform(
-        ((controller.value - 0.6) / 0.4).clamp(0.0, 1.0),
+        ((controller.value - from) / 0.28).clamp(0.0, 1.0),
       );
       return Opacity(
         opacity: t,
@@ -673,6 +735,34 @@ class _IconBtn extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.all(6),
         child: Icon(icon, size: 18, color: OT.sub),
+      ),
+    ),
+  );
+}
+
+/// Menggeser anak sedikit mengikuti penunjuk, dengan peredaman, sehingga lapisan
+/// belakang dan depan terasa punya kedalaman.
+class _Parallax extends StatelessWidget {
+  const _Parallax({
+    required this.look,
+    required this.depth,
+    required this.child,
+  });
+  final ValueNotifier<Offset> look;
+  final double depth;
+  final Widget child;
+  @override
+  Widget build(BuildContext context) => ValueListenableBuilder<Offset>(
+    valueListenable: look,
+    child: child,
+    builder: (_, v, c) => TweenAnimationBuilder<Offset>(
+      tween: Tween(end: v),
+      duration: const Duration(milliseconds: 520),
+      curve: Curves.easeOut,
+      child: c,
+      builder: (_, o, c) => Transform.translate(
+        offset: Offset(-o.dx * depth, -o.dy * depth),
+        child: c,
       ),
     ),
   );

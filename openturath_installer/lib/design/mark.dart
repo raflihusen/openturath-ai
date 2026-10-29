@@ -87,9 +87,15 @@ class MarkPainter extends CustomPainter {
         ..strokeWidth = 3 / k * 0.9
         ..strokeCap = StrokeCap.round
         ..color = OT.ink;
+      final head = Paint()
+        ..color = OT.ink
+        ..maskFilter = MaskFilter.blur(BlurStyle.normal, 7 / k);
       for (final part in g.parts) {
         for (final m in part.computeMetrics()) {
           canvas.drawPath(m.extractPath(0, m.length * trace), stroke);
+          // Ujung garis bercahaya, seperti pena yang sedang menulis.
+          final t = m.getTangentForOffset(m.length * trace);
+          if (t != null) canvas.drawCircle(t.position, 5 / k, head);
         }
       }
     }
@@ -104,8 +110,13 @@ class MarkPainter extends CustomPainter {
 /// Gema latar: bingkai arch berulang yang memuai pelan dan memudar, seperti
 /// riak dari tanda di tengah. [intensity] 0..1 menaikkan kecerahan.
 class EchoPainter extends CustomPainter {
-  EchoPainter({required this.phase, required this.intensity, this.center});
-  final double phase, intensity;
+  EchoPainter({
+    required this.phase,
+    required this.intensity,
+    this.center,
+    this.shock = 0,
+  });
+  final double phase, intensity, shock;
   final Offset? center;
 
   @override
@@ -132,9 +143,28 @@ class EchoPainter extends CustomPainter {
       );
       canvas.restore();
     }
+    // Gelombang kejut sekali jalan saat pemasangan selesai.
+    if (shock > 0 && shock < 1) {
+      final scale = baseK * (1 + Curves.easeOutCubic.transform(shock) * 6);
+      canvas.save();
+      canvas.translate(c.dx, c.dy);
+      canvas.scale(scale);
+      canvas.translate(-kMarkWidth / 2, -kMarkHeight / 2);
+      canvas.drawPath(
+        frame,
+        Paint()
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 1.8 / scale
+          ..color = OT.ink.withValues(alpha: 0.5 * math.pow(1 - shock, 1.6)),
+      );
+      canvas.restore();
+    }
   }
 
   @override
   bool shouldRepaint(EchoPainter o) =>
-      o.phase != phase || o.intensity != intensity || o.center != center;
+      o.phase != phase ||
+      o.intensity != intensity ||
+      o.center != center ||
+      o.shock != shock;
 }
