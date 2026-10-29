@@ -123,3 +123,17 @@ h3.sub{font-size:17px;margin:0 0 6px}
 }
 @media (prefers-reduced-motion:reduce){.ba,.ba-handle .knob,.ba-layer img{transition:none}}
 .fbrand{display:flex;flex-direction:column;align-items:flex-start}
+
+/* ---------- sisi "Hasil": teks hidup, bukan gambar ---------- */
+.ba{container-type:inline-size}
+.ba-after{color:#111;padding:6cqw 6cqw;display:block}
+.ba-after .txt{display:none;font-family:var(--naskh);font-size:3.1cqw;line-height:1.95;text-align:justify;text-justify:inter-word}
+.ba[data-tab="full"] .txt[data-for="full"],.ba[data-tab="syair"] .txt[data-for="syair"],.ba[data-tab="ayat"] .txt[data-for="ayat"]{display:block}
+.ba-after p{margin:0 0 .5em}
+.ba-after h4{margin:.4em 0 .3em;font:700 1.12em/1.7 var(--naskh);text-align:center}
+.ba-after .vs{display:flex;justify-content:space-between;gap:1.5em;margin:.15em 0 .55em;text-align:center}
+.ba-after .vs span{flex:1}
+.ba-after .end{margin-top:.2em}
+.ba[data-tab="syair"] .txt,.ba[data-tab="ayat"] .txt{font-size:3.2cqw;position:absolute;inset:0;padding:0 6cqw;display:none;align-content:center}
+.ba[data-tab="syair"] .txt[data-for="syair"],.ba[data-tab="ayat"] .txt[data-for="ayat"]{display:grid}
+.ba[data-tab="ayat"] .txt{font-size:4.1cqw}

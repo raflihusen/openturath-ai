@@ -13,12 +13,12 @@
   /* ================= SLIDER ================= */
   (function () {
     var ba = $('#ba'); if (!ba) return;
-    var handle = $('#ba-handle'), imgScan = $('#img-scan'), imgOut = $('#img-out');
+    var handle = $('#ba-handle'), imgScan = $('#img-scan');
     // Wilayah (x, y, lebar, tinggi; pecahan dari gambar) yang ditampilkan tiap tab, per sisi.
     var TABS = {
-      full:  { ar: 0.72, scan: [0, 0, 1, 1],              out: [0, 0, 1, 1] },
-      syair: { ar: 4.4,  scan: [0.04, 0.30, 0.92, 0.165], out: [0.04, 0.125, 0.92, 0.13] },
-      ayat:  { ar: 2,    scan: [0.04, 0.52, 0.92, 0.32],  out: [0.04, 0.385, 0.92, 0.345] }
+      full:  { ar: 0.72, scan: [0, 0, 1, 1] },
+      syair: { ar: 4.4,  scan: [0.04, 0.30, 0.92, 0.165] },
+      ayat:  { ar: 2,    scan: [0.04, 0.52, 0.92, 0.32] }
     };
     var tab = 'full', pos = 50, interacted = false, anim = 0;
 
@@ -32,8 +32,8 @@
     }
     function layout() {
       var t = TABS[tab];
-      place(imgScan, t.scan); place(imgOut, t.out);
-      if (imgScan.naturalWidth && imgOut.naturalWidth) ba.classList.add('ready');
+      place(imgScan, t.scan); ba.dataset.tab = tab;
+      if (imgScan.naturalWidth) ba.classList.add('ready');
     }
     function setPos(p) {
       pos = clamp(p, 0, 100);
@@ -104,7 +104,7 @@
       });
     });
 
-    [imgScan, imgOut].forEach(function (im) { if (im.complete) layout(); else im.addEventListener('load', layout); });
+    [imgScan].forEach(function (im) { if (im.complete) layout(); else im.addEventListener('load', layout); });
     if (window.ResizeObserver) new ResizeObserver(layout).observe(ba); else addEventListener('resize', layout);
     ba.style.setProperty('--ar', String(TABS.full.ar));
     setPos(50); layout();
