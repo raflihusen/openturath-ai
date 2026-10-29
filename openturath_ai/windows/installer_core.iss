@@ -1,7 +1,7 @@
 ; Mesin pemasangan OpenTurath AI. Dijalankan senyap oleh layar pemasang
 ; (openturath_installer); pengguna tidak melihat wizard ini.
 #define MyAppName "OpenTurath AI"
-#define MyAppVersion "1.0.83"
+#define MyAppVersion "1.0.85"
 #define MyAppPublisher "OpenTurath"
 #define MyAppURL "https://openturath.id"
 #define MyAppExeName "openturath_ai.exe"
