@@ -138,7 +138,7 @@ test('A01 signed success with wrong amount cannot activate invoice',async()=>{
 test('redeem capacity survives parallel distinct accounts',async()=>{
   const {api,db}=loadBackend(root);
   db.seed('redeem_codes/CODE',{max_uses:3,times_used:0,entitlement_key:'hadits',duration_days:7});
-  const results=await Promise.allSettled(Array.from({length:20},(_,i)=>api.redeemCode({code:'CODE'},{auth:{uid:'u'+i,token:{email:'u'+i+'@example.test'}}})));
+  const results=await Promise.allSettled(Array.from({length:20},(_,i)=>api.redeemCode({code:'CODE'},{auth:{uid:'u'+i,token:{email:'u'+i+'@example.test',email_verified:true}}})));
   assert.equal(results.filter(r=>r.status==='fulfilled').length,3);
   assert.equal(db.docs.get('redeem_codes/CODE').times_used,3);
 });
@@ -209,7 +209,7 @@ for(const code of [null, {}, '\0CODE', '\u202ECODE', 'a/b/c', "' OR 1=1", 'A'.re
 test('voucher whitespace and hyphen normalize to the canonical stored code',async()=>{
   const {api,db}=loadBackend(root);
   db.seed('redeem_codes/AB12',{max_uses:1,times_used:0,duration_days:7,entitlement_key:'hadits'});
-  const result=await api.redeemCode({code:' ab- 12 '},{auth:{uid:'u',token:{email:'u@example.test'}}});
+  const result=await api.redeemCode({code:' ab- 12 '},{auth:{uid:'u',token:{email:'u@example.test',email_verified:true}}});
   assert.equal(result.success,true);
 });
 

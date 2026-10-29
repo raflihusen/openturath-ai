@@ -2914,6 +2914,72 @@ async function notifySubscriptionServer(
 // are handled by the access worker; nothing here can mint new ones.
 
 // ================================================================
+// SAFETY NET: pembayaran lunas wajib berujung akses siap. Bila dalam 3 menit
+// penugasan notebook belum `ready`, penilaian akses dipercepat (worker memeriksa
+// tiap 15 detik) dan pemilik diberi tahu satu kali per transaksi.
+// ================================================================
+export const AUTH_FAILURE_FIELD = /^[a-zA-Z0-9_.:-]{1,80}$/;
+
+export const monitorPaidWithoutAccess = functions
+  .runWith({serviceAccount: "open-turath@appspot.gserviceaccount.com", timeoutSeconds: 120})
+  .pubsub.schedule("every 2 minutes").onRun(async () => {
+    const now = Date.now();
+    const since = admin.firestore.Timestamp.fromMillis(now - 3 * 3600000);
+    const paid = await db.collection("transactions").where("status", "==", "paid").where("paid_at", ">=", since).limit(100).get();
+    for (const tx of paid.docs) {
+      const t = tx.data();
+      const paidMs = t.paid_at?.toMillis?.() || 0;
+      if (!t.uid || !t.entitlement_key || now - paidMs < 180000) continue;
+      const ready = await db.collection("access_assignments")
+        .where("uid", "==", t.uid).where("scope", "==", t.entitlement_key).where("status", "==", "ready").limit(1).get();
+      if (!ready.empty) continue;
+      const flag = db.collection("paid_access_alerts").doc(tx.id);
+      if ((await flag.get()).exists) continue;
+      await db.collection("users").doc(t.uid).update({access_due_ms: now}).catch(() => {});
+      await flag.set({uid: t.uid, entitlement_key: t.entitlement_key, paid_ms: paidMs, alerted_ms: now});
+      await sendTelegramNotification(
+        `⚠️ <b>[PEMBAYARAN LUNAS, AKSES BELUM SIAP]</b>\n` +
+        `📦 Produk: <b>${esc(String(t.entitlement_key))}</b>\n` +
+        `🧾 Invoice: <code>${esc(String(t.invoice_number || tx.id))}</code>\n` +
+        `⏱️ Lewat ${Math.round((now - paidMs) / 60000)} menit. Penilaian akses sudah dipercepat; periksa bila belum teratasi.`,
+        "alert");
+    }
+    return null;
+  });
+
+// ================================================================
+// PELAPORAN GALAT LOGIN TANPA AKUN: hanya kode tetap (tanpa token, email, atau
+// data pribadi), dibatasi laju per alamat IP, disimpan sebagai penghitung harian.
+// ================================================================
+export const reportAuthFailure = functions
+  .runWith({serviceAccount: "open-turath@appspot.gserviceaccount.com", timeoutSeconds: 30, maxInstances: 5})
+  .https.onRequest(async (req, res) => {
+    if (req.method !== "POST") { res.status(405).send("Method Not Allowed"); return; }
+    const body = typeof req.body === "object" && req.body ? req.body : {};
+    const fields: Record<string, string> = {};
+    for (const k of ["platform", "stage", "code", "category", "appVersion"]) {
+      const v = String(body[k] ?? "").trim();
+      fields[k] = AUTH_FAILURE_FIELD.test(v) ? v : "unknown";
+    }
+    const ipHash = crypto.createHash("sha256").update(String(req.ip || "")).digest("hex").slice(0, 24);
+    try {
+      await enforceRateLimit(`authfail_${ipHash}`, 20, 3600, "Terlalu banyak laporan.");
+    } catch (_) { res.status(429).send("Too Many Requests"); return; }
+    const day = new Date().toISOString().slice(0, 10).replace(/-/g, "");
+    const id = `${day}_${fields.platform}_${fields.stage}_${fields.code}`.slice(0, 200);
+    const ref = db.collection("auth_failure_stats").doc(id);
+    await ref.set({...fields, day, count: admin.firestore.FieldValue.increment(1),
+      last_seen: admin.firestore.FieldValue.serverTimestamp()}, {merge: true});
+    const count = (await ref.get()).data()?.count || 0;
+    if (count === 1 || count === 10 || count === 50) {
+      await sendTelegramNotification(
+        `🔐 <b>[GAGAL LOGIN]</b> ${esc(fields.platform)} • tahap <code>${esc(fields.stage)}</code> • kode <code>${esc(fields.code)}</code> • ${count}× hari ini`,
+        "alert");
+    }
+    res.status(204).send("");
+  });
+
+// ================================================================
 // TELEMETRY CLOUD FUNCTION: Forward critical errors to Telegram
 // ================================================================
 export const onClientErrorLogged = functions.firestore
