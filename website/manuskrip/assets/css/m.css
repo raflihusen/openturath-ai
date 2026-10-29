@@ -156,3 +156,54 @@ h3.sub{font-size:17px;margin:0 0 6px}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--hero-wash:#09090B}}
 
 .theme-btn{display:none!important}
+
+/* ---------- tabel: rapi, sel sejajar tengah, kolom sorot menyambung ---------- */
+.cmp{border-radius:20px;overflow-x:auto;overflow-y:hidden;background:var(--surface);box-shadow:0 1px 0 rgba(0,0,0,.02)}
+.cmp table{border-collapse:separate;border-spacing:0}
+.cmp th,.cmp td{vertical-align:middle;padding:18px 22px}
+.cmp thead th{background:var(--container-low,var(--container));border-bottom:1px solid var(--outline-variant);padding-block:16px;font-size:12px;letter-spacing:.09em}
+.cmp tbody th{font-size:15px;line-height:1.4}
+.cmp tbody tr:hover th,.cmp tbody tr:hover td{background:color-mix(in srgb,var(--on-surface) 2.5%,transparent)}
+.cmp.price table{table-layout:fixed;min-width:860px}
+.cmp.price thead th:nth-child(1){width:19%}.cmp.price thead th:nth-child(2){width:22%}.cmp.price thead th:nth-child(3){width:22%}
+.cmp.price td{font-size:14.5px;line-height:1.5}
+.cmp.price tr.us th,.cmp.price tr.us td{background:var(--on-surface);color:var(--surface);font-weight:500;border-bottom:0}
+.cmp.price tr.us:hover th,.cmp.price tr.us:hover td{background:var(--on-surface)}
+.cmp.price tr.us td:last-child{color:var(--surface);font-weight:500}
+.cmp.price tr.us th{font-weight:650}
+.cmp.matrix table{table-layout:fixed;min-width:680px}
+.cmp.matrix thead th:first-child,.cmp.matrix tbody th{width:46%}
+.cmp.matrix thead th:not(:first-child){width:18%}
+.cmp.matrix tbody th{white-space:normal;min-width:0;font-weight:500}
+.cmp.matrix td{height:60px;padding-block:12px}
+.cmp.matrix td:last-child,.cmp.matrix thead th:last-child{background:color-mix(in srgb,var(--on-surface) 5%,var(--surface))}
+.cmp.matrix thead th:last-child{color:var(--on-surface)}
+.cmp.matrix td:last-child{white-space:nowrap}
+.cmp.matrix .yes{vertical-align:middle;margin:0 2px 0 0;transform:rotate(-45deg) translate(1px,-3px)}
+.cmp.matrix small.chip{display:inline-block;margin:0 0 0 10px;padding:3px 10px;border:1px solid var(--outline-variant);border-radius:999px;font-size:11.5px;font-weight:500;color:var(--on-variant);background:var(--surface);vertical-align:middle}
+.cmp.matrix .paid{display:inline-block;max-width:11em;font-size:12.5px;line-height:1.35}
+
+/* ---------- Mengapa per kata ---------- */
+.why-head{margin-top:56px;max-width:900px}
+.why-head h3{font-size:clamp(24px,3vw,32px);font-weight:450;letter-spacing:-.025em;line-height:1.2;margin-top:10px}
+.why{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:28px}
+.why article{display:flex;flex-direction:column;gap:10px;padding:26px 26px 28px;border:1px solid var(--outline-variant);border-radius:20px;background:var(--surface)}
+.why .n{font-size:12px;font-weight:600;letter-spacing:.12em;color:var(--on-variant);font-variant-numeric:tabular-nums}
+.why h4{font-size:19px;font-weight:550;letter-spacing:-.015em;line-height:1.25;margin:0}
+.why p{font-size:15px;line-height:1.6;color:var(--on-variant);margin:0}
+.why .free{background:var(--on-surface);border-color:var(--on-surface)}
+.why .free .n,.why .free p{color:color-mix(in srgb,var(--surface) 72%,transparent)}
+.why .free h4{color:var(--surface)}
+@media (max-width:900px){.why{grid-template-columns:1fr 1fr}}
+@media (max-width:600px){.why{grid-template-columns:1fr}.cmp th,.cmp td{padding:14px 16px}}
+.cmp.matrix thead th:first-child,.cmp.matrix tbody th{width:40%}
+.cmp.matrix thead th:not(:first-child){width:17%}
+.cmp.matrix thead th:last-child{width:26%}
+.cmp.matrix td:last-child{white-space:normal}
+.cmp.matrix small.chip{display:block;width:max-content;margin:6px auto 0;text-transform:none;letter-spacing:0}
+.cmp.matrix td:last-child .yes{margin:0}
+.why{grid-template-columns:repeat(6,1fr)}
+.why article{grid-column:span 2}
+.why article:nth-child(n+4){grid-column:span 3}
+@media (max-width:900px){.why{grid-template-columns:1fr 1fr}.why article,.why article:nth-child(n+4){grid-column:span 1}.why article:last-child{grid-column:1/-1}}
+@media (max-width:600px){.why article,.why article:last-child{grid-column:1/-1}}
