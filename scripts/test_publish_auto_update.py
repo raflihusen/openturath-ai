@@ -84,5 +84,61 @@ class BroadcastMaskTest(unittest.TestCase):
         urlopen.assert_not_called()
 
 
+class EditionTests(unittest.TestCase):
+    def test_versioned_names_never_collide_between_editions(self):
+        self.assertEqual(pub.versioned_apk_name("standard", 85), "OpenTurath_v85.apk")
+        self.assertEqual(pub.versioned_apk_name("guru", 85), "OpenTurath_Guru_v85.apk")
+        self.assertEqual(pub.versioned_apk_url("standard", 85), "https://openturath.web.app/OpenTurath_v85.apk")
+
+    def test_guru_payload_only_touches_editions_guru(self):
+        payload, mask = pub.build_firestore_payload("guru", "1.0.99", 99, "u", "a" * 64, "n", "t")
+        self.assertEqual(mask, ["editions.guru"])
+        self.assertEqual(list(payload["fields"]), ["editions"])
+        guru = payload["fields"]["editions"]["mapValue"]["fields"]["guru"]["mapValue"]["fields"]
+        self.assertEqual(guru["build"], {"integerValue": "99"})
+        self.assertEqual(guru["url"], {"stringValue": "u"})
+
+    def test_standard_payload_never_includes_editions(self):
+        payload, mask = pub.build_firestore_payload("standard", "1.0.99", 99, "u", "a" * 64, "n", "t")
+        self.assertNotIn("editions", payload["fields"])
+        self.assertEqual(tuple(mask), pub.ANDROID_VERSION_FIELDS)
+
+    def test_guru_broadcast_sends_only_guru_mask(self):
+        with mock.patch.object(pub, "get_google_access_token", lambda: "tok"), \
+                mock.patch.object(pub.urllib.request, "urlopen") as urlopen, \
+                mock.patch("builtins.print"):
+            urlopen.return_value.__enter__.return_value.read.return_value = b"{}"
+            ok = pub.update_firestore_version("1.0.99", 99, "https://x.test/a.apk", "a" * 64, "n", edition="guru")
+        self.assertTrue(ok)
+        req = urlopen.call_args[0][0]
+        self.assertEqual(parse_qs(urlparse(req.full_url).query)["updateMask.fieldPaths"], ["editions.guru"])
+
+
+class LiveCheckTests(unittest.TestCase):
+    def _resp(self, status=200, ctype="application/vnd.android.package-archive", length="10"):
+        r = mock.MagicMock()
+        r.status = status
+        r.headers = {"Content-Type": ctype, "Content-Length": length}
+        cm = mock.MagicMock()
+        cm.__enter__.return_value = r
+        return cm
+
+    def test_ok(self):
+        with mock.patch.object(pub.urllib.request, "urlopen", return_value=self._resp()):
+            self.assertTrue(pub.verify_live_file("https://x.test/a.apk", 10)[0])
+
+    def test_html_fallback_is_rejected(self):
+        with mock.patch.object(pub.urllib.request, "urlopen", return_value=self._resp(ctype="text/html")):
+            self.assertFalse(pub.verify_live_file("https://x.test/a.apk", 10)[0])
+
+    def test_size_mismatch_is_rejected(self):
+        with mock.patch.object(pub.urllib.request, "urlopen", return_value=self._resp(length="11")):
+            self.assertFalse(pub.verify_live_file("https://x.test/a.apk", 10)[0])
+
+    def test_network_error_is_rejected(self):
+        with mock.patch.object(pub.urllib.request, "urlopen", side_effect=OSError("down")):
+            self.assertFalse(pub.verify_live_file("https://x.test/a.apk", 10)[0])
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)
