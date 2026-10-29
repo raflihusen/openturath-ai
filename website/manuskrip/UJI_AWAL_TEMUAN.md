@@ -22,7 +22,11 @@ Pola: ketiganya di baris syair dua bagian. Usulan aturan kerja AI: jangan mengha
 | 4 | 7 | إلا بالكثيرية ولا بالقعيطية بل بأسلافنا الصالحين | 11 | Dibalik jadi «إلا بأسلافنا الصالحين، لا بالكثيرية ولا بالقعيطية», «بل» hilang. Makna sama, bukan salinan setia. |
 | 5 | 3 | لا تستسهلون (bacaan tidak pasti) | 6 | Hasil «لا تتساهلون» |
 
-Dilihat tapi tidak yakin (tidak dihitung): hal. 4 «آل الدويلة» vs hasil «آل الدويل»; hal. 4 «عمر حامد» vs hasil «عمر بن حامد».
+## B2. Hasil pembesaran gambar (crop resolusi penuh)
+
+- Hal. 3 «لا تستسهلون»: huruf terbaca jelas «تستسهلون». Hasil «تتساهلون» berarti kata diganti (temuan 5 naik jadi **cukup pasti**).
+- Hal. 4 «عمر حامد»: tidak ada «بن» di naskah. Hasil menambah «بن» secara senyap (kemungkinan benar secara isi, tetapi tidak setia pada naskah).
+- Hal. 4 «آل الدويل(ة)»: bentuk akhir kata tidak terbaca pasti bahkan setelah dibesarkan. **Tetap perlu korektor.**
 
 ## C. Penambahan penyuntingan (bukan transkripsi murni)
 
