@@ -1547,9 +1547,15 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
             ? 'Aktifkan paket langganan untuk membuka ${session.agent.title}.'
             : isAuthError
                 ? 'Sesi masuk Anda belum terhubung. Muat ulang atau masuk kembali.'
-                : e is AgentAccessException && e.code == 'failed-precondition'
+                : e is AgentAccessException &&
+                        const {
+                          'failed-precondition',
+                          'resource-exhausted',
+                          'unavailable',
+                          'deadline-exceeded',
+                        }.contains(e.code)
                     ? e.message
-                    : 'AI belum bisa dihubungkan. Coba lagi.';
+                    : 'AI belum bisa dihubungkan. Coba lagi.${e is AgentAccessException && RegExp(r'^[a-z-]{3,30}$').hasMatch(e.code) ? ' (${e.code})' : ''}';
       });
     }
   }

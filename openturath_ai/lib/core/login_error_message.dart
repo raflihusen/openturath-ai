@@ -9,6 +9,11 @@ String loginErrorMessage(Object error) {
   if (error is PlatformException) {
     if (error.code == 'sign_in_canceled') return '';
     if (error.code == 'network_error') return AppCopy.networkError;
+    if (error.code == 'browser_launch_failed')
+      return AppCopy.desktopBrowserError;
+    if (error.code == 'desktop_loopback_failed') {
+      return AppCopy.desktopListenerError;
+    }
     if (error.code == 'sign_in_failed' &&
         '${error.details}'.toLowerCase().contains('keychain')) {
       return AppCopy.desktopKeychainError;
@@ -19,8 +24,19 @@ String loginErrorMessage(Object error) {
       'keychain-error' => AppCopy.desktopKeychainError,
       'popup-closed-by-user' || 'canceled' => '',
       'network-request-failed' => AppCopy.networkError,
-      _ => AppCopy.googleSignInFailed,
+      _ => _withCode(error.code),
     };
   }
-  return AppCopy.googleSignInFailed;
+  return _withCode(error is PlatformException ? error.code : null);
+}
+
+final _safeCode = RegExp(r'^[a-zA-Z0-9_-]{1,40}$');
+
+/// Pesan umum plus kode galat singkat agar pengguna bisa melaporkannya. Hanya kode,
+/// tidak pernah pesan atau detail SDK yang bisa memuat token.
+String _withCode(String? code) {
+  final safe = code != null && _safeCode.hasMatch(code) ? code : null;
+  return safe == null
+      ? AppCopy.googleSignInFailed
+      : '${AppCopy.googleSignInFailed} ($safe)';
 }

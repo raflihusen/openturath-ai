@@ -32,9 +32,18 @@ void main() {
     final platform =
         PlatformException(code: 'sign_in_failed', details: sensitive);
     final firebase = FirebaseAuthException(code: 'unknown', message: sensitive);
-    expect(loginErrorMessage(platform), AppCopy.googleSignInFailed);
-    expect(loginErrorMessage(firebase), AppCopy.googleSignInFailed);
+    expect(loginErrorMessage(platform), startsWith(AppCopy.googleSignInFailed));
+    expect(loginErrorMessage(firebase), startsWith(AppCopy.googleSignInFailed));
+    expect(loginErrorMessage(platform), isNot(contains(sensitive)));
     expect(loginErrorMessage(firebase), isNot(contains(sensitive)));
+  });
+  test('generic failure shows only a short error code for support', () {
+    expect(loginErrorMessage(FirebaseAuthException(code: 'invalid-credential')),
+        '${AppCopy.googleSignInFailed} (invalid-credential)');
+    expect(loginErrorMessage(StateError('x')), AppCopy.googleSignInFailed);
+    expect(
+        loginErrorMessage(PlatformException(code: 'browser_launch_failed')),
+        AppCopy.desktopBrowserError);
   });
   tearDown(() => AppConfig.localeNotifier.value = 'id');
 }

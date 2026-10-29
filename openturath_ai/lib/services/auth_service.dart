@@ -12,6 +12,7 @@ import 'agent_session_manager.dart';
 import 'session_user_stream.dart';
 import 'browser_companion_chat_service.dart';
 import 'persistent_google_session.dart';
+import 'auth_failure_reporter.dart';
 import 'desktop_auth_gateway.dart';
 
 class AuthService {
@@ -256,6 +257,10 @@ class AuthService {
           RegExp(r'^[a-zA-Z0-9_-]{1,80}$').hasMatch(code) ? code : 'unknown';
       // ignore: avoid_print
       print('OpenTurathAuth stage=$stage code=$safeCode category=$category');
+      if (category != 'cancelled' && safeCode != 'sign_in_canceled') {
+        AuthFailureReporter.report(
+            stage: stage, code: safeCode, category: category);
+      }
       rethrow;
     }
   }
