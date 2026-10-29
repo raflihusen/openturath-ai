@@ -104,7 +104,7 @@
   /* ================= LATAR HERO: ARTEFAK NASKAH ================= */
   // Dua lapis. Lapis bawah (#dots-bg, digambar sekali): kisi bintang khatam dan cincin astrolab.
   // Lapis atas (#dots, bergerak): lembaran kitab, lembar berhias, medali syamsah, astrolab, dan
-  // ubin bintang yang melayang pelan. Palet mengikuti tema: kertas krem dan tinta cokelat (terang)
+  // ubin bintang yang melayang pelan. Palet mengikuti tema: lembaran putih dan tinta hitam (terang)
   // atau abu pudar (gelap). Bagian tengah dipudarkan lewat CSS agar teks tetap terbaca.
   (function () {
     var cv = $('#dots'); if (!cv) return;
@@ -126,8 +126,8 @@
     function palette() {
       light = isLight();
       pal = light
-        ? { p0: '#F4E9D2', p1: '#E6D4B0', edge: 'rgba(120,88,50,0.5)', ink: 'rgba(74,46,24,0.62)', gold: 'rgba(150,104,36,0.8)', goldFill: 'rgba(176,130,56,0.16)', line: 'rgba(120,88,50,0.09)', shadow: 'rgba(70,45,20,0.3)', shade: '80,50,20' }
-        : { p0: 'rgba(205,170,115,0.06)', p1: 'rgba(205,170,115,0.04)', edge: 'rgba(205,170,115,0.14)', ink: 'rgba(214,186,140,0.26)', gold: 'rgba(214,176,112,0.24)', goldFill: 'rgba(205,170,115,0.05)', line: 'rgba(205,170,115,0.06)', shadow: 'transparent', shade: '0,0,0' };
+        ? { p0: '#FFFFFF', p1: '#ECECEC', edge: 'rgba(24,24,27,0.38)', ink: 'rgba(24,24,27,0.6)', gold: 'rgba(24,24,27,0.55)', goldFill: 'rgba(24,24,27,0.07)', line: 'rgba(0,0,0,0.07)', shadow: 'rgba(0,0,0,0.25)', shade: '0,0,0' }
+        : { p0: 'rgba(255,255,255,0.05)', p1: 'rgba(255,255,255,0.03)', edge: 'rgba(255,255,255,0.14)', ink: 'rgba(250,250,250,0.24)', gold: 'rgba(250,250,250,0.22)', goldFill: 'rgba(255,255,255,0.05)', line: 'rgba(255,255,255,0.06)', shadow: 'transparent', shade: '0,0,0' };
     }
     function star(g, cx, cy, R, r, n, rot) {
       g.beginPath();

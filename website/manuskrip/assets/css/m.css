@@ -150,7 +150,7 @@ h3.sub{font-size:17px;margin:0 0 6px}
 .yes{display:inline-block;width:18px;height:11px;border-left:2.5px solid currentColor;border-bottom:2.5px solid currentColor;transform:rotate(-45deg) translate(2px,-3px)}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 
-/* latar hero: krem hangat (terang) dan hitam hangat (gelap), mengikuti tema seperti token situs */
-:root{--hero-wash:#F7EFDD}
-:root[data-theme="dark"]{--hero-wash:#0C0B09}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--hero-wash:#0C0B09}}
+/* latar hero: putih (terang) dan hitam (gelap), netral tanpa nuansa kuning */
+:root{--hero-wash:#FAFAFA}
+:root[data-theme="dark"]{--hero-wash:#09090B}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--hero-wash:#09090B}}
