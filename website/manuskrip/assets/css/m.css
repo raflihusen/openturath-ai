@@ -12,7 +12,7 @@
 .hero-m h1.hero.hero-wide:not(.ar){font-size:clamp(26px,8vw,92px)}
 .hero-m .lede{text-shadow:0 0 18px var(--surface),0 0 8px var(--surface)}
 .hero-m #dots{opacity:.7;-webkit-mask-image:radial-gradient(ellipse 70% 52% at 50% 48%,rgba(0,0,0,.08) 0%,rgba(0,0,0,.55) 55%,#000 100%);mask-image:radial-gradient(ellipse 70% 52% at 50% 48%,rgba(0,0,0,.08) 0%,rgba(0,0,0,.55) 55%,#000 100%)}
-:root[data-theme="light"] .hero-m #dots{opacity:.45}
+:root[data-theme="light"] .hero-m #dots{opacity:.9}
 .hero-m .hero-sub{font-size:max(.42em,18px)}
 
 /* ---------- slider before/after ---------- */

@@ -110,12 +110,14 @@
     var WORDS = ('العلم هذا شريف ولا شيء أشرف منه وقال الله تعالى ثلث بأهل العلم والإنسان يمتثل الأوامر ويجتنب النواهي ' +
       'إذا جاء في المذاكرة شيء من سير السلف فاكتبوه إذا ما انتفعتم به أنتم انتفع به غيركم دونوا سير سلفهم ' +
       'تفوت كرامات الرجال شواردا إذا لم تقيدها علينا الدفاتر وهذا أوان الشروع في المقصود فأقول قال سيدي رضي الله عنه').split(' ');
-    var W = 0, H = 0, dpr = 1, rgb = '0,0,0', sheets = [], raf = 0, last = 0, running = false, visible = true, simT = 0;
+    var W = 0, H = 0, dpr = 1, rgb = '0,0,0', light = false, sheets = [], raf = 0, last = 0, running = false, visible = true, simT = 0;
     var rnd = (function (seed) { return function () { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; }; })(1369);
 
     function readColor() {
       var c = getComputedStyle(cv).color.match(/[\d.]+/g);
       if (c && c.length >= 3) rgb = c[0] + ',' + c[1] + ',' + c[2];
+      var bg = getComputedStyle(d.body).backgroundColor.match(/[\d.]+/g);
+      light = !!bg && bg.length >= 3 && (0.299 * bg[0] + 0.587 * bg[1] + 0.114 * bg[2]) > 140;
     }
     // Satu lembar: kartu bersudut membulat berisi baris-baris Arab dari kanan ke kiri.
     function sprite(w, h) {
@@ -124,11 +126,13 @@
       var g = c.getContext('2d'); g.setTransform(q, 0, 0, q, 0, 0);
       var r = Math.min(w, h) * 0.05;
       g.beginPath(); g.moveTo(r, 0); g.arcTo(w, 0, w, h, r); g.arcTo(w, h, 0, h, r); g.arcTo(0, h, 0, 0, r); g.arcTo(0, 0, w, 0, r); g.closePath();
-      g.fillStyle = 'rgba(' + rgb + ',0.07)'; g.fill();
-      g.lineWidth = 1.2; g.strokeStyle = 'rgba(' + rgb + ',0.22)'; g.stroke();
+      if (light) { // mode terang: kertas krem kecokelatan, tinta cokelat tua
+        var pg = g.createLinearGradient(0, 0, w, h); pg.addColorStop(0, '#F4E9D2'); pg.addColorStop(1, '#E6D4B0');
+        g.fillStyle = pg; g.fill(); g.lineWidth = 1.2; g.strokeStyle = 'rgba(120,88,50,0.45)'; g.stroke();
+      } else { g.fillStyle = 'rgba(' + rgb + ',0.07)'; g.fill(); g.lineWidth = 1.2; g.strokeStyle = 'rgba(' + rgb + ',0.22)'; g.stroke(); }
       g.direction = 'rtl'; g.textAlign = 'right'; g.textBaseline = 'alphabetic';
       var size = w / 11, lh = size * 1.9, pad = w * 0.1, y = pad + size, wi = Math.floor(rnd() * WORDS.length);
-      g.fillStyle = 'rgba(' + rgb + ',0.5)'; g.font = size + 'px "OT Naskh", "Scheherazade New", serif';
+      g.fillStyle = light ? 'rgba(74,46,24,0.62)' : 'rgba(' + rgb + ',0.5)'; g.font = size + 'px "OT Naskh", "Scheherazade New", serif';
       while (y < h - pad * 0.8) {
         var x = w - pad, left = pad + rnd() * w * 0.12;
         while (true) {
@@ -166,7 +170,12 @@
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
         ctx.translate(((x % (W + p.w)) + W + p.w) % (W + p.w) - p.w / 2, y);
         ctx.rotate(p.rot + p.vr * t); ctx.scale(sx, 1);
+        if (light) { ctx.shadowColor = 'rgba(70,45,20,0.28)'; ctx.shadowBlur = 20 * p.depth; ctx.shadowOffsetY = 10 * p.depth; }
         ctx.drawImage(p.img, -p.w / 2, -p.h / 2, p.w, p.h);
+        if (light) { ctx.shadowColor = 'transparent'; }
+        // sisi lembar yang miring ke arah cahaya lebih gelap: kesan lengkung dan kedalaman
+        var sh = (1 - sx) * (light ? 1.3 : 0.9);
+        if (sh > 0.02) { ctx.fillStyle = light ? 'rgba(80,50,20,' + sh + ')' : 'rgba(0,0,0,' + sh + ')'; ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h); }
       }
       ctx.globalAlpha = 1;
     }
