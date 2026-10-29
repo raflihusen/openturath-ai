@@ -31,10 +31,18 @@
 
   /* menu ponsel */
   var mb = $('.menu-btn'), sheet = $('.sheet');
-  if (mb && sheet) mb.addEventListener('click', function () {
-    var o = sheet.classList.toggle('open'); mb.setAttribute('aria-expanded', o); d.body.style.overflow = o ? 'hidden' : '';
+  /* kunci scroll di html dan body: html ber-overflow-x:clip membuat overflow body tidak diteruskan ke viewport */
+  var setMenu = function (o) {
+    sheet.classList.toggle('open', o); mb.setAttribute('aria-expanded', o);
+    d.documentElement.style.overflow = o ? 'hidden' : ''; d.body.style.overflow = o ? 'hidden' : '';
     var hd = $('header.site'); if (o && hd) sheet.style.top = Math.max(hd.getBoundingClientRect().bottom, 0) + 'px';
-  });
+  };
+  if (mb && sheet) {
+    mb.addEventListener('click', function () { setMenu(!sheet.classList.contains('open')); });
+    sheet.addEventListener('click', function (e) { if (e.target.closest('a')) setMenu(false); });
+    d.addEventListener('keydown', function (e) { if (e.key === 'Escape' && sheet.classList.contains('open')) setMenu(false); });
+    addEventListener('resize', function () { if (innerWidth > 1120 && sheet.classList.contains('open')) setMenu(false); });
+  }
 
   /* muncul perlahan */
   var rv = $$('.rv');
