@@ -2277,6 +2277,26 @@ export const redeemCode = functions
 // penukaran voucher atau pembayaran miliknya sudah selesai. Hanya membaca
 // pekerjaan milik pemanggil; tidak mengubah apa pun.
 // ================================================================
+
+// Semua kajian dalam paket (`all_access` = seluruh scope yang dapat diberikan) wajib
+// punya penugasan notebook `ready` dan terverifikasi bagi pemilik.
+export async function ledgerScopesReady(uid: string, scopes: string[]): Promise<boolean> {
+  const wanted = new Set<string>();
+  for (const sc of scopes) {
+    if (sc === "all_access" || sc === "all_ai") PROVISIONABLE_SCOPES.forEach((x) => wanted.add(x));
+    else if (sc) wanted.add(sc);
+  }
+  if (!wanted.size) return false;
+  for (const sc of wanted) {
+    const entities = Object.entries(ENTITY_SCOPES).filter(([, scope]) => scope === sc).map(([e]) => e);
+    if (!entities.length) return false;
+    const snap = await db.collection("access_assignments").where("uid", "==", uid).where("scope", "==", sc).where("status", "==", "ready").get();
+    const ready = new Set(snap.docs.filter((d) => d.data().verified_ms).map((d) => d.data().entity));
+    if (!entities.every((e) => ready.has(e))) return false;
+  }
+  return true;
+}
+
 export const getAccessReadiness = functions
   .runWith({ serviceAccount: "open-turath@appspot.gserviceaccount.com" })
   .https.onCall(async (data, context) => {
@@ -2288,6 +2308,7 @@ export const getAccessReadiness = functions
     await enforceRateLimit(`rdy_${uid}`, 60, 300, "Terlalu banyak pemeriksaan status akses.");
 
     let jobIds: string[] = [];
+    let scopes: string[] = [];
     if (typeof data?.code === "string" && data.code.length <= 256) {
       const rawCode = data.code.trim().toUpperCase().replace(/[\s-]/g, "");
       if (!/^[A-Z0-9]{1,64}$/.test(rawCode)) {
@@ -2301,6 +2322,11 @@ export const getAccessReadiness = functions
       jobIds = Array.isArray(keys) && keys.length > 1
         ? keys.map((k: string) => `redeem_${rawCode}_${uid}_${k}`)
         : [`redeem_${rawCode}_${uid}`];
+      if (Array.isArray(keys) && keys.length) scopes = keys;
+      else {
+        const c = (await db.collection("redeem_codes").doc(rawCode).get()).data();
+        scopes = Array.isArray(c?.entitlement_keys) && c!.entitlement_keys.length ? c!.entitlement_keys : [c?.entitlement_key || "fiqh_syafii"];
+      }
     } else if (typeof data?.invoice === "string" && data.invoice.length <= 100) {
       const invoice = data.invoice.trim();
       const tx = await db.collection("transactions").where("invoice_number", "==", invoice).limit(1).get();
@@ -2308,9 +2334,14 @@ export const getAccessReadiness = functions
         throw new functions.https.HttpsError("not-found", "Transaksi tidak ditemukan.");
       }
       jobIds = [`job_${invoice}`];
+      scopes = [String(tx.docs[0].data().entitlement_key || "")];
     } else {
       throw new functions.https.HttpsError("invalid-argument", "Sebutkan kode atau nomor invoice.");
     }
+
+    // Pada ledger v2 pekerjaan outbox hanya berstatus "v2_handed_off"; kesiapan sejati
+    // adalah penugasan notebook `ready` untuk setiap kajian dalam paket.
+    if (await vpsWriterActive()) return {ready: await ledgerScopesReady(uid, scopes), failed: false};
 
     const states: string[] = [];
     for (const id of jobIds) {

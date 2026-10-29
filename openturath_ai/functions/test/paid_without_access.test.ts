@@ -30,3 +30,18 @@ test('lunas baru (< 3 menit) atau sudah ready tidak memicu apa pun', async () =>
   await b.api.monitorPaidWithoutAccess();
   assert.equal(b.db.docs.has('paid_access_alerts/t3'), false);
 });
+
+test('getAccessReadiness ledger v2: siap hanya bila setiap kajian paket sudah punya penugasan ready', async () => {
+  const f = loadBackend();
+  const caller = {auth: {uid: 'u', token: {email: 'u@example.test', email_verified: true}}};
+  f.db.seed('access_control/runtime', {writer: 'vps-v2'});
+  f.db.seed('transactions/t9', {uid: 'u', invoice_number: 'OT-9', entitlement_key: 'fiqh_tahawwulat', status: 'paid'});
+  f.db.seed('provisioning_outbox/job_OT-9', {status: 'v2_handed_off'});
+  const entities = Object.entries(f.catalog.ENTITY_SCOPES).filter(([, sc]) => sc === 'fiqh_tahawwulat').map(([e]) => e);
+  assert.ok(entities.length > 1);
+  assert.equal((await f.api.getAccessReadiness({invoice: 'OT-9'}, caller)).ready, false);
+  entities.slice(0, -1).forEach((e, i) => f.db.seed(`access_assignments/a${i}`, {uid: 'u', scope: 'fiqh_tahawwulat', entity: e, status: 'ready', verified_ms: 1}));
+  assert.equal((await f.api.getAccessReadiness({invoice: 'OT-9'}, caller)).ready, false, 'satu kajian belum siap');
+  f.db.seed('access_assignments/last', {uid: 'u', scope: 'fiqh_tahawwulat', entity: entities.at(-1), status: 'ready', verified_ms: 1});
+  assert.equal((await f.api.getAccessReadiness({invoice: 'OT-9'}, caller)).ready, true);
+});
