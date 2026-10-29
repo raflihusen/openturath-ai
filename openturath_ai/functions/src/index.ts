@@ -2979,6 +2979,49 @@ export const monitorPaidWithoutAccess = functions
   });
 
 // ================================================================
+// REKONSILIASI HARIAN MIDTRANS: transaksi 7 hari terakhir yang bagi kita belum
+// `paid` ditanyakan langsung ke Midtrans. Selisih (Midtrans lunas, kita belum)
+// dilaporkan, dicatat di `payment_audit`, dan tidak diubah otomatis.
+// ================================================================
+export function midtransLedgerMismatch(local: string, remote: string | undefined, localAmount: unknown, remoteAmount: unknown): string | null {
+  const settled = remote === "settlement" || remote === "capture";
+  if (!settled || local === "paid" || local === "success") return null;
+  const a = Number(localAmount), b = Number(remoteAmount);
+  return Number.isFinite(a) && Number.isFinite(b) && Math.round(a) !== Math.round(b) ? "paid_amount_differs" : "paid_at_midtrans_not_locally";
+}
+
+export const auditMidtransLedger = functions
+  .runWith({serviceAccount: "open-turath@appspot.gserviceaccount.com", timeoutSeconds: 300})
+  .pubsub.schedule("15 2 * * *").timeZone("Asia/Jakarta").onRun(async () => {
+    const cfg = getMidtransConfig();
+    const auth = "Basic " + Buffer.from(cfg.serverKey + ":").toString("base64");
+    const since = admin.firestore.Timestamp.fromMillis(Date.now() - 7 * 86400000);
+    const snap = await db.collection("transactions").where("gateway", "==", "midtrans").where("created_at", ">=", since).limit(300).get();
+    const started = Date.now();
+    const mismatches: any[] = [];
+    let checked = 0, failed = 0;
+    for (const doc of snap.docs) {
+      if (Date.now() - started > 250000) break;
+      const t = doc.data();
+      if (t.status === "paid" || !t.invoice_number) continue;
+      try {
+        const r = await axios.get(`${cfg.apiUrl}/${encodeURIComponent(t.invoice_number)}/status`, {headers: {Authorization: auth, Accept: "application/json"}, timeout: 10000});
+        checked++;
+        const kind = midtransLedgerMismatch(t.status, r.data?.transaction_status, t.amount, r.data?.gross_amount);
+        if (kind) mismatches.push({invoice: t.invoice_number, local: t.status, kind});
+      } catch (_) { failed++; }
+    }
+    const day = new Date().toISOString().slice(0, 10);
+    await db.collection("payment_audit").doc(day).set({checked, failed, mismatches, at: Date.now()});
+    if (mismatches.length) {
+      await sendTelegramNotification(
+        `⚠️ <b>[SELISIH MIDTRANS]</b> ${mismatches.length} transaksi lunas di Midtrans tetapi belum lunas di sistem:\n` +
+        mismatches.slice(0, 10).map((m) => `• <code>${esc(String(m.invoice))}</code> (${esc(m.kind)})`).join("\n"), "alert");
+    }
+    return null;
+  });
+
+// ================================================================
 // PELAPORAN GALAT LOGIN TANPA AKUN: hanya kode tetap (tanpa token, email, atau
 // data pribadi), dibatasi laju per alamat IP, disimpan sebagai penghitung harian.
 // ================================================================

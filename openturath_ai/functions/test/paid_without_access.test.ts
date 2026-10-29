@@ -45,3 +45,11 @@ test('getAccessReadiness ledger v2: siap hanya bila setiap kajian paket sudah pu
   f.db.seed('access_assignments/last', {uid: 'u', scope: 'fiqh_tahawwulat', entity: entities.at(-1), status: 'ready', verified_ms: 1});
   assert.equal((await f.api.getAccessReadiness({invoice: 'OT-9'}, caller)).ready, true);
 });
+
+test('rekonsiliasi Midtrans: lunas di Midtrans tapi belum di sistem ditandai; sisanya tidak', () => {
+  const {api} = loadBackend();
+  assert.equal(api.midtransLedgerMismatch('pending', 'settlement', 49000, '49000.00'), 'paid_at_midtrans_not_locally');
+  assert.equal(api.midtransLedgerMismatch('abandoned', 'capture', 49000, '299000.00'), 'paid_amount_differs');
+  assert.equal(api.midtransLedgerMismatch('paid', 'settlement', 49000, '49000.00'), null);
+  assert.equal(api.midtransLedgerMismatch('abandoned', 'expire', 49000, '49000.00'), null);
+});

@@ -1,7 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.onClientErrorLogged = exports.cleanupOrphanedDeletions = exports.onUserDeleted = exports.onProvisioningOutboxCreated = exports.processProvisioningOutbox = exports.dailyRevoke = exports.onUserCreate = exports.getAccessReadiness = exports.redeemCode = exports.checkPaymentStatus = exports.midtransWebhook = exports.dokuWebhook = exports.monitorAccessHealth = exports.reconcileMidtransPayments = exports.createCheckout = exports.askAgent = exports.recordQuestion = exports.getAgentUrl = exports.MODULE_PLANS = exports.PURCHASABLE_AGENTS = void 0;
+exports.onClientErrorLogged = exports.reportAuthFailure = exports.monitorPaidWithoutAccess = exports.AUTH_FAILURE_FIELD = exports.cleanupOrphanedDeletions = exports.onUserDeleted = exports.onProvisioningOutboxCreated = exports.processProvisioningOutbox = exports.dailyRevoke = exports.onUserCreate = exports.getAccessReadiness = exports.redeemCode = exports.checkPaymentStatus = exports.midtransWebhook = exports.dokuWebhook = exports.monitorAccessHealth = exports.reconcileMidtransPayments = exports.createCheckout = exports.askAgent = exports.recordQuestion = exports.getAgentUrl = exports.MODULE_PLANS = exports.PURCHASABLE_AGENTS = void 0;
 exports.addCalendarMonthsClamped = addCalendarMonthsClamped;
+exports.deviceRedemptionFailure = deviceRedemptionFailure;
+exports.ledgerScopesReady = ledgerScopesReady;
 const functions = require("firebase-functions");
 const admin = require("firebase-admin");
 const axios_1 = require("axios");
@@ -244,6 +246,7 @@ async function appCheckGate(context, fn) {
 exports.getAgentUrl = functions
     .runWith({ serviceAccount: "open-turath@appspot.gserviceaccount.com" })
     .https.onCall(async (data, context) => {
+    var _a, _b;
     if (!context.auth) {
         throw new functions.https.HttpsError("unauthenticated", "Login diperlukan untuk mengakses agent.");
     }
@@ -264,13 +267,23 @@ exports.getAgentUrl = functions
         throw new functions.https.HttpsError("not-found", "User tidak ditemukan.");
     }
     const userData = userDoc.data();
+    // Sub-AI "segera hadir": ditolak untuk semua kecuali akun VIP sejati
+    // (Aturan 5: VIP tidak pernah diperlakukan sebagai galat akses).
+    if (!(0, access_control_1.isVip)(userData) && (await getSoonSubAgentIds()).has(agentId)) {
+        throw new functions.https.HttpsError("failed-precondition", "AI ini segera hadir dan belum dibuka.");
+    }
+    // Notebook dibagikan ke ALAMAT EMAIL, jadi identitas harus terverifikasi dan cocok dengan profil
+    // di semua cabang (legacy maupun ledger). VIP sejati dikecualikan dari pencocokan profil
+    // (Aturan 5) tetapi tetap wajib berupa sesi bertoken email terverifikasi.
+    const tokenEmail = String(((_a = context.auth.token) === null || _a === void 0 ? void 0 : _a.email) || "").trim().toLowerCase();
+    const profileEmail = String(userData.email || "").trim().toLowerCase();
+    if (((_b = context.auth.token) === null || _b === void 0 ? void 0 : _b.email_verified) !== true || !tokenEmail ||
+        (!(0, access_control_1.isVip)(userData) && tokenEmail !== profileEmail)) {
+        throw new functions.https.HttpsError("failed-precondition", "Gunakan email terverifikasi yang terdaftar untuk akses notebook ini.");
+    }
     // Until cutover no worker creates notebook assignments, so ledger-only
     // resolution would lock out every paying account. Legacy evaluation applies.
     const ledgerActive = userData.access_version === 2 && await vpsWriterActive();
-    if (ledgerActive && (context.auth.token.email_verified !== true ||
-        String(context.auth.token.email || "").trim().toLowerCase() !== String(userData.email || "").trim().toLowerCase())) {
-        throw new functions.https.HttpsError("failed-precondition", "Gunakan email terverifikasi yang terdaftar untuk akses notebook ini.");
-    }
     if (ledgerActive) {
         const entity = notebook_catalog_1.AGENT_TO_ENTITY[agentId];
         if (!entity)
@@ -376,7 +389,12 @@ exports.askAgent = functions
                 if (!key || !AGENT_URLS[agentId])
                     return false;
                 const snapshot = await db.collection("users").doc(uid).get();
-                return snapshot.exists && getEntitlementAccess(snapshot.data(), key).active;
+                if (!snapshot.exists)
+                    return false;
+                const user = snapshot.data();
+                if (!(0, access_control_1.isVip)(user) && (await getSoonSubAgentIds()).has(agentId))
+                    return false;
+                return getEntitlementAccess(user, key).active;
             },
             rateLimit: uid => enforceRateLimit(`native_chat_${uid}`, 10, 60, "Terlalu banyak pertanyaan. Silakan tunggu sebentar."),
             ask: async (request) => {
@@ -454,6 +472,54 @@ async function getDynamicPricingConfig() {
         console.warn("[PricingConfig] Failed to fetch app_config/pricing, using hardcoded fallback:", err.message);
     }
     return null;
+}
+// ================================================================
+// SAKLAR FITUR JARAK JAUH — app_config/features
+// Sub-AI yang ditandai "segera hadir" tidak boleh dibuka, apa pun langganannya.
+// Aturan baca HARUS sama dengan FeatureFlags.parse di klien Flutter
+// (openturath_ai/lib/services/feature_flags.dart).
+// ================================================================
+const DEFAULT_SOON_SUB_AGENTS = [
+    "fiqh_tahawwulat_khatib",
+    "fiqh_tahawwulat_habib",
+    "fiqh_tahawwulat_mukhtabir",
+];
+const SOON_ID_PATTERN = /^[a-z][a-z0-9_]{0,79}$/;
+const MAX_SOON_IDS = 50;
+// Dokumen yang ada menentukan hasil secara deterministik: kunci hilang atau
+// rusak kembali ke bawaan. Daftar melewati batas dianggap salah ketik.
+function parseSoonSubAgentIds(data) {
+    const fallback = new Set(DEFAULT_SOON_SUB_AGENTS);
+    const raw = data && typeof data === "object" ? data.soon_sub_agent_ids : undefined;
+    if (!Array.isArray(raw))
+        return fallback;
+    const ids = new Set();
+    for (const item of raw) {
+        if (typeof item !== "string")
+            continue;
+        const id = item.trim();
+        if (SOON_ID_PATTERN.test(id))
+            ids.add(id);
+    }
+    return ids.size <= MAX_SOON_IDS ? ids : fallback;
+}
+let cachedSoonSubAgents = null;
+let cachedSoonTime = 0;
+async function getSoonSubAgentIds() {
+    const now = Date.now();
+    if (cachedSoonSubAgents && now - cachedSoonTime < 60000)
+        return cachedSoonSubAgents;
+    try {
+        const snap = await db.collection("app_config").doc("features").get();
+        cachedSoonSubAgents = snap.exists ? parseSoonSubAgentIds(snap.data()) : new Set(DEFAULT_SOON_SUB_AGENTS);
+        cachedSoonTime = now;
+        return cachedSoonSubAgents;
+    }
+    catch (err) {
+        console.warn("[FeaturesConfig] Failed to fetch app_config/features:", err.message);
+        // Gagal baca: pertahankan nilai terakhir; bila belum ada, tertutup (bawaan).
+        return cachedSoonSubAgents !== null && cachedSoonSubAgents !== void 0 ? cachedSoonSubAgents : new Set(DEFAULT_SOON_SUB_AGENTS);
+    }
 }
 let cachedActiveAgentIds = null;
 let cachedAgentsTime = 0;
@@ -1670,6 +1736,23 @@ exports.checkPaymentStatus = functions
 // Menukarkan Kode Redeem Santri (Voucher Akses 7 Hari, dsb)
 // Mengaktifkan entitlement berbatas waktu & trigger email sharing
 // ================================================================
+const ALREADY_ACTIVE_MESSAGE = "Kode ini sudah aktif di akun Anda. Tidak perlu menukarkannya lagi.";
+function maskEmailHint(email) {
+    const local = typeof email === "string" ? email.split("@")[0].trim() : "";
+    return local.length >= 2 ? `${local.slice(0, 2)}***` : "";
+}
+// Sebab penolakan kode per-perangkat. Sengaja murni agar bisa diuji tanpa Firestore.
+function deviceRedemptionFailure(existing, uid) {
+    if ((existing === null || existing === void 0 ? void 0 : existing.uid) === uid)
+        return { reason: "already_redeemed", message: ALREADY_ACTIVE_MESSAGE };
+    const hint = maskEmailHint(existing === null || existing === void 0 ? void 0 : existing.email);
+    return {
+        reason: "device_used",
+        message: "Perangkat ini sudah pernah dipakai mengaktifkan kode serupa" +
+            (hint ? ` oleh akun ${hint}.` : " oleh akun lain.") +
+            " Masuk dengan akun tersebut, atau hubungi admin bila ini keliru.",
+    };
+}
 exports.redeemCode = functions
     .runWith({ serviceAccount: "open-turath@appspot.gserviceaccount.com", timeoutSeconds: 120 })
     .https.onCall(async (data, context) => {
@@ -1747,16 +1830,23 @@ exports.redeemCode = functions
             if (!rawDeviceId || !/^[a-f0-9]{64}$/.test(rawDeviceId)) {
                 throw new functions.https.HttpsError("invalid-argument", "Identitas perangkat diperlukan untuk mengaktifkan kode ini.", { reason: "device_identity" });
             }
+            // Akun yang sama yang mengulang klaim harus mendengar "sudah aktif di akun Anda",
+            // bukan tuduhan bahwa perangkatnya sudah dipakai.
+            const redemptionDoc0 = await transaction.get(codeRef.collection("redemptions").doc(uid));
+            if (redemptionDoc0.exists) {
+                throw new functions.https.HttpsError("already-exists", ALREADY_ACTIVE_MESSAGE, { reason: "already_redeemed" });
+            }
             const deviceRedemptionDoc = await transaction.get(deviceRedemptionRef);
             if (deviceRedemptionDoc.exists) {
-                throw new functions.https.HttpsError("already-exists", "Kode ini hanya dapat diklaim 1 kali per perangkat. Perangkat ini sudah pernah mengaktifkannya sebelumnya.", { reason: "device_used" });
+                const failure = deviceRedemptionFailure(deviceRedemptionDoc.data(), uid);
+                throw new functions.https.HttpsError("already-exists", failure.message, { reason: failure.reason });
             }
         }
         // Periksa apakah pengguna sudah pernah menukarkan kode ini
         const redemptionRef = codeRef.collection("redemptions").doc(uid);
         const redemptionDoc = await transaction.get(redemptionRef);
         if (redemptionDoc.exists) {
-            throw new functions.https.HttpsError("already-exists", "Kode ini sudah pernah ditukarkan sebelumnya.", { reason: "already_redeemed" });
+            throw new functions.https.HttpsError("already-exists", ALREADY_ACTIVE_MESSAGE, { reason: "already_redeemed" });
         }
         // Satu kode dapat membuka satu, beberapa, atau semua AI. `entitlement_keys`
         // (daftar) didahulukan; `entitlement_key` (satu) tetap didukung. Alias
@@ -1800,10 +1890,15 @@ exports.redeemCode = functions
         // trial consumes a NotebookLM seat. One trial per verified Google
         // address and promo family, whatever the device or account.
         const trialClaimRef = db.collection("trial_claims").doc((0, access_control_1.keyOf)(userEmail, promoFamily));
+        // Semua voucher membagikan akses ke ALAMAT EMAIL: tanpa email terverifikasi kode tidak
+        // boleh terpakai (kuotanya hangus) dan tidak boleh ada pekerjaan berbagi untuk alamat kosong
+        // atau alamat dari profil lama.
+        if (!userEmail) {
+            throw new functions.https.HttpsError("failed-precondition", isTrialVoucher
+                ? "Masuk dengan akun Google terverifikasi untuk mengaktifkan masa coba."
+                : "Masuk dengan akun Google terverifikasi untuk menukar kode ini.", { reason: "needs_google" });
+        }
         if (isTrialVoucher) {
-            if (!userEmail) {
-                throw new functions.https.HttpsError("failed-precondition", "Masuk dengan akun Google terverifikasi untuk mengaktifkan masa coba.", { reason: "needs_google" });
-            }
             if ((await transaction.get(trialClaimRef)).exists) {
                 throw new functions.https.HttpsError("already-exists", "Masa coba untuk akun Google ini sudah pernah diaktifkan.", { reason: "trial_claimed" });
             }
@@ -1911,7 +2006,7 @@ exports.redeemCode = functions
             transaction.set(outboxRef, {
                 type: "redeem",
                 uid,
-                email: userEmail || userData.email || "",
+                email: userEmail,
                 name: userData.name || "Peneliti",
                 entitlement_key: entitlementKey,
                 plan: isTrialVoucher ? "trial" : "voucher_access",
@@ -1952,7 +2047,7 @@ exports.redeemCode = functions
             entitlementKeys,
             durationDays,
             expiryIso: primaryExpiry.toISOString(),
-            email: userEmail || userData.email || "",
+            email: userEmail,
             name: userData.name || "Peneliti",
             serviceTitle: titles.length <= 3 ? titles.join(", ") : `${titles.length} AI`,
         };
@@ -1992,6 +2087,29 @@ exports.redeemCode = functions
 // penukaran voucher atau pembayaran miliknya sudah selesai. Hanya membaca
 // pekerjaan milik pemanggil; tidak mengubah apa pun.
 // ================================================================
+// Semua kajian dalam paket (`all_access` = seluruh scope yang dapat diberikan) wajib
+// punya penugasan notebook `ready` dan terverifikasi bagi pemilik.
+async function ledgerScopesReady(uid, scopes) {
+    const wanted = new Set();
+    for (const sc of scopes) {
+        if (sc === "all_access" || sc === "all_ai")
+            access_catalog_1.PROVISIONABLE_SCOPES.forEach((x) => wanted.add(x));
+        else if (sc)
+            wanted.add(sc);
+    }
+    if (!wanted.size)
+        return false;
+    for (const sc of wanted) {
+        const entities = Object.entries(access_catalog_1.ENTITY_SCOPES).filter(([, scope]) => scope === sc).map(([e]) => e);
+        if (!entities.length)
+            return false;
+        const snap = await db.collection("access_assignments").where("uid", "==", uid).where("scope", "==", sc).where("status", "==", "ready").get();
+        const ready = new Set(snap.docs.filter((d) => d.data().verified_ms).map((d) => d.data().entity));
+        if (!entities.every((e) => ready.has(e)))
+            return false;
+    }
+    return true;
+}
 exports.getAccessReadiness = functions
     .runWith({ serviceAccount: "open-turath@appspot.gserviceaccount.com" })
     .https.onCall(async (data, context) => {
@@ -2003,6 +2121,7 @@ exports.getAccessReadiness = functions
     const uid = context.auth.uid;
     await enforceRateLimit(`rdy_${uid}`, 60, 300, "Terlalu banyak pemeriksaan status akses.");
     let jobIds = [];
+    let scopes = [];
     if (typeof (data === null || data === void 0 ? void 0 : data.code) === "string" && data.code.length <= 256) {
         const rawCode = data.code.trim().toUpperCase().replace(/[\s-]/g, "");
         if (!/^[A-Z0-9]{1,64}$/.test(rawCode)) {
@@ -2016,6 +2135,12 @@ exports.getAccessReadiness = functions
         jobIds = Array.isArray(keys) && keys.length > 1
             ? keys.map((k) => `redeem_${rawCode}_${uid}_${k}`)
             : [`redeem_${rawCode}_${uid}`];
+        if (Array.isArray(keys) && keys.length)
+            scopes = keys;
+        else {
+            const c = (await db.collection("redeem_codes").doc(rawCode).get()).data();
+            scopes = Array.isArray(c === null || c === void 0 ? void 0 : c.entitlement_keys) && c.entitlement_keys.length ? c.entitlement_keys : [(c === null || c === void 0 ? void 0 : c.entitlement_key) || "fiqh_syafii"];
+        }
     }
     else if (typeof (data === null || data === void 0 ? void 0 : data.invoice) === "string" && data.invoice.length <= 100) {
         const invoice = data.invoice.trim();
@@ -2024,10 +2149,15 @@ exports.getAccessReadiness = functions
             throw new functions.https.HttpsError("not-found", "Transaksi tidak ditemukan.");
         }
         jobIds = [`job_${invoice}`];
+        scopes = [String(tx.docs[0].data().entitlement_key || "")];
     }
     else {
         throw new functions.https.HttpsError("invalid-argument", "Sebutkan kode atau nomor invoice.");
     }
+    // Pada ledger v2 pekerjaan outbox hanya berstatus "v2_handed_off"; kesiapan sejati
+    // adalah penugasan notebook `ready` untuk setiap kajian dalam paket.
+    if (await vpsWriterActive())
+        return { ready: await ledgerScopesReady(uid, scopes), failed: false };
     const states = [];
     for (const id of jobIds) {
         const snap = await db.collection("provisioning_outbox").doc(id).get();
@@ -2656,6 +2786,76 @@ async function notifySubscriptionServer(email, name, plan, action, serviceName, 
 // GoAkal billing (akalWebhook, syncAkalPurchases) was retired on 2026-10-22:
 // payments are Midtrans-only. Historical GoAkal grants stay in the ledger and
 // are handled by the access worker; nothing here can mint new ones.
+// ================================================================
+// SAFETY NET: pembayaran lunas wajib berujung akses siap. Bila dalam 3 menit
+// penugasan notebook belum `ready`, penilaian akses dipercepat (worker memeriksa
+// tiap 15 detik) dan pemilik diberi tahu satu kali per transaksi.
+// ================================================================
+exports.AUTH_FAILURE_FIELD = /^[a-zA-Z0-9_.:-]{1,80}$/;
+exports.monitorPaidWithoutAccess = functions
+    .runWith({ serviceAccount: "open-turath@appspot.gserviceaccount.com", timeoutSeconds: 120 })
+    .pubsub.schedule("every 2 minutes").onRun(async () => {
+    var _a, _b;
+    const now = Date.now();
+    const since = admin.firestore.Timestamp.fromMillis(now - 3 * 3600000);
+    const paid = await db.collection("transactions").where("status", "==", "paid").where("paid_at", ">=", since).limit(100).get();
+    for (const tx of paid.docs) {
+        const t = tx.data();
+        const paidMs = ((_b = (_a = t.paid_at) === null || _a === void 0 ? void 0 : _a.toMillis) === null || _b === void 0 ? void 0 : _b.call(_a)) || 0;
+        if (!t.uid || !t.entitlement_key || now - paidMs < 180000)
+            continue;
+        const ready = await db.collection("access_assignments")
+            .where("uid", "==", t.uid).where("scope", "==", t.entitlement_key).where("status", "==", "ready").limit(1).get();
+        if (!ready.empty)
+            continue;
+        const flag = db.collection("paid_access_alerts").doc(tx.id);
+        if ((await flag.get()).exists)
+            continue;
+        await db.collection("users").doc(t.uid).update({ access_due_ms: now }).catch(() => { });
+        await flag.set({ uid: t.uid, entitlement_key: t.entitlement_key, paid_ms: paidMs, alerted_ms: now });
+        await sendTelegramNotification(`⚠️ <b>[PEMBAYARAN LUNAS, AKSES BELUM SIAP]</b>\n` +
+            `📦 Produk: <b>${esc(String(t.entitlement_key))}</b>\n` +
+            `🧾 Invoice: <code>${esc(String(t.invoice_number || tx.id))}</code>\n` +
+            `⏱️ Lewat ${Math.round((now - paidMs) / 60000)} menit. Penilaian akses sudah dipercepat; periksa bila belum teratasi.`, "alert");
+    }
+    return null;
+});
+// ================================================================
+// PELAPORAN GALAT LOGIN TANPA AKUN: hanya kode tetap (tanpa token, email, atau
+// data pribadi), dibatasi laju per alamat IP, disimpan sebagai penghitung harian.
+// ================================================================
+exports.reportAuthFailure = functions
+    .runWith({ serviceAccount: "open-turath@appspot.gserviceaccount.com", timeoutSeconds: 30, maxInstances: 5 })
+    .https.onRequest(async (req, res) => {
+    var _a, _b;
+    if (req.method !== "POST") {
+        res.status(405).send("Method Not Allowed");
+        return;
+    }
+    const body = typeof req.body === "object" && req.body ? req.body : {};
+    const fields = {};
+    for (const k of ["platform", "stage", "code", "category", "appVersion"]) {
+        const v = String((_a = body[k]) !== null && _a !== void 0 ? _a : "").trim();
+        fields[k] = exports.AUTH_FAILURE_FIELD.test(v) ? v : "unknown";
+    }
+    const ipHash = crypto.createHash("sha256").update(String(req.ip || "")).digest("hex").slice(0, 24);
+    try {
+        await enforceRateLimit(`authfail_${ipHash}`, 20, 3600, "Terlalu banyak laporan.");
+    }
+    catch (_) {
+        res.status(429).send("Too Many Requests");
+        return;
+    }
+    const day = new Date().toISOString().slice(0, 10).replace(/-/g, "");
+    const id = `${day}_${fields.platform}_${fields.stage}_${fields.code}`.slice(0, 200);
+    const ref = db.collection("auth_failure_stats").doc(id);
+    await ref.set(Object.assign(Object.assign({}, fields), { day, count: admin.firestore.FieldValue.increment(1), last_seen: admin.firestore.FieldValue.serverTimestamp() }), { merge: true });
+    const count = ((_b = (await ref.get()).data()) === null || _b === void 0 ? void 0 : _b.count) || 0;
+    if (count === 1 || count === 10 || count === 50) {
+        await sendTelegramNotification(`🔐 <b>[GAGAL LOGIN]</b> ${esc(fields.platform)} • tahap <code>${esc(fields.stage)}</code> • kode <code>${esc(fields.code)}</code> • ${count}× hari ini`, "alert");
+    }
+    res.status(204).send("");
+});
 // ================================================================
 // TELEMETRY CLOUD FUNCTION: Forward critical errors to Telegram
 // ================================================================
