@@ -32,7 +32,8 @@ PrivilegesRequiredOverridesAllowed=dialog
 Name: "english"; MessagesFile: "compiler:Default.isl"
 
 [Files]
-Source: "installer\mark.bmp"; Flags: dontcopy
+Source: "installer\mark_dim.bmp"; Flags: dontcopy
+Source: "installer\mark_lit.bmp"; Flags: dontcopy
 Source: "..\..\OpenTurath_AI_Windows\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\..\OpenTurath_AI_Windows\*.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\..\OpenTurath_AI_Windows\data\*"; DestDir: "{app}\data"; Flags: ignoreversion recursesubdirs createallsubdirs
@@ -67,6 +68,8 @@ function GetSystemMetrics(nIndex: Integer): Integer;
 var
   Lang: Integer;            { 0 = Indonesia, 1 = English, 2 = Arab }
   Logo: TBitmapImage;
+  MarkDim, MarkLit: TBitmap;
+  MarkW, MarkH, MarkLevel: Integer;
   TitleP, SubP, FooterP, OptP, PathP, ChangeP, IconP: TPanel;
   BtnInstall, BtnOpen, BtnClose: TPanel;
   LangP: array[0..2] of TPanel;
@@ -106,12 +109,44 @@ begin
   Result.Parent := WizardForm;
   Result.BevelOuter := bvNone;
   Result.Color := ClBg;
-  Result.SetBounds(L, Tp, W, H);
+  Result.SetBounds(ScaleX(L), ScaleY(Tp), ScaleX(W), ScaleY(H));
   Result.Caption := Cap;
   Result.Font.Name := Face;
   Result.Font.Size := Sz;
   Result.Font.Color := Ink;
   if Bold then Result.Font.Style := [fsBold];
+end;
+
+{ Tanda OpenTurath "terisi" dari bawah ke atas: dua bitmap (redup dan terang)
+  disusun ulang pada kanvas. Saat memasang, isiannya mengikuti kemajuan nyata. }
+procedure SetLevel(L: Integer);
+var
+  Y: Integer;
+begin
+  if L < 0 then L := 0;
+  if L > 1000 then L := 1000;
+  MarkLevel := L;
+  Y := MarkH - MarkH * L div 1000;
+  Logo.Bitmap.Canvas.CopyRect(Rect(0, 0, MarkW, MarkH), MarkDim.Canvas, Rect(0, 0, MarkW, MarkH));
+  if Y < MarkH then
+    Logo.Bitmap.Canvas.CopyRect(Rect(0, Y, MarkW, MarkH), MarkLit.Canvas, Rect(0, Y, MarkW, MarkH));
+  Logo.Repaint;
+end;
+
+procedure WipeTo(Target: Integer);
+var
+  I, From, K: Integer;
+begin
+  From := MarkLevel;
+  for I := 1 to 32 do
+  begin
+    K := I * 100 div 32;
+    K := 100 - (100 - K) * (100 - K) div 100;
+    SetLevel(From + (Target - From) * K div 100);
+    Application.ProcessMessages;
+    Sleep(18);
+  end;
+  SetLevel(Target);
 end;
 
 { Teks yang tampak dari latar ke warna tujuan, dengan akselerasi lembut. }
@@ -200,8 +235,10 @@ end;
 procedure RevealWelcome;
 begin
   ShowGroup(True, False, False);
+  SetLevel(0);
   InkOff(TitleP); InkOff(SubP); InkOff(OptP); InkOff(FooterP);
   BtnInstall.Color := ClBg; BtnInstall.Font.Color := ClBg;
+  WipeTo(1000);
   FadeText(TitleP, ClInk);
   FadeText(SubP, ClSub);
   FadeButton(BtnInstall);
@@ -279,8 +316,8 @@ begin
   end;
   DesktopIcon := True;
 
-  WizardForm.ClientWidth := 720;
-  WizardForm.ClientHeight := 480;
+  WizardForm.ClientWidth := ScaleX(720);
+  WizardForm.ClientHeight := ScaleY(520);
   WizardForm.Left := (GetSystemMetrics(0) - WizardForm.Width) div 2;
   WizardForm.Top := (GetSystemMetrics(1) - WizardForm.Height) div 2;
   WizardForm.Color := ClBg;
@@ -306,31 +343,40 @@ begin
   except
   end;
 
-  ExtractTemporaryFile('mark.bmp');
+  ExtractTemporaryFile('mark_dim.bmp');
+  ExtractTemporaryFile('mark_lit.bmp');
+  MarkDim := TBitmap.Create;
+  MarkDim.LoadFromFile(ExpandConstant('{tmp}\mark_dim.bmp'));
+  MarkLit := TBitmap.Create;
+  MarkLit.LoadFromFile(ExpandConstant('{tmp}\mark_lit.bmp'));
+  MarkW := MarkDim.Width;
+  MarkH := MarkDim.Height;
   Logo := TBitmapImage.Create(WizardForm);
   Logo.Parent := WizardForm;
-  Logo.AutoSize := True;
-  Logo.Bitmap.LoadFromFile(ExpandConstant('{tmp}\mark.bmp'));
-  Logo.Left := (720 - Logo.Width) div 2;
-  Logo.Top := 70;
+  Logo.AutoSize := False;
+  Logo.Stretch := True;
+  Logo.Bitmap.LoadFromFile(ExpandConstant('{tmp}\mark_dim.bmp'));
+  Logo.SetBounds((WizardForm.ClientWidth - ScaleX(MarkW)) div 2, ScaleY(40),
+    ScaleX(MarkW), ScaleY(MarkH));
+  MarkLevel := 0;
 
-  TitleP := MakeP('', 0, 190, 720, 48, 28, False, ClInk, 'Georgia');
-  SubP := MakeP('', 0, 244, 720, 28, 11, False, ClSub, 'Segoe UI');
-  BtnInstall := MakeP('', 260, 306, 200, 46, 11, True, ClDark, 'Segoe UI');
+  TitleP := MakeP('', 0, 226, 720, 48, 28, False, ClInk, 'Georgia');
+  SubP := MakeP('', 0, 280, 720, 28, 11, False, ClSub, 'Segoe UI');
+  BtnInstall := MakeP('', 260, 336, 200, 46, 11, True, ClDark, 'Segoe UI');
   BtnInstall.Color := ClInk;
   BtnInstall.Cursor := crHand;
   BtnInstall.OnClick := @InstallClick;
-  OptP := MakeP('', 210, 368, 300, 24, 9, False, ClSub, 'Segoe UI');
+  OptP := MakeP('', 210, 400, 300, 24, 9, False, ClSub, 'Segoe UI');
   OptP.Cursor := crHand;
   OptP.OnClick := @ToggleOptions;
-  PathP := MakeP(WizardForm.DirEdit.Text, 90, 398, 480, 22, 9, False, ClSub, 'Segoe UI');
-  ChangeP := MakeP('', 574, 398, 56, 22, 9, True, ClInk, 'Segoe UI');
+  PathP := MakeP(WizardForm.DirEdit.Text, 90, 428, 480, 22, 9, False, ClSub, 'Segoe UI');
+  ChangeP := MakeP('', 574, 428, 56, 22, 9, True, ClInk, 'Segoe UI');
   ChangeP.Cursor := crHand;
   ChangeP.OnClick := @ChangeDir;
-  IconP := MakeP('', 210, 424, 300, 22, 9, False, ClSub, 'Segoe UI');
+  IconP := MakeP('', 210, 452, 300, 22, 9, False, ClSub, 'Segoe UI');
   IconP.Cursor := crHand;
   IconP.OnClick := @ToggleIcon;
-  FooterP := MakeP('openturath.id  ·  v{#MyAppVersion}', 0, 452, 720, 20, 8, False, ClSub, 'Segoe UI');
+  FooterP := MakeP('openturath.id  ·  v{#MyAppVersion}', 0, 496, 720, 20, 8, False, ClSub, 'Segoe UI');
 
   for X := 0 to 2 do
   begin
@@ -343,20 +389,20 @@ begin
     LangP[X].OnClick := @ChipClick;
   end;
 
-  PctP := MakeP('0%', 0, 196, 720, 70, 40, False, ClInk, 'Georgia');
-  StatusP := MakeP('', 0, 330, 720, 24, 10, False, ClSub, 'Segoe UI');
-  TrackP := MakeP('', (720 - TrackW) div 2, 300, TrackW, 3, 8, False, ClSub, 'Segoe UI');
+  PctP := MakeP('0%', 0, 226, 720, 70, 40, False, ClInk, 'Georgia');
+  StatusP := MakeP('', 0, 340, 720, 24, 10, False, ClSub, 'Segoe UI');
+  TrackP := MakeP('', (720 - TrackW) div 2, 318, TrackW, 3, 8, False, ClSub, 'Segoe UI');
   TrackP.Color := ClLine;
-  FillP := MakeP('', (720 - TrackW) div 2, 300, 0, 3, 8, False, ClSub, 'Segoe UI');
+  FillP := MakeP('', (720 - TrackW) div 2, 318, 0, 3, 8, False, ClSub, 'Segoe UI');
   FillP.Color := ClInk;
 
-  DoneTitleP := MakeP('', 0, 190, 720, 48, 28, False, ClInk, 'Georgia');
-  DoneSubP := MakeP('', 0, 244, 720, 28, 11, False, ClSub, 'Segoe UI');
-  BtnOpen := MakeP('', 200, 306, 200, 46, 11, True, ClDark, 'Segoe UI');
+  DoneTitleP := MakeP('', 0, 226, 720, 48, 28, False, ClInk, 'Georgia');
+  DoneSubP := MakeP('', 0, 280, 720, 28, 11, False, ClSub, 'Segoe UI');
+  BtnOpen := MakeP('', 200, 336, 200, 46, 11, True, ClDark, 'Segoe UI');
   BtnOpen.Color := ClInk;
   BtnOpen.Cursor := crHand;
   BtnOpen.OnClick := @OpenClick;
-  BtnClose := MakeP('', 420, 306, 100, 46, 11, False, ClInk, 'Segoe UI');
+  BtnClose := MakeP('', 420, 336, 100, 46, 11, False, ClInk, 'Segoe UI');
   BtnClose.Cursor := crHand;
   BtnClose.OnClick := @CloseClick;
 
@@ -380,6 +426,7 @@ begin
   else if CurPageID = wpFinished then
   begin
     ShowGroup(False, False, True);
+    SetLevel(1000);
     InkOff(DoneTitleP); InkOff(DoneSubP);
     BtnOpen.Color := ClBg; BtnOpen.Font.Color := ClBg;
     FadeText(DoneTitleP, ClInk);
@@ -387,17 +434,22 @@ begin
     FadeButton(BtnOpen);
   end
   else
+    begin
     ShowGroup(False, True, False);
+    if CurPageID = wpInstalling then SetLevel(0);
+  end;
 end;
 
 procedure CurInstallProgressChanged(CurProgress, MaxProgress: Integer);
 var
-  Target, Pct: Integer;
+  Target, Pct, Lvl: Integer;
 begin
   if MaxProgress <= 0 then Exit;
-  Target := Trunc(TrackW * 1.0 * CurProgress / MaxProgress);
+  Target := Trunc(ScaleX(TrackW) * 1.0 * CurProgress / MaxProgress);
+  Lvl := Trunc(1000.0 * CurProgress / MaxProgress);
   Pct := Trunc(100.0 * CurProgress / MaxProgress);
   if Target <> FillP.Width then FillP.Width := Target;
+  if Abs(Lvl - MarkLevel) >= 5 then SetLevel(Lvl);
   if PctP.Caption <> IntToStr(Pct) + '%' then
     PctP.Caption := IntToStr(Pct) + '%';
 end;
