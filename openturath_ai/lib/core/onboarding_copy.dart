@@ -18,8 +18,8 @@ class OnboardingCopy {
 
   static String get replayTitle =>
       _l('Pengenalan aplikasi', 'App introduction', 'التعريف بالتطبيق');
-  static String get replaySubtitle => _l('Lihat kembali empat slide pengenalan',
-      'Watch the four intro slides again', 'شاهد شرائح التعريف الأربع من جديد');
+  static String get replaySubtitle => _l('Lihat kembali lima slide pengenalan',
+      'Watch the five intro slides again', 'شاهد شرائح التعريف الخمس من جديد');
 
   // ── Slide 1 ──
   static String get p1Kicker => 'OPENTURATH AI';
@@ -100,4 +100,30 @@ class OnboardingCopy {
       _l('Ibarah asli', 'Original passage', 'العبارة الأصلية');
   static String get p4Reference => _l('Kitab · jilid · halaman',
       'Book · volume · page', 'الكتاب · الجزء · الصفحة');
+
+  // ── Slide 5: amanah ──
+  static String get p5Title => _l('Amanah Anda kami jaga.',
+      'Your trust is safe with us.', 'أمانتكم محفوظة عندنا.');
+  static String get p5Body => _l(
+      'Data Anda hanya dipakai untuk menjalankan layanan ini. Tidak lebih.',
+      'Your data is used only to run this service. Nothing more.',
+      'تُستعمل بياناتكم لتشغيل هذه الخدمة فقط، لا أكثر.');
+  static String get p5Note => _l(
+      'Pertanyaan diproses oleh Google (NotebookLM). Rinciannya ada di Kebijakan Privasi.',
+      'Questions are processed by Google (NotebookLM). Details are in the Privacy Policy.',
+      'تُعالَج الأسئلة عبر Google ‏(NotebookLM). التفاصيل في سياسة الخصوصية.');
+  static List<String> get p5Promises => [
+        _l('Data Anda tidak kami jual', 'We never sell your data',
+            'لا نبيع بياناتكم'),
+        _l('Tanpa iklan pihak ketiga', 'No third-party ads',
+            'بلا إعلانات من أطراف أخرى'),
+        _l('Percakapan tidak melatih AI', 'Your chats do not train AI',
+            'محادثاتكم لا تُستعمل لتدريب الذكاء الاصطناعي'),
+        _l('Catatan tersimpan di perangkat Anda',
+            'Your notes stay on your device', 'ملاحظاتكم تبقى على جهازكم'),
+        _l(
+            'Akun bisa dihapus kapan saja di Profil',
+            'Delete your account any time in Profile',
+            'يمكنكم حذف الحساب في أي وقت من الملف الشخصي'),
+      ];
 }

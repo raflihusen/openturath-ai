@@ -13,6 +13,7 @@ import '../core/onboarding_copy.dart';
 import '../core/routes.dart';
 import '../services/onboarding_gate.dart';
 import '../widgets/onboarding_art.dart';
+import '../widgets/onboarding_promise_art.dart';
 import '../widgets/tahawwulat_slide_motion.dart';
 
 /// Pengenalan aplikasi: empat slide singkat tentang OpenTurath, dengan grafik
@@ -31,7 +32,7 @@ class OnboardingScreen extends StatefulWidget {
 }
 
 class _OnboardingScreenState extends State<OnboardingScreen> {
-  static const _count = 4;
+  static const _count = 5;
   final PageController _page = PageController();
   final FocusNode _focus = FocusNode();
   int _i = 0;
@@ -274,7 +275,7 @@ class _OnboardingPage extends StatelessWidget {
           const SizedBox(height: OTSpacing.base),
           words(OnboardingCopy.p3Body, lead),
         ];
-      default:
+      case 3:
         art = OnboardingAskArt(
             dark: dark,
             question: OnboardingCopy.p4Question,
@@ -288,6 +289,18 @@ class _OnboardingPage extends StatelessWidget {
           words(OnboardingCopy.p4Body, lead),
           const SizedBox(height: OTSpacing.base),
           r(Text(OnboardingCopy.p4Note,
+              style: OTTypography.caption(color: sub))),
+        ];
+      default:
+        art = OnboardingPromiseArt(
+            dark: dark, promises: OnboardingCopy.p5Promises);
+        artFlex = 6;
+        text = [
+          words(OnboardingCopy.p5Title, titleStyle),
+          const SizedBox(height: OTSpacing.base),
+          words(OnboardingCopy.p5Body, lead),
+          const SizedBox(height: OTSpacing.base),
+          r(Text(OnboardingCopy.p5Note,
               style: OTTypography.caption(color: sub))),
         ];
     }

@@ -9,7 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   testWidgets(
-      'pengenalan empat slide tanpa overflow (id/en/ar, ponsel/desktop)',
+      'pengenalan lima slide tanpa overflow (id/en/ar, ponsel/desktop)',
       (tester) async {
     addTearDown(() {
       tester.view.reset();
@@ -22,13 +22,13 @@ void main() {
         tester.view.devicePixelRatio = 1;
         await tester.pumpWidget(
             const MaterialApp(home: OnboardingScreen(replay: true)));
-        for (var page = 0; page < 4; page++) {
+        for (var page = 0; page < 5; page++) {
           for (var k = 0; k < 60; k++) {
             await tester.pump(const Duration(milliseconds: 100));
           }
           expect(tester.takeException(), isNull,
               reason: '$lang $width slide $page');
-          if (page < 3) {
+          if (page < 4) {
             await tester.tap(find.text(OnboardingCopy.next));
             await tester.pump(const Duration(milliseconds: 600));
           }
