@@ -126,8 +126,8 @@
     function palette() {
       light = isLight();
       pal = light
-        ? { p0: '#F4E9D2', p1: '#E6D4B0', edge: 'rgba(120,88,50,0.5)', ink: 'rgba(74,46,24,0.62)', gold: 'rgba(150,104,36,0.8)', goldFill: 'rgba(176,130,56,0.16)', line: 'rgba(120,88,50,0.16)', shadow: 'rgba(70,45,20,0.3)', shade: '80,50,20' }
-        : { p0: 'rgba(250,250,250,0.07)', p1: 'rgba(250,250,250,0.07)', edge: 'rgba(250,250,250,0.22)', ink: 'rgba(250,250,250,0.5)', gold: 'rgba(250,250,250,0.42)', goldFill: 'rgba(250,250,250,0.05)', line: 'rgba(250,250,250,0.07)', shadow: 'transparent', shade: '0,0,0' };
+        ? { p0: '#F4E9D2', p1: '#E6D4B0', edge: 'rgba(120,88,50,0.5)', ink: 'rgba(74,46,24,0.62)', gold: 'rgba(150,104,36,0.8)', goldFill: 'rgba(176,130,56,0.16)', line: 'rgba(120,88,50,0.09)', shadow: 'rgba(70,45,20,0.3)', shade: '80,50,20' }
+        : { p0: 'rgba(205,170,115,0.06)', p1: 'rgba(205,170,115,0.04)', edge: 'rgba(205,170,115,0.14)', ink: 'rgba(214,186,140,0.26)', gold: 'rgba(214,176,112,0.24)', goldFill: 'rgba(205,170,115,0.05)', line: 'rgba(205,170,115,0.06)', shadow: 'transparent', shade: '0,0,0' };
     }
     function star(g, cx, cy, R, r, n, rot) {
       g.beginPath();
@@ -207,7 +207,7 @@
         star(g, x, y, s, s * 0.62, 8, Math.PI / 8); g.stroke(); ring(g, x, y, s * 0.2); g.stroke();
       }
       g.lineWidth = 1.2;
-      [[0.04, 0.2, 0.62], [0.97, 0.85, 0.7], [0.55, -0.1, 0.5]].forEach(function (a) {
+      [[0.03, 0.15, 0.6], [0.98, 0.9, 0.68]].forEach(function (a) {
         var cx = W * a[0], cy = H * a[1], R = Math.min(W, H) * a[2];
         for (var k = 1; k <= 4; k++) { ring(g, cx, cy, R * (1 - k * 0.12)); g.stroke(); }
         for (var i = 0; i < 120; i++) { var an = TAU * i / 120, l = i % 5 ? 0.012 : 0.03; g.beginPath(); g.moveTo(cx + Math.cos(an) * R, cy + Math.sin(an) * R); g.lineTo(cx + Math.cos(an) * R * (1 + l), cy + Math.sin(an) * R * (1 + l)); g.stroke(); }
@@ -219,7 +219,7 @@
       dpr = Math.min(1.5, window.devicePixelRatio || 1);
       cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
       backdrop();
-      var n = W < 600 ? 14 : 26, kinds = ['page', 'page', 'page', 'page', 'illum', 'illum', 'medal', 'medal', 'astro', 'tile', 'tile'];
+      var n = W < 600 ? 7 : 12, kinds = ['page', 'page', 'page', 'page', 'page', 'illum', 'illum', 'medal', 'astro', 'tile'];
       sheets = [];
       for (var i = 0; i < n; i++) {
         var kind = kinds[Math.floor(rnd() * kinds.length)], depth = 0.45 + rnd() * 0.75;
@@ -240,7 +240,7 @@
         var y = ((p.y0 + p.vy * t + S.h) % span + span) % span - S.h;
         var x = p.x0 + p.vx * t + Math.sin(t * 0.25 + i) * 14 * p.depth;
         var sx = 0.78 + 0.22 * Math.cos(p.flip + t * p.vf); // lembar seperti perlahan dibalik
-        ctx.globalAlpha = clamp(0.4 + p.depth * 0.5, 0, 0.95);
+        ctx.globalAlpha = clamp(0.3 + p.depth * 0.4, 0, 0.8);
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
         ctx.translate(((x % (W + S.w)) + W + S.w) % (W + S.w) - S.w / 2, y);
         ctx.rotate(p.rot + p.vr * t); ctx.scale(sx, 1);
