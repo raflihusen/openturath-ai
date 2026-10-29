@@ -7,12 +7,14 @@
 /* ---------- hero: titik jadi baris ---------- */
 .hero-m{min-height:0;padding-block:clamp(56px,9vw,104px) clamp(40px,6vw,72px);justify-content:flex-start}
 .hero-m #dots{position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;color:var(--on-surface)}
-.hero-m>*:not(#dots){position:relative;z-index:1}
+.hero-m>*:not(#dots):not(#dots-bg){position:relative;z-index:1}
+.hero-m #dots-bg{position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
 .hero-m .eyebrow-brand{margin-bottom:28px}
 .hero-m h1.hero.hero-wide:not(.ar){font-size:clamp(26px,8vw,92px)}
-.hero-m .lede{text-shadow:0 0 18px var(--surface),0 0 8px var(--surface)}
-.hero-m #dots{opacity:.7;-webkit-mask-image:radial-gradient(ellipse 70% 52% at 50% 48%,rgba(0,0,0,.08) 0%,rgba(0,0,0,.55) 55%,#000 100%);mask-image:radial-gradient(ellipse 70% 52% at 50% 48%,rgba(0,0,0,.08) 0%,rgba(0,0,0,.55) 55%,#000 100%)}
-:root[data-theme="light"] .hero-m #dots{opacity:.9}
+.hero-m{background:var(--hero-wash)}
+.hero-m #dots,.hero-m #dots-bg{-webkit-mask-image:radial-gradient(ellipse 66% 50% at 50% 48%,rgba(0,0,0,.22) 0%,rgba(0,0,0,.6) 55%,#000 100%);mask-image:radial-gradient(ellipse 66% 50% at 50% 48%,rgba(0,0,0,.22) 0%,rgba(0,0,0,.6) 55%,#000 100%)}
+.hero-m #dots{opacity:.85}
+.hero-m .lede{text-shadow:0 0 22px var(--hero-wash),0 0 10px var(--hero-wash)}
 .hero-m .hero-sub{font-size:max(.42em,18px)}
 
 /* ---------- slider before/after ---------- */
@@ -147,3 +149,8 @@ h3.sub{font-size:17px;margin:0 0 6px}
 .cmp.matrix small{display:block;font-size:12px;font-weight:450;color:var(--on-variant);margin-top:4px}
 .yes{display:inline-block;width:18px;height:11px;border-left:2.5px solid currentColor;border-bottom:2.5px solid currentColor;transform:rotate(-45deg) translate(2px,-3px)}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* latar hero: krem hangat (terang) dan hitam hangat (gelap), mengikuti tema seperti token situs */
+:root{--hero-wash:#F7EFDD}
+:root[data-theme="dark"]{--hero-wash:#0E0D0B}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--hero-wash:#0E0D0B}}
