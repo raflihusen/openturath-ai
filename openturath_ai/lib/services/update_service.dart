@@ -92,6 +92,23 @@ class UpdateService extends ChangeNotifier {
 
   bool _isChecking = false;
   bool _isDownloading = false;
+  DateTime? _lastCheckedAt;
+
+  /// Jeda minimum antar pengecekan otomatis (mis. saat aplikasi kembali dibuka).
+  static const recheckInterval = Duration(minutes: 30);
+
+  /// Perlu cek ulang? Tidak bila update sudah siap dipasang, atau baru dicek.
+  /// Pengecekan yang gagal tidak mengisi [last], jadi dicoba lagi pada kesempatan berikut.
+  @visibleForTesting
+  static bool shouldRecheck({
+    required DateTime now,
+    required DateTime? last,
+    required bool ready,
+    Duration interval = recheckInterval,
+  }) {
+    if (ready) return false;
+    return last == null || now.difference(last) >= interval;
+  }
 
   /// Hitung SHA-256 secara streaming tanpa memuat seluruh file 60MB ke memori RAM (F20)
   static Future<String> _computeFileSha256(File file) async {
@@ -105,6 +122,10 @@ class UpdateService extends ChangeNotifier {
         (!AppPlatform.isDesktop && !AppPlatform.isAndroid) ||
         _isChecking ||
         _isDownloading) {
+      return;
+    }
+    if (!shouldRecheck(
+        now: DateTime.now(), last: _lastCheckedAt, ready: isUpdateReady)) {
       return;
     }
     _isChecking = true;
@@ -121,6 +142,8 @@ class UpdateService extends ChangeNotifier {
           .collection('app_config')
           .doc('version')
           .get();
+
+      _lastCheckedAt = DateTime.now();
 
       if (!doc.exists) {
         _status = UpdateStatus.idle;
@@ -247,7 +270,7 @@ class UpdateService extends ChangeNotifier {
           await request.close().timeout(const Duration(seconds: 30));
 
       if (response.statusCode != 200) {
-        _status = UpdateStatus.idle;
+        _status = UpdateStatus.error;
         notifyListeners();
         return;
       }
@@ -292,7 +315,7 @@ class UpdateService extends ChangeNotifier {
           (contentLength > 0 && tempLength < contentLength)) {
         debugPrint('[UpdateService] Unduhan tidak lengkap ($tempLength bytes)');
         if (await tempFile.exists()) await tempFile.delete();
-        _status = UpdateStatus.idle;
+        _status = UpdateStatus.error;
         notifyListeners();
         return;
       }
@@ -303,7 +326,7 @@ class UpdateService extends ChangeNotifier {
         debugPrint(
             '[UpdateService] SHA256 checksum mismatch; download discarded.');
         if (await tempFile.exists()) await tempFile.delete();
-        _status = UpdateStatus.idle;
+        _status = UpdateStatus.error;
         notifyListeners();
         return;
       }
@@ -329,7 +352,7 @@ class UpdateService extends ChangeNotifier {
       try {
         if (await tempFile.exists()) await tempFile.delete();
       } catch (_) {}
-      _status = UpdateStatus.idle;
+      _status = UpdateStatus.error;
       notifyListeners();
     } finally {
       _isDownloading = false;

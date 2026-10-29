@@ -57,7 +57,8 @@ class DashboardScreen extends StatefulWidget {
   State<DashboardScreen> createState() => _DashboardScreenState();
 }
 
-class _DashboardScreenState extends State<DashboardScreen> {
+class _DashboardScreenState extends State<DashboardScreen>
+    with WidgetsBindingObserver {
   final AuthService _authService = AuthService();
   final AgentService _agentService = AgentService();
   final TextEditingController _searchController = TextEditingController();
@@ -78,6 +79,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
     _updateService = UpdateService();
     _updateService.addListener(_onUpdateServiceChanged);
     _updateService.checkForUpdatesSilently();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    // Aplikasi yang dibiarkan terbuka berhari-hari tetap menemukan rilis baru.
+    if (state == AppLifecycleState.resumed) {
+      _updateService.checkForUpdatesSilently();
+    }
   }
 
   void _onUpdateServiceChanged() {
@@ -104,6 +114,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _updateService.removeListener(_onUpdateServiceChanged);
     if (widget.searchFocusNode == null) _searchFocusNode.dispose();
     _searchController.dispose();
