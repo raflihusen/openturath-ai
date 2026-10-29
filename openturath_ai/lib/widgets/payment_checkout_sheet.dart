@@ -14,6 +14,7 @@ import '../core/scholarly_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../core/constants.dart';
+import '../core/payment_destination_policy.dart';
 import '../core/checkout_completion.dart';
 import '../core/theme.dart';
 import '../core/design/ot_colors.dart';
@@ -345,48 +346,28 @@ class _PaymentCheckoutSheetState extends State<PaymentCheckoutSheet> {
     }
   }
 
-  /// OT-F005: Destination allowlist ketat untuk WebView transaksi pembayaran
-  bool _isAllowedPaymentDestination(Uri uri) {
-    if (uri.scheme != 'https') return false;
-
-    final host = uri.host.toLowerCase();
-
-    // Domain aplikasi OpenTurath
-    if (host == 'openturath.id' ||
-        host.endsWith('.openturath.id') ||
-        host == 'openturath-ai.web.app' ||
-        host == 'open-turath.web.app' ||
-        host == 'open-turath.firebaseapp.com' ||
-        host == 'openturath.ai' ||
-        host.endsWith('.openturath.ai')) {
-      return true;
-    }
-
-    // Platform checkout resmi Midtrans
-    if (host == 'midtrans.com' ||
-        host.endsWith('.midtrans.com') ||
-        host == 'veritrans.co.id' ||
-        host.endsWith('.veritrans.co.id')) {
-      return true;
-    }
-
-    // Partner perbankan & e-wallet resmi untuk pembayaran QRIS / VA / Direct Debit
-    if (host.endsWith('.bca.co.id') ||
-        host.endsWith('.mandiri.co.id') ||
-        host.endsWith('.bri.co.id') ||
-        host.endsWith('.bni.co.id') ||
-        host.endsWith('.cimbniaga.co.id') ||
-        host.endsWith('.permata.co.id') ||
-        host.endsWith('.gopay.co.id') ||
-        host.endsWith('.shopeepay.co.id') ||
-        host.endsWith('.ovo.id') ||
-        host.endsWith('.dana.id') ||
-        host.endsWith('.linkaja.id')) {
-      return true;
-    }
-
-    return false;
+  /// Navigasi ke tujuan di luar daftar tidak boleh menjadi jalan buntu senyap:
+  /// pembeli diberi jalan keluar lewat peramban sistem.
+  void _offerBrowserFallback() {
+    if (!mounted) return;
+    final messenger = ScaffoldMessenger.maybeOf(context);
+    final uri = Uri.tryParse(widget.paymentUrl);
+    if (messenger == null || uri == null) return;
+    messenger.hideCurrentSnackBar();
+    messenger.showSnackBar(SnackBar(
+      content: const Text(
+          'Halaman ini tidak dapat dibuka di dalam aplikasi demi keamanan. Lanjutkan pembayaran lewat peramban.'),
+      duration: const Duration(seconds: 12),
+      action: SnackBarAction(
+        label: 'Buka di peramban',
+        onPressed: () => launchUrl(uri, mode: LaunchMode.externalApplication),
+      ),
+    ));
   }
+
+  /// OT-F005: Destination allowlist ketat untuk WebView transaksi pembayaran
+  bool _isAllowedPaymentDestination(Uri uri) =>
+      PaymentDestinationPolicy.isAllowed(uri);
 
   static const Set<String> _allowedExternalPaymentSchemes = {
     'gojek',
@@ -745,6 +726,7 @@ class _PaymentCheckoutSheetState extends State<PaymentCheckoutSheet> {
                         if (!_isAllowedPaymentDestination(uri)) {
                           debugPrint(
                               '[PaymentCheckout] Navigation to untrusted destination rejected: $webUri');
+                          _offerBrowserFallback();
                           return NavigationActionPolicy.CANCEL;
                         }
 
