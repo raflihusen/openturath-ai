@@ -137,3 +137,9 @@ h3.sub{font-size:17px;margin:0 0 6px}
 .ba[data-tab="syair"] .txt,.ba[data-tab="ayat"] .txt{font-size:3.2cqw;position:absolute;inset:0;padding:0 6cqw;display:none;align-content:center}
 .ba[data-tab="syair"] .txt[data-for="syair"],.ba[data-tab="ayat"] .txt[data-for="ayat"]{display:grid}
 .ba[data-tab="ayat"] .txt{font-size:4.1cqw}
+
+.cmp.price table{min-width:780px}
+.cmp.price td:last-child,.cmp.price thead th:last-child{background:none;font-weight:400;color:var(--on-variant)}
+.cmp.price thead th:last-child{font-weight:600}
+.cmp.price tr.us th,.cmp.price tr.us td{background:var(--container);color:var(--on-surface);font-weight:550}
+.cmp.price tbody th{white-space:normal;min-width:150px}
