@@ -38,10 +38,27 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 Source: "..\..\OpenTurath_AI_Windows\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\..\OpenTurath_AI_Windows\*.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\..\OpenTurath_AI_Windows\data\*"; DestDir: "{app}\data"; Flags: ignoreversion recursesubdirs createallsubdirs
+; Prasyarat resmi Microsoft disediakan oleh tool\package_windows.ps1. Berkas ini
+; WAJIB ada: tanpa skipifsourcedoesntexist, kompilasi gagal bila paket dibuat
+; lewat jalur lain yang tidak membawa runtime.
+Source: "..\..\OpenTurath_AI_Windows\prerequisites\vc_redist.x64.exe"; DestDir: "{tmp}"; Flags: deleteafterinstall; Check: VCRedistNeeded
 
 [Icons]
 Name: "{autoprograms}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
 Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon
 
 [Run]
+; shellexec agar Windows meminta elevasi untuk pemasang Microsoft (pemasang ini berjalan tanpa hak admin).
+Filename: "{tmp}\vc_redist.x64.exe"; Parameters: "/install /quiet /norestart"; StatusMsg: "Memasang Microsoft Visual C++ Runtime..."; Flags: shellexec waituntilterminated; Check: VCRedistNeeded
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
+
+[Code]
+// Runtime VC++ 2015-2022 x64 terpasang bila Installed=1 pada kunci ini.
+function VCRedistNeeded: Boolean;
+var
+  Installed: Cardinal;
+begin
+  Result := True;
+  if RegQueryDWordValue(HKLM64, 'SOFTWARE\Microsoft\VisualStudio\14.0\VC\Runtimes\x64', 'Installed', Installed) then
+    Result := (Installed <> 1);
+end;

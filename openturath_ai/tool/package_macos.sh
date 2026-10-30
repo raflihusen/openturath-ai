@@ -19,3 +19,12 @@ ln -s /Applications "$stage/Applications"
 hdiutil create -volname 'OpenTurath AI' -srcfolder "$stage" -ov -format UDZO "$products/OpenTurath_AI_macOS.dmg"
 shasum -a 256 "$products/OpenTurath_AI_macOS.dmg" > "$products/OpenTurath_AI_macOS.dmg.sha256"
 # Packaging is local. Developer ID signing/notarization must precede public distribution.
+# Distribusi publik (OPENTURATH_PUBLIC_DIST=1) wajib Developer ID + notarisasi
+# yang lolos Gatekeeper; paket lokal ad-hoc tidak boleh dipublikasikan.
+if [ "${OPENTURATH_PUBLIC_DIST:-0}" = "1" ]; then
+  if ! codesign -dv "$app" 2>&1 | grep -q 'Authority=Developer ID Application'; then
+    echo "Distribusi publik ditolak: aplikasi tidak ditandatangani Developer ID Application." >&2; exit 1
+  fi
+  spctl --assess --type execute -v "$app" || { echo "Distribusi publik ditolak: Gatekeeper menolak aplikasi." >&2; exit 1; }
+  xcrun stapler validate "$app" || { echo "Distribusi publik ditolak: tiket notarisasi belum distaple." >&2; exit 1; }
+fi
