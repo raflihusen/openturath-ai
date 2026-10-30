@@ -473,16 +473,19 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                     bool cleared = false;
                     try {
                       final result = await session.webController
-                          ?.callAsyncJavaScript(functionBody:
-                              'return typeof window.otClearChat === "function" ? await window.otClearChat() : false;')
+                          ?.callAsyncJavaScript(
+                              functionBody:
+                                  'return typeof window.otClearChat === "function" ? await window.otClearChat() : false;')
                           .timeout(const Duration(seconds: 20));
                       cleared = result?.value == true;
                     } catch (_) {}
                     if (!mounted) return;
                     if (cleared) {
-                      AppSnackBar.success(context, Loc.tr('chatHistoryCleared'));
+                      AppSnackBar.success(
+                          context, Loc.tr('chatHistoryCleared'));
                     } else {
-                      AppSnackBar.error(context, Loc.tr('chatHistoryClearFailed'));
+                      AppSnackBar.error(
+                          context, Loc.tr('chatHistoryClearFailed'));
                     }
                   },
                   child: Text(Loc.tr('delete'),

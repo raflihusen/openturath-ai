@@ -30,7 +30,9 @@ void main() {
   });
   for (final permission in [false, true]) {
     for (final result in [false, null]) {
-      testWidgets('Google connection $result preserves ${permission ? 'permission' : 'login'} recovery', (tester) async {
+      testWidgets(
+          'Google connection $result preserves ${permission ? 'permission' : 'login'} recovery',
+          (tester) async {
         final manager = AgentSessionManager.instance;
         manager.openAgent(AgentModel.defaultAgents.first);
         final session = manager.activeTab!;
@@ -45,14 +47,15 @@ void main() {
           home: const AgentMultiTabRoom(),
           routes: {
             AppRoutes.googleSessionAuth: (context) => Scaffold(
-              body: TextButton(
-                onPressed: () => Navigator.pop(context, result),
-                child: const Text('Postpone connection'),
-              ),
-            ),
+                  body: TextButton(
+                    onPressed: () => Navigator.pop(context, result),
+                    child: const Text('Postpone connection'),
+                  ),
+                ),
           },
         ));
-        final retry = permission ? Loc.tr('ui_f9d6eb247c') : Loc.tr('roomLoginNow');
+        final retry =
+            permission ? Loc.tr('ui_f9d6eb247c') : Loc.tr('roomLoginNow');
         await tester.tap(find.text(retry));
         await tester.pumpAndSettle();
         await tester.tap(find.text('Postpone connection'));
