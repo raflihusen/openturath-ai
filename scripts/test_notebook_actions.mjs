@@ -19,7 +19,7 @@ function message(role, value, children = []) {
   return node;
 }
 function exportConversation(nodes) {
-  const block = source.slice(source.indexOf('  const answerSelector'), source.indexOf("  let lastCopy = ''));
+  const block = source.slice(source.indexOf('  const answerSelector'), source.indexOf("  let lastCopy = ''"));
   const context = vm.createContext({document: {querySelectorAll: () => nodes}, getComputedStyle: () => ({visibility: 'visible', display: 'block'})});
   vm.runInContext(block + ';this.output = conversation();', context);
   return context.output;
