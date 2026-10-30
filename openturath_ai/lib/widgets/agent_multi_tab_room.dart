@@ -1681,7 +1681,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
           retryLabel: Loc.tr('roomLoginNow'),
           retryIcon: Icons.login_rounded,
           onRetry: () async {
-            final connected = await Navigator.pushNamed<bool>(
+            final connected = await Navigator.pushNamed(
                 context, AppRoutes.googleSessionAuth);
             if (!mounted || connected != true) return;
             if (session.resolvedUrl != null) {
@@ -1714,7 +1714,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
             // Galat izin bisa berarti berbagi notebook belum selesai, bukan
             // sesi rusak: cookie tidak dihapus di luar Log Out (Aturan #8).
             if (context.mounted) {
-              final connected = await Navigator.pushNamed<bool>(
+              final connected = await Navigator.pushNamed(
                   context, AppRoutes.googleSessionAuth);
               if (!mounted || connected != true) return;
               if (session.resolvedUrl != null) {
