@@ -13,12 +13,14 @@ import 'package:openturath_ai/services/update_service.dart';
 const manifestPath = String.fromEnvironment('OT_OTA_LOCAL_MANIFEST');
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  debugPrint('OTA fixture: adHoc=${const bool.fromEnvironment('OT_OTA_ALLOW_ADHOC_TEST')}, manifest=$manifestPath');
+  debugPrint(
+      'OTA fixture: adHoc=${const bool.fromEnvironment('OT_OTA_ALLOW_ADHOC_TEST')}, manifest=$manifestPath');
   WidgetsBinding.instance.addPostFrameCallback((_) {
     unawaited(DesktopUpdateInstaller.confirmStartup());
   });
   runApp(MaterialApp(
-      theme: ThemeData(colorScheme: const ColorScheme.light(primary: Color(0xFF18181B))),
+      theme: ThemeData(
+          colorScheme: const ColorScheme.light(primary: Color(0xFF18181B))),
       home: const DesktopSmoke()));
 }
 
