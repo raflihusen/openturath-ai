@@ -18,6 +18,7 @@ class PersistentGoogleSession {
   static const String _legacyVaultKey = 'ot_persistent_google_cookies_v3';
   static const String _ownerKey = 'webview_session_owner';
   static const String _readyKey = 'google_session_ready';
+
   /// Owner lama dapat berasal dari login Firebase saja. Marker ini hanya
   /// ditulis setelah identitas WebView diverifikasi oleh alur koneksi Google.
   static const String verifiedOwnerKey = 'webview_session_owner_verified_v1';
