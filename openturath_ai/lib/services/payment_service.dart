@@ -7,7 +7,10 @@ import '../core/product_pricing.dart';
 /// Semua interaksi dengan gateway dan kuncinya terjadi di server; aplikasi
 /// tidak pernah menyimpan kunci rahasia.
 class PaymentService {
-  final CallableGateway _functions = const CallableGateway();
+  PaymentService({CallableGateway? functions})
+      : _functions = functions ?? const CallableGateway();
+
+  final CallableGateway _functions;
 
   /// Buat sesi pembayaran checkout resmi melalui Cloud Function createCheckout
   Future<Map<String, dynamic>> createCheckoutSession({
@@ -55,15 +58,44 @@ class PaymentService {
   Future<Map<String, dynamic>> checkPaymentStatus({
     required String invoiceNumber,
   }) async {
-    try {
-      final result = await _functions.call(
-          AppConstants.fnCheckPaymentStatus, {'invoiceNumber': invoiceNumber});
-      return Map<String, dynamic>.from(result as Map);
-    } catch (e) {
-      return {
-        'success': false,
-        'status': 'ERROR',
-      };
+    final result = await _functions.call(
+        AppConstants.fnCheckPaymentStatus, {'invoiceNumber': invoiceNumber});
+    return Map<String, dynamic>.from(result as Map);
+  }
+}
+
+/// Hasil inquiry yang boleh ditampilkan tanpa menebak status pembayaran.
+class PaymentInquiryFeedback {
+  const PaymentInquiryFeedback(this.messageKey, {this.terminal = false});
+
+  final String messageKey;
+  final bool terminal;
+
+  static PaymentInquiryFeedback forStatus(Object? status) {
+    switch (status.toString().trim().toUpperCase()) {
+      case 'EXPIRE':
+      case 'EXPIRED':
+        return const PaymentInquiryFeedback('paymentExpired', terminal: true);
+      case 'DENY':
+      case 'DENIED':
+      case 'FAILED':
+        return const PaymentInquiryFeedback('paymentDenied', terminal: true);
+      case 'CANCEL':
+      case 'CANCELLED':
+        return const PaymentInquiryFeedback('paymentCancelled', terminal: true);
+      case 'REFUND':
+      case 'CHARGEBACK':
+        return const PaymentInquiryFeedback('paymentRefunded', terminal: true);
+      case 'PARTIAL_REFUND':
+      case 'PARTIAL_CHARGEBACK':
+        return const PaymentInquiryFeedback('paymentPartialRefund', terminal: true);
+      case 'PENDING':
+      case 'CHALLENGE':
+      case 'CAPTURE':
+      case 'AUTHORIZE':
+        return const PaymentInquiryFeedback('paymentPending');
+      default:
+        return const PaymentInquiryFeedback('paymentCheckUnavailable');
     }
   }
 }
