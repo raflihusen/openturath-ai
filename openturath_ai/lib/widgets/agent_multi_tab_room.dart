@@ -3,6 +3,7 @@ import 'output_language_sheet.dart';
 import '../services/desktop_webview_runtime.dart';
 import '../widgets/desktop_webview_gate.dart';
 import '../core/app_platform.dart';
+import '../core/webview_cookie_policy.dart';
 import 'dart:async';
 import 'dart:collection';
 import 'dart:convert';
@@ -1766,7 +1767,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
               displayZoomControls: false,
               mixedContentMode: MixedContentMode.MIXED_CONTENT_NEVER_ALLOW,
               thirdPartyCookiesEnabled: true,
-              sharedCookiesEnabled: true,
+              sharedCookiesEnabled: WebViewCookiePolicy.sharedCookiesEnabled,
               hardwareAcceleration: true,
               useHybridComposition: true,
               useOnRenderProcessGone: true,

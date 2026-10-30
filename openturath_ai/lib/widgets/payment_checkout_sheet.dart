@@ -1,6 +1,7 @@
 import '../services/desktop_webview_runtime.dart';
 import '../widgets/desktop_webview_gate.dart';
 import '../core/app_platform.dart';
+import '../core/webview_cookie_policy.dart';
 import '../core/localization.dart';
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -649,7 +650,8 @@ class _PaymentCheckoutSheetState extends State<PaymentCheckoutSheet> {
                         javaScriptEnabled: true,
                         domStorageEnabled: true,
                         databaseEnabled: true,
-                        sharedCookiesEnabled: true,
+                        sharedCookiesEnabled:
+                            WebViewCookiePolicy.sharedCookiesEnabled,
                         thirdPartyCookiesEnabled: true,
                         cacheEnabled: true,
                         clearCache: false,
