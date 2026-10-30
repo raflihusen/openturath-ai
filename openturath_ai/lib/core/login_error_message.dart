@@ -7,10 +7,15 @@ import 'app_copy.dart';
 /// An empty message means the user cancelled the authorization flow.
 String loginErrorMessage(Object error) {
   if (error is PlatformException) {
-    if (error.code == 'sign_in_canceled') return '';
-    if (error.code == 'network_error') return AppCopy.networkError;
-    if (error.code == 'browser_launch_failed')
+    if (error.code == 'sign_in_canceled') {
+      return '';
+    }
+    if (error.code == 'network_error') {
+      return AppCopy.networkError;
+    }
+    if (error.code == 'browser_launch_failed') {
       return AppCopy.desktopBrowserError;
+    }
     if (error.code == 'desktop_loopback_failed') {
       return AppCopy.desktopListenerError;
     }
