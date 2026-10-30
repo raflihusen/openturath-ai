@@ -79,7 +79,7 @@ class UpdateService extends ChangeNotifier {
       required Future<int> Function() buildLoader,
       required Future<Map<String, dynamic>?> Function() manifestLoader,
       required UpdatePackageStore store,
-      required Future<void> Function(UpdateInfo) installer})
+      Future<void> Function(UpdateInfo)? installer})
       : _platformOverride = platform,
         _buildLoader = buildLoader,
         _manifestLoader = manifestLoader,

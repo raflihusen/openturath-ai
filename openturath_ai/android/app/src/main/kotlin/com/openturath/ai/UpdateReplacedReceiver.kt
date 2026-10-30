@@ -9,7 +9,11 @@ class UpdateReplacedReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         if (intent.action != Intent.ACTION_MY_PACKAGE_REPLACED) return
         val prefs = context.getSharedPreferences("openturath_updater", 0)
-        if (prefs.getString("status", "idle") != "waiting") return
+        if (prefs.getString("status", "idle") !in setOf("waiting", "installed")) return
+        @Suppress("DEPRECATION")
+        val info = context.packageManager.getPackageInfo(context.packageName, 0)
+        val installedBuild = if (android.os.Build.VERSION.SDK_INT >= 28) info.longVersionCode else info.versionCode.toLong()
+        if (installedBuild != prefs.getLong("build", 0)) return
         prefs.edit().putString("status", "installed").commit()
         try {
             context.packageManager.getLaunchIntentForPackage(context.packageName)?.let {
