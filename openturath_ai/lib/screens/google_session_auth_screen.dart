@@ -137,7 +137,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
 
   /// Menyelaraskan status pelindung visual (Visual Shield) dengan domain navigasi WebView
   void _handleUrlNavigation(InAppWebViewController controller, WebUri? url) {
-    if (!mounted || url == null) return;
+    if (!mounted || url == null || _verificationFailed || _connectionCancelled) return;
     final uri = url.uriValue;
     final isNotebook = NotebookNavigation.notebook(uri);
     final isAuthFlow = NotebookNavigation.signInFlow(uri);
@@ -371,6 +371,8 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
         await Future.delayed(const Duration(milliseconds: 250));
       }
       inconclusive = true;
+    } catch (_) {
+      if (_isCurrentVerification(epoch)) _showVerificationRecovery();
     } finally {
       _isCheckingAccount = false;
     }
@@ -765,7 +767,11 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
       }
       final verified = await PersistentGoogleSession.instance
           .lockAndPersistCookies(controller, email,
-              isCurrent: () => _isCurrentVerification(epoch));
+              isCurrent: () =>
+                  _isCurrentVerification(epoch) &&
+                  (AuthService().cachedCurrentUser?.email ??
+                          AuthService().currentUser?.email ?? '')
+                      .trim().toLowerCase() == email);
       if (!_isCurrentVerification(epoch)) return;
       if (!verified) {
         _showVerificationRecovery();
