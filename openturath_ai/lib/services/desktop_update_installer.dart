@@ -102,6 +102,7 @@ class DesktopUpdateInstaller {
       required String hash,
       required int build,
       required int installerProtocol}) async {
+    final normalizedHash = hash.toLowerCase();
     final windows = Platform.isWindows;
     if (!windows && !Platform.isMacOS) {
       throw UnsupportedError('Desktop updater');
@@ -141,7 +142,7 @@ class DesktopUpdateInstaller {
         package.path,
         target,
         '$build',
-        hash,
+        normalizedHash,
         allowAdhocForTesting ? '1' : '0'
       ]).timeout(const Duration(minutes: 3));
       if (result.exitCode != 0) {
@@ -159,7 +160,7 @@ class DesktopUpdateInstaller {
       'stage': stage,
       'build': build,
       'package': package.path,
-      'sha256': hash,
+      'sha256': normalizedHash,
       'parentPid': pid,
       'allowAdhocTest': allowAdhocForTesting
     };
