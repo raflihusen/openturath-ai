@@ -45,6 +45,17 @@ Label versi di laporan auth juga tidak dapat dipercaya sebagai versi binary: [au
 
 Metadata rilis server bukan bukti byte aktual pada URL unduhan. Perbandingan dengan berkas yang dilayani URL perlu dicatat tersendiri. Aplikasi terpasang 1.0.87+88 juga tidak otomatis berarti seluruh pelanggan menerima versi tersebut.
 
+Pemeriksaan URL publik selesai sekitar **22.56 Asia/Aden**:
+
+| Pemeriksaan URL unduhan | macOS | Windows Setup |
+|---|---|---|
+| Respons binary | HTTP 200, disk image | HTTP 200, executable |
+| `Last-Modified` | 29 Oktober, 10.43.10 UTC | 29 Oktober, 10.43.10 UTC |
+| Checksum sidecar | `OpenTurath_AI_macOS.dmg.sha256` HTTP 404, berisi HTML | Tersedia; hash cocok dengan Firestore dan Setup lokal build 86 |
+| Hash binary lengkap pada pemeriksaan ini | Belum terverifikasi | Belum terverifikasi |
+
+Percobaan transfer paralel dibatasi 45 detik: DMG baru menerima 5.607.133 byte; Setup 6.367.488 dari 32.250.824 byte, lalu keduanya timeout. Hash parsial tidak dipakai. Tidak ada binary yang disimpan atau dijalankan. Ini membatasi bukti audit; bukan bukti semua pelanggan mengalami kecepatan unduh yang sama. Metadata live 29 Oktober tidak boleh disamakan dengan DMG lokal 30 Oktober. Bukti hash/signing paket publik pada audit 29 Oktober adalah bukti historis bertanggal, bukan pengukuran hash penuh baru pada hari ini.
+
 ## 3. Temuan sesi dan pembukaan AI
 
 ### S01 — P1: proses menyatakan sukses walaupun pemeriksaan sesi gagal
