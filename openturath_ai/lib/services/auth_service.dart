@@ -55,10 +55,10 @@ class AuthService {
   // ── Cache Helpers ──────────────────────────────────────────────
   static Future<void> _cacheUserLocally(UserModel user, {bool Function()? isCurrent}) async {
     if (isCurrent?.call() == false) return;
+    _userCache[user.uid] = user;
     try {
       final prefs = await SharedPreferences.getInstance();
       if (isCurrent?.call() == false) return;
-      _userCache[user.uid] = user;
       await prefs.setString('current_user_uid', user.uid);
       if (isCurrent?.call() == false) return;
       await prefs.setString(
@@ -408,8 +408,9 @@ class AuthService {
         return fallback;
       }
       final userModel = UserModel.fromFirestore(doc);
-      await _cacheUserLocally(userModel);
-      return userModel;
+      await _cacheUserLocally(userModel,
+        isCurrent: () => currentUser?.uid == user.uid);
+      return currentUser?.uid == user.uid ? userModel : null;
     } catch (_) {
       // Pertahankan snapshot terakhir jika ada (F41)
       final cached = await _getCachedUser(user.uid);
@@ -443,7 +444,8 @@ class AuthService {
           if (!doc.exists) return null;
           final user = UserModel.fromFirestore(doc);
           if (_auth.currentUser?.uid == uid) {
-            unawaited(_cacheUserLocally(user));
+            unawaited(_cacheUserLocally(user,
+              isCurrent: () => _auth.currentUser?.uid == uid));
           }
           return user;
         }),
