@@ -49,6 +49,7 @@ if [ "$mode" = prepare ]; then
   printf '%s\n' "$stage"
 elif [ "$mode" = install ]; then
   stage=$2; target=$3; oldpid=$4; build=$5
+  trap 'rc=$?; if [ "$rc" != 0 ]; then echo failed > "$stage/handoff_failed"; fi' EXIT
   case "$oldpid:$build" in *[!0-9:]*|:*) fail 'Invalid install request';; esac
   [ "$(cat "$stage/target")" = "$target" ] || fail 'Install target changed'
   [ "$(dirname "$stage")" = "$(dirname "$target")" ] || fail 'Invalid staging folder'
@@ -65,6 +66,7 @@ elif [ "$mode" = install ]; then
   [ ! -f "$stage/cancelled" ] || fail 'Install cancelled'
   replaced=0
   rollback() {
+    result=$?
     if [ "$replaced" = 1 ] && [ -d "$stage/previous.app" ]; then
       # Stop only the failed candidate before restoring its predecessor.
       executable=$(plist "$target" CFBundleExecutable)
@@ -76,6 +78,7 @@ elif [ "$mode" = install ]; then
       echo rolled_back > "$stage/status"
       /usr/bin/open -n "$target" || true
     fi
+    if [ "$result" != 0 ]; then echo failed > "$stage/handoff_failed"; fi
   }
   trap rollback EXIT
   /bin/mv "$target" "$stage/previous.app"

@@ -124,6 +124,41 @@ int main(int argc, char **argv) {
             if old.poll() is None: old.terminate(); old.wait()
             if helper.poll() is None: helper.kill(); helper.wait()
 
+    def test_cancelled_handoff_keeps_original_running(self):
+        dmg, digest = self.package()
+        prepared = self.prepare(dmg, digest)
+        self.assertEqual(prepared.returncode, 0, prepared.stderr)
+        stage = pathlib.Path(prepared.stdout.strip())
+        old = subprocess.Popen(['sleep', '30'])
+        helper = subprocess.Popen(['/bin/sh', str(HELPER), 'install', str(stage),
+            str(self.target), str(old.pid), '2'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        try:
+            deadline = time.time()+10
+            while not (stage/'ready').exists() and time.time()<deadline: time.sleep(.05)
+            self.assertTrue((stage/'ready').exists())
+            (stage/'cancelled').write_text('cancelled')
+            helper.communicate(timeout=10)
+            self.assertNotEqual(helper.returncode, 0)
+            self.assertEqual(self.build(), '1')
+            self.assertIsNone(old.poll())
+            self.assertTrue((stage/'handoff_failed').exists())
+        finally:
+            old.terminate(); old.wait()
+            if helper.poll() is None: helper.kill(); helper.wait()
+
+    def test_changed_staged_bundle_fails_before_handoff(self):
+        dmg, digest = self.package()
+        prepared = self.prepare(dmg, digest)
+        self.assertEqual(prepared.returncode, 0, prepared.stderr)
+        stage = pathlib.Path(prepared.stdout.strip())
+        (stage/'next.app/Contents/Resources/behavior').write_text('changed')
+        result = subprocess.run(['/bin/sh', str(HELPER), 'install', str(stage),
+            str(self.target), str(os.getpid()), '2'], capture_output=True, timeout=10)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertFalse((stage/'ready').exists())
+        self.assertTrue((stage/'handoff_failed').exists())
+        self.assertEqual(self.build(), '1')
+
     def test_real_install_and_relaunch(self):
         code, stage, error = self.run_install('confirm')
         self.assertEqual(code, 0, error)
