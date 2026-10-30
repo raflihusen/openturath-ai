@@ -50,14 +50,19 @@ class PersistentGoogleSession {
   /// Mengembalikan false bila akun kosong atau cookie sesi tidak tersedia.
   Future<bool> lockAndPersistCookies(
     InAppWebViewController? controller,
-    String email,
+    String email, {
+    bool Function()? isCurrent,
+  }
   ) async {
     final cleanEmail = email.trim().toLowerCase();
-    if (cleanEmail.isEmpty) return false;
+    if (cleanEmail.isEmpty || isCurrent?.call() == false) return false;
     try {
       if (!await _hasLiveSession(controller)) return false;
+      if (isCurrent?.call() == false) return false;
       final prefs = await SharedPreferences.getInstance();
+      if (isCurrent?.call() == false) return false;
       await _dropLegacyVault(prefs);
+      if (isCurrent?.call() == false) return false;
       if (cleanEmail.isNotEmpty) {
         await prefs.setString(_ownerKey, cleanEmail);
         await prefs.setString(verifiedOwnerKey, cleanEmail);

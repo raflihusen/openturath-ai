@@ -22,6 +22,7 @@ class _MemoryCookieManager extends PlatformCookieManager {
   int reads = 0;
   int writes = 0;
   int deletes = 0;
+  Completer<void>? readGate;
 
   @override
   Future<List<Cookie>> getCookies({
@@ -30,6 +31,7 @@ class _MemoryCookieManager extends PlatformCookieManager {
     PlatformInAppWebViewController? webViewController,
   }) async {
     reads++;
+    await readGate?.future;
     return List.of(cookies);
   }
 
@@ -78,7 +80,8 @@ void main() {
     platform.manager
       ..reads = 0
       ..writes = 0
-      ..deletes = 0;
+      ..deletes = 0
+      ..readGate = null;
     platform.manager.cookies
       ..clear()
       ..add(Cookie(name: 'SID', value: 'synthetic-session-a'));
@@ -194,4 +197,30 @@ void main() {
     expect(prefs.getString(verifiedOwnerKey), accountA);
     expect(await session.restoreSessionIfAvailable(accountA), true);
   });
+
+  test('cancelled connection cannot claim ownership after a delayed cookie read',
+      () async {
+    var isCurrent = true;
+    final gate = Completer<void>();
+    platform.manager.readGate = gate;
+
+    final result = session.lockAndPersistCookies(
+      null,
+      accountA,
+      isCurrent: () => isCurrent,
+    );
+    await Future<void>.delayed(Duration.zero);
+    expect(platform.manager.reads, 1);
+
+    isCurrent = false;
+    gate.complete();
+
+    expect(await result, false);
+    final prefs = await SharedPreferences.getInstance();
+    expect(prefs.getString(ownerKey), isNull);
+    expect(prefs.getString(verifiedOwnerKey), isNull);
+    expect(prefs.getBool('google_session_ready'), isNot(true));
+  });
 }
+import 'dart:async';
+
