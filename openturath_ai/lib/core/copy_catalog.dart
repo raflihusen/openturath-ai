@@ -653,6 +653,11 @@ const copyCatalog = <String, List<String>>{
     "The offer price has been refreshed. Review the displayed price and press the payment button again if you agree.",
     "حُدّث سعر العرض. راجع السعر المعروض ثم اضغط زر الدفع مجددًا إن وافقت."
   ],
+  "priceRefreshUnavailable": [
+    "Harga terbaru belum dapat dimuat. Periksa koneksi lalu tekan tombol bayar untuk mencoba memuatnya kembali.",
+    "The latest price could not be loaded. Check your connection, then press the payment button to try loading it again.",
+    "تعذر تحميل السعر الأحدث. تحقق من الاتصال ثم اضغط زر الدفع لإعادة محاولة تحميله."
+  ],
   "googleSessionFailed": [
     "Gagal menghubungkan akun Google.",
     "Unable to connect your Google account.",
