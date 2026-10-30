@@ -1,3 +1,4 @@
+import 'services/desktop_update_installer.dart';
 import 'core/app_platform.dart';
 import 'screens/onboarding_screen.dart';
 import 'screens/browser_workspace_screen.dart';
@@ -41,6 +42,9 @@ const _browserWorkspaceExperiment = bool.fromEnvironment(
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    unawaited(DesktopUpdateInstaller.confirmStartup());
+  });
 
   if (_browserWorkspaceExperiment) {
     try {

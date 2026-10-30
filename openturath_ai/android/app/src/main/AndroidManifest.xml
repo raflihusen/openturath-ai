@@ -27,6 +27,10 @@
             </intent-filter>
         </activity>
 
+        <receiver android:name=".UpdateReplacedReceiver" android:exported="false">
+            <intent-filter><action android:name="android.intent.action.MY_PACKAGE_REPLACED"/></intent-filter>
+        </receiver>
+
         <!-- ── Provider untuk flutter_inappwebview ── -->
         <provider
             android:name="androidx.core.content.FileProvider"

@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 /// A detached installer outlives the application. Readiness is acknowledged
 /// before the running app exits; startup confirmation enables rollback.
@@ -31,8 +32,8 @@ class DesktopUpdateInstaller {
       // Do not acknowledge a restart of the predecessor or a rolled-back app.
       final status = File(p.join(stage.path, 'status'));
       if (!await status.exists() || (await status.readAsString()).trim() != 'installed') return;
-      final info = await const MethodChannel('plugins.flutter.io/package_info').invokeMapMethod<String, dynamic>('getAll');
-      final build = int.tryParse('${info?['buildNumber']}') ?? 0;
+      final info = await PackageInfo.fromPlatform();
+      final build = int.tryParse(info.buildNumber) ?? 0;
       if (build != plan['build']) return;
       await File(p.join(stage.path, 'confirmed')).writeAsString('$build', flush: true);
       await receipt.delete();
@@ -61,7 +62,7 @@ class DesktopUpdateInstaller {
     await helper.writeAsString(await rootBundle.loadString('assets/updater/$asset'), flush: true);
     String stage;
     if (windows) {
-      stage = (await Directory(p.join(p.dirname(target), '.ot-update-')).createTemp()).path;
+      stage = (await Directory(p.dirname(target)).createTemp('.ot-update-')).path;
     } else {
       final result = await Process.run('/bin/sh', [helper.path, 'prepare', package.path,
         target, '$build', hash, allowAdhocForTesting ? '1' : '0']).timeout(const Duration(minutes: 3));

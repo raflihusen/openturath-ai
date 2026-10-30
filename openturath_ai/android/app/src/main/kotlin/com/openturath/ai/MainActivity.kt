@@ -7,10 +7,29 @@ import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
 
 class MainActivity : FlutterActivity() {
+    private val updater by lazy { AndroidUpdateInstaller(this) }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        updater.onResult(requestCode, resultCode)
+    }
+
     private val CHANNEL = "com.openturath.ai/native_launcher"
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "com.openturath.ai/updater").setMethodCallHandler { call, result ->
+            try {
+                when (call.method) {
+                    "install" -> result.success(updater.install(requireNotNull(call.argument<String>("path")),
+                        requireNotNull(call.argument<Number>("build")).toLong()))
+                    "status" -> result.success(updater.status())
+                    else -> result.notImplemented()
+                }
+            } catch (_: Exception) {
+                result.error("UPDATE_INSTALL_FAILED", "Paket pembaruan tidak dapat dipasang.", null)
+            }
+        }
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL).setMethodCallHandler { call, result ->
             when (call.method) {
                 "isNotebookAppInstalled" -> {
