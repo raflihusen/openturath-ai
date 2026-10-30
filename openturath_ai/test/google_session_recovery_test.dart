@@ -46,9 +46,13 @@ class _Controller extends PlatformInAppWebViewController {
             const PlatformInAppWebViewControllerCreationParams(id: 'fixture'));
 
   String? detectedEmail = _email;
+  bool failUrlRead = false;
 
   @override
-  Future<WebUri?> getUrl() async => _notebookUrl;
+  Future<WebUri?> getUrl() async {
+    if (failUrlRead) throw PlatformException(code: 'fixture-disposed-view');
+    return _notebookUrl;
+  }
 
   @override
   Future<dynamic> evaluateJavascript({
@@ -159,10 +163,12 @@ void main() {
     await tester.tap(find.text('Open Google connection'));
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 350));
-    final controller =
-        InAppWebViewController.fromPlatform(platform: _Controller());
-    platform.lastView!.params.onWebViewCreated!(controller);
-    return controller;
+    final nativeController = _Controller();
+    platform.lastView!.params.onWebViewCreated!(
+        InAppWebViewController.fromPlatform(platform: nativeController));
+    // The macOS plugin wraps the same platform controller separately for
+    // onWebViewCreated and later navigation events.
+    return InAppWebViewController.fromPlatform(platform: nativeController);
   }
 
   Future<void> finishLoad(
@@ -231,9 +237,19 @@ void main() {
     expect(platform.lastView, isNot(same(failedView)));
     expect(platform.lastView!.params.initialUrlRequest!.url.toString(),
         'https://notebook.google.com/');
-    final retryController =
-        InAppWebViewController.fromPlatform(platform: _Controller());
-    platform.lastView!.params.onWebViewCreated!(retryController);
+    final retryNativeController = _Controller();
+    platform.lastView!.params.onWebViewCreated!(
+        InAppWebViewController.fromPlatform(platform: retryNativeController));
+    final retryController = InAppWebViewController.fromPlatform(
+        platform: retryNativeController);
+
+    // A disposed view can deliver a late event after replacement. Its failed
+    // platform call must not replace the new view with another recovery state.
+    (controller.platform as _Controller).failUrlRead = true;
+    failedView!.params.onLoadStop!(controller, _notebookUrl);
+    await tester.pump();
+    expect(find.byType(InAppWebView), findsOneWidget);
+    expect(find.text(Loc.tr('googleSessionUnverifiedTitle')), findsNothing);
     await finishLoad(tester, retryController);
 
     final prefs = await SharedPreferences.getInstance();
