@@ -94,6 +94,12 @@ class AuthService {
   User? get currentUser => previewUser != null ? null : _auth.currentUser;
   Stream<User?> get authStateChanges => _auth.authStateChanges();
 
+  bool get hasAuthenticatedSession {
+    if (previewUser != null) return true;
+    final user = currentUser;
+    return user != null && !user.isAnonymous;
+  }
+
   UserModel? get cachedCurrentUser {
     if (previewUser != null) return previewUser;
     final user = _auth.currentUser;
@@ -219,8 +225,9 @@ class AuthService {
               defaultTargetPlatform == TargetPlatform.macOS)) {
         // Native GoogleSignIn SDK on Android, iOS, & macOS (Darwin)
         final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
-        if (googleUser == null || !current())
+        if (googleUser == null || !current()) {
           return null; // Pengguna membatalkan login
+        }
 
         stage = 'google-token';
         final GoogleSignInAuthentication googleAuth =
@@ -252,8 +259,9 @@ class AuthService {
         // Platform desktop Windows: gunakan DesktopAuthGateway (Loopback + Firebase Web Auth)
         stage = 'desktop-gateway';
         final desktopAuth = await DesktopAuthGateway.signIn();
-        if (desktopAuth == null || !current())
+        if (desktopAuth == null || !current()) {
           return null; // Pengguna membatalkan login
+        }
 
         stage = 'firebase-credential';
         final credential = GoogleAuthProvider.credential(
@@ -274,7 +282,9 @@ class AuthService {
 
       if (firebaseUser == null ||
           !current() ||
-          _auth.currentUser?.uid != firebaseUser.uid) return null;
+          _auth.currentUser?.uid != firebaseUser.uid) {
+        return null;
+      }
       bool ownsUser() =>
           current() && _auth.currentUser?.uid == firebaseUser!.uid;
       stage = 'profile-resolve';
