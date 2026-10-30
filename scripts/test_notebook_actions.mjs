@@ -85,10 +85,13 @@ test('copy label changes only after successful clipboard acknowledgement', () =>
 async function deleteHistory(mode) {
   let now = 0; let messages = [message('user', 'Q'), message('assistant', 'A')];
   let localRemovals = 0; let providerClicks = 0; let dialog = false; let failed = false;
+  let confirmed = false;
+  const successNotice = {innerText: 'Chat history deleted'};
+  const errorNotice = {innerText: 'Chat history deletion failed'};
   messages.forEach(node => { node.remove = () => { localRemovals++; }; });
   const confirm = {innerText: 'Delete', getAttribute: () => null, click() {
-    providerClicks++; dialog = false;
-    if (mode === 'success' || mode === 'transient') messages = [];
+    providerClicks++; dialog = false; confirmed = true;
+    if (['success', 'transient', 'no-ack', 'late-failure', 'stale-ack'].includes(mode)) messages = [];
     if (mode === 'failure') failed = true;
   }};
   const menu = {innerText: 'Delete chat history', getAttribute: () => null, click() {
@@ -102,7 +105,11 @@ async function deleteHistory(mode) {
     if (selector.includes('[role="menuitem"]')) return mode === 'no-menu' ? [] : [menu];
     if (selector === 'mat-icon, [data-mat-icon-name]') return [];
     if (selector.includes('mat-dialog-container,')) return dialog ? [{innerText: 'Delete chat history?', querySelectorAll: () => [confirm]}] : [];
-    if (selector.includes('[role="alert"]')) return failed ? [{innerText: 'Delete failed'}] : [];
+    if (selector.includes('[role="status"]')) {
+      if (failed || (mode === 'late-failure' && confirmed && now >= 2000)) return [errorNotice];
+      if (mode === 'stale-ack' || (mode === 'success' && confirmed)) return [successNotice];
+      return [];
+    }
     return [];
   };
   const window = {};
@@ -130,4 +137,12 @@ test('successful deletion waits for provider UI completion with stable empty cha
 test('temporary empty chat while the provider updates is not deletion success', async () => {
   const result = await deleteHistory('transient');
   assert.equal(result.result, false); assert.equal(result.localRemovals, 0);
+});
+
+test('optimistic empty chat without provider acknowledgement stays unconfirmed', async () => {
+  for (const mode of ['no-ack', 'stale-ack', 'late-failure']) {
+    const result = await deleteHistory(mode);
+    assert.equal(result.result, false, mode); assert.equal(result.localRemovals, 0);
+    if (mode === 'late-failure') assert.ok(result.elapsed >= 2000);
+  }
 });
