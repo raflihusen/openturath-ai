@@ -10,6 +10,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:openturath_ai/core/localization.dart';
 import 'package:openturath_ai/core/routes.dart';
 import 'package:openturath_ai/main.dart';
+import 'package:openturath_ai/models/agent_model.dart';
+import 'package:openturath_ai/services/agent_service.dart';
+import 'package:openturath_ai/widgets/specialist_card.dart';
 import 'package:openturath_ai/models/user_model.dart';
 import 'package:openturath_ai/screens/dashboard_screen.dart';
 import 'package:openturath_ai/screens/splash_screen.dart';
@@ -97,6 +100,12 @@ class DashboardAuth extends AuthService {
   Future<UserModel?> getCurrentUserModel() async => cached;
   @override
   Future<UserModel?> restoreSession() async => cached;
+}
+
+class PendingAgents extends AgentService {
+  final result = Completer<List<AgentModel>>();
+  @override
+  Future<List<AgentModel>> getAgents({bool forceRefresh = false, dynamic firestore}) => result.future;
 }
 
 void main() {
@@ -301,6 +310,27 @@ void main() {
     await tester.pump();
     expect(calls, 2);
     expect(ready, 1);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('Hanafi stays unavailable before and after a stalled catalog times out', (tester) async {
+    final auth = DashboardAuth()
+      ..user = TestUser('launch-owner')
+      ..cached = profile('launch-owner');
+    await tester.pumpWidget(MaterialApp(home: DashboardScreen(
+      authService: auth, agentService: PendingAgents(),
+    )));
+    await tester.enterText(find.byType(TextField), 'Hanafi');
+    await tester.pump();
+    SpecialistCard card() => tester.widget<SpecialistCard>(find.byType(SpecialistCard).first);
+    expect(card().isLocked, isTrue);
+    expect(card().statusLabel, isNotNull);
+    await tester.pump(const Duration(seconds: 5));
+    expect(card().isLocked, isTrue);
+    expect(card().statusLabel, isNotNull);
+    await tester.pumpWidget(const SizedBox());
+    await auth.events.close();
+    await tester.pump(const Duration(seconds: 16));
     expect(tester.takeException(), isNull);
   });
 
