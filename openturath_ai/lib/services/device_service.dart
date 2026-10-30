@@ -77,7 +77,9 @@ class DeviceService {
     try {
       if (kIsWeb) {
         final webInfo = await _deviceInfo.webBrowserInfo;
-        final rawId = webInfo.userAgent ?? 'web_browser';
+        // User agent sama di banyak browser; identitas instalasi acak yang
+        // tersimpan membedakan pengguna yang sah.
+        final rawId = await _persistentId();
         final brand = webInfo.vendor ?? 'browser';
         final model = webInfo.browserName.name;
         final hash = computeHash(rawId: rawId, brand: brand, model: model);
@@ -91,7 +93,9 @@ class DeviceService {
 
       if (Platform.isAndroid) {
         final androidInfo = await _deviceInfo.androidInfo;
-        final rawId = androidInfo.id; // Settings.Secure.ANDROID_ID
+        // androidInfo.id adalah Build.ID (versi firmware), identik pada semua
+        // ponsel semodel; bukan ANDROID_ID. Pakai identitas instalasi acak.
+        final rawId = await _persistentId();
         final brand = androidInfo.brand;
         final model = androidInfo.model;
         final isPhysical = androidInfo.isPhysicalDevice;
