@@ -213,6 +213,37 @@ void main() {
     await close(tester);
   });
 
+  testWidgets('recovery replaces the WebView and retry connects a valid session',
+      (tester) async {
+    final controller = await open(tester);
+    final failedView = platform.lastView;
+    await finishLoad(tester, controller);
+
+    expect(find.text(Loc.tr('googleSessionUnverifiedTitle')), findsOneWidget);
+    expect(find.text(Loc.tr('verifyingSessionTitle')), findsNothing);
+    expect(find.byType(InAppWebView), findsNothing);
+    expect(routeResults, isEmpty);
+
+    platform.cookies.cookies = [Cookie(name: 'SID', value: 'fixture-only')];
+    await tester.tap(find.text(Loc.tr('tryAgain')));
+    await tester.pump();
+    expect(find.byType(InAppWebView), findsOneWidget);
+    expect(platform.lastView, isNot(same(failedView)));
+    expect(platform.lastView!.params.initialUrlRequest!.url.toString(),
+        'https://notebook.google.com/');
+    final retryController =
+        InAppWebViewController.fromPlatform(platform: _Controller());
+    platform.lastView!.params.onWebViewCreated!(retryController);
+    await finishLoad(tester, retryController);
+
+    final prefs = await SharedPreferences.getInstance();
+    expect(routeResults, [true]);
+    expect(prefs.getBool('google_session_ready'), isTrue);
+    expect(prefs.getString('webview_session_owner'), _email);
+    expect(platform.cookies.deletions, 0);
+    await close(tester);
+  });
+
   testWidgets('canceling Google connection preserves account, cookies and tabs',
       (tester) async {
     SharedPreferences.setMockInitialValues({
