@@ -24,7 +24,7 @@ class AuthService {
   })  : _providedAuth = auth,
         _providedGoogleSignIn = googleSignIn,
         _restoreTimeout = restoreTimeout,
-       _authenticationTimeout = authenticationTimeout;
+        _authenticationTimeout = authenticationTimeout;
 
   final FirebaseAuth? _providedAuth;
   final GoogleSignIn? _providedGoogleSignIn;
@@ -53,7 +53,8 @@ class AuthService {
   static bool _lastAuthActionWasSignOut = false;
 
   // ── Cache Helpers ──────────────────────────────────────────────
-  static Future<void> _cacheUserLocally(UserModel user, {bool Function()? isCurrent}) async {
+  static Future<void> _cacheUserLocally(UserModel user,
+      {bool Function()? isCurrent}) async {
     if (isCurrent?.call() == false) return;
     _userCache[user.uid] = user;
     try {
@@ -218,7 +219,8 @@ class AuthService {
               defaultTargetPlatform == TargetPlatform.macOS)) {
         // Native GoogleSignIn SDK on Android, iOS, & macOS (Darwin)
         final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
-        if (googleUser == null || !current()) return null; // Pengguna membatalkan login
+        if (googleUser == null || !current())
+          return null; // Pengguna membatalkan login
 
         stage = 'google-token';
         final GoogleSignInAuthentication googleAuth =
@@ -250,7 +252,8 @@ class AuthService {
         // Platform desktop Windows: gunakan DesktopAuthGateway (Loopback + Firebase Web Auth)
         stage = 'desktop-gateway';
         final desktopAuth = await DesktopAuthGateway.signIn();
-        if (desktopAuth == null || !current()) return null; // Pengguna membatalkan login
+        if (desktopAuth == null || !current())
+          return null; // Pengguna membatalkan login
 
         stage = 'firebase-credential';
         final credential = GoogleAuthProvider.credential(
@@ -269,12 +272,15 @@ class AuthService {
         firebaseUser = userCredential.user;
       }
 
-      if (firebaseUser == null || !current() ||
+      if (firebaseUser == null ||
+          !current() ||
           _auth.currentUser?.uid != firebaseUser.uid) return null;
-      bool ownsUser() => current() && _auth.currentUser?.uid == firebaseUser!.uid;
+      bool ownsUser() =>
+          current() && _auth.currentUser?.uid == firebaseUser!.uid;
       stage = 'profile-resolve';
       final userModel = await _resolveOrCreateFirebaseUser(
-        firebaseUser, isCurrent: ownsUser,
+        firebaseUser,
+        isCurrent: ownsUser,
       ).timeout(const Duration(seconds: 10));
       if (!ownsUser() || userModel == null) return null;
       final effectiveEmail = firebaseUser.email?.trim().toLowerCase();
@@ -409,7 +415,7 @@ class AuthService {
       }
       final userModel = UserModel.fromFirestore(doc);
       await _cacheUserLocally(userModel,
-        isCurrent: () => currentUser?.uid == user.uid);
+          isCurrent: () => currentUser?.uid == user.uid);
       return currentUser?.uid == user.uid ? userModel : null;
     } catch (_) {
       // Pertahankan snapshot terakhir jika ada (F41)
@@ -445,7 +451,7 @@ class AuthService {
           final user = UserModel.fromFirestore(doc);
           if (_auth.currentUser?.uid == uid) {
             unawaited(_cacheUserLocally(user,
-              isCurrent: () => _auth.currentUser?.uid == uid));
+                isCurrent: () => _auth.currentUser?.uid == uid));
           }
           return user;
         }),
