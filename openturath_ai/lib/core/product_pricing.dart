@@ -138,8 +138,13 @@ class ProductPricingService {
     required dynamic details,
     Future<void> Function()? reload,
   }) async {
-    await (reload ?? () => syncPricing(forceRefresh: true))();
-    if (details is! Map || details['reason'] != 'price_changed') return;
+    try {
+      await (reload ?? () => syncPricing(forceRefresh: true))();
+    } catch (_) {
+      // Detail harga server tetap tersedia meski konfigurasi gagal dibaca.
+    }
+    if (details is! Map || details['reason'] != 'price_changed' ||
+        details['agentId'] != agentId || details['plan'] != plan) return;
     final amount = details['amount'];
     final revision = details['pricingRevision'];
     if (amount is! int || amount <= 0 || revision is! String || revision.isEmpty) return;
