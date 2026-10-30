@@ -54,6 +54,35 @@ void main() {
     expect(find.text('SELESAI TANPA KONFIRMASI'), findsOneWidget);
   });
 
+  testWidgets('hasil pemeriksaan terakhir tetap terbit setelah timer berhenti',
+      (tester) async {
+    final last = Completer<bool>();
+    var calls = 0;
+    await tester.pumpWidget(_host(() {
+      calls++;
+      return calls == 11 ? last.future : Future.value(false);
+    }, (_) {}));
+    for (var second = 0; second < 30; second++) {
+      await tester.pump(const Duration(seconds: 1));
+    }
+    expect(calls, 11);
+    expect(find.text('SELESAI TANPA KONFIRMASI'), findsOneWidget);
+    last.complete(true);
+    await tester.pump();
+    expect(find.text('SIAP'), findsOneWidget);
+    await tester.pumpWidget(const SizedBox.shrink());
+  });
+
+  testWidgets('hasil pemeriksaan terlambat aman setelah layar ditutup',
+      (tester) async {
+    final pending = Completer<bool>();
+    await tester.pumpWidget(_host(() => pending.future, (_) {}));
+    await tester.pumpWidget(const SizedBox.shrink());
+    pending.complete(true);
+    await tester.pump();
+    expect(tester.takeException(), isNull);
+  });
+
   test(
       'alasan terstruktur dari server diterjemahkan, bukan dijadikan "tidak aktif"',
       () {
@@ -73,3 +102,5 @@ void main() {
     AppConfig.localeNotifier.value = 'id';
   });
 }
+import 'dart:async';
+
