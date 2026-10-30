@@ -6,7 +6,10 @@ import 'payment_service.dart';
 import 'callable_gateway.dart';
 
 class SubscriptionService {
-  final PaymentService _paymentService = PaymentService();
+  SubscriptionService({PaymentService? paymentService})
+      : _paymentService = paymentService ?? PaymentService();
+
+  final PaymentService _paymentService;
 
   /// Normalisasi kode voucher: hapus spasi, ubah huruf kapital, hapus tanda strip
   static String normalizeCode(String input) {
@@ -173,6 +176,10 @@ class SubscriptionService {
 
     // Validasi ketat respon server Cloud Function: hanya status final yang dianggap lunas
     final rawStatus = (res['status'] ?? '').toString().toUpperCase().trim();
+    // Backend lama memakai PENDING untuk galat inquiry. Pertahankan arti
+    // galat tersebut sampai semua instalasi memakai kontrak ERROR yang baru.
+    final legacyInquiryError = rawStatus == 'PENDING' &&
+        (res['message'] ?? '').toString().startsWith('Status pembayaran belum dapat diperiksa.');
     final isSuccess =
         rawStatus == 'SUCCESS' || rawStatus == 'SETTLED' || rawStatus == 'PAID';
     if (isSuccess) {
@@ -185,7 +192,8 @@ class SubscriptionService {
 
     return {
       'success': false,
-      'status': rawStatus.isNotEmpty ? rawStatus : 'PENDING',
+      'status': legacyInquiryError || res['reason'] == 'inquiry_unavailable'
+          ? 'ERROR' : rawStatus.isNotEmpty ? rawStatus : 'ERROR',
       'data': res,
       if (res['message'] != null) 'message': res['message'],
     };
