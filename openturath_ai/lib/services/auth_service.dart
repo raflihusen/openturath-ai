@@ -435,6 +435,12 @@ class AuthService {
     } catch (_) {}
   }
 
+  /// Benar bila UI memegang profil tersimpan tetapi Firebase tidak punya sesi.
+  /// Profil itu hanya tampilan offline, bukan bukti autentikasi: operasi online
+  /// harus memulihkan sesi atau meminta masuk kembali.
+  bool get isCachedProfileOnly =>
+      _auth.currentUser == null && cachedCurrentUser != null;
+
   // ── Sign Out ───────────────────────────────────────────────────
   Future<void> signOut() async {
     final currentUid = _auth.currentUser?.uid;

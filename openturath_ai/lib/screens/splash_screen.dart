@@ -65,7 +65,19 @@ class _SplashScreenState extends State<SplashScreen> {
         targetRoute = widget.resolveInitialRoute!();
       } else {
         final restoredUser = await AuthService().restoreSession();
-        final firebaseUser = FirebaseAuth.instance.currentUser;
+        // Firebase memulihkan sesi tersimpan secara asinkron: tunggu peristiwa
+        // auth pertama (terbatas) sebelum menilai bahwa sesi Firebase tidak ada.
+        var firebaseUser = FirebaseAuth.instance.currentUser;
+        if (firebaseUser == null && restoredUser != null) {
+          try {
+            firebaseUser = await FirebaseAuth.instance
+                .authStateChanges()
+                .first
+                .timeout(const Duration(seconds: 4));
+          } catch (_) {
+            firebaseUser = FirebaseAuth.instance.currentUser;
+          }
+        }
         if (restoredUser != null ||
             (firebaseUser != null && !firebaseUser.isAnonymous)) {
           final currentEmail =
