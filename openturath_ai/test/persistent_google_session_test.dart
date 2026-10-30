@@ -65,6 +65,7 @@ void main() {
   final platform = _CookiePlatform();
   final session = PersistentGoogleSession.instance;
   const ownerKey = AuthService.webSessionOwnerKey;
+  const verifiedOwnerKey = PersistentGoogleSession.verifiedOwnerKey;
   const accountA = 'account-a@example.test';
   const accountB = 'account-b@example.test';
 
@@ -95,6 +96,7 @@ void main() {
       () async {
     SharedPreferences.setMockInitialValues({
       ownerKey: accountA,
+      verifiedOwnerKey: accountA,
       'google_session_ready': true,
     });
 
@@ -102,6 +104,7 @@ void main() {
 
     final prefs = await SharedPreferences.getInstance();
     expect(prefs.getString(ownerKey), isNull);
+    expect(prefs.getString(verifiedOwnerKey), isNull);
     expect(prefs.getBool('google_session_ready'), false);
     expect(await session.restoreSessionIfAvailable(accountB), false);
     expect(platform.manager.reads, 0);
@@ -130,12 +133,16 @@ void main() {
 
   test('matching verified owner keeps its native session without mutation',
       () async {
-    SharedPreferences.setMockInitialValues({ownerKey: accountA});
+    SharedPreferences.setMockInitialValues({
+      ownerKey: accountA,
+      verifiedOwnerKey: accountA,
+    });
 
     await AuthService.reconcileWebSession(' ACCOUNT-A@EXAMPLE.TEST ');
 
     final prefs = await SharedPreferences.getInstance();
     expect(prefs.getString(ownerKey), accountA);
+    expect(prefs.getString(verifiedOwnerKey), accountA);
     expect(prefs.getBool('google_session_ready'), true);
     expect(platform.manager.reads, 1);
   });
@@ -146,6 +153,7 @@ void main() {
 
     final prefs = await SharedPreferences.getInstance();
     expect(prefs.getString(ownerKey), accountA);
+    expect(prefs.getString(verifiedOwnerKey), accountA);
     expect(prefs.getBool('google_session_ready'), true);
     expect(await session.restoreSessionIfAvailable(accountA), true);
     expect(await session.restoreSessionIfAvailable(accountB), false);
@@ -160,5 +168,30 @@ void main() {
     expect(prefs.getString(ownerKey), isNull);
     expect(prefs.getBool('google_session_ready'), isNot(true));
     expect(platform.manager.reads, 0);
+  });
+
+  test('legacy owner requires identity verification without deleting cookies',
+      () async {
+    SharedPreferences.setMockInitialValues({
+      ownerKey: accountA,
+      'google_session_ready': true,
+    });
+
+    await AuthService.reconcileWebSession(accountA);
+
+    final prefs = await SharedPreferences.getInstance();
+    expect(prefs.getString(ownerKey), accountA);
+    expect(prefs.getString(verifiedOwnerKey), isNull);
+    expect(prefs.getBool('google_session_ready'), false);
+    expect(platform.manager.reads, 0);
+
+    await AuthService.rememberWebSessionOwner(accountA);
+    expect(prefs.getString(verifiedOwnerKey), isNull);
+    expect(await session.restoreSessionIfAvailable(accountA), false);
+
+    // Only the verified onboarding callback can upgrade the legacy owner.
+    expect(await session.lockAndPersistCookies(null, accountA), true);
+    expect(prefs.getString(verifiedOwnerKey), accountA);
+    expect(await session.restoreSessionIfAvailable(accountA), true);
   });
 }

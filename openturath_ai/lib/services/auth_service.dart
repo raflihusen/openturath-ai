@@ -405,7 +405,11 @@ class AuthService {
       final prefs = await SharedPreferences.getInstance();
       final verifiedOwner =
           (prefs.getString(webSessionOwnerKey) ?? '').trim().toLowerCase();
-      if (verifiedOwner != owner) return;
+      final verification =
+          (prefs.getString(PersistentGoogleSession.verifiedOwnerKey) ?? '')
+              .trim()
+              .toLowerCase();
+      if (verifiedOwner != owner || verification != owner) return;
       await prefs.setString(webSessionOwnerKey, owner);
     } catch (_) {}
   }

@@ -18,6 +18,9 @@ class PersistentGoogleSession {
   static const String _legacyVaultKey = 'ot_persistent_google_cookies_v3';
   static const String _ownerKey = 'webview_session_owner';
   static const String _readyKey = 'google_session_ready';
+  /// Owner lama dapat berasal dari login Firebase saja. Marker ini hanya
+  /// ditulis setelah identitas WebView diverifikasi oleh alur koneksi Google.
+  static const String verifiedOwnerKey = 'webview_session_owner_verified_v1';
 
   /// Cookie sesi hidup, dibaca tanpa mengubah apa pun.
   Future<bool> _hasLiveSession(InAppWebViewController? controller) async {
@@ -56,6 +59,7 @@ class PersistentGoogleSession {
       await _dropLegacyVault(prefs);
       if (cleanEmail.isNotEmpty) {
         await prefs.setString(_ownerKey, cleanEmail);
+        await prefs.setString(verifiedOwnerKey, cleanEmail);
         await prefs.setString('google_session_email', cleanEmail);
         await prefs.setString('notebook_google_email', cleanEmail);
       }
@@ -77,7 +81,9 @@ class PersistentGoogleSession {
       await _dropLegacyVault(prefs);
       final savedOwner =
           (prefs.getString(_ownerKey) ?? '').trim().toLowerCase();
-      if (savedOwner.isEmpty || savedOwner != cleanEmail) {
+      final verifiedOwner =
+          (prefs.getString(verifiedOwnerKey) ?? '').trim().toLowerCase();
+      if (savedOwner != cleanEmail || verifiedOwner != cleanEmail) {
         await prefs.setBool(_readyKey, false);
         return false;
       }
@@ -100,6 +106,7 @@ class PersistentGoogleSession {
       final prefs = await SharedPreferences.getInstance();
       await _dropLegacyVault(prefs);
       await prefs.remove(_ownerKey);
+      await prefs.remove(verifiedOwnerKey);
       await prefs.setBool(_readyKey, false);
     } catch (_) {}
   }
@@ -111,6 +118,7 @@ class PersistentGoogleSession {
       final prefs = await SharedPreferences.getInstance();
       await prefs.remove(_legacyVaultKey);
       await prefs.remove(_ownerKey);
+      await prefs.remove(verifiedOwnerKey);
       await prefs.remove(_readyKey);
       await DesktopWebViewRuntime.clearSession();
     } catch (_) {}
