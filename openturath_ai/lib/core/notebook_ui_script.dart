@@ -70,12 +70,13 @@ const _notebookCleanupScript = r'''
   let lastCopy = '';
   let lastCopyAt = 0;
   let lastCopyResult = Promise.resolve(false);
+  let copyQueue = Promise.resolve();
   function sendCopy(value) {
     if (typeof value !== 'string' || !value.trim() || value.length > 200000) return Promise.resolve(false);
     const content = value.trim();
     if (content === lastCopy && Date.now() - lastCopyAt < 3500) return lastCopyResult;
     lastCopy = content; lastCopyAt = Date.now();
-    lastCopyResult = Promise.resolve().then(async () => {
+    lastCopyResult = copyQueue.then(async () => {
       if (window.flutter_inappwebview?.callHandler) {
         return await window.flutter_inappwebview.callHandler('otCopiedAnswer', content) === true;
       }
@@ -88,6 +89,7 @@ const _notebookCleanupScript = r'''
       if (!ok && lastCopy === content) lastCopy = '';
       return ok;
     });
+    copyQueue = lastCopyResult;
     return lastCopyResult;
   }
   // Tangkap klik pada tombol copy NotebookLM maupun seleksi copy biasa
@@ -1390,7 +1392,9 @@ window.otDeleteChatHistory = async function() {
       const button = icon.closest('button, [role="button"]');
       if ((name === 'more_vert' || name === 'more_horiz') && button && !options.includes(button)) options.push(button);
     });
+    const menuDeadline = Date.now() + 3000;
     for (const button of options.filter(visible)) {
+      if (Date.now() >= menuDeadline) break;
       if (!triggerClick(button)) continue;
       for (let attempt = 0; attempt < 5 && !item; attempt++) {
         await pause();
