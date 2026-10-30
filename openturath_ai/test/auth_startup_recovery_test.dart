@@ -105,7 +105,9 @@ class DashboardAuth extends AuthService {
 class PendingAgents extends AgentService {
   final result = Completer<List<AgentModel>>();
   @override
-  Future<List<AgentModel>> getAgents({bool forceRefresh = false, dynamic firestore}) => result.future;
+  Future<List<AgentModel>> getAgents(
+          {bool forceRefresh = false, dynamic firestore}) =>
+      result.future;
 }
 
 void main() {
@@ -313,16 +315,21 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('Hanafi stays unavailable before and after a stalled catalog times out', (tester) async {
+  testWidgets(
+      'Hanafi stays unavailable before and after a stalled catalog times out',
+      (tester) async {
     final auth = DashboardAuth()
       ..user = TestUser('launch-owner')
       ..cached = profile('launch-owner');
-    await tester.pumpWidget(MaterialApp(home: DashboardScreen(
-      authService: auth, agentService: PendingAgents(),
+    await tester.pumpWidget(MaterialApp(
+        home: DashboardScreen(
+      authService: auth,
+      agentService: PendingAgents(),
     )));
     await tester.enterText(find.byType(TextField), 'Hanafi');
     await tester.pump();
-    SpecialistCard card() => tester.widget<SpecialistCard>(find.byType(SpecialistCard).first);
+    SpecialistCard card() =>
+        tester.widget<SpecialistCard>(find.byType(SpecialistCard).first);
     expect(card().isLocked, isTrue);
     expect(card().statusLabel, isNotNull);
     await tester.pump(const Duration(seconds: 5));
