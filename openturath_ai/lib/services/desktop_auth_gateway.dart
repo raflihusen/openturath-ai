@@ -99,6 +99,8 @@ class DesktopAuthGateway {
         message: 'Gagal menginisialisasi server loopback lokal Windows: $e',
       );
     }
+    _shutdownTimer?.cancel();
+    _shutdownTimer = null;
     _activeServer = server;
 
     final state = _randomUrlSafe(24);
@@ -225,14 +227,20 @@ class DesktopAuthGateway {
     }
   }
 
+  static Timer? _shutdownTimer;
+
+  /// Menutup server sesi yang sedang berjalan saat ini saja. Timer lama
+  /// dibatalkan dan terikat pada instance asalnya, sehingga sesi baru yang
+  /// dimulai dalam 500 ms tidak ikut tertutup.
   static void _scheduleServerShutdown() {
-    Timer(const Duration(milliseconds: 500), () {
-      if (_activeServer != null) {
-        try {
-          _activeServer!.close(force: true);
-        } catch (_) {}
-        _activeServer = null;
-      }
+    final server = _activeServer;
+    _shutdownTimer?.cancel();
+    _shutdownTimer = Timer(const Duration(milliseconds: 500), () {
+      if (server == null) return;
+      try {
+        server.close(force: true);
+      } catch (_) {}
+      if (identical(_activeServer, server)) _activeServer = null;
     });
   }
 

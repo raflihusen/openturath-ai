@@ -115,7 +115,9 @@ class AuthService {
             defaultTargetPlatform == TargetPlatform.iOS ||
             defaultTargetPlatform == TargetPlatform.macOS)) {
       try {
-        final googleUser = await _googleSignIn.signInSilently();
+        final googleUser = await _googleSignIn
+            .signInSilently()
+            .timeout(const Duration(seconds: 10));
         if (googleUser != null) {
           final googleAuth = await googleUser.authentication;
           final credential = GoogleAuthProvider.credential(
@@ -408,8 +410,8 @@ class AuthService {
     } catch (_) {}
   }
 
-  /// Menghapus sesi Google di WebView bila bukan milik [email], agar akun
-  /// sebelumnya tidak terbawa ke pengguna berikutnya di perangkat yang sama.
+  /// Melepas klaim sesi Google di WebView bila bukan milik [email], agar akun
+  /// sebelumnya tidak diakui sebagai ke pengguna berikutnya di perangkat yang sama.
   static Future<void> reconcileWebSession(String email) async {
     final current = email.trim().toLowerCase();
     if (current.isEmpty) return;
@@ -423,8 +425,10 @@ class AuthService {
         return;
       }
       if (owner.isNotEmpty && owner != current) {
-        // Hanya bersihkan sesi jika pengguna secara eksplisit berganti ke akun lain
-        await PersistentGoogleSession.instance.clearOnSignOut();
+        // Akun aplikasi berganti: lepas klaim kepemilikan saja. Cookie Google
+        // tidak dihapus di luar Log Out (Aturan Sakral #8); layar sesi akan
+        // meminta pemilihan akun yang sesuai.
+        await PersistentGoogleSession.instance.releaseOwnership();
       }
       await prefs.setString(webSessionOwnerKey, current);
       await PersistentGoogleSession.instance.restoreSessionIfAvailable(current);

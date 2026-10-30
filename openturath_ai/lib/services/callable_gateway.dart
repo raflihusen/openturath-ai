@@ -23,6 +23,8 @@ class CallableGateway {
           client: client,
           projectId: Firebase.app().options.projectId,
           token: () async => FirebaseAuth.instance.currentUser?.getIdToken(),
+          refreshToken: () async =>
+              FirebaseAuth.instance.currentUser?.getIdToken(true),
           timeout: timeout,
         ).call(name, data);
       } finally {
@@ -63,6 +65,7 @@ class CallableHttpTransport {
     required this.client,
     required this.projectId,
     required this.token,
+    this.refreshToken,
     this.region = 'us-central1',
     this.timeout = const Duration(seconds: 30),
   });
@@ -71,21 +74,37 @@ class CallableHttpTransport {
   final String projectId;
   final String region;
   final Future<String?> Function() token;
+
+  /// Dipanggil sekali bila server menolak dengan `unauthenticated`. Penolakan
+  /// autentikasi terjadi sebelum fungsi berjalan, sehingga mengulang dengan
+  /// token segar tidak menggandakan efek mutasi.
+  final Future<String?> Function()? refreshToken;
   final Duration timeout;
 
   Future<dynamic> call(String name, [Map<String, dynamic>? data]) async {
+    try {
+      return await _attempt(name, data, token);
+    } on FirebaseFunctionsException catch (e) {
+      final refresh = refreshToken;
+      if (e.code != 'unauthenticated' || refresh == null) rethrow;
+      return _attempt(name, data, refresh);
+    }
+  }
+
+  Future<dynamic> _attempt(String name, Map<String, dynamic>? data,
+      Future<String?> Function() obtainToken) async {
     if (!RegExp(r'^[a-zA-Z][a-zA-Z0-9_-]*$').hasMatch(name)) {
       throw ArgumentError.value(name, 'name', 'Invalid callable name');
     }
     try {
-      final idToken = await token().timeout(timeout);
+      final idToken = await obtainToken().timeout(timeout);
       if (idToken == null || idToken.isEmpty) {
         throw FirebaseFunctionsException(
           code: 'unauthenticated',
           message: Loc.tr('errSignInAgain'),
         );
       }
-      // No automatic retry: checkout/redeem/quota calls may mutate server state.
+      // Retry hanya lewat call() untuk penolakan `unauthenticated`.
       final response = await client
           .post(
             Uri.https('$region-$projectId.cloudfunctions.net', '/$name'),

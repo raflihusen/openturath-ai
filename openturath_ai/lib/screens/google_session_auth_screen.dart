@@ -231,7 +231,9 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
     var inconclusive = false;
 
     try {
-      final currentWebUrl = await controller.getUrl();
+      final currentWebUrl = await controller
+          .getUrl()
+          .timeout(const Duration(seconds: 5), onTimeout: () => null);
       if (currentWebUrl == null) return;
       final urlStr = currentWebUrl.toString();
 
@@ -431,15 +433,15 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
           FilledButton(
             onPressed: () async {
               Navigator.pop(ctx);
-              try {
-                await DesktopWebViewRuntime.cookies.deleteAllCookies();
-              } catch (_) {}
               if (mounted) {
                 setState(() => _isShieldActive = false);
               }
+              // Pilih akun lewat pemilih akun Google; cookie tidak dihapus.
               if (_webController != null) {
                 await _webController!.loadUrl(
-                  urlRequest: URLRequest(url: WebUri(_targetLoginUrl)),
+                  urlRequest: URLRequest(
+                      url: WebUri(
+                          'https://accounts.google.com/AccountChooser?continue=${Uri.encodeComponent('${NotebookNavigation.canonicalOrigin}/')}')),
                 );
               }
             },
