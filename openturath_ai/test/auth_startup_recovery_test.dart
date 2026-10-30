@@ -391,21 +391,29 @@ void main() {
     expect(auth.maxNativeInFlight, 1);
   });
 
-  test('a failed native request releases the gate for a waiting new login', () async {
+  test('a failed native request releases the gate for a waiting new login',
+      () async {
     debugDefaultTargetPlatformOverride = TargetPlatform.macOS;
     final pendingA = Completer<UserCredential>();
     final pendingB = Completer<UserCredential>();
     final auth = TestAuth()..pendingCredential = pendingA;
-    final googleA = TestGoogle()..account = TestGoogleAccount(Future.value(TestTokens()));
-    final first = AuthService(auth: auth, googleSignIn: googleA,
-      restoreTimeout: const Duration(milliseconds: 30));
+    final googleA = TestGoogle()
+      ..account = TestGoogleAccount(Future.value(TestTokens()));
+    final first = AuthService(
+        auth: auth,
+        googleSignIn: googleA,
+        restoreTimeout: const Duration(milliseconds: 30));
     expect(await first.restoreSession(), isNull);
-    final googleB = TestGoogle()..account = TestGoogleAccount(Future.value(TestTokens()));
-    final next = AuthService(auth: auth, googleSignIn: googleB,
-      authenticationTimeout: const Duration(milliseconds: 300));
+    final googleB = TestGoogle()
+      ..account = TestGoogleAccount(Future.value(TestTokens()));
+    final next = AuthService(
+        auth: auth,
+        googleSignIn: googleB,
+        authenticationTimeout: const Duration(milliseconds: 300));
     final waiting = next.signInWithGoogle();
     auth.pendingCredential = pendingB;
-    pendingA.completeError(FirebaseAuthException(code: 'network-request-failed'));
+    pendingA
+        .completeError(FirebaseAuthException(code: 'network-request-failed'));
     await Future<void>.delayed(Duration.zero);
     expect(googleB.authorizeCalls, 1);
     expect(auth.credentialCalls, 2);
