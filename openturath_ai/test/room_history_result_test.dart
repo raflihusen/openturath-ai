@@ -101,6 +101,8 @@ void main() {
               ? 'chatHistoryClearFailed'
               : 'chatHistoryCleared')),
           findsNothing);
+      await tester.pump(const Duration(seconds: 5));
+      await tester.pumpAndSettle();
       await tester.pumpWidget(const SizedBox());
       await tester.pump();
     });
