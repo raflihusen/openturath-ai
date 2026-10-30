@@ -50,6 +50,19 @@ test('two different answers copied rapidly both reach the device clipboard', asy
   assert.equal(await copy('Answer B'), true);
   assert.deepEqual(writes, ['Answer A', 'Answer B']);
 });
+test('asynchronous clipboard acknowledgements retain the latest copy order', async () => {
+  const writes = []; let finishFirst;
+  const copy = clipboard(async (_, text) => {
+    if (text === 'A') await new Promise(resolve => { finishFirst = resolve; });
+    writes.push(text); return true;
+  });
+  const first = copy('A'); const second = copy('B');
+  await Promise.resolve(); await Promise.resolve();
+  assert.deepEqual(writes, []);
+  finishFirst();
+  assert.equal(await first, true); assert.equal(await second, true);
+  assert.deepEqual(writes, ['A', 'B']);
+});
 test('duplicate click and native copy events share one acknowledged clipboard write', async () => {
   let writes = 0; const copy = clipboard(async () => { writes++; return true; });
   const [first, second] = await Promise.all([copy('A'), copy('A')]);
