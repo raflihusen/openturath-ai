@@ -21,6 +21,7 @@ import '../core/theme.dart';
 import '../core/design/ot_colors.dart';
 import '../services/auth_service.dart';
 import '../services/subscription_service.dart';
+import '../services/payment_service.dart';
 import 'app_loader.dart';
 import 'promo_price.dart';
 
@@ -140,6 +141,7 @@ class _PaymentCheckoutSheetState extends State<PaymentCheckoutSheet> {
   bool _isShowingConfirmDialog = false;
   bool _hasPopped = false;
   bool _pollExhausted = false;
+  String? _inquiryMessageKey;
   final _completion = CheckoutCompletion();
   BuildContext? _confirmationContext;
 
@@ -262,7 +264,7 @@ class _PaymentCheckoutSheetState extends State<PaymentCheckoutSheet> {
     }
 
     _lastInquiryAt = DateTime.now();
-    _isChecking = true;
+    setState(() => _isChecking = true);
     try {
       final res = await _subService.verifyPaymentStatus(
         invoiceNumber: widget.invoiceNumber,
@@ -271,19 +273,23 @@ class _PaymentCheckoutSheetState extends State<PaymentCheckoutSheet> {
 
       if (res['status'] == 'SUCCESS' && res['success'] == true) {
         _triggerSuccess();
+      } else if (mounted) {
+        final feedback = PaymentInquiryFeedback.forStatus(res['status']);
+        if (feedback.terminal) _pollTimer?.cancel();
+        if (force || feedback.terminal) {
+          setState(() => _inquiryMessageKey = feedback.messageKey);
+        }
       }
     } catch (_) {
       // Polling background gagal sementara, lanjut ke tick berikutnya. Untuk
       // pemeriksaan manual, jangan diam: kegagalan memeriksa bukan berarti
       // belum membayar.
       if (force && mounted) {
-        ScaffoldMessenger.maybeOf(context)?.showSnackBar(const SnackBar(
-            content: Text(
-                'Status pembayaran belum dapat diperiksa. Ini bukan berarti pembayaran gagal; coba lagi sebentar lagi.')));
+        setState(() => _inquiryMessageKey = 'paymentCheckUnavailable');
       }
     } finally {
       if (mounted) {
-        _isChecking = false;
+        setState(() => _isChecking = false);
       }
     }
   }
@@ -612,13 +618,13 @@ class _PaymentCheckoutSheetState extends State<PaymentCheckoutSheet> {
                     ),
                   ),
 
-                  if (_pollExhausted && !_isSuccess)
+                  if ((_pollExhausted || _inquiryMessageKey != null) && !_isSuccess)
                     Container(
                       width: double.infinity,
                       color: OTColors.surfaceSubtle(isDark),
                       padding: const EdgeInsets.symmetric(
                           horizontal: 16, vertical: 12),
-                      child: Text(Loc.tr('checkoutStillWaiting'),
+                      child: Text(Loc.tr(_inquiryMessageKey ?? 'checkoutStillWaiting'),
                           style: ScholarlyFonts.outfit(
                               fontSize: OTFontSize.s12,
                               height: 1.4,
