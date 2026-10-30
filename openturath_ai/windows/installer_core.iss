@@ -4,6 +4,9 @@
 #ifndef MyAppVersion
 #define MyAppVersion "0.0.0"
 #endif
+#ifndef PayloadRoot
+#define PayloadRoot "..\..\OpenTurath_AI_Windows"
+#endif
 #define MyAppPublisher "OpenTurath"
 #define MyAppURL "https://openturath.id"
 #define MyAppExeName "openturath_ai.exe"
@@ -37,13 +40,13 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"
 
 [Files]
-Source: "..\..\OpenTurath_AI_Windows\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\..\OpenTurath_AI_Windows\*.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\..\OpenTurath_AI_Windows\data\*"; DestDir: "{app}\data"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "{#PayloadRoot}\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#PayloadRoot}\*.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#PayloadRoot}\data\*"; DestDir: "{app}\data"; Flags: ignoreversion recursesubdirs createallsubdirs
 ; Prasyarat resmi Microsoft disediakan oleh tool\package_windows.ps1. Berkas ini
 ; WAJIB ada: tanpa skipifsourcedoesntexist, kompilasi gagal bila paket dibuat
 ; lewat jalur lain yang tidak membawa runtime.
-Source: "..\..\OpenTurath_AI_Windows\prerequisites\vc_redist.x64.exe"; DestDir: "{tmp}"; Flags: deleteafterinstall; Check: VCRedistNeeded
+Source: "{#PayloadRoot}\prerequisites\vc_redist.x64.exe"; DestDir: "{tmp}"; Flags: deleteafterinstall; Check: VCRedistNeeded
 
 [Icons]
 Name: "{autoprograms}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"

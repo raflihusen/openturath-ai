@@ -4,6 +4,7 @@
 #   3. ui.zip + install_manifest.json
 #   4. pembungkus (installer_stub.iss) -> OpenTurath_AI_Windows_Setup.exe
 # Hanya untuk Windows. Tidak mengunggah atau menyiarkan rilis apa pun.
+param([switch]$LocalOnly, [string]$PayloadDirectory = '')
 $ErrorActionPreference = 'Stop'
 $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $projectDir = Resolve-Path (Join-Path $scriptDir '..')
@@ -11,7 +12,7 @@ $repoDir = Resolve-Path (Join-Path $projectDir '..')
 $windowsDir = Join-Path $projectDir 'windows'
 $uiProject = Join-Path $repoDir 'openturath_installer'
 $stage = Join-Path $projectDir 'build\installer_stage'
-$payloadDir = Join-Path $repoDir 'OpenTurath_AI_Windows'
+$payloadDir = if ($PayloadDirectory) { [IO.Path]::GetFullPath($PayloadDirectory) } else { Join-Path $repoDir 'OpenTurath_AI_Windows' }
 
 $isccCandidates = @(
   'C:\Users\apple\AppData\Local\Programs\Inno Setup 6\ISCC.exe',
@@ -28,7 +29,7 @@ $appVersion = $versionParts[0]
 $appBuild = [int]$versionParts[1]
 
 Write-Host "1/4 Mesin pemasang (Inno)..." -ForegroundColor Cyan
-& $iscc ("/DMyAppVersion=$appVersion") (Join-Path $windowsDir 'installer_core.iss')
+& $iscc ("/DMyAppVersion=$appVersion") ("/DPayloadRoot=$payloadDir") (Join-Path $windowsDir 'installer_core.iss')
 if ($LASTEXITCODE -ne 0) { throw "ISCC gagal pada installer_core.iss" }
 
 Write-Host "2/4 Layar pemasang (Flutter)..." -ForegroundColor Cyan
@@ -50,16 +51,20 @@ if (Test-Path $zip) { Remove-Item $zip }
 Compress-Archive -Path (Join-Path $uiRelease '*') -DestinationPath $zip
 
 Write-Host "4/4 Pembungkus satu berkas..." -ForegroundColor Cyan
-& $iscc (Join-Path $windowsDir 'installer_stub.iss')
+$outputDir = if ($LocalOnly) { $stage } else { $repoDir }
+$outputName = if ($LocalOnly) { 'OpenTurath_AI_Windows_LocalTest_Setup' } else { 'OpenTurath_AI_Windows_Setup' }
+& $iscc ("/O$outputDir") ("/F$outputName") (Join-Path $windowsDir 'installer_stub.iss')
 if ($LASTEXITCODE -ne 0) { throw "ISCC gagal pada installer_stub.iss" }
 
-$outputExe = Join-Path $projectDir '..\OpenTurath_AI_Windows_Setup.exe'
+$outputExe = Join-Path $outputDir ($outputName + '.exe')
 if (Test-Path $outputExe) {
   $hash = (Get-FileHash $outputExe -Algorithm SHA256).Hash.ToLower()
   "$hash  OpenTurath_AI_Windows_Setup.exe" | Set-Content "$outputExe.sha256" -Encoding ascii
   $publicDir = Join-Path $projectDir 'public'
-  Copy-Item $outputExe (Join-Path $publicDir 'OpenTurath_AI_Windows_Setup.exe') -Force
-  Copy-Item "$outputExe.sha256" (Join-Path $publicDir 'OpenTurath_AI_Windows_Setup.exe.sha256') -Force
+  if (!$LocalOnly) {
+    Copy-Item $outputExe (Join-Path $publicDir 'OpenTurath_AI_Windows_Setup.exe') -Force
+    Copy-Item "$outputExe.sha256" (Join-Path $publicDir 'OpenTurath_AI_Windows_Setup.exe.sha256') -Force
+  }
   # Local metadata for the future, explicitly authorized publication step.
   @{version=$appVersion; build=$appBuild; sha256=$hash; installer_protocol=1;
     url='https://openturath.web.app/OpenTurath_AI_Windows_Setup.exe'} |
