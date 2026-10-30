@@ -51,8 +51,14 @@ import 'package:intl/intl.dart' show NumberFormat;
 /// Dilengkapi animasi Apple Interactive micro-compression, pantulan pegas halus,
 /// penanggalan ganda Hijriah, pencarian naskah seketika, dan portal keilmuan interaktif.
 class DashboardScreen extends StatefulWidget {
-  const DashboardScreen({super.key, this.searchFocusNode, this.authService});
+  const DashboardScreen({
+    super.key,
+    this.searchFocusNode,
+    this.authService,
+    this.agentService,
+  });
   final AuthService? authService;
+  final AgentService? agentService;
   final FocusNode? searchFocusNode;
 
   @override
@@ -62,7 +68,7 @@ class DashboardScreen extends StatefulWidget {
 class _DashboardScreenState extends State<DashboardScreen>
     with WidgetsBindingObserver {
   late final AuthService _authService = widget.authService ?? AuthService();
-  final AgentService _agentService = AgentService();
+  late final AgentService _agentService = widget.agentService ?? AgentService();
   final TextEditingController _searchController = TextEditingController();
   late final FocusNode _searchFocusNode = widget.searchFocusNode ?? FocusNode();
   late final UpdateService _updateService;
