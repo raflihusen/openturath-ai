@@ -613,6 +613,46 @@ const copyCatalog = <String, List<String>>{
     "Could not confirm that the history was deleted. The conversation remains visible; try again when the page is ready.",
     "تعذّر التأكد من حذف السجل. ما زالت المحادثة ظاهرة؛ أعد المحاولة بعد اكتمال تحميل الصفحة."
   ],
+  "paymentCheckUnavailable": [
+    "Status pembayaran belum dapat diperiksa. Ini bukan berarti pembayaran gagal; coba lagi sebentar lagi.",
+    "Payment status could not be checked. This does not mean your payment failed; try again shortly.",
+    "تعذر التحقق من حالة الدفع. لا يعني هذا فشل الدفع؛ أعد المحاولة بعد قليل."
+  ],
+  "paymentPending": [
+    "Pembayaran masih menunggu penyelesaian. Jika sudah membayar, periksa lagi sebentar lagi.",
+    "Payment is still pending. If you have paid, check again shortly.",
+    "الدفع قيد الانتظار. إن كنت قد دفعت فتحقق مجددًا بعد قليل."
+  ],
+  "paymentExpired": [
+    "Batas waktu pembayaran habis. Tutup halaman ini untuk menyiapkan pembayaran baru.",
+    "This payment has expired. Close this page to start a new checkout.",
+    "انتهت مهلة الدفع. أغلق هذه الصفحة لإعداد دفعة جديدة."
+  ],
+  "paymentDenied": [
+    "Pembayaran ditolak oleh penyedia pembayaran. Tutup halaman ini untuk mencoba kembali.",
+    "The payment provider declined this payment. Close this page to try again.",
+    "رفض مزود الدفع هذه الدفعة. أغلق هذه الصفحة للمحاولة مجددًا."
+  ],
+  "paymentCancelled": [
+    "Pembayaran ini dibatalkan. Tutup halaman ini untuk menyiapkan pembayaran baru.",
+    "This payment was cancelled. Close this page to start a new checkout.",
+    "أُلغيت هذه الدفعة. أغلق هذه الصفحة لإعداد دفعة جديدة."
+  ],
+  "paymentRefunded": [
+    "Pengembalian pembayaran tercatat. Hubungi bantuan bila membutuhkan penjelasan.",
+    "A payment refund was recorded. Contact support if you need help.",
+    "سُجّل رد المبلغ. تواصل مع الدعم إن احتجت إلى توضيح."
+  ],
+  "paymentPartialRefund": [
+    "Sebagian pembayaran telah dikembalikan. Hubungi bantuan untuk rincian.",
+    "Part of this payment has been refunded. Contact support for details.",
+    "رُدّ جزء من هذا المبلغ. تواصل مع الدعم لمعرفة التفاصيل."
+  ],
+  "priceChangedReview": [
+    "Harga penawaran diperbarui. Periksa harga yang tampil, lalu tekan tombol bayar lagi jika setuju.",
+    "The offer price has been refreshed. Review the displayed price and press the payment button again if you agree.",
+    "حُدّث سعر العرض. راجع السعر المعروض ثم اضغط زر الدفع مجددًا إن وافقت."
+  ],
   "googleSessionFailed": [
     "Gagal menghubungkan akun Google.",
     "Unable to connect your Google account.",
