@@ -13,10 +13,12 @@ import '../core/notebook_navigation.dart';
 import '../core/routes.dart';
 import '../core/scholarly_fonts.dart';
 import '../core/theme.dart';
+import '../services/auth_failure_reporter.dart';
 import '../services/auth_service.dart';
 import '../services/desktop_webview_runtime.dart';
 import '../services/persistent_google_session.dart';
 import '../widgets/app_loader.dart';
+import '../widgets/diagnostic_report_action.dart';
 
 import 'package:openturath_ai/core/design/ot_typography.dart';
 import 'package:openturath_ai/core/design/ot_radius.dart';
@@ -50,6 +52,10 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
   bool _isMismatchDialogOpen = false;
   bool _isShieldActive = false;
   bool _isCheckingAccount = false;
+  // Halaman penolakan Google ("Couldn't sign you in") terdeteksi: tawarkan
+  // tombol kirim laporan agar pemilik dapat menganalisa penyebabnya.
+  bool _googleRejected = false;
+  String _lastPage = '';
   bool _isConfirmOpen = false;
   Timer? _watchdog;
 
@@ -221,6 +227,41 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
 
   /// Memverifikasi bahwa sesi di WebView telah selesai dan menggunakan akun yang sama.
   /// Dilengkapi mutex guard dan siklus polling adaptif untuk menjamin keandalan pada koneksi lambat.
+  static const _rejectionPhrases = [
+    "couldn't sign you in",
+    'browser or app may not be secure',
+    'browser doesn\'t support javascript',
+    'tidak dapat membuat anda login',
+    'tidak bisa login',
+  ];
+
+  /// Mengenali halaman penolakan Google dari alamat (`/signin/rejected`) atau
+  /// teksnya. Hanya membaca; tidak mengubah halaman, cookie, atau sesi.
+  Future<void> _detectGoogleRejection(
+      InAppWebViewController controller, WebUri url) async {
+    _lastPage = url.toString();
+    if (!url.host.endsWith('accounts.google.com')) {
+      if (_googleRejected && mounted) setState(() => _googleRejected = false);
+      return;
+    }
+    var rejected = url.path.contains('/signin/rejected');
+    if (!rejected) {
+      try {
+        final text = await controller
+            .evaluateJavascript(
+                source: "(document.body&&document.body.innerText||'')"
+                    '.toLowerCase().slice(0,2000)')
+            .timeout(const Duration(seconds: 3));
+        final lower = '${text ?? ''}';
+        rejected = _rejectionPhrases.any(lower.contains);
+      } catch (_) {}
+    }
+    if (!rejected || !mounted) return;
+    AuthFailureReporter.reportOnce(
+        stage: 'login-webview', code: 'google-rejected');
+    if (!_googleRejected) setState(() => _googleRejected = true);
+  }
+
   Future<void> _checkAccountVerification(
       InAppWebViewController controller) async {
     if (!mounted || _isSessionReady || _isCheckingAccount) return;
@@ -1029,6 +1070,8 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
                                   onLoadStop: (controller, url) async {
                                     if (!mounted || url == null) return;
                                     _handleUrlNavigation(controller, url);
+                                    unawaited(
+                                        _detectGoogleRejection(controller, url));
                                     await _checkAccountVerification(controller);
                                   },
                                   onUpdateVisitedHistory:
@@ -1041,9 +1084,32 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
                                       (controller, request, error) {
                                     debugPrint(
                                         '[GoogleSessionAuth] WebView error: ${error.description}');
+                                    if (request.isForMainFrame == true) {
+                                      AuthFailureReporter.reportOnce(
+                                          stage: 'login-webview',
+                                          code: 'load-${error.type.toNativeValue() ?? 'unknown'}');
+                                    }
                                   },
                                 ),
                         ),
+                        if (_googleRejected)
+                          Positioned(
+                            left: 16,
+                            right: 16,
+                            bottom: 16,
+                            child: SafeArea(
+                              child: FilledButton.icon(
+                                onPressed: () => submitDiagnosticFromUi(
+                                  context,
+                                  stage: 'login-webview',
+                                  code: 'google-rejected',
+                                  page: _lastPage,
+                                ),
+                                icon: const Icon(Icons.flag_outlined, size: 18),
+                                label: Text(Loc.tr('reportSend')),
+                              ),
+                            ),
+                          ),
                         if (_isShieldActive)
                           Positioned.fill(
                             child: ColoredBox(

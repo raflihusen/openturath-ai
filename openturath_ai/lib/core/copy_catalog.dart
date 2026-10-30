@@ -2367,6 +2367,18 @@ const copyCatalog = <String, List<String>>{
     "The AI could not be opened",
     "تعذّر فتح المساعد"
   ],
+  "reportSend": ["Kirim laporan", "Send report", "إرسال تقرير"],
+  "reportSending": ["Mengirim laporan…", "Sending report…", "جارٍ إرسال التقرير…"],
+  "reportSent": [
+    "Laporan terkirim. Kode rujukan Anda: {0}. Sebutkan kode ini bila menghubungi kami.",
+    "Report sent. Your reference code: {0}. Quote it if you contact us.",
+    "تم إرسال التقرير. رمزك المرجعي: {0}. اذكره عند التواصل معنا."
+  ],
+  "reportFailed": [
+    "Laporan belum terkirim. Periksa koneksi lalu coba lagi.",
+    "The report could not be sent. Check your connection and try again.",
+    "تعذّر إرسال التقرير. تحقق من الاتصال ثم أعد المحاولة."
+  ],
   "roomHttpFailure": [
     "AI belum bisa dibuka (kode {0}). Coba muat ulang sebentar lagi.",
     "The AI could not be opened (code {0}). Try reloading in a moment.",

@@ -30,6 +30,8 @@ import '../core/design/ot_typography.dart';
 import '../core/scholarly_fonts.dart';
 import '../models/agent_model.dart';
 import '../services/agent_service.dart';
+import '../services/auth_failure_reporter.dart';
+import 'diagnostic_report_action.dart';
 import '../services/agent_session_manager.dart';
 import '../services/auth_service.dart';
 import '../services/bookmark_service.dart';
@@ -1271,6 +1273,8 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
         session.isPaywallRequired = false;
         session.isTimeoutError = false;
         session.errorMessage = Loc.tr('roomGooglePermissionDetail');
+        AuthFailureReporter.reportOnce(
+            stage: 'room-load', code: 'google-permission');
       });
     }
   }
@@ -1288,7 +1292,38 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
       session.isSessionReady = false;
       session.isGoogleAuthPage = true;
       session.errorMessage = null;
+      AuthFailureReporter.reportOnce(
+          stage: 'room-load', code: 'google-auth-page');
     });
+  }
+
+  /// Tombol "Kirim laporan" pada layar galat: kode mengikuti penyebab yang
+  /// sedang tampil; alamat dikirim tanpa query.
+  Future<void> _sendRoomReport(AgentSessionTab session) async {
+    final code = session.isGoogleAuthPage
+        ? 'google-auth-page'
+        : session.isGooglePermissionError
+            ? 'google-permission'
+            : session.isTimeoutError
+                ? 'not-ready-timeout'
+                : 'load-failed';
+    String? page;
+    try {
+      page = (await session.webController?.getUrl())?.toString();
+    } catch (_) {}
+    if (!mounted) return;
+    await submitDiagnosticFromUi(
+      context,
+      stage: 'room-load',
+      code: code,
+      page: page ?? session.resolvedUrl,
+      flags: {
+        'session_ready': session.isSessionReady,
+        'google_auth_page': session.isGoogleAuthPage,
+        'permission_error': session.isGooglePermissionError,
+        'timeout': session.isTimeoutError,
+      },
+    );
   }
 
   Future<void> _checkReady() async {
@@ -1343,6 +1378,8 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
             widget.session.isSessionReady = false;
             widget.session.isTimeoutError = true;
             widget.session.errorMessage = Loc.tr('roomNotReadyBody');
+            AuthFailureReporter.reportOnce(
+                stage: 'room-load', code: 'not-ready-timeout');
           });
         }
         return;
@@ -1628,6 +1665,8 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
           message: email.isNotEmpty
               ? Loc.tr('roomSameAccountBody', [email])
               : Loc.tr('roomSameAccountBodyPlain'),
+          onSecondary: () => _sendRoomReport(session),
+          secondaryLabel: Loc.tr('reportSend'),
           retryLabel: Loc.tr('roomLoginNow'),
           retryIcon: Icons.login_rounded,
           onRetry: () async {
@@ -1655,6 +1694,8 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
           icon: Icons.account_circle_outlined,
           title: Loc.tr('roomPermissionTitle'),
           message: Loc.tr('roomPermissionBody'),
+          onSecondary: () => _sendRoomReport(session),
+          secondaryLabel: Loc.tr('reportSend'),
           retryLabel: Loc.tr('ui_f9d6eb247c'),
           retryIcon: Icons.switch_account_outlined,
           onRetry: () async {
@@ -1689,6 +1730,8 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
           message: session.errorMessage ?? Loc.tr('roomLoadFailBody'),
           retryLabel: Loc.tr('tryAgain'),
           onRetry: retry,
+          onSecondary: () => _sendRoomReport(session),
+          secondaryLabel: Loc.tr('reportSend'),
           onBack: close,
           backLabel: Loc.tr('back'),
         );
@@ -1771,6 +1814,9 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
                   current.toString() != request.url.toString()) {
                 return;
               }
+              AuthFailureReporter.reportOnce(
+                  stage: 'room-load',
+                  code: 'load-${error.type.toNativeValue() ?? 'unknown'}');
               _readinessTimer?.cancel();
               setState(() {
                 session.isWebLoading = false;
@@ -1791,6 +1837,8 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
                   // notebook bisa terlambat sampai ke akun Google.
                   _handleAccessDenied(session);
                 } else if (code != null && code >= 400) {
+                  AuthFailureReporter.reportOnce(
+                      stage: 'room-load', code: 'http-$code');
                   _readinessTimer?.cancel();
                   _inputRetryTimer?.cancel();
                   setState(() {
