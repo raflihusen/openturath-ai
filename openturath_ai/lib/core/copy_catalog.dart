@@ -558,6 +558,31 @@ const copyCatalog = <String, List<String>>{
     "Cancel sign-in",
     "إلغاء تسجيل الدخول"
   ],
+  "cancelGoogleConnectionTitle": [
+    "Tunda koneksi AI?",
+    "Connect AI later?",
+    "تأجيل الاتصال بالذكاء الاصطناعي؟"
+  ],
+  "cancelGoogleConnectionDesc": [
+    "Anda tetap masuk ke OpenTurath. Sesi Google dan tab yang sudah terbuka tetap disimpan. Anda dapat melanjutkan koneksi AI nanti.",
+    "You will remain signed in to OpenTurath. Your Google session and open tabs will be kept. You can connect AI later.",
+    "ستبقى مسجّل الدخول إلى OpenTurath، مع الاحتفاظ بجلسة Google وعلامات التبويب المفتوحة. يمكنك متابعة الاتصال بالذكاء الاصطناعي لاحقًا."
+  ],
+  "cancelGoogleConnectionAction": [
+    "Tunda dulu",
+    "Connect later",
+    "التأجيل الآن"
+  ],
+  "continueGoogleConnection": [
+    "Lanjutkan masuk",
+    "Continue sign-in",
+    "متابعة تسجيل الدخول"
+  ],
+  "googleSessionUnverified": [
+    "Sesi Google belum dapat diverifikasi. Tekan Periksa lagi atau Lanjutkan setelah akun yang sama selesai masuk. Sesi Anda tidak dihapus.",
+    "Your Google session could not be verified yet. Retry or continue after signing in with the same account. Your session has not been cleared.",
+    "تعذّر التحقق من جلسة Google حتى الآن. أعد المحاولة أو تابع بعد إتمام تسجيل الدخول بالحساب نفسه. لم تُحذف جلستك."
+  ],
   "connectingGoogleAccount": [
     "Menghubungkan akun Google…",
     "Connecting your Google account…",
