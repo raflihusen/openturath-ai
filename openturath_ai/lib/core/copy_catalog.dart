@@ -1509,7 +1509,7 @@ const copyCatalog = <String, List<String>>{
   ],
   "ui_b1c0a06c2d": ["Jilid", "Volumes", "الأجزاء"],
   "ui_ffc1ce6e71": [
-    "Ketuk untuk membuka tautan pembaruan versi desktop terbaru.",
+    "Selesai diunduh dan diperiksa. Siap dipasang.",
     "Open the latest desktop update.",
     "افتح تحديث سطح المكتب الأخير."
   ],
@@ -2477,6 +2477,12 @@ const copyCatalog = <String, List<String>>{
     "Select an AI to switch active study sessions.",
     "اختر مساعدًا للتبديل إلى جلسة المطالعة النشطة."
   ],
+  "updateDownloadFailed": ["Pembaruan belum selesai diunduh. Coba lagi.", "The update could not be downloaded. Try again.", "تعذر إكمال تنزيل التحديث. حاول مجددًا."],
+  "updatePackageChanged": ["Berkas pembaruan perlu diperiksa ulang. Unduh kembali untuk melanjutkan.", "The update file needs to be downloaded again for verification.", "يلزم تنزيل ملف التحديث مجددًا للتحقق منه."],
+  "updateInstallFailed": ["Pembaruan belum dapat dipasang. Paket tetap tersimpan; coba lagi dari aplikasi yang sudah terpasang.", "The update could not be installed. The package is saved; retry from the installed application.", "تعذر تثبيت التحديث. الحزمة محفوظة؛ حاول من التطبيق المثبّت."],
+  "updateDownloading": ["Mengunduh pembaruan…", "Downloading update…", "جارٍ تنزيل التحديث…"],
+  "updateInstalling": ["Menyiapkan pemasangan…", "Preparing installation…", "جارٍ تجهيز التثبيت…"],
+  "updateRetry": ["Coba lagi", "Try Again", "حاول مجددًا"],
   "updateReadyTitleDesktop": [
     "Pembaruan tersedia",
     "Update Available",
@@ -2485,14 +2491,14 @@ const copyCatalog = <String, List<String>>{
   "updateReadyTitleMobile": ["Pembaruan siap", "Update Ready", "التحديث جاهز"],
   "updateReadyVersion": ["Versi {0}", "Version {0}", "الإصدار {0}"],
   "updateReadyDescDesktop": [
-    "Versi desktop terbaru sudah tersedia. Buka tautan untuk memperbarui.",
-    "A newer desktop version is available with scholarship improvements and stability. Open the link to update.",
-    "يتوفر إصدار جديد لسطح المكتب مع تحسينات علمية وثبات للنظام. افتح الرابط للتحديث."
+    "Pembaruan sudah diunduh dan diperiksa. Pasang untuk membuka ulang aplikasi dengan versi terbaru.",
+    "The update has been downloaded and verified. Install it to restart with the new version.",
+    "تم تنزيل التحديث والتحقق منه. ثبّته لإعادة تشغيل التطبيق بالإصدار الجديد."
   ],
   "updateReadyDescMobile": [
-    "Pembaruan sudah diunduh. Ketuk tombol di bawah untuk memasang dan memuat ulang aplikasi.",
-    "The app has finished downloading updates silently in the background. Tap below to install and reload.",
-    "اكتمل تنزيل التحديث في الخلفية بهدوء. اضغط أدناه للتثبيت وإعادة التشغيل."
+    "Pembaruan sudah diunduh. Ketuk Pasang, lalu ikuti konfirmasi Android.",
+    "The update has been downloaded. Tap Install, then follow the Android confirmation.",
+    "اكتمل تنزيل التحديث. اضغط تثبيت ثم اتبع تأكيد أندرويد."
   ],
   "updateReadyDefaultNotes": [
     "Perbaikan dan peningkatan kestabilan.",
@@ -2500,14 +2506,14 @@ const copyCatalog = <String, List<String>>{
     "تحسينات لاستقرار المطالعة والمنظومة العلمية."
   ],
   "updateReadyActionDesktop": [
-    "Unduh pembaruan",
-    "Download Update",
-    "تنزيل التحديث"
+    "Pasang dan buka ulang",
+    "Install and Restart",
+    "تثبيت وإعادة تشغيل"
   ],
   "updateReadyActionMobile": [
-    "Pasang dan muat ulang",
-    "Install & Reload Now",
-    "تثبيت وإعادة تشغيل الآن"
+    "Pasang pembaruan",
+    "Install Update",
+    "تثبيت التحديث"
   ],
   "updateReadyLater": ["Nanti saja", "Later", "لاحقًا"],
   "updateReadyOpenFailed": [
@@ -2526,9 +2532,9 @@ const copyCatalog = <String, List<String>>{
     "التحديث v{0} جاهز للتثبيت"
   ],
   "updateBannerDescDesktop": [
-    "Ketuk untuk membuka tautan pembaruan versi desktop terbaru.",
-    "Tap to open the update link for the latest desktop version.",
-    "اضغط لفتح رابط التحديث لأحدث إصدار لسطح المكتب."
+    "Selesai diunduh dan diperiksa. Siap dipasang.",
+    "Downloaded and verified. Ready to install.",
+    "تم التنزيل والتحقق. التحديث جاهز للتثبيت."
   ],
   "updateBannerDescMobile": [
     "Selesai diunduh di latar belakang. Ketuk pasang untuk menerapkan.",

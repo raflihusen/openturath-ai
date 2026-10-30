@@ -45,7 +45,7 @@ class UpdateReadyDialog extends StatelessWidget {
     final releaseNotes =
         info?.releaseNotes ?? Loc.tr('updateReadyDefaultNotes');
 
-    return Dialog(
+    return AnimatedBuilder(animation: updateService, builder: (context, _) => Dialog(
       backgroundColor: surface,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(AppTheme.radiusCard),
@@ -160,14 +160,14 @@ class UpdateReadyDialog extends StatelessWidget {
               width: double.infinity,
               height: 46,
               child: FilledButton(
-                onPressed: () async {
+                onPressed: updateService.isInstalling ? null : () async {
                   final opened = await updateService.installNow();
                   if (!context.mounted) return;
                   if (opened) {
                     Navigator.of(context).pop();
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                      content: Text(Loc.tr('updateReadyOpenFailed')),
+                      content: Text(updateService.lastError ?? Loc.tr('updateReadyOpenFailed')),
                     ));
                   }
                 },
@@ -177,7 +177,7 @@ class UpdateReadyDialog extends StatelessWidget {
                   elevation: 0,
                 ),
                 child: Text(
-                  isDesktop
+                  updateService.isInstalling ? Loc.tr('updateInstalling') : isDesktop
                       ? Loc.tr('updateReadyActionDesktop')
                       : Loc.tr('updateReadyActionMobile'),
                   style: ScholarlyFonts.outfit(
@@ -210,6 +210,6 @@ class UpdateReadyDialog extends StatelessWidget {
           ],
         ),
       ),
-    );
+    ));
   }
 }

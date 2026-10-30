@@ -172,6 +172,7 @@ class UpdateService extends ChangeNotifier {
     _status = UpdateStatus.installing;
     _lastError = null;
     notifyListeners();
+    var handedOff = false;
     try {
       final file = File(info.localFilePath!);
       if (!await (await _packageStore()).verified(file, info.sha256Hash!)) {
@@ -187,6 +188,7 @@ class UpdateService extends ChangeNotifier {
         await const DesktopUpdateInstaller().handoff(package: file,
             hash: info.sha256Hash!, build: info.latestVersionCode,
             installerProtocol: info.installerProtocol);
+        handedOff = true;
         // The helper has acknowledged readiness and now waits for this PID.
         Timer(const Duration(milliseconds: 500), () => exit(0));
       } else {
@@ -199,7 +201,7 @@ class UpdateService extends ChangeNotifier {
       _lastError = Loc.tr('updateInstallFailed');
       return false;
     } finally {
-      if (_status == UpdateStatus.installing) _status = UpdateStatus.readyToInstall;
+      if (_status == UpdateStatus.installing && !handedOff) _status = UpdateStatus.readyToInstall;
       notifyListeners();
     }
   }
