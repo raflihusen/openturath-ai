@@ -531,9 +531,9 @@ class AuthService {
             .map((doc) {
           if (!doc.exists) return null;
           final user = UserModel.fromFirestore(doc);
-          if (_auth.currentUser?.uid == uid) {
+          if (currentUser?.uid == uid) {
             unawaited(_cacheUserLocally(user,
-                isCurrent: () => _auth.currentUser?.uid == uid));
+                isCurrent: () => currentUser?.uid == uid));
           }
           return user;
         }),
