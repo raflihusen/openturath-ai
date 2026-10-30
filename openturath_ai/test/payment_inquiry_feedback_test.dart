@@ -14,7 +14,7 @@ class _Gateway extends CallableGateway {
 void main() {
   test('transport failure remains an error rather than an unpaid result',
       () async {
-    final failure = FirebaseFunctionsException(code: 'unavailable');
+    final failure = FirebaseFunctionsException(code: 'unavailable', message: 'offline');
     final service =
         PaymentService(functions: _Gateway(() async => throw failure));
     await expectLater(service.checkPaymentStatus(invoiceNumber: 'INV-1'),
