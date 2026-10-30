@@ -42,9 +42,19 @@ SDK yang sudah menjalankan permintaan tidak dapat dibatalkan oleh deadline Dart.
 | Kompilasi TypeScript melalui `npm run build` | Berhasil; hasil JavaScript/map tersinkron dalam checkpoint `b3a1d82f`. |
 | Aksi NotebookLM dan guard dialog melalui Node | **15 lulus**; menjalankan potongan JavaScript yang diekstrak dari sumber aplikasi. |
 | Analisis Dart seluruh proyek setelah perubahan akhir | **No errors**. |
-| Kompilasi macOS release snapshot akhir | Sedang berjalan; hasil akhir dicatat setelah proses selesai. |
+| Kompilasi macOS release snapshot akhir | **Berhasil**, exit 0, ukuran bundle terlapor 130,9 MB. |
+| Integritas tanda tangan lokal macOS | `codesign --verify --deep --strict` berhasil. |
+| Penerimaan distribusi macOS | **Belum lolos**: `spctl --assess --type execute` menghasilkan `rejected`, exit 3. Tanda tangan masih ad hoc, tanpa TeamIdentifier. |
 
 Suite tambahan memakai penyimpanan lokal, server HTTP lokal untuk transfer paket, serta Firebase/callable/provider tiruan untuk memeriksa urutan respons dan kegagalan. Pengujian itu tidak melakukan pembayaran atau menghapus riwayat Google sungguhan.
+
+Build lokal akhir berada di [OpenTurath AI.app](</Users/apple/Downloads/ramadhan/openturath_ai/build/macos/Build/Products/Release/OpenTurath AI.app>). Binary Dart di App.framework berukuran 22.830.496 byte, dimodifikasi `2026-10-30T21:31:42.978877+00:00`, dengan SHA-256 `31c1877eb7e0afed4de898b1a5e8bf6248c936f981339f3b706e44bd7831e704`. Metadata aplikasi tetap `1.0.87`, build `88`. Build ini untuk pemeriksaan internal.
+
+## Penghalang rilis Mac yang masih terbuka
+
+Pemeriksaan keychain menemukan satu identitas **Apple Development**, tanpa **Developer ID Application**. Sertifikat pengembangan tersebut tidak menyelesaikan persyaratan distribusi langsung ke pelanggan. Apple mensyaratkan Developer ID dan proses notarisasi untuk jalur tersebut; lihat [panduan notarisasi Apple](https://developer.apple.com/documentation/security/notarizing-macos-software-before-distribution). Karena itu, keberhasilan kompilasi dan verifikasi integritas tanda tangan tidak dinyatakan sebagai keberhasilan distribusi publik.
+
+Masalah ini terpisah dari tantangan login Google pada screenshot. Penyelesaian distribusi publik masih memerlukan identitas Developer ID milik pemilik beserta akses notarisasi yang sesuai. Tidak membuat sertifikat, mengunggah aplikasi ke Apple, atau menerbitkan build tanpa instruksi rilis.
 
 Bukti khusus tersedia di [regresi auth/startup](/Users/apple/Downloads/ramadhan/openturath_ai/test/auth_startup_recovery_test.dart), [Undo dan sinkronisasi](/Users/apple/Downloads/ramadhan/openturath_ai/test/bookmark_undo_sync_test.dart), [aliran unduhan/instalasi lokal](/Users/apple/Downloads/ramadhan/openturath_ai/test/ota_install_flow_test.dart), [pemulihan harga](/Users/apple/Downloads/ramadhan/openturath_ai/test/checkout_price_refresh_test.dart), [hasil pemeriksaan pembayaran](/Users/apple/Downloads/ramadhan/openturath_ai/test/payment_inquiry_feedback_test.dart), [hasil koneksi Google](/Users/apple/Downloads/ramadhan/openturath_ai/test/room_google_connection_result_test.dart), [hasil hapus riwayat](/Users/apple/Downloads/ramadhan/openturath_ai/test/room_history_result_test.dart), dan [regresi aksi JavaScript](/Users/apple/Downloads/ramadhan/scripts/test_notebook_actions.mjs).
 
@@ -58,6 +68,6 @@ Bukti khusus tersedia di [regresi auth/startup](/Users/apple/Downloads/ramadhan/
 
 Aturan WebView dipertahankan: minimal empat sampel kesiapan, elapsed minimal 3000 ms, jeda 250 ms, viewport galat yang bersih, dukungan lima tab, dan tanpa penimpaan cookie Google. Perubahan ruang AI terbatas pada handler aksi serta pembungkusan label menu.
 
-Permintaan verifikasi identitas Google tetap merupakan keputusan layanan Google. Screenshot tidak cukup untuk menyimpulkan akun diretas atau menjamin bahwa tantangan tidak akan muncul lagi; lihat [penjelasan Google tentang verifikasi identitas] (https://support.google.com/accounts/answer/7162782?hl=en).
+Permintaan verifikasi identitas Google tetap merupakan keputusan layanan Google. Screenshot tidak cukup untuk menyimpulkan akun diretas atau menjamin bahwa tantangan tidak akan muncul lagi; lihat [penjelasan Google tentang verifikasi identitas](https://support.google.com/accounts/answer/7162782?hl=en).
 
 Seluruh perubahan dibuatkan checkpoint otomatis. Empat item untracked yang sudah ada sebelum pekerjaan dipertahankan.
