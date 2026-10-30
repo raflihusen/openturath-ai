@@ -11,6 +11,17 @@ class SubscriptionService {
 
   final PaymentService _paymentService;
 
+  static bool isCheckoutPriceChange({
+    required String code,
+    String? message,
+    Object? details,
+  }) {
+    if (code.toLowerCase() != 'failed-precondition') return false;
+    if (details is Map && details['reason'] == 'price_changed') return true;
+    return details == null &&
+        message == 'Harga penawaran telah berubah. Muat ulang aplikasi.';
+  }
+
   /// Normalisasi kode voucher: hapus spasi, ubah huruf kapital, hapus tanda strip
   static String normalizeCode(String input) {
     return input.trim().toUpperCase().replaceAll(RegExp(r'[\s-]'), '');
