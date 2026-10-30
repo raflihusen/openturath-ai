@@ -176,7 +176,7 @@ void main() {
         await download;
         updater.dispose();
       }
-      expect(updater.status, UpdateStatus.ready);
+      expect(updater.status, UpdateStatus.readyToInstall);
       expect(updater.updateInfo!.downloadProgress, 1);
     });
   }
