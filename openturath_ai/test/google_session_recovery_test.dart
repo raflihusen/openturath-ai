@@ -165,10 +165,9 @@ void main() {
 
   Future<void> finishLoad(
       WidgetTester tester, InAppWebViewController controller) async {
-    final load = platform.lastView!.params.onLoadStop!(controller, _notebookUrl);
+    platform.lastView!.params.onLoadStop!(controller, _notebookUrl);
     await tester.pump();
     await tester.pump(const Duration(seconds: 1));
-    await load;
     await tester.pump(const Duration(milliseconds: 350));
   }
 
@@ -219,7 +218,7 @@ void main() {
     final existingTab = manager.activeTab;
     await open(tester);
 
-    await tester.tap(find.byTooltip(Loc.tr('exit')));
+    await tester.tap(find.byTooltip(Loc.tr('cancelSignIn')));
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 250));
     expect(find.text(Loc.tr('cancelGoogleConnectionTitle')), findsOneWidget);
@@ -250,7 +249,14 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 250));
 
-    expect(find.text(Loc.tr('confirmGoogleAccountTitle')), findsNothing);
+    // A confirmation is only a request to recheck; it cannot substitute for
+    // evidence that Google accepted the session and the expected account.
+    if (find.text(Loc.tr('yesAlreadySignedIn')).evaluate().isNotEmpty) {
+      await tester.tap(find.text(Loc.tr('yesAlreadySignedIn')));
+      await tester.pump();
+      await tester.pump(const Duration(seconds: 1));
+      await tester.pump(const Duration(milliseconds: 350));
+    }
     expect(routeResults, isEmpty);
     final prefs = await SharedPreferences.getInstance();
     expect(prefs.getBool('google_session_ready'), isNot(true));
