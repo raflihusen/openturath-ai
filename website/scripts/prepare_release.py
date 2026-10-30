@@ -40,6 +40,7 @@ def main():
         "OpenTurath_AI.apk",
         "OpenTurath_v86.apk",
         "OpenTurath_v87.apk",
+        "OpenTurath_v88.apk",
         "OpenTurath_AI_macOS.dmg",
         "OpenTurath_AI_Windows_Setup.exe",
         "OpenTurath_AI_Windows.zip",
@@ -69,7 +70,7 @@ def main():
         shutil.copy2(root_apk, temp_backup / "openturath.apk")
         shutil.copy2(root_apk, temp_backup / "app-release-latest.apk")
         shutil.copy2(root_apk, temp_backup / "OpenTurath_AI.apk")
-        shutil.copy2(root_apk, temp_backup / "OpenTurath_v87.apk")
+        shutil.copy2(root_apk, temp_backup / "OpenTurath_v88.apk")
         print(f"   [OK] Menggunakan biner APK terbaru dari root: {root_apk.stat().st_size:,} bytes")
 
     if root_dmg.exists():
@@ -187,7 +188,7 @@ def main():
         shutil.copy2(root_apk, APP_PUBLIC / "openturath.apk")
         shutil.copy2(root_apk, APP_PUBLIC / "app-release-latest.apk")
         shutil.copy2(root_apk, APP_PUBLIC / "OpenTurath_AI.apk")
-        shutil.copy2(root_apk, APP_PUBLIC / "OpenTurath_v87.apk")
+        shutil.copy2(root_apk, APP_PUBLIC / "OpenTurath_v88.apk")
         if (DIST / "RELEASE_MANIFEST.json").exists():
             shutil.copy2(DIST / "RELEASE_MANIFEST.json", APP_PUBLIC / "RELEASE_MANIFEST.json")
 
