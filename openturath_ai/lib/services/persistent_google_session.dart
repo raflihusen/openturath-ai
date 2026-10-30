@@ -52,8 +52,7 @@ class PersistentGoogleSession {
     InAppWebViewController? controller,
     String email, {
     bool Function()? isCurrent,
-  }
-  ) async {
+  }) async {
     final cleanEmail = email.trim().toLowerCase();
     if (cleanEmail.isEmpty || isCurrent?.call() == false) return false;
     try {
