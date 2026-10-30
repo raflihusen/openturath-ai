@@ -200,7 +200,8 @@ void main() {
     expect(await session.restoreSessionIfAvailable(accountA), true);
   });
 
-  test('cancelled connection cannot claim ownership after a delayed cookie read',
+  test(
+      'cancelled connection cannot claim ownership after a delayed cookie read',
       () async {
     var isCurrent = true;
     final gate = Completer<void>();
@@ -224,4 +225,3 @@ void main() {
     expect(prefs.getBool('google_session_ready'), isNot(true));
   });
 }
-
