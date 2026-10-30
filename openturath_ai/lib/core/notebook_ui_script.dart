@@ -1373,6 +1373,9 @@ window.otDeleteChatHistory = async function() {
   // Let NotebookLM remove its own messages after the provider action. Never
   // simulate deletion by removing DOM nodes: failed requests must remain visible.
   const pause = () => new Promise(resolve => setTimeout(resolve, 100));
+  const noticeSelector = '[role="status"], [role="alert"], .mat-mdc-snack-bar-label';
+  const initialNotices = new Map([...document.querySelectorAll(noticeSelector)]
+    .map(el => [el, el.innerText || el.textContent || '']));
   const messages = () => [...document.querySelectorAll(questionSelector + ',' + answerSelector)].filter(visible);
   if (!messages().length) return inputReady();
   const chatLabel = /chat|history|riwayat|obrolan|percakapan|محادث|سجل/i;
@@ -1426,10 +1429,15 @@ window.otDeleteChatHistory = async function() {
   let emptySince = null;
   while (Date.now() < completionDeadline) {
     const dialogOpen = [...document.querySelectorAll('mat-dialog-container, [role="dialog"], [role="alertdialog"]')].some(visible);
-    const failure = [...document.querySelectorAll('[role="alert"], .mat-mdc-snack-bar-label')]
-      .some(el => visible(el) && /failed|error|try again|gagal|kesalahan|تعذّر|خطأ/i.test(el.innerText || el.textContent || ''));
-    if (failure) return false;
-    if (!dialogOpen && inputReady() && messages().length === 0) {
+    const notices = [...document.querySelectorAll(noticeSelector)]
+      .filter(el => visible(el) && initialNotices.get(el) !== (el.innerText || el.textContent || ''))
+      .map(el => el.innerText || el.textContent || '');
+    if (notices.some(label => /failed|error|try again|could not|not deleted|gagal|kesalahan|tidak.{0,20}(dihapus|terhapus)|تعذّر|خطأ/i.test(label))) return false;
+    // Empty DOM can be optimistic. Require an explicit provider success notice
+    // as well; unknown NotebookLM markup must produce an unconfirmed result.
+    const providerConfirmed = notices.some(label => chatLabel.test(label) &&
+      /\b(deleted|cleared|dihapus|terhapus|dibersihkan)\b|تم.{0,15}(حذف|مسح)/i.test(label));
+    if (providerConfirmed && !dialogOpen && inputReady() && messages().length === 0) {
       if (emptySince === null) emptySince = Date.now();
       if (Date.now() - emptySince >= 1000) return true;
     } else {
