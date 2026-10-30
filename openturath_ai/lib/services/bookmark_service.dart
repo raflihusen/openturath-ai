@@ -141,6 +141,33 @@ class BookmarkService extends ChangeNotifier {
     }
   }
 
+  /// Undo is a new edit, newer than the deletion already queued for sync.
+  Future<void> restoreBookmark(BookmarkModel bookmark, {String? userId}) async {
+    final effectiveUid = userId ?? _activeAuth?.currentUser?.uid;
+    BookmarkModel? restored;
+    await _store.update(_key(effectiveUid), (items) {
+      final index = items.indexWhere((item) => item.id == bookmark.id);
+      final latest = index == -1 ? bookmark : items[index];
+      var restoredAt = DateTime.now();
+      for (final knownTime in [bookmark.syncTime, latest.syncTime]) {
+        if (!restoredAt.isAfter(knownTime)) {
+          restoredAt = knownTime.add(const Duration(microseconds: 1));
+        }
+      }
+      restored = latest.copyWith(
+        updatedAt: restoredAt,
+        clearDeletedAt: true,
+      );
+      items.removeWhere((item) => item.id == bookmark.id);
+      items.insert(0, restored!);
+      return items;
+    });
+    notifyListeners();
+    if (effectiveUid != null && effectiveUid.isNotEmpty) {
+      unawaited(_pushToCloud(restored!, effectiveUid));
+    }
+  }
+
   Future<bool> isBookmarked(String id, {String? userId}) async =>
       (await getBookmarks(userId: userId)).any((item) => item.id == id);
 

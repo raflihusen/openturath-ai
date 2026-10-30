@@ -171,6 +171,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
     final textPrimary = NativeColors.textPrimary(isDark);
     final textSecondary = NativeColors.textSecondary(isDark);
 
+    final ownerUid = _bookmarkService.currentUserId;
     final confirm = await showDialog<bool>(
       context: context,
       builder: (context) {
@@ -208,8 +209,8 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
       },
     );
 
-    if (confirm == true) {
-      await _bookmarkService.deleteBookmark(item.id);
+    if (confirm == true && _bookmarkService.currentUserId == ownerUid) {
+      await _bookmarkService.deleteBookmark(item.id, userId: ownerUid);
       if (mounted) {
         AppSnackBar.show(
           context,
@@ -217,7 +218,11 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
           action: SnackBarAction(
             label: AppCopy.undo,
             textColor: NativeColors.accent(isDark),
-            onPressed: () => _bookmarkService.addBookmark(item),
+            onPressed: () {
+              if (_bookmarkService.currentUserId == ownerUid) {
+                unawaited(_bookmarkService.restoreBookmark(item, userId: ownerUid));
+              }
+            },
           ),
         );
       }
