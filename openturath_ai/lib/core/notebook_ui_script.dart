@@ -69,11 +69,26 @@ const _notebookCleanupScript = r'''
   }
   let lastCopy = '';
   let lastCopyAt = 0;
+  let lastCopyResult = Promise.resolve(false);
   function sendCopy(value) {
-    if (typeof value !== 'string' || !value.trim() || value.length > 200000) return;
-    if (Date.now() - lastCopyAt < 3500) return;
-    lastCopy = value.trim(); lastCopyAt = Date.now();
-    if (window.flutter_inappwebview?.callHandler) window.flutter_inappwebview.callHandler('otCopiedAnswer', value.trim());
+    if (typeof value !== 'string' || !value.trim() || value.length > 200000) return Promise.resolve(false);
+    const content = value.trim();
+    if (content === lastCopy && Date.now() - lastCopyAt < 3500) return lastCopyResult;
+    lastCopy = content; lastCopyAt = Date.now();
+    lastCopyResult = Promise.resolve().then(async () => {
+      if (window.flutter_inappwebview?.callHandler) {
+        return await window.flutter_inappwebview.callHandler('otCopiedAnswer', content) === true;
+      }
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(content);
+        return true;
+      }
+      return false;
+    }).catch(() => false).then(ok => {
+      if (!ok && lastCopy === content) lastCopy = '';
+      return ok;
+    });
+    return lastCopyResult;
   }
   // Tangkap klik pada tombol copy NotebookLM maupun seleksi copy biasa
   let copyUntil = 0;
@@ -98,7 +113,9 @@ const _notebookCleanupScript = r'''
 
     selectedAnswer = extracted;
     copyUntil = Date.now() + 2000;
-    sendCopy(selectedAnswer);
+    sendCopy(selectedAnswer).then(ok => {
+      copyTarget.dispatchEvent(new CustomEvent('ot-copy-result', {detail: ok}));
+    });
   }, true);
   document.addEventListener('copy', event => {
     var sel = (window.getSelection ? window.getSelection().toString() : '').trim();

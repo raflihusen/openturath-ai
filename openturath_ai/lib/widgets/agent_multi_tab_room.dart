@@ -1023,6 +1023,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
   bool _checkingReady = false;
   bool? _lastIsDark;
   DateTime? _lastCopiedToastAt;
+  String? _lastCopiedText;
 
   @override
   void initState() {
@@ -1883,14 +1884,15 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
                     final text = (args.first as String).trim();
                     if (text.isNotEmpty && text.length <= 200000) {
                       final now = DateTime.now();
-                      if (_lastCopiedToastAt != null &&
+                      if (_lastCopiedText == text &&
+                          _lastCopiedToastAt != null &&
                           now.difference(_lastCopiedToastAt!) <
                               const Duration(milliseconds: 3500)) {
                         return true;
                       }
-                      _lastCopiedToastAt = now;
-
                       await Clipboard.setData(ClipboardData(text: text));
+                      _lastCopiedText = text;
+                      _lastCopiedToastAt = now;
                       if (context.mounted &&
                           _authService.currentUser?.uid == owner) {
                         OTMotion.light();
@@ -1916,7 +1918,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
                     }
                   } catch (_) {
                     if (context.mounted) {
-                      AppSnackBar.error(context, AppCopy.saveFailed);
+                      AppSnackBar.error(context, AppCopy.copyFailed);
                     }
                   }
                   return false;

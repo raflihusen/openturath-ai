@@ -21,17 +21,17 @@ const notebookSkinScript = r'''
 
   const LABELS = {
     id: {
-      thought: 'Proses berpikir', ibarah: 'Ibarah', copy: 'Salin jawaban', copied: 'Tersalin',
+      thought: 'Proses berpikir', ibarah: 'Ibarah', copy: 'Salin jawaban', copied: 'Tersalin', copyFailed: 'Gagal menyalin',
       disclaimer: 'OpenTurath AI bisa salah, maka verifikasi ulang jawabannya.',
       stages: ['Mencari ibarah di kitab…', 'Membaca rujukan…', 'Menimbang pendapat dalam mazhab…', 'Menyusun jawaban…']
     },
     en: {
-      thought: 'Reasoning', ibarah: 'Passage', copy: 'Copy answer', copied: 'Copied',
+      thought: 'Reasoning', ibarah: 'Passage', copy: 'Copy answer', copied: 'Copied', copyFailed: 'Could not copy',
       disclaimer: 'OpenTurath AI can be wrong, so please verify its answers.',
       stages: ['Looking for the passage in the books…', 'Reading the references…', 'Weighing the views within the school…', 'Writing the answer…']
     },
     ar: {
-      thought: 'مسار التفكير', ibarah: 'عبارة', copy: 'نسخ الجواب', copied: 'تم النسخ',
+      thought: 'مسار التفكير', ibarah: 'عبارة', copy: 'نسخ الجواب', copied: 'تم النسخ', copyFailed: 'تعذّر النسخ',
       disclaimer: 'قد يخطئ OpenTurath AI، فتحقّق من الإجابات.',
       stages: ['جارٍ البحث عن العبارة في الكتب…', 'قراءة المراجع…', 'الموازنة بين الأقوال في المذهب…', 'صياغة الجواب…']
     }
@@ -649,11 +649,12 @@ const notebookSkinScript = r'''
         const label = document.createElement('span');
         label.className = 'ot-copy-label';
         btn.appendChild(label);
-        btn.addEventListener('click', () => {
-          btn.__otCopied = true;
-          label.textContent = LABELS[lang()].copied;
+        btn.addEventListener('ot-copy-result', event => {
+          btn.__otCopied = event.detail === true;
+          btn.__otCopyFailed = event.detail !== true;
+          label.textContent = btn.__otCopied ? LABELS[lang()].copied : LABELS[lang()].copyFailed;
           clearTimeout(btn.__otTimer);
-          btn.__otTimer = setTimeout(() => { btn.__otCopied = false; label.textContent = LABELS[lang()].copy; }, 1800);
+          btn.__otTimer = setTimeout(() => { btn.__otCopied = false; btn.__otCopyFailed = false; label.textContent = LABELS[lang()].copy; }, 1800);
         });
         btn.addEventListener('keydown', e => {
           if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); btn.click(); }
@@ -666,7 +667,8 @@ const notebookSkinScript = r'''
       const label = box.querySelector(':scope > .ot-answer-actions .ot-copy-label');
       if (label) {
         const btn = label.closest('.ot-copy-answer');
-        const want = btn && btn.__otCopied ? LABELS[lang()].copied : LABELS[lang()].copy;
+        const want = btn && btn.__otCopied ? LABELS[lang()].copied :
+          btn && btn.__otCopyFailed ? LABELS[lang()].copyFailed : LABELS[lang()].copy;
         if (label.textContent !== want) label.textContent = want;
       }
     });
