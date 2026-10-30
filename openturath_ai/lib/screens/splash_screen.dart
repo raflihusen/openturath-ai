@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import '../core/design/ot_colors.dart';
 import '../core/design/ot_motion.dart';
 import '../core/routes.dart';
@@ -13,7 +12,9 @@ import '../services/persistent_google_session.dart';
 import '../widgets/ot_arch_motion.dart';
 
 class SplashScreen extends StatefulWidget {
-  const SplashScreen({super.key, this.resolveInitialRoute});
+  const SplashScreen({super.key, this.resolveInitialRoute, this.authService});
+
+  final AuthService? authService;
 
   final String Function()? resolveInitialRoute;
 
@@ -64,29 +65,23 @@ class _SplashScreenState extends State<SplashScreen> {
       if (widget.resolveInitialRoute != null) {
         targetRoute = widget.resolveInitialRoute!();
       } else {
-        final restoredUser = await AuthService().restoreSession();
-        // Firebase memulihkan sesi tersimpan secara asinkron: tunggu peristiwa
-        // auth pertama (terbatas) sebelum menilai bahwa sesi Firebase tidak ada.
-        var firebaseUser = FirebaseAuth.instance.currentUser;
-        if (firebaseUser == null && restoredUser != null) {
-          try {
-            firebaseUser = await FirebaseAuth.instance
-                .authStateChanges()
-                .first
-                .timeout(const Duration(seconds: 4));
-          } catch (_) {
-            firebaseUser = FirebaseAuth.instance.currentUser;
-          }
+        final auth = widget.authService ?? AuthService();
+        try {
+          await auth.restoreSession().timeout(const Duration(seconds: 16));
+        } catch (_) {
+          // A stored Firebase session can still be used when a profile read fails.
         }
-        if (restoredUser != null ||
-            (firebaseUser != null && !firebaseUser.isAnonymous)) {
-          final currentEmail =
-              (firebaseUser?.email ?? restoredUser?.email ?? '')
-                  .trim()
-                  .toLowerCase();
+        final firebaseUser = auth.currentUser;
+        if (firebaseUser != null && !firebaseUser.isAnonymous) {
+          final currentEmail = (firebaseUser.email ?? '').trim().toLowerCase();
           if (currentEmail.isNotEmpty) {
-            await PersistentGoogleSession.instance
-                .restoreSessionIfAvailable(currentEmail);
+            try {
+              await PersistentGoogleSession.instance
+                  .restoreSessionIfAvailable(currentEmail)
+                  .timeout(const Duration(seconds: 4));
+            } catch (_) {
+              // Google readiness is checked separately when opening the AI.
+            }
           }
           targetRoute = AppRoutes.dashboard;
         }
@@ -99,8 +94,10 @@ class _SplashScreenState extends State<SplashScreen> {
     // aplikasi, baru masuk akun. Masing-masing hanya sekali.
     var showLanguage = false, showIntro = false;
     if (widget.resolveInitialRoute == null && targetRoute == AppRoutes.login) {
-      showLanguage = !await LanguageGate.chosen();
-      showIntro = !await OnboardingGate.seen();
+      showLanguage = !await LanguageGate.chosen()
+          .timeout(const Duration(seconds: 2), onTimeout: () => false);
+      showIntro = !await OnboardingGate.seen()
+          .timeout(const Duration(seconds: 2), onTimeout: () => false);
     }
     await hold;
     if (!mounted) return;

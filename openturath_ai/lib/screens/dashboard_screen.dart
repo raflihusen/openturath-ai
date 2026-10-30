@@ -32,6 +32,7 @@ import '../services/auth_service.dart';
 import '../services/update_service.dart';
 import '../core/navigation_guard.dart';
 import '../widgets/update_ready_banner.dart';
+import '../widgets/app_error_state.dart';
 import '../widgets/update_ready_dialog.dart';
 import '../widgets/specialist_card.dart';
 import '../widgets/library_bottom_sheet.dart';
@@ -50,7 +51,8 @@ import 'package:intl/intl.dart' show NumberFormat;
 /// Dilengkapi animasi Apple Interactive micro-compression, pantulan pegas halus,
 /// penanggalan ganda Hijriah, pencarian naskah seketika, dan portal keilmuan interaktif.
 class DashboardScreen extends StatefulWidget {
-  const DashboardScreen({super.key, this.searchFocusNode});
+  const DashboardScreen({super.key, this.searchFocusNode, this.authService});
+  final AuthService? authService;
   final FocusNode? searchFocusNode;
 
   @override
@@ -59,7 +61,7 @@ class DashboardScreen extends StatefulWidget {
 
 class _DashboardScreenState extends State<DashboardScreen>
     with WidgetsBindingObserver {
-  final AuthService _authService = AuthService();
+  late final AuthService _authService = widget.authService ?? AuthService();
   final AgentService _agentService = AgentService();
   final TextEditingController _searchController = TextEditingController();
   late final FocusNode _searchFocusNode = widget.searchFocusNode ?? FocusNode();
@@ -67,7 +69,7 @@ class _DashboardScreenState extends State<DashboardScreen>
   bool _hasShownUpdateDialog = false;
 
   UserModel? _initialUser;
-  List<AgentModel> _agents = AgentModel.defaultAgents;
+  List<AgentModel> _agents = AgentService.getActiveAgentsSync();
   String _searchQuery = '';
   String? _lastOpenedAgentId;
 
@@ -123,19 +125,13 @@ class _DashboardScreenState extends State<DashboardScreen>
 
   Future<void> _loadData([bool forceRefresh = false]) async {
     try {
-      // 1. Dapatkan profil pengguna: memory -> disk cache -> restoreSession
-      var user = _authService.currentUser != null
-          ? await _authService.getCurrentUserModel()
-          : null;
-      user ??= _authService.cachedCurrentUser;
-      user ??= await _authService.restoreSession();
-
-      // 2. Hanya navigasikan ke login jika benar-benar tidak ada sesi di memory maupun disk cache
-      if (user == null && _authService.currentUser == null) {
-        if (!mounted) return;
-        Navigator.pushReplacementNamed(context, AppRoutes.login);
+      // A cached profile cannot substitute for a disconnected Firebase account.
+      if (_authService.currentUser == null && AuthService.previewUser == null) {
+        if (mounted) setState(() => _initialUser = null);
         return;
       }
+      var user = _authService.cachedCurrentUser;
+      user ??= await _authService.getCurrentUserModel();
 
       final results = await Future.wait([
         user != null && !forceRefresh
@@ -146,7 +142,7 @@ class _DashboardScreenState extends State<DashboardScreen>
         FeatureFlagsService.sync(forceRefresh: forceRefresh),
       ]).timeout(
         const Duration(seconds: 4),
-        onTimeout: () => [user, AgentModel.defaultAgents, null, null],
+        onTimeout: () => [user, AgentService.getActiveAgentsSync(), null, null],
       );
 
       if (!mounted) return;
@@ -180,6 +176,10 @@ class _DashboardScreenState extends State<DashboardScreen>
   }
 
   void _openNotebook(AgentModel agent, UserModel? user) {
+    if (_authService.currentUser == null && AuthService.previewUser == null) {
+      AppSnackBar.warning(context, Loc.tr('sessionReconnectBody'));
+      return;
+    }
     if (agent.kind == CorpusKind.scholar) {
       AppSnackBar.warning(context, Loc.tr('scholarPreparingBody'));
       return;
@@ -245,8 +245,25 @@ class _DashboardScreenState extends State<DashboardScreen>
       stream: _authService.userStream,
       builder: (context, snapshot) {
         final curFirebaseUser = _authService.currentUser;
-        final user = snapshot.data ??
-            _initialUser ??
+        if (curFirebaseUser == null && AuthService.previewUser == null) {
+          return Scaffold(
+            backgroundColor: canvas,
+            body: SafeArea(
+              child: AppErrorState(
+                title: Loc.tr('sessionReconnectTitle'),
+                message: Loc.tr('sessionReconnectBody'),
+                retryLabel: Loc.tr('sessionReconnectAction'),
+                retryIcon: Icons.login_rounded,
+                onRetry: () => Navigator.pushNamed(context, AppRoutes.login),
+              ),
+            ),
+          );
+        }
+        final uid = curFirebaseUser?.uid ?? AuthService.previewUser?.uid;
+        final streamUser = snapshot.data;
+        final user = (streamUser?.uid == uid ? streamUser : null) ??
+            (_initialUser?.uid == uid ? _initialUser : null) ??
+            _authService.cachedCurrentUser ??
             UserModel(
               uid: curFirebaseUser?.uid ?? 'user',
               name: curFirebaseUser?.displayName?.isNotEmpty == true
