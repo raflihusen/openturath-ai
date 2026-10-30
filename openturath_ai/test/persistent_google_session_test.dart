@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:openturath_ai/services/auth_service.dart';
@@ -222,5 +224,4 @@ void main() {
     expect(prefs.getBool('google_session_ready'), isNot(true));
   });
 }
-import 'dart:async';
 
