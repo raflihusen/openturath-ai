@@ -173,6 +173,13 @@ void main() {
     await tester.pump(const Duration(milliseconds: 350));
   }
 
+  Future<void> close(WidgetTester tester) async {
+    await tester.pumpWidget(const SizedBox());
+    // Warning SnackBars may have already scheduled their minimum display time
+    // while the connection view was mounted. Drain those fixture timers too.
+    await tester.pump(const Duration(seconds: 4));
+  }
+
   for (final failRead in [false, true]) {
     testWidgets(
         'matching DOM email with ${failRead ? 'unreadable' : 'missing'} cookies does not complete connection',
@@ -187,7 +194,7 @@ void main() {
       expect(prefs.getBool('google_session_ready'), isNot(true));
       expect(prefs.getString('webview_session_owner'), isNull);
       expect(platform.cookies.deletions, 0);
-      await tester.pumpWidget(const SizedBox());
+      await close(tester);
     });
   }
 
@@ -203,7 +210,7 @@ void main() {
     expect(prefs.getString('webview_session_owner'), _email);
     expect(prefs.getString('google_session_email'), _email);
     expect(platform.cookies.deletions, 0);
-    await tester.pumpWidget(const SizedBox());
+    await close(tester);
   });
 
   testWidgets('canceling Google connection preserves account, cookies and tabs',
@@ -238,7 +245,34 @@ void main() {
     expect(prefs.getBool('google_session_ready'), isTrue);
     expect(prefs.getString('webview_session_owner'), _email);
     expect(prefs.getString('google_session_email'), _email);
-    await tester.pumpWidget(const SizedBox());
+    await close(tester);
+  });
+
+  testWidgets('verification cannot dismiss the open cancellation dialog',
+      (tester) async {
+    platform.cookies.cookies = [Cookie(name: 'SID', value: 'fixture-only')];
+    final controller = await open(tester);
+    await tester.tap(find.byTooltip(Loc.tr('cancelSignIn')));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 250));
+    expect(find.text(Loc.tr('cancelGoogleConnectionTitle')), findsOneWidget);
+
+    // A late page-load callback can arrive while the user is deciding. It
+    // must not pop the dialog with a result that impersonates their choice.
+    await finishLoad(tester, controller);
+
+    expect(routeResults, isEmpty);
+    expect(find.text(Loc.tr('cancelGoogleConnectionTitle')), findsOneWidget);
+    await tester.tap(find.text(Loc.tr('cancelGoogleConnectionAction')));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 350));
+    expect(routeResults, [false]);
+    expect(platform.cookies.deletions, 0);
+    expect(platform.cookies.cookies.single.name, 'SID');
+    final prefs = await SharedPreferences.getInstance();
+    expect(prefs.getBool('google_session_ready'), isNot(true));
+    expect(prefs.getString('webview_session_owner'), isNull);
+    await close(tester);
   });
 
   testWidgets('manual continue cannot accept unreadable session as confirmed',
@@ -264,6 +298,6 @@ void main() {
     expect(prefs.getBool('google_session_ready'), isNot(true));
     expect(prefs.getString('webview_session_owner'), isNull);
     expect(platform.cookies.deletions, 0);
-    await tester.pumpWidget(const SizedBox());
+    await close(tester);
   });
 }
