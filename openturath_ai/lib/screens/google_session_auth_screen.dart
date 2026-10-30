@@ -4,7 +4,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../core/app_copy.dart';
 import '../core/design/ot_colors.dart';
@@ -13,6 +12,7 @@ import '../core/notebook_navigation.dart';
 import '../core/routes.dart';
 import '../core/scholarly_fonts.dart';
 import '../core/theme.dart';
+import '../core/webview_cookie_policy.dart';
 import '../services/auth_failure_reporter.dart';
 import '../services/auth_service.dart';
 import '../services/desktop_webview_runtime.dart';
@@ -48,6 +48,7 @@ class GoogleSessionAuthScreen extends StatefulWidget {
 class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
   InAppWebViewController? _webController;
   bool _isSessionReady = false;
+  bool _isCompletingSession = false;
   final ValueNotifier<double> _loadProgress = ValueNotifier<double>(0.0);
   bool _isMismatchDialogOpen = false;
   bool _isShieldActive = false;
@@ -69,6 +70,11 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
     }
     return 'https://accounts.google.com/InteractiveLogin?continue=${NotebookNavigation.canonicalOrigin}/';
   }
+
+  // Try the existing WebKit session before asking Google to sign in again.
+  // A valid legacy session can establish verified ownership without replaying
+  // cookies or forcing InteractiveLogin; an absent session uses the fallback.
+  static const _initialSessionUrl = '${NotebookNavigation.canonicalOrigin}/';
 
   /// Skrip penyembunyi antarmuka NotebookLM di level mesin WebKit (Document Start Cloak).
   /// Menjamin tidak ada 1 piksel pun antarmuka NotebookLM yang pernah digambar ke layar,
@@ -143,6 +149,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
     if (!mounted ||
         controller == null ||
         _isSessionReady ||
+        _isCompletingSession ||
         _isCheckingAccount ||
         _isConfirmOpen ||
         _isMismatchDialogOpen) {
@@ -264,7 +271,10 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
 
   Future<void> _checkAccountVerification(
       InAppWebViewController controller) async {
-    if (!mounted || _isSessionReady || _isCheckingAccount) return;
+    if (!mounted ||
+        _isSessionReady ||
+        _isCompletingSession ||
+        _isCheckingAccount) return;
     // Mutex dipasang sebelum `await` pertama. Sebelumnya dipasang sesudah
     // `getUrl()`, sehingga onLoadStop dan onUpdateVisitedHistory yang datang
     // nyaris bersamaan sama-sama lolos dan menjalankan dua siklus polling.
@@ -334,8 +344,8 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
   ///
   /// - Tanpa cookie sesi Google: pengguna belum benar-benar masuk, arahkan
   ///   kembali ke halaman login (pelindung turun otomatis di onLoadStart).
-  /// - Cookie ada (atau tidak bisa dibaca): minta konfirmasi akun yang sama
-  ///   secara eksplisit, seperti tombol Lanjutkan manual.
+  /// - Cookie tidak bisa dibaca: sesi belum dapat diverifikasi, tanpa logout.
+  /// - Cookie ada: konfirmasi hanya meminta pemeriksaan identitas ulang.
   Future<void> _handleInconclusiveVerification(
       InAppWebViewController controller) async {
     if (!mounted || _isSessionReady || _isMismatchDialogOpen) return;
@@ -349,6 +359,10 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
       await controller.loadUrl(
         urlRequest: URLRequest(url: WebUri(_targetLoginUrl)),
       );
+      return;
+    }
+    if (hasSession == null) {
+      AppSnackBar.warning(context, Loc.tr('googleSessionUnverified'));
       return;
     }
 
@@ -504,7 +518,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
       final cookies = await DesktopWebViewRuntime.cookies.getCookies(
         url: WebUri(NotebookNavigation.canonicalOrigin),
         webViewController: _webController,
-      );
+      ).timeout(const Duration(seconds: 5));
       const names = {'SID', '__Secure-1PSID', '__Secure-3PSID'};
       return cookies.any((cookie) =>
           names.contains(cookie.name) &&
@@ -598,16 +612,16 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
 
   /// Tombol Lanjutkan manual untuk memeriksa login dan konfirmasi akun
   Future<void> _handleManualContinue() async {
-    if (!mounted || _isSessionReady) return;
+    if (!mounted || _isSessionReady || _isCompletingSession) return;
     final controller = _webController;
-    final currentWebUrl = await controller?.getUrl();
-    final urlStr = currentWebUrl?.toString() ?? '';
+    WebUri? currentWebUrl;
+    try {
+      currentWebUrl = await controller?.getUrl().timeout(const Duration(seconds: 5));
+    } catch (_) {}
+    if (!mounted) return;
 
-    if (urlStr.isEmpty ||
-        urlStr.contains('accounts.google') ||
-        urlStr.contains('InteractiveLogin') ||
-        urlStr.contains('ServiceLogin') ||
-        urlStr.contains('signin/v2')) {
+    if (currentWebUrl == null ||
+        !NotebookNavigation.notebook(currentWebUrl.uriValue)) {
       if (mounted) {
         AppSnackBar.warning(
           context,
@@ -640,11 +654,11 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
 
     // Konfirmasi manual hanya berlaku bila sesi Google benar-benar ada;
     // tanpa itu ruang AI pasti gagal dibuka.
-    if (await _hasGoogleSession() == false) {
+    if (await _hasGoogleSession() != true) {
       if (mounted) {
         AppSnackBar.warning(
           context,
-          Loc.tr('pleaseFinishGoogleLogin'),
+          Loc.tr('googleSessionUnverified'),
         );
       }
       return;
@@ -664,52 +678,69 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
     }
   }
 
-  /// Menandai sesi Google terautentikasi dan melanjutkan
+  /// Only a matching account on Notebook can establish session ownership.
+  /// Failed reads leave the existing native session intact and remain retryable.
   Future<void> _onSessionAuthenticated() async {
-    if (!mounted || _isSessionReady) return;
-    setState(() => _isSessionReady = true);
-
+    if (!mounted || _isSessionReady || _isCompletingSession) return;
+    _isCompletingSession = true;
     try {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setBool('google_session_ready', true);
+      final controller = _webController;
       final email = (AuthService().cachedCurrentUser?.email ??
               AuthService().currentUser?.email ??
               '')
           .trim()
           .toLowerCase();
-      if (email.isNotEmpty) {
-        await prefs.setString('google_session_email', email);
-        await prefs.setString('notebook_google_email', email);
-        await PersistentGoogleSession.instance
-            .lockAndPersistCookies(_webController, email);
+      final url = await controller?.getUrl().timeout(const Duration(seconds: 5));
+      if (!mounted) return;
+      if (controller == null ||
+          email.isEmpty ||
+          url == null ||
+          !NotebookNavigation.notebook(url.uriValue)) {
+        AppSnackBar.warning(context, Loc.tr('googleSessionUnverified'));
+        return;
       }
-    } catch (_) {}
-    await AuthService.rememberWebSessionOwner(
-        AuthService().cachedCurrentUser?.email ??
-            AuthService().currentUser?.email ??
-            '');
-
-    await Future.delayed(const Duration(milliseconds: 600));
-    if (!mounted) return;
-    if (Navigator.canPop(context)) {
-      Navigator.pop(context, true);
-    } else {
-      Navigator.pushNamedAndRemoveUntil(
-        context,
-        AppRoutes.dashboard,
-        (route) => false,
-      );
+      final detectedEmail = await _detectGoogleEmail(controller);
+      if (!mounted) return;
+      if (detectedEmail != email) {
+        AppSnackBar.warning(context, Loc.tr('googleSessionUnverified'));
+        return;
+      }
+      final verified = await PersistentGoogleSession.instance
+          .lockAndPersistCookies(controller, email);
+      if (!mounted) return;
+      if (!verified) {
+        AppSnackBar.warning(context, Loc.tr('googleSessionUnverified'));
+        return;
+      }
+      setState(() => _isSessionReady = true);
+      await Future.delayed(const Duration(milliseconds: 600));
+      if (!mounted) return;
+      if (Navigator.canPop(context)) {
+        Navigator.pop(context, true);
+      } else {
+        Navigator.pushNamedAndRemoveUntil(
+          context,
+          AppRoutes.dashboard,
+          (route) => false,
+        );
+      }
+    } catch (_) {
+      if (mounted) {
+        AppSnackBar.warning(context, Loc.tr('googleSessionUnverified'));
+      }
+    } finally {
+      _isCompletingSession = false;
     }
   }
 
-  /// Dialog konfirmasi jika pengguna membatalkan / keluar dari langkah ke-2
-  Future<void> _confirmCancelAndSignOut() async {
+  /// Postponing an AI connection is separate from signing out in Settings.
+  Future<void> _confirmCancelConnection() async {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primary = OTColors.textPrimary(isDark);
     final secondary = OTColors.textSecondary(isDark);
     final surface = OTColors.surface(isDark);
 
-    final shouldSignOut = await showDialog<bool>(
+    final shouldCancel = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
         backgroundColor: surface,
@@ -718,14 +749,14 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
           side: BorderSide(color: OTColors.border(isDark)),
         ),
         title: Text(
-          Loc.tr('cancelSignInTitle'),
+          Loc.tr('cancelGoogleConnectionTitle'),
           style: ScholarlyFonts.outfit(
             fontWeight: FontWeight.w600,
             color: primary,
           ),
         ),
         content: Text(
-          Loc.tr('googleSessionSignInSameAccountDesc'),
+          Loc.tr('cancelGoogleConnectionDesc'),
           style: ScholarlyFonts.outfit(
             fontSize: OTFontSize.s14,
             color: secondary,
@@ -735,7 +766,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
             child: Text(
-              Loc.tr('cancel'),
+              Loc.tr('continueGoogleConnection'),
               style: ScholarlyFonts.outfit(
                 color: secondary,
                 fontWeight: FontWeight.w600,
@@ -744,9 +775,9 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
           ),
           FilledButton(
             onPressed: () => Navigator.pop(ctx, true),
-            style: OTButtons.destructive(isDark),
+            style: OTButtons.primary(isDark),
             child: Text(
-              Loc.tr('exit'),
+              Loc.tr('cancelGoogleConnectionAction'),
               style: OTTypography.button(color: OTColors.onAccent(isDark)),
             ),
           ),
@@ -754,14 +785,16 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
       ),
     );
 
-    if (shouldSignOut == true && mounted) {
-      await AuthService().signOut();
-      if (!mounted) return;
-      Navigator.pushNamedAndRemoveUntil(
-        context,
-        AppRoutes.login,
-        (route) => false,
-      );
+    if (shouldCancel == true && mounted) {
+      if (Navigator.canPop(context)) {
+        Navigator.pop(context, false);
+      } else {
+        Navigator.pushNamedAndRemoveUntil(
+          context,
+          AppRoutes.dashboard,
+          (route) => false,
+        );
+      }
     }
   }
 
@@ -801,7 +834,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
         if (canGoBack) {
           await _webController?.goBack();
         } else {
-          await _confirmCancelAndSignOut();
+          await _confirmCancelConnection();
         }
       },
       child: AnnotatedRegion<SystemUiOverlayStyle>(
@@ -827,7 +860,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
                 if (canGoBack) {
                   await _webController?.goBack();
                 } else {
-                  await _confirmCancelAndSignOut();
+                  await _confirmCancelConnection();
                 }
               },
             ),
@@ -857,10 +890,10 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
                 ),
               ),
               IconButton(
-                tooltip: Loc.tr('exit'),
+                tooltip: Loc.tr('cancelSignIn'),
                 icon:
-                    Icon(Icons.logout_rounded, size: 20, color: textSecondary),
-                onPressed: _confirmCancelAndSignOut,
+                    Icon(Icons.close_rounded, size: 20, color: textSecondary),
+                onPressed: _confirmCancelConnection,
               ),
               const SizedBox(width: 4),
             ],
@@ -1001,14 +1034,16 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
                                   context,
                                   InAppWebViewSettings(
                                     incognito: false,
+                                    sharedCookiesEnabled:
+                                        WebViewCookiePolicy.sharedCookiesEnabled,
                                   ),
-                                  _targetLoginUrl,
+                                  _initialSessionUrl,
                                 )
                               : InAppWebView(
                                   webViewEnvironment:
                                       DesktopWebViewRuntime.environment,
                                   initialUrlRequest:
-                                      URLRequest(url: WebUri(_targetLoginUrl)),
+                                      URLRequest(url: WebUri(_initialSessionUrl)),
                                   initialUserScripts: UnmodifiableListView([
                                     _buildStealthCloakScript(isDark),
                                   ]),
@@ -1028,7 +1063,8 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
                                     mixedContentMode: MixedContentMode
                                         .MIXED_CONTENT_NEVER_ALLOW,
                                     thirdPartyCookiesEnabled: true,
-                                    sharedCookiesEnabled: true,
+                                    sharedCookiesEnabled:
+                                        WebViewCookiePolicy.sharedCookiesEnabled,
                                     hardwareAcceleration: true,
                                     useHybridComposition: true,
                                     useOnRenderProcessGone: true,
