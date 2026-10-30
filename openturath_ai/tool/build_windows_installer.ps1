@@ -21,8 +21,14 @@ $isccCandidates = @(
 $iscc = $isccCandidates | Where-Object { Test-Path $_ } | Select-Object -First 1
 if (-not $iscc) { throw "ISCC.exe not found. Install Inno Setup 6 (winget install JRSoftware.InnoSetup)." }
 
+$versionLine = Select-String -Path (Join-Path $projectDir 'pubspec.yaml') -Pattern '^version:\s*(\S+)'
+if (!$versionLine) { throw 'Missing app version' }
+$versionParts = $versionLine.Matches[0].Groups[1].Value.Split('+')
+$appVersion = $versionParts[0]
+$appBuild = [int]$versionParts[1]
+
 Write-Host "1/4 Mesin pemasang (Inno)..." -ForegroundColor Cyan
-& $iscc (Join-Path $windowsDir 'installer_core.iss')
+& $iscc ("/DMyAppVersion=$appVersion") (Join-Path $windowsDir 'installer_core.iss')
 if ($LASTEXITCODE -ne 0) { throw "ISCC gagal pada installer_core.iss" }
 
 Write-Host "2/4 Layar pemasang (Flutter)..." -ForegroundColor Cyan
@@ -54,6 +60,10 @@ if (Test-Path $outputExe) {
   $publicDir = Join-Path $projectDir 'public'
   Copy-Item $outputExe (Join-Path $publicDir 'OpenTurath_AI_Windows_Setup.exe') -Force
   Copy-Item "$outputExe.sha256" (Join-Path $publicDir 'OpenTurath_AI_Windows_Setup.exe.sha256') -Force
+  # Local metadata for the future, explicitly authorized publication step.
+  @{version=$appVersion; build=$appBuild; sha256=$hash; installer_protocol=1;
+    url='https://openturath.web.app/OpenTurath_AI_Windows_Setup.exe'} |
+    ConvertTo-Json | Set-Content "$outputExe.update.json" -Encoding utf8
   Write-Host "Installer ready: $outputExe" -ForegroundColor Green
   Write-Host "SHA256: $hash" -ForegroundColor Yellow
 }

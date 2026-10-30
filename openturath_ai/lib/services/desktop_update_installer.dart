@@ -138,7 +138,7 @@ class DesktopUpdateInstaller {
     final ready = File(p.join(stage, 'ready'));
     final deadline = DateTime.now().add(const Duration(minutes: 2));
     while (!await ready.exists()) {
-      if (await File(p.join(stage, 'failed')).exists()) {
+      if (await File(p.join(stage, 'handoff_failed')).exists()) {
         throw const FileSystemException('Installer preparation failed');
       }
       if (DateTime.now().isAfter(deadline)) {

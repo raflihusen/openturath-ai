@@ -28,8 +28,27 @@ Source: "..\build\installer_stage\ui.zip"; Flags: dontcopy
 Source: "..\build\installer_core\OpenTurath_AI_Core_Setup.exe"; DestName: "core.exe"; Flags: dontcopy
 
 [Code]
-procedure ExitProcess(ExitCode: Integer);
-  external 'ExitProcess@kernel32.dll stdcall';
+var
+  OtaMode: Boolean;
+  OtaTarget: String;
+  OtaExitCode: Integer;
+
+function GetCustomSetupExitCode: Integer;
+begin
+  Result := OtaExitCode;
+end;
+
+procedure CurStepChanged(CurStep: TSetupStep);
+var Rc: Integer;
+begin
+  if OtaMode and (CurStep = ssPostInstall) then
+  begin
+    if Exec(ExpandConstant('{tmp}\core.exe'),
+        '/VERYSILENT /SUPPRESSMSGBOXES /NORESTART /SP- /DIR="' + OtaTarget + '"',
+        '', SW_HIDE, ewWaitUntilTerminated, Rc) then OtaExitCode := Rc
+    else OtaExitCode := 2;
+  end;
+end;
 
 function IsOtaUpdate: Boolean;
 var I: Integer;
@@ -52,13 +71,12 @@ begin
     if (OtaDir = '') or (Pos('"', OtaDir) > 0) or
        not FileExists(OtaDir + '\openturath_ai.exe') then
     begin
-      ExitProcess(2);
       Exit;
     end;
-    if not Exec(ExpandConstant('{tmp}\core.exe'),
-        '/VERYSILENT /SUPPRESSMSGBOXES /NORESTART /SP- /DIR="' + OtaDir + '"',
-        '', SW_HIDE, ewWaitUntilTerminated, Rc) then Rc := 2;
-    ExitProcess(Rc);
+    OtaMode := True;
+    OtaTarget := OtaDir;
+    OtaExitCode := 2;
+    Result := True;
     Exit;
   end;
   ExtractTemporaryFile('ui.zip');

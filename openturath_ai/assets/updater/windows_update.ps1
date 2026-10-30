@@ -58,6 +58,6 @@ try {
 }
 
 } catch {
-  'failed' | Set-Content -LiteralPath (Join-Path $stage 'failed')
+  'failed' | Set-Content -LiteralPath (Join-Path $stage 'handoff_failed')
   throw
 }
