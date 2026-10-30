@@ -205,7 +205,7 @@ class UpdateReadyDialog extends StatelessWidget {
                       width: double.infinity,
                       height: 40,
                       child: TextButton(
-                        onPressed: () => Navigator.of(context).pop(),
+                        onPressed: updateService.isInstalling ? null : () => Navigator.of(context).pop(),
                         style: TextButton.styleFrom(
                           foregroundColor: textSecondary,
                         ),
