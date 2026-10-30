@@ -25,28 +25,33 @@ class DesktopUpdateInstaller {
       final receipt =
           File(p.join((await updateDirectory()).path, 'pending_install.json'));
       if (!await receipt.exists()) return;
-      final plan =
-          jsonDecode(await receipt.readAsString()) as Map<String, dynamic>;
-      final executable = File(Platform.resolvedExecutable).absolute.path;
-      final target = plan['target'] as String;
-      // Confirmation belongs to this installed location, not another app copy.
-      if (!p.isWithin(target, executable)) return;
-      final stage = Directory(plan['stage'] as String);
-      if (!p.equals(p.dirname(stage.path), p.dirname(target))) return;
-      // Do not acknowledge a restart of the predecessor or a rolled-back app.
-      final status = File(p.join(stage.path, 'status'));
-      if (!await status.exists() ||
-          (await status.readAsString()).trim() != 'installed') return;
       final info = await PackageInfo.fromPlatform();
-      final build = int.tryParse(info.buildNumber) ?? 0;
-      if (build != plan['build']) return;
-      await File(p.join(stage.path, 'confirmed'))
-          .writeAsString('$build', flush: true);
-      await receipt.delete();
+      await confirmReceipt(receipt: receipt, executable: Platform.resolvedExecutable,
+          build: int.tryParse(info.buildNumber) ?? 0);
     } catch (error) {
       debugPrint(
           '[Updater] Startup confirmation unavailable: ${error.runtimeType}');
     }
+  }
+
+  @visibleForTesting
+  static Future<void> confirmReceipt({required File receipt,
+      required String executable, required int build}) async {
+    final plan = jsonDecode(await receipt.readAsString()) as Map<String, dynamic>;
+    final target = plan['target'] as String;
+    if (!p.isWithin(target, File(executable).absolute.path)) return;
+    final stage = Directory(plan['stage'] as String);
+    if (!p.equals(p.dirname(stage.path), p.dirname(target)) ||
+        !p.basename(stage.path).startsWith('.ot-update')) {
+      return;
+    }
+    final status = File(p.join(stage.path, 'status'));
+    if (!await status.exists() ||
+        (await status.readAsString()).trim() != 'installed' || build != plan['build']) {
+      return;
+    }
+    await File(p.join(stage.path, 'confirmed')).writeAsString('$build', flush: true);
+    await receipt.delete();
   }
 
   Future<String> handoff(
@@ -55,8 +60,12 @@ class DesktopUpdateInstaller {
       required int build,
       required int installerProtocol}) async {
     final windows = Platform.isWindows;
-    if (!windows && !Platform.isMacOS)
+    if (!windows && !Platform.isMacOS) {
       throw UnsupportedError('Desktop updater');
+    }
+    if (kReleaseMode && allowAdhocForTesting) {
+      throw StateError('Test signing bypass is forbidden in release builds');
+    }
     if (windows && installerProtocol != 1) {
       throw const FormatException(
           'This Windows installer does not support automatic updating');
@@ -92,8 +101,10 @@ class DesktopUpdateInstaller {
         hash,
         allowAdhocForTesting ? '1' : '0'
       ]).timeout(const Duration(minutes: 3));
-      if (result.exitCode != 0)
+      if (result.exitCode != 0) {
+        debugPrint('[Updater] Preparation rejected: ${result.stderr}');
         throw const FileSystemException('Update package could not be prepared');
+      }
       stage = (result.stdout as String).trim();
       if (!p.equals(p.dirname(stage), p.dirname(target)) ||
           !p.basename(stage).startsWith('.ot-update.')) {

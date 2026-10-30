@@ -138,7 +138,9 @@ class UpdateService extends ChangeNotifier {
         !shouldRecheck(
             now: DateTime.now(),
             last: _lastCheckedAt,
-            ready: isUpdateReady)) return;
+            ready: isUpdateReady)) {
+      return;
+    }
     _isChecking = true;
     _lastError = null;
     _status = UpdateStatus.checking;

@@ -74,8 +74,9 @@ class UpdatePackageStore {
           throw const HttpException('Invalid update redirect');
         }
         location = location.resolve(next);
-        if (!allowUrl(location))
+        if (!allowUrl(location)) {
           throw const HttpException('Untrusted update redirect');
+        }
       }
       if (response == null ||
           response.statusCode != HttpStatus.ok ||
@@ -92,8 +93,9 @@ class UpdatePackageStore {
             throw const HttpException('Update download exceeded its limit');
           }
           sink.add(bytes);
-          if (response.contentLength > 0)
+          if (response.contentLength > 0) {
             onProgress?.call(received / response.contentLength);
+          }
         }
         await sink.flush();
       } finally {

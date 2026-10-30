@@ -17,8 +17,9 @@ class _OtaSmokeState extends State<OtaSmoke> {
   void initState() {
     super.initState();
     PackageInfo.fromPlatform().then((info) {
-      if (mounted)
+      if (mounted) {
         setState(() => state = 'OTA smoke build ${info.buildNumber}');
+      }
     });
   }
 
