@@ -16,7 +16,7 @@ class MacUpdateTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.temp = tempfile.TemporaryDirectory(prefix='ot native update tests ')
-        cls.base = pathlib.Path(cls.temp.name)
+        cls.base = pathlib.Path(cls.temp.name).resolve()
         source = cls.base / 'fixture.c'
         source.write_text(r'''
 #include <stdio.h>
