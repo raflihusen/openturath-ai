@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:convert';
 import 'package:crypto/crypto.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -253,7 +254,7 @@ void main() {
       await file.setLastModified(DateTime(2020, 1, build - 87));
       if (build == 89) {
         await File(p.join(directory.path, 'pending_install.json'))
-            .writeAsString('{"package":${'"${files.first.path}"'}}');
+            .writeAsString(jsonEncode({'package': files.first.path}));
       }
     }
     expect(await files.first.exists(), true,
