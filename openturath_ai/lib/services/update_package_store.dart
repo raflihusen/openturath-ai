@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:convert';
 import 'package:crypto/crypto.dart';
 import 'package:path/path.dart' as p;
 
@@ -30,6 +31,27 @@ class UpdatePackageStore {
         await digest(file) == hash.toLowerCase();
   }
 
+  Future<void> _prune(String prefix, File current) async {
+    try {
+      String? pending;
+      final receipt = File(p.join(directory.path, 'pending_install.json'));
+      if (await receipt.exists()) {
+        pending = (jsonDecode(await receipt.readAsString()) as Map<String, dynamic>)['package'] as String?;
+      }
+      final candidates = <File>[];
+      await for (final entry in directory.list()) {
+        if (entry is File && p.basename(entry.path).startsWith(prefix) &&
+            RegExp(r'_[0-9]+_[a-f0-9]{64}\.(apk|dmg|exe)$').hasMatch(entry.path) &&
+            entry.path != current.path && entry.path != pending) candidates.add(entry);
+      }
+      candidates.sort((a, b) => b.lastModifiedSync().compareTo(a.lastModifiedSync()));
+      // Keep the current package, one predecessor, and any pending installer.
+      for (final file in candidates.skip(1)) {
+        try { await file.delete(); } on FileSystemException { /* May be in use. */ }
+      }
+    } catch (_) { /* Cleanup must never invalidate a verified download. */ }
+  }
+
   Future<File> obtain(
       {required Uri url,
       required int build,
@@ -53,13 +75,15 @@ class UpdatePackageStore {
     File? partial;
     try {
       await directory.create(recursive: true);
+      final prefix = 'OpenTurath_${platform}_${edition}_';
       final target = File(p.join(directory.path,
           'OpenTurath_${platform}_${edition}_${build}_${hash.toLowerCase()}$ext'));
       if (await verified(target, hash)) {
+        await _prune(prefix, target);
         onProgress?.call(1);
         return target;
       }
-      partial = File('${target.path}.partial');
+      partial = File('${target.path}.$pid.partial');
       if (await partial.exists()) await partial.delete();
       final deadline = DateTime.now().add(totalTimeout);
       var location = url;
@@ -105,8 +129,15 @@ class UpdatePackageStore {
           !await verified(partial, hash)) {
         throw const FormatException('Update package integrity check failed');
       }
-      if (await target.exists()) await target.delete();
-      await partial.rename(target.path);
+      if (await target.exists() && !await verified(target, hash)) {
+        await target.delete();
+      }
+      if (await verified(target, hash)) {
+        await partial.delete();
+      } else {
+        await partial.rename(target.path);
+      }
+      await _prune(prefix, target);
       onProgress?.call(1);
       return target;
     } finally {

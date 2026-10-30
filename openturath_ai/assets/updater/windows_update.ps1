@@ -1,6 +1,6 @@
 param([Parameter(Mandatory=$true)][string]$Plan)
 $ErrorActionPreference = 'Stop'
-$cfg = Get-Content -LiteralPath $Plan -Raw | ConvertFrom-Json
+$cfg = Get-Content -LiteralPath $Plan -Raw -Encoding UTF8 | ConvertFrom-Json
 $target = [IO.Path]::GetFullPath([string]$cfg.target)
 $package = [IO.Path]::GetFullPath([string]$cfg.package)
 $stage = [IO.Path]::GetFullPath([string]$cfg.stage)
