@@ -2,6 +2,13 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {loadBackend, Stamp} from './audit_harness.ts';
 
+const seedReady = (f: any, scope: string, verified = true) => {
+  Object.entries(f.catalog.ENTITY_SCOPES).filter(([, sc]) => sc === scope).forEach(([entity], i) =>
+    f.db.seed(`access_assignments/${scope}_${i}`, {uid: 'u', scope, entity, status: 'ready', ...(verified ? {verified_ms: 1} : {})}));
+};
+
+const telegramOk = (f: any) => { f.axios.post = async (...a: any[]) => { f.sent.push(a); return {data: {ok: true}}; }; };
+
 const seedPaid = (db: any, id: string, minutesAgo: number) => {
   db.seed('users/u', {email: 'u@example.test', access_version: 2});
   db.seed(`transactions/${id}`, {status: 'paid', uid: 'u', entitlement_key: 'fiqh_syafii', invoice_number: 'OT-1',
@@ -26,7 +33,7 @@ test('lunas baru (< 3 menit) atau sudah ready tidak memicu apa pun', async () =>
   assert.equal(a.db.docs.has('paid_access_alerts/t2'), false);
   const b = loadBackend();
   seedPaid(b.db, 't3', 10);
-  b.db.seed('access_assignments/x', {uid: 'u', scope: 'fiqh_syafii', status: 'ready'});
+  seedReady(b, 'fiqh_syafii');
   await b.api.monitorPaidWithoutAccess();
   assert.equal(b.db.docs.has('paid_access_alerts/t3'), false);
 });
@@ -52,4 +59,68 @@ test('rekonsiliasi Midtrans: lunas di Midtrans tapi belum di sistem ditandai; si
   assert.equal(api.midtransLedgerMismatch('abandoned', 'capture', 49000, '299000.00'), 'paid_amount_differs');
   assert.equal(api.midtransLedgerMismatch('paid', 'settlement', 49000, '49000.00'), null);
   assert.equal(api.midtransLedgerMismatch('abandoned', 'expire', 49000, '49000.00'), null);
+});
+
+test('assignment ready tanpa verified_ms atau sebagian kajian bukan akses siap: pemantau tetap memberi alarm', async () => {
+  process.env.TELEGRAM_BOT_TOKEN = 't'; process.env.TELEGRAM_CHAT_ID = 'c';
+  const f = loadBackend();
+  seedPaid(f.db, 't4', 10);
+  seedReady(f, 'fiqh_syafii', false);
+  await f.api.monitorPaidWithoutAccess();
+  assert.equal(f.db.docs.get('paid_access_alerts/t4').status, 'open');
+});
+
+test('paket all_access siap penuh tidak memicu alarm palsu', async () => {
+  const f = loadBackend();
+  f.db.seed('users/u', {email: 'u@example.test', access_version: 2});
+  f.db.seed('transactions/t5', {status: 'paid', uid: 'u', entitlement_key: 'all_access', invoice_number: 'OT-5',
+    paid_at: new Stamp(Date.now() - 10 * 60000)});
+  let i = 0;
+  for (const [entity, scope] of Object.entries(f.catalog.ENTITY_SCOPES)) {
+    if (!(f.catalog.PROVISIONABLE_SCOPES as string[]).includes(scope as string)) continue;
+    f.db.seed(`access_assignments/a${i++}`, {uid: 'u', scope, entity, status: 'ready', verified_ms: 1});
+  }
+  await f.api.monitorPaidWithoutAccess();
+  assert.equal(f.db.docs.has('paid_access_alerts/t5'), false);
+});
+
+test('Telegram gagal: insiden tetap terbuka dan dicoba ulang dengan backoff, lalu selesai saat akses siap', async () => {
+  process.env.TELEGRAM_BOT_TOKEN = 't'; process.env.TELEGRAM_CHAT_ID = 'c';
+  const f = loadBackend();
+  seedPaid(f.db, 't6', 10);
+  const okPost = async (...a: any[]) => { f.sent.push(a); return {data: {ok: true}}; };
+  f.axios.post = async () => { throw new Error('telegram down'); };
+  await f.api.monitorPaidWithoutAccess();
+  let alert = f.db.docs.get('paid_access_alerts/t6');
+  assert.equal(alert.status, 'open');
+  assert.equal(alert.attempts, 1);
+  assert.equal(alert.delivery_succeeded_ms, undefined);
+  assert.ok(alert.next_retry_ms > Date.now());
+  // belum waktunya mencoba ulang
+  await f.api.monitorPaidWithoutAccess();
+  assert.equal(f.db.docs.get('paid_access_alerts/t6').attempts, 1);
+  // waktunya mencoba ulang dan Telegram pulih
+  f.axios.post = okPost;
+  f.db.docs.get('paid_access_alerts/t6').next_retry_ms = Date.now() - 1;
+  await f.api.monitorPaidWithoutAccess();
+  alert = f.db.docs.get('paid_access_alerts/t6');
+  assert.ok(alert.delivery_succeeded_ms > 0);
+  seedReady(f, 'fiqh_syafii');
+  await f.api.monitorPaidWithoutAccess();
+  assert.equal(f.db.docs.get('paid_access_alerts/t6').status, 'resolved');
+});
+
+test('insiden terbuka tetap diawasi walau transaksi sudah lewat jendela 3 jam', async () => {
+  process.env.TELEGRAM_BOT_TOKEN = 't'; process.env.TELEGRAM_CHAT_ID = 'c';
+  const f = loadBackend();
+  telegramOk(f);
+  seedPaid(f.db, 't7', 5 * 60);
+  f.db.seed('paid_access_alerts/t7', {uid: 'u', entitlement_key: 'fiqh_syafii', status: 'open', attempts: 1,
+    delivery_succeeded_ms: 1, next_retry_ms: 0});
+  await f.api.monitorPaidWithoutAccess();
+  const alert = f.db.docs.get('paid_access_alerts/t7');
+  assert.ok(alert.escalated_ms > 0, 'eskalasi keterlambatan terkirim');
+  seedReady(f, 'fiqh_syafii');
+  await f.api.monitorPaidWithoutAccess();
+  assert.equal(f.db.docs.get('paid_access_alerts/t7').status, 'resolved');
 });

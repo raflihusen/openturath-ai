@@ -2951,29 +2951,67 @@ async function notifySubscriptionServer(
 // ================================================================
 export const AUTH_FAILURE_FIELD = /^[a-zA-Z0-9_.:-]{1,80}$/;
 
+// Insiden bertahan di `paid_access_alerts/{transaksi}` sampai akses benar-benar
+// siap (`access_resolved_ms`). Pengiriman Telegram dicatat terpisah dari
+// penemuan insiden, sehingga kegagalan kirim dicoba ulang dengan backoff dan
+// insiden lama tetap diawasi walau keluar dari jendela 3 jam.
+const PAID_ALERT_RETRY_BASE_MS = 120000;
+const PAID_ALERT_RETRY_MAX_MS = 3600000;
+const PAID_ALERT_ESCALATE_MS = 3 * 3600000;
+
 export const monitorPaidWithoutAccess = functions
   .runWith({serviceAccount: "open-turath@appspot.gserviceaccount.com", timeoutSeconds: 120})
   .pubsub.schedule("every 2 minutes").onRun(async () => {
     const now = Date.now();
     const since = admin.firestore.Timestamp.fromMillis(now - 3 * 3600000);
-    const paid = await db.collection("transactions").where("status", "==", "paid").where("paid_at", ">=", since).limit(100).get();
-    for (const tx of paid.docs) {
-      const t = tx.data();
+    const recent = await db.collection("transactions").where("status", "==", "paid").where("paid_at", ">=", since).limit(100).get();
+    const open = await db.collection("paid_access_alerts").where("status", "==", "open").limit(100).get();
+    const candidates = new Map<string, any>();
+    for (const tx of recent.docs) candidates.set(tx.id, tx.data());
+    for (const incident of open.docs) {
+      if (candidates.has(incident.id)) continue;
+      const tx = await db.collection("transactions").doc(incident.id).get();
+      if (tx.exists) candidates.set(incident.id, tx.data());
+    }
+    for (const [id, t] of candidates) {
       const paidMs = t.paid_at?.toMillis?.() || 0;
-      if (!t.uid || !t.entitlement_key || now - paidMs < 180000) continue;
-      const ready = await db.collection("access_assignments")
-        .where("uid", "==", t.uid).where("scope", "==", t.entitlement_key).where("status", "==", "ready").limit(1).get();
-      if (!ready.empty) continue;
-      const flag = db.collection("paid_access_alerts").doc(tx.id);
-      if ((await flag.get()).exists) continue;
-      await db.collection("users").doc(t.uid).update({access_due_ms: now}).catch(() => {});
-      await flag.set({uid: t.uid, entitlement_key: t.entitlement_key, paid_ms: paidMs, alerted_ms: now});
-      await sendTelegramNotification(
-        `⚠️ <b>[PEMBAYARAN LUNAS, AKSES BELUM SIAP]</b>\n` +
+      if (!t.uid || !t.entitlement_key || t.status !== "paid") continue;
+      const flag = db.collection("paid_access_alerts").doc(id);
+      const incident = await flag.get();
+      const state = incident.exists ? incident.data() as any : null;
+      // Definisi siap sama dengan getAccessReadiness: seluruh kajian paket
+      // memiliki penugasan ready yang terverifikasi.
+      if (await ledgerScopesReady(String(t.uid), [String(t.entitlement_key)])) {
+        if (state && state.status !== "resolved") {
+          await flag.set({status: "resolved", access_resolved_ms: now}, {merge: true});
+        }
+        continue;
+      }
+      if (!state && now - paidMs < 180000) continue;
+      if (!state) {
+        await db.collection("users").doc(t.uid).update({access_due_ms: now}).catch(() => {});
+        await flag.set({uid: t.uid, entitlement_key: t.entitlement_key, paid_ms: paidMs, status: "open",
+          opened_ms: now, attempts: 0, next_retry_ms: now});
+      }
+      const cur = (state || {attempts: 0, next_retry_ms: now}) as any;
+      const escalate = !cur.escalated_ms && now - paidMs >= PAID_ALERT_ESCALATE_MS;
+      if ((cur.delivery_succeeded_ms && !escalate) || (cur.next_retry_ms || 0) > now) continue;
+      const minutes = Math.round((now - paidMs) / 60000);
+      const delivered = await sendTelegramNotification(
+        `${escalate ? "🚨" : "⚠️"} <b>[PEMBAYARAN LUNAS, AKSES BELUM SIAP${escalate ? " — TERLAMBAT" : ""}]</b>\n` +
         `📦 Produk: <b>${esc(String(t.entitlement_key))}</b>\n` +
-        `🧾 Invoice: <code>${esc(String(t.invoice_number || tx.id))}</code>\n` +
-        `⏱️ Lewat ${Math.round((now - paidMs) / 60000)} menit. Penilaian akses sudah dipercepat; periksa bila belum teratasi.`,
+        `🧾 Invoice: <code>${esc(String(t.invoice_number || id))}</code>\n` +
+        `⏱️ Lewat ${minutes} menit. Penilaian akses sudah dipercepat; periksa bila belum teratasi.`,
         "alert");
+      const attempts = (cur.attempts || 0) + 1;
+      const patch: Record<string, any> = {attempts, last_attempt_ms: now};
+      if (delivered) {
+        patch.delivery_succeeded_ms = now;
+        if (escalate) patch.escalated_ms = now;
+      } else {
+        patch.next_retry_ms = now + Math.min(PAID_ALERT_RETRY_BASE_MS * 2 ** (attempts - 1), PAID_ALERT_RETRY_MAX_MS);
+      }
+      await flag.set(patch, {merge: true});
     }
     return null;
   });
