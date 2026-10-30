@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {loadBackend} from './audit_harness.ts';
+import {loadBackend, Stamp} from './audit_harness.ts';
 
 const DAY = 86400000;
 const stamp = (ms: number) => ({toMillis: () => ms, toDate: () => new Date(ms)});
@@ -91,6 +91,53 @@ test('voucher tidak menurunkan paket berbayar yang masih berjalan pada AI yang s
   assert.equal(ent.source, 'payment');
   assert.equal(ent.voucher_extended, true);
   assert.ok(ent.expiry.toDate().getTime() > exp + 9 * DAY);
+});
+
+test('trial preserves the paid expiry and payment grant on the same module', async () => {
+  for (const writer of ['legacy', 'vps-v2']) {
+    const paidExpiry = Date.now() + 100 * DAY;
+    const otherExpiry = Date.now() + 200 * DAY;
+    const {api, db} = fixture({
+      fiqh_syafii: {plan: 'bahits_1y', status: 'active', source: 'payment',
+        source_transaction_id: 'paid-invoice', payment_status: 'paid', expiry: new Stamp(paidExpiry)},
+      fiqh_tahawwulat: {plan: 'bahits_1y', status: 'active', payment_status: 'paid', expiry: new Stamp(otherExpiry)},
+    });
+    db.seed('access_control/runtime', {writer});
+    db.seed('access_grants/paid-grant', {uid: 'u', scope: 'fiqh_syafii', kind: 'payment', status: 'active',
+      amount: 499000, starts_ms: Date.now() - DAY, expires_ms: paidExpiry});
+    db.docs.get('users/u').access_grant_ids = ['paid-grant'];
+    db.seed('redeem_codes/TRIALPAID', {type: 'trial', max_uses: 5, times_used: 0,
+      entitlement_key: 'fiqh_syafii', duration_days: 7});
+
+    await api.redeemCode({code: 'TRIALPAID', deviceId: 'a'.repeat(64)}, caller());
+
+    const user = db.docs.get('users/u');
+    assert.equal(user.entitlements.fiqh_syafii.expiry.toMillis(), paidExpiry, writer);
+    assert.equal(user.entitlements.fiqh_syafii.plan, 'bahits_1y', writer);
+    assert.equal(user.entitlements.fiqh_syafii.source_transaction_id, 'paid-invoice', writer);
+    assert.equal(user.entitlements.fiqh_syafii.payment_status, 'paid', writer);
+    assert.equal(user.entitlements.fiqh_tahawwulat.expiry.toMillis(), otherExpiry, writer);
+    assert.equal(db.docs.get('access_grants/paid-grant').expires_ms, paidExpiry, writer);
+  }
+});
+
+test('all-access trial preserves a paid global projection and VIP status', async () => {
+  const paidExpiry = Date.now() + 100 * DAY;
+  const {api, db} = fixture({all_access: {plan: 'all_access', status: 'active', source: 'payment',
+    payment_status: 'paid', expiry: new Stamp(paidExpiry)}});
+  const originalUser = db.docs.get('users/u');
+  Object.assign(originalUser, {plan: 'all_access', is_vip: true, role: 'vip', subscription_expiry: new Stamp(paidExpiry)});
+  db.seed('redeem_codes/TRIALALL', {type: 'trial', max_uses: 5, times_used: 0,
+    entitlement_key: 'all_access', duration_days: 7});
+
+  await api.redeemCode({code: 'TRIALALL', deviceId: 'b'.repeat(64)}, caller());
+
+  const user = db.docs.get('users/u');
+  assert.equal(user.entitlements.all_access.expiry.toMillis(), paidExpiry);
+  assert.equal(user.subscription_expiry.toMillis(), paidExpiry);
+  assert.equal(user.plan, 'all_access');
+  assert.equal(user.is_vip, true);
+  assert.equal(user.role, 'vip');
 });
 
 test('voucher multi-AI tidak menyentuh AI lain yang sudah dimiliki', async () => {
