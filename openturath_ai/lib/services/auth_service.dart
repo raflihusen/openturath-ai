@@ -227,14 +227,9 @@ class AuthService {
       if (effectiveEmail != null && effectiveEmail.isNotEmpty) {
         try {
           final prefs = await SharedPreferences.getInstance();
-          final previousOwner =
-              (prefs.getString(webSessionOwnerKey) ?? '').trim().toLowerCase();
           await prefs.setString('current_user_uid', firebaseUser.uid);
           await prefs.setString('google_session_email', effectiveEmail);
           await prefs.setString('notebook_google_email', effectiveEmail);
-          if (previousOwner.isEmpty) {
-            await prefs.setString(webSessionOwnerKey, effectiveEmail);
-          }
         } catch (_) {}
       }
       return userModel;
@@ -400,12 +395,17 @@ class AuthService {
 
   static const webSessionOwnerKey = 'webview_session_owner';
 
-  /// Mencatat akun pemilik sesi Google yang tersimpan di WebView.
+  /// Mempertahankan owner yang sudah diverifikasi oleh alur koneksi Google.
+  /// Callback ruang AI membawa email aplikasi, bukan bukti identitas WebView,
+  /// sehingga tidak boleh menetapkan atau mengganti owner sesi.
   static Future<void> rememberWebSessionOwner(String email) async {
     final owner = email.trim().toLowerCase();
     if (owner.isEmpty) return;
     try {
       final prefs = await SharedPreferences.getInstance();
+      final verifiedOwner =
+          (prefs.getString(webSessionOwnerKey) ?? '').trim().toLowerCase();
+      if (verifiedOwner != owner) return;
       await prefs.setString(webSessionOwnerKey, owner);
     } catch (_) {}
   }
@@ -419,18 +419,13 @@ class AuthService {
       final prefs = await SharedPreferences.getInstance();
       final owner =
           (prefs.getString(webSessionOwnerKey) ?? '').trim().toLowerCase();
-      if (owner == current) {
-        await PersistentGoogleSession.instance
-            .restoreSessionIfAvailable(current);
-        return;
-      }
-      if (owner.isNotEmpty && owner != current) {
+      if (owner != current) {
         // Akun aplikasi berganti: lepas klaim kepemilikan saja. Cookie Google
         // tidak dihapus di luar Log Out (Aturan Sakral #8); layar sesi akan
         // meminta pemilihan akun yang sesuai.
         await PersistentGoogleSession.instance.releaseOwnership();
+        return;
       }
-      await prefs.setString(webSessionOwnerKey, current);
       await PersistentGoogleSession.instance.restoreSessionIfAvailable(current);
     } catch (_) {}
   }

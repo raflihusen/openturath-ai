@@ -41,13 +41,15 @@ class PersistentGoogleSession {
     if (prefs.containsKey(_legacyVaultKey)) await prefs.remove(_legacyVaultKey);
   }
 
-  /// Mencatat [email] sebagai pemilik sesi bila cookie sesi Google benar-benar
-  /// hidup. Mengembalikan false bila belum ada sesi yang dapat dibuktikan.
+  /// Mencatat [email] yang sudah diverifikasi oleh alur koneksi Google sebagai
+  /// pemilik sesi. Cookie hanya membuktikan keberadaan sesi, bukan identitasnya.
+  /// Mengembalikan false bila akun kosong atau cookie sesi tidak tersedia.
   Future<bool> lockAndPersistCookies(
     InAppWebViewController? controller,
     String email,
   ) async {
     final cleanEmail = email.trim().toLowerCase();
+    if (cleanEmail.isEmpty) return false;
     try {
       if (!await _hasLiveSession(controller)) return false;
       final prefs = await SharedPreferences.getInstance();
@@ -75,7 +77,10 @@ class PersistentGoogleSession {
       await _dropLegacyVault(prefs);
       final savedOwner =
           (prefs.getString(_ownerKey) ?? '').trim().toLowerCase();
-      if (savedOwner.isEmpty || savedOwner != cleanEmail) return false;
+      if (savedOwner.isEmpty || savedOwner != cleanEmail) {
+        await prefs.setBool(_readyKey, false);
+        return false;
+      }
 
       if (await _hasLiveSession(null)) {
         await prefs.setBool(_readyKey, true);
