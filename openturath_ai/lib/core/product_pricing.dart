@@ -132,29 +132,30 @@ class ProductPricingService {
   /// Segarkan penawaran setelah server menolak harga lama. Detail harga dari
   /// callable terautentikasi tetap dapat dipakai bila pembacaan konfigurasi gagal.
   /// Ini hanya memperbarui tampilan; checkout tetap memerlukan ketukan baru.
-  static Future<void> refreshCheckoutOffer({
+  static Future<bool> refreshCheckoutOffer({
     required String agentId,
     required String plan,
     required dynamic details,
-    Future<void> Function()? reload,
+    Future<bool> Function()? reload,
   }) async {
+    var configurationLoaded = false;
     try {
-      await (reload ?? () => syncPricing(forceRefresh: true))();
+      configurationLoaded = await (reload ?? () => syncPricing(forceRefresh: true))();
     } catch (_) {
       // Detail harga server tetap tersedia meski konfigurasi gagal dibaca.
     }
     if (details is! Map ||
         details['reason'] != 'price_changed' ||
         details['agentId'] != agentId ||
-        details['plan'] != plan) return;
+        details['plan'] != plan) return configurationLoaded;
     final amount = details['amount'];
     final revision = details['pricingRevision'];
     if (amount is! int ||
         amount <= 0 ||
         revision is! String ||
-        revision.isEmpty) return;
+        revision.isEmpty) return configurationLoaded;
     final offers = ProductPricing.forAgent(agentId);
-    if (!offers.any((offer) => offer.plan == plan)) return;
+    if (!offers.any((offer) => offer.plan == plan)) return false;
     final updated = <String, dynamic>{
       for (final offer in offers)
         offer.plan: {
@@ -167,25 +168,26 @@ class ProductPricingService {
       tahawwulatMap: agentId.startsWith('fiqh_tahawwulat') ? updated : null,
       specialistsMap: agentId.startsWith('fiqh_tahawwulat') ? null : updated,
     );
+    return true;
   }
 
-  static Future<void> syncPricing(
+  static Future<bool> syncPricing(
       {bool forceRefresh = false, FirebaseFirestore? firestore}) async {
     final now = DateTime.now();
     if (!forceRefresh &&
         _lastFetch != null &&
         now.difference(_lastFetch!).inSeconds < 60) {
-      return;
+      return true;
     }
     try {
       final db = firestore ??
           (Firebase.apps.isNotEmpty ? FirebaseFirestore.instance : null);
-      if (db == null) return;
+      if (db == null) return false;
 
       final doc = await db
           .collection('app_config')
           .doc('pricing')
-          .get(const GetOptions(source: Source.serverAndCache))
+          .get(GetOptions(source: forceRefresh ? Source.server : Source.serverAndCache))
           .timeout(const Duration(seconds: 3));
 
       if (doc.exists && doc.data() != null) {
@@ -230,9 +232,11 @@ class ProductPricingService {
           specialistsMap: specialists,
         );
         _lastFetch = now;
+        return tahawwulat != null || specialists != null;
       }
     } catch (_) {
       // Graceful fallback to default constants
     }
+    return false;
   }
 }
