@@ -49,7 +49,7 @@ void main() {
 
   Map<String, dynamic> manifest(TargetPlatform platform, {String? digest, int protocol = 1}) {
     final ext = platform == TargetPlatform.macOS ? 'dmg' : platform == TargetPlatform.windows ? 'exe' : 'apk';
-    return {'platforms': {platform.name: {'build': 88, 'version': '1.0.87',
+    return {'platforms': {platform.name.toLowerCase(): {'build': 88, 'version': '1.0.87',
       'url': 'https://openturath.web.app/update.$ext', 'sha256': digest ?? hash,
       'installer_protocol': protocol}}};
   }

@@ -145,7 +145,7 @@ class UpdateService extends ChangeNotifier {
         _status = UpdateStatus.downloading;
         notifyListeners();
         final file = await (await _packageStore()).obtain(url: release.url,
-            build: release.build, platform: platform.name,
+            build: release.build, platform: platform.name.toLowerCase(),
             edition: AppConfig.isGuruEdition ? 'guru' : 'standard', hash: release.sha256!,
             onProgress: (progress) {
               _updateInfo = _updateInfo?.copyWith(downloadProgress: progress);
