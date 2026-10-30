@@ -209,7 +209,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
         await ProductPricingService.refreshCheckoutOffer(
           agentId: agent.id,
           plan: offer.plan,
-          details: {'reason': 'price_changed', ...result},
+          details: {...result, 'reason': 'price_changed', 'agentId': agent.id, 'plan': offer.plan},
         );
         if (mounted) setState(() => _checkoutError = Loc.tr('priceChangedReview'));
         return;
