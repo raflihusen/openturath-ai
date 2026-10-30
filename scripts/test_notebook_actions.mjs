@@ -96,7 +96,7 @@ async function deleteHistory(mode) {
   const context = vm.createContext({window, document: {querySelectorAll}, questionSelector: '[data-sender="user"]', answerSelector: '[data-sender="model"]', visible, inputReady: () => true,
     triggerClick: el => { el.click(); return true; }, Date: {now: () => now}, setTimeout: callback => { now += 100; queueMicrotask(callback); }, Promise,
   });
-  vm.runInContext(source.slice(source.indexOf('window.otDeleteChatHistory = '), source.indexOf('\nwindow.otNotebook = {')), context);
+  vm.runInContext(source.slice(source.indexOf('window.otDeleteChatHistory = async function()'), source.indexOf('\nwindow.otNotebook = {')), context);
   const result = await window.otClearChat();
   return {result, localRemovals, providerClicks, messages, elapsed: now};
 }
