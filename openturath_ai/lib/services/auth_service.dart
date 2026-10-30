@@ -50,7 +50,38 @@ class AuthService {
   // In-memory cache to prevent entitlement loss on network hiccup (F41)
   static final Map<String, UserModel> _userCache = {};
   static int _authActionGeneration = 0;
-  static bool _lastAuthActionWasSignOut = false;
+  static Future<void> _authMutationTail = Future<void>.value();
+  static final _logoutIntent = Expando<bool>('explicit Firebase logout');
+  static final _authViewChanges = StreamController<FirebaseAuth>.broadcast();
+  static const explicitLogoutKey = 'explicit_logout_v1';
+
+  bool get _logoutRequested => _logoutIntent[_auth] == true;
+
+  void _setLogoutRequested(bool requested) {
+    _logoutIntent[_auth] = requested;
+    _authViewChanges.add(_auth);
+  }
+
+  /// Reserve the tail synchronously, before awaiting an earlier SDK request.
+  /// UI deadlines never release an in-flight native mutation. Cancelled queued
+  /// sign-ins are checked again immediately before native dispatch.
+  static Future<T?> _queueAuthMutation<T>(
+    Future<T> Function() operation, {
+    required bool Function() isCurrent,
+  }) {
+    final previous = _authMutationTail;
+    final released = Completer<void>();
+    _authMutationTail = released.future;
+    return (() async {
+      try {
+        await previous;
+        if (!isCurrent()) return null;
+        return await operation();
+      } finally {
+        released.complete();
+      }
+    })();
+  }
 
   // ── Cache Helpers ──────────────────────────────────────────────
   static Future<void> _cacheUserLocally(UserModel user,
@@ -91,8 +122,21 @@ class AuthService {
   static UserModel? previewUser;
 
   // ── Current Firebase User ──────────────────────────────────────
-  User? get currentUser => previewUser != null ? null : _auth.currentUser;
-  Stream<User?> get authStateChanges => _auth.authStateChanges();
+  User? get currentUser =>
+      previewUser != null || _logoutRequested ? null : _auth.currentUser;
+
+  Stream<User?> get authStateChanges => Stream<User?>.multi((listener) {
+    final sdk = _auth.authStateChanges().listen(
+      (user) => listener.add(_logoutRequested ? null : user),
+      onError: listener.addError,
+    );
+    final view = _authViewChanges.stream
+        .where((auth) => identical(auth, _auth))
+        .listen((_) => listener.add(currentUser));
+    listener.onCancel = () async {
+      await Future.wait([sdk.cancel(), view.cancel()]);
+    };
+  }, isBroadcast: true);
 
   bool get hasAuthenticatedSession {
     if (previewUser != null) return true;
@@ -102,6 +146,7 @@ class AuthService {
 
   UserModel? get cachedCurrentUser {
     if (previewUser != null) return previewUser;
+    if (_logoutRequested) return null;
     final user = _auth.currentUser;
     if (user != null && !user.isAnonymous) {
       return _userCache[user.uid] ??
@@ -144,6 +189,17 @@ class AuthService {
     bool Function() active,
     int generation,
   ) async {
+    final prefs = await SharedPreferences.getInstance()
+        .timeout(const Duration(seconds: 2));
+    if (!active()) return null;
+    if (_logoutRequested || prefs.getBool(explicitLogoutKey) == true) {
+      _setLogoutRequested(true);
+      // Complete the user's persisted Log Out intent after a process restart.
+      // This does not touch Google cookies or perform a silent sign-in.
+      await _queueAuthMutation<void>(() => _auth.signOut(),
+        isCurrent: () => true).timeout(_authenticationTimeout);
+      return null;
+    }
     User? firebaseUser = _auth.currentUser;
     if (firebaseUser == null) {
       try {
@@ -161,6 +217,8 @@ class AuthService {
             defaultTargetPlatform == TargetPlatform.iOS ||
             defaultTargetPlatform == TargetPlatform.macOS)) {
       try {
+        await _authMutationTail.timeout(_authenticationTimeout);
+        if (!active()) return null;
         final googleUser = await _googleSignIn
             .signInSilently()
             .timeout(const Duration(seconds: 10));
@@ -173,10 +231,11 @@ class AuthService {
             accessToken: googleAuth.accessToken,
             idToken: googleAuth.idToken,
           );
-          final pending = _auth.signInWithCredential(credential);
-          unawaited(_discardRestoreAfterSignOut(pending, generation));
-          final result = await pending.timeout(const Duration(seconds: 5));
-          firebaseUser = result.user;
+          final result = await _queueAuthMutation<UserCredential>(
+            () => _auth.signInWithCredential(credential),
+            isCurrent: active,
+          ).timeout(const Duration(seconds: 5));
+          firebaseUser = result?.user;
         }
       } catch (_) {}
     }
@@ -192,31 +251,16 @@ class AuthService {
     return cachedCurrentUser;
   }
 
-  Future<void> _discardRestoreAfterSignOut(
-    Future<UserCredential> pending,
-    int generation,
-  ) async {
-    try {
-      final result = await pending;
-      // An SDK credential request cannot be cancelled. Honor an explicit Log Out
-      // even if its earlier credential request finishes afterwards.
-      if (generation != _authActionGeneration &&
-          _lastAuthActionWasSignOut &&
-          result.user != null &&
-          _auth.currentUser?.uid == result.user!.uid) {
-        await _auth.signOut();
-      }
-    } catch (_) {}
-  }
-
   // ── Google Sign In ─────────────────────────────────────────────
   Future<UserModel?> signInWithGoogle() async {
     final generation = ++_authActionGeneration;
-    _lastAuthActionWasSignOut = false;
     var active = true;
     bool current() => active && generation == _authActionGeneration;
     var stage = 'google-authorize';
     try {
+      // An older native request must settle before a new account picker opens.
+      await _authMutationTail.timeout(_authenticationTimeout);
+      if (!current()) return null;
       User? firebaseUser;
 
       if (!kIsWeb &&
@@ -241,10 +285,11 @@ class AuthService {
 
         try {
           stage = 'firebase-credential';
-          final pending = _auth.signInWithCredential(credential);
-          unawaited(_discardRestoreAfterSignOut(pending, generation));
-          final userCredential = await pending.timeout(_authenticationTimeout);
-          firebaseUser = userCredential.user;
+          final userCredential = await _queueAuthMutation<UserCredential>(
+            () => _auth.signInWithCredential(credential),
+            isCurrent: current,
+          ).timeout(_authenticationTimeout);
+          firebaseUser = userCredential?.user;
         } on FirebaseAuthException catch (e) {
           if (e.code == 'keychain-error' && _auth.currentUser != null) {
             firebaseUser = _auth.currentUser;
@@ -253,8 +298,11 @@ class AuthService {
           }
         }
       } else if (kIsWeb) {
-        final result = await _auth.signInWithPopup(GoogleAuthProvider());
-        firebaseUser = result.user;
+        final result = await _queueAuthMutation<UserCredential>(
+          () => _auth.signInWithPopup(GoogleAuthProvider()),
+          isCurrent: current,
+        ).timeout(const Duration(minutes: 5));
+        firebaseUser = result?.user;
       } else if (defaultTargetPlatform == TargetPlatform.windows) {
         // Platform desktop Windows: gunakan DesktopAuthGateway (Loopback + Firebase Web Auth)
         stage = 'desktop-gateway';
@@ -269,15 +317,19 @@ class AuthService {
           idToken: desktopAuth.idToken,
         );
 
-        final pending = _auth.signInWithCredential(credential);
-        unawaited(_discardRestoreAfterSignOut(pending, generation));
-        final userCredential = await pending.timeout(_authenticationTimeout);
-        firebaseUser = userCredential.user;
+        final userCredential = await _queueAuthMutation<UserCredential>(
+          () => _auth.signInWithCredential(credential),
+          isCurrent: current,
+        ).timeout(_authenticationTimeout);
+        firebaseUser = userCredential?.user;
       } else {
         // Platform desktop lain (Linux) langsung via Firebase OAuth Provider
         final provider = GoogleAuthProvider();
-        final userCredential = await _auth.signInWithProvider(provider);
-        firebaseUser = userCredential.user;
+        final userCredential = await _queueAuthMutation<UserCredential>(
+          () => _auth.signInWithProvider(provider),
+          isCurrent: current,
+        ).timeout(const Duration(minutes: 5));
+        firebaseUser = userCredential?.user;
       }
 
       if (firebaseUser == null ||
@@ -305,6 +357,12 @@ class AuthService {
           await prefs.setString('notebook_google_email', effectiveEmail);
         } catch (_) {}
       }
+      if (!ownsUser()) return null;
+      final prefs = await SharedPreferences.getInstance();
+      if (!ownsUser()) return null;
+      await prefs.remove(explicitLogoutKey);
+      if (!ownsUser()) return null;
+      _setLogoutRequested(false);
       return userModel;
     } catch (e) {
       // Only fixed diagnostic categories: never log OAuth tokens or account data.
@@ -450,7 +508,7 @@ class AuthService {
       : _cachedUserStream ??= _buildUserStream();
 
   Stream<UserModel?> _buildUserStream() => sessionUserStream<UserModel>(
-        auth: _auth.authStateChanges().map((user) => user?.uid),
+        auth: authStateChanges.map((user) => user?.uid),
         cached: _getCachedUser,
         watch: (uid) => _db
             .collection(AppConstants.colUsers)
@@ -511,8 +569,35 @@ class AuthService {
   // ── Sign Out ───────────────────────────────────────────────────
   Future<void> signOut() async {
     _authActionGeneration++;
-    _lastAuthActionWasSignOut = true;
+    _setLogoutRequested(true);
     final currentUid = _auth.currentUser?.uid;
+    final localCleanup = Completer<void>();
+    // Reserve this mandatory cleanup before any asynchronous work. A later
+    // login cannot dispatch until both the earlier request and this Log Out end.
+    final drained = _queueAuthMutation<void>(() async {
+      try {
+        await localCleanup.future;
+      } finally {
+        await _auth.signOut();
+      }
+    }, isCurrent: () => true);
+    // End the SDK session immediately as well: the mandatory queued sign-out
+    // handles an older credential that completes after this immediate one.
+    final immediate = Future<void>.sync(() => _auth.signOut());
+    localCleanup.complete(() async {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool(explicitLogoutKey, true);
+      await Future.wait([_prepareLocalSignOut(currentUid), immediate]);
+    }());
+    try {
+      await drained.timeout(_authenticationTimeout);
+    } on TimeoutException {
+      // The local identity is already signed out and the durable intent remains.
+      // Keep the native drain locked; the login screen can report a bounded retry.
+    }
+  }
+
+  Future<void> _prepareLocalSignOut(String? currentUid) async {
     // Revoke native capabilities before asynchronous SDK/storage cleanup.
     await BrowserCompanionChatService.stop();
 
@@ -545,8 +630,6 @@ class AuthService {
       }
     } catch (_) {}
 
-    // Propagate Auth signOut to avoid half-signed-out UI state (F41)
-    await _auth.signOut();
   }
 
   // ── Delete Account & User Data (Google Play Compliance & Orphan Cleanup, P0) ──
@@ -555,25 +638,44 @@ class AuthService {
     if (user == null || user.isAnonymous) {
       throw FirebaseAuthException(code: 'requires-recent-login');
     }
-    _authActionGeneration++;
-    _lastAuthActionWasSignOut = true;
+    final generation = ++_authActionGeneration;
+    var active = true;
+    bool current() => active && generation == _authActionGeneration &&
+        _auth.currentUser?.uid == user.uid;
+    try {
+      final deleted = await _queueAuthMutation<bool>(() async {
+        await _deleteAccountData(user, current);
+        return true;
+      }, isCurrent: current).timeout(const Duration(minutes: 5));
+      if (deleted != true) {
+        throw FirebaseAuthException(code: 'requires-recent-login');
+      }
+    } finally {
+      active = false;
+    }
+  }
+
+  Future<void> _deleteAccountData(User user, bool Function() current) async {
     final uid = user.uid;
     await BrowserCompanionChatService.stop();
 
     // Auth deletion enforces recent login. The server trigger owns revocation and recursive cleanup.
     try {
+      if (!current()) throw FirebaseAuthException(code: 'requires-recent-login');
       await user.delete();
     } on FirebaseAuthException catch (e) {
       if (e.code == 'requires-recent-login') {
         if (kIsWeb || defaultTargetPlatform != TargetPlatform.windows) {
           final googleUser = await _googleSignIn.signIn();
-          if (googleUser != null) {
+          if (googleUser != null && current()) {
             final googleAuth = await googleUser.authentication;
+            if (!current()) throw FirebaseAuthException(code: 'requires-recent-login');
             final credential = GoogleAuthProvider.credential(
               accessToken: googleAuth.accessToken,
               idToken: googleAuth.idToken,
             );
             await user.reauthenticateWithCredential(credential);
+            if (!current()) throw FirebaseAuthException(code: 'requires-recent-login');
             await user.delete();
           } else {
             rethrow;
@@ -581,12 +683,13 @@ class AuthService {
         } else {
           // Windows: login ulang lewat peramban (OAuth loopback) lalu hapus akun.
           final desktopAuth = await DesktopAuthGateway.signIn();
-          if (desktopAuth == null) rethrow;
+          if (desktopAuth == null || !current()) rethrow;
           final credential = GoogleAuthProvider.credential(
             accessToken: desktopAuth.accessToken,
             idToken: desktopAuth.idToken,
           );
           await user.reauthenticateWithCredential(credential);
+          if (!current()) throw FirebaseAuthException(code: 'requires-recent-login');
           await user.delete();
         }
       } else {
