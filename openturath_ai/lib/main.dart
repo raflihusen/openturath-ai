@@ -114,39 +114,51 @@ Future<void> main() async {
         ? AppCopy.deviceNotSupportedMessage
         : AppCopy.cannotConnectMessage;
 
-    runApp(_InitializationFailureApp(
+    runApp(InitializationFailureApp(
       title: title,
       message: message,
     ));
   }
 }
 
-class _InitializationFailureApp extends StatefulWidget {
+class InitializationFailureApp extends StatefulWidget {
   final String title;
   final String message;
 
-  const _InitializationFailureApp({
+  const InitializationFailureApp({
+    super.key,
     required this.title,
     required this.message,
+    this.initialize,
+    this.onInitialized,
+    this.retryTimeout = const Duration(seconds: 30),
   });
 
+  final Future<void> Function()? initialize;
+  final VoidCallback? onInitialized;
+  final Duration retryTimeout;
+
   @override
-  State<_InitializationFailureApp> createState() =>
+  State<InitializationFailureApp> createState() =>
       _InitializationFailureAppState();
 }
 
-class _InitializationFailureAppState extends State<_InitializationFailureApp> {
+class _InitializationFailureAppState extends State<InitializationFailureApp> {
   bool _retrying = false;
 
   Future<void> _retry() async {
     if (_retrying) return;
     setState(() => _retrying = true);
     try {
-      await Firebase.initializeApp(
-        options: DefaultFirebaseOptions.currentPlatform,
-      );
-      TelemetryService.instance.init();
-      runApp(const OpenTurathApp());
+      await (widget.initialize?.call() ?? _initializeFirebase())
+          .timeout(widget.retryTimeout);
+      if (!mounted) return;
+      if (widget.onInitialized != null) {
+        widget.onInitialized!();
+      } else {
+        TelemetryService.instance.init();
+        runApp(const OpenTurathApp());
+      }
     } catch (e, st) {
       TelemetryService.instance.reportError(
         e,
@@ -154,8 +166,16 @@ class _InitializationFailureAppState extends State<_InitializationFailureApp> {
         context: 'firebase_init_retry_failure',
         severity: 'critical',
       );
+    } finally {
       if (mounted) setState(() => _retrying = false);
     }
+  }
+
+  Future<void> _initializeFirebase() async {
+    if (Firebase.apps.isNotEmpty) return;
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
   }
 
   @override
