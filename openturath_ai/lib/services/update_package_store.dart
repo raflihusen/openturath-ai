@@ -46,7 +46,9 @@ class UpdatePackageStore {
             RegExp(r'_[0-9]+_[a-f0-9]{64}\.(apk|dmg|exe)$')
                 .hasMatch(entry.path) &&
             entry.path != current.path &&
-            entry.path != pending) candidates.add(entry);
+            entry.path != pending) {
+          candidates.add(entry);
+        }
       }
       candidates
           .sort((a, b) => b.lastModifiedSync().compareTo(a.lastModifiedSync()));
@@ -78,7 +80,9 @@ class UpdatePackageStore {
       throw const FormatException('Unsupported update package format');
     }
     _busy = true;
-    final client = HttpClient()..connectionTimeout = idleTimeout;
+    final client = HttpClient()
+      ..connectionTimeout = idleTimeout
+      ..autoUncompress = false;
     File? partial;
     try {
       await directory.create(recursive: true);
@@ -98,6 +102,7 @@ class UpdatePackageStore {
       for (var redirects = 0; redirects <= 5; redirects++) {
         final request = await client.getUrl(location).timeout(idleTimeout);
         request.followRedirects = false;
+        request.headers.set(HttpHeaders.acceptEncodingHeader, 'identity');
         response = await request.close().timeout(idleTimeout);
         if (!response.isRedirect) break;
         final next = response.headers.value(HttpHeaders.locationHeader);

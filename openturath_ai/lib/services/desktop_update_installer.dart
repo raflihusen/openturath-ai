@@ -69,10 +69,14 @@ class DesktopUpdateInstaller {
       await for (final entry in Directory(p.dirname(target)).list()) {
         if (entry is! Directory ||
             entry.path == current ||
-            !p.basename(entry.path).startsWith('.ot-update')) continue;
+            !p.basename(entry.path).startsWith('.ot-update')) {
+          continue;
+        }
         final status = File(p.join(entry.path, 'status'));
         if (!await status.exists() ||
-            (await status.readAsString()).trim() != 'confirmed') continue;
+            (await status.readAsString()).trim() != 'confirmed') {
+          continue;
+        }
         final macTarget = File(p.join(entry.path, 'target'));
         final windowsPlan = File(p.join(entry.path, 'plan.json'));
         final String? recorded = await macTarget.exists()
