@@ -22,7 +22,6 @@ import '../widgets/diagnostic_report_action.dart';
 
 import 'package:openturath_ai/core/design/ot_typography.dart';
 import 'package:openturath_ai/core/design/ot_radius.dart';
-import 'package:openturath_ai/core/design/ot_buttons.dart';
 import '../core/app_snackbar.dart';
 
 /// Layar Autentikasi Sesi Google (Langkah 2 dari 2)
@@ -477,7 +476,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
           TextButton(
             onPressed: () {
               Navigator.pop(ctx);
-              _confirmCancelAndSignOut();
+              _confirmCancelConnection();
             },
             child: Text(
               Loc.tr('exit'),
@@ -515,10 +514,12 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
   /// dapat membacanya, sehingga keputusan tidak boleh didasarkan padanya.
   Future<bool?> _hasGoogleSession() async {
     try {
-      final cookies = await DesktopWebViewRuntime.cookies.getCookies(
-        url: WebUri(NotebookNavigation.canonicalOrigin),
-        webViewController: _webController,
-      ).timeout(const Duration(seconds: 5));
+      final cookies = await DesktopWebViewRuntime.cookies
+          .getCookies(
+            url: WebUri(NotebookNavigation.canonicalOrigin),
+            webViewController: _webController,
+          )
+          .timeout(const Duration(seconds: 5));
       const names = {'SID', '__Secure-1PSID', '__Secure-3PSID'};
       return cookies.any((cookie) =>
           names.contains(cookie.name) &&
@@ -616,7 +617,8 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
     final controller = _webController;
     WebUri? currentWebUrl;
     try {
-      currentWebUrl = await controller?.getUrl().timeout(const Duration(seconds: 5));
+      currentWebUrl =
+          await controller?.getUrl().timeout(const Duration(seconds: 5));
     } catch (_) {}
     if (!mounted) return;
 
@@ -690,7 +692,8 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
               '')
           .trim()
           .toLowerCase();
-      final url = await controller?.getUrl().timeout(const Duration(seconds: 5));
+      final url =
+          await controller?.getUrl().timeout(const Duration(seconds: 5));
       if (!mounted) return;
       if (controller == null ||
           email.isEmpty ||
@@ -775,7 +778,6 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
           ),
           FilledButton(
             onPressed: () => Navigator.pop(ctx, true),
-            style: OTButtons.primary(isDark),
             child: Text(
               Loc.tr('cancelGoogleConnectionAction'),
               style: OTTypography.button(color: OTColors.onAccent(isDark)),
@@ -891,8 +893,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
               ),
               IconButton(
                 tooltip: Loc.tr('cancelSignIn'),
-                icon:
-                    Icon(Icons.close_rounded, size: 20, color: textSecondary),
+                icon: Icon(Icons.close_rounded, size: 20, color: textSecondary),
                 onPressed: _confirmCancelConnection,
               ),
               const SizedBox(width: 4),
@@ -1034,16 +1035,16 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
                                   context,
                                   InAppWebViewSettings(
                                     incognito: false,
-                                    sharedCookiesEnabled:
-                                        WebViewCookiePolicy.sharedCookiesEnabled,
+                                    sharedCookiesEnabled: WebViewCookiePolicy
+                                        .sharedCookiesEnabled,
                                   ),
                                   _initialSessionUrl,
                                 )
                               : InAppWebView(
                                   webViewEnvironment:
                                       DesktopWebViewRuntime.environment,
-                                  initialUrlRequest:
-                                      URLRequest(url: WebUri(_initialSessionUrl)),
+                                  initialUrlRequest: URLRequest(
+                                      url: WebUri(_initialSessionUrl)),
                                   initialUserScripts: UnmodifiableListView([
                                     _buildStealthCloakScript(isDark),
                                   ]),
@@ -1063,8 +1064,8 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
                                     mixedContentMode: MixedContentMode
                                         .MIXED_CONTENT_NEVER_ALLOW,
                                     thirdPartyCookiesEnabled: true,
-                                    sharedCookiesEnabled:
-                                        WebViewCookiePolicy.sharedCookiesEnabled,
+                                    sharedCookiesEnabled: WebViewCookiePolicy
+                                        .sharedCookiesEnabled,
                                     hardwareAcceleration: true,
                                     useHybridComposition: true,
                                     useOnRenderProcessGone: true,
@@ -1106,8 +1107,8 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
                                   onLoadStop: (controller, url) async {
                                     if (!mounted || url == null) return;
                                     _handleUrlNavigation(controller, url);
-                                    unawaited(
-                                        _detectGoogleRejection(controller, url));
+                                    unawaited(_detectGoogleRejection(
+                                        controller, url));
                                     await _checkAccountVerification(controller);
                                   },
                                   onUpdateVisitedHistory:
@@ -1123,7 +1124,8 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
                                     if (request.isForMainFrame == true) {
                                       AuthFailureReporter.reportOnce(
                                           stage: 'login-webview',
-                                          code: 'load-${error.type.toNativeValue() ?? 'unknown'}');
+                                          code:
+                                              'load-${error.type.toNativeValue() ?? 'unknown'}');
                                     }
                                   },
                                 ),

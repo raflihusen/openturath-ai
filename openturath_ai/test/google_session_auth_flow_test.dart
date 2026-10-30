@@ -58,8 +58,9 @@ void main() {
     );
 
     final login = Uri.parse(loginUrl!);
-    expect(login.host, 'accounts.google.com');
-    expect(login.queryParameters['continue'], 'https://notebook.google.com/');
+    // Reuse an existing Google session before offering InteractiveLogin.
+    expect(login.host, 'notebook.google.com');
+    expect(login.path, '/');
 
     // Verifikasi webview placeholder ter-mount
     expect(find.byKey(const Key('mock_webview')), findsOneWidget);

@@ -579,7 +579,7 @@ const copyCatalog = <String, List<String>>{
     "متابعة تسجيل الدخول"
   ],
   "googleSessionUnverified": [
-    "Sesi Google belum dapat diverifikasi. Tekan Periksa lagi atau Lanjutkan setelah akun yang sama selesai masuk. Sesi Anda tidak dihapus.",
+    "Sesi Google belum dapat diverifikasi. Coba lagi atau tekan Lanjutkan setelah akun yang sama selesai masuk. Sesi Anda tidak dihapus.",
     "Your Google session could not be verified yet. Retry or continue after signing in with the same account. Your session has not been cleared.",
     "تعذّر التحقق من جلسة Google حتى الآن. أعد المحاولة أو تابع بعد إتمام تسجيل الدخول بالحساب نفسه. لم تُحذف جلستك."
   ],
