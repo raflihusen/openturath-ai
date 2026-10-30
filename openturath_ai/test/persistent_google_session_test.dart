@@ -10,7 +10,8 @@ class _CookiePlatform extends InAppWebViewPlatform {
   @override
   PlatformCookieManager createPlatformCookieManager(
     PlatformCookieManagerCreationParams params,
-  ) => manager;
+  ) =>
+      manager;
 }
 
 class _MemoryCookieManager extends PlatformCookieManager {
@@ -90,7 +91,8 @@ void main() {
     expect(platform.manager.cookies.single.value, 'synthetic-session-a');
   });
 
-  test('account B cannot inherit account A session after reconciliation', () async {
+  test('account B cannot inherit account A session after reconciliation',
+      () async {
     SharedPreferences.setMockInitialValues({
       ownerKey: accountA,
       'google_session_ready': true,
