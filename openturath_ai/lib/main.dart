@@ -57,12 +57,21 @@ Future<void> main() async {
       DeviceOrientation.portraitDown,
     ]);
   }
-  await DesktopWebViewRuntime.prepare();
+  // Persiapan WebView tidak boleh menahan frame pertama tanpa batas: bila
+  // platform menggantung, aplikasi tetap terbuka dan ruang web melaporkan
+  // masalahnya sendiri.
+  try {
+    await DesktopWebViewRuntime.prepare().timeout(const Duration(seconds: 25));
+  } catch (_) {
+    DesktopWebViewRuntime.problem ??=
+        'Ruang web belum siap pada waktunya. Tutup dan buka kembali aplikasi.';
+  }
 
   // Load configuration
   try {
-    await AppConfig.init();
-    final prefs = await SharedPreferences.getInstance();
+    await AppConfig.init().timeout(const Duration(seconds: 10));
+    final prefs = await SharedPreferences.getInstance()
+        .timeout(const Duration(seconds: 10));
     AgentSessionTab.defaultFontScale =
         prefs.getDouble('turath_font_zoom_level') ?? 1.0;
   } catch (_) {}
@@ -79,7 +88,7 @@ Future<void> main() async {
     // ── Inisialisasi Firebase ──
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
-    );
+    ).timeout(const Duration(seconds: 30));
     // ── Inisialisasi Silent Telemetry ──
     TelemetryService.instance.init();
     runApp(const OpenTurathApp());
@@ -212,7 +221,8 @@ class OpenTurathApp extends StatelessWidget {
                   textDirection: currentLocale == 'ar'
                       ? TextDirection.rtl
                       : TextDirection.ltr,
-                  child: AppTransitionHost(child: child ?? const SizedBox.shrink()),
+                  child: AppTransitionHost(
+                      child: child ?? const SizedBox.shrink()),
                 )),
 
                 // ── Initial Route ──
