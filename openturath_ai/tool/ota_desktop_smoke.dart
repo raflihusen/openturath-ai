@@ -101,6 +101,11 @@ class _DesktopSmokeState extends State<DesktopSmoke> {
               Uri.parse('http://127.0.0.1:${server!.port}/candidate$ext')));
       updater!.addListener(changed);
       if (mounted) setState(() {});
+      // Explicit local fixture switch, never read by the production entry point.
+      if (Platform.environment['OT_OTA_SMOKE_AUTORUN'] == '1') {
+        await updater!.checkForUpdatesSilently();
+        if (updater!.isUpdateReady) await updater!.installNow();
+      }
     } catch (error) {
       if (mounted) setState(() => text = 'Fixture error: $error');
     }
