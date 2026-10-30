@@ -618,8 +618,9 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                       Icon(Icons.language_rounded,
                           color: textPrimary, size: 18),
                       const SizedBox(width: 12),
-                      Expanded(child: Text(Loc.tr('outputLanguage'),
-                          style: OTTypography.body(color: textPrimary))),
+                      Expanded(
+                          child: Text(Loc.tr('outputLanguage'),
+                              style: OTTypography.body(color: textPrimary))),
                     ],
                   ),
                 ),
@@ -633,11 +634,12 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                               Theme.of(ctx).brightness == Brightness.dark),
                           size: 18),
                       const SizedBox(width: 12),
-                      Expanded(child: Text(Loc.tr('clearChatHistory'),
-                          style: OTTypography.body(
-                              color: OTColors.destructive(
-                                  Theme.of(ctx).brightness ==
-                                      Brightness.dark)))),
+                      Expanded(
+                          child: Text(Loc.tr('clearChatHistory'),
+                              style: OTTypography.body(
+                                  color: OTColors.destructive(
+                                      Theme.of(ctx).brightness ==
+                                          Brightness.dark)))),
                     ],
                   ),
                 ),
@@ -648,8 +650,9 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                     Icon(Icons.content_copy_rounded,
                         color: textPrimary, size: 18),
                     const SizedBox(width: 12),
-                    Expanded(child: Text(AppCopy.copyConversationAction,
-                        style: OTTypography.body(color: textPrimary))),
+                    Expanded(
+                        child: Text(AppCopy.copyConversationAction,
+                            style: OTTypography.body(color: textPrimary))),
                   ],
                 ),
               ),
@@ -661,8 +664,9 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                       Icon(Icons.format_size_rounded,
                           color: textPrimary, size: 18),
                       const SizedBox(width: 12),
-                      Expanded(child: Text(Loc.tr('fontSizeLabel'),
-                          style: OTTypography.body(color: textPrimary))),
+                      Expanded(
+                          child: Text(Loc.tr('fontSizeLabel'),
+                              style: OTTypography.body(color: textPrimary))),
                     ],
                   ),
                 ),
