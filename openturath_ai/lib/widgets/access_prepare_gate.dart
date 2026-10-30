@@ -53,9 +53,17 @@ class _AccessPrepareGateState extends State<AccessPrepareGate> {
     if (check == null || _polling || _ready) return;
     _polling = true;
     try {
-      _ready = await check();
+      final ready = await check();
+      if (!mounted) return;
+      setState(() {
+        _ready = ready;
+        if (_ready && widget.seconds - _left >= widget.minSeconds) {
+          _left = 0;
+          _timer?.cancel();
+        }
+      });
     } catch (_) {
-      _ready = false;
+      // Pemeriksaan gagal tidak mengubah status yang telah dikonfirmasi.
     } finally {
       _polling = false;
     }
