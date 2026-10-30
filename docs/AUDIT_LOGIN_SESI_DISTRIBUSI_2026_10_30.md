@@ -3,6 +3,8 @@
 Tanggal pemeriksaan: **30 Oktober 2026**, Asia/Aden (UTC+3). Pemeriksaan utama sekitar 22.40–23.00.
 Sumber awal: cabang `v9-2-integrasi`, commit `727097b8`, versi workspace **1.0.87+88**.
 
+Catatan tindak lanjut: setelah audit ini, sebagian temuan sesi telah diperbaiki pada kode lokal. Lihat [catatan implementasi dan 40 tes sesi](/Users/apple/Downloads/ramadhan/docs/PERBAIKAN_SESI_GOOGLE_2026_10_30.md). Temuan di bawah merekam snapshot sebelum patch; perbaikan lokal belum dipasang atau dirilis.
+
 ## Kesimpulan untuk pemilik
 
 Keluhan login berulang dan AI tetap meminta masuk mempunyai dasar teknis nyata. Aplikasi menyimpan beberapa status berbeda dengan arti yang belum dipisahkan dengan baik: profil OpenTurath, autentikasi Firebase, sesi Google di WebView, identitas Google aktif, izin notebook, dan kesiapan kolom chat. Berhasil pada satu tahap belum menjamin tahap berikutnya berhasil.
