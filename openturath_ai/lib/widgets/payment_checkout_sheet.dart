@@ -618,13 +618,15 @@ class _PaymentCheckoutSheetState extends State<PaymentCheckoutSheet> {
                     ),
                   ),
 
-                  if ((_pollExhausted || _inquiryMessageKey != null) && !_isSuccess)
+                  if ((_pollExhausted || _inquiryMessageKey != null) &&
+                      !_isSuccess)
                     Container(
                       width: double.infinity,
                       color: OTColors.surfaceSubtle(isDark),
                       padding: const EdgeInsets.symmetric(
                           horizontal: 16, vertical: 12),
-                      child: Text(Loc.tr(_inquiryMessageKey ?? 'checkoutStillWaiting'),
+                      child: Text(
+                          Loc.tr(_inquiryMessageKey ?? 'checkoutStillWaiting'),
                           style: ScholarlyFonts.outfit(
                               fontSize: OTFontSize.s12,
                               height: 1.4,

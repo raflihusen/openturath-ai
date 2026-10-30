@@ -143,11 +143,16 @@ class ProductPricingService {
     } catch (_) {
       // Detail harga server tetap tersedia meski konfigurasi gagal dibaca.
     }
-    if (details is! Map || details['reason'] != 'price_changed' ||
-        details['agentId'] != agentId || details['plan'] != plan) return;
+    if (details is! Map ||
+        details['reason'] != 'price_changed' ||
+        details['agentId'] != agentId ||
+        details['plan'] != plan) return;
     final amount = details['amount'];
     final revision = details['pricingRevision'];
-    if (amount is! int || amount <= 0 || revision is! String || revision.isEmpty) return;
+    if (amount is! int ||
+        amount <= 0 ||
+        revision is! String ||
+        revision.isEmpty) return;
     final offers = ProductPricing.forAgent(agentId);
     if (!offers.any((offer) => offer.plan == plan)) return;
     final updated = <String, dynamic>{

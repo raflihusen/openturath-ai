@@ -88,7 +88,8 @@ class PaymentInquiryFeedback {
         return const PaymentInquiryFeedback('paymentRefunded', terminal: true);
       case 'PARTIAL_REFUND':
       case 'PARTIAL_CHARGEBACK':
-        return const PaymentInquiryFeedback('paymentPartialRefund', terminal: true);
+        return const PaymentInquiryFeedback('paymentPartialRefund',
+            terminal: true);
       case 'PENDING':
       case 'CHALLENGE':
       case 'CAPTURE':

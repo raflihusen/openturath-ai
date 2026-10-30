@@ -209,9 +209,15 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
         await ProductPricingService.refreshCheckoutOffer(
           agentId: agent.id,
           plan: offer.plan,
-          details: {...result, 'reason': 'price_changed', 'agentId': agent.id, 'plan': offer.plan},
+          details: {
+            ...result,
+            'reason': 'price_changed',
+            'agentId': agent.id,
+            'plan': offer.plan
+          },
         );
-        if (mounted) setState(() => _checkoutError = Loc.tr('priceChangedReview'));
+        if (mounted)
+          setState(() => _checkoutError = Loc.tr('priceChangedReview'));
         return;
       }
       final paymentUrl = result['redirectUrl'];
@@ -239,9 +245,12 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
       final details = error.details;
       if (details is Map && details['reason'] == 'price_changed') {
         await ProductPricingService.refreshCheckoutOffer(
-          agentId: agent.id, plan: offer.plan, details: details,
+          agentId: agent.id,
+          plan: offer.plan,
+          details: details,
         );
-        if (mounted) setState(() => _checkoutError = Loc.tr('priceChangedReview'));
+        if (mounted)
+          setState(() => _checkoutError = Loc.tr('priceChangedReview'));
         return;
       }
       if (mounted) {

@@ -179,7 +179,9 @@ class SubscriptionService {
     // Backend lama memakai PENDING untuk galat inquiry. Pertahankan arti
     // galat tersebut sampai semua instalasi memakai kontrak ERROR yang baru.
     final legacyInquiryError = rawStatus == 'PENDING' &&
-        (res['message'] ?? '').toString().startsWith('Status pembayaran belum dapat diperiksa.');
+        (res['message'] ?? '')
+            .toString()
+            .startsWith('Status pembayaran belum dapat diperiksa.');
     final isSuccess =
         rawStatus == 'SUCCESS' || rawStatus == 'SETTLED' || rawStatus == 'PAID';
     if (isSuccess) {
@@ -193,7 +195,10 @@ class SubscriptionService {
     return {
       'success': false,
       'status': legacyInquiryError || res['reason'] == 'inquiry_unavailable'
-          ? 'ERROR' : rawStatus.isNotEmpty ? rawStatus : 'ERROR',
+          ? 'ERROR'
+          : rawStatus.isNotEmpty
+              ? rawStatus
+              : 'ERROR',
       'data': res,
       if (res['message'] != null) 'message': res['message'],
     };
