@@ -2162,11 +2162,12 @@ export const redeemCode = functions
         const paidActive = currentEnt && currentEnt.status === "active" && currentExp && currentExp > redeemedAt &&
           currentEnt.plan !== "trial" && currentEnt.plan !== "voucher_access" &&
           currentEnt.payment_status && currentEnt.payment_status !== "none";
-        // Hibah trial tetap berdurasi sesuai kode; proyeksi akses berbayar
-        // tidak boleh dipendekkan oleh trial yang masa berlakunya lebih singkat.
-        const projectedExpiry = paidActive && isTrialVoucher && currentExp > newExpiry ? currentExp : newExpiry;
+        // Hibah trial tetap berdurasi sesuai kode; proyeksi akses aktif yang
+        // lebih panjang (termasuk voucher kehormatan) tidak boleh dipendekkan.
+        const preserveActive = isTrialVoucher && currentEnt?.status === "active" && currentExp && currentExp > newExpiry;
+        const projectedExpiry = preserveActive ? currentExp : newExpiry;
         if (index === 0) primaryExpiry = projectedExpiry;
-        updatedEntitlements[entitlementKey] = paidActive
+        updatedEntitlements[entitlementKey] = paidActive || preserveActive
           ? {
             ...currentEnt,
             expiry: admin.firestore.Timestamp.fromDate(projectedExpiry),
@@ -2220,7 +2221,7 @@ export const redeemCode = functions
           userUpdate.access_legacy_audit_required = true;
         }
       }
-      if (globalExpiry) {
+      if (globalExpiry && !isVip(userData)) {
         userUpdate.plan = updatedEntitlements.all_access.plan;
         userUpdate.subscription_expiry = admin.firestore.Timestamp.fromDate(globalExpiry);
       }
