@@ -206,7 +206,12 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
       if (result['amount'] != offer.amount ||
           (result['pricingRevision'] != ProductPricing.revision &&
               result['pricingRevision'] != ProductPricing.defaultRevision)) {
-        setState(() => _checkoutError = Loc.tr('priceChanged'));
+        await ProductPricingService.refreshCheckoutOffer(
+          agentId: agent.id,
+          plan: offer.plan,
+          details: {'reason': 'price_changed', ...result},
+        );
+        if (mounted) setState(() => _checkoutError = Loc.tr('priceChangedReview'));
         return;
       }
       final paymentUrl = result['redirectUrl'];
@@ -231,6 +236,14 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
       }
     } on FirebaseFunctionsException catch (error, stack) {
       TelemetryService.instance.reportError(error, stack, context: 'checkout');
+      final details = error.details;
+      if (details is Map && details['reason'] == 'price_changed') {
+        await ProductPricingService.refreshCheckoutOffer(
+          agentId: agent.id, plan: offer.plan, details: details,
+        );
+        if (mounted) setState(() => _checkoutError = Loc.tr('priceChangedReview'));
+        return;
+      }
       if (mounted) {
         setState(() => _checkoutError = _checkoutErrorMessage(error));
       }
