@@ -157,7 +157,7 @@ test('short trial preserves long voucher access in both writer modes', async () 
     Object.assign(db.docs.get('users/u'), {plan: 'voucher_access', subscription_expiry: stamp(expiry)});
     db.seed('redeem_codes/TRIALVOUCHER', {type: 'trial', max_uses: 5, times_used: 0,
       entitlement_key: 'all_access', duration_days: 7});
-    await api.redeemCode({code: 'TRIALVOUCHER'}, caller());
+    await api.redeemCode({code: 'TRIALVOUCHER', deviceId: 'c'.repeat(64)}, caller());
     const user = db.docs.get('users/u');
     assert.equal(user.entitlements.all_access.expiry.toMillis(), expiry, writer);
     assert.equal(user.entitlements.all_access.plan, 'voucher_access', writer);
@@ -171,12 +171,26 @@ test('trial never rewrites a permanent VIP global profile without dated entitlem
   Object.assign(db.docs.get('users/u'), {plan: 'VIP_PERMANENT', role: 'vip', is_vip: true});
   db.seed('redeem_codes/TRIALVIP', {type: 'trial', max_uses: 5, times_used: 0,
     entitlement_key: 'all_access', duration_days: 7});
-  await api.redeemCode({code: 'TRIALVIP'}, caller());
+  await api.redeemCode({code: 'TRIALVIP', deviceId: 'd'.repeat(64)}, caller());
   const user = db.docs.get('users/u');
   assert.equal(user.plan, 'VIP_PERMANENT');
   assert.equal(user.subscription_expiry, undefined);
   assert.equal(user.role, 'vip');
   assert.equal(user.is_vip, true);
+});
+
+test('existing permanent VIP entitlement survives trial redemption without a fake expiry', async () => {
+  const {api, db} = fixture({all_access: {plan: 'VIP_PERMANENT', role: 'vip',
+    status: 'active', expiry: null, source: 'owner', payment_status: 'none'}});
+  Object.assign(db.docs.get('users/u'), {plan: 'VIP_PERMANENT', role: 'vip', is_vip: true});
+  const before = {...db.docs.get('users/u').entitlements.all_access};
+  db.seed('redeem_codes/TRIALVIPENT', {type: 'trial', max_uses: 5, times_used: 0,
+    entitlement_key: 'all_access', duration_days: 7});
+  await api.redeemCode({code: 'TRIALVIPENT', deviceId: 'e'.repeat(64)}, caller());
+  const user = db.docs.get('users/u');
+  assert.deepEqual(user.entitlements.all_access, before);
+  assert.equal(user.subscription_expiry, undefined);
+  assert.equal(user.plan, 'VIP_PERMANENT');
 });
 
 test('kuota kode multi-AI dihitung sekali per penukaran, bukan per AI', async () => {
