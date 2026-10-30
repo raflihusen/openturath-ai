@@ -1379,6 +1379,10 @@ export const monitorAccessHealth = functions
     try {
       const pending=await db.collection("access_jobs").where("status","in",["pending","retry","processing"]).orderBy("queued_ms").limit(1).get();
       if(!pending.empty && now-pending.docs[0].data().queued_ms>900000)issues.push("access_queue_overdue");
+      // Status lama di luar kontrak job tidak pernah dieksekusi: harus terlihat
+      // oleh operator, bukan diam. Pemulihannya manual (periksa deadlettered_by).
+      const legacy=await db.collection("access_jobs").where("status","in",["queued"]).limit(1).get();
+      if(!legacy.empty)issues.push("access_job_legacy_status");
     } catch (_) {if(now-started>900000)issues.push("queue_observation_unavailable");}
     // Seat capacity per module (master + clones), recomputed every 10 minutes.
     // The allocator only fills healthy notebooks, so a module whose clones are
@@ -1423,6 +1427,7 @@ export const monitorAccessHealth = functions
         sharing_provider_stale:"Koneksi NotebookLM belum terverifikasi; pemulihan sesi perlu diperiksa.",
         payment_reconciliation_stale:"Pemeriksaan pembayaran berkala belum berjalan sesuai jadwal.",
         access_queue_overdue:"Ada pekerjaan akses yang tertahan lebih dari 15 menit.",
+        access_job_legacy_status:"Ada pekerjaan akses berstatus lama (queued) yang tidak dieksekusi; periksa deadlettered_by sebelum memulihkan.",
         payment_activation_backlog:"Pemeriksaan invoice Midtrans yang belum aktif tertinggal lebih dari 10 menit.",
         access_schedule_overdue:"Ada akun yang evaluasi aksesnya terlambat lebih dari 30 menit (pembeli bisa belum mendapat notebook).",
         notebook_capacity_low:"Kursi kosong di sebagian modul menipis (master + clone sehat). Tambah clone atau periksa clone yang hilang.",

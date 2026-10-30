@@ -33,12 +33,33 @@ sudo systemctl daemon-reload
 sudo systemctl restart "$SERVICE"
 
 echo "==> Waiting for the worker"
+# The worker is healthy only when it has completed a cycle since this start,
+# reports no error, has a valid provider session and, for the expected mode,
+# actually holds (active) or yields (standby) the writer lease. A 503 body is
+# still parsed: it is how the worker explains why it is not ready.
+EXPECT_MODE="${OPENTURATH_EXPECT_MODE:-active}"   # active | standby | shadow
+check_worker() {
+  curl -s --max-time 5 http://127.0.0.1:8091/ | EXPECT_MODE="$EXPECT_MODE" python3 -c '
+import json, os, sys, time
+d = json.load(sys.stdin)
+mode = os.environ["EXPECT_MODE"]
+now = time.time() * 1000
+def fail(why):
+    print("not ready: " + why, file=sys.stderr); sys.exit(1)
+if d.get("error"): fail("error " + str(d["error"]))
+if d.get("authentication_error"): fail("provider authentication error")
+if d.get("mode") != mode: fail("mode %s, expected %s" % (d.get("mode"), mode))
+if not d.get("last_success_ms") or d["last_success_ms"] < d.get("started_ms", 0): fail("no successful cycle since start")
+if mode == "active":
+    if d.get("lease_held") is not True: fail("writer lease not held")
+    if not d.get("last_provider_success_ms") or now - d["last_provider_success_ms"] > 300000: fail("provider not observed recently")
+if mode == "standby" and d.get("lease_held") is True: fail("standby holds the lease")
+' 2>/dev/null
+}
 healthy=0
-for _ in $(seq 1 20); do
+for _ in $(seq 1 40); do
   sleep 3
-  # The endpoint answers 503 while the provider has not been observed yet;
-  # what matters here is that the process is up and its cycle did not fail.
-  if curl -s --max-time 5 http://127.0.0.1:8091/ | python3 -c 'import json,sys; d=json.load(sys.stdin); sys.exit(1 if d.get("error") else 0)' 2>/dev/null; then
+  if check_worker; then
     healthy=1; break
   fi
 done

@@ -397,3 +397,27 @@ test("legacy GoAkal events are granted only with complete positive evidence for 
   assert.equal(classifyLegacyEvent({...event, payment_status: "EXPIRED"}, scopes).action, "noted");
   assert.equal(akalDurationMonths("6 Bulan"), 6); assert.equal(akalDurationMonths("1 Bulan"), 1);
 });
+
+test("provisioning tanpa job dipulihkan lewat reserve dan repair; job yang ada (termasuk queued ber-deadletter) tidak disentuh", async () => {
+  const {db, engine, user} = setup(0, 2); user("u"); user("v");
+  const a = await engine.reserve("u", entity);
+  // job hilang: reserve ulang membuatnya kembali, idempoten
+  const jobId = keyOf("u", entity, String(a.revision));
+  db.docs.delete(`access_jobs/${jobId}`);
+  await engine.reserve("u", entity);
+  assert.equal(db.docs.get(`access_jobs/${jobId}`).status, "pending");
+  assert.equal(db.docs.get(`access_jobs/${jobId}`).recovered_orphan, true);
+  await engine.reserve("u", entity);
+  assert.equal([...db.docs.keys()].filter(k => k.startsWith("access_jobs/")).length, 1);
+  // repair pada provisioning tanpa job juga memulihkan
+  db.docs.delete(`access_jobs/${jobId}`);
+  await engine.repair("u", entity);
+  assert.equal(db.docs.get(`access_jobs/${jobId}`).status, "pending");
+  // job queued bertanda dead-letter tidak diubah menjadi pending
+  const b = await engine.reserve("v", entity);
+  const vJob = `access_jobs/${keyOf("v", entity, String(b.revision))}`;
+  db.docs.get(vJob).status = "queued"; db.docs.get(vJob).deadlettered_by = "operator";
+  await engine.reserve("v", entity); await engine.repair("v", entity);
+  assert.equal(db.docs.get(vJob).status, "queued");
+  assert.equal(db.docs.get(vJob).recovered_orphan, undefined);
+});

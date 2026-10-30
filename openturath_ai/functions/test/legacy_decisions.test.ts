@@ -108,3 +108,27 @@ test('seats held by an address without a login get an owner record and an honore
   assert.equal((await after.assessRevocation(uid, 'fiqh_tahawwulat')).allowed, true);
   assert.equal((await applyDecisions(db, [{approved: true, action: 'create_legacy_owner', uid: 'legacy_wrong', email: 'n@x.test'}], {engine, now}))[0].result, 'invalid');
 });
+
+test('impor billing hanya melepas penahan miliknya; penahan pemilik dengan review lama tetap terlindungi', async () => {
+  const {runWorker} = await import('./worker_harness.ts');
+  const make = (extra: any, review: any) => {
+    const db = new MemoryDB(), auth = new Map<string, any>();
+    db.seed('access_control/runtime', {writer: 'vps-v2'});
+    db.seed('users/h', {email: 'h@x.test', access_version: 2, access_revocation_hold: true, ...extra});
+    auth.set('h', {email: 'h@x.test', emailVerified: true});
+    db.seed(`access_reviews/${keyOf('h', 'legacy_evidence')}`, {uid: 'h', ...review});
+    return {db, auth};
+  };
+  // penahan pemilik (tanpa penanda) + review lama resolved: tetap ditahan
+  const a = make({}, {status: 'resolved_by_verified_billing'});
+  await runWorker(a.db, a.auth, '--import');
+  assert.equal(a.db.docs.get('users/h').access_revocation_hold, true);
+  // penahan pemilik + review terbuka tetapi tanpa penanda importer: tetap ditahan
+  const b = make({}, {code: 'legacy_payment_evidence_incomplete'});
+  await runWorker(b.db, b.auth, '--import');
+  assert.equal(b.db.docs.get('users/h').access_revocation_hold, true);
+  // penahan milik importer + review terbuka + bukti kini lengkap: dilepas
+  const c = make({access_revocation_hold_by: 'legacy_import'}, {code: 'legacy_payment_evidence_incomplete'});
+  await runWorker(c.db, c.auth, '--import');
+  assert.equal(c.db.docs.get('users/h').access_revocation_hold, false);
+});
