@@ -148,6 +148,37 @@ test('voucher multi-AI tidak menyentuh AI lain yang sudah dimiliki', async () =>
   assert.equal(db.docs.get('users/u').entitlements.fiqh_tahawwulat.plan, 'bahits_1y');
 });
 
+test('short trial preserves long voucher access in both writer modes', async () => {
+  for (const writer of ['legacy', 'vps-v2']) {
+    const expiry = Date.now() + 100 * DAY;
+    const {api, db} = fixture({all_access: {plan: 'voucher_access', status: 'active',
+      source: 'redeem_code', payment_status: 'none', expiry: stamp(expiry)}});
+    db.seed('access_control/runtime', {writer});
+    Object.assign(db.docs.get('users/u'), {plan: 'voucher_access', subscription_expiry: stamp(expiry)});
+    db.seed('redeem_codes/TRIALVOUCHER', {type: 'trial', max_uses: 5, times_used: 0,
+      entitlement_key: 'all_access', duration_days: 7});
+    await api.redeemCode({code: 'TRIALVOUCHER'}, caller());
+    const user = db.docs.get('users/u');
+    assert.equal(user.entitlements.all_access.expiry.toMillis(), expiry, writer);
+    assert.equal(user.entitlements.all_access.plan, 'voucher_access', writer);
+    assert.equal(user.subscription_expiry.toMillis(), expiry, writer);
+    assert.equal(user.plan, 'voucher_access', writer);
+  }
+});
+
+test('trial never rewrites a permanent VIP global profile without dated entitlement', async () => {
+  const {api, db} = fixture();
+  Object.assign(db.docs.get('users/u'), {plan: 'VIP_PERMANENT', role: 'vip', is_vip: true});
+  db.seed('redeem_codes/TRIALVIP', {type: 'trial', max_uses: 5, times_used: 0,
+    entitlement_key: 'all_access', duration_days: 7});
+  await api.redeemCode({code: 'TRIALVIP'}, caller());
+  const user = db.docs.get('users/u');
+  assert.equal(user.plan, 'VIP_PERMANENT');
+  assert.equal(user.subscription_expiry, undefined);
+  assert.equal(user.role, 'vip');
+  assert.equal(user.is_vip, true);
+});
+
 test('kuota kode multi-AI dihitung sekali per penukaran, bukan per AI', async () => {
   const {api, db} = fixture();
   db.docs.set('users/w', {email: 'w@example.test', plan: 'trial', entitlements: {}});
