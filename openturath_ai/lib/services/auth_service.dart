@@ -126,17 +126,17 @@ class AuthService {
       previewUser != null || _logoutRequested ? null : _auth.currentUser;
 
   Stream<User?> get authStateChanges => Stream<User?>.multi((listener) {
-    final sdk = _auth.authStateChanges().listen(
-      (user) => listener.add(_logoutRequested ? null : user),
-      onError: listener.addError,
-    );
-    final view = _authViewChanges.stream
-        .where((auth) => identical(auth, _auth))
-        .listen((_) => listener.add(currentUser));
-    listener.onCancel = () async {
-      await Future.wait([sdk.cancel(), view.cancel()]);
-    };
-  }, isBroadcast: true);
+        final sdk = _auth.authStateChanges().listen(
+              (user) => listener.add(_logoutRequested ? null : user),
+              onError: listener.addError,
+            );
+        final view = _authViewChanges.stream
+            .where((auth) => identical(auth, _auth))
+            .listen((_) => listener.add(currentUser));
+        listener.onCancel = () async {
+          await Future.wait([sdk.cancel(), view.cancel()]);
+        };
+      }, isBroadcast: true);
 
   bool get hasAuthenticatedSession {
     if (previewUser != null) return true;
@@ -197,7 +197,7 @@ class AuthService {
       // Complete the user's persisted Log Out intent after a process restart.
       // This does not touch Google cookies or perform a silent sign-in.
       await _queueAuthMutation<void>(() => _auth.signOut(),
-        isCurrent: () => true).timeout(_authenticationTimeout);
+          isCurrent: () => true).timeout(_authenticationTimeout);
       return null;
     }
     User? firebaseUser = _auth.currentUser;
@@ -629,7 +629,6 @@ class AuthService {
         _userCache.clear();
       }
     } catch (_) {}
-
   }
 
   // ── Delete Account & User Data (Google Play Compliance & Orphan Cleanup, P0) ──
@@ -640,13 +639,16 @@ class AuthService {
     }
     final generation = ++_authActionGeneration;
     var active = true;
-    bool current() => active && generation == _authActionGeneration &&
+    bool current() =>
+        active &&
+        generation == _authActionGeneration &&
         _auth.currentUser?.uid == user.uid;
     try {
       final deleted = await _queueAuthMutation<bool>(() async {
         await _deleteAccountData(user, current);
         return true;
-      }, isCurrent: current).timeout(const Duration(minutes: 5));
+      }, isCurrent: current)
+          .timeout(const Duration(minutes: 5));
       if (deleted != true) {
         throw FirebaseAuthException(code: 'requires-recent-login');
       }
@@ -661,7 +663,8 @@ class AuthService {
 
     // Auth deletion enforces recent login. The server trigger owns revocation and recursive cleanup.
     try {
-      if (!current()) throw FirebaseAuthException(code: 'requires-recent-login');
+      if (!current())
+        throw FirebaseAuthException(code: 'requires-recent-login');
       await user.delete();
     } on FirebaseAuthException catch (e) {
       if (e.code == 'requires-recent-login') {
@@ -669,13 +672,15 @@ class AuthService {
           final googleUser = await _googleSignIn.signIn();
           if (googleUser != null && current()) {
             final googleAuth = await googleUser.authentication;
-            if (!current()) throw FirebaseAuthException(code: 'requires-recent-login');
+            if (!current())
+              throw FirebaseAuthException(code: 'requires-recent-login');
             final credential = GoogleAuthProvider.credential(
               accessToken: googleAuth.accessToken,
               idToken: googleAuth.idToken,
             );
             await user.reauthenticateWithCredential(credential);
-            if (!current()) throw FirebaseAuthException(code: 'requires-recent-login');
+            if (!current())
+              throw FirebaseAuthException(code: 'requires-recent-login');
             await user.delete();
           } else {
             rethrow;
@@ -689,7 +694,8 @@ class AuthService {
             idToken: desktopAuth.idToken,
           );
           await user.reauthenticateWithCredential(credential);
-          if (!current()) throw FirebaseAuthException(code: 'requires-recent-login');
+          if (!current())
+            throw FirebaseAuthException(code: 'requires-recent-login');
           await user.delete();
         }
       } else {
