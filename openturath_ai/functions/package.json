@@ -2,6 +2,9 @@
   "name": "openturath-functions",
   "version": "1.0.0",
   "main": "lib/index.js",
+  "engines": {
+    "node": "22"
+  },
   "scripts": {
     "build": "tsc",
     "serve": "npm run build && firebase emulators:start --only functions",
@@ -18,7 +21,7 @@
     "googleapis": "^173.0.0"
   },
   "devDependencies": {
-    "@types/node": "^20.0.0",
+    "@types/node": "^22.0.0",
     "typescript": "^5.4.5"
   }
 }
