@@ -45,6 +45,8 @@ class AuthService {
 
   // In-memory cache to prevent entitlement loss on network hiccup (F41)
   static final Map<String, UserModel> _userCache = {};
+  static int _authActionGeneration = 0;
+  static bool _lastAuthActionWasSignOut = false;
 
   // ── Cache Helpers ──────────────────────────────────────────────
   static Future<void> _cacheUserLocally(UserModel user) async {
@@ -107,12 +109,16 @@ class AuthService {
   Future<UserModel?> restoreSession() async {
     if (previewUser != null) return previewUser;
     var active = true;
+    final generation = _authActionGeneration;
     try {
-      return await _restoreAuthenticatedSession(() => active).timeout(
+      return await _restoreAuthenticatedSession(
+        () => active && generation == _authActionGeneration,
+        generation,
+      ).timeout(
         _restoreTimeout,
         onTimeout: () {
           active = false;
-          return cachedCurrentUser;
+          return generation == _authActionGeneration ? cachedCurrentUser : null;
         },
       );
     } finally {
@@ -120,7 +126,9 @@ class AuthService {
     }
   }
 
-  Future<UserModel?> _restoreAuthenticatedSession(bool Function() active) async {
+  Future<UserModel?> _restoreAuthenticatedSession(
+    bool Function() active, int generation,
+  ) async {
     User? firebaseUser = _auth.currentUser;
     if (firebaseUser == null) {
       try {
@@ -148,8 +156,9 @@ class AuthService {
             accessToken: googleAuth.accessToken,
             idToken: googleAuth.idToken,
           );
-          final result = await _auth.signInWithCredential(credential)
-              .timeout(const Duration(seconds: 5));
+          final pending = _auth.signInWithCredential(credential);
+          unawaited(_discardRestoreAfterSignOut(pending, generation));
+          final result = await pending.timeout(const Duration(seconds: 5));
           firebaseUser = result.user;
         }
       } catch (_) {}
@@ -166,8 +175,27 @@ class AuthService {
     return cachedCurrentUser;
   }
 
+  Future<void> _discardRestoreAfterSignOut(
+    Future<UserCredential> pending,
+    int generation,
+  ) async {
+    try {
+      final result = await pending;
+      // An SDK credential request cannot be cancelled. Honor an explicit Log Out
+      // even if its earlier credential request finishes afterwards.
+      if (generation != _authActionGeneration &&
+          _lastAuthActionWasSignOut &&
+          result.user != null &&
+          _auth.currentUser?.uid == result.user!.uid) {
+        await _auth.signOut();
+      }
+    } catch (_) {}
+  }
+
   // ── Google Sign In ─────────────────────────────────────────────
   Future<UserModel?> signInWithGoogle() async {
+    _authActionGeneration++;
+    _lastAuthActionWasSignOut = false;
     var stage = 'google-authorize';
     try {
       User? firebaseUser;
@@ -430,14 +458,10 @@ class AuthService {
     } catch (_) {}
   }
 
-  /// Benar bila UI memegang profil tersimpan tetapi Firebase tidak punya sesi.
-  /// Profil itu hanya tampilan offline, bukan bukti autentikasi: operasi online
-  /// harus memulihkan sesi atau meminta masuk kembali.
-  bool get isCachedProfileOnly =>
-      _auth.currentUser == null && cachedCurrentUser != null;
-
   // ── Sign Out ───────────────────────────────────────────────────
   Future<void> signOut() async {
+    _authActionGeneration++;
+    _lastAuthActionWasSignOut = true;
     final currentUid = _auth.currentUser?.uid;
     // Revoke native capabilities before asynchronous SDK/storage cleanup.
     await BrowserCompanionChatService.stop();
@@ -481,6 +505,8 @@ class AuthService {
     if (user == null || user.isAnonymous) {
       throw FirebaseAuthException(code: 'requires-recent-login');
     }
+    _authActionGeneration++;
+    _lastAuthActionWasSignOut = true;
     final uid = user.uid;
     await BrowserCompanionChatService.stop();
 

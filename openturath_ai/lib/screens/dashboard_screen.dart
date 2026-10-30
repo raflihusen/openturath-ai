@@ -126,7 +126,8 @@ class _DashboardScreenState extends State<DashboardScreen>
   Future<void> _loadData([bool forceRefresh = false]) async {
     try {
       // A cached profile cannot substitute for a disconnected Firebase account.
-      if (_authService.currentUser == null && AuthService.previewUser == null) {
+      if ((_authService.currentUser == null || _authService.currentUser!.isAnonymous) &&
+          AuthService.previewUser == null) {
         if (mounted) setState(() => _initialUser = null);
         return;
       }
@@ -176,7 +177,8 @@ class _DashboardScreenState extends State<DashboardScreen>
   }
 
   void _openNotebook(AgentModel agent, UserModel? user) {
-    if (_authService.currentUser == null && AuthService.previewUser == null) {
+    if ((_authService.currentUser == null || _authService.currentUser!.isAnonymous) &&
+          AuthService.previewUser == null) {
       AppSnackBar.warning(context, Loc.tr('sessionReconnectBody'));
       return;
     }
@@ -245,7 +247,8 @@ class _DashboardScreenState extends State<DashboardScreen>
       stream: _authService.userStream,
       builder: (context, snapshot) {
         final curFirebaseUser = _authService.currentUser;
-        if (curFirebaseUser == null && AuthService.previewUser == null) {
+        if ((curFirebaseUser == null || curFirebaseUser.isAnonymous) &&
+            AuthService.previewUser == null) {
           return Scaffold(
             backgroundColor: canvas,
             body: SafeArea(
