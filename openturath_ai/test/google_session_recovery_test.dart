@@ -219,7 +219,8 @@ void main() {
     await close(tester);
   });
 
-  testWidgets('recovery replaces the WebView and retry connects a valid session',
+  testWidgets(
+      'recovery replaces the WebView and retry connects a valid session',
       (tester) async {
     final controller = await open(tester);
     final failedView = platform.lastView;
@@ -240,8 +241,8 @@ void main() {
     final retryNativeController = _Controller();
     platform.lastView!.params.onWebViewCreated!(
         InAppWebViewController.fromPlatform(platform: retryNativeController));
-    final retryController = InAppWebViewController.fromPlatform(
-        platform: retryNativeController);
+    final retryController =
+        InAppWebViewController.fromPlatform(platform: retryNativeController);
 
     // A disposed view can deliver a late event after replacement. Its failed
     // platform call must not replace the new view with another recovery state.
