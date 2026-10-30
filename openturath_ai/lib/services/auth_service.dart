@@ -16,9 +16,20 @@ import 'auth_failure_reporter.dart';
 import 'desktop_auth_gateway.dart';
 
 class AuthService {
+  AuthService({
+    FirebaseAuth? auth,
+    GoogleSignIn? googleSignIn,
+    Duration restoreTimeout = const Duration(seconds: 15),
+  }) : _providedAuth = auth,
+       _providedGoogleSignIn = googleSignIn,
+       _restoreTimeout = restoreTimeout;
+
+  final FirebaseAuth? _providedAuth;
+  final GoogleSignIn? _providedGoogleSignIn;
+  final Duration _restoreTimeout;
   // Ditunda sampai dipakai, agar layar bisa dirender tanpa Firebase (pratinjau, tes).
-  late final FirebaseAuth _auth = FirebaseAuth.instance;
-  final GoogleSignIn _googleSignIn = GoogleSignIn(
+  late final FirebaseAuth _auth = _providedAuth ?? FirebaseAuth.instance;
+  late final GoogleSignIn _googleSignIn = _providedGoogleSignIn ?? GoogleSignIn(
     clientId: (!kIsWeb &&
             (defaultTargetPlatform == TargetPlatform.iOS ||
                 defaultTargetPlatform == TargetPlatform.macOS))
@@ -76,7 +87,7 @@ class AuthService {
   UserModel? get cachedCurrentUser {
     if (previewUser != null) return previewUser;
     final user = _auth.currentUser;
-    if (user != null) {
+    if (user != null && !user.isAnonymous) {
       return _userCache[user.uid] ??
           UserModel(
             uid: user.uid,
@@ -87,79 +98,72 @@ class AuthService {
             questionsUsed: 0,
           );
     }
-    // Only an unambiguous cached profile may stand in; with several accounts
-    // in memory there is no way to know which one this session belongs to.
-    if (_userCache.length == 1) {
-      return _userCache.values.single;
-    }
     return null;
   }
 
-  /// Memulihkan sesi pengguna secara aman dari Firebase Auth atau cache disk lokal
+  /// Cache hanya memulihkan profil UID yang masih diautentikasi Firebase.
+  /// Sesi Firebase tersimpan tetap dapat dipakai offline; profil disk sendiri
+  /// tidak membuktikan bahwa pengguna masih masuk.
   Future<UserModel?> restoreSession() async {
     if (previewUser != null) return previewUser;
+    var active = true;
+    try {
+      return await _restoreAuthenticatedSession(() => active).timeout(
+        _restoreTimeout,
+        onTimeout: () {
+          active = false;
+          return cachedCurrentUser;
+        },
+      );
+    } finally {
+      active = false;
+    }
+  }
+
+  Future<UserModel?> _restoreAuthenticatedSession(bool Function() active) async {
     User? firebaseUser = _auth.currentUser;
     if (firebaseUser == null) {
       try {
-        firebaseUser = await _auth
-            .authStateChanges()
-            .firstWhere((u) => u != null)
+        firebaseUser = await _auth.authStateChanges()
+            .firstWhere((u) => u != null && !u.isAnonymous)
             .timeout(const Duration(milliseconds: 1200));
       } catch (_) {}
     }
+    if (!active()) return null;
 
-    // Silent Sign-in Fallback: Pulihkan kredensial Google OAuth tanpa prompt jika sesi Firebase belum siap
     if (firebaseUser == null &&
         !kIsWeb &&
         (defaultTargetPlatform == TargetPlatform.android ||
             defaultTargetPlatform == TargetPlatform.iOS ||
             defaultTargetPlatform == TargetPlatform.macOS)) {
       try {
-        final googleUser = await _googleSignIn
-            .signInSilently()
+        final googleUser = await _googleSignIn.signInSilently()
             .timeout(const Duration(seconds: 10));
+        if (!active()) return null;
         if (googleUser != null) {
-          final googleAuth = await googleUser.authentication;
+          final googleAuth = await googleUser.authentication
+              .timeout(const Duration(seconds: 4));
+          if (!active()) return null;
           final credential = GoogleAuthProvider.credential(
             accessToken: googleAuth.accessToken,
             idToken: googleAuth.idToken,
           );
-          final userCredential = await _auth.signInWithCredential(credential);
-          firebaseUser = userCredential.user;
+          final result = await _auth.signInWithCredential(credential)
+              .timeout(const Duration(seconds: 5));
+          firebaseUser = result.user;
         }
       } catch (_) {}
     }
+    if (!active()) return null;
+    firebaseUser ??= _auth.currentUser;
+    if (firebaseUser == null || firebaseUser.isAnonymous) return null;
 
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      // The cached profile is keyed by the UID of the last verified sign-in.
-      // Never guess from other cached profiles: that could surface another
-      // account's name and entitlements on a shared device.
-      final uid = firebaseUser?.uid ?? prefs.getString('current_user_uid');
-
-      if (uid != null && uid.isNotEmpty) {
-        final cached = await _getCachedUser(uid);
-        if (cached != null) {
-          _userCache[cached.uid] = cached;
-          return cached;
-        }
-      }
-    } catch (_) {}
-
-    if (firebaseUser != null) {
-      final fallback = UserModel(
-        uid: firebaseUser.uid,
-        name: firebaseUser.displayName ?? 'Pengguna',
-        email: firebaseUser.email ?? '',
-        photoUrl: firebaseUser.photoURL ?? '',
-        plan: AppConstants.planTrial,
-        questionsUsed: 0,
-      );
-      _userCache[fallback.uid] = fallback;
-      return fallback;
-    }
-
-    return null;
+    final uid = firebaseUser.uid;
+    final cached = await _getCachedUser(uid)
+        .timeout(const Duration(seconds: 2), onTimeout: () => null);
+    if (!active() || _auth.currentUser?.uid != uid) return null;
+    if (cached != null) return cached;
+    return cachedCurrentUser;
   }
 
   // ── Google Sign In ─────────────────────────────────────────────
@@ -323,24 +327,15 @@ class AuthService {
   // ── Get Current UserModel from Firestore ───────────────────────
   Future<UserModel?> getCurrentUserModel() async {
     final user = currentUser;
-    if (user == null) {
-      if (cachedCurrentUser != null) return cachedCurrentUser;
-      try {
-        final prefs = await SharedPreferences.getInstance();
-        final uid = prefs.getString('current_user_uid');
-        if (uid != null && uid.isNotEmpty) {
-          final cached = await _getCachedUser(uid);
-          if (cached != null) return cached;
-        }
-      } catch (_) {}
-      return null;
-    }
+    if (previewUser != null) return previewUser;
+    if (user == null || user.isAnonymous) return null;
     try {
       final doc = await _db
           .collection(AppConstants.colUsers)
           .doc(user.uid)
           .get()
           .timeout(const Duration(seconds: 4));
+      if (currentUser?.uid != user.uid) return null;
       if (!doc.exists) {
         final fallback = UserModel(
           uid: user.uid,
@@ -358,6 +353,7 @@ class AuthService {
     } catch (_) {
       // Pertahankan snapshot terakhir jika ada (F41)
       final cached = await _getCachedUser(user.uid);
+      if (currentUser?.uid != user.uid) return null;
       if (cached != null) return cached;
 
       return UserModel(
@@ -482,7 +478,9 @@ class AuthService {
   // ── Delete Account & User Data (Google Play Compliance & Orphan Cleanup, P0) ──
   Future<void> deleteAccount() async {
     final user = currentUser;
-    if (user == null) return;
+    if (user == null || user.isAnonymous) {
+      throw FirebaseAuthException(code: 'requires-recent-login');
+    }
     final uid = user.uid;
     await BrowserCompanionChatService.stop();
 
