@@ -40,6 +40,9 @@ void main() {
   late FixtureStore store;
   var hits = 0;
   var responseCode = 200;
+  Completer<void>? firstChunk;
+  Completer<void>? finishResponse;
+  var knownLength = false;
   final payload = List<int>.generate(1024, (i) => i % 256);
   final hash = sha256.convert(payload).toString();
   setUp(() async {
@@ -47,6 +50,9 @@ void main() {
     server = await HttpServer.bind(InternetAddress.loopbackIPv4, 0);
     hits = 0;
     responseCode = 200;
+    firstChunk = null;
+    finishResponse = null;
+    knownLength = false;
     server.listen((request) async {
       hits++;
       request.response.statusCode = responseCode;
@@ -55,7 +61,17 @@ void main() {
         request.response.headers
             .set('location', 'https://untrusted.example/bad.dmg');
       } else {
-        request.response.add(payload);
+        if (finishResponse != null) {
+          request.response.bufferOutput = false;
+          if (knownLength) request.response.contentLength = payload.length;
+          request.response.add(payload.sublist(0, payload.length ~/ 2));
+          await request.response.flush();
+          firstChunk!.complete();
+          await finishResponse!.future;
+          request.response.add(payload.sublist(payload.length ~/ 2));
+        } else {
+          request.response.add(payload);
+        }
       }
       await request.response.close();
     });
@@ -128,6 +144,40 @@ void main() {
       expect(hits, 1, reason: 'Installation must never open a remote URL');
       first.dispose();
       reopened.dispose();
+    });
+  }
+
+  for (final lengthKnown in [false, true]) {
+    test('download progress is honest when length known=$lengthKnown', () async {
+      knownLength = lengthKnown;
+      firstChunk = Completer<void>();
+      finishResponse = Completer<void>();
+      final updater = service(TargetPlatform.macOS);
+      final halfReceived = Completer<void>();
+      updater.addListener(() {
+        if (updater.updateInfo?.downloadProgress == 0.5 &&
+            !halfReceived.isCompleted) {
+          halfReceived.complete();
+        }
+      });
+      final download = updater.checkForUpdatesSilently();
+      try {
+        await firstChunk!.future;
+        expect(updater.status, UpdateStatus.downloading);
+        if (lengthKnown) {
+          await halfReceived.future.timeout(const Duration(seconds: 2));
+          expect(updater.updateInfo!.downloadProgress, 0.5);
+        } else {
+          expect(updater.updateInfo!.downloadProgress, isNull,
+              reason: 'Unknown total must show moving indeterminate progress');
+        }
+      } finally {
+        finishResponse!.complete();
+        await download;
+        updater.dispose();
+      }
+      expect(updater.status, UpdateStatus.ready);
+      expect(updater.updateInfo!.downloadProgress, 1);
     });
   }
 
