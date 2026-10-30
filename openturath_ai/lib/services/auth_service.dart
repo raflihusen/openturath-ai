@@ -20,24 +20,25 @@ class AuthService {
     FirebaseAuth? auth,
     GoogleSignIn? googleSignIn,
     Duration restoreTimeout = const Duration(seconds: 15),
-  }) : _providedAuth = auth,
-       _providedGoogleSignIn = googleSignIn,
-       _restoreTimeout = restoreTimeout;
+  })  : _providedAuth = auth,
+        _providedGoogleSignIn = googleSignIn,
+        _restoreTimeout = restoreTimeout;
 
   final FirebaseAuth? _providedAuth;
   final GoogleSignIn? _providedGoogleSignIn;
   final Duration _restoreTimeout;
   // Ditunda sampai dipakai, agar layar bisa dirender tanpa Firebase (pratinjau, tes).
   late final FirebaseAuth _auth = _providedAuth ?? FirebaseAuth.instance;
-  late final GoogleSignIn _googleSignIn = _providedGoogleSignIn ?? GoogleSignIn(
-    clientId: (!kIsWeb &&
-            (defaultTargetPlatform == TargetPlatform.iOS ||
-                defaultTargetPlatform == TargetPlatform.macOS))
-        ? '255541559800-fen41rigfp5o3fsntiieaien3v915ptd.apps.googleusercontent.com'
-        : null,
-    serverClientId:
-        '255541559800-jcip3mf8umtscgf5jm8khflm4u83rmcj.apps.googleusercontent.com',
-  );
+  late final GoogleSignIn _googleSignIn = _providedGoogleSignIn ??
+      GoogleSignIn(
+        clientId: (!kIsWeb &&
+                (defaultTargetPlatform == TargetPlatform.iOS ||
+                    defaultTargetPlatform == TargetPlatform.macOS))
+            ? '255541559800-fen41rigfp5o3fsntiieaien3v915ptd.apps.googleusercontent.com'
+            : null,
+        serverClientId:
+            '255541559800-jcip3mf8umtscgf5jm8khflm4u83rmcj.apps.googleusercontent.com',
+      );
   late final FirebaseFirestore _db = FirebaseFirestore.instance;
 
   // Cached persistent userStream to prevent memory leak and listener churn (F10)
@@ -127,12 +128,14 @@ class AuthService {
   }
 
   Future<UserModel?> _restoreAuthenticatedSession(
-    bool Function() active, int generation,
+    bool Function() active,
+    int generation,
   ) async {
     User? firebaseUser = _auth.currentUser;
     if (firebaseUser == null) {
       try {
-        firebaseUser = await _auth.authStateChanges()
+        firebaseUser = await _auth
+            .authStateChanges()
             .firstWhere((u) => u != null && !u.isAnonymous)
             .timeout(const Duration(milliseconds: 1200));
       } catch (_) {}
@@ -145,7 +148,8 @@ class AuthService {
             defaultTargetPlatform == TargetPlatform.iOS ||
             defaultTargetPlatform == TargetPlatform.macOS)) {
       try {
-        final googleUser = await _googleSignIn.signInSilently()
+        final googleUser = await _googleSignIn
+            .signInSilently()
             .timeout(const Duration(seconds: 10));
         if (!active()) return null;
         if (googleUser != null) {

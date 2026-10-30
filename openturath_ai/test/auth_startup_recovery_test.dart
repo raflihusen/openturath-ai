@@ -77,7 +77,8 @@ class TestGoogle extends Fake implements GoogleSignIn {
   Future<GoogleSignInAccount?> signInSilently({
     bool suppressErrors = true,
     bool reAuthenticate = false,
-  }) async => account;
+  }) async =>
+      account;
   @override
   Future<GoogleSignInAccount?> signOut() async => null;
 }
@@ -116,11 +117,13 @@ void main() {
     AuthService.previewUser = null;
   });
 
-  test('disk profile without Firebase session is never authenticated', () async {
+  test('disk profile without Firebase session is never authenticated',
+      () async {
     debugDefaultTargetPlatformOverride = TargetPlatform.linux;
     SharedPreferences.setMockInitialValues({
       'current_user_uid': 'old-cache',
-      'openturath_cached_user_old-cache': jsonEncode(profile('old-cache').toJsonMap()),
+      'openturath_cached_user_old-cache':
+          jsonEncode(profile('old-cache').toJsonMap()),
       'webview_session_owner': 'old-cache@example.test',
       'google_session_ready': true,
     });
@@ -135,10 +138,12 @@ void main() {
     expect(prefs.getBool('google_session_ready'), isTrue);
   });
 
-  test('offline cache retains profile only for authenticated matching UID', () async {
+  test('offline cache retains profile only for authenticated matching UID',
+      () async {
     SharedPreferences.setMockInitialValues({
       'current_user_uid': 'offline-owner',
-      'openturath_cached_user_offline-owner': jsonEncode(profile('offline-owner').toJsonMap()),
+      'openturath_cached_user_offline-owner':
+          jsonEncode(profile('offline-owner').toJsonMap()),
     });
     final auth = TestAuth()..user = TestUser('offline-owner');
     final service = AuthService(auth: auth, googleSignIn: TestGoogle());
@@ -151,11 +156,15 @@ void main() {
     expect(service.cachedCurrentUser, isNull);
   });
 
-  test('unauthenticated delete reports recent login instead of succeeding', () async {
+  test('unauthenticated delete reports recent login instead of succeeding',
+      () async {
     final service = AuthService(auth: TestAuth(), googleSignIn: TestGoogle());
-    await expectLater(service.deleteAccount(), throwsA(
-      isA<FirebaseAuthException>().having((e) => e.code, 'code', 'requires-recent-login'),
-    ));
+    await expectLater(
+        service.deleteAccount(),
+        throwsA(
+          isA<FirebaseAuthException>()
+              .having((e) => e.code, 'code', 'requires-recent-login'),
+        ));
   });
 
   test('anonymous account cannot restore or delete a real account', () async {
@@ -163,16 +172,21 @@ void main() {
     final service = AuthService(auth: auth, googleSignIn: TestGoogle());
     expect(await service.restoreSession(), isNull);
     expect(await service.getCurrentUserModel(), isNull);
-    await expectLater(service.deleteAccount(), throwsA(isA<FirebaseAuthException>()));
+    await expectLater(
+        service.deleteAccount(), throwsA(isA<FirebaseAuthException>()));
   });
 
-  test('late Google token after deadline cannot start Firebase credential login', () async {
+  test(
+      'late Google token after deadline cannot start Firebase credential login',
+      () async {
     debugDefaultTargetPlatformOverride = TargetPlatform.macOS;
     final tokens = Completer<GoogleSignInAuthentication>();
     final auth = TestAuth();
     final google = TestGoogle()..account = TestGoogleAccount(tokens.future);
-    final service = AuthService(auth: auth, googleSignIn: google,
-      restoreTimeout: const Duration(milliseconds: 40));
+    final service = AuthService(
+        auth: auth,
+        googleSignIn: google,
+        restoreTimeout: const Duration(milliseconds: 40));
     expect(await service.restoreSession(), isNull);
     tokens.complete(TestTokens());
     await Future<void>.delayed(Duration.zero);
@@ -189,14 +203,18 @@ void main() {
     });
     final pending = Completer<UserCredential>();
     final auth = TestAuth()..pendingCredential = pending;
-    final google = TestGoogle()..account = TestGoogleAccount(Future.value(TestTokens()));
-    final service = AuthService(auth: auth, googleSignIn: google,
-      restoreTimeout: const Duration(milliseconds: 40));
+    final google = TestGoogle()
+      ..account = TestGoogleAccount(Future.value(TestTokens()));
+    final service = AuthService(
+        auth: auth,
+        googleSignIn: google,
+        restoreTimeout: const Duration(milliseconds: 40));
     expect(await service.restoreSession(), isNull);
     expect(auth.credentialCalls, 1);
     expect(auth.signOutCalls, 0);
     final prefs = await SharedPreferences.getInstance();
-    expect(prefs.getString('webview_session_owner_verified_v1'), 'kept@example.test');
+    expect(prefs.getString('webview_session_owner_verified_v1'),
+        'kept@example.test');
     expect(prefs.getBool('google_session_ready'), isTrue);
     final user = TestUser('late-owner');
     auth.user = user;
@@ -205,13 +223,17 @@ void main() {
     expect(auth.signOutCalls, 0);
   });
 
-  test('explicit logout wins over an earlier pending credential request', () async {
+  test('explicit logout wins over an earlier pending credential request',
+      () async {
     debugDefaultTargetPlatformOverride = TargetPlatform.macOS;
     final pending = Completer<UserCredential>();
     final auth = TestAuth()..pendingCredential = pending;
-    final google = TestGoogle()..account = TestGoogleAccount(Future.value(TestTokens()));
-    final service = AuthService(auth: auth, googleSignIn: google,
-      restoreTimeout: const Duration(milliseconds: 40));
+    final google = TestGoogle()
+      ..account = TestGoogleAccount(Future.value(TestTokens()));
+    final service = AuthService(
+        auth: auth,
+        googleSignIn: google,
+        restoreTimeout: const Duration(milliseconds: 40));
     final restored = service.restoreSession();
     await Future<void>.delayed(const Duration(milliseconds: 10));
     expect(auth.credentialCalls, 1);
@@ -225,7 +247,9 @@ void main() {
     expect(auth.signOutCalls, 2);
   });
 
-  testWidgets('splash rejects a restored cached profile when auth remains absent', (tester) async {
+  testWidgets(
+      'splash rejects a restored cached profile when auth remains absent',
+      (tester) async {
     SharedPreferences.setMockInitialValues({
       'openturath_language_chosen': true,
       'openturath_onboarding_seen': true,
@@ -239,9 +263,11 @@ void main() {
     expect(find.text('Login destination'), findsOneWidget);
   });
 
-  testWidgets('dashboard hides cached identity after session disconnects', (tester) async {
+  testWidgets('dashboard hides cached identity after session disconnects',
+      (tester) async {
     final auth = DashboardAuth()..cached = profile('stale');
-    await tester.pumpWidget(MaterialApp(home: DashboardScreen(authService: auth)));
+    await tester
+        .pumpWidget(MaterialApp(home: DashboardScreen(authService: auth)));
     await tester.pump();
     expect(find.text('Cached stale'), findsNothing);
     expect(find.text(Loc.tr('sessionReconnectTitle')), findsOneWidget);
@@ -249,13 +275,19 @@ void main() {
     await auth.events.close();
   });
 
-  testWidgets('initialization timeout releases retry and permits successful retry', (tester) async {
+  testWidgets(
+      'initialization timeout releases retry and permits successful retry',
+      (tester) async {
     var calls = 0;
     var ready = 0;
     await tester.pumpWidget(InitializationFailureApp(
-      title: 'Connection failed', message: 'Please retry',
+      title: 'Connection failed',
+      message: 'Please retry',
       retryTimeout: const Duration(seconds: 1),
-      initialize: () { calls++; return calls == 1 ? Completer<void>().future : Future.value(); },
+      initialize: () {
+        calls++;
+        return calls == 1 ? Completer<void>().future : Future.value();
+      },
       onInitialized: () => ready++,
     ));
     await tester.tap(find.text('Coba lagi'));
@@ -269,11 +301,14 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('late initialization does not replace a disposed failure screen', (tester) async {
+  testWidgets('late initialization does not replace a disposed failure screen',
+      (tester) async {
     final pending = Completer<void>();
     var ready = false;
     await tester.pumpWidget(InitializationFailureApp(
-      title: 'Failed', message: 'Retry', initialize: () => pending.future,
+      title: 'Failed',
+      message: 'Retry',
+      initialize: () => pending.future,
       onInitialized: () => ready = true,
     ));
     await tester.tap(find.text('Coba lagi'));
