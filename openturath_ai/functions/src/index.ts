@@ -2148,7 +2148,6 @@ export const redeemCode = functions
           baseDate = currentExp;
         }
         const newExpiry = new Date(baseDate.getTime() + durationDays * 24 * 60 * 60 * 1000);
-        if (index === 0) primaryExpiry = newExpiry;
 
         const voucherGrantId = multiKey ? keyOf("voucher", rawCode, uid, entitlementKey) : keyOf("voucher", rawCode, uid);
         grantIds.push(voucherGrantId);
@@ -2163,11 +2162,15 @@ export const redeemCode = functions
         const paidActive = currentEnt && currentEnt.status === "active" && currentExp && currentExp > redeemedAt &&
           currentEnt.plan !== "trial" && currentEnt.plan !== "voucher_access" &&
           currentEnt.payment_status && currentEnt.payment_status !== "none";
+        // Hibah trial tetap berdurasi sesuai kode; proyeksi akses berbayar
+        // tidak boleh dipendekkan oleh trial yang masa berlakunya lebih singkat.
+        const projectedExpiry = paidActive && isTrialVoucher && currentExp > newExpiry ? currentExp : newExpiry;
+        if (index === 0) primaryExpiry = projectedExpiry;
         updatedEntitlements[entitlementKey] = paidActive
           ? {
             ...currentEnt,
-            expiry: admin.firestore.Timestamp.fromDate(newExpiry),
-            voucher_extended: true,
+            expiry: admin.firestore.Timestamp.fromDate(projectedExpiry),
+            ...(!isTrialVoucher ? {voucher_extended: true} : {}),
             updated_at: admin.firestore.FieldValue.serverTimestamp(),
           }
           : {
@@ -2200,7 +2203,7 @@ export const redeemCode = functions
 
         // Hanya paket semua AI yang mengubah paket global.
         if (entitlementKey === "all_access") {
-          globalExpiry = newExpiry;
+          globalExpiry = projectedExpiry;
         }
       }
 
@@ -2218,7 +2221,7 @@ export const redeemCode = functions
         }
       }
       if (globalExpiry) {
-        userUpdate.plan = isTrialVoucher ? "trial" : "voucher_access";
+        userUpdate.plan = updatedEntitlements.all_access.plan;
         userUpdate.subscription_expiry = admin.firestore.Timestamp.fromDate(globalExpiry);
       }
 
