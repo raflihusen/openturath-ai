@@ -49,7 +49,7 @@ try {
       parentPid=123456; sha256=$hash; build=88; allowAdhocTest=$false} |
       ConvertTo-Json | Set-Content -LiteralPath $plan
     $failed=$false
-    try { & $helper -Plan $plan } catch { $failed=$true }
+    try { & $helper -Plan $plan } catch { $failed=$true; Write-Output ("Observed ${mode}: " + $_.Exception.Message) }
     $actual=(Get-Content -LiteralPath (Join-Path $script:caseTarget 'openturath_ai.exe') -Raw).Trim()
     Assert ($failed -eq ($mode -ne 'success')) "${mode}: incorrect success status"
     Assert ($actual -eq $(if($mode -eq 'success'){'new'}else{'old'})) "${mode}: application was not preserved/replaced correctly"
