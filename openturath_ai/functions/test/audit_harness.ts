@@ -165,7 +165,7 @@ export function loadBackend(root = process.cwd()) {
     'getEntitlementAccess','processSuccessfulPayment','dokuWebhook','getDokuConfig','notifySubscriptionServer',
     'onUserCreate','dailyRevoke','processProvisioningOutbox','cleanupOrphanedDeletions','redeemCode','getAccessReadiness',
     'addCalendarMonthsClamped','generateDokuSignature',
-    'getAgentUrl','askAgent','checkPaymentStatus','syncAkalPurchases','akalWebhook','onClientErrorLogged','applyAkalPurchase','detectDurationMonths','resolvePlanPricing','createCheckout','reconcileMidtransPayments','applyMidtransRefund','monitorAccessHealth','reportAuthFailure','monitorPaidWithoutAccess','midtransLedgerMismatch','auditMidtransLedger',
+    'getAgentUrl','askAgent','checkPaymentStatus','syncAkalPurchases','akalWebhook','onClientErrorLogged','applyAkalPurchase','detectDurationMonths','resolvePlanPricing','createCheckout','reconcileMidtransPayments','applyMidtransRefund','monitorAccessHealth','reportAuthFailure','submitDiagnosticReport','redactDiagnosticText','safeDiagnosticPage','monitorPaidWithoutAccess','midtransLedgerMismatch','auditMidtransLedger',
   ].map(n=>n+':typeof '+n+' === "undefined" ? undefined : '+n).join(',') + ', onUserDeleted: typeof onUserDeleted === "undefined" ? undefined : onUserDeleted};';
   const exports: any = {};
   vm.runInNewContext(stripTypeScriptTypes(source), {require:(name: string)=>{if(!(name in deps))throw Error('Unexpected dependency '+name);return deps[name];}, exports, Buffer, process, URL, console:{log(){},warn(){},error(){}},Date, setTimeout,clearTimeout});

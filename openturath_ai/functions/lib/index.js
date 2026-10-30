@@ -1,10 +1,12 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.onClientErrorLogged = exports.reportAuthFailure = exports.auditMidtransLedger = exports.monitorPaidWithoutAccess = exports.AUTH_FAILURE_FIELD = exports.cleanupOrphanedDeletions = exports.onUserDeleted = exports.onProvisioningOutboxCreated = exports.processProvisioningOutbox = exports.dailyRevoke = exports.onUserCreate = exports.getAccessReadiness = exports.redeemCode = exports.checkPaymentStatus = exports.midtransWebhook = exports.dokuWebhook = exports.monitorAccessHealth = exports.reconcileMidtransPayments = exports.createCheckout = exports.askAgent = exports.recordQuestion = exports.getAgentUrl = exports.MODULE_PLANS = exports.PURCHASABLE_AGENTS = void 0;
+exports.onClientErrorLogged = exports.submitDiagnosticReport = exports.reportAuthFailure = exports.auditMidtransLedger = exports.monitorPaidWithoutAccess = exports.AUTH_FAILURE_FIELD = exports.cleanupOrphanedDeletions = exports.onUserDeleted = exports.onProvisioningOutboxCreated = exports.processProvisioningOutbox = exports.dailyRevoke = exports.onUserCreate = exports.getAccessReadiness = exports.redeemCode = exports.checkPaymentStatus = exports.midtransWebhook = exports.dokuWebhook = exports.monitorAccessHealth = exports.reconcileMidtransPayments = exports.createCheckout = exports.askAgent = exports.recordQuestion = exports.getAgentUrl = exports.MODULE_PLANS = exports.PURCHASABLE_AGENTS = void 0;
 exports.addCalendarMonthsClamped = addCalendarMonthsClamped;
 exports.deviceRedemptionFailure = deviceRedemptionFailure;
 exports.ledgerScopesReady = ledgerScopesReady;
 exports.midtransLedgerMismatch = midtransLedgerMismatch;
+exports.redactDiagnosticText = redactDiagnosticText;
+exports.safeDiagnosticPage = safeDiagnosticPage;
 const functions = require("firebase-functions");
 const admin = require("firebase-admin");
 const axios_1 = require("axios");
@@ -2952,6 +2954,81 @@ exports.reportAuthFailure = functions
         await sendTelegramNotification(`🔐 <b>[GAGAL LOGIN]</b> ${esc(fields.platform)} • tahap <code>${esc(fields.stage)}</code> • kode <code>${esc(fields.code)}</code> • ${count}× hari ini`, "alert");
     }
     res.status(204).send("");
+});
+// ================================================================
+// LAPORAN DIAGNOSTIK RINCI (tombol "Kirim laporan" pada layar galat). Bisa
+// dipakai sebelum login. Tanpa teks bebas dari pengguna; semua nilai disaring
+// pola tetap, dan jejak langkah disamarkan di server (token, cookie, email).
+// Pengguna menerima kode rujukan pendek untuk disampaikan ke pemilik.
+// ================================================================
+function redactDiagnosticText(input, max = 200) {
+    let t = String(input !== null && input !== void 0 ? input : "").slice(0, max * 2);
+    t = t.replace(/bearer\s+[a-zA-Z0-9_\-.]+/gi, "Bearer [REDACTED]");
+    t = t.replace(/(password|secret|apiKey|api_key|token|access_token|refreshToken)["':\s=]+[^,\s\n}]+/gi, "$1: [REDACTED]");
+    t = t.replace(/(SID|HSID|SSID|APISID|SAPISID|__Secure-[A-Za-z0-9]+)=[^;\s]+/gi, "$1=[REDACTED]");
+    t = t.replace(/[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/g, "[EMAIL]");
+    return t.slice(0, max);
+}
+function safeDiagnosticPage(input) {
+    try {
+        const u = new URL(String(input !== null && input !== void 0 ? input : ""));
+        if (u.protocol !== "https:" && u.protocol !== "http:")
+            return "unknown";
+        return `${u.protocol}//${u.host}${u.pathname}`.slice(0, 200);
+    }
+    catch (_) {
+        return "unknown";
+    }
+}
+exports.submitDiagnosticReport = functions
+    .runWith({ serviceAccount: "open-turath@appspot.gserviceaccount.com", timeoutSeconds: 30, maxInstances: 5 })
+    .https.onRequest(async (req, res) => {
+    var _a;
+    if (req.method !== "POST") {
+        res.status(405).send("Method Not Allowed");
+        return;
+    }
+    const body = typeof req.body === "object" && req.body ? req.body : {};
+    const fields = {};
+    for (const k of ["platform", "stage", "code", "category", "appVersion"]) {
+        const v = String((_a = body[k]) !== null && _a !== void 0 ? _a : "").trim();
+        fields[k] = exports.AUTH_FAILURE_FIELD.test(v) ? v : "unknown";
+    }
+    const ipHash = crypto.createHash("sha256").update(String(req.ip || "")).digest("hex").slice(0, 24);
+    try {
+        await enforceRateLimit(`diagrep_${ipHash}`, 5, 3600, "Terlalu banyak laporan.");
+    }
+    catch (_) {
+        res.status(429).send("Too Many Requests");
+        return;
+    }
+    const crumbs = (Array.isArray(body.breadcrumbs) ? body.breadcrumbs : []).slice(-20).map((c) => {
+        var _a;
+        return ({
+            message: redactDiagnosticText(c === null || c === void 0 ? void 0 : c.message, 200),
+            category: exports.AUTH_FAILURE_FIELD.test(String((_a = c === null || c === void 0 ? void 0 : c.category) !== null && _a !== void 0 ? _a : "")) ? String(c.category) : "unknown",
+        });
+    });
+    const flags = {};
+    const rawFlags = typeof body.flags === "object" && body.flags ? body.flags : {};
+    for (const k of Object.keys(rawFlags).slice(0, 12)) {
+        if (exports.AUTH_FAILURE_FIELD.test(k) && typeof rawFlags[k] === "boolean")
+            flags[k] = rawFlags[k];
+    }
+    const ref = `OT-${crypto.randomBytes(3).toString("hex").toUpperCase()}`;
+    await db.collection("diagnostic_reports").doc(ref).set(Object.assign(Object.assign({}, fields), { page: safeDiagnosticPage(body.page), flags, breadcrumbs: crumbs, created_at: admin.firestore.FieldValue.serverTimestamp() }));
+    let notify = true;
+    try {
+        await enforceRateLimit("diagrep_alert_global", 20, 900, "limited");
+    }
+    catch (_) {
+        notify = false;
+    }
+    if (notify) {
+        await sendTelegramNotification(`📋 <b>[LAPORAN PENGGUNA]</b> <code>${esc(ref)}</code>\n` +
+            `${esc(fields.platform)} • v${esc(fields.appVersion)} • tahap <code>${esc(fields.stage)}</code> • kode <code>${esc(fields.code)}</code>`, "alert");
+    }
+    res.status(200).send({ ref });
 });
 // ================================================================
 // TELEMETRY CLOUD FUNCTION: Forward critical errors to Telegram

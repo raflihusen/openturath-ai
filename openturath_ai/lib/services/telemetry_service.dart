@@ -32,6 +32,10 @@ class TelemetryService {
 
   bool _initialized = false;
 
+  /// Salinan baca-saja jejak langkah terakhir, dipakai laporan diagnostik.
+  List<Map<String, dynamic>> get recentBreadcrumbs =>
+      List<Map<String, dynamic>>.unmodifiable(_breadcrumbs);
+
   /// Inisialisasi global unhandled error handlers
   void init() {
     if (_initialized) return;

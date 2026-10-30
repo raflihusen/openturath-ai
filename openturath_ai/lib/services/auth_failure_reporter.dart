@@ -29,6 +29,24 @@ class AuthFailureReporter {
         'appVersion': appVersion,
       };
 
+  static final Set<String> _sentThisRun = <String>{};
+
+  /// Seperti [report], tetapi hanya sekali per jalannya aplikasi untuk
+  /// kombinasi tahap+kode yang sama, supaya satu halaman yang gagal berulang
+  /// tidak menghabiskan batas laju server (20 laporan per jam per IP).
+  static void reportOnce({
+    required String stage,
+    required String code,
+    String category = 'webview',
+    Future<http.Response> Function(Uri, Map<String, String>)? sender,
+  }) {
+    if (!_sentThisRun.add('${sanitize(stage)}|${sanitize(code)}')) return;
+    report(stage: stage, code: code, category: category, sender: sender);
+  }
+
+  @visibleForTesting
+  static void resetOnceForTest() => _sentThisRun.clear();
+
   /// Fire-and-forget: galat jaringan atau server tidak boleh mengganggu login.
   static void report({
     required String stage,
