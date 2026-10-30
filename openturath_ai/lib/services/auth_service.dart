@@ -54,12 +54,21 @@ class AuthService {
   static final _logoutIntent = Expando<bool>('explicit Firebase logout');
   static final _authViewChanges = StreamController<FirebaseAuth>.broadcast();
   static const explicitLogoutKey = 'explicit_logout_v1';
+  static final _interactiveDepth = Expando<int>('interactive sign-in depth');
 
   bool get _logoutRequested => _logoutIntent[_auth] == true;
 
   void _setLogoutRequested(bool requested) {
     _logoutIntent[_auth] = requested;
     _authViewChanges.add(_auth);
+  }
+
+  Future<void> _waitForAuthMutationDrain() async {
+    try {
+      await _authMutationTail.timeout(_authenticationTimeout);
+    } on TimeoutException {
+      throw FirebaseAuthException(code: 'auth-operation-in-progress');
+    }
   }
 
   /// Reserve the tail synchronously, before awaiting an earlier SDK request.
@@ -172,7 +181,6 @@ class AuthService {
     try {
       return await _restoreAuthenticatedSession(
         () => active && generation == _authActionGeneration,
-        generation,
       ).timeout(
         _restoreTimeout,
         onTimeout: () {
@@ -187,11 +195,11 @@ class AuthService {
 
   Future<UserModel?> _restoreAuthenticatedSession(
     bool Function() active,
-    int generation,
   ) async {
+    if ((_interactiveDepth[_auth] ?? 0) > 0) return null;
     final prefs = await SharedPreferences.getInstance()
         .timeout(const Duration(seconds: 2));
-    if (!active()) return null;
+    if (!active() || (_interactiveDepth[_auth] ?? 0) > 0) return null;
     if (_logoutRequested || prefs.getBool(explicitLogoutKey) == true) {
       _setLogoutRequested(true);
       // Complete the user's persisted Log Out intent after a process restart.
@@ -255,11 +263,12 @@ class AuthService {
   Future<UserModel?> signInWithGoogle() async {
     final generation = ++_authActionGeneration;
     var active = true;
+    _interactiveDepth[_auth] = (_interactiveDepth[_auth] ?? 0) + 1;
     bool current() => active && generation == _authActionGeneration;
     var stage = 'google-authorize';
     try {
       // An older native request must settle before a new account picker opens.
-      await _authMutationTail.timeout(_authenticationTimeout);
+      await _waitForAuthMutationDrain();
       if (!current()) return null;
       User? firebaseUser;
 
@@ -291,7 +300,11 @@ class AuthService {
           ).timeout(_authenticationTimeout);
           firebaseUser = userCredential?.user;
         } on FirebaseAuthException catch (e) {
-          if (e.code == 'keychain-error' && _auth.currentUser != null) {
+          if (e.code == 'keychain-error' &&
+              _auth.currentUser != null &&
+              googleUser.email.trim().isNotEmpty &&
+              (_auth.currentUser!.email ?? '').trim().toLowerCase() ==
+                  googleUser.email.trim().toLowerCase()) {
             firebaseUser = _auth.currentUser;
           } else {
             rethrow;
@@ -392,6 +405,7 @@ class AuthService {
       rethrow;
     } finally {
       active = false;
+      _interactiveDepth[_auth] = (_interactiveDepth[_auth] ?? 1) - 1;
     }
   }
 
@@ -572,6 +586,7 @@ class AuthService {
     _setLogoutRequested(true);
     final currentUid = _auth.currentUser?.uid;
     final localCleanup = Completer<void>();
+    unawaited(localCleanup.future.then((_) {}, onError: (Object _, StackTrace __) {}));
     // Reserve this mandatory cleanup before any asynchronous work. A later
     // login cannot dispatch until both the earlier request and this Log Out end.
     final drained = _queueAuthMutation<void>(() async {
@@ -583,7 +598,8 @@ class AuthService {
     }, isCurrent: () => true);
     // End the SDK session immediately as well: the mandatory queued sign-out
     // handles an older credential that completes after this immediate one.
-    final immediate = Future<void>.sync(() => _auth.signOut());
+    final immediate = Future<void>.sync(() => _auth.signOut())
+        .catchError((Object _) {});
     localCleanup.complete(() async {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setBool(explicitLogoutKey, true);
