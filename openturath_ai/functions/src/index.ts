@@ -922,7 +922,8 @@ export const createCheckout = functions
     const isRevisionValid = pricingRevision === pricing.revision || pricingRevision === "harga-v92-2026-10-14";
     if (expectedAmount !== undefined &&
         (!Number.isSafeInteger(expectedAmount) || expectedAmount !== pricing.amount || !isRevisionValid)) {
-      throw new functions.https.HttpsError("failed-precondition", "Harga penawaran telah berubah. Muat ulang aplikasi.");
+      throw new functions.https.HttpsError("failed-precondition", "Harga penawaran telah berubah. Periksa harga terbaru sebelum membayar.",
+        {reason: "price_changed", amount: pricing.amount, pricingRevision: pricing.revision});
     }
     // Each checkout writes two documents and calls the gateway.
     await enforceRateLimit(
@@ -1807,7 +1808,7 @@ export const checkPaymentStatus = functions
         console.error("[checkPaymentStatus] Error checking Midtrans status:", err.response?.data || err.message);
         return {
           success: false,
-          status: "PENDING",
+          status: "ERROR",
           message: "Status pembayaran belum dapat diperiksa. Silakan coba lagi.",
         };
       }
@@ -1854,7 +1855,7 @@ export const checkPaymentStatus = functions
         console.error("[checkPaymentStatus] Error checking DOKU status:", err.response?.data || err.message);
         return {
           success: false,
-          status: "PENDING",
+          status: "ERROR",
           message: "Status pembayaran belum dapat diperiksa. Silakan coba lagi.",
         };
       }
