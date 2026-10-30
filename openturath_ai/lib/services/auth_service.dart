@@ -586,7 +586,8 @@ class AuthService {
     _setLogoutRequested(true);
     final currentUid = _auth.currentUser?.uid;
     final localCleanup = Completer<void>();
-    unawaited(localCleanup.future.then((_) {}, onError: (Object _, StackTrace __) {}));
+    unawaited(localCleanup.future
+        .then((_) {}, onError: (Object _, StackTrace __) {}));
     // Reserve this mandatory cleanup before any asynchronous work. A later
     // login cannot dispatch until both the earlier request and this Log Out end.
     final drained = _queueAuthMutation<void>(() async {
@@ -598,8 +599,8 @@ class AuthService {
     }, isCurrent: () => true);
     // End the SDK session immediately as well: the mandatory queued sign-out
     // handles an older credential that completes after this immediate one.
-    final immediate = Future<void>.sync(() => _auth.signOut())
-        .catchError((Object _) {});
+    final immediate =
+        Future<void>.sync(() => _auth.signOut()).catchError((Object _) {});
     localCleanup.complete(() async {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setBool(explicitLogoutKey, true);
