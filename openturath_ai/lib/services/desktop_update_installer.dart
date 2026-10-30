@@ -62,23 +62,35 @@ class DesktopUpdateInstaller {
     await _pruneConfirmedBackups(target, stage.path);
   }
 
-  static Future<void> _pruneConfirmedBackups(String target, String current) async {
+  static Future<void> _pruneConfirmedBackups(
+      String target, String current) async {
     try {
       final previous = <Directory>[];
       await for (final entry in Directory(p.dirname(target)).list()) {
-        if (entry is! Directory || entry.path == current ||
+        if (entry is! Directory ||
+            entry.path == current ||
             !p.basename(entry.path).startsWith('.ot-update')) continue;
         final status = File(p.join(entry.path, 'status'));
-        if (!await status.exists() || (await status.readAsString()).trim() != 'confirmed') continue;
+        if (!await status.exists() ||
+            (await status.readAsString()).trim() != 'confirmed') continue;
         final macTarget = File(p.join(entry.path, 'target'));
         final windowsPlan = File(p.join(entry.path, 'plan.json'));
-        final String? recorded = await macTarget.exists() ? await macTarget.readAsString() :
-            await windowsPlan.exists() ? (jsonDecode(await windowsPlan.readAsString()) as Map<String, dynamic>)['target'] as String? : null;
+        final String? recorded = await macTarget.exists()
+            ? await macTarget.readAsString()
+            : await windowsPlan.exists()
+                ? (jsonDecode(await windowsPlan.readAsString())
+                    as Map<String, dynamic>)['target'] as String?
+                : null;
         if (recorded != null && p.equals(recorded, target)) previous.add(entry);
       }
-      previous.sort((a, b) => b.statSync().modified.compareTo(a.statSync().modified));
-      for (final old in previous.skip(1)) { await old.delete(recursive: true); }
-    } catch (_) { /* Preserve backups if their ownership cannot be established. */ }
+      previous.sort(
+          (a, b) => b.statSync().modified.compareTo(a.statSync().modified));
+      for (final old in previous.skip(1)) {
+        await old.delete(recursive: true);
+      }
+    } catch (_) {
+      /* Preserve backups if their ownership cannot be established. */
+    }
   }
 
   Future<String> handoff(

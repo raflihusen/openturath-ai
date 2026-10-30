@@ -238,22 +238,28 @@ void main() {
     expect(hits, 0);
     updater.dispose();
   });
-  test('cache keeps a predecessor and pending package without growing indefinitely', () async {
+  test(
+      'cache keeps a predecessor and pending package without growing indefinitely',
+      () async {
     final files = <File>[];
     for (var build = 88; build <= 91; build++) {
-      final file = await store.obtain(url: Uri.parse('https://openturath.web.app/update.apk'),
-        build: build, platform: 'android', edition: 'standard', hash: hash);
+      final file = await store.obtain(
+          url: Uri.parse('https://openturath.web.app/update.apk'),
+          build: build,
+          platform: 'android',
+          edition: 'standard',
+          hash: hash);
       files.add(file);
       await file.setLastModified(DateTime(2020, 1, build - 87));
       if (build == 89) {
-        await File(p.join(directory.path, 'pending_install.json')).writeAsString(
-          '{"package":${'"${files.first.path}"'}}');
+        await File(p.join(directory.path, 'pending_install.json'))
+            .writeAsString('{"package":${'"${files.first.path}"'}}');
       }
     }
-    expect(await files.first.exists(), true, reason: 'Pending installer is protected');
+    expect(await files.first.exists(), true,
+        reason: 'Pending installer is protected');
     expect(await files[1].exists(), false, reason: 'Old cache is reclaimed');
     expect(await files[2].exists(), true);
     expect(await files.last.exists(), true);
   });
-
 }

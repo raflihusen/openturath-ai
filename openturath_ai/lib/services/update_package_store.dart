@@ -36,20 +36,27 @@ class UpdatePackageStore {
       String? pending;
       final receipt = File(p.join(directory.path, 'pending_install.json'));
       if (await receipt.exists()) {
-        pending = (jsonDecode(await receipt.readAsString()) as Map<String, dynamic>)['package'] as String?;
+        pending = (jsonDecode(await receipt.readAsString())
+            as Map<String, dynamic>)['package'] as String?;
       }
       final candidates = <File>[];
       await for (final entry in directory.list()) {
-        if (entry is File && p.basename(entry.path).startsWith(prefix) &&
-            RegExp(r'_[0-9]+_[a-f0-9]{64}\.(apk|dmg|exe)$').hasMatch(entry.path) &&
-            entry.path != current.path && entry.path != pending) candidates.add(entry);
+        if (entry is File &&
+            p.basename(entry.path).startsWith(prefix) &&
+            RegExp(r'_[0-9]+_[a-f0-9]{64}\.(apk|dmg|exe)$')
+                .hasMatch(entry.path) &&
+            entry.path != current.path &&
+            entry.path != pending) candidates.add(entry);
       }
-      candidates.sort((a, b) => b.lastModifiedSync().compareTo(a.lastModifiedSync()));
+      candidates
+          .sort((a, b) => b.lastModifiedSync().compareTo(a.lastModifiedSync()));
       // Keep the current package, one predecessor, and any pending installer.
       for (final file in candidates.skip(1)) {
-        try { await file.delete(); } on FileSystemException { /* May be in use. */ }
+        try {
+          await file.delete();
+        } on FileSystemException {/* May be in use. */}
       }
-    } catch (_) { /* Cleanup must never invalidate a verified download. */ }
+    } catch (_) {/* Cleanup must never invalidate a verified download. */}
   }
 
   Future<File> obtain(
