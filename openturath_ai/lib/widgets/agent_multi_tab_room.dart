@@ -482,10 +482,10 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                     if (!mounted) return;
                     if (cleared) {
                       AppSnackBar.success(
-                          context, Loc.tr('chatHistoryCleared'));
+                          this.context, Loc.tr('chatHistoryCleared'));
                     } else {
                       AppSnackBar.error(
-                          context, Loc.tr('chatHistoryClearFailed'));
+                          this.context, Loc.tr('chatHistoryClearFailed'));
                     }
                   },
                   child: Text(Loc.tr('delete'),

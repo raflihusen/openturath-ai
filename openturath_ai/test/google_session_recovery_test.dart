@@ -78,8 +78,7 @@ class _Controller extends PlatformInAppWebViewController {
 }
 
 class _WebView extends PlatformInAppWebViewWidget {
-  _WebView(PlatformInAppWebViewWidgetCreationParams params)
-      : super.implementation(params);
+  _WebView(super.params) : super.implementation();
 
   @override
   Widget build(BuildContext context) => const SizedBox();

@@ -216,9 +216,10 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
             'plan': offer.plan
           },
         );
-        if (mounted)
+        if (mounted) {
           setState(() => _checkoutError = Loc.tr(
               refreshed ? 'priceChangedReview' : 'priceRefreshUnavailable'));
+        }
         return;
       }
       final paymentUrl = result['redirectUrl'];
@@ -251,9 +252,10 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
           plan: offer.plan,
           details: details,
         );
-        if (mounted)
+        if (mounted) {
           setState(() => _checkoutError = Loc.tr(
               refreshed ? 'priceChangedReview' : 'priceRefreshUnavailable'));
+        }
         return;
       }
       if (mounted) {

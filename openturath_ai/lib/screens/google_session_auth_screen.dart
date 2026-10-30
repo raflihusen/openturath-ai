@@ -138,8 +138,9 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
   /// Menyelaraskan status pelindung visual (Visual Shield) dengan domain navigasi WebView
   void _handleUrlNavigation(InAppWebViewController controller, WebUri? url) {
     if (!identical(controller.platform, _webController?.platform)) return;
-    if (!mounted || url == null || _verificationFailed || _connectionCancelled)
+    if (!mounted || url == null || _verificationFailed || _connectionCancelled) {
       return;
+    }
     final uri = url.uriValue;
     final isNotebook = NotebookNavigation.notebook(uri);
     final isAuthFlow = NotebookNavigation.signInFlow(uri);
@@ -314,7 +315,9 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
         _isCancelDialogOpen ||
         _connectionCancelled ||
         _verificationFailed ||
-        _isCheckingAccount) return;
+        _isCheckingAccount) {
+      return;
+    }
     // Mutex dipasang sebelum `await` pertama. Sebelumnya dipasang sesudah
     // `getUrl()`, sehingga onLoadStop dan onUpdateVisitedHistory yang datang
     // nyaris bersamaan sama-sama lolos dan menjalankan dua siklus polling.
@@ -401,7 +404,9 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
     final epoch = _connectionEpoch;
     if (!_isCurrentVerification(epoch) ||
         _isSessionReady ||
-        _isMismatchDialogOpen) return;
+        _isMismatchDialogOpen) {
+      return;
+    }
     debugPrint(
         '[GoogleSessionAuth] Email Google tidak terdeteksi setelah $_maxVerificationAttempts percobaan, memakai fallback.');
 
@@ -671,7 +676,9 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
         _isSessionReady ||
         _isCompletingSession ||
         _isCancelDialogOpen ||
-        _connectionCancelled) return;
+        _connectionCancelled) {
+      return;
+    }
     if (_verificationFailed) {
       _retryVerification();
       return;
@@ -744,7 +751,9 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
     final epoch = _connectionEpoch;
     if (!_isCurrentVerification(epoch) ||
         _isSessionReady ||
-        _isCompletingSession) return;
+        _isCompletingSession) {
+      return;
+    }
     _isCompletingSession = true;
     try {
       final controller = _webController;
@@ -787,7 +796,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
       }
       setState(() => _isSessionReady = true);
       await Future.delayed(const Duration(milliseconds: 600));
-      if (!_isCurrentVerification(epoch)) return;
+      if (!mounted || !_isCurrentVerification(epoch)) return;
       if (Navigator.canPop(context)) {
         Navigator.pop(context, true);
       } else {

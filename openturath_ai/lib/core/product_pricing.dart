@@ -148,13 +148,17 @@ class ProductPricingService {
     if (details is! Map ||
         details['reason'] != 'price_changed' ||
         details['agentId'] != agentId ||
-        details['plan'] != plan) return configurationLoaded;
+        details['plan'] != plan) {
+      return configurationLoaded;
+    }
     final amount = details['amount'];
     final revision = details['pricingRevision'];
     if (amount is! int ||
         amount <= 0 ||
         revision is! String ||
-        revision.isEmpty) return configurationLoaded;
+        revision.isEmpty) {
+      return configurationLoaded;
+    }
     final offers = ProductPricing.forAgent(agentId);
     if (!offers.any((offer) => offer.plan == plan)) return false;
     final updated = <String, dynamic>{
