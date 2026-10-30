@@ -140,7 +140,8 @@ class ProductPricingService {
   }) async {
     var configurationLoaded = false;
     try {
-      configurationLoaded = await (reload ?? () => syncPricing(forceRefresh: true))();
+      configurationLoaded =
+          await (reload ?? () => syncPricing(forceRefresh: true))();
     } catch (_) {
       // Detail harga server tetap tersedia meski konfigurasi gagal dibaca.
     }
@@ -187,7 +188,8 @@ class ProductPricingService {
       final doc = await db
           .collection('app_config')
           .doc('pricing')
-          .get(GetOptions(source: forceRefresh ? Source.server : Source.serverAndCache))
+          .get(GetOptions(
+              source: forceRefresh ? Source.server : Source.serverAndCache))
           .timeout(const Duration(seconds: 3));
 
       if (doc.exists && doc.data() != null) {

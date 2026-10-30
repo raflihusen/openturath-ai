@@ -217,7 +217,8 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
           },
         );
         if (mounted)
-          setState(() => _checkoutError = Loc.tr(refreshed ? 'priceChangedReview' : 'priceRefreshUnavailable'));
+          setState(() => _checkoutError = Loc.tr(
+              refreshed ? 'priceChangedReview' : 'priceRefreshUnavailable'));
         return;
       }
       final paymentUrl = result['redirectUrl'];
@@ -251,7 +252,8 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
           details: details,
         );
         if (mounted)
-          setState(() => _checkoutError = Loc.tr(refreshed ? 'priceChangedReview' : 'priceRefreshUnavailable'));
+          setState(() => _checkoutError = Loc.tr(
+              refreshed ? 'priceChangedReview' : 'priceRefreshUnavailable'));
         return;
       }
       if (mounted) {
