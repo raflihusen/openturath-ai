@@ -15,7 +15,8 @@ const _email = 'session-reader@example.invalid';
 final _notebookUrl = WebUri('https://notebook.google.com/');
 
 class _Cookies extends PlatformCookieManager {
-  _Cookies() : super.implementation(const PlatformCookieManagerCreationParams());
+  _Cookies()
+      : super.implementation(const PlatformCookieManagerCreationParams());
 
   List<Cookie> cookies = [];
   bool failRead = false;
@@ -145,7 +146,8 @@ void main() {
           body: TextButton(
             onPressed: () async {
               final result = await Navigator.of(context).push<bool>(
-                MaterialPageRoute(builder: (_) => const GoogleSessionAuthScreen()),
+                MaterialPageRoute(
+                    builder: (_) => const GoogleSessionAuthScreen()),
               );
               routeResults.add(result);
             },
@@ -157,8 +159,8 @@ void main() {
     await tester.tap(find.text('Open Google connection'));
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 350));
-    final controller = InAppWebViewController.fromPlatform(
-        platform: _Controller());
+    final controller =
+        InAppWebViewController.fromPlatform(platform: _Controller());
     platform.lastView!.params.onWebViewCreated!(controller);
     return controller;
   }
