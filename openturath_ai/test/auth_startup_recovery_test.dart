@@ -95,6 +95,8 @@ class DashboardAuth extends AuthService {
   Stream<UserModel?> get userStream => events.stream;
   @override
   Future<UserModel?> getCurrentUserModel() async => cached;
+  @override
+  Future<UserModel?> restoreSession() async => cached;
 }
 
 void main() {
@@ -251,8 +253,8 @@ void main() {
       'splash rejects a restored cached profile when auth remains absent',
       (tester) async {
     SharedPreferences.setMockInitialValues({
-      'openturath_language_chosen': true,
-      'openturath_onboarding_seen': true,
+      'language_chosen_v1': true,
+      'onboarding_seen_v1': true,
     });
     final auth = DashboardAuth()..cached = profile('stale');
     await tester.pumpWidget(MaterialApp(
