@@ -129,6 +129,36 @@ abstract final class ProductPricing {
 class ProductPricingService {
   static DateTime? _lastFetch;
 
+  /// Segarkan penawaran setelah server menolak harga lama. Detail harga dari
+  /// callable terautentikasi tetap dapat dipakai bila pembacaan konfigurasi gagal.
+  /// Ini hanya memperbarui tampilan; checkout tetap memerlukan ketukan baru.
+  static Future<void> refreshCheckoutOffer({
+    required String agentId,
+    required String plan,
+    required dynamic details,
+    Future<void> Function()? reload,
+  }) async {
+    await (reload ?? () => syncPricing(forceRefresh: true))();
+    if (details is! Map || details['reason'] != 'price_changed') return;
+    final amount = details['amount'];
+    final revision = details['pricingRevision'];
+    if (amount is! int || amount <= 0 || revision is! String || revision.isEmpty) return;
+    final offers = ProductPricing.forAgent(agentId);
+    if (!offers.any((offer) => offer.plan == plan)) return;
+    final updated = <String, dynamic>{
+      for (final offer in offers)
+        offer.plan: {
+          'amount': offer.plan == plan ? amount : offer.amount,
+          'regularAmount': offer.regularAmount,
+        },
+    };
+    ProductPricing.updateOffers(
+      revision: revision,
+      tahawwulatMap: agentId.startsWith('fiqh_tahawwulat') ? updated : null,
+      specialistsMap: agentId.startsWith('fiqh_tahawwulat') ? null : updated,
+    );
+  }
+
   static Future<void> syncPricing(
       {bool forceRefresh = false, FirebaseFirestore? firestore}) async {
     final now = DateTime.now();
