@@ -46,13 +46,13 @@ const _notebookCleanupScript = r'''
     nodes.forEach(node => {
       const role = roleOf(node);
       const descendants = nodes.filter(other => other !== node && node.contains(other));
-      // Mixed turn wrappers contain both question and answer. Same-role nested
-      // wrappers with identical content are represented once by their outer node.
+      // Mixed turn wrappers contain both question and answer. Nested wrappers
+      // containing only one role are represented once by their outer node.
       if (descendants.some(other => roleOf(other) !== role)) return;
       const value = answerText(node);
       if (!value) return;
       if (nodes.some(other => other !== node && other.contains(node) &&
-          roleOf(other) === role && answerText(other) === value &&
+          roleOf(other) === role &&
           !nodes.some(child => child !== other && other.contains(child) && roleOf(child) !== role))) return;
       entries.push({role, value});
     });
