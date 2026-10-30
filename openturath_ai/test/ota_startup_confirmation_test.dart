@@ -56,4 +56,21 @@ void main() {
     await confirm();
     expect(await receipt.exists(), true);
   });
+  test('old confirmed backups are bounded and another application is untouched', () async {
+    final old = <Directory>[];
+    for (var i = 0; i < 3; i++) {
+      final folder = await Directory(p.join(root.path, '.ot-update-old$i')).create();
+      await File(p.join(folder.path, 'target')).writeAsString(target.path);
+      await File(p.join(folder.path, 'status')).writeAsString('confirmed');
+      old.add(folder);
+    }
+    final foreign = await Directory(p.join(root.path, '.ot-update-foreign')).create();
+    await File(p.join(foreign.path, 'target')).writeAsString(p.join(root.path, 'Other.app'));
+    await File(p.join(foreign.path, 'status')).writeAsString('confirmed');
+    await confirm();
+    expect(old.where((d) => d.existsSync()).length, 1);
+    expect(await foreign.exists(), true);
+    expect(await stage.exists(), true);
+  });
+
 }
