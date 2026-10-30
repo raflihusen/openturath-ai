@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'services/desktop_update_installer.dart';
 import 'core/app_platform.dart';
 import 'screens/onboarding_screen.dart';

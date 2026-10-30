@@ -1,24 +1,17 @@
-import 'package:path/path.dart' as p;
-import '../core/app_platform.dart';
-import '../core/app_config.dart';
-import '../core/platform_release.dart';
 import 'dart:async';
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:crypto/crypto.dart';
 import 'package:flutter/foundation.dart';
-import 'package:open_filex/open_filex.dart';
+import 'package:flutter/services.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:path/path.dart' as p;
+import '../core/app_config.dart';
+import '../core/platform_release.dart';
+import '../core/localization.dart';
+import 'desktop_update_installer.dart';
+import 'update_package_store.dart';
 
-enum UpdateStatus {
-  idle,
-  checking,
-  downloading,
-  readyToInstall,
-  error,
-}
+enum UpdateStatus { idle, checking, downloading, readyToInstall, installing, error }
 
 class UpdateInfo {
   final String latestVersion;
@@ -28,6 +21,7 @@ class UpdateInfo {
   final String? sha256Hash;
   final bool isDownloaded;
   final String? localFilePath;
+  final int installerProtocol;
   final double downloadProgress; // 0.0 to 1.0
 
   const UpdateInfo({
@@ -36,6 +30,7 @@ class UpdateInfo {
     required this.apkUrl,
     required this.releaseNotes,
     this.sha256Hash,
+    this.installerProtocol = 0,
     this.isDownloaded = false,
     this.localFilePath,
     this.downloadProgress = 0.0,
@@ -52,6 +47,7 @@ class UpdateInfo {
     double? downloadProgress,
   }) {
     return UpdateInfo(
+      installerProtocol: installerProtocol,
       latestVersion: latestVersion ?? this.latestVersion,
       latestVersionCode: latestVersionCode ?? this.latestVersionCode,
       apkUrl: apkUrl ?? this.apkUrl,
@@ -64,371 +60,147 @@ class UpdateInfo {
   }
 }
 
-/// UpdateService: Background Auto-Downloader & Instant One-Click Installer
-/// - Mengunduh file APK di latar belakang secara diam-diam (silent download) di Android
-/// - Di macOS/Windows: Membuka laman unduh rilis desktop via browser eksternal
-/// - Dilengkapi mutex unduhan, sanitasi sink I/O, dan verifikasi integritas SHA-256
+/// All platforms download and verify a local package before offering installation.
 class UpdateService extends ChangeNotifier {
   static final UpdateService _instance = UpdateService._internal();
   factory UpdateService() => _instance;
   UpdateService._internal();
 
+  @visibleForTesting
+  UpdateService.test({required TargetPlatform platform,
+      required Future<int> Function() buildLoader,
+      required Future<Map<String, dynamic>?> Function() manifestLoader,
+      required UpdatePackageStore store,
+      required Future<void> Function(UpdateInfo) installer})
+      : _platformOverride = platform, _buildLoader = buildLoader,
+        _manifestLoader = manifestLoader, _store = store, _installer = installer;
+
+  TargetPlatform? _platformOverride;
+  TargetPlatform get platform => _platformOverride ?? defaultTargetPlatform;
+  bool get _desktop => platform == TargetPlatform.macOS || platform == TargetPlatform.windows;
+  Future<int> Function()? _buildLoader;
+  Future<Map<String, dynamic>?> Function()? _manifestLoader;
+  Future<void> Function(UpdateInfo)? _installer;
+  UpdatePackageStore? _store;
   UpdateStatus _status = UpdateStatus.idle;
   UpdateStatus get status => _status;
-
   UpdateInfo? _updateInfo;
   UpdateInfo? get updateInfo => _updateInfo;
-
-  bool get isUpdateReady {
-    if (_status != UpdateStatus.readyToInstall || _updateInfo == null) {
-      return false;
-    }
-    if (AppPlatform.isDesktop) {
-      // Desktop: siap membuka URL unduhan desktop
-      return true;
-    }
-    return _updateInfo!.isDownloaded && _updateInfo!.localFilePath != null;
-  }
-
+  String? _lastError;
+  String? get lastError => _lastError;
+  bool get isInstalling => _status == UpdateStatus.installing;
+  bool get isUpdateReady => _status == UpdateStatus.readyToInstall &&
+      _updateInfo?.isDownloaded == true && _updateInfo?.localFilePath != null;
   bool _isChecking = false;
-  bool _isDownloading = false;
   DateTime? _lastCheckedAt;
-
-  /// Jeda minimum antar pengecekan otomatis (mis. saat aplikasi kembali dibuka).
   static const recheckInterval = Duration(minutes: 30);
-
-  /// Perlu cek ulang? Tidak bila update sudah siap dipasang, atau baru dicek.
-  /// Pengecekan yang gagal tidak mengisi [last], jadi dicoba lagi pada kesempatan berikut.
   @visibleForTesting
-  static bool shouldRecheck({
-    required DateTime now,
-    required DateTime? last,
-    required bool ready,
-    Duration interval = recheckInterval,
-  }) {
-    if (ready) return false;
-    return last == null || now.difference(last) >= interval;
+  static bool shouldRecheck({required DateTime now, required DateTime? last,
+      required bool ready, Duration interval = recheckInterval}) =>
+      !ready && (last == null || now.difference(last) >= interval);
+
+  Future<UpdatePackageStore> _packageStore() async => _store ??= UpdatePackageStore(
+      await DesktopUpdateInstaller.updateDirectory(),
+      allowUrl: (url) => url.scheme == 'https' && url.userInfo.isEmpty &&
+          url.port == 443 && PlatformRelease.allowedHosts.contains(url.host));
+
+  Future<void> retry() async {
+    _lastCheckedAt = null;
+    await checkForUpdatesSilently();
   }
 
-  /// Hitung SHA-256 secara streaming tanpa memuat seluruh file 60MB ke memori RAM (F20)
-  static Future<String> _computeFileSha256(File file) async {
-    final digest = await sha256.bind(file.openRead()).first;
-    return digest.toString();
-  }
-
-  /// Memulai pengecekan versi dan unduhan otomatis di background
   Future<void> checkForUpdatesSilently() async {
-    if (kIsWeb ||
-        (!AppPlatform.isDesktop && !AppPlatform.isAndroid) ||
-        _isChecking ||
-        _isDownloading) {
-      return;
-    }
-    if (!shouldRecheck(
-        now: DateTime.now(), last: _lastCheckedAt, ready: isUpdateReady)) {
-      return;
-    }
+    if ((kIsWeb && _platformOverride == null) ||
+        (!_desktop && platform != TargetPlatform.android) || _isChecking || isInstalling ||
+        !shouldRecheck(now: DateTime.now(), last: _lastCheckedAt, ready: isUpdateReady)) return;
     _isChecking = true;
-
+    _lastError = null;
+    _status = UpdateStatus.checking;
+    notifyListeners();
     try {
-      _status = UpdateStatus.checking;
-      notifyListeners();
-
-      final packageInfo = await PackageInfo.fromPlatform();
-      final currentCode = int.tryParse(packageInfo.buildNumber) ?? 0;
-
-      // Ambil konfigurasi versi dari Firestore (collection: app_config, doc: version)
-      final doc = await FirebaseFirestore.instance
-          .collection('app_config')
-          .doc('version')
-          .get();
-
-      _lastCheckedAt = DateTime.now();
-
-      if (!doc.exists) {
-        _status = UpdateStatus.idle;
-        _isChecking = false;
-        notifyListeners();
-        return;
-      }
-
-      final data = doc.data()!;
-      const edition = AppConfig.isGuruEdition ? 'guru' : 'standard';
-      final release =
-          PlatformRelease.parse(data, defaultTargetPlatform, edition: edition);
-      if (release == null) {
+      final current = await (_buildLoader?.call() ?? PackageInfo.fromPlatform()
+          .then((info) => int.tryParse(info.buildNumber) ?? 0)).timeout(const Duration(seconds: 15));
+      final data = await (_manifestLoader?.call() ?? FirebaseFirestore.instance
+          .collection('app_config').doc('version').get().then((doc) => doc.data()))
+          .timeout(const Duration(seconds: 20));
+      final release = data == null ? null : PlatformRelease.parse(data, platform,
+          edition: AppConfig.isGuruEdition ? 'guru' : 'standard');
+      if (release == null || release.build <= current) {
         _updateInfo = null;
         _status = UpdateStatus.idle;
-        notifyListeners();
-        return;
-      }
-      final latestCode = release.build;
-      final latestVersion = release.version;
-      final apkUrl = release.url.toString();
-      final releaseNotes = release.notes;
-      final sha256Hash = release.sha256;
-
-      // Jika versi di server lebih baru dari versi yang sedang terpasang
-      if (latestCode > currentCode && apkUrl.isNotEmpty) {
-        _updateInfo = UpdateInfo(
-          latestVersion: latestVersion,
-          latestVersionCode: latestCode,
-          apkUrl: apkUrl,
-          releaseNotes: releaseNotes,
-          sha256Hash: sha256Hash,
-        );
-
-        if (AppPlatform.isDesktop) {
-          // macOS / Windows Desktop: tampilkan banner siap update (buka URL)
-          _updateInfo = _updateInfo!.copyWith(
-            isDownloaded: false,
-            downloadProgress: 0.0,
-          );
-          _status = UpdateStatus.readyToInstall;
-          notifyListeners();
-          return;
-        }
-
-        // Android installs a downloaded file, so the manifest must name the
-        // exact binary. A release without a valid SHA-256 is never fetched.
-        if (sha256Hash == null || sha256Hash.isEmpty) {
-          debugPrint(
-              '[UpdateService] Release manifest has no SHA-256; skipped.');
-          _updateInfo = null;
-          _status = UpdateStatus.idle;
-          notifyListeners();
-          return;
-        }
-
-        // Android: Periksa apakah APK versi tersebut SUDAH pernah terunduh di cache (F44)
-        final localFile = await _getLocalApkFile(latestCode, edition);
-        bool isCachedValid = false;
-        if (await localFile.exists() &&
-            (await localFile.length()) > 5 * 1024 * 1024) {
-          try {
-            final cachedSha = await _computeFileSha256(localFile);
-            if (cachedSha.toLowerCase() == sha256Hash.toLowerCase()) {
-              isCachedValid = true;
-            } else {
-              debugPrint(
-                  '[UpdateService] Cached APK hash mismatch; discarded.');
-              await localFile.delete();
-            }
-          } catch (e) {
-            debugPrint('[UpdateService] Error checking cached hash: $e');
-            try {
-              await localFile.delete();
-            } catch (_) {}
-          }
-        }
-
-        if (isCachedValid) {
-          _updateInfo = _updateInfo!.copyWith(
-            isDownloaded: true,
-            localFilePath: localFile.path,
-            downloadProgress: 1.0,
-          );
-          _status = UpdateStatus.readyToInstall;
-          notifyListeners();
-        } else {
-          // Belum terunduh atau cache tidak valid: Jalankan silent background download otomatis
-          _startSilentDownload(apkUrl, localFile, sha256Hash);
-        }
       } else {
-        _status = UpdateStatus.idle;
+        if (release.sha256 == null ||
+            (platform == TargetPlatform.windows && release.installerProtocol != 1)) {
+          throw const FormatException('Release is not compatible with verified installation');
+        }
+        final ext = p.extension(release.url.path).toLowerCase();
+        if (ext != (platform == TargetPlatform.macOS ? '.dmg' :
+            platform == TargetPlatform.windows ? '.exe' : '.apk')) {
+          throw const FormatException('Unsupported installer format');
+        }
+        _updateInfo = UpdateInfo(latestVersion: release.version,
+            latestVersionCode: release.build, apkUrl: release.url.toString(),
+            releaseNotes: release.notes, sha256Hash: release.sha256,
+            installerProtocol: release.installerProtocol);
+        _status = UpdateStatus.downloading;
         notifyListeners();
+        final file = await (await _packageStore()).obtain(url: release.url,
+            build: release.build, platform: platform.name,
+            edition: AppConfig.isGuruEdition ? 'guru' : 'standard', hash: release.sha256!,
+            onProgress: (progress) {
+              _updateInfo = _updateInfo?.copyWith(downloadProgress: progress);
+              notifyListeners();
+            });
+        _updateInfo = _updateInfo!.copyWith(isDownloaded: true,
+            localFilePath: file.path, downloadProgress: 1);
+        _status = UpdateStatus.readyToInstall;
       }
-    } catch (e) {
-      debugPrint('[UpdateService] Error checking updates: $e');
-      _status = UpdateStatus.idle;
-      notifyListeners();
+      _lastCheckedAt = DateTime.now();
+    } catch (error) {
+      debugPrint('[Updater] Check/download failed: ${error.runtimeType}');
+      _status = UpdateStatus.error;
+      _lastError = Loc.tr('updateDownloadFailed');
     } finally {
       _isChecking = false;
+      notifyListeners();
     }
   }
 
-  /// Unduh APK di latar belakang tanpa mengganggu user dengan mutex dan try-finally sink
-  Future<void> _startSilentDownload(
-      String url, File targetFile, String expectedSha256) async {
-    if (_isDownloading) return;
-    _isDownloading = true;
-    // Whole-download ceiling in addition to the per-chunk idle timeout.
-    final deadline = DateTime.now().add(const Duration(minutes: 20));
-    final tempFile = File('${targetFile.path}.tmp');
-
-    final client = HttpClient()
-      ..connectionTimeout = const Duration(seconds: 30);
-    try {
-      _status = UpdateStatus.downloading;
-      notifyListeners();
-
-      // Bersihkan file update lama sebelum mulai unduh baru
-      await _cleanOldUpdates(targetFile.path);
-
-      final request = await client.getUrl(Uri.parse(url));
-      final response =
-          await request.close().timeout(const Duration(seconds: 30));
-
-      if (response.statusCode != 200) {
-        _status = UpdateStatus.error;
-        notifyListeners();
-        return;
-      }
-
-      final contentLength = response.contentLength;
-      // Bound disk consumption even when the server omits Content-Length.
-      const maxDownloadBytes = 256 * 1024 * 1024;
-      if (contentLength > maxDownloadBytes) {
-        throw const HttpException('Update exceeds download size limit');
-      }
-      if (await tempFile.exists()) {
-        await tempFile.delete();
-      }
-
-      final sink = tempFile.openWrite();
-      int receivedBytes = 0;
-
-      try {
-        await for (final chunk
-            in response.timeout(const Duration(seconds: 30))) {
-          receivedBytes += chunk.length;
-          if (receivedBytes > maxDownloadBytes) {
-            throw const HttpException('Update exceeds download size limit');
-          }
-          if (DateTime.now().isAfter(deadline)) {
-            throw const HttpException('Update download exceeded time limit');
-          }
-          sink.add(chunk);
-          if (contentLength > 0) {
-            final progress = receivedBytes / contentLength;
-            _updateInfo = _updateInfo?.copyWith(downloadProgress: progress);
-          }
-        }
-        await sink.flush();
-      } finally {
-        await sink.close();
-      }
-
-      // Validasi integritas ukuran file
-      final tempLength = await tempFile.length();
-      if (tempLength < 5 * 1024 * 1024 ||
-          (contentLength > 0 && tempLength < contentLength)) {
-        debugPrint('[UpdateService] Unduhan tidak lengkap ($tempLength bytes)');
-        if (await tempFile.exists()) await tempFile.delete();
-        _status = UpdateStatus.error;
-        notifyListeners();
-        return;
-      }
-
-      // SHA-256 wajib cocok dengan manifest app_config/version (F20)
-      final calculatedSha256 = await _computeFileSha256(tempFile);
-      if (calculatedSha256.toLowerCase() != expectedSha256.toLowerCase()) {
-        debugPrint(
-            '[UpdateService] SHA256 checksum mismatch; download discarded.');
-        if (await tempFile.exists()) await tempFile.delete();
-        _status = UpdateStatus.error;
-        notifyListeners();
-        return;
-      }
-
-      // Rename dari temp ke final APK
-      if (await targetFile.exists()) {
-        await targetFile.delete();
-      }
-      await tempFile.rename(targetFile.path);
-
-      _updateInfo = _updateInfo?.copyWith(
-        isDownloaded: true,
-        localFilePath: targetFile.path,
-        downloadProgress: 1.0,
-      );
-      _status = UpdateStatus.readyToInstall;
-      notifyListeners();
-      debugPrint(
-          '[UpdateService] Background download complete: ${targetFile.path}');
-    } catch (e) {
-      debugPrint('[UpdateService] Background download error: $e');
-      // A partial file is never reused; remove it so it cannot fill storage.
-      try {
-        if (await tempFile.exists()) await tempFile.delete();
-      } catch (_) {}
-      _status = UpdateStatus.error;
-      notifyListeners();
-    } finally {
-      _isDownloading = false;
-      client.close(force: true);
-    }
-  }
-
-  /// Bersihkan file APK atau file sementara lama di direktori update
-  Future<void> _cleanOldUpdates(String currentPath) async {
-    try {
-      final dir = await getApplicationSupportDirectory();
-      final updateDir = Directory(p.join(dir.path, 'updates'));
-      if (await updateDir.exists()) {
-        final list = updateDir.listSync();
-        for (final entity in list) {
-          if (entity.path != currentPath &&
-              (entity.path.endsWith('.apk') || entity.path.endsWith('.tmp'))) {
-            try {
-              entity.deleteSync();
-            } catch (_) {}
-          }
-        }
-      }
-    } catch (_) {}
-  }
-
-  /// Lokasi file APK di penyimpanan privat aplikasi
-  Future<File> _getLocalApkFile(int versionCode, String edition) async {
-    final dir = await getApplicationSupportDirectory();
-    final updateDir = Directory(p.join(dir.path, 'updates'));
-    if (!await updateDir.exists()) {
-      await updateDir.create(recursive: true);
-    }
-    final tag = edition == 'standard' ? '' : '_$edition';
-    return File(p.join(updateDir.path, 'OpenTurath${tag}_v$versionCode.apk'));
-  }
-
-  /// Tombol "Pasang Sekarang" dipanggil:
-  /// - Android: Langsung buka Package Installer sistem
-  /// - Desktop (macOS/Windows): Buka tautan pembaruan langsung di browser
   Future<bool> installNow() async {
-    if (!isUpdateReady || _updateInfo == null) return false;
-    if (AppPlatform.isDesktop) {
-      try {
-        return await launchUrl(Uri.parse(_updateInfo!.apkUrl),
-            mode: LaunchMode.externalApplication);
-      } catch (_) {
-        return false;
-      }
-    }
-    if (!AppPlatform.isAndroid) return false;
-    final filePath = _updateInfo!.localFilePath;
-    if (filePath == null) return false;
-    final file = File(filePath);
-    if (!await file.exists()) {
-      _status = UpdateStatus.idle;
-      notifyListeners();
-      return false;
-    }
+    if (!isUpdateReady) return false;
+    final info = _updateInfo!;
+    _status = UpdateStatus.installing;
+    _lastError = null;
+    notifyListeners();
     try {
-      // The file sat on disk since the download; verify again before handing
-      // it to the system installer.
-      final expected = _updateInfo!.sha256Hash;
-      if (expected == null ||
-          (await _computeFileSha256(file)).toLowerCase() !=
-              expected.toLowerCase()) {
-        await file.delete();
-        _status = UpdateStatus.idle;
-        notifyListeners();
+      final file = File(info.localFilePath!);
+      if (!await (await _packageStore()).verified(file, info.sha256Hash!)) {
+        _updateInfo = null;
+        _status = UpdateStatus.error;
+        _lastCheckedAt = null;
+        _lastError = Loc.tr('updatePackageChanged');
         return false;
       }
-      final result = await OpenFilex.open(filePath,
-          type: 'application/vnd.android.package-archive');
-      return result.type == ResultType.done;
-    } catch (_) {
+      if (_installer != null) {
+        await _installer!(info);
+      } else if (_desktop) {
+        await const DesktopUpdateInstaller().handoff(package: file,
+            hash: info.sha256Hash!, build: info.latestVersionCode,
+            installerProtocol: info.installerProtocol);
+        // The helper has acknowledged readiness and now waits for this PID.
+        Timer(const Duration(milliseconds: 500), () => exit(0));
+      } else {
+        await const MethodChannel('com.openturath.ai/updater').invokeMethod<String>(
+            'install', {'path': file.path, 'build': info.latestVersionCode});
+      }
+      return true;
+    } catch (error) {
+      debugPrint('[Updater] Installation could not start: ${error.runtimeType}');
+      _lastError = Loc.tr('updateInstallFailed');
       return false;
+    } finally {
+      if (_status == UpdateStatus.installing) _status = UpdateStatus.readyToInstall;
+      notifyListeners();
     }
   }
 }
