@@ -807,7 +807,7 @@ exports.createCheckout = functions
     const isRevisionValid = pricingRevision === pricing.revision || pricingRevision === "harga-v92-2026-10-14";
     if (expectedAmount !== undefined &&
         (!Number.isSafeInteger(expectedAmount) || expectedAmount !== pricing.amount || !isRevisionValid)) {
-        throw new functions.https.HttpsError("failed-precondition", "Harga penawaran telah berubah. Muat ulang aplikasi.");
+        throw new functions.https.HttpsError("failed-precondition", "Harga penawaran telah berubah. Periksa harga terbaru sebelum membayar.", { reason: "price_changed", agentId: currentAgentId, plan, amount: pricing.amount, pricingRevision: pricing.revision });
     }
     // Each checkout writes two documents and calls the gateway.
     await enforceRateLimit(`checkout_${context.auth.uid}`, 10, 600, "Terlalu banyak permintaan pembayaran.");
@@ -1687,7 +1687,7 @@ exports.checkPaymentStatus = functions
             console.error("[checkPaymentStatus] Error checking Midtrans status:", ((_a = err.response) === null || _a === void 0 ? void 0 : _a.data) || err.message);
             return {
                 success: false,
-                status: "PENDING",
+                status: "ERROR",
                 message: "Status pembayaran belum dapat diperiksa. Silakan coba lagi.",
             };
         }
@@ -1734,7 +1734,7 @@ exports.checkPaymentStatus = functions
             console.error("[checkPaymentStatus] Error checking DOKU status:", ((_d = err.response) === null || _d === void 0 ? void 0 : _d.data) || err.message);
             return {
                 success: false,
-                status: "PENDING",
+                status: "ERROR",
                 message: "Status pembayaran belum dapat diperiksa. Silakan coba lagi.",
             };
         }
@@ -1971,10 +1971,13 @@ exports.redeemCode = functions
         //    (F01: isolasi per modul). Id lama dipertahankan untuk kode satu AI.
         const updatedEntitlements = Object.assign({}, entitlements);
         const grantIds = [];
+        const permanentVip = (0, access_control_1.isVip)(userData, ownedGrants) || /^vip(?:_|$)/i.test(String(userData.plan || ""));
+        let preserveGlobalVip = permanentVip;
         let primaryExpiry = redeemedAt;
         for (const [index, entitlementKey] of entitlementKeys.entries()) {
             const currentEnt = entitlements[entitlementKey];
             const currentExp = expiryOf(currentEnt);
+            const protectedVipEntitlement = currentEnt && (permanentVip || (0, access_control_1.isVip)(currentEnt) || /^vip(?:_|$)/i.test(String(currentEnt.plan || "")));
             // Trial selalu dihitung dari saat voucher diklaim. Perpanjangan hanya
             // berlaku pada akses berbayar atau voucher yang diberi izin eksplisit.
             let baseDate = redeemedAt;
@@ -1983,8 +1986,6 @@ exports.redeemCode = functions
                 baseDate = currentExp;
             }
             const newExpiry = new Date(baseDate.getTime() + durationDays * 24 * 60 * 60 * 1000);
-            if (index === 0)
-                primaryExpiry = newExpiry;
             const voucherGrantId = multiKey ? (0, access_control_1.keyOf)("voucher", rawCode, uid, entitlementKey) : (0, access_control_1.keyOf)("voucher", rawCode, uid);
             grantIds.push(voucherGrantId);
             transaction.set(db.collection("access_grants").doc(voucherGrantId), {
@@ -1997,8 +1998,14 @@ exports.redeemCode = functions
             const paidActive = currentEnt && currentEnt.status === "active" && currentExp && currentExp > redeemedAt &&
                 currentEnt.plan !== "trial" && currentEnt.plan !== "voucher_access" &&
                 currentEnt.payment_status && currentEnt.payment_status !== "none";
-            updatedEntitlements[entitlementKey] = paidActive
-                ? Object.assign(Object.assign({}, currentEnt), { expiry: admin.firestore.Timestamp.fromDate(newExpiry), voucher_extended: true, updated_at: admin.firestore.FieldValue.serverTimestamp() }) : {
+            // Hibah trial tetap berdurasi sesuai kode; proyeksi akses aktif yang
+            // lebih panjang (termasuk voucher kehormatan) tidak boleh dipendekkan.
+            const preserveActive = isTrialVoucher && (currentEnt === null || currentEnt === void 0 ? void 0 : currentEnt.status) === "active" && currentExp && currentExp > newExpiry;
+            const projectedExpiry = preserveActive ? currentExp : newExpiry;
+            if (index === 0)
+                primaryExpiry = projectedExpiry;
+            updatedEntitlements[entitlementKey] = protectedVipEntitlement ? currentEnt : paidActive || preserveActive
+                ? Object.assign(Object.assign(Object.assign(Object.assign({}, currentEnt), { expiry: admin.firestore.Timestamp.fromDate(projectedExpiry) }), (!isTrialVoucher ? { voucher_extended: true } : {})), { updated_at: admin.firestore.FieldValue.serverTimestamp() }) : {
                 plan: isTrialVoucher ? "trial" : "voucher_access",
                 status: "active",
                 source: "redeem_code",
@@ -2026,7 +2033,8 @@ exports.redeemCode = functions
             });
             // Hanya paket semua AI yang mengubah paket global.
             if (entitlementKey === "all_access") {
-                globalExpiry = newExpiry;
+                globalExpiry = projectedExpiry;
+                preserveGlobalVip = preserveGlobalVip || !!protectedVipEntitlement;
             }
         }
         const userUpdate = {
@@ -2042,8 +2050,8 @@ exports.redeemCode = functions
                 userUpdate.access_legacy_audit_required = true;
             }
         }
-        if (globalExpiry) {
-            userUpdate.plan = isTrialVoucher ? "trial" : "voucher_access";
+        if (globalExpiry && !preserveGlobalVip) {
+            userUpdate.plan = updatedEntitlements.all_access.plan;
             userUpdate.subscription_expiry = admin.firestore.Timestamp.fromDate(globalExpiry);
         }
         if (!userData.email && userEmail) {
