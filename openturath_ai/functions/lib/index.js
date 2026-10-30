@@ -578,10 +578,10 @@ async function resolvePlanPricing(agentId, plan) {
     // Harga Mandiri Khusus Fikih Tahawwulat
     if (agentId.startsWith("fiqh_tahawwulat")) {
         const tahawwulatTiers = {
-            tholib_1m: { amount: 300000, durationMonths: 1, labelSuffix: "(1 Bulan)" },
+            tholib_1m: { amount: 299000, durationMonths: 1, labelSuffix: "(1 Bulan)" },
             tholib_6m: { amount: 1499000, durationMonths: 6, labelSuffix: "(6 Bulan)" },
             bahits_1y: { amount: 1999000, durationMonths: 12, labelSuffix: "(1 Tahun)" },
-            "1m": { amount: 300000, durationMonths: 1, labelSuffix: "(1 Bulan)" },
+            "1m": { amount: 299000, durationMonths: 1, labelSuffix: "(1 Bulan)" },
             "6m": { amount: 1499000, durationMonths: 6, labelSuffix: "(6 Bulan)" },
             "1y": { amount: 1999000, durationMonths: 12, labelSuffix: "(1 Tahun)" },
         };
@@ -1270,6 +1270,11 @@ exports.monitorAccessHealth = functions
         const pending = await db.collection("access_jobs").where("status", "in", ["pending", "retry", "processing"]).orderBy("queued_ms").limit(1).get();
         if (!pending.empty && now - pending.docs[0].data().queued_ms > 900000)
             issues.push("access_queue_overdue");
+        // Status lama di luar kontrak job tidak pernah dieksekusi: harus terlihat
+        // oleh operator, bukan diam. Pemulihannya manual (periksa deadlettered_by).
+        const legacy = await db.collection("access_jobs").where("status", "in", ["queued"]).limit(1).get();
+        if (!legacy.empty)
+            issues.push("access_job_legacy_status");
     }
     catch (_) {
         if (now - started > 900000)
@@ -1324,6 +1329,7 @@ exports.monitorAccessHealth = functions
             sharing_provider_stale: "Koneksi NotebookLM belum terverifikasi; pemulihan sesi perlu diperiksa.",
             payment_reconciliation_stale: "Pemeriksaan pembayaran berkala belum berjalan sesuai jadwal.",
             access_queue_overdue: "Ada pekerjaan akses yang tertahan lebih dari 15 menit.",
+            access_job_legacy_status: "Ada pekerjaan akses berstatus lama (queued) yang tidak dieksekusi; periksa deadlettered_by sebelum memulihkan.",
             payment_activation_backlog: "Pemeriksaan invoice Midtrans yang belum aktif tertinggal lebih dari 10 menit.",
             access_schedule_overdue: "Ada akun yang evaluasi aksesnya terlambat lebih dari 30 menit (pembeli bisa belum mendapat notebook).",
             notebook_capacity_low: "Kursi kosong di sebagian modul menipis (master + clone sehat). Tambah clone atau periksa clone yang hilang.",
@@ -2793,31 +2799,73 @@ async function notifySubscriptionServer(email, name, plan, action, serviceName, 
 // tiap 15 detik) dan pemilik diberi tahu satu kali per transaksi.
 // ================================================================
 exports.AUTH_FAILURE_FIELD = /^[a-zA-Z0-9_.:-]{1,80}$/;
+// Insiden bertahan di `paid_access_alerts/{transaksi}` sampai akses benar-benar
+// siap (`access_resolved_ms`). Pengiriman Telegram dicatat terpisah dari
+// penemuan insiden, sehingga kegagalan kirim dicoba ulang dengan backoff dan
+// insiden lama tetap diawasi walau keluar dari jendela 3 jam.
+const PAID_ALERT_RETRY_BASE_MS = 120000;
+const PAID_ALERT_RETRY_MAX_MS = 3600000;
+const PAID_ALERT_ESCALATE_MS = 3 * 3600000;
 exports.monitorPaidWithoutAccess = functions
     .runWith({ serviceAccount: "open-turath@appspot.gserviceaccount.com", timeoutSeconds: 120 })
     .pubsub.schedule("every 2 minutes").onRun(async () => {
     var _a, _b;
     const now = Date.now();
     const since = admin.firestore.Timestamp.fromMillis(now - 3 * 3600000);
-    const paid = await db.collection("transactions").where("status", "==", "paid").where("paid_at", ">=", since).limit(100).get();
-    for (const tx of paid.docs) {
-        const t = tx.data();
+    const recent = await db.collection("transactions").where("status", "==", "paid").where("paid_at", ">=", since).limit(100).get();
+    const open = await db.collection("paid_access_alerts").where("status", "==", "open").limit(100).get();
+    const candidates = new Map();
+    for (const tx of recent.docs)
+        candidates.set(tx.id, tx.data());
+    for (const incident of open.docs) {
+        if (candidates.has(incident.id))
+            continue;
+        const tx = await db.collection("transactions").doc(incident.id).get();
+        if (tx.exists)
+            candidates.set(incident.id, tx.data());
+    }
+    for (const [id, t] of candidates) {
         const paidMs = ((_b = (_a = t.paid_at) === null || _a === void 0 ? void 0 : _a.toMillis) === null || _b === void 0 ? void 0 : _b.call(_a)) || 0;
-        if (!t.uid || !t.entitlement_key || now - paidMs < 180000)
+        if (!t.uid || !t.entitlement_key || t.status !== "paid")
             continue;
-        const ready = await db.collection("access_assignments")
-            .where("uid", "==", t.uid).where("scope", "==", t.entitlement_key).where("status", "==", "ready").limit(1).get();
-        if (!ready.empty)
+        const flag = db.collection("paid_access_alerts").doc(id);
+        const incident = await flag.get();
+        const state = incident.exists ? incident.data() : null;
+        // Definisi siap sama dengan getAccessReadiness: seluruh kajian paket
+        // memiliki penugasan ready yang terverifikasi.
+        if (await ledgerScopesReady(String(t.uid), [String(t.entitlement_key)])) {
+            if (state && state.status !== "resolved") {
+                await flag.set({ status: "resolved", access_resolved_ms: now }, { merge: true });
+            }
             continue;
-        const flag = db.collection("paid_access_alerts").doc(tx.id);
-        if ((await flag.get()).exists)
+        }
+        if (!state && now - paidMs < 180000)
             continue;
-        await db.collection("users").doc(t.uid).update({ access_due_ms: now }).catch(() => { });
-        await flag.set({ uid: t.uid, entitlement_key: t.entitlement_key, paid_ms: paidMs, alerted_ms: now });
-        await sendTelegramNotification(`⚠️ <b>[PEMBAYARAN LUNAS, AKSES BELUM SIAP]</b>\n` +
+        if (!state) {
+            await db.collection("users").doc(t.uid).update({ access_due_ms: now }).catch(() => { });
+            await flag.set({ uid: t.uid, entitlement_key: t.entitlement_key, paid_ms: paidMs, status: "open",
+                opened_ms: now, attempts: 0, next_retry_ms: now });
+        }
+        const cur = (state || { attempts: 0, next_retry_ms: now });
+        const escalate = !cur.escalated_ms && now - paidMs >= PAID_ALERT_ESCALATE_MS;
+        if ((cur.delivery_succeeded_ms && !escalate) || (cur.next_retry_ms || 0) > now)
+            continue;
+        const minutes = Math.round((now - paidMs) / 60000);
+        const delivered = await sendTelegramNotification(`${escalate ? "🚨" : "⚠️"} <b>[PEMBAYARAN LUNAS, AKSES BELUM SIAP${escalate ? " — TERLAMBAT" : ""}]</b>\n` +
             `📦 Produk: <b>${esc(String(t.entitlement_key))}</b>\n` +
-            `🧾 Invoice: <code>${esc(String(t.invoice_number || tx.id))}</code>\n` +
-            `⏱️ Lewat ${Math.round((now - paidMs) / 60000)} menit. Penilaian akses sudah dipercepat; periksa bila belum teratasi.`, "alert");
+            `🧾 Invoice: <code>${esc(String(t.invoice_number || id))}</code>\n` +
+            `⏱️ Lewat ${minutes} menit. Penilaian akses sudah dipercepat; periksa bila belum teratasi.`, "alert");
+        const attempts = (cur.attempts || 0) + 1;
+        const patch = { attempts, last_attempt_ms: now };
+        if (delivered) {
+            patch.delivery_succeeded_ms = now;
+            if (escalate)
+                patch.escalated_ms = now;
+        }
+        else {
+            patch.next_retry_ms = now + Math.min(PAID_ALERT_RETRY_BASE_MS * 2 ** (attempts - 1), PAID_ALERT_RETRY_MAX_MS);
+        }
+        await flag.set(patch, { merge: true });
     }
     return null;
 });

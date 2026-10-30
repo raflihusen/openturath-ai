@@ -169,6 +169,7 @@ async function seed(restrict = false) {
     await Promise.all([inspect(), inspect(), inspect()]);
 }
 async function importOwner(doc) {
+    var _a;
     const uid = doc.id, u = doc.data(), email = (0, access_control_1.normalEmail)(u.email);
     if (!email)
         return;
@@ -255,16 +256,22 @@ async function importOwner(doc) {
             if (!automatedProjection && e.status === "active" && (0, access_control_1.millis)(e.expiry) > Date.now() && !(0, access_control_1.rights)(u, evidence, scope))
                 unresolved.push(`profile_scope:${scope}`);
         }
+    // Setiap penahan mencatat pemiliknya. Importer hanya boleh melepas penahan
+    // miliknya sendiri; penahan pemilik, insiden, VIP, atau migrasi lain tidak.
+    const holdNow = (await doc.ref.get()).data() || {};
     if (unresolved.length) {
-        await doc.ref.update({ access_revocation_hold: true });
+        const foreignHold = holdNow.access_revocation_hold === true && holdNow.access_revocation_hold_by !== "legacy_import";
+        await doc.ref.update(Object.assign({ access_revocation_hold: true }, (foreignHold ? {} : { access_revocation_hold_by: "legacy_import" })));
         await db.collection("access_reviews").doc((0, access_control_1.keyOf)(uid, "legacy_evidence")).set({ uid,
             code: "legacy_payment_evidence_incomplete", transaction_documents: unresolved, updated_ms: Date.now() });
     }
     if (!unresolved.length) {
         const review = db.collection("access_reviews").doc((0, access_control_1.keyOf)(uid, "legacy_evidence"));
         const free = await db.collection("access_reviews").doc((0, access_control_1.keyOf)(email, "free_access")).get();
-        if ((await review.get()).exists && !free.exists) {
-            await doc.ref.update({ access_revocation_hold: false });
+        const reviewSnap = await review.get();
+        const ownsHold = holdNow.access_revocation_hold_by === "legacy_import";
+        if (reviewSnap.exists && !free.exists && ownsHold && ((_a = reviewSnap.data()) === null || _a === void 0 ? void 0 : _a.status) !== "resolved_by_verified_billing") {
+            await doc.ref.update({ access_revocation_hold: false, access_revocation_hold_by: null });
             await review.update({ status: "resolved_by_verified_billing", updated_ms: Date.now() });
         }
     }
@@ -647,6 +654,11 @@ async function runJobs() {
                 await Promise.all(Array.from({ length: Math.min(concurrency, lanes.length) }, async () => {
                     while (cursor < lanes.length)
                         for (const job of lanes[cursor++]) {
+                            // Lease dapat berpindah di tengah batch: jangan mutasi sebagai penulis lama.
+                            if (!lease.holds()) {
+                                cursor = lanes.length;
+                                break;
+                            }
                             try {
                                 await engine.runJob(job.ref);
                             }

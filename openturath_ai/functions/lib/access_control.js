@@ -450,8 +450,17 @@ class AccessControl {
             }
             if (existing && existing.email !== email)
                 throw new AccessFault("failed-precondition", "Email change requires verified migration");
-            if (existing && ["ready", "provisioning"].includes(existing.status))
+            if (existing && ["ready", "provisioning"].includes(existing.status)) {
+                // Provisioning yatim (job hilang) dipulihkan secara idempoten setelah hak
+                // dan pemilik tervalidasi di atas. Job yang masih ada tidak disentuh.
+                if (existing.status === "provisioning") {
+                    const jr = this.db.collection("access_jobs").doc((0, exports.keyOf)(uid, entity, String(existing.revision)));
+                    if (!(await t.get(jr)).data()) {
+                        t.set(jr, Object.assign(Object.assign({}, existing), { desired: true, status: "pending", attempts: 0, queued_ms: this.clock(), due_ms: this.clock(), recovered_orphan: true }));
+                    }
+                }
                 return existing;
+            }
             const candidates = [];
             for (const id of ids) {
                 const nr = this.db.collection("access_notebooks").doc(id);
@@ -603,6 +612,13 @@ class AccessControl {
         const ar = this.assignmentRef(uid, entity);
         await this.db.runTransaction(async (t) => {
             const a = (await t.get(ar)).data();
+            if ((a === null || a === void 0 ? void 0 : a.status) === "provisioning") {
+                const jr = this.db.collection("access_jobs").doc((0, exports.keyOf)(uid, entity, String(a.revision)));
+                if (!(await t.get(jr)).data()) {
+                    t.set(jr, Object.assign(Object.assign({}, a), { desired: true, status: "pending", attempts: 0, queued_ms: this.clock(), due_ms: this.clock(), recovered_orphan: true }));
+                }
+                return;
+            }
             if (!a || a.status !== "ready")
                 return;
             const revision = a.revision + 1;
