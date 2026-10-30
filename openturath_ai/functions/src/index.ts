@@ -923,7 +923,7 @@ export const createCheckout = functions
     if (expectedAmount !== undefined &&
         (!Number.isSafeInteger(expectedAmount) || expectedAmount !== pricing.amount || !isRevisionValid)) {
       throw new functions.https.HttpsError("failed-precondition", "Harga penawaran telah berubah. Periksa harga terbaru sebelum membayar.",
-        {reason: "price_changed", amount: pricing.amount, pricingRevision: pricing.revision});
+        {reason: "price_changed", agentId: currentAgentId, plan, amount: pricing.amount, pricingRevision: pricing.revision});
     }
     // Each checkout writes two documents and calls the gateway.
     await enforceRateLimit(
