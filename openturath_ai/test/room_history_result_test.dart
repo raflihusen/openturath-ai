@@ -31,6 +31,7 @@ class _HistoryController extends PlatformInAppWebViewController {
     deletes++;
     return completion.future;
   }
+
   @override
   Future<void> loadUrl({
     required URLRequest urlRequest,
@@ -46,8 +47,12 @@ void main() {
     AppConfig.localeNotifier.value = 'id';
     SharedPreferences.setMockInitialValues({});
     AuthService.previewUser = UserModel(
-      uid: 'room-history-fixture', name: 'Reader',
-      email: 'reader@example.invalid', photoUrl: '', plan: 'trial', questionsUsed: 0,
+      uid: 'room-history-fixture',
+      name: 'Reader',
+      email: 'reader@example.invalid',
+      photoUrl: '',
+      plan: 'trial',
+      questionsUsed: 0,
     );
     AgentSessionManager.instance.closeAll();
   });
@@ -56,12 +61,14 @@ void main() {
     AgentSessionManager.instance.closeAll();
   });
   for (final result in [true, false, null, 'error']) {
-    testWidgets('history result $result controls the actual completion message', (tester) async {
+    testWidgets('history result $result controls the actual completion message',
+        (tester) async {
       final manager = AgentSessionManager.instance;
       manager.openAgent(AgentModel.defaultAgents.first);
       final session = manager.activeTab!;
       final controller = _HistoryController();
-      session.webController = InAppWebViewController.fromPlatform(platform: controller);
+      session.webController =
+          InAppWebViewController.fromPlatform(platform: controller);
       session.resolvedUrl = 'https://notebooklm.google.com/notebook/fixture';
       session.isUrlLoading = false;
       session.isWebLoading = false;
@@ -80,11 +87,20 @@ void main() {
       if (result == 'error') {
         controller.completion.completeError(StateError('provider unavailable'));
       } else {
-        controller.completion.complete(CallAsyncJavaScriptResult(value: result));
+        controller.completion
+            .complete(CallAsyncJavaScriptResult(value: result));
       }
       await tester.pumpAndSettle();
-      expect(find.text(Loc.tr(result == true ? 'chatHistoryCleared' : 'chatHistoryClearFailed')), findsOneWidget);
-      expect(find.text(Loc.tr(result == true ? 'chatHistoryClearFailed' : 'chatHistoryCleared')), findsNothing);
+      expect(
+          find.text(Loc.tr(result == true
+              ? 'chatHistoryCleared'
+              : 'chatHistoryClearFailed')),
+          findsOneWidget);
+      expect(
+          find.text(Loc.tr(result == true
+              ? 'chatHistoryClearFailed'
+              : 'chatHistoryCleared')),
+          findsNothing);
       await tester.pumpWidget(const SizedBox());
       await tester.pump();
     });

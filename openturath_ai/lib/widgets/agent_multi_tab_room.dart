@@ -1681,8 +1681,8 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
           retryLabel: Loc.tr('roomLoginNow'),
           retryIcon: Icons.login_rounded,
           onRetry: () async {
-            final connected = await Navigator.pushNamed(
-                context, AppRoutes.googleSessionAuth);
+            final connected =
+                await Navigator.pushNamed(context, AppRoutes.googleSessionAuth);
             if (!mounted || connected != true) return;
             if (session.resolvedUrl != null) {
               setState(() {
