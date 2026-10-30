@@ -5,6 +5,7 @@ $target = [IO.Path]::GetFullPath([string]$cfg.target)
 $package = [IO.Path]::GetFullPath([string]$cfg.package)
 $stage = [IO.Path]::GetFullPath([string]$cfg.stage)
 $oldPid = [int]$cfg.parentPid
+try {
 if ($target.Contains('"') -or $target.Contains("`n") -or $target.Contains("`r")) { throw 'Invalid target' }
 if (!(Test-Path -LiteralPath (Join-Path $target 'openturath_ai.exe'))) { throw 'Installed application not found' }
 if ((Split-Path $stage -Parent) -ne (Split-Path $target -Parent)) { throw 'Invalid staging location' }
@@ -22,7 +23,13 @@ Get-ChildItem -LiteralPath $target -Force | Copy-Item -Destination $backup -Recu
 'waiting' | Set-Content -LiteralPath $status
 New-Item -ItemType File -Path (Join-Path $stage 'ready') | Out-Null
 $process = Get-Process -Id $oldPid -ErrorAction SilentlyContinue
-if ($process -and !$process.WaitForExit(120000)) { throw 'Application did not close' }
+$quitDeadline = (Get-Date).AddSeconds(120)
+while ($process -and !$process.HasExited) {
+  if (Test-Path -LiteralPath (Join-Path $stage 'cancelled')) { throw 'Install cancelled' }
+  if ((Get-Date) -gt $quitDeadline) { throw 'Application did not close' }
+  Start-Sleep -Milliseconds 200
+}
+if (Test-Path -LiteralPath (Join-Path $stage 'cancelled')) { throw 'Install cancelled' }
 $replaced = $false
 try {
   $replaced = $true
@@ -47,5 +54,10 @@ try {
     'rolled_back' | Set-Content -LiteralPath $status
     Start-Process -FilePath (Join-Path $target 'openturath_ai.exe') -WorkingDirectory $target
   }
+  throw
+}
+
+} catch {
+  'failed' | Set-Content -LiteralPath (Join-Path $stage 'failed')
   throw
 }

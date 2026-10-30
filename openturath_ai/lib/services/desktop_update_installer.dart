@@ -49,7 +49,7 @@ class DesktopUpdateInstaller {
     }
   }
 
-  Future<void> handoff(
+  Future<String> handoff(
       {required File package,
       required String hash,
       required int build,
@@ -138,9 +138,15 @@ class DesktopUpdateInstaller {
     final ready = File(p.join(stage, 'ready'));
     final deadline = DateTime.now().add(const Duration(minutes: 2));
     while (!await ready.exists()) {
-      if (DateTime.now().isAfter(deadline))
+      if (await File(p.join(stage, 'failed')).exists()) {
+        throw const FileSystemException('Installer preparation failed');
+      }
+      if (DateTime.now().isAfter(deadline)) {
+        await File(p.join(stage, 'cancelled')).writeAsString('cancelled');
         throw TimeoutException('Installer did not become ready');
+      }
       await Future<void>.delayed(const Duration(milliseconds: 100));
     }
+    return stage;
   }
 }

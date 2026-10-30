@@ -231,14 +231,20 @@ class UpdateService extends ChangeNotifier {
       if (_installer != null) {
         await _installer!(info);
       } else if (_desktop) {
-        await const DesktopUpdateInstaller().handoff(
+        final stage = await const DesktopUpdateInstaller().handoff(
             package: file,
             hash: info.sha256Hash!,
             build: info.latestVersionCode,
             installerProtocol: info.installerProtocol);
-        handedOff = true;
-        // The helper has acknowledged readiness and now waits for this PID.
-        Timer(const Duration(milliseconds: 500), () => exit(0));
+        try {
+          final closing = await const MethodChannel('com.openturath.ai/updater')
+              .invokeMethod<bool>('quitForUpdate').timeout(const Duration(seconds: 5));
+          if (closing != true) throw StateError('Application could not close');
+          handedOff = true;
+        } catch (_) {
+          await File(p.join(stage, 'cancelled')).writeAsString('cancelled');
+          rethrow;
+        }
       } else {
         await const MethodChannel('com.openturath.ai/updater')
             .invokeMethod<String>('install',
@@ -251,8 +257,9 @@ class UpdateService extends ChangeNotifier {
       _lastError = Loc.tr('updateInstallFailed');
       return false;
     } finally {
-      if (_status == UpdateStatus.installing && !handedOff)
+      if (_status == UpdateStatus.installing && !handedOff) {
         _status = UpdateStatus.readyToInstall;
+      }
       notifyListeners();
     }
   }

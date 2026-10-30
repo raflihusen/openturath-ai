@@ -58,9 +58,11 @@ elif [ "$mode" = install ]; then
   touch "$stage/ready"
   n=0
   while kill -0 "$oldpid" 2>/dev/null; do
+    [ ! -f "$stage/cancelled" ] || fail 'Install cancelled'
     n=$((n+1)); [ "$n" -lt 120 ] || fail 'Application did not close'
     sleep 1
   done
+  [ ! -f "$stage/cancelled" ] || fail 'Install cancelled'
   replaced=0
   rollback() {
     if [ "$replaced" = 1 ] && [ -d "$stage/previous.app" ]; then

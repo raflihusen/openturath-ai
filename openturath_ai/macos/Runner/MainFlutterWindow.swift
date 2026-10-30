@@ -2,6 +2,7 @@ import Cocoa
 import FlutterMacOS
 
 class MainFlutterWindow: NSWindow {
+  private var updaterChannel: FlutterMethodChannel?
   private let fixedWidth: CGFloat = 920
 
   override func constrainFrameRect(_ frameRect: NSRect, to screen: NSScreen?) -> NSRect {
@@ -46,6 +47,15 @@ class MainFlutterWindow: NSWindow {
     self.standardWindowButton(.zoomButton)?.isHidden = true
     self.title = "OpenTurath AI"
 
+    updaterChannel = FlutterMethodChannel(name: "com.openturath.ai/updater",
+      binaryMessenger: flutterViewController.engine.binaryMessenger)
+    updaterChannel?.setMethodCallHandler { call, result in
+      guard call.method == "quitForUpdate" else { result(FlutterMethodNotImplemented); return }
+      result(true)
+      DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(300)) {
+        NSApp.terminate(nil)
+      }
+    }
     RegisterGeneratedPlugins(registry: flutterViewController)
     super.awakeFromNib()
   }
