@@ -25,15 +25,21 @@ class UpdatePackageStore {
       return false;
     }
     final size = await file.length();
-    return size >= minBytes && size <= maxBytes &&
+    return size >= minBytes &&
+        size <= maxBytes &&
         await digest(file) == hash.toLowerCase();
   }
 
-  Future<File> obtain({required Uri url, required int build,
-      required String platform, required String edition, required String hash,
+  Future<File> obtain(
+      {required Uri url,
+      required int build,
+      required String platform,
+      required String edition,
+      required String hash,
       void Function(double)? onProgress}) async {
     if (_busy) throw StateError('An update download is already running');
-    if (!allowUrl(url) || build <= 0 ||
+    if (!allowUrl(url) ||
+        build <= 0 ||
         !RegExp(r'^[a-fA-F0-9]{64}$').hasMatch(hash) ||
         !RegExp(r'^[a-z0-9_]+$').hasMatch('$platform$edition')) {
       throw const FormatException('Invalid update package');
@@ -68,9 +74,11 @@ class UpdatePackageStore {
           throw const HttpException('Invalid update redirect');
         }
         location = location.resolve(next);
-        if (!allowUrl(location)) throw const HttpException('Untrusted update redirect');
+        if (!allowUrl(location))
+          throw const HttpException('Untrusted update redirect');
       }
-      if (response == null || response.statusCode != HttpStatus.ok ||
+      if (response == null ||
+          response.statusCode != HttpStatus.ok ||
           response.contentLength > maxBytes ||
           response.headers.contentType?.mimeType == 'text/html') {
         throw const HttpException('Update download was rejected');
@@ -84,7 +92,8 @@ class UpdatePackageStore {
             throw const HttpException('Update download exceeded its limit');
           }
           sink.add(bytes);
-          if (response.contentLength > 0) onProgress?.call(received / response.contentLength);
+          if (response.contentLength > 0)
+            onProgress?.call(received / response.contentLength);
         }
         await sink.flush();
       } finally {

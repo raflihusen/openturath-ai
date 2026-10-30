@@ -2368,7 +2368,11 @@ const copyCatalog = <String, List<String>>{
     "تعذّر فتح المساعد"
   ],
   "reportSend": ["Kirim laporan", "Send report", "إرسال تقرير"],
-  "reportSending": ["Mengirim laporan…", "Sending report…", "جارٍ إرسال التقرير…"],
+  "reportSending": [
+    "Mengirim laporan…",
+    "Sending report…",
+    "جارٍ إرسال التقرير…"
+  ],
   "reportSent": [
     "Laporan terkirim. Kode rujukan Anda: {0}. Sebutkan kode ini bila menghubungi kami.",
     "Report sent. Your reference code: {0}. Quote it if you contact us.",
@@ -2477,11 +2481,31 @@ const copyCatalog = <String, List<String>>{
     "Select an AI to switch active study sessions.",
     "اختر مساعدًا للتبديل إلى جلسة المطالعة النشطة."
   ],
-  "updateDownloadFailed": ["Pembaruan belum selesai diunduh. Coba lagi.", "The update could not be downloaded. Try again.", "تعذر إكمال تنزيل التحديث. حاول مجددًا."],
-  "updatePackageChanged": ["Berkas pembaruan perlu diperiksa ulang. Unduh kembali untuk melanjutkan.", "The update file needs to be downloaded again for verification.", "يلزم تنزيل ملف التحديث مجددًا للتحقق منه."],
-  "updateInstallFailed": ["Pembaruan belum dapat dipasang. Paket tetap tersimpan; coba lagi dari aplikasi yang sudah terpasang.", "The update could not be installed. The package is saved; retry from the installed application.", "تعذر تثبيت التحديث. الحزمة محفوظة؛ حاول من التطبيق المثبّت."],
-  "updateDownloading": ["Mengunduh pembaruan…", "Downloading update…", "جارٍ تنزيل التحديث…"],
-  "updateInstalling": ["Menyiapkan pemasangan…", "Preparing installation…", "جارٍ تجهيز التثبيت…"],
+  "updateDownloadFailed": [
+    "Pembaruan belum selesai diunduh. Coba lagi.",
+    "The update could not be downloaded. Try again.",
+    "تعذر إكمال تنزيل التحديث. حاول مجددًا."
+  ],
+  "updatePackageChanged": [
+    "Berkas pembaruan perlu diperiksa ulang. Unduh kembali untuk melanjutkan.",
+    "The update file needs to be downloaded again for verification.",
+    "يلزم تنزيل ملف التحديث مجددًا للتحقق منه."
+  ],
+  "updateInstallFailed": [
+    "Pembaruan belum dapat dipasang. Paket tetap tersimpan; coba lagi dari aplikasi yang sudah terpasang.",
+    "The update could not be installed. The package is saved; retry from the installed application.",
+    "تعذر تثبيت التحديث. الحزمة محفوظة؛ حاول من التطبيق المثبّت."
+  ],
+  "updateDownloading": [
+    "Mengunduh pembaruan…",
+    "Downloading update…",
+    "جارٍ تنزيل التحديث…"
+  ],
+  "updateInstalling": [
+    "Menyiapkan pemasangan…",
+    "Preparing installation…",
+    "جارٍ تجهيز التثبيت…"
+  ],
   "updateRetry": ["Coba lagi", "Try Again", "حاول مجددًا"],
   "updateReadyTitleDesktop": [
     "Pembaruan tersedia",

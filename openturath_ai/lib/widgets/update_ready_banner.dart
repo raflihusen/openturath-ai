@@ -19,17 +19,33 @@ class UpdateReadyBanner extends StatelessWidget {
     return AnimatedBuilder(
       animation: updateService,
       builder: (context, _) {
-        if (updateService.status == UpdateStatus.downloading || updateService.isInstalling ||
+        if (updateService.status == UpdateStatus.downloading ||
+            updateService.isInstalling ||
             updateService.status == UpdateStatus.error) {
           final failed = updateService.status == UpdateStatus.error;
-          return Padding(padding: const EdgeInsets.symmetric(vertical: 12), child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text(failed ? updateService.lastError ?? Loc.tr('updateDownloadFailed') :
-                Loc.tr(updateService.isInstalling ? 'updateInstalling' : 'updateDownloading')),
-              if (failed) TextButton(onPressed: updateService.retry, child: Text(Loc.tr('updateRetry')))
-              else LinearProgressIndicator(value: updateService.isInstalling ? null :
-                updateService.updateInfo?.downloadProgress, color: OTColors.textPrimary(Theme.of(context).brightness == Brightness.dark)),
-            ]));
+          return Padding(
+              padding: const EdgeInsets.symmetric(vertical: 12),
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(failed
+                        ? updateService.lastError ??
+                            Loc.tr('updateDownloadFailed')
+                        : Loc.tr(updateService.isInstalling
+                            ? 'updateInstalling'
+                            : 'updateDownloading')),
+                    if (failed)
+                      TextButton(
+                          onPressed: updateService.retry,
+                          child: Text(Loc.tr('updateRetry')))
+                    else
+                      LinearProgressIndicator(
+                          value: updateService.isInstalling
+                              ? null
+                              : updateService.updateInfo?.downloadProgress,
+                          color: OTColors.textPrimary(
+                              Theme.of(context).brightness == Brightness.dark)),
+                  ]));
         }
         if (!updateService.isUpdateReady) {
           return const SizedBox.shrink();
@@ -111,7 +127,8 @@ class UpdateReadyBanner extends StatelessWidget {
                   final opened = await updateService.installNow();
                   if (!opened && context.mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                      content: Text(updateService.lastError ?? Loc.tr('updateReadyOpenFailed')),
+                      content: Text(updateService.lastError ??
+                          Loc.tr('updateReadyOpenFailed')),
                     ));
                   }
                 },
