@@ -684,8 +684,9 @@ class AuthService {
 
     // Auth deletion enforces recent login. The server trigger owns revocation and recursive cleanup.
     try {
-      if (!current())
+      if (!current()) {
         throw FirebaseAuthException(code: 'requires-recent-login');
+      }
       await user.delete();
     } on FirebaseAuthException catch (e) {
       if (e.code == 'requires-recent-login') {
@@ -693,15 +694,17 @@ class AuthService {
           final googleUser = await _googleSignIn.signIn();
           if (googleUser != null && current()) {
             final googleAuth = await googleUser.authentication;
-            if (!current())
+            if (!current()) {
               throw FirebaseAuthException(code: 'requires-recent-login');
+            }
             final credential = GoogleAuthProvider.credential(
               accessToken: googleAuth.accessToken,
               idToken: googleAuth.idToken,
             );
             await user.reauthenticateWithCredential(credential);
-            if (!current())
+            if (!current()) {
               throw FirebaseAuthException(code: 'requires-recent-login');
+            }
             await user.delete();
           } else {
             rethrow;
@@ -715,8 +718,9 @@ class AuthService {
             idToken: desktopAuth.idToken,
           );
           await user.reauthenticateWithCredential(credential);
-          if (!current())
+          if (!current()) {
             throw FirebaseAuthException(code: 'requires-recent-login');
+          }
           await user.delete();
         }
       } else {

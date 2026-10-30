@@ -454,8 +454,14 @@ void main() {
         restoreTimeout: const Duration(milliseconds: 30),
         authenticationTimeout: const Duration(milliseconds: 30));
     expect(await service.restoreSession(), isNull);
+    auth.user = TestUser('visible-before-logout');
+    final identities = <User?>[];
+    final subscription = service.authStateChanges.listen(identities.add);
+    await Future<void>.delayed(Duration.zero);
+    expect(identities.last?.uid, 'visible-before-logout');
     auth.signOutWait = cleanup;
     await service.signOut().timeout(const Duration(milliseconds: 300));
+    expect(identities.last, isNull);
     expect(service.currentUser, isNull);
     expect(service.cachedCurrentUser, isNull);
     expect(service.hasAuthenticatedSession, isFalse);
@@ -494,6 +500,7 @@ void main() {
         (await SharedPreferences.getInstance())
             .getBool(AuthService.explicitLogoutKey),
         isNull);
+    await subscription.cancel();
   });
 
   test(
