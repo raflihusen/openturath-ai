@@ -468,15 +468,21 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                     padding:
                         const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   ),
-                  onPressed: () {
+                  onPressed: () async {
                     Navigator.pop(ctx);
-                    session.webController?.evaluateJavascript(
-                      source:
-                          'if (typeof window.otClearChat === "function") { window.otClearChat(); } else if (typeof window.otDeleteChatHistory === "function") { window.otDeleteChatHistory(); }',
-                    );
-                    if (mounted) {
-                      AppSnackBar.success(
-                          context, Loc.tr('chatHistoryCleared'));
+                    bool cleared = false;
+                    try {
+                      final result = await session.webController
+                          ?.callAsyncJavaScript(functionBody:
+                              'return typeof window.otClearChat === "function" ? await window.otClearChat() : false;')
+                          .timeout(const Duration(seconds: 20));
+                      cleared = result?.value == true;
+                    } catch (_) {}
+                    if (!mounted) return;
+                    if (cleared) {
+                      AppSnackBar.success(context, Loc.tr('chatHistoryCleared'));
+                    } else {
+                      AppSnackBar.error(context, Loc.tr('chatHistoryClearFailed'));
                     }
                   },
                   child: Text(Loc.tr('delete'),

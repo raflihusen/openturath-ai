@@ -1367,77 +1367,76 @@ function accessDenied() {
   const hasElementMatch = !!document.querySelector('[aria-label*="Request access" i], [aria-label*="Minta akses" i], app-access-denied, div[class*="access-denied" i]');
   return hasTextMatch || hasElementMatch;
 }
-window.otDeleteChatHistory = function() {
-  const moreBtns = [
-    ...document.querySelectorAll('button[aria-label*="More" i], button[aria-label*="Opsi" i], button[aria-label*="options" i], button[aria-label*="chat options" i], mat-toolbar button, .project-header button')
-  ];
-  document.querySelectorAll('mat-icon, [data-mat-icon-name]').forEach(icon => {
-    const name = (icon.getAttribute('data-mat-icon-name') || icon.getAttribute('fonticon') || icon.textContent || '').trim().toLowerCase();
-    if (name === 'more_vert' || name === 'more_horiz') {
-      const btn = icon.closest('button, [role="button"]');
-      if (btn && !moreBtns.includes(btn)) moreBtns.push(btn);
-    }
-  });
-
+window.otDeleteChatHistory = async function() {
+  // Let NotebookLM remove its own messages after the provider action. Never
+  // simulate deletion by removing DOM nodes: failed requests must remain visible.
+  const pause = () => new Promise(resolve => setTimeout(resolve, 100));
+  const messages = () => [...document.querySelectorAll(questionSelector + ',' + answerSelector)].filter(visible);
+  if (!messages().length) return inputReady();
+  const chatLabel = /chat|history|riwayat|obrolan|percakapan|محادث|سجل/i;
+  const deleteLabel = /delete|hapus|clear|حذف|مسح/i;
   function findDeleteMenuItem() {
-    const items = [...document.querySelectorAll('[role="menuitem"], .mat-mdc-menu-panel button, .cdk-overlay-pane button, mat-list-item')];
-    return items.find(item => {
-      const txt = (item.getAttribute('aria-label') || item.innerText || item.textContent || '').toLowerCase();
-      return (txt.includes('delete') || txt.includes('hapus') || txt.includes('clear')) && 
-             (txt.includes('chat') || txt.includes('history') || txt.includes('riwayat') || txt.includes('obrolan') || txt.includes('percakapan'));
-    });
-  }
-
-  function confirmDialog() {
-    const deadline = Date.now() + 2500;
-    const interval = setInterval(() => {
-      const dialogBtns = [...document.querySelectorAll('mat-dialog-container button, .cdk-overlay-pane [role="dialog"] button, [role="alertdialog"] button')];
-      const confirmBtn = dialogBtns.find(b => {
-        const t = (b.getAttribute('aria-label') || b.innerText || b.textContent || '').trim().toLowerCase();
-        return (t === 'delete' || t === 'hapus' || t === 'clear' || t.includes('delete') || t.includes('hapus')) && !t.includes('cancel') && !t.includes('batal');
+    return [...document.querySelectorAll('[role="menuitem"], .mat-mdc-menu-panel button, .cdk-overlay-pane button, mat-list-item')]
+      .find(item => {
+        const label = item.getAttribute('aria-label') || item.innerText || item.textContent || '';
+        return visible(item) && deleteLabel.test(label) && chatLabel.test(label);
       });
-      if (confirmBtn) {
-        clearInterval(interval);
-        triggerClick(confirmBtn);
-      } else if (Date.now() > deadline) {
-        clearInterval(interval);
-      }
-    }, 50);
   }
-
-  const immediate = findDeleteMenuItem();
-  if (immediate) {
-    triggerClick(immediate);
-    confirmDialog();
-    return true;
-  }
-
-  for (const btn of moreBtns) {
-    triggerClick(btn);
-    setTimeout(() => {
-      const item = findDeleteMenuItem();
-      if (item) {
-        triggerClick(item);
-        confirmDialog();
-      }
-    }, 80);
-  }
-  return true;
-};
-
-window.otClearChat = function() {
-  try {
-    window.otDeleteChatHistory();
-  } catch (_) {}
-  try {
-    const messageContainers = document.querySelectorAll('.chat-panel-content, .chat-view, .conversation-container, .message-list, [role="log"]');
-    messageContainers.forEach(c => {
-      const messages = c.querySelectorAll('.chat-message, .model-message, .user-message, .to-user-container, .to-model-container, app-chat-response, app-chat-query, app-chat-prompt, app-chat-message, [role="article"]');
-      messages.forEach(m => m.remove());
+  let item = findDeleteMenuItem();
+  if (!item) {
+    const options = [...document.querySelectorAll('button[aria-label*="More" i], button[aria-label*="Opsi" i], button[aria-label*="options" i], button[aria-label*="chat options" i]')];
+    document.querySelectorAll('mat-icon, [data-mat-icon-name]').forEach(icon => {
+      const name = (icon.getAttribute('data-mat-icon-name') || icon.getAttribute('fonticon') || icon.textContent || '').trim().toLowerCase();
+      const button = icon.closest('button, [role="button"]');
+      if ((name === 'more_vert' || name === 'more_horiz') && button && !options.includes(button)) options.push(button);
     });
-  } catch (_) {}
-  return true;
+    for (const button of options.filter(visible)) {
+      if (!triggerClick(button)) continue;
+      for (let attempt = 0; attempt < 5 && !item; attempt++) {
+        await pause();
+        item = findDeleteMenuItem();
+      }
+      if (item) break;
+    }
+  }
+  if (!item || !triggerClick(item)) return false;
+
+  let confirmed = false;
+  const confirmDeadline = Date.now() + 3000;
+  while (Date.now() < confirmDeadline && !confirmed) {
+    const dialogs = [...document.querySelectorAll('mat-dialog-container, [role="dialog"], [role="alertdialog"]')].filter(visible);
+    for (const dialog of dialogs) {
+      const label = dialog.innerText || dialog.textContent || '';
+      if (!deleteLabel.test(label) || !chatLabel.test(label)) continue;
+      const button = [...dialog.querySelectorAll('button, [role="button"]')].find(button => {
+        const label = (button.getAttribute('aria-label') || button.innerText || button.textContent || '').trim();
+        return visible(button) && /^(delete|hapus|clear|حذف|مسح)$/i.test(label);
+      });
+      if (button) { confirmed = triggerClick(button); break; }
+    }
+    if (!confirmed) await pause();
+  }
+  if (!confirmed) return false;
+
+  const completionDeadline = Date.now() + 8000;
+  let emptySince = null;
+  while (Date.now() < completionDeadline) {
+    const dialogOpen = [...document.querySelectorAll('mat-dialog-container, [role="dialog"], [role="alertdialog"]')].some(visible);
+    const failure = [...document.querySelectorAll('[role="alert"], .mat-mdc-snack-bar-label')]
+      .some(el => visible(el) && /failed|error|try again|gagal|kesalahan|تعذّر|خطأ/i.test(el.innerText || el.textContent || ''));
+    if (failure) return false;
+    if (!dialogOpen && inputReady() && messages().length === 0) {
+      if (emptySince === null) emptySince = Date.now();
+      if (Date.now() - emptySince >= 1000) return true;
+    } else {
+      emptySince = null;
+    }
+    await pause();
+  }
+  return false;
 };
+
+window.otClearChat = window.otDeleteChatHistory;
 
 window.otNotebook = {
   clean,
