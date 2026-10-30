@@ -51,8 +51,8 @@ try {
     $failed=$false
     try { & $helper -Plan $plan } catch { $failed=$true }
     $actual=(Get-Content -LiteralPath (Join-Path $script:caseTarget 'openturath_ai.exe') -Raw).Trim()
-    Assert ($failed -eq ($mode -ne 'success')) "$mode: incorrect success status"
-    Assert ($actual -eq $(if($mode -eq 'success'){'new'}else{'old'})) "$mode: application was not preserved/replaced correctly"
+    Assert ($failed -eq ($mode -ne 'success')) "${mode}: incorrect success status"
+    Assert ($actual -eq $(if($mode -eq 'success'){'new'}else{'old'})) "${mode}: application was not preserved/replaced correctly"
     Assert ((Get-Content -LiteralPath (Join-Path $case 'user-session') -Raw).Trim() -eq 'unchanged') 'User session changed'
     if ($mode -in @('install_fail','startup_fail')) {
       Assert ((Get-Content -LiteralPath (Join-Path $script:caseStage 'status') -Raw).Trim() -eq 'rolled_back') 'Rollback missing'
