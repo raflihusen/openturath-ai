@@ -583,6 +583,11 @@ const copyCatalog = <String, List<String>>{
     "Your Google session could not be verified yet. Retry or continue after signing in with the same account. Your session has not been cleared.",
     "تعذّر التحقق من جلسة Google حتى الآن. أعد المحاولة أو تابع بعد إتمام تسجيل الدخول بالحساب نفسه. لم تُحذف جلستك."
   ],
+  "googleSessionUnverifiedTitle": [
+    "Koneksi AI belum terverifikasi",
+    "AI connection not verified yet",
+    "لم يتم التحقق من اتصال الذكاء الاصطناعي بعد"
+  ],
   "connectingGoogleAccount": [
     "Menghubungkan akun Google…",
     "Connecting your Google account…",

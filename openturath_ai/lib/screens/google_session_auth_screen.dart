@@ -48,6 +48,10 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
   InAppWebViewController? _webController;
   bool _isSessionReady = false;
   bool _isCompletingSession = false;
+  bool _isCancelDialogOpen = false;
+  bool _connectionCancelled = false;
+  bool _verificationFailed = false;
+  int _connectionEpoch = 0;
   final ValueNotifier<double> _loadProgress = ValueNotifier<double>(0.0);
   bool _isMismatchDialogOpen = false;
   bool _isShieldActive = false;
@@ -74,6 +78,33 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
   // A valid legacy session can establish verified ownership without replaying
   // cookies or forcing InteractiveLogin; an absent session uses the fallback.
   static const _initialSessionUrl = '${NotebookNavigation.canonicalOrigin}/';
+
+  bool _isCurrentVerification(int epoch) =>
+      mounted &&
+      epoch == _connectionEpoch &&
+      !_isCancelDialogOpen &&
+      !_connectionCancelled &&
+      !_verificationFailed;
+
+  void _showVerificationRecovery() {
+    if (!mounted || _isCancelDialogOpen || _connectionCancelled) return;
+    setState(() {
+      _connectionEpoch++;
+      _verificationFailed = true;
+      _isShieldActive = false;
+      _webController = null;
+    });
+  }
+
+  void _retryVerification() {
+    if (!mounted || _isCancelDialogOpen || _connectionCancelled) return;
+    _connectionEpoch++;
+    if (_verificationFailed) {
+      setState(() => _verificationFailed = false);
+    } else {
+      _webController?.reload();
+    }
+  }
 
   /// Skrip penyembunyi antarmuka NotebookLM di level mesin WebKit (Document Start Cloak).
   /// Menjamin tidak ada 1 piksel pun antarmuka NotebookLM yang pernah digambar ke layar,
@@ -149,6 +180,9 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
         controller == null ||
         _isSessionReady ||
         _isCompletingSession ||
+        _isCancelDialogOpen ||
+        _connectionCancelled ||
+        _verificationFailed ||
         _isCheckingAccount ||
         _isConfirmOpen ||
         _isMismatchDialogOpen) {
@@ -273,18 +307,26 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
     if (!mounted ||
         _isSessionReady ||
         _isCompletingSession ||
+        _isCancelDialogOpen ||
+        _connectionCancelled ||
+        _verificationFailed ||
         _isCheckingAccount) return;
     // Mutex dipasang sebelum `await` pertama. Sebelumnya dipasang sesudah
     // `getUrl()`, sehingga onLoadStop dan onUpdateVisitedHistory yang datang
     // nyaris bersamaan sama-sama lolos dan menjalankan dua siklus polling.
     _isCheckingAccount = true;
+    final epoch = _connectionEpoch;
     var inconclusive = false;
 
     try {
       final currentWebUrl = await controller
           .getUrl()
           .timeout(const Duration(seconds: 5), onTimeout: () => null);
-      if (currentWebUrl == null) return;
+      if (!_isCurrentVerification(epoch)) return;
+      if (currentWebUrl == null) {
+        _showVerificationRecovery();
+        return;
+      }
       final urlStr = currentWebUrl.toString();
 
       // Jangan lakukan verifikasi jika masih di formulir login Google
@@ -311,9 +353,10 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
       // Siklus polling: periksa setiap 250ms hingga 32 kali (~8s). WebView
       // Android dengan tata letak seluler memuat SPA NotebookLM lebih lambat.
       for (var attempt = 0; attempt < _maxVerificationAttempts; attempt++) {
-        if (!mounted || _isSessionReady) return;
+        if (!_isCurrentVerification(epoch) || _isSessionReady) return;
 
         final detectedEmail = await _detectGoogleEmail(controller);
+        if (!_isCurrentVerification(epoch)) return;
         if (detectedEmail != null && detectedEmail.isNotEmpty) {
           if (currentEmail.isNotEmpty && detectedEmail != currentEmail) {
             // Tampilkan peringatan jika akun Google berbeda
@@ -332,7 +375,9 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
       _isCheckingAccount = false;
     }
 
-    if (inconclusive) await _handleInconclusiveVerification(controller);
+    if (inconclusive && _isCurrentVerification(epoch)) {
+      await _handleInconclusiveVerification(controller);
+    }
   }
 
   static const int _maxVerificationAttempts = 32;
@@ -347,12 +392,15 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
   /// - Cookie ada: konfirmasi hanya meminta pemeriksaan identitas ulang.
   Future<void> _handleInconclusiveVerification(
       InAppWebViewController controller) async {
-    if (!mounted || _isSessionReady || _isMismatchDialogOpen) return;
+    final epoch = _connectionEpoch;
+    if (!_isCurrentVerification(epoch) ||
+        _isSessionReady ||
+        _isMismatchDialogOpen) return;
     debugPrint(
         '[GoogleSessionAuth] Email Google tidak terdeteksi setelah $_maxVerificationAttempts percobaan, memakai fallback.');
 
     final hasSession = await _hasGoogleSession();
-    if (!mounted || _isSessionReady) return;
+    if (!_isCurrentVerification(epoch) || _isSessionReady) return;
 
     if (hasSession == false) {
       await controller.loadUrl(
@@ -361,12 +409,12 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
       return;
     }
     if (hasSession == null) {
-      AppSnackBar.warning(context, Loc.tr('googleSessionUnverified'));
+      _showVerificationRecovery();
       return;
     }
 
     final confirmed = await _confirmSameAccount();
-    if (!mounted || _isSessionReady) return;
+    if (!_isCurrentVerification(epoch) || _isSessionReady) return;
     if (confirmed == true) {
       await _onSessionAuthenticated();
     } else if (confirmed == false) {
@@ -613,14 +661,20 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
 
   /// Tombol Lanjutkan manual untuk memeriksa login dan konfirmasi akun
   Future<void> _handleManualContinue() async {
-    if (!mounted || _isSessionReady || _isCompletingSession) return;
+    if (!mounted || _isSessionReady || _isCompletingSession ||
+        _isCancelDialogOpen || _connectionCancelled) return;
+    if (_verificationFailed) {
+      _retryVerification();
+      return;
+    }
+    final epoch = _connectionEpoch;
     final controller = _webController;
     WebUri? currentWebUrl;
     try {
       currentWebUrl =
           await controller?.getUrl().timeout(const Duration(seconds: 5));
     } catch (_) {}
-    if (!mounted) return;
+    if (!_isCurrentVerification(epoch)) return;
 
     if (currentWebUrl == null ||
         !NotebookNavigation.notebook(currentWebUrl.uriValue)) {
@@ -641,7 +695,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
 
     if (controller != null) {
       final detectedEmail = await _detectGoogleEmail(controller);
-      if (!mounted) return;
+      if (!_isCurrentVerification(epoch)) return;
       if (detectedEmail != null && detectedEmail.isNotEmpty) {
         if (currentEmail.isNotEmpty && detectedEmail != currentEmail) {
           _showAccountMismatchDialog(detectedEmail, currentEmail);
@@ -652,24 +706,19 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
       }
     }
 
-    if (!mounted) return;
+    if (!_isCurrentVerification(epoch)) return;
 
     // Konfirmasi manual hanya berlaku bila sesi Google benar-benar ada;
     // tanpa itu ruang AI pasti gagal dibuka.
     if (await _hasGoogleSession() != true) {
-      if (mounted) {
-        AppSnackBar.warning(
-          context,
-          Loc.tr('googleSessionUnverified'),
-        );
-      }
+      if (_isCurrentVerification(epoch)) _showVerificationRecovery();
       return;
     }
-    if (!mounted) return;
+    if (!_isCurrentVerification(epoch)) return;
 
     // Jika belum terbaca dari DOM, tampilkan konfirmasi akun sama
     final confirm = await _confirmSameAccount();
-    if (!mounted) return;
+    if (!_isCurrentVerification(epoch)) return;
 
     if (confirm == true) {
       await _onSessionAuthenticated();
@@ -683,7 +732,8 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
   /// Only a matching account on Notebook can establish session ownership.
   /// Failed reads leave the existing native session intact and remain retryable.
   Future<void> _onSessionAuthenticated() async {
-    if (!mounted || _isSessionReady || _isCompletingSession) return;
+    final epoch = _connectionEpoch;
+    if (!_isCurrentVerification(epoch) || _isSessionReady || _isCompletingSession) return;
     _isCompletingSession = true;
     try {
       final controller = _webController;
@@ -694,30 +744,31 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
           .toLowerCase();
       final url =
           await controller?.getUrl().timeout(const Duration(seconds: 5));
-      if (!mounted) return;
+      if (!_isCurrentVerification(epoch)) return;
       if (controller == null ||
           email.isEmpty ||
           url == null ||
           !NotebookNavigation.notebook(url.uriValue)) {
-        AppSnackBar.warning(context, Loc.tr('googleSessionUnverified'));
+        _showVerificationRecovery();
         return;
       }
       final detectedEmail = await _detectGoogleEmail(controller);
-      if (!mounted) return;
+      if (!_isCurrentVerification(epoch)) return;
       if (detectedEmail != email) {
-        AppSnackBar.warning(context, Loc.tr('googleSessionUnverified'));
+        _showVerificationRecovery();
         return;
       }
       final verified = await PersistentGoogleSession.instance
-          .lockAndPersistCookies(controller, email);
-      if (!mounted) return;
+          .lockAndPersistCookies(controller, email,
+              isCurrent: () => _isCurrentVerification(epoch));
+      if (!_isCurrentVerification(epoch)) return;
       if (!verified) {
-        AppSnackBar.warning(context, Loc.tr('googleSessionUnverified'));
+        _showVerificationRecovery();
         return;
       }
       setState(() => _isSessionReady = true);
       await Future.delayed(const Duration(milliseconds: 600));
-      if (!mounted) return;
+      if (!_isCurrentVerification(epoch)) return;
       if (Navigator.canPop(context)) {
         Navigator.pop(context, true);
       } else {
@@ -728,9 +779,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
         );
       }
     } catch (_) {
-      if (mounted) {
-        AppSnackBar.warning(context, Loc.tr('googleSessionUnverified'));
-      }
+      if (_isCurrentVerification(epoch)) _showVerificationRecovery();
     } finally {
       _isCompletingSession = false;
     }
@@ -738,6 +787,9 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
 
   /// Postponing an AI connection is separate from signing out in Settings.
   Future<void> _confirmCancelConnection() async {
+    if (!mounted || _isCancelDialogOpen || _connectionCancelled) return;
+    _isCancelDialogOpen = true;
+    _connectionEpoch++;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primary = OTColors.textPrimary(isDark);
     final secondary = OTColors.textSecondary(isDark);
@@ -786,8 +838,11 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
         ],
       ),
     );
+    _isCancelDialogOpen = false;
 
     if (shouldCancel == true && mounted) {
+      _connectionCancelled = true;
+      _connectionEpoch++;
       if (Navigator.canPop(context)) {
         Navigator.pop(context, false);
       } else {
@@ -799,6 +854,42 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
       }
     }
   }
+
+  Widget _buildVerificationRecovery(bool isDark) => ColoredBox(
+        color: OTColors.canvas(isDark),
+        child: Center(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(Icons.lock_outline_rounded,
+                    color: OTColors.textPrimary(isDark), size: 32),
+                const SizedBox(height: 16),
+                Text(Loc.tr('googleSessionUnverifiedTitle'),
+                    textAlign: TextAlign.center,
+                    style: ScholarlyFonts.outfit(
+                        fontSize: OTFontSize.s16,
+                        fontWeight: FontWeight.w600,
+                        color: OTColors.textPrimary(isDark))),
+                const SizedBox(height: 12),
+                Text(Loc.tr('googleSessionUnverified'),
+                    textAlign: TextAlign.center,
+                    style: ScholarlyFonts.outfit(
+                        fontSize: OTFontSize.s14,
+                        color: OTColors.textSecondary(isDark))),
+                const SizedBox(height: 20),
+                FilledButton(
+                    onPressed: _retryVerification,
+                    child: Text(Loc.tr('tryAgain'))),
+                TextButton(
+                    onPressed: _confirmCancelConnection,
+                    child: Text(Loc.tr('cancelGoogleConnectionAction'))),
+              ],
+            ),
+          ),
+        ),
+      );
 
   @override
   Widget build(BuildContext context) {
@@ -880,9 +971,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
                 tooltip: Loc.tr('tryAgain'),
                 icon:
                     Icon(Icons.refresh_rounded, size: 20, color: textSecondary),
-                onPressed: () {
-                  _webController?.reload();
-                },
+                onPressed: _retryVerification,
               ),
               TextButton(
                 onPressed: _handleManualContinue,
@@ -1027,7 +1116,9 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
                       border: Border.all(color: border, width: 1),
                     ),
                     clipBehavior: Clip.antiAlias,
-                    child: Stack(
+                    child: _verificationFailed
+                        ? _buildVerificationRecovery(isDark)
+                        : Stack(
                       children: [
                         Positioned.fill(
                           child: widget.webViewBuilder != null
