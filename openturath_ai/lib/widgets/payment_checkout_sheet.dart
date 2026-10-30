@@ -247,13 +247,17 @@ class _PaymentCheckoutSheetState extends State<PaymentCheckoutSheet> {
       return;
     }
 
-    _pollAttempts++;
-    // F33: Batas maksimal polling 150 kali (5 menit) agar tidak memboroskan sumber daya
-    if (_pollAttempts > 60) {
-      _pollTimer?.cancel();
-      // Pengguna perlu tahu bahwa pemeriksaan otomatis berhenti.
-      if (mounted && !_pollExhausted) setState(() => _pollExhausted = true);
-      return;
+    // F33: batas polling otomatis (60 kali) agar tidak memboroskan sumber daya.
+    // Pemeriksaan manual (force) tidak dihitung dan tetap berjalan sesudahnya;
+    // ia hanya dibatasi oleh _isChecking.
+    if (!force) {
+      _pollAttempts++;
+      if (_pollAttempts > 60) {
+        _pollTimer?.cancel();
+        // Pengguna perlu tahu bahwa pemeriksaan otomatis berhenti.
+        if (mounted && !_pollExhausted) setState(() => _pollExhausted = true);
+        return;
+      }
     }
 
     _lastInquiryAt = DateTime.now();
@@ -268,7 +272,14 @@ class _PaymentCheckoutSheetState extends State<PaymentCheckoutSheet> {
         _triggerSuccess();
       }
     } catch (_) {
-      // Polling background gagal sementara, lanjut ke tick berikutnya
+      // Polling background gagal sementara, lanjut ke tick berikutnya. Untuk
+      // pemeriksaan manual, jangan diam: kegagalan memeriksa bukan berarti
+      // belum membayar.
+      if (force && mounted) {
+        ScaffoldMessenger.maybeOf(context)?.showSnackBar(const SnackBar(
+            content: Text(
+                'Status pembayaran belum dapat diperiksa. Ini bukan berarti pembayaran gagal; coba lagi sebentar lagi.')));
+      }
     } finally {
       if (mounted) {
         _isChecking = false;
@@ -676,6 +687,7 @@ class _PaymentCheckoutSheetState extends State<PaymentCheckoutSheet> {
                           } else {
                             debugPrint(
                                 '[PaymentCheckout] Blocked popup window to untrusted origin: $uri');
+                            _offerBrowserFallback();
                             return false;
                           }
                         }
@@ -706,8 +718,9 @@ class _PaymentCheckoutSheetState extends State<PaymentCheckoutSheet> {
                         // Deep links untuk aplikasi perbankan atau e-wallet (GoPay, ShopeePay, dsb.)
                         if (uri.scheme != 'http' && uri.scheme != 'https') {
                           if (_isAllowedExternalScheme(uri)) {
+                            var opened = false;
                             try {
-                              await launchUrl(uri,
+                              opened = await launchUrl(uri,
                                   mode: AppPlatform.isDesktop
                                       ? LaunchMode.externalApplication
                                       : LaunchMode
@@ -716,9 +729,13 @@ class _PaymentCheckoutSheetState extends State<PaymentCheckoutSheet> {
                               debugPrint(
                                   '[PaymentCheckout] Gagal membuka external payment app: $e');
                             }
+                            // Aplikasi dompet/bank tidak terpasang: arahkan ke
+                            // halaman pembayaran HTTPS tepercaya.
+                            if (!opened) _offerBrowserFallback();
                           } else {
                             debugPrint(
                                 '[PaymentCheckout] External scheme ditolak karena tidak masuk allowlist: ${uri.scheme}');
+                            _offerBrowserFallback();
                           }
                           return NavigationActionPolicy.CANCEL;
                         }

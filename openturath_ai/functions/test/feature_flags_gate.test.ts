@@ -104,7 +104,7 @@ test('pembelian paket Tahawwulat induk tidak terpengaruh', async () => {
   const {api} = loadBackend();
   const offer = await api.resolvePlanPricing('fiqh_tahawwulat', 'tholib_1m');
   assert.equal(offer.entitlementKey, 'fiqh_tahawwulat');
-  assert.equal(offer.amount, 300000);
+  assert.equal(offer.amount, 299000);
 });
 
 // ---- askAgent (asisten native): gerbang yang sama ----

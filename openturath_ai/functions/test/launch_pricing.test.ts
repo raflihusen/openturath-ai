@@ -21,8 +21,8 @@ test('all 19 published disciplines resolve to the launch price without global ac
 test('Tahawwulat duration prices and aliases retain the correct calendar months', async () => {
   const {api} = loadBackend();
   for (const [plan, amount, months] of [
-    ['tholib_1m',300000,1], ['tholib_6m',1499000,6], ['bahits_1y',1999000,12],
-    ['1m',300000,1], ['6m',1499000,6], ['1y',1999000,12],
+    ['tholib_1m',299000,1], ['tholib_6m',1499000,6], ['bahits_1y',1999000,12],
+    ['1m',299000,1], ['6m',1499000,6], ['1y',1999000,12],
   ] as const) {
     const offer = await api.resolvePlanPricing('fiqh_tahawwulat', plan);
     assert.equal(offer.amount, amount);
@@ -61,4 +61,30 @@ test('checkout requires a verified Google address and bills that address, not a 
   await api.createCheckout(offer,{auth:{uid:'reader',token:{email:'Reader@Example.test',email_verified:true}}}).catch(()=>{});
   const tx=[...db.docs.entries()].find(([k]:any)=>k.startsWith('transactions/'));
   assert.equal(tx?.[1].customer_email,'reader@example.test');
+});
+
+// Harga cadangan klien (lib/core/product_pricing.dart) dan server harus sama:
+// bila konfigurasi tidak terbaca, selisih membuat checkout ditolak sebagai "harga berubah".
+test('harga cadangan klien Dart sama dengan harga server', async () => {
+  const {readFileSync} = await import('node:fs');
+  const src = readFileSync(new URL('../../lib/core/product_pricing.dart', import.meta.url), 'utf8');
+  const block = (name: string) => {
+    const m = src.match(new RegExp(`${name}\\s*=\\s*\\[([\\s\\S]*?)\\];`));
+    assert.ok(m, name);
+    return [...m![1].matchAll(/plan:\s*'(\w+)',\s*months:\s*(\d+),\s*regularAmount:\s*\d+,\s*amount:\s*(\d+)/g)]
+      .map((x) => ({plan: x[1], months: Number(x[2]), amount: Number(x[3])}));
+  };
+  const {api, db} = loadBackend();
+  db.seed('app_config/agents', {active_agent_ids: [...specialists, 'fiqh_tahawwulat']});
+  const tahawwulat = block('defaultTahawwulat');
+  assert.equal(tahawwulat.length, 3);
+  for (const t of tahawwulat) {
+    const offer = await api.resolvePlanPricing('fiqh_tahawwulat', t.plan);
+    assert.deepEqual([offer.amount, offer.durationMonths], [t.amount, t.months], `tahawwulat ${t.plan}`);
+  }
+  const clientSpecialists = block('defaultSpecialists');
+  for (const t of clientSpecialists) {
+    const offer = await api.resolvePlanPricing('fiqh_syafii', t.plan);
+    assert.deepEqual([offer.amount, offer.durationMonths], [t.amount, t.months], `specialist ${t.plan}`);
+  }
 });

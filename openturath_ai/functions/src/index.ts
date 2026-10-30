@@ -631,10 +631,10 @@ async function resolvePlanPricing(agentId: string, plan: string): Promise<{ amou
   // Harga Mandiri Khusus Fikih Tahawwulat
   if (agentId.startsWith("fiqh_tahawwulat")) {
     const tahawwulatTiers: Record<string, { amount: number; durationMonths: number; labelSuffix: string }> = {
-      tholib_1m: { amount: 300000, durationMonths: 1, labelSuffix: "(1 Bulan)" },
+      tholib_1m: { amount: 299000, durationMonths: 1, labelSuffix: "(1 Bulan)" },
       tholib_6m: { amount: 1499000, durationMonths: 6, labelSuffix: "(6 Bulan)" },
       bahits_1y: { amount: 1999000, durationMonths: 12, labelSuffix: "(1 Tahun)" },
-      "1m": { amount: 300000, durationMonths: 1, labelSuffix: "(1 Bulan)" },
+      "1m": { amount: 299000, durationMonths: 1, labelSuffix: "(1 Bulan)" },
       "6m": { amount: 1499000, durationMonths: 6, labelSuffix: "(6 Bulan)" },
       "1y": { amount: 1999000, durationMonths: 12, labelSuffix: "(1 Tahun)" },
     };
