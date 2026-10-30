@@ -138,7 +138,10 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
   /// Menyelaraskan status pelindung visual (Visual Shield) dengan domain navigasi WebView
   void _handleUrlNavigation(InAppWebViewController controller, WebUri? url) {
     if (!identical(controller.platform, _webController?.platform)) return;
-    if (!mounted || url == null || _verificationFailed || _connectionCancelled) {
+    if (!mounted ||
+        url == null ||
+        _verificationFailed ||
+        _connectionCancelled) {
       return;
     }
     final uri = url.uriValue;
