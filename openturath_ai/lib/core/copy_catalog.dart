@@ -593,6 +593,26 @@ const copyCatalog = <String, List<String>>{
     "Connecting your Google account…",
     "جارٍ ربط حساب Google…"
   ],
+  "sessionReconnectTitle": [
+    "Masuk kembali ke akun Anda",
+    "Sign in to your account again",
+    "سجّل الدخول إلى حسابك مجددًا"
+  ],
+  "sessionReconnectBody": [
+    "Sesi aplikasi belum terhubung. Masuk kembali untuk membuka AI dan mengelola akun. Catatan tersimpan tetap tersedia setelah masuk.",
+    "Your app session is disconnected. Sign in again to open AI and manage your account. Saved notes remain available after signing in.",
+    "جلسة التطبيق غير متصلة. سجّل الدخول مجددًا لفتح الذكاء الاصطناعي وإدارة حسابك. تبقى ملاحظاتك المحفوظة متاحة بعد تسجيل الدخول."
+  ],
+  "sessionReconnectAction": [
+    "Masuk kembali",
+    "Sign in again",
+    "تسجيل الدخول مجددًا"
+  ],
+  "chatHistoryClearFailed": [
+    "Riwayat belum dapat dipastikan terhapus. Obrolan tetap ditampilkan; coba lagi setelah halaman siap.",
+    "Could not confirm that the history was deleted. The conversation remains visible; try again when the page is ready.",
+    "تعذّر التأكد من حذف السجل. ما زالت المحادثة ظاهرة؛ أعد المحاولة بعد اكتمال تحميل الصفحة."
+  ],
   "googleSessionFailed": [
     "Gagal menghubungkan akun Google.",
     "Unable to connect your Google account.",
