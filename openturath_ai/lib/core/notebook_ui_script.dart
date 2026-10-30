@@ -465,6 +465,10 @@ const _notebookCleanupScript = r'''
         align-items: center !important;
         justify-content: center !important;
       }
+      /* Percakapan kosong (riwayat dihapus): tidak ada transkrip yang menyerap sisa tinggi,
+         sehingga composer akan naik ke atas. margin-top:auto menjaganya tetap di dasar kolom
+         tanpa mengambang (tetap in-flow). */
+      .ot-chat-composer.ot-chat-composer-empty { margin-top: auto !important; }
       .ot-chat-composer > *,
       .ot-chat-composer form,
       .ot-chat-composer .chat-input-container,
@@ -1016,6 +1020,7 @@ const _notebookCleanupScript = r'''
     const composerPaths = new Set();
     const transcriptPaths = new Set();
     let composer = null;
+    let emptyConversation = false;
     if (input) {
       const panelSelector = 'app-chat, app-chat-view, app-chat-panel, .chat-panel, .chat-view, .chat-panel-content, .conversation-container, main, [role="main"]';
       const composerSelector = 'app-chat-input, .chat-input-container, .input-container, form.chat-input-form, .chat-input-area, .query-box-container';
@@ -1077,6 +1082,7 @@ const _notebookCleanupScript = r'''
             }
           }
         }
+        emptyConversation = !conversationRoot;
         let belowRoot = !!conversationRoot;
         ancestors.forEach(ancestor => {
           if (ancestor === conversationRoot) belowRoot = false;
@@ -1131,6 +1137,10 @@ const _notebookCleanupScript = r'''
     });
     transcriptPaths.forEach(node => node.classList.add('ot-chat-transcript-path'));
     if (composer) composer.classList.add('ot-chat-composer');
+    if (composer) composer.classList.toggle('ot-chat-composer-empty', emptyConversation);
+    document.querySelectorAll('.ot-chat-composer-empty').forEach(node => {
+      if (node !== composer) node.classList.remove('ot-chat-composer-empty');
+    });
     document.body?.classList.toggle('ot-chat-layout', !!composer);
 
     // Pastikan DOM bersih dari elemen spacer buatan masa lalu
