@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
 
 import 'app_copy.dart';
+import 'localization.dart';
 
 /// Maps SDK failures to useful copy without displaying SDK payloads or tokens.
 /// An empty message means the user cancelled the authorization flow.
@@ -27,6 +28,7 @@ String loginErrorMessage(Object error) {
   if (error is FirebaseAuthException) {
     return switch (error.code) {
       'keychain-error' => AppCopy.desktopKeychainError,
+      'auth-operation-in-progress' => Loc.tr('authPreviousLoginPending'),
       'popup-closed-by-user' || 'canceled' => '',
       'network-request-failed' => AppCopy.networkError,
       _ => _withCode(error.code),

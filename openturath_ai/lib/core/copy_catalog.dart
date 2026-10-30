@@ -608,6 +608,11 @@ const copyCatalog = <String, List<String>>{
     "Sign in again",
     "تسجيل الدخول مجددًا"
   ],
+  "authPreviousLoginPending": [
+    "Proses masuk sebelumnya masih diselesaikan. Tunggu sebentar lalu coba lagi. Jika tetap muncul, tutup dan buka kembali aplikasi.",
+    "A previous sign-in is still finishing. Wait a moment and try again. If this continues, close and reopen the app.",
+    "لا تزال عملية تسجيل الدخول السابقة قيد الإكمال. انتظر قليلًا ثم حاول مجددًا. إذا استمرت المشكلة، أغلق التطبيق وافتحه من جديد."
+  ],
   "chatHistoryClearFailed": [
     "Riwayat belum dapat dipastikan terhapus. Periksa kembali obrolan dan coba lagi setelah halaman siap.",
     "Could not confirm that the history was deleted. Check the conversation and try again when the page is ready.",
