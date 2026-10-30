@@ -2,6 +2,7 @@ import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:openturath_ai/services/callable_gateway.dart';
 import 'package:openturath_ai/services/payment_service.dart';
+import 'package:openturath_ai/services/subscription_service.dart';
 
 class _Gateway extends CallableGateway {
   _Gateway(this.response);
@@ -24,6 +25,24 @@ void main() {
       final feedback = PaymentInquiryFeedback.forStatus(result['status']);
       expect(feedback.messageKey, status == 'ERROR' ? 'paymentCheckUnavailable' : 'paymentPending');
       expect(feedback.terminal, isFalse);
+    }
+  });
+
+  test('real verification path distinguishes legacy provider error from pending', () async {
+    for (final response in [
+      {'success': false, 'status': 'PENDING', 'message': 'Status pembayaran belum dapat diperiksa. Silakan coba lagi.'},
+      {'success': false, 'status': 'ERROR'},
+      {'success': false, 'status': 'PENDING', 'message': 'Pembayaran masih menunggu penyelesaian.'},
+      {'success': false, 'status': 'expire'},
+    ]) {
+      final service = SubscriptionService(paymentService: PaymentService(functions: _Gateway(() async => response)));
+      final result = await service.verifyPaymentStatus(invoiceNumber: ' INV-1 ');
+      final feedback = PaymentInquiryFeedback.forStatus(result['status']);
+      final expected = response['status'] == 'expire' ? 'paymentExpired'
+          : response['message'] == 'Pembayaran masih menunggu penyelesaian.' ? 'paymentPending'
+          : 'paymentCheckUnavailable';
+      expect(result['success'], isFalse);
+      expect(feedback.messageKey, expected);
     }
   });
 
