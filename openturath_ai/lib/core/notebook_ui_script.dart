@@ -39,15 +39,22 @@ const _notebookCleanupScript = r'''
   function conversation() {
     const nodes = [...document.querySelectorAll(questionSelector + ',' + answerSelector)].filter(visible);
     const entries = [];
-    const seen = new Set();
+    // Select one message node per structural branch. Repeated words in
+    // separate turns are valid conversation content, never a deduplication key.
+    const roleOf = node => node.matches(questionSelector) || !!node.closest(questionSelector)
+      ? 'PERTANYAAN' : 'JAWABAN';
     nodes.forEach(node => {
+      const role = roleOf(node);
+      const descendants = nodes.filter(other => other !== node && node.contains(other));
+      // Mixed turn wrappers contain both question and answer. Same-role nested
+      // wrappers with identical content are represented once by their outer node.
+      if (descendants.some(other => roleOf(other) !== role)) return;
       const value = answerText(node);
-      if (!value || seen.has(value)) return;
-      const isQuestion = node.matches(questionSelector) || !!node.closest(questionSelector);
-      const role = isQuestion ? 'PERTANYAAN' : 'JAWABAN';
-      if (entries.some(entry => entry.role === role && entry.value.includes(value))) return;
+      if (!value) return;
+      if (nodes.some(other => other !== node && other.contains(node) &&
+          roleOf(other) === role && answerText(other) === value &&
+          !nodes.some(child => child !== other && other.contains(child) && roleOf(child) !== role))) return;
       entries.push({role, value});
-      seen.add(value);
     });
     if (!entries.some(entry => entry.role === 'JAWABAN')) {
       const answer = latest();
