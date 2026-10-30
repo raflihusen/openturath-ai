@@ -43,6 +43,10 @@ class TestAuth extends Fake implements FirebaseAuth {
   int credentialCalls = 0;
   int signOutCalls = 0;
   Completer<UserCredential>? pendingCredential;
+  FirebaseAuthException? credentialFailure;
+  Completer<void>? signOutWait;
+  int nativeInFlight = 0;
+  int maxNativeInFlight = 0;
   @override
   User? get currentUser => user;
   @override
@@ -50,12 +54,21 @@ class TestAuth extends Fake implements FirebaseAuth {
   @override
   Future<UserCredential> signInWithCredential(AuthCredential credential) {
     credentialCalls++;
-    return pendingCredential!.future;
+    nativeInFlight++;
+    if (nativeInFlight > maxNativeInFlight) maxNativeInFlight = nativeInFlight;
+    final result = credentialFailure == null
+        ? pendingCredential!.future
+        : Future<UserCredential>.error(credentialFailure!);
+    return result.then((result) {
+      user = result.user;
+      return result;
+    }).whenComplete(() => nativeInFlight--);
   }
 
   @override
   Future<void> signOut() async {
     signOutCalls++;
+    await signOutWait?.future;
     user = null;
   }
 }
@@ -68,22 +81,31 @@ class TestTokens extends Fake implements GoogleSignInAuthentication {
 }
 
 class TestGoogleAccount extends Fake implements GoogleSignInAccount {
-  TestGoogleAccount(this.tokens);
+  TestGoogleAccount(this.tokens, {this.email = 'google@example.test'});
   final Future<GoogleSignInAuthentication> tokens;
+  @override
+  final String email;
   @override
   Future<GoogleSignInAuthentication> get authentication => tokens;
 }
 
 class TestGoogle extends Fake implements GoogleSignIn {
   GoogleSignInAccount? account;
+  int authorizeCalls = 0;
+  int silentCalls = 0;
   @override
-  Future<GoogleSignInAccount?> signIn() async => account;
+  Future<GoogleSignInAccount?> signIn() async {
+    authorizeCalls++;
+    return account;
+  }
   @override
   Future<GoogleSignInAccount?> signInSilently({
     bool suppressErrors = true,
     bool reAuthenticate = false,
-  }) async =>
-      account;
+  }) async {
+    silentCalls++;
+    return account;
+  }
   @override
   Future<GoogleSignInAccount?> signOut() async => null;
 }
@@ -248,7 +270,8 @@ void main() {
     final service = AuthService(
         auth: auth,
         googleSignIn: google,
-        restoreTimeout: const Duration(milliseconds: 40));
+        restoreTimeout: const Duration(milliseconds: 40),
+        authenticationTimeout: const Duration(milliseconds: 40));
     final restored = service.restoreSession();
     await Future<void>.delayed(const Duration(milliseconds: 10));
     expect(auth.credentialCalls, 1);
@@ -322,6 +345,160 @@ void main() {
         (await SharedPreferences.getInstance()).getString('current_user_uid'),
         isNull);
     expect(auth.signOutCalls, 0);
+  });
+
+  test('pending native A blocks account B before authorization until explicit retry', () async {
+    debugDefaultTargetPlatformOverride = TargetPlatform.macOS;
+    final pendingA = Completer<UserCredential>();
+    final auth = TestAuth()..pendingCredential = pendingA;
+    final googleA = TestGoogle()..account = TestGoogleAccount(Future.value(TestTokens()));
+    final serviceA = AuthService(auth: auth, googleSignIn: googleA,
+      restoreTimeout: const Duration(milliseconds: 30));
+    expect(await serviceA.restoreSession(), isNull);
+    expect(auth.credentialCalls, 1);
+    final googleB = TestGoogle()..account = TestGoogleAccount(Future.value(TestTokens()));
+    final serviceB = AuthService(auth: auth, googleSignIn: googleB,
+      authenticationTimeout: const Duration(milliseconds: 30));
+    await expectLater(serviceB.signInWithGoogle(), throwsA(isA<FirebaseAuthException>()
+      .having((e) => e.code, 'code', 'auth-operation-in-progress')));
+    expect(googleB.authorizeCalls, 0);
+    expect(auth.credentialCalls, 1);
+    pendingA.complete(TestCredential(TestUser('native-A')));
+    await Future<void>.delayed(Duration.zero);
+    expect(googleB.authorizeCalls, 0);
+    expect(auth.credentialCalls, 1); // Timed-out B must never dispatch later.
+    final pendingB = Completer<UserCredential>();
+    auth.pendingCredential = pendingB;
+    final retry = serviceB.signInWithGoogle();
+    await Future<void>.delayed(Duration.zero);
+    expect(googleB.authorizeCalls, 1);
+    expect(auth.credentialCalls, 2);
+    pendingB.complete(TestCredential(TestUser('native-B')));
+    expect((await retry)?.uid, 'native-B');
+    expect(auth.currentUser?.uid, 'native-B');
+    expect(auth.maxNativeInFlight, 1);
+  });
+
+  test('simultaneous restorations reserve the native mutation gate atomically', () async {
+    debugDefaultTargetPlatformOverride = TargetPlatform.macOS;
+    final pendingA = Completer<UserCredential>();
+    final pendingB = Completer<UserCredential>();
+    final auth = TestAuth()..pendingCredential = pendingA;
+    TestGoogle google() => TestGoogle()..account = TestGoogleAccount(Future.value(TestTokens()));
+    final first = AuthService(auth: auth, googleSignIn: google()).restoreSession();
+    final second = AuthService(auth: auth, googleSignIn: google()).restoreSession();
+    await Future<void>.delayed(const Duration(milliseconds: 10));
+    expect(auth.credentialCalls, 1);
+    auth.pendingCredential = pendingB;
+    pendingA.complete(TestCredential(TestUser('same-owner')));
+    await Future<void>.delayed(const Duration(milliseconds: 10));
+    expect(auth.credentialCalls, 2);
+    expect(auth.maxNativeInFlight, 1);
+    pendingB.complete(TestCredential(TestUser('same-owner')));
+    await Future.wait([first, second]);
+    expect(auth.nativeInFlight, 0);
+  });
+
+  test('queued restoration cannot dispatch after its own deadline', () async {
+    debugDefaultTargetPlatformOverride = TargetPlatform.macOS;
+    final pending = Completer<UserCredential>();
+    final auth = TestAuth()..pendingCredential = pending;
+    TestGoogle google() => TestGoogle()..account = TestGoogleAccount(Future.value(TestTokens()));
+    final first = AuthService(auth: auth, googleSignIn: google(),
+      restoreTimeout: const Duration(milliseconds: 30)).restoreSession();
+    final second = AuthService(auth: auth, googleSignIn: google(),
+      restoreTimeout: const Duration(milliseconds: 30)).restoreSession();
+    expect(await Future.wait([first, second]), [null, null]);
+    expect(auth.credentialCalls, 1);
+    pending.complete(TestCredential(TestUser('only-request')));
+    await Future<void>.delayed(Duration.zero);
+    expect(auth.credentialCalls, 1);
+    expect(auth.maxNativeInFlight, 1);
+  });
+
+  test('logout stays bounded and hides identity while native A and cleanup remain pending', () async {
+    debugDefaultTargetPlatformOverride = TargetPlatform.macOS;
+    final pending = Completer<UserCredential>();
+    final cleanup = Completer<void>();
+    final auth = TestAuth()..pendingCredential = pending;
+    final googleA = TestGoogle()..account = TestGoogleAccount(Future.value(TestTokens()));
+    final service = AuthService(auth: auth, googleSignIn: googleA,
+      restoreTimeout: const Duration(milliseconds: 30),
+      authenticationTimeout: const Duration(milliseconds: 30));
+    expect(await service.restoreSession(), isNull);
+    auth.signOutWait = cleanup;
+    await service.signOut().timeout(const Duration(milliseconds: 300));
+    expect(service.currentUser, isNull);
+    expect(service.cachedCurrentUser, isNull);
+    expect(service.hasAuthenticatedSession, isFalse);
+    expect((await SharedPreferences.getInstance()).getBool(AuthService.explicitLogoutKey), isTrue);
+    final googleB = TestGoogle()..account = TestGoogleAccount(Future.value(TestTokens()));
+    final newer = AuthService(auth: auth, googleSignIn: googleB,
+      authenticationTimeout: const Duration(milliseconds: 30));
+    pending.complete(TestCredential(TestUser('late-logout-A')));
+    await Future<void>.delayed(Duration.zero);
+    // A is native-authenticated, but the explicit logout hides it immediately.
+    expect(auth.currentUser?.uid, 'late-logout-A');
+    expect(service.currentUser, isNull);
+    await expectLater(newer.signInWithGoogle(), throwsA(isA<FirebaseAuthException>()
+      .having((e) => e.code, 'code', 'auth-operation-in-progress')));
+    expect(googleB.authorizeCalls, 0);
+    cleanup.complete();
+    await Future<void>.delayed(const Duration(milliseconds: 10));
+    expect(auth.currentUser, isNull);
+    expect(auth.signOutCalls, 2);
+    final next = Completer<UserCredential>();
+    auth.pendingCredential = next;
+    final retry = newer.signInWithGoogle();
+    await Future<void>.delayed(Duration.zero);
+    next.complete(TestCredential(TestUser('post-logout-B')));
+    expect((await retry)?.uid, 'post-logout-B');
+    expect(newer.currentUser?.uid, 'post-logout-B');
+    expect((await SharedPreferences.getInstance()).getBool(AuthService.explicitLogoutKey), isNull);
+  });
+
+  test('persisted explicit logout is honored after a process restart without Google cleanup', () async {
+    debugDefaultTargetPlatformOverride = TargetPlatform.macOS;
+    SharedPreferences.setMockInitialValues({
+      AuthService.explicitLogoutKey: true,
+      'webview_session_owner': 'untouched@example.test',
+      'webview_session_owner_verified_v1': 'untouched@example.test',
+    });
+    final auth = TestAuth()..user = TestUser('persisted-A');
+    final google = TestGoogle();
+    final service = AuthService(auth: auth, googleSignIn: google);
+    expect(await service.restoreSession(), isNull);
+    expect(auth.currentUser, isNull);
+    expect(service.currentUser, isNull);
+    expect(auth.signOutCalls, 1);
+    expect(google.silentCalls, 0);
+    final prefs = await SharedPreferences.getInstance();
+    expect(prefs.getString('webview_session_owner'), 'untouched@example.test');
+    expect(prefs.getString('webview_session_owner_verified_v1'), 'untouched@example.test');
+  });
+
+  test('keychain fallback never accepts old A after the user selected B', () async {
+    debugDefaultTargetPlatformOverride = TargetPlatform.macOS;
+    final auth = TestAuth()
+      ..user = TestUser('keychain-A')
+      ..credentialFailure = FirebaseAuthException(code: 'keychain-error');
+    final google = TestGoogle()..account = TestGoogleAccount(Future.value(TestTokens()),
+      email: 'keychain-B@example.test');
+    final service = AuthService(auth: auth, googleSignIn: google);
+    await expectLater(service.signInWithGoogle(), throwsA(isA<FirebaseAuthException>()
+      .having((e) => e.code, 'code', 'keychain-error')));
+    expect((await SharedPreferences.getInstance()).getString('current_user_uid'), isNull);
+  });
+
+  test('keychain fallback accepts the same explicitly selected account', () async {
+    debugDefaultTargetPlatformOverride = TargetPlatform.macOS;
+    final auth = TestAuth()
+      ..user = TestUser('keychain-same')
+      ..credentialFailure = FirebaseAuthException(code: 'keychain-error');
+    final google = TestGoogle()..account = TestGoogleAccount(Future.value(TestTokens()),
+      email: ' KEYCHAIN-SAME@example.test ');
+    final service = AuthService(auth: auth, googleSignIn: google);
+    expect((await service.signInWithGoogle())?.uid, 'keychain-same');
   });
 
   testWidgets(

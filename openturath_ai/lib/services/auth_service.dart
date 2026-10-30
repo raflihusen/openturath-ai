@@ -602,9 +602,13 @@ class AuthService {
     final immediate =
         Future<void>.sync(() => _auth.signOut()).catchError((Object _) {});
     localCleanup.complete(() async {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setBool(explicitLogoutKey, true);
-      await Future.wait([_prepareLocalSignOut(currentUid), immediate]);
+      try {
+        final prefs = await SharedPreferences.getInstance();
+        final stored = await prefs.setBool(explicitLogoutKey, true);
+        if (!stored) throw StateError('explicit-logout-not-persisted');
+      } finally {
+        await Future.wait([_prepareLocalSignOut(currentUid), immediate]);
+      }
     }());
     try {
       await drained.timeout(_authenticationTimeout);
