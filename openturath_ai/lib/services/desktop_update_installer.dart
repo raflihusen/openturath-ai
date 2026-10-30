@@ -26,7 +26,9 @@ class DesktopUpdateInstaller {
           File(p.join((await updateDirectory()).path, 'pending_install.json'));
       if (!await receipt.exists()) return;
       final info = await PackageInfo.fromPlatform();
-      await confirmReceipt(receipt: receipt, executable: Platform.resolvedExecutable,
+      await confirmReceipt(
+          receipt: receipt,
+          executable: Platform.resolvedExecutable,
           build: int.tryParse(info.buildNumber) ?? 0);
     } catch (error) {
       debugPrint(
@@ -35,9 +37,12 @@ class DesktopUpdateInstaller {
   }
 
   @visibleForTesting
-  static Future<void> confirmReceipt({required File receipt,
-      required String executable, required int build}) async {
-    final plan = jsonDecode(await receipt.readAsString()) as Map<String, dynamic>;
+  static Future<void> confirmReceipt(
+      {required File receipt,
+      required String executable,
+      required int build}) async {
+    final plan =
+        jsonDecode(await receipt.readAsString()) as Map<String, dynamic>;
     final target = plan['target'] as String;
     if (!p.isWithin(target, File(executable).absolute.path)) return;
     final stage = Directory(plan['stage'] as String);
@@ -47,10 +52,12 @@ class DesktopUpdateInstaller {
     }
     final status = File(p.join(stage.path, 'status'));
     if (!await status.exists() ||
-        (await status.readAsString()).trim() != 'installed' || build != plan['build']) {
+        (await status.readAsString()).trim() != 'installed' ||
+        build != plan['build']) {
       return;
     }
-    await File(p.join(stage.path, 'confirmed')).writeAsString('$build', flush: true);
+    await File(p.join(stage.path, 'confirmed'))
+        .writeAsString('$build', flush: true);
     await receipt.delete();
   }
 

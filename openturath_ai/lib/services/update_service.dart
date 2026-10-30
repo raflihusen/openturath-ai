@@ -136,9 +136,7 @@ class UpdateService extends ChangeNotifier {
         _isChecking ||
         isInstalling ||
         !shouldRecheck(
-            now: DateTime.now(),
-            last: _lastCheckedAt,
-            ready: isUpdateReady)) {
+            now: DateTime.now(), last: _lastCheckedAt, ready: isUpdateReady)) {
       return;
     }
     _isChecking = true;
@@ -240,7 +238,8 @@ class UpdateService extends ChangeNotifier {
             installerProtocol: info.installerProtocol);
         try {
           final closing = await const MethodChannel('com.openturath.ai/updater')
-              .invokeMethod<bool>('quitForUpdate').timeout(const Duration(seconds: 5));
+              .invokeMethod<bool>('quitForUpdate')
+              .timeout(const Duration(seconds: 5));
           if (closing != true) throw StateError('Application could not close');
           handedOff = true;
         } catch (_) {
