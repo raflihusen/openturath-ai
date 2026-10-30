@@ -609,9 +609,9 @@ const copyCatalog = <String, List<String>>{
     "تسجيل الدخول مجددًا"
   ],
   "chatHistoryClearFailed": [
-    "Riwayat belum dapat dipastikan terhapus. Obrolan tetap ditampilkan; coba lagi setelah halaman siap.",
-    "Could not confirm that the history was deleted. The conversation remains visible; try again when the page is ready.",
-    "تعذّر التأكد من حذف السجل. ما زالت المحادثة ظاهرة؛ أعد المحاولة بعد اكتمال تحميل الصفحة."
+    "Riwayat belum dapat dipastikan terhapus. Periksa kembali obrolan dan coba lagi setelah halaman siap.",
+    "Could not confirm that the history was deleted. Check the conversation and try again when the page is ready.",
+    "تعذّر التأكد من حذف السجل. راجع المحادثة وأعد المحاولة بعد اكتمال تحميل الصفحة."
   ],
   "paymentCheckUnavailable": [
     "Status pembayaran belum dapat diperiksa. Ini bukan berarti pembayaran gagal; coba lagi sebentar lagi.",
