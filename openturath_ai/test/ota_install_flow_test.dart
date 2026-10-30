@@ -20,7 +20,6 @@ class FixtureStore extends UpdatePackageStore {
 }
 
 void main() {
-  TestWidgetsFlutterBinding.ensureInitialized();
   late Directory directory;
   late HttpServer server;
   late FixtureStore store;
