@@ -28,14 +28,40 @@ Source: "..\build\installer_stage\ui.zip"; Flags: dontcopy
 Source: "..\build\installer_core\OpenTurath_AI_Core_Setup.exe"; DestName: "core.exe"; Flags: dontcopy
 
 [Code]
+procedure ExitProcess(ExitCode: Integer);
+  external 'ExitProcess@kernel32.dll stdcall';
+
+function IsOtaUpdate: Boolean;
+var I: Integer;
+begin
+  Result := False;
+  for I := 1 to ParamCount do
+    if CompareText(ParamStr(I), '/OTAUPDATE') = 0 then Result := True;
+end;
+
 function InitializeSetup: Boolean;
 var
   Rc: Integer;
-  UiDir, UiExe: String;
+  UiDir, UiExe, OtaDir: String;
 begin
   Result := False; { tidak pernah menampilkan wizard bawaan }
-  ExtractTemporaryFile('ui.zip');
   ExtractTemporaryFile('core.exe');
+  if IsOtaUpdate then
+  begin
+    OtaDir := ExpandConstant('{param:OTADIR|}');
+    if (OtaDir = '') or (Pos('"', OtaDir) > 0) or
+       not FileExists(OtaDir + '\openturath_ai.exe') then
+    begin
+      ExitProcess(2);
+      Exit;
+    end;
+    if not Exec(ExpandConstant('{tmp}\core.exe'),
+        '/VERYSILENT /SUPPRESSMSGBOXES /NORESTART /SP- /DIR="' + OtaDir + '"',
+        '', SW_HIDE, ewWaitUntilTerminated, Rc) then Rc := 2;
+    ExitProcess(Rc);
+    Exit;
+  end;
+  ExtractTemporaryFile('ui.zip');
   UiDir := ExpandConstant('{tmp}\ui');
   ForceDirectories(UiDir);
   { tar.exe tersedia bawaan di Windows 10 1803 ke atas. }
