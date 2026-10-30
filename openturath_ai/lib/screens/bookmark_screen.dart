@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import '../core/localization.dart';
 import '../widgets/native_theme.dart';
 import '../widgets/native_components.dart';
