@@ -24,11 +24,13 @@ void main() {
     expect(find.text('Paket 6 bulan'), findsOneWidget);
     expect(find.textContaining('sudah aktif'), findsNothing);
     expect(find.textContaining('Menyiapkan akses'), findsOneWidget);
-    expect(find.text('Selesai'), findsNothing);
+    expect(find.text('Kembali ke Dashboard'), findsNothing);
     await tester.pump(const Duration(seconds: 31));
     await tester.pumpAndSettle();
     expect(find.textContaining('Menyiapkan akses'), findsNothing);
-    await tester.tap(find.text('Selesai'));
+    expect(find.textContaining('Akses Anda sudah siap'), findsNothing);
+    expect(find.textContaining('masih diproses'), findsOneWidget);
+    await tester.tap(find.text('Kembali ke Dashboard'));
     await tester.pumpAndSettle();
     expect(find.byType(PaymentSuccessDialog), findsNothing);
     expect(tester.takeException(), isNull);

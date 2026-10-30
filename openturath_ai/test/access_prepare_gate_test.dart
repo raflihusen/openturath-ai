@@ -9,10 +9,16 @@ Widget _host(Future<bool> Function()? ready, void Function(bool) onBuild) =>
         home: Scaffold(
             body: AccessPrepareGate(
                 isReady: ready,
-                builder: (context, done, left, panel) {
-                  onBuild(done);
-                  return Column(
-                      children: [Text(done ? 'SIAP' : 'TUNGGU $left'), panel]);
+                builder: (context, done, left, panel, ready) {
+                  onBuild(ready);
+                  return Column(children: [
+                    Text(ready
+                        ? 'SIAP'
+                        : done
+                            ? 'SELESAI TANPA KONFIRMASI'
+                            : 'TUNGGU $left'),
+                    panel
+                  ]);
                 })));
 
 void main() {
@@ -37,13 +43,15 @@ void main() {
     expect(find.text('SIAP'), findsOneWidget);
   });
 
-  testWidgets('belum siap atau galat: tetap menunggu sampai batas 30 detik',
+  testWidgets(
+      'belum siap atau galat: setelah 30 detik tidak pernah dinyatakan siap',
       (tester) async {
     await tester.pumpWidget(_host(() async => throw StateError('x'), (_) {}));
     await tester.pump(const Duration(seconds: 15));
     expect(find.textContaining('TUNGGU'), findsOneWidget);
     await tester.pump(const Duration(seconds: 16));
-    expect(find.text('SIAP'), findsOneWidget);
+    expect(find.text('SIAP'), findsNothing);
+    expect(find.text('SELESAI TANPA KONFIRMASI'), findsOneWidget);
   });
 
   test(

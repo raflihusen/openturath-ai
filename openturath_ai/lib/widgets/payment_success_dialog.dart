@@ -46,7 +46,7 @@ class PaymentSuccessDialog extends StatelessWidget {
     return AccessPrepareGate(
       seconds: prepareSeconds,
       isReady: () => SubscriptionService().isAccessReady(invoice: invoice),
-      builder: (context, done, left, panel) => PopScope(
+      builder: (context, done, left, panel, ready) => PopScope(
         canPop: done,
         child: AlertDialog(
           shape: RoundedRectangleBorder(borderRadius: OTRadius.dialogBorder),
@@ -79,13 +79,18 @@ class PaymentSuccessDialog extends StatelessWidget {
                   style: OTTypography.body(color: muted)),
               const SizedBox(height: 20),
               Text(
-                  done
+                  ready
                       ? reviewCopy('Akses Anda sudah siap.',
                           'أصبح وصولك جاهزًا.', 'Your access is ready.')
-                      : reviewCopy(
-                          'Akses sedang disiapkan. Mohon tunggu sebentar dan tidak perlu membayar lagi.',
-                          'يجري تجهيز وصولك. يُرجى الانتظار قليلًا ولا حاجة للدفع مرة أخرى.',
-                          'Your access is being prepared. Please wait a moment; there is no need to pay again.'),
+                      : done
+                          ? reviewCopy(
+                              'Pembayaran Anda sudah tercatat, tetapi akses masih diproses. Tidak perlu membayar lagi; buka kembali dari dashboard sebentar lagi.',
+                              'تم تسجيل دفعتك لكن الوصول ما زال قيد المعالجة. لا حاجة للدفع مرة أخرى؛ افتح من لوحة التحكم بعد قليل.',
+                              'Your payment is recorded but access is still being processed. No need to pay again; check the dashboard shortly.')
+                          : reviewCopy(
+                              'Akses sedang disiapkan. Mohon tunggu sebentar dan tidak perlu membayar lagi.',
+                              'يجري تجهيز وصولك. يُرجى الانتظار قليلًا ولا حاجة للدفع مرة أخرى.',
+                              'Your access is being prepared. Please wait a moment; there is no need to pay again.'),
                   textAlign: TextAlign.center,
                   style: OTTypography.bodyMedium(color: ink)),
               const SizedBox(height: 12),
@@ -109,7 +114,7 @@ class PaymentSuccessDialog extends StatelessWidget {
                               nav.popUntil((route) =>
                                   route.settings.name == AppRoutes.dashboard ||
                                   route.isFirst);
-                              if (agent != null) {
+                              if (ready && agent != null) {
                                 AgentSessionManager.instance.openAgent(
                                   agent!,
                                   user: AuthService().cachedCurrentUser,
@@ -118,10 +123,15 @@ class PaymentSuccessDialog extends StatelessWidget {
                             }
                           : null,
                       child: Text(done
-                          ? (agent != null
+                          ? (ready && agent != null
                               ? reviewCopy('Mulai Bertanya Sekarang',
                                   'ابدأ السؤال الآن', 'Start Asking Now')
-                              : reviewCopy('Selesai', 'تم', 'Done'))
+                              : ready
+                                  ? reviewCopy('Selesai', 'تم', 'Done')
+                                  : reviewCopy(
+                                      'Kembali ke Dashboard',
+                                      'العودة إلى لوحة التحكم',
+                                      'Back to Dashboard'))
                           : reviewCopy(
                               'Menyiapkan akses… $left',
                               'جارٍ التجهيز… $left',

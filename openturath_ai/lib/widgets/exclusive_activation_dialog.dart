@@ -122,7 +122,7 @@ class ExclusiveActivationDialog extends StatelessWidget {
       isReady: code == null
           ? null
           : () => SubscriptionService().isAccessReady(code: code),
-      builder: (context, done, left, panel) => PopScope(
+      builder: (context, done, left, panel, ready) => PopScope(
         canPop: done,
         child: AlertDialog(
           backgroundColor: OTColors.surface(dark),
@@ -157,15 +157,20 @@ class ExclusiveActivationDialog extends StatelessWidget {
                   ],
                   const SizedBox(height: 16),
                   Text(
-                      done
+                      ready
                           ? reviewCopy(
                               'Anda dapat membuka AI dan menyimpan jawaban ke Catatan.',
                               'يمكنك فتح الذكاء الاصطناعي وحفظ نتائج الدراسة في الملاحظات.',
                               'You can open the AI and save study results to Notes.')
-                          : reviewCopy(
-                              'Kode diterima. Akses sedang disiapkan, mohon tunggu sebentar.',
-                              'تم قبول الرمز. يجري تجهيز الوصول، يُرجى الانتظار قليلًا.',
-                              'Code accepted. Your access is being prepared; please wait a moment.'),
+                          : done
+                              ? reviewCopy(
+                                  'Kode diterima, tetapi akses masih diproses. Buka kembali AI dari dashboard sebentar lagi.',
+                                  'تم قبول الرمز لكن الوصول ما زال قيد المعالجة. افتح المساعد من لوحة التحكم بعد قليل.',
+                                  'Code accepted, but access is still being processed. Open the AI from the dashboard shortly.')
+                              : reviewCopy(
+                                  'Kode diterima. Akses sedang disiapkan, mohon tunggu sebentar.',
+                                  'تم قبول الرمز. يجري تجهيز الوصول، يُرجى الانتظار قليلًا.',
+                                  'Code accepted. Your access is being prepared; please wait a moment.'),
                       style: OTTypography.body(color: muted)),
                   const SizedBox(height: 16),
                   panel,
@@ -177,8 +182,8 @@ class ExclusiveActivationDialog extends StatelessWidget {
                 child:
                     Text(MaterialLocalizations.of(context).closeButtonLabel)),
             FilledButton(
-                onPressed: done ? () => _handleStartStudy(context) : null,
-                child: Text(done
+                onPressed: ready ? () => _handleStartStudy(context) : null,
+                child: Text(ready
                     ? Loc.tr('openAssistant')
                     : reviewCopy('Menyiapkan akses… $left',
                         'جارٍ التجهيز… $left', 'Preparing access… $left'))),

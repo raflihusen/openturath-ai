@@ -10,7 +10,13 @@ import 'tahawwulat_hero.dart' show reviewCopy;
 /// Penahan setelah akses diberikan (pembayaran atau voucher). Pemberian akses
 /// di server perlu beberapa detik, jadi pengguna ditahan [seconds] detik
 /// dengan petunjuk pemakaian alih-alih langsung membuka AI yang belum siap.
-/// [builder] menerima status selesai, sisa detik, dan panel progres + petunjuk.
+/// [builder] menerima status selesai menunggu (`done`), sisa detik, panel
+/// progres + petunjuk, dan `ready`.
+///
+/// `done` hanya berarti waktu tunggu habis (dialog boleh ditutup). Akses baru
+/// boleh dinyatakan siap bila `ready` true: server mengonfirmasinya lewat
+/// [isReady], atau tidak ada pemeriksaan yang tersedia sehingga hanya waktu
+/// tunggu yang dapat dipakai.
 class AccessPrepareGate extends StatefulWidget {
   const AccessPrepareGate(
       {super.key,
@@ -19,13 +25,15 @@ class AccessPrepareGate extends StatefulWidget {
       this.isReady,
       this.minSeconds = 8});
 
-  final Widget Function(BuildContext context, bool done, int left, Widget panel)
+  final Widget Function(
+          BuildContext context, bool done, int left, Widget panel, bool ready)
       builder;
   final int seconds;
 
   /// Bila diberikan, dipanggil tiap 3 detik; begitu mengembalikan true dan
   /// [minSeconds] sudah lewat, penahan dilepas lebih awal. Galat atau false
-  /// berarti terus menunggu sampai [seconds] habis.
+  /// berarti terus menunggu sampai [seconds] habis, lalu `done` true tetapi
+  /// `ready` tetap false.
   final Future<bool> Function()? isReady;
   final int minSeconds;
 
@@ -170,6 +178,6 @@ class _AccessPrepareGateState extends State<AccessPrepareGate> {
   }
 
   @override
-  Widget build(BuildContext context) =>
-      widget.builder(context, _left == 0, _left, _panel(context));
+  Widget build(BuildContext context) => widget.builder(context, _left == 0,
+      _left, _panel(context), _left == 0 && (widget.isReady == null || _ready));
 }
