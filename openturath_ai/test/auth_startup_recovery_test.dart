@@ -275,6 +275,7 @@ void main() {
     expect(find.text(Loc.tr('sessionReconnectTitle')), findsOneWidget);
     await tester.pumpWidget(const SizedBox());
     await auth.events.close();
+    await tester.pump(const Duration(seconds: 16));
   });
 
   testWidgets(
