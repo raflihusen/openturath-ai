@@ -661,8 +661,11 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
 
   /// Tombol Lanjutkan manual untuk memeriksa login dan konfirmasi akun
   Future<void> _handleManualContinue() async {
-    if (!mounted || _isSessionReady || _isCompletingSession ||
-        _isCancelDialogOpen || _connectionCancelled) return;
+    if (!mounted ||
+        _isSessionReady ||
+        _isCompletingSession ||
+        _isCancelDialogOpen ||
+        _connectionCancelled) return;
     if (_verificationFailed) {
       _retryVerification();
       return;
@@ -733,7 +736,9 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
   /// Failed reads leave the existing native session intact and remain retryable.
   Future<void> _onSessionAuthenticated() async {
     final epoch = _connectionEpoch;
-    if (!_isCurrentVerification(epoch) || _isSessionReady || _isCompletingSession) return;
+    if (!_isCurrentVerification(epoch) ||
+        _isSessionReady ||
+        _isCompletingSession) return;
     _isCompletingSession = true;
     try {
       final controller = _webController;
@@ -1119,194 +1124,205 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
                     child: _verificationFailed
                         ? _buildVerificationRecovery(isDark)
                         : Stack(
-                      children: [
-                        Positioned.fill(
-                          child: widget.webViewBuilder != null
-                              ? widget.webViewBuilder!(
-                                  context,
-                                  InAppWebViewSettings(
-                                    incognito: false,
-                                    sharedCookiesEnabled: WebViewCookiePolicy
-                                        .sharedCookiesEnabled,
-                                  ),
-                                  _initialSessionUrl,
-                                )
-                              : InAppWebView(
-                                  webViewEnvironment:
-                                      DesktopWebViewRuntime.environment,
-                                  initialUrlRequest: URLRequest(
-                                      url: WebUri(_initialSessionUrl)),
-                                  initialUserScripts: UnmodifiableListView([
-                                    _buildStealthCloakScript(isDark),
-                                  ]),
-                                  initialSettings: InAppWebViewSettings(
-                                    incognito: false,
-                                    javaScriptEnabled: true,
-                                    domStorageEnabled: true,
-                                    databaseEnabled: true,
-                                    useWideViewPort: false,
-                                    loadWithOverviewMode: false,
-                                    cacheEnabled: true,
-                                    clearCache: false,
-                                    transparentBackground: false,
-                                    allowsInlineMediaPlayback: true,
-                                    supportZoom: false,
-                                    displayZoomControls: false,
-                                    mixedContentMode: MixedContentMode
-                                        .MIXED_CONTENT_NEVER_ALLOW,
-                                    thirdPartyCookiesEnabled: true,
-                                    sharedCookiesEnabled: WebViewCookiePolicy
-                                        .sharedCookiesEnabled,
-                                    hardwareAcceleration: true,
-                                    useHybridComposition: true,
-                                    useOnRenderProcessGone: true,
-                                    supportMultipleWindows: true,
-                                    javaScriptCanOpenWindowsAutomatically: true,
-                                    isInspectable: kDebugMode,
-                                    forceDark:
-                                        isDark ? ForceDark.ON : ForceDark.OFF,
-                                    forceDarkStrategy: ForceDarkStrategy
-                                        .PREFER_WEB_THEME_OVER_USER_AGENT_DARKENING,
-                                    algorithmicDarkeningAllowed: true,
-                                  ),
-                                  onCreateWindow:
-                                      (controller, createWindowAction) async {
-                                    final targetUrl =
-                                        createWindowAction.request.url;
-                                    if (targetUrl != null &&
-                                        (NotebookNavigation.signInFlow(
-                                                targetUrl.uriValue) ||
-                                            NotebookNavigation.allowed(
-                                                targetUrl.uriValue))) {
-                                      await controller.loadUrl(
-                                          urlRequest:
-                                              URLRequest(url: targetUrl));
-                                      return true;
-                                    }
-                                    return false;
-                                  },
-                                  onWebViewCreated: (controller) =>
-                                      _webController = controller,
-                                  onProgressChanged: (controller, progress) {
-                                    if (mounted) {
-                                      _loadProgress.value = progress / 100;
-                                    }
-                                  },
-                                  onLoadStart: (controller, url) {
-                                    _handleUrlNavigation(controller, url);
-                                  },
-                                  onLoadStop: (controller, url) async {
-                                    if (!mounted || url == null) return;
-                                    _handleUrlNavigation(controller, url);
-                                    unawaited(_detectGoogleRejection(
-                                        controller, url));
-                                    await _checkAccountVerification(controller);
-                                  },
-                                  onUpdateVisitedHistory:
-                                      (controller, url, isReload) async {
-                                    if (!mounted || url == null) return;
-                                    _handleUrlNavigation(controller, url);
-                                    await _checkAccountVerification(controller);
-                                  },
-                                  onReceivedError:
-                                      (controller, request, error) {
-                                    debugPrint(
-                                        '[GoogleSessionAuth] WebView error: ${error.description}');
-                                    if (request.isForMainFrame == true) {
-                                      AuthFailureReporter.reportOnce(
-                                          stage: 'login-webview',
-                                          code:
-                                              'load-${error.type.toNativeValue() ?? 'unknown'}');
-                                    }
-                                  },
-                                ),
-                        ),
-                        if (_googleRejected)
-                          Positioned(
-                            left: 16,
-                            right: 16,
-                            bottom: 16,
-                            child: SafeArea(
-                              child: FilledButton.icon(
-                                onPressed: () => submitDiagnosticFromUi(
-                                  context,
-                                  stage: 'login-webview',
-                                  code: 'google-rejected',
-                                  page: _lastPage,
-                                ),
-                                icon: const Icon(Icons.flag_outlined, size: 18),
-                                label: Text(Loc.tr('reportSend')),
-                              ),
-                            ),
-                          ),
-                        if (_isShieldActive)
-                          Positioned.fill(
-                            child: ColoredBox(
-                              color: canvas,
-                              child: Center(
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Container(
-                                      width: 52,
-                                      height: 52,
-                                      decoration: BoxDecoration(
-                                        color: surface,
-                                        shape: BoxShape.circle,
-                                        border: Border.all(
-                                            color: border, width: 1.2),
-                                      ),
-                                      child: Center(
-                                        child: Icon(
-                                          Icons.verified_user_outlined,
-                                          size: 26,
-                                          color: textPrimary,
+                            children: [
+                              Positioned.fill(
+                                child: widget.webViewBuilder != null
+                                    ? widget.webViewBuilder!(
+                                        context,
+                                        InAppWebViewSettings(
+                                          incognito: false,
+                                          sharedCookiesEnabled:
+                                              WebViewCookiePolicy
+                                                  .sharedCookiesEnabled,
                                         ),
-                                      ),
-                                    ),
-                                    const SizedBox(height: 18),
-                                    Text(
-                                      Loc.tr('verifyingSessionTitle'),
-                                      textAlign: TextAlign.center,
-                                      style: ScholarlyFonts.outfit(
-                                        fontSize: OTFontSize.s16,
-                                        fontWeight: FontWeight.w600,
-                                        color: textPrimary,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 8),
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 32),
-                                      child: Text(
-                                        Loc.tr('verifyingSessionSubtitle'),
-                                        textAlign: TextAlign.center,
-                                        style: ScholarlyFonts.outfit(
-                                          fontSize: OTFontSize.s12,
-                                          height: 1.4,
-                                          color: textSecondary,
+                                        _initialSessionUrl,
+                                      )
+                                    : InAppWebView(
+                                        webViewEnvironment:
+                                            DesktopWebViewRuntime.environment,
+                                        initialUrlRequest: URLRequest(
+                                            url: WebUri(_initialSessionUrl)),
+                                        initialUserScripts:
+                                            UnmodifiableListView([
+                                          _buildStealthCloakScript(isDark),
+                                        ]),
+                                        initialSettings: InAppWebViewSettings(
+                                          incognito: false,
+                                          javaScriptEnabled: true,
+                                          domStorageEnabled: true,
+                                          databaseEnabled: true,
+                                          useWideViewPort: false,
+                                          loadWithOverviewMode: false,
+                                          cacheEnabled: true,
+                                          clearCache: false,
+                                          transparentBackground: false,
+                                          allowsInlineMediaPlayback: true,
+                                          supportZoom: false,
+                                          displayZoomControls: false,
+                                          mixedContentMode: MixedContentMode
+                                              .MIXED_CONTENT_NEVER_ALLOW,
+                                          thirdPartyCookiesEnabled: true,
+                                          sharedCookiesEnabled:
+                                              WebViewCookiePolicy
+                                                  .sharedCookiesEnabled,
+                                          hardwareAcceleration: true,
+                                          useHybridComposition: true,
+                                          useOnRenderProcessGone: true,
+                                          supportMultipleWindows: true,
+                                          javaScriptCanOpenWindowsAutomatically:
+                                              true,
+                                          isInspectable: kDebugMode,
+                                          forceDark: isDark
+                                              ? ForceDark.ON
+                                              : ForceDark.OFF,
+                                          forceDarkStrategy: ForceDarkStrategy
+                                              .PREFER_WEB_THEME_OVER_USER_AGENT_DARKENING,
+                                          algorithmicDarkeningAllowed: true,
                                         ),
+                                        onCreateWindow: (controller,
+                                            createWindowAction) async {
+                                          final targetUrl =
+                                              createWindowAction.request.url;
+                                          if (targetUrl != null &&
+                                              (NotebookNavigation.signInFlow(
+                                                      targetUrl.uriValue) ||
+                                                  NotebookNavigation.allowed(
+                                                      targetUrl.uriValue))) {
+                                            await controller.loadUrl(
+                                                urlRequest:
+                                                    URLRequest(url: targetUrl));
+                                            return true;
+                                          }
+                                          return false;
+                                        },
+                                        onWebViewCreated: (controller) =>
+                                            _webController = controller,
+                                        onProgressChanged:
+                                            (controller, progress) {
+                                          if (mounted) {
+                                            _loadProgress.value =
+                                                progress / 100;
+                                          }
+                                        },
+                                        onLoadStart: (controller, url) {
+                                          _handleUrlNavigation(controller, url);
+                                        },
+                                        onLoadStop: (controller, url) async {
+                                          if (!mounted || url == null) return;
+                                          _handleUrlNavigation(controller, url);
+                                          unawaited(_detectGoogleRejection(
+                                              controller, url));
+                                          await _checkAccountVerification(
+                                              controller);
+                                        },
+                                        onUpdateVisitedHistory:
+                                            (controller, url, isReload) async {
+                                          if (!mounted || url == null) return;
+                                          _handleUrlNavigation(controller, url);
+                                          await _checkAccountVerification(
+                                              controller);
+                                        },
+                                        onReceivedError:
+                                            (controller, request, error) {
+                                          debugPrint(
+                                              '[GoogleSessionAuth] WebView error: ${error.description}');
+                                          if (request.isForMainFrame == true) {
+                                            AuthFailureReporter.reportOnce(
+                                                stage: 'login-webview',
+                                                code:
+                                                    'load-${error.type.toNativeValue() ?? 'unknown'}');
+                                          }
+                                        },
                                       ),
-                                    ),
-                                    const SizedBox(height: 20),
-                                    SizedBox(
-                                      width: 140,
-                                      child: LinearProgressIndicator(
-                                        backgroundColor:
-                                            border.withValues(alpha: 0.3),
-                                        valueColor:
-                                            AlwaysStoppedAnimation<Color>(
-                                                textPrimary),
-                                        minHeight: 2,
-                                      ),
-                                    ),
-                                  ],
-                                ),
                               ),
-                            ),
+                              if (_googleRejected)
+                                Positioned(
+                                  left: 16,
+                                  right: 16,
+                                  bottom: 16,
+                                  child: SafeArea(
+                                    child: FilledButton.icon(
+                                      onPressed: () => submitDiagnosticFromUi(
+                                        context,
+                                        stage: 'login-webview',
+                                        code: 'google-rejected',
+                                        page: _lastPage,
+                                      ),
+                                      icon: const Icon(Icons.flag_outlined,
+                                          size: 18),
+                                      label: Text(Loc.tr('reportSend')),
+                                    ),
+                                  ),
+                                ),
+                              if (_isShieldActive)
+                                Positioned.fill(
+                                  child: ColoredBox(
+                                    color: canvas,
+                                    child: Center(
+                                      child: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Container(
+                                            width: 52,
+                                            height: 52,
+                                            decoration: BoxDecoration(
+                                              color: surface,
+                                              shape: BoxShape.circle,
+                                              border: Border.all(
+                                                  color: border, width: 1.2),
+                                            ),
+                                            child: Center(
+                                              child: Icon(
+                                                Icons.verified_user_outlined,
+                                                size: 26,
+                                                color: textPrimary,
+                                              ),
+                                            ),
+                                          ),
+                                          const SizedBox(height: 18),
+                                          Text(
+                                            Loc.tr('verifyingSessionTitle'),
+                                            textAlign: TextAlign.center,
+                                            style: ScholarlyFonts.outfit(
+                                              fontSize: OTFontSize.s16,
+                                              fontWeight: FontWeight.w600,
+                                              color: textPrimary,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 8),
+                                          Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 32),
+                                            child: Text(
+                                              Loc.tr(
+                                                  'verifyingSessionSubtitle'),
+                                              textAlign: TextAlign.center,
+                                              style: ScholarlyFonts.outfit(
+                                                fontSize: OTFontSize.s12,
+                                                height: 1.4,
+                                                color: textSecondary,
+                                              ),
+                                            ),
+                                          ),
+                                          const SizedBox(height: 20),
+                                          SizedBox(
+                                            width: 140,
+                                            child: LinearProgressIndicator(
+                                              backgroundColor:
+                                                  border.withValues(alpha: 0.3),
+                                              valueColor:
+                                                  AlwaysStoppedAnimation<Color>(
+                                                      textPrimary),
+                                              minHeight: 2,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                            ],
                           ),
-                      ],
-                    ),
                   ),
                 ),
               ],
