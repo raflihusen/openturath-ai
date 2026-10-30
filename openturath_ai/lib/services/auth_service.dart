@@ -20,13 +20,16 @@ class AuthService {
     FirebaseAuth? auth,
     GoogleSignIn? googleSignIn,
     Duration restoreTimeout = const Duration(seconds: 15),
+    Duration authenticationTimeout = const Duration(seconds: 15),
   })  : _providedAuth = auth,
         _providedGoogleSignIn = googleSignIn,
-        _restoreTimeout = restoreTimeout;
+        _restoreTimeout = restoreTimeout,
+       _authenticationTimeout = authenticationTimeout;
 
   final FirebaseAuth? _providedAuth;
   final GoogleSignIn? _providedGoogleSignIn;
   final Duration _restoreTimeout;
+  final Duration _authenticationTimeout;
   // Ditunda sampai dipakai, agar layar bisa dirender tanpa Firebase (pratinjau, tes).
   late final FirebaseAuth _auth = _providedAuth ?? FirebaseAuth.instance;
   late final GoogleSignIn _googleSignIn = _providedGoogleSignIn ??
@@ -50,11 +53,14 @@ class AuthService {
   static bool _lastAuthActionWasSignOut = false;
 
   // ── Cache Helpers ──────────────────────────────────────────────
-  static Future<void> _cacheUserLocally(UserModel user) async {
-    _userCache[user.uid] = user;
+  static Future<void> _cacheUserLocally(UserModel user, {bool Function()? isCurrent}) async {
+    if (isCurrent?.call() == false) return;
     try {
       final prefs = await SharedPreferences.getInstance();
+      if (isCurrent?.call() == false) return;
+      _userCache[user.uid] = user;
       await prefs.setString('current_user_uid', user.uid);
+      if (isCurrent?.call() == false) return;
       await prefs.setString(
         'openturath_cached_user_${user.uid}',
         jsonEncode(user.toJsonMap()),
@@ -198,8 +204,10 @@ class AuthService {
 
   // ── Google Sign In ─────────────────────────────────────────────
   Future<UserModel?> signInWithGoogle() async {
-    _authActionGeneration++;
+    final generation = ++_authActionGeneration;
     _lastAuthActionWasSignOut = false;
+    var active = true;
+    bool current() => active && generation == _authActionGeneration;
     var stage = 'google-authorize';
     try {
       User? firebaseUser;
@@ -210,11 +218,12 @@ class AuthService {
               defaultTargetPlatform == TargetPlatform.macOS)) {
         // Native GoogleSignIn SDK on Android, iOS, & macOS (Darwin)
         final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
-        if (googleUser == null) return null; // Pengguna membatalkan login
+        if (googleUser == null || !current()) return null; // Pengguna membatalkan login
 
         stage = 'google-token';
         final GoogleSignInAuthentication googleAuth =
-            await googleUser.authentication;
+            await googleUser.authentication.timeout(_authenticationTimeout);
+        if (!current()) return null;
 
         final credential = GoogleAuthProvider.credential(
           accessToken: googleAuth.accessToken,
@@ -223,7 +232,9 @@ class AuthService {
 
         try {
           stage = 'firebase-credential';
-          final userCredential = await _auth.signInWithCredential(credential);
+          final pending = _auth.signInWithCredential(credential);
+          unawaited(_discardRestoreAfterSignOut(pending, generation));
+          final userCredential = await pending.timeout(_authenticationTimeout);
           firebaseUser = userCredential.user;
         } on FirebaseAuthException catch (e) {
           if (e.code == 'keychain-error' && _auth.currentUser != null) {
@@ -239,7 +250,7 @@ class AuthService {
         // Platform desktop Windows: gunakan DesktopAuthGateway (Loopback + Firebase Web Auth)
         stage = 'desktop-gateway';
         final desktopAuth = await DesktopAuthGateway.signIn();
-        if (desktopAuth == null) return null; // Pengguna membatalkan login
+        if (desktopAuth == null || !current()) return null; // Pengguna membatalkan login
 
         stage = 'firebase-credential';
         final credential = GoogleAuthProvider.credential(
@@ -247,7 +258,9 @@ class AuthService {
           idToken: desktopAuth.idToken,
         );
 
-        final userCredential = await _auth.signInWithCredential(credential);
+        final pending = _auth.signInWithCredential(credential);
+        unawaited(_discardRestoreAfterSignOut(pending, generation));
+        final userCredential = await pending.timeout(_authenticationTimeout);
         firebaseUser = userCredential.user;
       } else {
         // Platform desktop lain (Linux) langsung via Firebase OAuth Provider
@@ -256,15 +269,23 @@ class AuthService {
         firebaseUser = userCredential.user;
       }
 
-      if (firebaseUser == null) return null;
+      if (firebaseUser == null || !current() ||
+          _auth.currentUser?.uid != firebaseUser.uid) return null;
+      bool ownsUser() => current() && _auth.currentUser?.uid == firebaseUser!.uid;
       stage = 'profile-resolve';
-      final userModel = await _resolveOrCreateFirebaseUser(firebaseUser);
+      final userModel = await _resolveOrCreateFirebaseUser(
+        firebaseUser, isCurrent: ownsUser,
+      ).timeout(const Duration(seconds: 10));
+      if (!ownsUser() || userModel == null) return null;
       final effectiveEmail = firebaseUser.email?.trim().toLowerCase();
       if (effectiveEmail != null && effectiveEmail.isNotEmpty) {
         try {
           final prefs = await SharedPreferences.getInstance();
+          if (!ownsUser()) return null;
           await prefs.setString('current_user_uid', firebaseUser.uid);
+          if (!ownsUser()) return null;
           await prefs.setString('google_session_email', effectiveEmail);
+          if (!ownsUser()) return null;
           await prefs.setString('notebook_google_email', effectiveEmail);
         } catch (_) {}
       }
@@ -295,14 +316,17 @@ class AuthService {
             stage: stage, code: safeCode, category: category);
       }
       rethrow;
+    } finally {
+      active = false;
     }
   }
 
   // ── Helper Resolusi Profil User Firestore ──────────────────────
-  Future<UserModel> _resolveOrCreateFirebaseUser(
+  Future<UserModel?> _resolveOrCreateFirebaseUser(
     User firebaseUser, {
     String? fallbackName,
     String? fallbackEmail,
+    required bool Function() isCurrent,
   }) async {
     // Firestore rules cap the stored name at 120 characters.
     final rawName = firebaseUser.displayName ?? fallbackName ?? 'Pengguna';
@@ -315,7 +339,7 @@ class AuthService {
       final docRef =
           _db.collection(AppConstants.colUsers).doc(firebaseUser.uid);
       final doc = await docRef.get().timeout(const Duration(seconds: 4));
-
+      if (!isCurrent()) return null;
       if (!doc.exists) {
         final newUser = UserModel(
           uid: firebaseUser.uid,
@@ -333,15 +357,19 @@ class AuthService {
           'questions_used': newUser.questionsUsed,
           'subscription_expiry': null,
         }).timeout(const Duration(seconds: 4));
-        await _cacheUserLocally(newUser);
-        return newUser;
+        if (!isCurrent()) return null;
+        await _cacheUserLocally(newUser, isCurrent: isCurrent);
+        return isCurrent() ? newUser : null;
       } else {
         final userModel = UserModel.fromFirestore(doc);
-        await _cacheUserLocally(userModel);
-        return userModel;
+        await _cacheUserLocally(userModel, isCurrent: isCurrent);
+        return isCurrent() ? userModel : null;
       }
     } catch (_) {
-      final cached = await _getCachedUser(firebaseUser.uid);
+      if (!isCurrent()) return null;
+      final cached = await _getCachedUser(firebaseUser.uid)
+          .timeout(const Duration(seconds: 2), onTimeout: () => null);
+      if (!isCurrent()) return null;
       if (cached != null) return cached;
 
       final fallback = UserModel(
