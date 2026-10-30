@@ -29,8 +29,8 @@ class MacUpdateTest(unittest.TestCase):
 int main(int argc, char **argv) {
   char executable[PATH_MAX], app[PATH_MAX], parent[PATH_MAX], file[PATH_MAX];
   if (!realpath(argv[0], executable)) return 3;
-  strcpy(app, executable); dirname(app); dirname(app); dirname(app);
-  strcpy(parent, app); dirname(parent);
+  strcpy(app, executable); for(int i=0;i<3;i++){char *slash=strrchr(app,'/');if(!slash)return 4;*slash=0;}
+  strcpy(parent, app); char *slash=strrchr(parent,'/');if(!slash)return 4;*slash=0;
   snprintf(file,sizeof(file),"%s/Contents/Resources/behavior",app);
   FILE *f=fopen(file,"r"); char behavior[32]={0}; if(f){fgets(behavior,32,f);fclose(f);}
   if (!strcmp(behavior,"crash")) return 23;
