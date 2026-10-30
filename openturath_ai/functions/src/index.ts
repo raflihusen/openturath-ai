@@ -2137,10 +2137,13 @@ export const redeemCode = functions
       //    (F01: isolasi per modul). Id lama dipertahankan untuk kode satu AI.
       const updatedEntitlements: Record<string, any> = {...entitlements};
       const grantIds: string[] = [];
+      const permanentVip = isVip(userData, ownedGrants) || /^vip(?:_|$)/i.test(String(userData.plan || ""));
+      let preserveGlobalVip = permanentVip;
       let primaryExpiry = redeemedAt;
       for (const [index, entitlementKey] of entitlementKeys.entries()) {
         const currentEnt = entitlements[entitlementKey];
         const currentExp = expiryOf(currentEnt);
+        const protectedVipEntitlement = currentEnt && (permanentVip || isVip(currentEnt) || /^vip(?:_|$)/i.test(String(currentEnt.plan || "")));
         // Trial selalu dihitung dari saat voucher diklaim. Perpanjangan hanya
         // berlaku pada akses berbayar atau voucher yang diberi izin eksplisit.
         let baseDate = redeemedAt;
@@ -2168,7 +2171,7 @@ export const redeemCode = functions
         const preserveActive = isTrialVoucher && currentEnt?.status === "active" && currentExp && currentExp > newExpiry;
         const projectedExpiry = preserveActive ? currentExp : newExpiry;
         if (index === 0) primaryExpiry = projectedExpiry;
-        updatedEntitlements[entitlementKey] = paidActive || preserveActive
+        updatedEntitlements[entitlementKey] = protectedVipEntitlement ? currentEnt : paidActive || preserveActive
           ? {
             ...currentEnt,
             expiry: admin.firestore.Timestamp.fromDate(projectedExpiry),
@@ -2206,6 +2209,7 @@ export const redeemCode = functions
         // Hanya paket semua AI yang mengubah paket global.
         if (entitlementKey === "all_access") {
           globalExpiry = projectedExpiry;
+          preserveGlobalVip = preserveGlobalVip || !!protectedVipEntitlement;
         }
       }
 
@@ -2222,7 +2226,7 @@ export const redeemCode = functions
           userUpdate.access_legacy_audit_required = true;
         }
       }
-      if (globalExpiry && !isVip(userData)) {
+      if (globalExpiry && !preserveGlobalVip) {
         userUpdate.plan = updatedEntitlements.all_access.plan;
         userUpdate.subscription_expiry = admin.firestore.Timestamp.fromDate(globalExpiry);
       }
