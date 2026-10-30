@@ -262,48 +262,65 @@ void main() {
     expect(auth.signOutCalls, 2);
   });
 
-  test('interactive Google token cannot keep the login operation pending forever', () async {
+  test(
+      'interactive Google token cannot keep the login operation pending forever',
+      () async {
     debugDefaultTargetPlatformOverride = TargetPlatform.macOS;
     final token = Completer<GoogleSignInAuthentication>();
     final auth = TestAuth();
     final google = TestGoogle()..account = TestGoogleAccount(token.future);
-    final service = AuthService(auth: auth, googleSignIn: google,
-      authenticationTimeout: const Duration(milliseconds: 40));
-    await expectLater(service.signInWithGoogle(), throwsA(isA<TimeoutException>()));
+    final service = AuthService(
+        auth: auth,
+        googleSignIn: google,
+        authenticationTimeout: const Duration(milliseconds: 40));
+    await expectLater(
+        service.signInWithGoogle(), throwsA(isA<TimeoutException>()));
     token.complete(TestTokens());
     await Future<void>.delayed(Duration.zero);
     expect(auth.credentialCalls, 0);
     expect(auth.signOutCalls, 0);
   });
 
-  test('new interactive login invalidates a previous account token completion', () async {
+  test('new interactive login invalidates a previous account token completion',
+      () async {
     debugDefaultTargetPlatformOverride = TargetPlatform.macOS;
     final token = Completer<GoogleSignInAuthentication>();
     final auth = TestAuth();
     final oldGoogle = TestGoogle()..account = TestGoogleAccount(token.future);
-    final first = AuthService(auth: auth, googleSignIn: oldGoogle).signInWithGoogle();
+    final first =
+        AuthService(auth: auth, googleSignIn: oldGoogle).signInWithGoogle();
     await Future<void>.delayed(Duration.zero);
     final newer = AuthService(auth: auth, googleSignIn: TestGoogle());
     expect(await newer.signInWithGoogle(), isNull);
     token.complete(TestTokens());
     expect(await first, isNull);
     expect(auth.credentialCalls, 0);
-    expect((await SharedPreferences.getInstance()).getString('current_user_uid'), isNull);
+    expect(
+        (await SharedPreferences.getInstance()).getString('current_user_uid'),
+        isNull);
   });
 
-  test('interactive Firebase credential deadline never publishes a late profile', () async {
+  test(
+      'interactive Firebase credential deadline never publishes a late profile',
+      () async {
     debugDefaultTargetPlatformOverride = TargetPlatform.macOS;
     final pending = Completer<UserCredential>();
     final auth = TestAuth()..pendingCredential = pending;
-    final google = TestGoogle()..account = TestGoogleAccount(Future.value(TestTokens()));
-    final service = AuthService(auth: auth, googleSignIn: google,
-      authenticationTimeout: const Duration(milliseconds: 40));
-    await expectLater(service.signInWithGoogle(), throwsA(isA<TimeoutException>()));
+    final google = TestGoogle()
+      ..account = TestGoogleAccount(Future.value(TestTokens()));
+    final service = AuthService(
+        auth: auth,
+        googleSignIn: google,
+        authenticationTimeout: const Duration(milliseconds: 40));
+    await expectLater(
+        service.signInWithGoogle(), throwsA(isA<TimeoutException>()));
     final user = TestUser('late-interactive-owner');
     auth.user = user;
     pending.complete(TestCredential(user));
     await Future<void>.delayed(Duration.zero);
-    expect((await SharedPreferences.getInstance()).getString('current_user_uid'), isNull);
+    expect(
+        (await SharedPreferences.getInstance()).getString('current_user_uid'),
+        isNull);
     expect(auth.signOutCalls, 0);
   });
 
