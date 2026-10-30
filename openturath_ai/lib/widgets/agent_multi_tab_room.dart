@@ -32,7 +32,6 @@ import '../models/agent_model.dart';
 import '../services/agent_service.dart';
 import '../services/agent_session_manager.dart';
 import '../services/auth_service.dart';
-import '../services/persistent_google_session.dart';
 import '../services/bookmark_service.dart';
 import '../services/native_agent_launcher.dart';
 import '../widgets/app_error_state.dart';
@@ -1659,7 +1658,8 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
           retryLabel: Loc.tr('ui_f9d6eb247c'),
           retryIcon: Icons.switch_account_outlined,
           onRetry: () async {
-            await PersistentGoogleSession.instance.clearOnSignOut();
+            // Galat izin bisa berarti berbagi notebook belum selesai, bukan
+            // sesi rusak: cookie tidak dihapus di luar Log Out (Aturan #8).
             if (context.mounted) {
               await Navigator.pushNamed(context, AppRoutes.googleSessionAuth);
               if (!mounted) return;
