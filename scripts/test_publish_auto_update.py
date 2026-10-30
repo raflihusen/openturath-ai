@@ -140,5 +140,48 @@ class LiveCheckTests(unittest.TestCase):
             self.assertFalse(pub.verify_live_file("https://x.test/a.apk", 10)[0])
 
 
+
+
+class ReleaseEvidenceTests(unittest.TestCase):
+    def test_badging_parsed(self):
+        out = "package: name='id.x' versionCode='86' versionName='1.0.85' platformBuildVersionName='15'"
+        self.assertEqual(pub.parse_badging(out), (86, '1.0.85'))
+        self.assertEqual(pub.parse_badging('kosong'), (None, None))
+
+    def test_embedded_version_mismatch_is_rejected(self):
+        with mock.patch.object(pub, 'embedded_apk_version', lambda p: (85, '1.0.84')):
+            self.assertIn('berbeda', pub.check_embedded_version('x.apk', '1.0.85', 86))
+        with mock.patch.object(pub, 'embedded_apk_version', lambda p: (86, '1.0.85')):
+            self.assertIsNone(pub.check_embedded_version('x.apk', '1.0.85', 86))
+        with mock.patch.object(pub, 'embedded_apk_version', lambda p: (None, None)):
+            self.assertIsNone(pub.check_embedded_version('x.apk', '1.0.85', 86))
+
+    def test_versioned_file_is_never_overwritten_with_other_content(self):
+        import tempfile
+        with tempfile.TemporaryDirectory() as d:
+            path = Path(d) / 'OpenTurath_v86.apk'
+            path.write_bytes(b'lama')
+            same = pub.compute_sha256(str(path))
+            self.assertIsNone(pub.refuse_overwrite(str(path), same))
+            self.assertIn('Naikkan build', pub.refuse_overwrite(str(path), 'b' * 64))
+            self.assertIsNone(pub.refuse_overwrite(str(Path(d) / 'baru.apk'), same))
+
+    def test_live_hash_compared(self):
+        import hashlib
+        body = b'apk-bytes'
+
+        class R(Resp):
+            def __init__(self):
+                self.d = body
+
+            def read(self, n=-1):
+                out, self.d = self.d, b''
+                return out
+
+        with mock.patch.object(pub.urllib.request, 'urlopen', lambda *a, **k: R()):
+            self.assertTrue(pub.verify_live_hash('https://x/y.apk', hashlib.sha256(body).hexdigest())[0])
+            self.assertFalse(pub.verify_live_hash('https://x/y.apk', 'c' * 64)[0])
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)

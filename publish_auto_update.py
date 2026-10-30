@@ -156,6 +156,59 @@ def verify_live_file(url, expected_size, timeout=30):
         return False, str(e)[:100]
 
 
+def parse_badging(text):
+    """Ambil (versionCode, versionName) dari keluaran `aapt2 dump badging`."""
+    import re
+    m = re.search(r"versionCode='(\d+)'\s+versionName='([^']*)'", text)
+    return (int(m.group(1)), m.group(2)) if m else (None, None)
+
+
+def find_aapt2():
+    import glob
+    sdk = os.environ.get('ANDROID_HOME') or os.environ.get('ANDROID_SDK_ROOT') or os.path.expanduser('~/Library/Android/sdk')
+    found = sorted(glob.glob(os.path.join(sdk, 'build-tools', '*', 'aapt2')))
+    return found[-1] if found else None
+
+
+def embedded_apk_version(apk_path):
+    """Versi yang benar-benar tertanam di APK, atau (None, None) bila aapt2 tidak ada."""
+    tool = find_aapt2()
+    if not tool:
+        return None, None
+    out = subprocess.run([tool, 'dump', 'badging', apk_path], capture_output=True, text=True)
+    return parse_badging(out.stdout) if out.returncode == 0 else (None, None)
+
+
+def check_embedded_version(apk_path, version_name, version_code):
+    """Kembalikan pesan galat bila versi tertanam beda dari metadata yang akan disiarkan."""
+    code, name = embedded_apk_version(apk_path)
+    if code is None:
+        return None  # aapt2 tidak tersedia: pemanggil menampilkan peringatan
+    if code != version_code or name != version_name:
+        return f"APK tertanam v{name} (build {code}) berbeda dari metadata v{version_name} (build {version_code})."
+    return None
+
+
+def refuse_overwrite(path, new_sha256):
+    """Berkas berversi bersifat immutable: URL yang sama tidak boleh berisi biner lain."""
+    if os.path.exists(path) and compute_sha256(path) != new_sha256:
+        return f"{os.path.basename(path)} sudah ada dengan isi berbeda. Naikkan build; URL berversi tidak ditimpa."
+    return None
+
+
+def verify_live_hash(url, expected_sha256, timeout=120):
+    """Unduh berkas live dan cocokkan SHA-256-nya. Dipakai sebelum siaran."""
+    h = hashlib.sha256()
+    try:
+        req = urllib.request.Request(url, headers={'User-Agent': 'openturath-publish'})
+        with urllib.request.urlopen(req, timeout=timeout) as resp:
+            for chunk in iter(lambda: resp.read(1024 * 1024), b''):
+                h.update(chunk)
+    except Exception as e:  # noqa: BLE001
+        return False, str(e)[:100]
+    return (h.hexdigest() == expected_sha256), ('OK' if h.hexdigest() == expected_sha256 else f'hash live {h.hexdigest()[:12]}… berbeda')
+
+
 def update_firestore_version(version_name, version_code, apk_url, sha256_hash, release_notes, edition='standard'):
     token = get_google_access_token()
     if not token:
@@ -260,6 +313,15 @@ def main():
     print(f"   SHA-256 Hash    : {sha256_hash}")
     print(f"   URL berversi    : {apk_live_url}")
 
+    mismatch = check_embedded_version(apk_source, version_name, version_code)
+    if mismatch:
+        fail(mismatch + " Siaran DIBATALKAN.")
+    if embedded_apk_version(apk_source)[0] is None:
+        print("   [!] aapt2 tidak ditemukan: versi tertanam APK TIDAK diverifikasi.")
+    clash = refuse_overwrite(os.path.join(PUBLIC_DIR, versioned_apk_name(args.edition, version_code)), sha256_hash)
+    if clash:
+        fail(clash + " Siaran DIBATALKAN.")
+
     if args.dry_run:
         payload, mask = build_firestore_payload(args.edition, version_name, version_code, apk_live_url, sha256_hash, release_notes, now_iso)
         print("\n[DRY-RUN] Tidak ada berkas disalin, tidak ada unggahan, tidak ada tulis Firestore.")
@@ -314,6 +376,10 @@ def main():
     if not ok:
         fail(f"Berkas live tidak lolos ({why}). Broadcast DIBATALKAN; Firestore tidak diubah.")
     print(f"   [OK] {apk_live_url} live dan ukurannya cocok.")
+    ok, why = verify_live_hash(apk_live_url, sha256_hash)
+    if not ok:
+        fail(f"Isi berkas live tidak cocok ({why}). Broadcast DIBATALKAN; Firestore tidak diubah.")
+    print("   [OK] SHA-256 berkas live cocok dengan APK lokal.")
 
     # 6. Broadcast ke Firestore
     print("\n[5/5] Menyiarkan (broadcast) pembaruan ke perangkat pengguna via Firestore...")
