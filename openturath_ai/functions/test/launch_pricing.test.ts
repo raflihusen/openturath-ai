@@ -35,7 +35,8 @@ test('stale offer is rejected before invoice creation or gateway calls', async (
   await assert.rejects(api.createCheckout({agentId:'fiqh_syafii',plan:'tholib_1m',
     name:'Reader',email:'reader@example.test',phone:'+628123456789',
     expectedAmount:50000,pricingRevision:'harga-v92-2026-10-14'}, {auth:{uid:'reader',token:{email:'reader@example.test',email_verified:true}}}),
-    (error:any) => error.code === 'failed-precondition');
+    (error:any) => error.code === 'failed-precondition' && error.details?.reason === 'price_changed'
+      && error.details.amount === 49000 && typeof error.details.pricingRevision === 'string');
   assert.equal([...db.docs.keys()].filter(k=>k.startsWith('transactions/')).length,0);
   assert.equal(sent.length,0);
 });
