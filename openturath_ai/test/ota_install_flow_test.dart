@@ -148,7 +148,8 @@ void main() {
   }
 
   for (final lengthKnown in [false, true]) {
-    test('download progress is honest when length known=$lengthKnown', () async {
+    test('download progress is honest when length known=$lengthKnown',
+        () async {
       knownLength = lengthKnown;
       firstChunk = Completer<void>();
       finishResponse = Completer<void>();

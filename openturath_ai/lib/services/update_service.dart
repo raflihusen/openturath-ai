@@ -29,6 +29,7 @@ class UpdateInfo {
   final bool isDownloaded;
   final String? localFilePath;
   final int installerProtocol;
+
   /// Null until the server supplies a total size; shows indeterminate progress.
   final double? downloadProgress;
 

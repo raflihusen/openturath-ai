@@ -222,7 +222,8 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
             textColor: NativeColors.accent(isDark),
             onPressed: () {
               if (_bookmarkService.currentUserId == ownerUid) {
-                unawaited(_bookmarkService.restoreBookmark(item, userId: ownerUid));
+                unawaited(
+                    _bookmarkService.restoreBookmark(item, userId: ownerUid));
               }
             },
           ),
