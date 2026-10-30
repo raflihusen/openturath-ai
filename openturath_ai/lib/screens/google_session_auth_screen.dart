@@ -137,6 +137,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
 
   /// Menyelaraskan status pelindung visual (Visual Shield) dengan domain navigasi WebView
   void _handleUrlNavigation(InAppWebViewController controller, WebUri? url) {
+    if (!identical(controller.platform, _webController?.platform)) return;
     if (!mounted || url == null || _verificationFailed || _connectionCancelled)
       return;
     final uri = url.uriValue;
@@ -280,6 +281,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
   /// teksnya. Hanya membaca; tidak mengubah halaman, cookie, atau sesi.
   Future<void> _detectGoogleRejection(
       InAppWebViewController controller, WebUri url) async {
+    if (!identical(controller.platform, _webController?.platform)) return;
     _lastPage = url.toString();
     if (!url.host.endsWith('accounts.google.com')) {
       if (_googleRejected && mounted) setState(() => _googleRejected = false);
@@ -305,6 +307,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
 
   Future<void> _checkAccountVerification(
       InAppWebViewController controller) async {
+    if (!identical(controller.platform, _webController?.platform)) return;
     if (!mounted ||
         _isSessionReady ||
         _isCompletingSession ||
