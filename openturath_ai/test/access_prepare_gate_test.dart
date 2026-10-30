@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:openturath_ai/core/app_config.dart';
@@ -102,5 +104,3 @@ void main() {
     AppConfig.localeNotifier.value = 'id';
   });
 }
-import 'dart:async';
-
