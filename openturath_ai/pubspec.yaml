@@ -85,6 +85,7 @@ flutter:
         - asset: assets/native_fonts/Cairo-700.ttf
           weight: 700
   assets:
+    - assets/updater/
     - assets/native_fonts/Cairo-OFL.txt
     - assets/images/
     - assets/data/

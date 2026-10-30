@@ -7,12 +7,14 @@ class PlatformRelease {
       required this.version,
       required this.url,
       required this.notes,
-      this.sha256});
+      this.sha256,
+      this.installerProtocol = 0});
   final int build;
   final String version;
   final Uri url;
   final String notes;
   final String? sha256;
+  final int installerProtocol;
 
   static const allowedHosts = {
     'openturath.id',
@@ -93,6 +95,7 @@ class PlatformRelease {
     if (!extensions.any(path.endsWith)) return null;
     final hash = release['sha256'];
     return PlatformRelease(
+      installerProtocol: release['installer_protocol'] is int ? release['installer_protocol'] as int : 0,
       build: build,
       version: version,
       url: uri,
