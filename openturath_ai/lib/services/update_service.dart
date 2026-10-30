@@ -29,7 +29,8 @@ class UpdateInfo {
   final bool isDownloaded;
   final String? localFilePath;
   final int installerProtocol;
-  final double downloadProgress; // 0.0 to 1.0
+  /// Null until the server supplies a total size; shows indeterminate progress.
+  final double? downloadProgress;
 
   const UpdateInfo({
     required this.latestVersion,
@@ -40,7 +41,7 @@ class UpdateInfo {
     this.installerProtocol = 0,
     this.isDownloaded = false,
     this.localFilePath,
-    this.downloadProgress = 0.0,
+    this.downloadProgress,
   });
 
   UpdateInfo copyWith({
