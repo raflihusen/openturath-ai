@@ -109,9 +109,9 @@ class OnboardingCopy {
       'Your data is used only to run this service. Nothing more.',
       'تُستعمل بياناتكم لتشغيل هذه الخدمة فقط، لا أكثر.');
   static String get p5Note => _l(
-      'Pertanyaan diproses oleh Google (NotebookLM). Rinciannya ada di Kebijakan Privasi.',
-      'Questions are processed by Google (NotebookLM). Details are in the Privacy Policy.',
-      'تُعالَج الأسئلة عبر Google ‏(NotebookLM). التفاصيل في سياسة الخصوصية.');
+      'Pertanyaan diproses melalui teknologi komputasi riset Google. Rinciannya ada di Kebijakan Privasi.',
+      'Questions are processed through Google research computing technology. Details are in the Privacy Policy.',
+      'تُعالَج الأسئلة عبر تقنية الحوسبة البحثية من Google. التفاصيل في سياسة الخصوصية.');
   static List<String> get p5Promises => [
         _l('Data Anda tidak kami jual', 'We never sell your data',
             'لا نبيع بياناتكم'),
