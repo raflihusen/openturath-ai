@@ -22,6 +22,7 @@ import '../core/app_config.dart';
 import '../core/app_snackbar.dart';
 import '../core/navigation_guard.dart';
 import '../core/routes.dart';
+import '../core/google_rejection.dart';
 import '../core/notebook_navigation.dart';
 import '../core/notebook_ui_script.dart';
 import '../core/copied_answer.dart';
@@ -1087,6 +1088,9 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
       _readinessTimer = null;
       _inputRetryTimer?.cancel();
       _inputRetryTimer = null;
+      // Polling berhenti, jadi jatah 45 detik juga berhenti; kalau tidak, tab
+      // yang ditinggal langsung dinyatakan gagal saat dibuka kembali.
+      _loadingStarted = null;
       try {
         widget.session.webController?.evaluateJavascript(
           source:
@@ -1130,6 +1134,8 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
             widget.session.webController?.resume().catchError((Object _) {}) ??
                 Future<void>.value());
       }
+      // Waktu saat aplikasi di latar belakang bukan waktu tunggu halaman.
+      if (!widget.session.isSessionReady) _loadingStarted = null;
       _verifySurfaceHealth();
     } else if (state == AppLifecycleState.paused) {
       if (AppPlatform.isAndroid) {
@@ -1138,6 +1144,17 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
                 Future<void>.value());
       }
     }
+  }
+
+  void _recoverDeadPage(InAppWebViewController controller) {
+    if (!mounted) return;
+    setState(() {
+      widget.session.isWebLoading = true;
+      widget.session.isSessionReady = false;
+    });
+    controller.reload();
+    _loadingStarted = null;
+    _startReadinessCheck();
   }
 
   Future<void> _verifySurfaceHealth() async {
@@ -1312,16 +1329,34 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
     });
   }
 
+  /// Penolakan Google juga bisa tampil di dalam ruang: laporkan, dan tawarkan
+  /// tombol kirim selama halaman itu yang terlihat.
+  Future<void> _syncGoogleRejection(
+      InAppWebViewController controller, WebUri uri) async {
+    final session = widget.session;
+    final rejected = await isGoogleRejectionPage(controller, uri);
+    if (!mounted) return;
+    if (rejected) {
+      AuthFailureReporter.reportOnce(
+          stage: 'room-load', code: 'google-rejected');
+    }
+    if (rejected != session.isGoogleRejected) {
+      setState(() => session.isGoogleRejected = rejected);
+    }
+  }
+
   /// Tombol "Kirim laporan" pada layar galat: kode mengikuti penyebab yang
   /// sedang tampil; alamat dikirim tanpa query.
   Future<void> _sendRoomReport(AgentSessionTab session) async {
-    final code = session.isGoogleAuthPage
-        ? 'google-auth-page'
-        : session.isGooglePermissionError
-            ? 'google-permission'
-            : session.isTimeoutError
-                ? 'not-ready-timeout'
-                : 'load-failed';
+    final code = session.isGoogleRejected
+        ? 'google-rejected'
+        : session.isGoogleAuthPage
+            ? 'google-auth-page'
+            : session.isGooglePermissionError
+                ? 'google-permission'
+                : session.isTimeoutError
+                    ? 'not-ready-timeout'
+                    : 'load-failed';
     String? page;
     try {
       page = (await session.webController?.getUrl())?.toString();
@@ -1341,6 +1376,10 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
     );
   }
 
+  /// Halaman yang macet tidak boleh menahan pemeriksaan selamanya: batas
+  /// 45 detik di bawah hanya tercapai bila setiap langkah selesai.
+  static const _readyStepLimit = Duration(seconds: 8);
+
   Future<void> _checkReady() async {
     if (_checkingReady ||
         widget.session.webController == null ||
@@ -1352,7 +1391,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
     _checkingReady = true;
     try {
       final controller = widget.session.webController!;
-      final url = await controller.getUrl();
+      final url = await controller.getUrl().timeout(_readyStepLimit);
       if (url != null && NotebookNavigation.notebook(url.uriValue)) {
         if (widget.session.isGoogleAuthPage && mounted) {
           setState(() {
@@ -1414,28 +1453,36 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
           widget.session.errorMessage = null;
         }
       }
-      final hasScript = await controller.evaluateJavascript(
-        source:
-            'typeof window.otNotebook !== "undefined" && typeof window.otNotebook.ready === "function"',
-      );
+      final hasScript = await controller
+          .evaluateJavascript(
+            source:
+                'typeof window.otNotebook !== "undefined" && typeof window.otNotebook.ready === "function"',
+          )
+          .timeout(_readyStepLimit);
       if (hasScript != true) {
         if (!mounted) return;
         final isDark = Theme.of(context).brightness == Brightness.dark;
-        await controller.evaluateJavascript(
-          source:
-              'window._otIsDark = $isDark;\n$_turatsMasterScript$notebookUiScript',
-        );
-        await _applyThemeCss(isDark);
+        await controller
+            .evaluateJavascript(
+              source:
+                  'window._otIsDark = $isDark;\n$_turatsMasterScript$notebookUiScript',
+            )
+            .timeout(_readyStepLimit);
+        await _applyThemeCss(isDark).timeout(_readyStepLimit);
       }
-      final isDenied = await controller.evaluateJavascript(
-          source:
-              'window.otNotebook ? window.otNotebook.accessDenied() : false');
+      final isDenied = await controller
+          .evaluateJavascript(
+              source:
+                  'window.otNotebook ? window.otNotebook.accessDenied() : false')
+          .timeout(_readyStepLimit);
       if (isDenied == true) {
         _handleAccessDenied(widget.session);
         return;
       }
-      final result = await controller.evaluateJavascript(
-          source: 'window.otNotebook ? window.otNotebook.ready() : false');
+      final result = await controller
+          .evaluateJavascript(
+              source: 'window.otNotebook ? window.otNotebook.ready() : false')
+          .timeout(_readyStepLimit);
       _readySamples = result == true ? _readySamples + 1 : 0;
       if (!mounted) return;
       final elapsedMs = _loadingStarted != null
@@ -1447,9 +1494,12 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
         _readinessTimer?.cancel();
         _inputRetryTimer?.cancel();
         _loadingStarted = null;
-        await controller.evaluateJavascript(
-          source: 'window.otNotebook?.activate()',
-        );
+        // Timer sudah berhenti: aktivasi yang macet tidak boleh menahan loader.
+        try {
+          await controller
+              .evaluateJavascript(source: 'window.otNotebook?.activate()')
+              .timeout(_readyStepLimit);
+        } catch (_) {}
         // Jeda mikro stabilisasi 250ms agar rendering WebKit rampung sebelum fade-out loader
         await Future.delayed(const Duration(milliseconds: 250));
         try {
@@ -1459,6 +1509,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
         await AuthService.rememberWebSessionOwner(
             _authService.currentUser?.email ?? '');
         if (!mounted) return;
+        _accessDeniedRetryCount = 0;
         setState(() {
           widget.session.isWebLoading = false;
           widget.session.isSessionReady = true;
@@ -1560,8 +1611,8 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
           session.isUrlLoading = false;
           session.isPaywallRequired = !isVip;
           session.errorMessage = isVip
-              ? 'Sesi AI sedang disiapkan. Coba lagi sebentar.'
-              : 'Aktifkan paket langganan untuk membuka ${session.agent.title}.';
+              ? Loc.tr('roomPreparing')
+              : Loc.tr('roomPaywallBody', [Loc.text(session.agent.title)]);
         });
       }
     } catch (e) {
@@ -1595,9 +1646,9 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
         session.isUrlLoading = false;
         session.isPaywallRequired = isPaywall;
         session.errorMessage = isPaywall
-            ? 'Aktifkan paket langganan untuk membuka ${session.agent.title}.'
+            ? Loc.tr('roomPaywallBody', [Loc.text(session.agent.title)])
             : isAuthError
-                ? 'Sesi masuk Anda belum terhubung. Muat ulang atau masuk kembali.'
+                ? Loc.tr('roomAuthDisconnected')
                 : e is AgentAccessException &&
                         const {
                           'failed-precondition',
@@ -1606,7 +1657,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
                           'deadline-exceeded',
                         }.contains(e.code)
                     ? e.message
-                    : 'AI belum bisa dihubungkan. Coba lagi.${e is AgentAccessException && RegExp(r'^[a-z-]{3,30}$').hasMatch(e.code) ? ' (${e.code})' : ''}';
+                    : '${Loc.tr('roomConnectFailed')}${e is AgentAccessException && RegExp(r'^[a-z-]{3,30}$').hasMatch(e.code) ? ' (${e.code})' : ''}';
       });
     }
   }
@@ -1634,6 +1685,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
       void close() => AgentSessionManager.instance.closeRoom();
 
       void retry() {
+        _accessDeniedRetryCount = 0;
         setState(() {
           session.errorMessage = null;
           session.isTimeoutError = false;
@@ -1715,6 +1767,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
           retryLabel: Loc.tr('ui_f9d6eb247c'),
           retryIcon: Icons.switch_account_outlined,
           onRetry: () async {
+            _accessDeniedRetryCount = 0;
             // Galat izin bisa berarti berbagi notebook belum selesai, bukan
             // sesi rusak: cookie tidak dihapus di luar Log Out (Aturan #8).
             if (context.mounted) {
@@ -1870,14 +1923,15 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
             onRenderProcessGone: (controller, detail) async {
               debugPrint(
                   '[OpenTurath] WebView render process gone (didCrash: ${detail.didCrash})');
-              if (mounted) {
-                setState(() {
-                  widget.session.isWebLoading = true;
-                  widget.session.isSessionReady = false;
-                });
-                controller.reload();
-                _startReadinessCheck();
-              }
+              _recoverDeadPage(controller);
+            },
+            // Padanan WebKit (macOS): tanpa ini halaman menjadi kosong tanpa
+            // loader maupun pesan.
+            onWebContentProcessDidTerminate: (controller) {
+              debugPrint('[OpenTurath] WebKit content process terminated');
+              AuthFailureReporter.reportOnce(
+                  stage: 'room-load', code: 'webkit-process-terminated');
+              _recoverDeadPage(controller);
             },
             onWebViewCreated: (controller) {
               session.webController = controller;
@@ -2088,6 +2142,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
             },
             onLoadStop: (controller, uri) async {
               if (!mounted || uri == null) return;
+              unawaited(_syncGoogleRejection(controller, uri));
 
               final host = uri.host.toLowerCase();
               if (host.startsWith('accounts.google') ||
@@ -2259,6 +2314,20 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
                   }
                 },
                 child: const ColoredBox(color: Colors.transparent),
+              ),
+            ),
+
+          if (session.isGoogleRejected && session.isGoogleAuthPage)
+            Positioned(
+              left: 16,
+              right: 16,
+              bottom: 16,
+              child: SafeArea(
+                child: FilledButton.icon(
+                  onPressed: () => _sendRoomReport(session),
+                  icon: const Icon(Icons.flag_outlined, size: 18),
+                  label: Text(Loc.tr('reportSend')),
+                ),
               ),
             ),
 

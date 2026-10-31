@@ -7,6 +7,7 @@ import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
 import '../core/app_copy.dart';
 import '../core/design/ot_colors.dart';
+import '../core/google_rejection.dart';
 import '../core/localization.dart';
 import '../core/notebook_navigation.dart';
 import '../core/routes.dart';
@@ -273,40 +274,20 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
 
   /// Memverifikasi bahwa sesi di WebView telah selesai dan menggunakan akun yang sama.
   /// Dilengkapi mutex guard dan siklus polling adaptif untuk menjamin keandalan pada koneksi lambat.
-  static const _rejectionPhrases = [
-    "couldn't sign you in",
-    'browser or app may not be secure',
-    'browser doesn\'t support javascript',
-    'tidak dapat membuat anda login',
-    'tidak bisa login',
-  ];
-
-  /// Mengenali halaman penolakan Google dari alamat (`/signin/rejected`) atau
-  /// teksnya. Hanya membaca; tidak mengubah halaman, cookie, atau sesi.
+  /// Tombol laporan mengikuti halaman yang sedang tampil, jadi hilang lagi
+  /// saat pengguna mencoba ulang dan Google tidak lagi menolak.
   Future<void> _detectGoogleRejection(
       InAppWebViewController controller, WebUri url) async {
-    if (!identical(controller.platform, _webController?.platform)) return;
     _lastPage = url.toString();
-    if (!url.host.endsWith('accounts.google.com')) {
-      if (_googleRejected && mounted) setState(() => _googleRejected = false);
-      return;
+    final rejected = await isGoogleRejectionPage(controller, url);
+    if (!mounted) return;
+    if (rejected) {
+      AuthFailureReporter.reportOnce(
+          stage: 'login-webview', code: 'google-rejected');
     }
-    var rejected = url.path.contains('/signin/rejected');
-    if (!rejected) {
-      try {
-        final text = await controller
-            .evaluateJavascript(
-                source: "(document.body&&document.body.innerText||'')"
-                    '.toLowerCase().slice(0,2000)')
-            .timeout(const Duration(seconds: 3));
-        final lower = '${text ?? ''}';
-        rejected = _rejectionPhrases.any(lower.contains);
-      } catch (_) {}
+    if (rejected != _googleRejected) {
+      setState(() => _googleRejected = rejected);
     }
-    if (!rejected || !mounted) return;
-    AuthFailureReporter.reportOnce(
-        stage: 'login-webview', code: 'google-rejected');
-    if (!_googleRejected) setState(() => _googleRejected = true);
   }
 
   Future<void> _checkAccountVerification(
@@ -1248,6 +1229,12 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
                                           await _checkAccountVerification(
                                               controller);
                                         },
+                                        // Proses halaman mati: muat ulang agar pengguna
+                                        // tidak tertinggal di layar kosong.
+                                        onRenderProcessGone: (controller, detail) =>
+                                            controller.reload(),
+                                        onWebContentProcessDidTerminate: (controller) =>
+                                            controller.reload(),
                                         onReceivedError:
                                             (controller, request, error) {
                                           debugPrint(
