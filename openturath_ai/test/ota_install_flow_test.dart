@@ -278,6 +278,34 @@ void main() {
     expect(directory.listSync(), isEmpty);
   });
 
+  test('Android lewat data seluler menunggu persetujuan, lalu mengunduh',
+      () async {
+    final updater = UpdateService.test(
+        platform: TargetPlatform.android,
+        buildLoader: () async => 87,
+        manifestLoader: () async => manifest(TargetPlatform.android),
+        store: store,
+        installer: (_) async {},
+        meteredCheck: () async => true);
+    await updater.checkForUpdatesSilently();
+    expect(updater.status, UpdateStatus.awaitingDownload);
+    expect(updater.isUpdateReady, isFalse);
+    await updater.downloadOnMeteredNetwork();
+    expect(updater.isUpdateReady, isTrue);
+  });
+
+  test('Android lewat Wi-Fi tetap mengunduh otomatis', () async {
+    final updater = UpdateService.test(
+        platform: TargetPlatform.android,
+        buildLoader: () async => 87,
+        manifestLoader: () async => manifest(TargetPlatform.android),
+        store: store,
+        installer: (_) async {},
+        meteredCheck: () async => false);
+    await updater.checkForUpdatesSilently();
+    expect(updater.isUpdateReady, isTrue);
+  });
+
   test('an already installed build is not downloaded', () async {
     final updater = UpdateService.test(
         platform: TargetPlatform.macOS,

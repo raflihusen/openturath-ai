@@ -204,7 +204,7 @@ class AiInfoSheet extends StatelessWidget {
                     onTap: () {
                       Clipboard.setData(
                           ClipboardData(text: q['teks']?.toString() ?? ''));
-                      AppSnackBar.show(context, message: 'Pertanyaan disalin');
+                      AppSnackBar.show(context, message: Loc.tr('questionCopied'));
                     },
                     child: Container(
                       width: double.infinity,

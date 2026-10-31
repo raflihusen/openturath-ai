@@ -1,6 +1,8 @@
 package com.openturath.ai
 
+import android.content.Context
 import android.content.Intent
+import android.net.ConnectivityManager
 import android.net.Uri
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
@@ -24,6 +26,8 @@ class MainActivity : FlutterActivity() {
                     "install" -> result.success(updater.install(requireNotNull(call.argument<String>("path")),
                         requireNotNull(call.argument<Number>("build")).toLong()))
                     "status" -> result.success(updater.status())
+                    "isMetered" -> result.success(
+                        (getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager).isActiveNetworkMetered)
                     else -> result.notImplemented()
                 }
             } catch (_: Exception) {

@@ -2483,6 +2483,135 @@ const copyCatalog = <String, List<String>>{
     "The report could not be sent. Check your connection and try again.",
     "تعذّر إرسال التقرير. تحقق من الاتصال ثم أعد المحاولة."
   ],
+  "dashSlideAboutBadge": [
+    "TENTANG OPENTURATH",
+    "ABOUT OPENTURATH",
+    "عن أوبن تراث"
+  ],
+  "dashSlideAboutTitle": [
+    "Mengenal OpenTurath",
+    "Getting to know OpenTurath",
+    "تعرّف على أوبن تراث"
+  ],
+  "dashSlideAboutSummary": [
+    "Membaca ibarah dan menelusuri rujukan langsung dari kitab.",
+    "Read passages and trace references directly from the books.",
+    "اقرأ العبارات وتتبّع المراجع من الكتب مباشرة."
+  ],
+  "dashSlideAboutBody": [
+    "Gunakan OpenTurath untuk mencari rujukan dan membandingkan matan dengan syarah. Periksa hasilnya pada kitab asal, lalu diskusikan dengan guru dan ulama yang berkompeten.",
+    "Use OpenTurath to find references and compare base texts with their commentaries. Check the results in the original book, then discuss them with qualified teachers and scholars.",
+    "استخدم أوبن تراث للبحث عن المراجع والمقارنة بين المتن والشرح. راجع النتائج في الكتاب الأصلي، ثم ناقشها مع المعلمين والعلماء المؤهلين."
+  ],
+  "dashSlideAdabBadge": ["ADAB BELAJAR", "ETIQUETTE OF LEARNING", "آداب الطلب"],
+  "dashSlideAdabTitle": [
+    "Tetap Belajar Bersama Guru",
+    "Keep learning with a teacher",
+    "واصل التعلّم مع معلّمك"
+  ],
+  "dashSlideAdabSummary": [
+    "Bimbingan guru yang bersanad tetap diperlukan.",
+    "Guidance from a teacher with a chain of transmission remains necessary.",
+    "لا غنى عن إرشاد معلّم ذي سند."
+  ],
+  "dashSlideAdabBody": [
+    "AI membantu mencari ibarah dan membandingkan penjelasan dalam kitab. Untuk memahami fikih dan fatwa, tetaplah belajar kepada guru dan ulama yang bersanad.",
+    "AI helps you find passages and compare explanations in the books. To understand fiqh and fatwas, keep learning from teachers and scholars with a chain of transmission.",
+    "يساعدك الذكاء الاصطناعي على تتبع العبارات والمقارنة بين الشروح في الكتب. أما فهم الفقه والفتوى فخذه عن المعلمين والعلماء ذوي السند."
+  ],
+  "dashSlideSourceBadge": ["PERIKSA SUMBER", "CHECK THE SOURCE", "راجع المصدر"],
+  "dashSlideSourceTitle": [
+    "Cocokkan dengan kitab asal",
+    "Compare with the original book",
+    "قابل النص بالكتاب الأصلي"
+  ],
+  "dashSlideSourceSummary": [
+    "Periksa kembali kutipan di Maktabah Syamilah atau kitab cetak.",
+    "Check the quotation again in Maktabah Shamela or the printed book.",
+    "راجع الاقتباس في المكتبة الشاملة أو الكتاب المطبوع."
+  ],
+  "dashSlideSourceBody": [
+    "Baca ibarah beserta konteksnya pada kitab cetak yang dirujuk sebelum menarik kesimpulan atau membagikan hasilnya.",
+    "Read the passage in context in the cited printed book before drawing a conclusion or sharing the result.",
+    "اقرأ العبارة في سياقها من الكتاب المطبوع المحال إليه قبل أن تستخلص نتيجة أو تنشرها."
+  ],
+  "dashSlideAmanahBadge": [
+    "AMANAH ILMIAH",
+    "SCHOLARLY INTEGRITY",
+    "الأمانة العلمية"
+  ],
+  "dashSlideAmanahTitle": [
+    "Cantumkan Rujukan Saat Mengutip",
+    "Cite the reference when quoting",
+    "اذكر المرجع عند الاقتباس"
+  ],
+  "dashSlideAmanahSummary": [
+    "Sertakan nama pengarang, judul kitab, bab, jilid, dan halaman.",
+    "Include the author, book title, chapter, volume, and page.",
+    "اذكر المؤلف وعنوان الكتاب والباب والجزء والصفحة."
+  ],
+  "dashSlideAmanahBody": [
+    "Saat mengutip, tuliskan nama pengarang, judul kitab, bab, jilid, dan halaman sesuai sumber yang digunakan agar rujukan mudah ditemukan.",
+    "When quoting, write the author, book title, chapter, volume, and page of the source you used so the reference is easy to find.",
+    "عند الاقتباس، اذكر المؤلف وعنوان الكتاب والباب والجزء والصفحة وفق المصدر المستخدم ليسهل الوصول إلى المرجع."
+  ],
+  "dashSlideTraceBadge": [
+    "TELUSURI RUJUKAN",
+    "TRACE THE REFERENCE",
+    "تتبّع المرجع"
+  ],
+  "dashSlideTraceTitle": [
+    "Lihat Asal Kutipan",
+    "See where a quotation comes from",
+    "اطّلع على أصل الاقتباس"
+  ],
+  "dashSlideTraceSummary": [
+    "Gunakan informasi kitab, jilid, dan halaman untuk memeriksa naskah.",
+    "Use the book, volume, and page details to check the text.",
+    "استعن ببيانات الكتاب والجزء والصفحة لمراجعة النص."
+  ],
+  "dashSlideTraceBody": [
+    "Buka rujukan yang tersedia untuk menelusuri asal kutipan. Cocokkan teks, jilid, dan halaman dengan edisi kitab yang Anda gunakan.",
+    "Open the available reference to trace the quotation. Compare the text, volume, and page with the edition you are using.",
+    "افتح المرجع المتاح لتتبع أصل الاقتباس، وقابل النص والجزء والصفحة بطبعة الكتاب التي بين يديك."
+  ],
+  "roomPreparing": [
+    "Sesi AI sedang disiapkan. Coba lagi sebentar.",
+    "The AI session is being prepared. Try again in a moment.",
+    "تُجهَّز جلسة المساعد الآن. أعد المحاولة بعد قليل."
+  ],
+  "roomAuthDisconnected": [
+    "Sesi masuk Anda belum terhubung. Muat ulang atau masuk kembali.",
+    "Your sign-in session is not connected. Reload or sign in again.",
+    "جلسة دخولك غير متصلة. أعد التحميل أو سجّل الدخول من جديد."
+  ],
+  "roomConnectFailed": [
+    "AI belum bisa dihubungkan. Coba lagi.",
+    "The AI could not be reached. Try again.",
+    "تعذّر الاتصال بالمساعد. أعد المحاولة."
+  ],
+  "paymentOpenBrowserBody": [
+    "Halaman ini tidak dapat dibuka di dalam aplikasi demi keamanan. Lanjutkan pembayaran lewat peramban.",
+    "For security, this page cannot open inside the app. Continue the payment in your browser.",
+    "لا يمكن فتح هذه الصفحة داخل التطبيق حفاظًا على الأمان. أكمل الدفع عبر المتصفح."
+  ],
+  "paymentOpenBrowser": [
+    "Buka di peramban",
+    "Open in browser",
+    "افتح في المتصفح"
+  ],
+  "questionCopied": ["Pertanyaan disalin", "Question copied", "نُسخ السؤال"],
+  "updateMeteredBody": [
+    "Pembaruan tersedia. Unduh sekarang lewat data seluler, atau tunggu sampai tersambung ke Wi-Fi.",
+    "An update is available. Download it now over mobile data, or wait for Wi-Fi.",
+    "يتوفر تحديث. نزّله الآن عبر بيانات الجوال أو انتظر الاتصال بشبكة Wi-Fi."
+  ],
+  "updateDownloadNow": ["Unduh sekarang", "Download now", "نزّل الآن"],
+  "errorSectionFailed": [
+    "Bagian ini gagal ditampilkan. Tutup lalu buka kembali.",
+    "This section could not be shown. Close it and open it again.",
+    "تعذّر عرض هذا القسم. أغلقه ثم افتحه من جديد."
+  ],
   "roomHttpFailure": [
     "AI belum bisa dibuka (kode {0}). Coba muat ulang sebentar lagi.",
     "The AI could not be opened (code {0}). Try reloading in a moment.",

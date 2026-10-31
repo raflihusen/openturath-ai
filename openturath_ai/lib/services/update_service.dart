@@ -14,6 +14,7 @@ import 'update_package_store.dart';
 enum UpdateStatus {
   idle,
   checking,
+  awaitingDownload,
   downloading,
   readyToInstall,
   installing,
@@ -81,12 +82,14 @@ class UpdateService extends ChangeNotifier {
       required Future<int> Function() buildLoader,
       required Future<Map<String, dynamic>?> Function() manifestLoader,
       required UpdatePackageStore store,
-      Future<void> Function(UpdateInfo)? installer})
+      Future<void> Function(UpdateInfo)? installer,
+      Future<bool> Function()? meteredCheck})
       : _platformOverride = platform,
         _buildLoader = buildLoader,
         _manifestLoader = manifestLoader,
         _store = store,
-        _installer = installer;
+        _installer = installer,
+        _meteredCheck = meteredCheck;
 
   TargetPlatform? _platformOverride;
   TargetPlatform get platform => _platformOverride ?? defaultTargetPlatform;
@@ -95,7 +98,9 @@ class UpdateService extends ChangeNotifier {
   Future<int> Function()? _buildLoader;
   Future<Map<String, dynamic>?> Function()? _manifestLoader;
   Future<void> Function(UpdateInfo)? _installer;
+  Future<bool> Function()? _meteredCheck;
   UpdatePackageStore? _store;
+  bool _meteredApproved = false;
   UpdateStatus _status = UpdateStatus.idle;
   UpdateStatus get status => _status;
   UpdateInfo? _updateInfo;
@@ -126,6 +131,27 @@ class UpdateService extends ChangeNotifier {
                   url.userInfo.isEmpty &&
                   url.port == 443 &&
                   PlatformRelease.allowedHosts.contains(url.host));
+
+  /// Android: paket tidak diunduh diam-diam lewat kuota seluler pengguna.
+  /// Bila status jaringan tidak terbaca, perilaku lama (unduh) dipertahankan.
+  Future<bool> _onMeteredNetwork() async {
+    if (platform != TargetPlatform.android) return false;
+    try {
+      return await (_meteredCheck?.call() ??
+              const MethodChannel('com.openturath.ai/updater')
+                  .invokeMethod<bool>('isMetered')
+                  .then((value) => value == true))
+          .timeout(const Duration(seconds: 3));
+    } catch (_) {
+      return false;
+    }
+  }
+
+  /// Persetujuan pengguna untuk mengunduh lewat data seluler (sekali jalan).
+  Future<void> downloadOnMeteredNetwork() async {
+    _meteredApproved = true;
+    await retry();
+  }
 
   Future<void> retry() async {
     _lastCheckedAt = null;
@@ -187,6 +213,11 @@ class UpdateService extends ChangeNotifier {
             releaseNotes: release.notes,
             sha256Hash: release.sha256,
             installerProtocol: release.installerProtocol);
+        if (!_meteredApproved && await _onMeteredNetwork()) {
+          _status = UpdateStatus.awaitingDownload;
+          _lastCheckedAt = DateTime.now();
+          return;
+        }
         _status = UpdateStatus.downloading;
         notifyListeners();
         final file = await (await _packageStore()).obtain(

@@ -47,6 +47,18 @@ class UpdateReadyBanner extends StatelessWidget {
                               Theme.of(context).brightness == Brightness.dark)),
                   ]));
         }
+        if (updateService.status == UpdateStatus.awaitingDownload) {
+          return Padding(
+              padding: const EdgeInsets.symmetric(vertical: 12),
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(Loc.tr('updateMeteredBody')),
+                    TextButton(
+                        onPressed: updateService.downloadOnMeteredNetwork,
+                        child: Text(Loc.tr('updateDownloadNow'))),
+                  ]));
+        }
         if (!updateService.isUpdateReady) {
           return const SizedBox.shrink();
         }

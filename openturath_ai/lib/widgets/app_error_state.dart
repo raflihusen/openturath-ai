@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../core/design/ot_colors.dart';
+import '../core/localization.dart';
 import '../core/scholarly_fonts.dart';
 
 import 'package:openturath_ai/core/design/ot_typography.dart';
@@ -173,6 +174,39 @@ class AppErrorState extends StatelessWidget {
                 ),
               ],
             ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Pengganti kotak abu-abu bawaan Flutter saat sebuah widget gagal dibangun di
+/// versi rilis. Sengaja sederhana: bisa muncul di ruang sekecil apa pun dan di
+/// luar MaterialApp, jadi tidak boleh bergantung pada Theme atau tata letak.
+class ReleaseErrorSurface extends StatelessWidget {
+  const ReleaseErrorSurface({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Directionality(
+      textDirection: TextDirection.ltr,
+      child: ColoredBox(
+        color: Colors.transparent,
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Text(
+              Loc.tr('errorSectionFailed'),
+              textAlign: TextAlign.center,
+              maxLines: 3,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(
+                fontSize: 13,
+                decoration: TextDecoration.none,
+                color: Color(0xFF71717A),
+              ),
+            ),
           ),
         ),
       ),

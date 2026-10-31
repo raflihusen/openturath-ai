@@ -373,11 +373,10 @@ class _PaymentCheckoutSheetState extends State<PaymentCheckoutSheet> {
     if (messenger == null || uri == null) return;
     messenger.hideCurrentSnackBar();
     messenger.showSnackBar(SnackBar(
-      content: const Text(
-          'Halaman ini tidak dapat dibuka di dalam aplikasi demi keamanan. Lanjutkan pembayaran lewat peramban.'),
+      content: Text(Loc.tr('paymentOpenBrowserBody')),
       duration: const Duration(seconds: 12),
       action: SnackBarAction(
-        label: 'Buka di peramban',
+        label: Loc.tr('paymentOpenBrowser'),
         onPressed: () => launchUrl(uri, mode: LaunchMode.externalApplication),
       ),
     ));

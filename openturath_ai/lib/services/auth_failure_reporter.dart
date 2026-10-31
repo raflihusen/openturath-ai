@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
+import 'package:package_info_plus/package_info_plus.dart';
 
 /// Melaporkan kegagalan login ke server TANPA data pribadi: hanya platform, tahap,
 /// kode galat, dan kategori tetap. Endpoint menolak nilai di luar pola
@@ -9,8 +10,15 @@ import 'package:http/http.dart' as http;
 class AuthFailureReporter {
   static const endpoint =
       'https://us-central1-open-turath.cloudfunctions.net/reportAuthFailure';
-  static const appVersion = '1.0.85';
+  static String appVersion = 'unknown';
   static final _safe = RegExp(r'^[a-zA-Z0-9_.:-]{1,80}$');
+
+  /// Dibaca dari paket terpasang agar laporan selalu menyebut versi yang benar.
+  static Future<void> loadAppVersion() async {
+    try {
+      appVersion = sanitize((await PackageInfo.fromPlatform()).version);
+    } catch (_) {}
+  }
 
   static String sanitize(String value) =>
       _safe.hasMatch(value) ? value : 'unknown';

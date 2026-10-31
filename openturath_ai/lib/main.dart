@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/foundation.dart';
 import 'services/desktop_update_installer.dart';
 import 'core/app_platform.dart';
 import 'screens/onboarding_screen.dart';
@@ -31,6 +32,7 @@ import 'core/app_config.dart';
 import 'core/app_transition.dart';
 import 'core/app_copy.dart';
 import 'core/localization.dart';
+import 'services/auth_failure_reporter.dart';
 import 'services/telemetry_service.dart';
 import 'widgets/app_error_state.dart';
 
@@ -96,6 +98,10 @@ Future<void> main() async {
     ).timeout(const Duration(seconds: 30));
     // ── Inisialisasi Silent Telemetry ──
     TelemetryService.instance.init();
+    unawaited(AuthFailureReporter.loadAppVersion());
+    if (kReleaseMode) {
+      ErrorWidget.builder = (_) => const ReleaseErrorSurface();
+    }
     runApp(const OpenTurathApp());
   } catch (error, stackTrace) {
     debugPrint(

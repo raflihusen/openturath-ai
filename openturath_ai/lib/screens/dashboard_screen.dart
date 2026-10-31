@@ -972,42 +972,11 @@ class _DashboardAnnouncementCarouselState
   Timer? _autoPlayTimer;
 
   static const List<_AnnouncementSlide> _slides = [
-    _AnnouncementSlide(
-      badge: 'TENTANG OPENTURATH',
-      title: 'Mengenal OpenTurath',
-      summary: 'Membaca ibarah dan menelusuri rujukan langsung dari kitab.',
-      detailedContent:
-          'Gunakan OpenTurath untuk mencari rujukan dan membandingkan matan dengan syarah. Periksa hasilnya pada kitab asal, lalu diskusikan dengan guru dan ulama yang berkompeten.',
-    ),
-    _AnnouncementSlide(
-      badge: 'ADAB BELAJAR',
-      title: 'Tetap Belajar Bersama Guru',
-      summary: 'Bimbingan guru yang bersanad tetap diperlukan.',
-      detailedContent:
-          'AI membantu mencari ibarah dan membandingkan penjelasan dalam kitab. Untuk memahami fikih dan fatwa, tetaplah belajar kepada guru dan ulama yang bersanad.',
-    ),
-    _AnnouncementSlide(
-      badge: 'PERIKSA SUMBER',
-      title: 'Cocokkan dengan kitab asal',
-      summary: 'Periksa kembali kutipan di Maktabah Syamilah atau kitab cetak.',
-      detailedContent:
-          'Baca ibarah beserta konteksnya pada kitab cetak yang dirujuk sebelum menarik kesimpulan atau membagikan hasilnya.',
-    ),
-    _AnnouncementSlide(
-      badge: 'AMANAH ILMIAH',
-      title: 'Cantumkan Rujukan Saat Mengutip',
-      summary: 'Sertakan nama pengarang, judul kitab, bab, jilid, dan halaman.',
-      detailedContent:
-          'Saat mengutip, tuliskan nama pengarang, judul kitab, bab, jilid, dan halaman sesuai sumber yang digunakan agar rujukan mudah ditemukan.',
-    ),
-    _AnnouncementSlide(
-      badge: 'TELUSURI RUJUKAN',
-      title: 'Lihat Asal Kutipan',
-      summary:
-          'Gunakan informasi kitab, jilid, dan halaman untuk memeriksa naskah.',
-      detailedContent:
-          'Buka rujukan yang tersedia untuk menelusuri asal kutipan. Cocokkan teks, jilid, dan halaman dengan edisi kitab yang Anda gunakan.',
-    ),
+    _AnnouncementSlide('About'),
+    _AnnouncementSlide('Adab'),
+    _AnnouncementSlide('Source'),
+    _AnnouncementSlide('Amanah'),
+    _AnnouncementSlide('Trace'),
   ];
 
   @override
@@ -1262,17 +1231,14 @@ class _DashboardAnnouncementCarouselState
 }
 
 class _AnnouncementSlide {
-  final String badge;
-  final String title;
-  final String summary;
-  final String detailedContent;
+  final String id;
 
-  const _AnnouncementSlide({
-    required this.badge,
-    required this.title,
-    required this.summary,
-    required this.detailedContent,
-  });
+  const _AnnouncementSlide(this.id);
+
+  String get badge => Loc.tr('dashSlide${id}Badge');
+  String get title => Loc.tr('dashSlide${id}Title');
+  String get summary => Loc.tr('dashSlide${id}Summary');
+  String get detailedContent => Loc.tr('dashSlide${id}Body');
 }
 
 /// Tanggal hari ini: Hijriah sebagai judul, Masehi di sampingnya.
