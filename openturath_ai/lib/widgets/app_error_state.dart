@@ -201,10 +201,12 @@ class ReleaseErrorSurface extends StatelessWidget {
               textAlign: TextAlign.center,
               maxLines: 3,
               overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                fontSize: 13,
+              style: TextStyle(
+                fontSize: OTFontSize.s14,
                 decoration: TextDecoration.none,
-                color: Color(0xFF71717A),
+                color: OTColors.textSecondary(
+                    MediaQuery.maybePlatformBrightnessOf(context) ==
+                        Brightness.dark),
               ),
             ),
           ),
