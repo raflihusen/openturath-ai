@@ -2447,6 +2447,17 @@ const copyCatalog = <String, List<String>>{
     "Could not complete sign-in. Return to the app and try again.",
     "تعذّر إكمال الدخول. عد إلى التطبيق وأعد المحاولة."
   ],
+  "vipExclusiveTitle": [
+    "Akses Eksklusif",
+    "Exclusive Access",
+    "وصول حصري"
+  ],
+  "vipExclusiveBody": [
+    "Anda termasuk keluarga eksklusif tim OpenTurath. Seluruh AI terbuka untuk Anda secara permanen, sehingga bagian langganan tidak diperlukan.",
+    "You are part of the exclusive OpenTurath team family. Every AI is permanently open to you, so the subscription section is not needed.",
+    "أنت من الأسرة الحصرية لفريق OpenTurath. جميع المساعدين مفتوحون لك بشكل دائم، فلا حاجة إلى قسم الاشتراك."
+  ],
+  "vipExclusiveOk": ["Mengerti", "Understood", "مفهوم"],
   "libraryShort": ["Pustaka", "Library", "المكتبة"],
   "libRefTitle": [
     "Kitab rujukan {0}",

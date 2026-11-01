@@ -1,6 +1,7 @@
 import '../core/onboarding_copy.dart';
 import 'onboarding_screen.dart';
 import 'ai_trouble_screen.dart';
+import '../widgets/vip_exclusive_dialog.dart';
 import '../widgets/adaptive_sheet.dart';
 import '../core/localization.dart';
 import 'package:flutter/material.dart';
@@ -178,6 +179,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   void _openSubscription([UserModel? userModel]) {
     final user = userModel ?? _authService.cachedCurrentUser;
+    if (isExclusiveAccount(user)) {
+      VipExclusiveDialog.show(context);
+      return;
+    }
     NavigationGuard.safePushNamed(
       context,
       AppRoutes.subscription,
@@ -1019,8 +1024,7 @@ class _MembershipPass extends StatelessWidget {
             ),
           ),
         ),
-        if (!AppConfig.isGuruEdition &&
-            summary.state != MembershipPassState.permanent) ...[
+        ...[
           const SizedBox(height: 16),
           Divider(height: 1, color: OTColors.borderSubtle(isDark)),
           const SizedBox(height: 16),

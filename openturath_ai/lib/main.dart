@@ -29,6 +29,8 @@ import 'models/agent_model.dart';
 import 'firebase_options.dart';
 
 import 'core/app_config.dart';
+import 'services/auth_service.dart';
+import 'widgets/vip_exclusive_dialog.dart';
 import 'core/app_transition.dart';
 import 'core/app_copy.dart';
 import 'core/localization.dart';
@@ -303,7 +305,9 @@ class OpenTurathApp extends StatelessWidget {
                       page = const MainShellScreen();
                       break;
                     case AppRoutes.subscription:
-                      page = AppConfig.isGuruEdition
+                      // Akun VIP dan edisi Guru tidak pernah membuka layar
+                      // langganan; pesan eksklusif tampil di titik masuknya.
+                      page = isExclusiveAccount(AuthService().cachedCurrentUser)
                           ? const MainShellScreen()
                           : const SubscriptionScreen();
                       break;
