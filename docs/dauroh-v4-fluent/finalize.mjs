@@ -1,6 +1,8 @@
 import fs from 'node:fs/promises';
 import { finalizePresentation } from '/Users/apple/.codex/plugins/cache/openai-primary-runtime/presentations/26.1026.10807/skills/presentations/container_tools/artifact_tool_utils.mjs';
 
+process.env.RUNTIME_NODE_MODULES='/Users/apple/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules';
+process.env.RUNTIME_NODE='/Users/apple/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node';
 const workspaceDir='/Users/apple/Downloads/ramadhan/docs/dauroh-v4-fluent';
 const skill='/Users/apple/.codex/plugins/cache/openai-primary-runtime/presentations/26.1026.10807/skills/presentations';
 const finalPath=workspaceDir+'/output/دورة_الذكاء_الاصطناعي_والبحث_العلمي.pptx';
