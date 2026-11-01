@@ -1,4 +1,5 @@
 import '../core/localization.dart';
+import '../core/design/native_design.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -199,7 +200,9 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
     final textSecondary = OTColors.textSecondary(isDark);
 
     final isGeneralTab = widget.field == null;
-    final title = isGeneralTab ? AppCopy.navStudies : widget.field!.name;
+    final title = isGeneralTab
+        ? AppCopy.navStudies
+        : NativeCopy.text('field_${widget.field!.id}');
     final filtered = _computeFilteredAgents();
     final shell = MainShellController.of(context);
 
@@ -348,7 +351,7 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
                             return Padding(
                               padding: const EdgeInsetsDirectional.only(end: 8),
                               child: _filterChip(
-                                label: field.name,
+                                label: NativeCopy.text('field_${field.id}'),
                                 isSelected: _selectedFieldId == field.id,
                                 onTap: () =>
                                     setState(() => _selectedFieldId = field.id),
