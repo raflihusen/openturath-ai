@@ -77,7 +77,7 @@ Pada akhir dauroh, sasaran inti yang diusulkan adalah peserta mampu:
 3. Menunjuk satu kalimat jawaban yang didukung teks, serta satu tambahan yang belum didukung.
 4. Mengajukan satu pertanyaan kecil yang mungkin dijawab dengan sumber yang tersedia.
 5. Mencatat satu sumber dan membuat satu kartu faedah.
-6. Menulis satu paragraf sederhana dengan penunjuk sumber, lalu menjelaskan isinya sendiri.
+6. Menulis satu paragraf pendek, cukup 2–3 kalimat Indonesia dengan penunjuk sumber, lalu menjelaskan isinya sendiri.
 7. Mengetahui kapan perlu berhenti, memeriksa bahan, atau bertanya kepada guru.
 
 **Keluaran inti:** satu lembar kerja berisi pertanyaan sederhana, sumber, catatan, paragraf, dan hasil pemeriksaan. Ini latihan awal penelitian, bukan penelitian lengkap atau bukti penguasaan bahasa Arab.
@@ -90,24 +90,26 @@ Metode setiap bagian: **pengajar mencontohkan → peserta menirukan bersama → 
 
 ## 5. Satu contoh bersama sebagai penghubung
 
-**Jenis contoh:** memahami satu istilah dalam satu kutipan pendek dari kitab yang dipilih pengajar. Hindari persoalan khilaf yang memerlukan banyak prasyarat dan jangan mengawali dengan permintaan fatwa.
+**Jenis contoh inti:** memahami satu gagasan dalam teks Indonesia pendek yang dipilih dan diperiksa pengajar, misalnya tentang adab belajar atau cara membuat catatan. Pilih bahan yang tidak menuntut pengetahuan fikih khusus. Hindari persoalan khilaf dan jangan mengawali dengan permintaan fatwa.
 
-Pertanyaan bersama: **“Apa yang dijelaskan penulis tentang istilah ini, dan apa yang belum dapat kita simpulkan dari potongan teks ini?”**
+Jika bahan diambil dari kitab Arab, gunakan penjelasan/terjemahan Indonesia yang sudah diperiksa pengajar sebagai bahan kerja peserta. Teks Arab boleh ditampilkan sebagai contoh pendamping. Mencocokkan jawaban AI dengan versi Indonesia **belum membuktikan peserta dapat memverifikasi terjemahan atau kutipan Arab secara mandiri**.
+
+Pertanyaan bersama: **“Apa yang dijelaskan penulis dalam bagian ini, dan apa yang belum dapat kita simpulkan dari potongan teks ini?”**
 
 Pengajar menyiapkan:
 
-- Satu kutipan pendek, sekitar 3–5 baris, yang sudah dicocokkan dengan halaman sumber.
-- Gambar halaman dan identitas edisinya; teks Arab, arti penjelasan Indonesia, serta penanda baris untuk latihan.
+- Satu teks Indonesia pendek, sekitar 3–5 baris, yang sudah dicocokkan dengan sumber atau versi terjemahan pengajar yang ditandai jelas.
+- Halaman sumber dan identitasnya; jika sumber asli berbahasa Arab, sediakan teks asli dan terjemahan yang diperiksa pengajar, dengan label fungsi masing-masing.
 - Contoh ringkasan yang sesuai dan satu contoh tambahan yang tidak didukung teks. Contoh buatan diberi label **simulasi**, tidak disajikan sebagai keluaran AI nyata.
 - Paket kedua dengan panjang dan kesulitan serupa untuk tugas akhir.
 
-Belum ada kutipan kitab atau rekaman demo yang disiapkan oleh dokumen ini. Jangan mengisi contoh dengan kutipan, halaman, atau identitas kitab rekaan.
+Belum ada kutipan kitab atau rekaman demo yang disiapkan oleh dokumen ini. Jangan mengisi contoh dengan kutipan, halaman, atau identitas kitab rekaan. Latihan ini memeriksa **dukungan teks terhadap jawaban**, bukan otomatis menetapkan kebenaran setiap isi sumber; kelayakan sumber dan kesimpulan ilmiah tetap memerlukan penilaian yang sesuai bidang.
 
 Perjalanan contoh: membaca teks → meminta bantuan ringkasan → mengecek kalimatnya → memperjelas permintaan → membuat pertanyaan → mencatat sumber → menyusun paragraf → memeriksa isinya. Topik pribadi baru dipakai setelah alur bersama dipahami.
 
 ## 6. Jadwal usulan: dua hari, masing-masing 240 menit
 
-Angka berikut adalah perkiraan untuk gladi, bukan durasi yang sudah terbukti. Sebanyak 52 nomor di bawah mencakup layar demonstrasi, instruksi latihan, dan evaluasi; bukan 52 ceramah terpisah. Materi panjang dan templat berada pada lembar kerja.
+Angka berikut adalah perkiraan untuk gladi, bukan durasi yang sudah terbukti. Sebanyak 52 nomor di bawah mencakup layar demonstrasi, instruksi latihan, dan evaluasi; bukan 52 ceramah terpisah. Jumlah slide bukan target penyampaian. Slide 6 dan 15 dapat dijelaskan sangat singkat bila peserta belum memerlukan rinciannya; contoh Arab pada slide 45–46 dan contoh produk tambahan bersifat pilihan. Materi panjang dan templat berada pada lembar kerja.
 
 ### Hari pertama — merasa bisa memakai AI dan tahu cara memeriksa hasilnya
 
@@ -180,7 +182,7 @@ Judul Arab disertakan untuk kesinambungan identitas dauroh. Karena peserta juga 
 - **Batas:** aplikasi tidak otomatis memahami kebutuhan kita atau memastikan kebenaran jawaban.
 
 #### 07 — Melihat satu bantuan nyata / مثال على المساعدة
-- **Di layar:** teks pendek dan tiga poin ringkasan yang sudah diperiksa pengajar.
+- **Di layar:** teks Indonesia pendek dan tiga poin ringkasan yang sudah diperiksa pengajar.
 - **Dibahas:** pengajar menunjukkan tugas, jawaban, dan perbandingannya dengan teks. Peserta melihat manfaat yang konkret.
 - **Bentuk:** demonstrasi singkat; belum meminta peserta melakukan penilaian ilmiah yang rumit.
 
@@ -230,9 +232,9 @@ Judul Arab disertakan untuk kesinambungan identitas dauroh. Karena peserta juga 
 - **Hasil:** prosedur sederhana yang akan diulang sepanjang dauroh.
 
 #### 17 — Memeriksa bersama / نتحقق معًا
-- **Di layar:** kutipan, arti yang dijelaskan pengajar, dan jawaban AI bersebelahan.
+- **Di layar:** teks Indonesia dan jawaban AI bersebelahan; contoh Arab dengan arti yang disiapkan guru hanya sebagai pendamping.
 - **Dibahas:** cocokkan dua kalimat, termasuk batas seperti “dalam teks ini”. Masing-masing pasangan menjelaskan alasan satu penandaan.
-- **Praktik:** peserta baru memeriksa bahan yang memang tersedia, belum berburu referensi di internet.
+- **Praktik:** peserta baru memeriksa bahan Indonesia yang tersedia, belum berburu referensi di internet atau menilai ketepatan terjemahan Arab.
 
 #### 18 — Apa yang dilakukan ketika belum yakin? / ماذا نفعل عند الشك؟
 - **Di layar:** periksa teks, persempit pertanyaan, cari sumber tambahan, atau bertanya kepada guru.
@@ -328,7 +330,7 @@ Judul Arab disertakan untuk kesinambungan identitas dauroh. Karena peserta juga 
 
 #### 36 — Menemukan satu sumber nyata / الوصول إلى مصدر واحد
 - **Di layar:** buka satu sumber → cocokkan identitas → catat letak teks.
-- **Dibahas:** latihan dipandu menggunakan jalur atau paket pilihan. Bila tidak ditemukan, tulis statusnya dan gunakan cadangan; jangan membuat identitas yang kosong.
+- **Dibahas:** latihan dipandu menggunakan dua sumber tertaut atau paket pilihan, bukan pencarian bebas di banyak situs. Bila tidak ditemukan, tulis statusnya dan gunakan cadangan; jangan membuat identitas yang kosong.
 - **Hasil:** satu sumber tercatat; revisi pertanyaan slide 33 bila sumbernya tidak mendukung. Bukan perlombaan mencari tiga buku.
 
 #### 37 — Satu faedah, satu catatan / فائدة واحدة في بطاقة
@@ -353,7 +355,7 @@ Judul Arab disertakan untuk kesinambungan identitas dauroh. Karena peserta juga 
 
 #### 41 — Menulis satu paragraf dengan kata sendiri / كتابة فقرة بكلماتنا
 - **Di layar:** kalimat gagasan; bukti atau ringkasan; penjelasan hubungan keduanya.
-- **Dibahas:** peserta menulis dalam bahasa Indonesia lebih dahulu. AI boleh mengajukan pertanyaan atau menawarkan perapian, tetapi peserta memilih dan menjelaskan isinya.
+- **Dibahas:** peserta menulis 2–3 kalimat dalam bahasa Indonesia lebih dahulu. AI boleh mengajukan pertanyaan atau menawarkan perapian, tetapi peserta memilih dan menjelaskan isinya.
 - **Batas:** contoh parafrasa tidak diklaim sebagai kutipan kitab.
 
 #### 42 — Menyertakan sumber dan membatasi kesimpulan / ذكر المصدر وضبط الاستنتاج
@@ -489,7 +491,7 @@ Gunakan kategori “mandiri”, “dengan bantuan”, dan “belum teramati”. 
 
 - Pilih satu alat utama dan periksa akun, akses peserta, serta tampilan ponsel/laptop sebelum hari pelaksanaan. Jangan menganggap tersedianya akun otomatis berarti fiturnya tersedia.
 - Siapkan satu jalur pencarian sumber yang sesuai bidang dan manhaj pengajaran. Ajarkan fungsi sumber; jangan menjadikan respons situs sebagai bukti kelayakan ilmiah.
-- Siapkan dua paket teks dengan jawaban panduan. Teks Arab diterjemahkan dan dijelaskan pengajar sebelum dipakai sebagai dasar pemeriksaan oleh pemula.
+- Siapkan dua paket teks Indonesia dengan jawaban panduan. Bila menyertakan Arab, terjemahan dan penjelasannya diperiksa pengajar; hasil latihan tidak disebut sebagai bukti peserta mampu memeriksa Arab secara mandiri.
 - Siapkan panduan layar satu halaman dengan tombol yang nyata, serta cara menyimpan tugas dan sumber. Pengunggahan PDF besar tidak wajib dalam kelas dasar.
 - Siapkan pendamping dan atur peserta berpasangan; sebagai titik awal perencanaan, satu pendamping untuk sekitar 8–10 peserta, lalu sesuaikan hasil gladi.
 - Jika hanya ponsel, gunakan teks pendek yang mudah disalin dan hindari praktik yang menuntut banyak jendela. Setiap peserta tetap mendapat giliran mengoperasikan alat.
