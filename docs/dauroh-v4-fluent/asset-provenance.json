@@ -1,0 +1,26 @@
+{
+  "tool": "built-in image_gen",
+  "generated": {
+    "cover": {
+      "file": "assets/cover.png",
+      "source": "/Users/apple/.codex/generated_images/01a1975e-a34c-7bd1-aaba-6e831834a9b4/exec-63b27d45-306a-48f0-9650-146dee5c04e7.png",
+      "prompt_summary": "Microsoft Fluent inspired monochrome 3D studio render; cover concept in left third; wide canvas, negative space for editable Arabic text; no text or brand marks."
+    },
+    "brain": {
+      "file": "assets/brain.png",
+      "source": "/Users/apple/.codex/generated_images/01a1975e-a34c-7bd1-aaba-6e831834a9b4/exec-b0671e14-064a-4a6d-a571-d41ff0ae1eb7.png",
+      "prompt_summary": "Microsoft Fluent inspired monochrome 3D studio render; brain concept in left third; wide canvas, negative space for editable Arabic text; no text or brand marks."
+    },
+    "search": {
+      "file": "assets/search.png",
+      "source": "/Users/apple/.codex/generated_images/01a1975e-a34c-7bd1-aaba-6e831834a9b4/exec-3b3a815b-f9db-47b5-b44f-a01008612ad4.png",
+      "prompt_summary": "Microsoft Fluent inspired monochrome 3D studio render; search concept in left third; wide canvas, negative space for editable Arabic text; no text or brand marks."
+    },
+    "shield": {
+      "file": "assets/shield.png",
+      "source": "/Users/apple/.codex/generated_images/01a1975e-a34c-7bd1-aaba-6e831834a9b4/exec-2d019259-2c2a-40f4-b512-eb7dcd3c633f.png",
+      "prompt_summary": "Microsoft Fluent inspired monochrome 3D studio render; shield concept in left third; wide canvas, negative space for editable Arabic text; no text or brand marks."
+    }
+  },
+  "logos": "Original supplied project logos copied unchanged from docs/dauroh/assets"
+}
