@@ -173,8 +173,8 @@ class _ResearchLibrarySheetState extends State<ResearchLibrarySheet> {
     final border = OTColors.border(isDark);
 
     final title = widget.agent != null
-        ? 'Kitab rujukan ${widget.agent!.title}'
-        : 'Kitab rujukan Mazhab Syafi\'i';
+        ? Loc.tr('libRefTitle', [Loc.text(widget.agent!.title)])
+        : Loc.tr('libRefTitleShafii');
 
     return DraggableScrollableSheet(
       initialChildSize: 0.85,
@@ -212,7 +212,10 @@ class _ResearchLibrarySheetState extends State<ResearchLibrarySheet> {
                           ),
                           if (_allBooks != null)
                             Text(
-                              '${_filteredBooks?.length ?? 0} dari ${_allBooks!.length} kitab rujukan',
+                              Loc.tr('libCount', [
+                                '${_filteredBooks?.length ?? 0}',
+                                '${_allBooks!.length}'
+                              ]),
                               style: OTTypography.caption(color: textSecondary),
                             ),
                         ],
@@ -306,8 +309,8 @@ class _ResearchLibrarySheetState extends State<ResearchLibrarySheet> {
                                       const SizedBox(height: OTSpacing.sm),
                                       Text(
                                         _searchController.text.isNotEmpty
-                                            ? 'Tidak ada kitab yang cocok dengan pencarian'
-                                            : 'Katalog naskah sedang disiapkan.',
+                                            ? Loc.tr('libNoMatch')
+                                            : Loc.tr('libPreparing'),
                                         textAlign: TextAlign.center,
                                         style: OTTypography.body(
                                             color: textSecondary),
@@ -460,7 +463,7 @@ class CanonicalBookTile extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     Text(
-                      'Keterangan kitab',
+                      Loc.tr('libBookInfo'),
                       style: OTTypography.button(color: accent)
                           .copyWith(fontSize: OTFontSize.s12),
                     ),

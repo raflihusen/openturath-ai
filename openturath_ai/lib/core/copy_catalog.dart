@@ -2416,7 +2416,64 @@ const copyCatalog = <String, List<String>>{
   ],
   "authorDeathLabel": ["Wafat pengarang", "Author died", "وفاة المؤلف"],
   "searchFieldHint": ["Cari bidang…", "Search disciplines…", "ابحث عن فنّ…"],
+  "authPageOk": ["Berhasil", "Done", "تم بنجاح"],
+  "authPageFail": [
+    "Tidak dapat melanjutkan",
+    "Cannot continue",
+    "تعذّرت المتابعة"
+  ],
+  "authPageBadState": [
+    "Permintaan tidak dikenali. Tutup tab ini dan coba lagi dari aplikasi.",
+    "Request not recognized. Close this tab and try again from the app.",
+    "لم يُعرَف الطلب. أغلق هذا التبويب وأعد المحاولة من التطبيق."
+  ],
+  "authPageCancelled": [
+    "Proses masuk dibatalkan. Anda dapat menutup tab ini dan mencoba lagi di aplikasi.",
+    "Sign-in was cancelled. You can close this tab and try again in the app.",
+    "أُلغيت عملية الدخول. يمكنك إغلاق هذا التبويب والمحاولة من جديد في التطبيق."
+  ],
+  "authPageNoCode": [
+    "Google tidak mengirim kode otorisasi.",
+    "Google did not send an authorization code.",
+    "لم ترسل Google رمز التفويض."
+  ],
+  "authPageLinked": [
+    "Akun berhasil dihubungkan. Anda dapat menutup tab ini dan kembali ke aplikasi OpenTurath AI.",
+    "Account linked. You can close this tab and return to the OpenTurath AI app.",
+    "تم ربط الحساب. يمكنك إغلاق هذا التبويب والعودة إلى تطبيق OpenTurath AI."
+  ],
+  "authPageError": [
+    "Gagal menyelesaikan proses masuk. Kembali ke aplikasi dan coba lagi.",
+    "Could not complete sign-in. Return to the app and try again.",
+    "تعذّر إكمال الدخول. عد إلى التطبيق وأعد المحاولة."
+  ],
   "libraryShort": ["Pustaka", "Library", "المكتبة"],
+  "libRefTitle": [
+    "Kitab rujukan {0}",
+    "Reference books: {0}",
+    "الكتب المرجعية: {0}"
+  ],
+  "libRefTitleShafii": [
+    "Kitab rujukan Mazhab Syafi'i",
+    "Shafi'i school reference books",
+    "الكتب المرجعية للمذهب الشافعي"
+  ],
+  "libCount": [
+    "{0} dari {1} kitab rujukan",
+    "{0} of {1} reference books",
+    "{0} من {1} كتابًا مرجعيًا"
+  ],
+  "libNoMatch": [
+    "Tidak ada kitab yang cocok dengan pencarian",
+    "No books match your search",
+    "لا توجد كتب مطابقة للبحث"
+  ],
+  "libPreparing": [
+    "Katalog naskah sedang disiapkan.",
+    "The manuscript catalog is being prepared.",
+    "فهرس المخطوطات قيد الإعداد."
+  ],
+  "libBookInfo": ["Keterangan kitab", "Book details", "بيانات الكتاب"],
   "loginStatLibraries": [
     "pustaka bidang ilmu",
     "discipline libraries",

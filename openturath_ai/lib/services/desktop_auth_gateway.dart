@@ -10,6 +10,7 @@ import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
 
 import '../core/desktop_oauth_config.dart';
+import '../core/localization.dart';
 
 /// Hasil otorisasi Google OAuth dari browser desktop untuk dioper ke Firebase Auth.
 class DesktopAuthResult {
@@ -125,20 +126,18 @@ class DesktopAuthGateway {
 
       if (query['state'] != state) {
         request.response.statusCode = HttpStatus.forbidden;
-        await reply(false,
-            'Permintaan tidak dikenali. Tutup tab ini dan coba lagi dari aplikasi.');
+        await reply(false, Loc.tr('authPageBadState'));
         return;
       }
       if (query['error'] != null) {
-        await reply(false,
-            'Proses masuk dibatalkan. Anda dapat menutup tab ini dan mencoba lagi di aplikasi.');
+        await reply(false, Loc.tr('authPageCancelled'));
         if (!completer.isCompleted) completer.complete(null);
         return;
       }
       final code = query['code'];
       if (code == null || code.isEmpty) {
         request.response.statusCode = HttpStatus.badRequest;
-        await reply(false, 'Google tidak mengirim kode otorisasi.');
+        await reply(false, Loc.tr('authPageNoCode'));
         return;
       }
       try {
@@ -158,8 +157,7 @@ class DesktopAuthGateway {
               message: 'Google tidak mengembalikan token.');
         }
         final claims = _idTokenClaims(idToken);
-        await reply(true,
-            'Akun berhasil dihubungkan. Anda dapat menutup tab ini dan kembali ke aplikasi OpenTurath AI.');
+        await reply(true, Loc.tr('authPageLinked'));
         if (!completer.isCompleted) {
           completer.complete(DesktopAuthResult(
             idToken: idToken,
@@ -170,8 +168,7 @@ class DesktopAuthGateway {
           ));
         }
       } catch (e) {
-        await reply(false,
-            'Gagal menyelesaikan proses masuk. Kembali ke aplikasi dan coba lagi.');
+        await reply(false, Loc.tr('authPageError'));
         if (!completer.isCompleted) completer.completeError(e);
       } finally {
         _scheduleServerShutdown();
@@ -245,10 +242,12 @@ class DesktopAuthGateway {
   }
 
   static String _resultPage(bool ok, String message) {
-    final title = ok ? 'Berhasil' : 'Tidak dapat melanjutkan';
+    final title = Loc.tr(ok ? 'authPageOk' : 'authPageFail');
+    final lang = Loc.language;
+    final dir = lang == 'ar' ? 'rtl' : 'ltr';
     final mark = ok ? '✓' : '!';
     return '''<!DOCTYPE html>
-<html lang="id"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<html lang="$lang" dir="$dir"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>OpenTurath AI</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
