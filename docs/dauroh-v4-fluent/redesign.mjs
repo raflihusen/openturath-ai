@@ -23,11 +23,18 @@ function P(s,n,x,y,w,h,{fill=C.white,r=28,stroke='none',shadow=true}={}){
 }
 function card(s,n,title,content,x,y,w,h,{dark=false,size=29,titleSize=29,fill,tag,center=false}={}){
  const bg=P(s,n,x,y,w,h,{fill:fill||(dark?C.dark:C.white)}),fg=dark?C.paper:C.ink;
- const pad=28;
+ const pad=h<160?22:28;
+ if(title&&/^\d+$|^[٠-٩]+$/.test(title)&&h<155){
+  T(s,n+'-title',title,x+w-72,y+25,46,h-35,28,fg,true,'center');
+  T(s,n+'-body',content,x+pad,y+25,w-125,h-40,size,fg);
+  return bg;
+ }
  if(tag)T(s,n+'-tag',tag,x+pad,y+18,w-2*pad,30,19,dark?C.light:C.muted);
- const ty=y+(tag?57:25);
- if(title)T(s,n+'-title',title,x+pad,ty,w-2*pad,58,titleSize,fg,true,center?'center':'right');
- if(content)T(s,n+'-body',content,x+pad,ty+(title?70:0),w-2*pad,h-(ty-y)-(title?86:22),size,fg,false,center?'center':'right');
+ const ty=y+(tag?57:(h<160?18:25));
+ const titleH=title?(h<160?34:(title.length>25?60:42)):0;
+ if(title)T(s,n+'-title',title,x+pad,ty,w-2*pad,titleH,Math.min(titleSize,h<160?27:titleSize),fg,true,center?'center':'right');
+ const bodyY=ty+(title?titleH+(h<160?7:12):0);
+ if(content)T(s,n+'-body',content,x+pad,bodyY,w-2*pad,h-(bodyY-y)-18,Math.min(size,h<160?26:size),fg,false,center?'center':'right');
  return bg;
 }
 function pill(s,n,v,x,y,w,{dark=false}={}){P(s,n,x,y,w,48,{fill:dark?C.dark:C.mist,r:24,shadow:false});T(s,n+'-text',v,x+18,y+9,w-36,30,21,dark?C.paper:C.dark,true,'center');}
@@ -58,7 +65,7 @@ function head(s,d,dark=false){
 }
 function footer(s,txt,{dark=false,y=700}={}){if(!txt)return;P(s,'caption',70,y,1300,54,{fill:dark?C.charcoal:'#E4E4E7',shadow:false,r:22});T(s,'caption-text',txt,92,y+10,1256,38,22,dark?C.paper:C.dark);}
 function node(s,n,title,x,y,w=275,h=150,opts={}){return card(s,n,title,'',x,y,w,h,opts);}
-function step(s,n,txt,x,y,w,h,{dark=false,num=n}={}){const b=P(s,'step-'+n,x,y,w,h,{fill:dark?C.dark:C.white});pill(s,'step-number-'+n,ar(num),x+w-76,y+22,48,{dark:!dark});T(s,'step-text-'+n,txt,x+26,y+31,w-130,h-48,29,dark?C.paper:C.ink,true);return b;}
+function step(s,n,txt,x,y,w,h,{dark=false,num=n}={}){const b=P(s,'step-'+n,x,y,w,h,{fill:dark?C.dark:C.white});pill(s,'step-number-'+n,ar(num),x+w-76,y+20,48,{dark:!dark});T(s,'step-text-'+n,txt,x+22,y+(w<400?14:27),w-(w<400?103:125),h-(w<400?24:40),w<400?22:29,dark?C.paper:C.ink,true);return b;}
 
 for(const d of data){
  let s;
@@ -238,7 +245,7 @@ for(const d of data){
  case 40:
   s=start(d,'research index card / source quotation');await img(s,'cards',20,375,430,340);
   P(s,'index-card',500,260,870,450,{fill:C.white,r:32});
-  d.columns.forEach((c,i)=>card(s,'index-field-'+i,c.title,c.body.join('\n'),i%2===0?960:535,i<2?290:495,375,180,{fill:i===0?C.dark:C.mist,dark:i===0,size:26,titleSize:27}));break;
+  d.columns.forEach((c,i)=>card(s,'index-field-'+i,c.title,c.body.join('\n'),i%2===0?960:535,i<2?290:495,375,200,{fill:i===0?C.dark:C.mist,dark:i===0,size:24,titleSize:26}));break;
  case 41:
   s=start(d,'three authorial voices / cascading cards');
   d.columns.forEach((c,i)=>card(s,'voice-'+i,c.title,c.body.join('\n'),1000-i*465,270+i*55,370,300,{dark:i===0,size:28,tag:['كلام المؤلف','عرض المعنى','عمل الباحث'][i]}));footer(s,d.body[0]);break;
