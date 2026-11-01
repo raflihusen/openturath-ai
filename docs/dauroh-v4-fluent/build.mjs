@@ -87,9 +87,9 @@ for (const d of slides) {
     continue;
   }
   if(d.type==='prompt') {
-    const {s,fg,muted}=shell(d,{dark:true,key:'chat'});
-    text(s,'prompt',d.prompt,510,295,700,245,d.prompt.length>200?31:34,fg);
-    text(s,'prompt-instruction',d.body.join('\n'),510,570,700,77,25,muted);
+    const {s,fg,muted}=shell(d,{dark:true,compact:true,key:'chat'});
+    text(s,'prompt',d.prompt,80,310,1120,235,34,fg);
+    text(s,'prompt-instruction',d.body.join('\n'),80,590,1120,57,27,muted);
     continue;
   }
   if(d.type==='exercise') {
@@ -116,7 +116,7 @@ for (const d of slides) {
   if(d.type==='hero'||d.type==='end') {
     const dark=d.type==='end'||d.id===47;
     const {s,fg}=shell(d,{dark,key:dark?'cover':'brain'});
-    rows(s,d.body,540,306,670,fg,{size:34,gap:99});
+    rows(s,d.body,700,306,510,fg,{size:34,gap:99});
     continue;
   }
   if(d.type==='split' && d.quote) {
