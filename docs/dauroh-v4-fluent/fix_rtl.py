@@ -3,6 +3,7 @@ from pathlib import Path
 from zipfile import ZipFile, ZIP_DEFLATED
 import re
 import sys
+import hashlib
 import xml.etree.ElementTree as ET
 
 source, target = map(Path, sys.argv[1:3])
@@ -13,8 +14,24 @@ ET.register_namespace('p', P)
 ET.register_namespace('r', 'http://schemas.openxmlformats.org/officeDocument/2006/relationships')
 
 with ZipFile(source) as src, ZipFile(target, 'w', ZIP_DEFLATED) as dst:
+    canonical = {}
+    duplicate = {}
     for name in src.namelist():
+        if name.startswith('ppt/media/'):
+            digest = hashlib.sha256(src.read(name)).hexdigest()
+            if digest in canonical:
+                duplicate[name] = canonical[digest]
+            else:
+                canonical[digest] = name
+    for name in src.namelist():
+        if name in duplicate:
+            continue
         data = src.read(name)
+        if name.endswith('.rels'):
+            rels = data.decode('utf-8')
+            for old, new in duplicate.items():
+                rels = rels.replace('Target="../media/' + Path(old).name + '"', 'Target="../media/' + Path(new).name + '"')
+            data = rels.encode('utf-8')
         if re.fullmatch(r'ppt/slides/slide\d+\.xml', name):
             root = ET.fromstring(data)
             for paragraph in root.findall('.//{%s}p' % A):
