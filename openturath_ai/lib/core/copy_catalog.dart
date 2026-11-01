@@ -2468,6 +2468,43 @@ const copyCatalog = <String, List<String>>{
     "تعذّر فتح المساعد"
   ],
   "reportSend": ["Kirim laporan", "Send report", "إرسال تقرير"],
+  "aiHelpTitle": ["AI bermasalah?", "AI not working?", "المساعد لا يعمل؟"],
+  "aiHelpSubtitle": [
+    "Solusi cepat jika AI berputar terus atau tidak merespons",
+    "Quick fixes if the AI keeps spinning or does not respond",
+    "حلول سريعة إذا ظل المساعد يدور أو لم يستجب"
+  ],
+  "aiSlowHint": [
+    "Terlalu lama? Tutup AI ini lalu buka lagi. Biasanya langsung berhasil.",
+    "Taking too long? Close this AI and open it again. It usually works right away.",
+    "طال الانتظار؟ أغلق هذا المساعد ثم افتحه من جديد، وغالبًا ينجح فورًا."
+  ],
+  "aiRestartAction": [
+    "Tutup & buka ulang",
+    "Close & reopen",
+    "إغلاق وإعادة الفتح"
+  ],
+  "aiHelpMore": ["Solusi lain", "More fixes", "حلول أخرى"],
+  "aiHelpStep1": [
+    "AI berputar terus atau tidak merespons: tutup AI, lalu buka lagi. Biasanya berhasil.",
+    "The AI keeps spinning or does not respond: close it, then open it again. This usually works.",
+    "إذا ظل المساعد يدور أو لا يستجيب: أغلقه ثم افتحه من جديد، وغالبًا ينجح ذلك."
+  ],
+  "aiHelpStep2": [
+    "Masih gagal: hapus riwayat obrolan lewat menu titik tiga, tutup AI, lalu buka lagi.",
+    "Still failing: clear the chat history from the three-dot menu, close the AI, then open it again.",
+    "إن استمر الفشل: امسح سجل المحادثة من قائمة النقاط الثلاث، ثم أغلق المساعد وافتحه من جديد."
+  ],
+  "aiHelpStep3": [
+    "Sudah bertanya tetapi jawaban lama, atau muncul pesan bahwa pesan tidak bisa diterima: tutup AI lalu buka lagi. Biasanya jawabannya sudah selesai.",
+    "You asked but the answer is slow, or a message says it cannot receive your message: close the AI and open it again. The answer is usually already done.",
+    "إذا سألت وتأخرت الإجابة، أو ظهرت رسالة تفيد بتعذر استقبال رسالتك: أغلق المساعد ثم افتحه من جديد، وغالبًا تكون الإجابة قد اكتملت."
+  ],
+  "aiHelpStep4": [
+    "Tetap bermasalah: tekan Kirim laporan agar kami bisa memeriksanya.",
+    "Still stuck: tap Send report so we can look into it.",
+    "إن بقيت المشكلة: اضغط إرسال تقرير لنتحقق منها."
+  ],
   "reportSending": [
     "Mengirim laporan…",
     "Sending report…",

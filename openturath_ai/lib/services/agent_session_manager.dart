@@ -142,6 +142,14 @@ class AgentSessionManager extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Tutup sesi AI ini sampai bersih, lalu buka lagi dari awal. Dipakai saat AI
+  /// berputar terus atau tidak merespons; biasanya itu cukup memulihkannya.
+  void restartAgent(AgentModel agent, {UserModel? user}) {
+    final index = _tabs.indexWhere((t) => t.agent.id == agent.id);
+    if (index != -1) closeTab(index);
+    openAgent(agent, user: user);
+  }
+
   /// Switch active tab (like clicking a Chrome tab).
   void selectTab(int index) {
     if (index >= 0 && index < _tabs.length && _activeIndex != index) {

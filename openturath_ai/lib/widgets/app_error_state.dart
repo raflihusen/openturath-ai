@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../core/design/ot_colors.dart';
 import '../core/localization.dart';
 import '../core/scholarly_fonts.dart';
+import 'ai_trouble_help.dart';
 
 import 'package:openturath_ai/core/design/ot_typography.dart';
 
@@ -19,6 +20,9 @@ class AppErrorState extends StatelessWidget {
   final VoidCallback? onBack;
   final String backLabel;
 
+  /// Langkah pemulihan bernomor yang tampil di bawah pesan (opsional).
+  final List<String> steps;
+
   const AppErrorState({
     super.key,
     this.title = 'Koneksi terputus',
@@ -32,6 +36,7 @@ class AppErrorState extends StatelessWidget {
     this.secondaryLabel = '',
     this.onBack,
     this.backLabel = 'Kembali',
+    this.steps = const [],
   });
 
   const AppErrorState.network({
@@ -46,7 +51,8 @@ class AppErrorState extends StatelessWidget {
     this.backLabel = 'Kembali',
   })  : retryIcon = Icons.refresh_rounded,
         onSecondary = null,
-        secondaryLabel = '';
+        secondaryLabel = '',
+        steps = const [];
 
   const AppErrorState.unauthorized({
     super.key,
@@ -59,7 +65,8 @@ class AppErrorState extends StatelessWidget {
     this.backLabel = 'Kembali',
   })  : retryIcon = Icons.refresh_rounded,
         onSecondary = null,
-        secondaryLabel = '';
+        secondaryLabel = '',
+        steps = const [];
 
   const AppErrorState.empty({
     super.key,
@@ -73,7 +80,8 @@ class AppErrorState extends StatelessWidget {
     this.backLabel = 'Kembali',
   })  : retryIcon = Icons.refresh_rounded,
         onSecondary = null,
-        secondaryLabel = '';
+        secondaryLabel = '',
+        steps = const [];
 
   const AppErrorState.generic({
     super.key,
@@ -86,7 +94,8 @@ class AppErrorState extends StatelessWidget {
     this.backLabel = 'Kembali',
   })  : retryIcon = Icons.refresh_rounded,
         onSecondary = null,
-        secondaryLabel = '';
+        secondaryLabel = '',
+        steps = const [];
 
   @override
   Widget build(BuildContext context) {
@@ -132,6 +141,10 @@ class AppErrorState extends StatelessWidget {
                   color: muted,
                 ),
               ),
+              if (steps.isNotEmpty) ...[
+                const SizedBox(height: 20),
+                AiTroubleSteps(steps: steps),
+              ],
               if (onRetry != null) ...[
                 const SizedBox(height: 24),
                 FilledButton.icon(

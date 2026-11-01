@@ -10,6 +10,7 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'ot_popup_menu.dart';
+import 'ai_trouble_help.dart';
 import 'stop_generating_dialog.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
@@ -190,6 +191,9 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
   final AgentSessionManager _sessionManager = AgentSessionManager.instance;
   final BookmarkService _bookmarkService = BookmarkService();
   final AuthService _authService = AuthService();
+
+  void _restartRoom(AgentSessionTab session) => AgentSessionManager.instance
+      .restartAgent(session.agent, user: _authService.cachedCurrentUser);
 
   Future<void> _copyActiveConversation(AgentSessionTab session) async {
     final owner = _authService.currentUser?.uid;
@@ -608,6 +612,9 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                 _confirmDeleteChatHistory(context, activeTab);
               } else if (val == 'font') {
                 _showFontScaleDialog(context, activeTab);
+              } else if (val == 'help') {
+                showAiTroubleSheet(context,
+                    onRestart: () => _restartRoom(activeTab));
               }
             },
             itemBuilder: (ctx) => [
@@ -653,6 +660,19 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                     const SizedBox(width: 12),
                     Expanded(
                         child: Text(AppCopy.copyConversationAction,
+                            style: OTTypography.body(color: textPrimary))),
+                  ],
+                ),
+              ),
+              OTPopupMenuItem(
+                value: 'help',
+                child: Row(
+                  children: [
+                    Icon(Icons.help_outline_rounded,
+                        color: textPrimary, size: 18),
+                    const SizedBox(width: 12),
+                    Expanded(
+                        child: Text(Loc.tr('aiHelpTitle'),
                             style: OTTypography.body(color: textPrimary))),
                   ],
                 ),
@@ -1662,6 +1682,17 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
     }
   }
 
+  /// Tutup sesi AI ini lalu buka lagi dari awal (langkah pemulihan paling
+  /// sering berhasil bila AI berputar terus).
+  void _restartRoom(AgentSessionTab session) => AgentSessionManager.instance
+      .restartAgent(session.agent, user: _authService.cachedCurrentUser);
+
+  Widget _slowLoadHint(AgentSessionTab session) => AiSlowLoadHint(
+        onRestart: () => _restartRoom(session),
+        onMore: () =>
+            showAiTroubleSheet(context, onRestart: () => _restartRoom(session)),
+      );
+
   @override
   Widget build(BuildContext context) {
     super.build(context);
@@ -1674,11 +1705,19 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
     final canvas = OTColors.canvas(isDark);
 
     if (session.isUrlLoading) {
-      return AppLoader.fullscreen(
-        title: session.agent.title,
-        subtitle: AppCopy.loadingReferences,
-        onCancel: () => AgentSessionManager.instance.closeRoom(),
-      );
+      return Stack(children: [
+        Positioned.fill(
+          child: AppLoader.fullscreen(
+            title: session.agent.title,
+            subtitle: AppCopy.loadingReferences,
+            onCancel: () => AgentSessionManager.instance.closeRoom(),
+          ),
+        ),
+        Align(
+          alignment: Alignment.bottomCenter,
+          child: _slowLoadHint(session),
+        ),
+      ]);
     }
 
     if (session.errorMessage != null) {
@@ -1798,6 +1837,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
           icon: Icons.public_off_rounded,
           title: Loc.tr('roomLoadFailTitle'),
           message: session.errorMessage ?? Loc.tr('roomLoadFailBody'),
+          steps: aiTroubleSteps(),
           retryLabel: Loc.tr('tryAgain'),
           onRetry: retry,
           onSecondary: () => _sendRoomReport(session),
@@ -2337,11 +2377,22 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
               duration: const Duration(milliseconds: 320),
               switchOutCurve: Curves.easeOut,
               child: (!session.isSessionReady && !session.isGoogleAuthPage)
-                  ? AppLoader.fullscreen(
+                  ? Stack(
                       key: const ValueKey('room-loader'),
-                      title: session.agent.title,
-                      subtitle: AppCopy.loadingReferences,
-                      onCancel: () => AgentSessionManager.instance.closeRoom(),
+                      children: [
+                        Positioned.fill(
+                          child: AppLoader.fullscreen(
+                            title: session.agent.title,
+                            subtitle: AppCopy.loadingReferences,
+                            onCancel: () =>
+                                AgentSessionManager.instance.closeRoom(),
+                          ),
+                        ),
+                        Align(
+                          alignment: Alignment.bottomCenter,
+                          child: _slowLoadHint(session),
+                        ),
+                      ],
                     )
                   : const IgnorePointer(
                       key: ValueKey('room-ready'),

@@ -1,5 +1,6 @@
 import '../core/onboarding_copy.dart';
 import 'onboarding_screen.dart';
+import 'ai_trouble_screen.dart';
 import '../widgets/adaptive_sheet.dart';
 import '../core/localization.dart';
 import 'package:flutter/material.dart';
@@ -540,6 +541,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 MaterialPageRoute<void>(
                                     builder: (_) =>
                                         const OnboardingScreen(replay: true))),
+                          ),
+                          Divider(height: 1, color: border),
+                          _SettingsTile(
+                            icon: Icons.help_outline_rounded,
+                            title: Loc.tr('aiHelpTitle'),
+                            subtitle: Loc.tr('aiHelpSubtitle'),
+                            trailing: Icon(Icons.chevron_right_rounded,
+                                color: textSecondary, size: 20),
+                            onTap: () => Navigator.of(context).push(
+                                MaterialPageRoute<void>(
+                                    builder: (_) => const AiTroubleScreen())),
                           ),
                           Divider(height: 1, color: border),
                           _SettingsTile(
