@@ -1,0 +1,339 @@
+{
+  "font": "IBM Plex Sans Arabic",
+  "size": {
+    "width": 1440,
+    "height": 810
+  },
+  "slides": [
+    {
+      "slide": 1,
+      "layout": "cover / book and inset title",
+      "panels": 2,
+      "primaryArtwork": null
+    },
+    {
+      "slide": 2,
+      "layout": "deliverable ribbon / four stations",
+      "panels": 5,
+      "primaryArtwork": null
+    },
+    {
+      "slide": 3,
+      "layout": "workspace / readiness board",
+      "panels": 4,
+      "primaryArtwork": null
+    },
+    {
+      "slide": 4,
+      "layout": "evidence source / stacked answer cards",
+      "panels": 4,
+      "primaryArtwork": null
+    },
+    {
+      "slide": 5,
+      "layout": "asymmetric research bento",
+      "panels": 3,
+      "primaryArtwork": null
+    },
+    {
+      "slide": 6,
+      "layout": "model sculpture / input and output cards",
+      "panels": 3,
+      "primaryArtwork": null
+    },
+    {
+      "slide": 7,
+      "layout": "annotated document / summary slips",
+      "panels": 5,
+      "primaryArtwork": null
+    },
+    {
+      "slide": 8,
+      "layout": "nested model / application / independent source",
+      "panels": 3,
+      "primaryArtwork": null
+    },
+    {
+      "slide": 9,
+      "layout": "privacy shield / controlled materials",
+      "panels": 2,
+      "primaryArtwork": null
+    },
+    {
+      "slide": 10,
+      "layout": "educational chat mockup / four marked operations",
+      "panels": 12,
+      "primaryArtwork": null
+    },
+    {
+      "slide": 11,
+      "layout": "first prompt / single-use dialogue sculpture",
+      "panels": 2,
+      "primaryArtwork": null
+    },
+    {
+      "slide": 12,
+      "layout": "conversation fork / saved notebook",
+      "panels": 3,
+      "primaryArtwork": null
+    },
+    {
+      "slide": 13,
+      "layout": "practice staircase",
+      "panels": 8,
+      "primaryArtwork": null
+    },
+    {
+      "slide": 14,
+      "layout": "source rule / two contrasting answers",
+      "panels": 3,
+      "primaryArtwork": null
+    },
+    {
+      "slide": 15,
+      "layout": "error anatomy / three evidence drawers",
+      "panels": 4,
+      "primaryArtwork": null
+    },
+    {
+      "slide": 16,
+      "layout": "microscope / inspection ladder",
+      "panels": 8,
+      "primaryArtwork": null
+    },
+    {
+      "slide": 17,
+      "layout": "primary quote / manufactured claim",
+      "panels": 2,
+      "primaryArtwork": null
+    },
+    {
+      "slide": 18,
+      "layout": "principle slab / unsupported confidence tokens",
+      "panels": 5,
+      "primaryArtwork": null
+    },
+    {
+      "slide": 19,
+      "layout": "before after prompt / unequal panels",
+      "panels": 3,
+      "primaryArtwork": null
+    },
+    {
+      "slide": 20,
+      "layout": "prompt anatomy / four numbered bands",
+      "panels": 4,
+      "primaryArtwork": null
+    },
+    {
+      "slide": 21,
+      "layout": "prompt document / constraints footer",
+      "panels": 4,
+      "primaryArtwork": null
+    },
+    {
+      "slide": 22,
+      "layout": "two conversation styles / source anchor",
+      "panels": 3,
+      "primaryArtwork": null
+    },
+    {
+      "slide": 23,
+      "layout": "request worksheet / raw draft and four fields",
+      "panels": 5,
+      "primaryArtwork": null
+    },
+    {
+      "slide": 24,
+      "layout": "research compass / interview questions",
+      "panels": 4,
+      "primaryArtwork": null
+    },
+    {
+      "slide": 25,
+      "layout": "feasibility decision fork",
+      "panels": 3,
+      "primaryArtwork": null
+    },
+    {
+      "slide": 26,
+      "layout": "project passport / structured first draft",
+      "panels": 6,
+      "primaryArtwork": null
+    },
+    {
+      "slide": 27,
+      "layout": "hourglass / homework notebook",
+      "panels": 2,
+      "primaryArtwork": null
+    },
+    {
+      "slide": 28,
+      "layout": "second-day recap / overlapping answer cards",
+      "panels": 4,
+      "primaryArtwork": null
+    },
+    {
+      "slide": 29,
+      "layout": "help triage / three diagnosis tickets",
+      "panels": 4,
+      "primaryArtwork": null
+    },
+    {
+      "slide": 30,
+      "layout": "source families / document shelves",
+      "panels": 5,
+      "primaryArtwork": null
+    },
+    {
+      "slide": 31,
+      "layout": "search sculpture / keyword ladder",
+      "panels": 8,
+      "primaryArtwork": null
+    },
+    {
+      "slide": 32,
+      "layout": "edition page / four annotations",
+      "panels": 5,
+      "primaryArtwork": null
+    },
+    {
+      "slide": 33,
+      "layout": "source collection exercise / paired forms",
+      "panels": 2,
+      "primaryArtwork": null
+    },
+    {
+      "slide": 34,
+      "layout": "research problem tree / aims and limits",
+      "panels": 4,
+      "primaryArtwork": null
+    },
+    {
+      "slide": 35,
+      "layout": "target sculpture / title scope comparison",
+      "panels": 2,
+      "primaryArtwork": null
+    },
+    {
+      "slide": 36,
+      "layout": "interview instruction sheet / verify understanding",
+      "panels": 2,
+      "primaryArtwork": null
+    },
+    {
+      "slide": 37,
+      "layout": "plan sculpture / reasoning cards",
+      "panels": 4,
+      "primaryArtwork": null
+    },
+    {
+      "slide": 38,
+      "layout": "plan audit / evidence matrix",
+      "panels": 13,
+      "primaryArtwork": null
+    },
+    {
+      "slide": 39,
+      "layout": "outline worksheet / two branches",
+      "panels": 3,
+      "primaryArtwork": null
+    },
+    {
+      "slide": 40,
+      "layout": "research index card / source quotation",
+      "panels": 5,
+      "primaryArtwork": null
+    },
+    {
+      "slide": 41,
+      "layout": "three authorial voices / cascading cards",
+      "panels": 4,
+      "primaryArtwork": null
+    },
+    {
+      "slide": 42,
+      "layout": "evidence links / paragraph construction",
+      "panels": 3,
+      "primaryArtwork": null
+    },
+    {
+      "slide": 43,
+      "layout": "review document / criterion sidebar",
+      "panels": 4,
+      "primaryArtwork": null
+    },
+    {
+      "slide": 44,
+      "layout": "balanced critique / three decisions",
+      "panels": 3,
+      "primaryArtwork": null
+    },
+    {
+      "slide": 45,
+      "layout": "language correction / protected quotation",
+      "panels": 2,
+      "primaryArtwork": null
+    },
+    {
+      "slide": 46,
+      "layout": "revision ledger / four decisions",
+      "panels": 5,
+      "primaryArtwork": null
+    },
+    {
+      "slide": 47,
+      "layout": "OpenTurath / logo and scholarly standards",
+      "panels": 3,
+      "primaryArtwork": null
+    },
+    {
+      "slide": 48,
+      "layout": "live demonstration / inspection stages",
+      "panels": 7,
+      "primaryArtwork": null
+    },
+    {
+      "slide": 49,
+      "layout": "individual assessment / text and task sheet",
+      "panels": 2,
+      "primaryArtwork": null
+    },
+    {
+      "slide": 50,
+      "layout": "claim examination / four inspection tiles",
+      "panels": 5,
+      "primaryArtwork": null
+    },
+    {
+      "slide": 51,
+      "layout": "learning portfolio / four completed artifacts",
+      "panels": 5,
+      "primaryArtwork": null
+    },
+    {
+      "slide": 52,
+      "layout": "continued learning / cap and next steps",
+      "panels": 3,
+      "primaryArtwork": null
+    }
+  ],
+  "primaryArtworkUsedOnce": [
+    "cover",
+    "brain",
+    "shield",
+    "chat",
+    "microscope",
+    "book",
+    "compass",
+    "hourglass",
+    "search",
+    "target",
+    "plan",
+    "cards",
+    "link",
+    "scale",
+    "pen",
+    "cap"
+  ]
+}
