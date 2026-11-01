@@ -9,7 +9,7 @@ const finalPath=workspaceDir+'/output/دورة_الذكاء_الاصطناعي_�
 await fs.mkdir(workspaceDir+'/output',{recursive:true});
 const result=await finalizePresentation({
  workspaceDir,
- candidatePath:workspaceDir+'/.build/redesign/review-02.pptx',
+ candidatePath:workspaceDir+'/.build/redesign/review-03.pptx',
  finalPath,
  pythonExecutable:'/Users/apple/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3',
  integrityValidatorPath:skill+'/container_tools/inspect_presentation_package_integrity.py',

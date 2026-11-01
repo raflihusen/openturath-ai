@@ -44,16 +44,25 @@ with ZipFile(source) as src, ZipFile(target, 'w', ZIP_DEFLATED) as dst:
             root = ET.fromstring(data)
             for paragraph in root.findall('.//{%s}p' % A):
                 value = ''.join(paragraph.itertext())
-                if not re.search(r'[\u0600-\u06ff]', value):
+                has_arabic = bool(re.search(r'[\u0600-\u06ff]', value))
+                if not has_arabic and not is_notes:
                     continue
                 props = paragraph.find('{%s}pPr' % A)
                 if props is None:
                     props = ET.Element('{%s}pPr' % A)
                     paragraph.insert(0, props)
-                props.set('rtl', '1')
+                if has_arabic:
+                    props.set('rtl', '1')
+                    if is_notes:
+                        props.set('algn', 'r')
+                if is_notes:
+                    for run in paragraph.findall('{%s}r' % A):
+                        if run.find('{%s}rPr' % A) is None:
+                            run.insert(0, ET.Element('{%s}rPr' % A))
                 for rpr in paragraph.findall('.//{%s}rPr' % A):
-                    rpr.set('lang', 'ar-YE')
-                    rpr.set('altLang', 'ar-SA')
+                    rpr.set('lang', 'ar-YE' if has_arabic else 'en-US')
+                    if has_arabic:
+                        rpr.set('altLang', 'ar-SA')
                     cs = rpr.find('{%s}cs' % A)
                     if cs is None:
                         cs = ET.SubElement(rpr, '{%s}cs' % A)
