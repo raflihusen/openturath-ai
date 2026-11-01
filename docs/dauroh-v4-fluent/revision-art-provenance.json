@@ -1,0 +1,38 @@
+{
+  "tool": "built-in image_gen",
+  "use_policy": "Each primary artwork appears on one slide only",
+  "assets": {
+    "microscope": {
+      "source": "/Users/apple/.codex/generated_images/01a1975e-a34c-7bd1-aaba-6e831834a9b4/exec-cd9fe4d1-8c87-4ddd-8266-262deb76df45.png",
+      "prompt": "Use case: stylized-concept. Asset type: transparent 3D illustration for a premium Arabic academic slide deck. Microsoft Fluent 3D inspired, strict monochrome: white porcelain, polished graphite, clear glass and neutral silver only. Soft diffuse studio light, exquisite material detail, calm scholarly feeling. Isolated full object centered with generous transparent padding, no cropping. No text, letters, writing, logos, frames, or watermark. Genuine transparent background. A sophisticated sculptural research microscope made from ivory ceramic and dark chrome, a clear glass magnifying lens, plus one small floating silver pearl. Visually a close inspection of evidence, three-quarter view."
+    },
+    "compass": {
+      "source": "/Users/apple/.codex/generated_images/01a1975e-a34c-7bd1-aaba-6e831834a9b4/exec-8b265a4b-62b1-4fb3-8b48-3a8f3368c36c.png",
+      "prompt": "Use case: stylized-concept. Asset type: transparent 3D illustration for a premium Arabic academic slide deck. Microsoft Fluent 3D inspired, strict monochrome: white porcelain, polished graphite, clear glass and neutral silver only. Soft diffuse studio light, exquisite material detail, calm scholarly feeling. Isolated full object centered with generous transparent padding, no cropping. No text, letters, writing, logos, frames, or watermark. Genuine transparent background. An oversized elegant drafting compass with two curved ivory porcelain arms and dark graphite metal joints, one translucent glass orbit. A single sculptural object suggesting orientation and narrowing a research topic, three-quarter view."
+    },
+    "hourglass": {
+      "source": "/Users/apple/.codex/generated_images/01a1975e-a34c-7bd1-aaba-6e831834a9b4/exec-31fea290-a5f1-4634-a7c5-4762cf35d178.png",
+      "prompt": "Use case: stylized-concept. Asset type: transparent 3D illustration for a premium Arabic academic slide deck. Microsoft Fluent 3D inspired, strict monochrome: white porcelain, polished graphite, clear glass and neutral silver only. Soft diffuse studio light, exquisite material detail, calm scholarly feeling. Isolated full object centered with generous transparent padding, no cropping. No text, letters, writing, logos, frames, or watermark. Genuine transparent background. An elegant rounded hourglass of transparent smoked glass with white ceramic caps and a small stream of silver-gray sand, standing beside a tiny folded blank paper page. Compact refined sculpture."
+    },
+    "target": {
+      "source": "/Users/apple/.codex/generated_images/01a1975e-a34c-7bd1-aaba-6e831834a9b4/exec-26653cd1-0b18-4459-9d5c-bd855d3ca4e1.png",
+      "prompt": "Use case: stylized-concept. Asset type: transparent 3D illustration for a premium Arabic academic slide deck. Microsoft Fluent 3D inspired, strict monochrome: white porcelain, polished graphite, clear glass and neutral silver only. Soft diffuse studio light, exquisite material detail, calm scholarly feeling. Isolated full object centered with generous transparent padding, no cropping. No text, letters, writing, logos, frames, or watermark. Genuine transparent background. A sculptural thick target formed from three concentric ivory ceramic rings, a single polished graphite arrow landing at the center, with one small silver bead. Refined minimal 3D object for a clear research question."
+    },
+    "cards": {
+      "source": "/Users/apple/.codex/generated_images/01a1975e-a34c-7bd1-aaba-6e831834a9b4/exec-9ffff3b8-dd86-4181-9938-2c6b5a4405c1.png",
+      "prompt": "Use case: stylized-concept. Asset: transparent 3D object for premium Arabic academic slides. Microsoft Fluent inspired but strictly monochrome: white porcelain, clear glass, polished graphite and neutral silver. Soft studio lighting and tactile refinement. Isolated centered full object with plenty of transparent padding; genuine alpha background. No text, letters, writing, brand marks, frames or watermark. A sculptural stack of three thick ivory index cards, gently staggered with small dark rounded abstract bars and one silver paperclip, floating above a subtle soft shadow. Beautiful stationery 3D object for research note-taking."
+    },
+    "link": {
+      "source": "/Users/apple/.codex/generated_images/01a1975e-a34c-7bd1-aaba-6e831834a9b4/exec-14b28d1e-eaec-4b28-9443-4589a108c2d7.png",
+      "prompt": "Use case: stylized-concept. Asset: transparent 3D object for premium Arabic academic slides. Microsoft Fluent inspired but strictly monochrome: white porcelain, clear glass, polished graphite and neutral silver. Soft studio lighting and tactile refinement. Isolated centered full object with plenty of transparent padding; genuine alpha background. No text, letters, writing, brand marks, frames or watermark. Two large interlocked oval chain links, one thick matte white porcelain, the other transparent smoky glass with dark chrome ends. Sculptural evidence connection, precise elegant proportions, three-quarter view."
+    },
+    "scale": {
+      "source": "/Users/apple/.codex/generated_images/01a1975e-a34c-7bd1-aaba-6e831834a9b4/exec-61825bec-0f5a-4bb3-858a-51a16ecf0de2.png",
+      "prompt": "Use case: stylized-concept. Asset: transparent 3D object for premium Arabic academic slides. Microsoft Fluent inspired but strictly monochrome: white porcelain, clear glass, polished graphite and neutral silver. Soft studio lighting and tactile refinement. Isolated centered full object with plenty of transparent padding; genuine alpha background. No text, letters, writing, brand marks, frames or watermark. A balanced minimal scientific weighing scale with two shallow white porcelain plates, slim silver structure and rounded obsidian base. Abstract scholarly evaluation, clearly recognizable and elegantly engineered."
+    },
+    "cap": {
+      "source": "/Users/apple/.codex/generated_images/01a1975e-a34c-7bd1-aaba-6e831834a9b4/exec-b962d69e-0a03-4dfe-a034-7aa1fc22c0b1.png",
+      "prompt": "Use case: stylized-concept. Asset: transparent 3D object for premium Arabic academic slides. Microsoft Fluent inspired but strictly monochrome: white porcelain, clear glass, polished graphite and neutral silver. Soft studio lighting and tactile refinement. Isolated centered full object with plenty of transparent padding; genuine alpha background. No text, letters, writing, brand marks, frames or watermark. An elegant academic mortarboard cap made of graphite ceramic with a tiny polished silver tassel, floating above two white closed books with blank spines. Restrained graduation and ongoing learning metaphor."
+    }
+  }
+}
