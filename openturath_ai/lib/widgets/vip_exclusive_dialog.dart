@@ -35,7 +35,7 @@ class VipExclusiveDialog extends StatelessWidget {
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 400),
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(28, 28, 28, 20),
+          padding: const EdgeInsets.fromLTRB(24, 24, 24, 20),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
