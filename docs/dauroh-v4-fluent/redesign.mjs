@@ -60,7 +60,8 @@ function head(s,d,dark=false){
  T(s,'section','اليوم '+(d.day===1?'الأول':'الثاني')+'  ·  '+d.section,70,24,1300,30,19,muted);
  T(s,'title',d.title,70,77,1300,90,d.title.length>40?47:53,fg,true);
  if(d.subtitle)T(s,'subtitle',d.subtitle.replace(/\s*\|\s*/g,'  '),70,177,1300,62,23,muted);
- T(s,'page',ar(d.id)+' / '+ar(data.length),70,774,160,24,17,muted,false,'left');
+ if(d.id===9)P(s,'page-contrast',59,766,180,36,{fill:C.ink,r:12,shadow:false});
+ T(s,'page',ar(d.id)+' / '+ar(data.length),70,774,160,24,17,d.id===9?C.paper:muted,false,'left');
  T(s,'brand','أوبن تراث',1150,772,220,28,18,muted,true);
 }
 function footer(s,txt,{dark=false,y=700}={}){if(!txt)return;P(s,'caption',70,y,1300,54,{fill:dark?C.charcoal:'#E4E4E7',shadow:false,r:22});T(s,'caption-text',txt,92,y+10,1256,38,22,dark?C.paper:C.dark);}
