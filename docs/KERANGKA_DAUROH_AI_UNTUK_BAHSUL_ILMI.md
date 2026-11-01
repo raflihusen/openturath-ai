@@ -1,6 +1,6 @@
 # Kerangka Dauroh: استخدام الذكاء الاصطناعي في مجال البحث العلمي
 
-**Versi 2**, 1 November 2026. Dua hari, masing-masing 4 jam. Peserta benar-benar awam.
+**Versi 3**, 1 November 2026. Versi Arab: `KERANGKA_DAUROH_AI_UNTUK_BAHSUL_ILMI_AR.md`. Dua hari, masing-masing 4 jam. Peserta benar-benar awam.
 Draf kerja; belum menjadi slide. Audit versi 1 ada di Lampiran C.
 
 ## Yang berubah dari versi 1
@@ -18,7 +18,9 @@ Draf kerja; belum menjadi slide. Audit versi 1 ada di Lampiran C.
 2. **Bahasa sederhana.** Istilah teknis hanya yang perlu, tiap istilah satu kalimat penjelasan, dengan padanan Arab bila ada.
 3. **Satu topik pribadi dari awal sampai akhir.** Peserta membawa pulang rancangan penelitian yang nyata.
 4. **Aturan penyebutan (dari arahan Anda yang tercatat):** tidak menyebut produk atau model pihak lain; cukup "teknologi Google" bila perlu; tidak menyebut angka pasti tentang OpenTurath; harga tidak ditampilkan di slide; hindari kata "telaah" dan "ruang kajian".
-5. **Tampilan slide** mengikuti bahasa desain OpenTurath (monokrom editorial): latar gelap atau putih bersih, tanpa warna aksen, huruf Arab besar.
+5. **Tiap bagian ditutup dengan "Tugas" (3 sampai 15 menit) yang benar-benar dikerjakan peserta.** Pola: instruksi singkat (1 menit), kerja (sebagian besar), satu atau dua orang membagikan hasil (1 sampai 2 menit). Pada akhir Hari 1 ada **PR** untuk Hari 2, dan Hari 2 dibuka dengan memakai hasil PR itu.
+6. **Hasil akhir penelitian berbahasa Arab.** Judul, rumusan masalah, kerangka, dan abstrak ditulis dalam bahasa Arab sejak Hari 1. AI boleh mengoreksi dan memberi pilihan, tetapi kalimat Arab pertama harus tulisan peserta sendiri; kalau tidak, ia tidak belajar dan tidak bisa mempertahankannya di munaqasyah. Versi Arab dokumen ini disediakan untuk slide dan materi cetak.
+7. **Tampilan slide** mengikuti bahasa desain OpenTurath (monokrom editorial): latar gelap atau putih bersih, tanpa warna aksen, huruf Arab besar.
 
 ## Alur penelitian (sepuluh tahap, jadi tulang punggung)
 
@@ -74,7 +76,7 @@ Asumsi: tiap hari **240 menit sudah termasuk jeda dan salat**. Bila salat berada
 | 3:30 | S13 · Mengenal OpenTurath | 20 |
 | 3:50 | Penutup dan evaluasi | 10 |
 
-**Jika waktu kurang, potong berurutan:** (1) praktik S9 dan S12, (2) slide 14 dan 63, (3) demo ulang di S2, (4) bagian "belajar dari kesalahan" di S10. **Jangan dipotong:** S2, bagian periksa kutipan di S9, S11, dan S13.
+**Jika waktu kurang, potong berurutan:** (1) praktik S9 dan S12, (2) slide 10 dan 64, (3) demo ulang di S2, (4) bagian "belajar dari kesalahan" di S10. **Jangan dipotong:** S2, bagian periksa kutipan di S9, S11, dan S13.
 
 ---
 
@@ -99,6 +101,8 @@ Asumsi: tiap hari **240 menit sudah termasuk jeda dan salat**. Bila salat berada
 10. **AI agent, cukup tahu namanya.** LLM yang diberi alat untuk mengerjakan beberapa langkah sekaligus. Satu kalimat saja.
 11. **Bedanya dengan mesin pencari.** Mesin pencari menunjukkan di mana tulisan berada; AI menyusun jawaban baru, dan itu sebabnya ia bisa terdengar benar padahal keliru.
 
+**Tugas (5 menit, berpasangan):** Buka alat AI, ketik "Apa itu jual beli salam?", lalu tulis di lembar kerja tiga hal: apa yang dijawab, apa yang Anda yakini benar, dan apa yang belum Anda yakini. Satu pasangan membagikan hasilnya.
+
 ## S2 · Cara kerja dan bahayanya (30 menit)
 
 *Tujuan: peserta paham kenapa AI salah, dan kenapa itu lebih berat di ilmu syar'i.*
@@ -111,6 +115,8 @@ Asumsi: tiap hari **240 menit sudah termasuk jeda dan salat**. Bila salat berada
 17. **Kenapa lebih berat di ilmu syar'i.** Kesalahan kecil menjadi penisbatan atau hukum yang keliru. Hubungkan dengan *tatsabbut* (memeriksa kabar).
 18. **Demo (5 menit).** Pertanyaan yang sama diajukan dua kali; peserta melihat rujukan yang ternyata tidak ada. *Siapkan rekaman layar sebagai cadangan.*
 19. **Aturan emas.** AI adalah *pembantu pencari*: bukan sumber, bukan guru, bukan pemberi fatwa.
+
+**Tugas (7 menit):** Ajukan kepada AI satu pertanyaan fikih yang jawabannya sudah Anda ketahui, minta rujukan kitab, jilid, dan halaman. Beri tanda pada tiap rujukan: sudah dicek benar / belum dicek / terbukti keliru. Hitung berapa yang terbukti keliru atau tidak ditemukan.
 
 ## Jeda (15 menit)
 
@@ -125,7 +131,7 @@ Asumsi: tiap hari **240 menit sudah termasuk jeda dan salat**. Bila salat berada
 24. **Minta AI bertanya balik.** Kalimat kunci: "Sebelum menjawab, tanyakan dulu apa yang perlu kamu ketahui." Ini fondasi Sesi 5.
 25. **Minta rujukan dan ibarah asli,** lalu tandai bahwa semuanya harus dicek.
 26. **Pertanyaan lanjutan sebagai alat uji:** "Dari mana ini?", "Apa pendapat yang berbeda?", "Tunjukkan ibarah Arabnya.", "Bagian mana yang kamu tidak yakin?"
-27. **Praktik berpasangan (12 menit).** Memperbaiki satu perintah mentah dari lembar kerja.
+27. **Tugas berpasangan (12 menit).** Memperbaiki satu perintah mentah dari lembar kerja.
 
 ## S4 · Memakai AI dengan aman dan beradab (20 menit)
 
@@ -136,6 +142,8 @@ Asumsi: tiap hari **240 menit sudah termasuk jeda dan salat**. Bila salat berada
 30. **Jujur menyebut pemakaian AI** sesuai aturan kampus atau lembaga.
 31. **Yang tidak diserahkan kepada AI:** menetapkan hukum, berfatwa, menilai derajat hadis, menyimpulkan tanpa membuka kitab.
 32. **AI bukan guru.** Sanad dan bimbingan guru tetap jalan ilmu. AI hanya mempercepat pekerjaan pencarian.
+
+**Tugas (3 menit):** Tulis di kartu tiga aturan pribadi Anda dalam memakai AI (satu tentang data, satu tentang pemeriksaan, satu tentang guru). Simpan kartu itu; dipakai lagi di penutup Hari 2.
 
 ## Jeda / salat (15 menit)
 
@@ -148,8 +156,8 @@ Asumsi: tiap hari **240 menit sudah termasuk jeda dan salat**. Bila salat berada
 35. **Yang dikumpulkan AI pewawancara:** bidang, masalah, ruang lingkup, jenis penelitian (pustaka, perbandingan, analisis tema, takhrij), sumber utama yang mungkin, dan hasil akhir yang diinginkan.
 36. **Dari jawaban menjadi pilihan judul,** lengkap dengan alasan dan risikonya (terlalu luas, sudah banyak dibahas, sumber terlalu sedikit).
 37. **Tiga pertanyaan menguji judul:** bisakah dijawab dengan sumber yang ada? apa yang baru? apakah batasannya jelas?
-38. **Rumusan masalah, tujuan, batasan.** Disusun dari jawaban peserta; peserta yang menyunting.
-39. **Praktik (25 menit).** Wawancara dengan AI, pilih satu judul, tulis rumusan masalah. *Peserta yang belum punya topik memilih dari bank topik (Lampiran B).*
+38. **Rumusan masalah, tujuan, batasan.** Disusun dari jawaban peserta; peserta yang menyunting. **Judul dan rumusan masalah akhir ditulis dalam bahasa Arab.** Peserta menulis versi Arab sendiri lebih dulu, baru meminta AI mengoreksi (dibahas lagi di Sesi 10).
+39. **Tugas (25 menit).** Wawancara dengan AI, pilih satu judul, tulis rumusan masalah. *Peserta yang belum punya topik memilih dari bank topik (Lampiran B).*
 
 ## S6 · Kerangka bab (30 menit)
 
@@ -160,12 +168,19 @@ Asumsi: tiap hari **240 menit sudah termasuk jeda dan salat**. Bila salat berada
 42. **Pola umum:** pendahuluan, landasan teori, metode, pembahasan, penutup; dibandingkan dengan pola pembahasan fikih yang bertahap (definisi, dalil, pendapat, tarjih).
 43. **Menguji kerangka.** Apakah tiap bab menjawab satu bagian rumusan masalah? Adakah yang tumpang tindih atau loncat?
 44. **Menyambung kerangka ke sumber.** Tiap subbab diberi daftar sumber yang perlu dicari. Ini jembatan ke Hari 2.
-45. **Praktik (15 menit).**
+45. **Tugas (15 menit).**
 
 ## Penutup Hari 1 (10 menit)
 
 46. **Rekap lima pegangan:** AI itu pembantu; minta rujukan; periksa ke kitab; jaga data; tetap berguru.
-47. **PR ringan:** tandai tiga subbab yang paling butuh sumber.
+47. **PR untuk Hari 2 (sekitar 60 sampai 90 menit, dibagikan tertulis).** Setiap peserta membawa:
+    1. **Judul dan rumusan masalah versi Arab,** hasil wawancara ulang dengan AI pewawancara di rumah (sekitar 20 menit).
+    2. **Kerangka bab yang sudah dirapikan,** dengan tiga subbab yang paling butuh sumber ditandai (sekitar 10 menit).
+    3. **Tiga sumber nyata** untuk subbab itu: judul kitab, pengarang, penerbit atau edisi, dan alamat atau asal berkasnya. Dicari sendiri, bukan dari AI (sekitar 30 menit).
+    4. **Satu paragraf Arab tulisan sendiri,** 5 sampai 8 baris, tentang topik penelitian. Belum dikoreksi siapa pun, belum disentuh AI (sekitar 15 menit). Dipakai di Sesi 10 dan 11.
+    5. **Satu catatan uji:** ajukan pertanyaan yang sama dua kali kepada AI pada waktu berbeda, tulis apa yang berbeda (sekitar 5 menit).
+    - **Versi minimum bila waktu sempit:** butir 1 dan 4 saja.
+    - **Cara memastikan dikerjakan:** kirim lembar PR cetak dan formulir pengumpulan singkat (foto atau berkas) sehari sebelum Hari 2. Panitia memeriksa sekilas dan menyiapkan bantuan untuk yang belum selesai.
 
 ---
 
@@ -173,7 +188,7 @@ Asumsi: tiap hari **240 menit sudah termasuk jeda dan salat**. Bila salat berada
 
 ## Pembuka (10 menit)
 
-48. **Rekap Hari 1 dan jawaban PR.** Siapa yang berhasil memperbaiki perintahnya di rumah?
+48. **Rekap Hari 1 dan pemeriksaan PR (10 menit).** Tunjuk tangan: siapa yang menyelesaikan kelima butir? Dua peserta menceritakan temuan catatan uji (butir 5). Peserta yang belum mengerjakan butir 3 atau 4 diberi waktu singkat di sela sesi; PR itu dipakai langsung di Sesi 7, 10, dan 11.
 
 ## S7 · Mencari sumber kitab (45 menit)
 
@@ -188,7 +203,7 @@ Asumsi: tiap hari **240 menit sudah termasuk jeda dan salat**. Bila salat berada
 55. **Adab mengambil sumber.** Hak cipta, edisi resmi bila ada, mencatat asal unduhan.
 56. **AI membantu mencari, bukan menjadi sumber.** AI memperluas kata kunci (sinonim istilah fikih) dan menyarankan arah; peserta membuka dan memeriksa sendiri. Yang tidak ditemukan di sumber nyata dicoret.
 57. **Daftar sumber berprioritas:** wajib, penting, pelengkap.
-58. **Praktik (15 menit).** Cari tiga sumber untuk satu subbab, nilai edisinya, catat rujukan lengkapnya.
+58. **Tugas (15 menit).** Cari tiga sumber untuk satu subbab, nilai edisinya, catat rujukan lengkapnya.
 
 ## S8 · Membaca, mencatat, dan takhrij (35 menit)
 
@@ -200,7 +215,7 @@ Asumsi: tiap hari **240 menit sudah termasuk jeda dan salat**. Bila salat berada
 62. **Takhrij: dua pekerjaan yang berbeda.** (a) *Menemukan sumber hadis:* di kitab apa, bab apa, dengan lafaz apa. (b) *Menilai derajatnya:* pekerjaan ahli hadis. Alat bantu, termasuk aplikasi takhrij, membantu yang pertama; yang kedua tetap kepada rujukan ahli.
 63. **Muqaranah mazhab.** Tabel perbandingan dengan kolom dalil dan rujukan. AI sering menukar mazhab, jadi tiap sel diperiksa.
 64. **Mencari makna istilah** di kamus klasik, bukan hanya dari jawaban AI.
-65. **Praktik (10 menit).** Satu kutipan menjadi satu kartu catatan lengkap.
+65. **Tugas (10 menit).** Satu kutipan menjadi satu kartu catatan lengkap.
 
 ## Jeda (15 menit)
 
@@ -208,12 +223,12 @@ Asumsi: tiap hari **240 menit sudah termasuk jeda dan salat**. Bila salat berada
 
 *Tujuan: peserta menulis dengan suara sendiri, bukan menyalin AI.*
 
-66. **Garis batas.** Gagasan dan analisis milik peserta. AI boleh membantu menyusun ulang alur dan memberi variasi kalimat.
+66. **Garis batas.** Gagasan dan analisis milik peserta. AI boleh membantu menyusun ulang alur dan memberi variasi kalimat. Karena hasil akhir berbahasa Arab, peserta menulis kalimat Arab sendiri dulu, sesederhana apa pun, baru dikoreksi. Teks Arab buatan AI yang diserahkan mentah akan ketahuan penguji dan tidak bisa dipertahankan.
 67. **Dari kartu catatan menjadi paragraf.**
 68. **Kutipan langsung dan parafrase.** Kapan mengutip utuh, kapan memparafrase, dan cara mencantumkan rujukan.
 69. **Catatan kaki (hamisy).** Format rujukan kitab: pengarang, judul, jilid, halaman, penerbit, tahun. AI menyeragamkan format; isi rujukannya diperiksa manual.
 70. **Memeriksa kutipan.** Bandingkan tiap kutipan dengan sumbernya. Kesalahan khas AI: halaman tertukar, jilid tidak ada, kutipan terpotong.
-71. **Praktik (8 menit).** Satu paragraf dengan rujukan, lalu tukar dengan teman untuk diperiksa.
+71. **Tugas (8 menit).** Satu paragraf dengan rujukan, lalu tukar dengan teman untuk diperiksa.
 
 ## S10 · Memperbaiki bahasa Arab (30 menit)
 
@@ -224,7 +239,7 @@ Asumsi: tiap hari **240 menit sudah termasuk jeda dan salat**. Bila salat berada
 74. **Cara membaca hasil koreksi.** Pisahkan: kesalahan nahwu (pasti), kesalahan sharaf, pilihan gaya (selera), dan kata yang lebih tepat. Peserta memilih, tidak menerima semuanya.
 75. **Belajar dari kesalahan.** Catat tiga kesalahan yang paling sering muncul; itu bahan belajar pribadi.
 76. **Batas AI.** Umumnya lebih kuat pada Arab modern daripada Arab klasik, dan bisa keliru pada tulisan bercorak turats. Naskah penting tetap diperiksa guru nahwu. Teks kutipan dari kitab tidak diubah.
-77. **Praktik (12 menit).** Satu paragraf Arab tulisan sendiri.
+77. **Tugas (12 menit).** Satu paragraf Arab tulisan sendiri.
 
 ## Jeda / salat (15 menit)
 
@@ -238,11 +253,13 @@ Asumsi: tiap hari **240 menit sudah termasuk jeda dan salat**. Bila salat berada
 81. **Cara membaca kritik.** Pisahkan: kritik valid (perbaiki), kritik karena AI salah paham (jelaskan ulang), kritik yang membuka pertanyaan baru (pertimbangkan).
 82. **Menjaga hati.** Kritik keras adalah alat, bukan penilaian terhadap diri.
 83. **Siklus revisi.** Kritik, revisi, kritik ulang; berhenti setelah dua atau tiga putaran.
-84. **Praktik (12 menit).** Satu bagian diserahkan untuk dikritik; catat tiga temuan terpenting.
+84. **Tugas (12 menit).** Satu bagian diserahkan untuk dikritik; catat tiga temuan terpenting.
 
 ## S12 · Finishing (5 menit)
 
 85. **Abstrak, daftar pustaka, dan simulasi munaqasyah.** AI membantu membuat abstrak (Indonesia, Inggris, Arab) dan berperan sebagai penguji; angka, nama, dan klaim tetap diperiksa. Latihan simulasi dilakukan sendiri di rumah.
+
+**Tugas (3 menit):** Tulis abstrak tiga kalimat dalam bahasa Arab untuk penelitian Anda (masalah, metode, hasil yang diharapkan). Dikoreksi di rumah.
 
 ## S13 · Mengenal OpenTurath (20 menit)
 
@@ -250,10 +267,12 @@ Asumsi: tiap hari **240 menit sudah termasuk jeda dan salat**. Bila salat berada
 
 86. **Kenapa kami membuatnya.** Mencari satu ibarah di antara ribuan halaman memakan berjam-jam, dan AI umum sering mencampur mazhab atau mengarang rujukan. *Sampaikan terbuka: "Ini produk kami."*
 87. **OpenTurath AI.** Menjawab dari kitab turats, menampilkan ibarah asli beserta rujukan kitab, jilid, dan halaman bila tersedia, dipisah per bidang ilmu. Bahan belajar, bukan fatwa. Demo satu pertanyaan.
-88. **Maktutat.** Pengenalan singkat, sesuai status sebenarnya (lihat catatan di Lampiran C).
+88. **Maktutat (AI Manuskrip).** Membantu membaca dan memahami naskah tulisan tangan (makhthuthat), yang tidak bisa dicari lewat mesin pencari biasa. Sampaikan sesuai status sebenarnya: di situs masih "segera hadir" dan dalam tahap uji. Jangan menjanjikan ketepatan baca; tulisan tangan sulit dan hasilnya perlu dicocokkan dengan naskah dan guru. Demo hanya bila hasil ujinya stabil; kalau belum, tampilkan contoh hasil uji yang jujur.
 89. **Aplikasi takhrij hadis.** Membantu menelusuri sumber hadis dalam kitab-kitab rujukan. Demo satu hadis. Sampaikan batasnya: membantu menemukan sumber; penilaian derajat tetap kepada ahli.
 90. **Peta: di tahap mana alat ini menolong** (kembali ke sepuluh tahap penelitian).
 91. **Komitmen.** OpenTurath membantu penuntut ilmu dan tidak menggantikan guru. Tampilkan kontak dukungan dan cara mencoba (keputusan Anda, Lampiran C).
+
+**Tugas (4 menit):** Ambil kartu tahap penelitian. Tulis satu tahap di penelitian Anda yang paling memakan waktu, dan alat mana (OpenTurath AI, AI Manuskrip, aplikasi takhrij, atau bukan satu pun) yang mungkin menolong. Jawaban jujur "bukan satu pun" tetap diterima.
 
 ## Penutup dan evaluasi (10 menit)
 
@@ -337,7 +356,7 @@ Ini hanya menunjukkan situs hidup. Tidak menunjukkan kualitas koleksi, kelengkap
 
 ## C4. Yang belum bisa saya pastikan
 
-- **Apa yang dimaksud "Maktutat".** Saya mengartikannya sebagai AI Manuskrip (makhthuthat). Bila yang dimaksud Maktabah OpenTurath (pusat unduh kitab, yang menurut catatan sedang dibangun), isi slide 88 berbeda.
+- **Maktutat = AI Manuskrip** (dikonfirmasi pemilik). Status dan kemampuan baca tulisan tangannya belum saya lihat; slide 88 ditulis hati-hati.
 - **Isi video referensi.** Saya hanya membaca judul, deskripsi, dan daftar babnya. Transkripnya tidak tersedia, jadi saya tidak mengutip ucapannya.
 - **Tiga AI khusus** (pewawancara judul dan kerangka, koreksi Arab, dosen syadid). Tidak ada di daftar AI aplikasi yang saya baca; yang paling dekat hanya `nahwu_sharaf`. Perintah di Lampiran A bisa dipakai lebih dulu.
 - **Kemampuan nyata AI dalam tugas di dauroh** (koreksi Arab, kritik skripsi, takhrij). Belum saya uji. Hasilnya harus Anda coba sendiri sebelum diajarkan.
@@ -345,7 +364,7 @@ Ini hanya menunjukkan situs hidup. Tidak menunjukkan kualitas koleksi, kelengkap
 
 ## C5. Keputusan yang menjadi hak Anda
 
-1. Arti "Maktutat" (AI Manuskrip atau Maktabah OpenTurath).
+1. ~~Arti "Maktutat"~~ (sudah: AI Manuskrip).
 2. Apakah aplikasi takhrij sudah bisa didemokan, dan bukti ketepatan apa yang bisa ditampilkan.
 3. Apakah peserta mendapat akses coba OpenTurath (dan berapa lama). Harga tidak ditampilkan di slide.
 4. Apakah salat termasuk dalam 4 jam atau di luar.
