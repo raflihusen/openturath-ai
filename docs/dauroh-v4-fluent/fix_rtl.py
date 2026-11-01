@@ -29,8 +29,13 @@ with ZipFile(source) as src, ZipFile(target, 'w', ZIP_DEFLATED) as dst:
         data = src.read(name)
         if name.endswith('.rels'):
             rels = data.decode('utf-8')
-            for old, new in duplicate.items():
-                rels = rels.replace('Target="../media/' + Path(old).name + '"', 'Target="../media/' + Path(new).name + '"')
+            def canonical_target(match):
+                value = match.group(1)
+                old = 'ppt/media/' + value.rsplit('/', 1)[-1]
+                if old in duplicate:
+                    value = value.rsplit('/', 1)[0] + '/' + Path(duplicate[old]).name
+                return 'Target="' + value + '"'
+            rels = re.sub(r'Target="([^"]+)"', canonical_target, rels)
             data = rels.encode('utf-8')
         if re.fullmatch(r'ppt/slides/slide\d+\.xml', name):
             root = ET.fromstring(data)
