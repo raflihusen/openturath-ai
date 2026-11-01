@@ -43,20 +43,9 @@ class MembershipPassSummary {
 }
 
 MembershipPassSummary resolveMembershipPass(UserModel? user, {DateTime? now}) {
-  if (AppConfig.isGuruEdition) {
-    return const MembershipPassSummary(
-      state: MembershipPassState.permanent,
-      badge: 'GURU',
-      accessLabel: 'Akses Penuh Seluruh Khazanah Turats',
-      supportingLabel: 'Akses Khusus Kehormatan Guru',
-      expiryLabel: 'Permanen',
-      expiresAt: null,
-      ctaLabel: '',
-    );
-  }
   final reference = now ?? DateTime.now();
   // Owner-designated VIP status takes precedence over every paid package.
-  if (user?.isVip == true) {
+  if (AppConfig.isGuruEdition || user?.isVip == true) {
     return MembershipPassSummary(
       state: MembershipPassState.permanent,
       badge: 'VIP',

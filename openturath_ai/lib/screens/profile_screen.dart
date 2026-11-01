@@ -545,9 +545,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           _SettingsTile(
                             icon: Icons.info_outline_rounded,
                             title: AppCopy.aboutTitle,
-                            subtitle: AppConfig.isGuruEdition
-                                ? 'v$_appVersion · Edisi Guru'
-                                : AppCopy.versionWithTagline(_appVersion),
+                            subtitle: AppCopy.versionWithTagline(_appVersion),
                             trailing: Icon(Icons.chevron_right_rounded,
                                 color: textSecondary, size: 20),
                             onTap: () => _showAboutModal(
@@ -1009,7 +1007,8 @@ class _MembershipPass extends StatelessWidget {
             ),
           ),
         ),
-        if (!AppConfig.isGuruEdition) ...[
+        if (!AppConfig.isGuruEdition &&
+            summary.state != MembershipPassState.permanent) ...[
           const SizedBox(height: 16),
           Divider(height: 1, color: OTColors.borderSubtle(isDark)),
           const SizedBox(height: 16),
