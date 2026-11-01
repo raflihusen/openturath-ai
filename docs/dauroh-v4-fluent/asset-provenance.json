@@ -20,6 +20,26 @@
       "file": "assets/shield.png",
       "source": "/Users/apple/.codex/generated_images/01a1975e-a34c-7bd1-aaba-6e831834a9b4/exec-2d019259-2c2a-40f4-b512-eb7dcd3c633f.png",
       "prompt_summary": "Microsoft Fluent inspired monochrome 3D studio render; shield concept in left third; wide canvas, negative space for editable Arabic text; no text or brand marks."
+    },
+    "chat": {
+      "file": "assets/chat.png",
+      "source": "/Users/apple/.codex/generated_images/01a1975e-a34c-7bd1-aaba-6e831834a9b4/exec-2c56368d-a3e1-42a6-9875-d45fd2e4235e.png",
+      "prompt_summary": "Microsoft Fluent inspired monochrome 3D studio background; chat scene in left third with empty right text area; porcelain glass and chrome; no text or logos."
+    },
+    "plan": {
+      "file": "assets/plan.png",
+      "source": "/Users/apple/.codex/generated_images/01a1975e-a34c-7bd1-aaba-6e831834a9b4/exec-9648091c-caa1-40ca-8e21-326c3bdd61c5.png",
+      "prompt_summary": "Microsoft Fluent inspired monochrome 3D studio background; plan scene in left third with empty right text area; porcelain glass and chrome; no text or logos."
+    },
+    "pen": {
+      "file": "assets/pen.png",
+      "source": "/Users/apple/.codex/generated_images/01a1975e-a34c-7bd1-aaba-6e831834a9b4/exec-4ecbb1e8-59f7-41a7-90f3-826923899516.png",
+      "prompt_summary": "Microsoft Fluent inspired monochrome 3D studio background; pen scene in left third with empty right text area; porcelain glass and chrome; no text or logos."
+    },
+    "book": {
+      "file": "assets/book.png",
+      "source": "/Users/apple/.codex/generated_images/01a1975e-a34c-7bd1-aaba-6e831834a9b4/exec-eb4c675a-68a4-488a-9aa6-918359219e45.png",
+      "prompt_summary": "Microsoft Fluent inspired monochrome 3D studio background; book scene in left third with empty right text area; porcelain glass and chrome; no text or logos."
     }
   },
   "logos": "Original supplied project logos copied unchanged from docs/dauroh/assets"
