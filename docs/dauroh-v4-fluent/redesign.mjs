@@ -273,7 +273,7 @@ for(const d of data){
  case 47:
   s=start(d,'OpenTurath / logo and scholarly standards',{dark:true});
   P(s,'logo-surface',70,275,470,420,{fill:C.dark,r:40});
-  s.images.add({path:ROOT+'/assets/openturath_light.svg',fit:'contain',position:{left:145,top:310,width:320,height:320},alt:'شعار أوبن تراث'});
+  s.images.add({blob:new Uint8Array(await fs.readFile(ROOT+'/assets/openturath_light.png')),contentType:'image/png',fit:'contain',position:{left:145,top:310,width:320,height:320},alt:'شعار أوبن تراث'});
   card(s,'project','أوبن تراث',d.body[0],610,275,760,170,{size:32});
   card(s,'same-standard','معيار التحقق',d.body[1]+'\n'+d.body[2],610,480,760,215,{dark:true,size:30});break;
  case 48:{
