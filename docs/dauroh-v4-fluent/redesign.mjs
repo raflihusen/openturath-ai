@@ -92,7 +92,7 @@ for(const d of data){
   s=start(d,'evidence source / stacked answer cards');
   card(s,'source',d.columns[0].title,col(d,0),785,270,585,370,{size:31,tag:'نص تدريبي — إعداد الدورة'});
   card(s,'answer-a','أ',d.columns[1].body[0].replace(/^أ:\s*/,''),70,270,650,180,{dark:true,size:29});
-  card(s,'answer-b','ب',d.columns[1].body[1].replace(/^ب:\s*/,''),70,480,650,180,{size:29});footer(s,'أيّ إضافة يسندها النص؟ وما العبارة التي تدل عليها؟');break;
+  card(s,'answer-b','ب',d.columns[1].body[1].replace(/^ب:\s*/,''),70,480,650,180,{size:29});footer(s,'أيّ الجوابين يسنده النص؟ وما الإضافة التي لا يدل عليها؟');break;
  case 5:
   s=start(d,'asymmetric research bento');
   card(s,'understand',d.columns[0].title,col(d,0),830,270,540,420,{dark:true,size:38,titleSize:37});
@@ -128,7 +128,7 @@ for(const d of data){
  case 11:
   s=start(d,'first prompt / single-use dialogue sculpture',{dark:true,header:false});await img(s,'chat',0,0,W,H,{old:true,fit:'cover'});head(s,d,true);
   card(s,'first-prompt','الأمر الذي نكتبه',d.prompt,760,275,610,310,{dark:true,size:31,tag:'نموذج للتطبيق'});
-  footer(s,body(d),{dark:true,y:690});break;
+  footer(s,d.body.join('  '),{dark:true,y:690});break;
  case 12:{
   s=start(d,'conversation fork / saved notebook');
   const a=card(s,'continue',d.columns[0].title,col(d,0),745,270,625,290,{dark:true,size:29});
