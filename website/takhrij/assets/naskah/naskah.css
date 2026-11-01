@@ -1,0 +1,44 @@
+/* Identitas Naskah: halaman kitab, tinta, dan hamisy. Berdiri sendiri, keluarga OpenTurath. */
+@font-face{font-family:"Google Sans Flex";font-weight:400 600;font-display:swap;src:url("../fonts/googlesansflex.woff2") format("woff2")}
+@font-face{font-family:"OT Naskh";font-weight:400;font-display:swap;src:url("../fonts/ScheherazadeNew-Regular.ttf")}
+@font-face{font-family:"OT Naskh";font-weight:700;font-display:swap;src:url("../fonts/ScheherazadeNew-Bold.ttf")}
+@font-face{font-family:"OT Plex";font-weight:400;font-display:swap;src:url("../fonts/IBMPlexSansArabic-Regular.ttf")}
+:root{--paper:#F7F5F0;--leaf:#FFFDF8;--ink:#1A1815;--soft:#6A655C;--rule:#DDD8CD;--on:#FFFDF8;--naskh:"OT Naskh",serif;--sans:"Google Sans Flex",system-ui,sans-serif;--ease:cubic-bezier(.2,.8,.2,1)}
+:root[data-theme=dark]{--paper:#141311;--leaf:#1E1C19;--ink:#F3EFE7;--soft:#A9A296;--rule:#38342E;--on:#141311}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]){--paper:#141311;--leaf:#1E1C19;--ink:#F3EFE7;--soft:#A9A296;--rule:#38342E;--on:#141311}}
+html[lang=ar]{--sans:"OT Plex",system-ui,sans-serif}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--sans);min-height:100svh;display:flex;flex-direction:column}
+a{color:inherit;text-decoration:none}button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
+.top{display:flex;align-items:center;gap:16px;padding:14px clamp(16px,3vw,40px);font-size:14px;color:var(--soft)}
+.top img{height:30px}.top .d{display:none}:root[data-theme=dark] .top .l{display:none}:root[data-theme=dark] .top .d{display:block}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]) .top .l{display:none}:root:not([data-theme=light]) .top .d{display:block}}
+.top .name{font-family:var(--naskh);font-size:21px;font-weight:700;color:var(--ink)}.top .sp{flex:1}.top a[aria-current]{color:var(--ink)}
+.page{position:relative;flex:1;margin:0 clamp(12px,3vw,40px) clamp(12px,3vw,40px);background:var(--leaf);border:1px solid var(--rule);padding:6px;display:flex}
+.frame{position:relative;flex:1;min-width:0;min-height:600px;border:1px solid var(--rule);display:grid;grid-template-columns:minmax(150px,210px) minmax(0,1fr) minmax(150px,210px);grid-template-rows:1fr auto;direction:rtl}
+.run{position:absolute;top:14px;inset-inline:0;text-align:center;font-family:var(--naskh);font-size:15px;color:var(--soft);opacity:0;animation:fade .8s ease .1s forwards}
+.sanad,.kutub{list-style:none;display:flex;flex-direction:column;justify-content:center;gap:clamp(22px,4vh,38px);padding:48px 22px 24px;font-family:var(--naskh);font-size:clamp(17px,1.5vw,20px)}
+.sanad{border-inline-end:1px solid var(--rule)}.kutub{border-inline-start:1px solid var(--rule);text-align:left}
+.sanad li,.kutub li{opacity:0;transform:translateY(5px);animation:rise .6s var(--ease) var(--t) forwards;cursor:default}
+.sanad small,.kutub small{display:block;font-family:var(--sans);font-size:12px;color:var(--soft)}
+.matn{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:56px 24px 32px;min-width:0}
+.matn h1{font-family:var(--naskh);font-weight:700;font-size:clamp(46px,7.4vw,108px);line-height:1.5;letter-spacing:0}
+.ink{display:inline-block;-webkit-mask-image:linear-gradient(to left,#000 calc(var(--p,0)*1% - 6%),transparent calc(var(--p,0)*1% + 2%));mask-image:linear-gradient(to left,#000 calc(var(--p,0)*1% - 6%),transparent calc(var(--p,0)*1% + 2%));animation:write var(--dur,1.5s) cubic-bezier(.45,.05,.55,.95) var(--t,.3s) forwards}
+@property --p{syntax:"<number>";inherits:false;initial-value:0}
+@keyframes write{to{--p:108}}@keyframes fade{to{opacity:1}}@keyframes rise{to{opacity:1;transform:none}}
+.lat{direction:ltr;font-size:clamp(20px,2.2vw,30px);font-weight:500;letter-spacing:-.02em;margin-top:6px;opacity:0;animation:rise .8s var(--ease) 4.2s forwards}
+html[lang=ar] .lat{direction:rtl;letter-spacing:0}
+.lede{direction:ltr;color:var(--soft);font-size:clamp(15px,1.3vw,17px);max-width:44ch;margin-top:10px;opacity:0;animation:rise .8s var(--ease) 4.35s forwards}
+html[lang=ar] .lede{direction:rtl}
+.go{display:inline-block;margin-top:22px;background:var(--ink);color:var(--on);padding:12px 26px;font-size:15px;font-weight:500;opacity:0;animation:rise .8s var(--ease) 4.5s forwards;transition:transform .18s var(--ease)}.go:hover{transform:translateY(-2px)}
+.foot{grid-column:1/-1;border-top:1px solid var(--rule);padding:14px 24px 16px;font-family:var(--naskh);font-size:clamp(15px,1.25vw,18px);line-height:1.8}
+.foot sup{font-family:var(--sans);font-size:11px;margin-inline-end:4px}
+.ribbon{position:fixed;bottom:0;inset-inline:0;text-align:center;font-size:12px;color:var(--soft);padding:4px;background:var(--paper)}
+#line{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible}
+#line path{fill:none;stroke:var(--ink);stroke-width:1.3;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:1;animation:draw var(--dur) ease-in-out var(--t) forwards}
+#line circle{fill:var(--ink);opacity:0}
+#line .drop{transition:opacity .2s}
+@keyframes draw{to{stroke-dashoffset:0}}
+@media(max-width:860px){.frame{display:flex;flex-direction:column;min-height:0;justify-content:center}.matn{order:1;padding:52px 16px 16px}.sanad{order:2;flex-direction:row;flex-wrap:wrap;justify-content:center;gap:4px 14px;padding:12px 16px;border:0;border-top:1px solid var(--rule);font-size:17px}.sanad small{display:none}.kutub{display:none}.foot{order:3}#line{display:none}.sanad li:not(:last-child)::after{content:"←";margin-inline-start:14px;color:var(--soft);font-family:var(--sans)}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.run,.sanad li,.kutub li,.lat,.lede,.go{opacity:1;transform:none}.ink{--p:108}#line path{stroke-dashoffset:0}}
