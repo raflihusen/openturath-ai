@@ -7,6 +7,7 @@ import '../core/localization.dart';
 import '../core/scholarly_fonts.dart';
 import 'tahawwulat_diagram.dart';
 import 'tahawwulat_artwork.dart';
+import '../core/app_config.dart';
 import '../services/feature_flags.dart';
 
 String reviewCopy(String id, String ar, String en) => Loc.isArabic
@@ -32,7 +33,8 @@ class TahawwulatHero extends StatelessWidget {
 
   static bool get introductionReady =>
       introductionReadyOverride ??
-      FeatureFlagsService.current.introductionEnabled;
+      (AppConfig.isGuruEdition ||
+          FeatureFlagsService.current.introductionEnabled);
 
   final VoidCallback onOpen;
   final VoidCallback? onOpenLibrary;

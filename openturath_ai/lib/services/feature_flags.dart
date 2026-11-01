@@ -2,6 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 
+import '../core/app_config.dart';
+
 /// Saklar fitur jarak jauh dari dokumen Firestore `app_config/features`.
 ///
 /// Dipakai agar status sebuah fitur bisa diubah tanpa merilis aplikasi:
@@ -90,10 +92,11 @@ enum SubAgentGate {
 /// Aturan tunggal untuk membuka sub-AI. Dipisahkan dari layar agar bisa diuji
 /// dan dipakai di semua jalur masuk.
 ///
-/// Sub-AI "segera hadir" TIDAK dibuka siapa pun: pelanggan, VIP, maupun Edisi
-/// Guru, karena alasannya kematangan isi, bukan hak akses.
+/// Sub-AI "segera hadir" tidak dibuka bagi pelanggan maupun VIP karena
+/// alasannya kematangan isi, bukan hak akses. Edisi Guru (build khusus atas
+/// perintah Pemilik) membuka seluruh AI.
 SubAgentGate gateSubAgent(String subAgentId, FeatureFlags flags) =>
-    flags.isSubAgentSoon(subAgentId)
+    !AppConfig.isGuruEdition && flags.isSubAgentSoon(subAgentId)
         ? SubAgentGate.comingSoon
         : SubAgentGate.open;
 
