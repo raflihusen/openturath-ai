@@ -483,14 +483,15 @@ Map<String, SceneDef> scenesMengenal() => {
           G(50, 30, 28, t: 1.6, d: 0.5, tone: 0.5),
         ];
       }, alt: 'Zoom ke tanda besar lalu mundur melihat kelima simpul'),
-      // Peta lima cabang: lima simpul dengan nama singkat, tanpa istilah teknis.
+      // Peta lima cabang: lima simpul dengan nama asli (singkat) kelima fikih.
       'm23': SceneDef(2.8, () {
         final names = [
-          L3('Penyimpangan', 'Deviation', 'الانحراف'),
-          L3('Isyarat', 'Signals', 'الإشارات'),
-          L3('Sains', 'Science', 'العلوم'),
-          L3('Tanda alam', 'Natural signs', 'الأشراط'),
-          L3('Sejarah', 'History', 'التاريخ'),
+          L3('An-Nawaqid wan-Naqaid', 'An-Nawaqid wan-Naqaid',
+              'النواقض والنقائض'),
+          L3('Al-Isyarat', 'Al-Isyarat', 'الإشارات'),
+          L3('Al-Mustajaddat', 'Al-Mustajaddat', 'المستجدات'),
+          L3('Al-Asyrath', 'Al-Asyrath', 'الأشراط'),
+          L3('Ar-Rabth', 'Ar-Rabth', 'الربط'),
         ];
         return [
           Pg(50, 30, 17, 5, t: 0, d: 0.4, tone: 0.6),
