@@ -83,6 +83,7 @@ class _DashboardScreenState extends State<DashboardScreen>
   @override
   void initState() {
     super.initState();
+    AgentService.availabilityRevision.addListener(_onAvailabilityChanged);
     _loadData();
     _loadLastOpenedAgent();
     _updateService = UpdateService();
@@ -98,6 +99,10 @@ class _DashboardScreenState extends State<DashboardScreen>
       _updateService.checkForUpdatesSilently();
       unawaited(_loadData(true));
     }
+  }
+
+  void _onAvailabilityChanged() {
+    if (mounted) setState(() => _agents = AgentService.getActiveAgentsSync());
   }
 
   void _onUpdateServiceChanged() {
@@ -125,6 +130,7 @@ class _DashboardScreenState extends State<DashboardScreen>
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+    AgentService.availabilityRevision.removeListener(_onAvailabilityChanged);
     _updateService.removeListener(_onUpdateServiceChanged);
     if (widget.searchFocusNode == null) _searchFocusNode.dispose();
     _searchController.dispose();
