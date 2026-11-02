@@ -452,3 +452,235 @@ Gunakan dua belas menit. Anda boleh mengatur catatan latihan, membuat rencana be
 
 **Catatan pengajar**
 Buka pekerjaan yang baru Anda simpan. Sebutkan satu hal yang sudah dapat dilakukan sendiri dan satu yang masih membingungkan. Pada hari kedua, kita memakai kemampuan yang sama untuk menentukan pertanyaan, membaca sumber, mengembangkan tulisan, dan meninjaunya. Bawa kembali file latihan Anda.
+
+## Hari kedua — Menggunakan AI pada setiap tahap penelitian
+
+### Blok I · menit00–15 · Peta pekerjaan penelitian
+
+### 41. Kita mulai dari pekerjaan yang sudah Anda simpan
+
+**Teks layar**
+- Apa yang diminta kepada AI?
+- Fitur apa yang digunakan?
+- Bagian mana yang diterima, diubah, atau masih perlu diperiksa?
+
+**Catatan pengajar**
+Mari lihat dua hasil latihan kemarin. Ceritakan kebutuhan dan prosesnya secara singkat. Dari sini kita mengetahui langkah yang sudah dipahami dan hambatan yang masih ada. Keterampilan yang sama akan dipakai hari ini, tetapi jenis bahan dan tuntutan pemeriksaannya menjadi lebih khusus.
+
+### 42. Peta penelitian dan tempat bantuan AI
+
+**Teks layar**
+- Topik, pertanyaan, dan tujuan.
+- Sumber, penelitian terdahulu, serta metode.
+- Pembacaan, analisis, dan penulisan.
+- Revisi, kesimpulan, dan presentasi.
+
+**Catatan pengajar**
+Kita melihat penelitian sebagai pekerjaan yang saling berhubungan. Membaca sumber dapat membuat pertanyaan berubah; hasil analisis dapat membuat kerangka diperbaiki. Pada setiap tahap, tanyakan: bantuan apa yang kita perlukan dari AI, dan keputusan apa yang harus tetap kita ambil sendiri? Hasil hari ini adalah rancangan kecil beserta satu contoh tulisan.
+
+### Blok J · menit15–50 · Dari minat menjadi rancangan penelitian
+
+### 43. Memulai dari minat yang dapat dijelaskan
+
+**Teks layar**
+- Sebutkan bidang yang Anda kenal.
+- Pilih persoalan yang ingin dipahami.
+- Jelaskan bahan, waktu, dan tingkat penelitian yang memungkinkan.
+
+**Catatan pengajar**
+Sebagian peserta sudah mempunyai topik, sebagian belum. Kita dapat mulai dari istilah dalam kitab, perbedaan penjelasan, atau persoalan yang ditemui saat belajar. Contoh pertanyaan awalnya: saya ingin memahami penggunaan istilah ‘urf dalam dua kitab yang akan dipilih. Ini contoh arah latihan, belum klaim kebaruan atau judul yang telah disahkan.
+
+**Prompt**
+“Bantu saya mengembangkan minat menjadi topik penelitian. Tanyakan dahulu bidang yang saya pelajari, persoalan yang menarik, sumber yang bisa saya baca, dan waktu yang tersedia. Ajukan pertanyaan satu per satu.”
+
+### 44. Menghasilkan beberapa pilihan topik
+
+**Teks layar**
+- Minta beberapa kemungkinan yang berbeda.
+- Bandingkan cakupan, bahan, dan kebutuhan kerja.
+- Pilih berdasarkan alasan yang dapat dijelaskan.
+
+**Catatan pengajar**
+AI dapat membantu membuka kemungkinan yang belum terpikirkan. Kita tidak perlu langsung mengambil judul pertama. Setelah informasi Anda diberikan, minta beberapa opsi dan kebutuhan sumber masing-masing. Pilihan awal harus dicocokkan dengan kemampuan membaca dan akses bahan yang benar-benar Anda miliki.
+
+**Prompt lanjutan**
+“Berdasarkan jawaban saya, usulkan tiga topik. Untuk setiap topik, jelaskan fokus, jenis sumber yang dibutuhkan, dan bagian yang mungkin terlalu luas. Jangan mengklaim topik itu belum pernah diteliti.”
+
+### 45. Mempersempit judul dan cakupan
+
+**Teks layar**
+- “Pembahasan ‘urf dalam khazanah Islam” masih sangat luas.
+- Batasi istilah, sumber, objek perbandingan, atau periode yang relevan.
+- Judul sementara mengikuti bahan dan pertanyaan.
+
+**Catatan pengajar**
+Kita coba mengubah minat luas menjadi pekerjaan yang mungkin dilakukan. Misalnya memperhatikan cara dua kitab tertentu menjelaskan satu istilah. Nama kitab baru dimasukkan setelah dipilih dan diperiksa. Kita tidak perlu membuat judul terdengar besar jika bahan yang tersedia hanya mendukung pertanyaan yang lebih sempit.
+
+### 46. Dari topik ke masalah dan pertanyaan penelitian
+
+**Teks layar**
+- Topik menyebut wilayah pembahasan.
+- Pertanyaan menyebut apa yang ingin diketahui.
+- Masalah penelitian menjelaskan mengapa pertanyaan itu perlu diteliti.
+
+**Catatan pengajar**
+Perbandingan dua kitab belum dengan sendirinya menjadi masalah penelitian. Apa yang ingin kita bandingkan: definisi, contoh, syarat, atau penerapannya? AI dapat membantu memperjelas pilihan itu. Kita membaca bahan awal agar masalahnya lahir dari sesuatu yang benar-benar ada, bukan dibuat dramatis oleh bahasa aplikasi.
+
+**Prompt**
+“Bantu saya membedakan topik, masalah, dan pertanyaan penelitian berdasarkan informasi yang sudah saya berikan. Tunjukkan bagian yang belum mempunyai dasar bacaan dan tanyakan informasi yang masih diperlukan.”
+
+### 47. Menyesuaikan tujuan, manfaat, dan batas penelitian
+
+**Teks layar**
+- Tujuan menjawab pertanyaan yang diajukan.
+- Manfaat dijelaskan sesuai hasil yang mungkin dicapai.
+- Batas penelitian membuat pekerjaan tetap terarah.
+
+**Catatan pengajar**
+Jika pertanyaannya tentang perbedaan cara menjelaskan istilah, tujuan tidak tiba-tiba menjadi membangun seluruh teori baru. Kita bisa meminta AI memeriksa kecocokan antarbagian. Saran yang terdengar penting tetap perlu disesuaikan dengan ukuran penelitian. Catat pula apa yang memang tidak akan dibahas.
+
+### 48. Latihan: kartu rancangan awal
+
+**Teks layar**
+- Bidang dan topik sementara.
+- Satu pertanyaan utama dan tujuan.
+- Batas pembahasan serta sumber yang perlu dicari.
+- Satu hal yang masih perlu dibicarakan dengan pembimbing.
+
+**Catatan pengajar**
+Gunakan sepuluh menit untuk menulis kartu singkat ini. Anda boleh bekerja dengan topik sendiri atau contoh latihan. Mintalah bantuan AI pada bagian yang belum jelas, lalu pilih dan perbaiki usulannya. Pada akhir latihan, Anda harus dapat menjelaskan mengapa memilih pertanyaan itu dan bahan apa yang diperlukan untuk menjawabnya.
+
+### Blok K · menit50–90 · Sumber dan penelitian terdahulu
+
+### 49. Pencarian dimulai dari kata kunci
+
+**Teks layar**
+- Ambil istilah inti dari pertanyaan penelitian.
+- Tambahkan variasi istilah, bahasa, nama tokoh, atau sumber yang relevan.
+- Bedakan kata kunci utama dan perluasan penelusuran.
+
+**Catatan pengajar**
+Sering kali kita sulit mencari karena hanya memakai judul sementara secara utuh. AI dapat membantu memecahnya menjadi kata kunci. Pada contoh ‘urf, kita juga mempertimbangkan istilah terkait, tetapi tidak menganggap semuanya sama makna sebelum diperiksa. Catat kata kunci dan tempat pencarian yang telah dicoba.
+
+**Prompt**
+“Dari pertanyaan penelitian saya, susun kata kunci utama dan variasi penelusuran dalam bahasa Arab serta bahasa lain yang relevan. Jelaskan istilah yang mungkin berkaitan tetapi tidak identik. Jangan membuat daftar referensi.”
+
+### 50. Sumber primer, kajian peneliti lain, dan ringkasan AI
+
+**Teks layar**
+- Sumber primer adalah objek atau dasar yang dikaji sesuai pertanyaan.
+- Penelitian terdahulu membantu melihat pembahasan yang sudah dilakukan.
+- Ringkasan AI perlu dibedakan dari sumber yang diringkas.
+
+**Catatan pengajar**
+Jenis sumber bergantung pada pertanyaan. Jika meneliti cara sebuah kitab menjelaskan istilah, kitab itu merupakan bahan utama. Artikel tentang kitab tersebut membantu membaca penelitian terdahulu. Jawaban AI yang merangkum keduanya belum menjadi pengganti membaca bahan yang akan dipakai dalam argumen.
+
+### 51. Memakai pencarian dan fitur riset secara terarah
+
+**Teks layar**
+- Tentukan pertanyaan, jenis sumber, bahasa, dan cakupan pencarian.
+- Minta tautan dan keterangan relevansi.
+- Buka hasil, bukan hanya membaca ringkasannya.
+
+**Catatan pengajar**
+Kita jalankan satu pencarian langsung berdasarkan kata kunci peserta atau contoh latihan. Perhatikan apakah alat benar-benar mencari dan sumber apa yang dipakai. Jika memakai fitur penelitian mendalam, baca rencana atau laporannya. Hasilnya menjadi daftar yang akan ditelaah, bukan otomatis daftar pustaka yang siap dipakai.
+
+### 52. Memastikan referensi benar-benar ada
+
+**Teks layar**
+- Cocokkan judul, pengarang, penerbit atau jurnal, dan tahun.
+- Buka teks atau rekaman bibliografi yang dapat dipercaya.
+- Periksa lokasi kutipan dan identitas versi yang digunakan.
+
+**Catatan pengajar**
+Kita pilih satu hasil dan telusuri identitasnya. Nama yang tampak meyakinkan belum cukup. Jika aplikasi menulis nomor halaman, buka halaman itu pada versi yang dimaksud. Bila belum berhasil memeriksa sesuatu, tandai dengan jelas. Jangan membiarkan kekosongan data diisi oleh tebakan.
+
+### 53. Membaca penelitian terdahulu dengan pertanyaan yang sama
+
+**Teks layar**
+- Apa pertanyaan dan tujuan penelitiannya?
+- Bahan dan metode apa yang digunakan?
+- Apa hasil serta keterbatasan yang dinyatakan?
+
+**Catatan pengajar**
+Kita membaca penelitian terdahulu dengan pertanyaan yang konsisten supaya mudah dibandingkan. Berikan artikel yang sudah dibuka, lalu minta ringkasan beserta bagian yang menjadi dasarnya. Jika hanya abstrak yang tersedia, jelaskan bahwa penilaian kita masih terbatas pada informasi tersebut.
+
+**Prompt**
+“Baca artikel yang saya lampirkan. Pisahkan pertanyaan, tujuan, bahan, metode, hasil, dan keterbatasan yang dinyatakan penulis. Tunjukkan bagian teks pendukung. Jika suatu informasi tidak ditemukan, tulis belum ditemukan.”
+
+### 54. Membandingkan penelitian terdahulu
+
+**Teks layar**
+- Gunakan kolom yang sama untuk setiap penelitian.
+- Bandingkan pertanyaan, sumber, metode, dan hasilnya.
+- Bedakan perbedaan nyata dari informasi yang belum terbaca.
+
+**Catatan pengajar**
+Setelah membaca masing-masing artikel, kita dapat menyusun tabel. Minta AI menunjukkan persamaan dan perbedaannya berdasarkan teks yang diberikan. Jika satu artikel belum dibaca penuh, jangan menafsirkan kolom kosong sebagai kekurangan penelitian itu. Tabel membantu kita menelaah, bukan menggantikan penelaahan.
+
+### 55. Apakah topik saya sudah pernah diteliti?
+
+**Teks layar**
+- Hasil pencarian yang sedikit belum membuktikan kebaruan.
+- Periksa variasi istilah dan tempat penelusuran.
+- Rumuskan kontribusi sementara berdasarkan bacaan yang sudah diperiksa.
+
+**Catatan pengajar**
+Pernyataan “belum pernah diteliti” membutuhkan kehati-hatian. AI dapat membantu menemukan kemungkinan perbedaan pertanyaan, bahan, atau pendekatan. Kita meninjau kemungkinan itu melalui penelusuran lanjutan dan diskusi dengan pembimbing. Simpan catatan pencarian agar alasan Anda dapat dijelaskan.
+
+### Blok L · menit90–115 · Membaca kitab dan mengelola bahan
+
+### 56. Meminta bantuan memahami teks yang sulit
+
+**Teks layar**
+- Sertakan teks dan konteks yang diperlukan.
+- Tunjuk ungkapan yang belum dipahami.
+- Bedakan penjelasan, kemungkinan tafsir, dan terjemahan.
+
+**Catatan pengajar**
+Peserta yang fasih Arab tetap dapat menemui istilah atau susunan ilmiah yang sulit. Kita meminta penjelasan pada bagian tertentu dengan memberikan kalimat sebelum dan sesudahnya. Jika makna bergantung pada istilah pengarang atau pembahasan lain, minta hal itu disebutkan, lalu kembali ke sumber yang sesuai.
+
+**Prompt**
+“Jelaskan ungkapan yang saya tandai dalam teks berikut berdasarkan konteks yang saya sertakan. Pisahkan penjelasan yang langsung tampak dari teks dan kemungkinan yang masih perlu diteliti. Pertahankan istilah ilmiahnya.”
+
+### 57. Merangkum sesuai pertanyaan penelitian
+
+**Teks layar**
+- Tentukan bagian dan tujuan ringkasan.
+- Pertahankan pengecualian dan ketentuan penting.
+- Hubungkan setiap hasil dengan bagian sumbernya.
+
+**Catatan pengajar**
+Ringkasan untuk memahami gambaran umum berbeda dari catatan untuk menjawab pertanyaan tertentu. Kita menyebut apa yang dicari dan menjaga ungkapan yang membatasi maksud. Coba satu bagian pendek, kemudian lihat apakah ada hal penting yang hilang ketika diringkas.
+
+### 58. Mengambil informasi dan membandingkan teks
+
+**Teks layar**
+- Tentukan informasi yang ingin diambil.
+- Pisahkan teksA dan teksB beserta sumbernya.
+- Bandingkan berdasarkan unsur yang sama.
+
+**Catatan pengajar**
+Dalam dua penjelasan istilah, misalnya kita membandingkan definisi, contoh, dan syarat yang disebut. Kita tidak perlu meminta seluruh perbedaan sekaligus. Aplikasi boleh membantu menyusun tabel, tetapi kutipan dan pemilik pendapat tetap harus cocok dengan teks. Ketiadaan keterangan pada petikan belum membuktikan ketiadaannya di seluruh kitab.
+
+### 59. Mana kutipan, ringkasan, dan analisis saya?
+
+**Teks layar**
+- Kutipan mempertahankan kata-kata sumber.
+- Ringkasan menyampaikan kembali makna dengan rujukan.
+- Analisis menjelaskan pemahaman atau hubungan yang dibangun peneliti.
+
+**Catatan pengajar**
+Tiga bentuk ini dapat berada dalam tulisan yang sama, tetapi pembaca harus bisa membedakannya. Jangan menaruh ringkasan buatan aplikasi dalam tanda kutip seolah-olah itulah kata pengarang. Kita dapat meminta tiga kolom untuk membantu pemisahan, kemudian memeriksa masing-masing pada teks asalnya.
+
+### 60. Catatan bacaan yang siap digunakan untuk menulis
+
+**Teks layar**
+- Simpan kutipan atau informasi yang diperlukan.
+- Catat sumber dan lokasi dengan jelas.
+- Pisahkan ringkasan, komentar sendiri, dan pertanyaan lanjutan.
+
+**Catatan pengajar**
+Gunakan enam menit untuk membuat satu catatan dari teks latihan yang dibaca. AI dapat membantu menatanya, tetapi data sumber diisi dari bahan yang telah dibuka. Sesudah ini, kita akan memakai catatan itu ketika menyusun kerangka dan menulis. Catatan yang rapi mengurangi pekerjaan mencari ulang dari awal.
+
+### Istirahat · menit115–130 ·15menit
