@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - v9-2-integrasi
     tags:
       - 'v*'
   workflow_dispatch:
