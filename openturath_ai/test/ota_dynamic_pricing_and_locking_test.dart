@@ -42,6 +42,23 @@ void main() {
           .firstWhere((a) => a.id == 'fiqh_hanafi').isActive, isTrue);
     });
 
+    testWidgets('a failed newer read does not discard an older valid result',
+        (tester) async {
+      final first = Completer<Set<String>?>();
+      final second = Completer<Set<String>?>();
+      var calls = 0;
+      final service = AgentService(
+          activeIdsLoader: () => calls++ == 0 ? first.future : second.future);
+      service.getAgents(forceRefresh: true);
+      service.getAgents(forceRefresh: true);
+      second.completeError(StateError('offline'));
+      await tester.pump();
+      first.complete({'fiqh_syafii', 'fiqh_hanafi'});
+      await tester.pump();
+      expect(AgentService.getActiveAgentsSync()
+          .firstWhere((a) => a.id == 'fiqh_hanafi').isActive, isTrue);
+    });
+
     test('AgentModel copyWith preserves fields and updates status', () {
       final syafii =
           AgentModel.defaultAgents.firstWhere((a) => a.id == 'fiqh_syafii');
