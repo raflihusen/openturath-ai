@@ -65,6 +65,11 @@ jobs:
       - name: Setup NuGet for WebView2 native dependencies
         uses: NuGet/setup-nuget@v2
 
+      - name: Install compatible CMake for Firebase C++ SDK
+        uses: lukka/get-cmake@latest
+        with:
+          cmakeVersion: '3.31.6'
+
       - name: Enable Windows Desktop
         run: flutter config --enable-windows-desktop
 
