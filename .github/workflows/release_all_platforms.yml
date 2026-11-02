@@ -186,3 +186,53 @@ jobs:
           if-no-files-found: error
           name: OpenTurath-AI-Android-APK
           path: openturath_ai/build/app/outputs/flutter-apk/app-release.apk
+
+  build-windows-setup:
+    name: Build Windows Setup installer
+    needs: build-windows-exe
+    runs-on: windows-latest
+    env:
+      CMAKE_POLICY_VERSION_MINIMUM: "3.5"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.38.4'
+          channel: 'stable'
+          cache: true
+      - name: Download Windows application bundle
+        uses: actions/download-artifact@v4
+        with:
+          name: OpenTurath-AI-Windows-x64
+          path: openturath_ai/build/portable-artifact
+      - name: Build single-file Windows Setup
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $archive = 'openturath_ai/build/portable-artifact/OpenTurath_AI_Windows_x64.zip'
+          $payload = 'openturath_ai/build/installer_payload'
+          Expand-Archive -Path $archive -DestinationPath $payload
+          ./openturath_ai/tool/build_windows_installer.ps1 -LocalOnly -PayloadDirectory (Resolve-Path $payload).Path
+          $stage = 'openturath_ai/build/installer_stage'
+          $setup = Join-Path $stage 'OpenTurath_AI_Windows_Setup.exe'
+          Copy-Item (Join-Path $stage 'OpenTurath_AI_Windows_LocalTest_Setup.exe') $setup
+          $hash = (Get-FileHash $setup -Algorithm SHA256).Hash.ToLower()
+          "$hash  OpenTurath_AI_Windows_Setup.exe" | Set-Content "$setup.sha256" -Encoding ascii
+      - name: Smoke test installer core
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $core = (Resolve-Path 'openturath_ai/build/installer_core/OpenTurath_AI_Core_Setup.exe').Path
+          $target = Join-Path $env:RUNNER_TEMP 'openturath-installer-smoke'
+          $proc = Start-Process -FilePath $core -ArgumentList @('/VERYSILENT', '/SUPPRESSMSGBOXES', '/NORESTART', '/SP-', "/DIR=`"$target`"") -Wait -PassThru
+          if ($proc.ExitCode -ne 0) { throw "Installer core failed: $($proc.ExitCode)" }
+          if (!(Test-Path (Join-Path $target 'openturath_ai.exe'))) { throw 'Installed executable missing' }
+          if (!(Test-Path (Join-Path $target 'data/app.so'))) { throw 'Installed application data missing' }
+      - name: Upload Windows Setup artifact
+        uses: actions/upload-artifact@v4
+        with:
+          if-no-files-found: error
+          name: OpenTurath-AI-Windows-Setup
+          path: |
+            openturath_ai/build/installer_stage/OpenTurath_AI_Windows_Setup.exe
+            openturath_ai/build/installer_stage/OpenTurath_AI_Windows_Setup.exe.sha256
