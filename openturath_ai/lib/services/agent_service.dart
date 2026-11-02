@@ -22,13 +22,14 @@ class AgentService {
   static Set<String>? _cachedActiveIds;
   static DateTime? _lastAgentsFetch;
   static int _requestGeneration = 0;
+  static int _lastAppliedGeneration = 0;
 
   /// Memberi tahu layar ketika daftar yang berhasil dibaca berubah.
   static final ValueNotifier<int> availabilityRevision = ValueNotifier<int>(0);
 
   @visibleForTesting
   static void resetCacheForTest() {
-    _requestGeneration++;
+    _lastAppliedGeneration = ++_requestGeneration;
     _cachedActiveIds = null;
     _lastAgentsFetch = null;
   }
@@ -103,9 +104,10 @@ class AgentService {
             final raw = doc.data()?['active_agent_ids'];
             if (doc.exists && raw is List) ids = raw.whereType<String>().toSet();
           }
-          if (generation != _requestGeneration || ids == null || ids.isEmpty) {
+          if (generation < _lastAppliedGeneration || ids == null || ids.isEmpty) {
             return;
           }
+          _lastAppliedGeneration = generation;
           final changed = !setEquals(_cachedActiveIds, ids);
           _cachedActiveIds = Set<String>.unmodifiable(ids);
           _lastAgentsFetch = DateTime.now();
