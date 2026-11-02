@@ -50,8 +50,6 @@ jobs:
     needs: validate
     name: Build Windows EXE
     runs-on: windows-latest
-    env:
-      CMAKE_POLICY_VERSION_MINIMUM: "3.5"
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -75,8 +73,6 @@ jobs:
           flutter pub get --enforce-lockfile
 
       - name: Build Windows Release
-        env:
-          CMAKE_POLICY_VERSION_MINIMUM: "3.5"
         run: |
           cd openturath_ai
           flutter build windows --release
@@ -157,9 +153,6 @@ jobs:
           channel: 'stable'
           flutter-version: '3.38.4'
           cache: true
-
-      - name: Grant Executable Permission to Gradlew
-        run: chmod +x openturath_ai/android/gradlew
 
       - name: Get dependencies
         run: |
