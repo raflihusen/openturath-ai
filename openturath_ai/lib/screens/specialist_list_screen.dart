@@ -64,6 +64,7 @@ class _SpecialistListScreenState extends State<SpecialistListScreen>
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    AgentService.availabilityRevision.addListener(_onAvailabilityChanged);
     _selectedFieldId = widget.field?.id;
     _loadAgents();
     OpenTurathCatalogRepository.instance.loadAllMetadata().then((all) {
@@ -72,6 +73,15 @@ class _SpecialistListScreenState extends State<SpecialistListScreen>
       TelemetryService.instance
           .reportError(error, stack, context: 'library_metadata');
     });
+  }
+
+  void _onAvailabilityChanged() {
+    if (mounted) {
+      setState(() {
+        _allAgents = AgentService.getActiveAgentsSync();
+        _isLoading = false;
+      });
+    }
   }
 
   @override
@@ -84,6 +94,7 @@ class _SpecialistListScreenState extends State<SpecialistListScreen>
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+    AgentService.availabilityRevision.removeListener(_onAvailabilityChanged);
     _searchCtrl.dispose();
     _listScrollCtrl.dispose();
     _debounce?.cancel();
