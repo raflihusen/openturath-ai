@@ -1,8 +1,8 @@
 # Naskah induk dauroh: penggunaan AI untuk pemula dan penelitian ilmiah
 
-Bahasa kerja: Indonesia. Draf isi untuk direvisi sebelum penerjemahan Arab dan pembuatan desain. Peserta: mahasiswa tingkat akhir di Yaman, fasih Arab, pemula AI; pengalaman penelitian beragam. Durasi: dua hari, masing-masing240menit termasuk istirahat15menit.
+Bahasa kerja: Indonesia. Draf isi untuk direvisi sebelum penerjemahan Arab dan pembuatan desain. Peserta: mahasiswa tingkat akhir di Yaman, fasih Arab, pemula AI; pengalaman penelitian beragam. Durasi: dua hari, masing-masing 240 menit termasuk istirahat 15 menit.
 
-Naskah terdiri dari80slide:40hari pertama dan40hari kedua. Istirahat tidak dihitung sebagai slide. Teks layar adalah isi ringkas yang dilihat peserta. Catatan pengajar adalah contoh ucapan yang dapat dikembangkan; bukan teks tambahan untuk dimasukkan seluruhnya ke layar. Nomor slide menjadi acuan revisi.
+Naskah terdiri dari 80slide:40 hari pertama dan40 hari kedua. Istirahat tidak dihitung sebagai slide. Teks layar adalah isi ringkas yang dilihat peserta. Catatan pengajar adalah contoh ucapan yang dapat dikembangkan; bukan teks tambahan untuk dimasukkan seluruhnya ke layar. Nomor slide menjadi acuan revisi.
 
 Pada bagian produk, pengajar menunjukkan fitur yang tersedia pada akun demonstrasi. Nama model, batas unggahan, harga, dan letak tombol diperiksa mendekati pelaksanaan. Tidak ada peringkat aplikasi yang dianggap berlaku untuk semua pekerjaan.
 
@@ -41,7 +41,7 @@ Bayangkan setelah pulang Anda menemui halaman sulit, catatan yang berantakan, at
 Saya perlihatkan tiga contoh singkat supaya gambaran kegunaannya terasa. Perhatikan perubahan dari masukan menjadi hasil. Anda belum perlu mengikuti semua tombolnya. Sesudah memahami apa yang dapat dilakukan, kita pelajari bagaimana alat ini bekerja dan cara memakainya sendiri.
 
 **Demonstrasi**
-Gunakan catatan latihan pada LampiranA untuk pengaturan catatan. Untuk penjelasan: “Jelaskan perbedaan topik dan pertanyaan penelitian dengan contoh sederhana.” Tandai seluruh hasil demonstrasi sebagai jawaban yang perlu dibaca, bukan jawaban baku.
+Gunakan catatan latihan pada Lampiran A untuk pengaturan catatan. Untuk penjelasan: “Jelaskan perbedaan topik dan pertanyaan penelitian dengan contoh sederhana.” Tandai seluruh hasil demonstrasi sebagai jawaban yang perlu dibaca, bukan jawaban baku.
 
 ### Blok B · menit15–40 · Pengertian, sejarah, dan peta dasar
 
@@ -68,10 +68,10 @@ Mungkin Anda pernah berbicara kepada ponsel, memakai penerjemah, atau menerima r
 ### 06. Sejarah singkat: dari aturan ke AI generatif
 
 **Teks layar**
--1956: Dartmouth menjadi tonggak pembentukan bidang AI.
+- 1956: Dartmouth menjadi tonggak pembentukan bidang AI.
 - Sistem berbasis aturan berkembang bersama pendekatan yang belajar dari data.
 - Pembelajaran mendalam memperluas kemampuan pengenalan dan pemrosesan.
--2022: peluncuran ChatGPT memperkenalkan percakapan generatif kepada khalayak luas.
+- 2022: peluncuran ChatGPT memperkenalkan percakapan generatif kepada khalayak luas.
 
 **Catatan pengajar**
 Perjalanannya berlangsung puluhan tahun. Pendekatan lama tidak semuanya hilang ketika pendekatan baru muncul. Yang berubah besar bagi pengguna umum adalah kemudahan berinteraksi melalui bahasa sehari-hari. Kita cukup memahami arah perkembangan ini; tidak perlu menghafal seluruh tokoh, model, dan tahun.
@@ -124,7 +124,7 @@ Jawaban dipengaruhi oleh apa yang kita kirim, percakapan sebelumnya, dan fasilit
 **Teks layar**
 - Menyelesaikan masalah dan menalar merupakan kemampuan yang dapat diuji.
 - Proses komputasional tidak boleh langsung disamakan dengan pengalaman manusia.
-- Mode“Thinking”adalah fitur kerja; namanya tidak membuktikan kesadaran.
+- Mode “Thinking” adalah fitur kerja; namanya tidak membuktikan kesadaran.
 
 **Catatan pengajar**
 Kata berpikir bisa berarti mengerjakan penalaran, tetapi juga bisa menunjuk kesadaran dan pengalaman batin. Dua pertanyaan itu berbeda. Kita dapat menguji apakah sistem berhasil menjawab persoalan. Tentang kesadaran AI, terdapat perdebatan dan ketidakpastian ilmiah; nama fitur atau pengakuan chatbot tentang dirinya tidak menyelesaikan persoalan tersebut.
@@ -172,7 +172,7 @@ Kita mulai dari tempat menulis pesan, letak percakapan, serta pilihan yang muncu
 Saya tunjukkan perbedaan bertanya biasa, meminta pencarian, dan bekerja pada berkas. Kita tidak mengaktifkan semua fitur sekaligus. Perhatikan juga fasilitas yang tersedia pada akun Anda. Keberadaan satu fitur dalam layanan tidak selalu berarti semua akun mempunyai batas dan akses yang sama.
 
 **Demonstrasi**
-Gunakan PromptPembanding pada LampiranB. Setelah itu tunjukkan lokasi satu fitur dokumen dan satu fitur pencarian pada akun demonstrasi.
+Gunakan PromptPembanding pada Lampiran B. Setelah itu tunjukkan lokasi satu fitur dokumen dan satu fitur pencarian pada akun demonstrasi.
 
 ### 16. Mengenal Gemini
 
@@ -254,7 +254,7 @@ Keempat aplikasi sudah menerima tugas yang sama. Mari bandingkan satu bagian has
 **Catatan pengajar**
 Anda tidak harus membuka empat aplikasi sekaligus untuk setiap pertanyaan. Pilih yang dapat Anda akses dan pahami, lalu pelajari cara memakainya dengan baik. Bila suatu pekerjaan membutuhkan fasilitas lain, barulah kita mencari alternatif. Akses berbayar juga perlu dinilai dari kebutuhan, bukan anggapan bahwa semua jawaban akan otomatis lebih benar.
 
-### Istirahat · menit110–125 ·15menit
+### Istirahat · menit110–125 ·15 menit
 
 ### Blok E · menit125–150 · Percakapan pertama peserta
 
@@ -320,7 +320,7 @@ Prompt dapat berupa satu kalimat atau beberapa paragraf. Pekerjaan sederhana cuk
 
 **Teks layar**
 - Kabur: “Bantu saya belajar.”
-- Lebih jelas: “Susun jadwal mengulang tiga bab selama enam hari,45menit per hari.”
+- Lebih jelas: “Susun jadwal mengulang tiga bab selama enam hari,45 menit per hari.”
 - Tambahkan informasi yang benar-benar memengaruhi hasil.
 
 **Catatan pengajar**
@@ -368,7 +368,7 @@ Jika saya meminta penelitian lengkap sekaligus, sulit melihat dari mana kesalaha
 - Jawaban pertama diterima tanpa dibaca dan ditindaklanjuti.
 
 **Catatan pengajar**
-Kita lihat beberapa pesan pendek dan cari penyebab masalahnya. Misalnya meminta ringkasan50kata sekaligus uraian lengkap setiap bagian, atau meminta isi halaman yang belum diberikan. Perbaikannya berbeda-beda. Kita tidak perlu menambah banyak instruksi jika masalah sebenarnya adalah bahan yang belum ada.
+Kita lihat beberapa pesan pendek dan cari penyebab masalahnya. Misalnya meminta ringkasan 50 kata sekaligus uraian lengkap setiap bagian, atau meminta isi halaman yang belum diberikan. Perbaikannya berbeda-beda. Kita tidak perlu menambah banyak instruksi jika masalah sebenarnya adalah bahan yang belum ada.
 
 ### 34. Latihan: perbaiki satu prompt
 
@@ -382,7 +382,7 @@ Gunakan sepuluh menit untuk bekerja. Anda boleh memilih permintaan belajar, peng
 
 **Pilihan permintaan awal**
 1. “Bantu saya belajar.”
-2. “Rapikan catatan ini.” Gunakan LampiranA.
+2. “Rapikan catatan ini.” Gunakan Lampiran A.
 3. “Bantu saya memilih topik penelitian.”
 
 ### Blok G · menit195–220 · Memilih fitur dan menangani dokumen
@@ -657,7 +657,7 @@ Ringkasan untuk memahami gambaran umum berbeda dari catatan untuk menjawab perta
 
 **Teks layar**
 - Tentukan informasi yang ingin diambil.
-- Pisahkan teksA dan teksB beserta sumbernya.
+- Pisahkan teks A dan teks B beserta sumbernya.
 - Bandingkan berdasarkan unsur yang sama.
 
 **Catatan pengajar**
@@ -683,7 +683,7 @@ Tiga bentuk ini dapat berada dalam tulisan yang sama, tetapi pembaca harus bisa 
 **Catatan pengajar**
 Gunakan enam menit untuk membuat satu catatan dari teks latihan yang dibaca. AI dapat membantu menatanya, tetapi data sumber diisi dari bahan yang telah dibuka. Sesudah ini, kita akan memakai catatan itu ketika menyusun kerangka dan menulis. Catatan yang rapi mengurangi pekerjaan mencari ulang dari awal.
 
-### Istirahat · menit115–130 ·15menit
+### Istirahat · menit115–130 ·15 menit
 
 ### Blok M · menit130–155 · Metode dan kerangka
 
@@ -910,23 +910,23 @@ Kita tidak memulai seluruh penelitian lagi pada akhir kelas. Buka hasil yang tum
 **Catatan pengajar**
 Untuk pekan berikutnya, pilih satu halaman atau satu bagian penelitian. Ulangi proses yang kita pelajari dan simpan hasilnya. Saat mempersiapkan munaqasyah, Anda dapat meminta pertanyaan tentang masalah, metode, dan kesimpulan. Latihan itu membantu melihat kekurangan penjelasan, lalu Anda kembali memperbaiki pemahaman dan tulisan bersama pembimbing.
 
-## LampiranA — Catatan untuk demonstrasi dan latihan berkas
+## Lampiran A — Catatan untuk demonstrasi dan latihan berkas
 
 Catatan berikut dibuat khusus untuk latihan. Ini bukan data penelitian atau kutipan dari kitab.
 
-> Saya ingin mengulang tiga bab pelajaran selama enam hari. Waktu yang tersedia45menit per hari. Bab pertama lebih mudah, bab kedua paling sulit, dan bab ketiga belum selesai dibaca. Saya ingin ada latihan mengingat kembali tanpa melihat buku. Saya juga perlu menulis tiga pertanyaan untuk dibawa ke kelompok belajar. Waktu pertemuan kelompok belum ditentukan. Saya mempunyai catatan lama yang perlu dirapikan. Saya ingin mengetahui bagian mana yang belum dipahami sebelum meminta bantuan pengajar.
+> Saya ingin mengulang tiga bab pelajaran selama enam hari. Waktu yang tersedia 45 menit per hari. Bab pertama lebih mudah, bab kedua paling sulit, dan bab ketiga belum selesai dibaca. Saya ingin ada latihan mengingat kembali tanpa melihat buku. Saya juga perlu menulis tiga pertanyaan untuk dibawa ke kelompok belajar. Waktu pertemuan kelompok belum ditentukan. Saya mempunyai catatan lama yang perlu dirapikan. Saya ingin mengetahui bagian mana yang belum dipahami sebelum meminta bantuan pengajar.
 
 **Tugas pengaturan catatan**
 “Kelompokkan catatan ini menjadi tujuan, keadaan sekarang, batas waktu, pekerjaan, dan informasi yang masih perlu ditanyakan. Jangan menetapkan waktu pertemuan yang belum disebutkan.”
 
-## LampiranB — Permintaan pembanding untuk empat aplikasi
+## Lampiran B — Permintaan pembanding untuk empat aplikasi
 
-> “Saya mahasiswa yang ingin mengulang tiga bab dalam enam hari. Saya punya45menit setiap hari. Bab pertama relatif mudah, bab kedua paling sulit, dan bab ketiga belum selesai dibaca. Susun jadwal dalam tabel: hari, kegiatan, alokasi menit, dan cara mengecek pemahaman. Pastikan jumlah waktu harian tidak melebihi45menit. Jika ada informasi penting yang belum tersedia, sebutkan pertanyaan klarifikasinya.”
+> “Saya mahasiswa yang ingin mengulang tiga bab dalam enam hari. Saya punya 45 menit setiap hari. Bab pertama relatif mudah, bab kedua paling sulit, dan bab ketiga belum selesai dibaca. Susun jadwal dalam tabel: hari, kegiatan, alokasi menit, dan cara mengecek pemahaman. Pastikan jumlah waktu harian tidak melebihi 45 menit. Jika ada informasi penting yang belum tersedia, sebutkan pertanyaan klarifikasinya.”
 
 **Cara membandingkan**
 Gunakan permintaan yang sama dan catat model, mode, serta fitur yang digunakan. Bandingkan pemenuhan waktu, pembagian pekerjaan, kejelasan, dan tindak lanjut. Jangan menyebut satu percobaan sebagai ukuran umum seluruh kemampuan aplikasi.
 
-## LampiranC — Bahan penelitian yang ditentukan saat finalisasi
+## Lampiran C — Bahan penelitian yang ditentukan saat finalisasi
 
 Agar contoh hari kedua konkret, pengajar perlu menetapkan bahan berikut sebelum materi dinyatakan siap digunakan di kelas:
 
@@ -938,7 +938,7 @@ Agar contoh hari kedua konkret, pengajar perlu menetapkan bahan berikut sebelum 
 
 Bagian ini sengaja ditandai sebagai persiapan yang masih perlu ditentukan bersama isi final. Draf belum mengklaim telah melakukan penelusuran pustaka atau demonstrasi produk atas bahan tersebut.
 
-## LampiranD — Peta waktu dan hasil yang diperiksa
+## Lampiran D — Peta waktu dan hasil yang diperiksa
 
 | Hari | Rentang menit | Slide | Fokus |
 |---|---|---|---|
@@ -946,7 +946,7 @@ Bagian ini sengaja ditandai sebagai persiapan yang masih perlu ditentukan bersam
 |1|15–40|04–08|Pengertian dan sejarah|
 |1|40–65|09–13|Cara kerja dan pertanyaan dasar|
 |1|65–110|14–23|Empat aplikasi dan perbandingan|
-|1|110–125|Istirahat|15menit|
+|1|110–125|Istirahat|15 menit|
 |1|125–150|24–27|Praktik percakapan|
 |1|150–195|28–34|Prompt dan latihan|
 |1|195–220|35–38|Fitur dan dokumen|
@@ -955,7 +955,7 @@ Bagian ini sengaja ditandai sebagai persiapan yang masih perlu ditentukan bersam
 |2|15–50|43–48|Rancangan penelitian|
 |2|50–90|49–55|Sumber dan penelitian terdahulu|
 |2|90–115|56–60|Pembacaan dan catatan|
-|2|115–130|Istirahat|15menit|
+|2|115–130|Istirahat|15 menit|
 |2|130–155|61–64|Metode dan kerangka|
 |2|155–190|65–71|Analisis dan penulisan|
 |2|190–210|72–76|Revisi dan penyelesaian|
@@ -968,10 +968,10 @@ Penjelasan tidak harus mendapat durasi sama per slide. Slide demonstrasi dan lat
 
 Fitur dan batas penggunaannya dapat berubah. Rujukan berikut mendasari pengenalan dan digunakan kembali ketika memfinalisasi materi:
 
-- Slide06: [Dartmouth: AI Coined at Dartmouth](https://home.dartmouth.edu/about/artificial-intelligence-ai-coined-dartmouth) dan [OpenAI: Introducing ChatGPT](https://openai.com/index/chatgpt/).
-- Slide09–10: [OpenAI: How ChatGPT and our foundation models are developed](https://help.openai.com/en/articles/7842364-how-chatgpt-and-our-foundation-models-are-developed).
-- Slide11: [Anthropic: Exploring model welfare](https://www.anthropic.com/research/exploring-model-welfare). Pembahasan kesadaran dibedakan dari penilaian kemampuan dan tidak disajikan sebagai persoalan yang sudah selesai.
-- Slide14–15: [ChatGPT capabilities overview](https://help.openai.com/en/articles/9260256-chatgpt-capabilities-overview), [Study mode](https://help.openai.com/en/articles/11780217-study-mode).
-- Slide16–17: [Gemini feature availability](https://support.google.com/gemini/answer/16275805?hl=en), [Gemini Canvas](https://support.google.com/gemini/answer/16047321?hl=en), [Gemini Deep Research](https://support.google.com/gemini/answer/15719111?hl=en).
-- Slide18–19: [Claude web search](https://support.claude.com/en/articles/10684626-enable-and-use-web-search), [Claude Research](https://support.claude.com/en/articles/11088861-use-research-on-claude), [Claude Artifacts](https://support.claude.com/en/articles/17153992-what-are-artifacts-and-how-do-i-use-them).
-- Slide20–21: [Introducing DeepSeek App](https://api-docs.deepseek.com/news/news250115/), [DeepSeek Thinking Mode](https://api-docs.deepseek.com/guides/thinking_mode/), [DeepSeek change log](https://api-docs.deepseek.com/updates/). Pengumuman pengenalan aplikasi adalah sumber historis; akses, fitur, dan harga diperiksa kembali pada layanan yang digunakan.
+- Slide 06: [Dartmouth: AI Coined at Dartmouth](https://home.dartmouth.edu/about/artificial-intelligence-ai-coined-dartmouth) dan [OpenAI: Introducing ChatGPT](https://openai.com/index/chatgpt/).
+- Slide 09–10: [OpenAI: How ChatGPT and our foundation models are developed](https://help.openai.com/en/articles/7842364-how-chatgpt-and-our-foundation-models-are-developed).
+- Slide 11: [Anthropic: Exploring model welfare](https://www.anthropic.com/research/exploring-model-welfare). Pembahasan kesadaran dibedakan dari penilaian kemampuan dan tidak disajikan sebagai persoalan yang sudah selesai.
+- Slide 14–15: [ChatGPT capabilities overview](https://help.openai.com/en/articles/9260256-chatgpt-capabilities-overview), [Study mode](https://help.openai.com/en/articles/11780217-study-mode).
+- Slide 16–17: [Gemini feature availability](https://support.google.com/gemini/answer/16275805?hl=en), [Gemini Canvas](https://support.google.com/gemini/answer/16047321?hl=en), [Gemini Deep Research](https://support.google.com/gemini/answer/15719111?hl=en).
+- Slide 18–19: [Claude web search](https://support.claude.com/en/articles/10684626-enable-and-use-web-search), [Claude Research](https://support.claude.com/en/articles/11088861-use-research-on-claude), [Claude Artifacts](https://support.claude.com/en/articles/17153992-what-are-artifacts-and-how-do-i-use-them).
+- Slide 20–21: [Introducing DeepSeek App](https://api-docs.deepseek.com/news/news250115/), [DeepSeek Thinking Mode](https://api-docs.deepseek.com/guides/thinking_mode/), [DeepSeek change log](https://api-docs.deepseek.com/updates/). Pengumuman pengenalan aplikasi adalah sumber historis; akses, fitur, dan harga diperiksa kembali pada layanan yang digunakan.
