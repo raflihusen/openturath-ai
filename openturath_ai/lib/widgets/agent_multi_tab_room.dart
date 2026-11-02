@@ -1797,12 +1797,23 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
           backLabel: Loc.tr('back'),
         );
       } else if (session.isGooglePermissionError) {
+        final user = _authService.cachedCurrentUser;
+        final hasAccess = user != null && user.hasAccessToAgent(session.agent.id);
         state = AppErrorState(
           icon: Icons.account_circle_outlined,
           title: Loc.tr('roomPermissionTitle'),
           message: Loc.tr('roomPermissionBody'),
-          onSecondary: () => _sendRoomReport(session),
-          secondaryLabel: Loc.tr('reportSend'),
+          onSecondary: hasAccess
+              ? () => _sendRoomReport(session)
+              : () => NavigationGuard.safePushNamed(
+                    context,
+                    AppRoutes.subscription,
+                    arguments: {
+                      'user': _authService.cachedCurrentUser,
+                      'agent': session.agent,
+                    },
+                  ),
+          secondaryLabel: hasAccess ? Loc.tr('reportSend') : Loc.tr('roomSeePlans'),
           retryLabel: Loc.tr('ui_f9d6eb247c'),
           retryIcon: Icons.switch_account_outlined,
           onRetry: () async {
