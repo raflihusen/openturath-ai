@@ -91,7 +91,7 @@ class AgentService {
         try {
           Set<String>? ids;
           if (_activeIdsLoader != null) {
-            ids = await _activeIdsLoader();
+            ids = await _activeIdsLoader!();
           } else {
             final db = firestore ??
                 (Firebase.apps.isNotEmpty ? FirebaseFirestore.instance : null);
