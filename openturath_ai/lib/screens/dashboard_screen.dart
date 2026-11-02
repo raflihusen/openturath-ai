@@ -78,6 +78,7 @@ class _DashboardScreenState extends State<DashboardScreen>
   List<AgentModel> _agents = AgentService.getActiveAgentsSync();
   String _searchQuery = '';
   String? _lastOpenedAgentId;
+  int _loadGeneration = 0;
 
   @override
   void initState() {
@@ -95,6 +96,7 @@ class _DashboardScreenState extends State<DashboardScreen>
     // Aplikasi yang dibiarkan terbuka berhari-hari tetap menemukan rilis baru.
     if (state == AppLifecycleState.resumed) {
       _updateService.checkForUpdatesSilently();
+      unawaited(_loadData());
     }
   }
 
@@ -130,32 +132,45 @@ class _DashboardScreenState extends State<DashboardScreen>
   }
 
   Future<void> _loadData([bool forceRefresh = false]) async {
-    try {
-      // A cached profile cannot substitute for a disconnected Firebase account.
-      if (!_authService.hasAuthenticatedSession) {
-        if (mounted) setState(() => _initialUser = null);
-        return;
+    final generation = ++_loadGeneration;
+
+    // Availability is public configuration. Apply it independently so a slow
+    // profile, pricing or feature request cannot leave the cards stale.
+    final agentsFuture = _agentService
+        .getAgents(forceRefresh: forceRefresh)
+        .then((agents) {
+      if (mounted && generation == _loadGeneration) {
+        setState(() => _agents = agents);
       }
+    }).catchError((Object _) {});
+
+    if (!_authService.hasAuthenticatedSession) {
+      if (mounted) setState(() => _initialUser = null);
+      await agentsFuture.timeout(const Duration(seconds: 4), onTimeout: () {});
+      return;
+    }
+
+    try {
       var user = _authService.cachedCurrentUser;
       user ??= await _authService.getCurrentUserModel();
-
       final results = await Future.wait([
         user != null && !forceRefresh
             ? Future.value(user)
             : _authService.getCurrentUserModel(),
-        _agentService.getAgents(forceRefresh: forceRefresh),
         ProductPricingService.syncPricing(forceRefresh: forceRefresh),
         FeatureFlagsService.sync(forceRefresh: forceRefresh),
       ]).timeout(
         const Duration(seconds: 4),
-        onTimeout: () => [user, AgentService.getActiveAgentsSync(), null, null],
+        onTimeout: () => [user, null, null],
       );
 
-      if (!mounted) return;
+      if (!mounted || generation != _loadGeneration) return;
       setState(() {
-        _initialUser = results[0] as UserModel?;
-        _agents = results[1] as List<AgentModel>;
+        _initialUser = _authService.hasAuthenticatedSession
+            ? results[0] as UserModel?
+            : null;
       });
+      await agentsFuture.timeout(const Duration(seconds: 4), onTimeout: () {});
     } catch (_) {}
   }
 
