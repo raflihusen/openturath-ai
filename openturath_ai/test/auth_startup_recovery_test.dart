@@ -136,6 +136,17 @@ class PendingAgents extends AgentService {
       result.future;
 }
 
+class SequencedAgents extends AgentService {
+  final requests = <Completer<List<AgentModel>>>[];
+  @override
+  Future<List<AgentModel>> getAgents(
+      {bool forceRefresh = false, dynamic firestore}) {
+    final request = Completer<List<AgentModel>>();
+    requests.add(request);
+    return request.future;
+  }
+}
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   UserModel profile(String uid) => UserModel(
@@ -664,6 +675,55 @@ void main() {
     await tester.pump(const Duration(seconds: 5));
     expect(card().isLocked, isTrue);
     expect(card().statusLabel, isNotNull);
+    await tester.pumpWidget(const SizedBox());
+    await auth.events.close();
+    await tester.pump(const Duration(seconds: 16));
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('late agent availability updates the dashboard independently',
+      (tester) async {
+    final auth = DashboardAuth()
+      ..user = TestUser('launch-owner')
+      ..cached = profile('launch-owner');
+    final agents = PendingAgents();
+    await tester.pumpWidget(MaterialApp(
+        home: DashboardScreen(authService: auth, agentService: agents)));
+    await tester.enterText(find.byType(TextField), 'Hanafi');
+    await tester.pump(const Duration(seconds: 5));
+    SpecialistCard card() =>
+        tester.widget<SpecialistCard>(find.byType(SpecialistCard).first);
+    expect(card().isLocked, isTrue);
+    agents.result.complete(AgentModel.defaultAgents);
+    await tester.pump();
+    expect(card().isLocked, isFalse);
+    await tester.pumpWidget(const SizedBox());
+    await auth.events.close();
+    await tester.pump(const Duration(seconds: 16));
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('resuming refreshes availability and ignores older responses',
+      (tester) async {
+    final auth = DashboardAuth()
+      ..user = TestUser('launch-owner')
+      ..cached = profile('launch-owner');
+    final agents = SequencedAgents();
+    await tester.pumpWidget(MaterialApp(
+        home: DashboardScreen(authService: auth, agentService: agents)));
+    await tester.enterText(find.byType(TextField), 'Hanafi');
+    await tester.pump();
+    tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
+    await tester.pump();
+    expect(agents.requests.length, 2);
+    agents.requests.last.complete(AgentModel.defaultAgents);
+    await tester.pump();
+    SpecialistCard card() =>
+        tester.widget<SpecialistCard>(find.byType(SpecialistCard).first);
+    expect(card().isLocked, isFalse);
+    agents.requests.first.complete(AgentService.getActiveAgentsSync());
+    await tester.pump();
+    expect(card().isLocked, isFalse);
     await tester.pumpWidget(const SizedBox());
     await auth.events.close();
     await tester.pump(const Duration(seconds: 16));
