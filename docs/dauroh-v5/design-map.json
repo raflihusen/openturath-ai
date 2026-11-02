@@ -1,0 +1,2347 @@
+{
+  "font": "IBM Plex Sans Arabic",
+  "slideSize": {
+    "width": 1440,
+    "height": 810
+  },
+  "uniqueArtwork": [
+    "cover",
+    "brain",
+    "shield",
+    "book",
+    "chat",
+    "compass",
+    "hourglass",
+    "cards",
+    "scale",
+    "cap"
+  ],
+  "slides": [
+    {
+      "slide": 1,
+      "layout": "cover / composition 1",
+      "stages": 2,
+      "blocks": []
+    },
+    {
+      "slide": 2,
+      "layout": "result / composition 2",
+      "stages": 2,
+      "blocks": [
+        {
+          "index": 1,
+          "stage": 1,
+          "rect": [
+            390,
+            250,
+            980,
+            340
+          ],
+          "bodyFont": 31,
+          "estimatedHeight": 114,
+          "bodyHeight": 228
+        },
+        {
+          "index": 2,
+          "stage": 2,
+          "rect": [
+            70,
+            300,
+            280,
+            320
+          ],
+          "bodyFont": 27,
+          "estimatedHeight": 199,
+          "bodyHeight": 208
+        }
+      ]
+    },
+    {
+      "slide": 3,
+      "layout": "problem / composition 3",
+      "stages": 2,
+      "blocks": [
+        {
+          "index": 1,
+          "stage": 1,
+          "rect": [
+            960,
+            270,
+            410,
+            355
+          ],
+          "bodyFont": 31,
+          "estimatedHeight": 191,
+          "bodyHeight": 243
+        },
+        {
+          "index": 2,
+          "stage": 2,
+          "rect": [
+            510,
+            320,
+            410,
+            355
+          ],
+          "bodyFont": 31,
+          "estimatedHeight": 191,
+          "bodyHeight": 243
+        },
+        {
+          "index": 3,
+          "stage": 2,
+          "rect": [
+            60,
+            270,
+            410,
+            355
+          ],
+          "bodyFont": 31,
+          "estimatedHeight": 191,
+          "bodyHeight": 243
+        }
+      ]
+    },
+    {
+      "slide": 4,
+      "layout": "concept / composition 4",
+      "stages": 2,
+      "blocks": [
+        {
+          "index": 1,
+          "stage": 1,
+          "rect": [
+            790,
+            240,
+            580,
+            145
+          ],
+          "bodyFont": 25,
+          "estimatedHeight": 92,
+          "bodyHeight": 73
+        },
+        {
+          "index": 2,
+          "stage": 2,
+          "rect": [
+            790,
+            405,
+            580,
+            145
+          ],
+          "bodyFont": 25,
+          "estimatedHeight": 92,
+          "bodyHeight": 73
+        },
+        {
+          "index": 3,
+          "stage": 2,
+          "rect": [
+            790,
+            570,
+            580,
+            130
+          ],
+          "bodyFont": 25,
+          "estimatedHeight": 92,
+          "bodyHeight": 58
+        }
+      ]
+    },
+    {
+      "slide": 5,
+      "layout": "compare / composition 5",
+      "stages": 2,
+      "blocks": [
+        {
+          "index": 1,
+          "stage": 1,
+          "rect": [
+            950,
+            260,
+            420,
+            400
+          ],
+          "bodyFont": 31,
+          "estimatedHeight": 191,
+          "bodyHeight": 288
+        },
+        {
+          "index": 2,
+          "stage": 2,
+          "rect": [
+            510,
+            290,
+            400,
+            370
+          ],
+          "bodyFont": 31,
+          "estimatedHeight": 191,
+          "bodyHeight": 258
+        },
+        {
+          "index": 3,
+          "stage": 2,
+          "rect": [
+            70,
+            260,
+            400,
+            400
+          ],
+          "bodyFont": 31,
+          "estimatedHeight": 191,
+          "bodyHeight": 288
+        }
+      ]
+    },
+    {
+      "slide": 6,
+      "layout": "interface / composition 6",
+      "stages": 2,
+      "blocks": [
+        {
+          "index": 1,
+          "stage": 1,
+          "rect": [
+            745,
+            245,
+            625,
+            210
+          ],
+          "bodyFont": 25,
+          "estimatedHeight": 92,
+          "bodyHeight": 98
+        },
+        {
+          "index": 2,
+          "stage": 2,
+          "rect": [
+            70,
+            245,
+            625,
+            210
+          ],
+          "bodyFont": 25,
+          "estimatedHeight": 92,
+          "bodyHeight": 98
+        },
+        {
+          "index": 3,
+          "stage": 2,
+          "rect": [
+            745,
+            480,
+            625,
+            210
+          ],
+          "bodyFont": 25,
+          "estimatedHeight": 92,
+          "bodyHeight": 98
+        },
+        {
+          "index": 4,
+          "stage": 2,
+          "rect": [
+            70,
+            480,
+            625,
+            210
+          ],
+          "bodyFont": 25,
+          "estimatedHeight": 92,
+          "bodyHeight": 98
+        }
+      ]
+    },
+    {
+      "slide": 7,
+      "layout": "checklist / composition 7",
+      "stages": 2,
+      "blocks": [
+        {
+          "index": 1,
+          "stage": 1,
+          "rect": [
+            770,
+            270,
+            600,
+            205
+          ],
+          "bodyFont": 25,
+          "estimatedHeight": 92,
+          "bodyHeight": 93
+        },
+        {
+          "index": 2,
+          "stage": 2,
+          "rect": [
+            770,
+            505,
+            600,
+            190
+          ],
+          "bodyFont": 25,
+          "estimatedHeight": 92,
+          "bodyHeight": 78
+        }
+      ]
+    },
+    {
+      "slide": 8,
+      "layout": "source / composition 8",
+      "stages": 2,
+      "blocks": [
+        {
+          "index": 1,
+          "stage": 1,
+          "rect": [
+            650,
+            245,
+            720,
+            240
+          ],
+          "bodyFont": 31,
+          "estimatedHeight": 114,
+          "bodyHeight": 128
+        },
+        {
+          "index": 2,
+          "stage": 2,
+          "rect": [
+            650,
+            510,
+            720,
+            180
+          ],
+          "bodyFont": 25,
+          "estimatedHeight": 92,
+          "bodyHeight": 68
+        },
+        {
+          "index": 3,
+          "stage": 2,
+          "rect": [
+            70,
+            555,
+            500,
+            135
+          ],
+          "bodyFont": 25,
+          "estimatedHeight": 92,
+          "bodyHeight": 63
+        }
+      ]
+    },
+    {
+      "slide": 9,
+      "layout": "explain / composition 9",
+      "stages": 2,
+      "blocks": [
+        {
+          "index": 1,
+          "stage": 1,
+          "rect": [
+            745,
+            250,
+            625,
+            425
+          ],
+          "bodyFont": 31,
+          "estimatedHeight": 114,
+          "bodyHeight": 313
+        },
+        {
+          "index": 2,
+          "stage": 2,
+          "rect": [
+            70,
+            250,
+            625,
+            200
+          ],
+          "bodyFont": 25,
+          "estimatedHeight": 92,
+          "bodyHeight": 88
+        },
+        {
+          "index": 3,
+          "stage": 2,
+          "rect": [
+            70,
+            475,
+            625,
+            200
+          ],
+          "bodyFont": 25,
+          "estimatedHeight": 92,
+          "bodyHeight": 88
+        }
+      ]
+    },
+    {
+      "slide": 10,
+      "layout": "prompt / composition 10",
+      "stages": 2,
+      "blocks": [
+        {
+          "index": 1,
+          "stage": 1,
+          "rect": [
+            740,
+            245,
+            630,
+            320
+          ],
+          "bodyFont": 27,
+          "estimatedHeight": 199,
+          "bodyHeight": 208
+        },
+        {
+          "index": 2,
+          "stage": 2,
+          "rect": [
+            740,
+            590,
+            630,
+            110
+          ],
+          "bodyFont": 25,
+          "estimatedHeight": 62,
+          "bodyHeight": 38
+        }
+      ]
+    },
+    {
+      "slide": 11,
+      "layout": "response / composition 11",
+      "stages": 2,
+      "blocks": [
+        {
+          "index": 1,
+          "stage": 1,
+          "rect": [
+            745,
+            270,
+            625,
+            350
+          ],
+          "bodyFont": 31,
+          "estimatedHeight": 153,
+          "bodyHeight": 238
+        },
+        {
+          "index": 2,
+          "stage": 2,
+          "rect": [
+            70,
+            330,
+            625,
+            350
+          ],
+          "bodyFont": 31,
+          "estimatedHeight": 114,
+          "bodyHeight": 238
+        }
+      ]
+    },
+    {
+      "slide": 12,
+      "layout": "mapping / composition 12",
+      "stages": 2,
+      "blocks": [
+        {
+          "index": 1,
+          "stage": 1,
+          "rect": [
+            880,
+            260,
+            490,
+            350
+          ],
+          "bodyFont": 31,
+          "estimatedHeight": 191,
+          "bodyHeight": 238
+        },
+        {
+          "index": 2,
+          "stage": 2,
+          "rect": [
+            70,
+            260,
+            750,
+            175
+          ],
+          "bodyFont": 26,
+          "estimatedHeight": 64,
+          "bodyHeight": 103
+        },
+        {
+          "index": 3,
+          "stage": 2,
+          "rect": [
+            70,
+            465,
+            750,
+            185
+          ],
+          "bodyFont": 25,
+          "estimatedHeight": 92,
+          "bodyHeight": 73
+        }
+      ]
+    },
+    {
+      "slide": 13,
+      "layout": "error / composition 13",
+      "stages": 3,
+      "blocks": [
+        {
+          "index": 1,
+          "stage": 1,
+          "rect": [
+            745,
+            250,
+            625,
+            180
+          ],
+          "bodyFont": 25,
+          "estimatedHeight": 92,
+          "bodyHeight": 68
+        },
+        {
+          "index": 2,
+          "stage": 2,
+          "rect": [
+            70,
+            250,
+            625,
+            270
+          ],
+          "bodyFont": 31,
+          "estimatedHeight": 114,
+          "bodyHeight": 158
+        },
+        {
+          "index": 3,
+          "stage": 3,
+          "rect": [
+            745,
+            460,
+            625,
+            230
+          ],
+          "bodyFont": 25,
+          "estimatedHeight": 92,
+          "bodyHeight": 118
+        }
+      ]
+    },
+    {
+      "slide": 14,
+      "layout": "questions / composition 14",
+      "stages": 2,
+      "blocks": [
+        {
+          "index": 1,
+          "stage": 1,
+          "rect": [
+            960,
+            265,
+            410,
+            350
+          ],
+          "bodyFont": 31,
+          "estimatedHeight": 191,
+          "bodyHeight": 238
+        },
+        {
+          "index": 2,
+          "stage": 2,
+          "rect": [
+            515,
+            305,
+            405,
+            350
+          ],
+          "bodyFont": 31,
+          "estimatedHeight": 229,
+          "bodyHeight": 238
+        },
+        {
+          "index": 3,
+          "stage": 2,
+          "rect": [
+            70,
+            265,
+            405,
+            350
+          ],
+          "bodyFont": 31,
+          "estimatedHeight": 191,
+          "bodyHeight": 238
+        }
+      ]
+    },
+    {
+      "slide": 15,
+      "layout": "followup / composition 15",
+      "stages": 2,
+      "blocks": [
+        {
+          "index": 1,
+          "stage": 1,
+          "rect": [
+            730,
+            245,
+            640,
+            185
+          ],
+          "bodyFont": 25,
+          "estimatedHeight": 92,
+          "bodyHeight": 73
+        },
+        {
+          "index": 2,
+          "stage": 2,
+          "rect": [
+            70,
+            245,
+            610,
+            425
+          ],
+          "bodyFont": 31,
+          "estimatedHeight": 153,
+          "bodyHeight": 313
+        },
+        {
+          "index": 3,
+          "stage": 2,
+          "rect": [
+            730,
+            460,
+            640,
+            210
+          ],
+          "bodyFont": 25,
+          "estimatedHeight": 92,
+          "bodyHeight": 98
+        }
+      ]
+    },
+    {
+      "slide": 16,
+      "layout": "save / composition 16",
+      "stages": 2,
+      "blocks": [
+        {
+          "index": 1,
+          "stage": 1,
+          "rect": [
+            70,
+            250,
+            410,
+            380
+          ],
+          "bodyFont": 31,
+          "estimatedHeight": 191,
+          "bodyHeight": 268
+        },
+        {
+          "index": 2,
+          "stage": 2,
+          "rect": [
+            510,
+            285,
+            410,
+            380
+          ],
+          "bodyFont": 31,
+          "estimatedHeight": 229,
+          "bodyHeight": 268
+        },
+        {
+          "index": 3,
+          "stage": 2,
+          "rect": [
+            960,
+            250,
+            410,
+            380
+          ],
+          "bodyFont": 31,
+          "estimatedHeight": 229,
+          "bodyHeight": 268
+        }
+      ]
+    },
+    {
+      "slide": 17,
+      "layout": "exercise / composition 17",
+      "stages": 2,
+      "blocks": [
+        {
+          "index": 1,
+          "stage": 1,
+          "rect": [
+            745,
+            245,
+            625,
+            245
+          ],
+          "bodyFont": 25,
+          "estimatedHeight": 123,
+          "bodyHeight": 133
+        },
+        {
+          "index": 2,
+          "stage": 2,
+          "rect": [
+            70,
+            245,
+            625,
+            245
+          ],
+          "bodyFont": 31,
+          "estimatedHeight": 114,
+          "bodyHeight": 133
+        },
+        {
+          "index": 3,
+          "stage": 2,
+          "rect": [
+            340,
+            525,
+            1030,
+            160
+          ],
+          "bodyFont": 31,
+          "estimatedHeight": 76,
+          "bodyHeight": 88
+        }
+      ]
+    },
+    {
+      "slide": 18,
+      "layout": "recap / composition 18",
+      "stages": 3,
+      "blocks": [
+        {
+          "index": 1,
+          "stage": 1,
+          "rect": [
+            900,
+            280,
+            470,
+            320
+          ],
+          "bodyFont": 31,
+          "estimatedHeight": 76,
+          "bodyHeight": 208
+        },
+        {
+          "index": 2,
+          "stage": 2,
+          "rect": [
+            460,
+            360,
+            400,
+            300
+          ],
+          "bodyFont": 31,
+          "estimatedHeight": 114,
+          "bodyHeight": 188
+        },
+        {
+          "index": 3,
+          "stage": 3,
+          "rect": [
+            70,
+            275,
+            350,
+            320
+          ],
+          "bodyFont": 31,
+          "estimatedHeight": 114,
+          "bodyHeight": 208
+        }
+      ]
+    },
+    {
+      "slide": 19,
+      "layout": "comparison / composition 19",
+      "stages": 3,
+      "blocks": [
+        {
+          "index": 1,
+          "stage": 1,
+          "rect": [
+            840,
+            245,
+            530,
+            310
+          ],
+          "bodyFont": 31,
+          "estimatedHeight": 76,
+          "bodyHeight": 198
+        },
+        {
+          "index": 2,
+          "stage": 2,
+          "rect": [
+            70,
+            285,
+            720,
+            310
+          ],
+          "bodyFont": 31,
+          "estimatedHeight": 114,
+          "bodyHeight": 198
+        },
+        {
+          "index": 3,
+          "stage": 3,
+          "rect": [
+            240,
+            615,
+            1130,
+            85
+          ],
+          "bodyFont": 28,
+          "estimatedHeight": 34,
+          "bodyHeight": 49
+        }
+      ]
+    },
+    {
+      "slide": 20,
+      "layout": "four-questions / composition 20",
+      "stages": 3,
+      "blocks": [
+        {
+          "index": 1,
+          "stage": 1,
+          "rect": [
+            745,
+            245,
+            625,
+            205
+          ],
+          "bodyFont": 31,
+          "estimatedHeight": 38,
+          "bodyHeight": 93
+        },
+        {
+          "index": 2,
+          "stage": 2,
+          "rect": [
+            70,
+            245,
+            625,
+            205
+          ],
+          "bodyFont": 31,
+          "estimatedHeight": 38,
+          "bodyHeight": 93
+        },
+        {
+          "index": 3,
+          "stage": 3,
+          "rect": [
+            745,
+            480,
+            625,
+            205
+          ],
+          "bodyFont": 31,
+          "estimatedHeight": 38,
+          "bodyHeight": 93
+        },
+        {
+          "index": 4,
+          "stage": 3,
+          "rect": [
+            70,
+            480,
+            625,
+            205
+          ],
+          "bodyFont": 31,
+          "estimatedHeight": 76,
+          "bodyHeight": 93
+        }
+      ]
+    },
+    {
+      "slide": 21,
+      "layout": "prompt-build / composition 21",
+      "stages": 3,
+      "blocks": [
+        {
+          "index": 1,
+          "stage": 1,
+          "rect": [
+            590,
+            245,
+            780,
+            120
+          ],
+          "bodyFont": 31,
+          "estimatedHeight": 38,
+          "bodyHeight": 48
+        },
+        {
+          "index": 2,
+          "stage": 2,
+          "rect": [
+            590,
+            385,
+            780,
+            135
+          ],
+          "bodyFont": 25,
+          "estimatedHeight": 62,
+          "bodyHeight": 63
+        },
+        {
+          "index": 3,
+          "stage": 3,
+          "rect": [
+            590,
+            540,
+            780,
+            160
+          ],
+          "bodyFont": 28,
+          "estimatedHeight": 69,
+          "bodyHeight": 88
+        }
+      ]
+    },
+    {
+      "slide": 22,
+      "layout": "conversation / composition 22",
+      "stages": 3,
+      "blocks": [
+        {
+          "index": 1,
+          "stage": 1,
+          "rect": [
+            745,
+            245,
+            625,
+            180
+          ],
+          "bodyFont": 26,
+          "estimatedHeight": 32,
+          "bodyHeight": 68
+        },
+        {
+          "index": 2,
+          "stage": 2,
+          "rect": [
+            70,
+            310,
+            625,
+            180
+          ],
+          "bodyFont": 25,
+          "estimatedHeight": 62,
+          "bodyHeight": 68
+        },
+        {
+          "index": 3,
+          "stage": 3,
+          "rect": [
+            470,
+            525,
+            900,
+            160
+          ],
+          "bodyFont": 31,
+          "estimatedHeight": 38,
+          "bodyHeight": 88
+        }
+      ]
+    },
+    {
+      "slide": 23,
+      "layout": "comparison / composition 23",
+      "stages": 3,
+      "blocks": [
+        {
+          "index": 1,
+          "stage": 1,
+          "rect": [
+            760,
+            250,
+            610,
+            260
+          ],
+          "bodyFont": 31,
+          "estimatedHeight": 114,
+          "bodyHeight": 148
+        },
+        {
+          "index": 2,
+          "stage": 2,
+          "rect": [
+            70,
+            290,
+            640,
+            260
+          ],
+          "bodyFont": 31,
+          "estimatedHeight": 76,
+          "bodyHeight": 148
+        },
+        {
+          "index": 3,
+          "stage": 3,
+          "rect": [
+            400,
+            585,
+            970,
+            105
+          ],
+          "bodyFont": 31,
+          "estimatedHeight": 38,
+          "bodyHeight": 69
+        }
+      ]
+    },
+    {
+      "slide": 24,
+      "layout": "file-reading / composition 24",
+      "stages": 3,
+      "blocks": [
+        {
+          "index": 1,
+          "stage": 1,
+          "rect": [
+            990,
+            245,
+            380,
+            205
+          ],
+          "bodyFont": 25,
+          "estimatedHeight": 92,
+          "bodyHeight": 93
+        },
+        {
+          "index": 2,
+          "stage": 2,
+          "rect": [
+            550,
+            245,
+            400,
+            205
+          ],
+          "bodyFont": 26,
+          "estimatedHeight": 64,
+          "bodyHeight": 93
+        },
+        {
+          "index": 3,
+          "stage": 3,
+          "rect": [
+            110,
+            245,
+            400,
+            205
+          ],
+          "bodyFont": 25,
+          "estimatedHeight": 92,
+          "bodyHeight": 93
+        },
+        {
+          "index": 4,
+          "stage": 3,
+          "rect": [
+            110,
+            480,
+            1260,
+            205
+          ],
+          "bodyFont": 31,
+          "estimatedHeight": 38,
+          "bodyHeight": 93
+        }
+      ]
+    },
+    {
+      "slide": 25,
+      "layout": "practice / composition 25",
+      "stages": 3,
+      "blocks": [
+        {
+          "index": 1,
+          "stage": 1,
+          "rect": [
+            900,
+            255,
+            470,
+            195
+          ],
+          "bodyFont": 30,
+          "estimatedHeight": 74,
+          "bodyHeight": 83
+        },
+        {
+          "index": 2,
+          "stage": 2,
+          "rect": [
+            70,
+            255,
+            780,
+            340
+          ],
+          "bodyFont": 31,
+          "estimatedHeight": 114,
+          "bodyHeight": 228
+        },
+        {
+          "index": 3,
+          "stage": 3,
+          "rect": [
+            900,
+            480,
+            470,
+            195
+          ],
+          "bodyFont": 25,
+          "estimatedHeight": 92,
+          "bodyHeight": 83
+        }
+      ]
+    },
+    {
+      "slide": 26,
+      "layout": "day-close / composition 26",
+      "stages": 3,
+      "blocks": [
+        {
+          "index": 1,
+          "stage": 1,
+          "rect": [
+            570,
+            250,
+            800,
+            120
+          ],
+          "bodyFont": 29,
+          "estimatedHeight": 36,
+          "bodyHeight": 48
+        },
+        {
+          "index": 2,
+          "stage": 2,
+          "rect": [
+            570,
+            390,
+            800,
+            160
+          ],
+          "bodyFont": 31,
+          "estimatedHeight": 76,
+          "bodyHeight": 88
+        },
+        {
+          "index": 3,
+          "stage": 3,
+          "rect": [
+            570,
+            570,
+            800,
+            130
+          ],
+          "bodyFont": 28,
+          "estimatedHeight": 34,
+          "bodyHeight": 58
+        }
+      ]
+    },
+    {
+      "slide": 27,
+      "layout": "day-return / composition 27",
+      "stages": 3,
+      "blocks": [
+        {
+          "index": 1,
+          "stage": 1,
+          "rect": [
+            610,
+            250,
+            760,
+            120
+          ],
+          "bodyFont": 31,
+          "estimatedHeight": 38,
+          "bodyHeight": 48
+        },
+        {
+          "index": 2,
+          "stage": 2,
+          "rect": [
+            610,
+            390,
+            760,
+            120
+          ],
+          "bodyFont": 31,
+          "estimatedHeight": 38,
+          "bodyHeight": 48
+        },
+        {
+          "index": 3,
+          "stage": 3,
+          "rect": [
+            610,
+            530,
+            760,
+            150
+          ],
+          "bodyFont": 30,
+          "estimatedHeight": 37,
+          "bodyHeight": 78
+        }
+      ]
+    },
+    {
+      "slide": 28,
+      "layout": "research-question / composition 28",
+      "stages": 3,
+      "blocks": [
+        {
+          "index": 1,
+          "stage": 1,
+          "rect": [
+            530,
+            250,
+            840,
+            150
+          ],
+          "bodyFont": 29,
+          "estimatedHeight": 36,
+          "bodyHeight": 78
+        },
+        {
+          "index": 2,
+          "stage": 2,
+          "rect": [
+            70,
+            250,
+            410,
+            340
+          ],
+          "bodyFont": 31,
+          "estimatedHeight": 114,
+          "bodyHeight": 228
+        },
+        {
+          "index": 3,
+          "stage": 3,
+          "rect": [
+            530,
+            435,
+            840,
+            240
+          ],
+          "bodyFont": 31,
+          "estimatedHeight": 76,
+          "bodyHeight": 128
+        }
+      ]
+    },
+    {
+      "slide": 29,
+      "layout": "comparison / composition 29",
+      "stages": 3,
+      "blocks": [
+        {
+          "index": 1,
+          "stage": 1,
+          "rect": [
+            960,
+            260,
+            410,
+            280
+          ],
+          "bodyFont": 31,
+          "estimatedHeight": 38,
+          "bodyHeight": 168
+        },
+        {
+          "index": 2,
+          "stage": 2,
+          "rect": [
+            70,
+            260,
+            830,
+            165
+          ],
+          "bodyFont": 31,
+          "estimatedHeight": 76,
+          "bodyHeight": 93
+        },
+        {
+          "index": 3,
+          "stage": 3,
+          "rect": [
+            70,
+            455,
+            830,
+            220
+          ],
+          "bodyFont": 31,
+          "estimatedHeight": 76,
+          "bodyHeight": 108
+        }
+      ]
+    },
+    {
+      "slide": 30,
+      "layout": "source-search / composition 30",
+      "stages": 3,
+      "blocks": [
+        {
+          "index": 1,
+          "stage": 1,
+          "rect": [
+            745,
+            245,
+            625,
+            185
+          ],
+          "bodyFont": 31,
+          "estimatedHeight": 38,
+          "bodyHeight": 73
+        },
+        {
+          "index": 2,
+          "stage": 2,
+          "rect": [
+            70,
+            245,
+            625,
+            185
+          ],
+          "bodyFont": 25,
+          "estimatedHeight": 62,
+          "bodyHeight": 73
+        },
+        {
+          "index": 3,
+          "stage": 3,
+          "rect": [
+            745,
+            455,
+            625,
+            230
+          ],
+          "bodyFont": 31,
+          "estimatedHeight": 76,
+          "bodyHeight": 118
+        },
+        {
+          "index": 4,
+          "stage": 3,
+          "rect": [
+            70,
+            455,
+            625,
+            230
+          ],
+          "bodyFont": 31,
+          "estimatedHeight": 76,
+          "bodyHeight": 118
+        }
+      ]
+    },
+    {
+      "slide": 31,
+      "layout": "source-identity / composition 31",
+      "stages": 3,
+      "blocks": [
+        {
+          "index": 1,
+          "stage": 1,
+          "rect": [
+            860,
+            255,
+            510,
+            370
+          ],
+          "bodyFont": 31,
+          "estimatedHeight": 76,
+          "bodyHeight": 258
+        },
+        {
+          "index": 2,
+          "stage": 2,
+          "rect": [
+            70,
+            255,
+            735,
+            165
+          ],
+          "bodyFont": 31,
+          "estimatedHeight": 38,
+          "bodyHeight": 93
+        },
+        {
+          "index": 3,
+          "stage": 3,
+          "rect": [
+            70,
+            450,
+            735,
+            225
+          ],
+          "bodyFont": 31,
+          "estimatedHeight": 76,
+          "bodyHeight": 113
+        }
+      ]
+    },
+    {
+      "slide": 32,
+      "layout": "quote-summary-analysis / composition 32",
+      "stages": 3,
+      "blocks": [
+        {
+          "index": 1,
+          "stage": 1,
+          "rect": [
+            960,
+            245,
+            410,
+            360
+          ],
+          "bodyFont": 31,
+          "estimatedHeight": 191,
+          "bodyHeight": 248
+        },
+        {
+          "index": 2,
+          "stage": 2,
+          "rect": [
+            515,
+            290,
+            405,
+            360
+          ],
+          "bodyFont": 31,
+          "estimatedHeight": 153,
+          "bodyHeight": 248
+        },
+        {
+          "index": 3,
+          "stage": 3,
+          "rect": [
+            70,
+            335,
+            405,
+            360
+          ],
+          "bodyFont": 31,
+          "estimatedHeight": 153,
+          "bodyHeight": 248
+        }
+      ]
+    },
+    {
+      "slide": 33,
+      "layout": "evidence-card / composition 33",
+      "stages": 3,
+      "blocks": [
+        {
+          "index": 1,
+          "stage": 1,
+          "rect": [
+            745,
+            245,
+            625,
+            205
+          ],
+          "bodyFont": 25,
+          "estimatedHeight": 92,
+          "bodyHeight": 93
+        },
+        {
+          "index": 2,
+          "stage": 2,
+          "rect": [
+            70,
+            245,
+            625,
+            205
+          ],
+          "bodyFont": 25,
+          "estimatedHeight": 92,
+          "bodyHeight": 93
+        },
+        {
+          "index": 3,
+          "stage": 3,
+          "rect": [
+            745,
+            480,
+            625,
+            205
+          ],
+          "bodyFont": 31,
+          "estimatedHeight": 76,
+          "bodyHeight": 93
+        },
+        {
+          "index": 4,
+          "stage": 3,
+          "rect": [
+            70,
+            480,
+            625,
+            205
+          ],
+          "bodyFont": 31,
+          "estimatedHeight": 76,
+          "bodyHeight": 93
+        }
+      ]
+    },
+    {
+      "slide": 34,
+      "layout": "practice / composition 34",
+      "stages": 3,
+      "blocks": [
+        {
+          "index": 1,
+          "stage": 1,
+          "rect": [
+            650,
+            250,
+            720,
+            425
+          ],
+          "bodyFont": 31,
+          "estimatedHeight": 153,
+          "bodyHeight": 313
+        },
+        {
+          "index": 2,
+          "stage": 2,
+          "rect": [
+            70,
+            250,
+            530,
+            190
+          ],
+          "bodyFont": 25,
+          "estimatedHeight": 123,
+          "bodyHeight": 78
+        },
+        {
+          "index": 3,
+          "stage": 3,
+          "rect": [
+            70,
+            470,
+            530,
+            205
+          ],
+          "bodyFont": 25,
+          "estimatedHeight": 92,
+          "bodyHeight": 93
+        }
+      ]
+    },
+    {
+      "slide": 35,
+      "layout": "outline / composition 35",
+      "stages": 3,
+      "blocks": [
+        {
+          "index": 1,
+          "stage": 1,
+          "rect": [
+            70,
+            245,
+            1300,
+            125
+          ],
+          "bodyFont": 31,
+          "estimatedHeight": 38,
+          "bodyHeight": 53
+        },
+        {
+          "index": 2,
+          "stage": 2,
+          "rect": [
+            745,
+            395,
+            625,
+            190
+          ],
+          "bodyFont": 25,
+          "estimatedHeight": 92,
+          "bodyHeight": 58
+        },
+        {
+          "index": 3,
+          "stage": 3,
+          "rect": [
+            70,
+            395,
+            625,
+            190
+          ],
+          "bodyFont": 25,
+          "estimatedHeight": 92,
+          "bodyHeight": 58
+        },
+        {
+          "index": 4,
+          "stage": 3,
+          "rect": [
+            70,
+            610,
+            1300,
+            90
+          ],
+          "bodyFont": 31,
+          "estimatedHeight": 38,
+          "bodyHeight": 54
+        }
+      ]
+    },
+    {
+      "slide": 36,
+      "layout": "paragraph / composition 36",
+      "stages": 2,
+      "blocks": [
+        {
+          "index": 1,
+          "stage": 1,
+          "rect": [
+            100,
+            245,
+            1240,
+            310
+          ],
+          "bodyFont": 30,
+          "estimatedHeight": 185,
+          "bodyHeight": 198
+        },
+        {
+          "index": 2,
+          "stage": 2,
+          "rect": [
+            360,
+            590,
+            980,
+            110
+          ],
+          "bodyFont": 26,
+          "estimatedHeight": 64,
+          "bodyHeight": 74
+        }
+      ]
+    },
+    {
+      "slide": 37,
+      "layout": "paragraph-map / composition 37",
+      "stages": 3,
+      "blocks": [
+        {
+          "index": 1,
+          "stage": 1,
+          "rect": [
+            900,
+            260,
+            470,
+            280
+          ],
+          "bodyFont": 31,
+          "estimatedHeight": 76,
+          "bodyHeight": 168
+        },
+        {
+          "index": 2,
+          "stage": 2,
+          "rect": [
+            70,
+            260,
+            770,
+            180
+          ],
+          "bodyFont": 25,
+          "estimatedHeight": 62,
+          "bodyHeight": 68
+        },
+        {
+          "index": 3,
+          "stage": 3,
+          "rect": [
+            70,
+            470,
+            770,
+            220
+          ],
+          "bodyFont": 27,
+          "estimatedHeight": 100,
+          "bodyHeight": 108
+        }
+      ]
+    },
+    {
+      "slide": 38,
+      "layout": "writing-prompt / composition 38",
+      "stages": 2,
+      "blocks": [
+        {
+          "index": 1,
+          "stage": 1,
+          "rect": [
+            470,
+            245,
+            900,
+            440
+          ],
+          "bodyFont": 31,
+          "estimatedHeight": 229,
+          "bodyHeight": 328
+        },
+        {
+          "index": 2,
+          "stage": 2,
+          "rect": [
+            70,
+            335,
+            350,
+            345
+          ],
+          "bodyFont": 31,
+          "estimatedHeight": 153,
+          "bodyHeight": 233
+        }
+      ]
+    },
+    {
+      "slide": 39,
+      "layout": "review-example / composition 39",
+      "stages": 2,
+      "blocks": [
+        {
+          "index": 1,
+          "stage": 1,
+          "rect": [
+            160,
+            260,
+            1210,
+            240
+          ],
+          "bodyFont": 31,
+          "estimatedHeight": 76,
+          "bodyHeight": 128
+        },
+        {
+          "index": 2,
+          "stage": 2,
+          "rect": [
+            70,
+            535,
+            1080,
+            150
+          ],
+          "bodyFont": 28,
+          "estimatedHeight": 69,
+          "bodyHeight": 78
+        }
+      ]
+    },
+    {
+      "slide": 40,
+      "layout": "scope-correction / composition 40",
+      "stages": 3,
+      "blocks": [
+        {
+          "index": 1,
+          "stage": 1,
+          "rect": [
+            745,
+            250,
+            625,
+            160
+          ],
+          "bodyFont": 31,
+          "estimatedHeight": 76,
+          "bodyHeight": 88
+        },
+        {
+          "index": 2,
+          "stage": 2,
+          "rect": [
+            70,
+            250,
+            625,
+            240
+          ],
+          "bodyFont": 31,
+          "estimatedHeight": 76,
+          "bodyHeight": 128
+        },
+        {
+          "index": 3,
+          "stage": 3,
+          "rect": [
+            745,
+            440,
+            625,
+            255
+          ],
+          "bodyFont": 28,
+          "estimatedHeight": 103,
+          "bodyHeight": 143
+        }
+      ]
+    },
+    {
+      "slide": 41,
+      "layout": "critique-prompt / composition 41",
+      "stages": 2,
+      "blocks": [
+        {
+          "index": 1,
+          "stage": 1,
+          "rect": [
+            590,
+            245,
+            780,
+            300
+          ],
+          "bodyFont": 31,
+          "estimatedHeight": 153,
+          "bodyHeight": 188
+        },
+        {
+          "index": 2,
+          "stage": 2,
+          "rect": [
+            590,
+            575,
+            780,
+            125
+          ],
+          "bodyFont": 25,
+          "estimatedHeight": 62,
+          "bodyHeight": 53
+        }
+      ]
+    },
+    {
+      "slide": 42,
+      "layout": "critique-decisions / composition 42",
+      "stages": 3,
+      "blocks": [
+        {
+          "index": 1,
+          "stage": 1,
+          "rect": [
+            960,
+            255,
+            410,
+            350
+          ],
+          "bodyFont": 31,
+          "estimatedHeight": 153,
+          "bodyHeight": 238
+        },
+        {
+          "index": 2,
+          "stage": 2,
+          "rect": [
+            515,
+            300,
+            405,
+            350
+          ],
+          "bodyFont": 31,
+          "estimatedHeight": 153,
+          "bodyHeight": 238
+        },
+        {
+          "index": 3,
+          "stage": 3,
+          "rect": [
+            70,
+            255,
+            405,
+            350
+          ],
+          "bodyFont": 31,
+          "estimatedHeight": 153,
+          "bodyHeight": 238
+        }
+      ]
+    },
+    {
+      "slide": 43,
+      "layout": "meaning-edit / composition 43",
+      "stages": 2,
+      "blocks": [
+        {
+          "index": 1,
+          "stage": 1,
+          "rect": [
+            745,
+            245,
+            625,
+            175
+          ],
+          "bodyFont": 31,
+          "estimatedHeight": 76,
+          "bodyHeight": 103
+        },
+        {
+          "index": 2,
+          "stage": 2,
+          "rect": [
+            70,
+            290,
+            625,
+            220
+          ],
+          "bodyFont": 31,
+          "estimatedHeight": 76,
+          "bodyHeight": 108
+        },
+        {
+          "index": 3,
+          "stage": 2,
+          "rect": [
+            745,
+            450,
+            625,
+            235
+          ],
+          "bodyFont": 31,
+          "estimatedHeight": 76,
+          "bodyHeight": 123
+        }
+      ]
+    },
+    {
+      "slide": 44,
+      "layout": "writing-practice / composition 44",
+      "stages": 2,
+      "blocks": [
+        {
+          "index": 1,
+          "stage": 1,
+          "rect": [
+            745,
+            245,
+            625,
+            280
+          ],
+          "bodyFont": 26,
+          "estimatedHeight": 160,
+          "bodyHeight": 168
+        },
+        {
+          "index": 2,
+          "stage": 2,
+          "rect": [
+            70,
+            245,
+            625,
+            280
+          ],
+          "bodyFont": 29,
+          "estimatedHeight": 143,
+          "bodyHeight": 168
+        },
+        {
+          "index": 3,
+          "stage": 2,
+          "rect": [
+            300,
+            560,
+            1070,
+            140
+          ],
+          "bodyFont": 28,
+          "estimatedHeight": 34,
+          "bodyHeight": 68
+        }
+      ]
+    },
+    {
+      "slide": 45,
+      "layout": "openturath / composition 45",
+      "stages": 2,
+      "blocks": [
+        {
+          "index": 1,
+          "stage": 1,
+          "rect": [
+            650,
+            245,
+            720,
+            140
+          ],
+          "bodyFont": 25,
+          "estimatedHeight": 62,
+          "bodyHeight": 68
+        },
+        {
+          "index": 2,
+          "stage": 2,
+          "rect": [
+            650,
+            410,
+            720,
+            140
+          ],
+          "bodyFont": 25,
+          "estimatedHeight": 62,
+          "bodyHeight": 68
+        },
+        {
+          "index": 3,
+          "stage": 2,
+          "rect": [
+            650,
+            575,
+            720,
+            125
+          ],
+          "bodyFont": 25,
+          "estimatedHeight": 62,
+          "bodyHeight": 53
+        }
+      ]
+    },
+    {
+      "slide": 46,
+      "layout": "demo / composition 46",
+      "stages": 3,
+      "blocks": [
+        {
+          "index": 1,
+          "stage": 1,
+          "rect": [
+            600,
+            245,
+            770,
+            280
+          ],
+          "bodyFont": 26,
+          "estimatedHeight": 160,
+          "bodyHeight": 168
+        },
+        {
+          "index": 2,
+          "stage": 2,
+          "rect": [
+            70,
+            245,
+            480,
+            240
+          ],
+          "bodyFont": 31,
+          "estimatedHeight": 114,
+          "bodyHeight": 128
+        },
+        {
+          "index": 3,
+          "stage": 3,
+          "rect": [
+            70,
+            520,
+            480,
+            170
+          ],
+          "bodyFont": 31,
+          "estimatedHeight": 76,
+          "bodyHeight": 98
+        }
+      ]
+    },
+    {
+      "slide": 47,
+      "layout": "recovery / composition 47",
+      "stages": 3,
+      "blocks": [
+        {
+          "index": 1,
+          "stage": 1,
+          "rect": [
+            890,
+            260,
+            480,
+            365
+          ],
+          "bodyFont": 31,
+          "estimatedHeight": 153,
+          "bodyHeight": 253
+        },
+        {
+          "index": 2,
+          "stage": 2,
+          "rect": [
+            70,
+            260,
+            760,
+            180
+          ],
+          "bodyFont": 25,
+          "estimatedHeight": 62,
+          "bodyHeight": 68
+        },
+        {
+          "index": 3,
+          "stage": 3,
+          "rect": [
+            70,
+            470,
+            760,
+            220
+          ],
+          "bodyFont": 31,
+          "estimatedHeight": 76,
+          "bodyHeight": 108
+        }
+      ]
+    },
+    {
+      "slide": 48,
+      "layout": "assessment / composition 48",
+      "stages": 2,
+      "blocks": [
+        {
+          "index": 1,
+          "stage": 1,
+          "rect": [
+            690,
+            245,
+            680,
+            350
+          ],
+          "bodyFont": 31,
+          "estimatedHeight": 229,
+          "bodyHeight": 238
+        },
+        {
+          "index": 2,
+          "stage": 2,
+          "rect": [
+            70,
+            245,
+            570,
+            280
+          ],
+          "bodyFont": 31,
+          "estimatedHeight": 153,
+          "bodyHeight": 168
+        },
+        {
+          "index": 3,
+          "stage": 2,
+          "rect": [
+            70,
+            555,
+            570,
+            140
+          ],
+          "bodyFont": 25,
+          "estimatedHeight": 62,
+          "bodyHeight": 68
+        }
+      ]
+    },
+    {
+      "slide": 49,
+      "layout": "assessment-review / composition 49",
+      "stages": 2,
+      "blocks": [
+        {
+          "index": 1,
+          "stage": 1,
+          "rect": [
+            745,
+            250,
+            625,
+            250
+          ],
+          "bodyFont": 31,
+          "estimatedHeight": 114,
+          "bodyHeight": 138
+        },
+        {
+          "index": 2,
+          "stage": 2,
+          "rect": [
+            70,
+            310,
+            625,
+            190
+          ],
+          "bodyFont": 28,
+          "estimatedHeight": 34,
+          "bodyHeight": 78
+        },
+        {
+          "index": 3,
+          "stage": 2,
+          "rect": [
+            745,
+            530,
+            625,
+            160
+          ],
+          "bodyFont": 30,
+          "estimatedHeight": 74,
+          "bodyHeight": 88
+        }
+      ]
+    },
+    {
+      "slide": 50,
+      "layout": "transfer / composition 50",
+      "stages": 2,
+      "blocks": [
+        {
+          "index": 1,
+          "stage": 1,
+          "rect": [
+            960,
+            250,
+            410,
+            330
+          ],
+          "bodyFont": 31,
+          "estimatedHeight": 114,
+          "bodyHeight": 218
+        },
+        {
+          "index": 2,
+          "stage": 2,
+          "rect": [
+            515,
+            290,
+            405,
+            330
+          ],
+          "bodyFont": 31,
+          "estimatedHeight": 114,
+          "bodyHeight": 218
+        },
+        {
+          "index": 3,
+          "stage": 2,
+          "rect": [
+            70,
+            330,
+            405,
+            330
+          ],
+          "bodyFont": 31,
+          "estimatedHeight": 153,
+          "bodyHeight": 218
+        }
+      ]
+    },
+    {
+      "slide": 51,
+      "layout": "self-check / composition 51",
+      "stages": 2,
+      "blocks": [
+        {
+          "index": 1,
+          "stage": 1,
+          "rect": [
+            830,
+            245,
+            540,
+            420
+          ],
+          "bodyFont": 31,
+          "estimatedHeight": 114,
+          "bodyHeight": 308
+        },
+        {
+          "index": 2,
+          "stage": 2,
+          "rect": [
+            70,
+            245,
+            710,
+            195
+          ],
+          "bodyFont": 30,
+          "estimatedHeight": 74,
+          "bodyHeight": 83
+        },
+        {
+          "index": 3,
+          "stage": 2,
+          "rect": [
+            70,
+            475,
+            710,
+            195
+          ],
+          "bodyFont": 30,
+          "estimatedHeight": 74,
+          "bodyHeight": 83
+        }
+      ]
+    },
+    {
+      "slide": 52,
+      "layout": "closing / composition 52",
+      "stages": 3,
+      "blocks": [
+        {
+          "index": 1,
+          "stage": 1,
+          "rect": [
+            610,
+            245,
+            760,
+            130
+          ],
+          "bodyFont": 28,
+          "estimatedHeight": 34,
+          "bodyHeight": 58
+        },
+        {
+          "index": 2,
+          "stage": 2,
+          "rect": [
+            610,
+            400,
+            760,
+            130
+          ],
+          "bodyFont": 28,
+          "estimatedHeight": 34,
+          "bodyHeight": 58
+        },
+        {
+          "index": 3,
+          "stage": 3,
+          "rect": [
+            610,
+            555,
+            760,
+            145
+          ],
+          "bodyFont": 26,
+          "estimatedHeight": 64,
+          "bodyHeight": 73
+        }
+      ]
+    }
+  ]
+}

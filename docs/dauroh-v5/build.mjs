@@ -32,7 +32,7 @@ function block(s,d,i,rect,opts={}){
  const size=fit(b.text,bodyW,bodyH,opts.size||31,opts.min||25);
  T(s,n+'-label',b.label,compact?x+w-205:x+pad,y+pad,compact?185:w-2*pad,compact?h-30:labelH,h<180?23:27,fg,true);
  T(s,n+'-text',b.text,bodyX,bodyY,bodyW,bodyH,size,fg);
- report.at(-1).blocks.push({index:i+1,stage:g,rect,bodyFont:size,estimatedHeight:Math.round(estimate(b.text,size,w-pad*2)),bodyHeight:Math.round(bodyH)});
+ report.at(-1).blocks.push({index:i+1,stage:g,rect,bodyFont:size,estimatedHeight:Math.round(estimate(b.text,size,bodyW)),bodyHeight:Math.round(bodyH)});
  return n;
 }
 function arrow(s,g,x,y,w=55){s.shapes.add({name:'b'+g+'-arrow-'+x+'-'+y,geometry:'leftArrow',position:{left:x,top:y,width:w,height:26},fill:C.light,line:{fill:'none',width:0}});}
@@ -115,7 +115,8 @@ for(const d of data){
   if(d.id===45){P(s,'b1-logo-surface',70,270,510,400,C.dark,38);s.images.add({blob:new Uint8Array(await fs.readFile(A+'/openturath_light.png')),contentType:'image/png',fit:'contain',position:{left:150,top:315,width:350,height:300},alt:'شعار أوبن تراث'});}
   const rr=rects[d.id];if(!rr||rr.length!==d.blocks.length)throw Error('Missing composition '+d.id);
   d.blocks.forEach((b,i)=>block(s,d,i,rr[i],{dark:([4,8,10,21,26,27,41,45,52].includes(d.id)?i>0:undefined),size:d.id===36?32:31,min:25}));
-  if([11,12,19,32,37,40,43].includes(d.id))arrow(s,Math.min(2,d.notes.length),695,390,45);
+  const arrows={11:[[704,410]],12:[[832,390]],19:[[798,390]],32:[[927,400],[482,450]],37:[[850,390]],40:[[704,390]],43:[[704,420]]};
+  for(const [x,y] of arrows[d.id]||[])arrow(s,Math.min(2,d.notes.length),x,y,34);
   if(d.takeaway){const n='b'+d.notes.length+'-takeaway';P(s,n+'-panel',70,719,1300,45,dark?C.gray:'#E4E4E7',20,false);T(s,n+'-text',d.takeaway,92,728,1256,34,21,dark?C.paper:C.gray);}
  }
  const notes=d.notes.map(n=>n.cue+'\n'+n.say).join('\n\n');
