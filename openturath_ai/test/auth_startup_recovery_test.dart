@@ -732,23 +732,30 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('late public availability updates without exposing stale identity',
+  testWidgets('late availability survives session restoration without exposing stale identity',
       (tester) async {
     final auth = DashboardAuth()..cached = profile('stale');
     final pending = Completer<Set<String>?>();
     final service = AgentService(activeIdsLoader: () => pending.future);
     await tester.pumpWidget(MaterialApp(
         home: DashboardScreen(authService: auth, agentService: service)));
-    await tester.enterText(find.byType(TextField), 'Hanafi');
     await tester.pump(const Duration(seconds: 4));
-    SpecialistCard card() =>
-        tester.widget<SpecialistCard>(find.byType(SpecialistCard).first);
-    expect(card().isLocked, isTrue);
     expect(find.text('Cached stale'), findsNothing);
+    expect(AgentService.getActiveAgentsSync()
+        .firstWhere((a) => a.id == 'fiqh_hanafi').isActive, isFalse);
     pending.complete({'fiqh_syafii', 'fiqh_hanafi'});
     await tester.pump();
-    expect(card().isLocked, isFalse);
+    expect(AgentService.getActiveAgentsSync()
+        .firstWhere((a) => a.id == 'fiqh_hanafi').isActive, isTrue);
     expect(find.text('Cached stale'), findsNothing);
+    auth.user = TestUser('stale');
+    tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
+    await tester.pump();
+    await tester.pump();
+    await tester.enterText(find.byType(TextField), 'Hanafi');
+    await tester.pump();
+    final card = tester.widget<SpecialistCard>(find.byType(SpecialistCard).first);
+    expect(card.isLocked, isFalse);
     await tester.pumpWidget(const SizedBox());
     await auth.events.close();
     await tester.pump(const Duration(seconds: 16));
