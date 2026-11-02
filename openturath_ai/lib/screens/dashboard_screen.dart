@@ -96,7 +96,7 @@ class _DashboardScreenState extends State<DashboardScreen>
     // Aplikasi yang dibiarkan terbuka berhari-hari tetap menemukan rilis baru.
     if (state == AppLifecycleState.resumed) {
       _updateService.checkForUpdatesSilently();
-      unawaited(_loadData());
+      unawaited(_loadData(true));
     }
   }
 
