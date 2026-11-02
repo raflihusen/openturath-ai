@@ -70,6 +70,14 @@ jobs:
         with:
           cmakeVersion: '3.31.6'
 
+      - name: Fix Firebase C++ SDK CMake policy for modern CMake
+        shell: pwsh
+        run: |
+          [Environment]::SetEnvironmentVariable("CMAKE_POLICY_VERSION_MINIMUM", "3.5", "Machine")
+          [Environment]::SetEnvironmentVariable("CMAKE_POLICY_VERSION_MINIMUM", "3.5", "Process")
+          [Environment]::SetEnvironmentVariable("CMAKE_POLICY_VERSION_MINIMUM", "3.5", "User")
+          echo "CMAKE_POLICY_VERSION_MINIMUM=3.5" >> $env:GITHUB_ENV
+
       - name: Enable Windows Desktop
         run: flutter config --enable-windows-desktop
 
@@ -79,9 +87,11 @@ jobs:
           flutter pub get --enforce-lockfile
 
       - name: Build Windows Release
+        env:
+          CMAKE_POLICY_VERSION_MINIMUM: "3.5"
         run: |
           cd openturath_ai
-          flutter build windows --release
+          flutter build windows --release --dart-define=CMAKE_POLICY_VERSION_MINIMUM=3.5
 
       - name: Compress Windows Release Bundle
         shell: pwsh
