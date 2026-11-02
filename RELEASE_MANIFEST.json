@@ -29,8 +29,8 @@
   "windows": {
     "installer": {
       "fileName": "OpenTurath_AI_Windows_Setup.exe",
-      "sha256": "ef507cb3186d2d9d45103af124cd2ac49f1aa65bd2a823fa542e1cb54314dcb3",
-      "fileSizeBytes": 55671503,
+      "sha256": "624d21e684b62631786f854c11bd9e443470570df10d842b1534d5ecece2fb8b",
+      "fileSizeBytes": 55672559,
       "fileSizeMb": "53.09 MB",
       "type": "Standalone Flutter UI + Inno Setup Engine"
     },
