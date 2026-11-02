@@ -185,17 +185,40 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("source", type=Path)
     parser.add_argument("target", type=Path)
-    parser.add_argument("manifest", type=Path)
+    parser.add_argument("manifest", type=Path, nargs="?",
+                        help="Optional explicit manifest; otherwise use chrome-* and b1-* through b4-*")
     parser.add_argument("--require-all", action="store_true")
     parser.add_argument("--report", type=Path)
     args = parser.parse_args()
     if args.source.resolve() == args.target.resolve():
         raise ValueError("Source and target paths must differ")
-    specs = {int(s["slide"]): s for s in json.loads(args.manifest.read_text())["slides"]}
+    specs = ({int(s["slide"]): s for s in json.loads(args.manifest.read_text())["slides"]}
+             if args.manifest else {})
     reports = []
     with ZipFile(args.source) as source, ZipFile(args.target, "w") as target:
         slide_numbers = {int(re.fullmatch(r"ppt/slides/slide(\d+)\.xml", n).group(1))
                          for n in source.namelist() if re.fullmatch(r"ppt/slides/slide\d+\.xml", n)}
+        if not args.manifest:
+            for number in sorted(slide_numbers):
+                root = ET.fromstring(source.read(f"ppt/slides/slide{number}.xml"))
+                names = [shape["name"] for shape in named_shapes(root)]
+                present = lambda prefix: any(fnmatch.fnmatchcase(n, prefix) for n in names)
+                intro = []
+                if present("chrome-*"):
+                    intro.append({"targets": ["chrome-*"], "effect": "fade", "durationMs": 320})
+                if not present("b1-*"):
+                    raise ValueError(f"Slide {number} needs at least one b1-* object")
+                intro.append({"targets": ["b1-*"], "effect": "floatUp", "durationMs": 500,
+                              "delayMs": 90})
+                stages = [{"trigger": "auto", "effects": intro}]
+                variants = ["floatLeft", "fade", "floatUp", "floatRight"]
+                for block in range(2, 5):
+                    if present(f"b{block}-*"):
+                        stages.append({"trigger": "click", "effects": [{
+                            "targets": [f"b{block}-*"],
+                            "effect": variants[(number + block) % len(variants)],
+                            "durationMs": 420 if block % 2 == 0 else 500}]})
+                specs[number] = {"slide": number, "stages": stages}
         if not set(specs) <= slide_numbers:
             raise ValueError("Manifest references a missing slide")
         if args.require_all and set(specs) != slide_numbers:
