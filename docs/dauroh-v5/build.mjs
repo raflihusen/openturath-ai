@@ -23,13 +23,15 @@ function fit(v,w,h,max=31,min=25){let f=max;while(f>min&&estimate(v,f,w)>h-8)f-=
 function block(s,d,i,rect,opts={}){
  const b=d.blocks[i],g=Math.min(i+1,d.notes.length),n='b'+g+'-block'+(i+1),[x,y,w,h]=rect;
  const dark=opts.dark??(i===0&&!darkSlides.has(d.id)&&!['source','reference'].includes(b.role));
- const fill=opts.fill||(dark?C.dark:C.paper),fg=dark?C.paper:C.ink,pad=h<165?23:30;
+ const fill=opts.fill||(dark?C.dark:C.paper),fg=dark?C.paper:C.ink,pad=h<180?18:30;
  P(s,n+'-panel',x,y,w,h,fill,opts.radius||28);
- const labelH=b.label.length>31?62:42;
- const bodyY=y+pad+labelH+10,bodyH=y+h-pad-bodyY;
- const size=fit(b.text,w-pad*2,bodyH,opts.size||31,opts.min||25);
- T(s,n+'-label',b.label,x+pad,y+pad,w-2*pad,labelH,h<170?24:27,fg,true);
- T(s,n+'-text',b.text,x+pad,bodyY,w-2*pad,bodyH,size,fg);
+ const labelH=h<180?30:b.label.length>31?62:42;
+ const compact=h<=115&&w>850;
+ const bodyY=compact?y+18:y+pad+labelH+(h<180?6:10),bodyH=compact?h-36:y+h-pad-bodyY;
+ const bodyX=compact?x+pad:x+pad,bodyW=compact?w-240:w-2*pad;
+ const size=fit(b.text,bodyW,bodyH,opts.size||31,opts.min||25);
+ T(s,n+'-label',b.label,compact?x+w-205:x+pad,y+pad,compact?185:w-2*pad,compact?h-30:labelH,h<180?23:27,fg,true);
+ T(s,n+'-text',b.text,bodyX,bodyY,bodyW,bodyH,size,fg);
  report.at(-1).blocks.push({index:i+1,stage:g,rect,bodyFont:size,estimatedHeight:Math.round(estimate(b.text,size,w-pad*2)),bodyHeight:Math.round(bodyH)});
  return n;
 }
@@ -52,7 +54,7 @@ const rects={
 16:[[70,250,410,380],[510,285,410,380],[960,250,410,380]],
 17:[[745,245,625,245],[70,245,625,245],[340,525,1030,160]],
 18:[[900,280,470,320],[460,360,400,300],[70,275,350,320]],
-19:[[840,260,530,340],[70,300,720,340],[240,655,1130,45]],
+19:[[840,245,530,310],[70,285,720,310],[240,615,1130,85]],
 20:[[745,245,625,205],[70,245,625,205],[745,480,625,205],[70,480,625,205]],
 21:[[590,245,780,120],[590,385,780,135],[590,540,780,160]],
 22:[[745,245,625,180],[70,310,625,180],[470,525,900,160]],
