@@ -109,6 +109,15 @@ def main():
                     manifest_data["dmg"]["sha256"] = h_dmg.hexdigest()
                     manifest_data["dmg"]["fileSizeBytes"] = root_dmg.stat().st_size
                     manifest_data["dmg"]["fileSizeMb"] = f"{root_dmg.stat().st_size / (1024*1024):.2f} MB"
+            if root_win_setup.exists():
+                h_win = hashlib.sha256()
+                with open(root_win_setup, "rb") as wfh:
+                    while chunk := wfh.read(65536):
+                        h_win.update(chunk)
+                if "windows" in manifest_data and "installer" in manifest_data["windows"]:
+                    manifest_data["windows"]["installer"]["sha256"] = h_win.hexdigest()
+                    manifest_data["windows"]["installer"]["fileSizeBytes"] = root_win_setup.stat().st_size
+                    manifest_data["windows"]["installer"]["fileSizeMb"] = f"{root_win_setup.stat().st_size / (1024*1024):.2f} MB"
         else:
             manifest_data = {
                 "version": "1.0.83",
