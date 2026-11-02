@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:openturath_ai/core/product_pricing.dart';
 import 'package:openturath_ai/models/agent_model.dart';
@@ -5,6 +7,41 @@ import 'package:openturath_ai/services/agent_service.dart';
 
 void main() {
   group('OTA Dynamic Locking & Pricing Tests', () {
+    setUp(AgentService.resetCacheForTest);
+    tearDown(AgentService.resetCacheForTest);
+    testWidgets('late server result updates the cached availability',
+        (tester) async {
+      final pending = Completer<Set<String>?>();
+      final service = AgentService(activeIdsLoader: () => pending.future);
+      final revision = AgentService.availabilityRevision.value;
+      List<AgentModel>? initial;
+      service.getAgents().then((value) => initial = value);
+      await tester.pump(const Duration(seconds: 4));
+      expect(initial!.firstWhere((a) => a.id == 'fiqh_hanafi').isActive, isFalse);
+      pending.complete({'fiqh_syafii', 'fiqh_hanafi'});
+      await tester.pump();
+      expect(AgentService.getActiveAgentsSync()
+          .firstWhere((a) => a.id == 'fiqh_hanafi').isActive, isTrue);
+      expect(AgentService.availabilityRevision.value, revision + 1);
+    });
+
+    testWidgets('older late responses cannot replace newer availability',
+        (tester) async {
+      final first = Completer<Set<String>?>();
+      final second = Completer<Set<String>?>();
+      var calls = 0;
+      final service = AgentService(
+          activeIdsLoader: () => calls++ == 0 ? first.future : second.future);
+      service.getAgents(forceRefresh: true);
+      service.getAgents(forceRefresh: true);
+      second.complete({'fiqh_syafii', 'fiqh_hanafi'});
+      await tester.pump();
+      first.complete({'fiqh_syafii'});
+      await tester.pump();
+      expect(AgentService.getActiveAgentsSync()
+          .firstWhere((a) => a.id == 'fiqh_hanafi').isActive, isTrue);
+    });
+
     test('AgentModel copyWith preserves fields and updates status', () {
       final syafii =
           AgentModel.defaultAgents.firstWhere((a) => a.id == 'fiqh_syafii');
