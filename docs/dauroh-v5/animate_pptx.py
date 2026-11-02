@@ -57,6 +57,8 @@ def named_shapes(root):
     result = []
     for item in root.findall(".//p:cNvPr", NS):
         shape = item.getparent().getparent()
+        if shape.tag == f"{{{P}}}pic" and not item.get("name", "").strip():
+            item.set("name", "art-" + item.get("id"))
         result.append({"id": item.get("id"), "name": item.get("name", ""),
                        "text": shape.find("p:txBody", NS) is not None})
     return result
