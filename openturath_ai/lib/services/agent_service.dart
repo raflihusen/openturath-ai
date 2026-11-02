@@ -3,19 +3,36 @@ import '../core/app_config.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_functions/cloud_functions.dart';
+import 'package:flutter/foundation.dart';
 import '../core/notebook_navigation.dart';
 import '../models/agent_model.dart';
 import 'callable_gateway.dart';
 import '../core/constants.dart';
 
 class AgentService {
-  AgentService({CallableGateway? functions})
-      : _functions = functions ?? const CallableGateway();
+  AgentService({
+    CallableGateway? functions,
+    @visibleForTesting Future<Set<String>?> Function()? activeIdsLoader,
+  })  : _functions = functions ?? const CallableGateway(),
+        _activeIdsLoader = activeIdsLoader;
 
   final CallableGateway _functions;
+  final Future<Set<String>?> Function()? _activeIdsLoader;
 
   static Set<String>? _cachedActiveIds;
   static DateTime? _lastAgentsFetch;
+  static int _requestGeneration = 0;
+
+  /// Memberi tahu layar ketika daftar yang berhasil dibaca berubah.
+  static final ValueNotifier<int> availabilityRevision = ValueNotifier<int>(0);
+
+  @visibleForTesting
+  static void resetCacheForTest() {
+    _requestGeneration++;
+    _cachedActiveIds = null;
+    _lastAgentsFetch = null;
+  }
+
 
   /// Whitelist peluncuran perdana bawaan: Hanya Fikih Tahawwulat & Fikih Syafi'i (dan subagennya).
   static const defaultLaunchActiveIds = <String>{
@@ -62,44 +79,48 @@ class AgentService {
     bool forceRefresh = false,
     FirebaseFirestore? firestore,
   }) async {
-    final baseAgents = AgentModel.defaultAgents;
-    Set<String> activeIds = _cachedActiveIds ?? defaultLaunchActiveIds;
     final now = DateTime.now();
-
     final shouldFetch = forceRefresh ||
         _cachedActiveIds == null ||
         _lastAgentsFetch == null ||
         now.difference(_lastAgentsFetch!).inSeconds >= 60;
 
     if (shouldFetch) {
-      try {
-        final db = firestore ??
-            (Firebase.apps.isNotEmpty ? FirebaseFirestore.instance : null);
-        if (db != null) {
-          final doc = await db
-              .collection('app_config')
-              .doc('agents')
-              .get(const GetOptions(source: Source.serverAndCache))
-              .timeout(const Duration(seconds: 3));
-
-          if (doc.exists && doc.data() != null) {
-            final raw = doc.data()!['active_agent_ids'];
-            if (raw is List) {
-              final list = List<String>.from(raw.whereType<String>());
-              if (list.isNotEmpty) {
-                activeIds = list.toSet();
-                _cachedActiveIds = activeIds;
-                _lastAgentsFetch = now;
-              }
-            }
+      final generation = ++_requestGeneration;
+      Future<void> refresh() async {
+        try {
+          Set<String>? ids;
+          if (_activeIdsLoader != null) {
+            ids = await _activeIdsLoader();
+          } else {
+            final db = firestore ??
+                (Firebase.apps.isNotEmpty ? FirebaseFirestore.instance : null);
+            if (db == null) return;
+            final doc = await db
+                .collection('app_config')
+                .doc('agents')
+                .get(const GetOptions(source: Source.serverAndCache));
+            final raw = doc.data()?['active_agent_ids'];
+            if (doc.exists && raw is List) ids = raw.whereType<String>().toSet();
           }
+          if (generation != _requestGeneration || ids == null || ids.isEmpty) {
+            return;
+          }
+          final changed = !setEquals(_cachedActiveIds, ids);
+          _cachedActiveIds = Set<String>.unmodifiable(ids);
+          _lastAgentsFetch = DateTime.now();
+          if (changed) availabilityRevision.value++;
+        } catch (_) {
+          // Pertahankan daftar terakhir bila pembacaan gagal.
         }
-      } catch (_) {
-        // Fail-safe: Tetap gunakan activeIds (default launch whitelist / cached)
       }
+
+      // Timeout membatasi tunggu layar, bukan membuang hasil Firestore yang
+      // terlambat. Bila berhasil belakangan, notifier memperbarui layar.
+      await refresh().timeout(const Duration(seconds: 3), onTimeout: () {});
     }
 
-    return _applyActiveStatus(baseAgents, activeIds);
+    return getActiveAgentsSync();
   }
 
   static final _notebookPath = RegExp(
