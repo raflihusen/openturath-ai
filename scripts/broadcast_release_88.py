@@ -70,7 +70,7 @@ def broadcast_all(dry_run=False):
         "updated_at",
     ]
 
-    # 2. Payload Desktop Platforms (macOS & Windows)
+    # 2. Payload Desktop Platform (hanya macOS yang memiliki biner build 88 terbaru)
     desktop_payload = {
         "fields": {
             "platforms": {
@@ -86,25 +86,13 @@ def broadcast_all(dry_run=False):
                                     "notes": {"stringValue": notes},
                                 }
                             }
-                        },
-                        "windows": {
-                            "mapValue": {
-                                "fields": {
-                                    "build": {"integerValue": "88"},
-                                    "version": {"stringValue": "1.0.87"},
-                                    "url": {"stringValue": "https://openturath.web.app/OpenTurath_AI_Windows_Setup.exe"},
-                                    "sha256": {"stringValue": "00826441e7829e9acae9778d99c97bb8a08d516cd4e23e0881988f0c5190478f"},
-                                    "notes": {"stringValue": notes},
-                                    "installer_protocol": {"integerValue": "1"}
-                                }
-                            }
                         }
                     }
                 }
             }
         }
     }
-    desktop_mask = ["platforms.macos", "platforms.windows"]
+    desktop_mask = ["platforms.macos"]
 
     print("=== BROADCAST RILIS v1.0.87+88 ===")
     print(f"Target Dokumen : app_config/version")
