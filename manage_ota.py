@@ -38,8 +38,41 @@ PROJECT_ID = "open-turath"
 BASE_FIRESTORE_URL = f"https://firestore.googleapis.com/v1/projects/{PROJECT_ID}/databases/(default)/documents/app_config"
 
 ALL_KNOWN_AGENTS = [
+    # Modul Utama & Disiplin (AgentModel.defaultAgents)
     "fiqh_tahawwulat",
+    "fiqh_tahawwulat_muhaqqiq",
+    "fiqh_tahawwulat_bayan",
+    "fiqh_tahawwulat_mukhtabir",
+    "fiqh_tahawwulat_habib",
+    "fiqh_tahawwulat_khatib",
     "fiqh_syafii",
+    "fiqh_syafii_muhaqqiq",
+    "fiqh_hanafi",
+    "fiqh_hanafi_muhaqqiq",
+    "fiqh_maliki",
+    "fiqh_maliki_muhaqqiq",
+    "fiqh_hanbali",
+    "fiqh_hanbali_muhaqqiq",
+    "fiqh_muqaran",
+    "fiqh_muqaran_muhaqqiq",
+    "hadits",
+    "hadits_muhaqqiq",
+    "tafsir",
+    "tafsir_muhaqqiq",
+    "ushul_fiqh",
+    "ushul_muhaqqiq",
+    "nahwu_sharaf",
+    "nahwu_sharaf_muerib",
+    "nahwu_sharaf_tashrif",
+    "aqidah",
+    "tarikh",
+    "tasawwuf",
+    "tajwid_qiraat",
+    "musthalah_hadits",
+    "syarah_hadits",
+    "thabaqat_rijal",
+    "bibliografi_faharis",
+    # Alias Khazanah & Entitas Tambahan
     "aqidah_al_asyairah",
     "hadith_kutub_sittah",
     "ushul_fiqh_syafii",
@@ -47,7 +80,6 @@ ALL_KNOWN_AGENTS = [
     "tasawwuf_tazkiyah",
     "sirah_nabawiyyah",
     "qawaid_fiqhiyyah",
-    "nahwu_sharaf",
     "balaghah_adab",
     "mantiq_kalam",
     "tarikh_islam",
@@ -56,9 +88,6 @@ ALL_KNOWN_AGENTS = [
     "akhlaq_adab",
     "lughah_mujam",
     "musthalah_hadith",
-    "fiqh_hanafi",
-    "fiqh_maliki",
-    "fiqh_hanbali",
 ]
 
 DEFAULT_ACTIVE_AGENTS = ["fiqh_tahawwulat", "fiqh_syafii"]
@@ -619,6 +648,22 @@ def cmd_unlock_agent(agent_id, token):
     print(f"   Pengguna aplikasi kini langsung dapat mengakses modul '{agent_id}' tanpa update app.")
 
 
+def cmd_unlock_all(token):
+    agents_doc = rest_get("agents", token)
+    current_active = set(DEFAULT_ACTIVE_AGENTS)
+    if agents_doc and "fields" in agents_doc:
+        current_active = set(parse_firestore_fields(agents_doc["fields"]).get("active_agent_ids", []))
+
+    current_active.update(ALL_KNOWN_AGENTS)
+    payload = to_firestore_agents_fields(
+        sorted(list(current_active)),
+        "Membuka gembok seluruh AI spesialis dan sub-agen via OTA",
+    )
+    rest_patch("agents", payload, token)
+    print("🎉 SUKSES! Gembok SELURUH AI spesialis BERHASIL DIBUKA OVER-THE-AIR!")
+    print(f"   Total {len(current_active)} agen kini aktif dan dapat diakses pengguna tanpa update app.")
+
+
 def cmd_lock_agent(agent_id, token):
     if agent_id in ("fiqh_tahawwulat", "fiqh_syafii"):
         print(f"❌ DILARANG: '{agent_id}' adalah modul master sakral dan tidak boleh dikunci!")
@@ -788,6 +833,9 @@ def main():
     unlock_p = subparsers.add_parser("unlock-agent", help="Buka gembok AI spesialis")
     unlock_p.add_argument("agent_id", help="ID agen (misal: hadith_kutub_sittah)")
 
+    # unlock-all
+    subparsers.add_parser("unlock-all", help="Buka gembok seluruh AI spesialis sekaligus")
+
     # lock-agent
     lock_p = subparsers.add_parser("lock-agent", help="Kunci kembali AI spesialis")
     lock_p.add_argument("agent_id", help="ID agen")
@@ -826,6 +874,8 @@ def main():
         cmd_set_pricing(args.mode, token)
     elif args.command == "unlock-agent":
         cmd_unlock_agent(args.agent_id, token)
+    elif args.command == "unlock-all":
+        cmd_unlock_all(token)
     elif args.command == "lock-agent":
         cmd_lock_agent(args.agent_id, token)
     elif args.command == "features":
