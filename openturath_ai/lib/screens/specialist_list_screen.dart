@@ -44,12 +44,14 @@ class SpecialistListScreen extends StatefulWidget {
   State<SpecialistListScreen> createState() => _SpecialistListScreenState();
 }
 
-class _SpecialistListScreenState extends State<SpecialistListScreen> {
+class _SpecialistListScreenState extends State<SpecialistListScreen>
+    with WidgetsBindingObserver {
   final AgentService _agentService = AgentService();
   final AuthService _authService = AuthService();
   final TextEditingController _searchCtrl = TextEditingController();
   final ScrollController _listScrollCtrl = ScrollController();
   Timer? _debounce;
+  int _loadGeneration = 0;
 
   List<AgentModel> _allAgents = [];
   String? _selectedFieldId;
@@ -61,6 +63,7 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _selectedFieldId = widget.field?.id;
     _loadAgents();
     OpenTurathCatalogRepository.instance.loadAllMetadata().then((all) {
@@ -72,28 +75,37 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
   }
 
   @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      unawaited(_loadAgents(forceRefresh: true));
+    }
+  }
+
+  @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _searchCtrl.dispose();
     _listScrollCtrl.dispose();
     _debounce?.cancel();
     super.dispose();
   }
 
-  Future<void> _loadAgents() async {
+  Future<void> _loadAgents({bool forceRefresh = false}) async {
+    final generation = ++_loadGeneration;
     // Saklar fitur disegarkan bersama daftar agen; kegagalannya tidak menahan layar.
-    unawaited(FeatureFlagsService.sync());
+    unawaited(FeatureFlagsService.sync(forceRefresh: forceRefresh));
     try {
-      final agents = await _agentService.getAgents();
-      if (mounted) {
+      final agents = await _agentService.getAgents(forceRefresh: forceRefresh);
+      if (mounted && generation == _loadGeneration) {
         setState(() {
           _allAgents = agents;
           _isLoading = false;
         });
       }
     } catch (_) {
-      if (mounted) {
+      if (mounted && generation == _loadGeneration) {
         setState(() {
-          _allAgents = AgentModel.defaultAgents;
+          _allAgents = AgentService.getActiveAgentsSync();
           _isLoading = false;
         });
       }
