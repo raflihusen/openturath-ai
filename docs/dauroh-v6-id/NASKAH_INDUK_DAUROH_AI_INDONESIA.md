@@ -684,3 +684,294 @@ Tiga bentuk ini dapat berada dalam tulisan yang sama, tetapi pembaca harus bisa 
 Gunakan enam menit untuk membuat satu catatan dari teks latihan yang dibaca. AI dapat membantu menatanya, tetapi data sumber diisi dari bahan yang telah dibuka. Sesudah ini, kita akan memakai catatan itu ketika menyusun kerangka dan menulis. Catatan yang rapi mengurangi pekerjaan mencari ulang dari awal.
 
 ### Istirahat · menit115–130 ·15menit
+
+### Blok M · menit130–155 · Metode dan kerangka
+
+### 61. Metode berangkat dari pertanyaan penelitian
+
+**Teks layar**
+- Apa yang ingin diketahui?
+- Bahan apa yang akan diperiksa?
+- Apa yang dilakukan terhadap bahan untuk menjawab pertanyaan?
+
+**Catatan pengajar**
+Metode tidak dipilih hanya karena istilahnya terdengar ilmiah. Jika pertanyaannya membandingkan penjelasan dua kitab, kita harus menjelaskan unsur perbandingan, pemilihan teks, dan cara membacanya. AI dapat membantu menguraikan pilihan, tetapi ketepatannya perlu dinilai berdasarkan pertanyaan dan dibicarakan bersama pembimbing.
+
+### 62. Mendiskusikan pilihan metode dengan AI
+
+**Teks layar**
+- Berikan pertanyaan, sumber, dan batas penelitian.
+- Minta alasan kesesuaian serta kelemahan pendekatan.
+- Pastikan istilah metode dipahami dan dapat dilaksanakan.
+
+**Catatan pengajar**
+Kita meminta pertimbangan, lalu membandingkannya dengan pekerjaan yang benar-benar akan dilakukan. Jangan mengambil paragraf metode yang memuat prosedur yang tidak pernah Anda kerjakan. Jika penelitiannya memakai wawancara atau data angka, kebutuhan keahlian dan pemeriksaannya juga berbeda dari kajian teks.
+
+**Prompt**
+“Berdasarkan pertanyaan dan sumber yang saya berikan, jelaskan pendekatan yang mungkin sesuai, langkah kerjanya, dan keterbatasannya. Tunjukkan informasi yang belum cukup. Jangan menganggap saya sudah mengumpulkan data atau menjalankan prosedur.”
+
+### 63. Menyusun bab dan subbab yang menjawab pertanyaan
+
+**Teks layar**
+- Beri fungsi yang jelas pada setiap bagian.
+- Urutkan penjelasan agar pembaca dapat mengikuti argumennya.
+- Hubungkan bagian dengan sumber atau bahan yang diperlukan.
+
+**Catatan pengajar**
+Kita meminta usulan kerangka berdasarkan pertanyaan yang sudah dipilih. Untuk setiap bagian, jelaskan apa yang akan dibahas dan mengapa diperlukan. Kerangka dapat berubah ketika bahan dibaca. Judul yang banyak tidak otomatis menunjukkan pembahasan yang lebih lengkap.
+
+### 64. Latihan: uji kerangka sebelum mulai menulis
+
+**Teks layar**
+- Bagian mana menjawab pertanyaan utama?
+- Apakah ada pengulangan atau urutan yang membingungkan?
+- Bahan untuk bagian mana belum ditemukan?
+
+**Catatan pengajar**
+Gunakan delapan menit untuk menyusun dan memeriksa kerangka singkat. Pilih dua sampai empat bagian yang sesuai ukuran latihan. Mintalah satu komentar dari aplikasi atau teman. Kemudian jelaskan satu keputusan Anda: mengubah urutan, menggabungkan bagian, atau menandai kebutuhan sumber yang belum tersedia.
+
+### Blok N · menit155–190 · Analisis dan penulisan
+
+### 65. Mengatur catatan menjadi bahan pembahasan
+
+**Teks layar**
+- Kelompokkan catatan menurut pertanyaan atau tema.
+- Pertahankan penanda sumber setiap catatan.
+- Pisahkan bahan yang relevan dan yang belum jelas hubungannya.
+
+**Catatan pengajar**
+Catatan yang dikumpulkan tidak harus langsung masuk ke tulisan. Kita dapat meminta AI mengusulkan pengelompokan beserta alasannya. Periksa apakah ada kutipan yang tercampur sumbernya atau dipindah ke tema yang tidak tepat. Pengelompokan membantu melihat bahan yang sudah cukup dan bahan yang masih kurang.
+
+### 66. Apa bedanya merangkum dan menganalisis?
+
+**Teks layar**
+- Ringkasan: apa yang dikatakan masing-masing sumber?
+- Perbandingan: apa persamaan dan perbedaannya?
+- Analisis: apa arti hubungan itu bagi pertanyaan penelitian?
+
+**Catatan pengajar**
+Dua ringkasan yang diletakkan berurutan belum tentu menjadi analisis. Dalam contoh istilah, kita dapat membandingkan unsur definisi, contoh, dan konteks pemakaian. Setelah itu, kita menjelaskan makna perbedaannya sejauh didukung bahan. AI dapat mengusulkan hubungan, tetapi peneliti harus memahami alasan yang dipakai.
+
+### 67. Menguji kemungkinan penjelasan dan keberatan
+
+**Teks layar**
+- Minta beberapa kemungkinan penjelasan.
+- Tanyakan bukti yang mendukung dan yang belum ada.
+- Cari penafsiran atau keberatan yang perlu dipertimbangkan.
+
+**Catatan pengajar**
+Ketika aplikasi mengusulkan kesimpulan, kita bisa bertanya apa penjelasan alternatifnya. Mungkin perbedaan berasal dari konteks atau tujuan kitab, tetapi kemungkinan itu perlu diperiksa. Kita tidak mengubah dugaan menjadi fakta hanya karena penjelasannya menarik. Catat apa yang perlu dibaca untuk menilainya.
+
+**Prompt**
+“Dari dua petikan yang saya lampirkan, usulkan kemungkinan penjelasan atas perbedaannya. Untuk tiap kemungkinan, bedakan bukti yang tersedia dan bukti tambahan yang diperlukan. Sertakan satu keberatan yang masuk akal.”
+
+### 68. Membangun paragraf dari gagasan, bahan, dan penjelasan
+
+**Teks layar**
+- Nyatakan gagasan yang ingin dijelaskan.
+- Hadirkan kutipan atau informasi yang relevan dengan rujukan.
+- Jelaskan hubungannya dengan pertanyaan penelitian.
+
+**Catatan pengajar**
+Kita memperlihatkan bagaimana satu catatan menjadi paragraf. Kutipan tidak dibiarkan menjelaskan dirinya sendiri. Penulis menunjukkan mengapa ia memilih kutipan itu dan apa yang dipahami darinya. AI dapat membantu menata hubungan, tetapi pembaca harus tetap dapat membedakan kata sumber dan penjelasan peneliti.
+
+### 69. Meminta bantuan menyusun draf yang terarah
+
+**Teks layar**
+- Berikan pertanyaan, catatan, dan tujuan paragraf.
+- Tentukan bantuan yang dibutuhkan.
+- Periksa setiap tambahan, kutipan, dan perubahan makna.
+
+**Catatan pengajar**
+Bantuan dapat berupa usulan susunan, draf awal, atau masukan terhadap tulisan sendiri. Pilih sesuai kebutuhan dan aturan lembaga. Kita tidak mengandalkan aplikasi untuk menciptakan bahan yang belum dikumpulkan. Sesudah membaca hasilnya, tulis hanya gagasan yang Anda pahami serta dapat dijelaskan sumber dan alasannya.
+
+**Prompt**
+“Gunakan pertanyaan dan catatan bacaan yang saya lampirkan. Usulkan susunan satu paragraf pembahasan: gagasan, bukti, dan penjelasan. Pertahankan penanda sumber. Tunjukkan bagian yang belum cukup bahan; jangan mengisinya dengan informasi baru.”
+
+### 70. Latihan: tulis dan tinjau satu paragraf
+
+**Teks layar**
+- Gunakan catatan bacaan yang sudah dibuat.
+- Tulis satu paragraf yang menjawab bagian dari pertanyaan.
+- Minta satu masukan dan catat keputusan revisinya.
+
+**Catatan pengajar**
+Gunakan dua belas menit. Mulai dari bahan yang sudah Anda baca, bukan judul besar penelitian. Anda dapat meminta bantuan menyusun atau meninjau sesuai kebutuhan. Simpan tulisan sebelum dan sesudah perbaikan. Pada akhir latihan, jelaskan satu perubahan dengan merujuk gagasan, sumber, atau kejelasan hubungan kalimat.
+
+### 71. Memperbaiki bahasa tanpa mengubah maksud
+
+**Teks layar**
+- Pertahankan istilah, atribusi, dan tingkat kepastian.
+- Bedakan koreksi kesalahan dari pilihan gaya.
+- Jangan mengubah kutipan harfiah secara diam-diam.
+
+**Catatan pengajar**
+Contohnya, “mungkin berkaitan” tidak sama dengan “pasti disebabkan”. Aplikasi kadang menawarkan kalimat yang lebih tegas tetapi mengubah gagasan. Minta ia menunjukkan perubahan dan alasannya, lalu baca kembali. Tujuannya memperjelas tulisan Anda, sambil menjaga arti yang memang ingin disampaikan.
+
+### Blok O · menit190–210 · Revisi dan penyelesaian
+
+### 72. Kritik yang dapat diperiksa dan diputuskan
+
+**Teks layar**
+- Tunjukkan kalimat yang dikritik dan alasannya.
+- Bandingkan komentar dengan tulisan serta sumber.
+- Terima, tolak, atau teliti lebih lanjut dengan alasan.
+
+**Catatan pengajar**
+Komentar “argumen lemah” perlu dijelaskan: kalimat mana dan apa masalahnya? Kita dapat meminta pemeriksaan hubungan bukti dan kesimpulan, atau kesesuaian paragraf dengan pertanyaan. Tidak perlu mencari-cari kesalahan jika tidak ada yang terlihat. Peneliti menentukan perubahan setelah memahami komentar tersebut.
+
+### 73. Menyusun hasil dan kesimpulan
+
+**Teks layar**
+- Ambil dari analisis yang benar-benar dikerjakan.
+- Cocokkan dengan pertanyaan penelitian.
+- Pisahkan temuan, keterbatasan, dan usulan lanjutan.
+
+**Catatan pengajar**
+Jangan meminta kesimpulan hanya berdasarkan judul. Berikan hasil pembahasan yang sudah diperiksa, lalu minta bantuan merangkumnya. Kita membaca apakah ada temuan baru yang tiba-tiba muncul tanpa dasar. Kesimpulan harus mencerminkan ukuran pekerjaan dan bahan yang memang telah diteliti.
+
+### 74. Menulis abstrak setelah isi dan hasil jelas
+
+**Teks layar**
+- Persoalan dan tujuan.
+- Bahan serta metode yang digunakan.
+- Hasil utama dan kesimpulan yang sesuai.
+
+**Catatan pengajar**
+AI dapat membantu memadatkan isi dan menyesuaikan batas kata. Namun, abstrak harus cocok dengan penelitian. Periksa apakah ada prosedur, data, atau hasil yang tidak pernah Anda kerjakan. Jika dibutuhkan versi bahasa lain, tinjau kembali istilah ilmiah dan kesesuaiannya dengan naskah asal.
+
+### 75. Rujukan dan daftar pustaka
+
+**Teks layar**
+- Gunakan data bibliografi yang sudah dipastikan.
+- Cocokkan sitasi dalam tulisan dengan daftar pustaka.
+- Terapkan format yang diminta lembaga atau penerbit.
+
+**Catatan pengajar**
+Aplikasi dapat membantu menyeragamkan format dari data yang kita berikan. Data yang belum ada harus ditandai, bukan dilengkapi dengan tebakan. Cek pengarang, judul, tahun, edisi, dan lokasi kutipan. Kerapian daftar pustaka tidak membuktikan bahwa semua referensinya benar atau sudah dibaca.
+
+### 76. Tanggung jawab penulis dan keterbukaan penggunaan AI
+
+**Teks layar**
+- Pahami setiap bagian tulisan yang diserahkan.
+- Ikuti aturan lembaga mengenai penggunaan dan pelaporannya.
+- Jaga dokumen pribadi, hak akses bahan, dan pekerjaan orang lain.
+
+**Catatan pengajar**
+Bantuan yang diterima perlu disesuaikan dengan ketentuan kampus atau pembimbing. Kita tidak memakai AI untuk mengaku telah membaca sumber atau menjalankan penelitian yang belum dilakukan. Tanggung jawab atas isi dan kutipan tetap perlu dapat Anda jelaskan ketika ditanya.
+
+### Blok P · menit210–225 · Penerapan melalui OpenTurath
+
+### 77. Mengenal OpenTurath melalui kebutuhan peneliti
+
+**Teks layar**
+- OpenTurath adalah proyek untuk membantu pekerjaan ilmiah dan pembacaan khazanah.
+- Pilih satu kebutuhan yang sudah kita pahami.
+- Kenali fungsi yang tersedia melalui pekerjaan nyata.
+
+**Catatan pengajar**
+Kita sudah mengenal jenis bantuan yang dibutuhkan dalam penelitian. Sekarang saya memperkenalkan OpenTurath melalui satu pekerjaan yang relevan. Saya menunjukkan fungsi yang ada pada versi demonstrasi, lalu kita membaca hasilnya bersama. Kita menggunakan ukuran yang sama: apakah membantu, apa sumbernya, dan apa yang masih harus dikerjakan peneliti?
+
+### 78. Demonstrasi OpenTurath: dari pertanyaan ke bahan yang dibaca
+
+**Teks layar**
+- Tetapkan pertanyaan dan bahan yang dipakai.
+- Jalankan fungsi yang tersedia dan baca hasil sebenarnya.
+- Periksa teks atau rujukan yang digunakan.
+- Simpan hasil yang relevan dan pertanyaan lanjutannya.
+
+**Catatan pengajar**
+Demonstrasi memakai kebutuhan pembacaan atau penelusuran yang sudah diuji sebelum pelaksanaan. Saya menjelaskan apa yang dimasukkan, apa yang muncul, dan bagian mana yang kita buka kembali. Jika ada sesuatu yang belum berhasil diperiksa, kita menyatakannya dengan jelas. Peserta mengamati manfaat yang benar-benar terlihat dari pekerjaan tersebut.
+
+**Persiapan pengajar**
+Pilih fungsi pada versi OpenTurath yang benar-benar akan dipakai. Uji satu pertanyaan, sumber, dan aksesnya sebelum kelas. Catatan ini adalah kebutuhan persiapan, bukan klaim bahwa demonstrasinya sudah dijalankan dalam draf ini.
+
+### Blok Q · menit225–240 · Pemeriksaan kemampuan dan tindak lanjut
+
+### 79. Tunjukkan pekerjaan yang sekarang bisa Anda jelaskan
+
+**Teks layar**
+- Pertanyaan dan judul sementara.
+- Kata kunci serta sumber awal yang dibuka.
+- Satu catatan bacaan dan kerangka singkat.
+- Satu paragraf serta alasan perbaikannya.
+
+**Catatan pengajar**
+Kita tidak memulai seluruh penelitian lagi pada akhir kelas. Buka hasil yang tumbuh sepanjang sesi tadi. Dua peserta menunjukkan satu bagian selama sekitar satu menit: apa kebutuhannya, bagaimana AI membantu, dan keputusan apa yang diambil. Peserta lain mencatat satu keterampilan yang sudah dapat dilakukan serta satu yang masih perlu latihan.
+
+### 80. Setelah dauroh: latihan, pembimbing, dan munaqasyah
+
+**Teks layar**
+- Ulangi satu tugas pada bahan yang Anda pelajari.
+- Bawa persoalan yang jelas kepada pembimbing.
+- Gunakan AI untuk menyiapkan ringkasan, bahan presentasi, dan pertanyaan latihan.
+- Jawab berdasarkan penelitian yang Anda kerjakan dan pahami.
+
+**Catatan pengajar**
+Untuk pekan berikutnya, pilih satu halaman atau satu bagian penelitian. Ulangi proses yang kita pelajari dan simpan hasilnya. Saat mempersiapkan munaqasyah, Anda dapat meminta pertanyaan tentang masalah, metode, dan kesimpulan. Latihan itu membantu melihat kekurangan penjelasan, lalu Anda kembali memperbaiki pemahaman dan tulisan bersama pembimbing.
+
+## LampiranA — Catatan untuk demonstrasi dan latihan berkas
+
+Catatan berikut dibuat khusus untuk latihan. Ini bukan data penelitian atau kutipan dari kitab.
+
+> Saya ingin mengulang tiga bab pelajaran selama enam hari. Waktu yang tersedia45menit per hari. Bab pertama lebih mudah, bab kedua paling sulit, dan bab ketiga belum selesai dibaca. Saya ingin ada latihan mengingat kembali tanpa melihat buku. Saya juga perlu menulis tiga pertanyaan untuk dibawa ke kelompok belajar. Waktu pertemuan kelompok belum ditentukan. Saya mempunyai catatan lama yang perlu dirapikan. Saya ingin mengetahui bagian mana yang belum dipahami sebelum meminta bantuan pengajar.
+
+**Tugas pengaturan catatan**
+“Kelompokkan catatan ini menjadi tujuan, keadaan sekarang, batas waktu, pekerjaan, dan informasi yang masih perlu ditanyakan. Jangan menetapkan waktu pertemuan yang belum disebutkan.”
+
+## LampiranB — Permintaan pembanding untuk empat aplikasi
+
+> “Saya mahasiswa yang ingin mengulang tiga bab dalam enam hari. Saya punya45menit setiap hari. Bab pertama relatif mudah, bab kedua paling sulit, dan bab ketiga belum selesai dibaca. Susun jadwal dalam tabel: hari, kegiatan, alokasi menit, dan cara mengecek pemahaman. Pastikan jumlah waktu harian tidak melebihi45menit. Jika ada informasi penting yang belum tersedia, sebutkan pertanyaan klarifikasinya.”
+
+**Cara membandingkan**
+Gunakan permintaan yang sama dan catat model, mode, serta fitur yang digunakan. Bandingkan pemenuhan waktu, pembagian pekerjaan, kejelasan, dan tindak lanjut. Jangan menyebut satu percobaan sebagai ukuran umum seluruh kemampuan aplikasi.
+
+## LampiranC — Bahan penelitian yang ditentukan saat finalisasi
+
+Agar contoh hari kedua konkret, pengajar perlu menetapkan bahan berikut sebelum materi dinyatakan siap digunakan di kelas:
+
+1. Dua atau tiga pilihan topik latihan yang sesuai bidang peserta; salah satu arah contoh dalam draf adalah perbandingan penggunaan istilah ‘urf dalam dua kitab yang akan dipilih.
+2. Dua petikan sumber asli yang boleh dibagikan, beserta identitas versi dan lokasi yang diperiksa. Jangan memasukkan nama kitab atau kutipan buatan seolah-olah sumber nyata.
+3. Dua artikel atau penelitian terdahulu yang benar-benar sudah dibuka dan dapat dipakai untuk demonstrasi pembandingan.
+4. Satu paragraf latihan yang ditulis pengajar dan diberi label sebagai contoh buatan, atau tulisan peserta yang diizinkan.
+5. Satu demonstrasi OpenTurath sesuai versi, akses, fungsi, dan sumber yang tersedia pada pelaksanaan.
+
+Bagian ini sengaja ditandai sebagai persiapan yang masih perlu ditentukan bersama isi final. Draf belum mengklaim telah melakukan penelusuran pustaka atau demonstrasi produk atas bahan tersebut.
+
+## LampiranD — Peta waktu dan hasil yang diperiksa
+
+| Hari | Rentang menit | Slide | Fokus |
+|---|---|---|---|
+|1|00–15|01–03|Pembukaan dan contoh hasil|
+|1|15–40|04–08|Pengertian dan sejarah|
+|1|40–65|09–13|Cara kerja dan pertanyaan dasar|
+|1|65–110|14–23|Empat aplikasi dan perbandingan|
+|1|110–125|Istirahat|15menit|
+|1|125–150|24–27|Praktik percakapan|
+|1|150–195|28–34|Prompt dan latihan|
+|1|195–220|35–38|Fitur dan dokumen|
+|1|220–240|39–40|Latihan gabungan dan penutup|
+|2|00–15|41–42|Pengulangan dan peta penelitian|
+|2|15–50|43–48|Rancangan penelitian|
+|2|50–90|49–55|Sumber dan penelitian terdahulu|
+|2|90–115|56–60|Pembacaan dan catatan|
+|2|115–130|Istirahat|15menit|
+|2|130–155|61–64|Metode dan kerangka|
+|2|155–190|65–71|Analisis dan penulisan|
+|2|190–210|72–76|Revisi dan penyelesaian|
+|2|210–225|77–78|OpenTurath|
+|2|225–240|79–80|Pemeriksaan hasil dan tindak lanjut|
+
+Penjelasan tidak harus mendapat durasi sama per slide. Slide demonstrasi dan latihan menggunakan waktu lebih banyak. Jika kelas membutuhkan bantuan operasional tambahan, kurangi jumlah hasil yang dibahas bersama dan kedalaman tur fitur tambahan; pertahankan pengalaman mencoba, latihan prompt, pembacaan sumber, dan penulisan peserta.
+
+## Rujukan resmi untuk fakta dasar dan pengenalan produk
+
+Fitur dan batas penggunaannya dapat berubah. Rujukan berikut mendasari pengenalan dan digunakan kembali ketika memfinalisasi materi:
+
+- Slide06: [Dartmouth: AI Coined at Dartmouth](https://home.dartmouth.edu/about/artificial-intelligence-ai-coined-dartmouth) dan [OpenAI: Introducing ChatGPT](https://openai.com/index/chatgpt/).
+- Slide09–10: [OpenAI: How ChatGPT and our foundation models are developed](https://help.openai.com/en/articles/7842364-how-chatgpt-and-our-foundation-models-are-developed).
+- Slide11: [Anthropic: Exploring model welfare](https://www.anthropic.com/research/exploring-model-welfare). Pembahasan kesadaran dibedakan dari penilaian kemampuan dan tidak disajikan sebagai persoalan yang sudah selesai.
+- Slide14–15: [ChatGPT capabilities overview](https://help.openai.com/en/articles/9260256-chatgpt-capabilities-overview), [Study mode](https://help.openai.com/en/articles/11780217-study-mode).
+- Slide16–17: [Gemini feature availability](https://support.google.com/gemini/answer/16275805?hl=en), [Gemini Canvas](https://support.google.com/gemini/answer/16047321?hl=en), [Gemini Deep Research](https://support.google.com/gemini/answer/15719111?hl=en).
+- Slide18–19: [Claude web search](https://support.claude.com/en/articles/10684626-enable-and-use-web-search), [Claude Research](https://support.claude.com/en/articles/11088861-use-research-on-claude), [Claude Artifacts](https://support.claude.com/en/articles/17153992-what-are-artifacts-and-how-do-i-use-them).
+- Slide20–21: [Introducing DeepSeek App](https://api-docs.deepseek.com/news/news250115/), [DeepSeek Thinking Mode](https://api-docs.deepseek.com/guides/thinking_mode/), [DeepSeek change log](https://api-docs.deepseek.com/updates/). Pengumuman pengenalan aplikasi adalah sumber historis; akses, fitur, dan harga diperiksa kembali pada layanan yang digunakan.
