@@ -99,6 +99,16 @@ def main():
                 manifest_data = json.load(rmf)
             manifest_data["sha256"] = h.hexdigest()
             manifest_data["fileSizeBytes"] = root_apk.stat().st_size
+            manifest_data["fileSizeMb"] = f"{root_apk.stat().st_size / (1024*1024):.2f} MB"
+            if root_dmg.exists():
+                h_dmg = hashlib.sha256()
+                with open(root_dmg, "rb") as dfh:
+                    while chunk := dfh.read(65536):
+                        h_dmg.update(chunk)
+                if "dmg" in manifest_data:
+                    manifest_data["dmg"]["sha256"] = h_dmg.hexdigest()
+                    manifest_data["dmg"]["fileSizeBytes"] = root_dmg.stat().st_size
+                    manifest_data["dmg"]["fileSizeMb"] = f"{root_dmg.stat().st_size / (1024*1024):.2f} MB"
         else:
             manifest_data = {
                 "version": "1.0.83",
@@ -119,6 +129,8 @@ def main():
                 }
             }
         with open(temp_backup / "RELEASE_MANIFEST.json", "w", encoding="utf-8") as mfh:
+            json.dump(manifest_data, mfh, indent=2)
+        with open(ROOT / "RELEASE_MANIFEST.json", "w", encoding="utf-8") as mfh:
             json.dump(manifest_data, mfh, indent=2)
 
     for pf in preserve_files:
