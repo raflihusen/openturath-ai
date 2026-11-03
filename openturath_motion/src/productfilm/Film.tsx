@@ -57,7 +57,7 @@ const FieldCards:React.FC<{t:number}>=({t})=>{
       const dy=i===0?m(y,550,chosen):y+85*chosen;
       return <div key={label} style={{...box,left:dx,top:dy+120*(1-arrive),width:i===0?m(434,892,chosen):434,height:i===0?m(248,152,chosen):248,borderRadius:32,background:C.card,color:C.white,overflow:'hidden',opacity:arrive*(i===0?1-end:1-p(t,2.9+i*.035,3.45+i*.035)),scale:i===0?1-.018*Math.sin(p(t,2.72,3.04)*Math.PI):.92+.08*arrive,boxShadow:'0 12px 24px rgba(9,9,11,.04)'}}>
         <div style={{...box,left:30,right:24,top:m(36,35,i===0?chosen:0),fontSize:i===0?m(44,42,chosen):label.length>14?36:44,fontWeight:600,lineHeight:1.15,zIndex:2}}>{label}</div>
-        <div dir="rtl" lang="ar" style={{...box,left:20,right:20,bottom:-24,fontFamily:'FilmArabicUI, sans-serif',fontSize:94,textAlign:'center',opacity:.08,whiteSpace:'nowrap'}}>{ar}</div>
+        <div dir="rtl" lang="ar" style={{...box,left:20,right:20,bottom:16,fontFamily:'FilmArabicUI, sans-serif',fontSize:Math.min(94,650/ar.length),lineHeight:1.25,textAlign:'center',opacity:.08,whiteSpace:'nowrap'}}>{ar}</div>
         {i===0&&<div style={{...box,right:34,top:49,opacity:chosen}}><Icon name="chevron" size={36}/></div>}
       </div>;
     })}
@@ -76,11 +76,11 @@ function AssistantCards({t}:{t:number}) {
       const x=94+(i%2)*458, y=760+Math.floor(i/2)*276;
       const chosen=i===0;
       return <div key={label} style={{...box,left:chosen?m(x,94,move):x+(i%2?180:-180)*move,top:chosen?m(y,534,move):y+50*move,width:chosen?m(434,892,move):i===4?892:434,height:chosen?m(248,122,move):i===4?148:248,borderRadius:chosen?m(32,23,move):32,background:C.card,color:C.white,overflow:'hidden',opacity:arrival*(chosen?1-leave:1-p(t,4.8+i*.025,5.35+i*.025)),translate:`0 ${60*(1-arrival)}px`,zIndex:5}}>
-        <div style={{...box,left:chosen?m(30,90,move):30,right:24,top:chosen?m(38,41,move):38,fontSize:chosen?m(39,36,move):i===4?37:39,fontWeight:600,lineHeight:1.15,zIndex:2}}>{label}</div>
+        <div style={{...box,left:chosen?m(30,90,move):30,right:i===4?230:24,top:chosen?m(38,41,move):i===4?52:38,fontSize:chosen?m(39,36,move):i===4?34:39,fontWeight:600,lineHeight:1.15,zIndex:2}}>{label}</div>
         {chosen&&<div style={{...box,left:28,top:43,opacity:move}}><Icon name="back" size={30}/></div>}
-        <div lang="ar" dir="rtl" style={{...box,left:20,right:20,bottom:-24,fontFamily:'FilmArabicUI, sans-serif',fontSize:94,textAlign:'center',opacity:.08*(1-move),whiteSpace:'nowrap'}}>{ar}</div>
+        <div lang="ar" dir="rtl" style={{...box,left:20,right:20,bottom:16,fontFamily:'FilmArabicUI, sans-serif',fontSize:Math.min(94,650/ar.length),lineHeight:1.25,textAlign:'center',opacity:.08*(1-move),whiteSpace:'nowrap'}}>{ar}</div>
         <div style={{...box,right:28,top:43,...row,gap:24,opacity:move}}><Icon name="book" size={32}/><svg width="24" height="32" viewBox="0 0 24 32" fill="currentColor"><circle cx="12" cy="6" r="2"/><circle cx="12" cy="16" r="2"/><circle cx="12" cy="26" r="2"/></svg></div>
-        <div style={{...box,left:30,bottom:30,...row,gap:20,opacity:1-move}}><div style={{background:C.white,color:C.card,borderRadius:32,padding:'12px 26px'}}><Icon name="chat" size={30}/></div><div style={{border:'1px solid #555',borderRadius:32,padding:12}}><Icon name="book" size={30}/></div></div>
+        <div style={{...box,left:i===4?undefined:30,right:i===4?30:undefined,bottom:i===4?45:30,...row,gap:20,opacity:1-move}}><div style={{background:C.white,color:C.card,borderRadius:32,padding:'12px 26px'}}><Icon name="chat" size={30}/></div><div style={{border:'1px solid #555',borderRadius:32,padding:12}}><Icon name="book" size={30}/></div></div>
       </div>;
     })}
     <div style={{...box,left:94,top:1485,fontSize:25,color:C.gray,opacity:visible(t,3.45,5.25)}}>Akses mengikuti akun</div>
@@ -96,7 +96,7 @@ function Question({t}:{t:number}) {
       <div style={{...box,left:36,right:m(122,36,sending),top:32,fontSize:m(43,37,sending),lineHeight:1.27,fontWeight:400}}>{typed}<span style={{display:t>7.6||t<6.05?'none':'inline-block',width:2,height:43,background:C.ink,marginLeft:4,verticalAlign:'middle',opacity:Math.floor(t*3)%2===0?1:.15}}/></div>
       <div style={{...box,right:22,bottom:22,width:74,height:74,borderRadius:'50%',background:C.card,color:C.white,display:'grid',placeItems:'center',opacity:1-p(t,8.0,8.35),scale:1-.14*Math.sin(p(t,7.97,8.24)*Math.PI)}}><Icon name="arrow" size={34}/></div>
     </div>
-    <div style={{...box,left:118,top:978,fontSize:26,color:C.gray,opacity:visible(t,5.9,8.0)}}>Tanyakan sesuatu…</div>
+    <div style={{...box,left:118,top:978,fontSize:26,color:C.gray,opacity:visible(t,5.9,8.0),zIndex:6}}>Tanyakan sesuatu…</div>
     <Tap t={t} at={8.03} x={905} y={1251} dark/>
   </>;
 }
@@ -105,7 +105,7 @@ function AnswerList({t,note=false}:{t:number;note?:boolean}) {
   const reveal=e(t,8.85,9.3), focus=blend(t,14.4,15.4);
   if(note)return <div>
     <div style={{fontSize:34,lineHeight:1.5,marginBottom:20}}>{DEMO.introduction}</div>
-    {DEMO.items.map((text,i)=><div key={text} style={{...row,gap:20,minHeight:73,fontSize:34,lineHeight:1.3}}><span style={{fontSize:24,color:C.gray,width:32}}>{i+1}.</span>{text}</div>)}
+    {DEMO.items.map((text,i)=><div key={text} style={{...row,gap:20,minHeight:62,fontSize:34,lineHeight:1.3}}><span style={{fontSize:24,color:C.gray,width:32}}>{i+1}.</span>{text}</div>)}
   </div>;
   return <div style={{...box,left:116,right:116,top:932-360*focus,opacity:reveal*(1-p(t,14.5,15.15)),zIndex:6}}>
     <div style={{fontSize:46,fontWeight:600,letterSpacing:-.7,marginBottom:23,translate:`0 ${20*(1-reveal)}px`}}>{DEMO.title}</div>
@@ -131,7 +131,7 @@ function CopyAndSave({t}:{t:number}) {
   const copied=t>=19.55, saved=t>=20.65;
   const bar=e(t,19.65,20.02)*(1-p(t,21.2,21.55));
   return <>
-    <div style={{...box,left:116,top:1475,...row,gap:15,padding:'16px 22px',border:`1px solid ${C.line}`,borderRadius:18,fontSize:29,color:C.gray,opacity:visible(t,15.5,21.3),background:copied?C.wash:C.white,scale:1-.025*Math.sin(p(t,19.5,19.75)*Math.PI)}}>{copied?<Check/>:<CopyIcon/>}<span>{copied?'Tersalin':'Salin jawaban'}</span></div>
+    <div style={{...box,left:116,top:1475,...row,gap:15,padding:'16px 22px',border:`1px solid ${C.line}`,borderRadius:18,fontSize:29,color:C.gray,opacity:visible(t,15.5,21.3),background:copied?C.wash:C.white,scale:1-.025*Math.sin(p(t,19.5,19.75)*Math.PI),zIndex:8}}>{copied?<Check/>:<CopyIcon/>}<span>{copied?'Tersalin':'Salin jawaban'}</span></div>
     <div style={{...box,left:116,right:116,top:1577,height:105,borderRadius:20,background:C.card,color:C.white,...row,justifyContent:'space-between',padding:'0 28px',fontSize:31,opacity:bar,translate:`0 ${50*(1-bar)}px`,zIndex:12}}>
       <span>Jawaban disalin.</span>
       <span style={{fontWeight:600,padding:'14px 18px',borderRadius:12,background:saved?'#353535':'transparent'}}>Simpan</span>
@@ -147,7 +147,7 @@ function Conversation({t}:{t:number}) {
   return <>
     <div style={{...box,left:m(94,64,reveal),top:m(760,504,reveal),width:m(434,952,reveal),height:m(248,1200,reveal),borderRadius:m(32,45,reveal),background:C.white,border:`1px solid ${C.line}`,boxShadow:shadow,opacity:reveal*(1-leave),zIndex:1}}/>
     <Question t={t}/><AnswerList t={t}/><Source t={t}/><CopyAndSave t={t}/>
-    <div style={{...box,left:116,top:905,...row,gap:10,fontSize:24,color:C.gray,opacity:visible(t,8.7,14.8)}}><div style={{width:7,height:7,borderRadius:'50%',background:C.gray}}/>Contoh jawaban · diringkas dari Safinatun Najah</div>
+    <div style={{...box,left:116,top:905,...row,gap:10,fontSize:24,color:C.gray,opacity:visible(t,8.7,14.8),zIndex:6}}><div style={{width:7,height:7,borderRadius:'50%',background:C.gray}}/>Contoh jawaban · diringkas dari Safinatun Najah</div>
   </>;
 }
 
@@ -161,14 +161,15 @@ function NotesJourney({t}:{t:number}) {
       </div>
       <div style={{...box,left:46,right:46,top:153,height:88,borderRadius:44,background:C.wash,...row,gap:20,padding:'0 25px',fontSize:31,color:C.gray,opacity:1-open}}><Icon name="search" size={31}/>Cari catatan…</div>
       <div style={{...box,left:46,top:280,fontSize:25,color:C.gray,opacity:1-open}}>TERSIMPAN</div>
-      <div style={{...box,left:m(46,48,open),right:m(46,48,open),top:m(338,174,open),height:m(245,885,open),background:C.white,border:`1px solid ${C.line}`,borderRadius:m(28,0,open),padding:m(32,0,open),overflow:'hidden'}}>
-        <div style={{...row,justifyContent:'space-between',opacity:1-open}}><span style={{fontSize:26,color:C.gray}}>Jawaban AI</span><span style={{fontSize:23,color:C.gray}}>Baru saja</span></div>
-        <div style={{fontFamily:EDIT,fontSize:m(48,60,open),lineHeight:1.15,marginTop:m(22,14,open),letterSpacing:-1,fontWeight:600}}>{DEMO.title}</div>
+      <div style={{...box,left:m(46,48,open),right:m(46,48,open),top:m(338,174,open),height:m(245,885,open),background:open>.98?'transparent':C.white,border:`1px solid rgba(218,218,218,${1-open})`,borderRadius:m(28,0,open),padding:m(32,0,open),overflow:'hidden'}}>
+        <div style={{...row,gap:20,fontSize:24,color:C.gray}}><span style={{background:open>.98?'transparent':C.wash,padding:open>.98?0:'5px 12px',borderRadius:20}}>Fikih Syafi’i</span><span style={{opacity:1-open}}>·</span><span style={{opacity:1-open}}>3 Nov 2026</span></div>
+        <div style={{fontFamily:open>.5?EDIT:UI,fontSize:m(40,60,open),lineHeight:1.15,marginTop:m(22,14,open),letterSpacing:-1,fontWeight:600}}>{DEMO.title}</div>
+        <div style={{...box,top:143,fontSize:29,color:C.gray,opacity:open}}>Fikih Syafi’i</div>
         <div style={{fontSize:31,color:C.gray,marginTop:20,opacity:1-open,whiteSpace:'nowrap'}}>Fardu wudu ada enam: niat, membasuh wajah…</div>
-        <div style={{...box,left:0,right:0,top:128,opacity:open,translate:`0 ${30*(1-open)}px`}}>
+        <div style={{...box,left:0,right:0,top:201,opacity:open,translate:`0 ${30*(1-open)}px`}}>
           <div style={{height:1,background:C.line,marginBottom:25}}/>
           <AnswerList t={t} note/>
-          <div style={{marginTop:26,padding:'18px 24px',background:C.paper,borderLeft:`3px solid ${C.gray}`}}>
+          <div style={{marginTop:26,padding:'18px 24px',background:C.white,borderLeft:`3px solid ${C.gray}`}}>
             <div dir="rtl" lang="ar" style={{fontFamily:AR,fontSize:56,lineHeight:1.65,textAlign:'right'}}>{DEMO.excerpt}</div>
             <div style={{fontSize:29,color:C.gray,marginTop:4}}>{DEMO.book} · {DEMO.section}</div>
           </div>
