@@ -59,10 +59,10 @@ const Rig:React.FC<{pos:V3;target:V3;fov?:number}> = ({pos,target,fov=35})=>{
  useLayoutEffect(()=>{camera.position.set(...pos);camera.up.set(0,1,0);camera.lookAt(...target);if(camera instanceof THREE.PerspectiveCamera){camera.fov=fov;camera.updateProjectionMatrix();}gl.shadowMap.enabled=true;gl.shadowMap.type=THREE.PCFSoftShadowMap;},[camera,gl,pos[0],pos[1],pos[2],target[0],target[1],target[2],fov]);return null;
 };
 const Lights:React.FC<{dark:boolean}> = ({dark})=><>
- <ambientLight intensity={dark?.36:.85}/>
- <directionalLight position={[-4,8,5]} intensity={dark?1.7:2.1} castShadow shadow-mapSize-width={2048} shadow-mapSize-height={2048} shadow-camera-left={-10} shadow-camera-right={10} shadow-camera-top={12} shadow-camera-bottom={-10} shadow-bias={-.00015}/>
- <directionalLight position={[5,5,-6]} intensity={dark?2.5:1.1}/>
- <directionalLight position={[0,3,8]} intensity={dark?.45:.55}/>
+ <ambientLight intensity={dark?.22:.25}/>
+ <directionalLight position={[-7,5,3]} intensity={dark?2.0:3.0} castShadow shadow-mapSize-width={2048} shadow-mapSize-height={2048} shadow-camera-left={-10} shadow-camera-right={10} shadow-camera-top={12} shadow-camera-bottom={-10} shadow-bias={-.00015}/>
+ <directionalLight position={[5,5,-6]} intensity={dark?2.5:1.5}/>
+ <directionalLight position={[0,3,8]} intensity={dark?.35:.35}/>
 </>;
 
 const Macro:React.FC<{t:number}> = ({t})=>{
@@ -73,9 +73,9 @@ const Macro:React.FC<{t:number}> = ({t})=>{
 };
 const Portal:React.FC<{t:number}> = ({t})=>{
  const s=(t-4)/5,p=ease(s);const path:V3[]=Array.from({length:140},(_,i)=>{const z=5-i*.13;return [.32*Math.sin(z*.65),-.075,z];});
- return <><Rig pos={vmix([-.22,1.45,7],[.2,1.7,.5],p)} target={[0,2.2,-6]} fov={39}/><Ground/><Ink points={path} portion={.5+s*.5}/>{Array.from({length:10},(_,k)=>{
- const surface=(u:number,v:number):V3=>{const a=Math.PI*u,r=2+.06*k,x=-r*Math.cos(a),y=(4.4+.08*k)*Math.pow(Math.sin(a),.85);return [x+.14*Math.sin(y*.8+k*.35+s*1.5)*Math.sin(a),y,-k*1.32+(v-.5)*.32+.2*Math.sin(a*2+k*.3+s*1.5)];};
- return <Sheet key={k} surface={surface} nx={72} ny={3}/>;})}</>;
+ return <><Rig pos={vmix([-.22,1.45,7],[.2,1.7,.5],p)} target={[0,2.2,-6]} fov={39}/><Ground/><mesh position={[0,7,-16]} receiveShadow><planeGeometry args={[35,20]}/><meshStandardMaterial color={obsidian} roughness={.95}/></mesh><Ink points={path} portion={.5+s*.5}/>{Array.from({length:10},(_,k)=>{
+ const surface=(u:number,v:number):V3=>{const a=Math.PI*u,phase=k*.35+s*1.5,r=2+v*1.8,x=-r*Math.cos(a),y=(4.4+v*2)*Math.pow(Math.sin(a),.85);return [x+.14*Math.sin(y*.8+phase)*Math.sin(a),y,-k*1.32+(v-.5)*1.0+.7*Math.sin(u*Math.PI*2+v*Math.PI+phase)];};
+ return <Sheet key={k} surface={surface} nx={72} ny={18}/>;})}</>;
 };
 const QuestionWorld:React.FC<{t:number}> = ({t})=>{
  const p=ease((t-9)/5.8),curl=(1-ease(p*2.5))*.65;
@@ -102,7 +102,7 @@ const BookWorld:React.FC<{t:number}> = ({t})=>{
 export const JejakWorld3D:React.FC = () => {
  const frame=useCurrentFrame();const {fps,width,height}=useVideoConfig();const t=frame/fps;const dark=t>=24;
  return <ThreeCanvas width={width} height={height} shadows camera={{position:[0,6,6],fov:38,near:.02,far:200}} gl={{antialias:true,alpha:false}}>
-  <color attach="background" args={[dark?obsidian:'#e5e5e5']}/><Lights dark={dark}/>
+  <color attach="background" args={[dark?obsidian:'#e5e5e5']}/><fog attach="fog" args={[dark?obsidian:'#e5e5e5',16,35]}/><Lights dark={dark}/>
   {t<4?<Macro t={t}/>:t<9?<Portal t={t}/>:t<14.8?<QuestionWorld t={t}/>:t<19?<SourceWorld t={t}/>:t<24?<NoteWorld t={t}/>:<BookWorld t={t}/>}
  </ThreeCanvas>;
 };
