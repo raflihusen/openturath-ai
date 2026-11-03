@@ -81,7 +81,7 @@ source([37,38],'table',{title:'Fitur yang sesuai dengan tugas',values:[['Kebutuh
 exercise('Praktik mandiri sebelum hari kedua',15,['Pilih satu kebutuhan Anda.','Gunakan aplikasi dan fitur yang sesuai.','Lanjutkan percakapan berdasarkan hasil pertama.','Simpan bahan, prompt, dan hasil yang dipilih.'],'Satu folder kerja yang siap dibawa ke sesi penelitian.','Peserta dapat memakai alat yang tersedia pada akunnya. Bahas alasan memilih fitur, hal yang diterima dari jawaban, dan bagian yang masih harus diperiksa. Hindari penilaian berdasarkan kecepatan atau panjang jawaban saja.',[39]);
 source([40],'quote',{title:'Hasil kerja hari pertama',quote:'Anda sudah mempunyai satu pekerjaan yang dapat dijelaskan kembali.',detail:'Besok kita membawa kemampuan ini ke pencarian sumber, rancangan penelitian, pembacaan, dan tulisan.'});
 
-day=2;
+day=2;chapter='Pembukaan hari kedua';
 source([41],'explain',{title:'Pekerjaan yang Anda simpan kemarin',lead:'Tunjukkan permintaan, hasil, dan satu keputusan Anda setelah membaca jawabannya.',detail:'Jelaskan fitur yang dipakai dan bagian yang masih perlu diperiksa. Pilih satu kebutuhan yang akan dikembangkan menjadi pekerjaan penelitian hari ini.'});
 const so=flatChapters(await load('sources-openturath.json'));
 const sources=so.find(c=>(c.key??c.id??c.title??'').toLowerCase().includes('source'));
