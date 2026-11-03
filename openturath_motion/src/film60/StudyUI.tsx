@@ -50,7 +50,7 @@ export const ChatScreen: React.FC<{typed:string; answerProgress:number; scrollY?
     </div>}</>}
    </div>
   </div>
-  <div style={{position:'absolute',bottom:0,left:0,right:0,height:72,boxSizing:'border-box',padding:'9px 18px',background:paper}}><div style={{height:50,border:'1px solid #D6D6D6',background:'#fff',borderRadius:27,display:'flex',alignItems:'center',padding:'0 8px 0 17px',gap:10}}><span style={{flex:1,fontSize:13,color:!sent && typed && !isTahawwulat?ink:'#929292',overflow:'hidden',whiteSpace:'nowrap',textOverflow:'ellipsis'}}>{!sent && !isTahawwulat && typed ? typed : 'Tanyakan sesuatu...'}</span><div style={{width:34,height:34,background:ink,color:'#fff',borderRadius:20,display:'grid',placeItems:'center'}}><Icon name="send" size={17}/></div></div></div>
+  <div style={{position:'absolute',bottom:0,left:0,right:0,height:72,boxSizing:'border-box',padding:'9px 18px',background:paper}}><div style={{height:50,border:'1px solid #D6D6D6',background:'#fff',borderRadius:27,display:'flex',alignItems:'center',padding:'0 8px 0 17px',gap:10}}><span style={{flex:1,fontSize:12,lineHeight:'16px',color:!sent && typed && !isTahawwulat?ink:'#929292',overflow:'hidden',display:'-webkit-box',WebkitLineClamp:2,WebkitBoxOrient:'vertical'}}>{!sent && !isTahawwulat && typed ? typed : 'Tanyakan sesuatu...'}</span><div style={{width:34,height:34,background:ink,color:'#fff',borderRadius:20,display:'grid',placeItems:'center'}}><Icon name="send" size={17}/></div></div></div>
  </div>;
 };
 
