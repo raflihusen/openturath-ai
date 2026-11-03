@@ -1,3 +1,4 @@
+import { ProductMotion } from "./motion_v2/Film";
 import { PromoElegan } from "./elegan/PromoElegan";
 import { Composition, Folder } from "remotion";
 import { OpenTurathIntro } from "./OpenTurathIntro";
@@ -16,6 +17,7 @@ const V = { width: 1080, height: 1920, fps: 30 } as const;
 
 export const RemotionRoot: React.FC = () => (
   <>
+    <Composition id="OpenTurathMotionV2" component={ProductMotion} durationInFrames={1680} width={1920} height={1080} fps={60} />
     <Composition id="PromoElegan" component={PromoElegan} durationInFrames={900} {...V} />
     <Folder name="Adegan">
       <Composition id="Pembuka" component={Pembuka} durationInFrames={130} {...V} />
