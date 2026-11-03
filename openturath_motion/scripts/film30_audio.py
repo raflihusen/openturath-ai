@@ -119,6 +119,10 @@ for cue in manifest['cues']:
     l=max(0,int((when-1)*SR)); r=max(l+1,int(when*SR))
     local=max(float(np.sqrt(np.mean(bed[l:r]**2))),.012)
     gain=min(.48,local*10**(cue['bed_over_db']/20)/10**(meta['peak_db']/20))
+    # The stop-down makes the local bed near-silent; keep the final fold and
+    # logo audible without multiplying all other cues.
+    if cue['label']=='fold': gain=max(gain,.04)
+    if cue['label']=='logo': gain=max(gain,.08)
     offset=meta['peak_s' if cue['alignment']=='peak' else 'onset_s']
     put(fx,wave,when-offset,gain,cue['pan'])
     print('CUE',f'{when:.3f}',role,'bed_rms',round(20*np.log10(local),1),
