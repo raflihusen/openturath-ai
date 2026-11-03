@@ -13,21 +13,20 @@ const range=(t:number,a:number,b:number)=>clamp((t-a)/(b-a));
 const show=(t:number,a:number,b:number)=>clamp(ease(t,a,26,1)*(1-ease(t,b,26,1)));
 const smooth=(t:number,a:number,b:number)=>{const p=range(t,a,b);return p*p*(3-2*p);};
 const pos:React.CSSProperties={position:'absolute'};
-const logoPath='promo/mark_black.svg';
 const captions:[number,number,string][]=[
  [5,10.8,'Ruang belajar,\ndalam genggaman.'],
  [11.2,15.5,'Seluas\nkhazanah turats.'],
  [15.8,21.7,'Temukan AI\nsesuai bidangmu.'],
  [22.2,25.1,'Fikih Tahawwulat.\nLima peran AI.'],
  [25.5,29.1,'Pilih cara\nmendalami.'],
- [29.8,32.8,'Mulai dengan\npertanyaan.'],
+ [29.4,32.8,'Contohnya di\nFikih Syafi’i.'],
  [33.2,39.8,'Baca penjelasan.\nTelusuri ibarah.'],
  [40.6,45.8,'Kenali kitab\nyang dirujuk.'],
  [46.3,50.8,'Bandingkan\nruang kajian.'],
  [51.6,55.1,'Simpan untuk\ndipelajari kembali.'],
 ];
 const fieldNames=['Fikih Tahawwulat','Fikih & Fatwa','Hadis & Ulumul Hadis','Tafsir & Qiraat','Akidah & Ushuluddin','Usul Fikih & Kaidah','Bahasa & Sastra Arab','Sejarah, Sirah & Rijal','Tasawuf & Akhlak','Bibliografi & Faharis'];
-const Q='Bagaimana mazhab Syafi’i menjelaskan hukum bersentuhan kulit antara laki-laki dan perempuan non-mahram dalam kaitannya dengan wudhu?';
+const Q='Bagaimana hukum bersentuhan kulit dengan non-mahram terhadap wudhu?';
 const rail=[['Hadits','الحديث'],['Tafsir','التفسير'],['Akidah','العقيدة'],['Ushul & Kaidah Fikih','أصول الفقه'],['Bahasa Arab','علوم العربية'],['Sejarah & Sirah','التاريخ'],['Tasawuf','التصوف'],['Bibliografi Kitab','الفهارس']];
 
 const Route:React.FC<{t:number;start:number;end:number;modal?:boolean;children:React.ReactNode}>=({t,start,end,modal=false,children})=>{
@@ -61,12 +60,12 @@ export const OpenTurathFilm60:React.FC=()=>{
  const dashboardScroll=key(t,0,[[7.8,110],[9,255],[10,300]],8);
  // Real content scrolls within its native viewport; the header and bottom nav stay fixed.
  const directoryScroll=key(t,0,[[12,280],[13.5,485],[15,680],[16.5,890],[18,1100],[19.5,1300],[20.8,1510]],7);
- const typed=Q.slice(0,Math.floor(range(t,30,32)*Q.length));
+ const typed=Q.slice(0,Math.floor(range(t,30.5,32.25)*Q.length));
  const answer=range(t,33,36.7);
  const answerScroll=key(t,0,[[35.7,80],[37.2,205],[38.5,225]],7);
  const libraryScroll=key(t,0,[[41.4,65],[42.7,165],[44.1,245]],7);
  const modalP=clamp(ease(t,25.3,14,1)*(1-ease(t,29,20,1)));
- const select=t>28.6?0:-1;
+ const select=t>27.7&&t<28.5?0:-1;
  const final=show(t,56.4,70);
  const clickTimes=[7,11,25,29,32.5,37.5,40,46,47.3,48.6,51,53.5];
  // Cursor coordinates are defined in the actual 420 × 820 app plane.
@@ -97,7 +96,8 @@ export const OpenTurathFilm60:React.FC=()=>{
    <Route t={t} start={11} end={22.15}><DirectoryScreen scrollY={directoryScroll}/></Route>
    <Route t={t} start={22} end={29.55}><TahawwulatScreen/></Route>
    <div style={{...pos,inset:0,opacity:show(t,25.25,29.5),pointerEvents:'none'}}><PickerScreen selected={select} progress={modalP}/></div>
-   <Route t={t} start={29.5} end={40.5}><ChatScreen typed={typed} answerProgress={answer} sent={t>=32.5} scrollY={answerScroll}/></Route>
+   <Route t={t} start={29.2} end={30.55}><DirectoryScreen field="fiqh"/></Route>
+   <Route t={t} start={30.4} end={40.5}><ChatScreen typed={typed} answerProgress={answer} sent={t>=32.5} scrollY={answerScroll}/></Route>
    <Route t={t} start={40.35} end={46.15}><LibraryScreen scrollY={libraryScroll}/></Route>
    <Route t={t} start={46} end={51.5}><ChatScreen typed={Q} answerProgress={1} tabbed activeTab={t>=47.3&&t<48.6?1:0} scrollY={t>=47.3&&t<48.6?0:120}/></Route>
    <Route t={t} start={51.4} end={55.2}><NotesScreen saved={t>=53.5}/></Route>
