@@ -11,7 +11,7 @@ const pres=Presentation.create({slideSize:{width:W,height:H}});
 await fs.mkdir(BUILD,{recursive:true});
 const audit=[];
 
-function text(slide,name,value,x,y,w,h,size=30,{color=K.ink,bold=false,align='left'}={}){
+function text(slide,name,value,x,y,w,h,size=30,{color=K.ink,bold=false,align='right'}={}){
  const s=slide.shapes.add({name,geometry:'textbox',position:{left:x,top:y,width:w,height:h},fill:'none',line:{fill:'none',width:0}});
  s.text=String(value??'').replaceAll('**','');
  s.text.style={typeface:FONT,fontSize:size,bold,color,alignment:align,verticalAlignment:'top',insets:0,autoFit:'none',wrap:'square'};
@@ -21,7 +21,7 @@ function base(d,i,dark=false){
  const s=pres.slides.add();s.background.fill=dark?K.ink:K.paper;
  const fg=dark?K.paper:K.ink,muted=dark?K.quiet:K.muted;
  if(!['cover','chapter','closing'].includes(d.kind)){
-  text(s,'chapter-label',`Hari ${d.day}   /   ${d.chapter}`,84,45,1210,36,20,{color:muted});
+  text(s,'chapter-label',`اليوم ${d.day}   /   ${d.chapter}`,84,45,1210,36,20,{color:muted});
   text(s,'slide-title',d.title,84,110,1272,135,d.title.length>72?46:54,{bold:true,color:fg});
  }
  if(d.kind!=='cover')text(s,'page-number',String(i+1).padStart(2,'0'),1290,755,66,26,17,{align:'right',color:muted});
@@ -47,7 +47,7 @@ async function screenshot(s,d){
   text(s,`reveal-${i+1}-caption`,v,1015,at-3,341,126,v.length>145?25:28);
   at+=145;
  });
- text(s,'image-source-label',d.imageCaption??'Cuplikan dari dokumentasi resmi. Tampilan mengikuti versi dan akses akun.',84,712,1272,32,17,{color:K.muted});
+ text(s,'image-source-label',d.imageCaption??'صورة من مواد المنتج الرسمية؛ قد تختلف الواجهة حسب الحساب والإصدار.',84,712,1272,32,17,{color:K.muted});
 }
 
 for(const [i,d] of specs.entries()){
@@ -56,14 +56,14 @@ for(const [i,d] of specs.entries()){
  const b=d.body??[];
  switch(d.kind){
   case 'cover':
-   text(s,'course-label','DAUROH',84,74,900,45,25,{color:K.quiet});
-   text(s,'cover-title','AI untuk Belajar\n& Penelitian Ilmiah',84,190,1272,250,86,{bold:true,color:K.paper});
-   text(s,'cover-subtitle','Dari pengenalan aplikasi hingga proyek penelitian',84,486,1200,100,33,{color:K.paper});
+   text(s,'course-label','دورة تدريبية',84,74,900,45,25,{color:K.quiet});
+   text(s,'cover-title','الذكاء الاصطناعي\nوالبحث العلمي',84,190,1272,250,86,{bold:true,color:K.paper});
+   text(s,'cover-subtitle','من التعرف على الأدوات إلى مشروع بحثي',84,486,1200,100,33,{color:K.paper});
    text(s,'presenter-name-ar','رفلي حسين',850,636,505,90,48,{color:K.paper,align:'right'});
-   text(s,'course-duration','Dua hari praktik',84,696,600,38,24,{color:K.quiet});
+   text(s,'course-duration','يومان من التدريب والتطبيق',84,696,600,38,24,{color:K.quiet});
    break;
   case 'chapter':
-   text(s,'chapter-index',`BAB ${String(d.number).padStart(2,'0')}`,84,88,1100,52,26,{color:K.quiet});
+   text(s,'chapter-index',`الفصل ${String(d.number).padStart(2,'0')}`,84,88,1100,52,26,{color:K.quiet});
    text(s,'chapter-name',d.title,84,230,1272,220,d.title.length>23?82:112,{bold:true,color:K.paper});
    text(s,'chapter-description',d.subtitle??b.join(' '),84,497,1150,125,38,{color:K.paper});
    text(s,'chapter-outcome',d.outcome??'',84,675,1180,70,25,{color:K.quiet});
@@ -79,16 +79,16 @@ for(const [i,d] of specs.entries()){
   case 'screenshot': await screenshot(s,d);break;
   case 'table':table(s,d);break;
   case 'formula':
-   ['S','I','A','P'].forEach((letter,j)=>{
+   (d.formulaLetters??['م','س','ا','ر']).forEach((letter,j)=>{
     const x=84+j*324;
     text(s,`reveal-${j+1}-letter`,letter,x,258,285,175,144,{bold:true});
-    text(s,`reveal-${j+1}-term`,['Sasaran','Informasi','Aturan','Penyajian'][j],x,450,280,60,35,{bold:true});
+    text(s,`reveal-${j+1}-term`,(d.formulaTerms??['المهمة','السياق','الاشتراطات','الرد المطلوب'])[j],x,450,280,60,35,{bold:true});
     text(s,`reveal-${j+1}-detail`,b[j],x,538,278,140,28);
    });
    break;
   case 'comparison':
-   text(s,'comparison-left-label',d.leftLabel??'Permintaan awal',84,270,598,65,28,{color:K.muted});
-   text(s,'comparison-right-label',d.rightLabel??'Permintaan yang diperjelas',758,270,598,65,28,{bold:true});
+   text(s,'comparison-left-label',d.leftLabel??'الطلب الأول',84,270,598,65,28,{color:K.muted});
+   text(s,'comparison-right-label',d.rightLabel??'الطلب بعد تحسينه',758,270,598,65,28,{bold:true});
    text(s,'reveal-1-before',d.left??b[0],84,355,598,300,d.left?.length>270?27:34);
    text(s,'reveal-2-after',d.right??b[1],758,355,598,300,d.right?.length>300?27:32);
    if(d.takeaway)text(s,'comparison-takeaway',d.takeaway,84,690,1272,58,25,{color:K.muted});
@@ -103,15 +103,15 @@ for(const [i,d] of specs.entries()){
   }
   case 'exercise': {
    text(s,'exercise-minutes',String(d.minutes??15),84,286,330,220,190,{bold:true,color:fg});
-   text(s,'exercise-unit','menit praktik',88,520,330,80,38,{color:fg});
+   text(s,'exercise-unit','دقيقة للتطبيق',88,520,330,80,38,{color:fg});
    const st=d.steps??b;
    st.slice(0,4).forEach((v,j)=>text(s,`reveal-${j+1}-step`,`${j+1}. ${v}`,500,282+j*84,856,78,29,{color:fg}));
-   text(s,'exercise-deliverable-label','Hasil yang dikumpulkan',500,644,856,42,23,{color:muted});
+   text(s,'exercise-deliverable-label','الناتج المطلوب',500,644,856,42,23,{color:muted});
    text(s,'exercise-deliverable',d.deliverable??'',500,689,856,69,28,{color:fg});
    break;
   }
   case 'prompt':
-   text(s,'prompt-label',d.promptLabel??'Contoh permintaan',84,268,1272,42,23,{color:muted});
+   text(s,'prompt-label',d.promptLabel??'طلب للتجربة',84,268,1272,42,23,{color:muted});
    if(d.promptParts){
     d.promptParts.forEach((part,j)=>{
      text(s,`reveal-${j+1}-prompt-key`,part.key,84,336+j*87,180,70,29,{bold:true});
@@ -129,12 +129,12 @@ for(const [i,d] of specs.entries()){
    text(s,'reveal-1-quote-comment',d.detail??b.slice(1).join(' '),84,590,1120,120,30);
    break;
   case 'break':
-   text(s,'break-title','Istirahat',84,235,1272,160,112,{color:fg,bold:true});
-   text(s,'break-duration',`${d.minutes??15} menit`,84,456,1000,100,52,{color:fg});
+   text(s,'break-title','استراحة',84,235,1272,160,112,{color:fg,bold:true});
+   text(s,'break-duration',`${d.minutes??15} دقيقة`,84,456,1000,100,52,{color:fg});
    text(s,'break-return',d.subtitle??'Simpan pekerjaan Anda. Kita lanjutkan pada bab berikutnya.',84,620,1160,100,30,{color:muted});
    break;
   case 'closing':
-   text(s,'closing-label','PENUTUP',84,77,1150,42,24,{color:muted});
+   text(s,'closing-label','ختام الدورة',84,77,1150,42,24,{color:muted});
    text(s,'closing-title',d.title,84,235,1272,205,84,{bold:true,color:fg});
    text(s,'closing-detail',d.detail??b.join(' '),84,496,1180,130,36,{color:fg});
    text(s,'closing-presenter','رفلي حسين',850,666,505,83,44,{align:'right',color:fg});
@@ -145,9 +145,9 @@ for(const [i,d] of specs.entries()){
    if(d.example)text(s,'reveal-2-explain-example',d.example,84,680,1272,65,25,{color:muted});
  }
  let notes=(d.notes??'').trim();
- if(d.demo&&d.demo!=='.')notes+='\n\nDEMONSTRASI\n'+d.demo.replaceAll('**','');
- if(d.sources?.length)notes+='\n\nRUJUKAN\n'+d.sources.join('\n');
- if(d.screenshot)notes+='\n\nKETERANGAN GAMBAR\n'+(d.imageProvenance??'Cuplikan yang diterbitkan pemilik produk; contoh antarmuka, bukan rekaman akun peserta.');
+ if(d.demo&&d.demo!=='.')notes+='\n\nتطبيق عملي\n'+d.demo.replaceAll('**','');
+ if(d.sources?.length)notes+='\n\nالمراجع\n'+d.sources.join('\n');
+ if(d.screenshot)notes+='\n\nبيان الصورة\n'+(d.imageProvenance??'Cuplikan yang diterbitkan pemilik produk; contoh antarmuka, bukan rekaman akun peserta.');
  s.speakerNotes.text=notes;
  audit.push({slide:i+1,id:s.id,kind:d.kind,title:d.title,chapter:d.chapter,day:d.day,screenshot:d.screenshot??null,sourceIds:d.sourceIds??[],notesWords:notes.split(/\s+/).length});
 }
