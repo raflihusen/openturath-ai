@@ -1,0 +1,115 @@
+{
+  "fps": 30,
+  "totalFrames": 900,
+  "note": "Frame-rounded markers from productfilm/Film.tsx; timing is start of animation, not necessarily its visually dominant point.",
+  "events": [
+    {
+      "id": "focus_field",
+      "kind": "tap",
+      "f": 82,
+      "source_time": 2.74
+    },
+    {
+      "id": "choose_assistant",
+      "kind": "tap",
+      "f": 143,
+      "source_time": 4.78
+    },
+    {
+      "id": "send_question",
+      "kind": "tap",
+      "f": 241,
+      "source_time": 8.03
+    },
+    {
+      "id": "answer_row_1",
+      "kind": "reveal",
+      "f": 280,
+      "source_time": 9.35
+    },
+    {
+      "id": "answer_row_2",
+      "kind": "reveal",
+      "f": 285,
+      "source_time": 9.49
+    },
+    {
+      "id": "answer_row_3",
+      "kind": "reveal",
+      "f": 289,
+      "source_time": 9.63
+    },
+    {
+      "id": "answer_row_4",
+      "kind": "reveal",
+      "f": 293,
+      "source_time": 9.77
+    },
+    {
+      "id": "answer_row_5",
+      "kind": "reveal",
+      "f": 297,
+      "source_time": 9.91
+    },
+    {
+      "id": "answer_row_6",
+      "kind": "reveal",
+      "f": 302,
+      "source_time": 10.05
+    },
+    {
+      "id": "citation_appear",
+      "kind": "reveal",
+      "f": 318,
+      "source_time": 10.6
+    },
+    {
+      "id": "citation_focus",
+      "kind": "focus",
+      "f": 432,
+      "source_time": 14.4
+    },
+    {
+      "id": "copy",
+      "kind": "tap",
+      "f": 586,
+      "source_time": 19.53
+    },
+    {
+      "id": "save",
+      "kind": "tap",
+      "f": 617,
+      "source_time": 20.56
+    },
+    {
+      "id": "back",
+      "kind": "tap",
+      "f": 641,
+      "source_time": 21.36
+    },
+    {
+      "id": "notes",
+      "kind": "tap",
+      "f": 664,
+      "source_time": 22.12
+    },
+    {
+      "id": "open_note",
+      "kind": "tap",
+      "f": 699,
+      "source_time": 23.3
+    },
+    {
+      "id": "closing_transition",
+      "kind": "transition",
+      "f": 789,
+      "source_time": 26.3
+    },
+    {
+      "id": "closing_tagline",
+      "kind": "reveal",
+      "f": 816,
+      "source_time": 27.2
+    }
+  ]
+}
