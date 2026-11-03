@@ -1,0 +1,3478 @@
+{
+  "slides": [
+    {
+      "slide": 1,
+      "stages": [
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "cover-title"
+              ],
+              "effect": "floatUp",
+              "durationMs": 450
+            },
+            {
+              "targets": [
+                "cover-subtitle"
+              ],
+              "effect": "fade",
+              "durationMs": 420,
+              "delayMs": 120
+            },
+            {
+              "targets": [
+                "presenter-name-ar"
+              ],
+              "effect": "fade",
+              "durationMs": 420,
+              "delayMs": 120
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slide": 2,
+      "stages": [
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "slide-title"
+              ],
+              "effect": "floatUp",
+              "durationMs": 450
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slide": 3,
+      "stages": [
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "chapter-name"
+              ],
+              "effect": "floatUp",
+              "durationMs": 450
+            },
+            {
+              "targets": [
+                "chapter-description"
+              ],
+              "effect": "fade",
+              "durationMs": 420,
+              "delayMs": 120
+            },
+            {
+              "targets": [
+                "chapter-outcome"
+              ],
+              "effect": "fade",
+              "durationMs": 420,
+              "delayMs": 120
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slide": 4,
+      "stages": [
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "slide-title"
+              ],
+              "effect": "floatUp",
+              "durationMs": 450
+            }
+          ]
+        },
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "reveal-1-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 100
+            }
+          ]
+        },
+        {
+          "trigger": "click",
+          "effects": [
+            {
+              "targets": [
+                "reveal-2-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 0
+            }
+          ]
+        },
+        {
+          "trigger": "click",
+          "effects": [
+            {
+              "targets": [
+                "reveal-3-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 0
+            }
+          ]
+        },
+        {
+          "trigger": "click",
+          "effects": [
+            {
+              "targets": [
+                "reveal-4-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slide": 5,
+      "stages": [
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "slide-title"
+              ],
+              "effect": "floatUp",
+              "durationMs": 450
+            }
+          ]
+        },
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "reveal-1-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 100
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slide": 6,
+      "stages": [
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "slide-title"
+              ],
+              "effect": "floatUp",
+              "durationMs": 450
+            }
+          ]
+        },
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "reveal-1-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 100
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slide": 7,
+      "stages": [
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "slide-title"
+              ],
+              "effect": "floatUp",
+              "durationMs": 450
+            }
+          ]
+        },
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "reveal-1-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 100
+            }
+          ]
+        },
+        {
+          "trigger": "click",
+          "effects": [
+            {
+              "targets": [
+                "reveal-2-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 0
+            }
+          ]
+        },
+        {
+          "trigger": "click",
+          "effects": [
+            {
+              "targets": [
+                "reveal-3-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slide": 8,
+      "stages": [
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "slide-title"
+              ],
+              "effect": "floatUp",
+              "durationMs": 450
+            }
+          ]
+        },
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "reveal-1-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 100
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slide": 9,
+      "stages": [
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "slide-title"
+              ],
+              "effect": "floatUp",
+              "durationMs": 450
+            }
+          ]
+        },
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "reveal-1-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 100
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slide": 10,
+      "stages": [
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "slide-title"
+              ],
+              "effect": "floatUp",
+              "durationMs": 450
+            }
+          ]
+        },
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "reveal-1-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 100
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slide": 11,
+      "stages": [
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "slide-title"
+              ],
+              "effect": "floatUp",
+              "durationMs": 450
+            }
+          ]
+        },
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "reveal-1-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 100
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slide": 12,
+      "stages": [
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "slide-title"
+              ],
+              "effect": "floatUp",
+              "durationMs": 450
+            }
+          ]
+        },
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "reveal-1-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 100
+            }
+          ]
+        },
+        {
+          "trigger": "click",
+          "effects": [
+            {
+              "targets": [
+                "reveal-2-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 0
+            }
+          ]
+        },
+        {
+          "trigger": "click",
+          "effects": [
+            {
+              "targets": [
+                "reveal-3-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 0
+            }
+          ]
+        },
+        {
+          "trigger": "click",
+          "effects": [
+            {
+              "targets": [
+                "reveal-4-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slide": 13,
+      "stages": [
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "chapter-name"
+              ],
+              "effect": "floatUp",
+              "durationMs": 450
+            },
+            {
+              "targets": [
+                "chapter-description"
+              ],
+              "effect": "fade",
+              "durationMs": 420,
+              "delayMs": 120
+            },
+            {
+              "targets": [
+                "chapter-outcome"
+              ],
+              "effect": "fade",
+              "durationMs": 420,
+              "delayMs": 120
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slide": 14,
+      "stages": [
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "slide-title"
+              ],
+              "effect": "floatUp",
+              "durationMs": 450
+            }
+          ]
+        },
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "reveal-1-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 100
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slide": 15,
+      "stages": [
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "slide-title"
+              ],
+              "effect": "floatUp",
+              "durationMs": 450
+            }
+          ]
+        },
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "reveal-1-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 100
+            }
+          ]
+        },
+        {
+          "trigger": "click",
+          "effects": [
+            {
+              "targets": [
+                "reveal-2-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 0
+            }
+          ]
+        },
+        {
+          "trigger": "click",
+          "effects": [
+            {
+              "targets": [
+                "reveal-3-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slide": 16,
+      "stages": [
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "slide-title"
+              ],
+              "effect": "floatUp",
+              "durationMs": 450
+            }
+          ]
+        },
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "reveal-1-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 100
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slide": 17,
+      "stages": [
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "slide-title"
+              ],
+              "effect": "floatUp",
+              "durationMs": 450
+            }
+          ]
+        },
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "reveal-1-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 100
+            }
+          ]
+        },
+        {
+          "trigger": "click",
+          "effects": [
+            {
+              "targets": [
+                "reveal-2-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 0
+            }
+          ]
+        },
+        {
+          "trigger": "click",
+          "effects": [
+            {
+              "targets": [
+                "reveal-3-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slide": 18,
+      "stages": [
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "slide-title"
+              ],
+              "effect": "floatUp",
+              "durationMs": 450
+            }
+          ]
+        },
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "reveal-1-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 100
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slide": 19,
+      "stages": [
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "slide-title"
+              ],
+              "effect": "floatUp",
+              "durationMs": 450
+            }
+          ]
+        },
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "reveal-1-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 100
+            }
+          ]
+        },
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "reveal-2-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 100
+            }
+          ]
+        },
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "reveal-3-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 100
+            }
+          ]
+        },
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "reveal-4-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 100
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slide": 20,
+      "stages": [
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "chapter-name"
+              ],
+              "effect": "floatUp",
+              "durationMs": 450
+            },
+            {
+              "targets": [
+                "chapter-description"
+              ],
+              "effect": "fade",
+              "durationMs": 420,
+              "delayMs": 120
+            },
+            {
+              "targets": [
+                "chapter-outcome"
+              ],
+              "effect": "fade",
+              "durationMs": 420,
+              "delayMs": 120
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slide": 21,
+      "stages": [
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "slide-title"
+              ],
+              "effect": "floatUp",
+              "durationMs": 450
+            }
+          ]
+        },
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "reveal-1-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 100
+            }
+          ]
+        },
+        {
+          "trigger": "click",
+          "effects": [
+            {
+              "targets": [
+                "reveal-2-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 0
+            }
+          ]
+        },
+        {
+          "trigger": "click",
+          "effects": [
+            {
+              "targets": [
+                "reveal-3-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slide": 22,
+      "stages": [
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "slide-title"
+              ],
+              "effect": "floatUp",
+              "durationMs": 450
+            }
+          ]
+        },
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "reveal-1-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 100
+            }
+          ]
+        },
+        {
+          "trigger": "click",
+          "effects": [
+            {
+              "targets": [
+                "reveal-2-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 0
+            }
+          ]
+        },
+        {
+          "trigger": "click",
+          "effects": [
+            {
+              "targets": [
+                "reveal-3-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slide": 23,
+      "stages": [
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "slide-title"
+              ],
+              "effect": "floatUp",
+              "durationMs": 450
+            }
+          ]
+        },
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "reveal-1-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 100
+            }
+          ]
+        },
+        {
+          "trigger": "click",
+          "effects": [
+            {
+              "targets": [
+                "reveal-2-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 0
+            }
+          ]
+        },
+        {
+          "trigger": "click",
+          "effects": [
+            {
+              "targets": [
+                "reveal-3-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slide": 24,
+      "stages": [
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "slide-title"
+              ],
+              "effect": "floatUp",
+              "durationMs": 450
+            }
+          ]
+        },
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "reveal-1-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 100
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slide": 25,
+      "stages": [
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "slide-title"
+              ],
+              "effect": "floatUp",
+              "durationMs": 450
+            }
+          ]
+        },
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "reveal-1-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 100
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slide": 26,
+      "stages": [
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "slide-title"
+              ],
+              "effect": "floatUp",
+              "durationMs": 450
+            }
+          ]
+        },
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "reveal-1-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 100
+            }
+          ]
+        },
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "reveal-2-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 100
+            }
+          ]
+        },
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "reveal-3-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 100
+            }
+          ]
+        },
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "reveal-4-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 100
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slide": 27,
+      "stages": [
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "break-title"
+              ],
+              "effect": "floatUp",
+              "durationMs": 450
+            },
+            {
+              "targets": [
+                "break-duration"
+              ],
+              "effect": "fade",
+              "durationMs": 420,
+              "delayMs": 120
+            },
+            {
+              "targets": [
+                "break-return"
+              ],
+              "effect": "fade",
+              "durationMs": 420,
+              "delayMs": 120
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slide": 28,
+      "stages": [
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "chapter-name"
+              ],
+              "effect": "floatUp",
+              "durationMs": 450
+            },
+            {
+              "targets": [
+                "chapter-description"
+              ],
+              "effect": "fade",
+              "durationMs": 420,
+              "delayMs": 120
+            },
+            {
+              "targets": [
+                "chapter-outcome"
+              ],
+              "effect": "fade",
+              "durationMs": 420,
+              "delayMs": 120
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slide": 29,
+      "stages": [
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "slide-title"
+              ],
+              "effect": "floatUp",
+              "durationMs": 450
+            }
+          ]
+        },
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "reveal-1-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 100
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slide": 30,
+      "stages": [
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "slide-title"
+              ],
+              "effect": "floatUp",
+              "durationMs": 450
+            }
+          ]
+        },
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "reveal-1-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 100
+            }
+          ]
+        },
+        {
+          "trigger": "click",
+          "effects": [
+            {
+              "targets": [
+                "reveal-2-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 0
+            }
+          ]
+        },
+        {
+          "trigger": "click",
+          "effects": [
+            {
+              "targets": [
+                "reveal-3-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slide": 31,
+      "stages": [
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "slide-title"
+              ],
+              "effect": "floatUp",
+              "durationMs": 450
+            }
+          ]
+        },
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "reveal-1-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 100
+            }
+          ]
+        },
+        {
+          "trigger": "click",
+          "effects": [
+            {
+              "targets": [
+                "reveal-2-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slide": 32,
+      "stages": [
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "slide-title"
+              ],
+              "effect": "floatUp",
+              "durationMs": 450
+            }
+          ]
+        },
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "reveal-1-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 100
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slide": 33,
+      "stages": [
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "slide-title"
+              ],
+              "effect": "floatUp",
+              "durationMs": 450
+            }
+          ]
+        },
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "reveal-1-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 100
+            }
+          ]
+        },
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "reveal-2-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 100
+            }
+          ]
+        },
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "reveal-3-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 100
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slide": 34,
+      "stages": [
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "chapter-name"
+              ],
+              "effect": "floatUp",
+              "durationMs": 450
+            },
+            {
+              "targets": [
+                "chapter-description"
+              ],
+              "effect": "fade",
+              "durationMs": 420,
+              "delayMs": 120
+            },
+            {
+              "targets": [
+                "chapter-outcome"
+              ],
+              "effect": "fade",
+              "durationMs": 420,
+              "delayMs": 120
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slide": 35,
+      "stages": [
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "slide-title"
+              ],
+              "effect": "floatUp",
+              "durationMs": 450
+            }
+          ]
+        },
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "reveal-1-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 100
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slide": 36,
+      "stages": [
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "slide-title"
+              ],
+              "effect": "floatUp",
+              "durationMs": 450
+            }
+          ]
+        },
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "reveal-1-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 100
+            }
+          ]
+        },
+        {
+          "trigger": "click",
+          "effects": [
+            {
+              "targets": [
+                "reveal-2-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 0
+            }
+          ]
+        },
+        {
+          "trigger": "click",
+          "effects": [
+            {
+              "targets": [
+                "reveal-3-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slide": 37,
+      "stages": [
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "slide-title"
+              ],
+              "effect": "floatUp",
+              "durationMs": 450
+            }
+          ]
+        },
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "reveal-1-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 100
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slide": 38,
+      "stages": [
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "slide-title"
+              ],
+              "effect": "floatUp",
+              "durationMs": 450
+            }
+          ]
+        },
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "reveal-1-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 100
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slide": 39,
+      "stages": [
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "slide-title"
+              ],
+              "effect": "floatUp",
+              "durationMs": 450
+            }
+          ]
+        },
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "reveal-1-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 100
+            }
+          ]
+        },
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "reveal-2-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 100
+            }
+          ]
+        },
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "reveal-3-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 100
+            }
+          ]
+        },
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "reveal-4-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 100
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slide": 40,
+      "stages": [
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "chapter-name"
+              ],
+              "effect": "floatUp",
+              "durationMs": 450
+            },
+            {
+              "targets": [
+                "chapter-description"
+              ],
+              "effect": "fade",
+              "durationMs": 420,
+              "delayMs": 120
+            },
+            {
+              "targets": [
+                "chapter-outcome"
+              ],
+              "effect": "fade",
+              "durationMs": 420,
+              "delayMs": 120
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slide": 41,
+      "stages": [
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "slide-title"
+              ],
+              "effect": "floatUp",
+              "durationMs": 450
+            }
+          ]
+        },
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "reveal-1-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 100
+            }
+          ]
+        },
+        {
+          "trigger": "click",
+          "effects": [
+            {
+              "targets": [
+                "reveal-2-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 0
+            }
+          ]
+        },
+        {
+          "trigger": "click",
+          "effects": [
+            {
+              "targets": [
+                "reveal-3-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 0
+            }
+          ]
+        },
+        {
+          "trigger": "click",
+          "effects": [
+            {
+              "targets": [
+                "reveal-4-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slide": 42,
+      "stages": [
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "slide-title"
+              ],
+              "effect": "floatUp",
+              "durationMs": 450
+            }
+          ]
+        },
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "reveal-1-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 100
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slide": 43,
+      "stages": [
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "slide-title"
+              ],
+              "effect": "floatUp",
+              "durationMs": 450
+            }
+          ]
+        },
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "reveal-1-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 100
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slide": 44,
+      "stages": [
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "slide-title"
+              ],
+              "effect": "floatUp",
+              "durationMs": 450
+            }
+          ]
+        },
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "reveal-1-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 100
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slide": 45,
+      "stages": [
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "slide-title"
+              ],
+              "effect": "floatUp",
+              "durationMs": 450
+            }
+          ]
+        },
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "reveal-1-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 100
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slide": 46,
+      "stages": [
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "slide-title"
+              ],
+              "effect": "floatUp",
+              "durationMs": 450
+            }
+          ]
+        },
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "reveal-1-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 100
+            }
+          ]
+        },
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "reveal-2-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 100
+            }
+          ]
+        },
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "reveal-3-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 100
+            }
+          ]
+        },
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "reveal-4-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 100
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slide": 47,
+      "stages": [
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "slide-title"
+              ],
+              "effect": "floatUp",
+              "durationMs": 450
+            }
+          ]
+        },
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "reveal-1-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 100
+            }
+          ]
+        },
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "reveal-2-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 100
+            }
+          ]
+        },
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "reveal-3-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 100
+            }
+          ]
+        },
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "reveal-4-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 100
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slide": 48,
+      "stages": [
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "slide-title"
+              ],
+              "effect": "floatUp",
+              "durationMs": 450
+            }
+          ]
+        },
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "reveal-1-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 100
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slide": 49,
+      "stages": [
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "slide-title"
+              ],
+              "effect": "floatUp",
+              "durationMs": 450
+            }
+          ]
+        },
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "reveal-1-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 100
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slide": 50,
+      "stages": [
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "slide-title"
+              ],
+              "effect": "floatUp",
+              "durationMs": 450
+            }
+          ]
+        },
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "reveal-1-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 100
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slide": 51,
+      "stages": [
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "slide-title"
+              ],
+              "effect": "floatUp",
+              "durationMs": 450
+            }
+          ]
+        },
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "reveal-1-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 100
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slide": 52,
+      "stages": [
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "chapter-name"
+              ],
+              "effect": "floatUp",
+              "durationMs": 450
+            },
+            {
+              "targets": [
+                "chapter-description"
+              ],
+              "effect": "fade",
+              "durationMs": 420,
+              "delayMs": 120
+            },
+            {
+              "targets": [
+                "chapter-outcome"
+              ],
+              "effect": "fade",
+              "durationMs": 420,
+              "delayMs": 120
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slide": 53,
+      "stages": [
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "slide-title"
+              ],
+              "effect": "floatUp",
+              "durationMs": 450
+            }
+          ]
+        },
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "reveal-1-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 100
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slide": 54,
+      "stages": [
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "slide-title"
+              ],
+              "effect": "floatUp",
+              "durationMs": 450
+            }
+          ]
+        },
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "reveal-1-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 100
+            }
+          ]
+        },
+        {
+          "trigger": "click",
+          "effects": [
+            {
+              "targets": [
+                "reveal-2-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 0
+            }
+          ]
+        },
+        {
+          "trigger": "click",
+          "effects": [
+            {
+              "targets": [
+                "reveal-3-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slide": 55,
+      "stages": [
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "slide-title"
+              ],
+              "effect": "floatUp",
+              "durationMs": 450
+            }
+          ]
+        },
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "reveal-1-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 100
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slide": 56,
+      "stages": [
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "slide-title"
+              ],
+              "effect": "floatUp",
+              "durationMs": 450
+            }
+          ]
+        },
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "reveal-1-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 100
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slide": 57,
+      "stages": [
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "slide-title"
+              ],
+              "effect": "floatUp",
+              "durationMs": 450
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slide": 58,
+      "stages": [
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "slide-title"
+              ],
+              "effect": "floatUp",
+              "durationMs": 450
+            }
+          ]
+        },
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "reveal-1-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 100
+            }
+          ]
+        },
+        {
+          "trigger": "click",
+          "effects": [
+            {
+              "targets": [
+                "reveal-2-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slide": 59,
+      "stages": [
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "slide-title"
+              ],
+              "effect": "floatUp",
+              "durationMs": 450
+            }
+          ]
+        },
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "reveal-1-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 100
+            }
+          ]
+        },
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "reveal-2-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 100
+            }
+          ]
+        },
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "reveal-3-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 100
+            }
+          ]
+        },
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "reveal-4-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 100
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slide": 60,
+      "stages": [
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "chapter-name"
+              ],
+              "effect": "floatUp",
+              "durationMs": 450
+            },
+            {
+              "targets": [
+                "chapter-description"
+              ],
+              "effect": "fade",
+              "durationMs": 420,
+              "delayMs": 120
+            },
+            {
+              "targets": [
+                "chapter-outcome"
+              ],
+              "effect": "fade",
+              "durationMs": 420,
+              "delayMs": 120
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slide": 61,
+      "stages": [
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "slide-title"
+              ],
+              "effect": "floatUp",
+              "durationMs": 450
+            }
+          ]
+        },
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "reveal-1-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 100
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slide": 62,
+      "stages": [
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "slide-title"
+              ],
+              "effect": "floatUp",
+              "durationMs": 450
+            }
+          ]
+        },
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "reveal-1-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 100
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slide": 63,
+      "stages": [
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "slide-title"
+              ],
+              "effect": "floatUp",
+              "durationMs": 450
+            }
+          ]
+        },
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "reveal-1-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 100
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slide": 64,
+      "stages": [
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "slide-title"
+              ],
+              "effect": "floatUp",
+              "durationMs": 450
+            }
+          ]
+        },
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "reveal-1-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 100
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slide": 65,
+      "stages": [
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "slide-title"
+              ],
+              "effect": "floatUp",
+              "durationMs": 450
+            }
+          ]
+        },
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "reveal-1-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 100
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slide": 66,
+      "stages": [
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "slide-title"
+              ],
+              "effect": "floatUp",
+              "durationMs": 450
+            }
+          ]
+        },
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "reveal-1-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 100
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slide": 67,
+      "stages": [
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "slide-title"
+              ],
+              "effect": "floatUp",
+              "durationMs": 450
+            }
+          ]
+        },
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "reveal-1-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 100
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slide": 68,
+      "stages": [
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "slide-title"
+              ],
+              "effect": "floatUp",
+              "durationMs": 450
+            }
+          ]
+        },
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "reveal-1-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 100
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slide": 69,
+      "stages": [
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "slide-title"
+              ],
+              "effect": "floatUp",
+              "durationMs": 450
+            }
+          ]
+        },
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "reveal-1-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 100
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slide": 70,
+      "stages": [
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "slide-title"
+              ],
+              "effect": "floatUp",
+              "durationMs": 450
+            }
+          ]
+        },
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "reveal-1-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 100
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slide": 71,
+      "stages": [
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "slide-title"
+              ],
+              "effect": "floatUp",
+              "durationMs": 450
+            }
+          ]
+        },
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "reveal-1-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 100
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slide": 72,
+      "stages": [
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "slide-title"
+              ],
+              "effect": "floatUp",
+              "durationMs": 450
+            }
+          ]
+        },
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "reveal-1-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 100
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slide": 73,
+      "stages": [
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "slide-title"
+              ],
+              "effect": "floatUp",
+              "durationMs": 450
+            }
+          ]
+        },
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "reveal-1-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 100
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slide": 74,
+      "stages": [
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "slide-title"
+              ],
+              "effect": "floatUp",
+              "durationMs": 450
+            }
+          ]
+        },
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "reveal-1-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 100
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slide": 75,
+      "stages": [
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "break-title"
+              ],
+              "effect": "floatUp",
+              "durationMs": 450
+            },
+            {
+              "targets": [
+                "break-duration"
+              ],
+              "effect": "fade",
+              "durationMs": 420,
+              "delayMs": 120
+            },
+            {
+              "targets": [
+                "break-return"
+              ],
+              "effect": "fade",
+              "durationMs": 420,
+              "delayMs": 120
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slide": 76,
+      "stages": [
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "chapter-name"
+              ],
+              "effect": "floatUp",
+              "durationMs": 450
+            },
+            {
+              "targets": [
+                "chapter-description"
+              ],
+              "effect": "fade",
+              "durationMs": 420,
+              "delayMs": 120
+            },
+            {
+              "targets": [
+                "chapter-outcome"
+              ],
+              "effect": "fade",
+              "durationMs": 420,
+              "delayMs": 120
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slide": 77,
+      "stages": [
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "slide-title"
+              ],
+              "effect": "floatUp",
+              "durationMs": 450
+            }
+          ]
+        },
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "reveal-1-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 100
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slide": 78,
+      "stages": [
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "slide-title"
+              ],
+              "effect": "floatUp",
+              "durationMs": 450
+            }
+          ]
+        },
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "reveal-1-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 100
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slide": 79,
+      "stages": [
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "slide-title"
+              ],
+              "effect": "floatUp",
+              "durationMs": 450
+            }
+          ]
+        },
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "reveal-1-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 100
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slide": 80,
+      "stages": [
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "slide-title"
+              ],
+              "effect": "floatUp",
+              "durationMs": 450
+            }
+          ]
+        },
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "reveal-1-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 100
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slide": 81,
+      "stages": [
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "slide-title"
+              ],
+              "effect": "floatUp",
+              "durationMs": 450
+            }
+          ]
+        },
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "reveal-1-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 100
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slide": 82,
+      "stages": [
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "slide-title"
+              ],
+              "effect": "floatUp",
+              "durationMs": 450
+            }
+          ]
+        },
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "reveal-1-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 100
+            }
+          ]
+        },
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "reveal-2-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 100
+            }
+          ]
+        },
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "reveal-3-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 100
+            }
+          ]
+        },
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "reveal-4-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 100
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slide": 83,
+      "stages": [
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "chapter-name"
+              ],
+              "effect": "floatUp",
+              "durationMs": 450
+            },
+            {
+              "targets": [
+                "chapter-description"
+              ],
+              "effect": "fade",
+              "durationMs": 420,
+              "delayMs": 120
+            },
+            {
+              "targets": [
+                "chapter-outcome"
+              ],
+              "effect": "fade",
+              "durationMs": 420,
+              "delayMs": 120
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slide": 84,
+      "stages": [
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "slide-title"
+              ],
+              "effect": "floatUp",
+              "durationMs": 450
+            }
+          ]
+        },
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "reveal-1-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 100
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slide": 85,
+      "stages": [
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "slide-title"
+              ],
+              "effect": "floatUp",
+              "durationMs": 450
+            }
+          ]
+        },
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "reveal-1-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 100
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slide": 86,
+      "stages": [
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "slide-title"
+              ],
+              "effect": "floatUp",
+              "durationMs": 450
+            }
+          ]
+        },
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "reveal-1-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 100
+            }
+          ]
+        },
+        {
+          "trigger": "click",
+          "effects": [
+            {
+              "targets": [
+                "reveal-2-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slide": 87,
+      "stages": [
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "slide-title"
+              ],
+              "effect": "floatUp",
+              "durationMs": 450
+            }
+          ]
+        },
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "reveal-1-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 100
+            }
+          ]
+        },
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "reveal-2-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 100
+            }
+          ]
+        },
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "reveal-3-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 100
+            }
+          ]
+        },
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "reveal-4-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 100
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slide": 88,
+      "stages": [
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "slide-title"
+              ],
+              "effect": "floatUp",
+              "durationMs": 450
+            }
+          ]
+        },
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "reveal-1-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 100
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slide": 89,
+      "stages": [
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "slide-title"
+              ],
+              "effect": "floatUp",
+              "durationMs": 450
+            }
+          ]
+        },
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "reveal-1-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 100
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slide": 90,
+      "stages": [
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "slide-title"
+              ],
+              "effect": "floatUp",
+              "durationMs": 450
+            }
+          ]
+        },
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "reveal-1-*"
+              ],
+              "effect": "floatUp",
+              "durationMs": 350,
+              "delayMs": 100
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slide": 91,
+      "stages": [
+        {
+          "trigger": "auto",
+          "effects": [
+            {
+              "targets": [
+                "closing-title"
+              ],
+              "effect": "floatUp",
+              "durationMs": 450
+            },
+            {
+              "targets": [
+                "closing-detail"
+              ],
+              "effect": "fade",
+              "durationMs": 420,
+              "delayMs": 120
+            },
+            {
+              "targets": [
+                "closing-presenter"
+              ],
+              "effect": "fade",
+              "durationMs": 420,
+              "delayMs": 120
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
