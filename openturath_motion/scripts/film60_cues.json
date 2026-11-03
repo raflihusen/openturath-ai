@@ -51,14 +51,6 @@
       "label": "dashboard"
     },
     {
-      "time": 7,
-      "role": "click",
-      "alignment": "onset",
-      "bed_over_db": 4,
-      "pan": 0,
-      "label": "continue"
-    },
-    {
       "time": 8,
       "role": "whoosh",
       "alignment": "peak",
@@ -264,7 +256,7 @@
       "alignment": "onset",
       "bed_over_db": 4,
       "pan": 0,
-      "label": "select"
+      "label": "dismiss sheet"
     },
     {
       "time": 29.5,
@@ -289,6 +281,14 @@
       "bed_over_db": 1,
       "pan": -0.08,
       "label": "typing"
+    },
+    {
+      "time": 30.3,
+      "role": "click",
+      "alignment": "onset",
+      "bed_over_db": 3,
+      "pan": 0,
+      "label": "Syafii card"
     },
     {
       "time": 30.327,
@@ -491,12 +491,20 @@
       "label": "tab"
     },
     {
-      "time": 51,
+      "time": 50.8,
       "role": "click",
       "alignment": "onset",
       "bed_over_db": 3,
       "pan": 0,
-      "label": "notes navigation"
+      "label": "back to dashboard"
+    },
+    {
+      "time": 51.4,
+      "role": "click",
+      "alignment": "onset",
+      "bed_over_db": 3,
+      "pan": 0,
+      "label": "notes navigation from dashboard"
     },
     {
       "time": 51.4,
@@ -508,11 +516,11 @@
     },
     {
       "time": 53.5,
-      "role": "confirm",
+      "role": "click",
       "alignment": "onset",
-      "bed_over_db": 4,
+      "bed_over_db": 3,
       "pan": 0,
-      "label": "save"
+      "label": "open saved note"
     },
     {
       "time": 55,
