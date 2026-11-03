@@ -21,6 +21,7 @@ N=30*SR
 p=argparse.ArgumentParser()
 p.add_argument('--music',required=True,type=Path)
 p.add_argument('--paper',required=True,type=Path)
+p.add_argument('--tail',action='store_true',help='Use the final thirty seconds of the original track.')
 a=p.parse_args()
 
 def decode(src,dst):
@@ -42,7 +43,7 @@ with tempfile.TemporaryDirectory(prefix='ot-jejak-audio-') as tmp:
         print('TIME_STRETCH',round(tempo,5),'of original tempo')
     # A single continuous excerpt rather than a stitched-together track.
     if len(music)<N: music=np.pad(music,((0,N-len(music)),(0,0)))
-    music=music[:N].astype(np.float64)
+    music=(music[-N:] if a.tail else music[:N]).astype(np.float64)
     paper=paper.astype(np.float64)
     music[:int(.8*SR)]*=np.linspace(0,1,int(.8*SR))[:,None]
     meter=pyln.Meter(SR)
@@ -53,7 +54,7 @@ with tempfile.TemporaryDirectory(prefix='ot-jejak-audio-') as tmp:
     for cue,gain in [(.7,.055),(14.5,.045),(24.6,.06)]:
         start=round((cue-.142)*SR); n=min(len(paper),N-start)
         music[start:start+n]+=paper[:n]*gain
-    music[-int(1.5*SR):]*=np.linspace(1,0,int(1.5*SR))[:,None]
+    if not a.tail: music[-int(1.5*SR):]*=np.linspace(1,0,int(1.5*SR))[:,None]
     # Keep the recording's center clear on phone and mono playback.
     mid=(music[:,0]+music[:,1])*.5
     side=(music[:,0]-music[:,1])*.18
@@ -62,7 +63,7 @@ with tempfile.TemporaryDirectory(prefix='ot-jejak-audio-') as tmp:
     peak=np.max(np.abs(music))
     if peak>.80: music*=.80/peak
     pre=tmp/'pre.wav'; wavfile.write(pre,SR,np.round(music*32767).astype(np.int16))
-    out=ROOT/'public/jejak/audio/soundtrack.wav'; out.parent.mkdir(parents=True,exist_ok=True)
+    out=ROOT/'public/jejak/audio/master.wav'; out.parent.mkdir(parents=True,exist_ok=True)
     subprocess.run(['ffmpeg','-hide_banner','-loglevel','error','-y','-i',str(pre),
                     '-af','loudnorm=I=-16:TP=-1.8:LRA=11','-ar',str(SR),
                     '-c:a','pcm_s16le',str(out)],check=True)
