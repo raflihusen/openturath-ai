@@ -6,7 +6,7 @@ const ROOT='/Users/apple/Downloads/ramadhan/docs/dauroh-v6-id';
 const BUILD=path.join(ROOT,'revision/.build');
 const FONT='IBM Plex Sans Arabic',W=1440,H=810;
 const K={paper:'#FAFAFA',ink:'#09090B',muted:'#606060',line:'#DADADA',quiet:'#A1A1AA'};
-const specs=JSON.parse(await fs.readFile(path.join(ROOT,'revision/deck-spec.json'),'utf8'));
+const specs=JSON.parse(await fs.readFile(process.env.SPEC_PATH??path.join(ROOT,'revision/deck-spec.json'),'utf8'));
 const pres=Presentation.create({slideSize:{width:W,height:H}});
 await fs.mkdir(BUILD,{recursive:true});
 const audit=[];
