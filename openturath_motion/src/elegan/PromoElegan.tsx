@@ -44,7 +44,7 @@ const Ask: React.FC = () => {
     <div style={{position: 'absolute', top: 290, left: 88, right: 88}}><Label>Mulai dari pertanyaan</Label><div style={{height: 35}}/><Title delay={8}>Bertanya.<br/><i>Memahami.</i></Title><p style={{fontFamily: sans, fontSize: 38, lineHeight: 1.35, marginTop: 40, maxWidth: 750, color: '#52525B'}}>Ruang untuk menemani perjalanan membaca kitab.</p></div>
     <div style={{position: 'absolute', top: 1000, left: 88, right: 88, border: '1px solid #D4D4D8', background: '#fff', padding: '48px 50px', boxShadow: '0 28px 70px #0000000b', translate: `0 ${rise(f, 28)}px`, opacity: interpolate(f, [28, 55], [0, 1], clamp)}}>
       <div style={{fontFamily: sans, fontSize: 22, letterSpacing: 3, color: '#71717A'}}>PERTANYAAN ANDA</div>
-      <div style={{fontFamily: serif, fontSize: 52, lineHeight: 1.25, marginTop: 30}}>Apa makna dari<br/>ibarat ini?</div>
+      <div style={{fontFamily: serif, fontSize: 52, lineHeight: 1.25, marginTop: 30}}>Apa makna dari<br/>ibārah ini?</div>
       <div style={{height: 1, background: '#D4D4D8', marginTop: 45}} />
       <div style={{display: 'flex', justifyContent: 'space-between', marginTop: 30, fontFamily: sans, fontSize: 25, color: '#71717A'}}><span>Mulai percakapan</span><span style={{color: ink}}>↗</span></div>
     </div>
