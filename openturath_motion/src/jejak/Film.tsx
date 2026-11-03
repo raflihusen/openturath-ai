@@ -25,8 +25,8 @@ const DirectoryCrop:React.FC<{t:number}> = ({t}) => <div style={{...softBox,left
  <div style={{position:'absolute',left:-4,top:-454,width:420,height:820,transform:'scale(2.02)',transformOrigin:'top left'}}><DirectoryScreen field="fiqh"/></div>
 </div>;
 const ComposerCrop:React.FC<{t:number}> = ({t})=>{
- const typed=query.slice(0,Math.floor(range(t,11.6,13.9)*query.length));
- const sent=t>=14.05;
+ const typed=query.slice(0,Math.floor(range(t,11.6,12.95)*query.length));
+ const sent=t>=14.65;
  return <div style={{...softBox,left:135,top:820,width:810,height:260,borderRadius:25,opacity:inOut(t,11.15,14.8),transform:`translateY(${26*(1-smooth(t,11.15,11.8))}px)`}}>
   <div style={{position:'absolute',left:0,top:0,right:0,fontFamily:'Outfit',fontSize:26,fontWeight:600,color:ink,padding:'24px 30px 0',zIndex:2}}>Contoh pertanyaan · Fikih Syafi’i</div>
   <div style={{position:'absolute',left:-5,top:-1400,width:420,height:820,transform:'scale(2.02)',transformOrigin:'top left'}}><ChatScreen typed={typed} answerProgress={0} sent={sent}/></div>
