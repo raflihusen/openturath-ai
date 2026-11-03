@@ -5,7 +5,7 @@
 
 ## Pertanyaan kreatif
 
-Bagaimana membuat film 30 detik yang memperkenalkan OpenTurath AI melalui pengalaman menelusuri ilmu, dengan kesan sinematis dan identitas OpenTurath sendiri? Film perlu menunjukkan hubungan antara pertanyaan, penjelasan, ibarah, dan sumber; antarmuka yang sudah disetujui tetap menjadi bukti produk, sementara sebagian besar durasi membangun cerita visual yang dirancang khusus.
+Bagaimana membuat film 30 detik yang memperkenalkan OpenTurath AI melalui pengalaman menelusuri ilmu, dengan kesan sinematis dan identitas OpenTurath sendiri? Film perlu menunjukkan hubungan antara pertanyaan, penjelasan, ibarah, dan sumber; antarmuka yang mengikuti produk tetap menjadi bukti pengalaman nyata, sementara sebagian besar durasi membangun cerita visual yang dirancang khusus.
 
 Riset ini membaca dua dokumen pendamping: [analisis film MacBook Air](FILM_ANALYSIS.md) dan [riset audio](AUDIO_RESEARCH.md). Keduanya membedakan hal yang teramati dari tafsir dan pilihan yang masih harus diuji. Tidak ada gambar, rekaman, atau musik Apple yang disalin ke proyek.
 
@@ -42,11 +42,17 @@ Pada [film MacBook Air resmi](https://www.apple.com/105/media/us/macbook-air/202
 
 [Apple Human Interface Guidelines: Motion](https://developer.apple.com/design/human-interface-guidelines/motion) menganjurkan gerak yang mendukung tujuan dan membantu orang memahami perubahan; dokumen itu terutama membahas antarmuka, sehingga penerapannya pada film ini merupakan **adaptasi kreatif**, bukan aturan iklan. [Design principles](https://developer.apple.com/design/human-interface-guidelines/design-principles/) juga menempatkan kejernihan, tujuan, dan perhatian pada detail dalam satu pengalaman.
 
-Pelajaran untuk proyek ini: tetapkan satu maksud untuk setiap perpindahan, bangun hierarki dengan perubahan skala, dan buat bahan visual sesuai kisah OpenTurath. Jangan meniru komposisi, merek, musik, atau karya Apple.
+[BUCK, dalam studi kasus Power to the Pro](https://buck.co/work/apple-power-to-the-pro), menjelaskan konsep proses kreatif: gagasan abstrak berkembang melalui eksplorasi hingga menjadi karya. Ini keterangan studio pembuatnya, bukan kesimpulan dari pemutaran film oleh penulis laporan. Yang bisa dipindahkan adalah keberadaan satu gagasan yang mengatur perubahan bentuk dan adegan, bukan menyalin gaya atau objeknya.
+
+[Antfood menjelaskan produksi iMac Pro bersama BUCK](https://www.antfood.com/work/apple-imac) sebagai musik orisinal dan sound design yang digarap untuk melengkapi animasinya. Hubungan gambar dan musik harus direncanakan bersama. Ini informasi metode produksi dari studio, bukan penilaian pendengaran atas referensi.
+
+Pelajaran untuk proyek ini: tetapkan satu maksud untuk setiap perpindahan, bangun hierarki dengan perubahan skala, buat bahan visual sesuai kisah OpenTurath, dan susun frasa musik terhadap adegan. Jangan meniru komposisi, merek, musik, atau karya Apple.
 
 ## Konsep terpilih: Dari pertanyaan ke sumber
 
-**Judul kerja kampanye: “Jejak Ilmu”.** Sebuah pertanyaan memulai jalur visual yang bergerak melewati ruang ilmu, penjelasan, ibarah, dan identitas kitab. Jalur itu bukan klaim bahwa AI selalu benar atau bahwa setiap sitasi otomatis tervalidasi: ia adalah metafora untuk proses menelusuri dan memeriksa. Antarmuka asli yang telah disetujui hadir sekitar **5–6 detik** sebagai bukti pengalaman produk. Selebihnya berupa objek dan ruang yang dirancang untuk film.
+**Judul kerja kampanye: “Jejak Ilmu”.** Sebuah pertanyaan memulai jalur visual yang bergerak melewati ruang ilmu, penjelasan, ibarah, dan identitas kitab. Jalur itu adalah metafora untuk proses menelusuri dan memeriksa. Ia tidak menyatakan bahwa AI selalu benar atau bahwa setiap sitasi otomatis tervalidasi. Antarmuka lengkap hadir sekitar **5–6 detik**, di luar fragmen kutipan dan sumber. Selebihnya berupa objek dan ruang yang dirancang untuk film.
+
+**Hubungan dengan software harus terlihat.** Lanskap kertas saja masih bisa menjadi iklan perpustakaan umum. Karena itu, pilihan bidang menentukan cabang jalur yang dilalui; bidang yang sama muncul dalam UI. Satu pertanyaan harus berlanjut secara utuh dari input, penjelasan, rujukan, hingga catatan, sehingga hubungan antartahap terbaca. Penutup memperlihatkan hasil belajar yang disimpan sebelum kembali ke merek. Lokator mengajak pembaca memeriksa sumber, bukan menjadi stempel bahwa AI sudah membuktikan semuanya.
 
 Bahasa visual tetap **monokrom editorial**: tinta obsidian, kertas putih, kontras hitam-putih, dan cahaya netral. Newsreader dipakai untuk judul editorial, Outfit untuk antarmuka, dan font Arab ilmiah yang sesuai untuk teks sumber. Bentuk lengkung logo dapat memberi geometri ruang, tanpa menggambarkannya sebagai bangunan atau tempat nyata. Kedalaman dibuat melalui ukuran, bayangan kontak, permukaan, fokus, dan gerak kamera yang konsisten; bukan melalui dekorasi yang bergerak sendiri.
 
@@ -57,10 +63,10 @@ Kutipan Arab dan lokator hanya dipakai setelah diverifikasi terhadap edisi sumbe
 | Waktu | Gambar, kamera, dan tujuan | Maksud audio untuk diuji |
 |---|---|---|
 | **0:00–0:04** | Bidang putih bertekstur halus dalam jarak dekat. Garis tinta muncul sebagai jejak sebuah pertanyaan; kamera bergerak mendekat sehingga garis menjadi jalur pada permukaan halaman. Satu kalimat singkat memperkenalkan kegiatan bertanya. Tujuan: membuka cerita dari kebutuhan pembaca. | Awal musik memberi ruang dan arah; satu bunyi material hanya jika terkait jelas dengan gerak tinta atau kertas. |
-| **0:04–0:09** | Kamera mengikuti jalur melewati beberapa volume geometris berbentuk halaman, membentuk lengkung yang mengacu pada logo. Nama beberapa bidang muncul pada permukaan secara terbaca, tanpa mengubahnya menjadi sampul kitab rekaan. Tujuan: memperlihatkan keluasan bidang. | Musik berkembang menuju perpindahan ruang, tanpa efek pada setiap nama. |
-| **0:09–0:14** | Jalur tiba pada permukaan yang berubah menjadi fragmen antarmuka yang disetujui: pilih bidang, lalu masukkan pertanyaan. Tampilkan gerakan langsung dan responsnya dalam potongan yang cukup besar untuk dibaca. Tujuan: membuktikan hubungan dengan produk nyata. | Satu isyarat interaksi yang ringkas dapat diuji terhadap musik; sisakan ruang untuk membaca. |
+| **0:04–0:09** | Kamera mengikuti jalur melewati beberapa volume geometris berbentuk halaman, membentuk lengkung yang mengacu pada logo. Nama beberapa bidang aktual muncul pada permukaan secara terbaca. Satu pilihan menentukan cabang perjalanan menuju bidang yang sama dalam UI. Tujuan: memperlihatkan keluasan dan pengorganisasian AI menurut bidang. | Musik berkembang menuju perpindahan ruang, tanpa efek pada setiap nama. |
+| **0:09–0:14** | Jalur tiba pada permukaan yang berubah menjadi antarmuka produk: bidang yang dipilih dan pertanyaan yang sama di composer. Tampilkan gerakan langsung dan responsnya cukup besar untuk dibaca. Tujuan: membuktikan hubungan dengan produk nyata. | Satu isyarat interaksi yang ringkas dapat diuji terhadap musik; sisakan ruang untuk membaca. |
 | **0:14–0:19** | Potongan jawaban di antarmuka mengantar ke ibarah yang telah diverifikasi; kamera mendekat pada teks dan jalur berakhir pada lokator yang benar. Pertahankan label contoh bila isi percakapan direkonstruksi. Tujuan: menghubungkan penjelasan dengan pemeriksaan sumber. | Biarkan frasa musik memberi waktu pada momen baca; efek halaman hanya bila tidak mengaburkan perhatian. |
-| **0:19–0:24** | Identitas kitab atau entri pustaka yang terverifikasi muncul di ruang yang sama. Satu penanda berpindah menjadi catatan, disertai sekilas UI catatan yang benar-benar ada. Tujuan: menunjukkan kelanjutan belajar. | Peralihan menuju penyelesaian musik; satu aksen seperlunya, selaras dengan tindakan menyimpan. |
+| **0:19–0:24** | Identitas kitab atau entri pustaka yang terverifikasi muncul di ruang yang sama. Satu penanda dari pertanyaan yang sama berpindah menjadi catatan, disertai sekilas UI catatan yang benar-benar ada. Tujuan: menunjukkan hasil penelusuran yang dapat disimpan dan dipelajari kembali. | Peralihan menuju penyelesaian musik; satu aksen seperlunya, selaras dengan tindakan menyimpan. |
 | **0:24–0:30** | Kamera menjauh; jalur dan lengkung halaman membentuk komposisi merek yang utuh. Logo OpenTurath AI dan alamat situs tampil cukup lama dalam ruang bersih. Halaman tetap utuh. Tujuan: menutup pada identitas dan langkah berikutnya. | Frasa penutup diselesaikan secara musikal; periksa akhir dan ekornya pada master. |
 
 Rincian gerak dan kalimat di atas adalah rancangan, bukan storyboard yang telah diujikan. Jadwal shot dapat disesuaikan setelah keterbacaan dan musik dinilai bersama.
@@ -71,6 +77,20 @@ Cari karya yang memang dilisensikan untuk kampanye ini, gunakan musik yang hakny
 
 Earshot dapat membantu mengukur loudness, true peak, mono, dan penempatan cue; pengukuran tersebut tidak menentukan selera atau membuktikan mutu musik. Penilaian komposisi, performa, dan kecocokan emosional memerlukan orang yang mendengarkan. Periksa kembali hasil akhir setelah encoding audio.
 
-Sebelum membuat film penuh lagi, produksi **tiga styleframe hero**: (1) dunia kertas dan jalur pertanyaan, (2) ruang bidang ilmu dan lengkung, (3) ibarah serta sumber yang terverifikasi. Tinjau tekstur, skala, keterbacaan, dan batas merek. Lalu buat **look development delapan detik** yang menghubungkan sedikitnya dua keadaan material dan satu momen UI, disertai uji musik yang haknya mengizinkan pratinjau tersebut. Lihat gerak secara utuh dan dengarkan bersama sebelum memilih arah.
+## Papan visual dan uji gerak
 
-Jangan membuat render iklan penuh keempat sebelum satu arah visual dan pendekatan audio dipilih berdasarkan uji itu. Setelah dipilih, susun storyboard, verifikasi sumber dan hak, selesaikan animasi, lalu lakukan pemeriksaan gambar, teks Arab, transisi, keterbacaan pada layar ponsel, serta master audio. Keputusan akhir tentang kualitas tetap berada pada peninjau manusia.
+Eksplorasi awal sudah dibuat dalam [papan tiga styleframe](STYLEFRAME_BOARD.png): (1) macro kertas dan jalur tinta, (2) ruang halaman dan lengkung, (3) buku terbuka sebagai momen kedatangan. Dibuat dengan imagegen; [prompt dan batas penggunaan](STYLEFRAME_PROMPT.md) tercatat. Ini gambar konsep material dan komposisi, belum animasi atau hasil render 3D. Halamannya sengaja kosong. Ibarah, identitas kitab, dan antarmuka perlu ditata dari sumber yang benar pada tahap produksi.
+
+Uji gerak berikutnya adalah **delapan detik** yang menghubungkan sedikitnya dua keadaan material dan satu momen UI. Tujuannya menguji apakah konsep tetap bekerja saat bergerak; memperbesar atau menggeser papan gambar tidak mencukupi. Rancangan uji:
+
+| Waktu uji | Perubahan objek yang harus tampak | Cara menilainya |
+|---|---|---|
+| **0,0–1,4** | Garis tumbuh dari ujungnya pada permukaan kertas; awal kamera diam. | Ujung dan panjang jejak berubah pada frame awal, tengah, dan akhir. |
+| **1,2–3,0** | Tepi lembar utuh melengkung dan bayangan kontak bergeser mengikuti bentuknya. | Kamera sempat berhenti, tetapi bentuk dan bayangan tetap berubah. |
+| **2,5–4,5** | Bidang halaman bergerak pada kedalaman berbeda dan membentuk lengkung; jalur tetap terikat pada permukaan. | Bagian dekat dan jauh saling menutupi secara konsisten; tidak bergerak sebagai satu bidang datar. |
+| **4,2–6,5** | Bidang melurus; batasnya mengantar melalui potongan yang selaras ke UI produk, lalu pertanyaan dimasukkan. | Tidak ada teks ganda atau komponen UI palsu; bidang yang dipilih tetap sama. |
+| **6,5–8,0** | Penanda rujukan menghubungkan penjelasan dengan bidang sumber yang berhenti dalam posisi baca. | Tanpa metadata rekaan. Jika sumber belum diverifikasi, gunakan bidang kosong pada uji material. |
+
+Rentang tumpang tindih menandai perpindahan yang berbagi objek, bukan lima potongan yang harus dipadatkan. Jika keterbacaan turun, kurangi aksi pada uji tersebut. Kelengkungan kertas, bayangan, dan perspektif yang meyakinkan memerlukan adegan 3D atau aset khusus; proyek lokal belum memiliki perangkat adegan tersebut. Gerak garis dan komposisi dapat dibuat dengan Remotion, tetapi itu belum membuktikan mutu material fisiknya.
+
+Setelah uji gerak dan kandidat musik dinilai bersama, lanjutkan storyboard final 30 detik, penataan teks dan UI, animasi penuh, lalu pemeriksaan gambar, teks Arab, transisi, keterbacaan pada layar ponsel, serta master audio. Pengukuran teknis akan mendukung penilaian; mutu gerak dan kecocokan musikal tetap perlu ditinjau melalui pemutaran utuh.
