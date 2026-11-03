@@ -43,7 +43,7 @@ export const OpenTurathJejakIlmu:React.FC<{worldRenderer?:'video'|'three'}> = ({
   <div style={{position:'absolute',left:96,bottom:250,width:600,fontFamily:'Newsreader, serif',fontSize:62,lineHeight:1.12,letterSpacing:-1.5,color:ink,opacity:inOut(t,.7,3.8),transform:`translateY(${16*(1-smooth(t,.7,1.6))}px)`}}>Setiap pertanyaan<br/>membuka jalan.</div>
   {/* Sparse labels belong to the 3D space; the arch and paper remain visible. */}
   {[{text:'Fikih',x:145,y:750,a:5.0,b:7.8},{text:'Hadis',x:702,y:990,a:5.65,b:8.3},{text:'Tafsir',x:310,y:1250,a:6.25,b:8.6}].map(({text,x,y,a,b})=><div key={text} style={{position:'absolute',left:x,top:y,fontFamily:'Outfit, sans-serif',fontSize:27,letterSpacing:1,color:'#3F3F46',opacity:inOut(t,a,b)*.8,transform:`translateY(${12*(1-smooth(t,a,a+.7))}px)`}}>{text}</div>)}
-  <SceneTitle t={t} start={9.1} end={11.25} text={'Pilih bidang ilmu.'} overline="OPENTURATH AI"/>
+  <SceneTitle t={t} start={9.1} end={11.25} text={'Pilih asisten AI.'} overline="OPENTURATH AI"/>
   <SceneTitle t={t} start={11.4} end={14.7} text={'Mulai dengan\npertanyaan.'} overline="OPENTURATH AI"/>
   <DirectoryCrop t={t}/><ComposerCrop t={t}/>
   <div style={{...heading,top:1080,left:135,right:105,opacity:inOut(t,14.9,18.8),transform:`translateY(${22*(1-smooth(t,14.9,15.8))}px)`}}>Baca penjelasan.<br/>Telusuri rujukan.</div>
