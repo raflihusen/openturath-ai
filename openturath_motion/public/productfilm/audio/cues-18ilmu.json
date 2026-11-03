@@ -1,0 +1,150 @@
+{
+  "fps": 60,
+  "totalFrames": 1800,
+  "note": "Actual global timeline for OpenTurath18Ilmu; source_story_time refers to the original product demo.",
+  "events": [
+    {
+      "id": "catalog_first_six",
+      "kind": "catalog",
+      "f": 51,
+      "source_time": 0.85
+    },
+    {
+      "id": "catalog_second_six",
+      "kind": "catalog",
+      "f": 249,
+      "source_time": 4.15
+    },
+    {
+      "id": "catalog_final_six",
+      "kind": "catalog",
+      "f": 471,
+      "source_time": 7.85
+    },
+    {
+      "id": "catalog_search",
+      "kind": "catalog",
+      "f": 657,
+      "source_time": 10.95
+    },
+    {
+      "id": "choose_assistant",
+      "kind": "tap",
+      "f": 711,
+      "source_time": 11.85,
+      "source_story_time": 4.73
+    },
+    {
+      "id": "send_question",
+      "kind": "tap",
+      "f": 838,
+      "source_time": 13.97,
+      "source_story_time": 8.03
+    },
+    {
+      "id": "answer_row_1",
+      "kind": "reveal",
+      "f": 893,
+      "source_time": 14.8829,
+      "source_story_time": 9.35
+    },
+    {
+      "id": "answer_row_2",
+      "kind": "reveal",
+      "f": 899,
+      "source_time": 14.9901,
+      "source_story_time": 9.49
+    },
+    {
+      "id": "answer_row_3",
+      "kind": "reveal",
+      "f": 906,
+      "source_time": 15.0973,
+      "source_story_time": 9.63
+    },
+    {
+      "id": "answer_row_4",
+      "kind": "reveal",
+      "f": 912,
+      "source_time": 15.2045,
+      "source_story_time": 9.77
+    },
+    {
+      "id": "answer_row_5",
+      "kind": "reveal",
+      "f": 919,
+      "source_time": 15.3117,
+      "source_story_time": 9.91
+    },
+    {
+      "id": "answer_row_6",
+      "kind": "reveal",
+      "f": 925,
+      "source_time": 15.4189,
+      "source_story_time": 10.05
+    },
+    {
+      "id": "citation_appear",
+      "kind": "reveal",
+      "f": 950,
+      "source_time": 15.8401,
+      "source_story_time": 10.6
+    },
+    {
+      "id": "citation_focus",
+      "kind": "focus",
+      "f": 1125,
+      "source_time": 18.75,
+      "source_story_time": 14.4
+    },
+    {
+      "id": "copy",
+      "kind": "tap",
+      "f": 1279,
+      "source_time": 21.3224,
+      "source_story_time": 19.53
+    },
+    {
+      "id": "save",
+      "kind": "tap",
+      "f": 1326,
+      "source_time": 22.0921,
+      "source_story_time": 20.56
+    },
+    {
+      "id": "back",
+      "kind": "tap",
+      "f": 1361,
+      "source_time": 22.6899,
+      "source_story_time": 21.36
+    },
+    {
+      "id": "notes",
+      "kind": "tap",
+      "f": 1395,
+      "source_time": 23.2578,
+      "source_story_time": 22.12
+    },
+    {
+      "id": "open_note",
+      "kind": "tap",
+      "f": 1448,
+      "source_time": 24.1396,
+      "source_story_time": 23.3
+    },
+    {
+      "id": "closing_transition",
+      "kind": "transition",
+      "f": 1593,
+      "source_time": 26.55,
+      "source_story_time": 26.3
+    },
+    {
+      "id": "closing_tagline",
+      "kind": "reveal",
+      "f": 1643,
+      "source_time": 27.3892,
+      "source_story_time": 27.2
+    }
+  ]
+}
