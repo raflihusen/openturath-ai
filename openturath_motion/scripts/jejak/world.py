@@ -49,8 +49,8 @@ def material(name,color,texture=False):
   ramp.color_ramp.elements[1].position=.85;ramp.color_ramp.elements[1].color=(*color,1)
   l.new(tex.outputs['Fac'],ramp.inputs[0]);l.new(ramp.outputs['Color'],p.inputs['Base Color'])
  return m
-paper=material('Cotton paper | neutral fibers',(.86,.86,.85),True)
-edge=material('Page edge',(.66,.66,.65),True)
+paper=material('Cotton paper | neutral fibers',(.86,.86,.86),True)
+edge=material('Page edge',(.66,.66,.66),True)
 ink=material('Matte obsidian ink',(.008,.008,.009))
 black=material('Obsidian studio',(.012,.012,.014),True)
 
