@@ -20,8 +20,8 @@ specs=json.loads((ROOT/'revision/deck-spec.json').read_text())
 def children(node,ns,local):
     return [n for n in node.childNodes if n.nodeType==n.ELEMENT_NODE and n.namespaceURI==ns and n.localName==local]
 
-def append(doc,parent,ns,name,**attrs):
-    node=doc.createElementNS(ns,name)
+def append(doc,parent,ns,tag,**attrs):
+    node=doc.createElementNS(ns,tag)
     for key,value in attrs.items():node.setAttribute(key,str(value))
     parent.appendChild(node)
     return node
