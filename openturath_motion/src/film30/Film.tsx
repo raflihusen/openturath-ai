@@ -62,7 +62,6 @@ export const OpenTurathLaunch30:React.FC=()=>{
  const qp=smooth(p(t,14.4,14.95))*(1-smooth(p(t,16.4,16.65)));
  const bp=smooth(p(t,19,19.4))*(1-smooth(p(t,20.1,20.35)));
  const np=smooth(p(t,23.15,23.48))*(1-smooth(p(t,23.72,24.02)));
- const fold=smooth(p(t,24.55,25.8));
  return <AbsoluteFill style={{backgroundColor:`rgb(${grey},${grey},${grey})`,fontFamily:U.fontOutfit,overflow:'hidden',color:U.ink}}>
   <Audio src={staticFile('film30/soundtrack.wav')}/>
   {/* Stable editorial registration leaves room for the shared-element choreography. */}
