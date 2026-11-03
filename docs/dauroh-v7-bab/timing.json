@@ -1,0 +1,86 @@
+{
+  "1": [
+    [
+      "Pembukaan dan dasar AI",
+      40
+    ],
+    [
+      "Gemini, termasuk praktik 10 menit",
+      30
+    ],
+    [
+      "ChatGPT, termasuk praktik 10 menit",
+      30
+    ],
+    [
+      "Istirahat",
+      15
+    ],
+    [
+      "Perplexity, termasuk praktik 5 menit",
+      20
+    ],
+    [
+      "DeepSeek, termasuk praktik 5 menit",
+      10
+    ],
+    [
+      "Claude, termasuk praktik 10 menit",
+      25
+    ],
+    [
+      "Prompt TEPAT, termasuk praktik 15 menit",
+      55
+    ],
+    [
+      "Rangkuman dan tanya jawab",
+      15
+    ]
+  ],
+  "2": [
+    [
+      "Pembukaan",
+      10
+    ],
+    [
+      "Sumber, termasuk praktik 15 menit",
+      45
+    ],
+    [
+      "Rancangan penelitian",
+      20
+    ],
+    [
+      "Penelitian terdahulu",
+      25
+    ],
+    [
+      "Pembacaan dan catatan",
+      25
+    ],
+    [
+      "Istirahat",
+      15
+    ],
+    [
+      "Metode dan kerangka",
+      20
+    ],
+    [
+      "Penulisan dan revisi",
+      35
+    ],
+    [
+      "Praktik akhir",
+      15
+    ],
+    [
+      "Tur OpenTurath",
+      20
+    ],
+    [
+      "Penutup",
+      10
+    ]
+  ]
+}
