@@ -4,7 +4,7 @@ const R='/Users/apple/Downloads/ramadhan/docs/dauroh-v8-ar';
 const data=JSON.parse(await fs.readFile(R+'/slides.json','utf8'));
 const p=Presentation.create({slideSize:{width:1440,height:810}}),F='IBM Plex Sans Arabic';
 function tx(s,name,value,x,y,w,h,size=32,color='#09090B',bold=false){
- const z=s.shapes.add({name,geometry:'textbox',position:{left:1440-x-w,top:y,width:w,height:h},fill:'none',line:{fill:'none',width:0}});z.text=value;z.text.style={typeface:F,fontSize:size,bold,color,alignment:'right',verticalAlignment:'top',insets:0,autoFit:'none',wrap:'square'};return z;
+ const z=s.shapes.add({name,geometry:'textbox',position:{left:1440-x-w,top:y,width:w,height:h},fill:'none',line:{fill:'none',width:0}});z.text=String(value).replace(/@shamelaws/g,"\u2066@shamelaws\u2069");z.text.style={typeface:F,fontSize:size,bold,color,alignment:'right',verticalAlignment:'top',insets:0,autoFit:'none',wrap:'square'};return z;
 }
 const an=x=>String(x).replace(/[0-9]/g,c=>'٠١٢٣٤٥٦٧٨٩'[+c]);
 const val=x=>Array.isArray(x)?x[1]:x;

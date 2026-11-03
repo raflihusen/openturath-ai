@@ -6,7 +6,7 @@ const R='/Users/apple/Downloads/ramadhan/docs/dauroh-v8-ar';
 const S='/Users/apple/.codex/plugins/cache/openai-primary-runtime/presentations/26.1026.10807/skills/presentations';
 await fs.mkdir(R+'/output',{recursive:true});
 const result=await finalizePresentation({
- workspaceDir:R,candidatePath:R+'/review/review-01.pptx',finalPath:R+'/output/دورة_الذكاء_الاصطناعي_والبحث_العلمي_عربية_v03.pptx',
+ workspaceDir:R,candidatePath:R+'/review/review-02.pptx',finalPath:R+'/output/دورة_الذكاء_الاصطناعي_والبحث_العلمي_عربية_v03.pptx',
  pythonExecutable:'/Users/apple/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3',
  integrityValidatorPath:S+'/container_tools/inspect_presentation_package_integrity.py',
  layoutValidatorPath:S+'/container_tools/inspect_presentation_layout_geometry.py',
