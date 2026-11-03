@@ -54,6 +54,10 @@ with tempfile.TemporaryDirectory(prefix='ot-jejak-audio-') as tmp:
         start=round((cue-.142)*SR); n=min(len(paper),N-start)
         music[start:start+n]+=paper[:n]*gain
     music[-int(1.5*SR):]*=np.linspace(1,0,int(1.5*SR))[:,None]
+    # Keep the recording's center clear on phone and mono playback.
+    mid=(music[:,0]+music[:,1])*.5
+    side=(music[:,0]-music[:,1])*.18
+    music=np.column_stack((mid+side,mid-side))
     # Protect the intermediate 16-bit PCM, then let EBU loudnorm set delivery.
     peak=np.max(np.abs(music))
     if peak>.80: music*=.80/peak
