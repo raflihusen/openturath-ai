@@ -3,8 +3,8 @@
 
 Example:
   earshot-venv/bin/python scripts/jejak_audio.py --music /tmp/reawakening-tail.mp3 --paper /tmp/page-turn.wav
-Use the original downloaded file, or a contiguous >=30 s MP3 tail ending at
-the end of the recording. Licensed source files are intentionally not stored
+Use the original downloaded file or a contiguous excerpt of at least 27 s.
+Short excerpts are slowed slightly to cover 30 s; all edits are disclosed. Licensed source files are intentionally not stored
 in the repository. See public/jejak/audio/CREDITS.md for terms and attribution.
 """
 import argparse
@@ -31,11 +31,19 @@ with tempfile.TemporaryDirectory(prefix='ot-jejak-audio-') as tmp:
     tmp=Path(tmp); mw=tmp/'music.wav'; pw=tmp/'paper.wav'
     decode(a.music,mw); decode(a.paper,pw)
     _,music=wavfile.read(mw); _,paper=wavfile.read(pw)
-    if len(music)<N: raise ValueError('Music source must include at least 30 seconds.')
-    music=music[-N:].astype(np.float64)
+    if len(music)<27*SR: raise ValueError('Music excerpt must contain at least 27 seconds.')
+    if len(music)<N:
+        tempo=len(music)/N
+        slower=tmp/'slower.wav'
+        subprocess.run(['ffmpeg','-hide_banner','-loglevel','error','-y','-i',str(mw),
+                        '-af',f'atempo={tempo:.8f}','-ar',str(SR),'-ac','2',
+                        '-c:a','pcm_f32le',str(slower)],check=True)
+        _,music=wavfile.read(slower)
+        print('TIME_STRETCH',round(tempo,5),'of original tempo')
+    # A single continuous excerpt rather than a stitched-together track.
+    if len(music)<N: music=np.pad(music,((0,N-len(music)),(0,0)))
+    music=music[:N].astype(np.float64)
     paper=paper.astype(np.float64)
-    # Preserve a continuous final 30-second phrase from the original recording,
-    # avoiding a guessed musical edit. Fade at the start and preserve its end.
     music[:int(.8*SR)]*=np.linspace(0,1,int(.8*SR))[:,None]
     meter=pyln.Meter(SR)
     before=meter.integrated_loudness(music)
@@ -45,7 +53,7 @@ with tempfile.TemporaryDirectory(prefix='ot-jejak-audio-') as tmp:
     for cue,gain in [(.7,.055),(14.5,.045),(24.6,.06)]:
         start=round((cue-.142)*SR); n=min(len(paper),N-start)
         music[start:start+n]+=paper[:n]*gain
-    music[-int(.5*SR):]*=np.linspace(1,0,int(.5*SR))[:,None]
+    music[-int(1.5*SR):]*=np.linspace(1,0,int(1.5*SR))[:,None]
     # Protect the intermediate 16-bit PCM, then let EBU loudnorm set delivery.
     peak=np.max(np.abs(music))
     if peak>.80: music*=.80/peak
