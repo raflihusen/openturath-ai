@@ -11,7 +11,6 @@ const ease=(t:number,at:number,w=18,z=.95)=>step(t-at,w,z);
 const key=(t:number,initial:number,keys:[number,number][],w=15)=>chan(t,initial,keys.map(([at,v])=>({t:at,v,w,z:.95})));
 const range=(t:number,a:number,b:number)=>clamp((t-a)/(b-a));
 const show=(t:number,a:number,b:number)=>clamp(ease(t,a,26,1)*(1-ease(t,b,26,1)));
-const smooth=(t:number,a:number,b:number)=>{const p=range(t,a,b);return p*p*(3-2*p);};
 const pos:React.CSSProperties={position:'absolute'};
 const captions:[number,number,string][]=[
  [5,10.8,'Ruang belajar,\ndalam genggaman.'],
