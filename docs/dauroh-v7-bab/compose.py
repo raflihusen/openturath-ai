@@ -160,7 +160,7 @@ Setelah menerima hasil pertama, jangan mengubah semuanya. Pilih satu masalah yan
 add('Pembahasan latihan TEPAT',['Sebelum: unsur yang belum jelas','Sesudah: satu perubahan yang sengaja dibuat','Keputusan: bagian hasil yang diterima atau masih diperiksa'],OLD[33]['notes']+'\n\nPada pembahasan ini, saya meminta peserta menyebutkan unsur TEPAT yang diubah. Kita menghindari penilaian bahwa suatu aplikasi selalu lebih baik hanya dari satu percobaan. Yang dibahas adalah hubungan antara instruksi, bahan, dan hasil tertentu.','compare')
 reuse(40,'closing',title='Bekal untuk hari kedua')
 # DAY TWO
-DAY1=len(S);day=2
+DAY1=len(S);day=2;chapter='Pembukaan hari kedua';bab=0
 add('Hari kedua',['AI dalam pekerjaan bahsul ilmi','Bahan yang dipakai hari ini berasal dari sumber yang dapat diperiksa.'],OLD[40]['notes'],'cover')
 add('Urutan kerja hari ini',['Pengumpulan sumber dan penyimpanan bahan','Rancangan penelitian dan penelitian terdahulu','Pembacaan, metode, penulisan, serta revisi','Praktik akhir dan tur proyek OpenTurath'],OLD[41]['notes'],'agenda')
 chap(8,'Mengumpulkan sumber','Di mana bahan ditemukan dan bagaimana menyimpannya?','Telegram, Internet Archive, Noor Book, perpustakaan kitab, dan situs ilmiah',notes='''Hari kedua kita mulai dari pengumpulan bahan. Sebelum meminta AI membahas sebuah masalah, kita perlu tahu sumber apa yang dipakai dan bagaimana sumber itu diperoleh. Ini bagian yang sering terasa melelahkan, karena judul, cetakan, nama berkas, dan nomor halaman bisa berbeda-beda.

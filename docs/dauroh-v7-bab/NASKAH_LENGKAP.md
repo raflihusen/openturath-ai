@@ -1560,7 +1560,7 @@ CONTOH PERMINTAAN
 
 ## 048. Hari kedua
 
-Hari 2, bab 7: Prompt yang jelas
+Hari 2, bab 0: Pembukaan hari kedua
 
 
 ### Isi layar
@@ -1584,7 +1584,7 @@ Sekarang simpan satu pelajaran dari pengalaman tadi. Hari ini keterampilan itu k
 
 ## 049. Urutan kerja hari ini
 
-Hari 2, bab 7: Prompt yang jelas
+Hari 2, bab 0: Pembukaan hari kedua
 
 
 ### Isi layar

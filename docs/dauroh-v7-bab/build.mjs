@@ -41,7 +41,7 @@ for(const d of data){
    tx(s,'reminder','Alat bantu ingatan\nuntuk menjelaskan pekerjaan',85,470,380,125,28,M);
    body.forEach((b,i)=>tx(s,'letter-'+i,b,570,270+i*88,770,78,29,C));
   }else if(d.kind==='feature'){
-   body.forEach((b,i)=>{const a=pair(b);tx(s,'label-'+i,a[0],82,285+i*143,360,105,31,C,true);tx(s,'explanation-'+i,a[1],485,285+i*143,825,110,32,C);});
+   body.forEach((b,i)=>{const a=pair(b),step=body.length>3?110:143;tx(s,'label-'+i,a[0],82,275+i*step,360,step-10,31,C,true);tx(s,'explanation-'+i,a[1],485,275+i*step,825,step-10,32,C);});
   }else if(d.kind==='agenda'){
    const step=body.length>2?115:205;
    body.forEach((b,i)=>{tx(s,'order-'+i,String(i+1).padStart(2,'0'),80,290+i*step,115,90,48,M);tx(s,'agenda-'+i,val(b),245,290+i*step,1060,145,body.length>2?34:43,C);});
