@@ -190,8 +190,8 @@
     "title": "Mengenal ChatGPT",
     "body": [
       "Aplikasi percakapan dari OpenAI.",
-      "Perkenalkan percakapan, masukan dokumen dan gambar, serta fitur pendukung yang tersedia.",
-      "Bedakan pilihan model, alat, dan paket akun."
+      "Percakapan, dokumen, gambar, dan alat tambahan sesuai akun.",
+      "Pilihan model dan fitur dapat berbeda antarjenis akun."
     ],
     "baseNotes": "Kita mulai dari tempat menulis pesan, letak percakapan, serta pilihan yang muncul pada akun demonstrasi. Tujuan Anda adalah mengenali fungsi dan menemukan bantuan yang diperlukan. Nama model atau susunan menu dapat berubah, sehingga yang perlu dipahami adalah hubungan antara kebutuhan dan alat yang dipilih.",
     "notes": "Kita mulai dari tempat menulis pesan, letak percakapan, serta pilihan yang muncul pada akun demonstrasi. Tujuan Anda adalah mengenali fungsi dan menemukan bantuan yang diperlukan. Nama model atau susunan menu dapat berubah, sehingga yang perlu dipahami adalah hubungan antara kebutuhan dan alat yang dipilih.\n\nSekarang saya membuka ChatGPT pada akun demonstrasi. Saya mulai dengan menunjukkan bagian yang paling dibutuhkan pemula: daftar percakapan, percakapan baru, kotak pesan, dan tempat menambahkan bahan bila tersedia. Anda belum perlu mengikuti semua pilihan. Perhatikan nama fungsi dan apa yang ingin kita kerjakan melalui fungsi tersebut.\n\nDi akun tertentu ada pilihan model atau mode. Pilihan itu perlu dibedakan dari alat seperti pencarian dan unggahan. Kita tidak akan menghafal seluruh nama versi. Jika saya memakai suatu mode saat demonstrasi, saya menyebutkannya agar kondisi percobaannya jelas. Jangan pula menyimpulkan bahwa semua peserta mempunyai menu dan batas yang sama dengan akun yang tampil di layar.\n\nSaya akan menjalankan tugas sederhana tentang jadwal belajar. Masukannya sudah kita siapkan, sehingga Anda bisa melihat apakah jawaban mematuhi waktu dan kebutuhan yang disebut. Kita baca hasil yang benar-benar muncul. Kalau ada yang kurang sesuai, kita tidak menyembunyikannya; kita jadikan contoh pertanyaan lanjutan. Dengan demikian, pengenalan aplikasi langsung menunjukkan cara bekerja, bukan hanya daftar nama fitur. Sesudah memahami tempat percakapan ini, kita akan melihat beberapa fasilitas yang dapat memperluas pekerjaan ketika kebutuhan kita sudah lebih khusus.",
@@ -218,7 +218,7 @@
     "title": "Mengenal Gemini",
     "body": [
       "Aplikasi AI dari Google.",
-      "Perkenalkan percakapan, masukan berkas, dan fasilitas yang tersedia pada akun.",
+      "Percakapan, masukan berkas, dan fasilitas kerja sesuai akun.",
       "Perhatikan sumber yang digunakan ketika meminta informasi."
     ],
     "baseNotes": "Sekarang kita mengenali aplikasi lain dengan tujuan yang sama. Saya tunjukkan fungsi yang setara: menulis pesan, memberikan berkas, dan melanjutkan jawaban. Perbedaan tampilan tidak perlu membuat kita belajar dari nol lagi. Kita mencari fungsi yang sudah mulai kita pahami.",
@@ -246,8 +246,8 @@
     "title": "Mengenal Claude",
     "body": [
       "Aplikasi AI dari Anthropic.",
-      "Perkenalkan percakapan, dokumen, dan pengorganisasian pekerjaan.",
-      "Lihat bagaimana instruksi dan bahan dibawa dalam percakapan."
+      "Percakapan, pembacaan dokumen, dan pengorganisasian pekerjaan.",
+      "Lampirkan bahan dan lanjutkan instruksi sesuai kebutuhan."
     ],
     "baseNotes": "Kita kembali memakai pola pengenalan yang sama. Perhatikan tempat menulis permintaan, melampirkan bahan, dan melanjutkan pekerjaan. Saya menjalankan tugas pembanding tanpa mengubah kebutuhannya agar kita dapat mendiskusikan jawaban yang terlihat, bukan menilai berdasarkan nama aplikasi.",
     "notes": "Kita kembali memakai pola pengenalan yang sama. Perhatikan tempat menulis permintaan, melampirkan bahan, dan melanjutkan pekerjaan. Saya menjalankan tugas pembanding tanpa mengubah kebutuhannya agar kita dapat mendiskusikan jawaban yang terlihat, bukan menilai berdasarkan nama aplikasi.\n\nSaya membuka Claude dan mengajak Anda mencari bagian yang sekarang mulai terasa familiar. Di mana memulai percakapan? Di mana memberikan dokumen? Bagaimana melanjutkan instruksi? Kita juga melihat fasilitas pengorganisasian pekerjaan yang tersedia, tanpa menganggap seluruh akun mempunyai batas yang identik. Untuk pengguna baru, fungsi dasar ini lebih penting daripada menghafal versi model.\n\nPermintaan pembanding tetap tentang jadwal belajar enam hari. Saya membacakan kondisi yang diberikan sebelum mengirim, kemudian kita lihat apakah hasilnya memenuhi kondisi tersebut. Kalau jawaban sangat panjang, kita tidak langsung menyebutnya lebih lengkap. Kita mencari bagian yang benar-benar membantu dan bagian yang justru tidak diperlukan. Anda boleh mencatat satu perbedaan yang terlihat dibanding demonstrasi sebelumnya.\n\nDalam pekerjaan dokumen, perhatian kita adalah bahan yang diberikan dan apa yang dilakukan terhadapnya. Kita dapat meminta penjelasan, pengelompokan, atau tinjauan, tetapi perlu tetap membuka hasilnya. Contohnya, usulan mengubah urutan catatan harus diperiksa agar tidak memindahkan kutipan ke sumber yang salah. Setelah tempat kerja dasarnya dikenali, kita melihat bagaimana fasilitas pencarian serta pengembangan hasil dapat dipakai. Pembahasan berikutnya membantu membedakan pekerjaan menelusuri informasi dari kegiatan menyunting sesuatu yang sudah ada.",
@@ -274,8 +274,8 @@
     "title": "Mengenal DeepSeek",
     "body": [
       "Layanan yang menyediakan model dan aplikasi percakapan.",
-      "Perkenalkan kotak pesan, pilihan mode, pencarian, dan masukan berkas yang tersedia.",
-      "Periksa penggunaan fitur pada aplikasi, bukan hanya nama model."
+      "Percakapan, mode berpikir, pencarian, dan berkas sesuai akses.",
+      "Model dan fasilitas aplikasi perlu dibedakan."
     ],
     "baseNotes": "Kita mengenali aplikasi keempat secara singkat. Perhatikan fungsi yang kini mulai familiar. Kita juga membedakan penjelasan tentang model dari fasilitas yang benar-benar ditawarkan aplikasi. Peserta tidak perlu menghafal seluruh versi model untuk mulai memakai fungsi dasarnya.",
     "notes": "Kita mengenali aplikasi keempat secara singkat. Perhatikan fungsi yang kini mulai familiar. Kita juga membedakan penjelasan tentang model dari fasilitas yang benar-benar ditawarkan aplikasi. Peserta tidak perlu menghafal seluruh versi model untuk mulai memakai fungsi dasarnya.\n\nSekarang kita masuk ke DeepSeek. Sama seperti sebelumnya, saya menunjukkan tempat menulis pesan, daftar percakapan, serta pilihan yang terlihat pada akun demonstrasi. Nama layanan ini juga dipakai dalam pembicaraan tentang model, sehingga kita perlu tetap membedakan kemampuan model dari fasilitas aplikasi yang sedang dibuka. Informasi teknis sebuah model belum tentu menjelaskan seluruh pengalaman pengguna aplikasi.\n\nKita jalankan tugas pembanding yang sama. Perhatikan apakah jawaban mematuhi alokasi waktu, membagi pekerjaan secara masuk akal, dan menanyakan informasi yang belum tersedia. Kita juga amati kemungkinan pertanyaan lanjutan yang perlu diberikan. Proses pengamatan ini lebih berguna daripada langsung mencari satu nama yang dianggap paling baik untuk semua kebutuhan.\n\nSetelah hasilnya dibaca, saya akan memperlihatkan pilihan mode berpikir, pencarian, dan masukan berkas yang tersedia. Kita membicarakan fungsinya secara terpisah agar Anda mengetahui kapan masing-masing diperlukan. Tidak perlu mengubah semuanya sekaligus pada percobaan awal. Jika ada perbedaan akses atau fasilitas pada perangkat peserta, kita menyebut perbedaannya dengan jelas. Setelah pengenalan aplikasi keempat selesai, kita kembali pada pekerjaan Anda sendiri: apa yang ingin dilakukan, bahan apa yang dimiliki, dan ukuran hasil seperti apa yang berguna?",
@@ -400,7 +400,7 @@
     "title": "Permintaan kabur dan permintaan yang jelas",
     "body": [
       "Kabur: “Bantu saya belajar.”",
-      "Lebih jelas: “Susun jadwal mengulang tiga bab selama enam hari,45 menit per hari.”",
+      "Lebih jelas: “Susun jadwal mengulang tiga bab selama enam hari, 45 menit per hari.”",
       "Tambahkan informasi yang benar-benar memengaruhi hasil."
     ],
     "baseNotes": "Dua permintaan ini menunjukkan perbedaan yang mudah dirasakan. Pada permintaan pertama, aplikasi harus menebak banyak hal. Pada permintaan kedua, pekerjaan, waktu, dan cakupannya terlihat. Jika nama bab penting, kita berikan. Jika belum diketahui, kita minta pertanyaan klarifikasi sebelum jadwal dibuat.",

@@ -155,8 +155,8 @@ Jangan menganggap AI selalu mengingat seluruh percakapan atau otomatis membuka i
 
 **Teks layar**
 - Aplikasi percakapan dari OpenAI.
-- Perkenalkan percakapan, masukan dokumen dan gambar, serta fitur pendukung yang tersedia.
-- Bedakan pilihan model, alat, dan paket akun.
+- Percakapan, dokumen, gambar, dan alat tambahan sesuai akun.
+- Pilihan model dan fitur dapat berbeda antarjenis akun.
 
 **Catatan pengajar**
 Kita mulai dari tempat menulis pesan, letak percakapan, serta pilihan yang muncul pada akun demonstrasi. Tujuan Anda adalah mengenali fungsi dan menemukan bantuan yang diperlukan. Nama model atau susunan menu dapat berubah, sehingga yang perlu dipahami adalah hubungan antara kebutuhan dan alat yang dipilih.
@@ -178,7 +178,7 @@ Gunakan PromptPembanding pada Lampiran B. Setelah itu tunjukkan lokasi satu fitu
 
 **Teks layar**
 - Aplikasi AI dari Google.
-- Perkenalkan percakapan, masukan berkas, dan fasilitas yang tersedia pada akun.
+- Percakapan, masukan berkas, dan fasilitas kerja sesuai akun.
 - Perhatikan sumber yang digunakan ketika meminta informasi.
 
 **Catatan pengajar**
@@ -198,8 +198,8 @@ Kita melihat bagaimana hasil percakapan dapat dikembangkan menjadi pekerjaan yan
 
 **Teks layar**
 - Aplikasi AI dari Anthropic.
-- Perkenalkan percakapan, dokumen, dan pengorganisasian pekerjaan.
-- Lihat bagaimana instruksi dan bahan dibawa dalam percakapan.
+- Percakapan, pembacaan dokumen, dan pengorganisasian pekerjaan.
+- Lampirkan bahan dan lanjutkan instruksi sesuai kebutuhan.
 
 **Catatan pengajar**
 Kita kembali memakai pola pengenalan yang sama. Perhatikan tempat menulis permintaan, melampirkan bahan, dan melanjutkan pekerjaan. Saya menjalankan tugas pembanding tanpa mengubah kebutuhannya agar kita dapat mendiskusikan jawaban yang terlihat, bukan menilai berdasarkan nama aplikasi.
@@ -218,8 +218,8 @@ Saya perlihatkan hasil kerja yang bisa dibuka dan diperbaiki, kemudian contoh pe
 
 **Teks layar**
 - Layanan yang menyediakan model dan aplikasi percakapan.
-- Perkenalkan kotak pesan, pilihan mode, pencarian, dan masukan berkas yang tersedia.
-- Periksa penggunaan fitur pada aplikasi, bukan hanya nama model.
+- Percakapan, mode berpikir, pencarian, dan berkas sesuai akses.
+- Model dan fasilitas aplikasi perlu dibedakan.
 
 **Catatan pengajar**
 Kita mengenali aplikasi keempat secara singkat. Perhatikan fungsi yang kini mulai familiar. Kita juga membedakan penjelasan tentang model dari fasilitas yang benar-benar ditawarkan aplikasi. Peserta tidak perlu menghafal seluruh versi model untuk mulai memakai fungsi dasarnya.
@@ -320,7 +320,7 @@ Prompt dapat berupa satu kalimat atau beberapa paragraf. Pekerjaan sederhana cuk
 
 **Teks layar**
 - Kabur: “Bantu saya belajar.”
-- Lebih jelas: “Susun jadwal mengulang tiga bab selama enam hari,45 menit per hari.”
+- Lebih jelas: “Susun jadwal mengulang tiga bab selama enam hari, 45 menit per hari.”
 - Tambahkan informasi yang benar-benar memengaruhi hasil.
 
 **Catatan pengajar**
