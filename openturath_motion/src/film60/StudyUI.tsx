@@ -70,3 +70,19 @@ export const LibraryScreen: React.FC<{scrollY:number}> = ({scrollY}) => <div sty
   {books.map((book,i)=><div key={book.title} dir="rtl" lang="ar" style={{padding:'15px 3px',borderTop:`1px solid ${line}`,fontFamily:arabic,textAlign:'right'}}><div style={{display:'flex',gap:10,alignItems:'baseline'}}><span style={{fontSize:22,fontWeight:600,lineHeight:1.35,flex:1}}>{book.title}</span><span style={{fontSize:13,color:muted}}>{['١','٢','٣','٤','٥'][i]}</span></div><div style={{fontSize:17,color:'#666',marginTop:4}}>{book.author}</div><div style={{display:'flex',gap:18,color:'#777',fontSize:14,marginTop:5}}><span>{book.death}</span><span>{book.volumes}</span></div></div>)}
  </div></div>
 </div>;
+
+// Note reader follows note_reader_screen.dart; the text is the same illustrative
+// example as ChatScreen, with its excerpt and locator from carousel slide 06.
+export const NoteReaderScreen: React.FC<{scrollY?:number}> = ({scrollY=0}) => <div style={frame}>
+ <div style={{...bar,borderBottom:`1px solid ${line}`}}><Icon name="back"/><span style={{fontSize:17,fontWeight:600,flex:1}}>Catatan</span><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round"><rect x="8" y="7" width="12" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h2"/></svg><Icon name="more"/></div>
+ <div style={{position:'absolute',top:64,bottom:0,left:0,right:0,overflow:'hidden'}}><div style={{padding:'20px 24px 36px',transform:`translateY(${-Math.max(0,scrollY)}px)`}}>
+  <div style={{fontSize:11,fontWeight:600,color:muted,letterSpacing:.6}}>CATATAN</div>
+  <div style={{fontFamily:'Newsreader, serif',fontWeight:600,fontSize:27,lineHeight:1.2,marginTop:8}}>Hukum bersentuhan kulit</div>
+  <div style={{fontSize:14,color:muted,marginTop:10}}>Fikih Syafi’i</div>
+  <div style={{height:1,background:line,margin:'20px 0'}}/>
+  <div style={{fontSize:15,lineHeight:1.6}}>Menurut mazhab Syafi’i, bertemunya kulit laki-laki dengan perempuan non-mahram membatalkan wudhu.</div>
+  <div lang="ar" dir="rtl" style={{fontFamily:arabic,fontSize:24,lineHeight:1.75,textAlign:'right',marginTop:18}}>«وَإِذَا أَفْضَى الرَّجُلُ بِيَدِهِ إلَى امْرَأَتِهِ أَوْ بِبَعْضِ جَسَدِهِ إلَى بَعْضِ جَسَدِهَا لَا حَائِلَ بَيْنَهُ وَبَيْنَهَا بِشَهْوَةٍ أَوْ بِغَيْرِ شَهْوَةٍ وَجَبَ عَلَيْهِ الْوُضُوءُ…»</div>
+  <div lang="ar" dir="rtl" style={{fontFamily:arabic,fontSize:20,color:'#666',marginTop:8}}>الأم ج١، ص٢٩-٣٠</div>
+  <div style={{fontSize:12,lineHeight:1.5,color:muted,marginTop:18}}>Rincian dan pengecualian perlu ditelaah pada sumbernya.</div>
+ </div></div>
+</div>;
