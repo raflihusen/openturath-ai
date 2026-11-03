@@ -67,6 +67,8 @@ with tempfile.TemporaryDirectory(prefix='openturath-audio-') as tmp:
 # Fade naturally to silence at both ends, preserving final AAC headroom.
 fade = np.minimum(np.minimum(t / .55, (DURATION - t) / 2), 1).clip(0, 1)
 stereo *= fade[:, None]
+# Raise the measured bed from -29.6 to about -17 LUFS.
+stereo *= 10 ** (12.6 / 20)
 peak = np.max(np.abs(stereo))
 if peak > .70: stereo *= .70 / peak
 out = ROOT / 'public/promo/elegan_audio.wav'
