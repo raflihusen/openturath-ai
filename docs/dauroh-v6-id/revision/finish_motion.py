@@ -6,7 +6,7 @@ No slide advances automatically and no remote media or macros are introduced.
 """
 from pathlib import Path
 from zipfile import ZipFile
-from defusedxml.minidom import parseString
+from xml.dom.minidom import parseString
 import json,re,subprocess,sys,uuid
 
 ROOT=Path('/Users/apple/Downloads/ramadhan/docs/dauroh-v6-id')
