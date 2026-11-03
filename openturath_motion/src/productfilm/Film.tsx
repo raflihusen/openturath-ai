@@ -70,12 +70,13 @@ const FieldCards:React.FC<{t:number}>=({t})=>{
 
 function AssistantCards({t}:{t:number}) {
   const move=blend(t,4.75,5.75), leave=p(t,21.4,21.95);
+  const send=blend(t,8.0,8.85);
   return <>
     {ASSISTANTS.map(([label,ar],i)=>{
       const arrival=e(t,3.25+i*.06,3.95+i*.06);
       const x=94+(i%2)*458, y=760+Math.floor(i/2)*276;
       const chosen=i===0;
-      return <div key={label} style={{...box,left:chosen?m(x,94,move):x+(i%2?180:-180)*move,top:chosen?m(y,534,move):y+50*move,width:chosen?m(434,892,move):i===4?892:434,height:chosen?m(248,122,move):i===4?148:248,borderRadius:chosen?m(32,23,move):32,background:C.card,color:C.white,overflow:'hidden',opacity:arrival*(chosen?1-leave:1-p(t,4.8+i*.025,5.35+i*.025)),translate:`0 ${60*(1-arrival)}px`,zIndex:5}}>
+      return <div key={label} style={{...box,left:chosen?m(x,94,move):x+(i%2?180:-180)*move,top:chosen?m(y,m(720,534,send),move):y+50*move,width:chosen?m(434,892,move):i===4?892:434,height:chosen?m(248,122,move):i===4?148:248,borderRadius:chosen?m(32,23,move):32,background:C.card,color:C.white,overflow:'hidden',opacity:arrival*(chosen?1-leave:1-p(t,4.8+i*.025,5.35+i*.025)),translate:`0 ${60*(1-arrival)}px`,zIndex:5}}>
         <div style={{...box,left:chosen?m(30,90,move):30,right:i===4?230:24,top:chosen?m(38,41,move):i===4?52:38,fontSize:chosen?m(39,36,move):i===4?34:39,fontWeight:600,lineHeight:1.15,zIndex:2}}>{label}</div>
         {chosen&&<div style={{...box,left:28,top:43,opacity:move}}><Icon name="back" size={30}/></div>}
         <div lang="ar" dir="rtl" style={{...box,left:20,right:20,bottom:16,fontFamily:'FilmArabicUI, sans-serif',fontSize:Math.min(94,650/ar.length),lineHeight:1.25,textAlign:'center',opacity:.08*(1-move),whiteSpace:'nowrap'}}>{ar}</div>
@@ -92,12 +93,12 @@ function Question({t}:{t:number}) {
   const sending=blend(t,8.0,8.85), leave=p(t,21.35,21.8);
   const typed=DEMO.question.slice(0,Math.floor(p(t,6.05,7.5)*DEMO.question.length));
   return <>
-    <div style={{...box,left:m(116,246,sending),top:m(1070,708,sending),width:m(848,718,sending),height:m(240,174,sending),borderRadius:m(38,32,sending),background:C.wash,color:C.ink,padding:'32px 36px',opacity:e(t,5.65,6.1)*(1-leave),zIndex:7,boxShadow: sending<.95?'0 14px 30px rgba(9,9,11,.035)':'none'}}>
+    <div style={{...box,left:m(116,246,sending),top:m(1010,708,sending),width:m(848,718,sending),height:m(240,174,sending),borderRadius:m(38,32,sending),background:C.wash,color:C.ink,padding:'32px 36px',opacity:e(t,5.65,6.1)*(1-leave),zIndex:7,boxShadow: sending<.95?'0 14px 30px rgba(9,9,11,.035)':'none'}}>
       <div style={{...box,left:36,right:m(122,36,sending),top:32,fontSize:m(43,37,sending),lineHeight:1.27,fontWeight:400}}>{typed}<span style={{display:t>7.6||t<6.05?'none':'inline-block',width:2,height:43,background:C.ink,marginLeft:4,verticalAlign:'middle',opacity:Math.floor(t*3)%2===0?1:.15}}/></div>
       <div style={{...box,right:22,bottom:22,width:74,height:74,borderRadius:'50%',background:C.card,color:C.white,display:'grid',placeItems:'center',opacity:1-p(t,8.0,8.35),scale:1-.14*Math.sin(p(t,7.97,8.24)*Math.PI)}}><Icon name="arrow" size={34}/></div>
     </div>
-    <div style={{...box,left:118,top:978,fontSize:26,color:C.gray,opacity:visible(t,5.9,8.0),zIndex:6}}>Tanyakan sesuatu…</div>
-    <Tap t={t} at={8.03} x={905} y={1251} dark/>
+    <div style={{...box,left:118,top:927,fontSize:26,color:C.gray,opacity:visible(t,5.9,8.0),zIndex:6}}>Tanyakan sesuatu…</div>
+    <Tap t={t} at={8.03} x={905} y={1191} dark/>
   </>;
 }
 
@@ -144,8 +145,9 @@ function CopyAndSave({t}:{t:number}) {
 
 function Conversation({t}:{t:number}) {
   const reveal=blend(t,4.8,5.65), leave=blend(t,21.4,22.05);
+  const send=blend(t,8.0,8.85);
   return <>
-    <div style={{...box,left:m(94,64,reveal),top:m(760,504,reveal),width:m(434,952,reveal),height:m(248,1200,reveal),borderRadius:m(32,45,reveal),background:C.white,border:`1px solid ${C.line}`,boxShadow:shadow,opacity:reveal*(1-leave),zIndex:1}}/>
+    <div style={{...box,left:m(94,64,reveal),top:m(760,m(690,504,send),reveal),width:m(434,952,reveal),height:m(248,m(674,1200,send),reveal),borderRadius:m(32,45,reveal),background:C.white,border:`1px solid ${C.line}`,boxShadow:shadow,opacity:reveal*(1-leave),zIndex:1}}/>
     <Question t={t}/><AnswerList t={t}/><Source t={t}/><CopyAndSave t={t}/>
     <div style={{...box,left:116,top:905,...row,gap:10,fontSize:24,color:C.gray,opacity:visible(t,8.7,14.8),zIndex:6}}><div style={{width:7,height:7,borderRadius:'50%',background:C.gray}}/>Contoh jawaban · diringkas dari Safinatun Najah</div>
   </>;

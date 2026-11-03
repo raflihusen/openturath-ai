@@ -7,9 +7,9 @@ export const DEMO = {
   items: [
     "Niat",
     "Membasuh wajah",
-    "Membasuh tangan hingga siku",
+    "Membasuh kedua tangan hingga siku",
     "Mengusap sebagian kepala",
-    "Membasuh kaki hingga mata kaki",
+    "Membasuh kedua kaki hingga mata kaki",
     "Tertib",
   ],
   excerpt: "فُرُوضُ الوُضُوءِ سِتَّةٌ",
