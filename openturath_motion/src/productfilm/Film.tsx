@@ -329,13 +329,13 @@ const FieldCards: React.FC<{ t: number }> = ({ t }) => {
   );
 };
 
-function AssistantCards({ t }: { t: number }) {
+function AssistantCards({ t, selectedOnly = false }: { t: number; selectedOnly?: boolean }) {
   const move = blend(t, 4.75, 5.75),
     leave = p(t, 21.4, 21.95);
   const send = blend(t, 8.0, 8.85);
   return (
     <>
-      {ASSISTANTS.map(([label, ar], i) => {
+      {(selectedOnly ? ASSISTANTS.slice(0, 1) : ASSISTANTS).map(([label, ar], i) => {
         const arrival = e(t, 3.25 + i * 0.06, 3.95 + i * 0.06);
         const x = 94 + (i % 2) * 458,
           y = 760 + Math.floor(i / 2) * 276;
@@ -1206,12 +1206,14 @@ function Finale({ t }: { t: number }) {
   );
 }
 
-export const OpenTurathProductFilm: React.FC<{ silent?: boolean }> = ({
+export const OpenTurathProductFilm: React.FC<{ silent?: boolean; storyTime?: number; catalogDemo?: boolean }> = ({
   silent = false,
+  storyTime,
+  catalogDemo = false,
 }) => {
   const f = useCurrentFrame(),
     { fps } = useVideoConfig(),
-    t = f / fps;
+    t = storyTime ?? f / fps;
   return (
     <AbsoluteFill
       style={{
@@ -1223,7 +1225,7 @@ export const OpenTurathProductFilm: React.FC<{ silent?: boolean }> = ({
     >
       {!silent && <Audio src={staticFile("productfilm/audio/master.wav")} />}
       <BrandHeader t={t} />
-      {t < 3.15 && (
+      {!catalogDemo && t < 3.15 && (
         <Headline
           t={t}
           start={0.06}
@@ -1231,11 +1233,11 @@ export const OpenTurathProductFilm: React.FC<{ silent?: boolean }> = ({
           lines={["Ilmu, berawal", "dari bertanya."]}
         />
       )}
-      {t >= 2.95 && t < 5.5 && (
+      {!catalogDemo && t >= 2.95 && t < 5.5 && (
         <Headline t={t} start={3.04} end={5.32} lines={["Pilih bidangmu."]} />
       )}
-      {t >= 5.25 && t < 9.25 && (
-        <Headline t={t} start={5.35} end={9.05} lines={["Tanyakan."]} />
+      {t >= (catalogDemo ? 4.75 : 5.25) && t < 9.25 && (
+        <Headline t={t} start={catalogDemo ? 4.83 : 5.35} end={9.05} lines={["Tanyakan."]} />
       )}
       {t >= 9.05 && t < 14.85 && (
         <Headline
@@ -1270,8 +1272,8 @@ export const OpenTurathProductFilm: React.FC<{ silent?: boolean }> = ({
         />
       )}
       <Conversation t={t} />
-      <FieldCards t={t} />
-      <AssistantCards t={t} />
+      {!catalogDemo && <FieldCards t={t} />}
+      <AssistantCards t={t} selectedOnly={catalogDemo} />
       <NotesJourney t={t} />
       <div
         style={{

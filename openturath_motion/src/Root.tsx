@@ -1,5 +1,6 @@
 import { OpenTurathJejakIlmu } from "./jejak/Film";
 import { OpenTurathProductFilm } from "./productfilm/Film";
+import { OpenTurath18Ilmu } from "./productfilm/CatalogFilm";
 import { JejakWorld3D } from "./jejak/World";
 import { OpenTurathLaunch30 } from "./film30/Film";
 import { OpenTurathFilm60 } from "./film60/Film";
@@ -22,6 +23,7 @@ const V = { width: 1080, height: 1920, fps: 30 } as const;
 
 export const RemotionRoot: React.FC = () => (
   <>
+    <Composition id="OpenTurath18Ilmu" component={OpenTurath18Ilmu} durationInFrames={1800} width={1080} height={1920} fps={60} />
     <Composition id="OpenTurathProductFilm" component={OpenTurathProductFilm} durationInFrames={1800} width={1080} height={1920} fps={60} />
     <Composition id="JejakWorld3D" component={JejakWorld3D} durationInFrames={900} width={1080} height={1920} fps={30} />
     <Composition id="OpenTurathJejakIlmu" component={OpenTurathJejakIlmu} durationInFrames={900} width={1080} height={1920} fps={30} />
