@@ -29,6 +29,7 @@
     "dev": "remotion studio",
     "build": "remotion bundle",
     "upgrade": "remotion upgrade",
-    "lint": "eslint src && tsc"
+    "lint": "eslint src && tsc",
+    "render:jejak": "remotion render src/index.ts OpenTurathJejakIlmu out/OpenTurath_Jejak_Ilmu_30s_9x16.mp4 --codec=h264 --crf=17 --gl=angle --concurrency=1 --audio-codec=aac --audio-bitrate=320k --disable-shared-memory-capture --disallow-parallel-encoding --image-format=jpeg --jpeg-quality=95"
   }
 }
