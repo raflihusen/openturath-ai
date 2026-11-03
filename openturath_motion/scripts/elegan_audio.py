@@ -32,7 +32,7 @@ for i, chord in enumerate(chords):
     for j, f in enumerate(chord):
         phase = 0.63 * j + 0.19 * i
         left = np.sin(2 * np.pi * f * t + phase)
-        right = np.sin(2 * np.pi * (f * 1.0007) * t + phase)
+        right = 0.85 * left + 0.15 * np.sin(2 * np.pi * (f * 1.0007) * t + phase)
         harmonic = np.sin(2 * np.pi * 2 * f * t + phase) * 0.12
         gain = 0.018 if j else 0.024
         stereo[:, 0] += (left + harmonic) * env * gain
