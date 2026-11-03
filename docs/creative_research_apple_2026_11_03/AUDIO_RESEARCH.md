@@ -17,7 +17,7 @@ Pada pemeriksaan lokal terakhir, model semantik dan realness earshot belum terse
 
 ## Arah yang diusulkan untuk OpenTurath
 
-Pertahankan film dan antarmuka yang telah disetujui. Cari satu karya musik profesional yang punya perkembangan jelas dan dapat diedit secara musikal untuk film 30 detik. Pertimbangkan tekstur instrumen nyata yang dimainkan, lapisan elektronik yang tidak mendominasi, dan ruang untuk satu penutup yang terhubung ke identitas merek. Ini arahan untuk diseleksi dan didengarkan, bukan klaim bahwa satu jenis instrumen otomatis terdengar lebih baik.
+Pertahankan identitas visual dan kebenaran isi produk; pendekatan film perlu diubah sesuai umpan balik terbaru. Cari satu karya musik profesional yang punya perkembangan jelas dan dapat diedit secara musikal untuk film 30 detik. Pertimbangkan tekstur instrumen nyata yang dimainkan, lapisan elektronik yang tidak mendominasi, dan ruang untuk satu penutup yang terhubung ke identitas merek. Ini arahan untuk diseleksi dan didengarkan, bukan klaim bahwa satu jenis instrumen otomatis terdengar lebih baik.
 
 Untuk efek, eksplorasi rekaman taktil yang berhubungan dengan kegiatan membaca: halaman yang dibalik, gerak kertas, gesekan lembut benda tulis, dan atmosfer ruang yang sangat tipis. Pilih hanya bila berkaitan dengan gambar dan musik; hindari efek untuk setiap perubahan layar. Rekaman tinta atau ruang tidak perlu dipaksakan apabila justru mengaburkan tampilan. Jaga satu palet sumber yang konsisten, sisakan ruang pada tampilan teks, dan beri penutup yang ringkas. Semua contoh ini memerlukan pratinjau, penilaian manusia, dan pemeriksaan hak sebelum dipakai.
 
