@@ -39,9 +39,10 @@ export const createPaperRenderer = (defaults: THREE.WebGLRendererParameters) => 
    lastW=size.x;lastH=size.y;lastDpr=dpr;
   }
   const focus=Number(camera.userData.focusDistance)||6;
-  bokeh!.uniforms.focus.value=focus;
-  bokeh!.uniforms.aperture.value=Number(camera.userData.aperture)||.002;
-  bokeh!.uniforms.maxblur.value=Number(camera.userData.maxblur)||.009;
+  const optics=bokeh!.uniforms as Record<string,{value:number}>;
+  optics.focus.value=focus;
+  optics.aperture.value=Number(camera.userData.aperture)||.002;
+  optics.maxblur.value=Number(camera.userData.maxblur)||.009;
   busy=true;
   try{composer!.render(0);}finally{busy=false;}
  };
