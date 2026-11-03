@@ -131,11 +131,10 @@ function CopyAndSave({t}:{t:number}) {
   const copied=t>=19.55, saved=t>=20.65;
   const bar=e(t,19.65,20.02)*(1-p(t,21.2,21.55));
   return <>
-    <div style={{...box,left:116,top:1475,...row,gap:15,padding:'16px 22px',border:`1px solid ${C.line}`,borderRadius:18,fontSize:29,color:C.gray,opacity:visible(t,15.5,21.3),background:copied?C.wash:C.white,scale:1-.025*Math.sin(p(t,19.5,19.75)*Math.PI)}}>{copied?<Check/>:<CopyIcon/>}<span>Salin jawaban</span></div>
+    <div style={{...box,left:116,top:1475,...row,gap:15,padding:'16px 22px',border:`1px solid ${C.line}`,borderRadius:18,fontSize:29,color:C.gray,opacity:visible(t,15.5,21.3),background:copied?C.wash:C.white,scale:1-.025*Math.sin(p(t,19.5,19.75)*Math.PI)}}>{copied?<Check/>:<CopyIcon/>}<span>{copied?'Tersalin':'Salin jawaban'}</span></div>
     <div style={{...box,left:116,right:116,top:1577,height:105,borderRadius:20,background:C.card,color:C.white,...row,justifyContent:'space-between',padding:'0 28px',fontSize:31,opacity:bar,translate:`0 ${50*(1-bar)}px`,zIndex:12}}>
-      <span>{saved?'Jawaban disimpan ke Catatan.':'Jawaban disalin.'}</span>
-      {!saved&&<span style={{fontWeight:600,padding:'14px 18px',borderRadius:12,background:t>20.56?'#353535':'transparent'}}>Simpan</span>}
-      {saved&&<Check/>}
+      <span>Jawaban disalin.</span>
+      <span style={{fontWeight:600,padding:'14px 18px',borderRadius:12,background:saved?'#353535':'transparent'}}>Simpan</span>
     </div>
     <Tap t={t} at={19.53} x={287} y={1510}/>
     <Tap t={t} at={20.56} x={873} y={1630} dark/>
