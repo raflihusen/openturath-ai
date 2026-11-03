@@ -169,7 +169,7 @@ export function CatalogIntro({ t }: { t: number }) {
           left: 0,
           top: 640,
           right: 0,
-          height: 865,
+          height: 824,
           overflow: "hidden",
         }}
       >

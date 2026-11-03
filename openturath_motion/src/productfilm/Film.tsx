@@ -1229,6 +1229,7 @@ export const OpenTurathProductFilm: React.FC<{
         color: C.ink,
         fontFamily: UI,
         overflow: "hidden",
+        zIndex: 0,
       }}
     >
       {!silent && <Audio src={staticFile("productfilm/audio/master.wav")} />}
