@@ -183,7 +183,7 @@
     "number": 14
   },
   {
-    "kind": "screenshot",
+    "kind": "sequence",
     "title": "البحث المتعمق: من السؤال إلى خطة بحث",
     "body": [
       "افتح قائمة الأدوات واختر البحث المتعمق إذا كان متاحًا.",
@@ -192,7 +192,6 @@
     ],
     "day": 1,
     "chapter": "الفصل 2: جيميناي",
-    "screenshot": "/Users/apple/Downloads/ramadhan/docs/dauroh-v6-id/revision/assets/gemini/deep-research-overview.jpg",
     "steps": [
       "افتح قائمة الأدوات واختر البحث المتعمق إذا كان متاحًا.",
       "حدّد السؤال ونوع المصادر، ثم راجع خطة البحث قبل البدء.",
@@ -216,7 +215,7 @@
     "number": 16
   },
   {
-    "kind": "screenshot",
+    "kind": "sequence",
     "title": "Canvas: تطوير نتيجة قابلة للمراجعة",
     "body": [
       "ابدأ من مادة قصيرة أو مسودة واضحة.",
@@ -225,7 +224,6 @@
     ],
     "day": 1,
     "chapter": "الفصل 2: جيميناي",
-    "screenshot": "/Users/apple/Downloads/ramadhan/docs/dauroh-v6-id/revision/assets/gemini/canvas-quiz.png",
     "steps": [
       "ابدأ من مادة قصيرة أو مسودة واضحة.",
       "اطلب تحويلها إلى مادة تعلم أو أسئلة مراجعة.",

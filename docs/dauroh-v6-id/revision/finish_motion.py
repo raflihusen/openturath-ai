@@ -58,7 +58,7 @@ with ZipFile(BUILD/'motion.pptx') as source,ZipFile(BUILD/'candidate-ready.pptx'
             if before:root.insertBefore(transition,before[0])
             else:root.appendChild(transition)
             for n in doc.getElementsByTagNameNS(P,'cNvPr'):
-                if n.getAttribute('name') not in {'presenter-name-ar','closing-presenter'}:continue
+                if not any(re.search(r'[\u0600-\u06ff]', t.firstChild.nodeValue if t.firstChild else '') for t in n.parentNode.parentNode.getElementsByTagNameNS(A,'t')):continue
                 shape=n.parentNode.parentNode
                 for para in shape.getElementsByTagNameNS(A,'p'):
                     pr=children(para,A,'pPr')
@@ -79,7 +79,7 @@ with ZipFile(BUILD/'motion.pptx') as source,ZipFile(BUILD/'candidate-ready.pptx'
             ids=[n.getAttribute('id') for n in children(children(root,P,'sldIdLst')[0],P,'sldId')]
             current=None
             for d,slideid in zip(specs,ids):
-                key=f"Hari {d['day']} / {d['chapter']}"
+                key=f"اليوم {d['day']} / {d['chapter']}"
                 if key!=current:
                     sec=append(doc,sections,P14,'p14:section',name=key,id='{'+str(uuid.uuid5(uuid.NAMESPACE_URL,key)).upper()+'}')
                     members=append(doc,sec,P14,'p14:sldIdLst');current=key
