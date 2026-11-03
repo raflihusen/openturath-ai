@@ -993,7 +993,7 @@ function NotesJourney({ t }: { t: number }) {
               top: 143,
               fontSize: 29,
               color: C.gray,
-              opacity: open,
+              opacity: p(open, 0.4, 0.8),
             }}
           >
             Fikih Syafi’i
@@ -1003,7 +1003,7 @@ function NotesJourney({ t }: { t: number }) {
               fontSize: 31,
               color: C.gray,
               marginTop: 20,
-              opacity: 1 - open,
+              opacity: 1 - p(open, 0, 0.35),
               whiteSpace: "nowrap",
             }}
           >
@@ -1015,7 +1015,7 @@ function NotesJourney({ t }: { t: number }) {
               left: 0,
               right: 0,
               top: 201,
-              opacity: open,
+              opacity: p(open, 0.35, 0.85),
               translate: `0 ${30 * (1 - open)}px`,
             }}
           >
@@ -1227,21 +1227,21 @@ export const OpenTurathProductFilm: React.FC<{ silent?: boolean }> = ({
         <Headline
           t={t}
           start={0.06}
-          end={3.15}
+          end={3}
           lines={["Ilmu, berawal", "dari bertanya."]}
         />
       )}
       {t >= 2.95 && t < 5.5 && (
-        <Headline t={t} start={3.04} end={5.5} lines={["Pilih bidangmu."]} />
+        <Headline t={t} start={3.04} end={5.32} lines={["Pilih bidangmu."]} />
       )}
       {t >= 5.25 && t < 9.25 && (
-        <Headline t={t} start={5.35} end={9.25} lines={["Tanyakan."]} />
+        <Headline t={t} start={5.35} end={9.05} lines={["Tanyakan."]} />
       )}
       {t >= 9.05 && t < 14.85 && (
         <Headline
           t={t}
           start={9.08}
-          end={14.85}
+          end={14.69}
           lines={["Pahami", "jawabannya."]}
         />
       )}
@@ -1249,7 +1249,7 @@ export const OpenTurathProductFilm: React.FC<{ silent?: boolean }> = ({
         <Headline
           t={t}
           start={14.72}
-          end={19.8}
+          end={19.65}
           lines={["Baca dengan", "rujukan."]}
         />
       )}
@@ -1257,7 +1257,7 @@ export const OpenTurathProductFilm: React.FC<{ silent?: boolean }> = ({
         <Headline
           t={t}
           start={19.68}
-          end={23.5}
+          end={23.35}
           lines={["Simpan untuk", "dipelajari lagi."]}
         />
       )}
