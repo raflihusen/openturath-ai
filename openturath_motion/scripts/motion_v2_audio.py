@@ -91,7 +91,7 @@ bed *= 10 ** ((-19.5-meter.integrated_loudness(bed))/20)
 sounds = {
  'tick': 'tap/finger', 'click': 'fit/click/floss_lid',
  'whoosh': 'whoosh_fast/tight', 'pop': 'ui_pop/soft',
- 'key': 'typing_key/light', 'hit': 'cut_hit/punch',
+ 'key': 'typing_key/crisp', 'hit': 'cut_hit/punch',
  'swell': 'reverse_swell/dark', 'mallet': 'mallet/pluck',
  'paper': 'swipe/paper', 'confirm': 'notify/mid_wood',
 }
