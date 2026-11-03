@@ -1,3 +1,4 @@
+import { PromoElegan } from "./elegan/PromoElegan";
 import { Composition, Folder } from "remotion";
 import { OpenTurathIntro } from "./OpenTurathIntro";
 import { Pembuka } from "./scenes/Pembuka";
@@ -15,6 +16,7 @@ const V = { width: 1080, height: 1920, fps: 30 } as const;
 
 export const RemotionRoot: React.FC = () => (
   <>
+    <Composition id="PromoElegan" component={PromoElegan} durationInFrames={900} {...V} />
     <Folder name="Adegan">
       <Composition id="Pembuka" component={Pembuka} durationInFrames={130} {...V} />
       <Composition id="Pertanyaan" component={Pertanyaan} durationInFrames={165} {...V} />
