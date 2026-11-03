@@ -57,7 +57,7 @@ const FieldCards:React.FC<{t:number}>=({t})=>{
       const dy=i===0?m(y,550,chosen):y+85*chosen;
       return <div key={label} style={{...box,left:dx,top:dy+120*(1-arrive),width:i===0?m(434,892,chosen):434,height:i===0?m(248,152,chosen):248,borderRadius:32,background:C.card,color:C.white,overflow:'hidden',opacity:arrive*(i===0?1-end:1-p(t,2.9+i*.035,3.45+i*.035)),scale:i===0?1-.018*Math.sin(p(t,2.72,3.04)*Math.PI):.92+.08*arrive,boxShadow:'0 12px 24px rgba(9,9,11,.04)'}}>
         <div style={{...box,left:30,right:24,top:m(36,35,i===0?chosen:0),fontSize:i===0?m(44,42,chosen):label.length>14?36:44,fontWeight:600,lineHeight:1.15,zIndex:2}}>{label}</div>
-        <div dir="rtl" lang="ar" style={{...box,left:20,right:20,bottom:16,fontFamily:'FilmArabicUI, sans-serif',fontSize:Math.min(94,650/ar.length),lineHeight:1.25,textAlign:'center',opacity:.08,whiteSpace:'nowrap'}}>{ar}</div>
+        <div dir="rtl" lang="ar" style={{...box,left:20,right:20,bottom:10,fontFamily:'FilmArabicUI, sans-serif',fontSize:Math.min(94,650/ar.length),lineHeight:1.8,textAlign:'center',opacity:.08,whiteSpace:'nowrap'}}>{ar}</div>
         {i===0&&<div style={{...box,right:34,top:49,opacity:chosen}}><Icon name="chevron" size={36}/></div>}
       </div>;
     })}
@@ -79,7 +79,7 @@ function AssistantCards({t}:{t:number}) {
       return <div key={label} style={{...box,left:chosen?m(x,94,move):x+(i%2?180:-180)*move,top:chosen?m(y,m(720,534,send),move):y+50*move,width:chosen?m(434,892,move):i===4?892:434,height:chosen?m(248,122,move):i===4?148:248,borderRadius:chosen?m(32,23,move):32,background:C.card,color:C.white,overflow:'hidden',opacity:arrival*(chosen?1-leave:1-p(t,4.8+i*.025,5.35+i*.025)),translate:`0 ${60*(1-arrival)}px`,zIndex:5}}>
         <div style={{...box,left:chosen?m(30,90,move):30,right:i===4?230:24,top:chosen?m(38,41,move):i===4?52:38,fontSize:chosen?m(39,36,move):i===4?34:39,fontWeight:600,lineHeight:1.15,zIndex:2}}>{label}</div>
         {chosen&&<div style={{...box,left:28,top:43,opacity:move}}><Icon name="back" size={30}/></div>}
-        <div lang="ar" dir="rtl" style={{...box,left:20,right:20,bottom:16,fontFamily:'FilmArabicUI, sans-serif',fontSize:Math.min(94,650/ar.length),lineHeight:1.25,textAlign:'center',opacity:.08*(1-move),whiteSpace:'nowrap'}}>{ar}</div>
+        <div lang="ar" dir="rtl" style={{...box,left:i===4?30:205,right:i===4?230:24,bottom:i===4?8:22,fontFamily:'FilmArabicUI, sans-serif',fontSize:i===4?32:Math.min(58,360/ar.length),lineHeight:1.85,textAlign:'right',opacity:.1*(1-move),whiteSpace:'nowrap'}}>{ar}</div>
         <div style={{...box,right:28,top:43,...row,gap:24,opacity:move}}><Icon name="book" size={32}/><svg width="24" height="32" viewBox="0 0 24 32" fill="currentColor"><circle cx="12" cy="6" r="2"/><circle cx="12" cy="16" r="2"/><circle cx="12" cy="26" r="2"/></svg></div>
         <div style={{...box,left:i===4?undefined:30,right:i===4?30:undefined,bottom:i===4?45:30,...row,gap:20,opacity:1-move}}><div style={{background:C.white,color:C.card,borderRadius:32,padding:'12px 26px'}}><Icon name="chat" size={30}/></div><div style={{border:'1px solid #555',borderRadius:32,padding:12}}><Icon name="book" size={30}/></div></div>
       </div>;
@@ -106,14 +106,14 @@ function AnswerList({t,note=false}:{t:number;note?:boolean}) {
   const reveal=e(t,8.85,9.3), focus=blend(t,14.4,15.4);
   if(note)return <div>
     <div style={{fontSize:34,lineHeight:1.5,marginBottom:20}}>{DEMO.introduction}</div>
-    {DEMO.items.map((text,i)=><div key={text} style={{...row,gap:20,minHeight:62,fontSize:34,lineHeight:1.3}}><span style={{fontSize:24,color:C.gray,width:32}}>{i+1}.</span>{text}</div>)}
+    {DEMO.items.map((text,i)=><div key={text} style={{...row,gap:20,minHeight:62,fontSize:38,lineHeight:1.3}}><span style={{fontSize:24,color:C.gray,width:32}}>{i+1}.</span>{text}</div>)}
   </div>;
   return <div style={{...box,left:116,right:116,top:932-360*focus,opacity:reveal*(1-p(t,14.5,15.15)),zIndex:6}}>
     <div style={{fontSize:46,fontWeight:600,letterSpacing:-.7,marginBottom:23,translate:`0 ${20*(1-reveal)}px`}}>{DEMO.title}</div>
     <div style={{fontSize:34,color:C.gray,marginBottom:16}}>{DEMO.introduction}</div>
     {DEMO.items.map((text,i)=>{
       const a=e(t,9.35+i*.14,9.9+i*.14);
-      return <div key={text} style={{...row,gap:20,height:72,opacity:a,translate:`0 ${22*(1-a)}px`}}><span style={{display:'grid',placeItems:'center',width:37,height:37,borderRadius:'50%',border:`1px solid ${C.line}`,fontSize:22,color:C.gray}}>{i+1}</span><span style={{fontSize:36,lineHeight:1.25}}>{text}</span></div>;
+      return <div key={text} style={{...row,gap:20,height:72,opacity:a,translate:`0 ${22*(1-a)}px`}}><span style={{display:'grid',placeItems:'center',width:37,height:37,borderRadius:'50%',border:`1px solid ${C.line}`,fontSize:22,color:C.gray,flexShrink:0}}>{i+1}</span><span style={{fontSize:42,lineHeight:1.25}}>{text}</span></div>;
     })}
   </div>;
 }
