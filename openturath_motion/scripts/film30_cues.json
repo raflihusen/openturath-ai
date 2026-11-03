@@ -1,0 +1,446 @@
+{
+  "duration_seconds": 30,
+  "bpm": 120,
+  "cues": [
+    {
+      "time": 0,
+      "role": "tick",
+      "alignment": "onset",
+      "bed_over_db": 2,
+      "pan": 0,
+      "label": "logo stroke"
+    },
+    {
+      "time": 0.35,
+      "role": "tick",
+      "alignment": "onset",
+      "bed_over_db": 2,
+      "pan": 0,
+      "label": "logo stroke"
+    },
+    {
+      "time": 0.7,
+      "role": "tick",
+      "alignment": "onset",
+      "bed_over_db": 2,
+      "pan": 0,
+      "label": "logo stroke"
+    },
+    {
+      "time": 1.05,
+      "role": "tick",
+      "alignment": "onset",
+      "bed_over_db": 2,
+      "pan": 0,
+      "label": "logo stroke"
+    },
+    {
+      "time": 1.5,
+      "role": "confirm",
+      "alignment": "onset",
+      "bed_over_db": 4,
+      "pan": 0,
+      "label": "wordmark lock"
+    },
+    {
+      "time": 2.1,
+      "role": "whoosh",
+      "alignment": "peak",
+      "bed_over_db": 4,
+      "pan": 0,
+      "label": "phone arrive"
+    },
+    {
+      "time": 3.6,
+      "role": "click",
+      "alignment": "onset",
+      "bed_over_db": 4,
+      "pan": 0,
+      "label": "AI nav"
+    },
+    {
+      "time": 3.8,
+      "role": "whoosh",
+      "alignment": "peak",
+      "bed_over_db": 3,
+      "pan": 0,
+      "label": "directory"
+    },
+    {
+      "time": 4.2,
+      "role": "pop",
+      "alignment": "onset",
+      "bed_over_db": 3,
+      "pan": 0,
+      "label": "cards"
+    },
+    {
+      "time": 4.5,
+      "role": "pop",
+      "alignment": "onset",
+      "bed_over_db": 3,
+      "pan": 0,
+      "label": "cards"
+    },
+    {
+      "time": 4.8,
+      "role": "pop",
+      "alignment": "onset",
+      "bed_over_db": 3,
+      "pan": 0,
+      "label": "cards"
+    },
+    {
+      "time": 5.1,
+      "role": "pop",
+      "alignment": "onset",
+      "bed_over_db": 3,
+      "pan": 0,
+      "label": "cards"
+    },
+    {
+      "time": 5.8,
+      "role": "whoosh",
+      "alignment": "peak",
+      "bed_over_db": 3,
+      "pan": 0,
+      "label": "sweep"
+    },
+    {
+      "time": 6.4,
+      "role": "whoosh",
+      "alignment": "peak",
+      "bed_over_db": 3,
+      "pan": 0,
+      "label": "sweep"
+    },
+    {
+      "time": 7.2,
+      "role": "whoosh",
+      "alignment": "peak",
+      "bed_over_db": 4,
+      "pan": 0,
+      "label": "converge"
+    },
+    {
+      "time": 7.5,
+      "role": "hit",
+      "alignment": "onset",
+      "bed_over_db": 4,
+      "pan": 0,
+      "label": "Tahawwulat hero"
+    },
+    {
+      "time": 7.8,
+      "role": "click",
+      "alignment": "onset",
+      "bed_over_db": 4,
+      "pan": 0,
+      "label": "open"
+    },
+    {
+      "time": 8,
+      "role": "whoosh",
+      "alignment": "peak",
+      "bed_over_db": 3,
+      "pan": 0,
+      "label": "sheet"
+    },
+    {
+      "time": 8.25,
+      "role": "tick",
+      "alignment": "onset",
+      "bed_over_db": 2,
+      "pan": 0,
+      "label": "role focus"
+    },
+    {
+      "time": 8.7,
+      "role": "tick",
+      "alignment": "onset",
+      "bed_over_db": 2,
+      "pan": 0,
+      "label": "role focus"
+    },
+    {
+      "time": 9.15,
+      "role": "tick",
+      "alignment": "onset",
+      "bed_over_db": 2,
+      "pan": 0,
+      "label": "role focus"
+    },
+    {
+      "time": 9.6,
+      "role": "tick",
+      "alignment": "onset",
+      "bed_over_db": 2,
+      "pan": 0,
+      "label": "role focus"
+    },
+    {
+      "time": 10.05,
+      "role": "tick",
+      "alignment": "onset",
+      "bed_over_db": 2,
+      "pan": 0,
+      "label": "role focus"
+    },
+    {
+      "time": 10.6,
+      "role": "click",
+      "alignment": "onset",
+      "bed_over_db": 3,
+      "pan": 0,
+      "label": "dismiss"
+    },
+    {
+      "time": 10.9,
+      "role": "whoosh",
+      "alignment": "peak",
+      "bed_over_db": 3,
+      "pan": 0,
+      "label": "fiqh directory"
+    },
+    {
+      "time": 11.4,
+      "role": "click",
+      "alignment": "onset",
+      "bed_over_db": 4,
+      "pan": 0,
+      "label": "Syafii"
+    },
+    {
+      "time": 11.7,
+      "role": "whoosh",
+      "alignment": "peak",
+      "bed_over_db": 3,
+      "pan": 0,
+      "label": "chat"
+    },
+    {
+      "time": 12.0,
+      "role": "key",
+      "alignment": "onset",
+      "bed_over_db": 1,
+      "pan": 0.08,
+      "label": "typing"
+    },
+    {
+      "time": 12.167,
+      "role": "key",
+      "alignment": "onset",
+      "bed_over_db": 1,
+      "pan": -0.08,
+      "label": "typing"
+    },
+    {
+      "time": 12.333,
+      "role": "key",
+      "alignment": "onset",
+      "bed_over_db": 1,
+      "pan": 0.08,
+      "label": "typing"
+    },
+    {
+      "time": 12.5,
+      "role": "key",
+      "alignment": "onset",
+      "bed_over_db": 1,
+      "pan": -0.08,
+      "label": "typing"
+    },
+    {
+      "time": 12.667,
+      "role": "key",
+      "alignment": "onset",
+      "bed_over_db": 1,
+      "pan": 0.08,
+      "label": "typing"
+    },
+    {
+      "time": 12.833,
+      "role": "key",
+      "alignment": "onset",
+      "bed_over_db": 1,
+      "pan": -0.08,
+      "label": "typing"
+    },
+    {
+      "time": 13.0,
+      "role": "key",
+      "alignment": "onset",
+      "bed_over_db": 1,
+      "pan": 0.08,
+      "label": "typing"
+    },
+    {
+      "time": 13.2,
+      "role": "click",
+      "alignment": "onset",
+      "bed_over_db": 4,
+      "pan": 0,
+      "label": "send"
+    },
+    {
+      "time": 13.5,
+      "role": "whoosh",
+      "alignment": "peak",
+      "bed_over_db": 4,
+      "pan": 0,
+      "label": "answer"
+    },
+    {
+      "time": 14.4,
+      "role": "pop",
+      "alignment": "onset",
+      "bed_over_db": 3,
+      "pan": 0,
+      "label": "quote extract"
+    },
+    {
+      "time": 16.4,
+      "role": "click",
+      "alignment": "onset",
+      "bed_over_db": 3,
+      "pan": 0,
+      "label": "return"
+    },
+    {
+      "time": 17,
+      "role": "click",
+      "alignment": "onset",
+      "bed_over_db": 4,
+      "pan": 0,
+      "label": "book"
+    },
+    {
+      "time": 17.3,
+      "role": "whoosh",
+      "alignment": "peak",
+      "bed_over_db": 3,
+      "pan": 0,
+      "label": "catalog"
+    },
+    {
+      "time": 18.4,
+      "role": "tick",
+      "alignment": "onset",
+      "bed_over_db": 2,
+      "pan": 0,
+      "label": "underline"
+    },
+    {
+      "time": 19,
+      "role": "pop",
+      "alignment": "onset",
+      "bed_over_db": 3,
+      "pan": 0,
+      "label": "row lift"
+    },
+    {
+      "time": 20.1,
+      "role": "click",
+      "alignment": "onset",
+      "bed_over_db": 3,
+      "pan": 0,
+      "label": "return"
+    },
+    {
+      "time": 20.5,
+      "role": "click",
+      "alignment": "onset",
+      "bed_over_db": 3,
+      "pan": 0,
+      "label": "back"
+    },
+    {
+      "time": 20.8,
+      "role": "whoosh",
+      "alignment": "peak",
+      "bed_over_db": 3,
+      "pan": 0,
+      "label": "tabs"
+    },
+    {
+      "time": 21.3,
+      "role": "click",
+      "alignment": "onset",
+      "bed_over_db": 3,
+      "pan": 0,
+      "label": "tab"
+    },
+    {
+      "time": 22.0,
+      "role": "click",
+      "alignment": "onset",
+      "bed_over_db": 3,
+      "pan": 0,
+      "label": "tab"
+    },
+    {
+      "time": 22.6,
+      "role": "click",
+      "alignment": "onset",
+      "bed_over_db": 3,
+      "pan": 0,
+      "label": "back"
+    },
+    {
+      "time": 22.9,
+      "role": "click",
+      "alignment": "onset",
+      "bed_over_db": 3,
+      "pan": 0,
+      "label": "notes nav"
+    },
+    {
+      "time": 23.2,
+      "role": "tick",
+      "alignment": "onset",
+      "bed_over_db": 2,
+      "pan": 0,
+      "label": "note highlight"
+    },
+    {
+      "time": 23.7,
+      "role": "click",
+      "alignment": "onset",
+      "bed_over_db": 3,
+      "pan": 0,
+      "label": "note open"
+    },
+    {
+      "time": 24.5,
+      "role": "paper",
+      "alignment": "peak",
+      "bed_over_db": 4,
+      "pan": 0,
+      "label": "paper fan"
+    },
+    {
+      "time": 25.5,
+      "role": "paper",
+      "alignment": "peak",
+      "bed_over_db": 4,
+      "pan": 0,
+      "label": "fold"
+    },
+    {
+      "time": 26.5,
+      "role": "hit",
+      "alignment": "onset",
+      "bed_over_db": 5,
+      "pan": 0,
+      "label": "logo"
+    },
+    {
+      "time": 27,
+      "role": "confirm",
+      "alignment": "onset",
+      "bed_over_db": 3,
+      "pan": 0,
+      "label": "wordmark"
+    }
+  ]
+}
