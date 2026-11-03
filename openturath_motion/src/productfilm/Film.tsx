@@ -329,132 +329,140 @@ const FieldCards: React.FC<{ t: number }> = ({ t }) => {
   );
 };
 
-function AssistantCards({ t, selectedOnly = false }: { t: number; selectedOnly?: boolean }) {
+function AssistantCards({
+  t,
+  selectedOnly = false,
+}: {
+  t: number;
+  selectedOnly?: boolean;
+}) {
   const move = blend(t, 4.75, 5.75),
     leave = p(t, 21.4, 21.95);
   const send = blend(t, 8.0, 8.85);
   return (
     <>
-      {(selectedOnly ? ASSISTANTS.slice(0, 1) : ASSISTANTS).map(([label, ar], i) => {
-        const arrival = e(t, 3.25 + i * 0.06, 3.95 + i * 0.06);
-        const x = 94 + (i % 2) * 458,
-          y = 760 + Math.floor(i / 2) * 276;
-        const chosen = i === 0;
-        return (
-          <div
-            key={label}
-            style={{
-              ...box,
-              left: chosen ? m(x, 94, move) : x + (i % 2 ? 180 : -180) * move,
-              top: chosen ? m(y, m(720, 534, send), move) : y + 50 * move,
-              width: chosen ? m(434, 892, move) : i === 4 ? 892 : 434,
-              height: chosen ? m(248, 122, move) : i === 4 ? 148 : 248,
-              borderRadius: chosen ? m(32, 23, move) : 32,
-              background: C.card,
-              color: C.white,
-              overflow: "hidden",
-              opacity:
-                arrival *
-                (chosen
-                  ? 1 - leave
-                  : 1 - p(t, 4.8 + i * 0.025, 5.35 + i * 0.025)),
-              translate: `0 ${60 * (1 - arrival)}px`,
-              zIndex: 5,
-            }}
-          >
+      {(selectedOnly ? ASSISTANTS.slice(0, 1) : ASSISTANTS).map(
+        ([label, ar], i) => {
+          const arrival = e(t, 3.25 + i * 0.06, 3.95 + i * 0.06);
+          const x = 94 + (i % 2) * 458,
+            y = 760 + Math.floor(i / 2) * 276;
+          const chosen = i === 0;
+          return (
             <div
+              key={label}
               style={{
                 ...box,
-                left: chosen ? m(30, 90, move) : 30,
-                right: i === 4 ? 230 : 24,
-                top: chosen ? m(38, 41, move) : i === 4 ? 52 : 38,
-                fontSize: chosen ? m(39, 36, move) : i === 4 ? 34 : 39,
-                fontWeight: 600,
-                lineHeight: 1.15,
-                zIndex: 2,
-              }}
-            >
-              {label}
-            </div>
-            {chosen && (
-              <div style={{ ...box, left: 28, top: 43, opacity: move }}>
-                <Icon name="back" size={30} />
-              </div>
-            )}
-            <div
-              lang="ar"
-              dir="rtl"
-              style={{
-                ...box,
-                left: i === 4 ? 30 : 205,
-                right: i === 4 ? 230 : 24,
-                bottom: i === 4 ? 8 : 22,
-                fontFamily: "FilmArabicUI, sans-serif",
-                fontSize: i === 4 ? 32 : Math.min(58, 360 / ar.length),
-                lineHeight: 1.85,
-                textAlign: "right",
-                opacity: 0.1 * (1 - move),
-                whiteSpace: "nowrap",
-              }}
-            >
-              {ar}
-            </div>
-            <div
-              style={{
-                ...box,
-                right: 28,
-                top: 43,
-                ...row,
-                gap: 24,
-                opacity: move,
-              }}
-            >
-              <Icon name="book" size={32} />
-              <svg
-                width="24"
-                height="32"
-                viewBox="0 0 24 32"
-                fill="currentColor"
-              >
-                <circle cx="12" cy="6" r="2" />
-                <circle cx="12" cy="16" r="2" />
-                <circle cx="12" cy="26" r="2" />
-              </svg>
-            </div>
-            <div
-              style={{
-                ...box,
-                left: i === 4 ? undefined : 30,
-                right: i === 4 ? 30 : undefined,
-                bottom: i === 4 ? 45 : 30,
-                ...row,
-                gap: 20,
-                opacity: 1 - move,
+                left: chosen ? m(x, 94, move) : x + (i % 2 ? 180 : -180) * move,
+                top: chosen ? m(y, m(720, 534, send), move) : y + 50 * move,
+                width: chosen ? m(434, 892, move) : i === 4 ? 892 : 434,
+                height: chosen ? m(248, 122, move) : i === 4 ? 148 : 248,
+                borderRadius: chosen ? m(32, 23, move) : 32,
+                background: C.card,
+                color: C.white,
+                overflow: "hidden",
+                opacity:
+                  arrival *
+                  (chosen
+                    ? 1 - leave
+                    : 1 - p(t, 4.8 + i * 0.025, 5.35 + i * 0.025)),
+                translate: `0 ${60 * (1 - arrival)}px`,
+                zIndex: 5,
               }}
             >
               <div
                 style={{
-                  background: C.white,
-                  color: C.card,
-                  borderRadius: 32,
-                  padding: "12px 26px",
+                  ...box,
+                  left: chosen ? m(30, 90, move) : 30,
+                  right: i === 4 ? 230 : 24,
+                  top: chosen ? m(38, 41, move) : i === 4 ? 52 : 38,
+                  fontSize: chosen ? m(39, 36, move) : i === 4 ? 34 : 39,
+                  fontWeight: 600,
+                  lineHeight: 1.15,
+                  zIndex: 2,
                 }}
               >
-                <Icon name="chat" size={30} />
+                {label}
+              </div>
+              {chosen && (
+                <div style={{ ...box, left: 28, top: 43, opacity: move }}>
+                  <Icon name="back" size={30} />
+                </div>
+              )}
+              <div
+                lang="ar"
+                dir="rtl"
+                style={{
+                  ...box,
+                  left: i === 4 ? 30 : 205,
+                  right: i === 4 ? 230 : 24,
+                  bottom: i === 4 ? 8 : 22,
+                  fontFamily: "FilmArabicUI, sans-serif",
+                  fontSize: i === 4 ? 32 : Math.min(58, 360 / ar.length),
+                  lineHeight: 1.85,
+                  textAlign: "right",
+                  opacity: 0.1 * (1 - move),
+                  whiteSpace: "nowrap",
+                }}
+              >
+                {ar}
               </div>
               <div
                 style={{
-                  border: "1px solid #555",
-                  borderRadius: 32,
-                  padding: 12,
+                  ...box,
+                  right: 28,
+                  top: 43,
+                  ...row,
+                  gap: 24,
+                  opacity: move,
                 }}
               >
-                <Icon name="book" size={30} />
+                <Icon name="book" size={32} />
+                <svg
+                  width="24"
+                  height="32"
+                  viewBox="0 0 24 32"
+                  fill="currentColor"
+                >
+                  <circle cx="12" cy="6" r="2" />
+                  <circle cx="12" cy="16" r="2" />
+                  <circle cx="12" cy="26" r="2" />
+                </svg>
+              </div>
+              <div
+                style={{
+                  ...box,
+                  left: i === 4 ? undefined : 30,
+                  right: i === 4 ? 30 : undefined,
+                  bottom: i === 4 ? 45 : 30,
+                  ...row,
+                  gap: 20,
+                  opacity: 1 - move,
+                }}
+              >
+                <div
+                  style={{
+                    background: C.white,
+                    color: C.card,
+                    borderRadius: 32,
+                    padding: "12px 26px",
+                  }}
+                >
+                  <Icon name="chat" size={30} />
+                </div>
+                <div
+                  style={{
+                    border: "1px solid #555",
+                    borderRadius: 32,
+                    padding: 12,
+                  }}
+                >
+                  <Icon name="book" size={30} />
+                </div>
               </div>
             </div>
-          </div>
-        );
-      })}
+          );
+        },
+      )}
       <div
         style={{
           ...box,
@@ -1206,11 +1214,11 @@ function Finale({ t }: { t: number }) {
   );
 }
 
-export const OpenTurathProductFilm: React.FC<{ silent?: boolean; storyTime?: number; catalogDemo?: boolean }> = ({
-  silent = false,
-  storyTime,
-  catalogDemo = false,
-}) => {
+export const OpenTurathProductFilm: React.FC<{
+  silent?: boolean;
+  storyTime?: number;
+  catalogDemo?: boolean;
+}> = ({ silent = false, storyTime, catalogDemo = false }) => {
   const f = useCurrentFrame(),
     { fps } = useVideoConfig(),
     t = storyTime ?? f / fps;
@@ -1237,7 +1245,12 @@ export const OpenTurathProductFilm: React.FC<{ silent?: boolean; storyTime?: num
         <Headline t={t} start={3.04} end={5.32} lines={["Pilih bidangmu."]} />
       )}
       {t >= (catalogDemo ? 4.75 : 5.25) && t < 9.25 && (
-        <Headline t={t} start={catalogDemo ? 4.83 : 5.35} end={9.05} lines={["Tanyakan."]} />
+        <Headline
+          t={t}
+          start={catalogDemo ? 4.83 : 5.35}
+          end={9.05}
+          lines={["Tanyakan."]}
+        />
       )}
       {t >= 9.05 && t < 14.85 && (
         <Headline
