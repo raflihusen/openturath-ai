@@ -100,7 +100,7 @@ def main():
         print(f"   [OK] Menggunakan biner Windows Zip terbaru dari root: {root_win_zip.stat().st_size:,} bytes")
         
         # Buat/perbarui RELEASE_MANIFEST.json sesuai biner terbaru
-        import hashlib, json
+        import json
         h = hashlib.sha256()
         with open(root_apk, "rb") as fh:
             while chunk := fh.read(65536):
