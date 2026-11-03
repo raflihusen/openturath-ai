@@ -77,7 +77,7 @@ const Macro:React.FC<{t:number}> = ({t})=>{
  const p=ease(t/4), lift=.08+.55*ease((t-1.2)/2.8);
  const surface=(u:number,v:number):V3=>{const x=(u-.5)*5,z=(v-.5)*8;return [x,.025*Math.sin(z*1.2)+lift*Math.pow(Math.max(0,(Math.abs(x)-.9)/1.6),2)+.018*Math.sin(x*1.8+z*.6),z];};
  const points:V3[]=Array.from({length:120},(_,i)=>{const q=i/119,z=-1.7+5.2*q,x=.32*Math.sin(q*Math.PI*2-.3);const y=surface(x/5+.5,z/8+.5)[1]+.016;return [x,y,z];});
- return <><Rig pos={vmix([.12,1.35,3.1],[.38,2.1,2.4],p)} target={vmix([0,0,.4],[0,0,-.7],p)} fov={32}/><Ground/><Sheet surface={surface} nx={60} ny={64}/><Ink points={points} portion={ease((t-.05)/2.95)}/></>;
+ return <><Rig pos={vmix([.12,1.35,3.1],[.38,2.1,2.4],p)} target={vmix([-.15,0,.4],[-.15,0,-.7],p)} fov={32}/><Ground/><Sheet surface={surface} nx={60} ny={64}/><Ink points={points} portion={ease((t-.05)/2.95)}/></>;
 };
 const Portal:React.FC<{t:number}> = ({t})=>{
  const s=(t-4)/5,p=ease(s);const path:V3[]=Array.from({length:140},(_,i)=>{const z=5-i*.13;return [.32*Math.sin(z*.65),-.075,z];});
