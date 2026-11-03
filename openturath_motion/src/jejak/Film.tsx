@@ -28,7 +28,7 @@ const ComposerCrop:React.FC<{t:number}> = ({t})=>{
  const typed=query.slice(0,Math.floor(range(t,11.6,13.9)*query.length));
  const sent=t>=14.05;
  return <div style={{...softBox,left:135,top:820,width:810,height:260,borderRadius:25,opacity:inOut(t,11.15,14.8),transform:`translateY(${26*(1-smooth(t,11.15,11.8))}px)`}}>
-  <div style={{position:'absolute',left:0,top:0,right:0,fontFamily:'Outfit',fontSize:26,fontWeight:600,color:ink,padding:'24px 30px 0'}}>Contoh pertanyaan · Fikih Syafi’i</div>
+  <div style={{position:'absolute',left:0,top:0,right:0,fontFamily:'Outfit',fontSize:26,fontWeight:600,color:ink,padding:'24px 30px 0',zIndex:2}}>Contoh pertanyaan · Fikih Syafi’i</div>
   <div style={{position:'absolute',left:-5,top:-1400,width:420,height:820,transform:'scale(2.02)',transformOrigin:'top left'}}><ChatScreen typed={typed} answerProgress={0} sent={sent}/></div>
  </div>;
 };
@@ -39,16 +39,18 @@ export const OpenTurathJejakIlmu:React.FC = () => {
  return <AbsoluteFill style={{backgroundColor:'#F6F6F6',overflow:'hidden'}}>
   <OffthreadVideo src={staticFile('jejak/world.mp4')} muted style={{width:'100%',height:'100%',objectFit:'cover'}}/>
   <Audio src={staticFile('jejak/audio/master.wav')}/>
-  <SceneTitle t={t} start={.55} end={3.8} text={'Setiap pertanyaan\nmembuka jalan.'}/>
-  <SceneTitle t={t} start={4.4} end={8.85} text={'Menelusuri\nkhazanah ilmu.'}/>
+  <div style={{position:'absolute',left:96,bottom:250,width:600,fontFamily:'Newsreader, serif',fontSize:67,lineHeight:1.12,letterSpacing:-1.5,color:ink,opacity:inOut(t,.7,3.8),transform:`translateY(${16*(1-smooth(t,.7,1.6))}px)`}}>Setiap pertanyaan<br/>membuka jalan.</div>
+  {/* Sparse labels belong to the 3D space; the arch and paper remain visible. */}
+  {[{text:'Fikih',x:145,y:750,a:5.0,b:7.8},{text:'Hadis',x:702,y:990,a:5.65,b:8.3},{text:'Tafsir',x:310,y:1250,a:6.25,b:8.6}].map(({text,x,y,a,b})=><div key={text} style={{position:'absolute',left:x,top:y,fontFamily:'Outfit, sans-serif',fontSize:27,letterSpacing:1,color:'#3F3F46',opacity:inOut(t,a,b)*.8,transform:`translateY(${12*(1-smooth(t,a,a+.7))}px)`}}>{text}</div>)}
   <SceneTitle t={t} start={9.1} end={11.25} text={'Pilih bidang ilmu.'} overline="OPENTURATH AI"/>
   <SceneTitle t={t} start={11.4} end={14.7} text={'Mulai dengan\npertanyaan.'} overline="OPENTURATH AI"/>
   <DirectoryCrop t={t}/><ComposerCrop t={t}/>
-  <div style={{position:'absolute',left:145,right:145,top:1370,textAlign:'center',fontFamily:'Outfit, sans-serif',fontSize:21,color:'#52525B',opacity:inOut(t,9.1,14.75)}}>Visualisasi antarmuka · contoh pertanyaan</div>
-  <SceneTitle t={t} start={14.9} end={18.8} text={'Baca penjelasan.\nTelusuri rujukan.'}/>
-  <div style={{position:'absolute',left:100,right:100,top:510,color:'#52525B',fontFamily:'Outfit',fontSize:30,lineHeight:1.4,opacity:inOut(t,15.3,18.8)}}>Periksa pada kitab dan edisi yang digunakan.</div>
-  <SceneTitle t={t} start={19.2} end={23.75} text={'Simpan untuk\ndipelajari kembali.'}/>
-  <div style={{position:'absolute',left:0,right:0,top:0,bottom:0,background:'rgba(9,9,11,.58)',opacity:final}}/>
+  <div style={{position:'absolute',left:145,right:145,top:1370,textAlign:'center',fontFamily:'Outfit, sans-serif',fontSize:18,color:'#71717A',opacity:inOut(t,11.4,14.65)}}>Contoh pertanyaan</div>
+  <div style={{...heading,top:1080,left:135,right:105,opacity:inOut(t,14.9,18.8),transform:`translateY(${22*(1-smooth(t,14.9,15.8))}px)`}}>Baca penjelasan.<br/>Telusuri rujukan.</div>
+  <div style={{position:'absolute',left:140,right:120,top:1315,color:'#52525B',fontFamily:'Outfit',fontSize:27,lineHeight:1.4,opacity:inOut(t,15.3,18.8)}}>Periksa pada kitab dan edisi yang digunakan.</div>
+  <div style={{position:'absolute',left:100,top:290,color:ink,fontFamily:'Newsreader, serif',fontSize:76,lineHeight:1.08,letterSpacing:-2,opacity:inOut(t,19.2,23.75)}}>Simpan untuk<br/>dipelajari kembali.</div>
+  {/* An illustrative saved note, based on the approved note-card geometry. */}
+  <div style={{position:'absolute',left:210,top:1040,width:660,boxSizing:'border-box',padding:'30px 34px',border:'1px solid #DADADA',borderRadius:24,background:'#fff',boxShadow:'0 22px 65px rgba(0,0,0,.12)',fontFamily:'Outfit, sans-serif',color:ink,opacity:inOut(t,20.05,23.3),transform:`translateY(${30*(1-smooth(t,20.05,20.9))}px) rotate(${1.5*(1-smooth(t,20.05,20.9))}deg)`}}><div style={{fontSize:20,color:'#71717A'}}>Contoh catatan · Fikih Syafi’i</div><div style={{fontSize:30,fontWeight:600,marginTop:13}}>Pertanyaan tentang rukun wudu</div></div>
   <div style={{position:'absolute',left:0,right:0,top:540,textAlign:'center',opacity:final,transform:`translateY(${25*(1-markP)}px)`,color:'#FAFAFA'}}>
    <Img src={staticFile('promo/mark_white.svg')} style={{width:220,height:245,objectFit:'contain'}}/>
    <div style={{fontFamily:'Newsreader, serif',fontSize:102,letterSpacing:-3,marginTop:60}}>OpenTurath AI</div>
