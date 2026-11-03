@@ -2,9 +2,10 @@ import React from 'react';
 import {AbsoluteFill, Audio, Easing, Img, interpolate, OffthreadVideo, staticFile, useCurrentFrame, useVideoConfig} from 'remotion';
 import {ChatScreen, LibraryScreen, NoteReaderScreen} from '../film60/StudyUI';
 import {DirectoryScreen} from '../film60/AppUI';
+import {JejakWorld3D} from './World';
 
 // Product views are cropped from the approved UI reconstruction; the physical
-// visual world is an independently rendered Blender animation beneath them.
+// visual world may be an independently rendered Blender video or a live ThreeCanvas.
 const clamp = {extrapolateLeft:'clamp',extrapolateRight:'clamp'} as const;
 const range=(t:number,a:number,b:number)=>interpolate(t,[a,b],[0,1],clamp);
 const inOut=(t:number,a:number,b:number)=>Math.min(range(t,a,a+.55),1-range(t,b-.55,b));
@@ -33,11 +34,11 @@ const ComposerCrop:React.FC<{t:number}> = ({t})=>{
  </div>;
 };
 
-export const OpenTurathJejakIlmu:React.FC = () => {
+export const OpenTurathJejakIlmu:React.FC<{worldRenderer?:'video'|'three'}> = ({worldRenderer='video'}) => {
  const frame=useCurrentFrame();const {fps}=useVideoConfig();const t=frame/fps;
  const final=inOut(t,25.1,30.6); const markP=smooth(t,25.1,26.25);
  return <AbsoluteFill style={{backgroundColor:'#F6F6F6',overflow:'hidden'}}>
-  <OffthreadVideo src={staticFile('jejak/world.mp4')} muted style={{width:'100%',height:'100%',objectFit:'cover'}}/>
+  {worldRenderer==='three' ? <JejakWorld3D/> : <OffthreadVideo src={staticFile('jejak/world.mp4')} muted style={{width:'100%',height:'100%',objectFit:'cover'}}/>}
   <Audio src={staticFile('jejak/audio/master.wav')}/>
   <div style={{position:'absolute',left:96,bottom:250,width:600,fontFamily:'Newsreader, serif',fontSize:67,lineHeight:1.12,letterSpacing:-1.5,color:ink,opacity:inOut(t,.7,3.8),transform:`translateY(${16*(1-smooth(t,.7,1.6))}px)`}}>Setiap pertanyaan<br/>membuka jalan.</div>
   {/* Sparse labels belong to the 3D space; the arch and paper remain visible. */}
