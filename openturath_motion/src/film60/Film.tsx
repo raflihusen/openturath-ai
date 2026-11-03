@@ -3,7 +3,7 @@ import {AbsoluteFill,Audio,Img,staticFile,useCurrentFrame,useVideoConfig} from '
 import {loadFont} from '@remotion/fonts';
 import {chan,clamp,mix,step} from '../promo/pegas';
 import {DashboardScreen,DirectoryScreen,TahawwulatScreen,PickerScreen,NotesScreen,U,InkCard} from './AppUI';
-import {ChatScreen,LibraryScreen} from './StudyUI';
+import {ChatScreen,LibraryScreen,NoteReaderScreen} from './StudyUI';
 
 loadFont({family:'Scheherazade New',url:staticFile('fonts/NativeArabic.ttf'),weight:'400'});
 loadFont({family:'FilmArabicUI',url:staticFile('film60/Cairo-700.ttf'),weight:'700'});
@@ -24,7 +24,6 @@ const captions:[number,number,string][]=[
  [46.3,50.8,'Bandingkan\nruang kajian.'],
  [51.6,55.1,'Simpan untuk\ndipelajari kembali.'],
 ];
-const fieldNames=['Fikih Tahawwulat','Fikih & Fatwa','Hadis & Ulumul Hadis','Tafsir & Qiraat','Akidah & Ushuluddin','Usul Fikih & Kaidah','Bahasa & Sastra Arab','Sejarah, Sirah & Rijal','Tasawuf & Akhlak','Bibliografi & Faharis'];
 const Q='Bagaimana hukum bersentuhan kulit dengan non-mahram terhadap wudhu?';
 const rail=[['Hadits','الحديث'],['Tafsir','التفسير'],['Akidah','العقيدة'],['Ushul & Kaidah Fikih','أصول الفقه'],['Bahasa Arab','علوم العربية'],['Sejarah & Sirah','التاريخ'],['Tasawuf','التصوف'],['Bibliografi Kitab','الفهارس']];
 
@@ -51,14 +50,14 @@ export const OpenTurathFilm60:React.FC=()=>{
  const dark=clamp(key(t,0,[[22,.98],[29.35,0],[55.1,1]],9));
  const bg=Math.round(mix(246,9,dark));
  const phoneVisible=show(t,3.8,55.1);
- const scale=key(t,.15,[[3.8,.2],[4.85,1.82],[7.2,1.95],[10.6,1.88],[11.2,2.03],[15.5,2.08],[19.5,2.0],[22,1.83],[25.3,1.89],[29.5,1.89],[30.3,2.45],[32.5,1.92],[36.8,2.1],[40.35,2.03],[46,1.98],[49.5,1.96],[51.4,1.89],[55.1,.18]],10);
- const px=key(t,540,[[7.2,510],[10.6,540],[15.5,548],[19.5,530],[22,540],[30.3,520],[32.5,540],[36.8,535],[40.35,548],[46,525],[51.4,540],[55.1,540]],9);
- const py=key(t,870,[[3.8,870],[4.85,1115],[7.2,1130],[10.6,1120],[11.2,1160],[15.5,1160],[19.5,1160],[22,1120],[25.3,1130],[29.5,1130],[30.3,625],[32.5,1130],[36.8,1160],[40.35,1160],[46,1140],[49.5,1130],[51.4,1120],[55.1,900]],9);
+ const scale=key(t,.15,[[3.8,.2],[4.85,1.66],[7.2,1.72],[10.6,1.67],[11.2,1.72],[15.5,1.74],[19.5,1.70],[22,1.67],[25.3,1.70],[29.5,1.68],[30.3,1.74],[32.5,1.70],[36.8,1.74],[40.35,1.72],[46,1.70],[49.5,1.70],[51.4,1.68],[55.1,.18]],10);
+ const px=key(t,540,[[7.2,530],[10.6,540],[15.5,545],[19.5,537],[22,540],[30.3,535],[32.5,540],[36.8,538],[40.35,544],[46,535],[51.4,540],[55.1,540]],9);
+ const py=key(t,870,[[3.8,870],[4.85,1040],[7.2,1040],[10.6,1040],[11.2,1045],[15.5,1045],[19.5,1040],[22,1040],[25.3,1040],[29.5,1040],[30.3,1040],[32.5,1040],[36.8,1045],[40.35,1045],[46,1040],[49.5,1040],[51.4,1040],[55.1,900]],9);
  const tilt=key(t,0,[[4.85,-2],[7.2,1],[10.6,0],[11.2,-1],[19.5,1],[22,0],[30.3,-1],[32.5,0],[40.35,1],[46,-1],[51.4,0],[55.1,8]],10);
  const ry=key(t,-18,[[4.85,-5],[7.2,2],[10.6,0],[11.2,3],[19.5,-2],[22,0],[30.3,0],[32.5,0],[40.35,-3],[46,2],[51.4,0],[55.1,36]],10);
  const dashboardScroll=key(t,0,[[7.8,110],[9,255],[10,300]],8);
  // Real content scrolls within its native viewport; the header and bottom nav stay fixed.
- const directoryScroll=key(t,0,[[12,280],[13.5,485],[15,680],[16.5,890],[18,1100],[19.5,1300],[20.8,1510]],7);
+ const directoryScroll=key(t,0,[[12,280],[13.5,485],[15,680],[16.5,890],[18,1100],[19.5,1380],[20.2,1660]],7);
  const typed=Q.slice(0,Math.floor(range(t,30.5,32.25)*Q.length));
  const answer=range(t,33,36.7);
  const answerScroll=key(t,0,[[35.7,80],[37.2,205],[38.5,225]],7);
@@ -66,11 +65,11 @@ export const OpenTurathFilm60:React.FC=()=>{
  const modalP=clamp(ease(t,25.3,14,1)*(1-ease(t,29,20,1)));
  const select=t>27.7&&t<28.5?0:-1;
  const final=show(t,56.4,70);
- const clickTimes=[7,11,25,29,32.5,37.5,40,46,47.3,48.6,51,53.5];
+ const clickTimes=[11,25,29,30.3,32.5,37.5,40,46,47.3,48.6,50.8,51.4,53.5];
  // Cursor coordinates are defined in the actual 420 × 820 app plane.
- const cursorX=key(t,210,[[6.5,185],[7,190],[10.9,156],[24.8,175],[28.8,210],[32.4,384],[37.5,335],[39.9,365],[45.8,26],[47.2,230],[48.5,91],[50.9,265],[53.4,280]],11);
- const cursorY=key(t,890,[[6.5,155],[7,155],[10.9,788],[24.8,240],[28.8,302],[32.4,786],[37.5,400],[39.9,33],[45.8,31],[47.2,85],[48.5,85],[50.9,788],[53.4,282]],11);
- const cursorOpacity=show(t,6.5,7.4)+show(t,10.7,11.4)+show(t,24.8,25.5)+show(t,28.7,29.3)+show(t,32.25,32.8)+show(t,37.25,37.85)+show(t,39.75,40.55)+show(t,45.75,46.3)+show(t,47.05,49)+show(t,50.8,51.55)+show(t,53.3,53.8);
+ const cursorX=key(t,210,[[10.9,156],[24.8,175],[28.8,210],[30.2,100],[32.4,384],[37.5,335],[39.9,355],[45.8,26],[47.2,175],[48.5,64],[50.7,26],[51.3,265],[53.4,200]],14);
+ const cursorY=key(t,890,[[10.9,788],[24.8,240],[28.8,76],[30.2,340],[32.4,786],[37.5,400],[39.9,33],[45.8,31],[47.2,85],[48.5,85],[50.7,31],[51.3,788],[53.4,268]],14);
+ const cursorOpacity=show(t,10.7,11.4)+show(t,24.8,25.5)+show(t,28.7,29.3)+show(t,30.1,30.65)+show(t,32.25,32.8)+show(t,37.25,37.85)+show(t,39.75,40.55)+show(t,45.75,46.3)+show(t,47.05,49)+show(t,50.6,51.7)+show(t,53.3,53.85);
  const press=clickTimes.reduce((m,a)=>Math.max(m,Math.sin(range(t,a,a+.19)*Math.PI)),0);
  return <AbsoluteFill style={{backgroundColor:`rgb(${bg},${bg},${bg})`,overflow:'hidden',fontFamily:'Outfit',color:U.ink}}>
   <Audio src={staticFile('film60/soundtrack.wav')}/>
@@ -98,8 +97,10 @@ export const OpenTurathFilm60:React.FC=()=>{
    <Route t={t} start={29.2} end={30.55}><DirectoryScreen field="fiqh"/></Route>
    <Route t={t} start={30.4} end={40.5}><ChatScreen typed={typed} answerProgress={answer} sent={t>=32.5} scrollY={answerScroll}/></Route>
    <Route t={t} start={40.35} end={46.15}><LibraryScreen scrollY={libraryScroll}/></Route>
-   <Route t={t} start={46} end={51.5}><ChatScreen typed={Q} answerProgress={1} tabbed activeTab={t>=47.3&&t<48.6?1:0} scrollY={t>=47.3&&t<48.6?0:120}/></Route>
-   <Route t={t} start={51.4} end={55.2}><NotesScreen saved={t>=53.5}/></Route>
+   <Route t={t} start={46} end={50.95}><ChatScreen typed={Q} answerProgress={1} tabbed activeTab={t>=47.3&&t<48.6?1:0} scrollY={t>=47.3&&t<48.6?0:120}/></Route>
+   <Route t={t} start={50.85} end={51.6}><DashboardScreen scrollY={0}/></Route>
+   <Route t={t} start={51.4} end={53.75}><NotesScreen saved/></Route>
+   <Route t={t} start={53.6} end={55.2}><NoteReaderScreen/></Route>
    {/* One soft contact marker anchors each visible interaction. */}
    <div style={{...pos,left:cursorX,top:cursorY,opacity:clamp(cursorOpacity),transform:`scale(${1-press*.16})`}}><svg width="18" height="23" viewBox="0 0 28 36" style={{filter:'drop-shadow(1px 2px 2px #0005)'}}><path d="M2 2v29l7-7 5 10 5-3-5-10h11z" fill="#fff" stroke="#171717" strokeWidth="2.2" strokeLinejoin="round"/></svg></div>
    {clickTimes.map(at=>{const p=range(t,at,at+.4);return p>0&&p<1?<div key={at} style={{...pos,left:cursorX,top:cursorY,width:8+p*48,height:8+p*48,border:'1px solid #606060',borderRadius:'50%',opacity:(1-p)*.4,transform:'translate(-50%,-50%)'}}/>:null;})}
@@ -111,9 +112,8 @@ export const OpenTurathFilm60:React.FC=()=>{
    <div style={{height:1,width:75,background:'#71717A',margin:'46px auto'}}/>
    <div style={{fontSize:39,letterSpacing:.3}}>openturath.id <span style={{marginLeft:18}}>↗</span></div>
   </div>
-  <div style={{...pos,left:87,bottom:58,fontSize:18,color:dark>.5?'#B8B8B8':'#777',opacity:show(t,4.8,55)}}>Visualisasi antarmuka · contoh percakapan</div>
+  <div style={{...pos,left:87,right:87,textAlign:'center',bottom:108,fontSize:21,color:dark>.5?'#B8B8B8':'#777',opacity:show(t,4.8,55)}}>Visualisasi antarmuka · contoh percakapan</div>
   <div style={{...pos,left:87,right:87,bottom:34,height:1,background:dark>.5?'#ffffff18':'#00000012'}}><div style={{height:1,width:`${range(t,0,60)*100}%`,background:dark>.5?'#B8B8B8':'#606060',opacity:.4}}/></div>
-  {/* Fields are all present in source; the changing rail is metadata, not an availability promise. */}
-  <div style={{...pos,left:85,right:85,bottom:114,opacity:show(t,11.5,21.7),overflow:'hidden',height:40,color:'#606060'}}><div style={{whiteSpace:'nowrap',fontSize:24,transform:`translateX(${-Math.max(0,t-11.5)*140}px)`}}>{fieldNames.join('   ·   ')}</div></div>
+
  </AbsoluteFill>;
 };
