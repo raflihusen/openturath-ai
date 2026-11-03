@@ -7,6 +7,7 @@ serta mempertahankan webhook, unduhan APK resmi, .well-known/security.txt, dan r
 """
 
 import os
+import hashlib
 import shutil
 import subprocess
 from pathlib import Path
@@ -19,6 +20,18 @@ PUBLIC = WEBSITE / "public"
 APP_PUBLIC = ROOT / "openturath_ai" / "public"
 
 def main():
+    # Never publish the locally packaged Guru edition through public APK aliases.
+    public_apk = ROOT / "openturath.apk"
+    if not public_apk.exists():
+        public_apk = ROOT / "app-release-latest.apk"
+    guru_apk = ROOT / "OpenTurath_AI_Edisi_Guru.apk"
+    if public_apk.exists() and guru_apk.exists():
+        def digest(path):
+            with path.open("rb") as source:
+                return hashlib.file_digest(source, "sha256").digest()
+        if digest(public_apk) == digest(guru_apk):
+            raise SystemExit("ERROR: APK publik identik dengan Edisi Guru; siapkan APK standar sebelum deployment.")
+
     print("1. Menjalankan build redesign-v7...")
     res = subprocess.run(["python3", str(WEBSITE / "redesign-v7" / "build.py")], cwd=str(ROOT), capture_output=True, text=True)
     if res.returncode != 0:
