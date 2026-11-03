@@ -42,7 +42,8 @@ export function CatalogIntro({ t }: { t: number }) {
   const filtering = e(t, 11, 11.8);
   const opacity = 1 - p(t, 11.7, 11.85);
   const group = t < 3.86 ? 0 : t < 7.56 ? 1 : 2;
-  const query = "Fikih Syafi’i".slice(0, Math.floor(p(t, 10.95, 11.55) * 12));
+  const searchText = "Fikih Syafi’i";
+  const query = searchText.slice(0, Math.floor(p(t, 10.95, 11.55) * searchText.length));
   return (
     <AbsoluteFill
       style={{
