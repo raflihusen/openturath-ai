@@ -3,6 +3,7 @@ import {ThreeCanvas} from '@remotion/three';
 import {useThree} from '@react-three/fiber';
 import {useCurrentFrame, useVideoConfig} from 'remotion';
 import * as THREE from 'three';
+import {createPaperRenderer} from './RenderEffects';
 
 // A deterministic 3D fallback: intact pages, a growing ink line and six
 // independently staged camera moves. Nothing is rasterised from styleframes.
@@ -63,7 +64,7 @@ const Ink:React.FC<{points:V3[];portion:number;color?:string;radius?:number}> = 
 const Ground:React.FC<{dark?:boolean}> = ({dark=false})=><mesh rotation={[-Math.PI/2,0,0]} position={[0,-.1,0]} receiveShadow><planeGeometry args={[120,120]}/><meshStandardMaterial color={dark?obsidian:page} roughness={.92} map={dark?null:fibers.albedo} bumpMap={dark?null:fibers.height} bumpScale={.016} roughnessMap={dark?null:fibers.roughness}/></mesh>;
 const Rig:React.FC<{pos:V3;target:V3;fov?:number}> = ({pos,target,fov=35})=>{
  const {camera,gl}=useThree();
- useLayoutEffect(()=>{camera.position.set(...pos);camera.up.set(0,1,0);camera.lookAt(...target);if(camera instanceof THREE.PerspectiveCamera){camera.fov=fov;camera.updateProjectionMatrix();}gl.shadowMap.enabled=true;gl.shadowMap.type=THREE.VSMShadowMap;},[camera,gl,pos[0],pos[1],pos[2],target[0],target[1],target[2],fov]);return null;
+ useLayoutEffect(()=>{camera.position.set(...pos);camera.up.set(0,1,0);camera.lookAt(...target);camera.userData.focusDistance=new THREE.Vector3(...pos).distanceTo(new THREE.Vector3(...target));if(camera instanceof THREE.PerspectiveCamera){camera.fov=fov;camera.updateProjectionMatrix();}gl.shadowMap.enabled=true;gl.shadowMap.type=THREE.VSMShadowMap;},[camera,gl,pos[0],pos[1],pos[2],target[0],target[1],target[2],fov]);return null;
 };
 const Lights:React.FC<{dark:boolean}> = ({dark})=><>
  <ambientLight intensity={dark?.38:.52}/>
@@ -108,7 +109,7 @@ const BookWorld:React.FC<{t:number}> = ({t})=>{
 
 export const JejakWorld3D:React.FC = () => {
  const frame=useCurrentFrame();const {fps,width,height}=useVideoConfig();const t=frame/fps;const dark=t>=24;
- return <ThreeCanvas width={width} height={height} shadows camera={{position:[0,6,6],fov:38,near:.02,far:200}} gl={{antialias:true,alpha:false}}>
+ return <ThreeCanvas width={width} height={height} shadows camera={{position:[0,6,6],fov:38,near:.02,far:200}} gl={createPaperRenderer}>
   <color attach="background" args={[dark?obsidian:'#e5e5e5']}/><fog attach="fog" args={[dark?obsidian:'#e5e5e5',16,35]}/><Lights dark={dark}/>
   {t<4?<Macro t={t}/>:t<9?<Portal t={t}/>:t<14.8?<QuestionWorld t={t}/>:t<19?<SourceWorld t={t}/>:t<24?<NoteWorld t={t}/>:<BookWorld t={t}/>}
  </ThreeCanvas>;
