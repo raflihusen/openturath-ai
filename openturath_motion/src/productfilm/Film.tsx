@@ -84,7 +84,7 @@ function AssistantCards({t}:{t:number}) {
       </div>;
     })}
     <div style={{...box,left:94,top:1485,fontSize:25,color:C.gray,opacity:visible(t,3.45,5.25)}}>Akses mengikuti akun</div>
-    <Tap t={t} at={4.78} x={311} y={897} dark/>
+    <Tap t={t} at={4.73} x={165} y={947} dark/>
   </>;
 }
 
@@ -153,15 +153,17 @@ function Conversation({t}:{t:number}) {
 
 function NotesJourney({t}:{t:number}) {
   const show=blend(t,21.65,22.2), open=blend(t,23.25,24.05), end=blend(t,26.3,27.15);
+  const notes=e(t,22.12,22.5);
   const close=1-end;
   return <div style={{...box,left:64,top:504,width:952,height:1200,opacity:show*close,zIndex:10,translate:`${100*(1-show)}px ${-24*end}px`,scale:1-.04*end,transformOrigin:'center center'}}>
     <div style={{...box,inset:0,borderRadius:45,background:C.paper,border:`1px solid ${C.line}`,boxShadow:shadow,overflow:'hidden'}}>
       <div style={{...box,left:46,right:46,top:44,...row,gap:24,height:64}}>
-        <div style={{opacity:open}}><Icon name="back" size={32}/></div><div style={{fontSize:42,fontWeight:600,translate:`${-56*(1-open)}px 0`}}>Catatan</div><div style={{marginLeft:'auto',opacity:open}}><CopyIcon size={32}/></div>
+        <div style={{opacity:open}}><Icon name="back" size={32}/></div><div style={{fontSize:t<22.12?36:42,fontWeight:600,translate:`${-56*(1-open)}px 0`}}>{t<22.12?'Halo, Penuntut Ilmu':'Catatan'}</div><div style={{marginLeft:'auto',opacity:open}}><CopyIcon size={32}/></div>
       </div>
-      <div style={{...box,left:46,right:46,top:153,height:88,borderRadius:44,background:C.wash,...row,gap:20,padding:'0 25px',fontSize:31,color:C.gray,opacity:1-open}}><Icon name="search" size={31}/>Cari catatan…</div>
-      <div style={{...box,left:46,top:280,fontSize:25,color:C.gray,opacity:1-open}}>TERSIMPAN</div>
-      <div style={{...box,left:m(46,48,open),right:m(46,48,open),top:m(338,174,open),height:m(245,885,open),background:open>.98?'transparent':C.white,border:`1px solid rgba(218,218,218,${1-open})`,borderRadius:m(28,0,open),padding:m(32,0,open),overflow:'hidden'}}>
+      <div style={{...box,left:46,right:46,top:153,height:88,borderRadius:44,background:C.wash,...row,gap:20,padding:'0 25px',fontSize:31,color:C.gray,opacity:1-open}}><Icon name="search" size={31}/>{t<22.12?'Cari AI atau bidang keilmuan…':'Cari catatan…'}</div>
+      <div style={{...box,left:46,right:46,top:285,opacity:1-notes}}><div style={{fontSize:32,fontWeight:600,marginBottom:28}}>Pilih bidang</div><div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:22}}>{FIELDS.slice(0,4).map(([title])=><div key={title} style={{height:186,borderRadius:25,background:C.card,color:C.white,padding:28,fontSize:36,fontWeight:600}}>{title}</div>)}</div></div>
+      <div style={{...box,left:46,top:280,fontSize:25,color:C.gray,opacity:(1-open)*notes}}>TERSIMPAN</div>
+      <div style={{...box,left:m(46,48,open),right:m(46,48,open),top:m(338,174,open),height:m(245,885,open),background:open>.98?'transparent':C.white,border:`1px solid rgba(218,218,218,${1-open})`,borderRadius:m(28,0,open),padding:m(32,0,open),overflow:'hidden',opacity:notes,translate:`0 ${24*(1-notes)}px`}}>
         <div style={{...row,gap:20,fontSize:24,color:C.gray}}><span style={{background:open>.98?'transparent':C.wash,padding:open>.98?0:'5px 12px',borderRadius:20}}>Fikih Syafi’i</span><span style={{opacity:1-open}}>·</span><span style={{opacity:1-open}}>3 Nov 2026</span></div>
         <div style={{fontFamily:open>.5?EDIT:UI,fontSize:m(40,60,open),lineHeight:1.15,marginTop:m(22,14,open),letterSpacing:-1,fontWeight:600}}>{DEMO.title}</div>
         <div style={{...box,top:143,fontSize:29,color:C.gray,opacity:open}}>Fikih Syafi’i</div>
@@ -176,7 +178,7 @@ function NotesJourney({t}:{t:number}) {
         </div>
       </div>
       <div style={{...box,bottom:0,left:0,right:0,height:152,borderTop:`1px solid ${C.line}`,background:C.white,...row,justifyContent:'space-around',opacity:1-open}}>
-        {(['Beranda','AI','Catatan','Pengaturan'] as const).map((label,i)=><div key={label} style={{...row,flexDirection:'column',gap:10,fontSize:25,color:i===2?C.ink:C.gray}}><div style={{padding:'10px 28px',borderRadius:40,background:i===2?C.wash:'transparent'}}><Icon name={(['home','ai','notes','settings'] as const)[i]} size={32}/></div>{label}</div>)}
+        {(['Beranda','AI','Catatan','Pengaturan'] as const).map((label,i)=><div key={label} style={{...row,flexDirection:'column',gap:10,fontSize:25,color:i===(t<22.12?0:2)?C.ink:C.gray}}><div style={{padding:'10px 28px',borderRadius:40,background:i===(t<22.12?0:2)?C.wash:'transparent'}}><Icon name={(['home','ai','notes','settings'] as const)[i]} size={32}/></div>{label}</div>)}
       </div>
     </div>
     <Tap t={t} at={22.12} x={595} y={1127}/>
