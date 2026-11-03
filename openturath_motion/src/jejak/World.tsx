@@ -11,20 +11,27 @@ const ease=(v:number)=>{const p=clamp(v);return p*p*(3-2*p);};
 const mix=(a:number,b:number,p:number)=>a+(b-a)*p;
 type V3=[number,number,number];
 const vmix=(a:V3,b:V3,p:number):V3=>[mix(a[0],b[0],p),mix(a[1],b[1],p),mix(a[2],b[2],p)];
-const page='#dedede', edge='#bbbbbb', obsidian='#111113';
+const page='#fafafa', edge='#d0d0d0', obsidian='#111113';
 
-// Repeatable fiber noise; it does not sample a photograph or alter over time.
-function paperTexture():THREE.DataTexture {
- const size=256, data=new Uint8Array(size*size*4);let seed=97823;
+// Three independent, deterministic maps: the colour carries visible paper
+// grain; height and roughness add physical response to moving lights.
+function paperTextures():{albedo:THREE.DataTexture;height:THREE.DataTexture;roughness:THREE.DataTexture} {
+ const size=512,count=size*size*4,colour=new Uint8Array(count),height=new Uint8Array(count),rough=new Uint8Array(count);let seed=97823;
  const rand=()=>{seed=(Math.imul(seed,1664525)+1013904223)>>>0;return seed/4294967296;};
  for(let y=0;y<size;y++)for(let x=0;x<size;x++){
-  const i=(y*size+x)*4;const v=Math.round(113+rand()*28+7*Math.sin(x*.18+y*.025));
-  data[i]=v;data[i+1]=v;data[i+2]=v;data[i+3]=255;
+  const i=(y*size+x)*4;const n=rand();
+  const fibre=Math.sin(x*.12+y*.027)*Math.sin(x*.024-y*.086);
+  const c=Math.round(Math.max(230,Math.min(255,246+6*fibre+(n-.5)*13)));
+  const h=Math.round(Math.max(0,Math.min(255,128+40*fibre+(rand()-.5)*78)));
+  const r=Math.round(210+rand()*35);
+  for(let q=0;q<3;q++){colour[i+q]=c;height[i+q]=h;rough[i+q]=r;}
+  colour[i+3]=height[i+3]=rough[i+3]=255;
  }
- const tex=new THREE.DataTexture(data,size,size,THREE.RGBAFormat);
- tex.wrapS=tex.wrapT=THREE.RepeatWrapping;tex.repeat.set(3,3);tex.needsUpdate=true;return tex;
+ const texture=(data:Uint8Array)=>{const tex=new THREE.DataTexture(data,size,size,THREE.RGBAFormat);tex.wrapS=tex.wrapT=THREE.RepeatWrapping;tex.repeat.set(2,2);tex.anisotropy=4;tex.needsUpdate=true;return tex;};
+ const albedo=texture(colour);albedo.colorSpace=THREE.SRGBColorSpace;
+ return {albedo,height:texture(height),roughness:texture(rough)};
 }
-const fibers=paperTexture();
+const fibers=paperTextures();
 
 type SurfaceFn=(u:number,v:number)=>V3;
 function makeSurface(nx:number,ny:number,fn:SurfaceFn):THREE.BufferGeometry {
@@ -43,7 +50,7 @@ const Sheet:React.FC<{surface:SurfaceFn;nx?:number;ny?:number;color?:string;bump
   position.needsUpdate=true;geometry.computeVertexNormals();geometry.computeBoundingSphere();
  },[geometry,nx,ny,surface]);
  useLayoutEffect(()=>()=>geometry.dispose(),[geometry]);
- return <mesh geometry={geometry} castShadow receiveShadow><meshStandardMaterial color={color} roughness={.86} metalness={0} side={THREE.DoubleSide} bumpMap={bump?fibers:null} bumpScale={.025}/></mesh>;
+ return <mesh geometry={geometry} castShadow receiveShadow><meshStandardMaterial color={color} roughness={.86} metalness={0} side={THREE.DoubleSide} map={bump?fibers.albedo:null} bumpMap={bump?fibers.height:null} bumpScale={.022} roughnessMap={bump?fibers.roughness:null}/></mesh>;
 };
 const Ink:React.FC<{points:V3[];portion:number;color?:string;radius?:number}> = ({points,portion,color='#111112',radius=.009})=>{
  const geometry=useMemo(()=>{
@@ -53,16 +60,16 @@ const Ink:React.FC<{points:V3[];portion:number;color?:string;radius?:number}> = 
  useLayoutEffect(()=>()=>geometry.dispose(),[geometry]);
  return <mesh geometry={geometry} castShadow><meshStandardMaterial color={color} roughness={.9}/></mesh>;
 };
-const Ground:React.FC<{dark?:boolean}> = ({dark=false})=><mesh rotation={[-Math.PI/2,0,0]} position={[0,-.1,0]} receiveShadow><planeGeometry args={[120,120]}/><meshStandardMaterial color={dark?obsidian:page} roughness={.92} bumpMap={dark?null:fibers} bumpScale={.018}/></mesh>;
+const Ground:React.FC<{dark?:boolean}> = ({dark=false})=><mesh rotation={[-Math.PI/2,0,0]} position={[0,-.1,0]} receiveShadow><planeGeometry args={[120,120]}/><meshStandardMaterial color={dark?obsidian:page} roughness={.92} map={dark?null:fibers.albedo} bumpMap={dark?null:fibers.height} bumpScale={.016} roughnessMap={dark?null:fibers.roughness}/></mesh>;
 const Rig:React.FC<{pos:V3;target:V3;fov?:number}> = ({pos,target,fov=35})=>{
  const {camera,gl}=useThree();
- useLayoutEffect(()=>{camera.position.set(...pos);camera.up.set(0,1,0);camera.lookAt(...target);if(camera instanceof THREE.PerspectiveCamera){camera.fov=fov;camera.updateProjectionMatrix();}gl.shadowMap.enabled=true;gl.shadowMap.type=THREE.PCFSoftShadowMap;},[camera,gl,pos[0],pos[1],pos[2],target[0],target[1],target[2],fov]);return null;
+ useLayoutEffect(()=>{camera.position.set(...pos);camera.up.set(0,1,0);camera.lookAt(...target);if(camera instanceof THREE.PerspectiveCamera){camera.fov=fov;camera.updateProjectionMatrix();}gl.shadowMap.enabled=true;gl.shadowMap.type=THREE.VSMShadowMap;},[camera,gl,pos[0],pos[1],pos[2],target[0],target[1],target[2],fov]);return null;
 };
 const Lights:React.FC<{dark:boolean}> = ({dark})=><>
- <ambientLight intensity={dark?.22:.25}/>
- <directionalLight position={[-7,5,3]} intensity={dark?2.0:3.0} castShadow shadow-mapSize-width={2048} shadow-mapSize-height={2048} shadow-camera-left={-10} shadow-camera-right={10} shadow-camera-top={12} shadow-camera-bottom={-10} shadow-bias={-.00015}/>
+ <ambientLight intensity={dark?.38:.52}/>
+ <directionalLight position={[-7,5,3]} intensity={dark?2.0:3.0} castShadow shadow-mapSize-width={2048} shadow-mapSize-height={2048} shadow-camera-left={-10} shadow-camera-right={10} shadow-camera-top={12} shadow-camera-bottom={-10} shadow-bias={-.00015} shadow-radius={6} shadow-blurSamples={8}/>
  <directionalLight position={[5,5,-6]} intensity={dark?2.5:1.5}/>
- <directionalLight position={[0,3,8]} intensity={dark?.35:.35}/>
+ <directionalLight position={[0,3,8]} intensity={dark?1.1:1.4}/>
 </>;
 
 const Macro:React.FC<{t:number}> = ({t})=>{
@@ -73,7 +80,7 @@ const Macro:React.FC<{t:number}> = ({t})=>{
 };
 const Portal:React.FC<{t:number}> = ({t})=>{
  const s=(t-4)/5,p=ease(s);const path:V3[]=Array.from({length:140},(_,i)=>{const z=5-i*.13;return [.32*Math.sin(z*.65),-.075,z];});
- return <><Rig pos={vmix([-.22,1.45,7],[.2,1.7,.5],p)} target={[0,2.2,-6]} fov={39}/><Ground/><mesh position={[0,7,-16]} receiveShadow><planeGeometry args={[35,20]}/><meshStandardMaterial color={obsidian} roughness={.95}/></mesh><Ink points={path} portion={.5+s*.5}/>{Array.from({length:10},(_,k)=>{
+ return <><Rig pos={vmix([-.22,1.45,7],[.2,1.7,.5],p)} target={[0,2.2,-6]} fov={39}/><Ground/><mesh position={[0,7,-16]} receiveShadow><planeGeometry args={[35,20]}/><meshStandardMaterial color="#555555" roughness={.95} map={fibers.albedo} bumpMap={fibers.height} bumpScale={.018}/></mesh><Ink points={path} portion={.5+s*.5}/>{Array.from({length:10},(_,k)=>{
  const surface=(u:number,v:number):V3=>{const a=Math.PI*u,phase=k*.35+s*1.5,r=2+v*1.8,x=-r*Math.cos(a),y=(4.4+v*2)*Math.pow(Math.sin(a),.85);return [x+.14*Math.sin(y*.8+phase)*Math.sin(a),y,-k*1.32+(v-.5)*1.0+.7*Math.sin(u*Math.PI*2+v*Math.PI+phase)];};
  return <Sheet key={k} surface={surface} nx={72} ny={18}/>;})}</>;
 };
