@@ -56,6 +56,7 @@ export const OpenTurathJejakIlmu:React.FC = () => {
    <div style={{width:72,height:1,background:'#A1A1AA',margin:'42px auto'}}/>
    <div style={{fontFamily:'Outfit, sans-serif',fontSize:36,letterSpacing:.4}}>openturath.id ↗</div>
   </div>
+  <div style={{position:'absolute',left:80,right:80,bottom:88,textAlign:'center',fontFamily:'Outfit, sans-serif',fontSize:20,lineHeight:1.45,color:'#A1A1AA',opacity:inOut(t,27.0,30.7)}}>Reawakening — Scott Buckley<br/>CC BY 4.0 · scottbuckley.com.au</div>
  </AbsoluteFill>;
 };
 
