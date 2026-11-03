@@ -7,10 +7,10 @@ export const QuoteCard: React.FC<{compact?:boolean}> = ({compact=false}) => <div
  <div lang="ar" dir="rtl" style={{fontFamily:'Scheherazade New, serif',fontSize:20,color:'#666',marginTop:6}}>الأم ج١، ص٢٩-٣٠</div>
 </div>;
 
-export const CatalogRow: React.FC = () => <div dir="rtl" lang="ar" style={{width:384,height:116,boxSizing:'border-box',background:U.paper,borderTop:`1px solid ${U.border}`,padding:'12px 3px',fontFamily:'Scheherazade New, serif',color:U.ink,textAlign:'right'}}>
- <div style={{display:'flex',gap:10,alignItems:'baseline'}}><span style={{fontSize:22,fontWeight:600,flex:1}}>الأم</span><span style={{fontSize:13,color:'#777'}}>٣</span></div>
- <div style={{fontSize:17,color:'#666',marginTop:4}}>الإمام الشافعي</div>
- <div style={{display:'flex',gap:18,color:'#777',fontSize:14,marginTop:5}}><span>ت ٢٠٤ هـ</span><span>المجلدات: ٨</span></div>
+export const CatalogRow: React.FC = () => <div dir="rtl" lang="ar" style={{width:384,height:144,boxSizing:'border-box',background:U.paper,borderTop:`1px solid ${U.border}`,padding:'12px 3px',fontFamily:'Scheherazade New, serif',color:U.ink,textAlign:'right'}}>
+ <div style={{display:'flex',gap:10,alignItems:'baseline'}}><span style={{fontSize:22,lineHeight:1.5,fontWeight:600,flex:1}}>الأم</span><span style={{fontSize:13,lineHeight:1.5,color:'#777'}}>٣</span></div>
+ <div style={{fontSize:17,lineHeight:1.5,color:'#666',marginTop:4}}>الإمام الشافعي</div>
+ <div style={{display:'flex',gap:18,color:'#777',fontSize:14,lineHeight:1.5,marginTop:5}}><span>ت ٢٠٤ هـ</span><span>المجلدات: ٨</span></div>
 </div>;
 
 export const NoteCard: React.FC = () => <div style={{width:380,height:110,boxSizing:'border-box',padding:20,background:'#fff',border:`1px solid ${U.border}`,borderRadius:20,color:U.ink,fontFamily:U.fontOutfit}}>
