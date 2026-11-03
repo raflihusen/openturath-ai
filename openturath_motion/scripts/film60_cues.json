@@ -267,22 +267,6 @@
       "label": "route"
     },
     {
-      "time": 30.0,
-      "role": "key",
-      "alignment": "onset",
-      "bed_over_db": 1,
-      "pan": 0.08,
-      "label": "typing"
-    },
-    {
-      "time": 30.164,
-      "role": "key",
-      "alignment": "onset",
-      "bed_over_db": 1,
-      "pan": -0.08,
-      "label": "typing"
-    },
-    {
       "time": 30.3,
       "role": "click",
       "alignment": "onset",
@@ -291,7 +275,7 @@
       "label": "Syafii card"
     },
     {
-      "time": 30.327,
+      "time": 30.5,
       "role": "key",
       "alignment": "onset",
       "bed_over_db": 1,
@@ -299,19 +283,11 @@
       "label": "typing"
     },
     {
-      "time": 30.491,
+      "time": 30.659,
       "role": "key",
       "alignment": "onset",
       "bed_over_db": 1,
       "pan": -0.08,
-      "label": "typing"
-    },
-    {
-      "time": 30.655,
-      "role": "key",
-      "alignment": "onset",
-      "bed_over_db": 1,
-      "pan": 0.08,
       "label": "typing"
     },
     {
@@ -319,19 +295,11 @@
       "role": "key",
       "alignment": "onset",
       "bed_over_db": 1,
-      "pan": -0.08,
-      "label": "typing"
-    },
-    {
-      "time": 30.982,
-      "role": "key",
-      "alignment": "onset",
-      "bed_over_db": 1,
       "pan": 0.08,
       "label": "typing"
     },
     {
-      "time": 31.145,
+      "time": 30.977,
       "role": "key",
       "alignment": "onset",
       "bed_over_db": 1,
@@ -339,7 +307,7 @@
       "label": "typing"
     },
     {
-      "time": 31.309,
+      "time": 31.136,
       "role": "key",
       "alignment": "onset",
       "bed_over_db": 1,
@@ -347,7 +315,7 @@
       "label": "typing"
     },
     {
-      "time": 31.473,
+      "time": 31.295,
       "role": "key",
       "alignment": "onset",
       "bed_over_db": 1,
@@ -355,7 +323,7 @@
       "label": "typing"
     },
     {
-      "time": 31.636,
+      "time": 31.455,
       "role": "key",
       "alignment": "onset",
       "bed_over_db": 1,
@@ -363,7 +331,39 @@
       "label": "typing"
     },
     {
-      "time": 31.8,
+      "time": 31.614,
+      "role": "key",
+      "alignment": "onset",
+      "bed_over_db": 1,
+      "pan": -0.08,
+      "label": "typing"
+    },
+    {
+      "time": 31.773,
+      "role": "key",
+      "alignment": "onset",
+      "bed_over_db": 1,
+      "pan": 0.08,
+      "label": "typing"
+    },
+    {
+      "time": 31.932,
+      "role": "key",
+      "alignment": "onset",
+      "bed_over_db": 1,
+      "pan": -0.08,
+      "label": "typing"
+    },
+    {
+      "time": 32.091,
+      "role": "key",
+      "alignment": "onset",
+      "bed_over_db": 1,
+      "pan": 0.08,
+      "label": "typing"
+    },
+    {
+      "time": 32.25,
       "role": "key",
       "alignment": "onset",
       "bed_over_db": 1,
