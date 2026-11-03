@@ -11,7 +11,7 @@ const ease=(v:number)=>{const p=clamp(v);return p*p*(3-2*p);};
 const mix=(a:number,b:number,p:number)=>a+(b-a)*p;
 type V3=[number,number,number];
 const vmix=(a:V3,b:V3,p:number):V3=>[mix(a[0],b[0],p),mix(a[1],b[1],p),mix(a[2],b[2],p)];
-const page='#dededb', edge='#bbbcb9', obsidian='#111113';
+const page='#dedede', edge='#bbbbbb', obsidian='#111113';
 
 // Repeatable fiber noise; it does not sample a photograph or alter over time.
 function paperTexture():THREE.DataTexture {
@@ -36,7 +36,13 @@ function makeSurface(nx:number,ny:number,fn:SurfaceFn):THREE.BufferGeometry {
  const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(points,3));g.setAttribute('uv',new THREE.Float32BufferAttribute(uv,2));g.setIndex(indices);g.computeVertexNormals();return g;
 }
 const Sheet:React.FC<{surface:SurfaceFn;nx?:number;ny?:number;color?:string;bump?:boolean}> = ({surface,nx=32,ny=32,color=page,bump=true})=>{
- const geometry=useMemo(()=>makeSurface(nx,ny,surface),[nx,ny,surface]);
+ const geometry=useMemo(()=>makeSurface(nx,ny,()=>[0,0,0]),[nx,ny]);
+ useLayoutEffect(()=>{
+  const position=geometry.getAttribute('position') as THREE.BufferAttribute;
+  for(let j=0;j<=ny;j++)for(let i=0;i<=nx;i++){const k=j*(nx+1)+i;const p=surface(i/nx,j/ny);position.setXYZ(k,p[0],p[1],p[2]);}
+  position.needsUpdate=true;geometry.computeVertexNormals();geometry.computeBoundingSphere();
+ },[geometry,nx,ny,surface]);
+ useLayoutEffect(()=>()=>geometry.dispose(),[geometry]);
  return <mesh geometry={geometry} castShadow receiveShadow><meshStandardMaterial color={color} roughness={.86} metalness={0} side={THREE.DoubleSide} bumpMap={bump?fibers:null} bumpScale={.025}/></mesh>;
 };
 const Ink:React.FC<{points:V3[];portion:number;color?:string;radius?:number}> = ({points,portion,color='#111112',radius=.009})=>{
@@ -44,6 +50,7 @@ const Ink:React.FC<{points:V3[];portion:number;color?:string;radius?:number}> = 
   const n=Math.max(2,Math.ceil(points.length*clamp(portion)));const curve=new THREE.CatmullRomCurve3(points.slice(0,n).map(p=>new THREE.Vector3(...p)));
   return new THREE.TubeGeometry(curve,Math.max(8,n*2),radius,6,false);
  },[points,portion,radius]);
+ useLayoutEffect(()=>()=>geometry.dispose(),[geometry]);
  return <mesh geometry={geometry} castShadow><meshStandardMaterial color={color} roughness={.9}/></mesh>;
 };
 const Ground:React.FC<{dark?:boolean}> = ({dark=false})=><mesh rotation={[-Math.PI/2,0,0]} position={[0,-.1,0]} receiveShadow><planeGeometry args={[120,120]}/><meshStandardMaterial color={dark?obsidian:page} roughness={.92} bumpMap={dark?null:fibers} bumpScale={.018}/></mesh>;
@@ -95,7 +102,7 @@ const BookWorld:React.FC<{t:number}> = ({t})=>{
 export const JejakWorld3D:React.FC = () => {
  const frame=useCurrentFrame();const {fps,width,height}=useVideoConfig();const t=frame/fps;const dark=t>=24;
  return <ThreeCanvas width={width} height={height} shadows camera={{position:[0,6,6],fov:38,near:.02,far:200}} gl={{antialias:true,alpha:false}}>
-  <color attach="background" args={[dark?obsidian:'#e5e5e2']}/><Lights dark={dark}/>
+  <color attach="background" args={[dark?obsidian:'#e5e5e5']}/><Lights dark={dark}/>
   {t<4?<Macro t={t}/>:t<9?<Portal t={t}/>:t<14.8?<QuestionWorld t={t}/>:t<19?<SourceWorld t={t}/>:t<24?<NoteWorld t={t}/>:<BookWorld t={t}/>}
  </ThreeCanvas>;
 };
