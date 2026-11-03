@@ -45,7 +45,6 @@ export const OpenTurathJejakIlmu:React.FC = () => {
   <SceneTitle t={t} start={9.1} end={11.25} text={'Pilih bidang ilmu.'} overline="OPENTURATH AI"/>
   <SceneTitle t={t} start={11.4} end={14.7} text={'Mulai dengan\npertanyaan.'} overline="OPENTURATH AI"/>
   <DirectoryCrop t={t}/><ComposerCrop t={t}/>
-  <div style={{position:'absolute',left:145,right:145,top:1370,textAlign:'center',fontFamily:'Outfit, sans-serif',fontSize:18,color:'#71717A',opacity:inOut(t,11.4,14.65)}}>Contoh pertanyaan</div>
   <div style={{...heading,top:1080,left:135,right:105,opacity:inOut(t,14.9,18.8),transform:`translateY(${22*(1-smooth(t,14.9,15.8))}px)`}}>Baca penjelasan.<br/>Telusuri rujukan.</div>
   <div style={{position:'absolute',left:140,right:120,top:1315,color:'#52525B',fontFamily:'Outfit',fontSize:27,lineHeight:1.4,opacity:inOut(t,15.3,18.8)}}>Periksa pada kitab dan edisi yang digunakan.</div>
   <div style={{position:'absolute',left:100,top:290,color:ink,fontFamily:'Newsreader, serif',fontSize:76,lineHeight:1.08,letterSpacing:-2,opacity:inOut(t,19.2,23.75)}}>Simpan untuk<br/>dipelajari kembali.</div>
