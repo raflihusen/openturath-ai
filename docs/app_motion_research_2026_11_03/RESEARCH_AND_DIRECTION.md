@@ -66,7 +66,7 @@ Contoh rancangan gerak untuk diuji:
 - **Bertanya:** kolom input diberi ruang besar. Setelah dikirim, teks yang sama tetap menjadi jangkar perhatian saat berpindah ke bubble percakapan.
 - **Memahami:** bagian jawaban yang relevan muncul dan diberi waktu untuk dibaca. Kamera mendekat pada informasi yang sedang dijelaskan, lalu mengembalikan konteks.
 - **Memeriksa:** satu rujukan yang valid difokuskan. Tindakan berikutnya mengikuti kontrol dan kemampuan aplikasi yang benar-benar ada; jangan menciptakan navigasi sumber yang belum didukung produk.
-- **Menyimpan:** bagian yang dipilih tetap dikenali ketika masuk ke catatan. Catatan memiliki isi yang berhubungan dengan pertanyaan dan jawaban tadi.
+- **Menyimpan:** uji transisi menuju catatan dengan isi yang tetap berhubungan dengan pertanyaan dan jawaban. Bila aplikasi mendukung penyimpanan bagian terpilih, pertahankan bagian itu sebagai jangkar visual. Jika belum, gunakan alur catatan yang memang tersedia; jangan menyiratkan fitur seleksi atau penyimpanan otomatis yang belum dibuktikan.
 
 Ini rancangan transisi film, bukan pernyataan bahwa aplikasi saat ini mempunyai animasi tersebut. Keadaan awal/akhir, kontrol, data, dan hubungan fiturnya harus sesuai produk. Gerak bisa dirancang khusus tanpa mengarang kemampuan.
 
