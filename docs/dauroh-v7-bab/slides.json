@@ -1291,7 +1291,7 @@
     "old": 48,
     "prompt": ".",
     "minutes": 10,
-    "result": "Hasil latihan disimpan bersama alasan revisi dan sumber yang dipakai."
+    "result": "kartu rancangan awal beserta satu pertanyaan untuk pembimbing."
   },
   {
     "id": 69,
@@ -1572,7 +1572,7 @@
     "old": 64,
     "prompt": ".",
     "minutes": 10,
-    "result": "Hasil latihan disimpan bersama alasan revisi dan sumber yang dipakai."
+    "result": "kerangka singkat dan catatan bahan yang masih diperlukan."
   },
   {
     "id": 87,
@@ -1670,7 +1670,7 @@
     "old": 70,
     "prompt": ".",
     "minutes": 15,
-    "result": "Hasil latihan disimpan bersama alasan revisi dan sumber yang dipakai."
+    "result": "satu paragraf beserta alasan perbaikannya."
   },
   {
     "id": 93,
@@ -1785,7 +1785,7 @@
     "old": 79,
     "prompt": ".",
     "minutes": 15,
-    "result": "Hasil latihan disimpan bersama alasan revisi dan sumber yang dipakai."
+    "result": "pertanyaan, kartu sumber, catatan bacaan, dan satu paragraf."
   },
   {
     "id": 100,
@@ -1844,7 +1844,7 @@
       ],
       [
         "Dalam tur",
-        "Tunjukkan bagian yang sudah berjalan dan bedakan dari rencana."
+        "Ketersediaan mengikuti bagian proyek yang sudah berjalan."
       ]
     ],
     "notes": "Setelah melihat OpenTurath AI, kita beralih ke kebutuhan yang sudah kita alami pada bab sumber: menemukan kitab dan memilih cetakan yang tepat. Maktabah OpenTurath diarahkan untuk membantu pekerjaan tersebut. Gagasannya adalah membuat informasi buku dan jalur ke salinannya lebih mudah ditelusuri.\n\nDalam penelitian, satu judul dapat memiliki beberapa edisi. Karena itu, kemudahan pencarian perlu disertai identitas cetakan yang jelas. Kita ingin pengguna mengetahui apa yang sedang dibuka, bukan hanya menemukan berkas dengan nama yang mirip. Hubungan antara judul, edisi, dan salinan menjadi bagian penting dari pekerjaan ini.\n\nSaat memperlihatkan proyek, saya membedakan bagian yang sudah bisa digunakan dari bagian yang masih dikembangkan. Jika belum ada layanan yang dapat dibuka peserta, saya cukup menunjukkan tujuan dan contoh alur yang direncanakan. Saya tidak menyebut seolah seluruh koleksi atau integrasinya sudah tersedia.\n\nKaitannya dengan latihan kita sangat dekat. Anda sudah membuat kartu sumber dan memeriksa identitas berkas. Maktabah diarahkan untuk mengurangi waktu pencarian awal, sementara keputusan memilih edisi dan menilai sumber tetap mengikuti kebutuhan penelitian. Pertanyaan dari peserta tentang edisi yang sulit ditemukan dapat dicatat sebagai masukan pengembangan, bukan janji bahwa setiap permintaan langsung tersedia.",

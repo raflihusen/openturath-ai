@@ -2175,7 +2175,7 @@ Hari 2, bab 9: Rancangan dan penelitian terdahulu
 - Satu hal yang masih perlu dibicarakan dengan pembimbing.
 
 
-Durasi praktik: 10 menit. Hasil: Hasil latihan disimpan bersama alasan revisi dan sumber yang dipakai.
+Durasi praktik: 10 menit. Hasil: kartu rancangan awal beserta satu pertanyaan untuk pembimbing.
 
 
 ### Naskah pengajar
@@ -2704,7 +2704,7 @@ Hari 2, bab 11: Metode, penulisan, dan revisi
 - Bahan untuk bagian mana belum ditemukan?
 
 
-Durasi praktik: 10 menit. Hasil: Hasil latihan disimpan bersama alasan revisi dan sumber yang dipakai.
+Durasi praktik: 10 menit. Hasil: kerangka singkat dan catatan bahan yang masih diperlukan.
 
 
 ### Naskah pengajar
@@ -2890,7 +2890,7 @@ Hari 2, bab 11: Metode, penulisan, dan revisi
 - Minta satu masukan dan catat keputusan revisinya.
 
 
-Durasi praktik: 15 menit. Hasil: Hasil latihan disimpan bersama alasan revisi dan sumber yang dipakai.
+Durasi praktik: 15 menit. Hasil: satu paragraf beserta alasan perbaikannya.
 
 
 ### Naskah pengajar
@@ -3101,7 +3101,7 @@ Hari 2, bab 11: Metode, penulisan, dan revisi
 - Satu paragraf serta alasan perbaikannya.
 
 
-Durasi praktik: 15 menit. Hasil: Hasil latihan disimpan bersama alasan revisi dan sumber yang dipakai.
+Durasi praktik: 15 menit. Hasil: pertanyaan, kartu sumber, catatan bacaan, dan satu paragraf.
 
 
 ### Naskah pengajar
@@ -3194,7 +3194,7 @@ Hari 2, bab 12: Tur OpenTurath
 
 - Manfaat yang dituju — Menghubungkan informasi buku dengan sumber salinan yang dapat dibuka.
 
-- Dalam tur — Tunjukkan bagian yang sudah berjalan dan bedakan dari rencana.
+- Dalam tur — Ketersediaan mengikuti bagian proyek yang sudah berjalan.
 
 
 ### Naskah pengajar
