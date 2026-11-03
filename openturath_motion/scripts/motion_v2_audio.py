@@ -7,6 +7,8 @@ Run with the earshot virtualenv Python to regenerate the WAV and print the
 bank checks, cue gains, and measured loudness. No external media is needed.
 """
 from pathlib import Path
+import subprocess
+import tempfile
 import numpy as np
 from scipy.io import wavfile
 from scipy.signal import butter, sosfilt
@@ -141,7 +143,14 @@ if peak > .79:
     print('HEADROOM adjustment', round(20*np.log10(.79/peak),2), 'dB')
     y *= .79 / peak
 out = ROOT / 'public/promo/motion_v2.wav'
-wavfile.write(out, SR, np.round(y*32767).astype(np.int16))
-print('OUTPUT', out, 'lufs', round(meter.integrated_loudness(y),2),
-      'peak_dbfs', round(20*np.log10(np.max(np.abs(y))),2),
-      'stereo_correlation', round(np.corrcoef(y.T)[0,1],3))
+with tempfile.TemporaryDirectory(prefix='ot-motion-master-') as tmp:
+    pre = Path(tmp) / 'pre.wav'
+    wavfile.write(pre, SR, np.round(y*32767).astype(np.int16))
+    subprocess.run(['ffmpeg', '-hide_banner', '-loglevel', 'error', '-y', '-i', str(pre),
+                    '-af', 'loudnorm=I=-14.5:TP=-1.5:LRA=11', '-ar', str(SR),
+                    '-c:a', 'pcm_s16le', str(out)], check=True)
+_, master = wavfile.read(out)
+master = master.astype(np.float64) / 32768
+print('OUTPUT', out, 'lufs', round(meter.integrated_loudness(master),2),
+      'peak_dbfs', round(20*np.log10(np.max(np.abs(master))),2),
+      'stereo_correlation', round(np.corrcoef(master.T)[0,1],3))
