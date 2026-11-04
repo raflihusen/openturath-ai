@@ -11,7 +11,7 @@ Branch: `codex/diagnostic-access-session-recovery`. Baseline implementasi: `7e88
 2. Masuk beranda tidak membuat klaim bahwa identitas Google di WebView sudah terverifikasi. Challenge wajib, cookie, dan cache profil tidak menggantikan autentikasi aplikasi. Identitas yang berubah atau logout membatalkan callback lama.
 3. Saat AI dibuka, hak akses tetap diperiksa server. Koneksi Google yang belum terverifikasi diarahkan ke pemeriksaan akun; tidak diperlakukan sebagai alasan membeli ulang. Pemulihan AI hanya dilanjutkan setelah hasil koneksi yang terverifikasi, bukan ketika pengguna menunda atau sekadar masuk beranda.
 4. Cookie Google hanya dibaca. Tidak ada replay, perubahan masa berlaku, atau penghapusan global baru. Hasil pemeriksaan sesi yang terlambat setelah kepemilikan dilepas tidak dapat menandai sesi lama sebagai siap.
-5. Galat sebelum URL diterima mempertahankan tahap, kode, alasan, modul, ID percobaan, ID insiden, dan ID permintaan server. Laporan menyebut build/edisi, menyaring URL dan metadata, mendukung identitas token opsional, serta memakai kembali nomor tiket untuk insiden yang sama.
+5. Galat sebelum URL diterima mempertahankan tahap, kode, alasan, modul, ID percobaan, ID insiden, dan ID permintaan server. Laporan menyebut build/edisi, menyaring URL dan metadata, mendukung identitas token opsional, serta memakai kembali nomor tiket untuk insiden yang sama dalam konteks identitas/IP yang sama.
 6. Server membedakan alasan penyiapan, pemeriksaan legacy, identitas, aplikasi, pembatasan permintaan, notebook tidak tersedia, dan penolakan hak. Keputusan hak yang ada dipertahankan; VIP tetap dilindungi dan modul dievaluasi independen.
 7. Halaman login Google dan pembatalan normal dipisahkan dari statistik kegagalan teknis. Statistik baru memisahkan build, edisi, dan alasan. Tidak ada persentase keberhasilan baru yang diklaim tanpa data awal/akhir percobaan.
 8. Habisnya timer tidak menyatakan akses siap. Tanpa konfirmasi server, dialog menyatakan akses masih diproses dan mengizinkan pengguna kembali. Tombol masuk diperiksa dalam tiga bahasa pada lebar 320, 390, dan 1280 piksel.
@@ -26,11 +26,22 @@ Branch: `codex/diagnostic-access-session-recovery`. Baseline implementasi: `7e88
 
 ## Hasil verifikasi
 
-- Backend: **281 lulus, 0 gagal, 0 dilewati**, harness terisolasi dengan Firestore dan pengiriman notifikasi tiruan.
+- Backend: **281 lulus, 0 gagal, 0 dilewati**, baik pada Node 26.12.1 lokal maupun Node **22.23.4**, sesuai major version server. Harness memakai Firestore dan pengiriman notifikasi tiruan; ini bukan eksekusi pada server produksi.
 - TypeScript: pemeriksaan tipe dan kompilasi berhasil. Keluaran JavaScript serta source map diperbarui dalam checkpoint `377b6b7b`.
 - Pemeriksaan statis seluruh proyek Flutter: **No errors**, termasuk tidak ada peringatan yang tersisa pada hasil pemeriksaan terakhir.
-- Suite Flutter final: sedang diselesaikan; hasil akhir dan rincian tes yang dilewati dicatat pada bukti pendamping setelah proses selesai.
-- Kompilasi aplikasi lokal: sedang diverifikasi. Tidak ada instalasi atau pengujian akun nyata yang dilakukan oleh proses kompilasi.
+- Suite Flutter final: **663 lulus, 0 gagal, 6 dilewati**. Enam tes tersebut adalah ekspor gambar katalog, adegan, motion, slide, pengenalan, dan teaser yang hanya aktif jika `OT_SNAPSHOT_DIR` disediakan. Bukan tes login yang dilewati.
+- Kompilasi **debug lokal Standard**, versi **1.0.87/build 89**: macOS dan Android berhasil dengan exit code 0. Gradle `assembleDebug` selesai dan manifest APK menyebut build 89. APK debug aktual berisi arm64-v8a, armeabi-v7a, dan x86_64 meskipun flag target build memakai android-arm64; tidak diklaim sebagai APK rilis arm64 saja.
+- Kompilasi native masih mengeluarkan peringatan dependensi lama dan build phase tanpa output; tidak ada kegagalan kompilasi. Dependensi tidak dinaikkan hanya untuk menghilangkan peringatan tersebut.
+- Windows belum dikompilasi pada host macOS ini. Tidak ada pemasangan kandidat, pengujian Google nyata, penandatanganan distribusi, atau pembuktian jawaban NotebookLM dari proses kompilasi.
+
+Rincian hasil, versi, hash, lokasi artefak lokal, dan hasil per berkas tersedia pada [bukti-verifikasi.json](bukti-verifikasi.json). Transkrip pengujian dan kompilasi terakhir disimpan di [logs](logs/). Identitas tree sumber pada bukti tetap berlaku setelah checkpoint dokumentasi berikutnya.
+
+Artefak internal:
+
+- macOS: `openturath_ai/build/macos/Build/Products/Debug/OpenTurath AI.app` — bundle ID `com.example.openturathAi`, build 89.
+- Android: `openturath_ai/build/app/outputs/flutter-apk/app-debug.apk` — package `com.openturath.ai`, build 89, SHA-256 `64a0d5f19399049579c1dfc6ae953493f3c090de883e46fc37eb36548dd732c8`.
+
+Artefak tersebut hanya untuk pengujian internal. Tidak disalin menjadi APK rilis publik atau `app-release-latest.apk`. Tidak ada artefak Guru yang diklaim telah dibangun dalam pekerjaan ini.
 
 Uji regresi terlebih dahulu mereproduksi masalah: navigasi aplikasi masih menunggu NotebookLM, alasan sebelum URL hilang, timer membuat siap palsu, callback sesi lama menjadi siap, dan tata letak tombol meluber. Koreksi kemudian diuji ulang. Uji menyeluruh pertama juga menemukan ekspektasi dialog aktivasi lama; alur dialog dan pengujiannya diselaraskan dengan syarat konfirmasi server sebelum suite diulang.
 

@@ -1,0 +1,586 @@
+{
+  "schema_version": 1,
+  "recorded_utc": "2026-11-04T12:52:55.831761+00:00",
+  "workspace": "/Users/apple/Downloads/ramadhan",
+  "branch": "codex/diagnostic-access-session-recovery",
+  "implementation_baseline": "7e882ab2962d7606498e6424c2c43d256200cdf4",
+  "source_snapshot_commit": "4a6188fbd1656cf17d62e99cfc1992ebd00bac85",
+  "app_source_tree": "1be15f235855d43fcc7d2b57789a543b886273d9",
+  "release_status": "held_pending_real_google_and_device_verification",
+  "deployment_performed": false,
+  "production_account_changes_performed": false,
+  "flutter": {
+    "tool": "mcp__dart_mcp_server__run_tests",
+    "arguments": {
+      "concurrency": "2",
+      "reporter": "expanded",
+      "root": "/Users/apple/Downloads/ramadhan/openturath_ai"
+    },
+    "passed": 663,
+    "failed": 0,
+    "skipped": 6,
+    "elapsed_ms": 236849,
+    "skipped_tests": [
+      {
+        "name": "render katalog",
+        "file": "test/visual/render_catalog_test.dart",
+        "reason": "optional visual export; OT_SNAPSHOT_DIR not supplied"
+      },
+      {
+        "name": "render adegan",
+        "file": "test/visual/render_scenes_test.dart",
+        "reason": "optional visual export; OT_SNAPSHOT_DIR not supplied"
+      },
+      {
+        "name": "render motion",
+        "file": "test/visual/render_motion_test.dart",
+        "reason": "optional visual export; OT_SNAPSHOT_DIR not supplied"
+      },
+      {
+        "name": "render slide",
+        "file": "test/visual/render_slides_test.dart",
+        "reason": "optional visual export; OT_SNAPSHOT_DIR not supplied"
+      },
+      {
+        "name": "render pengenalan",
+        "file": "test/visual/render_onboarding_test.dart",
+        "reason": "optional visual export; OT_SNAPSHOT_DIR not supplied"
+      },
+      {
+        "name": "render teaser",
+        "file": "test/visual/render_teaser_test.dart",
+        "reason": "optional visual export; OT_SNAPSHOT_DIR not supplied"
+      }
+    ],
+    "per_file": {
+      "test/access_prepare_gate_test.dart": {
+        "passed": 6,
+        "skipped": 0
+      },
+      "test/active_subscription_access_test.dart": {
+        "passed": 6,
+        "skipped": 0
+      },
+      "test/agent_service_canonical_url_test.dart": {
+        "passed": 27,
+        "skipped": 0
+      },
+      "test/agent_session_manager_test.dart": {
+        "passed": 9,
+        "skipped": 0
+      },
+      "test/agent_sub_session_test.dart": {
+        "passed": 2,
+        "skipped": 0
+      },
+      "test/ai_info_sheet_test.dart": {
+        "passed": 20,
+        "skipped": 0
+      },
+      "test/ai_trouble_help_test.dart": {
+        "passed": 3,
+        "skipped": 0
+      },
+      "test/answer_citation_provenance_test.dart": {
+        "passed": 3,
+        "skipped": 0
+      },
+      "test/answer_direction_test.dart": {
+        "passed": 4,
+        "skipped": 0
+      },
+      "test/app_transition_test.dart": {
+        "passed": 4,
+        "skipped": 0
+      },
+      "test/application_states_test.dart": {
+        "passed": 7,
+        "skipped": 0
+      },
+      "test/arabic_search_normalization_test.dart": {
+        "passed": 5,
+        "skipped": 0
+      },
+      "test/assistant_room_default_mode_test.dart": {
+        "passed": 1,
+        "skipped": 0
+      },
+      "test/audit_auth_stream_test.dart": {
+        "passed": 2,
+        "skipped": 0
+      },
+      "test/audit_checkout_completion_test.dart": {
+        "passed": 1,
+        "skipped": 0
+      },
+      "test/audit_entitlement_test.dart": {
+        "passed": 5,
+        "skipped": 0
+      },
+      "test/audit_navigation_test.dart": {
+        "passed": 4,
+        "skipped": 0
+      },
+      "test/audit_storage_test.dart": {
+        "passed": 6,
+        "skipped": 0
+      },
+      "test/auth_failure_reporter_test.dart": {
+        "passed": 1,
+        "skipped": 0
+      },
+      "test/auth_startup_recovery_test.dart": {
+        "passed": 26,
+        "skipped": 0
+      },
+      "test/book_catalog_navigation_test.dart": {
+        "passed": 5,
+        "skipped": 0
+      },
+      "test/bookmark_concurrent_sync_test.dart": {
+        "passed": 3,
+        "skipped": 0
+      },
+      "test/bookmark_content_contract_test.dart": {
+        "passed": 5,
+        "skipped": 0
+      },
+      "test/bookmark_sync_test.dart": {
+        "passed": 7,
+        "skipped": 0
+      },
+      "test/bookmark_undo_sync_test.dart": {
+        "passed": 2,
+        "skipped": 0
+      },
+      "test/browser_companion_chat_service_test.dart": {
+        "passed": 14,
+        "skipped": 0
+      },
+      "test/browser_companion_runtime_test.dart": {
+        "passed": 17,
+        "skipped": 0
+      },
+      "test/browser_workspace_launcher_test.dart": {
+        "passed": 8,
+        "skipped": 0
+      },
+      "test/cairo_localization_review_test.dart": {
+        "passed": 10,
+        "skipped": 0
+      },
+      "test/canonical_catalog_test.dart": {
+        "passed": 1,
+        "skipped": 0
+      },
+      "test/canonical_multi_discipline_catalog_test.dart": {
+        "passed": 4,
+        "skipped": 0
+      },
+      "test/catalog_card_content_test.dart": {
+        "passed": 3,
+        "skipped": 0
+      },
+      "test/catalog_evidence_test.dart": {
+        "passed": 4,
+        "skipped": 0
+      },
+      "test/catalog_search_reset_test.dart": {
+        "passed": 1,
+        "skipped": 0
+      },
+      "test/checkout_price_refresh_test.dart": {
+        "passed": 5,
+        "skipped": 0
+      },
+      "test/copied_answer_test.dart": {
+        "passed": 3,
+        "skipped": 0
+      },
+      "test/copywriting_test.dart": {
+        "passed": 7,
+        "skipped": 0
+      },
+      "test/dashboard_and_theme_restructure_test.dart": {
+        "passed": 6,
+        "skipped": 0
+      },
+      "test/deep_test.dart": {
+        "passed": 13,
+        "skipped": 0
+      },
+      "test/design_system_test.dart": {
+        "passed": 5,
+        "skipped": 0
+      },
+      "test/design_token_guard_test.dart": {
+        "passed": 7,
+        "skipped": 0
+      },
+      "test/desktop_auth_gateway_test.dart": {
+        "passed": 6,
+        "skipped": 0
+      },
+      "test/desktop_interaction_test.dart": {
+        "passed": 5,
+        "skipped": 0
+      },
+      "test/desktop_release_test.dart": {
+        "passed": 7,
+        "skipped": 0
+      },
+      "test/desktop_transport_test.dart": {
+        "passed": 9,
+        "skipped": 0
+      },
+      "test/device_service_test.dart": {
+        "passed": 4,
+        "skipped": 0
+      },
+      "test/diagnostic_report_service_test.dart": {
+        "passed": 9,
+        "skipped": 0
+      },
+      "test/editorial_catalog_reliability_test.dart": {
+        "passed": 32,
+        "skipped": 0
+      },
+      "test/exclusive_activation_dialog_test.dart": {
+        "passed": 1,
+        "skipped": 0
+      },
+      "test/expressive_locale_and_actions_test.dart": {
+        "passed": 1,
+        "skipped": 0
+      },
+      "test/feature_flags_test.dart": {
+        "passed": 25,
+        "skipped": 0
+      },
+      "test/field_labels_localization_test.dart": {
+        "passed": 1,
+        "skipped": 0
+      },
+      "test/fiqh_specialists_and_theme_test.dart": {
+        "passed": 5,
+        "skipped": 0
+      },
+      "test/google_app_entry_test.dart": {
+        "passed": 22,
+        "skipped": 0
+      },
+      "test/google_rejection_test.dart": {
+        "passed": 2,
+        "skipped": 0
+      },
+      "test/google_session_auth_flow_test.dart": {
+        "passed": 2,
+        "skipped": 0
+      },
+      "test/google_session_recovery_test.dart": {
+        "passed": 7,
+        "skipped": 0
+      },
+      "test/guru_edition_test.dart": {
+        "passed": 1,
+        "skipped": 0
+      },
+      "test/hardening_and_redeem_test.dart": {
+        "passed": 8,
+        "skipped": 0
+      },
+      "test/language_screen_test.dart": {
+        "passed": 5,
+        "skipped": 0
+      },
+      "test/launch_localization_test.dart": {
+        "passed": 6,
+        "skipped": 0
+      },
+      "test/legal_policy_test.dart": {
+        "passed": 4,
+        "skipped": 0
+      },
+      "test/login_error_message_test.dart": {
+        "passed": 7,
+        "skipped": 0
+      },
+      "test/membership_controls_test.dart": {
+        "passed": 3,
+        "skipped": 0
+      },
+      "test/membership_pass_state_test.dart": {
+        "passed": 12,
+        "skipped": 0
+      },
+      "test/native_turath_chat_view_test.dart": {
+        "passed": 6,
+        "skipped": 0
+      },
+      "test/navigation_guard_test.dart": {
+        "passed": 3,
+        "skipped": 0
+      },
+      "test/note_clipboard_content_test.dart": {
+        "passed": 1,
+        "skipped": 0
+      },
+      "test/note_editor_reliability_test.dart": {
+        "passed": 8,
+        "skipped": 0
+      },
+      "test/notebook_backend_chat_test.dart": {
+        "passed": 8,
+        "skipped": 0
+      },
+      "test/notebook_chat_controller_login_target_test.dart": {
+        "passed": 2,
+        "skipped": 0
+      },
+      "test/notebook_navigation_test.dart": {
+        "passed": 3,
+        "skipped": 0
+      },
+      "test/notebook_ui_script_syntax_test.dart": {
+        "passed": 15,
+        "skipped": 0
+      },
+      "test/onboarding_screen_test.dart": {
+        "passed": 2,
+        "skipped": 0
+      },
+      "test/ot_popup_menu_test.dart": {
+        "passed": 2,
+        "skipped": 0
+      },
+      "test/ota_dynamic_pricing_and_locking_test.dart": {
+        "passed": 7,
+        "skipped": 0
+      },
+      "test/ota_install_flow_test.dart": {
+        "passed": 15,
+        "skipped": 0
+      },
+      "test/ota_startup_confirmation_test.dart": {
+        "passed": 6,
+        "skipped": 0
+      },
+      "test/output_language_sheet_test.dart": {
+        "passed": 1,
+        "skipped": 0
+      },
+      "test/payment_destination_policy_test.dart": {
+        "passed": 2,
+        "skipped": 0
+      },
+      "test/payment_inquiry_feedback_test.dart": {
+        "passed": 4,
+        "skipped": 0
+      },
+      "test/payment_success_dialog_test.dart": {
+        "passed": 1,
+        "skipped": 0
+      },
+      "test/persistent_google_session_test.dart": {
+        "passed": 10,
+        "skipped": 0
+      },
+      "test/phone_layout_review_test.dart": {
+        "passed": 2,
+        "skipped": 0
+      },
+      "test/platform_release_edition_test.dart": {
+        "passed": 5,
+        "skipped": 0
+      },
+      "test/promo_countdown_banner_test.dart": {
+        "passed": 5,
+        "skipped": 0
+      },
+      "test/resilience_and_compliance_test.dart": {
+        "passed": 9,
+        "skipped": 0
+      },
+      "test/room_google_connection_result_test.dart": {
+        "passed": 8,
+        "skipped": 0
+      },
+      "test/room_history_result_test.dart": {
+        "passed": 4,
+        "skipped": 0
+      },
+      "test/room_session_gate_test.dart": {
+        "passed": 6,
+        "skipped": 0
+      },
+      "test/rounded_flagship_review_test.dart": {
+        "passed": 4,
+        "skipped": 0
+      },
+      "test/scholarly_library_locale_layout_test.dart": {
+        "passed": 9,
+        "skipped": 0
+      },
+      "test/splash_startup_test.dart": {
+        "passed": 5,
+        "skipped": 0
+      },
+      "test/stop_generating_dialog_test.dart": {
+        "passed": 5,
+        "skipped": 0
+      },
+      "test/subscription_screen_layout_test.dart": {
+        "passed": 2,
+        "skipped": 0
+      },
+      "test/tahawwulat_deck_test.dart": {
+        "passed": 6,
+        "skipped": 0
+      },
+      "test/tahawwulat_module_screen_test.dart": {
+        "passed": 1,
+        "skipped": 0
+      },
+      "test/tahawwulat_slides_screen_test.dart": {
+        "passed": 1,
+        "skipped": 0
+      },
+      "test/telemetry_service_test.dart": {
+        "passed": 5,
+        "skipped": 0
+      },
+      "test/ui_copy_regression_test.dart": {
+        "passed": 3,
+        "skipped": 0
+      },
+      "test/update_service_recheck_test.dart": {
+        "passed": 4,
+        "skipped": 0
+      },
+      "test/vip_exclusive_dialog_test.dart": {
+        "passed": 4,
+        "skipped": 0
+      },
+      "test/visual/render_arch_login_test.dart": {
+        "passed": 1,
+        "skipped": 0
+      },
+      "test/visual/render_catalog_test.dart": {
+        "passed": 0,
+        "skipped": 1
+      },
+      "test/visual/render_motion_test.dart": {
+        "passed": 0,
+        "skipped": 1
+      },
+      "test/visual/render_onboarding_test.dart": {
+        "passed": 0,
+        "skipped": 1
+      },
+      "test/visual/render_scenes_test.dart": {
+        "passed": 0,
+        "skipped": 1
+      },
+      "test/visual/render_screens_test.dart": {
+        "passed": 1,
+        "skipped": 0
+      },
+      "test/visual/render_slides_test.dart": {
+        "passed": 0,
+        "skipped": 1
+      },
+      "test/visual/render_subscription_test.dart": {
+        "passed": 1,
+        "skipped": 0
+      },
+      "test/visual/render_teaser_test.dart": {
+        "passed": 0,
+        "skipped": 1
+      },
+      "test/webview_cookie_policy_test.dart": {
+        "passed": 7,
+        "skipped": 0
+      },
+      "test/webview_release_hardening_test.dart": {
+        "passed": 1,
+        "skipped": 0
+      },
+      "test/widget_test.dart": {
+        "passed": 12,
+        "skipped": 0
+      }
+    }
+  },
+  "backend": {
+    "passed": 281,
+    "failed": 0,
+    "skipped": 0,
+    "runtimes": [
+      "22.23.4",
+      "26.12.1"
+    ],
+    "primary_command": "npx --yes --package=node@22 node --test --experimental-transform-types functions/test/*.test.ts",
+    "dependencies": "Firestore/auth/notifications simulated by audit harness",
+    "typescript_check_exit": 0,
+    "typescript_build_exit": 0
+  },
+  "static_analysis": {
+    "tool": "mcp__dart_mcp_server__analyze_files",
+    "scope": "/Users/apple/Downloads/ramadhan/openturath_ai",
+    "result": "No errors"
+  },
+  "candidates": {
+    "edition": "standard",
+    "version": "1.0.87",
+    "build_number": "89",
+    "mode": "debug",
+    "installed": false,
+    "macos": {
+      "command": "flutter build macos --debug --no-pub --build-number=89 --dart-define=APP_EDITION=standard",
+      "exit_code": 0,
+      "path": "/Users/apple/Downloads/ramadhan/openturath_ai/build/macos/Build/Products/Debug/OpenTurath AI.app",
+      "bundle_id": "com.example.openturathAi",
+      "component_sha256": {
+        "Contents/MacOS/OpenTurath AI": "e443e759706ae502b593f5015fc276df8ff6d4f3b208626576e834329846a345",
+        "Contents/MacOS/OpenTurath AI.debug.dylib": "f5546c22fe45c2f7355ca318ed0d97f460eaab290b0d5da40377c56970b58aec",
+        "Contents/Frameworks/App.framework/Versions/A/App": "b5be806ddadf714ead64e97d3da18fac861b7295d9f59bbda84e542046cf1259",
+        "Contents/Frameworks/App.framework/Versions/A/Resources/flutter_assets/kernel_blob.bin": "1d692f7962d76624c0ee93dc46ffe9da616d4a663d5c0cdc881ad603c0c371ff"
+      },
+      "hash_scope": "listed components only; not a distribution certification"
+    },
+    "android": {
+      "command": "flutter build apk --debug --no-pub --build-number=89 --target-platform android-arm64 --dart-define=APP_EDITION=standard",
+      "exit_code": 0,
+      "path": "/Users/apple/Downloads/ramadhan/openturath_ai/build/app/outputs/flutter-apk/app-debug.apk",
+      "package": "com.openturath.ai",
+      "actual_abis": [
+        "arm64-v8a",
+        "armeabi-v7a",
+        "x86_64"
+      ],
+      "bytes": 99436891,
+      "sha256": "64a0d5f19399049579c1dfc6ae953493f3c090de883e46fc37eb36548dd732c8",
+      "mtime_utc": "2026-11-04T12:48:17.173136+00:00"
+    },
+    "windows": {
+      "built": false,
+      "reason": "Windows build host/device not available"
+    }
+  },
+  "remaining_acceptance": [
+    "real Google second login including optional recovery and required challenge on affected devices",
+    "native Google session close/reopen and account-switch verification",
+    "five simultaneous native macOS WebViews and preserved composer layout",
+    "authorized test account receives an actual NotebookLM answer on each target platform",
+    "controlled client/server diagnostic correlation after a separately authorized staging deployment",
+    "historical incidents with missing data remain unproven"
+  ],
+  "transcripts_sha256": {
+    "flutter-final.jsonl": "220622d14b08ddb0cfddf17a17c1a57c1e0f7628ee3cc497fd1dd3007d02315d",
+    "backend-node22-final.txt": "1722ab8e7a57d4cf5c901bbc42cc1f23085f51d88ab0f93c393e8783c37cd7fb",
+    "backend-node26-final.txt": "ee21a5ddf53abc0ecd18c1adfffd46a31b3427480fcc4d79bd8c9de52ecaedb8",
+    "typescript-check.txt": "bd8ad3d00f5e809f40279685ad8ef4cdaf27a298c9401aa6d761acb05d19ce6b",
+    "macos-debug-final.txt": "97d402a35dffca0bbd2d9d301e4da5f0eea3baade010e049d21c9efe7615ee5d",
+    "android-debug-final.txt": "6116b7c85b7048aae0640da7f49f1e3d0f587d28fb07bafdf22686a242d3f99c"
+  }
+}

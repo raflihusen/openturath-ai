@@ -1,0 +1,1799 @@
+TAP version 13
+# (node:66359) ExperimentalWarning: Transform Types is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:66359) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///Users/apple/Downloads/ramadhan/openturath_ai/functions/src/access_control.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /Users/apple/Downloads/ramadhan/openturath_ai/functions/package.json.
+# Subtest: 100 concurrent opens/reservations for one UID consume exactly one seat
+ok 1 - 100 concurrent opens/reservations for one UID consume exactly one seat
+  ---
+  duration_ms: 71.022625
+  type: 'test'
+  ...
+# Subtest: concurrent buyers overflow atomically; all-full never returns a full notebook
+ok 2 - concurrent buyers overflow atomically; all-full never returns a full notebook
+  ---
+  duration_ms: 0.717666
+  type: 'test'
+  ...
+# Subtest: resolver is read-only and returns the verified assigned clone
+ok 3 - resolver is read-only and returns the verified assigned clone
+  ---
+  duration_ms: 15.735375
+  type: 'test'
+  ...
+# Subtest: observed existing membership is sticky and not counted twice
+ok 4 - observed existing membership is sticky and not counted twice
+  ---
+  duration_ms: 0.681041
+  type: 'test'
+  ...
+# Subtest: public, stale, disabled or missing pools never fallback to master
+ok 5 - public, stale, disabled or missing pools never fallback to master
+  ---
+  duration_ms: 0.546958
+  type: 'test'
+  ...
+# Subtest: no ready access or freed seat until exact target evidence is verified
+ok 6 - no ready access or freed seat until exact target evidence is verified
+  ---
+  duration_ms: 1.114
+  type: 'test'
+  ...
+# Subtest: expired stale add is superseded and never grants access
+ok 7 - expired stale add is superseded and never grants access
+  ---
+  duration_ms: 1.035667
+  type: 'test'
+  ...
+# Subtest: expiration is granular; only confirmed absence frees the seat
+ok 8 - expiration is granular; only confirmed absence frees the seat
+  ---
+  duration_ms: 15.889541
+  type: 'test'
+  ...
+# Subtest: renewal arriving after remove was queued supersedes the stale removal
+ok 9 - renewal arriving after remove was queued supersedes the stale removal
+  ---
+  duration_ms: 1.184791
+  type: 'test'
+  ...
+# Subtest: Google identity collision and unverified email change require recovery
+ok 10 - Google identity collision and unverified email change require recovery
+  ---
+  duration_ms: 0.698292
+  type: 'test'
+  ...
+# Subtest: zero payment and another module/yearly grant do not create global rights
+ok 11 - zero payment and another module/yearly grant do not create global rights
+  ---
+  duration_ms: 0.159625
+  type: 'test'
+  ...
+# Subtest: VIP protected: {"email":"prilatief@gmail.com"}
+ok 12 - VIP protected: {"email":"prilatief@gmail.com"}
+  ---
+  duration_ms: 5.759167
+  type: 'test'
+  ...
+# Subtest: VIP protected: {"is_vip":true}
+ok 13 - VIP protected: {"is_vip":true}
+  ---
+  duration_ms: 1.764792
+  type: 'test'
+  ...
+# Subtest: VIP protected: {"role":"vip"}
+ok 14 - VIP protected: {"role":"vip"}
+  ---
+  duration_ms: 1.012542
+  type: 'test'
+  ...
+# Subtest: VIP protected: {"email":"udinvoldigoad05@gmail.com"}
+ok 15 - VIP protected: {"email":"udinvoldigoad05@gmail.com"}
+  ---
+  duration_ms: 1.063708
+  type: 'test'
+  ...
+# Subtest: verified legacy ownership transfer preserves grants and resumes in-flight jobs
+ok 16 - verified legacy ownership transfer preserves grants and resumes in-flight jobs
+  ---
+  duration_ms: 4.785667
+  type: 'test'
+  ...
+# Subtest: permanent legacy VIP registry protects an owner without profile VIP flags
+ok 17 - permanent legacy VIP registry protects an owner without profile VIP flags
+  ---
+  duration_ms: 0.988292
+  type: 'test'
+  ...
+# Subtest: deleted static VIP accounts retain their physical notebook membership
+ok 18 - deleted static VIP accounts retain their physical notebook membership
+  ---
+  duration_ms: 0.59275
+  type: 'test'
+  ...
+# Subtest: an unresolved legacy hold prevents an already queued removal
+ok 19 - an unresolved legacy hold prevents an already queued removal
+  ---
+  duration_ms: 1.446959
+  type: 'test'
+  ...
+# Subtest: incident pause blocks queued removals while preserving access grants
+ok 20 - incident pause blocks queued removals while preserving access grants
+  ---
+  duration_ms: 3.113917
+  type: 'test'
+  ...
+# Subtest: owner bonuses and free transfers block legacy revocation despite verified expired receipts
+ok 21 - owner bonuses and free transfers block legacy revocation despite verified expired receipts
+  ---
+  duration_ms: 2.447084
+  type: 'test'
+  ...
+# Subtest: provider invoice expiry and unpaid expired quotations never determine subscription rights
+ok 22 - provider invoice expiry and unpaid expired quotations never determine subscription rights
+  ---
+  duration_ms: 1.382666
+  type: 'test'
+  ...
+# Subtest: historical renewals sort by real payment time and duplicate receipts never compound
+ok 23 - historical renewals sort by real payment time and duplicate receipts never compound
+  ---
+  duration_ms: 0.294333
+  type: 'test'
+  ...
+# Subtest: provider annual packages remain module specific and unknown products do not grant access
+ok 24 - provider annual packages remain module specific and unknown products do not grant access
+  ---
+  duration_ms: 0.109
+  type: 'test'
+  ...
+# Subtest: the same provider payment cannot be reassigned to another email
+ok 25 - the same provider payment cannot be reassigned to another email
+  ---
+  duration_ms: 0.143583
+  type: 'test'
+  ...
+# Subtest: legacy app routing uses its registered clone even when a master has spare capacity
+ok 26 - legacy app routing uses its registered clone even when a master has spare capacity
+  ---
+  duration_ms: 34.814542
+  type: 'test'
+  ...
+# Subtest: Muhammad incident: provider receipt cannot supersede a later owner bonus even if hold was lost
+ok 27 - Muhammad incident: provider receipt cannot supersede a later owner bonus even if hold was lost
+  ---
+  duration_ms: 2.206583
+  type: 'test'
+  ...
+# Subtest: Arie incident: new zero-value transfer invalidates a previously approved removal before Google
+ok 28 - Arie incident: new zero-value transfer invalidates a previously approved removal before Google
+  ---
+  duration_ms: 2.364125
+  type: 'test'
+  ...
+# Subtest: a hold arriving during Google removal restores the original permission and preserves its seat
+ok 29 - a hold arriving during Google removal restores the original permission and preserves its seat
+  ---
+  duration_ms: 1.940167
+  type: 'test'
+  ...
+# Subtest: manual evidence arriving during removal restores membership even without a hold or renewal grant
+ok 30 - manual evidence arriving during removal restores membership even without a hold or renewal grant
+  ---
+  duration_ms: 1.027292
+  type: 'test'
+  ...
+# Subtest: grant job never directly removes a membership if expiry changes during provisioning
+ok 31 - grant job never directly removes a membership if expiry changes during provisioning
+  ---
+  duration_ms: 0.421042
+  type: 'test'
+  ...
+# Subtest: legacy audit is bound to identity scope policy and the exact evidence snapshot
+ok 32 - legacy audit is bound to identity scope policy and the exact evidence snapshot
+  ---
+  duration_ms: 0.40775
+  type: 'test'
+  ...
+# Subtest: manual rights in another known module do not invalidate an independent modern scope decision
+ok 33 - manual rights in another known module do not invalidate an independent modern scope decision
+  ---
+  duration_ms: 0.11325
+  type: 'test'
+  ...
+# Subtest: unknown scope evidence blocks revocation instead of guessing the module
+ok 34 - unknown scope evidence blocks revocation instead of guessing the module
+  ---
+  duration_ms: 0.179125
+  type: 'test'
+  ...
+# Subtest: missing scope evidence or deleted profile does not prove permission to remove access
+ok 35 - missing scope evidence or deleted profile does not prove permission to remove access
+  ---
+  duration_ms: 0.164417
+  type: 'test'
+  ...
+# Subtest: legacy identity adoption preserves holds and requires a new identity-specific audit
+ok 36 - legacy identity adoption preserves holds and requires a new identity-specific audit
+  ---
+  duration_ms: 0.148042
+  type: 'test'
+  ...
+# Subtest: evidence hash is independent of property order and changes for an owner adjustment
+ok 37 - evidence hash is independent of property order and changes for an owner adjustment
+  ---
+  duration_ms: 0.107416
+  type: 'test'
+  ...
+# Subtest: an audit label alone cannot discard an unresolved future bonus
+ok 38 - an audit label alone cannot discard an unresolved future bonus
+  ---
+  duration_ms: 0.385584
+  type: 'test'
+  ...
+# Subtest: owner evidence arriving during the initial Google observation prevents any removal
+ok 39 - owner evidence arriving during the initial Google observation prevents any removal
+  ---
+  duration_ms: 5.680666
+  type: 'test'
+  ...
+# Subtest: a timeout after Google removes the member restores the original verified membership
+ok 40 - a timeout after Google removes the member restores the original verified membership
+  ---
+  duration_ms: 1.298041
+  type: 'test'
+  ...
+# Subtest: safety restoration repairs missing membership metadata and reconciles the observed seat count
+ok 41 - safety restoration repairs missing membership metadata and reconciles the observed seat count
+  ---
+  duration_ms: 0.879167
+  type: 'test'
+  ...
+# Subtest: failed safety restoration is persisted and retried before pause and expiry checks
+ok 42 - failed safety restoration is persisted and retried before pause and expiry checks
+  ---
+  duration_ms: 1.280083
+  type: 'test'
+  ...
+# Subtest: restart recovery restores a journaled original membership without issuing another removal
+ok 43 - restart recovery restores a journaled original membership without issuing another removal
+  ---
+  duration_ms: 0.844666
+  type: 'test'
+  ...
+# Subtest: a migration hold preserves the customer's registered clone in the application without creating a grant
+ok 44 - a migration hold preserves the customer's registered clone in the application without creating a grant
+  ---
+  duration_ms: 0.411125
+  type: 'test'
+  ...
+# Subtest: a migration hold cannot allocate or open a notebook without physical registration evidence
+ok 45 - a migration hold cannot allocate or open a notebook without physical registration evidence
+  ---
+  duration_ms: 0.14675
+  type: 'test'
+  ...
+# Subtest: a migration hold does not bypass explicit account deletion
+ok 46 - a migration hold does not bypass explicit account deletion
+  ---
+  duration_ms: 0.217209
+  type: 'test'
+  ...
+# Subtest: legacy GoAkal events are granted only with complete positive evidence for a known product
+ok 47 - legacy GoAkal events are granted only with complete positive evidence for a known product
+  ---
+  duration_ms: 0.947666
+  type: 'test'
+  ...
+# Subtest: provisioning tanpa job dipulihkan lewat reserve dan repair; job yang ada (termasuk queued ber-deadletter) tidak disentuh
+ok 48 - provisioning tanpa job dipulihkan lewat reserve dan repair; job yang ada (termasuk queued ber-deadletter) tidak disentuh
+  ---
+  duration_ms: 0.846458
+  type: 'test'
+  ...
+# (node:66360) ExperimentalWarning: Transform Types is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:66360) ExperimentalWarning: stripTypeScriptTypes is an experimental feature and might change at any time
+# Subtest: tidak ada hak modul dibedakan dari gangguan penyiapan
+ok 49 - tidak ada hak modul dibedakan dari gangguan penyiapan
+  ---
+  duration_ms: 202.650708
+  type: 'test'
+  ...
+# Subtest: pelanggan berbayar tanpa assignment menerima alasan penyiapan, bukan beli ulang
+ok 50 - pelanggan berbayar tanpa assignment menerima alasan penyiapan, bukan beli ulang
+  ---
+  duration_ms: 36.020459
+  type: 'test'
+  ...
+# Subtest: VIP tanpa assignment tetap VIP dan menerima status penyiapan
+ok 51 - VIP tanpa assignment tetap VIP dan menerima status penyiapan
+  ---
+  duration_ms: 64.673334
+  type: 'test'
+  ...
+# Subtest: hold legacy tetap terlindungi ketika bukti notebook belum cocok
+ok 52 - hold legacy tetap terlindungi ketika bukti notebook belum cocok
+  ---
+  duration_ms: 66.988958
+  type: 'test'
+  ...
+# (node:66361) ExperimentalWarning: Transform Types is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:66361) ExperimentalWarning: stripTypeScriptTypes is an experimental feature and might change at any time
+# Subtest: monitor records an incident without sending messages when owner approval is absent
+ok 53 - monitor records an incident without sending messages when owner approval is absent
+  ---
+  duration_ms: 173.119542
+  type: 'test'
+  ...
+# Subtest: approved monitoring stays quiet while healthy and detects long queued retries
+ok 54 - approved monitoring stays quiet while healthy and detects long queued retries
+  ---
+  duration_ms: 69.639584
+  type: 'test'
+  ...
+# Subtest: a failed alert delivery is not falsely recorded as delivered and can be retried
+ok 55 - a failed alert delivery is not falsely recorded as delivered and can be retried
+  ---
+  duration_ms: 43.119875
+  type: 'test'
+  ...
+# Subtest: launch metrics: payment activation backlog and overdue access evaluation raise incidents
+ok 56 - launch metrics: payment activation backlog and overdue access evaluation raise incidents
+  ---
+  duration_ms: 61.287542
+  type: 'test'
+  ...
+# Subtest: capacity metrics: low seats, missing clones and buyers waiting for a seat raise incidents
+ok 57 - capacity metrics: low seats, missing clones and buyers waiting for a seat raise incidents
+  ---
+  duration_ms: 76.271958
+  type: 'test'
+  ...
+# (node:66362) ExperimentalWarning: Transform Types is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:66362) ExperimentalWarning: stripTypeScriptTypes is an experimental feature and might change at any time
+# Subtest: before cutover a voucher keeps the account on legacy evaluation and every module working
+ok 58 - before cutover a voucher keeps the account on legacy evaluation and every module working
+  ---
+  duration_ms: 181.096375
+  type: 'test'
+  ...
+# Subtest: an account already marked v2 still opens paid modules while the VPS writer is not active
+ok 59 - an account already marked v2 still opens paid modules while the VPS writer is not active
+  ---
+  duration_ms: 47.910417
+  type: 'test'
+  ...
+# Subtest: after cutover a voucher moves the account to the ledger and holds unbacked legacy modules
+ok 60 - after cutover a voucher moves the account to the ledger and holds unbacked legacy modules
+  ---
+  duration_ms: 44.557875
+  type: 'test'
+  ...
+# Subtest: after cutover an account whose modules are all ledger-backed is not placed on hold
+ok 61 - after cutover an account whose modules are all ledger-backed is not placed on hold
+  ---
+  duration_ms: 43.995208
+  type: 'test'
+  ...
+# Subtest: checkout input is typed, bounded and rate limited
+ok 62 - checkout input is typed, bounded and rate limited
+  ---
+  duration_ms: 51.07225
+  type: 'test'
+  ...
+# Subtest: deleting an account removes device bindings and contact details outside the profile
+ok 63 - deleting an account removes device bindings and contact details outside the profile
+  ---
+  duration_ms: 49.493542
+  type: 'test'
+  ...
+# (node:66363) ExperimentalWarning: Transform Types is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:66363) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///Users/apple/Downloads/ramadhan/openturath_ai/functions/src/access_control.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /Users/apple/Downloads/ramadhan/openturath_ai/functions/package.json.
+# (node:66363) ExperimentalWarning: stripTypeScriptTypes is an experimental feature and might change at any time
+# Subtest: signups without a purchase never block buyers in the provisioning queue
+ok 64 - signups without a purchase never block buyers in the provisioning queue
+  ---
+  duration_ms: 155.546417
+  type: 'test'
+  ...
+# Subtest: control: a lone buyer is provisioned in one pass
+ok 65 - control: a lone buyer is provisioned in one pass
+  ---
+  duration_ms: 33.151917
+  type: 'test'
+  ...
+# Subtest: one failing account does not stop the rest of the batch
+ok 66 - one failing account does not stop the rest of the batch
+  ---
+  duration_ms: 25.997625
+  type: 'test'
+  ...
+# Subtest: an active subscriber is not re-evaluated every hour
+ok 67 - an active subscriber is not re-evaluated every hour
+  ---
+  duration_ms: 19.675625
+  type: 'test'
+  ...
+# Subtest: an expired subscriber is re-evaluated exactly at expiry
+ok 68 - an expired subscriber is re-evaluated exactly at expiry
+  ---
+  duration_ms: 13.713833
+  type: 'test'
+  ...
+# (node:66364) ExperimentalWarning: Transform Types is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:66364) ExperimentalWarning: stripTypeScriptTypes is an experimental feature and might change at any time
+# Subtest: A01 missing DOKU secret rejects configuration
+ok 69 - A01 missing DOKU secret rejects configuration
+  ---
+  duration_ms: 82.074375
+  type: 'test'
+  ...
+# Subtest: A02 revoked all access cannot be restored by legacy plan
+ok 70 - A02 revoked all access cannot be restored by legacy plan
+  ---
+  duration_ms: 61.2965
+  type: 'test'
+  ...
+# Subtest: PERDANA voucher grants time bound Pro trial using its server duration
+ok 71 - PERDANA voucher grants time bound Pro trial using its server duration
+  ---
+  duration_ms: 59.85625
+  type: 'test'
+  ...
+# Subtest: one trial per verified Google address, whatever the device or account
+ok 72 - one trial per verified Google address, whatever the device or account
+  ---
+  duration_ms: 78.117375
+  type: 'test'
+  ...
+# Subtest: a trial voucher starts at redemption and cannot silently stack
+ok 73 - a trial voucher starts at redemption and cannot silently stack
+  ---
+  duration_ms: 54.0955
+  type: 'test'
+  ...
+# Subtest: A02 a revoked module is not restored by paid billing history
+ok 74 - A02 a revoked module is not restored by paid billing history
+  ---
+  duration_ms: 105.07275
+  type: 'test'
+  ...
+# Subtest: A03 new account cannot inherit a transaction owned by another UID
+ok 75 - A03 new account cannot inherit a transaction owned by another UID
+  ---
+  duration_ms: 51.492292
+  type: 'test'
+  ...
+# Subtest: A04 provisioning HTTP failure remains a failed promise
+ok 76 - A04 provisioning HTTP failure remains a failed promise
+  ---
+  duration_ms: 102.759
+  type: 'test'
+  ...
+# Subtest: A04 failed outbox request is retried, never marked completed
+ok 77 - A04 failed outbox request is retried, never marked completed
+  ---
+  duration_ms: 45.706375
+  type: 'test'
+  ...
+# Subtest: A05 expiration checks current snapshot before revoking renewed entitlement
+ok 78 - A05 expiration checks current snapshot before revoking renewed entitlement
+  ---
+  duration_ms: 31.641709
+  type: 'test'
+  ...
+# Subtest: A05 stale removal job reconciles to current paid access
+ok 79 - A05 stale removal job reconciles to current paid access
+  ---
+  duration_ms: 68.006959
+  type: 'test'
+  ...
+# Subtest: A06 deleted auth account schedules removal and recursively deletes conversations
+ok 80 - A06 deleted auth account schedules removal and recursively deletes conversations
+  ---
+  duration_ms: 95.762125
+  type: 'test'
+  ...
+# Subtest: A01 duplicate invoice grants one extension under parallel calls
+ok 81 - A01 duplicate invoice grants one extension under parallel calls
+  ---
+  duration_ms: 70.122667
+  type: 'test'
+  ...
+# Subtest: A01 signed success with wrong amount cannot activate invoice
+ok 82 - A01 signed success with wrong amount cannot activate invoice
+  ---
+  duration_ms: 34.310875
+  type: 'test'
+  ...
+# Subtest: redeem capacity survives parallel distinct accounts
+ok 83 - redeem capacity survives parallel distinct accounts
+  ---
+  duration_ms: 153.826334
+  type: 'test'
+  ...
+# Subtest: calendar month end clamps January in leap and common years
+ok 84 - calendar month end clamps January in leap and common years
+  ---
+  duration_ms: 50.255792
+  type: 'test'
+  ...
+# Subtest: A01 webhook rejects missing invalid or stale timestamp 
+ok 85 - A01 webhook rejects missing invalid or stale timestamp 
+  ---
+  duration_ms: 59.515584
+  type: 'test'
+  ...
+# Subtest: A01 webhook rejects missing invalid or stale timestamp invalid
+ok 86 - A01 webhook rejects missing invalid or stale timestamp invalid
+  ---
+  duration_ms: 48.730166
+  type: 'test'
+  ...
+# Subtest: A01 webhook rejects missing invalid or stale timestamp 2000-01-01T00:00:00Z
+ok 87 - A01 webhook rejects missing invalid or stale timestamp 2000-01-01T00:00:00Z
+  ---
+  duration_ms: 19.218708
+  type: 'test'
+  ...
+# Subtest: A01 webhook rejects missing invalid or stale timestamp 2999-01-01T00:00:00Z
+ok 88 - A01 webhook rejects missing invalid or stale timestamp 2999-01-01T00:00:00Z
+  ---
+  duration_ms: 38.746291
+  type: 'test'
+  ...
+# Subtest: A01 full authenticated webhook activates exact invoice and accepts replay once
+ok 89 - A01 full authenticated webhook activates exact invoice and accepts replay once
+  ---
+  duration_ms: 27.752083
+  type: 'test'
+  ...
+# Subtest: A04 overlapping workers acquire a single user lease
+ok 90 - A04 overlapping workers acquire a single user lease
+  ---
+  duration_ms: 23.151125
+  type: 'test'
+  ...
+# Subtest: A05 entitlement changed during delivery leaves reconciliation pending
+ok 91 - A05 entitlement changed during delivery leaves reconciliation pending
+  ---
+  duration_ms: 17.982375
+  type: 'test'
+  ...
+# Subtest: redeem rate limiter admits only eight parallel attempts per UID
+ok 92 - redeem rate limiter admits only eight parallel attempts per UID
+  ---
+  duration_ms: 37.705667
+  type: 'test'
+  ...
+# Subtest: voucher rejects malformed input null
+ok 93 - voucher rejects malformed input null
+  ---
+  duration_ms: 239.492167
+  type: 'test'
+  ...
+# Subtest: voucher rejects malformed input {}
+ok 94 - voucher rejects malformed input {}
+  ---
+  duration_ms: 51.204708
+  type: 'test'
+  ...
+# Subtest: voucher rejects malformed input "\\u0000CODE"
+ok 95 - voucher rejects malformed input "\\u0000CODE"
+  ---
+  duration_ms: 53.403541
+  type: 'test'
+  ...
+# Subtest: voucher rejects malformed input "‮CODE"
+ok 96 - voucher rejects malformed input "‮CODE"
+  ---
+  duration_ms: 31.019083
+  type: 'test'
+  ...
+# Subtest: voucher rejects malformed input "a/b/c"
+ok 97 - voucher rejects malformed input "a/b/c"
+  ---
+  duration_ms: 30.555833
+  type: 'test'
+  ...
+# Subtest: voucher rejects malformed input "' OR 1=1"
+ok 98 - voucher rejects malformed input "' OR 1=1"
+  ---
+  duration_ms: 67.164291
+  type: 'test'
+  ...
+# Subtest: voucher rejects malformed input "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+ok 99 - voucher rejects malformed input "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+  ---
+  duration_ms: 50.918333
+  type: 'test'
+  ...
+# Subtest: voucher whitespace and hyphen normalize to the canonical stored code
+ok 100 - voucher whitespace and hyphen normalize to the canonical stored code
+  ---
+  duration_ms: 67.352167
+  type: 'test'
+  ...
+# Subtest: A06 interrupted recursive deletion already blocks access
+ok 101 - A06 interrupted recursive deletion already blocks access
+  ---
+  duration_ms: 54.097792
+  type: 'test'
+  ...
+# (node:66365) ExperimentalWarning: Transform Types is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:66365) ExperimentalWarning: stripTypeScriptTypes is an experimental feature and might change at any time
+# Subtest: laporan gagal login: hanya kode tetap yang disimpan, nilai liar menjadi unknown
+ok 102 - laporan gagal login: hanya kode tetap yang disimpan, nilai liar menjadi unknown
+  ---
+  duration_ms: 58.727083
+  type: 'test'
+  ...
+# Subtest: laporan gagal login: metode selain POST ditolak dan laju dibatasi 20 per jam per IP
+ok 103 - laporan gagal login: metode selain POST ditolak dan laju dibatasi 20 per jam per IP
+  ---
+  duration_ms: 69.723666
+  type: 'test'
+  ...
+# Subtest: laporan rinci: kode rujukan keluar, jejak langkah disamarkan, URL tanpa query
+ok 104 - laporan rinci: kode rujukan keluar, jejak langkah disamarkan, URL tanpa query
+  ---
+  duration_ms: 23.150667
+  type: 'test'
+  ...
+# Subtest: laporan rinci: bukan POST ditolak dan laju 5 per jam per IP
+ok 105 - laporan rinci: bukan POST ditolak dan laju 5 per jam per IP
+  ---
+  duration_ms: 99.789709
+  type: 'test'
+  ...
+# Subtest: halaman login Google dicatat sebagai fase dan tidak dihitung gagal login
+ok 106 - halaman login Google dicatat sebagai fase dan tidak dihitung gagal login
+  ---
+  duration_ms: 58.727208
+  type: 'test'
+  ...
+# Subtest: statistik baru memisahkan build sehingga versi lama tidak menimpa versi kejadian
+ok 107 - statistik baru memisahkan build sehingga versi lama tidak menimpa versi kejadian
+  ---
+  duration_ms: 35.054875
+  type: 'test'
+  ...
+# Subtest: metadata memiliki bentuk terbatas dan skema navigasi tetap teramati
+ok 108 - metadata memiliki bentuk terbatas dan skema navigasi tetap teramati
+  ---
+  duration_ms: 76.329875
+  type: 'test'
+  ...
+# Subtest: alasan berbeda tidak saling menimpa dalam statistik baru
+ok 109 - alasan berbeda tidak saling menimpa dalam statistik baru
+  ---
+  duration_ms: 119.060959
+  type: 'test'
+  ...
+# Subtest: server menyamarkan segmen alamat email dalam URL klien lama
+ok 110 - server menyamarkan segmen alamat email dalam URL klien lama
+  ---
+  duration_ms: 91.498
+  type: 'test'
+  ...
+# Subtest: laporan baru mempertahankan konteks sebelum URL diterima tanpa mengarang halaman
+ok 111 - laporan baru mempertahankan konteks sebelum URL diterima tanpa mengarang halaman
+  ---
+  duration_ms: 110.738333
+  type: 'test'
+  ...
+# Subtest: pengiriman ulang event yang sama mengembalikan tiket yang sama
+ok 112 - pengiriman ulang event yang sama mengembalikan tiket yang sama
+  ---
+  duration_ms: 22.736417
+  type: 'test'
+  ...
+# Subtest: identitas tiket berasal dari token terverifikasi dan bukan klaim body
+ok 113 - identitas tiket berasal dari token terverifikasi dan bukan klaim body
+  ---
+  duration_ms: 36.575041
+  type: 'test'
+  ...
+# Subtest: token invalid tidak mengarang owner dan tetap mendukung laporan anonim
+ok 114 - token invalid tidak mengarang owner dan tetap mendukung laporan anonim
+  ---
+  duration_ms: 84.372125
+  type: 'test'
+  ...
+# (node:66367) ExperimentalWarning: Transform Types is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:66367) ExperimentalWarning: stripTypeScriptTypes is an experimental feature and might change at any time
+# Subtest: GoAkal billing endpoints are retired and cannot mint grants
+ok 115 - GoAkal billing endpoints are retired and cannot mint grants
+  ---
+  duration_ms: 165.451333
+  type: 'test'
+  ...
+# Subtest: client error alerts are escaped and bounded per account
+ok 116 - client error alerts are escaped and bounded per account
+  ---
+  duration_ms: 39.64325
+  type: 'test'
+  ...
+# Subtest: the sales feed masks customer addresses and is bounded per minute
+ok 117 - the sales feed masks customer addresses and is bounded per minute
+  ---
+  duration_ms: 69.583792
+  type: 'test'
+  ...
+# Subtest: App Check gate: off by default, monitor lets calls through, enforce rejects calls without a token
+ok 118 - App Check gate: off by default, monitor lets calls through, enforce rejects calls without a token
+  ---
+  duration_ms: 59.909709
+  type: 'test'
+  ...
+# (node:66368) ExperimentalWarning: Transform Types is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:66368) ExperimentalWarning: stripTypeScriptTypes is an experimental feature and might change at any time
+# Subtest: getAgentUrl: sesi tak terverifikasi ditolak walau profil punya entitlement
+ok 119 - getAgentUrl: sesi tak terverifikasi ditolak walau profil punya entitlement
+  ---
+  duration_ms: 278.243459
+  type: 'test'
+  ...
+# Subtest: getAgentUrl: sesi terverifikasi dengan email sama tetap berhasil
+ok 120 - getAgentUrl: sesi terverifikasi dengan email sama tetap berhasil
+  ---
+  duration_ms: 63.045208
+  type: 'test'
+  ...
+# Subtest: getAgentUrl: email token tidak cocok dengan profil ditolak (tidak boleh membuka akun orang lain)
+ok 121 - getAgentUrl: email token tidak cocok dengan profil ditolak (tidak boleh membuka akun orang lain)
+  ---
+  duration_ms: 48.9885
+  type: 'test'
+  ...
+# Subtest: getAgentUrl: VIP sejati dengan email terverifikasi tetap terbuka (Aturan 5)
+ok 122 - getAgentUrl: VIP sejati dengan email terverifikasi tetap terbuka (Aturan 5)
+  ---
+  duration_ms: 19.34875
+  type: 'test'
+  ...
+# Subtest: redeemCode: voucher non-trial oleh sesi tak terverifikasi ditolak dan kode TIDAK terpakai
+ok 123 - redeemCode: voucher non-trial oleh sesi tak terverifikasi ditolak dan kode TIDAK terpakai
+  ---
+  duration_ms: 171.201334
+  type: 'test'
+  ...
+# Subtest: redeemCode: voucher non-trial oleh sesi terverifikasi tetap berhasil dan dikirim ke email token
+ok 124 - redeemCode: voucher non-trial oleh sesi terverifikasi tetap berhasil dan dikirim ke email token
+  ---
+  duration_ms: 68.176584
+  type: 'test'
+  ...
+# Subtest: redeemCode: alamat berbagi akses SELALU dari token terverifikasi, bukan dari profil
+ok 125 - redeemCode: alamat berbagi akses SELALU dari token terverifikasi, bukan dari profil
+  ---
+  duration_ms: 51.057833
+  type: 'test'
+  ...
+# Subtest: redeemCode: voucher trial tetap mewajibkan Google terverifikasi (perilaku lama tidak berubah)
+ok 126 - redeemCode: voucher trial tetap mewajibkan Google terverifikasi (perilaku lama tidak berubah)
+  ---
+  duration_ms: 36.659709
+  type: 'test'
+  ...
+# Subtest: redeemCode: VIP sejati dengan email terverifikasi tidak ditolak
+ok 127 - redeemCode: VIP sejati dengan email terverifikasi tidak ditolak
+  ---
+  duration_ms: 53.324583
+  type: 'test'
+  ...
+# (node:66369) ExperimentalWarning: Transform Types is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:66369) ExperimentalWarning: stripTypeScriptTypes is an experimental feature and might change at any time
+# Subtest: pelanggan Tahawwulat TIDAK bisa membuka tiga sub-AI "segera hadir" tanpa dokumen features
+ok 128 - pelanggan Tahawwulat TIDAK bisa membuka tiga sub-AI "segera hadir" tanpa dokumen features
+  ---
+  duration_ms: 112.273167
+  type: 'test'
+  ...
+# Subtest: sub-AI lain dan induk Tahawwulat tetap terbuka bagi pelanggan
+ok 129 - sub-AI lain dan induk Tahawwulat tetap terbuka bagi pelanggan
+  ---
+  duration_ms: 61.627583
+  type: 'test'
+  ...
+# Subtest: Fikih Syafi'i tidak tersentuh gerbang ini
+ok 130 - Fikih Syafi'i tidak tersentuh gerbang ini
+  ---
+  duration_ms: 69.75325
+  type: 'test'
+  ...
+# Subtest: akun VIP sejati tetap bisa membuka (Aturan 5), dengan atau tanpa daftar
+ok 131 - akun VIP sejati tetap bisa membuka (Aturan 5), dengan atau tanpa daftar
+  ---
+  duration_ms: 272.339958
+  type: 'test'
+  ...
+# Subtest: dokumen features dengan daftar kosong membuka semua sub-AI (rilis penuh)
+ok 132 - dokumen features dengan daftar kosong membuka semua sub-AI (rilis penuh)
+  ---
+  duration_ms: 29.43525
+  type: 'test'
+  ...
+# Subtest: dokumen features dapat menutup sub-AI lain, dan membuka yang tidak tercantum
+ok 133 - dokumen features dapat menutup sub-AI lain, dan membuka yang tidak tercantum
+  ---
+  duration_ms: 47.115333
+  type: 'test'
+  ...
+# Subtest: dokumen rusak jatuh ke bawaan yang tertutup, bukan terbuka
+ok 134 - dokumen rusak jatuh ke bawaan yang tertutup, bukan terbuka
+  ---
+  duration_ms: 177.517208
+  type: 'test'
+  ...
+# Subtest: elemen daftar tidak valid dibuang tanpa menutup sub-AI lain
+ok 135 - elemen daftar tidak valid dibuang tanpa menutup sub-AI lain
+  ---
+  duration_ms: 51.260209
+  type: 'test'
+  ...
+# Subtest: daftar melewati batas dianggap salah ketik: kembali ke bawaan
+ok 136 - daftar melewati batas dianggap salah ketik: kembali ke bawaan
+  ---
+  duration_ms: 197.121667
+  type: 'test'
+  ...
+# Subtest: kegagalan membaca dokumen tidak membuka sub-AI yang segera hadir
+ok 137 - kegagalan membaca dokumen tidak membuka sub-AI yang segera hadir
+  ---
+  duration_ms: 91.855667
+  type: 'test'
+  ...
+# Subtest: pembelian paket Tahawwulat induk tidak terpengaruh
+ok 138 - pembelian paket Tahawwulat induk tidak terpengaruh
+  ---
+  duration_ms: 48.580708
+  type: 'test'
+  ...
+# Subtest: askAgent menolak sub-AI "segera hadir" walau pengguna berlangganan Tahawwulat
+ok 139 - askAgent menolak sub-AI "segera hadir" walau pengguna berlangganan Tahawwulat
+  ---
+  duration_ms: 30.164292
+  type: 'test'
+  ...
+# Subtest: askAgent tetap melayani sub-AI yang terbuka
+ok 140 - askAgent tetap melayani sub-AI yang terbuka
+  ---
+  duration_ms: 47.045791
+  type: 'test'
+  ...
+# Subtest: askAgent: VIP sejati tidak ditolak oleh gerbang segera hadir
+ok 141 - askAgent: VIP sejati tidak ditolak oleh gerbang segera hadir
+  ---
+  duration_ms: 20.878167
+  type: 'test'
+  ...
+# (node:66370) ExperimentalWarning: Transform Types is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:66370) ExperimentalWarning: stripTypeScriptTypes is an experimental feature and might change at any time
+# Subtest: all 19 published disciplines resolve to the launch price without global access
+ok 142 - all 19 published disciplines resolve to the launch price without global access
+  ---
+  duration_ms: 235.540958
+  type: 'test'
+  ...
+# Subtest: Tahawwulat duration prices and aliases retain the correct calendar months
+ok 143 - Tahawwulat duration prices and aliases retain the correct calendar months
+  ---
+  duration_ms: 45.986042
+  type: 'test'
+  ...
+# Subtest: stale offer is rejected before invoice creation or gateway calls
+ok 144 - stale offer is rejected before invoice creation or gateway calls
+  ---
+  duration_ms: 47.894583
+  type: 'test'
+  ...
+# Subtest: old pricing revision and noninteger expected prices are rejected
+ok 145 - old pricing revision and noninteger expected prices are rejected
+  ---
+  duration_ms: 96.947417
+  type: 'test'
+  ...
+# Subtest: hidden all-access and unknown products remain unavailable for checkout
+ok 146 - hidden all-access and unknown products remain unavailable for checkout
+  ---
+  duration_ms: 112.340292
+  type: 'test'
+  ...
+# Subtest: checkout requires a verified Google address and bills that address, not a typed one
+ok 147 - checkout requires a verified Google address and bills that address, not a typed one
+  ---
+  duration_ms: 28.183125
+  type: 'test'
+  ...
+# Subtest: harga cadangan klien Dart sama dengan harga server
+ok 148 - harga cadangan klien Dart sama dengan harga server
+  ---
+  duration_ms: 61.835167
+  type: 'test'
+  ...
+# (node:66371) ExperimentalWarning: Transform Types is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:66371) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///Users/apple/Downloads/ramadhan/openturath_ai/functions/src/access_control.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /Users/apple/Downloads/ramadhan/openturath_ai/functions/package.json.
+# (node:66371) ExperimentalWarning: stripTypeScriptTypes is an experimental feature and might change at any time
+# Subtest: launch day: 2055 accounts converge to the correct access
+ok 149 - launch day: 2055 accounts converge to the correct access
+  ---
+  duration_ms: 5374.064083
+  type: 'test'
+  ...
+# (node:66372) ExperimentalWarning: Transform Types is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:66372) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///Users/apple/Downloads/ramadhan/openturath_ai/functions/src/access_control.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /Users/apple/Downloads/ramadhan/openturath_ai/functions/package.json.
+# (node:66372) ExperimentalWarning: stripTypeScriptTypes is an experimental feature and might change at any time
+# Subtest: an orphan paid grant is linked to its buyer, who is then active again
+ok 150 - an orphan paid grant is linked to its buyer, who is then active again
+  ---
+  duration_ms: 4.614291
+  type: 'test'
+  ...
+# Subtest: a grant that belongs to someone else cannot be linked
+ok 151 - a grant that belongs to someone else cannot be linked
+  ---
+  duration_ms: 0.679833
+  type: 'test'
+  ...
+# Subtest: a bonus is honored to its promised date, then the access is removable with a valid certificate
+ok 152 - a bonus is honored to its promised date, then the access is removable with a valid certificate
+  ---
+  duration_ms: 36.050041
+  type: 'test'
+  ...
+# Subtest: a transferred purchase is ended for the sender and certified as void
+ok 153 - a transferred purchase is ended for the sender and certified as void
+  ---
+  duration_ms: 2.037625
+  type: 'test'
+  ...
+# Subtest: an adjustment without a decision blocks the certificate
+ok 154 - an adjustment without a decision blocks the certificate
+  ---
+  duration_ms: 0.852167
+  type: 'test'
+  ...
+# Subtest: unapproved entries and VIP accounts are never changed
+ok 155 - unapproved entries and VIP accounts are never changed
+  ---
+  duration_ms: 0.365583
+  type: 'test'
+  ...
+# Subtest: seats held by an address without a login get an owner record and an honored end date
+ok 156 - seats held by an address without a login get an owner record and an honored end date
+  ---
+  duration_ms: 4.650333
+  type: 'test'
+  ...
+# Subtest: impor billing hanya melepas penahan miliknya; penahan pemilik dengan review lama tetap terlindungi
+ok 157 - impor billing hanya melepas penahan miliknya; penahan pemilik dengan review lama tetap terlindungi
+  ---
+  duration_ms: 153.778708
+  type: 'test'
+  ...
+# (node:66373) ExperimentalWarning: Transform Types is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:66373) ExperimentalWarning: stripTypeScriptTypes is an experimental feature and might change at any time
+# Subtest: unauthenticated requests never call the operator bridge
+ok 158 - unauthenticated requests never call the operator bridge
+  ---
+  duration_ms: 3.364292
+  type: 'test'
+  ...
+# Subtest: identity changes before sending are rejected
+ok 159 - identity changes before sending are rejected
+  ---
+  duration_ms: 0.782917
+  type: 'test'
+  ...
+# Subtest: prototype is disabled without explicit test user configuration
+ok 160 - prototype is disabled without explicit test user configuration
+  ---
+  duration_ms: 0.348334
+  type: 'test'
+  ...
+# Subtest: an unapproved prototype user cannot reach the bridge
+ok 161 - an unapproved prototype user cannot reach the bridge
+  ---
+  duration_ms: 0.259542
+  type: 'test'
+  ...
+# Subtest: inactive entitlement blocks chat before rate-limit or Google calls
+ok 162 - inactive entitlement blocks chat before rate-limit or Google calls
+  ---
+  duration_ms: 0.260666
+  type: 'test'
+  ...
+# Subtest: client cannot select an upstream notebook, operator or conversation
+ok 163 - client cannot select an upstream notebook, operator or conversation
+  ---
+  duration_ms: 0.920833
+  type: 'test'
+  ...
+# Subtest: malformed and oversized questions do not reach the bridge
+ok 164 - malformed and oversized questions do not reach the bridge
+  ---
+  duration_ms: 3.365792
+  type: 'test'
+  ...
+# Subtest: success passes only verified identity and strips upstream secrets
+ok 165 - success passes only verified identity and strips upstream secrets
+  ---
+  duration_ms: 8.755541
+  type: 'test'
+  ...
+# Subtest: rate-limited requests do not ask Google
+ok 166 - rate-limited requests do not ask Google
+  ---
+  duration_ms: 0.937792
+  type: 'test'
+  ...
+# Subtest: upstream exceptions are sanitized and are never automatically retried
+ok 167 - upstream exceptions are sanitized and are never automatically retried
+  ---
+  duration_ms: 1.018292
+  type: 'test'
+  ...
+# Subtest: wrong request IDs, empty answers and invalid citations fail closed
+ok 168 - wrong request IDs, empty answers and invalid citations fail closed
+  ---
+  duration_ms: 0.625083
+  type: 'test'
+  ...
+# Subtest: actual callable rejects unauthenticated access before making HTTP requests
+ok 169 - actual callable rejects unauthenticated access before making HTTP requests
+  ---
+  duration_ms: 77.937125
+  type: 'test'
+  ...
+# Subtest: actual callable revalidates token revocation before accessing the bridge
+ok 170 - actual callable revalidates token revocation before accessing the bridge
+  ---
+  duration_ms: 34.72325
+  type: 'test'
+  ...
+# Subtest: actual callable validates entitlement and forwards the Firebase UID
+ok 171 - actual callable validates entitlement and forwards the Firebase UID
+  ---
+  duration_ms: 80.501084
+  type: 'test'
+  ...
+# (node:66374) ExperimentalWarning: Transform Types is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:66374) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///Users/apple/Downloads/ramadhan/openturath_ai/functions/src/access_control.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /Users/apple/Downloads/ramadhan/openturath_ai/functions/package.json.
+# Subtest: buyer N+1 overflows from a full master to clone 01, then 02, and the app gets the clone link
+ok 172 - buyer N+1 overflows from a full master to clone 01, then 02, and the app gets the clone link
+  ---
+  duration_ms: 21.502625
+  type: 'test'
+  ...
+# Subtest: missing and unhealthy clones are skipped by the waterfall
+ok 173 - missing and unhealthy clones are skipped by the waterfall
+  ---
+  duration_ms: 2.100167
+  type: 'test'
+  ...
+# Subtest: when every notebook is full the payment is kept and the buyer waits for capacity
+ok 174 - when every notebook is full the payment is kept and the buyer waits for capacity
+  ---
+  duration_ms: 1.499875
+  type: 'test'
+  ...
+# Subtest: members of a clone that disappears are moved to the next healthy notebook and can open it
+ok 175 - members of a clone that disappears are moved to the next healthy notebook and can open it
+  ---
+  duration_ms: 6.120542
+  type: 'test'
+  ...
+# Subtest: expiry after a relocation does not try to remove the viewer from the missing clone
+ok 176 - expiry after a relocation does not try to remove the viewer from the missing clone
+  ---
+  duration_ms: 10.051208
+  type: 'test'
+  ...
+# Subtest: expired members are not re-seated when their clone disappears
+ok 177 - expired members are not re-seated when their clone disappears
+  ---
+  duration_ms: 2.7215
+  type: 'test'
+  ...
+# Subtest: catalog: every notebook ID is unique and every module has at least five clones
+ok 178 - catalog: every notebook ID is unique and every module has at least five clones
+  ---
+  duration_ms: 12.244792
+  type: 'test'
+  ...
+# (node:66375) ExperimentalWarning: Transform Types is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: a hidden first input does not mask the usable composer
+ok 179 - a hidden first input does not mask the usable composer
+  ---
+  duration_ms: 1.282416
+  type: 'test'
+  ...
+# Subtest: a disabled first input does not mask the usable composer
+ok 180 - a disabled first input does not mask the usable composer
+  ---
+  duration_ms: 0.400584
+  type: 'test'
+  ...
+# Subtest: empty, hidden and disabled inputs cannot declare a session ready
+ok 181 - empty, hidden and disabled inputs cannot declare a session ready
+  ---
+  duration_ms: 0.620291
+  type: 'test'
+  ...
+# Subtest: unrelated source-panel progress cannot block an enabled conversation input
+ok 182 - unrelated source-panel progress cannot block an enabled conversation input
+  ---
+  duration_ms: 0.478542
+  type: 'test'
+  ...
+# Subtest: skrip WebView bagian pembersih (_notebookCleanupScript) berkesintaks JavaScript valid
+ok 183 - skrip WebView bagian pembersih (_notebookCleanupScript) berkesintaks JavaScript valid
+  ---
+  duration_ms: 1.35025
+  type: 'test'
+  ...
+# Subtest: skrip WebView bagian font (notebookFontsScript) berkesintaks JavaScript valid
+ok 184 - skrip WebView bagian font (notebookFontsScript) berkesintaks JavaScript valid
+  ---
+  duration_ms: 2.891333
+  type: 'test'
+  ...
+# Subtest: skrip WebView bagian kulit (notebookSkinScript) berkesintaks JavaScript valid
+ok 185 - skrip WebView bagian kulit (notebookSkinScript) berkesintaks JavaScript valid
+  ---
+  duration_ms: 3.915167
+  type: 'test'
+  ...
+# (node:66376) ExperimentalWarning: Transform Types is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:66376) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///Users/apple/Downloads/ramadhan/openturath_ai/functions/src/access_control.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /Users/apple/Downloads/ramadhan/openturath_ai/functions/package.json.
+# (node:66376) ExperimentalWarning: stripTypeScriptTypes is an experimental feature and might change at any time
+# Subtest: strangers are ignored; /start only tells them their own ID
+ok 186 - strangers are ignored; /start only tells them their own ID
+  ---
+  duration_ms: 23.198709
+  type: 'test'
+  ...
+# Subtest: a change is only made after the owner presses confirm on the exact preview
+ok 187 - a change is only made after the owner presses confirm on the exact preview
+  ---
+  duration_ms: 11.306875
+  type: 'test'
+  ...
+# Subtest: revocation preview names the person; cancel leaves everything untouched
+ok 188 - revocation preview names the person; cancel leaves everything untouched
+  ---
+  duration_ms: 2.096875
+  type: 'test'
+  ...
+# Subtest: a preview that changed before confirmation is not executed
+ok 189 - a preview that changed before confirmation is not executed
+  ---
+  duration_ms: 0.560709
+  type: 'test'
+  ...
+# Subtest: VIP cannot be revoked even by the owner bot
+ok 190 - VIP cannot be revoked even by the owner bot
+  ---
+  duration_ms: 0.285792
+  type: 'test'
+  ...
+# Subtest: the LLM can read and propose, but its proposals still wait for the button
+ok 191 - the LLM can read and propose, but its proposals still wait for the button
+  ---
+  duration_ms: 0.88725
+  type: 'test'
+  ...
+# Subtest: instructions hidden in customer data cannot make anything run
+ok 192 - instructions hidden in customer data cannot make anything run
+  ---
+  duration_ms: 0.618084
+  type: 'test'
+  ...
+# Subtest: expired confirmations are refused
+ok 193 - expired confirmations are refused
+  ---
+  duration_ms: 1.54325
+  type: 'test'
+  ...
+# Subtest: kode bonus satu orang: kode baru dibuat hanya setelah konfirmasi dan hanya ditampilkan kepada pemilik
+ok 194 - kode bonus satu orang: kode baru dibuat hanya setelah konfirmasi dan hanya ditampilkan kepada pemilik
+  ---
+  duration_ms: 1.417084
+  type: 'test'
+  ...
+# Subtest: kode bonus: jenis feed 7 hari, custom menuntut hari 1-31, modul asing ditolak, batal tidak membuat kode
+ok 195 - kode bonus: jenis feed 7 hari, custom menuntut hari 1-31, modul asing ditolak, batal tidak membuat kode
+  ---
+  duration_ms: 1.0955
+  type: 'test'
+  ...
+# (node:66377) ExperimentalWarning: Transform Types is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:66377) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///Users/apple/Downloads/ramadhan/openturath_ai/functions/src/access_control.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /Users/apple/Downloads/ramadhan/openturath_ai/functions/package.json.
+# (node:66377) ExperimentalWarning: stripTypeScriptTypes is an experimental feature and might change at any time
+# Subtest: durations: days, months, years and permanent; nonsense is rejected
+ok 196 - durations: days, months, years and permanent; nonsense is rejected
+  ---
+  duration_ms: 2.518875
+  type: 'test'
+  ...
+# Subtest: manual one-month access for one AI works for an address without an app account
+ok 197 - manual one-month access for one AI works for an address without an app account
+  ---
+  duration_ms: 11.201791
+  type: 'test'
+  ...
+# Subtest: access to every AI and extension from the current end date
+ok 198 - access to every AI and extension from the current end date
+  ---
+  duration_ms: 9.717375
+  type: 'test'
+  ...
+# Subtest: VIP: every AI, never removable, and the registry protects even before signup
+ok 199 - VIP: every AI, never removable, and the registry protects even before signup
+  ---
+  duration_ms: 0.778084
+  type: 'test'
+  ...
+# Subtest: owner revocation lists the person and seats first, then is removable despite pause on expiry, holds and legacy evidence
+ok 200 - owner revocation lists the person and seats first, then is removable despite pause on expiry, holds and legacy evidence
+  ---
+  duration_ms: 12.784
+  type: 'test'
+  ...
+# Subtest: a seat with no recorded right at all can be revoked by the owner
+ok 201 - a seat with no recorded right at all can be revoked by the owner
+  ---
+  duration_ms: 0.698208
+  type: 'test'
+  ...
+# Subtest: a later grant cancels an earlier owner revocation
+ok 202 - a later grant cancels an earlier owner revocation
+  ---
+  duration_ms: 1.078917
+  type: 'test'
+  ...
+# Subtest: the kill switch and an owner_revoke pause still stop owner revocations
+ok 203 - the kill switch and an owner_revoke pause still stop owner revocations
+  ---
+  duration_ms: 0.813
+  type: 'test'
+  ...
+# Subtest: guards: reason required, unknown module, partial revoke of an all-AI holder, ambiguous accounts
+ok 204 - guards: reason required, unknown module, partial revoke of an all-AI holder, ambiguous accounts
+  ---
+  duration_ms: 0.726042
+  type: 'test'
+  ...
+# Subtest: status and expiring list read back what the owner needs
+ok 205 - status and expiring list read back what the owner needs
+  ---
+  duration_ms: 0.881958
+  type: 'test'
+  ...
+# (node:66378) ExperimentalWarning: Transform Types is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:66378) ExperimentalWarning: stripTypeScriptTypes is an experimental feature and might change at any time
+# Subtest: lunas > 3 menit tanpa penugasan ready: akses dipercepat dan pemilik diberi tahu sekali
+ok 206 - lunas > 3 menit tanpa penugasan ready: akses dipercepat dan pemilik diberi tahu sekali
+  ---
+  duration_ms: 134.24475
+  type: 'test'
+  ...
+# Subtest: lunas baru (< 3 menit) atau sudah ready tidak memicu apa pun
+ok 207 - lunas baru (< 3 menit) atau sudah ready tidak memicu apa pun
+  ---
+  duration_ms: 94.413375
+  type: 'test'
+  ...
+# Subtest: getAccessReadiness ledger v2: siap hanya bila setiap kajian paket sudah punya penugasan ready
+ok 208 - getAccessReadiness ledger v2: siap hanya bila setiap kajian paket sudah punya penugasan ready
+  ---
+  duration_ms: 132.749333
+  type: 'test'
+  ...
+# Subtest: rekonsiliasi Midtrans: lunas di Midtrans tapi belum di sistem ditandai; sisanya tidak
+ok 209 - rekonsiliasi Midtrans: lunas di Midtrans tapi belum di sistem ditandai; sisanya tidak
+  ---
+  duration_ms: 69.527125
+  type: 'test'
+  ...
+# Subtest: assignment ready tanpa verified_ms atau sebagian kajian bukan akses siap: pemantau tetap memberi alarm
+ok 210 - assignment ready tanpa verified_ms atau sebagian kajian bukan akses siap: pemantau tetap memberi alarm
+  ---
+  duration_ms: 49.222375
+  type: 'test'
+  ...
+# Subtest: paket all_access siap penuh tidak memicu alarm palsu
+ok 211 - paket all_access siap penuh tidak memicu alarm palsu
+  ---
+  duration_ms: 79.906708
+  type: 'test'
+  ...
+# Subtest: Telegram gagal: insiden tetap terbuka dan dicoba ulang dengan backoff, lalu selesai saat akses siap
+ok 212 - Telegram gagal: insiden tetap terbuka dan dicoba ulang dengan backoff, lalu selesai saat akses siap
+  ---
+  duration_ms: 27.203292
+  type: 'test'
+  ...
+# Subtest: insiden terbuka tetap diawasi walau transaksi sudah lewat jendela 3 jam
+ok 213 - insiden terbuka tetap diawasi walau transaksi sudah lewat jendela 3 jam
+  ---
+  duration_ms: 54.115667
+  type: 'test'
+  ...
+# (node:66380) ExperimentalWarning: Transform Types is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:66380) ExperimentalWarning: stripTypeScriptTypes is an experimental feature and might change at any time
+# Subtest: gateway lookup failure is ERROR rather than a genuine PENDING payment
+ok 214 - gateway lookup failure is ERROR rather than a genuine PENDING payment
+  ---
+  duration_ms: 67.716167
+  type: 'test'
+  ...
+# Subtest: expire deny and cancel remain explicit final results
+ok 215 - expire deny and cancel remain explicit final results
+  ---
+  duration_ms: 47.621167
+  type: 'test'
+  ...
+# (node:66381) ExperimentalWarning: Transform Types is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:66381) ExperimentalWarning: stripTypeScriptTypes is an experimental feature and might change at any time
+# Subtest: missed payment webhook is recovered with one duration extension even after another inquiry
+ok 216 - missed payment webhook is recovered with one duration extension even after another inquiry
+  ---
+  duration_ms: 101.068584
+  type: 'test'
+  ...
+# Subtest: verified full refund revokes its grant and preserves another module
+ok 217 - verified full refund revokes its grant and preserves another module
+  ---
+  duration_ms: 44.121542
+  type: 'test'
+  ...
+# Subtest: a failed gateway inquiry never removes a paid grant and remains queued
+ok 218 - a failed gateway inquiry never removes a paid grant and remains queued
+  ---
+  duration_ms: 72.077209
+  type: 'test'
+  ...
+# Subtest: partial refunds require policy review; mismatched transaction IDs cannot revoke access
+ok 219 - partial refunds require policy review; mismatched transaction IDs cannot revoke access
+  ---
+  duration_ms: 43.67225
+  type: 'test'
+  ...
+# Subtest: a checkout abandoned before choosing a payment method becomes final after 24 hours
+ok 220 - a checkout abandoned before choosing a payment method becomes final after 24 hours
+  ---
+  duration_ms: 45.920375
+  type: 'test'
+  ...
+# Subtest: legacy reconciliation rows without created_ms age from the transaction document
+ok 221 - legacy reconciliation rows without created_ms age from the transaction document
+  ---
+  duration_ms: 45.3515
+  type: 'test'
+  ...
+# Subtest: a paid invoice is audited for refunds on day 1, 7 and 30, then leaves the queue
+ok 222 - a paid invoice is audited for refunds on day 1, 7 and 30, then leaves the queue
+  ---
+  duration_ms: 42.116959
+  type: 'test'
+  ...
+# Subtest: unpaid invoices are checked before refund audits when the queue is long
+ok 223 - unpaid invoices are checked before refund audits when the queue is long
+  ---
+  duration_ms: 72.782417
+  type: 'test'
+  ...
+# Subtest: a checkout whose gateway call failed is closed immediately
+ok 224 - a checkout whose gateway call failed is closed immediately
+  ---
+  duration_ms: 31.660459
+  type: 'test'
+  ...
+# Subtest: a payment that settles after the account was deleted goes to refund review, not endless retries
+ok 225 - a payment that settles after the account was deleted goes to refund review, not endless retries
+  ---
+  duration_ms: 35.640708
+  type: 'test'
+  ...
+# (node:66382) ExperimentalWarning: Transform Types is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:66382) ExperimentalWarning: stripTypeScriptTypes is an experimental feature and might change at any time
+# Subtest: an expired transaction of a profile-level VIP never queues a removal, even without a transaction UID
+ok 226 - an expired transaction of a profile-level VIP never queues a removal, even without a transaction UID
+  ---
+  duration_ms: 92.051916
+  type: 'test'
+  ...
+# Subtest: every address in the canonical VIP registry is protected in both reaper phases
+ok 227 - every address in the canonical VIP registry is protected in both reaper phases
+  ---
+  duration_ms: 109.503833
+  type: 'test'
+  ...
+# Subtest: an address in access_vip_registry is protected
+ok 228 - an address in access_vip_registry is protected
+  ---
+  duration_ms: 44.951959
+  type: 'test'
+  ...
+# Subtest: a module kept active by another grant survives the expiry of an older transaction
+ok 229 - a module kept active by another grant survives the expiry of an older transaction
+  ---
+  duration_ms: 47.830958
+  type: 'test'
+  ...
+# Subtest: a one-month plan past its expiry is detected and only its own module is queued
+ok 230 - a one-month plan past its expiry is detected and only its own module is queued
+  ---
+  duration_ms: 45.282917
+  type: 'test'
+  ...
+# (node:66383) ExperimentalWarning: Transform Types is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:66383) ExperimentalWarning: stripTypeScriptTypes is an experimental feature and might change at any time
+# Subtest: satu kode dapat membuka beberapa AI sekaligus, masing-masing dengan hibah dan pekerjaan sendiri
+ok 231 - satu kode dapat membuka beberapa AI sekaligus, masing-masing dengan hibah dan pekerjaan sendiri
+  ---
+  duration_ms: 84.702041
+  type: 'test'
+  ...
+# Subtest: kode satu AI tetap memakai id pekerjaan lama
+ok 232 - kode satu AI tetap memakai id pekerjaan lama
+  ---
+  duration_ms: 37.404333
+  type: 'test'
+  ...
+# Subtest: alias all_ai disamakan dengan all_access dan mengubah paket global
+ok 233 - alias all_ai disamakan dengan all_access dan mengubah paket global
+  ---
+  duration_ms: 22.333125
+  type: 'test'
+  ...
+# Subtest: kunci AI yang tidak dikenal ditolak tanpa menulis apa pun
+ok 234 - kunci AI yang tidak dikenal ditolak tanpa menulis apa pun
+  ---
+  duration_ms: 77.333709
+  type: 'test'
+  ...
+# Subtest: durasi tidak valid ditolak, bukan diam-diam menjadi 7 hari; tanpa durasi berarti 7 hari
+ok 235 - durasi tidak valid ditolak, bukan diam-diam menjadi 7 hari; tanpa durasi berarti 7 hari
+  ---
+  duration_ms: 49.617208
+  type: 'test'
+  ...
+# Subtest: voucher kehormatan boleh sampai 400 hari, trial tidak pernah lebih dari 31 hari
+ok 236 - voucher kehormatan boleh sampai 400 hari, trial tidak pernah lebih dari 31 hari
+  ---
+  duration_ms: 31.050166
+  type: 'test'
+  ...
+# Subtest: voucher tidak menurunkan paket berbayar yang masih berjalan pada AI yang sama
+ok 237 - voucher tidak menurunkan paket berbayar yang masih berjalan pada AI yang sama
+  ---
+  duration_ms: 20.922667
+  type: 'test'
+  ...
+# Subtest: trial preserves the paid expiry and payment grant on the same module
+ok 238 - trial preserves the paid expiry and payment grant on the same module
+  ---
+  duration_ms: 65.954667
+  type: 'test'
+  ...
+# Subtest: all-access trial preserves a paid global projection and VIP status
+ok 239 - all-access trial preserves a paid global projection and VIP status
+  ---
+  duration_ms: 26.561292
+  type: 'test'
+  ...
+# Subtest: voucher multi-AI tidak menyentuh AI lain yang sudah dimiliki
+ok 240 - voucher multi-AI tidak menyentuh AI lain yang sudah dimiliki
+  ---
+  duration_ms: 19.735167
+  type: 'test'
+  ...
+# Subtest: short trial preserves long voucher access in both writer modes
+ok 241 - short trial preserves long voucher access in both writer modes
+  ---
+  duration_ms: 37.230042
+  type: 'test'
+  ...
+# Subtest: trial never rewrites a permanent VIP global profile without dated entitlement
+ok 242 - trial never rewrites a permanent VIP global profile without dated entitlement
+  ---
+  duration_ms: 20.852209
+  type: 'test'
+  ...
+# Subtest: existing permanent VIP entitlement survives trial redemption without a fake expiry
+ok 243 - existing permanent VIP entitlement survives trial redemption without a fake expiry
+  ---
+  duration_ms: 17.481333
+  type: 'test'
+  ...
+# Subtest: kuota kode multi-AI dihitung sekali per penukaran, bukan per AI
+ok 244 - kuota kode multi-AI dihitung sekali per penukaran, bukan per AI
+  ---
+  duration_ms: 17.909167
+  type: 'test'
+  ...
+# Subtest: status kesiapan akses: selesai hanya bila semua pekerjaan completed, dan hanya milik pemanggil
+ok 245 - status kesiapan akses: selesai hanya bila semua pekerjaan completed, dan hanya milik pemanggil
+  ---
+  duration_ms: 17.738167
+  type: 'test'
+  ...
+# Subtest: status kesiapan untuk pembayaran memeriksa kepemilikan invoice
+ok 246 - status kesiapan untuk pembayaran memeriksa kepemilikan invoice
+  ---
+  duration_ms: 16.976875
+  type: 'test'
+  ...
+# Subtest: galat penukaran membawa alasan terstruktur agar aplikasi dapat menerjemahkannya
+ok 247 - galat penukaran membawa alasan terstruktur agar aplikasi dapat menerjemahkannya
+  ---
+  duration_ms: 18.163167
+  type: 'test'
+  ...
+# Subtest: akun yang sama mengulang klaim trial mendengar "sudah aktif", bukan tuduhan perangkat
+ok 248 - akun yang sama mengulang klaim trial mendengar "sudah aktif", bukan tuduhan perangkat
+  ---
+  duration_ms: 17.543417
+  type: 'test'
+  ...
+# Subtest: perangkat dipakai akun lain: pesan jelas dengan petunjuk akun tersamar
+ok 249 - perangkat dipakai akun lain: pesan jelas dengan petunjuk akun tersamar
+  ---
+  duration_ms: 16.96
+  type: 'test'
+  ...
+# (node:66384) ExperimentalWarning: Transform Types is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:66384) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///Users/apple/Downloads/ramadhan/openturath_ai/functions/src/access_control.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /Users/apple/Downloads/ramadhan/openturath_ai/functions/package.json.
+# (node:66384) ExperimentalWarning: stripTypeScriptTypes is an experimental feature and might change at any time
+# Subtest: expired Midtrans access is removed end to end
+ok 250 - expired Midtrans access is removed end to end
+  ---
+  duration_ms: 4.834
+  type: 'test'
+  ...
+# Subtest: a recent unverified GoAkal period still blocks automated removal
+ok 251 - a recent unverified GoAkal period still blocks automated removal
+  ---
+  duration_ms: 0.340291
+  type: 'test'
+  ...
+# Subtest: a provider-verified GoAkal period is removable once it ends
+ok 252 - a provider-verified GoAkal period is removable once it ends
+  ---
+  duration_ms: 0.387333
+  type: 'test'
+  ...
+# Subtest: an old GoAkal history no longer taints a later expired Midtrans purchase
+ok 253 - an old GoAkal history no longer taints a later expired Midtrans purchase
+  ---
+  duration_ms: 27.446459
+  type: 'test'
+  ...
+# Subtest: the old sticky legacy flag alone no longer blocks a pure Midtrans buyer
+ok 254 - the old sticky legacy flag alone no longer blocks a pure Midtrans buyer
+  ---
+  duration_ms: 0.558583
+  type: 'test'
+  ...
+# Subtest: an active profile entitlement without ledger backing still blocks removal
+ok 255 - an active profile entitlement without ledger backing still blocks removal
+  ---
+  duration_ms: 2.984875
+  type: 'test'
+  ...
+# Subtest: manual owner adjustments still require a certificate
+ok 256 - manual owner adjustments still require a certificate
+  ---
+  duration_ms: 1.27725
+  type: 'test'
+  ...
+# Subtest: unpaid checkouts opened with the buyer address do not change the decision
+ok 257 - unpaid checkouts opened with the buyer address do not change the decision
+  ---
+  duration_ms: 5.5515
+  type: 'test'
+  ...
+# Subtest: refunds keep flowing while ordinary expiry is paused
+ok 258 - refunds keep flowing while ordinary expiry is paused
+  ---
+  duration_ms: 5.387084
+  type: 'test'
+  ...
+# Subtest: ordinary expiry respects its own pause
+ok 259 - ordinary expiry respects its own pause
+  ---
+  duration_ms: 2.752875
+  type: 'test'
+  ...
+# Subtest: the kill switch stops every category, refunds included
+ok 260 - the kill switch stops every category, refunds included
+  ---
+  duration_ms: 3.901708
+  type: 'test'
+  ...
+# Subtest: VIP accounts are never removed, even when deleted or refunded
+ok 261 - VIP accounts are never removed, even when deleted or refunded
+  ---
+  duration_ms: 0.332458
+  type: 'test'
+  ...
+# Subtest: a deleted account loses its notebook seats through its tombstone
+ok 262 - a deleted account loses its notebook seats through its tombstone
+  ---
+  duration_ms: 10.658208
+  type: 'test'
+  ...
+# Subtest: signing up again after deleting an account reuses the same Google address
+ok 263 - signing up again after deleting an account reuses the same Google address
+  ---
+  duration_ms: 2.058542
+  type: 'test'
+  ...
+# Subtest: an address bound to a live account still needs a human
+ok 264 - an address bound to a live account still needs a human
+  ---
+  duration_ms: 1.110917
+  type: 'test'
+  ...
+# Subtest: removals beyond the hourly quota wait instead of running
+ok 265 - removals beyond the hourly quota wait instead of running
+  ---
+  duration_ms: 2.636334
+  type: 'test'
+  ...
+# Subtest: deleting an account writes the tombstone before the profile disappears
+ok 266 - deleting an account writes the tombstone before the profile disappears
+  ---
+  duration_ms: 38.816375
+  type: 'test'
+  ...
+# (node:66385) ExperimentalWarning: Transform Types is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:66385) ExperimentalWarning: stripTypeScriptTypes is an experimental feature and might change at any time
+# Subtest: exported VIP registry matches the canonical list
+ok 267 - exported VIP registry matches the canonical list
+  ---
+  duration_ms: 59.301083
+  type: 'test'
+  ...
+# Subtest: exported product catalog matches the canonical catalog
+ok 268 - exported product catalog matches the canonical catalog
+  ---
+  duration_ms: 44.771333
+  type: 'test'
+  ...
+# Subtest: every GoAkal product grants a scope its agents actually require
+ok 269 - every GoAkal product grants a scope its agents actually require
+  ---
+  duration_ms: 29.576042
+  type: 'test'
+  ...
+# Subtest: service titles resolve to their own module and unknown titles are never guessed
+ok 270 - service titles resolve to their own module and unknown titles are never guessed
+  ---
+  duration_ms: 32.653458
+  type: 'test'
+  ...
+# (node:66386) ExperimentalWarning: Transform Types is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: A11 injected UI script does not modify Google sign-in pages
+ok 271 - A11 injected UI script does not modify Google sign-in pages
+  ---
+  duration_ms: 1.331084
+  type: 'test'
+  ...
+# Subtest: font scaling remains absolute across 100 repeated applications
+ok 272 - font scaling remains absolute across 100 repeated applications
+  ---
+  duration_ms: 0.8945
+  type: 'test'
+  ...
+# Subtest: nonfinite scale cannot produce invalid CSS
+ok 273 - nonfinite scale cannot produce invalid CSS
+  ---
+  duration_ms: 5.720125
+  type: 'test'
+  ...
+# Subtest: reading styles never hide arbitrary content or toolbar elements
+ok 274 - reading styles never hide arbitrary content or toolbar elements
+  ---
+  duration_ms: 6.695417
+  type: 'test'
+  ...
+# Subtest: mixed Indonesian and Arabic paragraphs keep independent directions
+ok 275 - mixed Indonesian and Arabic paragraphs keep independent directions
+  ---
+  duration_ms: 2.168459
+  type: 'test'
+  ...
+# (node:66387) ExperimentalWarning: Transform Types is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:66387) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///Users/apple/Downloads/ramadhan/openturath_ai/functions/src/worker_lease.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /Users/apple/Downloads/ramadhan/openturath_ai/functions/package.json.
+# Subtest: hanya satu pemegang sewa pada satu waktu
+ok 276 - hanya satu pemegang sewa pada satu waktu
+  ---
+  duration_ms: 1.354166
+  type: 'test'
+  ...
+# Subtest: standby mengambil alih hanya setelah sewa primary mati lebih dari masa tenggang
+ok 277 - standby mengambil alih hanya setelah sewa primary mati lebih dari masa tenggang
+  ---
+  duration_ms: 0.213709
+  type: 'test'
+  ...
+# Subtest: primary merebut kembali dari standby dan standby berhenti menulis
+ok 278 - primary merebut kembali dari standby dan standby berhenti menulis
+  ---
+  duration_ms: 0.431583
+  type: 'test'
+  ...
+# Subtest: keyakinan lokal kedaluwarsa cepat bila pembaruan terhenti
+ok 279 - keyakinan lokal kedaluwarsa cepat bila pembaruan terhenti
+  ---
+  duration_ms: 0.207333
+  type: 'test'
+  ...
+# Subtest: galat Firestore berarti tidak ada hak menulis
+ok 280 - galat Firestore berarti tidak ada hak menulis
+  ---
+  duration_ms: 0.153792
+  type: 'test'
+  ...
+# Subtest: release melepas sewa agar penerus langsung mengambil
+ok 281 - release melepas sewa agar penerus langsung mengambil
+  ---
+  duration_ms: 0.345292
+  type: 'test'
+  ...
+1..281
+# tests 281
+# suites 0
+# pass 281
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 6609.658583
