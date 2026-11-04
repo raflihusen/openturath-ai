@@ -1397,29 +1397,36 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
                 : session.isTimeoutError
                     ? 'not-ready-timeout'
                     : 'load-failed';
+    final failure = session.failure ??= RoomFailure(
+      stage: 'room-load',
+      code: code,
+      agentId: session.agent.id,
+      attemptId: session.diagnosticAttemptId,
+    );
+    final resolvedUrl = session.resolvedUrl;
+    final controller = session.webController;
+    final flags = {
+      'session_ready': session.isSessionReady,
+      'google_auth_page': session.isGoogleAuthPage,
+      'permission_error': session.isGooglePermissionError,
+      'timeout': session.isTimeoutError,
+    };
     String? page;
     try {
-      page = (await session.webController
-              ?.getUrl()
-              .timeout(const Duration(seconds: 2)))
+      page = (await controller?.getUrl().timeout(const Duration(seconds: 2)))
           ?.toString();
     } catch (_) {}
     if (DiagnosticReportService.safePage(page) == 'unknown') {
-      page = session.resolvedUrl;
+      page = resolvedUrl;
     }
     if (!mounted) return;
     await submitDiagnosticFromUi(
       context,
-      stage: session.failure?.stage ?? 'room-load',
-      code: session.failure?.code ?? code,
-      failure: session.failure,
-      page: page ?? session.resolvedUrl,
-      flags: {
-        'session_ready': session.isSessionReady,
-        'google_auth_page': session.isGoogleAuthPage,
-        'permission_error': session.isGooglePermissionError,
-        'timeout': session.isTimeoutError,
-      },
+      stage: failure.stage,
+      code: failure.code,
+      failure: failure,
+      page: page ?? resolvedUrl,
+      flags: flags,
     );
   }
 
