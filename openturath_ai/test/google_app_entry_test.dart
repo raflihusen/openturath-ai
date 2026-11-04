@@ -1,4 +1,6 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart' as fb;
 import 'package:flutter/services.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -23,6 +25,8 @@ class _Cookies extends PlatformCookieManager {
   List<Cookie> cookies = [];
   bool failRead = false;
   int deletions = 0;
+  Completer<void>? readGate;
+  bool reading = false;
 
   @override
   Future<List<Cookie>> getCookies({
@@ -30,6 +34,8 @@ class _Cookies extends PlatformCookieManager {
     PlatformInAppWebViewController? iosBelow11WebViewController,
     PlatformInAppWebViewController? webViewController,
   }) async {
+    reading = true;
+    await readGate?.future;
     if (failRead) throw PlatformException(code: 'fixture-cookie-read-failed');
     return cookies;
   }
@@ -111,6 +117,18 @@ class _WebViewPlatform extends InAppWebViewPlatform {
 }
 
 
+class _AppAuth extends AuthService {
+  _AppAuth(this.user);
+  UserModel? user;
+  bool authenticated = true;
+  @override
+  bool get hasAuthenticatedSession => authenticated && user != null;
+  @override
+  UserModel? get cachedCurrentUser => user;
+  @override
+  fb.User? get currentUser => null;
+}
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   final platform = _WebViewPlatform();
@@ -122,7 +140,9 @@ void main() {
     platform.cookies
       ..cookies = [Cookie(name: 'SID', value: 'synthetic-session')]
       ..failRead = false
-      ..deletions = 0;
+      ..deletions = 0
+      ..readGate = null
+      ..reading = false;
     platform.lastView = null;
     AuthService.previewUser = UserModel(
       uid: 'app-entry-reader', name: 'Reader', email: _email,
@@ -130,9 +150,10 @@ void main() {
   });
   tearDown(() => AuthService.previewUser = null);
 
-  Future<InAppWebViewController> open(WidgetTester tester) async {
+  Future<InAppWebViewController> open(WidgetTester tester,
+      {AuthService? authService}) async {
     await tester.pumpWidget(MaterialApp(
-      home: const GoogleSessionAuthScreen(),
+      home: GoogleSessionAuthScreen(authService: authService),
       routes: {
         AppRoutes.dashboard: (_) => const Scaffold(body: Text('OpenTurath home')),
         AppRoutes.login: (_) => const Scaffold(body: Text('OpenTurath sign in')),
@@ -216,6 +237,77 @@ void main() {
     } finally {
       await close(tester);
     }
+  });
+
+  testWidgets('Google cookies and a cached profile cannot replace app authentication',
+      (tester) async {
+    final auth = _AppAuth(AuthService.previewUser)..authenticated = false;
+    final controller = await open(tester, authService: auth);
+    try {
+      (controller.platform as _Controller).currentUrl =
+          WebUri('https://myaccount.google.com/security');
+      await finishLoad(tester, controller);
+      expect(find.text('OpenTurath home'), findsNothing);
+      await tester.tap(find.descendant(
+          of: find.byType(AppBar), matching: find.byType(TextButton)));
+      await tester.pumpAndSettle();
+      expect(find.text('OpenTurath sign in'), findsOneWidget);
+      expect(platform.cookies.deletions, 0);
+    } finally {
+      await close(tester);
+    }
+  });
+
+  for (final signOut in [false, true]) {
+    testWidgets('late cookie completion cannot enter after ${signOut ? 'logout' : 'account change'}',
+        (tester) async {
+      final auth = _AppAuth(AuthService.previewUser);
+      final gate = Completer<void>();
+      platform.cookies.readGate = gate;
+      final controller = await open(tester, authService: auth);
+      try {
+        (controller.platform as _Controller).currentUrl =
+            WebUri('https://myaccount.google.com/security');
+        platform.lastView!.params.onLoadStop!(
+            controller, (controller.platform as _Controller).currentUrl);
+        await tester.pump();
+        expect(platform.cookies.reading, isTrue);
+        if (signOut) {
+          auth.authenticated = false;
+        } else {
+          auth.user = UserModel(uid: 'another-reader', name: 'Other',
+              email: 'other@example.invalid', photoUrl: '', plan: 'trial',
+              questionsUsed: 0);
+        }
+        gate.complete();
+        await tester.pump();
+        await tester.pump(const Duration(seconds: 1));
+        expect(find.text('OpenTurath home'), findsNothing);
+        final prefs = await SharedPreferences.getInstance();
+        expect(prefs.getString('webview_session_owner_verified_v1'), isNull);
+        expect(platform.cookies.deletions, 0);
+      } finally {
+        if (!gate.isCompleted) gate.complete();
+        await close(tester);
+      }
+    });
+  }
+
+  testWidgets('late cookie completion is safe after the connection screen closes',
+      (tester) async {
+    final gate = Completer<void>();
+    platform.cookies.readGate = gate;
+    final controller = await open(tester);
+    (controller.platform as _Controller).currentUrl =
+        WebUri('https://myaccount.google.com/security');
+    platform.lastView!.params.onLoadStop!(
+        controller, (controller.platform as _Controller).currentUrl);
+    await tester.pump();
+    await tester.pumpWidget(const SizedBox());
+    gate.complete();
+    await tester.pump();
+    expect(tester.takeException(), isNull);
+    expect(platform.cookies.deletions, 0);
   });
 
   for (final target in [
