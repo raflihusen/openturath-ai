@@ -22,15 +22,16 @@ class RoomFailure {
   final String? requestId;
   final String? pageScheme;
 
-  static String safeIdentifier(String input) =>
-      RegExp(r'^[a-zA-Z0-9_.:-]{1,80}$').hasMatch(input) ? input : 'unknown';
+  static String _safe(String value, String pattern) =>
+      RegExp(pattern).hasMatch(value) ? value : 'unknown';
 
   Map<String, dynamic> get metadata => {
-    'attempt_id': safeIdentifier(attemptId),
-    'event_id': safeIdentifier(eventId),
-    'agent_id': safeIdentifier(agentId),
-    if (reason != null) 'reason': safeIdentifier(reason!),
-    if (requestId != null) 'request_id': safeIdentifier(requestId!),
-    if (pageScheme != null) 'page_scheme': safeIdentifier(pageScheme!),
+    'attempt_id': _safe(attemptId, r'^[a-f0-9]{32}$'),
+    'event_id': _safe(eventId, r'^[a-f0-9]{32}$'),
+    'agent_id': _safe(agentId, r'^[a-zA-Z0-9_-]{1,80}$'),
+    if (reason != null) 'reason': _safe(reason!, r'^[a-z][a-z0-9_]{0,59}$'),
+    if (requestId != null) 'request_id': _safe(requestId!,
+        r'^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$'),
+    if (pageScheme != null) 'page_scheme': _safe(pageScheme!, r'^[a-z][a-z0-9+-]{0,31}$'),
   };
 }
