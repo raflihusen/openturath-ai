@@ -1,0 +1,29 @@
+{
+  "audit": "second_google_login_entry_gate",
+  "date": "2026-11-04",
+  "source_commit": "c7a8c906",
+  "source_version": "1.0.87+88",
+  "scope": "isolated widget and behavioral tests",
+  "total_passed": 27,
+  "total_failed": 0,
+  "audit_characterization_cases": 6,
+  "existing_regression_cases": 21,
+  "lib_dart_files_compared": 179,
+  "lib_dart_files_changed": [],
+  "pubspec_identical": true,
+  "lockfile_identical": true,
+  "characterization_sha256": "e7aa8dcd68ad9c07073f130d3e64a90c0a0c33313780ff8e3a0e400001686b52",
+  "tested_provider": "fake WebView and cookie manager",
+  "native_device_verification": false,
+  "interactive_google_login_tested": false,
+  "application_source_modified": false,
+  "production_accounts_or_cookies_modified": false,
+  "interpretation": "Passed characterization cases reproduce current blocking behavior; they do not certify a fix.",
+  "regression_files": [
+    "google_session_recovery_test.dart",
+    "google_session_auth_flow_test.dart",
+    "persistent_google_session_test.dart",
+    "room_google_connection_result_test.dart"
+  ]
+}
+

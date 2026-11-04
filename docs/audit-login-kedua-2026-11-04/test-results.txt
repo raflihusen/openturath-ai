@@ -1,0 +1,39 @@
+Audit pada salinan sumber c7a8c906; 6 skenario reproduksi + 21 regresi.
+Hasil ini memverifikasi perilaku yang ada, bukan perbaikan atau perangkat nyata.
+
+00:00 +0: loading /private/var/folders/y8/_fp3x3f500n4ww10s28g2dmh0000gn/T/openturath-second-login-audit-20261104-d9v0wmk8/test/second_login_audit_characterization_test.dart
+00:00 +0: /private/var/folders/y8/_fp3x3f500n4ww10s28g2dmh0000gn/T/openturath-second-login-audit-20261104-d9v0wmk8/test/second_login_audit_characterization_test.dart: AUDIT authenticated-session fixture remains blocked on https://myaccount.google.com/security
+00:00 +1: /private/var/folders/y8/_fp3x3f500n4ww10s28g2dmh0000gn/T/openturath-second-login-audit-20261104-d9v0wmk8/test/second_login_audit_characterization_test.dart: AUDIT authenticated-session fixture remains blocked on https://myaccount.google.com/
+00:00 +2: /private/var/folders/y8/_fp3x3f500n4ww10s28g2dmh0000gn/T/openturath-second-login-audit-20261104-d9v0wmk8/test/second_login_audit_characterization_test.dart: AUDIT the same fixture completes only after reaching Notebook
+00:00 +3: /private/var/folders/y8/_fp3x3f500n4ww10s28g2dmh0000gn/T/openturath-second-login-audit-20261104-d9v0wmk8/test/second_login_audit_characterization_test.dart: AUDIT live cookies plus Yes Signed In still fails without Notebook email
+00:00 +4: /private/var/folders/y8/_fp3x3f500n4ww10s28g2dmh0000gn/T/openturath-second-login-audit-20261104-d9v0wmk8/test/second_login_audit_characterization_test.dart: AUDIT fallback accepts 3PSID but final persistence rejects this cookie set
+00:00 +5: /private/var/folders/y8/_fp3x3f500n4ww10s28g2dmh0000gn/T/openturath-second-login-audit-20261104-d9v0wmk8/test/second_login_audit_characterization_test.dart: AUDIT splash permits authenticated Firebase user without Google readiness
+00:01 +6: loading /private/var/folders/y8/_fp3x3f500n4ww10s28g2dmh0000gn/T/openturath-second-login-audit-20261104-d9v0wmk8/test/google_session_recovery_test.dart
+00:02 +6: /private/var/folders/y8/_fp3x3f500n4ww10s28g2dmh0000gn/T/openturath-second-login-audit-20261104-d9v0wmk8/test/google_session_recovery_test.dart: matching DOM email with missing cookies does not complete connection
+00:02 +7: /private/var/folders/y8/_fp3x3f500n4ww10s28g2dmh0000gn/T/openturath-second-login-audit-20261104-d9v0wmk8/test/google_session_recovery_test.dart: matching DOM email with unreadable cookies does not complete connection
+00:02 +8: /private/var/folders/y8/_fp3x3f500n4ww10s28g2dmh0000gn/T/openturath-second-login-audit-20261104-d9v0wmk8/test/google_session_recovery_test.dart: successful Google session completes with verified owner
+00:03 +9: /private/var/folders/y8/_fp3x3f500n4ww10s28g2dmh0000gn/T/openturath-second-login-audit-20261104-d9v0wmk8/test/google_session_recovery_test.dart: recovery replaces the WebView and retry connects a valid session
+00:03 +10: /private/var/folders/y8/_fp3x3f500n4ww10s28g2dmh0000gn/T/openturath-second-login-audit-20261104-d9v0wmk8/test/google_session_recovery_test.dart: canceling Google connection preserves account, cookies and tabs
+00:03 +11: /private/var/folders/y8/_fp3x3f500n4ww10s28g2dmh0000gn/T/openturath-second-login-audit-20261104-d9v0wmk8/test/google_session_recovery_test.dart: verification cannot dismiss the open cancellation dialog
+00:03 +12: /private/var/folders/y8/_fp3x3f500n4ww10s28g2dmh0000gn/T/openturath-second-login-audit-20261104-d9v0wmk8/test/google_session_recovery_test.dart: manual continue cannot accept unreadable session as confirmed
+00:03 +13: loading /private/var/folders/y8/_fp3x3f500n4ww10s28g2dmh0000gn/T/openturath-second-login-audit-20261104-d9v0wmk8/test/google_session_auth_flow_test.dart
+00:04 +13: /private/var/folders/y8/_fp3x3f500n4ww10s28g2dmh0000gn/T/openturath-second-login-audit-20261104-d9v0wmk8/test/google_session_auth_flow_test.dart: GoogleSessionAuthScreen menampilkan disclaimer akun yang sama dan langkah 2
+00:04 +14: /private/var/folders/y8/_fp3x3f500n4ww10s28g2dmh0000gn/T/openturath-second-login-audit-20261104-d9v0wmk8/test/google_session_auth_flow_test.dart: GoogleSessionAuthScreen mempertahankan mount webview dan teks pelindung terdaftar di lokalisasi
+00:04 +15: loading /private/var/folders/y8/_fp3x3f500n4ww10s28g2dmh0000gn/T/openturath-second-login-audit-20261104-d9v0wmk8/test/persistent_google_session_test.dart
+00:05 +15: /private/var/folders/y8/_fp3x3f500n4ww10s28g2dmh0000gn/T/openturath-second-login-audit-20261104-d9v0wmk8/test/persistent_google_session_test.dart: (setUpAll)
+00:05 +15: /private/var/folders/y8/_fp3x3f500n4ww10s28g2dmh0000gn/T/openturath-second-login-audit-20261104-d9v0wmk8/test/persistent_google_session_test.dart: account B cannot inherit account A session after reconciliation
+00:05 +16: /private/var/folders/y8/_fp3x3f500n4ww10s28g2dmh0000gn/T/openturath-second-login-audit-20261104-d9v0wmk8/test/persistent_google_session_test.dart: an unowned native cookie is not assigned to the app account
+00:05 +17: /private/var/folders/y8/_fp3x3f500n4ww10s28g2dmh0000gn/T/openturath-second-login-audit-20261104-d9v0wmk8/test/persistent_google_session_test.dart: room callback cannot establish or replace a verified owner
+00:05 +18: /private/var/folders/y8/_fp3x3f500n4ww10s28g2dmh0000gn/T/openturath-second-login-audit-20261104-d9v0wmk8/test/persistent_google_session_test.dart: matching verified owner keeps its native session without mutation
+00:05 +19: /private/var/folders/y8/_fp3x3f500n4ww10s28g2dmh0000gn/T/openturath-second-login-audit-20261104-d9v0wmk8/test/persistent_google_session_test.dart: verified onboarding can establish ownership for a live native session
+00:05 +20: /private/var/folders/y8/_fp3x3f500n4ww10s28g2dmh0000gn/T/openturath-second-login-audit-20261104-d9v0wmk8/test/persistent_google_session_test.dart: an empty account cannot establish ownership from a native cookie
+00:05 +21: /private/var/folders/y8/_fp3x3f500n4ww10s28g2dmh0000gn/T/openturath-second-login-audit-20261104-d9v0wmk8/test/persistent_google_session_test.dart: legacy owner requires identity verification without deleting cookies
+00:05 +22: /private/var/folders/y8/_fp3x3f500n4ww10s28g2dmh0000gn/T/openturath-second-login-audit-20261104-d9v0wmk8/test/persistent_google_session_test.dart: cancelled connection cannot claim ownership after a delayed cookie read
+00:05 +23: /private/var/folders/y8/_fp3x3f500n4ww10s28g2dmh0000gn/T/openturath-second-login-audit-20261104-d9v0wmk8/test/persistent_google_session_test.dart: (tearDownAll)
+00:05 +23: loading /private/var/folders/y8/_fp3x3f500n4ww10s28g2dmh0000gn/T/openturath-second-login-audit-20261104-d9v0wmk8/test/room_google_connection_result_test.dart
+00:07 +23: /private/var/folders/y8/_fp3x3f500n4ww10s28g2dmh0000gn/T/openturath-second-login-audit-20261104-d9v0wmk8/test/room_google_connection_result_test.dart: Google connection false preserves login recovery
+00:08 +24: /private/var/folders/y8/_fp3x3f500n4ww10s28g2dmh0000gn/T/openturath-second-login-audit-20261104-d9v0wmk8/test/room_google_connection_result_test.dart: Google connection null preserves login recovery
+00:08 +25: /private/var/folders/y8/_fp3x3f500n4ww10s28g2dmh0000gn/T/openturath-second-login-audit-20261104-d9v0wmk8/test/room_google_connection_result_test.dart: Google connection false preserves permission recovery
+00:08 +26: /private/var/folders/y8/_fp3x3f500n4ww10s28g2dmh0000gn/T/openturath-second-login-audit-20261104-d9v0wmk8/test/room_google_connection_result_test.dart: Google connection null preserves permission recovery
+00:08 +27: All tests passed!
+
