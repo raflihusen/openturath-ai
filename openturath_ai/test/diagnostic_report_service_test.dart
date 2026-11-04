@@ -5,6 +5,20 @@ import 'package:openturath_ai/services/auth_failure_reporter.dart';
 import 'package:openturath_ai/services/diagnostic_report_service.dart';
 
 void main() {
+  test('laporan menyebut skema dan nomor build agar versi kejadian tidak tertukar', () {
+    final payload = DiagnosticReportService.payload(stage: 'agent-url', code: 'unavailable');
+    expect(payload['schema_version'], 2);
+    expect(payload.containsKey('buildNumber'), isTrue);
+    expect(payload['edition'], 'standard');
+  });
+
+  test('alamat diagnostik membuang skema nonweb dan email di dalam path', () {
+    expect(DiagnosticReportService.safePage('javascript://host/private'), 'unknown');
+    final page = DiagnosticReportService.safePage(
+      'https://accounts.google.com/user/reader%40example.invalid?token=secret');
+    expect(page.contains('reader'), isFalse);
+    expect(page.contains('secret'), isFalse);
+  });
   test('safePage membuang query dan fragmen', () {
     expect(
         DiagnosticReportService.safePage(
