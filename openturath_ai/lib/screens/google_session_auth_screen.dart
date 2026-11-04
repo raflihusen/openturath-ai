@@ -1068,14 +1068,20 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
                     Icon(Icons.refresh_rounded, size: 20, color: textSecondary),
                 onPressed: _retryVerification,
               ),
-              TextButton(
-                onPressed: _handleManualContinue,
-                child: Text(
-                  Loc.tr(_isAppEntry ? 'enterOpenTurath' : 'ui_5bcbc797a7'),
-                  style: OTTypography.button(color: textPrimary),
+              ConstrainedBox(
+                constraints: BoxConstraints(
+                    maxWidth: MediaQuery.sizeOf(context).width * 0.5),
+                child: TextButton(
+                  onPressed: _handleManualContinue,
+                  child: Text(
+                    Loc.tr(_isAppEntry ? 'enterOpenTurath' : 'ui_5bcbc797a7'),
+                    maxLines: 2,
+                    textAlign: TextAlign.center,
+                    style: OTTypography.button(color: textPrimary),
+                  ),
                 ),
               ),
-              IconButton(
+              if (!_isAppEntry) IconButton(
                 tooltip: Loc.tr('cancelSignIn'),
                 icon: Icon(Icons.close_rounded, size: 20, color: textSecondary),
                 onPressed: _confirmCancelConnection,
