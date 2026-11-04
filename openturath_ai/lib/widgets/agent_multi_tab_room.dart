@@ -59,7 +59,10 @@ const _nativeChat = _backendChatPrototype || _browserCompanionPrototype;
 /// AgentMultiTabRoom: Persistent, multi-tab AI Study Room inspired by Google Chrome tabs.
 /// Keeps up to 7 AI specialists running concurrently in memory without reloading.
 class AgentMultiTabRoom extends StatefulWidget {
-  const AgentMultiTabRoom({super.key});
+  const AgentMultiTabRoom({super.key, this.agentService, this.authService});
+
+  final AgentService? agentService;
+  final AuthService? authService;
 
   /// Dialog pemilihan akun Google khusus untuk asisten NotebookLM.
   /// Memastikan browser eksternal membuka akun yang tepat (/u/<index> atau AccountChooser).
@@ -830,6 +833,8 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                 key: ValueKey('agent_tab_${sessions[i].agent.id}'),
                 session: sessions[i],
                 isActive: i == _sessionManager.activeIndex,
+                agentService: widget.agentService,
+                authService: widget.authService,
               ),
         ],
       ),
@@ -842,11 +847,15 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
 class _SingleAgentTabWebView extends StatefulWidget {
   final AgentSessionTab session;
   final bool isActive;
+  final AgentService? agentService;
+  final AuthService? authService;
 
   const _SingleAgentTabWebView({
     super.key,
     required this.session,
     required this.isActive,
+    this.agentService,
+    this.authService,
   });
 
   @override
@@ -855,9 +864,9 @@ class _SingleAgentTabWebView extends StatefulWidget {
 
 class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
     with AutomaticKeepAliveClientMixin, WidgetsBindingObserver {
-  final AgentService _agentService = AgentService();
+  late final AgentService _agentService = widget.agentService ?? AgentService();
   final BookmarkService _bookmarkService = BookmarkService();
-  final AuthService _authService = AuthService();
+  late final AuthService _authService = widget.authService ?? AuthService();
 
   @override
   bool get wantKeepAlive => true;
