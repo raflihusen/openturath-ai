@@ -126,7 +126,8 @@ void main() {
 
   for (final vip in [false, true]) {
     testWidgets(
-        '${vip ? 'VIP' : 'ordinary'} account verifies Google only before opening AI', (tester) async {
+        '${vip ? 'VIP' : 'ordinary'} account verifies Google only before opening AI',
+        (tester) async {
       if (vip) {
         AuthService.previewUser = UserModel.fromMap('vip', {
           'email': _email,
