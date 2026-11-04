@@ -4,6 +4,7 @@ import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:openturath_ai/core/app_config.dart';
 import 'package:openturath_ai/core/localization.dart';
+import 'package:openturath_ai/core/google_connection_flow.dart';
 import 'package:openturath_ai/models/agent_model.dart';
 import 'package:openturath_ai/models/user_model.dart';
 import 'package:openturath_ai/screens/google_session_auth_screen.dart';
@@ -112,7 +113,7 @@ void main() {
   // CookieManager.instance retains its platform object, so keep one fake for
   // this file and reset its state between cases rather than replacing it.
   final platform = _WebViewPlatform();
-  final routeResults = <bool?>[];
+  final routeResults = <GoogleConnectionResult?>[];
   late UserModel user;
 
   setUp(() {
@@ -148,9 +149,11 @@ void main() {
         return Scaffold(
           body: TextButton(
             onPressed: () async {
-              final result = await Navigator.of(context).push<bool>(
+              final result = await Navigator.of(context).push<GoogleConnectionResult>(
                 MaterialPageRoute(
-                    builder: (_) => const GoogleSessionAuthScreen()),
+                    builder: (_) => const GoogleSessionAuthScreen(
+                      purpose: GoogleConnectionPurpose.aiRoom,
+                    )),
               );
               routeResults.add(result);
             },
@@ -210,7 +213,7 @@ void main() {
     await finishLoad(tester, controller);
 
     final prefs = await SharedPreferences.getInstance();
-    expect(routeResults, [true]);
+    expect(routeResults, [GoogleConnectionResult.verified]);
     expect(prefs.getBool('google_session_ready'), isTrue);
     expect(prefs.getString('webview_session_owner'), _email);
     expect(prefs.getString('google_session_email'), _email);
@@ -253,7 +256,7 @@ void main() {
     await finishLoad(tester, retryController);
 
     final prefs = await SharedPreferences.getInstance();
-    expect(routeResults, [true]);
+    expect(routeResults, [GoogleConnectionResult.verified]);
     expect(prefs.getBool('google_session_ready'), isTrue);
     expect(prefs.getString('webview_session_owner'), _email);
     expect(platform.cookies.deletions, 0);
@@ -283,7 +286,7 @@ void main() {
     await tester.pump(const Duration(milliseconds: 350));
 
     final prefs = await SharedPreferences.getInstance();
-    expect(routeResults, [false]);
+    expect(routeResults, [GoogleConnectionResult.deferred]);
     expect(AuthService.previewUser, same(user));
     expect(manager.activeTab, same(existingTab));
     expect(manager.tabs, [existingTab]);
@@ -313,7 +316,7 @@ void main() {
     await tester.tap(find.text(Loc.tr('cancelGoogleConnectionAction')));
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 350));
-    expect(routeResults, [false]);
+    expect(routeResults, [GoogleConnectionResult.deferred]);
     expect(platform.cookies.deletions, 0);
     expect(platform.cookies.cookies.single.name, 'SID');
     final prefs = await SharedPreferences.getInstance();
