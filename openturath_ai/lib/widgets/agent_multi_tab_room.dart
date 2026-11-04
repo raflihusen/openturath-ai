@@ -17,6 +17,8 @@ import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../models/turath_chat_message.dart';
+import '../models/room_failure.dart';
+import '../services/telemetry_service.dart';
 
 import '../core/app_copy.dart';
 import '../core/app_config.dart';
@@ -1335,6 +1337,8 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
         session.isGooglePermissionError = true;
         session.isPaywallRequired = false;
         session.isTimeoutError = false;
+        session.failure = RoomFailure(stage: 'room-load', code: 'google-permission',
+            agentId: session.agent.id, attemptId: session.diagnosticAttemptId);
         session.errorMessage = Loc.tr('roomGooglePermissionDetail');
         AuthFailureReporter.reportOnce(
             stage: 'room-load', code: 'google-permission');
@@ -1355,8 +1359,9 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
       session.isSessionReady = false;
       session.isGoogleAuthPage = true;
       session.errorMessage = null;
-      AuthFailureReporter.reportOnce(
-          stage: 'room-load', code: 'google-auth-page');
+      session.failure = null;
+      TelemetryService.instance.leaveBreadcrumb('google_session_required',
+          category: 'auth');
     });
   }
 
@@ -1390,13 +1395,16 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
                     : 'load-failed';
     String? page;
     try {
-      page = (await session.webController?.getUrl())?.toString();
+      page = (await session.webController?.getUrl()
+              .timeout(const Duration(seconds: 2)))?.toString();
     } catch (_) {}
+    if (DiagnosticReportService.safePage(page) == 'unknown') page = session.resolvedUrl;
     if (!mounted) return;
     await submitDiagnosticFromUi(
       context,
-      stage: 'room-load',
-      code: code,
+      stage: session.failure?.stage ?? 'room-load',
+      code: session.failure?.code ?? code,
+      failure: session.failure,
       page: page ?? session.resolvedUrl,
       flags: {
         'session_ready': session.isSessionReady,
@@ -1462,6 +1470,9 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
             widget.session.isWebLoading = false;
             widget.session.isSessionReady = false;
             widget.session.isTimeoutError = true;
+            widget.session.failure = RoomFailure(stage: 'composer-ready',
+                code: 'not-ready-timeout', agentId: widget.session.agent.id,
+                attemptId: widget.session.diagnosticAttemptId);
             widget.session.errorMessage = Loc.tr('roomNotReadyBody');
             AuthFailureReporter.reportOnce(
                 stage: 'room-load', code: 'not-ready-timeout');
@@ -1547,6 +1558,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
           widget.session.isGooglePermissionError = false;
           widget.session.errorMessage = null;
           widget.session.isTimeoutError = false;
+          widget.session.failure = null;
         });
         _syncInitialHistory();
       }
@@ -1607,7 +1619,11 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
       session.isUrlLoading = true;
       session.errorMessage = null;
       session.isPaywallRequired = false;
+      session.failure = null;
+      session.diagnosticAttemptId = newDiagnosticId();
     });
+    TelemetryService.instance.leaveBreadcrumb(
+        'agent_url_requested:${session.agent.id}', category: 'room');
 
     if (_authService.currentUser == null) {
       await _authService.restoreSession();
@@ -1658,7 +1674,13 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
       if (!mounted || currentUid != openingUid) {
         return;
       }
-      final msg = e.toString().toLowerCase();
+      session.failure = RoomFailure(stage: 'agent-url',
+          code: e is AgentAccessException ? e.code : e.runtimeType.toString(),
+          reason: e is AgentAccessException ? e.reason : null,
+          requestId: e is AgentAccessException ? e.requestId : null,
+          agentId: session.agent.id, attemptId: session.diagnosticAttemptId);
+      TelemetryService.instance.leaveBreadcrumb(
+          'agent_url_failed:${session.failure!.code}', category: 'room');
 
       final user = _authService.cachedCurrentUser;
       final isVip = user?.isVip == true;
@@ -1670,11 +1692,9 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
       // DAN pengguna memang bukan VIP serta tidak memiliki akses aktif ke modul ini.
       final isPaywall = !isVip &&
           !hasAgentAccess &&
-          (msg.contains('permission-denied') ||
-              (e is AgentAccessException && e.code == 'permission-denied'));
+          e is AgentAccessException && e.code == 'permission-denied';
 
-      final isAuthError = msg.contains('unauthenticated') ||
-          (e is AgentAccessException && e.code == 'unauthenticated');
+      final isAuthError = e is AgentAccessException && e.code == 'unauthenticated';
 
       setState(() {
         session.isUrlLoading = false;
@@ -1746,6 +1766,8 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
           session.isPaywallRequired = false;
           session.isWebLoading = true;
           session.isSessionReady = false;
+          session.failure = null;
+          session.diagnosticAttemptId = newDiagnosticId();
         });
         _loadingStarted = DateTime.now();
         if (session.webController != null) {
@@ -1945,6 +1967,10 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
               AuthFailureReporter.reportOnce(
                   stage: 'room-load',
                   code: 'load-${error.type.toNativeValue() ?? 'unknown'}');
+              session.failure = RoomFailure(stage: 'web-document',
+                  code: 'load-${error.type.toNativeValue() ?? 'unknown'}',
+                  agentId: session.agent.id, attemptId: session.diagnosticAttemptId,
+                  pageScheme: request.url.uriValue.scheme);
               _readinessTimer?.cancel();
               setState(() {
                 session.isWebLoading = false;
@@ -1967,6 +1993,10 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
                 } else if (code != null && code >= 400) {
                   AuthFailureReporter.reportOnce(
                       stage: 'room-load', code: 'http-$code');
+                  session.failure = RoomFailure(stage: 'web-document',
+                      code: 'http-$code', agentId: session.agent.id,
+                      attemptId: session.diagnosticAttemptId,
+                      pageScheme: requestUri.scheme);
                   _readinessTimer?.cancel();
                   _inputRetryTimer?.cancel();
                   setState(() {
