@@ -246,51 +246,63 @@ async function appCheckGate(context: functions.https.CallableContext, fn: string
 export const getAgentUrl = functions
   .runWith({ serviceAccount: "open-turath@appspot.gserviceaccount.com" })
   .https.onCall(async (data, context) => {
+    const requestId = crypto.randomUUID();
+    const fail = (code: functions.https.FunctionsErrorCode, message: string, reason: string) => {
+      console.warn("agent_access_failure", {request_id: requestId, code, reason});
+      return new functions.https.HttpsError(code, message, {reason, request_id: requestId});
+    };
     if (!context.auth) {
-      throw new functions.https.HttpsError(
+      throw fail(
         "unauthenticated",
-        "Login diperlukan untuk mengakses agent."
+        "Login diperlukan untuk mengakses agent.", "app_session_required"
       );
     }
-    await appCheckGate(context, "getAgentUrl");
+    try { await appCheckGate(context, "getAgentUrl"); }
+    catch (e) {
+      if (e instanceof functions.https.HttpsError) throw fail(e.code, e.message, "app_update_required");
+      throw e;
+    }
 
     const uid = context.auth.uid;
-    await enforceRateLimit(
+    try { await enforceRateLimit(
       `agent_url_${uid}`,
       60,
       60,
       "Terlalu banyak permintaan membuka asisten. Silakan coba kembali sebentar lagi."
-    );
-    const agentId = data.agentId as string;
+    ); } catch (e) {
+      if (e instanceof functions.https.HttpsError) throw fail(e.code, e.message, "request_rate_limited");
+      throw e;
+    }
+    const agentId = typeof data?.agentId === "string" ? data.agentId : "";
 
     if (!agentId) {
-      throw new functions.https.HttpsError(
+      throw fail(
         "invalid-argument",
-        "agentId diperlukan."
+        "agentId diperlukan.", "invalid_agent"
       );
     }
 
     const resolved = resolveAgentNotebook(agentId, uid);
     const url = resolved ? resolved.url : AGENT_URLS[agentId];
     if (!url) {
-      throw new functions.https.HttpsError(
+      throw fail(
         "not-found",
-        "Agent tidak ditemukan atau belum aktif."
+        "Agent tidak ditemukan atau belum aktif.", "agent_unavailable"
       );
     }
 
     const userDoc = await db.collection("users").doc(uid).get();
     if (!userDoc.exists) {
-      throw new functions.https.HttpsError("not-found", "User tidak ditemukan.");
+      throw fail("not-found", "User tidak ditemukan.", "profile_unavailable");
     }
 
     const userData = userDoc.data()!;
     // Sub-AI "segera hadir": ditolak untuk semua kecuali akun VIP sejati
     // (Aturan 5: VIP tidak pernah diperlakukan sebagai galat akses).
     if (!isVip(userData) && (await getSoonSubAgentIds()).has(agentId)) {
-      throw new functions.https.HttpsError(
+      throw fail(
         "failed-precondition",
-        "AI ini segera hadir dan belum dibuka."
+        "AI ini segera hadir dan belum dibuka.", "agent_unavailable"
       );
     }
     // Notebook dibagikan ke ALAMAT EMAIL, jadi identitas harus terverifikasi dan cocok dengan profil
@@ -300,17 +312,17 @@ export const getAgentUrl = functions
     const profileEmail = String(userData.email || "").trim().toLowerCase();
     if (context.auth.token?.email_verified !== true || !tokenEmail ||
         (!isVip(userData) && tokenEmail !== profileEmail)) {
-      throw new functions.https.HttpsError("failed-precondition","Gunakan email terverifikasi yang terdaftar untuk akses notebook ini.");
+      throw fail("failed-precondition","Gunakan email terverifikasi yang terdaftar untuk akses notebook ini.","identity_mismatch");
     }
     // Until cutover no worker creates notebook assignments, so ledger-only
     // resolution would lock out every paying account. Legacy evaluation applies.
     const ledgerActive = userData.access_version === 2 && await vpsWriterActive();
     if (ledgerActive) {
       const entity = AGENT_TO_ENTITY[agentId];
-      if (!entity) throw new functions.https.HttpsError("not-found", "Kajian tidak ditemukan.");
+      if (!entity) throw fail("not-found", "Kajian tidak ditemukan.", "agent_unavailable");
       try { return await new AccessControl(db, NOTEBOOK_ENTITIES, ENTITY_SCOPES).resolve(uid, entity); }
       catch (e) {
-        if (e instanceof AccessFault) throw new functions.https.HttpsError(e.code as functions.https.FunctionsErrorCode, e.message);
+        if (e instanceof AccessFault) throw fail(e.code as functions.https.FunctionsErrorCode, e.message, e.reason || "unclassified_failure");
         throw e;
       }
     }
@@ -321,10 +333,10 @@ export const getAgentUrl = functions
     if (entitlementAccess.active) {
       if (await vpsWriterActive()) {
         const entity=AGENT_TO_ENTITY[agentId];
-        if (!entity) throw new functions.https.HttpsError("not-found","Kajian tidak ditemukan.");
+        if (!entity) throw fail("not-found","Kajian tidak ditemukan.","agent_unavailable");
         try {return await new AccessControl(db,NOTEBOOK_ENTITIES,ENTITY_SCOPES).resolveObservedLegacy(uid,userData.email,entity);}
         catch (e) {
-          if (e instanceof AccessFault) throw new functions.https.HttpsError(e.code as functions.https.FunctionsErrorCode,e.message);
+          if (e instanceof AccessFault) throw fail(e.code as functions.https.FunctionsErrorCode,e.message,e.reason || "unclassified_failure");
           throw e;
         }
       }
@@ -337,9 +349,10 @@ export const getAgentUrl = functions
       };
     }
 
-    throw new functions.https.HttpsError(
+    throw fail(
       "permission-denied",
-      "Akses modul riset ini membutuhkan langganan aktif atau kode redeem santri. Silakan berlangganan atau masukkan kode akses untuk melanjutkan."
+      "Akses modul riset ini membutuhkan langganan aktif atau kode redeem santri. Silakan berlangganan atau masukkan kode akses untuk melanjutkan.",
+      "entitlement_required"
     );
   });
 
