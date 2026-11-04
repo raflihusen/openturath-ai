@@ -8,6 +8,7 @@ import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import '../core/app_copy.dart';
 import '../core/design/ot_colors.dart';
 import '../core/google_rejection.dart';
+import '../core/google_connection_flow.dart';
 import '../core/localization.dart';
 import '../core/notebook_navigation.dart';
 import '../core/routes.dart';
@@ -32,7 +33,12 @@ class GoogleSessionAuthScreen extends StatefulWidget {
   const GoogleSessionAuthScreen({
     super.key,
     this.webViewBuilder,
+    this.purpose = GoogleConnectionPurpose.appEntry,
+    this.authService,
   });
+
+  final GoogleConnectionPurpose purpose;
+  final AuthService? authService;
 
   final Widget Function(
     BuildContext context,
@@ -46,6 +52,16 @@ class GoogleSessionAuthScreen extends StatefulWidget {
 }
 
 class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
+  late final AuthService _authService;
+  String? _openingUid;
+
+  bool get _isAppEntry => widget.purpose == GoogleConnectionPurpose.appEntry;
+
+  bool get _hasOriginalAppSession =>
+      _openingUid != null &&
+      _authService.hasAuthenticatedSession &&
+      _authService.cachedCurrentUser?.uid == _openingUid;
+
   InAppWebViewController? _webController;
   bool _isSessionReady = false;
   bool _isCompletingSession = false;
@@ -65,24 +81,29 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
   Timer? _watchdog;
 
   String get _targetLoginUrl {
-    final email = (AuthService().cachedCurrentUser?.email ??
-            AuthService().currentUser?.email ??
+    final email = (_authService.cachedCurrentUser?.email ??
+            _authService.currentUser?.email ??
             '')
         .trim();
-    if (email.isNotEmpty) {
-      return 'https://accounts.google.com/InteractiveLogin?continue=${NotebookNavigation.canonicalOrigin}/&login_hint=${Uri.encodeComponent(email)}';
-    }
-    return 'https://accounts.google.com/InteractiveLogin?continue=${NotebookNavigation.canonicalOrigin}/';
+    return Uri.https('accounts.google.com', '/InteractiveLogin', {
+      'continue': _isAppEntry
+          ? 'https://myaccount.google.com/'
+          : '${NotebookNavigation.canonicalOrigin}/',
+      if (email.isNotEmpty) 'login_hint': email,
+    }).toString();
   }
 
   // Try the existing WebKit session before asking Google to sign in again.
   // A valid legacy session can establish verified ownership without replaying
   // cookies or forcing InteractiveLogin; an absent session uses the fallback.
-  static const _initialSessionUrl = '${NotebookNavigation.canonicalOrigin}/';
+  String get _initialSessionUrl => _isAppEntry
+      ? _targetLoginUrl
+      : '${NotebookNavigation.canonicalOrigin}/';
 
   bool _isCurrentVerification(int epoch) =>
       mounted &&
       epoch == _connectionEpoch &&
+      _hasOriginalAppSession &&
       !_isCancelDialogOpen &&
       !_connectionCancelled &&
       !_verificationFailed;
@@ -174,6 +195,10 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
   @override
   void initState() {
     super.initState();
+    _authService = widget.authService ?? AuthService();
+    if (_authService.hasAuthenticatedSession) {
+      _openingUid = _authService.cachedCurrentUser?.uid;
+    }
     // Verifikasi tidak boleh bergantung pada peristiwa pemuatan halaman saja: SPA
     // NotebookLM bisa selesai tanpa peristiwa baru, dan satu panggilan JavaScript yang
     // menggantung menahan kunci verifikasi. Penjaga ini memeriksa ulang secara berkala.
@@ -198,7 +223,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
     try {
       final url = await controller.getUrl().timeout(const Duration(seconds: 3));
       if (!mounted || url == null || _isSessionReady) return;
-      if (NotebookNavigation.notebook(url.uriValue)) {
+      if (_isAppEntry || NotebookNavigation.notebook(url.uriValue)) {
         await _checkAccountVerification(controller);
       } else if (_isShieldActive) {
         // Halaman perantara Google di bawah pelindung: tampilkan agar pengguna bisa melanjutkan.
@@ -292,6 +317,10 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
 
   Future<void> _checkAccountVerification(
       InAppWebViewController controller) async {
+    if (_isAppEntry) {
+      await _checkApplicationEntry(controller);
+      return;
+    }
     if (!identical(controller.platform, _webController?.platform)) return;
     if (!mounted ||
         _isSessionReady ||
@@ -374,6 +403,56 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
   }
 
   static const int _maxVerificationAttempts = 32;
+
+  /// Account settings after sign-in can return to the app immediately. This
+  /// grants no NotebookLM ownership and never writes Google readiness markers.
+  Future<void> _checkApplicationEntry(
+      InAppWebViewController controller) async {
+    if (!identical(controller.platform, _webController?.platform) ||
+        !_isCurrentVerification(_connectionEpoch) ||
+        _isCheckingAccount ||
+        _isCompletingSession) {
+      return;
+    }
+    _isCheckingAccount = true;
+    final epoch = _connectionEpoch;
+    try {
+      final url = await controller.getUrl().timeout(const Duration(seconds: 3));
+      if (!_isCurrentVerification(epoch) ||
+          url == null ||
+          !GoogleConnectionNavigation.isAccountPage(url.uriValue)) {
+        return;
+      }
+      final hasSession = await _hasGoogleSession();
+      if (_isCurrentVerification(epoch) && hasSession == true) {
+        await _enterApplication();
+      }
+    } catch (_) {
+      // Browser verification must not block the explicit app-entry action.
+    } finally {
+      _isCheckingAccount = false;
+    }
+  }
+
+  Future<void> _enterApplication() async {
+    if (!mounted ||
+        _isCompletingSession ||
+        _isCancelDialogOpen ||
+        _connectionCancelled) {
+      return;
+    }
+    if (!_hasOriginalAppSession) {
+      if (!_authService.hasAuthenticatedSession) {
+        Navigator.pushNamedAndRemoveUntil(
+            context, AppRoutes.login, (route) => false);
+      }
+      return;
+    }
+    _connectionEpoch++;
+    _isCompletingSession = true;
+    Navigator.pushNamedAndRemoveUntil(
+        context, AppRoutes.dashboard, (route) => false);
+  }
 
   /// Email Google tidak terbaca dari DOM sampai polling habis. Pelindung visual
   /// menutup seluruh WebView, jadi tanpa jalur keluar di sini layar macet
@@ -656,6 +735,10 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
 
   /// Tombol Lanjutkan manual untuk memeriksa login dan konfirmasi akun
   Future<void> _handleManualContinue() async {
+    if (_isAppEntry) {
+      await _enterApplication();
+      return;
+    }
     if (!mounted ||
         _isSessionReady ||
         _isCompletingSession ||
@@ -782,7 +865,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
       await Future.delayed(const Duration(milliseconds: 600));
       if (!mounted || !_isCurrentVerification(epoch)) return;
       if (Navigator.canPop(context)) {
-        Navigator.pop(context, true);
+        Navigator.pop(context, GoogleConnectionResult.verified);
       } else {
         Navigator.pushNamedAndRemoveUntil(
           context,
@@ -855,8 +938,14 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
     if (shouldCancel == true && mounted) {
       _connectionCancelled = true;
       _connectionEpoch++;
-      if (Navigator.canPop(context)) {
-        Navigator.pop(context, false);
+      if (_isAppEntry) {
+        Navigator.pushNamedAndRemoveUntil(
+          context,
+          _hasOriginalAppSession ? AppRoutes.dashboard : AppRoutes.login,
+          (route) => false,
+        );
+      } else if (Navigator.canPop(context)) {
+        Navigator.pop(context, GoogleConnectionResult.deferred);
       } else {
         Navigator.pushNamedAndRemoveUntil(
           context,
@@ -895,8 +984,11 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
                     onPressed: _retryVerification,
                     child: Text(Loc.tr('tryAgain'))),
                 TextButton(
-                    onPressed: _confirmCancelConnection,
-                    child: Text(Loc.tr('cancelGoogleConnectionAction'))),
+                    onPressed:
+                        _isAppEntry ? _enterApplication : _confirmCancelConnection,
+                    child: Text(Loc.tr(_isAppEntry
+                        ? 'enterOpenTurath'
+                        : 'cancelGoogleConnectionAction'))),
               ],
             ),
           ),
@@ -988,7 +1080,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
               TextButton(
                 onPressed: _handleManualContinue,
                 child: Text(
-                  Loc.tr('ui_5bcbc797a7'),
+                  Loc.tr(_isAppEntry ? 'enterOpenTurath' : 'ui_5bcbc797a7'),
                   style: OTTypography.button(color: textPrimary),
                 ),
               ),
