@@ -1,0 +1,189 @@
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:openturath_ai/core/app_config.dart';
+import 'package:openturath_ai/core/localization.dart';
+import 'package:openturath_ai/core/google_connection_flow.dart';
+import 'package:openturath_ai/models/agent_model.dart';
+import 'package:openturath_ai/models/user_model.dart';
+import 'package:openturath_ai/screens/google_session_auth_screen.dart';
+import 'package:openturath_ai/services/agent_session_manager.dart';
+import 'package:openturath_ai/services/auth_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import 'package:openturath_ai/services/agent_service.dart';
+import 'package:openturath_ai/services/persistent_google_session.dart';
+import 'package:openturath_ai/widgets/agent_multi_tab_room.dart';
+
+const _email = 'session-reader@example.invalid';
+final _notebookUrl = WebUri('https://notebook.google.com/');
+
+class _Cookies extends PlatformCookieManager {
+  _Cookies()
+      : super.implementation(const PlatformCookieManagerCreationParams());
+
+  List<Cookie> cookies = [];
+  bool failRead = false;
+  int deletions = 0;
+
+  @override
+  Future<List<Cookie>> getCookies({
+    required WebUri url,
+    PlatformInAppWebViewController? iosBelow11WebViewController,
+    PlatformInAppWebViewController? webViewController,
+  }) async {
+    if (failRead) throw PlatformException(code: 'fixture-cookie-read-failed');
+    return cookies;
+  }
+
+  @override
+  Future<bool> deleteAllCookies() async {
+    deletions++;
+    cookies = [];
+    return true;
+  }
+}
+
+class _Controller extends PlatformInAppWebViewController {
+  _Controller()
+      : super.implementation(
+            const PlatformInAppWebViewControllerCreationParams(id: 'fixture'));
+
+  String? detectedEmail = _email;
+  bool failUrlRead = false;
+
+  @override
+  Future<WebUri?> getUrl() async {
+    if (failUrlRead) throw PlatformException(code: 'fixture-disposed-view');
+    return _notebookUrl;
+  }
+
+  @override
+  Future<dynamic> evaluateJavascript({
+    required String source,
+    ContentWorld? contentWorld,
+  }) async {
+    if (source.contains('var selectors =')) return detectedEmail;
+    return null;
+  }
+
+  @override
+  Future<bool> canGoBack() async => false;
+
+  @override
+  Future<void> loadUrl({
+    required URLRequest urlRequest,
+    Uri? iosAllowingReadAccessTo,
+    WebUri? allowingReadAccessTo,
+  }) async {}
+
+  @override
+  Future<void> reload() async {}
+}
+
+class _WebView extends PlatformInAppWebViewWidget {
+  _WebView(super.params) : super.implementation();
+
+  @override
+  Widget build(BuildContext context) => const SizedBox();
+
+  @override
+  T controllerFromPlatform<T>(PlatformInAppWebViewController controller) =>
+      params.controllerFromPlatform!(controller) as T;
+
+  @override
+  void dispose() {}
+}
+
+class _WebViewPlatform extends InAppWebViewPlatform {
+  final cookies = _Cookies();
+  _WebView? lastView;
+
+  @override
+  PlatformCookieManager createPlatformCookieManager(
+          PlatformCookieManagerCreationParams params) =>
+      cookies;
+
+  @override
+  PlatformInAppWebViewWidget createPlatformInAppWebViewWidget(
+      PlatformInAppWebViewWidgetCreationParams params) {
+    return lastView = _WebView(params);
+  }
+}
+
+
+class _UrlService extends AgentService {
+  @override
+  Future<String?> getAgentUrl(String agentId) async =>
+      'https://notebook.google.com/notebook/00000000-0000-4000-8000-000000000001';
+}
+void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+  final platform = _WebViewPlatform();
+  final manager = AgentSessionManager.instance;
+  final agent = AgentModel.defaultAgents.firstWhere((a) => a.id == 'fiqh_syafii');
+  setUp(() {
+    InAppWebViewPlatform.instance = platform;
+    SharedPreferences.setMockInitialValues({});
+    AppConfig.localeNotifier.value = 'id';
+    platform.cookies
+      ..cookies = [Cookie(name: 'SID', value: 'synthetic-session')]
+      ..failRead = false
+      ..deletions = 0;
+    platform.lastView = null;
+    manager.closeAll();
+    AuthService.previewUser = UserModel(uid: 'reader', name: 'Reader',
+      email: _email, photoUrl: '', plan: 'trial', questionsUsed: 0);
+  });
+  tearDown(() {
+    manager.closeAll();
+    AuthService.previewUser = null;
+  });
+  Future<void> open(WidgetTester tester) async {
+    manager.openAgent(agent, user: AuthService.previewUser);
+    await tester.pumpWidget(MaterialApp(
+      home: AgentMultiTabRoom(agentService: _UrlService())));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 350));
+  }
+  Future<void> close(WidgetTester tester) async {
+    await tester.pumpWidget(const SizedBox());
+    await tester.pump(const Duration(seconds: 4));
+  }
+  for (final vip in [false, true]) {
+    testWidgets((vip ? 'VIP' : 'ordinary') + ' account verifies Google only before opening AI',
+        (tester) async {
+      if (vip) {
+        AuthService.previewUser = UserModel.fromMap('vip', {
+          'email': _email, 'name': 'VIP Reader', 'is_vip': true, 'role': 'vip',
+        });
+      }
+      try {
+        await open(tester);
+        expect(find.text(Loc.tr('roomLoginNow')), findsOneWidget);
+        expect(find.text(Loc.tr('roomSeePlans')), findsNothing);
+        expect(find.byType(InAppWebView), findsNothing);
+        expect(manager.activeTab!.isSessionReady, isFalse);
+        expect(platform.cookies.deletions, 0);
+      } finally {
+        await close(tester);
+      }
+    });
+  }
+  testWidgets('matching verified owner opens AI without another account connection',
+      (tester) async {
+    SharedPreferences.setMockInitialValues({
+      'webview_session_owner': _email,
+      PersistentGoogleSession.verifiedOwnerKey: _email,
+    });
+    try {
+      await open(tester);
+      expect(find.byType(InAppWebView), findsOneWidget);
+      expect(find.text(Loc.tr('roomLoginNow')), findsNothing);
+      expect(platform.cookies.deletions, 0);
+    } finally {
+      await close(tester);
+    }
+  });
+}
