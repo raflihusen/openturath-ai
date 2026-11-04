@@ -13,6 +13,7 @@ import 'package:flutter/services.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'core/theme.dart';
 import 'core/routes.dart';
+import 'core/google_connection_flow.dart';
 import 'screens/splash_screen.dart';
 import 'screens/language_screen.dart';
 import 'screens/login_screen.dart';
@@ -312,7 +313,11 @@ class OpenTurathApp extends StatelessWidget {
                           : const SubscriptionScreen();
                       break;
                     case AppRoutes.googleSessionAuth:
-                      page = const GoogleSessionAuthScreen();
+                      page = GoogleSessionAuthScreen(
+                        purpose: settings.arguments is GoogleConnectionPurpose
+                            ? settings.arguments as GoogleConnectionPurpose
+                            : GoogleConnectionPurpose.appEntry,
+                      );
                       break;
                     case AppRoutes.bookCatalog:
                       page = BookCatalogScreen(
