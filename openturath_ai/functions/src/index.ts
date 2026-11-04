@@ -3090,6 +3090,16 @@ export const auditMidtransLedger = functions
 // PELAPORAN GALAT LOGIN TANPA AKUN: hanya kode tetap (tanpa token, email, atau
 // data pribadi), dibatasi laju per alamat IP, disimpan sebagai penghitung harian.
 // ================================================================
+function diagnosticMetadata(body: any): Record<string, string | number> {
+  if (Number(body.schema_version) !== 2) return {};
+  const result: Record<string, string | number> = {schema_version: 2};
+  for (const key of ["buildNumber", "edition", "agent_id", "reason", "request_id", "attempt_id", "event_id"]) {
+    const value = String(body[key] ?? "").trim();
+    if (value) result[key] = AUTH_FAILURE_FIELD.test(value) ? value : "unknown";
+  }
+  return result;
+}
+
 export const reportAuthFailure = functions
   .runWith({serviceAccount: "open-turath@appspot.gserviceaccount.com", timeoutSeconds: 30, maxInstances: 5})
   .https.onRequest(async (req, res) => {
@@ -3105,12 +3115,18 @@ export const reportAuthFailure = functions
       await enforceRateLimit(`authfail_${ipHash}`, 20, 3600, "Terlalu banyak laporan.");
     } catch (_) { res.status(429).send("Too Many Requests"); return; }
     const day = new Date().toISOString().slice(0, 10).replace(/-/g, "");
-    const id = `${day}_${fields.platform}_${fields.stage}_${fields.code}`.slice(0, 200);
-    const ref = db.collection("auth_failure_stats").doc(id);
-    await ref.set({...fields, day, count: admin.firestore.FieldValue.increment(1),
+    const metadata = diagnosticMetadata(body);
+    const phase = ["google-auth-page", "google_session_required", "sign_in_canceled", "sign_in_cancelled"].includes(fields.code);
+    const versioned = metadata.schema_version === 2;
+    const id = versioned
+      ? crypto.createHash("sha256").update(JSON.stringify([day, fields, metadata.buildNumber || "unknown", metadata.edition || "unknown"])).digest("hex")
+      : `${day}_${fields.platform}_${fields.stage}_${fields.code}`.slice(0, 200);
+    const collection = phase ? "auth_flow_stats" : versioned ? "auth_failure_stats_v2" : "auth_failure_stats";
+    const ref = db.collection(collection).doc(id);
+    await ref.set({...fields, ...metadata, outcome: phase ? "phase" : "failure", day, count: admin.firestore.FieldValue.increment(1),
       last_seen: admin.firestore.FieldValue.serverTimestamp()}, {merge: true});
     const count = (await ref.get()).data()?.count || 0;
-    if (count === 1 || count === 10 || count === 50) {
+    if (!phase && (count === 1 || count === 10 || count === 50)) {
       await sendTelegramNotification(
         `🔐 <b>[GAGAL LOGIN]</b> ${esc(fields.platform)} • tahap <code>${esc(fields.stage)}</code> • kode <code>${esc(fields.code)}</code> • ${count}× hari ini`,
         "alert");
@@ -3152,6 +3168,38 @@ export const submitDiagnosticReport = functions
       fields[k] = AUTH_FAILURE_FIELD.test(v) ? v : "unknown";
     }
     const ipHash = crypto.createHash("sha256").update(String(req.ip || "")).digest("hex").slice(0, 24);
+    const metadata = diagnosticMetadata(body);
+    let ownerUid: string | undefined;
+    let authContext = "anonymous";
+    const authorization = String(req.headers.authorization || "");
+    if (authorization.startsWith("Bearer ")) {
+      authContext = "unverified";
+      let timer: ReturnType<typeof setTimeout> | undefined;
+      try {
+        const token = authorization.slice(7);
+        const decoded = await Promise.race([
+          admin.auth().verifyIdToken(token),
+          new Promise<never>((_, reject) => {
+            timer = setTimeout(() => reject(new Error("diagnostic_identity_timeout")), 2500);
+          }),
+        ]);
+        if (typeof decoded.uid === "string" && decoded.uid.length <= 128) {
+          ownerUid = decoded.uid;
+          authContext = "verified";
+        }
+      } catch (_) { /* Invalid identity stays untrusted; never copy body claims. */ }
+      finally { if (timer) clearTimeout(timer); }
+    }
+    const eventId = typeof metadata.event_id === "string" && /^[a-f0-9]{32}$/.test(metadata.event_id)
+      ? metadata.event_id : null;
+    const dedup = eventId ? db.collection("diagnostic_dedup").doc(
+      crypto.createHash("sha256").update(`${ownerUid || ipHash}|${eventId}`).digest("hex")) : null;
+    if (dedup) {
+      const existing = (await dedup.get()).data();
+      if (typeof existing?.ref === "string" && /^OT-[0-9A-F]{6}$/.test(existing.ref)) {
+        res.status(200).send({ref: existing.ref}); return;
+      }
+    }
     try {
       await enforceRateLimit(`diagrep_${ipHash}`, 5, 3600, "Terlalu banyak laporan.");
     } catch (_) { res.status(429).send("Too Many Requests"); return; }
@@ -3164,11 +3212,30 @@ export const submitDiagnosticReport = functions
     for (const k of Object.keys(rawFlags).slice(0, 12)) {
       if (AUTH_FAILURE_FIELD.test(k) && typeof rawFlags[k] === "boolean") flags[k] = rawFlags[k];
     }
-    const ref = `OT-${crypto.randomBytes(3).toString("hex").toUpperCase()}`;
-    await db.collection("diagnostic_reports").doc(ref).set({
-      ...fields, page: safeDiagnosticPage(body.page), flags, breadcrumbs: crumbs,
-      created_at: admin.firestore.FieldValue.serverTimestamp(),
-    });
+    let saved: {ref: string; created: boolean} | undefined;
+    for (let attempt = 0; attempt < 4 && !saved; attempt++) {
+      const ref = `OT-${crypto.randomBytes(3).toString("hex").toUpperCase()}`;
+      saved = await db.runTransaction(async (transaction) => {
+        if (dedup) {
+          const previous = (await transaction.get(dedup)).data();
+          if (typeof previous?.ref === "string" && /^OT-[0-9A-F]{6}$/.test(previous.ref)) {
+            return {ref: previous.ref, created: false};
+          }
+        }
+        const report = db.collection("diagnostic_reports").doc(ref);
+        if ((await transaction.get(report)).exists) return undefined;
+        transaction.set(report, {
+          ...fields, ...metadata, page: safeDiagnosticPage(body.page), flags, breadcrumbs: crumbs,
+          auth_context: authContext, ...(ownerUid ? {owner_uid: ownerUid} : {}),
+          created_at: admin.firestore.FieldValue.serverTimestamp(),
+        });
+        if (dedup) transaction.set(dedup, {ref, created_at: admin.firestore.FieldValue.serverTimestamp()});
+        return {ref, created: true};
+      });
+    }
+    if (!saved) { res.status(503).send("Report reference unavailable"); return; }
+    const ref = saved.ref;
+    if (!saved.created) { res.status(200).send({ref}); return; }
     let notify = true;
     try { await enforceRateLimit("diagrep_alert_global", 20, 900, "limited"); } catch (_) { notify = false; }
     if (notify) {
