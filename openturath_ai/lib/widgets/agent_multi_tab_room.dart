@@ -19,6 +19,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../models/turath_chat_message.dart';
 import '../models/room_failure.dart';
 import '../services/telemetry_service.dart';
+import '../services/diagnostic_report_service.dart';
 
 import '../core/app_copy.dart';
 import '../core/app_config.dart';
@@ -1691,10 +1692,20 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
       // Paywall HANYA aktif jika server eksplisit menolak hak akses ('permission-denied')
       // DAN pengguna memang bukan VIP serta tidak memiliki akses aktif ke modul ini.
       final isPaywall = !isVip &&
-          !hasAgentAccess &&
-          e is AgentAccessException && e.code == 'permission-denied';
+          e is AgentAccessException && e.code == 'permission-denied' &&
+          (e.reason == 'entitlement_required' ||
+              e.reason == 'entitlement_expired' ||
+              (e.reason == null && !hasAgentAccess));
 
       final isAuthError = e is AgentAccessException && e.code == 'unauthenticated';
+      final reasonKey = e is AgentAccessException ? const {
+        'access_provisioning': 'roomPreparing',
+        'legacy_review': 'roomLegacyReview',
+        'notebook_unavailable': 'roomNotebookUnavailable',
+        'identity_mismatch': 'roomVerifiedEmailRequired',
+        'app_update_required': 'roomAppUpdateRequired',
+        'request_rate_limited': 'roomRequestLimited',
+      }[e.reason] : null;
 
       setState(() {
         session.isUrlLoading = false;
@@ -1703,6 +1714,8 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
             ? Loc.tr('roomPaywallBody', [Loc.text(session.agent.title)])
             : isAuthError
                 ? Loc.tr('roomAuthDisconnected')
+                : reasonKey != null
+                    ? Loc.tr(reasonKey)
                 : e is AgentAccessException &&
                         const {
                           'failed-precondition',
