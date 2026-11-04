@@ -48,10 +48,10 @@ Future<void> main() async {
 
   void record(String phase, [Map<String, Object?> details = const {}]) {
     debugPrint('OT_DEVICE_AUDIT ${jsonEncode({
-      'phase': phase,
-      'elapsed_ms': clock.elapsedMilliseconds,
-      ...details,
-    })}');
+          'phase': phase,
+          'elapsed_ms': clock.elapsedMilliseconds,
+          ...details,
+        })}');
   }
 
   record('started');
@@ -95,8 +95,10 @@ Future<void> main() async {
         'firebase_identity_unchanged': auth.hasAuthenticatedSession &&
             auth.cachedCurrentUser?.uid == openingUid,
         'verified_owner_unchanged':
-            prefs.getString(PersistentGoogleSession.verifiedOwnerKey) == verifiedOwner,
-        'ready_marker_unchanged': prefs.getBool('google_session_ready') == ready,
+            prefs.getString(PersistentGoogleSession.verifiedOwnerKey) ==
+                verifiedOwner,
+        'ready_marker_unchanged':
+            prefs.getBool('google_session_ready') == ready,
         'google_cookie_present': cookiePresent,
       });
     }
