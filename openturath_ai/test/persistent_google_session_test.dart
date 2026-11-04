@@ -165,6 +165,16 @@ void main() {
     expect(prefs.getBool('google_session_ready'), false);
   });
 
+  test('verified account accepts the session cookie used by the fallback',
+      () async {
+    platform.manager.cookies
+      ..clear()
+      ..add(Cookie(name: '__Secure-3PSID', value: 'synthetic-session-a'));
+    expect(await session.lockAndPersistCookies(null, accountA), true);
+    expect(await session.restoreSessionIfAvailable(accountA), true);
+    expect(await session.restoreSessionIfAvailable(accountB), false);
+  });
+
   test('an empty account cannot establish ownership from a native cookie',
       () async {
     expect(await session.lockAndPersistCookies(null, '  '), false);
