@@ -636,16 +636,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
   /// dapat membacanya, sehingga keputusan tidak boleh didasarkan padanya.
   Future<bool?> _hasGoogleSession() async {
     try {
-      final cookies = await DesktopWebViewRuntime.cookies
-          .getCookies(
-            url: WebUri(NotebookNavigation.canonicalOrigin),
-            webViewController: _webController,
-          )
-          .timeout(const Duration(seconds: 5));
-      const names = {'SID', '__Secure-1PSID', '__Secure-3PSID'};
-      return cookies.any((cookie) =>
-          names.contains(cookie.name) &&
-          (cookie.value?.toString().isNotEmpty ?? false));
+      return await PersistentGoogleSession.instance.hasLiveSession(_webController);
     } catch (_) {
       return null;
     }
