@@ -8,6 +8,8 @@ Workspace: `/Users/apple/Downloads/ramadhan`.
 
 Baseline kode saat penyusunan: branch `v9-2-integrasi`, HEAD `d8befd8b470852f225f8d2edd3f8ffcc7b4de2c6`, versi sumber aplikasi `1.0.87+88`.
 
+**Pembaruan setelah audit login kedua:** akses beranda harus dipisahkan dari keberhasilan membuka NotebookLM. Audit lanjutan berhasil mereproduksi penghalang tersebut melalui enam skenario tambahan dan menjalankan 21 regresi sesi pada salinan sumber yang identik. Perbaikan alur masuk ini menjadi prioritas awal, sebelum menunggu penyebab seluruh tiket historis teridentifikasi. Rincian ada pada bagian 14 dan `docs/audit-login-kedua-2026-11-04/AUDIT.md`.
+
 ## 1. Tujuan dan hasil akhir
 
 Memastikan setiap kegagalan membuka bilik mempunyai bukti penyebab yang cukup, pengguna menerima langkah pemulihan yang sesuai, pelanggan berhak tidak diminta membeli ulang, dan keberhasilan dibuktikan melalui pemakaian bilik di perangkat.
@@ -287,6 +289,16 @@ Seluruh pengujian kontrak memakai data sintetis, penyedia palsu, dan Telegram st
 | T28 | Transaksi yang sama diproses ulang dan nominal nol tanpa verifikasi | Tidak menambah durasi atau akses baru sebagai efek samping perbaikan | Regresi backend |
 | T29 | Bahasa Indonesia, Arab RTL, Inggris; ukuran layar kecil/besar | Pesan serta tombol dapat dibaca; tidak bocor detail internal; monokrom terjaga | Widget + visual perangkat |
 | T30 | Akun berhak membuka bilik lalu mengirim pertanyaan | Jawaban benar-benar diterima; versi berjalan, modul, dan hasil dicatat | Perangkat Android/Windows/macOS |
+| T31 | Google kedua berhasil, lalu muncul saran pemulihan opsional | Dashboard dapat dimasuki tanpa kunjungan ke NotebookLM; owner WebView tidak dipalsukan | Widget + perangkat |
+| T32 | Sesi aplikasi sah, pengguna berada di halaman keamanan Google | Tindakan masuk aplikasi tersedia dan tidak mensyaratkan domain NotebookLM | Widget + perangkat |
+| T33 | Email DOM Google/NotebookLM tidak terbaca | Tidak memblokir beranda; status koneksi AI tetap sesuai tingkat bukti | Widget + kontrak hasil koneksi |
+| T34 | NotebookLM lambat atau tidak tersedia setelah login aplikasi | Beranda dan bagian aplikasi lain tetap dapat dipakai | Integrasi + perangkat |
+| T35 | Login baru dibanding startup untuk akun sah yang sama | Persyaratan akses beranda konsisten pada kedua jalur | Widget + integrasi |
+| T36 | Koneksi dibuka dari bilik lalu ditunda atau belum terverifikasi | Tidak mengembalikan sukses AI palsu dan tidak menghapus status pemulihan bilik | Widget + integrasi |
+| T37 | Google masih meminta challenge wajib | Tidak dinyatakan sebagai owner/sesi Google terverifikasi hanya karena URL atau cookie ada | Kontrak + perangkat |
+| T38 | Cookie Google ada tetapi sesi Firebase tidak sah | Tidak dapat masuk beranda hanya berdasarkan cookie atau cache profil | Regresi autentikasi |
+| T39 | Himpunan cookie dikenali fallback tetapi berbeda dengan pemeriksaan akhir | Keputusan baca-saja konsisten; tidak ada penulisan atau pembuatan cookie | Regresi sesi |
+| T40 | Identitas berubah, logout, atau layar ditutup sebelum callback pascalogin | Tidak ada navigasi dan penetapan owner memakai identitas lama | Widget + regresi sesi |
 
 Pengujian fokus pada keputusan dan akibat yang dapat diamati. Tidak menambah tes untuk getter trivial atau sekadar menyalin baris implementasi. Pemeriksaan teks sumber saja tidak menggantikan uji perilaku atau bukti perangkat.
 
@@ -301,7 +313,7 @@ Pengujian fokus pada keputusan dan akibat yang dapat diamati. Tidak menambah tes
 | Cookie dan tab | `persistent_google_session_test.dart`, `agent_session_manager_test.dart` | Perluas ke lima tab macOS dan interaksi laporan dengan sesi yang hidup. |
 | Transport dan worker | `desktop_transport_test.dart`, `functions/test/access_worker_queue.test.ts`, `worker_lease.test.ts`, `access_monitoring.test.ts` | Jalankan regresi jika kontrak atau konteks menyentuh jalur ini; tidak merombak worker tanpa reproduksi. |
 
-Berkas tersebut dibaca saat perencanaan; **belum dijalankan dalam tahap penyusunan rencana ini**. Hasil lama tidak dicatat sebagai hasil pengujian kandidat baru.
+Berkas tersebut dibaca saat penyusunan rencana awal dan belum dijalankan pada tahap awal itu. Audit login kedua kemudian menjalankan empat berkas regresi sesi (21 kasus) dan enam kasus reproduksi tambahan, seluruhnya lulus pada salinan sumber yang identik. Hasil tersebut memverifikasi perilaku kode saat audit, termasuk penghalang yang harus diperbaiki; **bukan hasil kandidat perbaikan**. Berkas lain dalam tabel tidak otomatis dianggap sudah dijalankan.
 
 ## 10. Prioritas, dependensi, dan checkpoint
 
@@ -370,3 +382,29 @@ Dokumen akhir harus memuat: checkpoint dan perubahan final, matriks hasil aktual
 - Instruksi pelaksanaan implementasi merupakan tahap setelah rencana ini. Persetujuan deployment, perubahan data produksi, dan broadcast mengikuti tindakan konkretnya serta otorisasi yang sudah diberikan dalam sesi.
 
 Estimasi durasi baru dibuat setelah baseline pengujian, ketersediaan perangkat, dan kebutuhan koreksi P4 diketahui. Rencana ini tidak menjanjikan tenggat untuk penyebab yang masih belum dapat direproduksi. Kemajuan dinilai dari paket bukti yang selesai, bukan dari jumlah commit atau turunnya jumlah notifikasi.
+
+## 14. Prioritas baru: keluar dari login Google kedua tanpa menunggu NotebookLM
+
+### 14.1 Penyebab yang sudah berhasil direproduksi
+
+- Pemeriksaan otomatis dan watchdog hanya menyelesaikan koneksi ketika URL berada di domain NotebookLM.
+- Tombol Lanjutkan menolak halaman Google lain sebelum memeriksa sesi.
+- Konfirmasi “Ya, sudah masuk” masih memerlukan email yang terbaca dari NotebookLM pada pemeriksaan akhir.
+- Login baru menahan pengguna melalui syarat koneksi Google, sedangkan startup sudah mengizinkan dashboard untuk Firebase user sah tanpa syarat tersebut.
+
+Secara teknis login kedua menunggu domain dan identitas pada halaman NotebookLM, bukan composer. Composer tetap merupakan syarat kesiapan bilik yang diperiksa terpisah.
+
+### 14.2 Perubahan urutan kerja
+
+Setelah baseline P0, dahulukan kontrak navigasi berikut dan uji T31–T40. Pekerjaan ini dapat berjalan tanpa menunggu akses Cloud Logging atau diagnosis 16 tiket lama.
+
+1. Bedakan izin memasuki aplikasi, bukti sesi Google WebView, dan kesiapan bilik. Firebase user yang sah mengizinkan beranda; cookie atau cache saja tidak cukup.
+2. Tetapkan konteks layar koneksi: dibuka sesudah login aplikasi atau untuk memulihkan bilik. Jangan hanya mengandalkan susunan Navigator untuk menentukan makna hasil.
+3. Bedakan hasil koneksi terverifikasi, belum terverifikasi/ditunda, dan dibatalkan. Hasil “boleh masuk beranda” tidak dipakai sebagai true/sukses pemulihan AI.
+4. Izinkan perpindahan ke dashboard setelah keberhasilan login Google teramati, tanpa domain NotebookLM sebagai syarat. Halaman tindak lanjut yang opsional tidak menjadi penghalang global aplikasi.
+5. Jika status Google belum dapat disimpulkan, sediakan tindakan masuk OpenTurath yang jelas selama sesi aplikasi sah. Koneksi AI tetap belum terverifikasi; tidak menulis marker verified owner atau google_session_ready secara palsu.
+6. Pertahankan verifikasi akun dan hak modul sebelum penggunaan bilik yang memerlukannya. Jangan menganggap semua halaman Google atau cookie lama membuktikan challenge berhasil.
+7. Sesuaikan teks, fallback, dan telemetry agar penundaan koneksi bukan pembatalan login aplikasi.
+8. Jalankan regresi route, pergantian akun, cookie, dan hasil pemulihan bilik, lalu uji perangkat dengan halaman pascalogin yang benar-benar muncul.
+
+Siklus hidup WebView bilik, polling yang diwajibkan, cookie, VIP, dan data akses tetap dipertahankan. Audit ini belum menerapkan perubahan runtime atau mempublikasikan kandidat.
