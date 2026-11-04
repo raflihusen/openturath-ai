@@ -12,6 +12,7 @@ import 'desktop_webview_runtime.dart';
 class PersistentGoogleSession {
   PersistentGoogleSession._();
   static final PersistentGoogleSession instance = PersistentGoogleSession._();
+  int _ownershipEpoch = 0;
 
   /// Brankas cookie lama (v3) disimpan di SharedPreferences. Hanya salinan
   /// lokal itu yang dihapus; cookie yang sedang aktif di OS tidak disentuh.
@@ -54,21 +55,27 @@ class PersistentGoogleSession {
     String email, {
     bool Function()? isCurrent,
   }) async {
+    final epoch = _ownershipEpoch;
+    bool current() => epoch == _ownershipEpoch && isCurrent?.call() != false;
     final cleanEmail = email.trim().toLowerCase();
-    if (cleanEmail.isEmpty || isCurrent?.call() == false) return false;
+    if (cleanEmail.isEmpty || !current()) return false;
     try {
       if (!await hasLiveSession(controller)) return false;
-      if (isCurrent?.call() == false) return false;
+      if (!current()) return false;
       final prefs = await SharedPreferences.getInstance();
-      if (isCurrent?.call() == false) return false;
+      if (!current()) return false;
       await _dropLegacyVault(prefs);
-      if (isCurrent?.call() == false) return false;
+      if (!current()) return false;
       if (cleanEmail.isNotEmpty) {
         await prefs.setString(_ownerKey, cleanEmail);
+        if (!current()) return false;
         await prefs.setString(verifiedOwnerKey, cleanEmail);
+        if (!current()) return false;
         await prefs.setString('google_session_email', cleanEmail);
+        if (!current()) return false;
         await prefs.setString('notebook_google_email', cleanEmail);
       }
+      if (!current()) return false;
       await prefs.setBool(_readyKey, true);
       return true;
     } catch (_) {
@@ -80,11 +87,13 @@ class PersistentGoogleSession {
   /// WebView. Tidak pernah menulis cookie; sesi kedaluwarsa berarti pengguna
   /// harus masuk kembali lewat alur resmi Google.
   Future<bool> restoreSessionIfAvailable(String email) async {
+    final epoch = _ownershipEpoch;
     final cleanEmail = email.trim().toLowerCase();
     if (cleanEmail.isEmpty) return false;
     try {
       final prefs = await SharedPreferences.getInstance();
       await _dropLegacyVault(prefs);
+      if (epoch != _ownershipEpoch) return false;
       final savedOwner =
           (prefs.getString(_ownerKey) ?? '').trim().toLowerCase();
       final verifiedOwner =
@@ -94,7 +103,13 @@ class PersistentGoogleSession {
         return false;
       }
 
-      if (await hasLiveSession(null)) {
+      final live = await hasLiveSession(null);
+      if (epoch != _ownershipEpoch ||
+          prefs.getString(_ownerKey)?.trim().toLowerCase() != cleanEmail ||
+          prefs.getString(verifiedOwnerKey)?.trim().toLowerCase() != cleanEmail) {
+        return false;
+      }
+      if (live) {
         await prefs.setBool(_readyKey, true);
         return true;
       }
@@ -108,6 +123,7 @@ class PersistentGoogleSession {
   /// Melepas klaim kepemilikan sesi tanpa menghapus cookie WebView, dipakai
   /// saat akun aplikasi berganti. Sesi Google dipilih ulang lewat pemilih akun.
   Future<void> releaseOwnership() async {
+    _ownershipEpoch++;
     try {
       final prefs = await SharedPreferences.getInstance();
       await _dropLegacyVault(prefs);
@@ -120,6 +136,7 @@ class PersistentGoogleSession {
   /// Pembersihan global: HANYA untuk Log Out atau hapus akun yang dipicu
   /// eksplisit oleh pengguna.
   Future<void> clearOnSignOut() async {
+    _ownershipEpoch++;
     try {
       final prefs = await SharedPreferences.getInstance();
       await prefs.remove(_legacyVaultKey);
