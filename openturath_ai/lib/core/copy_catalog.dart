@@ -583,6 +583,31 @@ const copyCatalog = <String, List<String>>{
     "Enter OpenTurath",
     "الدخول إلى أوبن تراث"
   ],
+  "roomLegacyReview": [
+    "Sedang mencocokkan akses lama Anda. Anda tidak perlu membeli ulang.",
+    "Your existing access is being checked. You do not need to purchase again.",
+    "جارٍ التحقق من صلاحية وصولك السابقة. لا تحتاج إلى الاشتراك مجددًا."
+  ],
+  "roomVerifiedEmailRequired": [
+    "Gunakan akun Google terverifikasi yang terdaftar di OpenTurath.",
+    "Use the verified Google account registered with OpenTurath.",
+    "استخدم حساب Google الموثّق والمسجّل في أوبن تراث."
+  ],
+  "roomAppUpdateRequired": [
+    "Versi aplikasi ini perlu diperbarui sebelum membuka bilik.",
+    "Update this version of the app before opening the study room.",
+    "يرجى تحديث التطبيق قبل فتح غرفة الدراسة."
+  ],
+  "roomRequestLimited": [
+    "Permintaan terlalu sering. Tunggu sebentar lalu coba lagi.",
+    "Too many requests. Wait a moment and try again.",
+    "الطلبات متكررة. انتظر قليلًا ثم أعد المحاولة."
+  ],
+  "roomNotebookUnavailable": [
+    "Ruang kajian sedang diperiksa. Silakan coba lagi sebentar.",
+    "The study room is being checked. Please try again shortly.",
+    "غرفة الدراسة قيد الفحص. يرجى إعادة المحاولة بعد قليل."
+  ],
   "googleSessionUnverified": [
     "Sesi Google belum dapat diverifikasi. Coba lagi atau tekan Lanjutkan setelah akun yang sama selesai masuk. Sesi Anda tidak dihapus.",
     "Your Google session could not be verified yet. Retry or continue after signing in with the same account. Your session has not been cleared.",
