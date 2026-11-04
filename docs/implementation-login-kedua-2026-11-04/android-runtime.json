@@ -1,0 +1,39 @@
+{
+  "recorded_utc": "2026-11-04T13:19:23.095866+00:00",
+  "device_model": "Pixel 10 Pro XL",
+  "package": "com.openturath.ai",
+  "version": "1.0.87",
+  "build": 89,
+  "currently_installed_mode": "debug",
+  "debuggable_verified": true,
+  "debug_apk_sha256": "64a0d5f19399049579c1dfc6ae953493f3c090de883e46fc37eb36548dd732c8",
+  "prior_release_update": {
+    "from_build": 88,
+    "to_build": 89,
+    "signature_matched": true,
+    "adb_install_r_result": "Success",
+    "dashboard_opened": true,
+    "profile_label_unchanged": true,
+    "arabic_locale_preserved": true,
+    "apk_backup_retained": true
+  },
+  "subsequent_fresh_debug_install": {
+    "requested_after_user_uninstalled_app": true,
+    "adb_install_r_result": "Success",
+    "normal_lib_main_entrypoint": true,
+    "registered_debug_google_certificate": true
+  },
+  "runtime_observation": {
+    "dart_tooling_connected": true,
+    "baseline_runtime_errors": [],
+    "observed_widget": "LoginScreen",
+    "google_login": "awaiting_user_interaction",
+    "notebooklm_answer": "not_tested",
+    "vip_account_on_device": "not_tested"
+  },
+  "compiled_internal_release_sha256": "06571f03386e6531f89cb09558b0b2c61c63822fe3c1c7b4f4150c8c09ea322a",
+  "lib_source_tree": "b0c7cdaef8f652cf8ae77bdc86785b5c7370d993",
+  "public_release_performed": false,
+  "deployment_performed": false,
+  "agent_uninstalled_app_or_cleared_user_data": false
+}

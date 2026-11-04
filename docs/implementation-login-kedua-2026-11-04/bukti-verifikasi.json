@@ -534,7 +534,6 @@
     "version": "1.0.87",
     "build_number": "89",
     "mode": "debug",
-    "installed": false,
     "macos": {
       "command": "flutter build macos --debug --no-pub --build-number=89 --dart-define=APP_EDITION=standard",
       "exit_code": 0,
@@ -546,7 +545,8 @@
         "Contents/Frameworks/App.framework/Versions/A/App": "b5be806ddadf714ead64e97d3da18fac861b7295d9f59bbda84e542046cf1259",
         "Contents/Frameworks/App.framework/Versions/A/Resources/flutter_assets/kernel_blob.bin": "1d692f7962d76624c0ee93dc46ffe9da616d4a663d5c0cdc881ad603c0c371ff"
       },
-      "hash_scope": "listed components only; not a distribution certification"
+      "hash_scope": "listed components only; not a distribution certification",
+      "installed": false
     },
     "android": {
       "command": "flutter build apk --debug --no-pub --build-number=89 --target-platform android-arm64 --dart-define=APP_EDITION=standard",
@@ -560,7 +560,9 @@
       ],
       "bytes": 99436891,
       "sha256": "64a0d5f19399049579c1dfc6ae953493f3c090de883e46fc37eb36548dd732c8",
-      "mtime_utc": "2026-11-04T12:48:17.173136+00:00"
+      "mtime_utc": "2026-11-04T12:48:17.173136+00:00",
+      "installed": true,
+      "device": "Pixel 10 Pro XL"
     },
     "windows": {
       "built": false,
@@ -581,6 +583,8 @@
     "backend-node26-final.txt": "ee21a5ddf53abc0ecd18c1adfffd46a31b3427480fcc4d79bd8c9de52ecaedb8",
     "typescript-check.txt": "bd8ad3d00f5e809f40279685ad8ef4cdaf27a298c9401aa6d761acb05d19ce6b",
     "macos-debug-final.txt": "97d402a35dffca0bbd2d9d301e4da5f0eea3baade010e049d21c9efe7615ee5d",
-    "android-debug-final.txt": "6116b7c85b7048aae0640da7f49f1e3d0f587d28fb07bafdf22686a242d3f99c"
-  }
+    "android-debug-final.txt": "6116b7c85b7048aae0640da7f49f1e3d0f587d28fb07bafdf22686a242d3f99c",
+    "android-internal-signed.txt": "2d3f0b9015f3bdcdacd90f6417e49266fbdc205b455fc5fdd2d865a7aac443e9"
+  },
+  "android_runtime_evidence": "android-runtime.json"
 }

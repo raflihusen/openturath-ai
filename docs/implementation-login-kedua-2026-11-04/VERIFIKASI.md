@@ -32,7 +32,7 @@ Branch: `codex/diagnostic-access-session-recovery`. Baseline implementasi: `7e88
 - Suite Flutter final: **663 lulus, 0 gagal, 6 dilewati**. Enam tes tersebut adalah ekspor gambar katalog, adegan, motion, slide, pengenalan, dan teaser yang hanya aktif jika `OT_SNAPSHOT_DIR` disediakan. Bukan tes login yang dilewati.
 - Kompilasi **debug lokal Standard**, versi **1.0.87/build 89**: macOS dan Android berhasil dengan exit code 0. Gradle `assembleDebug` selesai dan manifest APK menyebut build 89. APK debug aktual berisi arm64-v8a, armeabi-v7a, dan x86_64 meskipun flag target build memakai android-arm64; tidak diklaim sebagai APK rilis arm64 saja.
 - Kompilasi native masih mengeluarkan peringatan dependensi lama dan build phase tanpa output; tidak ada kegagalan kompilasi. Dependensi tidak dinaikkan hanya untuk menghilangkan peringatan tersebut.
-- Windows belum dikompilasi pada host macOS ini. Tidak ada pemasangan kandidat, pengujian Google nyata, penandatanganan distribusi, atau pembuktian jawaban NotebookLM dari proses kompilasi.
+- Windows belum dikompilasi pada host macOS ini. macOS belum dipasang atau diuji dengan Google nyata. Hasil perangkat Android dijelaskan terpisah di bawah; kompilasi tidak membuktikan jawaban NotebookLM.
 
 Rincian hasil, versi, hash, lokasi artefak lokal, dan hasil per berkas tersedia pada [bukti-verifikasi.json](bukti-verifikasi.json). Transkrip pengujian dan kompilasi terakhir disimpan di [logs](logs/). Identitas tree sumber pada bukti tetap berlaku setelah checkpoint dokumentasi berikutnya.
 
@@ -41,7 +41,19 @@ Artefak internal:
 - macOS: `openturath_ai/build/macos/Build/Products/Debug/OpenTurath AI.app` — bundle ID `com.example.openturathAi`, build 89.
 - Android: `openturath_ai/build/app/outputs/flutter-apk/app-debug.apk` — package `com.openturath.ai`, build 89, SHA-256 `64a0d5f19399049579c1dfc6ae953493f3c090de883e46fc37eb36548dd732c8`.
 
-Artefak tersebut hanya untuk pengujian internal. Tidak disalin menjadi APK rilis publik atau `app-release-latest.apk`. Tidak ada artefak Guru yang diklaim telah dibangun dalam pekerjaan ini.
+Artefak debug tersebut hanya untuk pengujian internal. Tidak ada artefak Guru yang diklaim telah dibangun dalam pekerjaan ini.
+
+## Pengujian pada Android yang dihubungkan pengguna
+
+- Perangkat nyata: **Pixel 10 Pro XL**. Awalnya terpasang versi 1.0.87/build 88 dengan tanda tangan rilis yang berbeda dari APK debug.
+- Sebelum pembaruan, APK terpasang dan alias lokal lama disalin ke `openturath_ai/build/verification-android-20261104/`. Tidak ada penghapusan aplikasi atau data oleh agen.
+- Kandidat Standard build 89 juga dikompilasi secara lokal dengan konfigurasi penandatanganan rilis untuk pembaruan perangkat internal. Gradle `assembleRelease` selesai, sertifikat cocok dengan aplikasi terpasang, timestamp baru dan hash alias lokal diverifikasi. APK itu **tidak dipublikasikan**. Alias `app-release-latest.apk` berisi kandidat normal dari `lib/main.dart`, dengan salinan lama tetap disimpan.
+- Pembaruan biasa dengan `adb install -r` berhasil. Versi terpasang benar-benar menjadi build 89, dashboard terbuka, serta label profil dan bahasa Arab tetap sama. Ini membuktikan kesinambungan startup pada satu perangkat tersebut; tidak membuktikan semua cookie atau seluruh alur Google.
+- Pengguna kemudian menghapus aplikasi sendiri dan meminta pemasangan debug. APK **debug build 89** dipasang ulang dan dibuka. Flag `DEBUGGABLE`, nomor build, serta koneksi Dart Tooling ke proses nyata terverifikasi. Sertifikat debug juga tercantum dalam konfigurasi Google Android aplikasi.
+- Pemeriksaan awal menemukan **tidak ada runtime error**. Pohon widget nyata menunjukkan `LoginScreen`. **Login Google baru sedang menunggu interaksi pengguna di ponsel**; hasil login kedua dan jawaban AI belum dinyatakan lulus.
+- Data XML/screenshot perangkat disimpan hanya pada folder build lokal yang diabaikan Git. Bukti yang dicatat pada [android-runtime.json](android-runtime.json) tidak memuat email, token, UID, cookie, atau isi percakapan.
+
+APK normal internal bertanda tangan: SHA-256 `06571f03386e6531f89cb09558b0b2c61c63822fe3c1c7b4f4150c8c09ea322a`. APK debug yang sekarang terpasang tetap memiliki hash `64a0d5f19399049579c1dfc6ae953493f3c090de883e46fc37eb36548dd732c8`. Keduanya belum merupakan rilis publik.
 
 Uji regresi terlebih dahulu mereproduksi masalah: navigasi aplikasi masih menunggu NotebookLM, alasan sebelum URL hilang, timer membuat siap palsu, callback sesi lama menjadi siap, dan tata letak tombol meluber. Koreksi kemudian diuji ulang. Uji menyeluruh pertama juga menemukan ekspektasi dialog aktivasi lama; alur dialog dan pengujiannya diselaraskan dengan syarat konfirmasi server sebelum suite diulang.
 
