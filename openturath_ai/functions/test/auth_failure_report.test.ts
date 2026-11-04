@@ -81,6 +81,32 @@ test('statistik baru memisahkan build sehingga versi lama tidak menimpa versi ke
 
 const detailed = {schema_version:2,platform:'android',stage:'agent-url',code:'failed-precondition',category:'webview',appVersion:'1.0.87',buildNumber:'89',edition:'standard',attempt_id:'a'.repeat(32),event_id:'b'.repeat(32),agent_id:'fiqh_syafii',reason:'access_provisioning',request_id:'11111111-2222-4333-8444-555555555555'};
 
+test('metadata memiliki bentuk terbatas dan skema navigasi tetap teramati', async()=>{
+  const f=loadBackend();
+  const r=await callDiag(f.api,{...detailed,buildNumber:'private.token.value',
+    edition:'private.token.value',attempt_id:'private.token.value',event_id:'private.token.value',
+    request_id:'private.token.value',reason:'private.token.value',page_scheme:'intent'});
+  const d=f.db.docs.get(`diagnostic_reports/${r.body.ref}`);
+  assert.equal(JSON.stringify(d).includes('private.token.value'),false);
+  assert.equal(d.page_scheme,'intent');
+});
+
+test('alasan berbeda tidak saling menimpa dalam statistik baru', async()=>{
+  const f=loadBackend();
+  for(const reason of ['access_provisioning','legacy_review']) await call(f.api,{...detailed,reason});
+  const docs=[...f.db.docs.entries()].filter(([k])=>k.startsWith('auth_failure_stats_v2/')).map(([,v])=>v);
+  assert.equal(docs.length,2);
+  assert.deepEqual(new Set(docs.map(d=>d.reason)),new Set(['access_provisioning','legacy_review']));
+});
+
+test('server menyamarkan segmen alamat email dalam URL klien lama', async()=>{
+  const f=loadBackend();
+  const r=await callDiag(f.api,{...detailed,page:'https://accounts.google.com/user/reader%40example.invalid?token=secret'});
+  const d=f.db.docs.get(`diagnostic_reports/${r.body.ref}`);
+  assert.equal(d.page.includes('reader'),false);
+  assert.equal(d.page.includes('secret'),false);
+});
+
 test('laporan baru mempertahankan konteks sebelum URL diterima tanpa mengarang halaman',async()=>{
   const f=loadBackend(),r=await callDiag(f.api,detailed);
   const d=f.db.docs.get(`diagnostic_reports/${r.body.ref}`);
