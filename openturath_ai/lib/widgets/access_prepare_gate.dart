@@ -15,8 +15,7 @@ import 'tahawwulat_hero.dart' show reviewCopy;
 ///
 /// `done` hanya berarti waktu tunggu habis (dialog boleh ditutup). Akses baru
 /// boleh dinyatakan siap bila `ready` true: server mengonfirmasinya lewat
-/// [isReady], atau tidak ada pemeriksaan yang tersedia sehingga hanya waktu
-/// tunggu yang dapat dipakai.
+/// [isReady]. Tanpa pemeriksaan, habisnya waktu hanya mengizinkan dialog ditutup.
 class AccessPrepareGate extends StatefulWidget {
   const AccessPrepareGate(
       {super.key,
@@ -187,5 +186,5 @@ class _AccessPrepareGateState extends State<AccessPrepareGate> {
 
   @override
   Widget build(BuildContext context) => widget.builder(context, _left == 0,
-      _left, _panel(context), _left == 0 && (widget.isReady == null || _ready));
+      _left, _panel(context), _left == 0 && _ready);
 }
