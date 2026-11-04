@@ -12,7 +12,7 @@
   "lib_dart_files_changed": [],
   "pubspec_identical": true,
   "lockfile_identical": true,
-  "characterization_sha256": "e7aa8dcd68ad9c07073f130d3e64a90c0a0c33313780ff8e3a0e400001686b52",
+  "characterization_sha256": "9ce217a68d6c75cb27c53d39854a33a37afe8856bbdb67252b6a810c628794bb",
   "tested_provider": "fake WebView and cookie manager",
   "native_device_verification": false,
   "interactive_google_login_tested": false,
@@ -24,6 +24,7 @@
     "google_session_auth_flow_test.dart",
     "persistent_google_session_test.dart",
     "room_google_connection_result_test.dart"
-  ]
+  ],
+  "tested_characterization_sha256": "e7aa8dcd68ad9c07073f130d3e64a90c0a0c33313780ff8e3a0e400001686b52",
+  "artifact_normalization": "Trailing blank lines removed; code otherwise identical to tested fixture."
 }
-

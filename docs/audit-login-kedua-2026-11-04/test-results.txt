@@ -36,4 +36,3 @@ Hasil ini memverifikasi perilaku yang ada, bukan perbaikan atau perangkat nyata.
 00:08 +25: /private/var/folders/y8/_fp3x3f500n4ww10s28g2dmh0000gn/T/openturath-second-login-audit-20261104-d9v0wmk8/test/room_google_connection_result_test.dart: Google connection false preserves permission recovery
 00:08 +26: /private/var/folders/y8/_fp3x3f500n4ww10s28g2dmh0000gn/T/openturath-second-login-audit-20261104-d9v0wmk8/test/room_google_connection_result_test.dart: Google connection null preserves permission recovery
 00:08 +27: All tests passed!
-
