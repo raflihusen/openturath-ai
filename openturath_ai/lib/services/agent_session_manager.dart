@@ -5,6 +5,7 @@ import '../core/app_config.dart';
 import '../models/agent_model.dart';
 import '../models/turath_chat_message.dart';
 import '../models/user_model.dart';
+import '../models/room_failure.dart';
 
 /// Represents a single active AI specialist tab in memory.
 class AgentSessionTab {
@@ -21,6 +22,8 @@ class AgentSessionTab {
   bool isGooglePermissionError = false;
   bool isGoogleAuthPage = false;
   bool isGoogleRejected = false;
+  String diagnosticAttemptId = newDiagnosticId();
+  RoomFailure? failure;
 
   static double defaultFontScale = 1.0;
   double fontScale = defaultFontScale;
