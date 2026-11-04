@@ -13,6 +13,7 @@ import 'package:openturath_ai/services/auth_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:openturath_ai/services/agent_service.dart';
+import 'package:openturath_ai/services/diagnostic_report_service.dart';
 import 'package:openturath_ai/services/persistent_google_session.dart';
 import 'package:openturath_ai/widgets/agent_multi_tab_room.dart';
 
@@ -114,9 +115,13 @@ class _WebViewPlatform extends InAppWebViewPlatform {
 
 
 class _UrlService extends AgentService {
+  _UrlService([this.error]);
+  final AgentAccessException? error;
   @override
-  Future<String?> getAgentUrl(String agentId) async =>
-      'https://notebook.google.com/notebook/00000000-0000-4000-8000-000000000001';
+  Future<String?> getAgentUrl(String agentId) async {
+    if (error != null) throw error!;
+    return 'https://notebook.google.com/notebook/00000000-0000-4000-8000-000000000001';
+  }
 }
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -140,10 +145,10 @@ void main() {
     manager.closeAll();
     AuthService.previewUser = null;
   });
-  Future<void> open(WidgetTester tester) async {
+  Future<void> open(WidgetTester tester, {AgentAccessException? error}) async {
     manager.openAgent(agent, user: AuthService.previewUser);
     await tester.pumpWidget(MaterialApp(
-      home: AgentMultiTabRoom(agentService: _UrlService())));
+      home: AgentMultiTabRoom(agentService: _UrlService(error))));
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 350));
   }
@@ -182,6 +187,25 @@ void main() {
       expect(find.byType(InAppWebView), findsOneWidget);
       expect(find.text(Loc.tr('roomLoginNow')), findsNothing);
       expect(platform.cookies.deletions, 0);
+    } finally {
+      await close(tester);
+    }
+  });
+
+  testWidgets('failure before a URL reaches the report with the original cause',
+      (tester) async {
+    try {
+      await open(tester, error: const AgentAccessException(
+          'failed-precondition', 'Preparing access', reason: 'access_provisioning',
+          requestId: '11111111-2222-4333-8444-555555555555'));
+      final payload = DiagnosticReportService.payload(stage: 'room-load',
+          code: 'load-failed', failure: manager.activeTab!.failure);
+      expect(payload['stage'], 'agent-url');
+      expect(payload['code'], 'failed-precondition');
+      expect(payload['reason'], 'access_provisioning');
+      expect(payload['agent_id'], 'fiqh_syafii');
+      expect(payload['request_id'], '11111111-2222-4333-8444-555555555555');
+      expect(find.text(Loc.tr('roomSeePlans')), findsNothing);
     } finally {
       await close(tester);
     }
