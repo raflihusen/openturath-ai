@@ -24,7 +24,7 @@ class PersistentGoogleSession {
   static const String verifiedOwnerKey = 'webview_session_owner_verified_v1';
 
   /// Cookie sesi hidup, dibaca tanpa mengubah apa pun.
-  Future<bool> _hasLiveSession(InAppWebViewController? controller) async {
+  Future<bool> hasLiveSession(InAppWebViewController? controller) async {
     final cookieManager = DesktopWebViewRuntime.cookies;
     for (final url in [
       WebUri(NotebookNavigation.canonicalOrigin),
@@ -33,8 +33,9 @@ class PersistentGoogleSession {
       final cookies = await cookieManager
           .getCookies(url: url, webViewController: controller)
           .timeout(const Duration(seconds: 5));
+      const sessionNames = {'SID', '__Secure-1PSID', '__Secure-3PSID'};
       final live = cookies.any((c) =>
-          (c.name == 'SID' || c.name == '__Secure-1PSID') &&
+          sessionNames.contains(c.name) &&
           (c.value?.toString().isNotEmpty ?? false));
       if (live) return true;
     }
@@ -56,7 +57,7 @@ class PersistentGoogleSession {
     final cleanEmail = email.trim().toLowerCase();
     if (cleanEmail.isEmpty || isCurrent?.call() == false) return false;
     try {
-      if (!await _hasLiveSession(controller)) return false;
+      if (!await hasLiveSession(controller)) return false;
       if (isCurrent?.call() == false) return false;
       final prefs = await SharedPreferences.getInstance();
       if (isCurrent?.call() == false) return false;
@@ -93,7 +94,7 @@ class PersistentGoogleSession {
         return false;
       }
 
-      if (await _hasLiveSession(null)) {
+      if (await hasLiveSession(null)) {
         await prefs.setBool(_readyKey, true);
         return true;
       }
