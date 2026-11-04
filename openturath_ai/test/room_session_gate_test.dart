@@ -210,4 +210,23 @@ void main() {
       await close(tester);
     }
   });
+
+  for (final vip in [false, true]) {
+    testWidgets('server entitlement decision preserves VIP=$vip', (tester) async {
+      AuthService.previewUser = UserModel.fromMap('reader', {
+        'email': _email, 'name': 'Reader', 'is_vip': vip,
+        'entitlements': {'fiqh_syafii': {'status': 'active', 'plan': 'yearly',
+          'expiry': DateTime.now().add(const Duration(days: 365)).toIso8601String()}},
+      });
+      try {
+        await open(tester, error: const AgentAccessException('permission-denied',
+            'Entitlement required', reason: 'entitlement_required'));
+        expect(manager.activeTab!.isPaywallRequired, !vip);
+        expect(find.text(Loc.tr('roomSeePlans')), vip ? findsNothing : findsOneWidget);
+        expect(platform.cookies.deletions, 0);
+      } finally {
+        await close(tester);
+      }
+    });
+  }
 }

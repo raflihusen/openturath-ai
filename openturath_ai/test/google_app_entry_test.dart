@@ -154,6 +154,9 @@ void main() {
       {AuthService? authService}) async {
     await tester.pumpWidget(MaterialApp(
       home: GoogleSessionAuthScreen(authService: authService),
+      builder: (context, child) => Directionality(
+        textDirection: AppConfig.localeNotifier.value == 'ar'
+            ? TextDirection.rtl : TextDirection.ltr, child: child!),
       routes: {
         AppRoutes.dashboard: (_) => const Scaffold(body: Text('OpenTurath home')),
         AppRoutes.login: (_) => const Scaffold(body: Text('OpenTurath sign in')),
@@ -177,6 +180,33 @@ void main() {
   Future<void> close(WidgetTester tester) async {
     await tester.pumpWidget(const SizedBox());
     await tester.pump(const Duration(seconds: 4));
+  }
+
+  for (final locale in ['id', 'en', 'ar']) {
+    for (final width in [320.0, 390.0, 1280.0]) {
+      testWidgets('app entry action fits $locale at width $width', (tester) async {
+        AppConfig.localeNotifier.value = locale;
+        tester.view.physicalSize = Size(width, 800);
+        tester.view.devicePixelRatio = 1;
+        addTearDown(tester.view.resetPhysicalSize);
+        addTearDown(tester.view.resetDevicePixelRatio);
+        try {
+          await open(tester);
+          expect(tester.takeException(), isNull);
+          final action = find.descendant(of: find.byType(AppBar),
+              matching: find.text(Loc.tr('enterOpenTurath')));
+          expect(action, findsOneWidget);
+          final bounds = tester.getRect(action);
+          expect(bounds.left, greaterThanOrEqualTo(0));
+          expect(bounds.right, lessThanOrEqualTo(width));
+          await tester.tap(action);
+          await tester.pumpAndSettle();
+          expect(find.text('OpenTurath home'), findsOneWidget);
+        } finally {
+          await close(tester);
+        }
+      });
+    }
   }
 
   for (final target in [

@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter/foundation.dart';
 import 'package:openturath_ai/models/agent_model.dart';
 import 'package:openturath_ai/services/agent_session_manager.dart';
 
@@ -21,6 +22,27 @@ void main() {
   });
 
   group('AgentSessionManager Multi-Tab Keep-Alive Suite', () {
+    test('macOS preserves all five sessions through tab changes', () {
+      debugDefaultTargetPlatformOverride = TargetPlatform.macOS;
+      addTearDown(() => debugDefaultTargetPlatformOverride = null);
+      final manager = AgentSessionManager.instance;
+      expect(AgentSessionManager.maxTabs, greaterThanOrEqualTo(5));
+      for (final agent in AgentModel.defaultAgents.take(5)) {
+        manager.openAgent(agent);
+      }
+      final original = List.of(manager.tabs);
+      for (var i = 0; i < 5; i++) {
+        original[i].resolvedUrl = 'https://example.invalid/notebook/$i';
+        original[i].isSessionReady = true;
+        manager.selectTab(i);
+        expect(manager.activeTab, same(original[i]));
+      }
+      manager.closeRoom();
+      manager.openAgent(original.first.agent);
+      expect(manager.tabs, orderedEquals(original));
+      expect(manager.tabs.every((tab) => tab.isSessionReady), true);
+      expect(manager.tabs.map((tab) => tab.resolvedUrl).toSet().length, 5);
+    });
     test('Starts empty and closed', () {
       final manager = AgentSessionManager.instance;
       expect(manager.tabs.isEmpty, isTrue);
