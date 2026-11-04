@@ -38,6 +38,7 @@ import '../services/auth_failure_reporter.dart';
 import 'diagnostic_report_action.dart';
 import '../services/agent_session_manager.dart';
 import '../services/auth_service.dart';
+import '../services/persistent_google_session.dart';
 import '../services/bookmark_service.dart';
 import '../services/native_agent_launcher.dart';
 import '../widgets/app_error_state.dart';
@@ -1621,18 +1622,24 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
       final url = await _agentService.getAgentUrl(session.agent.id);
       final currentUid =
           _authService.currentUser?.uid ?? _authService.cachedCurrentUser?.uid;
-      if (!mounted ||
-          (openingUid != null &&
-              currentUid != null &&
-              currentUid != openingUid)) {
+      if (!mounted || currentUid != openingUid) {
         return;
       }
       if (url != null && url.isNotEmpty) {
+        final email = _authService.cachedCurrentUser?.email ?? '';
+        final googleReady = await PersistentGoogleSession.instance
+            .restoreSessionIfAvailable(email)
+            .timeout(const Duration(seconds: 3), onTimeout: () => false);
+        final verifiedUid =
+            _authService.currentUser?.uid ?? _authService.cachedCurrentUser?.uid;
+        if (!mounted || verifiedUid != openingUid) return;
         setState(() {
           session.resolvedUrl = url;
           session.isUrlLoading = false;
           session.isPaywallRequired = false;
-          session.errorMessage = null;
+          session.isGoogleAuthPage = !googleReady;
+          session.errorMessage =
+              googleReady ? null : Loc.tr('roomSameAccountBodyPlain');
         });
       } else {
         final user = _authService.cachedCurrentUser;
@@ -1648,10 +1655,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
     } catch (e) {
       final currentUid =
           _authService.currentUser?.uid ?? _authService.cachedCurrentUser?.uid;
-      if (!mounted ||
-          (openingUid != null &&
-              currentUid != null &&
-              currentUid != openingUid)) {
+      if (!mounted || currentUid != openingUid) {
         return;
       }
       final msg = e.toString().toLowerCase();
