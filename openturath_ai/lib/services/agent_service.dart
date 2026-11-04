@@ -163,14 +163,20 @@ class AgentService {
       // the legacy Google host to the verified Google redirect destination.
       return uri.replace(host: NotebookNavigation.canonicalHost).toString();
     } on FirebaseFunctionsException catch (e) {
-      if (e.code == 'permission-denied') {
-        throw AgentAccessException(
-          'permission-denied',
-          e.message ?? Loc.tr('ui_5d804a44a9'),
-        );
-      }
+      final details = e.details is Map ? e.details as Map : const {};
+      final reason = details['reason'];
+      final requestId = details['request_id'];
       throw AgentAccessException(
-          e.code, e.message ?? Loc.tr('errServiceUnavailable'));
+        e.code,
+        e.message ?? Loc.tr(e.code == 'permission-denied'
+            ? 'ui_5d804a44a9' : 'errServiceUnavailable'),
+        reason: reason is String &&
+                RegExp(r'^[a-z][a-z0-9_]{0,59}$').hasMatch(reason)
+            ? reason : null,
+        requestId: requestId is String &&
+                RegExp(r'^[a-f0-9-]{36}$').hasMatch(requestId)
+            ? requestId : null,
+      );
     } catch (e) {
       if (e is AgentAccessException) rethrow;
       throw AgentAccessException('unknown-error', e.toString());
@@ -211,9 +217,12 @@ class TrialUsage {
 }
 
 class AgentAccessException implements Exception {
-  const AgentAccessException(this.code, this.message);
+  const AgentAccessException(this.code, this.message,
+      {this.reason, this.requestId});
   final String code;
   final String message;
+  final String? reason;
+  final String? requestId;
 
   @override
   String toString() => 'AgentAccessException($code): $message';
