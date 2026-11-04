@@ -9,6 +9,7 @@ import '../core/scholarly_fonts.dart';
 import '../core/app_copy.dart';
 import '../core/login_error_message.dart';
 import '../core/routes.dart';
+import '../core/google_connection_flow.dart';
 import '../core/design/ot_buttons.dart';
 import '../core/design/ot_colors.dart';
 import '../core/design/ot_expressive.dart';
@@ -78,10 +79,13 @@ class _LoginScreenState extends State<LoginScreen> {
         await AuthService.reconcileWebSession(userEmail);
         final sessionReady = await PersistentGoogleSession.instance
             .restoreSessionIfAvailable(userEmail);
-        if (!mounted) return;
+        if (!mounted ||
+            !_authService.hasAuthenticatedSession ||
+            _authService.cachedCurrentUser?.uid != user.uid) return;
         Navigator.pushReplacementNamed(
           context,
           sessionReady ? AppRoutes.dashboard : AppRoutes.googleSessionAuth,
+          arguments: GoogleConnectionPurpose.appEntry,
         );
         return;
       }
