@@ -185,6 +185,24 @@ void main() {
     expect(platform.manager.reads, 0);
   });
 
+  test('released ownership cannot become ready after a delayed restore', () async {
+    SharedPreferences.setMockInitialValues({
+      ownerKey: accountA,
+      verifiedOwnerKey: accountA,
+    });
+    final gate = Completer<void>();
+    platform.manager.readGate = gate;
+    final result = session.restoreSessionIfAvailable(accountA);
+    await Future<void>.delayed(Duration.zero);
+    expect(platform.manager.reads, 1);
+    await session.releaseOwnership();
+    gate.complete();
+    expect(await result, false);
+    final prefs = await SharedPreferences.getInstance();
+    expect(prefs.getBool('google_session_ready'), false);
+    expect(prefs.getString(verifiedOwnerKey), isNull);
+  });
+
   test('legacy owner requires identity verification without deleting cookies',
       () async {
     SharedPreferences.setMockInitialValues({

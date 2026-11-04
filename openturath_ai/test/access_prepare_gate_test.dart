@@ -26,13 +26,14 @@ Widget _host(Future<bool> Function()? ready, void Function(bool) onBuild) =>
 void main() {
   setUp(() => AppConfig.localeNotifier.value = 'id');
 
-  testWidgets('tanpa pemeriksaan kesiapan, penahan berlaku penuh 30 detik',
+  testWidgets('tanpa pemeriksaan kesiapan, timer tidak mengarang status siap',
       (tester) async {
     await tester.pumpWidget(_host(null, (_) {}));
     await tester.pump(const Duration(seconds: 29));
     expect(find.textContaining('TUNGGU'), findsOneWidget);
     await tester.pump(const Duration(seconds: 2));
-    expect(find.text('SIAP'), findsOneWidget);
+    expect(find.text('SIAP'), findsNothing);
+    expect(find.text('SELESAI TANPA KONFIRMASI'), findsOneWidget);
   });
 
   testWidgets(
