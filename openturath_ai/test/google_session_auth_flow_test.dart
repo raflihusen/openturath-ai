@@ -58,9 +58,10 @@ void main() {
     );
 
     final login = Uri.parse(loginUrl!);
-    // Reuse an existing Google session before offering InteractiveLogin.
-    expect(login.host, 'notebook.google.com');
-    expect(login.path, '/');
+    // App onboarding returns from Google without bootstrapping NotebookLM.
+    expect(login.host, 'accounts.google.com');
+    expect(login.queryParameters['continue'], 'https://myaccount.google.com/');
+    expect(find.text('Masuk ke OpenTurath'), findsOneWidget);
 
     // Verifikasi webview placeholder ter-mount
     expect(find.byKey(const Key('mock_webview')), findsOneWidget);
