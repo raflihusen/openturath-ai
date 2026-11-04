@@ -25,18 +25,26 @@ Matcher _accessError(String code) =>
     isA<AgentAccessException>().having((error) => error.code, 'code', code);
 
 void main() {
-  test('server access reasons survive transport without copying private details', () async {
-    final gateway = _Gateway(error: FirebaseFunctionsException(
-      code: 'failed-precondition', message: 'Preparing access',
-      details: {'reason': 'access_provisioning',
+  test(
+      'server access reasons survive transport without copying private details',
+      () async {
+    final gateway = _Gateway(
+        error: FirebaseFunctionsException(
+      code: 'failed-precondition',
+      message: 'Preparing access',
+      details: {
+        'reason': 'access_provisioning',
         'request_id': '11111111-2222-4333-8444-555555555555',
-        'email': 'private@example.invalid', 'token': 'not-a-diagnostic-field'},
+        'email': 'private@example.invalid',
+        'token': 'not-a-diagnostic-field'
+      },
     ));
-    await expectLater(AgentService(functions: gateway).getAgentUrl('fiqh_syafii'),
-      throwsA(isA<AgentAccessException>()
-        .having((dynamic e) => e.reason, 'reason', 'access_provisioning')
-        .having((dynamic e) => e.requestId, 'requestId',
-          '11111111-2222-4333-8444-555555555555')));
+    await expectLater(
+        AgentService(functions: gateway).getAgentUrl('fiqh_syafii'),
+        throwsA(isA<AgentAccessException>()
+            .having((dynamic e) => e.reason, 'reason', 'access_provisioning')
+            .having((dynamic e) => e.requestId, 'requestId',
+                '11111111-2222-4333-8444-555555555555')));
   });
   // Synthetic ID: this suite must never depend on a production notebook.
   const path = '/notebook/00000000-0000-4000-8000-000000000001';

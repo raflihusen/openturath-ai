@@ -96,9 +96,8 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
   // Try the existing WebKit session before asking Google to sign in again.
   // A valid legacy session can establish verified ownership without replaying
   // cookies or forcing InteractiveLogin; an absent session uses the fallback.
-  String get _initialSessionUrl => _isAppEntry
-      ? _targetLoginUrl
-      : '${NotebookNavigation.canonicalOrigin}/';
+  String get _initialSessionUrl =>
+      _isAppEntry ? _targetLoginUrl : '${NotebookNavigation.canonicalOrigin}/';
 
   bool _isCurrentVerification(int epoch) =>
       mounted &&
@@ -406,8 +405,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
 
   /// Account settings after sign-in can return to the app immediately. This
   /// grants no NotebookLM ownership and never writes Google readiness markers.
-  Future<void> _checkApplicationEntry(
-      InAppWebViewController controller) async {
+  Future<void> _checkApplicationEntry(InAppWebViewController controller) async {
     if (!identical(controller.platform, _webController?.platform) ||
         !_isCurrentVerification(_connectionEpoch) ||
         _isCheckingAccount ||
@@ -636,7 +634,8 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
   /// dapat membacanya, sehingga keputusan tidak boleh didasarkan padanya.
   Future<bool?> _hasGoogleSession() async {
     try {
-      return await PersistentGoogleSession.instance.hasLiveSession(_webController);
+      return await PersistentGoogleSession.instance
+          .hasLiveSession(_webController);
     } catch (_) {
       return null;
     }
@@ -975,8 +974,9 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
                     onPressed: _retryVerification,
                     child: Text(Loc.tr('tryAgain'))),
                 TextButton(
-                    onPressed:
-                        _isAppEntry ? _enterApplication : _confirmCancelConnection,
+                    onPressed: _isAppEntry
+                        ? _enterApplication
+                        : _confirmCancelConnection,
                     child: Text(Loc.tr(_isAppEntry
                         ? 'enterOpenTurath'
                         : 'cancelGoogleConnectionAction'))),
@@ -1081,11 +1081,13 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
                   ),
                 ),
               ),
-              if (!_isAppEntry) IconButton(
-                tooltip: Loc.tr('cancelSignIn'),
-                icon: Icon(Icons.close_rounded, size: 20, color: textSecondary),
-                onPressed: _confirmCancelConnection,
-              ),
+              if (!_isAppEntry)
+                IconButton(
+                  tooltip: Loc.tr('cancelSignIn'),
+                  icon:
+                      Icon(Icons.close_rounded, size: 20, color: textSecondary),
+                  onPressed: _confirmCancelConnection,
+                ),
               const SizedBox(width: 4),
             ],
             bottom: PreferredSize(
@@ -1320,10 +1322,11 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
                                         },
                                         // Proses halaman mati: muat ulang agar pengguna
                                         // tidak tertinggal di layar kosong.
-                                        onRenderProcessGone: (controller, detail) =>
-                                            controller.reload(),
-                                        onWebContentProcessDidTerminate: (controller) =>
-                                            controller.reload(),
+                                        onRenderProcessGone:
+                                            (controller, detail) =>
+                                                controller.reload(),
+                                        onWebContentProcessDidTerminate:
+                                            (controller) => controller.reload(),
                                         onReceivedError:
                                             (controller, request, error) {
                                           debugPrint(

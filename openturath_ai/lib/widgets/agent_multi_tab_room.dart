@@ -1338,8 +1338,11 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
         session.isGooglePermissionError = true;
         session.isPaywallRequired = false;
         session.isTimeoutError = false;
-        session.failure = RoomFailure(stage: 'room-load', code: 'google-permission',
-            agentId: session.agent.id, attemptId: session.diagnosticAttemptId);
+        session.failure = RoomFailure(
+            stage: 'room-load',
+            code: 'google-permission',
+            agentId: session.agent.id,
+            attemptId: session.diagnosticAttemptId);
         session.errorMessage = Loc.tr('roomGooglePermissionDetail');
         AuthFailureReporter.reportOnce(
             stage: 'room-load', code: 'google-permission');
@@ -1361,8 +1364,8 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
       session.isGoogleAuthPage = true;
       session.errorMessage = null;
       session.failure = null;
-      TelemetryService.instance.leaveBreadcrumb('google_session_required',
-          category: 'auth');
+      TelemetryService.instance
+          .leaveBreadcrumb('google_session_required', category: 'auth');
     });
   }
 
@@ -1396,10 +1399,13 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
                     : 'load-failed';
     String? page;
     try {
-      page = (await session.webController?.getUrl()
-              .timeout(const Duration(seconds: 2)))?.toString();
+      page = (await session.webController
+              ?.getUrl()
+              .timeout(const Duration(seconds: 2)))
+          ?.toString();
     } catch (_) {}
-    if (DiagnosticReportService.safePage(page) == 'unknown') page = session.resolvedUrl;
+    if (DiagnosticReportService.safePage(page) == 'unknown')
+      page = session.resolvedUrl;
     if (!mounted) return;
     await submitDiagnosticFromUi(
       context,
@@ -1471,8 +1477,10 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
             widget.session.isWebLoading = false;
             widget.session.isSessionReady = false;
             widget.session.isTimeoutError = true;
-            widget.session.failure = RoomFailure(stage: 'composer-ready',
-                code: 'not-ready-timeout', agentId: widget.session.agent.id,
+            widget.session.failure = RoomFailure(
+                stage: 'composer-ready',
+                code: 'not-ready-timeout',
+                agentId: widget.session.agent.id,
                 attemptId: widget.session.diagnosticAttemptId);
             widget.session.errorMessage = Loc.tr('roomNotReadyBody');
             AuthFailureReporter.reportOnce(
@@ -1624,7 +1632,8 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
       session.diagnosticAttemptId = newDiagnosticId();
     });
     TelemetryService.instance.leaveBreadcrumb(
-        'agent_url_requested:${session.agent.id}', category: 'room');
+        'agent_url_requested:${session.agent.id}',
+        category: 'room');
 
     if (_authService.currentUser == null) {
       await _authService.restoreSession();
@@ -1647,8 +1656,8 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
         final googleReady = await PersistentGoogleSession.instance
             .restoreSessionIfAvailable(email)
             .timeout(const Duration(seconds: 3), onTimeout: () => false);
-        final verifiedUid =
-            _authService.currentUser?.uid ?? _authService.cachedCurrentUser?.uid;
+        final verifiedUid = _authService.currentUser?.uid ??
+            _authService.cachedCurrentUser?.uid;
         if (!mounted || verifiedUid != openingUid) return;
         setState(() {
           session.resolvedUrl = url;
@@ -1675,13 +1684,16 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
       if (!mounted || currentUid != openingUid) {
         return;
       }
-      session.failure = RoomFailure(stage: 'agent-url',
+      session.failure = RoomFailure(
+          stage: 'agent-url',
           code: e is AgentAccessException ? e.code : e.runtimeType.toString(),
           reason: e is AgentAccessException ? e.reason : null,
           requestId: e is AgentAccessException ? e.requestId : null,
-          agentId: session.agent.id, attemptId: session.diagnosticAttemptId);
+          agentId: session.agent.id,
+          attemptId: session.diagnosticAttemptId);
       TelemetryService.instance.leaveBreadcrumb(
-          'agent_url_failed:${session.failure!.code}', category: 'room');
+          'agent_url_failed:${session.failure!.code}',
+          category: 'room');
 
       final user = _authService.cachedCurrentUser;
       final isVip = user?.isVip == true;
@@ -1692,20 +1704,24 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
       // Paywall HANYA aktif jika server eksplisit menolak hak akses ('permission-denied')
       // DAN pengguna memang bukan VIP serta tidak memiliki akses aktif ke modul ini.
       final isPaywall = !isVip &&
-          e is AgentAccessException && e.code == 'permission-denied' &&
+          e is AgentAccessException &&
+          e.code == 'permission-denied' &&
           (e.reason == 'entitlement_required' ||
               e.reason == 'entitlement_expired' ||
               (e.reason == null && !hasAgentAccess));
 
-      final isAuthError = e is AgentAccessException && e.code == 'unauthenticated';
-      final reasonKey = e is AgentAccessException ? const {
-        'access_provisioning': 'roomPreparing',
-        'legacy_review': 'roomLegacyReview',
-        'notebook_unavailable': 'roomNotebookUnavailable',
-        'identity_mismatch': 'roomVerifiedEmailRequired',
-        'app_update_required': 'roomAppUpdateRequired',
-        'request_rate_limited': 'roomRequestLimited',
-      }[e.reason] : null;
+      final isAuthError =
+          e is AgentAccessException && e.code == 'unauthenticated';
+      final reasonKey = e is AgentAccessException
+          ? const {
+              'access_provisioning': 'roomPreparing',
+              'legacy_review': 'roomLegacyReview',
+              'notebook_unavailable': 'roomNotebookUnavailable',
+              'identity_mismatch': 'roomVerifiedEmailRequired',
+              'app_update_required': 'roomAppUpdateRequired',
+              'request_rate_limited': 'roomRequestLimited',
+            }[e.reason]
+          : null;
 
       setState(() {
         session.isUrlLoading = false;
@@ -1716,15 +1732,15 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
                 ? Loc.tr('roomAuthDisconnected')
                 : reasonKey != null
                     ? Loc.tr(reasonKey)
-                : e is AgentAccessException &&
-                        const {
-                          'failed-precondition',
-                          'resource-exhausted',
-                          'unavailable',
-                          'deadline-exceeded',
-                        }.contains(e.code)
-                    ? e.message
-                    : '${Loc.tr('roomConnectFailed')}${e is AgentAccessException && RegExp(r'^[a-z-]{3,30}$').hasMatch(e.code) ? ' (${e.code})' : ''}';
+                    : e is AgentAccessException &&
+                            const {
+                              'failed-precondition',
+                              'resource-exhausted',
+                              'unavailable',
+                              'deadline-exceeded',
+                            }.contains(e.code)
+                        ? e.message
+                        : '${Loc.tr('roomConnectFailed')}${e is AgentAccessException && RegExp(r'^[a-z-]{3,30}$').hasMatch(e.code) ? ' (${e.code})' : ''}';
       });
     }
   }
@@ -1826,10 +1842,12 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
           retryIcon: Icons.login_rounded,
           onRetry: () async {
             final connected = await Navigator.pushNamed(
-              context, AppRoutes.googleSessionAuth,
+              context,
+              AppRoutes.googleSessionAuth,
               arguments: GoogleConnectionPurpose.aiRoom,
             );
-            if (!mounted || !GoogleConnectionResult.canResumeAi(connected)) return;
+            if (!mounted || !GoogleConnectionResult.canResumeAi(connected))
+              return;
             if (session.resolvedUrl != null) {
               setState(() {
                 session.errorMessage = null;
@@ -1862,10 +1880,12 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
             // sesi rusak: cookie tidak dihapus di luar Log Out (Aturan #8).
             if (context.mounted) {
               final connected = await Navigator.pushNamed(
-                context, AppRoutes.googleSessionAuth,
+                context,
+                AppRoutes.googleSessionAuth,
                 arguments: GoogleConnectionPurpose.aiRoom,
               );
-              if (!mounted || !GoogleConnectionResult.canResumeAi(connected)) return;
+              if (!mounted || !GoogleConnectionResult.canResumeAi(connected))
+                return;
               if (session.resolvedUrl != null) {
                 setState(() {
                   session.errorMessage = null;
@@ -1980,9 +2000,11 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
               AuthFailureReporter.reportOnce(
                   stage: 'room-load',
                   code: 'load-${error.type.toNativeValue() ?? 'unknown'}');
-              session.failure = RoomFailure(stage: 'web-document',
+              session.failure = RoomFailure(
+                  stage: 'web-document',
                   code: 'load-${error.type.toNativeValue() ?? 'unknown'}',
-                  agentId: session.agent.id, attemptId: session.diagnosticAttemptId,
+                  agentId: session.agent.id,
+                  attemptId: session.diagnosticAttemptId,
                   pageScheme: request.url.uriValue.scheme);
               _readinessTimer?.cancel();
               setState(() {
@@ -2006,8 +2028,10 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
                 } else if (code != null && code >= 400) {
                   AuthFailureReporter.reportOnce(
                       stage: 'room-load', code: 'http-$code');
-                  session.failure = RoomFailure(stage: 'web-document',
-                      code: 'http-$code', agentId: session.agent.id,
+                  session.failure = RoomFailure(
+                      stage: 'web-document',
+                      code: 'http-$code',
+                      agentId: session.agent.id,
                       attemptId: session.diagnosticAttemptId,
                       pageScheme: requestUri.scheme);
                   _readinessTimer?.cancel();

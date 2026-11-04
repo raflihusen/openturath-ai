@@ -149,11 +149,12 @@ void main() {
         return Scaffold(
           body: TextButton(
             onPressed: () async {
-              final result = await Navigator.of(context).push<GoogleConnectionResult>(
+              final result =
+                  await Navigator.of(context).push<GoogleConnectionResult>(
                 MaterialPageRoute(
                     builder: (_) => const GoogleSessionAuthScreen(
-                      purpose: GoogleConnectionPurpose.aiRoom,
-                    )),
+                          purpose: GoogleConnectionPurpose.aiRoom,
+                        )),
               );
               routeResults.add(result);
             },

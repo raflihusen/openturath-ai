@@ -7,10 +7,15 @@ import 'package:openturath_ai/services/auth_failure_reporter.dart';
 import 'package:openturath_ai/services/diagnostic_report_service.dart';
 
 void main() {
-  RoomFailure incident() => RoomFailure(stage: 'agent-url', code: 'unavailable',
-      agentId: 'fiqh_syafii', attemptId: newDiagnosticId());
+  RoomFailure incident() => RoomFailure(
+      stage: 'agent-url',
+      code: 'unavailable',
+      agentId: 'fiqh_syafii',
+      attemptId: newDiagnosticId());
 
-  test('identitas laporan hanya dikirim sebagai header dan insiden tidak diduplikasi', () async {
+  test(
+      'identitas laporan hanya dikirim sebagai header dan insiden tidak diduplikasi',
+      () async {
     var calls = 0;
     final failure = incident();
     final client = MockClient((request) async {
@@ -21,50 +26,80 @@ void main() {
       return http.Response('{"ref":"OT-A1B2C3"}', 200);
     });
     for (var i = 0; i < 2; i++) {
-      expect(await DiagnosticReportService.send(stage: 's', code: 'c',
-          failure: failure, client: client,
-          authToken: () async => 'fixture-private-token'), 'OT-A1B2C3');
+      expect(
+          await DiagnosticReportService.send(
+              stage: 's',
+              code: 'c',
+              failure: failure,
+              client: client,
+              authToken: () async => 'fixture-private-token'),
+          'OT-A1B2C3');
     }
     expect(calls, 1);
     client.close();
   });
 
-  test('pengiriman gagal boleh dicoba ulang; token gagal tetap dapat melapor anonim', () async {
+  test(
+      'pengiriman gagal boleh dicoba ulang; token gagal tetap dapat melapor anonim',
+      () async {
     var calls = 0;
     final failure = incident();
     final client = MockClient((request) async {
       expect(request.headers.containsKey('Authorization'), false);
-      return ++calls == 1 ? http.Response('', 503)
+      return ++calls == 1
+          ? http.Response('', 503)
           : http.Response('{"ref":"OT-C3B2A1"}', 200);
     });
     Future<String?> token() async => throw StateError('unavailable');
-    expect(await DiagnosticReportService.send(stage: 's', code: 'c',
-        failure: failure, client: client, authToken: token), isNull);
-    expect(await DiagnosticReportService.send(stage: 's', code: 'c',
-        failure: failure, client: client, authToken: token), 'OT-C3B2A1');
+    expect(
+        await DiagnosticReportService.send(
+            stage: 's',
+            code: 'c',
+            failure: failure,
+            client: client,
+            authToken: token),
+        isNull);
+    expect(
+        await DiagnosticReportService.send(
+            stage: 's',
+            code: 'c',
+            failure: failure,
+            client: client,
+            authToken: token),
+        'OT-C3B2A1');
     expect(calls, 2);
     client.close();
   });
 
   test('metadata insiden menolak nilai token yang menyerupai identifier', () {
-    final failure = RoomFailure(stage: 'room-load', code: 'load-failed',
-        agentId: 'fiqh_syafii', attemptId: 'private.token.value',
-        requestId: 'private.token.value', reason: 'private.token.value',
-        eventId: 'private.token.value', pageScheme: 'private.token.value');
-    expect(jsonEncode(failure.metadata), isNot(contains('private.token.value')));
+    final failure = RoomFailure(
+        stage: 'room-load',
+        code: 'load-failed',
+        agentId: 'fiqh_syafii',
+        attemptId: 'private.token.value',
+        requestId: 'private.token.value',
+        reason: 'private.token.value',
+        eventId: 'private.token.value',
+        pageScheme: 'private.token.value');
+    expect(
+        jsonEncode(failure.metadata), isNot(contains('private.token.value')));
   });
 
-  test('laporan menyebut skema dan nomor build agar versi kejadian tidak tertukar', () {
-    final payload = DiagnosticReportService.payload(stage: 'agent-url', code: 'unavailable');
+  test(
+      'laporan menyebut skema dan nomor build agar versi kejadian tidak tertukar',
+      () {
+    final payload = DiagnosticReportService.payload(
+        stage: 'agent-url', code: 'unavailable');
     expect(payload['schema_version'], 2);
     expect(payload.containsKey('buildNumber'), isTrue);
     expect(payload['edition'], 'standard');
   });
 
   test('alamat diagnostik membuang skema nonweb dan email di dalam path', () {
-    expect(DiagnosticReportService.safePage('javascript://host/private'), 'unknown');
+    expect(DiagnosticReportService.safePage('javascript://host/private'),
+        'unknown');
     final page = DiagnosticReportService.safePage(
-      'https://accounts.google.com/user/reader%40example.invalid?token=secret');
+        'https://accounts.google.com/user/reader%40example.invalid?token=secret');
     expect(page.contains('reader'), isFalse);
     expect(page.contains('secret'), isFalse);
   });
@@ -101,9 +136,7 @@ void main() {
         sender: (u, b) async => http.Response('{"ref":"OT-1A2B3C"}', 200));
     expect(ok, 'OT-1A2B3C');
     final bad = await DiagnosticReportService.send(
-        stage: 's',
-        code: 'c',
-        sender: (u, b) async => http.Response('', 429));
+        stage: 's', code: 'c', sender: (u, b) async => http.Response('', 429));
     expect(bad, isNull);
     final boom = await DiagnosticReportService.send(
         stage: 's', code: 'c', sender: (u, b) async => throw Exception('x'));

@@ -113,7 +113,6 @@ class _WebViewPlatform extends InAppWebViewPlatform {
   }
 }
 
-
 class _UrlService extends AgentService {
   _UrlService([this.error]);
   final AgentAccessException? error;
@@ -123,11 +122,13 @@ class _UrlService extends AgentService {
     return 'https://notebook.google.com/notebook/00000000-0000-4000-8000-000000000001';
   }
 }
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   final platform = _WebViewPlatform();
   final manager = AgentSessionManager.instance;
-  final agent = AgentModel.defaultAgents.firstWhere((a) => a.id == 'fiqh_syafii');
+  final agent =
+      AgentModel.defaultAgents.firstWhere((a) => a.id == 'fiqh_syafii');
   setUp(() {
     InAppWebViewPlatform.instance = platform;
     SharedPreferences.setMockInitialValues({});
@@ -138,8 +139,13 @@ void main() {
       ..deletions = 0;
     platform.lastView = null;
     manager.closeAll();
-    AuthService.previewUser = UserModel(uid: 'reader', name: 'Reader',
-      email: _email, photoUrl: '', plan: 'trial', questionsUsed: 0);
+    AuthService.previewUser = UserModel(
+        uid: 'reader',
+        name: 'Reader',
+        email: _email,
+        photoUrl: '',
+        plan: 'trial',
+        questionsUsed: 0);
   });
   tearDown(() {
     manager.closeAll();
@@ -147,21 +153,27 @@ void main() {
   });
   Future<void> open(WidgetTester tester, {AgentAccessException? error}) async {
     manager.openAgent(agent, user: AuthService.previewUser);
-    await tester.pumpWidget(MaterialApp(
-      home: AgentMultiTabRoom(agentService: _UrlService(error))));
+    await tester.pumpWidget(
+        MaterialApp(home: AgentMultiTabRoom(agentService: _UrlService(error))));
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 350));
   }
+
   Future<void> close(WidgetTester tester) async {
     await tester.pumpWidget(const SizedBox());
     await tester.pump(const Duration(seconds: 4));
   }
+
   for (final vip in [false, true]) {
-    testWidgets((vip ? 'VIP' : 'ordinary') + ' account verifies Google only before opening AI',
-        (tester) async {
+    testWidgets(
+        (vip ? 'VIP' : 'ordinary') +
+            ' account verifies Google only before opening AI', (tester) async {
       if (vip) {
         AuthService.previewUser = UserModel.fromMap('vip', {
-          'email': _email, 'name': 'VIP Reader', 'is_vip': true, 'role': 'vip',
+          'email': _email,
+          'name': 'VIP Reader',
+          'is_vip': true,
+          'role': 'vip',
         });
       }
       try {
@@ -176,7 +188,8 @@ void main() {
       }
     });
   }
-  testWidgets('matching verified owner opens AI without another account connection',
+  testWidgets(
+      'matching verified owner opens AI without another account connection',
       (tester) async {
     SharedPreferences.setMockInitialValues({
       'webview_session_owner': _email,
@@ -195,11 +208,15 @@ void main() {
   testWidgets('failure before a URL reaches the report with the original cause',
       (tester) async {
     try {
-      await open(tester, error: const AgentAccessException(
-          'failed-precondition', 'Preparing access', reason: 'access_provisioning',
-          requestId: '11111111-2222-4333-8444-555555555555'));
-      final payload = DiagnosticReportService.payload(stage: 'room-load',
-          code: 'load-failed', failure: manager.activeTab!.failure);
+      await open(tester,
+          error: const AgentAccessException(
+              'failed-precondition', 'Preparing access',
+              reason: 'access_provisioning',
+              requestId: '11111111-2222-4333-8444-555555555555'));
+      final payload = DiagnosticReportService.payload(
+          stage: 'room-load',
+          code: 'load-failed',
+          failure: manager.activeTab!.failure);
       expect(payload['stage'], 'agent-url');
       expect(payload['code'], 'failed-precondition');
       expect(payload['reason'], 'access_provisioning');
@@ -212,17 +229,29 @@ void main() {
   });
 
   for (final vip in [false, true]) {
-    testWidgets('server entitlement decision preserves VIP=$vip', (tester) async {
+    testWidgets('server entitlement decision preserves VIP=$vip',
+        (tester) async {
       AuthService.previewUser = UserModel.fromMap('reader', {
-        'email': _email, 'name': 'Reader', 'is_vip': vip,
-        'entitlements': {'fiqh_syafii': {'status': 'active', 'plan': 'yearly',
-          'expiry': DateTime.now().add(const Duration(days: 365)).toIso8601String()}},
+        'email': _email,
+        'name': 'Reader',
+        'is_vip': vip,
+        'entitlements': {
+          'fiqh_syafii': {
+            'status': 'active',
+            'plan': 'yearly',
+            'expiry':
+                DateTime.now().add(const Duration(days: 365)).toIso8601String()
+          }
+        },
       });
       try {
-        await open(tester, error: const AgentAccessException('permission-denied',
-            'Entitlement required', reason: 'entitlement_required'));
+        await open(tester,
+            error: const AgentAccessException(
+                'permission-denied', 'Entitlement required',
+                reason: 'entitlement_required'));
         expect(manager.activeTab!.isPaywallRequired, !vip);
-        expect(find.text(Loc.tr('roomSeePlans')), vip ? findsNothing : findsOneWidget);
+        expect(find.text(Loc.tr('roomSeePlans')),
+            vip ? findsNothing : findsOneWidget);
         expect(platform.cookies.deletions, 0);
       } finally {
         await close(tester);

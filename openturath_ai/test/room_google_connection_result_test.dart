@@ -31,7 +31,9 @@ void main() {
   });
   for (final permission in [false, true]) {
     for (final result in <Object?>[
-      false, null, GoogleConnectionResult.deferred,
+      false,
+      null,
+      GoogleConnectionResult.deferred,
       GoogleConnectionResult.appEntered,
     ]) {
       testWidgets(
@@ -54,11 +56,11 @@ void main() {
             AppRoutes.googleSessionAuth: (context) {
               requestedPurpose = ModalRoute.of(context)?.settings.arguments;
               return Scaffold(
-                  body: TextButton(
-                    onPressed: () => Navigator.pop(context, result),
-                    child: const Text('Postpone connection'),
-                  ),
-                );
+                body: TextButton(
+                  onPressed: () => Navigator.pop(context, result),
+                  child: const Text('Postpone connection'),
+                ),
+              );
             },
           },
         ));

@@ -106,7 +106,8 @@ class PersistentGoogleSession {
       final live = await hasLiveSession(null);
       if (epoch != _ownershipEpoch ||
           prefs.getString(_ownerKey)?.trim().toLowerCase() != cleanEmail ||
-          prefs.getString(verifiedOwnerKey)?.trim().toLowerCase() != cleanEmail) {
+          prefs.getString(verifiedOwnerKey)?.trim().toLowerCase() !=
+              cleanEmail) {
         return false;
       }
       if (live) {

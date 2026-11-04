@@ -34,7 +34,6 @@ class AgentService {
     _lastAgentsFetch = null;
   }
 
-
   /// Whitelist peluncuran perdana bawaan: Hanya Fikih Tahawwulat & Fikih Syafi'i (dan subagennya).
   static const defaultLaunchActiveIds = <String>{
     'fiqh_tahawwulat',
@@ -102,9 +101,12 @@ class AgentService {
                 .doc('agents')
                 .get(const GetOptions(source: Source.serverAndCache));
             final raw = doc.data()?['active_agent_ids'];
-            if (doc.exists && raw is List) ids = raw.whereType<String>().toSet();
+            if (doc.exists && raw is List)
+              ids = raw.whereType<String>().toSet();
           }
-          if (generation < _lastAppliedGeneration || ids == null || ids.isEmpty) {
+          if (generation < _lastAppliedGeneration ||
+              ids == null ||
+              ids.isEmpty) {
             return;
           }
           _lastAppliedGeneration = generation;
@@ -168,14 +170,18 @@ class AgentService {
       final requestId = details['request_id'];
       throw AgentAccessException(
         e.code,
-        e.message ?? Loc.tr(e.code == 'permission-denied'
-            ? 'ui_5d804a44a9' : 'errServiceUnavailable'),
+        e.message ??
+            Loc.tr(e.code == 'permission-denied'
+                ? 'ui_5d804a44a9'
+                : 'errServiceUnavailable'),
         reason: reason is String &&
                 RegExp(r'^[a-z][a-z0-9_]{0,59}$').hasMatch(reason)
-            ? reason : null,
+            ? reason
+            : null,
         requestId: requestId is String &&
                 RegExp(r'^[a-f0-9-]{36}$').hasMatch(requestId)
-            ? requestId : null,
+            ? requestId
+            : null,
       );
     } catch (e) {
       if (e is AgentAccessException) rethrow;

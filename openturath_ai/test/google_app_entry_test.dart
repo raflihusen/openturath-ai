@@ -116,7 +116,6 @@ class _WebViewPlatform extends InAppWebViewPlatform {
   }
 }
 
-
 class _AppAuth extends AuthService {
   _AppAuth(this.user);
   UserModel? user;
@@ -145,8 +144,12 @@ void main() {
       ..reading = false;
     platform.lastView = null;
     AuthService.previewUser = UserModel(
-      uid: 'app-entry-reader', name: 'Reader', email: _email,
-      photoUrl: '', plan: 'trial', questionsUsed: 0);
+        uid: 'app-entry-reader',
+        name: 'Reader',
+        email: _email,
+        photoUrl: '',
+        plan: 'trial',
+        questionsUsed: 0);
   });
   tearDown(() => AuthService.previewUser = null);
 
@@ -155,23 +158,27 @@ void main() {
     await tester.pumpWidget(MaterialApp(
       home: GoogleSessionAuthScreen(authService: authService),
       builder: (context, child) => Directionality(
-        textDirection: AppConfig.localeNotifier.value == 'ar'
-            ? TextDirection.rtl : TextDirection.ltr, child: child!),
+          textDirection: AppConfig.localeNotifier.value == 'ar'
+              ? TextDirection.rtl
+              : TextDirection.ltr,
+          child: child!),
       routes: {
-        AppRoutes.dashboard: (_) => const Scaffold(body: Text('OpenTurath home')),
-        AppRoutes.login: (_) => const Scaffold(body: Text('OpenTurath sign in')),
+        AppRoutes.dashboard: (_) =>
+            const Scaffold(body: Text('OpenTurath home')),
+        AppRoutes.login: (_) =>
+            const Scaffold(body: Text('OpenTurath sign in')),
       },
     ));
     final native = _Controller();
     platform.lastView!.params.onWebViewCreated!(
-      InAppWebViewController.fromPlatform(platform: native));
+        InAppWebViewController.fromPlatform(platform: native));
     return InAppWebViewController.fromPlatform(platform: native);
   }
 
-  Future<void> finishLoad(WidgetTester tester,
-      InAppWebViewController controller) async {
+  Future<void> finishLoad(
+      WidgetTester tester, InAppWebViewController controller) async {
     platform.lastView!.params.onLoadStop!(
-      controller, (controller.platform as _Controller).currentUrl);
+        controller, (controller.platform as _Controller).currentUrl);
     await tester.pump();
     await tester.pump(const Duration(seconds: 1));
     await tester.pump(const Duration(milliseconds: 350));
@@ -184,7 +191,8 @@ void main() {
 
   for (final locale in ['id', 'en', 'ar']) {
     for (final width in [320.0, 390.0, 1280.0]) {
-      testWidgets('app entry action fits $locale at width $width', (tester) async {
+      testWidgets('app entry action fits $locale at width $width',
+          (tester) async {
         AppConfig.localeNotifier.value = locale;
         tester.view.physicalSize = Size(width, 800);
         tester.view.devicePixelRatio = 1;
@@ -193,7 +201,8 @@ void main() {
         try {
           await open(tester);
           expect(tester.takeException(), isNull);
-          final action = find.descendant(of: find.byType(AppBar),
+          final action = find.descendant(
+              of: find.byType(AppBar),
               matching: find.text(Loc.tr('enterOpenTurath')));
           expect(action, findsOneWidget);
           final bounds = tester.getRect(action);
@@ -241,7 +250,7 @@ void main() {
       (controller.platform as _Controller).currentUrl =
           WebUri('https://accounts.google.com/InteractiveLogin');
       await tester.tap(find.descendant(
-        of: find.byType(AppBar), matching: find.byType(TextButton)));
+          of: find.byType(AppBar), matching: find.byType(TextButton)));
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 350));
       expect(find.text('OpenTurath home'), findsOneWidget);
@@ -259,7 +268,7 @@ void main() {
     try {
       (controller.platform as _Controller).failUrlRead = true;
       await tester.tap(find.descendant(
-        of: find.byType(AppBar), matching: find.byType(TextButton)));
+          of: find.byType(AppBar), matching: find.byType(TextButton)));
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 350));
       expect(find.text('OpenTurath home'), findsOneWidget);
@@ -269,7 +278,8 @@ void main() {
     }
   });
 
-  testWidgets('Google cookies and a cached profile cannot replace app authentication',
+  testWidgets(
+      'Google cookies and a cached profile cannot replace app authentication',
       (tester) async {
     final auth = _AppAuth(AuthService.previewUser)..authenticated = false;
     final controller = await open(tester, authService: auth);
@@ -289,7 +299,8 @@ void main() {
   });
 
   for (final signOut in [false, true]) {
-    testWidgets('late cookie completion cannot enter after ${signOut ? 'logout' : 'account change'}',
+    testWidgets(
+        'late cookie completion cannot enter after ${signOut ? 'logout' : 'account change'}',
         (tester) async {
       final auth = _AppAuth(AuthService.previewUser);
       final gate = Completer<void>();
@@ -305,8 +316,12 @@ void main() {
         if (signOut) {
           auth.authenticated = false;
         } else {
-          auth.user = UserModel(uid: 'another-reader', name: 'Other',
-              email: 'other@example.invalid', photoUrl: '', plan: 'trial',
+          auth.user = UserModel(
+              uid: 'another-reader',
+              name: 'Other',
+              email: 'other@example.invalid',
+              photoUrl: '',
+              plan: 'trial',
               questionsUsed: 0);
         }
         gate.complete();
@@ -323,7 +338,8 @@ void main() {
     });
   }
 
-  testWidgets('late cookie completion is safe after the connection screen closes',
+  testWidgets(
+      'late cookie completion is safe after the connection screen closes',
       (tester) async {
     final gate = Completer<void>();
     platform.cookies.readGate = gate;
@@ -346,7 +362,8 @@ void main() {
     'https://myaccount.google.com.evil.invalid/security',
     'http://myaccount.google.com/security',
   ]) {
-    testWidgets('no automatic completion on challenge or untrusted route: $target',
+    testWidgets(
+        'no automatic completion on challenge or untrusted route: $target',
         (tester) async {
       final controller = await open(tester);
       try {

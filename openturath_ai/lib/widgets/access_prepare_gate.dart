@@ -185,6 +185,6 @@ class _AccessPrepareGateState extends State<AccessPrepareGate> {
   }
 
   @override
-  Widget build(BuildContext context) => widget.builder(context, _left == 0,
-      _left, _panel(context), _left == 0 && _ready);
+  Widget build(BuildContext context) => widget.builder(
+      context, _left == 0, _left, _panel(context), _left == 0 && _ready);
 }

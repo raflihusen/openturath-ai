@@ -22,11 +22,11 @@ class DiagnosticReportService {
     if (uri == null ||
         !const {'http', 'https'}.contains(uri.scheme) ||
         uri.host.isEmpty) return 'unknown';
-    final segments = uri.pathSegments.map((part) =>
-        part.contains('@') ||
-                RegExp(r'(token|password|secret|SID)[=:]', caseSensitive: false)
-                    .hasMatch(part)
-            ? 'REDACTED' : Uri.encodeComponent(part));
+    final segments = uri.pathSegments.map((part) => part.contains('@') ||
+            RegExp(r'(token|password|secret|SID)[=:]', caseSensitive: false)
+                .hasMatch(part)
+        ? 'REDACTED'
+        : Uri.encodeComponent(part));
     final path = '${uri.path.startsWith('/') ? '/' : ''}${segments.join('/')}';
     final host = uri.host.contains(':') ? '[${uri.host}]' : uri.host;
     return '${uri.scheme}://$host${uri.hasPort ? ':${uri.port}' : ''}$path';
@@ -43,12 +43,14 @@ class DiagnosticReportService {
   }) {
     final base = AuthFailureReporter.payload(
         stage: failure?.stage ?? stage,
-        code: failure?.code ?? code, category: category);
+        code: failure?.code ?? code,
+        category: category);
     final crumbs = (breadcrumbs ?? TelemetryService.instance.recentBreadcrumbs)
         .map((c) => {
               'message': TelemetryService.instance
                   .sanitizeData('${c['message'] ?? ''}'),
-              'category': AuthFailureReporter.sanitize('${c['category'] ?? ''}'),
+              'category':
+                  AuthFailureReporter.sanitize('${c['category'] ?? ''}'),
             })
         .toList();
     return {
@@ -79,7 +81,11 @@ class DiagnosticReportService {
     }
     try {
       final body = jsonEncode(payload(
-          stage: stage, code: code, category: category, page: page, flags: flags,
+          stage: stage,
+          code: code,
+          category: category,
+          page: page,
+          flags: flags,
           failure: failure));
       String? token;
       if (sender == null) {
@@ -96,13 +102,15 @@ class DiagnosticReportService {
           (uri, b) => client != null
               ? client.post(uri, headers: headers, body: b)
               : http.post(uri, headers: headers, body: b);
-      final res =
-          await post(Uri.parse(endpoint), body).timeout(const Duration(seconds: 8));
+      final res = await post(Uri.parse(endpoint), body)
+          .timeout(const Duration(seconds: 8));
       if (res.statusCode != 200) return null;
       final ref = (jsonDecode(res.body) as Map)['ref'];
-      if (ref is! String || !RegExp(r'^OT-[0-9A-F]{6}$').hasMatch(ref)) return null;
+      if (ref is! String || !RegExp(r'^OT-[0-9A-F]{6}$').hasMatch(ref))
+        return null;
       if (eventId != null) {
-        if (_sentReferences.length >= 100) _sentReferences.remove(_sentReferences.keys.first);
+        if (_sentReferences.length >= 100)
+          _sentReferences.remove(_sentReferences.keys.first);
         _sentReferences[eventId] = ref;
       }
       return ref;

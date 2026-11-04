@@ -185,7 +185,8 @@ void main() {
     expect(platform.manager.reads, 0);
   });
 
-  test('released ownership cannot become ready after a delayed restore', () async {
+  test('released ownership cannot become ready after a delayed restore',
+      () async {
     SharedPreferences.setMockInitialValues({
       ownerKey: accountA,
       verifiedOwnerKey: accountA,

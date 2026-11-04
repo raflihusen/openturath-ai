@@ -21,7 +21,11 @@ abstract final class GoogleConnectionNavigation {
       return false;
     }
     const authenticationSteps = {
-      'signin', 'challenge', 'reauth', 'rejected', 'intro',
+      'signin',
+      'challenge',
+      'reauth',
+      'rejected',
+      'intro',
     };
     return !uri.pathSegments
         .map((part) => part.toLowerCase())
