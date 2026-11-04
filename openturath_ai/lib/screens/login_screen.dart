@@ -81,7 +81,9 @@ class _LoginScreenState extends State<LoginScreen> {
             .restoreSessionIfAvailable(userEmail);
         if (!mounted ||
             !_authService.hasAuthenticatedSession ||
-            _authService.cachedCurrentUser?.uid != user.uid) return;
+            _authService.cachedCurrentUser?.uid != user.uid) {
+          return;
+        }
         Navigator.pushReplacementNamed(
           context,
           sessionReady ? AppRoutes.dashboard : AppRoutes.googleSessionAuth,

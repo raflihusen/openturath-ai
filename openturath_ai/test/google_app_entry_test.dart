@@ -6,10 +6,8 @@ import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:openturath_ai/core/app_config.dart';
 import 'package:openturath_ai/core/localization.dart';
-import 'package:openturath_ai/models/agent_model.dart';
 import 'package:openturath_ai/models/user_model.dart';
 import 'package:openturath_ai/screens/google_session_auth_screen.dart';
-import 'package:openturath_ai/services/agent_session_manager.dart';
 import 'package:openturath_ai/services/auth_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

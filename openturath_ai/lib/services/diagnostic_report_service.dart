@@ -21,7 +21,9 @@ class DiagnosticReportService {
     final uri = Uri.tryParse(url ?? '');
     if (uri == null ||
         !const {'http', 'https'}.contains(uri.scheme) ||
-        uri.host.isEmpty) return 'unknown';
+        uri.host.isEmpty) {
+      return 'unknown';
+    }
     final segments = uri.pathSegments.map((part) => part.contains('@') ||
             RegExp(r'(token|password|secret|SID)[=:]', caseSensitive: false)
                 .hasMatch(part)
@@ -106,11 +108,13 @@ class DiagnosticReportService {
           .timeout(const Duration(seconds: 8));
       if (res.statusCode != 200) return null;
       final ref = (jsonDecode(res.body) as Map)['ref'];
-      if (ref is! String || !RegExp(r'^OT-[0-9A-F]{6}$').hasMatch(ref))
+      if (ref is! String || !RegExp(r'^OT-[0-9A-F]{6}$').hasMatch(ref)) {
         return null;
+      }
       if (eventId != null) {
-        if (_sentReferences.length >= 100)
+        if (_sentReferences.length >= 100) {
           _sentReferences.remove(_sentReferences.keys.first);
+        }
         _sentReferences[eventId] = ref;
       }
       return ref;

@@ -32,7 +32,7 @@ void main() {
         error: FirebaseFunctionsException(
       code: 'failed-precondition',
       message: 'Preparing access',
-      details: {
+      details: const {
         'reason': 'access_provisioning',
         'request_id': '11111111-2222-4333-8444-555555555555',
         'email': 'private@example.invalid',

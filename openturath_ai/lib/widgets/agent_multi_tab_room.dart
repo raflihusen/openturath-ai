@@ -1404,8 +1404,9 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
               .timeout(const Duration(seconds: 2)))
           ?.toString();
     } catch (_) {}
-    if (DiagnosticReportService.safePage(page) == 'unknown')
+    if (DiagnosticReportService.safePage(page) == 'unknown') {
       page = session.resolvedUrl;
+    }
     if (!mounted) return;
     await submitDiagnosticFromUi(
       context,
@@ -1846,8 +1847,9 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
               AppRoutes.googleSessionAuth,
               arguments: GoogleConnectionPurpose.aiRoom,
             );
-            if (!mounted || !GoogleConnectionResult.canResumeAi(connected))
+            if (!mounted || !GoogleConnectionResult.canResumeAi(connected)) {
               return;
+            }
             if (session.resolvedUrl != null) {
               setState(() {
                 session.errorMessage = null;
@@ -1884,8 +1886,9 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
                 AppRoutes.googleSessionAuth,
                 arguments: GoogleConnectionPurpose.aiRoom,
               );
-              if (!mounted || !GoogleConnectionResult.canResumeAi(connected))
+              if (!mounted || !GoogleConnectionResult.canResumeAi(connected)) {
                 return;
+              }
               if (session.resolvedUrl != null) {
                 setState(() {
                   session.errorMessage = null;

@@ -101,8 +101,9 @@ class AgentService {
                 .doc('agents')
                 .get(const GetOptions(source: Source.serverAndCache));
             final raw = doc.data()?['active_agent_ids'];
-            if (doc.exists && raw is List)
+            if (doc.exists && raw is List) {
               ids = raw.whereType<String>().toSet();
+            }
           }
           if (generation < _lastAppliedGeneration ||
               ids == null ||
