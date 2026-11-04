@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:openturath_ai/core/app_config.dart';
 import 'package:openturath_ai/core/localization.dart';
 import 'package:openturath_ai/core/routes.dart';
+import 'package:openturath_ai/core/google_connection_flow.dart';
 import 'package:openturath_ai/models/agent_model.dart';
 import 'package:openturath_ai/models/user_model.dart';
 import 'package:openturath_ai/services/agent_session_manager.dart';
@@ -29,13 +30,17 @@ void main() {
     AgentSessionManager.instance.closeAll();
   });
   for (final permission in [false, true]) {
-    for (final result in [false, null]) {
+    for (final result in <Object?>[
+      false, null, GoogleConnectionResult.deferred,
+      GoogleConnectionResult.appEntered,
+    ]) {
       testWidgets(
           'Google connection $result preserves ${permission ? 'permission' : 'login'} recovery',
           (tester) async {
         final manager = AgentSessionManager.instance;
         manager.openAgent(AgentModel.defaultAgents.first);
         final session = manager.activeTab!;
+        Object? requestedPurpose;
         session.resolvedUrl = 'https://notebooklm.google.com/notebook/fixture';
         session.isUrlLoading = false;
         session.isWebLoading = false;
@@ -46,18 +51,22 @@ void main() {
         await tester.pumpWidget(MaterialApp(
           home: const AgentMultiTabRoom(),
           routes: {
-            AppRoutes.googleSessionAuth: (context) => Scaffold(
+            AppRoutes.googleSessionAuth: (context) {
+              requestedPurpose = ModalRoute.of(context)?.settings.arguments;
+              return Scaffold(
                   body: TextButton(
                     onPressed: () => Navigator.pop(context, result),
                     child: const Text('Postpone connection'),
                   ),
-                ),
+                );
+            },
           },
         ));
         final retry =
             permission ? Loc.tr('ui_f9d6eb247c') : Loc.tr('roomLoginNow');
         await tester.tap(find.text(retry));
         await tester.pumpAndSettle();
+        expect(requestedPurpose, GoogleConnectionPurpose.aiRoom);
         await tester.tap(find.text('Postpone connection'));
         await tester.pumpAndSettle();
         expect(session.errorMessage, 'fixture requires connection');
