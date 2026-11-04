@@ -578,6 +578,11 @@ const copyCatalog = <String, List<String>>{
     "Continue sign-in",
     "متابعة تسجيل الدخول"
   ],
+  "enterOpenTurath": [
+    "Masuk ke OpenTurath",
+    "Enter OpenTurath",
+    "الدخول إلى أوبن تراث"
+  ],
   "googleSessionUnverified": [
     "Sesi Google belum dapat diverifikasi. Coba lagi atau tekan Lanjutkan setelah akun yang sama selesai masuk. Sesi Anda tidak dihapus.",
     "Your Google session could not be verified yet. Retry or continue after signing in with the same account. Your session has not been cleared.",
