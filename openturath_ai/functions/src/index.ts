@@ -3093,9 +3093,16 @@ export const auditMidtransLedger = functions
 function diagnosticMetadata(body: any): Record<string, string | number> {
   if (Number(body.schema_version) !== 2) return {};
   const result: Record<string, string | number> = {schema_version: 2};
-  for (const key of ["buildNumber", "edition", "agent_id", "reason", "request_id", "attempt_id", "event_id"]) {
+  const patterns: Record<string, RegExp> = {
+    buildNumber: /^\d{1,12}$/, edition: /^(standard|guru)$/,
+    agent_id: /^[a-zA-Z0-9_-]{1,80}$/, reason: /^[a-z][a-z0-9_]{0,59}$/,
+    request_id: /^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/,
+    attempt_id: /^[a-f0-9]{32}$/, event_id: /^[a-f0-9]{32}$/,
+    page_scheme: /^[a-z][a-z0-9+-]{0,31}$/,
+  };
+  for (const [key, pattern] of Object.entries(patterns)) {
     const value = String(body[key] ?? "").trim();
-    if (value) result[key] = AUTH_FAILURE_FIELD.test(value) ? value : "unknown";
+    if (value) result[key] = pattern.test(value) ? value : "unknown";
   }
   return result;
 }
@@ -3119,7 +3126,7 @@ export const reportAuthFailure = functions
     const phase = ["google-auth-page", "google_session_required", "sign_in_canceled", "sign_in_cancelled"].includes(fields.code);
     const versioned = metadata.schema_version === 2;
     const id = versioned
-      ? crypto.createHash("sha256").update(JSON.stringify([day, fields, metadata.buildNumber || "unknown", metadata.edition || "unknown"])).digest("hex")
+      ? crypto.createHash("sha256").update(JSON.stringify([day, fields, metadata.buildNumber || "unknown", metadata.edition || "unknown", metadata.reason || "unknown"])).digest("hex")
       : `${day}_${fields.platform}_${fields.stage}_${fields.code}`.slice(0, 200);
     const collection = phase ? "auth_flow_stats" : versioned ? "auth_failure_stats_v2" : "auth_failure_stats";
     const ref = db.collection(collection).doc(id);
@@ -3153,7 +3160,12 @@ export function safeDiagnosticPage(input: unknown): string {
   try {
     const u = new URL(String(input ?? ""));
     if (u.protocol !== "https:" && u.protocol !== "http:") return "unknown";
-    return `${u.protocol}//${u.host}${u.pathname}`.slice(0, 200);
+    const path = u.pathname.split("/").map(part => {
+      const decoded = decodeURIComponent(part);
+      return decoded.includes("@") || /(token|password|secret|SID)[=:]/i.test(decoded)
+        ? "REDACTED" : part;
+    }).join("/");
+    return `${u.protocol}//${u.host}${path}`.slice(0, 200);
   } catch (_) { return "unknown"; }
 }
 
@@ -3171,7 +3183,7 @@ export const submitDiagnosticReport = functions
     const metadata = diagnosticMetadata(body);
     let ownerUid: string | undefined;
     let authContext = "anonymous";
-    const authorization = String(req.headers.authorization || "");
+    const authorization = String(req.headers?.authorization || "");
     if (authorization.startsWith("Bearer ")) {
       authContext = "unverified";
       let timer: ReturnType<typeof setTimeout> | undefined;
