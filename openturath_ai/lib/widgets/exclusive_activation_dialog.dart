@@ -181,7 +181,7 @@ class ExclusiveActivationDialog extends StatelessWidget {
                 onPressed: done ? () => Navigator.of(context).pop() : null,
                 child:
                     Text(MaterialLocalizations.of(context).closeButtonLabel)),
-            FilledButton(
+            if (!done || ready) FilledButton(
                 onPressed: ready ? () => _handleStartStudy(context) : null,
                 child: Text(ready
                     ? Loc.tr('openAssistant')
