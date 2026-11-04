@@ -250,30 +250,49 @@ exports.getAgentUrl = functions
     .runWith({ serviceAccount: "open-turath@appspot.gserviceaccount.com" })
     .https.onCall(async (data, context) => {
     var _a, _b;
+    const requestId = crypto.randomUUID();
+    const fail = (code, message, reason) => {
+        console.warn("agent_access_failure", { request_id: requestId, code, reason });
+        return new functions.https.HttpsError(code, message, { reason, request_id: requestId });
+    };
     if (!context.auth) {
-        throw new functions.https.HttpsError("unauthenticated", "Login diperlukan untuk mengakses agent.");
+        throw fail("unauthenticated", "Login diperlukan untuk mengakses agent.", "app_session_required");
     }
-    await appCheckGate(context, "getAgentUrl");
+    try {
+        await appCheckGate(context, "getAgentUrl");
+    }
+    catch (e) {
+        if (e instanceof functions.https.HttpsError)
+            throw fail(e.code, e.message, "app_update_required");
+        throw e;
+    }
     const uid = context.auth.uid;
-    await enforceRateLimit(`agent_url_${uid}`, 60, 60, "Terlalu banyak permintaan membuka asisten. Silakan coba kembali sebentar lagi.");
-    const agentId = data.agentId;
+    try {
+        await enforceRateLimit(`agent_url_${uid}`, 60, 60, "Terlalu banyak permintaan membuka asisten. Silakan coba kembali sebentar lagi.");
+    }
+    catch (e) {
+        if (e instanceof functions.https.HttpsError)
+            throw fail(e.code, e.message, "request_rate_limited");
+        throw e;
+    }
+    const agentId = typeof (data === null || data === void 0 ? void 0 : data.agentId) === "string" ? data.agentId : "";
     if (!agentId) {
-        throw new functions.https.HttpsError("invalid-argument", "agentId diperlukan.");
+        throw fail("invalid-argument", "agentId diperlukan.", "invalid_agent");
     }
     const resolved = (0, notebook_catalog_1.resolveAgentNotebook)(agentId, uid);
     const url = resolved ? resolved.url : AGENT_URLS[agentId];
     if (!url) {
-        throw new functions.https.HttpsError("not-found", "Agent tidak ditemukan atau belum aktif.");
+        throw fail("not-found", "Agent tidak ditemukan atau belum aktif.", "agent_unavailable");
     }
     const userDoc = await db.collection("users").doc(uid).get();
     if (!userDoc.exists) {
-        throw new functions.https.HttpsError("not-found", "User tidak ditemukan.");
+        throw fail("not-found", "User tidak ditemukan.", "profile_unavailable");
     }
     const userData = userDoc.data();
     // Sub-AI "segera hadir": ditolak untuk semua kecuali akun VIP sejati
     // (Aturan 5: VIP tidak pernah diperlakukan sebagai galat akses).
     if (!(0, access_control_1.isVip)(userData) && (await getSoonSubAgentIds()).has(agentId)) {
-        throw new functions.https.HttpsError("failed-precondition", "AI ini segera hadir dan belum dibuka.");
+        throw fail("failed-precondition", "AI ini segera hadir dan belum dibuka.", "agent_unavailable");
     }
     // Notebook dibagikan ke ALAMAT EMAIL, jadi identitas harus terverifikasi dan cocok dengan profil
     // di semua cabang (legacy maupun ledger). VIP sejati dikecualikan dari pencocokan profil
@@ -282,7 +301,7 @@ exports.getAgentUrl = functions
     const profileEmail = String(userData.email || "").trim().toLowerCase();
     if (((_b = context.auth.token) === null || _b === void 0 ? void 0 : _b.email_verified) !== true || !tokenEmail ||
         (!(0, access_control_1.isVip)(userData) && tokenEmail !== profileEmail)) {
-        throw new functions.https.HttpsError("failed-precondition", "Gunakan email terverifikasi yang terdaftar untuk akses notebook ini.");
+        throw fail("failed-precondition", "Gunakan email terverifikasi yang terdaftar untuk akses notebook ini.", "identity_mismatch");
     }
     // Until cutover no worker creates notebook assignments, so ledger-only
     // resolution would lock out every paying account. Legacy evaluation applies.
@@ -290,13 +309,13 @@ exports.getAgentUrl = functions
     if (ledgerActive) {
         const entity = notebook_catalog_1.AGENT_TO_ENTITY[agentId];
         if (!entity)
-            throw new functions.https.HttpsError("not-found", "Kajian tidak ditemukan.");
+            throw fail("not-found", "Kajian tidak ditemukan.", "agent_unavailable");
         try {
             return await new access_control_1.AccessControl(db, notebook_catalog_1.NOTEBOOK_ENTITIES, access_catalog_1.ENTITY_SCOPES).resolve(uid, entity);
         }
         catch (e) {
             if (e instanceof access_control_1.AccessFault)
-                throw new functions.https.HttpsError(e.code, e.message);
+                throw fail(e.code, e.message, e.reason || "unclassified_failure");
             throw e;
         }
     }
@@ -307,13 +326,13 @@ exports.getAgentUrl = functions
         if (await vpsWriterActive()) {
             const entity = notebook_catalog_1.AGENT_TO_ENTITY[agentId];
             if (!entity)
-                throw new functions.https.HttpsError("not-found", "Kajian tidak ditemukan.");
+                throw fail("not-found", "Kajian tidak ditemukan.", "agent_unavailable");
             try {
                 return await new access_control_1.AccessControl(db, notebook_catalog_1.NOTEBOOK_ENTITIES, access_catalog_1.ENTITY_SCOPES).resolveObservedLegacy(uid, userData.email, entity);
             }
             catch (e) {
                 if (e instanceof access_control_1.AccessFault)
-                    throw new functions.https.HttpsError(e.code, e.message);
+                    throw fail(e.code, e.message, e.reason || "unclassified_failure");
                 throw e;
             }
         }
@@ -325,7 +344,7 @@ exports.getAgentUrl = functions
             isMaster: resolved === null || resolved === void 0 ? void 0 : resolved.isMaster,
         };
     }
-    throw new functions.https.HttpsError("permission-denied", "Akses modul riset ini membutuhkan langganan aktif atau kode redeem santri. Silakan berlangganan atau masukkan kode akses untuk melanjutkan.");
+    throw fail("permission-denied", "Akses modul riset ini membutuhkan langganan aktif atau kode redeem santri. Silakan berlangganan atau masukkan kode akses untuk melanjutkan.", "entitlement_required");
 });
 // ================================================================
 // FUNCTION 1b: recordQuestion
@@ -2931,6 +2950,25 @@ exports.auditMidtransLedger = functions
 // PELAPORAN GALAT LOGIN TANPA AKUN: hanya kode tetap (tanpa token, email, atau
 // data pribadi), dibatasi laju per alamat IP, disimpan sebagai penghitung harian.
 // ================================================================
+function diagnosticMetadata(body) {
+    var _a;
+    if (Number(body.schema_version) !== 2)
+        return {};
+    const result = { schema_version: 2 };
+    const patterns = {
+        buildNumber: /^\d{1,12}$/, edition: /^(standard|guru)$/,
+        agent_id: /^[a-zA-Z0-9_-]{1,80}$/, reason: /^[a-z][a-z0-9_]{0,59}$/,
+        request_id: /^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/,
+        attempt_id: /^[a-f0-9]{32}$/, event_id: /^[a-f0-9]{32}$/,
+        page_scheme: /^[a-z][a-z0-9+-]{0,31}$/,
+    };
+    for (const [key, pattern] of Object.entries(patterns)) {
+        const value = String((_a = body[key]) !== null && _a !== void 0 ? _a : "").trim();
+        if (value)
+            result[key] = pattern.test(value) ? value : "unknown";
+    }
+    return result;
+}
 exports.reportAuthFailure = functions
     .runWith({ serviceAccount: "open-turath@appspot.gserviceaccount.com", timeoutSeconds: 30, maxInstances: 5 })
     .https.onRequest(async (req, res) => {
@@ -2954,11 +2992,17 @@ exports.reportAuthFailure = functions
         return;
     }
     const day = new Date().toISOString().slice(0, 10).replace(/-/g, "");
-    const id = `${day}_${fields.platform}_${fields.stage}_${fields.code}`.slice(0, 200);
-    const ref = db.collection("auth_failure_stats").doc(id);
-    await ref.set(Object.assign(Object.assign({}, fields), { day, count: admin.firestore.FieldValue.increment(1), last_seen: admin.firestore.FieldValue.serverTimestamp() }), { merge: true });
+    const metadata = diagnosticMetadata(body);
+    const phase = ["google-auth-page", "google_session_required", "sign_in_canceled", "sign_in_cancelled"].includes(fields.code);
+    const versioned = metadata.schema_version === 2;
+    const id = versioned
+        ? crypto.createHash("sha256").update(JSON.stringify([day, fields, metadata.buildNumber || "unknown", metadata.edition || "unknown", metadata.reason || "unknown"])).digest("hex")
+        : `${day}_${fields.platform}_${fields.stage}_${fields.code}`.slice(0, 200);
+    const collection = phase ? "auth_flow_stats" : versioned ? "auth_failure_stats_v2" : "auth_failure_stats";
+    const ref = db.collection(collection).doc(id);
+    await ref.set(Object.assign(Object.assign(Object.assign({}, fields), metadata), { outcome: phase ? "phase" : "failure", day, count: admin.firestore.FieldValue.increment(1), last_seen: admin.firestore.FieldValue.serverTimestamp() }), { merge: true });
     const count = ((_b = (await ref.get()).data()) === null || _b === void 0 ? void 0 : _b.count) || 0;
-    if (count === 1 || count === 10 || count === 50) {
+    if (!phase && (count === 1 || count === 10 || count === 50)) {
         await sendTelegramNotification(`🔐 <b>[GAGAL LOGIN]</b> ${esc(fields.platform)} • tahap <code>${esc(fields.stage)}</code> • kode <code>${esc(fields.code)}</code> • ${count}× hari ini`, "alert");
     }
     res.status(204).send("");
@@ -2982,7 +3026,12 @@ function safeDiagnosticPage(input) {
         const u = new URL(String(input !== null && input !== void 0 ? input : ""));
         if (u.protocol !== "https:" && u.protocol !== "http:")
             return "unknown";
-        return `${u.protocol}//${u.host}${u.pathname}`.slice(0, 200);
+        const path = u.pathname.split("/").map(part => {
+            const decoded = decodeURIComponent(part);
+            return decoded.includes("@") || /(token|password|secret|SID)[=:]/i.test(decoded)
+                ? "REDACTED" : part;
+        }).join("/");
+        return `${u.protocol}//${u.host}${path}`.slice(0, 200);
     }
     catch (_) {
         return "unknown";
@@ -2991,7 +3040,7 @@ function safeDiagnosticPage(input) {
 exports.submitDiagnosticReport = functions
     .runWith({ serviceAccount: "open-turath@appspot.gserviceaccount.com", timeoutSeconds: 30, maxInstances: 5 })
     .https.onRequest(async (req, res) => {
-    var _a;
+    var _a, _b;
     if (req.method !== "POST") {
         res.status(405).send("Method Not Allowed");
         return;
@@ -3003,6 +3052,42 @@ exports.submitDiagnosticReport = functions
         fields[k] = exports.AUTH_FAILURE_FIELD.test(v) ? v : "unknown";
     }
     const ipHash = crypto.createHash("sha256").update(String(req.ip || "")).digest("hex").slice(0, 24);
+    const metadata = diagnosticMetadata(body);
+    let ownerUid;
+    let authContext = "anonymous";
+    const authorization = String(((_b = req.headers) === null || _b === void 0 ? void 0 : _b.authorization) || "");
+    if (authorization.startsWith("Bearer ")) {
+        authContext = "unverified";
+        let timer;
+        try {
+            const token = authorization.slice(7);
+            const decoded = await Promise.race([
+                admin.auth().verifyIdToken(token),
+                new Promise((_, reject) => {
+                    timer = setTimeout(() => reject(new Error("diagnostic_identity_timeout")), 2500);
+                }),
+            ]);
+            if (typeof decoded.uid === "string" && decoded.uid.length <= 128) {
+                ownerUid = decoded.uid;
+                authContext = "verified";
+            }
+        }
+        catch (_) { /* Invalid identity stays untrusted; never copy body claims. */ }
+        finally {
+            if (timer)
+                clearTimeout(timer);
+        }
+    }
+    const eventId = typeof metadata.event_id === "string" && /^[a-f0-9]{32}$/.test(metadata.event_id)
+        ? metadata.event_id : null;
+    const dedup = eventId ? db.collection("diagnostic_dedup").doc(crypto.createHash("sha256").update(`${ownerUid || ipHash}|${eventId}`).digest("hex")) : null;
+    if (dedup) {
+        const existing = (await dedup.get()).data();
+        if (typeof (existing === null || existing === void 0 ? void 0 : existing.ref) === "string" && /^OT-[0-9A-F]{6}$/.test(existing.ref)) {
+            res.status(200).send({ ref: existing.ref });
+            return;
+        }
+    }
     try {
         await enforceRateLimit(`diagrep_${ipHash}`, 5, 3600, "Terlalu banyak laporan.");
     }
@@ -3023,8 +3108,34 @@ exports.submitDiagnosticReport = functions
         if (exports.AUTH_FAILURE_FIELD.test(k) && typeof rawFlags[k] === "boolean")
             flags[k] = rawFlags[k];
     }
-    const ref = `OT-${crypto.randomBytes(3).toString("hex").toUpperCase()}`;
-    await db.collection("diagnostic_reports").doc(ref).set(Object.assign(Object.assign({}, fields), { page: safeDiagnosticPage(body.page), flags, breadcrumbs: crumbs, created_at: admin.firestore.FieldValue.serverTimestamp() }));
+    let saved;
+    for (let attempt = 0; attempt < 4 && !saved; attempt++) {
+        const ref = `OT-${crypto.randomBytes(3).toString("hex").toUpperCase()}`;
+        saved = await db.runTransaction(async (transaction) => {
+            if (dedup) {
+                const previous = (await transaction.get(dedup)).data();
+                if (typeof (previous === null || previous === void 0 ? void 0 : previous.ref) === "string" && /^OT-[0-9A-F]{6}$/.test(previous.ref)) {
+                    return { ref: previous.ref, created: false };
+                }
+            }
+            const report = db.collection("diagnostic_reports").doc(ref);
+            if ((await transaction.get(report)).exists)
+                return undefined;
+            transaction.set(report, Object.assign(Object.assign(Object.assign(Object.assign(Object.assign({}, fields), metadata), { page: safeDiagnosticPage(body.page), flags, breadcrumbs: crumbs, auth_context: authContext }), (ownerUid ? { owner_uid: ownerUid } : {})), { created_at: admin.firestore.FieldValue.serverTimestamp() }));
+            if (dedup)
+                transaction.set(dedup, { ref, created_at: admin.firestore.FieldValue.serverTimestamp() });
+            return { ref, created: true };
+        });
+    }
+    if (!saved) {
+        res.status(503).send("Report reference unavailable");
+        return;
+    }
+    const ref = saved.ref;
+    if (!saved.created) {
+        res.status(200).send({ ref });
+        return;
+    }
     let notify = true;
     try {
         await enforceRateLimit("diagrep_alert_global", 20, 900, "limited");

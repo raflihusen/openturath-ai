@@ -158,9 +158,10 @@ function rights(u, grants, scope, now = Date.now()) {
         (g.kind === "payment" && g.amount > 0 || g.kind === "admin" && g.admin_verified === true || g.kind === "voucher"));
 }
 class AccessFault extends Error {
-    constructor(code, message) {
+    constructor(code, message, reason) {
         super(message);
         this.code = code;
+        this.reason = reason;
     }
 }
 exports.AccessFault = AccessFault;
@@ -388,14 +389,14 @@ class AccessControl {
             return Object.assign(Object.assign({}, registered), { status: "ready", revision: (assignment === null || assignment === void 0 ? void 0 : assignment.revision) || 1, legacyReview: true, validUntil: new Date(this.clock() + 60000).toISOString() });
         }
         if (!rights(user, grants, this.scopes[entity], this.clock()))
-            throw new AccessFault("permission-denied", "Hak akses kajian ini sudah tidak aktif.");
+            throw new AccessFault("permission-denied", "Hak akses kajian ini sudah tidak aktif.", "entitlement_required");
         const a = (await this.assignmentRef(uid, entity).get()).data();
         if (!a || a.status !== "ready" || a.email !== (0, exports.normalEmail)(user.email)) {
-            throw new AccessFault("failed-precondition", "Pembayaran/hak akses tercatat. Akses notebook sedang disiapkan; Anda tidak perlu membeli ulang.");
+            throw new AccessFault("failed-precondition", "Pembayaran/hak akses tercatat. Akses notebook sedang disiapkan; Anda tidak perlu membeli ulang.", "access_provisioning");
         }
         const n = (await this.db.collection("access_notebooks").doc(a.notebook_id).get()).data();
         if (!n || n.entity !== entity || !["active", "draining"].includes(n.status) || n.is_public !== false || !a.verified_ms) {
-            throw new AccessFault("unavailable", "Notebook sedang diperiksa. Silakan coba lagi.");
+            throw new AccessFault("unavailable", "Notebook sedang diperiksa. Silakan coba lagi.", "notebook_unavailable");
         }
         return { status: "ready", url: `https://notebook.google.com/notebook/${a.notebook_id}`, notebookId: a.notebook_id,
             entityCode: entity, revision: a.revision, isMaster: a.notebook_id === this.entities[entity].masterId,
@@ -416,7 +417,7 @@ class AccessControl {
                 return { url: `https://notebook.google.com/notebook/${member.notebook_id}`, notebookId: member.notebook_id,
                     entityCode: entity, isMaster: member.notebook_id === e.masterId, cloneName: n.name };
         }
-        throw new AccessFault("failed-precondition", "Hak akses lama sedang dicocokkan dengan notebook terdaftar. Anda tidak perlu membeli ulang.");
+        throw new AccessFault("failed-precondition", "Hak akses lama sedang dicocokkan dengan notebook terdaftar. Anda tidak perlu membeli ulang.", "legacy_review");
     }
     async reserve(uid, entity) {
         const { user, grants } = await this.owner(uid);
