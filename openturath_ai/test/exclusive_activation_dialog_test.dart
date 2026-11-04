@@ -49,7 +49,9 @@ void main() {
     await tester.pump(const Duration(seconds: 31));
     await tester.pumpAndSettle();
     expect(find.textContaining('Menyiapkan akses'), findsNothing);
-    expect(find.text('Buka AI'), findsOneWidget);
+    expect(find.text('Buka AI'), findsNothing);
+    expect(find.byType(FilledButton), findsNothing);
+    expect(find.textContaining('akses masih diproses'), findsOneWidget);
     expect(find.text('Tutup'), findsOneWidget);
 
     // Klik tombol tutup
