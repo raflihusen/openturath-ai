@@ -1,5 +1,6 @@
 // Naskah kanonik ID, EN, AR. Setiap entri wajib memiliki tiga terjemahan.
 const copyCatalog = <String, List<String>>{
+  "loginConfigurationHelp": ["Ada kendala pada pengaturan masuk aplikasi. Hubungi tim OpenTurath; menghapus akun tidak akan memperbaikinya.", "There is a problem with the app’s sign-in configuration. Contact OpenTurath; deleting your account will not resolve it.", "يوجد خلل في إعدادات تسجيل الدخول للتطبيق. تواصل مع فريق أوبن تراث؛ حذف حسابك لن يحلّه."],
   "loginPrivacyShort": [
     "Kata sandi dan OTP diisi hanya di halaman Google. OpenTurath menggunakan data profil untuk akun Anda.",
     "Enter passwords and OTP codes only on Google pages. OpenTurath uses profile data for your account.",
@@ -46,9 +47,9 @@ const copyCatalog = <String, List<String>>{
     "إذا طلبت صفحة Google عنوانًا أو رقم هاتف أو بريدًا للاسترداد، فهذا من إجراءات Google لأمان حسابك. لا تنشئ أوبن تراث نماذج الأمان هذه. تجاوز الخطوة فقط إذا أتاحت Google خيار التخطي، وأكمل التحقّقات الإلزامية."
   ],
   "loginPrivacyFacts": [
-    "OpenTurath tidak meminta Anda mengirimkan kata sandi Google, kode OTP, alamat rumah, atau data pemulihan kepada tim kami. Masukkan kredensial hanya di halaman Google yang asli. Kami menerima nama, email, dan foto profil Google untuk akun Anda; data layanan dan diagnostik diproses sesuai Kebijakan Privasi.",
-    "OpenTurath does not ask you to send Google passwords, OTP codes, home addresses or recovery information to our team. Enter credentials only on genuine Google pages. We receive your Google name, email and profile photo for your account; service and diagnostic data are processed under our Privacy Policy.",
-    "لا تطلب أوبن تراث إرسال كلمة مرور Google أو رموز التحقّق أو عنوان المنزل أو بيانات الاسترداد إلى فريقنا. أدخل بيانات الدخول في صفحات Google الأصلية فقط. نتلقّى اسمك وبريدك وصورة ملفك في Google لإنشاء حسابك؛ وتُعالَج بيانات الخدمة والتشخيص وفق سياسة الخصوصية."
+    "Untuk proses login, OpenTurath tidak meminta Anda mengirimkan kata sandi Google, kode OTP, alamat rumah, atau data pemulihan kepada tim kami. Masukkan kredensial hanya di halaman Google yang asli. Kami menerima nama, email, dan foto profil Google untuk akun Anda; data layanan dan diagnostik diproses sesuai Kebijakan Privasi.",
+    "For sign-in, OpenTurath does not ask you to send Google passwords, OTP codes, home addresses or recovery information to our team. Enter credentials only on genuine Google pages. We receive your Google name, email and profile photo for your account; service and diagnostic data are processed under our Privacy Policy.",
+    "في عملية تسجيل الدخول، لا تطلب أوبن تراث إرسال كلمة مرور Google أو رموز التحقّق أو عنوان المنزل أو بيانات الاسترداد إلى فريقنا. أدخل بيانات الدخول في صفحات Google الأصلية فقط. نتلقّى اسمك وبريدك وصورة ملفك في Google لإنشاء حسابك؛ وتُعالَج بيانات الخدمة والتشخيص وفق سياسة الخصوصية."
   ],
   "loginOptionalContinue": [
     "Setelah akun aplikasi aktif, Anda dapat memilih Masuk ke OpenTurath untuk membuka beranda. Koneksi AI dapat diselesaikan saat diperlukan. Permintaan keamanan Google tidak memerlukan penghapusan akun OpenTurath.",

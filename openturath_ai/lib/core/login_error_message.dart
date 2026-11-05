@@ -4,10 +4,21 @@ import 'package:flutter/services.dart';
 import 'app_copy.dart';
 import 'localization.dart';
 
+/// Read only the numeric native status; never forward the SDK message.
+int? googleSignInNativeCode(Object error) {
+  if (error is! PlatformException || error.code != 'sign_in_failed') return null;
+  final match = RegExp(r'\bApiException:\s*(\d{1,5})\b')
+      .firstMatch(error.message ?? '');
+  return match == null ? null : int.tryParse(match.group(1)!);
+}
+
 /// Maps SDK failures to useful copy without displaying SDK payloads or tokens.
 /// An empty message means the user cancelled the authorization flow.
 String loginErrorMessage(Object error) {
   if (error is PlatformException) {
+    if (googleSignInNativeCode(error) == 10) {
+      return '${Loc.tr('loginConfigurationHelp')} (G10)';
+    }
     if (error.code == 'sign_in_canceled') {
       return '';
     }

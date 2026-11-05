@@ -1,4 +1,5 @@
 import 'dart:async';
+import '../core/login_error_message.dart';
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
@@ -385,7 +386,8 @@ class AuthService {
               ? e.code
               : e.runtimeType.toString();
       final detail = e is PlatformException ? '${e.details}'.toLowerCase() : '';
-      final category = detail.contains('keychain')
+      final configurationError = googleSignInNativeCode(e) == 10;
+      final category = configurationError ? 'configuration' : detail.contains('keychain')
           ? 'keychain'
           : detail.contains('cancel')
               ? 'cancelled'
@@ -394,7 +396,7 @@ class AuthService {
                   : detail.contains('configuration')
                       ? 'configuration'
                       : 'unspecified';
-      final safeCode =
+      final safeCode = configurationError ? 'google_oauth_configuration' :
           RegExp(r'^[a-zA-Z0-9_-]{1,80}$').hasMatch(code) ? code : 'unknown';
       // ignore: avoid_print
       print('OpenTurathAuth stage=$stage code=$safeCode category=$category');
