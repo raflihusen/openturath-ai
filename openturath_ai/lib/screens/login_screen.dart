@@ -240,8 +240,11 @@ class _LoginScreenState extends State<LoginScreen> {
                 children: [
                   OpenTurathMark(size: 26, color: primary),
                   const SizedBox(width: 10),
-                  Expanded(child: Text(
-                    AppCopy.appName, maxLines: 1, overflow: TextOverflow.ellipsis,
+                  Expanded(
+                      child: Text(
+                    AppCopy.appName,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                     style: ScholarlyFonts.outfit(
                       fontSize: OTFontSize.s18,
                       fontWeight: FontWeight.w600,

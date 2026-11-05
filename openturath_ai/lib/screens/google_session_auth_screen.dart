@@ -1131,28 +1131,31 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
                         children: [
                           Row(
                             children: [
-                              Flexible(flex: 3, child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 8, vertical: 2),
-                                decoration: BoxDecoration(
-                                  color: textPrimary.withValues(alpha: 0.08),
-                                  borderRadius:
-                                      BorderRadius.circular(OTRadius.xs),
-                                  border: Border.all(
-                                    color: border,
-                                    width: 0.6,
-                                  ),
-                                ),
-                                child: Text(
-                                  Loc.tr('stepTwoOfTwo'),
-                                  style: ScholarlyFonts.outfit(
-                                    fontSize: OTFontSize.s11,
-                                    fontWeight: FontWeight.w700,
-                                    letterSpacing: 0.6,
-                                    color: textPrimary,
-                                  ),
-                                ),
-                              )),
+                              Flexible(
+                                  flex: 3,
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 8, vertical: 2),
+                                    decoration: BoxDecoration(
+                                      color:
+                                          textPrimary.withValues(alpha: 0.08),
+                                      borderRadius:
+                                          BorderRadius.circular(OTRadius.xs),
+                                      border: Border.all(
+                                        color: border,
+                                        width: 0.6,
+                                      ),
+                                    ),
+                                    child: Text(
+                                      Loc.tr('stepTwoOfTwo'),
+                                      style: ScholarlyFonts.outfit(
+                                        fontSize: OTFontSize.s11,
+                                        fontWeight: FontWeight.w700,
+                                        letterSpacing: 0.6,
+                                        color: textPrimary,
+                                      ),
+                                    ),
+                                  )),
                               const SizedBox(width: 8),
                               Expanded(
                                 child: Text(
