@@ -1,5 +1,5 @@
 {
-  "recorded_utc": "2026-11-05T11:57:27.060589+00:00",
+  "recorded_utc": "2026-11-05T12:07:52.678799+00:00",
   "device": "POCO F1",
   "android_version": "15",
   "abi": "arm64-v8a",
@@ -14,7 +14,7 @@
   "baseline_flutter_runtime_errors": [],
   "baseline_android_fatal_exceptions": 0,
   "observed_widget": "LoginScreen",
-  "google_login": "failed_google_authorize",
+  "google_login": "passed_after_approved_debug_certificate_registration",
   "real_ai_answer": "not_tested",
   "vip_mutations": false,
   "google_cookie_mutations_by_installation": false,
@@ -38,12 +38,22 @@
     "debug_certificate_missing_for_target_package": true,
     "live_firebase_configuration_read": true
   },
-  "next_step": "repeat Google login on physical POCO F1 after OAuth registration",
+  "next_step": "complete live AI room connection and answer verification; no public release",
   "approved_debug_sha_registration": {
     "owner_approved": true,
     "firebase_app_id": "1:255541559800:android:503d489eac3b009fd2960d",
     "sha1_added": "130eb43e337db3b85564250b9183f3acaf96e6e4",
     "remote_verified": true,
     "all_existing_release_certificates_preserved": true
+  },
+  "runtime_observation": {
+    "google_second_step_screen_observed": true,
+    "authenticated_application_settings_opened": true,
+    "restart_session_preserved": true,
+    "after_restart_widget": "MainShellScreen",
+    "after_restart_runtime_errors": [],
+    "ai_catalog_loaded": true,
+    "ai_room_attempt": "in_progress",
+    "real_ai_answer": "not_tested"
   }
 }
