@@ -45,6 +45,10 @@ class LoginGuidance extends StatelessWidget {
       Text(Loc.tr('loginStageTwoBody'), style: TextStyle(color: ink, fontSize: 13)),
       const SizedBox(height: 8),
       Text(Loc.tr('loginGoogleSecurityShort'), style: TextStyle(color: ink, fontSize: 13)),
+      if (!compact) ...[
+        const SizedBox(height: 8),
+        Text(Loc.tr('loginPrivacyShort'), style: TextStyle(color: ink, fontSize: 13)),
+      ],
       TextButton(onPressed: () => _details(context),
           style: TextButton.styleFrom(foregroundColor: ink),
           child: Text(Loc.tr('loginGuidanceDetails'))),

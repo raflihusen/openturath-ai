@@ -1,5 +1,6 @@
 // Naskah kanonik ID, EN, AR. Setiap entri wajib memiliki tiga terjemahan.
 const copyCatalog = <String, List<String>>{
+  "loginPrivacyShort": ["Kata sandi dan OTP diisi hanya di halaman Google. OpenTurath menggunakan data profil untuk akun Anda.", "Enter passwords and OTP codes only on Google pages. OpenTurath uses profile data for your account.", "أدخل كلمات المرور ورموز التحقّق في صفحات Google فقط. تستخدم أوبن تراث بيانات الملف الشخصي لحسابك."],
   "loginStagesTitle": ["Mengapa masuk dua kali?", "Why sign in twice?", "لماذا تسجيل الدخول مرتين؟"],
   "loginStageOneTitle": ["1. Masuk ke OpenTurath", "1. Sign in to OpenTurath", "١. الدخول إلى أوبن تراث"],
   "loginStageOneBody": ["Mengenali akun Anda dan memeriksa hak akses layanan.", "Identify your account and check your service access.", "للتعرّف على حسابك والتحقّق من صلاحية وصولك إلى الخدمات."],

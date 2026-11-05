@@ -268,13 +268,14 @@ class _LoginScreenState extends State<LoginScreen> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     titleText(onCard),
-                    const SizedBox(height: 28),
+                    const SizedBox(height: 16),
+                    const LoginGuidance(color: onCardMuted),
+                    const SizedBox(height: 16),
                     signInButton(OTButtons.onInk(), OTExpressive.ink),
                     if (_desktopError != null) errorBox(),
                     const SizedBox(height: 20),
                     legalText(onCardMuted, onCard),
-                    const SizedBox(height: 20),
-                    const LoginGuidance(color: onCardMuted),
+
                   ],
                 ),
               );
@@ -296,7 +297,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           return SingleChildScrollView(
                             child: Column(children: [
                               SizedBox(
-                                height: (card.maxHeight * 0.25).clamp(40.0, 220.0),
+                                height: card.maxHeight >= 800 ? 180 : card.maxHeight >= 650 ? 80 : 24,
                                 child: const ExcludeSemantics(
                                     child: ArchEchoCanvas(compact: true)),
                               ),
@@ -328,13 +329,14 @@ class _LoginScreenState extends State<LoginScreen> {
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
                               titleText(primary),
-                              const SizedBox(height: 28),
+                              const SizedBox(height: 16),
+                              const LoginGuidance(),
+                              const SizedBox(height: 16),
                               signInButton(null, secondary),
                               if (_desktopError != null) errorBox(),
                               const SizedBox(height: 20),
                               legalText(secondary, primary),
-                              const SizedBox(height: 20),
-                              const LoginGuidance(),
+
                             ],
                           ),
                         ),
