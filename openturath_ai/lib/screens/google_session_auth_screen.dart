@@ -1131,7 +1131,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
                         children: [
                           Row(
                             children: [
-                              Container(
+                              Flexible(flex: 3, child: Container(
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 8, vertical: 2),
                                 decoration: BoxDecoration(
@@ -1152,7 +1152,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
                                     color: textPrimary,
                                   ),
                                 ),
-                              ),
+                              )),
                               const SizedBox(width: 8),
                               Expanded(
                                 child: Text(
