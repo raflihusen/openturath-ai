@@ -38,5 +38,12 @@
     "debug_certificate_missing_for_target_package": true,
     "live_firebase_configuration_read": true
   },
-  "next_step": "await explicit approval to append verified debug SHA1 to active Firebase Android app; preserve all existing certificates"
+  "next_step": "repeat Google login on physical POCO F1 after OAuth registration",
+  "approved_debug_sha_registration": {
+    "owner_approved": true,
+    "firebase_app_id": "1:255541559800:android:503d489eac3b009fd2960d",
+    "sha1_added": "130eb43e337db3b85564250b9183f3acaf96e6e4",
+    "remote_verified": true,
+    "all_existing_release_certificates_preserved": true
+  }
 }
