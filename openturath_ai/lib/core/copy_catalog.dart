@@ -1,6 +1,10 @@
 // Naskah kanonik ID, EN, AR. Setiap entri wajib memiliki tiga terjemahan.
 const copyCatalog = <String, List<String>>{
-  "loginConfigurationHelp": ["Ada kendala pada pengaturan masuk aplikasi. Hubungi tim OpenTurath; menghapus akun tidak akan memperbaikinya.", "There is a problem with the app’s sign-in configuration. Contact OpenTurath; deleting your account will not resolve it.", "يوجد خلل في إعدادات تسجيل الدخول للتطبيق. تواصل مع فريق أوبن تراث؛ حذف حسابك لن يحلّه."],
+  "loginConfigurationHelp": [
+    "Ada kendala pada pengaturan masuk aplikasi. Hubungi tim OpenTurath; menghapus akun tidak akan memperbaikinya.",
+    "There is a problem with the app’s sign-in configuration. Contact OpenTurath; deleting your account will not resolve it.",
+    "يوجد خلل في إعدادات تسجيل الدخول للتطبيق. تواصل مع فريق أوبن تراث؛ حذف حسابك لن يحلّه."
+  ],
   "loginPrivacyShort": [
     "Kata sandi dan OTP diisi hanya di halaman Google. OpenTurath menggunakan data profil untuk akun Anda.",
     "Enter passwords and OTP codes only on Google pages. OpenTurath uses profile data for your account.",

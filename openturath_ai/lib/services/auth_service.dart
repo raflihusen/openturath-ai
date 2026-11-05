@@ -387,17 +387,22 @@ class AuthService {
               : e.runtimeType.toString();
       final detail = e is PlatformException ? '${e.details}'.toLowerCase() : '';
       final configurationError = googleSignInNativeCode(e) == 10;
-      final category = configurationError ? 'configuration' : detail.contains('keychain')
-          ? 'keychain'
-          : detail.contains('cancel')
-              ? 'cancelled'
-              : detail.contains('network')
-                  ? 'network'
-                  : detail.contains('configuration')
-                      ? 'configuration'
-                      : 'unspecified';
-      final safeCode = configurationError ? 'google_oauth_configuration' :
-          RegExp(r'^[a-zA-Z0-9_-]{1,80}$').hasMatch(code) ? code : 'unknown';
+      final category = configurationError
+          ? 'configuration'
+          : detail.contains('keychain')
+              ? 'keychain'
+              : detail.contains('cancel')
+                  ? 'cancelled'
+                  : detail.contains('network')
+                      ? 'network'
+                      : detail.contains('configuration')
+                          ? 'configuration'
+                          : 'unspecified';
+      final safeCode = configurationError
+          ? 'google_oauth_configuration'
+          : RegExp(r'^[a-zA-Z0-9_-]{1,80}$').hasMatch(code)
+              ? code
+              : 'unknown';
       // ignore: avoid_print
       print('OpenTurathAuth stage=$stage code=$safeCode category=$category');
       if (category != 'cancelled' && safeCode != 'sign_in_canceled') {

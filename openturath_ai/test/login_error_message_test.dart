@@ -6,18 +6,25 @@ import 'package:openturath_ai/core/app_copy.dart';
 import 'package:openturath_ai/core/login_error_message.dart';
 
 void main() {
-  test('Google configuration failure explains that deleting an account cannot fix it', () {
+  test(
+      'Google configuration failure explains that deleting an account cannot fix it',
+      () {
     AppConfig.localeNotifier.value = 'id';
-    final message = loginErrorMessage(PlatformException(code: 'sign_in_failed',
-        message: 'com.google.android.gms.common.api.ApiException: 10: synthetic-secret-token'));
+    final message = loginErrorMessage(PlatformException(
+        code: 'sign_in_failed',
+        message:
+            'com.google.android.gms.common.api.ApiException: 10: synthetic-secret-token'));
     expect(message, contains('G10'));
     expect(message, contains('menghapus akun'));
     expect(message, isNot(contains('synthetic-secret-token')));
   });
-  test('other native codes are not labelled as Google configuration error 10', () {
+  test('other native codes are not labelled as Google configuration error 10',
+      () {
     for (final code in [7, 100, 12501]) {
-      expect(loginErrorMessage(PlatformException(code: 'sign_in_failed',
-          message: 'ApiException: $code:')), isNot(contains('G10')));
+      expect(
+          loginErrorMessage(PlatformException(
+              code: 'sign_in_failed', message: 'ApiException: $code:')),
+          isNot(contains('G10')));
     }
   });
   for (final locale in ['id', 'en', 'ar']) {
@@ -55,8 +62,7 @@ void main() {
     expect(loginErrorMessage(FirebaseAuthException(code: 'invalid-credential')),
         '${AppCopy.googleSignInFailed} (invalid-credential)');
     expect(loginErrorMessage(StateError('x')), AppCopy.googleSignInFailed);
-    expect(
-        loginErrorMessage(PlatformException(code: 'browser_launch_failed')),
+    expect(loginErrorMessage(PlatformException(code: 'browser_launch_failed')),
         AppCopy.desktopBrowserError);
   });
   tearDown(() => AppConfig.localeNotifier.value = 'id');
