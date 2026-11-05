@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../core/localization.dart';
 import '../core/design/ot_colors.dart';
+import '../core/design/ot_typography.dart';
 import 'legal_document_sheet.dart';
 
 /// Explains the app and Google boundaries without changing authentication.
@@ -54,22 +55,22 @@ class LoginGuidance extends StatelessWidget {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       if (!compact) ...[
         Text(Loc.tr('loginStageOneTitle'),
-            style: TextStyle(color: ink, fontWeight: FontWeight.w600)),
+            style: OTTypography.cardTitle(color: ink)),
         Text(Loc.tr('loginStageOneBody'),
-            style: TextStyle(color: ink, fontSize: 13)),
+            style: OTTypography.caption(color: ink)),
         const SizedBox(height: 8),
         Text(Loc.tr('loginStageTwoTitle'),
-            style: TextStyle(color: ink, fontWeight: FontWeight.w600)),
+            style: OTTypography.cardTitle(color: ink)),
       ],
       Text(Loc.tr('loginStageTwoBody'),
-          style: TextStyle(color: ink, fontSize: 13)),
+          style: OTTypography.caption(color: ink)),
       const SizedBox(height: 8),
       Text(Loc.tr('loginGoogleSecurityShort'),
-          style: TextStyle(color: ink, fontSize: 13)),
+          style: OTTypography.caption(color: ink)),
       if (!compact) ...[
         const SizedBox(height: 8),
         Text(Loc.tr('loginPrivacyShort'),
-            style: TextStyle(color: ink, fontSize: 13)),
+            style: OTTypography.caption(color: ink)),
       ],
       TextButton(
           onPressed: () => _details(context),
