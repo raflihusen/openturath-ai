@@ -1,5 +1,5 @@
 {
-  "recorded_utc": "2026-11-05T12:07:52.678799+00:00",
+  "recorded_utc": "2026-11-05T12:16:03.734408+00:00",
   "device": "POCO F1",
   "android_version": "15",
   "abi": "arm64-v8a",
@@ -15,7 +15,7 @@
   "baseline_android_fatal_exceptions": 0,
   "observed_widget": "LoginScreen",
   "google_login": "passed_after_approved_debug_certificate_registration",
-  "real_ai_answer": "not_tested",
+  "real_ai_answer": "passed",
   "vip_mutations": false,
   "google_cookie_mutations_by_installation": false,
   "agent_uninstall_or_clear_data": false,
@@ -38,7 +38,7 @@
     "debug_certificate_missing_for_target_package": true,
     "live_firebase_configuration_read": true
   },
-  "next_step": "complete live AI room connection and answer verification; no public release",
+  "next_step": "public release remains held; broader account/platform acceptance separate",
   "approved_debug_sha_registration": {
     "owner_approved": true,
     "firebase_app_id": "1:255541559800:android:503d489eac3b009fd2960d",
@@ -53,7 +53,14 @@
     "after_restart_widget": "MainShellScreen",
     "after_restart_runtime_errors": [],
     "ai_catalog_loaded": true,
-    "ai_room_attempt": "in_progress",
-    "real_ai_answer": "not_tested"
+    "ai_room_attempt": "passed",
+    "real_ai_answer": "not_tested",
+    "module": "fiqh_tahawwulat_muhaqqiq",
+    "test_prompt": "Jelaskan tema utama sumber yang tersedia secara singkat.",
+    "prompt_submitted_and_sources_scanning_observed": true,
+    "new_ai_answer_received_and_completion_controls_visible": true,
+    "final_flutter_runtime_errors": [],
+    "final_android_fatal_exceptions": 0,
+    "scope": "One physical POCO F1 and one selected account; not all accounts, modules or platforms certified"
   }
 }
