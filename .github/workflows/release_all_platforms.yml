@@ -42,6 +42,8 @@ jobs:
           python-version: '3.12'
       - run: python -m unittest discover -s tests -v
         working-directory: ecosystem/openturath_subscription
+      - name: Test Android Google sign-in configuration guard
+        run: python -m unittest discover -s openturath_ai/tool -p test_android_google_signin.py
 
   # ════════════════════════════════════════════════════════════════
   # 1. BUILD WINDOWS EXE (Installer & Portable Zip)
@@ -170,6 +172,9 @@ jobs:
         run: |
           cd openturath_ai
           flutter build apk --release
+
+      - name: Verify APK package and Google OAuth signing certificate
+        run: python3 openturath_ai/tool/check_android_google_signin.py --apk openturath_ai/build/app/outputs/flutter-apk/app-release.apk
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4

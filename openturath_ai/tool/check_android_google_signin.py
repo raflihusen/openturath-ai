@@ -5,9 +5,30 @@ verify the current configuration in Firebase/Google Cloud.
 """
 import argparse
 import json
+import os
 from pathlib import Path
 import re
+import shutil
 import subprocess
+
+
+def android_tool(name):
+    available = shutil.which(name)
+    if available:
+        return available
+    sdk = os.environ.get('ANDROID_HOME') or os.environ.get('ANDROID_SDK_ROOT')
+    properties = Path(__file__).resolve().parents[1] / 'android/local.properties'
+    if not sdk and properties.exists():
+        sdk = next((line.split('=', 1)[1].strip() for line in properties.read_text().splitlines()
+                    if line.startswith('sdk.dir=')), None)
+    if sdk:
+        folders = [p for p in (Path(sdk) / 'build-tools').glob('*') if p.is_dir() and '-' not in p.name]
+        for folder in sorted(folders, key=lambda p: tuple(int(n) for n in p.name.split('.')), reverse=True):
+            for suffix in ['', '.exe', '.bat']:
+                candidate = folder / (name + suffix)
+                if candidate.exists():
+                    return str(candidate)
+    return name
 
 
 def validate(config, package, sha1):
@@ -30,8 +51,8 @@ def validate(config, package, sha1):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--apk', required=True)
-    parser.add_argument('--aapt', default='aapt')
-    parser.add_argument('--apksigner', default='apksigner')
+    parser.add_argument('--aapt', default=android_tool('aapt'))
+    parser.add_argument('--apksigner', default=android_tool('apksigner'))
     parser.add_argument('--config', type=Path, default=Path(__file__).resolve().parents[1] / 'android/app/google-services.json')
     args = parser.parse_args()
     try:
