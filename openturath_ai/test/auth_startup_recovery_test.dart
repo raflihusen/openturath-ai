@@ -45,6 +45,7 @@ class TestAuth extends Fake implements FirebaseAuth {
   Completer<UserCredential>? pendingCredential;
   FirebaseAuthException? credentialFailure;
   Completer<void>? signOutWait;
+  Completer<void>? mandatorySignOutFinished;
   int nativeInFlight = 0;
   int maxNativeInFlight = 0;
   @override
@@ -67,9 +68,10 @@ class TestAuth extends Fake implements FirebaseAuth {
 
   @override
   Future<void> signOut() async {
-    signOutCalls++;
+    final invocation = ++signOutCalls;
     await signOutWait?.future;
     user = null;
+    if (invocation == 2) mandatorySignOutFinished?.complete();
   }
 }
 
@@ -279,7 +281,10 @@ void main() {
       () async {
     debugDefaultTargetPlatformOverride = TargetPlatform.macOS;
     final pending = Completer<UserCredential>();
-    final auth = TestAuth()..pendingCredential = pending;
+    final drained = Completer<void>();
+    final auth = TestAuth()
+      ..pendingCredential = pending
+      ..mandatorySignOutFinished = drained;
     final google = TestGoogle()
       ..account = TestGoogleAccount(Future.value(TestTokens()));
     final service = AuthService(
@@ -295,7 +300,10 @@ void main() {
     auth.user = user;
     pending.complete(TestCredential(user));
     expect(await restored, isNull);
-    await Future<void>.delayed(Duration.zero);
+    expect(service.currentUser, isNull);
+    // The bounded UI deadline can expire before local cleanup finishes.
+    // Wait for the actual mandatory SDK cleanup, not one scheduler turn.
+    await drained.future.timeout(const Duration(seconds: 2));
     expect(auth.currentUser, isNull);
     expect(auth.signOutCalls, 2);
   });
