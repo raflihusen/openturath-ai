@@ -1,5 +1,5 @@
 {
-  "recorded_utc": "2026-11-05T11:50:37.704522+00:00",
+  "recorded_utc": "2026-11-05T11:57:27.060589+00:00",
   "device": "POCO F1",
   "android_version": "15",
   "abi": "arm64-v8a",
@@ -14,12 +14,29 @@
   "baseline_flutter_runtime_errors": [],
   "baseline_android_fatal_exceptions": 0,
   "observed_widget": "LoginScreen",
-  "google_login": "awaiting_user_interaction",
+  "google_login": "failed_google_authorize",
   "real_ai_answer": "not_tested",
   "vip_mutations": false,
   "google_cookie_mutations_by_installation": false,
   "agent_uninstall_or_clear_data": false,
   "public_release": false,
   "source_tree": "1be15f235855d43fcc7d2b57789a543b886273d9",
-  "apk_sha256": "64a0d5f19399049579c1dfc6ae953493f3c090de883e46fc37eb36548dd732c8"
+  "apk_sha256": "64a0d5f19399049579c1dfc6ae953493f3c090de883e46fc37eb36548dd732c8",
+  "error": {
+    "platform_code": "sign_in_failed",
+    "native_code": 10,
+    "native_message": "com.google.android.gms.common.api.ApiException: 10:",
+    "captured_using": "Dart debugger exception local; breakpoint removed and isolate resumed"
+  },
+  "diagnosis": {
+    "package": "com.openturath.ai",
+    "debug_sha1": "130eb43e337db3b85564250b9183f3acaf96e6e4",
+    "registered_debug_package_in_local_config": "com.example.openturath_ai",
+    "live_target_app_sha1": [
+      "cb7f1a9f1bb0e75aab44fa6ed3458fbdf3136a09"
+    ],
+    "debug_certificate_missing_for_target_package": true,
+    "live_firebase_configuration_read": true
+  },
+  "next_step": "await explicit approval to append verified debug SHA1 to active Firebase Android app; preserve all existing certificates"
 }
