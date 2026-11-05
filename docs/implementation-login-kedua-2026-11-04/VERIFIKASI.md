@@ -106,6 +106,25 @@ Uji regresi terlebih dahulu mereproduksi masalah: navigasi aplikasi masih menung
 
 ## Syarat sebelum rilis
 
+### Lanjutan 5 November 2026 — POCO F1
+
+APK debug build 89 dipasang pada POCO F1/Android 15 yang dihubungkan pengguna. Pengujian nyata menemukan `PlatformException(sign_in_failed)` dengan `ApiException: 10` pada tahap `google-authorize`. Kode numerik diambil dari exception debugger; breakpoint dilepas dan proses dilanjutkan. Ini galat otorisasi yang ditangani aplikasi, sehingga tidak muncul sebagai crash pada pemeriksaan runtime Flutter.
+
+Sertifikat debug SHA-1 `130eb43e337db3b85564250b9183f3acaf96e6e4` sebelumnya hanya terdaftar untuk paket lama `com.example.openturath_ai`. Pemeriksaan Firebase aktif membuktikan aplikasi `com.openturath.ai` hanya memiliki sertifikat rilis. Setelah **izin eksplisit pemilik**, satu SHA-1 debug ditambahkan ke aplikasi Android yang benar. Sertifikat SHA-1/SHA-256 rilis diperiksa tetap utuh; konfigurasi lokal Google diperbarui dengan entri OAuth yang baru tanpa menghapus client lama.
+
+Dengan APK debug yang sama, hasil pada satu akun/perangkat ini:
+
+- Login Google pertama berhasil dan layar langkah kedua muncul.
+- Aplikasi dapat dimasuki; halaman Pengaturan menampilkan versi 1.0.87+89.
+- Setelah proses aplikasi dihentikan dan dibuka kembali, sesi autentikasi tetap tersimpan dan `MainShellScreen` terbuka.
+- Katalog AI dan ruang Al-Muhaqqiq Fikih Tahawwulat dapat dibuka.
+- Pertanyaan baru "Jelaskan tema utama sumber yang tersedia secara singkat." benar-benar terkirim, proses pencarian sumber terlihat, lalu jawaban baru selesai ditampilkan.
+- Pemeriksaan akhir: tidak ada runtime error Flutter dan tidak ada `FATAL EXCEPTION` Android pada proses aplikasi.
+
+Bukti tersaring ada pada [android-poco-2026-11-05.json](android-poco-2026-11-05.json). Ini membuktikan alur fungsional tersebut pada POCO F1 dan satu akun terpilih. Tidak membuktikan seluruh akun/modul/platform, semua variasi recovery Google, atau akurasi ilmiah isi jawaban. Tidak ada penghapusan cookie, pencabutan VIP, perubahan entitlement, atau rilis publik oleh agen.
+
+### Pemeriksaan yang tetap diperlukan
+
 1. Catat paket terpasang, edisi, versi/build, perangkat, dan akun uji. Gunakan akun/notebook uji yang disediakan, tanpa mengubah akun pelanggan.
 2. Uji login pertama dan kedua, saran pemulihan opsional, challenge wajib, DOM email tidak terbaca, dan kembali ke aplikasi tanpa menunggu NotebookLM.
 3. Uji akun Google berbeda, tunda koneksi, login ulang, logout, tutup-buka aplikasi, serta background/resume. Pastikan sesi yang sah tetap tersimpan.
