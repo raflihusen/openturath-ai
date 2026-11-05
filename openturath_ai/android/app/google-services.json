@@ -76,6 +76,14 @@
         {
           "client_id": "255541559800-jcip3mf8umtscgf5jm8khflm4u83rmcj.apps.googleusercontent.com",
           "client_type": 3
+        },
+        {
+          "client_id": "255541559800-tf3ruq83o5tg7pvn376fk3j45gsjssd7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.openturath.ai",
+            "certificate_hash": "130eb43e337db3b85564250b9183f3acaf96e6e4"
+          }
         }
       ],
       "api_key": [
