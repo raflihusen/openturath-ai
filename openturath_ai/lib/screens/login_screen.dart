@@ -1,3 +1,4 @@
+import '../widgets/login_guidance.dart';
 import '../core/app_platform.dart';
 import '../core/localization.dart';
 import 'package:flutter/gestures.dart';
@@ -272,6 +273,8 @@ class _LoginScreenState extends State<LoginScreen> {
                     if (_desktopError != null) errorBox(),
                     const SizedBox(height: 20),
                     legalText(onCardMuted, onCard),
+                    const SizedBox(height: 20),
+                    const LoginGuidance(color: onCardMuted),
                   ],
                 ),
               );
@@ -290,22 +293,15 @@ class _LoginScreenState extends State<LoginScreen> {
                               Border.all(color: onCard.withValues(alpha: 0.12)),
                         ),
                         child: LayoutBuilder(builder: (context, card) {
-                          if (card.maxHeight < 520) {
-                            return Center(
-                              child: SingleChildScrollView(
-                                padding: const EdgeInsets.only(top: 24),
-                                child: content,
-                              ),
-                            );
-                          }
-                          return Column(
-                            children: [
-                              const Expanded(
-                                child: ExcludeSemantics(
+                          return SingleChildScrollView(
+                            child: Column(children: [
+                              SizedBox(
+                                height: (card.maxHeight * 0.25).clamp(40.0, 220.0),
+                                child: const ExcludeSemantics(
                                     child: ArchEchoCanvas(compact: true)),
                               ),
                               content,
-                            ],
+                            ]),
                           );
                         }),
                       ),
@@ -337,6 +333,8 @@ class _LoginScreenState extends State<LoginScreen> {
                               if (_desktopError != null) errorBox(),
                               const SizedBox(height: 20),
                               legalText(secondary, primary),
+                              const SizedBox(height: 20),
+                              const LoginGuidance(),
                             ],
                           ),
                         ),

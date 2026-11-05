@@ -1,3 +1,4 @@
+import '../widgets/login_guidance.dart';
 import 'dart:async';
 import 'dart:collection';
 import 'package:flutter/foundation.dart';
@@ -1109,8 +1110,9 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
           body: SafeArea(
             child: Column(
               children: [
-                // ── Info Wajib Akun yang Sama (Langkah 2) ──
-                Container(
+                // Keep the explanation scrollable when the keyboard is open.
+                Flexible(flex: 2, fit: FlexFit.loose,
+                  child: SingleChildScrollView(child: Container(
                   width: double.infinity,
                   margin: const EdgeInsets.fromLTRB(16, 4, 16, 8),
                   padding:
@@ -1173,6 +1175,8 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
                           color: textSecondary,
                         ),
                       ),
+                      const SizedBox(height: 8),
+                      const LoginGuidance(compact: true),
                       if (currentEmail.isNotEmpty) ...[
                         const SizedBox(height: 8),
                         Container(
@@ -1207,10 +1211,10 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
                       ],
                     ],
                   ),
-                ),
+                ))),
 
                 // ── InAppWebView Halaman Masuk Resmi Google ──
-                Expanded(
+                Expanded(flex: 3,
                   child: Container(
                     margin: const EdgeInsets.fromLTRB(16, 0, 16, 12),
                     decoration: BoxDecoration(
