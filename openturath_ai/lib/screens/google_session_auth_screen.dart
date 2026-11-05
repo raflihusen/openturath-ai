@@ -1111,95 +1111,56 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
             child: Column(
               children: [
                 // Keep the explanation scrollable when the keyboard is open.
-                Flexible(flex: 2, fit: FlexFit.loose,
-                  child: SingleChildScrollView(child: Container(
-                  width: double.infinity,
-                  margin: const EdgeInsets.fromLTRB(16, 4, 16, 8),
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-                  decoration: BoxDecoration(
-                    color: surface,
-                    borderRadius: BorderRadius.circular(AppTheme.radiusCard),
-                    border: Border.all(color: border, width: 1),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
+                Flexible(
+                    flex: 2,
+                    fit: FlexFit.loose,
+                    child: SingleChildScrollView(
+                        child: Container(
+                      width: double.infinity,
+                      margin: const EdgeInsets.fromLTRB(16, 4, 16, 8),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 12),
+                      decoration: BoxDecoration(
+                        color: surface,
+                        borderRadius:
+                            BorderRadius.circular(AppTheme.radiusCard),
+                        border: Border.all(color: border, width: 1),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 8, vertical: 2),
-                            decoration: BoxDecoration(
-                              color: textPrimary.withValues(alpha: 0.08),
-                              borderRadius: BorderRadius.circular(OTRadius.xs),
-                              border: Border.all(
-                                color: border,
-                                width: 0.6,
-                              ),
-                            ),
-                            child: Text(
-                              Loc.tr('stepTwoOfTwo'),
-                              style: ScholarlyFonts.outfit(
-                                fontSize: OTFontSize.s11,
-                                fontWeight: FontWeight.w700,
-                                letterSpacing: 0.6,
-                                color: textPrimary,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: Text(
-                              Loc.tr('roomSameAccountTitle'),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: ScholarlyFonts.outfit(
-                                fontSize: OTFontSize.s14,
-                                fontWeight: FontWeight.w600,
-                                color: textPrimary,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 8),
-                      // Cukup bilang login dengan akun yang sama
-                      Text(
-                        currentEmail.isNotEmpty
-                            ? '${Loc.tr('pleaseSignInSameAccount')}: $currentEmail'
-                            : Loc.tr('pleaseSignInSameAccount'),
-                        style: ScholarlyFonts.outfit(
-                          fontSize: OTFontSize.s12,
-                          height: 1.4,
-                          color: textSecondary,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      const LoginGuidance(compact: true),
-                      if (currentEmail.isNotEmpty) ...[
-                        const SizedBox(height: 8),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 8, vertical: 4),
-                          decoration: BoxDecoration(
-                            color: canvas,
-                            borderRadius: BorderRadius.circular(OTRadius.xs),
-                            border: Border.all(color: border, width: 0.8),
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
+                          Row(
                             children: [
-                              Icon(Icons.account_circle_outlined,
-                                  size: 15, color: textPrimary),
-                              const SizedBox(width: 6),
-                              Flexible(
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 8, vertical: 2),
+                                decoration: BoxDecoration(
+                                  color: textPrimary.withValues(alpha: 0.08),
+                                  borderRadius:
+                                      BorderRadius.circular(OTRadius.xs),
+                                  border: Border.all(
+                                    color: border,
+                                    width: 0.6,
+                                  ),
+                                ),
                                 child: Text(
-                                  currentEmail,
+                                  Loc.tr('stepTwoOfTwo'),
+                                  style: ScholarlyFonts.outfit(
+                                    fontSize: OTFontSize.s11,
+                                    fontWeight: FontWeight.w700,
+                                    letterSpacing: 0.6,
+                                    color: textPrimary,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Text(
+                                  Loc.tr('roomSameAccountTitle'),
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                   style: ScholarlyFonts.outfit(
-                                    fontSize: OTFontSize.s12,
+                                    fontSize: OTFontSize.s14,
                                     fontWeight: FontWeight.w600,
                                     color: textPrimary,
                                   ),
@@ -1207,14 +1168,60 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
                               ),
                             ],
                           ),
-                        ),
-                      ],
-                    ],
-                  ),
-                ))),
+                          const SizedBox(height: 8),
+                          // Cukup bilang login dengan akun yang sama
+                          Text(
+                            currentEmail.isNotEmpty
+                                ? '${Loc.tr('pleaseSignInSameAccount')}: $currentEmail'
+                                : Loc.tr('pleaseSignInSameAccount'),
+                            style: ScholarlyFonts.outfit(
+                              fontSize: OTFontSize.s12,
+                              height: 1.4,
+                              color: textSecondary,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          const LoginGuidance(compact: true),
+                          if (currentEmail.isNotEmpty) ...[
+                            const SizedBox(height: 8),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 8, vertical: 4),
+                              decoration: BoxDecoration(
+                                color: canvas,
+                                borderRadius:
+                                    BorderRadius.circular(OTRadius.xs),
+                                border: Border.all(color: border, width: 0.8),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(Icons.account_circle_outlined,
+                                      size: 15, color: textPrimary),
+                                  const SizedBox(width: 6),
+                                  Flexible(
+                                    child: Text(
+                                      currentEmail,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: ScholarlyFonts.outfit(
+                                        fontSize: OTFontSize.s12,
+                                        fontWeight: FontWeight.w600,
+                                        color: textPrimary,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ],
+                      ),
+                    ))),
 
                 // ── InAppWebView Halaman Masuk Resmi Google ──
-                Expanded(flex: 3,
+                Expanded(
+                  flex: 3,
                   child: Container(
                     margin: const EdgeInsets.fromLTRB(16, 0, 16, 12),
                     decoration: BoxDecoration(

@@ -275,7 +275,6 @@ class _LoginScreenState extends State<LoginScreen> {
                     if (_desktopError != null) errorBox(),
                     const SizedBox(height: 20),
                     legalText(onCardMuted, onCard),
-
                   ],
                 ),
               );
@@ -297,7 +296,11 @@ class _LoginScreenState extends State<LoginScreen> {
                           return SingleChildScrollView(
                             child: Column(children: [
                               SizedBox(
-                                height: card.maxHeight >= 800 ? 180 : card.maxHeight >= 650 ? 80 : 24,
+                                height: card.maxHeight >= 800
+                                    ? 180
+                                    : card.maxHeight >= 650
+                                        ? 80
+                                        : 24,
                                 child: const ExcludeSemantics(
                                     child: ArchEchoCanvas(compact: true)),
                               ),
@@ -336,7 +339,6 @@ class _LoginScreenState extends State<LoginScreen> {
                               if (_desktopError != null) errorBox(),
                               const SizedBox(height: 20),
                               legalText(secondary, primary),
-
                             ],
                           ),
                         ),
