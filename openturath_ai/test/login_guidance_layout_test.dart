@@ -14,26 +14,40 @@ import 'package:shared_preferences/shared_preferences.dart';
 void main() {
   setUp(() {
     SharedPreferences.setMockInitialValues({});
-    AuthService.previewUser = UserModel(uid: 'reader', name: 'Reader',
-        email: 'reader@example.invalid', photoUrl: '', plan: 'trial', questionsUsed: 0);
+    AuthService.previewUser = UserModel(
+        uid: 'reader',
+        name: 'Reader',
+        email: 'reader@example.invalid',
+        photoUrl: '',
+        plan: 'trial',
+        questionsUsed: 0);
   });
   tearDown(() => AuthService.previewUser = null);
 
   Widget host(Widget child, String locale, double scale) => MaterialApp(
-    theme: AppTheme.lightTheme,
-    locale: Locale(locale), supportedLocales: Loc.supportedLocales,
-    localizationsDelegates: GlobalMaterialLocalizations.delegates,
-    builder: (context, page) => MediaQuery(
-      data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(scale)),
-      child: Directionality(textDirection: locale == 'ar' ? TextDirection.rtl : TextDirection.ltr,
-          child: page!)),
-    home: child,
-  );
+        theme: AppTheme.lightTheme,
+        locale: Locale(locale),
+        supportedLocales: Loc.supportedLocales,
+        localizationsDelegates: GlobalMaterialLocalizations.delegates,
+        builder: (context, page) => MediaQuery(
+            data: MediaQuery.of(context)
+                .copyWith(textScaler: TextScaler.linear(scale)),
+            child: Directionality(
+                textDirection:
+                    locale == 'ar' ? TextDirection.rtl : TextDirection.ltr,
+                child: page!)),
+        home: child,
+      );
 
   for (final locale in ['id', 'en', 'ar']) {
-    for (final size in [const Size(320, 640), const Size(390, 844), const Size(1280, 800)]) {
+    for (final size in [
+      const Size(320, 640),
+      const Size(390, 844),
+      const Size(1280, 800)
+    ]) {
       for (final scale in [1.0, 1.4]) {
-        testWidgets('login guidance fits $locale $size text $scale', (tester) async {
+        testWidgets('login guidance fits $locale $size text $scale',
+            (tester) async {
           AppConfig.localeNotifier.value = locale;
           tester.view.physicalSize = size;
           tester.view.devicePixelRatio = 1;
@@ -45,25 +59,35 @@ void main() {
           expect(tester.takeException(), isNull);
           await tester.pumpWidget(const SizedBox());
         });
-        testWidgets('second login remains usable $locale $size text $scale', (tester) async {
+        testWidgets('second login remains usable $locale $size text $scale',
+            (tester) async {
           AppConfig.localeNotifier.value = locale;
           tester.view.physicalSize = size;
           tester.view.devicePixelRatio = 1;
           addTearDown(tester.view.reset);
-          await tester.pumpWidget(host(GoogleSessionAuthScreen(
-              webViewBuilder: (_, settings, url) => const SizedBox(key: Key('google-page'))), locale, scale));
+          await tester.pumpWidget(host(
+              GoogleSessionAuthScreen(
+                  webViewBuilder: (_, settings, url) =>
+                      const SizedBox(key: Key('google-page'))),
+              locale,
+              scale));
           await tester.pump(const Duration(seconds: 1));
           expect(find.byKey(const Key('google-page')), findsOneWidget);
-          expect(tester.getSize(find.byKey(const Key('google-page'))).height, greaterThan(100));
+          expect(tester.getSize(find.byKey(const Key('google-page'))).height,
+              greaterThan(100));
           expect(find.text(Loc.tr('loginGoogleSecurityShort')), findsOneWidget);
           expect(tester.takeException(), isNull);
           await tester.pumpWidget(const SizedBox());
         });
       }
     }
-    testWidgets('privacy explanation and real policy can be opened $locale', (tester) async {
+    testWidgets('privacy explanation and real policy can be opened $locale',
+        (tester) async {
       AppConfig.localeNotifier.value = locale;
-      await tester.pumpWidget(host(const Scaffold(body: SingleChildScrollView(child: LoginGuidance())), locale, 1));
+      await tester.pumpWidget(host(
+          const Scaffold(body: SingleChildScrollView(child: LoginGuidance())),
+          locale,
+          1));
       await tester.tap(find.text(Loc.tr('loginGuidanceDetails')));
       await tester.pumpAndSettle();
       final facts = find.text(Loc.tr('loginPrivacyFacts'));
