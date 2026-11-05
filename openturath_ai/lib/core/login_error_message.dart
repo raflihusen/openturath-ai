@@ -6,8 +6,9 @@ import 'localization.dart';
 
 /// Read only the numeric native status; never forward the SDK message.
 int? googleSignInNativeCode(Object error) {
-  if (error is! PlatformException || error.code != 'sign_in_failed')
+  if (error is! PlatformException || error.code != 'sign_in_failed') {
     return null;
+  }
   final match =
       RegExp(r'\bApiException:\s*(\d{1,5})\b').firstMatch(error.message ?? '');
   return match == null ? null : int.tryParse(match.group(1)!);
