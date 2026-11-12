@@ -582,9 +582,13 @@ def page_tentang():
 
 # ======================= UNDUH =======================
 def page_unduh():
-    title = L("Segera hadir", "Coming soon", "قريبًا")
-    description = L("Aplikasi OpenTurath AI akan segera hadir.", "The OpenTurath AI app is coming soon.", "تطبيق OpenTurath AI قادم قريبًا.")
-    body = head(L("Aplikasi", "App", "التطبيق"), title, description)
+    title = L("OpenTurath AI untuk Mac", "OpenTurath AI for Mac", "OpenTurath AI لنظام ماك")
+    description = L("Unduh aplikasi untuk Mac dengan Apple Silicon atau Intel.", "Download the app for Mac with Apple Silicon or Intel.", "حمّل التطبيق لأجهزة ماك بمعالجات Apple Silicon أو Intel.")
+    status = L("Pemeriksaan langganan dan harga sedang terganggu, sehingga ruang AI dapat gagal dibuka. Pembayaran di dalam aplikasi belum tersedia.", "Subscription and pricing checks are currently unavailable, so AI rooms may not open. In-app payments are not yet available.", "يتعذر حاليًا التحقق من الاشتراكات والأسعار، وقد لا تُفتح غرف الذكاء الاصطناعي. الدفع من داخل التطبيق غير متاح بعد.")
+    mac_notice = L("Aplikasi belum diverifikasi Apple; macOS dapat menampilkan peringatan saat membukanya.", "The app has not been verified by Apple; macOS may display a warning when you open it.", "لم تتحقق Apple من التطبيق؛ وقد يعرض نظام ماك تحذيرًا عند فتحه.")
+    download = "https://github.com/raflihusen/openturath-ai/releases/download/macos-1.0.87-build92/OpenTurath_AI_macOS_1.0.87_92.dmg"
+    body = (head(L("Aplikasi", "App", "التطبيق"), title, description) +
+            sec(f'''<div class="cols2"><div><h2>{L("Status layanan", "Service status", "حالة الخدمة")}</h2><p class="lead" style="margin-top:16px">{status}</p></div><div><a class="btn primary" href="{download}">{ic("download")}{L("Unduh untuk Mac · 50 MB", "Download for Mac · 50 MB", "تحميل لماك · 50 ميغابايت")}</a><p class="small" style="margin-top:16px">{mac_notice}</p></div></div>'''))
     write("unduh.html", f"{title}: OpenTurath", description, body, "")
 
 # ======================= BANTUAN =======================
