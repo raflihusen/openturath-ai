@@ -19,8 +19,7 @@ from notebooklm.types import SharePermission
 
 TARGET_STORAGE = "/Users/apple/Downloads/ramadhan/ecosystem/openturath_subscription/storage_state_macbookairm1ku.json"
 CATALOG_PATH = "/Users/apple/Downloads/ramadhan/ecosystem/openturath_subscription/pro_account_master_catalog.json"
-VIP_PATH = "/Users/apple/Downloads/ramadhan/ecosystem/openturath_subscription/shared/vip_emails.json"
-SUBS_REPORT = "/Users/apple/Downloads/ramadhan/ecosystem/openturath_subscription/subscribers_report.txt"
+SEED_NOTEBOOK_ID = "6f42cb8a-79cc-429b-89c5-9a96561f8f4d"
 PROGRESS_FILE = "/Users/apple/Downloads/ramadhan/ecosystem/openturath_subscription/vip_sharing_progress.json"
 
 async def main():
@@ -28,33 +27,11 @@ async def main():
     print("👥 SHARING 24 MASTER PRO NOTEBOOKS KE SELURUH VIP & PELANGGAN AKTIF")
     print("=" * 80)
 
-    # 1. Kumpulkan daftar email
-    with open(VIP_PATH) as f:
-        vips = set(json.load(f))
-
-    import re
-    with open(SUBS_REPORT) as f:
-        subs_text = f.read()
-
-    sub_emails = set(re.findall(r'[\w\.-]+@[\w\.-]+\.\w+', subs_text))
-
-    target_emails = set()
-    for e in vips.union(sub_emails):
-        e = e.strip().lower()
-        if '@' in e and not e.startswith('test-') and e != 'hus180402@gmail.com':
-            # Perbaiki typo email jika ada
-            if e == 'idawahidah88@gmai.com':
-                continue
-            target_emails.add(e)
-
-    sorted_emails = sorted(target_emails)
-    print(f"📋 Total email target: {len(sorted_emails)} akun.")
-
-    # 2. Baca 24 Master Notebook
+    # 1. Baca 24 Master Notebook
     with open(CATALOG_PATH) as f:
         catalog = json.load(f)
 
-    # 3. Baca progress jika ada
+    # 2. Baca progress jika ada
     progress = {}
     if os.path.exists(PROGRESS_FILE):
         try:
@@ -63,9 +40,16 @@ async def main():
         except Exception:
             progress = {}
 
-    grants = [(email, SharePermission.VIEWER) for email in sorted_emails]
-
     async with NotebookLMClient.from_storage(TARGET_STORAGE) as target:
+        # Ambil daftar email terverifikasi dari seed notebook
+        seed_status = await target.sharing.get_status(SEED_NOTEBOOK_ID)
+        valid_emails = [u.email for u in seed_status.shared_users if u.email != 'hus180402@gmail.com']
+        print(f"📋 Ditemukan {len(valid_emails)} akun VIP/pelanggan terverifikasi Google:")
+        for e in sorted(valid_emails):
+            print(f"   - {e}")
+
+        grants = [(email, SharePermission.VIEWER) for email in valid_emails]
+
         for idx, (cat_key, data) in enumerate(catalog.items(), 1):
             nb_id = data["notebook_id"]
             title = data["title"]
