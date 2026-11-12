@@ -1,0 +1,241 @@
+{
+  "01_FIKIH_SYAFII": {
+    "category_key": "01_FIKIH_SYAFII",
+    "title": "01 - FIKIH SYAFII (PRO MASTER)",
+    "notebook_id": "6f42cb8a-79cc-429b-89c5-9a96561f8f4d",
+    "url": "https://notebooklm.google.com/notebook/6f42cb8a-79cc-429b-89c5-9a96561f8f4d",
+    "source_clone_id": "c407fc84-5a44-4cc9-938c-3198416f44cb",
+    "status": "COMPLETED",
+    "timestamp": "2026-11-12 23:38:44"
+  },
+  "02_HADITS": {
+    "category_key": "02_HADITS",
+    "title": "02 - HADITS (MASTER)",
+    "notebook_id": "c0df829e-db5d-416a-88d8-4f934ce5e8ef",
+    "url": "https://notebooklm.google.com/notebook/c0df829e-db5d-416a-88d8-4f934ce5e8ef",
+    "source_clone_id": "21005a0f-5e42-4faa-b6ce-73bd0bf6ea7f",
+    "status": "COMPLETED",
+    "elapsed_seconds": 2.78,
+    "timestamp": "2026-11-12 23:39:14"
+  },
+  "03_USHUL_FIKIH": {
+    "category_key": "03_USHUL_FIKIH",
+    "title": "03 - USHUL FIKIH (MASTER)",
+    "notebook_id": "70750dab-a3e4-471c-82b3-f1edefaa83b0",
+    "url": "https://notebooklm.google.com/notebook/70750dab-a3e4-471c-82b3-f1edefaa83b0",
+    "source_clone_id": "8e43e6a3-1a1b-461a-8091-4df384cd1dc8",
+    "status": "COMPLETED",
+    "elapsed_seconds": 0.8,
+    "timestamp": "2026-11-12 23:39:30"
+  },
+  "04_BAHASA_DAN_SASTRA_ARAB": {
+    "category_key": "04_BAHASA_DAN_SASTRA_ARAB",
+    "title": "04 - BAHASA DAN SASTRA ARAB (MASTER)",
+    "notebook_id": "35948e7e-f415-420b-afc0-86548287a60d",
+    "url": "https://notebooklm.google.com/notebook/35948e7e-f415-420b-afc0-86548287a60d",
+    "source_clone_id": "2e0643cf-b782-4bc6-923a-ddec92d679f5",
+    "status": "COMPLETED",
+    "elapsed_seconds": 0.82,
+    "timestamp": "2026-11-12 23:39:46"
+  },
+  "05_TAFSIR_DAN_ULUMUL_QURAN": {
+    "category_key": "05_TAFSIR_DAN_ULUMUL_QURAN",
+    "title": "05 - TAFSIR DAN ULUMUL QURAN (MASTER)",
+    "notebook_id": "0f84a81e-9bb4-4b8a-9aae-847f6ad55e7e",
+    "url": "https://notebooklm.google.com/notebook/0f84a81e-9bb4-4b8a-9aae-847f6ad55e7e",
+    "source_clone_id": "f7b14cae-eb38-4d1c-8aa9-226daddd26ec",
+    "status": "COMPLETED",
+    "elapsed_seconds": 0.88,
+    "timestamp": "2026-11-12 23:40:06"
+  },
+  "06.1_AL_MUHAQQIQ": {
+    "category_key": "06.1_AL_MUHAQQIQ",
+    "title": "06.1 - AL-MUHAQQIQ (MASTER)",
+    "notebook_id": "f9354b96-7664-419c-a1c5-62edd487692c",
+    "url": "https://notebooklm.google.com/notebook/f9354b96-7664-419c-a1c5-62edd487692c",
+    "source_clone_id": "3acfe036-9b94-4343-8c92-96bd8e2d84e8",
+    "status": "COMPLETED",
+    "elapsed_seconds": 0.72,
+    "timestamp": "2026-11-12 23:40:21"
+  },
+  "06.2_AL_BAYAN": {
+    "category_key": "06.2_AL_BAYAN",
+    "title": "06.2 - AL-BAYAN (MASTER)",
+    "notebook_id": "fc93c87c-b117-4957-852f-ee125b831e0c",
+    "url": "https://notebooklm.google.com/notebook/fc93c87c-b117-4957-852f-ee125b831e0c",
+    "source_clone_id": "6cef3b61-1be7-48c1-af39-c615b9be2104",
+    "status": "COMPLETED",
+    "elapsed_seconds": 0.75,
+    "timestamp": "2026-11-12 23:40:35"
+  },
+  "06.3_AL_MUKHTABIR": {
+    "category_key": "06.3_AL_MUKHTABIR",
+    "title": "06.3 - AL-MUKHTABIR (MASTER)",
+    "notebook_id": "6f811162-d4c4-4299-9ac1-8130b63e3308",
+    "url": "https://notebooklm.google.com/notebook/6f811162-d4c4-4299-9ac1-8130b63e3308",
+    "source_clone_id": "b9fa1948-dd24-4987-af53-2a2c04e68c36",
+    "status": "COMPLETED",
+    "elapsed_seconds": 0.7,
+    "timestamp": "2026-11-12 23:40:49"
+  },
+  "06.4_AL_HABIB": {
+    "category_key": "06.4_AL_HABIB",
+    "title": "06.4 - AL-HABIB (MASTER)",
+    "notebook_id": "838be245-2610-4e60-be3e-fd6077426dc4",
+    "url": "https://notebooklm.google.com/notebook/838be245-2610-4e60-be3e-fd6077426dc4",
+    "source_clone_id": "4891f29b-ad11-4b38-9beb-550b67d4b578",
+    "status": "COMPLETED",
+    "elapsed_seconds": 4.52,
+    "timestamp": "2026-11-12 23:41:10"
+  },
+  "06.5_AL_KHATIB": {
+    "category_key": "06.5_AL_KHATIB",
+    "title": "06.5 - AL-KHATIB (MASTER)",
+    "notebook_id": "b03ea74c-9417-448a-934d-c1d4c67602ac",
+    "url": "https://notebooklm.google.com/notebook/b03ea74c-9417-448a-934d-c1d4c67602ac",
+    "source_clone_id": "bb081b3a-1888-4ac0-9515-eb891b67ac30",
+    "status": "COMPLETED",
+    "elapsed_seconds": 1.58,
+    "timestamp": "2026-11-12 23:41:29"
+  },
+  "07_TARIKH_DAN_SIRAH_NABAWIYYAH": {
+    "category_key": "07_TARIKH_DAN_SIRAH_NABAWIYYAH",
+    "title": "07 - TARIKH DAN SIRAH NABAWIYYAH (MASTER)",
+    "notebook_id": "0b3fe87e-9fbe-4a3a-84f1-9cf2090a58f0",
+    "url": "https://notebooklm.google.com/notebook/0b3fe87e-9fbe-4a3a-84f1-9cf2090a58f0",
+    "source_clone_id": "bd9c69d0-187c-425f-9a14-00b5f1fe5558",
+    "status": "COMPLETED",
+    "elapsed_seconds": 1.58,
+    "timestamp": "2026-11-12 23:41:44"
+  },
+  "08_FIKIH_MUQARAN_DAN_UMUM": {
+    "category_key": "08_FIKIH_MUQARAN_DAN_UMUM",
+    "title": "08 - FIKIH MUQARAN (MASTER)",
+    "notebook_id": "890bec2a-f50b-47c4-9a81-3d11647b46db",
+    "url": "https://notebooklm.google.com/notebook/890bec2a-f50b-47c4-9a81-3d11647b46db",
+    "source_clone_id": "e93ff4b5-cce6-46c2-8b2c-d9af834a16bd",
+    "status": "COMPLETED",
+    "elapsed_seconds": 0.7,
+    "timestamp": "2026-11-12 23:41:57"
+  },
+  "09_FATAWA_DAN_MASAIL_FIQHIYYAH": {
+    "category_key": "09_FATAWA_DAN_MASAIL_FIQHIYYAH",
+    "title": "09 - FATAWA & MASAIL FIQHIYYAH (MASTER)",
+    "notebook_id": "04eab3d3-a952-4d51-a8bc-92e6ae4bb6a8",
+    "url": "https://notebooklm.google.com/notebook/04eab3d3-a952-4d51-a8bc-92e6ae4bb6a8",
+    "source_clone_id": "54c5d6a9-3888-4cb7-b23d-de32925e1114",
+    "status": "COMPLETED",
+    "elapsed_seconds": 0.78,
+    "timestamp": "2026-11-12 23:42:11"
+  },
+  "10_SYARAH_HADITS": {
+    "category_key": "10_SYARAH_HADITS",
+    "title": "10 - SYARAH HADITS (MASTER)",
+    "notebook_id": "bee47a12-217a-48d3-b8ca-d83059586e79",
+    "url": "https://notebooklm.google.com/notebook/bee47a12-217a-48d3-b8ca-d83059586e79",
+    "source_clone_id": "f77c91be-790d-4dbb-9993-5b38b7318d0c",
+    "status": "COMPLETED",
+    "elapsed_seconds": 4.44,
+    "timestamp": "2026-11-12 23:42:31"
+  },
+  "11_FIKIH_HANAFI": {
+    "category_key": "11_FIKIH_HANAFI",
+    "title": "11 - FIKIH HANAFI (MASTER)",
+    "notebook_id": "150c3d7b-d482-4ff0-9ae3-6a5767a84b20",
+    "url": "https://notebooklm.google.com/notebook/150c3d7b-d482-4ff0-9ae3-6a5767a84b20",
+    "source_clone_id": "059bb7b1-92ba-4437-b101-50afc16f1484",
+    "status": "COMPLETED",
+    "elapsed_seconds": 0.95,
+    "timestamp": "2026-11-12 23:42:42"
+  },
+  "12_FIKIH_MALIKI": {
+    "category_key": "12_FIKIH_MALIKI",
+    "title": "12 - FIKIH MALIKI (MASTER)",
+    "notebook_id": "88d9e63e-b7a0-4d85-a406-f79482c95238",
+    "url": "https://notebooklm.google.com/notebook/88d9e63e-b7a0-4d85-a406-f79482c95238",
+    "source_clone_id": "8d647c3f-676d-4b41-9489-2107ffbc6ae4",
+    "status": "COMPLETED",
+    "elapsed_seconds": 0.85,
+    "timestamp": "2026-11-12 23:42:56"
+  },
+  "13_FIKIH_HANBALI": {
+    "category_key": "13_FIKIH_HANBALI",
+    "title": "13 - FIKIH HANBALI (MASTER)",
+    "notebook_id": "a3b8c4e3-01a8-47e1-bea3-47ce195f0bfd",
+    "url": "https://notebooklm.google.com/notebook/a3b8c4e3-01a8-47e1-bea3-47ce195f0bfd",
+    "source_clone_id": "f48af2bd-033f-437a-8849-c48a7b580ed6",
+    "status": "COMPLETED",
+    "elapsed_seconds": 0.72,
+    "timestamp": "2026-11-12 23:43:11"
+  },
+  "14_TASAWWUF_DAN_ADZKAR": {
+    "category_key": "14_TASAWWUF_DAN_ADZKAR",
+    "title": "14 - TASAWWUF DAN ADZKAR (MASTER)",
+    "notebook_id": "f80add45-4a51-417e-89dc-f2bd3c9be298",
+    "url": "https://notebooklm.google.com/notebook/f80add45-4a51-417e-89dc-f2bd3c9be298",
+    "source_clone_id": "a1a52d8b-1e29-4f61-b284-a916bc1a54f7",
+    "status": "COMPLETED",
+    "elapsed_seconds": 0.84,
+    "timestamp": "2026-11-12 23:43:25"
+  },
+  "15_TAJWID_DAN_QIRAAT": {
+    "category_key": "15_TAJWID_DAN_QIRAAT",
+    "title": "15 - TAJWID DAN QIRAAT (MASTER)",
+    "notebook_id": "ce341050-11f3-44a0-94d3-abcde2ea0024",
+    "url": "https://notebooklm.google.com/notebook/ce341050-11f3-44a0-94d3-abcde2ea0024",
+    "source_clone_id": "9f033e91-b69c-47ee-986a-cddce307f0d8",
+    "status": "COMPLETED",
+    "elapsed_seconds": 3.22,
+    "timestamp": "2026-11-12 23:43:52"
+  },
+  "16_QAWAID_FIQHIYYAH": {
+    "category_key": "16_QAWAID_FIQHIYYAH",
+    "title": "16 - QAWAID FIQHIYYAH (MASTER)",
+    "notebook_id": "06dd4666-de4f-4faf-b60c-a800c166da1e",
+    "url": "https://notebooklm.google.com/notebook/06dd4666-de4f-4faf-b60c-a800c166da1e",
+    "source_clone_id": "fe8fbf8f-73cd-40a6-b736-f59e25c56ff8",
+    "status": "COMPLETED",
+    "elapsed_seconds": 0.91,
+    "timestamp": "2026-11-12 23:44:11"
+  },
+  "17_MUSTHALAH_DAN_ULUMUL_HADITS": {
+    "category_key": "17_MUSTHALAH_DAN_ULUMUL_HADITS",
+    "title": "17 - MUSTHALAH DAN ULUMUL HADITS (MASTER)",
+    "notebook_id": "d577b5bc-97f3-4ff5-9810-9c4c5bbeec95",
+    "url": "https://notebooklm.google.com/notebook/d577b5bc-97f3-4ff5-9810-9c4c5bbeec95",
+    "source_clone_id": "728ba05c-ce4e-420c-ac56-c219dda0ec67",
+    "status": "COMPLETED",
+    "elapsed_seconds": 2.06,
+    "timestamp": "2026-11-12 23:44:28"
+  },
+  "18_AQIDAH_DAN_USHULUDDIN": {
+    "category_key": "18_AQIDAH_DAN_USHULUDDIN",
+    "title": "18 - AQIDAH DAN USHULUDDIN (MASTER)",
+    "notebook_id": "bc6bad2e-7ed9-4fb2-974d-e649d8073368",
+    "url": "https://notebooklm.google.com/notebook/bc6bad2e-7ed9-4fb2-974d-e649d8073368",
+    "source_clone_id": "645c4b29-e4be-45b4-9f92-d45fbc2d17f0",
+    "status": "COMPLETED",
+    "elapsed_seconds": 0.69,
+    "timestamp": "2026-11-12 23:44:43"
+  },
+  "19_THABAQAT_DAN_TARAJIM_RIJAL": {
+    "category_key": "19_THABAQAT_DAN_TARAJIM_RIJAL",
+    "title": "19 - THABAQAT DAN TARAJIM RIJAL (MASTER)",
+    "notebook_id": "f7b8e849-6ea9-4274-983a-4dd4573a65f0",
+    "url": "https://notebooklm.google.com/notebook/f7b8e849-6ea9-4274-983a-4dd4573a65f0",
+    "source_clone_id": "7b82d508-df64-498f-b34e-f184b46fa82d",
+    "status": "COMPLETED",
+    "elapsed_seconds": 0.93,
+    "timestamp": "2026-11-12 23:44:54"
+  },
+  "26_BIBLIOGRAFI_DAN_FAHARIS": {
+    "category_key": "26_BIBLIOGRAFI_DAN_FAHARIS",
+    "title": "26 - BIBLIOGRAFI DAN FAHARIS (MASTER)",
+    "notebook_id": "d0bfade2-f397-45cd-945b-13f738b791e8",
+    "url": "https://notebooklm.google.com/notebook/d0bfade2-f397-45cd-945b-13f738b791e8",
+    "source_clone_id": "49327bfb-cdbd-4798-881d-e8ee56b73570",
+    "status": "COMPLETED",
+    "elapsed_seconds": 0.78,
+    "timestamp": "2026-11-12 23:45:07"
+  }
+}
