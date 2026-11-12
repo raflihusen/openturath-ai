@@ -1649,11 +1649,13 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
 
     // The server owns current rights; a stale local profile must not turn a
     // paid-but-provisioning assignment into a request to purchase again.
+    final currentUser = _authService.cachedCurrentUser;
     final openingUid =
-        _authService.currentUser?.uid ?? _authService.cachedCurrentUser?.uid;
+        _authService.currentUser?.uid ?? currentUser?.uid;
 
     try {
-      final url = await _agentService.getAgentUrl(session.agent.id);
+      final url =
+          await _agentService.getAgentUrl(session.agent.id, currentUser);
       final currentUid =
           _authService.currentUser?.uid ?? _authService.cachedCurrentUser?.uid;
       if (!mounted || currentUid != openingUid) {

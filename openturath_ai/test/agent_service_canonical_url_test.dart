@@ -1,6 +1,7 @@
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:openturath_ai/core/constants.dart';
+import 'package:openturath_ai/models/user_model.dart';
 import 'package:openturath_ai/services/agent_service.dart';
 import 'package:openturath_ai/services/callable_gateway.dart';
 
@@ -134,4 +135,51 @@ void main() {
           throwsA(_accessError('invalid-url')));
     });
   }
+
+  test('falls back to canonical master URL when server is down and user is VIP', () async {
+    final gateway = _Gateway(
+      error: FirebaseFunctionsException(
+        code: 'resource-exhausted',
+        message: 'Quota exceeded',
+      ),
+    );
+    final service = AgentService(functions: gateway);
+    final vipUser = UserModel(
+      uid: 'vip-user-uid',
+      name: 'VIP User',
+      email: 'alkhateeb23@gmail.com',
+      photoUrl: '',
+      plan: 'all_access',
+      questionsUsed: 0,
+      isVip: true,
+    );
+
+    final url = await service.getAgentUrl('fiqh_syafii', vipUser);
+    expect(url, 'https://notebook.google.com/notebook/6f42cb8a-79cc-429b-89c5-9a96561f8f4d');
+  });
+
+  test('does not bypass permission-denied paywall even for provided user', () async {
+    final gateway = _Gateway(
+      error: FirebaseFunctionsException(
+        code: 'permission-denied',
+        message: 'Payment required',
+        details: {'reason': 'entitlement_required'},
+      ),
+    );
+    final service = AgentService(functions: gateway);
+    final regularUser = UserModel(
+      uid: 'regular-uid',
+      name: 'Regular User',
+      email: 'regular@example.com',
+      photoUrl: '',
+      plan: 'free',
+      questionsUsed: 0,
+      isVip: false,
+    );
+
+    await expectLater(
+      service.getAgentUrl('fiqh_syafii', regularUser),
+      throwsA(_accessError('permission-denied')),
+    );
+  });
 }

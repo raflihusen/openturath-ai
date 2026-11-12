@@ -5,7 +5,9 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter/foundation.dart';
 import '../core/notebook_navigation.dart';
+import '../core/canonical_notebook_catalog.dart';
 import '../models/agent_model.dart';
+import '../models/user_model.dart';
 import 'callable_gateway.dart';
 import '../core/constants.dart';
 
@@ -133,7 +135,7 @@ class AgentService {
   );
 
   // ── Ambil URL agent dari Cloud Function secara aman (Server-Side Entitlement) ────
-  Future<String?> getAgentUrl(String agentId) async {
+  Future<String?> getAgentUrl(String agentId, [UserModel? user]) async {
     try {
       final result = await _functions
           .call(AppConstants.fnGetAgentUrl, {'agentId': agentId});
@@ -166,6 +168,16 @@ class AgentService {
       // the legacy Google host to the verified Google redirect destination.
       return uri.replace(host: NotebookNavigation.canonicalHost).toString();
     } on FirebaseFunctionsException catch (e) {
+      // Jika pengguna adalah VIP sejati atau memiliki hak akses aktif,
+      // tetapi Cloud Functions mengalami kendala teknis/kuota/server down
+      // (bukan penolakan hak izin permission-denied / unauthenticated),
+      // gunakan fallback kanonik resmi agar pengguna tidak terblokir.
+      if (user != null && (user.isVip || user.hasAccessToAgent(agentId))) {
+        if (e.code != 'permission-denied' && e.code != 'unauthenticated') {
+          final fallback = CanonicalNotebookCatalog.getUrl(agentId);
+          if (fallback != null) return fallback;
+        }
+      }
       final details = e.details is Map ? e.details as Map : const {};
       final reason = details['reason'];
       final requestId = details['request_id'];
@@ -186,6 +198,10 @@ class AgentService {
       );
     } catch (e) {
       if (e is AgentAccessException) rethrow;
+      if (user != null && (user.isVip || user.hasAccessToAgent(agentId))) {
+        final fallback = CanonicalNotebookCatalog.getUrl(agentId);
+        if (fallback != null) return fallback;
+      }
       throw AgentAccessException('unknown-error', e.toString());
     }
   }

@@ -4,6 +4,7 @@ import 'dart:convert';
 
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:openturath_ai/models/user_model.dart';
 import 'package:openturath_ai/services/agent_service.dart';
 import 'package:openturath_ai/services/browser_companion.dart';
 import 'package:openturath_ai/services/browser_companion_chat_service.dart';
@@ -27,7 +28,7 @@ class _Agents extends AgentService {
   int recordCalls = 0;
 
   @override
-  Future<String?> getAgentUrl(String agentId) async {
+  Future<String?> getAgentUrl(String agentId, [UserModel? user]) async {
     expect(agentId, 'fixture-agent');
     urlCalls++;
     return onUrl();
