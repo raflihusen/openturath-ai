@@ -10,7 +10,6 @@ import '../core/scholarly_fonts.dart';
 import '../core/app_copy.dart';
 import '../core/login_error_message.dart';
 import '../core/routes.dart';
-import '../core/google_connection_flow.dart';
 import '../core/design/ot_buttons.dart';
 import '../core/design/ot_colors.dart';
 import '../core/design/ot_expressive.dart';
@@ -78,17 +77,22 @@ class _LoginScreenState extends State<LoginScreen> {
       if (user != null && mounted) {
         final userEmail = user.email.trim().toLowerCase();
         await AuthService.reconcileWebSession(userEmail);
-        final sessionReady = await PersistentGoogleSession.instance
-            .restoreSessionIfAvailable(userEmail);
+        try {
+          await PersistentGoogleSession.instance
+              .restoreSessionIfAvailable(userEmail)
+              .timeout(const Duration(seconds: 2));
+        } catch (_) {
+          // Kesiapan sesi Google dicek mandiri saat pengguna membuka ruang AI.
+        }
         if (!mounted ||
             !_authService.hasAuthenticatedSession ||
             _authService.cachedCurrentUser?.uid != user.uid) {
           return;
         }
+        // Single login mulus: langsung masuk ke Dashboard tanpa memaksa layar kedua
         Navigator.pushReplacementNamed(
           context,
-          sessionReady ? AppRoutes.dashboard : AppRoutes.googleSessionAuth,
-          arguments: GoogleConnectionPurpose.appEntry,
+          AppRoutes.dashboard,
         );
         return;
       }
