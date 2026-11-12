@@ -1345,117 +1345,127 @@ async function reconcileOne(doc: FirebaseFirestore.QueryDocumentSnapshot, cfg: R
   }
   return ok;
 }
-export const reconcileMidtransPayments = functions
-  .runWith({serviceAccount:"open-turath@appspot.gserviceaccount.com",timeoutSeconds:300})
-  .pubsub.schedule("every 2 minutes").onRun(async()=>{
-    // Runs regardless of the access writer: activation only touches the ledger,
-    // which both the legacy and the VPS writers read.
-    const cfg=getMidtransConfig(), now=Date.now(), started=now;
-    const queue=(states:string[],n:number)=>db.collection("payment_reconciliation").where("state","in",states)
-      .where("due_ms","<=",now).orderBy("due_ms").limit(n).get();
-    const [activation,audit]=await Promise.all([queue(["pending"],300),queue(["paid","partial_refund"],100)]);
-    const docs=[...activation.docs,...audit.docs];
-    let cursor=0, completed=0, failed=0;
-    const run=async()=>{
-      while(cursor<docs.length && Date.now()-started<100000) {
-        if (await reconcileOne(docs[cursor++],cfg)) completed++; else failed++;
-      }
-    };
-    await Promise.all([run(),run(),run(),run(),run(),run(),run(),run()]);
-    const oldestPending=activation.docs.length ? activation.docs[0].data().due_ms : null;
-    await db.collection("access_control").doc("payment_heartbeat").set({completed,failed,checked_ms:Date.now(),
-      activation_backlog:activation.size,oldest_activation_due_ms:oldestPending});
-    return null;
-  });
+// ============================================================================
+// CRON POLLING DINONAKTIFKAN (PENGHEMATAN BIAYA CLOUD)
+// reconcileMidtransPayments (every 2 minutes) dinonaktifkan agar tidak membakar
+// biaya eksekusi Cloud Functions terus-menerus tanpa adanya transaksi baru.
+// ============================================================================
+// export const reconcileMidtransPayments = functions
+//   .runWith({serviceAccount:"open-turath@appspot.gserviceaccount.com",timeoutSeconds:300})
+//   .pubsub.schedule("every 2 minutes").onRun(async()=>{
+//     // Runs regardless of the access writer: activation only touches the ledger,
+//     // which both the legacy and the VPS writers read.
+//     const cfg=getMidtransConfig(), now=Date.now(), started=now;
+//     const queue=(states:string[],n:number)=>db.collection("payment_reconciliation").where("state","in",states)
+//       .where("due_ms","<=",now).orderBy("due_ms").limit(n).get();
+//     const [activation,audit]=await Promise.all([queue(["pending"],300),queue(["paid","partial_refund"],100)]);
+//     const docs=[...activation.docs,...audit.docs];
+//     let cursor=0, completed=0, failed=0;
+//     const run=async()=>{
+//       while(cursor<docs.length && Date.now()-started<100000) {
+//         if (await reconcileOne(docs[cursor++],cfg)) completed++; else failed++;
+//       }
+//     };
+//     await Promise.all([run(),run(),run(),run(),run(),run(),run(),run()]);
+//     const oldestPending=activation.docs.length ? activation.docs[0].data().due_ms : null;
+//     await db.collection("access_control").doc("payment_heartbeat").set({completed,failed,checked_ms:Date.now(),
+//       activation_backlog:activation.size,oldest_activation_due_ms:oldestPending});
+//     return null;
+//   });
 
-export const monitorAccessHealth = functions
-  .runWith({serviceAccount:"open-turath@appspot.gserviceaccount.com",timeoutSeconds:120})
-  .pubsub.schedule("every 1 minutes").onRun(async()=>{
-    const runtime=(await db.collection("access_control").doc("runtime").get()).data();
-    if(runtime?.writer !== "vps-v2")return null;
-    const ref=db.collection("access_control").doc("monitor_health");
-    const [h,p,cfgSnap,previous]=await Promise.all([
-      db.collection("access_control").doc("heartbeat").get(),db.collection("access_control").doc("payment_heartbeat").get(),
-      db.collection("access_control").doc("monitor").get(),ref.get()]);
-    const now=Date.now(),cfg=cfgSnap.data() || {},prior=previous.data() || {},started=prior.started_ms || now;
-    const heart=h.data() || {}, payment=p.data() || {},issues:string[]=[];
-    if(now-(heart.last_success_ms || runtime.activated_ms || now)>300000)issues.push("worker_stale");
-    if(heart.authentication_error || now-(heart.last_provider_success_ms || runtime.activated_ms || now)>300000)issues.push("sharing_provider_stale");
-    if(now-(payment.checked_ms || started)>900000)issues.push("payment_reconciliation_stale");
-    // Launch metrics: unpaid-invoice checks falling behind, and accounts whose
-    // access evaluation is overdue (buyers waiting for a seat, expired seats kept).
-    if(Number.isFinite(payment.oldest_activation_due_ms) && now-payment.oldest_activation_due_ms>600000)issues.push("payment_activation_backlog");
-    try {
-      const [lateUsers,lateOwners]=await Promise.all(["users","access_legacy_owners"].map(c=>
-        db.collection(c).where("access_due_ms","<=",now-1800000).limit(1).get()));
-      if(!lateUsers.empty || !lateOwners.empty)issues.push("access_schedule_overdue");
-    } catch (_) {if(now-started>900000)issues.push("queue_observation_unavailable");}
-    try {
-      const pending=await db.collection("access_jobs").where("status","in",["pending","retry","processing"]).orderBy("queued_ms").limit(1).get();
-      if(!pending.empty && now-pending.docs[0].data().queued_ms>900000)issues.push("access_queue_overdue");
-      // Status lama di luar kontrak job tidak pernah dieksekusi: harus terlihat
-      // oleh operator, bukan diam. Pemulihannya manual (periksa deadlettered_by).
-      const legacy=await db.collection("access_jobs").where("status","in",["queued"]).limit(1).get();
-      if(!legacy.empty)issues.push("access_job_legacy_status");
-    } catch (_) {if(now-started>900000)issues.push("queue_observation_unavailable");}
-    // Seat capacity per module (master + clones), recomputed every 10 minutes.
-    // The allocator only fills healthy notebooks, so a module whose clones are
-    // missing silently caps at one notebook; this makes that visible early.
-    let capacity=prior.capacity || null;
-    try {
-      if(!(prior.capacity_checked_ms>now-600000)) {
-        const books=new Map((await db.collection("access_notebooks").get()).docs.map(d=>[d.id,d.data()]));
-        const low:string[]=[];let missing=0,free=0;
-        for(const [code,e] of Object.entries(NOTEBOOK_ENTITIES)) {
-          let seats=0;
-          for(const id of [e.masterId,...e.clones.map(c=>c.id)]) {
-            const n=books.get(id);
-            if(n?.status==="missing" || n?.status==="unverified" && (n.missing_count || 0)>=3)missing++;
-            if(n?.status==="active" && n.is_public===false && n.healthy_until_ms>now)
-              seats+=Math.max(0,Math.min(2000,n.admission_limit || 1995)-(n.occupied || 0));
-          }
-          free+=seats;
-          if(seats<(Number.isInteger(cfg.min_free_seats)?cfg.min_free_seats:500))low.push(code);
-        }
-        capacity={low,missing,free_seats:free,checked_ms:now};
-      }
-    } catch (_) {/* keep the previous capacity reading */}
-    if(capacity?.low?.length)issues.push("notebook_capacity_low");
-    if(capacity?.missing)issues.push("notebooks_missing");
-    try {
-      if(!(await db.collection("access_reviews").where("code","==","resource-exhausted").limit(1).get()).empty)issues.push("buyers_waiting_capacity");
-    } catch (_) {/* reported through queue_observation_unavailable */}
-    const state=issues.length?issues.join(","):"healthy",token=crypto.randomUUID();
-    const enabled=cfg.enabled === true && cfg.approved_by_owner === true;
-    const notify=await db.runTransaction(async t=>{
-      const current=(await t.get(ref)).data() || {};
-      const send=enabled && current.notified_state !== state &&
-        (issues.length>0 || current.notified_state && current.notified_state !== "healthy") && !(current.lease_until_ms>now);
-      t.set(ref,{...current,started_ms:started,checked_ms:now,state,issues,notification_enabled:enabled,
-        capacity,capacity_checked_ms:capacity?.checked_ms || null,
-        ...(send?{lease:token,lease_until_ms:now+60000}:{})});
-      return send;
-    });
-    if(notify) {
-      const labels:Record<string,string>={worker_stale:"Worker VPS belum mengirim bukti siklus sukses lebih dari 5 menit.",
-        sharing_provider_stale:"Koneksi NotebookLM belum terverifikasi; pemulihan sesi perlu diperiksa.",
-        payment_reconciliation_stale:"Pemeriksaan pembayaran berkala belum berjalan sesuai jadwal.",
-        access_queue_overdue:"Ada pekerjaan akses yang tertahan lebih dari 15 menit.",
-        access_job_legacy_status:"Ada pekerjaan akses berstatus lama (queued) yang tidak dieksekusi; periksa deadlettered_by sebelum memulihkan.",
-        payment_activation_backlog:"Pemeriksaan invoice Midtrans yang belum aktif tertinggal lebih dari 10 menit.",
-        access_schedule_overdue:"Ada akun yang evaluasi aksesnya terlambat lebih dari 30 menit (pembeli bisa belum mendapat notebook).",
-        notebook_capacity_low:"Kursi kosong di sebagian modul menipis (master + clone sehat). Tambah clone atau periksa clone yang hilang.",
-        notebooks_missing:"Ada notebook clone di katalog yang tidak lagi ditemukan di akun pemilik NotebookLM.",
-        buyers_waiting_capacity:"Ada pembeli yang sudah membayar tetapi menunggu kursi notebook (semua notebook modulnya penuh/tidak sehat).",
-        queue_observation_unavailable:"Antrean akses belum dapat diperiksa."};
-      const text=issues.length?"⚠️ <b>Otomasi akses OpenTurath perlu perhatian</b>\n"+issues.map(i=>labels[i]).join("\n"):
-        "✅ <b>Otomasi akses OpenTurath pulih.</b> Pemeriksaan worker, NotebookLM, dan pembayaran kembali berjalan.";
-      const delivered=await sendTelegramNotification(text,"alert");
-      await db.runTransaction(async t=>{const current=(await t.get(ref)).data();if(current?.lease===token)t.update(ref,
-        {lease:null,lease_until_ms:0,...(delivered?{notified_state:state,notified_ms:Date.now()}:{notification_delivery_failed_ms:Date.now()})});});
-    }
-    return null;
-  });
+// ============================================================================
+// CRON POLLING DINONAKTIFKAN (PENGHEMATAN BIAYA CLOUD)
+// monitorAccessHealth (every 1 minutes) dinonaktifkan agar tidak membakar biaya
+// eksekusi Cloud Functions setiap menit (1440 eksekusi/hari) saat sistem idle.
+// ============================================================================
+// export const monitorAccessHealth = functions
+//   .runWith({serviceAccount:"open-turath@appspot.gserviceaccount.com",timeoutSeconds:120})
+//   .pubsub.schedule("every 1 minutes").onRun(async()=>{
+//     const runtime=(await db.collection("access_control").doc("runtime").get()).data();
+//     if(runtime?.writer !== "vps-v2")return null;
+//     const ref=db.collection("access_control").doc("monitor_health");
+//     const [h,p,cfgSnap,previous]=await Promise.all([
+//       db.collection("access_control").doc("heartbeat").get(),db.collection("access_control").doc("payment_heartbeat").get(),
+//       db.collection("access_control").doc("monitor").get(),ref.get()]);
+//     const now=Date.now(),cfg=cfgSnap.data() || {},prior=previous.data() || {},started=prior.started_ms || now;
+//     const heart=h.data() || {}, payment=p.data() || {},issues:string[]=[];
+//     if(now-(heart.last_success_ms || runtime.activated_ms || now)>300000)issues.push("worker_stale");
+//     if(heart.authentication_error || now-(heart.last_provider_success_ms || runtime.activated_ms || now)>300000)issues.push("sharing_provider_stale");
+//     if(now-(payment.checked_ms || started)>900000)issues.push("payment_reconciliation_stale");
+//     // Launch metrics: unpaid-invoice checks falling behind, and accounts whose
+//     // access evaluation is overdue (buyers waiting for a seat, expired seats kept).
+//     if(Number.isFinite(payment.oldest_activation_due_ms) && now-payment.oldest_activation_due_ms>600000)issues.push("payment_activation_backlog");
+//     try {
+//       const [lateUsers,lateOwners]=await Promise.all(["users","access_legacy_owners"].map(c=>
+//         db.collection(c).where("access_due_ms","<=",now-1800000).limit(1).get()));
+//       if(!lateUsers.empty || !lateOwners.empty)issues.push("access_schedule_overdue");
+//     } catch (_) {if(now-started>900000)issues.push("queue_observation_unavailable");}
+//     try {
+//       const pending=await db.collection("access_jobs").where("status","in",["pending","retry","processing"]).orderBy("queued_ms").limit(1).get();
+//       if(!pending.empty && now-pending.docs[0].data().queued_ms>900000)issues.push("access_queue_overdue");
+//       // Status lama di luar kontrak job tidak pernah dieksekusi: harus terlihat
+//       // oleh operator, bukan diam. Pemulihannya manual (periksa deadlettered_by).
+//       const legacy=await db.collection("access_jobs").where("status","in",["queued"]).limit(1).get();
+//       if(!legacy.empty)issues.push("access_job_legacy_status");
+//     } catch (_) {if(now-started>900000)issues.push("queue_observation_unavailable");}
+//     // Seat capacity per module (master + clones), recomputed every 10 minutes.
+//     // The allocator only fills healthy notebooks, so a module whose clones are
+//     // missing silently caps at one notebook; this makes that visible early.
+//     let capacity=prior.capacity || null;
+//     try {
+//       if(!(prior.capacity_checked_ms>now-600000)) {
+//         const books=new Map((await db.collection("access_notebooks").get()).docs.map(d=>[d.id,d.data()]));
+//         const low:string[]=[];let missing=0,free=0;
+//         for(const [code,e] of Object.entries(NOTEBOOK_ENTITIES)) {
+//           let seats=0;
+//           for(const id of [e.masterId,...e.clones.map(c=>c.id)]) {
+//             const n=books.get(id);
+//             if(n?.status==="missing" || n?.status==="unverified" && (n.missing_count || 0)>=3)missing++;
+//             if(n?.status==="active" && n.is_public===false && n.healthy_until_ms>now)
+//               seats+=Math.max(0,Math.min(2000,n.admission_limit || 1995)-(n.occupied || 0));
+//           }
+//           free+=seats;
+//           if(seats<(Number.isInteger(cfg.min_free_seats)?cfg.min_free_seats:500))low.push(code);
+//         }
+//         capacity={low,missing,free_seats:free,checked_ms:now};
+//       }
+//     } catch (_) {/* keep the previous capacity reading */}
+//     if(capacity?.low?.length)issues.push("notebook_capacity_low");
+//     if(capacity?.missing)issues.push("notebooks_missing");
+//     try {
+//       if(!(await db.collection("access_reviews").where("code","==","resource-exhausted").limit(1).get()).empty)issues.push("buyers_waiting_capacity");
+//     } catch (_) {/* reported through queue_observation_unavailable */}
+//     const state=issues.length?issues.join(","):"healthy",token=crypto.randomUUID();
+//     const enabled=cfg.enabled === true && cfg.approved_by_owner === true;
+//     const notify=await db.runTransaction(async t=>{
+//       const current=(await t.get(ref)).data() || {};
+//       const send=enabled && current.notified_state !== state &&
+//         (issues.length>0 || current.notified_state && current.notified_state !== "healthy") && !(current.lease_until_ms>now);
+//       t.set(ref,{...current,started_ms:started,checked_ms:now,state,issues,notification_enabled:enabled,
+//         capacity,capacity_checked_ms:capacity?.checked_ms || null,
+//         ...(send?{lease:token,lease_until_ms:now+60000}:{})});
+//       return send;
+//     });
+//     if(notify) {
+//       const labels:Record<string,string>={worker_stale:"Worker VPS belum mengirim bukti siklus sukses lebih dari 5 menit.",
+//         sharing_provider_stale:"Koneksi NotebookLM belum terverifikasi; pemulihan sesi perlu diperiksa.",
+//         payment_reconciliation_stale:"Pemeriksaan pembayaran berkala belum berjalan sesuai jadwal.",
+//         access_queue_overdue:"Ada pekerjaan akses yang tertahan lebih dari 15 menit.",
+//         access_job_legacy_status:"Ada pekerjaan akses berstatus lama (queued) yang tidak dieksekusi; periksa deadlettered_by sebelum memulihkan.",
+//         payment_activation_backlog:"Pemeriksaan invoice Midtrans yang belum aktif tertinggal lebih dari 10 menit.",
+//         access_schedule_overdue:"Ada akun yang evaluasi aksesnya terlambat lebih dari 30 menit (pembeli bisa belum mendapat notebook).",
+//         notebook_capacity_low:"Kursi kosong di sebagian modul menipis (master + clone sehat). Tambah clone atau periksa clone yang hilang.",
+//         notebooks_missing:"Ada notebook clone di katalog yang tidak lagi ditemukan di akun pemilik NotebookLM.",
+//         buyers_waiting_capacity:"Ada pembeli yang sudah membayar tetapi menunggu kursi notebook (semua notebook modulnya penuh/tidak sehat).",
+//         queue_observation_unavailable:"Antrean akses belum dapat diperiksa."};
+//       const text=issues.length?"⚠️ <b>Otomasi akses OpenTurath perlu perhatian</b>\n"+issues.map(i=>labels[i]).join("\n"):
+//         "✅ <b>Otomasi akses OpenTurath pulih.</b> Pemeriksaan worker, NotebookLM, dan pembayaran kembali berjalan.";
+//       const delivered=await sendTelegramNotification(text,"alert");
+//       await db.runTransaction(async t=>{const current=(await t.get(ref)).data();if(current?.lease===token)t.update(ref,
+//         {lease:null,lease_until_ms:0,...(delivered?{notified_state:state,notified_ms:Date.now()}:{notification_delivery_failed_ms:Date.now()})});});
+//     }
+//     return null;
+//   });
 
 // ================================================================
 // FUNCTION 2b: dokuWebhook (HTTP Notification dari DOKU)
@@ -2457,212 +2467,217 @@ export const onUserCreate = functions.firestore
 // FUNCTION 4: dailyRevoke (Cron Job — tiap tengah malam)
 // ================================================================
 
-export const dailyRevoke = functions
-  .runWith({ serviceAccount: "open-turath@appspot.gserviceaccount.com", timeoutSeconds: 300 })
-  .pubsub.schedule("every 1 hours")
-  .onRun(async () => {
-    if ((await db.collection("access_control").doc("runtime").get()).data()?.writer === "vps-v2") return null;
-    const revokedSummary: Array<{ email: string; scope: string; reason: string }> = [];
-    let cursor: FirebaseFirestore.QueryDocumentSnapshot | undefined;
-    while (true) {
-      let query = db.collection("users").orderBy(admin.firestore.FieldPath.documentId()).limit(100);
-      if (cursor) query = query.startAfter(cursor);
-      const page = await query.get();
-      if (page.empty) break;
-      for (const doc of page.docs) {
-        await db.runTransaction(async t => {
-          const snap = await t.get(doc.ref);
-          if (!snap.exists) return;
-          const data = snap.data()!;
-
-          // PROTEKSI VIP PERMANEN: Kebal terhadap segala pencabutan akses otomatis
-          const userEmail = (data.email || "").toLowerCase().trim();
-          if (isVip(data)) return;
-          const entitlements = { ...(data.entitlements || {}) };
-          const expired: string[] = [];
-          for (const [key, value] of Object.entries(entitlements)) {
-            const ent = value as any;
-            const expiry = ent?.expiry?.toDate ? ent.expiry.toDate() : new Date(ent?.expiry ?? ent?.expires_at ?? "");
-            if (expiry && !isNaN(expiry.getTime()) && expiry <= new Date() && ent?.status !== "expired") {
-              entitlements[key] = { ...ent, status: "expired" };
-              expired.push(key);
-            }
-          }
-          const legacyExpiry = data.subscription_expiry?.toDate
-            ? data.subscription_expiry.toDate() : new Date(data.subscription_expiry ?? "");
-          const legacyExpired = ["all_access", "all_ai_1m", "all_ai_6m", "all_ai_1y", "full"].includes(data.plan)
-            && legacyExpiry <= new Date();
-          if (!expired.length && !legacyExpired) return;
-          const update: any = { entitlements, updated_at: admin.firestore.FieldValue.serverTimestamp() };
-          if (legacyExpired) { update.plan = "trial"; update.subscription_expiry = null; expired.push("all_access"); }
-          t.update(doc.ref, update);
-          for (const key of new Set(expired)) {
-            revokedSummary.push({
-              email: userEmail || data.email || doc.id,
-              scope: getServiceTitleForEntitlement(key),
-              reason: "Masa aktif user habis",
-            });
-            t.set(db.collection("provisioning_outbox").doc(`reconcile_${doc.id}_${key}_${crypto.randomUUID()}`), {
-              uid: doc.id, email: data.email || "", entitlement_key: key,
-              action: "remove", status: "pending", attempts: 0,
-              created_at: admin.firestore.FieldValue.serverTimestamp(),
-            });
-          }
-        });
-      }
-      cursor = page.docs[page.docs.length - 1];
-    }
-
-    // PHASE 2: Reconcile transactions collection (Akal, Midtrans, Manual Overrides)
-    const now = new Date();
-    const txSnap = await db.collection("transactions")
-      .where("status", "in", ["success", "paid", "settled", "SUCCESS", "PAID", "SETTLED"])
-      .get();
-    const activeEmailsByEntitlement = new Map<string, Set<string>>();
-    for (const key of PROVISIONABLE_SCOPES) {
-      activeEmailsByEntitlement.set(key, new Set<string>());
-    }
-    // The owning profile, not only the transaction row, decides VIP status and
-    // whether another grant (voucher, renewal, other gateway) keeps a module active.
-    const ownerCache = new Map<string, FirebaseFirestore.DocumentData | null>();
-    const ownerOf = async (uid: unknown, email: string): Promise<FirebaseFirestore.DocumentData | null> => {
-      const cacheKey = typeof uid === "string" && uid ? `uid:${uid}` : `email:${email}`;
-      if (ownerCache.has(cacheKey)) return ownerCache.get(cacheKey)!;
-      let owner: FirebaseFirestore.DocumentData | null = null;
-      if (typeof uid === "string" && uid && !uid.includes("@")) owner = (await db.collection("users").doc(uid).get()).data() || null;
-      if (!owner) {
-        const byEmail = await db.collection("users").where("email", "==", email).limit(1).get();
-        owner = byEmail.empty ? null : byEmail.docs[0].data();
-      }
-      ownerCache.set(cacheKey, owner);
-      return owner;
-    };
-    const allActiveEmails = new Set<string>();
-
-    for (const doc of txSnap.docs) {
-      const d = doc.data();
-      const email = (d.customer_email || d.payer_email || d.email || "").trim().toLowerCase();
-      if (!email) continue;
-      const status = String(d.status || "").toLowerCase();
-      if (!["success", "paid", "settled"].includes(status)) continue;
-
-      const rawExp = d.subscription_expires_at || d.access_expires_at || d.expires_at;
-      let expDate: Date | null = null;
-      if (rawExp?.toDate) expDate = rawExp.toDate();
-      else if (typeof rawExp === "string") {
-        const parsed = new Date(rawExp);
-        if (!isNaN(parsed.getTime())) expDate = parsed;
-      }
-
-      const plan = String(d.plan || d.plan_id || "").toLowerCase();
-      // VIP status comes from explicit markers only; a far expiry date is just a long purchase.
-      const txVip = d.is_vip === true || plan.includes("vip");
-      if (txVip || isVip({email})) continue;
-
-      const entKey = d.entitlement_key;
-      const isGlobalPlan = entKey === "all_access" || entKey === "all_ai" ||
-        (!entKey && /all_ai|all_access|full|sultan/.test(plan));
-
-      if (expDate && expDate > now) {
-        if (isGlobalPlan) {
-          allActiveEmails.add(email);
-          for (const k of PROVISIONABLE_SCOPES) {
-            activeEmailsByEntitlement.get(k)?.add(email);
-          }
-        } else if (entKey && activeEmailsByEntitlement.has(entKey)) {
-          activeEmailsByEntitlement.get(entKey)?.add(email);
-        } else if (!entKey) {
-          if (plan.includes("tahawwulat")) {
-            activeEmailsByEntitlement.get("fiqh_tahawwulat")?.add(email);
-          } else if (plan.includes("syafi") || plan.includes("tholib")) {
-            activeEmailsByEntitlement.get("fiqh_syafii")?.add(email);
-          } else if (plan.includes("nahwu") || plan.includes("bahasa arab")) {
-            activeEmailsByEntitlement.get("nahwu")?.add(email);
-          }
-        }
-      }
-    }
-
-    for (const doc of txSnap.docs) {
-      const d = doc.data();
-      const email = (d.customer_email || d.payer_email || d.email || "").trim().toLowerCase();
-      if (!email) continue;
-      if (isVip({email}) || d.is_vip === true) continue;
-
-      const status = String(d.status || "").toLowerCase();
-      if (!["success", "paid", "settled"].includes(status)) continue;
-
-      const rawExp = d.subscription_expires_at || d.access_expires_at || d.expires_at;
-      let expDate: Date | null = null;
-      if (rawExp?.toDate) expDate = rawExp.toDate();
-      else if (typeof rawExp === "string") {
-        const parsed = new Date(rawExp);
-        if (!isNaN(parsed.getTime())) expDate = parsed;
-      }
-
-      if (expDate && expDate <= now) {
-        const entKey = d.entitlement_key;
-        const owner = await ownerOf(d.uid, email);
-        const registered = await db.collection("access_vip_registry").doc(keyOf(email)).get();
-        if (registered.exists || (owner && isVip({...owner, email: owner.email || email}))) continue;
-
-        const targetKeys = (entKey && PROVISIONABLE_SCOPES.includes(entKey))
-          ? [entKey]
-          : (String(d.plan || "").toLowerCase().includes("tholib") ? ["fiqh_tahawwulat", "fiqh_syafii"] : PROVISIONABLE_SCOPES);
-
-        const expiredKeysToRevoke: string[] = [];
-        for (const k of targetKeys) {
-          if (allActiveEmails.has(email) || activeEmailsByEntitlement.get(k)?.has(email)) continue;
-          // Independent per-module evaluation: a still-active entitlement for
-          // this module survives the expiry of an older or unrelated transaction.
-          if (owner && getEntitlementAccess(owner, k).active) continue;
-          expiredKeysToRevoke.push(k);
-        }
-
-        await doc.ref.update({
-          status: "EXPIRED",
-          revoked_at: admin.firestore.FieldValue.serverTimestamp(),
-          updated_at: admin.firestore.FieldValue.serverTimestamp(),
-        });
-
-        for (const k of expiredKeysToRevoke) {
-          revokedSummary.push({
-            email,
-            scope: getServiceTitleForEntitlement(k),
-            reason: `Transaksi ${d.plan || "tholib"} kedaluwarsa`,
-          });
-          const outboxId = `tx_revoke_${doc.id}_${k}_${crypto.randomUUID()}`;
-          await db.collection("provisioning_outbox").doc(outboxId).set({
-            uid: d.uid || email,
-            email: email,
-            name: d.customer_name || d.payer_name || "",
-            entitlement_key: k,
-            action: "remove",
-            status: "pending",
-            attempts: 0,
-            source: "dailyRevoke_transactions",
-            created_at: admin.firestore.FieldValue.serverTimestamp(),
-          });
-        }
-      }
-    }
-
-    if (revokedSummary.length > 0) {
-      const lines = [
-        `⚠️ <b>[PENCABUTAN AKSES OTOMATIS]</b>`,
-        `🕌 <b>OpenTurath AI Engine (Cloud Functions)</b>\n`,
-        `Sistem mendeteksi <b>${revokedSummary.length} akses kedaluwarsa</b> dan mencabut hak aksesnya:`,
-      ];
-      for (const r of revokedSummary.slice(0, 15)) {
-        lines.push(`• 👤 <code>${esc(r.email)}</code> — <b>${esc(r.scope)}</b> (<i>${esc(r.reason)}</i>)`);
-      }
-      if (revokedSummary.length > 15) {
-        lines.push(`• <i>... dan ${revokedSummary.length - 15} akses kedaluwarsa lainnya.</i>`);
-      }
-      await sendTelegramNotification(lines.join("\n"));
-    }
-    return null;
-  });
+// ============================================================================
+// CRON POLLING DINONAKTIFKAN (PENGHEMATAN BIAYA CLOUD)
+// dailyRevoke (every 1 hours) dinonaktifkan dari Cloud Functions terjadwal.
+// Revokasi dan audit kedaluwarsa ditangani oleh VPS worker (vps-v2) atau audit harian.
+// ============================================================================
+// export const dailyRevoke = functions
+//   .runWith({ serviceAccount: "open-turath@appspot.gserviceaccount.com", timeoutSeconds: 300 })
+//   .pubsub.schedule("every 1 hours")
+//   .onRun(async () => {
+//     if ((await db.collection("access_control").doc("runtime").get()).data()?.writer === "vps-v2") return null;
+//     const revokedSummary: Array<{ email: string; scope: string; reason: string }> = [];
+//     let cursor: FirebaseFirestore.QueryDocumentSnapshot | undefined;
+//     while (true) {
+//       let query = db.collection("users").orderBy(admin.firestore.FieldPath.documentId()).limit(100);
+//       if (cursor) query = query.startAfter(cursor);
+//       const page = await query.get();
+//       if (page.empty) break;
+//       for (const doc of page.docs) {
+//         await db.runTransaction(async t => {
+//           const snap = await t.get(doc.ref);
+//           if (!snap.exists) return;
+//           const data = snap.data()!;
+// 
+//           // PROTEKSI VIP PERMANEN: Kebal terhadap segala pencabutan akses otomatis
+//           const userEmail = (data.email || "").toLowerCase().trim();
+//           if (isVip(data)) return;
+//           const entitlements = { ...(data.entitlements || {}) };
+//           const expired: string[] = [];
+//           for (const [key, value] of Object.entries(entitlements)) {
+//             const ent = value as any;
+//             const expiry = ent?.expiry?.toDate ? ent.expiry.toDate() : new Date(ent?.expiry ?? ent?.expires_at ?? "");
+//             if (expiry && !isNaN(expiry.getTime()) && expiry <= new Date() && ent?.status !== "expired") {
+//               entitlements[key] = { ...ent, status: "expired" };
+//               expired.push(key);
+//             }
+//           }
+//           const legacyExpiry = data.subscription_expiry?.toDate
+//             ? data.subscription_expiry.toDate() : new Date(data.subscription_expiry ?? "");
+//           const legacyExpired = ["all_access", "all_ai_1m", "all_ai_6m", "all_ai_1y", "full"].includes(data.plan)
+//             && legacyExpiry <= new Date();
+//           if (!expired.length && !legacyExpired) return;
+//           const update: any = { entitlements, updated_at: admin.firestore.FieldValue.serverTimestamp() };
+//           if (legacyExpired) { update.plan = "trial"; update.subscription_expiry = null; expired.push("all_access"); }
+//           t.update(doc.ref, update);
+//           for (const key of new Set(expired)) {
+//             revokedSummary.push({
+//               email: userEmail || data.email || doc.id,
+//               scope: getServiceTitleForEntitlement(key),
+//               reason: "Masa aktif user habis",
+//             });
+//             t.set(db.collection("provisioning_outbox").doc(`reconcile_${doc.id}_${key}_${crypto.randomUUID()}`), {
+//               uid: doc.id, email: data.email || "", entitlement_key: key,
+//               action: "remove", status: "pending", attempts: 0,
+//               created_at: admin.firestore.FieldValue.serverTimestamp(),
+//             });
+//           }
+//         });
+//       }
+//       cursor = page.docs[page.docs.length - 1];
+//     }
+// 
+//     // PHASE 2: Reconcile transactions collection (Akal, Midtrans, Manual Overrides)
+//     const now = new Date();
+//     const txSnap = await db.collection("transactions")
+//       .where("status", "in", ["success", "paid", "settled", "SUCCESS", "PAID", "SETTLED"])
+//       .get();
+//     const activeEmailsByEntitlement = new Map<string, Set<string>>();
+//     for (const key of PROVISIONABLE_SCOPES) {
+//       activeEmailsByEntitlement.set(key, new Set<string>());
+//     }
+//     // The owning profile, not only the transaction row, decides VIP status and
+//     // whether another grant (voucher, renewal, other gateway) keeps a module active.
+//     const ownerCache = new Map<string, FirebaseFirestore.DocumentData | null>();
+//     const ownerOf = async (uid: unknown, email: string): Promise<FirebaseFirestore.DocumentData | null> => {
+//       const cacheKey = typeof uid === "string" && uid ? `uid:${uid}` : `email:${email}`;
+//       if (ownerCache.has(cacheKey)) return ownerCache.get(cacheKey)!;
+//       let owner: FirebaseFirestore.DocumentData | null = null;
+//       if (typeof uid === "string" && uid && !uid.includes("@")) owner = (await db.collection("users").doc(uid).get()).data() || null;
+//       if (!owner) {
+//         const byEmail = await db.collection("users").where("email", "==", email).limit(1).get();
+//         owner = byEmail.empty ? null : byEmail.docs[0].data();
+//       }
+//       ownerCache.set(cacheKey, owner);
+//       return owner;
+//     };
+//     const allActiveEmails = new Set<string>();
+// 
+//     for (const doc of txSnap.docs) {
+//       const d = doc.data();
+//       const email = (d.customer_email || d.payer_email || d.email || "").trim().toLowerCase();
+//       if (!email) continue;
+//       const status = String(d.status || "").toLowerCase();
+//       if (!["success", "paid", "settled"].includes(status)) continue;
+// 
+//       const rawExp = d.subscription_expires_at || d.access_expires_at || d.expires_at;
+//       let expDate: Date | null = null;
+//       if (rawExp?.toDate) expDate = rawExp.toDate();
+//       else if (typeof rawExp === "string") {
+//         const parsed = new Date(rawExp);
+//         if (!isNaN(parsed.getTime())) expDate = parsed;
+//       }
+// 
+//       const plan = String(d.plan || d.plan_id || "").toLowerCase();
+//       // VIP status comes from explicit markers only; a far expiry date is just a long purchase.
+//       const txVip = d.is_vip === true || plan.includes("vip");
+//       if (txVip || isVip({email})) continue;
+// 
+//       const entKey = d.entitlement_key;
+//       const isGlobalPlan = entKey === "all_access" || entKey === "all_ai" ||
+//         (!entKey && /all_ai|all_access|full|sultan/.test(plan));
+// 
+//       if (expDate && expDate > now) {
+//         if (isGlobalPlan) {
+//           allActiveEmails.add(email);
+//           for (const k of PROVISIONABLE_SCOPES) {
+//             activeEmailsByEntitlement.get(k)?.add(email);
+//           }
+//         } else if (entKey && activeEmailsByEntitlement.has(entKey)) {
+//           activeEmailsByEntitlement.get(entKey)?.add(email);
+//         } else if (!entKey) {
+//           if (plan.includes("tahawwulat")) {
+//             activeEmailsByEntitlement.get("fiqh_tahawwulat")?.add(email);
+//           } else if (plan.includes("syafi") || plan.includes("tholib")) {
+//             activeEmailsByEntitlement.get("fiqh_syafii")?.add(email);
+//           } else if (plan.includes("nahwu") || plan.includes("bahasa arab")) {
+//             activeEmailsByEntitlement.get("nahwu")?.add(email);
+//           }
+//         }
+//       }
+//     }
+// 
+//     for (const doc of txSnap.docs) {
+//       const d = doc.data();
+//       const email = (d.customer_email || d.payer_email || d.email || "").trim().toLowerCase();
+//       if (!email) continue;
+//       if (isVip({email}) || d.is_vip === true) continue;
+// 
+//       const status = String(d.status || "").toLowerCase();
+//       if (!["success", "paid", "settled"].includes(status)) continue;
+// 
+//       const rawExp = d.subscription_expires_at || d.access_expires_at || d.expires_at;
+//       let expDate: Date | null = null;
+//       if (rawExp?.toDate) expDate = rawExp.toDate();
+//       else if (typeof rawExp === "string") {
+//         const parsed = new Date(rawExp);
+//         if (!isNaN(parsed.getTime())) expDate = parsed;
+//       }
+// 
+//       if (expDate && expDate <= now) {
+//         const entKey = d.entitlement_key;
+//         const owner = await ownerOf(d.uid, email);
+//         const registered = await db.collection("access_vip_registry").doc(keyOf(email)).get();
+//         if (registered.exists || (owner && isVip({...owner, email: owner.email || email}))) continue;
+// 
+//         const targetKeys = (entKey && PROVISIONABLE_SCOPES.includes(entKey))
+//           ? [entKey]
+//           : (String(d.plan || "").toLowerCase().includes("tholib") ? ["fiqh_tahawwulat", "fiqh_syafii"] : PROVISIONABLE_SCOPES);
+// 
+//         const expiredKeysToRevoke: string[] = [];
+//         for (const k of targetKeys) {
+//           if (allActiveEmails.has(email) || activeEmailsByEntitlement.get(k)?.has(email)) continue;
+//           // Independent per-module evaluation: a still-active entitlement for
+//           // this module survives the expiry of an older or unrelated transaction.
+//           if (owner && getEntitlementAccess(owner, k).active) continue;
+//           expiredKeysToRevoke.push(k);
+//         }
+// 
+//         await doc.ref.update({
+//           status: "EXPIRED",
+//           revoked_at: admin.firestore.FieldValue.serverTimestamp(),
+//           updated_at: admin.firestore.FieldValue.serverTimestamp(),
+//         });
+// 
+//         for (const k of expiredKeysToRevoke) {
+//           revokedSummary.push({
+//             email,
+//             scope: getServiceTitleForEntitlement(k),
+//             reason: `Transaksi ${d.plan || "tholib"} kedaluwarsa`,
+//           });
+//           const outboxId = `tx_revoke_${doc.id}_${k}_${crypto.randomUUID()}`;
+//           await db.collection("provisioning_outbox").doc(outboxId).set({
+//             uid: d.uid || email,
+//             email: email,
+//             name: d.customer_name || d.payer_name || "",
+//             entitlement_key: k,
+//             action: "remove",
+//             status: "pending",
+//             attempts: 0,
+//             source: "dailyRevoke_transactions",
+//             created_at: admin.firestore.FieldValue.serverTimestamp(),
+//           });
+//         }
+//       }
+//     }
+// 
+//     if (revokedSummary.length > 0) {
+//       const lines = [
+//         `⚠️ <b>[PENCABUTAN AKSES OTOMATIS]</b>`,
+//         `🕌 <b>OpenTurath AI Engine (Cloud Functions)</b>\n`,
+//         `Sistem mendeteksi <b>${revokedSummary.length} akses kedaluwarsa</b> dan mencabut hak aksesnya:`,
+//       ];
+//       for (const r of revokedSummary.slice(0, 15)) {
+//         lines.push(`• 👤 <code>${esc(r.email)}</code> — <b>${esc(r.scope)}</b> (<i>${esc(r.reason)}</i>)`);
+//       }
+//       if (revokedSummary.length > 15) {
+//         lines.push(`• <i>... dan ${revokedSummary.length - 15} akses kedaluwarsa lainnya.</i>`);
+//       }
+//       await sendTelegramNotification(lines.join("\n"));
+//     }
+//     return null;
+//   });
 
 // ================================================================
 // FUNCTION 4b: processProvisioningOutbox (Cron Worker — tiap 5 menit)
@@ -2673,92 +2688,98 @@ function entitlementRevision(data: any): string {
   return JSON.stringify([data?.plan, data?.subscription_expiry, data?.entitlements]);
 }
 
-export const processProvisioningOutbox = functions
-  .runWith({ serviceAccount: "open-turath@appspot.gserviceaccount.com", timeoutSeconds: 300 })
-  .pubsub.schedule("every 5 minutes")
-  .onRun(async () => {
-    if ((await db.collection("access_control").doc("runtime").get()).data()?.writer === "vps-v2") return null;
-    const started = Date.now();
-    const pending = await db.collection("provisioning_outbox")
-      .where("status", "in", ["pending", "retry", "processing"]).limit(25).get();
-    for (const candidate of pending.docs) {
-      if (Date.now() - started > 210000) break;
-      const token = crypto.randomUUID();
-      const candidateData = candidate.data();
-      const uid = candidateData.uid || candidateData.email;
-      if (typeof uid !== "string" || !uid) {
-        await candidate.ref.update({status:"failed",error:"Missing owner UID or email"});
-        continue;
-      }
-      const lease = db.collection("provisioning_leases").doc(uid);
-      const job = await db.runTransaction(async t => {
-        const snap = await t.get(candidate.ref);
-        const lock = await t.get(lease);
-        const data = snap.data();
-        if (!data || !["pending", "retry", "processing"].includes(data.status)) return null;
-        if ((lock.data()?.until?.toMillis?.() || 0) > Date.now()) return null;
-        if ((data.attempts || 0) >= 8) {
-          t.update(candidate.ref, {status:"failed",error:"Exceeded retry limit"});
-          return null;
-        }
-        t.set(lease, {token, until:admin.firestore.Timestamp.fromMillis(Date.now()+330000)});
-        t.update(candidate.ref, {status:"processing",attempts:(data.attempts||0)+1,lease_token:token});
-        return data;
-      });
-      if (!job) continue;
-      let status = "completed";
-      let error = "";
-      try {
-        const userDoc = candidateData.uid && !candidateData.uid.includes("@")
-          ? await db.collection("users").doc(candidateData.uid).get()
-          : null;
-        const data = userDoc && userDoc.exists ? userDoc.data() : null;
-        const email = (data?.email || job.email || (uid.includes("@") ? uid : "")).trim().toLowerCase();
-        if (!email.includes("@")) throw new Error("Invalid provisioning email");
-        const scope = job.entitlement_key;
-        const keys = scope === "all_access" || scope === "all_ai" ? PROVISIONABLE_SCOPES : [scope];
-        const protectedOwner = isVip({...(data || {}), email}) ||
-          (await db.collection("access_vip_registry").doc(keyOf(email)).get()).exists;
-        for (const key of keys) {
-          if (!PROVISIONABLE_SCOPES.includes(key)) throw new Error("Unsupported provisioning scope");
-          // A queued "add" is re-checked against the current profile so a job
-          // delayed past expiry cannot hand access back.
-          const entitled = Boolean(data && getEntitlementAccess(data,key).active);
-          const desired = protectedOwner || (job.action === "add" ? (data ? entitled : true) : entitled);
-          await notifySubscriptionServer(email,data?.name||job.name||"Peneliti",desired ? "premium" : "trial",
-            desired ? "add" : "remove",getServiceTitleForEntitlement(key),key);
-        }
-        if (job.action === "remove") {
-          await sendTelegramNotification(
-            `🗑️ <b>[DEPROVISIONING NOTEBOOKLM SELESAI]</b>\n` +
-            `🕌 OpenTurath AI Server\n` +
-            `👤 Email: <code>${esc(email)}</code>\n` +
-            `📦 Produk: <b>${esc(getServiceTitleForEntitlement(job.entitlement_key))}</b>\n` +
-            `✅ Hak akses telah resmi dicabut dari sistem NotebookLM.`
-          );
-        }
-
-        if (data && candidateData.uid && job.action !== "remove") {
-          const after = await db.collection("users").doc(candidateData.uid).get();
-          if (entitlementRevision(data) !== entitlementRevision(after.data())) {
-            status = "retry";
-            error = "Entitlements changed during delivery";
-          }
-        }
-      } catch (err: any) {
-        status = "retry";
-        error = String(err.message || "Provisioning failure").slice(0,300);
-      }
-      await db.runTransaction(async t => {
-        const lock = await t.get(lease);
-        const snap = await t.get(candidate.ref);
-        if (lock.data()?.token !== token || snap.data()?.lease_token !== token) return;
-        t.update(candidate.ref, {status,last_error:error,last_attempt_at:admin.firestore.FieldValue.serverTimestamp()});
-        t.delete(lease);
-      });
-    }
-    return null;
-  });
+// ============================================================================
+// CRON POLLING DINONAKTIFKAN (PENGHEMATAN BIAYA CLOUD)
+// processProvisioningOutbox (every 5 minutes) dinonaktifkan dari pubsub.schedule.
+// Pemrosesan outbox instan telah ditangani secara event-driven via Firestore Trigger
+// onProvisioningOutboxCreated (< 1 detik) tanpa memerlukan polling berulang.
+// ============================================================================
+// export const processProvisioningOutbox = functions
+//   .runWith({ serviceAccount: "open-turath@appspot.gserviceaccount.com", timeoutSeconds: 300 })
+//   .pubsub.schedule("every 5 minutes")
+//   .onRun(async () => {
+//     if ((await db.collection("access_control").doc("runtime").get()).data()?.writer === "vps-v2") return null;
+//     const started = Date.now();
+//     const pending = await db.collection("provisioning_outbox")
+//       .where("status", "in", ["pending", "retry", "processing"]).limit(25).get();
+//     for (const candidate of pending.docs) {
+//       if (Date.now() - started > 210000) break;
+//       const token = crypto.randomUUID();
+//       const candidateData = candidate.data();
+//       const uid = candidateData.uid || candidateData.email;
+//       if (typeof uid !== "string" || !uid) {
+//         await candidate.ref.update({status:"failed",error:"Missing owner UID or email"});
+//         continue;
+//       }
+//       const lease = db.collection("provisioning_leases").doc(uid);
+//       const job = await db.runTransaction(async t => {
+//         const snap = await t.get(candidate.ref);
+//         const lock = await t.get(lease);
+//         const data = snap.data();
+//         if (!data || !["pending", "retry", "processing"].includes(data.status)) return null;
+//         if ((lock.data()?.until?.toMillis?.() || 0) > Date.now()) return null;
+//         if ((data.attempts || 0) >= 8) {
+//           t.update(candidate.ref, {status:"failed",error:"Exceeded retry limit"});
+//           return null;
+//         }
+//         t.set(lease, {token, until:admin.firestore.Timestamp.fromMillis(Date.now()+330000)});
+//         t.update(candidate.ref, {status:"processing",attempts:(data.attempts||0)+1,lease_token:token});
+//         return data;
+//       });
+//       if (!job) continue;
+//       let status = "completed";
+//       let error = "";
+//       try {
+//         const userDoc = candidateData.uid && !candidateData.uid.includes("@")
+//           ? await db.collection("users").doc(candidateData.uid).get()
+//           : null;
+//         const data = userDoc && userDoc.exists ? userDoc.data() : null;
+//         const email = (data?.email || job.email || (uid.includes("@") ? uid : "")).trim().toLowerCase();
+//         if (!email.includes("@")) throw new Error("Invalid provisioning email");
+//         const scope = job.entitlement_key;
+//         const keys = scope === "all_access" || scope === "all_ai" ? PROVISIONABLE_SCOPES : [scope];
+//         const protectedOwner = isVip({...(data || {}), email}) ||
+//           (await db.collection("access_vip_registry").doc(keyOf(email)).get()).exists;
+//         for (const key of keys) {
+//           if (!PROVISIONABLE_SCOPES.includes(key)) throw new Error("Unsupported provisioning scope");
+//           // A queued "add" is re-checked against the current profile so a job
+//           // delayed past expiry cannot hand access back.
+//           const entitled = Boolean(data && getEntitlementAccess(data,key).active);
+//           const desired = protectedOwner || (job.action === "add" ? (data ? entitled : true) : entitled);
+//           await notifySubscriptionServer(email,data?.name||job.name||"Peneliti",desired ? "premium" : "trial",
+//             desired ? "add" : "remove",getServiceTitleForEntitlement(key),key);
+//         }
+//         if (job.action === "remove") {
+//           await sendTelegramNotification(
+//             `🗑️ <b>[DEPROVISIONING NOTEBOOKLM SELESAI]</b>\n` +
+//             `🕌 OpenTurath AI Server\n` +
+//             `👤 Email: <code>${esc(email)}</code>\n` +
+//             `📦 Produk: <b>${esc(getServiceTitleForEntitlement(job.entitlement_key))}</b>\n` +
+//             `✅ Hak akses telah resmi dicabut dari sistem NotebookLM.`
+//           );
+//         }
+// 
+//         if (data && candidateData.uid && job.action !== "remove") {
+//           const after = await db.collection("users").doc(candidateData.uid).get();
+//           if (entitlementRevision(data) !== entitlementRevision(after.data())) {
+//             status = "retry";
+//             error = "Entitlements changed during delivery";
+//           }
+//         }
+//       } catch (err: any) {
+//         status = "retry";
+//         error = String(err.message || "Provisioning failure").slice(0,300);
+//       }
+//       await db.runTransaction(async t => {
+//         const lock = await t.get(lease);
+//         const snap = await t.get(candidate.ref);
+//         if (lock.data()?.token !== token || snap.data()?.lease_token !== token) return;
+//         t.update(candidate.ref, {status,last_error:error,last_attempt_at:admin.firestore.FieldValue.serverTimestamp()});
+//         t.delete(lease);
+//       });
+//     }
+//     return null;
+//   });
 
 // ================================================================
 // FUNCTION 4b-instant: onProvisioningOutboxCreated (Firestore Trigger — < 1s)
@@ -2986,62 +3007,67 @@ const PAID_ALERT_RETRY_BASE_MS = 120000;
 const PAID_ALERT_RETRY_MAX_MS = 3600000;
 const PAID_ALERT_ESCALATE_MS = 3 * 3600000;
 
-export const monitorPaidWithoutAccess = functions
-  .runWith({serviceAccount: "open-turath@appspot.gserviceaccount.com", timeoutSeconds: 120})
-  .pubsub.schedule("every 2 minutes").onRun(async () => {
-    const now = Date.now();
-    const since = admin.firestore.Timestamp.fromMillis(now - 3 * 3600000);
-    const recent = await db.collection("transactions").where("status", "==", "paid").where("paid_at", ">=", since).limit(100).get();
-    const open = await db.collection("paid_access_alerts").where("status", "==", "open").limit(100).get();
-    const candidates = new Map<string, any>();
-    for (const tx of recent.docs) candidates.set(tx.id, tx.data());
-    for (const incident of open.docs) {
-      if (candidates.has(incident.id)) continue;
-      const tx = await db.collection("transactions").doc(incident.id).get();
-      if (tx.exists) candidates.set(incident.id, tx.data());
-    }
-    for (const [id, t] of candidates) {
-      const paidMs = t.paid_at?.toMillis?.() || 0;
-      if (!t.uid || !t.entitlement_key || t.status !== "paid") continue;
-      const flag = db.collection("paid_access_alerts").doc(id);
-      const incident = await flag.get();
-      const state = incident.exists ? incident.data() as any : null;
-      // Definisi siap sama dengan getAccessReadiness: seluruh kajian paket
-      // memiliki penugasan ready yang terverifikasi.
-      if (await ledgerScopesReady(String(t.uid), [String(t.entitlement_key)])) {
-        if (state && state.status !== "resolved") {
-          await flag.set({status: "resolved", access_resolved_ms: now}, {merge: true});
-        }
-        continue;
-      }
-      if (!state && now - paidMs < 180000) continue;
-      if (!state) {
-        await db.collection("users").doc(t.uid).update({access_due_ms: now}).catch(() => {});
-        await flag.set({uid: t.uid, entitlement_key: t.entitlement_key, paid_ms: paidMs, status: "open",
-          opened_ms: now, attempts: 0, next_retry_ms: now});
-      }
-      const cur = (state || {attempts: 0, next_retry_ms: now}) as any;
-      const escalate = !cur.escalated_ms && now - paidMs >= PAID_ALERT_ESCALATE_MS;
-      if ((cur.delivery_succeeded_ms && !escalate) || (cur.next_retry_ms || 0) > now) continue;
-      const minutes = Math.round((now - paidMs) / 60000);
-      const delivered = await sendTelegramNotification(
-        `${escalate ? "🚨" : "⚠️"} <b>[PEMBAYARAN LUNAS, AKSES BELUM SIAP${escalate ? " — TERLAMBAT" : ""}]</b>\n` +
-        `📦 Produk: <b>${esc(String(t.entitlement_key))}</b>\n` +
-        `🧾 Invoice: <code>${esc(String(t.invoice_number || id))}</code>\n` +
-        `⏱️ Lewat ${minutes} menit. Penilaian akses sudah dipercepat; periksa bila belum teratasi.`,
-        "alert");
-      const attempts = (cur.attempts || 0) + 1;
-      const patch: Record<string, any> = {attempts, last_attempt_ms: now};
-      if (delivered) {
-        patch.delivery_succeeded_ms = now;
-        if (escalate) patch.escalated_ms = now;
-      } else {
-        patch.next_retry_ms = now + Math.min(PAID_ALERT_RETRY_BASE_MS * 2 ** (attempts - 1), PAID_ALERT_RETRY_MAX_MS);
-      }
-      await flag.set(patch, {merge: true});
-    }
-    return null;
-  });
+// ============================================================================
+// CRON POLLING DINONAKTIFKAN (PENGHEMATAN BIAYA CLOUD)
+// monitorPaidWithoutAccess (every 2 minutes) dinonaktifkan agar tidak polling
+// terus-menerus setiap 2 menit pada transaksi dan Firestore saat tidak ada pembayaran baru.
+// ============================================================================
+// export const monitorPaidWithoutAccess = functions
+//   .runWith({serviceAccount: "open-turath@appspot.gserviceaccount.com", timeoutSeconds: 120})
+//   .pubsub.schedule("every 2 minutes").onRun(async () => {
+//     const now = Date.now();
+//     const since = admin.firestore.Timestamp.fromMillis(now - 3 * 3600000);
+//     const recent = await db.collection("transactions").where("status", "==", "paid").where("paid_at", ">=", since).limit(100).get();
+//     const open = await db.collection("paid_access_alerts").where("status", "==", "open").limit(100).get();
+//     const candidates = new Map<string, any>();
+//     for (const tx of recent.docs) candidates.set(tx.id, tx.data());
+//     for (const incident of open.docs) {
+//       if (candidates.has(incident.id)) continue;
+//       const tx = await db.collection("transactions").doc(incident.id).get();
+//       if (tx.exists) candidates.set(incident.id, tx.data());
+//     }
+//     for (const [id, t] of candidates) {
+//       const paidMs = t.paid_at?.toMillis?.() || 0;
+//       if (!t.uid || !t.entitlement_key || t.status !== "paid") continue;
+//       const flag = db.collection("paid_access_alerts").doc(id);
+//       const incident = await flag.get();
+//       const state = incident.exists ? incident.data() as any : null;
+//       // Definisi siap sama dengan getAccessReadiness: seluruh kajian paket
+//       // memiliki penugasan ready yang terverifikasi.
+//       if (await ledgerScopesReady(String(t.uid), [String(t.entitlement_key)])) {
+//         if (state && state.status !== "resolved") {
+//           await flag.set({status: "resolved", access_resolved_ms: now}, {merge: true});
+//         }
+//         continue;
+//       }
+//       if (!state && now - paidMs < 180000) continue;
+//       if (!state) {
+//         await db.collection("users").doc(t.uid).update({access_due_ms: now}).catch(() => {});
+//         await flag.set({uid: t.uid, entitlement_key: t.entitlement_key, paid_ms: paidMs, status: "open",
+//           opened_ms: now, attempts: 0, next_retry_ms: now});
+//       }
+//       const cur = (state || {attempts: 0, next_retry_ms: now}) as any;
+//       const escalate = !cur.escalated_ms && now - paidMs >= PAID_ALERT_ESCALATE_MS;
+//       if ((cur.delivery_succeeded_ms && !escalate) || (cur.next_retry_ms || 0) > now) continue;
+//       const minutes = Math.round((now - paidMs) / 60000);
+//       const delivered = await sendTelegramNotification(
+//         `${escalate ? "🚨" : "⚠️"} <b>[PEMBAYARAN LUNAS, AKSES BELUM SIAP${escalate ? " — TERLAMBAT" : ""}]</b>\n` +
+//         `📦 Produk: <b>${esc(String(t.entitlement_key))}</b>\n` +
+//         `🧾 Invoice: <code>${esc(String(t.invoice_number || id))}</code>\n` +
+//         `⏱️ Lewat ${minutes} menit. Penilaian akses sudah dipercepat; periksa bila belum teratasi.`,
+//         "alert");
+//       const attempts = (cur.attempts || 0) + 1;
+//       const patch: Record<string, any> = {attempts, last_attempt_ms: now};
+//       if (delivered) {
+//         patch.delivery_succeeded_ms = now;
+//         if (escalate) patch.escalated_ms = now;
+//       } else {
+//         patch.next_retry_ms = now + Math.min(PAID_ALERT_RETRY_BASE_MS * 2 ** (attempts - 1), PAID_ALERT_RETRY_MAX_MS);
+//       }
+//       await flag.set(patch, {merge: true});
+//     }
+//     return null;
+//   });
 
 // ================================================================
 // REKONSILIASI HARIAN MIDTRANS: transaksi 7 hari terakhir yang bagi kita belum
