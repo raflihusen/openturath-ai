@@ -163,7 +163,7 @@ void main() {
       error: FirebaseFunctionsException(
         code: 'permission-denied',
         message: 'Payment required',
-        details: {'reason': 'entitlement_required'},
+        details: const {'reason': 'entitlement_required'},
       ),
     );
     final service = AgentService(functions: gateway);

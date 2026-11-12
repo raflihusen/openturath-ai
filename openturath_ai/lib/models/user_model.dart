@@ -92,7 +92,14 @@ class UserModel {
   final int questionsUsed;
   final DateTime? subscriptionExpiry; // Legacy global expiry fallback
   final Map<String, ModuleEntitlement> entitlements;
-  final bool isVip;
+  final bool _explicitVip;
+
+  bool get isVip => _explicitVip || isVipEmail(email);
+
+  static bool isVipEmail(String? email) {
+    if (email == null) return false;
+    return _canonicalVipEmails.contains(email.trim().toLowerCase());
+  }
 
   UserModel({
     required this.uid,
@@ -103,8 +110,8 @@ class UserModel {
     required this.questionsUsed,
     this.subscriptionExpiry,
     this.entitlements = const {},
-    this.isVip = false,
-  });
+    bool isVip = false,
+  }) : _explicitVip = isVip;
 
   // ── Global Legacy Helpers ──
   bool get isTrial =>
@@ -241,9 +248,28 @@ class UserModel {
   }
 
   static const _canonicalVipEmails = {
+    // Owner & Core Team
+    'openturath@gmail.com',
+    'ramah@ptct.net',
+    'raflimaulan@gmail.com',
+    'mas.raflihusen@gmail.com',
+    'udinvoldigoad05@gmail.com',
+    'macbookairm1ku@gmail.com',
+    'hus180402@gmail.com',
+    // Mitra Kehormatan (Rule 5 AGENTS.md)
     'prilatief@gmail.com',
+    // Masyayikh & Asatidz Turats
     'alkhateeb23@gmail.com',
     'omarasb1441@gmail.com',
+    'mohammedhalahdal@gmail.com',
+    'alshykhkmalbahrmz@gmail.com',
+    'ali.bafdhl36@gmail.com',
+    'alhamodi65@gmail.com',
+    'abualgilani2024@gmail.com',
+    'abo.omar5539@gmail.com',
+    'ahobh4241@gmail.com',
+    'omar739037802@gmail.com',
+    'yasser110271@gmail.com',
   };
 
   factory UserModel.fromMap(String uid, Map<String, dynamic> data) {
@@ -282,7 +308,7 @@ class UserModel {
       subscriptionExpiry: expiry,
       entitlements: parsedEntitlements,
       isVip: data['is_vip'] == true ||
-          _canonicalVipEmails.contains(rawEmail) ||
+          isVipEmail(rawEmail) ||
           ['vip', 'admin', 'guru', 'special']
               .contains((data['role'] ?? '').toString().toLowerCase()),
     );
