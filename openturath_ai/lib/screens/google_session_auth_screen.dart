@@ -59,9 +59,11 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
   bool get _isAppEntry => widget.purpose == GoogleConnectionPurpose.appEntry;
 
   bool get _hasOriginalAppSession =>
-      _openingUid != null &&
-      _authService.hasAuthenticatedSession &&
-      _authService.cachedCurrentUser?.uid == _openingUid;
+      !_isAppEntry
+          ? (_openingUid != null &&
+              _authService.hasAuthenticatedSession &&
+              _authService.cachedCurrentUser?.uid == _openingUid)
+          : true;
 
   InAppWebViewController? _webController;
   bool _isSessionReady = false;
@@ -86,19 +88,16 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
             _authService.currentUser?.email ??
             '')
         .trim();
-    return Uri.https('accounts.google.com', '/InteractiveLogin', {
-      'continue': _isAppEntry
-          ? 'https://myaccount.google.com/'
-          : '${NotebookNavigation.canonicalOrigin}/',
-      if (email.isNotEmpty) 'login_hint': email,
+    return Uri.https('accounts.google.com', '/ServiceLogin', {
+      'service': 'wise',
+      'passive': '1209600',
+      'continue': '${NotebookNavigation.canonicalOrigin}/',
+      if (email.isNotEmpty) 'Email': email,
     }).toString();
   }
 
-  // Try the existing WebKit session before asking Google to sign in again.
-  // A valid legacy session can establish verified ownership without replaying
-  // cookies or forcing InteractiveLogin; an absent session uses the fallback.
-  String get _initialSessionUrl =>
-      _isAppEntry ? _targetLoginUrl : '${NotebookNavigation.canonicalOrigin}/';
+  // Buka langsung halaman masuk Google untuk NotebookLM secara resmi
+  String get _initialSessionUrl => _targetLoginUrl;
 
   bool _isCurrentVerification(int epoch) =>
       mounted &&
@@ -126,35 +125,6 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
     } else {
       _webController?.reload();
     }
-  }
-
-  /// Skrip penyembunyi antarmuka NotebookLM di level mesin WebKit (Document Start Cloak).
-  /// Menjamin tidak ada 1 piksel pun antarmuka NotebookLM yang pernah digambar ke layar,
-  /// sementara struktur DOM dan objek JavaScript Google (WIZ_global_data) tetap utuh di memori.
-  static UserScript _buildStealthCloakScript(bool isDark) {
-    const script = '''
-      (function() {
-        try {
-          var host = (window.location.hostname || '').toLowerCase();
-          if (!host.includes('notebooklm.google.com') && !host.includes('notebook.google.com')) {
-            return;
-          }
-          var styleId = 'ot-stealth-auth-cloak';
-          var style = document.getElementById(styleId);
-          if (!style) {
-            style = document.createElement('style');
-            style.id = styleId;
-            (document.head || document.documentElement).appendChild(style);
-          }
-          style.textContent = 'html, body { background-color: #09090B !important; color: transparent !important; overflow: hidden !important; } body * { opacity: 0 !important; pointer-events: none !important; }';
-        } catch(e) {}
-      })();
-    ''';
-    return UserScript(
-      source: script,
-      injectionTime: UserScriptInjectionTime.AT_DOCUMENT_START,
-      forMainFrameOnly: true,
-    );
   }
 
   /// Menyelaraskan status pelindung visual (Visual Shield) dengan domain navigasi WebView
@@ -1054,7 +1024,9 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
               },
             ),
             title: Text(
-              Loc.tr('roomSameAccountTitle'),
+              _isAppEntry
+                  ? Loc.tr('loginTitle')
+                  : Loc.tr('roomSameAccountTitle'),
               style: ScholarlyFonts.newsreader(
                 fontSize: OTFontSize.s18,
                 fontWeight: FontWeight.w600,
@@ -1112,9 +1084,9 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
               children: [
                 // Keep the explanation scrollable when the keyboard is open.
                 Flexible(
-                    flex: 2,
-                    fit: FlexFit.loose,
-                    child: SingleChildScrollView(
+                  flex: 2,
+                  fit: FlexFit.loose,
+                  child: SingleChildScrollView(
                         child: Container(
                       width: double.infinity,
                       margin: const EdgeInsets.fromLTRB(16, 4, 16, 8),
@@ -1255,9 +1227,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
                                         initialUrlRequest: URLRequest(
                                             url: WebUri(_initialSessionUrl)),
                                         initialUserScripts:
-                                            UnmodifiableListView([
-                                          _buildStealthCloakScript(isDark),
-                                        ]),
+                                            UnmodifiableListView([]),
                                         initialSettings: InAppWebViewSettings(
                                           incognito: false,
                                           javaScriptEnabled: true,

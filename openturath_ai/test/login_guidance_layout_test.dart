@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:openturath_ai/core/app_config.dart';
+import 'package:openturath_ai/core/app_copy.dart';
 import 'package:openturath_ai/core/localization.dart';
 import 'package:openturath_ai/core/theme.dart';
 import 'package:openturath_ai/models/user_model.dart';
@@ -46,7 +47,7 @@ void main() {
       const Size(1280, 800)
     ]) {
       for (final scale in [1.0, 1.4]) {
-        testWidgets('login guidance fits $locale $size text $scale',
+        testWidgets('login screen fits $locale $size text $scale',
             (tester) async {
           AppConfig.localeNotifier.value = locale;
           tester.view.physicalSize = size;
@@ -54,8 +55,8 @@ void main() {
           addTearDown(tester.view.reset);
           await tester.pumpWidget(host(const LoginScreen(), locale, scale));
           await tester.pump(const Duration(seconds: 2));
-          expect(find.text(Loc.tr('loginStageOneTitle')), findsOneWidget);
-          expect(find.text(Loc.tr('loginStageTwoTitle')), findsOneWidget);
+          expect(find.text(Loc.tr('loginTitle')), findsOneWidget);
+          expect(find.text(AppCopy.continueWithGoogle), findsOneWidget);
           expect(tester.takeException(), isNull);
           await tester.pumpWidget(const SizedBox());
         });

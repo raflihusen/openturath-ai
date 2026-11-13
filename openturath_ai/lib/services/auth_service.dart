@@ -94,6 +94,8 @@ class AuthService {
   }
 
   // ── Cache Helpers ──────────────────────────────────────────────
+  static Future<void> cacheUserLocally(UserModel user) => _cacheUserLocally(user);
+
   static Future<void> _cacheUserLocally(UserModel user,
       {bool Function()? isCurrent}) async {
     if (isCurrent?.call() == false) return;
@@ -151,7 +153,8 @@ class AuthService {
   bool get hasAuthenticatedSession {
     if (previewUser != null) return true;
     final user = currentUser;
-    return user != null && !user.isAnonymous;
+    if (user != null && !user.isAnonymous) return true;
+    return _userCache.isNotEmpty;
   }
 
   UserModel? get cachedCurrentUser {
@@ -168,6 +171,9 @@ class AuthService {
             plan: AppConstants.planTrial,
             questionsUsed: 0,
           );
+    }
+    if (_userCache.isNotEmpty) {
+      return _userCache.values.first;
     }
     return null;
   }
@@ -369,6 +375,13 @@ class AuthService {
           await prefs.setString('google_session_email', effectiveEmail);
           if (!ownsUser()) return null;
           await prefs.setString('notebook_google_email', effectiveEmail);
+          if (!ownsUser()) return null;
+          await prefs.setString('webview_session_owner', effectiveEmail);
+          if (!ownsUser()) return null;
+          await prefs.setString(
+              PersistentGoogleSession.verifiedOwnerKey, effectiveEmail);
+          if (!ownsUser()) return null;
+          await prefs.setBool('google_session_ready', true);
         } catch (_) {}
       }
       if (!ownsUser()) return null;
@@ -580,9 +593,9 @@ class AuthService {
         // Akun aplikasi berganti: lepas klaim kepemilikan saja. Cookie Google
         // tidak dihapus di luar Log Out (Aturan Sakral #8).
         await PersistentGoogleSession.instance.releaseOwnership();
-      } else {
-        await PersistentGoogleSession.instance.restoreSessionIfAvailable(current);
       }
+      await PersistentGoogleSession.instance.establishVerifiedOwner(current);
+      await PersistentGoogleSession.instance.restoreSessionIfAvailable(current);
     } catch (_) {}
   }
 

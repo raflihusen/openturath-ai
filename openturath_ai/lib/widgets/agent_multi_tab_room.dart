@@ -28,7 +28,6 @@ import '../core/app_snackbar.dart';
 import '../core/navigation_guard.dart';
 import '../core/routes.dart';
 import '../core/google_rejection.dart';
-import '../core/google_connection_flow.dart';
 import '../core/notebook_navigation.dart';
 import '../core/notebook_ui_script.dart';
 import '../core/copied_answer.dart';
@@ -1869,14 +1868,6 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
           retryLabel: Loc.tr('roomLoginNow'),
           retryIcon: Icons.login_rounded,
           onRetry: () async {
-            final connected = await Navigator.pushNamed(
-              context,
-              AppRoutes.googleSessionAuth,
-              arguments: GoogleConnectionPurpose.aiRoom,
-            );
-            if (!mounted || !GoogleConnectionResult.canResumeAi(connected)) {
-              return;
-            }
             if (session.resolvedUrl != null) {
               setState(() {
                 session.errorMessage = null;
@@ -1907,14 +1898,6 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
           retryIcon: Icons.switch_account_outlined,
           onRetry: () async {
             _accessDeniedRetryCount = 0;
-            final connected = await Navigator.pushNamed(
-              context,
-              AppRoutes.googleSessionAuth,
-              arguments: GoogleConnectionPurpose.aiRoom,
-            );
-            if (!mounted || !GoogleConnectionResult.canResumeAi(connected)) {
-              return;
-            }
             if (session.resolvedUrl != null) {
               setState(() {
                 session.errorMessage = null;
