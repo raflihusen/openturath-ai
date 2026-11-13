@@ -1683,19 +1683,13 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
             _authService.cachedCurrentUser?.uid;
         if (!mounted || verifiedUid != openingUid) return;
 
-        // Gunakan URL account-bound resmi bila sesi Google belum diverifikasi di WebView,
-        // sehingga Google AccountChooser langsung memilih akun pengguna tanpa error page:
-        final effectiveUrl = (googleReady || email.isEmpty)
-            ? url
-            : NativeAgentLauncher.formatAccountBoundUrl(url, email: email);
-
         setState(() {
-          session.resolvedUrl = effectiveUrl;
+          session.resolvedUrl = url;
           session.isUrlLoading = false;
           session.isPaywallRequired = false;
-          session.isGoogleAuthPage = false;
-          session.isWebLoading = true;
-          session.errorMessage = null;
+          session.isGoogleAuthPage = !googleReady;
+          session.errorMessage =
+              googleReady ? null : Loc.tr('roomSameAccountBodyPlain');
         });
       } else {
         final user = _authService.cachedCurrentUser;
@@ -1862,8 +1856,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
           onBack: close,
           backLabel: Loc.tr('back'),
         );
-      } else if (session.isGoogleAuthPage &&
-          (session.errorMessage?.isNotEmpty ?? false)) {
+      } else if (session.isGoogleAuthPage) {
         final email = _authService.currentUser?.email?.trim() ?? '';
         state = AppErrorState(
           icon: Icons.link_rounded,

@@ -1,3 +1,4 @@
+import '../widgets/login_guidance.dart';
 import '../core/app_platform.dart';
 import '../core/localization.dart';
 import 'package:flutter/gestures.dart';
@@ -9,14 +10,19 @@ import '../core/scholarly_fonts.dart';
 import '../core/app_copy.dart';
 import '../core/login_error_message.dart';
 import '../core/routes.dart';
+import '../core/google_connection_flow.dart';
 import '../core/design/ot_buttons.dart';
 import '../core/design/ot_colors.dart';
+import '../core/design/ot_expressive.dart';
 import '../widgets/ot_motion_widgets.dart';
 import '../core/app_snackbar.dart';
 import '../services/auth_service.dart';
 import '../services/persistent_google_session.dart';
 import '../widgets/openturath_brand.dart';
 import '../widgets/language_switcher.dart';
+import '../widgets/arch_echo_canvas.dart';
+import '../services/open_turath_catalog_repository.dart';
+import 'package:intl/intl.dart' show NumberFormat;
 
 import 'package:openturath_ai/core/design/ot_typography.dart';
 import 'package:openturath_ai/core/design/ot_radius.dart';
@@ -26,8 +32,6 @@ import '../widgets/app_loader.dart';
 import '../core/design/ot_motion.dart';
 
 /// A shared, theme-adaptive sign-in surface for mobile and desktop.
-/// Desain monokrom obsidian murni: kartu terpusat, tanpa cover ramai,
-/// langsung masuk dengan Google tanpa tahapan kedua.
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
@@ -74,20 +78,17 @@ class _LoginScreenState extends State<LoginScreen> {
       if (user != null && mounted) {
         final userEmail = user.email.trim().toLowerCase();
         await AuthService.reconcileWebSession(userEmail);
-        try {
-          await PersistentGoogleSession.instance
-              .restoreSessionIfAvailable(userEmail)
-              .timeout(const Duration(seconds: 2));
-        } catch (_) {}
+        final sessionReady = await PersistentGoogleSession.instance
+            .restoreSessionIfAvailable(userEmail);
         if (!mounted ||
             !_authService.hasAuthenticatedSession ||
             _authService.cachedCurrentUser?.uid != user.uid) {
           return;
         }
-        // Single login mulus: langsung masuk ke Dashboard tanpa memaksa layar kedua
         Navigator.pushReplacementNamed(
           context,
-          AppRoutes.dashboard,
+          sessionReady ? AppRoutes.dashboard : AppRoutes.googleSessionAuth,
+          arguments: GoogleConnectionPurpose.appEntry,
         );
         return;
       }
@@ -126,61 +127,45 @@ class _LoginScreenState extends State<LoginScreen> {
         backgroundColor: canvas,
         body: SafeArea(
           child: LayoutBuilder(builder: (context, viewport) {
-            Widget titleText() => OTReveal(
+            final phone = viewport.maxWidth < 900;
+
+            // Potongan yang dipakai bersama oleh ponsel (di atas kartu gelap)
+            // dan desktop (di atas latar terang). Semua teks rata tengah.
+            Widget titleText(Color color) => OTReveal(
                   delayMs: OTMotion.loginHeadlineMs,
                   child: Text(
                     Loc.tr('loginTitle'),
                     textAlign: TextAlign.center,
                     style: ScholarlyFonts.outfit(
-                      fontSize: OTFontSize.s26,
-                      fontWeight: FontWeight.w600,
-                      letterSpacing: -0.6,
-                      height: 1.2,
-                      color: primary,
-                    ),
-                  ),
-                );
-
-            Widget subtitleText() => OTReveal(
-                  delayMs: OTMotion.loginHeadlineMs + 50,
-                  child: Text(
-                    AppCopy.appTagline,
-                    textAlign: TextAlign.center,
-                    style: ScholarlyFonts.outfit(
-                      fontSize: OTFontSize.s14,
+                      fontSize: OTFontSize.s36,
                       fontWeight: FontWeight.w400,
-                      height: 1.5,
-                      color: secondary,
+                      letterSpacing: -0.8,
+                      height: 1.15,
+                      color: color,
                     ),
                   ),
                 );
-
-            Widget signInButton() => OTReveal(
+            Widget signInButton(ButtonStyle? style, Color loader) => OTReveal(
                   delayMs: OTMotion.loginButtonMs,
-                  child: SizedBox(
-                    width: double.infinity,
-                    height: 50,
-                    child: FilledButton.icon(
-                      style: dark ? OTButtons.onInverse(dark) : null,
-                      onPressed: _isLoading ? null : _signIn,
-                      icon: _isLoading
-                          ? AppLoader(dotSize: 5, spacing: 2, color: primary)
-                          : _GoogleGVector(),
-                      label: Text(
-                        _isLoading
-                            ? Loc.tr('desktopConnectingGoogle')
-                            : AppCopy.continueWithGoogle,
-                        textAlign: TextAlign.center,
-                        style: ScholarlyFonts.outfit(
-                          fontSize: OTFontSize.s16,
-                          fontWeight: FontWeight.w600,
-                          height: 1.4,
-                        ),
+                  child: FilledButton.icon(
+                    style: style,
+                    onPressed: _isLoading ? null : _signIn,
+                    icon: _isLoading
+                        ? AppLoader(dotSize: 5, spacing: 2, color: loader)
+                        : _GoogleGVector(),
+                    label: Text(
+                      _isLoading
+                          ? Loc.tr('desktopConnectingGoogle')
+                          : AppCopy.continueWithGoogle,
+                      textAlign: TextAlign.center,
+                      style: ScholarlyFonts.outfit(
+                        fontSize: OTFontSize.s16,
+                        fontWeight: FontWeight.w600,
+                        height: 1.4,
                       ),
                     ),
                   ),
                 );
-
             Widget errorBox() => Padding(
                   padding: const EdgeInsets.only(top: 16),
                   child: Semantics(
@@ -212,20 +197,20 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                 );
-
-            Widget legalText() => OTReveal(
+            Widget legalText(Color muted, Color link) => OTReveal(
                   delayMs: OTMotion.loginLegalMs,
                   child: Text.rich(
                     textAlign: TextAlign.center,
                     TextSpan(
                       text: '${AppCopy.termsAgreementPrefix} ',
                       style: ScholarlyFonts.outfit(
-                          fontSize: OTFontSize.s12, height: 1.6, color: secondary),
+                          fontSize: OTFontSize.s12, height: 1.6, color: muted),
                       children: [
                         TextSpan(
-                          text: AppCopy.termsOfService.replaceAll(' ', '\u00A0'),
+                          text:
+                              AppCopy.termsOfService.replaceAll(' ', '\u00A0'),
                           style: TextStyle(
-                            color: primary,
+                            color: link,
                             decoration: TextDecoration.underline,
                           ),
                           recognizer: _termsRecognizer,
@@ -240,7 +225,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         TextSpan(
                           text: AppCopy.privacyPolicy.replaceAll(' ', '\u00A0'),
                           style: TextStyle(
-                            color: primary,
+                            color: link,
                             decoration: TextDecoration.underline,
                           ),
                           recognizer: _privacyRecognizer,
@@ -249,72 +234,113 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                 );
-
             final header = Padding(
-              padding: const EdgeInsetsDirectional.fromSTEB(24, 16, 16, 0),
+              padding: const EdgeInsetsDirectional.fromSTEB(24, 16, 12, 0),
               child: Row(
                 children: [
                   OpenTurathMark(size: 26, color: primary),
                   const SizedBox(width: 10),
                   Expanded(
-                    child: Text(
-                      AppCopy.appName,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: ScholarlyFonts.outfit(
-                        fontSize: OTFontSize.s18,
-                        fontWeight: FontWeight.w600,
-                        letterSpacing: -0.3,
-                        color: primary,
-                      ),
+                      child: Text(
+                    AppCopy.appName,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: ScholarlyFonts.outfit(
+                      fontSize: OTFontSize.s18,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: -0.3,
+                      color: primary,
                     ),
-                  ),
+                  )),
                   const LanguageSwitcher(),
                 ],
               ),
             );
 
-            return Column(
+            if (phone) {
+              // Ponsel: satu kartu gelap hampir penuh layar, bersudut bulat
+              // sampai bawah. Lengkung di atas, judul, tombol, dan syarat
+              // tersusun di dalamnya, semuanya rata tengah.
+              const onCard = OTExpressive.white;
+              const onCardMuted = OTExpressive.whiteMuted;
+              final content = Padding(
+                padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    titleText(onCard),
+                    const SizedBox(height: 16),
+                    const LoginGuidance(color: onCardMuted),
+                    const SizedBox(height: 16),
+                    signInButton(OTButtons.onInk(), OTExpressive.ink),
+                    if (_desktopError != null) errorBox(),
+                    const SizedBox(height: 20),
+                    legalText(onCardMuted, onCard),
+                  ],
+                ),
+              );
+              return Column(
+                children: [
+                  header,
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(12, 12, 12, 12),
+                      child: Container(
+                        clipBehavior: Clip.antiAlias,
+                        decoration: BoxDecoration(
+                          color: OTExpressive.hero,
+                          borderRadius: BorderRadius.circular(OTRadius.sheet),
+                          border:
+                              Border.all(color: onCard.withValues(alpha: 0.12)),
+                        ),
+                        child: LayoutBuilder(builder: (context, card) {
+                          return SingleChildScrollView(
+                            child: Column(children: [
+                              SizedBox(
+                                height: card.maxHeight >= 800
+                                    ? 180
+                                    : card.maxHeight >= 650
+                                        ? 80
+                                        : 24,
+                                child: const ExcludeSemantics(
+                                    child: ArchEchoCanvas(compact: true)),
+                              ),
+                              content,
+                            ]),
+                          );
+                        }),
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            }
+
+            // Desktop: formulir di kiri, panel merek gelap di kanan.
+            final formColumn = Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 header,
                 Expanded(
                   child: Center(
                     child: SingleChildScrollView(
-                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+                      padding: const EdgeInsets.all(24),
                       child: ConstrainedBox(
-                        constraints: const BoxConstraints(maxWidth: 400),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 28, vertical: 32),
-                          decoration: BoxDecoration(
-                            color: OTColors.surface(dark),
-                            borderRadius: BorderRadius.circular(OTRadius.dialog),
-                            border: Border.all(color: OTColors.border(dark)),
-                          ),
+                        constraints: const BoxConstraints(maxWidth: 380),
+                        child: OTReveal(
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
-                              Center(
-                                child: Container(
-                                  padding: const EdgeInsets.all(12),
-                                  decoration: BoxDecoration(
-                                    color: OTColors.surfaceSubtle(dark),
-                                    shape: BoxShape.circle,
-                                    border: Border.all(color: OTColors.border(dark)),
-                                  ),
-                                  child: OpenTurathMark(size: 32, color: primary),
-                                ),
-                              ),
-                              const SizedBox(height: 20),
-                              titleText(),
-                              const SizedBox(height: 10),
-                              subtitleText(),
-                              const SizedBox(height: 28),
-                              signInButton(),
+                              titleText(primary),
+                              const SizedBox(height: 16),
+                              const LoginGuidance(),
+                              const SizedBox(height: 16),
+                              signInButton(null, secondary),
                               if (_desktopError != null) errorBox(),
-                              const SizedBox(height: 24),
-                              legalText(),
+                              const SizedBox(height: 20),
+                              legalText(secondary, primary),
                             ],
                           ),
                         ),
@@ -322,11 +348,170 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                 ),
+                const SizedBox(height: 20),
+              ],
+            );
+            return Row(
+              children: [
+                Expanded(flex: 5, child: formColumn),
+                const Expanded(flex: 6, child: _LoginAside()),
               ],
             );
           }),
         ),
       ),
+    );
+  }
+}
+
+class _LoginAside extends StatelessWidget {
+  const _LoginAside();
+
+  @override
+  Widget build(BuildContext context) {
+    Loc.watch(context);
+    final dark = Theme.of(context).brightness == Brightness.dark;
+    const ink = OTColors.onInverseSurface;
+    final muted = ink.withValues(alpha: 0.66);
+    final line = ink.withValues(alpha: 0.14);
+
+    return Padding(
+      padding: const EdgeInsets.all(12),
+      child: Container(
+        clipBehavior: Clip.antiAlias,
+        decoration: BoxDecoration(
+          color: OTColors.inverseSurface(dark),
+          borderRadius: BorderRadius.circular(OTRadius.dialog),
+          border: Border.all(
+              color:
+                  dark ? OTColors.border(dark) : OTColors.inverseSurface(dark)),
+        ),
+        child: Stack(
+          children: [
+            // Lengkung logo bersarang dengan cahaya yang bernapas pelan.
+            const Positioned.fill(
+              child: ExcludeSemantics(child: ArchEchoCanvas()),
+            ),
+            // Gradasi bawah agar teks tetap terbaca di atas kanvas.
+            Positioned.fill(
+              child: IgnorePointer(
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      stops: const [0.5, 0.72],
+                      colors: [
+                        OTColors.inverseSurface(dark).withValues(alpha: 0),
+                        OTColors.inverseSurface(dark),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(32),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Spacer(),
+                  OTReveal(
+                    child: Text(
+                      AppCopy.appTagline,
+                      style: ScholarlyFonts.outfit(
+                        fontSize: OTFontSize.s36,
+                        fontWeight: FontWeight.w400,
+                        letterSpacing: -1.1,
+                        height: 1.08,
+                        color: ink,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  OTReveal(
+                    index: 1,
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 440),
+                      child: Text(
+                        Loc.tr('loginAsideBody'),
+                        style: ScholarlyFonts.outfit(
+                            fontSize: OTFontSize.s16,
+                            height: 1.55,
+                            color: muted),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  Divider(height: 1, color: line),
+                  const SizedBox(height: 16),
+                  // Angka pustaka dari metadata; tanpa ikon.
+                  OTReveal(
+                      index: 2, child: _LibraryTotals(ink: ink, muted: muted)),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _LibraryTotals extends StatelessWidget {
+  const _LibraryTotals({required this.ink, required this.muted});
+
+  final Color ink;
+  final Color muted;
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<Map<String, AiLibraryMetadata>>(
+      future: OpenTurathCatalogRepository.instance.loadAllMetadata(),
+      builder: (context, snapshot) {
+        final all = snapshot.data ?? const <String, AiLibraryMetadata>{};
+        if (snapshot.hasError) return Text(Loc.tr('catalogFailure'));
+        if (all.isEmpty) return const SizedBox(height: 44);
+        final number = NumberFormat.decimalPattern(Loc.language);
+        final entries =
+            all.values.fold<int>(0, (sum, item) => sum + item.totalKitab);
+        final pages =
+            all.values.fold<int>(0, (sum, item) => sum + item.totalHalaman);
+        Widget stat(String value, String label) => Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    value,
+                    style: ScholarlyFonts.outfit(
+                      fontSize: OTFontSize.s22,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: -0.4,
+                      color: ink,
+                    ).copyWith(
+                        fontFeatures: const [FontFeature.tabularFigures()]),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(label,
+                      style: ScholarlyFonts.outfit(
+                          fontSize: OTFontSize.s12, color: muted)),
+                ],
+              ),
+            );
+        return Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            stat(number.format(all.length), Loc.tr('loginStatLibraries')),
+            // Dibulatkan ke bawah: sebagian angka halaman di metadata adalah perkiraan.
+            stat(Loc.atLeast(number.format(entries ~/ 100 * 100)),
+                Loc.tr('loginStatEntries')),
+            stat(
+                Loc.atLeast(
+                    number.format(pages ~/ 100000 / 10), Loc.tr('unitMillion')),
+                Loc.tr('loginStatPages')),
+          ],
+        );
+      },
     );
   }
 }
