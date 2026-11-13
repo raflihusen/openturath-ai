@@ -2329,6 +2329,12 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
                     session.errorMessage = null;
                   });
                 }
+                final email = _authService.cachedCurrentUser?.email;
+                if (email != null && email.isNotEmpty) {
+                  unawaited(PersistentGoogleSession.instance
+                      .lockAndPersistCookies(controller, email)
+                      .catchError((_) => false));
+                }
                 _startReadinessCheck();
               } else if (NotebookNavigation.signInFlow(uri.uriValue)) {
                 if (!session.isGoogleAuthPage && mounted) {
