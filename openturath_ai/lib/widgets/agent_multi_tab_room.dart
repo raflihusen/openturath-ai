@@ -16,6 +16,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../models/user_model.dart';
 import '../models/turath_chat_message.dart';
 import '../models/room_failure.dart';
 import '../services/telemetry_service.dart';
@@ -199,6 +200,7 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
   final AgentSessionManager _sessionManager = AgentSessionManager.instance;
   final BookmarkService _bookmarkService = BookmarkService();
   final AuthService _authService = AuthService();
+  StreamSubscription<UserModel?>? _userSub;
 
   void _restartRoom(AgentSessionTab session) => AgentSessionManager.instance
       .restartAgent(session.agent, user: _authService.cachedCurrentUser);
@@ -245,10 +247,19 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
   void initState() {
     super.initState();
     _sessionManager.addListener(_onSessionsChanged);
+    _userSub = _authService.userStream.listen((user) {
+      if (!mounted || user == null) return;
+      for (final tab in _sessionManager.tabs) {
+        if (tab.isPaywallRequired && user.hasAccessToAgent(tab.agent.id)) {
+          _restartRoom(tab);
+        }
+      }
+    });
   }
 
   @override
   void dispose() {
+    _userSub?.cancel();
     _sessionManager.removeListener(_onSessionsChanged);
     super.dispose();
   }
@@ -1662,20 +1673,29 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
         return;
       }
       if (url != null && url.isNotEmpty) {
-        final email = _authService.cachedCurrentUser?.email ?? '';
+        final email = _authService.cachedCurrentUser?.email ??
+            _authService.currentUser?.email ??
+            '';
         final googleReady = await PersistentGoogleSession.instance
             .restoreSessionIfAvailable(email)
             .timeout(const Duration(seconds: 3), onTimeout: () => false);
         final verifiedUid = _authService.currentUser?.uid ??
             _authService.cachedCurrentUser?.uid;
         if (!mounted || verifiedUid != openingUid) return;
+
+        // Gunakan URL account-bound resmi bila sesi Google belum diverifikasi di WebView,
+        // sehingga Google AccountChooser langsung memilih akun pengguna tanpa error page:
+        final effectiveUrl = (googleReady || email.isEmpty)
+            ? url
+            : NativeAgentLauncher.formatAccountBoundUrl(url, email: email);
+
         setState(() {
-          session.resolvedUrl = url;
+          session.resolvedUrl = effectiveUrl;
           session.isUrlLoading = false;
           session.isPaywallRequired = false;
-          session.isGoogleAuthPage = !googleReady;
-          session.errorMessage =
-              googleReady ? null : Loc.tr('roomSameAccountBodyPlain');
+          session.isGoogleAuthPage = false;
+          session.isWebLoading = true;
+          session.errorMessage = null;
         });
       } else {
         final user = _authService.cachedCurrentUser;
@@ -1827,18 +1847,23 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
           message: Loc.tr('roomPaywallBody', [Loc.text(session.agent.title)]),
           retryLabel: Loc.tr('roomSeePlans'),
           retryIcon: Icons.arrow_forward_rounded,
-          onRetry: () => NavigationGuard.safePushNamed(
-            context,
-            AppRoutes.subscription,
-            arguments: {
-              'user': _authService.cachedCurrentUser,
-              'agent': session.agent,
-            },
-          ),
+          onRetry: () async {
+            await NavigationGuard.safePushNamed(
+              context,
+              AppRoutes.subscription,
+              arguments: {
+                'user': _authService.cachedCurrentUser,
+                'agent': session.agent,
+              },
+            );
+            if (!mounted) return;
+            _fetchUrl();
+          },
           onBack: close,
           backLabel: Loc.tr('back'),
         );
-      } else if (session.isGoogleAuthPage) {
+      } else if (session.isGoogleAuthPage &&
+          (session.errorMessage?.isNotEmpty ?? false)) {
         final email = _authService.currentUser?.email?.trim() ?? '';
         state = AppErrorState(
           icon: Icons.link_rounded,
@@ -1871,6 +1896,8 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
                 urlRequest: URLRequest(url: WebUri(session.resolvedUrl!)),
               );
               _startReadinessCheck();
+            } else {
+              _fetchUrl();
             }
           },
           onBack: close,
@@ -1887,31 +1914,29 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
           retryIcon: Icons.switch_account_outlined,
           onRetry: () async {
             _accessDeniedRetryCount = 0;
-            // Galat izin bisa berarti berbagi notebook belum selesai, bukan
-            // sesi rusak: cookie tidak dihapus di luar Log Out (Aturan #8).
-            if (context.mounted) {
-              final connected = await Navigator.pushNamed(
-                context,
-                AppRoutes.googleSessionAuth,
-                arguments: GoogleConnectionPurpose.aiRoom,
+            final connected = await Navigator.pushNamed(
+              context,
+              AppRoutes.googleSessionAuth,
+              arguments: GoogleConnectionPurpose.aiRoom,
+            );
+            if (!mounted || !GoogleConnectionResult.canResumeAi(connected)) {
+              return;
+            }
+            if (session.resolvedUrl != null) {
+              setState(() {
+                session.errorMessage = null;
+                session.isGooglePermissionError = false;
+                session.isGoogleAuthPage = false;
+                session.isWebLoading = true;
+                session.isSessionReady = false;
+              });
+              _loadingStarted = null;
+              session.webController?.loadUrl(
+                urlRequest: URLRequest(url: WebUri(session.resolvedUrl!)),
               );
-              if (!mounted || !GoogleConnectionResult.canResumeAi(connected)) {
-                return;
-              }
-              if (session.resolvedUrl != null) {
-                setState(() {
-                  session.errorMessage = null;
-                  session.isGooglePermissionError = false;
-                  session.isGoogleAuthPage = false;
-                  session.isWebLoading = true;
-                  session.isSessionReady = false;
-                });
-                _loadingStarted = null;
-                session.webController?.loadUrl(
-                  urlRequest: URLRequest(url: WebUri(session.resolvedUrl!)),
-                );
-                _startReadinessCheck();
-              }
+              _startReadinessCheck();
+            } else {
+              _fetchUrl();
             }
           },
           onBack: close,

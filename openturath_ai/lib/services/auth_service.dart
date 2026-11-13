@@ -576,14 +576,13 @@ class AuthService {
       final prefs = await SharedPreferences.getInstance();
       final owner =
           (prefs.getString(webSessionOwnerKey) ?? '').trim().toLowerCase();
-      if (owner != current) {
+      if (owner.isNotEmpty && owner != current) {
         // Akun aplikasi berganti: lepas klaim kepemilikan saja. Cookie Google
-        // tidak dihapus di luar Log Out (Aturan Sakral #8); layar sesi akan
-        // meminta pemilihan akun yang sesuai.
+        // tidak dihapus di luar Log Out (Aturan Sakral #8).
         await PersistentGoogleSession.instance.releaseOwnership();
-        return;
+      } else {
+        await PersistentGoogleSession.instance.restoreSessionIfAvailable(current);
       }
-      await PersistentGoogleSession.instance.restoreSessionIfAvailable(current);
     } catch (_) {}
   }
 

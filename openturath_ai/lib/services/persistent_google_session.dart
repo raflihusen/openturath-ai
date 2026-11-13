@@ -103,6 +103,7 @@ class PersistentGoogleSession {
         return false;
       }
 
+      final isReady = prefs.getBool(_readyKey) == true;
       final live = await hasLiveSession(null);
       if (epoch != _ownershipEpoch ||
           prefs.getString(_ownerKey)?.trim().toLowerCase() != cleanEmail ||
@@ -110,7 +111,7 @@ class PersistentGoogleSession {
               cleanEmail) {
         return false;
       }
-      if (live) {
+      if (live || isReady) {
         await prefs.setBool(_readyKey, true);
         return true;
       }
@@ -119,6 +120,21 @@ class PersistentGoogleSession {
     } catch (_) {
       return false;
     }
+  }
+
+  /// Mencatat email pengguna yang berhasil login Google sebagai pemilik sesi yang terverifikasi.
+  Future<void> establishVerifiedOwner(String email) async {
+    final cleanEmail = email.trim().toLowerCase();
+    if (cleanEmail.isEmpty) return;
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(_ownerKey, cleanEmail);
+      await prefs.setString(verifiedOwnerKey, cleanEmail);
+      await prefs.setString('webview_session_owner', cleanEmail);
+      await prefs.setString('google_session_email', cleanEmail);
+      await prefs.setString('notebook_google_email', cleanEmail);
+      await prefs.setBool(_readyKey, true);
+    } catch (_) {}
   }
 
   /// Melepas klaim kepemilikan sesi tanpa menghapus cookie WebView, dipakai
