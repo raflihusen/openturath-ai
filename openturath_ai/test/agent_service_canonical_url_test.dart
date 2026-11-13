@@ -158,6 +158,29 @@ void main() {
     expect(url, 'https://notebook.google.com/notebook/6f42cb8a-79cc-429b-89c5-9a96561f8f4d');
   });
 
+  test('auto-detects VIP from canonical email even when isVip flag is false or omitted', () async {
+    final gateway = _Gateway(
+      error: FirebaseFunctionsException(
+        code: 'unavailable',
+        message: 'Network error',
+      ),
+    );
+    final service = AgentService(functions: gateway);
+    final vipUser = UserModel(
+      uid: 'vip-auto-uid',
+      name: 'Syekh Mohammed Al-Ahdal',
+      email: 'mohammedhalahdal@gmail.com',
+      photoUrl: '',
+      plan: 'free',
+      questionsUsed: 0,
+      isVip: false, // Disengaja false untuk membuktikan auto-detection dinamis
+    );
+
+    expect(vipUser.isVip, isTrue);
+    final url = await service.getAgentUrl('hadits', vipUser);
+    expect(url, 'https://notebook.google.com/notebook/c0df829e-db5d-416a-88d8-4f934ce5e8ef');
+  });
+
   test('does not bypass permission-denied paywall even for provided user', () async {
     final gateway = _Gateway(
       error: FirebaseFunctionsException(
