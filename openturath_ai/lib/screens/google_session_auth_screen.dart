@@ -90,14 +90,14 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
             _authService.currentUser?.email ??
             '')
         .trim();
-    return Uri.https('accounts.google.com', '/InteractiveLogin', {
-      'continue': '${NotebookNavigation.canonicalOrigin}/',
-      if (email.isNotEmpty) 'login_hint': email,
+    return Uri.https('notebook.google.com', '/login', {
+      'continue': 'https://notebook.google.com/',
+      if (email.isNotEmpty) 'Email': email,
     }).toString();
   }
 
-  // Buka langsung halaman NotebookLM secara resmi; jika belum ada sesi, WebKit akan mengarah ke login
-  String get _initialSessionUrl => '${NotebookNavigation.canonicalOrigin}/';
+  // Buka langsung halaman masuk Google untuk NotebookLM secara resmi
+  String get _initialSessionUrl => _targetLoginUrl;
 
   bool _isCurrentVerification(int epoch) =>
       mounted &&
@@ -134,6 +134,13 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
         url == null ||
         _verificationFailed ||
         _connectionCancelled) {
+      return;
+    }
+    if (_isAppEntry) {
+      // Pada alur login awal, jangan pernah aktifkan pelindung visual gelap
+      if (_isShieldActive && mounted) {
+        setState(() => _isShieldActive = false);
+      }
       return;
     }
     final uri = url.uriValue;
@@ -239,6 +246,11 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
     }
     // 2. Cek variabel global Google WIZ
     if (window.WIZ_global_data) {
+      try {
+        var strWiz = JSON.stringify(window.WIZ_global_data);
+        var mWiz = strWiz.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}/);
+        if (mWiz) return mWiz[0].toLowerCase();
+      } catch(_) {}
       for (var k in window.WIZ_global_data) {
         var val = window.WIZ_global_data[k];
         if (typeof val === 'string' && val.indexOf('@') !== -1) {
@@ -390,30 +402,60 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
         return;
       }
       final host = url.host.toLowerCase();
+
+      // 1. Jika masih berada di domain login accounts.google.com, biarkan pengguna berinteraksi (email, kata sandi, 2FA)
+      if (host.contains('accounts.google.com')) {
+        return;
+      }
+
+      // 2. Periksa path apakah masih dalam halaman login / perantara
+      final path = url.path.toLowerCase();
+      if (path.contains('/login') ||
+          path.contains('/signin') ||
+          path.contains('/servicelogin')) {
+        return;
+      }
+
       final isNotebookLm = host.contains('notebooklm.google.com') ||
           host.contains('notebook.google.com');
-      final isAccountPage =
-          GoogleConnectionNavigation.isAccountPage(url.uriValue);
 
-      if (isNotebookLm || isAccountPage) {
-        final email = await _detectGoogleEmail(controller);
-        final hasSession = await _hasGoogleSession();
-        if (hasSession == true || email != null) {
-          final effectiveEmail = (email != null && email.isNotEmpty)
-              ? email
-              : (_authService.cachedCurrentUser?.email ??
-                  'macbookairm1ku@gmail.com');
-          if (effectiveEmail.isNotEmpty) {
-            await PersistentGoogleSession.instance
-                .lockAndPersistCookies(controller, effectiveEmail);
-            await PersistentGoogleSession.instance
-                .establishVerifiedOwner(effectiveEmail);
-            await AuthService.rememberWebSessionOwner(effectiveEmail);
-            await AuthService.establishVerifiedWebUser(effectiveEmail);
-          }
-          await _enterApplication();
-        }
+      if (!isNotebookLm) {
+        return;
       }
+
+      // 3. Deteksi email Google aktif dari sesi. Pengguna WAJIB memiliki email valid!
+      String? email;
+      for (var attempt = 0; attempt < 6; attempt++) {
+        if (!_isCurrentVerification(epoch)) return;
+        email = await _detectGoogleEmail(controller);
+        if (email != null && email.isNotEmpty && email.contains('@')) {
+          break;
+        }
+        await Future.delayed(const Duration(milliseconds: 500));
+      }
+
+      if (email == null || email.trim().isEmpty || !email.contains('@')) {
+        // Belum ada email aktif di DOM NotebookLM, jangan redirect prematur!
+        return;
+      }
+
+      final cleanEmail = email.trim().toLowerCase();
+
+      // 4. Pastikan sesi cookies Google aktif di WebKit
+      final hasSession = await _hasGoogleSession();
+      if (hasSession != true) {
+        return;
+      }
+
+      // Seluruh 4 kriteria terpenuhi: sesi Google NotebookLM 100% SUKSES!
+      await PersistentGoogleSession.instance
+          .lockAndPersistCookies(controller, cleanEmail);
+      await PersistentGoogleSession.instance
+          .establishVerifiedOwner(cleanEmail);
+      await AuthService.rememberWebSessionOwner(cleanEmail);
+      await AuthService.establishVerifiedWebUser(cleanEmail);
+
+      await _enterApplication();
     } catch (_) {
       // Browser verification must not block the explicit app-entry action.
     } finally {
@@ -1339,7 +1381,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
                                     ),
                                   ),
                                 ),
-                              if (_isShieldActive)
+                              if (_isShieldActive && !_isAppEntry)
                                 Positioned.fill(
                                   child: ColoredBox(
                                     color: canvas,

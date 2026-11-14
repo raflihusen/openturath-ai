@@ -278,6 +278,7 @@ class AuthService {
             isVip: isVip,
           );
           _userCache[user.uid] = user;
+          _sessionUidController.add(user.uid);
           return user;
         }
       }
@@ -562,27 +563,69 @@ class AuthService {
     }
   }
 
+  static final StreamController<String?> _sessionUidController =
+      StreamController<String?>.broadcast();
+
+  Stream<String?> get _sessionUidStream => Stream<String?>.multi((listener) {
+        final sdk = authStateChanges.map((u) => u?.uid).listen((uid) {
+          if (uid != null) {
+            listener.add(uid);
+          } else {
+            final webUser = cachedCurrentUser;
+            if (webUser != null && webUser.uid.startsWith('web_')) {
+              listener.add(webUser.uid);
+            } else {
+              listener.add(null);
+            }
+          }
+        }, onError: listener.addError);
+
+        final webSub = _sessionUidController.stream.listen((uid) {
+          listener.add(uid);
+        });
+
+        listener.onCancel = () async {
+          await Future.wait([sdk.cancel(), webSub.cancel()]);
+        };
+      });
+
   // ── Stream user changes (real-time with single persistent cached stream, F10 & F41) ──
   Stream<UserModel?> get userStream => previewUser != null
       ? Stream<UserModel?>.value(previewUser)
       : _cachedUserStream ??= _buildUserStream();
 
   Stream<UserModel?> _buildUserStream() => sessionUserStream<UserModel>(
-        auth: authStateChanges.map((user) => user?.uid),
+        auth: _sessionUidStream,
         cached: _getCachedUser,
-        watch: (uid) => _db
-            .collection(AppConstants.colUsers)
-            .doc(uid)
-            .snapshots()
-            .map((doc) {
-          if (!doc.exists) return null;
-          final user = UserModel.fromFirestore(doc);
-          if (currentUser?.uid == uid) {
-            unawaited(_cacheUserLocally(user,
-                isCurrent: () => currentUser?.uid == uid));
+        watch: (uid) {
+          if (uid.startsWith('web_')) {
+            return Stream<UserModel?>.multi((listener) {
+              final cached = _userCache[uid];
+              if (cached != null) listener.add(cached);
+              final sub = _sessionUidController.stream.listen((activeUid) {
+                if (activeUid == uid) {
+                  listener.add(_userCache[uid]);
+                } else if (activeUid == null) {
+                  listener.add(null);
+                }
+              });
+              listener.onCancel = sub.cancel;
+            });
           }
-          return user;
-        }),
+          return _db
+              .collection(AppConstants.colUsers)
+              .doc(uid)
+              .snapshots()
+              .map((doc) {
+            if (!doc.exists) return null;
+            final user = UserModel.fromFirestore(doc);
+            if (currentUser?.uid == uid) {
+              unawaited(_cacheUserLocally(user,
+                  isCurrent: () => currentUser?.uid == uid));
+            }
+            return user;
+          });
+        },
       );
 
   static const webSessionOwnerKey = 'webview_session_owner';
@@ -603,9 +646,12 @@ class AuthService {
     );
     _userCache[user.uid] = user;
     AuthService()._setLogoutRequested(false);
+    _sessionUidController.add(user.uid);
     try {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setBool('web_session_active', true);
+      await prefs.setString(
+          'openturath_cached_user_${user.uid}', jsonEncode(user.toJsonMap()));
     } catch (_) {}
   }
 
@@ -712,6 +758,7 @@ class AuthService {
     } catch (_) {}
 
     try {
+      _sessionUidController.add(null);
       final prefs = await SharedPreferences.getInstance();
       await prefs.remove('current_user_uid');
       await prefs.remove('web_session_active');
