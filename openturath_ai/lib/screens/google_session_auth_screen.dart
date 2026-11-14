@@ -945,12 +945,8 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
                     onPressed: _retryVerification,
                     child: Text(Loc.tr('tryAgain'))),
                 TextButton(
-                    onPressed: _isAppEntry
-                        ? _enterApplication
-                        : _confirmCancelConnection,
-                    child: Text(Loc.tr(_isAppEntry
-                        ? 'enterOpenTurath'
-                        : 'cancelGoogleConnectionAction'))),
+                    onPressed: _confirmCancelConnection,
+                    child: Text(Loc.tr('cancelGoogleConnectionAction'))),
               ],
             ),
           ),
