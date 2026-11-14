@@ -9,6 +9,8 @@ import '../core/canonical_notebook_catalog.dart';
 import '../models/agent_model.dart';
 import '../models/user_model.dart';
 import 'callable_gateway.dart';
+import 'auth_service.dart';
+import 'persistent_google_session.dart';
 import '../core/constants.dart';
 
 class AgentService {
@@ -136,6 +138,24 @@ class AgentService {
 
   // ── Ambil URL agent dari Cloud Function secara aman (Server-Side Entitlement) ────
   Future<String?> getAgentUrl(String agentId, [UserModel? user]) async {
+    final effectiveUser = user ??
+        (Firebase.apps.isNotEmpty ? AuthService().cachedCurrentUser : null);
+    final email = (effectiveUser?.email ??
+            PersistentGoogleSession.instance.verifiedOwner ??
+            '')
+        .trim()
+        .toLowerCase();
+    final isVip = (effectiveUser?.isVip == true) || UserModel.isVipEmail(email);
+
+    // Rule 5 AGENTS.md (Hukum Sakral VIP): Akun VIP sejati berhak atas naskah master secara permanen
+    // dan langsung diarahkan ke naskah resmi tanpa delay atau terhalang unauthenticated/unavailable.
+    if (isVip) {
+      final canonical = CanonicalNotebookCatalog.getUrl(agentId);
+      if (canonical != null && canonical.isNotEmpty) {
+        return canonical;
+      }
+    }
+
     try {
       final result = await _functions
           .call(AppConstants.fnGetAgentUrl, {'agentId': agentId});
@@ -170,7 +190,7 @@ class AgentService {
     } on FirebaseFunctionsException catch (e) {
       // Jika pengguna adalah VIP sejati atau memiliki hak akses aktif,
       // selalu gunakan fallback kanonik resmi agar pengguna tidak pernah terblokir kendala server.
-      if (user != null && (user.isVip || user.hasAccessToAgent(agentId))) {
+      if (isVip || (effectiveUser != null && (effectiveUser.isVip || effectiveUser.hasAccessToAgent(agentId)))) {
         final fallback = CanonicalNotebookCatalog.getUrl(agentId);
         if (fallback != null) return fallback;
       }
@@ -194,7 +214,7 @@ class AgentService {
       );
     } catch (e) {
       if (e is AgentAccessException) rethrow;
-      if (user != null && (user.isVip || user.hasAccessToAgent(agentId))) {
+      if (isVip || (effectiveUser != null && (effectiveUser.isVip || effectiveUser.hasAccessToAgent(agentId)))) {
         final fallback = CanonicalNotebookCatalog.getUrl(agentId);
         if (fallback != null) return fallback;
       }

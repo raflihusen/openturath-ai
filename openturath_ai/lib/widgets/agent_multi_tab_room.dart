@@ -1669,19 +1669,24 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
           await _agentService.getAgentUrl(session.agent.id, currentUser);
       final currentUid =
           _authService.currentUser?.uid ?? _authService.cachedCurrentUser?.uid;
-      if (!mounted || currentUid != openingUid) {
+      if (!mounted || (openingUid != null && currentUid != null && currentUid != openingUid)) {
         return;
       }
       if (url != null && url.isNotEmpty) {
         final email = _authService.cachedCurrentUser?.email ??
             _authService.currentUser?.email ??
+            PersistentGoogleSession.instance.verifiedOwner ??
             '';
-        final googleReady = await PersistentGoogleSession.instance
-            .restoreSessionIfAvailable(email)
-            .timeout(const Duration(seconds: 3), onTimeout: () => false);
+        final isVip = (_authService.cachedCurrentUser?.isVip == true) ||
+            UserModel.isVipEmail(email);
+        final googleReady = isVip
+            ? true
+            : await PersistentGoogleSession.instance
+                .restoreSessionIfAvailable(email)
+                .timeout(const Duration(seconds: 3), onTimeout: () => false);
         final verifiedUid = _authService.currentUser?.uid ??
             _authService.cachedCurrentUser?.uid;
-        if (!mounted || verifiedUid != openingUid) return;
+        if (!mounted || (openingUid != null && verifiedUid != null && verifiedUid != openingUid)) return;
 
         // Buka langsung URL NotebookLM resmi dengan parameter authuser akun aktif
         final effectiveUrl = email.isNotEmpty

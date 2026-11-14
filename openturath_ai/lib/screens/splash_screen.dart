@@ -72,8 +72,14 @@ class _SplashScreenState extends State<SplashScreen> {
           // A stored Firebase session can still be used when a profile read fails.
         }
         final firebaseUser = auth.currentUser;
-        if (firebaseUser != null && !firebaseUser.isAnonymous) {
-          final currentEmail = (firebaseUser.email ?? '').trim().toLowerCase();
+        final hasWebSession = auth.cachedCurrentUser != null &&
+            !auth.cachedCurrentUser!.isGuest;
+        if ((firebaseUser != null && !firebaseUser.isAnonymous) || hasWebSession) {
+          final currentEmail = (auth.cachedCurrentUser?.email ??
+                  firebaseUser?.email ??
+                  '')
+              .trim()
+              .toLowerCase();
           if (currentEmail.isNotEmpty) {
             try {
               await PersistentGoogleSession.instance

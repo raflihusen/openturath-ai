@@ -13,6 +13,9 @@ class PersistentGoogleSession {
   PersistentGoogleSession._();
   static final PersistentGoogleSession instance = PersistentGoogleSession._();
   int _ownershipEpoch = 0;
+  static String? _cachedVerifiedOwner;
+
+  String? get verifiedOwner => _cachedVerifiedOwner;
 
   /// Brankas cookie lama (v3) disimpan di SharedPreferences. Hanya salinan
   /// lokal itu yang dihapus; cookie yang sedang aktif di OS tidak disentuh.
@@ -67,6 +70,7 @@ class PersistentGoogleSession {
       await _dropLegacyVault(prefs);
       if (!current()) return false;
       if (cleanEmail.isNotEmpty) {
+        _cachedVerifiedOwner = cleanEmail;
         await prefs.setString(_ownerKey, cleanEmail);
         if (!current()) return false;
         await prefs.setString(verifiedOwnerKey, cleanEmail);
@@ -112,6 +116,7 @@ class PersistentGoogleSession {
         return false;
       }
       if (live || isReady) {
+        _cachedVerifiedOwner = cleanEmail;
         await prefs.setBool(_readyKey, true);
         return true;
       }
@@ -126,6 +131,7 @@ class PersistentGoogleSession {
   Future<void> establishVerifiedOwner(String email) async {
     final cleanEmail = email.trim().toLowerCase();
     if (cleanEmail.isEmpty) return;
+    _cachedVerifiedOwner = cleanEmail;
     try {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString(_ownerKey, cleanEmail);
@@ -154,6 +160,7 @@ class PersistentGoogleSession {
   /// eksplisit oleh pengguna.
   Future<void> clearOnSignOut() async {
     _ownershipEpoch++;
+    _cachedVerifiedOwner = null;
     try {
       final prefs = await SharedPreferences.getInstance();
       await prefs.remove(_legacyVaultKey);

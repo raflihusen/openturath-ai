@@ -50,6 +50,8 @@ class AuthService {
 
   // In-memory cache to prevent entitlement loss on network hiccup (F41)
   static final Map<String, UserModel> _userCache = {};
+  static UserModel? _activeWebUser;
+  static String? _activeWebUserEmail;
   static int _authActionGeneration = 0;
   static Future<void> _authMutationTail = Future<void>.value();
   static final _logoutIntent = Expando<bool>('explicit Firebase logout');
@@ -160,6 +162,7 @@ class AuthService {
   UserModel? get cachedCurrentUser {
     if (previewUser != null) return previewUser;
     if (_logoutRequested) return null;
+    if (_activeWebUser != null) return _activeWebUser;
     final user = _auth.currentUser;
     if (user != null && !user.isAnonymous) {
       return _userCache[user.uid] ??
@@ -172,10 +175,15 @@ class AuthService {
             questionsUsed: 0,
           );
     }
+    if (_activeWebUserEmail != null &&
+        _userCache.containsKey('web_$_activeWebUserEmail')) {
+      return _userCache['web_$_activeWebUserEmail'];
+    }
     if (_userCache.isNotEmpty) {
-      final first = _userCache.values.first;
-      if (first.uid.startsWith('web_')) {
-        return first;
+      for (final candidate in _userCache.values) {
+        if (candidate.uid.startsWith('web_')) {
+          return candidate;
+        }
       }
     }
     return null;
@@ -186,6 +194,10 @@ class AuthService {
   /// tidak membuktikan bahwa pengguna masih masuk.
   Future<UserModel?> restoreSession() async {
     if (previewUser != null) return previewUser;
+    if (_activeWebUser != null && !_logoutRequested) {
+      _sessionUidController.add(_activeWebUser!.uid);
+      return _activeWebUser;
+    }
     var active = true;
     final generation = _authActionGeneration;
     try {
@@ -261,26 +273,28 @@ class AuthService {
     firebaseUser ??= _auth.currentUser;
     if (firebaseUser == null || firebaseUser.isAnonymous) {
       final webSessionActive = prefs.getBool('web_session_active') ?? false;
-      if (webSessionActive) {
-        final verifiedOwner =
-            (prefs.getString(PersistentGoogleSession.verifiedOwnerKey) ?? '')
-                .trim()
-                .toLowerCase();
-        if (verifiedOwner.isNotEmpty) {
-          final isVip = UserModel.isVipEmail(verifiedOwner);
-          final user = UserModel(
-            uid: 'web_$verifiedOwner',
-            name: verifiedOwner.split('@').first,
-            email: verifiedOwner,
-            photoUrl: '',
-            plan: isVip ? 'vip' : AppConstants.planTrial,
-            questionsUsed: 0,
-            isVip: isVip,
-          );
-          _userCache[user.uid] = user;
-          _sessionUidController.add(user.uid);
-          return user;
-        }
+      final verifiedOwner = (prefs.getString(PersistentGoogleSession.verifiedOwnerKey) ??
+              prefs.getString('google_session_email') ??
+              prefs.getString(webSessionOwnerKey) ??
+              '')
+          .trim()
+          .toLowerCase();
+      if ((webSessionActive || verifiedOwner.isNotEmpty) && verifiedOwner.isNotEmpty) {
+        final isVip = UserModel.isVipEmail(verifiedOwner);
+        final user = UserModel(
+          uid: 'web_$verifiedOwner',
+          name: verifiedOwner.split('@').first,
+          email: verifiedOwner,
+          photoUrl: '',
+          plan: isVip ? 'vip' : AppConstants.planTrial,
+          questionsUsed: 0,
+          isVip: isVip,
+        );
+        _activeWebUser = user;
+        _activeWebUserEmail = verifiedOwner;
+        _userCache[user.uid] = user;
+        _sessionUidController.add(user.uid);
+        return user;
       }
       return null;
     }
@@ -571,7 +585,7 @@ class AuthService {
           if (uid != null) {
             listener.add(uid);
           } else {
-            final webUser = cachedCurrentUser;
+            final webUser = _activeWebUser ?? cachedCurrentUser;
             if (webUser != null && webUser.uid.startsWith('web_')) {
               listener.add(webUser.uid);
             } else {
@@ -583,6 +597,11 @@ class AuthService {
         final webSub = _sessionUidController.stream.listen((uid) {
           listener.add(uid);
         });
+
+        final initialWeb = _activeWebUser ?? cachedCurrentUser;
+        if (initialWeb != null && initialWeb.uid.startsWith('web_')) {
+          listener.add(initialWeb.uid);
+        }
 
         listener.onCancel = () async {
           await Future.wait([sdk.cancel(), webSub.cancel()]);
@@ -644,12 +663,20 @@ class AuthService {
       questionsUsed: 0,
       isVip: isVip,
     );
+    _activeWebUser = user;
+    _activeWebUserEmail = cleanEmail;
     _userCache[user.uid] = user;
     AuthService()._setLogoutRequested(false);
     _sessionUidController.add(user.uid);
     try {
       final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool(explicitLogoutKey, false);
       await prefs.setBool('web_session_active', true);
+      await prefs.setString('current_user_uid', user.uid);
+      await prefs.setString(PersistentGoogleSession.verifiedOwnerKey, cleanEmail);
+      await prefs.setString(webSessionOwnerKey, cleanEmail);
+      await prefs.setString('google_session_email', cleanEmail);
+      await prefs.setString('notebook_google_email', cleanEmail);
       await prefs.setString(
           'openturath_cached_user_${user.uid}', jsonEncode(user.toJsonMap()));
     } catch (_) {}
@@ -758,6 +785,8 @@ class AuthService {
     } catch (_) {}
 
     try {
+      _activeWebUser = null;
+      _activeWebUserEmail = null;
       _sessionUidController.add(null);
       final prefs = await SharedPreferences.getInstance();
       await prefs.remove('current_user_uid');
