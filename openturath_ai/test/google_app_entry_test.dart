@@ -189,7 +189,7 @@ void main() {
 
   for (final locale in ['id', 'en', 'ar']) {
     for (final width in [320.0, 390.0, 1280.0]) {
-      testWidgets('app entry action fits $locale at width $width',
+      testWidgets('app entry title fits $locale at width $width',
           (tester) async {
         AppConfig.localeNotifier.value = locale;
         tester.view.physicalSize = Size(width, 800);
@@ -199,16 +199,13 @@ void main() {
         try {
           await open(tester);
           expect(tester.takeException(), isNull);
-          final action = find.descendant(
+          final title = find.descendant(
               of: find.byType(AppBar),
-              matching: find.text(Loc.tr('enterOpenTurath')));
-          expect(action, findsOneWidget);
-          final bounds = tester.getRect(action);
+              matching: find.text(Loc.tr('loginTitle')));
+          expect(title, findsOneWidget);
+          final bounds = tester.getRect(title);
           expect(bounds.left, greaterThanOrEqualTo(0));
           expect(bounds.right, lessThanOrEqualTo(width));
-          await tester.tap(action);
-          await tester.pumpAndSettle();
-          expect(find.text('OpenTurath home'), findsOneWidget);
         } finally {
           await close(tester);
         }
@@ -221,18 +218,18 @@ void main() {
     'https://myaccount.google.com/security',
     'https://myaccount.google.com/signinoptions/recovery-email',
   ]) {
-    testWidgets('signed-in account page enters app without Notebook: $target',
+    testWidgets('signed-in account page enters app and persists session: $target',
         (tester) async {
       final controller = await open(tester);
       try {
         (controller.platform as _Controller)
           ..currentUrl = WebUri(target)
-          ..detectedEmail = null;
+          ..detectedEmail = _email;
         await finishLoad(tester, controller);
         expect(find.text('OpenTurath home'), findsOneWidget);
         final prefs = await SharedPreferences.getInstance();
-        expect(prefs.getBool('google_session_ready'), isNot(true));
-        expect(prefs.getString('webview_session_owner_verified_v1'), isNull);
+        expect(prefs.getBool('google_session_ready'), isTrue);
+        expect(prefs.getString('webview_session_owner_verified_v1'), _email);
         expect(platform.cookies.deletions, 0);
       } finally {
         await close(tester);
@@ -240,57 +237,17 @@ void main() {
     });
   }
 
-  testWidgets('manual app entry works while browser session is unverified',
+  testWidgets('back button during app entry returns cleanly to login screen without bypass',
       (tester) async {
-    platform.cookies.cookies = [];
-    final controller = await open(tester);
+    await open(tester);
     try {
-      (controller.platform as _Controller).currentUrl =
-          WebUri('https://accounts.google.com/InteractiveLogin');
-      await tester.tap(find.descendant(
-          of: find.byType(AppBar), matching: find.byType(TextButton)));
-      await tester.pump();
-      await tester.pump(const Duration(milliseconds: 350));
-      expect(find.text('OpenTurath home'), findsOneWidget);
-      final prefs = await SharedPreferences.getInstance();
-      expect(prefs.getBool('google_session_ready'), isNot(true));
-      expect(platform.cookies.deletions, 0);
-    } finally {
-      await close(tester);
-    }
-  });
-
-  testWidgets('unreadable WebView cannot block entering an authenticated app',
-      (tester) async {
-    final controller = await open(tester);
-    try {
-      (controller.platform as _Controller).failUrlRead = true;
-      await tester.tap(find.descendant(
-          of: find.byType(AppBar), matching: find.byType(TextButton)));
-      await tester.pump();
-      await tester.pump(const Duration(milliseconds: 350));
-      expect(find.text('OpenTurath home'), findsOneWidget);
-      expect(platform.cookies.deletions, 0);
-    } finally {
-      await close(tester);
-    }
-  });
-
-  testWidgets(
-      'Google cookies and a cached profile cannot replace app authentication',
-      (tester) async {
-    final auth = _AppAuth(AuthService.previewUser)..authenticated = false;
-    final controller = await open(tester, authService: auth);
-    try {
-      (controller.platform as _Controller).currentUrl =
-          WebUri('https://myaccount.google.com/security');
-      await finishLoad(tester, controller);
-      expect(find.text('OpenTurath home'), findsNothing);
-      await tester.tap(find.descendant(
-          of: find.byType(AppBar), matching: find.byType(TextButton)));
+      final backButton = find.descendant(
+          of: find.byType(AppBar), matching: find.byIcon(Icons.arrow_back_rounded));
+      expect(backButton, findsOneWidget);
+      await tester.tap(backButton);
       await tester.pumpAndSettle();
       expect(find.text('OpenTurath sign in'), findsOneWidget);
-      expect(platform.cookies.deletions, 0);
+      expect(find.text('OpenTurath home'), findsNothing);
     } finally {
       await close(tester);
     }

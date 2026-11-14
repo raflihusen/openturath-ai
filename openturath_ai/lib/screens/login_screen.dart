@@ -10,7 +10,6 @@ import '../core/app_copy.dart';
 import '../core/routes.dart';
 import '../core/google_connection_flow.dart';
 import '../core/design/ot_colors.dart';
-import '../core/design/ot_buttons.dart';
 import '../core/design/ot_expressive.dart';
 import '../widgets/ot_motion_widgets.dart';
 import '../widgets/openturath_brand.dart';
@@ -83,22 +82,21 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     Loc.watch(context);
-    final dark = Theme.of(context).brightness == Brightness.dark;
-    final canvas = OTColors.canvas(dark);
-    final primary = OTColors.textPrimary(dark);
-    final secondary = OTColors.textSecondary(dark);
+    // Paduan latar putih editorial dengan kartu obsidian gerbang lengkung Islam (Foto 2)
+    const outerCanvas = Color(0xFFF7F7F8);
+    const headerPrimary = Color(0xFF18181B);
+    const headerSecondary = Color(0xFF71717A);
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: SystemUiOverlayStyle(
+      value: const SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
-        statusBarIconBrightness: dark ? Brightness.light : Brightness.dark,
-        statusBarBrightness: dark ? Brightness.dark : Brightness.light,
-        systemNavigationBarColor: canvas,
-        systemNavigationBarIconBrightness:
-            dark ? Brightness.light : Brightness.dark,
+        statusBarIconBrightness: Brightness.dark,
+        statusBarBrightness: Brightness.light,
+        systemNavigationBarColor: outerCanvas,
+        systemNavigationBarIconBrightness: Brightness.dark,
       ),
       child: Scaffold(
-        backgroundColor: canvas,
+        backgroundColor: outerCanvas,
         body: SafeArea(
           child: LayoutBuilder(builder: (context, viewport) {
             final isPhone = viewport.maxWidth < 900;
@@ -159,15 +157,15 @@ class _LoginScreenState extends State<LoginScreen> {
                     child: Container(
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: OTColors.surfaceSubtle(dark),
-                        border: Border.all(color: OTColors.border(dark)),
+                        color: Colors.white,
+                        border: Border.all(color: const Color(0xFFE4E4E7)),
                         borderRadius: BorderRadius.circular(OTRadius.xs),
                       ),
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Icon(Icons.error_outline_rounded,
-                              size: 18, color: primary),
+                          const Icon(Icons.error_outline_rounded,
+                              size: 18, color: headerPrimary),
                           const SizedBox(width: 10),
                           Expanded(
                             child: Text(
@@ -175,7 +173,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               style: ScholarlyFonts.outfit(
                                   fontSize: OTFontSize.s14,
                                   height: 1.5,
-                                  color: primary),
+                                  color: headerPrimary),
                             ),
                           ),
                         ],
@@ -225,7 +223,7 @@ class _LoginScreenState extends State<LoginScreen> {
               padding: const EdgeInsetsDirectional.fromSTEB(24, 16, 16, 0),
               child: Row(
                 children: [
-                  OpenTurathMark(size: 26, color: primary),
+                  const OpenTurathMark(size: 26, color: headerPrimary),
                   const SizedBox(width: 10),
                   Expanded(
                     child: Text(
@@ -236,7 +234,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         fontSize: OTFontSize.s18,
                         fontWeight: FontWeight.w600,
                         letterSpacing: -0.3,
-                        color: primary,
+                        color: headerPrimary,
                       ),
                     ),
                   ),
@@ -245,7 +243,7 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
             );
 
-            // ── Tampilan Ponsel (Foto 2 Otentik) ───────────────────────────
+            // ── Tampilan Ponsel (Foto 2 Otentik dengan Paduan Latar Putih) ───
             if (isPhone) {
               return Column(
                 children: [
@@ -259,7 +257,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           color: const Color(0xFF141416),
                           borderRadius: BorderRadius.circular(OTRadius.sheet),
                           border: Border.all(
-                              color: Colors.white.withValues(alpha: 0.10)),
+                              color: Colors.white.withValues(alpha: 0.12)),
                         ),
                         child: LayoutBuilder(builder: (context, card) {
                           final archHeight = card.maxHeight >= 700
@@ -318,7 +316,7 @@ class _LoginScreenState extends State<LoginScreen> {
               );
             }
 
-            // ── Tampilan Desktop (2-Kolom Seimbang) ────────────────────────
+            // ── Tampilan Desktop (Paduan Putih Editorial di Kiri, Hitam di Kanan) ──
             final formColumn = Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
@@ -334,15 +332,23 @@ class _LoginScreenState extends State<LoginScreen> {
                             mainAxisSize: MainAxisSize.min,
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
-                              titleText(primary),
+                              titleText(headerPrimary),
                               const SizedBox(height: 24),
                               signInButton(
-                                dark ? OTButtons.onInverse(dark) : null,
-                                primary,
+                                FilledButton.styleFrom(
+                                  backgroundColor: const Color(0xFF18181B),
+                                  foregroundColor: Colors.white,
+                                  elevation: 0,
+                                  minimumSize: const Size(double.infinity, 52),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(26),
+                                  ),
+                                ),
+                                Colors.white,
                               ),
                               if (_desktopError != null) errorBox(),
                               const SizedBox(height: 20),
-                              legalText(secondary, primary),
+                              legalText(headerSecondary, headerPrimary),
                             ],
                           ),
                         ),

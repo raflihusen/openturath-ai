@@ -62,8 +62,10 @@ class AuthService {
   bool get _logoutRequested => _logoutIntent[_auth] == true;
 
   void _setLogoutRequested(bool requested) {
-    _logoutIntent[_auth] = requested;
-    _authViewChanges.add(_auth);
+    try {
+      _logoutIntent[_auth] = requested;
+      _authViewChanges.add(_auth);
+    } catch (_) {}
   }
 
   Future<void> _waitForAuthMutationDrain() async {

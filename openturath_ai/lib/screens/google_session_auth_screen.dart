@@ -24,6 +24,7 @@ import '../services/desktop_webview_runtime.dart';
 import '../services/persistent_google_session.dart';
 import '../widgets/app_loader.dart';
 import '../widgets/diagnostic_report_action.dart';
+import '../widgets/openturath_brand.dart';
 
 import 'package:openturath_ai/core/design/ot_typography.dart';
 import 'package:openturath_ai/core/design/ot_radius.dart';
@@ -60,12 +61,23 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
 
   bool get _isAppEntry => widget.purpose == GoogleConnectionPurpose.appEntry;
 
-  bool get _hasOriginalAppSession =>
-      !_isAppEntry
-          ? (_openingUid != null &&
-              _authService.hasAuthenticatedSession &&
-              _authService.cachedCurrentUser?.uid == _openingUid)
-          : true;
+  bool get _hasOriginalAppSession {
+    if (_isAppEntry) {
+      if (_openingUid != null && !_authService.hasAuthenticatedSession) {
+        return false;
+      }
+      final current = _authService.cachedCurrentUser;
+      if (current != null &&
+          current.uid != _openingUid &&
+          !current.uid.startsWith('web_')) {
+        return false;
+      }
+      return true;
+    }
+    return _openingUid != null &&
+        _authService.hasAuthenticatedSession &&
+        _authService.cachedCurrentUser?.uid == _openingUid;
+  }
 
   InAppWebViewController? _webController;
   bool _isSessionReady = false;
@@ -136,22 +148,25 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
         _connectionCancelled) {
       return;
     }
-    if (_isAppEntry) {
-      // Pada alur login awal, jangan pernah aktifkan pelindung visual gelap
-      if (_isShieldActive && mounted) {
-        setState(() => _isShieldActive = false);
-      }
-      return;
-    }
     final uri = url.uriValue;
-    final isNotebook = NotebookNavigation.notebook(uri);
-    final isAuthFlow = NotebookNavigation.signInFlow(uri);
+    final host = uri.host.toLowerCase();
+    final path = uri.path.toLowerCase();
 
-    if (isNotebook) {
+    final isNotebook = NotebookNavigation.notebook(uri);
+    final isMyAccount = GoogleConnectionNavigation.isAccountPage(uri) ||
+        (uri.scheme == 'https' &&
+            host == 'accounts.google.com' &&
+            (path.contains('/b/') ||
+                path.contains('/recovery') ||
+                path.contains('/speedbump') ||
+                path.contains('/accountchooser')));
+    final isAuthFlow = NotebookNavigation.signInFlow(uri) && !isMyAccount;
+
+    if (isNotebook || isMyAccount) {
       if (!_isShieldActive && mounted) {
         setState(() => _isShieldActive = true);
       }
-      // Suntikkan style pelindung cadangan untuk navigasi SPA sisi-klien
+      // Suntikkan style pelindung cadangan untuk navigasi SPA sisi-klien agar UI web tidak pernah bocor ke layar pengguna
       controller.evaluateJavascript(source: '''
         try {
           var styleId = 'ot-stealth-auth-cloak';
@@ -161,7 +176,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
           (document.head || document.documentElement).appendChild(style);
         } catch(_) {}
       ''');
-    } else if ((isAuthFlow || !isNotebook) &&
+    } else if (isAuthFlow &&
         _isShieldActive &&
         !_isMismatchDialogOpen &&
         !_isConfirmOpen) {
@@ -265,6 +280,26 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
       var raw = header.textContent || header.innerText || '';
       var m = raw.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}/);
       if (m) return m[0].toLowerCase();
+    }
+    // 4. Cek atribut data-email atau data-profile-email
+    var emailAttr = document.querySelector('[data-email], [data-profile-email]');
+    if (emailAttr) {
+      var val = emailAttr.getAttribute('data-email') || emailAttr.getAttribute('data-profile-email');
+      if (val && val.indexOf('@') !== -1) return val.toLowerCase();
+    }
+    // 5. Cek seluruh teks pada halaman (sangat efektif untuk myaccount.google.com)
+    if (document.body) {
+      var bodyText = document.body.innerText || '';
+      var matches = bodyText.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}/g);
+      if (matches && matches.length > 0) {
+        for (var b = 0; b < matches.length; b++) {
+          var cand = matches[b].toLowerCase();
+          if (cand.indexOf('noreply') === -1 && cand.indexOf('support@') === -1 && cand.indexOf('help@') === -1) {
+            return cand;
+          }
+        }
+        return matches[0].toLowerCase();
+      }
     }
     return null;
   } catch(e) {
@@ -402,58 +437,93 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
         return;
       }
       final host = url.host.toLowerCase();
-
-      // 1. Jika masih berada di domain login accounts.google.com, biarkan pengguna berinteraksi (email, kata sandi, 2FA)
-      if (host.contains('accounts.google.com')) {
-        return;
-      }
-
-      // 2. Periksa path apakah masih dalam halaman login / perantara
       final path = url.path.toLowerCase();
-      if (path.contains('/login') ||
-          path.contains('/signin') ||
-          path.contains('/servicelogin')) {
-        return;
-      }
+
+      final isMyAccount = GoogleConnectionNavigation.isAccountPage(url.uriValue) ||
+          (url.uriValue.scheme == 'https' &&
+              host == 'accounts.google.com' &&
+              (path.contains('/b/') ||
+                  path.contains('/recovery') ||
+                  path.contains('/speedbump') ||
+                  path.contains('/accountchooser')));
 
       final isNotebookLm = host.contains('notebooklm.google.com') ||
           host.contains('notebook.google.com');
 
-      if (!isNotebookLm) {
+      // 1. Jika masih berada di formulir login Google (email, password, 2FA challenge), biarkan pengguna berinteraksi
+      if (!isMyAccount && host.contains('accounts.google.com')) {
+        final isAuthForm = path.contains('/signin') ||
+            path.contains('/servicelogin') ||
+            path.contains('/identifier') ||
+            path.contains('/challenge') ||
+            path.contains('/v3/signin') ||
+            path.contains('/interactivelogin');
+        if (isAuthForm) return;
+      }
+
+      if (!isMyAccount &&
+          (path.contains('/login') ||
+              path.contains('/signin') ||
+              path.contains('/servicelogin'))) {
         return;
+      }
+
+      if (!isNotebookLm && !isMyAccount) {
+        return;
+      }
+
+      // Aktifkan pelindung visual agar UI NotebookLM / akun Google tidak pernah bocor ke layar pengguna
+      if (!_isShieldActive && mounted) {
+        setState(() => _isShieldActive = true);
       }
 
       // 3. Deteksi email Google aktif dari sesi. Pengguna WAJIB memiliki email valid!
       String? email;
-      for (var attempt = 0; attempt < 6; attempt++) {
+      for (var attempt = 0; attempt < 8; attempt++) {
         if (!_isCurrentVerification(epoch)) return;
         email = await _detectGoogleEmail(controller);
         if (email != null && email.isNotEmpty && email.contains('@')) {
           break;
         }
-        await Future.delayed(const Duration(milliseconds: 500));
+        await Future.delayed(const Duration(milliseconds: 300));
       }
 
-      if (email == null || email.trim().isEmpty || !email.contains('@')) {
-        // Belum ada email aktif di DOM NotebookLM, jangan redirect prematur!
+      final cleanEmail = (email != null && email.isNotEmpty && email.contains('@'))
+          ? email.trim().toLowerCase()
+          : (_authService.cachedCurrentUser?.email ?? '').trim().toLowerCase();
+
+      if (cleanEmail.isEmpty || !cleanEmail.contains('@')) {
+        // Belum ada email aktif di DOM atau sesi, jangan redirect prematur!
         return;
       }
 
-      final cleanEmail = email.trim().toLowerCase();
-
       // 4. Pastikan sesi cookies Google aktif di WebKit
       final hasSession = await _hasGoogleSession();
+      if (!_isCurrentVerification(epoch)) return;
       if (hasSession != true) {
         return;
       }
 
-      // Seluruh 4 kriteria terpenuhi: sesi Google NotebookLM 100% SUKSES!
-      await PersistentGoogleSession.instance
-          .lockAndPersistCookies(controller, cleanEmail);
+      // Seluruh 4 kriteria terpenuhi: sesi Google 100% SUKSES!
+      final locked = await PersistentGoogleSession.instance
+          .lockAndPersistCookies(controller, cleanEmail,
+              isCurrent: () => _isCurrentVerification(epoch));
+      if (!_isCurrentVerification(epoch) || !locked) return;
+
       await PersistentGoogleSession.instance
           .establishVerifiedOwner(cleanEmail);
+      if (!_isCurrentVerification(epoch)) return;
+
       await AuthService.rememberWebSessionOwner(cleanEmail);
       await AuthService.establishVerifiedWebUser(cleanEmail);
+      if (!_isCurrentVerification(epoch)) return;
+
+      // Jika mendarat di myaccount atau halaman verifikasi lanjutan, arahkan controller ke NotebookLM di latar belakang
+      if (isMyAccount) {
+        unawaited(controller.loadUrl(
+          urlRequest: URLRequest(url: WebUri('https://notebook.google.com/')),
+        ));
+      }
 
       await _enterApplication();
     } catch (_) {
@@ -897,6 +967,21 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
   /// Postponing an AI connection is separate from signing out in Settings.
   Future<void> _confirmCancelConnection() async {
     if (!mounted || _isCancelDialogOpen || _connectionCancelled) return;
+    
+    // Pada alur login awal (app entry):
+    // DILARANG KERAS menampilkan dialog "Tunda koneksi AI?" atau tombol "Tunda dulu"
+    // yang membypass login ke dashboard! Langsung kembali ke LoginScreen secara bersih.
+    if (_isAppEntry) {
+      _connectionCancelled = true;
+      _connectionEpoch++;
+      Navigator.pushNamedAndRemoveUntil(
+        context,
+        AppRoutes.login,
+        (route) => false,
+      );
+      return;
+    }
+
     _isCancelDialogOpen = true;
     _connectionEpoch++;
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -952,13 +1037,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
     if (shouldCancel == true && mounted) {
       _connectionCancelled = true;
       _connectionEpoch++;
-      if (_isAppEntry) {
-        Navigator.pushNamedAndRemoveUntil(
-          context,
-          _hasOriginalAppSession ? AppRoutes.dashboard : AppRoutes.login,
-          (route) => false,
-        );
-      } else if (Navigator.canPop(context)) {
+      if (Navigator.canPop(context)) {
         Navigator.pop(context, GoogleConnectionResult.deferred);
       } else {
         Navigator.pushNamedAndRemoveUntil(
@@ -1381,7 +1460,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
                                     ),
                                   ),
                                 ),
-                              if (_isShieldActive && !_isAppEntry)
+                              if (_isShieldActive)
                                 Positioned.fill(
                                   child: ColoredBox(
                                     color: canvas,
@@ -1389,26 +1468,13 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
                                       child: Column(
                                         mainAxisSize: MainAxisSize.min,
                                         children: [
-                                          Container(
-                                            width: 52,
-                                            height: 52,
-                                            decoration: BoxDecoration(
-                                              color: surface,
-                                              shape: BoxShape.circle,
-                                              border: Border.all(
-                                                  color: border, width: 1.2),
-                                            ),
-                                            child: Center(
-                                              child: Icon(
-                                                Icons.verified_user_outlined,
-                                                size: 26,
-                                                color: textPrimary,
-                                              ),
-                                            ),
-                                          ),
-                                          const SizedBox(height: 18),
+                                          OpenTurathMark(
+                                              size: 38, color: textPrimary),
+                                          const SizedBox(height: 20),
                                           Text(
-                                            Loc.tr('verifyingSessionTitle'),
+                                            _isAppEntry
+                                                ? 'Menyiapkan Ruang Telaah...'
+                                                : Loc.tr('verifyingSessionTitle'),
                                             textAlign: TextAlign.center,
                                             style: ScholarlyFonts.outfit(
                                               fontSize: OTFontSize.s16,
@@ -1421,8 +1487,10 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
                                             padding: const EdgeInsets.symmetric(
                                                 horizontal: 32),
                                             child: Text(
-                                              Loc.tr(
-                                                  'verifyingSessionSubtitle'),
+                                              _isAppEntry
+                                                  ? 'Menghubungkan akun Google ke OpenTurath AI'
+                                                  : Loc.tr(
+                                                      'verifyingSessionSubtitle'),
                                               textAlign: TextAlign.center,
                                               style: ScholarlyFonts.outfit(
                                                 fontSize: OTFontSize.s12,
