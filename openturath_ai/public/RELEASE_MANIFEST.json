@@ -2,9 +2,9 @@
   "version": "1.0.88",
   "buildNumber": 89,
   "versionFull": "1.0.88+89",
-  "buildTimestamp": "2026-11-14T03:15:00+00:00",
-  "sha256": "c91a0303a68ef5c6f651fbcc5b7afe62894183ce45fba2921158a12a0d676c9c",
-  "fileSizeBytes": 71159570,
+  "buildTimestamp": "2026-11-14T12:22:00+00:00",
+  "sha256": "374d28aa5ff0293ff28be9c2e14353a8406d2ac1c9c70e0ec6bfded8561bb1d4",
+  "fileSizeBytes": 71175954,
   "apkArtifacts": [
     "/Users/apple/Downloads/ramadhan/openturath.apk",
     "/Users/apple/Downloads/ramadhan/website/dist/openturath.apk",
@@ -16,13 +16,13 @@
     "speedMode": "Turbo M1 Max (Parallel 8 Workers, 4GB JVM)",
     "daemonStopped": true
   },
-  "fileSizeMb": "67.86 MB",
+  "fileSizeMb": "67.88 MB",
   "targetPlatform": "android-arm64",
   "architecture": "arm64-v8a (Modern 64-bit Android)",
   "dmg": {
-    "sha256": "ca525547d08b27a1d3348a45d3a243c2fdc27364af14b01523e2f1c6f535eb0b",
-    "fileSizeBytes": 51906488,
-    "fileSizeMb": "49.50 MB",
+    "sha256": "1f6916436e0fad83e6219580e6e12e4ee77d5d0ba1408b8248f7d35804dcaa0a",
+    "fileSizeBytes": 51696039,
+    "fileSizeMb": "49.30 MB",
     "fileName": "openturath.dmg",
     "platform": "macOS (Universal arm64 + x86_64)"
   },
