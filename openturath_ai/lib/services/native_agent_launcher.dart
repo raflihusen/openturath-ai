@@ -46,6 +46,22 @@ class NativeAgentLauncher {
     } catch (_) {}
   }
 
+  /// Mengikat akun Google ke parameter query NotebookLM langsung tanpa melalui AccountChooser.
+  static String appendAuthUser(String url, {String? email}) {
+    final cleanUrl = url.replaceAll('/preview', '');
+    final uri = Uri.tryParse(cleanUrl);
+    if (uri == null) return cleanUrl;
+
+    final targetEmail = email?.trim().toLowerCase();
+    if (targetEmail == null || targetEmail.isEmpty) {
+      return cleanUrl;
+    }
+
+    final queryParams = Map<String, String>.from(uri.queryParameters);
+    queryParams['authuser'] = targetEmail;
+    return uri.replace(queryParameters: queryParams).toString();
+  }
+
   /// Memformat URL NotebookLM dengan integrasi Google AccountChooser dan authuser.
   /// Mencegah browser salah masuk ke akun default (/u/0/) jika user memiliki banyak akun Google.
   static String formatAccountBoundUrl(String url, {String? email}) {

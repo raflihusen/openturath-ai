@@ -23,6 +23,7 @@ import '../services/telemetry_service.dart';
 import '../services/diagnostic_report_service.dart';
 
 import '../core/app_copy.dart';
+import '../core/constants.dart';
 import '../core/app_config.dart';
 import '../core/app_snackbar.dart';
 import '../core/navigation_guard.dart';
@@ -1682,13 +1683,19 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
             _authService.cachedCurrentUser?.uid;
         if (!mounted || verifiedUid != openingUid) return;
 
+        // Buka langsung URL NotebookLM resmi dengan parameter authuser akun aktif
+        final effectiveUrl = email.isNotEmpty
+            ? NativeAgentLauncher.appendAuthUser(url, email: email)
+            : url;
+
         setState(() {
-          session.resolvedUrl = url;
+          session.resolvedUrl = effectiveUrl;
           session.isUrlLoading = false;
           session.isPaywallRequired = false;
           session.isGoogleAuthPage = !googleReady;
           session.errorMessage =
               googleReady ? null : Loc.tr('roomSameAccountBodyPlain');
+          session.isWebLoading = googleReady;
         });
       } else {
         final user = _authService.cachedCurrentUser;
@@ -1948,6 +1955,9 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
             initialUserScripts:
                 UnmodifiableListView([_buildCloakScript(isDark)]),
             initialSettings: InAppWebViewSettings(
+              userAgent: AppPlatform.isDesktop
+                  ? AppConstants.desktopSafariUserAgent
+                  : AppConstants.chromeMobileUserAgent,
               incognito: false,
               javaScriptEnabled: true,
               domStorageEnabled: true,

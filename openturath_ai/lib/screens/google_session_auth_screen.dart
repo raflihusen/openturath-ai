@@ -7,6 +7,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
 import '../core/app_copy.dart';
+import '../core/app_platform.dart';
+import '../core/constants.dart';
 import '../core/design/ot_colors.dart';
 import '../core/google_rejection.dart';
 import '../core/google_connection_flow.dart';
@@ -88,16 +90,14 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
             _authService.currentUser?.email ??
             '')
         .trim();
-    return Uri.https('accounts.google.com', '/ServiceLogin', {
-      'service': 'wise',
-      'passive': '1209600',
+    return Uri.https('accounts.google.com', '/InteractiveLogin', {
       'continue': '${NotebookNavigation.canonicalOrigin}/',
-      if (email.isNotEmpty) 'Email': email,
+      if (email.isNotEmpty) 'login_hint': email,
     }).toString();
   }
 
-  // Buka langsung halaman masuk Google untuk NotebookLM secara resmi
-  String get _initialSessionUrl => _targetLoginUrl;
+  // Buka langsung halaman NotebookLM secara resmi; jika belum ada sesi, WebKit akan mengarah ke login
+  String get _initialSessionUrl => '${NotebookNavigation.canonicalOrigin}/';
 
   bool _isCurrentVerification(int epoch) =>
       mounted &&
@@ -1041,26 +1041,27 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
                     Icon(Icons.refresh_rounded, size: 20, color: textSecondary),
                 onPressed: _retryVerification,
               ),
-              ConstrainedBox(
-                constraints: BoxConstraints(
-                    maxWidth: MediaQuery.sizeOf(context).width * 0.5),
-                child: TextButton(
-                  onPressed: _handleManualContinue,
-                  child: Text(
-                    Loc.tr(_isAppEntry ? 'enterOpenTurath' : 'ui_5bcbc797a7'),
-                    maxLines: 2,
-                    textAlign: TextAlign.center,
-                    style: OTTypography.button(color: textPrimary),
+              if (!_isAppEntry) ...[
+                ConstrainedBox(
+                  constraints: BoxConstraints(
+                      maxWidth: MediaQuery.sizeOf(context).width * 0.5),
+                  child: TextButton(
+                    onPressed: _handleManualContinue,
+                    child: Text(
+                      Loc.tr('ui_5bcbc797a7'),
+                      maxLines: 2,
+                      textAlign: TextAlign.center,
+                      style: OTTypography.button(color: textPrimary),
+                    ),
                   ),
                 ),
-              ),
-              if (!_isAppEntry)
                 IconButton(
                   tooltip: Loc.tr('cancelSignIn'),
                   icon:
                       Icon(Icons.close_rounded, size: 20, color: textSecondary),
                   onPressed: _confirmCancelConnection,
                 ),
+              ],
               const SizedBox(width: 4),
             ],
             bottom: PreferredSize(
@@ -1103,31 +1104,8 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
                         children: [
                           Row(
                             children: [
-                              Flexible(
-                                  flex: 3,
-                                  child: Container(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 8, vertical: 2),
-                                    decoration: BoxDecoration(
-                                      color:
-                                          textPrimary.withValues(alpha: 0.08),
-                                      borderRadius:
-                                          BorderRadius.circular(OTRadius.xs),
-                                      border: Border.all(
-                                        color: border,
-                                        width: 0.6,
-                                      ),
-                                    ),
-                                    child: Text(
-                                      Loc.tr('stepTwoOfTwo'),
-                                      style: ScholarlyFonts.outfit(
-                                        fontSize: OTFontSize.s11,
-                                        fontWeight: FontWeight.w700,
-                                        letterSpacing: 0.6,
-                                        color: textPrimary,
-                                      ),
-                                    ),
-                                  )),
+                              Icon(Icons.lock_outline_rounded,
+                                  size: 16, color: textSecondary),
                               const SizedBox(width: 8),
                               Expanded(
                                 child: Text(
@@ -1214,6 +1192,11 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
                                     ? widget.webViewBuilder!(
                                         context,
                                         InAppWebViewSettings(
+                                          userAgent: AppPlatform.isDesktop
+                                              ? AppConstants
+                                                  .desktopSafariUserAgent
+                                              : AppConstants
+                                                  .chromeMobileUserAgent,
                                           incognito: false,
                                           sharedCookiesEnabled:
                                               WebViewCookiePolicy
@@ -1229,6 +1212,11 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
                                         initialUserScripts:
                                             UnmodifiableListView([]),
                                         initialSettings: InAppWebViewSettings(
+                                          userAgent: AppPlatform.isDesktop
+                                              ? AppConstants
+                                                  .desktopSafariUserAgent
+                                              : AppConstants
+                                                  .chromeMobileUserAgent,
                                           incognito: false,
                                           javaScriptEnabled: true,
                                           domStorageEnabled: true,
