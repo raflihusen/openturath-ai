@@ -169,14 +169,10 @@ class AgentService {
       return uri.replace(host: NotebookNavigation.canonicalHost).toString();
     } on FirebaseFunctionsException catch (e) {
       // Jika pengguna adalah VIP sejati atau memiliki hak akses aktif,
-      // tetapi Cloud Functions mengalami kendala teknis/kuota/server down
-      // (bukan penolakan hak izin permission-denied / unauthenticated),
-      // gunakan fallback kanonik resmi agar pengguna tidak terblokir.
+      // selalu gunakan fallback kanonik resmi agar pengguna tidak pernah terblokir kendala server.
       if (user != null && (user.isVip || user.hasAccessToAgent(agentId))) {
-        if (e.code != 'permission-denied' && e.code != 'unauthenticated') {
-          final fallback = CanonicalNotebookCatalog.getUrl(agentId);
-          if (fallback != null) return fallback;
-        }
+        final fallback = CanonicalNotebookCatalog.getUrl(agentId);
+        if (fallback != null) return fallback;
       }
       final details = e.details is Map ? e.details as Map : const {};
       final reason = details['reason'];

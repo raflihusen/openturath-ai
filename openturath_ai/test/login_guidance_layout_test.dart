@@ -8,6 +8,7 @@ import 'package:openturath_ai/core/theme.dart';
 import 'package:openturath_ai/models/user_model.dart';
 import 'package:openturath_ai/screens/login_screen.dart';
 import 'package:openturath_ai/screens/google_session_auth_screen.dart';
+import 'package:openturath_ai/core/google_connection_flow.dart';
 import 'package:openturath_ai/services/auth_service.dart';
 import 'package:openturath_ai/widgets/login_guidance.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -68,6 +69,7 @@ void main() {
           addTearDown(tester.view.reset);
           await tester.pumpWidget(host(
               GoogleSessionAuthScreen(
+                  purpose: GoogleConnectionPurpose.aiRoom,
                   webViewBuilder: (_, settings, url) =>
                       const SizedBox(key: Key('google-page'))),
               locale,

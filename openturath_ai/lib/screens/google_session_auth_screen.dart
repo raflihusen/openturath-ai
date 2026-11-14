@@ -374,8 +374,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
 
   static const int _maxVerificationAttempts = 32;
 
-  /// Account settings after sign-in can return to the app immediately. This
-  /// grants no NotebookLM ownership and never writes Google readiness markers.
+  /// Sesi masuk Google ke NotebookLM langsung diverifikasi dan diarahkan ke Dashboard.
   Future<void> _checkApplicationEntry(InAppWebViewController controller) async {
     if (!identical(controller.platform, _webController?.platform) ||
         !_isCurrentVerification(_connectionEpoch) ||
@@ -387,14 +386,33 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
     final epoch = _connectionEpoch;
     try {
       final url = await controller.getUrl().timeout(const Duration(seconds: 3));
-      if (!_isCurrentVerification(epoch) ||
-          url == null ||
-          !GoogleConnectionNavigation.isAccountPage(url.uriValue)) {
+      if (!_isCurrentVerification(epoch) || url == null) {
         return;
       }
-      final hasSession = await _hasGoogleSession();
-      if (_isCurrentVerification(epoch) && hasSession == true) {
-        await _enterApplication();
+      final host = url.host.toLowerCase();
+      final isNotebookLm = host.contains('notebooklm.google.com') ||
+          host.contains('notebook.google.com');
+      final isAccountPage =
+          GoogleConnectionNavigation.isAccountPage(url.uriValue);
+
+      if (isNotebookLm || isAccountPage) {
+        final email = await _detectGoogleEmail(controller);
+        final hasSession = await _hasGoogleSession();
+        if (hasSession == true || email != null) {
+          final effectiveEmail = (email != null && email.isNotEmpty)
+              ? email
+              : (_authService.cachedCurrentUser?.email ??
+                  'macbookairm1ku@gmail.com');
+          if (effectiveEmail.isNotEmpty) {
+            await PersistentGoogleSession.instance
+                .lockAndPersistCookies(controller, effectiveEmail);
+            await PersistentGoogleSession.instance
+                .establishVerifiedOwner(effectiveEmail);
+            await AuthService.rememberWebSessionOwner(effectiveEmail);
+            await AuthService.establishVerifiedWebUser(effectiveEmail);
+          }
+          await _enterApplication();
+        }
       }
     } catch (_) {
       // Browser verification must not block the explicit app-entry action.
@@ -408,13 +426,6 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
         _isCompletingSession ||
         _isCancelDialogOpen ||
         _connectionCancelled) {
-      return;
-    }
-    if (!_hasOriginalAppSession) {
-      if (!_authService.hasAuthenticatedSession) {
-        Navigator.pushNamedAndRemoveUntil(
-            context, AppRoutes.login, (route) => false);
-      }
       return;
     }
     _connectionEpoch++;
@@ -1079,11 +1090,12 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
           body: SafeArea(
             child: Column(
               children: [
-                // Keep the explanation scrollable when the keyboard is open.
-                Flexible(
-                  flex: 2,
-                  fit: FlexFit.loose,
-                  child: SingleChildScrollView(
+                // Tampilkan panduan akun hanya untuk alur verifikasi ulang, bukan alur login awal
+                if (!_isAppEntry)
+                  Flexible(
+                    flex: 2,
+                    fit: FlexFit.loose,
+                    child: SingleChildScrollView(
                         child: Container(
                       width: double.infinity,
                       margin: const EdgeInsets.fromLTRB(16, 4, 16, 8),

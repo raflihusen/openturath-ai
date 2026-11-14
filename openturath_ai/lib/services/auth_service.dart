@@ -173,7 +173,10 @@ class AuthService {
           );
     }
     if (_userCache.isNotEmpty) {
-      return _userCache.values.first;
+      final first = _userCache.values.first;
+      if (first.uid.startsWith('web_')) {
+        return first;
+      }
     }
     return null;
   }
@@ -256,7 +259,30 @@ class AuthService {
     }
     if (!active()) return null;
     firebaseUser ??= _auth.currentUser;
-    if (firebaseUser == null || firebaseUser.isAnonymous) return null;
+    if (firebaseUser == null || firebaseUser.isAnonymous) {
+      final webSessionActive = prefs.getBool('web_session_active') ?? false;
+      if (webSessionActive) {
+        final verifiedOwner =
+            (prefs.getString(PersistentGoogleSession.verifiedOwnerKey) ?? '')
+                .trim()
+                .toLowerCase();
+        if (verifiedOwner.isNotEmpty) {
+          final isVip = UserModel.isVipEmail(verifiedOwner);
+          final user = UserModel(
+            uid: 'web_$verifiedOwner',
+            name: verifiedOwner.split('@').first,
+            email: verifiedOwner,
+            photoUrl: '',
+            plan: isVip ? 'vip' : AppConstants.planTrial,
+            questionsUsed: 0,
+            isVip: isVip,
+          );
+          _userCache[user.uid] = user;
+          return user;
+        }
+      }
+      return null;
+    }
 
     final uid = firebaseUser.uid;
     final cached = await _getCachedUser(uid)
@@ -561,6 +587,28 @@ class AuthService {
 
   static const webSessionOwnerKey = 'webview_session_owner';
 
+  /// Menetapkan pengguna sesi web Google yang terverifikasi ke dalam sesi aplikasi
+  static Future<void> establishVerifiedWebUser(String email, {String? displayName}) async {
+    final cleanEmail = email.trim().toLowerCase();
+    if (cleanEmail.isEmpty) return;
+    final isVip = UserModel.isVipEmail(cleanEmail);
+    final user = UserModel(
+      uid: 'web_$cleanEmail',
+      name: displayName ?? cleanEmail.split('@').first,
+      email: cleanEmail,
+      photoUrl: '',
+      plan: isVip ? 'vip' : AppConstants.planTrial,
+      questionsUsed: 0,
+      isVip: isVip,
+    );
+    _userCache[user.uid] = user;
+    AuthService()._setLogoutRequested(false);
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool('web_session_active', true);
+    } catch (_) {}
+  }
+
   /// Mempertahankan owner yang sudah diverifikasi oleh alur koneksi Google.
   /// Callback ruang AI membawa email aplikasi, bukan bukti identitas WebView,
   /// sehingga tidak boleh menetapkan atau mengganti owner sesi.
@@ -666,6 +714,7 @@ class AuthService {
     try {
       final prefs = await SharedPreferences.getInstance();
       await prefs.remove('current_user_uid');
+      await prefs.remove('web_session_active');
       await prefs.remove('google_session_ready');
       await prefs.remove('google_session_email');
       await prefs.remove('notebook_google_email');

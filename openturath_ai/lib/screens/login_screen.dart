@@ -1,4 +1,3 @@
-import '../core/app_platform.dart';
 import '../core/localization.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -7,14 +6,11 @@ import 'package:flutter_svg/flutter_svg.dart';
 import '../core/scholarly_fonts.dart';
 
 import '../core/app_copy.dart';
-import '../core/login_error_message.dart';
 import '../core/routes.dart';
+import '../core/google_connection_flow.dart';
 import '../core/design/ot_buttons.dart';
 import '../core/design/ot_colors.dart';
 import '../widgets/ot_motion_widgets.dart';
-import '../core/app_snackbar.dart';
-import '../services/auth_service.dart';
-import '../services/persistent_google_session.dart';
 import '../widgets/openturath_brand.dart';
 import '../widgets/language_switcher.dart';
 
@@ -36,7 +32,6 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final AuthService _authService = AuthService();
   bool _isLoading = false;
   String? _desktopError;
   late final TapGestureRecognizer _termsRecognizer;
@@ -69,40 +64,15 @@ class _LoginScreenState extends State<LoginScreen> {
       _desktopError = null;
     });
     try {
-      final user = await _authService.signInWithGoogle();
-
-      if (user != null && mounted) {
-        final userEmail = user.email.trim().toLowerCase();
-        await AuthService.reconcileWebSession(userEmail);
-        await PersistentGoogleSession.instance.establishVerifiedOwner(userEmail);
-        try {
-          await PersistentGoogleSession.instance
-              .restoreSessionIfAvailable(userEmail)
-              .timeout(const Duration(seconds: 2));
-        } catch (_) {}
-        if (!mounted ||
-            !_authService.hasAuthenticatedSession ||
-            _authService.cachedCurrentUser?.uid != user.uid) {
-          return;
-        }
-        // Single login mulus: langsung masuk ke Dashboard tanpa memaksa layar kedua
-        Navigator.pushReplacementNamed(
-          context,
-          AppRoutes.dashboard,
-        );
-        return;
-      }
-    } catch (e) {
-      if (!mounted) return;
-      final message = loginErrorMessage(e);
-      if (message.isEmpty) return;
-      if (AppPlatform.isDesktop) {
-        setState(() => _desktopError = message);
-      } else {
-        AppSnackBar.error(context, message);
-      }
+      await Navigator.pushNamed(
+        context,
+        AppRoutes.googleSessionAuth,
+        arguments: GoogleConnectionPurpose.appEntry,
+      );
     } finally {
-      if (mounted) setState(() => _isLoading = false);
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
     }
   }
 
