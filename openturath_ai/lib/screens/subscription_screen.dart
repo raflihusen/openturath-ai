@@ -848,7 +848,6 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                 benefits: [
                   Loc.tr('planFeaturedBenefit1'),
                   Loc.tr('planFeaturedBenefit3'),
-                  Loc.tr('planFeaturedBenefit4'),
                   Loc.tr('planBenefitGrowth'),
                   Loc.tr('planBenefitUpdates'),
                 ],
@@ -907,18 +906,6 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                                     fontSize: wide
                                         ? OTFontSize.s36
                                         : OTFontSize.s26)),
-                        const SizedBox(height: OTSpacing.xl),
-                        Center(
-                          child: ConstrainedBox(
-                            constraints: const BoxConstraints(maxWidth: 440),
-                            child: Align(
-                              alignment: AlignmentDirectional.centerStart,
-                              child: _pill(Loc.tr('launchOffer'), ink),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: OTSpacing.sm),
-                        const _PromoCountdownBanner(),
                         const SizedBox(height: OTSpacing.xl),
                         Center(
                           child: ConstrainedBox(

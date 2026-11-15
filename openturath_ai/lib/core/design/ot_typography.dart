@@ -179,6 +179,14 @@ class OTTypography {
         color: color,
       );
 
+  static TextStyle tagline({Color? color}) => _newsreader(
+        fontSize: OTFontSize.s14,
+        fontWeight: FontWeight.w400,
+        letterSpacing: 0.2,
+        height: 1.4,
+        color: color,
+      );
+
   // ── Interface & Body Styles ──
   static TextStyle sectionTitle({Color? color}) => _outfit(
         fontSize: OTFontSize.s18,

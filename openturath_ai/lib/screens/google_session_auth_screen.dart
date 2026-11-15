@@ -1473,7 +1473,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
                                           const SizedBox(height: 20),
                                           Text(
                                             _isAppEntry
-                                                ? 'Menyiapkan Ruang Telaah...'
+                                                ? 'Memuat...'
                                                 : Loc.tr('verifyingSessionTitle'),
                                             textAlign: TextAlign.center,
                                             style: ScholarlyFonts.outfit(
@@ -1488,7 +1488,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
                                                 horizontal: 32),
                                             child: Text(
                                               _isAppEntry
-                                                  ? 'Menghubungkan akun Google ke OpenTurath AI'
+                                                  ? 'Mohon tunggu sebentar'
                                                   : Loc.tr(
                                                       'verifyingSessionSubtitle'),
                                               textAlign: TextAlign.center,

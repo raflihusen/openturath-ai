@@ -95,7 +95,7 @@ class _OTSplashIntroState extends State<OTSplashIntro>
     super.dispose();
   }
 
-  static const _markH = 128.0;
+  static const _markH = 92.0;
   static const _vbW = 616.0,
       _vbH = 674.0,
       _box = 1024.0,
@@ -140,14 +140,11 @@ class _OTSplashIntroState extends State<OTSplashIntro>
         final tagStyle = Loc.isArabic
             ? OTTypography.arabicReading(color: ink.withValues(alpha: 0.72))
                 .copyWith(fontSize: OTFontSize.s16, fontWeight: FontWeight.w400)
-            : OTTypography.caption(color: ink.withValues(alpha: 0.72))
-                .copyWith(letterSpacing: 0.6);
+            : OTTypography.tagline(color: ink.withValues(alpha: 0.72));
         const outlineH = (833 - _y0) * s;
         const canvasW = markW * 2.9, canvasH = _markH;
-        // Kunci berukuran tetap, diperbesar mengikuti sisi terpendek layar
-        // (ponsel kecil tetap 1×, tablet dan desktop sampai 2×).
         final shortest = MediaQuery.sizeOf(context).shortestSide;
-        final scale = (shortest / 390).clamp(1.0, 2.0);
+        final scale = (shortest / 390).clamp(0.85, 1.15);
         return Semantics(
             label: '${Loc.tr('appName')}. ${Loc.tr('splashTagline')}',
             container: true,
@@ -206,7 +203,7 @@ class _OTSplashIntroState extends State<OTSplashIntro>
                         ],
                       ),
                     ),
-                    const SizedBox(height: OTSpacing.base),
+                    const SizedBox(height: OTSpacing.sm),
                     Directionality(
                       textDirection: TextDirection.ltr,
                       child: Row(mainAxisSize: MainAxisSize.min, children: [
@@ -214,7 +211,7 @@ class _OTSplashIntroState extends State<OTSplashIntro>
                           _letter(word[i], i, ms, ink),
                       ]),
                     ),
-                    const SizedBox(height: OTSpacing.lg),
+                    const SizedBox(height: 6),
                     Opacity(
                       opacity: tag,
                       child: Transform.translate(

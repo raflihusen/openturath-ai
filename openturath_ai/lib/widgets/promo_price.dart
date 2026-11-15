@@ -49,9 +49,6 @@ class PromoPrice extends StatelessWidget {
                       'normalPrice', [ProductPricing.rupiah(regularAmount)]),
                   style: OTTypography.caption(color: secondary)
                       .copyWith(decoration: TextDecoration.lineThrough)),
-              if (inlineSaving)
-                Text(Loc.tr('launchOffer'),
-                    style: OTTypography.captionMedium(color: foreground)),
             ]),
       Wrap(
           crossAxisAlignment: WrapCrossAlignment.center,
@@ -77,7 +74,7 @@ class PromoPrice extends StatelessWidget {
         Padding(
             padding: const EdgeInsets.only(top: 4),
             child: Text(
-                '${Loc.tr('launchOffer')} · ${Loc.tr('saving', ['$saving'])}',
+                Loc.tr('saving', ['$saving']),
                 style: OTTypography.captionMedium(color: secondary))),
     ]);
   }
