@@ -175,8 +175,17 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
 
   Future<void> _checkout(AgentModel agent, SubscriptionOffer offer) async {
     if (_processing) return;
-    final user = AuthService().currentUser;
-    if (user == null || user.isAnonymous) {
+    final auth = AuthService();
+    final cached = auth.cachedCurrentUser;
+    final webEmail = AuthService.activeWebUserEmail;
+    final fbUser = auth.currentUser;
+
+    final email = (cached?.email ?? webEmail ?? fbUser?.email ?? '').trim().toLowerCase();
+    final uid = cached?.uid ?? (webEmail != null && webEmail.isNotEmpty ? 'web_$webEmail' : fbUser?.uid ?? '');
+    final name = cached?.name ?? fbUser?.displayName ?? (email.isNotEmpty ? email.split('@').first : 'Pengguna OpenTurath');
+    final phone = fbUser?.phoneNumber ?? '';
+
+    if (email.isEmpty || uid.isEmpty) {
       setState(() {
         _checkoutAgentId = agent.id;
         _checkoutError = Loc.tr('signInRequired');
@@ -191,16 +200,14 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     try {
       final title = '${agent.title} · ${offer.title}';
       final result = await _service.createPayment(
-          uid: user.uid,
+          uid: uid,
           agentId: agent.id,
           plan: offer.plan,
           planTitle: title,
           amount: offer.amount,
-          name: user.displayName ??
-              user.email?.split('@').first ??
-              'Pengguna OpenTurath',
-          email: user.email ?? '',
-          phone: user.phoneNumber ?? '');
+          name: name,
+          email: email,
+          phone: phone);
       if (!mounted) return;
       // An old backend or stale quote must never open a differently priced checkout.
       if (result['amount'] != offer.amount ||

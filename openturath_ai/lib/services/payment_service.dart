@@ -1,3 +1,5 @@
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'callable_gateway.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import '../core/constants.dart';
@@ -12,7 +14,7 @@ class PaymentService {
 
   final CallableGateway _functions;
 
-  /// Buat sesi pembayaran checkout resmi melalui Cloud Function createCheckout
+  /// Buat sesi pembayaran checkout resmi melalui backend VPS atau fallback Cloud Function
   Future<Map<String, dynamic>> createCheckoutSession({
     required String uid,
     required String agentId,
@@ -23,6 +25,51 @@ class PaymentService {
     required String email,
     required String phone,
   }) async {
+    // 1. Coba buat sesi checkout via endpoint mandiri VPS
+    try {
+      final res = await http.post(
+        Uri.parse('https://maktabah.openturath.id/api/v1/payment/checkout'),
+        headers: {
+          'Content-Type': 'application/json',
+          'User-Agent': 'OpenTurathApp/1.0',
+        },
+        body: jsonEncode({
+          'agent_id': agentId,
+          'plan': plan,
+          'customer_name': name,
+          'customer_email': email,
+          'customer_phone': phone,
+          'uid': uid,
+        }),
+      ).timeout(const Duration(seconds: 10));
+
+      if (res.statusCode == 200) {
+        final data = jsonDecode(res.body);
+        if (data is Map) {
+          final paymentUrl = data['redirect_url'] ??
+              data['paymentUrl'] ??
+              data['redirectUrl'] ??
+              data['snap_url'];
+          final invoiceNumber = data['order_id'] ??
+              data['invoiceNumber'] ??
+              data['invoice_number'] ??
+              '';
+          final trxId = data['transaction_id'] ?? data['trxId'] ?? '';
+          if (paymentUrl is String && paymentUrl.isNotEmpty) {
+            return {
+              'redirectUrl': paymentUrl,
+              'paymentUrl': paymentUrl,
+              'trxId': trxId,
+              'invoiceNumber': invoiceNumber,
+              'status': 'pending',
+              'amount': amount,
+              'pricingRevision': ProductPricing.revision,
+            };
+          }
+        }
+      }
+    } catch (_) {}
+
     try {
       final result = await _functions.call(AppConstants.fnCreatePayment, {
         'uid': uid,
