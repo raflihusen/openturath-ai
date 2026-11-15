@@ -620,17 +620,35 @@ class AuthService {
         cached: _getCachedUser,
         watch: (uid) {
           if (uid.startsWith('web_')) {
-            return Stream<UserModel?>.multi((listener) {
-              final cached = _userCache[uid];
-              if (cached != null) listener.add(cached);
-              final sub = _sessionUidController.stream.listen((activeUid) {
-                if (activeUid == uid) {
-                  listener.add(_userCache[uid]);
-                } else if (activeUid == null) {
-                  listener.add(null);
-                }
-              });
-              listener.onCancel = sub.cancel;
+            final cleanEmail = uid.substring(4).trim().toLowerCase();
+            return _db
+                .collection(AppConstants.colUsers)
+                .where('email', isEqualTo: cleanEmail)
+                .limit(1)
+                .snapshots()
+                .map((snap) {
+              if (snap.docs.isEmpty) {
+                final cached = _userCache[uid] ??
+                    UserModel(
+                      uid: uid,
+                      name: cleanEmail.split('@').first,
+                      email: cleanEmail,
+                      photoUrl: '',
+                      plan: UserModel.isVipEmail(cleanEmail)
+                          ? 'vip'
+                          : AppConstants.planTrial,
+                      questionsUsed: 0,
+                      isVip: UserModel.isVipEmail(cleanEmail),
+                    );
+                return cached;
+              }
+              final doc = snap.docs.first;
+              final user = UserModel.fromFirestore(doc);
+              _userCache[uid] = user;
+              _activeWebUser = user;
+              unawaited(_cacheUserLocally(user,
+                  isCurrent: () => _activeWebUserEmail == cleanEmail));
+              return user;
             });
           }
           return _db
@@ -668,6 +686,19 @@ class AuthService {
     _activeWebUser = user;
     _activeWebUserEmail = cleanEmail;
     _userCache[user.uid] = user;
+    try {
+      final snap = await FirebaseFirestore.instance
+          .collection(AppConstants.colUsers)
+          .where('email', isEqualTo: cleanEmail)
+          .limit(1)
+          .get()
+          .timeout(const Duration(seconds: 3));
+      if (snap.docs.isNotEmpty) {
+        final firestoreUser = UserModel.fromFirestore(snap.docs.first);
+        _activeWebUser = firestoreUser;
+        _userCache[user.uid] = firestoreUser;
+      }
+    } catch (_) {}
     AuthService()._setLogoutRequested(false);
     _sessionUidController.add(user.uid);
     try {

@@ -200,6 +200,14 @@ const _notebookCleanupScript = r'''
       [class*="top-gradient" i], [class*="scroll-gradient" i], [class*="header-gradient" i],
       [class*="fade-overlay" i], [class*="scroll-overlay" i],
       mat-tab-header, .mat-mdc-tab-header, .mobile-tab-bar, .mobile-tabs, .mobile-navigation,
+      [role="tablist"], [role="tab"],
+      mat-button-toggle-group, .mat-button-toggle-group, .mat-mdc-button-toggle-group,
+      mat-button-toggle, .mat-button-toggle, .mat-mdc-button-toggle,
+      .tab-bar, app-tab-bar, .tabs-container, nav[class*="tab" i], div[class*="tab-bar" i],
+      .mobile-nav, app-navigation-bar, .navigation-bar, .view-selector,
+      button[aria-label*="scroll" i], button[title*="scroll" i],
+      .scroll-to-bottom-button, [class*="scroll-to-bottom" i], [class*="scroll-down" i], [class*="jump-to-bottom" i],
+      app-scroll-button, .scroll-button,
       app-loading-screen, .loading-screen, .loading-container,
       [class*="loading-screen" i], [class*="notebook-loading" i], [class*="project-loading" i],
       mat-spinner, mat-progress-spinner, mat-progress-bar, [role="progressbar"],
@@ -566,14 +574,15 @@ const _notebookCleanupScript = r'''
       [class*="title-card" i],
       [class*="overview-card" i],
       /* Sembunyikan bilah tab Sources | Chat | Studio dan tombol add/upload non-obrolan */
-      [role="tablist"],
+      [role="tablist"], [role="tab"],
       mat-button-toggle-group, .mat-button-toggle-group, .mat-mdc-button-toggle-group,
+      mat-button-toggle, .mat-button-toggle, .mat-mdc-button-toggle,
       .tab-bar, app-tab-bar, .tabs-container, nav[class*="tab" i], div[class*="tab-bar" i],
       mat-tab-header, .mat-mdc-tab-header, .mobile-tab-bar, .mobile-tabs, .mobile-navigation,
-      button:has(mat-icon[fonticon="add"]),
-      button:has(mat-icon[data-mat-icon-name="add"]),
-      button:has(svg path[d*="M19 13"]),
-      button:has(svg path[d*="M12 4v16m8-8H4"]),
+      .mobile-nav, app-navigation-bar, .navigation-bar, .view-selector,
+      button[aria-label*="scroll" i], button[title*="scroll" i],
+      .scroll-to-bottom-button, [class*="scroll-to-bottom" i], [class*="scroll-down" i], [class*="jump-to-bottom" i],
+      app-scroll-button, .scroll-button,
       button[aria-label*="Add source" i], button[aria-label*="Tambah sumber" i],
       button[aria-label*="Add" i], button[aria-label*="Tambah" i],
       button[aria-label*="Insert" i], button[aria-label*="Sisipkan" i],
@@ -582,7 +591,7 @@ const _notebookCleanupScript = r'''
       .add-source-button, [class*="add-source" i],
       .sources-panel-header, .sources-header, [class*="sources-header" i],
       [class*="sources-panel" i] button, [class*="source-list" i] button,
-      mat-sidenav button:has(mat-icon), .sources-container button,
+      mat-sidenav button, .sources-container button,
       app-chat-empty-state h1, app-chat-empty-state h2, app-chat-empty-state h3,
       app-chat-empty-state mat-icon, app-chat-empty-state img, app-chat-empty-state svg,
       app-empty-state h1, app-empty-state h2, app-empty-state h3,
@@ -874,7 +883,7 @@ const _notebookCleanupScript = r'''
       target.style.setProperty('overflow', 'hidden', 'important');
     });
 
-    // 3. Pastikan tab Chat selalu aktif jika antarmuka mobile/tab NotebookLM terbuka
+    // 3. Pastikan tab Chat selalu aktif dan sembunyikan bar tab mobile & tombol scroll
     try {
       const tabs = document.querySelectorAll('[role="tab"], button, a, [role="button"]');
       for (const tab of tabs) {
@@ -889,6 +898,29 @@ const _notebookCleanupScript = r'''
             tab.click?.();
           }
           break;
+        }
+      }
+
+      // Sembunyikan bilah tab mobile (Sources | Chat | Studio)
+      const mobileTabLists = document.querySelectorAll('[role="tablist"], mat-button-toggle-group, .mobile-tabs, .mobile-nav, nav[class*="tab" i], .view-selector');
+      for (const tl of mobileTabLists) {
+        if (!isComposerOrInput(tl)) {
+          tl.style.setProperty('display', 'none', 'important');
+          tl.style.setProperty('height', '0px', 'important');
+          tl.style.setProperty('padding', '0px', 'important');
+          tl.style.setProperty('margin', '0px', 'important');
+          tl.style.setProperty('overflow', 'hidden', 'important');
+        }
+      }
+
+      // Sembunyikan tombol scroll melayang yang menabrak teks obrolan
+      const scrollBtns = document.querySelectorAll('button[aria-label*="scroll" i], [class*="scroll-to-bottom" i], [class*="scroll-down" i], [class*="jump-to-bottom" i], app-scroll-button, .scroll-button');
+      for (const sb of scrollBtns) {
+        if (!isComposerOrInput(sb)) {
+          sb.style.setProperty('display', 'none', 'important');
+          sb.style.setProperty('visibility', 'hidden', 'important');
+          sb.style.setProperty('opacity', '0', 'important');
+          sb.style.setProperty('pointer-events', 'none', 'important');
         }
       }
     } catch (_) {}

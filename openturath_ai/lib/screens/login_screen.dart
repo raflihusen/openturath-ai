@@ -243,14 +243,41 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
             );
 
-            // ── Tampilan Ponsel (Foto 2 Otentik dengan Paduan Latar Putih) ───
+            // ── Tampilan Ponsel (Foto 2 Otentik Full-Bleed) ───
             if (isPhone) {
+              final content = Padding(
+                padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    titleText(onCard),
+                    const SizedBox(height: 24),
+                    signInButton(
+                      FilledButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        foregroundColor: Colors.black,
+                        elevation: 0,
+                        minimumSize: const Size(double.infinity, 52),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(26),
+                        ),
+                      ),
+                      Colors.black,
+                    ),
+                    if (_desktopError != null) errorBox(),
+                    const SizedBox(height: 20),
+                    legalText(onCardMuted, onCard),
+                  ],
+                ),
+              );
+
               return Column(
                 children: [
                   header,
                   Expanded(
                     child: Padding(
-                      padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
+                      padding: const EdgeInsets.fromLTRB(12, 8, 12, 12),
                       child: Container(
                         clipBehavior: Clip.antiAlias,
                         decoration: BoxDecoration(
@@ -260,53 +287,23 @@ class _LoginScreenState extends State<LoginScreen> {
                               color: Colors.white.withValues(alpha: 0.12)),
                         ),
                         child: LayoutBuilder(builder: (context, card) {
-                          final archHeight = card.maxHeight >= 700
-                              ? card.maxHeight * 0.46
-                              : card.maxHeight >= 550
-                                  ? card.maxHeight * 0.38
-                                  : 160.0;
-                          return SingleChildScrollView(
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                SizedBox(
-                                  height: archHeight,
-                                  child: const ExcludeSemantics(
-                                    child: ArchEchoCanvas(compact: true),
-                                  ),
+                          if (card.maxHeight < 520) {
+                            return Center(
+                              child: SingleChildScrollView(
+                                padding: const EdgeInsets.only(top: 24),
+                                child: content,
+                              ),
+                            );
+                          }
+                          return Column(
+                            children: [
+                              const Expanded(
+                                child: ExcludeSemantics(
+                                  child: ArchEchoCanvas(compact: true),
                                 ),
-                                Padding(
-                                  padding:
-                                      const EdgeInsets.fromLTRB(24, 0, 24, 24),
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.stretch,
-                                    children: [
-                                      titleText(onCard),
-                                      const SizedBox(height: 24),
-                                      signInButton(
-                                        FilledButton.styleFrom(
-                                          backgroundColor: Colors.white,
-                                          foregroundColor: Colors.black,
-                                          elevation: 0,
-                                          minimumSize:
-                                              const Size(double.infinity, 52),
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(26),
-                                          ),
-                                        ),
-                                        Colors.black,
-                                      ),
-                                      if (_desktopError != null) errorBox(),
-                                      const SizedBox(height: 20),
-                                      legalText(onCardMuted, onCard),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
+                              ),
+                              content,
+                            ],
                           );
                         }),
                       ),

@@ -17,7 +17,7 @@ const crypto = require("crypto");
 // test/shared_catalog.test.ts fails when the exported copy drifts.
 exports.VIP_EMAILS = new Set([
     // Owner & Core Team
-    "openturath@gmail.com", "ramah@ptct.net", "raflimaulan@gmail.com",
+    "ramah@ptct.net", "raflimaulan@gmail.com",
     "mas.raflihusen@gmail.com", "udinvoldigoad05@gmail.com",
     // Mitra Kehormatan (Rule 5 AGENTS.md)
     "prilatief@gmail.com",

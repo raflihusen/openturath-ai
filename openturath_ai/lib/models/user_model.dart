@@ -249,7 +249,6 @@ class UserModel {
 
   static const _canonicalVipEmails = {
     // Owner & Core Team
-    'openturath@gmail.com',
     'ramah@ptct.net',
     'raflimaulan@gmail.com',
     'mas.raflihusen@gmail.com',
