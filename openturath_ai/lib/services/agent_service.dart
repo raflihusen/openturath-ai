@@ -1,4 +1,5 @@
-import '../core/localization.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import '../core/app_config.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -11,7 +12,6 @@ import '../models/user_model.dart';
 import 'callable_gateway.dart';
 import 'auth_service.dart';
 import 'persistent_google_session.dart';
-import '../core/constants.dart';
 
 class AgentService {
   AgentService({
@@ -157,70 +157,47 @@ class AgentService {
       }
     }
 
+    // 1. Coba panggil endpoint mandiri VPS OpenTurath
     try {
-      final result = await _functions
-          .call(AppConstants.fnGetAgentUrl, {'agentId': agentId});
-      if (result is! Map) {
-        throw const AgentAccessException(
-            'invalid-response', 'Respons alamat AI tidak valid.');
+      final res = await http.post(
+        Uri.parse('https://maktabah.openturath.id/api/getAgentUrl'),
+        headers: {
+          'Content-Type': 'application/json',
+          'User-Agent': 'OpenTurath-App/1.0',
+        },
+        body: jsonEncode({
+          'data': {'agentId': agentId}
+        }),
+      ).timeout(const Duration(seconds: 4));
+
+      if (res.statusCode == 200) {
+        final body = jsonDecode(res.body);
+        if (body is Map) {
+          final url = body['result']?['url'] ?? body['url'];
+          if (url is String && url.isNotEmpty) {
+            final uri = Uri.tryParse(url);
+            if (uri != null &&
+                NotebookNavigation.notebook(uri) &&
+                _notebookPath.hasMatch(uri.path)) {
+              return uri
+                  .replace(host: NotebookNavigation.canonicalHost)
+                  .toString();
+            }
+          }
+        }
       }
-      final url = result['url'];
-      if (url == null || url == '') {
-        throw const AgentAccessException(
-            'empty-url', 'URL AI belum tersedia untuk bidang ini.');
-      }
-      if (url is! String) {
-        throw const AgentAccessException(
-            'invalid-url', 'Alamat AI dari server tidak valid.');
-      }
-      final uri = Uri.tryParse(url);
-      if (uri == null ||
-          url != url.trim() ||
-          url.contains('%') ||
-          !NotebookNavigation.notebook(uri) ||
-          !_notebookPath.hasMatch(uri.path) ||
-          uri.hasQuery ||
-          uri.hasFragment) {
-        throw const AgentAccessException(
-            'invalid-url', 'Alamat AI dari server tidak valid.');
-      }
-      // The authenticated server owns notebook selection and entitlement checks.
-      // Preserve its exact notebook ID/path and validate before normalizing only
-      // the legacy Google host to the verified Google redirect destination.
-      return uri.replace(host: NotebookNavigation.canonicalHost).toString();
-    } on FirebaseFunctionsException catch (e) {
-      // Jika pengguna adalah VIP sejati atau memiliki hak akses aktif,
-      // selalu gunakan fallback kanonik resmi agar pengguna tidak pernah terblokir kendala server.
-      if (isVip || (effectiveUser != null && (effectiveUser.isVip || effectiveUser.hasAccessToAgent(agentId)))) {
-        final fallback = CanonicalNotebookCatalog.getUrl(agentId);
-        if (fallback != null) return fallback;
-      }
-      final details = e.details is Map ? e.details as Map : const {};
-      final reason = details['reason'];
-      final requestId = details['request_id'];
-      throw AgentAccessException(
-        e.code,
-        e.message ??
-            Loc.tr(e.code == 'permission-denied'
-                ? 'ui_5d804a44a9'
-                : 'errServiceUnavailable'),
-        reason: reason is String &&
-                RegExp(r'^[a-z][a-z0-9_]{0,59}$').hasMatch(reason)
-            ? reason
-            : null,
-        requestId: requestId is String &&
-                RegExp(r'^[a-f0-9-]{36}$').hasMatch(requestId)
-            ? requestId
-            : null,
-      );
-    } catch (e) {
-      if (e is AgentAccessException) rethrow;
-      if (isVip || (effectiveUser != null && (effectiveUser.isVip || effectiveUser.hasAccessToAgent(agentId)))) {
-        final fallback = CanonicalNotebookCatalog.getUrl(agentId);
-        if (fallback != null) return fallback;
-      }
-      throw AgentAccessException('unknown-error', e.toString());
+    } catch (_) {
+      // Abaikan kegagalan jaringan VPS dan lanjutkan ke fallback kanonik
     }
+
+    // 2. Fallback naskah kanonik resmi Pro Master
+    final canonical = CanonicalNotebookCatalog.getUrl(agentId);
+    if (canonical != null && canonical.isNotEmpty) {
+      return canonical;
+    }
+
+    throw const AgentAccessException(
+        'empty-url', 'URL AI belum tersedia untuk bidang ini.');
   }
 
   // ── Catat pertanyaan trial secara atomik di Cloud Functions ───

@@ -13,6 +13,7 @@ import 'profile_screen.dart';
 import '../widgets/openturath_brand.dart';
 import '../core/app_snackbar.dart';
 import '../services/agent_session_manager.dart';
+import '../services/auth_service.dart';
 import '../widgets/agent_multi_tab_room.dart';
 
 class MainShellController extends InheritedWidget {
@@ -41,7 +42,8 @@ class MainShellScreen extends StatefulWidget {
   State<MainShellScreen> createState() => _MainShellScreenState();
 }
 
-class _MainShellScreenState extends State<MainShellScreen> {
+class _MainShellScreenState extends State<MainShellScreen>
+    with WidgetsBindingObserver {
   final FocusNode _dashboardSearchFocus = FocusNode();
   late int _currentIndex;
   late final PageController _pageController;
@@ -51,15 +53,27 @@ class _MainShellScreenState extends State<MainShellScreen> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _currentIndex = widget.initialTab;
     _pageController = PageController(initialPage: _currentIndex);
   }
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _dashboardSearchFocus.dispose();
     _pageController.dispose();
     super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      final email = AuthService.activeWebUserEmail;
+      if (email != null && email.isNotEmpty) {
+        AuthService.syncUserStatusWithVps(email);
+      }
+    }
   }
 
   void _onTabSelected(int index, {String? fieldId, CorpusKind? kind}) {
