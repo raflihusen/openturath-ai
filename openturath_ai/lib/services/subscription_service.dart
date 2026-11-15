@@ -176,7 +176,23 @@ class SubscriptionService {
 
       if (response.statusCode == 200 && data != null && data['success'] == true) {
         if (email.isNotEmpty) {
-          unawaited(AuthService.establishVerifiedWebUser(email));
+          final expiryIso = data['expiryIso'] ?? data['expiry'];
+          final expiryDate = expiryIso != null
+              ? DateTime.tryParse(expiryIso.toString())
+              : null;
+          final durationDays = (data['durationDays'] as num?)?.toInt() ?? 7;
+          final agentId = data['entitlementKey'] as String?;
+          if (expiryDate != null) {
+            unawaited(AuthService.applyActiveGrant(
+              email,
+              expiry: expiryDate,
+              durationDays: durationDays,
+              agentId: agentId,
+              planTitle: data['serviceTitle'] as String?,
+            ));
+          } else {
+            unawaited(AuthService.establishVerifiedWebUser(email));
+          }
         }
         return data;
       }

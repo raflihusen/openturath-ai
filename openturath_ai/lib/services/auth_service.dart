@@ -715,6 +715,74 @@ class AuthService {
     } catch (_) {}
   }
 
+  /// Menetapkan hak akses aktif (misal dari penukaran voucher atau verifikasi langganan VPS)
+  static Future<void> applyActiveGrant(
+    String email, {
+    required DateTime expiry,
+    String? planTitle,
+    String? agentId,
+    int? durationDays,
+  }) async {
+    final cleanEmail = email.trim().toLowerCase();
+    if (cleanEmail.isEmpty) return;
+    final isVip = UserModel.isVipEmail(cleanEmail);
+    final isAll = agentId == null ||
+        agentId.isEmpty ||
+        agentId == 'all_access' ||
+        agentId == 'all_ai';
+
+    final entMap = <String, ModuleEntitlement>{
+      if (isAll) ...{
+        'all_access': ModuleEntitlement(
+          plan: 'trial',
+          status: 'active',
+          expiry: expiry,
+          startedAt: DateTime.now(),
+          trialDurationDays: durationDays,
+        ),
+        'all_ai': ModuleEntitlement(
+          plan: 'trial',
+          status: 'active',
+          expiry: expiry,
+          startedAt: DateTime.now(),
+          trialDurationDays: durationDays,
+        ),
+      } else ...{
+        agentId: ModuleEntitlement(
+          plan: 'trial',
+          status: 'active',
+          expiry: expiry,
+          startedAt: DateTime.now(),
+          trialDurationDays: durationDays,
+        ),
+      }
+    };
+
+    final user = UserModel(
+      uid: 'web_$cleanEmail',
+      name: cleanEmail.split('@').first,
+      email: cleanEmail,
+      photoUrl: '',
+      plan: isVip ? 'vip' : 'all_ai',
+      questionsUsed: 0,
+      subscriptionExpiry: expiry,
+      entitlements: entMap,
+      isVip: isVip,
+    );
+
+    _activeWebUser = user;
+    _activeWebUserEmail = cleanEmail;
+    _userCache[user.uid] = user;
+    await _cacheUserLocally(user, isCurrent: () => true);
+    _sessionUidController.add(user.uid);
+
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(
+          'openturath_cached_user_${user.uid}', jsonEncode(user.toJsonMap()));
+    } catch (_) {}
+  }
+
   /// Mempertahankan owner yang sudah diverifikasi oleh alur koneksi Google.
   /// Callback ruang AI membawa email aplikasi, bukan bukti identitas WebView,
   /// sehingga tidak boleh menetapkan atau mengganti owner sesi.

@@ -149,7 +149,8 @@ class AgentService {
 
     // Rule 5 AGENTS.md (Hukum Sakral VIP): Akun VIP sejati berhak atas naskah master secara permanen
     // dan langsung diarahkan ke naskah resmi tanpa delay atau terhalang unauthenticated/unavailable.
-    if (isVip) {
+    // Begitu juga akun dengan hak akses langganan atau voucher aktif, langsung diarahkan ke naskah resmi.
+    if (isVip || (effectiveUser != null && effectiveUser.hasAccessToAgent(agentId))) {
       final canonical = CanonicalNotebookCatalog.getUrl(agentId);
       if (canonical != null && canonical.isNotEmpty) {
         return canonical;
