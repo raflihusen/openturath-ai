@@ -20,9 +20,9 @@
   "targetPlatform": "android-arm64",
   "architecture": "arm64-v8a (Modern 64-bit Android)",
   "dmg": {
-    "sha256": "cfd526fce70359a92763521871826df617efb9da199e725efafe244b4123af7a",
-    "fileSizeBytes": 51244667,
-    "fileSizeMb": "48.87 MB",
+    "sha256": "66354f67cb90ef60d68d0e1f19e16e16e33b95ddc45d2f48764d0a29691d2057",
+    "fileSizeBytes": 51621117,
+    "fileSizeMb": "49.23 MB",
     "fileName": "openturath.dmg",
     "platform": "macOS (Universal arm64 + x86_64)"
   },
