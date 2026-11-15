@@ -7,6 +7,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
 import '../models/user_model.dart';
 import '../core/constants.dart';
 import 'agent_session_manager.dart';
@@ -52,6 +53,7 @@ class AuthService {
   static final Map<String, UserModel> _userCache = {};
   static UserModel? _activeWebUser;
   static String? _activeWebUserEmail;
+  static String? get activeWebUserEmail => _activeWebUserEmail;
   static int _authActionGeneration = 0;
   static Future<void> _authMutationTail = Future<void>.value();
   static final _logoutIntent = Expando<bool>('explicit Firebase logout');
@@ -282,9 +284,11 @@ class AuthService {
           .trim()
           .toLowerCase();
       if ((webSessionActive || verifiedOwner.isNotEmpty) && verifiedOwner.isNotEmpty) {
+        final uid = 'web_$verifiedOwner';
+        final cached = await _getCachedUser(uid);
         final isVip = UserModel.isVipEmail(verifiedOwner);
-        final user = UserModel(
-          uid: 'web_$verifiedOwner',
+        final user = cached ?? UserModel(
+          uid: uid,
           name: verifiedOwner.split('@').first,
           email: verifiedOwner,
           photoUrl: '',
@@ -296,6 +300,7 @@ class AuthService {
         _activeWebUserEmail = verifiedOwner;
         _userCache[user.uid] = user;
         _sessionUidController.add(user.uid);
+        unawaited(syncUserStatusWithVps(verifiedOwner));
         return user;
       }
       return null;
@@ -698,9 +703,15 @@ class AuthService {
         _activeWebUser = firestoreUser;
         _userCache[user.uid] = firestoreUser;
       }
+      final cached = await _getCachedUser(user.uid);
+      if (cached != null) {
+        _activeWebUser = cached;
+        _userCache[user.uid] = cached;
+      }
     } catch (_) {}
     AuthService()._setLogoutRequested(false);
-    _sessionUidController.add(user.uid);
+    _sessionUidController.add(_activeWebUser?.uid ?? user.uid);
+    unawaited(syncUserStatusWithVps(cleanEmail));
     try {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setBool(explicitLogoutKey, false);
@@ -780,6 +791,72 @@ class AuthService {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString(
           'openturath_cached_user_${user.uid}', jsonEncode(user.toJsonMap()));
+    } catch (_) {}
+  }
+
+  /// Mencabut hak akses aktif ketika masa langganan/voucher telah berakhir
+  static Future<void> revokeActiveGrant(String email) async {
+    final cleanEmail = email.trim().toLowerCase();
+    if (cleanEmail.isEmpty) return;
+    final isVip = UserModel.isVipEmail(cleanEmail);
+    if (isVip) return; // Sakral Rule 5: Hak prerogatif VIP tidak pernah dicabut
+
+    final user = UserModel(
+      uid: 'web_$cleanEmail',
+      name: cleanEmail.split('@').first,
+      email: cleanEmail,
+      photoUrl: '',
+      plan: AppConstants.planTrial,
+      questionsUsed: 0,
+      subscriptionExpiry: null,
+      entitlements: const {},
+      isVip: false,
+    );
+
+    _activeWebUser = user;
+    _activeWebUserEmail = cleanEmail;
+    _userCache[user.uid] = user;
+    await _cacheUserLocally(user, isCurrent: () => true);
+    _sessionUidController.add(user.uid);
+
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(
+          'openturath_cached_user_${user.uid}', jsonEncode(user.toJsonMap()));
+    } catch (_) {}
+  }
+
+  /// Sinkronisasi hak akses pengguna secara realtime dengan backend VPS
+  static Future<void> syncUserStatusWithVps(String email) async {
+    final cleanEmail = email.trim().toLowerCase();
+    if (cleanEmail.isEmpty) return;
+    try {
+      final res = await http.get(
+        Uri.parse('https://maktabah.openturath.id/api/user-status?email=$cleanEmail'),
+      ).timeout(const Duration(seconds: 4));
+      if (res.statusCode == 200) {
+        final data = jsonDecode(res.body);
+        if (data is Map && data['success'] == true) {
+          final hasActive = data['hasActiveAccess'] == true;
+          final isVip = data['isVip'] == true || UserModel.isVipEmail(cleanEmail);
+          if (hasActive) {
+            final expiryStr = data['expiryIso']?.toString();
+            final expiry = expiryStr != null ? DateTime.tryParse(expiryStr) : null;
+            final planTitle = data['serviceTitle']?.toString();
+            final plan = data['plan']?.toString() ?? 'all_ai';
+            if (expiry != null && expiry.isAfter(DateTime.now())) {
+              await applyActiveGrant(
+                cleanEmail,
+                expiry: expiry,
+                planTitle: planTitle,
+                agentId: plan == 'all_ai' || plan == 'all_access' ? 'all_ai' : plan,
+              );
+            }
+          } else if (!isVip) {
+            await revokeActiveGrant(cleanEmail);
+          }
+        }
+      }
     } catch (_) {}
   }
 

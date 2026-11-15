@@ -46,6 +46,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
   void initState() {
     super.initState();
     _loadAppVersion();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final email = AuthService.activeWebUserEmail ?? _authService.currentUser?.email;
+      if (email != null && email.isNotEmpty) {
+        AuthService.syncUserStatusWithVps(email);
+      }
+    });
   }
 
   Future<void> _loadAppVersion() async {

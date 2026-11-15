@@ -303,6 +303,10 @@ class SubscriptionService {
     final isSuccess =
         rawStatus == 'SUCCESS' || rawStatus == 'SETTLED' || rawStatus == 'PAID';
     if (isSuccess) {
+      final activeEmail = AuthService.activeWebUserEmail;
+      if (activeEmail != null && activeEmail.isNotEmpty) {
+        unawaited(AuthService.syncUserStatusWithVps(activeEmail));
+      }
       return {
         'success': true,
         'status': 'SUCCESS',
