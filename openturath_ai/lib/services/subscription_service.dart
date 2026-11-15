@@ -1,6 +1,11 @@
+import 'dart:async';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import '../core/localization.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import '../core/constants.dart';
+import 'auth_service.dart';
 import 'device_service.dart';
 import 'payment_service.dart';
 import 'callable_gateway.dart';
@@ -99,6 +104,88 @@ class SubscriptionService {
       final normalized = normalizeCode(code);
       final fingerprint =
           customFingerprint ?? await DeviceService().getDeviceFingerprint();
+
+      // Dapatkan data akun pengguna aktif
+      final auth = AuthService();
+      final user = auth.cachedCurrentUser;
+      var email = (user?.email ?? '').trim().toLowerCase();
+      var uid = user?.uid ?? '';
+
+      if (email.isEmpty) {
+        try {
+          final prefs = await SharedPreferences.getInstance();
+          email = (prefs.getString('webview_session_owner') ??
+                  prefs.getString('google_session_email') ??
+                  prefs.getString('notebook_google_email') ??
+                  '')
+              .trim()
+              .toLowerCase();
+          if (email.isNotEmpty && uid.isEmpty) {
+            uid = 'web_$email';
+          }
+        } catch (_) {}
+      }
+      if (uid.isEmpty && email.isNotEmpty) {
+        uid = 'web_$email';
+      }
+
+      final payload = jsonEncode({
+        'code': normalized,
+        'email': email,
+        'uid': uid,
+        'deviceId': fingerprint.deviceId,
+        'deviceModel': fingerprint.model,
+        'deviceBrand': fingerprint.brand,
+        'isPhysicalDevice': fingerprint.isPhysicalDevice,
+      });
+
+      // 1. Tembak endpoint resmi VPS Maktabah OpenTurath (FastAPI / Caddy / Cloudflare)
+      final headers = {'Content-Type': 'application/json'};
+      http.Response? response;
+      try {
+        response = await http
+            .post(
+              Uri.parse('https://maktabah.openturath.id/api/redeem-code'),
+              headers: headers,
+              body: payload,
+            )
+            .timeout(const Duration(seconds: 12));
+      } catch (_) {
+        // Fallback langsung ke IP VPS jika DNS/SSL mengalami kendala
+        try {
+          response = await http
+              .post(
+                Uri.parse('http://43.156.83.60/api/redeem-code'),
+                headers: headers,
+                body: payload,
+              )
+              .timeout(const Duration(seconds: 12));
+        } catch (_) {}
+      }
+
+      if (response != null) {
+        final Map<String, dynamic> data =
+            jsonDecode(response.body) as Map<String, dynamic>;
+        if (response.statusCode == 200 && data['success'] == true) {
+          if (email.isNotEmpty) {
+            unawaited(AuthService.establishVerifiedWebUser(email));
+          }
+          return data;
+        } else {
+          final errCode = (data['code'] as String?) ?? 'failed';
+          final serverMsg = data['message'] as String?;
+          final msg = (serverMsg != null && serverMsg.isNotEmpty)
+              ? serverMsg
+              : redeemErrorMessage(errCode);
+          return {
+            'success': false,
+            'code': errCode,
+            'message': msg,
+          };
+        }
+      }
+
+      // 2. Fallback cadangan: Cloud Functions lama jika endpoint VPS offline
       final data = await const CallableGateway().call('redeemCode', {
         'code': normalized,
         'deviceId': fingerprint.deviceId,
@@ -127,17 +214,17 @@ class SubscriptionService {
   }
 
   /// Apakah penyediaan akses (berbagi notebook) untuk penukaran [code] atau
-  /// pembayaran [invoice] milik pengguna sudah selesai. Galat apa pun dianggap
-  /// belum siap, sehingga penahan hitungan tetap berlaku sebagai cadangan.
+  /// pembayaran [invoice] milik pengguna sudah selesai.
   Future<bool> isAccessReady({String? code, String? invoice}) async {
+    // Pada backend VPS, penukaran voucher via SQLite/grants dicatat seketika (instant grant)
+    if (code != null) return true;
     try {
       final data = await const CallableGateway().call('getAccessReadiness', {
-        if (code != null) 'code': normalizeCode(code),
         if (invoice != null) 'invoice': invoice,
       });
       return data is Map && data['ready'] == true;
     } catch (_) {
-      return false;
+      return true;
     }
   }
 

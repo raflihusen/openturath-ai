@@ -67,7 +67,7 @@ class _RedeemCodeSheetState extends State<RedeemCodeSheet> {
       final serviceTitle =
           (result['serviceTitle'] as String?) ?? Loc.tr('redeemFallbackTitle');
       final durationDays = (result['durationDays'] as num?)?.toInt() ?? 0;
-      final expiryRaw = result['expiry'] as String?;
+      final expiryRaw = (result['expiryIso'] ?? result['expiry']) as String?;
       final expiryDate =
           expiryRaw != null ? DateTime.tryParse(expiryRaw) : null;
       final agentId = (result['entitlementKey'] as String?) ?? '';
