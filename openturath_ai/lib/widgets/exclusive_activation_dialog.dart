@@ -7,6 +7,7 @@ import '../core/entitlement_keys.dart';
 import '../core/hijri_date_utils.dart';
 import '../core/routes.dart';
 import '../models/agent_model.dart';
+import '../screens/main_shell_screen.dart';
 import '../services/agent_session_manager.dart';
 import '../services/auth_service.dart';
 import '../services/subscription_service.dart';
@@ -91,22 +92,26 @@ class ExclusiveActivationDialog extends StatelessWidget {
     nav.popUntil(
         (route) => route.settings.name == AppRoutes.dashboard || route.isFirst);
 
-    AgentModel? matched;
+    // Jika aktivasi untuk 1 AI spesifik, buka AI tersebut langsung
     if (agentId != null && agentId!.isNotEmpty && agentId != 'all_access') {
-      matched = AgentModel.defaultAgents
+      final matched = AgentModel.defaultAgents
           .where((a) =>
               a.id == agentId || (entitlementKeys[a.id] ?? a.id) == agentId)
           .firstOrNull;
-    }
-    final targetAgent = matched ??
-        AgentModel.defaultAgents.firstWhere(
-          (a) => a.id == 'fiqh_tahawwulat' || a.id == 'fiqh_syafii',
-          orElse: () => AgentModel.defaultAgents.first,
+      if (matched != null) {
+        AgentSessionManager.instance.openAgent(
+          matched,
+          user: AuthService().cachedCurrentUser,
         );
-    AgentSessionManager.instance.openAgent(
-      targetAgent,
-      user: AuthService().cachedCurrentUser,
-    );
+        return;
+      }
+    }
+
+    // Jika akses semua AI (all_access / voucher paket), arahkan langsung ke Tab Daftar AI
+    try {
+      final shell = MainShellController.of(nav.context);
+      shell?.switchTab(1);
+    } catch (_) {}
   }
 
   @override
