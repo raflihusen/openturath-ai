@@ -1,9 +1,9 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../core/localization.dart';
-import 'package:cloud_functions/cloud_functions.dart';
 import '../core/constants.dart';
 import 'auth_service.dart';
 import 'device_service.dart';
@@ -140,7 +140,11 @@ class SubscriptionService {
       });
 
       // 1. Tembak endpoint resmi VPS Maktabah OpenTurath (FastAPI / Caddy / Cloudflare)
-      final headers = {'Content-Type': 'application/json'};
+      final headers = {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'User-Agent': 'OpenTurathApp/1.0',
+      };
       http.Response? response;
       try {
         response = await http
@@ -149,72 +153,72 @@ class SubscriptionService {
               headers: headers,
               body: payload,
             )
-            .timeout(const Duration(seconds: 12));
-      } catch (_) {
-        // Fallback langsung ke IP VPS jika DNS/SSL mengalami kendala
-        try {
-          response = await http
-              .post(
-                Uri.parse('http://43.156.83.60/api/redeem-code'),
-                headers: headers,
-                body: payload,
-              )
-              .timeout(const Duration(seconds: 12));
-        } catch (_) {}
+            .timeout(const Duration(seconds: 15));
+      } catch (e) {
+        debugPrint('[SubscriptionService] Network error calling redeem-code: $e');
+        return {
+          'success': false,
+          'code': 'network_error',
+          'message': Loc.tr('networkError'),
+        };
       }
 
-      if (response != null) {
-        final Map<String, dynamic> data =
-            jsonDecode(response.body) as Map<String, dynamic>;
-        if (response.statusCode == 200 && data['success'] == true) {
-          if (email.isNotEmpty) {
-            unawaited(AuthService.establishVerifiedWebUser(email));
-          }
-          return data;
-        } else {
-          final errCode = (data['code'] as String?) ?? 'failed';
-          final serverMsg = data['message'] as String?;
-          final msg = (serverMsg != null && serverMsg.isNotEmpty)
-              ? serverMsg
-              : redeemErrorMessage(errCode);
-          return {
-            'success': false,
-            'code': errCode,
-            'message': msg,
-          };
+      // Coba parsing JSON dari respons server
+      Map<String, dynamic>? data;
+      try {
+        final decoded = jsonDecode(response.body);
+        if (decoded is Map<String, dynamic>) {
+          data = decoded;
         }
+      } catch (_) {
+        // Format respon bukan JSON (misal HTML Cloudflare atau plain text 500)
       }
 
-      // 2. Fallback cadangan: Cloud Functions lama jika endpoint VPS offline
-      final data = await const CallableGateway().call('redeemCode', {
-        'code': normalized,
-        'deviceId': fingerprint.deviceId,
-        'deviceModel': fingerprint.model,
-        'deviceBrand': fingerprint.brand,
-        'isPhysicalDevice': fingerprint.isPhysicalDevice,
-      });
-      if (data is Map) {
-        return Map<String, dynamic>.from(data);
+      if (response.statusCode == 200 && data != null && data['success'] == true) {
+        if (email.isNotEmpty) {
+          unawaited(AuthService.establishVerifiedWebUser(email));
+        }
+        return data;
       }
-      return {'success': true};
-    } on FirebaseFunctionsException catch (e) {
-      final serverMsg = e.message;
-      if (serverMsg != null &&
-          serverMsg.isNotEmpty &&
-          (serverMsg.contains('perangkat') || serverMsg.contains('ponsel'))) {
-        return {'success': false, 'message': serverMsg};
+
+      if (data != null) {
+        final errCode = (data['code'] as String?) ?? 'failed';
+        final serverMsg = data['message'] as String?;
+        final msg = (serverMsg != null && serverMsg.isNotEmpty)
+            ? serverMsg
+            : redeemErrorMessage(errCode);
+        return {
+          'success': false,
+          'code': errCode,
+          'message': msg,
+        };
       }
+
+      // Jika server mengembalikan non-JSON (seperti 500 Internal Server Error)
+      if (response.statusCode >= 500) {
+        return {
+          'success': false,
+          'code': 'server_error',
+          'message':
+              'Server voucher sedang mengalami kendala (${response.statusCode}). Mohon hubungi admin atau coba sesaat lagi.',
+        };
+      }
+
       return {
         'success': false,
-        'message': redeemErrorMessage(e.code, serverMsg, e.details)
+        'code': 'http_${response.statusCode}',
+        'message':
+            'Gagal memproses voucher (${response.statusCode}). Coba lagi nanti.',
       };
     } catch (e) {
+      debugPrint('[SubscriptionService] Unhandled error: $e');
       return {'success': false, 'message': Loc.tr('networkError')};
     }
   }
 
   /// Apakah penyediaan akses (berbagi notebook) untuk penukaran [code] atau
-  /// pembayaran [invoice] milik pengguna sudah selesai.
+  /// pembayaran [invoice] milik pengguna sudah selesai. Galat apa pun dianggap
+  /// belum siap, sehingga penahan hitungan tetap berlaku sebagai cadangan.
   Future<bool> isAccessReady({String? code, String? invoice}) async {
     // Pada backend VPS, penukaran voucher via SQLite/grants dicatat seketika (instant grant)
     if (code != null) return true;
@@ -224,7 +228,7 @@ class SubscriptionService {
       });
       return data is Map && data['ready'] == true;
     } catch (_) {
-      return true;
+      return false;
     }
   }
 
