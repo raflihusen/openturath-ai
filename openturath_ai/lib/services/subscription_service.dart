@@ -8,7 +8,6 @@ import '../core/constants.dart';
 import 'auth_service.dart';
 import 'device_service.dart';
 import 'payment_service.dart';
-import 'callable_gateway.dart';
 
 class SubscriptionService {
   SubscriptionService({PaymentService? paymentService})
@@ -238,14 +237,15 @@ class SubscriptionService {
   Future<bool> isAccessReady({String? code, String? invoice}) async {
     // Pada backend VPS, penukaran voucher via SQLite/grants dicatat seketika (instant grant)
     if (code != null) return true;
-    try {
-      final data = await const CallableGateway().call('getAccessReadiness', {
-        if (invoice != null) 'invoice': invoice,
-      });
-      return data is Map && data['ready'] == true;
-    } catch (_) {
-      return false;
+    if (invoice != null && invoice.isNotEmpty) {
+      try {
+        final res = await verifyPaymentStatus(invoiceNumber: invoice);
+        if (res['status'] == 'SUCCESS' || res['success'] == true) {
+          return true;
+        }
+      } catch (_) {}
     }
+    return false;
   }
 
   // ── Buat sesi pembayaran lewat Cloud Functions ───────
@@ -286,6 +286,30 @@ class SubscriptionService {
         'status': 'INVALID_INVOICE',
         'message': 'Nomor invoice transaksi tidak valid.'
       };
+    }
+
+    // 1. Cek realtime status via user-status di VPS jika email aktif tersedia
+    final activeEmail = AuthService.activeWebUserEmail;
+    if (activeEmail != null && activeEmail.isNotEmpty) {
+      try {
+        final vpsRes = await http.get(
+          Uri.parse(
+              'https://maktabah.openturath.id/api/user-status?email=${Uri.encodeComponent(activeEmail)}'),
+        ).timeout(const Duration(seconds: 4));
+        if (vpsRes.statusCode == 200) {
+          final data = jsonDecode(vpsRes.body);
+          if (data is Map &&
+              data['success'] == true &&
+              data['hasActiveAccess'] == true) {
+            unawaited(AuthService.syncUserStatusWithVps(activeEmail));
+            return {
+              'success': true,
+              'status': 'SUCCESS',
+              'data': data,
+            };
+          }
+        }
+      } catch (_) {}
     }
 
     // Status ditanyakan server ke gateway; klien tidak pernah memutuskan lunas sendiri.
