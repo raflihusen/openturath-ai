@@ -1098,10 +1098,6 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
     if (!mounted) return;
     final isOpen = AgentSessionManager.instance.isOpen;
     if (!isOpen) {
-      if (widget.session.isPrewarmed && !widget.session.isSessionReady) {
-        // Tab sedang di-prewarm di background: biarkan polling kesiapan 4-sampel berjalan sampai stabil
-        return;
-      }
       // Room ditutup/disembunyikan: jeda/batalkan timer agar tidak memboroskan CPU
       _readinessTimer?.cancel();
       _readinessTimer = null;
@@ -1592,7 +1588,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
           widget.session.isTimeoutError = false;
           widget.session.failure = null;
         });
-        if (!AgentSessionManager.instance.isOpen && widget.session.isPrewarmed) {
+        if (!AgentSessionManager.instance.isOpen) {
           try {
             widget.session.webController?.evaluateJavascript(
               source:

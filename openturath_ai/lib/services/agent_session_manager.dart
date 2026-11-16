@@ -154,20 +154,10 @@ class AgentSessionManager extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Pre-warm an agent silently in the background without opening the room UI.
-  /// Strictly respects platform budget to leave free slots for user exploration.
+  /// Pre-warm dinonaktifkan permanen demi keandalan saat kondisi koneksi awal terputus (offline).
+  /// Sesi AI hanya dibuat secara transparan saat pengguna mengetuk agen bersangkutan.
   void prewarmAgent(AgentModel agent, {UserModel? user}) {
-    final existingIndex = _tabs.indexWhere((t) => t.agent.id == agent.id);
-    if (existingIndex != -1) return; // Already exists or prewarmed
-
-    // Reserve at least 2 free tab slots on macOS (or 1 on mobile) for user exploration
-    final maxPrewarmLimit = maxTabs > 3 ? 2 : 1;
-    if (_tabs.length >= maxPrewarmLimit) return;
-
-    final tab = AgentSessionTab(agent: agent);
-    tab.isPrewarmed = true;
-    _tabs.add(tab);
-    notifyListeners();
+    // No-op: dinonaktifkan
   }
 
   /// Tutup sesi AI ini sampai bersih, lalu buka lagi dari awal. Dipakai saat AI
