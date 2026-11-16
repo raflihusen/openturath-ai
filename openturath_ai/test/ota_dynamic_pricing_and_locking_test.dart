@@ -186,9 +186,17 @@ void main() {
                 {
                   'agentId': 'fiqh_syafii',
                   'plans': [
-                    {'plan': 'tholib_1m', 'months': 1, 'amount': 49000},
+                    {'plan': 'tholib_1m', 'months': 1, 'amount': 1000},
                     {'plan': 'tholib_6m', 'months': 6, 'amount': 299000},
                     {'plan': 'bahits_1y', 'months': 12, 'amount': 499000},
+                  ]
+                },
+                {
+                  'agentId': 'all_specialists',
+                  'plans': [
+                    {'plan': 'tholib_1m', 'months': 1, 'amount': 300000},
+                    {'plan': 'tholib_6m', 'months': 6, 'amount': 1500000},
+                    {'plan': 'bahits_1y', 'months': 12, 'amount': 2500000},
                   ]
                 },
                 {
@@ -223,10 +231,15 @@ void main() {
       expect(success, isTrue);
       expect(ProductPricing.revision, equals('vps-prod-20261111'));
 
-      // Verifikasi penawaran untuk agen spesialis fiqh_syafii
+      // Verifikasi penawaran untuk agen spesialis fiqh_syafii (Rp 1.000 test)
       final syafiiOffers = ProductPricing.forAgent('fiqh_syafii');
       expect(syafiiOffers, isNotEmpty);
-      expect(syafiiOffers.first.amount, equals(49000));
+      expect(syafiiOffers.first.amount, equals(1000));
+
+      // Verifikasi penawaran untuk paket all_specialists (Rp 300.000)
+      final allSpecialistsOffers = ProductPricing.forAgent('all_specialists');
+      expect(allSpecialistsOffers, isNotEmpty);
+      expect(allSpecialistsOffers.first.amount, equals(300000));
 
       // Verifikasi penawaran untuk paket all_ai
       final allAiOffers = ProductPricing.forAgent('all_ai');

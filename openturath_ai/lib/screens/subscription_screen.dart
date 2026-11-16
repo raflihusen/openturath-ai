@@ -150,15 +150,32 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     }
   }
 
+  static final AgentModel allSpecialistsAgent = AgentModel(
+    id: 'all_specialists',
+    title: 'Semua AI (kecuali Fikih Tahawwulat)',
+    titleArabic: 'جميع العلوم التخصصية',
+    description:
+        'Akses penuh ke seluruh bidang keilmuan Islam selain Fikih Tahawwulat.',
+    emoji: '📚',
+    category: 'Paket Kompilasi',
+    status: 'active',
+    sortOrder: 0,
+    kind: CorpusKind.discipline,
+  );
+
   List<AgentModel> get _specialists {
     final list = _loadedAgents ?? AgentService.getActiveAgentsSync();
-    return list
+    final items = list
         .where((a) =>
             a.kind == CorpusKind.discipline &&
             a.isActive &&
             !a.isComingSoon &&
             a.id != 'fiqh_tahawwulat')
         .toList();
+    if (!items.any((a) => a.id == 'all_specialists')) {
+      items.insert(0, allSpecialistsAgent);
+    }
+    return items;
   }
 
   @override
@@ -1040,10 +1057,14 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                   ? _planCard(
                       inverse: false,
                       wide: twoUp,
-                      label: Loc.tr('planSingleLabel'),
+                      label: selected.id == 'all_specialists'
+                          ? 'Paket Kompilasi Disiplin'
+                          : Loc.tr('planSingleLabel'),
                       active: _hasAccess(selected.id),
                       title: Loc.text(selected.title),
-                      description: Loc.tr('planSingleDescription'),
+                      description: selected.id == 'all_specialists'
+                          ? 'Akses ke seluruh AI spesialis disiplin keilmuan Islam selain Fikih Tahawwulat.'
+                          : Loc.tr('planSingleDescription'),
                       field: _fieldRow(
                         label: Loc.tr('chooseField'),
                         name: Loc.text(selected.title),
@@ -1055,13 +1076,20 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                       ),
                       price: singleOffer,
                       offers: singleOffers,
-                      benefits: [
-                        Loc.tr(
-                            'planSingleBenefit1', [Loc.text(selected.title)]),
-                        Loc.tr('planSingleBenefit2'),
-                        Loc.tr('planBenefitGrowthSingle'),
-                        Loc.tr('planBenefitUpdates'),
-                      ],
+                      benefits: selected.id == 'all_specialists'
+                          ? [
+                              'Akses ke seluruh disiplin keilmuan Islam',
+                              'Uji pemahaman lewat tanya jawab komparasi langsung',
+                              'Kitab dan arsip rujukan baru ditambahkan berkala',
+                              'Pembaruan aplikasi selama langganan aktif',
+                            ]
+                          : [
+                              Loc.tr(
+                                  'planSingleBenefit1', [Loc.text(selected.title)]),
+                              Loc.tr('planSingleBenefit2'),
+                              Loc.tr('planBenefitGrowthSingle'),
+                              Loc.tr('planBenefitUpdates'),
+                            ],
                       onCheckout: () => _checkout(selected, singleOffer),
                       agentId: selected.id,
                     )
