@@ -14,6 +14,8 @@ import '../widgets/openturath_brand.dart';
 import '../core/app_snackbar.dart';
 import '../services/agent_session_manager.dart';
 import '../services/auth_service.dart';
+import '../services/agent_service.dart';
+import '../models/user_model.dart';
 import '../widgets/agent_multi_tab_room.dart';
 
 class MainShellController extends InheritedWidget {
@@ -56,6 +58,63 @@ class _MainShellScreenState extends State<MainShellScreen>
     WidgetsBinding.instance.addObserver(this);
     _currentIndex = widget.initialTab;
     _pageController = PageController(initialPage: _currentIndex);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _scheduleSpeculativePrewarm();
+    });
+  }
+
+  Future<void> _scheduleSpeculativePrewarm() async {
+    // 1. Berikan jeda 1.200ms agar rendering dashboard dan transisi awal selesai tanpa perebutan thread
+    await Future.delayed(const Duration(milliseconds: 1200));
+    if (!mounted) return;
+
+    // 2. Evaluasi hak akses pengguna
+    final auth = AuthService();
+    final user = auth.cachedCurrentUser;
+    final webEmail = AuthService.activeWebUserEmail;
+    final isVip = user?.isVip == true ||
+        (webEmail != null && UserModel.isVipEmail(webEmail));
+    final hasAllAccess = isVip ||
+        user?.plan == 'all_ai' ||
+        user?.plan == 'all_access' ||
+        user?.entitlements.containsKey('all_access') == true ||
+        user?.entitlements.containsKey('all_ai') == true;
+
+    final allAgents = AgentService.getActiveAgentsSync();
+    if (allAgents.isEmpty) return;
+
+    // 3. Tentukan AI prioritas untuk dimuat senyap di latar belakang
+    if (hasAllAccess) {
+      // Prioritas 1: Fikih Syafi'i (Trafik #1)
+      final syafii =
+          allAgents.where((a) => a.id == 'fiqh_syafii').firstOrNull;
+      if (syafii != null) {
+        AgentSessionManager.instance.prewarmAgent(syafii, user: user);
+      }
+
+      // Prioritas 2 (khusus desktop macOS dengan kapasitas 5 tab): Fikih Tahawwulat
+      if (AgentSessionManager.maxTabs > 3) {
+        await Future.delayed(const Duration(milliseconds: 1500));
+        if (!mounted) return;
+        final tahawwulat = allAgents
+            .where((a) =>
+                a.id == 'fiqh_tahawwulat_muhaqqiq' ||
+                a.id == 'fiqh_tahawwulat' ||
+                a.id == 'fiqh_tahawwulat_bayan')
+            .firstOrNull;
+        if (tahawwulat != null) {
+          AgentSessionManager.instance.prewarmAgent(tahawwulat, user: user);
+        }
+      }
+    } else if (user != null) {
+      // Pengguna spesialis satu modul: prewarm modul yang dimiliki
+      for (final agent in allAgents) {
+        if (user.isAgentSubscriptionActive(agent.id)) {
+          AgentSessionManager.instance.prewarmAgent(agent, user: user);
+          break;
+        }
+      }
+    }
   }
 
   @override

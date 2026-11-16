@@ -28,6 +28,8 @@ import '../services/telemetry_service.dart';
 
 import 'package:openturath_ai/core/design/ot_radius.dart';
 import 'package:openturath_ai/core/design/ot_buttons.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../services/persistent_google_session.dart';
 
 /// Penawaran perdana. Hak akses tetap diputuskan oleh backend yang terverifikasi.
 class SubscriptionScreen extends StatefulWidget {
@@ -173,6 +175,137 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     }
   }
 
+  Future<String?> _promptEmailForGuestCheckout(BuildContext context,
+      {required AgentModel agent, required SubscriptionOffer offer}) async {
+    final controller = TextEditingController();
+    String? errorText;
+
+    final result = await showDialog<String>(
+      context: context,
+      barrierDismissible: true,
+      builder: (ctx) {
+        return StatefulBuilder(
+          builder: (context, setDialogState) {
+            final dark = Theme.of(context).brightness == Brightness.dark;
+            final bg = dark ? const Color(0xFF18181B) : Colors.white;
+            final textCol =
+                dark ? const Color(0xFFFAFAFA) : const Color(0xFF09090B);
+            final subCol =
+                dark ? const Color(0xFFA1A1AA) : const Color(0xFF71717A);
+            final borderCol =
+                dark ? const Color(0xFF27272A) : const Color(0xFFE4E4E7);
+
+            return Dialog(
+              backgroundColor: bg,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(OTRadius.card),
+                side: BorderSide(color: borderCol),
+              ),
+              child: Container(
+                constraints: const BoxConstraints(maxWidth: 440),
+                padding: const EdgeInsets.all(OTSpacing.xl),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Lanjut ke Pembayaran',
+                      style: OTTypography.cardTitle(color: textCol),
+                    ),
+                    const SizedBox(height: OTSpacing.sm),
+                    Text(
+                      'Masukkan email Google Anda untuk aktivasi akses ke modul ${agent.title}.',
+                      style: OTTypography.body(color: subCol)
+                          .copyWith(fontSize: 14),
+                    ),
+                    const SizedBox(height: OTSpacing.lg),
+                    TextField(
+                      controller: controller,
+                      autofocus: true,
+                      keyboardType: TextInputType.emailAddress,
+                      style: OTTypography.body(color: textCol),
+                      decoration: InputDecoration(
+                        hintText: 'nama@gmail.com',
+                        hintStyle: TextStyle(color: subCol),
+                        errorText: errorText,
+                        prefixIcon: Icon(Icons.email_outlined,
+                            color: subCol, size: 20),
+                        filled: true,
+                        fillColor: dark
+                            ? const Color(0xFF09090B)
+                            : const Color(0xFFF4F4F5),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(OTRadius.input),
+                          borderSide: BorderSide(color: borderCol),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(OTRadius.input),
+                          borderSide: BorderSide(color: borderCol),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(OTRadius.input),
+                          borderSide: BorderSide(color: textCol),
+                        ),
+                      ),
+                      onSubmitted: (val) {
+                        final email = val.trim().toLowerCase();
+                        if (!email.contains('@') || !email.contains('.')) {
+                          setDialogState(
+                              () => errorText = 'Format email tidak valid');
+                        } else {
+                          Navigator.pop(ctx, email);
+                        }
+                      },
+                    ),
+                    const SizedBox(height: OTSpacing.xl),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(ctx, null),
+                          child:
+                              Text('Batal', style: TextStyle(color: subCol)),
+                        ),
+                        const SizedBox(width: OTSpacing.md),
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor:
+                                dark ? Colors.white : const Color(0xFF09090B),
+                            foregroundColor:
+                                dark ? const Color(0xFF09090B) : Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius:
+                                  BorderRadius.circular(OTRadius.button),
+                            ),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 20, vertical: 12),
+                          ),
+                          onPressed: () {
+                            final email = controller.text.trim().toLowerCase();
+                            if (!email.contains('@') || !email.contains('.')) {
+                              setDialogState(
+                                  () => errorText = 'Format email tidak valid');
+                            } else {
+                              Navigator.pop(ctx, email);
+                            }
+                          },
+                          child: const Text('Buka Pembayaran Midtrans',
+                              style: TextStyle(fontWeight: FontWeight.bold)),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+
+    return result;
+  }
+
   Future<void> _checkout(AgentModel agent, SubscriptionOffer offer) async {
     if (_processing) return;
     final auth = AuthService();
@@ -180,18 +313,57 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     final webEmail = AuthService.activeWebUserEmail;
     final fbUser = auth.currentUser;
 
-    final email = (cached?.email ?? webEmail ?? fbUser?.email ?? '').trim().toLowerCase();
-    final uid = cached?.uid ?? (webEmail != null && webEmail.isNotEmpty ? 'web_$webEmail' : fbUser?.uid ?? '');
-    final name = cached?.name ?? fbUser?.displayName ?? (email.isNotEmpty ? email.split('@').first : 'Pengguna OpenTurath');
+    var email =
+        (cached?.email ?? webEmail ?? fbUser?.email ?? '').trim().toLowerCase();
+    var uid = cached?.uid ??
+        (webEmail != null && webEmail.isNotEmpty
+            ? 'web_$webEmail'
+            : fbUser?.uid ?? '');
+    var name = cached?.name ??
+        fbUser?.displayName ??
+        (email.isNotEmpty ? email.split('@').first : '');
     final phone = fbUser?.phoneNumber ?? '';
 
-    if (email.isEmpty || uid.isEmpty) {
-      setState(() {
-        _checkoutAgentId = agent.id;
-        _checkoutError = Loc.tr('signInRequired');
-      });
-      return;
+    // Ambil dari SharedPreferences jika memori cache belum terisi
+    if (email.isEmpty) {
+      try {
+        final prefs = await SharedPreferences.getInstance();
+        final diskEmail = (prefs.getString(
+                    PersistentGoogleSession.verifiedOwnerKey) ??
+                prefs.getString('google_session_email') ??
+                prefs.getString('webview_session_owner') ??
+                prefs.getString('webview_session_owner_verified_v1') ??
+                '')
+            .trim()
+            .toLowerCase();
+        if (diskEmail.isNotEmpty) {
+          email = diskEmail;
+          uid = 'web_$diskEmail';
+          name = diskEmail.split('@').first;
+          AuthService.setActiveWebEmail(diskEmail);
+        }
+      } catch (_) {}
     }
+
+    // Jika pengguna benar-benar anonim, minta email tujuan akses tanpa memblokir
+    if (email.isEmpty || uid.isEmpty) {
+      if (!mounted) return;
+      final entered = await _promptEmailForGuestCheckout(context,
+          agent: agent, offer: offer);
+      if (entered == null || entered.isEmpty) {
+        return;
+      }
+      email = entered;
+      uid = 'web_$entered';
+      name = entered.split('@').first;
+      AuthService.setActiveWebEmail(entered);
+      try {
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('google_session_email', entered);
+        await prefs.setString('webview_session_owner', entered);
+      } catch (_) {}
+    }
+
     setState(() {
       _processing = true;
       _checkoutError = null;

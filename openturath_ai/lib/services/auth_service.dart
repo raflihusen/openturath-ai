@@ -53,6 +53,26 @@ class AuthService {
   static final Map<String, UserModel> _userCache = {};
   static UserModel? _activeWebUser;
   static String? _activeWebUserEmail;
+  static void setActiveWebEmail(String email) {
+    final clean = email.trim().toLowerCase();
+    if (clean.isEmpty) return;
+    _activeWebUserEmail = clean;
+    final uid = 'web_$clean';
+    final isVip = UserModel.isVipEmail(clean);
+    final user = _userCache[uid] ?? UserModel(
+      uid: uid,
+      name: clean.split('@').first,
+      email: clean,
+      photoUrl: '',
+      plan: isVip ? 'vip' : AppConstants.planTrial,
+      questionsUsed: 0,
+      isVip: isVip,
+    );
+    _activeWebUser = user;
+    _userCache[uid] = user;
+    _sessionUidController.add(uid);
+  }
+
   static String? get activeWebUserEmail => _activeWebUserEmail;
   static int _authActionGeneration = 0;
   static Future<void> _authMutationTail = Future<void>.value();
@@ -245,17 +265,45 @@ class AuthService {
     }
     if (!active()) return null;
 
+    // Prioritaskan pemulihan sesi Google WebKit (macOS desktop / Web Session) secara instan tanpa tunda
+    final webSessionActive = prefs.getBool('web_session_active') ?? false;
+    final verifiedOwner = (prefs.getString(PersistentGoogleSession.verifiedOwnerKey) ??
+            prefs.getString('google_session_email') ??
+            prefs.getString(webSessionOwnerKey) ??
+            '')
+        .trim()
+        .toLowerCase();
+    if ((webSessionActive || verifiedOwner.isNotEmpty) && verifiedOwner.isNotEmpty) {
+      final uid = 'web_$verifiedOwner';
+      final cached = await _getCachedUser(uid);
+      final isVip = UserModel.isVipEmail(verifiedOwner);
+      final user = cached ?? UserModel(
+        uid: uid,
+        name: verifiedOwner.split('@').first,
+        email: verifiedOwner,
+        photoUrl: '',
+        plan: isVip ? 'vip' : AppConstants.planTrial,
+        questionsUsed: 0,
+        isVip: isVip,
+      );
+      _activeWebUser = user;
+      _activeWebUserEmail = verifiedOwner;
+      _userCache[user.uid] = user;
+      _sessionUidController.add(user.uid);
+      unawaited(syncUserStatusWithVps(verifiedOwner));
+      return user;
+    }
+
     if (firebaseUser == null &&
         !kIsWeb &&
         (defaultTargetPlatform == TargetPlatform.android ||
-            defaultTargetPlatform == TargetPlatform.iOS ||
-            defaultTargetPlatform == TargetPlatform.macOS)) {
+            defaultTargetPlatform == TargetPlatform.iOS)) {
       try {
         await _authMutationTail.timeout(_authenticationTimeout);
         if (!active()) return null;
         final googleUser = await _googleSignIn
             .signInSilently()
-            .timeout(const Duration(seconds: 10));
+            .timeout(const Duration(seconds: 4));
         if (!active()) return null;
         if (googleUser != null) {
           final googleAuth = await googleUser.authentication
@@ -276,33 +324,6 @@ class AuthService {
     if (!active()) return null;
     firebaseUser ??= _auth.currentUser;
     if (firebaseUser == null || firebaseUser.isAnonymous) {
-      final webSessionActive = prefs.getBool('web_session_active') ?? false;
-      final verifiedOwner = (prefs.getString(PersistentGoogleSession.verifiedOwnerKey) ??
-              prefs.getString('google_session_email') ??
-              prefs.getString(webSessionOwnerKey) ??
-              '')
-          .trim()
-          .toLowerCase();
-      if ((webSessionActive || verifiedOwner.isNotEmpty) && verifiedOwner.isNotEmpty) {
-        final uid = 'web_$verifiedOwner';
-        final cached = await _getCachedUser(uid);
-        final isVip = UserModel.isVipEmail(verifiedOwner);
-        final user = cached ?? UserModel(
-          uid: uid,
-          name: verifiedOwner.split('@').first,
-          email: verifiedOwner,
-          photoUrl: '',
-          plan: isVip ? 'vip' : AppConstants.planTrial,
-          questionsUsed: 0,
-          isVip: isVip,
-        );
-        _activeWebUser = user;
-        _activeWebUserEmail = verifiedOwner;
-        _userCache[user.uid] = user;
-        _sessionUidController.add(user.uid);
-        unawaited(syncUserStatusWithVps(verifiedOwner));
-        return user;
-      }
       return null;
     }
 

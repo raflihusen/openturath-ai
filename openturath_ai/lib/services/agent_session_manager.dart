@@ -29,6 +29,7 @@ class AgentSessionTab {
   double fontScale = defaultFontScale;
   bool hasInjectedEarlyScript = false;
   bool isMenuOpen = false;
+  bool isPrewarmed = false;
 
   /// Mode tampilan: false untuk tampilan DOM WebView murni (default), true jika menggunakan overlay native.
   bool isNativeView = false;
@@ -117,6 +118,7 @@ class AgentSessionManager extends ChangeNotifier {
   void openAgent(AgentModel agent, {UserModel? user}) {
     final existingIndex = _tabs.indexWhere((t) => t.agent.id == agent.id);
     if (existingIndex != -1) {
+      _tabs[existingIndex].isPrewarmed = false;
       if (_activeIndex != existingIndex) {
         try {
           _tabs[_activeIndex].webController?.evaluateJavascript(
@@ -125,6 +127,13 @@ class AgentSessionManager extends ChangeNotifier {
               );
         } catch (_) {}
         _activeIndex = existingIndex;
+        try {
+          _tabs[_activeIndex].webController?.evaluateJavascript(
+                source:
+                    'window.otSetBackgroundPaused && window.otSetBackgroundPaused(false); window.otNotebook && window.otNotebook.clean && window.otNotebook.clean();',
+              );
+        } catch (_) {}
+      } else {
         try {
           _tabs[_activeIndex].webController?.evaluateJavascript(
                 source:
@@ -142,6 +151,22 @@ class AgentSessionManager extends ChangeNotifier {
       _activeIndex = _tabs.length - 1;
     }
     _isOpen = true;
+    notifyListeners();
+  }
+
+  /// Pre-warm an agent silently in the background without opening the room UI.
+  /// Strictly respects platform budget to leave free slots for user exploration.
+  void prewarmAgent(AgentModel agent, {UserModel? user}) {
+    final existingIndex = _tabs.indexWhere((t) => t.agent.id == agent.id);
+    if (existingIndex != -1) return; // Already exists or prewarmed
+
+    // Reserve at least 2 free tab slots on macOS (or 1 on mobile) for user exploration
+    final maxPrewarmLimit = maxTabs > 3 ? 2 : 1;
+    if (_tabs.length >= maxPrewarmLimit) return;
+
+    final tab = AgentSessionTab(agent: agent);
+    tab.isPrewarmed = true;
+    _tabs.add(tab);
     notifyListeners();
   }
 
