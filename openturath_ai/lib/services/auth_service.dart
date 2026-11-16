@@ -754,6 +754,8 @@ class AuthService {
     String? planTitle,
     String? agentId,
     int? durationDays,
+    Map<String, ModuleEntitlement>? customEntitlements,
+    bool isPaidSubscription = false,
   }) async {
     final cleanEmail = email.trim().toLowerCase();
     if (cleanEmail.isEmpty) return;
@@ -761,41 +763,53 @@ class AuthService {
     final isAll = agentId == null ||
         agentId.isEmpty ||
         agentId == 'all_access' ||
-        agentId == 'all_ai';
+        agentId == 'all_ai' ||
+        agentId == 'all_specialists';
 
     final entMap = <String, ModuleEntitlement>{
-      if (isAll) ...{
+      if (customEntitlements != null && customEntitlements.isNotEmpty)
+        ...customEntitlements
+      else if (isAll) ...{
         'all_access': ModuleEntitlement(
-          plan: 'trial',
+          plan: isPaidSubscription ? 'all_access' : 'trial',
           status: 'active',
           expiry: expiry,
           startedAt: DateTime.now(),
           trialDurationDays: durationDays,
+          paymentStatus: isPaidSubscription ? 'paid' : 'none',
         ),
         'all_ai': ModuleEntitlement(
-          plan: 'trial',
+          plan: isPaidSubscription ? 'all_ai' : 'trial',
           status: 'active',
           expiry: expiry,
           startedAt: DateTime.now(),
           trialDurationDays: durationDays,
+          paymentStatus: isPaidSubscription ? 'paid' : 'none',
         ),
       } else ...{
         agentId: ModuleEntitlement(
-          plan: 'trial',
+          plan: isPaidSubscription ? 'tholib_1m' : 'trial',
           status: 'active',
           expiry: expiry,
           startedAt: DateTime.now(),
           trialDurationDays: durationDays,
+          paymentStatus: isPaidSubscription ? 'paid' : 'none',
         ),
       }
     };
+
+    final effectivePlan = isVip
+        ? 'vip'
+        : (isPaidSubscription
+            ? (agentId ?? 'tholib_1m')
+            : (isAll ? 'all_ai' : 'trial'));
 
     final user = UserModel(
       uid: 'web_$cleanEmail',
       name: cleanEmail.split('@').first,
       email: cleanEmail,
       photoUrl: '',
-      plan: isVip ? 'vip' : 'all_ai',
+      plan: effectivePlan,
       questionsUsed: 0,
       subscriptionExpiry: expiry,
       entitlements: entMap,
@@ -865,12 +879,44 @@ class AuthService {
             final expiry = expiryStr != null ? DateTime.tryParse(expiryStr) : null;
             final planTitle = data['serviceTitle']?.toString();
             final plan = data['plan']?.toString() ?? 'all_ai';
+
+            final rawEnt = data['entitlements'];
+            Map<String, ModuleEntitlement>? granularEntitlements;
+            if (rawEnt is Map && rawEnt.isNotEmpty) {
+              granularEntitlements = <String, ModuleEntitlement>{};
+              rawEnt.forEach((key, val) {
+                if (val is Map) {
+                  final p = val['plan']?.toString() ?? 'tholib_1m';
+                  final st = val['status']?.toString() ?? 'active';
+                  final expStr = val['expiry']?.toString();
+                  final exp = expStr != null ? DateTime.tryParse(expStr) : null;
+                  final startStr = val['startsAt']?.toString();
+                  final startedAt = startStr != null ? DateTime.tryParse(startStr) : null;
+                  final kind = val['kind']?.toString() ?? 'payment';
+                  final src = val['source']?.toString();
+
+                  granularEntitlements![key.toString()] = ModuleEntitlement(
+                    plan: p,
+                    status: st,
+                    expiry: exp,
+                    startedAt: startedAt,
+                    sourceTransactionId: src,
+                    paymentStatus: kind == 'payment' ? 'paid' : 'none',
+                  );
+                }
+              });
+            }
+
+            final hasPaid = granularEntitlements?.values.any((e) => e.paymentStatus == 'paid') ?? false;
+
             if (expiry != null && expiry.isAfter(DateTime.now())) {
               await applyActiveGrant(
                 cleanEmail,
                 expiry: expiry,
                 planTitle: planTitle,
                 agentId: plan == 'all_ai' || plan == 'all_access' ? 'all_ai' : plan,
+                customEntitlements: granularEntitlements,
+                isPaidSubscription: hasPaid,
               );
             }
           } else if (!isVip) {

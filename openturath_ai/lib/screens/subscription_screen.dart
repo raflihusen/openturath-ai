@@ -1043,8 +1043,9 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
         child: Stack(
           children: [
             LayoutBuilder(builder: (context, viewport) {
-              final wide = viewport.maxWidth >= 900;
-              final threeUp = wide && hasSpecialists;
+              final threeUp = viewport.maxWidth >= 1220 && hasSpecialists;
+              final twoUp = viewport.maxWidth >= 760 && !threeUp;
+              final wide = viewport.maxWidth >= 760;
 
               final featuredPlan = _planCard(
                 inverse: true,
@@ -1184,7 +1185,8 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                     OTSpacing.jumbo),
                 child: Center(
                   child: ConstrainedBox(
-                    constraints: BoxConstraints(maxWidth: threeUp ? 1220 : 560),
+                    constraints: BoxConstraints(
+                        maxWidth: threeUp ? 1320 : (twoUp ? 960 : 560)),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
@@ -1231,7 +1233,26 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                               ],
                             ),
                           )
-                        else ...[
+                        else if (twoUp) ...[
+                          IntrinsicHeight(
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                Expanded(
+                                    child: OTReveal(
+                                        index: 0, child: featuredPlan)),
+                                const SizedBox(width: OTSpacing.base),
+                                Expanded(
+                                    child: OTReveal(
+                                        index: 1, child: allSpecialistsPlan)),
+                              ],
+                            ),
+                          ),
+                          if (singlePlan != null) ...[
+                            const SizedBox(height: OTSpacing.base),
+                            OTReveal(index: 2, child: singlePlan),
+                          ],
+                        ] else ...[
                           OTReveal(index: 0, child: featuredPlan),
                           const SizedBox(height: OTSpacing.base),
                           OTReveal(index: 1, child: allSpecialistsPlan),

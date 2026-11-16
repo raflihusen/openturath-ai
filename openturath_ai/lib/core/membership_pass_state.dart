@@ -116,11 +116,26 @@ MembershipPassSummary resolveMembershipPass(UserModel? user, {DateTime? now}) {
     );
   }
 
-  final all = active
-      .where((entry) => entry.key == 'all_access' || entry.key == 'all_ai')
-      .toList();
-  final selected = all.isNotEmpty ? all : active;
-  final isTrial = active.every(
+  final paid = active.where((entry) =>
+      entry.value.paymentStatus == 'paid' ||
+      (entry.value.plan != 'trial' && entry.value.status != 'trial')).toList();
+
+  final List<MapEntry<String, ModuleEntitlement>> selected;
+  if (paid.isNotEmpty) {
+    // Dahulukan paket berbayar di atas voucher coba
+    final paidAll = paid.where((entry) =>
+        entry.key == 'all_access' ||
+        entry.key == 'all_ai' ||
+        entry.key == 'all_specialists').toList();
+    selected = paidAll.isNotEmpty ? paidAll : paid;
+  } else {
+    final all = active
+        .where((entry) => entry.key == 'all_access' || entry.key == 'all_ai')
+        .toList();
+    selected = all.isNotEmpty ? all : active;
+  }
+
+  final isTrial = paid.isEmpty && active.every(
       (entry) => entry.value.plan == 'trial' || entry.value.status == 'trial');
   final isPermanent =
       selected.every((entry) => entry.value.plan == 'permanent');
@@ -129,10 +144,12 @@ MembershipPassSummary resolveMembershipPass(UserModel? user, {DateTime? now}) {
       .whereType<DateTime>()
       .toList()
     ..sort();
-  final expiry = expiries.isEmpty ? null : expiries.first;
-  final accessLabel = all.isNotEmpty
+  final expiry = expiries.isEmpty ? null : expiries.last;
+  final accessLabel = selected.any((entry) => entry.key == 'all_access' || entry.key == 'all_ai' || entry.key == 'all_specialists')
       ? AppCopy.allAssistantsAvailable
-      : AppCopy.assistantsAvailableCount(selected.length);
+      : (selected.length == 1
+          ? _singleModuleTitle(selected.first.key)
+          : AppCopy.assistantsAvailableCount(selected.length));
   if (isPermanent) {
     return MembershipPassSummary(
         state: MembershipPassState.permanent,
@@ -190,3 +207,21 @@ MembershipPassSummary _base(
       expiresAt: null,
       ctaLabel: cta,
     );
+
+String _singleModuleTitle(String key) => switch (key) {
+      'fiqh_tahawwulat' => 'AI Fikih Tahawwulat',
+      'fiqh_syafii' => "AI Fikih Syafi'i",
+      'fiqh_hanafi' => 'AI Fikih Hanafi',
+      'fiqh_maliki' => 'AI Fikih Maliki',
+      'fiqh_hanbali' => 'AI Fikih Hanbali',
+      'fiqh_muqaran' => 'AI Perbandingan Mazhab',
+      'ushul_fiqh' => 'AI Usul Fikih',
+      'nahwu' => 'AI Bahasa Arab',
+      'tafsir' => "AI Tafsir Al-Qur'an",
+      'hadits' => 'AI Hadis Nabawi',
+      'aqidah' => 'AI Akidah & Ushuluddin',
+      'tarikh' => 'AI Sejarah & Sirah',
+      'tasawwuf' => 'AI Tasawuf & Adzkar',
+      _ => AppCopy.allAssistantsAvailable,
+    };
+

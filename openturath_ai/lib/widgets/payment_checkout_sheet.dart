@@ -217,6 +217,12 @@ class _PaymentCheckoutSheetState extends State<PaymentCheckoutSheet> {
       _isSuccess = true;
     });
 
+    // Sinkronisasi status langganan dan hak akses terbaru dari VPS seketika
+    final email = AuthService.activeWebUserEmail ?? AuthService().currentUser?.email;
+    if (email != null && email.isNotEmpty) {
+      unawaited(AuthService.syncUserStatusWithVps(email));
+    }
+
     // Beri jeda 400ms agar dialog piagam aktivasi langsung muncul
     await Future.delayed(const Duration(milliseconds: 400));
     await _completion.finish(

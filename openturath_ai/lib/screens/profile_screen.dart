@@ -213,22 +213,54 @@ class _ProfileScreenState extends State<ProfileScreen> {
         .toList();
     final allAccess = summary.agentIds.contains('all_access') ||
         summary.agentIds.contains('all_ai');
-    // Akses penuh: tampilkan nama asisten yang benar-benar terbuka.
-    final rows = allAccess
-        ? [
-            for (final agent in AgentModel.defaultAgents)
-              if (!agent.isComingSoon) (Loc.text(agent.title), ''),
-          ]
-        : [
-            for (final entry in entries)
-              (
-                _entitlementTitle(entry.key),
-                entry.value.expiry == null
-                    ? Loc.tr('activeSubscription')
-                    : Loc.tr(
-                        'expiryDate', [_formatAccessDate(entry.value.expiry!)]),
-              ),
-          ];
+    final allEntries = (user?.entitlements.entries ??
+            const <MapEntry<String, ModuleEntitlement>>[])
+        .where((entry) => entry.value.isActive)
+        .toList();
+    final hasSpecificPaid = allEntries.any((entry) =>
+        entry.key != 'all_access' &&
+        entry.key != 'all_ai' &&
+        (entry.value.paymentStatus == 'paid' || entry.value.plan != 'trial'));
+
+    final rows = <(String, String)>[];
+    if (hasSpecificPaid) {
+      for (final entry in allEntries) {
+        if (entry.key == 'all_access' || entry.key == 'all_ai') continue;
+        rows.add((
+          _entitlementTitle(entry.key),
+          entry.value.expiry == null
+              ? Loc.tr('activeSubscription')
+              : Loc.tr('expiryDate', [_formatAccessDate(entry.value.expiry!)]),
+        ));
+      }
+      final voucherAll = allEntries
+          .where((e) => e.key == 'all_access' || e.key == 'all_ai')
+          .toList();
+      if (voucherAll.isNotEmpty) {
+        final exp = voucherAll.first.value.expiry;
+        rows.add((
+          'Semua AI (Masa Coba Tambahan)',
+          exp == null
+              ? Loc.tr('activeSubscription')
+              : Loc.tr('expiryDate', [_formatAccessDate(exp)]),
+        ));
+      }
+    } else if (allAccess) {
+      for (final agent in AgentModel.defaultAgents) {
+        if (!agent.isComingSoon) {
+          rows.add((Loc.text(agent.title), ''));
+        }
+      }
+    } else {
+      for (final entry in entries) {
+        rows.add((
+          _entitlementTitle(entry.key),
+          entry.value.expiry == null
+              ? Loc.tr('activeSubscription')
+              : Loc.tr('expiryDate', [_formatAccessDate(entry.value.expiry!)]),
+        ));
+      }
+    }
     showAdaptiveSheet<void>(
       context: context,
       isScrollControlled: rows.length > 6,
@@ -252,9 +284,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               .copyWith(fontSize: OTFontSize.s18)),
                       const SizedBox(height: 4),
                       Text(
-                        allAccess
-                            ? '${Loc.tr('ui_b236ca6182')} · ${summary.supportingLabel}'
-                            : Loc.tr('ui_b92aed18d1'),
+                        hasSpecificPaid
+                            ? 'Langganan Spesialis Aktif · ${summary.supportingLabel}'
+                            : (allAccess
+                                ? '${Loc.tr('ui_b236ca6182')} · ${summary.supportingLabel}'
+                                : Loc.tr('ui_b92aed18d1')),
                         style: OTTypography.caption(color: textSecondary)
                             .copyWith(fontSize: OTFontSize.s14),
                       ),
