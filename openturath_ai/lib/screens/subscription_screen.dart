@@ -152,8 +152,8 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
 
   static final AgentModel allSpecialistsAgent = AgentModel(
     id: 'all_specialists',
-    title: 'Semua AI (kecuali Fikih Tahawwulat)',
-    titleArabic: 'جميع العلوم التخصصية',
+    title: 'Semua AI*',
+    titleArabic: 'جميع الذكاءات*',
     description:
         'Akses penuh ke seluruh bidang keilmuan Islam selain Fikih Tahawwulat.',
     emoji: '📚',
@@ -165,17 +165,14 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
 
   List<AgentModel> get _specialists {
     final list = _loadedAgents ?? AgentService.getActiveAgentsSync();
-    final items = list
+    return list
         .where((a) =>
             a.kind == CorpusKind.discipline &&
             a.isActive &&
             !a.isComingSoon &&
-            a.id != 'fiqh_tahawwulat')
+            a.id != 'fiqh_tahawwulat' &&
+            a.id != 'all_specialists')
         .toList();
-    if (!items.any((a) => a.id == 'all_specialists')) {
-      items.insert(0, allSpecialistsAgent);
-    }
-    return items;
   }
 
   @override
@@ -486,6 +483,8 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     required String agentId,
     bool active = false,
     bool exclusive = false,
+    Widget? subtitleWidget,
+    bool threeUp = false,
   }) {
     final dark = Theme.of(context).brightness == Brightness.dark;
     // Paket utama: terbalik (hitam di atas terang) di mode terang. Di mode
@@ -503,12 +502,15 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
             ? OTColors.onInvertedMuted(dark)
             : OTColors.textSecondary(dark);
     final line = inverse ? fg.withValues(alpha: 0.18) : OTColors.border(dark);
-    final pad = wide ? OTSpacing.xxl : OTSpacing.xl;
+    final pad = wide ? (threeUp ? OTSpacing.xl : OTSpacing.xxl) : OTSpacing.lg;
     final ar = Loc.isArabic;
     final titleStyle = (ar
             ? OTTypography.arabicDisplay(color: fg)
             : OTTypography.editorialHero(color: fg))
-        .copyWith(fontSize: wide ? OTFontSize.s36 : OTFontSize.s26);
+        .copyWith(
+            fontSize: wide
+                ? (threeUp ? OTFontSize.s26 : OTFontSize.s36)
+                : OTFontSize.s22);
 
     final monthly = offers.first.amount;
     final saving = price.months <= 1
@@ -565,6 +567,10 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
           ),
           const SizedBox(height: OTSpacing.lg),
           Text(title, style: titleStyle),
+          if (subtitleWidget != null) ...[
+            const SizedBox(height: OTSpacing.xs),
+            subtitleWidget,
+          ],
           const SizedBox(height: OTSpacing.md),
           ConstrainedBox(
             constraints: BoxConstraints(minHeight: wide ? 48 : 0),
@@ -715,6 +721,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     required String name,
     required bool inverse,
     VoidCallback? onTap,
+    bool stacked = false,
   }) {
     final dark = Theme.of(context).brightness == Brightness.dark;
     final onFeaturedDark = inverse && dark;
@@ -736,17 +743,18 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
           child: Builder(builder: (context) {
             // Satu baris bila muat; menumpuk di kolom sempit atau huruf besar.
             final scale = MediaQuery.textScalerOf(context).scale(1);
-            final stacked =
-                MediaQuery.sizeOf(context).width < 400 || scale > 1.3;
+            final isStacked = stacked ||
+                MediaQuery.sizeOf(context).width < (stacked ? 1400 : 400) ||
+                scale > 1.25;
             final nameText = Text(name,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                textAlign: stacked ? TextAlign.start : TextAlign.end,
+                textAlign: isStacked ? TextAlign.start : TextAlign.end,
                 style: OTTypography.bodyMedium(color: fg));
             final chevron = onTap != null
                 ? Icon(Icons.unfold_more_rounded, size: 20, color: sub)
                 : null;
-            if (stacked) {
+            if (isStacked) {
               return Row(children: [
                 Expanded(
                   child: Column(
@@ -1008,11 +1016,21 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     final singleOffers = selected != null
         ? ProductPricing.forAgent(selected.id)
         : ProductPricing.specialists;
+    final allSpecialistsOffers = ProductPricing.forAgent('all_specialists');
     final fi = _periodIndex.clamp(0, flagshipOffers.length - 1);
     final si = _periodIndex.clamp(0, singleOffers.length - 1);
+    final ai = allSpecialistsOffers.isNotEmpty
+        ? _periodIndex.clamp(0, allSpecialistsOffers.length - 1)
+        : 0;
     final flagshipOffer = flagshipOffers[fi];
     final flagshipActive = _hasAccess(flagship.id);
     final singleOffer = singleOffers[si];
+    final singleActive = selected != null && _hasAccess(selected.id);
+    final allSpecialistsOffer = allSpecialistsOffers.isNotEmpty
+        ? allSpecialistsOffers[ai]
+        : singleOffer;
+    final allSpecialistsActive =
+        _hasAccess('all_specialists') || _hasAccess('all_ai');
 
     return Scaffold(
       backgroundColor: OTColors.canvas(dark),
@@ -1025,12 +1043,13 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
         child: Stack(
           children: [
             LayoutBuilder(builder: (context, viewport) {
-              final wide = viewport.maxWidth >= 820;
-              final twoUp = wide && hasSpecialists;
+              final wide = viewport.maxWidth >= 900;
+              final threeUp = wide && hasSpecialists;
 
               final featuredPlan = _planCard(
                 inverse: true,
-                wide: twoUp,
+                wide: wide,
+                threeUp: threeUp,
                 label: Loc.tr('planFeaturedBadge'),
                 exclusive: true,
                 active: flagshipActive,
@@ -1040,6 +1059,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                   label: Loc.tr('planFeaturedInside'),
                   name: Loc.tr('planFeaturedInsideValue'),
                   inverse: true,
+                  stacked: threeUp,
                 ),
                 price: flagshipOffer,
                 offers: flagshipOffers,
@@ -1053,22 +1073,90 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                 agentId: flagship.id,
               );
 
+              final allSpecialistsPlan = _planCard(
+                inverse: false,
+                wide: wide,
+                threeUp: threeUp,
+                label: Loc.isArabic
+                    ? 'باقة العلوم التخصصية'
+                    : (Loc.language == 'en'
+                        ? 'All Disciplines Bundle'
+                        : 'Paket Kompilasi Disiplin'),
+                active: allSpecialistsActive,
+                title: Loc.isArabic
+                    ? 'جميع الذكاءات*'
+                    : (Loc.language == 'en' ? 'All AIs*' : 'Semua AI*'),
+                subtitleWidget: Text(
+                  Loc.isArabic
+                      ? '*باستثناء فقه التحولات'
+                      : (Loc.language == 'en'
+                          ? '*excluding Fiqh Tahawwulat'
+                          : '*kecuali Fikih Tahawwulat'),
+                  style: OTTypography.caption(
+                          color: OTColors.textSecondary(dark))
+                      .copyWith(
+                    fontSize: 12,
+                    fontStyle: FontStyle.italic,
+                  ),
+                ),
+                description: Loc.isArabic
+                    ? 'الوصول الكامل إلى جميع المساعدين في العلوم الشرعية.'
+                    : (Loc.language == 'en'
+                        ? 'Full access to all Islamic discipline specialist AIs.'
+                        : 'Akses ke seluruh AI spesialis disiplin keilmuan Islam.'),
+                field: _fieldRow(
+                  label: Loc.isArabic
+                      ? 'النطاق'
+                      : (Loc.language == 'en' ? 'Scope' : 'Cakupan'),
+                  name: Loc.isArabic
+                      ? 'جميع العلوم التراثية'
+                      : (Loc.language == 'en'
+                          ? 'All Turath Disciplines'
+                          : 'Seluruh Disiplin Turats'),
+                  inverse: false,
+                  stacked: threeUp,
+                ),
+                price: allSpecialistsOffer,
+                offers: allSpecialistsOffers,
+                benefits: Loc.isArabic
+                    ? [
+                        'الوصول إلى جميع العلوم الشرعية التخصصية',
+                        'المقارنة والاستنباط المباشر بين المذاهب والعلوم',
+                        'إضافة كتب ومراجع جديدة بشكل مستمر',
+                        'تحديثات التطبيق طوال فترة الاشتراك',
+                      ]
+                    : (Loc.language == 'en'
+                        ? [
+                            'Access to all Islamic academic disciplines',
+                            'Direct cross-discipline comparative inquiries',
+                            'New reference books added periodically',
+                            'Application updates throughout subscription',
+                          ]
+                        : [
+                            'Akses ke seluruh disiplin keilmuan Islam',
+                            'Uji pemahaman lewat tanya jawab komparasi langsung',
+                            'Kitab dan arsip rujukan baru ditambahkan berkala',
+                            'Pembaruan aplikasi selama langganan aktif',
+                          ]),
+                onCheckout: () =>
+                    _checkout(allSpecialistsAgent, allSpecialistsOffer),
+                agentId: allSpecialistsAgent.id,
+              );
+
               final singlePlan = hasSpecialists
                   ? _planCard(
                       inverse: false,
-                      wide: twoUp,
-                      label: selected.id == 'all_specialists'
-                          ? 'Paket Kompilasi Disiplin'
-                          : Loc.tr('planSingleLabel'),
-                      active: _hasAccess(selected.id),
+                      wide: wide,
+                      threeUp: threeUp,
+                      label: Loc.tr('planSingleLabel'),
+                      active: singleActive,
                       title: Loc.text(selected.title),
-                      description: selected.id == 'all_specialists'
-                          ? 'Akses ke seluruh AI spesialis disiplin keilmuan Islam selain Fikih Tahawwulat.'
-                          : Loc.tr('planSingleDescription'),
+                      description: Loc.tr('planSingleDescription'),
                       field: _fieldRow(
                         label: Loc.tr('chooseField'),
                         name: Loc.text(selected.title),
                         inverse: false,
+                        stacked: threeUp,
                         onTap: _processing
                             ? null
                             : () => _showDisciplinePickerModal(
@@ -1076,20 +1164,13 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                       ),
                       price: singleOffer,
                       offers: singleOffers,
-                      benefits: selected.id == 'all_specialists'
-                          ? [
-                              'Akses ke seluruh disiplin keilmuan Islam',
-                              'Uji pemahaman lewat tanya jawab komparasi langsung',
-                              'Kitab dan arsip rujukan baru ditambahkan berkala',
-                              'Pembaruan aplikasi selama langganan aktif',
-                            ]
-                          : [
-                              Loc.tr(
-                                  'planSingleBenefit1', [Loc.text(selected.title)]),
-                              Loc.tr('planSingleBenefit2'),
-                              Loc.tr('planBenefitGrowthSingle'),
-                              Loc.tr('planBenefitUpdates'),
-                            ],
+                      benefits: [
+                        Loc.tr(
+                            'planSingleBenefit1', [Loc.text(selected.title)]),
+                        Loc.tr('planSingleBenefit2'),
+                        Loc.tr('planBenefitGrowthSingle'),
+                        Loc.tr('planBenefitUpdates'),
+                      ],
                       onCheckout: () => _checkout(selected, singleOffer),
                       agentId: selected.id,
                     )
@@ -1103,7 +1184,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                     OTSpacing.jumbo),
                 child: Center(
                   child: ConstrainedBox(
-                    constraints: BoxConstraints(maxWidth: twoUp ? 1040 : 560),
+                    constraints: BoxConstraints(maxWidth: threeUp ? 1220 : 560),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
@@ -1131,7 +1212,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                           ),
                         ),
                         const SizedBox(height: OTSpacing.xl),
-                        if (twoUp && singlePlan != null)
+                        if (threeUp && singlePlan != null)
                           IntrinsicHeight(
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -1141,16 +1222,22 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                                         index: 0, child: featuredPlan)),
                                 const SizedBox(width: OTSpacing.base),
                                 Expanded(
+                                    child: OTReveal(
+                                        index: 1, child: allSpecialistsPlan)),
+                                const SizedBox(width: OTSpacing.base),
+                                Expanded(
                                     child:
-                                        OTReveal(index: 1, child: singlePlan)),
+                                        OTReveal(index: 2, child: singlePlan)),
                               ],
                             ),
                           )
                         else ...[
                           OTReveal(index: 0, child: featuredPlan),
+                          const SizedBox(height: OTSpacing.base),
+                          OTReveal(index: 1, child: allSpecialistsPlan),
                           if (singlePlan != null) ...[
                             const SizedBox(height: OTSpacing.base),
-                            OTReveal(index: 1, child: singlePlan),
+                            OTReveal(index: 2, child: singlePlan),
                           ],
                         ],
                         const SizedBox(height: OTSpacing.xl),

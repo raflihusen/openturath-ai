@@ -56,8 +56,8 @@ void main() {
               await tester.pump(const Duration(milliseconds: 300));
             }
             expect(tester.takeException(), isNull, reason: reason);
-            // Dua tombol bayar (paket utama dan satu bidang).
-            expect(find.byType(FilledButton), findsNWidgets(2), reason: reason);
+            // Tiga tombol bayar (paket utama, semua ai, dan satu bidang).
+            expect(find.byType(FilledButton), findsNWidgets(3), reason: reason);
             // Kedua kartu punya satu baris pilihan yang simetris; paket utama
             // menyebut "lima asisten" tanpa mendaftar namanya.
             expect(
