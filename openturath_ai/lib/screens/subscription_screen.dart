@@ -987,8 +987,10 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
             orElse: () => specialists.first)
         : null;
     final hasSpecialists = specialists.isNotEmpty && selected != null;
-    final flagshipOffers = ProductPricing.tahawwulat;
-    final singleOffers = ProductPricing.specialists;
+    final flagshipOffers = ProductPricing.forAgent('fiqh_tahawwulat');
+    final singleOffers = selected != null
+        ? ProductPricing.forAgent(selected.id)
+        : ProductPricing.specialists;
     final fi = _periodIndex.clamp(0, flagshipOffers.length - 1);
     final si = _periodIndex.clamp(0, singleOffers.length - 1);
     final flagshipOffer = flagshipOffers[fi];

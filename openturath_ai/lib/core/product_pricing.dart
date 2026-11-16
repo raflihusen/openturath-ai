@@ -1,3 +1,5 @@
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'localization.dart';
@@ -62,6 +64,7 @@ abstract final class ProductPricing {
 
   static List<SubscriptionOffer> _specialists = List.of(defaultSpecialists);
   static List<SubscriptionOffer> _tahawwulat = List.of(defaultTahawwulat);
+  static final Map<String, List<SubscriptionOffer>> _agentOffers = {};
 
   static SubscriptionOffer get specialist => _specialists.first;
   static List<SubscriptionOffer> get specialists => _specialists;
@@ -71,9 +74,19 @@ abstract final class ProductPricing {
     String? revision,
     Map<String, dynamic>? tahawwulatMap,
     Map<String, dynamic>? specialistsMap,
+    Map<String, List<SubscriptionOffer>>? agentOffersMap,
   }) {
     if (revision != null && revision.isNotEmpty) {
       _currentRevision = revision;
+    }
+    if (agentOffersMap != null && agentOffersMap.isNotEmpty) {
+      _agentOffers.addAll(agentOffersMap);
+      if (_agentOffers.containsKey('fiqh_tahawwulat')) {
+        _tahawwulat = List.of(_agentOffers['fiqh_tahawwulat']!);
+      }
+      if (_agentOffers.containsKey('fiqh_syafii')) {
+        _specialists = List.of(_agentOffers['fiqh_syafii']!);
+      }
     }
     if (tahawwulatMap != null) {
       _tahawwulat = [
@@ -120,8 +133,12 @@ abstract final class ProductPricing {
     );
   }
 
-  static List<SubscriptionOffer> forAgent(String agentId) =>
-      agentId.startsWith('fiqh_tahawwulat') ? tahawwulat : specialists;
+  static List<SubscriptionOffer> forAgent(String agentId) {
+    if (_agentOffers.containsKey(agentId)) {
+      return _agentOffers[agentId]!;
+    }
+    return agentId.startsWith('fiqh_tahawwulat') ? tahawwulat : specialists;
+  }
   static String rupiah(int amount) =>
       'Rp ${amount.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (match) => '${match[1]}.')}';
 }
@@ -177,13 +194,106 @@ class ProductPricingService {
   }
 
   static Future<bool> syncPricing(
-      {bool forceRefresh = false, FirebaseFirestore? firestore}) async {
+      {bool forceRefresh = false,
+      FirebaseFirestore? firestore,
+      http.Client? client}) async {
     final now = DateTime.now();
     if (!forceRefresh &&
         _lastFetch != null &&
         now.difference(_lastFetch!).inSeconds < 60) {
       return true;
     }
+
+    // 1. Prioritas Utama: OTA Dynamic Pricing langsung dari VPS API resmi
+    try {
+      final httpClient = client ?? http.Client();
+      final res = await httpClient.get(
+        Uri.parse('https://maktabah.openturath.id/api/v1/catalog/offers'),
+        headers: {
+          'Accept': 'application/json',
+          'User-Agent': 'OpenTurathApp/1.0',
+        },
+      ).timeout(const Duration(seconds: 4));
+
+      if (res.statusCode == 200) {
+        final data = jsonDecode(res.body);
+        if (data is Map && data['offers'] is List) {
+          final revision = data['revision']?.toString();
+          final rawOffers = data['offers'] as List;
+          final agentOffersMap = <String, List<SubscriptionOffer>>{};
+
+          for (final item in rawOffers) {
+            if (item is Map &&
+                item['agentId'] is String &&
+                item['plans'] is List) {
+              final agentId = item['agentId'] as String;
+              final plans = item['plans'] as List;
+              final offers = <SubscriptionOffer>[];
+
+              for (final p in plans) {
+                if (p is Map) {
+                  final planStr = p['plan']?.toString() ?? '';
+                  final months = p['months'] is int
+                      ? p['months'] as int
+                      : int.tryParse(p['months']?.toString() ?? '1') ?? 1;
+                  final amount = p['amount'] is int
+                      ? p['amount'] as int
+                      : int.tryParse(p['amount']?.toString() ?? '0') ?? 0;
+
+                  // Hitung harga normal (regularAmount) coret jika tidak disediakan
+                  int regular = 0;
+                  if (p['regularAmount'] is int) {
+                    regular = p['regularAmount'] as int;
+                  } else if (p['regular_amount'] is int) {
+                    regular = p['regular_amount'] as int;
+                  } else {
+                    if (months == 1) {
+                      regular = amount >= 400000
+                          ? 1000000
+                          : (amount >= 200000 ? 1000000 : 300000);
+                    } else if (months == 6) {
+                      regular = amount >= 2000000
+                          ? 4995000
+                          : (amount >= 1000000 ? 2995000 : 1200000);
+                    } else {
+                      regular = amount >= 3000000
+                          ? 7995000
+                          : (amount >= 1500000 ? 4995000 : 2400000);
+                    }
+                  }
+
+                  if (planStr.isNotEmpty && amount > 0) {
+                    offers.add(SubscriptionOffer(
+                      plan: planStr,
+                      months: months,
+                      regularAmount: regular,
+                      amount: amount,
+                    ));
+                  }
+                }
+              }
+
+              if (offers.isNotEmpty) {
+                agentOffersMap[agentId] = offers;
+              }
+            }
+          }
+
+          if (agentOffersMap.isNotEmpty) {
+            ProductPricing.updateOffers(
+              revision: revision,
+              agentOffersMap: agentOffersMap,
+            );
+            _lastFetch = now;
+            return true;
+          }
+        }
+      }
+    } catch (_) {
+      // Fallback ke Firestore bila jaringan VPS terkendala
+    }
+
+    // 2. Fallback Sekunder: Firestore app_config/pricing
     try {
       final db = firestore ??
           (Firebase.apps.isNotEmpty ? FirebaseFirestore.instance : null);

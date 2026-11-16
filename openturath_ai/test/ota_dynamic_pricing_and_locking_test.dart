@@ -1,9 +1,13 @@
 import 'dart:async';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:http/testing.dart';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:openturath_ai/core/product_pricing.dart';
 import 'package:openturath_ai/models/agent_model.dart';
 import 'package:openturath_ai/services/agent_service.dart';
+import 'package:openturath_ai/services/subscription_service.dart';
 
 void main() {
   group('OTA Dynamic Locking & Pricing Tests', () {
@@ -165,6 +169,83 @@ void main() {
       );
       expect(ProductPricing.tahawwulat.first.amount, equals(299000));
       expect(ProductPricing.revision, equals(ProductPricing.defaultRevision));
+    });
+
+    test(
+        'ProductPricingService syncPricing dynamically fetches OTA catalog from VPS',
+        () async {
+      final mockClient = MockClient((request) async {
+        if (request.url.toString() ==
+            'https://maktabah.openturath.id/api/v1/catalog/offers') {
+          return http.Response(
+            jsonEncode({
+              'schemaVersion': 1,
+              'revision': 'vps-prod-20261111',
+              'serverNow': 1794804731760,
+              'offers': [
+                {
+                  'agentId': 'fiqh_syafii',
+                  'plans': [
+                    {'plan': 'tholib_1m', 'months': 1, 'amount': 49000},
+                    {'plan': 'tholib_6m', 'months': 6, 'amount': 299000},
+                    {'plan': 'bahits_1y', 'months': 12, 'amount': 499000},
+                  ]
+                },
+                {
+                  'agentId': 'fiqh_tahawwulat',
+                  'plans': [
+                    {'plan': 'tholib_1m', 'months': 1, 'amount': 299000},
+                    {'plan': 'tholib_6m', 'months': 6, 'amount': 1499000},
+                    {'plan': 'bahits_1y', 'months': 12, 'amount': 1999000},
+                  ]
+                },
+                {
+                  'agentId': 'all_ai',
+                  'plans': [
+                    {'plan': 'tholib_1m', 'months': 1, 'amount': 499000},
+                    {'plan': 'tholib_6m', 'months': 6, 'amount': 2499000},
+                    {'plan': 'bahits_1y', 'months': 12, 'amount': 3999000},
+                  ]
+                }
+              ]
+            }),
+            200,
+            headers: {'content-type': 'application/json'},
+          );
+        }
+        return http.Response('Not Found', 404);
+      });
+
+      final success = await ProductPricingService.syncPricing(
+        forceRefresh: true,
+        client: mockClient,
+      );
+      expect(success, isTrue);
+      expect(ProductPricing.revision, equals('vps-prod-20261111'));
+
+      // Verifikasi penawaran untuk agen spesialis fiqh_syafii
+      final syafiiOffers = ProductPricing.forAgent('fiqh_syafii');
+      expect(syafiiOffers, isNotEmpty);
+      expect(syafiiOffers.first.amount, equals(49000));
+
+      // Verifikasi penawaran untuk paket all_ai
+      final allAiOffers = ProductPricing.forAgent('all_ai');
+      expect(allAiOffers, isNotEmpty);
+      expect(allAiOffers.first.amount, equals(499000));
+    });
+
+    test(
+        'SubscriptionService verifyPaymentStatus does not falsely report SUCCESS for unpaid order',
+        () async {
+      final subService = SubscriptionService();
+      final result = await subService.verifyPaymentStatus(
+        invoiceNumber: 'OT-NONEXISTENT-TEST-INVOICE',
+      );
+
+      // Pastikan status BUKAN SUCCESS dan success adalah false
+      expect(result['success'], isFalse);
+      expect(result['status'], isNot(equals('SUCCESS')));
+      expect(result['status'], isNot(equals('SETTLED')));
     });
   });
 }
