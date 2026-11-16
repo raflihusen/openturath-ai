@@ -485,6 +485,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     bool exclusive = false,
     Widget? subtitleWidget,
     bool threeUp = false,
+    bool inRow = false,
   }) {
     final dark = Theme.of(context).brightness == Brightness.dark;
     // Paket utama: terbalik (hitam di atas terang) di mode terang. Di mode
@@ -583,8 +584,8 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
           ],
           // Berdampingan: harga, manfaat, dan tombol kedua kartu sejajar di
           // bawah, berapa pun tinggi bagian atas.
-          if (wide) const Spacer() else const SizedBox(height: OTSpacing.xl),
-          if (wide) const SizedBox(height: OTSpacing.xl),
+          if (inRow) const Spacer() else const SizedBox(height: OTSpacing.xl),
+          if (inRow) const SizedBox(height: OTSpacing.xl),
           if (!_pricingReady)
             _priceSkeleton(sub)
           else
@@ -1051,6 +1052,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                 inverse: true,
                 wide: wide,
                 threeUp: threeUp,
+                inRow: threeUp || twoUp,
                 label: Loc.tr('planFeaturedBadge'),
                 exclusive: true,
                 active: flagshipActive,
@@ -1078,6 +1080,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                 inverse: false,
                 wide: wide,
                 threeUp: threeUp,
+                inRow: threeUp || twoUp,
                 label: Loc.isArabic
                     ? 'باقة العلوم التخصصية'
                     : (Loc.language == 'en'
@@ -1149,6 +1152,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                       inverse: false,
                       wide: wide,
                       threeUp: threeUp,
+                      inRow: threeUp,
                       label: Loc.tr('planSingleLabel'),
                       active: singleActive,
                       title: Loc.text(selected.title),

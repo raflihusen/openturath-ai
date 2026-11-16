@@ -144,7 +144,7 @@ MembershipPassSummary resolveMembershipPass(UserModel? user, {DateTime? now}) {
       .whereType<DateTime>()
       .toList()
     ..sort();
-  final expiry = expiries.isEmpty ? null : expiries.last;
+  final expiry = expiries.isEmpty ? null : expiries.first;
   final accessLabel = selected.any((entry) => entry.key == 'all_access' || entry.key == 'all_ai' || entry.key == 'all_specialists')
       ? AppCopy.allAssistantsAvailable
       : (selected.length == 1
