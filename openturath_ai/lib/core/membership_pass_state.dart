@@ -1,5 +1,6 @@
 import 'app_copy.dart';
 import 'app_config.dart';
+import 'localization.dart';
 import '../models/user_model.dart';
 
 enum MembershipPassState {
@@ -208,20 +209,24 @@ MembershipPassSummary _base(
       ctaLabel: cta,
     );
 
-String _singleModuleTitle(String key) => switch (key) {
-      'fiqh_tahawwulat' => 'AI Fikih Tahawwulat',
-      'fiqh_syafii' => "AI Fikih Syafi'i",
-      'fiqh_hanafi' => 'AI Fikih Hanafi',
-      'fiqh_maliki' => 'AI Fikih Maliki',
-      'fiqh_hanbali' => 'AI Fikih Hanbali',
-      'fiqh_muqaran' => 'AI Perbandingan Mazhab',
-      'ushul_fiqh' => 'AI Usul Fikih',
-      'nahwu' => 'AI Bahasa Arab',
-      'tafsir' => "AI Tafsir Al-Qur'an",
-      'hadits' => 'AI Hadis Nabawi',
-      'aqidah' => 'AI Akidah & Ushuluddin',
-      'tarikh' => 'AI Sejarah & Sirah',
-      'tasawwuf' => 'AI Tasawuf & Adzkar',
-      _ => AppCopy.allAssistantsAvailable,
-    };
+String _singleModuleTitle(String key) {
+  final base = switch (key) {
+    'fiqh_tahawwulat' => Loc.text('Fikih Tahawwulat'),
+    'fiqh_syafii' => Loc.text("Fikih Syafi'i"),
+    'fiqh_hanafi' => Loc.text('Fikih Hanafi'),
+    'fiqh_maliki' => Loc.text('Fikih Maliki'),
+    'fiqh_hanbali' => Loc.text('Fikih Hanbali'),
+    'fiqh_muqaran' => Loc.text('Perbandingan Mazhab'),
+    'ushul_fiqh' => Loc.text('Usul Fikih'),
+    'nahwu' => Loc.text('Bahasa Arab'),
+    'tafsir' => Loc.text("Tafsir Al-Qur'an"),
+    'hadits' => Loc.text('Hadis Nabawi'),
+    'aqidah' => Loc.text('Akidah & Ushuluddin'),
+    'tarikh' => Loc.text('Sejarah & Sirah'),
+    'tasawwuf' => Loc.text('Tasawuf & Adzkar'),
+    _ => AppCopy.allAssistantsAvailable,
+  };
+  if (base == AppCopy.allAssistantsAvailable) return base;
+  return Loc.isArabic ? base : 'AI $base';
+}
 

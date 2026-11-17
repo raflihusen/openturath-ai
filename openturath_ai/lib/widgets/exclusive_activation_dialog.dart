@@ -86,6 +86,50 @@ class ExclusiveActivationDialog extends StatelessWidget {
     );
   }
 
+  static String _localizedTitle(String raw) {
+    if (Loc.isArabic) {
+      if (raw.contains('7 Menit') || raw.contains('7M') || raw.contains('7 دقائق')) {
+        return 'وصول تجريبي لكافة المساعدات (٧ دقائق)';
+      }
+      if (raw.contains('5 Menit') || raw.contains('5M') || raw.contains('5 دقائق')) {
+        return 'وصول تجريبي لكافة المساعدات (٥ دقائق)';
+      }
+      if (raw.contains('10 Menit') || raw.contains('10M') || raw.contains('10 دقائق')) {
+        return 'وصول تجريبي لكافة المساعدات (١٠ دقائق)';
+      }
+      if (raw.contains('Semua AI') || raw.contains('all_access') || raw.contains('all_specialists')) {
+        return 'باقة جميع العلوم والمساعدات';
+      }
+      if (raw.contains('Syafi') || raw.contains('syafii')) {
+        return 'الفقه الشافعي';
+      }
+      if (raw.contains('Tahawwulat') || raw.contains('tahawwulat')) {
+        return 'فقه التحولات';
+      }
+      final cleaned = Loc.cleanTitle(raw);
+      return Loc.text(cleaned);
+    }
+    if (Loc.language == 'en') {
+      if (raw.contains('7 Menit') || raw.contains('7M')) {
+        return 'All AI Assistants Trial Access (7 Minutes)';
+      }
+      if (raw.contains('5 Menit') || raw.contains('5M')) {
+        return 'All AI Assistants Trial Access (5 Minutes)';
+      }
+      if (raw.contains('10 Menit') || raw.contains('10M')) {
+        return 'All AI Assistants Trial Access (10 Minutes)';
+      }
+      if (raw.contains('Semua AI') || raw.contains('all_access')) {
+        return 'All AI Assistants Access';
+      }
+      if (raw.contains('Syafi')) {
+        return "AI Shafi'i Fiqh";
+      }
+      return raw.startsWith('AI ') ? raw : 'AI $raw';
+    }
+    return raw.startsWith('AI ') ? raw : (raw.startsWith('Akses ') ? raw : 'AI $raw');
+  }
+
   void _handleStartStudy(BuildContext context) {
     HapticFeedback.mediumImpact();
     final nav = Navigator.of(context);
@@ -147,9 +191,7 @@ class ExclusiveActivationDialog extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                      serviceTitle.startsWith('AI ')
-                          ? serviceTitle
-                          : 'AI $serviceTitle',
+                      _localizedTitle(serviceTitle),
                       style: OTTypography.bodyMedium(color: ink)),
                   if (showValidity) ...[
                     const SizedBox(height: 12),

@@ -532,6 +532,74 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     final perDay = Loc.tr('perDayEquivalent',
         [ProductPricing.rupiah(((price.amount / days) / 100).round() * 100)]);
 
+    Widget pricingSection() => Column(
+      crossAxisAlignment:
+          wide ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        if (!_pricingReady)
+          _priceSkeleton(sub)
+        else
+          PromoPrice(
+            key: ValueKey('$agentId-${price.amount}'),
+            amount: price.amount,
+            regularAmount: price.regularAmount,
+            period: price.period,
+            display: true,
+            inlineSaving: true,
+            foregroundColor: fg,
+            secondaryColor: sub,
+          ),
+        const SizedBox(height: OTSpacing.xs),
+        if (_pricingReady)
+          Wrap(
+            alignment: wide ? WrapAlignment.end : WrapAlignment.start,
+            spacing: OTSpacing.sm,
+            runSpacing: OTSpacing.xs,
+            children: [
+              Text(perDay, style: OTTypography.captionMedium(color: fg)),
+              if (perMonth.isNotEmpty)
+                Text(perMonth, style: OTTypography.caption(color: sub)),
+              if (saving >= 5)
+                Text(Loc.tr('saving', ['$saving']),
+                    style: OTTypography.captionMedium(color: fg)),
+            ],
+          ),
+      ],
+    );
+
+    Widget actionButton() => Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        SizedBox(
+          width: wide ? 240 : double.infinity,
+          height: 48,
+          child: FilledButton(
+            onPressed: (_processing || !_pricingReady) ? null : onCheckout,
+            style: inverse && !dark ? OTButtons.onInverse(dark) : null,
+            child: Text(Loc.tr(active ? 'planRenew' : 'planContinue')),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(top: 6),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.lock_outline_rounded, size: 12, color: sub),
+              const SizedBox(width: 4),
+              Flexible(
+                child: Text(Loc.tr('planTrustNote'),
+                    textAlign: TextAlign.center,
+                    style: OTTypography.caption(color: sub)
+                        .copyWith(fontSize: 11)),
+              ),
+            ],
+          ),
+        ),
+        _checkoutNotice(agentId, ink: fg),
+      ],
+    );
+
     return Container(
       padding: EdgeInsets.all(pad),
       decoration: BoxDecoration(
@@ -540,128 +608,108 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
             : inverse
                 ? OTColors.inverted(dark)
                 : OTColors.surface(dark),
-        gradient: darkFeatured
-            ? LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [fg.withValues(alpha: 0.12), fg.withValues(alpha: 0)],
-                stops: const [0, 0.55],
-              )
-            : null,
-        borderRadius: BorderRadius.circular(OTRadius.hero),
+        borderRadius: BorderRadius.circular(OTRadius.card),
         border: darkFeatured
             ? Border.all(color: fg.withValues(alpha: 0.85), width: 1.5)
             : inverse
-                ? null
+                ? Border.all(color: fg.withValues(alpha: 0.18), width: 1)
                 : Border.all(color: line),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Wrap(
-            spacing: OTSpacing.sm,
-            runSpacing: OTSpacing.sm,
-            children: [
-              _pill(label, fg, filled: exclusive, icon: exclusive),
-              if (active) _pill(Loc.tr('planActive'), fg, filled: true),
-            ],
-          ),
-          const SizedBox(height: OTSpacing.lg),
-          Text(title, style: titleStyle),
-          if (subtitleWidget != null) ...[
-            const SizedBox(height: OTSpacing.xs),
-            subtitleWidget,
-          ],
-          const SizedBox(height: OTSpacing.md),
-          ConstrainedBox(
-            constraints: BoxConstraints(minHeight: wide ? 48 : 0),
-            child: Text(description,
-                style: OTTypography.body(color: sub).copyWith(height: 1.5)),
-          ),
-          if (field != null) ...[
-            const SizedBox(height: OTSpacing.xl),
-            field,
-          ],
-          // Berdampingan: harga, manfaat, dan tombol kedua kartu sejajar di
-          // bawah, berapa pun tinggi bagian atas.
-          if (inRow) const Spacer() else const SizedBox(height: OTSpacing.xl),
-          if (inRow) const SizedBox(height: OTSpacing.xl),
-          if (!_pricingReady)
-            _priceSkeleton(sub)
-          else
-            AnimatedSwitcher(
-              duration: OTMotion.normal,
-              switchInCurve: Curves.easeOutCubic,
-              transitionBuilder: (child, animation) => FadeTransition(
-                opacity: animation,
-                child: SlideTransition(
-                  position: Tween(begin: const Offset(0, 0.1), end: Offset.zero)
-                      .animate(animation),
-                  child: child,
+      child: wide
+          ? Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Wrap(
+                        spacing: OTSpacing.sm,
+                        runSpacing: OTSpacing.sm,
+                        children: [
+                          _pill(label, fg, filled: exclusive, icon: exclusive),
+                          if (active)
+                            _pill(Loc.tr('planActive'), fg, filled: true),
+                        ],
+                      ),
+                      const SizedBox(height: OTSpacing.sm),
+                      Text(title, style: titleStyle),
+                      if (subtitleWidget != null) ...[
+                        const SizedBox(height: 2),
+                        subtitleWidget,
+                      ],
+                      const SizedBox(height: 6),
+                      Text(description,
+                          style: OTTypography.body(color: sub)
+                              .copyWith(fontSize: 13, height: 1.4),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis),
+                      if (field != null) ...[
+                        const SizedBox(height: 10),
+                        ConstrainedBox(
+                          constraints: const BoxConstraints(maxWidth: 340),
+                          child: field,
+                        ),
+                      ],
+                      const SizedBox(height: 10),
+                      for (final benefit in benefits) _benefitRow(benefit, fg),
+                    ],
+                  ),
                 ),
-              ),
-              layoutBuilder: (current, previous) => Stack(
-                alignment: AlignmentDirectional.topStart,
-                children: [...previous, if (current != null) current],
-              ),
-              child: PromoPrice(
-                key: ValueKey('$agentId-${price.amount}'),
-                amount: price.amount,
-                regularAmount: price.regularAmount,
-                period: price.period,
-                display: true,
-                inlineSaving: true,
-                foregroundColor: fg,
-                secondaryColor: sub,
-              ),
-            ),
-          const SizedBox(height: OTSpacing.sm),
-          if (_pricingReady)
-            Wrap(
-              spacing: OTSpacing.sm,
-              runSpacing: OTSpacing.xs,
-              children: [
-                Text(perDay, style: OTTypography.captionMedium(color: fg)),
-                if (perMonth.isNotEmpty)
-                  Text(perMonth, style: OTTypography.caption(color: sub)),
-                if (saving >= 5)
-                  Text(Loc.tr('saving', ['$saving']),
-                      style: OTTypography.captionMedium(color: fg)),
-              ],
-            ),
-          const SizedBox(height: OTSpacing.base),
-          Divider(color: line, height: 1),
-          const SizedBox(height: OTSpacing.lg),
-          for (final benefit in benefits) _benefitRow(benefit, fg),
-          const SizedBox(height: OTSpacing.lg),
-          SizedBox(
-            width: double.infinity,
-            height: 52,
-            child: FilledButton(
-              onPressed: (_processing || !_pricingReady) ? null : onCheckout,
-              style: inverse && !dark ? OTButtons.onInverse(dark) : null,
-              child: Text(Loc.tr(active ? 'planRenew' : 'planContinue')),
-            ),
-          ),
-          // Jaminan tepat di bawah tombol, tempat keraguan biasanya muncul.
-          Padding(
-            padding: const EdgeInsets.only(top: OTSpacing.md),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(Icons.lock_outline_rounded, size: 14, color: sub),
-                const SizedBox(width: OTSpacing.xs),
-                Flexible(
-                  child: Text(Loc.tr('planTrustNote'),
-                      textAlign: TextAlign.center,
-                      style: OTTypography.caption(color: sub)),
+                const SizedBox(width: 24),
+                SizedBox(
+                  width: 260,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      pricingSection(),
+                      const SizedBox(height: 14),
+                      actionButton(),
+                    ],
+                  ),
                 ),
               ],
+            )
+          : Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Wrap(
+                  spacing: OTSpacing.sm,
+                  runSpacing: OTSpacing.sm,
+                  children: [
+                    _pill(label, fg, filled: exclusive, icon: exclusive),
+                    if (active) _pill(Loc.tr('planActive'), fg, filled: true),
+                  ],
+                ),
+                const SizedBox(height: OTSpacing.sm),
+                Text(title, style: titleStyle),
+                if (subtitleWidget != null) ...[
+                  const SizedBox(height: 2),
+                  subtitleWidget,
+                ],
+                const SizedBox(height: 6),
+                Text(description,
+                    style: OTTypography.body(color: sub)
+                        .copyWith(fontSize: 13, height: 1.4),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis),
+                if (field != null) ...[
+                  const SizedBox(height: 10),
+                  field,
+                ],
+                const SizedBox(height: 12),
+                for (final benefit in benefits) _benefitRow(benefit, fg),
+                const SizedBox(height: 12),
+                Divider(color: line, height: 1),
+                const SizedBox(height: 12),
+                pricingSection(),
+                const SizedBox(height: 12),
+                actionButton(),
+              ],
             ),
-          ),
-          _checkoutNotice(agentId, ink: fg),
-        ],
-      ),
     );
   }
 
@@ -1190,7 +1238,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                 child: Center(
                   child: ConstrainedBox(
                     constraints: BoxConstraints(
-                        maxWidth: threeUp ? 1320 : (twoUp ? 960 : 560)),
+                        maxWidth: wide ? 880 : 560),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
@@ -1218,52 +1266,12 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                           ),
                         ),
                         const SizedBox(height: OTSpacing.xl),
-                        if (threeUp && singlePlan != null)
-                          IntrinsicHeight(
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: [
-                                Expanded(
-                                    child: OTReveal(
-                                        index: 0, child: featuredPlan)),
-                                const SizedBox(width: OTSpacing.base),
-                                Expanded(
-                                    child: OTReveal(
-                                        index: 1, child: allSpecialistsPlan)),
-                                const SizedBox(width: OTSpacing.base),
-                                Expanded(
-                                    child:
-                                        OTReveal(index: 2, child: singlePlan)),
-                              ],
-                            ),
-                          )
-                        else if (twoUp) ...[
-                          IntrinsicHeight(
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: [
-                                Expanded(
-                                    child: OTReveal(
-                                        index: 0, child: featuredPlan)),
-                                const SizedBox(width: OTSpacing.base),
-                                Expanded(
-                                    child: OTReveal(
-                                        index: 1, child: allSpecialistsPlan)),
-                              ],
-                            ),
-                          ),
-                          if (singlePlan != null) ...[
-                            const SizedBox(height: OTSpacing.base),
-                            OTReveal(index: 2, child: singlePlan),
-                          ],
-                        ] else ...[
-                          OTReveal(index: 0, child: featuredPlan),
+                        OTReveal(index: 0, child: featuredPlan),
+                        const SizedBox(height: OTSpacing.base),
+                        OTReveal(index: 1, child: allSpecialistsPlan),
+                        if (singlePlan != null) ...[
                           const SizedBox(height: OTSpacing.base),
-                          OTReveal(index: 1, child: allSpecialistsPlan),
-                          if (singlePlan != null) ...[
-                            const SizedBox(height: OTSpacing.base),
-                            OTReveal(index: 2, child: singlePlan),
-                          ],
+                          OTReveal(index: 2, child: singlePlan),
                         ],
                         const SizedBox(height: OTSpacing.xl),
                         _consentNote(OTColors.textSecondary(dark)),
