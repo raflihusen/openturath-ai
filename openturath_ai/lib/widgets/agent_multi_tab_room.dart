@@ -1690,11 +1690,9 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
             '';
         final isVip = (_authService.cachedCurrentUser?.isVip == true) ||
             UserModel.isVipEmail(email);
-        final googleReady = isVip
-            ? true
-            : await PersistentGoogleSession.instance
-                .restoreSessionIfAvailable(email)
-                .timeout(const Duration(seconds: 3), onTimeout: () => false);
+        final googleReady = await PersistentGoogleSession.instance
+            .restoreSessionIfAvailable(email)
+            .timeout(const Duration(seconds: 3), onTimeout: () => false);
         final verifiedUid = _authService.currentUser?.uid ??
             _authService.cachedCurrentUser?.uid;
         if (!mounted || (openingUid != null && verifiedUid != null && verifiedUid != openingUid)) return;

@@ -108,8 +108,8 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
     }).toString();
   }
 
-  // Buka langsung halaman masuk Google untuk NotebookLM secara resmi
-  String get _initialSessionUrl => _targetLoginUrl;
+  // Try the existing WebKit session before asking Google to sign in again.
+  String get _initialSessionUrl => '${NotebookNavigation.canonicalOrigin}/';
 
   bool _isCurrentVerification(int epoch) =>
       mounted &&
