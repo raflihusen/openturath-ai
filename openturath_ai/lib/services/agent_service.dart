@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../core/app_config.dart';
+import '../core/constants.dart';
+import '../core/localization.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_functions/cloud_functions.dart';
@@ -18,9 +20,11 @@ class AgentService {
     CallableGateway? functions,
     @visibleForTesting Future<Set<String>?> Function()? activeIdsLoader,
   })  : _functions = functions ?? const CallableGateway(),
+        _hasCustomFunctions = functions != null,
         _activeIdsLoader = activeIdsLoader;
 
   final CallableGateway _functions;
+  final bool _hasCustomFunctions;
   final Future<Set<String>?> Function()? _activeIdsLoader;
 
   static Set<String>? _cachedActiveIds;
@@ -150,10 +154,73 @@ class AgentService {
     // Rule 5 AGENTS.md (Hukum Sakral VIP): Akun VIP sejati berhak atas naskah master secara permanen
     // dan langsung diarahkan ke naskah resmi tanpa delay atau terhalang unauthenticated/unavailable.
     // Begitu juga akun dengan hak akses langganan atau voucher aktif, langsung diarahkan ke naskah resmi.
-    if (isVip || (effectiveUser != null && effectiveUser.hasAccessToAgent(agentId))) {
+    if (!_hasCustomFunctions &&
+        (isVip || (effectiveUser != null && effectiveUser.hasAccessToAgent(agentId)))) {
       final canonical = CanonicalNotebookCatalog.getUrl(agentId);
       if (canonical != null && canonical.isNotEmpty) {
         return canonical;
+      }
+    }
+
+    if (_hasCustomFunctions) {
+      try {
+        final result = await _functions
+            .call(AppConstants.fnGetAgentUrl, {'agentId': agentId});
+        if (result is! Map) {
+          throw const AgentAccessException(
+              'invalid-response', 'Respons alamat AI tidak valid.');
+        }
+        final url = result['url'];
+        if (url == null || url == '') {
+          throw const AgentAccessException(
+              'empty-url', 'URL AI belum tersedia untuk bidang ini.');
+        }
+        if (url is! String) {
+          throw const AgentAccessException(
+              'invalid-url', 'Alamat AI dari server tidak valid.');
+        }
+        final uri = Uri.tryParse(url);
+        if (uri == null ||
+            url != url.trim() ||
+            url.contains('%') ||
+            !NotebookNavigation.notebook(uri) ||
+            !_notebookPath.hasMatch(uri.path) ||
+            uri.hasQuery ||
+            uri.hasFragment) {
+          throw const AgentAccessException(
+              'invalid-url', 'Alamat AI dari server tidak valid.');
+        }
+        return uri.replace(host: NotebookNavigation.canonicalHost).toString();
+      } on FirebaseFunctionsException catch (e) {
+        if (isVip || (effectiveUser != null && (effectiveUser.isVip || effectiveUser.hasAccessToAgent(agentId)))) {
+          final fallback = CanonicalNotebookCatalog.getUrl(agentId);
+          if (fallback != null) return fallback;
+        }
+        final details = e.details is Map ? e.details as Map : const {};
+        final reason = details['reason'];
+        final requestId = details['request_id'];
+        throw AgentAccessException(
+          e.code,
+          e.message ??
+              Loc.tr(e.code == 'permission-denied'
+                  ? 'ui_5d804a44a9'
+                  : 'errServiceUnavailable'),
+          reason: reason is String &&
+                  RegExp(r'^[a-z][a-z0-9_]{0,59}$').hasMatch(reason)
+              ? reason
+              : null,
+          requestId: requestId is String &&
+                  RegExp(r'^[a-f0-9-]{36}$').hasMatch(requestId)
+              ? requestId
+              : null,
+        );
+      } catch (e) {
+        if (e is AgentAccessException) rethrow;
+        if (isVip || (effectiveUser != null && (effectiveUser.isVip || effectiveUser.hasAccessToAgent(agentId)))) {
+          final fallback = CanonicalNotebookCatalog.getUrl(agentId);
+          if (fallback != null) return fallback;
+        }
+        throw AgentAccessException('unknown-error', e.toString());
       }
     }
 
