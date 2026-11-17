@@ -6,6 +6,8 @@
 service-account*.json
 master_token.json
 storage_state.json
+storage_state*.json
+.storage_state*.json*
 env.yaml
 key.properties
 *.keystore
@@ -44,6 +46,7 @@ openturath_ai/reports/
 *.apkm
 *.dmg
 *.zip
+*.tar.gz
 *.sha256
 *.exe
 OpenTurath_AI_Windows/

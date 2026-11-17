@@ -26,14 +26,13 @@ logging.basicConfig(
     ],
 )
 
+import shared_registry
+
 PROTECTED_NOTEBOOKS = [
-    {"name": "Al-Muhaqqiq (Tahawwulat)", "id": "dc7ee7e4-f4ad-4db6-9cd0-0013727abbe4"},
-    {"name": "Al-Bayan (Tahawwulat)", "id": "483d0291-0a70-411c-bff0-f1ea4b83b2fd"},
-    {"name": "Al-Mukhtabir (Tahawwulat)", "id": "ac61a7a0-87e7-42a5-a30f-980ff74a78d8"},
-    {"name": "Al-Habib (Tahawwulat)", "id": "6673e79a-7156-42e1-b116-bc1653a32094"},
-    {"name": "Al-Khatib (Tahawwulat)", "id": "1288e413-9569-47a3-892f-64008e53c1e8"},
-    {"name": "AI Fikih Syafi'i", "id": "334e7b83-0e76-4787-a1d6-314642a35862"},
-    {"name": "AI Bahasa Arab", "id": "15bc4cef-4b94-4241-b05a-d50a586bde06"},
+    {"name": f"{nb.get('entity', scope)} (Master)", "id": nb["master"]}
+    for scope, info in shared_registry.catalog().get("scopes", {}).items()
+    for nb in info.get("notebooks", [])
+    if nb.get("master")
 ]
 
 CHECK_INTERVAL_SECONDS = 60

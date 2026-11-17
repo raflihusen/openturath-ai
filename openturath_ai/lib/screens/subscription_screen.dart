@@ -201,13 +201,10 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
         return StatefulBuilder(
           builder: (context, setDialogState) {
             final dark = Theme.of(context).brightness == Brightness.dark;
-            final bg = dark ? const Color(0xFF18181B) : Colors.white;
-            final textCol =
-                dark ? const Color(0xFFFAFAFA) : const Color(0xFF09090B);
-            final subCol =
-                dark ? const Color(0xFFA1A1AA) : const Color(0xFF71717A);
-            final borderCol =
-                dark ? const Color(0xFF27272A) : const Color(0xFFE4E4E7);
+            final bg = OTColors.surface(dark);
+            final textCol = OTColors.textPrimary(dark);
+            final subCol = OTColors.textSecondary(dark);
+            final borderCol = OTColors.border(dark);
 
             return Dialog(
               backgroundColor: bg,
@@ -245,9 +242,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                         prefixIcon: Icon(Icons.email_outlined,
                             color: subCol, size: 20),
                         filled: true,
-                        fillColor: dark
-                            ? const Color(0xFF09090B)
-                            : const Color(0xFFF4F4F5),
+                        fillColor: OTColors.surfaceSubtle(dark),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(OTRadius.input),
                           borderSide: BorderSide(color: borderCol),
@@ -283,10 +278,8 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                         const SizedBox(width: OTSpacing.md),
                         ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                            backgroundColor:
-                                dark ? Colors.white : const Color(0xFF09090B),
-                            foregroundColor:
-                                dark ? const Color(0xFF09090B) : Colors.white,
+                            backgroundColor: OTColors.accent(dark),
+                            foregroundColor: OTColors.onAccent(dark),
                             shape: RoundedRectangleBorder(
                               borderRadius:
                                   BorderRadius.circular(OTRadius.button),

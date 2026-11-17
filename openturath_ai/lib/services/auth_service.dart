@@ -866,8 +866,19 @@ class AuthService {
     final cleanEmail = email.trim().toLowerCase();
     if (cleanEmail.isEmpty) return;
     try {
+      String? idToken;
+      try {
+        idToken = await FirebaseAuth.instance.currentUser?.getIdToken();
+      } catch (_) {}
+      final headers = <String, String>{
+        'Accept': 'application/json',
+        'User-Agent': 'OpenTurathApp/1.0',
+        if (idToken != null && idToken.isNotEmpty)
+          'Authorization': 'Bearer $idToken',
+      };
       final res = await http.get(
-        Uri.parse('https://maktabah.openturath.id/api/user-status?email=$cleanEmail'),
+        Uri.parse('https://maktabah.openturath.id/api/user-status?email=${Uri.encodeQueryComponent(cleanEmail)}'),
+        headers: headers,
       ).timeout(const Duration(seconds: 4));
       if (res.statusCode == 200) {
         final data = jsonDecode(res.body);

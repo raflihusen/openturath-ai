@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -139,10 +140,16 @@ class SubscriptionService {
       });
 
       // 1. Tembak endpoint resmi VPS Maktabah OpenTurath (FastAPI / Caddy / Cloudflare)
-      final headers = {
+      String? idToken;
+      try {
+        idToken = await FirebaseAuth.instance.currentUser?.getIdToken();
+      } catch (_) {}
+      final headers = <String, String>{
         'Content-Type': 'application/json',
         'Accept': 'application/json',
         'User-Agent': 'OpenTurathApp/1.0',
+        if (idToken != null && idToken.isNotEmpty)
+          'Authorization': 'Bearer $idToken',
       };
       http.Response? response;
       try {
@@ -235,8 +242,16 @@ class SubscriptionService {
   /// pembayaran [invoice] milik pengguna sudah selesai. Galat apa pun dianggap
   /// belum siap, sehingga penahan hitungan tetap berlaku sebagai cadangan.
   Future<bool> isAccessReady({String? code, String? invoice}) async {
-    // Pada backend VPS, penukaran voucher via SQLite/grants dicatat seketika (instant grant)
-    if (code != null) return true;
+    if (code != null) {
+      final email = AuthService.activeWebUserEmail ??
+          AuthService().cachedCurrentUser?.email ??
+          '';
+      if (email.isNotEmpty) {
+        await AuthService.syncUserStatusWithVps(email);
+      }
+      final user = AuthService().cachedCurrentUser;
+      return user != null && (user.isVip || user.hasAccess);
+    }
     if (invoice != null && invoice.isNotEmpty) {
       try {
         final res = await verifyPaymentStatus(invoiceNumber: invoice);

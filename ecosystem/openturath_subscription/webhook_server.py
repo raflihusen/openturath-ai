@@ -307,81 +307,91 @@ def determine_plan_and_expiry(price_scheme_name: str, service_name: str, amount:
 
 def process_firestore_updates(email: str, name: str, plan: str, duration_months: int, amount: float,
                               transaction_id: str, scopes: list[str], service_name: str, paid_at_str: str = ""):
-    """Record one verified GoAkal purchase.
+    """Record one verified GoAkal purchase atomically.
 
-    Idempotent per transaction ID. Only the purchased modules are written; the
-    account-wide `plan` / `subscription_expiry` are never touched, so one
-    module cannot unlock the others. A longer existing entitlement is kept.
+    Idempotent per transaction ID inside a Firestore transaction. Only the
+    purchased modules are written; the account-wide `plan` / `subscription_expiry`
+    are never touched, so one module cannot unlock the others.
     """
     db = get_firestore_client()
     if not db:
         raise RuntimeError("Firestore client not available")
     email = email.strip().lower()
     trx_ref = db.collection("transactions").document(transaction_id)
-    if trx_ref.get().exists:
-        logger.info("⏭️  Transaksi %s sudah tercatat. Idempotent skip.", transaction_id)
-        return
+    user_query_doc = next(iter(db.collection("users").where("email", "==", email).limit(1).stream()), None)
+    user_ref = user_query_doc.reference if user_query_doc else None
+    legacy_uid = f"legacy_{hashlib.sha256(email.encode()).hexdigest()[:16]}"
+    legacy_owner_ref = db.collection("access_legacy_owners").document(legacy_uid)
 
     now = datetime.datetime.now(datetime.timezone.utc)
     base_date = access_policy.parse_dt(paid_at_str) or now
-    user_doc = next(iter(db.collection("users").where("email", "==", email).limit(1).stream()), None)
-    entitlements = (user_doc.to_dict() or {}).get("entitlements", {}) if user_doc else {}
-    if not isinstance(entitlements, dict):
-        entitlements = {}
 
-    # Renewal bought before the current period ends continues from that end.
-    start = base_date
-    for scope in scopes:
-        current = entitlements.get(scope)
-        current_end = access_policy.parse_dt(current.get("expiry")) if isinstance(current, dict) else None
-        if current_end and current_end > start and str(current.get("status") or "active") == "active":
-            start = current_end
-    expiry_date = access_policy.billing_expiry(start, duration_months)
+    @firestore.transactional
+    def _apply_atomic(transaction: firestore.Transaction):
+        if trx_ref.get(transaction=transaction).exists:
+            logger.info("⏭️  Transaksi %s sudah tercatat. Idempotent skip.", transaction_id)
+            return False
 
-    trx_ref.set({
-        "customer_email": email,
-        "customer_name": name,
-        "plan": plan,
-        "amount": amount,
-        "duration_months": duration_months,
-        "status": "success",
-        "source": "akal",
-        "service_name": service_name,
-        "entitlement_key": scopes[0],
-        "entitlement_keys": scopes,
-        "paid_at": base_date,
-        "paid_ms": int(base_date.timestamp() * 1000),
-        "expires_ms": int(expiry_date.timestamp() * 1000),
-        "processed_at": now,
-        "created_at": now,
-        "completed_at": now,
-        "subscription_expires_at": expiry_date,
-    })
-    logger.info("Saved Akal transaction %s.", transaction_id)
+        user_snap = user_ref.get(transaction=transaction) if user_ref else None
+        user_data = (user_snap.to_dict() or {}) if (user_snap and user_snap.exists) else {}
+        entitlements = user_data.get("entitlements", {})
+        if not isinstance(entitlements, dict):
+            entitlements = {}
 
-    grant_ids = []
-    for scope in scopes:
-        grant_id = f"goakal_{transaction_id}_{scope}"
-        grant_ref = db.collection("access_grants").document(grant_id)
-        grant_ref.set({
-            "uid": user_doc.id if user_doc else f"legacy_{hashlib.sha256(email.encode()).hexdigest()[:16]}",
-            "email": email,
-            "scope": scope,
-            "kind": "payment",
-            "status": "active",
+        # Renewal bought before the current period ends continues from that end.
+        start = base_date
+        for scope in scopes:
+            current = entitlements.get(scope)
+            current_end = access_policy.parse_dt(current.get("expiry")) if isinstance(current, dict) else None
+            if current_end and current_end > start and str(current.get("status") or "active") == "active":
+                start = current_end
+        expiry_date = access_policy.billing_expiry(start, duration_months)
+
+        legacy_snap = legacy_owner_ref.get(transaction=transaction) if not (user_snap and user_snap.exists) else None
+
+        transaction.set(trx_ref, {
+            "customer_email": email,
+            "customer_name": name,
+            "plan": plan,
             "amount": amount,
-            "provider": "goakal",
-            "source": "akal_webhook",
-            "transaction_id": transaction_id,
-            "starts_ms": int(base_date.timestamp() * 1000),
+            "duration_months": duration_months,
+            "status": "success",
+            "source": "akal",
+            "service_name": service_name,
+            "entitlement_key": scopes[0],
+            "entitlement_keys": scopes,
+            "paid_at": base_date,
+            "paid_ms": int(base_date.timestamp() * 1000),
             "expires_ms": int(expiry_date.timestamp() * 1000),
-            "created_ms": int(now.timestamp() * 1000),
-        }, merge=True)
-        grant_ids.append(grant_id)
+            "processed_at": now,
+            "created_at": now,
+            "completed_at": now,
+            "subscription_expires_at": expiry_date,
+        })
 
-    digest = hashlib.sha256(json.dumps([str(transaction_id), "PAID", email, service_name, amount, str(base_date)], separators=(",", ":")).encode()).hexdigest()
-    try:
-        db.collection("access_legacy_events").document(digest).set({
+        grant_ids = []
+        target_uid = user_snap.id if (user_snap and user_snap.exists) else legacy_uid
+        for scope in scopes:
+            grant_id = f"goakal_{transaction_id}_{scope}"
+            grant_ref = db.collection("access_grants").document(grant_id)
+            transaction.set(grant_ref, {
+                "uid": target_uid,
+                "email": email,
+                "scope": scope,
+                "kind": "payment",
+                "status": "active",
+                "amount": amount,
+                "provider": "goakal",
+                "source": "akal_webhook",
+                "transaction_id": transaction_id,
+                "starts_ms": int(base_date.timestamp() * 1000),
+                "expires_ms": int(expiry_date.timestamp() * 1000),
+                "created_ms": int(now.timestamp() * 1000),
+            }, merge=True)
+            grant_ids.append(grant_id)
+
+        digest = hashlib.sha256(json.dumps([str(transaction_id), "PAID", email, service_name, amount, str(base_date)], separators=(",", ":")).encode()).hexdigest()
+        transaction.set(db.collection("access_legacy_events").document(digest), {
             "email": email,
             "service": service_name,
             "payment_status": "PAID",
@@ -393,41 +403,38 @@ def process_firestore_updates(email: str, name: str, plan: str, duration_months:
             "grant_ids": grant_ids,
             "processed_at": now,
         }, merge=True)
-    except Exception as e:
-        logger.warning("Could not set access_legacy_events: %s", e)
 
-    if not user_doc:
-        legacy_uid = f"legacy_{hashlib.sha256(email.encode()).hexdigest()[:16]}"
-        legacy_owner_ref = db.collection("access_legacy_owners").document(legacy_uid)
-        try:
-            existing_grants = (legacy_owner_ref.get().to_dict() or {}).get("access_grant_ids", [])
-        except Exception:
-            existing_grants = []
-        legacy_owner_ref.set({
-            "email": email,
-            "legacy_revoke_only": False,
-            "access_grant_ids": list(set(existing_grants + grant_ids)),
-            "updated_at": now,
-            "access_version": 2,
-        }, merge=True)
-        logger.info("Pembeli %s belum terdaftar; akses dicatat di access_legacy_owners.", mask_email(email))
-        return
+        if not (user_snap and user_snap.exists):
+            existing_grants = (legacy_snap.to_dict() or {}).get("access_grant_ids", []) if (legacy_snap and legacy_snap.exists) else []
+            transaction.set(legacy_owner_ref, {
+                "email": email,
+                "legacy_revoke_only": False,
+                "access_grant_ids": list(set(existing_grants + grant_ids)),
+                "updated_at": now,
+                "access_version": 2,
+            }, merge=True)
+            logger.info("Pembeli %s belum terdaftar; akses dicatat atomik di access_legacy_owners.", mask_email(email))
+            return True
 
-    updates = {}
-    for scope in scopes:
-        current = entitlements.get(scope)
-        current_end = access_policy.parse_dt(current.get("expiry")) if isinstance(current, dict) else None
-        if current_end and current_end >= expiry_date and str(current.get("status") or "active") == "active":
-            continue
-        updates[f"entitlements.{scope}"] = {
-            "plan": plan, "status": "active", "expiry": expiry_date, "source": "goakal",
-            "source_transaction_id": transaction_id, "updated_at": now,
-        }
-    existing_grants = (user_doc.to_dict() or {}).get("access_grant_ids", [])
-    updates["access_grant_ids"] = list(set(existing_grants + grant_ids))
-    if updates:
-        user_doc.reference.update(updates)
-        logger.info("Updated %s: %s until %s", mask_email(email), ", ".join(scopes), expiry_date.date())
+        updates = {}
+        for scope in scopes:
+            current = entitlements.get(scope)
+            current_end = access_policy.parse_dt(current.get("expiry")) if isinstance(current, dict) else None
+            if current_end and current_end >= expiry_date and str(current.get("status") or "active") == "active":
+                continue
+            updates[f"entitlements.{scope}"] = {
+                "plan": plan, "status": "active", "expiry": expiry_date, "source": "goakal",
+                "source_transaction_id": transaction_id, "updated_at": now,
+            }
+        existing_grants = user_data.get("access_grant_ids", [])
+        updates["access_grant_ids"] = list(set(existing_grants + grant_ids))
+        if updates:
+            transaction.update(user_ref, updates)
+            logger.info("Updated %s atomically: %s until %s", mask_email(email), ", ".join(scopes), expiry_date.date())
+        return True
+
+    if _apply_atomic(db.transaction()):
+        logger.info("Saved Akal transaction %s atomically.", transaction_id)
 
 
 async def process_internal_provisioning(payload: dict) -> dict:

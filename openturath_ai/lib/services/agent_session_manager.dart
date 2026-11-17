@@ -114,8 +114,14 @@ class AgentSessionManager extends ChangeNotifier {
     return _tabs[_activeIndex];
   }
 
+  bool get isAtTabLimit => _tabs.length >= maxTabs;
+
+  int get oldestEvictableIndex => _activeIndex == 0 ? 1 : 0;
+
   /// Open an agent or switch to its existing active tab with zero reload.
-  void openAgent(AgentModel agent, {UserModel? user}) {
+  /// Returns `false` if [maxTabs] is reached and [replaceOldest] is `false`.
+  bool openAgent(AgentModel agent,
+      {UserModel? user, bool replaceOldest = false}) {
     final existingIndex = _tabs.indexWhere((t) => t.agent.id == agent.id);
     if (existingIndex != -1) {
       _tabs[existingIndex].isPrewarmed = false;
@@ -143,15 +149,17 @@ class AgentSessionManager extends ChangeNotifier {
       }
     } else {
       if (_tabs.length >= maxTabs) {
-        // Tab limit reached: close oldest non-active tab to preserve WebView memory
-        final evictIndex = _activeIndex == 0 ? 1 : 0;
-        closeTab(evictIndex);
+        if (!replaceOldest) {
+          return false;
+        }
+        closeTab(oldestEvictableIndex);
       }
       _tabs.add(AgentSessionTab(agent: agent));
       _activeIndex = _tabs.length - 1;
     }
     _isOpen = true;
     notifyListeners();
+    return true;
   }
 
   /// Pre-warm dinonaktifkan permanen demi keandalan saat kondisi koneksi awal terputus (offline).

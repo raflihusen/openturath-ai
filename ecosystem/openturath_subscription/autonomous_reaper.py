@@ -86,232 +86,26 @@ class EvidenceUnavailable(RuntimeError):
     """A data source could not be read; revoking on partial data is forbidden."""
 
 
-MASTER_NOTEBOOKS = [
-    # 1. Fikih Syafi'i (Master & Legacy)
-    {
-        "name": "01 - FIKIH SYAFII (MASTER)",
-        "id": "c89d09ca-4b48-4000-a98d-59e532607fb6",
-        "key": "fiqh_syafii",
-        "cuid": os.getenv("AKAL_SERVICE_CUID_FIKIH_SYAFII", "cms4ls3j60001l20439k1nqh4"),
-    },
-    {
-        "name": "AI Fikih Syafi'i (Legacy)",
-        "id": os.getenv("NOTEBOOK_ID_FIKIH_SYAFII", "334e7b83-0e76-4787-a1d6-314642a35862"),
-        "key": "fiqh_syafii",
-        "cuid": os.getenv("AKAL_SERVICE_CUID_FIKIH_SYAFII", "cms4ls3j60001l20439k1nqh4"),
-    },
-    # 2. Fikih Tahawwulat (5 Cabang Master Asli & Pool)
-    {
-        "name": "06.1 - AL-MUHAQQIQ (MASTER)",
-        "id": "483d0291-0a70-411c-bff0-f1ea4b83b2fd",
-        "key": "fiqh_tahawwulat",
-        "cuid": os.getenv("AKAL_SERVICE_CUID_FIKIH_TAHAWWULAT", "cmln2i27k0000jx047oabzw8p"),
-    },
-    {
-        "name": "Al-Muhaqqiq (Secondary Pool)",
-        "id": "67b65ed8-0d1e-4fb4-929c-4fcb735d3be3",
-        "key": "fiqh_tahawwulat",
-        "cuid": os.getenv("AKAL_SERVICE_CUID_FIKIH_TAHAWWULAT", "cmln2i27k0000jx047oabzw8p"),
-    },
-    {
-        "name": "06.2 - AL-BAYAN (MASTER)",
-        "id": "dc7ee7e4-f4ad-4db6-9cd0-0013727abbe4",
-        "key": "fiqh_tahawwulat",
-        "cuid": os.getenv("AKAL_SERVICE_CUID_FIKIH_TAHAWWULAT", "cmln2i27k0000jx047oabzw8p"),
-    },
-    {
-        "name": "Al-Bayan (Secondary Pool)",
-        "id": "75882649-638f-4729-97f8-19897d90b108",
-        "key": "fiqh_tahawwulat",
-        "cuid": os.getenv("AKAL_SERVICE_CUID_FIKIH_TAHAWWULAT", "cmln2i27k0000jx047oabzw8p"),
-    },
-    {
-        "name": "06.3 - AL-MUKHTABIR (MASTER)",
-        "id": "ac803816-5541-4446-bc9d-b56326493555",
-        "key": "fiqh_tahawwulat",
-        "cuid": os.getenv("AKAL_SERVICE_CUID_FIKIH_TAHAWWULAT", "cmln2i27k0000jx047oabzw8p"),
-    },
-    {
-        "name": "Al-Mukhtabir (Legacy)",
-        "id": "ac61a7a0-87e7-42a5-a30f-980ff74a78d8",
-        "key": "fiqh_tahawwulat",
-        "cuid": os.getenv("AKAL_SERVICE_CUID_FIKIH_TAHAWWULAT", "cmln2i27k0000jx047oabzw8p"),
-    },
-    {
-        "name": "06.4 - AL-HABIB (MASTER)",
-        "id": "c8b8a754-991d-429d-8379-b0478abb6ceb",
-        "key": "fiqh_tahawwulat",
-        "cuid": os.getenv("AKAL_SERVICE_CUID_FIKIH_TAHAWWULAT", "cmln2i27k0000jx047oabzw8p"),
-    },
-    {
-        "name": "Al-Habib (Legacy)",
-        "id": "6673e79a-7156-42e1-b116-bc1653a32094",
-        "key": "fiqh_tahawwulat",
-        "cuid": os.getenv("AKAL_SERVICE_CUID_FIKIH_TAHAWWULAT", "cmln2i27k0000jx047oabzw8p"),
-    },
-    {
-        "name": "06.5 - AL-KHATIB (MASTER)",
-        "id": "926f3633-53fc-4dbf-81da-0570f7a4d26b",
-        "key": "fiqh_tahawwulat",
-        "cuid": os.getenv("AKAL_SERVICE_CUID_FIKIH_TAHAWWULAT", "cmln2i27k0000jx047oabzw8p"),
-    },
-    {
-        "name": "Al-Khatib (Legacy)",
-        "id": "1288e413-9569-47a3-892f-64008e53c1e8",
-        "key": "fiqh_tahawwulat",
-        "cuid": os.getenv("AKAL_SERVICE_CUID_FIKIH_TAHAWWULAT", "cmln2i27k0000jx047oabzw8p"),
-    },
-    # 3. Bahasa & Sastra Arab
-    {
-        "name": "AI Bahasa Arab",
-        "id": "1ae6ae57-53f0-4ce2-a2be-c324e03abb83",
-        "key": "nahwu",
-        "cuid": os.getenv("AKAL_SERVICE_CUID_BAHASA_ARAB", "cmnd7l4o60002l504ab6qq31x"),
-    },
-    {
-        "name": "AI Bahasa Arab (Legacy)",
-        "id": "15bc4cef-4b94-4241-b05a-d50a586bde06",
-        "key": "nahwu",
-        "cuid": "",
-    },
-    # 4. Hadits Nabawi
-    {
-        "name": "AI Hadits Nabawi",
-        "id": "9da436c8-f9b7-4e8b-a51f-d798a31892a7",
-        "key": "hadits",
-        "cuid": os.getenv("AKAL_SERVICE_CUID_HADITS", ""),
-    },
-    {
-        "name": "AI Hadits (Legacy)",
-        "id": "b9626501-538c-4358-a44f-6731eaec50b6",
-        "key": "hadits",
-        "cuid": "",
-    },
-    # 5. Tafsir & Ulumul Qur'an
-    {
-        "name": "AI Tafsir & Ulumul Quran",
-        "id": "f15bd838-dac9-415b-bd40-fef3da1355d4",
-        "key": "tafsir",
-        "cuid": os.getenv("AKAL_SERVICE_CUID_TAFSIR", ""),
-    },
-    {
-        "name": "AI Tafsir (Legacy)",
-        "id": "df92cc50-1106-4221-8748-1663f00fa7fe",
-        "key": "tafsir",
-        "cuid": "",
-    },
-    # 6. Ushul Fikih
-    {
-        "name": "AI Ushul Fiqih",
-        "id": "6009f2ee-6328-497d-b74e-4276834caa94",
-        "key": "ushul_fiqh",
-        "cuid": os.getenv("AKAL_SERVICE_CUID_USHUL_FIQIH", ""),
-    },
-    {
-        "name": "AI Ushul Fiqih (Legacy)",
-        "id": "6ab6dae8-0067-435a-85ca-b6bd4e17dd12",
-        "key": "ushul_fiqh",
-        "cuid": "",
-    },
-    # 7. Qawaid Fiqhiyyah
-    {
-        "name": "AI Qawaid Fiqhiyyah",
-        "id": "35cc555e-3d6c-43fd-ae82-6a06cd107899",
-        "key": "ushul_fiqh",
-        "cuid": "",
-    },
-    # 8. Aqidah & Ushuluddin
-    {
-        "name": "AI Aqidah & Ushuluddin",
-        "id": "d4807af1-1c3b-4ffd-b9b8-a944b2f8c5bd",
-        "key": "aqidah",
-        "cuid": "",
-    },
-    # 9. Bibliografi & Faharis
-    {
-        "name": "AI Bibliografi & Faharis",
-        "id": "d35f7598-076a-4c91-8ccf-9dc1aa1b0e7d",
-        "key": "bibliografi_faharis",
-        "cuid": "",
-    },
-    # 10. Tajwid & Qiraat
-    {
-        "name": "AI Tajwid & Qiraat",
-        "id": "0364032d-3cb9-4b4e-bf5c-b0bf72f134f6",
-        "key": "tafsir",
-        "cuid": "",
-    },
-    # 11. Fikih Muqaran & Umum
-    {
-        "name": "AI Fikih Muqaran & Umum",
-        "id": "66ed9863-e177-43a9-a1a4-25fb953520a7",
-        "key": "fiqh_muqaran",
-        "cuid": "",
-    },
-    # 12. Tasawwuf & Adzkar
-    {
-        "name": "AI Tasawwuf & Adzkar",
-        "id": "9a9902ff-ff0a-4696-845b-a809a69db84b",
-        "key": "tasawwuf",
-        "cuid": "",
-    },
-    # 13. Fikih Hanafi
-    {
-        "name": "AI Fikih Hanafi",
-        "id": "063ddf96-61a5-46c7-a6ae-5b9eb8bddb6b",
-        "key": "fiqh_hanafi",
-        "cuid": "",
-    },
-    # 14. Fikih Hanbali
-    {
-        "name": "AI Fikih Hanbali",
-        "id": "45f6ccdd-d3e5-4ca7-96cb-4f905d3cde3e",
-        "key": "fiqh_hanbali",
-        "cuid": "",
-    },
-    # 15. Fatawa & Masail Fiqhiyyah
-    {
-        "name": "AI Fatawa & Masail Fiqhiyyah",
-        "id": "45a2043c-4617-42a7-9f00-fbc2138def48",
-        "key": "fiqh",
-        "cuid": "",
-    },
-    # 16. Fikih Maliki
-    {
-        "name": "AI Fikih Maliki",
-        "id": "cc152334-e7d2-44ac-bb14-65e70d893b40",
-        "key": "fiqh_maliki",
-        "cuid": "",
-    },
-    # 17. Musthalah & Ulumul Hadits
-    {
-        "name": "AI Musthalah & Ulumul Hadits",
-        "id": "af26bf8f-4429-4d2f-9cf0-17bcc835fb86",
-        "key": "hadits",
-        "cuid": "",
-    },
-    # 18. Thabaqat & Tarajim Rijal
-    {
-        "name": "AI Thabaqat & Tarajim Rijal",
-        "id": "59fd5420-7392-4d58-825a-02b87bade32d",
-        "key": "tarikh",
-        "cuid": "",
-    },
-    # 19. Tarikh & Sirah Nabawiyyah
-    {
-        "name": "AI Tarikh & Sirah Nabawiyyah",
-        "id": "94d49b05-e0b6-4ea2-9b7d-7c75f8edca75",
-        "key": "tarikh",
-        "cuid": "",
-    },
-    # 20. Syarah Hadits
-    {
-        "name": "AI Syarah Hadits",
-        "id": "27c104b7-e8aa-40a9-b9dd-ad4741b2d515",
-        "key": "hadits",
-        "cuid": "",
-    },
-]
+def _build_master_notebooks() -> list[dict[str, str]]:
+    """Bangun daftar notebook master + legacy langsung dari shared/product_catalog.json."""
+    entries: list[dict[str, str]] = []
+    seen_ids: set[str] = set()
+    scopes = shared_registry.catalog().get("scopes", {})
+    for scope_key, scope_info in scopes.items():
+        for nb in scope_info.get("notebooks", []):
+            entity = nb.get("entity", scope_key)
+            master_id = nb.get("master", "")
+            if master_id and master_id not in seen_ids:
+                seen_ids.add(master_id)
+                entries.append({"name": f"{entity} (Master)", "id": master_id, "key": scope_key, "cuid": ""})
+            for legacy_id in nb.get("legacy", []):
+                if legacy_id and legacy_id not in seen_ids:
+                    seen_ids.add(legacy_id)
+                    entries.append({"name": f"{entity} (Legacy)", "id": legacy_id, "key": scope_key, "cuid": ""})
+    return entries
+
+
+MASTER_NOTEBOOKS = _build_master_notebooks()
 
 def send_telegram(text: str) -> bool:
     token = os.getenv("TELEGRAM_BOT_TOKEN")

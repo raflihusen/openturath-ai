@@ -234,8 +234,49 @@ class _DashboardScreenState extends State<DashboardScreen>
       return;
     }
 
-    // Buka sesi AI multi-tab secara seketika (0ms delay)
-    AgentSessionManager.instance.openAgent(agent, user: user);
+    // Buka sesi AI multi-tab secara seketika (0ms delay), atau konfirmasi jika batas tab penuh
+    if (!AgentSessionManager.instance.openAgent(agent, user: user)) {
+      _confirmReplaceOldestTab(agent, user);
+    }
+  }
+
+  Future<void> _confirmReplaceOldestTab(
+      AgentModel agent, UserModel? user) async {
+    final mgr = AgentSessionManager.instance;
+    final oldest = mgr.tabs[mgr.oldestEvictableIndex].agent;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: OTColors.surface(isDark),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(OTRadius.dialog),
+          side: BorderSide(color: OTColors.border(isDark)),
+        ),
+        title: Text(
+          'Batas Tab Tercapai',
+          style: OTTypography.cardTitle(color: OTColors.textPrimary(isDark)),
+        ),
+        content: Text(
+          'Maksimal ${AgentSessionManager.maxTabs} asisten aktif terbuka bersamaan. Tutup tab "${Loc.text(oldest.title)}" untuk membuka "${Loc.text(agent.title)}"?',
+          style: OTTypography.body(color: OTColors.textSecondary(isDark)),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: Text(Loc.tr('cancel'),
+                style: OTTypography.body(color: OTColors.textSecondary(isDark))),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text('Tutup & Buka'),
+          ),
+        ],
+      ),
+    );
+    if (confirmed == true && mounted) {
+      mgr.openAgent(agent, user: user, replaceOldest: true);
+    }
   }
 
   static const List<({String fieldId, String name, int specialistCount})>

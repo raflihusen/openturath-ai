@@ -118,6 +118,7 @@ class PaymentSuccessDialog extends StatelessWidget {
                                 AgentSessionManager.instance.openAgent(
                                   agent!,
                                   user: AuthService().cachedCurrentUser,
+                                  replaceOldest: true,
                                 );
                               }
                             }

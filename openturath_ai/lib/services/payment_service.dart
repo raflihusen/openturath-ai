@@ -103,10 +103,8 @@ class PaymentService {
     }
   }
 
-  static const String _midtransServerKey =
-      'MIDTRANS_SERVER_KEY_REDACTED';
-
-  /// Periksa status pembayaran transaksi secara sah langsung ke Midtrans API
+  /// Periksa status pembayaran transaksi melalui Cloud Function server-side.
+  /// Klien tidak pernah menyimpan atau memakai Server Key Midtrans.
   Future<Map<String, dynamic>> checkPaymentStatus({
     required String invoiceNumber,
   }) async {
@@ -119,96 +117,12 @@ class PaymentService {
       };
     }
 
-    // 1. Inquiry langsung ke endpoint status resmi Midtrans API v2
-    try {
-      final authBasic =
-          base64Encode(utf8.encode('$_midtransServerKey:'));
-      final res = await http.get(
-        Uri.parse('https://api.midtrans.com/v2/$cleanInvoice/status'),
-        headers: {
-          'Authorization': 'Basic $authBasic',
-          'Accept': 'application/json',
-          'User-Agent': 'OpenTurathApp/1.0',
-        },
-      ).timeout(const Duration(seconds: 6));
-
-      if (res.statusCode == 200) {
-        final data = jsonDecode(res.body);
-        if (data is Map) {
-          final txStatus =
-              (data['transaction_status'] ?? '').toString().toLowerCase();
-          final fraudStatus =
-              (data['fraud_status'] ?? '').toString().toLowerCase();
-
-          // Transaksi lunas di Midtrans: settlement atau capture (dengan fraud_status accept)
-          if (txStatus == 'settlement' ||
-              (txStatus == 'capture' &&
-                  (fraudStatus.isEmpty || fraudStatus == 'accept'))) {
-            return {
-              'status': 'SETTLED',
-              'success': true,
-              'transaction_status': txStatus,
-              'order_id': cleanInvoice,
-              'gross_amount': data['gross_amount'],
-              'payment_type': data['payment_type'],
-              'transaction_time': data['transaction_time'],
-            };
-          } else if (txStatus == 'pending') {
-            return {
-              'status': 'PENDING',
-              'success': false,
-              'transaction_status': 'pending',
-              'order_id': cleanInvoice,
-            };
-          } else if (txStatus == 'expire') {
-            return {
-              'status': 'EXPIRED',
-              'success': false,
-              'transaction_status': 'expire',
-              'order_id': cleanInvoice,
-            };
-          } else if (txStatus == 'cancel') {
-            return {
-              'status': 'CANCELLED',
-              'success': false,
-              'transaction_status': 'cancel',
-              'order_id': cleanInvoice,
-            };
-          } else if (txStatus == 'deny') {
-            return {
-              'status': 'DENIED',
-              'success': false,
-              'transaction_status': 'deny',
-              'order_id': cleanInvoice,
-            };
-          } else {
-            return {
-              'status': txStatus.toUpperCase(),
-              'success': false,
-              'transaction_status': txStatus,
-              'order_id': cleanInvoice,
-            };
-          }
-        }
-      } else if (res.statusCode == 404) {
-        // Pada Midtrans Snap, transaksi baru tercatat di core engine ketika user
-        // sudah memilih metode pembayaran (misal membuka QRIS atau memilih Virtual Account).
-        // Sebelum metode dipilih, Midtrans mengembalikan 404 "Transaction doesn't exist.".
-        // Status di klien tetap PENDING agar checkout sheet tetap terbuka menunggu aksi user.
-        return {
-          'status': 'PENDING',
-          'success': false,
-          'transaction_status': 'not_yet_selected',
-          'order_id': cleanInvoice,
-        };
-      }
-    } catch (_) {}
-
-    // 2. Fallback jika Cloud Function masih tersedia di lingkungan pengujian
     try {
       final result = await _functions.call(
           AppConstants.fnCheckPaymentStatus, {'invoiceNumber': cleanInvoice});
       return Map<String, dynamic>.from(result as Map);
+    } on FirebaseFunctionsException {
+      rethrow;
     } catch (_) {
       return {
         'status': 'PENDING',

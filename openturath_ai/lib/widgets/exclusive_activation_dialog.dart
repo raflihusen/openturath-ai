@@ -146,6 +146,7 @@ class ExclusiveActivationDialog extends StatelessWidget {
         AgentSessionManager.instance.openAgent(
           matched,
           user: AuthService().cachedCurrentUser,
+          replaceOldest: true,
         );
         return;
       }

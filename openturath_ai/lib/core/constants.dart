@@ -1,11 +1,21 @@
+import 'package:flutter/foundation.dart';
+
 class AppConstants {
   // ── App Info ──────────────────────────────────────────────────
   static const String appName = 'OpenTurath AI';
   static const String appTagline = 'AI for Islamic Scholarship';
 
-  // ── User Agent Desktop Resmi (Safari macOS untuk WKWebView) ──
+  // ── User Agent Desktop Resmi (Safari macOS / Chrome Windows) ──
   static const String desktopSafariUserAgent =
       'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Safari/605.1.15';
+
+  static const String desktopWindowsUserAgent =
+      'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36';
+
+  static String get desktopUserAgent =>
+      (!kIsWeb && defaultTargetPlatform == TargetPlatform.macOS)
+          ? desktopSafariUserAgent
+          : desktopWindowsUserAgent;
 
   // ── Chrome Mobile User Agent Resmi (Android WebView) ──
   static const String chromeMobileUserAgent =

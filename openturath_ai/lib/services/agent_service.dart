@@ -190,14 +190,18 @@ class AgentService {
       // Abaikan kegagalan jaringan VPS dan lanjutkan ke fallback kanonik
     }
 
-    // 2. Fallback naskah kanonik resmi Pro Master
-    final canonical = CanonicalNotebookCatalog.getUrl(agentId);
-    if (canonical != null && canonical.isNotEmpty) {
-      return canonical;
+    // 2. Fallback naskah kanonik resmi Pro Master HANYA jika user terverifikasi berhak
+    if (isVip || (effectiveUser != null && effectiveUser.hasAccessToAgent(agentId))) {
+      final canonical = CanonicalNotebookCatalog.getUrl(agentId);
+      if (canonical != null && canonical.isNotEmpty) {
+        return canonical;
+      }
     }
 
     throw const AgentAccessException(
-        'empty-url', 'URL AI belum tersedia untuk bidang ini.');
+        'permission-denied',
+        'Akses ke modul AI ini memerlukan paket langganan atau voucher aktif.',
+        reason: 'entitlement_required');
   }
 
   // ── Catat pertanyaan trial secara atomik di Cloud Functions ───

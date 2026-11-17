@@ -9,5 +9,7 @@ __pycache__/
 *_report.txt
 stress_test_report.json
 .storage_state.json*
+.storage_state*.json*
 storage_state.json
+storage_state*.json
 master_token.json

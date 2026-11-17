@@ -171,7 +171,9 @@ class _SpecialistListScreenState extends State<SpecialistListScreen>
       return;
     }
 
-    AgentSessionManager.instance.openAgent(agent, user: user);
+    if (!AgentSessionManager.instance.openAgent(agent, user: user)) {
+      _confirmReplaceOldestTab(agent, user);
+    }
   }
 
   void _openTahawwulatSubAgent(AgentModel parentAgent, SubAgentModel subAgent) {
@@ -199,7 +201,48 @@ class _SpecialistListScreenState extends State<SpecialistListScreen>
       prefs.setString('last_opened_notebook_id', personaAgent.id);
     }).catchError((_) {});
 
-    AgentSessionManager.instance.openAgent(personaAgent, user: user);
+    if (!AgentSessionManager.instance.openAgent(personaAgent, user: user)) {
+      _confirmReplaceOldestTab(personaAgent, user);
+    }
+  }
+
+  Future<void> _confirmReplaceOldestTab(
+      AgentModel agent, UserModel? user) async {
+    final mgr = AgentSessionManager.instance;
+    final oldest = mgr.tabs[mgr.oldestEvictableIndex].agent;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: OTColors.surface(isDark),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(OTRadius.dialog),
+          side: BorderSide(color: OTColors.border(isDark)),
+        ),
+        title: Text(
+          'Batas Tab Tercapai',
+          style: OTTypography.cardTitle(color: OTColors.textPrimary(isDark)),
+        ),
+        content: Text(
+          'Maksimal ${AgentSessionManager.maxTabs} asisten aktif terbuka bersamaan. Tutup tab "${Loc.text(oldest.title)}" untuk membuka "${Loc.text(agent.title)}"?',
+          style: OTTypography.body(color: OTColors.textSecondary(isDark)),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: Text(Loc.tr('cancel'),
+                style: OTTypography.body(color: OTColors.textSecondary(isDark))),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text('Tutup & Buka'),
+          ),
+        ],
+      ),
+    );
+    if (confirmed == true && mounted) {
+      mgr.openAgent(agent, user: user, replaceOldest: true);
+    }
   }
 
   void _openSubscriptionForAgent(AgentModel agent, {UserModel? user}) {

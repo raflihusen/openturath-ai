@@ -83,9 +83,9 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     Loc.watch(context);
     // Paduan latar putih editorial dengan kartu obsidian gerbang lengkung Islam (Foto 2)
-    const outerCanvas = Color(0xFFF7F7F8);
-    const headerPrimary = Color(0xFF18181B);
-    const headerSecondary = Color(0xFF71717A);
+    const outerCanvas = OTColors.canvasLight;
+    const headerPrimary = OTColors.textPrimaryLight;
+    const headerSecondary = OTColors.textSecondaryLight;
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: const SystemUiOverlayStyle(
@@ -124,8 +124,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: FilledButton.icon(
                     style: style ??
                         FilledButton.styleFrom(
-                          backgroundColor: Colors.white,
-                          foregroundColor: Colors.black,
+                          backgroundColor: OTColors.surfaceLight,
+                          foregroundColor: OTColors.textPrimaryLight,
                           elevation: 0,
                           minimumSize: const Size(double.infinity, 52),
                           shape: RoundedRectangleBorder(
@@ -157,8 +157,8 @@ class _LoginScreenState extends State<LoginScreen> {
                     child: Container(
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: Colors.white,
-                        border: Border.all(color: const Color(0xFFE4E4E7)),
+                        color: OTColors.surfaceLight,
+                        border: Border.all(color: OTColors.borderLight),
                         borderRadius: BorderRadius.circular(OTRadius.xs),
                       ),
                       child: Row(
@@ -255,15 +255,15 @@ class _LoginScreenState extends State<LoginScreen> {
                     const SizedBox(height: 24),
                     signInButton(
                       FilledButton.styleFrom(
-                        backgroundColor: Colors.white,
-                        foregroundColor: Colors.black,
+                        backgroundColor: OTColors.surfaceLight,
+                        foregroundColor: OTColors.textPrimaryLight,
                         elevation: 0,
                         minimumSize: const Size(double.infinity, 52),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(26),
                         ),
                       ),
-                      Colors.black,
+                      OTColors.textPrimaryLight,
                     ),
                     if (_desktopError != null) errorBox(),
                     const SizedBox(height: 20),
@@ -281,10 +281,10 @@ class _LoginScreenState extends State<LoginScreen> {
                       child: Container(
                         clipBehavior: Clip.antiAlias,
                         decoration: BoxDecoration(
-                          color: const Color(0xFF141416),
+                          color: OTColors.canvasDark,
                           borderRadius: BorderRadius.circular(OTRadius.sheet),
                           border: Border.all(
-                              color: Colors.white.withValues(alpha: 0.12)),
+                              color: OTColors.surfaceLight.withValues(alpha: 0.12)),
                         ),
                         child: LayoutBuilder(builder: (context, card) {
                           if (card.maxHeight < 520) {
@@ -333,15 +333,15 @@ class _LoginScreenState extends State<LoginScreen> {
                               const SizedBox(height: 24),
                               signInButton(
                                 FilledButton.styleFrom(
-                                  backgroundColor: const Color(0xFF18181B),
-                                  foregroundColor: Colors.white,
+                                  backgroundColor: OTColors.accentLight,
+                                  foregroundColor: OTColors.onAccentLight,
                                   elevation: 0,
                                   minimumSize: const Size(double.infinity, 52),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(26),
                                   ),
                                 ),
-                                Colors.white,
+                                OTColors.onAccentLight,
                               ),
                               if (_desktopError != null) errorBox(),
                               const SizedBox(height: 20),

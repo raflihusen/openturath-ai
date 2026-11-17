@@ -684,7 +684,7 @@ class _PaymentCheckoutSheetState extends State<PaymentCheckoutSheet> {
                         forceDark: isDark ? ForceDark.ON : ForceDark.OFF,
                         transparentBackground: false,
                         userAgent: AppPlatform.isDesktop
-                            ? AppConstants.desktopSafariUserAgent
+                            ? AppConstants.desktopUserAgent
                             : AppConstants.chromeMobileUserAgent,
                       ),
                       onWebViewCreated: (controller) {

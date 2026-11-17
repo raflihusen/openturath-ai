@@ -1972,7 +1972,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
                 UnmodifiableListView([_buildCloakScript(isDark)]),
             initialSettings: InAppWebViewSettings(
               userAgent: AppPlatform.isDesktop
-                  ? AppConstants.desktopSafariUserAgent
+                  ? AppConstants.desktopUserAgent
                   : AppConstants.chromeMobileUserAgent,
               incognito: false,
               javaScriptEnabled: true,

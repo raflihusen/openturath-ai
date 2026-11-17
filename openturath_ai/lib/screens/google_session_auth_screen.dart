@@ -820,7 +820,21 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
   /// Tombol Lanjutkan manual untuk memeriksa login dan konfirmasi akun
   Future<void> _handleManualContinue() async {
     if (_isAppEntry) {
-      await _enterApplication();
+      final controller = _webController;
+      if (controller != null) {
+        await _checkApplicationEntry(controller);
+      }
+      if (!mounted || _isCompletingSession) return;
+      final hasSession = await _hasGoogleSession();
+      final email = (AuthService.activeWebUserEmail ??
+              _authService.cachedCurrentUser?.email ??
+              '')
+          .trim();
+      if (hasSession == true && email.contains('@')) {
+        await _enterApplication();
+      } else if (mounted) {
+        AppSnackBar.warning(context, Loc.tr('pleaseFinishGoogleLogin'));
+      }
       return;
     }
     if (!mounted ||
@@ -1322,8 +1336,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
                                         context,
                                         InAppWebViewSettings(
                                           userAgent: AppPlatform.isDesktop
-                                              ? AppConstants
-                                                  .desktopSafariUserAgent
+                                              ? AppConstants.desktopUserAgent
                                               : AppConstants
                                                   .chromeMobileUserAgent,
                                           incognito: false,
@@ -1342,8 +1355,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
                                             UnmodifiableListView([]),
                                         initialSettings: InAppWebViewSettings(
                                           userAgent: AppPlatform.isDesktop
-                                              ? AppConstants
-                                                  .desktopSafariUserAgent
+                                              ? AppConstants.desktopUserAgent
                                               : AppConstants
                                                   .chromeMobileUserAgent,
                                           incognito: false,
