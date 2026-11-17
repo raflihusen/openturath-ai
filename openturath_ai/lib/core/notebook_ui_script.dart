@@ -1022,13 +1022,16 @@ const _notebookCleanupScript = r'''
           fullText.includes('limits updated') ||
           fullText.includes('data anda dilindungi') ||
           fullText.includes('your data is protected') ||
-          fullText.includes('persyaratan layanan') ||
-          fullText.includes('terms of service') ||
           fullText.includes('info terbaru');
+
+        // Dialog persetujuan hukum / Terms of Service tidak boleh disetujui otomatis
+        if (fullText.includes('persyaratan layanan') || fullText.includes('terms of service')) {
+          return;
+        }
 
         if (isWelcomeOrPromo) {
           foundPromoOrWelcome = true;
-          // Otomatis klik tombol konfirmasi / tutup agar status tersimpan di backend Google
+          // Otomatis tutup dialog onboarding/selamat datang kosmetik
           const buttons = dialog.querySelectorAll('button, [role="button"]');
           for (const btn of buttons) {
             const btnText = (btn.innerText || btn.textContent || btn.getAttribute('aria-label') || '').trim().toLowerCase();
@@ -1037,8 +1040,8 @@ const _notebookCleanupScript = r'''
               /^(close|tutup|dismiss|\u0625\u063a\u0644\u0627\u0642)$/i.test((btn.getAttribute('aria-label') || '').trim());
             if (btnText === 'oke' || btnText === 'ok' || btnText === 'mengerti' || btnText === 'got it' ||
                 btnText === 'close' || btnText === 'tutup' || btnText.includes('close') || hasCloseIcon ||
-                btnText === 'lanjutkan' || btnText === 'continue' || btnText === 'setuju' || btnText === 'agree' ||
-                btnText === 'mulai' || btnText === 'get started' || btnText === 'accept' || btnText === 'terima') {
+                btnText === 'lanjutkan' || btnText === 'continue' ||
+                btnText === 'mulai' || btnText === 'get started') {
               try { btn.click(); break; } catch (_) {}
             }
           }

@@ -89,9 +89,9 @@
       "notebooks": [
         {
           "entity": "01_FIKIH_SYAFII",
-          "master": "6f42cb8a-79cc-429b-89c5-9a96561f8f4d",
+          "master": "c89d09ca-4b48-4000-a98d-59e532607fb6",
           "legacy": [
-            "c89d09ca-4b48-4000-a98d-59e532607fb6",
+            "6f42cb8a-79cc-429b-89c5-9a96561f8f4d",
             "334e7b83-0e76-4787-a1d6-314642a35862"
           ]
         }

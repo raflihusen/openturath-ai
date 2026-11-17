@@ -766,7 +766,12 @@ class AuthService {
         agentId == 'all_ai' ||
         agentId == 'all_specialists';
 
+    // Pertahankan hak akses modul lain yang masih aktif (Aturan 5: Hak Akses Granular Per-Modul)
+    final existingEntitlements = Map<String, ModuleEntitlement>.from(
+        _activeWebUser?.entitlements ?? _userCache['web_$cleanEmail']?.entitlements ?? {});
+
     final entMap = <String, ModuleEntitlement>{
+      ...existingEntitlements,
       if (customEntitlements != null && customEntitlements.isNotEmpty)
         ...customEntitlements
       else if (isAll) ...{
