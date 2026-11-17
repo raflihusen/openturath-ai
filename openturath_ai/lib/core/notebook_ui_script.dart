@@ -25,9 +25,13 @@ const _notebookCleanupScript = r'''
   const text = el => (el?.innerText || el?.textContent || '').trim();
   function answerText(el) {
     if (!el) return '';
-    const clone = el.cloneNode(true);
-    clone.querySelectorAll('button, [role="button"], .message-actions, .feedback-buttons, [class*="action" i], [class*="feedback" i]').forEach(e => e.remove());
-    return text(clone);
+    const content = el.querySelector?.('.to-user-message-card-content, .message-text-content, .rendered-markdown');
+    const target = content || el;
+    const clone = target.cloneNode(true);
+    clone.querySelectorAll('button, [role="button"], thinking-chain-view, .thinking-chain, .message-actions, .feedback-buttons, chat-actions, .chat-actions, .ot-answer-actions, [class*="action" i], [class*="feedback" i]').forEach(e => e.remove());
+    let res = (clone.innerText || clone.textContent || '').trim();
+    if (!res) res = (target.innerText || target.textContent || '').trim();
+    return res;
   }
   function latest() {
     let answers = [...document.querySelectorAll(answerSelector)].filter(visible);
@@ -77,14 +81,19 @@ const _notebookCleanupScript = r'''
     if (content === lastCopy && Date.now() - lastCopyAt < 3500) return lastCopyResult;
     lastCopy = content; lastCopyAt = Date.now();
     lastCopyResult = copyQueue.then(async () => {
+      let ok = false;
       if (window.flutter_inappwebview?.callHandler) {
-        return await window.flutter_inappwebview.callHandler('otCopiedAnswer', content) === true;
+        try {
+          ok = await window.flutter_inappwebview.callHandler('otCopiedAnswer', content) === true;
+        } catch (_) {}
       }
-      if (navigator.clipboard?.writeText) {
-        await navigator.clipboard.writeText(content);
-        return true;
+      if (!ok && navigator.clipboard?.writeText) {
+        try {
+          await navigator.clipboard.writeText(content);
+          ok = true;
+        } catch (_) {}
       }
-      return false;
+      return ok;
     }).catch(() => false).then(ok => {
       if (!ok && lastCopy === content) lastCopy = '';
       return ok;

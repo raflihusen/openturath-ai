@@ -77,7 +77,7 @@ void main() {
   test(
       'notebookUiScript suppresses standalone plus button and source count pill in chat input',
       () {
-    expect(notebookUiScript.contains('button:has(mat-icon[fonticon="add"])'),
+    expect(notebookUiScript.contains('button[aria-label*="Add" i]'),
         isTrue);
     expect(notebookUiScript.contains('.add-source-button'), isTrue);
     expect(notebookUiScript.contains('isSourceCounter'), isTrue);

@@ -206,8 +206,6 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
       .restartAgent(session.agent, user: _authService.cachedCurrentUser);
 
   Future<void> _copyActiveConversation(AgentSessionTab session) async {
-    final owner = _authService.currentUser?.uid;
-    if (owner == null) return;
     final controller = session.webController;
     if (!_nativeChat && controller == null) return;
     try {
@@ -220,16 +218,21 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                   'window.otNotebook ? window.otNotebook.conversation() : ""',
             );
       final text = result is String ? result.trim() : '';
-      if (_authService.currentUser?.uid != owner) return;
       if (text.isEmpty) {
         if (mounted) AppSnackBar.warning(context, AppCopy.noConversationToCopy);
         return;
       }
       final formatted = text;
-      // 1. Simpan langsung ke Catatan (Bookmarks)
-      final bookmark = copiedAnswerBookmark(formatted, session.agent);
-      await _bookmarkService.addBookmark(bookmark, userId: owner);
-      if (_authService.currentUser?.uid != owner) return;
+      final owner = _authService.currentUser?.uid ??
+          _authService.cachedCurrentUser?.uid ??
+          (AuthService.activeWebUserEmail != null
+              ? 'web_${AuthService.activeWebUserEmail}'
+              : null);
+      if (owner != null) {
+        // 1. Simpan langsung ke Catatan (Bookmarks) jika akun terdeteksi
+        final bookmark = copiedAnswerBookmark(formatted, session.agent);
+        unawaited(_bookmarkService.addBookmark(bookmark, userId: owner));
+      }
 
       // 2. Salin ke clipboard perangkat
       await Clipboard.setData(ClipboardData(text: formatted));
@@ -2100,10 +2103,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
                 handlerName: 'otCopiedAnswer',
                 callback: (args) async {
                   try {
-                    final owner = _authService.currentUser?.uid;
-                    if (owner == null) return false;
                     final url = await controller.getUrl();
-                    if (_authService.currentUser?.uid != owner) return false;
                     if (url?.scheme != 'https' ||
                         !['notebooklm.google.com', 'notebook.google.com']
                             .contains(url?.host) ||
@@ -2123,25 +2123,29 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
                       await Clipboard.setData(ClipboardData(text: text));
                       _lastCopiedText = text;
                       _lastCopiedToastAt = now;
-                      if (context.mounted &&
-                          _authService.currentUser?.uid == owner) {
+                      if (context.mounted) {
+                        final owner = _authService.currentUser?.uid ??
+                            _authService.cachedCurrentUser?.uid ??
+                            (AuthService.activeWebUserEmail != null
+                                ? 'web_${AuthService.activeWebUserEmail}'
+                                : null);
                         OTMotion.light();
                         AppSnackBar.success(
                           context,
                           AppCopy.answerCopied,
                           duration: const Duration(milliseconds: 2500),
-                          action: SnackBarAction(
-                            label: Loc.tr('save'),
-                            textColor: OTColors.onInverseSurface,
-                            onPressed: () {
-                              if (_authService.currentUser?.uid == owner) {
-                                unawaited(_bookmarkService.addBookmark(
-                                  copiedAnswerBookmark(text, session.agent),
-                                  userId: owner,
-                                ));
-                              }
-                            },
-                          ),
+                          action: owner != null
+                              ? SnackBarAction(
+                                  label: Loc.tr('save'),
+                                  textColor: OTColors.onInverseSurface,
+                                  onPressed: () {
+                                    unawaited(_bookmarkService.addBookmark(
+                                      copiedAnswerBookmark(text, session.agent),
+                                      userId: owner,
+                                    ));
+                                  },
+                                )
+                              : null,
                         );
                       }
                       return true;
