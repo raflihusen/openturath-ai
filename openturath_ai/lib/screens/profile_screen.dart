@@ -239,7 +239,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
       if (voucherAll.isNotEmpty) {
         final exp = voucherAll.first.value.expiry;
         rows.add((
-          'Semua AI (Masa Coba Tambahan)',
+          Loc.isArabic
+              ? 'جميع الذكاءات (فترة تجريبية إضافية)'
+              : (Loc.language == 'en'
+                  ? 'All AIs (Additional Trial Period)'
+                  : 'Semua AI (Masa Coba Tambahan)'),
           exp == null
               ? Loc.tr('activeSubscription')
               : Loc.tr('expiryDate', [_formatAccessDate(exp)]),
@@ -284,11 +288,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               .copyWith(fontSize: OTFontSize.s18)),
                       const SizedBox(height: 4),
                       Text(
-                        hasSpecificPaid
-                            ? 'Langganan Spesialis Aktif · ${summary.supportingLabel}'
-                            : (allAccess
-                                ? '${Loc.tr('ui_b236ca6182')} · ${summary.supportingLabel}'
-                                : Loc.tr('ui_b92aed18d1')),
+                        Loc.tr('ui_b92aed18d1'),
                         style: OTTypography.caption(color: textSecondary)
                             .copyWith(fontSize: OTFontSize.s14),
                       ),

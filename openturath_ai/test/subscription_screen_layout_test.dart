@@ -116,4 +116,56 @@ void main() {
     expect(find.text('Perpanjang akses'), findsOneWidget);
     expect(find.text('AKTIF'), findsOneWidget);
   });
+
+  testWidgets(
+      'Ganti periode (1, 6, 12 Bulan) memicu animasi AnimatedSwitcher tanpa galat',
+      (tester) async {
+    addTearDown(() {
+      tester.view.reset();
+      AuthService.previewUser = null;
+    });
+    AuthService.previewUser = UserModel(
+      uid: 'Qx7Zp2LmN8vRt4Kc',
+      name: 'Rafli Husen',
+      email: 'contoh@openturath.id',
+      photoUrl: '',
+      plan: AppConstants.planTrial,
+      questionsUsed: 0,
+    );
+    tester.view.physicalSize = const Size(980, 2000);
+    tester.view.devicePixelRatio = 1;
+    AppConfig.localeNotifier.value = 'id';
+    await tester.pumpWidget(MaterialApp(
+      theme: AppTheme.lightTheme,
+      locale: const Locale('id'),
+      supportedLocales: Loc.supportedLocales,
+      localizationsDelegates: GlobalMaterialLocalizations.delegates,
+      builder: (context, child) => LocaleScope(child: child!),
+      home: const SubscriptionScreen(),
+    ));
+    await tester
+        .runAsync(() => Future<void>.delayed(const Duration(milliseconds: 80)));
+    await tester.pumpAndSettle();
+
+    // Pastikan AnimatedSwitcher ada di layar untuk harga
+    expect(find.byType(AnimatedSwitcher), findsWidgets);
+
+    // Ketuk periode 6 Bulan
+    final sixMonths = find.text('6 Bulan');
+    expect(sixMonths, findsOneWidget);
+    await tester.tap(sixMonths);
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 150));
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+
+    // Ketuk periode 12 Bulan
+    final twelveMonths = find.text('12 Bulan');
+    expect(twelveMonths, findsOneWidget);
+    await tester.tap(twelveMonths);
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 150));
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+  });
 }

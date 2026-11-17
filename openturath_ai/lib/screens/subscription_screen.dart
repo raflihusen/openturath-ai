@@ -532,40 +532,57 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     final perDay = Loc.tr('perDayEquivalent',
         [ProductPricing.rupiah(((price.amount / days) / 100).round() * 100)]);
 
-    Widget pricingSection() => Column(
-      crossAxisAlignment:
-          wide ? CrossAxisAlignment.end : CrossAxisAlignment.start,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        if (!_pricingReady)
-          _priceSkeleton(sub)
-        else
-          PromoPrice(
-            key: ValueKey('$agentId-${price.amount}'),
-            amount: price.amount,
-            regularAmount: price.regularAmount,
-            period: price.period,
-            display: true,
-            inlineSaving: true,
-            foregroundColor: fg,
-            secondaryColor: sub,
-          ),
-        const SizedBox(height: OTSpacing.xs),
-        if (_pricingReady)
-          Wrap(
-            alignment: wide ? WrapAlignment.end : WrapAlignment.start,
-            spacing: OTSpacing.sm,
-            runSpacing: OTSpacing.xs,
-            children: [
-              Text(perDay, style: OTTypography.captionMedium(color: fg)),
-              if (perMonth.isNotEmpty)
-                Text(perMonth, style: OTTypography.caption(color: sub)),
-              if (saving >= 5)
-                Text(Loc.tr('saving', ['$saving']),
-                    style: OTTypography.captionMedium(color: fg)),
-            ],
-          ),
-      ],
+    Widget pricingSection() => AnimatedSwitcher(
+      duration: OTMotion.transition,
+      switchInCurve: Curves.easeOutCubic,
+      switchOutCurve: Curves.easeInCubic,
+      transitionBuilder: (child, animation) => FadeTransition(
+        opacity: animation,
+        child: SlideTransition(
+          position: Tween<Offset>(
+            begin: const Offset(0.0, 0.18),
+            end: Offset.zero,
+          ).animate(animation),
+          child: child,
+        ),
+      ),
+      child: KeyedSubtree(
+        key: ValueKey('$agentId-${price.amount}-${price.months}'),
+        child: Column(
+          crossAxisAlignment:
+              wide ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (!_pricingReady)
+              _priceSkeleton(sub)
+            else
+              PromoPrice(
+                amount: price.amount,
+                regularAmount: price.regularAmount,
+                period: price.period,
+                display: true,
+                inlineSaving: true,
+                foregroundColor: fg,
+                secondaryColor: sub,
+              ),
+            const SizedBox(height: OTSpacing.xs),
+            if (_pricingReady)
+              Wrap(
+                alignment: wide ? WrapAlignment.end : WrapAlignment.start,
+                spacing: OTSpacing.sm,
+                runSpacing: OTSpacing.xs,
+                children: [
+                  Text(perDay, style: OTTypography.captionMedium(color: fg)),
+                  if (perMonth.isNotEmpty)
+                    Text(perMonth, style: OTTypography.caption(color: sub)),
+                  if (saving >= 5)
+                    Text(Loc.tr('saving', ['$saving']),
+                        style: OTTypography.captionMedium(color: fg)),
+                ],
+              ),
+          ],
+        ),
+      ),
     );
 
     Widget actionButton() => Column(
@@ -1353,8 +1370,8 @@ class _PeriodSwitch extends StatelessWidget {
           children: [
             Positioned.fill(
               child: AnimatedAlign(
-                duration: reduced ? Duration.zero : OTMotion.normal,
-                curve: Curves.easeOutCubic,
+                duration: reduced ? Duration.zero : OTMotion.sheet,
+                curve: Curves.fastOutSlowIn,
                 alignment: AlignmentDirectional(
                     n == 1 ? 0 : -1 + 2 * selected / (n - 1), 0),
                 child: FractionallySizedBox(
@@ -1387,9 +1404,13 @@ class _PeriodSwitch extends StatelessWidget {
                           children: [
                             FittedBox(
                               fit: BoxFit.scaleDown,
-                              child: Text(titles[i],
-                                  style: OTTypography.bodyMedium(
-                                      color: selected == i ? onInk : muted)),
+                              child: AnimatedDefaultTextStyle(
+                                duration: OTMotion.normal,
+                                curve: Curves.easeInOut,
+                                style: OTTypography.bodyMedium(
+                                    color: selected == i ? onInk : muted),
+                                child: Text(titles[i]),
+                              ),
                             ),
                             if (hasNotes)
                               SizedBox(
@@ -1398,12 +1419,16 @@ class _PeriodSwitch extends StatelessWidget {
                                     ? null
                                     : FittedBox(
                                         fit: BoxFit.scaleDown,
-                                        child: Text(notes[i],
-                                            style: OTTypography.metadataTag(
-                                                color: selected == i
-                                                    ? OTColors.onInvertedMuted(
-                                                        dark)
-                                                    : muted)),
+                                        child: AnimatedDefaultTextStyle(
+                                          duration: OTMotion.normal,
+                                          curve: Curves.easeInOut,
+                                          style: OTTypography.metadataTag(
+                                              color: selected == i
+                                                  ? OTColors.onInvertedMuted(
+                                                      dark)
+                                                  : muted),
+                                          child: Text(notes[i]),
+                                        ),
                                       ),
                               ),
                           ],
