@@ -103,7 +103,7 @@ class PaymentService {
     }
   }
 
-  /// Periksa status pembayaran transaksi melalui Cloud Function server-side.
+  /// Periksa status pembayaran transaksi melalui backend VPS / Cloud Function server-side.
   /// Klien tidak pernah menyimpan atau memakai Server Key Midtrans.
   Future<Map<String, dynamic>> checkPaymentStatus({
     required String invoiceNumber,
@@ -117,6 +117,30 @@ class PaymentService {
       };
     }
 
+    // 1. Cek langsung ke backend resmi VPS (maktabah.openturath.id)
+    try {
+      final vpsUrl = Uri.parse(
+          'https://maktabah.openturath.id/api/v1/payment/status?invoiceNumber=${Uri.encodeQueryComponent(cleanInvoice)}');
+      final resp = await http.get(vpsUrl, headers: {
+        'Accept': 'application/json',
+      }).timeout(const Duration(seconds: 8));
+
+      if (resp.statusCode == 200) {
+        final data = jsonDecode(resp.body);
+        if (data is Map<String, dynamic>) {
+          if (data['status'] == 'SUCCESS' || data['success'] == true) {
+            return {
+              'status': 'SUCCESS',
+              'success': true,
+              'order_id': cleanInvoice,
+              'data': data,
+            };
+          }
+        }
+      }
+    } catch (_) {}
+
+    // 2. Fallback ke Cloud Function jika ada sesi Firebase Auth aktif
     try {
       final result = await _functions.call(
           AppConstants.fnCheckPaymentStatus, {'invoiceNumber': cleanInvoice});

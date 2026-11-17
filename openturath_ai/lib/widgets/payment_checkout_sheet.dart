@@ -758,6 +758,15 @@ class _PaymentCheckoutSheetState extends State<PaymentCheckoutSheet> {
                         if (!_isAllowedPaymentDestination(uri)) {
                           debugPrint(
                               '[PaymentCheckout] Navigation to untrusted destination rejected: $webUri');
+                          // Jangan tolak atau alihkan jika ini adalah callback finish Midtrans atau callback sukses
+                          final lowerUrl = uri.toString().toLowerCase();
+                          if (lowerUrl.contains('payment-success') ||
+                              lowerUrl.contains('finish') ||
+                              lowerUrl.contains('order_id') ||
+                              lowerUrl.contains('status_code=200')) {
+                            _checkPaymentStatus(force: true);
+                            return NavigationActionPolicy.CANCEL;
+                          }
                           _offerBrowserFallback();
                           return NavigationActionPolicy.CANCEL;
                         }
@@ -770,7 +779,7 @@ class _PaymentCheckoutSheetState extends State<PaymentCheckoutSheet> {
                             urlStr.contains('finish') ||
                             urlStr.contains('checkout-success') ||
                             urlStr.contains('success')) {
-                          _checkPaymentStatus();
+                          _checkPaymentStatus(force: true);
                           return NavigationActionPolicy.ALLOW;
                         }
 
@@ -784,8 +793,9 @@ class _PaymentCheckoutSheetState extends State<PaymentCheckoutSheet> {
                         final urlStr = url?.toString().toLowerCase() ?? '';
                         if (urlStr.contains('openturath-ai.web.app') ||
                             urlStr.contains('checkout-link') ||
-                            urlStr.contains('success')) {
-                          _checkPaymentStatus();
+                            urlStr.contains('success') ||
+                            urlStr.contains('finish')) {
+                          _checkPaymentStatus(force: true);
                         }
 
                         // Pastikan overflow scroll di body/html aktif
@@ -798,22 +808,18 @@ class _PaymentCheckoutSheetState extends State<PaymentCheckoutSheet> {
                           """);
                         } catch (_) {}
 
-                        // Deteksi instan jika halaman gateway menampilkan halaman Payment Successful
+                        // Deteksi instan case-insensitive jika halaman gateway menampilkan halaman Payment Successful
                         try {
                           final isPaidDom =
                               await controller.evaluateJavascript(source: """
                             (function() {
-                              var text = (document.body ? document.body.innerText : '') || '';
-                              if (text.includes('Payment Successful') || 
-                                  text.includes('Pembayaran Berhasil') || 
-                                  text.includes('Berhasil!')) {
-                                return true;
-                              }
-                              return false;
+                              var text = (document.body ? (document.body.innerText || document.body.textContent) : '') || '';
+                              var rx = /payment\\s*successful|pembayaran\\s*berhasil|berhasil!|transaksi\\s*berhasil/i;
+                              return rx.test(text);
                             })();
                           """);
                           if (isPaidDom == true) {
-                            _checkPaymentStatus();
+                            _checkPaymentStatus(force: true);
                           }
                         } catch (_) {}
                       },
