@@ -167,26 +167,28 @@ void main() {
       expect(manager.activeTab?.agent.id, 'fiqh_maliki');
     });
 
-    test('Enforces maxTabs = 7 limit and evicts oldest non-active tab', () {
+    test('Enforces maxTabs limit without silent eviction unless replaceOldest is true', () {
       final manager = AgentSessionManager.instance;
       final agents = AgentModel.defaultAgents;
-      expect(agents.length, greaterThanOrEqualTo(8));
+      expect(agents.length, greaterThan(AgentSessionManager.maxTabs));
 
-      // Buka 7 agen pertama
+      // Buka hingga batas maxTabs
       for (int i = 0; i < AgentSessionManager.maxTabs; i++) {
-        manager.openAgent(agents[i]);
+        expect(manager.openAgent(agents[i]), isTrue);
       }
       expect(manager.tabs.length, AgentSessionManager.maxTabs);
       expect(manager.activeIndex, AgentSessionManager.maxTabs - 1);
 
-      // Buka agen ke-8 (melebihi batas maxTabs 7)
-      manager.openAgent(agents[7]);
-
-      // Total tab tetap 7
+      // Buka agen berikutnya tanpa konfirmasi (replaceOldest: false): ditolak tanpa eviksi senyap
+      final nextAgent = agents[AgentSessionManager.maxTabs];
+      expect(manager.openAgent(nextAgent), isFalse);
       expect(manager.tabs.length, AgentSessionManager.maxTabs);
-      // Tab aktif adalah agen ke-8 yang baru dibuka
-      expect(manager.activeTab?.agent.id, agents[7].id);
-      // Agen tertua pertama (agents[0]) telah di-evict
+      expect(manager.tabs.any((t) => t.agent.id == agents[0].id), isTrue);
+
+      // Buka agen berikutnya setelah konfirmasi pengguna (replaceOldest: true)
+      expect(manager.openAgent(nextAgent, replaceOldest: true), isTrue);
+      expect(manager.tabs.length, AgentSessionManager.maxTabs);
+      expect(manager.activeTab?.agent.id, nextAgent.id);
       expect(manager.tabs.any((t) => t.agent.id == agents[0].id), isFalse);
     });
   });
