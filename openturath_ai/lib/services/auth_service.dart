@@ -756,6 +756,7 @@ class AuthService {
     int? durationDays,
     Map<String, ModuleEntitlement>? customEntitlements,
     bool isPaidSubscription = false,
+    bool replaceEntitlements = false,
   }) async {
     final cleanEmail = email.trim().toLowerCase();
     if (cleanEmail.isEmpty) return;
@@ -766,9 +767,12 @@ class AuthService {
         agentId == 'all_ai' ||
         agentId == 'all_specialists';
 
-    // Pertahankan hak akses modul lain yang masih aktif (Aturan 5: Hak Akses Granular Per-Modul)
-    final existingEntitlements = Map<String, ModuleEntitlement>.from(
-        _activeWebUser?.entitlements ?? _userCache['web_$cleanEmail']?.entitlements ?? {});
+    // Pertahankan hak akses modul lain yang masih aktif, kecuali saat sinkronisasi
+    // penuh dari VPS yang membawa daftar entitlement otoritatif terbaru.
+    final existingEntitlements = replaceEntitlements
+        ? const <String, ModuleEntitlement>{}
+        : Map<String, ModuleEntitlement>.from(
+            _activeWebUser?.entitlements ?? _userCache['web_$cleanEmail']?.entitlements ?? {});
 
     final entMap = <String, ModuleEntitlement>{
       ...existingEntitlements,
@@ -933,6 +937,7 @@ class AuthService {
                 agentId: plan == 'all_ai' || plan == 'all_access' ? 'all_ai' : plan,
                 customEntitlements: granularEntitlements,
                 isPaidSubscription: hasPaid,
+                replaceEntitlements: granularEntitlements != null,
               );
             }
           } else if (!isVip) {

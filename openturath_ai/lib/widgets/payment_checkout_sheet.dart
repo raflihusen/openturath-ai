@@ -136,6 +136,7 @@ class _PaymentCheckoutSheetState extends State<PaymentCheckoutSheet> {
   DateTime? _lastInquiryAt;
   double _loadProgress = 0.0;
   bool _isChecking = false;
+  bool _pendingForcedCheck = false;
   bool _isSuccess = false;
   int _pollAttempts = 0;
   bool _isShowingConfirmDialog = false;
@@ -181,6 +182,7 @@ class _PaymentCheckoutSheetState extends State<PaymentCheckoutSheet> {
     _userSubscription = AuthService().userStream.listen((user) {
       if (user != null && !_isSuccess && mounted) {
         final matchesThisTx = user.entitlements.values.any((e) =>
+            e.isActive &&
             (e.sourceTransactionId != null &&
                 e.sourceTransactionId!.isNotEmpty &&
                 (e.sourceTransactionId == widget.invoiceNumber ||
@@ -246,7 +248,11 @@ class _PaymentCheckoutSheetState extends State<PaymentCheckoutSheet> {
   }
 
   Future<void> _checkPaymentStatus({bool force = false}) async {
-    if (_isChecking || _isSuccess || _hasPopped || !mounted) return;
+    if (_isSuccess || _hasPopped || !mounted) return;
+    if (_isChecking) {
+      if (force) _pendingForcedCheck = true;
+      return;
+    }
     if (widget.invoiceNumber.isEmpty) return;
 
     if (!force &&
@@ -322,6 +328,10 @@ class _PaymentCheckoutSheetState extends State<PaymentCheckoutSheet> {
     } finally {
       if (mounted) {
         setState(() => _isChecking = false);
+        if (_pendingForcedCheck && !_isSuccess && !_hasPopped) {
+          _pendingForcedCheck = false;
+          scheduleMicrotask(() => _checkPaymentStatus(force: true));
+        }
       }
     }
   }
@@ -464,13 +474,17 @@ class _PaymentCheckoutSheetState extends State<PaymentCheckoutSheet> {
   }
 
   @override
-  Widget build(BuildContext context) => DesktopWebViewGate(
-        builder: _buildContent,
-        externalUrl: _isAllowedPaymentDestination(Uri.parse(widget.paymentUrl))
-            ? Uri.parse(widget.paymentUrl)
-            : null,
-        onClose: () => Navigator.of(context).pop(false),
-      );
+  Widget build(BuildContext context) {
+    final parsedExternalUri = Uri.tryParse(widget.paymentUrl);
+    return DesktopWebViewGate(
+      builder: _buildContent,
+      externalUrl: parsedExternalUri != null &&
+              _isAllowedPaymentDestination(parsedExternalUri)
+          ? parsedExternalUri
+          : null,
+      onClose: () => Navigator.of(context).pop(false),
+    );
+  }
 
   Widget _buildContent(BuildContext context) {
     Loc.watch(context);

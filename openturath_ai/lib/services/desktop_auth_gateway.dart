@@ -55,7 +55,19 @@ class DesktopAuthGateway {
     final response = await http
         .post(Uri.parse(_tokenEndpoint), body: form)
         .timeout(const Duration(seconds: 30));
-    final body = jsonDecode(response.body) as Map<String, dynamic>;
+    Map<String, dynamic> body = const {};
+    try {
+      final decoded = jsonDecode(response.body);
+      if (decoded is Map<String, dynamic>) {
+        body = decoded;
+      }
+    } catch (_) {
+      throw PlatformException(
+        code: 'desktop_token_exchange_failed',
+        message:
+            'Respons penukaran kode Google tidak valid (HTTP ${response.statusCode}).',
+      );
+    }
     if (response.statusCode != 200) {
       throw PlatformException(
         code: 'desktop_token_exchange_failed',

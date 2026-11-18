@@ -128,10 +128,33 @@ class PaymentService {
       if (resp.statusCode == 200) {
         final data = jsonDecode(resp.body);
         if (data is Map<String, dynamic>) {
-          if (data['status'] == 'SUCCESS' || data['success'] == true) {
+          final rawStatus =
+              (data['status'] ?? '').toString().trim().toUpperCase();
+          if (rawStatus == 'SUCCESS' || data['success'] == true) {
             return {
               'status': 'SUCCESS',
               'success': true,
+              'order_id': cleanInvoice,
+              'data': data,
+            };
+          }
+          const terminalStatuses = {
+            'EXPIRE',
+            'EXPIRED',
+            'DENY',
+            'DENIED',
+            'FAILED',
+            'CANCEL',
+            'CANCELLED',
+            'REFUND',
+            'PARTIAL_REFUND',
+            'CHARGEBACK',
+            'PARTIAL_CHARGEBACK',
+          };
+          if (terminalStatuses.contains(rawStatus)) {
+            return {
+              'status': rawStatus,
+              'success': false,
               'order_id': cleanInvoice,
               'data': data,
             };
