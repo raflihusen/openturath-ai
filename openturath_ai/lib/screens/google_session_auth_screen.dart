@@ -153,13 +153,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
     final path = uri.path.toLowerCase();
 
     final isNotebook = NotebookNavigation.notebook(uri);
-    final isMyAccount = GoogleConnectionNavigation.isAccountPage(uri) ||
-        (uri.scheme == 'https' &&
-            host == 'accounts.google.com' &&
-            (path.contains('/b/') ||
-                path.contains('/recovery') ||
-                path.contains('/speedbump') ||
-                path.contains('/accountchooser')));
+    final isMyAccount = GoogleConnectionNavigation.isAccountPage(uri);
     final isAuthFlow = NotebookNavigation.signInFlow(uri) && !isMyAccount;
 
     if (isNotebook || isMyAccount) {
@@ -176,11 +170,16 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
           (document.head || document.documentElement).appendChild(style);
         } catch(_) {}
       ''');
-    } else if (isAuthFlow &&
-        _isShieldActive &&
-        !_isMismatchDialogOpen &&
-        !_isConfirmOpen) {
-      setState(() => _isShieldActive = false);
+    } else if (isAuthFlow) {
+      controller.evaluateJavascript(source: '''
+        try {
+          var s = document.getElementById('ot-stealth-auth-cloak');
+          if (s) s.remove();
+        } catch(_) {}
+      ''');
+      if (_isShieldActive && !_isMismatchDialogOpen && !_isConfirmOpen && mounted) {
+        setState(() => _isShieldActive = false);
+      }
     }
   }
 
@@ -439,42 +438,56 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
       final host = url.host.toLowerCase();
       final path = url.path.toLowerCase();
 
-      final isMyAccount = GoogleConnectionNavigation.isAccountPage(url.uriValue) ||
-          (url.uriValue.scheme == 'https' &&
-              host == 'accounts.google.com' &&
-              (path.contains('/b/') ||
-                  path.contains('/recovery') ||
-                  path.contains('/speedbump') ||
-                  path.contains('/accountchooser')));
+      final isMyAccount = GoogleConnectionNavigation.isAccountPage(url.uriValue);
 
       final isNotebookLm = host.contains('notebooklm.google.com') ||
           host.contains('notebook.google.com');
 
-      // 1. Jika masih berada di formulir login Google (email, password, 2FA challenge), biarkan pengguna berinteraksi
+      // 1. Jika masih berada di formulir login / pilih akun / verifikasi Google, biarkan pengguna berinteraksi
       if (!isMyAccount && host.contains('accounts.google.com')) {
-        final isAuthForm = path.contains('/signin') ||
-            path.contains('/servicelogin') ||
-            path.contains('/identifier') ||
-            path.contains('/challenge') ||
-            path.contains('/v3/signin') ||
-            path.contains('/interactivelogin');
-        if (isAuthForm) return;
+        if (_isShieldActive && mounted) {
+          setState(() => _isShieldActive = false);
+        }
+        return;
       }
 
       if (!isMyAccount &&
           (path.contains('/login') ||
               path.contains('/signin') ||
               path.contains('/servicelogin'))) {
+        if (_isShieldActive && mounted) {
+          setState(() => _isShieldActive = false);
+        }
         return;
       }
 
       if (!isNotebookLm && !isMyAccount) {
+        if (_isShieldActive && mounted) {
+          setState(() => _isShieldActive = false);
+        }
         return;
       }
 
       // Aktifkan pelindung visual agar UI NotebookLM / akun Google tidak pernah bocor ke layar pengguna
       if (!_isShieldActive && mounted) {
         setState(() => _isShieldActive = true);
+      }
+
+      // 2. Pastikan sesi cookies Google aktif di WebKit terlebih dahulu.
+      // Jika belum ada cookie sesi Google, langsung arahkan ke halaman login Google
+      // dan turunkan pelindung visual agar tidak macet di layar "Memuat...".
+      final hasSession = await _hasGoogleSession();
+      if (!_isCurrentVerification(epoch)) return;
+      if (hasSession == false) {
+        if (mounted) setState(() => _isShieldActive = false);
+        await controller.loadUrl(
+          urlRequest: URLRequest(url: WebUri(_targetLoginUrl)),
+        );
+        return;
+      }
+      if (hasSession == null) {
+        _showVerificationRecovery();
+        return;
       }
 
       // 3. Deteksi email Google aktif dari sesi. Pengguna WAJIB memiliki email valid!
@@ -493,14 +506,15 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
           : (_authService.cachedCurrentUser?.email ?? '').trim().toLowerCase();
 
       if (cleanEmail.isEmpty || !cleanEmail.contains('@')) {
-        // Belum ada email aktif di DOM atau sesi, jangan redirect prematur!
-        return;
-      }
-
-      // 4. Pastikan sesi cookies Google aktif di WebKit
-      final hasSession = await _hasGoogleSession();
-      if (!_isCurrentVerification(epoch)) return;
-      if (hasSession != true) {
+        // Jika sesi Google ada tetapi email belum terbaca di DOM NotebookLM,
+        // periksa lewat myaccount.google.com agar tidak macet di layar Memuat.
+        if (isNotebookLm) {
+          await controller.loadUrl(
+            urlRequest: URLRequest(url: WebUri('https://myaccount.google.com/')),
+          );
+        } else {
+          _showVerificationRecovery();
+        }
         return;
       }
 
