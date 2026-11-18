@@ -1071,7 +1071,12 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
         ? specialists.firstWhere((a) => a.id == _selectedAgentId,
             orElse: () => specialists.first)
         : null;
-    final hasSpecialists = specialists.isNotEmpty && selected != null;
+    final showTahawwulat = ProductPricing.hasOffersForAgent('fiqh_tahawwulat');
+    final showAllSpecialists =
+        ProductPricing.hasOffersForAgent('all_specialists');
+    final showSinglePlan =
+        selected != null && ProductPricing.hasOffersForAgent(selected.id);
+    final hasSpecialists = specialists.isNotEmpty && selected != null && showSinglePlan;
     final flagshipOffers = ProductPricing.forAgent('fiqh_tahawwulat');
     final singleOffers = selected != null
         ? ProductPricing.forAgent(selected.id)
@@ -1277,12 +1282,17 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                           ),
                         ),
                         const SizedBox(height: OTSpacing.xl),
-                        OTReveal(index: 0, child: featuredPlan),
-                        const SizedBox(height: OTSpacing.base),
-                        OTReveal(index: 1, child: allSpecialistsPlan),
-                        if (singlePlan != null) ...[
+                        if (showTahawwulat) ...[
+                          OTReveal(index: 0, child: featuredPlan),
                           const SizedBox(height: OTSpacing.base),
+                        ],
+                        if (showAllSpecialists) ...[
+                          OTReveal(index: 1, child: allSpecialistsPlan),
+                          const SizedBox(height: OTSpacing.base),
+                        ],
+                        if (singlePlan != null) ...[
                           OTReveal(index: 2, child: singlePlan),
+                          const SizedBox(height: OTSpacing.base),
                         ],
                         const SizedBox(height: OTSpacing.xl),
                         _consentNote(OTColors.textSecondary(dark)),

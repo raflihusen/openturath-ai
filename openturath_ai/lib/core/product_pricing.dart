@@ -80,6 +80,7 @@ abstract final class ProductPricing {
       _currentRevision = revision;
     }
     if (agentOffersMap != null && agentOffersMap.isNotEmpty) {
+      _agentOffers.clear();
       _agentOffers.addAll(agentOffersMap);
       if (_agentOffers.containsKey('fiqh_tahawwulat')) {
         _tahawwulat = List.of(_agentOffers['fiqh_tahawwulat']!);
@@ -131,6 +132,13 @@ abstract final class ProductPricing {
       regularAmount: regular,
       amount: amount,
     );
+  }
+
+  static bool hasOffersForAgent(String agentId) {
+    if (_agentOffers.isNotEmpty) {
+      return _agentOffers.containsKey(agentId);
+    }
+    return true;
   }
 
   static List<SubscriptionOffer> forAgent(String agentId) {
