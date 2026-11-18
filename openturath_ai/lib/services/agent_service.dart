@@ -101,16 +101,37 @@ class AgentService {
           if (_activeIdsLoader != null) {
             ids = await _activeIdsLoader!();
           } else {
-            final db = firestore ??
-                (Firebase.apps.isNotEmpty ? FirebaseFirestore.instance : null);
-            if (db == null) return;
-            final doc = await db
-                .collection('app_config')
-                .doc('agents')
-                .get(const GetOptions(source: Source.serverAndCache));
-            final raw = doc.data()?['active_agent_ids'];
-            if (doc.exists && raw is List) {
-              ids = raw.whereType<String>().toSet();
+            // 1. Prioritaskan OTA Config dari Backend VPS Resmi
+            try {
+              final vpsConfigUrl =
+                  Uri.parse('https://maktabah.openturath.id/api/v1/config/agents');
+              final resp = await http.get(vpsConfigUrl, headers: {
+                'Accept': 'application/json'
+              }).timeout(const Duration(seconds: 4));
+              if (resp.statusCode == 200) {
+                final cData = jsonDecode(resp.body);
+                if (cData is Map && cData['active_agent_ids'] is List) {
+                  ids = (cData['active_agent_ids'] as List)
+                      .whereType<String>()
+                      .toSet();
+                }
+              }
+            } catch (_) {}
+
+            // 2. Fallback ke Firestore app_config/agents bila VPS offline
+            if (ids == null || ids.isEmpty) {
+              final db = firestore ??
+                  (Firebase.apps.isNotEmpty ? FirebaseFirestore.instance : null);
+              if (db != null) {
+                final doc = await db
+                    .collection('app_config')
+                    .doc('agents')
+                    .get(const GetOptions(source: Source.serverAndCache));
+                final raw = doc.data()?['active_agent_ids'];
+                if (doc.exists && raw is List) {
+                  ids = raw.whereType<String>().toSet();
+                }
+              }
             }
           }
           if (generation < _lastAppliedGeneration ||
