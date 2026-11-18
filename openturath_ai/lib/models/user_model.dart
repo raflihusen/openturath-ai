@@ -171,9 +171,13 @@ class UserModel {
     if (isVip) return true;
     final mappedKey = entitlementKeys[agentId] ?? agentId;
 
-    // 1. Specific module entitlement check FIRST
-    final specific = entitlements[mappedKey];
-    if (specific != null && specific.isActive && specific.isPremium) {
+    // 1. Specific module entitlement check FIRST (cek key kanonik maupun key mentah agentId)
+    final candidates = <ModuleEntitlement>[
+      if (entitlements[mappedKey] != null) entitlements[mappedKey]!,
+      if (agentId != mappedKey && entitlements[agentId] != null)
+        entitlements[agentId]!,
+    ];
+    if (candidates.any((e) => e.isActive && e.isPremium)) {
       return true;
     }
 
@@ -184,7 +188,7 @@ class UserModel {
     }
 
     // If a specific module entitlement was explicitly revoked, deny access
-    if (specific != null && specific.status == 'revoked') {
+    if (candidates.isNotEmpty && candidates.every((e) => e.status == 'revoked')) {
       return false;
     }
 

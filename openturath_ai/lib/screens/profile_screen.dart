@@ -331,24 +331,37 @@ class _ProfileScreenState extends State<ProfileScreen> {
   static String _formatAccessDate(DateTime value) =>
       HijriDateUtils.formatMasehiOnly(value.toLocal());
 
-  static String _entitlementTitle(String key) => Loc.text(switch (key) {
-        'fiqh_tahawwulat' => 'Fikih Tahawwulat',
-        'fiqh_syafii' => "Fikih Syafi'i",
-        'fiqh_hanafi' => 'Fikih Hanafi',
-        'fiqh_maliki' => 'Fikih Maliki',
-        'fiqh_hanbali' => 'Fikih Hanbali',
-        'fiqh_muqaran' => 'Perbandingan Mazhab',
-        'fiqh' => 'Fatawa & Masail Fiqhiyyah',
-        'ushul_fiqh' => 'Usul Fikih',
-        'nahwu' => 'Bahasa Arab',
-        'tafsir' => "Tafsir Al-Qur'an",
-        'hadits' => 'Matan Hadis',
-        'aqidah' => 'Akidah',
-        'tarikh' => 'Sejarah & Sirah',
-        'tasawwuf' => 'Tasawuf & Adzkar',
-        'bibliografi_faharis' => 'Bibliografi & Faharis',
-        _ => AppCopy.navStudies,
-      });
+  static String _entitlementTitle(String key) {
+    final mapped = switch (key) {
+      'fiqh_tahawwulat' => 'Fikih Tahawwulat',
+      'fiqh_syafii' => "Fikih Syafi'i",
+      'fiqh_hanafi' => 'Fikih Hanafi',
+      'fiqh_maliki' => 'Fikih Maliki',
+      'fiqh_hanbali' || 'fiqh_hambali' => 'Fikih Hanbali',
+      'fiqh_muqaran' => 'Perbandingan Mazhab',
+      'fiqh' || 'fatawa_masail' => 'Fatawa & Masail Fiqhiyyah',
+      'ushul_fiqh' || 'qawaid_fiqhiyyah' => 'Ushul & Kaidah Fikih',
+      'nahwu' || 'nahwu_sharaf' || 'bahasa_arab' => 'Bahasa Arab',
+      'tafsir' => "Tafsir Al-Qur'an",
+      'tajwid_qiraat' => "Tajwid & Qira'at",
+      'hadits' => 'Matan Hadis',
+      'musthalah_hadits' => 'Ilmu Hadits',
+      'syarah_hadits' => 'Syarah Hadits',
+      'aqidah' => 'Akidah',
+      'tarikh' => 'Sejarah & Sirah',
+      'thabaqat_rijal' => 'Rijal & Biografi Ulama',
+      'tasawwuf' => 'Tasawuf & Adzkar',
+      'habib_umar' => 'Habib Umar bin Hafizh',
+      'imam_ghazali' => 'Imam Al-Ghazali',
+      'bibliografi_faharis' => 'Bibliografi & Faharis',
+      _ => '',
+    };
+    if (mapped.isNotEmpty) return Loc.text(mapped);
+    for (final agent in AgentModel.defaultAgents) {
+      if (agent.id == key) return Loc.text(agent.title);
+    }
+    return Loc.text(AppCopy.navStudies);
+  }
 
   @override
   Widget build(BuildContext context) {

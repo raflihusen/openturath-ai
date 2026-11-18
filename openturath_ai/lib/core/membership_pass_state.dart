@@ -215,18 +215,26 @@ String _singleModuleTitle(String key) {
     'fiqh_syafii' => Loc.text("Fikih Syafi'i"),
     'fiqh_hanafi' => Loc.text('Fikih Hanafi'),
     'fiqh_maliki' => Loc.text('Fikih Maliki'),
-    'fiqh_hanbali' => Loc.text('Fikih Hanbali'),
+    'fiqh_hanbali' || 'fiqh_hambali' => Loc.text('Fikih Hanbali'),
     'fiqh_muqaran' => Loc.text('Perbandingan Mazhab'),
-    'ushul_fiqh' => Loc.text('Usul Fikih'),
-    'nahwu' => Loc.text('Bahasa Arab'),
+    'fiqh' || 'fatawa_masail' => Loc.text('Fatawa & Masail Fiqhiyyah'),
+    'ushul_fiqh' || 'qawaid_fiqhiyyah' => Loc.text('Ushul & Kaidah Fikih'),
+    'nahwu' || 'nahwu_sharaf' || 'bahasa_arab' => Loc.text('Bahasa Arab'),
     'tafsir' => Loc.text("Tafsir Al-Qur'an"),
+    'tajwid_qiraat' => Loc.text("Tajwid & Qira'at"),
     'hadits' => Loc.text('Hadis Nabawi'),
+    'musthalah_hadits' => Loc.text('Ilmu Hadits'),
+    'syarah_hadits' => Loc.text('Syarah Hadits'),
     'aqidah' => Loc.text('Akidah & Ushuluddin'),
     'tarikh' => Loc.text('Sejarah & Sirah'),
+    'thabaqat_rijal' => Loc.text('Rijal & Biografi Ulama'),
     'tasawwuf' => Loc.text('Tasawuf & Adzkar'),
+    'habib_umar' => Loc.text('Habib Umar bin Hafizh'),
+    'imam_ghazali' => Loc.text('Imam Al-Ghazali'),
+    'bibliografi_faharis' => Loc.text('Bibliografi & Faharis'),
     _ => AppCopy.allAssistantsAvailable,
   };
   if (base == AppCopy.allAssistantsAvailable) return base;
-  return Loc.isArabic ? base : 'AI $base';
+  return Loc.isArabic ? base : (base.startsWith('AI ') ? base : 'AI $base');
 }
 

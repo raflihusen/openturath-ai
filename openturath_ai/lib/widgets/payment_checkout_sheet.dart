@@ -272,6 +272,32 @@ class _PaymentCheckoutSheetState extends State<PaymentCheckoutSheet> {
     _lastInquiryAt = DateTime.now();
     setState(() => _isChecking = true);
     try {
+      // 1. Sinkronisasi status akun dari VPS agar transaksi WebView/VPS terdeteksi instan
+      final email = (AuthService.activeWebUserEmail ??
+              AuthService().cachedCurrentUser?.email ??
+              AuthService().currentUser?.email ??
+              '')
+          .trim()
+          .toLowerCase();
+      if (email.isNotEmpty) {
+        await AuthService.syncUserStatusWithVps(email);
+        final updatedUser = AuthService().cachedCurrentUser;
+        final matchedVps = updatedUser?.entitlements.values.any((e) =>
+                e.isActive &&
+                e.sourceTransactionId != null &&
+                e.sourceTransactionId!.isNotEmpty &&
+                (e.sourceTransactionId == widget.invoiceNumber ||
+                    (widget.trxId != null &&
+                        widget.trxId!.isNotEmpty &&
+                        e.sourceTransactionId == widget.trxId))) ??
+            false;
+        if (matchedVps) {
+          _triggerSuccess();
+          return;
+        }
+      }
+
+      // 2. Inquiry ke Cloud Function jika tersedia
       final res = await _subService.verifyPaymentStatus(
         invoiceNumber: widget.invoiceNumber,
         trxId: widget.trxId,
