@@ -212,7 +212,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
         .where((entry) => summary.agentIds.contains(entry.key))
         .toList();
     final allAccess = summary.agentIds.contains('all_access') ||
-        summary.agentIds.contains('all_ai');
+        summary.agentIds.contains('all_ai') ||
+        summary.agentIds.contains('all_specialists');
     final allEntries = (user?.entitlements.entries ??
             const <MapEntry<String, ModuleEntitlement>>[])
         .where((entry) => entry.value.isActive)
@@ -220,6 +221,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final hasSpecificPaid = allEntries.any((entry) =>
         entry.key != 'all_access' &&
         entry.key != 'all_ai' &&
+        entry.key != 'all_specialists' &&
         (entry.value.paymentStatus == 'paid' || entry.value.plan != 'trial'));
 
     final rows = <(String, String)>[];

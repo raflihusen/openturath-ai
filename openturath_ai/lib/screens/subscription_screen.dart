@@ -371,6 +371,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
       } catch (_) {}
     }
 
+    if (!mounted) return;
     setState(() {
       _processing = true;
       _checkoutError = null;
