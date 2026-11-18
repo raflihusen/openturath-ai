@@ -149,8 +149,6 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
       return;
     }
     final uri = url.uriValue;
-    final host = uri.host.toLowerCase();
-    final path = uri.path.toLowerCase();
 
     final isNotebook = NotebookNavigation.notebook(uri);
     final isMyAccount = GoogleConnectionNavigation.isAccountPage(uri);

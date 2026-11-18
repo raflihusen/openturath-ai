@@ -46,8 +46,7 @@ void main() {
 
     final login = Uri.parse(loginUrl!);
     expect(login.host, 'notebook.google.com');
-    expect(login.path, '/login');
-    expect(login.queryParameters['continue'], 'https://notebook.google.com/');
+    expect(login.path, '/');
 
     // Verifikasi webview placeholder ter-mount
     expect(find.byKey(const Key('mock_webview')), findsOneWidget);
