@@ -501,7 +501,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
 
       final cleanEmail = (email != null && email.isNotEmpty && email.contains('@'))
           ? email.trim().toLowerCase()
-          : (_authService.cachedCurrentUser?.email ?? '').trim().toLowerCase();
+          : '';
 
       if (cleanEmail.isEmpty || !cleanEmail.contains('@')) {
         // Jika sesi Google ada tetapi email belum terbaca di DOM NotebookLM,
@@ -1497,7 +1497,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
                                           const SizedBox(height: 20),
                                           Text(
                                             _isAppEntry
-                                                ? 'Memuat...'
+                                                ? Loc.tr('checkoutPleaseWait')
                                                 : Loc.tr('verifyingSessionTitle'),
                                             textAlign: TextAlign.center,
                                             style: ScholarlyFonts.outfit(
@@ -1511,10 +1511,8 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
                                             padding: const EdgeInsets.symmetric(
                                                 horizontal: 32),
                                             child: Text(
-                                              _isAppEntry
-                                                  ? 'Mohon tunggu sebentar'
-                                                  : Loc.tr(
-                                                      'verifyingSessionSubtitle'),
+                                              Loc.tr(
+                                                  'verifyingSessionSubtitle'),
                                               textAlign: TextAlign.center,
                                               style: ScholarlyFonts.outfit(
                                                 fontSize: OTFontSize.s12,

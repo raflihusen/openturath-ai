@@ -107,7 +107,6 @@ class PersistentGoogleSession {
         return false;
       }
 
-      final isReady = prefs.getBool(_readyKey) == true;
       final live = await hasLiveSession(null);
       if (epoch != _ownershipEpoch ||
           prefs.getString(_ownerKey)?.trim().toLowerCase() != cleanEmail ||
@@ -115,7 +114,7 @@ class PersistentGoogleSession {
               cleanEmail) {
         return false;
       }
-      if (live || isReady) {
+      if (live) {
         _cachedVerifiedOwner = cleanEmail;
         await prefs.setBool(_readyKey, true);
         return true;
