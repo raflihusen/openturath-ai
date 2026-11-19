@@ -1,3 +1,9 @@
+import { ManuscriptFilm } from "./manuscript/ManuscriptFilm";
+import { Act1MarginStatement } from "./manuscript/Act1MarginStatement";
+import { Act2SplitComparison } from "./manuscript/Act2SplitComparison";
+import { Act3MacroIbarah } from "./manuscript/Act3MacroIbarah";
+import { Act4FihrisIndex } from "./manuscript/Act4FihrisIndex";
+import { Act5MonographFinale } from "./manuscript/Act5MonographFinale";
 import { OpenTurathJejakIlmu } from "./jejak/Film";
 import { OpenTurathProductFilm } from "./productfilm/Film";
 import { OpenTurath18Ilmu } from "./productfilm/CatalogFilm";
@@ -29,6 +35,64 @@ const V = { width: 1080, height: 1920, fps: 30 } as const;
 
 export const RemotionRoot: React.FC = () => (
   <>
+    <Folder name="Manuscript">
+      <Composition
+        id="OpenTurathManuscript9x16"
+        component={ManuscriptFilm}
+        durationInFrames={1560}
+        width={1080}
+        height={1920}
+        fps={60}
+      />
+      <Composition
+        id="OpenTurathManuscript16x9"
+        component={ManuscriptFilm}
+        durationInFrames={1560}
+        width={1920}
+        height={1080}
+        fps={60}
+      />
+      <Composition
+        id="Manuscript-01-Margin"
+        component={Act1MarginStatement}
+        durationInFrames={270}
+        width={1080}
+        height={1920}
+        fps={60}
+      />
+      <Composition
+        id="Manuscript-02-SplitMazhab"
+        component={Act2SplitComparison}
+        durationInFrames={420}
+        width={1080}
+        height={1920}
+        fps={60}
+      />
+      <Composition
+        id="Manuscript-03-MacroIbarah"
+        component={Act3MacroIbarah}
+        durationInFrames={330}
+        width={1080}
+        height={1920}
+        fps={60}
+      />
+      <Composition
+        id="Manuscript-04-Fihris"
+        component={Act4FihrisIndex}
+        durationInFrames={300}
+        width={1080}
+        height={1920}
+        fps={60}
+      />
+      <Composition
+        id="Manuscript-05-Finale"
+        component={Act5MonographFinale}
+        durationInFrames={240}
+        width={1080}
+        height={1920}
+        fps={60}
+      />
+    </Folder>
     <Folder name="PromoPro">
       <Composition
         id="OpenTurathPromoPro9x16"
