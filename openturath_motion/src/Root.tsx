@@ -2,11 +2,11 @@ import { OpenTurathJejakIlmu } from "./jejak/Film";
 import { OpenTurathProductFilm } from "./productfilm/Film";
 import { OpenTurath18Ilmu } from "./productfilm/CatalogFilm";
 import { PromoProFilm } from "./promopro/PromoProFilm";
-import { Scene1Opening } from "./promopro/Scene1Opening";
-import { Scene2Monograph } from "./promopro/Scene2Monograph";
-import { Scene3ProductShowcase } from "./promopro/Scene3ProductShowcase";
-import { Scene4Disciplines } from "./promopro/Scene4Disciplines";
-import { Scene5Finale } from "./promopro/Scene5Finale";
+import { KineticAct1Spark } from "./promopro/KineticAct1Spark";
+import { KineticAct2Matrix } from "./promopro/KineticAct2Matrix";
+import { KineticAct3Showcase3D } from "./promopro/KineticAct3Showcase3D";
+import { KineticAct4DisciplinesWall } from "./promopro/KineticAct4DisciplinesWall";
+import { KineticAct5Finale } from "./promopro/KineticAct5Finale";
 import { JejakWorld3D } from "./jejak/World";
 import { OpenTurathLaunch30 } from "./film30/Film";
 import { OpenTurathFilm60 } from "./film60/Film";
@@ -31,59 +31,59 @@ export const RemotionRoot: React.FC = () => (
   <>
     <Folder name="PromoPro">
       <Composition
-        id="OpenTurathPromoPro16x9"
-        component={PromoProFilm}
-        durationInFrames={1800}
-        width={1920}
-        height={1080}
-        fps={60}
-      />
-      <Composition
         id="OpenTurathPromoPro9x16"
         component={PromoProFilm}
-        durationInFrames={1800}
+        durationInFrames={1440}
         width={1080}
         height={1920}
         fps={60}
       />
       <Composition
-        id="PromoPro-01-Pengantar"
-        component={Scene1Opening}
-        durationInFrames={336}
+        id="OpenTurathPromoPro16x9"
+        component={PromoProFilm}
+        durationInFrames={1440}
         width={1920}
         height={1080}
         fps={60}
       />
       <Composition
-        id="PromoPro-02-RuangBaca"
-        component={Scene2Monograph}
-        durationInFrames={336}
-        width={1920}
-        height={1080}
+        id="Kinetic-01-SparkPortal"
+        component={KineticAct1Spark}
+        durationInFrames={240}
+        width={1080}
+        height={1920}
         fps={60}
       />
       <Composition
-        id="PromoPro-03-RujukanIbarah"
-        component={Scene3ProductShowcase}
-        durationInFrames={480}
-        width={1920}
-        height={1080}
+        id="Kinetic-02-3DKitabMatrix"
+        component={KineticAct2Matrix}
+        durationInFrames={240}
+        width={1080}
+        height={1920}
         fps={60}
       />
       <Composition
-        id="PromoPro-04-18BidangIlmu"
-        component={Scene4Disciplines}
-        durationInFrames={408}
-        width={1920}
-        height={1080}
+        id="Kinetic-03-3DAppShowcase"
+        component={KineticAct3Showcase3D}
+        durationInFrames={420}
+        width={1080}
+        height={1920}
         fps={60}
       />
       <Composition
-        id="PromoPro-05-Penutup"
-        component={Scene5Finale}
-        durationInFrames={336}
-        width={1920}
-        height={1080}
+        id="Kinetic-04-18DisciplinesWall"
+        component={KineticAct4DisciplinesWall}
+        durationInFrames={300}
+        width={1080}
+        height={1920}
+        fps={60}
+      />
+      <Composition
+        id="Kinetic-05-ShockwaveFinale"
+        component={KineticAct5Finale}
+        durationInFrames={240}
+        width={1080}
+        height={1920}
         fps={60}
       />
     </Folder>
