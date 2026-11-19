@@ -1,6 +1,12 @@
 import { OpenTurathJejakIlmu } from "./jejak/Film";
 import { OpenTurathProductFilm } from "./productfilm/Film";
 import { OpenTurath18Ilmu } from "./productfilm/CatalogFilm";
+import { PromoProFilm } from "./promopro/PromoProFilm";
+import { Scene1Opening } from "./promopro/Scene1Opening";
+import { Scene2Monograph } from "./promopro/Scene2Monograph";
+import { Scene3ProductShowcase } from "./promopro/Scene3ProductShowcase";
+import { Scene4Disciplines } from "./promopro/Scene4Disciplines";
+import { Scene5Finale } from "./promopro/Scene5Finale";
 import { JejakWorld3D } from "./jejak/World";
 import { OpenTurathLaunch30 } from "./film30/Film";
 import { OpenTurathFilm60 } from "./film60/Film";
@@ -23,6 +29,64 @@ const V = { width: 1080, height: 1920, fps: 30 } as const;
 
 export const RemotionRoot: React.FC = () => (
   <>
+    <Folder name="PromoPro">
+      <Composition
+        id="OpenTurathPromoPro16x9"
+        component={PromoProFilm}
+        durationInFrames={1800}
+        width={1920}
+        height={1080}
+        fps={60}
+      />
+      <Composition
+        id="OpenTurathPromoPro9x16"
+        component={PromoProFilm}
+        durationInFrames={1800}
+        width={1080}
+        height={1920}
+        fps={60}
+      />
+      <Composition
+        id="PromoPro-01-Pengantar"
+        component={Scene1Opening}
+        durationInFrames={336}
+        width={1920}
+        height={1080}
+        fps={60}
+      />
+      <Composition
+        id="PromoPro-02-RuangBaca"
+        component={Scene2Monograph}
+        durationInFrames={336}
+        width={1920}
+        height={1080}
+        fps={60}
+      />
+      <Composition
+        id="PromoPro-03-RujukanIbarah"
+        component={Scene3ProductShowcase}
+        durationInFrames={480}
+        width={1920}
+        height={1080}
+        fps={60}
+      />
+      <Composition
+        id="PromoPro-04-18BidangIlmu"
+        component={Scene4Disciplines}
+        durationInFrames={408}
+        width={1920}
+        height={1080}
+        fps={60}
+      />
+      <Composition
+        id="PromoPro-05-Penutup"
+        component={Scene5Finale}
+        durationInFrames={336}
+        width={1920}
+        height={1080}
+        fps={60}
+      />
+    </Folder>
     <Composition id="OpenTurath18Ilmu" component={OpenTurath18Ilmu} durationInFrames={1800} width={1080} height={1920} fps={60} />
     <Composition id="OpenTurathProductFilm" component={OpenTurathProductFilm} durationInFrames={1800} width={1080} height={1920} fps={60} />
     <Composition id="JejakWorld3D" component={JejakWorld3D} durationInFrames={900} width={1080} height={1920} fps={30} />
