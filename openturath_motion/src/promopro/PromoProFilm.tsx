@@ -19,7 +19,7 @@ import { PALETTE } from "./tokens";
 export const PromoProFilm: React.FC = () => {
   return (
     <AbsoluteFill style={{ backgroundColor: PALETTE.obsidian }}>
-      <Sequence name="01 Kinetic Spark & Portal" from={0} durationInFrames={240}>
+      <Sequence name="01 Kinetic Spark & Portal" durationInFrames={240}>
         <KineticAct1Spark />
       </Sequence>
 
