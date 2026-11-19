@@ -220,11 +220,19 @@ class _SpecialistListScreenState extends State<SpecialistListScreen>
           side: BorderSide(color: OTColors.border(isDark)),
         ),
         title: Text(
-          'Batas Tab Tercapai',
+          Loc.isArabic
+              ? 'الحد الأقصى للتبويبات'
+              : (Loc.language == 'en'
+                  ? 'Tab Limit Reached'
+                  : 'Batas Tab Tercapai'),
           style: OTTypography.cardTitle(color: OTColors.textPrimary(isDark)),
         ),
         content: Text(
-          'Maksimal ${AgentSessionManager.maxTabs} asisten aktif terbuka bersamaan. Tutup tab "${Loc.text(oldest.title)}" untuk membuka "${Loc.text(agent.title)}"?',
+          Loc.isArabic
+              ? 'الحد الأقصى ${AgentSessionManager.maxTabs} تبويبات نشطة معًا. هل تريد إغلاق "${Loc.text(oldest.title)}" لفتح "${Loc.text(agent.title)}"؟'
+              : (Loc.language == 'en'
+                  ? 'Up to ${AgentSessionManager.maxTabs} active assistants can stay open together. Close "${Loc.text(oldest.title)}" to open "${Loc.text(agent.title)}"?'
+                  : 'Maksimal ${AgentSessionManager.maxTabs} asisten aktif terbuka bersamaan. Tutup tab "${Loc.text(oldest.title)}" untuk membuka "${Loc.text(agent.title)}"?'),
           style: OTTypography.body(color: OTColors.textSecondary(isDark)),
         ),
         actions: [
@@ -235,7 +243,9 @@ class _SpecialistListScreenState extends State<SpecialistListScreen>
           ),
           FilledButton(
             onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('Tutup & Buka'),
+            child: Text(Loc.isArabic
+                ? 'إغلاق وفتح'
+                : (Loc.language == 'en' ? 'Close & Open' : 'Tutup & Buka')),
           ),
         ],
       ),

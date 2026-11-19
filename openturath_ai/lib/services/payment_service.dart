@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:http/http.dart' as http;
 import 'callable_gateway.dart';
 import 'package:cloud_functions/cloud_functions.dart';
@@ -10,9 +12,11 @@ import '../core/product_pricing.dart';
 /// tidak pernah menyimpan kunci rahasia.
 class PaymentService {
   PaymentService({CallableGateway? functions})
-      : _functions = functions ?? const CallableGateway();
+      : _functions = functions ?? const CallableGateway(),
+        _hasCustomFunctions = functions != null;
 
   final CallableGateway _functions;
+  final bool _hasCustomFunctions;
 
   /// Buat sesi pembayaran checkout resmi melalui backend VPS atau fallback Cloud Function
   Future<Map<String, dynamic>> createCheckoutSession({
@@ -118,52 +122,79 @@ class PaymentService {
     }
 
     // 1. Cek langsung ke backend resmi VPS (maktabah.openturath.id)
-    try {
-      final vpsUrl = Uri.parse(
-          'https://maktabah.openturath.id/api/v1/payment/status?invoiceNumber=${Uri.encodeQueryComponent(cleanInvoice)}');
-      final resp = await http.get(vpsUrl, headers: {
-        'Accept': 'application/json',
-      }).timeout(const Duration(seconds: 8));
+    if (!_hasCustomFunctions) {
+      try {
+        final vpsUrl = Uri.parse(
+            'https://maktabah.openturath.id/api/v1/payment/status?invoiceNumber=${Uri.encodeQueryComponent(cleanInvoice)}');
+        final resp = await http.get(vpsUrl, headers: {
+          'Accept': 'application/json',
+        }).timeout(const Duration(seconds: 8));
 
-      if (resp.statusCode == 200) {
-        final data = jsonDecode(resp.body);
-        if (data is Map<String, dynamic>) {
-          final rawStatus =
-              (data['status'] ?? '').toString().trim().toUpperCase();
-          if (rawStatus == 'SUCCESS' || data['success'] == true) {
-            return {
-              'status': 'SUCCESS',
-              'success': true,
-              'order_id': cleanInvoice,
-              'data': data,
+        if (resp.statusCode == 200) {
+          final data = jsonDecode(resp.body);
+          if (data is Map<String, dynamic>) {
+            final rawStatus =
+                (data['status'] ?? '').toString().trim().toUpperCase();
+            if (rawStatus == 'SUCCESS' || data['success'] == true) {
+              return {
+                'status': 'SUCCESS',
+                'success': true,
+                'order_id': cleanInvoice,
+                'data': data,
+              };
+            }
+            const terminalStatuses = {
+              'EXPIRE',
+              'EXPIRED',
+              'DENY',
+              'DENIED',
+              'FAILED',
+              'CANCEL',
+              'CANCELLED',
+              'REFUND',
+              'PARTIAL_REFUND',
+              'CHARGEBACK',
+              'PARTIAL_CHARGEBACK',
             };
-          }
-          const terminalStatuses = {
-            'EXPIRE',
-            'EXPIRED',
-            'DENY',
-            'DENIED',
-            'FAILED',
-            'CANCEL',
-            'CANCELLED',
-            'REFUND',
-            'PARTIAL_REFUND',
-            'CHARGEBACK',
-            'PARTIAL_CHARGEBACK',
-          };
-          if (terminalStatuses.contains(rawStatus)) {
-            return {
-              'status': rawStatus,
-              'success': false,
-              'order_id': cleanInvoice,
-              'data': data,
+            if (terminalStatuses.contains(rawStatus)) {
+              return {
+                'status': rawStatus,
+                'success': false,
+                'order_id': cleanInvoice,
+                'data': data,
+              };
+            }
+            const pendingStatuses = {
+              'PENDING',
+              'CHALLENGE',
+              'CAPTURE',
+              'AUTHORIZE',
             };
+            if (pendingStatuses.contains(rawStatus)) {
+              return {
+                'status': rawStatus,
+                'success': false,
+                'order_id': cleanInvoice,
+                'data': data,
+              };
+            }
           }
         }
-      }
-    } catch (_) {}
+      } catch (_) {}
+    }
 
-    // 2. Fallback ke Cloud Function jika ada sesi Firebase Auth aktif
+    // 2. Fallback ke Cloud Function hanya jika disediakan custom gateway atau ada sesi Firebase Auth aktif
+    final canCallCloudFunction = _hasCustomFunctions ||
+        (Firebase.apps.isNotEmpty && FirebaseAuth.instance.currentUser != null);
+    if (!canCallCloudFunction) {
+      return {
+        'status': 'PENDING',
+        'success': false,
+        'reason': 'inquiry_unavailable',
+        'message': 'Status pembayaran belum dapat diperiksa.',
+      };
+    }
+
     try {
       final result = await _functions.call(
           AppConstants.fnCheckPaymentStatus, {'invoiceNumber': cleanInvoice});

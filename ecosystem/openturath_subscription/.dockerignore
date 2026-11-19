@@ -17,9 +17,10 @@ __pycache__/
 .DS_Store
 .git
 .gitignore
+# Sesi browser dan rahasia lokal dilarang keras masuk image Docker
+storage_state.json
+storage_state*.json
 .storage_state.json*
-
-# BELUM dikecualikan karena masih dibaca dari /app saat runtime
-# (notebooklm_manager.py, autonomous_reaper.py, load_dotenv):
-#   .env, storage_state.json, master_token.json
-# Pindahkan ke Secret Manager / env Cloud Run, lalu tambahkan ke daftar di atas.
+master_token.json
+.env
+.env.*

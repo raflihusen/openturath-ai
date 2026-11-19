@@ -189,130 +189,6 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     }
   }
 
-  Future<String?> _promptEmailForGuestCheckout(BuildContext context,
-      {required AgentModel agent, required SubscriptionOffer offer}) async {
-    final controller = TextEditingController();
-    String? errorText;
-
-    final result = await showDialog<String>(
-      context: context,
-      barrierDismissible: true,
-      builder: (ctx) {
-        return StatefulBuilder(
-          builder: (context, setDialogState) {
-            final dark = Theme.of(context).brightness == Brightness.dark;
-            final bg = OTColors.surface(dark);
-            final textCol = OTColors.textPrimary(dark);
-            final subCol = OTColors.textSecondary(dark);
-            final borderCol = OTColors.border(dark);
-
-            return Dialog(
-              backgroundColor: bg,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(OTRadius.card),
-                side: BorderSide(color: borderCol),
-              ),
-              child: Container(
-                constraints: const BoxConstraints(maxWidth: 440),
-                padding: const EdgeInsets.all(OTSpacing.xl),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Lanjut ke Pembayaran',
-                      style: OTTypography.cardTitle(color: textCol),
-                    ),
-                    const SizedBox(height: OTSpacing.sm),
-                    Text(
-                      'Masukkan email Google Anda untuk aktivasi akses ke modul ${agent.title}.',
-                      style: OTTypography.body(color: subCol)
-                          .copyWith(fontSize: 14),
-                    ),
-                    const SizedBox(height: OTSpacing.lg),
-                    TextField(
-                      controller: controller,
-                      autofocus: true,
-                      keyboardType: TextInputType.emailAddress,
-                      style: OTTypography.body(color: textCol),
-                      decoration: InputDecoration(
-                        hintText: 'nama@gmail.com',
-                        hintStyle: TextStyle(color: subCol),
-                        errorText: errorText,
-                        prefixIcon: Icon(Icons.email_outlined,
-                            color: subCol, size: 20),
-                        filled: true,
-                        fillColor: OTColors.surfaceSubtle(dark),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(OTRadius.input),
-                          borderSide: BorderSide(color: borderCol),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(OTRadius.input),
-                          borderSide: BorderSide(color: borderCol),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(OTRadius.input),
-                          borderSide: BorderSide(color: textCol),
-                        ),
-                      ),
-                      onSubmitted: (val) {
-                        final email = val.trim().toLowerCase();
-                        if (!email.contains('@') || !email.contains('.')) {
-                          setDialogState(
-                              () => errorText = 'Format email tidak valid');
-                        } else {
-                          Navigator.pop(ctx, email);
-                        }
-                      },
-                    ),
-                    const SizedBox(height: OTSpacing.xl),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        TextButton(
-                          onPressed: () => Navigator.pop(ctx, null),
-                          child:
-                              Text('Batal', style: TextStyle(color: subCol)),
-                        ),
-                        const SizedBox(width: OTSpacing.md),
-                        ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: OTColors.accent(dark),
-                            foregroundColor: OTColors.onAccent(dark),
-                            shape: RoundedRectangleBorder(
-                              borderRadius:
-                                  BorderRadius.circular(OTRadius.button),
-                            ),
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 20, vertical: 12),
-                          ),
-                          onPressed: () {
-                            final email = controller.text.trim().toLowerCase();
-                            if (!email.contains('@') || !email.contains('.')) {
-                              setDialogState(
-                                  () => errorText = 'Format email tidak valid');
-                            } else {
-                              Navigator.pop(ctx, email);
-                            }
-                          },
-                          child: const Text('Buka Pembayaran Midtrans',
-                              style: TextStyle(fontWeight: FontWeight.bold)),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            );
-          },
-        );
-      },
-    );
-
-    return result;
-  }
-
   Future<void> _checkout(AgentModel agent, SubscriptionOffer offer) async {
     if (_processing) return;
     final auth = AuthService();
@@ -331,44 +207,33 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
         (email.isNotEmpty ? email.split('@').first : '');
     final phone = fbUser?.phoneNumber ?? '';
 
-    // Ambil dari SharedPreferences jika memori cache belum terisi
+    // Ambil dari SharedPreferences HANYA jika sesi web terverifikasi aktif
     if (email.isEmpty) {
       try {
         final prefs = await SharedPreferences.getInstance();
-        final diskEmail = (prefs.getString(
-                    PersistentGoogleSession.verifiedOwnerKey) ??
-                prefs.getString('google_session_email') ??
-                prefs.getString('webview_session_owner') ??
-                prefs.getString('webview_session_owner_verified_v1') ??
-                '')
-            .trim()
-            .toLowerCase();
+        final isActiveWeb = prefs.getBool('web_session_active') == true;
+        final diskEmail = isActiveWeb
+            ? (prefs.getString(PersistentGoogleSession.verifiedOwnerKey) ?? '')
+                .trim()
+                .toLowerCase()
+            : '';
         if (diskEmail.isNotEmpty) {
           email = diskEmail;
           uid = 'web_$diskEmail';
           name = diskEmail.split('@').first;
-          AuthService.setActiveWebEmail(diskEmail);
         }
       } catch (_) {}
     }
 
-    // Jika pengguna benar-benar anonim, minta email tujuan akses tanpa memblokir
+    // Dilarang keras menerima email ketikan anonim sebagai identitas sesi / VIP
+    // tanpa verifikasi kepemilikan akun Google.
     if (email.isEmpty || uid.isEmpty) {
       if (!mounted) return;
-      final entered = await _promptEmailForGuestCheckout(context,
-          agent: agent, offer: offer);
-      if (entered == null || entered.isEmpty) {
-        return;
-      }
-      email = entered;
-      uid = 'web_$entered';
-      name = entered.split('@').first;
-      AuthService.setActiveWebEmail(entered);
-      try {
-        final prefs = await SharedPreferences.getInstance();
-        await prefs.setString('google_session_email', entered);
-        await prefs.setString('webview_session_owner', entered);
-      } catch (_) {}
+      setState(() {
+        _checkoutAgentId = agent.id;
+        _checkoutError = Loc.tr('checkoutAuthExpired');
+      });
+      return;
     }
 
     if (!mounted) return;
@@ -592,7 +457,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
           ),
         ),
         Padding(
-          padding: const EdgeInsets.only(top: 6),
+          padding: const EdgeInsets.only(top: OTSpacing.sm),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -602,7 +467,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                 child: Text(Loc.tr('planTrustNote'),
                     textAlign: TextAlign.center,
                     style: OTTypography.caption(color: sub)
-                        .copyWith(fontSize: 11)),
+                        .copyWith(fontSize: OTFontSize.s11)),
               ),
             ],
           ),
@@ -653,7 +518,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                       const SizedBox(height: 6),
                       Text(description,
                           style: OTTypography.body(color: sub)
-                              .copyWith(fontSize: 13, height: 1.4),
+                              .copyWith(fontSize: OTFontSize.s14, height: 1.4),
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis),
                       if (field != null) ...[
@@ -704,7 +569,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                 const SizedBox(height: 6),
                 Text(description,
                     style: OTTypography.body(color: sub)
-                        .copyWith(fontSize: 13, height: 1.4),
+                        .copyWith(fontSize: OTFontSize.s14, height: 1.4),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis),
                 if (field != null) ...[
@@ -1163,7 +1028,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                   style: OTTypography.caption(
                           color: OTColors.textSecondary(dark))
                       .copyWith(
-                    fontSize: 12,
+                    fontSize: OTFontSize.s12,
                     fontStyle: FontStyle.italic,
                   ),
                 ),
@@ -1267,21 +1132,38 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                                         ? OTFontSize.s36
                                         : OTFontSize.s26)),
                         const SizedBox(height: OTSpacing.xl),
-                        Center(
-                          child: ConstrainedBox(
-                            constraints: const BoxConstraints(maxWidth: 440),
-                            child: _PeriodSwitch(
-                              label: Loc.tr('planPeriodLabel'),
-                              titles: [for (final o in flagshipOffers) o.title],
-                              notes: [for (final _ in flagshipOffers) ''],
-                              selected: fi,
-                              onSelect: _processing
-                                  ? null
-                                  : (i) => setState(() => _periodIndex = i),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: OTSpacing.xl),
+                        if (showTahawwulat ||
+                            showAllSpecialists ||
+                            singlePlan != null) ...[
+                          Builder(builder: (_) {
+                            final periodOffers = showTahawwulat
+                                ? flagshipOffers
+                                : (showAllSpecialists
+                                    ? allSpecialistsOffers
+                                    : singleOffers);
+                            final periodSelected =
+                                _periodIndex.clamp(0, periodOffers.length - 1);
+                            return Center(
+                              child: ConstrainedBox(
+                                constraints:
+                                    const BoxConstraints(maxWidth: 440),
+                                child: _PeriodSwitch(
+                                  label: Loc.tr('planPeriodLabel'),
+                                  titles: [
+                                    for (final o in periodOffers) o.title
+                                  ],
+                                  notes: [for (final _ in periodOffers) ''],
+                                  selected: periodSelected,
+                                  onSelect: _processing
+                                      ? null
+                                      : (i) =>
+                                          setState(() => _periodIndex = i),
+                                ),
+                              ),
+                            );
+                          }),
+                          const SizedBox(height: OTSpacing.xl),
+                        ],
                         if (showTahawwulat) ...[
                           OTReveal(index: 0, child: featuredPlan),
                           const SizedBox(height: OTSpacing.base),
@@ -1292,6 +1174,40 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                         ],
                         if (singlePlan != null) ...[
                           OTReveal(index: 2, child: singlePlan),
+                          const SizedBox(height: OTSpacing.base),
+                        ],
+                        if (!showTahawwulat &&
+                            !showAllSpecialists &&
+                            singlePlan == null) ...[
+                          Container(
+                            padding: const EdgeInsets.all(OTSpacing.xl),
+                            decoration: BoxDecoration(
+                              color: OTColors.surface(dark),
+                              borderRadius:
+                                  BorderRadius.circular(OTRadius.card),
+                              border: Border.all(color: OTColors.border(dark)),
+                            ),
+                            child: Column(
+                              children: [
+                                Icon(Icons.hourglass_empty_rounded,
+                                    size: 28,
+                                    color: OTColors.textSecondary(dark)),
+                                const SizedBox(height: OTSpacing.md),
+                                Text(
+                                  Loc.tr('comingSoon'),
+                                  textAlign: TextAlign.center,
+                                  style: OTTypography.cardTitle(color: ink),
+                                ),
+                                const SizedBox(height: OTSpacing.xs),
+                                Text(
+                                  Loc.tr('checkoutPlanUnavailable'),
+                                  textAlign: TextAlign.center,
+                                  style: OTTypography.body(
+                                      color: OTColors.textSecondary(dark)),
+                                ),
+                              ],
+                            ),
+                          ),
                           const SizedBox(height: OTSpacing.base),
                         ],
                         const SizedBox(height: OTSpacing.xl),

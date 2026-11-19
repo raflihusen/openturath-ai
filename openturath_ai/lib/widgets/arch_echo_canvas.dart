@@ -126,11 +126,18 @@ class _ArchEchoPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
+    if (!size.width.isFinite ||
+        !size.height.isFinite ||
+        size.width <= 0 ||
+        size.height <= 0) {
+      return;
+    }
     final cx = size.width / 2;
     final top = size.height * (compact ? 0.11 : 0.10);
     final base = size.height * (compact ? 0.93 : 0.88);
     final h0 = base - top;
     final w0 = math.min(size.width * (compact ? 0.64 : 0.70), h0 * 0.74);
+    if (!h0.isFinite || !w0.isFinite || h0 <= 0 || w0 <= 0) return;
     final t = seconds / _breath;
     final breathe = _wave(t);
     final settled = introMs >= introTotalMs - 1;

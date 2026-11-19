@@ -9,6 +9,7 @@ import '../core/localization.dart';
 import '../core/app_copy.dart';
 import '../core/routes.dart';
 import '../core/google_connection_flow.dart';
+import '../core/design/ot_buttons.dart';
 import '../core/design/ot_colors.dart';
 import '../core/design/ot_expressive.dart';
 import '../widgets/ot_motion_widgets.dart';
@@ -100,6 +101,7 @@ class _LoginScreenState extends State<LoginScreen> {
         body: SafeArea(
           child: LayoutBuilder(builder: (context, viewport) {
             final isPhone = viewport.maxWidth < 900;
+            final isCompactHeight = viewport.maxHeight < 700;
 
             const onCard = OTExpressive.white;
             const onCardMuted = OTExpressive.whiteMuted;
@@ -110,7 +112,8 @@ class _LoginScreenState extends State<LoginScreen> {
                     Loc.tr('loginTitle'),
                     textAlign: TextAlign.center,
                     style: ScholarlyFonts.outfit(
-                      fontSize: viewport.maxHeight < 700 ? OTFontSize.s26 : OTFontSize.s36,
+                      fontSize:
+                          isCompactHeight ? OTFontSize.s26 : OTFontSize.s36,
                       fontWeight: FontWeight.w600,
                       letterSpacing: -0.6,
                       height: 1.15,
@@ -121,30 +124,24 @@ class _LoginScreenState extends State<LoginScreen> {
 
             Widget signInButton(ButtonStyle? style, Color loader) => OTReveal(
                   delayMs: OTMotion.loginButtonMs,
-                  child: FilledButton.icon(
-                    style: style ??
-                        FilledButton.styleFrom(
-                          backgroundColor: OTColors.surfaceLight,
-                          foregroundColor: OTColors.textPrimaryLight,
-                          elevation: 0,
-                          minimumSize: const Size(double.infinity, 52),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(26),
-                          ),
+                  child: SizedBox(
+                    width: double.infinity,
+                    child: FilledButton.icon(
+                      style: style,
+                      onPressed: _isLoading ? null : _signIn,
+                      icon: _isLoading
+                          ? AppLoader(dotSize: 5, spacing: 2, color: loader)
+                          : _GoogleGVector(),
+                      label: Text(
+                        _isLoading
+                            ? Loc.tr('desktopConnectingGoogle')
+                            : AppCopy.continueWithGoogle,
+                        textAlign: TextAlign.center,
+                        style: ScholarlyFonts.outfit(
+                          fontSize: OTFontSize.s16,
+                          fontWeight: FontWeight.w600,
+                          height: 1.4,
                         ),
-                    onPressed: _isLoading ? null : _signIn,
-                    icon: _isLoading
-                        ? AppLoader(dotSize: 5, spacing: 2, color: loader)
-                        : _GoogleGVector(),
-                    label: Text(
-                      _isLoading
-                          ? Loc.tr('desktopConnectingGoogle')
-                          : AppCopy.continueWithGoogle,
-                      textAlign: TextAlign.center,
-                      style: ScholarlyFonts.outfit(
-                        fontSize: OTFontSize.s16,
-                        fontWeight: FontWeight.w600,
-                        height: 1.4,
                       ),
                     ),
                   ),
@@ -254,15 +251,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     titleText(onCard),
                     const SizedBox(height: 24),
                     signInButton(
-                      FilledButton.styleFrom(
-                        backgroundColor: OTColors.surfaceLight,
-                        foregroundColor: OTColors.textPrimaryLight,
-                        elevation: 0,
-                        minimumSize: const Size(double.infinity, 52),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(26),
-                        ),
-                      ),
+                      OTButtons.onInk(),
                       OTColors.textPrimaryLight,
                     ),
                     if (_desktopError != null) errorBox(),
@@ -287,7 +276,11 @@ class _LoginScreenState extends State<LoginScreen> {
                               color: OTColors.surfaceLight.withValues(alpha: 0.12)),
                         ),
                         child: LayoutBuilder(builder: (context, card) {
-                          if (card.maxHeight < 520) {
+                          final textScale =
+                              MediaQuery.textScalerOf(context).scale(1);
+                          final compactCard = card.maxHeight < 520 ||
+                              (card.maxHeight < 640 && textScale > 1.15);
+                          if (compactCard) {
                             return Center(
                               child: SingleChildScrollView(
                                 padding: const EdgeInsets.only(top: 24),
@@ -332,15 +325,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               titleText(headerPrimary),
                               const SizedBox(height: 24),
                               signInButton(
-                                FilledButton.styleFrom(
-                                  backgroundColor: OTColors.accentLight,
-                                  foregroundColor: OTColors.onAccentLight,
-                                  elevation: 0,
-                                  minimumSize: const Size(double.infinity, 52),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(26),
-                                  ),
-                                ),
+                                null,
                                 OTColors.onAccentLight,
                               ),
                               if (_desktopError != null) errorBox(),
