@@ -104,6 +104,26 @@ void main() {
     expect(
         notebookUiScript.contains('padding-bottom: 24px !important;'), isTrue);
   });
+
+  test(
+      'accessDenied detects Google request-access page even when textarea is present',
+      () {
+    // Regression guard: Google "Request access" page renders a "Message (optional)"
+    // textarea. accessDenied() must NOT defer to inputReady(), and inputReady() must
+    // reject access-denied pages and request-access textareas.
+    final accessDeniedStart = notebookUiScript.indexOf('function accessDenied()');
+    final accessDeniedEnd =
+        notebookUiScript.indexOf('function isRequestAccessInput', accessDeniedStart);
+    expect(accessDeniedStart, isNonNegative);
+    expect(accessDeniedEnd, greaterThan(accessDeniedStart));
+    final accessDeniedBody =
+        notebookUiScript.substring(accessDeniedStart, accessDeniedEnd);
+    expect(accessDeniedBody.contains('if (inputReady()) return false'), isFalse);
+    expect(accessDeniedBody.contains('anda memerlukan akses'), isTrue);
+    expect(accessDeniedBody.contains('request access'), isTrue);
+    expect(accessDeniedBody.contains('طلب الوصول'), isTrue);
+    expect(notebookUiScript.contains('isRequestAccessInput(input)'), isTrue);
+  });
 }
 
 void notebookSkinTests() {

@@ -1391,28 +1391,57 @@ const _notebookCleanupScript = r'''
     return false;
   }
 
+  function accessDenied() {
+    const body = (document.body?.innerText || '').toLowerCase();
+    const title = (document.title || '').toLowerCase();
+    const hasTextMatch =
+      /anda memerlukan akses|minta akses|minta izin|tidak memiliki izin|tidak punya izin|tidak memiliki akses|buku catatan tidak ditemukan|tidak dapat membuka notebook|you need access|request access|ask for access|you don['’]t have access|do not have access|don['’]t have permission|access denied|notebook not found|unable to open notebook|can['’]t access|تحتاج إلى إذن|طلب الإذن|طلب الوصول|طلب إذن|ليس لديك إذن|لا يمكنك الوصول|تعذّ?ر فتح/.test(body) ||
+      /anda memerlukan akses|you need access|access denied|request access|تحتاج إلى إذن|طلب الوصول/.test(title);
+    const hasElementMatch = !!document.querySelector(
+      '[aria-label*="Request access" i], [aria-label*="Minta akses" i], [aria-label*="Ask for access" i], [aria-label*="طلب الوصول"], [aria-label*="طلب إذن"], app-access-denied, div[class*="access-denied" i], button[class*="request-access" i]'
+    );
+    const hasRequestButton = [...document.querySelectorAll('button, [role="button"], a')].some(el => {
+      if (!visible(el)) return false;
+      const lbl = (el.getAttribute('aria-label') || el.innerText || el.textContent || '').trim().toLowerCase();
+      return /^(request access|minta akses|ask for access|minta izin|طلب الوصول|طلب إذن)$/.test(lbl);
+    });
+    return hasTextMatch || hasElementMatch || hasRequestButton;
+  }
+  function isRequestAccessInput(input) {
+    if (!input) return false;
+    const hint = [
+      input.getAttribute('placeholder'),
+      input.getAttribute('aria-label'),
+      input.getAttribute('name'),
+      input.id
+    ].filter(Boolean).join(' ').toLowerCase();
+    if (/message\s*\(optional\)|pesan\s*\(opsional\)|request.?access|minta.?akses|رسالة\s*\(اختياري\)/.test(hint)) {
+      return true;
+    }
+    const form = input.closest('form, [role="dialog"], main, section');
+    if (form) {
+      const formTxt = (form.innerText || '').toLowerCase();
+      if (/anda memerlukan akses|minta akses|you need access|request access|ask for access|تحتاج إلى إذن|طلب الوصول/.test(formTxt)) {
+        return true;
+      }
+    }
+    return false;
+  }
   function ready() {
     if (accessDenied()) return false;
     // Other panels may keep a source/upload spinner running after chat is usable.
     return inputReady();
   }
   function inputReady() {
+    if (accessDenied()) return false;
     // The page can contain a hidden or disabled input before the live composer.
     const inputs = [...document.querySelectorAll('textarea, [contenteditable="true"], [role="textbox"]')];
     return inputs.some(input => {
       if (input.disabled || input.getAttribute('aria-disabled') === 'true') return false;
+      if (isRequestAccessInput(input)) return false;
       return visible(input) || (input.offsetWidth > 0 && getComputedStyle(input).display !== 'none');
     });
   }
-function accessDenied() {
-  if (inputReady()) return false;
-  const body = (document.body?.innerText || '').toLowerCase();
-  const title = (document.title || '').toLowerCase();
-  const hasTextMatch = /anda memerlukan akses|minta akses|you need access|request access|tidak memiliki izin/.test(body) ||
-    /anda memerlukan akses|you need access/.test(title);
-  const hasElementMatch = !!document.querySelector('[aria-label*="Request access" i], [aria-label*="Minta akses" i], app-access-denied, div[class*="access-denied" i]');
-  return hasTextMatch || hasElementMatch;
-}
 window.otDeleteChatHistory = async function() {
   // Let NotebookLM remove its own messages after the provider action. Never
   // simulate deletion by removing DOM nodes: failed requests must remain visible.

@@ -28,6 +28,7 @@ import '../core/app_config.dart';
 import '../core/app_snackbar.dart';
 import '../core/navigation_guard.dart';
 import '../core/routes.dart';
+import '../core/google_connection_flow.dart';
 import '../core/google_rejection.dart';
 import '../core/notebook_navigation.dart';
 import '../core/notebook_ui_script.dart';
@@ -1325,16 +1326,23 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
   }
 
   void _handleAccessDenied(AgentSessionTab session) {
-    final user = AuthService().cachedCurrentUser;
+    final user = _authService.cachedCurrentUser;
     final hasActiveEntitlement = AppConfig.isGuruEdition ||
         (user != null &&
-            (user.isVip ||
-                (user.isSubscriptionActive &&
-                    user.isAgentSubscriptionActive(session.agent.id))));
+            (user.isVip || user.hasAccessToAgent(session.agent.id)));
 
     if (hasActiveEntitlement && _accessDeniedRetryCount < 5) {
       _accessDeniedRetryCount++;
       _readinessTimer?.cancel();
+      if (mounted) {
+        setState(() {
+          session.isSessionReady = false;
+          session.isWebLoading = true;
+        });
+      } else {
+        session.isSessionReady = false;
+        session.isWebLoading = true;
+      }
       Future.delayed(const Duration(seconds: 4), () {
         if (!mounted) return;
         session.webController?.reload();
@@ -1344,6 +1352,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
     }
 
     _readinessTimer?.cancel();
+    _inputRetryTimer?.cancel();
     _loadingStarted = null;
     if (mounted) {
       setState(() {
@@ -1709,6 +1718,13 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
               googleReady ? null : Loc.tr('roomSameAccountBodyPlain');
           session.isWebLoading = googleReady;
         });
+        if (googleReady && session.webController != null) {
+          _loadingStarted = null;
+          unawaited(session.webController!
+              .loadUrl(urlRequest: URLRequest(url: WebUri(effectiveUrl)))
+              .catchError((_) {}));
+          _startReadinessCheck();
+        }
       } else {
         final user = _authService.cachedCurrentUser;
         final isVip = user?.isVip == true;
@@ -1887,21 +1903,22 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
           retryLabel: Loc.tr('roomLoginNow'),
           retryIcon: Icons.login_rounded,
           onRetry: () async {
-            if (session.resolvedUrl != null) {
-              setState(() {
-                session.errorMessage = null;
-                session.isGoogleAuthPage = false;
-                session.isWebLoading = true;
-                session.isSessionReady = false;
-              });
-              _loadingStarted = null;
-              session.webController?.loadUrl(
-                urlRequest: URLRequest(url: WebUri(session.resolvedUrl!)),
-              );
-              _startReadinessCheck();
-            } else {
-              _fetchUrl();
-            }
+            final result = await NavigationGuard.safePushNamed<Object?>(
+              context,
+              AppRoutes.googleSessionAuth,
+              arguments: GoogleConnectionPurpose.aiRoom,
+            );
+            if (!mounted || result != GoogleConnectionResult.verified) return;
+            _accessDeniedRetryCount = 0;
+            setState(() {
+              session.errorMessage = null;
+              session.isGoogleAuthPage = false;
+              session.isGooglePermissionError = false;
+              session.isWebLoading = true;
+              session.isSessionReady = false;
+            });
+            _loadingStarted = null;
+            unawaited(_fetchUrl());
           },
           onBack: close,
           backLabel: Loc.tr('back'),
@@ -1916,23 +1933,22 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
           retryLabel: Loc.tr('ui_f9d6eb247c'),
           retryIcon: Icons.switch_account_outlined,
           onRetry: () async {
+            final result = await NavigationGuard.safePushNamed<Object?>(
+              context,
+              AppRoutes.googleSessionAuth,
+              arguments: GoogleConnectionPurpose.aiRoom,
+            );
+            if (!mounted || result != GoogleConnectionResult.verified) return;
             _accessDeniedRetryCount = 0;
-            if (session.resolvedUrl != null) {
-              setState(() {
-                session.errorMessage = null;
-                session.isGooglePermissionError = false;
-                session.isGoogleAuthPage = false;
-                session.isWebLoading = true;
-                session.isSessionReady = false;
-              });
-              _loadingStarted = null;
-              session.webController?.loadUrl(
-                urlRequest: URLRequest(url: WebUri(session.resolvedUrl!)),
-              );
-              _startReadinessCheck();
-            } else {
-              _fetchUrl();
-            }
+            setState(() {
+              session.errorMessage = null;
+              session.isGooglePermissionError = false;
+              session.isGoogleAuthPage = false;
+              session.isWebLoading = true;
+              session.isSessionReady = false;
+            });
+            _loadingStarted = null;
+            unawaited(_fetchUrl());
           },
           onBack: close,
           backLabel: Loc.tr('back'),
@@ -2359,7 +2375,9 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
                       .lockAndPersistCookies(controller, email)
                       .catchError((_) => false));
                 }
-                _startReadinessCheck();
+                if (!session.isSessionReady) {
+                  _startReadinessCheck();
+                }
               } else if (NotebookNavigation.signInFlow(uri.uriValue)) {
                 if (!session.isGoogleAuthPage && mounted) {
                   _enterGoogleSignIn();

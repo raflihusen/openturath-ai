@@ -175,121 +175,104 @@ class AgentService {
     // Rule 5 AGENTS.md (Hukum Sakral VIP): Akun VIP sejati berhak atas naskah master secara permanen
     // dan langsung diarahkan ke naskah resmi tanpa delay atau terhalang unauthenticated/unavailable.
     // Begitu juga akun dengan hak akses langganan atau voucher aktif, langsung diarahkan ke naskah resmi.
-    if (!_hasCustomFunctions &&
-        (isVip || (effectiveUser != null && effectiveUser.hasAccessToAgent(agentId)))) {
+    if (!_hasCustomFunctions) {
+      var hasAccess = AppConfig.isGuruEdition ||
+          isVip ||
+          (effectiveUser != null && effectiveUser.hasAccessToAgent(agentId));
+
+      // Jika cache lokal belum menunjukkan akses, sinkronkan dulu status otoritatif dari VPS
+      // agar pengguna yang baru saja membayar tidak keliru terkena paywall.
+      if (!hasAccess && email.isNotEmpty) {
+        try {
+          await AuthService.syncUserStatusWithVps(email)
+              .timeout(const Duration(seconds: 4));
+          final refreshed = AuthService().cachedCurrentUser;
+          hasAccess = (refreshed?.isVip == true) ||
+              (refreshed != null && refreshed.hasAccessToAgent(agentId));
+        } catch (_) {}
+      }
+
+      if (!hasAccess) {
+        throw const AgentAccessException(
+            'permission-denied',
+            'Akses ke modul AI ini memerlukan paket langganan atau voucher aktif.',
+            reason: 'entitlement_required');
+      }
+
       final canonical = CanonicalNotebookCatalog.getUrl(agentId);
       if (canonical != null && canonical.isNotEmpty) {
         return canonical;
       }
+
+      throw const AgentAccessException(
+          'empty-url', 'URL AI belum tersedia untuk bidang ini.');
     }
 
-    if (_hasCustomFunctions) {
-      try {
-        final result = await _functions
-            .call(AppConstants.fnGetAgentUrl, {'agentId': agentId});
-        if (result is! Map) {
-          throw const AgentAccessException(
-              'invalid-response', 'Respons alamat AI tidak valid.');
-        }
-        final url = result['url'];
-        if (url == null || url == '') {
-          throw const AgentAccessException(
-              'empty-url', 'URL AI belum tersedia untuk bidang ini.');
-        }
-        if (url is! String) {
-          throw const AgentAccessException(
-              'invalid-url', 'Alamat AI dari server tidak valid.');
-        }
-        final uri = Uri.tryParse(url);
-        if (uri == null ||
-            url != url.trim() ||
-            url.contains('%') ||
-            !NotebookNavigation.notebook(uri) ||
-            !_notebookPath.hasMatch(uri.path) ||
-            uri.hasQuery ||
-            uri.hasFragment) {
-          throw const AgentAccessException(
-              'invalid-url', 'Alamat AI dari server tidak valid.');
-        }
-        return uri.replace(host: NotebookNavigation.canonicalHost).toString();
-      } on FirebaseFunctionsException catch (e) {
-        if (isVip || (effectiveUser != null && (effectiveUser.isVip || effectiveUser.hasAccessToAgent(agentId)))) {
-          final fallback = CanonicalNotebookCatalog.getUrl(agentId);
-          if (fallback != null) return fallback;
-        }
-        final details = e.details is Map ? e.details as Map : const {};
-        final reason = details['reason'];
-        final requestId = details['request_id'];
-        throw AgentAccessException(
-          e.code,
-          e.message ??
-              Loc.tr(e.code == 'permission-denied'
-                  ? 'ui_5d804a44a9'
-                  : 'errServiceUnavailable'),
-          reason: reason is String &&
-                  RegExp(r'^[a-z][a-z0-9_]{0,59}$').hasMatch(reason)
-              ? reason
-              : null,
-          requestId: requestId is String &&
-                  RegExp(r'^[a-f0-9-]{36}$').hasMatch(requestId)
-              ? requestId
-              : null,
-        );
-      } catch (e) {
-        if (e is AgentAccessException) rethrow;
-        if (isVip || (effectiveUser != null && (effectiveUser.isVip || effectiveUser.hasAccessToAgent(agentId)))) {
-          final fallback = CanonicalNotebookCatalog.getUrl(agentId);
-          if (fallback != null) return fallback;
-        }
-        throw AgentAccessException('unknown-error', e.toString());
-      }
-    }
-
-    // 1. Coba panggil endpoint mandiri VPS OpenTurath
     try {
-      final res = await http.post(
-        Uri.parse('https://maktabah.openturath.id/api/getAgentUrl'),
-        headers: {
-          'Content-Type': 'application/json',
-          'User-Agent': 'OpenTurath-App/1.0',
-        },
-        body: jsonEncode({
-          'data': {'agentId': agentId}
-        }),
-      ).timeout(const Duration(seconds: 4));
-
-      if (res.statusCode == 200) {
-        final body = jsonDecode(res.body);
-        if (body is Map) {
-          final url = body['result']?['url'] ?? body['url'];
-          if (url is String && url.isNotEmpty) {
-            final uri = Uri.tryParse(url);
-            if (uri != null &&
-                NotebookNavigation.notebook(uri) &&
-                _notebookPath.hasMatch(uri.path)) {
-              return uri
-                  .replace(host: NotebookNavigation.canonicalHost)
-                  .toString();
-            }
-          }
-        }
+      final result = await _functions
+          .call(AppConstants.fnGetAgentUrl, {'agentId': agentId});
+      if (result is! Map) {
+        throw const AgentAccessException(
+            'invalid-response', 'Respons alamat AI tidak valid.');
       }
-    } catch (_) {
-      // Abaikan kegagalan jaringan VPS dan lanjutkan ke fallback kanonik
-    }
-
-    // 2. Fallback naskah kanonik resmi Pro Master HANYA jika user terverifikasi berhak
-    if (isVip || (effectiveUser != null && effectiveUser.hasAccessToAgent(agentId))) {
-      final canonical = CanonicalNotebookCatalog.getUrl(agentId);
-      if (canonical != null && canonical.isNotEmpty) {
-        return canonical;
+      final url = result['url'];
+      if (url == null || url == '') {
+        throw const AgentAccessException(
+            'empty-url', 'URL AI belum tersedia untuk bidang ini.');
       }
+      if (url is! String) {
+        throw const AgentAccessException(
+            'invalid-url', 'Alamat AI dari server tidak valid.');
+      }
+      final uri = Uri.tryParse(url);
+      if (uri == null ||
+          url != url.trim() ||
+          url.contains('%') ||
+          !NotebookNavigation.notebook(uri) ||
+          !_notebookPath.hasMatch(uri.path) ||
+          uri.hasQuery ||
+          uri.hasFragment) {
+        throw const AgentAccessException(
+            'invalid-url', 'Alamat AI dari server tidak valid.');
+      }
+      return uri.replace(host: NotebookNavigation.canonicalHost).toString();
+    } on FirebaseFunctionsException catch (e) {
+      if (isVip ||
+          (effectiveUser != null &&
+              (effectiveUser.isVip ||
+                  effectiveUser.hasAccessToAgent(agentId)))) {
+        final fallback = CanonicalNotebookCatalog.getUrl(agentId);
+        if (fallback != null) return fallback;
+      }
+      final details = e.details is Map ? e.details as Map : const {};
+      final reason = details['reason'];
+      final requestId = details['request_id'];
+      throw AgentAccessException(
+        e.code,
+        e.message ??
+            Loc.tr(e.code == 'permission-denied'
+                ? 'ui_5d804a44a9'
+                : 'errServiceUnavailable'),
+        reason: reason is String &&
+                RegExp(r'^[a-z][a-z0-9_]{0,59}$').hasMatch(reason)
+            ? reason
+            : null,
+        requestId: requestId is String &&
+                RegExp(r'^[a-f0-9-]{36}$').hasMatch(requestId)
+            ? requestId
+            : null,
+      );
+    } catch (e) {
+      if (e is AgentAccessException) rethrow;
+      if (isVip ||
+          (effectiveUser != null &&
+              (effectiveUser.isVip ||
+                  effectiveUser.hasAccessToAgent(agentId)))) {
+        final fallback = CanonicalNotebookCatalog.getUrl(agentId);
+        if (fallback != null) return fallback;
+      }
+      throw AgentAccessException('unknown-error', e.toString());
     }
-
-    throw const AgentAccessException(
-        'permission-denied',
-        'Akses ke modul AI ini memerlukan paket langganan atau voucher aktif.',
-        reason: 'entitlement_required');
   }
 
   // ── Catat pertanyaan trial secara atomik di Cloud Functions ───
