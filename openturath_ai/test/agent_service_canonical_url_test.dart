@@ -155,7 +155,7 @@ void main() {
     );
 
     final url = await service.getAgentUrl('fiqh_syafii', vipUser);
-    expect(url, 'https://notebooklm.google.com/notebook/6f42cb8a-79cc-429b-89c5-9a96561f8f4d');
+    expect(url, 'https://notebooklm.google.com/notebook/565630db-d4cb-4070-af38-e8cb81d688ea');
   });
 
   test('auto-detects VIP from canonical email even when isVip flag is false or omitted', () async {

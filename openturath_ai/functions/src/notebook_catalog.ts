@@ -379,9 +379,9 @@ export const NOTEBOOK_ENTITIES: Record<string, NotebookEntityInfo> = {
   "01_FIKIH_SYAFII": {
     code: "01_FIKIH_SYAFII",
     name: "Fikih Syafi'i (Mazhab Imam Asy-Syafi'i)",
-    masterId: "6f42cb8a-79cc-429b-89c5-9a96561f8f4d",
-    masterUrl: "https://notebooklm.google.com/notebook/6f42cb8a-79cc-429b-89c5-9a96561f8f4d",
-    legacyIds: ["c89d09ca-4b48-4000-a98d-59e532607fb6", "334e7b83-0e76-4787-a1d6-314642a35862"],
+    masterId: "565630db-d4cb-4070-af38-e8cb81d688ea",
+    masterUrl: "https://notebooklm.google.com/notebook/565630db-d4cb-4070-af38-e8cb81d688ea",
+    legacyIds: ["6f42cb8a-79cc-429b-89c5-9a96561f8f4d", "c89d09ca-4b48-4000-a98d-59e532607fb6", "334e7b83-0e76-4787-a1d6-314642a35862"],
     clones: [
       { name: "01 - FIKIH SYAFII - 01", id: "367a6325-23f7-4ab0-a724-4a3124c4b84e", url: "https://notebooklm.google.com/notebook/367a6325-23f7-4ab0-a724-4a3124c4b84e" },
       { name: "01 - FIKIH SYAFII - 02", id: "5dd3b967-a655-4f93-9b6a-54a577f9e563", url: "https://notebooklm.google.com/notebook/5dd3b967-a655-4f93-9b6a-54a577f9e563" },

@@ -25,7 +25,7 @@ class NotebookChatReply {
 class NotebookChatService {
   const NotebookChatService({
     CallableGateway gateway = const CallableGateway(
-      timeout: Duration(seconds: 100),
+      timeout: Duration(seconds: 240),
     ),
   }) : _gateway = gateway;
 
