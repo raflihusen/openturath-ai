@@ -379,17 +379,24 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                 100 /
                 (monthly * price.months))
             .round();
+    final isArabicCurrency = Loc.isArabic;
+    final totalSar = ProductPricing.toSar(price.amount);
     final perMonth = price.months > 1
         ? Loc.tr('monthlyEquivalent', [
-            ProductPricing.rupiah(
-                ((price.amount / price.months) / 1000).round() * 1000)
+            isArabicCurrency
+                ? ProductPricing.sar((totalSar / price.months).round())
+                : ProductPricing.rupiah(
+                    ((price.amount / price.months) / 1000).round() * 1000)
           ])
         : '';
     // Harga efektif per hari: 12 bulan dihitung 365 hari, selebihnya 30 hari
-    // per bulan, dibulatkan ke ratusan terdekat. Ditampilkan sebagai "sekitar".
+    // per bulan, dibulatkan ke ratusan terdekat (atau 1 desimal untuk SAR).
     final days = price.months >= 12 ? 365 : price.months * 30;
-    final perDay = Loc.tr('perDayEquivalent',
-        [ProductPricing.rupiah(((price.amount / days) / 100).round() * 100)]);
+    final perDay = Loc.tr('perDayEquivalent', [
+      isArabicCurrency
+          ? ProductPricing.sarDecimal(totalSar / days)
+          : ProductPricing.rupiah(((price.amount / days) / 100).round() * 100)
+    ]);
 
     Widget pricingSection() => AnimatedSwitcher(
       duration: OTMotion.transition,
@@ -406,7 +413,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
         ),
       ),
       child: KeyedSubtree(
-        key: ValueKey('$agentId-${price.amount}-${price.months}'),
+        key: ValueKey('$agentId-${price.amount}-${price.months}-${Loc.language}'),
         child: Column(
           crossAxisAlignment:
               wide ? CrossAxisAlignment.end : CrossAxisAlignment.start,
@@ -451,9 +458,13 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
           width: wide ? 240 : double.infinity,
           height: 48,
           child: FilledButton(
-            onPressed: (_processing || !_pricingReady) ? null : onCheckout,
+            onPressed: (isArabicCurrency || _processing || !_pricingReady)
+                ? null
+                : onCheckout,
             style: inverse && !dark ? OTButtons.onInverse(dark) : null,
-            child: Text(Loc.tr(active ? 'planRenew' : 'planContinue')),
+            child: Text(isArabicCurrency
+                ? 'قريباً'
+                : Loc.tr(active ? 'planRenew' : 'planContinue')),
           ),
         ),
         Padding(
@@ -464,7 +475,10 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
               Icon(Icons.lock_outline_rounded, size: 12, color: sub),
               const SizedBox(width: 4),
               Flexible(
-                child: Text(Loc.tr('planTrustNote'),
+                child: Text(
+                    isArabicCurrency
+                        ? 'الدفع بالريال السعودي عبر التحويل البنكي متاح قريباً'
+                        : Loc.tr('planTrustNote'),
                     textAlign: TextAlign.center,
                     style: OTTypography.caption(color: sub)
                         .copyWith(fontSize: OTFontSize.s11)),

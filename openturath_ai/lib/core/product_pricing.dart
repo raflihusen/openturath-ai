@@ -147,6 +147,39 @@ abstract final class ProductPricing {
     }
     return agentId.startsWith('fiqh_tahawwulat') ? tahawwulat : specialists;
   }
+  static const double sarPerIdrRate = 4868.0;
+
+  /// Konversi nominal IDR ke Riyal Saudi (SAR) dengan pembulatan bersih:
+  /// kelipatan 1 untuk < 50 SAR dan kelipatan 5 untuk >= 50 SAR.
+  static int toSar(int idrAmount) {
+    if (idrAmount <= 0) return 0;
+    final raw = idrAmount / sarPerIdrRate;
+    if (raw < 50) {
+      final rounded = raw.round();
+      return rounded < 1 ? 1 : rounded;
+    }
+    return ((raw / 5).round() * 5);
+  }
+
+  static String sar(int sarAmount) {
+    final formatted = sarAmount.toString().replaceAllMapped(
+      RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
+      (match) => '${match[1]},',
+    );
+    return '$formatted ر.س';
+  }
+
+  static String sarDecimal(double sarAmount) {
+    if (sarAmount >= 5) {
+      return sar(sarAmount.round());
+    }
+    final fixed = sarAmount < 0.1 ? '0.1' : sarAmount.toStringAsFixed(1);
+    return '${fixed.endsWith('.0') ? fixed.substring(0, fixed.length - 2) : fixed} ر.س';
+  }
+
+  static String formatLocalPrice(int idrAmount) =>
+      Loc.isArabic ? sar(toSar(idrAmount)) : rupiah(idrAmount);
+
   static String rupiah(int amount) =>
       'Rp ${amount.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (match) => '${match[1]}.')}';
 }

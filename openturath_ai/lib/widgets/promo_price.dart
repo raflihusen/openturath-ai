@@ -38,15 +38,16 @@ class PromoPrice extends StatelessWidget {
         : 0;
     final foreground = foregroundColor ?? OTColors.textPrimary(dark);
     final secondary = secondaryColor ?? OTColors.textSecondary(dark);
+    final normalLabel = ProductPricing.formatLocalPrice(regularAmount);
+    final promoLabel = ProductPricing.formatLocalPrice(amount);
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       if (regularAmount > amount)
         Wrap(
             spacing: 8,
             crossAxisAlignment: WrapCrossAlignment.center,
             children: [
-              Text(ProductPricing.rupiah(regularAmount),
-                  semanticsLabel: Loc.tr(
-                      'normalPrice', [ProductPricing.rupiah(regularAmount)]),
+              Text(normalLabel,
+                  semanticsLabel: Loc.tr('normalPrice', [normalLabel]),
                   style: OTTypography.caption(color: secondary)
                       .copyWith(decoration: TextDecoration.lineThrough)),
             ]),
@@ -55,12 +56,13 @@ class PromoPrice extends StatelessWidget {
           spacing: 6,
           children: [
             Directionality(
-                textDirection: TextDirection.ltr,
+                textDirection:
+                    Loc.isArabic ? TextDirection.rtl : TextDirection.ltr,
                 // Harga tidak pernah terbelah antar baris: mengecil bila sempit.
                 child: FittedBox(
                     fit: BoxFit.scaleDown,
                     alignment: AlignmentDirectional.centerStart,
-                    child: Text(ProductPricing.rupiah(amount),
+                    child: Text(promoLabel,
                         maxLines: 1,
                         style: OTTypography.price(color: foreground).copyWith(
                             fontSize: compact
