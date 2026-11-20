@@ -178,7 +178,7 @@ void main() {
 
     expect(vipUser.isVip, isTrue);
     final url = await service.getAgentUrl('hadits', vipUser);
-    expect(url, 'https://notebooklm.google.com/notebook/c0df829e-db5d-416a-88d8-4f934ce5e8ef');
+    expect(url, 'https://notebooklm.google.com/notebook/20b333d1-43eb-4ddb-a776-90473931929b');
   });
 
   test('does not bypass permission-denied paywall even for provided user', () async {
