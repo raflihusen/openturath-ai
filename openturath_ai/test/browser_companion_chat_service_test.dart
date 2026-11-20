@@ -28,7 +28,8 @@ class _Agents extends AgentService {
   int recordCalls = 0;
 
   @override
-  Future<String?> getAgentUrl(String agentId, [UserModel? user]) async {
+  Future<String?> getAgentUrl(String agentId,
+      [UserModel? user, bool preferDirect = false]) async {
     expect(agentId, 'fixture-agent');
     urlCalls++;
     return onUrl();
