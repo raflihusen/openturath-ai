@@ -27,7 +27,7 @@ class SubscriptionOffer {
       : months == 6
           ? 'perSixMonths'
           : 'perYear');
-  String get priceLabel => ProductPricing.rupiah(amount);
+  String get priceLabel => ProductPricing.formatLocalPrice(amount);
   Map<String, dynamic> toMap() => {
         'name': title, 'price': amount, 'regularPrice': regularAmount,
         'label': priceLabel, 'period': period, 'planId': plan,

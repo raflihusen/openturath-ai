@@ -190,7 +190,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
   }
 
   Future<void> _checkout(AgentModel agent, SubscriptionOffer offer) async {
-    if (_processing) return;
+    if (_processing || Loc.isArabic) return;
     final auth = AuthService();
     final cached = auth.cachedCurrentUser;
     final webEmail = AuthService.activeWebUserEmail;
