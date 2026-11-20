@@ -75,6 +75,11 @@ const notebookSkinScript = r'''
     return 'url("data:image/svg+xml,' + encodeURIComponent(svg) + '")';
   }
 
+  function checkIcon() {
+    const svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4.5 4.5L19 7.5"/></svg>';
+    return 'url("data:image/svg+xml,' + encodeURIComponent(svg) + '")';
+  }
+
   const CSS = `
     /* ── Token: satu sumber dengan OTColors ── */
     html body, html body.luminous-ui {
@@ -237,19 +242,68 @@ const notebookSkinScript = r'''
       color: var(--ot-muted);
     }
 
-    /* Ibarah Arab: lembar naskah berbingkai ganda (jadwal), dibuka dengan label "Ibarah". */
+    /* ── Arah teks cerdas (Bidi): kartu mengikuti bahasa utama, blok Arab di tengah LTR tetap RTL ── */
+    html body .to-user-message-card-content.ot-dir-ltr,
+    html body .from-user-message-card-content.ot-dir-ltr,
+    html body .to-user-message-card-content .ot-ltr-block {
+      direction: ltr !important;
+      text-align: left !important;
+      unicode-bidi: isolate !important;
+    }
+    html body .to-user-message-card-content.ot-dir-rtl,
+    html body .from-user-message-card-content.ot-dir-rtl {
+      direction: rtl !important;
+      text-align: right !important;
+      unicode-bidi: isolate !important;
+      font-family: var(--ot-arabic) !important;
+      line-height: 1.92 !important;
+    }
+    html body .to-user-message-card-content .ot-rtl-block {
+      direction: rtl !important;
+      text-align: right !important;
+      unicode-bidi: isolate !important;
+      font-family: var(--ot-arabic) !important;
+      font-size: calc(var(--ot-font-size, 15px) * 1.18) !important;
+      line-height: 1.92 !important;
+      letter-spacing: 0 !important;
+      font-synthesis: none !important;
+    }
+    html body .to-user-message-card-content .ot-rtl-block * {
+      font-family: var(--ot-arabic) !important;
+      font-size: inherit !important;
+      line-height: inherit !important;
+      font-synthesis: none !important;
+    }
+
+    /* Penataan list stabil tanpa bullet/nomor menggantung atau lompat saat streaming */
+    html body .to-user-message-card-content ul,
+    html body .to-user-message-card-content ol {
+      padding-inline-start: 22px !important;
+      margin-block: 10px !important;
+    }
+    html body .to-user-message-card-content li {
+      margin-block: 8px !important;
+    }
+    html body .to-user-message-card-content li > .paragraph:first-child,
+    html body .to-user-message-card-content li > p:first-child {
+      margin-top: 0 !important;
+    }
+
+    /* Kutipan ibarah Arab di tengah jawaban non-Arab: aksen garis editorial minimalis tanpa badge melayang */
     html body .to-user-message-card-content .ot-ibarah {
       position: relative !important;
-      margin-block: 14px !important;
-      padding: 16px 20px 14px !important;
+      margin-block: 10px !important;
+      padding: 12px 16px !important;
       background: var(--ot-subtle) !important;
-      border-radius: 8px !important;
-      outline: 1px solid var(--ot-line) !important;
-      outline-offset: -6px !important;
+      border-radius: 10px !important;
+      border-inline-start: 2.5px solid var(--ot-line) !important;
       list-style: none !important;
+      direction: rtl !important;
+      text-align: right !important;
+      unicode-bidi: isolate !important;
       font-family: var(--ot-arabic) !important;
-      font-size: calc(var(--ot-font-size, 15px) * 1.22) !important;
-      line-height: 1.9 !important;
+      font-size: calc(var(--ot-font-size, 15px) * 1.18) !important;
+      line-height: 1.92 !important;
       letter-spacing: 0 !important;
       font-synthesis: none !important;
     }
@@ -259,26 +313,10 @@ const notebookSkinScript = r'''
       line-height: inherit !important;
       font-synthesis: none !important;
     }
-    /* Penanda butir bawaan Google (::before) dimatikan; label "Ibarah" menempel di tepi atas bingkai. */
-    html body .to-user-message-card-content .ot-ibarah::before {
+    html body .to-user-message-card-content .ot-ibarah::before,
+    html body .to-user-message-card-content .ot-ibarah::after {
       content: none !important;
       display: none !important;
-    }
-    html body .to-user-message-card-content .ot-ibarah::after {
-      content: var(--ot-label-ibarah, "Ibarah") !important;
-      position: absolute !important;
-      top: -9px !important;
-      inset-inline-start: 18px !important;
-      padding: 1px 8px !important;
-      background: var(--ot-canvas) !important;
-      border-radius: 999px !important;
-      font-family: var(--ot-sans) !important;
-      font-size: 11px !important;
-      font-weight: 600 !important;
-      line-height: 1.4 !important;
-      letter-spacing: .14em !important;
-      text-transform: uppercase !important;
-      color: var(--ot-muted) !important;
     }
     html body .to-user-message-card-content li.ot-ibarah-item { list-style: none !important; }
     html body .to-user-message-card-content li.ot-ibarah-item::marker { content: "" !important; }
@@ -544,22 +582,21 @@ const notebookSkinScript = r'''
       color: var(--ot-faint);
     }
 
-    /* Tombol salin di ujung setiap jawaban selesai (jempol atas/bawah dihapus). */
-    html body .ot-answer-actions { display: flex !important; margin-top: 4px !important; }
+    /* Tombol salin minimalis (hanya ikon) di ujung setiap jawaban selesai. */
+    html body .ot-answer-actions { display: flex !important; margin-top: 6px !important; }
     html body .ot-copy-answer {
       display: inline-flex !important;
       align-items: center !important;
-      gap: 6px !important;
-      padding: 6px 12px 6px 8px !important;
+      justify-content: center !important;
+      width: 32px !important;
+      height: 32px !important;
+      padding: 0 !important;
       border-radius: 999px !important;
-      font-family: var(--ot-sans) !important;
-      font-size: 12px !important;
-      font-weight: 400 !important;
-      line-height: 1.4 !important;
       color: var(--ot-muted) !important;
       cursor: pointer !important;
       user-select: none !important;
       -webkit-user-select: none !important;
+      transition: background-color 140ms ease, color 140ms ease !important;
     }
     html body .ot-copy-answer:hover,
     html body .ot-copy-answer:focus-visible { background: var(--ot-subtle) !important; color: var(--ot-ink) !important; outline: none !important; }
@@ -570,6 +607,13 @@ const notebookSkinScript = r'''
       background: currentColor;
       -webkit-mask: var(--ot-copy-icon) center / contain no-repeat;
       mask: var(--ot-copy-icon) center / contain no-repeat;
+    }
+    html body .ot-copy-answer.ot-copied {
+      color: var(--ot-ink) !important;
+    }
+    html body .ot-copy-answer.ot-copied::before {
+      -webkit-mask: var(--ot-check-icon) center / contain no-repeat;
+      mask: var(--ot-check-icon) center / contain no-repeat;
     }
 
     /* ── Dialog dan menu Google yang sesekali tampil ── */
@@ -646,15 +690,23 @@ const notebookSkinScript = r'''
         btn.className = 'ot-copy-answer';
         btn.setAttribute('role', 'button');
         btn.setAttribute('tabindex', '0');
-        const label = document.createElement('span');
-        label.className = 'ot-copy-label';
-        btn.appendChild(label);
+        btn.setAttribute('aria-label', LABELS[lang()].copy);
+        btn.setAttribute('title', LABELS[lang()].copy);
         btn.addEventListener('ot-copy-result', event => {
           btn.__otCopied = event.detail === true;
           btn.__otCopyFailed = event.detail !== true;
-          label.textContent = btn.__otCopied ? LABELS[lang()].copied : LABELS[lang()].copyFailed;
+          toggle(btn, 'ot-copied', btn.__otCopied);
+          const tip = btn.__otCopied ? LABELS[lang()].copied : LABELS[lang()].copyFailed;
+          btn.setAttribute('aria-label', tip);
+          btn.setAttribute('title', tip);
           clearTimeout(btn.__otTimer);
-          btn.__otTimer = setTimeout(() => { btn.__otCopied = false; btn.__otCopyFailed = false; label.textContent = LABELS[lang()].copy; }, 1800);
+          btn.__otTimer = setTimeout(() => {
+            btn.__otCopied = false;
+            btn.__otCopyFailed = false;
+            toggle(btn, 'ot-copied', false);
+            btn.setAttribute('aria-label', LABELS[lang()].copy);
+            btn.setAttribute('title', LABELS[lang()].copy);
+          }, 1800);
         });
         btn.addEventListener('keydown', e => {
           if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); btn.click(); }
@@ -664,49 +716,73 @@ const notebookSkinScript = r'''
       } else if (!done && row) {
         row.remove();
       }
-      const label = box.querySelector(':scope > .ot-answer-actions .ot-copy-label');
-      if (label) {
-        const btn = label.closest('.ot-copy-answer');
-        const want = btn && btn.__otCopied ? LABELS[lang()].copied :
-          btn && btn.__otCopyFailed ? LABELS[lang()].copyFailed : LABELS[lang()].copy;
-        if (label.textContent !== want) label.textContent = want;
+      const btn = box.querySelector(':scope > .ot-answer-actions .ot-copy-answer');
+      if (btn && !btn.__otCopied && !btn.__otCopyFailed) {
+        const want = LABELS[lang()].copy;
+        if (btn.getAttribute('title') !== want) {
+          btn.setAttribute('aria-label', want);
+          btn.setAttribute('title', want);
+        }
       }
     });
-    document.querySelectorAll('.to-user-message-card-content .paragraph').forEach(el => {
+
+    // 1. Tentukan arah utama (LTR vs RTL) pada setiap kartu pertanyaan & jawaban
+    document.querySelectorAll('.from-user-message-card-content, .to-user-message-card-content').forEach(card => {
+      const cTxt = card.textContent || '';
+      if (card.__otDirLen === cTxt.length) return;
+      card.__otDirLen = cTxt.length;
+      const cAr = (cTxt.match(AR) || []).length;
+      const cLa = (cTxt.match(LAT) || []).length;
+      const total = cAr + cLa;
+      if (total === 0) return;
+      const isCardRtl = cAr >= 8 && (cAr / total) >= 0.55;
+      card.__otIsRtl = isCardRtl;
+      card.setAttribute('dir', isCardRtl ? 'rtl' : 'ltr');
+      toggle(card, 'ot-dir-rtl', isCardRtl);
+      toggle(card, 'ot-dir-ltr', !isCardRtl);
+    });
+
+    // 2. Di dalam kartu jawaban, atur arah per blok paragraf agar:
+    //    - Jawaban ID/EN tetap LTR (rata kiri) & potongan Arab pendek inline tetap ikut kalimat LTR
+    //    - Paragraf/baris Arab utuh di tengah jawaban ID/EN otomatis RTL (rata kanan) dengan font Arab
+    document.querySelectorAll('.to-user-message-card-content .paragraph, .to-user-message-card-content p').forEach(el => {
       const text = el.textContent || '';
       if (el.__otLen === text.length) return;
       el.__otLen = text.length;
 
-      // Jangan pecah jawaban yang secara keseluruhan berbahasa Arab penuh menjadi
-      // kotak-kotak IBARAH per paragraf. Kotak IBARAH hanya untuk kutipan naskah
-      // Arab yang diselipkan di dalam jawaban berbahasa non-Arab (ID/EN).
       const card = el.closest('.to-user-message-card-content');
-      let isWholeArabicCard = false;
-      if (card) {
-        const cTxt = card.textContent || '';
-        const cAr = (cTxt.match(AR) || []).length;
-        const cLa = (cTxt.match(LAT) || []).length;
-        isWholeArabicCard = (cAr + cLa) > 0 && (cAr / (cAr + cLa)) >= 0.55;
-      }
+      const isWholeArabicCard = !!(card && card.__otIsRtl);
 
       const trimmed = text.trim();
       const ar = (trimmed.match(AR) || []).length;
       const la = (trimmed.match(LAT) || []).length;
-      const looksLikeHeading = trimmed.length < 36 || /^[أ-ي0-9١-٩]+[\.\-\)]\s+/.test(trimmed);
-      const ibarah = !isWholeArabicCard &&
-          !looksLikeHeading &&
-          ar >= 24 &&
-          (ar + la) > 0 &&
-          (ar / (ar + la)) >= 0.72 &&
-          !el.querySelector('ul, ol, li') &&
-          !el.classList.contains('table-paragraph');
-      toggle(el, 'ot-ibarah', ibarah);
-      const item = el.closest('li');
-      if (item) toggle(item, 'ot-ibarah-item', ibarah && item.querySelectorAll('.paragraph').length === 1);
+      const total = ar + la;
+      const arRatio = total > 0 ? ar / total : 0;
+      const hasListChild = !!el.querySelector('ul, ol, li');
+      const isTableCell = el.classList.contains('table-paragraph') || !!el.closest('table');
+
+      if (!isWholeArabicCard) {
+        // Blok Arab utuh di tengah jawaban Indonesia/Inggris (bukan potongan pendek inline)
+        const isArabicBlock = !hasListChild && !isTableCell && ar >= 10 && arRatio >= 0.60;
+        const looksLikeHeading = trimmed.length < 36 || /^[أ-ي0-9١-٩]+[\.\-\)]\s+/.test(trimmed);
+        const ibarah = isArabicBlock && !looksLikeHeading && ar >= 28 && arRatio >= 0.70;
+
+        el.setAttribute('dir', isArabicBlock ? 'rtl' : 'ltr');
+        toggle(el, 'ot-rtl-block', isArabicBlock);
+        toggle(el, 'ot-ltr-block', !isArabicBlock);
+        toggle(el, 'ot-ibarah', ibarah);
+        const item = el.closest('li');
+        if (item) toggle(item, 'ot-ibarah-item', ibarah && item.querySelectorAll('.paragraph, p').length === 1);
+      } else {
+        el.setAttribute('dir', 'rtl');
+        toggle(el, 'ot-rtl-block', false);
+        toggle(el, 'ot-ltr-block', false);
+        toggle(el, 'ot-ibarah', false);
+      }
 
       let section = false;
       const head = el.firstElementChild;
-      if (!ibarah && head && head.tagName === 'B' &&
+      if (!isWholeArabicCard && head && head.tagName === 'B' &&
           /^[A-Z]\.\s+[A-Z0-9 ,&'’\/()\-–]+$/.test((head.textContent || '').trim()) &&
           head.nextElementSibling && (head.nextElementSibling.textContent || '').trim() === ':') {
         section = true;
@@ -718,7 +794,7 @@ const notebookSkinScript = r'''
       }
 
       const mode = /^\s*[▸▶►▷]?\s*Mode\s*:\s*(.+?)\s*$/i.exec(text);
-      if (mode && !ibarah) {
+      if (mode) {
         el.setAttribute('data-ot-mode', mode[1]);
         toggle(el, 'ot-mode', true);
       } else {
@@ -742,6 +818,8 @@ const notebookSkinScript = r'''
       if (!stageStart || !root.style.getPropertyValue('--ot-label-thinking')) root.style.setProperty('--ot-label-thinking', JSON.stringify(L.stages[0]));
       if (!window.__otCopyIcon) window.__otCopyIcon = copyIcon();
       root.style.setProperty('--ot-copy-icon', window.__otCopyIcon);
+      if (!window.__otCheckIcon) window.__otCheckIcon = checkIcon();
+      root.style.setProperty('--ot-check-icon', window.__otCheckIcon);
       if (!window.__otSendIcon) window.__otSendIcon = sendIcon();
       root.style.setProperty('--ot-send-icon', window.__otSendIcon);
       root.style.setProperty('--ot-label-thought', JSON.stringify(L.thought));
