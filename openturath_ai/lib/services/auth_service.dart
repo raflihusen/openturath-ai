@@ -1088,6 +1088,11 @@ class AuthService {
       await prefs.remove('google_session_email');
       await prefs.remove('notebook_google_email');
       await prefs.remove('last_opened_notebook_id');
+      for (final key in prefs.getKeys().toList()) {
+        if (key.startsWith('ot_assigned_notebook_v1_')) {
+          await prefs.remove(key);
+        }
+      }
       if (prevWebEmail != null && prevWebEmail.isNotEmpty) {
         _userCache.remove('web_$prevWebEmail');
         await prefs.remove('openturath_cached_user_web_$prevWebEmail');

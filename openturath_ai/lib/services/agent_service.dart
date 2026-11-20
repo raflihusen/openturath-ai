@@ -1,5 +1,7 @@
 import 'dart:convert';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import '../core/app_config.dart';
 import '../core/constants.dart';
 import '../core/localization.dart';
@@ -161,8 +163,64 @@ class AgentService {
     r'^/notebook/[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}/?$',
   );
 
-  // ── Ambil URL agent dari Cloud Function secara aman (Server-Side Entitlement) ────
-  Future<String?> getAgentUrl(String agentId, [UserModel? user]) async {
+  static const _assignedUrlCachePrefix = 'ot_assigned_notebook_v1_';
+  static final Map<String, String> _assignedUrlMemoryCache = {};
+
+  static String _assignedCacheKey(String email, String agentId) =>
+      '$_assignedUrlCachePrefix${email.trim().toLowerCase()}|$agentId';
+
+  static Future<String?> _readAssignedUrlCache(
+      String email, String agentId) async {
+    if (email.isEmpty) return null;
+    final key = _assignedCacheKey(email, agentId);
+    final mem = _assignedUrlMemoryCache[key];
+    if (mem != null && mem.isNotEmpty) return mem;
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final stored = prefs.getString(key);
+      if (stored != null && stored.isNotEmpty) {
+        _assignedUrlMemoryCache[key] = stored;
+        return stored;
+      }
+    } catch (_) {}
+    return null;
+  }
+
+  static Future<void> _saveAssignedUrlCache(
+      String email, String agentId, String url) async {
+    if (email.isEmpty || url.isEmpty) return;
+    final key = _assignedCacheKey(email, agentId);
+    _assignedUrlMemoryCache[key] = url;
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(key, url);
+    } catch (_) {}
+  }
+
+  static Future<void> clearAssignedUrlCache([String? email]) async {
+    if (email != null && email.trim().isNotEmpty) {
+      final prefix = '$_assignedUrlCachePrefix${email.trim().toLowerCase()}|';
+      _assignedUrlMemoryCache.removeWhere((k, _) => k.startsWith(prefix));
+      try {
+        final prefs = await SharedPreferences.getInstance();
+        for (final k in prefs.getKeys().toList()) {
+          if (k.startsWith(prefix)) await prefs.remove(k);
+        }
+      } catch (_) {}
+      return;
+    }
+    _assignedUrlMemoryCache.clear();
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      for (final k in prefs.getKeys().toList()) {
+        if (k.startsWith(_assignedUrlCachePrefix)) await prefs.remove(k);
+      }
+    } catch (_) {}
+  }
+
+  // ── Ambil URL agent dari Server / Ledger secara aman (Server-Side Entitlement & Clone Routing) ────
+  Future<String?> getAgentUrl(String agentId,
+      [UserModel? user, bool forceRefresh = false]) async {
     final effectiveUser = user ??
         (Firebase.apps.isNotEmpty ? AuthService().cachedCurrentUser : null);
     final email = (effectiveUser?.email ??
@@ -172,9 +230,6 @@ class AgentService {
         .toLowerCase();
     final isVip = (effectiveUser?.isVip == true) || UserModel.isVipEmail(email);
 
-    // Rule 5 AGENTS.md (Hukum Sakral VIP): Akun VIP sejati berhak atas naskah master secara permanen
-    // dan langsung diarahkan ke naskah resmi tanpa delay atau terhalang unauthenticated/unavailable.
-    // Begitu juga akun dengan hak akses langganan atau voucher aktif, langsung diarahkan ke naskah resmi.
     if (!_hasCustomFunctions) {
       var hasAccess = AppConfig.isGuruEdition ||
           isVip ||
@@ -199,25 +254,70 @@ class AgentService {
             reason: 'entitlement_required');
       }
 
-      // Untuk akun non-VIP, periksa dulu apakah VPS menugaskan kloning khusus
-      // bagi email pengguna agar tidak membebani 1 notebook master tunggal.
-      if (!isVip && email.isNotEmpty) {
+      // Semua akun (VIP maupun reguler) menanyakan penugasan notebook/kloning
+      // spesifik ke VPS terlebih dahulu agar user ke-2.001, ke-4.001, maupun VIP baru
+      // selalu membuka kloning yang tepat dan tidak tertukar dengan Master.
+      if (email.isNotEmpty) {
+        String? idToken;
         try {
-          final res = await http.post(
-            Uri.parse('https://maktabah.openturath.id/api/getAgentUrl'),
-            headers: {
-              'Content-Type': 'application/json',
-              'User-Agent': 'OpenTurath-App/1.0',
-            },
-            body: jsonEncode({
-              'data': {'agentId': agentId, 'email': email}
-            }),
-          ).timeout(const Duration(seconds: 3));
-          if (res.statusCode == 200) {
+          if (Firebase.apps.isNotEmpty) {
+            idToken = await FirebaseAuth.instance.currentUser?.getIdToken();
+          }
+        } catch (_) {}
+
+        try {
+          final res = await http
+              .post(
+                Uri.parse('https://maktabah.openturath.id/api/getAgentUrl'),
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Accept': 'application/json',
+                  'User-Agent': 'OpenTurath-App/1.0',
+                  if (idToken != null && idToken.isNotEmpty)
+                    'Authorization': 'Bearer $idToken',
+                },
+                body: jsonEncode({
+                  'data': {
+                    'agentId': agentId,
+                    'email': email,
+                    'forceRefresh': forceRefresh,
+                  }
+                }),
+              )
+              .timeout(const Duration(seconds: 6));
+
+          if (res.statusCode == 202 ||
+              res.statusCode == 200 ||
+              res.statusCode == 412) {
             final body = jsonDecode(res.body);
             if (body is Map) {
-              final rawUrl = body['result']?['url'] ?? body['url'];
-              if (rawUrl is String && rawUrl.isNotEmpty) {
+              final resultObj =
+                  body['result'] is Map ? body['result'] as Map : body;
+              final status = (resultObj['status'] ?? body['status'] ?? '')
+                  .toString()
+                  .trim()
+                  .toLowerCase();
+              final reason = (resultObj['reason'] ?? body['reason'] ?? '')
+                  .toString()
+                  .trim()
+                  .toLowerCase();
+
+              // Jika akses sedang disiapkan di antrean worker (provisioning),
+              // JANGAN fallback ke Master ID agar user ke-2.001 tidak terkena Minta Akses.
+              if (res.statusCode == 202 ||
+                  status == 'provisioning' ||
+                  reason == 'access_provisioning') {
+                throw const AgentAccessException(
+                  'failed-precondition',
+                  'Akses AI sedang disiapkan oleh server. Mohon tunggu beberapa detik lalu coba lagi.',
+                  reason: 'access_provisioning',
+                );
+              }
+
+              final rawUrl = resultObj['url'] ?? body['url'];
+              if (res.statusCode == 200 &&
+                  rawUrl is String &&
+                  rawUrl.isNotEmpty) {
                 final uri = Uri.tryParse(rawUrl.trim());
                 if (uri != null &&
                     !rawUrl.contains('%') &&
@@ -225,15 +325,28 @@ class AgentService {
                     _notebookPath.hasMatch(uri.path) &&
                     !uri.hasQuery &&
                     !uri.hasFragment) {
-                  return uri
+                  final normalized = uri
                       .replace(host: NotebookNavigation.canonicalHost)
                       .toString();
+                  await _saveAssignedUrlCache(email, agentId, normalized);
+                  return normalized;
                 }
               }
             }
           }
+        } on AgentAccessException {
+          rethrow;
         } catch (_) {
-          // Lanjut ke katalog master kanonik yang selaras dengan VPS
+          // Lanjut ke sticky local cache terlebih dahulu sebelum Master kanonik
+        }
+
+        // Sticky local cache: jika VPS sedang lambat/offline, pertahankan URL kloning
+        // milik user ini yang sebelumnya sudah terverifikasi agar tidak mental ke Master.
+        if (!forceRefresh) {
+          final sticky = await _readAssignedUrlCache(email, agentId);
+          if (sticky != null && sticky.isNotEmpty) {
+            return sticky;
+          }
         }
       }
 

@@ -1343,7 +1343,25 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
         session.isSessionReady = false;
         session.isWebLoading = true;
       }
-      Future.delayed(const Duration(seconds: 4), () {
+      Future.delayed(const Duration(seconds: 4), () async {
+        if (!mounted) return;
+        try {
+          final freshUrl = await _agentService.getAgentUrl(
+              session.agent.id, _authService.cachedCurrentUser, true);
+          if (!mounted) return;
+          if (freshUrl != null &&
+              freshUrl.isNotEmpty &&
+              freshUrl != session.resolvedUrl) {
+            session.resolvedUrl = freshUrl;
+            _loadingStarted = null;
+            await session.webController
+                ?.loadUrl(urlRequest: URLRequest(url: WebUri(freshUrl)));
+            _startReadinessCheck();
+            return;
+          }
+        } catch (_) {
+          // Jika server sedang provisioning/offline, lanjutkan reload URL saat ini
+        }
         if (!mounted) return;
         session.webController?.reload();
         _startReadinessCheck();
