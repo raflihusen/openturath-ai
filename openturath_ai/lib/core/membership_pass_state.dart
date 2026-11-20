@@ -146,11 +146,22 @@ MembershipPassSummary resolveMembershipPass(UserModel? user, {DateTime? now}) {
       .toList()
     ..sort();
   final expiry = expiries.isEmpty ? null : expiries.first;
-  final accessLabel = selected.any((entry) => entry.key == 'all_access' || entry.key == 'all_ai' || entry.key == 'all_specialists')
+  final hasSelectedAll = selected.any((entry) =>
+      entry.key == 'all_access' ||
+      entry.key == 'all_ai' ||
+      entry.key == 'all_specialists');
+  final activeSpecificCount = active
+      .where((entry) => entry.key != 'all_access' && entry.key != 'all_ai')
+      .length;
+  final hasCollapsedAllEntry = active
+      .any((entry) => entry.key == 'all_access' || entry.key == 'all_ai');
+  final visibleActiveCount =
+      activeSpecificCount + (hasCollapsedAllEntry ? 1 : 0);
+  final accessLabel = hasSelectedAll
       ? AppCopy.allAssistantsAvailable
-      : (selected.length == 1
+      : (visibleActiveCount == 1
           ? _singleModuleTitle(selected.first.key)
-          : AppCopy.assistantsAvailableCount(selected.length));
+          : AppCopy.assistantsAvailableCount(visibleActiveCount));
   if (isPermanent) {
     return MembershipPassSummary(
         state: MembershipPassState.permanent,

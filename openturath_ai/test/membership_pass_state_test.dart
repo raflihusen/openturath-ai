@@ -165,5 +165,23 @@ void main() {
       'fiqh_syafii': ModuleEntitlement(plan: 'pro', expiry: DateTime(2030)),
     }));
     expect(pass.badge, 'PRO');
+    expect(pass.accessLabel, AppCopy.assistantsAvailableCount(2));
+  });
+
+  test('access count matches all visible active portfolio items including trial all_access', () {
+    final pass = resolveMembershipPass(user({
+      'ushul_fiqh': ModuleEntitlement(
+          plan: 'tholib_1m', paymentStatus: 'paid', expiry: DateTime(2026, 12, 17)),
+      'nahwu_sharaf': ModuleEntitlement(
+          plan: 'tholib_1m', paymentStatus: 'paid', expiry: DateTime(2026, 12, 18)),
+      'tarikh': ModuleEntitlement(
+          plan: 'tholib_1m', paymentStatus: 'paid', expiry: DateTime(2026, 12, 18)),
+      'all_access': ModuleEntitlement(
+          plan: 'trial', status: 'trial', expiry: DateTime(2026, 11, 26)),
+      'all_ai': ModuleEntitlement(
+          plan: 'trial', status: 'trial', expiry: DateTime(2026, 11, 26)),
+    }), now: DateTime(2026, 11, 20));
+    expect(pass.badge, 'PRO');
+    expect(pass.accessLabel, AppCopy.assistantsAvailableCount(4));
   });
 }
