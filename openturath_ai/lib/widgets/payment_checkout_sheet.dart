@@ -134,7 +134,9 @@ class _PaymentCheckoutSheetState extends State<PaymentCheckoutSheet> {
   StreamSubscription<QuerySnapshot>? _txSubscription;
   StreamSubscription? _userSubscription;
   DateTime? _lastInquiryAt;
+  Timer? _initialLoadFallbackTimer;
   double _loadProgress = 0.0;
+  bool _isInitialPageLoading = true;
   bool _isChecking = false;
   bool _pendingForcedCheck = false;
   bool _isSuccess = false;
@@ -199,11 +201,19 @@ class _PaymentCheckoutSheetState extends State<PaymentCheckoutSheet> {
     _pollTimer = Timer.periodic(const Duration(seconds: 5), (_) {
       _checkPaymentStatus();
     });
+
+    // Fail-safe agar overlay loading awal selalu terbuka paling lambat 8 detik
+    _initialLoadFallbackTimer = Timer(const Duration(seconds: 8), () {
+      if (mounted && _isInitialPageLoading) {
+        setState(() => _isInitialPageLoading = false);
+      }
+    });
   }
 
   @override
   void dispose() {
     _pollTimer?.cancel();
+    _initialLoadFallbackTimer?.cancel();
     _txSubscription?.cancel();
     _userSubscription?.cancel();
     _webController = null;
@@ -687,9 +697,12 @@ class _PaymentCheckoutSheetState extends State<PaymentCheckoutSheet> {
                       minHeight: 2.5,
                     ),
 
-                  // WebView gateway pembayaran
+                  // WebView gateway pembayaran dengan overlay loading imersif saat inisialisasi awal
                   Expanded(
-                    child: InAppWebView(
+                    child: Stack(
+                      children: [
+                        Positioned.fill(
+                          child: InAppWebView(
                       gestureRecognizers: <Factory<
                           OneSequenceGestureRecognizer>>{
                         Factory<OneSequenceGestureRecognizer>(
@@ -752,6 +765,9 @@ class _PaymentCheckoutSheetState extends State<PaymentCheckoutSheet> {
                         if (mounted) {
                           setState(() {
                             _loadProgress = progress / 100.0;
+                            if (progress >= 95 && _isInitialPageLoading) {
+                              _isInitialPageLoading = false;
+                            }
                           });
                         }
                       },
@@ -827,7 +843,10 @@ class _PaymentCheckoutSheetState extends State<PaymentCheckoutSheet> {
                       },
                       onLoadStop: (controller, url) async {
                         if (mounted) {
-                          setState(() => _loadProgress = 1.0);
+                          setState(() {
+                            _loadProgress = 1.0;
+                            _isInitialPageLoading = false;
+                          });
                         }
 
                         final urlStr = url?.toString().toLowerCase() ?? '';
@@ -863,6 +882,31 @@ class _PaymentCheckoutSheetState extends State<PaymentCheckoutSheet> {
                           }
                         } catch (_) {}
                       },
+                    ),
+                        ),
+                        Positioned.fill(
+                          child: AnimatedSwitcher(
+                            duration: const Duration(milliseconds: 300),
+                            switchOutCurve: Curves.easeOut,
+                            child: _isInitialPageLoading
+                                ? AppLoader.fullscreen(
+                                    key: const ValueKey('payment-loader'),
+                                    title: widget.planTitle != null &&
+                                            widget.planTitle!.isNotEmpty
+                                        ? widget.planTitle!
+                                        : Loc.tr('checkoutPreparing'),
+                                    stages: [
+                                      Loc.tr('checkoutPreparing'),
+                                      Loc.tr('checkoutPleaseWait'),
+                                    ],
+                                  )
+                                : const IgnorePointer(
+                                    key: ValueKey('payment-ready'),
+                                    child: SizedBox.expand(),
+                                  ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],

@@ -53,6 +53,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
   bool _initialized = false;
   String? _checkoutError;
   String? _checkoutAgentId;
+  String? _checkoutPlanTitle;
   late final TapGestureRecognizer _termsTap = TapGestureRecognizer()
     ..onTap = () => LegalDocumentSheet.showTermsOfService(context);
   late final TapGestureRecognizer _refundTap = TapGestureRecognizer()
@@ -478,13 +479,14 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     }
 
     if (!mounted) return;
+    final title = '${agent.title} · ${offer.title}';
     setState(() {
       _processing = true;
       _checkoutError = null;
       _checkoutAgentId = agent.id;
+      _checkoutPlanTitle = title;
     });
     try {
-      final title = '${agent.title} · ${offer.title}';
       final result = await _service.createPayment(
           uid: uid,
           agentId: agent.id,
@@ -562,7 +564,12 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
       TelemetryService.instance.reportError(error, stack, context: 'checkout');
       if (mounted) setState(() => _checkoutError = Loc.tr('checkoutError'));
     } finally {
-      if (mounted) setState(() => _processing = false);
+      if (mounted) {
+        setState(() {
+          _processing = false;
+          _checkoutPlanTitle = null;
+        });
+      }
     }
   }
 
@@ -1500,14 +1507,12 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
               Positioned.fill(
                 child: AbsorbPointer(
                   absorbing: true,
-                  child: Container(
-                    color: OTColors.canvas(dark).withValues(alpha: 0.88),
-                    child: Center(
-                      child: AppLoader.fullscreen(
-                        title: Loc.tr('checkoutPreparing'),
-                        subtitle: Loc.tr('checkoutPleaseWait'),
-                      ),
-                    ),
+                  child: AppLoader.fullscreen(
+                    title: _checkoutPlanTitle ?? Loc.tr('checkoutPreparing'),
+                    stages: [
+                      Loc.tr('checkoutPreparing'),
+                      Loc.tr('checkoutPleaseWait'),
+                    ],
                   ),
                 ),
               ),
