@@ -1080,6 +1080,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
 
   Timer? _readinessTimer;
   Timer? _inputRetryTimer;
+  Timer? _googleSignInDebounceTimer;
   DateTime? _loadingStarted;
   int _readySamples = 0;
   int _accessDeniedRetryCount = 0;
@@ -1169,6 +1170,8 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
     _readinessTimer = null;
     _inputRetryTimer?.cancel();
     _inputRetryTimer = null;
+    _googleSignInDebounceTimer?.cancel();
+    _googleSignInDebounceTimer = null;
     if (mounted) {
       AppSnackBar.clear(context);
     }
@@ -1391,8 +1394,23 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
     }
   }
 
+  /// Tunda transisi ke layar sign-in Google agar redirect SSO singkat
+  /// (< 2 detik) tidak mengedipkan layar terang atau menghilangkan overlay loading.
+  void _scheduleGoogleSignIn() {
+    if (widget.session.isGoogleAuthPage || _googleSignInDebounceTimer != null) {
+      return;
+    }
+    _googleSignInDebounceTimer = Timer(const Duration(milliseconds: 2200), () {
+      _googleSignInDebounceTimer = null;
+      if (!mounted || widget.session.isSessionReady) return;
+      _enterGoogleSignIn();
+    });
+  }
+
   /// Halaman masuk Google ditampilkan apa adanya secara bersih tanpa banner.
   void _enterGoogleSignIn() {
+    _googleSignInDebounceTimer?.cancel();
+    _googleSignInDebounceTimer = null;
     // Jangan batalkan _readinessTimer agar saat Google selesai redirect/autentikasi,
     // kesiapan sesi AI langsung terdeteksi otomatis.
     _inputRetryTimer?.cancel();
@@ -2301,6 +2319,8 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
               _loadingStarted = DateTime.now();
               if (uri != null) {
                 if (NotebookNavigation.notebook(uri.uriValue)) {
+                  _googleSignInDebounceTimer?.cancel();
+                  _googleSignInDebounceTimer = null;
                   if (session.isGoogleAuthPage && mounted) {
                     setState(() {
                       session.isGoogleAuthPage = false;
@@ -2309,7 +2329,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
                     });
                   }
                 } else if (NotebookNavigation.signInFlow(uri.uriValue)) {
-                  if (!session.isGoogleAuthPage) _enterGoogleSignIn();
+                  if (!session.isGoogleAuthPage) _scheduleGoogleSignIn();
                   return;
                 }
               }
@@ -2343,12 +2363,24 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
               if (host.startsWith('accounts.google') ||
                   host == 'accounts.youtube.com' ||
                   host == 'consent.google.com') {
+                final path = uri.path.toLowerCase();
+                final isInteractiveAuthForm = path.contains('/signin') ||
+                    path.contains('/identifier') ||
+                    path.contains('/challenge') ||
+                    path.contains('/accountchooser') ||
+                    host == 'consent.google.com';
+                if (isInteractiveAuthForm && !session.isGoogleAuthPage) {
+                  _enterGoogleSignIn();
+                }
                 return;
               }
 
               if (!NotebookNavigation.notebook(uri.uriValue)) {
                 return;
               }
+
+              _googleSignInDebounceTimer?.cancel();
+              _googleSignInDebounceTimer = null;
 
               if (session.isGoogleAuthPage && mounted) {
                 setState(() {
@@ -2381,6 +2413,8 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
             onUpdateVisitedHistory: (controller, uri, isReload) async {
               if (!mounted || uri == null) return;
               if (NotebookNavigation.notebook(uri.uriValue)) {
+                _googleSignInDebounceTimer?.cancel();
+                _googleSignInDebounceTimer = null;
                 if (session.isGoogleAuthPage && mounted) {
                   setState(() {
                     session.isGoogleAuthPage = false;
@@ -2398,7 +2432,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
                 }
               } else if (NotebookNavigation.signInFlow(uri.uriValue)) {
                 if (!session.isGoogleAuthPage && mounted) {
-                  _enterGoogleSignIn();
+                  _scheduleGoogleSignIn();
                 }
               }
             },

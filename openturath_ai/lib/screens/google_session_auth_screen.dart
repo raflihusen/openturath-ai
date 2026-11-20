@@ -139,6 +139,89 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
     }
   }
 
+  void _showSignInHelpDialog() {
+    if (!mounted) return;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isAr = Loc.isArabic;
+    final isEn = Loc.language == 'en';
+    final title = isAr
+        ? 'هل واجهت مشكلة في تسجيل الدخول؟'
+        : (isEn ? 'Having trouble signing in?' : 'Kendala saat masuk akun?');
+    final body = isAr
+        ? 'إذا ظهرت رسالة Google مثل "Couldn\'t sign you in" أو "This browser or app may not be secure":\n\n'
+            '١. اضغط على زر «Try again» داخل صفحة Google.\n'
+            '٢. أو اضغط على زر إعادة التحميل (↻) في أعلى الشاشة، ثم أعد المحاولة بحساب Google نفسه.\n'
+            '٣. تأكد من استقرار اتصال الإنترنت وعدم تفعيل VPN مقيد.'
+        : (isEn
+            ? 'If Google shows "Couldn\'t sign you in" or "This browser or app may not be secure":\n\n'
+                '1. Tap the "Try again" button on the Google page.\n'
+                '2. Or tap the reload icon (↻) at the top right, then sign in again with the same Google account.\n'
+                '3. Make sure your internet connection is stable.'
+            : 'Jika muncul pesan Google seperti "Couldn\'t sign you in" atau "This browser or app may not be secure":\n\n'
+                '1. Tekan tombol "Try again" di halaman Google.\n'
+                '2. Atau tekan tombol Muat ulang (↻) di pojok kanan atas, lalu coba masuk kembali dengan akun Google yang sama.\n'
+                '3. Pastikan koneksi internet stabil dan tidak terhalang VPN.');
+    final closeLabel = isAr ? 'حسناً' : (isEn ? 'Got it' : 'Mengerti');
+
+    showDialog<void>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: OTColors.surface(isDark),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(OTRadius.dialog),
+          side: BorderSide(color: OTColors.border(isDark)),
+        ),
+        title: Row(
+          children: [
+            Icon(Icons.error_outline_rounded,
+                size: 20, color: OTColors.textPrimary(isDark)),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                title,
+                style: ScholarlyFonts.outfit(
+                  fontSize: OTFontSize.s16,
+                  fontWeight: FontWeight.w600,
+                  color: OTColors.textPrimary(isDark),
+                ),
+              ),
+            ),
+          ],
+        ),
+        content: Text(
+          body,
+          style: ScholarlyFonts.outfit(
+            fontSize: OTFontSize.s14,
+            height: 1.5,
+            color: OTColors.textSecondary(isDark),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(ctx);
+              _retryVerification();
+            },
+            child: Text(
+              Loc.tr('tryAgain'),
+              style: ScholarlyFonts.outfit(
+                fontWeight: FontWeight.w600,
+                color: OTColors.textPrimary(isDark),
+              ),
+            ),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: Text(
+              closeLabel,
+              style: ScholarlyFonts.outfit(fontWeight: FontWeight.w600),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   /// Menyelaraskan status pelindung visual (Visual Shield) dengan domain navigasi WebView
   void _handleUrlNavigation(InAppWebViewController controller, WebUri? url) {
     if (!identical(controller.platform, _webController?.platform)) return;
@@ -1189,6 +1272,16 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
               ),
             ),
             actions: [
+              IconButton(
+                tooltip: Loc.isArabic
+                    ? 'مساعدة تسجيل الدخول'
+                    : (Loc.language == 'en'
+                        ? 'Sign-in help'
+                        : 'Bantuan masuk akun'),
+                icon: Icon(Icons.error_outline_rounded,
+                    size: 20, color: textSecondary),
+                onPressed: _showSignInHelpDialog,
+              ),
               IconButton(
                 tooltip: Loc.tr('tryAgain'),
                 icon:

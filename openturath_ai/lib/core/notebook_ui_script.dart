@@ -1445,54 +1445,84 @@ const _notebookCleanupScript = r'''
 window.otDeleteChatHistory = async function() {
   // Let NotebookLM remove its own messages after the provider action. Never
   // simulate deletion by removing DOM nodes: failed requests must remain visible.
-  const pause = () => new Promise(resolve => setTimeout(resolve, 100));
+  const pause = () => new Promise(resolve => setTimeout(resolve, 120));
   const noticeSelector = '[role="status"], [role="alert"], .mat-mdc-snack-bar-label';
   const initialNotices = new Map([...document.querySelectorAll(noticeSelector)]
     .map(el => [el, el.innerText || el.textContent || '']));
   const messages = () => [...document.querySelectorAll(questionSelector + ',' + answerSelector)].filter(visible);
   if (!messages().length) return inputReady();
   const chatLabel = /chat|history|riwayat|obrolan|percakapan|محادث|سجل/i;
-  const deleteLabel = /delete|hapus|clear|حذف|مسح/i;
+  const deleteLabel = /delete|hapus|clear|refresh|reset|حذف|مسح/i;
+  const safeClick = (el) => {
+    if (!el || !el.isConnected || el.disabled || el.getAttribute('aria-disabled') === 'true') return false;
+    try {
+      if (typeof triggerClick === 'function' && visible(el)) {
+        if (triggerClick(el)) return true;
+      }
+    } catch (_) {}
+    try {
+      el.click();
+      return true;
+    } catch (_) {
+      return false;
+    }
+  };
   function findDeleteMenuItem() {
-    return [...document.querySelectorAll('[role="menuitem"], .mat-mdc-menu-panel button, .cdk-overlay-pane button, mat-list-item')]
-      .find(item => {
-        const label = item.getAttribute('aria-label') || item.innerText || item.textContent || '';
-        return visible(item) && deleteLabel.test(label) && chatLabel.test(label);
-      });
+    const candidates = [...document.querySelectorAll(
+      '[role="menuitem"], .mat-mdc-menu-panel button, .cdk-overlay-pane button, mat-list-item, button[aria-label*="Delete chat" i], button[aria-label*="Hapus riwayat" i], button[aria-label*="Refresh" i]'
+    )];
+    return candidates.find(item => {
+      if (!item.isConnected || item.disabled) return false;
+      const label = (item.getAttribute('aria-label') || item.innerText || item.textContent || '').trim();
+      return deleteLabel.test(label) && chatLabel.test(label);
+    });
   }
   let item = findDeleteMenuItem();
   if (!item) {
-    const options = [...document.querySelectorAll('button[aria-label*="More" i], button[aria-label*="Opsi" i], button[aria-label*="options" i], button[aria-label*="chat options" i]')];
+    // Catatan: tombol opsi titik tiga NotebookLM disembunyikan oleh CSS ot-hide (display:none),
+    // sehingga kita sengaja tidak memfilter dengan visible(button) saat mencarinya di DOM.
+    const options = [...document.querySelectorAll(
+      'button[aria-label*="More" i], button[aria-label*="Opsi" i], button[aria-label*="options" i], button[aria-label*="chat options" i], button[aria-label*="menu" i], button[aria-label*="lainnya" i], app-chat-header button, .chat-header button, [class*="chat-header" i] button'
+    )];
     document.querySelectorAll('mat-icon, [data-mat-icon-name]').forEach(icon => {
       const name = (icon.getAttribute('data-mat-icon-name') || icon.getAttribute('fonticon') || icon.textContent || '').trim().toLowerCase();
       const button = icon.closest('button, [role="button"]');
-      if ((name === 'more_vert' || name === 'more_horiz') && button && !options.includes(button)) options.push(button);
+      if ((name === 'more_vert' || name === 'more_horiz' || name === 'refresh' || name === 'delete' || name === 'delete_outline') && button && !options.includes(button)) {
+        options.push(button);
+      }
     });
-    const menuDeadline = Date.now() + 3000;
-    for (const button of options.filter(visible)) {
+    const menuDeadline = Date.now() + 3500;
+    for (const button of options) {
       if (Date.now() >= menuDeadline) break;
-      if (!triggerClick(button)) continue;
-      for (let attempt = 0; attempt < 5 && !item; attempt++) {
+      if (!button.isConnected || button.disabled) continue;
+      if (!safeClick(button)) continue;
+      for (let attempt = 0; attempt < 6 && !item; attempt++) {
         await pause();
         item = findDeleteMenuItem();
       }
       if (item) break;
     }
   }
-  if (!item || !triggerClick(item)) return false;
+  if (!item || !safeClick(item)) return false;
 
   let confirmed = false;
-  const confirmDeadline = Date.now() + 3000;
+  const confirmDeadline = Date.now() + 3500;
   while (Date.now() < confirmDeadline && !confirmed) {
-    const dialogs = [...document.querySelectorAll('mat-dialog-container, [role="dialog"], [role="alertdialog"]')].filter(visible);
+    const dialogs = [...document.querySelectorAll('mat-dialog-container, [role="dialog"], [role="alertdialog"]')].filter(d => d.isConnected);
     for (const dialog of dialogs) {
       const label = dialog.innerText || dialog.textContent || '';
-      if (!deleteLabel.test(label) || !chatLabel.test(label)) continue;
+      if (!deleteLabel.test(label) && !chatLabel.test(label)) continue;
       const button = [...dialog.querySelectorAll('button, [role="button"]')].find(button => {
-        const label = (button.getAttribute('aria-label') || button.innerText || button.textContent || '').trim();
-        return visible(button) && /^(delete|hapus|clear|حذف|مسح)$/i.test(label);
+        if (!button.isConnected || button.disabled) return false;
+        const lbl = (button.getAttribute('aria-label') || button.innerText || button.textContent || '').trim();
+        return /^(delete|hapus|clear|confirm|konfirmasi|continue|lanjutkan|ok|ya|حذف|مسح|تأكيد)$/i.test(lbl);
       });
-      if (button) { confirmed = triggerClick(button); break; }
+      if (button) { confirmed = safeClick(button); break; }
+    }
+    // Sebagian versi NotebookLM langsung menghapus tanpa dialog konfirmasi
+    if (!confirmed && dialogs.length === 0 && messages().length === 0) {
+      confirmed = true;
+      break;
     }
     if (!confirmed) await pause();
   }
@@ -1510,7 +1540,7 @@ window.otDeleteChatHistory = async function() {
       /\b(deleted|cleared|dihapus|terhapus|dibersihkan)\b|تم.{0,15}(حذف|مسح)/i.test(label));
     if (!dialogOpen && inputReady() && messages().length === 0) {
       if (emptySince === null) emptySince = Date.now();
-      const settledMs = providerConfirmed ? 800 : 1500;
+      const settledMs = providerConfirmed ? 600 : 1200;
       if (Date.now() - emptySince >= settledMs) return true;
     } else {
       emptySince = null;
