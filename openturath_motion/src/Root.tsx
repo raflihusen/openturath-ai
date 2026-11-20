@@ -1,4 +1,5 @@
 import { ManuscriptFilm } from "./manuscript/ManuscriptFilm";
+import { AktifKembaliFilm } from "./aktifkembali/AktifKembaliFilm";
 import { Act1MarginStatement } from "./manuscript/Act1MarginStatement";
 import { Act2SplitComparison } from "./manuscript/Act2SplitComparison";
 import { Act3MacroIbarah } from "./manuscript/Act3MacroIbarah";
@@ -35,6 +36,14 @@ const V = { width: 1080, height: 1920, fps: 30 } as const;
 
 export const RemotionRoot: React.FC = () => (
   <>
+    <Composition
+      id="OpenTurathAktifKembali9x16"
+      component={AktifKembaliFilm}
+      durationInFrames={720}
+      width={1080}
+      height={1920}
+      fps={60}
+    />
     <Folder name="Manuscript">
       <Composition
         id="OpenTurathManuscript9x16"
