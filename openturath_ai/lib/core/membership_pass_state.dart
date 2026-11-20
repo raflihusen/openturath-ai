@@ -151,10 +151,15 @@ MembershipPassSummary resolveMembershipPass(UserModel? user, {DateTime? now}) {
       entry.key == 'all_ai' ||
       entry.key == 'all_specialists');
   final activeSpecificCount = active
-      .where((entry) => entry.key != 'all_access' && entry.key != 'all_ai')
+      .where((entry) =>
+          entry.key != 'all_access' &&
+          entry.key != 'all_ai' &&
+          entry.key != 'all_specialists')
       .length;
-  final hasCollapsedAllEntry = active
-      .any((entry) => entry.key == 'all_access' || entry.key == 'all_ai');
+  final hasCollapsedAllEntry = active.any((entry) =>
+      entry.key == 'all_access' ||
+      entry.key == 'all_ai' ||
+      entry.key == 'all_specialists');
   final visibleActiveCount =
       activeSpecificCount + (hasCollapsedAllEntry ? 1 : 0);
   final accessLabel = hasSelectedAll

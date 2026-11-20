@@ -856,13 +856,23 @@ class AuthService {
     final isVip = UserModel.isVipEmail(cleanEmail);
     if (isVip) return; // Sakral Rule 5: Hak prerogatif VIP tidak pernah dicabut
 
+    final existingUid = (_activeWebUser != null &&
+            _activeWebUser!.email.trim().toLowerCase() == cleanEmail)
+        ? _activeWebUser!.uid
+        : 'web_$cleanEmail';
+    final existingName = (_activeWebUser != null &&
+            _activeWebUser!.email.trim().toLowerCase() == cleanEmail &&
+            _activeWebUser!.name.isNotEmpty)
+        ? _activeWebUser!.name
+        : cleanEmail.split('@').first;
+
     final user = UserModel(
-      uid: 'web_$cleanEmail',
-      name: cleanEmail.split('@').first,
+      uid: existingUid,
+      name: existingName,
       email: cleanEmail,
-      photoUrl: '',
+      photoUrl: _activeWebUser?.photoUrl ?? '',
       plan: AppConstants.planTrial,
-      questionsUsed: 0,
+      questionsUsed: _activeWebUser?.questionsUsed ?? 0,
       subscriptionExpiry: null,
       entitlements: const {},
       isVip: false,
@@ -871,13 +881,17 @@ class AuthService {
     _activeWebUser = user;
     _activeWebUserEmail = cleanEmail;
     _userCache[user.uid] = user;
+    _userCache['web_$cleanEmail'] = user;
     await _cacheUserLocally(user, isCurrent: () => true);
     _sessionUidController.add(user.uid);
 
     try {
       final prefs = await SharedPreferences.getInstance();
-      await prefs.setString(
-          'openturath_cached_user_${user.uid}', jsonEncode(user.toJsonMap()));
+      final encoded = jsonEncode(user.toJsonMap());
+      await prefs.setString('openturath_cached_user_web_$cleanEmail', encoded);
+      if (user.uid != 'web_$cleanEmail') {
+        await prefs.setString('openturath_cached_user_${user.uid}', encoded);
+      }
     } catch (_) {}
   }
 

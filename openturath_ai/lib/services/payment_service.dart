@@ -135,14 +135,6 @@ class PaymentService {
           if (data is Map<String, dynamic>) {
             final rawStatus =
                 (data['status'] ?? '').toString().trim().toUpperCase();
-            if (rawStatus == 'SUCCESS' || data['success'] == true) {
-              return {
-                'status': 'SUCCESS',
-                'success': true,
-                'order_id': cleanInvoice,
-                'data': data,
-              };
-            }
             const terminalStatuses = {
               'EXPIRE',
               'EXPIRED',
@@ -174,6 +166,21 @@ class PaymentService {
               return {
                 'status': rawStatus,
                 'success': false,
+                'order_id': cleanInvoice,
+                'data': data,
+              };
+            }
+            const successStatuses = {
+              'SUCCESS',
+              'PAID',
+              'SETTLED',
+              'SETTLEMENT',
+            };
+            if (successStatuses.contains(rawStatus) ||
+                (rawStatus.isEmpty && data['success'] == true)) {
+              return {
+                'status': 'SUCCESS',
+                'success': true,
                 'order_id': cleanInvoice,
                 'data': data,
               };

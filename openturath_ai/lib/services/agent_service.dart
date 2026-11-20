@@ -199,6 +199,44 @@ class AgentService {
             reason: 'entitlement_required');
       }
 
+      // Untuk akun non-VIP, periksa dulu apakah VPS menugaskan kloning khusus
+      // bagi email pengguna agar tidak membebani 1 notebook master tunggal.
+      if (!isVip && email.isNotEmpty) {
+        try {
+          final res = await http.post(
+            Uri.parse('https://maktabah.openturath.id/api/getAgentUrl'),
+            headers: {
+              'Content-Type': 'application/json',
+              'User-Agent': 'OpenTurath-App/1.0',
+            },
+            body: jsonEncode({
+              'data': {'agentId': agentId, 'email': email}
+            }),
+          ).timeout(const Duration(seconds: 3));
+          if (res.statusCode == 200) {
+            final body = jsonDecode(res.body);
+            if (body is Map) {
+              final rawUrl = body['result']?['url'] ?? body['url'];
+              if (rawUrl is String && rawUrl.isNotEmpty) {
+                final uri = Uri.tryParse(rawUrl.trim());
+                if (uri != null &&
+                    !rawUrl.contains('%') &&
+                    NotebookNavigation.notebook(uri) &&
+                    _notebookPath.hasMatch(uri.path) &&
+                    !uri.hasQuery &&
+                    !uri.hasFragment) {
+                  return uri
+                      .replace(host: NotebookNavigation.canonicalHost)
+                      .toString();
+                }
+              }
+            }
+          }
+        } catch (_) {
+          // Lanjut ke katalog master kanonik yang selaras dengan VPS
+        }
+      }
+
       final canonical = CanonicalNotebookCatalog.getUrl(agentId);
       if (canonical != null && canonical.isNotEmpty) {
         return canonical;

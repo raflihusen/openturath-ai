@@ -18,8 +18,8 @@ export const NOTEBOOK_ENTITIES: Record<string, NotebookEntityInfo> = {
   "06.1_AL_MUHAQQIQ": {
     code: "06.1_AL_MUHAQQIQ",
     name: "Al-Muhaqqiq (Fikih Tahawwulat - Cabang Analitis & Ushul)",
-    masterId: "67b65ed8-0d1e-4fb4-929c-4fcb735d3be3",
-    masterUrl: "https://notebooklm.google.com/notebook/67b65ed8-0d1e-4fb4-929c-4fcb735d3be3",
+    masterId: "f9354b96-7664-419c-a1c5-62edd487692c",
+    masterUrl: "https://notebooklm.google.com/notebook/f9354b96-7664-419c-a1c5-62edd487692c",
     legacyIds: ["f9354b96-7664-419c-a1c5-62edd487692c", "dc7ee7e4-f4ad-4db6-9cd0-0013727abbe4"],
     clones: [
       { name: "06.1 - AL-MUHAQQIQ - 01", id: "60442e17-15b3-45b4-a7f6-9362c8019afd", url: "https://notebooklm.google.com/notebook/60442e17-15b3-45b4-a7f6-9362c8019afd" },
@@ -40,8 +40,8 @@ export const NOTEBOOK_ENTITIES: Record<string, NotebookEntityInfo> = {
   "06.2_AL_BAYAN": {
     code: "06.2_AL_BAYAN",
     name: "Al-Bayan (Fikih Tahawwulat - Cabang Sosialisasi & Dakwah Ammah)",
-    masterId: "75882649-638f-4729-97f8-19897d90b108",
-    masterUrl: "https://notebooklm.google.com/notebook/75882649-638f-4729-97f8-19897d90b108",
+    masterId: "fc93c87c-b117-4957-852f-ee125b831e0c",
+    masterUrl: "https://notebooklm.google.com/notebook/fc93c87c-b117-4957-852f-ee125b831e0c",
     legacyIds: ["fc93c87c-b117-4957-852f-ee125b831e0c", "483d0291-0a70-411c-bff0-f1ea4b83b2fd"],
     clones: [
       { name: "06.2 - AL-BAYAN - 01", id: "7a272347-a75f-4cd7-90f8-0b55ad968bf0", url: "https://notebooklm.google.com/notebook/7a272347-a75f-4cd7-90f8-0b55ad968bf0" },
@@ -62,8 +62,8 @@ export const NOTEBOOK_ENTITIES: Record<string, NotebookEntityInfo> = {
   "06.3_AL_MUKHTABIR": {
     code: "06.3_AL_MUKHTABIR",
     name: "Al-Mukhtabir (Fikih Tahawwulat - Cabang Komparasi & Verifikasi Ilmiah)",
-    masterId: "ac803816-5541-4446-bc9d-b56326493555",
-    masterUrl: "https://notebooklm.google.com/notebook/ac803816-5541-4446-bc9d-b56326493555",
+    masterId: "6f811162-d4c4-4299-9ac1-8130b63e3308",
+    masterUrl: "https://notebooklm.google.com/notebook/6f811162-d4c4-4299-9ac1-8130b63e3308",
     legacyIds: ["6f811162-d4c4-4299-9ac1-8130b63e3308", "ac61a7a0-87e7-42a5-a30f-980ff74a78d8"],
     clones: [
       { name: "06.3 - AL-MUKHTABIR - 01", id: "6c0c7c9f-56ad-4c37-8c30-f3379acaf468", url: "https://notebooklm.google.com/notebook/6c0c7c9f-56ad-4c37-8c30-f3379acaf468" },
@@ -84,8 +84,8 @@ export const NOTEBOOK_ENTITIES: Record<string, NotebookEntityInfo> = {
   "06.4_AL_HABIB": {
     code: "06.4_AL_HABIB",
     name: "Al-Habib (Fikih Tahawwulat - Cabang Hikmah & Tazkiyah)",
-    masterId: "c8b8a754-991d-429d-8379-b0478abb6ceb",
-    masterUrl: "https://notebooklm.google.com/notebook/c8b8a754-991d-429d-8379-b0478abb6ceb",
+    masterId: "838be245-2610-4e60-be3e-fd6077426dc4",
+    masterUrl: "https://notebooklm.google.com/notebook/838be245-2610-4e60-be3e-fd6077426dc4",
     legacyIds: ["838be245-2610-4e60-be3e-fd6077426dc4", "6673e79a-7156-42e1-b116-bc1653a32094"],
     clones: [
       { name: "06.4 - AL-HABIB - 01", id: "85b41a61-5f8a-4314-ad9a-5db3a4d63a31", url: "https://notebooklm.google.com/notebook/85b41a61-5f8a-4314-ad9a-5db3a4d63a31" },
@@ -106,8 +106,8 @@ export const NOTEBOOK_ENTITIES: Record<string, NotebookEntityInfo> = {
   "06.5_AL_KHATIB": {
     code: "06.5_AL_KHATIB",
     name: "Al-Khatib (Fikih Tahawwulat - Cabang Khutbah & Retorika Aktual)",
-    masterId: "926f3633-53fc-4dbf-81da-0570f7a4d26b",
-    masterUrl: "https://notebooklm.google.com/notebook/926f3633-53fc-4dbf-81da-0570f7a4d26b",
+    masterId: "b03ea74c-9417-448a-934d-c1d4c67602ac",
+    masterUrl: "https://notebooklm.google.com/notebook/b03ea74c-9417-448a-934d-c1d4c67602ac",
     legacyIds: ["b03ea74c-9417-448a-934d-c1d4c67602ac", "1288e413-9569-47a3-892f-64008e53c1e8"],
     clones: [
       { name: "06.5 - AL-KHATIB - 01", id: "f79cd54e-1eb1-4b27-8380-958a154173ba", url: "https://notebooklm.google.com/notebook/f79cd54e-1eb1-4b27-8380-958a154173ba" },
@@ -128,8 +128,8 @@ export const NOTEBOOK_ENTITIES: Record<string, NotebookEntityInfo> = {
   "16_QAWAID_FIQHIYYAH": {
     code: "16_QAWAID_FIQHIYYAH",
     name: "Qawaid Fiqhiyyah (Kaidah-Kaidah Fikih)",
-    masterId: "35cc555e-3d6c-43fd-ae82-6a06cd107899",
-    masterUrl: "https://notebooklm.google.com/notebook/35cc555e-3d6c-43fd-ae82-6a06cd107899",
+    masterId: "06dd4666-de4f-4faf-b60c-a800c166da1e",
+    masterUrl: "https://notebooklm.google.com/notebook/06dd4666-de4f-4faf-b60c-a800c166da1e",
     legacyIds: ["06dd4666-de4f-4faf-b60c-a800c166da1e"],
     clones: [
       { name: "16 - QAWAID FIQHIYYAH - 01", id: "a2dccb35-c5be-48fa-842f-b6960ff88a78", url: "https://notebooklm.google.com/notebook/a2dccb35-c5be-48fa-842f-b6960ff88a78" },
@@ -150,8 +150,8 @@ export const NOTEBOOK_ENTITIES: Record<string, NotebookEntityInfo> = {
   "18_AQIDAH_DAN_USHULUDDIN": {
     code: "18_AQIDAH_DAN_USHULUDDIN",
     name: "Aqidah & Ushuluddin (Teologi & Ilmu Kalam)",
-    masterId: "4387f271-fdae-43af-945d-f5de31170b40",
-    masterUrl: "https://notebooklm.google.com/notebook/4387f271-fdae-43af-945d-f5de31170b40",
+    masterId: "bc6bad2e-7ed9-4fb2-974d-e649d8073368",
+    masterUrl: "https://notebooklm.google.com/notebook/bc6bad2e-7ed9-4fb2-974d-e649d8073368",
     legacyIds: ["bc6bad2e-7ed9-4fb2-974d-e649d8073368", "d4807af1-1c3b-4ffd-b9b8-a944b2f8c5bd"],
     clones: [
       { name: "18 - AQIDAH DAN USHULUDDIN - 01", id: "8d6356d6-4150-4512-b3db-f232ccc67a35", url: "https://notebooklm.google.com/notebook/8d6356d6-4150-4512-b3db-f232ccc67a35" },
@@ -172,8 +172,8 @@ export const NOTEBOOK_ENTITIES: Record<string, NotebookEntityInfo> = {
   "26_BIBLIOGRAFI_DAN_FAHARIS": {
     code: "26_BIBLIOGRAFI_DAN_FAHARIS",
     name: "Bibliografi & Faharis (Indeks & Katalog Turath)",
-    masterId: "d35f7598-076a-4c91-8ccf-9dc1aa1b0e7d",
-    masterUrl: "https://notebooklm.google.com/notebook/d35f7598-076a-4c91-8ccf-9dc1aa1b0e7d",
+    masterId: "d0bfade2-f397-45cd-945b-13f738b791e8",
+    masterUrl: "https://notebooklm.google.com/notebook/d0bfade2-f397-45cd-945b-13f738b791e8",
     legacyIds: ["d0bfade2-f397-45cd-945b-13f738b791e8"],
     clones: [
       { name: "26 - BIBLIOGRAFI DAN FAHARIS - 01", id: "2f91e6a7-95d9-4506-bb15-dd92068ab3cd", url: "https://notebooklm.google.com/notebook/2f91e6a7-95d9-4506-bb15-dd92068ab3cd" },
@@ -194,8 +194,8 @@ export const NOTEBOOK_ENTITIES: Record<string, NotebookEntityInfo> = {
   "15_TAJWID_DAN_QIRAAT": {
     code: "15_TAJWID_DAN_QIRAAT",
     name: "Tajwid & Qiraat (Ilmu Bacaan Al-Qur'an)",
-    masterId: "0364032d-3cb9-4b4e-bf5c-b0bf72f134f6",
-    masterUrl: "https://notebooklm.google.com/notebook/0364032d-3cb9-4b4e-bf5c-b0bf72f134f6",
+    masterId: "ce341050-11f3-44a0-94d3-abcde2ea0024",
+    masterUrl: "https://notebooklm.google.com/notebook/ce341050-11f3-44a0-94d3-abcde2ea0024",
     legacyIds: ["ce341050-11f3-44a0-94d3-abcde2ea0024"],
     clones: [
       { name: "15 - TAJWID DAN QIRAAT - 01", id: "2336e10b-34e9-49e8-9b2e-b811151b028a", url: "https://notebooklm.google.com/notebook/2336e10b-34e9-49e8-9b2e-b811151b028a" },
@@ -216,8 +216,8 @@ export const NOTEBOOK_ENTITIES: Record<string, NotebookEntityInfo> = {
   "08_FIKIH_MUQARAN_DAN_UMUM": {
     code: "08_FIKIH_MUQARAN_DAN_UMUM",
     name: "Fikih Muqaran & Umum (Fikih Perbandingan Mazhab & Siyasah)",
-    masterId: "19788f89-ea20-4477-8f66-e46d245cdba9",
-    masterUrl: "https://notebooklm.google.com/notebook/19788f89-ea20-4477-8f66-e46d245cdba9",
+    masterId: "890bec2a-f50b-47c4-9a81-3d11647b46db",
+    masterUrl: "https://notebooklm.google.com/notebook/890bec2a-f50b-47c4-9a81-3d11647b46db",
     legacyIds: ["890bec2a-f50b-47c4-9a81-3d11647b46db", "66ed9863-e177-43a9-a1a4-25fb953520a7"],
     clones: [
       { name: "08 - FIKIH MUQARAN DAN UMUM - 01", id: "95fe5435-92d6-4dfe-a229-ac2d76f1235d", url: "https://notebooklm.google.com/notebook/95fe5435-92d6-4dfe-a229-ac2d76f1235d" },
@@ -238,8 +238,8 @@ export const NOTEBOOK_ENTITIES: Record<string, NotebookEntityInfo> = {
   "14_TASAWWUF_DAN_ADZKAR": {
     code: "14_TASAWWUF_DAN_ADZKAR",
     name: "Tasawwuf & Adzkar (Spiritualitas & Doa)",
-    masterId: "1e306cb3-14f4-4bd4-b652-559b1447f1a2",
-    masterUrl: "https://notebooklm.google.com/notebook/1e306cb3-14f4-4bd4-b652-559b1447f1a2",
+    masterId: "f80add45-4a51-417e-89dc-f2bd3c9be298",
+    masterUrl: "https://notebooklm.google.com/notebook/f80add45-4a51-417e-89dc-f2bd3c9be298",
     legacyIds: ["f80add45-4a51-417e-89dc-f2bd3c9be298", "9a9902ff-ff0a-4696-845b-a809a69db84b"],
     clones: [
       { name: "14 - TASAWWUF DAN ADZKAR - 01", id: "d1b524b6-da79-4d74-9612-2f48e5af2b48", url: "https://notebooklm.google.com/notebook/d1b524b6-da79-4d74-9612-2f48e5af2b48" },
@@ -260,8 +260,8 @@ export const NOTEBOOK_ENTITIES: Record<string, NotebookEntityInfo> = {
   "11_FIKIH_HANAFI": {
     code: "11_FIKIH_HANAFI",
     name: "Fikih Hanafi (Mazhab Imam Abu Hanifah)",
-    masterId: "063ddf96-61a5-46c7-a6ae-5b9eb8bddb6b",
-    masterUrl: "https://notebooklm.google.com/notebook/063ddf96-61a5-46c7-a6ae-5b9eb8bddb6b",
+    masterId: "150c3d7b-d482-4ff0-9ae3-6a5767a84b20",
+    masterUrl: "https://notebooklm.google.com/notebook/150c3d7b-d482-4ff0-9ae3-6a5767a84b20",
     legacyIds: ["150c3d7b-d482-4ff0-9ae3-6a5767a84b20"],
     clones: [
       { name: "11 - FIKIH HANAFI - 01", id: "d52de363-f98f-4942-81b5-785ec917ed4f", url: "https://notebooklm.google.com/notebook/d52de363-f98f-4942-81b5-785ec917ed4f" },
@@ -282,8 +282,8 @@ export const NOTEBOOK_ENTITIES: Record<string, NotebookEntityInfo> = {
   "13_FIKIH_HANBALI": {
     code: "13_FIKIH_HANBALI",
     name: "Fikih Hanbali (Mazhab Imam Ahmad bin Hanbal)",
-    masterId: "45f6ccdd-d3e5-4ca7-96cb-4f905d3cde3e",
-    masterUrl: "https://notebooklm.google.com/notebook/45f6ccdd-d3e5-4ca7-96cb-4f905d3cde3e",
+    masterId: "a3b8c4e3-01a8-47e1-bea3-47ce195f0bfd",
+    masterUrl: "https://notebooklm.google.com/notebook/a3b8c4e3-01a8-47e1-bea3-47ce195f0bfd",
     legacyIds: ["a3b8c4e3-01a8-47e1-bea3-47ce195f0bfd"],
     clones: [
       { name: "13 - FIKIH HANBALI - 01", id: "7a057d11-ed84-43b8-903a-285c71d306fd", url: "https://notebooklm.google.com/notebook/7a057d11-ed84-43b8-903a-285c71d306fd" },
@@ -304,8 +304,8 @@ export const NOTEBOOK_ENTITIES: Record<string, NotebookEntityInfo> = {
   "09_FATAWA_DAN_MASAIL_FIQHIYYAH": {
     code: "09_FATAWA_DAN_MASAIL_FIQHIYYAH",
     name: "Fatawa & Masail Fiqhiyyah (Kumpulan Fatwa Ulama)",
-    masterId: "45a2043c-4617-42a7-9f00-fbc2138def48",
-    masterUrl: "https://notebooklm.google.com/notebook/45a2043c-4617-42a7-9f00-fbc2138def48",
+    masterId: "04eab3d3-a952-4d51-a8bc-92e6ae4bb6a8",
+    masterUrl: "https://notebooklm.google.com/notebook/04eab3d3-a952-4d51-a8bc-92e6ae4bb6a8",
     legacyIds: ["04eab3d3-a952-4d51-a8bc-92e6ae4bb6a8"],
     clones: [
       { name: "09 - FATAWA & MASAIL FIQHIYYAH - 01", id: "15881af7-bf48-4cea-85c0-f3738a1a8b23", url: "https://notebooklm.google.com/notebook/15881af7-bf48-4cea-85c0-f3738a1a8b23" },
@@ -326,8 +326,8 @@ export const NOTEBOOK_ENTITIES: Record<string, NotebookEntityInfo> = {
   "12_FIKIH_MALIKI": {
     code: "12_FIKIH_MALIKI",
     name: "Fikih Maliki (Mazhab Imam Malik)",
-    masterId: "cc152334-e7d2-44ac-bb14-65e70d893b40",
-    masterUrl: "https://notebooklm.google.com/notebook/cc152334-e7d2-44ac-bb14-65e70d893b40",
+    masterId: "88d9e63e-b7a0-4d85-a406-f79482c95238",
+    masterUrl: "https://notebooklm.google.com/notebook/88d9e63e-b7a0-4d85-a406-f79482c95238",
     legacyIds: ["88d9e63e-b7a0-4d85-a406-f79482c95238"],
     clones: [
       { name: "12 - FIKIH MALIKI - 01", id: "8e4bee9e-cfe0-4633-8230-c043c7d59c4c", url: "https://notebooklm.google.com/notebook/8e4bee9e-cfe0-4633-8230-c043c7d59c4c" },
@@ -370,8 +370,8 @@ export const NOTEBOOK_ENTITIES: Record<string, NotebookEntityInfo> = {
   "17_MUSTHALAH_DAN_ULUMUL_HADITS": {
     code: "17_MUSTHALAH_DAN_ULUMUL_HADITS",
     name: "Musthalah & Ulumul Hadits (Kritik & Metodologi Hadis)",
-    masterId: "45eacec4-a35f-4950-8719-9dff8459f9c2",
-    masterUrl: "https://notebooklm.google.com/notebook/45eacec4-a35f-4950-8719-9dff8459f9c2",
+    masterId: "d577b5bc-97f3-4ff5-9810-9c4c5bbeec95",
+    masterUrl: "https://notebooklm.google.com/notebook/d577b5bc-97f3-4ff5-9810-9c4c5bbeec95",
     legacyIds: ["d577b5bc-97f3-4ff5-9810-9c4c5bbeec95", "af26bf8f-4429-4d2f-9cf0-17bcc835fb86"],
     clones: [
       { name: "17 - MUSTHALAH DAN ULUMUL HADITS - 01", id: "4e127db6-6122-4c72-943f-5edf9fb7ad02", url: "https://notebooklm.google.com/notebook/4e127db6-6122-4c72-943f-5edf9fb7ad02" },
@@ -392,8 +392,8 @@ export const NOTEBOOK_ENTITIES: Record<string, NotebookEntityInfo> = {
   "05_TAFSIR_DAN_ULUMUL_QURAN": {
     code: "05_TAFSIR_DAN_ULUMUL_QURAN",
     name: "Tafsir & Ulumul Qur'an (Eksegesis Kitab Suci)",
-    masterId: "45463af7-4563-4a46-a750-5d3db4873ea5",
-    masterUrl: "https://notebooklm.google.com/notebook/45463af7-4563-4a46-a750-5d3db4873ea5",
+    masterId: "0f84a81e-9bb4-4b8a-9aae-847f6ad55e7e",
+    masterUrl: "https://notebooklm.google.com/notebook/0f84a81e-9bb4-4b8a-9aae-847f6ad55e7e",
     legacyIds: ["0f84a81e-9bb4-4b8a-9aae-847f6ad55e7e", "f15bd838-dac9-415b-bd40-fef3da1355d4", "df92cc50-1106-4221-8748-1663f00fa7fe"],
     clones: [
       { name: "05 - TAFSIR DAN ULUMUL QURAN - 01", id: "6d523070-ca51-463c-abcc-6b83c21f247c", url: "https://notebooklm.google.com/notebook/6d523070-ca51-463c-abcc-6b83c21f247c" },
@@ -458,8 +458,8 @@ export const NOTEBOOK_ENTITIES: Record<string, NotebookEntityInfo> = {
   "19_THABAQAT_DAN_TARAJIM_RIJAL": {
     code: "19_THABAQAT_DAN_TARAJIM_RIJAL",
     name: "Thabaqat & Tarajim Rijal (Biografi Tokoh & Perawi Hadis)",
-    masterId: "09bf9e55-0096-43b4-aaed-634c96430d35",
-    masterUrl: "https://notebooklm.google.com/notebook/09bf9e55-0096-43b4-aaed-634c96430d35",
+    masterId: "f7b8e849-6ea9-4274-983a-4dd4573a65f0",
+    masterUrl: "https://notebooklm.google.com/notebook/f7b8e849-6ea9-4274-983a-4dd4573a65f0",
     legacyIds: ["f7b8e849-6ea9-4274-983a-4dd4573a65f0", "59fd5420-7392-4d58-825a-02b87bade32d"],
     clones: [
       { name: "19 - THABAQAT DAN TARAJIM RIJAL - 01", id: "6fa3d522-2a66-4d59-be1f-531d450683e7", url: "https://notebooklm.google.com/notebook/6fa3d522-2a66-4d59-be1f-531d450683e7" },
@@ -502,8 +502,8 @@ export const NOTEBOOK_ENTITIES: Record<string, NotebookEntityInfo> = {
   "07_TARIKH_DAN_SIRAH_NABAWIYYAH": {
     code: "07_TARIKH_DAN_SIRAH_NABAWIYYAH",
     name: "Tarikh & Sirah Nabawiyyah (Sejarah Islam & Biografi Nabi)",
-    masterId: "94d49b05-e0b6-4ea2-9b7d-7c75f8edca75",
-    masterUrl: "https://notebooklm.google.com/notebook/94d49b05-e0b6-4ea2-9b7d-7c75f8edca75",
+    masterId: "0b3fe87e-9fbe-4a3a-84f1-9cf2090a58f0",
+    masterUrl: "https://notebooklm.google.com/notebook/0b3fe87e-9fbe-4a3a-84f1-9cf2090a58f0",
     legacyIds: ["0b3fe87e-9fbe-4a3a-84f1-9cf2090a58f0"],
     clones: [
       { name: "07 - TARIKH DAN SIRAH NABAWIYYAH - 01", id: "d603cefe-20c1-48e1-b31c-fc031a33e436", url: "https://notebooklm.google.com/notebook/d603cefe-20c1-48e1-b31c-fc031a33e436" },
@@ -524,8 +524,8 @@ export const NOTEBOOK_ENTITIES: Record<string, NotebookEntityInfo> = {
   "10_SYARAH_HADITS": {
     code: "10_SYARAH_HADITS",
     name: "Syarah Hadits (Penjelasan Ensiklopedis Hadis Nabawi)",
-    masterId: "725aba10-1b68-474b-8079-f0f93237a115",
-    masterUrl: "https://notebooklm.google.com/notebook/725aba10-1b68-474b-8079-f0f93237a115",
+    masterId: "bee47a12-217a-48d3-b8ca-d83059586e79",
+    masterUrl: "https://notebooklm.google.com/notebook/bee47a12-217a-48d3-b8ca-d83059586e79",
     legacyIds: ["bee47a12-217a-48d3-b8ca-d83059586e79", "27c104b7-e8aa-40a9-b9dd-ad4741b2d515"],
     clones: [
       { name: "10 - SYARAH HADITS - 01", id: "039bfef7-35d3-480b-a6b0-352743f47d6c", url: "https://notebooklm.google.com/notebook/039bfef7-35d3-480b-a6b0-352743f47d6c" },

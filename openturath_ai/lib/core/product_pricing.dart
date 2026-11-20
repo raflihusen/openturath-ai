@@ -213,8 +213,8 @@ class ProductPricingService {
     }
 
     // 1. Prioritas Utama: OTA Dynamic Pricing langsung dari VPS API resmi
+    final httpClient = client ?? http.Client();
     try {
-      final httpClient = client ?? http.Client();
       final res = await httpClient.get(
         Uri.parse('https://maktabah.openturath.id/api/v1/catalog/offers'),
         headers: {
@@ -299,6 +299,10 @@ class ProductPricingService {
       }
     } catch (_) {
       // Fallback ke Firestore bila jaringan VPS terkendala
+    } finally {
+      if (client == null) {
+        httpClient.close();
+      }
     }
 
     // 2. Fallback Sekunder: Firestore app_config/pricing
