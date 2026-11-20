@@ -11,7 +11,6 @@ class LanguageSwitcher extends StatelessWidget {
     Loc.watch(context);
     return PopupMenuButton<String>(
       tooltip: Loc.tr('language'),
-      initialValue: Loc.language,
       icon: const Icon(Icons.translate_rounded, size: 22),
       onSelected: (language) async {
         try {

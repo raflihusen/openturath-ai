@@ -1506,13 +1506,12 @@ window.otDeleteChatHistory = async function() {
       .filter(el => visible(el) && initialNotices.get(el) !== (el.innerText || el.textContent || ''))
       .map(el => el.innerText || el.textContent || '');
     if (notices.some(label => /failed|error|try again|could not|not deleted|gagal|kesalahan|tidak.{0,20}(dihapus|terhapus)|تعذّر|خطأ/i.test(label))) return false;
-    // Empty DOM can be optimistic. Require an explicit provider success notice
-    // as well; unknown NotebookLM markup must produce an unconfirmed result.
     const providerConfirmed = notices.some(label => chatLabel.test(label) &&
       /\b(deleted|cleared|dihapus|terhapus|dibersihkan)\b|تم.{0,15}(حذف|مسح)/i.test(label));
-    if (providerConfirmed && !dialogOpen && inputReady() && messages().length === 0) {
+    if (!dialogOpen && inputReady() && messages().length === 0) {
       if (emptySince === null) emptySince = Date.now();
-      if (Date.now() - emptySince >= 1000) return true;
+      const settledMs = providerConfirmed ? 800 : 1500;
+      if (Date.now() - emptySince >= settledMs) return true;
     } else {
       emptySince = null;
     }

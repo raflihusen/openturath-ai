@@ -43,25 +43,30 @@ class _OTPopupMenuItemState<T> extends State<OTPopupMenuItem<T>> {
       child: Padding(
         padding: const EdgeInsets.symmetric(
             horizontal: OTSpacing.sm, vertical: OTSpacing.xxs),
-        child: InkWell(
-          onTap: widget.enabled
-              ? () => Navigator.pop<T>(context, widget.value)
-              : null,
-          canRequestFocus: widget.enabled,
+        child: Material(
+          type: MaterialType.transparency,
           borderRadius: BorderRadius.circular(OTRadius.chip),
-          hoverColor: ink.withValues(alpha: dark ? 0.08 : 0.05),
-          focusColor: ink.withValues(alpha: dark ? 0.10 : 0.07),
-          highlightColor: ink.withValues(alpha: dark ? 0.12 : 0.08),
-          splashColor: ink.withValues(alpha: dark ? 0.10 : 0.06),
-          child: ConstrainedBox(
-            constraints:
-                BoxConstraints(minHeight: widget.height - OTSpacing.xxs * 2),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: OTSpacing.base),
-              child: Align(
-                alignment: AlignmentDirectional.centerStart,
-                widthFactor: 1,
-                child: widget.child,
+          clipBehavior: Clip.antiAlias,
+          child: InkWell(
+            onTap: widget.enabled
+                ? () => Navigator.pop<T>(context, widget.value)
+                : null,
+            canRequestFocus: widget.enabled,
+            borderRadius: BorderRadius.circular(OTRadius.chip),
+            hoverColor: ink.withValues(alpha: dark ? 0.08 : 0.05),
+            focusColor: ink.withValues(alpha: dark ? 0.10 : 0.07),
+            highlightColor: ink.withValues(alpha: dark ? 0.12 : 0.08),
+            splashColor: ink.withValues(alpha: dark ? 0.10 : 0.06),
+            child: ConstrainedBox(
+              constraints:
+                  BoxConstraints(minHeight: widget.height - OTSpacing.xxs * 2),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: OTSpacing.base),
+                child: Align(
+                  alignment: AlignmentDirectional.centerStart,
+                  widthFactor: 1,
+                  child: widget.child,
+                ),
               ),
             ),
           ),

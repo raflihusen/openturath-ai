@@ -96,9 +96,11 @@ class _LoginScreenState extends State<LoginScreen> {
         systemNavigationBarColor: outerCanvas,
         systemNavigationBarIconBrightness: Brightness.dark,
       ),
-      child: Scaffold(
-        backgroundColor: outerCanvas,
-        body: SafeArea(
+      child: Theme(
+        data: AppTheme.lightTheme,
+        child: Scaffold(
+          backgroundColor: outerCanvas,
+          body: SafeArea(
           child: LayoutBuilder(builder: (context, viewport) {
             final isPhone = viewport.maxWidth < 900;
             final isCompactHeight = viewport.maxHeight < 700;
@@ -349,6 +351,7 @@ class _LoginScreenState extends State<LoginScreen> {
               ],
             );
           }),
+        ),
         ),
       ),
     );

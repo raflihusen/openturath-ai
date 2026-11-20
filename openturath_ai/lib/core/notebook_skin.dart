@@ -248,7 +248,7 @@ const notebookSkinScript = r'''
       outline-offset: -6px !important;
       list-style: none !important;
       font-family: var(--ot-arabic) !important;
-      font-size: calc(var(--ot-font-size, 15px) * 1.45) !important;
+      font-size: calc(var(--ot-font-size, 15px) * 1.22) !important;
       line-height: 1.9 !important;
       letter-spacing: 0 !important;
       font-synthesis: none !important;
@@ -677,9 +677,29 @@ const notebookSkinScript = r'''
       if (el.__otLen === text.length) return;
       el.__otLen = text.length;
 
-      const ar = (text.match(AR) || []).length;
-      const la = (text.match(LAT) || []).length;
-      const ibarah = ar >= 12 && ar / (ar + la) >= 0.6 && !el.querySelector('ul, ol, li') && !el.classList.contains('table-paragraph');
+      // Jangan pecah jawaban yang secara keseluruhan berbahasa Arab penuh menjadi
+      // kotak-kotak IBARAH per paragraf. Kotak IBARAH hanya untuk kutipan naskah
+      // Arab yang diselipkan di dalam jawaban berbahasa non-Arab (ID/EN).
+      const card = el.closest('.to-user-message-card-content');
+      let isWholeArabicCard = false;
+      if (card) {
+        const cTxt = card.textContent || '';
+        const cAr = (cTxt.match(AR) || []).length;
+        const cLa = (cTxt.match(LAT) || []).length;
+        isWholeArabicCard = (cAr + cLa) > 0 && (cAr / (cAr + cLa)) >= 0.55;
+      }
+
+      const trimmed = text.trim();
+      const ar = (trimmed.match(AR) || []).length;
+      const la = (trimmed.match(LAT) || []).length;
+      const looksLikeHeading = trimmed.length < 36 || /^[أ-ي0-9١-٩]+[\.\-\)]\s+/.test(trimmed);
+      const ibarah = !isWholeArabicCard &&
+          !looksLikeHeading &&
+          ar >= 24 &&
+          (ar + la) > 0 &&
+          (ar / (ar + la)) >= 0.72 &&
+          !el.querySelector('ul, ol, li') &&
+          !el.classList.contains('table-paragraph');
       toggle(el, 'ot-ibarah', ibarah);
       const item = el.closest('li');
       if (item) toggle(item, 'ot-ibarah-item', ibarah && item.querySelectorAll('.paragraph').length === 1);
