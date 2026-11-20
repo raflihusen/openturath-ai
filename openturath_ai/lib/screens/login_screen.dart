@@ -8,6 +8,7 @@ import '../core/scholarly_fonts.dart';
 import '../core/localization.dart';
 import '../core/app_copy.dart';
 import '../core/routes.dart';
+import '../core/theme.dart';
 import '../core/google_connection_flow.dart';
 import '../core/design/ot_buttons.dart';
 import '../core/design/ot_colors.dart';
