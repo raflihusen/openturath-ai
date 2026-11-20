@@ -134,7 +134,7 @@ async def clone_all():
                     mut_copy_on = [None, None, None, [None, None, None, None, 3]]
                     await master_client.rpc_call(RPCMethod.RENAME_NOTEBOOK, [clone_id, [mut_copy_on]], allow_null=True)
                     try:
-                        await master_client.sharing.add_user(clone_id, TARGET_EMAIL, SharePermission.EDITOR)
+                        await master_client.sharing.add_user(clone_id, TARGET_EMAIL, SharePermission.EDITOR, notify=False)
                     except Exception:
                         pass
 

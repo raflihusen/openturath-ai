@@ -90,7 +90,7 @@ async def main():
             else:
                 print(f"   ➕ Menambahkan {TARGET_EMAIL} sebagai VIEWER...")
                 try:
-                    await nlm.sharing.add_user(nb_id, TARGET_EMAIL, SharePermission.VIEWER)
+                    await nlm.sharing.add_user(nb_id, TARGET_EMAIL, SharePermission.VIEWER, notify=False)
                     print(f"   🎉 BERHASIL menambahkan {TARGET_EMAIL} ke {nb_name}!")
                     
                     # Log Firestore

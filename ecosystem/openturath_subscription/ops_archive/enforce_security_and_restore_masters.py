@@ -120,7 +120,7 @@ async def secure_and_restore():
                 else:
                     print(f"   ➕ Menambahkan {em} ke {nb_name}...")
                     try:
-                        await nlm.sharing.add_user(nb_id, em, SharePermission.VIEWER)
+                        await nlm.sharing.add_user(nb_id, em, SharePermission.VIEWER, notify=False)
                         print(f"   🎉 BERHASIL menambahkan {em} ke {nb_name}!")
                         db.collection("sharing_log").add({
                             "email": em,

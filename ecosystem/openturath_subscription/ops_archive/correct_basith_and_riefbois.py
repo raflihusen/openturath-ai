@@ -67,7 +67,7 @@ async def fix_transfer():
                     # B. Pastikan riefbois33@gmail.com aktif
                     if "riefbois33@gmail.com" not in current_viewers:
                         print(f"   ➕ Menambahkan riefbois33@gmail.com sebagai VIEWER...")
-                        await nlm.sharing.add_user(nb_id, "riefbois33@gmail.com", SharePermission.VIEWER)
+                        await nlm.sharing.add_user(nb_id, "riefbois33@gmail.com", SharePermission.VIEWER, notify=False)
                         print(f"   ✅ riefbois33@gmail.com BERHASIL DITAMBAHKAN.")
                     else:
                         print(f"   ✅ riefbois33@gmail.com SUDAH AKTIF.")
@@ -75,7 +75,7 @@ async def fix_transfer():
                     # C. Pastikan ndsfraaaaaaa@gmail.com aktif
                     if "ndsfraaaaaaa@gmail.com" not in current_viewers:
                         print(f"   ➕ Menambahkan ndsfraaaaaaa@gmail.com sebagai VIEWER...")
-                        await nlm.sharing.add_user(nb_id, "ndsfraaaaaaa@gmail.com", SharePermission.VIEWER)
+                        await nlm.sharing.add_user(nb_id, "ndsfraaaaaaa@gmail.com", SharePermission.VIEWER, notify=False)
                         print(f"   ✅ ndsfraaaaaaa@gmail.com BERHASIL DITAMBAHKAN.")
                     else:
                         print(f"   ✅ ndsfraaaaaaa@gmail.com SUDAH AKTIF.")

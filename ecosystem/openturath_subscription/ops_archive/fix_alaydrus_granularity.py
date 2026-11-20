@@ -109,7 +109,7 @@ async def main():
                     print(f"   ✅ {nb_name}: TERDAFTAR (OK)")
                 else:
                     print(f"   ➕ Menambahkan ke {nb_name}...")
-                    await nlm.sharing.add_user(nb_id, TARGET_EMAIL, SharePermission.VIEWER)
+                    await nlm.sharing.add_user(nb_id, TARGET_EMAIL, SharePermission.VIEWER, notify=False)
                     print(f"   ✅ {nb_name}: BERHASIL DITAMBAHKAN")
             except Exception as e:
                 print(f"   ⚠️ Error cek {nb_name}: {e}")
