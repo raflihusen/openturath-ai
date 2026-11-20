@@ -3,7 +3,10 @@ import '../widgets/app_loader.dart';
 import '../widgets/adaptive_sheet.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:cloud_functions/cloud_functions.dart';
+import 'package:url_launcher/url_launcher.dart';
+import '../core/app_snackbar.dart';
 import '../widgets/ot_motion_widgets.dart';
 import '../core/design/ot_motion.dart';
 import '../core/scholarly_fonts.dart';
@@ -189,8 +192,246 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     }
   }
 
+  Future<void> _showArabicBankTransferDialog(
+    AgentModel agent,
+    SubscriptionOffer offer,
+    ArabicPaymentConfig config,
+  ) async {
+    final auth = AuthService();
+    var userEmail = (auth.cachedCurrentUser?.email ??
+            AuthService.activeWebUserEmail ??
+            auth.currentUser?.email ??
+            '')
+        .trim()
+        .toLowerCase();
+    if (userEmail.isEmpty) {
+      try {
+        final prefs = await SharedPreferences.getInstance();
+        if (prefs.getBool('web_session_active') == true) {
+          userEmail =
+              (prefs.getString(PersistentGoogleSession.verifiedOwnerKey) ?? '')
+                  .trim()
+                  .toLowerCase();
+        }
+      } catch (_) {}
+    }
+
+    if (!mounted) return;
+    final dark = Theme.of(context).brightness == Brightness.dark;
+    final ink = OTColors.textPrimary(dark);
+    final muted = OTColors.textSecondary(dark);
+    final border = OTColors.border(dark);
+    final surface = OTColors.surface(dark);
+    final subtle = OTColors.surfaceSubtle(dark);
+
+    final agentName = agent.titleArabic.trim().isNotEmpty
+        ? agent.titleArabic.trim()
+        : Loc.text(agent.title);
+    final priceSar = ProductPricing.formatLocalPrice(offer.amount);
+
+    final waLines = <String>[
+      'السلام عليكم، أرغب في الاشتراك في OpenTurath AI:',
+      '• المساعد: $agentName',
+      '• الباقة: ${offer.title}',
+      '• المبلغ: $priceSar',
+      if (config.bankName.isNotEmpty) '• البنك: ${config.bankName}',
+      if (userEmail.isNotEmpty) '• البريد الإلكتروني: $userEmail',
+      '',
+      'سأرسل صورة إيصال التحويل الآن.',
+    ];
+    final waMessage = waLines.join('\n');
+
+    void copyValue(String value) {
+      Clipboard.setData(ClipboardData(text: value));
+      if (mounted) {
+        AppSnackBar.success(context, 'تم النسخ');
+      }
+    }
+
+    Widget infoRow(String label, String value, {bool copyable = false}) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 6),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(label, style: OTTypography.caption(color: muted)),
+                  const SizedBox(height: 2),
+                  SelectableText(
+                    value,
+                    textDirection: copyable ? TextDirection.ltr : null,
+                    style: OTTypography.bodyMedium(color: ink),
+                  ),
+                ],
+              ),
+            ),
+            if (copyable)
+              IconButton(
+                tooltip: 'نسخ',
+                onPressed: () => copyValue(value),
+                icon: Icon(Icons.copy_rounded, size: 18, color: muted),
+              ),
+          ],
+        ),
+      );
+    }
+
+    await showDialog<void>(
+      context: context,
+      builder: (dialogCtx) {
+        return Directionality(
+          textDirection: TextDirection.rtl,
+          child: Dialog(
+            backgroundColor: surface,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(OTRadius.dialog),
+              side: BorderSide(color: border),
+            ),
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 460),
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(OTSpacing.xl),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'الاشتراك بالتحويل البنكي',
+                                style: OTTypography.cardTitle(color: ink),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                '$agentName · ${offer.title} · $priceSar',
+                                style: OTTypography.caption(color: muted),
+                              ),
+                            ],
+                          ),
+                        ),
+                        IconButton(
+                          onPressed: () => Navigator.of(dialogCtx).pop(),
+                          icon: Icon(Icons.close_rounded, color: muted),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: OTSpacing.base),
+                    Container(
+                      padding: const EdgeInsets.all(OTSpacing.base),
+                      decoration: BoxDecoration(
+                        color: subtle,
+                        borderRadius: BorderRadius.circular(OTRadius.card),
+                        border: Border.all(color: border),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Text(
+                            'الخطوة ١: حوّل المبلغ إلى الحساب البنكي',
+                            style: OTTypography.bodyMedium(color: ink)
+                                .copyWith(fontWeight: FontWeight.w600),
+                          ),
+                          const SizedBox(height: OTSpacing.sm),
+                          if (config.bankName.isNotEmpty)
+                            infoRow('البنك', config.bankName),
+                          if (config.accountName.isNotEmpty)
+                            infoRow('اسم الحساب', config.accountName),
+                          if (config.accountNumber.isNotEmpty)
+                            infoRow('رقم الحساب', config.accountNumber,
+                                copyable: true),
+                          if (config.iban.isNotEmpty)
+                            infoRow('الآيبان (IBAN)', config.iban,
+                                copyable: true),
+                          infoRow('المبلغ المطلوب', priceSar),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: OTSpacing.base),
+                    Container(
+                      padding: const EdgeInsets.all(OTSpacing.base),
+                      decoration: BoxDecoration(
+                        color: subtle,
+                        borderRadius: BorderRadius.circular(OTRadius.card),
+                        border: Border.all(color: border),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Text(
+                            'الخطوة ٢: أرسل إيصال التحويل عبر واتساب',
+                            style: OTTypography.bodyMedium(color: ink)
+                                .copyWith(fontWeight: FontWeight.w600),
+                          ),
+                          const SizedBox(height: 6),
+                          Text(
+                            'بعد التحويل، اضغط الزر أدناه لإرسال صورة الإيصال عبر واتساب ليتم تفعيل اشتراكك أو إرسال كود التفعيل.',
+                            style: OTTypography.caption(color: muted)
+                                .copyWith(height: 1.5),
+                          ),
+                          const SizedBox(height: OTSpacing.base),
+                          SizedBox(
+                            height: 46,
+                            child: FilledButton.icon(
+                              onPressed: () async {
+                                final uri = Uri.https(
+                                  'wa.me',
+                                  '/${config.cleanWhatsapp}',
+                                  {'text': waMessage},
+                                );
+                                var opened = false;
+                                try {
+                                  opened = await launchUrl(
+                                    uri,
+                                    mode: LaunchMode.externalApplication,
+                                  );
+                                } catch (_) {
+                                  opened = false;
+                                }
+                                if (!opened && mounted) {
+                                  await Clipboard.setData(
+                                      ClipboardData(text: waMessage));
+                                  if (mounted) {
+                                    AppSnackBar.info(
+                                      context,
+                                      'تم نسخ رسالة الطلب. يرجى إرسال الإيصال عبر واتساب: +${config.cleanWhatsapp}',
+                                    );
+                                  }
+                                }
+                              },
+                              icon: const Icon(Icons.chat_outlined, size: 18),
+                              label: const Text('إرسال الإيصال عبر واتساب'),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   Future<void> _checkout(AgentModel agent, SubscriptionOffer offer) async {
-    if (_processing || Loc.isArabic) return;
+    if (_processing) return;
+    if (Loc.isArabic) {
+      final arabicPay = ProductPricing.arabicPayment;
+      if (arabicPay.isAvailable) {
+        await _showArabicBankTransferDialog(agent, offer, arabicPay);
+      }
+      return;
+    }
     final auth = AuthService();
     final cached = auth.cachedCurrentUser;
     final webEmail = AuthService.activeWebUserEmail;
@@ -451,6 +692,9 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
       ),
     );
 
+    final arabicPay = ProductPricing.arabicPayment;
+    final arabicPayReady = arabicPay.isAvailable;
+
     Widget actionButton() => Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -458,12 +702,16 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
           width: wide ? 240 : double.infinity,
           height: 48,
           child: FilledButton(
-            onPressed: (isArabicCurrency || _processing || !_pricingReady)
+            onPressed: ((isArabicCurrency && !arabicPayReady) ||
+                    _processing ||
+                    !_pricingReady)
                 ? null
                 : onCheckout,
             style: inverse && !dark ? OTButtons.onInverse(dark) : null,
             child: Text(isArabicCurrency
-                ? 'قريباً'
+                ? (arabicPayReady
+                    ? (active ? 'تجديد الاشتراك' : 'اشترك الآن')
+                    : 'قريباً')
                 : Loc.tr(active ? 'planRenew' : 'planContinue')),
           ),
         ),
@@ -477,7 +725,11 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
               Flexible(
                 child: Text(
                     isArabicCurrency
-                        ? 'الدفع بالريال السعودي عبر التحويل البنكي متاح قريباً'
+                        ? (arabicPayReady
+                            ? (arabicPay.note.isNotEmpty
+                                ? arabicPay.note
+                                : 'التحويل البنكي بالريال السعودي — تفعيل فوري بعد تأكيد الإيصال')
+                            : 'الدفع بالريال السعودي عبر التحويل البنكي متاح قريباً')
                         : Loc.tr('planTrustNote'),
                     textAlign: TextAlign.center,
                     style: OTTypography.caption(color: sub)

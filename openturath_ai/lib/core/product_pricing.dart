@@ -36,9 +36,55 @@ class SubscriptionOffer {
       };
 }
 
+/// Konfigurasi pembayaran transfer bank + WhatsApp khusus mode Bahasa Arab
+/// yang dapat diaktifkan dan diubah secara OTA dari VPS / Firestore tanpa update app.
+class ArabicPaymentConfig {
+  const ArabicPaymentConfig({
+    this.enabled = false,
+    this.bankName = '',
+    this.accountName = '',
+    this.accountNumber = '',
+    this.iban = '',
+    this.whatsappNumber = '',
+    this.note = '',
+  });
+
+  final bool enabled;
+  final String bankName;
+  final String accountName;
+  final String accountNumber;
+  final String iban;
+  final String whatsappNumber;
+  final String note;
+
+  String get cleanWhatsapp => whatsappNumber.replaceAll(RegExp(r'[^0-9]'), '');
+
+  bool get isAvailable =>
+      enabled &&
+      cleanWhatsapp.isNotEmpty &&
+      (accountNumber.trim().isNotEmpty || iban.trim().isNotEmpty);
+
+  static ArabicPaymentConfig? fromMap(Object? raw) {
+    if (raw is! Map) return null;
+    String str(String a, [String? b]) =>
+        (raw[a] ?? (b != null ? raw[b] : null) ?? '').toString().trim();
+    return ArabicPaymentConfig(
+      enabled: raw['enabled'] == true,
+      bankName: str('bankName', 'bank_name'),
+      accountName: str('accountName', 'account_name'),
+      accountNumber: str('accountNumber', 'account_number'),
+      iban: str('iban', 'IBAN'),
+      whatsappNumber: str('whatsappNumber', 'whatsapp_number'),
+      note: str('note', 'trustNote'),
+    );
+  }
+}
+
 abstract final class ProductPricing {
   static const defaultRevision = 'harga-v92-2026-10-14';
   static String _currentRevision = defaultRevision;
+  static ArabicPaymentConfig _arabicPayment = const ArabicPaymentConfig();
+  static ArabicPaymentConfig get arabicPayment => _arabicPayment;
   static String get revision => _currentRevision;
   static set revision(String value) {
     if (value.isNotEmpty) _currentRevision = value;
@@ -75,9 +121,13 @@ abstract final class ProductPricing {
     Map<String, dynamic>? tahawwulatMap,
     Map<String, dynamic>? specialistsMap,
     Map<String, List<SubscriptionOffer>>? agentOffersMap,
+    ArabicPaymentConfig? arabicPaymentConfig,
   }) {
     if (revision != null && revision.isNotEmpty) {
       _currentRevision = revision;
+    }
+    if (arabicPaymentConfig != null) {
+      _arabicPayment = arabicPaymentConfig;
     }
     if (agentOffersMap != null && agentOffersMap.isNotEmpty) {
       _agentOffers.clear();
@@ -258,73 +308,111 @@ class ProductPricingService {
 
       if (res.statusCode == 200) {
         final data = jsonDecode(res.body);
-        if (data is Map && data['offers'] is List) {
+        if (data is Map) {
           final revision = data['revision']?.toString();
-          final rawOffers = data['offers'] as List;
+          final arabicCfg = ArabicPaymentConfig.fromMap(
+              data['arabicPayment'] ?? data['arabic_payment']);
           final agentOffersMap = <String, List<SubscriptionOffer>>{};
 
-          for (final item in rawOffers) {
-            if (item is Map &&
-                item['agentId'] is String &&
-                item['plans'] is List) {
-              final agentId = item['agentId'] as String;
-              final plans = item['plans'] as List;
-              final offers = <SubscriptionOffer>[];
+          if (data['offers'] is List) {
+            final rawOffers = data['offers'] as List;
+            for (final item in rawOffers) {
+              if (item is Map &&
+                  item['agentId'] is String &&
+                  item['plans'] is List) {
+                final agentId = item['agentId'] as String;
+                final plans = item['plans'] as List;
+                final offers = <SubscriptionOffer>[];
 
-              for (final p in plans) {
-                if (p is Map) {
-                  final planStr = p['plan']?.toString() ?? '';
-                  final months = p['months'] is int
-                      ? p['months'] as int
-                      : int.tryParse(p['months']?.toString() ?? '1') ?? 1;
-                  final amount = p['amount'] is int
-                      ? p['amount'] as int
-                      : int.tryParse(p['amount']?.toString() ?? '0') ?? 0;
+                for (final p in plans) {
+                  if (p is Map) {
+                    final planStr = p['plan']?.toString() ?? '';
+                    final months = p['months'] is int
+                        ? p['months'] as int
+                        : int.tryParse(p['months']?.toString() ?? '1') ?? 1;
+                    final amount = p['amount'] is int
+                        ? p['amount'] as int
+                        : int.tryParse(p['amount']?.toString() ?? '0') ?? 0;
 
-                  // Hitung harga normal (regularAmount) coret jika tidak disediakan
-                  int regular = 0;
-                  if (p['regularAmount'] is int) {
-                    regular = p['regularAmount'] as int;
-                  } else if (p['regular_amount'] is int) {
-                    regular = p['regular_amount'] as int;
-                  } else {
-                    if (months == 1) {
-                      regular = amount >= 400000
-                          ? 1000000
-                          : (amount >= 200000 ? 1000000 : 300000);
-                    } else if (months == 6) {
-                      regular = amount >= 2000000
-                          ? 4995000
-                          : (amount >= 1000000 ? 2995000 : 1200000);
+                    // Hitung harga normal (regularAmount) coret jika tidak disediakan
+                    int regular = 0;
+                    if (p['regularAmount'] is int) {
+                      regular = p['regularAmount'] as int;
+                    } else if (p['regular_amount'] is int) {
+                      regular = p['regular_amount'] as int;
                     } else {
-                      regular = amount >= 3000000
-                          ? 7995000
-                          : (amount >= 1500000 ? 4995000 : 2400000);
+                      if (months == 1) {
+                        regular = amount >= 400000
+                            ? 1000000
+                            : (amount >= 200000 ? 1000000 : 300000);
+                      } else if (months == 6) {
+                        regular = amount >= 2000000
+                            ? 4995000
+                            : (amount >= 1000000 ? 2995000 : 1200000);
+                      } else {
+                        regular = amount >= 3000000
+                            ? 7995000
+                            : (amount >= 1500000 ? 4995000 : 2400000);
+                      }
+                    }
+
+                    if (planStr.isNotEmpty && amount > 0) {
+                      offers.add(SubscriptionOffer(
+                        plan: planStr,
+                        months: months,
+                        regularAmount: regular,
+                        amount: amount,
+                      ));
                     }
                   }
-
-                  if (planStr.isNotEmpty && amount > 0) {
-                    offers.add(SubscriptionOffer(
-                      plan: planStr,
-                      months: months,
-                      regularAmount: regular,
-                      amount: amount,
-                    ));
-                  }
                 }
-              }
 
-              if (offers.isNotEmpty) {
-                agentOffersMap[agentId] = offers;
+                if (offers.isNotEmpty) {
+                  agentOffersMap[agentId] = offers;
+                }
               }
             }
           }
 
-          if (agentOffersMap.isNotEmpty) {
+          if (agentOffersMap.isNotEmpty || arabicCfg != null) {
             ProductPricing.updateOffers(
               revision: revision,
-              agentOffersMap: agentOffersMap,
+              agentOffersMap: agentOffersMap.isNotEmpty ? agentOffersMap : null,
+              arabicPaymentConfig: arabicCfg,
             );
+          }
+
+          if (agentOffersMap.isNotEmpty) {
+            // Jika VPS belum menyertakan arabicPayment, cek Firestore app_config/pricing
+            // agar tombol pembayaran Arab tetap bisa diaktifkan OTA dari salah satu sumber.
+            if (arabicCfg == null) {
+              try {
+                final db = firestore ??
+                    (Firebase.apps.isNotEmpty
+                        ? FirebaseFirestore.instance
+                        : null);
+                if (db != null) {
+                  final doc = await db
+                      .collection('app_config')
+                      .doc('pricing')
+                      .get(GetOptions(
+                          source: forceRefresh
+                              ? Source.server
+                              : Source.serverAndCache))
+                      .timeout(const Duration(seconds: 2));
+                  if (doc.exists && doc.data() != null) {
+                    final fsData = doc.data()!;
+                    final fsArabicCfg = ArabicPaymentConfig.fromMap(
+                        fsData['arabicPayment'] ?? fsData['arabic_payment']);
+                    if (fsArabicCfg != null) {
+                      ProductPricing.updateOffers(
+                        arabicPaymentConfig: fsArabicCfg,
+                      );
+                    }
+                  }
+                }
+              } catch (_) {}
+            }
             _lastFetch = now;
             return true;
           }
@@ -354,6 +442,8 @@ class ProductPricingService {
       if (doc.exists && doc.data() != null) {
         final data = doc.data()!;
         final revision = data['revision'] as String?;
+        final arabicCfg = ArabicPaymentConfig.fromMap(
+            data['arabicPayment'] ?? data['arabic_payment']);
         final plans = data['plans'];
         Map<String, dynamic>? tahawwulat;
         Map<String, dynamic>? specialists;
@@ -391,9 +481,10 @@ class ProductPricingService {
           revision: revision,
           tahawwulatMap: tahawwulat,
           specialistsMap: specialists,
+          arabicPaymentConfig: arabicCfg,
         );
         _lastFetch = now;
-        return tahawwulat != null || specialists != null;
+        return tahawwulat != null || specialists != null || arabicCfg != null;
       }
     } catch (_) {
       // Graceful fallback to default constants
