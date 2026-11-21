@@ -403,12 +403,13 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                                   }
                                   fontStyle.textContent = `
                                     :root, html, body { --ot-font-size: \${basePx}px !important; }
-                                    .rendered-markdown, .rendered-markdown *, .chat-response, .chat-response *, [role="article"], [role="article"] *,
-                                    .chat-panel-content, .chat-panel-content * {
+                                    .rendered-markdown p:not(.table-paragraph), .rendered-markdown li,
+                                    .chat-response p:not(.table-paragraph), .chat-response li,
+                                    .to-user-container .paragraph:not(.table-paragraph) {
                                       font-size: \${basePx}px !important;
                                       line-height: 1.7 !important;
                                     }
-                                    [lang="ar"], .arabic, [dir="rtl"] {
+                                    [lang="ar"], .arabic, .ot-rtl-block, .ot-ibarah {
                                       font-size: \${arabicPx}px !important;
                                     }
                                   `;
