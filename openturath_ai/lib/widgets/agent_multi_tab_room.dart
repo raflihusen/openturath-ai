@@ -1590,9 +1590,8 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
       final elapsedMs = _loadingStarted != null
           ? DateTime.now().difference(_loadingStarted!).inMilliseconds
           : 0;
-      // Wajib stabil: minimal 4 sampel berturut-turut (2 detik) dan minimal 3000ms berlalu
-      // agar tidak ada flicker atau pemunculan dini sebelum layout Angular selesai sempurna.
-      if (_readySamples >= 4 && elapsedMs >= 3000) {
+      // Stabil tanpa jeda berlebihan: 2 sampel berturut-turut (1 detik) dan minimal 1200ms berlalu.
+      if (_readySamples >= 2 && elapsedMs >= 1200) {
         _readinessTimer?.cancel();
         _inputRetryTimer?.cancel();
         _loadingStarted = null;
@@ -1602,8 +1601,8 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
               .evaluateJavascript(source: 'window.otNotebook?.activate()')
               .timeout(_readyStepLimit);
         } catch (_) {}
-        // Jeda mikro stabilisasi 250ms agar rendering WebKit rampung sebelum fade-out loader
-        await Future.delayed(const Duration(milliseconds: 250));
+        // Jeda mikro stabilisasi 150ms agar rendering WebKit rampung sebelum fade-out loader
+        await Future.delayed(const Duration(milliseconds: 150));
         try {
           final prefs = await SharedPreferences.getInstance();
           await prefs.setBool('google_session_ready', true);

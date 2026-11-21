@@ -1399,24 +1399,46 @@ const _notebookCleanupScript = r'''
     return false;
   }
 
+  function hasLiveChatSurface() {
+    if (document.querySelector('omnibar, app-chat-input, .to-user-container, .from-user-container, .chat-message-pair, chat-message')) {
+      return true;
+    }
+    const inputs = [...document.querySelectorAll('textarea, [contenteditable="true"], [role="textbox"]')];
+    return inputs.some(input => {
+      const hint = [input.getAttribute('placeholder'), input.getAttribute('aria-label'), input.getAttribute('name'), input.id].filter(Boolean).join(' ').toLowerCase();
+      if (/message\s*\(optional\)|pesan\s*\(opsional\)|request.?access|minta.?akses|رسالة\s*\(اختياري\)/.test(hint)) return false;
+      return visible(input) && !!input.closest('.query-box-container, .chat-input-container, .input-group, omnibar, app-chat-input');
+    });
+  }
+
   function accessDenied() {
-    const body = (document.body?.innerText || '').toLowerCase();
+    // Halaman penolakan akses Google tidak pernah memiliki kolom chat atau balon percakapan.
+    // Jika ruang chat sudah ada, jangan pindai body.innerText agar kosakata fikih
+    // seperti "minta izin" atau "tidak memiliki izin" di riwayat chat tidak memicu loop reload.
+    if (hasLiveChatSurface()) return false;
+
     const title = (document.title || '').toLowerCase();
-    const hasTextMatch =
-      /anda memerlukan akses|minta akses|minta izin|tidak memiliki izin|tidak punya izin|tidak memiliki akses|buku catatan tidak ditemukan|tidak dapat membuka notebook|you need access|request access|ask for access|you don['’]t have access|do not have access|don['’]t have permission|access denied|notebook not found|unable to open notebook|can['’]t access|تحتاج إلى إذن|طلب الإذن|طلب الوصول|طلب إذن|ليس لديك إذن|لا يمكنك الوصول|تعذّ?ر فتح/.test(body) ||
-      /anda memerlukan akses|you need access|access denied|request access|تحتاج إلى إذن|طلب الوصول/.test(title);
     const hasElementMatch = !!document.querySelector(
-      '[aria-label*="Request access" i], [aria-label*="Minta akses" i], [aria-label*="Ask for access" i], [aria-label*="طلب الوصول"], [aria-label*="طلب إذن"], app-access-denied, div[class*="access-denied" i], button[class*="request-access" i]'
+      '[aria-label*="Request access" i], [aria-label*="Minta akses" i], [aria-label*="Ask for access" i], [aria-label*="طلب الوصول"], app-access-denied, div[class*="access-denied" i], button[class*="request-access" i]'
     );
     const hasRequestButton = [...document.querySelectorAll('button, [role="button"], a')].some(el => {
       if (!visible(el)) return false;
       const lbl = (el.getAttribute('aria-label') || el.innerText || el.textContent || '').trim().toLowerCase();
-      return /^(request access|minta akses|ask for access|minta izin|طلب الوصول|طلب إذن)$/.test(lbl);
+      return /^(request access|minta akses|ask for access|طلب الوصول)$/.test(lbl);
     });
-    return hasTextMatch || hasElementMatch || hasRequestButton;
+    if (hasElementMatch || hasRequestButton) return true;
+
+    const body = (document.body?.innerText || '').toLowerCase();
+    const hasTextMatch =
+      /anda memerlukan akses|buku catatan tidak ditemukan|tidak dapat membuka notebook|you need access|you don['’]t have access|do not have access|don['’]t have permission|access denied|notebook not found|unable to open notebook|تحتاج إلى إذن للوصول|تعذّ?ر فتح/.test(body) ||
+      /anda memerlukan akses|you need access|access denied|request access|تحتاج إلى إذن|طلب الوصول/.test(title);
+    return hasTextMatch;
   }
   function isRequestAccessInput(input) {
     if (!input) return false;
+    if (input.closest('omnibar, app-chat-input, .query-box-container, .chat-input-container, .input-group')) {
+      return false;
+    }
     const hint = [
       input.getAttribute('placeholder'),
       input.getAttribute('aria-label'),
@@ -1426,8 +1448,8 @@ const _notebookCleanupScript = r'''
     if (/message\s*\(optional\)|pesan\s*\(opsional\)|request.?access|minta.?akses|رسالة\s*\(اختياري\)/.test(hint)) {
       return true;
     }
-    const form = input.closest('form, [role="dialog"], main, section');
-    if (form) {
+    const form = input.closest('form, [role="dialog"]');
+    if (form && !form.querySelector('.to-user-container, .from-user-container, chat-message')) {
       const formTxt = (form.innerText || '').toLowerCase();
       if (/anda memerlukan akses|minta akses|you need access|request access|ask for access|تحتاج إلى إذن|طلب الوصول/.test(formTxt)) {
         return true;
