@@ -166,9 +166,16 @@ class DesktopUpdateInstaller {
     };
     final receipt = File(p.join(dir.path, 'pending_install.json'));
     final temporary = File('${receipt.path}.tmp');
-    await temporary.writeAsString(jsonEncode(plan), flush: true);
-    if (await receipt.exists()) await receipt.delete();
-    await temporary.rename(receipt.path);
+    try {
+      await temporary.writeAsString(jsonEncode(plan), flush: true);
+      if (await receipt.exists()) await receipt.delete();
+      await temporary.rename(receipt.path);
+    } catch (_) {
+      try {
+        if (await temporary.exists()) await temporary.delete();
+      } catch (_) {}
+      rethrow;
+    }
     if (windows) {
       final planFile = File(p.join(stage, 'plan.json'));
       await planFile.writeAsString(jsonEncode(plan), flush: true);
