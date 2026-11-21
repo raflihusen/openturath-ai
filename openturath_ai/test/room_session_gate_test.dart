@@ -78,7 +78,9 @@ class _UrlService extends AgentService {
   final AgentAccessException? error;
   @override
   Future<String?> getAgentUrl(String agentId,
-      [UserModel? user, bool preferDirect = false]) async {
+      [UserModel? user,
+      bool forceRefresh = false,
+      void Function(String freshUrl)? onBackgroundRefresh]) async {
     if (error != null) throw error!;
     return 'https://notebook.google.com/notebook/00000000-0000-4000-8000-000000000001';
   }
