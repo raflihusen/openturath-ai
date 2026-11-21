@@ -815,7 +815,7 @@ const _notebookCleanupScript = r'''
     // Sembunyikan baris header atas spesifik tanpa forced layout loop
     document.querySelectorAll('header, [role="banner"], app-top-bar, .top-bar, app-header, mat-toolbar').forEach(el => {
       if (el.children.length > 0 && el.children.length <= 10) {
-        const txt = (el.innerText || el.textContent || '').trim().toLowerCase();
+        const txt = (el.textContent || '').trim().toLowerCase();
         const hasShared = txt.includes('shared') || txt.includes('dibagikan');
         const hasAvatar = el.querySelector('app-user-avatar, [aria-label*="Google Account" i]');
         const hasModeTabs = (txt.includes('sources') || txt.includes('sumber')) && (txt.includes('studio') || txt.includes('chat'));
@@ -866,7 +866,7 @@ const _notebookCleanupScript = r'''
     document.querySelectorAll('span, p, div, small').forEach(el => {
       if (isComposerOrInput(el) || isMessageOrBubble(el)) return;
       if (el.children.length > 2) return;
-      const txt = (el.innerText || el.textContent || '').trim();
+      const txt = (el.textContent || '').trim();
       if (!txt || txt.length > 60) return;
 
       const isSourceCount = /^\d+\s*(sumber|source|sources)\s*[·•]/i.test(txt) ||
@@ -905,7 +905,7 @@ const _notebookCleanupScript = r'''
       const tabs = document.querySelectorAll('[role="tab"], button, a, [role="button"]');
       for (const tab of tabs) {
         if (isComposerOrInput(tab) || isMessageOrBubble(tab)) continue;
-        const txt = (tab.innerText || tab.textContent || '').trim().toLowerCase();
+        const txt = (tab.textContent || '').trim().toLowerCase();
         if (txt === 'chat' || txt === 'obrolan' || txt === 'percakapan') {
           const isSelected = tab.getAttribute('aria-selected') === 'true' ||
                              tab.classList.contains('active') ||
@@ -951,7 +951,7 @@ const _notebookCleanupScript = r'''
         let prev = firstMessage.previousElementSibling;
         while (prev) {
           if (!isComposerOrInput(prev)) {
-            const prevTxt = (prev.innerText || prev.textContent || '').trim();
+            const prevTxt = (prev.textContent || '').trim();
             const isSourceHeader = /^\d+\s*(sumber|source|sources)\s*[·•]/i.test(prevTxt) ||
                                    (prev.querySelector('img, svg, mat-icon') && !prev.matches('.user-turn, .model-turn'));
             if (prev.matches('.empty-state-header, app-notebook-guide, notebook-guide, .notebook-guide, app-guide-card, .guide-card, app-notebook-title, app-project-title, app-notebook-cover, .notebook-cover, .cover-emoji, .cover-image-container, app-artifact-summary, .artifact-summary, .summary-card, [class*="hero-header" i], [class*="intro-header" i], app-suggestion-chips, .suggestion-chips') ||
@@ -979,7 +979,7 @@ const _notebookCleanupScript = r'''
     document.querySelectorAll('span, div, p, [role="img"]').forEach(el => {
       if (isComposerOrInput(el) || el.closest('.chat-message, .model-message, .user-message, [role="article"], .rendered-markdown, app-chat-response')) return;
       if (el.children.length === 0) {
-        const t = (el.innerText || el.textContent || '').trim();
+        const t = (el.textContent || '').trim();
         if (t === '🕋' || (t.includes('🕋') && t.length <= 4)) {
           el.style.setProperty('display', 'none', 'important');
         }
@@ -994,7 +994,7 @@ const _notebookCleanupScript = r'''
         return;
       }
       if (el.children.length === 0) {
-        const txt = (el.innerText || el.textContent || '').trim().toLowerCase();
+        const txt = (el.textContent || '').trim().toLowerCase();
         if (txt && txt.length < 35 && (txt === 'loading notebook...' || txt === 'memuat notebook...' || txt === 'loading notebook' || txt === 'memuat notebook' || txt.includes('loading notebook') || txt.includes('memuat notebook'))) {
           el.style.setProperty('display', 'none', 'important');
         }
@@ -1130,11 +1130,20 @@ const _notebookCleanupScript = r'''
           if (!conversationRoot && messageBranches.length) {
             conversationRoot = node;
             messageBranches.forEach(branch => {
-              const scrollers = [branch, ...branch.querySelectorAll('*')].filter(el => {
-                if (!el.querySelector(answerSelector + ',' + questionSelector)) return false;
-                return el.matches('.message-list, [role="log"]') || /auto|scroll/.test(getComputedStyle(el).overflowY);
-              });
-              const scroller = scrollers[scrollers.length - 1] || branch;
+              let scroller = branch.matches('.message-list, [role="log"], .chat-panel-content, .chat-view, .conversation-container')
+                ? branch
+                : branch.querySelector('.message-list, [role="log"], .chat-panel-content, .chat-view, .conversation-container, cdk-virtual-scroll-viewport');
+              if (!scroller) {
+                const candidates = [branch, ...branch.querySelectorAll('div, section, main')];
+                for (let ci = candidates.length - 1; ci >= 0; ci--) {
+                  const el = candidates[ci];
+                  if (el.querySelector(answerSelector + ',' + questionSelector) && /auto|scroll/.test(getComputedStyle(el).overflowY)) {
+                    scroller = el;
+                    break;
+                  }
+                }
+              }
+              scroller = scroller || branch;
               transcripts.add(scroller);
               let wrapper = scroller.parentElement;
               while (wrapper && wrapper !== node) {
@@ -1232,12 +1241,17 @@ const _notebookCleanupScript = r'''
   }
 
   let layoutFrame = 0;
+  let layoutTimer = 0;
   function scheduleConversationLayout() {
-    if (layoutFrame) return;
-    layoutFrame = requestAnimationFrame(() => {
-      layoutFrame = 0;
-      anchorConversationInput();
-    });
+    if (window._otBackgroundPaused || layoutFrame || layoutTimer) return;
+    layoutTimer = setTimeout(() => {
+      layoutTimer = 0;
+      if (window._otBackgroundPaused || layoutFrame) return;
+      layoutFrame = requestAnimationFrame(() => {
+        layoutFrame = 0;
+        if (!window._otBackgroundPaused) anchorConversationInput();
+      });
+    }, 150);
   }
   window.addEventListener('resize', scheduleConversationLayout);
   window.visualViewport?.addEventListener('resize', scheduleConversationLayout);
@@ -1587,6 +1601,7 @@ window.otNotebook = {
   activate: () => { presentationEnabled = true; clean(); },
   ready,
   inputReady,
+  probe: () => accessDenied() ? 'denied' : (inputReady() ? 'ready' : 'loading'),
   latest,
   conversation,
   conversationList,
@@ -1686,8 +1701,10 @@ window.addEventListener('keydown', function(event) {
 }, true);
 
 let _otBackgroundPaused = false;
+window._otBackgroundPaused = false;
 window.otSetBackgroundPaused = function(paused) {
   _otBackgroundPaused = !!paused;
+  window._otBackgroundPaused = _otBackgroundPaused;
   if (!paused) {
     clean();
     scheduleConversationLayout();

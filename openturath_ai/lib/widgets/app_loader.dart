@@ -577,7 +577,7 @@ class _DotFieldPainter extends CustomPainter {
 
     const tau = math.pi * 2.0;
     final isCompact = w < 760;
-    final gap = isCompact ? 20.0 : 25.0;
+    final gap = isCompact ? 26.0 : 32.0;
     final cx = w * 0.5;
     // Pusatkan titik tepat di kotak emblem (sedikit di atas tengah bila ada teks)
     final cy = hasText ? h * 0.5 - 52.0 : h * 0.5;

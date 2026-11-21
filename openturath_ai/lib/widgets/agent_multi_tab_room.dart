@@ -394,7 +394,6 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                                 } else {
                                   var scale = $val;
                                   var basePx = Math.round(scale * 15);
-                                  var arabicPx = Math.round(scale * 19);
                                   var fontStyle = document.getElementById('ot-font-scale-style');
                                   if (!fontStyle) {
                                     fontStyle = document.createElement('style');
@@ -409,8 +408,9 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                                       font-size: \${basePx}px !important;
                                       line-height: 1.7 !important;
                                     }
-                                    [lang="ar"], .arabic, .ot-rtl-block, .ot-ibarah {
-                                      font-size: \${arabicPx}px !important;
+                                    [lang="ar"], .arabic, .ot-rtl-block, .ot-ibarah, .ot-ibarah-trans {
+                                      font-size: \${basePx}px !important;
+                                      line-height: 1.88 !important;
                                     }
                                   `;
                                 }
@@ -900,7 +900,6 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
         if (!Number.isFinite(scale)) return;
         scale = Math.max(0.85, Math.min(2, scale));
         var basePx = Math.round(scale * 15);
-        var arabicPx = Math.round(scale * 19);
 
         if (document.documentElement && document.documentElement.style && typeof document.documentElement.style.setProperty === 'function') {
           document.documentElement.style.setProperty('--ot-font-size', basePx + 'px');
@@ -934,8 +933,8 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
             font-size: ${basePx}px !important;
             line-height: 1.7 !important;
           }
-          [lang="ar"], .arabic, .ot-rtl-block, .ot-ibarah {
-            font-size: ${arabicPx}px !important;
+          [lang="ar"], .arabic, .ot-rtl-block, .ot-ibarah, .ot-ibarah-trans {
+            font-size: ${basePx}px !important;
             line-height: 1.88 !important;
           }
         `;
@@ -1285,6 +1284,34 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
     } catch (_) {}
   }
 
+  /// Injeksi skrip UI hanya jika belum terpasang di halaman saat ini,
+  /// sehingga tidak mengirim ulang payload ~272 KB lewat IPC pada setiap event.
+  Future<void> _ensureInjectedScripts(
+      InAppWebViewController controller, bool isDark) async {
+    final alreadyInstalled = await controller
+        .evaluateJavascript(
+          source:
+              'typeof window.otNotebook === "object" && typeof window.otNotebook.probe === "function" && window.__otSkinInstalled === true',
+        )
+        .timeout(_readyStepLimit);
+    if (alreadyInstalled == true) {
+      await controller
+          .evaluateJavascript(
+            source:
+                'window._otIsDark = $isDark; window.otNotebook.clean && window.otNotebook.clean(); window.otSkinApply && window.otSkinApply();',
+          )
+          .timeout(_readyStepLimit);
+      return;
+    }
+    await controller
+        .evaluateJavascript(
+          source:
+              'window._otIsDark = $isDark;\n$_turatsMasterScript$notebookUiScript',
+        )
+        .timeout(_readyStepLimit);
+    await _applyThemeCss(isDark).timeout(_readyStepLimit);
+  }
+
   void _startReadinessCheck() {
     _readinessTimer?.cancel();
     _inputRetryTimer?.cancel();
@@ -1395,6 +1422,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
   void _enterGoogleSignIn() {
     _googleSignInDebounceTimer?.cancel();
     _googleSignInDebounceTimer = null;
+    PersistentGoogleSession.instance.invalidateLiveSessionCache();
     // Jangan batalkan _readinessTimer agar saat Google selesai redirect/autentikasi,
     // kesiapan sesi AI langsung terdeteksi otomatis.
     _inputRetryTimer?.cancel();
@@ -1499,7 +1527,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
         }
       } else if (url != null && NotebookNavigation.signInFlow(url.uriValue)) {
         _loadingStarted = null;
-        if (!widget.session.isGoogleAuthPage) _enterGoogleSignIn();
+        if (!widget.session.isGoogleAuthPage) _scheduleGoogleSignIn();
         return;
       }
       if (widget.session.isGoogleAuthPage) {
@@ -1555,43 +1583,29 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
           widget.session.errorMessage = null;
         }
       }
-      final hasScript = await controller
+      final probe = await controller
           .evaluateJavascript(
             source:
-                'typeof window.otNotebook !== "undefined" && typeof window.otNotebook.ready === "function"',
+                '(typeof window.otNotebook === "object" && typeof window.otNotebook.probe === "function") ? window.otNotebook.probe() : "missing"',
           )
           .timeout(_readyStepLimit);
-      if (hasScript != true) {
+      if (probe == 'missing') {
         if (!mounted) return;
         final isDark = Theme.of(context).brightness == Brightness.dark;
-        await controller
-            .evaluateJavascript(
-              source:
-                  'window._otIsDark = $isDark;\n$_turatsMasterScript$notebookUiScript',
-            )
-            .timeout(_readyStepLimit);
-        await _applyThemeCss(isDark).timeout(_readyStepLimit);
+        await _ensureInjectedScripts(controller, isDark);
+        return;
       }
-      final isDenied = await controller
-          .evaluateJavascript(
-              source:
-                  'window.otNotebook ? window.otNotebook.accessDenied() : false')
-          .timeout(_readyStepLimit);
-      if (isDenied == true) {
+      if (probe == 'denied') {
         _handleAccessDenied(widget.session);
         return;
       }
-      final result = await controller
-          .evaluateJavascript(
-              source: 'window.otNotebook ? window.otNotebook.ready() : false')
-          .timeout(_readyStepLimit);
-      _readySamples = result == true ? _readySamples + 1 : 0;
+      _readySamples = probe == 'ready' ? _readySamples + 1 : 0;
       if (!mounted) return;
       final elapsedMs = _loadingStarted != null
           ? DateTime.now().difference(_loadingStarted!).inMilliseconds
           : 0;
-      // Stabil tanpa jeda berlebihan: 2 sampel berturut-turut (1 detik) dan minimal 1200ms berlalu.
-      if (_readySamples >= 2 && elapsedMs >= 1200) {
+      // Segera tampilkan ruang chat begitu input siap (1 sampel >= 600ms atau 2 sampel berturut-turut).
+      if (_readySamples >= 2 || (_readySamples >= 1 && elapsedMs >= 600)) {
         _readinessTimer?.cancel();
         _inputRetryTimer?.cancel();
         _loadingStarted = null;
@@ -1601,8 +1615,6 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
               .evaluateJavascript(source: 'window.otNotebook?.activate()')
               .timeout(_readyStepLimit);
         } catch (_) {}
-        // Jeda mikro stabilisasi 150ms agar rendering WebKit rampung sebelum fade-out loader
-        await Future.delayed(const Duration(milliseconds: 150));
         try {
           final prefs = await SharedPreferences.getInstance();
           await prefs.setBool('google_session_ready', true);
@@ -1704,21 +1716,48 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
         _authService.currentUser?.uid ?? currentUser?.uid;
 
     try {
-      final url =
-          await _agentService.getAgentUrl(session.agent.id, currentUser);
+      final email = _authService.cachedCurrentUser?.email ??
+          _authService.currentUser?.email ??
+          PersistentGoogleSession.instance.verifiedOwner ??
+          '';
+
+      void onBackgroundUrlRefresh(String freshUrl) {
+        if (!mounted || freshUrl.isEmpty) return;
+        final effectiveFresh = email.isNotEmpty
+            ? NativeAgentLauncher.appendAuthUser(freshUrl, email: email)
+            : freshUrl;
+        if (session.resolvedUrl == effectiveFresh) return;
+        if (session.chatMessages.isNotEmpty || session.isGenerating) return;
+        session.resolvedUrl = effectiveFresh;
+        if (session.webController != null && !session.isGoogleAuthPage) {
+          _loadingStarted = null;
+          unawaited(session.webController!
+              .loadUrl(urlRequest: URLRequest(url: WebUri(effectiveFresh)))
+              .catchError((_) {}));
+          if (!session.isSessionReady) _startReadinessCheck();
+        }
+      }
+
+      // Jalankan lookup URL (cache-first SWR) dan verifikasi sesi Google secara paralel
+      final googleReadyFuture = PersistentGoogleSession.instance
+          .restoreSessionIfAvailable(email)
+          .timeout(const Duration(seconds: 4), onTimeout: () => false)
+          .catchError((_) => false);
+      final urlFuture = _agentService.getAgentUrl(
+        session.agent.id,
+        currentUser,
+        false,
+        onBackgroundUrlRefresh,
+      );
+
+      final url = await urlFuture;
       final currentUid =
           _authService.currentUser?.uid ?? _authService.cachedCurrentUser?.uid;
       if (!mounted || (openingUid != null && currentUid != null && currentUid != openingUid)) {
         return;
       }
       if (url != null && url.isNotEmpty) {
-        final email = _authService.cachedCurrentUser?.email ??
-            _authService.currentUser?.email ??
-            PersistentGoogleSession.instance.verifiedOwner ??
-            '';
-        final googleReady = await PersistentGoogleSession.instance
-            .restoreSessionIfAvailable(email)
-            .timeout(const Duration(seconds: 3), onTimeout: () => false);
+        final googleReady = await googleReadyFuture;
         final verifiedUid = _authService.currentUser?.uid ??
             _authService.cachedCurrentUser?.uid;
         if (!mounted || (openingUid != null && verifiedUid != null && verifiedUid != openingUid)) return;
@@ -2387,10 +2426,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
               }
 
               try {
-                await controller.evaluateJavascript(
-                    source:
-                        'window._otIsDark = $isDark;\n$_turatsMasterScript$notebookUiScript');
-                await _applyThemeCss(isDark);
+                await _ensureInjectedScripts(controller, isDark);
                 await controller.evaluateJavascript(
                   source:
                       'if (typeof applyTurathFontScale === "function") { applyTurathFontScale(${session.fontScale}); }',
@@ -2424,7 +2460,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
                       .lockAndPersistCookies(controller, email)
                       .catchError((_) => false));
                 }
-                if (!session.isSessionReady) {
+                if (!session.isSessionReady && _readinessTimer == null) {
                   _startReadinessCheck();
                 }
               } else if (NotebookNavigation.signInFlow(uri.uriValue)) {
@@ -2453,10 +2489,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
                   !session.hasInjectedEarlyScript) {
                 session.hasInjectedEarlyScript = true;
                 try {
-                  await controller.evaluateJavascript(
-                      source:
-                          'window._otIsDark = $isDark;\n$_turatsMasterScript$notebookUiScript');
-                  await _applyThemeCss(isDark);
+                  await _ensureInjectedScripts(controller, isDark);
                 } catch (_) {
                   session.hasInjectedEarlyScript = false;
                   _loadingStarted = DateTime.now();

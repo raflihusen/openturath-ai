@@ -218,9 +218,96 @@ class AgentService {
     } catch (_) {}
   }
 
+  Future<String?> _fetchVpsAssignedUrl(
+    String agentId,
+    String email, {
+    required bool forceRefresh,
+  }) async {
+    String? idToken;
+    try {
+      if (Firebase.apps.isNotEmpty) {
+        idToken = await FirebaseAuth.instance.currentUser
+            ?.getIdToken()
+            .timeout(const Duration(seconds: 2), onTimeout: () => null);
+      }
+    } catch (_) {}
+
+    final res = await http
+        .post(
+          Uri.parse('https://maktabah.openturath.id/api/getAgentUrl'),
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'User-Agent': 'OpenTurath-App/1.0',
+            if (idToken != null && idToken.isNotEmpty)
+              'Authorization': 'Bearer $idToken',
+          },
+          body: jsonEncode({
+            'data': {
+              'agentId': agentId,
+              'email': email,
+              'forceRefresh': forceRefresh,
+            }
+          }),
+        )
+        .timeout(const Duration(seconds: 5));
+
+    if (res.statusCode == 202 ||
+        res.statusCode == 200 ||
+        res.statusCode == 412) {
+      final body = jsonDecode(res.body);
+      if (body is Map) {
+        final resultObj =
+            body['result'] is Map ? body['result'] as Map : body;
+        final status = (resultObj['status'] ?? body['status'] ?? '')
+            .toString()
+            .trim()
+            .toLowerCase();
+        final reason = (resultObj['reason'] ?? body['reason'] ?? '')
+            .toString()
+            .trim()
+            .toLowerCase();
+
+        // Jika akses sedang disiapkan di antrean worker (provisioning),
+        // JANGAN fallback ke Master ID agar user ke-2.001 tidak terkena Minta Akses.
+        if (res.statusCode == 202 ||
+            status == 'provisioning' ||
+            reason == 'access_provisioning') {
+          throw const AgentAccessException(
+            'failed-precondition',
+            'Akses AI sedang disiapkan oleh server. Mohon tunggu beberapa detik lalu coba lagi.',
+            reason: 'access_provisioning',
+          );
+        }
+
+        final rawUrl = resultObj['url'] ?? body['url'];
+        if (res.statusCode == 200 && rawUrl is String && rawUrl.isNotEmpty) {
+          final uri = Uri.tryParse(rawUrl.trim());
+          if (uri != null &&
+              !rawUrl.contains('%') &&
+              NotebookNavigation.notebook(uri) &&
+              _notebookPath.hasMatch(uri.path) &&
+              !uri.hasQuery &&
+              !uri.hasFragment) {
+            final normalized = uri
+                .replace(host: NotebookNavigation.canonicalHost)
+                .toString();
+            await _saveAssignedUrlCache(email, agentId, normalized);
+            return normalized;
+          }
+        }
+      }
+    }
+    return null;
+  }
+
   // ── Ambil URL agent dari Server / Ledger secara aman (Server-Side Entitlement & Clone Routing) ────
-  Future<String?> getAgentUrl(String agentId,
-      [UserModel? user, bool forceRefresh = false]) async {
+  Future<String?> getAgentUrl(
+    String agentId, [
+    UserModel? user,
+    bool forceRefresh = false,
+    void Function(String freshUrl)? onBackgroundRefresh,
+  ]) async {
     final effectiveUser = user ??
         (Firebase.apps.isNotEmpty ? AuthService().cachedCurrentUser : null);
     final email = (effectiveUser?.email ??
@@ -254,99 +341,37 @@ class AgentService {
             reason: 'entitlement_required');
       }
 
-      // Semua akun (VIP maupun reguler) menanyakan penugasan notebook/kloning
-      // spesifik ke VPS terlebih dahulu agar user ke-2.001, ke-4.001, maupun VIP baru
-      // selalu membuka kloning yang tepat dan tidak tertukar dengan Master.
       if (email.isNotEmpty) {
-        String? idToken;
-        try {
-          if (Firebase.apps.isNotEmpty) {
-            idToken = await FirebaseAuth.instance.currentUser?.getIdToken();
-          }
-        } catch (_) {}
-
-        try {
-          final res = await http
-              .post(
-                Uri.parse('https://maktabah.openturath.id/api/getAgentUrl'),
-                headers: {
-                  'Content-Type': 'application/json',
-                  'Accept': 'application/json',
-                  'User-Agent': 'OpenTurath-App/1.0',
-                  if (idToken != null && idToken.isNotEmpty)
-                    'Authorization': 'Bearer $idToken',
-                },
-                body: jsonEncode({
-                  'data': {
-                    'agentId': agentId,
-                    'email': email,
-                    'forceRefresh': forceRefresh,
-                  }
-                }),
-              )
-              .timeout(const Duration(seconds: 6));
-
-          if (res.statusCode == 202 ||
-              res.statusCode == 200 ||
-              res.statusCode == 412) {
-            final body = jsonDecode(res.body);
-            if (body is Map) {
-              final resultObj =
-                  body['result'] is Map ? body['result'] as Map : body;
-              final status = (resultObj['status'] ?? body['status'] ?? '')
-                  .toString()
-                  .trim()
-                  .toLowerCase();
-              final reason = (resultObj['reason'] ?? body['reason'] ?? '')
-                  .toString()
-                  .trim()
-                  .toLowerCase();
-
-              // Jika akses sedang disiapkan di antrean worker (provisioning),
-              // JANGAN fallback ke Master ID agar user ke-2.001 tidak terkena Minta Akses.
-              if (res.statusCode == 202 ||
-                  status == 'provisioning' ||
-                  reason == 'access_provisioning') {
-                throw const AgentAccessException(
-                  'failed-precondition',
-                  'Akses AI sedang disiapkan oleh server. Mohon tunggu beberapa detik lalu coba lagi.',
-                  reason: 'access_provisioning',
-                );
-              }
-
-              final rawUrl = resultObj['url'] ?? body['url'];
-              if (res.statusCode == 200 &&
-                  rawUrl is String &&
-                  rawUrl.isNotEmpty) {
-                final uri = Uri.tryParse(rawUrl.trim());
-                if (uri != null &&
-                    !rawUrl.contains('%') &&
-                    NotebookNavigation.notebook(uri) &&
-                    _notebookPath.hasMatch(uri.path) &&
-                    !uri.hasQuery &&
-                    !uri.hasFragment) {
-                  final normalized = uri
-                      .replace(host: NotebookNavigation.canonicalHost)
-                      .toString();
-                  await _saveAssignedUrlCache(email, agentId, normalized);
-                  return normalized;
+        // Stale-while-revalidate: bila URL kloning untuk (email, agentId) sudah ada
+        // di sticky cache dan tidak sedang forceRefresh, langsung kembalikan dalam 0 ms
+        // agar WebView segera memuat, sambil menyegarkan penugasan VPS di latar belakang.
+        if (!forceRefresh) {
+          final sticky = await _readAssignedUrlCache(email, agentId);
+          if (sticky != null && sticky.isNotEmpty) {
+            Future<void>(() async {
+              try {
+                final fresh = await _fetchVpsAssignedUrl(agentId, email,
+                    forceRefresh: false);
+                if (fresh != null && fresh.isNotEmpty && fresh != sticky) {
+                  onBackgroundRefresh?.call(fresh);
                 }
-              }
-            }
+              } catch (_) {}
+            });
+            return sticky;
+          }
+        }
+
+        // Cold cache atau forceRefresh: tanyakan penugasan notebook/kloning ke VPS.
+        try {
+          final fetched = await _fetchVpsAssignedUrl(agentId, email,
+              forceRefresh: forceRefresh);
+          if (fetched != null && fetched.isNotEmpty) {
+            return fetched;
           }
         } on AgentAccessException {
           rethrow;
         } catch (_) {
-          // Lanjut ke sticky local cache terlebih dahulu sebelum Master kanonik
-        }
-
-        // Sticky local cache: jika VPS sedang lambat/offline, pertahankan URL kloning
-        // milik user ini yang sebelumnya sudah terverifikasi agar tidak mental ke Master.
-        if (!forceRefresh) {
-          final sticky = await _readAssignedUrlCache(email, agentId);
-          if (sticky != null && sticky.isNotEmpty) {
-            return sticky;
-          }
+          // Lanjut ke fallback katalog master kanonik
         }
       }
 

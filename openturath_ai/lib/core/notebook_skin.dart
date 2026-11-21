@@ -18,6 +18,11 @@
 const notebookSkinScript = r'''
 (function () {
   if (window.top !== window || !['notebooklm.google.com', 'notebook.google.com'].includes(location.hostname)) return;
+  if (window.__otSkinInstalled) {
+    if (typeof window.otSkinApply === 'function') { try { window.otSkinApply(); } catch (_) {} }
+    return;
+  }
+  window.__otSkinInstalled = true;
 
   const LABELS = {
     id: {
@@ -263,7 +268,7 @@ const notebookSkinScript = r'''
       text-align: right !important;
       unicode-bidi: isolate !important;
       font-family: var(--ot-arabic) !important;
-      font-size: calc(var(--ot-font-size, 15px) * 1.18) !important;
+      font-size: calc(var(--ot-font-size, 15px) + 1px) !important;
       line-height: 1.92 !important;
       letter-spacing: 0 !important;
       font-synthesis: none !important;
@@ -302,7 +307,7 @@ const notebookSkinScript = r'''
       text-align: right !important;
       unicode-bidi: isolate !important;
       font-family: var(--ot-arabic) !important;
-      font-size: calc(var(--ot-font-size, 15px) * 1.18) !important;
+      font-size: calc(var(--ot-font-size, 15px) + 1px) !important;
       line-height: 1.92 !important;
       letter-spacing: 0 !important;
       font-synthesis: none !important;
@@ -327,7 +332,7 @@ const notebookSkinScript = r'''
       text-align: left !important;
       unicode-bidi: isolate !important;
       font-family: var(--ot-sans) !important;
-      font-size: calc(var(--ot-font-size, 15px) + 0.5px) !important;
+      font-size: calc(var(--ot-font-size, 15px) + 1px) !important;
       line-height: 1.7 !important;
       color: var(--ot-ink) !important;
     }
@@ -1277,10 +1282,14 @@ const notebookSkinScript = r'''
   if (!window.__otSkinObserver) {
     let queued = false;
     window.__otSkinObserver = new MutationObserver(() => {
-      if (queued) return;
+      if (window._otBackgroundPaused || queued) return;
       queued = true;
-      const wait = Date.now() - (window.__otLastScroll || 0) < 250 ? 350 : 160;
-      setTimeout(() => { queued = false; apply(); }, wait);
+      const wait = Date.now() - (window.__otLastScroll || 0) < 250 ? 350 : 220;
+      setTimeout(() => {
+        queued = false;
+        if (window._otBackgroundPaused) return;
+        apply();
+      }, wait);
     });
     window.addEventListener('scroll', () => { window.__otLastScroll = Date.now(); }, { capture: true, passive: true });
     const start = () => {
