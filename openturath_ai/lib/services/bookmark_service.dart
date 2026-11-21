@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/widgets.dart';
 import '../models/bookmark_model.dart';
+import 'auth_service.dart';
 import 'scoped_json_store.dart';
 
 class BookmarkService extends ChangeNotifier {
@@ -27,9 +28,28 @@ class BookmarkService extends ChangeNotifier {
 
   final Future<List<BookmarkModel>> Function(String uid)? _readCloudOverride;
   final String? _currentUserIdOverride;
-  String? get currentUserId => _readCloudOverride != null
-      ? _currentUserIdOverride
-      : _activeAuth?.currentUser?.uid;
+
+  String? _resolveCurrentUserId() {
+    if (_readCloudOverride != null) return _currentUserIdOverride;
+    final fbUid = _activeAuth?.currentUser?.uid;
+    if (fbUid != null && fbUid.isNotEmpty) return fbUid;
+    try {
+      final cachedUid = AuthService().cachedCurrentUser?.uid;
+      if (cachedUid != null && cachedUid.isNotEmpty) return cachedUid;
+    } catch (_) {}
+    final webEmail = AuthService.activeWebUserEmail?.trim().toLowerCase();
+    if (webEmail != null && webEmail.isNotEmpty) return 'web_$webEmail';
+    return null;
+  }
+
+  bool _canSyncToFirestore(String? uid) {
+    if (uid == null || uid.isEmpty) return false;
+    if (_readCloudOverride != null) return true;
+    final fbUid = _activeAuth?.currentUser?.uid;
+    return fbUid != null && fbUid.isNotEmpty && !uid.startsWith('web_');
+  }
+
+  String? get currentUserId => _resolveCurrentUserId();
 
   FirebaseFirestore? _firestore;
   FirebaseAuth? _auth;
@@ -87,7 +107,7 @@ class BookmarkService extends ChangeNotifier {
   static const String _legacyKey = 'openturath_saved_bookmarks';
 
   String _key(String? userId) {
-    final uid = userId ?? _activeAuth?.currentUser?.uid;
+    final uid = userId ?? _resolveCurrentUserId();
     return uid == null || uid.isEmpty
         ? _legacyKey
         : 'openturath_${uid}_saved_bookmarks';
@@ -99,7 +119,7 @@ class BookmarkService extends ChangeNotifier {
           .toList();
 
   Future<void> addBookmark(BookmarkModel bookmark, {String? userId}) async {
-    final effectiveUid = userId ?? _activeAuth?.currentUser?.uid;
+    final effectiveUid = userId ?? _resolveCurrentUserId();
     final key = _key(effectiveUid);
 
     // 1. Instant local offline-first update
@@ -110,14 +130,14 @@ class BookmarkService extends ChangeNotifier {
     });
     notifyListeners();
 
-    // 2. Asynchronous cloud push if logged in
-    if (effectiveUid != null && effectiveUid.isNotEmpty) {
-      unawaited(_pushToCloud(bookmark, effectiveUid));
+    // 2. Asynchronous cloud push if logged in with Firebase Auth
+    if (_canSyncToFirestore(effectiveUid)) {
+      unawaited(_pushToCloud(bookmark, effectiveUid!));
     }
   }
 
   Future<void> deleteBookmark(String id, {String? userId}) async {
-    final effectiveUid = userId ?? _activeAuth?.currentUser?.uid;
+    final effectiveUid = userId ?? _resolveCurrentUserId();
     final key = _key(effectiveUid);
 
     // 1. Instant local update
@@ -136,14 +156,14 @@ class BookmarkService extends ChangeNotifier {
 
     // 2. Sync a tombstone instead of deleting remotely. An offline older
     // device will then receive the deletion rather than restoring stale data.
-    if (effectiveUid != null && effectiveUid.isNotEmpty && deleted != null) {
-      unawaited(_pushToCloud(deleted!, effectiveUid));
+    if (_canSyncToFirestore(effectiveUid) && deleted != null) {
+      unawaited(_pushToCloud(deleted!, effectiveUid!));
     }
   }
 
   /// Undo is a new edit, newer than the deletion already queued for sync.
   Future<void> restoreBookmark(BookmarkModel bookmark, {String? userId}) async {
-    final effectiveUid = userId ?? _activeAuth?.currentUser?.uid;
+    final effectiveUid = userId ?? _resolveCurrentUserId();
     BookmarkModel? restored;
     await _store.update(_key(effectiveUid), (items) {
       final index = items.indexWhere((item) => item.id == bookmark.id);
@@ -163,8 +183,8 @@ class BookmarkService extends ChangeNotifier {
       return items;
     });
     notifyListeners();
-    if (effectiveUid != null && effectiveUid.isNotEmpty) {
-      unawaited(_pushToCloud(restored!, effectiveUid));
+    if (_canSyncToFirestore(effectiveUid)) {
+      unawaited(_pushToCloud(restored!, effectiveUid!));
     }
   }
 
@@ -172,6 +192,7 @@ class BookmarkService extends ChangeNotifier {
       (await getBookmarks(userId: userId)).any((item) => item.id == id);
 
   Future<void> _pushToCloud(BookmarkModel bookmark, String uid) async {
+    if (!_canSyncToFirestore(uid)) return;
     final db = _db;
     if (db == null) return;
     try {
@@ -194,8 +215,26 @@ class BookmarkService extends ChangeNotifier {
   /// Bidirectional smart synchronization between local storage and Firestore.
   /// Reconciles differences, migrates legacy offline notes, and ensures zero data loss.
   Future<bool> syncWithCloud({String? userId}) async {
-    final effectiveUid = userId ?? _activeAuth?.currentUser?.uid;
+    final effectiveUid = userId ?? _resolveCurrentUserId();
     if (effectiveUid == null || effectiveUid.isEmpty) return false;
+    if (!_canSyncToFirestore(effectiveUid)) {
+      // Tetap migrasikan catatan anonim lama ke namespace sesi web agar tidak hilang.
+      final userKey = _key(effectiveUid);
+      final legacyNotes = await _store.read(_legacyKey);
+      if (legacyNotes.isNotEmpty) {
+        final current = await _store.read(userKey);
+        final mergedLocal = <String, BookmarkModel>{
+          for (final b in current) b.id: b,
+        };
+        for (final b in legacyNotes) {
+          mergedLocal.putIfAbsent(b.id, () => b);
+        }
+        await _store.replace(userKey, mergedLocal.values.toList());
+        await _store.replace(_legacyKey, <BookmarkModel>[]);
+        notifyListeners();
+      }
+      return true;
+    }
 
     if (_isSyncing) {
       // Jangan buang permintaan: jalankan ulang setelah sinkronisasi berjalan selesai.

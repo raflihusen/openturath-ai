@@ -908,22 +908,8 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
           document.body.style.setProperty('--ot-font-size', basePx + 'px');
         }
 
-        try {
-          // Direction follows the first letter, never the presence of an Arabic quote.
-          // Do not change wrapper divs: their children can have different directions.
-          var arabicLetter = /[\u0620-\u064A\u066E-\u06D3\u06FA-\u06FC\u0750-\u077F\u08A0-\u08C9\uFB50-\uFDFF\uFE70-\uFEFF]/;
-          var firstLetter = /[A-Za-z\u00C0-\u024F\u0620-\u064A\u066E-\u06D3\u06FA-\u06FC\u0750-\u077F\u08A0-\u08C9\uFB50-\uFDFF\uFE70-\uFEFF]/;
-          var els = document.querySelectorAll('.rendered-markdown p, .rendered-markdown li, [role="article"] p, [role="article"] li');
-          if (els && typeof els.forEach === 'function') {
-            els.forEach(function(el) {
-              var first = (el.textContent || '').match(firstLetter);
-              var rtl = !!first && arabicLetter.test(first[0]);
-              el.setAttribute('dir', rtl ? 'rtl' : 'ltr');
-              if (el.classList && typeof el.classList.toggle === 'function') el.classList.toggle('arabic', rtl);
-              if (el.style) { el.style.textAlign = rtl ? 'right' : 'left'; el.style.unicodeBidi = 'plaintext'; }
-            });
-          }
-        } catch (_) {}
+        // Bidi RTL/LTR & deteksi ibarah ditangani tunggal oleh notebook_skin.dart agar tidak saling timpa.
+        if (typeof window.otSkinApply === 'function') { try { window.otSkinApply(); } catch (_) {} }
 
         var fontStyle = document.getElementById('ot-font-scale-style');
         if (!fontStyle) {
@@ -2181,16 +2167,30 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
                         AppSnackBar.success(
                           context,
                           AppCopy.answerCopied,
-                          duration: const Duration(milliseconds: 2500),
+                          duration: Duration(milliseconds: owner != null ? 4000 : 2500),
                           action: owner != null
                               ? SnackBarAction(
                                   label: Loc.tr('save'),
                                   textColor: OTColors.onInverseSurface,
                                   onPressed: () {
-                                    unawaited(_bookmarkService.addBookmark(
-                                      copiedAnswerBookmark(text, session.agent),
-                                      userId: owner,
-                                    ));
+                                    unawaited(_bookmarkService
+                                        .addBookmark(
+                                          copiedAnswerBookmark(
+                                              text, session.agent),
+                                          userId: owner,
+                                        )
+                                        .then((_) {
+                                      if (context.mounted) {
+                                        AppSnackBar.success(
+                                          context,
+                                          Loc.isArabic
+                                              ? 'تم الحفظ في الملاحظات'
+                                              : (Loc.language == 'en'
+                                                  ? 'Saved to Notes'
+                                                  : 'Tersimpan di Catatan'),
+                                        );
+                                      }
+                                    }));
                                   },
                                 )
                               : null,

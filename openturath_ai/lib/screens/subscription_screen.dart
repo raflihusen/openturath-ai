@@ -1507,51 +1507,44 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
               Positioned.fill(
                 child: AbsorbPointer(
                   absorbing: true,
-                  child: ColoredBox(
-                    color: AppPlatform.isDesktop
-                        ? (dark
-                            ? OTColors.surfaceDark
-                            : OTColors.textPrimaryDark)
-                        : OTColors.shadow.withValues(alpha: 0.45),
-                    child: Align(
-                      alignment: AppPlatform.isDesktop
-                          ? Alignment.center
-                          : Alignment.bottomCenter,
+                  child: Container(
+                    color: OTColors.canvas(dark).withValues(alpha: 0.72),
+                    child: Center(
                       child: Container(
-                        constraints: AppPlatform.isDesktop
-                            ? const BoxConstraints(
-                                maxWidth: 620, maxHeight: 850)
-                            : BoxConstraints(
-                                maxHeight:
-                                    MediaQuery.sizeOf(context).height * 0.92,
-                              ),
-                        width: double.infinity,
-                        margin: AppPlatform.isDesktop
-                            ? const EdgeInsets.symmetric(
-                                vertical: 20, horizontal: 20)
-                            : EdgeInsets.zero,
-                        decoration: BoxDecoration(
-                          color: OTColors.canvas(dark),
-                          borderRadius: AppPlatform.isDesktop
-                              ? BorderRadius.circular(OTRadius.card)
-                              : const BorderRadius.vertical(
-                                  top: Radius.circular(OTRadius.card),
-                                ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: OTColors.shadow.withAlpha(50),
-                              blurRadius: 24,
-                              offset: const Offset(0, 8),
-                            ),
-                          ],
+                        width: 280,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: OTSpacing.xl,
+                          vertical: OTSpacing.xl,
                         ),
-                        clipBehavior: Clip.antiAlias,
-                        child: AppLoader.fullscreen(
-                          title:
+                        decoration: BoxDecoration(
+                          color: OTColors.surface(dark),
+                          borderRadius: BorderRadius.circular(OTRadius.card),
+                          border: Border.all(color: OTColors.border(dark)),
+                        ),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            AppLoader(
+                              color: OTColors.textPrimary(dark),
+                              dotSize: 8,
+                              spacing: 4,
+                            ),
+                            const SizedBox(height: OTSpacing.base),
+                            Text(
                               _checkoutPlanTitle ?? Loc.tr('checkoutPreparing'),
-                          stages: [
-                            Loc.tr('checkoutPreparing'),
-                            Loc.tr('checkoutPleaseWait'),
+                              textAlign: TextAlign.center,
+                              style: OTTypography.bodyMedium(
+                                color: OTColors.textPrimary(dark),
+                              ),
+                            ),
+                            const SizedBox(height: OTSpacing.xs),
+                            Text(
+                              Loc.tr('checkoutPreparing'),
+                              textAlign: TextAlign.center,
+                              style: OTTypography.caption(
+                                color: OTColors.textSecondary(dark),
+                              ),
+                            ),
                           ],
                         ),
                       ),

@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter_markdown/flutter_markdown.dart';
+import 'scholarly_answer.dart';
 import 'package:intl/intl.dart' show Bidi;
 import '../core/localization.dart';
 import 'native_theme.dart';
@@ -528,18 +528,11 @@ class _NoteEditorSheetState extends State<NoteEditorSheet> {
                                 ),
                               ),
                               const SizedBox(height: 24),
-                              Directionality(
-                                  textDirection: _textDirection,
-                                  child: MarkdownBody(
-                                      data: _bodyController.text,
-                                      selectable: true,
-                                      styleSheet: MarkdownStyleSheet(
-                                        p: _textDirection == TextDirection.rtl
-                                            ? NativeType.arabic(dark, size: 22)
-                                            : NativeType.body(dark, size: 17),
-                                        h1: NativeType.title(dark),
-                                        h2: NativeType.title(dark, size: 24),
-                                      ))),
+                              ScholarlyAnswer(
+                                text: _bodyController.text,
+                                ink: NativeColors.textPrimary(dark),
+                                muted: NativeColors.textSecondary(dark),
+                              ),
                             ] else ...[
                               TextField(
                                   controller: _titleController,

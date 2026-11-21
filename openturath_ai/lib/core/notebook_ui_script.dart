@@ -29,7 +29,15 @@ const _notebookCleanupScript = r'''
     const target = content || el;
     const clone = target.cloneNode(true);
     clone.querySelectorAll('button, [role="button"], thinking-chain-view, .thinking-chain, .message-actions, .feedback-buttons, chat-actions, .chat-actions, .ot-answer-actions, [class*="action" i], [class*="feedback" i]').forEach(e => e.remove());
-    let res = (clone.innerText || clone.textContent || '').trim();
+    // Pertahankan jeda baris & paragraf meski clone tidak terpasang di DOM (detached node)
+    clone.querySelectorAll('br').forEach(br => br.replaceWith('\n'));
+    clone.querySelectorAll('p, .paragraph, li, h1, h2, h3, h4, blockquote, .ot-ibarah, .ot-ibarah-trans, tr').forEach(blk => {
+      if (blk.tagName === 'LI') {
+        blk.insertAdjacentText('afterbegin', '• ');
+      }
+      blk.insertAdjacentText('afterend', '\n\n');
+    });
+    let res = (clone.textContent || '').replace(/[ \t]+\n/g, '\n').replace(/\n{3,}/g, '\n\n').trim();
     if (!res) res = (target.innerText || target.textContent || '').trim();
     return res;
   }
