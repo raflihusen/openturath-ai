@@ -12,7 +12,16 @@ class AgentModel {
   String get title {
     final label =
         Loc.isArabic && titleArabic.isNotEmpty ? titleArabic : Loc.text(_title);
-    return label.startsWith('AI ') ? label : 'AI $label';
+    final lower = label.toLowerCase();
+    if (id == 'all_specialists' ||
+        id == 'all_ai' ||
+        id == 'all_access' ||
+        label.startsWith('AI ') ||
+        lower.contains('semua ai') ||
+        lower.contains('all ai')) {
+      return label;
+    }
+    return 'AI $label';
   }
 
   final String titleArabic;

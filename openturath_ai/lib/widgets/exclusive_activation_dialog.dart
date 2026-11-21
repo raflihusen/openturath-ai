@@ -127,6 +127,11 @@ class ExclusiveActivationDialog extends StatelessWidget {
       }
       return raw.startsWith('AI ') ? raw : 'AI $raw';
     }
+    if (raw.contains('Semua AI') ||
+        raw.contains('all_access') ||
+        raw.contains('all_specialists')) {
+      return 'Semua AI';
+    }
     return raw.startsWith('AI ') ? raw : (raw.startsWith('Akses ') ? raw : 'AI $raw');
   }
 

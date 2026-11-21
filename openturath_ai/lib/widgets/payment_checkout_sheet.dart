@@ -69,35 +69,17 @@ class PaymentCheckoutSheet extends StatefulWidget {
           fullscreenDialog: true,
           builder: (context) => Scaffold(
             backgroundColor: Theme.of(context).brightness == Brightness.dark
-                ? OTColors.surfaceDark
-                : OTColors.textPrimaryDark,
+                ? AppTheme.surfaceCardDark
+                : AppTheme.surfaceCardLight,
             body: SafeArea(
-              child: Center(
-                child: Container(
-                  constraints:
-                      const BoxConstraints(maxWidth: 620, maxHeight: 850),
-                  margin: const EdgeInsets.symmetric(vertical: 20),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(OTRadius.card),
-                    boxShadow: [
-                      BoxShadow(
-                        color: OTColors.shadow.withAlpha(50),
-                        blurRadius: 24,
-                        offset: const Offset(0, 8),
-                      ),
-                    ],
-                  ),
-                  clipBehavior: Clip.antiAlias,
-                  child: PaymentCheckoutSheet(
-                    paymentUrl: paymentUrl,
-                    invoiceNumber: invoiceNumber,
-                    trxId: trxId,
-                    planTitle: planTitle,
-                    amount: amount,
-                    regularAmount: regularAmount,
-                    periodLabel: periodLabel,
-                  ),
-                ),
+              child: PaymentCheckoutSheet(
+                paymentUrl: paymentUrl,
+                invoiceNumber: invoiceNumber,
+                trxId: trxId,
+                planTitle: planTitle,
+                amount: amount,
+                regularAmount: regularAmount,
+                periodLabel: periodLabel,
               ),
             ),
           ),
@@ -521,25 +503,27 @@ class _PaymentCheckoutSheetState extends State<PaymentCheckoutSheet> {
         }
       },
       child: Container(
-        height: AppPlatform.isDesktop ? double.infinity : screenHeight * 0.92,
+        height: AppPlatform.isDesktop ? double.infinity : screenHeight * 0.94,
         decoration: BoxDecoration(
           color: surfaceColor,
           borderRadius: AppPlatform.isDesktop
-              ? BorderRadius.circular(AppTheme.radiusCard)
+              ? BorderRadius.zero
               : const BorderRadius.vertical(
                   top: Radius.circular(AppTheme.radiusCard)),
-          boxShadow: [
-            BoxShadow(
-              color: OTColors.shadow.withAlpha(isDark ? 100 : 40),
-              blurRadius: 24,
-              offset: const Offset(0, -4),
-            ),
-          ],
+          boxShadow: AppPlatform.isDesktop
+              ? null
+              : [
+                  BoxShadow(
+                    color: OTColors.shadow.withAlpha(isDark ? 100 : 40),
+                    blurRadius: 24,
+                    offset: const Offset(0, -4),
+                  ),
+                ],
         ),
         child: ClipRRect(
           clipBehavior: AppPlatform.isDesktop ? Clip.none : Clip.antiAlias,
           borderRadius: AppPlatform.isDesktop
-              ? BorderRadius.circular(AppTheme.radiusCard)
+              ? BorderRadius.zero
               : const BorderRadius.vertical(
                   top: Radius.circular(AppTheme.radiusCard)),
           child: Stack(
@@ -549,8 +533,9 @@ class _PaymentCheckoutSheetState extends State<PaymentCheckoutSheet> {
                 children: [
                   // Top Drag Handle & Title Bar
                   Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 16, vertical: 12),
+                    padding: EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: AppPlatform.isDesktop ? 8 : 12),
                     decoration: BoxDecoration(
                       color: surfaceColor,
                       border:
@@ -558,8 +543,9 @@ class _PaymentCheckoutSheetState extends State<PaymentCheckoutSheet> {
                     ),
                     child: Column(
                       children: [
-                        // Drag Indicator
-                        const Center(child: SheetGrabber(bottom: 12)),
+                        // Drag Indicator (mobile only)
+                        if (!AppPlatform.isDesktop)
+                          const Center(child: SheetGrabber(bottom: 12)),
                         Row(
                           children: [
                             Container(
@@ -857,12 +843,38 @@ class _PaymentCheckoutSheetState extends State<PaymentCheckoutSheet> {
                           _checkPaymentStatus(force: true);
                         }
 
-                        // Pastikan overflow scroll di body/html aktif
+                        // Pastikan overflow scroll aktif dan perbesar tampilan QRIS Midtrans di layar desktop
                         try {
                           await controller.evaluateJavascript(source: """
                             (function() {
                               document.documentElement.style.overflow = 'auto';
                               document.body.style.overflow = 'auto';
+                              if (!document.getElementById('ot-qris-boost')) {
+                                var st = document.createElement('style');
+                                st.id = 'ot-qris-boost';
+                                st.textContent = `
+                                  #application, .app-container, .snap-container, .page-container {
+                                    max-width: 720px !important;
+                                    width: 100% !important;
+                                    margin-left: auto !important;
+                                    margin-right: auto !important;
+                                  }
+                                  img[src*="qris" i], img[src*="qr-code" i], img[alt*="qr" i], .qr-image, .qris-image, .qr-wrapper img {
+                                    width: min(360px, 85vw) !important;
+                                    max-width: 360px !important;
+                                    height: auto !important;
+                                    image-rendering: crisp-edges !important;
+                                    image-rendering: pixelated !important;
+                                  }
+                                  .qr-wrapper, .qris-wrapper {
+                                    max-width: 420px !important;
+                                    width: 100% !important;
+                                    margin-left: auto !important;
+                                    margin-right: auto !important;
+                                  }
+                                `;
+                                (document.head || document.documentElement).appendChild(st);
+                              }
                             })();
                           """);
                         } catch (_) {}

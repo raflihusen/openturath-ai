@@ -156,8 +156,8 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
 
   static final AgentModel allSpecialistsAgent = AgentModel(
     id: 'all_specialists',
-    title: 'Semua AI*',
-    titleArabic: 'جميع الذكاءات*',
+    title: 'Semua AI',
+    titleArabic: 'جميع الذكاءات',
     description:
         'Akses penuh ke seluruh bidang keilmuan Islam selain Fikih Tahawwulat.',
     emoji: '📚',
@@ -1290,14 +1290,14 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                         : 'Paket Kompilasi Disiplin'),
                 active: allSpecialistsActive,
                 title: Loc.isArabic
-                    ? 'جميع الذكاءات*'
-                    : (Loc.language == 'en' ? 'All AIs*' : 'Semua AI*'),
+                    ? 'جميع الذكاءات'
+                    : (Loc.language == 'en' ? 'All AIs' : 'Semua AI'),
                 subtitleWidget: Text(
                   Loc.isArabic
-                      ? '*باستثناء فقه التحولات'
+                      ? 'باستثناء فقه التحولات'
                       : (Loc.language == 'en'
-                          ? '*excluding Fiqh Tahawwulat'
-                          : '*kecuali Fikih Tahawwulat'),
+                          ? 'Excluding Fiqh Tahawwulat'
+                          : 'Kecuali Fikih Tahawwulat'),
                   style: OTTypography.caption(
                           color: OTColors.textSecondary(dark))
                       .copyWith(

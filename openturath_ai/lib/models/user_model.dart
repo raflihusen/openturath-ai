@@ -26,7 +26,7 @@ class ModuleEntitlement {
   });
 
   bool get isPremium => RegExp(
-          r'^(trial|tholib(?:_1m|_6m)?|bahits(?:_1y)?|premium|all_access|all_ai.*|single|sultan|pro|voucher(?:_.*)?|redeem(?:_.*)?|custom|full)$')
+          r'^(trial|tholib(?:_1m|_6m)?|bahits(?:_1y)?|premium|all_access|all_ai.*|all_specialists(?:_.*)?|all_disciplines(?:_.*)?|single|sultan|pro|voucher(?:_.*)?|redeem(?:_.*)?|custom|full)$')
       .hasMatch(plan);
 
   bool get isActive =>
@@ -135,6 +135,8 @@ class UserModel {
               plan == 'pro' ||
               plan == 'premium' ||
               plan.startsWith('all_ai') ||
+              plan.startsWith('all_specialists') ||
+              plan.startsWith('all_disciplines') ||
               plan.startsWith('redeem') ||
               plan.startsWith('voucher') ||
               plan == 'custom' ||
@@ -187,6 +189,16 @@ class UserModel {
       return true;
     }
 
+    // 2b. Explicit all_specialists / all_disciplines entitlement (Semua AI kecuali Fikih Tahawwulat)
+    final allSpecialists =
+        entitlements['all_specialists'] ?? entitlements['all_disciplines'];
+    if (mappedKey != 'fiqh_tahawwulat' &&
+        allSpecialists != null &&
+        allSpecialists.isActive &&
+        allSpecialists.isPremium) {
+      return true;
+    }
+
     // If a specific module entitlement was explicitly revoked, deny access
     if (candidates.isNotEmpty && candidates.every((e) => e.status == 'revoked')) {
       return false;
@@ -210,7 +222,12 @@ class UserModel {
     final isGlobalPlan =
         (globalAllPlans.contains(plan) || plan.startsWith('all_ai')) &&
             isSubscriptionActive;
-    if (isGlobalPlan) {
+    final isAllSpecialistsPlan = mappedKey != 'fiqh_tahawwulat' &&
+        (plan == 'all_specialists' ||
+            plan.startsWith('all_specialists_') ||
+            plan == 'all_disciplines') &&
+        isSubscriptionActive;
+    if (isGlobalPlan || isAllSpecialistsPlan) {
       return true;
     }
 

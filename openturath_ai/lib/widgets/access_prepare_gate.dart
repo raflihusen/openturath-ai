@@ -92,48 +92,59 @@ class _AccessPrepareGateState extends State<AccessPrepareGate> {
 
   List<(IconData, String, String)> get _tips => [
         (
-          Icons.chat_bubble_outline_rounded,
+          Icons.auto_awesome_outlined,
           reviewCopy(
-              'Contoh pertanyaan', 'مثال على سؤال', 'An example question'),
+              'Adab Menggunakan AI · Luruskan Niat',
+              'آداب استخدام الذكاء الاصطناعي · إخلاص النية',
+              'AI Etiquette · Sincere Intention'),
           reviewCopy(
-              '“Apa bedanya waktu Kiamat dan tanda-tandanya?” Tulis dengan bahasa sehari-hari, OpenTurath menjawab lalu menunjukkan teks aslinya.',
-              '«ما الفرق بين وقت الساعة وعلاماتها؟» اكتب بلغتك اليومية، فيجيبك OpenTurath ثم يعرض لك النص الأصلي.',
-              '“What is the difference between the time of the Hour and its signs?” Write in everyday language; OpenTurath answers, then shows the original text.')
+              'Mulailah dengan basmalah dan niatkan mencari ilmu karena Allah. Jadikan AI sebagai alat bantu belajar, bukan tujuan.',
+              'ابدأ بالبسملة وانوِ طلب العلم لله تعالى، واجعل الذكاء الاصطناعي وسيلة مساعدة في البحث والتعلم.',
+              'Begin with Bismillah and seek knowledge sincerely. Treat AI as a study companion, not an end in itself.')
+        ),
+        (
+          Icons.forum_outlined,
+          reviewCopy(
+              'Adab Menggunakan AI · Bertanya dengan Jelas',
+              'آداب استخدام الذكاء الاصطناعي · وضوح السؤال',
+              'AI Etiquette · Ask Clearly'),
+          reviewCopy(
+              'Sampaikan pertanyaan secara ringkas, sopan, dan fokus pada pokok masalah agar jawaban tepat sasaran dan tidak membuang waktu.',
+              'اطرح سؤالك بوضوح وأدب وتركيز على محل البحث، لتحصل على جواب دقيق وتوفّر وقتك.',
+              'Ask concise, respectful, and focused questions so answers stay accurate and save your time.')
         ),
         (
           Icons.menu_book_outlined,
           reviewCopy(
-              'Periksa sumbernya', 'تحقّق من المصدر', 'Check the source'),
+              'Adab Menggunakan AI · Periksa Kitab Asli',
+              'آداب استخدام الذكاء الاصطناعي · التحقق من المصدر',
+              'AI Etiquette · Verify the Primary Text'),
           reviewCopy(
-              'Setiap jawaban disertai ibarah asli dan rujukan kitab, jilid, dan halaman bila tersedia.',
-              'كل جواب مصحوب بالعبارة الأصلية ومرجعها من الكتاب والجزء والصفحة عند توفرها.',
-              'Every answer comes with the original passage and a reference to book, volume and page where available.')
-        ),
-        (
-          Icons.translate_rounded,
-          reviewCopy('Bahasa jawaban', 'لغة الجواب', 'Answer language'),
-          reviewCopy(
-              'Ubah bahasa jawaban lewat menu titik tiga di pojok kanan atas ruang percakapan.',
-              'غيّر لغة الجواب من قائمة النقاط الثلاث في أعلى غرفة المحادثة.',
-              'Change the answer language from the three-dot menu at the top right of the chat.')
-        ),
-        (
-          Icons.library_books_outlined,
-          reviewCopy('Daftar kitab rujukan', 'قائمة الكتب المرجعية',
-              'The reference books'),
-          reviewCopy(
-              'Ketuk ikon buku di bagian atas untuk melihat kitab-kitab yang menjadi sumber AI ini.',
-              'اضغط أيقونة الكتاب في الأعلى لترى الكتب التي يستند إليها هذا المساعد.',
-              'Tap the book icon at the top to see the books this AI draws from.')
+              'Selalu verifikasi ibarah Arab, nama kitab, jilid, dan halaman rujukan yang ditampilkan sebelum mengutip atau menyebarkan.',
+              'تحقّق دائمًا من العبارة العربية واسم الكتاب والجزء والصفحة قبل النقل أو النشر.',
+              'Always verify the Arabic passage, book title, volume, and page reference before quoting or sharing.')
         ),
         (
           Icons.school_outlined,
-          reviewCopy('Bahan belajar, bukan fatwa', 'مادة للدراسة وليست فتوى',
-              'A study aid, not a fatwa'),
           reviewCopy(
-              'Untuk urusan amalan, tetap tanyakan kepada guru Anda yang bersanad.',
-              'وفي أمور العمل اسأل معلّمك صاحب السند.',
-              'For matters of practice, always ask your teacher with a chain of transmission.')
+              'Adab Menggunakan AI · Bukan Pengganti Guru',
+              'آداب استخدام الذكاء الاصطناعي · ليس بديلاً عن العالم',
+              'AI Etiquette · Not a Replacement for Teachers'),
+          reviewCopy(
+              'AI adalah bahan telaah awal, bukan mufti atau fatwa. Untuk urusan amalan dan hukum praktis, tetap tanyakan kepada guru yang bersanad.',
+              'الذكاء الاصطناعي أداة مساعدة للدرس وليس مفتيًا؛ وفي أمور العمل والفتوى ارجع إلى أهل العلم المسنَدين.',
+              'AI is a study aid, not a fatwa. For matters of practice and rulings, consult qualified teachers.')
+        ),
+        (
+          Icons.verified_user_outlined,
+          reviewCopy(
+              'Adab Menggunakan AI · Jaga Amanah Ilmiah',
+              'آداب استخدام الذكاء الاصطناعي · الأمانة العلمية',
+              'AI Etiquette · Scholarly Integrity'),
+          reviewCopy(
+              'Gunakan hasil telaah untuk memperdalam pemahaman dan beramal, bukan untuk berdebat kusir atau menisbatkan kutipan tanpa tabayyun.',
+              'استفد من الإجابات لتعميق الفهم والعمل، لا للجدال أو نسبة الأقوال دون تثبّت.',
+              'Use findings to deepen understanding and practice, never for idle debate or unverified attribution.')
         ),
       ];
 

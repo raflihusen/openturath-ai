@@ -252,10 +252,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ));
       }
     } else if (allAccess) {
+      final onlySpecialists = summary.agentIds.contains('all_specialists') &&
+          !summary.agentIds.contains('all_access') &&
+          !summary.agentIds.contains('all_ai');
       for (final agent in AgentModel.defaultAgents) {
-        if (!agent.isComingSoon) {
-          rows.add((Loc.text(agent.title), ''));
-        }
+        if (agent.isComingSoon) continue;
+        if (onlySpecialists && agent.id == 'fiqh_tahawwulat') continue;
+        rows.add((Loc.text(agent.title), ''));
       }
     } else {
       for (final entry in entries) {
@@ -334,6 +337,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
       HijriDateUtils.formatMasehiOnly(value.toLocal());
 
   static String _entitlementTitle(String key) {
+    if (key == 'all_specialists' || key == 'all_disciplines') {
+      return Loc.isArabic
+          ? 'جميع الذكاءات (باستثناء فقه التحولات)'
+          : (Loc.language == 'en'
+              ? 'All AIs (excl. Fiqh Tahawwulat)'
+              : 'Semua AI (kecuali Fikih Tahawwulat)');
+    }
+    if (key == 'all_access' || key == 'all_ai') {
+      return Loc.isArabic
+          ? 'جميع الذكاءات'
+          : (Loc.language == 'en' ? 'All AIs' : 'Semua AI');
+    }
     final mapped = switch (key) {
       'fiqh_tahawwulat' => 'Fikih Tahawwulat',
       'fiqh_syafii' => "Fikih Syafi'i",

@@ -5,8 +5,6 @@ import '../core/design/ot_typography.dart';
 import '../core/product_pricing.dart';
 import '../core/routes.dart';
 import '../models/agent_model.dart';
-import '../services/agent_session_manager.dart';
-import '../services/auth_service.dart';
 import '../services/subscription_service.dart';
 import 'access_prepare_gate.dart';
 import 'tahawwulat_hero.dart';
@@ -110,29 +108,18 @@ class PaymentSuccessDialog extends StatelessWidget {
                   child: FilledButton(
                       onPressed: done
                           ? () {
-                              final nav = Navigator.of(context);
-                              nav.popUntil((route) =>
+                              Navigator.of(context).popUntil((route) =>
                                   route.settings.name == AppRoutes.dashboard ||
                                   route.isFirst);
-                              if (ready && agent != null) {
-                                AgentSessionManager.instance.openAgent(
-                                  agent!,
-                                  user: AuthService().cachedCurrentUser,
-                                  replaceOldest: true,
-                                );
-                              }
                             }
                           : null,
                       child: Text(done
-                          ? (ready && agent != null
-                              ? reviewCopy('Mulai Bertanya Sekarang',
-                                  'ابدأ السؤال الآن', 'Start Asking Now')
-                              : ready
-                                  ? reviewCopy('Selesai', 'تم', 'Done')
-                                  : reviewCopy(
-                                      'Kembali ke Dashboard',
-                                      'العودة إلى لوحة التحكم',
-                                      'Back to Dashboard'))
+                          ? (ready
+                              ? reviewCopy('Selesai', 'تم', 'Done')
+                              : reviewCopy(
+                                  'Kembali ke Dashboard',
+                                  'العودة إلى لوحة التحكم',
+                                  'Back to Dashboard'))
                           : reviewCopy(
                               'Menyiapkan akses… $left',
                               'جارٍ التجهيز… $left',
