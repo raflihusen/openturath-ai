@@ -197,9 +197,9 @@ class AgentModel {
           catalogId: 'canonical_tahawwulat',
           status: 'active',
           sortOrder: 1,
-          price1m: 299000,
-          price6m: 1499000,
-          price1y: 1999000,
+          price1m: 1000,
+          price6m: 1000,
+          price1y: 1000,
           subAgents: [
             SubAgentModel(
               id: 'fiqh_tahawwulat_muhaqqiq',
@@ -282,9 +282,9 @@ class AgentModel {
           ],
           status: 'active',
           sortOrder: 2,
-          price1m: 49000,
-          price6m: 299000,
-          price1y: 499000,
+          price1m: 1000,
+          price6m: 1000,
+          price1y: 1000,
           subAgents: [
             SubAgentModel(
               id: 'fiqh_syafii_muhaqqiq',
@@ -331,9 +331,9 @@ class AgentModel {
           catalogId: 'canonical_hanafi',
           status: 'active',
           sortOrder: 3,
-          price1m: 49000,
-          price6m: 299000,
-          price1y: 499000,
+          price1m: 1000,
+          price6m: 1000,
+          price1y: 1000,
           subAgents: [
             SubAgentModel(
               id: 'fiqh_hanafi_muhaqqiq',
@@ -380,9 +380,9 @@ class AgentModel {
           catalogId: 'canonical_maliki',
           status: 'active',
           sortOrder: 4,
-          price1m: 49000,
-          price6m: 299000,
-          price1y: 499000,
+          price1m: 1000,
+          price6m: 1000,
+          price1y: 1000,
           subAgents: [
             SubAgentModel(
               id: 'fiqh_maliki_muhaqqiq',
@@ -428,9 +428,9 @@ class AgentModel {
           catalogId: 'canonical_hanbali',
           status: 'active',
           sortOrder: 5,
-          price1m: 49000,
-          price6m: 299000,
-          price1y: 499000,
+          price1m: 1000,
+          price6m: 1000,
+          price1y: 1000,
           subAgents: [
             SubAgentModel(
               id: 'fiqh_hanbali_muhaqqiq',
@@ -477,9 +477,9 @@ class AgentModel {
           catalogId: 'canonical_fiqh_muqaran',
           status: 'active',
           sortOrder: 6,
-          price1m: 49000,
-          price6m: 299000,
-          price1y: 499000,
+          price1m: 1000,
+          price6m: 1000,
+          price1y: 1000,
           subAgents: [
             SubAgentModel(
               id: 'fiqh_muqaran_muhaqqiq',
@@ -527,9 +527,9 @@ class AgentModel {
           catalogId: 'canonical_hadits',
           status: 'active',
           sortOrder: 7,
-          price1m: 49000,
-          price6m: 299000,
-          price1y: 499000,
+          price1m: 1000,
+          price6m: 1000,
+          price1y: 1000,
           subAgents: [
             SubAgentModel(
               id: 'hadits_muhaqqiq',
@@ -578,9 +578,9 @@ class AgentModel {
           catalogId: 'canonical_tafsir',
           status: 'active',
           sortOrder: 8,
-          price1m: 49000,
-          price6m: 299000,
-          price1y: 499000,
+          price1m: 1000,
+          price6m: 1000,
+          price1y: 1000,
           subAgents: [
             SubAgentModel(
               id: 'tafsir_muhaqqiq',
@@ -630,9 +630,9 @@ class AgentModel {
           catalogId: 'canonical_ushul_fikih',
           status: 'active',
           sortOrder: 9,
-          price1m: 49000,
-          price6m: 299000,
-          price1y: 499000,
+          price1m: 1000,
+          price6m: 1000,
+          price1y: 1000,
           subAgents: [
             SubAgentModel(
               id: 'ushul_muhaqqiq',
@@ -682,9 +682,9 @@ class AgentModel {
           catalogId: 'canonical_bahasa_arab',
           status: 'active',
           sortOrder: 10,
-          price1m: 49000,
-          price6m: 299000,
-          price1y: 499000,
+          price1m: 1000,
+          price6m: 1000,
+          price1y: 1000,
           subAgents: [
             SubAgentModel(
               id: 'nahwu_sharaf_muerib',
@@ -744,9 +744,9 @@ class AgentModel {
           catalogId: 'canonical_akidah',
           status: 'active',
           sortOrder: 11,
-          price1m: 49000,
-          price6m: 299000,
-          price1y: 499000,
+          price1m: 1000,
+          price6m: 1000,
+          price1y: 1000,
         ),
 
         // ── 7. SEJARAH & SIRAH ────────────────────────────────
@@ -768,9 +768,9 @@ class AgentModel {
           catalogId: 'canonical_tarikh',
           status: 'active',
           sortOrder: 12,
-          price1m: 49000,
-          price6m: 299000,
-          price1y: 499000,
+          price1m: 1000,
+          price6m: 1000,
+          price1y: 1000,
         ),
 
         AgentModel(
@@ -786,7 +786,9 @@ class AgentModel {
           catalogId: 'canonical_tasawuf',
           status: 'active',
           sortOrder: 13,
-          price1m: 49000,
+          price1m: 1000,
+          price6m: 1000,
+          price1y: 1000,
         ),
 
         // ── 9. SPESIALIS TAMBAHAN KATALOG MASTER ───────────────
@@ -808,9 +810,9 @@ class AgentModel {
           catalogId: 'canonical_ulumul_quran',
           status: 'active',
           sortOrder: 17,
-          price1m: 49000,
-          price6m: 299000,
-          price1y: 499000,
+          price1m: 1000,
+          price6m: 1000,
+          price1y: 1000,
         ),
         AgentModel(
           id: 'musthalah_hadits',
@@ -830,9 +832,9 @@ class AgentModel {
           catalogId: 'canonical_musthalah_hadits',
           status: 'active',
           sortOrder: 18,
-          price1m: 49000,
-          price6m: 299000,
-          price1y: 499000,
+          price1m: 1000,
+          price6m: 1000,
+          price1y: 1000,
         ),
         AgentModel(
           id: 'syarah_hadits',
@@ -853,9 +855,9 @@ class AgentModel {
           catalogId: 'canonical_syarah_hadits',
           status: 'active',
           sortOrder: 19,
-          price1m: 49000,
-          price6m: 299000,
-          price1y: 499000,
+          price1m: 1000,
+          price6m: 1000,
+          price1y: 1000,
         ),
         AgentModel(
           id: 'thabaqat_rijal',
@@ -875,9 +877,9 @@ class AgentModel {
           catalogId: 'canonical_thabaqat_tarajim',
           status: 'active',
           sortOrder: 20,
-          price1m: 49000,
-          price6m: 299000,
-          price1y: 499000,
+          price1m: 1000,
+          price6m: 1000,
+          price1y: 1000,
         ),
         AgentModel(
           id: 'bibliografi_faharis',
@@ -897,9 +899,9 @@ class AgentModel {
           catalogId: 'canonical_bibliografi',
           status: 'active',
           sortOrder: 21,
-          price1m: 49000,
-          price6m: 299000,
-          price1y: 499000,
+          price1m: 1000,
+          price6m: 1000,
+          price1y: 1000,
         ),
       ];
 }

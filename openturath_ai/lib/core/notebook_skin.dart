@@ -188,7 +188,7 @@ const notebookSkinScript = r'''
     }
     html body .to-user-message-card-content .paragraph,
     html body .to-user-message-card-content li {
-      font-size: calc(var(--ot-font-size, 15px) + 1px) !important;
+      font-size: var(--ot-font-size, 15px) !important;
       line-height: 1.7 !important;
     }
     html body .to-user-message-card-content b,
@@ -268,7 +268,7 @@ const notebookSkinScript = r'''
       text-align: right !important;
       unicode-bidi: isolate !important;
       font-family: var(--ot-arabic) !important;
-      font-size: calc(var(--ot-font-size, 15px) + 1px) !important;
+      font-size: var(--ot-font-size, 15px) !important;
       line-height: 1.92 !important;
       letter-spacing: 0 !important;
       font-synthesis: none !important;
@@ -307,7 +307,7 @@ const notebookSkinScript = r'''
       text-align: right !important;
       unicode-bidi: isolate !important;
       font-family: var(--ot-arabic) !important;
-      font-size: calc(var(--ot-font-size, 15px) + 1px) !important;
+      font-size: var(--ot-font-size, 15px) !important;
       line-height: 1.92 !important;
       letter-spacing: 0 !important;
       font-synthesis: none !important;
@@ -332,7 +332,7 @@ const notebookSkinScript = r'''
       text-align: left !important;
       unicode-bidi: isolate !important;
       font-family: var(--ot-sans) !important;
-      font-size: calc(var(--ot-font-size, 15px) + 1px) !important;
+      font-size: var(--ot-font-size, 15px) !important;
       line-height: 1.7 !important;
       color: var(--ot-ink) !important;
     }

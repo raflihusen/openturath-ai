@@ -408,7 +408,10 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                                       font-size: \${basePx}px !important;
                                       line-height: 1.7 !important;
                                     }
-                                    [lang="ar"], .arabic, .ot-rtl-block, .ot-ibarah, .ot-ibarah-trans {
+                                    [lang="ar"], .arabic, .ot-rtl-block, .ot-ibarah, .ot-ibarah-trans,
+                                    html body .to-user-message-card-content .ot-rtl-block,
+                                    html body .to-user-message-card-content .ot-ibarah,
+                                    html body .to-user-message-card-content .ot-ibarah-trans {
                                       font-size: \${basePx}px !important;
                                       line-height: 1.88 !important;
                                     }
@@ -933,7 +936,10 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
             font-size: ${basePx}px !important;
             line-height: 1.7 !important;
           }
-          [lang="ar"], .arabic, .ot-rtl-block, .ot-ibarah, .ot-ibarah-trans {
+          [lang="ar"], .arabic, .ot-rtl-block, .ot-ibarah, .ot-ibarah-trans,
+          html body .to-user-message-card-content .ot-rtl-block,
+          html body .to-user-message-card-content .ot-ibarah,
+          html body .to-user-message-card-content .ot-ibarah-trans {
             font-size: ${basePx}px !important;
             line-height: 1.88 !important;
           }
