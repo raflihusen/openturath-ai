@@ -337,7 +337,14 @@ const notebookSkinScript = r'''
     }
     html body .to-user-message-card-content li.ot-ibarah-item {
       list-style: none !important;
-      margin-inline-start: -18px !important;
+    }
+    html body .to-user-message-card-content.ot-dir-ltr li.ot-ibarah-item {
+      margin-left: -18px !important;
+      margin-right: 0 !important;
+    }
+    html body .to-user-message-card-content.ot-dir-rtl li.ot-ibarah-item {
+      margin-right: -18px !important;
+      margin-left: 0 !important;
     }
     html body .to-user-message-card-content li.ot-ibarah-item::marker { content: "" !important; }
 
@@ -379,6 +386,8 @@ const notebookSkinScript = r'''
       border: none !important;
       border-bottom: 1px solid var(--ot-line) !important;
       vertical-align: middle !important;
+      white-space: normal !important;
+      min-width: 72px !important;
       overflow-wrap: break-word !important;
       word-break: break-word !important;
       max-width: 240px !important;
@@ -388,6 +397,8 @@ const notebookSkinScript = r'''
       vertical-align: top !important;
       border: none !important;
       border-bottom: 1px solid var(--ot-line-soft) !important;
+      white-space: normal !important;
+      min-width: 72px !important;
       overflow-wrap: break-word !important;
       word-break: break-word !important;
       max-width: 260px !important;
@@ -777,13 +788,31 @@ const notebookSkinScript = r'''
     });
 
     // 1. Deteksi bahasa utama kartu (LTR vs RTL) yang kebal harakat & kebal kutipan ibarah panjang.
-    //    Menghitung KATA prosa non-kutipan (membuang «...», ﴿...﴾, dan referensi kitab dalam kurung).
+    //    Menghitung KATA prosa non-kutipan (membuang «...», ﴿...﴾, "..." Arab, dan referensi kitab dalam kurung),
+    //    serta mempertimbangkan bahasa pertanyaan pasangan di atasnya bila prosa pembuka sangat singkat.
     const AR_WORD = /[\u0621-\u063A\u0641-\u064A\u0671-\u06D3]{2,}/g;
     const LAT_WORD = /[A-Za-z]{2,}/g;
-    const LATIN_PROSE_HINT = /\b(artinya|arti\/intisari|intisari|terjemahan|kesimpulan|penjelasan|dalil|rujukan|ibarah|jawaban|mazhab|hukumnya|conclusion|meaning|translation|summary)\b/i;
+    const LATIN_PROSE_HINT = /\b(artinya|arti\/intisari|intisari|terjemahan|kesimpulan|penjelasan|dalil|rujukan|ibarah|jawaban|mazhab|hukumnya|berikut|conclusion|meaning|translation|summary)\b/i;
+    const ASKED_ARABIC = /(?:bahasa\s+arab|in\s+arabic|بالعربية|باللغة\s+العربية)/i;
+    const QUOTED_ARABIC_ANY = /(?:«[^»]*[\u0621-\u064A]{3,}[^»]*»|﴿[^﴾]*[\u0621-\u064A]{3,}[^﴾]*﴾|["“][^"”]*[\u0621-\u064A]{8,}[^"”]*["”])/g;
+    const STARTS_QUOTED_ARABIC = /^(?:[-–•]\s*)?(?:«([^»]+)»|﴿([^﴾]+)﴾|["“]([^"”]+)["”])/;
     const TRANS_PREFIX = /^\s*(?:Arti\s*\/\s*Intisari|Artinya|Arti|Intisari|Terjemahan|Terjemah|Makna|Maksud|Meaning|Translation)\s*[:：]/i;
     const TRANS_INLINE = /(?:\n|\s+)(?=(?:Arti\s*\/\s*Intisari|Artinya|Arti|Intisari|Terjemahan|Terjemah|Makna|Maksud|Meaning|Translation)\s*[:：])/i;
     const KITAB_REF = /(?:\([^)]*[\u0621-\u064A][^)]*(?:[٠-٩0-9]|ص|ج|سورة|آية|حديث)[^)]*\)|(?:ج\s*[٠-٩0-9]+|ص\s*[٠-٩0-9]+|[٠-٩0-9]+\s*\/\s*[٠-٩0-9]+))/;
+
+    function pairedQuestionCard(answerCard) {
+      const pair = answerCard.closest('.chat-message-pair, chat-turn, app-chat-turn');
+      if (pair) {
+        const q = pair.querySelector('.from-user-message-card-content');
+        if (q) return q;
+      }
+      const all = [...document.querySelectorAll('.from-user-message-card-content, .to-user-message-card-content')];
+      const idx = all.indexOf(answerCard);
+      for (let i = idx - 1; i >= 0; i--) {
+        if (all[i].classList.contains('from-user-message-card-content')) return all[i];
+      }
+      return null;
+    }
 
     document.querySelectorAll('.from-user-message-card-content, .to-user-message-card-content').forEach(card => {
       const cTxt = card.textContent || '';
@@ -791,7 +820,7 @@ const notebookSkinScript = r'''
       card.__otDirLen = cTxt.length;
       const isAnswer = card.classList.contains('to-user-message-card-content');
       const proseTxt = isAnswer
-        ? cTxt.replace(/«[^»]*»/g, ' ').replace(/﴿[^﴾]*﴾/g, ' ').replace(/\([^)]*[\u0621-\u064A][^)]*\)/g, ' ')
+        ? cTxt.replace(QUOTED_ARABIC_ANY, ' ').replace(/\([^)]*[\u0621-\u064A][^)]*\)/g, ' ')
         : cTxt;
       const arWords = (proseTxt.match(AR_WORD) || []).length;
       const latWords = (proseTxt.match(LAT_WORD) || []).length;
@@ -799,9 +828,13 @@ const notebookSkinScript = r'''
       if (totalWords === 0) return;
       let isCardRtl;
       if (isAnswer) {
-        const hasLatinHint = LATIN_PROSE_HINT.test(proseTxt) && latWords >= 6;
+        const hasLatinHint = LATIN_PROSE_HINT.test(proseTxt) && latWords >= 2;
         const strongLatinProse = latWords >= 12 && (latWords / totalWords) >= 0.30;
-        isCardRtl = !hasLatinHint && !strongLatinProse && arWords >= 6 && (arWords / totalWords) >= 0.72;
+        const qCard = pairedQuestionCard(card);
+        const qTxt = qCard ? (qCard.textContent || '') : '';
+        const pairedLtrQuestion = !!(qCard && qCard.__otIsRtl === false && !ASKED_ARABIC.test(qTxt));
+        const shortLtrLead = pairedLtrQuestion && latWords >= 2;
+        isCardRtl = !hasLatinHint && !strongLatinProse && !shortLtrLead && arWords >= 6 && (arWords / totalWords) >= 0.72;
       } else {
         isCardRtl = arWords >= 2 && (arWords / totalWords) >= 0.55;
       }
@@ -825,12 +858,20 @@ const notebookSkinScript = r'''
     function isIbarahSegment(txt) {
       const trimmed = (txt || '').trim();
       if (!trimmed) return false;
+      // Kutipan Arab eksplisit di awal baris («...», ﴿...﴾, "...") selalu ibarah meski sumber (...) di belakangnya berhuruf Latin
+      const qMatch = STARTS_QUOTED_ARABIC.exec(trimmed);
+      if (qMatch) {
+        const inner = qMatch[1] || qMatch[2] || qMatch[3] || '';
+        const innerAr = (inner.match(AR) || []).length;
+        const innerLa = (inner.match(LAT) || []).length;
+        if (innerAr >= 10 && innerAr > innerLa * 2) return true;
+      }
       const ar = (trimmed.match(AR) || []).length;
       const la = (trimmed.match(LAT) || []).length;
       const total = ar + la;
       const arRatio = total > 0 ? ar / total : 0;
       const looksLikeHeading = trimmed.length < 24 || /^[أ-ي0-9١-٩]+[\.\-\)]\s+/.test(trimmed);
-      const hasQuoteMarks = /[«»﴿﴾]/.test(trimmed) && ar >= 10 && arRatio >= 0.45;
+      const hasQuoteMarks = (/[«»﴿﴾]/.test(trimmed) || /["“][^"”]*[\u0621-\u064A]{8,}[^"”]*["”]/.test(trimmed)) && ar >= 10 && arRatio >= 0.45;
       const hasKitabRef = KITAB_REF.test(trimmed) && ar >= 12 && arRatio >= 0.45;
       const isSubstantialArabic = !looksLikeHeading && ar >= 22 && arRatio >= 0.62;
       return hasQuoteMarks || hasKitabRef || isSubstantialArabic;
@@ -847,7 +888,6 @@ const notebookSkinScript = r'''
       const rawNodes = Array.from(container.childNodes);
       if (!rawNodes.length) return false;
 
-      // Pecah node menjadi segmen-segmen logis berdasarkan <br>, \n, atau label Artinya/Arti/Intisari
       const segments = [];
       let current = [];
       const pushCurrent = () => {
@@ -881,7 +921,6 @@ const notebookSkinScript = r'''
       pushCurrent();
       if (segments.length < 2) return false;
 
-      // Klasifikasikan tiap segmen: hanya pisahkan jika benar-benar campuran ibarah Arab + prosa LTR
       const classified = segments.map(seg => ({
         ...seg,
         kind: isIbarahSegment(seg.text) ? 'ibarah' : 'prose',
@@ -890,7 +929,6 @@ const notebookSkinScript = r'''
       const hasProse = classified.some(s => s.kind === 'prose');
       if (!hasIbarah || !hasProse) return false;
 
-      // Gabungkan segmen berurutan dengan jenis yang sama
       const groups = [];
       for (const seg of classified) {
         const last = groups[groups.length - 1];
@@ -920,15 +958,35 @@ const notebookSkinScript = r'''
       return true;
     }
 
+    // Tangani <li> yang memiliki teks ibarah langsung di awal lalu diikuti sub-list <ul>/<ol>
+    function wrapLeadingIbarahInList(li) {
+      if (li.dataset.otLeadWrapped === '1' || li.querySelector(':scope > .ot-ibarah, :scope > .paragraph, :scope > p')) return;
+      const subList = li.querySelector(':scope > ul, :scope > ol');
+      if (!subList) return;
+      const leadNodes = [];
+      for (const child of Array.from(li.childNodes)) {
+        if (child === subList) break;
+        leadNodes.push(child);
+      }
+      const leadText = leadNodes.map(n => n.textContent || '').join('').trim();
+      if (!isIbarahSegment(leadText)) return;
+      const wrap = document.createElement('div');
+      wrap.className = 'ot-ibarah';
+      wrap.setAttribute('dir', 'rtl');
+      for (const node of leadNodes) wrap.appendChild(node);
+      li.insertBefore(wrap, subList);
+      li.dataset.otLeadWrapped = '1';
+      toggle(li, 'ot-ibarah-item', true);
+    }
+
     function processBlock(el, cardDone) {
       if (el.closest('.ot-ibarah, .ot-ibarah-trans')) return;
-      const text = el.textContent || '';
-      const stateKey = text.length + ':' + (cardDone ? '1' : '0');
-      if (el.__otStateKey === stateKey) return;
-      el.__otStateKey = stateKey;
-
       const card = el.closest('.to-user-message-card-content');
       const isWholeArabicCard = !!(card && card.__otIsRtl);
+      const text = el.textContent || '';
+      const stateKey = text.length + ':' + (cardDone ? '1' : '0') + ':' + (isWholeArabicCard ? 'R' : 'L');
+      if (el.__otStateKey === stateKey) return;
+      el.__otStateKey = stateKey;
 
       const trimmed = text.trim();
       const ar = (trimmed.match(AR) || []).length;
@@ -960,8 +1018,8 @@ const notebookSkinScript = r'''
         el.setAttribute('dir', 'rtl');
         toggle(el, 'ot-rtl-block', false);
         toggle(el, 'ot-ltr-block', false);
-        // Di kartu full-Arab, hanya kutipan eksplisit «...» atau ﴿...﴾ yang diberi aksen kotak halus
-        const explicitQuote = !hasListChild && !isTableCell && /[«»﴿﴾]/.test(trimmed) && ar >= 16;
+        // Di kartu full-Arab, hanya kutipan eksplisit «...», ﴿...﴾, atau "..." Arab yang diberi aksen kotak halus
+        const explicitQuote = !hasListChild && !isTableCell && (/[«»﴿﴾]/.test(trimmed) || /["“][^"”]*[\u0621-\u064A]{10,}[^"”]*["”]/.test(trimmed)) && ar >= 14;
         toggle(el, 'ot-ibarah', explicitQuote);
       }
 
@@ -989,9 +1047,15 @@ const notebookSkinScript = r'''
 
     document.querySelectorAll('.to-user-container').forEach(box => {
       const cardDone = !!box.querySelector('chat-actions, .chat-actions');
+      const card = box.querySelector('.to-user-message-card-content');
+      const isWholeArabicCard = !!(card && card.__otIsRtl);
       box.querySelectorAll('.to-user-message-card-content .paragraph, .to-user-message-card-content p').forEach(el => processBlock(el, cardDone));
       box.querySelectorAll('.to-user-message-card-content li').forEach(li => {
-        if (!li.querySelector('.paragraph, p, ul, ol')) processBlock(li, cardDone);
+        if (!li.querySelector('.paragraph, p, ul, ol')) {
+          processBlock(li, cardDone);
+        } else if (cardDone && !isWholeArabicCard) {
+          wrapLeadingIbarahInList(li);
+        }
       });
     });
   }
