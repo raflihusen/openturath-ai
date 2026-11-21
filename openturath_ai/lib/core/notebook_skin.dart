@@ -341,50 +341,64 @@ const notebookSkinScript = r'''
     }
     html body .to-user-message-card-content li.ot-ibarah-item::marker { content: "" !important; }
 
-    /* Tabel: sama dengan tabel di situs openturath.id (kotak 16, kepala tonal, garis tipis). */
+    /* Tabel: responsif penuh agar tidak pernah terpotong meski ukuran huruf diperbesar. */
     html body .to-user-message-card-content table-element-view {
       display: block !important;
+      width: 100% !important;
+      max-width: 100% !important;
       overflow-x: auto !important;
+      -webkit-overflow-scrolling: touch !important;
       margin: 18px 0 22px !important;
       border: 1px solid var(--ot-line) !important;
       border-radius: 16px !important;
+      box-sizing: border-box !important;
     }
     html body .to-user-message-card-content table {
       border-collapse: collapse !important;
       width: 100% !important;
-      min-width: 560px !important;
+      min-width: 0 !important;
+      table-layout: auto !important;
     }
     html body .to-user-message-card-content th {
       text-align: start !important;
-      padding: 12px 14px !important;
+      padding: 10px 10px !important;
       background: light-dark(rgba(23,23,23,.06), rgba(245,245,245,.07)) !important;
       border: none !important;
       border-bottom: 1px solid var(--ot-line) !important;
       vertical-align: middle !important;
+      overflow-wrap: break-word !important;
+      word-break: break-word !important;
     }
     html body .to-user-message-card-content td {
-      padding: 14px !important;
+      padding: 10px 10px !important;
       vertical-align: top !important;
       border: none !important;
       border-bottom: 1px solid var(--ot-line-soft) !important;
+      overflow-wrap: break-word !important;
+      word-break: break-word !important;
     }
     html body .to-user-message-card-content tr:last-child td { border-bottom: 0 !important; }
     html body .to-user-message-card-content th + th,
     html body .to-user-message-card-content td + td { border-inline-start: 1px solid var(--ot-line-soft) !important; }
+    html body .to-user-message-card-content table td,
+    html body .to-user-message-card-content table td *,
     html body .to-user-message-card-content .paragraph.table-paragraph,
     html body .to-user-message-card-content .paragraph.table-paragraph * {
       margin: 0 !important;
-      font-size: 15px !important;
-      line-height: 1.6 !important;
+      font-size: clamp(12px, calc(var(--ot-font-size, 15px) * 0.88), 17px) !important;
+      line-height: 1.55 !important;
       text-transform: none !important;
       letter-spacing: 0 !important;
     }
+    html body .to-user-message-card-content table th,
+    html body .to-user-message-card-content table th *,
     html body .to-user-message-card-content th .paragraph.table-paragraph,
     html body .to-user-message-card-content th .paragraph.table-paragraph * {
-      font-size: 12px !important;
+      font-size: clamp(11px, calc(var(--ot-font-size, 15px) * 0.78), 14px) !important;
       font-weight: 600 !important;
-      letter-spacing: .08em !important;
+      letter-spacing: .04em !important;
       color: var(--ot-muted) !important;
+      line-height: 1.4 !important;
     }
 
     /* Rujukan di dalam jawaban. */
@@ -683,7 +697,8 @@ const notebookSkinScript = r'''
     html.ot-opening-language .cdk-overlay-container { opacity: 0 !important; pointer-events: none !important; }
   `;
 
-  const AR = /[؀-ۿݐ-ݿࢠ-ࣿﭐ-﷿ﹰ-﻿]/g;
+  // Hitung HANYA huruf dasar Arab (tanpa harakat/tashkeel) agar nash berharakat tidak menggelembungkan rasio Arab kartu.
+  const AR = /[\u0621-\u063A\u0641-\u064A\u0671-\u06D3]/g;
   const LAT = /[A-Za-z]/g;
 
   function toggle(el, name, on) {
@@ -746,31 +761,42 @@ const notebookSkinScript = r'''
       }
     });
 
-    // 1. Tentukan arah utama (LTR vs RTL) pada setiap kartu pertanyaan & jawaban
+    // 1. Tentukan arah utama (LTR vs RTL) pada setiap kartu pertanyaan & jawaban.
+    //    Pada kartu jawaban, keluarkan dulu kutipan ibarah «...» agar jawaban Indonesia/Inggris
+    //    yang kaya ibarah Arab berharakat TIDAK pernah keliru terbalik menjadi RTL (termasuk tabel & list).
     document.querySelectorAll('.from-user-message-card-content, .to-user-message-card-content').forEach(card => {
       const cTxt = card.textContent || '';
       if (card.__otDirLen === cTxt.length) return;
       card.__otDirLen = cTxt.length;
-      const cAr = (cTxt.match(AR) || []).length;
-      const cLa = (cTxt.match(LAT) || []).length;
+      const isAnswer = card.classList.contains('to-user-message-card-content');
+      const proseTxt = isAnswer ? cTxt.replace(/«[^»]{10,}»/g, ' ') : cTxt;
+      const cAr = (proseTxt.match(AR) || []).length;
+      const cLa = (proseTxt.match(LAT) || []).length;
       const total = cAr + cLa;
       if (total === 0) return;
-      const isCardRtl = cAr >= 8 && (cAr / total) >= 0.55;
+      const isCardRtl = isAnswer
+        ? (cAr >= 12 && (cAr / total) >= 0.65 && !(cLa >= 60 && cLa >= cAr * 0.40))
+        : (cAr >= 6 && (cAr / total) >= 0.55);
       card.__otIsRtl = isCardRtl;
       card.setAttribute('dir', isCardRtl ? 'rtl' : 'ltr');
       toggle(card, 'ot-dir-rtl', isCardRtl);
       toggle(card, 'ot-dir-ltr', !isCardRtl);
     });
 
-    // 2. Di dalam kartu jawaban, atur arah per blok paragraf agar:
+    // 2. Di dalam kartu jawaban, atur arah per blok paragraf / item list agar:
     //    - Jawaban ID/EN tetap LTR (rata kiri) & potongan Arab pendek inline tetap ikut kalimat LTR
-    //    - Paragraf/baris Arab utuh di tengah jawaban ID/EN otomatis RTL (rata kanan) dengan font Arab
+    //    - Setiap ibarah Arab (berguillemet «...», berujuk kitab/halaman, atau nash panjang) SELALU berkotak RTL
+    //    - Jika satu blok menggabungkan ibarah + Artinya/Arti/Intisari, dipisah bersih: kotak RTL di atas, terjemahan LTR di bawah
     const TRANS_PREFIX = /^\s*(?:Arti\s*\/\s*Intisari|Artinya|Arti|Intisari|Terjemahan|Terjemah|Makna|Maksud|Meaning|Translation)\s*[:：]/i;
-    const KITAB_REF = /(?:\([^)]*[\u0600-\u06FF][^)]*(?:[٠-٩0-9]|ص|ج|سورة|آية|حديث)[^)]*\)|(?:ج\s*[٠-٩0-9]+|ص\s*[٠-٩0-9]+|[٠-٩0-9]+\s*\/\s*[٠-٩0-9]+))/;
+    const KITAB_REF = /(?:\([^)]*[\u0621-\u064A][^)]*(?:[٠-٩0-9]|ص|ج|سورة|آية|حديث)[^)]*\)|(?:ج\s*[٠-٩0-9]+|ص\s*[٠-٩0-9]+|[٠-٩0-9]+\s*\/\s*[٠-٩0-9]+))/;
 
     function splitCompoundIbarah(el) {
       if (el.dataset.otSplit === '1' || el.querySelector('.ot-ibarah, .ot-ibarah-trans, ul, ol, table')) return false;
-      const nodes = Array.from(el.childNodes);
+      let container = el;
+      while (container.childNodes.length === 1 && container.firstChild.nodeType === 1 && container.firstChild.tagName === 'SPAN') {
+        container = container.firstChild;
+      }
+      const nodes = Array.from(container.childNodes);
       if (!nodes.length) return false;
       let splitIdx = -1;
       let skipBr = false;
@@ -785,7 +811,7 @@ const notebookSkinScript = r'''
           const afterText = nodes.slice(i + 1).map(x => x.textContent || '').join('');
           const arA = (afterText.match(AR) || []).length;
           const laA = (afterText.match(LAT) || []).length;
-          if (arB >= 18 && arB >= laB * 1.2 && (TRANS_PREFIX.test(afterText) || (laA >= 15 && laA > arA * 1.4))) {
+          if (arB >= 12 && arB >= laB * 1.1 && (TRANS_PREFIX.test(afterText) || (laA >= 12 && laA > arA * 1.3))) {
             splitIdx = i;
             skipBr = true;
             break;
@@ -793,9 +819,22 @@ const notebookSkinScript = r'''
         } else if (i > 0 && TRANS_PREFIX.test(nTxt)) {
           const arB = (beforeText.match(AR) || []).length;
           const laB = (beforeText.match(LAT) || []).length;
-          if (arB >= 18 && arB >= laB * 1.2) {
+          if (arB >= 12 && arB >= laB * 1.1) {
             splitIdx = i;
             break;
+          }
+        } else if (n.nodeType === 3 && nTxt.includes('\n')) {
+          const m = /\n\s*(?=(?:Arti\s*\/\s*Intisari|Artinya|Arti|Intisari|Terjemahan|Terjemah|Makna|Maksud|Meaning|Translation)\s*[:：])/i.exec(nTxt);
+          if (m) {
+            const head = beforeText + nTxt.slice(0, m.index);
+            const arB = (head.match(AR) || []).length;
+            const laB = (head.match(LAT) || []).length;
+            if (arB >= 12 && arB >= laB * 1.1) {
+              const tailNode = n.splitText(m.index);
+              nodes.splice(i + 1, 0, tailNode);
+              splitIdx = i + 1;
+              break;
+            }
           }
         }
         beforeText += nTxt;
@@ -832,7 +871,8 @@ const notebookSkinScript = r'''
       return true;
     }
 
-    document.querySelectorAll('.to-user-message-card-content .paragraph, .to-user-message-card-content p').forEach(el => {
+    function processBlock(el) {
+      if (el.closest('.ot-ibarah, .ot-ibarah-trans')) return;
       const text = el.textContent || '';
       if (el.__otLen === text.length) return;
       el.__otLen = text.length;
@@ -853,18 +893,18 @@ const notebookSkinScript = r'''
           el.setAttribute('dir', 'ltr');
           return;
         }
-        // 1. Jika satu paragraf menggabungkan ibarah Arab + Artinya/Arti/Intisari, pisahkan rapi:
+        // 1. Jika satu blok menggabungkan ibarah Arab + Artinya/Arti/Intisari, pisahkan rapi:
         //    ibarah Arab masuk kotak RTL, terjemahannya di bawahnya tetap LTR rata kiri.
-        if (!hasListChild && !isTableCell && ar >= 18 && la >= 12 && splitCompoundIbarah(el)) {
+        if (!hasListChild && !isTableCell && ar >= 12 && la >= 10 && splitCompoundIbarah(el)) {
           return;
         }
         // 2. Blok Arab utuh: deteksi konsisten berbasis kutipan «...», rujukan kitab/halaman, atau panjang nash.
-        const looksLikeHeading = trimmed.length < 32 || /^[أ-ي0-9١-٩]+[\.\-\)]\s+/.test(trimmed);
-        const hasGuillemetQuote = /[«»]/.test(trimmed) && ar >= 18 && arRatio >= 0.52;
-        const hasKitabRef = KITAB_REF.test(trimmed) && ar >= 20 && arRatio >= 0.52;
-        const isSubstantialArabic = !looksLikeHeading && ar >= 30 && arRatio >= 0.66;
+        const looksLikeHeading = trimmed.length < 28 || /^[أ-ي0-9١-٩]+[\.\-\)]\s+/.test(trimmed);
+        const hasGuillemetQuote = /[«»]/.test(trimmed) && ar >= 12 && arRatio >= 0.45;
+        const hasKitabRef = KITAB_REF.test(trimmed) && ar >= 14 && arRatio >= 0.45;
+        const isSubstantialArabic = !looksLikeHeading && ar >= 24 && arRatio >= 0.62;
         const ibarah = !hasListChild && !isTableCell && (hasGuillemetQuote || hasKitabRef || isSubstantialArabic);
-        const isArabicBlock = !hasListChild && !isTableCell && (ibarah || (ar >= 10 && arRatio >= 0.60));
+        const isArabicBlock = !hasListChild && !isTableCell && (ibarah || (ar >= 10 && arRatio >= 0.58));
 
         el.setAttribute('dir', isArabicBlock ? 'rtl' : 'ltr');
         toggle(el, 'ot-rtl-block', isArabicBlock && !ibarah);
@@ -899,6 +939,12 @@ const notebookSkinScript = r'''
       } else {
         toggle(el, 'ot-mode', false);
       }
+    }
+
+    document.querySelectorAll('.to-user-message-card-content .paragraph, .to-user-message-card-content p').forEach(processBlock);
+    // Tangani juga <li> yang berisi teks langsung tanpa pembungkus .paragraph/<p> (mis. daftar ibarah bersarang)
+    document.querySelectorAll('.to-user-message-card-content li').forEach(li => {
+      if (!li.querySelector('.paragraph, p, ul, ol')) processBlock(li);
     });
   }
 

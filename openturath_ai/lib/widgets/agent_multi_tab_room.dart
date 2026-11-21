@@ -927,18 +927,15 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
             font-size: ${basePx}px !important;
             line-height: 1.7 !important;
           }
-          .rendered-markdown p, .rendered-markdown span, .rendered-markdown li, .rendered-markdown div,
-          .chat-response p, .chat-response span, .chat-response li, .chat-response div,
-          [role="article"] p, [role="article"] span, [role="article"] li, [role="article"] div,
-          .chat-panel-content p, .chat-panel-content span, .chat-panel-content li, .chat-panel-content div,
-          .to-user-container p, .to-user-container span, .to-user-container li, .to-user-container div,
-          .to-model-container p, .to-model-container span, .to-model-container li, .to-model-container div {
+          .rendered-markdown p:not(.table-paragraph), .rendered-markdown li,
+          .chat-response p:not(.table-paragraph), .chat-response li,
+          .to-user-container .paragraph:not(.table-paragraph) {
             font-size: ${basePx}px !important;
             line-height: 1.7 !important;
           }
-          [lang="ar"], .arabic, [dir="rtl"] {
+          [lang="ar"], .arabic, .ot-rtl-block, .ot-ibarah {
             font-size: ${arabicPx}px !important;
-            line-height: 1.85 !important;
+            line-height: 1.88 !important;
           }
         `;
       };
