@@ -23,14 +23,16 @@ void main() {
   tearDown(() => TahawwulatHero.introductionReadyOverride = null);
 
   group('FeatureFlags.parse', () {
-    test('bawaan: tiga sub-AI segera hadir dan Mengenal mati', () {
-      expect(FeatureFlags.defaults.soonSubAgentIds, soonThree);
+    test('bawaan: seluruh 5 sub-AI Tahawwulat terbuka dan Mengenal mati', () {
+      expect(FeatureFlags.defaults.soonSubAgentIds, isEmpty);
       expect(FeatureFlags.defaults.introductionEnabled, isFalse);
-      // Muhaqqiq dan Bayan TIDAK termasuk; keduanya tetap terbuka.
-      expect(FeatureFlags.defaults.isSubAgentSoon('fiqh_tahawwulat_muhaqqiq'),
-          isFalse);
-      expect(FeatureFlags.defaults.isSubAgentSoon('fiqh_tahawwulat_bayan'),
-          isFalse);
+      for (final id in [
+        'fiqh_tahawwulat_muhaqqiq',
+        'fiqh_tahawwulat_bayan',
+        ...soonThree,
+      ]) {
+        expect(FeatureFlags.defaults.isSubAgentSoon(id), isFalse, reason: id);
+      }
     });
 
     test('dokumen kosong atau null memakai bawaan', () {
@@ -63,11 +65,11 @@ void main() {
       expect(a.introductionEnabled, isFalse);
       final b = FeatureFlags.parse(const {'introduction_enabled': 1});
       expect(b.introductionEnabled, isFalse);
-      // soon_sub_agent_ids bukan list -> bawaan.
+      // soon_sub_agent_ids bukan list -> bawaan (kosong).
       final c = FeatureFlags.parse(const {'soon_sub_agent_ids': 'fiqh_x'});
-      expect(c.soonSubAgentIds, soonThree);
+      expect(c.soonSubAgentIds, FeatureFlags.defaults.soonSubAgentIds);
       final d = FeatureFlags.parse(const {'soon_sub_agent_ids': 7});
-      expect(d.soonSubAgentIds, soonThree);
+      expect(d.soonSubAgentIds, FeatureFlags.defaults.soonSubAgentIds);
     });
 
     test('elemen daftar yang tidak valid dibuang, yang valid dipertahankan',
@@ -113,8 +115,20 @@ void main() {
   });
 
   group('gateSubAgent', () {
-    test('tiga sub-AI bawaan ditolak, dua lainnya dilanjutkan', () {
+    test('bawaan membuka seluruh 5 sub-AI Tahawwulat', () {
       const f = FeatureFlags.defaults;
+      for (final id in [
+        'fiqh_tahawwulat_muhaqqiq',
+        'fiqh_tahawwulat_bayan',
+        ...soonThree,
+      ]) {
+        expect(gateSubAgent(id, f), SubAgentGate.open, reason: id);
+      }
+    });
+
+    test('sub-AI yang ditandai segera hadir oleh remote flag ditolak', () {
+      const f = FeatureFlags(
+          soonSubAgentIds: soonThree, introductionEnabled: false);
       for (final id in soonThree) {
         expect(gateSubAgent(id, f), SubAgentGate.comingSoon, reason: id);
       }

@@ -25,26 +25,37 @@ class ModuleEntitlement {
     this.paymentStatus = 'none',
   });
 
-  bool get isPremium => RegExp(
-          r'^(trial|tholib(?:_1m|_6m)?|bahits(?:_1y)?|premium|all_access|all_ai.*|all_specialists(?:_.*)?|all_disciplines(?:_.*)?|single|sultan|pro|voucher(?:_.*)?|redeem(?:_.*)?|custom|full)$')
-      .hasMatch(plan);
+  bool get isPremium {
+    final normalized = plan.trim().toLowerCase();
+    if (normalized.isEmpty || normalized == 'free' || normalized == 'none') {
+      return false;
+    }
+    return RegExp(
+            r'^(trial|tholib(?:_1m|_6m)?|bahits(?:_1y)?|premium|permanent|paid|all_access|all_ai.*|all_specialists(?:_.*)?|all_disciplines(?:_.*)?|single|sultan|pro|voucher(?:_.*)?|redeem(?:_.*)?|custom|full|[a-z0-9_]+_(?:1m|6m|1y))$')
+        .hasMatch(normalized);
+  }
 
-  bool get isActive =>
-      status != 'revoked' &&
-      status != 'expired' &&
-      expiry != null &&
-      expiry!.isAfter(DateTime.now());
+  bool get isActive {
+    final st = status.trim().toLowerCase();
+    if (st != 'active' && st != 'trial') return false;
+    if (plan.trim().toLowerCase() == 'permanent') return true;
+    return expiry != null && expiry!.isAfter(DateTime.now());
+  }
 
   factory ModuleEntitlement.fromMap(Map<String, dynamic> map) {
+    final rawDays = map['trial_duration_days'];
+    final parsedDays = rawDays is num
+        ? rawDays.toInt()
+        : int.tryParse(rawDays?.toString() ?? '');
     return ModuleEntitlement(
-      plan: map['plan'] ?? AppConstants.planTrial,
+      plan: map['plan']?.toString() ?? AppConstants.planTrial,
       expiry: map['expiry'] != null
           ? (map['expiry'] is Timestamp
               ? (map['expiry'] as Timestamp).toDate()
               : DateTime.tryParse(map['expiry'].toString()))
           : null,
-      status: map['status'] ?? 'active',
-      sourceTransactionId: map['source_transaction_id'] ?? map['trx_id'],
+      status: map['status']?.toString() ?? 'active',
+      sourceTransactionId: (map['source_transaction_id'] ?? map['trx_id'])?.toString(),
       updatedAt: map['updated_at'] != null
           ? (map['updated_at'] is Timestamp
               ? (map['updated_at'] as Timestamp).toDate()
@@ -55,8 +66,8 @@ class ModuleEntitlement {
               ? (map['started_at'] as Timestamp).toDate()
               : DateTime.tryParse(map['started_at'].toString()))
           : null,
-      trialDurationDays: map['trial_duration_days'] as int?,
-      paymentStatus: map['payment_status'] ?? 'none',
+      trialDurationDays: parsedDays,
+      paymentStatus: map['payment_status']?.toString() ?? 'none',
     );
   }
 
@@ -171,16 +182,33 @@ class UserModel {
     if (AppConfig.isGuruEdition) return true;
     // Owner-approved permanent VIP outranks expired or revoked paid packages.
     if (isVip) return true;
-    final mappedKey = entitlementKeys[agentId] ?? agentId;
+    final rawLower = agentId.trim().toLowerCase();
+    if (rawLower.isEmpty) return false;
+    final mappedKey =
+        entitlementKeys[agentId] ?? entitlementKeys[rawLower] ?? rawLower;
+    final isTahawwulat = mappedKey == 'fiqh_tahawwulat' ||
+        mappedKey.contains('tahawwulat') ||
+        rawLower.contains('tahawwulat');
 
     // 1. Specific module entitlement check FIRST (cek key kanonik maupun key mentah agentId)
     final candidates = <ModuleEntitlement>[
       if (entitlements[mappedKey] != null) entitlements[mappedKey]!,
       if (agentId != mappedKey && entitlements[agentId] != null)
         entitlements[agentId]!,
+      if (rawLower != mappedKey &&
+          rawLower != agentId &&
+          entitlements[rawLower] != null)
+        entitlements[rawLower]!,
     ];
     if (candidates.any((e) => e.isActive && e.isPremium)) {
       return true;
+    }
+
+    // If a specific module entitlement was explicitly revoked, deny access
+    // BEFORE considering global bundle entitlements.
+    if (candidates.isNotEmpty &&
+        candidates.every((e) => e.status.trim().toLowerCase() == 'revoked')) {
+      return false;
     }
 
     // 2. Explicit all_access entitlement
@@ -192,20 +220,15 @@ class UserModel {
     // 2b. Explicit all_specialists / all_disciplines entitlement (Semua AI kecuali Fikih Tahawwulat)
     final allSpecialists =
         entitlements['all_specialists'] ?? entitlements['all_disciplines'];
-    if (mappedKey != 'fiqh_tahawwulat' &&
+    if (!isTahawwulat &&
         allSpecialists != null &&
         allSpecialists.isActive &&
         allSpecialists.isPremium) {
       return true;
     }
 
-    // If a specific module entitlement was explicitly revoked, deny access
-    if (candidates.isNotEmpty && candidates.every((e) => e.status == 'revoked')) {
-      return false;
-    }
-
     // If an explicit all_access was REVOKED and no active specific entitlement, deny access
-    if (all != null && all.status == 'revoked') {
+    if (all != null && all.status.trim().toLowerCase() == 'revoked') {
       return false;
     }
 
@@ -219,13 +242,15 @@ class UserModel {
       'full',
       'sultan',
     ];
+    final cleanPlan = plan.trim().toLowerCase();
     final isGlobalPlan =
-        (globalAllPlans.contains(plan) || plan.startsWith('all_ai')) &&
+        (globalAllPlans.contains(cleanPlan) || cleanPlan.startsWith('all_ai')) &&
             isSubscriptionActive;
-    final isAllSpecialistsPlan = mappedKey != 'fiqh_tahawwulat' &&
-        (plan == 'all_specialists' ||
-            plan.startsWith('all_specialists_') ||
-            plan == 'all_disciplines') &&
+    final isAllSpecialistsPlan = !isTahawwulat &&
+        (cleanPlan == 'all_specialists' ||
+            cleanPlan.startsWith('all_specialists_') ||
+            cleanPlan == 'all_disciplines' ||
+            cleanPlan.startsWith('all_disciplines_')) &&
         isSubscriptionActive;
     if (isGlobalPlan || isAllSpecialistsPlan) {
       return true;
@@ -233,7 +258,6 @@ class UserModel {
 
     // 4. Module-specific plan matching (e.g. 'fiqh_syafii_1m', 'fiqh_tahawwulat_1m')
     if (isSubscriptionActive) {
-      final cleanPlan = plan.toLowerCase();
       final cleanKey = mappedKey.toLowerCase();
       if (cleanPlan == cleanKey || cleanPlan.startsWith('${cleanKey}_')) {
         return true;
@@ -248,9 +272,9 @@ class UserModel {
         AppConstants.planTholib6m,
         AppConstants.planBahits1y,
       ];
-      if (legacyAllAccessPlans.contains(plan) ||
-          plan.startsWith('redeem') ||
-          plan.startsWith('voucher')) {
+      if (legacyAllAccessPlans.contains(cleanPlan) ||
+          cleanPlan.startsWith('redeem') ||
+          cleanPlan.startsWith('voucher')) {
         return true;
       }
     }
@@ -293,13 +317,14 @@ class UserModel {
   };
 
   factory UserModel.fromMap(String uid, Map<String, dynamic> data) {
-    // Parse entitlements map
+    // Parse entitlements map safely even if nested maps are Map<dynamic, dynamic>
     final Map<String, ModuleEntitlement> parsedEntitlements = {};
-    if (data['entitlements'] != null && data['entitlements'] is Map) {
-      final rawMap = data['entitlements'] as Map<String, dynamic>;
-      rawMap.forEach((key, val) {
-        if (val is Map<String, dynamic>) {
-          parsedEntitlements[key] = ModuleEntitlement.fromMap(val);
+    final rawEntitlements = data['entitlements'];
+    if (rawEntitlements is Map) {
+      rawEntitlements.forEach((key, val) {
+        if (val is Map) {
+          parsedEntitlements[key.toString()] =
+              ModuleEntitlement.fromMap(Map<String, dynamic>.from(val));
         }
       });
     }
@@ -317,14 +342,18 @@ class UserModel {
     }
 
     final rawEmail = (data['email'] ?? '').toString().trim().toLowerCase();
+    final rawQuestions = data['questions_used'];
+    final parsedQuestions = rawQuestions is num
+        ? rawQuestions.toInt()
+        : int.tryParse(rawQuestions?.toString() ?? '') ?? 0;
 
     return UserModel(
       uid: uid,
-      name: data['name'] ?? '',
-      email: data['email'] ?? '',
-      photoUrl: data['photo_url'] ?? '',
-      plan: data['plan'] ?? AppConstants.planTrial,
-      questionsUsed: data['questions_used'] ?? 0,
+      name: data['name']?.toString() ?? '',
+      email: data['email']?.toString() ?? '',
+      photoUrl: data['photo_url']?.toString() ?? '',
+      plan: data['plan']?.toString() ?? AppConstants.planTrial,
+      questionsUsed: parsedQuestions,
       subscriptionExpiry: expiry,
       entitlements: parsedEntitlements,
       isVip: data['is_vip'] == true ||

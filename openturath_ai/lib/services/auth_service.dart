@@ -4,12 +4,14 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import '../models/user_model.dart';
 import '../core/constants.dart';
+import 'agent_service.dart';
 import 'agent_session_manager.dart';
 import 'session_user_stream.dart';
 import 'browser_companion_chat_service.dart';
@@ -51,11 +53,14 @@ class AuthService {
 
   // In-memory cache to prevent entitlement loss on network hiccup (F41)
   static final Map<String, UserModel> _userCache = {};
+  static final StreamController<UserModel> _webUserUpdates =
+      StreamController<UserModel>.broadcast();
   static UserModel? _activeWebUser;
   static String? _activeWebUserEmail;
   static void setActiveWebEmail(String email) {
     final clean = email.trim().toLowerCase();
     if (clean.isEmpty) return;
+    final prevUid = _activeWebUser?.uid;
     _activeWebUserEmail = clean;
     final uid = 'web_$clean';
     final isVip = UserModel.isVipEmail(clean);
@@ -70,23 +75,42 @@ class AuthService {
     );
     _activeWebUser = user;
     _userCache[uid] = user;
-    _sessionUidController.add(uid);
+    if (prevUid != uid) {
+      _sessionUidController.add(uid);
+    }
+    _webUserUpdates.add(user);
   }
 
   static String? get activeWebUserEmail => _activeWebUserEmail;
   static int _authActionGeneration = 0;
   static Future<void> _authMutationTail = Future<void>.value();
   static final _logoutIntent = Expando<bool>('explicit Firebase logout');
+  static bool _webLogoutRequested = false;
   static final _authViewChanges = StreamController<FirebaseAuth>.broadcast();
   static const explicitLogoutKey = 'explicit_logout_v1';
   static final _interactiveDepth = Expando<int>('interactive sign-in depth');
 
-  bool get _logoutRequested => _logoutIntent[_auth] == true;
+  @visibleForTesting
+  static void resetWebSessionForTest() {
+    _activeWebUser = null;
+    _activeWebUserEmail = null;
+    _webLogoutRequested = false;
+    _userCache.clear();
+  }
+
+  bool get _logoutRequested {
+    if (_providedAuth != null) return _logoutIntent[_providedAuth!] == true;
+    if (Firebase.apps.isEmpty) return _webLogoutRequested;
+    return _webLogoutRequested || _logoutIntent[_auth] == true;
+  }
 
   void _setLogoutRequested(bool requested) {
+    if (_providedAuth == null) _webLogoutRequested = requested;
     try {
-      _logoutIntent[_auth] = requested;
-      _authViewChanges.add(_auth);
+      if (_providedAuth != null || Firebase.apps.isNotEmpty) {
+        _logoutIntent[_auth] = requested;
+        _authViewChanges.add(_auth);
+      }
     } catch (_) {}
   }
 
@@ -160,8 +184,11 @@ class AuthService {
   static UserModel? previewUser;
 
   // ── Current Firebase User ──────────────────────────────────────
-  User? get currentUser =>
-      previewUser != null || _logoutRequested ? null : _auth.currentUser;
+  User? get currentUser {
+    if (previewUser != null || _logoutRequested) return null;
+    if (_providedAuth == null && Firebase.apps.isEmpty) return null;
+    return _auth.currentUser;
+  }
 
   Stream<User?> get authStateChanges => Stream<User?>.multi((listener) {
         final sdk = _auth.authStateChanges().listen(
@@ -190,6 +217,7 @@ class AuthService {
     if (previewUser != null) return previewUser;
     if (_logoutRequested) return null;
     if (_providedAuth == null && _activeWebUser != null) return _activeWebUser;
+    if (_providedAuth == null && Firebase.apps.isEmpty) return null;
     final user = _auth.currentUser;
     if (user != null && !user.isAnonymous) {
       return _userCache[user.uid] ??
@@ -639,35 +667,8 @@ class AuthService {
         watch: (uid) {
           if (uid.startsWith('web_')) {
             final cleanEmail = uid.substring(4).trim().toLowerCase();
-            return _db
-                .collection(AppConstants.colUsers)
-                .where('email', isEqualTo: cleanEmail)
-                .limit(1)
-                .snapshots()
-                .map((snap) {
-              if (snap.docs.isEmpty) {
-                final cached = _userCache[uid] ??
-                    UserModel(
-                      uid: uid,
-                      name: cleanEmail.split('@').first,
-                      email: cleanEmail,
-                      photoUrl: '',
-                      plan: UserModel.isVipEmail(cleanEmail)
-                          ? 'vip'
-                          : AppConstants.planTrial,
-                      questionsUsed: 0,
-                      isVip: UserModel.isVipEmail(cleanEmail),
-                    );
-                return cached;
-              }
-              final doc = snap.docs.first;
-              final user = UserModel.fromFirestore(doc);
-              _userCache[uid] = user;
-              _activeWebUser = user;
-              unawaited(_cacheUserLocally(user,
-                  isCurrent: () => _activeWebUserEmail == cleanEmail));
-              return user;
-            });
+            return _webUserUpdates.stream.where((u) =>
+                u.uid == uid || u.email.trim().toLowerCase() == cleanEmail);
           }
           return _db
               .collection(AppConstants.colUsers)
@@ -687,99 +688,114 @@ class AuthService {
 
   static const webSessionOwnerKey = 'webview_session_owner';
 
-  /// Menetapkan pengguna sesi web Google yang terverifikasi ke dalam sesi aplikasi
-  static Future<void> establishVerifiedWebUser(String email, {String? displayName}) async {
+  /// Menetapkan pengguna sesi web Google yang terverifikasi ke dalam sesi aplikasi.
+  /// Memuat profil cache terlebih dahulu agar status langganan/VIP lokal tidak
+  /// pernah diturunkan ke trial saat offline atau sebelum respons VPS tiba.
+  static Future<void> establishVerifiedWebUser(String email,
+      {String? displayName}) async {
     final cleanEmail = email.trim().toLowerCase();
     if (cleanEmail.isEmpty) return;
+    final uid = 'web_$cleanEmail';
+    final prevUid = _activeWebUser?.uid;
     final isVip = UserModel.isVipEmail(cleanEmail);
-    final user = UserModel(
-      uid: 'web_$cleanEmail',
-      name: displayName ?? cleanEmail.split('@').first,
-      email: cleanEmail,
-      photoUrl: '',
-      plan: isVip ? 'vip' : AppConstants.planTrial,
-      questionsUsed: 0,
-      isVip: isVip,
-    );
-    _activeWebUser = user;
+
+    final cached = await _getCachedUser(uid);
+    final UserModel resolvedUser;
+    if (cached != null) {
+      resolvedUser = UserModel(
+        uid: uid,
+        name: cached.name.isNotEmpty
+            ? cached.name
+            : (displayName ?? cleanEmail.split('@').first),
+        email: cleanEmail,
+        photoUrl: cached.photoUrl,
+        plan: isVip ? 'vip' : cached.plan,
+        questionsUsed: cached.questionsUsed,
+        subscriptionExpiry: cached.subscriptionExpiry,
+        entitlements: cached.entitlements,
+        isVip: cached.isVip || isVip,
+      );
+    } else {
+      resolvedUser = UserModel(
+        uid: uid,
+        name: displayName ?? cleanEmail.split('@').first,
+        email: cleanEmail,
+        photoUrl: '',
+        plan: isVip ? 'vip' : AppConstants.planTrial,
+        questionsUsed: 0,
+        isVip: isVip,
+      );
+    }
+
+    _activeWebUser = resolvedUser;
     _activeWebUserEmail = cleanEmail;
-    _userCache[user.uid] = user;
-    try {
-      final snap = await FirebaseFirestore.instance
-          .collection(AppConstants.colUsers)
-          .where('email', isEqualTo: cleanEmail)
-          .limit(1)
-          .get()
-          .timeout(const Duration(seconds: 3));
-      if (snap.docs.isNotEmpty) {
-        final firestoreUser = UserModel.fromFirestore(snap.docs.first);
-        _activeWebUser = firestoreUser;
-        _userCache[user.uid] = firestoreUser;
-        _userCache[firestoreUser.uid] = firestoreUser;
-      } else {
-        final cached = await _getCachedUser(user.uid);
-        if (cached != null) {
-          _activeWebUser = cached;
-          _userCache[user.uid] = cached;
-        }
-      }
-    } catch (_) {}
-    final resolvedUser = _activeWebUser ?? user;
+    _userCache[uid] = resolvedUser;
     AuthService()._setLogoutRequested(false);
-    _sessionUidController.add(resolvedUser.uid);
+    if (prevUid != uid) {
+      _sessionUidController.add(uid);
+    }
+    _webUserUpdates.add(resolvedUser);
     unawaited(syncUserStatusWithVps(cleanEmail));
     try {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setBool(explicitLogoutKey, false);
       await prefs.setBool('web_session_active', true);
-      await prefs.setString('current_user_uid', resolvedUser.uid);
-      await prefs.setString(PersistentGoogleSession.verifiedOwnerKey, cleanEmail);
+      await prefs.setString('current_user_uid', uid);
+      await prefs.setString(
+          PersistentGoogleSession.verifiedOwnerKey, cleanEmail);
       await prefs.setString(webSessionOwnerKey, cleanEmail);
       await prefs.setString('google_session_email', cleanEmail);
       await prefs.setString('notebook_google_email', cleanEmail);
       await prefs.setString(
-          'openturath_cached_user_${user.uid}',
-          jsonEncode(resolvedUser.toJsonMap()));
-      if (resolvedUser.uid != user.uid) {
-        await prefs.setString(
-            'openturath_cached_user_${resolvedUser.uid}',
-            jsonEncode(resolvedUser.toJsonMap()));
-      }
+          'openturath_cached_user_$uid', jsonEncode(resolvedUser.toJsonMap()));
     } catch (_) {}
   }
 
   /// Menetapkan hak akses aktif (misal dari penukaran voucher atau verifikasi langganan VPS)
   static Future<void> applyActiveGrant(
     String email, {
-    required DateTime expiry,
+    DateTime? expiry,
     String? planTitle,
     String? agentId,
     int? durationDays,
     Map<String, ModuleEntitlement>? customEntitlements,
     bool isPaidSubscription = false,
     bool replaceEntitlements = false,
+    bool isVipOverride = false,
   }) async {
     final cleanEmail = email.trim().toLowerCase();
     if (cleanEmail.isEmpty) return;
-    final isVip = UserModel.isVipEmail(cleanEmail);
-    final isAll = agentId == null ||
-        agentId.isEmpty ||
-        agentId == 'all_access' ||
-        agentId == 'all_ai' ||
-        agentId == 'all_specialists';
+    final isVip = isVipOverride || UserModel.isVipEmail(cleanEmail);
+    final cleanAgentId = (agentId ?? '').trim().toLowerCase();
+    final isAllSpecialists = cleanAgentId == 'all_specialists' ||
+        cleanAgentId == 'all_disciplines';
+    final isAll = !isAllSpecialists &&
+        (cleanAgentId.isEmpty ||
+            cleanAgentId == 'all_access' ||
+            cleanAgentId == 'all_ai');
 
     // Pertahankan hak akses modul lain yang masih aktif, kecuali saat sinkronisasi
     // penuh dari VPS yang membawa daftar entitlement otoritatif terbaru.
     final existingEntitlements = replaceEntitlements
         ? const <String, ModuleEntitlement>{}
-        : Map<String, ModuleEntitlement>.from(
-            _activeWebUser?.entitlements ?? _userCache['web_$cleanEmail']?.entitlements ?? {});
+        : Map<String, ModuleEntitlement>.from(_activeWebUser?.entitlements ??
+            _userCache['web_$cleanEmail']?.entitlements ??
+            {});
 
     final entMap = <String, ModuleEntitlement>{
       ...existingEntitlements,
       if (customEntitlements != null && customEntitlements.isNotEmpty)
         ...customEntitlements
-      else if (isAll) ...{
+      else if (isAllSpecialists && expiry != null) ...{
+        'all_specialists': ModuleEntitlement(
+          plan: isPaidSubscription ? 'all_specialists' : 'trial',
+          status: 'active',
+          expiry: expiry,
+          startedAt: DateTime.now(),
+          trialDurationDays: durationDays,
+          paymentStatus: isPaidSubscription ? 'paid' : 'none',
+        ),
+      } else if (isAll && expiry != null) ...{
         'all_access': ModuleEntitlement(
           plan: isPaidSubscription ? 'all_access' : 'trial',
           status: 'active',
@@ -796,8 +812,8 @@ class AuthService {
           trialDurationDays: durationDays,
           paymentStatus: isPaidSubscription ? 'paid' : 'none',
         ),
-      } else ...{
-        agentId: ModuleEntitlement(
+      } else if (cleanAgentId.isNotEmpty && expiry != null) ...{
+        cleanAgentId: ModuleEntitlement(
           plan: isPaidSubscription ? 'tholib_1m' : 'trial',
           status: 'active',
           expiry: expiry,
@@ -810,10 +826,13 @@ class AuthService {
 
     final effectivePlan = isVip
         ? 'vip'
-        : (isPaidSubscription
-            ? (agentId ?? 'tholib_1m')
-            : (isAll ? 'all_ai' : 'trial'));
+        : isAllSpecialists
+            ? 'all_specialists'
+            : (isPaidSubscription
+                ? (cleanAgentId.isNotEmpty ? cleanAgentId : 'tholib_1m')
+                : (isAll ? 'all_ai' : 'trial'));
 
+    final prevUid = _activeWebUser?.uid;
     final existingUid = (_activeWebUser != null &&
             _activeWebUser!.email.trim().toLowerCase() == cleanEmail)
         ? _activeWebUser!.uid
@@ -840,12 +859,15 @@ class AuthService {
     _userCache[user.uid] = user;
     _userCache['web_$cleanEmail'] = user;
     await _cacheUserLocally(user, isCurrent: () => true);
-    _sessionUidController.add(user.uid);
+    if (prevUid != user.uid) {
+      _sessionUidController.add(user.uid);
+    }
+    _webUserUpdates.add(user);
 
     try {
       final prefs = await SharedPreferences.getInstance();
-      await prefs.setString(
-          'openturath_cached_user_web_$cleanEmail', jsonEncode(user.toJsonMap()));
+      await prefs.setString('openturath_cached_user_web_$cleanEmail',
+          jsonEncode(user.toJsonMap()));
     } catch (_) {}
   }
 
@@ -853,9 +875,12 @@ class AuthService {
   static Future<void> revokeActiveGrant(String email) async {
     final cleanEmail = email.trim().toLowerCase();
     if (cleanEmail.isEmpty) return;
-    final isVip = UserModel.isVipEmail(cleanEmail);
+    final isVip = UserModel.isVipEmail(cleanEmail) ||
+        (_activeWebUser?.email.trim().toLowerCase() == cleanEmail &&
+            _activeWebUser?.isVip == true);
     if (isVip) return; // Sakral Rule 5: Hak prerogatif VIP tidak pernah dicabut
 
+    final prevUid = _activeWebUser?.uid;
     final existingUid = (_activeWebUser != null &&
             _activeWebUser!.email.trim().toLowerCase() == cleanEmail)
         ? _activeWebUser!.uid
@@ -883,7 +908,10 @@ class AuthService {
     _userCache[user.uid] = user;
     _userCache['web_$cleanEmail'] = user;
     await _cacheUserLocally(user, isCurrent: () => true);
-    _sessionUidController.add(user.uid);
+    if (prevUid != user.uid) {
+      _sessionUidController.add(user.uid);
+    }
+    _webUserUpdates.add(user);
 
     try {
       final prefs = await SharedPreferences.getInstance();
@@ -899,10 +927,15 @@ class AuthService {
   static Future<void> syncUserStatusWithVps(String email) async {
     final cleanEmail = email.trim().toLowerCase();
     if (cleanEmail.isEmpty) return;
+    final generation = _authActionGeneration;
     try {
       String? idToken;
       try {
-        idToken = await FirebaseAuth.instance.currentUser?.getIdToken();
+        if (Firebase.apps.isNotEmpty) {
+          idToken = await FirebaseAuth.instance.currentUser
+              ?.getIdToken()
+              .timeout(const Duration(seconds: 3), onTimeout: () => null);
+        }
       } catch (_) {}
       final headers = <String, String>{
         'Accept': 'application/json',
@@ -910,62 +943,111 @@ class AuthService {
         if (idToken != null && idToken.isNotEmpty)
           'Authorization': 'Bearer $idToken',
       };
-      final res = await http.get(
-        Uri.parse('https://maktabah.openturath.id/api/user-status?email=${Uri.encodeQueryComponent(cleanEmail)}'),
-        headers: headers,
-      ).timeout(const Duration(seconds: 4));
+      final res = await http
+          .get(
+            Uri.parse(
+                'https://maktabah.openturath.id/api/user-status?email=${Uri.encodeQueryComponent(cleanEmail)}'),
+            headers: headers,
+          )
+          .timeout(const Duration(seconds: 10));
+      // Abaikan hasil sinkronisasi basi bila pengguna sudah logout atau ganti akun.
+      if (generation != _authActionGeneration) return;
+      if (_activeWebUserEmail != null && _activeWebUserEmail != cleanEmail) {
+        return;
+      }
       if (res.statusCode == 200) {
         final data = jsonDecode(res.body);
         if (data is Map && data['success'] == true) {
           final hasActive = data['hasActiveAccess'] == true;
-          final isVip = data['isVip'] == true || UserModel.isVipEmail(cleanEmail);
-          if (hasActive) {
-            final expiryStr = data['expiryIso']?.toString();
-            final expiry = expiryStr != null ? DateTime.tryParse(expiryStr) : null;
-            final planTitle = data['serviceTitle']?.toString();
-            final plan = data['plan']?.toString() ?? 'all_ai';
+          final isVip =
+              data['isVip'] == true || UserModel.isVipEmail(cleanEmail);
+          final expiryStr = data['expiryIso']?.toString();
+          final expiry =
+              expiryStr != null ? DateTime.tryParse(expiryStr) : null;
+          final planTitle = data['serviceTitle']?.toString();
+          final rawPlan = (data['plan']?.toString() ?? '').trim().toLowerCase();
 
-            final rawEnt = data['entitlements'];
-            Map<String, ModuleEntitlement>? granularEntitlements;
-            if (rawEnt is Map && rawEnt.isNotEmpty) {
-              granularEntitlements = <String, ModuleEntitlement>{};
-              rawEnt.forEach((key, val) {
-                if (val is Map) {
-                  final p = val['plan']?.toString() ?? 'tholib_1m';
-                  final st = val['status']?.toString() ?? 'active';
-                  final expStr = val['expiry']?.toString();
-                  final exp = expStr != null ? DateTime.tryParse(expStr) : null;
-                  final startStr = val['startsAt']?.toString();
-                  final startedAt = startStr != null ? DateTime.tryParse(startStr) : null;
-                  final kind = val['kind']?.toString() ?? 'payment';
-                  final src = val['source']?.toString();
+          final rawEnt = data['entitlements'];
+          Map<String, ModuleEntitlement>? granularEntitlements;
+          if (rawEnt is Map && rawEnt.isNotEmpty) {
+            granularEntitlements = <String, ModuleEntitlement>{};
+            rawEnt.forEach((key, val) {
+              if (val is Map) {
+                final p = val['plan']?.toString() ?? 'tholib_1m';
+                final st = val['status']?.toString() ?? 'active';
+                final expStr = val['expiry']?.toString();
+                final exp = expStr != null ? DateTime.tryParse(expStr) : null;
+                final startStr = val['startsAt']?.toString();
+                final startedAt =
+                    startStr != null ? DateTime.tryParse(startStr) : null;
+                final kind = val['kind']?.toString() ?? 'payment';
+                final src = val['source']?.toString();
 
-                  granularEntitlements![key.toString()] = ModuleEntitlement(
-                    plan: p,
-                    status: st,
-                    expiry: exp,
-                    startedAt: startedAt,
-                    sourceTransactionId: src,
-                    paymentStatus: kind == 'payment' ? 'paid' : 'none',
-                  );
-                }
-              });
+                granularEntitlements![key.toString()] = ModuleEntitlement(
+                  plan: p,
+                  status: st,
+                  expiry: exp,
+                  startedAt: startedAt,
+                  sourceTransactionId: src,
+                  paymentStatus: kind == 'payment' ? 'paid' : 'none',
+                );
+              }
+            });
+          }
+
+          final hasPaid = granularEntitlements?.values
+                  .any((e) => e.paymentStatus == 'paid') ??
+              false;
+
+          String resolvedPlan = rawPlan;
+          if (resolvedPlan.isEmpty &&
+              granularEntitlements != null &&
+              granularEntitlements.isNotEmpty) {
+            if (granularEntitlements.containsKey('all_access') ||
+                granularEntitlements.containsKey('all_ai')) {
+              resolvedPlan = 'all_ai';
+            } else if (granularEntitlements.containsKey('all_specialists') ||
+                granularEntitlements.containsKey('all_disciplines')) {
+              resolvedPlan = 'all_specialists';
+            } else {
+              resolvedPlan = granularEntitlements.keys.first;
             }
+          }
 
-            final hasPaid = granularEntitlements?.values.any((e) => e.paymentStatus == 'paid') ?? false;
-
-            if (expiry != null && expiry.isAfter(DateTime.now())) {
+          if (isVip) {
+            await applyActiveGrant(
+              cleanEmail,
+              expiry: expiry,
+              planTitle: planTitle,
+              agentId: resolvedPlan.isNotEmpty ? resolvedPlan : null,
+              customEntitlements: granularEntitlements,
+              isPaidSubscription: hasPaid,
+              replaceEntitlements: granularEntitlements != null,
+              isVipOverride: true,
+            );
+          } else if (hasActive) {
+            final hasValidGranular = granularEntitlements != null &&
+                granularEntitlements.values
+                    .any((e) => e.isActive && e.isPremium);
+            if ((expiry != null && expiry.isAfter(DateTime.now())) ||
+                hasValidGranular) {
               await applyActiveGrant(
                 cleanEmail,
                 expiry: expiry,
                 planTitle: planTitle,
-                agentId: plan == 'all_ai' || plan == 'all_access' ? 'all_ai' : plan,
+                agentId: (resolvedPlan == 'all_ai' ||
+                        resolvedPlan == 'all_access')
+                    ? 'all_ai'
+                    : (resolvedPlan == 'all_specialists' ||
+                            resolvedPlan == 'all_disciplines')
+                        ? 'all_specialists'
+                        : (resolvedPlan.isNotEmpty ? resolvedPlan : null),
                 customEntitlements: granularEntitlements,
                 isPaidSubscription: hasPaid,
                 replaceEntitlements: granularEntitlements != null,
               );
             }
-          } else if (!isVip) {
+          } else {
             await revokeActiveGrant(cleanEmail);
           }
         }
@@ -1014,6 +1096,7 @@ class AuthService {
       if (owner == current && verifiedOwner == current) {
         await PersistentGoogleSession.instance.restoreSessionIfAvailable(current);
       } else {
+        PersistentGoogleSession.instance.invalidateLiveSessionCache();
         await prefs.setBool('google_session_ready', false);
       }
     } catch (_) {}
@@ -1070,6 +1153,10 @@ class AuthService {
     } catch (_) {}
 
     try {
+      await AgentService.clearAssignedUrlCache();
+    } catch (_) {}
+
+    try {
       if (kIsWeb || defaultTargetPlatform != TargetPlatform.windows) {
         await _googleSignIn.signOut();
       }
@@ -1114,6 +1201,28 @@ class AuthService {
   Future<void> deleteAccount() async {
     final user = currentUser;
     if (user == null || user.isAnonymous) {
+      // Pada arsitektur 1-login WebView, pengguna mungkin terautentikasi melalui
+      // sesi web Google tanpa akun Firebase Auth aktif. Bersihkan seluruh data
+      // lokal dan sesi WebView secara tuntas.
+      if (_providedAuth == null &&
+          _activeWebUser != null &&
+          !_logoutRequested) {
+        final webUid = _activeWebUser!.uid;
+        _authActionGeneration++;
+        _setLogoutRequested(true);
+        try {
+          final prefs = await SharedPreferences.getInstance();
+          await prefs.setBool(explicitLogoutKey, true);
+          for (final key in prefs.getKeys().toList()) {
+            if (key.startsWith('openturath_${webUid}_') ||
+                key == 'openturath_cached_user_$webUid') {
+              await prefs.remove(key);
+            }
+          }
+        } catch (_) {}
+        await _prepareLocalSignOut(webUid);
+        return;
+      }
       throw FirebaseAuthException(code: 'requires-recent-login');
     }
     final generation = ++_authActionGeneration;
@@ -1188,6 +1297,10 @@ class AuthService {
     AgentSessionManager.instance.closeAll();
     try {
       await PersistentGoogleSession.instance.clearOnSignOut();
+    } catch (_) {}
+
+    try {
+      await AgentService.clearAssignedUrlCache();
     } catch (_) {}
 
     // 4. Bersihkan ONLY preferensi spesifik user UID ini (F08 & F41: dilarang prefs.clear())

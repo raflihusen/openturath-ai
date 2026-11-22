@@ -1,6 +1,8 @@
 import 'app_copy.dart';
 import 'app_config.dart';
+import 'entitlement_keys.dart';
 import 'localization.dart';
+import '../models/agent_model.dart';
 import '../models/user_model.dart';
 
 enum MembershipPassState {
@@ -117,22 +119,37 @@ MembershipPassSummary resolveMembershipPass(UserModel? user, {DateTime? now}) {
     );
   }
 
+  bool isFullAllKey(String k) => k == 'all_access' || k == 'all_ai';
+  bool isSpecialistsBundleKey(String k) =>
+      k == 'all_specialists' || k == 'all_disciplines';
+  bool isAnyAllKey(String k) => isFullAllKey(k) || isSpecialistsBundleKey(k);
+
   final paid = active.where((entry) =>
       entry.value.paymentStatus == 'paid' ||
       (entry.value.plan != 'trial' && entry.value.status != 'trial')).toList();
 
   final List<MapEntry<String, ModuleEntitlement>> selected;
   if (paid.isNotEmpty) {
-    // Dahulukan paket berbayar di atas voucher coba
-    final paidAll = paid.where((entry) =>
-        entry.key == 'all_access' ||
-        entry.key == 'all_ai' ||
-        entry.key == 'all_specialists').toList();
-    selected = paidAll.isNotEmpty ? paidAll : paid;
+    // Dahulukan paket berbayar di atas voucher coba.
+    // Bila pengguna memegang Semua AI (all_specialists) DAN Fikih Tahawwulat,
+    // pertahankan keduanya agar rincian akses dan tanggal kedaluwarsa terdekat akurat.
+    final paidFullAll = paid.where((e) => isFullAllKey(e.key)).toList();
+    final paidSpecialists =
+        paid.where((e) => isSpecialistsBundleKey(e.key)).toList();
+    if (paidFullAll.isNotEmpty) {
+      selected = paidFullAll;
+    } else if (paidSpecialists.isNotEmpty) {
+      final paidTahawwulat = paid
+          .where((e) =>
+              e.key == 'fiqh_tahawwulat' ||
+              entitlementKeys[e.key] == 'fiqh_tahawwulat')
+          .toList();
+      selected = [...paidSpecialists, ...paidTahawwulat];
+    } else {
+      selected = paid;
+    }
   } else {
-    final all = active
-        .where((entry) => entry.key == 'all_access' || entry.key == 'all_ai')
-        .toList();
+    final all = active.where((entry) => isAnyAllKey(entry.key)).toList();
     selected = all.isNotEmpty ? all : active;
   }
 
@@ -146,27 +163,32 @@ MembershipPassSummary resolveMembershipPass(UserModel? user, {DateTime? now}) {
       .toList()
     ..sort();
   final expiry = expiries.isEmpty ? null : expiries.first;
-  final hasSelectedAll = selected.any((entry) =>
-      entry.key == 'all_access' ||
-      entry.key == 'all_ai' ||
-      entry.key == 'all_specialists');
-  final activeSpecificCount = active
-      .where((entry) =>
-          entry.key != 'all_access' &&
-          entry.key != 'all_ai' &&
-          entry.key != 'all_specialists')
-      .length;
-  final hasCollapsedAllEntry = active.any((entry) =>
-      entry.key == 'all_access' ||
-      entry.key == 'all_ai' ||
-      entry.key == 'all_specialists');
+  final hasSelectedFullAll = selected.any((entry) => isFullAllKey(entry.key));
+  final hasSelectedSpecialists =
+      selected.any((entry) => isSpecialistsBundleKey(entry.key));
+  final hasSelectedTahawwulat = selected.any((entry) =>
+      entry.key == 'fiqh_tahawwulat' ||
+      entitlementKeys[entry.key] == 'fiqh_tahawwulat');
+  final activeSpecificCount =
+      active.where((entry) => !isAnyAllKey(entry.key)).length;
+  final hasCollapsedAllEntry = active.any((entry) => isAnyAllKey(entry.key));
   final visibleActiveCount =
       activeSpecificCount + (hasCollapsedAllEntry ? 1 : 0);
-  final accessLabel = hasSelectedAll
-      ? AppCopy.allAssistantsAvailable
-      : (visibleActiveCount == 1
-          ? _singleModuleTitle(selected.first.key)
-          : AppCopy.assistantsAvailableCount(visibleActiveCount));
+  final String accessLabel;
+  if (hasSelectedFullAll ||
+      (hasSelectedSpecialists && hasSelectedTahawwulat)) {
+    accessLabel = AppCopy.allAssistantsAvailable;
+  } else if (hasSelectedSpecialists) {
+    accessLabel = Loc.isArabic
+        ? 'جميع الذكاءات · باستثناء فقه التحولات'
+        : (Loc.language == 'en'
+            ? 'All AIs · Excl. Fiqh Tahawwulat'
+            : 'Semua AI · Kecuali Fikih Tahawwulat');
+  } else if (visibleActiveCount == 1) {
+    accessLabel = _singleModuleTitle(selected.first.key);
+  } else {
+    accessLabel = AppCopy.assistantsAvailableCount(visibleActiveCount);
+  }
   if (isPermanent) {
     return MembershipPassSummary(
         state: MembershipPassState.permanent,
@@ -226,7 +248,8 @@ MembershipPassSummary _base(
     );
 
 String _singleModuleTitle(String key) {
-  final base = switch (key) {
+  final canonical = entitlementKeys[key] ?? key;
+  final base = switch (canonical) {
     'fiqh_tahawwulat' => Loc.text('Fikih Tahawwulat'),
     'fiqh_syafii' => Loc.text("Fikih Syafi'i"),
     'fiqh_hanafi' => Loc.text('Fikih Hanafi'),
@@ -234,23 +257,33 @@ String _singleModuleTitle(String key) {
     'fiqh_hanbali' || 'fiqh_hambali' => Loc.text('Fikih Hanbali'),
     'fiqh_muqaran' => Loc.text('Perbandingan Mazhab'),
     'fiqh' || 'fatawa_masail' => Loc.text('Fatawa & Masail Fiqhiyyah'),
-    'ushul_fiqh' || 'qawaid_fiqhiyyah' => Loc.text('Ushul & Kaidah Fikih'),
+    'ushul_fiqh' || 'qawaid_fiqhiyyah' => Loc.text('Usul & Kaidah Fikih'),
     'nahwu' || 'nahwu_sharaf' || 'bahasa_arab' => Loc.text('Bahasa Arab'),
     'tafsir' => Loc.text("Tafsir Al-Qur'an"),
     'tajwid_qiraat' => Loc.text("Tajwid & Qira'at"),
     'hadits' => Loc.text('Hadis Nabawi'),
-    'musthalah_hadits' => Loc.text('Ilmu Hadits'),
-    'syarah_hadits' => Loc.text('Syarah Hadits'),
-    'aqidah' => Loc.text('Akidah & Ushuluddin'),
+    'musthalah_hadits' => Loc.text('Ilmu Hadis'),
+    'syarah_hadits' => Loc.text('Syarah Hadis'),
+    'aqidah' => Loc.text('Akidah & Usuluddin'),
     'tarikh' => Loc.text('Sejarah & Sirah'),
     'thabaqat_rijal' => Loc.text('Rijal & Biografi Ulama'),
     'tasawwuf' => Loc.text('Tasawuf & Adzkar'),
     'habib_umar' => Loc.text('Habib Umar bin Hafizh'),
     'imam_ghazali' => Loc.text('Imam Al-Ghazali'),
     'bibliografi_faharis' => Loc.text('Bibliografi & Faharis'),
-    _ => AppCopy.allAssistantsAvailable,
+    _ => '',
   };
-  if (base == AppCopy.allAssistantsAvailable) return base;
-  return Loc.isArabic ? base : (base.startsWith('AI ') ? base : 'AI $base');
+  if (base.isNotEmpty) {
+    return Loc.isArabic ? base : (base.startsWith('AI ') ? base : 'AI $base');
+  }
+  for (final agent in AgentModel.defaultAgents) {
+    if (agent.id == key || agent.id == canonical) {
+      final t = Loc.text(agent.title);
+      return Loc.isArabic ? t : (t.startsWith('AI ') ? t : 'AI $t');
+    }
+  }
+  return Loc.isArabic
+      ? 'مساعد الذكاء الاصطناعي'
+      : (Loc.language == 'en' ? 'AI Assistant' : 'Asisten AI');
 }
 

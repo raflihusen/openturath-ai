@@ -120,6 +120,7 @@ class DesktopAuthGateway {
     final verifier = _randomUrlSafe(48);
     final redirectUri = 'http://127.0.0.1:${server.port}/oauth2callback';
 
+    var handled = false;
     late final StreamSubscription<HttpRequest> sub;
     sub = server.listen((request) async {
       if (request.method != 'GET' || request.uri.path != '/oauth2callback') {
@@ -136,14 +137,20 @@ class DesktopAuthGateway {
         await request.response.close();
       }
 
+      if (handled) {
+        await reply(true, Loc.tr('authPageLinked'));
+        return;
+      }
       if (query['state'] != state) {
         request.response.statusCode = HttpStatus.forbidden;
         await reply(false, Loc.tr('authPageBadState'));
         return;
       }
       if (query['error'] != null) {
+        handled = true;
         await reply(false, Loc.tr('authPageCancelled'));
         if (!completer.isCompleted) completer.complete(null);
+        _scheduleServerShutdown(server);
         return;
       }
       final code = query['code'];
@@ -152,6 +159,7 @@ class DesktopAuthGateway {
         await reply(false, Loc.tr('authPageNoCode'));
         return;
       }
+      handled = true;
       try {
         final tokens = await (tokenExchange ?? _exchangeCode)({
           'code': code,
@@ -183,7 +191,7 @@ class DesktopAuthGateway {
         await reply(false, Loc.tr('authPageError'));
         if (!completer.isCompleted) completer.completeError(e);
       } finally {
-        _scheduleServerShutdown();
+        _scheduleServerShutdown(server);
       }
     });
 
@@ -205,7 +213,13 @@ class DesktopAuthGateway {
       }
     } catch (e) {
       await sub.cancel();
-      await cancel();
+      if (identical(_activeServer, server)) {
+        await cancel();
+      } else {
+        try {
+          await server.close(force: true);
+        } catch (_) {}
+      }
       throw PlatformException(
         code: 'browser_launch_failed',
         message:
@@ -214,16 +228,20 @@ class DesktopAuthGateway {
     }
 
     return completer.future.timeout(timeout, onTimeout: () {
-      cancel();
+      if (identical(_activeCompleter, completer)) {
+        cancel();
+      }
       return null;
     }).whenComplete(() {
       sub.cancel();
-      _scheduleServerShutdown();
+      _scheduleServerShutdown(server);
     });
   }
 
   /// Membatalkan sesi otorisasi aktif dan menutup server socket lokal.
   static Future<void> cancel() async {
+    _shutdownTimer?.cancel();
+    _shutdownTimer = null;
     if (_activeCompleter != null && !_activeCompleter!.isCompleted) {
       _activeCompleter!.complete(null);
     }
@@ -241,16 +259,24 @@ class DesktopAuthGateway {
   /// Menutup server sesi yang sedang berjalan saat ini saja. Timer lama
   /// dibatalkan dan terikat pada instance asalnya, sehingga sesi baru yang
   /// dimulai dalam 500 ms tidak ikut tertutup.
-  static void _scheduleServerShutdown() {
-    final server = _activeServer;
-    _shutdownTimer?.cancel();
-    _shutdownTimer = Timer(const Duration(milliseconds: 500), () {
-      if (server == null) return;
-      try {
-        server.close(force: true);
-      } catch (_) {}
-      if (identical(_activeServer, server)) _activeServer = null;
-    });
+  static void _scheduleServerShutdown([HttpServer? target]) {
+    final server = target ?? _activeServer;
+    if (server == null) return;
+    if (identical(_activeServer, server)) {
+      _shutdownTimer?.cancel();
+      _shutdownTimer = Timer(const Duration(milliseconds: 500), () {
+        try {
+          server.close(force: true);
+        } catch (_) {}
+        if (identical(_activeServer, server)) _activeServer = null;
+      });
+    } else {
+      Timer(const Duration(milliseconds: 500), () {
+        try {
+          server.close(force: true);
+        } catch (_) {}
+      });
+    }
   }
 
   static String _resultPage(bool ok, String message) {

@@ -36,28 +36,39 @@ class PersistentGoogleSession {
   /// ditulis setelah identitas WebView diverifikasi oleh alur koneksi Google.
   static const String verifiedOwnerKey = 'webview_session_owner_verified_v1';
 
-  /// Cookie sesi hidup, dibaca paralel lintas domain tanpa mengubah apa pun.
-  Future<bool> hasLiveSession(InAppWebViewController? controller) async {
+  /// Cookie sesi hidup dalam 3 status:
+  /// - `true`: cookie sesi Google ditemukan.
+  /// - `false`: pembacaan cookie berhasil namun sesi Google tidak ditemukan.
+  /// - `null`: seluruh pembacaan cookie gagal/timeout sehingga status tidak dapat dipastikan.
+  Future<bool?> hasLiveSessionTriState(
+      InAppWebViewController? controller) async {
     final cookieManager = DesktopWebViewRuntime.cookies;
     const sessionNames = {'SID', '__Secure-1PSID', '__Secure-3PSID'};
     final urls = [
       WebUri(NotebookNavigation.canonicalOrigin),
       WebUri('https://accounts.google.com'),
     ];
-    final results = await Future.wait<bool>(urls.map((url) async {
+    var anyReadSucceeded = false;
+    for (final url in urls) {
       try {
         final cookies = await cookieManager
             .getCookies(url: url, webViewController: controller)
             .timeout(const Duration(seconds: 4));
-        return cookies.any((c) =>
+        anyReadSucceeded = true;
+        final live = cookies.any((c) =>
             sessionNames.contains(c.name) &&
             (c.value?.toString().isNotEmpty ?? false));
+        if (live) return true;
       } catch (_) {
-        return false;
+        // Lanjut ke domain berikutnya; jika semua gagal kembalikan null.
       }
-    }));
-    return results.any((live) => live);
+    }
+    return anyReadSucceeded ? false : null;
   }
+
+  /// Cookie sesi hidup, dibaca tanpa mengubah apa pun (Aturan Sakral #8).
+  Future<bool> hasLiveSession(InAppWebViewController? controller) async =>
+      (await hasLiveSessionTriState(controller)) == true;
 
   Future<void> _dropLegacyVault(SharedPreferences prefs) async {
     if (prefs.containsKey(_legacyVaultKey)) await prefs.remove(_legacyVaultKey);
@@ -109,12 +120,6 @@ class PersistentGoogleSession {
     final epoch = _ownershipEpoch;
     final cleanEmail = email.trim().toLowerCase();
     if (cleanEmail.isEmpty) return false;
-    // Fast-path dalam sesi aplikasi yang sama bila cookie sudah terverifikasi hidup.
-    if (_cachedLiveEmail == cleanEmail &&
-        _cachedLiveEpoch == epoch &&
-        _cachedVerifiedOwner == cleanEmail) {
-      return true;
-    }
     try {
       final prefs = await SharedPreferences.getInstance();
       await _dropLegacyVault(prefs);
@@ -124,8 +129,18 @@ class PersistentGoogleSession {
       final verifiedOwner =
           (prefs.getString(verifiedOwnerKey) ?? '').trim().toLowerCase();
       if (savedOwner != cleanEmail || verifiedOwner != cleanEmail) {
+        invalidateLiveSessionCache();
         await prefs.setBool(_readyKey, false);
         return false;
+      }
+
+      // Fast-path dalam sesi aplikasi yang sama hanya jika kepemilikan di disk
+      // dan flag ready masih cocok dengan cache in-memory di epoch yang sama.
+      if (prefs.getBool(_readyKey) == true &&
+          _cachedLiveEmail == cleanEmail &&
+          _cachedLiveEpoch == epoch &&
+          _cachedVerifiedOwner == cleanEmail) {
+        return true;
       }
 
       final live = await hasLiveSession(null);
@@ -154,16 +169,21 @@ class PersistentGoogleSession {
   Future<void> establishVerifiedOwner(String email) async {
     final cleanEmail = email.trim().toLowerCase();
     if (cleanEmail.isEmpty) return;
-    _cachedVerifiedOwner = cleanEmail;
-    _cachedLiveEmail = cleanEmail;
-    _cachedLiveEpoch = _ownershipEpoch;
+    final epoch = _ownershipEpoch;
     try {
       final prefs = await SharedPreferences.getInstance();
+      if (epoch != _ownershipEpoch) return;
+      _cachedVerifiedOwner = cleanEmail;
+      _cachedLiveEmail = cleanEmail;
+      _cachedLiveEpoch = epoch;
       await prefs.setString(_ownerKey, cleanEmail);
+      if (epoch != _ownershipEpoch) return;
       await prefs.setString(verifiedOwnerKey, cleanEmail);
-      await prefs.setString('webview_session_owner', cleanEmail);
+      if (epoch != _ownershipEpoch) return;
       await prefs.setString('google_session_email', cleanEmail);
+      if (epoch != _ownershipEpoch) return;
       await prefs.setString('notebook_google_email', cleanEmail);
+      if (epoch != _ownershipEpoch) return;
       await prefs.setBool(_readyKey, true);
     } catch (_) {}
   }
@@ -172,12 +192,15 @@ class PersistentGoogleSession {
   /// saat akun aplikasi berganti. Sesi Google dipilih ulang lewat pemilih akun.
   Future<void> releaseOwnership() async {
     _ownershipEpoch++;
+    _cachedVerifiedOwner = null;
     invalidateLiveSessionCache();
     try {
       final prefs = await SharedPreferences.getInstance();
       await _dropLegacyVault(prefs);
       await prefs.remove(_ownerKey);
       await prefs.remove(verifiedOwnerKey);
+      await prefs.remove('google_session_email');
+      await prefs.remove('notebook_google_email');
       await prefs.setBool(_readyKey, false);
     } catch (_) {}
   }

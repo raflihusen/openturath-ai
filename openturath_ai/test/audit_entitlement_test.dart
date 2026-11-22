@@ -1,5 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:openturath_ai/core/membership_pass_state.dart';
 import 'package:openturath_ai/models/user_model.dart';
+import 'package:openturath_ai/services/auth_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   ModuleEntitlement entitlement({String status = 'active'}) =>
@@ -83,5 +86,76 @@ void main() {
     });
     expect(ordinary.isVip, isFalse);
     expect(ordinary.hasAccessToAgent('hadits'), isFalse);
+  });
+
+  test('all_specialists unlocks non-Tahawwulat disciplines and isolates all 5 Tahawwulat sub-AIs', () {
+    final u = user({
+      'all_specialists': ModuleEntitlement(
+        plan: 'all_specialists_1m',
+        status: 'active',
+        paymentStatus: 'paid',
+        expiry: DateTime.now().add(const Duration(days: 30)),
+      ),
+    });
+    for (final allowed in [
+      'fiqh_syafii',
+      'fiqh_hanafi',
+      'hadits',
+      'tafsir',
+      'nahwu_sharaf',
+      'bibliografi_faharis',
+    ]) {
+      expect(u.hasAccessToAgent(allowed), isTrue, reason: allowed);
+    }
+    for (final isolated in [
+      'fiqh_tahawwulat',
+      'fiqh_tahawwulat_muhaqqiq',
+      'fiqh_tahawwulat_bayan',
+      'fiqh_tahawwulat_khatib',
+      'fiqh_tahawwulat_habib',
+      'fiqh_tahawwulat_mukhtabir',
+      'fikih-tahawwulat-bayan',
+    ]) {
+      expect(u.hasAccessToAgent(isolated), isFalse, reason: isolated);
+    }
+    final pass = resolveMembershipPass(u);
+    expect(pass.badge, 'PRO');
+    expect(pass.accessLabel, contains('Kecuali Fikih Tahawwulat'));
+  });
+
+  test('pending or failed entitlement with future expiry is never active', () {
+    final pending = ModuleEntitlement(
+      plan: 'tholib_1m',
+      status: 'pending',
+      expiry: DateTime.now().add(const Duration(days: 30)),
+    );
+    final failed = ModuleEntitlement(
+      plan: 'tholib_1m',
+      status: 'failed',
+      expiry: DateTime.now().add(const Duration(days: 30)),
+    );
+    expect(pending.isActive, isFalse);
+    expect(failed.isActive, isFalse);
+    expect(user({'hadits': pending}).hasAccessToAgent('hadits'), isFalse);
+  });
+
+  test('applyActiveGrant for all_specialists never leaks all_access or Tahawwulat', () async {
+    addTearDown(AuthService.resetWebSessionForTest);
+    SharedPreferences.setMockInitialValues({});
+    await AuthService.applyActiveGrant(
+      'santri@example.test',
+      expiry: DateTime.now().add(const Duration(days: 30)),
+      agentId: 'all_specialists',
+      isPaidSubscription: true,
+      replaceEntitlements: true,
+    );
+    final cached = AuthService().cachedCurrentUser;
+    expect(cached, isNotNull);
+    expect(cached!.entitlements.containsKey('all_specialists'), isTrue);
+    expect(cached.entitlements.containsKey('all_access'), isFalse);
+    expect(cached.entitlements.containsKey('all_ai'), isFalse);
+    expect(cached.hasAccessToAgent('fiqh_syafii'), isTrue);
+    expect(cached.hasAccessToAgent('fiqh_tahawwulat'), isFalse);
+    expect(cached.hasAccessToAgent('fiqh_tahawwulat_khatib'), isFalse);
   });
 }

@@ -824,7 +824,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
   Future<bool?> _hasGoogleSession() async {
     try {
       return await PersistentGoogleSession.instance
-          .hasLiveSession(_webController);
+          .hasLiveSessionTriState(_webController);
     } catch (_) {
       return null;
     }

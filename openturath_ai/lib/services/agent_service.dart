@@ -11,6 +11,7 @@ import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter/foundation.dart';
 import '../core/notebook_navigation.dart';
 import '../core/canonical_notebook_catalog.dart';
+import '../core/entitlement_keys.dart';
 import '../models/agent_model.dart';
 import '../models/user_model.dart';
 import 'callable_gateway.dart';
@@ -333,6 +334,11 @@ class AgentService {
     bool forceRefresh = false,
     void Function(String freshUrl)? onBackgroundRefresh,
   ]) async {
+    if (virtualBundleAgentIds.contains(agentId.trim().toLowerCase())) {
+      throw const AgentAccessException(
+          'invalid-argument',
+          'Paket bundel tidak dapat dibuka sebagai satu ruang AI tunggal. Silakan pilih bidang keilmuan spesifik.');
+    }
     final effectiveUser = user ??
         (Firebase.apps.isNotEmpty ? AuthService().cachedCurrentUser : null);
     final email = (effectiveUser?.email ??
@@ -402,6 +408,10 @@ class AgentService {
 
       final canonical = CanonicalNotebookCatalog.getUrl(agentId);
       if (canonical != null && canonical.isNotEmpty) {
+        final uri = Uri.tryParse(canonical.trim());
+        if (uri != null && NotebookNavigation.notebook(uri)) {
+          return uri.replace(host: NotebookNavigation.canonicalHost).toString();
+        }
         return canonical;
       }
 

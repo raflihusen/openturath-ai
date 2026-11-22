@@ -20,8 +20,10 @@ import '../widgets/ot_motion_widgets.dart';
 import '../core/design/ot_typography.dart';
 import '../core/design/ot_radius.dart';
 import '../core/design/ot_spacing.dart';
+import '../core/entitlement_keys.dart';
 import '../models/user_model.dart';
 import '../models/agent_model.dart';
+import '../services/agent_service.dart';
 import '../services/auth_service.dart';
 import '../core/navigation_guard.dart';
 import '../core/membership_pass_state.dart';
@@ -47,7 +49,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
     super.initState();
     _loadAppVersion();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final email = AuthService.activeWebUserEmail ?? _authService.currentUser?.email;
+      final email = AuthService.activeWebUserEmail ??
+          _authService.cachedCurrentUser?.email ??
+          _authService.currentUser?.email;
       if (email != null && email.isNotEmpty) {
         AuthService.syncUserStatusWithVps(email);
       }
@@ -211,9 +215,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
             const <MapEntry<String, ModuleEntitlement>>[])
         .where((entry) => summary.agentIds.contains(entry.key))
         .toList();
-    final allAccess = summary.agentIds.contains('all_access') ||
-        summary.agentIds.contains('all_ai') ||
-        summary.agentIds.contains('all_specialists');
+    final hasSpecialistsBundle = summary.agentIds.contains('all_specialists') ||
+        summary.agentIds.contains('all_disciplines');
+    final hasFullAllAccess = summary.agentIds.contains('all_access') ||
+        summary.agentIds.contains('all_ai');
+    final allAccess = hasFullAllAccess || hasSpecialistsBundle;
     final allEntries = (user?.entitlements.entries ??
             const <MapEntry<String, ModuleEntitlement>>[])
         .where((entry) => entry.value.isActive)
@@ -222,8 +228,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
         entry.key != 'all_access' &&
         entry.key != 'all_ai' &&
         entry.key != 'all_specialists' &&
+        entry.key != 'all_disciplines' &&
         (entry.value.paymentStatus == 'paid' || entry.value.plan != 'trial'));
 
+    final activeAgents = AgentService.getActiveAgentsSync();
     final rows = <(String, String)>[];
     if (hasSpecificPaid) {
       for (final entry in allEntries) {
@@ -252,10 +260,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ));
       }
     } else if (allAccess) {
-      final onlySpecialists = summary.agentIds.contains('all_specialists') &&
-          !summary.agentIds.contains('all_access') &&
-          !summary.agentIds.contains('all_ai');
-      for (final agent in AgentModel.defaultAgents) {
+      final onlySpecialists = hasSpecialistsBundle && !hasFullAllAccess;
+      if (onlySpecialists) {
+        final specialistEntry = allEntries.where((e) =>
+            e.key == 'all_specialists' || e.key == 'all_disciplines');
+        final exp = specialistEntry.isNotEmpty
+            ? specialistEntry.first.value.expiry
+            : summary.expiresAt;
+        rows.add((
+          _entitlementTitle('all_specialists'),
+          exp == null
+              ? Loc.tr('activeSubscription')
+              : Loc.tr('expiryDate', [_formatAccessDate(exp)]),
+        ));
+      }
+      for (final agent in activeAgents) {
         if (agent.isComingSoon) continue;
         if (onlySpecialists && agent.id == 'fiqh_tahawwulat') continue;
         rows.add((Loc.text(agent.title), ''));
@@ -337,19 +356,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
       HijriDateUtils.formatMasehiOnly(value.toLocal());
 
   static String _entitlementTitle(String key) {
-    if (key == 'all_specialists' || key == 'all_disciplines') {
+    final normalized = key.trim().toLowerCase();
+    if (normalized == 'all_specialists' || normalized == 'all_disciplines') {
       return Loc.isArabic
           ? 'جميع الذكاءات (باستثناء فقه التحولات)'
           : (Loc.language == 'en'
               ? 'All AIs (excl. Fiqh Tahawwulat)'
               : 'Semua AI (kecuali Fikih Tahawwulat)');
     }
-    if (key == 'all_access' || key == 'all_ai') {
+    if (normalized == 'all_access' || normalized == 'all_ai') {
       return Loc.isArabic
           ? 'جميع الذكاءات'
           : (Loc.language == 'en' ? 'All AIs' : 'Semua AI');
     }
-    final mapped = switch (key) {
+    final canonical = entitlementKeys[key] ??
+        entitlementKeys[normalized] ??
+        normalized;
+    final mapped = switch (canonical) {
       'fiqh_tahawwulat' => 'Fikih Tahawwulat',
       'fiqh_syafii' => "Fikih Syafi'i",
       'fiqh_hanafi' => 'Fikih Hanafi',
@@ -357,13 +380,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
       'fiqh_hanbali' || 'fiqh_hambali' => 'Fikih Hanbali',
       'fiqh_muqaran' => 'Perbandingan Mazhab',
       'fiqh' || 'fatawa_masail' => 'Fatawa & Masail Fiqhiyyah',
-      'ushul_fiqh' || 'qawaid_fiqhiyyah' => 'Ushul & Kaidah Fikih',
+      'ushul_fiqh' || 'qawaid_fiqhiyyah' => 'Usul & Kaidah Fikih',
       'nahwu' || 'nahwu_sharaf' || 'bahasa_arab' => 'Bahasa Arab',
       'tafsir' => "Tafsir Al-Qur'an",
       'tajwid_qiraat' => "Tajwid & Qira'at",
       'hadits' => 'Matan Hadis',
-      'musthalah_hadits' => 'Ilmu Hadits',
-      'syarah_hadits' => 'Syarah Hadits',
+      'musthalah_hadits' => 'Ilmu Hadis',
+      'syarah_hadits' => 'Syarah Hadis',
       'aqidah' => 'Akidah',
       'tarikh' => 'Sejarah & Sirah',
       'thabaqat_rijal' => 'Rijal & Biografi Ulama',
@@ -374,10 +397,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
       _ => '',
     };
     if (mapped.isNotEmpty) return Loc.text(mapped);
-    for (final agent in AgentModel.defaultAgents) {
-      if (agent.id == key) return Loc.text(agent.title);
+    for (final agent in AgentService.getActiveAgentsSync()) {
+      if (agent.id == key || agent.id == canonical) {
+        return Loc.text(agent.title);
+      }
     }
-    return Loc.text(AppCopy.navStudies);
+    return Loc.isArabic
+        ? 'مساعد الذكاء الاصطناعي'
+        : (Loc.language == 'en' ? 'AI Assistant' : 'Asisten AI');
   }
 
   @override
@@ -409,9 +436,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
             final userModel = snapshot.data ?? _authService.cachedCurrentUser;
             final fbUser = _authService.currentUser;
 
+            final defaultName = Loc.isArabic
+                ? 'مستخدم'
+                : (Loc.language == 'en' ? 'User' : 'Pengguna');
             final displayName = userModel?.name.isNotEmpty == true
                 ? userModel!.name
-                : (fbUser?.displayName ?? 'Pengguna');
+                : (fbUser?.displayName ?? defaultName);
             final email = userModel?.email.isNotEmpty == true
                 ? userModel!.email
                 : (fbUser?.email ?? '');
@@ -488,7 +518,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       ),
                                       child: LayoutBuilder(
                                           builder: (context, box) {
-                                        const stacked = false;
+                                        final stacked = box.maxWidth < 240;
                                         final choices = <Widget>[
                                           _buildThemeOption(
                                             stacked: stacked,
@@ -531,7 +561,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                 ThemeMode.dark),
                                           ),
                                         ];
-                                        return Row(children: choices);
+                                        return stacked
+                                            ? Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.stretch,
+                                                children: choices)
+                                            : Row(children: choices);
                                       }),
                                     ),
                                   ],
@@ -1083,12 +1118,7 @@ class _MembershipPass extends StatelessWidget {
                     ])),
                 if (onViewAccess != null) ...[
                   const SizedBox(width: 8),
-                  Icon(
-                      Directionality.of(context) == TextDirection.rtl
-                          ? Icons.chevron_left_rounded
-                          : Icons.chevron_right_rounded,
-                      size: 22,
-                      color: muted),
+                  Icon(Icons.chevron_right_rounded, size: 22, color: muted),
                 ],
               ]),
             ),

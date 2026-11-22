@@ -211,18 +211,15 @@ class _DashboardScreenState extends State<DashboardScreen>
       AppSnackBar.warning(context, Loc.tr('scholarPreparingBody'));
       return;
     }
-    if (!AppConfig.isGuruEdition && agent.isComingSoon) {
+    if (!AppConfig.isGuruEdition &&
+        (agent.isComingSoon ||
+            gateSubAgent(agent.id, FeatureFlagsService.current) ==
+                SubAgentGate.comingSoon)) {
       TahqiqKhazanahDialog.show(context, agent: agent);
       return;
     }
 
-    // Rekam riwayat pembukaan terakhir secara asynchronous di background
-    SharedPreferences.getInstance().then((prefs) {
-      prefs.setString('last_opened_notebook_id', agent.id);
-      if (mounted) setState(() => _lastOpenedAgentId = agent.id);
-    }).catchError((_) {});
-
-    // Cek akses pengguna ke agent (paywall)
+    // Cek akses pengguna ke agent (paywall) sebelum mengubah riwayat terakhir
     final accessAgent = _parentOf(agent) ?? agent;
     if (!AppConfig.isGuruEdition &&
         (user == null || !user.hasAccessToAgent(accessAgent.id))) {
@@ -233,6 +230,12 @@ class _DashboardScreenState extends State<DashboardScreen>
       );
       return;
     }
+
+    // Rekam riwayat pembukaan terakhir secara asynchronous di background
+    SharedPreferences.getInstance().then((prefs) {
+      prefs.setString('last_opened_notebook_id', agent.id);
+      if (mounted) setState(() => _lastOpenedAgentId = agent.id);
+    }).catchError((_) {});
 
     // Buka sesi AI multi-tab secara seketika (0ms delay), atau konfirmasi jika batas tab penuh
     if (!AgentSessionManager.instance.openAgent(agent, user: user)) {
@@ -386,9 +389,15 @@ class _DashboardScreenState extends State<DashboardScreen>
                                 final active = AgentSessionManager
                                     .instance.activeTab?.agent;
                                 final last = _resolveLastOpened();
-                                final fallbackActive = _agents
-                                    .where((a) => a.isActive)
+                                final accessibleActive = _agents
+                                    .where((a) =>
+                                        a.isActive &&
+                                        user.hasAccessToAgent(a.id))
                                     .firstOrNull;
+                                final fallbackActive = accessibleActive ??
+                                    _agents
+                                        .where((a) => a.isActive)
+                                        .firstOrNull;
                                 final target =
                                     (active != null && active.isActive)
                                         ? active

@@ -69,7 +69,10 @@ class _MainShellScreenState extends State<MainShellScreen>
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
-      final email = AuthService.activeWebUserEmail;
+      final auth = AuthService();
+      final email = AuthService.activeWebUserEmail ??
+          auth.cachedCurrentUser?.email ??
+          auth.currentUser?.email;
       if (email != null && email.isNotEmpty) {
         AuthService.syncUserStatusWithVps(email);
       }
