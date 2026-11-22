@@ -668,6 +668,9 @@ void main() {
   testWidgets(
       'Hanafi stays unavailable before and after a stalled catalog times out',
       (tester) async {
+    await AgentService(
+            activeIdsLoader: () async => {'fiqh_tahawwulat', 'fiqh_syafii'})
+        .getAgents(forceRefresh: true);
     final auth = DashboardAuth()
       ..user = TestUser('launch-owner')
       ..cached = profile('launch-owner');
@@ -693,6 +696,9 @@ void main() {
 
   testWidgets('late agent availability updates the dashboard independently',
       (tester) async {
+    await AgentService(
+            activeIdsLoader: () async => {'fiqh_tahawwulat', 'fiqh_syafii'})
+        .getAgents(forceRefresh: true);
     final auth = DashboardAuth()
       ..user = TestUser('launch-owner')
       ..cached = profile('launch-owner');
@@ -715,6 +721,9 @@ void main() {
 
   testWidgets('resuming refreshes availability and ignores older responses',
       (tester) async {
+    await AgentService(
+            activeIdsLoader: () async => {'fiqh_tahawwulat', 'fiqh_syafii'})
+        .getAgents(forceRefresh: true);
     final auth = DashboardAuth()
       ..user = TestUser('launch-owner')
       ..cached = profile('launch-owner');
@@ -743,6 +752,7 @@ void main() {
   testWidgets(
       'late availability survives session restoration without exposing stale identity',
       (tester) async {
+    AgentService.seedActiveIdsForTest({'fiqh_tahawwulat', 'fiqh_syafii'});
     final auth = DashboardAuth()..cached = profile('stale');
     final pending = Completer<Set<String>?>();
     final service = AgentService(activeIdsLoader: () => pending.future);

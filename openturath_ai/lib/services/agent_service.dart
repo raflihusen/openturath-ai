@@ -45,6 +45,13 @@ class AgentService {
     _lastAgentsFetch = null;
   }
 
+  @visibleForTesting
+  static void seedActiveIdsForTest(Set<String> ids) {
+    _lastAppliedGeneration = ++_requestGeneration;
+    _cachedActiveIds = Set<String>.unmodifiable(ids);
+    _lastAgentsFetch = null;
+  }
+
   /// Daftar agen aktif bawaan saat offline/cold-start sebelum /api/v1/config/agents termuat.
   static const defaultLaunchActiveIds = <String>{
     'fiqh_tahawwulat',

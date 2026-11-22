@@ -31,6 +31,7 @@ class UpdateReadyDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Loc.watch(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final surface =
         isDark ? AppTheme.surfaceCardDark : AppTheme.surfaceCardLight;
@@ -55,7 +56,7 @@ class UpdateReadyDialog extends StatelessWidget {
               ),
               insetPadding:
                   const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
-              child: Padding(
+              child: SingleChildScrollView(
                 padding: const EdgeInsets.all(24),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
@@ -161,9 +162,9 @@ class UpdateReadyDialog extends StatelessWidget {
                     ],
 
                     // Tombol Aksi Pasang & Muat Ulang
-                    SizedBox(
-                      width: double.infinity,
-                      height: 46,
+                    ConstrainedBox(
+                      constraints: const BoxConstraints(
+                          minWidth: double.infinity, minHeight: 46),
                       child: FilledButton(
                         onPressed: updateService.isInstalling
                             ? null
@@ -201,9 +202,9 @@ class UpdateReadyDialog extends StatelessWidget {
                     const SizedBox(height: 10),
 
                     // Tombol Nanti Saja
-                    SizedBox(
-                      width: double.infinity,
-                      height: 40,
+                    ConstrainedBox(
+                      constraints: const BoxConstraints(
+                          minWidth: double.infinity, minHeight: 40),
                       child: TextButton(
                         onPressed: updateService.isInstalling
                             ? null

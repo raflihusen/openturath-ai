@@ -15,11 +15,14 @@ void main() {
     tearDown(AgentService.resetCacheForTest);
     testWidgets('late server result updates the cached availability',
         (tester) async {
+      // Seed initial narrowed server whitelist where fiqh_hanafi is locked.
+      await AgentService(activeIdsLoader: () async => {'fiqh_syafii'})
+          .getAgents(forceRefresh: true);
       final pending = Completer<Set<String>?>();
       final service = AgentService(activeIdsLoader: () => pending.future);
       final revision = AgentService.availabilityRevision.value;
       List<AgentModel>? initial;
-      service.getAgents().then((value) => initial = value);
+      service.getAgents(forceRefresh: true).then((value) => initial = value);
       await tester.pump(const Duration(seconds: 4));
       expect(initial!.firstWhere((a) => a.id == 'fiqh_hanafi').isActive, isFalse);
       pending.complete({'fiqh_syafii', 'fiqh_hanafi'});
@@ -80,11 +83,16 @@ void main() {
       expect(activeCopy.isLocked, isFalse);
     });
 
-    test('AgentService getAgents applies default launch whitelist', () async {
-      final service = AgentService();
-      final agents = await service.getAgents();
+    test('AgentService getAgents applies default launch whitelist and dynamic OTA locking', () async {
+      // Default v2.0.0 whitelist exposes all 18 disciplines (including Hanafi, Hadis, Tafsir).
+      final defaultAgents = AgentService.getActiveAgentsSync();
+      expect(defaultAgents.where((a) => a.isActive).map((a) => a.id),
+          containsAll(['fiqh_tahawwulat', 'fiqh_syafii', 'fiqh_hanafi', 'hadits', 'tafsir']));
 
-      // Memastikan hanya Fikih Tahawwulat & Fikih Syafi'i yang berstatus aktif secara default
+      // When OTA config restricts active_agent_ids, non-whitelisted agents lock dynamically.
+      final service = AgentService(
+          activeIdsLoader: () async => {'fiqh_tahawwulat', 'fiqh_syafii'});
+      final agents = await service.getAgents(forceRefresh: true);
       final activeAgents = agents.where((a) => a.isActive).toList();
       final lockedAgents = agents.where((a) => a.isComingSoon).toList();
 
@@ -93,7 +101,6 @@ void main() {
       expect(activeAgents.map((a) => a.id), isNot(contains('fiqh_hanafi')));
       expect(activeAgents.map((a) => a.id), isNot(contains('hadits')));
 
-      // 16 disiplin spesialis lainnya berstatus coming_soon / locked
       expect(lockedAgents.map((a) => a.id), contains('fiqh_hanafi'));
       expect(lockedAgents.map((a) => a.id), contains('fiqh_maliki'));
       expect(lockedAgents.map((a) => a.id), contains('fiqh_hanbali'));
@@ -103,8 +110,11 @@ void main() {
     });
 
     test(
-        'AgentService getActiveAgentsSync matches active whitelist and isolates unreleased agents',
-        () {
+        'AgentService getActiveAgentsSync matches active whitelist and isolates locked agents',
+        () async {
+      await AgentService(
+              activeIdsLoader: () async => {'fiqh_tahawwulat', 'fiqh_syafii'})
+          .getAgents(forceRefresh: true);
       final agents = AgentService.getActiveAgentsSync();
       final active =
           agents.where((a) => a.isActive && !a.isComingSoon).toList();
@@ -113,7 +123,6 @@ void main() {
       expect(active.map((a) => a.id), contains('fiqh_tahawwulat'));
       expect(active.map((a) => a.id), contains('fiqh_syafii'));
 
-      // 16 disiplin unreleased harus berstatus coming_soon / locked
       expect(unreleased.map((a) => a.id), contains('fiqh_hanafi'));
       expect(unreleased.map((a) => a.id), contains('hadits'));
       expect(unreleased.map((a) => a.id), contains('tafsir'));

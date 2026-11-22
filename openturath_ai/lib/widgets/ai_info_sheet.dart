@@ -401,7 +401,11 @@ class _TahawwulatLectureListPageState extends State<TahawwulatLectureListPage> {
       backgroundColor: OTColors.canvas(isDark),
       appBar: AppBar(
           backgroundColor: OTColors.canvas(isDark),
-          title: const Text('Ceramah Fikih Tahawwulat')),
+          title: Text(Loc.isArabic
+              ? 'محاضرات فقه التحولات'
+              : (Loc.language == 'en'
+                  ? 'Fiqh al-Tahawwulat Lectures'
+                  : 'Ceramah Fikih Tahawwulat'))),
       body: !_ready
           ? const Center(child: CircularProgressIndicator())
           : Column(children: [
@@ -409,9 +413,13 @@ class _TahawwulatLectureListPageState extends State<TahawwulatLectureListPage> {
                 padding: const EdgeInsets.fromLTRB(
                     OTSpacing.base, OTSpacing.sm, OTSpacing.base, OTSpacing.sm),
                 child: TextField(
-                  decoration: const InputDecoration(
-                      prefixIcon: Icon(Icons.search_rounded),
-                      hintText: 'Cari judul ceramah'),
+                  decoration: InputDecoration(
+                      prefixIcon: const Icon(Icons.search_rounded),
+                      hintText: Loc.isArabic
+                          ? 'ابحث عن عنوان المحاضرة'
+                          : (Loc.language == 'en'
+                              ? 'Search lecture titles'
+                              : 'Cari judul ceramah')),
                   onChanged: (v) => setState(() => _query = v.trim()),
                 ),
               ),

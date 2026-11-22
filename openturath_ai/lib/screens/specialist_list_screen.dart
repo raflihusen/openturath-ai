@@ -335,8 +335,9 @@ class _SpecialistListScreenState extends State<SpecialistListScreen>
                     child: Column(
                       children: [
                         Container(
-                          height: 44,
-                          padding: const EdgeInsets.symmetric(horizontal: 12),
+                          constraints: const BoxConstraints(minHeight: 44),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: OTSpacing.md, vertical: OTSpacing.xs),
                           decoration: BoxDecoration(
                             color: surface,
                             borderRadius: OTRadius.inputBorder,
@@ -403,7 +404,8 @@ class _SpecialistListScreenState extends State<SpecialistListScreen>
                   // Discipline Filter Chips (only in discipline mode)
                   if (isGeneralTab && _corpusKind == CorpusKind.discipline) ...[
                     SizedBox(
-                      height: Loc.isArabic ? 52 : 40,
+                      height: MediaQuery.textScalerOf(context)
+                          .scale(Loc.isArabic ? 52 : 40),
                       child: ListView(
                         physics: const BouncingScrollPhysics(),
                         scrollDirection: Axis.horizontal,

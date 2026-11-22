@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import '../core/app_copy.dart';
 import '../core/design/ot_colors.dart';
 import '../core/design/ot_motion.dart';
+import '../core/design/ot_radius.dart';
 import '../core/design/ot_typography.dart';
 import '../core/localization.dart';
 import '../core/scholarly_fonts.dart';
@@ -483,7 +484,7 @@ class _EmblemTile extends StatelessWidget {
                   height: 84,
                   decoration: BoxDecoration(
                     color: surface,
-                    borderRadius: BorderRadius.circular(24),
+                    borderRadius: OTRadius.cardBorder,
                     border: Border.all(
                       color: ink.withValues(alpha: isDark ? 0.14 : 0.08),
                       width: 1.0,

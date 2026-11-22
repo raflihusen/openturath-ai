@@ -3343,4 +3343,74 @@ const copyCatalog = <String, List<String>>{
     "The voucher code format is not valid.",
     "صيغة رمز القسيمة غير صحيحة."
   ],
+  "discPerbandinganFatwa": [
+    "Perbandingan Mazhab & Fatwa",
+    "Comparative Fiqh & Fatwas",
+    "الفقه المقارن والفتاوى"
+  ],
+  "discHadits": [
+    "Hadits",
+    "Hadith",
+    "الحديث النبوي"
+  ],
+  "discHadisNabawi": [
+    "Hadis Nabawi",
+    "Prophetic Hadith",
+    "الحديث النبوي"
+  ],
+  "discUshulKaidah": [
+    "Ushul & Kaidah Fikih",
+    "Principles & Maxims of Fiqh",
+    "أصول الفقه والقواعد الفقهية"
+  ],
+  "discUsulKaidah": [
+    "Usul & Kaidah Fikih",
+    "Principles & Maxims of Fiqh",
+    "أصول الفقه والقواعد الفقهية"
+  ],
+  "discAqidah": [
+    "Aqidah",
+    "Islamic Creed (Aqidah)",
+    "العقيدة الإسلامية"
+  ],
+  "discAkidahUsuluddin": [
+    "Akidah & Usuluddin",
+    "Creed & Theology",
+    "العقيدة وأصول الدين"
+  ],
+  "discTasawuf": [
+    "Tasawuf",
+    "Spirituality & Ethics (Tasawwuf)",
+    "التصوف والأخلاق"
+  ],
+  "discTasawufAdzkar": [
+    "Tasawuf & Adzkar",
+    "Spirituality & Remembrance",
+    "التصوف والأذكار"
+  ],
+  "discIlmuHadits": [
+    "Ilmu Hadits",
+    "Hadith Sciences",
+    "علوم الحديث"
+  ],
+  "discIlmuHadis": [
+    "Ilmu Hadis",
+    "Hadith Sciences",
+    "علوم الحديث"
+  ],
+  "discSyarahHadits": [
+    "Syarah Hadits",
+    "Hadith Commentaries",
+    "شروح الحديث"
+  ],
+  "discRijalBiografi": [
+    "Rijal & Biografi Ulama",
+    "Biographies of Scholars & Narrators",
+    "التراجم ورجال الحديث"
+  ],
+  "discBibliografiKitab": [
+    "Bibliografi Kitab",
+    "Classical Bibliography & Catalogs",
+    "الببليوغرافيا والفهارس"
+  ],
 };
