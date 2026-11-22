@@ -155,7 +155,7 @@ void main() {
     );
 
     final url = await service.getAgentUrl('fiqh_syafii', vipUser);
-    expect(url, 'https://notebooklm.google.com/notebook/565630db-d4cb-4070-af38-e8cb81d688ea');
+    expect(url, 'https://notebook.google.com/notebook/565630db-d4cb-4070-af38-e8cb81d688ea');
   });
 
   test('auto-detects VIP from canonical email even when isVip flag is false or omitted', () async {
@@ -178,7 +178,7 @@ void main() {
 
     expect(vipUser.isVip, isTrue);
     final url = await service.getAgentUrl('hadits', vipUser);
-    expect(url, 'https://notebooklm.google.com/notebook/20b333d1-43eb-4ddb-a776-90473931929b');
+    expect(url, 'https://notebook.google.com/notebook/20b333d1-43eb-4ddb-a776-90473931929b');
   });
 
   test('does not bypass permission-denied paywall even for provided user', () async {
