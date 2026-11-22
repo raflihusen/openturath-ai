@@ -82,6 +82,12 @@ class AuthService {
   }
 
   static String? get activeWebUserEmail => _activeWebUserEmail;
+  static bool? _lastVpsProvisioningReady;
+  static bool? get lastVpsProvisioningReady => _lastVpsProvisioningReady;
+  static void setLastVpsProvisioningReady(bool? ready) {
+    _lastVpsProvisioningReady = ready;
+  }
+
   static int _authActionGeneration = 0;
   static Future<void> _authMutationTail = Future<void>.value();
   static final _logoutIntent = Expando<bool>('explicit Firebase logout');
@@ -94,6 +100,7 @@ class AuthService {
   static void resetWebSessionForTest() {
     _activeWebUser = null;
     _activeWebUserEmail = null;
+    _lastVpsProvisioningReady = null;
     _webLogoutRequested = false;
     _userCache.clear();
   }
@@ -727,6 +734,9 @@ class AuthService {
       );
     }
 
+    if (_activeWebUserEmail != cleanEmail) {
+      _lastVpsProvisioningReady = null;
+    }
     _activeWebUser = resolvedUser;
     _activeWebUserEmail = cleanEmail;
     _userCache[uid] = resolvedUser;
@@ -958,6 +968,15 @@ class AuthService {
       if (res.statusCode == 200) {
         final data = jsonDecode(res.body);
         if (data is Map && data['success'] == true) {
+          final rawProvReady = data['provisioningReady'];
+          final rawPendingShares = data['pendingShareCount'];
+          if (rawProvReady is bool) {
+            _lastVpsProvisioningReady = rawProvReady;
+          } else if (rawPendingShares is num) {
+            _lastVpsProvisioningReady = rawPendingShares.toInt() <= 0;
+          } else {
+            _lastVpsProvisioningReady = null;
+          }
           final hasActive = data['hasActiveAccess'] == true;
           final isVip =
               data['isVip'] == true || UserModel.isVipEmail(cleanEmail);
@@ -1167,6 +1186,7 @@ class AuthService {
       final prevWebUid = _activeWebUser?.uid;
       _activeWebUser = null;
       _activeWebUserEmail = null;
+      _lastVpsProvisioningReady = null;
       _sessionUidController.add(null);
       final prefs = await SharedPreferences.getInstance();
       await prefs.remove('current_user_uid');

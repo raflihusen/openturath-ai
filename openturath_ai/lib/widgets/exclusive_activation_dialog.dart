@@ -86,56 +86,76 @@ class ExclusiveActivationDialog extends StatelessWidget {
     );
   }
 
+  static bool _isSelfContainedTitle(String raw) {
+    final lower = raw.trim().toLowerCase();
+    return lower.startsWith('ai ') ||
+        lower.startsWith('akses ') ||
+        lower.startsWith('voucher ') ||
+        lower.startsWith('paket ') ||
+        lower.startsWith('masa coba') ||
+        lower.startsWith('trial ') ||
+        lower.startsWith('access ') ||
+        lower.startsWith('all ') ||
+        lower.startsWith('semua ');
+  }
+
   static String _localizedTitle(String raw) {
+    final trimmed = raw.trim();
     if (Loc.isArabic) {
-      if (raw.contains('7 Menit') || raw.contains('7M') || raw.contains('7 دقائق')) {
+      if (trimmed.contains('7 Menit') || trimmed.contains('7M') || trimmed.contains('7 دقائق')) {
         return 'وصول تجريبي لكافة المساعدات (٧ دقائق)';
       }
-      if (raw.contains('5 Menit') || raw.contains('5M') || raw.contains('5 دقائق')) {
+      if (trimmed.contains('5 Menit') || trimmed.contains('5M') || trimmed.contains('5 دقائق')) {
         return 'وصول تجريبي لكافة المساعدات (٥ دقائق)';
       }
-      if (raw.contains('10 Menit') || raw.contains('10M') || raw.contains('10 دقائق')) {
+      if (trimmed.contains('10 Menit') || trimmed.contains('10M') || trimmed.contains('10 دقائق')) {
         return 'وصول تجريبي لكافة المساعدات (١٠ دقائق)';
       }
-      if (raw.contains('Semua AI') || raw.contains('all_access') || raw.contains('all_specialists')) {
+      if (trimmed.contains('all_specialists') || trimmed.contains('all_disciplines')) {
+        return 'جميع التخصصات العلمية';
+      }
+      if (trimmed.contains('Semua AI') || trimmed.contains('all_access') || trimmed.contains('all_ai')) {
         return 'باقة جميع العلوم والمساعدات';
       }
-      if (raw.contains('Syafi') || raw.contains('syafii')) {
+      if (trimmed.contains('Syafi') || trimmed.contains('syafii')) {
         return 'الفقه الشافعي';
       }
-      if (raw.contains('Tahawwulat') || raw.contains('tahawwulat')) {
+      if (trimmed.contains('Tahawwulat') || trimmed.contains('tahawwulat')) {
         return 'فقه التحولات';
       }
-      final cleaned = Loc.cleanTitle(raw);
+      final cleaned = Loc.cleanTitle(trimmed);
       return Loc.text(cleaned);
     }
     if (Loc.language == 'en') {
-      if (raw.contains('7 Menit') || raw.contains('7M')) {
+      if (trimmed.contains('7 Menit') || trimmed.contains('7M')) {
         return 'All AI Assistants Trial Access (7 Minutes)';
       }
-      if (raw.contains('5 Menit') || raw.contains('5M')) {
+      if (trimmed.contains('5 Menit') || trimmed.contains('5M')) {
         return 'All AI Assistants Trial Access (5 Minutes)';
       }
-      if (raw.contains('10 Menit') || raw.contains('10M')) {
+      if (trimmed.contains('10 Menit') || trimmed.contains('10M')) {
         return 'All AI Assistants Trial Access (10 Minutes)';
       }
-      if (raw.contains('Semua AI') ||
-          raw.contains('all_access') ||
-          raw.contains('all_specialists') ||
-          raw.contains('all_disciplines')) {
+      if (trimmed.contains('Semua AI') ||
+          trimmed.contains('all_access') ||
+          trimmed.contains('all_ai') ||
+          trimmed.contains('all_specialists') ||
+          trimmed.contains('all_disciplines')) {
         return 'All AIs';
       }
-      if (raw.contains('Syafi')) {
+      if (trimmed.contains('Syafi')) {
         return "AI Shafi'i Fiqh";
       }
-      return raw.startsWith('AI ') ? raw : 'AI $raw';
+      return _isSelfContainedTitle(trimmed) ? trimmed : 'AI $trimmed';
     }
-    if (raw.contains('Semua AI') ||
-        raw.contains('all_access') ||
-        raw.contains('all_specialists')) {
+    if (trimmed.contains('Semua AI') ||
+        trimmed.contains('all_access') ||
+        trimmed.contains('all_ai') ||
+        trimmed.contains('all_specialists') ||
+        trimmed.contains('all_disciplines')) {
       return 'Semua AI';
     }
-    return raw.startsWith('AI ') ? raw : (raw.startsWith('Akses ') ? raw : 'AI $raw');
+    return _isSelfContainedTitle(trimmed) ? trimmed : 'AI $trimmed';
   }
 
   void _handleStartStudy(BuildContext context) {
@@ -162,10 +182,11 @@ class ExclusiveActivationDialog extends StatelessWidget {
       }
     }
 
-    // Jika akses semua AI (all_access / voucher paket), arahkan langsung ke Tab Daftar AI
+    // Jika akses semua AI (all_access / all_specialists / voucher paket), arahkan langsung ke Tab Daftar AI
     try {
-      final shell = MainShellController.of(nav.context);
-      shell?.switchTab(1);
+      if (!MainShellController.switchActiveTab(1)) {
+        MainShellController.of(nav.context)?.switchTab(1);
+      }
     } catch (_) {}
   }
 

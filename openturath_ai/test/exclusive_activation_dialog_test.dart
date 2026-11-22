@@ -61,4 +61,38 @@ void main() {
 
     expect(find.text('Akses telah aktif'), findsNothing);
   });
+
+  testWidgets('voucher titles are not awkwardly prefixed with AI',
+      (tester) async {
+    AppConfig.localeNotifier.value = 'id';
+    await tester.pumpWidget(
+      MaterialApp(
+        locale: const Locale('id'),
+        supportedLocales: Loc.supportedLocales,
+        localizationsDelegates: GlobalMaterialLocalizations.delegates,
+        home: Scaffold(
+          body: Builder(
+            builder: (context) => ElevatedButton(
+              onPressed: () {
+                ExclusiveActivationDialog.show(
+                  context,
+                  serviceTitle: 'Voucher Percobaan 7 Hari (TURATH7)',
+                  durationDays: 7,
+                  expiryDate: DateTime(2040, 10, 6),
+                  agentId: 'all_specialists',
+                );
+              },
+              child: const Text('Show Voucher Dialog'),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    await tester.tap(find.text('Show Voucher Dialog'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Voucher Percobaan 7 Hari (TURATH7)'), findsOneWidget);
+    expect(find.textContaining('AI Voucher'), findsNothing);
+  });
 }

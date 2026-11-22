@@ -1,8 +1,11 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:openturath_ai/core/app_config.dart';
 import 'package:openturath_ai/core/hijri_date_utils.dart';
+import 'package:openturath_ai/core/localization.dart';
 import 'package:openturath_ai/models/agent_model.dart';
 import 'package:openturath_ai/models/user_model.dart';
 import 'package:openturath_ai/core/notebook_navigation.dart';
+import 'package:openturath_ai/services/auth_service.dart';
 import 'package:openturath_ai/services/subscription_service.dart';
 
 void main() {
@@ -148,6 +151,68 @@ void main() {
             'failed-precondition', emulatorMsg),
         equals(emulatorMsg),
       );
+    });
+
+    test(
+        'redeemErrorMessage translates VPS JSON reason/code to active locale (id/en/ar)',
+        () {
+      addTearDown(() => AppConfig.localeNotifier.value = 'id');
+
+      for (final locale in const ['id', 'en', 'ar']) {
+        AppConfig.localeNotifier.value = locale;
+        // 1. VPS mengirim structured reason + pesan Indonesia -> harus pakai terjemahan lokal
+        expect(
+          SubscriptionService.redeemErrorMessage(
+            'failed',
+            'Perangkat ini sudah pernah klaim.',
+            const {'reason': 'device_used'},
+          ),
+          equals(Loc.tr('redeemDeviceUsed')),
+          reason: 'device_used in $locale',
+        );
+        // 2. VPS lama hanya mengirim code tanpa reason -> tetap diterjemahkan
+        expect(
+          SubscriptionService.redeemErrorMessage(
+            'not_found',
+            'Kode voucher tidak ditemukan.',
+            const {'code': 'not_found'},
+          ),
+          equals(Loc.tr('redeemNotFound')),
+          reason: 'not_found code in $locale',
+        );
+        expect(
+          SubscriptionService.redeemErrorMessage(
+            'rate_limited',
+            'Terlalu banyak percobaan.',
+            const {'code': 'rate_limited'},
+          ),
+          equals(Loc.tr('redeemRateLimited')),
+          reason: 'rate_limited code in $locale',
+        );
+      }
+    });
+
+    test(
+        'isAccessReady respects AuthService.lastVpsProvisioningReady == false even when local user has access',
+        () async {
+      addTearDown(() => AuthService.resetWebSessionForTest());
+      AuthService.resetWebSessionForTest();
+      await AuthService.applyActiveGrant(
+        'santri@example.com',
+        expiry: DateTime.now().add(const Duration(days: 7)),
+        durationDays: 7,
+        agentId: 'all_specialists',
+      );
+      final service = SubscriptionService(syncUserStatus: (_) async {});
+      AuthService.setLastVpsProvisioningReady(false);
+      expect(await service.isAccessReady(code: 'TURATH7'), isFalse);
+
+      AuthService.setLastVpsProvisioningReady(true);
+      expect(await service.isAccessReady(code: 'TURATH7'), isTrue);
+
+      // Backward compatibility: bila VPS belum mengirim field provisioningReady (null)
+      AuthService.setLastVpsProvisioningReady(null);
+      expect(await service.isAccessReady(code: 'TURATH7'), isTrue);
     });
 
     test(

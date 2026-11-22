@@ -75,7 +75,12 @@ class _RedeemCodeSheetState extends State<RedeemCodeSheet> {
       final expiryRaw = (result['expiryIso'] ?? result['expiry'])?.toString();
       final expiryDate =
           expiryRaw != null ? DateTime.tryParse(expiryRaw) : null;
-      final agentId = result['entitlementKey']?.toString() ?? '';
+      final agentId = (result['entitlementKey'] ??
+                  result['entitlement_key'] ??
+                  result['scope'])
+              ?.toString()
+              .trim() ??
+          '';
 
       final nav = Navigator.of(context);
       widget.onSuccess?.call();
@@ -154,6 +159,11 @@ class _RedeemCodeSheetState extends State<RedeemCodeSheet> {
             TextField(
               controller: _codeController,
               enabled: !_isLoading,
+              autofocus: true,
+              textInputAction: TextInputAction.done,
+              onSubmitted: (_) {
+                if (!_isLoading) _handleRedeem();
+              },
               textCapitalization: TextCapitalization.characters,
               inputFormatters: [
                 FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z0-9\-\s_]')),

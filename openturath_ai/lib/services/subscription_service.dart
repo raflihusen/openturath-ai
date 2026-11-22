@@ -12,10 +12,14 @@ import 'device_service.dart';
 import 'payment_service.dart';
 
 class SubscriptionService {
-  SubscriptionService({PaymentService? paymentService})
-      : _paymentService = paymentService ?? PaymentService();
+  SubscriptionService({
+    PaymentService? paymentService,
+    Future<void> Function(String email)? syncUserStatus,
+  })  : _paymentService = paymentService ?? PaymentService(),
+        _syncUserStatus = syncUserStatus ?? AuthService.syncUserStatusWithVps;
 
   final PaymentService _paymentService;
+  final Future<void> Function(String email) _syncUserStatus;
 
   static bool isCheckoutPriceChange({
     required String code,
@@ -39,13 +43,19 @@ class SubscriptionService {
     // Alasan terstruktur dari server didahulukan: pesan Indonesia dari server
     // tidak ikut ditampilkan, dan satu kode galat tidak lagi menutupi sebab
     // yang berbeda-beda.
-    final reason = details is Map ? details['reason'] : null;
+    final explicitReason = details is Map
+        ? details['reason']?.toString().trim().toLowerCase()
+        : null;
+    final codeReason = code.trim().toLowerCase().replaceAll('-', '_');
+    final reason = (explicitReason != null && explicitReason.isNotEmpty)
+        ? explicitReason
+        : (details is Map ? codeReason : null);
     final byReason = switch (reason) {
       'not_found' => 'redeemNotFound',
       'inactive' => 'redeemInactive',
       'quota' => 'redeemQuota',
       'expired' => 'redeemExpired',
-      'already_redeemed' => 'redeemUsed',
+      'already_redeemed' || 'already_used' => 'redeemUsed',
       'trial_active' => 'redeemTrialActive',
       'trial_claimed' => 'redeemTrialClaimed',
       'needs_google' => 'redeemNeedsGoogle',
@@ -54,6 +64,7 @@ class SubscriptionService {
       'physical_device_only' => 'redeemPhysicalOnly',
       'device_used' => 'redeemDeviceUsed',
       'device_identity' => 'redeemDeviceIdentity',
+      'invalid_format' || 'invalid_code' || 'empty' => 'redeemBadFormat',
       _ => null,
     };
     if (byReason != null) return Loc.tr(byReason);
@@ -193,38 +204,58 @@ class SubscriptionService {
       }
 
       if (response.statusCode == 200 && data != null && data['success'] == true) {
+        if (data['provisioningReady'] is bool) {
+          AuthService.setLastVpsProvisioningReady(
+              data['provisioningReady'] as bool);
+        } else {
+          AuthService.setLastVpsProvisioningReady(null);
+        }
         if (email.isNotEmpty) {
           final expiryIso = data['expiryIso'] ?? data['expiry'];
           final expiryDate = expiryIso != null
               ? DateTime.tryParse(expiryIso.toString())
               : null;
           final durationDays = (data['durationDays'] as num?)?.toInt() ?? 7;
-          final agentId = data['entitlementKey'] as String?;
-          if (expiryDate != null) {
-            unawaited(AuthService.applyActiveGrant(
+          final rawKey = (data['entitlementKey'] ??
+                  data['entitlement_key'] ??
+                  data['scope'] ??
+                  '')
+              .toString()
+              .trim();
+          if (expiryDate != null && rawKey.isNotEmpty) {
+            await AuthService.applyActiveGrant(
               email,
               expiry: expiryDate,
               durationDays: durationDays,
-              agentId: agentId,
+              agentId: rawKey,
               planTitle: data['serviceTitle'] as String?,
-            ));
+            );
           } else {
-            unawaited(AuthService.establishVerifiedWebUser(email));
+            await AuthService.syncUserStatusWithVps(email);
+            if (AuthService().cachedCurrentUser == null) {
+              await AuthService.establishVerifiedWebUser(email);
+            }
           }
         }
         return data;
       }
 
       if (data != null) {
-        final errCode = (data['code'] as String?) ?? 'failed';
+        final errCode = (data['code'] as String?) ??
+            (data['reason'] as String?) ??
+            'failed';
         final serverMsg = data['message'] as String?;
-        final msg = (serverMsg != null && serverMsg.isNotEmpty)
-            ? serverMsg
-            : redeemErrorMessage(errCode);
+        final localized = redeemErrorMessage(errCode, serverMsg, data);
+        final fellBackToGeneric =
+            localized == Loc.tr('redeemNotActivated') &&
+                Loc.language == 'id' &&
+                serverMsg != null &&
+                serverMsg.trim().isNotEmpty;
         return {
           'success': false,
           'code': errCode,
-          'message': msg,
+          if (data['reason'] != null) 'reason': data['reason'],
+          'message': fellBackToGeneric ? serverMsg.trim() : localized,
         };
       }
 
@@ -233,16 +264,14 @@ class SubscriptionService {
         return {
           'success': false,
           'code': 'server_error',
-          'message':
-              'Server voucher sedang mengalami kendala (${response.statusCode}). Mohon hubungi admin atau coba sesaat lagi.',
+          'message': Loc.tr('redeemServiceUnavailable'),
         };
       }
 
       return {
         'success': false,
         'code': 'http_${response.statusCode}',
-        'message':
-            'Gagal memproses voucher (${response.statusCode}). Coba lagi nanti.',
+        'message': Loc.tr('redeemNotActivated'),
       };
     } catch (e) {
       debugPrint('[SubscriptionService] Unhandled error: $e');
@@ -259,7 +288,10 @@ class SubscriptionService {
           AuthService().cachedCurrentUser?.email ??
           '';
       if (email.isNotEmpty) {
-        await AuthService.syncUserStatusWithVps(email);
+        await _syncUserStatus(email);
+      }
+      if (AuthService.lastVpsProvisioningReady == false) {
+        return false;
       }
       final user = AuthService().cachedCurrentUser;
       return user != null && (user.isVip || user.hasAccess);

@@ -28,6 +28,7 @@ import '../services/auth_service.dart';
 import '../core/navigation_guard.dart';
 import '../core/membership_pass_state.dart';
 import '../widgets/legal_document_sheet.dart';
+import '../widgets/redeem_code_sheet.dart';
 
 import 'package:openturath_ai/core/design/ot_buttons.dart';
 
@@ -463,6 +464,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       summary: membership,
                       isDark: isDark,
                       onManage: () => _openSubscription(userModel),
+                      onRedeem: () => RedeemCodeSheet.show(context),
                       onViewAccess: membership.isOpen &&
                               membership.agentIds.isNotEmpty
                           ? () => _showAccessPortfolio(userModel, membership)
@@ -1015,6 +1017,7 @@ class _MembershipPass extends StatelessWidget {
       required this.summary,
       required this.isDark,
       required this.onManage,
+      this.onRedeem,
       this.onViewAccess,
       this.memberId = ''});
   final String holderName;
@@ -1023,6 +1026,7 @@ class _MembershipPass extends StatelessWidget {
   final MembershipPassSummary summary;
   final bool isDark;
   final VoidCallback onManage;
+  final VoidCallback? onRedeem;
   final VoidCallback? onViewAccess;
 
   @override
@@ -1137,6 +1141,19 @@ class _MembershipPass extends StatelessWidget {
               label: Text(AppCopy.subscription),
             ),
           ),
+          if (onRedeem != null) ...[
+            const SizedBox(height: 8),
+            SizedBox(
+              width: double.infinity,
+              child: TextButton.icon(
+                key: const ValueKey('profile-redeem-voucher-button'),
+                onPressed: onRedeem,
+                style: OTButtons.quiet(isDark),
+                icon: const Icon(Icons.confirmation_number_outlined, size: 18),
+                label: Text(Loc.tr('redeemAccess')),
+              ),
+            ),
+          ],
         ],
       ]),
     );

@@ -1599,7 +1599,21 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                                         : OTFontSize.s26)),
                         const SizedBox(height: OTSpacing.base),
                         _promoOfferNotice(dark),
-                        const SizedBox(height: OTSpacing.lg),
+                        const SizedBox(height: OTSpacing.sm),
+                        Align(
+                          alignment: AlignmentDirectional.centerStart,
+                          child: TextButton.icon(
+                            key: const ValueKey('top-redeem-voucher-button'),
+                            onPressed: _processing
+                                ? null
+                                : () => RedeemCodeSheet.show(context),
+                            style: OTButtons.quiet(dark),
+                            icon: const Icon(Icons.confirmation_number_outlined,
+                                size: 18),
+                            label: Text(Loc.tr('redeemAccess')),
+                          ),
+                        ),
+                        const SizedBox(height: OTSpacing.sm),
                         if (showTahawwulat ||
                             showAllSpecialists ||
                             singlePlan != null) ...[

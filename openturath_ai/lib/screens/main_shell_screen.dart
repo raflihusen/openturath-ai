@@ -19,6 +19,9 @@ import '../widgets/agent_multi_tab_room.dart';
 class MainShellController extends InheritedWidget {
   final void Function(int index, {String? fieldId, CorpusKind? kind}) switchTab;
 
+  static void Function(int index, {String? fieldId, CorpusKind? kind})?
+      _activeSwitchTab;
+
   const MainShellController({
     super.key,
     required this.switchTab,
@@ -27,6 +30,19 @@ class MainShellController extends InheritedWidget {
 
   static MainShellController? of(BuildContext context) {
     return context.dependOnInheritedWidgetOfExactType<MainShellController>();
+  }
+
+  /// Mengalihkan tab pada [MainShellScreen] aktif dari rute turunan atau dialog
+  /// yang berada di luar subtree [MainShellController].
+  static bool switchActiveTab(
+    int index, {
+    String? fieldId,
+    CorpusKind? kind,
+  }) {
+    final handler = _activeSwitchTab;
+    if (handler == null) return false;
+    handler(index, fieldId: fieldId, kind: kind);
+    return true;
   }
 
   @override
@@ -56,10 +72,14 @@ class _MainShellScreenState extends State<MainShellScreen>
     WidgetsBinding.instance.addObserver(this);
     _currentIndex = widget.initialTab;
     _pageController = PageController(initialPage: _currentIndex);
+    MainShellController._activeSwitchTab = _onTabSelected;
   }
 
   @override
   void dispose() {
+    if (identical(MainShellController._activeSwitchTab, _onTabSelected)) {
+      MainShellController._activeSwitchTab = null;
+    }
     WidgetsBinding.instance.removeObserver(this);
     _dashboardSearchFocus.dispose();
     _pageController.dispose();
