@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart' as http;
@@ -22,13 +23,19 @@ class AgentService {
   AgentService({
     CallableGateway? functions,
     @visibleForTesting Future<Set<String>?> Function()? activeIdsLoader,
+    @visibleForTesting http.Client? httpClient,
+    @visibleForTesting Future<String?> Function(bool forceRefresh)? tokenProvider,
   })  : _functions = functions ?? const CallableGateway(),
         _hasCustomFunctions = functions != null,
-        _activeIdsLoader = activeIdsLoader;
+        _activeIdsLoader = activeIdsLoader,
+        _httpClient = httpClient,
+        _tokenProvider = tokenProvider;
 
   final CallableGateway _functions;
   final bool _hasCustomFunctions;
   final Future<Set<String>?> Function()? _activeIdsLoader;
+  final http.Client? _httpClient;
+  final Future<String?> Function(bool forceRefresh)? _tokenProvider;
 
   static Set<String>? _cachedActiveIds;
   static DateTime? _lastAgentsFetch;
@@ -199,8 +206,23 @@ class AgentService {
   static const _assignedUrlCachePrefix = 'ot_assigned_notebook_v1_';
   static final Map<String, String> _assignedUrlMemoryCache = {};
 
+  /// Satukan alias agen yang merujuk entitas notebook yang sama (mis. `fiqh_syafii`
+  /// dan `fiqh_syafii_muhaqqiq`) ke satu kunci sticky cache, sambil menjaga kelima
+  /// sub-AI Fikih Tahawwulat tetap terpisah karena UUID masternya berbeda.
+  static String _canonicalCacheScope(String agentId) {
+    final clean = agentId.trim().toLowerCase();
+    final masterUrl = CanonicalNotebookCatalog.getUrl(clean);
+    if (masterUrl != null && masterUrl.isNotEmpty) {
+      final segments = Uri.tryParse(masterUrl)?.pathSegments;
+      if (segments != null && segments.isNotEmpty) {
+        return segments.last.toLowerCase();
+      }
+    }
+    return clean;
+  }
+
   static String _assignedCacheKey(String email, String agentId) =>
-      '$_assignedUrlCachePrefix${email.trim().toLowerCase()}|$agentId';
+      '$_assignedUrlCachePrefix${email.trim().toLowerCase()}|${_canonicalCacheScope(agentId)}';
 
   static Future<String?> _readAssignedUrlCache(
       String email, String agentId) async {
@@ -230,6 +252,17 @@ class AgentService {
     } catch (_) {}
   }
 
+  static Future<void> removeAssignedUrlCache(
+      String email, String agentId) async {
+    if (email.isEmpty) return;
+    final key = _assignedCacheKey(email, agentId);
+    _assignedUrlMemoryCache.remove(key);
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove(key);
+    } catch (_) {}
+  }
+
   static Future<void> clearAssignedUrlCache([String? email]) async {
     if (email != null && email.trim().isNotEmpty) {
       final prefix = '$_assignedUrlCachePrefix${email.trim().toLowerCase()}|';
@@ -251,61 +284,135 @@ class AgentService {
     } catch (_) {}
   }
 
-  Future<String?> _fetchVpsAssignedUrl(
+  Future<String?> _readAuthToken({required bool forceRefresh}) async {
+    final tokenProvider = _tokenProvider;
+    if (tokenProvider != null) {
+      try {
+        return await tokenProvider(forceRefresh)
+            .timeout(const Duration(seconds: 5));
+      } on TimeoutException {
+        return null;
+      }
+    }
+    try {
+      if (Firebase.apps.isNotEmpty) {
+        return await FirebaseAuth.instance.currentUser
+            ?.getIdToken(forceRefresh)
+            .timeout(const Duration(seconds: 5));
+      }
+    } catch (_) {}
+    return null;
+  }
+
+  Future<http.Response> _postGetAgentUrl(
+    String agentId,
+    String email, {
+    required bool forceRefresh,
+    String? idToken,
+  }) {
+    final uri = Uri.parse('https://maktabah.openturath.id/api/getAgentUrl');
+    final headers = <String, String>{
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'User-Agent': 'OpenTurath-App/1.0',
+      if (idToken != null && idToken.isNotEmpty)
+        'Authorization': 'Bearer $idToken',
+    };
+    final body = jsonEncode({
+      'data': {
+        'agentId': agentId,
+        'email': email,
+        'forceRefresh': forceRefresh,
+      }
+    });
+    final httpClient = _httpClient;
+    final call = httpClient != null
+        ? httpClient.post(uri, headers: headers, body: body)
+        : http.post(uri, headers: headers, body: body);
+    return call.timeout(const Duration(seconds: 6));
+  }
+
+  static Map<String, dynamic> _extractErrorMap(dynamic body) {
+    if (body is! Map) return const {};
+    final detail = body['detail'];
+    if (detail is Map) {
+      final nestedErr = detail['error'];
+      if (nestedErr is Map) return Map<String, dynamic>.from(nestedErr);
+      return Map<String, dynamic>.from(detail);
+    }
+    final err = body['error'];
+    if (err is Map) return Map<String, dynamic>.from(err);
+    final res = body['result'];
+    if (res is Map) return Map<String, dynamic>.from(res);
+    return Map<String, dynamic>.from(body);
+  }
+
+  Future<String> _fetchVpsAssignedUrl(
     String agentId,
     String email, {
     required bool forceRefresh,
   }) async {
-    String? idToken;
-    try {
-      if (Firebase.apps.isNotEmpty) {
-        idToken = await FirebaseAuth.instance.currentUser
-            ?.getIdToken()
-            .timeout(const Duration(seconds: 2), onTimeout: () => null);
-      }
-    } catch (_) {}
+    var idToken = await _readAuthToken(forceRefresh: false);
+    var res = await _postGetAgentUrl(
+      agentId,
+      email,
+      forceRefresh: forceRefresh,
+      idToken: idToken,
+    );
 
-    final res = await http
-        .post(
-          Uri.parse('https://maktabah.openturath.id/api/getAgentUrl'),
-          headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-            'User-Agent': 'OpenTurath-App/1.0',
-            if (idToken != null && idToken.isNotEmpty)
-              'Authorization': 'Bearer $idToken',
-          },
-          body: jsonEncode({
-            'data': {
-              'agentId': agentId,
-              'email': email,
-              'forceRefresh': forceRefresh,
-            }
-          }),
-        )
-        .timeout(const Duration(seconds: 5));
+    // Bila token 1-jam Firebase kedaluwarsa (401/403 unauthenticated),
+    // segarkan token sekali secara paksa lalu ulangi permintaan ke VPS.
+    if (res.statusCode == 401 || res.statusCode == 403) {
+      dynamic decoded;
+      try {
+        decoded = jsonDecode(res.body);
+      } catch (_) {}
+      final errMap = _extractErrorMap(decoded);
+      final errCode = (errMap['code'] ?? '').toString().trim().toLowerCase();
+      final isUnauth = res.statusCode == 401 || errCode == 'unauthenticated';
+      if (isUnauth) {
+        final refreshedToken = await _readAuthToken(forceRefresh: true);
+        if (refreshedToken != null &&
+            refreshedToken.isNotEmpty &&
+            refreshedToken != idToken) {
+          idToken = refreshedToken;
+          res = await _postGetAgentUrl(
+            agentId,
+            email,
+            forceRefresh: forceRefresh,
+            idToken: idToken,
+          );
+        }
+      }
+    }
+
+    dynamic decodedBody;
+    try {
+      decodedBody = jsonDecode(res.body);
+    } catch (_) {}
 
     if (res.statusCode == 202 ||
         res.statusCode == 200 ||
         res.statusCode == 412) {
-      final body = jsonDecode(res.body);
-      if (body is Map) {
-        final resultObj =
-            body['result'] is Map ? body['result'] as Map : body;
-        final status = (resultObj['status'] ?? body['status'] ?? '')
+      if (decodedBody is Map) {
+        final resultObj = decodedBody['result'] is Map
+            ? decodedBody['result'] as Map
+            : decodedBody;
+        final status = (resultObj['status'] ?? decodedBody['status'] ?? '')
             .toString()
             .trim()
             .toLowerCase();
-        final reason = (resultObj['reason'] ?? body['reason'] ?? '')
+        final reason = (resultObj['reason'] ?? decodedBody['reason'] ?? '')
             .toString()
             .trim()
             .toLowerCase();
 
-        // Jika akses sedang disiapkan di antrean worker (provisioning),
-        // JANGAN fallback ke Master ID agar user ke-2.001 tidak terkena Minta Akses.
+        // Jika akses sedang disiapkan/relokasi di antrean worker (provisioning),
+        // hapus sticky lama & JANGAN fallback ke Master ID agar user kloning tidak terkena Minta Akses.
         if (res.statusCode == 202 ||
             status == 'provisioning' ||
             reason == 'access_provisioning') {
+          await removeAssignedUrlCache(email, agentId);
           throw const AgentAccessException(
             'failed-precondition',
             'Akses AI sedang disiapkan oleh server. Mohon tunggu beberapa detik lalu coba lagi.',
@@ -313,7 +420,7 @@ class AgentService {
           );
         }
 
-        final rawUrl = resultObj['url'] ?? body['url'];
+        final rawUrl = resultObj['url'] ?? decodedBody['url'];
         if (res.statusCode == 200 && rawUrl is String && rawUrl.isNotEmpty) {
           final uri = Uri.tryParse(rawUrl.trim());
           if (uri != null &&
@@ -330,8 +437,56 @@ class AgentService {
           }
         }
       }
+      throw const AgentAccessException(
+        'invalid-response',
+        'Respons alamat AI dari server tidak valid.',
+      );
     }
-    return null;
+
+    final errMap = _extractErrorMap(decodedBody);
+    final errCode = (errMap['code'] ?? '').toString().trim().toLowerCase();
+    final errReason = (errMap['reason'] ?? '').toString().trim().toLowerCase();
+
+    if (res.statusCode == 401 ||
+        (res.statusCode == 403 && errCode == 'unauthenticated')) {
+      throw const AgentAccessException(
+        'unauthenticated',
+        'Sesi autentikasi perlu diperbarui. Silakan masuk kembali untuk membuka AI.',
+        reason: 'unauthenticated',
+      );
+    }
+
+    if (res.statusCode == 403) {
+      await removeAssignedUrlCache(email, agentId);
+      throw AgentAccessException(
+        'permission-denied',
+        'Akses ke modul AI ini memerlukan paket langganan atau voucher aktif.',
+        reason: errReason.isNotEmpty ? errReason : 'entitlement_required',
+      );
+    }
+
+    if (res.statusCode == 429) {
+      throw const AgentAccessException(
+        'resource-exhausted',
+        'Permintaan sedang padat. Mohon tunggu beberapa detik lalu coba lagi.',
+        reason: 'request_rate_limited',
+      );
+    }
+
+    throw AgentAccessException(
+      'unavailable',
+      Loc.tr('errServiceUnavailable'),
+    );
+  }
+
+  String? _canonicalMasterUrl(String agentId) {
+    final canonical = CanonicalNotebookCatalog.getUrl(agentId);
+    if (canonical == null || canonical.isEmpty) return null;
+    final uri = Uri.tryParse(canonical.trim());
+    if (uri != null && NotebookNavigation.notebook(uri)) {
+      return uri.replace(host: NotebookNavigation.canonicalHost).toString();
+    }
+    return canonical;
   }
 
   // ── Ambil URL agent dari Server / Ledger secara aman (Server-Side Entitlement & Clone Routing) ────
@@ -380,50 +535,75 @@ class AgentService {
       }
 
       if (email.isNotEmpty) {
-        // Stale-while-revalidate: bila URL kloning untuk (email, agentId) sudah ada
+        final previousSticky = await _readAssignedUrlCache(email, agentId);
+
+        // Stale-while-revalidate: bila URL kloning untuk (email, entity) sudah ada
         // di sticky cache dan tidak sedang forceRefresh, langsung kembalikan dalam 0 ms
         // agar WebView segera memuat, sambil menyegarkan penugasan VPS di latar belakang.
-        if (!forceRefresh) {
-          final sticky = await _readAssignedUrlCache(email, agentId);
-          if (sticky != null && sticky.isNotEmpty) {
-            Future<void>(() async {
-              try {
-                final fresh = await _fetchVpsAssignedUrl(agentId, email,
-                    forceRefresh: false);
-                if (fresh != null && fresh.isNotEmpty && fresh != sticky) {
-                  onBackgroundRefresh?.call(fresh);
-                }
-              } catch (_) {}
-            });
-            return sticky;
-          }
+        if (!forceRefresh &&
+            previousSticky != null &&
+            previousSticky.isNotEmpty) {
+          Future<void>(() async {
+            try {
+              final fresh = await _fetchVpsAssignedUrl(agentId, email,
+                  forceRefresh: false);
+              if (fresh.isNotEmpty && fresh != previousSticky) {
+                onBackgroundRefresh?.call(fresh);
+              }
+            } catch (_) {
+              // Bila VPS mengembalikan provisioning/permission-denied, sticky cache
+              // sudah dibersihkan di _fetchVpsAssignedUrl.
+            }
+          });
+          return previousSticky;
         }
 
         // Cold cache atau forceRefresh: tanyakan penugasan notebook/kloning ke VPS.
         try {
-          final fetched = await _fetchVpsAssignedUrl(agentId, email,
+          return await _fetchVpsAssignedUrl(agentId, email,
               forceRefresh: forceRefresh);
-          if (fetched != null && fetched.isNotEmpty) {
-            return fetched;
+        } on AgentAccessException catch (e) {
+          // Provisioning dan pencabutan hak akses TIDAK BOLEH pernah ditutup fallback.
+          if (e.reason == 'access_provisioning' ||
+              e.code == 'permission-denied') {
+            rethrow;
           }
-        } on AgentAccessException {
+          // VIP/Guru memiliki kuota cadangan resmi di Master Notebook (Rule 5).
+          if (isVip || AppConfig.isGuruEdition) {
+            final master = _canonicalMasterUrl(agentId);
+            if (master != null) return master;
+          }
+          // Non-VIP saat VPS sementara sibuk/padat: pertahankan kloning sticky lama bila ada,
+          // JANGAN PERNAH fallback ke Master pada cold-cache agar user #1.801-#20.000
+          // tidak salah diarahkan ke Master dan terkunci "Minta Akses".
+          if (previousSticky != null &&
+              previousSticky.isNotEmpty &&
+              (e.code == 'unavailable' || e.reason == 'request_rate_limited')) {
+            return previousSticky;
+          }
           rethrow;
         } catch (_) {
-          // Lanjut ke fallback katalog master kanonik
+          if (isVip || AppConfig.isGuruEdition) {
+            final master = _canonicalMasterUrl(agentId);
+            if (master != null) return master;
+          }
+          if (previousSticky != null && previousSticky.isNotEmpty) {
+            return previousSticky;
+          }
+          throw AgentAccessException(
+            'unavailable',
+            Loc.tr('errServiceUnavailable'),
+          );
         }
       }
 
-      final canonical = CanonicalNotebookCatalog.getUrl(agentId);
-      if (canonical != null && canonical.isNotEmpty) {
-        final uri = Uri.tryParse(canonical.trim());
-        if (uri != null && NotebookNavigation.notebook(uri)) {
-          return uri.replace(host: NotebookNavigation.canonicalHost).toString();
-        }
-        return canonical;
+      if (isVip || AppConfig.isGuruEdition) {
+        final master = _canonicalMasterUrl(agentId);
+        if (master != null) return master;
       }
 
       throw const AgentAccessException(
-          'empty-url', 'URL AI belum tersedia untuk bidang ini.');
+          'unauthenticated', 'Sesi akun belum ditemukan. Silakan masuk ulang.');
     }
 
     try {

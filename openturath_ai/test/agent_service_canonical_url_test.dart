@@ -1,9 +1,13 @@
+import 'dart:convert';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:http/http.dart' as http;
+import 'package:http/testing.dart';
 import 'package:openturath_ai/core/constants.dart';
 import 'package:openturath_ai/models/user_model.dart';
 import 'package:openturath_ai/services/agent_service.dart';
 import 'package:openturath_ai/services/callable_gateway.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class _Gateway extends CallableGateway {
   _Gateway({this.response, this.error});
@@ -204,5 +208,188 @@ void main() {
       service.getAgentUrl('fiqh_syafii', regularUser),
       throwsA(_accessError('permission-denied')),
     );
+  });
+
+  group('VPS Clone Rollover, Sticky Routing & Auto-Failover', () {
+    const clone1Url =
+        'https://notebook.google.com/notebook/11111111-1111-4111-8111-111111111111';
+    const clone2Url =
+        'https://notebook.google.com/notebook/22222222-2222-4222-8222-222222222222';
+
+    UserModel paidRegularUser() => UserModel(
+          uid: 'clone-user-2001',
+          name: 'Santri Clone 2001',
+          email: 'santri2001@example.com',
+          photoUrl: '',
+          plan: 'tholib_1m',
+          questionsUsed: 0,
+          entitlements: {
+            'fiqh_syafii': ModuleEntitlement(
+              plan: 'tholib_1m',
+              status: 'active',
+              expiry: DateTime.now().add(const Duration(days: 30)),
+              paymentStatus: 'paid',
+            ),
+          },
+        );
+
+    setUp(() async {
+      SharedPreferences.setMockInitialValues({});
+      await AgentService.clearAssignedUrlCache();
+    });
+
+    test(
+        'non-VIP clone user on cold cache NEVER falls back to Master on VPS 403 unauthenticated or 500',
+        () async {
+      final unauthClient = MockClient((_) async => http.Response(
+            jsonEncode({
+              'detail': {
+                'error': {
+                  'status': 'PERMISSION_DENIED',
+                  'code': 'unauthenticated',
+                  'message': 'Bearer token required',
+                }
+              }
+            }),
+            403,
+          ));
+      final serviceUnauth = AgentService(
+        httpClient: unauthClient,
+        tokenProvider: (_) async => null,
+      );
+      await expectLater(
+        serviceUnauth.getAgentUrl('fiqh_syafii', paidRegularUser()),
+        throwsA(_accessError('unauthenticated')),
+      );
+
+      final serverDownClient =
+          MockClient((_) async => http.Response('Internal Server Error', 500));
+      final serviceDown = AgentService(
+        httpClient: serverDownClient,
+        tokenProvider: (_) async => 'valid-token',
+      );
+      await expectLater(
+        serviceDown.getAgentUrl('fiqh_syafii', paidRegularUser()),
+        throwsA(_accessError('unavailable')),
+      );
+    });
+
+    test(
+        'expired Firebase token retries once with forceRefresh=true and receives assigned Clone URL',
+        () async {
+      var tokenCalls = 0;
+      final client = MockClient((req) async {
+        final auth = req.headers['Authorization'];
+        if (auth == 'Bearer stale-token') {
+          return http.Response(
+            jsonEncode({
+              'detail': {
+                'error': {'code': 'unauthenticated', 'message': 'Expired token'}
+              }
+            }),
+            403,
+          );
+        }
+        expect(auth, 'Bearer fresh-token');
+        return http.Response(
+          jsonEncode({'result': {'status': 'ready', 'url': clone1Url}}),
+          200,
+        );
+      });
+
+      final service = AgentService(
+        httpClient: client,
+        tokenProvider: (force) async {
+          tokenCalls++;
+          return force ? 'fresh-token' : 'stale-token';
+        },
+      );
+
+      final url = await service.getAgentUrl('fiqh_syafii', paidRegularUser());
+      expect(url, clone1Url);
+      expect(tokenCalls, 2);
+    });
+
+    test(
+        'sticky cache unifies aliases, triggers SWR background relocation, and invalidates on 202 provisioning',
+        () async {
+      var mode = 'clone1';
+      final client = MockClient((_) async {
+        if (mode == 'clone1') {
+          return http.Response(
+            jsonEncode({'result': {'status': 'ready', 'url': clone1Url}}),
+            200,
+          );
+        }
+        if (mode == 'clone2') {
+          return http.Response(
+            jsonEncode({'result': {'status': 'ready', 'url': clone2Url}}),
+            200,
+          );
+        }
+        return http.Response(
+          jsonEncode({
+            'result': {'status': 'provisioning', 'reason': 'access_provisioning'}
+          }),
+          202,
+        );
+      });
+
+      final service = AgentService(
+        httpClient: client,
+        tokenProvider: (_) async => 'tok',
+      );
+      final user = paidRegularUser();
+
+      // 1. Cold fetch assigns Clone 1
+      expect(await service.getAgentUrl('fiqh_syafii', user), clone1Url);
+
+      // 2. Alias fiqh_syafii_muhaqqiq hits the SAME sticky cache instantly while
+      //    background refresh relocates to Clone 2
+      mode = 'clone2';
+      String? relocatedUrl;
+      final stickyHit = await service.getAgentUrl(
+        'fiqh_syafii_muhaqqiq',
+        user,
+        false,
+        (fresh) => relocatedUrl = fresh,
+      );
+      expect(stickyHit, clone1Url);
+      await Future<void>.delayed(const Duration(milliseconds: 50));
+      expect(relocatedUrl, clone2Url);
+
+      // 3. Force refresh returning 202 provisioning throws access_provisioning & clears sticky cache
+      mode = 'provisioning';
+      await expectLater(
+        service.getAgentUrl('fiqh_syafii', user, true),
+        throwsA(isA<AgentAccessException>()
+            .having((e) => e.reason, 'reason', 'access_provisioning')),
+      );
+    });
+
+    test('VIP user falls back to canonical Master URL when VPS returns 500',
+        () async {
+      final serverDownClient =
+          MockClient((_) async => http.Response('Service Unavailable', 503));
+      final service = AgentService(
+        httpClient: serverDownClient,
+        tokenProvider: (_) async => 'tok',
+      );
+      final vipUser = UserModel(
+        uid: 'vip-uid',
+        name: 'VIP User',
+        email: 'alkhateeb23@gmail.com',
+        photoUrl: '',
+        plan: 'vip',
+        questionsUsed: 0,
+        isVip: true,
+      );
+
+      final url = await service.getAgentUrl('fiqh_syafii', vipUser);
+      expect(
+        url,
+        'https://notebook.google.com/notebook/565630db-d4cb-4070-af38-e8cb81d688ea',
+      );
+    });
   });
 }

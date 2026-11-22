@@ -1424,23 +1424,73 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
       }
       Future.delayed(const Duration(seconds: 4), () async {
         if (!mounted) return;
+        final email = (_authService.cachedCurrentUser?.email ??
+                _authService.currentUser?.email ??
+                PersistentGoogleSession.instance.verifiedOwner ??
+                '')
+            .trim();
         try {
           final freshUrl = await _agentService.getAgentUrl(
               session.agent.id, _authService.cachedCurrentUser, true);
           if (!mounted) return;
-          if (freshUrl != null &&
-              freshUrl.isNotEmpty &&
-              freshUrl != session.resolvedUrl) {
-            session.resolvedUrl = freshUrl;
+          if (freshUrl != null && freshUrl.isNotEmpty) {
+            final effectiveFresh = email.isNotEmpty
+                ? NativeAgentLauncher.appendAuthUser(freshUrl, email: email)
+                : freshUrl;
+            if (effectiveFresh != session.resolvedUrl) {
+              session.resolvedUrl = effectiveFresh;
+              _loadingStarted = null;
+              await session.webController
+                  ?.loadUrl(urlRequest: URLRequest(url: WebUri(effectiveFresh)));
+              if (!mounted) return;
+              _startReadinessCheck();
+              return;
+            }
+          }
+        } on AgentAccessException catch (e) {
+          if (!mounted) return;
+          if (e.reason == 'access_provisioning') {
+            if (_accessDeniedRetryCount < 5) {
+              _handleAccessDenied(session);
+            } else {
+              _readinessTimer?.cancel();
+              _inputRetryTimer?.cancel();
+              _loadingStarted = null;
+              setState(() {
+                session.isWebLoading = false;
+                session.isSessionReady = false;
+                session.isGooglePermissionError = false;
+                session.isPaywallRequired = false;
+                session.isTimeoutError = false;
+                session.failure = RoomFailure(
+                    stage: 'agent-url',
+                    code: e.code,
+                    reason: e.reason,
+                    agentId: session.agent.id,
+                    attemptId: session.diagnosticAttemptId);
+                session.errorMessage = Loc.tr('roomPreparing');
+              });
+            }
+            return;
+          }
+          if (e.code == 'permission-denied' &&
+              !(_authService.cachedCurrentUser?.isVip == true)) {
+            _readinessTimer?.cancel();
+            _inputRetryTimer?.cancel();
             _loadingStarted = null;
-            await session.webController
-                ?.loadUrl(urlRequest: URLRequest(url: WebUri(freshUrl)));
-            if (!mounted) return;
-            _startReadinessCheck();
+            setState(() {
+              session.isWebLoading = false;
+              session.isSessionReady = false;
+              session.isGooglePermissionError = false;
+              session.isPaywallRequired = true;
+              session.isTimeoutError = false;
+              session.errorMessage =
+                  Loc.tr('roomPaywallBody', [Loc.text(session.agent.title)]);
+            });
             return;
           }
         } catch (_) {
-          // Jika server sedang provisioning/offline, lanjutkan reload URL saat ini
+          // Jika jaringan sementara gagal, lanjutkan reload URL saat ini
         }
         if (!mounted) return;
         session.webController?.reload();
@@ -1758,12 +1808,14 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
     } catch (_) {}
   }
 
-  Future<void> _fetchUrl() async {
+  Future<void> _fetchUrl({bool forceRefresh = false}) async {
     final session = widget.session;
     setState(() {
       session.isUrlLoading = true;
       session.errorMessage = null;
       session.isPaywallRequired = false;
+      session.isGooglePermissionError = false;
+      session.isTimeoutError = false;
       session.failure = null;
       session.diagnosticAttemptId = newDiagnosticId();
     });
@@ -1787,14 +1839,31 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
           PersistentGoogleSession.instance.verifiedOwner ??
           '';
 
+      String? backgroundFreshUrl;
+
       void onBackgroundUrlRefresh(String freshUrl) {
         if (!mounted || freshUrl.isEmpty) return;
         final effectiveFresh = email.isNotEmpty
             ? NativeAgentLauncher.appendAuthUser(freshUrl, email: email)
             : freshUrl;
+        backgroundFreshUrl = effectiveFresh;
         if (session.resolvedUrl == effectiveFresh) return;
         if (session.chatMessages.isNotEmpty || session.isGenerating) return;
-        session.resolvedUrl = effectiveFresh;
+        final hadError = session.errorMessage != null ||
+            session.isGooglePermissionError ||
+            session.isTimeoutError;
+        if (hadError) {
+          setState(() {
+            session.resolvedUrl = effectiveFresh;
+            session.errorMessage = null;
+            session.isGooglePermissionError = false;
+            session.isTimeoutError = false;
+            session.isWebLoading = true;
+            session.isSessionReady = false;
+          });
+        } else {
+          session.resolvedUrl = effectiveFresh;
+        }
         if (session.webController != null && !session.isGoogleAuthPage) {
           _loadingStarted = null;
           unawaited(session.webController!
@@ -1812,7 +1881,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
       final urlFuture = _agentService.getAgentUrl(
         session.agent.id,
         currentUser,
-        false,
+        forceRefresh,
         onBackgroundUrlRefresh,
       );
 
@@ -1828,10 +1897,12 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
             _authService.cachedCurrentUser?.uid;
         if (!mounted || (openingUid != null && verifiedUid != null && verifiedUid != openingUid)) return;
 
-        // Buka langsung URL NotebookLM resmi dengan parameter authuser akun aktif
-        final effectiveUrl = email.isNotEmpty
-            ? NativeAgentLauncher.appendAuthUser(url, email: email)
-            : url;
+        // Buka langsung URL NotebookLM resmi dengan parameter authuser akun aktif.
+        // Bila SWR latar belakang sudah tiba lebih dulu membawa kloning baru, pakai itu!
+        final effectiveUrl = backgroundFreshUrl ??
+            (email.isNotEmpty
+                ? NativeAgentLauncher.appendAuthUser(url, email: email)
+                : url);
 
         setState(() {
           session.resolvedUrl = effectiveUrl;
@@ -1970,23 +2041,8 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
 
       void retry() {
         _accessDeniedRetryCount = 0;
-        setState(() {
-          session.errorMessage = null;
-          session.isTimeoutError = false;
-          session.isGooglePermissionError = false;
-          session.isPaywallRequired = false;
-          session.isWebLoading = true;
-          session.isSessionReady = false;
-          session.failure = null;
-          session.diagnosticAttemptId = newDiagnosticId();
-        });
-        _loadingStarted = DateTime.now();
-        if (session.webController != null) {
-          session.webController!.reload();
-          _startReadinessCheck();
-        } else {
-          _fetchUrl();
-        }
+        _loadingStarted = null;
+        unawaited(_fetchUrl(forceRefresh: true));
       }
 
       // Satu tampilan untuk empat keadaan; naskahnya mengikuti penyebab,
@@ -2042,7 +2098,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
               session.isSessionReady = false;
             });
             _loadingStarted = null;
-            unawaited(_fetchUrl());
+            unawaited(_fetchUrl(forceRefresh: true));
           },
           onBack: close,
           backLabel: Loc.tr('back'),
@@ -2072,7 +2128,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
               session.isSessionReady = false;
             });
             _loadingStarted = null;
-            unawaited(_fetchUrl());
+            unawaited(_fetchUrl(forceRefresh: true));
           },
           onBack: close,
           backLabel: Loc.tr('back'),

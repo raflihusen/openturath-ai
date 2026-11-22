@@ -917,6 +917,7 @@ class AuthService {
     _activeWebUserEmail = cleanEmail;
     _userCache[user.uid] = user;
     _userCache['web_$cleanEmail'] = user;
+    await AgentService.clearAssignedUrlCache(cleanEmail);
     await _cacheUserLocally(user, isCurrent: () => true);
     if (prevUid != user.uid) {
       _sessionUidController.add(user.uid);
