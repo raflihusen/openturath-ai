@@ -1,54 +1,69 @@
 # Workspace Rules — OpenTurath AI
 
+> **Pembaruan Terakhir:** 22 November 2026 · **Arsitektur Aktif:** VPS Mandiri (`maktabah.openturath.id`) + Direct Release (APK / DMG / EXE) tanpa Google Play Store dan tanpa ketergantungan utama pada Firestore/Cloud Functions.
+
+## 0. Arsitektur Mandiri VPS & Direct Release (KONTEKS WAJIB)
+- **Otoritas Tunggal Backend:** Seluruh akun, status langganan (`/api/user-status`), katalog harga dinamis (`/api/v1/catalog/offers`), daftar agen aktif (`/api/v1/config/agents`), penugasan URL notebook (`/api/getAgentUrl`), webhook Midtrans, dan worker sharing/reaper NotebookLM berjalan di **VPS mandiri `maktabah.openturath.id`** (24 Master Notebook aktif milik `hus180402@gmail.com`).
+- **Distribusi Independen:** Aplikasi didistribusikan langsung (Direct Release APK Android, DMG macOS, EXE/ZIP Windows) tanpa Google Play Store. Oleh karena itu:
+  - Izin `REQUEST_INSTALL_PACKAGES` dan mekanisme OTA self-update di Android/desktop adalah **fitur resmi**, bukan cacat.
+  - Pembayaran langsung via Midtrans / QRIS / Transfer Bank / WhatsApp di dalam aplikasi adalah **alur resmi** (bukan pelanggaran kebijakan toko pihak ketiga).
+  - Jangan membuat rekomendasi perbaikan yang mengasumsikan kepatuhan Google Play Billing atau migrasi wajib ke Cloud Functions/Firestore.
+
 ## 1. Automatic Checkpoint Protocol (MANDATORY)
-- **Setiap perubahan sekecil apapun WAJIB langsung dibuatkan check point (Git commit) secara otomatis.**
-- Setiap kali file kode, aset, UI, konfigurasi, atau unit test dimodifikasi atau ditambahkan:
-  1. Jalankan `git add <files>`
-  2. Lakukan commit dengan pesan yang deskriptif dan terstruktur: `git commit -m "<type>(<scope>): <pesan detail perubahan>"`
-- Jangan pernah membiarkan perubahan menumpuk tanpa check point.
-- Check point harus selalu dibuat secara otomatis tanpa menunggu instruksi tambahan dari pengguna.
+- **Setiap perubahan sekecil apa pun WAJIB langsung dibuatkan checkpoint (Git commit) secara otomatis.**
+- Setiap kali file kode, aset, UI, konfigurasi, dokumentasi, atau unit test dimodifikasi atau ditambahkan:
+  1. Jalankan `git add <files>` (stage hanya file yang relevan dengan pekerjaan saat ini; jangan ikutkan file tidak terkait yang sudah kotor di working tree).
+  2. Lakukan commit dengan pesan deskriptif dan terstruktur: `git commit -m "<type>(<scope>): <pesan detail perubahan>"`.
+- Jangan membiarkan perubahan menumpuk tanpa checkpoint.
 
 ## 2. Integritas Build & Release
-- Setiap pembuatan APK rilis harus memverifikasi bahwa proses kompilasi Gradle selesai 100% dan file binary rilis yang disalin ke `/Users/apple/Downloads/ramadhan/app-release-latest.apk` memiliki timestamp baru yang valid.
+- Setiap kompilasi biner rilis (APK / DMG / EXE) wajib memverifikasi proses build selesai 100%, biner disalin ke jalur distribusi resmi (mis. `/Users/apple/Downloads/ramadhan/app-release-latest.apk`, `OpenTurath_AI_macOS.dmg`), dan file checksum `.sha256` selalu disinkronkan dengan biner fisiknya.
+- Pastikan tidak ada harga tes (seperti Rp 1.000) yang tertinggal di klien (`product_pricing.dart`, `constants.dart`, `agent_model.dart`) maupun di VPS (`/api/v1/catalog/offers`) sebelum build rilis publik.
 
 ## 3. Pemisahan Build Lokal & Broadcast Rilis Publik (MANDATORY)
-- Kompilasi APK (`flutter build apk --release`) bersifat lokal semata untuk keperluan pengujian, verifikasi, atau audit internal.
-- DILARANG KERAS memicu pengunggahan APK ke CDN / Firebase Hosting maupun menyiarkan versi rilis baru ke Firestore (`app_config/version`) secara otomatis setiap kali APK selesai dikompilasi.
-- Otomasi broadcast update (`publish_auto_update.py`) HANYA BOLEH dijalankan jika pengguna memberikan instruksi eksplisit secara langsung (misalnya: *"updatein dong"*, *"rilis update sekarang"*, atau sejenisnya).
+- Kompilasi biner lokal (`flutter build apk --release`, `flutter build macos --release`) bersifat lokal untuk pengujian dan verifikasi internal.
+- DILARANG KERAS mengunggah biner ke CDN/hosting atau menyiarkan versi rilis baru ke endpoint update publik secara otomatis setelah build.
+- Broadcast update publik (`publish_auto_update.py` atau update manifest VPS) HANYA BOLEH dijalankan atas instruksi eksplisit pengguna.
 
-## 4. Standar Preservasi Format Ideal WebView (MANDATORY)
-- **DILARANG MERUSAK ATAU MENGUBAH LOGIKA SIKLUS HIDUP WEBVIEW** di `openturath_ai/lib/widgets/agent_multi_tab_room.dart` dan `desktop_webview_runtime.dart`.
-- Logika kestabilan polling kesiapan sesi NotebookLM (Angular SPA) **WAJIB mempertahankan minimal 4 sampel berturut-turut (2 detik), elapsed waktu minimum 3000ms, dan jeda mikro 250ms**. Dilarang memotongnya menjadi 1-2 sampel demi alasan kecepatan semu karena memicu layout flicker/blank DOM.
-- Tampilan galat (**error state**) **WAJIB menggantikan seluruh viewport WebView secara bersih** (`return ColoredBox(color: canvas, child: state)`). Dilarang keras menumpuk platform view `InAppWebView` di bawah overlay `Positioned.fill` saat galat terjadi.
-- Dokumen rujukan teknis permanen: `openturath_ai/docs/STANDAR_IDEAL_WEBVIEW.md`.
+## 4. Standar Siklus Hidup & Kecepatan WebView (MANDATORY)
+- **Cepat, Bebas Flicker, Anti False-Positive:**
+  - `AgentService.getAgentUrl` menggunakan pola *stale-while-revalidate* melalui sticky cache (`ot_assigned_notebook_v1_<email>|<agentId>`) agar tab AI terbuka instan sambil menyegarkan URL kloning dari VPS di latar belakang.
+  - Deteksi kesiapan WebView di `agent_multi_tab_room.dart` tidak boleh memakai jeda tunggu artifisial berdetik-detik yang memperlambat pembukaan tab, dan deteksi `accessDenied` wajib menghindari *false-positive* dari teks fikih/jawaban di dalam transkrip.
+- **Error State Bersih:** Tampilan galat (**error state**) WAJIB menggantikan seluruh viewport WebView secara bersih (`return ColoredBox(color: canvas, child: state)`). Dilarang menumpuk platform view `InAppWebView` di bawah overlay `Positioned.fill` saat galat terjadi.
+- Dokumen rujukan teknis: `openturath_ai/docs/STANDAR_IDEAL_WEBVIEW.md`.
 
-## 5. Hukum Sakral VIP & Standar Ekspirasi (MANDATORY)
-- **YANG VIP ADALAH VIP SEJATI.** Semua akun yang terdaftar di `STATIC_WHITELIST`, `is_vip: true`, `role: "vip"`, atau dokumen `VIP_PERMANENT` (seperti `prilatief@gmail.com`, `alkhateeb23@gmail.com`, `omarasb1441@gmail.com`, Asatidz, Masyayikh, dan tamu kehormatan) adalah hak prerogatif mutlak Pemilik (Owner). **DILARANG KERAS meragukan, menganggapnya kesalahan, atau mencoba mencabut akun VIP.**
-- **Hak Akses Granular Per-Modul:** Pengguna yang memiliki paket aktif di modul tertentu (misalnya Fikih Tahawwulat 1 Tahun) DILARANG KERAS dicabut dari notebook modul tersebut hanya karena paket di modul lain (Fikih Syafi'i) kedaluwarsa. Evaluasi hak akses WAJIB independen per-modul.
-- **Anti-Ghost Sync & Idempotensi:** Webhook atau skrip sinkronisasi dilarang menambahkan durasi berlangganan berulang kali (*compounding loop*) tanpa memeriksa keunikan transaksi (`transaction_id`). Transaksi dengan `amount: 0.0` tidak boleh memicu perpanjangan otomatis tanpa verifikasi admin.
-- **Deteksi Kedaluwarsa Presisi:** Evaluasi hak akses wajib memvalidasi transaksi riil, bukan semata-mata membaca field profil yang berpotensi korup. User dengan paket 1 bulan yang telah melewati masa 30 hari WAJIB dideteksi sebagai expired.
-- **Sinkronisasi Master Notebook:** Skrip reaper WAJIB memantau Master Notebook aktif `01 - FIKIH SYAFII (MASTER)` (`c89d09ca-4b48-4000-a98d-59e532607fb6`), bukan hanya notebook legacy.
-- Dokumen rujukan permanen: `DOKUMENTASI_KECACATAN_SISTEM_DAN_ATURAN_VIP.md`.
+## 5. Hukum Sakral VIP, Paket `all_specialists` & Standar Ekspirasi (MANDATORY)
+- **YANG VIP ADALAH VIP SEJATI.** Semua akun yang terdaftar di `_canonicalVipEmails`, `STATIC_WHITELIST`, `is_vip: true`, atau `role: "vip"` adalah hak prerogatif mutlak Pemilik. **DILARANG KERAS meragukan atau mencabut akses akun VIP.**
+- **Hak Akses Granular Per-Modul & Paket `all_specialists` (`Semua AI`):**
+  - Evaluasi hak akses WAJIB independen per-modul. Kedaluwarsanya satu modul tidak boleh mencabut modul lain yang masih aktif.
+  - Paket **`all_specialists`** (judul resmi: **`Semua AI`**, tanpa `*` dan tanpa awalan `"AI "` ganda) mencakup **seluruh 19 Master Notebook disiplin keilmuan aktif KECUALI `fiqh_tahawwulat`** (beserta 5 sub-agennya: `06.1–06.5`).
+  - Baik klien (`UserModel.isAgentSubscriptionActive`, `ModuleEntitlement.isPremium`, `ProfileScreen._entitlementTitle`) maupun backend VPS (`/api/getAgentUrl`, `/api/user-status`, `reaper_worker.py`, `access_policy.py`) WAJIB mengakui `all_specialists` untuk semua disiplin non-Tahawwulat dan tetap mengisolasi `fiqh_tahawwulat`.
+  - ID bundel virtual (`all_specialists`, `all_disciplines`) tidak boleh dibuka sebagai satu tab notebook tunggal.
+- **Idempotensi Transaksi:** Webhook pembayaran dilarang menambahkan durasi berulang kali (*compounding loop*) tanpa deduplikasi `transaction_id`, dan transaksi `amount <= 0` dilarang memicu aktivasi otomatis.
 
-## 6. Standar Baku Bebas Bar & Scrim WebView — Gold Standard Syafi'i (MANDATORY)
-- **TOLOK UKUR IDEAL TAMPILAN WEBVIEW ADALAH FIKIH SYAFI'I.** Teks dan tabel obrolan WAJIB rapat ke bawah bilah tab Flutter (0px celah putih, tanpa jeda bar kosong 64px, tanpa top scrim pudar).
-- Seluruh elemen header Google/NotebookLM (`app-chat-header`, `app-conversation-header`, `app-chat-panel-header`, `mat-toolbar`, `top-bar`, `.top-scrim`, `.scroll-scrim`, `[class*="scrim" i]`, `[class*="gradient" i]`, `[class*="fade-overlay" i]`, `mat-tab-header`) WAJIB dieliminasi dengan aturan CSS independen murni berdimensi nol (`display: none !important; height: 0 !important; padding: 0 !important; margin: 0 !important;`).
-- Dilarang menggabungkan selektor `:has(...)` ke dalam blok koma aturan penghilang bilah utama karena kegagalan parsing mesin WebKit akan menggugurkan seluruh aturan penyembunyian.
-- Wadah percakapan (`app-chat-view`, `main`, dll) WAJIB menonaktifkan `-webkit-mask-image: none !important; mask-image: none !important;` serta pseudo-elemen `::before`/`::after` untuk mencegah teks atas pudar terpotong.
-- Wadah input pertanyaan (`.ot-chat-composer`) WAJIB terpasang secara alami di dasar kolom percakapan (*Natural Flexbox In-Flow Docking* dengan `position: relative !important; flex: 0 0 auto !important; align-self: center !important; margin-inline: auto !important; max-width: 720px !important;`). DILARANG membuat kolom input mengambang secara artifisial (`position: fixed`) di atas transkrip agar teks pesan paling bawah tidak tertutup saat discroll mentok. Transkrip pesan mandiri dengan `flex: 1 1 0px !important; min-height: 0 !important; overflow-y: auto !important; padding-bottom: 24px !important;`. Wadah input dan seluruh pembungkus anaknya (`form`, `.chat-input-container`, `.query-box-container`) wajib terkunci presisi di tengah (*mathematical horizontal centering*) melalui kombinasi `margin-inline: auto !important; align-self: center !important;` serta `align-items: center !important;` pada wadah induk (`.ot-chat-composer-path`) dan berdimensi serasi dengan kolom baca 720px (`.rendered-markdown`) agar tidak condong/miring ke kiri.
-- Setiap pergantian tab aktif WAJIB memanggil pembersihan instan `clean()` agar tab yang baru aktif langsung rapat dan bebas bar.
-- Dokumen rujukan teknis mutlak: `openturath_ai/docs/STANDAR_IDEAL_WEBVIEW.md`.
+## 6. Standar Baku WebView — Bebas Bar, Tipografi Ibarah, Bidi & Natural Composer (MANDATORY)
+- **Bebas Bar & Scrim:** Teks dan tabel obrolan WAJIB rapat ke bawah bilah tab Flutter (0px celah putih, tanpa top scrim pudar). Elemen header Google/NotebookLM (`app-chat-header`, `app-conversation-header`, `app-chat-panel-header`, `mat-toolbar`, `.top-scrim`, `[class*="scrim" i]`, `mat-tab-header`) dieliminasi dengan aturan CSS independen non-`:has(...)` berdimensi nol, dan `-webkit-mask-image` dinonaktifkan pada wadah percakapan.
+- **Kesetaraan Ukuran Font Ibarah & Bidi Universal:**
+  - Ukuran font kutipan Arab (`.ot-ibarah`) WAJIB **sama** dengan ukuran teks jawaban utama (dengan CSS specificity yang konsisten di `notebook_skin.dart` dan `agent_multi_tab_room.dart`), sehingga saat pengguna memperbesar/memperkecil ukuran teks, ibarah ikut terskala seragam.
+  - Arsitektur deteksi Bidi universal, pemisah segmen ibarah anti-streaming-bug, dan tabel responsif wajib dijaga tetap utuh.
+- **Natural Flexbox In-Flow Composer:** Wadah input pertanyaan (`.ot-chat-composer`) WAJIB terpasang alami di dasar kolom percakapan (*Natural Flexbox In-Flow Docking*, `position: relative`, `flex: 0 0 auto`, terpusat presisi di `max-width: 720px` selaras dengan `.rendered-markdown`). Dilarang memakai `position: fixed` yang menutupi pesan terbawah.
+- Setiap pergantian tab aktif WAJIB memanggil pembersihan instan `clean()`.
 
 ## 7. Hak Multi-Tab & Non-Destructive Session (MANDATORY)
-- Pada lingkungan desktop (macOS), aplikasi WAJIB mengizinkan hingga **minimal 5 tab aktif bersamaan** (`maxTabs = 5`) untuk mendukung komparasi lintas disiplin/kitab turats.
-- DILARANG KERAS menutup paksa tab yang sedang dibuka pengguna secara senyap (*silent auto-eviction*) di bawah batas maksimum.
+- Pada desktop (macOS/Windows), aplikasi WAJIB mengizinkan hingga **minimal 5 tab aktif bersamaan** (`maxTabs = 5`) untuk komparasi lintas kitab/disiplin.
+- DILARANG KERAS menutup paksa tab yang sedang dibuka pengguna secara senyap di bawah batas maksimum.
 
 ## 8. Standar Sakral Sesi Google & Anti-Tamper Cookie (MANDATORY)
-- Mesin WebKit macOS (`WKHTTPCookieStore`) mengelola persistensi cookie Google ke disk secara bawaan dan permanen.
-- DILARANG KERAS menimpa (*overwrite/tamper*) token sesi Google yang sedang aktif di WebKit (khususnya `__Secure-1PSIDTS`, `__Secure-3PSIDTS`, `SID`, `HSID`) dengan atribut buatan (`expiresDate` palsu atau `SameSite=None`), karena memicu mekanisme pertahanan DBSC Google Frontend yang mencabut sesi dan memaksa status *Signed out* pada semua akun.
-- Pembersihan sesi global (`deleteAllCookies` / `clearSession`) HANYA BOLEH dijalankan ketika pengguna secara sadar dan eksplisit menekan tombol **Log Out / Keluar** di Pengaturan Akun. Dilarang membersihkan cookie saat inisialisasi aplikasi atau saat membuka tab baru.
+- Mesin WebKit macOS (`WKHTTPCookieStore`) mengelola persistensi cookie Google secara bawaan.
+- DILARANG KERAS memutasi/menimpa live cookie sesi Google di WebKit (khususnya `__Secure-1PSIDTS`, `__Secure-3PSIDTS`, `SID`, `HSID`) dengan atribut buatan (`expiresDate` palsu atau `SameSite=None`), karena memicu pertahanan DBSC Google Frontend dan mencabut sesi (*Signed out*). `lockAndPersistCookies()` harus tetap read-only terhadap WebKit.
+- Pembersihan sesi global (`deleteAllCookies` / `clearSession`) HANYA BOLEH dijalankan saat pengguna secara eksplisit menekan **Log Out / Keluar** atau saat pemilik akun aplikasi benar-benar berganti.
 
-## 9. Hak Paten Desain Hitam-Putih Monokrom (MANDATORY)
-- Bahasa desain OpenTurath AI adalah **Monochrome Editorial — The Quiet Islamic Scholar**.
-- Seluruh elemen antarmuka (kartu langganan *Bithāqah Al-Intisāb*, dialog, tombol, dan lembar pembayaran) WAJIB mempertahankan estetika monokrom obsidian murni (#09090B, #18181B, #27272A, #FAFAFA). Dilarang menyisipkan aksen warna oranye, kuning, atau warna kontras lain yang merusak keheningan visual scholarly.
-- **Pengecualian tunggal (keputusan Pemilik, 23 Oktober 2026):** banner hitung mundur penawaran perdana di layar langganan (`PromoCountdownBanner`) tetap berwarna merah solid `OTColors.errorLight`. Tidak ada elemen lain yang boleh berwarna.
+## 9. Hak Paten Desain Hitam-Putih Monokrom & Standar Checkout (MANDATORY)
+- Bahasa desain OpenTurath AI adalah **Monochrome Editorial — The Quiet Islamic Scholar** (palet tinta & kertas via token `OTColors`, tanpa warna oranye/kuning/emas/neon; hanya merah galat `OTColors.destructive` untuk error dan aksi permanen).
+- **Layar Langganan (`subscription_screen.dart`):**
+  - Penamaan paket bundel resmi adalah **`Semua AI`** (tanpa `*` dan tanpa awalan `"AI "` ganda), dengan keterangan *"Kecuali Fikih Tahawwulat"* di bawah judul.
+  - Kartu **Semua AI** ditonjolkan secara monokrom editorial sebagai *Pilihan Terbaik* (bingkai `1.8px`, gradasi tonal halus, lencana solid, strip perbandingan nilai vs satuan, tombol `FilledButton`), sementara paket satuan memakai `OutlinedButton` yang lebih tenang.
+- **Checkout & Dialog Sukses (`payment_checkout_sheet.dart`, `payment_success_dialog.dart`, `access_prepare_gate.dart`):**
+  - Modal checkout desktop WAJIB tampil **full-window** (tanpa `maxWidth: 620`) dengan perbesaran QRIS Midtrans agar mudah di-scan dari layar laptop.
+  - Dialog pembayaran berhasil hanya menampilkan tombol **`Selesai`** (tanpa tombol *"Mulai Bertanya Sekarang"* dan tanpa memaksa membuka tab AI otomatis).
+  - Kartu tunggu aktivasi (`AccessPrepareGate`) menampilkan **Adab Menggunakan AI** (bukan contoh pertanyaan).

@@ -1,15 +1,35 @@
 # OpenTurath AI — Master Progress & Context Tracker
 
 > **Panduan Awet Konteks & Ringan Memori**:
-> File ini adalah *Single Source of Truth* status proyek OpenTurath AI. Ketika sesi chat terasa panjang (>15-20 turn), buka **Chat Baru (New Conversation)** lalu cukup instruksikan:
-> **"Baca PROGRESS.md dan lanjutkan task berikutnya."**
-> Agent akan langsung memahami 100% konteks proyek tanpa membebani RAM laptop.
+> File ini adalah *Single Source of Truth* status proyek OpenTurath AI. Ketika sesi chat terasa panjang, buka **Chat Baru (New Conversation)** lalu cukup instruksikan:
+> **"Baca PROGRESS.md dan AGENTS.md, lalu lanjutkan task berikutnya."**
+
+---
+
+## 0. Ringkasan Status Terkini (Snapshot 22 November 2026 — BACA INI DULU)
+- **Versi Aplikasi (`pubspec.yaml`):** `2.0.0+91` · **Branch Aktif:** `feature/rekonstruksi-arsitektur-sederhana` (head: `1d61ecfa`).
+- **Arsitektur Produksi:** **100% VPS Mandiri (`https://maktabah.openturath.id`) + Direct Release (APK Android / DMG macOS / EXE Windows)** tanpa Google Play Store. Otoritas akun (`/api/user-status`), harga (`/api/v1/catalog/offers`), daftar agen aktif (`/api/v1/config/agents`), penugasan URL notebook (`/api/getAgentUrl`), webhook Midtrans, dan sharing/reaper 24 Master Notebook (milik `hus180402@gmail.com`) berada di VPS.
+- **Harga Produksi Resmi (Sudah Dipulihkan di Klien — `6761c459`):**
+  - **Fikih Tahawwulat** (5 AI): `Rp 299.000` (1 bln) · `Rp 1.499.000` (6 bln) · `Rp 1.999.000` (12 bln)
+  - **Semua AI** (`all_specialists`, 18+ AI kecuali Fikih Tahawwulat): **`Rp 299.000`** (1 bln) · **`Rp 1.299.000`** (6 bln, hemat 28%) · **`Rp 1.799.000`** (12 bln, hemat 50%)
+  - **1 AI Satuan** (per bidang): `Rp 49.000` (1 bln) · `Rp 299.000` (6 bln) · `Rp 499.000` (12 bln)
+- **Status Sinkronisasi Klien ↔ VPS (`all_specialists`):**
+  - Klien (`fbde2cc0`) dan VPS sudah sinkron penuh untuk paket `all_specialists` (19/19 notebook disiplin non-Tahawwulat ter-share & terverifikasi via RPC; 5/5 notebook Fikih Tahawwulat tetap terisolasi; reaper anti-cabut aktif).
+- **Peningkatan Terakhir yang Sudah Selesai & Ter-commit:**
+  - Percepatan buka tab AI & pencegahan false-positive `accessDenied` (`1c91cea2`, `ec15ac5c`).
+  - Arsitektur Bidi universal, tabel responsif, dan kesetaraan ukuran font `.ot-ibarah` (`b1bc62e2`, `ab2168b2`, `ec15ac5c`, `15e63aa9`).
+  - Checkout desktop full-window + QRIS boost 360px, penamaan bersih `Semua AI`, dialog sukses tombol `Selesai` + 5 poin **Adab Menggunakan AI**, perbaikan label Rincian akses, dan dukungan penuh `all_specialists` di `UserModel` (`fbde2cc0`).
+  - Pemulihan harga produksi & redesign kartu **Semua AI** sebagai *Pilihan Terbaik* (`6761c459`, `1d61ecfa`).
+- **Yang Masih Perlu Dilakukan Sebelum Rilis Publik Final:**
+  1. Pastikan harga produksi di VPS (`products` SQLite & `/api/v1/catalog/offers`) sudah dikembalikan dari harga tes Rp 1.000 ke tabel harga di atas.
+  2. Opsional P1 klien: naikkan timeout `syncUserStatusWithVps` di `auth_service.dart:916` (4s → 10s), pisahkan fallback `applyActiveGrant` untuk `all_specialists`, perluas `defaultLaunchActiveIds` di `agent_service.dart`, dan sinkronkan 10 UUID master baru VPS ke `canonical_notebook_catalog.dart`.
+  3. Build final lintas platform (APK / DMG / EXE) + regenerasi checksum `.sha256` setelah verifikasi akhir.
 
 ---
 
 ## 1. Identitas & Visi Produk
-- **Aplikasi**: OpenTurath AI (`openturath_ai`) — platform riset dan talaqqi khazanah turats Islam berbasis AI (Flutter Cross-Platform: Android & macOS).
-- **Filosofi Visual**: *The Quiet Islamic Scholar* — desain monokrom teduh, tipografi editorial klasik, hening, minim distraksi, tanpa gradien mencolok (*zero tacky gradients*), tanpa bayangan tebal (*zero heavy shadows*), mengedepankan adab keilmuan dan keterbacaan teks marja'.
+- **Aplikasi**: OpenTurath AI (`openturath_ai`) — platform riset dan talaqqi khazanah turats Islam berbasis AI (Flutter Cross-Platform: Android, macOS, Windows).
+- **Filosofi Visual**: *The Quiet Islamic Scholar* — desain monokrom teduh, tipografi editorial klasik, hening, minim distraksi, mengedepankan adab keilmuan dan keterbacaan teks marja'.
 
 ---
 
@@ -685,11 +705,30 @@ Berdasarkan `AUDIT_OPENTURATH_AI.md`, dokumen perancangan pustaka, dan keluhan k
      - `https://openturath.id/RELEASE_MANIFEST.json`: HTTP 200 OK manifes sinkron versi `1.0.82+83`.
      - `https://openturath.id/midtrans-webhook`: HTTP 400 dengan Cloud Function execution ID valid (`jd7nd1imkvv9`).
 
+### Fasa 52: Arsitektur Mandiri VPS, Percepatan WebView, Bidi/Ibarah, Checkout Full-Window, `all_specialists` End-to-End & Harga Produksi (`b1bc62e2` s.d. `1d61ecfa` — Nov 2026)
+- **Stabilitas WebView, Bidi & Tipografi Ibarah (`b1bc62e2`, `ab2168b2`, `1c91cea2`, `ec15ac5c`, `15e63aa9`):**
+  - Penerapan arsitektur Bidi universal, pemisah segmen ibarah anti-streaming-bug, dan tabel responsif.
+  - Penghapusan celah *false-positive* `accessDenied` dari teks fikih serta percepatan buka tab AI via stale-while-revalidate sticky cache (`ot_assigned_notebook_v1_*`).
+  - Penyamakan specificity CSS ukuran font `.ot-ibarah` agar ukurannya persis sama dengan teks jawaban utama (termasuk saat zoom).
+  - Pembersihan file temp `pending_install.json.tmp` pada updater desktop (`2bf7f4b9`).
+- **Audit & Perbaikan End-to-End Checkout + Paket `Semua AI` (`fbde2cc0` + Patch VPS 22 Nov 2026):**
+  - Modal checkout desktop (`payment_checkout_sheet.dart`) diubah menjadi **full-window** dengan CSS boost QRIS (`360px`, `image-rendering: pixelated`).
+  - Penamaan paket dibersihkan menjadi **`Semua AI`** (menghapus `*` dan awalan `"AI "` ganda di `agent_model.dart`, `subscription_screen.dart`, `exclusive_activation_dialog.dart`).
+  - Dialog sukses pembayaran (`payment_success_dialog.dart`) menghapus tombol *"Mulai Bertanya Sekarang"* & auto-open AI (diganti **`Selesai`**), dan `access_prepare_gate.dart` mengganti *"Contoh pertanyaan"* menjadi 5 poin **Adab Menggunakan AI** (ID/AR/EN).
+  - Rincian akses di Pengaturan (`profile_screen.dart`) memetakan `all_specialists` ke **`Semua AI (kecuali Fikih Tahawwulat)`** (bukan fallback `"AI"`).
+  - `user_model.dart` mendukung penuh `all_specialists` / `all_disciplines` untuk membuka seluruh disiplin non-Tahawwulat; di sisi VPS seluruh 24 Master Notebook milik `hus180402@gmail.com` diselaraskan (19/19 spesialis ter-share + 5/5 Tahawwulat terisolasi, `/api/getAgentUrl` 200 OK, dan reaper anti-cabut diverifikasi).
+- **Pemulihan Harga Produksi & Redesign Kartu `Semua AI` (`6761c459`, `1d61ecfa`):**
+  - Seluruh harga tes Rp 1.000 di klien (`product_pricing.dart`, `constants.dart`, `agent_model.dart`, `manage_ota.py`) dikembalikan ke harga produksi resmi dengan struktur menarik untuk **Semua AI** (`Rp 299.000` / `Rp 1.299.000` / `Rp 1.799.000`).
+  - Kartu **Semua AI** di `subscription_screen.dart` ditingkatkan visualnya sebagai *Pilihan Terbaik* (bingkai `1.8px`, gradasi monokrom halus, lencana solid, strip perbandingan nilai vs satuan, `FilledButton` vs `OutlinedButton` pada paket satuan).
+
 ---
 
-## 5. Agenda & Fokus Selanjutnya
-1. **Pengujian Transaksi Real Midtrans (Rp 1.000)**:
-   - Pengujian live checkout QRIS Rp 1.000 di aplikasi desktop macOS dan ponsel.
-2. **Kesiapan Rilis Publik & Broadcast Update**:
-   - Membuka gembok agen berikutnya secara bertahap via `manage_ota.py unlock-agent <id>`.
+## 5. Agenda & Fokus Selanjutnya (Pra-Rilis Final v2.0.0)
+1. **Sinkronisasi Harga Produksi di VPS (`maktabah.openturath.id`):**
+   - Memastikan tabel `products` & `/api/v1/catalog/offers` di VPS sudah kembali dari Rp 1.000 ke harga produksi resmi (`fiqh_tahawwulat`: 299rb/1.499rb/1.999rb; `all_specialists`: 299rb/1.299rb/1.799rb; satuan: 49rb/299rb/499rb).
+2. **Hardening P1 Klien (Opsional Sebelum Build Final):**
+   - Naikkan timeout `syncUserStatusWithVps` (`auth_service.dart:916`) dari 4 detik ke 8–10 detik dan pisahkan fallback `applyActiveGrant` untuk `all_specialists`.
+   - Sinkronkan 10 UUID master baru dari VPS ke `canonical_notebook_catalog.dart` dan perluas `defaultLaunchActiveIds` di `agent_service.dart`.
+3. **Kompilasi Rilis Lintas Platform & Checksum:**
+   - Build bersih APK Android, DMG macOS, dan EXE/ZIP Windows, verifikasi uji akhir, lalu perbarui seluruh file `.sha256`.
 

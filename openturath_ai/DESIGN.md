@@ -253,3 +253,20 @@ Untuk versi lokal yang dipilih pemilik tanpa akun Developer berbayar, build mema
 ## Account subscription visibility — 2026-10-10
 
 Beranda dan profil menampilkan tombol Langganan berlabel jelas langsung di bawah identitas pengguna. Tombol menggantikan ikon tune tersembunyi pada kartu profil dan membuka rute langganan yang sama. Status VIP dari profil server selalu mengungguli paket berbayar/expired. Paket aktif diberi PRO; masa coba diberi TRIAL; pembayaran tertunda tidak mengklaim PRO. Label ini hanya presentasi, tanpa mengubah otorisasi per modul maupun siklus hidup WebView. Kontrol memakai Wrap agar tetap terbaca pada layar sempit dan teks diperbesar.
+
+## Pembaruan Pra-Rilis — 22 November 2026
+
+- **Layar Langganan & Kartu `Semua AI` (`subscription_screen.dart`):**
+  - Penamaan paket bundel dibakukan menjadi **`Semua AI`** (tanpa `*` dan tanpa awalan `"AI "` ganda), dengan keterangan *"Kecuali Fikih Tahawwulat"* di bawah judul.
+  - Kartu **Semua AI** dirancang sebagai *Pilihan Terbaik* dalam estetika monokrom editorial: bingkai tegas `1.8px`, gradasi tonal halus (`surface` ↔ `surfaceSubtle`), bayangan lembut, lencana solid **`PILIHAN TERBAIK · JAUH LEBIH HEMAT`**, strip perbandingan nilai (*"Bayar setara 6 AI satuan, langsung dapat semua 18+ AI sekaligus"*), serta `FilledButton` penuh (`Ambil Paket Semua AI`). Kartu **1 Bidang** di bawahnya memakai `OutlinedButton` agar hierarki pilihan langsung terbaca.
+  - Harga produksi resmi aktif kembali: **Fikih Tahawwulat** (`Rp 299.000` / `Rp 1.499.000` / `Rp 1.999.000`), **Semua AI** (`Rp 299.000` / `Rp 1.299.000` / `Rp 1.799.000`), dan **1 AI Satuan** (`Rp 49.000` / `Rp 299.000` / `Rp 499.000`).
+- **Checkout Full-Window & QRIS Desktop (`payment_checkout_sheet.dart`):**
+  - Pembatasan kotak `maxWidth: 620 / maxHeight: 850` dan `SheetGrabber` di desktop dihapus agar halaman checkout Midtrans tampil **penuh satu jendela aplikasi**. CSS adaptif disuntikkan untuk memperbesar QRIS hingga `360px` (`image-rendering: pixelated`) agar mudah di-scan dari layar laptop.
+- **Dialog Pembayaran Berhasil & Adab Menggunakan AI (`payment_success_dialog.dart`, `access_prepare_gate.dart`):**
+  - Tombol *"Mulai Bertanya Sekarang"* dan aksi buka-AI otomatis dihapus, diganti tombol **`Selesai`** yang menutup dialog ke dashboard secara bersih.
+  - Kartu *"Contoh pertanyaan"* diganti 5 poin **Adab Menggunakan AI** (Luruskan Niat, Bertanya dengan Jelas, Periksa Kitab Asli, Bukan Pengganti Guru, Jaga Amanah Ilmiah) dalam ID, AR, dan EN.
+- **Rincian Akses di Pengaturan (`profile_screen.dart`):**
+  - Entitlement `all_specialists` ditampilkan eksplisit sebagai **`Semua AI (kecuali Fikih Tahawwulat)`** (bukan fallback `"AI"`).
+- **Tipografi Ibarah & Bidi WebView (`notebook_skin.dart`, `agent_multi_tab_room.dart`):**
+  - Ukuran font `.ot-ibarah` disamakan dengan teks jawaban utama (termasuk saat pengguna memperbesar ukuran teks), disertai deteksi Bidi universal dan tabel responsif.
+
