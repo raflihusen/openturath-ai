@@ -56,8 +56,18 @@ void main() {
               await tester.pump(const Duration(milliseconds: 300));
             }
             expect(tester.takeException(), isNull, reason: reason);
-            // Tiga tombol bayar (paket utama, semua ai, dan satu bidang).
-            expect(find.byType(FilledButton), findsNWidgets(3), reason: reason);
+            // Dua tombol FilledButton (Fikih Tahawwulat & Semua AI) + 1 OutlinedButton tenang (1 AI Satuan) per Rule 9.
+            expect(find.byType(FilledButton), findsNWidgets(2), reason: reason);
+            expect(find.byType(OutlinedButton), findsOneWidget, reason: reason);
+            // Strip penawaran terbatas tampil trilingual tanpa overflow.
+            expect(
+                find.text(locale == 'ar'
+                    ? 'عرض لفترة محدودة'
+                    : locale == 'en'
+                        ? 'LIMITED-TIME OFFER'
+                        : 'PENAWARAN TERBATAS'),
+                findsOneWidget,
+                reason: reason);
             // Kedua kartu punya satu baris pilihan yang simetris; paket utama
             // menyebut "lima asisten" tanpa mendaftar namanya.
             expect(

@@ -16,7 +16,9 @@ class SubscriptionOffer {
   final int regularAmount;
   final int amount;
   int get savingsPercent =>
-      ((regularAmount - amount) * 100 / regularAmount).round();
+      (regularAmount <= 0 || regularAmount <= amount)
+          ? 0
+          : ((regularAmount - amount) * 100 / regularAmount).round();
   String get title => Loc.tr(months == 1
       ? 'oneMonth'
       : months == 6
@@ -95,7 +97,7 @@ abstract final class ProductPricing {
   static const defaultSpecialists = [
     defaultSpecialist,
     SubscriptionOffer(
-        plan: 'tholib_6m', months: 6, regularAmount: 1200000, amount: 299000),
+        plan: 'tholib_6m', months: 6, regularAmount: 1200000, amount: 249000),
     SubscriptionOffer(
         plan: 'bahits_1y', months: 12, regularAmount: 2400000, amount: 499000),
   ];
@@ -130,9 +132,11 @@ abstract final class ProductPricing {
   static void updateOffers({
     String? revision,
     Map<String, dynamic>? tahawwulatMap,
+    Map<String, dynamic>? allSpecialistsMap,
     Map<String, dynamic>? specialistsMap,
     Map<String, List<SubscriptionOffer>>? agentOffersMap,
     ArabicPaymentConfig? arabicPaymentConfig,
+    String? singleAgentOverrideId,
   }) {
     if (revision != null && revision.isNotEmpty) {
       _currentRevision = revision;
@@ -159,13 +163,39 @@ abstract final class ProductPricing {
         _buildOffer('tholib_6m', 6, 2995000, 1499000, tahawwulatMap),
         _buildOffer('bahits_1y', 12, 4995000, 1999000, tahawwulatMap),
       ];
+      if (_agentOffers.containsKey('fiqh_tahawwulat')) {
+        _agentOffers['fiqh_tahawwulat'] = List.of(_tahawwulat);
+      }
+      if (singleAgentOverrideId != null &&
+          _agentOffers.containsKey(singleAgentOverrideId)) {
+        _agentOffers[singleAgentOverrideId] = List.of(_tahawwulat);
+      }
+    }
+    if (allSpecialistsMap != null) {
+      _allSpecialists = [
+        _buildOffer('tholib_1m', 1, 1000000, 299000, allSpecialistsMap),
+        _buildOffer('tholib_6m', 6, 2995000, 1299000, allSpecialistsMap),
+        _buildOffer('bahits_1y', 12, 4995000, 1799000, allSpecialistsMap),
+      ];
+      if (_agentOffers.containsKey('all_specialists')) {
+        _agentOffers['all_specialists'] = List.of(_allSpecialists);
+      }
+      if (_agentOffers.containsKey('all_disciplines')) {
+        _agentOffers['all_disciplines'] = List.of(_allSpecialists);
+      }
     }
     if (specialistsMap != null) {
       _specialists = [
         _buildOffer('tholib_1m', 1, 300000, 49000, specialistsMap),
-        _buildOffer('tholib_6m', 6, 1200000, 299000, specialistsMap),
+        _buildOffer('tholib_6m', 6, 1200000, 249000, specialistsMap),
         _buildOffer('bahits_1y', 12, 2400000, 499000, specialistsMap),
       ];
+      if (singleAgentOverrideId != null &&
+          _agentOffers.containsKey(singleAgentOverrideId)) {
+        _agentOffers[singleAgentOverrideId] = List.of(_specialists);
+      } else if (_agentOffers.containsKey('fiqh_syafii')) {
+        _agentOffers['fiqh_syafii'] = List.of(_specialists);
+      }
     }
   }
 
@@ -199,10 +229,14 @@ abstract final class ProductPricing {
   }
 
   static bool hasOffersForAgent(String agentId) {
-    if (_agentOffers.isNotEmpty) {
-      return _agentOffers.containsKey(agentId);
+    if (_agentOffers.containsKey(agentId)) return true;
+    if (agentId == 'all_specialists' || agentId == 'all_disciplines') {
+      return _allSpecialists.isNotEmpty;
     }
-    return true;
+    if (agentId.startsWith('fiqh_tahawwulat')) {
+      return _tahawwulat.isNotEmpty;
+    }
+    return _specialists.isNotEmpty;
   }
 
   static List<SubscriptionOffer> forAgent(String agentId) {
@@ -293,10 +327,15 @@ class ProductPricingService {
           'regularAmount': offer.regularAmount,
         },
     };
+    final isTahawwulat = agentId.startsWith('fiqh_tahawwulat');
+    final isAllSpecialists =
+        agentId == 'all_specialists' || agentId == 'all_disciplines';
     ProductPricing.updateOffers(
       revision: revision,
-      tahawwulatMap: agentId.startsWith('fiqh_tahawwulat') ? updated : null,
-      specialistsMap: agentId.startsWith('fiqh_tahawwulat') ? null : updated,
+      tahawwulatMap: isTahawwulat ? updated : null,
+      allSpecialistsMap: isAllSpecialists ? updated : null,
+      specialistsMap: (!isTahawwulat && !isAllSpecialists) ? updated : null,
+      singleAgentOverrideId: agentId,
     );
     return true;
   }
@@ -351,11 +390,13 @@ class ProductPricingService {
                         ? p['amount'] as int
                         : int.tryParse(p['amount']?.toString() ?? '0') ?? 0;
 
-                    // Hitung harga normal (regularAmount) coret jika tidak disediakan
+                    // Hitung harga normal (regularAmount) coret jika tidak disediakan atau <= 0
                     int regular = 0;
-                    if (p['regularAmount'] is int) {
+                    if (p['regularAmount'] is int &&
+                        (p['regularAmount'] as int) > 0) {
                       regular = p['regularAmount'] as int;
-                    } else if (p['regular_amount'] is int) {
+                    } else if (p['regular_amount'] is int &&
+                        (p['regular_amount'] as int) > 0) {
                       regular = p['regular_amount'] as int;
                     } else {
                       if (months == 1) {

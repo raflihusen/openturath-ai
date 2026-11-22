@@ -119,8 +119,11 @@ class ExclusiveActivationDialog extends StatelessWidget {
       if (raw.contains('10 Menit') || raw.contains('10M')) {
         return 'All AI Assistants Trial Access (10 Minutes)';
       }
-      if (raw.contains('Semua AI') || raw.contains('all_access')) {
-        return 'All AI Assistants Access';
+      if (raw.contains('Semua AI') ||
+          raw.contains('all_access') ||
+          raw.contains('all_specialists') ||
+          raw.contains('all_disciplines')) {
+        return 'All AIs';
       }
       if (raw.contains('Syafi')) {
         return "AI Shafi'i Fiqh";
@@ -141,8 +144,10 @@ class ExclusiveActivationDialog extends StatelessWidget {
     nav.popUntil(
         (route) => route.settings.name == AppRoutes.dashboard || route.isFirst);
 
-    // Jika aktivasi untuk 1 AI spesifik, buka AI tersebut langsung
-    if (agentId != null && agentId!.isNotEmpty && agentId != 'all_access') {
+    // Jika aktivasi untuk 1 AI spesifik (bukan bundel virtual), buka AI tersebut langsung
+    final normalizedAgentId = (agentId ?? '').trim().toLowerCase();
+    if (normalizedAgentId.isNotEmpty &&
+        !virtualBundleAgentIds.contains(normalizedAgentId)) {
       final matched = AgentModel.defaultAgents
           .where((a) =>
               a.id == agentId || (entitlementKeys[a.id] ?? a.id) == agentId)
@@ -166,6 +171,7 @@ class ExclusiveActivationDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Loc.watch(context);
     final dark = Theme.of(context).brightness == Brightness.dark;
     final ink = OTColors.textPrimary(dark),
         muted = OTColors.textSecondary(dark);

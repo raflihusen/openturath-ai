@@ -17,6 +17,7 @@ import '../core/design/ot_expressive.dart';
 import '../core/design/ot_spacing.dart';
 import '../core/design/ot_typography.dart';
 import '../core/localization.dart';
+import '../core/payment_destination_policy.dart';
 import '../core/product_pricing.dart';
 import '../models/agent_model.dart';
 import '../services/agent_service.dart';
@@ -123,6 +124,54 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  /// Strip penawaran terbatas bergaya Monochrome Editorial (tenang, jelas,
+  /// trilingual ID/EN/AR, tanpa warna neon atau tanda seru).
+  Widget _promoOfferNotice(bool dark) {
+    final muted = OTColors.textSecondary(dark);
+    final badgeText = Loc.isArabic
+        ? 'عرض لفترة محدودة'
+        : (Loc.language == 'en' ? 'LIMITED-TIME OFFER' : 'PENAWARAN TERBATAS');
+    final bodyText = Loc.isArabic
+        ? 'أسعار ترويجية خاصة لفترة الإطلاق قبل العودة إلى الأسعار الاعتيادية.'
+        : (Loc.language == 'en'
+            ? 'Special launch discount active for a limited time before returning to regular rates.'
+            : 'Harga promo spesial berlaku terbatas sebelum kembali ke tarif normal.');
+    return Container(
+      padding: const EdgeInsets.symmetric(
+          horizontal: OTSpacing.base, vertical: OTSpacing.md),
+      decoration: BoxDecoration(
+        color: OTColors.surfaceSubtle(dark),
+        borderRadius: OTRadius.cardBorder,
+        border: Border.all(
+          color: OTColors.borderStrong(dark).withValues(alpha: 0.35),
+        ),
+      ),
+      child: Wrap(
+        spacing: OTSpacing.sm,
+        runSpacing: OTSpacing.xs,
+        crossAxisAlignment: WrapCrossAlignment.center,
+        children: [
+          Container(
+            padding: const EdgeInsets.symmetric(
+                horizontal: OTSpacing.sm, vertical: OTSpacing.xs),
+            decoration: BoxDecoration(
+              color: OTColors.inverted(dark),
+              borderRadius: OTRadius.chipBorder,
+            ),
+            child: Text(
+              badgeText,
+              style: OTTypography.metadataTag(color: OTColors.onInverted(dark)),
+            ),
+          ),
+          Text(
+            bodyText,
+            style: OTTypography.caption(color: muted).copyWith(height: 1.4),
+          ),
+        ],
       ),
     );
   }
@@ -251,7 +300,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
 
     Widget infoRow(String label, String value, {bool copyable = false}) {
       return Padding(
-        padding: const EdgeInsets.symmetric(vertical: 6),
+        padding: const EdgeInsets.symmetric(vertical: OTSpacing.sm),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
@@ -479,7 +528,12 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     }
 
     if (!mounted) return;
-    final title = '${agent.title} · ${offer.title}';
+    final localizedAgentTitle = agent.id == 'all_specialists'
+        ? (Loc.isArabic
+            ? 'جميع الذكاءات'
+            : (Loc.language == 'en' ? 'All AIs' : 'Semua AI'))
+        : Loc.text(agent.title);
+    final title = '$localizedAgentTitle · ${offer.title}';
     setState(() {
       _processing = true;
       _checkoutError = null;
@@ -519,16 +573,20 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
       }
       final paymentUrl = result['redirectUrl'];
       final invoice = result['invoiceNumber'];
+      final parsedPaymentUri =
+          paymentUrl is String ? Uri.tryParse(paymentUrl) : null;
       if (paymentUrl is! String ||
-          Uri.tryParse(paymentUrl)?.scheme != 'https' ||
+          parsedPaymentUri == null ||
+          !PaymentDestinationPolicy.isAllowed(parsedPaymentUri) ||
           invoice is! String ||
           invoice.isEmpty) {
         throw const FormatException('Invalid checkout response');
       }
+      final rawTrxId = result['trxId']?.toString();
       final paid = await PaymentCheckoutSheet.show(context,
           paymentUrl: paymentUrl,
           invoiceNumber: invoice,
-          trxId: result['trxId'] as String?,
+          trxId: (rawTrxId != null && rawTrxId.isNotEmpty) ? rawTrxId : null,
           planTitle: title,
           amount: offer.amount,
           regularAmount: offer.regularAmount,
@@ -708,6 +766,13 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     final arabicPay = ProductPricing.arabicPayment;
     final arabicPayReady = arabicPay.isAvailable;
 
+    final resolvedCtaLabel = (isArabicCurrency && !arabicPayReady)
+        ? 'قريباً'
+        : (ctaLabel ??
+            (isArabicCurrency
+                ? (active ? 'تجديد الاشتراك' : 'اشترك الآن')
+                : Loc.tr(active ? 'planRenew' : 'planContinue')));
+
     Widget actionButton() => Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -721,12 +786,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                           !_pricingReady)
                       ? null
                       : onCheckout,
-                  child: Text(ctaLabel ??
-                      (isArabicCurrency
-                          ? (arabicPayReady
-                              ? (active ? 'تجديد الاشتراك' : 'اشترك الآن')
-                              : 'قريباً')
-                          : Loc.tr(active ? 'planRenew' : 'planContinue'))),
+                  child: Text(resolvedCtaLabel),
                 )
               : FilledButton(
                   onPressed: ((isArabicCurrency && !arabicPayReady) ||
@@ -745,15 +805,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                       ],
                       Flexible(
                         child: Text(
-                          ctaLabel ??
-                              (isArabicCurrency
-                                  ? (arabicPayReady
-                                      ? (active
-                                          ? 'تجديد الاشتراك'
-                                          : 'اشترك الآن')
-                                      : 'قريباً')
-                                  : Loc.tr(
-                                      active ? 'planRenew' : 'planContinue')),
+                          resolvedCtaLabel,
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
@@ -1418,8 +1470,8 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                   name: Loc.isArabic
                       ? 'الفقه والمذاهب · الحديث · التفسير · الأصول · العربية والمزيد'
                       : (Loc.language == 'en'
-                          ? '4 Mazhabs · Hadith · Tafsir · Ushul · Arabic & more'
-                          : 'Fikih 4 Mazhab · Hadits · Tafsir · Ushul · Bahasa Arab & lainnya'),
+                          ? '4 Mazhabs · Hadith · Tafsir · Usul · Arabic & more'
+                          : 'Fikih 4 Mazhab · Hadis · Tafsir · Usul · Bahasa Arab & lainnya'),
                   inverse: false,
                   stacked: true,
                 ),
@@ -1468,8 +1520,8 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                           ]
                         : [
                             'Akses penuh ke seluruh $specialistCount+ AI disiplin keilmuan Islam',
-                            'Bandingkan dalil lintas 4 mazhab, hadits, tafsir, dan ushul sekaligus',
-                            'Hemat hingga 50% untuk paket 12 bulan (~Rp 150 rb/bulan)',
+                            'Bandingkan dalil lintas 4 mazhab, hadis, tafsir, dan usul sekaligus',
+                            'Hemat hingga 50% untuk paket 12 bulan (~${ProductPricing.rupiah((((allSpecialistsOffers.last.amount / 12) / 1000).round()) * 1000)}/bulan)',
                             'Kitab rujukan baru & pembaruan aplikasi selama langganan aktif',
                           ]),
                 ctaLabel: Loc.isArabic
@@ -1545,7 +1597,9 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                                     fontSize: wide
                                         ? OTFontSize.s36
                                         : OTFontSize.s26)),
-                        const SizedBox(height: OTSpacing.xl),
+                        const SizedBox(height: OTSpacing.base),
+                        _promoOfferNotice(dark),
+                        const SizedBox(height: OTSpacing.lg),
                         if (showTahawwulat ||
                             showAllSpecialists ||
                             singlePlan != null) ...[

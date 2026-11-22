@@ -94,7 +94,7 @@ class PaymentSuccessDialog extends StatelessWidget {
               const SizedBox(height: 12),
               panel,
               const SizedBox(height: 12),
-              Text(ProductPricing.rupiah(amount),
+              Text(ProductPricing.formatLocalPrice(amount),
                   textDirection: TextDirection.ltr,
                   style: OTTypography.bodyMedium(color: ink)),
               const SizedBox(height: 4),

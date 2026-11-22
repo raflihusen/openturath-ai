@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import '../core/design/ot_colors.dart';
+import '../core/design/ot_radius.dart';
+import '../core/design/ot_spacing.dart';
 import '../core/design/ot_typography.dart';
 import '../core/localization.dart';
 import '../core/product_pricing.dart';
@@ -43,13 +45,33 @@ class PromoPrice extends StatelessWidget {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       if (regularAmount > amount)
         Wrap(
-            spacing: 8,
+            spacing: OTSpacing.sm,
+            runSpacing: OTSpacing.xs,
             crossAxisAlignment: WrapCrossAlignment.center,
             children: [
               Text(normalLabel,
                   semanticsLabel: Loc.tr('normalPrice', [normalLabel]),
                   style: OTTypography.caption(color: secondary)
                       .copyWith(decoration: TextDecoration.lineThrough)),
+              if (inlineSaving && !compact && saving >= 5)
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: OTSpacing.sm, vertical: OTSpacing.xxs),
+                  decoration: BoxDecoration(
+                    color: foreground.withValues(alpha: 0.12),
+                    borderRadius: OTRadius.chipBorder,
+                    border:
+                        Border.all(color: foreground.withValues(alpha: 0.25)),
+                  ),
+                  child: Text(
+                    Loc.isArabic
+                        ? 'خصم $saving٪'
+                        : (Loc.language == 'en'
+                            ? '$saving% Off'
+                            : 'Diskon $saving%'),
+                    style: OTTypography.metadataTag(color: foreground),
+                  ),
+                ),
             ]),
       Wrap(
           crossAxisAlignment: WrapCrossAlignment.center,

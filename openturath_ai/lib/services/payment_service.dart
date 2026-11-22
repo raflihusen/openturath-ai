@@ -29,29 +29,53 @@ class PaymentService {
     required String email,
     required String phone,
   }) async {
-    // 1. Coba buat sesi checkout via endpoint mandiri VPS
-    try {
-      final res = await http.post(
-        Uri.parse('https://maktabah.openturath.id/api/v1/payment/checkout'),
-        headers: {
-          'Content-Type': 'application/json',
-          'User-Agent': 'OpenTurathApp/1.0',
-        },
-        body: jsonEncode({
-          'agent_id': agentId,
-          'plan': plan,
-          'plan_title': planTitle,
-          'amount': amount,
-          'customer_name': name,
-          'customer_email': email,
-          'customer_phone': phone,
-          'uid': uid,
-        }),
-      ).timeout(const Duration(seconds: 10));
+    // 1. Buat sesi checkout via endpoint mandiri VPS (otoritas utama produksi)
+    if (!_hasCustomFunctions) {
+      String? idToken;
+      try {
+        if (Firebase.apps.isNotEmpty) {
+          idToken = await FirebaseAuth.instance.currentUser
+              ?.getIdToken()
+              .timeout(const Duration(seconds: 3), onTimeout: () => null);
+        }
+      } catch (_) {}
 
-      if (res.statusCode == 200) {
-        final data = jsonDecode(res.body);
-        if (data is Map) {
+      final canFallbackToCloudFunction =
+          Firebase.apps.isNotEmpty && FirebaseAuth.instance.currentUser != null;
+
+      try {
+        final res = await http.post(
+          Uri.parse('https://maktabah.openturath.id/api/v1/payment/checkout'),
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'User-Agent': 'OpenTurathApp/1.0',
+            if (idToken != null && idToken.isNotEmpty)
+              'Authorization': 'Bearer $idToken',
+          },
+          body: jsonEncode({
+            'agent_id': agentId,
+            'plan': plan,
+            'plan_title': planTitle,
+            'amount': amount,
+            'expected_amount': amount,
+            'pricing_revision': ProductPricing.revision,
+            'customer_name': name,
+            'customer_email': email,
+            'customer_phone': phone,
+            'uid': uid,
+          }),
+        ).timeout(const Duration(seconds: 12));
+
+        Map<String, dynamic>? data;
+        try {
+          final decoded = jsonDecode(res.body);
+          if (decoded is Map) {
+            data = Map<String, dynamic>.from(decoded);
+          }
+        } catch (_) {}
+
+        if (res.statusCode == 200 && data != null) {
           final paymentUrl = data['redirect_url'] ??
               data['paymentUrl'] ??
               data['redirectUrl'] ??
@@ -60,21 +84,94 @@ class PaymentService {
               data['invoiceNumber'] ??
               data['invoice_number'] ??
               '';
-          final trxId = data['transaction_id'] ?? data['trxId'] ?? '';
+          final trxId =
+              (data['transaction_id'] ?? data['trxId'] ?? '').toString();
+          final rawServerAmount = data['amount'] ?? data['gross_amount'];
+          final parsedServerAmount = rawServerAmount is int
+              ? rawServerAmount
+              : (rawServerAmount is num
+                  ? rawServerAmount.toInt()
+                  : int.tryParse(rawServerAmount?.toString() ?? ''));
+          final serverRevision =
+              (data['pricingRevision'] ?? data['pricing_revision'])?.toString();
+
           if (paymentUrl is String && paymentUrl.isNotEmpty) {
             return {
               'redirectUrl': paymentUrl,
               'paymentUrl': paymentUrl,
               'trxId': trxId,
-              'invoiceNumber': invoiceNumber,
+              'invoiceNumber': invoiceNumber.toString(),
               'status': 'pending',
-              'amount': amount,
-              'pricingRevision': ProductPricing.revision,
+              'amount': parsedServerAmount ?? amount,
+              'pricingRevision':
+                  (serverRevision != null && serverRevision.isNotEmpty)
+                      ? serverRevision
+                      : ProductPricing.revision,
             };
           }
         }
+
+        // Tangani penolakan harga basi atau error bisnis VPS secara eksplisit;
+        // jangan diam-diam jatuh ke Cloud Function saat error 4xx atau tanpa FirebaseAuth.
+        final serverReason = data?['reason']?.toString();
+        final serverMessage =
+            (data?['message'] ?? data?['error'])?.toString();
+        if (res.statusCode == 409 ||
+            res.statusCode == 412 ||
+            serverReason == 'price_changed') {
+          throw FirebaseFunctionsException(
+            code: 'failed-precondition',
+            message: serverMessage ??
+                'Harga penawaran telah berubah. Muat ulang aplikasi.',
+            details: {
+              ...?data,
+              'reason': serverReason ?? 'price_changed',
+              'agentId': agentId,
+              'plan': plan,
+              if (data?['amount'] != null) 'amount': data!['amount'],
+              if (data?['pricingRevision'] != null ||
+                  data?['pricing_revision'] != null)
+                'pricingRevision':
+                    data!['pricingRevision'] ?? data['pricing_revision'],
+            },
+          );
+        }
+        if (res.statusCode == 401) {
+          throw FirebaseFunctionsException(
+            code: 'unauthenticated',
+            message: serverMessage ?? 'Sesi akun kedaluwarsa.',
+          );
+        }
+        if (res.statusCode == 403) {
+          throw FirebaseFunctionsException(
+            code: 'permission-denied',
+            message: serverMessage ?? 'Akses transaksi ditolak.',
+          );
+        }
+        if (res.statusCode == 400 || res.statusCode == 422) {
+          throw FirebaseFunctionsException(
+            code: 'invalid-argument',
+            message: serverMessage ?? 'Pilihan paket tidak valid.',
+          );
+        }
+        if (!canFallbackToCloudFunction) {
+          throw FirebaseFunctionsException(
+            code: 'unavailable',
+            message: serverMessage ??
+                'Layanan pembayaran sedang sibuk (HTTP ${res.statusCode}).',
+          );
+        }
+      } on FirebaseFunctionsException {
+        rethrow;
+      } catch (e) {
+        if (!canFallbackToCloudFunction) {
+          throw FirebaseFunctionsException(
+            code: 'unavailable',
+            message: 'Gagal terhubung ke server pembayaran: $e',
+          );
+        }
       }
-    } catch (_) {}
+    }
 
     try {
       final result = await _functions.call(AppConstants.fnCreatePayment, {
@@ -94,8 +191,8 @@ class PaymentService {
       return {
         'redirectUrl': data['paymentUrl'] ?? data['redirectUrl'],
         'paymentUrl': data['paymentUrl'] ?? data['redirectUrl'],
-        'trxId': data['trxId'] ?? '',
-        'invoiceNumber': data['invoiceNumber'] ?? '',
+        'trxId': (data['trxId'] ?? '').toString(),
+        'invoiceNumber': (data['invoiceNumber'] ?? '').toString(),
         'status': 'pending',
         'amount': data['amount'],
         'pricingRevision': data['pricingRevision'],

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -128,6 +129,13 @@ class SubscriptionService {
       if (uid.isEmpty && email.isNotEmpty) {
         uid = 'web_$email';
       }
+      if (email.isEmpty) {
+        return {
+          'success': false,
+          'code': 'unauthenticated',
+          'message': Loc.tr('redeemSignInFirst'),
+        };
+      }
 
       final payload = jsonEncode({
         'code': normalized,
@@ -142,7 +150,11 @@ class SubscriptionService {
       // 1. Tembak endpoint resmi VPS Maktabah OpenTurath (FastAPI / Caddy / Cloudflare)
       String? idToken;
       try {
-        idToken = await FirebaseAuth.instance.currentUser?.getIdToken();
+        if (Firebase.apps.isNotEmpty) {
+          idToken = await FirebaseAuth.instance.currentUser
+              ?.getIdToken()
+              .timeout(const Duration(seconds: 3), onTimeout: () => null);
+        }
       } catch (_) {}
       final headers = <String, String>{
         'Content-Type': 'application/json',
@@ -315,10 +327,15 @@ class SubscriptionService {
         (res['message'] ?? '')
             .toString()
             .startsWith('Status pembayaran belum dapat diperiksa.');
-    final isSuccess =
-        rawStatus == 'SUCCESS' || rawStatus == 'SETTLED' || rawStatus == 'PAID';
+    final isSuccess = rawStatus == 'SUCCESS' ||
+        rawStatus == 'SETTLED' ||
+        rawStatus == 'SETTLEMENT' ||
+        rawStatus == 'PAID';
     if (isSuccess) {
-      final activeEmail = AuthService.activeWebUserEmail;
+      final auth = AuthService();
+      final activeEmail = AuthService.activeWebUserEmail ??
+          auth.cachedCurrentUser?.email ??
+          auth.currentUser?.email;
       if (activeEmail != null && activeEmail.isNotEmpty) {
         unawaited(AuthService.syncUserStatusWithVps(activeEmail));
       }

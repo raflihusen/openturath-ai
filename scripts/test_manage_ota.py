@@ -12,13 +12,18 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 import manage_ota as ota  # noqa: E402
 
 DEFAULTS = {
-    "soon_sub_agent_ids": ["fiqh_tahawwulat_khatib", "fiqh_tahawwulat_habib", "fiqh_tahawwulat_mukhtabir"],
+    "soon_sub_agent_ids": [],
     "introduction_enabled": False,
 }
+SAMPLE_SOON = ["fiqh_tahawwulat_khatib", "fiqh_tahawwulat_habib", "fiqh_tahawwulat_mukhtabir"]
 
 
 def _defaults():
     return {"soon_sub_agent_ids": list(DEFAULTS["soon_sub_agent_ids"]), "introduction_enabled": False}
+
+
+def _with_sample_soon():
+    return {"soon_sub_agent_ids": list(SAMPLE_SOON), "introduction_enabled": False}
 
 
 class ReadFeaturesTest(unittest.TestCase):
@@ -59,13 +64,13 @@ class ReadFeaturesTest(unittest.TestCase):
         self.assertNotIn("DISEMBUNYIKAN", src)
 
     def test_defaults_match_the_other_two_implementations(self):
-        # Dart dan TypeScript menyimpan bawaan yang sama; tes ini menjaga kesepakatan.
+        # Dart dan TypeScript menyimpan bawaan yang sama (semua 5 sub-AI Tahawwulat terbuka secara default).
         root = Path(__file__).resolve().parent.parent
         dart = (root / "openturath_ai/lib/services/feature_flags.dart").read_text("utf8")
         ts = (root / "openturath_ai/functions/src/index.ts").read_text("utf8")
-        for agent in DEFAULTS["soon_sub_agent_ids"]:
-            self.assertIn(f"'{agent}'", dart, f"{agent} tidak ada di feature_flags.dart")
-            self.assertIn(f'"{agent}"', ts, f"{agent} tidak ada di index.ts")
+        self.assertEqual(ota.DEFAULT_SOON_SUB_AGENTS, [])
+        self.assertIn("soonSubAgentIds: {}", dart)
+        self.assertIn("const DEFAULT_SOON_SUB_AGENTS: string[] = [];", ts)
         self.assertIn("introductionEnabled: false", dart)
         # Pola id dan batas jumlah harus sama di ketiganya.
         self.assertIn(r"^[a-z][a-z0-9_]{0,79}$", dart)
@@ -77,17 +82,17 @@ class ReadFeaturesTest(unittest.TestCase):
 
 class ApplyChangeTest(unittest.TestCase):
     def test_release_removes_only_that_agent(self):
-        new = ota.apply_feature_change(_defaults(), release="fiqh_tahawwulat_khatib")
+        new = ota.apply_feature_change(_with_sample_soon(), release="fiqh_tahawwulat_khatib")
         self.assertEqual(new["soon_sub_agent_ids"], ["fiqh_tahawwulat_habib", "fiqh_tahawwulat_mukhtabir"])
 
     def test_release_all_three_leaves_empty_list(self):
-        state = _defaults()
-        for agent in DEFAULTS["soon_sub_agent_ids"]:
+        state = _with_sample_soon()
+        for agent in SAMPLE_SOON:
             state = ota.apply_feature_change(state, release=agent)
         self.assertEqual(state["soon_sub_agent_ids"], [])
 
     def test_soon_adds_once_and_is_idempotent(self):
-        base = ota.apply_feature_change(_defaults(), release="fiqh_tahawwulat_khatib")
+        base = ota.apply_feature_change(_with_sample_soon(), release="fiqh_tahawwulat_khatib")
         again = ota.apply_feature_change(base, soon="fiqh_tahawwulat_khatib")
         twice = ota.apply_feature_change(again, soon="fiqh_tahawwulat_khatib")
         self.assertEqual(again, twice)
@@ -199,7 +204,11 @@ class CommandFlowTest(unittest.TestCase):
         self.assertEqual(self._run(ota.cmd_soon_sub_agent, "fiqh_tahawwulat_bayan", dry_run=True), [])
 
     def test_release_writes_with_mask_limited_to_feature_fields(self):
-        writes = self._run(ota.cmd_release_sub_agent, "fiqh_tahawwulat_khatib")
+        existing = {
+            "soon_sub_agent_ids": {"arrayValue": {"values": [{"stringValue": a} for a in SAMPLE_SOON]}},
+            "introduction_enabled": {"booleanValue": False},
+        }
+        writes = self._run(ota.cmd_release_sub_agent, "fiqh_tahawwulat_khatib", existing=existing)
         self.assertEqual(len(writes), 1)
         (name, payload, token), kwargs = writes[0]
         self.assertEqual(name, "features")
@@ -210,10 +219,8 @@ class CommandFlowTest(unittest.TestCase):
         self.assertEqual(set(values), {"fiqh_tahawwulat_habib", "fiqh_tahawwulat_mukhtabir"})
 
     def test_no_op_changes_do_not_write(self):
-        # khatib sudah segera hadir secara bawaan -> menandainya lagi tidak menulis.
-        # Dokumen belum ada: perubahan no-op tetap membuat dokumen? Tidak: tidak ada perubahan niat.
         existing = {
-            "soon_sub_agent_ids": {"arrayValue": {"values": [{"stringValue": a} for a in DEFAULTS["soon_sub_agent_ids"]]}},
+            "soon_sub_agent_ids": {"arrayValue": {"values": [{"stringValue": a} for a in SAMPLE_SOON]}},
             "introduction_enabled": {"booleanValue": False},
         }
         self.assertEqual(self._run(ota.cmd_soon_sub_agent, "fiqh_tahawwulat_khatib", existing=existing), [])
@@ -319,11 +326,11 @@ class CheckEntryTest(unittest.TestCase):
         self.assertTrue(ota.check_release_entry("android", self.release(url="https://openturath.web.app:8443/a.apk"), 1))
         self.assertTrue(ota.check_release_entry("android", self.release(url="https://u:p@openturath.web.app/a.apk"), 1))
 
-    def test_android_requires_a_valid_sha256_but_desktop_does_not(self):
+    def test_all_platforms_require_a_valid_sha256(self):
         for bad in (None, "", "abc", "z" * 64):
             self.assertTrue(ota.check_release_entry("android", self.release(sha256=bad), 1), bad)
-        self.assertEqual(ota.check_release_entry("macos", self.release(url=DMG, sha256=None), 1), [])
-        self.assertTrue(ota.check_release_entry("macos", self.release(url=DMG, sha256="abc"), 1))
+            self.assertTrue(ota.check_release_entry("macos", self.release(url=DMG, sha256=bad), 1), bad)
+        self.assertEqual(ota.check_release_entry("macos", self.release(url=DMG, sha256=SHA_A), 1), [])
 
     def test_missing_release_is_reported(self):
         self.assertTrue(ota.check_release_entry("android", None, 1))

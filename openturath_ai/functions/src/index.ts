@@ -533,11 +533,7 @@ async function getDynamicPricingConfig(): Promise<DynamicPricingConfig | null> {
 // Aturan baca HARUS sama dengan FeatureFlags.parse di klien Flutter
 // (openturath_ai/lib/services/feature_flags.dart).
 // ================================================================
-const DEFAULT_SOON_SUB_AGENTS = [
-  "fiqh_tahawwulat_khatib",
-  "fiqh_tahawwulat_habib",
-  "fiqh_tahawwulat_mukhtabir",
-];
+const DEFAULT_SOON_SUB_AGENTS: string[] = [];
 const SOON_ID_PATTERN = /^[a-z][a-z0-9_]{0,79}$/;
 const MAX_SOON_IDS = 50;
 

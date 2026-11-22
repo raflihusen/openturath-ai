@@ -11,8 +11,9 @@ class PaymentDestinationPolicy {
     // Midtrans / Veritrans
     'midtrans.com', 'veritrans.co.id',
     // Bank
-    'bca.co.id', 'klikbca.com', 'mandiri.co.id', 'bri.co.id', 'bni.co.id',
-    'bsi.co.id', 'cimbniaga.co.id', 'permata.co.id', 'permatabank.com',
+    'bca.co.id', 'klikbca.com', 'mandiri.co.id', 'bankmandiri.co.id',
+    'bri.co.id', 'bni.co.id', 'bsi.co.id', 'bankbsi.co.id',
+    'cimbniaga.co.id', 'permata.co.id', 'permatabank.com',
     'danamon.co.id',
     // Dompet digital & paylater yang dialihkan Midtrans Snap
     'gopay.co.id', 'gojek.com', 'gojek.link', 'shopeepay.co.id',
@@ -22,6 +23,8 @@ class PaymentDestinationPolicy {
 
   static bool isAllowed(Uri uri) {
     if (uri.scheme != 'https') return false;
+    if (uri.userInfo.isNotEmpty) return false;
+    if (uri.hasPort && uri.port != 443) return false;
     final host = uri.host.toLowerCase();
     return _domains.any((d) => host == d || host.endsWith('.$d'));
   }

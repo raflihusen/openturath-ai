@@ -90,7 +90,41 @@ ALL_KNOWN_AGENTS = [
     "musthalah_hadith",
 ]
 
-DEFAULT_ACTIVE_AGENTS = ["fiqh_tahawwulat", "fiqh_syafii"]
+DEFAULT_ACTIVE_AGENTS = [
+    "fiqh_tahawwulat",
+    "fiqh_tahawwulat_muhaqqiq",
+    "fiqh_tahawwulat_bayan",
+    "fiqh_tahawwulat_mukhtabir",
+    "fiqh_tahawwulat_habib",
+    "fiqh_tahawwulat_khatib",
+    "fiqh_syafii",
+    "fiqh_syafii_muhaqqiq",
+    "fiqh_hanafi",
+    "fiqh_hanafi_muhaqqiq",
+    "fiqh_maliki",
+    "fiqh_maliki_muhaqqiq",
+    "fiqh_hanbali",
+    "fiqh_hanbali_muhaqqiq",
+    "fiqh_muqaran",
+    "fiqh_muqaran_muhaqqiq",
+    "hadits",
+    "hadits_muhaqqiq",
+    "tafsir",
+    "tafsir_muhaqqiq",
+    "ushul_fiqh",
+    "ushul_muhaqqiq",
+    "nahwu_sharaf",
+    "nahwu_sharaf_muerib",
+    "nahwu_sharaf_tashrif",
+    "aqidah",
+    "tarikh",
+    "tasawwuf",
+    "tajwid_qiraat",
+    "musthalah_hadits",
+    "syarah_hadits",
+    "thabaqat_rijal",
+    "bibliografi_faharis",
+]
 
 # Saklar fitur (app_config/features). Nilai bawaan HARUS sama dengan
 # FeatureFlags.defaults (Flutter) dan DEFAULT_SOON_SUB_AGENTS (Cloud Functions).
@@ -102,11 +136,7 @@ KNOWN_SUB_AGENTS = [
     "fiqh_tahawwulat_habib",
     "fiqh_tahawwulat_khatib",
 ]
-DEFAULT_SOON_SUB_AGENTS = [
-    "fiqh_tahawwulat_khatib",
-    "fiqh_tahawwulat_habib",
-    "fiqh_tahawwulat_mukhtabir",
-]
+DEFAULT_SOON_SUB_AGENTS = []
 DEFAULT_INTRODUCTION_ENABLED = False
 MAX_SOON_IDS = 50
 SUB_AGENT_ID_PATTERN = re.compile(r"^[a-z][a-z0-9_]{0,79}$")
@@ -183,7 +213,8 @@ RELEASE_PLATFORMS = {
     "windows": (".exe", ".msi", ".msix", ".msixbundle", ".zip"),
 }
 RELEASE_ALLOWED_HOSTS = {
-    "openturath.id", "www.openturath.id", "openturath.ai", "www.openturath.ai",
+    "openturath.id", "www.openturath.id", "maktabah.openturath.id",
+    "openturath.ai", "www.openturath.ai",
     "openturath.web.app", "open-turath.web.app", "openturath-ai.web.app",
     "openturath.firebaseapp.com", "open-turath.firebaseapp.com", "openturath-ai.firebaseapp.com",
 }
@@ -239,10 +270,8 @@ def check_release_entry(platform, release, current_build):
     if not uri.path.lower().endswith(RELEASE_PLATFORMS[platform]):
         problems.append(f"Ekstensi berkas harus salah satu dari {', '.join(RELEASE_PLATFORMS[platform])}.")
     sha = release.get("sha256")
-    if platform == "android" and not (isinstance(sha, str) and SHA256_PATTERN.match(sha)):
-        problems.append("Android WAJIB punya SHA-256 valid; tanpa itu aplikasi menolak mengunduh.")
-    elif sha is not None and not (isinstance(sha, str) and SHA256_PATTERN.match(sha)):
-        problems.append("SHA-256 tidak berformat 64 karakter heksadesimal.")
+    if not (isinstance(sha, str) and SHA256_PATTERN.match(sha)):
+        problems.append(f"{platform.upper()} WAJIB punya SHA-256 valid (64 karakter heksadesimal); tanpa itu aplikasi menolak mengunduh.")
     if current_build is not None and release["build"] < current_build:
         problems.append(f"Build di dokumen ({release['build']}) lebih LAMA dari build aplikasi sekarang ({current_build}).")
     return problems
@@ -342,8 +371,12 @@ def to_firestore_features_fields(state, note=""):
 PRODUCTION_PRICES = {
     # Modul Spesialis Per Bidang Ilmu (Fikih Syafi'i, Hadis, dll.)
     "tholib_1m": 49000,
-    "tholib_6m": 299000,
+    "tholib_6m": 249000,
     "bahits_1y": 499000,
+    # Paket Semua AI (Seluruh disiplin kecuali Fikih Tahawwulat)
+    "all_specialists_1m": 299000,
+    "all_specialists_6m": 1299000,
+    "all_specialists_1y": 1799000,
     # Modul Khusus Fikih Tahawwulat (5 Bilik AI Terpadu)
     "tahawwulat_1m": 299000,
     "tahawwulat_6m": 1499000,
@@ -357,8 +390,11 @@ PRODUCTION_PRICES = {
 TEST_PRICES = {
     # Mode Pengujian QRIS Midtrans Production (Rp 1.000)
     "tholib_1m": 1000,
-    "tholib_6m": 299000,
+    "tholib_6m": 249000,
     "bahits_1y": 499000,
+    "all_specialists_1m": 1000,
+    "all_specialists_6m": 1299000,
+    "all_specialists_1y": 1799000,
     "tahawwulat_1m": 1000,
     "tahawwulat_6m": 1499000,
     "tahawwulat_1y": 1999000,
@@ -450,8 +486,11 @@ def parse_firestore_fields(fields_dict):
 def to_firestore_pricing_fields(pricing_dict, revision, note=""):
     now_iso = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     tholib_1m = pricing_dict.get("tholib_1m", 49000)
-    tholib_6m = pricing_dict.get("tholib_6m", 299000)
+    tholib_6m = pricing_dict.get("tholib_6m", 249000)
     bahits_1y = pricing_dict.get("bahits_1y", 499000)
+    all_1m = pricing_dict.get("all_specialists_1m", 1000 if tholib_1m == 1000 else 299000)
+    all_6m = pricing_dict.get("all_specialists_6m", 1299000)
+    all_1y = pricing_dict.get("all_specialists_1y", 1799000)
     t_1m = pricing_dict.get("tahawwulat_1m", 1000 if tholib_1m == 1000 else 299000)
     t_6m = pricing_dict.get("tahawwulat_6m", 1499000)
     t_1y = pricing_dict.get("tahawwulat_1y", 1999000)
@@ -494,6 +533,36 @@ def to_firestore_pricing_fields(pricing_dict, revision, note=""):
                                     "mapValue": {
                                         "fields": {
                                             "amount": {"integerValue": str(t_1y)},
+                                            "regularAmount": {"integerValue": "4995000"},
+                                        }
+                                    }
+                                },
+                            }
+                        }
+                    },
+                    "all_specialists": {
+                        "mapValue": {
+                            "fields": {
+                                "tholib_1m": {
+                                    "mapValue": {
+                                        "fields": {
+                                            "amount": {"integerValue": str(all_1m)},
+                                            "regularAmount": {"integerValue": "1000000"},
+                                        }
+                                    }
+                                },
+                                "tholib_6m": {
+                                    "mapValue": {
+                                        "fields": {
+                                            "amount": {"integerValue": str(all_6m)},
+                                            "regularAmount": {"integerValue": "2995000"},
+                                        }
+                                    }
+                                },
+                                "bahits_1y": {
+                                    "mapValue": {
+                                        "fields": {
+                                            "amount": {"integerValue": str(all_1y)},
                                             "regularAmount": {"integerValue": "4995000"},
                                         }
                                     }
@@ -602,15 +671,20 @@ def cmd_status(token):
 def cmd_set_pricing(mode, token):
     now_ts = datetime.now(timezone.utc).strftime("%Y%m%d-%H%M%S")
     if mode == "test":
+        print("⚠️  PERINGATAN: Anda akan menyetel HARGA TEST Rp 1.000 di Firestore produksi!")
+        confirm = input("Ketik 'TEST-1000' untuk mengonfirmasi: ").strip()
+        if confirm != "TEST-1000":
+            print("❎ Dibatalkan. Harga produksi tidak diubah.")
+            return
         revision = f"rev-test-qris-1000-{now_ts}"
         note = "Testing Midtrans Production Rp 1.000 via QRIS"
         payload = to_firestore_pricing_fields(TEST_PRICES, revision, note)
         print("🚀 Mengubah harga ke MODE TEST (Rp 1.000 untuk Tholib 1 Bulan)...")
     elif mode == "production":
-        revision = f"rev-prod-300k-{now_ts}"
-        note = "Harga Resmi Peluncuran OpenTurath AI"
+        revision = f"rev-prod-v2-{now_ts}"
+        note = "Harga Resmi Peluncuran OpenTurath AI v2.0.0"
         payload = to_firestore_pricing_fields(PRODUCTION_PRICES, revision, note)
-        print("🚀 Mengubah harga ke MODE PRODUKSI (Tahawwulat Rp 299.000, per bidang Rp 49.000, 1 Bulan)...")
+        print("🚀 Mengubah harga ke MODE PRODUKSI (Tahawwulat 299rb/1.499rb/1.999rb, Semua AI 299rb/1.299rb/1.799rb, Satuan 49rb/249rb/499rb)...")
     else:
         print(f"❌ Mode '{mode}' tidak dikenal. Pilih: test atau production.")
         return

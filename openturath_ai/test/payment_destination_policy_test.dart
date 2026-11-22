@@ -9,6 +9,8 @@ void main() {
       'https://bca.co.id/x',
       'https://klikpay.klikbca.com/x',
       'https://bsi.co.id/x',
+      'https://bankbsi.co.id/x',
+      'https://bankmandiri.co.id/x',
       'https://epay.bri.co.id/x',
       'https://link.dana.id/x',
       'https://shopee.co.id/x',
@@ -16,13 +18,15 @@ void main() {
       expect(ok(u), isTrue, reason: u);
     }
   });
-  test('http, domain tiruan, dan akhiran menyerupai tetap ditolak', () {
+  test('http, domain tiruan, port non-443, userinfo, dan akhiran menyerupai tetap ditolak', () {
     for (final u in [
       'http://app.midtrans.com/x',
       'https://midtrans.com.evil.test/x',
       'https://evilmidtrans.com/x',
       'https://notbca.co.id/x',
       'https://example.com/x',
+      'https://app.midtrans.com:8443/x',
+      'https://user:pass@app.midtrans.com/x',
     ]) {
       expect(ok(u), isFalse, reason: u);
     }

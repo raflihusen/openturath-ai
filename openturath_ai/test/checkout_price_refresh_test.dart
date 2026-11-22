@@ -130,7 +130,41 @@ void main() {
       );
       expect(refreshed, isFalse);
       expect(ProductPricing.specialists.first.amount, 49000);
+      expect(ProductPricing.specialists[1].amount, 249000);
       expect(ProductPricing.revision, ProductPricing.defaultRevision);
     }
+  });
+
+  test('refreshCheckoutOffer for all_specialists never overwrites single specialist prices', () async {
+    final refreshed = await ProductPricingService.refreshCheckoutOffer(
+      agentId: 'all_specialists',
+      plan: 'tholib_1m',
+      details: {
+        'reason': 'price_changed',
+        'agentId': 'all_specialists',
+        'plan': 'tholib_1m',
+        'amount': 319000,
+        'pricingRevision': 'rev-all-spec-fresh',
+      },
+      reload: () async => false,
+    );
+    expect(refreshed, isTrue);
+    expect(ProductPricing.allSpecialists.first.amount, 319000);
+    expect(ProductPricing.specialists.first.amount, 49000);
+    expect(ProductPricing.specialists[1].amount, 249000);
+    ProductPricing.updateOffers(
+      revision: ProductPricing.defaultRevision,
+      allSpecialistsMap: {},
+    );
+  });
+
+  test('SubscriptionOffer.savingsPercent guards against zero regularAmount', () {
+    const zeroRegular = SubscriptionOffer(
+      plan: 'tholib_1m',
+      months: 1,
+      regularAmount: 0,
+      amount: 49000,
+    );
+    expect(zeroRegular.savingsPercent, 0);
   });
 }

@@ -64,13 +64,18 @@ class _RedeemCodeSheetState extends State<RedeemCodeSheet> {
     if (success) {
       // Isi dialog hanya dari jawaban server; tidak ada judul atau durasi
       // karangan bila server tidak mengirimnya.
-      final serviceTitle =
-          (result['serviceTitle'] as String?) ?? Loc.tr('redeemFallbackTitle');
-      final durationDays = (result['durationDays'] as num?)?.toInt() ?? 0;
-      final expiryRaw = (result['expiryIso'] ?? result['expiry']) as String?;
+      final rawTitle = result['serviceTitle']?.toString().trim();
+      final serviceTitle = (rawTitle != null && rawTitle.isNotEmpty)
+          ? rawTitle
+          : Loc.tr('redeemFallbackTitle');
+      final rawDays = result['durationDays'];
+      final durationDays = rawDays is num
+          ? rawDays.toInt()
+          : int.tryParse(rawDays?.toString() ?? '') ?? 0;
+      final expiryRaw = (result['expiryIso'] ?? result['expiry'])?.toString();
       final expiryDate =
           expiryRaw != null ? DateTime.tryParse(expiryRaw) : null;
-      final agentId = (result['entitlementKey'] as String?) ?? '';
+      final agentId = result['entitlementKey']?.toString() ?? '';
 
       final nav = Navigator.of(context);
       widget.onSuccess?.call();
@@ -86,8 +91,10 @@ class _RedeemCodeSheetState extends State<RedeemCodeSheet> {
         code: code,
       );
     } else {
-      setState(() => _inlineError =
-          (result['message'] as String?) ?? Loc.tr('redeemFailedGeneric'));
+      final errMsg = result['message']?.toString().trim();
+      setState(() => _inlineError = (errMsg != null && errMsg.isNotEmpty)
+          ? errMsg
+          : Loc.tr('redeemFailedGeneric'));
     }
   }
 

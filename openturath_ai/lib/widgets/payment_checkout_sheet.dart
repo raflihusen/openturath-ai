@@ -6,6 +6,7 @@ import '../core/localization.dart';
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'adaptive_sheet.dart';
@@ -135,7 +136,9 @@ class _PaymentCheckoutSheetState extends State<PaymentCheckoutSheet> {
     super.initState();
 
     // 1. Real-time Firestore Listener: mendeteksi instan saat status berubah jadi 'success' (< 1s)
-    final currentUid = FirebaseAuth.instance.currentUser?.uid;
+    final currentUid = Firebase.apps.isNotEmpty
+        ? FirebaseAuth.instance.currentUser?.uid
+        : null;
     if (widget.invoiceNumber.isNotEmpty && currentUid != null) {
       _txSubscription = FirebaseFirestore.instance
           .collection(AppConstants.colTransactions)
@@ -163,21 +166,26 @@ class _PaymentCheckoutSheetState extends State<PaymentCheckoutSheet> {
     // HANYA dipicu jika ada entitlement baru yang memiliki sourceTransactionId cocok dengan invoice/trxId ini.
     // DILARANG keras memicu _triggerSuccess hanya karena user sudah berstatus VIP atau memiliki paket lain,
     // karena hal tersebut akan menutup checkout secara instan sebelum Midtrans sempat terbuka!
-    _userSubscription = AuthService().userStream.listen((user) {
-      if (user != null && !_isSuccess && mounted) {
-        final matchesThisTx = user.entitlements.values.any((e) =>
-            e.isActive &&
-            (e.sourceTransactionId != null &&
-                e.sourceTransactionId!.isNotEmpty &&
-                (e.sourceTransactionId == widget.invoiceNumber ||
-                    (widget.trxId != null &&
-                        widget.trxId!.isNotEmpty &&
-                        e.sourceTransactionId == widget.trxId))));
-        if (matchesThisTx) {
-          _triggerSuccess();
+    _userSubscription = AuthService().userStream.listen(
+      (user) {
+        if (user != null && !_isSuccess && mounted) {
+          final matchesThisTx = user.entitlements.values.any((e) =>
+              e.isActive &&
+              (e.sourceTransactionId != null &&
+                  e.sourceTransactionId!.isNotEmpty &&
+                  (e.sourceTransactionId == widget.invoiceNumber ||
+                      (widget.trxId != null &&
+                          widget.trxId!.isNotEmpty &&
+                          e.sourceTransactionId == widget.trxId))));
+          if (matchesThisTx) {
+            _triggerSuccess();
+          }
         }
-      }
-    });
+      },
+      onError: (_) {
+        // Kegagalan stream tidak boleh membatalkan polling pembayaran.
+      },
+    );
 
     // 3. Active inquiry polling setiap 5 detik sebagai fail-safe
     _pollTimer = Timer.periodic(const Duration(seconds: 5), (_) {
@@ -212,7 +220,10 @@ class _PaymentCheckoutSheetState extends State<PaymentCheckoutSheet> {
     });
 
     // Sinkronisasi status langganan dan hak akses terbaru dari VPS seketika
-    final email = AuthService.activeWebUserEmail ?? AuthService().currentUser?.email;
+    final auth = AuthService();
+    final email = AuthService.activeWebUserEmail ??
+        auth.cachedCurrentUser?.email ??
+        auth.currentUser?.email;
     if (email != null && email.isNotEmpty) {
       unawaited(AuthService.syncUserStatusWithVps(email));
     }
@@ -250,7 +261,7 @@ class _PaymentCheckoutSheetState extends State<PaymentCheckoutSheet> {
     if (!force &&
         _lastInquiryAt != null &&
         DateTime.now().difference(_lastInquiryAt!) <
-            const Duration(seconds: 6)) {
+            const Duration(seconds: 4)) {
       return;
     }
 
@@ -449,18 +460,49 @@ class _PaymentCheckoutSheetState extends State<PaymentCheckoutSheet> {
         scheme == 'about') {
       return false;
     }
-    // Izinkan skema intent hanya jika spesifik untuk pembayaran perbankan/e-wallet
+    // Izinkan skema intent hanya jika segmen #Intent;...;end secara eksak
+    // menunjuk skema pembayaran/perbankan tepercaya (dan fallback URL tepercaya).
     if (scheme == 'intent') {
-      final str = uri.toString().toLowerCase();
-      return str.contains('scheme=gojek') ||
-          str.contains('scheme=shopeepay') ||
-          str.contains('scheme=ovo') ||
-          str.contains('scheme=dana') ||
-          str.contains('scheme=linkaja') ||
-          str.contains('scheme=bca') ||
-          str.contains('scheme=mandiri') ||
-          str.contains('scheme=bri') ||
-          str.contains('scheme=bni');
+      final raw = uri.toString();
+      final intentIdx = raw.indexOf('#Intent;');
+      final endIdx = raw.lastIndexOf(';end');
+      if (intentIdx < 0 || endIdx <= intentIdx) return false;
+      final tokens = raw.substring(intentIdx + 8, endIdx).split(';');
+      String? targetScheme;
+      String? fallbackUrl;
+      for (final token in tokens) {
+        if (token.startsWith('scheme=')) {
+          targetScheme = token.substring(7).trim().toLowerCase();
+        } else if (token.startsWith('S.browser_fallback_url=')) {
+          fallbackUrl = Uri.decodeComponent(token.substring(23));
+        }
+      }
+      const allowedIntentSchemes = {
+        'gojek',
+        'gopay',
+        'shopeepay',
+        'shopee',
+        'ovo',
+        'dana',
+        'linkaja',
+        'bca',
+        'mandiri',
+        'bankmandiri',
+        'bri',
+        'brimo',
+        'bni',
+        'bsi',
+      };
+      if (targetScheme == null || !allowedIntentSchemes.contains(targetScheme)) {
+        return false;
+      }
+      if (fallbackUrl != null && fallbackUrl.isNotEmpty) {
+        final fbUri = Uri.tryParse(fallbackUrl);
+        if (fbUri == null || !_isAllowedPaymentDestination(fbUri)) {
+          return false;
+        }
+      }
+      return true;
     }
     return false;
   }
@@ -685,68 +727,106 @@ class _PaymentCheckoutSheetState extends State<PaymentCheckoutSheet> {
 
                   // WebView gateway pembayaran dengan overlay loading imersif saat inisialisasi awal
                   Expanded(
-                    child: Stack(
-                      children: [
-                        Positioned.fill(
-                          child: InAppWebView(
-                      gestureRecognizers: <Factory<
-                          OneSequenceGestureRecognizer>>{
-                        Factory<OneSequenceGestureRecognizer>(
-                          () => EagerGestureRecognizer(),
-                        ),
-                      },
-                      webViewEnvironment: DesktopWebViewRuntime.environment,
-                      initialUrlRequest:
-                          URLRequest(url: WebUri(widget.paymentUrl)),
-                      initialSettings: InAppWebViewSettings(
-                        javaScriptEnabled: true,
-                        domStorageEnabled: true,
-                        databaseEnabled: true,
-                        sharedCookiesEnabled:
-                            WebViewCookiePolicy.sharedCookiesEnabled,
-                        thirdPartyCookiesEnabled: true,
-                        cacheEnabled: true,
-                        clearCache: false,
-                        clearSessionCache: false,
-                        useHybridComposition: false,
-                        disableVerticalScroll: false,
-                        disableHorizontalScroll: false,
-                        supportZoom: false,
-                        builtInZoomControls: false,
-                        displayZoomControls: false,
-                        mixedContentMode:
-                            MixedContentMode.MIXED_CONTENT_NEVER_ALLOW,
-                        allowFileAccess: false,
-                        allowContentAccess: true,
-                        javaScriptCanOpenWindowsAutomatically: true,
-                        supportMultipleWindows: true,
-                        forceDark: isDark ? ForceDark.ON : ForceDark.OFF,
-                        transparentBackground: false,
-                        userAgent: AppPlatform.isDesktop
-                            ? AppConstants.desktopUserAgent
-                            : AppConstants.chromeMobileUserAgent,
-                      ),
-                      onWebViewCreated: (controller) {
-                        _webController = controller;
-                      },
-                      onCreateWindow: (controller, createWindowAction) async {
-                        final targetUrl = createWindowAction.request.url;
-                        if (targetUrl != null) {
-                          final uri = targetUrl.uriValue;
-                          if (_isAllowedPaymentDestination(uri)) {
-                            await controller.loadUrl(
-                              urlRequest: URLRequest(url: targetUrl),
-                            );
-                            return true;
-                          } else {
-                            debugPrint(
-                                '[PaymentCheckout] Blocked popup window to untrusted origin: $uri');
-                            _offerBrowserFallback();
-                            return false;
-                          }
-                        }
-                        return false;
-                      },
+                    child: Builder(builder: (context) {
+                      final initialUri = Uri.tryParse(widget.paymentUrl);
+                      if (initialUri == null ||
+                          !_isAllowedPaymentDestination(initialUri)) {
+                        return Center(
+                          child: Padding(
+                            padding: const EdgeInsets.all(24),
+                            child: Text(
+                              Loc.tr('checkoutLinkUnavailable'),
+                              textAlign: TextAlign.center,
+                              style: OTTypography.body(color: textSecondary),
+                            ),
+                          ),
+                        );
+                      }
+                      return Stack(
+                        children: [
+                          Positioned.fill(
+                            child: InAppWebView(
+                              gestureRecognizers: <Factory<
+                                  OneSequenceGestureRecognizer>>{
+                                Factory<OneSequenceGestureRecognizer>(
+                                  () => EagerGestureRecognizer(),
+                                ),
+                              },
+                              webViewEnvironment:
+                                  DesktopWebViewRuntime.environment,
+                              initialUrlRequest:
+                                  URLRequest(url: WebUri(widget.paymentUrl)),
+                              initialSettings: InAppWebViewSettings(
+                                javaScriptEnabled: true,
+                                domStorageEnabled: true,
+                                databaseEnabled: true,
+                                sharedCookiesEnabled:
+                                    WebViewCookiePolicy.sharedCookiesEnabled,
+                                thirdPartyCookiesEnabled: true,
+                                cacheEnabled: true,
+                                clearCache: false,
+                                clearSessionCache: false,
+                                useHybridComposition: false,
+                                disableVerticalScroll: false,
+                                disableHorizontalScroll: false,
+                                supportZoom: false,
+                                builtInZoomControls: false,
+                                displayZoomControls: false,
+                                mixedContentMode:
+                                    MixedContentMode.MIXED_CONTENT_NEVER_ALLOW,
+                                allowFileAccess: false,
+                                allowContentAccess: true,
+                                javaScriptCanOpenWindowsAutomatically: true,
+                                supportMultipleWindows: true,
+                                forceDark:
+                                    isDark ? ForceDark.ON : ForceDark.OFF,
+                                transparentBackground: false,
+                                userAgent: AppPlatform.isDesktop
+                                    ? AppConstants.desktopUserAgent
+                                    : AppConstants.chromeMobileUserAgent,
+                              ),
+                              onWebViewCreated: (controller) {
+                                _webController = controller;
+                              },
+                              onCreateWindow:
+                                  (controller, createWindowAction) async {
+                                final targetUrl =
+                                    createWindowAction.request.url;
+                                if (targetUrl != null) {
+                                  final uri = targetUrl.uriValue;
+                                  if (_isAllowedPaymentDestination(uri)) {
+                                    await controller.loadUrl(
+                                      urlRequest: URLRequest(url: targetUrl),
+                                    );
+                                    return false;
+                                  }
+                                  if (uri.scheme != 'http' &&
+                                      uri.scheme != 'https' &&
+                                      _isAllowedExternalScheme(uri)) {
+                                    try {
+                                      await launchUrl(uri,
+                                          mode: AppPlatform.isDesktop
+                                              ? LaunchMode.externalApplication
+                                              : LaunchMode
+                                                  .externalNonBrowserApplication);
+                                    } catch (_) {
+                                      _offerBrowserFallback();
+                                    }
+                                    return false;
+                                  }
+                                  debugPrint(
+                                      '[PaymentCheckout] Blocked popup window to untrusted origin: $uri');
+                                  _offerBrowserFallback();
+                                  return false;
+                                }
+                                return false;
+                              },
+                              onReceivedError: (controller, request, error) {
+                                if (request.isForMainFrame == true && mounted) {
+                                  setState(() => _isInitialPageLoading = false);
+                                  _offerBrowserFallback();
+                                }
+                              },
                       onProgressChanged: (controller, progress) {
                         if (mounted) {
                           setState(() {
@@ -919,7 +999,8 @@ class _PaymentCheckoutSheetState extends State<PaymentCheckoutSheet> {
                           ),
                         ),
                       ],
-                    ),
+                    );
+                    }),
                   ),
                 ],
               ),

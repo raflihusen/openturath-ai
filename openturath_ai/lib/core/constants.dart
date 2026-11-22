@@ -38,6 +38,6 @@ class AppConstants {
 
   // ── Pricing (Rupiah) ──────────────────────────────────────────
   static const int priceTholib1m = 49000;
-  static const int priceTholib6m = 299000;
+  static const int priceTholib6m = 249000;
   static const int priceBahits1y = 499000;
 }

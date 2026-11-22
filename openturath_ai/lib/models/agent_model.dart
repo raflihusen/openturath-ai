@@ -292,7 +292,7 @@ class AgentModel {
           status: 'active',
           sortOrder: 2,
           price1m: 49000,
-          price6m: 299000,
+          price6m: 249000,
           price1y: 499000,
           subAgents: [
             SubAgentModel(
@@ -341,7 +341,7 @@ class AgentModel {
           status: 'active',
           sortOrder: 3,
           price1m: 49000,
-          price6m: 299000,
+          price6m: 249000,
           price1y: 499000,
           subAgents: [
             SubAgentModel(
@@ -390,7 +390,7 @@ class AgentModel {
           status: 'active',
           sortOrder: 4,
           price1m: 49000,
-          price6m: 299000,
+          price6m: 249000,
           price1y: 499000,
           subAgents: [
             SubAgentModel(
@@ -438,7 +438,7 @@ class AgentModel {
           status: 'active',
           sortOrder: 5,
           price1m: 49000,
-          price6m: 299000,
+          price6m: 249000,
           price1y: 499000,
           subAgents: [
             SubAgentModel(
@@ -487,7 +487,7 @@ class AgentModel {
           status: 'active',
           sortOrder: 6,
           price1m: 49000,
-          price6m: 299000,
+          price6m: 249000,
           price1y: 499000,
           subAgents: [
             SubAgentModel(
@@ -537,7 +537,7 @@ class AgentModel {
           status: 'active',
           sortOrder: 7,
           price1m: 49000,
-          price6m: 299000,
+          price6m: 249000,
           price1y: 499000,
           subAgents: [
             SubAgentModel(
@@ -588,7 +588,7 @@ class AgentModel {
           status: 'active',
           sortOrder: 8,
           price1m: 49000,
-          price6m: 299000,
+          price6m: 249000,
           price1y: 499000,
           subAgents: [
             SubAgentModel(
@@ -640,7 +640,7 @@ class AgentModel {
           status: 'active',
           sortOrder: 9,
           price1m: 49000,
-          price6m: 299000,
+          price6m: 249000,
           price1y: 499000,
           subAgents: [
             SubAgentModel(
@@ -692,7 +692,7 @@ class AgentModel {
           status: 'active',
           sortOrder: 10,
           price1m: 49000,
-          price6m: 299000,
+          price6m: 249000,
           price1y: 499000,
           subAgents: [
             SubAgentModel(
@@ -754,7 +754,7 @@ class AgentModel {
           status: 'active',
           sortOrder: 11,
           price1m: 49000,
-          price6m: 299000,
+          price6m: 249000,
           price1y: 499000,
         ),
 
@@ -778,7 +778,7 @@ class AgentModel {
           status: 'active',
           sortOrder: 12,
           price1m: 49000,
-          price6m: 299000,
+          price6m: 249000,
           price1y: 499000,
         ),
 
@@ -796,7 +796,7 @@ class AgentModel {
           status: 'active',
           sortOrder: 13,
           price1m: 49000,
-          price6m: 299000,
+          price6m: 249000,
           price1y: 499000,
         ),
 
@@ -820,7 +820,7 @@ class AgentModel {
           status: 'active',
           sortOrder: 17,
           price1m: 49000,
-          price6m: 299000,
+          price6m: 249000,
           price1y: 499000,
         ),
         AgentModel(
@@ -842,7 +842,7 @@ class AgentModel {
           status: 'active',
           sortOrder: 18,
           price1m: 49000,
-          price6m: 299000,
+          price6m: 249000,
           price1y: 499000,
         ),
         AgentModel(
@@ -865,7 +865,7 @@ class AgentModel {
           status: 'active',
           sortOrder: 19,
           price1m: 49000,
-          price6m: 299000,
+          price6m: 249000,
           price1y: 499000,
         ),
         AgentModel(
@@ -887,7 +887,7 @@ class AgentModel {
           status: 'active',
           sortOrder: 20,
           price1m: 49000,
-          price6m: 299000,
+          price6m: 249000,
           price1y: 499000,
         ),
         AgentModel(
@@ -909,7 +909,7 @@ class AgentModel {
           status: 'active',
           sortOrder: 21,
           price1m: 49000,
-          price6m: 299000,
+          price6m: 249000,
           price1y: 499000,
         ),
       ];
