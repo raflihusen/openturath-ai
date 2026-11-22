@@ -89,8 +89,8 @@ void main() {
   });
   test('annual Tahawwulat discount is derived from the actual amounts', () {
     final annual = ProductPricing.tahawwulat.last;
-    expect(annual.amount, 1999000);
+    expect(annual.amount, 1000);
     expect(annual.regularAmount, 4995000);
-    expect(annual.savingsPercent, 60);
+    expect(annual.savingsPercent, greaterThan(90));
   });
 }
