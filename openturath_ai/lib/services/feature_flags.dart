@@ -28,10 +28,11 @@ class FeatureFlags {
 
   /// Bawaan di dalam aplikasi, berlaku sebelum dan tanpa dokumen jarak jauh.
   /// Seluruh 5 sub-AI Fikih Tahawwulat (Al-Muhaqqiq, Al-Bayan, Al-Khatib,
-  /// Al-Habib, Al-Mukhtabir) terbuka secara default untuk rilis v2.0.0.
+  /// Al-Habib, Al-Mukhtabir) serta modul "Mengenal Fikih Tahawwulat" terbuka
+  /// secara default untuk rilis v2.0.0.
   static const defaults = FeatureFlags(
     soonSubAgentIds: {},
-    introductionEnabled: false,
+    introductionEnabled: true,
   );
 
   /// Id sub-AI yang valid: huruf kecil, angka, garis bawah; diawali huruf.

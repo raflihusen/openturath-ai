@@ -23,9 +23,9 @@ void main() {
   tearDown(() => TahawwulatHero.introductionReadyOverride = null);
 
   group('FeatureFlags.parse', () {
-    test('bawaan: seluruh 5 sub-AI Tahawwulat terbuka dan Mengenal mati', () {
+    test('bawaan: seluruh 5 sub-AI Tahawwulat dan Mengenal terbuka penuh', () {
       expect(FeatureFlags.defaults.soonSubAgentIds, isEmpty);
-      expect(FeatureFlags.defaults.introductionEnabled, isFalse);
+      expect(FeatureFlags.defaults.introductionEnabled, isTrue);
       for (final id in [
         'fiqh_tahawwulat_muhaqqiq',
         'fiqh_tahawwulat_bayan',
@@ -49,22 +49,22 @@ void main() {
       expect(f.introductionEnabled, isTrue);
     });
 
-    test('mengubah isi daftar dan menyalakan Mengenal', () {
+    test('mengubah isi daftar dan mematikan Mengenal lewat remote flag', () {
       final f = FeatureFlags.parse(const {
         'soon_sub_agent_ids': ['fiqh_tahawwulat_khatib'],
-        'introduction_enabled': true,
+        'introduction_enabled': false,
       });
       expect(f.soonSubAgentIds, {'fiqh_tahawwulat_khatib'});
       expect(f.isSubAgentSoon('fiqh_tahawwulat_habib'), isFalse);
-      expect(f.introductionEnabled, isTrue);
+      expect(f.introductionEnabled, isFalse);
     });
 
     test('nilai bertipe salah diabaikan, bukan dipercaya', () {
-      // introduction_enabled bukan bool -> bawaan (false), bukan "true" teks.
-      final a = FeatureFlags.parse(const {'introduction_enabled': 'true'});
-      expect(a.introductionEnabled, isFalse);
-      final b = FeatureFlags.parse(const {'introduction_enabled': 1});
-      expect(b.introductionEnabled, isFalse);
+      // introduction_enabled bukan bool -> jatuh ke fallback (bawaan true), bukan string/angka.
+      final a = FeatureFlags.parse(const {'introduction_enabled': 'false'});
+      expect(a.introductionEnabled, isTrue);
+      final b = FeatureFlags.parse(const {'introduction_enabled': 0});
+      expect(b.introductionEnabled, isTrue);
       // soon_sub_agent_ids bukan list -> bawaan (kosong).
       final c = FeatureFlags.parse(const {'soon_sub_agent_ids': 'fiqh_x'});
       expect(c.soonSubAgentIds, FeatureFlags.defaults.soonSubAgentIds);
@@ -182,12 +182,13 @@ void main() {
       FeatureFlagsService.resetForTest(FeatureFlags.defaults);
       expect(calls, 0);
       // Nilai berbeda: tepat satu pemberitahuan.
-      const open = FeatureFlags(soonSubAgentIds: {}, introductionEnabled: true);
-      FeatureFlagsService.resetForTest(open);
+      const closed =
+          FeatureFlags(soonSubAgentIds: {}, introductionEnabled: false);
+      FeatureFlagsService.resetForTest(closed);
       expect(calls, 1);
       // Nilai setara (isi sama) tidak memberi tahu lagi.
       FeatureFlagsService.resetForTest(
-          const FeatureFlags(soonSubAgentIds: {}, introductionEnabled: true));
+          const FeatureFlags(soonSubAgentIds: {}, introductionEnabled: false));
       expect(calls, 1);
       // Kembali ke bawaan: satu pemberitahuan lagi.
       FeatureFlagsService.resetForTest(FeatureFlags.defaults);
@@ -196,11 +197,11 @@ void main() {
   });
 
   group('Tombol Mengenal Fikih Tahawwulat', () {
-    test('kesiapan mengikuti saklar jarak jauh', () {
-      expect(TahawwulatHero.introductionReady, isFalse);
-      FeatureFlagsService.resetForTest(
-          const FeatureFlags(soonSubAgentIds: {}, introductionEnabled: true));
+    test('kesiapan terbuka secara default dan mengikuti saklar jarak jauh', () {
       expect(TahawwulatHero.introductionReady, isTrue);
+      FeatureFlagsService.resetForTest(
+          const FeatureFlags(soonSubAgentIds: {}, introductionEnabled: false));
+      expect(TahawwulatHero.introductionReady, isFalse);
     });
 
     test('penimpaan manual mengalahkan saklar jarak jauh', () {
@@ -220,26 +221,29 @@ void main() {
                 child: TahawwulatHero(
                     onOpen: () {}, onIntroduction: onIntroduction ?? () {}))));
 
-    testWidgets('selalu tampil; belum siap memberi penanda Segera hadir',
+    testWidgets('terbuka secara default tanpa penanda Segera hadir; remote false mengunci',
         (tester) async {
       tester.view.physicalSize = const Size(900, 900);
       tester.view.devicePixelRatio = 1;
       addTearDown(tester.view.reset);
       await tester.pumpWidget(frame());
       expect(find.text('Mengenal Fikih Tahawwulat'), findsOneWidget);
-      expect(find.text('Segera hadir'), findsOneWidget);
+      expect(find.text('Segera hadir'), findsNothing);
 
       FeatureFlagsService.resetForTest(
-          const FeatureFlags(soonSubAgentIds: {}, introductionEnabled: true));
+          const FeatureFlags(soonSubAgentIds: {}, introductionEnabled: false));
       await tester.pumpWidget(frame());
       expect(find.text('Mengenal Fikih Tahawwulat'), findsOneWidget);
-      expect(find.text('Segera hadir'), findsNothing);
+      expect(find.text('Segera hadir'), findsOneWidget);
     });
 
-    testWidgets('penanda berganti ke Inggris dan Arab', (tester) async {
+    testWidgets('penanda berganti ke Inggris dan Arab saat remote false',
+        (tester) async {
       tester.view.physicalSize = const Size(900, 900);
       tester.view.devicePixelRatio = 1;
       addTearDown(tester.view.reset);
+      FeatureFlagsService.resetForTest(
+          const FeatureFlags(soonSubAgentIds: {}, introductionEnabled: false));
       AppConfig.localeNotifier.value = 'en';
       await tester.pumpWidget(frame());
       expect(find.text('Getting to know Fiqh al-Tahawwulat'), findsOneWidget);
@@ -255,6 +259,8 @@ void main() {
       tester.view.physicalSize = const Size(320, 900);
       tester.view.devicePixelRatio = 1;
       addTearDown(tester.view.reset);
+      FeatureFlagsService.resetForTest(
+          const FeatureFlags(soonSubAgentIds: {}, introductionEnabled: false));
       await tester.pumpWidget(MaterialApp(
           theme: AppTheme.lightTheme,
           builder: (context, child) => MediaQuery(
