@@ -1372,7 +1372,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                 agentId: flagship.id,
               );
 
-              final specialistCount = specialists.length > 0 ? specialists.length : 18;
+              final specialistCount = specialists.isNotEmpty ? specialists.length : 18;
               final allSpecialistsPlan = _planCard(
                 inverse: false,
                 highlighted: true,
