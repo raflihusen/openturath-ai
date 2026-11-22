@@ -1,5 +1,9 @@
 $ErrorActionPreference = 'Stop'
 $bundle = Join-Path $PSScriptRoot '../build/windows/x64/runner/Release'
+$armBundle = Join-Path $PSScriptRoot '../build/windows/arm64/runner/Release'
+if (!(Test-Path $bundle) -and (Test-Path $armBundle)) {
+  throw "Terdeteksi build ARM64 di $armBundle. Firebase C++ SDK hanya mendukung Windows x64 — gunakan Flutter SDK x64 & VS 2022 x64 Build Tools (satu installer x64 berjalan di PC x64 dan ARM64)."
+}
 foreach ($required in @('openturath_ai.exe', 'flutter_windows.dll', 'data/icudtl.dat', 'data/app.so', 'data/flutter_assets')) {
   if (!(Test-Path (Join-Path $bundle $required))) { throw "Missing bundle component: $required" }
 }

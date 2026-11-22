@@ -44,7 +44,7 @@ class AgentService {
     _lastAgentsFetch = null;
   }
 
-  /// Whitelist peluncuran perdana bawaan: Hanya Fikih Tahawwulat & Fikih Syafi'i (dan subagennya).
+  /// Daftar agen aktif bawaan saat offline/cold-start sebelum /api/v1/config/agents termuat.
   static const defaultLaunchActiveIds = <String>{
     'fiqh_tahawwulat',
     'fiqh_tahawwulat_muhaqqiq',
@@ -54,6 +54,31 @@ class AgentService {
     'fiqh_tahawwulat_khatib',
     'fiqh_syafii',
     'fiqh_syafii_muhaqqiq',
+    'fiqh_hanafi',
+    'fiqh_hanafi_muhaqqiq',
+    'fiqh_maliki',
+    'fiqh_maliki_muhaqqiq',
+    'fiqh_hanbali',
+    'fiqh_hanbali_muhaqqiq',
+    'fiqh_muqaran',
+    'fiqh_muqaran_muhaqqiq',
+    'hadits',
+    'hadits_muhaqqiq',
+    'tafsir',
+    'tafsir_muhaqqiq',
+    'ushul_fiqh',
+    'ushul_muhaqqiq',
+    'nahwu_sharaf',
+    'nahwu_sharaf_muerib',
+    'nahwu_sharaf_tashrif',
+    'aqidah',
+    'tarikh',
+    'tasawwuf',
+    'tajwid_qiraat',
+    'musthalah_hadits',
+    'syarah_hadits',
+    'thabaqat_rijal',
+    'bibliografi_faharis',
   };
 
   static List<AgentModel> _applyActiveStatus(

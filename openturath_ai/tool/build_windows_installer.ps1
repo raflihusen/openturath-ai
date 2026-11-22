@@ -12,7 +12,18 @@ $repoDir = Resolve-Path (Join-Path $projectDir '..')
 $windowsDir = Join-Path $projectDir 'windows'
 $uiProject = Join-Path $repoDir 'openturath_installer'
 $stage = Join-Path $projectDir 'build\installer_stage'
-$payloadDir = if ($PayloadDirectory) { [IO.Path]::GetFullPath($PayloadDirectory) } else { Join-Path $repoDir 'OpenTurath_AI_Windows' }
+$defaultReleaseDir = Join-Path $projectDir 'build\windows\x64\runner\Release'
+$payloadDir = if ($PayloadDirectory) {
+  [IO.Path]::GetFullPath($PayloadDirectory)
+} elseif (Test-Path (Join-Path $defaultReleaseDir 'prerequisites\vc_redist.x64.exe')) {
+  $defaultReleaseDir
+} else {
+  Join-Path $repoDir 'OpenTurath_AI_Windows'
+}
+if (!(Test-Path (Join-Path $payloadDir 'openturath_ai.exe'))) {
+  throw "Payload tidak ditemukan di $payloadDir. Jalankan 'flutter build windows --release' (x64) lalu '.\tool\package_windows.ps1' terlebih dahulu."
+}
+$env:CMAKE_POLICY_VERSION_MINIMUM = '3.5'
 
 $isccCandidates = @(
   'C:\Users\apple\AppData\Local\Programs\Inno Setup 6\ISCC.exe',
@@ -35,9 +46,12 @@ if ($LASTEXITCODE -ne 0) { throw "ISCC gagal pada installer_core.iss" }
 Write-Host "2/4 Layar pemasang (Flutter)..." -ForegroundColor Cyan
 Push-Location $uiProject
 flutter build windows --release
-if ($LASTEXITCODE -ne 0) { throw "flutter build windows gagal" }
+if ($LASTEXITCODE -ne 0) { Pop-Location; throw "flutter build windows gagal" }
 Pop-Location
 $uiRelease = Join-Path $uiProject 'build\windows\x64\runner\Release'
+if (!(Test-Path $uiRelease)) {
+  throw "Output build x64 tidak ditemukan di $uiRelease. Pastikan memakai Flutter SDK x64 (bukan ARM64)."
+}
 
 Write-Host "3/4 Paket antarmuka..." -ForegroundColor Cyan
 New-Item -ItemType Directory -Force $stage | Out-Null
