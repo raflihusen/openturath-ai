@@ -2,11 +2,14 @@
 ; wizard: mengekstrak layar pemasang Flutter dan mesin pemasang ke folder
 ; sementara, menjalankan layar pemasang, lalu keluar saat layar itu ditutup.
 #define MyAppName "OpenTurath AI"
+#ifndef MyAppVersion
+#define MyAppVersion "2.0.0"
+#endif
 
 [Setup]
 AppId={{B6E0D2A4-5C1F-4B7A-9D3E-7A1F0C2E8B55}
 AppName={#MyAppName} Setup
-AppVersion=1
+AppVersion={#MyAppVersion}
 CreateAppDir=no
 Uninstallable=no
 PrivilegesRequired=lowest
@@ -20,8 +23,8 @@ DisableDirPage=yes
 DisableProgramGroupPage=yes
 DisableReadyPage=yes
 DisableFinishedPage=yes
-ArchitecturesAllowed=x64compatible arm64
-ArchitecturesInstallIn64BitMode=x64compatible arm64
+ArchitecturesAllowed=x64compatible
+ArchitecturesInstallIn64BitMode=x64compatible
 
 [Files]
 Source: "..\build\installer_stage\ui.zip"; Flags: dontcopy

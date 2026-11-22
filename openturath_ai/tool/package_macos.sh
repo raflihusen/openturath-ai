@@ -17,7 +17,7 @@ trap 'rm -rf "$stage"' EXIT
 ditto "$app" "$stage/OpenTurath AI.app"
 ln -s /Applications "$stage/Applications"
 hdiutil create -volname 'OpenTurath AI' -srcfolder "$stage" -ov -format UDZO "$products/OpenTurath_AI_macOS.dmg"
-shasum -a 256 "$products/OpenTurath_AI_macOS.dmg" > "$products/OpenTurath_AI_macOS.dmg.sha256"
+(cd "$products" && shasum -a 256 OpenTurath_AI_macOS.dmg > OpenTurath_AI_macOS.dmg.sha256)
 # Packaging is local. Developer ID signing/notarization must precede public distribution.
 # Distribusi publik (OPENTURATH_PUBLIC_DIST=1) wajib Developer ID + notarisasi
 # yang lolos Gatekeeper; paket lokal ad-hoc tidak boleh dipublikasikan.

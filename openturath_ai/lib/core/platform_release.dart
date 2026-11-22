@@ -19,6 +19,7 @@ class PlatformRelease {
   static const allowedHosts = {
     'openturath.id',
     'www.openturath.id',
+    'maktabah.openturath.id',
     'openturath.ai',
     'www.openturath.ai',
     'openturath.web.app',

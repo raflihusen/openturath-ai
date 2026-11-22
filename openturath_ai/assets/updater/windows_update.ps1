@@ -46,11 +46,28 @@ try {
   $replaced = $false
   'confirmed' | Set-Content -LiteralPath $status
 } catch {
-  if ($newProcess -and !$newProcess.HasExited) { Stop-Process -Id $newProcess.Id -ErrorAction SilentlyContinue }
-  if ($replaced) {
+  if ($newProcess -and !$newProcess.HasExited) {
+    Stop-Process -Id $newProcess.Id -Force -ErrorAction SilentlyContinue
+    try { $newProcess.WaitForExit(5000) | Out-Null } catch {}
+  }
+  Get-Process -ErrorAction SilentlyContinue | Where-Object {
+    $_.Path -and $_.Path.StartsWith($target, [StringComparison]::OrdinalIgnoreCase)
+  } | Stop-Process -Force -ErrorAction SilentlyContinue
+  if ($replaced -and (Test-Path -LiteralPath $backup)) {
     # Restore the previous application, never the user profile or cookies.
-    Move-Item -LiteralPath $target -Destination (Join-Path $stage 'failed')
-    Move-Item -LiteralPath $backup -Destination $target
+    $failedDir = Join-Path $stage 'failed'
+    for ($attempt = 0; $attempt -lt 6; $attempt++) {
+      try {
+        if (Test-Path -LiteralPath $target) {
+          Move-Item -LiteralPath $target -Destination $failedDir -Force
+        }
+        Move-Item -LiteralPath $backup -Destination $target -Force
+        break
+      } catch {
+        if ($attempt -eq 5) { throw }
+        Start-Sleep -Milliseconds 500
+      }
+    }
     'rolled_back' | Set-Content -LiteralPath $status
     Start-Process -FilePath (Join-Path $target 'openturath_ai.exe') -WorkingDirectory $target
   }

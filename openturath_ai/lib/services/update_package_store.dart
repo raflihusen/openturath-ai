@@ -153,9 +153,11 @@ class UpdatePackageStore {
       onProgress?.call(1);
       return target;
     } finally {
-      client.close(force: true);
-      if (partial != null && await partial.exists()) await partial.delete();
       _busy = false;
+      client.close(force: true);
+      try {
+        if (partial != null && await partial.exists()) await partial.delete();
+      } catch (_) {}
     }
   }
 }

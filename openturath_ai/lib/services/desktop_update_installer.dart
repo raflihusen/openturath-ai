@@ -168,7 +168,9 @@ class DesktopUpdateInstaller {
     final temporary = File('${receipt.path}.tmp');
     try {
       await temporary.writeAsString(jsonEncode(plan), flush: true);
-      if (await receipt.exists()) await receipt.delete();
+      if (windows && await receipt.exists()) {
+        await receipt.delete();
+      }
       await temporary.rename(receipt.path);
     } catch (_) {
       try {
@@ -176,39 +178,49 @@ class DesktopUpdateInstaller {
       } catch (_) {}
       rethrow;
     }
-    if (windows) {
-      final planFile = File(p.join(stage, 'plan.json'));
-      await planFile.writeAsString(jsonEncode(plan), flush: true);
-      await Process.start(
-          'powershell.exe',
-          [
-            '-NoProfile',
-            '-NonInteractive',
-            '-ExecutionPolicy',
-            'Bypass',
-            '-File',
-            helper.path,
-            '-Plan',
-            planFile.path
-          ],
-          mode: ProcessStartMode.detached);
-    } else {
-      await Process.start(
-          '/bin/sh', [helper.path, 'install', stage, target, '$pid', '$build'],
-          mode: ProcessStartMode.detached);
-    }
-    final ready = File(p.join(stage, 'ready'));
-    final deadline = DateTime.now().add(const Duration(minutes: 2));
-    while (!await ready.exists()) {
-      if (await File(p.join(stage, 'handoff_failed')).exists()) {
-        throw const FileSystemException('Installer preparation failed');
+    try {
+      if (windows) {
+        final planFile = File(p.join(stage, 'plan.json'));
+        await planFile.writeAsString(jsonEncode(plan), flush: true);
+        await Process.start(
+            'powershell.exe',
+            [
+              '-NoProfile',
+              '-NonInteractive',
+              '-ExecutionPolicy',
+              'Bypass',
+              '-File',
+              helper.path,
+              '-Plan',
+              planFile.path
+            ],
+            mode: ProcessStartMode.detached);
+      } else {
+        await Process.start(
+            '/bin/sh', [helper.path, 'install', stage, target, '$pid', '$build'],
+            mode: ProcessStartMode.detached);
       }
-      if (DateTime.now().isAfter(deadline)) {
-        await File(p.join(stage, 'cancelled')).writeAsString('cancelled');
-        throw TimeoutException('Installer did not become ready');
+      final ready = File(p.join(stage, 'ready'));
+      final deadline = DateTime.now().add(const Duration(minutes: 2));
+      while (!await ready.exists()) {
+        if (await File(p.join(stage, 'handoff_failed')).exists()) {
+          throw const FileSystemException('Installer preparation failed');
+        }
+        if (DateTime.now().isAfter(deadline)) {
+          await File(p.join(stage, 'cancelled')).writeAsString('cancelled');
+          throw TimeoutException('Installer did not become ready');
+        }
+        await Future<void>.delayed(const Duration(milliseconds: 100));
       }
-      await Future<void>.delayed(const Duration(milliseconds: 100));
+      return stage;
+    } catch (_) {
+      try {
+        final stageDir = Directory(stage);
+        if (await stageDir.exists()) {
+          await stageDir.delete(recursive: true);
+        }
+      } catch (_) {}
+      rethrow;
     }
-    return stage;
   }
 }

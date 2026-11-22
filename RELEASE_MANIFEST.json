@@ -6,9 +6,9 @@
   "sha256": "33684058b3ce9b01ee601542539b92ab8639100a09c893ca5639abe7f109211c",
   "fileSizeBytes": 28953076,
   "apkArtifacts": [
-    "/Users/apple/Downloads/ramadhan/openturath.apk",
-    "/Users/apple/Downloads/ramadhan/website/dist/openturath.apk",
-    "/Users/apple/Downloads/ramadhan/openturath_ai/public/openturath.apk"
+    "openturath.apk",
+    "website/dist/openturath.apk",
+    "openturath_ai/public/openturath.apk"
   ],
   "verification": {
     "gradleBuildStatus": "SUCCESS (100%)",

@@ -26,7 +26,7 @@ if (!(Test-Path (Join-Path $payloadDir 'openturath_ai.exe'))) {
 $env:CMAKE_POLICY_VERSION_MINIMUM = '3.5'
 
 $isccCandidates = @(
-  'C:\Users\apple\AppData\Local\Programs\Inno Setup 6\ISCC.exe',
+  "$env:LOCALAPPDATA\Programs\Inno Setup 6\ISCC.exe",
   "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe",
   "${env:ProgramFiles}\Inno Setup 6\ISCC.exe"
 )
@@ -60,6 +60,13 @@ $files = (Get-ChildItem $payloadDir -Filter '*.exe' | Where-Object Name -eq 'ope
          (Get-ChildItem $payloadDir -Filter '*.dll').Count +
          (Get-ChildItem (Join-Path $payloadDir 'data') -Recurse -File).Count
 @{ core = '..\core.exe'; files = $files } | ConvertTo-Json | Set-Content (Join-Path $uiRelease 'install_manifest.json') -Encoding utf8
+# Bundel DLL VC++ runtime app-local agar UI pemasang Flutter bisa berjalan di PC Windows baru sebelum vc_redist dipasang.
+foreach ($dll in @('vcruntime140.dll', 'vcruntime140_1.dll', 'msvcp140.dll')) {
+  $sysDll = Join-Path "$env:SystemRoot\System32" $dll
+  if (Test-Path $sysDll) {
+    Copy-Item $sysDll (Join-Path $uiRelease $dll) -Force
+  }
+}
 $zip = Join-Path $stage 'ui.zip'
 if (Test-Path $zip) { Remove-Item $zip }
 Compress-Archive -Path (Join-Path $uiRelease '*') -DestinationPath $zip
@@ -67,7 +74,7 @@ Compress-Archive -Path (Join-Path $uiRelease '*') -DestinationPath $zip
 Write-Host "4/4 Pembungkus satu berkas..." -ForegroundColor Cyan
 $outputDir = if ($LocalOnly) { $stage } else { $repoDir }
 $outputName = if ($LocalOnly) { 'OpenTurath_AI_Windows_LocalTest_Setup' } else { 'OpenTurath_AI_Windows_Setup' }
-& $iscc ("/O$outputDir") ("/F$outputName") (Join-Path $windowsDir 'installer_stub.iss')
+& $iscc ("/DMyAppVersion=$appVersion") ("/O$outputDir") ("/F$outputName") (Join-Path $windowsDir 'installer_stub.iss')
 if ($LASTEXITCODE -ne 0) { throw "ISCC gagal pada installer_stub.iss" }
 
 $outputExe = Join-Path $outputDir ($outputName + '.exe')

@@ -67,14 +67,28 @@ elif [ "$mode" = install ]; then
   replaced=0
   rollback() {
     result=$?
+    set +e
     if [ "$replaced" = 1 ] && [ -d "$stage/previous.app" ]; then
       # Stop only the failed candidate before restoring its predecessor.
-      executable=$(plist "$target" CFBundleExecutable)
-      for child in $(/usr/sbin/lsof -t "$target/Contents/MacOS/$executable" 2>/dev/null || true); do
-        kill "$child" 2>/dev/null || true
-      done
-      /bin/mv "$target" "$stage/failed.app" 2>/dev/null || true
-      /bin/mv "$stage/previous.app" "$target"
+      if [ -d "$target" ]; then
+        executable=$(plist "$target" CFBundleExecutable 2>/dev/null || true)
+        if [ -n "$executable" ]; then
+          pids=$(/usr/sbin/lsof -t "$target/Contents/MacOS/$executable" 2>/dev/null || true)
+          for child in $pids; do
+            kill "$child" 2>/dev/null || true
+          done
+          if [ -n "$pids" ]; then
+            sleep 1
+            for child in $pids; do
+              kill -9 "$child" 2>/dev/null || true
+            done
+          fi
+        fi
+        /bin/mv "$target" "$stage/failed.app" 2>/dev/null || true
+      fi
+      if [ ! -e "$target" ]; then
+        /bin/mv "$stage/previous.app" "$target"
+      fi
       echo rolled_back > "$stage/status"
       /usr/bin/open -n "$target" || true
     fi
