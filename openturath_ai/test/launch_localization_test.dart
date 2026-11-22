@@ -89,8 +89,15 @@ void main() {
   });
   test('annual Tahawwulat discount is derived from the actual amounts', () {
     final annual = ProductPricing.tahawwulat.last;
-    expect(annual.amount, 1000);
+    expect(annual.amount, 1999000);
     expect(annual.regularAmount, 4995000);
-    expect(annual.savingsPercent, greaterThan(90));
+    expect(annual.savingsPercent, 60);
+  });
+  test('allSpecialists production pricing ladder is consistent', () {
+    final offers = ProductPricing.forAgent('all_specialists');
+    expect(offers.length, 3);
+    expect(offers[0].amount, 299000);
+    expect(offers[1].amount, 1299000);
+    expect(offers[2].amount, 1799000);
   });
 }
