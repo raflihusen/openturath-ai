@@ -397,7 +397,7 @@ export class AccessControl {
       const callerIsVip = isVip(user, grants);
       const found = candidates.find(c => c.m?.present === true && c.n?.is_public === false && ["active", "draining"].includes(c.n?.status)) ||
         candidates.find(c => {
-          if (e.legacyIds?.includes(c.id)) return false;
+          if (c.id !== e.masterId && e.legacyIds?.includes(c.id)) return false;
           if (c.n?.status !== "active" || c.n?.is_public !== false || !(c.n?.healthy_until_ms > this.clock())) return false;
           const baseLimit = Math.min(2000, c.n.admission_limit || 1995);
           const effectiveLimit = (!callerIsVip && c.id === e.masterId) ? Math.min(1800, baseLimit) : baseLimit;
@@ -492,7 +492,10 @@ export class AccessControl {
     return this.db.runTransaction(async (t: any) => {
       const a = (await t.get(ar)).data();
       if (!a || !["ready", "provisioning"].includes(a.status)) return false;
-      const current = (await t.get(this.db.collection("access_notebooks").doc(a.notebook_id))).data();
+      const oldNr = this.db.collection("access_notebooks").doc(a.notebook_id);
+      const oldMr = this.db.collection("access_memberships").doc(keyOf(a.notebook_id, a.email));
+      const current = (await t.get(oldNr)).data();
+      const oldMember = (await t.get(oldMr)).data();
       if (!["missing", "draining"].includes(current?.status)) return false;
       const candidates = [];
       for (const id of [e.masterId, ...e.clones.map(c => c.id)]) {
@@ -508,8 +511,20 @@ export class AccessControl {
       });
       if (!found) throw new AccessFault("resource-exhausted", "paid_waiting_capacity");
       const revision = a.revision + 1;
+      const wasPresentOnOld = oldMember?.present === true;
+      const priorHistory = wasPresentOnOld
+        ? (a.history || [a.notebook_id])
+        : (a.history || []).filter((id: string) => id !== a.notebook_id);
       const moved = {...a, notebook_id: found.id, status: "provisioning", revision,
-        history: [...new Set([...(a.history || [a.notebook_id]), found.id])], relocated_from: a.notebook_id, updated_ms: this.clock()};
+        history: [...new Set([...priorHistory, found.id])], relocated_from: a.notebook_id, updated_ms: this.clock()};
+      // Lepaskan reservasi kursi pada notebook lama bila pengguna belum pernah benar-benar
+      // terdaftar di Google, agar tidak membocorkan hitungan kursi maupun riwayat reaper.
+      if (!wasPresentOnOld && oldMember?.counted === true) {
+        t.set(oldMr, {counted: false}, {merge: true});
+        if (current && current.status !== "draining") {
+          t.update(oldNr, {occupied: Math.max(0, (current.occupied || 0) - 1)});
+        }
+      }
       if (!found.m?.present) t.update(found.nr, {occupied: found.n.occupied + 1});
       t.set(found.mr, {uid, entity, email: a.email, notebook_id: found.id, present: found.m?.present === true,
         counted: true, revision, reserved_ms: this.clock()}, {merge: true});
@@ -676,8 +691,15 @@ export class AccessControl {
         catch (_) { /* Keep the durable recovery flag for the next attempt. */ }
       }
       const errMsg = String(e?.message || e || "");
+      // Pisahkan tegas HTTP 429 / rate-limit sementara Google (wajib retry backoff)
+      // dari kapasitas viewer notebook yang benar-benar penuh (draining + relokasi).
+      const isTransientRateLimit =
+        /\b429\b|rate[\s_-]?limit|too many requests|throttl|try again later|temporarily unavailable/i.test(errMsg);
+      const isNotebookCapacityFull =
+        !isTransientRateLimit &&
+        /(viewer|member|collaborator|share|user|notebook).*(limit|full|max|maximum|capacity|exceeded)|(maximum|max)\s+(number\s+of\s+)?(viewer|member|collaborator|user)|already\s+at\s+capacity|notebook\s+is\s+full|seat\s+limit/i.test(errMsg);
       // Auto-failover ke kloning berikutnya bila Google menolak add_viewer karena notebook penuh aktual.
-      if (job.desired === true && /limit|quota|full|maximum|too many|capacity|exceeded/i.test(errMsg)) {
+      if (job.desired === true && isNotebookCapacityFull) {
         try {
           const nr = this.db.collection("access_notebooks").doc(job.notebook_id);
           await this.db.runTransaction(async (t: any) => {

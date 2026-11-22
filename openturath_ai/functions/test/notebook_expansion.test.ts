@@ -102,3 +102,74 @@ test('catalog: every notebook ID is unique and every module has at least five cl
     for (const c of e.clones) assert.ok(c.url.endsWith(c.id), `${c.name} url matches id`);
   }
 });
+
+test('transient HTTP 429 rate-limit retries cleanly and NEVER marks Master or clones draining', async () => {
+  const db = new MemoryDB();
+  let calls = 0;
+  const provider = {
+    async observe(id: string) { return {notebookId: id, isPublic: false, complete: true, emails: []}; },
+    async apply(id: string, email: string, desired: boolean) {
+      calls++;
+      throw new Error('HTTP 429 Too Many Requests: Rate limit exceeded');
+    },
+  };
+  const engine = new AccessControl(db, {ent: entity}, {ent: 'fiqh_syafii'}, provider, () => now);
+  db.seed('access_control/runtime', {writer: 'vps-v2'});
+  for (const id of ['master', ...entity.clones.map(c => c.id)])
+    db.seed(`access_notebooks/${id}`, {entity: 'ent', occupied: 0, admission_limit: 1995, status: 'active', is_public: false, healthy_until_ms: now + DAY});
+  db.seed('users/u429', {email: 'u429@x.test', access_version: 2});
+  db.seed('access_grants/g_u429', {uid: 'u429', scope: 'fiqh_syafii', kind: 'payment', status: 'active', amount: 49000, gateway: 'midtrans', expires_ms: now + 30 * DAY});
+
+  await engine.reserve('u429', 'ent');
+  for (const d of (await db.collection('access_jobs').get()).docs) await engine.runJob(d.ref);
+
+  assert.equal(calls, 1);
+  assert.equal(db.docs.get('access_notebooks/master').status, 'active');
+  assert.equal(db.docs.get(`access_assignments/${keyOf('u429', 'ent')}`).notebook_id, 'master');
+});
+
+test('genuine notebook viewer capacity full marks draining, relocates to clone1, and keeps unentered master out of history', async () => {
+  const db = new MemoryDB();
+  const members = new Map<string, Set<string>>();
+  const provider = {
+    async observe(id: string) { return {notebookId: id, isPublic: false, complete: true, emails: [...(members.get(id) || [])]}; },
+    async apply(id: string, email: string, desired: boolean) {
+      if (id === 'master' && desired) throw new Error('Maximum number of viewers limit exceeded for this notebook');
+      if (!members.has(id)) members.set(id, new Set());
+      if (desired) members.get(id)!.add(email); else members.get(id)!.delete(email);
+      return this.observe(id);
+    },
+  };
+  const engine = new AccessControl(db, {ent: entity}, {ent: 'fiqh_syafii'}, provider, () => now);
+  db.seed('access_control/runtime', {writer: 'vps-v2'});
+  for (const id of ['master', ...entity.clones.map(c => c.id)])
+    db.seed(`access_notebooks/${id}`, {entity: 'ent', occupied: 0, admission_limit: 1995, status: 'active', is_public: false, healthy_until_ms: now + DAY});
+  db.seed('users/ufull', {email: 'ufull@x.test', access_version: 2});
+  db.seed('access_grants/g_ufull', {uid: 'ufull', scope: 'fiqh_syafii', kind: 'payment', status: 'active', amount: 49000, gateway: 'midtrans', expires_ms: now + 30 * DAY});
+
+  await engine.reserve('ufull', 'ent');
+  // First pass triggers auto-failover from master -> clone1
+  for (const d of (await db.collection('access_jobs').get()).docs) await engine.runJob(d.ref);
+  // Second pass runs the relocated clone1 job
+  for (const d of (await db.collection('access_jobs').get()).docs) await engine.runJob(d.ref);
+
+  assert.equal(db.docs.get('access_notebooks/master').status, 'draining');
+  const assignment = db.docs.get(`access_assignments/${keyOf('ufull', 'ent')}`);
+  assert.equal(assignment.notebook_id, 'clone1');
+  assert.equal(assignment.status, 'ready');
+  assert.deepEqual(assignment.history, ['clone1']);
+  assert.equal(db.docs.get(`access_memberships/${keyOf('master', 'ufull@x.test')}`).counted, false);
+});
+
+test('regular user spills to clone1 at 1800 Master seats while VIP still gets reserved Master seat', async () => {
+  const {db, engine, buyer} = setup(1995);
+  db.docs.get('access_notebooks/master').occupied = 1800;
+
+  buyer('reg1801');
+  const regSeat = await engine.reserve('reg1801', 'ent');
+  assert.equal(regSeat.notebook_id, 'clone1');
+
+  db.seed('users/vip1', {email: 'vip1@x.test', is_vip: true, access_version: 2});
+  const vipSeat = await engine.reserve('vip1', 'ent');
+  assert.equal(vipSeat.notebook_id, 'master');
+});
