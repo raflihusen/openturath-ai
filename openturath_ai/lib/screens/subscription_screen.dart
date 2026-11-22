@@ -136,19 +136,17 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
         ? 'عرض لفترة محدودة'
         : (Loc.language == 'en' ? 'LIMITED-TIME OFFER' : 'PENAWARAN TERBATAS');
     final bodyText = Loc.isArabic
-        ? 'أسعار ترويجية خاصة لفترة الإطلاق قبل العودة إلى الأسعار الاعتيادية.'
+        ? 'أسعار الإطلاق الترويجية متاحة لفترة محدودة.'
         : (Loc.language == 'en'
-            ? 'Special launch discount active for a limited time before returning to regular rates.'
-            : 'Harga promo spesial berlaku terbatas sebelum kembali ke tarif normal.');
+            ? 'Launch discount active for a limited time.'
+            : 'Harga promo berlaku terbatas sebelum kembali ke tarif normal.');
     return Container(
       padding: const EdgeInsets.symmetric(
           horizontal: OTSpacing.base, vertical: OTSpacing.md),
       decoration: BoxDecoration(
-        color: OTColors.surfaceSubtle(dark),
-        borderRadius: OTRadius.cardBorder,
-        border: Border.all(
-          color: OTColors.borderStrong(dark).withValues(alpha: 0.35),
-        ),
+        color: OTColors.surface(dark),
+        borderRadius: BorderRadius.circular(OTRadius.card),
+        border: Border.all(color: OTColors.borderSubtle(dark)),
       ),
       child: Wrap(
         spacing: OTSpacing.sm,
@@ -160,7 +158,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                 horizontal: OTSpacing.sm, vertical: OTSpacing.xs),
             decoration: BoxDecoration(
               color: OTColors.inverted(dark),
-              borderRadius: OTRadius.chipBorder,
+              borderRadius: BorderRadius.circular(OTRadius.xs),
             ),
             child: Text(
               badgeText,
@@ -647,21 +645,17 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     required VoidCallback onCheckout,
     required String agentId,
     bool active = false,
-    bool exclusive = false,
     bool highlighted = false,
     String? highlightBadge,
     Widget? subtitleWidget,
-    Widget? valueHighlight,
     String? ctaLabel,
-    IconData? ctaIcon,
     bool quietCta = false,
     bool threeUp = false,
     bool inRow = false,
   }) {
     final dark = Theme.of(context).brightness == Brightness.dark;
     // Paket utama: terbalik (hitam di atas terang) di mode terang. Di mode
-    // gelap tetap hitam, tidak putih yang menyilaukan; ia dibedakan oleh
-    // garis tepi terang dan kilau lembut dari sudut kiri atas.
+    // gelap tetap gelap dengan garis tepi terang agar nyaman dibaca.
     final darkFeatured = inverse && dark;
     final fg = darkFeatured
         ? OTColors.textPrimary(dark)
@@ -673,8 +667,8 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
         : inverse
             ? OTColors.onInvertedMuted(dark)
             : OTColors.textSecondary(dark);
-    final line = inverse ? fg.withValues(alpha: 0.18) : OTColors.border(dark);
-    final pad = wide ? (threeUp ? OTSpacing.xl : OTSpacing.xxl) : OTSpacing.lg;
+    final line = inverse ? fg.withValues(alpha: 0.14) : OTColors.borderSubtle(dark);
+    final pad = wide ? (threeUp ? OTSpacing.xl : OTSpacing.xxl) : OTSpacing.xl;
     final ar = Loc.isArabic;
     final titleStyle = (ar
             ? OTTypography.arabicDisplay(color: fg)
@@ -682,7 +676,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
         .copyWith(
             fontSize: wide
                 ? (threeUp ? OTFontSize.s26 : OTFontSize.s36)
-                : OTFontSize.s22);
+                : OTFontSize.s26);
 
     final monthly = offers.first.amount;
     final saving = price.months <= 1
@@ -710,58 +704,105 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
           : ProductPricing.rupiah(((price.amount / days) / 100).round() * 100)
     ]);
 
-    Widget pricingSection() => AnimatedSwitcher(
-      duration: OTMotion.transition,
-      switchInCurve: Curves.easeOutCubic,
-      switchOutCurve: Curves.easeInCubic,
-      transitionBuilder: (child, animation) => FadeTransition(
-        opacity: animation,
-        child: SlideTransition(
-          position: Tween<Offset>(
-            begin: const Offset(0.0, 0.18),
-            end: Offset.zero,
-          ).animate(animation),
-          child: child,
-        ),
-      ),
-      child: KeyedSubtree(
-        key: ValueKey('$agentId-${price.amount}-${price.months}-${Loc.language}'),
-        child: Column(
-          crossAxisAlignment:
-              wide ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+    Widget headerSection() => Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-            if (!_pricingReady)
-              _priceSkeleton(sub)
-            else
-              PromoPrice(
-                amount: price.amount,
-                regularAmount: price.regularAmount,
-                period: price.period,
-                display: true,
-                inlineSaving: true,
-                foregroundColor: fg,
-                secondaryColor: sub,
-              ),
-            const SizedBox(height: OTSpacing.xs),
-            if (_pricingReady)
-              Wrap(
-                alignment: wide ? WrapAlignment.end : WrapAlignment.start,
-                spacing: OTSpacing.sm,
-                runSpacing: OTSpacing.xs,
-                children: [
-                  Text(perDay, style: OTTypography.captionMedium(color: fg)),
-                  if (perMonth.isNotEmpty)
-                    Text(perMonth, style: OTTypography.caption(color: sub)),
-                  if (saving >= 5)
-                    Text(Loc.tr('saving', ['$saving']),
-                        style: OTTypography.captionMedium(color: fg)),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Expanded(
+                  child: highlightBadge != null
+                      ? Align(
+                          alignment: AlignmentDirectional.centerStart,
+                          child: _pill(
+                            highlightBadge,
+                            OTColors.onInverted(dark),
+                            solidBg: fg,
+                          ),
+                        )
+                      : Text(
+                          label.toUpperCase(),
+                          style: OTTypography.metadataTag(color: sub),
+                        ),
+                ),
+                if (active) ...[
+                  const SizedBox(width: OTSpacing.sm),
+                  _pill(Loc.tr('planActive'), fg, filled: true),
                 ],
-              ),
+              ],
+            ),
+            const SizedBox(height: OTSpacing.md),
+            Text(title, style: titleStyle),
+            if (subtitleWidget != null) ...[
+              const SizedBox(height: OTSpacing.xs),
+              subtitleWidget,
+            ],
+            const SizedBox(height: OTSpacing.sm),
+            Text(
+              description,
+              style: OTTypography.body(color: sub)
+                  .copyWith(fontSize: OTFontSize.s14, height: 1.45),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
           ],
-        ),
-      ),
-    );
+        );
+
+    Widget pricingSection() => AnimatedSwitcher(
+          duration: OTMotion.transition,
+          switchInCurve: Curves.easeOutCubic,
+          switchOutCurve: Curves.easeInCubic,
+          transitionBuilder: (child, animation) => FadeTransition(
+            opacity: animation,
+            child: SlideTransition(
+              position: Tween<Offset>(
+                begin: const Offset(0.0, 0.14),
+                end: Offset.zero,
+              ).animate(animation),
+              child: child,
+            ),
+          ),
+          child: KeyedSubtree(
+            key: ValueKey(
+                '$agentId-${price.amount}-${price.months}-${Loc.language}'),
+            child: Column(
+              crossAxisAlignment:
+                  wide ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (!_pricingReady)
+                  _priceSkeleton(sub)
+                else
+                  PromoPrice(
+                    amount: price.amount,
+                    regularAmount: price.regularAmount,
+                    period: price.period,
+                    display: true,
+                    inlineSaving: true,
+                    foregroundColor: fg,
+                    secondaryColor: sub,
+                  ),
+                const SizedBox(height: OTSpacing.xs),
+                if (_pricingReady)
+                  Wrap(
+                    alignment: wide ? WrapAlignment.end : WrapAlignment.start,
+                    spacing: OTSpacing.sm,
+                    runSpacing: OTSpacing.xs,
+                    children: [
+                      Text(perDay, style: OTTypography.caption(color: sub)),
+                      if (perMonth.isNotEmpty)
+                        Text('·  $perMonth',
+                            style: OTTypography.caption(color: sub)),
+                      if (saving >= 5)
+                        Text('·  ${Loc.tr('saving', ['$saving'])}',
+                            style: OTTypography.captionMedium(color: fg)),
+                    ],
+                  ),
+              ],
+            ),
+          ),
+        );
 
     final arabicPay = ProductPricing.arabicPayment;
     final arabicPayReady = arabicPay.isAvailable;
@@ -774,111 +815,81 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                 : Loc.tr(active ? 'planRenew' : 'planContinue')));
 
     Widget actionButton() => Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        SizedBox(
-          width: wide ? 240 : double.infinity,
-          height: 48,
-          child: quietCta
-              ? OutlinedButton(
-                  onPressed: ((isArabicCurrency && !arabicPayReady) ||
-                          _processing ||
-                          !_pricingReady)
-                      ? null
-                      : onCheckout,
-                  child: Text(resolvedCtaLabel),
-                )
-              : FilledButton(
-                  onPressed: ((isArabicCurrency && !arabicPayReady) ||
-                          _processing ||
-                          !_pricingReady)
-                      ? null
-                      : onCheckout,
-                  style: inverse && !dark ? OTButtons.onInverse(dark) : null,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      if (ctaIcon != null) ...[
-                        Icon(ctaIcon, size: 17),
-                        const SizedBox(width: 8),
-                      ],
-                      Flexible(
-                        child: Text(
-                          resolvedCtaLabel,
-                          overflow: TextOverflow.ellipsis,
-                        ),
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            SizedBox(
+              width: wide ? 240 : double.infinity,
+              height: 48,
+              child: quietCta
+                  ? OutlinedButton(
+                      onPressed: ((isArabicCurrency && !arabicPayReady) ||
+                              _processing ||
+                              !_pricingReady)
+                          ? null
+                          : onCheckout,
+                      child: Text(
+                        resolvedCtaLabel,
+                        overflow: TextOverflow.ellipsis,
                       ),
-                    ],
-                  ),
-                ),
-        ),
-        Padding(
-          padding: const EdgeInsets.only(top: OTSpacing.sm),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.lock_outline_rounded, size: 12, color: sub),
-              const SizedBox(width: 4),
-              Flexible(
-                child: Text(
-                    isArabicCurrency
-                        ? (arabicPayReady
-                            ? (arabicPay.note.isNotEmpty
-                                ? arabicPay.note
-                                : 'التحويل البنكي بالريال السعودي — تفعيل فوري بعد تأكيد الإيصال')
-                            : 'الدفع بالريال السعودي عبر التحويل البنكي متاح قريباً')
-                        : Loc.tr('planTrustNote'),
-                    textAlign: TextAlign.center,
-                    style: OTTypography.caption(color: sub)
-                        .copyWith(fontSize: OTFontSize.s11)),
+                    )
+                  : FilledButton(
+                      onPressed: ((isArabicCurrency && !arabicPayReady) ||
+                              _processing ||
+                              !_pricingReady)
+                          ? null
+                          : onCheckout,
+                      style: inverse && !dark ? OTButtons.onInverse(dark) : null,
+                      child: Text(
+                        resolvedCtaLabel,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: OTSpacing.sm),
+              child: Text(
+                isArabicCurrency
+                    ? (arabicPayReady
+                        ? (arabicPay.note.isNotEmpty
+                            ? arabicPay.note
+                            : 'التحويل البنكي بالريال السعودي · تفعيل فوري بعد تأكيد الإيصال')
+                        : 'الدفع بالريال السعودي عبر التحويل البنكي متاح قريباً')
+                    : Loc.tr('planTrustNote'),
+                textAlign: TextAlign.center,
+                style: OTTypography.caption(color: sub)
+                    .copyWith(fontSize: OTFontSize.s11),
               ),
-            ],
-          ),
-        ),
-        _checkoutNotice(agentId, ink: fg),
-      ],
-    );
+            ),
+            _checkoutNotice(agentId, ink: fg),
+          ],
+        );
 
     return Container(
       padding: EdgeInsets.all(pad),
       decoration: BoxDecoration(
-        color: highlighted
-            ? null
-            : (darkFeatured
-                ? OTColors.canvas(dark)
-                : inverse
-                    ? OTColors.inverted(dark)
-                    : OTColors.surface(dark)),
-        gradient: highlighted
-            ? LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: dark
-                    ? [
-                        OTColors.surfaceSubtle(dark),
-                        OTColors.surface(dark),
-                      ]
-                    : [
-                        OTColors.surface(dark),
-                        OTColors.surfaceSubtle(dark),
-                      ],
-              )
-            : null,
+        color: darkFeatured
+            ? OTColors.canvas(dark)
+            : inverse
+                ? OTColors.inverted(dark)
+                : OTColors.surface(dark),
         borderRadius: BorderRadius.circular(OTRadius.card),
         border: highlighted
-            ? Border.all(color: fg.withValues(alpha: dark ? 0.65 : 0.85), width: 1.8)
+            ? Border.all(
+                color: fg.withValues(alpha: dark ? 0.55 : 0.85),
+                width: 1.8,
+              )
             : darkFeatured
-                ? Border.all(color: fg.withValues(alpha: 0.85), width: 1.5)
+                ? Border.all(color: fg.withValues(alpha: 0.7), width: 1.4)
                 : inverse
-                    ? Border.all(color: fg.withValues(alpha: 0.18), width: 1)
-                    : Border.all(color: line),
+                    ? Border.all(color: fg.withValues(alpha: 0.16), width: 1)
+                    : Border.all(color: OTColors.border(dark), width: 1),
         boxShadow: highlighted
             ? [
                 BoxShadow(
-                  color: OTColors.shadow.withValues(alpha: dark ? 0.35 : 0.08),
-                  blurRadius: 24,
-                  offset: const Offset(0, 10),
+                  color: OTColors.shadow.withValues(alpha: dark ? 0.28 : 0.06),
+                  blurRadius: 20,
+                  offset: const Offset(0, 8),
                 ),
               ]
             : null,
@@ -892,51 +903,21 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Wrap(
-                        spacing: OTSpacing.sm,
-                        runSpacing: OTSpacing.sm,
-                        children: [
-                          if (highlightBadge != null)
-                            _pill(
-                              highlightBadge,
-                              OTColors.onInverted(dark),
-                              solidBg: fg,
-                              iconData: Icons.auto_awesome_rounded,
-                            ),
-                          _pill(label, fg, filled: exclusive, icon: exclusive),
-                          if (active)
-                            _pill(Loc.tr('planActive'), fg, filled: true),
-                        ],
-                      ),
-                      const SizedBox(height: OTSpacing.sm),
-                      Text(title, style: titleStyle),
-                      if (subtitleWidget != null) ...[
-                        const SizedBox(height: 2),
-                        subtitleWidget,
-                      ],
-                      const SizedBox(height: 6),
-                      Text(description,
-                          style: OTTypography.body(color: sub)
-                              .copyWith(fontSize: OTFontSize.s14, height: 1.4),
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis),
+                      headerSection(),
                       if (field != null) ...[
-                        const SizedBox(height: 10),
+                        const SizedBox(height: OTSpacing.base),
                         ConstrainedBox(
                           constraints: const BoxConstraints(maxWidth: 380),
                           child: field,
                         ),
                       ],
-                      if (valueHighlight != null) ...[
-                        const SizedBox(height: 10),
-                        valueHighlight,
-                      ],
-                      const SizedBox(height: 10),
-                      for (final benefit in benefits) _benefitRow(benefit, fg),
+                      const SizedBox(height: OTSpacing.base),
+                      for (final benefit in benefits)
+                        _benefitRow(benefit, fg, sub),
                     ],
                   ),
                 ),
-                const SizedBox(width: 24),
+                const SizedBox(width: OTSpacing.xl),
                 SizedBox(
                   width: 260,
                   child: Column(
@@ -944,7 +925,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       pricingSection(),
-                      const SizedBox(height: 14),
+                      const SizedBox(height: OTSpacing.base),
                       actionButton(),
                     ],
                   ),
@@ -955,49 +936,19 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                Wrap(
-                  spacing: OTSpacing.sm,
-                  runSpacing: OTSpacing.sm,
-                  children: [
-                    if (highlightBadge != null)
-                      _pill(
-                        highlightBadge,
-                        OTColors.onInverted(dark),
-                        solidBg: fg,
-                        iconData: Icons.auto_awesome_rounded,
-                      ),
-                    _pill(label, fg, filled: exclusive, icon: exclusive),
-                    if (active) _pill(Loc.tr('planActive'), fg, filled: true),
-                  ],
-                ),
-                const SizedBox(height: OTSpacing.sm),
-                Text(title, style: titleStyle),
-                if (subtitleWidget != null) ...[
-                  const SizedBox(height: 2),
-                  subtitleWidget,
-                ],
-                const SizedBox(height: 6),
-                Text(description,
-                    style: OTTypography.body(color: sub)
-                        .copyWith(fontSize: OTFontSize.s14, height: 1.4),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis),
+                headerSection(),
                 if (field != null) ...[
-                  const SizedBox(height: 10),
+                  const SizedBox(height: OTSpacing.base),
                   field,
                 ],
-                if (valueHighlight != null) ...[
-                  const SizedBox(height: 10),
-                  valueHighlight,
-                ],
-                const SizedBox(height: 12),
-                for (final benefit in benefits) _benefitRow(benefit, fg),
-                const SizedBox(height: 12),
-                Divider(color: line, height: 1),
-                const SizedBox(height: 12),
+                const SizedBox(height: OTSpacing.lg),
                 pricingSection(),
-                const SizedBox(height: 12),
+                const SizedBox(height: OTSpacing.base),
                 actionButton(),
+                const SizedBox(height: OTSpacing.lg),
+                Divider(color: line, height: 1),
+                const SizedBox(height: OTSpacing.base),
+                for (final benefit in benefits) _benefitRow(benefit, fg, sub),
               ],
             ),
     );
@@ -1026,40 +977,28 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     );
   }
 
-  /// Kapsul label, sama dengan label bagian di web. [filled] untuk penanda
-  /// yang lebih tegas (eksklusif, aktif).
-  Widget _pill(String text, Color color,
-          {bool filled = false,
-          bool icon = false,
-          Color? solidBg,
-          IconData? iconData}) =>
+  /// Penanda status ringkas bergaya editorial (radius kecil agar tidak bersaing
+  /// dengan tombol CTA berbentuk pil).
+  Widget _pill(String text, Color color, {bool filled = false, Color? solidBg}) =>
       Container(
         padding: const EdgeInsets.symmetric(
-            horizontal: OTSpacing.base, vertical: OTSpacing.xs),
+            horizontal: OTSpacing.sm, vertical: OTSpacing.xs),
         decoration: BoxDecoration(
-          color: solidBg ?? (filled ? color.withValues(alpha: 0.14) : null),
-          borderRadius: OTRadius.chipBorder,
-          border: solidBg != null
+          color: solidBg ?? (filled ? color.withValues(alpha: 0.12) : null),
+          borderRadius: BorderRadius.circular(OTRadius.xs),
+          border: solidBg != null || filled
               ? null
-              : Border.all(color: color.withValues(alpha: filled ? 0.0 : 0.3)),
+              : Border.all(color: color.withValues(alpha: 0.28)),
         ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (icon || iconData != null) ...[
-              Icon(iconData ?? Icons.workspace_premium_outlined,
-                  size: 14, color: color),
-              const SizedBox(width: OTSpacing.xs),
-            ],
-            Flexible(
-              child: Text(text.toUpperCase(),
-                  style: OTTypography.metadataTag(color: color)),
-            ),
-          ],
+        child: Text(
+          text.toUpperCase(),
+          style: OTTypography.metadataTag(color: color),
         ),
       );
 
-  /// Bidang ilmu: baris kapsul. Dapat diketuk bila ada lebih dari satu bidang.
+  /// Bidang ilmu: interaktif (pemilih bidang) tampil sebagai kontrol tonal,
+  /// sedangkan informasi statis (mis. "Termasuk: Lima AI") tampil rata tanpa
+  /// menyerupai tombol agar affordance tetap jujur.
   Widget _fieldRow({
     required String label,
     required String name,
@@ -1075,6 +1014,23 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     final sub = inverse && !onFeaturedDark
         ? OTColors.onInvertedMuted(dark)
         : OTColors.textSecondary(dark);
+
+    if (onTap == null) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: OTSpacing.xs),
+        child: Wrap(
+          spacing: OTSpacing.sm,
+          runSpacing: OTSpacing.xs,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          children: [
+            Text(label, style: OTTypography.caption(color: sub)),
+            Text('·', style: OTTypography.caption(color: sub)),
+            Text(name, style: OTTypography.captionMedium(color: fg)),
+          ],
+        ),
+      );
+    }
+
     return Material(
       color: inverse ? fg.withValues(alpha: 0.1) : OTColors.surfaceSubtle(dark),
       borderRadius: BorderRadius.circular(OTRadius.input),
@@ -1085,7 +1041,6 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
           padding: const EdgeInsetsDirectional.fromSTEB(
               OTSpacing.base, OTSpacing.md, OTSpacing.md, OTSpacing.md),
           child: Builder(builder: (context) {
-            // Satu baris bila muat; menumpuk di kolom sempit atau huruf besar.
             final scale = MediaQuery.textScalerOf(context).scale(1);
             final isStacked = stacked ||
                 MediaQuery.sizeOf(context).width < (stacked ? 1400 : 400) ||
@@ -1095,9 +1050,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                 overflow: TextOverflow.ellipsis,
                 textAlign: isStacked ? TextAlign.start : TextAlign.end,
                 style: OTTypography.bodyMedium(color: fg));
-            final chevron = onTap != null
-                ? Icon(Icons.unfold_more_rounded, size: 20, color: sub)
-                : null;
+            final chevron = Icon(Icons.unfold_more_rounded, size: 20, color: sub);
             if (isStacked) {
               return Row(children: [
                 Expanded(
@@ -1109,17 +1062,15 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                     ],
                   ),
                 ),
-                if (chevron != null) chevron,
+                chevron,
               ]);
             }
             return Row(children: [
               Text(label, style: OTTypography.caption(color: sub)),
               const SizedBox(width: OTSpacing.md),
               Expanded(child: nameText),
-              if (chevron != null) ...[
-                const SizedBox(width: OTSpacing.xs),
-                chevron,
-              ],
+              const SizedBox(width: OTSpacing.xs),
+              chevron,
             ]);
           }),
         ),
@@ -1156,25 +1107,25 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     );
   }
 
-  Widget _benefitRow(String text, Color textColor) {
+  Widget _benefitRow(String text, Color textColor, Color iconColor) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: OTSpacing.md),
+      padding: const EdgeInsets.only(bottom: OTSpacing.sm),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SizedBox(
             height:
-                MediaQuery.textScalerOf(context).scale(OTFontSize.s16) * 1.45,
+                MediaQuery.textScalerOf(context).scale(OTFontSize.s14) * 1.45,
             child: Center(
-              child: Icon(Icons.check_rounded, size: 18, color: textColor),
+              child: Icon(Icons.check_rounded, size: 16, color: iconColor),
             ),
           ),
-          const SizedBox(width: OTSpacing.md),
+          const SizedBox(width: OTSpacing.sm),
           Expanded(
             child: Text(
               text,
               style: OTTypography.body(color: textColor)
-                  .copyWith(fontSize: OTFontSize.s16, height: 1.45),
+                  .copyWith(fontSize: OTFontSize.s14, height: 1.45),
             ),
           ),
         ],
@@ -1402,7 +1353,6 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                 threeUp: threeUp,
                 inRow: threeUp || twoUp,
                 label: Loc.tr('planFeaturedBadge'),
-                exclusive: true,
                 active: flagshipActive,
                 title: AppCopy.planTahawwulat,
                 description: Loc.tr('planFeaturedDescription'),
@@ -1417,30 +1367,28 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                 benefits: [
                   Loc.tr('planFeaturedBenefit1'),
                   Loc.tr('planFeaturedBenefit3'),
-                  Loc.tr('planBenefitGrowth'),
                   Loc.tr('planBenefitUpdates'),
                 ],
                 onCheckout: () => _checkout(flagship, flagshipOffer),
                 agentId: flagship.id,
               );
 
-              final specialistCount = specialists.isNotEmpty ? specialists.length : 18;
+              final specialistCount =
+                  specialists.isNotEmpty ? specialists.length : 18;
               final allSpecialistsPlan = _planCard(
                 inverse: false,
                 highlighted: true,
                 highlightBadge: Loc.isArabic
-                    ? 'الخيار الأفضل · أوفر بكثير'
-                    : (Loc.language == 'en'
-                        ? 'Best Value · Save 65%+'
-                        : 'Pilihan Terbaik · Jauh Lebih Hemat'),
+                    ? 'الأفضل قيمة'
+                    : (Loc.language == 'en' ? 'Best Value' : 'Pilihan Terbaik'),
                 wide: wide,
                 threeUp: threeUp,
                 inRow: threeUp || twoUp,
                 label: Loc.isArabic
                     ? '$specialistCount+ ذكاءً تخصصيًا'
                     : (Loc.language == 'en'
-                        ? '$specialistCount+ Specialist AIs'
-                        : '$specialistCount+ AI Disiplin Ilmu'),
+                        ? '$specialistCount+ AIs'
+                        : '$specialistCount+ AI'),
                 active: allSpecialistsActive,
                 title: Loc.isArabic
                     ? 'جميع الذكاءات'
@@ -1452,90 +1400,43 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                           ? 'Excluding Fiqh Tahawwulat'
                           : 'Kecuali Fikih Tahawwulat'),
                   style: OTTypography.caption(
-                          color: OTColors.textSecondary(dark))
-                      .copyWith(
-                    fontSize: OTFontSize.s12,
-                    fontStyle: FontStyle.italic,
-                  ),
+                      color: OTColors.textSecondary(dark)),
                 ),
                 description: Loc.isArabic
-                    ? 'افتح جميع العلوم الشرعية في اشتراك واحد بدلًا من الاشتراك في كل علم على حدة.'
+                    ? 'افتح جميع العلوم الشرعية ($specialistCount+ ذكاء) في اشتراك واحد.'
                     : (Loc.language == 'en'
-                        ? 'Unlock every Islamic discipline in one pass instead of subscribing one by one.'
-                        : 'Buka seluruh AI disiplin keilmuan Islam dalam satu paket — jauh lebih hemat daripada langganan satu per satu.'),
-                field: _fieldRow(
-                  label: Loc.isArabic
-                      ? 'يشمل'
-                      : (Loc.language == 'en' ? 'Includes' : 'Mencakup'),
-                  name: Loc.isArabic
-                      ? 'الفقه والمذاهب · الحديث · التفسير · الأصول · العربية والمزيد'
-                      : (Loc.language == 'en'
-                          ? '4 Mazhabs · Hadith · Tafsir · Usul · Arabic & more'
-                          : 'Fikih 4 Mazhab · Hadis · Tafsir · Usul · Bahasa Arab & lainnya'),
-                  inverse: false,
-                  stacked: true,
-                ),
-                valueHighlight: Container(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: OTSpacing.md, vertical: OTSpacing.sm),
-                  decoration: BoxDecoration(
-                    color: ink.withValues(alpha: dark ? 0.08 : 0.05),
-                    borderRadius: BorderRadius.circular(OTRadius.input),
-                    border: Border.all(
-                        color: ink.withValues(alpha: dark ? 0.16 : 0.12)),
-                  ),
-                  child: Row(
-                    children: [
-                      Icon(Icons.savings_outlined, size: 16, color: ink),
-                      const SizedBox(width: OTSpacing.sm),
-                      Expanded(
-                        child: Text(
-                          Loc.isArabic
-                              ? 'بسعر ٦ تخصصات فقط، تحصل على جميع التخصصات ($specialistCount+ ذكاء) معًا.'
-                              : (Loc.language == 'en'
-                                  ? 'Pay the price of 6 single AIs and unlock all $specialistCount+ disciplines together.'
-                                  : 'Bayar setara 6 AI satuan, langsung dapat semua $specialistCount+ AI sekaligus.'),
-                          style: OTTypography.captionMedium(color: ink)
-                              .copyWith(height: 1.35),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                        ? 'Access all $specialistCount+ Islamic discipline AIs in a single plan.'
+                        : 'Akses seluruh $specialistCount+ AI disiplin ilmu Islam dalam satu langganan.'),
                 price: allSpecialistsOffer,
                 offers: allSpecialistsOffers,
                 benefits: Loc.isArabic
                     ? [
-                        'الوصول الكامل إلى جميع العلوم الشرعية التخصصية ($specialistCount+ ذكاء)',
-                        'المقارنة والاستنباط المباشر بين المذاهب الأربعة والعلوم',
-                        'توفير يصل إلى ٥٠٪ عند اختيار باقة ١٢ شهرًا',
-                        'إضافة كتب ومراجع جديدة وتحديثات التطبيق باستمرار',
+                        'يشمل الفقه والمذاهب الأربعة والحديث والتفسير والأصول والعربية',
+                        'مقارنة الأدلة بين المذاهب في مساحة واحدة',
+                        'تحديثات الكتب والتطبيق طوال مدة الاشتراك',
                       ]
                     : (Loc.language == 'en'
                         ? [
-                            'Full access to all $specialistCount+ Islamic academic disciplines',
-                            'Direct cross-discipline & 4-mazhab comparative inquiries',
-                            'Save up to 50% with the 12-month plan',
-                            'Continuous book additions & app updates included',
+                            'Includes 4 Mazhabs, Hadith, Tafsir, Usul, Arabic, and more',
+                            'Compare references across disciplines in one workspace',
+                            'New reference books and app updates included',
                           ]
                         : [
-                            'Akses penuh ke seluruh $specialistCount+ AI disiplin keilmuan Islam',
-                            'Bandingkan dalil lintas 4 mazhab, hadis, tafsir, dan usul sekaligus',
-                            'Hemat hingga 50% untuk paket 12 bulan (~${ProductPricing.rupiah((((allSpecialistsOffers.last.amount / 12) / 1000).round()) * 1000)}/bulan)',
-                            'Kitab rujukan baru & pembaruan aplikasi selama langganan aktif',
+                            'Mencakup Fikih 4 Mazhab, Hadis, Tafsir, Usul, Bahasa Arab, dan lainnya',
+                            'Bandingkan dalil lintas mazhab dalam satu ruang kerja',
+                            'Pembaruan kitab rujukan dan aplikasi selama langganan aktif',
                           ]),
                 ctaLabel: Loc.isArabic
                     ? (allSpecialistsActive
                         ? 'تجديد جميع الذكاءات'
-                        : 'احصل على جميع الذكاءات')
+                        : 'اشترك في جميع الذكاءات')
                     : (Loc.language == 'en'
                         ? (allSpecialistsActive
                             ? 'Renew All AIs'
-                            : 'Get All AIs')
+                            : 'Choose All AIs')
                         : (allSpecialistsActive
                             ? 'Perpanjang Semua AI'
-                            : 'Ambil Paket Semua AI')),
-                ctaIcon: Icons.auto_awesome_rounded,
+                            : 'Pilih Semua AI')),
                 onCheckout: () =>
                     _checkout(allSpecialistsAgent, allSpecialistsOffer),
                 agentId: allSpecialistsAgent.id,
@@ -1568,7 +1469,6 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                         Loc.tr(
                             'planSingleBenefit1', [Loc.text(selected.title)]),
                         Loc.tr('planSingleBenefit2'),
-                        Loc.tr('planBenefitGrowthSingle'),
                         Loc.tr('planBenefitUpdates'),
                       ],
                       onCheckout: () => _checkout(selected, singleOffer),

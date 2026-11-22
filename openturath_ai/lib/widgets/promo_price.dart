@@ -58,17 +58,15 @@ class PromoPrice extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(
                       horizontal: OTSpacing.sm, vertical: OTSpacing.xxs),
                   decoration: BoxDecoration(
-                    color: foreground.withValues(alpha: 0.12),
-                    borderRadius: OTRadius.chipBorder,
-                    border:
-                        Border.all(color: foreground.withValues(alpha: 0.25)),
+                    color: foreground.withValues(alpha: 0.08),
+                    borderRadius: BorderRadius.circular(OTRadius.xs),
                   ),
                   child: Text(
                     Loc.isArabic
                         ? 'خصم $saving٪'
                         : (Loc.language == 'en'
-                            ? '$saving% Off'
-                            : 'Diskon $saving%'),
+                            ? '$saving% off'
+                            : 'Hemat $saving%'),
                     style: OTTypography.metadataTag(color: foreground),
                   ),
                 ),
