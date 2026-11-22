@@ -239,8 +239,11 @@ void main() {
     await tester.pump();
     expect(find.byType(InAppWebView), findsOneWidget);
     expect(platform.lastView, isNot(same(failedView)));
-    expect(platform.lastView!.params.initialUrlRequest!.url.toString(),
-        'https://notebook.google.com/');
+    final retryUri =
+        Uri.parse(platform.lastView!.params.initialUrlRequest!.url.toString());
+    expect(retryUri.host, 'accounts.google.com');
+    expect(retryUri.path, '/ServiceLogin');
+    expect(retryUri.queryParameters['continue'], 'https://notebook.google.com/');
     final retryNativeController = _Controller();
     platform.lastView!.params.onWebViewCreated!(
         InAppWebViewController.fromPlatform(platform: retryNativeController));

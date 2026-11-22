@@ -28,5 +28,53 @@ void main() {
       expect(NotebookNavigation.notebook(notebookLoginUri), isFalse);
       expect(NotebookNavigation.signInFlow(notebookLoginUri), isTrue);
     });
+
+    test('Notebook hosts (including /login) are never interactive Google sign-in',
+        () {
+      for (final raw in [
+        'https://notebook.google.com/',
+        'https://notebook.google.com/login',
+        'https://notebooklm.google.com/',
+        'https://notebooklm.google.com/login',
+      ]) {
+        final uri = Uri.parse(raw);
+        expect(NotebookNavigation.isNotebookHost(uri), isTrue, reason: raw);
+        expect(NotebookNavigation.isInteractiveGoogleSignIn(uri), isFalse,
+            reason: raw);
+      }
+
+      expect(
+        NotebookNavigation.isInteractiveGoogleSignIn(
+            Uri.parse('https://myaccount.google.com/')),
+        isFalse,
+      );
+      expect(
+        NotebookNavigation.isInteractiveGoogleSignIn(
+            Uri.parse('https://accounts.google.com/v3/signin/identifier')),
+        isTrue,
+      );
+      expect(
+        NotebookNavigation.isInteractiveGoogleSignIn(
+            Uri.parse('https://accounts.google.com/ServiceLogin')),
+        isTrue,
+      );
+      expect(
+        NotebookNavigation.isInteractiveGoogleSignIn(
+            Uri.parse('https://consent.google.com/ml')),
+        isTrue,
+      );
+    });
+
+    test('directGoogleLoginUrl goes straight to accounts.google.com/ServiceLogin',
+        () {
+      final url = Uri.parse(
+        NotebookNavigation.directGoogleLoginUrl(email: 'santri@example.com'),
+      );
+      expect(url.scheme, 'https');
+      expect(url.host, 'accounts.google.com');
+      expect(url.path, '/ServiceLogin');
+      expect(url.queryParameters['continue'], 'https://notebook.google.com/');
+      expect(url.queryParameters['Email'], 'santri@example.com');
+    });
   });
 }

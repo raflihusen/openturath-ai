@@ -1685,7 +1685,8 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
             widget.session.isWebLoading = true;
           });
         }
-      } else if (url != null && NotebookNavigation.signInFlow(url.uriValue)) {
+      } else if (url != null &&
+          NotebookNavigation.isInteractiveGoogleSignIn(url.uriValue)) {
         _resetLoadingClock();
         if (!widget.session.isGoogleAuthPage) _scheduleGoogleSignIn();
         return;
@@ -2507,8 +2508,20 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
                       session.errorMessage = null;
                     });
                   }
-                } else if (NotebookNavigation.signInFlow(uri.uriValue)) {
+                } else if (NotebookNavigation.isInteractiveGoogleSignIn(
+                    uri.uriValue)) {
                   if (!session.isGoogleAuthPage) _scheduleGoogleSignIn();
+                  return;
+                } else if (NotebookNavigation.isNotebookHost(uri.uriValue) &&
+                    NotebookNavigation.authentication(uri.uriValue)) {
+                  // Tetap tampilkan loader OpenTurath selama transisi notebook.google.com/login
+                  // agar landing page tidak pernah terekspos.
+                  if (mounted && !session.isWebLoading) {
+                    setState(() {
+                      session.isGoogleAuthPage = false;
+                      session.isWebLoading = true;
+                    });
+                  }
                   return;
                 }
               }
@@ -2554,8 +2567,42 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
                 return;
               }
 
+              if (NotebookNavigation.isNotebookHost(uri.uriValue) &&
+                  NotebookNavigation.authentication(uri.uriValue)) {
+                final directLogin = NotebookNavigation.directGoogleLoginUrl(
+                  email: _authService.cachedCurrentUser?.email,
+                  continueUrl: session.resolvedUrl,
+                );
+                unawaited(controller.loadUrl(
+                  urlRequest: URLRequest(url: WebUri(directLogin)),
+                ));
+                return;
+              }
+
               if (!NotebookNavigation.notebook(uri.uriValue)) {
                 return;
+              }
+
+              // Jika halaman berhenti di root `notebook.google.com/` (bukan
+              // `/notebook/...`) tanpa cookie sesi aktif, itu adalah landing
+              // page publik Gemini Notebook — alihkan langsung ke Google login
+              // sambil mempertahankan loader OpenTurath.
+              final cleanPath = uri.path.trim();
+              if (!session.isSessionReady &&
+                  (cleanPath.isEmpty || cleanPath == '/')) {
+                final live = await PersistentGoogleSession.instance
+                    .hasLiveSessionTriState(controller);
+                if (!mounted) return;
+                if (live == false) {
+                  final directLogin = NotebookNavigation.directGoogleLoginUrl(
+                    email: _authService.cachedCurrentUser?.email,
+                    continueUrl: session.resolvedUrl,
+                  );
+                  unawaited(controller.loadUrl(
+                    urlRequest: URLRequest(url: WebUri(directLogin)),
+                  ));
+                  return;
+                }
               }
 
               _googleSignInDebounceTimer?.cancel();
@@ -2605,7 +2652,8 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
                 if (!session.isSessionReady && _readinessTimer == null) {
                   _startReadinessCheck();
                 }
-              } else if (NotebookNavigation.signInFlow(uri.uriValue)) {
+              } else if (NotebookNavigation.isInteractiveGoogleSignIn(
+                  uri.uriValue)) {
                 if (!session.isGoogleAuthPage && mounted) {
                   _scheduleGoogleSignIn();
                 }

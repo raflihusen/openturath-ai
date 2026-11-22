@@ -61,4 +61,44 @@ class NotebookNavigation {
       !authentication(uri);
 
   static bool notebook(Uri uri) => allowed(uri);
+
+  /// Benar untuk SEMUA halaman pada host Notebook (`notebook.google.com` /
+  /// `notebooklm.google.com`), termasuk `/`, `/login`, dan `/notebook/...`.
+  /// Tidak boleh pernah terekspos tanpa pelindung di layar masuk Google.
+  static bool isNotebookHost(Uri uri) =>
+      _trustedHttps(uri) && hosts.contains(uri.host.toLowerCase());
+
+  /// Benar HANYA pada halaman masuk/OAuth/verifikasi interaktif milik Google
+  /// (`accounts.google.*`, `consent.google.com`, `accounts.youtube.com`),
+  /// dan TIDAK pernah benar pada host Notebook ataupun `myaccount.google.com`.
+  static bool isInteractiveGoogleSignIn(Uri uri) {
+    if (!_trustedHttps(uri)) return false;
+    final host = uri.host.toLowerCase();
+    if (hosts.contains(host) || host == 'myaccount.google.com') {
+      return false;
+    }
+    return host == 'accounts.google.com' ||
+        host == 'accounts.google.co.id' ||
+        host == 'accounts.youtube.com' ||
+        host == 'consent.google.com' ||
+        RegExp(r'^accounts\.google\.[a-z.]{2,6}$').hasMatch(host);
+  }
+
+  /// URL masuk Google langsung ke `accounts.google.com/ServiceLogin` agar
+  /// pengguna tidak pernah diarahkan ke landing page Gemini Notebook / NotebookLM.
+  ///
+  /// - Jika belum ada sesi Google: langsung menampilkan form resmi Google
+  ///   ("Sign in — Use your Google Account").
+  /// - Jika cookie sesi Google sudah aktif: otomatis dialihkan ke [continueUrl]
+  ///   secara senyap di balik pelindung animasi OpenTurath.
+  static String directGoogleLoginUrl({String? email, String? continueUrl}) {
+    final cleanEmail = (email ?? '').trim();
+    final targetContinue = (continueUrl ?? '').trim().isNotEmpty
+        ? continueUrl!.trim()
+        : '$canonicalOrigin/';
+    return Uri.https('accounts.google.com', '/ServiceLogin', {
+      'continue': targetContinue,
+      if (cleanEmail.isNotEmpty) 'Email': cleanEmail,
+    }).toString();
+  }
 }

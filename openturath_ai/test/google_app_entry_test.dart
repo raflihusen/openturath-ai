@@ -9,6 +9,7 @@ import 'package:openturath_ai/core/localization.dart';
 import 'package:openturath_ai/models/user_model.dart';
 import 'package:openturath_ai/screens/google_session_auth_screen.dart';
 import 'package:openturath_ai/services/auth_service.dart';
+import 'package:openturath_ai/widgets/app_loader.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:openturath_ai/core/routes.dart';
@@ -54,6 +55,7 @@ class _Controller extends PlatformInAppWebViewController {
   String? detectedEmail = _email;
   bool failUrlRead = false;
   WebUri currentUrl = _notebookUrl;
+  final List<String> loadedUrls = [];
 
   @override
   Future<WebUri?> getUrl() async {
@@ -78,7 +80,11 @@ class _Controller extends PlatformInAppWebViewController {
     required URLRequest urlRequest,
     Uri? iosAllowingReadAccessTo,
     WebUri? allowingReadAccessTo,
-  }) async {}
+  }) async {
+    if (urlRequest.url != null) {
+      loadedUrls.add(urlRequest.url.toString());
+    }
+  }
 
   @override
   Future<void> reload() async {}
@@ -333,4 +339,54 @@ void main() {
       }
     });
   }
+
+  testWidgets(
+      'shield stays active on notebook landing/login pages and redirects directly to Google ServiceLogin',
+      (tester) async {
+    platform.cookies.cookies = [];
+    final controller = await open(tester);
+    final native = controller.platform as _Controller;
+    try {
+      // Frame 0: OpenTurath animation shield is already active before any page paints.
+      expect(find.byType(AppLoader), findsOneWidget);
+
+      // Even if Google redirects to notebook.google.com/ or /login without cookies,
+      // the shield MUST stay up and immediately bounce straight to accounts.google.com/ServiceLogin.
+      for (final landing in [
+        'https://notebook.google.com/',
+        'https://notebook.google.com/login?continue=https%3A%2F%2Fnotebook.google.com%2F',
+      ]) {
+        native.loadedUrls.clear();
+        native.currentUrl = WebUri(landing);
+        platform.lastView!.params.onLoadStart!(controller, native.currentUrl);
+        await tester.pump();
+        expect(find.byType(AppLoader), findsOneWidget,
+            reason: 'Shield must stay up during onLoadStart for $landing');
+
+        await finishLoad(tester, controller);
+        expect(find.byType(AppLoader), findsOneWidget,
+            reason: 'Shield must NEVER drop on $landing');
+        expect(native.loadedUrls, isNotEmpty,
+            reason: 'Must redirect away from $landing');
+        final redirected = Uri.parse(native.loadedUrls.last);
+        expect(redirected.host, 'accounts.google.com');
+        expect(redirected.path, '/ServiceLogin');
+      }
+
+      // On accounts.google.com, shield stays up during onLoadStart and ONLY drops after onLoadStop finishes.
+      final signInUrl =
+          WebUri('https://accounts.google.com/v3/signin/identifier?continue=https%3A%2F%2Fnotebook.google.com%2F');
+      native.currentUrl = signInUrl;
+      platform.lastView!.params.onLoadStart!(controller, signInUrl);
+      await tester.pump();
+      expect(find.byType(AppLoader), findsOneWidget,
+          reason: 'Shield must stay up until Google sign-in finishes loading');
+
+      await finishLoad(tester, controller);
+      expect(find.byType(AppLoader), findsNothing,
+          reason: 'Shield reveals the Google sign-in form once ready');
+    } finally {
+      await close(tester);
+    }
+  });
 }

@@ -24,7 +24,6 @@ import '../services/desktop_webview_runtime.dart';
 import '../services/persistent_google_session.dart';
 import '../widgets/app_loader.dart';
 import '../widgets/diagnostic_report_action.dart';
-import '../widgets/openturath_brand.dart';
 
 import 'package:openturath_ai/core/design/ot_typography.dart';
 import 'package:openturath_ai/core/design/ot_radius.dart';
@@ -88,7 +87,10 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
   int _connectionEpoch = 0;
   final ValueNotifier<double> _loadProgress = ValueNotifier<double>(0.0);
   bool _isMismatchDialogOpen = false;
-  bool _isShieldActive = false;
+  // Pelindung animasi OpenTurath WAJIB aktif sejak frame pertama agar halaman
+  // pengalihan atau landing page Notebook tidak pernah terlihat sebelum
+  // formulir masuk Google resmi benar-benar selesai dimuat dan siap dipakai.
+  bool _isShieldActive = true;
   bool _isCheckingAccount = false;
   // Halaman penolakan Google ("Couldn't sign you in") terdeteksi: tawarkan
   // tombol kirim laporan agar pemilik dapat menganalisa penyebabnya.
@@ -97,19 +99,39 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
   bool _isConfirmOpen = false;
   Timer? _watchdog;
 
+  /// Skrip pelindung awal (AT_DOCUMENT_START) yang HANYA menyembunyikan host
+  /// Notebook & myaccount agar tidak pernah melukis satu frame pun saat transisi.
+  /// Tidak pernah menyentuh `accounts.google.com` sedikit pun.
+  static const String _stealthCloakUserScript = '''
+(function() {
+  try {
+    var h = (window.location.hostname || '').toLowerCase();
+    if (h !== 'notebook.google.com' &&
+        h !== 'notebooklm.google.com' &&
+        h !== 'myaccount.google.com') {
+      return;
+    }
+    var styleId = 'ot-stealth-auth-cloak';
+    var style = document.getElementById(styleId) || document.createElement('style');
+    style.id = styleId;
+    style.textContent = 'html, body { background-color: #09090B !important; color: transparent !important; overflow: hidden !important; } body * { opacity: 0 !important; pointer-events: none !important; visibility: hidden !important; }';
+    (document.head || document.documentElement).appendChild(style);
+  } catch(_) {}
+})();
+''';
+
   String get _targetLoginUrl {
     final email = (_authService.cachedCurrentUser?.email ??
             _authService.currentUser?.email ??
             '')
         .trim();
-    return Uri.https('notebook.google.com', '/login', {
-      'continue': 'https://notebook.google.com/',
-      if (email.isNotEmpty) 'Email': email,
-    }).toString();
+    return NotebookNavigation.directGoogleLoginUrl(email: email);
   }
 
-  // Try the existing WebKit session before asking Google to sign in again.
-  String get _initialSessionUrl => '${NotebookNavigation.canonicalOrigin}/';
+  // Mulai langsung di accounts.google.com/ServiceLogin (bukan notebook.google.com/)
+  // agar pengguna tidak pernah menemui landing page Gemini Notebook; sesi cookie
+  // aktif tetap otomatis dialihkan ke notebook.google.com/ di balik pelindung.
+  String get _initialSessionUrl => _targetLoginUrl;
 
   bool _isCurrentVerification(int epoch) =>
       mounted &&
@@ -133,9 +155,15 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
     if (!mounted || _isCancelDialogOpen || _connectionCancelled) return;
     _connectionEpoch++;
     if (_verificationFailed) {
-      setState(() => _verificationFailed = false);
+      setState(() {
+        _verificationFailed = false;
+        _isShieldActive = true;
+      });
     } else {
-      _webController?.reload();
+      setState(() => _isShieldActive = true);
+      _webController?.loadUrl(
+        urlRequest: URLRequest(url: WebUri(_targetLoginUrl)),
+      );
     }
   }
 
@@ -222,8 +250,59 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
     );
   }
 
-  /// Menyelaraskan status pelindung visual (Visual Shield) dengan domain navigasi WebView
-  void _handleUrlNavigation(InAppWebViewController controller, WebUri? url) {
+  bool _isCloakedHost(Uri uri) {
+    final host = uri.host.toLowerCase();
+    return NotebookNavigation.isNotebookHost(uri) ||
+        host == 'myaccount.google.com' ||
+        GoogleConnectionNavigation.isAccountPage(uri);
+  }
+
+  bool _isServiceLoginRedirectHop(Uri uri) {
+    final host = uri.host.toLowerCase();
+    final path = uri.path.toLowerCase();
+    return host.startsWith('accounts.google.') &&
+        (path == '/servicelogin' || path == '/servicelogin/');
+  }
+
+  void _scheduleRevealIfStillSignIn(
+      InAppWebViewController controller, int epoch) {
+    Future<void>.delayed(const Duration(milliseconds: 350), () async {
+      if (!_isCurrentVerification(epoch) ||
+          _isSessionReady ||
+          _isCompletingSession ||
+          _isMismatchDialogOpen ||
+          _isConfirmOpen) {
+        return;
+      }
+      try {
+        final current =
+            await controller.getUrl().timeout(const Duration(seconds: 3));
+        if (!_isCurrentVerification(epoch) || current == null) return;
+        final uri = current.uriValue;
+        if (_isCloakedHost(uri)) return;
+        if (NotebookNavigation.isInteractiveGoogleSignIn(uri) &&
+            _isShieldActive &&
+            mounted) {
+          setState(() => _isShieldActive = false);
+        }
+      } catch (_) {}
+    });
+  }
+
+  /// Menyelaraskan status pelindung visual (Visual Shield) dengan domain navigasi WebView.
+  ///
+  /// Aturan keras anti-bocor:
+  /// - Semua host Notebook (`notebook.google.com` / `notebooklm.google.com`,
+  ///   termasuk `/login` & landing page) dan `myaccount.google.com` WAJIB selalu
+  ///   tertutup pelindung animasi OpenTurath.
+  /// - Pelindung HANYA boleh turun setelah halaman login interaktif resmi Google
+  ///   (`accounts.google.*` / `consent.google.com`) benar-benar selesai dimuat
+  ///   (`pageFinished == true`), bukan saat `onLoadStart`.
+  void _handleUrlNavigation(
+    InAppWebViewController controller,
+    WebUri? url, {
+    required bool pageFinished,
+  }) {
     if (!identical(controller.platform, _webController?.platform)) return;
     if (!mounted ||
         url == null ||
@@ -233,32 +312,44 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
     }
     final uri = url.uriValue;
 
-    final isNotebook = NotebookNavigation.notebook(uri);
-    final isMyAccount = GoogleConnectionNavigation.isAccountPage(uri);
-    final isAuthFlow = NotebookNavigation.signInFlow(uri) && !isMyAccount;
-
-    if (isNotebook || isMyAccount) {
+    if (_isCloakedHost(uri)) {
       if (!_isShieldActive && mounted) {
         setState(() => _isShieldActive = true);
       }
       // Suntikkan style pelindung cadangan untuk navigasi SPA sisi-klien agar UI web tidak pernah bocor ke layar pengguna
-      controller.evaluateJavascript(source: '''
-        try {
-          var styleId = 'ot-stealth-auth-cloak';
-          var style = document.getElementById(styleId) || document.createElement('style');
-          style.id = styleId;
-          style.textContent = 'html, body { background-color: #09090B !important; color: transparent !important; overflow: hidden !important; } body * { opacity: 0 !important; pointer-events: none !important; }';
-          (document.head || document.documentElement).appendChild(style);
-        } catch(_) {}
-      ''');
-    } else if (isAuthFlow) {
-      controller.evaluateJavascript(source: '''
-        try {
-          var s = document.getElementById('ot-stealth-auth-cloak');
-          if (s) s.remove();
-        } catch(_) {}
-      ''');
-      if (_isShieldActive && !_isMismatchDialogOpen && !_isConfirmOpen && mounted) {
+      controller.evaluateJavascript(source: _stealthCloakUserScript);
+      // Jika karena alasan apa pun WebView berhenti di `notebook.google.com/login`,
+      // pertahankan pelindung dan langsung alihkan ke accounts.google.com/ServiceLogin.
+      if (pageFinished &&
+          NotebookNavigation.isNotebookHost(uri) &&
+          NotebookNavigation.authentication(uri)) {
+        unawaited(controller.loadUrl(
+          urlRequest: URLRequest(url: WebUri(_targetLoginUrl)),
+        ));
+      }
+      return;
+    }
+
+    if (!pageFinished) {
+      // Jangan turunkan pelindung saat halaman baru mulai dimuat; tunggu
+      // sampai formulir masuk Google benar-benar selesai dirender.
+      return;
+    }
+
+    if (NotebookNavigation.isInteractiveGoogleSignIn(uri)) {
+      if (_isSessionReady ||
+          _isCompletingSession ||
+          _isMismatchDialogOpen ||
+          _isConfirmOpen) {
+        return;
+      }
+      if (_isServiceLoginRedirectHop(uri)) {
+        // `/ServiceLogin` bisa langsung mengalihkan balik ke notebook bila
+        // cookie sesi masih aktif; beri jeda singkat agar pelindung tidak berkedip.
+        _scheduleRevealIfStillSignIn(controller, _connectionEpoch);
+        return;
+      }
+      if (_isShieldActive && mounted) {
         setState(() => _isShieldActive = false);
       }
     }
@@ -295,10 +386,18 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
     try {
       final url = await controller.getUrl().timeout(const Duration(seconds: 3));
       if (!mounted || url == null || _isSessionReady) return;
-      if (_isAppEntry || NotebookNavigation.notebook(url.uriValue)) {
+      final uri = url.uriValue;
+      if (_isCloakedHost(uri)) {
+        if (!_isShieldActive && mounted) {
+          setState(() => _isShieldActive = true);
+        }
         await _checkAccountVerification(controller);
-      } else if (_isShieldActive) {
-        // Halaman perantara Google di bawah pelindung: tampilkan agar pengguna bisa melanjutkan.
+      } else if (_isShieldActive &&
+          NotebookNavigation.isInteractiveGoogleSignIn(uri) &&
+          !_isServiceLoginRedirectHop(uri) &&
+          _loadProgress.value >= 0.85) {
+        // Halaman masuk interaktif Google sudah selesai dimuat di bawah
+        // pelindung: tampilkan agar pengguna dapat langsung masuk.
         setState(() => _isShieldActive = false);
       }
     } catch (_) {}
@@ -516,51 +615,48 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
       if (!_isCurrentVerification(epoch) || url == null) {
         return;
       }
-      final host = url.host.toLowerCase();
-      final path = url.path.toLowerCase();
+      final uri = url.uriValue;
+      final isMyAccount = GoogleConnectionNavigation.isAccountPage(uri);
+      final isNotebookLm = NotebookNavigation.isNotebookHost(uri);
 
-      final isMyAccount = GoogleConnectionNavigation.isAccountPage(url.uriValue);
-
-      final isNotebookLm = host.contains('notebooklm.google.com') ||
-          host.contains('notebook.google.com');
-
-      // 1. Jika masih berada di formulir login / pilih akun / verifikasi Google, biarkan pengguna berinteraksi
-      if (!isMyAccount && host.contains('accounts.google.com')) {
-        if (_isShieldActive && mounted) {
-          setState(() => _isShieldActive = false);
-        }
+      // 1. Jika masih berada di formulir masuk / pilih akun / verifikasi Google,
+      // biarkan pengguna berinteraksi (pelindung diturunkan oleh onLoadStop
+      // setelah halaman login Google selesai dimuat).
+      if (NotebookNavigation.isInteractiveGoogleSignIn(uri)) {
         return;
       }
 
-      if (!isMyAccount &&
-          (path.contains('/login') ||
-              path.contains('/signin') ||
-              path.contains('/servicelogin'))) {
-        if (_isShieldActive && mounted) {
-          setState(() => _isShieldActive = false);
+      // Jika mendarat di `notebook.google.com/login` (atau rute auth pada host
+      // Notebook), JANGAN turunkan pelindung: langsung arahkan ke ServiceLogin.
+      if (isNotebookLm && NotebookNavigation.authentication(uri)) {
+        if (!_isShieldActive && mounted) {
+          setState(() => _isShieldActive = true);
         }
+        await controller.loadUrl(
+          urlRequest: URLRequest(url: WebUri(_targetLoginUrl)),
+        );
         return;
       }
 
       if (!isNotebookLm && !isMyAccount) {
-        if (_isShieldActive && mounted) {
-          setState(() => _isShieldActive = false);
-        }
         return;
       }
 
-      // Aktifkan pelindung visual agar UI NotebookLM / akun Google tidak pernah bocor ke layar pengguna
+      // Aktifkan pelindung visual agar UI Notebook / akun Google tidak pernah bocor ke layar pengguna
       if (!_isShieldActive && mounted) {
         setState(() => _isShieldActive = true);
       }
 
       // 2. Pastikan sesi cookies Google aktif di WebKit terlebih dahulu.
-      // Jika belum ada cookie sesi Google, langsung arahkan ke halaman login Google
-      // dan turunkan pelindung visual agar tidak macet di layar "Memuat...".
+      // Jika belum ada cookie sesi Google (mis. mendarat di landing page
+      // notebook.google.com/), PERTAHANKAN pelindung animasi OpenTurath dan
+      // langsung arahkan ke halaman login resmi Google (`accounts.google.com`).
       final hasSession = await _hasGoogleSession();
       if (!_isCurrentVerification(epoch)) return;
       if (hasSession == false) {
-        if (mounted) setState(() => _isShieldActive = false);
+        if (!_isShieldActive && mounted) {
+          setState(() => _isShieldActive = true);
+        }
         await controller.loadUrl(
           urlRequest: URLRequest(url: WebUri(_targetLoginUrl)),
         );
@@ -797,7 +893,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
             onPressed: () async {
               Navigator.pop(ctx);
               if (mounted) {
-                setState(() => _isShieldActive = false);
+                setState(() => _isShieldActive = true);
               }
               // Pilih akun lewat pemilih akun Google; cookie tidak dihapus.
               if (_webController != null) {
@@ -1457,7 +1553,15 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
                                         initialUrlRequest: URLRequest(
                                             url: WebUri(_initialSessionUrl)),
                                         initialUserScripts:
-                                            UnmodifiableListView([]),
+                                            UnmodifiableListView([
+                                          UserScript(
+                                            source: _stealthCloakUserScript,
+                                            injectionTime:
+                                                UserScriptInjectionTime
+                                                    .AT_DOCUMENT_START,
+                                            forMainFrameOnly: true,
+                                          ),
+                                        ]),
                                         initialSettings: InAppWebViewSettings(
                                           userAgent: AppPlatform.isDesktop
                                               ? AppConstants.desktopUserAgent
@@ -1521,11 +1625,19 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
                                           }
                                         },
                                         onLoadStart: (controller, url) {
-                                          _handleUrlNavigation(controller, url);
+                                          _handleUrlNavigation(
+                                            controller,
+                                            url,
+                                            pageFinished: false,
+                                          );
                                         },
                                         onLoadStop: (controller, url) async {
                                           if (!mounted || url == null) return;
-                                          _handleUrlNavigation(controller, url);
+                                          _handleUrlNavigation(
+                                            controller,
+                                            url,
+                                            pageFinished: true,
+                                          );
                                           unawaited(_detectGoogleRejection(
                                               controller, url));
                                           await _checkAccountVerification(
@@ -1534,7 +1646,12 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
                                         onUpdateVisitedHistory:
                                             (controller, url, isReload) async {
                                           if (!mounted || url == null) return;
-                                          _handleUrlNavigation(controller, url);
+                                          _handleUrlNavigation(
+                                            controller,
+                                            url,
+                                            pageFinished:
+                                                _loadProgress.value >= 0.9,
+                                          );
                                           await _checkAccountVerification(
                                               controller);
                                         },
@@ -1581,53 +1698,40 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
                                 Positioned.fill(
                                   child: ColoredBox(
                                     color: canvas,
-                                    child: Center(
-                                      child: Column(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          OpenTurathMark(
-                                              size: 38, color: textPrimary),
-                                          const SizedBox(height: 20),
-                                          Text(
-                                            _isAppEntry
-                                                ? Loc.tr('checkoutPleaseWait')
-                                                : Loc.tr('verifyingSessionTitle'),
-                                            textAlign: TextAlign.center,
-                                            style: ScholarlyFonts.outfit(
-                                              fontSize: OTFontSize.s16,
-                                              fontWeight: FontWeight.w600,
-                                              color: textPrimary,
+                                    child: LayoutBuilder(
+                                      builder: (context, constraints) {
+                                        final shieldTitle = _isAppEntry
+                                            ? Loc.tr('checkoutPleaseWait')
+                                            : Loc.tr('verifyingSessionTitle');
+                                        final shieldSubtitle = _isAppEntry
+                                            ? (Loc.isArabic
+                                                ? 'جارٍ تجهيز صفحة تسجيل الدخول…'
+                                                : (Loc.language == 'en'
+                                                    ? 'Preparing sign-in…'
+                                                    : 'Menyiapkan halaman masuk…'))
+                                            : Loc.tr(
+                                                'verifyingSessionSubtitle');
+                                        final textScale =
+                                            MediaQuery.textScalerOf(context)
+                                                .scale(1.0);
+                                        if (constraints.maxHeight >=
+                                            340.0 * textScale) {
+                                          return AppLoader.fullscreen(
+                                            title: shieldTitle,
+                                            subtitle: shieldSubtitle,
+                                          );
+                                        }
+                                        return Center(
+                                          child: SingleChildScrollView(
+                                            padding: const EdgeInsets.all(16),
+                                            child: AppLoader(
+                                              title: shieldTitle,
+                                              subtitle: shieldSubtitle,
+                                              dotSize: 9,
                                             ),
                                           ),
-                                          const SizedBox(height: 8),
-                                          Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 32),
-                                            child: Text(
-                                              Loc.tr(
-                                                  'verifyingSessionSubtitle'),
-                                              textAlign: TextAlign.center,
-                                              style: ScholarlyFonts.outfit(
-                                                fontSize: OTFontSize.s12,
-                                                height: 1.4,
-                                                color: textSecondary,
-                                              ),
-                                            ),
-                                          ),
-                                          const SizedBox(height: 20),
-                                          SizedBox(
-                                            width: 140,
-                                            child: LinearProgressIndicator(
-                                              backgroundColor:
-                                                  border.withValues(alpha: 0.3),
-                                              valueColor:
-                                                  AlwaysStoppedAnimation<Color>(
-                                                      textPrimary),
-                                              minHeight: 2,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
+                                        );
+                                      },
                                     ),
                                   ),
                                 ),

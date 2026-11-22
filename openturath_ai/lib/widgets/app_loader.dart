@@ -278,8 +278,9 @@ class _AppLoaderState extends State<AppLoader>
             // Lapis 2: Kotak emblem OpenTurath + tipografi tenang di tengah
             SafeArea(
               child: Center(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 32),
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 32, vertical: 16),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [

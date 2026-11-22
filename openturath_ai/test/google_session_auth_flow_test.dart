@@ -5,6 +5,7 @@ import 'package:openturath_ai/core/google_connection_flow.dart';
 import 'package:openturath_ai/models/user_model.dart';
 import 'package:openturath_ai/screens/google_session_auth_screen.dart';
 import 'package:openturath_ai/services/auth_service.dart';
+import 'package:openturath_ai/widgets/app_loader.dart';
 
 void main() {
   setUp(() {
@@ -24,7 +25,7 @@ void main() {
   });
 
   testWidgets(
-      'GoogleSessionAuthScreen pada alur masuk aplikasi (appEntry) memuat login NotebookLM resmi tanpa banner Langkah 2',
+      'GoogleSessionAuthScreen pada alur masuk aplikasi (appEntry) langsung memuat Google ServiceLogin di balik pelindung animasi tanpa landing page Notebook',
       (tester) async {
     String? loginUrl;
     await tester.pumpWidget(
@@ -45,10 +46,16 @@ void main() {
     expect(find.text('Masuk ke OpenTurath'), findsOneWidget);
 
     final login = Uri.parse(loginUrl!);
-    expect(login.host, 'notebook.google.com');
-    expect(login.path, '/');
+    expect(login.host, 'accounts.google.com');
+    expect(login.path, '/ServiceLogin');
+    expect(login.queryParameters['continue'], 'https://notebook.google.com/');
+    expect(login.queryParameters['Email'], 'santri.mock@gmail.com');
 
-    // Verifikasi webview placeholder ter-mount
+    // Pelindung animasi OpenTurath wajib aktif sejak frame pertama sebelum
+    // formulir masuk Google selesai dimuat.
+    expect(find.byType(AppLoader), findsOneWidget);
+
+    // Verifikasi webview placeholder ter-mount di balik pelindung
     expect(find.byKey(const Key('mock_webview')), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
