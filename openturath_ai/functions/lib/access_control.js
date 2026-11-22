@@ -468,13 +468,19 @@ class AccessControl {
                 const mr = this.db.collection("access_memberships").doc((0, exports.keyOf)(id, email));
                 candidates.push({ id, nr, mr, n: (await t.get(nr)).data(), m: (await t.get(mr)).data() });
             }
-            // Reuse observed registration before waterfall: imports retain the real
-            // notebook and do not consume a second seat, including legacy notebooks.
+            // Sisihkan 195 kursi di Master Notebook untuk VIP agar akun VIP baru
+            // tidak pernah kehabisan kursi di Master saat 20.000 user reguler masuk.
+            const callerIsVip = (0, exports.isVip)(user, grants);
             const found = candidates.find(c => { var _a, _b, _c; return ((_a = c.m) === null || _a === void 0 ? void 0 : _a.present) === true && ((_b = c.n) === null || _b === void 0 ? void 0 : _b.is_public) === false && ["active", "draining"].includes((_c = c.n) === null || _c === void 0 ? void 0 : _c.status); }) ||
                 candidates.find(c => {
                     var _a, _b, _c, _d;
-                    return !((_a = e.legacyIds) === null || _a === void 0 ? void 0 : _a.includes(c.id)) && ((_b = c.n) === null || _b === void 0 ? void 0 : _b.status) === "active" && ((_c = c.n) === null || _c === void 0 ? void 0 : _c.is_public) === false &&
-                        ((_d = c.n) === null || _d === void 0 ? void 0 : _d.healthy_until_ms) > this.clock() && c.n.occupied < Math.min(2000, c.n.admission_limit || 1995);
+                    if (c.id !== e.masterId && ((_a = e.legacyIds) === null || _a === void 0 ? void 0 : _a.includes(c.id)))
+                        return false;
+                    if (((_b = c.n) === null || _b === void 0 ? void 0 : _b.status) !== "active" || ((_c = c.n) === null || _c === void 0 ? void 0 : _c.is_public) !== false || !(((_d = c.n) === null || _d === void 0 ? void 0 : _d.healthy_until_ms) > this.clock()))
+                        return false;
+                    const baseLimit = Math.min(2000, c.n.admission_limit || 1995);
+                    const effectiveLimit = (!callerIsVip && c.id === e.masterId) ? Math.min(1800, baseLimit) : baseLimit;
+                    return c.n.occupied < effectiveLimit;
                 });
             if (!found)
                 throw new AccessFault("resource-exhausted", "paid_waiting_capacity");
@@ -563,8 +569,8 @@ class AccessControl {
             }
         });
     }
-    // Moves a paying member off a notebook that Google no longer has onto the
-    // next healthy one (master first, then clones), the same waterfall as reserve.
+    // Moves a paying member off a notebook that Google no longer has or that hit
+    // actual capacity onto the next healthy one (master with VIP reserve, then clones).
     async relocate(uid, entity) {
         const { user, grants } = await this.owner(uid);
         if (!rights(user, grants, this.scopes[entity], this.clock()))
@@ -572,14 +578,18 @@ class AccessControl {
         const e = this.entities[entity];
         if (!e)
             return false;
+        const callerIsVip = (0, exports.isVip)(user, grants);
         const ar = this.assignmentRef(uid, entity);
         return this.db.runTransaction(async (t) => {
             var _a, _b;
             const a = (await t.get(ar)).data();
             if (!a || !["ready", "provisioning"].includes(a.status))
                 return false;
-            const current = (await t.get(this.db.collection("access_notebooks").doc(a.notebook_id))).data();
-            if ((current === null || current === void 0 ? void 0 : current.status) !== "missing")
+            const oldNr = this.db.collection("access_notebooks").doc(a.notebook_id);
+            const oldMr = this.db.collection("access_memberships").doc((0, exports.keyOf)(a.notebook_id, a.email));
+            const current = (await t.get(oldNr)).data();
+            const oldMember = (await t.get(oldMr)).data();
+            if (!["missing", "draining"].includes(current === null || current === void 0 ? void 0 : current.status))
                 return false;
             const candidates = [];
             for (const id of [e.masterId, ...e.clones.map(c => c.id)]) {
@@ -590,13 +600,28 @@ class AccessControl {
             }
             const found = candidates.find(c => {
                 var _a, _b, _c;
-                return ((_a = c.n) === null || _a === void 0 ? void 0 : _a.status) === "active" && ((_b = c.n) === null || _b === void 0 ? void 0 : _b.is_public) === false &&
-                    ((_c = c.n) === null || _c === void 0 ? void 0 : _c.healthy_until_ms) > this.clock() && c.n.occupied < Math.min(2000, c.n.admission_limit || 1995);
+                if (((_a = c.n) === null || _a === void 0 ? void 0 : _a.status) !== "active" || ((_b = c.n) === null || _b === void 0 ? void 0 : _b.is_public) !== false || !(((_c = c.n) === null || _c === void 0 ? void 0 : _c.healthy_until_ms) > this.clock()))
+                    return false;
+                const baseLimit = Math.min(2000, c.n.admission_limit || 1995);
+                const effectiveLimit = (!callerIsVip && c.id === e.masterId) ? Math.min(1800, baseLimit) : baseLimit;
+                return c.n.occupied < effectiveLimit;
             });
             if (!found)
                 throw new AccessFault("resource-exhausted", "paid_waiting_capacity");
             const revision = a.revision + 1;
-            const moved = Object.assign(Object.assign({}, a), { notebook_id: found.id, status: "provisioning", revision, history: [...new Set([...(a.history || [a.notebook_id]), found.id])], relocated_from: a.notebook_id, updated_ms: this.clock() });
+            const wasPresentOnOld = (oldMember === null || oldMember === void 0 ? void 0 : oldMember.present) === true;
+            const priorHistory = wasPresentOnOld
+                ? (a.history || [a.notebook_id])
+                : (a.history || []).filter((id) => id !== a.notebook_id);
+            const moved = Object.assign(Object.assign({}, a), { notebook_id: found.id, status: "provisioning", revision, history: [...new Set([...priorHistory, found.id])], relocated_from: a.notebook_id, updated_ms: this.clock() });
+            // Lepaskan reservasi kursi pada notebook lama bila pengguna belum pernah benar-benar
+            // terdaftar di Google, agar tidak membocorkan hitungan kursi maupun riwayat reaper.
+            if (!wasPresentOnOld && (oldMember === null || oldMember === void 0 ? void 0 : oldMember.counted) === true) {
+                t.set(oldMr, { counted: false }, { merge: true });
+                if (current && current.status !== "draining") {
+                    t.update(oldNr, { occupied: Math.max(0, (current.occupied || 0) - 1) });
+                }
+            }
             if (!((_a = found.m) === null || _a === void 0 ? void 0 : _a.present))
                 t.update(found.nr, { occupied: found.n.occupied + 1 });
             t.set(found.mr, { uid, entity, email: a.email, notebook_id: found.id, present: ((_b = found.m) === null || _b === void 0 ? void 0 : _b.present) === true,
@@ -787,7 +812,34 @@ class AccessControl {
                 }
                 catch (_) { /* Keep the durable recovery flag for the next attempt. */ }
             }
-            await ref.update({ status: "retry", last_error: String(e.message).slice(0, 240),
+            const errMsg = String((e === null || e === void 0 ? void 0 : e.message) || e || "");
+            // Pisahkan tegas HTTP 429 / rate-limit sementara Google (wajib retry backoff)
+            // dari kapasitas viewer notebook yang benar-benar penuh (draining + relokasi).
+            const isTransientRateLimit = /\b429\b|rate[\s_-]?limit|too many requests|throttl|try again later|temporarily unavailable/i.test(errMsg);
+            const isNotebookCapacityFull = !isTransientRateLimit &&
+                /(viewer|member|collaborator|share|user|notebook).*(limit|full|max|maximum|capacity|exceeded)|(maximum|max)\s+(number\s+of\s+)?(viewer|member|collaborator|user)|already\s+at\s+capacity|notebook\s+is\s+full|seat\s+limit/i.test(errMsg);
+            // Auto-failover ke kloning berikutnya bila Google menolak add_viewer karena notebook penuh aktual.
+            if (job.desired === true && isNotebookCapacityFull) {
+                try {
+                    const nr = this.db.collection("access_notebooks").doc(job.notebook_id);
+                    await this.db.runTransaction(async (t) => {
+                        const n = (await t.get(nr)).data();
+                        if (n && n.status === "active") {
+                            const limit = Math.min(2000, n.admission_limit || 1995);
+                            t.update(nr, { status: "draining", occupied: Math.max(n.occupied || 0, limit), updated_ms: this.clock() });
+                        }
+                    });
+                    const moved = await this.relocate(job.uid, job.entity);
+                    if (moved) {
+                        await ref.update({ status: "superseded", last_error: "auto_failover_capacity_full", due_ms: 8640000000000000, updated_ms: this.clock() });
+                        return;
+                    }
+                }
+                catch (_) {
+                    // Jika relokasi gagal (semua kloning penuh), lanjut ke retry backoff normal
+                }
+            }
+            await ref.update({ status: "retry", last_error: errMsg.slice(0, 240),
                 due_ms: this.clock() + Math.min(300000, 1000 * 2 ** Math.min(job.attempts, 8)), updated_ms: this.clock() });
         }
         finally {

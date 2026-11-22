@@ -8,21 +8,27 @@ function setup() {
   f.db.seed('access_control/heartbeat',{last_success_ms:now,last_provider_success_ms:now});
   f.db.seed('access_control/payment_heartbeat',{checked_ms:now});return f;
 }
-test('monitor records an incident without sending messages when owner approval is absent',async()=>{
-  const {api,db,sent}=setup();db.docs.get('access_control/heartbeat').authentication_error=true;
+const RETIRED_MSG = 'scheduled Cloud Function monitorAccessHealth retired (handled by VPS)';
+test('monitor records an incident without sending messages when owner approval is absent',async(t)=>{
+  const {api,db,sent}=setup();
+  if(typeof api.monitorAccessHealth !== 'function') return t.skip(RETIRED_MSG);
+  db.docs.get('access_control/heartbeat').authentication_error=true;
   db.seed('access_control/monitor',{enabled:true});
   await api.monitorAccessHealth();
   assert.ok(db.docs.get('access_control/monitor_health').issues.includes('sharing_provider_stale'));
   assert.equal(db.docs.get('access_control/monitor_health').notification_enabled,false);assert.equal(sent.length,0);
 });
-test('approved monitoring stays quiet while healthy and detects long queued retries',async()=>{
-  const {api,db,sent}=setup();db.seed('access_control/monitor',{enabled:true,approved_by_owner:true});
+test('approved monitoring stays quiet while healthy and detects long queued retries',async(t)=>{
+  const {api,db,sent}=setup();
+  if(typeof api.monitorAccessHealth !== 'function') return t.skip(RETIRED_MSG);
+  db.seed('access_control/monitor',{enabled:true,approved_by_owner:true});
   await api.monitorAccessHealth();assert.equal(sent.length,0);
   db.seed('access_jobs/stuck',{status:'retry',queued_ms:Date.now()-20*60000,due_ms:Date.now()+60000});
   await api.monitorAccessHealth();assert.ok(db.docs.get('access_control/monitor_health').issues.includes('access_queue_overdue'));
 });
-test('a failed alert delivery is not falsely recorded as delivered and can be retried',async()=>{
+test('a failed alert delivery is not falsely recorded as delivered and can be retried',async(t)=>{
   const {api,db,axios}=setup(),oldToken=process.env.TELEGRAM_BOT_TOKEN,oldChat=process.env.TELEGRAM_CHAT_ID;
+  if(typeof api.monitorAccessHealth !== 'function') return t.skip(RETIRED_MSG);
   process.env.TELEGRAM_BOT_TOKEN='test-only-token';process.env.TELEGRAM_CHAT_ID='test-only-channel';
   db.seed('access_control/monitor',{enabled:true,approved_by_owner:true});
   db.docs.get('access_control/heartbeat').authentication_error=true;
@@ -36,8 +42,10 @@ test('a failed alert delivery is not falsely recorded as delivered and can be re
     if(oldChat===undefined)delete process.env.TELEGRAM_CHAT_ID;else process.env.TELEGRAM_CHAT_ID=oldChat;
   }
 });
-test('launch metrics: payment activation backlog and overdue access evaluation raise incidents',async()=>{
-  const {api,db}=setup();db.seed('access_control/monitor',{enabled:true,approved_by_owner:true,min_free_seats:0});
+test('launch metrics: payment activation backlog and overdue access evaluation raise incidents',async(t)=>{
+  const {api,db}=setup();
+  if(typeof api.monitorAccessHealth !== 'function') return t.skip(RETIRED_MSG);
+  db.seed('access_control/monitor',{enabled:true,approved_by_owner:true,min_free_seats:0});
   await api.monitorAccessHealth();assert.equal(db.docs.get('access_control/monitor_health').issues.length,0);
   db.docs.get('access_control/payment_heartbeat').oldest_activation_due_ms=Date.now()-20*60000;
   db.seed('users/late',{email:'late@x.test',access_due_ms:Date.now()-3600000});
@@ -45,8 +53,10 @@ test('launch metrics: payment activation backlog and overdue access evaluation r
   const issues=db.docs.get('access_control/monitor_health').issues;
   assert.ok(issues.includes('payment_activation_backlog'));assert.ok(issues.includes('access_schedule_overdue'));
 });
-test('capacity metrics: low seats, missing clones and buyers waiting for a seat raise incidents',async()=>{
-  const {api,db}=setup();db.seed('access_control/monitor',{enabled:true,approved_by_owner:true,min_free_seats:100});
+test('capacity metrics: low seats, missing clones and buyers waiting for a seat raise incidents',async(t)=>{
+  const {api,db}=setup();
+  if(typeof api.monitorAccessHealth !== 'function') return t.skip(RETIRED_MSG);
+  db.seed('access_control/monitor',{enabled:true,approved_by_owner:true,min_free_seats:100});
   await api.monitorAccessHealth();
   const first=db.docs.get('access_control/monitor_health');
   assert.ok(first.issues.includes('notebook_capacity_low'));

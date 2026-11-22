@@ -13,6 +13,9 @@ function probe(inputs: any[]) {
   return vm.runInNewContext(`(function(){ ${inputBody} })()`, {
     document: { querySelectorAll: () => inputs },
     visible: (item: any) => item.getClientRects().length > 0,
+    accessDenied: () => false,
+    isRequestAccessInput: () => false,
+    getComputedStyle: () => ({ display: 'block' }),
   });
 }
 test('a hidden first input does not mask the usable composer', () => {

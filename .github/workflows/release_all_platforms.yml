@@ -160,8 +160,21 @@ jobs:
           flutter-version: '3.38.4'
           cache: true
 
-      - name: Grant Executable Permission to Gradlew
-        run: chmod +x openturath_ai/android/gradlew
+      - name: Grant Executable Permission to Gradlew (if present)
+        run: |
+          if [ -f openturath_ai/android/gradlew ]; then
+            chmod +x openturath_ai/android/gradlew
+          fi
+
+      - name: Configure Android Release Signing (from GitHub Secrets if set)
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          ANDROID_KEY_PROPERTIES: ${{ secrets.ANDROID_KEY_PROPERTIES }}
+        run: |
+          if [ -n "$ANDROID_KEYSTORE_BASE64" ] && [ -n "$ANDROID_KEY_PROPERTIES" ]; then
+            echo "$ANDROID_KEYSTORE_BASE64" | base64 --decode > openturath_ai/android/app/upload-keystore.jks
+            printf '%s\n' "$ANDROID_KEY_PROPERTIES" > openturath_ai/android/key.properties
+          fi
 
       - name: Get dependencies
         run: |

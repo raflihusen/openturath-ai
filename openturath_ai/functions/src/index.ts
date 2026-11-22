@@ -139,10 +139,10 @@ export const PURCHASABLE_AGENTS = new Set([
 
 export const MODULE_PLANS: Record<string, { amount: number; durationMonths: number; labelSuffix: string }> = {
   tholib_1m: { amount: 49000, durationMonths: 1, labelSuffix: "(1 Bulan)" },
-  tholib_6m: { amount: 299000, durationMonths: 6, labelSuffix: "(6 Bulan)" },
+  tholib_6m: { amount: 249000, durationMonths: 6, labelSuffix: "(6 Bulan)" },
   bahits_1y: { amount: 499000, durationMonths: 12, labelSuffix: "(1 Tahun)" },
   "1m": { amount: 49000, durationMonths: 1, labelSuffix: "(1 Bulan)" },
-  "6m": { amount: 299000, durationMonths: 6, labelSuffix: "(6 Bulan)" },
+  "6m": { amount: 249000, durationMonths: 6, labelSuffix: "(6 Bulan)" },
   "1y": { amount: 499000, durationMonths: 12, labelSuffix: "(1 Tahun)" },
 };
 

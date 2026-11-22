@@ -16,10 +16,10 @@ function fixture(user: Record<string, unknown> = {}) {
 }
 const code = (e: any) => e?.code;
 
-test('pelanggan Tahawwulat TIDAK bisa membuka tiga sub-AI "segera hadir" tanpa dokumen features', async () => {
+test('pelanggan Tahawwulat dapat membuka seluruh lima sub-AI secara default tanpa dokumen features (rilis v2.0.0)', async () => {
   const {api} = fixture();
-  for (const id of SOON) {
-    await assert.rejects(api.getAgentUrl({agentId: id}, caller()), (e: any) => code(e) === 'failed-precondition', id);
+  for (const id of [...OPEN, ...SOON]) {
+    assert.ok((await api.getAgentUrl({agentId: id}, caller())).url, id);
   }
 });
 
@@ -36,9 +36,10 @@ test('Fikih Syafi\'i tidak tersentuh gerbang ini', async () => {
   assert.ok((await api.getAgentUrl({agentId: 'fiqh_syafii'}, caller())).url);
 });
 
-test('akun VIP sejati tetap bisa membuka (Aturan 5), dengan atau tanpa daftar', async () => {
+test('akun VIP sejati tetap bisa membuka (Aturan 5), meski dikunci di dokumen features', async () => {
   for (const vip of [{is_vip: true}, {role: 'vip'}, {email: 'prilatief@gmail.com'}]) {
-    const {api} = fixture({entitlements: {}, ...vip});
+    const {api, db} = fixture({entitlements: {}, ...vip});
+    db.seed('app_config/features', {soon_sub_agent_ids: SOON});
     for (const id of SOON) {
       assert.ok((await api.getAgentUrl({agentId: id}, caller())).url, `${JSON.stringify(vip)} ${id}`);
     }
@@ -61,13 +62,12 @@ test('dokumen features dapat menutup sub-AI lain, dan membuka yang tidak tercant
   assert.ok((await api.getAgentUrl({agentId: 'fiqh_tahawwulat_khatib'}, caller())).url);
 });
 
-test('dokumen rusak jatuh ke bawaan yang tertutup, bukan terbuka', async () => {
+test('dokumen rusak jatuh ke bawaan v2.0.0 yang terbuka penuh', async () => {
   for (const bad of [{soon_sub_agent_ids: 'fiqh_tahawwulat_khatib'}, {soon_sub_agent_ids: 7},
       {soon_sub_agent_ids: null}, {}, {introduction_enabled: true}]) {
     const {api, db} = fixture();
     db.seed('app_config/features', bad);
-    await assert.rejects(api.getAgentUrl({agentId: 'fiqh_tahawwulat_khatib'}, caller()),
-      (e: any) => code(e) === 'failed-precondition', JSON.stringify(bad));
+    assert.ok((await api.getAgentUrl({agentId: 'fiqh_tahawwulat_khatib'}, caller())).url, JSON.stringify(bad));
   }
 });
 
@@ -79,15 +79,14 @@ test('elemen daftar tidak valid dibuang tanpa menutup sub-AI lain', async () => 
   assert.ok((await api.getAgentUrl({agentId: 'fiqh_tahawwulat_khatib'}, caller())).url);
 });
 
-test('daftar melewati batas dianggap salah ketik: kembali ke bawaan', async () => {
+test('daftar melewati batas dianggap salah ketik: kembali ke bawaan v2.0.0', async () => {
   const {api, db} = fixture();
   db.seed('app_config/features', {soon_sub_agent_ids: Array.from({length: 80}, (_, i) => `agent_${i}`)});
-  await assert.rejects(api.getAgentUrl({agentId: 'fiqh_tahawwulat_khatib'}, caller()),
-    (e: any) => code(e) === 'failed-precondition');
+  assert.ok((await api.getAgentUrl({agentId: 'fiqh_tahawwulat_khatib'}, caller())).url);
   assert.ok((await api.getAgentUrl({agentId: 'fiqh_tahawwulat_muhaqqiq'}, caller())).url);
 });
 
-test('kegagalan membaca dokumen tidak membuka sub-AI yang segera hadir', async () => {
+test('kegagalan membaca dokumen jatuh ke bawaan v2.0.0 tanpa crash', async () => {
   const {api, db} = fixture();
   const original = db.doc.bind(db);
   db.doc = (key: string) => {
@@ -95,8 +94,7 @@ test('kegagalan membaca dokumen tidak membuka sub-AI yang segera hadir', async (
     if (key === 'app_config/features') ref.get = async () => { throw new Error('firestore unavailable'); };
     return ref;
   };
-  await assert.rejects(api.getAgentUrl({agentId: 'fiqh_tahawwulat_khatib'}, caller()),
-    (e: any) => code(e) === 'failed-precondition');
+  assert.ok((await api.getAgentUrl({agentId: 'fiqh_tahawwulat_khatib'}, caller())).url);
   assert.ok((await api.getAgentUrl({agentId: 'fiqh_tahawwulat'}, caller())).url);
 });
 
@@ -124,9 +122,10 @@ async function withBridge(run: (h: ReturnType<typeof loadBackend>, ctx: any) => 
 const ask = (agentId: string) => ({agentId, question: 'Apa itu fikih?', requestId: 'a'.repeat(32), expectedUid: 'u'});
 const reply = {requestId: 'a'.repeat(32), answer: 'Jawaban', citations: []};
 
-test('askAgent menolak sub-AI "segera hadir" walau pengguna berlangganan Tahawwulat', async () => {
+test('askAgent menolak sub-AI "segera hadir" saat dikunci di app_config/features walau pengguna berlangganan Tahawwulat', async () => {
   await withBridge(async ({api, db, axios, sent}, ctx) => {
     db.seed('users/u', {email: 'u@example.test', entitlements: paid()});
+    db.seed('app_config/features', {soon_sub_agent_ids: SOON});
     axios.post = async (...args: any[]) => { sent.push(args); return {data: reply}; };
     for (const id of SOON) {
       await assert.rejects(api.askAgent(ask(id), ctx), (e: any) => code(e) === 'permission-denied', id);
@@ -148,6 +147,7 @@ test('askAgent tetap melayani sub-AI yang terbuka', async () => {
 test('askAgent: VIP sejati tidak ditolak oleh gerbang segera hadir', async () => {
   await withBridge(async ({api, db, axios, sent}, ctx) => {
     db.seed('users/u', {email: 'u@example.test', is_vip: true, entitlements: {}});
+    db.seed('app_config/features', {soon_sub_agent_ids: SOON});
     axios.post = async (...args: any[]) => { sent.push(args); return {data: reply}; };
     await api.askAgent(ask('fiqh_tahawwulat_khatib'), ctx);
     assert.equal(sent.length, 1);

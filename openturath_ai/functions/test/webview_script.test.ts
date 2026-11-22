@@ -34,10 +34,10 @@ test('reading styles never hide arbitrary content or toolbar elements',()=>{
   assert.ok([...styles.values()].every(style=>!String(style.textContent).includes('display: none')));
 });
 
-test('mixed Indonesian and Arabic paragraphs keep independent directions',()=>{
-  const texts=['Dalam perspektif السعادة kebahagiaan itu…','السعادة في الدارين','2026. Dalam kitab الرضا'];
-  const paragraphs=texts.map(textContent=>({textContent, dir:'',style:{},classList:{toggle(){}},setAttribute(key: string,value: string){(this as any)[key]=value}}));
-  const {window}=page('notebooklm.google.com',paragraphs);
+test('font scaling delegates Bidi direction updates to unified notebook_skin without conflicting mutations',()=>{
+  let skinApplyCalls = 0;
+  const {window}=page('notebooklm.google.com',[]);
+  window.otSkinApply = () => { skinApplyCalls++; };
   window.applyTurathFontScale(1);
-  assert.deepEqual(paragraphs.map(p=>p.dir),['ltr','rtl','ltr']);
+  assert.equal(skinApplyCalls, 1);
 });

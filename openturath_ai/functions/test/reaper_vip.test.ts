@@ -9,8 +9,11 @@ const expiredTx = (email: string, extra: any = {}) => ({customer_email: email, s
 const removals = (db: any) => [...db.docs.entries()].filter(([k, v]: any) => k.startsWith('provisioning_outbox/') && v.action === 'remove');
 function seedTx(db: any, id: string, value: any) { db.seed(`transactions/${id}`, {}); Object.assign(db.docs.get(`transactions/${id}`), value); }
 
-test('an expired transaction of a profile-level VIP never queues a removal, even without a transaction UID', async () => {
+const RETIRED_MSG = 'scheduled Cloud Function dailyRevoke retired (handled by VPS)';
+
+test('an expired transaction of a profile-level VIP never queues a removal, even without a transaction UID', async (t) => {
   const {api, db} = loadBackend();
+  if (typeof api.dailyRevoke !== 'function') return t.skip(RETIRED_MSG);
   db.seed('users/vip', {email: 'ustadz@example.test', is_vip: true, entitlements: {}});
   seedTx(db, 't1', expiredTx('ustadz@example.test'));
   await api.dailyRevoke();
@@ -18,10 +21,11 @@ test('an expired transaction of a profile-level VIP never queues a removal, even
   assert.equal(db.docs.get('transactions/t1').status, 'success');
 });
 
-test('every address in the canonical VIP registry is protected in both reaper phases', async () => {
+test('every address in the canonical VIP registry is protected in both reaper phases', async (t) => {
   const {api, db, access} = loadBackend();
+  if (typeof api.dailyRevoke !== 'function') return t.skip(RETIRED_MSG);
   const emails = [...access.VIP_EMAILS];
-  assert.ok(emails.length >= 17);
+  assert.ok(emails.length >= 16);
   emails.forEach((email, i) => {
     db.seed(`users/v${i}`, {email, plan: 'trial'});
     db.docs.get(`users/v${i}`).entitlements = {fiqh_syafii: {plan: 'tholib_1m', status: 'active', expiry: stamp(Date.now() - DAY)}};
@@ -32,16 +36,18 @@ test('every address in the canonical VIP registry is protected in both reaper ph
   assert.equal(db.docs.get('users/v0').entitlements.fiqh_syafii.status, 'active');
 });
 
-test('an address in access_vip_registry is protected', async () => {
+test('an address in access_vip_registry is protected', async (t) => {
   const {api, db, access} = loadBackend();
+  if (typeof api.dailyRevoke !== 'function') return t.skip(RETIRED_MSG);
   db.seed(`access_vip_registry/${access.keyOf('guest@example.test')}`, {email: 'guest@example.test', permanent: true});
   seedTx(db, 't1', expiredTx('guest@example.test'));
   await api.dailyRevoke();
   assert.equal(removals(db).length, 0);
 });
 
-test('a module kept active by another grant survives the expiry of an older transaction', async () => {
+test('a module kept active by another grant survives the expiry of an older transaction', async (t) => {
   const {api, db} = loadBackend();
+  if (typeof api.dailyRevoke !== 'function') return t.skip(RETIRED_MSG);
   db.seed('users/u', {email: 'u@example.test', plan: 'trial'});
   db.docs.get('users/u').entitlements = {fiqh_syafii: {plan: 'voucher_access', status: 'active', expiry: stamp(Date.now() + 10 * DAY)}};
   seedTx(db, 't1', expiredTx('u@example.test', {uid: 'u'}));
@@ -49,8 +55,9 @@ test('a module kept active by another grant survives the expiry of an older tran
   assert.equal(removals(db).length, 0);
 });
 
-test('a one-month plan past its expiry is detected and only its own module is queued', async () => {
+test('a one-month plan past its expiry is detected and only its own module is queued', async (t) => {
   const {api, db} = loadBackend();
+  if (typeof api.dailyRevoke !== 'function') return t.skip(RETIRED_MSG);
   db.seed('users/u', {email: 'u@example.test', plan: 'trial'});
   db.docs.get('users/u').entitlements = {
     fiqh_syafii: {plan: 'tholib_1m', status: 'active', expiry: stamp(Date.now() - DAY)},

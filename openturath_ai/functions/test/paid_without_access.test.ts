@@ -15,9 +15,12 @@ const seedPaid = (db: any, id: string, minutesAgo: number) => {
     paid_at: new Stamp(Date.now() - minutesAgo * 60000)});
 };
 
-test('lunas > 3 menit tanpa penugasan ready: akses dipercepat dan pemilik diberi tahu sekali', async () => {
+const RETIRED_MONITOR = 'scheduled Cloud Function monitorPaidWithoutAccess retired (handled by VPS)';
+
+test('lunas > 3 menit tanpa penugasan ready: akses dipercepat dan pemilik diberi tahu sekali', async (t) => {
   process.env.TELEGRAM_BOT_TOKEN = 't'; process.env.TELEGRAM_CHAT_ID = 'c';
   const {api, db, sent} = loadBackend();
+  if (typeof api.monitorPaidWithoutAccess !== 'function') return t.skip(RETIRED_MONITOR);
   seedPaid(db, 't1', 10);
   await api.monitorPaidWithoutAccess();
   await api.monitorPaidWithoutAccess();
@@ -26,8 +29,9 @@ test('lunas > 3 menit tanpa penugasan ready: akses dipercepat dan pemilik diberi
   assert.equal(sent.filter((m: any) => JSON.stringify(m).includes('AKSES BELUM SIAP')).length, 1);
 });
 
-test('lunas baru (< 3 menit) atau sudah ready tidak memicu apa pun', async () => {
+test('lunas baru (< 3 menit) atau sudah ready tidak memicu apa pun', async (t) => {
   const a = loadBackend();
+  if (typeof a.api.monitorPaidWithoutAccess !== 'function') return t.skip(RETIRED_MONITOR);
   seedPaid(a.db, 't2', 1);
   await a.api.monitorPaidWithoutAccess();
   assert.equal(a.db.docs.has('paid_access_alerts/t2'), false);
@@ -61,17 +65,19 @@ test('rekonsiliasi Midtrans: lunas di Midtrans tapi belum di sistem ditandai; si
   assert.equal(api.midtransLedgerMismatch('abandoned', 'expire', 49000, '49000.00'), null);
 });
 
-test('assignment ready tanpa verified_ms atau sebagian kajian bukan akses siap: pemantau tetap memberi alarm', async () => {
+test('assignment ready tanpa verified_ms atau sebagian kajian bukan akses siap: pemantau tetap memberi alarm', async (t) => {
   process.env.TELEGRAM_BOT_TOKEN = 't'; process.env.TELEGRAM_CHAT_ID = 'c';
   const f = loadBackend();
+  if (typeof f.api.monitorPaidWithoutAccess !== 'function') return t.skip(RETIRED_MONITOR);
   seedPaid(f.db, 't4', 10);
   seedReady(f, 'fiqh_syafii', false);
   await f.api.monitorPaidWithoutAccess();
   assert.equal(f.db.docs.get('paid_access_alerts/t4').status, 'open');
 });
 
-test('paket all_access siap penuh tidak memicu alarm palsu', async () => {
+test('paket all_access siap penuh tidak memicu alarm palsu', async (t) => {
   const f = loadBackend();
+  if (typeof f.api.monitorPaidWithoutAccess !== 'function') return t.skip(RETIRED_MONITOR);
   f.db.seed('users/u', {email: 'u@example.test', access_version: 2});
   f.db.seed('transactions/t5', {status: 'paid', uid: 'u', entitlement_key: 'all_access', invoice_number: 'OT-5',
     paid_at: new Stamp(Date.now() - 10 * 60000)});
@@ -84,9 +90,10 @@ test('paket all_access siap penuh tidak memicu alarm palsu', async () => {
   assert.equal(f.db.docs.has('paid_access_alerts/t5'), false);
 });
 
-test('Telegram gagal: insiden tetap terbuka dan dicoba ulang dengan backoff, lalu selesai saat akses siap', async () => {
+test('Telegram gagal: insiden tetap terbuka dan dicoba ulang dengan backoff, lalu selesai saat akses siap', async (t) => {
   process.env.TELEGRAM_BOT_TOKEN = 't'; process.env.TELEGRAM_CHAT_ID = 'c';
   const f = loadBackend();
+  if (typeof f.api.monitorPaidWithoutAccess !== 'function') return t.skip(RETIRED_MONITOR);
   seedPaid(f.db, 't6', 10);
   const okPost = async (...a: any[]) => { f.sent.push(a); return {data: {ok: true}}; };
   f.axios.post = async () => { throw new Error('telegram down'); };
@@ -110,9 +117,10 @@ test('Telegram gagal: insiden tetap terbuka dan dicoba ulang dengan backoff, lal
   assert.equal(f.db.docs.get('paid_access_alerts/t6').status, 'resolved');
 });
 
-test('insiden terbuka tetap diawasi walau transaksi sudah lewat jendela 3 jam', async () => {
+test('insiden terbuka tetap diawasi walau transaksi sudah lewat jendela 3 jam', async (t) => {
   process.env.TELEGRAM_BOT_TOKEN = 't'; process.env.TELEGRAM_CHAT_ID = 'c';
   const f = loadBackend();
+  if (typeof f.api.monitorPaidWithoutAccess !== 'function') return t.skip(RETIRED_MONITOR);
   telegramOk(f);
   seedPaid(f.db, 't7', 5 * 60);
   f.db.seed('paid_access_alerts/t7', {uid: 'u', entitlement_key: 'fiqh_syafii', status: 'open', attempts: 1,

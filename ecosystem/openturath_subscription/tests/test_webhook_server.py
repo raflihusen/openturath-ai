@@ -21,7 +21,7 @@ class Document:
     def __init__(self, db, path):
         self.db, self.path, self.id = db, path, path.split("/")[-1]
 
-    def get(self):
+    def get(self, transaction=None):
         return Snapshot(self, self.db.docs.get(self.path))
 
     def set(self, data, merge=False):
@@ -39,6 +39,17 @@ class Document:
             for part in parts[:-1]:
                 target = target.setdefault(part, {})
             target[parts[-1]] = value
+
+
+class FakeTransaction:
+    def set(self, ref, data, merge=False):
+        ref.set(data, merge=merge)
+
+    def update(self, ref, data):
+        ref.update(data)
+
+    def create(self, ref, data):
+        ref.create(data)
 
 
 class Query:
@@ -67,6 +78,9 @@ class FakeDB:
     def collection(self, name):
         return Query(self, name)
 
+    def transaction(self):
+        return FakeTransaction()
+
 
 class FakeNotebooks:
     def __init__(self):
@@ -85,6 +99,8 @@ class FakeNotebooks:
 google = types.ModuleType("google"); cloud = types.ModuleType("google.cloud")
 firestore = types.ModuleType("google.cloud.firestore")
 firestore.SERVER_TIMESTAMP = "ts"; firestore.Client = lambda *a, **k: None
+firestore.Transaction = FakeTransaction
+firestore.transactional = lambda fn: (lambda tx, *a, **k: fn(tx, *a, **k))
 api_core = types.ModuleType("google.api_core"); exceptions = types.ModuleType("google.api_core.exceptions")
 exceptions.AlreadyExists = RuntimeError
 cloud.firestore = firestore; google.cloud = cloud; google.api_core = api_core; api_core.exceptions = exceptions
@@ -97,7 +113,7 @@ import shared_registry as registry  # noqa: E402
 import webhook_server as server  # noqa: E402
 
 PAID_AT = (datetime.now(timezone.utc) - timedelta(days=1)).isoformat()
-SYAFII_MASTER = "c89d09ca-4b48-4000-a98d-59e532607fb6"
+SYAFII_MASTER = "565630db-d4cb-4070-af38-e8cb81d688ea"
 
 
 def akal(service="Super AI Fikih Hanafi", **data):

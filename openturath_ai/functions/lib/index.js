@@ -141,10 +141,10 @@ exports.PURCHASABLE_AGENTS = new Set([
 ]);
 exports.MODULE_PLANS = {
     tholib_1m: { amount: 49000, durationMonths: 1, labelSuffix: "(1 Bulan)" },
-    tholib_6m: { amount: 299000, durationMonths: 6, labelSuffix: "(6 Bulan)" },
+    tholib_6m: { amount: 249000, durationMonths: 6, labelSuffix: "(6 Bulan)" },
     bahits_1y: { amount: 499000, durationMonths: 12, labelSuffix: "(1 Tahun)" },
     "1m": { amount: 49000, durationMonths: 1, labelSuffix: "(1 Bulan)" },
-    "6m": { amount: 299000, durationMonths: 6, labelSuffix: "(6 Bulan)" },
+    "6m": { amount: 249000, durationMonths: 6, labelSuffix: "(6 Bulan)" },
     "1y": { amount: 499000, durationMonths: 12, labelSuffix: "(1 Tahun)" },
 };
 function getEntitlementKey(agentId) {
@@ -501,11 +501,7 @@ async function getDynamicPricingConfig() {
 // Aturan baca HARUS sama dengan FeatureFlags.parse di klien Flutter
 // (openturath_ai/lib/services/feature_flags.dart).
 // ================================================================
-const DEFAULT_SOON_SUB_AGENTS = [
-    "fiqh_tahawwulat_khatib",
-    "fiqh_tahawwulat_habib",
-    "fiqh_tahawwulat_mukhtabir",
-];
+const DEFAULT_SOON_SUB_AGENTS = [];
 const SOON_ID_PATTERN = /^[a-z][a-z0-9_]{0,79}$/;
 const MAX_SOON_IDS = 50;
 // Dokumen yang ada menentukan hasil secara deterministik: kunci hilang atau

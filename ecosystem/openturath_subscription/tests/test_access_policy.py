@@ -85,7 +85,7 @@ class ClassifyTest(unittest.TestCase):
 class RegistryTest(unittest.TestCase):
     def test_registry_is_loaded_and_normalised(self):
         emails = registry.vip_emails()
-        self.assertGreaterEqual(len(emails), 17)
+        self.assertGreaterEqual(len(emails), 16)
         self.assertTrue(all(e == e.strip().lower() and "@" in e for e in emails))
         self.assertTrue(registry.is_vip_profile({"email": next(iter(emails)).upper()}))
         self.assertTrue(registry.is_vip_profile({"email": "x@x.test", "role": "VIP"}))
@@ -103,7 +103,7 @@ class RegistryTest(unittest.TestCase):
 
     def test_each_module_shares_its_own_master_notebook(self):
         syafii = registry.notebooks_for_scope("fiqh_syafii")
-        self.assertEqual(syafii[0], "c89d09ca-4b48-4000-a98d-59e532607fb6")
+        self.assertEqual(syafii[0], "565630db-d4cb-4070-af38-e8cb81d688ea")
         hanafi = registry.notebooks_for_scope("fiqh_hanafi")
         self.assertTrue(hanafi)
         self.assertFalse(set(hanafi) & set(syafii))

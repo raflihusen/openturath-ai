@@ -16,8 +16,10 @@ async function configured(fn:()=>Promise<void>) {
   const previous=process.env.MIDTRANS_SERVER_KEY;process.env.MIDTRANS_SERVER_KEY='test-only-key';
   try {await fn();} finally {if(previous===undefined)delete process.env.MIDTRANS_SERVER_KEY;else process.env.MIDTRANS_SERVER_KEY=previous;}
 }
-test('missed payment webhook is recovered with one duration extension even after another inquiry',async()=>configured(async()=>{
-  const {api,db,axios}=fixture();axios.get=async()=>({data:verified()});
+const RETIRED_RECONCILE = 'scheduled Cloud Function reconcileMidtransPayments retired (handled by VPS)';
+test('missed payment webhook is recovered with one duration extension even after another inquiry',async(t)=>configured(async()=>{
+  const {api,db,axios}=fixture();if(typeof api.reconcileMidtransPayments!=='function')return t.skip(RETIRED_RECONCILE);
+  axios.get=async()=>({data:verified()});
   await api.reconcileMidtransPayments();
   assert.equal(db.docs.get('transactions/t').activation_applied,true);
   const first=db.docs.get('users/u').entitlements.hadits.expiry.toMillis();
@@ -26,8 +28,9 @@ test('missed payment webhook is recovered with one duration extension even after
   assert.equal(db.docs.get('users/u').entitlements.hadits.expiry.toMillis(),first);
   assert.equal([...db.docs.values()].filter(x=>x.kind==='payment').length,1);
 }));
-test('verified full refund revokes its grant and preserves another module',async()=>configured(async()=>{
-  const {api,db,axios}=fixture();axios.get=async()=>({data:verified()});await api.reconcileMidtransPayments();
+test('verified full refund revokes its grant and preserves another module',async(t)=>configured(async()=>{
+  const {api,db,axios}=fixture();if(typeof api.reconcileMidtransPayments!=='function')return t.skip(RETIRED_RECONCILE);
+  axios.get=async()=>({data:verified()});await api.reconcileMidtransPayments();
   db.seed('access_grants/other',{uid:'u',scope:'fiqh_tahawwulat',kind:'payment',amount:50000,status:'active',expires_ms:Date.now()+86400000});
   axios.get=async()=>({data:verified('refund')});db.docs.get('payment_reconciliation/INV-1').due_ms=0;
   await api.reconcileMidtransPayments();
@@ -35,16 +38,18 @@ test('verified full refund revokes its grant and preserves another module',async
   assert.equal([...db.docs.values()].find(x=>x.transaction_id==='transaction-1'&&x.kind==='payment').status,'revoked');
   assert.equal(db.docs.get('access_grants/other').status,'active');
 }));
-test('a failed gateway inquiry never removes a paid grant and remains queued',async()=>configured(async()=>{
-  const {api,db,axios}=fixture();axios.get=async()=>({data:verified()});await api.reconcileMidtransPayments();
+test('a failed gateway inquiry never removes a paid grant and remains queued',async(t)=>configured(async()=>{
+  const {api,db,axios}=fixture();if(typeof api.reconcileMidtransPayments!=='function')return t.skip(RETIRED_RECONCILE);
+  axios.get=async()=>({data:verified()});await api.reconcileMidtransPayments();
   axios.get=async()=>{throw Error('network unavailable');};db.docs.get('payment_reconciliation/INV-1').due_ms=0;
   await api.reconcileMidtransPayments();
   assert.equal([...db.docs.values()].find(x=>x.transaction_id==='transaction-1'&&x.kind==='payment').status,'active');
   assert.ok(db.docs.get('payment_reconciliation/INV-1').due_ms>Date.now());
   assert.equal(db.docs.get('access_control/payment_heartbeat').failed,1);
 }));
-test('partial refunds require policy review; mismatched transaction IDs cannot revoke access',async()=>configured(async()=>{
-  const {api,db,axios}=fixture();axios.get=async()=>({data:verified()});await api.reconcileMidtransPayments();
+test('partial refunds require policy review; mismatched transaction IDs cannot revoke access',async(t)=>configured(async()=>{
+  const {api,db,axios}=fixture();if(typeof api.reconcileMidtransPayments!=='function')return t.skip(RETIRED_RECONCILE);
+  axios.get=async()=>({data:verified()});await api.reconcileMidtransPayments();
   await api.applyMidtransRefund('INV-1',verified('partial_refund'));
   const grant=[...db.docs.values()].find(x=>x.transaction_id==='transaction-1'&&x.kind==='payment');
   assert.equal(grant.status,'active');assert.equal(grant.review_required,true);
@@ -57,8 +62,9 @@ async function at(ms:number,fn:()=>Promise<void>) {
   const real=Date.now;Date.now=()=>ms;try{await fn();}finally{Date.now=real;}
 }
 const notFound=async()=>{throw Object.assign(Error('404'),{response:{status:404,data:{status_code:'404',status_message:"Transaction doesn't exist."}}});};
-test('a checkout abandoned before choosing a payment method becomes final after 24 hours',async()=>configured(async()=>{
-  const {api,db,axios}=fixture();axios.get=notFound;
+test('a checkout abandoned before choosing a payment method becomes final after 24 hours',async(t)=>configured(async()=>{
+  const {api,db,axios}=fixture();if(typeof api.reconcileMidtransPayments!=='function')return t.skip(RETIRED_RECONCILE);
+  axios.get=notFound;
   const start=Date.now();db.docs.get('payment_reconciliation/INV-1').created_ms=start;
   await at(start+HOUR,()=>api.reconcileMidtransPayments());
   assert.ok(db.docs.get('payment_reconciliation/INV-1').due_ms<start+2*HOUR,'young invoices keep being checked often');
@@ -68,14 +74,16 @@ test('a checkout abandoned before choosing a payment method becomes final after 
   assert.equal(job.state,'abandoned');assert.equal(job.due_ms,8640000000000000);
   assert.equal(db.docs.get('transactions/t').status,'abandoned');
 }));
-test('legacy reconciliation rows without created_ms age from the transaction document',async()=>configured(async()=>{
-  const {api,db,axios}=fixture();axios.get=notFound;
+test('legacy reconciliation rows without created_ms age from the transaction document',async(t)=>configured(async()=>{
+  const {api,db,axios}=fixture();if(typeof api.reconcileMidtransPayments!=='function')return t.skip(RETIRED_RECONCILE);
+  axios.get=notFound;
   db.docs.get('transactions/t').created_at={toMillis:()=>Date.now()-3*DAY};
   await api.reconcileMidtransPayments();
   assert.equal(db.docs.get('payment_reconciliation/INV-1').state,'abandoned');
 }));
-test('a paid invoice is audited for refunds on day 1, 7 and 30, then leaves the queue',async()=>configured(async()=>{
-  const {api,db,axios}=fixture();axios.get=async()=>({data:verified()});
+test('a paid invoice is audited for refunds on day 1, 7 and 30, then leaves the queue',async(t)=>configured(async()=>{
+  const {api,db,axios}=fixture();if(typeof api.reconcileMidtransPayments!=='function')return t.skip(RETIRED_RECONCILE);
+  axios.get=async()=>({data:verified()});
   const start=Date.now();
   await at(start,()=>api.reconcileMidtransPayments());
   const due=()=>db.docs.get('payment_reconciliation/INV-1').due_ms;
@@ -84,8 +92,8 @@ test('a paid invoice is audited for refunds on day 1, 7 and 30, then leaves the 
   assert.deepEqual(seen,[1,7,30]);
   assert.equal(due(),8640000000000000);
 }));
-test('unpaid invoices are checked before refund audits when the queue is long',async()=>configured(async()=>{
-  const {api,db,axios}=fixture();
+test('unpaid invoices are checked before refund audits when the queue is long',async(t)=>configured(async()=>{
+  const {api,db,axios}=fixture();if(typeof api.reconcileMidtransPayments!=='function')return t.skip(RETIRED_RECONCILE);
   for (let i=0;i<400;i++) db.seed(`payment_reconciliation/AUD-${String(i).padStart(3,'0')}`,{invoice_number:`AUD-${i}`,state:'paid',gateway:'midtrans',due_ms:0,paid_ms:Date.now()-DAY,audits:0,attempts:0});
   db.docs.get('payment_reconciliation/INV-1').due_ms=Date.now();
   axios.get=async(url:string)=>url.includes('INV-1')?{data:verified()}:{data:{order_id:url.split('/').at(-2),transaction_status:'settlement',currency:'IDR'}};
@@ -99,8 +107,9 @@ test('a checkout whose gateway call failed is closed immediately',async()=>confi
   const jobs=[...db.docs.entries()].filter(([k,v]:any)=>k.startsWith('payment_reconciliation/OT-'));
   assert.equal(jobs.length,1);assert.equal(jobs[0][1].state,'failed_final');assert.equal(jobs[0][1].due_ms,8640000000000000);
 }));
-test('a payment that settles after the account was deleted goes to refund review, not endless retries',async()=>configured(async()=>{
-  const {api,db,axios}=fixture();axios.get=async()=>({data:verified()});
+test('a payment that settles after the account was deleted goes to refund review, not endless retries',async(t)=>configured(async()=>{
+  const {api,db,axios}=fixture();if(typeof api.reconcileMidtransPayments!=='function')return t.skip(RETIRED_RECONCILE);
+  axios.get=async()=>({data:verified()});
   db.docs.delete('users/u');
   await api.reconcileMidtransPayments();
   const job=db.docs.get('payment_reconciliation/INV-1');

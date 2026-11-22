@@ -73,17 +73,20 @@ test('A04 provisioning HTTP failure remains a failed promise', async () => {
   axios.post=async()=>{throw Error('upstream 503');};
   await assert.rejects(api.notifySubscriptionServer('u@example.test','U','premium','add','AI Hadits'),/upstream 503/);
 });
-test('A04 failed outbox request is retried, never marked completed',async()=>{
+const RETIRED_CRON = 'scheduled Cloud Function retired (handled by VPS)';
+test('A04 failed outbox request is retried, never marked completed',async(t)=>{
   process.env.INTERNAL_SECRET='test-secret';
   const {api,db,axios}=loadBackend(root);
+  if(typeof api.processProvisioningOutbox!=='function')return t.skip(RETIRED_CRON);
   db.seed('users/u',{email:'u@example.test',entitlements:{hadits:active()}});
   db.seed('provisioning_outbox/j',{uid:'u',email:'u@example.test',entitlement_key:'hadits',action:'add',status:'pending',attempts:0});
   axios.post=async()=>{throw Error('upstream 503');};
   await api.processProvisioningOutbox();
   assert.equal(db.docs.get('provisioning_outbox/j').status,'retry');
 });
-test('A05 expiration checks current snapshot before revoking renewed entitlement',async()=>{
+test('A05 expiration checks current snapshot before revoking renewed entitlement',async(t)=>{
   const {api,db}=loadBackend(root);
+  if(typeof api.dailyRevoke!=='function')return t.skip(RETIRED_CRON);
   const expired={...active(),expiry:Stamp.fromMillis(Date.now()-1000)};
   db.seed('users/u',{email:'u@example.test',plan:'trial',entitlements:{hadits:expired}});
   const snapshot=db.snapshot.bind(db);
@@ -99,9 +102,10 @@ test('A05 expiration checks current snapshot before revoking renewed entitlement
   await api.dailyRevoke();
   assert.equal(db.docs.get('users/u').entitlements.hadits.status,'active');
 });
-test('A05 stale removal job reconciles to current paid access',async()=>{
+test('A05 stale removal job reconciles to current paid access',async(t)=>{
   process.env.INTERNAL_SECRET='test-secret';
   const {api,db,sent}=loadBackend(root);
+  if(typeof api.processProvisioningOutbox!=='function')return t.skip(RETIRED_CRON);
   db.seed('users/u',{email:'u@example.test',entitlements:{hadits:active()}});
   db.seed('provisioning_outbox/j',{uid:'u',email:'u@example.test',entitlement_key:'hadits',action:'remove',status:'pending',attempts:0});
   await api.processProvisioningOutbox();
@@ -178,17 +182,19 @@ test('A01 full authenticated webhook activates exact invoice and accepts replay 
   const next=response();await api.dokuWebhook(req,next);assert.equal(next.code,200);
   assert.equal(db.docs.get('users/u').entitlements.hadits.expiry.toMillis(),expiry);
 });
-test('A04 overlapping workers acquire a single user lease',async()=>{
+test('A04 overlapping workers acquire a single user lease',async(t)=>{
   process.env.INTERNAL_SECRET='test-secret';
   const {api,db,sent}=loadBackend(root);
+  if(typeof api.processProvisioningOutbox!=='function')return t.skip(RETIRED_CRON);
   db.seed('users/u',{email:'u@example.test',entitlements:{hadits:active()}});
   db.seed('provisioning_outbox/j',{uid:'u',email:'u@example.test',entitlement_key:'hadits',action:'add',status:'pending',attempts:0});
   await Promise.all([api.processProvisioningOutbox(),api.processProvisioningOutbox()]);
   assert.equal(sent.length,1);
 });
-test('A05 entitlement changed during delivery leaves reconciliation pending',async()=>{
+test('A05 entitlement changed during delivery leaves reconciliation pending',async(t)=>{
   process.env.INTERNAL_SECRET='test-secret';
   const {api,db,axios}=loadBackend(root);
+  if(typeof api.processProvisioningOutbox!=='function')return t.skip(RETIRED_CRON);
   db.seed('users/u',{email:'u@example.test',entitlements:{hadits:active()}});
   db.seed('provisioning_outbox/j',{uid:'u',email:'u@example.test',entitlement_key:'hadits',action:'add',status:'pending',attempts:0});
   axios.post=async()=>{db.seed('users/u',{email:'u@example.test',entitlements:{hadits:{...active(),status:'revoked'}}});return {status:200};};
