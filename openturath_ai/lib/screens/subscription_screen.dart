@@ -590,7 +590,13 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     required String agentId,
     bool active = false,
     bool exclusive = false,
+    bool highlighted = false,
+    String? highlightBadge,
     Widget? subtitleWidget,
+    Widget? valueHighlight,
+    String? ctaLabel,
+    IconData? ctaIcon,
+    bool quietCta = false,
     bool threeUp = false,
     bool inRow = false,
   }) {
@@ -708,19 +714,52 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
         SizedBox(
           width: wide ? 240 : double.infinity,
           height: 48,
-          child: FilledButton(
-            onPressed: ((isArabicCurrency && !arabicPayReady) ||
-                    _processing ||
-                    !_pricingReady)
-                ? null
-                : onCheckout,
-            style: inverse && !dark ? OTButtons.onInverse(dark) : null,
-            child: Text(isArabicCurrency
-                ? (arabicPayReady
-                    ? (active ? 'تجديد الاشتراك' : 'اشترك الآن')
-                    : 'قريباً')
-                : Loc.tr(active ? 'planRenew' : 'planContinue')),
-          ),
+          child: quietCta
+              ? OutlinedButton(
+                  onPressed: ((isArabicCurrency && !arabicPayReady) ||
+                          _processing ||
+                          !_pricingReady)
+                      ? null
+                      : onCheckout,
+                  child: Text(ctaLabel ??
+                      (isArabicCurrency
+                          ? (arabicPayReady
+                              ? (active ? 'تجديد الاشتراك' : 'اشترك الآن')
+                              : 'قريباً')
+                          : Loc.tr(active ? 'planRenew' : 'planContinue'))),
+                )
+              : FilledButton(
+                  onPressed: ((isArabicCurrency && !arabicPayReady) ||
+                          _processing ||
+                          !_pricingReady)
+                      ? null
+                      : onCheckout,
+                  style: inverse && !dark ? OTButtons.onInverse(dark) : null,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      if (ctaIcon != null) ...[
+                        Icon(ctaIcon, size: 17),
+                        const SizedBox(width: 8),
+                      ],
+                      Flexible(
+                        child: Text(
+                          ctaLabel ??
+                              (isArabicCurrency
+                                  ? (arabicPayReady
+                                      ? (active
+                                          ? 'تجديد الاشتراك'
+                                          : 'اشترك الآن')
+                                      : 'قريباً')
+                                  : Loc.tr(
+                                      active ? 'planRenew' : 'planContinue')),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
         ),
         Padding(
           padding: const EdgeInsets.only(top: OTSpacing.sm),
@@ -752,17 +791,45 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     return Container(
       padding: EdgeInsets.all(pad),
       decoration: BoxDecoration(
-        color: darkFeatured
-            ? OTColors.canvas(dark)
-            : inverse
-                ? OTColors.inverted(dark)
-                : OTColors.surface(dark),
+        color: highlighted
+            ? null
+            : (darkFeatured
+                ? OTColors.canvas(dark)
+                : inverse
+                    ? OTColors.inverted(dark)
+                    : OTColors.surface(dark)),
+        gradient: highlighted
+            ? LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: dark
+                    ? [
+                        OTColors.surfaceSubtle(dark),
+                        OTColors.surface(dark),
+                      ]
+                    : [
+                        OTColors.surface(dark),
+                        OTColors.surfaceSubtle(dark),
+                      ],
+              )
+            : null,
         borderRadius: BorderRadius.circular(OTRadius.card),
-        border: darkFeatured
-            ? Border.all(color: fg.withValues(alpha: 0.85), width: 1.5)
-            : inverse
-                ? Border.all(color: fg.withValues(alpha: 0.18), width: 1)
-                : Border.all(color: line),
+        border: highlighted
+            ? Border.all(color: fg.withValues(alpha: dark ? 0.65 : 0.85), width: 1.8)
+            : darkFeatured
+                ? Border.all(color: fg.withValues(alpha: 0.85), width: 1.5)
+                : inverse
+                    ? Border.all(color: fg.withValues(alpha: 0.18), width: 1)
+                    : Border.all(color: line),
+        boxShadow: highlighted
+            ? [
+                BoxShadow(
+                  color: OTColors.shadow.withValues(alpha: dark ? 0.35 : 0.08),
+                  blurRadius: 24,
+                  offset: const Offset(0, 10),
+                ),
+              ]
+            : null,
       ),
       child: wide
           ? Row(
@@ -777,6 +844,13 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                         spacing: OTSpacing.sm,
                         runSpacing: OTSpacing.sm,
                         children: [
+                          if (highlightBadge != null)
+                            _pill(
+                              highlightBadge,
+                              OTColors.onInverted(dark),
+                              solidBg: fg,
+                              iconData: Icons.auto_awesome_rounded,
+                            ),
                           _pill(label, fg, filled: exclusive, icon: exclusive),
                           if (active)
                             _pill(Loc.tr('planActive'), fg, filled: true),
@@ -797,9 +871,13 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                       if (field != null) ...[
                         const SizedBox(height: 10),
                         ConstrainedBox(
-                          constraints: const BoxConstraints(maxWidth: 340),
+                          constraints: const BoxConstraints(maxWidth: 380),
                           child: field,
                         ),
+                      ],
+                      if (valueHighlight != null) ...[
+                        const SizedBox(height: 10),
+                        valueHighlight,
                       ],
                       const SizedBox(height: 10),
                       for (final benefit in benefits) _benefitRow(benefit, fg),
@@ -829,6 +907,13 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                   spacing: OTSpacing.sm,
                   runSpacing: OTSpacing.sm,
                   children: [
+                    if (highlightBadge != null)
+                      _pill(
+                        highlightBadge,
+                        OTColors.onInverted(dark),
+                        solidBg: fg,
+                        iconData: Icons.auto_awesome_rounded,
+                      ),
                     _pill(label, fg, filled: exclusive, icon: exclusive),
                     if (active) _pill(Loc.tr('planActive'), fg, filled: true),
                   ],
@@ -848,6 +933,10 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                 if (field != null) ...[
                   const SizedBox(height: 10),
                   field,
+                ],
+                if (valueHighlight != null) ...[
+                  const SizedBox(height: 10),
+                  valueHighlight,
                 ],
                 const SizedBox(height: 12),
                 for (final benefit in benefits) _benefitRow(benefit, fg),
@@ -888,21 +977,26 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
   /// Kapsul label, sama dengan label bagian di web. [filled] untuk penanda
   /// yang lebih tegas (eksklusif, aktif).
   Widget _pill(String text, Color color,
-          {bool filled = false, bool icon = false}) =>
+          {bool filled = false,
+          bool icon = false,
+          Color? solidBg,
+          IconData? iconData}) =>
       Container(
         padding: const EdgeInsets.symmetric(
             horizontal: OTSpacing.base, vertical: OTSpacing.xs),
         decoration: BoxDecoration(
-          color: filled ? color.withValues(alpha: 0.14) : null,
+          color: solidBg ?? (filled ? color.withValues(alpha: 0.14) : null),
           borderRadius: OTRadius.chipBorder,
-          border:
-              Border.all(color: color.withValues(alpha: filled ? 0.0 : 0.3)),
+          border: solidBg != null
+              ? null
+              : Border.all(color: color.withValues(alpha: filled ? 0.0 : 0.3)),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            if (icon) ...[
-              Icon(Icons.workspace_premium_outlined, size: 14, color: color),
+            if (icon || iconData != null) ...[
+              Icon(iconData ?? Icons.workspace_premium_outlined,
+                  size: 14, color: color),
               const SizedBox(width: OTSpacing.xs),
             ],
             Flexible(
@@ -1278,16 +1372,23 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                 agentId: flagship.id,
               );
 
+              final specialistCount = specialists.length > 0 ? specialists.length : 18;
               final allSpecialistsPlan = _planCard(
                 inverse: false,
+                highlighted: true,
+                highlightBadge: Loc.isArabic
+                    ? 'الخيار الأفضل · أوفر بكثير'
+                    : (Loc.language == 'en'
+                        ? 'Best Value · Save 65%+'
+                        : 'Pilihan Terbaik · Jauh Lebih Hemat'),
                 wide: wide,
                 threeUp: threeUp,
                 inRow: threeUp || twoUp,
                 label: Loc.isArabic
-                    ? 'باقة العلوم التخصصية'
+                    ? '$specialistCount+ ذكاءً تخصصيًا'
                     : (Loc.language == 'en'
-                        ? 'All Disciplines Bundle'
-                        : 'Paket Kompilasi Disiplin'),
+                        ? '$specialistCount+ Specialist AIs'
+                        : '$specialistCount+ AI Disiplin Ilmu'),
                 active: allSpecialistsActive,
                 title: Loc.isArabic
                     ? 'جميع الذكاءات'
@@ -1306,44 +1407,83 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                   ),
                 ),
                 description: Loc.isArabic
-                    ? 'الوصول الكامل إلى جميع المساعدين في العلوم الشرعية.'
+                    ? 'افتح جميع العلوم الشرعية في اشتراك واحد بدلًا من الاشتراك في كل علم على حدة.'
                     : (Loc.language == 'en'
-                        ? 'Full access to all Islamic discipline specialist AIs.'
-                        : 'Akses ke seluruh AI spesialis disiplin keilmuan Islam.'),
+                        ? 'Unlock every Islamic discipline in one pass instead of subscribing one by one.'
+                        : 'Buka seluruh AI disiplin keilmuan Islam dalam satu paket — jauh lebih hemat daripada langganan satu per satu.'),
                 field: _fieldRow(
                   label: Loc.isArabic
-                      ? 'النطاق'
-                      : (Loc.language == 'en' ? 'Scope' : 'Cakupan'),
+                      ? 'يشمل'
+                      : (Loc.language == 'en' ? 'Includes' : 'Mencakup'),
                   name: Loc.isArabic
-                      ? 'جميع العلوم التراثية'
+                      ? 'الفقه والمذاهب · الحديث · التفسير · الأصول · العربية والمزيد'
                       : (Loc.language == 'en'
-                          ? 'All Turath Disciplines'
-                          : 'Seluruh Disiplin Turats'),
+                          ? '4 Mazhabs · Hadith · Tafsir · Ushul · Arabic & more'
+                          : 'Fikih 4 Mazhab · Hadits · Tafsir · Ushul · Bahasa Arab & lainnya'),
                   inverse: false,
-                  stacked: threeUp,
+                  stacked: true,
+                ),
+                valueHighlight: Container(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: OTSpacing.md, vertical: OTSpacing.sm),
+                  decoration: BoxDecoration(
+                    color: ink.withValues(alpha: dark ? 0.08 : 0.05),
+                    borderRadius: BorderRadius.circular(OTRadius.input),
+                    border: Border.all(
+                        color: ink.withValues(alpha: dark ? 0.16 : 0.12)),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(Icons.savings_outlined, size: 16, color: ink),
+                      const SizedBox(width: OTSpacing.sm),
+                      Expanded(
+                        child: Text(
+                          Loc.isArabic
+                              ? 'بسعر ٦ تخصصات فقط، تحصل على جميع التخصصات ($specialistCount+ ذكاء) معًا.'
+                              : (Loc.language == 'en'
+                                  ? 'Pay the price of 6 single AIs and unlock all $specialistCount+ disciplines together.'
+                                  : 'Bayar setara 6 AI satuan, langsung dapat semua $specialistCount+ AI sekaligus.'),
+                          style: OTTypography.captionMedium(color: ink)
+                              .copyWith(height: 1.35),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
                 price: allSpecialistsOffer,
                 offers: allSpecialistsOffers,
                 benefits: Loc.isArabic
                     ? [
-                        'الوصول إلى جميع العلوم الشرعية التخصصية',
-                        'المقارنة والاستنباط المباشر بين المذاهب والعلوم',
-                        'إضافة كتب ومراجع جديدة بشكل مستمر',
-                        'تحديثات التطبيق طوال فترة الاشتراك',
+                        'الوصول الكامل إلى جميع العلوم الشرعية التخصصية ($specialistCount+ ذكاء)',
+                        'المقارنة والاستنباط المباشر بين المذاهب الأربعة والعلوم',
+                        'توفير يصل إلى ٥٠٪ عند اختيار باقة ١٢ شهرًا',
+                        'إضافة كتب ومراجع جديدة وتحديثات التطبيق باستمرار',
                       ]
                     : (Loc.language == 'en'
                         ? [
-                            'Access to all Islamic academic disciplines',
-                            'Direct cross-discipline comparative inquiries',
-                            'New reference books added periodically',
-                            'Application updates throughout subscription',
+                            'Full access to all $specialistCount+ Islamic academic disciplines',
+                            'Direct cross-discipline & 4-mazhab comparative inquiries',
+                            'Save up to 50% with the 12-month plan',
+                            'Continuous book additions & app updates included',
                           ]
                         : [
-                            'Akses ke seluruh disiplin keilmuan Islam',
-                            'Uji pemahaman lewat tanya jawab komparasi langsung',
-                            'Kitab dan arsip rujukan baru ditambahkan berkala',
-                            'Pembaruan aplikasi selama langganan aktif',
+                            'Akses penuh ke seluruh $specialistCount+ AI disiplin keilmuan Islam',
+                            'Bandingkan dalil lintas 4 mazhab, hadits, tafsir, dan ushul sekaligus',
+                            'Hemat hingga 50% untuk paket 12 bulan (~Rp 150 rb/bulan)',
+                            'Kitab rujukan baru & pembaruan aplikasi selama langganan aktif',
                           ]),
+                ctaLabel: Loc.isArabic
+                    ? (allSpecialistsActive
+                        ? 'تجديد جميع الذكاءات'
+                        : 'احصل على جميع الذكاءات')
+                    : (Loc.language == 'en'
+                        ? (allSpecialistsActive
+                            ? 'Renew All AIs'
+                            : 'Get All AIs')
+                        : (allSpecialistsActive
+                            ? 'Perpanjang Semua AI'
+                            : 'Ambil Paket Semua AI')),
+                ctaIcon: Icons.auto_awesome_rounded,
                 onCheckout: () =>
                     _checkout(allSpecialistsAgent, allSpecialistsOffer),
                 agentId: allSpecialistsAgent.id,
@@ -1352,6 +1492,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
               final singlePlan = hasSpecialists
                   ? _planCard(
                       inverse: false,
+                      quietCta: true,
                       wide: wide,
                       threeUp: threeUp,
                       inRow: threeUp,

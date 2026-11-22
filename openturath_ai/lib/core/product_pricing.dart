@@ -91,29 +91,40 @@ abstract final class ProductPricing {
   }
 
   static const defaultSpecialist = SubscriptionOffer(
-      plan: 'tholib_1m', months: 1, regularAmount: 300000, amount: 1000);
+      plan: 'tholib_1m', months: 1, regularAmount: 300000, amount: 49000);
   static const defaultSpecialists = [
     defaultSpecialist,
     SubscriptionOffer(
-        plan: 'tholib_6m', months: 6, regularAmount: 1200000, amount: 1000),
+        plan: 'tholib_6m', months: 6, regularAmount: 1200000, amount: 299000),
     SubscriptionOffer(
-        plan: 'bahits_1y', months: 12, regularAmount: 2400000, amount: 1000),
+        plan: 'bahits_1y', months: 12, regularAmount: 2400000, amount: 499000),
+  ];
+  static const defaultAllSpecialists = [
+    SubscriptionOffer(
+        plan: 'tholib_1m', months: 1, regularAmount: 1000000, amount: 299000),
+    SubscriptionOffer(
+        plan: 'tholib_6m', months: 6, regularAmount: 2995000, amount: 1299000),
+    SubscriptionOffer(
+        plan: 'bahits_1y', months: 12, regularAmount: 4995000, amount: 1799000),
   ];
   static const defaultTahawwulat = [
     SubscriptionOffer(
-        plan: 'tholib_1m', months: 1, regularAmount: 1000000, amount: 1000),
+        plan: 'tholib_1m', months: 1, regularAmount: 1000000, amount: 299000),
     SubscriptionOffer(
-        plan: 'tholib_6m', months: 6, regularAmount: 2995000, amount: 1000),
+        plan: 'tholib_6m', months: 6, regularAmount: 2995000, amount: 1499000),
     SubscriptionOffer(
-        plan: 'bahits_1y', months: 12, regularAmount: 4995000, amount: 1000),
+        plan: 'bahits_1y', months: 12, regularAmount: 4995000, amount: 1999000),
   ];
 
   static List<SubscriptionOffer> _specialists = List.of(defaultSpecialists);
+  static List<SubscriptionOffer> _allSpecialists =
+      List.of(defaultAllSpecialists);
   static List<SubscriptionOffer> _tahawwulat = List.of(defaultTahawwulat);
   static final Map<String, List<SubscriptionOffer>> _agentOffers = {};
 
   static SubscriptionOffer get specialist => _specialists.first;
   static List<SubscriptionOffer> get specialists => _specialists;
+  static List<SubscriptionOffer> get allSpecialists => _allSpecialists;
   static List<SubscriptionOffer> get tahawwulat => _tahawwulat;
 
   static void updateOffers({
@@ -135,22 +146,25 @@ abstract final class ProductPricing {
       if (_agentOffers.containsKey('fiqh_tahawwulat')) {
         _tahawwulat = List.of(_agentOffers['fiqh_tahawwulat']!);
       }
+      if (_agentOffers.containsKey('all_specialists')) {
+        _allSpecialists = List.of(_agentOffers['all_specialists']!);
+      }
       if (_agentOffers.containsKey('fiqh_syafii')) {
         _specialists = List.of(_agentOffers['fiqh_syafii']!);
       }
     }
     if (tahawwulatMap != null) {
       _tahawwulat = [
-        _buildOffer('tholib_1m', 1, 1000000, 1000, tahawwulatMap),
-        _buildOffer('tholib_6m', 6, 2995000, 1000, tahawwulatMap),
-        _buildOffer('bahits_1y', 12, 4995000, 1000, tahawwulatMap),
+        _buildOffer('tholib_1m', 1, 1000000, 299000, tahawwulatMap),
+        _buildOffer('tholib_6m', 6, 2995000, 1499000, tahawwulatMap),
+        _buildOffer('bahits_1y', 12, 4995000, 1999000, tahawwulatMap),
       ];
     }
     if (specialistsMap != null) {
       _specialists = [
-        _buildOffer('tholib_1m', 1, 300000, 1000, specialistsMap),
-        _buildOffer('tholib_6m', 6, 1200000, 1000, specialistsMap),
-        _buildOffer('bahits_1y', 12, 2400000, 1000, specialistsMap),
+        _buildOffer('tholib_1m', 1, 300000, 49000, specialistsMap),
+        _buildOffer('tholib_6m', 6, 1200000, 299000, specialistsMap),
+        _buildOffer('bahits_1y', 12, 2400000, 499000, specialistsMap),
       ];
     }
   }
@@ -194,6 +208,9 @@ abstract final class ProductPricing {
   static List<SubscriptionOffer> forAgent(String agentId) {
     if (_agentOffers.containsKey(agentId)) {
       return _agentOffers[agentId]!;
+    }
+    if (agentId == 'all_specialists' || agentId == 'all_disciplines') {
+      return allSpecialists;
     }
     return agentId.startsWith('fiqh_tahawwulat') ? tahawwulat : specialists;
   }
@@ -461,7 +478,7 @@ class ProductPricingService {
         if (specialists == null && data['tholib_1m'] != null) {
           final p1m = data['tholib_1m'] is int
               ? data['tholib_1m'] as int
-              : int.tryParse(data['tholib_1m'].toString()) ?? 1000;
+              : int.tryParse(data['tholib_1m'].toString()) ?? 49000;
           specialists = {
             'tholib_1m': {'amount': p1m, 'regularAmount': 300000},
           };
@@ -472,7 +489,7 @@ class ProductPricingService {
               ? (data['tahawwulat_1m'] ?? data['tholib_1m']) as int
               : int.tryParse((data['tahawwulat_1m'] ?? data['tholib_1m'])
                       .toString()) ??
-                  1000;
+                  299000;
           tahawwulat = {
             'tholib_1m': {'amount': t1m, 'regularAmount': 1000000},
           };

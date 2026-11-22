@@ -355,15 +355,15 @@ PRODUCTION_PRICES = {
 }
 
 TEST_PRICES = {
-    # Mode Pengujian QRIS Midtrans Production (Rp 1.000 semua paket)
+    # Mode Pengujian QRIS Midtrans Production (Rp 1.000)
     "tholib_1m": 1000,
-    "tholib_6m": 1000,
-    "bahits_1y": 1000,
+    "tholib_6m": 299000,
+    "bahits_1y": 499000,
     "tahawwulat_1m": 1000,
-    "tahawwulat_6m": 1000,
-    "tahawwulat_1y": 1000,
-    "mustawa_1y": 1000,
-    "bithaqah_lifetime": 1000,
+    "tahawwulat_6m": 1499000,
+    "tahawwulat_1y": 1999000,
+    "mustawa_1y": 1500000,
+    "bithaqah_lifetime": 5000000,
     "specialist_add_on": 1000,
 }
 

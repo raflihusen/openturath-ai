@@ -37,7 +37,7 @@ class AppConstants {
   static const String fnCheckPaymentStatus = 'checkPaymentStatus';
 
   // ── Pricing (Rupiah) ──────────────────────────────────────────
-  static const int priceTholib1m = 1000;
-  static const int priceTholib6m = 1000;
-  static const int priceBahits1y = 1000;
+  static const int priceTholib1m = 49000;
+  static const int priceTholib6m = 299000;
+  static const int priceBahits1y = 499000;
 }
