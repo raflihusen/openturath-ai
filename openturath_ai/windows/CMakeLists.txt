@@ -33,6 +33,16 @@ set(CMAKE_CXX_FLAGS_PROFILE "${CMAKE_CXX_FLAGS_RELEASE}")
 # Use Unicode for all projects.
 add_definitions(-DUNICODE -D_UNICODE)
 
+# MSVC 14.5x+ (Visual Studio 2022 17.14+ / VS 2026) compatibility:
+# - Silence STL1011 hard-deprecation on legacy C++/WinRT <experimental/coroutine>
+#   until upstream plugins migrate to C++20 <coroutine>.
+# - Serialize PDB writes (/FS) so parallel MSBuild compilation of large plugins
+#   does not race on vc145.pdb (fatal error C1041).
+if(MSVC)
+  add_compile_definitions(_SILENCE_EXPERIMENTAL_COROUTINE_DEPRECATION_WARNINGS)
+  add_compile_options(/FS)
+endif()
+
 # Compilation settings that should be applied to most targets.
 #
 # Be cautious about adding new options here, as plugins use this function by
@@ -40,7 +50,9 @@ add_definitions(-DUNICODE -D_UNICODE)
 # of modifying this function.
 function(APPLY_STANDARD_SETTINGS TARGET)
   target_compile_features(${TARGET} PUBLIC cxx_std_17)
-  target_compile_options(${TARGET} PRIVATE /W4 /WX /wd"4100")
+  # Keep /W4 diagnostics visible, but avoid /WX on third-party plugins so
+  # rolling MSVC/Windows SDK header updates on CI do not break builds.
+  target_compile_options(${TARGET} PRIVATE /W4 /wd"4100" /FS)
   target_compile_options(${TARGET} PRIVATE /EHsc)
   target_compile_definitions(${TARGET} PRIVATE "_HAS_EXCEPTIONS=0")
   target_compile_definitions(${TARGET} PRIVATE "$<$<CONFIG:Debug>:_DEBUG>")
@@ -58,10 +70,16 @@ add_subdirectory("runner")
 # them to the application.
 include(flutter/generated_plugins.cmake)
 
-# Temporary MSVC compatibility for the WebView plugin.
+# MSVC 14.5x+ compatibility for flutter_inappwebview_windows:
+# - _SILENCE_EXPERIMENTAL_COROUTINE_DEPRECATION_WARNINGS avoids STL1011/C2338.
+# - /FS avoids parallel PDB race (C1041) across ~95 plugin translation units.
+# - /bigobj avoids object section overflow on WinRT templates.
+# - /wd4458 suppresses noisy WebView2EnvironmentOptions.h shadowing warnings.
 if(MSVC AND TARGET flutter_inappwebview_windows_plugin)
   target_compile_definitions(flutter_inappwebview_windows_plugin PRIVATE
     _SILENCE_EXPERIMENTAL_COROUTINE_DEPRECATION_WARNINGS)
+  target_compile_options(flutter_inappwebview_windows_plugin PRIVATE
+    /FS /bigobj /wd4458)
 endif()
 
 

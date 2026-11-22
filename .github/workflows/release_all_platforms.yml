@@ -68,6 +68,11 @@ jobs:
       - name: Setup NuGet for WebView2 native dependencies
         uses: NuGet/setup-nuget@v2
 
+      - name: Install compatible CMake for Firebase C++ SDK
+        uses: lukka/get-cmake@latest
+        with:
+          cmakeVersion: '3.31.6'
+
       - name: Enable Windows Desktop
         run: flutter config --enable-windows-desktop
 
@@ -77,11 +82,20 @@ jobs:
           flutter pub get --enforce-lockfile
 
       - name: Build Windows Release
+        shell: pwsh
         env:
           CMAKE_POLICY_VERSION_MINIMUM: "3.5"
         run: |
+          $ErrorActionPreference = 'Continue'
           cd openturath_ai
-          flutter build windows --release
+          $log = Join-Path $env:RUNNER_TEMP 'windows-build.log'
+          flutter build windows --release 2>&1 | Tee-Object -FilePath $log
+          $code = $LASTEXITCODE
+          if ($code -ne 0) {
+            Write-Host '=== WINDOWS BUILD ERROR SUMMARY ===' -ForegroundColor Red
+            Select-String -Path $log -Pattern 'error |fatal error|CMake Error|LNK\d+|MSB\d+|Exception:' | ForEach-Object { $_.Line }
+            exit $code
+          }
 
       - name: Compress Windows Release Bundle
         shell: pwsh
@@ -147,8 +161,29 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Configure Android Release Signing (from GitHub Secrets)
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          ANDROID_KEY_PROPERTIES: ${{ secrets.ANDROID_KEY_PROPERTIES }}
+        run: |
+          set -euo pipefail
+          if [ -z "$ANDROID_KEYSTORE_BASE64" ] || [ -z "$ANDROID_KEY_PROPERTIES" ]; then
+            echo "::error::Missing GitHub Actions secrets ANDROID_KEYSTORE_BASE64 and/or ANDROID_KEY_PROPERTIES. Configure both in GitHub Settings -> Secrets and variables -> Actions. Release APK builds never fall back to debug signing."
+            exit 1
+          fi
+          printf '%s\n' "$ANDROID_KEY_PROPERTIES" > openturath_ai/android/key.properties
+          store_file="$(grep -E '^[[:space:]]*storeFile=' openturath_ai/android/key.properties | tail -n 1 | cut -d'=' -f2- | tr -d '\r' | xargs || true)"
+          store_name="$(basename "${store_file:-openturath-release.jks}")"
+          if [ -z "$store_name" ] || [ "$store_name" = "." ] || [ "$store_name" = ".." ]; then
+            store_name="openturath-release.jks"
+          fi
+          keystore_path="openturath_ai/android/app/$store_name"
+          printf '%s' "$ANDROID_KEYSTORE_BASE64" | tr -d '[:space:]' | base64 --decode > "$keystore_path"
+          test -s "$keystore_path"
+          echo "Configured release keystore at $keystore_path"
+
       - name: Setup Java JDK 17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: 'temurin'
           java-version: '17'
@@ -164,16 +199,6 @@ jobs:
         run: |
           if [ -f openturath_ai/android/gradlew ]; then
             chmod +x openturath_ai/android/gradlew
-          fi
-
-      - name: Configure Android Release Signing (from GitHub Secrets if set)
-        env:
-          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
-          ANDROID_KEY_PROPERTIES: ${{ secrets.ANDROID_KEY_PROPERTIES }}
-        run: |
-          if [ -n "$ANDROID_KEYSTORE_BASE64" ] && [ -n "$ANDROID_KEY_PROPERTIES" ]; then
-            echo "$ANDROID_KEYSTORE_BASE64" | base64 --decode > openturath_ai/android/app/upload-keystore.jks
-            printf '%s\n' "$ANDROID_KEY_PROPERTIES" > openturath_ai/android/key.properties
           fi
 
       - name: Get dependencies
@@ -209,6 +234,10 @@ jobs:
           flutter-version: '3.38.4'
           channel: 'stable'
           cache: true
+      - name: Install compatible CMake for Windows installer UI
+        uses: lukka/get-cmake@latest
+        with:
+          cmakeVersion: '3.31.6'
       - name: Download Windows application bundle
         uses: actions/download-artifact@v4
         with:
