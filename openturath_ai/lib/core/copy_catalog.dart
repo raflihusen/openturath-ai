@@ -2628,6 +2628,11 @@ const copyCatalog = <String, List<String>>{
     "Quick fixes if the AI keeps spinning or does not respond",
     "حلول سريعة إذا ظل المساعد يدور أو لم يستجب"
   ],
+  "aiSlowWaiting": [
+    "Koneksi tampak melambat, AI masih memuat. Mohon tunggu sebentar…",
+    "Your connection seems slow; the AI is still loading. Please wait a moment…",
+    "يبدو أن الاتصال بطيء، ولا يزال المساعد قيد التحميل. يُرجى الانتظار قليلًا…"
+  ],
   "aiSlowHint": [
     "Terlalu lama? Tutup AI ini lalu buka lagi. Biasanya langsung berhasil.",
     "Taking too long? Close this AI and open it again. It usually works right away.",

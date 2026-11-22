@@ -329,7 +329,7 @@ class AgentService {
     final call = httpClient != null
         ? httpClient.post(uri, headers: headers, body: body)
         : http.post(uri, headers: headers, body: body);
-    return call.timeout(const Duration(seconds: 6));
+    return call.timeout(const Duration(seconds: 15));
   }
 
   static Map<String, dynamic> _extractErrorMap(dynamic body) {

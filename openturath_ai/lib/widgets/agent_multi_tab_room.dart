@@ -70,6 +70,29 @@ class AgentMultiTabRoom extends StatefulWidget {
   final AgentService? agentService;
   final AuthService? authService;
 
+  /// Batas muat minimal sebelum menampilkan galat timeout (ramah jaringan lambat).
+  static const Duration hardLoadTimeout = Duration(seconds: 120);
+
+  /// Selama WebView masih melaporkan progres dalam jendela ini, timeout diperpanjang.
+  static const Duration progressGraceWindow = Duration(seconds: 60);
+
+  /// Batas absolut agar ruang tidak menggantung selamanya bila progres berhenti total.
+  static const Duration maxExtendedLoadTimeout = Duration(seconds: 240);
+
+  /// Menentukan apakah proses muat WebView benar-benar layak diputus karena timeout.
+  static bool shouldTimeoutRoomLoad({
+    required int elapsedSec,
+    int? sinceLastProgressSec,
+  }) {
+    if (elapsedSec < hardLoadTimeout.inSeconds) return false;
+    if (elapsedSec >= maxExtendedLoadTimeout.inSeconds) return true;
+    if (sinceLastProgressSec != null &&
+        sinceLastProgressSec < progressGraceWindow.inSeconds) {
+      return false;
+    }
+    return true;
+  }
+
   /// Dialog pemilihan akun Google khusus untuk asisten NotebookLM.
   /// Memastikan browser eksternal membuka akun yang tepat (/u/<index> atau AccountChooser).
   static Future<void> showChangeGoogleAccountDialog(
@@ -1085,7 +1108,27 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
   Timer? _inputRetryTimer;
   Timer? _googleSignInDebounceTimer;
   DateTime? _loadingStarted;
+  DateTime? _lastProgressAt;
+  int _lastWebProgress = -1;
   int _readySamples = 0;
+
+  void _resetLoadingClock() {
+    _loadingStarted = null;
+    _lastProgressAt = null;
+    _lastWebProgress = -1;
+  }
+
+  void _markWebLoadProgress([int? progress]) {
+    if (widget.session.isSessionReady || widget.session.isGoogleAuthPage) {
+      return;
+    }
+    if (progress != null) {
+      if (progress <= 0) return;
+      if (progress == _lastWebProgress && progress >= 100) return;
+      _lastWebProgress = progress;
+    }
+    _lastProgressAt = DateTime.now();
+  }
   int _accessDeniedRetryCount = 0;
   bool _checkingReady = false;
   bool? _lastIsDark;
@@ -1111,7 +1154,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
       _readinessTimer = null;
       _inputRetryTimer?.cancel();
       _inputRetryTimer = null;
-      _loadingStarted = null;
+      _resetLoadingClock();
       try {
         widget.session.webController?.evaluateJavascript(
           source:
@@ -1142,7 +1185,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
       _inputRetryTimer = null;
       _googleSignInDebounceTimer?.cancel();
       _googleSignInDebounceTimer = null;
-      _loadingStarted = null;
+      _resetLoadingClock();
       _readySamples = 0;
       _accessDeniedRetryCount = 0;
       if (widget.session.resolvedUrl == null) {
@@ -1158,7 +1201,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
       _inputRetryTimer = null;
       // Polling berhenti, jadi jatah 45 detik juga berhenti; kalau tidak, tab
       // yang ditinggal langsung dinyatakan gagal saat dibuka kembali.
-      _loadingStarted = null;
+      _resetLoadingClock();
       try {
         widget.session.webController?.evaluateJavascript(
           source:
@@ -1205,7 +1248,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
                 Future<void>.value());
       }
       // Waktu saat aplikasi di latar belakang bukan waktu tunggu halaman.
-      if (!widget.session.isSessionReady) _loadingStarted = null;
+      if (!widget.session.isSessionReady) _resetLoadingClock();
       _verifySurfaceHealth();
     } else if (state == AppLifecycleState.paused) {
       if (AppPlatform.isAndroid) {
@@ -1223,7 +1266,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
       widget.session.isSessionReady = false;
     });
     controller.reload();
-    _loadingStarted = null;
+    _resetLoadingClock();
     _startReadinessCheck();
   }
 
@@ -1384,7 +1427,8 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
     _readySamples = 0;
     _readinessTimer =
         Timer.periodic(const Duration(milliseconds: 500), (_) => _checkReady());
-    _inputRetryTimer = Timer(const Duration(seconds: 15), _recoverMissingInput);
+    _inputRetryTimer =
+        Timer.periodic(const Duration(seconds: 20), (_) => _recoverMissingInput());
   }
 
   Future<void> _recoverMissingInput() async {
@@ -1439,7 +1483,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
                 : freshUrl;
             if (effectiveFresh != session.resolvedUrl) {
               session.resolvedUrl = effectiveFresh;
-              _loadingStarted = null;
+              _resetLoadingClock();
               await session.webController
                   ?.loadUrl(urlRequest: URLRequest(url: WebUri(effectiveFresh)));
               if (!mounted) return;
@@ -1455,7 +1499,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
             } else {
               _readinessTimer?.cancel();
               _inputRetryTimer?.cancel();
-              _loadingStarted = null;
+              _resetLoadingClock();
               setState(() {
                 session.isWebLoading = false;
                 session.isSessionReady = false;
@@ -1477,7 +1521,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
               !(_authService.cachedCurrentUser?.isVip == true)) {
             _readinessTimer?.cancel();
             _inputRetryTimer?.cancel();
-            _loadingStarted = null;
+            _resetLoadingClock();
             setState(() {
               session.isWebLoading = false;
               session.isSessionReady = false;
@@ -1501,7 +1545,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
 
     _readinessTimer?.cancel();
     _inputRetryTimer?.cancel();
-    _loadingStarted = null;
+    _resetLoadingClock();
     if (mounted) {
       setState(() {
         session.isWebLoading = false;
@@ -1542,7 +1586,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
     // Jangan batalkan _readinessTimer agar saat Google selesai redirect/autentikasi,
     // kesiapan sesi AI langsung terdeteksi otomatis.
     _inputRetryTimer?.cancel();
-    _loadingStarted = null;
+    _resetLoadingClock();
     if (!mounted) return;
     setState(() {
       final session = widget.session;
@@ -1642,18 +1686,25 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
           });
         }
       } else if (url != null && NotebookNavigation.signInFlow(url.uriValue)) {
-        _loadingStarted = null;
+        _resetLoadingClock();
         if (!widget.session.isGoogleAuthPage) _scheduleGoogleSignIn();
         return;
       }
       if (widget.session.isGoogleAuthPage) {
-        _loadingStarted = null;
+        _resetLoadingClock();
         return;
       }
 
-      _loadingStarted ??= DateTime.now();
-      final elapsedSec = DateTime.now().difference(_loadingStarted!).inSeconds;
-      if (elapsedSec >= 45) {
+      final now = DateTime.now();
+      _loadingStarted ??= now;
+      final elapsedSec = now.difference(_loadingStarted!).inSeconds;
+      final sinceLastProgressSec = _lastProgressAt != null
+          ? now.difference(_lastProgressAt!).inSeconds
+          : null;
+      if (AgentMultiTabRoom.shouldTimeoutRoomLoad(
+        elapsedSec: elapsedSec,
+        sinceLastProgressSec: sinceLastProgressSec,
+      )) {
         if (kDebugMode) {
           Object? title;
           try {
@@ -1662,11 +1713,11 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
                     'document.querySelectorAll(\'textarea, [contenteditable="true"], [role="textbox"]\').length');
           } catch (_) {}
           debugPrint(
-              '[OpenTurath] Readiness timeout: host=${url?.host} path=${url?.path} page=$title');
+              '[OpenTurath] Readiness timeout: host=${url?.host} path=${url?.path} elapsed=${elapsedSec}s lastProgress=${sinceLastProgressSec}s page=$title');
         }
         _readinessTimer?.cancel();
         _inputRetryTimer?.cancel();
-        _loadingStarted = null;
+        _resetLoadingClock();
         if (mounted) {
           setState(() {
             widget.session.isWebLoading = false;
@@ -1724,7 +1775,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
       if (_readySamples >= 2 || (_readySamples >= 1 && elapsedMs >= 600)) {
         _readinessTimer?.cancel();
         _inputRetryTimer?.cancel();
-        _loadingStarted = null;
+        _resetLoadingClock();
         // Timer sudah berhenti: aktivasi yang macet tidak boleh menahan loader.
         try {
           await controller
@@ -1865,7 +1916,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
           session.resolvedUrl = effectiveFresh;
         }
         if (session.webController != null && !session.isGoogleAuthPage) {
-          _loadingStarted = null;
+          _resetLoadingClock();
           unawaited(session.webController!
               .loadUrl(urlRequest: URLRequest(url: WebUri(effectiveFresh)))
               .catchError((_) {}));
@@ -1876,7 +1927,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
       // Jalankan lookup URL (cache-first SWR) dan verifikasi sesi Google secara paralel
       final googleReadyFuture = PersistentGoogleSession.instance
           .restoreSessionIfAvailable(email)
-          .timeout(const Duration(seconds: 4), onTimeout: () => false)
+          .timeout(const Duration(seconds: 8), onTimeout: () => false)
           .catchError((_) => false);
       final urlFuture = _agentService.getAgentUrl(
         session.agent.id,
@@ -1914,7 +1965,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
           session.isWebLoading = googleReady;
         });
         if (googleReady && session.webController != null) {
-          _loadingStarted = null;
+          _resetLoadingClock();
           unawaited(session.webController!
               .loadUrl(urlRequest: URLRequest(url: WebUri(effectiveUrl)))
               .catchError((_) {}));
@@ -2041,7 +2092,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
 
       void retry() {
         _accessDeniedRetryCount = 0;
-        _loadingStarted = null;
+        _resetLoadingClock();
         unawaited(_fetchUrl(forceRefresh: true));
       }
 
@@ -2097,7 +2148,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
               session.isWebLoading = true;
               session.isSessionReady = false;
             });
-            _loadingStarted = null;
+            _resetLoadingClock();
             unawaited(_fetchUrl(forceRefresh: true));
           },
           onBack: close,
@@ -2127,7 +2178,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
               session.isWebLoading = true;
               session.isSessionReady = false;
             });
-            _loadingStarted = null;
+            _resetLoadingClock();
             unawaited(_fetchUrl(forceRefresh: true));
           },
           onBack: close,
@@ -2443,6 +2494,8 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
             onLoadStart: (controller, uri) async {
               session.hasInjectedEarlyScript = false;
               _loadingStarted = DateTime.now();
+              _lastProgressAt = DateTime.now();
+              _lastWebProgress = -1;
               if (uri != null) {
                 if (NotebookNavigation.notebook(uri.uriValue)) {
                   _googleSignInDebounceTimer?.cancel();
@@ -2516,6 +2569,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
               }
 
               try {
+                _markWebLoadProgress();
                 await _ensureInjectedScripts(controller, isDark);
                 await controller.evaluateJavascript(
                   source:
@@ -2561,12 +2615,16 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
               final currentUrl = await controller.getUrl();
               if (currentUrl != null &&
                   NotebookNavigation.notebook(currentUrl.uriValue)) {
+                _markWebLoadProgress(progress);
                 if (session.isGoogleAuthPage && mounted) {
                   setState(() {
                     session.isGoogleAuthPage = false;
                     session.errorMessage = null;
                   });
                 }
+              } else if (progress > 0 && progress < 100) {
+                // Halaman redirect awal / aset masih diunduh di jaringan lambat.
+                _markWebLoadProgress(progress);
               }
               if (currentUrl == null ||
                   !NotebookNavigation.notebook(currentUrl.uriValue)) {
@@ -2580,7 +2638,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
                   await _ensureInjectedScripts(controller, isDark);
                 } catch (_) {
                   session.hasInjectedEarlyScript = false;
-                  _loadingStarted = DateTime.now();
+                  _lastProgressAt = DateTime.now();
                 }
               }
             },

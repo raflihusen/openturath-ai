@@ -117,87 +117,139 @@ Future<void> showAiTroubleSheet(BuildContext context,
   );
 }
 
-/// Kartu yang muncul setelah [delay] jika AI masih memuat: menyarankan menutup
-/// lalu membuka lagi. Dipasang hanya selama layar muat tampil, sehingga
-/// hitungannya mulai ulang setiap kali AI dibuka.
+/// Penanda muat lambat 3 tahap agar ramah koneksi lambat:
+/// - Tahap 1 (0 s.d. [noticeDelay], bawaan 20 detik): hening, hanya loader.
+/// - Tahap 2 ([noticeDelay] s.d. [delay], bawaan 20–50 detik): keterangan lembut
+///   agar pengguna menunggu karena koneksi mungkin lambat (tanpa tombol tutup/ulangi).
+/// - Tahap 3 (>= [delay], bawaan >= 50 detik): opsi pemulihan ("Tutup & buka ulang"
+///   dan "Solusi lain") sambil tetap membiarkan WebView memuat di latar belakang.
 class AiSlowLoadHint extends StatefulWidget {
-  const AiSlowLoadHint(
-      {super.key,
-      required this.onRestart,
-      required this.onMore,
-      this.delay = const Duration(seconds: 15)});
+  const AiSlowLoadHint({
+    super.key,
+    required this.onRestart,
+    required this.onMore,
+    this.noticeDelay = const Duration(seconds: 20),
+    this.delay = const Duration(seconds: 50),
+  });
   final VoidCallback onRestart;
   final VoidCallback onMore;
+  final Duration noticeDelay;
   final Duration delay;
 
   @override
   State<AiSlowLoadHint> createState() => _AiSlowLoadHintState();
 }
 
+enum _SlowLoadStage { hidden, waiting, actions }
+
 class _AiSlowLoadHintState extends State<AiSlowLoadHint> {
-  Timer? _timer;
-  bool _visible = false;
+  Timer? _noticeTimer;
+  Timer? _actionsTimer;
+  _SlowLoadStage _stage = _SlowLoadStage.hidden;
 
   @override
   void initState() {
     super.initState();
-    _timer = Timer(widget.delay, () {
-      if (mounted) setState(() => _visible = true);
+    if (widget.noticeDelay < widget.delay) {
+      _noticeTimer = Timer(widget.noticeDelay, () {
+        if (mounted && _stage == _SlowLoadStage.hidden) {
+          setState(() => _stage = _SlowLoadStage.waiting);
+        }
+      });
+    }
+    _actionsTimer = Timer(widget.delay, () {
+      if (mounted) setState(() => _stage = _SlowLoadStage.actions);
     });
   }
 
   @override
   void dispose() {
-    _timer?.cancel();
+    _noticeTimer?.cancel();
+    _actionsTimer?.cancel();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     Loc.watch(context);
-    if (!_visible) return const SizedBox.shrink();
+    if (_stage == _SlowLoadStage.hidden) return const SizedBox.shrink();
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return SafeArea(
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 440),
-          child: Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: OTColors.surface(isDark),
-              borderRadius: OTRadius.cardBorder,
-              border: Border.all(color: OTColors.border(isDark)),
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Text(Loc.tr('aiSlowHint'),
-                    style: ScholarlyFonts.outfit(
-                        fontSize: OTFontSize.s14,
-                        height: 1.55,
-                        color: OTColors.textPrimary(isDark))),
-                const SizedBox(height: 12),
-                Row(
-                  children: [
-                    Expanded(
-                      child: FilledButton(
-                        key: const ValueKey('ai-slow-restart'),
-                        onPressed: widget.onRestart,
-                        child: Text(Loc.tr('aiRestartAction')),
-                      ),
+          child: AnimatedSwitcher(
+            duration: const Duration(milliseconds: 280),
+            child: _stage == _SlowLoadStage.waiting
+                ? Container(
+                    key: const ValueKey('ai-slow-waiting'),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 12),
+                    decoration: BoxDecoration(
+                      color: OTColors.surface(isDark),
+                      borderRadius: OTRadius.cardBorder,
+                      border: Border.all(color: OTColors.border(isDark)),
                     ),
-                    const SizedBox(width: 8),
-                    TextButton(
-                      key: const ValueKey('ai-slow-more'),
-                      onPressed: widget.onMore,
-                      child: Text(Loc.tr('aiHelpMore')),
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.hourglass_bottom_rounded,
+                          size: 18,
+                          color: OTColors.textSecondary(isDark),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            Loc.tr('aiSlowWaiting'),
+                            style: ScholarlyFonts.outfit(
+                              fontSize: OTFontSize.s14,
+                              height: 1.5,
+                              color: OTColors.textSecondary(isDark),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-              ],
-            ),
+                  )
+                : Container(
+                    key: const ValueKey('ai-slow-actions'),
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: OTColors.surface(isDark),
+                      borderRadius: OTRadius.cardBorder,
+                      border: Border.all(color: OTColors.border(isDark)),
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Text(Loc.tr('aiSlowHint'),
+                            style: ScholarlyFonts.outfit(
+                                fontSize: OTFontSize.s14,
+                                height: 1.55,
+                                color: OTColors.textPrimary(isDark))),
+                        const SizedBox(height: 12),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: FilledButton(
+                                key: const ValueKey('ai-slow-restart'),
+                                onPressed: widget.onRestart,
+                                child: Text(Loc.tr('aiRestartAction')),
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            TextButton(
+                              key: const ValueKey('ai-slow-more'),
+                              onPressed: widget.onMore,
+                              child: Text(Loc.tr('aiHelpMore')),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
           ),
         ),
       ),
