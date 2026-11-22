@@ -756,21 +756,21 @@ const notebookSkinScript = r'''
         btn.className = 'ot-copy-answer';
         btn.setAttribute('role', 'button');
         btn.setAttribute('tabindex', '0');
-        btn.setAttribute('aria-label', LABELS[lang()].copy);
+        btn.setAttribute('data-ot-label', LABELS[lang()].copy);
         btn.setAttribute('title', LABELS[lang()].copy);
         btn.addEventListener('ot-copy-result', event => {
           btn.__otCopied = event.detail === true;
           btn.__otCopyFailed = event.detail !== true;
           toggle(btn, 'ot-copied', btn.__otCopied);
           const tip = btn.__otCopied ? LABELS[lang()].copied : LABELS[lang()].copyFailed;
-          btn.setAttribute('aria-label', tip);
+          btn.setAttribute('data-ot-label', tip);
           btn.setAttribute('title', tip);
           clearTimeout(btn.__otTimer);
           btn.__otTimer = setTimeout(() => {
             btn.__otCopied = false;
             btn.__otCopyFailed = false;
             toggle(btn, 'ot-copied', false);
-            btn.setAttribute('aria-label', LABELS[lang()].copy);
+            btn.setAttribute('data-ot-label', LABELS[lang()].copy);
             btn.setAttribute('title', LABELS[lang()].copy);
           }, 1800);
         });
@@ -786,7 +786,7 @@ const notebookSkinScript = r'''
       if (btn && !btn.__otCopied && !btn.__otCopyFailed) {
         const want = LABELS[lang()].copy;
         if (btn.getAttribute('title') !== want) {
-          btn.setAttribute('aria-label', want);
+          btn.setAttribute('data-ot-label', want);
           btn.setAttribute('title', want);
         }
       }

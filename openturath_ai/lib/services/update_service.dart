@@ -171,6 +171,7 @@ class UpdateService extends ChangeNotifier {
     _lastError = null;
     _status = UpdateStatus.checking;
     notifyListeners();
+    var foundNewerRelease = false;
     try {
       final current = await (_buildLoader?.call() ??
               PackageInfo.fromPlatform()
@@ -191,6 +192,7 @@ class UpdateService extends ChangeNotifier {
         _updateInfo = null;
         _status = UpdateStatus.idle;
       } else {
+        foundNewerRelease = true;
         if (release.sha256 == null ||
             (platform == TargetPlatform.windows &&
                 release.installerProtocol != 1)) {
@@ -237,8 +239,15 @@ class UpdateService extends ChangeNotifier {
       _lastCheckedAt = DateTime.now();
     } catch (error) {
       debugPrint('[Updater] Check/download failed: ${error.runtimeType}');
-      _status = UpdateStatus.error;
-      _lastError = Loc.tr('updateDownloadFailed');
+      if (foundNewerRelease) {
+        _status = UpdateStatus.error;
+        _lastError = Loc.tr('updateDownloadFailed');
+      } else {
+        // Kegagalan cek manifes senyap saat offline tidak boleh memunculkan
+        // banner galat di Beranda.
+        _status = UpdateStatus.idle;
+        _lastError = null;
+      }
     } finally {
       _isChecking = false;
       notifyListeners();

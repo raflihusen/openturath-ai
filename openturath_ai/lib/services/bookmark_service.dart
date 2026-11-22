@@ -201,7 +201,8 @@ class BookmarkService extends ChangeNotifier {
           .doc(uid)
           .collection('bookmarks')
           .doc(bookmark.id)
-          .set(bookmark.toJson(), SetOptions(merge: true));
+          .set(bookmark.toJson(), SetOptions(merge: true))
+          .timeout(const Duration(seconds: 8));
       if (_pendingPushIds.remove(bookmark.id)) notifyListeners();
     } catch (e) {
       // Offline or network glitch; retried on resume, login, or manual sync.
@@ -278,7 +279,8 @@ class BookmarkService extends ChangeNotifier {
             .collection('users')
             .doc(effectiveUid)
             .collection('bookmarks')
-            .get();
+            .get()
+            .timeout(const Duration(seconds: 8));
         for (final doc in snapshot.docs) {
           try {
             final data = doc.data();

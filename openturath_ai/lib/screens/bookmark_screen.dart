@@ -133,16 +133,22 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
   }
 
   Future<void> _loadBookmarks() async {
-    final list = await _bookmarkService.getBookmarks();
-    if (mounted) {
-      setState(() {
-        _allBookmarks = list;
-        if (!_categories.contains(_selectedCategory)) {
-          _selectedCategory = 'Semua';
-        }
-        _filter();
-        _isLoading = false;
-      });
+    try {
+      final list = await _bookmarkService.getBookmarks();
+      if (mounted) {
+        setState(() {
+          _allBookmarks = list;
+          if (!_categories.contains(_selectedCategory)) {
+            _selectedCategory = 'Semua';
+          }
+          _filter();
+          _isLoading = false;
+        });
+      }
+    } catch (_) {
+      if (mounted && _isLoading) {
+        setState(() => _isLoading = false);
+      }
     }
   }
 
@@ -775,12 +781,13 @@ class _BookmarkCardState extends State<_BookmarkCard> {
   }
 
   String _buildSearchPattern(String query) {
-    final clean = RegExp.escape(query.trim());
+    final chars = query.trim().characters.toList();
+    if (chars.isEmpty) return '';
     const harakat = r'[\u064B-\u065F\u0670\u06D6-\u06ED\u0640]*';
     final buffer = StringBuffer();
-    for (int i = 0; i < clean.length; i++) {
-      buffer.write(clean[i]);
-      if (i < clean.length - 1) {
+    for (int i = 0; i < chars.length; i++) {
+      buffer.write(RegExp.escape(chars[i]));
+      if (i < chars.length - 1) {
         buffer.write(harakat);
       }
     }
@@ -808,8 +815,15 @@ class _BookmarkCardState extends State<_BookmarkCard> {
     }
 
     final pattern = _buildSearchPattern(cleanQ);
-    final regex = RegExp(pattern, caseSensitive: false);
-    final matches = regex.allMatches(text).toList();
+    List<RegExpMatch> matches = const [];
+    if (pattern.isNotEmpty) {
+      try {
+        final regex = RegExp(pattern, caseSensitive: false);
+        matches = regex.allMatches(text).toList();
+      } catch (_) {
+        matches = const [];
+      }
+    }
 
     if (matches.isEmpty) {
       return Text(

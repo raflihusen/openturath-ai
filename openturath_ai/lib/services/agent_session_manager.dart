@@ -2,6 +2,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import '../core/app_config.dart';
+import '../core/app_platform.dart';
+import '../core/entitlement_keys.dart';
 import '../models/agent_model.dart';
 import '../models/turath_chat_message.dart';
 import '../models/user_model.dart';
@@ -9,6 +11,8 @@ import '../models/room_failure.dart';
 
 /// Represents a single active AI specialist tab in memory.
 class AgentSessionTab {
+  static int _nextInstanceId = 1;
+  final int instanceId = _nextInstanceId++;
   final AgentModel agent;
   String? resolvedUrl;
   InAppWebViewController? webController;
@@ -96,8 +100,7 @@ class AgentSessionManager extends ChangeNotifier {
   static String _jsString(String value) =>
       "'${value.replaceAll(r'\', r'\\').replaceAll("'", r"\'")}'";
 
-  static int get maxTabs =>
-      (!kIsWeb && defaultTargetPlatform == TargetPlatform.macOS) ? 5 : 3;
+  static int get maxTabs => AppPlatform.isDesktop ? 5 : 3;
 
   final List<AgentSessionTab> _tabs = [];
   int _activeIndex = 0;
@@ -122,6 +125,9 @@ class AgentSessionManager extends ChangeNotifier {
   /// Returns `false` if [maxTabs] is reached and [replaceOldest] is `false`.
   bool openAgent(AgentModel agent,
       {UserModel? user, bool replaceOldest = false}) {
+    if (virtualBundleAgentIds.contains(agent.id.trim().toLowerCase())) {
+      return false;
+    }
     final existingIndex = _tabs.indexWhere((t) => t.agent.id == agent.id);
     if (existingIndex != -1) {
       _tabs[existingIndex].isPrewarmed = false;
@@ -136,14 +142,14 @@ class AgentSessionManager extends ChangeNotifier {
         try {
           _tabs[_activeIndex].webController?.evaluateJavascript(
                 source:
-                    'window.otSetBackgroundPaused && window.otSetBackgroundPaused(false); window.otNotebook && window.otNotebook.clean && window.otNotebook.clean();',
+                    'window.otSetBackgroundPaused && window.otSetBackgroundPaused(false); window.otNotebook && window.otNotebook.clean && window.otNotebook.clean(); window.otSkinApply && window.otSkinApply();',
               );
         } catch (_) {}
       } else {
         try {
           _tabs[_activeIndex].webController?.evaluateJavascript(
                 source:
-                    'window.otSetBackgroundPaused && window.otSetBackgroundPaused(false); window.otNotebook && window.otNotebook.clean && window.otNotebook.clean();',
+                    'window.otSetBackgroundPaused && window.otSetBackgroundPaused(false); window.otNotebook && window.otNotebook.clean && window.otNotebook.clean(); window.otSkinApply && window.otSkinApply();',
               );
         } catch (_) {}
       }
@@ -153,6 +159,14 @@ class AgentSessionManager extends ChangeNotifier {
           return false;
         }
         closeTab(oldestEvictableIndex);
+      }
+      if (_tabs.isNotEmpty && _activeIndex >= 0 && _activeIndex < _tabs.length) {
+        try {
+          _tabs[_activeIndex].webController?.evaluateJavascript(
+                source:
+                    'window.otSetBackgroundPaused && window.otSetBackgroundPaused(true);',
+              );
+        } catch (_) {}
       }
       _tabs.add(AgentSessionTab(agent: agent));
       _activeIndex = _tabs.length - 1;
@@ -189,7 +203,7 @@ class AgentSessionManager extends ChangeNotifier {
       try {
         _tabs[_activeIndex].webController?.evaluateJavascript(
               source:
-                  'window.otSetBackgroundPaused && window.otSetBackgroundPaused(false); window.otNotebook && window.otNotebook.clean && window.otNotebook.clean();',
+                  'window.otSetBackgroundPaused && window.otSetBackgroundPaused(false); window.otNotebook && window.otNotebook.clean && window.otNotebook.clean(); window.otSkinApply && window.otSkinApply();',
             );
       } catch (_) {}
       notifyListeners();

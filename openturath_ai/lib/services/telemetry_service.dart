@@ -212,9 +212,10 @@ class TelemetryService {
 
       // Tulis secara senyap ke Firestore koleksi client_error_logs
       unawaited(
-        _db.collection('client_error_logs').add(payload).catchError((_) {
-          return null as dynamic;
-        }),
+        _db
+            .collection('client_error_logs')
+            .add(payload)
+            .then((_) {}, onError: (_) {}),
       );
     } catch (_) {
       // Menjamin TelemetryService tidak pernah melempar exception ke aplikasi

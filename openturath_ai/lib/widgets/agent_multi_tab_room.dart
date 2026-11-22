@@ -78,8 +78,9 @@ class AgentMultiTabRoom extends StatefulWidget {
     if (!context.mounted) return;
     final controller = TextEditingController(text: currentEmail);
     final isDark = Theme.of(context).brightness == Brightness.dark;
-
-    final newEmail = await showDialog<String>(
+    String? newEmail;
+    try {
+      newEmail = await showDialog<String>(
       context: context,
       builder: (ctx) => AlertDialog(
         backgroundColor:
@@ -181,6 +182,9 @@ class AgentMultiTabRoom extends StatefulWidget {
         ],
       ),
     );
+    } finally {
+      controller.dispose();
+    }
 
     if (newEmail != null && context.mounted) {
       await NativeAgentLauncher.setActiveNotebookEmail(newEmail);
@@ -251,14 +255,17 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
   void initState() {
     super.initState();
     _sessionManager.addListener(_onSessionsChanged);
-    _userSub = _authService.userStream.listen((user) {
-      if (!mounted || user == null) return;
-      for (final tab in _sessionManager.tabs) {
-        if (tab.isPaywallRequired && user.hasAccessToAgent(tab.agent.id)) {
-          _restartRoom(tab);
+    _userSub = _authService.userStream.listen(
+      (user) {
+        if (!mounted || user == null) return;
+        for (final tab in _sessionManager.tabs) {
+          if (tab.isPaywallRequired && user.hasAccessToAgent(tab.agent.id)) {
+            _restartRoom(tab);
+          }
         }
-      }
-    });
+      },
+      onError: (_) {},
+    );
   }
 
   @override
@@ -800,7 +807,11 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                             ),
                             // Tombol tutup tab terpisah tanpa nesting InkWell
                             Semantics(
-                              label: 'Tutup tab ${session.agent.title}',
+                              label: Loc.isArabic
+                                  ? 'إغلاق تبويب ${Loc.text(session.agent.title)}'
+                                  : (Loc.language == 'en'
+                                      ? 'Close tab ${Loc.text(session.agent.title)}'
+                                      : 'Tutup tab ${Loc.text(session.agent.title)}'),
                               button: true,
                               child: Material(
                                 color: Colors.transparent,
@@ -843,17 +854,20 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
           for (int i = 0; i < sessions.length; i++)
             if (_browserCompanionPrototype)
               BrowserCompanionChatTab(
-                key: ValueKey('companion_agent_tab_${sessions[i].agent.id}'),
+                key: ValueKey(
+                    'companion_agent_tab_${sessions[i].agent.id}_${sessions[i].instanceId}'),
                 session: sessions[i],
               )
             else if (_backendChatPrototype)
               NotebookBackendChatTab(
-                key: ValueKey('native_agent_tab_${sessions[i].agent.id}'),
+                key: ValueKey(
+                    'native_agent_tab_${sessions[i].agent.id}_${sessions[i].instanceId}'),
                 session: sessions[i],
               )
             else
               _SingleAgentTabWebView(
-                key: ValueKey('agent_tab_${sessions[i].agent.id}'),
+                key: ValueKey(
+                    'agent_tab_${sessions[i].agent.id}_${sessions[i].instanceId}'),
                 session: sessions[i],
                 isActive: i == _sessionManager.activeIndex,
                 agentService: widget.agentService,
@@ -1121,6 +1135,21 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
   @override
   void didUpdateWidget(_SingleAgentTabWebView oldWidget) {
     super.didUpdateWidget(oldWidget);
+    if (!identical(oldWidget.session, widget.session)) {
+      _readinessTimer?.cancel();
+      _readinessTimer = null;
+      _inputRetryTimer?.cancel();
+      _inputRetryTimer = null;
+      _googleSignInDebounceTimer?.cancel();
+      _googleSignInDebounceTimer = null;
+      _loadingStarted = null;
+      _readySamples = 0;
+      _accessDeniedRetryCount = 0;
+      if (widget.session.resolvedUrl == null) {
+        _fetchUrl();
+      }
+      return;
+    }
     if (oldWidget.isActive && !widget.isActive) {
       // Tab ini beralih ke background: hentikan polling dan bekukan observer DOM
       _readinessTimer?.cancel();
@@ -1141,7 +1170,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
       try {
         widget.session.webController?.evaluateJavascript(
           source:
-              'window.otSetBackgroundPaused && window.otSetBackgroundPaused(false); window.otNotebook && window.otNotebook.clean && window.otNotebook.clean();',
+              'window.otSetBackgroundPaused && window.otSetBackgroundPaused(false); window.otNotebook && window.otNotebook.clean && window.otNotebook.clean(); window.otSkinApply && window.otSkinApply();',
         );
       } catch (_) {}
       if (!widget.session.isSessionReady &&
@@ -1213,18 +1242,48 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
     }
   }
 
+  InAppWebViewSettings _buildWebViewSettings(bool isDark) =>
+      InAppWebViewSettings(
+        userAgent: AppPlatform.isDesktop
+            ? AppConstants.desktopUserAgent
+            : AppConstants.chromeMobileUserAgent,
+        incognito: false,
+        javaScriptEnabled: true,
+        domStorageEnabled: true,
+        databaseEnabled: true,
+        useWideViewPort: false,
+        loadWithOverviewMode: false,
+        cacheEnabled: true,
+        clearCache: false,
+        transparentBackground: false,
+        allowsInlineMediaPlayback: true,
+        supportZoom: false,
+        displayZoomControls: false,
+        mixedContentMode: MixedContentMode.MIXED_CONTENT_NEVER_ALLOW,
+        thirdPartyCookiesEnabled: true,
+        sharedCookiesEnabled: WebViewCookiePolicy.sharedCookiesEnabled,
+        hardwareAcceleration: true,
+        useHybridComposition: true,
+        useOnRenderProcessGone: true,
+        supportMultipleWindows: true,
+        javaScriptCanOpenWindowsAutomatically: true,
+        // Inspektur WebView hanya untuk build debug: di rilis ia membuka
+        // DOM, skrip injeksi, dan sesi Google ke siapa pun yang
+        // menyambungkan perangkat ke DevTools/Safari Web Inspector.
+        isInspectable: kDebugMode,
+        forceDark: isDark ? ForceDark.ON : ForceDark.OFF,
+        forceDarkStrategy:
+            ForceDarkStrategy.PREFER_WEB_THEME_OVER_USER_AGENT_DARKENING,
+        algorithmicDarkeningAllowed: true,
+      );
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     final currentIsDark = Theme.of(context).brightness == Brightness.dark;
     if (_lastIsDark != null && _lastIsDark != currentIsDark) {
       widget.session.webController?.setSettings(
-        settings: InAppWebViewSettings(
-          forceDark: currentIsDark ? ForceDark.ON : ForceDark.OFF,
-          forceDarkStrategy:
-              ForceDarkStrategy.PREFER_WEB_THEME_OVER_USER_AGENT_DARKENING,
-          algorithmicDarkeningAllowed: true,
-        ),
+        settings: _buildWebViewSettings(currentIsDark),
       );
       _applyThemeCss(currentIsDark);
     }
@@ -1376,6 +1435,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
             _loadingStarted = null;
             await session.webController
                 ?.loadUrl(urlRequest: URLRequest(url: WebUri(freshUrl)));
+            if (!mounted) return;
             _startReadinessCheck();
             return;
           }
@@ -2046,39 +2106,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
             initialUrlRequest: URLRequest(url: initialUri),
             initialUserScripts:
                 UnmodifiableListView([_buildCloakScript(isDark)]),
-            initialSettings: InAppWebViewSettings(
-              userAgent: AppPlatform.isDesktop
-                  ? AppConstants.desktopUserAgent
-                  : AppConstants.chromeMobileUserAgent,
-              incognito: false,
-              javaScriptEnabled: true,
-              domStorageEnabled: true,
-              databaseEnabled: true,
-              useWideViewPort: false,
-              loadWithOverviewMode: false,
-              cacheEnabled: true,
-              clearCache: false,
-              transparentBackground: false,
-              allowsInlineMediaPlayback: true,
-              supportZoom: false,
-              displayZoomControls: false,
-              mixedContentMode: MixedContentMode.MIXED_CONTENT_NEVER_ALLOW,
-              thirdPartyCookiesEnabled: true,
-              sharedCookiesEnabled: WebViewCookiePolicy.sharedCookiesEnabled,
-              hardwareAcceleration: true,
-              useHybridComposition: true,
-              useOnRenderProcessGone: true,
-              supportMultipleWindows: true,
-              javaScriptCanOpenWindowsAutomatically: true,
-              // Inspektur WebView hanya untuk build debug: di rilis ia membuka
-              // DOM, skrip injeksi, dan sesi Google ke siapa pun yang
-              // menyambungkan perangkat ke DevTools/Safari Web Inspector.
-              isInspectable: kDebugMode,
-              forceDark: isDark ? ForceDark.ON : ForceDark.OFF,
-              forceDarkStrategy:
-                  ForceDarkStrategy.PREFER_WEB_THEME_OVER_USER_AGENT_DARKENING,
-              algorithmicDarkeningAllowed: true,
-            ),
+            initialSettings: _buildWebViewSettings(isDark),
             onCreateWindow: (controller, createWindowAction) async {
               final targetUrl = createWindowAction.request.url;
               if (targetUrl != null &&
@@ -2086,7 +2114,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
                       NotebookNavigation.allowed(targetUrl.uriValue))) {
                 await controller.loadUrl(
                     urlRequest: URLRequest(url: targetUrl));
-                return true;
+                return false;
               }
               return false;
             },
@@ -2462,9 +2490,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
                 }
                 final email = _authService.cachedCurrentUser?.email;
                 if (email != null && email.isNotEmpty) {
-                  unawaited(PersistentGoogleSession.instance
-                      .lockAndPersistCookies(controller, email)
-                      .catchError((_) => false));
+                  unawaited(AuthService.rememberWebSessionOwner(email));
                 }
                 if (!session.isSessionReady && _readinessTimer == null) {
                   _startReadinessCheck();
@@ -2517,13 +2543,13 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
                 return NavigationActionPolicy.ALLOW;
               }
 
-              // 2. Izinkan skema internal
+              // 2. Izinkan hanya skema internal aman (tolak javascript:/data: di main frame)
               final scheme = uri.scheme.toLowerCase();
-              if (scheme == 'about' ||
-                  scheme == 'data' ||
-                  scheme == 'blob' ||
-                  scheme == 'javascript') {
+              if (scheme == 'about' || scheme == 'blob') {
                 return NavigationActionPolicy.ALLOW;
+              }
+              if (scheme != 'http' && scheme != 'https') {
+                return NavigationActionPolicy.CANCEL;
               }
 
               // 3. Izinkan seluruh ekosistem Google dan NotebookLM
