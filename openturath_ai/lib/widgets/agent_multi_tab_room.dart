@@ -45,10 +45,14 @@ import '../services/agent_session_manager.dart';
 import '../services/auth_service.dart';
 import '../services/persistent_google_session.dart';
 import '../services/bookmark_service.dart';
+import '../services/labs_flags.dart';
 import '../services/native_agent_launcher.dart';
+import '../services/voice_service.dart';
 import '../widgets/app_error_state.dart';
 import '../widgets/app_loader.dart';
 import '../widgets/library_bottom_sheet.dart';
+import '../widgets/voice_conversation_overlay.dart';
+import '../widgets/voice_dictation_sheet.dart';
 import 'notebook_backend_chat_tab.dart';
 import 'browser_companion_chat_tab.dart';
 import '../core/localization.dart';
@@ -229,6 +233,60 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
   final BookmarkService _bookmarkService = BookmarkService();
   final AuthService _authService = AuthService();
   StreamSubscription<UserModel?>? _userSub;
+  bool _voiceConversationOpen = false;
+
+  Future<void> _openVoiceDictation(AgentSessionTab tab) async {
+    final controller = tab.webController;
+    if (controller == null) return;
+    final result = await VoiceDictationSheet.show(context);
+    if (!mounted || result == null) return;
+    final encoded = jsonEncode(result.text);
+    final fn = result.action == VoiceDictationAction.sendNow
+        ? 'otSendPrompt'
+        : 'otSetDraftPrompt';
+    try {
+      await controller.evaluateJavascript(
+        source: 'window.$fn ? window.$fn($encoded) : false',
+      );
+    } catch (_) {}
+  }
+
+  Future<void> _toggleReadLastAnswer(AgentSessionTab tab) async {
+    final voice = VoiceService.instance;
+    if (voice.isSpeaking) {
+      await voice.stopSpeaking();
+      return;
+    }
+    final controller = tab.webController;
+    if (controller == null) return;
+    try {
+      final raw = await controller
+          .evaluateJavascript(
+              source:
+                  'window.otGetLastAnswerState ? window.otGetLastAnswerState() : "{}"')
+          .timeout(const Duration(seconds: 3));
+      String answer = '';
+      if (raw is String && raw.isNotEmpty) {
+        final decoded = jsonDecode(raw);
+        if (decoded is Map<String, dynamic>) {
+          answer = (decoded['lastAnswer'] as String?) ?? '';
+        }
+      }
+      if (!mounted) return;
+      if (answer.trim().isEmpty) {
+        AppSnackBar.info(context, 'Belum ada jawaban AI untuk dibacakan.');
+        return;
+      }
+      final flags = LabsFlagsService.current;
+      final primaryLocale =
+          flags.voiceLocale.startsWith('en') ? 'en-US' : 'id-ID';
+      await voice.speakBilingual(
+        answer,
+        primaryLocale: primaryLocale,
+        skipLongArabic: flags.voiceSkipLongArabic,
+      );
+    } catch (_) {}
+  }
 
   void _restartRoom(AgentSessionTab session) => AgentSessionManager.instance
       .restartAgent(session.agent, user: _authService.cachedCurrentUser);
@@ -278,6 +336,7 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
   void initState() {
     super.initState();
     _sessionManager.addListener(_onSessionsChanged);
+    unawaited(LabsFlagsService.load());
     _userSub = _authService.userStream.listen(
       (user) {
         if (!mounted || user == null) return;
@@ -608,6 +667,57 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
           overflow: TextOverflow.ellipsis,
         ),
         actions: [
+          ValueListenableBuilder<LabsFlags>(
+            valueListenable: LabsFlagsService.notifier,
+            builder: (context, labs, _) {
+              if (!labs.anyVoiceEnabled ||
+                  !activeTab.isSessionReady ||
+                  activeTab.webController == null) {
+                return const SizedBox.shrink();
+              }
+              return Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (labs.voiceDictation)
+                    IconButton(
+                      icon: Icon(Icons.mic_none_rounded,
+                          color: textPrimary, size: 20),
+                      tooltip: 'Dikte suara (Labs)',
+                      onPressed: () => _openVoiceDictation(activeTab),
+                    ),
+                  if (labs.voiceConversation)
+                    IconButton(
+                      icon: Icon(Icons.graphic_eq_rounded,
+                          color: textPrimary, size: 20),
+                      tooltip: 'Mode percakapan suara (Labs)',
+                      onPressed: () =>
+                          setState(() => _voiceConversationOpen = true),
+                    ),
+                  if (labs.voiceReadAloud)
+                    ValueListenableBuilder<VoiceEngineState>(
+                      valueListenable: VoiceService.instance.state,
+                      builder: (_, voiceState, __) {
+                        final speaking =
+                            voiceState == VoiceEngineState.speaking;
+                        return IconButton(
+                          icon: Icon(
+                            speaking
+                                ? Icons.stop_circle_outlined
+                                : Icons.volume_up_outlined,
+                            color: textPrimary,
+                            size: 20,
+                          ),
+                          tooltip: speaking
+                              ? 'Hentikan pembacaan'
+                              : 'Baca jawaban terakhir (Labs)',
+                          onPressed: () => _toggleReadLastAnswer(activeTab),
+                        );
+                      },
+                    ),
+                ],
+              );
+            },
+          ),
           IconButton(
             icon: Icon(Icons.menu_book_outlined, color: textPrimary, size: 20),
             tooltip: AppCopy.referenceBooks,
@@ -870,32 +980,44 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
               )
             : null,
       ),
-      body: IndexedStack(
-        key: const ValueKey('study-webviews'),
-        index: _sessionManager.activeIndex,
+      body: Stack(
         children: [
-          for (int i = 0; i < sessions.length; i++)
-            if (_browserCompanionPrototype)
-              BrowserCompanionChatTab(
-                key: ValueKey(
-                    'companion_agent_tab_${sessions[i].agent.id}_${sessions[i].instanceId}'),
-                session: sessions[i],
-              )
-            else if (_backendChatPrototype)
-              NotebookBackendChatTab(
-                key: ValueKey(
-                    'native_agent_tab_${sessions[i].agent.id}_${sessions[i].instanceId}'),
-                session: sessions[i],
-              )
-            else
-              _SingleAgentTabWebView(
-                key: ValueKey(
-                    'agent_tab_${sessions[i].agent.id}_${sessions[i].instanceId}'),
-                session: sessions[i],
-                isActive: i == _sessionManager.activeIndex,
-                agentService: widget.agentService,
-                authService: widget.authService,
+          IndexedStack(
+            key: const ValueKey('study-webviews'),
+            index: _sessionManager.activeIndex,
+            children: [
+              for (int i = 0; i < sessions.length; i++)
+                if (_browserCompanionPrototype)
+                  BrowserCompanionChatTab(
+                    key: ValueKey(
+                        'companion_agent_tab_${sessions[i].agent.id}_${sessions[i].instanceId}'),
+                    session: sessions[i],
+                  )
+                else if (_backendChatPrototype)
+                  NotebookBackendChatTab(
+                    key: ValueKey(
+                        'native_agent_tab_${sessions[i].agent.id}_${sessions[i].instanceId}'),
+                    session: sessions[i],
+                  )
+                else
+                  _SingleAgentTabWebView(
+                    key: ValueKey(
+                        'agent_tab_${sessions[i].agent.id}_${sessions[i].instanceId}'),
+                    session: sessions[i],
+                    isActive: i == _sessionManager.activeIndex,
+                    agentService: widget.agentService,
+                    authService: widget.authService,
+                  ),
+            ],
+          ),
+          if (_voiceConversationOpen && activeTab.webController != null)
+            Positioned.fill(
+              child: VoiceConversationOverlay(
+                agentTitle: activeTab.agent.title,
+                controller: activeTab.webController!,
+                onClose: () => setState(() => _voiceConversationOpen = false),
               ),
+            ),
         ],
       ),
     );

@@ -28,6 +28,10 @@
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>OpenTurath AI membutuhkan akses mikrofon untuk fitur dikte suara dan mode percakapan di Ruang Eksperimen.</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>OpenTurath AI membutuhkan izin pengenalan suara agar Anda dapat mengajukan pertanyaan secara lisan.</string>
 	<key>GIDClientID</key>
 	<string>255541559800-fen41rigfp5o3fsntiieaien3v915ptd.apps.googleusercontent.com</string>
 	<key>CFBundleURLTypes</key>

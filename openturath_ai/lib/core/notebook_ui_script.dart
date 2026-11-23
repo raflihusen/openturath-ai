@@ -1387,6 +1387,24 @@ const _notebookCleanupScript = r'''
     }, 60);
     return true;
   };
+  window.otSetDraftPrompt = function(promptText) {
+    if (!promptText || typeof promptText !== 'string') return false;
+    const input = document.querySelector('textarea, [contenteditable="true"], [role="textbox"], input[type="text"]');
+    if (!input) return false;
+    input.focus();
+    const isField = input.tagName.toLowerCase() === 'textarea' || input.tagName.toLowerCase() === 'input';
+    const prev = (isField ? input.value : input.innerText || '').trim();
+    const next = prev ? (prev + ' ' + promptText.trim()) : promptText.trim();
+    if (isField) {
+      input.value = next;
+      input.dispatchEvent(new Event('input', { bubbles: true }));
+      input.dispatchEvent(new Event('change', { bubbles: true }));
+    } else {
+      input.innerText = next;
+      input.dispatchEvent(new Event('input', { bubbles: true }));
+    }
+    return true;
+  };
   function conversationList() {
     const questionSelector = '.chat-message[data-sender="user"], .user-message, .from-user, .to-model-container, [data-message-author-role="user"], app-chat-query, app-chat-prompt';
     const nodes = [...document.querySelectorAll(questionSelector + ',' + answerSelector)].filter(visible);
@@ -1402,6 +1420,16 @@ const _notebookCleanupScript = r'''
     return JSON.stringify(list);
   }
   window.otGetConversationList = conversationList;
+  window.otGetLastAnswerState = function() {
+    const answerNodes = [...document.querySelectorAll(answerSelector)].filter(visible);
+    const texts = answerNodes.map(n => answerText(n)).filter(Boolean);
+    const lastAnswer = texts.length > 0 ? texts[texts.length - 1] : '';
+    return JSON.stringify({
+      count: texts.length,
+      lastAnswer: lastAnswer,
+      isLoading: isStillLoading()
+    });
+  };
 
   function isStillLoading() {
     const spinners = document.querySelectorAll('mat-spinner, mat-progress-spinner, mat-progress-bar, app-loading-screen');
