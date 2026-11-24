@@ -416,40 +416,13 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                           SharedPreferences.getInstance().then((prefs) {
                             prefs.setDouble('turath_font_zoom_level', val);
                           }).catchError((_) {});
-                          session.webController?.evaluateJavascript(
-                            source: '''
-                              (function() {
-                                if (typeof applyTurathFontScale === "function") {
-                                  applyTurathFontScale($val);
-                                } else {
-                                  var scale = $val;
-                                  var basePx = Math.round(scale * 15);
-                                  var fontStyle = document.getElementById('ot-font-scale-style');
-                                  if (!fontStyle) {
-                                    fontStyle = document.createElement('style');
-                                    fontStyle.id = 'ot-font-scale-style';
-                                    (document.head || document.documentElement).appendChild(fontStyle);
-                                  }
-                                  fontStyle.textContent = `
-                                    :root, html, body { --ot-font-size: \${basePx}px !important; }
-                                    .rendered-markdown p:not(.table-paragraph), .rendered-markdown li,
-                                    .chat-response p:not(.table-paragraph), .chat-response li,
-                                    .to-user-container .paragraph:not(.table-paragraph) {
-                                      font-size: \${basePx}px !important;
-                                      line-height: 1.7 !important;
-                                    }
-                                    [lang="ar"], .arabic, .ot-rtl-block, .ot-ibarah, .ot-ibarah-trans,
-                                    html body .to-user-message-card-content .ot-rtl-block,
-                                    html body .to-user-message-card-content .ot-ibarah,
-                                    html body .to-user-message-card-content .ot-ibarah-trans {
-                                      font-size: \${basePx}px !important;
-                                      line-height: 1.88 !important;
-                                    }
-                                  `;
-                                }
-                              })();
-                            ''',
-                          );
+                          final applyScript = _SingleAgentTabWebViewState
+                              .buildFontScaleEvalScript(val);
+                          for (final tab in AgentSessionManager.instance.tabs) {
+                            tab.fontScale = val;
+                            tab.webController
+                                ?.evaluateJavascript(source: applyScript);
+                          }
                         },
                       ),
                     ),
@@ -931,6 +904,124 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
   @override
   bool get wantKeepAlive => true;
 
+  static String buildFontScaleEvalScript(double scale) {
+    final safeScale = scale.clamp(0.85, 2.0);
+    return '''
+      (function() {
+        if (typeof window.applyTurathFontScale === "function") {
+          window.applyTurathFontScale($safeScale);
+          return;
+        }
+        var scale = Number($safeScale);
+        if (!Number.isFinite(scale)) return;
+        var basePx = Math.round(scale * 15);
+        if (document.documentElement && document.documentElement.style && typeof document.documentElement.style.setProperty === 'function') {
+          document.documentElement.style.setProperty('--ot-font-size', basePx + 'px', 'important');
+        }
+        if (document.body && document.body.style && typeof document.body.style.setProperty === 'function') {
+          document.body.style.setProperty('--ot-font-size', basePx + 'px', 'important');
+        }
+        var host = document.head || document.documentElement;
+        var fontStyle = document.getElementById('ot-font-scale-style');
+        if (!fontStyle) {
+          fontStyle = document.createElement('style');
+          fontStyle.id = 'ot-font-scale-style';
+        }
+        if (host && fontStyle.parentNode !== host) {
+          host.appendChild(fontStyle);
+        } else if (host && host.lastElementChild !== fontStyle) {
+          host.appendChild(fontStyle);
+        }
+        fontStyle.textContent = $_fontScaleCssJsExpression;
+      })();
+    ''';
+  }
+
+  static const String _fontScaleCssJsExpression = r"""`
+          :root, html, body, html body.luminous-ui {
+            --ot-font-size: ${basePx}px !important;
+          }
+          .chat-panel-content, .chat-view, .conversation-container, .message-list, [role="article"],
+          .rendered-markdown, .chat-response, .chat-message, .model-message, .user-message,
+          .to-user-container, .to-model-container, app-chat-message {
+            font-size: ${basePx}px !important;
+            line-height: 1.7 !important;
+          }
+          html body .from-user-message-card-content .md3-body-text,
+          html body .from-user-message-card-content p,
+          html body .from-user-message-card-content .message-text-content,
+          html body .from-user-message-card-content :is(p, .md3-body-text, .message-text-content) :is(span, b, strong, i, em, a, u),
+          html body .to-user-message-card-content .paragraph:not(.table-paragraph):not(.ot-mode),
+          html body .to-user-message-card-content .paragraph:not(.table-paragraph):not(.ot-mode) :is(span:not(.mat-icon):not(.mdc-button__label):not([class*="citation" i]), b, strong, i, em, a, u),
+          html body .to-user-message-card-content p:not(.table-paragraph),
+          html body .to-user-message-card-content p:not(.table-paragraph) :is(span:not(.mat-icon):not(.mdc-button__label):not([class*="citation" i]), b, strong, i, em, a, u),
+          html body .to-user-message-card-content li:not(.ot-mode),
+          html body .to-user-message-card-content li:not(.ot-mode) > :is(span:not(.mat-icon):not(.mdc-button__label):not([class*="citation" i]), b, strong, i, em, a, u),
+          html body .to-user-message-card-content .md3-body-text,
+          html body .to-user-message-card-content .mat-body-large,
+          html body .to-user-message-card-content .mat-body-medium,
+          .rendered-markdown p:not(.table-paragraph),
+          .rendered-markdown p:not(.table-paragraph) :is(span:not(.mat-icon):not(.mdc-button__label):not([class*="citation" i]), b, strong, i, em, a, u),
+          .rendered-markdown li,
+          .rendered-markdown li > :is(span:not(.mat-icon):not(.mdc-button__label):not([class*="citation" i]), b, strong, i, em, a, u),
+          .chat-response p:not(.table-paragraph),
+          .chat-response p:not(.table-paragraph) :is(span:not(.mat-icon):not(.mdc-button__label):not([class*="citation" i]), b, strong, i, em, a, u),
+          .chat-response li,
+          .chat-response li > :is(span:not(.mat-icon):not(.mdc-button__label):not([class*="citation" i]), b, strong, i, em, a, u),
+          .to-user-container .paragraph:not(.table-paragraph):not(.ot-mode),
+          .to-user-container .paragraph:not(.table-paragraph):not(.ot-mode) :is(span:not(.mat-icon):not(.mdc-button__label):not([class*="citation" i]), b, strong, i, em, a, u) {
+            font-size: ${basePx}px !important;
+            line-height: 1.7 !important;
+          }
+          html body .to-user-message-card-content h1,
+          .rendered-markdown h1 {
+            font-size: calc(${basePx}px * 1.24) !important;
+            line-height: 1.35 !important;
+          }
+          html body .to-user-message-card-content h2,
+          .rendered-markdown h2 {
+            font-size: calc(${basePx}px * 1.16) !important;
+            line-height: 1.4 !important;
+          }
+          html body .to-user-message-card-content :is(h3, h4),
+          .rendered-markdown :is(h3, h4) {
+            font-size: calc(${basePx}px * 1.08) !important;
+            line-height: 1.45 !important;
+          }
+          html body .to-user-message-card-content :is(h1, h2, h3, h4) :is(span, b, strong, i, em) {
+            font-size: inherit !important;
+            line-height: inherit !important;
+          }
+          html body .to-user-message-card-content .paragraph.ot-section > b:first-child {
+            font-size: 11px !important;
+            line-height: 1.4 !important;
+          }
+          html body .to-user-message-card-content table td,
+          html body .to-user-message-card-content table td *,
+          html body .to-user-message-card-content .paragraph.table-paragraph,
+          html body .to-user-message-card-content .paragraph.table-paragraph * {
+            font-size: clamp(12px, calc(${basePx}px * 0.86), 16.5px) !important;
+            line-height: 1.55 !important;
+          }
+          html body .to-user-message-card-content table th,
+          html body .to-user-message-card-content table th *,
+          html body .to-user-message-card-content th .paragraph.table-paragraph,
+          html body .to-user-message-card-content th .paragraph.table-paragraph * {
+            font-size: clamp(11px, calc(${basePx}px * 0.76), 13.5px) !important;
+            line-height: 1.4 !important;
+          }
+          [lang="ar"], .arabic, .ot-rtl-block, .ot-ibarah, .ot-ibarah-trans,
+          html body .to-user-message-card-content .ot-rtl-block,
+          html body .to-user-message-card-content .ot-rtl-block *,
+          html body .to-user-message-card-content .ot-ibarah,
+          html body .to-user-message-card-content .ot-ibarah *,
+          html body .to-user-message-card-content .ot-ibarah-trans,
+          html body .to-user-message-card-content .ot-ibarah-trans * {
+            font-size: ${basePx}px !important;
+            line-height: 1.88 !important;
+          }
+        `""";
+
   static const String _turatsMasterScript = r"""
     (function() {
       if (window.top !== window || !['notebooklm.google.com', 'notebook.google.com'].includes(location.hostname)) return;
@@ -942,45 +1033,25 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
         var basePx = Math.round(scale * 15);
 
         if (document.documentElement && document.documentElement.style && typeof document.documentElement.style.setProperty === 'function') {
-          document.documentElement.style.setProperty('--ot-font-size', basePx + 'px');
+          document.documentElement.style.setProperty('--ot-font-size', basePx + 'px', 'important');
         }
         if (document.body && document.body.style && typeof document.body.style.setProperty === 'function') {
-          document.body.style.setProperty('--ot-font-size', basePx + 'px');
+          document.body.style.setProperty('--ot-font-size', basePx + 'px', 'important');
         }
 
         // Bidi RTL/LTR & deteksi ibarah ditangani tunggal oleh notebook_skin.dart agar tidak saling timpa.
         if (typeof window.otSkinApply === 'function') { try { window.otSkinApply(); } catch (_) {} }
 
+        var host = document.head || document.documentElement;
         var fontStyle = document.getElementById('ot-font-scale-style');
         if (!fontStyle) {
           fontStyle = document.createElement('style');
           fontStyle.id = 'ot-font-scale-style';
-          (document.head || document.documentElement).appendChild(fontStyle);
         }
-        fontStyle.textContent = `
-          :root, html, body {
-            --ot-font-size: ${basePx}px !important;
-          }
-          .chat-panel-content, .chat-view, .conversation-container, .message-list, [role="article"],
-          .rendered-markdown, .chat-response, .chat-message, .model-message, .user-message,
-          .to-user-container, .to-model-container, app-chat-message {
-            font-size: ${basePx}px !important;
-            line-height: 1.7 !important;
-          }
-          .rendered-markdown p:not(.table-paragraph), .rendered-markdown li,
-          .chat-response p:not(.table-paragraph), .chat-response li,
-          .to-user-container .paragraph:not(.table-paragraph) {
-            font-size: ${basePx}px !important;
-            line-height: 1.7 !important;
-          }
-          [lang="ar"], .arabic, .ot-rtl-block, .ot-ibarah, .ot-ibarah-trans,
-          html body .to-user-message-card-content .ot-rtl-block,
-          html body .to-user-message-card-content .ot-ibarah,
-          html body .to-user-message-card-content .ot-ibarah-trans {
-            font-size: ${basePx}px !important;
-            line-height: 1.88 !important;
-          }
-        `;
+        if (host && host.lastElementChild !== fontStyle) {
+          host.appendChild(fontStyle);
+        }
+        fontStyle.textContent = """ + _fontScaleCssJsExpression + r""";
       };
 
       var _otMenuIsOpen = false;
@@ -2619,8 +2690,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
                 _markWebLoadProgress();
                 await _ensureInjectedScripts(controller, isDark);
                 await controller.evaluateJavascript(
-                  source:
-                      'if (typeof applyTurathFontScale === "function") { applyTurathFontScale(${session.fontScale}); }',
+                  source: buildFontScaleEvalScript(session.fontScale),
                 );
                 final denied = await controller.evaluateJavascript(
                     source:

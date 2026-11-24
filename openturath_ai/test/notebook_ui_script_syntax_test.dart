@@ -242,4 +242,28 @@ void notebookSkinTests() {
             'observe(document.body, { childList: true, subtree: true, characterData: true })'),
         isFalse);
   });
+
+  test(
+      'skala ukuran huruf mencakup span/teks inline di jawaban, pertanyaan, judul, dan ibarah tanpa :has()',
+      () {
+    expect(
+      notebookSkinScript.contains(
+          'html body .to-user-message-card-content .paragraph:not(.table-paragraph):not(.ot-mode) :is(span:not(.mat-icon)'),
+      isTrue,
+      reason: 'teks di dalam span Angular harus ikut membesar saat slider digeser',
+    );
+    expect(
+      notebookSkinScript.contains(
+          'html body .from-user-message-card-content .md3-body-text'),
+      isTrue,
+      reason: 'teks pertanyaan pengguna harus ikut terskala',
+    );
+    expect(
+      notebookSkinScript.contains(
+          'html body .to-user-message-card-content h1 { font-size: calc(var(--ot-font-size, 15px)'),
+      isTrue,
+      reason: 'judul bagian jawaban harus ikut terskala proporsional',
+    );
+    expect(notebookSkinScript.contains(':has('), isFalse);
+  });
 }
