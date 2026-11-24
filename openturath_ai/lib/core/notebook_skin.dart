@@ -166,8 +166,12 @@ const notebookSkinScript = r'''
     html body .from-user-message-card-content::after { display: none !important; }
     html body .from-user-message-inner-content { padding: 12px 16px !important; }
     html body .from-user-message-card-content .md3-body-text,
-    html body .from-user-message-card-content p {
+    html body .from-user-message-card-content p,
+    html body .from-user-message-card-content .message-text-content,
+    html body .from-user-message-card-content :is(p, .md3-body-text, .message-text-content) :is(span, b, strong, i, em, a, u) {
       font-family: var(--ot-sans) !important;
+      font-size: var(--ot-font-size, 15px) !important;
+      line-height: 1.65 !important;
       color: var(--ot-ink) !important;
     }
 
@@ -182,12 +186,20 @@ const notebookSkinScript = r'''
     html body .to-user-message-card-content .message-text-content,
     html body .to-user-message-card-content .paragraph,
     html body .to-user-message-card-content .paragraph span,
+    html body .to-user-message-card-content p,
     html body .to-user-message-card-content li {
       font-family: var(--ot-sans) !important;
       color: var(--ot-ink) !important;
     }
-    html body .to-user-message-card-content .paragraph,
-    html body .to-user-message-card-content li {
+    html body .to-user-message-card-content .paragraph:not(.table-paragraph):not(.ot-mode),
+    html body .to-user-message-card-content .paragraph:not(.table-paragraph):not(.ot-mode) :is(span:not(.mat-icon):not(.mdc-button__label):not([class*="citation" i]), b, strong, i, em, a, u),
+    html body .to-user-message-card-content p:not(.table-paragraph),
+    html body .to-user-message-card-content p:not(.table-paragraph) :is(span:not(.mat-icon):not(.mdc-button__label):not([class*="citation" i]), b, strong, i, em, a, u),
+    html body .to-user-message-card-content li:not(.ot-mode),
+    html body .to-user-message-card-content li:not(.ot-mode) > :is(span:not(.mat-icon):not(.mdc-button__label):not([class*="citation" i]), b, strong, i, em, a, u),
+    html body .to-user-message-card-content .md3-body-text,
+    html body .to-user-message-card-content .mat-body-large,
+    html body .to-user-message-card-content .mat-body-medium {
       font-size: var(--ot-font-size, 15px) !important;
       line-height: 1.7 !important;
     }
@@ -198,6 +210,13 @@ const notebookSkinScript = r'''
       font-weight: 600 !important;
       letter-spacing: -.01em !important;
       color: var(--ot-ink) !important;
+    }
+    html body .to-user-message-card-content h1 { font-size: calc(var(--ot-font-size, 15px) * 1.24) !important; line-height: 1.35 !important; }
+    html body .to-user-message-card-content h2 { font-size: calc(var(--ot-font-size, 15px) * 1.16) !important; line-height: 1.4 !important; }
+    html body .to-user-message-card-content :is(h3, h4) { font-size: calc(var(--ot-font-size, 15px) * 1.08) !important; line-height: 1.45 !important; }
+    html body .to-user-message-card-content :is(h1, h2, h3, h4) :is(span, b, strong, i, em) {
+      font-size: inherit !important;
+      line-height: inherit !important;
     }
     html body .to-user-message-card-content a {
       color: inherit !important;
@@ -384,6 +403,13 @@ const notebookSkinScript = r'''
       table-layout: auto !important;
       direction: inherit !important;
     }
+    html body .to-user-message-card-content table[dir="rtl"],
+    html body .to-user-message-card-content table[dir="rtl"] th,
+    html body .to-user-message-card-content table[dir="rtl"] td,
+    html body .to-user-message-card-content table[dir="rtl"] .paragraph.table-paragraph {
+      direction: rtl !important;
+      text-align: right !important;
+    }
     html body .to-user-message-card-content th {
       text-align: start !important;
       padding: 10px 10px !important;
@@ -398,6 +424,7 @@ const notebookSkinScript = r'''
       max-width: 240px !important;
     }
     html body .to-user-message-card-content td {
+      text-align: start !important;
       padding: 10px 10px !important;
       vertical-align: top !important;
       border: none !important;
@@ -1011,9 +1038,24 @@ const notebookSkinScript = r'''
           return;
         }
         const ibarah = !hasListChild && !isTableCell && isIbarahSegment(trimmed);
-        const isArabicBlock = !hasListChild && !isTableCell && (ibarah || (ar >= 8 && arRatio >= 0.58));
+        const isArabicTableCell = isTableCell && (ar >= 3 && arRatio >= 0.5);
+        const isArabicBlock = !hasListChild && ((!isTableCell && (ibarah || (ar >= 8 && arRatio >= 0.58))) || isArabicTableCell);
 
         el.setAttribute('dir', isArabicBlock ? 'rtl' : 'ltr');
+        if (isTableCell) {
+          el.style.textAlign = isArabicBlock ? 'right' : 'left';
+          const tbl = el.closest('table');
+          if (tbl && !tbl.dataset.otDirChecked) {
+            tbl.dataset.otDirChecked = '1';
+            const tTxt = (tbl.textContent || '').trim();
+            const tAr = (tTxt.match(AR) || []).length;
+            const tLa = (tTxt.match(LAT) || []).length;
+            const tRtl = tAr >= 6 && (tAr + tLa > 0 ? tAr / (tAr + tLa) >= 0.5 : false);
+            tbl.setAttribute('dir', tRtl ? 'rtl' : 'ltr');
+            const tev = tbl.closest('table-element-view');
+            if (tev) tev.setAttribute('dir', tRtl ? 'rtl' : 'ltr');
+          }
+        }
         toggle(el, 'ot-rtl-block', isArabicBlock && !ibarah);
         toggle(el, 'ot-ltr-block', !isArabicBlock);
         toggle(el, 'ot-ibarah', ibarah);
@@ -1021,6 +1063,15 @@ const notebookSkinScript = r'''
         if (item && ibarah) toggle(item, 'ot-ibarah-item', true);
       } else {
         el.setAttribute('dir', 'rtl');
+        if (isTableCell) {
+          el.style.textAlign = 'right';
+          const tbl = el.closest('table');
+          if (tbl) {
+            tbl.setAttribute('dir', 'rtl');
+            const tev = tbl.closest('table-element-view');
+            if (tev) tev.setAttribute('dir', 'rtl');
+          }
+        }
         toggle(el, 'ot-rtl-block', false);
         toggle(el, 'ot-ltr-block', false);
         // Di kartu full-Arab, hanya kutipan eksplisit «...», ﴿...﴾, atau "..." Arab yang diberi aksen kotak halus
