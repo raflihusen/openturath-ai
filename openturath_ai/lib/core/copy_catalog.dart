@@ -3418,4 +3418,19 @@ const copyCatalog = <String, List<String>>{
     "Classical Bibliography & Catalogs",
     "الببليوغرافيا والفهارس"
   ],
+  "chatDailyLimitTitle": [
+    "Batas percakapan harian tercapai",
+    "Daily conversation limit reached",
+    "تم الوصول إلى الحدّ اليومي للمحادثة"
+  ],
+  "chatDailyLimitBodyWithTime": [
+    "Kuota percakapan harian sedang jeda dan dapat digunakan kembali setelah {0}. Jawaban sebelumnya tetap dapat dibaca dan disalin.",
+    "Daily conversation quota is paused and will resume after {0}. Earlier answers remain readable and copyable.",
+    "تم إيقاف المحادثة مؤقتًا وستتوفّر مجددًا بعد {0}. يمكنك متابعة قراءة الإجابات السابقة ونسخها."
+  ],
+  "chatDailyLimitBody": [
+    "Kuota percakapan harian sedang jeda sementara. Jawaban sebelumnya tetap dapat dibaca dan disalin.",
+    "Daily conversation quota is temporarily paused. Earlier answers remain readable and copyable.",
+    "تم إيقاف المحادثة مؤقتًا بعد بلوغ الحدّ اليومي. يمكنك متابعة قراءة الإجابات السابقة ونسخها."
+  ],
 };

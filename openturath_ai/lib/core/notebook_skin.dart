@@ -524,7 +524,59 @@ const notebookSkinScript = r'''
     html body .date-separator,
     html body .selected-num-container,
     html body .chat-panel-top-fade,
-    html body .chat-panel-bottom-fade { display: none !important; }
+    html body .chat-panel-bottom-fade,
+    html body a[href*="one.google.com" i],
+    html body a[href*="workspace.google.com" i],
+    html body [class*="upgrade-button" i],
+    html body [class*="upsell-button" i],
+    html body .ot-hide-upgrade {
+      display: none !important;
+      visibility: hidden !important;
+      pointer-events: none !important;
+      width: 0 !important;
+      height: 0 !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      overflow: hidden !important;
+    }
+
+    /* Banner batas kuota harian dari Google: sesuaikan monokrom OpenTurath dan hilangkan tombol upgrade.
+       Begitu kartu native Flutter aktif (html.ot-flutter-limit-active), sembunyikan banner & kolom jeda Google. */
+    html body .ot-limit-banner {
+      background: var(--ot-surface) !important;
+      background-color: var(--ot-surface) !important;
+      border: 1px solid var(--ot-line) !important;
+      border-radius: 16px !important;
+      box-shadow: none !important;
+      color: var(--ot-ink) !important;
+      font-family: var(--ot-sans) !important;
+      font-size: 13.5px !important;
+      line-height: 1.6 !important;
+      padding: 14px 16px !important;
+      max-width: 720px !important;
+      margin: 8px auto !important;
+    }
+    html body .ot-limit-banner * {
+      color: var(--ot-ink) !important;
+      font-family: var(--ot-sans) !important;
+    }
+    html body .ot-limit-banner button,
+    html body .ot-limit-banner a {
+      display: none !important;
+      pointer-events: none !important;
+    }
+    html.ot-flutter-limit-active body .ot-limit-banner,
+    html.ot-flutter-limit-active body omnibar,
+    html.ot-flutter-limit-active body .ot-chat-composer-path {
+      display: none !important;
+      visibility: hidden !important;
+      pointer-events: none !important;
+    }
+    html.ot-flutter-limit-active body .ot-chat-transcript,
+    html.ot-flutter-limit-active body .chat-panel-content,
+    html.ot-flutter-limit-active body .conversation-container {
+      padding-bottom: 148px !important;
+    }
 
     /* ── Kolom tanya: kapsul permukaan seperti chat native ── */
     html body .input-group {
@@ -1173,9 +1225,103 @@ const notebookSkinScript = r'''
     window.__otFadeTimer = setTimeout(() => root.classList.remove('ot-theme-fade'), 520);
   };
 
+  /* Deteksi banner batas kuota harian AI & eliminasi tombol Upgrade/ترقية Google.
+     Hanya memeriksa elemen chrome di luar kartu pesan agar teks fikih tidak pernah tersentuh. */
+  const LIMIT_BANNER_RE = /(?:تم الوصول إلى الحد|الحدّ?\s*الأقصى\s*لاستخدام|تم إيقاف المحادثة|ستتوفّر جميع الميزات بعد|ستتوفر جميع الميزات بعد|batas penggunaan|mencapai batas|obrolan dijeda|chat paused|reached (?:your |the )?(?:daily )?(?:ai |chat |usage )?limit|all features will be available)/i;
+  const UPGRADE_BTN_RE = /^(?:ترقية|الترقية|upgrade|upgrade now|tingkatkan|get pro|get plus|subscribe|berlangganan|اشترك|learn more|تعرّف على المزيد|pelajari lebih lanjut)$/i;
+  const RESET_TIME_RE = /(?:بعد|حتى|until|after|setelah|hingga)\s+([0-9٠-٩]{1,2}[:.][0-9٠-٩]{2}(?:\s*(?:AM|PM|am|pm|ص|م|WIB|WITA|WIT))?)/i;
+  const MESSAGE_CONTAINER_SEL = '.to-user-message-card-content, .from-user-message-card-content, chat-message, .rendered-markdown, .thinking-chain, table';
+  let lastLimitKey = null;
+
+  function killUpgradeElement(el) {
+    if (!el || el.closest(MESSAGE_CONTAINER_SEL)) return;
+    toggle(el, 'ot-hide-upgrade', true);
+    if (el.tagName === 'A') el.removeAttribute('href');
+    if (el.tagName === 'BUTTON') el.disabled = true;
+    if (!el.__otUpgradeBlocked) {
+      el.__otUpgradeBlocked = true;
+      el.addEventListener('click', e => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (e.stopImmediatePropagation) e.stopImmediatePropagation();
+      }, true);
+    }
+  }
+
+  function tagLimitState() {
+    let limited = false;
+    let resetTime = '';
+    const prevBanners = new Set(document.querySelectorAll('.ot-limit-banner'));
+    const activeBanners = new Set();
+
+    // 1. Selalu sembunyikan tombol/tautan Upgrade/ترقية di luar isi percakapan.
+    document.querySelectorAll('button, a, [role="button"]').forEach(el => {
+      if (el.closest(MESSAGE_CONTAINER_SEL)) return;
+      const href = (el.getAttribute('href') || '').toLowerCase();
+      const txt = (el.innerText || el.textContent || '').trim();
+      const aria = (el.getAttribute('aria-label') || '').trim();
+      if (href.includes('one.google.com') || href.includes('/upgrade') || href.includes('/plus') || UPGRADE_BTN_RE.test(txt) || UPGRADE_BTN_RE.test(aria)) {
+        killUpgradeElement(el);
+      }
+    });
+
+    // 2. Deteksi banner batas kuota harian & status obrolan dijeda di chrome bawah/composer.
+    const candidates = document.querySelectorAll('omnibar, omnibar *, .ot-chat-composer-path, .ot-chat-composer-path *, [class*="limit" i], [class*="quota" i], [class*="upsell" i], [class*="upgrade" i], [class*="banner" i], [role="alert"], [role="status"]');
+    candidates.forEach(el => {
+      if (el.closest(MESSAGE_CONTAINER_SEL)) return;
+      if (el.querySelector && el.querySelector('chat-message, .to-user-message-card-content')) return;
+      const txt = (el.innerText || el.textContent || '').trim();
+      if (!txt || txt.length > 340) return;
+      if (!LIMIT_BANNER_RE.test(txt)) return;
+
+      limited = true;
+      if (!resetTime) {
+        const m = RESET_TIME_RE.exec(txt);
+        if (m && m[1]) resetTime = m[1].trim();
+      }
+
+      // Cari kartu pembungkus terdekat yang memuat teks batas (dan tombol upgrade bila ada)
+      let card = el;
+      let cur = el.parentElement;
+      for (let depth = 0; depth < 4 && cur && cur !== document.body; depth++) {
+        if (cur.tagName === 'OMNIBAR' || cur.classList.contains('ot-chat-composer-path') || cur.classList.contains('ot-chat-path')) break;
+        if (cur.querySelector('chat-message, .to-user-message-card-content, textarea, .query-box-input')) break;
+        const cTxt = (cur.innerText || cur.textContent || '').trim();
+        if (cTxt.length > 360) break;
+        card = cur;
+        cur = cur.parentElement;
+      }
+      if (!card.querySelector('textarea, .query-box-input')) {
+        toggle(card, 'ot-limit-banner', true);
+        activeBanners.add(card);
+        card.querySelectorAll('button, a, [role="button"]').forEach(killUpgradeElement);
+      }
+    });
+
+    prevBanners.forEach(b => {
+      if (!activeBanners.has(b)) toggle(b, 'ot-limit-banner', false);
+    });
+
+    if (document.documentElement) {
+      toggle(document.documentElement, 'ot-chat-limited', limited);
+      if (!limited) toggle(document.documentElement, 'ot-flutter-limit-active', false);
+    }
+
+    const key = limited ? ('1|' + resetTime) : '0';
+    if (key !== lastLimitKey) {
+      lastLimitKey = key;
+      try {
+        if (window.flutter_inappwebview && typeof window.flutter_inappwebview.callHandler === 'function') {
+          window.flutter_inappwebview.callHandler('otChatLimitState', { limited: limited, resetTime: resetTime });
+        }
+      } catch (_) {}
+    }
+  }
+
   function apply() {
     applyStyle();
     try { tagAnswers(); } catch (_) {}
+    try { tagLimitState(); } catch (_) {}
     updateStage();
     try { if (window.__otWatchStop) window.__otWatchStop(); } catch (_) {}
   }

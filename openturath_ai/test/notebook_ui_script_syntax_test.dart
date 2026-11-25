@@ -266,4 +266,17 @@ void notebookSkinTests() {
     );
     expect(notebookSkinScript.contains(':has('), isFalse);
   });
+
+  test(
+      'banner batas kuota harian menyembunyikan tombol ترقية/Upgrade dan melapor ke Flutter tanpa menyentuh isi jawaban',
+      () {
+    expect(notebookSkinScript.contains('ot-hide-upgrade'), isTrue);
+    expect(notebookSkinScript.contains('ot-limit-banner'), isTrue);
+    expect(notebookSkinScript.contains('ot-flutter-limit-active'), isTrue);
+    expect(notebookSkinScript.contains("callHandler('otChatLimitState'"), isTrue);
+    expect(notebookSkinScript.contains('ترقية'), isTrue);
+    expect(notebookSkinScript.contains('تم الوصول إلى الحد'), isTrue);
+    expect(notebookSkinScript.contains('MESSAGE_CONTAINER_SEL'), isTrue);
+    expect(notebookSkinScript.contains(':has('), isFalse);
+  });
 }

@@ -76,5 +76,29 @@ void main() {
       expect(url.queryParameters['continue'], 'https://notebook.google.com/');
       expect(url.queryParameters['Email'], 'santri@example.com');
     });
+
+    test('isUpsellDestination blocks Google One / Upgrade URLs while allowing notebooks',
+        () {
+      expect(
+        NotebookNavigation.isUpsellDestination(
+            Uri.parse('https://one.google.com/about/ai-premium/')),
+        isTrue,
+      );
+      expect(
+        NotebookNavigation.isUpsellDestination(
+            Uri.parse('https://notebooklm.google.com/plus')),
+        isTrue,
+      );
+      expect(
+        NotebookNavigation.isUpsellDestination(
+            Uri.parse('https://notebook.google.com/upgrade')),
+        isTrue,
+      );
+      expect(
+        NotebookNavigation.isUpsellDestination(
+            Uri.parse('https://notebook.google.com/notebook/565630db-d4cb-4070-af38-e8cb81d688ea')),
+        isFalse,
+      );
+    });
   });
 }

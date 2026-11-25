@@ -62,6 +62,29 @@ class NotebookNavigation {
 
   static bool notebook(Uri uri) => allowed(uri);
 
+  static const _upsellHosts = {
+    'one.google.com',
+    'workspace.google.com',
+    'pay.google.com',
+    'store.google.com',
+  };
+
+  /// Benar jika URL adalah halaman penawaran/upgrade Google One atau Gemini Pro
+  /// (mis. tombol "ترقية" / "Upgrade" saat kuota harian habis). Wajib diblokir.
+  static bool isUpsellDestination(Uri uri) {
+    final host = uri.host.toLowerCase();
+    if (_upsellHosts.contains(host)) return true;
+    final path = uri.path.toLowerCase();
+    if (hosts.contains(host) || host == 'gemini.google.com') {
+      return path.contains('/upgrade') ||
+          path.contains('/plus') ||
+          path.contains('/plans') ||
+          path.contains('/pricing') ||
+          path.contains('/subscriptions');
+    }
+    return false;
+  }
+
   /// Benar untuk SEMUA halaman pada host Notebook (`notebook.google.com` /
   /// `notebooklm.google.com`), termasuk `/`, `/login`, dan `/notebook/...`.
   /// Tidak boleh pernah terekspos tanpa pelindung di layar masuk Google.

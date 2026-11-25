@@ -33,6 +33,7 @@ import '../core/google_rejection.dart';
 import '../core/notebook_navigation.dart';
 import '../core/notebook_ui_script.dart';
 import '../core/copied_answer.dart';
+import '../core/design/ot_spacing.dart';
 import '../core/design/ot_colors.dart';
 import '../core/design/ot_motion.dart';
 import '../core/design/ot_typography.dart';
@@ -2289,6 +2290,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
             onCreateWindow: (controller, createWindowAction) async {
               final targetUrl = createWindowAction.request.url;
               if (targetUrl != null &&
+                  !NotebookNavigation.isUpsellDestination(targetUrl.uriValue) &&
                   (NotebookNavigation.signInFlow(targetUrl.uriValue) ||
                       NotebookNavigation.allowed(targetUrl.uriValue))) {
                 await controller.loadUrl(
@@ -2453,6 +2455,37 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
                     }
                   }
                   return false;
+                },
+              );
+              controller.addJavaScriptHandler(
+                handlerName: 'otChatLimitState',
+                callback: (args) {
+                  if (!mounted || args.isEmpty) return;
+                  final payload = args.first;
+                  bool limited = false;
+                  String? resetTime;
+                  if (payload is Map) {
+                    limited = payload['limited'] == true;
+                    final rawReset = payload['resetTime']?.toString().trim();
+                    if (rawReset != null && rawReset.isNotEmpty) {
+                      resetTime = rawReset;
+                    }
+                  }
+                  if (session.isDailyLimitReached != limited ||
+                      session.dailyLimitResetTime != resetTime) {
+                    setState(() {
+                      session.isDailyLimitReached = limited;
+                      session.dailyLimitResetTime = limited ? resetTime : null;
+                    });
+                  }
+                  unawaited(
+                    controller
+                        .evaluateJavascript(
+                          source:
+                              'if (document.documentElement) { document.documentElement.classList.toggle("ot-flutter-limit-active", $limited); }',
+                        )
+                        .catchError((_) => null),
+                  );
                 },
               );
               controller.addJavaScriptHandler(
@@ -2784,6 +2817,11 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
                 return NavigationActionPolicy.CANCEL;
               }
 
+              // 2b. Blokir halaman penawaran/upgrade Google (mis. tombol "ترقية" / "Upgrade")
+              if (NotebookNavigation.isUpsellDestination(uri.uriValue)) {
+                return NavigationActionPolicy.CANCEL;
+              }
+
               // 3. Izinkan seluruh ekosistem Google dan NotebookLM
               final host = uri.host.toLowerCase();
               final isGoogleEcosystem = host == 'google.com' ||
@@ -2862,6 +2900,16 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
               ),
             ),
 
+          if (session.isSessionReady &&
+              !session.isGoogleAuthPage &&
+              session.isDailyLimitReached)
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: 0,
+              child: _buildDailyLimitNotice(context, session, isDark),
+            ),
+
           // Layar muat hanya saat inisialisasi awal; memudar ke konten saat siap.
           Positioned.fill(
             child: AnimatedSwitcher(
@@ -2892,6 +2940,86 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildDailyLimitNotice(
+    BuildContext context,
+    AgentSessionTab session,
+    bool isDark,
+  ) {
+    final surface = OTColors.surface(isDark);
+    final subtle = OTColors.surfaceSubtle(isDark);
+    final border = OTColors.border(isDark);
+    final textPrimary = OTColors.textPrimary(isDark);
+    final textSecondary = OTColors.textSecondary(isDark);
+    final resetTime = session.dailyLimitResetTime;
+    final bodyText = (resetTime != null && resetTime.isNotEmpty)
+        ? Loc.tr('chatDailyLimitBodyWithTime', [resetTime])
+        : Loc.tr('chatDailyLimitBody');
+
+    return SafeArea(
+      top: false,
+      child: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 720),
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(
+              OTSpacing.base,
+              OTSpacing.sm,
+              OTSpacing.base,
+              OTSpacing.md,
+            ),
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                color: surface,
+                borderRadius: BorderRadius.circular(OTRadius.card),
+                border: Border.all(color: border),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(OTSpacing.base),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    DecoratedBox(
+                      decoration: BoxDecoration(
+                        color: subtle,
+                        borderRadius: BorderRadius.circular(OTRadius.xs),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(OTSpacing.sm),
+                        child: Icon(
+                          Icons.schedule_rounded,
+                          size: 18,
+                          color: textPrimary,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: OTSpacing.md),
+                    Expanded(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            Loc.tr('chatDailyLimitTitle'),
+                            style: OTTypography.cardTitle(color: textPrimary),
+                          ),
+                          const SizedBox(height: OTSpacing.xs),
+                          Text(
+                            bodyText,
+                            style: OTTypography.caption(color: textSecondary),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }
