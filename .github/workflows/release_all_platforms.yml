@@ -245,6 +245,10 @@ jobs:
           path: openturath_ai/build/portable-artifact
       - name: Build single-file Windows Setup
         shell: pwsh
+        env:
+          OT_WIN_CERT_SHA1: ${{ secrets.OT_WIN_CERT_SHA1 }}
+          OT_WIN_SIGN_COMMAND: ${{ secrets.OT_WIN_SIGN_COMMAND }}
+          OT_WIN_TIMESTAMP_URL: ${{ secrets.OT_WIN_TIMESTAMP_URL }}
         run: |
           $ErrorActionPreference = 'Stop'
           $archive = 'openturath_ai/build/portable-artifact/OpenTurath_AI_Windows_x64.zip'

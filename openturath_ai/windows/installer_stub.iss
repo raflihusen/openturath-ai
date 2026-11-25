@@ -2,6 +2,8 @@
 ; wizard: mengekstrak layar pemasang Flutter dan mesin pemasang ke folder
 ; sementara, menjalankan layar pemasang, lalu keluar saat layar itu ditutup.
 #define MyAppName "OpenTurath AI"
+#define MyAppPublisher "OpenTurath AI"
+#define MyAppURL "https://openturath.id"
 #ifndef MyAppVersion
 #define MyAppVersion "2.0.0"
 #endif
@@ -10,6 +12,16 @@
 AppId={{B6E0D2A4-5C1F-4B7A-9D3E-7A1F0C2E8B55}
 AppName={#MyAppName} Setup
 AppVersion={#MyAppVersion}
+AppPublisher={#MyAppPublisher}
+AppPublisherURL={#MyAppURL}
+AppSupportURL={#MyAppURL}
+AppUpdatesURL={#MyAppURL}
+VersionInfoVersion={#MyAppVersion}.0
+VersionInfoCompany={#MyAppPublisher}
+VersionInfoDescription={#MyAppName} Setup
+VersionInfoProductName={#MyAppName}
+VersionInfoProductVersion={#MyAppVersion}
+VersionInfoCopyright=Copyright (C) 2026 {#MyAppPublisher}. All rights reserved.
 CreateAppDir=no
 Uninstallable=no
 PrivilegesRequired=lowest
@@ -27,8 +39,8 @@ ArchitecturesAllowed=x64compatible
 ArchitecturesInstallIn64BitMode=x64compatible
 
 [Files]
-Source: "..\build\installer_stage\ui.zip"; Flags: dontcopy
 Source: "..\build\installer_core\OpenTurath_AI_Core_Setup.exe"; DestName: "core.exe"; Flags: dontcopy
+Source: "..\build\installer_stage\ui\*"; DestDir: "ui"; Flags: dontcopy recursesubdirs createallsubdirs
 
 [Code]
 var
@@ -82,17 +94,13 @@ begin
     Result := True;
     Exit;
   end;
-  ExtractTemporaryFile('ui.zip');
+  ExtractTemporaryFiles('ui\*');
   UiDir := ExpandConstant('{tmp}\ui');
-  ForceDirectories(UiDir);
-  { tar.exe tersedia bawaan di Windows 10 1803 ke atas. }
-  if not Exec(ExpandConstant('{sys}\tar.exe'),
-      '-xf "' + ExpandConstant('{tmp}\ui.zip') + '" -C "' + UiDir + '"',
-      '', SW_HIDE, ewWaitUntilTerminated, Rc) or (Rc <> 0) then
+  UiExe := UiDir + '\openturath_installer.exe';
+  if not FileExists(UiExe) then
   begin
     MsgBox('Tidak dapat menyiapkan pemasang. / Could not prepare the installer.', mbError, MB_OK);
     Exit;
   end;
-  UiExe := UiDir + '\openturath_installer.exe';
   Exec(UiExe, '', UiDir, SW_SHOW, ewWaitUntilTerminated, Rc);
 end;

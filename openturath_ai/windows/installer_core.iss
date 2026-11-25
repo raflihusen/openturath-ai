@@ -7,7 +7,7 @@
 #ifndef PayloadRoot
 #define PayloadRoot "..\..\OpenTurath_AI_Windows"
 #endif
-#define MyAppPublisher "OpenTurath"
+#define MyAppPublisher "OpenTurath AI"
 #define MyAppURL "https://openturath.id"
 #define MyAppExeName "openturath_ai.exe"
 
@@ -19,6 +19,12 @@ AppPublisher={#MyAppPublisher}
 AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
+VersionInfoVersion={#MyAppVersion}.0
+VersionInfoCompany={#MyAppPublisher}
+VersionInfoDescription={#MyAppName} Installer Engine
+VersionInfoProductName={#MyAppName}
+VersionInfoProductVersion={#MyAppVersion}
+VersionInfoCopyright=Copyright (C) 2026 {#MyAppPublisher}. All rights reserved.
 DefaultDirName={autopf}\{#MyAppName}
 UninstallDisplayIcon={app}\{#MyAppExeName}
 SetupIconFile=runner\resources\app_icon.ico

@@ -8,7 +8,7 @@ mengikuti kemajuan nyata, gema arch memuai di belakangnya.
 
 ```
 OpenTurath_AI_Windows_Setup.exe   (pembungkus Inno, tanpa wizard)
- ├─ ui.zip     → layar Flutter ini + install_manifest.json
+ ├─ ui\*       → layar Flutter ini + install_manifest.json (ekstraksi native Inno, tanpa tar.exe)
  └─ core.exe   → mesin pemasang Inno (installer_core.iss), dijalankan senyap
 ```
 
