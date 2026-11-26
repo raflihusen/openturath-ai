@@ -86,21 +86,24 @@ const notebookSkinScript = r'''
   }
 
   const CSS = `
-    /* ── Token: satu sumber dengan OTColors ── */
+    /* ── Token: satu sumber dengan OTColors (tanpa light-dark() agar kompatibel dengan WebView/Safari lama) ── */
     html body, html body.luminous-ui {
       --ot-sans: "OT Outfit", "OT Scheherazade", "Outfit", "Inter", "SF Pro Text", -apple-system, system-ui, "Segoe UI", sans-serif;
       --ot-arabic: "OT Scheherazade", "Scheherazade New", "Geeza Pro", "Noto Naskh Arabic", "Amiri", serif;
-      --ot-canvas: light-dark(#F6F6F6, #151515);
-      --ot-surface: light-dark(#FFFFFF, #292929);
-      --ot-subtle: light-dark(#EDEDED, #353535);
-      --ot-ink: light-dark(#171717, #F5F5F5);
-      --ot-muted: light-dark(#606060, #B8B8B8);
-      --ot-faint: light-dark(#6B6B6B, #9A9A9A);
-      --ot-line: light-dark(#DADADA, #454545);
-      --ot-line-soft: light-dark(#EBEBEB, #2D2D2D);
-      --ot-line-strong: light-dark(#767676, #808080);
-      --ot-on-ink: light-dark(#FFFFFF, #171717);
-      --ot-shadow: light-dark(rgba(0,0,0,.05), rgba(0,0,0,.2));
+      --ot-canvas: #F6F6F6;
+      --ot-surface: #FFFFFF;
+      --ot-subtle: #EDEDED;
+      --ot-ink: #171717;
+      --ot-muted: #606060;
+      --ot-faint: #6B6B6B;
+      --ot-line: #DADADA;
+      --ot-line-soft: #EBEBEB;
+      --ot-line-strong: #767676;
+      --ot-on-ink: #FFFFFF;
+      --ot-shadow: rgba(0,0,0,.05);
+      --ot-hover-tint: rgba(23,23,23,.06);
+      --ot-selection-bg: rgba(23,23,23,.14);
+      --ot-focus-border: rgba(23,23,23,.63);
       --nlm-font-family-sans: var(--ot-sans) !important;
       --chat-panel-bg: var(--ot-canvas) !important;
       --nlm-fills-surface-page: var(--ot-canvas) !important;
@@ -116,7 +119,7 @@ const notebookSkinScript = r'''
       --nlm-stroke-focus: var(--ot-line-strong) !important;
       --nlm-ctas-buttons-primary: var(--ot-ink) !important;
       --nlm-cta-text-and-icon-primary: var(--ot-on-ink) !important;
-      --nlm-states-on-primary-hover: light-dark(rgba(23,23,23,.06), rgba(245,245,245,.08)) !important;
+      --nlm-states-on-primary-hover: var(--ot-hover-tint) !important;
       --nlm-brand-blue: var(--ot-ink) !important;
       --nlm-icons-blue: var(--ot-ink) !important;
       --nlm-icons-default: var(--ot-ink) !important;
@@ -136,9 +139,31 @@ const notebookSkinScript = r'''
       font-family: var(--ot-sans) !important;
       background-color: var(--ot-canvas) !important;
     }
+    html[data-theme="dark"] body,
+    html.dark-theme body,
+    html.dark body,
+    html[data-theme="dark"] body.luminous-ui,
+    html.dark-theme body.luminous-ui,
+    html.dark body.luminous-ui {
+      --ot-canvas: #151515;
+      --ot-surface: #292929;
+      --ot-subtle: #353535;
+      --ot-ink: #F5F5F5;
+      --ot-muted: #B8B8B8;
+      --ot-faint: #9A9A9A;
+      --ot-line: #454545;
+      --ot-line-soft: #2D2D2D;
+      --ot-line-strong: #808080;
+      --ot-on-ink: #171717;
+      --ot-shadow: rgba(0,0,0,.2);
+      --ot-hover-tint: rgba(245,245,245,.08);
+      --ot-selection-bg: rgba(245,245,245,.22);
+      --ot-focus-border: rgba(245,245,245,.63);
+    }
     html { background-color: var(--ot-canvas) !important; }
+    html[data-theme="dark"], html.dark-theme, html.dark { --ot-canvas: #151515; background-color: #151515 !important; }
     html body textarea, html body button, html body input { font-family: var(--ot-sans) !important; }
-    ::selection { background: light-dark(rgba(23,23,23,.14), rgba(245,245,245,.22)); }
+    ::selection { background: var(--ot-selection-bg); }
     html body ::-webkit-scrollbar { width: 8px; height: 8px; }
     html body ::-webkit-scrollbar-thumb { background: var(--ot-line); border-radius: 8px; }
     html body ::-webkit-scrollbar-track { background: transparent; }
@@ -184,19 +209,19 @@ const notebookSkinScript = r'''
     }
     html body .to-user-message-card-content::after { display: none !important; }
     html body .to-user-message-card-content .message-text-content,
-    html body .to-user-message-card-content .paragraph,
-    html body .to-user-message-card-content .paragraph span,
-    html body .to-user-message-card-content p,
-    html body .to-user-message-card-content li {
+    html body .to-user-message-card-content .paragraph:not(.ot-ibarah):not(.ot-rtl-block),
+    html body .to-user-message-card-content .paragraph:not(.ot-ibarah):not(.ot-rtl-block) span,
+    html body .to-user-message-card-content p:not(.ot-ibarah):not(.ot-rtl-block),
+    html body .to-user-message-card-content li:not(.ot-ibarah):not(.ot-rtl-block) {
       font-family: var(--ot-sans) !important;
       color: var(--ot-ink) !important;
     }
     html body .to-user-message-card-content .paragraph:not(.table-paragraph):not(.ot-mode),
-    html body .to-user-message-card-content .paragraph:not(.table-paragraph):not(.ot-mode) :is(span:not(.mat-icon):not(.mdc-button__label):not([class*="citation" i]), b, strong, i, em, a, u),
+    html body .to-user-message-card-content .paragraph:not(.table-paragraph):not(.ot-mode) :where(span:not(.mat-icon):not(.mdc-button__label):not([class*="citation" i]), b, strong, i, em, a, u),
     html body .to-user-message-card-content p:not(.table-paragraph),
-    html body .to-user-message-card-content p:not(.table-paragraph) :is(span:not(.mat-icon):not(.mdc-button__label):not([class*="citation" i]), b, strong, i, em, a, u),
+    html body .to-user-message-card-content p:not(.table-paragraph) :where(span:not(.mat-icon):not(.mdc-button__label):not([class*="citation" i]), b, strong, i, em, a, u),
     html body .to-user-message-card-content li:not(.ot-mode),
-    html body .to-user-message-card-content li:not(.ot-mode) > :is(span:not(.mat-icon):not(.mdc-button__label):not([class*="citation" i]), b, strong, i, em, a, u),
+    html body .to-user-message-card-content li:not(.ot-mode) > :where(span:not(.mat-icon):not(.mdc-button__label):not([class*="citation" i]), b, strong, i, em, a, u),
     html body .to-user-message-card-content .md3-body-text,
     html body .to-user-message-card-content .mat-body-large,
     html body .to-user-message-card-content .mat-body-medium {
@@ -588,7 +613,7 @@ const notebookSkinScript = r'''
       padding-inline: 14px !important;
     }
     html body .input-group:focus-within {
-      border-color: light-dark(rgba(23,23,23,.63), rgba(245,245,245,.63)) !important;
+      border-color: var(--ot-focus-border) !important;
       outline: none !important;
     }
     html body .query-box-input {
@@ -899,10 +924,17 @@ const notebookSkinScript = r'''
     }
 
     document.querySelectorAll('.from-user-message-card-content, .to-user-message-card-content').forEach(card => {
-      const cTxt = card.textContent || '';
+      const isAnswer = card.classList.contains('to-user-message-card-content');
+      let cTxt;
+      if (isAnswer && card.querySelector('thinking-chain-view, .thinking-chain')) {
+        const clone = card.cloneNode(true);
+        clone.querySelectorAll('thinking-chain-view, .thinking-chain').forEach(n => n.remove());
+        cTxt = clone.textContent || '';
+      } else {
+        cTxt = card.textContent || '';
+      }
       if (card.__otDirLen === cTxt.length) return;
       card.__otDirLen = cTxt.length;
-      const isAnswer = card.classList.contains('to-user-message-card-content');
       const proseTxt = isAnswer
         ? cTxt.replace(QUOTED_ARABIC_ANY, ' ').replace(/\([^)]*[\u0621-\u064A][^)]*\)/g, ' ')
         : cTxt;
@@ -1199,6 +1231,7 @@ const notebookSkinScript = r'''
   let stageStart = 0;
   function updateStage() {
     try {
+      if (window._otBackgroundPaused) return;
       const active = document.querySelector('.thinking-chain.ot-thinking');
       const stages = LABELS[lang()].stages;
       if (!active) { stageStart = 0; return; }
@@ -1309,10 +1342,10 @@ const notebookSkinScript = r'''
 
     const key = limited ? ('1|' + resetTime) : '0';
     if (key !== lastLimitKey) {
-      lastLimitKey = key;
       try {
         if (window.flutter_inappwebview && typeof window.flutter_inappwebview.callHandler === 'function') {
           window.flutter_inappwebview.callHandler('otChatLimitState', { limited: limited, resetTime: resetTime });
+          lastLimitKey = key;
         }
       } catch (_) {}
     }
@@ -1326,6 +1359,16 @@ const notebookSkinScript = r'''
     try { if (window.__otWatchStop) window.__otWatchStop(); } catch (_) {}
   }
   window.otSkinApply = apply;
+
+  /* Deteksi tombol Stop aktif selalu diekspor meski dialog Stop kustom dimatikan,
+     agar body.ot-generating dan ikon kotak berhenti tetap akurat. */
+  const STOP_LABEL_GLOBAL = /stop|hentikan|berhenti|إيقاف|detener|arrêter|stopp/i;
+  const STOP_ICON_GLOBAL = /^(stop|stop_circle|stop_circle_outlined|square|stop_fill)$/i;
+  function stopIconOf(btn) {
+    const ic = btn && btn.querySelector ? btn.querySelector('mat-icon, .mat-icon, [data-mat-icon-name], [fonticon]') : null;
+    return ic ? (ic.getAttribute('data-mat-icon-name') || ic.getAttribute('fonticon') || ic.textContent || '').trim() : '';
+  }
+  window.__otIsStopButton = btn => !!btn && (STOP_ICON_GLOBAL.test(stopIconOf(btn)) || STOP_LABEL_GLOBAL.test(btn.getAttribute('aria-label') || ''));
 
   /* Tombol berhenti: dialog "Stop generating?" milik Google diganti dialog OpenTurath.
      Klik dicegat; aplikasi bertanya ke pengguna; bila setuju, tombol asli ditekan dan
@@ -1527,7 +1570,7 @@ const notebookSkinScript = r'''
 
       if (wanted.length === 0 || typeof window.otOpenLanguageSettings !== 'function') { finish(false, 'unsupported'); return; }
       root.classList.add('ot-opening-language');
-      if (!window.otOpenLanguageSettings()) { finish(false, 'menu'); return; }
+      if (!window.otOpenLanguageSettings(true)) { finish(false, 'menu'); return; }
 
       waitFor(
         () => document.querySelector('configure-user-settings mat-select'),

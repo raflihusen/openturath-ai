@@ -417,6 +417,14 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
       final result = await controller.evaluateJavascript(source: '''
 (function() {
   try {
+    var isValidEmail = function(cand) {
+      if (!cand || typeof cand !== 'string') return false;
+      var c = cand.trim().toLowerCase();
+      if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}\$/.test(c)) return false;
+      if (/\\.(png|jpg|jpeg|webp|svg|gif|ico|js|css|woff2?|ttf|otf|map)\$/.test(c)) return false;
+      if (c.indexOf('noreply') !== -1 || c.indexOf('no-reply') !== -1 || c.indexOf('support@') !== -1 || c.indexOf('help@') !== -1 || c.indexOf('@example.') !== -1) return false;
+      return true;
+    };
     // 1. Cek tombol profil / avatar di Google One-Google header
     var selectors = [
       'a[aria-label*="@"]',
@@ -435,21 +443,19 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
                   els[j].getAttribute('title') || 
                   els[j].getAttribute('data-identifier') || '';
         var match = str.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}/);
-        if (match) return match[0].toLowerCase();
+        if (match && isValidEmail(match[0])) return match[0].toLowerCase();
       }
     }
-    // 2. Cek variabel global Google WIZ
+    // 2. Cek variabel global Google WIZ (utamakan oPEP7c yang memang field email akun Google)
     if (window.WIZ_global_data) {
-      try {
-        var strWiz = JSON.stringify(window.WIZ_global_data);
-        var mWiz = strWiz.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}/);
-        if (mWiz) return mWiz[0].toLowerCase();
-      } catch(_) {}
+      if (typeof window.WIZ_global_data.oPEP7c === 'string' && isValidEmail(window.WIZ_global_data.oPEP7c)) {
+        return window.WIZ_global_data.oPEP7c.trim().toLowerCase();
+      }
       for (var k in window.WIZ_global_data) {
         var val = window.WIZ_global_data[k];
         if (typeof val === 'string' && val.indexOf('@') !== -1) {
           var m = val.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}/);
-          if (m) return m[0].toLowerCase();
+          if (m && isValidEmail(m[0])) return m[0].toLowerCase();
         }
       }
     }
@@ -458,13 +464,13 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
     if (header) {
       var raw = header.textContent || header.innerText || '';
       var m = raw.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}/);
-      if (m) return m[0].toLowerCase();
+      if (m && isValidEmail(m[0])) return m[0].toLowerCase();
     }
     // 4. Cek atribut data-email atau data-profile-email
     var emailAttr = document.querySelector('[data-email], [data-profile-email]');
     if (emailAttr) {
       var val = emailAttr.getAttribute('data-email') || emailAttr.getAttribute('data-profile-email');
-      if (val && val.indexOf('@') !== -1) return val.toLowerCase();
+      if (val && isValidEmail(val)) return val.trim().toLowerCase();
     }
     // 5. Cek seluruh teks pada halaman (sangat efektif untuk myaccount.google.com)
     if (document.body) {
@@ -472,12 +478,10 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
       var matches = bodyText.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}/g);
       if (matches && matches.length > 0) {
         for (var b = 0; b < matches.length; b++) {
-          var cand = matches[b].toLowerCase();
-          if (cand.indexOf('noreply') === -1 && cand.indexOf('support@') === -1 && cand.indexOf('help@') === -1) {
-            return cand;
+          if (isValidEmail(matches[b])) {
+            return matches[b].toLowerCase();
           }
         }
-        return matches[0].toLowerCase();
       }
     }
     return null;
@@ -773,7 +777,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
     final confirmed = await _confirmSameAccount();
     if (!_isCurrentVerification(epoch) || _isSessionReady) return;
     if (confirmed == true) {
-      await _onSessionAuthenticated();
+      await _onSessionAuthenticated(userConfirmed: true);
     } else if (confirmed == false) {
       // "Periksa lagi": muat ulang agar onLoadStop memicu verifikasi baru.
       await controller.reload();
@@ -1093,7 +1097,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
     if (!_isCurrentVerification(epoch)) return;
 
     if (confirm == true) {
-      await _onSessionAuthenticated();
+      await _onSessionAuthenticated(userConfirmed: true);
     } else if (_isShieldActive) {
       // "Periksa lagi": muat ulang agar onLoadStop menjalankan verifikasi
       // otomatis kembali, bukan membiarkan layar tertutup pelindung.
@@ -1103,7 +1107,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
 
   /// Only a matching account on Notebook can establish session ownership.
   /// Failed reads leave the existing native session intact and remain retryable.
-  Future<void> _onSessionAuthenticated() async {
+  Future<void> _onSessionAuthenticated({bool userConfirmed = false}) async {
     final epoch = _connectionEpoch;
     if (!_isCurrentVerification(epoch) ||
         _isSessionReady ||
@@ -1130,7 +1134,15 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
       }
       final detectedEmail = await _detectGoogleEmail(controller);
       if (!_isCurrentVerification(epoch)) return;
-      if (detectedEmail != email) {
+      // Jika DOM berhasil membaca email dan berbeda -> tolak.
+      // Jika DOM tidak mampu membaca email (null) tetapi pengguna sudah
+      // mengonfirmasi secara eksplisit bahwa akunnya sama & cookie sesi hidup -> izinkan.
+      if (detectedEmail != null && detectedEmail.isNotEmpty) {
+        if (detectedEmail != email) {
+          _showVerificationRecovery();
+          return;
+        }
+      } else if (!userConfirmed) {
         _showVerificationRecovery();
         return;
       }
@@ -1611,8 +1623,9 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
                                             await controller.loadUrl(
                                                 urlRequest:
                                                     URLRequest(url: targetUrl));
-                                            return true;
                                           }
+                                          // Kembalikan false karena navigasi dilakukan pada WebView saat ini
+                                          // (tanpa membuat jendela popup baru agar deferral WebView2 tidak macet).
                                           return false;
                                         },
                                         onWebViewCreated: (controller) =>

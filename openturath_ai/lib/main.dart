@@ -104,7 +104,7 @@ Future<void> main() async {
     final prefs = await SharedPreferences.getInstance()
         .timeout(const Duration(seconds: 10));
     AgentSessionTab.defaultFontScale =
-        prefs.getDouble('turath_font_zoom_level') ?? 1.0;
+        (prefs.getDouble('turath_font_zoom_level') ?? 1.0).clamp(0.85, 1.6);
   } catch (_) {}
 
   // ── Status bar transparan awal ──

@@ -248,7 +248,7 @@ void notebookSkinTests() {
       () {
     expect(
       notebookSkinScript.contains(
-          'html body .to-user-message-card-content .paragraph:not(.table-paragraph):not(.ot-mode) :is(span:not(.mat-icon)'),
+          'html body .to-user-message-card-content .paragraph:not(.table-paragraph):not(.ot-mode) :where(span:not(.mat-icon)'),
       isTrue,
       reason: 'teks di dalam span Angular harus ikut membesar saat slider digeser',
     );

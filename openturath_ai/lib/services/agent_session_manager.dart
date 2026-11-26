@@ -30,7 +30,7 @@ class AgentSessionTab {
   RoomFailure? failure;
 
   static double defaultFontScale = 1.0;
-  double fontScale = defaultFontScale;
+  double fontScale = defaultFontScale.clamp(0.85, 1.6);
   bool hasInjectedEarlyScript = false;
   bool isMenuOpen = false;
   bool isPrewarmed = false;
@@ -49,18 +49,39 @@ class AgentSessionTab {
 
   /// Lepaskan seluruh resource WebView dan handler JavaScript untuk mencegah kebocoran memori.
   Future<void> disposeWebResources() async {
+    final controller = webController;
+    webController = null;
+    isSessionReady = false;
+    isWebLoading = false;
+    hasInjectedEarlyScript = false;
+    isDailyLimitReached = false;
+    dailyLimitResetTime = null;
+
+    if (controller == null) return;
     try {
-      await webController?.loadUrl(
-          urlRequest: URLRequest(url: WebUri('about:blank')));
-      await webController?.stopLoading();
-      webController?.removeJavaScriptHandler(handlerName: 'otCopiedAnswer');
-      webController?.removeJavaScriptHandler(handlerName: 'otAnswerState');
-      webController?.removeJavaScriptHandler(handlerName: 'otAnswerChunk');
-      webController?.removeJavaScriptHandler(handlerName: 'otDismissMenu');
-      webController?.removeJavaScriptHandler(handlerName: 'otStopRequested');
-      webController?.removeJavaScriptHandler(handlerName: 'otChatLimitState');
-    } catch (_) {}
-    if (webController != null) {
+      try {
+        await controller
+            .loadUrl(urlRequest: URLRequest(url: WebUri('about:blank')))
+            .timeout(const Duration(milliseconds: 800));
+      } catch (_) {}
+      try {
+        await controller
+            .stopLoading()
+            .timeout(const Duration(milliseconds: 800));
+      } catch (_) {}
+      for (final name in const [
+        'otCopiedAnswer',
+        'otAnswerState',
+        'otAnswerChunk',
+        'otDismissMenu',
+        'otStopRequested',
+        'otChatLimitState',
+      ]) {
+        try {
+          controller.removeJavaScriptHandler(handlerName: name);
+        } catch (_) {}
+      }
+    } finally {
       // Dispose only after the corresponding platform view has left the tree.
       SchedulerBinding.instance.addPostFrameCallback((_) async {
         try {
@@ -71,12 +92,6 @@ class AgentSessionTab {
       });
       SchedulerBinding.instance.scheduleFrame();
     }
-    webController = null;
-    isSessionReady = false;
-    isWebLoading = false;
-    hasInjectedEarlyScript = false;
-    isDailyLimitReached = false;
-    dailyLimitResetTime = null;
   }
 }
 

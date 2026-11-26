@@ -182,10 +182,14 @@ class AgentMultiTabRoom extends StatefulWidget {
                       : OTColors.shadow.withValues(alpha: 0.87)),
             ),
           ),
-          if (AuthService().currentUser?.email != null)
+          if ((AuthService().cachedCurrentUser?.email ??
+                  AuthService().currentUser?.email) !=
+              null)
             TextButton(
               onPressed: () {
-                final def = AuthService().currentUser?.email ?? '';
+                final def = AuthService().cachedCurrentUser?.email ??
+                    AuthService().currentUser?.email ??
+                    '';
                 controller.text = def;
               },
               child: Text(
@@ -405,7 +409,7 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                             color: textSecondary)),
                     Expanded(
                       child: Slider(
-                        value: session.fontScale,
+                        value: session.fontScale.clamp(0.85, 1.6),
                         min: 0.85,
                         max: 1.6,
                         divisions: 5,
@@ -598,28 +602,8 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
             onOpened: () {
               setState(() => activeTab.isMenuOpen = true);
               activeTab.webController?.evaluateJavascript(
-                source: '''
-(function() {
-  if (typeof window.otSetMenuOpen === "function") window.otSetMenuOpen(true);
-  var old = document.getElementById('ot-menu-backdrop');
-  if (old) old.remove();
-  var b = document.createElement('div');
-  b.id = 'ot-menu-backdrop';
-  b.style.cssText = 'position:fixed!important;top:0!important;left:0!important;width:100vw!important;height:100vh!important;z-index:2147483647!important;background:transparent!important;cursor:default!important;-webkit-tap-highlight-color:transparent!important;';
-  function dismiss(e) {
-    try { e.preventDefault(); e.stopPropagation(); } catch (_) {}
-    b.remove();
-    if (window.flutter_inappwebview && window.flutter_inappwebview.callHandler) {
-      window.flutter_inappwebview.callHandler('otDismissMenu');
-    }
-  }
-  b.addEventListener('pointerdown', dismiss, true);
-  b.addEventListener('mousedown', dismiss, true);
-  b.addEventListener('touchstart', dismiss, true);
-  b.addEventListener('click', dismiss, true);
-  (document.body || document.documentElement).appendChild(b);
-})();
-''',
+                source:
+                    'if (typeof window.otSetMenuOpen === "function") window.otSetMenuOpen(true);',
               );
             },
             onCanceled: () {
@@ -951,26 +935,26 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
           html body .from-user-message-card-content .md3-body-text,
           html body .from-user-message-card-content p,
           html body .from-user-message-card-content .message-text-content,
-          html body .from-user-message-card-content :is(p, .md3-body-text, .message-text-content) :is(span, b, strong, i, em, a, u),
+          html body .from-user-message-card-content :where(p, .md3-body-text, .message-text-content) :where(span, b, strong, i, em, a, u),
           html body .to-user-message-card-content .paragraph:not(.table-paragraph):not(.ot-mode),
-          html body .to-user-message-card-content .paragraph:not(.table-paragraph):not(.ot-mode) :is(span:not(.mat-icon):not(.mdc-button__label):not([class*="citation" i]), b, strong, i, em, a, u),
+          html body .to-user-message-card-content .paragraph:not(.table-paragraph):not(.ot-mode) :where(span:not(.mat-icon):not(.mdc-button__label):not([class*="citation" i]), b, strong, i, em, a, u),
           html body .to-user-message-card-content p:not(.table-paragraph),
-          html body .to-user-message-card-content p:not(.table-paragraph) :is(span:not(.mat-icon):not(.mdc-button__label):not([class*="citation" i]), b, strong, i, em, a, u),
+          html body .to-user-message-card-content p:not(.table-paragraph) :where(span:not(.mat-icon):not(.mdc-button__label):not([class*="citation" i]), b, strong, i, em, a, u),
           html body .to-user-message-card-content li:not(.ot-mode),
-          html body .to-user-message-card-content li:not(.ot-mode) > :is(span:not(.mat-icon):not(.mdc-button__label):not([class*="citation" i]), b, strong, i, em, a, u),
+          html body .to-user-message-card-content li:not(.ot-mode) > :where(span:not(.mat-icon):not(.mdc-button__label):not([class*="citation" i]), b, strong, i, em, a, u),
           html body .to-user-message-card-content .md3-body-text,
           html body .to-user-message-card-content .mat-body-large,
           html body .to-user-message-card-content .mat-body-medium,
           .rendered-markdown p:not(.table-paragraph),
-          .rendered-markdown p:not(.table-paragraph) :is(span:not(.mat-icon):not(.mdc-button__label):not([class*="citation" i]), b, strong, i, em, a, u),
+          .rendered-markdown p:not(.table-paragraph) :where(span:not(.mat-icon):not(.mdc-button__label):not([class*="citation" i]), b, strong, i, em, a, u),
           .rendered-markdown li,
-          .rendered-markdown li > :is(span:not(.mat-icon):not(.mdc-button__label):not([class*="citation" i]), b, strong, i, em, a, u),
+          .rendered-markdown li > :where(span:not(.mat-icon):not(.mdc-button__label):not([class*="citation" i]), b, strong, i, em, a, u),
           .chat-response p:not(.table-paragraph),
-          .chat-response p:not(.table-paragraph) :is(span:not(.mat-icon):not(.mdc-button__label):not([class*="citation" i]), b, strong, i, em, a, u),
+          .chat-response p:not(.table-paragraph) :where(span:not(.mat-icon):not(.mdc-button__label):not([class*="citation" i]), b, strong, i, em, a, u),
           .chat-response li,
-          .chat-response li > :is(span:not(.mat-icon):not(.mdc-button__label):not([class*="citation" i]), b, strong, i, em, a, u),
+          .chat-response li > :where(span:not(.mat-icon):not(.mdc-button__label):not([class*="citation" i]), b, strong, i, em, a, u),
           .to-user-container .paragraph:not(.table-paragraph):not(.ot-mode),
-          .to-user-container .paragraph:not(.table-paragraph):not(.ot-mode) :is(span:not(.mat-icon):not(.mdc-button__label):not([class*="citation" i]), b, strong, i, em, a, u) {
+          .to-user-container .paragraph:not(.table-paragraph):not(.ot-mode) :where(span:not(.mat-icon):not(.mdc-button__label):not([class*="citation" i]), b, strong, i, em, a, u) {
             font-size: ${basePx}px !important;
             line-height: 1.7 !important;
           }
@@ -1184,6 +1168,13 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
   int _lastWebProgress = -1;
   int _readySamples = 0;
 
+  void _stopReadinessTimers() {
+    _readinessTimer?.cancel();
+    _readinessTimer = null;
+    _inputRetryTimer?.cancel();
+    _inputRetryTimer = null;
+  }
+
   void _resetLoadingClock() {
     _loadingStarted = null;
     _lastProgressAt = null;
@@ -1222,10 +1213,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
     final isOpen = AgentSessionManager.instance.isOpen;
     if (!isOpen) {
       // Room ditutup/disembunyikan: jeda/batalkan timer agar tidak memboroskan CPU
-      _readinessTimer?.cancel();
-      _readinessTimer = null;
-      _inputRetryTimer?.cancel();
-      _inputRetryTimer = null;
+      _stopReadinessTimers();
       _resetLoadingClock();
       try {
         widget.session.webController?.evaluateJavascript(
@@ -1235,6 +1223,9 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
       } catch (_) {}
     } else if (widget.isActive &&
         !widget.session.isSessionReady &&
+        widget.session.errorMessage == null &&
+        !widget.session.isUrlLoading &&
+        !widget.session.isGoogleAuthPage &&
         _readinessTimer == null) {
       // Room dibuka kembali dan sesi belum siap: lanjutkan polling kesiapan
       try {
@@ -1251,10 +1242,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
   void didUpdateWidget(_SingleAgentTabWebView oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (!identical(oldWidget.session, widget.session)) {
-      _readinessTimer?.cancel();
-      _readinessTimer = null;
-      _inputRetryTimer?.cancel();
-      _inputRetryTimer = null;
+      _stopReadinessTimers();
       _googleSignInDebounceTimer?.cancel();
       _googleSignInDebounceTimer = null;
       _resetLoadingClock();
@@ -1267,10 +1255,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
     }
     if (oldWidget.isActive && !widget.isActive) {
       // Tab ini beralih ke background: hentikan polling dan bekukan observer DOM
-      _readinessTimer?.cancel();
-      _readinessTimer = null;
-      _inputRetryTimer?.cancel();
-      _inputRetryTimer = null;
+      _stopReadinessTimers();
       // Polling berhenti, jadi jatah 45 detik juga berhenti; kalau tidak, tab
       // yang ditinggal langsung dinyatakan gagal saat dibuka kembali.
       _resetLoadingClock();
@@ -1285,10 +1270,13 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
       try {
         widget.session.webController?.evaluateJavascript(
           source:
-              'window.otSetBackgroundPaused && window.otSetBackgroundPaused(false); window.otNotebook && window.otNotebook.clean && window.otNotebook.clean(); window.otSkinApply && window.otSkinApply();',
+              'window.otSetBackgroundPaused && window.otSetBackgroundPaused(false); window.otNotebook && window.otNotebook.clean && window.otNotebook.clean(true); window.otSkinApply && window.otSkinApply();',
         );
       } catch (_) {}
       if (!widget.session.isSessionReady &&
+          widget.session.errorMessage == null &&
+          !widget.session.isUrlLoading &&
+          !widget.session.isGoogleAuthPage &&
           AgentSessionManager.instance.isOpen) {
         _startReadinessCheck();
       }
@@ -1299,10 +1287,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     AgentSessionManager.instance.removeListener(_onSessionManagerChanged);
-    _readinessTimer?.cancel();
-    _readinessTimer = null;
-    _inputRetryTimer?.cancel();
-    _inputRetryTimer = null;
+    _stopReadinessTimers();
     _googleSignInDebounceTimer?.cancel();
     _googleSignInDebounceTimer = null;
     if (mounted) {
@@ -1336,6 +1321,8 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
     setState(() {
       widget.session.isWebLoading = true;
       widget.session.isSessionReady = false;
+      widget.session.isDailyLimitReached = false;
+      widget.session.dailyLimitResetTime = null;
     });
     controller.reload();
     _resetLoadingClock();
@@ -1493,8 +1480,12 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
   }
 
   void _startReadinessCheck() {
-    _readinessTimer?.cancel();
-    _inputRetryTimer?.cancel();
+    _stopReadinessTimers();
+    if (widget.session.errorMessage != null ||
+        widget.session.isUrlLoading ||
+        widget.session.isGoogleAuthPage) {
+      return;
+    }
     _loadingStarted ??= DateTime.now();
     _readySamples = 0;
     _readinessTimer =
@@ -1528,7 +1519,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
 
     if (hasActiveEntitlement && _accessDeniedRetryCount < 5) {
       _accessDeniedRetryCount++;
-      _readinessTimer?.cancel();
+      _stopReadinessTimers();
       if (mounted) {
         setState(() {
           session.isSessionReady = false;
@@ -1569,8 +1560,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
             if (_accessDeniedRetryCount < 5) {
               _handleAccessDenied(session);
             } else {
-              _readinessTimer?.cancel();
-              _inputRetryTimer?.cancel();
+              _stopReadinessTimers();
               _resetLoadingClock();
               setState(() {
                 session.isWebLoading = false;
@@ -1591,8 +1581,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
           }
           if (e.code == 'permission-denied' &&
               !(_authService.cachedCurrentUser?.isVip == true)) {
-            _readinessTimer?.cancel();
-            _inputRetryTimer?.cancel();
+            _stopReadinessTimers();
             _resetLoadingClock();
             setState(() {
               session.isWebLoading = false;
@@ -1615,8 +1604,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
       return;
     }
 
-    _readinessTimer?.cancel();
-    _inputRetryTimer?.cancel();
+    _stopReadinessTimers();
     _resetLoadingClock();
     if (mounted) {
       setState(() {
@@ -1788,8 +1776,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
           debugPrint(
               '[OpenTurath] Readiness timeout: host=${url?.host} path=${url?.path} elapsed=${elapsedSec}s lastProgress=${sinceLastProgressSec}s page=$title');
         }
-        _readinessTimer?.cancel();
-        _inputRetryTimer?.cancel();
+        _stopReadinessTimers();
         _resetLoadingClock();
         if (mounted) {
           setState(() {
@@ -1846,13 +1833,17 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
           : 0;
       // Segera tampilkan ruang chat begitu input siap (1 sampel >= 600ms atau 2 sampel berturut-turut).
       if (_readySamples >= 2 || (_readySamples >= 1 && elapsedMs >= 600)) {
-        _readinessTimer?.cancel();
-        _inputRetryTimer?.cancel();
+        _stopReadinessTimers();
         _resetLoadingClock();
         // Timer sudah berhenti: aktivasi yang macet tidak boleh menahan loader.
         try {
           await controller
               .evaluateJavascript(source: 'window.otNotebook?.activate()')
+              .timeout(_readyStepLimit);
+          await controller
+              .evaluateJavascript(
+                source: buildFontScaleEvalScript(widget.session.fontScale),
+              )
               .timeout(_readyStepLimit);
         } catch (_) {}
         try {
@@ -1860,7 +1851,9 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
           await prefs.setBool('google_session_ready', true);
         } catch (_) {}
         await AuthService.rememberWebSessionOwner(
-            _authService.currentUser?.email ?? '');
+            _authService.cachedCurrentUser?.email ??
+                _authService.currentUser?.email ??
+                '');
         if (!mounted) return;
         _accessDeniedRetryCount = 0;
         setState(() {
@@ -1940,6 +1933,8 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
       session.isPaywallRequired = false;
       session.isGooglePermissionError = false;
       session.isTimeoutError = false;
+      session.isDailyLimitReached = false;
+      session.dailyLimitResetTime = null;
       session.failure = null;
       session.diagnosticAttemptId = newDiagnosticId();
     });
@@ -1976,6 +1971,11 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
         final hadError = session.errorMessage != null ||
             session.isGooglePermissionError ||
             session.isTimeoutError;
+        // Jangan potong sesi yang sudah siap dan sehat secara senyap di tengah jalan.
+        if (session.isSessionReady && !hadError) {
+          session.resolvedUrl = effectiveFresh;
+          return;
+        }
         if (hadError) {
           setState(() {
             session.resolvedUrl = effectiveFresh;
@@ -1993,7 +1993,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
           unawaited(session.webController!
               .loadUrl(urlRequest: URLRequest(url: WebUri(effectiveFresh)))
               .catchError((_) {}));
-          if (!session.isSessionReady) _startReadinessCheck();
+          _startReadinessCheck();
         }
       }
 
@@ -2195,7 +2195,10 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
           backLabel: Loc.tr('back'),
         );
       } else if (session.isGoogleAuthPage) {
-        final email = _authService.currentUser?.email?.trim() ?? '';
+        final email = (_authService.cachedCurrentUser?.email ??
+                _authService.currentUser?.email ??
+                '')
+            .trim();
         state = AppErrorState(
           icon: Icons.link_rounded,
           title: Loc.tr('roomSameAccountTitle'),
@@ -2542,7 +2545,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
                   if (text.isEmpty) return;
 
                   setState(() {
-                    session.isGenerating = false;
+                    session.isGenerating = true;
                     if (session.chatMessages.isNotEmpty &&
                         !session.chatMessages.last.isUser) {
                       final last = session.chatMessages.last;
@@ -2598,6 +2601,18 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
             },
             onLoadStart: (controller, uri) async {
               session.hasInjectedEarlyScript = false;
+              if (session.isDailyLimitReached ||
+                  session.dailyLimitResetTime != null) {
+                if (mounted) {
+                  setState(() {
+                    session.isDailyLimitReached = false;
+                    session.dailyLimitResetTime = null;
+                  });
+                } else {
+                  session.isDailyLimitReached = false;
+                  session.dailyLimitResetTime = null;
+                }
+              }
               _loadingStarted = DateTime.now();
               _lastProgressAt = DateTime.now();
               _lastWebProgress = -1;
@@ -2870,7 +2885,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
                   setState(() => session.isMenuOpen = false);
                   session.webController?.evaluateJavascript(
                     source:
-                        'var b = document.getElementById("ot-menu-backdrop"); if (b) b.remove();',
+                        'if (typeof window.otSetMenuOpen === "function") window.otSetMenuOpen(false); var b = document.getElementById("ot-menu-backdrop"); if (b) b.remove();',
                   );
                   final nav = Navigator.of(context, rootNavigator: false);
                   if (nav.canPop()) {

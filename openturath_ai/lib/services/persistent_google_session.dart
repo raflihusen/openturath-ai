@@ -143,22 +143,27 @@ class PersistentGoogleSession {
         return true;
       }
 
-      final live = await hasLiveSession(null);
+      final live = await hasLiveSessionTriState(null);
       if (epoch != _ownershipEpoch ||
           prefs.getString(_ownerKey)?.trim().toLowerCase() != cleanEmail ||
           prefs.getString(verifiedOwnerKey)?.trim().toLowerCase() !=
               cleanEmail) {
         return false;
       }
-      if (live) {
+      if (live == true) {
         _cachedVerifiedOwner = cleanEmail;
         _cachedLiveEmail = cleanEmail;
         _cachedLiveEpoch = epoch;
         await prefs.setBool(_readyKey, true);
         return true;
       }
-      invalidateLiveSessionCache();
-      await prefs.setBool(_readyKey, false);
+      // Hanya hapus _readyKey jika pembacaan cookie benar-benar sukses dan
+      // membuktikan sesi tidak ada (false); bila gagal/timeout (null), pertahankan
+      // flag disk agar startup offline / WebView2 sibuk tidak merusak status sesi.
+      if (live == false) {
+        invalidateLiveSessionCache();
+        await prefs.setBool(_readyKey, false);
+      }
       return false;
     } catch (_) {
       return false;

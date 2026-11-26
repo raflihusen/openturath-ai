@@ -20,7 +20,8 @@ const _notebookCleanupScript = r'''
     return;
   }
   const answerSelector = '.chat-message[data-sender="model"], .model-message, .response-message, .to-user-container, .to-user-message, .chat-message-pair .answer, [data-message-author-role="assistant"], app-chat-response, app-chat-message, .chat-response, [role="article"], app-chat-turn, chat-turn, [class*="model-turn" i], [class*="model-response" i]';
-  const questionSelector = '.chat-message[data-sender="user"], .user-message, .from-user, .to-model-container, [data-message-author-role="user"], app-chat-query, app-chat-prompt, [class*="user-turn" i], [class*="user-query" i], [class*="user-prompt" i]';
+  const questionSelector = '.chat-message[data-sender="user"], .user-message, .from-user, .from-user-container, .from-user-message-card-content, .to-model-container, [data-message-author-role="user"], app-chat-query, app-chat-prompt, [class*="user-turn" i], [class*="user-query" i], [class*="user-prompt" i]';
+  const MESSAGE_GUARD = 'chat-message, .chat-message, .model-message, .user-message, .from-user-container, .to-user-container, .from-user-message-card-content, .to-user-message-card-content, [role="article"], .rendered-markdown, app-chat-response, app-chat-query, app-chat-prompt, app-chat-turn, chat-turn, [data-message-author-role]';
   const visible = el => !!el && el.getClientRects().length > 0 && getComputedStyle(el).visibility !== 'hidden' && getComputedStyle(el).display !== 'none';
   const text = el => (el?.innerText || el?.textContent || '').trim();
   function answerText(el) {
@@ -626,32 +627,49 @@ const _notebookCleanupScript = r'''
         overflow: hidden !important;
       }
 
-      /* Pastikan bilah input chat dan komponen di dalamnya selalu terlihat dan interaktif */
-      app-chat-input,
-      app-chat-input *,
-      div.chat-input-container,
-      div.chat-input-container *,
-      .input-container,
-      .input-container *,
-      form.chat-input-form,
-      form.chat-input-form *,
-      .chat-input-area,
-      .chat-input-area *,
-      .query-box-container,
-      .query-box-container *,
-      textarea,
-      textarea *,
-      [contenteditable="true"],
-      [contenteditable="true"] *,
-      [role="textbox"],
-      [role="textbox"] * {
+      /* Pastikan bilah input chat dan komponen di dalamnya selalu terlihat dan interaktif
+         kecuali saat kartu batas harian Flutter sedang mengambil alih bagian bawah. */
+      html:not(.ot-flutter-limit-active) app-chat-input,
+      html:not(.ot-flutter-limit-active) app-chat-input *,
+      html:not(.ot-flutter-limit-active) div.chat-input-container,
+      html:not(.ot-flutter-limit-active) div.chat-input-container *,
+      html:not(.ot-flutter-limit-active) .input-container,
+      html:not(.ot-flutter-limit-active) .input-container *,
+      html:not(.ot-flutter-limit-active) form.chat-input-form,
+      html:not(.ot-flutter-limit-active) form.chat-input-form *,
+      html:not(.ot-flutter-limit-active) .chat-input-area,
+      html:not(.ot-flutter-limit-active) .chat-input-area *,
+      html:not(.ot-flutter-limit-active) .query-box-container,
+      html:not(.ot-flutter-limit-active) .query-box-container *,
+      html:not(.ot-flutter-limit-active) textarea,
+      html:not(.ot-flutter-limit-active) textarea *,
+      html:not(.ot-flutter-limit-active) [contenteditable="true"],
+      html:not(.ot-flutter-limit-active) [contenteditable="true"] *,
+      html:not(.ot-flutter-limit-active) [role="textbox"],
+      html:not(.ot-flutter-limit-active) [role="textbox"] * {
         visibility: visible !important;
         opacity: 1 !important;
         pointer-events: auto !important;
       }
 
-      /* Sembunyikan tombol penghitung sumber / pemilih sumber di dalam maupun di luar bilah obrolan */
-      app-chat-input button:not([type="submit"]):not([aria-label*="send" i]):not([aria-label*="kirim" i]):has(mat-icon[fonticon*="source"], mat-icon[data-mat-icon-name*="source"], mat-icon[fonticon*="filter"], mat-icon[data-mat-icon-name*="filter"]),
+      /* Sembunyikan tombol penghitung sumber / pemilih sumber di dalam maupun di luar bilah obrolan.
+         Aturan :has(...) WAJIB berdiri sendiri agar mesin CSS lama tidak menggugurkan seluruh daftar selektor (Rule 6). */
+      app-chat-input button:not([type="submit"]):not([aria-label*="send" i]):not([aria-label*="kirim" i]):has(mat-icon[fonticon*="source"], mat-icon[data-mat-icon-name*="source"], mat-icon[fonticon*="filter"], mat-icon[data-mat-icon-name*="filter"]) {
+        display: none !important;
+        visibility: hidden !important;
+        opacity: 0 !important;
+        pointer-events: none !important;
+        width: 0 !important;
+        height: 0 !important;
+        min-width: 0 !important;
+        min-height: 0 !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        border: none !important;
+        overflow: hidden !important;
+        position: absolute !important;
+        left: -9999px !important;
+      }
       app-chat-input button[aria-label*="source" i],
       app-chat-input button[aria-label*="sumber" i],
       app-chat-input button[aria-label*="filter" i],
@@ -761,7 +779,7 @@ const _notebookCleanupScript = r'''
     document.querySelectorAll('mat-icon, [data-mat-icon-name], svg').forEach(icon => {
       const name = (icon.getAttribute('data-mat-icon-name') || icon.getAttribute('fonticon') || icon.textContent || '').trim().toLowerCase();
       if (name === 'more_vert' || name === 'more_horiz' || name === 'add' || name === 'plus' || name === 'note_add' || name === 'post_add' || name === 'content_copy' || name === 'copy') {
-        if (icon.closest('.chat-message, .model-message, .user-message, [role="article"], .rendered-markdown, app-chat-response')) {
+        if (icon.closest(MESSAGE_GUARD)) {
           return;
         }
         const btn = icon.closest('button, [role="button"]') || icon;
@@ -775,7 +793,7 @@ const _notebookCleanupScript = r'''
     // Sembunyikan tombol apapun yang berdiri sendiri di luar form yang hanya berisi teks "+"
     document.querySelectorAll('button, [role="button"]').forEach(btn => {
       if (btn.closest('textarea, [contenteditable="true"]')) return;
-      if (btn.closest('.chat-message, .model-message, .user-message, app-chat-response')) return;
+      if (btn.closest(MESSAGE_GUARD)) return;
       const txt = (btn.textContent || '').trim();
       if (txt === '+' || txt === '＋') {
         btn.style.setProperty('display', 'none', 'important');
@@ -836,7 +854,7 @@ const _notebookCleanupScript = r'''
 
   function removeHeroCard() {
     const isComposerOrInput = el => !el || !!el.closest('app-chat-input, form, .chat-input-container, .query-box-container, textarea, [contenteditable="true"]');
-    const isMessageOrBubble = el => !el || !!el.closest('.chat-message, .model-message, .user-message, [role="article"], .rendered-markdown, app-chat-response, app-chat-query, app-chat-prompt, app-chat-turn, chat-turn, [data-message-author-role]');
+    const isMessageOrBubble = el => !el || !!el.closest(MESSAGE_GUARD);
 
     // 1. Sembunyikan elemen guide / overview / cover melalui selektor spesifik
     const guideSelectors = [
@@ -889,7 +907,7 @@ const _notebookCleanupScript = r'''
         if (parent.querySelector('textarea, [contenteditable="true"], form')) {
           break;
         }
-        if (parent.querySelector('.user-turn, .model-turn, .chat-message, app-chat-response, [role="article"]')) {
+        if (parent.querySelector(MESSAGE_GUARD + ', .user-turn, .model-turn')) {
           break;
         }
         target = parent;
@@ -983,7 +1001,7 @@ const _notebookCleanupScript = r'''
 
     // Sembunyikan emoji cover / Ka'bah (🕋) jika berdiri sendiri di luar obrolan
     document.querySelectorAll('span, div, p, [role="img"]').forEach(el => {
-      if (isComposerOrInput(el) || el.closest('.chat-message, .model-message, .user-message, [role="article"], .rendered-markdown, app-chat-response')) return;
+      if (isComposerOrInput(el) || isMessageOrBubble(el)) return;
       if (el.children.length === 0) {
         const t = (el.textContent || '').trim();
         if (t === '🕋' || (t.includes('🕋') && t.length <= 4)) {
@@ -994,7 +1012,7 @@ const _notebookCleanupScript = r'''
 
     // Sembunyikan pesan loading hanya pada leaf node
     document.querySelectorAll('app-loading-screen, .loading-container, div, p, span, h1, h2, h3, h4, h5').forEach(el => {
-      if (isComposerOrInput(el) || el.querySelector('.chat-message, [role="article"]')) return;
+      if (isComposerOrInput(el) || isMessageOrBubble(el) || el.querySelector(MESSAGE_GUARD)) return;
       if (el.matches('app-loading-screen, .loading-container')) {
         el.style.setProperty('display', 'none', 'important');
         return;
@@ -1011,7 +1029,7 @@ const _notebookCleanupScript = r'''
   function dismissPopups() {
     try {
       const dialogs = document.querySelectorAll(
-        'mat-dialog-container, .mat-mdc-dialog-container, [role="dialog"], [role="alertdialog"], [aria-modal="true"], .cdk-overlay-pane, app-welcome-dialog, app-onboarding-dialog, welcome-dialog, onboarding-dialog, ftue-dialog, app-ftue-dialog, whats-new-dialog, app-whats-new-dialog, app-welcome-banner, [class*="welcome-dialog" i], [class*="onboarding-dialog" i], [class*="whats-new" i], [class*="coachmark" i]'
+        'mat-dialog-container, .mat-mdc-dialog-container, [role="dialog"], [role="alertdialog"], [aria-modal="true"], app-welcome-dialog, app-onboarding-dialog, welcome-dialog, onboarding-dialog, ftue-dialog, app-ftue-dialog, whats-new-dialog, app-whats-new-dialog, app-welcome-banner, [class*="welcome-dialog" i], [class*="onboarding-dialog" i], [class*="whats-new" i], [class*="coachmark" i]'
       );
 
       const cleanButtonLabel = btn => {
@@ -1068,17 +1086,28 @@ const _notebookCleanupScript = r'''
           'app-welcome-dialog, app-onboarding-dialog, welcome-dialog, onboarding-dialog, ftue-dialog, app-ftue-dialog, whats-new-dialog, app-whats-new-dialog, app-welcome-banner, [class*="welcome-dialog" i], [class*="onboarding-dialog" i], [class*="whats-new" i], [class*="coachmark" i]'
         ) || !!dialog.querySelector('app-welcome-dialog, app-onboarding-dialog, welcome-dialog, onboarding-dialog, ftue-dialog, whats-new-dialog');
 
+        const hasBrandOrOnboardingContext =
+          fullText.includes('notebooklm') ||
+          fullText.includes('gemini') ||
+          fullText.includes('google') ||
+          fullText.includes('notebook') ||
+          fullText.includes('buku catatan') ||
+          fullText.includes('\u062f\u0641\u062a\u0631 \u0627\u0644\u0645\u0644\u0627\u062d\u0638\u0627\u062a');
         const isWelcomeOrPromo =
           isWelcomeHost ||
-          fullText.includes('selamat datang') ||
+          fullText.includes('selamat datang di notebooklm') ||
+          fullText.includes('selamat datang di gemini') ||
           fullText.includes('welcome to notebooklm') ||
           fullText.includes('welcome to gemini') ||
-          fullText.includes('welcome') ||
+          (hasBrandOrOnboardingContext && (
+            fullText.includes('selamat datang') ||
+            fullText.includes('welcome') ||
+            fullText.includes('\u0645\u0631\u062d\u0628\u064b\u0627') ||
+            fullText.includes('\u0645\u0631\u062d\u0628\u0627') ||
+            fullText.includes('\u0623\u0647\u0644\u064b\u0627') ||
+            fullText.includes('\u0623\u0647\u0644\u0627')
+          )) ||
           fullText.includes('gemini notebook') ||
-          fullText.includes('\u0645\u0631\u062d\u0628\u064b\u0627') ||
-          fullText.includes('\u0645\u0631\u062d\u0628\u0627') ||
-          fullText.includes('\u0623\u0647\u0644\u064b\u0627') ||
-          fullText.includes('\u0623\u0647\u0644\u0627') ||
           fullText.includes('fleksibilitas dan kontrol') ||
           fullText.includes('flexibility and control') ||
           fullText.includes('batas diperbarui') ||
@@ -1325,9 +1354,14 @@ const _notebookCleanupScript = r'''
     });
     path.forEach(node => node.classList.add('ot-chat-path'));
     transcripts.forEach(node => node.classList.add('ot-chat-transcript'));
+    const limitActive = !!document.documentElement?.classList?.contains('ot-flutter-limit-active');
     composerPaths.forEach(node => {
       node.classList.add('ot-chat-composer-path');
-      node.style.setProperty('display', 'flex', 'important');
+      if (limitActive) {
+        node.style.removeProperty('display');
+      } else {
+        node.style.setProperty('display', 'flex', 'important');
+      }
       node.style.setProperty('flex-direction', 'column', 'important');
       node.style.setProperty('align-items', 'center', 'important');
       node.style.setProperty('width', '100%', 'important');
@@ -1373,10 +1407,10 @@ const _notebookCleanupScript = r'''
   });
 
   let lastCleanAt = 0;
-  function clean() {
+  function clean(force = false) {
     if (!document.documentElement) return;
     const now = Date.now();
-    if (now - lastCleanAt < 800) return;
+    if (!force && now - lastCleanAt < 800) return;
     lastCleanAt = now;
     syncTheme();
     ensureStyles();
@@ -1433,11 +1467,13 @@ const _notebookCleanupScript = r'''
     return document.querySelector('button[aria-label*="More" i], button[aria-label*="Opsi" i], button[aria-label*="options" i]');
   }
 
-  window.otOpenLanguageSettings = function() {
+  window.otOpenLanguageSettings = function(keepHidden = false) {
     const root = document.documentElement;
     root.classList.add('ot-opening-language');
 
-    function cleanup() { root.classList.remove('ot-opening-language'); }
+    function cleanup() {
+      if (!keepHidden) root.classList.remove('ot-opening-language');
+    }
 
     const immediate = findOutputLanguageItem();
     if (immediate) {
@@ -1448,12 +1484,12 @@ const _notebookCleanupScript = r'''
 
     const settings = findSettingsButton();
     if (!settings) {
-      cleanup();
+      root.classList.remove('ot-opening-language');
       return false;
     }
 
     if (!triggerClick(settings)) {
-      cleanup();
+      root.classList.remove('ot-opening-language');
       return false;
     }
 
@@ -1468,7 +1504,7 @@ const _notebookCleanupScript = r'''
       }
       if (Date.now() > deadline) {
         clearInterval(interval);
-        cleanup();
+        root.classList.remove('ot-opening-language');
       }
     }, 25);
 
@@ -1500,7 +1536,6 @@ const _notebookCleanupScript = r'''
     return true;
   };
   function conversationList() {
-    const questionSelector = '.chat-message[data-sender="user"], .user-message, .from-user, .to-model-container, [data-message-author-role="user"], app-chat-query, app-chat-prompt';
     const nodes = [...document.querySelectorAll(questionSelector + ',' + answerSelector)].filter(visible);
     const list = [];
     const seen = new Set();
@@ -1710,7 +1745,7 @@ window.otClearChat = window.otDeleteChatHistory;
 
 window.otNotebook = {
   clean,
-  activate: () => { presentationEnabled = true; clean(); },
+  activate: () => { presentationEnabled = true; clean(true); },
   ready,
   inputReady,
   probe: () => accessDenied() ? 'denied' : (inputReady() ? 'ready' : 'loading'),
@@ -1757,10 +1792,16 @@ document.addEventListener('wheel', event => {
   if (event.deltaY < 0) userPausedFollow = true;
 }, {passive: true, capture: true});
 document.addEventListener('click', event => {
-  if (event.target.closest?.('button[type="submit"], button[aria-label*="send" i], button[aria-label*="kirim" i], .send-button, form button')) {
+  if (event.target.closest?.('.submit-button, button[type="submit"], button[aria-label*="send" i], button[aria-label*="kirim" i], .send-button, form button')) {
     userPausedFollow = false;
     setTimeout(followLatestAnswer, 50);
     setTimeout(followLatestAnswer, 250);
+  }
+}, true);
+document.addEventListener('keydown', event => {
+  if (event.key === 'Enter' && !event.shiftKey && event.target?.closest?.('textarea, [contenteditable="true"], [role="textbox"]')) {
+    userPausedFollow = false;
+    setTimeout(followLatestAnswer, 80);
   }
 }, true);
 
@@ -1818,7 +1859,7 @@ window.otSetBackgroundPaused = function(paused) {
   _otBackgroundPaused = !!paused;
   window._otBackgroundPaused = _otBackgroundPaused;
   if (!paused) {
-    clean();
+    clean(true);
     scheduleConversationLayout();
   }
 };
@@ -1909,6 +1950,7 @@ clean();
 dismissPopups();
 var _otPopupCounter = 0;
 var _otPopupTimer = setInterval(function() {
+  if (_otBackgroundPaused) return;
   dismissPopups();
   _otPopupCounter++;
   if (_otPopupCounter > 120) clearInterval(_otPopupTimer);
