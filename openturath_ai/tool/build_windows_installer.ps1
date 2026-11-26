@@ -97,7 +97,9 @@ New-Item -ItemType Directory -Force $stage | Out-Null
 $files = (Get-ChildItem $payloadDir -Filter '*.exe' | Where-Object Name -eq 'openturath_ai.exe').Count +
          (Get-ChildItem $payloadDir -Filter '*.dll').Count +
          (Get-ChildItem (Join-Path $payloadDir 'data') -Recurse -File).Count
-@{ core = '..\core.exe'; files = $files } | ConvertTo-Json | Set-Content (Join-Path $uiRelease 'install_manifest.json') -Encoding utf8
+$utf8NoBom = [Text.UTF8Encoding]::new($false)
+$manifestJson = @{ core = '..\core.exe'; files = $files } | ConvertTo-Json
+[IO.File]::WriteAllText((Join-Path $uiRelease 'install_manifest.json'), $manifestJson, $utf8NoBom)
 # Bundel DLL VC++ runtime app-local agar UI pemasang Flutter bisa berjalan di PC Windows baru sebelum vc_redist dipasang.
 foreach ($dll in @('vcruntime140.dll', 'vcruntime140_1.dll', 'msvcp140.dll')) {
   $sysDll = Join-Path "$env:SystemRoot\System32" $dll
@@ -130,9 +132,9 @@ if (Test-Path $outputExe) {
     Copy-Item "$outputExe.sha256" (Join-Path $publicDir 'OpenTurath_AI_Windows_Setup.exe.sha256') -Force
   }
   # Local metadata for the future, explicitly authorized publication step.
-  @{version=$appVersion; build=$appBuild; sha256=$hash; installer_protocol=1;
-    url='https://openturath.web.app/OpenTurath_AI_Windows_Setup.exe'} |
-    ConvertTo-Json | Set-Content "$outputExe.update.json" -Encoding utf8
+  $updateJson = @{version=$appVersion; build=$appBuild; sha256=$hash; installer_protocol=1;
+    url='https://openturath.web.app/OpenTurath_AI_Windows_Setup.exe'} | ConvertTo-Json
+  [IO.File]::WriteAllText("$outputExe.update.json", $updateJson, $utf8NoBom)
   Write-Host "Installer ready: $outputExe" -ForegroundColor Green
   Write-Host "SHA256: $hash" -ForegroundColor Yellow
 }

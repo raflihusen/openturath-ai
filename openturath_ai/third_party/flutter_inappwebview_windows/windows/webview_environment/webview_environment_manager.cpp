@@ -32,6 +32,10 @@ namespace flutter_inappwebview_plugin
   {
     auto* arguments = std::get_if<flutter::EncodableMap>(method_call.arguments());
     auto& methodName = method_call.method_name();
+    if (!arguments) {
+      result->Error("0", "Invalid method arguments");
+      return;
+    }
 
     if (string_equals(methodName, "create")) {
       auto id = get_fl_map_value<std::string>(*arguments, "id");
@@ -56,11 +60,18 @@ namespace flutter_inappwebview_plugin
   void WebViewEnvironmentManager::createWebViewEnvironment(const std::string& id, std::unique_ptr<WebViewEnvironmentSettings> settings, std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
   {
     auto result_ = std::shared_ptr<flutter::MethodResult<flutter::EncodableValue>>(std::move(result));
+    auto alive = alive_;
 
     auto webViewEnvironment = std::make_unique<WebViewEnvironment>(plugin, id);
-    webViewEnvironment->create(std::move(settings),
-      [this, id, result_](HRESULT errorCode)
+    auto* envPtr = webViewEnvironment.get();
+    webViewEnvironments.insert_or_assign(id, std::move(webViewEnvironment));
+    envPtr->create(std::move(settings),
+      [this, alive, id, result_](HRESULT errorCode)
       {
+        if (!*alive) {
+          result_->Error("0", "WebViewEnvironmentManager disposed");
+          return;
+        }
         if (succeededOrLog(errorCode)) {
           result_->Success(true);
         }
@@ -71,7 +82,6 @@ namespace flutter_inappwebview_plugin
           }
         }
       });
-    webViewEnvironments.insert({ id, std::move(webViewEnvironment) });
   }
 
   void WebViewEnvironmentManager::createOrGetDefaultWebViewEnvironment(const std::function<void(WebViewEnvironment*)> completionHandler)
@@ -94,8 +104,12 @@ namespace flutter_inappwebview_plugin
     defaultEnvironmentCreating_ = true;
     defaultEnvironmentReady_ = false;
     defaultEnvironment_ = std::make_unique<WebViewEnvironment>(plugin, "-1");
-    defaultEnvironment_->create(nullptr, [this](HRESULT errorCode)
+    auto alive = alive_;
+    defaultEnvironment_->create(nullptr, [this, alive](HRESULT errorCode)
       {
+        if (!*alive) {
+          return;
+        }
         defaultEnvironmentCreating_ = false;
         auto callbacks = std::move(defaultEnvironmentPendingCallbacks_);
         defaultEnvironmentPendingCallbacks_.clear();
@@ -141,6 +155,8 @@ namespace flutter_inappwebview_plugin
   WebViewEnvironmentManager::~WebViewEnvironmentManager()
   {
     debugLog("dealloc WebViewEnvironmentManager");
+    *alive_ = false;
+    defaultEnvironmentPendingCallbacks_.clear();
     webViewEnvironments.clear();
     plugin = nullptr;
     defaultEnvironment_ = nullptr;

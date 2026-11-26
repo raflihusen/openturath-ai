@@ -2,6 +2,7 @@
 #define FLUTTER_INAPPWEBVIEW_PLUGIN_IN_APP_WEBVIEW_H_
 
 #include <functional>
+#include <memory>
 #include <WebView2.h>
 #include <wil/com.h>
 #include <windows.ui.composition.desktop.h>
@@ -184,6 +185,7 @@ namespace flutter_inappwebview_plugin
 
     static bool isSslError(const COREWEBVIEW2_WEB_ERROR_STATUS& webErrorStatus);
   private:
+    std::shared_ptr<bool> alive_ = std::make_shared<bool>(true);
     // custom_platform_view
     winrt::com_ptr<ABI::Windows::UI::Composition::IVisual> surface_;
     SurfaceSizeChangedCallback surfaceSizeChangedCallback_;

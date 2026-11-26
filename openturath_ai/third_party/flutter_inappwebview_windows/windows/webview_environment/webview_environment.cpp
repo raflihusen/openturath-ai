@@ -17,7 +17,7 @@ namespace flutter_inappwebview_plugin
 
   void WebViewEnvironment::create(const std::unique_ptr<WebViewEnvironmentSettings> settings, const std::function<void(HRESULT)> completionHandler)
   {
-    if (!plugin) {
+    if (!plugin || !plugin->webViewEnvironmentManager) {
       if (completionHandler) {
         completionHandler(E_FAIL);
       }
@@ -56,26 +56,42 @@ namespace flutter_inappwebview_plugin
       }
     }
 
+    auto alive = alive_;
     auto hr = CreateCoreWebView2EnvironmentWithOptions(
       settings && settings->browserExecutableFolder.has_value() ? utf8_to_wide(settings->browserExecutableFolder.value()).c_str() : nullptr,
       settings && settings->userDataFolder.has_value() ? utf8_to_wide(settings->userDataFolder.value()).c_str() : nullptr,
       options.Get(),
       Callback<ICoreWebView2CreateCoreWebView2EnvironmentCompletedHandler>(
-        [this, hwnd, completionHandler](HRESULT result, wil::com_ptr<ICoreWebView2Environment> environment) -> HRESULT
+        [this, alive, hwnd, completionHandler](HRESULT result, wil::com_ptr<ICoreWebView2Environment> environment) -> HRESULT
         {
-          if (succeededOrLog(result)) {
+          if (!*alive) {
+            if (completionHandler) {
+              completionHandler(E_ABORT);
+            }
+            return S_OK;
+          }
+          if (succeededOrLog(result) && environment) {
             environment_ = std::move(environment);
 
             auto hr = environment_->CreateCoreWebView2Controller(hwnd, Callback<ICoreWebView2CreateCoreWebView2ControllerCompletedHandler>(
-              [this, completionHandler](HRESULT result, wil::com_ptr<ICoreWebView2Controller> controller) -> HRESULT
+              [this, alive, completionHandler](HRESULT result, wil::com_ptr<ICoreWebView2Controller> controller) -> HRESULT
               {
-                if (succeededOrLog(result)) {
+                if (!*alive) {
+                  if (controller) {
+                    controller->Close();
+                  }
+                  if (completionHandler) {
+                    completionHandler(E_ABORT);
+                  }
+                  return S_OK;
+                }
+                if (succeededOrLog(result) && controller) {
                   webViewController_ = std::move(controller);
                   webViewController_->get_CoreWebView2(&webView_);
                   webViewController_->put_IsVisible(false);
                 }
                 if (completionHandler) {
-                  completionHandler(result);
+                  completionHandler(controller ? result : E_FAIL);
                 }
                 return S_OK;
               }).Get());
@@ -85,7 +101,7 @@ namespace flutter_inappwebview_plugin
             }
           }
           else if (completionHandler) {
-            completionHandler(result);
+            completionHandler(FAILED(result) ? result : E_FAIL);
           }
           return S_OK;
         }).Get());
@@ -98,5 +114,12 @@ namespace flutter_inappwebview_plugin
   WebViewEnvironment::~WebViewEnvironment()
   {
     debugLog("dealloc WebViewEnvironment");
+    *alive_ = false;
+    if (webViewController_) {
+      failedLog(webViewController_->Close());
+    }
+    webView_ = nullptr;
+    webViewController_ = nullptr;
+    environment_ = nullptr;
   }
 }

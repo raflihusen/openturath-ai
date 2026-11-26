@@ -40,6 +40,7 @@ namespace flutter_inappwebview_plugin
     static std::optional<std::string> getAvailableVersion(std::optional<std::string> browserExecutableFolder);
     static std::optional<int> compareBrowserVersions(std::string version1, std::string version2);
   private:
+    std::shared_ptr<bool> alive_ = std::make_shared<bool>(true);
     std::unique_ptr<WebViewEnvironment> defaultEnvironment_;
     bool defaultEnvironmentReady_ = false;
     bool defaultEnvironmentCreating_ = false;

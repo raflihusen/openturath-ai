@@ -187,6 +187,8 @@ class DesktopUpdateInstaller {
             [
               '-NoProfile',
               '-NonInteractive',
+              '-WindowStyle',
+              'Hidden',
               '-ExecutionPolicy',
               'Bypass',
               '-File',
@@ -214,6 +216,11 @@ class DesktopUpdateInstaller {
       }
       return stage;
     } catch (_) {
+      try {
+        if (await receipt.exists()) {
+          await receipt.delete();
+        }
+      } catch (_) {}
       try {
         final stageDir = Directory(stage);
         if (await stageDir.exists()) {

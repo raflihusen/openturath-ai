@@ -20,18 +20,24 @@ namespace flutter_inappwebview_plugin
   void CookieManager::HandleMethodCall(const flutter::MethodCall<flutter::EncodableValue>& method_call,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
   {
-    auto& arguments = std::get<flutter::EncodableMap>(*method_call.arguments());
+    auto* argumentsPtr = std::get_if<flutter::EncodableMap>(method_call.arguments());
+    if (!argumentsPtr || !plugin || !plugin->webViewEnvironmentManager) {
+      result->Error("0", "CookieManager is unavailable");
+      return;
+    }
+    auto arguments = *argumentsPtr;
     auto& methodName = method_call.method_name();
 
     auto webViewEnvironmentId = get_optional_fl_map_value<std::string>(arguments, "webViewEnvironmentId");
 
-    auto webViewEnvironment = plugin && webViewEnvironmentId.has_value() && map_contains(plugin->webViewEnvironmentManager->webViewEnvironments, webViewEnvironmentId.value())
+    auto webViewEnvironment = webViewEnvironmentId.has_value() && map_contains(plugin->webViewEnvironmentManager->webViewEnvironments, webViewEnvironmentId.value())
       ? plugin->webViewEnvironmentManager->webViewEnvironments.at(webViewEnvironmentId.value()).get() : nullptr;
 
     auto result_ = std::shared_ptr<flutter::MethodResult<flutter::EncodableValue>>(std::move(result));
-    auto callback = [this, result_, methodName, arguments](WebViewEnvironment* webViewEnvironment)
+    auto alive = alive_;
+    auto callback = [this, alive, result_, methodName, arguments](WebViewEnvironment* webViewEnvironment)
       {
-        if (!webViewEnvironment) {
+        if (!*alive || !webViewEnvironment) {
           result_->Error("0", "Cannot obtain the WebViewEnvironment!");
           return;
         }
@@ -386,6 +392,7 @@ namespace flutter_inappwebview_plugin
   CookieManager::~CookieManager()
   {
     debugLog("dealloc CookieManager");
+    *alive_ = false;
     plugin = nullptr;
   }
 }

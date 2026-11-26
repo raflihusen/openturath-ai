@@ -9,6 +9,7 @@ class DesktopWebViewRuntime {
   static WebViewEnvironment? environment;
   static String? problem;
   static Future<void>? _preparing;
+  static Future<WebViewEnvironment>? _creatingEnv;
 
   static Future<void> prepare() =>
       _preparing ??= _prepare().whenComplete(() => _preparing = null);
@@ -31,23 +32,45 @@ class DesktopWebViewRuntime {
       final support = await getApplicationSupportDirectory();
       final profile = Directory(p.join(support.path, 'webview2'));
       await profile.create(recursive: true);
-      environment = await WebViewEnvironment.create(
+      // Reuse pembuatan environment yang sedang berjalan agar retry timeout tidak
+      // memicu dua WebViewEnvironment bersamaan pada userDataFolder yang sama.
+      final envFuture = _creatingEnv ??= WebViewEnvironment.create(
         settings: WebViewEnvironmentSettings(userDataFolder: profile.path),
-      ).timeout(const Duration(seconds: 15));
+      );
+      try {
+        environment = await envFuture.timeout(const Duration(seconds: 15));
+      } catch (e) {
+        // Hanya reset cache future jika create() sendiri gagal (bukan sekadar timeout).
+        envFuture.then((created) {
+          environment ??= created;
+        }, onError: (_) {
+          if (identical(_creatingEnv, envFuture)) {
+            _creatingEnv = null;
+          }
+        });
+        rethrow;
+      }
     } catch (_) {
       problem =
           'Ruang web belum dapat disiapkan. Periksa WebView2 dan izin penyimpanan aplikasi.';
     }
   }
 
+  static bool get hasWindowsEnvironment =>
+      kIsWeb ||
+      defaultTargetPlatform != TargetPlatform.windows ||
+      environment != null;
+
   static CookieManager get cookies =>
       CookieManager.instance(webViewEnvironment: environment);
 
   static Future<void> clearSession() async {
     // One unsupported method must not prevent the remaining cleanup operations.
-    try {
-      await cookies.deleteAllCookies();
-    } catch (_) {}
+    if (hasWindowsEnvironment) {
+      try {
+        await cookies.deleteAllCookies();
+      } catch (_) {}
+    }
     try {
       await InAppWebViewController.clearAllCache();
     } catch (_) {}

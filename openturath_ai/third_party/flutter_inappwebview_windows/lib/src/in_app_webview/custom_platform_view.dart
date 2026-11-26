@@ -122,43 +122,82 @@ class CustomPlatformViewController
   Future<void> initialize(
       {Function(int id)? onPlatformViewCreated, dynamic arguments}) async {
     if (_isDisposed) {
+      if (!_creatingCompleter.isCompleted) {
+        _creatingCompleter.complete();
+      }
       return;
     }
-    _textureId = (await _pluginChannel.invokeMethod<int>(
-        'createInAppWebView', arguments))!;
-
-    _methodChannel =
-        MethodChannel('com.pichillilorenzo/custom_platform_view_$_textureId');
-    _eventChannel = EventChannel(
-        'com.pichillilorenzo/custom_platform_view_${_textureId}_events');
-    _eventStreamSubscription =
-        _eventChannel.receiveBroadcastStream().listen((event) {
-      final map = event as Map<dynamic, dynamic>;
-      switch (map['type']) {
-        case 'cursorChanged':
-          _cursorStreamController.add(_getCursorByName(map['value']));
-          break;
+    try {
+      final createdId = await _pluginChannel.invokeMethod<int>(
+          'createInAppWebView', arguments);
+      if (createdId == null) {
+        throw PlatformException(
+          code: '0',
+          message: 'createInAppWebView returned null texture id',
+        );
       }
-    });
+      _textureId = createdId;
 
-    _methodChannel.setMethodCallHandler((call) {
-      throw MissingPluginException('Unknown method ${call.method}');
-    });
+      if (_isDisposed) {
+        try {
+          await _pluginChannel.invokeMethod('dispose', {"id": _textureId});
+        } catch (_) {}
+        if (!_creatingCompleter.isCompleted) {
+          _creatingCompleter.complete();
+        }
+        return;
+      }
 
-    value = value.copyWith(isInitialized: true);
+      _methodChannel =
+          MethodChannel('com.pichillilorenzo/custom_platform_view_$_textureId');
+      _eventChannel = EventChannel(
+          'com.pichillilorenzo/custom_platform_view_${_textureId}_events');
+      _eventStreamSubscription =
+          _eventChannel.receiveBroadcastStream().listen((event) {
+        if (_isDisposed || _cursorStreamController.isClosed) return;
+        final map = event as Map<dynamic, dynamic>;
+        switch (map['type']) {
+          case 'cursorChanged':
+            _cursorStreamController.add(_getCursorByName(map['value']));
+            break;
+        }
+      });
 
-    _creatingCompleter.complete();
+      _methodChannel.setMethodCallHandler((call) {
+        throw MissingPluginException('Unknown method ${call.method}');
+      });
 
-    onPlatformViewCreated?.call(_textureId);
+      value = value.copyWith(isInitialized: true);
+
+      if (!_creatingCompleter.isCompleted) {
+        _creatingCompleter.complete();
+      }
+
+      onPlatformViewCreated?.call(_textureId);
+    } catch (e, st) {
+      if (!_creatingCompleter.isCompleted) {
+        _creatingCompleter.completeError(e, st);
+      }
+      rethrow;
+    }
   }
 
   @override
   Future<void> dispose() async {
-    await _creatingCompleter.future;
+    try {
+      await _creatingCompleter.future;
+    } catch (_) {}
     if (!_isDisposed) {
       _isDisposed = true;
       await _eventStreamSubscription?.cancel();
-      await _pluginChannel.invokeMethod('dispose', {"id": _textureId});
+      if (!_cursorStreamController.isClosed) {
+        await _cursorStreamController.close();
+      }
+      if (value.isInitialized) {
+        try {
+          await _pluginChannel.invokeMethod('dispose', {"id": _textureId});
+        } catch (_) {}
+      }
     }
     super.dispose();
   }
@@ -288,20 +327,27 @@ class _CustomPlatformViewState extends State<CustomPlatformView> {
   void initState() {
     super.initState();
 
-    _controller.initialize(
-        onPlatformViewCreated: (id) {
-          widget.onPlatformViewCreated?.call(id);
-          setState(() {});
-        },
-        arguments: widget.creationParams);
+    _controller
+        .initialize(
+            onPlatformViewCreated: (id) {
+              if (!mounted) return;
+              widget.onPlatformViewCreated?.call(id);
+              if (mounted) {
+                setState(() {});
+              }
+            },
+            arguments: widget.creationParams)
+        .catchError((_) {});
 
     // Report initial surface size and widget position
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
       _reportSurfaceSize();
       _reportWidgetPosition();
     });
 
     _cursorSubscription = _controller._cursor.listen((cursor) {
+      if (!mounted) return;
       setState(() {
         _cursor = cursor;
       });
@@ -349,6 +395,7 @@ class _CustomPlatformViewState extends State<CustomPlatformView> {
                       if (!_focusNode.hasFocus) {
                         _focusNode.requestFocus();
                         Future.delayed(const Duration(milliseconds: 50), () {
+                          if (!mounted) return;
                           if (!_focusNode.hasFocus) {
                             _focusNode.requestFocus();
                           }
@@ -462,18 +509,28 @@ class _CustomPlatformViewState extends State<CustomPlatformView> {
   }
 
   void _reportSurfaceSize() async {
-    final box = _key.currentContext?.findRenderObject() as RenderBox?;
-    if (box != null) {
+    try {
       await _controller.ready;
+    } catch (_) {
+      return;
+    }
+    if (!mounted || !_controller.value.isInitialized) return;
+    final box = _key.currentContext?.findRenderObject() as RenderBox?;
+    if (box != null && box.attached && box.hasSize) {
       unawaited(_controller._setSize(
           box.size, widget.scaleFactor ?? window.devicePixelRatio));
     }
   }
 
   void _reportWidgetPosition() async {
-    final box = _key.currentContext?.findRenderObject() as RenderBox?;
-    if (box != null) {
+    try {
       await _controller.ready;
+    } catch (_) {
+      return;
+    }
+    if (!mounted || !_controller.value.isInitialized) return;
+    final box = _key.currentContext?.findRenderObject() as RenderBox?;
+    if (box != null && box.attached && box.hasSize) {
       final position = box.localToGlobal(Offset.zero);
       unawaited(_controller._setPosition(
           position, widget.scaleFactor ?? window.devicePixelRatio));

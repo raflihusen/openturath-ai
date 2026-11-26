@@ -89,7 +89,7 @@ namespace flutter_inappwebview_plugin
       result->Success(make_fl_value(webView->getUrl()));
     }
     else if (string_equals(methodName, "getTitle")) {
-      result->Success(make_fl_value(webView->getUrl()));
+      result->Success(make_fl_value(webView->getTitle()));
     }
     else if (string_equals(methodName, "loadUrl")) {
       auto urlRequest = std::make_unique<URLRequest>(get_fl_map_value<flutter::EncodableMap>(arguments, "urlRequest"));

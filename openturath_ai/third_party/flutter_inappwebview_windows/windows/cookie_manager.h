@@ -4,6 +4,7 @@
 #include <flutter/method_channel.h>
 #include <flutter/standard_message_codec.h>
 #include <functional>
+#include <memory>
 #include <optional>
 
 #include "flutter_inappwebview_windows_plugin.h"
@@ -32,6 +33,8 @@ namespace flutter_inappwebview_plugin
     void deleteCookie(WebViewEnvironment* webViewEnvironment, const std::string& url, const std::string& name, const std::string& path, const std::optional<std::string>& domain, std::function<void(const bool&)> completionHandler) const;
     void deleteCookies(WebViewEnvironment* webViewEnvironment, const std::string& url, const std::string& path, const std::optional<std::string>& domain, std::function<void(const bool&)> completionHandler) const;
     void deleteAllCookies(WebViewEnvironment* webViewEnvironment, std::function<void(const bool&)> completionHandler) const;
+  private:
+    std::shared_ptr<bool> alive_ = std::make_shared<bool>(true);
   };
 }
 

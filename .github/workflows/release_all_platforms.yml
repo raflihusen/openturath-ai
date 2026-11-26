@@ -260,16 +260,27 @@ jobs:
           Copy-Item (Join-Path $stage 'OpenTurath_AI_Windows_LocalTest_Setup.exe') $setup
           $hash = (Get-FileHash $setup -Algorithm SHA256).Hash.ToLower()
           "$hash  OpenTurath_AI_Windows_Setup.exe" | Set-Content "$setup.sha256" -Encoding ascii
-      - name: Smoke test installer core
+      - name: Smoke test installer core and OTA wrapper
         shell: pwsh
         run: |
           $ErrorActionPreference = 'Stop'
+          $manifestPath = 'openturath_ai/build/installer_stage/ui/install_manifest.json'
+          if (!(Test-Path $manifestPath)) { throw 'install_manifest.json missing from staged UI' }
+          $manifestBytes = [IO.File]::ReadAllBytes($manifestPath)
+          if ($manifestBytes.Length -ge 3 -and $manifestBytes[0] -eq 0xEF -and $manifestBytes[1] -eq 0xBB -and $manifestBytes[2] -eq 0xBF) {
+            throw 'install_manifest.json must not contain a UTF-8 BOM'
+          }
           $core = (Resolve-Path 'openturath_ai/build/installer_core/OpenTurath_AI_Core_Setup.exe').Path
           $target = Join-Path $env:RUNNER_TEMP 'openturath-installer-smoke'
           $proc = Start-Process -FilePath $core -ArgumentList @('/VERYSILENT', '/SUPPRESSMSGBOXES', '/NORESTART', '/SP-', "/DIR=`"$target`"") -Wait -PassThru
           if ($proc.ExitCode -ne 0) { throw "Installer core failed: $($proc.ExitCode)" }
           if (!(Test-Path (Join-Path $target 'openturath_ai.exe'))) { throw 'Installed executable missing' }
           if (!(Test-Path (Join-Path $target 'data/app.so'))) { throw 'Installed application data missing' }
+          $setup = (Resolve-Path 'openturath_ai/build/installer_stage/OpenTurath_AI_Windows_Setup.exe').Path
+          $otaTarget = Join-Path $env:RUNNER_TEMP 'openturath-ota-smoke'
+          $otaProc = Start-Process -FilePath $setup -ArgumentList @('/OTAUPDATE', '/VERYSILENT', '/SUPPRESSMSGBOXES', '/NORESTART', '/SP-', "/OTADIR=`"$otaTarget`"") -Wait -PassThru
+          if ($otaProc.ExitCode -ne 0) { throw "OTA wrapper install failed: $($otaProc.ExitCode)" }
+          if (!(Test-Path (Join-Path $otaTarget 'openturath_ai.exe'))) { throw 'OTA installed executable missing' }
       - name: Upload Windows Setup artifact
         uses: actions/upload-artifact@v4
         with:

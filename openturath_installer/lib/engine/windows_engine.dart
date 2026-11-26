@@ -35,7 +35,8 @@ class WindowsInstallEngine implements InstallEngine {
       final base = p.dirname(Platform.resolvedExecutable);
       final f = File(p.join(base, 'install_manifest.json'));
       if (!f.existsSync()) return null;
-      final m = jsonDecode(f.readAsStringSync()) as Map<String, dynamic>;
+      final raw = f.readAsStringSync().replaceFirst('\uFEFF', '');
+      final m = jsonDecode(raw) as Map<String, dynamic>;
       final core = p.normalize(p.join(base, m['core'] as String));
       if (!File(core).existsSync()) return null;
       return WindowsInstallEngine(

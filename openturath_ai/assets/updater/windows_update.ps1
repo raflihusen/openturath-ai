@@ -12,14 +12,23 @@ if ((Split-Path $stage -Parent) -ne (Split-Path $target -Parent)) { throw 'Inval
 if ((Get-FileHash -LiteralPath $package -Algorithm SHA256).Hash.ToLower() -ne $cfg.sha256) { throw 'Package checksum changed' }
 if (!$cfg.allowAdhocTest) {
   $signature = Get-AuthenticodeSignature -LiteralPath $package
-  if ($signature.Status -ne 'Valid') { throw 'Installer signature is not trusted' }
   $oldSignature = Get-AuthenticodeSignature -LiteralPath (Join-Path $target 'openturath_ai.exe')
-  if ($oldSignature.Status -eq 'Valid' -and $oldSignature.SignerCertificate.Subject -ne $signature.SignerCertificate.Subject) { throw 'Installer publisher changed' }
+  if ($oldSignature.Status -eq 'Valid') {
+    if ($signature.Status -ne 'Valid') { throw 'Installer signature is not trusted' }
+    if ($oldSignature.SignerCertificate.Subject -ne $signature.SignerCertificate.Subject) { throw 'Installer publisher changed' }
+  } else {
+    # Rilis gratis saat ini tidak memakai sertifikat komersial (NotSigned) dan
+    # dilindungi oleh verifikasi SHA-256 ketat di atas. Tolak bila bertanda tangan
+    # rusak/tidak valid/diubah (HashMismatch, NotTrusted, UnknownError, dsb.).
+    if ($signature.Status -notin @('Valid', 'NotSigned')) {
+      throw "Installer signature status rejected: $($signature.Status)"
+    }
+  }
 }
 $status = Join-Path $stage 'status'
 $backup = Join-Path $stage 'previous'
 New-Item -ItemType Directory -Path $backup -Force | Out-Null
-Get-ChildItem -LiteralPath $target -Force | Copy-Item -Destination $backup -Recurse -Force
+Get-ChildItem -LiteralPath $target -Force | Where-Object { $_.Name -notlike '*.WebView2' } | Copy-Item -Destination $backup -Recurse -Force
 'waiting' | Set-Content -LiteralPath $status
 New-Item -ItemType File -Path (Join-Path $stage 'ready') | Out-Null
 $process = Get-Process -Id $oldPid -ErrorAction SilentlyContinue
@@ -50,8 +59,9 @@ try {
     Stop-Process -Id $newProcess.Id -Force -ErrorAction SilentlyContinue
     try { $newProcess.WaitForExit(5000) | Out-Null } catch {}
   }
+  $targetPrefix = $target.TrimEnd('\') + '\'
   Get-Process -ErrorAction SilentlyContinue | Where-Object {
-    $_.Path -and $_.Path.StartsWith($target, [StringComparison]::OrdinalIgnoreCase)
+    $_.Path -and $_.Path.StartsWith($targetPrefix, [StringComparison]::OrdinalIgnoreCase)
   } | Stop-Process -Force -ErrorAction SilentlyContinue
   if ($replaced -and (Test-Path -LiteralPath $backup)) {
     # Restore the previous application, never the user profile or cookies.

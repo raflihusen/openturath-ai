@@ -57,6 +57,10 @@ namespace flutter_inappwebview_plugin
   {
     auto* arguments = std::get_if<flutter::EncodableMap>(method_call.arguments());
     auto& methodName = method_call.method_name();
+    if (!arguments) {
+      result->Error("0", "Invalid method arguments");
+      return;
+    }
 
     if (string_equals(methodName, "createInAppWebView")) {
       if (isSupported()) {
@@ -189,6 +193,9 @@ namespace flutter_inappwebview_plugin
           result_->Success(textureId);
         }
         else {
+          if (hwnd) {
+            DestroyWindow(hwnd);
+          }
           result_->Error("0", "Cannot create the InAppWebView instance!");
         }
       }

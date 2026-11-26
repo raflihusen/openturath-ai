@@ -2,6 +2,7 @@
 #define FLUTTER_INAPPWEBVIEW_PLUGIN_WEBVIEW_ENVIRONMENT_H_
 
 #include <functional>
+#include <memory>
 #include <WebView2.h>
 #include <wil/com.h>
 
@@ -39,6 +40,7 @@ namespace flutter_inappwebview_plugin
       return webView_;
     }
   private:
+    std::shared_ptr<bool> alive_ = std::make_shared<bool>(true);
     wil::com_ptr<ICoreWebView2Environment> environment_;
     wil::com_ptr<ICoreWebView2Controller> webViewController_;
     wil::com_ptr<ICoreWebView2> webView_;

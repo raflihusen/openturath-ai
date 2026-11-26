@@ -22,13 +22,17 @@ namespace flutter_inappwebview_plugin
     }
 
     wil::com_ptr<ICoreWebView2DevToolsProtocolEventReceiver> executionContextCreated;
+    auto alive = alive_;
     if (succeededOrLog(webView_->webView->GetDevToolsProtocolEventReceiver(L"Runtime.executionContextCreated", &executionContextCreated))) {
       auto hr = executionContextCreated->add_DevToolsProtocolEventReceived(
         Callback<ICoreWebView2DevToolsProtocolEventReceivedEventHandler>(
-          [this](
+          [this, alive](
             ICoreWebView2* sender,
             ICoreWebView2DevToolsProtocolEventReceivedEventArgs* args) -> HRESULT
           {
+            if (!*alive || !webView_) {
+              return S_OK;
+            }
             wil::unique_cotaskmem_string json;
             if (succeededOrLog(args->get_ParameterObjectAsJson(&json)) && json.get() != nullptr) {
               try {
@@ -324,9 +328,16 @@ namespace flutter_inappwebview_plugin
         {"frameId", webView_->pageFrameId()},
         {"worldName", worldName}
       };
+      auto alive = alive_;
       auto hr = webView_->webView->CallDevToolsProtocolMethod(L"Page.createIsolatedWorld", utf8_to_wide(parameters.dump()).c_str(), Callback<ICoreWebView2CallDevToolsProtocolMethodCompletedHandler>(
-        [this, completionHandler, worldName](HRESULT errorCode, LPCWSTR returnObjectAsJson)
+        [this, alive, completionHandler, worldName](HRESULT errorCode, LPCWSTR returnObjectAsJson)
         {
+          if (!*alive) {
+            if (completionHandler) {
+              completionHandler(-1);
+            }
+            return S_OK;
+          }
           if (succeededOrLog(errorCode) && completionHandler) {
             int id = -1;
             if (returnObjectAsJson != nullptr) {
@@ -453,6 +464,7 @@ namespace flutter_inappwebview_plugin
   UserContentController::~UserContentController()
   {
     debugLog("dealloc UserContentController");
+    *alive_ = false;
     removeAllUserOnlyScripts();
     removeAllPluginScripts();
     contentWorlds_.clear();
