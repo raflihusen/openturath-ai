@@ -136,12 +136,19 @@ class OpenTurathCatalogRepository {
   };
 
   Map<String, AiLibraryMetadata>? _metadataCache;
+  Future<Map<String, AiLibraryMetadata>>? _metadataFuture;
   final Map<String, List<OpenTurathBook>> _booksCache = {};
 
   /// Memuat seluruh metadata modul AI dari assets/data/metadata_training_seluruh_ai.json
-  Future<Map<String, AiLibraryMetadata>> loadAllMetadata() async {
-    if (_metadataCache != null) return _metadataCache!;
+  Future<Map<String, AiLibraryMetadata>> loadAllMetadata() {
+    if (_metadataCache != null) return Future.value(_metadataCache!);
+    return _metadataFuture ??= _loadAllMetadataOnce().catchError((Object e) {
+      _metadataFuture = null;
+      throw e;
+    });
+  }
 
+  Future<Map<String, AiLibraryMetadata>> _loadAllMetadataOnce() async {
     final jsonString = await rootBundle
         .loadString('assets/data/metadata_training_seluruh_ai.json');
     final decoded = jsonDecode(jsonString);

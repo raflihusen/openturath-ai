@@ -27,8 +27,10 @@ class DeviceFingerprint {
       };
 
   @override
-  String toString() =>
-      'DeviceFingerprint(deviceId: ${deviceId.substring(0, 8)}..., model: $model, physical: $isPhysicalDevice)';
+  String toString() {
+    final prefix = deviceId.length > 8 ? deviceId.substring(0, 8) : deviceId;
+    return 'DeviceFingerprint(deviceId: $prefix..., model: $model, physical: $isPhysicalDevice)';
+  }
 }
 
 class DeviceService {
@@ -111,7 +113,7 @@ class DeviceService {
 
       if (Platform.isIOS) {
         final iosInfo = await _deviceInfo.iosInfo;
-        final rawId = iosInfo.identifierForVendor ?? 'ios_device';
+        final rawId = iosInfo.identifierForVendor ?? await _persistentId();
         const brand = 'apple';
         final model = iosInfo.utsname.machine;
         final isPhysical = iosInfo.isPhysicalDevice;
@@ -157,7 +159,14 @@ class DeviceService {
     }
 
     // Fallback darurat (misalnya unit test harness lokal tanpa platform channel)
-    final fallbackId = await _persistentId();
+    String fallbackId;
+    try {
+      fallbackId = await _persistentId();
+    } catch (_) {
+      final random = Random.secure();
+      fallbackId =
+          base64UrlEncode(List.generate(32, (_) => random.nextInt(256)));
+    }
     final fallbackHash = computeHash(
       rawId: fallbackId,
       brand: 'generic',

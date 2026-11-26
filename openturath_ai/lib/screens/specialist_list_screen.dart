@@ -51,6 +51,7 @@ class _SpecialistListScreenState extends State<SpecialistListScreen>
   final TextEditingController _searchCtrl = TextEditingController();
   final ScrollController _listScrollCtrl = ScrollController();
   Timer? _debounce;
+  StreamSubscription? _userSub;
   int _loadGeneration = 0;
 
   List<AgentModel> _allAgents = [];
@@ -65,6 +66,9 @@ class _SpecialistListScreenState extends State<SpecialistListScreen>
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     AgentService.availabilityRevision.addListener(_onAvailabilityChanged);
+    _userSub = _authService.userStream.listen((_) {
+      if (mounted) setState(() {});
+    }, onError: (_) {});
     _selectedFieldId = widget.field?.id;
     _loadAgents();
     OpenTurathCatalogRepository.instance.loadAllMetadata().then((all) {
@@ -93,6 +97,7 @@ class _SpecialistListScreenState extends State<SpecialistListScreen>
 
   @override
   void dispose() {
+    _userSub?.cancel();
     WidgetsBinding.instance.removeObserver(this);
     AgentService.availabilityRevision.removeListener(_onAvailabilityChanged);
     _searchCtrl.dispose();
@@ -171,6 +176,10 @@ class _SpecialistListScreenState extends State<SpecialistListScreen>
       return;
     }
 
+    SharedPreferences.getInstance().then((prefs) {
+      prefs.setString('last_opened_notebook_id', agent.id);
+    }).catchError((_) {});
+
     if (!AgentSessionManager.instance.openAgent(agent, user: user)) {
       _confirmReplaceOldestTab(agent, user);
     }
@@ -209,7 +218,9 @@ class _SpecialistListScreenState extends State<SpecialistListScreen>
   Future<void> _confirmReplaceOldestTab(
       AgentModel agent, UserModel? user) async {
     final mgr = AgentSessionManager.instance;
-    final oldest = mgr.tabs[mgr.oldestEvictableIndex].agent;
+    if (!mgr.isAtTabLimit || mgr.tabs.isEmpty) return;
+    final evictIdx = mgr.oldestEvictableIndex.clamp(0, mgr.tabs.length - 1);
+    final oldest = mgr.tabs[evictIdx].agent;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final confirmed = await showDialog<bool>(
       context: context,
@@ -283,15 +294,11 @@ class _SpecialistListScreenState extends State<SpecialistListScreen>
     final shell = MainShellController.of(context);
 
     return PopScope(
-      canPop: isGeneralTab && (shell == null || !Navigator.canPop(context)),
+      canPop: shell == null && (isGeneralTab || !Navigator.canPop(context)),
       onPopInvokedWithResult: (didPop, result) {
         if (didPop) return;
-        if (!isGeneralTab) {
-          if (shell != null) {
-            shell.switchTab(0);
-          } else if (Navigator.canPop(context)) {
-            Navigator.pop(context);
-          }
+        if (shell != null) {
+          shell.switchTab(0);
         } else if (Navigator.canPop(context)) {
           Navigator.pop(context);
         }
@@ -299,9 +306,7 @@ class _SpecialistListScreenState extends State<SpecialistListScreen>
       child: Scaffold(
         backgroundColor: canvas,
         appBar: AppBar(
-          title: Text(
-            Loc.text(title),
-          ),
+          title: Text(title),
           centerTitle: false,
           backgroundColor: canvas,
           elevation: 0,
@@ -667,7 +672,7 @@ class _SpecialistListScreenState extends State<SpecialistListScreen>
           ),
         ),
         child: Text(
-          Loc.text(label),
+          label,
           style: OTTypography.caption(
                   color: isSelected ? OTColors.onAccent(isDark) : textSecondary)
               .copyWith(

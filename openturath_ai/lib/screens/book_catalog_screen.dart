@@ -205,7 +205,10 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
     NavigationGuard.safePushNamed(
       context,
       AppRoutes.bookDetail,
-      arguments: book,
+      arguments: {
+        'book': book,
+        if (widget.agent != null) 'agent': widget.agent,
+      },
     );
   }
 
@@ -385,7 +388,8 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
                             if (_selectedEra != null) Loc.textAr(_selectedEra!),
                             if (_selectedType != null)
                               Loc.textAr(_selectedType!),
-                            if (_selectedCentury != null) _selectedCentury!,
+                            if (_selectedCentury != null)
+                              Loc.textAr(_selectedCentury!),
                           ].join(' · '),
                           style: OTTypography.caption(color: primaryAccent)
                               .copyWith(
@@ -463,91 +467,101 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
       context: context,
       backgroundColor: surface,
       showDragHandle: true,
-      builder: (sheetContext) => SafeArea(
-        child: StatefulBuilder(
-          builder: (_, setSheetState) => Padding(
-            padding: const EdgeInsets.fromLTRB(
-                OTSpacing.lg, 0, OTSpacing.lg, OTSpacing.lg),
-            child: ListView(
-              shrinkWrap: true,
-              children: [
-                Text(Loc.trAr('ui_ac03e7c93b'),
-                    style: OTTypography.screenTitle(color: textPrimary)),
-                const SizedBox(height: 16),
-                if (_availableSections.length > 1) ...[
-                  Text(Loc.trAr('ui_8b71077ed7'),
-                      style: OTTypography.captionMedium(color: textSecondary)),
-                  Wrap(
-                      spacing: 8,
-                      children: _availableSections
-                          .map((section) => ChoiceChip(
-                              label: Text(_cleanSectionLabel(section)),
-                              selected: _selectedSection == section,
-                              onSelected: (_) {
-                                setState(() {
-                                  _selectedSection = _selectedSection == section
-                                      ? null
-                                      : section;
-                                  _applyFilters();
-                                });
-                                setSheetState(() {});
-                              }))
-                          .toList()),
-                  const SizedBox(height: 16),
-                ],
-                Text(Loc.trAr('ui_f37a89cbd1'),
-                    style: OTTypography.captionMedium(color: textSecondary)),
-                Wrap(
-                    spacing: 8,
-                    children: eraChoices
-                        .map((era) => ChoiceChip(
-                            label: Text(Loc.textAr(era)),
-                            selected:
-                                _selectedCentury == era || _selectedEra == era,
-                            onSelected: (_) {
-                              setState(() {
-                                if (isSyafii && _hasEras) {
-                                  _selectedEra =
-                                      _selectedEra == era ? null : era;
-                                  _selectedCentury = null;
-                                } else {
-                                  _selectedCentury =
-                                      _selectedCentury == era ? null : era;
-                                  _selectedEra = null;
-                                }
-                                _applyFilters();
-                              });
-                              setSheetState(() {});
-                            }))
-                        .toList()),
-                if (_hasTypes) ...[
-                  const SizedBox(height: 16),
-                  Text(Loc.trAr('ui_47b35543e3'),
-                      style: OTTypography.captionMedium(color: textSecondary)),
-                  Wrap(
-                      spacing: 8,
-                      children: _types
-                          .map((type) => ChoiceChip(
-                              label: Text(Loc.textAr(type)),
-                              selected: _selectedType == type,
-                              onSelected: (_) {
-                                setState(() {
-                                  _selectedType =
-                                      _selectedType == type ? null : type;
-                                  _applyFilters();
-                                });
-                                setSheetState(() {});
-                              }))
-                          .toList()),
-                ],
-                const SizedBox(height: 20),
-                TextButton(
-                    onPressed: () {
-                      _clearFilters();
-                      Navigator.pop(sheetContext);
-                    },
-                    child: Text(Loc.trAr('ui_a74cf8b9bd'))),
-              ],
+      builder: (sheetContext) => Theme(
+        data: ArabicCatalog.theme(Theme.of(sheetContext)),
+        child: Directionality(
+          textDirection: TextDirection.rtl,
+          child: SafeArea(
+            child: StatefulBuilder(
+              builder: (_, setSheetState) => Padding(
+                padding: const EdgeInsets.fromLTRB(
+                    OTSpacing.lg, 0, OTSpacing.lg, OTSpacing.lg),
+                child: ListView(
+                  shrinkWrap: true,
+                  children: [
+                    Text(Loc.trAr('ui_ac03e7c93b'),
+                        style: OTTypography.screenTitle(color: textPrimary)),
+                    const SizedBox(height: 16),
+                    if (_availableSections.length > 1) ...[
+                      Text(Loc.trAr('ui_8b71077ed7'),
+                          style:
+                              OTTypography.captionMedium(color: textSecondary)),
+                      Wrap(
+                          spacing: 8,
+                          children: _availableSections
+                              .map((section) => ChoiceChip(
+                                  label: Text(_cleanSectionLabel(section)),
+                                  selected: _selectedSection == section,
+                                  onSelected: (_) {
+                                    setState(() {
+                                      _selectedSection =
+                                          _selectedSection == section
+                                              ? null
+                                              : section;
+                                      _applyFilters();
+                                    });
+                                    setSheetState(() {});
+                                  }))
+                              .toList()),
+                      const SizedBox(height: 16),
+                    ],
+                    Text(Loc.trAr('ui_f37a89cbd1'),
+                        style:
+                            OTTypography.captionMedium(color: textSecondary)),
+                    Wrap(
+                        spacing: 8,
+                        children: eraChoices
+                            .map((era) => ChoiceChip(
+                                label: Text(Loc.textAr(era)),
+                                selected: _selectedCentury == era ||
+                                    _selectedEra == era,
+                                onSelected: (_) {
+                                  setState(() {
+                                    if (isSyafii && _hasEras) {
+                                      _selectedEra =
+                                          _selectedEra == era ? null : era;
+                                      _selectedCentury = null;
+                                    } else {
+                                      _selectedCentury =
+                                          _selectedCentury == era ? null : era;
+                                      _selectedEra = null;
+                                    }
+                                    _applyFilters();
+                                  });
+                                  setSheetState(() {});
+                                }))
+                            .toList()),
+                    if (_hasTypes) ...[
+                      const SizedBox(height: 16),
+                      Text(Loc.trAr('ui_47b35543e3'),
+                          style:
+                              OTTypography.captionMedium(color: textSecondary)),
+                      Wrap(
+                          spacing: 8,
+                          children: _types
+                              .map((type) => ChoiceChip(
+                                  label: Text(Loc.textAr(type)),
+                                  selected: _selectedType == type,
+                                  onSelected: (_) {
+                                    setState(() {
+                                      _selectedType =
+                                          _selectedType == type ? null : type;
+                                      _applyFilters();
+                                    });
+                                    setSheetState(() {});
+                                  }))
+                              .toList()),
+                    ],
+                    const SizedBox(height: 20),
+                    TextButton(
+                        onPressed: () {
+                          _clearFilters();
+                          Navigator.pop(sheetContext);
+                        },
+                        child: Text(Loc.trAr('ui_a74cf8b9bd'))),
+                  ],
+                ),
+              ),
             ),
           ),
         ),

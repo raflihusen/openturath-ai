@@ -19,6 +19,7 @@ import '../core/design/ot_spacing.dart';
 import '../core/design/ot_colors.dart';
 import '../core/navigation_guard.dart';
 import '../core/routes.dart';
+import '../models/agent_model.dart';
 import '../models/bookmark_model.dart';
 import '../models/book_model.dart';
 import '../services/bookmark_service.dart';
@@ -225,7 +226,8 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
           message: AppCopy.bookmarkDeleted,
           action: SnackBarAction(
             label: AppCopy.undo,
-            textColor: NativeColors.accent(isDark),
+            textColor:
+                isDark ? OTColors.onInverseSurface : OTColors.surfaceLight,
             onPressed: () {
               if (_bookmarkService.currentUserId == ownerUid) {
                 unawaited(
@@ -281,11 +283,30 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
   Future<void> _openBookmarkItem(BookmarkModel item) async {
     if (item.id.startsWith('book_')) {
       final editionId = item.id.replaceFirst('book_', '');
-      var books = CanonicalLibraryService.instance.cachedSyafiiBooks;
-      if (books == null) {
+      AgentModel? matchedAgent;
+      if (item.agentId.isNotEmpty) {
+        for (final a in AgentModel.defaultAgents) {
+          if (a.id == item.agentId) {
+            matchedAgent = a;
+            break;
+          }
+        }
+      }
+      List<CanonicalBookPresentation>? books;
+      if (matchedAgent != null) {
         try {
-          books = await CanonicalLibraryService.instance.loadSyafiiCatalog();
+          books = await CanonicalLibraryService.instance
+              .loadCatalogForAgent(matchedAgent);
         } catch (_) {}
+      }
+      if (books == null || !books.any((b) => b.editionId == editionId)) {
+        var syafii = CanonicalLibraryService.instance.cachedSyafiiBooks;
+        if (syafii == null) {
+          try {
+            syafii = await CanonicalLibraryService.instance.loadSyafiiCatalog();
+          } catch (_) {}
+        }
+        books = syafii ?? books;
       }
       final matchedBook = books?.firstWhere(
         (b) => b.editionId == editionId,
@@ -300,7 +321,10 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
         NavigationGuard.safePushNamed(
           context,
           AppRoutes.bookDetail,
-          arguments: matchedBook,
+          arguments: {
+            'book': matchedBook,
+            if (matchedAgent != null) 'agent': matchedAgent,
+          },
         );
         return;
       }
@@ -900,12 +924,12 @@ class _BookmarkCardState extends State<_BookmarkCard> {
     final pillLabel = switch (item.documentKind) {
       BookmarkDocumentKind.personalNote => AppCopy.navSaved,
       BookmarkDocumentKind.aiAnswer => item.agentTitle.isNotEmpty
-          ? item.agentTitle
-              .replaceFirst(RegExp(r'^AI\s+', caseSensitive: false), '')
+          ? Loc.text(item.agentTitle
+              .replaceFirst(RegExp(r'^AI\s+', caseSensitive: false), ''))
           : (item.fieldName.contains('Catatan')
               ? AppCopy.navSaved
               : (item.fieldName.isNotEmpty
-                  ? item.fieldName
+                  ? Loc.text(item.fieldName)
                   : AppCopy.studySpace)),
       BookmarkDocumentKind.bookReference => AppCopy.bookReferenceLabel,
     };

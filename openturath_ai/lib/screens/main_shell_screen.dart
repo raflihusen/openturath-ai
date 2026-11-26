@@ -100,6 +100,7 @@ class _MainShellScreenState extends State<MainShellScreen>
   }
 
   void _onTabSelected(int index, {String? fieldId, CorpusKind? kind}) {
+    if (!mounted) return;
     AppSnackBar.clear(context);
     if (_pageController.hasClients && _currentIndex != index) {
       // Lompat lalu pudarkan: halaman tidak meluncur melewati tab di antaranya.
@@ -180,101 +181,90 @@ class _MainShellScreenState extends State<MainShellScreen>
     final expandedSidebar = MediaQuery.sizeOf(context).width >= 1100;
     final screens = _buildScreens();
 
-    final Widget baseScaffold = isWideScreen
-        ? Scaffold(
-            backgroundColor: canvas,
-            body: Row(
-              children: [
-                Container(
-                  decoration: BoxDecoration(
-                      color: surface,
-                      border: BorderDirectional(
-                          end: BorderSide(
-                              color: OTColors.borderSubtle(isDark)))),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Expanded(
-                        child: NavigationRail(
-                          backgroundColor: surface,
-                          indicatorColor: indicator,
-                          minWidth: 88,
-                          minExtendedWidth: 208,
-                          extended: expandedSidebar,
-                          selectedIndex: _currentIndex,
-                          // Ikon saja; nama tujuan muncul sebagai tooltip.
-                          labelType: expandedSidebar
-                              ? NavigationRailLabelType.none
-                              : NavigationRailLabelType.all,
-                          leading: Padding(
-                            padding: const EdgeInsets.only(top: 16, bottom: 20),
-                            child:
-                                Row(mainAxisSize: MainAxisSize.min, children: [
-                              SizedBox.square(
-                                  dimension: 56,
-                                  child: Center(
-                                      child: OpenTurathMark(
-                                          size: 40, color: accent))),
-                              if (expandedSidebar) ...[
-                                const SizedBox(width: 10),
-                                Text('OpenTurath',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .titleMedium),
-                              ],
-                            ]),
-                          ),
-                          onDestinationSelected: (index) {
-                            HapticFeedback.selectionClick();
-                            _onTabSelected(index);
-                          },
-                          destinations: [
-                            NavigationRailDestination(
-                              icon: const Icon(Icons.home_outlined),
-                              selectedIcon: const Icon(Icons.home_rounded),
-                              label: Text(Loc.tr('navHome')),
-                            ),
-                            NavigationRailDestination(
-                              icon: const Icon(Icons.auto_awesome_outlined),
-                              selectedIcon:
-                                  const Icon(Icons.auto_awesome_rounded),
-                              label: Text(Loc.tr('navStudies')),
-                            ),
-                            NavigationRailDestination(
-                              icon: const Icon(Icons.edit_note_outlined),
-                              selectedIcon: const Icon(Icons.edit_note_rounded),
-                              label: Text(Loc.tr('navSaved')),
-                            ),
-                            NavigationRailDestination(
-                              icon: const Icon(Icons.settings_outlined),
-                              selectedIcon: const Icon(Icons.settings_rounded),
-                              label: Text(Loc.tr('navSettings')),
-                            ),
+    final Widget pageView = PageView(
+      controller: _pageController,
+      physics: const NeverScrollableScrollPhysics(),
+      children: screens,
+    );
+
+    final Widget baseScaffold = Scaffold(
+      backgroundColor: canvas,
+      body: Row(
+        children: [
+          if (isWideScreen)
+            Container(
+              decoration: BoxDecoration(
+                  color: surface,
+                  border: BorderDirectional(
+                      end: BorderSide(color: OTColors.borderSubtle(isDark)))),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Expanded(
+                    child: NavigationRail(
+                      backgroundColor: surface,
+                      indicatorColor: indicator,
+                      minWidth: 88,
+                      minExtendedWidth: 208,
+                      extended: expandedSidebar,
+                      selectedIndex: _currentIndex,
+                      // Ikon saja; nama tujuan muncul sebagai tooltip.
+                      labelType: expandedSidebar
+                          ? NavigationRailLabelType.none
+                          : NavigationRailLabelType.all,
+                      leading: Padding(
+                        padding: const EdgeInsets.only(top: 16, bottom: 20),
+                        child: Row(mainAxisSize: MainAxisSize.min, children: [
+                          SizedBox.square(
+                              dimension: 56,
+                              child: Center(
+                                  child: OpenTurathMark(
+                                      size: 40, color: accent))),
+                          if (expandedSidebar) ...[
+                            const SizedBox(width: 10),
+                            Text('OpenTurath',
+                                style: Theme.of(context).textTheme.titleMedium),
                           ],
-                        ),
+                        ]),
                       ),
-                    ],
+                      onDestinationSelected: (index) {
+                        HapticFeedback.selectionClick();
+                        _onTabSelected(index);
+                      },
+                      destinations: [
+                        NavigationRailDestination(
+                          icon: const Icon(Icons.home_outlined),
+                          selectedIcon: const Icon(Icons.home_rounded),
+                          label: Text(Loc.tr('navHome')),
+                        ),
+                        NavigationRailDestination(
+                          icon: const Icon(Icons.auto_awesome_outlined),
+                          selectedIcon: const Icon(Icons.auto_awesome_rounded),
+                          label: Text(Loc.tr('navStudies')),
+                        ),
+                        NavigationRailDestination(
+                          icon: const Icon(Icons.edit_note_outlined),
+                          selectedIcon: const Icon(Icons.edit_note_rounded),
+                          label: Text(Loc.tr('navSaved')),
+                        ),
+                        NavigationRailDestination(
+                          icon: const Icon(Icons.settings_outlined),
+                          selectedIcon: const Icon(Icons.settings_rounded),
+                          label: Text(Loc.tr('navSettings')),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-                Expanded(
-                  child: PageView(
-                    controller: _pageController,
-                    physics: const NeverScrollableScrollPhysics(),
-                    children: screens,
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
-          )
-        : Scaffold(
-            backgroundColor: canvas,
-            body: PageView(
-              controller: _pageController,
-              physics: const NeverScrollableScrollPhysics(),
-              children: screens,
-            ),
-            extendBody: false,
-            bottomNavigationBar: NavigationBar(
+          Expanded(child: pageView),
+        ],
+      ),
+      extendBody: false,
+      bottomNavigationBar: isWideScreen
+          ? null
+          : NavigationBar(
               backgroundColor: surface,
               indicatorColor: indicator,
               selectedIndex: _currentIndex,
@@ -306,7 +296,7 @@ class _MainShellScreenState extends State<MainShellScreen>
                 ),
               ],
             ),
-          );
+    );
 
     return MainShellController(
       switchTab: _onTabSelected,
@@ -323,9 +313,15 @@ class _MainShellScreenState extends State<MainShellScreen>
               if (sessionManager.isOpen) {
                 // Periksa apakah webview pada tab aktif memiliki riwayat navigasi sebelumnya
                 final activeWebCtrl = sessionManager.activeTab?.webController;
-                if (activeWebCtrl != null && await activeWebCtrl.canGoBack()) {
-                  await activeWebCtrl.goBack();
-                  return;
+                if (activeWebCtrl != null) {
+                  try {
+                    if (await activeWebCtrl.canGoBack()) {
+                      await activeWebCtrl.goBack();
+                      return;
+                    }
+                  } catch (_) {
+                    // Controller yang sudah dispose tidak boleh menghambat tombol kembali.
+                  }
                 }
                 if (context.mounted) {
                   AppSnackBar.clear(context);

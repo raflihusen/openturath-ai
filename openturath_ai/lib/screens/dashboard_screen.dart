@@ -14,6 +14,7 @@ import '../core/scholarly_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../core/app_copy.dart';
+import '../core/arabic_utils.dart';
 import '../core/app_config.dart';
 import '../services/feature_flags.dart';
 import '../core/constants.dart';
@@ -159,10 +160,19 @@ class _DashboardScreenState extends State<DashboardScreen>
     try {
       var user = _authService.cachedCurrentUser;
       user ??= await _authService.getCurrentUserModel();
+      final syncEmail = (AuthService.activeWebUserEmail ??
+              user?.email ??
+              _authService.currentUser?.email ??
+              '')
+          .trim();
       final results = await Future.wait([
-        user != null && !forceRefresh
-            ? Future.value(user)
-            : _authService.getCurrentUserModel(),
+        forceRefresh && syncEmail.isNotEmpty
+            ? AuthService.syncUserStatusWithVps(syncEmail).then((_) async =>
+                _authService.cachedCurrentUser ??
+                await _authService.getCurrentUserModel())
+            : (user != null && !forceRefresh
+                ? Future.value(user)
+                : _authService.getCurrentUserModel()),
         ProductPricingService.syncPricing(forceRefresh: forceRefresh),
         FeatureFlagsService.sync(forceRefresh: forceRefresh),
       ]).timeout(
@@ -246,7 +256,9 @@ class _DashboardScreenState extends State<DashboardScreen>
   Future<void> _confirmReplaceOldestTab(
       AgentModel agent, UserModel? user) async {
     final mgr = AgentSessionManager.instance;
-    final oldest = mgr.tabs[mgr.oldestEvictableIndex].agent;
+    if (!mgr.isAtTabLimit || mgr.tabs.isEmpty) return;
+    final evictIdx = mgr.oldestEvictableIndex.clamp(0, mgr.tabs.length - 1);
+    final oldest = mgr.tabs[evictIdx].agent;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final confirmed = await showDialog<bool>(
       context: context,
@@ -549,21 +561,19 @@ class _DashboardScreenState extends State<DashboardScreen>
                           const SizedBox(height: 12),
                           Builder(
                             builder: (context) {
-                              final q = _searchQuery.toLowerCase();
+                              final q = _searchQuery.trim();
                               final matches = _agents.where((a) {
                                 if (a.kind == CorpusKind.scholar) return false;
-                                final title = a.title.toLowerCase();
-                                final arabic = a.titleArabic;
-                                final subtitle =
-                                    a.subtitleAcademic.toLowerCase();
-                                final category = a.category.toLowerCase();
+                                final localizedTitle = Loc.text(a.title);
                                 final books = a.referenceBooks?.any((b) =>
-                                        b.title.toLowerCase().contains(q)) ??
+                                        ArabicUtils.matches(b.title, q)) ??
                                     false;
-                                return title.contains(q) ||
-                                    arabic.contains(q) ||
-                                    subtitle.contains(q) ||
-                                    category.contains(q) ||
+                                return ArabicUtils.matches(a.title, q) ||
+                                    ArabicUtils.matches(localizedTitle, q) ||
+                                    ArabicUtils.matches(a.titleArabic, q) ||
+                                    ArabicUtils.matches(
+                                        a.subtitleAcademic, q) ||
+                                    ArabicUtils.matches(a.category, q) ||
                                     books;
                               }).toList();
 
@@ -700,6 +710,9 @@ class _DashboardScreenState extends State<DashboardScreen>
                                               activeMembers.length)
                                           : reviewCopy('Belum tersedia',
                                               'غير متاح حالياً', 'Coming Soon');
+                                      final discLabel = Loc.isArabic
+                                          ? Loc.text(disc.name)
+                                          : 'AI ${Loc.text(disc.name)}';
                                       return OTReveal(
                                         index: index + 2,
                                         child: OTInkCard(
@@ -709,8 +722,7 @@ class _DashboardScreenState extends State<DashboardScreen>
                                                           'field_${disc.fieldId}']
                                                       ?[2] ??
                                                   ''),
-                                          semanticLabel:
-                                              'AI ${Loc.text(disc.name)}',
+                                          semanticLabel: discLabel,
                                           onTap: () {
                                             final shell =
                                                 MainShellController.of(context);
@@ -721,9 +733,7 @@ class _DashboardScreenState extends State<DashboardScreen>
                                               NavigationGuard.safePushNamed(
                                                 context,
                                                 AppRoutes.specialistList,
-                                                arguments: {
-                                                  'fieldId': disc.fieldId
-                                                },
+                                                arguments: disc.fieldId,
                                               );
                                             }
                                           },
@@ -731,7 +741,7 @@ class _DashboardScreenState extends State<DashboardScreen>
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
                                             children: [
-                                              Text('AI ${Loc.text(disc.name)}',
+                                              Text(discLabel,
                                                   maxLines: 2,
                                                   overflow:
                                                       TextOverflow.ellipsis,
@@ -793,7 +803,15 @@ class _LibraryNumbersTile extends StatelessWidget {
             future: OpenTurathCatalogRepository.instance.loadAllMetadata(),
             builder: (context, snapshot) {
               final all = snapshot.data ?? const <String, AiLibraryMetadata>{};
-              if (snapshot.hasError) return Text(Loc.tr('catalogFailure'));
+              if (snapshot.hasError) {
+                return Text(
+                  Loc.tr('catalogFailure'),
+                  style: ScholarlyFonts.outfit(
+                    fontSize: OTFontSize.s12,
+                    color: OTExpressive.whiteMuted,
+                  ),
+                );
+              }
               if (all.isEmpty) return const SizedBox(height: 44);
               final number = NumberFormat.decimalPattern(Loc.language);
               final entries =
@@ -897,10 +915,12 @@ class _AdabOfDayTile extends StatelessWidget {
         .sections
         .where((s) => AdabIcons.forSection(s.id) != null)
         .toList();
+    if (sections.isEmpty) return const SizedBox.shrink();
     final index = day % sections.length;
     final section = sections[index];
     final title = section.title.split(' · ').last;
     final body = section.content.split('\n\n').first;
+    final counter = Loc.ltr('${index + 1}/${sections.length}');
     return OTBentoTile(
       onTap: () => LegalDocumentSheet.showAiGuideline(context),
       semanticLabel: '${Loc.tr('aiEtiquetteLabel')}: $title',
@@ -913,7 +933,7 @@ class _AdabOfDayTile extends StatelessWidget {
               Icon(AdabIcons.forSection(section.id), size: 24, color: muted),
               const SizedBox(width: 12),
               Expanded(
-                child: Text('${Loc.tr('aiEtiquetteLabel')} · ${index + 1}/8',
+                child: Text('${Loc.tr('aiEtiquetteLabel')} · $counter',
                     style: ScholarlyFonts.outfit(
                         fontSize: OTFontSize.s12, color: muted)),
               ),

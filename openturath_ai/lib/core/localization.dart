@@ -24,10 +24,24 @@ abstract final class Loc {
     context.dependOnInheritedWidgetOfExactType<LocaleScope>();
   }
 
-  static final Map<String, String> _sourceKeys = {
-    for (final entry in copyCatalog.entries)
-      for (final value in entry.value) value: entry.key,
-  };
+  static final Map<String, String> _sourceKeys = () {
+    final map = <String, String>{};
+    // Prioritaskan kunci kanonis (non ui_*) agar judul resmi seperti "AI"
+    // tidak dibajak oleh entri ui_* yang otomatis dibuat.
+    for (final entry in copyCatalog.entries) {
+      if (entry.key.startsWith('ui_')) continue;
+      for (final value in entry.value) {
+        map.putIfAbsent(value, () => entry.key);
+      }
+    }
+    for (final entry in copyCatalog.entries) {
+      if (!entry.key.startsWith('ui_')) continue;
+      for (final value in entry.value) {
+        map.putIfAbsent(value, () => entry.key);
+      }
+    }
+    return map;
+  }();
   static const _aliases = {
     'app_name': 'appName',
     'available_now': 'readyToUse',

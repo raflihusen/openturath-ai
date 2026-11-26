@@ -106,7 +106,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
           agentId: agent.id,
           agentTitle: agent.title,
           fieldName: 'بطاقة كتاب',
-          fieldId: 'fiqh',
+          fieldId: agent.fieldId.isNotEmpty ? agent.fieldId : 'fiqh',
           arabicExcerpt: widget.book.titleArabic,
           fullAnswer:
               'كتاب ${widget.book.titleArabic}، للمؤلف ${widget.book.authorArabic}$deathYearStr$publisherStr$muhaqqiqStr.',
