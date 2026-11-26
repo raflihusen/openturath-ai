@@ -222,6 +222,10 @@ class SubscriptionService {
                   '')
               .toString()
               .trim();
+          final kindStr = (data['kind'] ?? '').toString().trim().toLowerCase();
+          final isPaidGrant = data['isPaid'] == true ||
+              data['is_paid'] == true ||
+              kindStr == 'payment';
           if (expiryDate != null && rawKey.isNotEmpty) {
             await AuthService.applyActiveGrant(
               email,
@@ -229,7 +233,9 @@ class SubscriptionService {
               durationDays: durationDays,
               agentId: rawKey,
               planTitle: data['serviceTitle'] as String?,
+              isPaidSubscription: isPaidGrant,
             );
+            unawaited(AuthService.syncUserStatusWithVps(email));
           } else {
             await AuthService.syncUserStatusWithVps(email);
             if (AuthService().cachedCurrentUser == null) {
@@ -241,11 +247,22 @@ class SubscriptionService {
       }
 
       if (data != null) {
-        final errCode = (data['code'] as String?) ??
-            (data['reason'] as String?) ??
-            'failed';
-        final serverMsg = data['message'] as String?;
-        final localized = redeemErrorMessage(errCode, serverMsg, data);
+        final rawDetail = data['detail'];
+        final detailMap =
+            rawDetail is Map ? Map<String, dynamic>.from(rawDetail) : null;
+        final errCode = (detailMap?['code'] ??
+                detailMap?['reason'] ??
+                data['code'] ??
+                data['reason'] ??
+                'failed')
+            .toString();
+        final serverMsg = (detailMap?['message'] ??
+                detailMap?['error'] ??
+                (rawDetail is String ? rawDetail : null) ??
+                data['message'])
+            ?.toString();
+        final mergedData = detailMap != null ? {...data, ...detailMap} : data;
+        final localized = redeemErrorMessage(errCode, serverMsg, mergedData);
         final fellBackToGeneric =
             localized == Loc.tr('redeemNotActivated') &&
                 Loc.language == 'id' &&
@@ -254,7 +271,7 @@ class SubscriptionService {
         return {
           'success': false,
           'code': errCode,
-          if (data['reason'] != null) 'reason': data['reason'],
+          if (mergedData['reason'] != null) 'reason': mergedData['reason'],
           'message': fellBackToGeneric ? serverMsg.trim() : localized,
         };
       }
@@ -300,7 +317,18 @@ class SubscriptionService {
       try {
         final res = await verifyPaymentStatus(invoiceNumber: invoice);
         if (res['status'] == 'SUCCESS' || res['success'] == true) {
-          return true;
+          final email = AuthService.activeWebUserEmail ??
+              AuthService().cachedCurrentUser?.email ??
+              AuthService().currentUser?.email ??
+              '';
+          if (email.isNotEmpty) {
+            await _syncUserStatus(email);
+          }
+          if (AuthService.lastVpsProvisioningReady == false) {
+            return false;
+          }
+          final user = AuthService().cachedCurrentUser;
+          return user != null && (user.isVip || user.hasAccess);
         }
       } catch (_) {}
     }

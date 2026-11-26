@@ -153,6 +153,8 @@ abstract final class ProductPricing {
       }
       if (_agentOffers.containsKey('all_specialists')) {
         _allSpecialists = List.of(_agentOffers['all_specialists']!);
+      } else if (_agentOffers.containsKey('all_disciplines')) {
+        _allSpecialists = List.of(_agentOffers['all_disciplines']!);
       }
       if (_agentOffers.containsKey('fiqh_syafii')) {
         _specialists = List.of(_agentOffers['fiqh_syafii']!);
@@ -194,8 +196,14 @@ abstract final class ProductPricing {
       if (singleAgentOverrideId != null &&
           _agentOffers.containsKey(singleAgentOverrideId)) {
         _agentOffers[singleAgentOverrideId] = List.of(_specialists);
-      } else if (_agentOffers.containsKey('fiqh_syafii')) {
-        _agentOffers['fiqh_syafii'] = List.of(_specialists);
+      } else {
+        for (final key in List<String>.from(_agentOffers.keys)) {
+          if (!key.startsWith('fiqh_tahawwulat') &&
+              key != 'all_specialists' &&
+              key != 'all_disciplines') {
+            _agentOffers[key] = List.of(_specialists);
+          }
+        }
       }
     }
   }
@@ -427,6 +435,7 @@ class ProductPricingService {
                 }
 
                 if (offers.isNotEmpty) {
+                  offers.sort((a, b) => a.months.compareTo(b.months));
                   agentOffersMap[agentId] = offers;
                 }
               }
@@ -443,8 +452,9 @@ class ProductPricingService {
 
           if (agentOffersMap.isNotEmpty) {
             // Jika VPS belum menyertakan arabicPayment, cek Firestore app_config/pricing
-            // agar tombol pembayaran Arab tetap bisa diaktifkan OTA dari salah satu sumber.
-            if (arabicCfg == null) {
+            // hanya saat antarmuka Arab aktif (atau saat firestore tes diinjeksi)
+            // agar pengguna ID/EN tidak terhambat probe 2 detik setiap buka layar harga.
+            if (arabicCfg == null && (Loc.isArabic || firestore != null)) {
               try {
                 Map<String, dynamic>? fsData;
                 if (firestore == null &&
@@ -524,11 +534,17 @@ class ProductPricingService {
             data['arabicPayment'] ?? data['arabic_payment']);
         final plans = data['plans'];
         Map<String, dynamic>? tahawwulat;
+        Map<String, dynamic>? allSpecialists;
         Map<String, dynamic>? specialists;
         if (plans is Map) {
           if (plans['fiqh_tahawwulat'] is Map) {
             tahawwulat =
                 Map<String, dynamic>.from(plans['fiqh_tahawwulat'] as Map);
+          }
+          final rawAllSpecialists =
+              plans['all_specialists'] ?? plans['all_disciplines'];
+          if (rawAllSpecialists is Map) {
+            allSpecialists = Map<String, dynamic>.from(rawAllSpecialists);
           }
           if (plans['specialists'] is Map) {
             specialists =
@@ -544,13 +560,10 @@ class ProductPricingService {
             'tholib_1m': {'amount': p1m, 'regularAmount': 300000},
           };
         }
-        if (tahawwulat == null &&
-            (data['tahawwulat_1m'] != null || data['tholib_1m'] != null)) {
-          final t1m = (data['tahawwulat_1m'] ?? data['tholib_1m']) is int
-              ? (data['tahawwulat_1m'] ?? data['tholib_1m']) as int
-              : int.tryParse((data['tahawwulat_1m'] ?? data['tholib_1m'])
-                      .toString()) ??
-                  299000;
+        if (tahawwulat == null && data['tahawwulat_1m'] != null) {
+          final t1m = data['tahawwulat_1m'] is int
+              ? data['tahawwulat_1m'] as int
+              : int.tryParse(data['tahawwulat_1m'].toString()) ?? 299000;
           tahawwulat = {
             'tholib_1m': {'amount': t1m, 'regularAmount': 1000000},
           };
@@ -558,11 +571,15 @@ class ProductPricingService {
         ProductPricing.updateOffers(
           revision: revision,
           tahawwulatMap: tahawwulat,
+          allSpecialistsMap: allSpecialists,
           specialistsMap: specialists,
           arabicPaymentConfig: arabicCfg,
         );
         _lastFetch = now;
-        return tahawwulat != null || specialists != null || arabicCfg != null;
+        return tahawwulat != null ||
+            allSpecialists != null ||
+            specialists != null ||
+            arabicCfg != null;
       }
     } catch (_) {
       // Graceful fallback to default constants

@@ -221,6 +221,8 @@ class UserModel {
     final allSpecialists =
         entitlements['all_specialists'] ?? entitlements['all_disciplines'];
     if (!isTahawwulat &&
+        mappedKey != 'all_access' &&
+        rawLower != 'all_ai' &&
         allSpecialists != null &&
         allSpecialists.isActive &&
         allSpecialists.isPremium) {
@@ -232,41 +234,40 @@ class UserModel {
       return false;
     }
 
-    // 3. Explicit global all-access plan check (ONLY truly global all-access plans)
-    const globalAllPlans = [
-      'all_access',
-      'all_ai_1m',
-      'all_ai_6m',
-      'all_ai_1y',
-      'all_ai',
-      'full',
-      'sultan',
-    ];
-    final cleanPlan = plan.trim().toLowerCase();
-    final isGlobalPlan =
-        (globalAllPlans.contains(cleanPlan) || cleanPlan.startsWith('all_ai')) &&
-            isSubscriptionActive;
-    final isAllSpecialistsPlan = !isTahawwulat &&
-        (cleanPlan == 'all_specialists' ||
-            cleanPlan.startsWith('all_specialists_') ||
-            cleanPlan == 'all_disciplines' ||
-            cleanPlan.startsWith('all_disciplines_')) &&
-        isSubscriptionActive;
-    if (isGlobalPlan || isAllSpecialistsPlan) {
-      return true;
-    }
+    // 3-5. Legacy global plan/subscriptionExpiry fallbacks ONLY apply when
+    // modular entitlements are absent. When modular entitlements exist, expired
+    // global/bundle plans must never resurrect access for unpurchased modules.
+    if (entitlements.isEmpty && isSubscriptionActive) {
+      const globalAllPlans = [
+        'all_access',
+        'all_ai_1m',
+        'all_ai_6m',
+        'all_ai_1y',
+        'all_ai',
+        'full',
+        'sultan',
+      ];
+      final cleanPlan = plan.trim().toLowerCase();
+      final isGlobalPlan =
+          globalAllPlans.contains(cleanPlan) || cleanPlan.startsWith('all_ai');
+      final isAllSpecialistsPlan = !isTahawwulat &&
+          mappedKey != 'all_access' &&
+          rawLower != 'all_ai' &&
+          (cleanPlan == 'all_specialists' ||
+              cleanPlan.startsWith('all_specialists_') ||
+              cleanPlan == 'all_disciplines' ||
+              cleanPlan.startsWith('all_disciplines_'));
+      if (isGlobalPlan || isAllSpecialistsPlan) {
+        return true;
+      }
 
-    // 4. Module-specific plan matching (e.g. 'fiqh_syafii_1m', 'fiqh_tahawwulat_1m')
-    if (isSubscriptionActive) {
+      // 4. Module-specific plan matching (e.g. 'fiqh_syafii_1m', 'fiqh_tahawwulat_1m')
       final cleanKey = mappedKey.toLowerCase();
       if (cleanPlan == cleanKey || cleanPlan.startsWith('${cleanKey}_')) {
         return true;
       }
-    }
 
-    // 5. Legacy plan backward-compatibility (ONLY when entitlements is empty)
-    // When a user has modular entitlements, legacy fallback must never leak unpurchased modules.
-    if (entitlements.isEmpty && isSubscriptionActive) {
+      // 5. Legacy all-access plan backward-compatibility
       const legacyAllAccessPlans = [
         AppConstants.planTholib1m,
         AppConstants.planTholib6m,

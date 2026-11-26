@@ -4,9 +4,6 @@ import '../core/app_platform.dart';
 import '../core/webview_cookie_policy.dart';
 import '../core/localization.dart';
 import 'dart:async';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'adaptive_sheet.dart';
@@ -112,9 +109,7 @@ class PaymentCheckoutSheet extends StatefulWidget {
 class _PaymentCheckoutSheetState extends State<PaymentCheckoutSheet> {
   final SubscriptionService _subService = SubscriptionService();
 
-  InAppWebViewController? _webController;
   Timer? _pollTimer;
-  StreamSubscription<QuerySnapshot>? _txSubscription;
   StreamSubscription? _userSubscription;
   DateTime? _lastInquiryAt;
   Timer? _initialLoadFallbackTimer;
@@ -135,34 +130,10 @@ class _PaymentCheckoutSheetState extends State<PaymentCheckoutSheet> {
   void initState() {
     super.initState();
 
-    // 1. Real-time Firestore Listener: mendeteksi instan saat status berubah jadi 'success' (< 1s)
-    final currentUid = Firebase.apps.isNotEmpty
-        ? FirebaseAuth.instance.currentUser?.uid
-        : null;
-    if (widget.invoiceNumber.isNotEmpty && currentUid != null) {
-      _txSubscription = FirebaseFirestore.instance
-          .collection(AppConstants.colTransactions)
-          .where('uid', isEqualTo: currentUid)
-          .where('invoice_number', isEqualTo: widget.invoiceNumber)
-          .limit(1)
-          .snapshots()
-          .listen(
-        (snap) {
-          if (snap.docs.isNotEmpty) {
-            final data = snap.docs.first.data() as Map<String, dynamic>?;
-            final status = (data?['status'] ?? '').toString().toLowerCase();
-            if (status == 'paid' || status == 'success') {
-              _triggerSuccess();
-            }
-          }
-        },
-        onError: (_) {
-          // Jika query ditolak atau gagal, biarkan fail-safe polling tetap berjalan
-        },
-      );
-    }
-
-    // 2. Real-time User Entitlements Listener: mendeteksi aktivasi instan dari webhook server
+    // 1. Otoritas pembayaran adalah VPS (maktabah.openturath.id):
+    // deteksi instan berjalan melalui AuthService().userStream (disegarkan VPS)
+    // dan active inquiry polling (/api/v1/payment/status), tanpa membuka stream
+    // C++ Firestore legacy yang rawan crash di Windows.
     // HANYA dipicu jika ada entitlement baru yang memiliki sourceTransactionId cocok dengan invoice/trxId ini.
     // DILARANG keras memicu _triggerSuccess hanya karena user sudah berstatus VIP atau memiliki paket lain,
     // karena hal tersebut akan menutup checkout secara instan sebelum Midtrans sempat terbuka!
@@ -204,16 +175,13 @@ class _PaymentCheckoutSheetState extends State<PaymentCheckoutSheet> {
   void dispose() {
     _pollTimer?.cancel();
     _initialLoadFallbackTimer?.cancel();
-    _txSubscription?.cancel();
     _userSubscription?.cancel();
-    _webController = null;
     super.dispose();
   }
 
   void _triggerSuccess() async {
     if (_isSuccess || _hasPopped || !mounted) return;
     _pollTimer?.cancel();
-    _txSubscription?.cancel();
     _userSubscription?.cancel();
     setState(() {
       _isSuccess = true;
@@ -661,12 +629,11 @@ class _PaymentCheckoutSheetState extends State<PaymentCheckoutSheet> {
                               ),
                             ),
 
-                            // Tombol Cek Manual / Refresh
+                            // Tombol Cek Manual Status (jangan reload WebView agar QRIS/VA tidak hilang)
                             IconButton(
                               onPressed: _isChecking
                                   ? null
                                   : () {
-                                      _webController?.reload();
                                       _checkPaymentStatus(force: true);
                                     },
                               icon: _isChecking
@@ -778,16 +745,13 @@ class _PaymentCheckoutSheetState extends State<PaymentCheckoutSheet> {
                                 allowContentAccess: true,
                                 javaScriptCanOpenWindowsAutomatically: true,
                                 supportMultipleWindows: true,
-                                forceDark:
-                                    isDark ? ForceDark.ON : ForceDark.OFF,
+                                // Jangan aktifkan ForceDark pada Midtrans Snap agar kode QRIS tidak terbalik warna.
+                                forceDark: ForceDark.OFF,
                                 transparentBackground: false,
                                 userAgent: AppPlatform.isDesktop
                                     ? AppConstants.desktopUserAgent
                                     : AppConstants.chromeMobileUserAgent,
                               ),
-                              onWebViewCreated: (controller) {
-                                _webController = controller;
-                              },
                               onCreateWindow:
                                   (controller, createWindowAction) async {
                                 final targetUrl =

@@ -28,6 +28,7 @@ import 'screens/book_catalog_screen.dart';
 import 'screens/book_detail_screen.dart';
 import 'models/book_model.dart';
 import 'models/agent_model.dart';
+import 'models/field_model.dart';
 import 'firebase_options.dart';
 
 import 'core/app_config.dart';
@@ -46,6 +47,25 @@ const _browserWorkspaceExperiment = bool.fromEnvironment(
   'OPENTURATH_BROWSER_EXPERIMENT',
   defaultValue: false,
 );
+
+void _configureAfterFirebaseInit() {
+  // Windows C++ SDK LevelDB persistence di %LOCALAPPDATA%\firestore rentan
+  // korup/terkunci dan memicu forced close native (0xC0000409 / SIGABRT)
+  // tanpa bisa ditangkap Dart. Gunakan memori saja di Windows sebelum
+  // operasi Firestore pertama dijalankan.
+  if (!kIsWeb && defaultTargetPlatform == TargetPlatform.windows) {
+    try {
+      FirebaseFirestore.instance.settings = const Settings(
+        persistenceEnabled: false,
+      );
+    } catch (_) {}
+  }
+  TelemetryService.instance.init();
+  unawaited(AuthFailureReporter.loadAppVersion());
+  if (kReleaseMode) {
+    ErrorWidget.builder = (_) => const ReleaseErrorSurface();
+  }
+}
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -100,23 +120,7 @@ Future<void> main() async {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     ).timeout(const Duration(seconds: 30));
-    // Windows C++ SDK LevelDB persistence di %LOCALAPPDATA%\firestore rentan
-    // korup/terkunci dan memicu forced close native (0xC0000409 / SIGABRT)
-    // tanpa bisa ditangkap Dart. Gunakan memori saja di Windows sebelum
-    // operasi Firestore pertama dijalankan.
-    if (!kIsWeb && defaultTargetPlatform == TargetPlatform.windows) {
-      try {
-        FirebaseFirestore.instance.settings = const Settings(
-          persistenceEnabled: false,
-        );
-      } catch (_) {}
-    }
-    // ── Inisialisasi Silent Telemetry ──
-    TelemetryService.instance.init();
-    unawaited(AuthFailureReporter.loadAppVersion());
-    if (kReleaseMode) {
-      ErrorWidget.builder = (_) => const ReleaseErrorSurface();
-    }
+    _configureAfterFirebaseInit();
     runApp(const OpenTurathApp());
   } catch (error, stackTrace) {
     debugPrint(
@@ -177,7 +181,7 @@ class _InitializationFailureAppState extends State<InitializationFailureApp> {
       if (widget.onInitialized != null) {
         widget.onInitialized!();
       } else {
-        TelemetryService.instance.init();
+        _configureAfterFirebaseInit();
         runApp(const OpenTurathApp());
       }
     } catch (e, st) {
@@ -193,10 +197,11 @@ class _InitializationFailureAppState extends State<InitializationFailureApp> {
   }
 
   Future<void> _initializeFirebase() async {
-    if (Firebase.apps.isNotEmpty) return;
-    await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
-    );
+    if (Firebase.apps.isEmpty) {
+      await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform,
+      );
+    }
     if (!kIsWeb && defaultTargetPlatform == TargetPlatform.windows) {
       try {
         FirebaseFirestore.instance.settings = const Settings(
@@ -309,7 +314,19 @@ class OpenTurathApp extends StatelessWidget {
                       page = const MainShellScreen();
                       break;
                     case AppRoutes.specialistList:
-                      page = const SpecialistListScreen();
+                      FieldModel? initialField;
+                      if (settings.arguments is FieldModel) {
+                        initialField = settings.arguments as FieldModel;
+                      } else if (settings.arguments is String) {
+                        final fieldId = settings.arguments as String;
+                        for (final f in FieldModel.defaultFields) {
+                          if (f.id == fieldId) {
+                            initialField = f;
+                            break;
+                          }
+                        }
+                      }
+                      page = SpecialistListScreen(field: initialField);
                       break;
                     case AppRoutes.bookmark:
                       page = const BookmarkScreen();
@@ -346,9 +363,20 @@ class OpenTurathApp extends StatelessWidget {
                       );
                       break;
                     case AppRoutes.bookDetail:
-                      final book =
-                          settings.arguments as CanonicalBookPresentation;
-                      page = BookDetailScreen(book: book);
+                      final args = settings.arguments;
+                      if (args is CanonicalBookPresentation) {
+                        page = BookDetailScreen(book: args);
+                      } else if (args is Map &&
+                          args['book'] is CanonicalBookPresentation) {
+                        page = BookDetailScreen(
+                          book: args['book'] as CanonicalBookPresentation,
+                          agent: args['agent'] is AgentModel
+                              ? args['agent'] as AgentModel
+                              : null,
+                        );
+                      } else {
+                        page = const BookCatalogScreen();
+                      }
                       break;
                     default:
                       page = const SplashScreen();

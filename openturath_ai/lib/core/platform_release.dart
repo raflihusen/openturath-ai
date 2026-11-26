@@ -96,9 +96,9 @@ class PlatformRelease {
     if (!extensions.any(path.endsWith)) return null;
     final hash = release['sha256'];
     return PlatformRelease(
-      installerProtocol: release['installer_protocol'] is int
-          ? release['installer_protocol'] as int
-          : 0,
+      installerProtocol: release['installer_protocol'] is num
+          ? (release['installer_protocol'] as num).toInt()
+          : int.tryParse('${release['installer_protocol'] ?? ''}') ?? 0,
       build: build,
       version: version,
       url: uri,

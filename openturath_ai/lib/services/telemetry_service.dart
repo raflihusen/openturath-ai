@@ -4,7 +4,9 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:crypto/crypto.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
+import '../core/firestore_public_doc.dart';
 
 /// ─────────────────────────────────────────────────────────────────────────────
 /// TelemetryService: Sistem Pemantauan Crash & Error Senyap (Silent Telemetry)
@@ -164,10 +166,21 @@ class TelemetryService {
     Map<String, dynamic>? extra,
   }) async {
     try {
+      // Hindari memanggil C++ Firestore SDK di Windows saat melaporkan error
+      // agar pelaporan error sendiri tidak memicu native abort (0xC0000409).
+      if (_firestore == null && FirestorePublicDoc.preferRestOnCurrentPlatform) {
+        return;
+      }
+      if (_auth == null && Firebase.apps.isEmpty) return;
+
+      final user = _firebaseAuth.currentUser;
+      // Remote reporting requires an authenticated owner; pre-login errors stay local.
+      if (user == null) return;
+
       final errorStr = sanitizeData(error?.toString() ?? 'Unknown Error');
       final stackStr = sanitizeData(stackTrace?.toString() ?? '');
 
-      // Cek deduplikasi
+      // Cek deduplikasi hanya setelah dipastikan error benar-benar akan dikirim
       final signature = _computeErrorSignature(errorStr, context, stackStr);
       final now = DateTime.now();
       final lastReported = _reportedSignatures[signature];
@@ -180,9 +193,6 @@ class TelemetryService {
       _reportedSignatures
           .removeWhere((_, time) => now.difference(time) > _dedupWindow);
 
-      final user = _firebaseAuth.currentUser;
-      // Remote reporting requires an authenticated owner; pre-login errors stay local.
-      if (user == null) return;
       final maskedUserEmail = user.email != null ? maskEmail(user.email!) : '';
 
       final sanitizedExtra = <String, dynamic>{};

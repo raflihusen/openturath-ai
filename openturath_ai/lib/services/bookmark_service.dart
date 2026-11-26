@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/widgets.dart';
+import '../core/firestore_public_doc.dart';
 import '../models/bookmark_model.dart';
 import 'auth_service.dart';
 import 'scoped_json_store.dart';
@@ -45,6 +46,11 @@ class BookmarkService extends ChangeNotifier {
   bool _canSyncToFirestore(String? uid) {
     if (uid == null || uid.isEmpty) return false;
     if (_readCloudOverride != null) return true;
+    // Windows C++ Firestore SDK rentan abort native (0xC0000409); catatan tetap
+    // tersimpan lokal dengan aman tanpa membuka koneksi Firestore C++.
+    if (_firestore == null && FirestorePublicDoc.preferRestOnCurrentPlatform) {
+      return false;
+    }
     final fbUid = _activeAuth?.currentUser?.uid;
     return fbUid != null && fbUid.isNotEmpty && !uid.startsWith('web_');
   }
@@ -55,6 +61,7 @@ class BookmarkService extends ChangeNotifier {
   FirebaseAuth? _auth;
   bool _isSyncing = false;
   bool _resyncRequested = false;
+  Future<bool>? _inFlightSync;
 
   /// Catatan yang sudah tersimpan di perangkat tetapi belum sampai ke cloud.
   final Set<String> _pendingPushIds = <String>{};
@@ -72,6 +79,7 @@ class BookmarkService extends ChangeNotifier {
 
   FirebaseFirestore? get _db {
     if (_firestore != null) return _firestore;
+    if (FirestorePublicDoc.preferRestOnCurrentPlatform) return null;
     try {
       return FirebaseFirestore.instance;
     } catch (_) {
@@ -83,12 +91,25 @@ class BookmarkService extends ChangeNotifier {
     try {
       _activeAuth?.authStateChanges().listen((user) {
         if (user != null && user.uid.isNotEmpty) {
-          syncWithCloud(userId: user.uid);
-        } else if (_pendingPushIds.isNotEmpty) {
+          notifyListeners();
+          unawaited(syncWithCloud(userId: user.uid));
+        } else {
           _pendingPushIds.clear();
           notifyListeners();
         }
       });
+    } catch (_) {}
+    // Dengarkan juga perubahan sesi web/VPS (Windows/macOS tanpa Firebase Auth)
+    try {
+      AuthService().userStream.listen((user) {
+        if (user != null) {
+          notifyListeners();
+          unawaited(syncWithCloud(userId: user.uid));
+        } else {
+          _pendingPushIds.clear();
+          notifyListeners();
+        }
+      }, onError: (_) {});
     } catch (_) {}
     // Push yang gagal saat offline dicoba lagi ketika aplikasi kembali aktif.
     try {
@@ -213,6 +234,22 @@ class BookmarkService extends ChangeNotifier {
 
   bool get isSyncing => _isSyncing;
 
+  Future<void> _migrateLegacyNotes(String userKey) async {
+    final legacyNotes = await _store.read(_legacyKey);
+    if (legacyNotes.isEmpty) return;
+    await _store.update(userKey, (current) {
+      final mergedLocal = <String, BookmarkModel>{
+        for (final b in current) b.id: b,
+      };
+      for (final b in legacyNotes) {
+        mergedLocal.putIfAbsent(b.id, () => b);
+      }
+      return mergedLocal.values.toList();
+    });
+    await _store.replace(_legacyKey, <BookmarkModel>[]);
+    notifyListeners();
+  }
+
   /// Bidirectional smart synchronization between local storage and Firestore.
   /// Reconciles differences, migrates legacy offline notes, and ensures zero data loss.
   Future<bool> syncWithCloud({String? userId}) async {
@@ -220,47 +257,35 @@ class BookmarkService extends ChangeNotifier {
     if (effectiveUid == null || effectiveUid.isEmpty) return false;
     if (!_canSyncToFirestore(effectiveUid)) {
       // Tetap migrasikan catatan anonim lama ke namespace sesi web agar tidak hilang.
-      final userKey = _key(effectiveUid);
-      final legacyNotes = await _store.read(_legacyKey);
-      if (legacyNotes.isNotEmpty) {
-        final current = await _store.read(userKey);
-        final mergedLocal = <String, BookmarkModel>{
-          for (final b in current) b.id: b,
-        };
-        for (final b in legacyNotes) {
-          mergedLocal.putIfAbsent(b.id, () => b);
-        }
-        await _store.replace(userKey, mergedLocal.values.toList());
-        await _store.replace(_legacyKey, <BookmarkModel>[]);
-        notifyListeners();
+      try {
+        await _migrateLegacyNotes(_key(effectiveUid));
+        return true;
+      } catch (e) {
+        debugPrint('[BookmarkService] Local legacy migration failed: $e');
+        return false;
       }
-      return true;
     }
 
-    if (_isSyncing) {
-      // Jangan buang permintaan: jalankan ulang setelah sinkronisasi berjalan selesai.
+    if (_isSyncing && _inFlightSync != null) {
+      // Jangan buang permintaan atau lapor sukses palsu: tunggu sinkronisasi
+      // berjalan selesai lalu jadwalkan satu kali ulangan.
       _resyncRequested = true;
-      return true;
+      return _inFlightSync!;
     }
+
+    final future = _performCloudSync(effectiveUid);
+    _inFlightSync = future;
+    return future;
+  }
+
+  Future<bool> _performCloudSync(String effectiveUid) async {
     _isSyncing = true;
 
     try {
       final userKey = _key(effectiveUid);
 
       // Step 1: Migrate legacy anonymous notes if any exist
-      final legacyNotes = await _store.read(_legacyKey);
-      if (legacyNotes.isNotEmpty) {
-        final current = await _store.read(userKey);
-        final mergedLocal = <String, BookmarkModel>{
-          for (final b in current) b.id: b,
-        };
-        for (final b in legacyNotes) {
-          mergedLocal.putIfAbsent(b.id, () => b);
-        }
-        await _store.replace(userKey, mergedLocal.values.toList());
-        await _store.replace(_legacyKey, <BookmarkModel>[]);
-        notifyListeners();
-      }
+      await _migrateLegacyNotes(userKey);
 
       final db = _db;
       if (db == null && _readCloudOverride == null) {
@@ -283,8 +308,9 @@ class BookmarkService extends ChangeNotifier {
             .timeout(const Duration(seconds: 8));
         for (final doc in snapshot.docs) {
           try {
-            final data = doc.data();
-            if (!data.containsKey('id') || (data['id'] as String).isEmpty) {
+            final data = Map<String, dynamic>.from(doc.data());
+            final rawId = data['id']?.toString().trim() ?? '';
+            if (rawId.isEmpty) {
               data['id'] = doc.id;
             }
             final model = BookmarkModel.fromJson(data);
@@ -326,6 +352,7 @@ class BookmarkService extends ChangeNotifier {
       return false;
     } finally {
       _isSyncing = false;
+      _inFlightSync = null;
       if (_resyncRequested) {
         _resyncRequested = false;
         unawaited(syncWithCloud());

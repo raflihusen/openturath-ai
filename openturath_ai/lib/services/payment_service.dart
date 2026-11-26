@@ -40,8 +40,9 @@ class PaymentService {
         }
       } catch (_) {}
 
-      final canFallbackToCloudFunction =
-          Firebase.apps.isNotEmpty && FirebaseAuth.instance.currentUser != null;
+      // Otoritas pembayaran adalah VPS mandiri (maktabah.openturath.id).
+      // Jangan pernah diam-diam jatuh ke Cloud Function legacy saat VPS sibuk/timeout.
+      const canFallbackToCloudFunction = false;
 
       try {
         final res = await http.post(
@@ -112,10 +113,23 @@ class PaymentService {
         }
 
         // Tangani penolakan harga basi atau error bisnis VPS secara eksplisit;
-        // jangan diam-diam jatuh ke Cloud Function saat error 4xx atau tanpa FirebaseAuth.
-        final serverReason = data?['reason']?.toString();
-        final serverMessage =
-            (data?['message'] ?? data?['error'])?.toString();
+        // buka envelope FastAPI {"detail": ...} bila ada.
+        final rawDetail = data?['detail'];
+        final detailMap =
+            rawDetail is Map ? Map<String, dynamic>.from(rawDetail) : null;
+        final errData = detailMap != null ? {...?data, ...detailMap} : data;
+        final serverReason =
+            (errData?['reason'] ?? errData?['code'])?.toString();
+        final serverMessage = (errData?['message'] ??
+                errData?['error'] ??
+                (rawDetail is String ? rawDetail : null))
+            ?.toString();
+        final rawAmount = errData?['amount'] ?? errData?['gross_amount'];
+        final parsedErrAmount = rawAmount is int
+            ? rawAmount
+            : (rawAmount is num
+                ? rawAmount.toInt()
+                : int.tryParse(rawAmount?.toString() ?? ''));
         if (res.statusCode == 409 ||
             res.statusCode == 412 ||
             serverReason == 'price_changed') {
@@ -124,15 +138,15 @@ class PaymentService {
             message: serverMessage ??
                 'Harga penawaran telah berubah. Muat ulang aplikasi.',
             details: {
-              ...?data,
+              ...?errData,
               'reason': serverReason ?? 'price_changed',
               'agentId': agentId,
               'plan': plan,
-              if (data?['amount'] != null) 'amount': data!['amount'],
-              if (data?['pricingRevision'] != null ||
-                  data?['pricing_revision'] != null)
+              if (parsedErrAmount != null) 'amount': parsedErrAmount,
+              if (errData?['pricingRevision'] != null ||
+                  errData?['pricing_revision'] != null)
                 'pricingRevision':
-                    data!['pricingRevision'] ?? data['pricing_revision'],
+                    errData!['pricingRevision'] ?? errData['pricing_revision'],
             },
           );
         }
@@ -287,10 +301,8 @@ class PaymentService {
       } catch (_) {}
     }
 
-    // 2. Fallback ke Cloud Function hanya jika disediakan custom gateway atau ada sesi Firebase Auth aktif
-    final canCallCloudFunction = _hasCustomFunctions ||
-        (Firebase.apps.isNotEmpty && FirebaseAuth.instance.currentUser != null);
-    if (!canCallCloudFunction) {
+    // 2. Fallback ke Cloud Function hanya untuk pengujian dengan custom gateway tersuntik
+    if (!_hasCustomFunctions) {
       return {
         'status': 'PENDING',
         'success': false,

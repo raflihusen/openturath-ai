@@ -11,6 +11,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import '../models/user_model.dart';
 import '../core/constants.dart';
+import '../core/firestore_public_doc.dart';
 import 'agent_service.dart';
 import 'agent_session_manager.dart';
 import 'session_user_stream.dart';
@@ -198,6 +199,10 @@ class AuthService {
   }
 
   Stream<User?> get authStateChanges => Stream<User?>.multi((listener) {
+        if (_providedAuth == null && Firebase.apps.isEmpty) {
+          listener.add(null);
+          return;
+        }
         final sdk = _auth.authStateChanges().listen(
               (user) => listener.add(_logoutRequested ? null : user),
               onError: listener.addError,
@@ -269,20 +274,25 @@ class AuthService {
   Future<UserModel?> _restoreAuthenticatedSession(
     bool Function() active,
   ) async {
-    if ((_interactiveDepth[_auth] ?? 0) > 0) return null;
+    final hasFirebase = _providedAuth != null || Firebase.apps.isNotEmpty;
+    if (hasFirebase && (_interactiveDepth[_auth] ?? 0) > 0) return null;
     final prefs = await SharedPreferences.getInstance()
         .timeout(const Duration(seconds: 2));
-    if (!active() || (_interactiveDepth[_auth] ?? 0) > 0) return null;
+    if (!active() || (hasFirebase && (_interactiveDepth[_auth] ?? 0) > 0)) {
+      return null;
+    }
     if (_logoutRequested || prefs.getBool(explicitLogoutKey) == true) {
       _setLogoutRequested(true);
       // Complete the user's persisted Log Out intent after a process restart.
       // This does not touch Google cookies or perform a silent sign-in.
-      await _queueAuthMutation<void>(() => _auth.signOut(),
-          isCurrent: () => true).timeout(_authenticationTimeout);
+      if (hasFirebase) {
+        await _queueAuthMutation<void>(() => _auth.signOut(),
+            isCurrent: () => true).timeout(_authenticationTimeout);
+      }
       return null;
     }
-    User? firebaseUser = _auth.currentUser;
-    if (firebaseUser == null) {
+    User? firebaseUser = hasFirebase ? _auth.currentUser : null;
+    if (firebaseUser == null && hasFirebase) {
       try {
         firebaseUser = await _auth
             .authStateChanges()
@@ -471,14 +481,11 @@ class AuthService {
           await prefs.setString('google_session_email', effectiveEmail);
           if (!ownsUser()) return null;
           await prefs.setString('notebook_google_email', effectiveEmail);
-          if (!ownsUser()) return null;
-          await prefs.setString('webview_session_owner', effectiveEmail);
-          if (!ownsUser()) return null;
-          await prefs.setString(
-              PersistentGoogleSession.verifiedOwnerKey, effectiveEmail);
-          if (!ownsUser()) return null;
-          await prefs.setBool('google_session_ready', true);
         } catch (_) {}
+        if (!ownsUser()) return null;
+        // Verifikasi kecocokan pemilik sesi WebView secara jujur tanpa memalsukan
+        // verifiedOwnerKey (mencegah akun B memakai cookie milik akun A).
+        await reconcileWebSession(effectiveEmail);
       }
       if (!ownsUser()) return null;
       final prefs = await SharedPreferences.getInstance();
@@ -540,6 +547,30 @@ class AuthService {
     final photoUrl = firebaseUser.photoURL ?? '';
 
     try {
+      // Di Windows, hindari C++ Firestore SDK (rawan crash LevelDB/thread).
+      // Gunakan cache lokal + sinkronisasi otoritatif VPS.
+      if (FirestorePublicDoc.preferRestOnCurrentPlatform) {
+        final cached = await _getCachedUser(firebaseUser.uid)
+            .timeout(const Duration(seconds: 2), onTimeout: () => null);
+        if (!isCurrent()) return null;
+        final resolved = cached ??
+            UserModel(
+              uid: firebaseUser.uid,
+              name: effectiveName,
+              email: effectiveEmail,
+              photoUrl: photoUrl,
+              plan: UserModel.isVipEmail(effectiveEmail)
+                  ? 'vip'
+                  : AppConstants.planTrial,
+              questionsUsed: 0,
+              isVip: UserModel.isVipEmail(effectiveEmail),
+            );
+        await _cacheUserLocally(resolved, isCurrent: isCurrent);
+        if (effectiveEmail.isNotEmpty) {
+          unawaited(syncUserStatusWithVps(effectiveEmail));
+        }
+        return isCurrent() ? resolved : null;
+      }
       final docRef =
           _db.collection(AppConstants.colUsers).doc(firebaseUser.uid);
       final doc = await docRef.get().timeout(const Duration(seconds: 4));
@@ -594,6 +625,26 @@ class AuthService {
     if (previewUser != null) return previewUser;
     if (user == null || user.isAnonymous) return null;
     try {
+      if (FirestorePublicDoc.preferRestOnCurrentPlatform) {
+        final email = (user.email ?? '').trim().toLowerCase();
+        if (email.isNotEmpty) {
+          await syncUserStatusWithVps(email)
+              .timeout(const Duration(seconds: 4), onTimeout: () {});
+        }
+        final webMatch = email.isNotEmpty ? _userCache['web_$email'] : null;
+        final cached = webMatch ?? await _getCachedUser(user.uid);
+        if (currentUser?.uid != user.uid) return null;
+        if (cached != null) return cached;
+        return UserModel(
+          uid: user.uid,
+          name: user.displayName ?? 'Pengguna',
+          email: user.email ?? '',
+          photoUrl: user.photoURL ?? '',
+          plan: UserModel.isVipEmail(email) ? 'vip' : AppConstants.planTrial,
+          questionsUsed: 0,
+          isVip: UserModel.isVipEmail(email),
+        );
+      }
       final doc = await _db
           .collection(AppConstants.colUsers)
           .doc(user.uid)
@@ -672,10 +723,20 @@ class AuthService {
         auth: _sessionUidStream,
         cached: _getCachedUser,
         watch: (uid) {
-          if (uid.startsWith('web_')) {
-            final cleanEmail = uid.substring(4).trim().toLowerCase();
+          if (uid.startsWith('web_') ||
+              FirestorePublicDoc.preferRestOnCurrentPlatform) {
+            final cleanEmail = uid.startsWith('web_')
+                ? uid.substring(4).trim().toLowerCase()
+                : (currentUser?.email ??
+                        cachedCurrentUser?.email ??
+                        _activeWebUserEmail ??
+                        '')
+                    .trim()
+                    .toLowerCase();
             return _webUserUpdates.stream.where((u) =>
-                u.uid == uid || u.email.trim().toLowerCase() == cleanEmail);
+                u.uid == uid ||
+                (cleanEmail.isNotEmpty &&
+                    u.email.trim().toLowerCase() == cleanEmail));
           }
           return _db
               .collection(AppConstants.colUsers)
@@ -852,6 +913,16 @@ class AuthService {
             _activeWebUser!.name.isNotEmpty)
         ? _activeWebUser!.name
         : cleanEmail.split('@').first;
+    DateTime? maxActiveExpiry = expiry;
+    for (final ent in entMap.values) {
+      if (ent.isActive &&
+          ent.isPremium &&
+          ent.expiry != null &&
+          (maxActiveExpiry == null || ent.expiry!.isAfter(maxActiveExpiry))) {
+        maxActiveExpiry = ent.expiry;
+      }
+    }
+
     final user = UserModel(
       uid: existingUid,
       name: existingName,
@@ -859,7 +930,7 @@ class AuthService {
       photoUrl: _activeWebUser?.photoUrl ?? '',
       plan: effectivePlan,
       questionsUsed: _activeWebUser?.questionsUsed ?? 0,
-      subscriptionExpiry: expiry,
+      subscriptionExpiry: maxActiveExpiry,
       entitlements: entMap,
       isVip: isVip,
     );
@@ -887,7 +958,9 @@ class AuthService {
     if (cleanEmail.isEmpty) return;
     final isVip = UserModel.isVipEmail(cleanEmail) ||
         (_activeWebUser?.email.trim().toLowerCase() == cleanEmail &&
-            _activeWebUser?.isVip == true);
+            _activeWebUser?.isVip == true) ||
+        _userCache.values.any(
+            (u) => u.email.trim().toLowerCase() == cleanEmail && u.isVip);
     if (isVip) return; // Sakral Rule 5: Hak prerogatif VIP tidak pernah dicabut
 
     final prevUid = _activeWebUser?.uid;
@@ -1023,14 +1096,18 @@ class AuthService {
           if (resolvedPlan.isEmpty &&
               granularEntitlements != null &&
               granularEntitlements.isNotEmpty) {
-            if (granularEntitlements.containsKey('all_access') ||
-                granularEntitlements.containsKey('all_ai')) {
+            final activeEnts = Map<String, ModuleEntitlement>.fromEntries(
+              granularEntitlements.entries
+                  .where((e) => e.value.isActive && e.value.isPremium),
+            );
+            if (activeEnts.containsKey('all_access') ||
+                activeEnts.containsKey('all_ai')) {
               resolvedPlan = 'all_ai';
-            } else if (granularEntitlements.containsKey('all_specialists') ||
-                granularEntitlements.containsKey('all_disciplines')) {
+            } else if (activeEnts.containsKey('all_specialists') ||
+                activeEnts.containsKey('all_disciplines')) {
               resolvedPlan = 'all_specialists';
-            } else {
-              resolvedPlan = granularEntitlements.keys.first;
+            } else if (activeEnts.isNotEmpty) {
+              resolvedPlan = activeEnts.keys.first;
             }
           }
 
@@ -1126,7 +1203,8 @@ class AuthService {
   Future<void> signOut() async {
     _authActionGeneration++;
     _setLogoutRequested(true);
-    final currentUid = _auth.currentUser?.uid;
+    final hasFirebase = _providedAuth != null || Firebase.apps.isNotEmpty;
+    final currentUid = hasFirebase ? _auth.currentUser?.uid : null;
     final localCleanup = Completer<void>();
     unawaited(localCleanup.future
         .then((_) {}, onError: (Object _, StackTrace __) {}));
@@ -1136,13 +1214,16 @@ class AuthService {
       try {
         await localCleanup.future;
       } finally {
-        await _auth.signOut();
+        if (hasFirebase) {
+          await _auth.signOut();
+        }
       }
     }, isCurrent: () => true);
     // End the SDK session immediately as well: the mandatory queued sign-out
     // handles an older credential that completes after this immediate one.
-    final immediate =
-        Future<void>.sync(() => _auth.signOut()).catchError((Object _) {});
+    final immediate = hasFirebase
+        ? Future<void>.sync(() => _auth.signOut()).catchError((Object _) {})
+        : Future<void>.value();
     localCleanup.complete(() async {
       try {
         final prefs = await SharedPreferences.getInstance();

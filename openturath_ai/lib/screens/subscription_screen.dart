@@ -55,6 +55,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
   String? _checkoutError;
   String? _checkoutAgentId;
   String? _checkoutPlanTitle;
+  StreamSubscription? _userSub;
   late final TapGestureRecognizer _termsTap = TapGestureRecognizer()
     ..onTap = () => LegalDocumentSheet.showTermsOfService(context);
   late final TapGestureRecognizer _refundTap = TapGestureRecognizer()
@@ -62,6 +63,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
 
   @override
   void dispose() {
+    _userSub?.cancel();
     _termsTap.dispose();
     _refundTap.dispose();
     super.dispose();
@@ -70,6 +72,10 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
   @override
   void initState() {
     super.initState();
+    // Segarkan lencana aktif secara reaktif saat status langganan/voucher berubah.
+    _userSub = AuthService().userStream.listen((_) {
+      if (mounted) setState(() {});
+    }, onError: (_) {});
     // Harga tidak ditampilkan sebelum sinkronisasi selesai, supaya angka
     // bawaan tidak sempat berganti di depan pengguna.
     ProductPricingService.syncPricing(forceRefresh: true).whenComplete(() {
@@ -550,14 +556,17 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
           phone: phone);
       if (!mounted) return;
       // An old backend or stale quote must never open a differently priced checkout.
-      if (result['amount'] != offer.amount ||
-          (result['pricingRevision'] != ProductPricing.revision &&
-              result['pricingRevision'] != ProductPricing.defaultRevision)) {
+      final serverAmount = result['amount'] is num
+          ? (result['amount'] as num).toInt()
+          : int.tryParse(result['amount']?.toString() ?? '');
+      final serverRevision = result['pricingRevision']?.toString();
+      if (serverAmount != offer.amount) {
         final refreshed = await ProductPricingService.refreshCheckoutOffer(
           agentId: agent.id,
           plan: offer.plan,
           details: {
             ...result,
+            if (serverAmount != null) 'amount': serverAmount,
             'reason': 'price_changed',
             'agentId': agent.id,
             'plan': offer.plan
@@ -568,6 +577,11 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
               refreshed ? 'priceChangedReview' : 'priceRefreshUnavailable'));
         }
         return;
+      }
+      if (serverRevision != null &&
+          serverRevision.isNotEmpty &&
+          serverRevision != ProductPricing.revision) {
+        ProductPricing.updateOffers(revision: serverRevision);
       }
       final paymentUrl = result['redirectUrl'];
       final invoice = result['invoiceNumber'];
@@ -1317,17 +1331,27 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
         ? ProductPricing.forAgent(selected.id)
         : ProductPricing.specialists;
     final allSpecialistsOffers = ProductPricing.forAgent('all_specialists');
-    final fi = _periodIndex.clamp(0, flagshipOffers.length - 1);
-    final si = _periodIndex.clamp(0, singleOffers.length - 1);
-    final ai = allSpecialistsOffers.isNotEmpty
-        ? _periodIndex.clamp(0, allSpecialistsOffers.length - 1)
-        : 0;
-    final flagshipOffer = flagshipOffers[fi];
+    final primaryPeriodOffers = showTahawwulat
+        ? flagshipOffers
+        : (showAllSpecialists ? allSpecialistsOffers : singleOffers);
+    final selectedMonths = primaryPeriodOffers.isNotEmpty
+        ? primaryPeriodOffers[
+                _periodIndex.clamp(0, primaryPeriodOffers.length - 1)]
+            .months
+        : 1;
+    SubscriptionOffer pickOfferByMonths(List<SubscriptionOffer> offers) {
+      for (final o in offers) {
+        if (o.months == selectedMonths) return o;
+      }
+      return offers[_periodIndex.clamp(0, offers.length - 1)];
+    }
+
+    final flagshipOffer = pickOfferByMonths(flagshipOffers);
     final flagshipActive = _hasAccess(flagship.id);
-    final singleOffer = singleOffers[si];
+    final singleOffer = pickOfferByMonths(singleOffers);
     final singleActive = selected != null && _hasAccess(selected.id);
     final allSpecialistsOffer = allSpecialistsOffers.isNotEmpty
-        ? allSpecialistsOffers[ai]
+        ? pickOfferByMonths(allSpecialistsOffers)
         : singleOffer;
     final allSpecialistsActive =
         _hasAccess('all_specialists') || _hasAccess('all_ai');
@@ -1506,7 +1530,12 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                             key: const ValueKey('top-redeem-voucher-button'),
                             onPressed: _processing
                                 ? null
-                                : () => RedeemCodeSheet.show(context),
+                                : () => RedeemCodeSheet.show(
+                                      context,
+                                      onSuccess: () {
+                                        if (mounted) setState(() {});
+                                      },
+                                    ),
                             style: OTButtons.quiet(dark),
                             icon: const Icon(Icons.confirmation_number_outlined,
                                 size: 18),
@@ -1599,7 +1628,12 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                           child: TextButton.icon(
                             onPressed: _processing
                                 ? null
-                                : () => RedeemCodeSheet.show(context),
+                                : () => RedeemCodeSheet.show(
+                                      context,
+                                      onSuccess: () {
+                                        if (mounted) setState(() {});
+                                      },
+                                    ),
                             style: OTButtons.quiet(dark),
                             icon: const Icon(Icons.confirmation_number_outlined,
                                 size: 18),

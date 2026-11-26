@@ -141,8 +141,8 @@ class FeatureFlagsService {
           'features',
           timeout: const Duration(seconds: 3),
         );
+        _lastFetch = now;
         if (restData != null) {
-          _lastFetch = now;
           _apply(FeatureFlags.parse(restData));
         }
         return _current;

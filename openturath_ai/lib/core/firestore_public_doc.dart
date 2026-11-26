@@ -59,6 +59,9 @@ class FirestorePublicDoc {
   /// peta Dart biasa (`String`, `int`, `double`, `bool`, `List`, `Map`, `null`).
   static Map<String, dynamic>? decodeDocument(Map<String, dynamic> raw) {
     final fields = raw['fields'];
+    if (fields == null && raw['name'] is String) {
+      return <String, dynamic>{};
+    }
     if (fields is! Map) return null;
     final out = <String, dynamic>{};
     fields.forEach((key, value) {

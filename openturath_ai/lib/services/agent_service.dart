@@ -411,14 +411,21 @@ class AgentService {
         res.statusCode == 200 ||
         res.statusCode == 412) {
       if (decodedBody is Map) {
+        final detailObj = _extractErrorMap(decodedBody);
         final resultObj = decodedBody['result'] is Map
             ? decodedBody['result'] as Map
-            : decodedBody;
-        final status = (resultObj['status'] ?? decodedBody['status'] ?? '')
+            : (detailObj.isNotEmpty ? detailObj : decodedBody);
+        final status = (resultObj['status'] ??
+                detailObj['status'] ??
+                decodedBody['status'] ??
+                '')
             .toString()
             .trim()
             .toLowerCase();
-        final reason = (resultObj['reason'] ?? decodedBody['reason'] ?? '')
+        final reason = (resultObj['reason'] ??
+                detailObj['reason'] ??
+                decodedBody['reason'] ??
+                '')
             .toString()
             .trim()
             .toLowerCase();
@@ -524,7 +531,7 @@ class AgentService {
             '')
         .trim()
         .toLowerCase();
-    final isVip = (effectiveUser?.isVip == true) || UserModel.isVipEmail(email);
+    var isVip = (effectiveUser?.isVip == true) || UserModel.isVipEmail(email);
 
     if (!_hasCustomFunctions) {
       var hasAccess = AppConfig.isGuruEdition ||
@@ -538,7 +545,8 @@ class AgentService {
           await AuthService.syncUserStatusWithVps(email)
               .timeout(const Duration(seconds: 4));
           final refreshed = AuthService().cachedCurrentUser;
-          hasAccess = (refreshed?.isVip == true) ||
+          isVip = isVip || (refreshed?.isVip == true);
+          hasAccess = isVip ||
               (refreshed != null && refreshed.hasAccessToAgent(agentId));
         } catch (_) {}
       }
@@ -565,6 +573,10 @@ class AgentService {
                   forceRefresh: false);
               if (fresh.isNotEmpty && fresh != previousSticky) {
                 onBackgroundRefresh?.call(fresh);
+              }
+            } on AgentAccessException catch (e) {
+              if (e.code == 'permission-denied') {
+                unawaited(AuthService.syncUserStatusWithVps(email));
               }
             } catch (_) {
               // Bila VPS mengembalikan provisioning/permission-denied, sticky cache

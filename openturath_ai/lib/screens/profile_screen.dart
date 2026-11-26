@@ -248,13 +248,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
           .where((e) => e.key == 'all_access' || e.key == 'all_ai')
           .toList();
       if (voucherAll.isNotEmpty) {
-        final exp = voucherAll.first.value.expiry;
+        final ent = voucherAll.first.value;
+        final exp = ent.expiry;
+        final isTrialBonus = ent.paymentStatus.trim().toLowerCase() != 'paid' &&
+            (ent.plan.trim().toLowerCase() == 'trial' ||
+                ent.status.trim().toLowerCase() == 'trial');
         rows.add((
-          Loc.isArabic
-              ? 'جميع الذكاءات (فترة تجريبية إضافية)'
-              : (Loc.language == 'en'
-                  ? 'All AIs (Additional Trial Period)'
-                  : 'Semua AI (Masa Coba Tambahan)'),
+          isTrialBonus
+              ? (Loc.isArabic
+                  ? 'جميع الذكاءات (فترة تجريبية إضافية)'
+                  : (Loc.language == 'en'
+                      ? 'All AIs (Additional Trial Period)'
+                      : 'Semua AI (Masa Coba Tambahan)'))
+              : _entitlementTitle('all_access'),
           exp == null
               ? Loc.tr('activeSubscription')
               : Loc.tr('expiryDate', [_formatAccessDate(exp)]),

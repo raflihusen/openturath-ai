@@ -64,12 +64,17 @@ MembershipPassSummary resolveMembershipPass(UserModel? user, {DateTime? now}) {
   final values = entitlements.entries.toList();
   final active = values.where((entry) {
     final entitlement = entry.value;
-    return (entitlement.status == 'active' || entitlement.status == 'trial') &&
-        (entitlement.plan == 'permanent' ||
+    final status = entitlement.status.trim().toLowerCase();
+    final plan = entitlement.plan.trim().toLowerCase();
+    return (status == 'active' || status == 'trial') &&
+        entitlement.isPremium &&
+        (plan == 'permanent' ||
             (entitlement.expiry != null &&
                 entitlement.expiry!.isAfter(reference)));
   }).toList();
-  if (active.isEmpty && user?.subscriptionExpiry?.isAfter(reference) == true) {
+  if (active.isEmpty &&
+      entitlements.isEmpty &&
+      user?.subscriptionExpiry?.isAfter(reference) == true) {
     final expiry = user!.subscriptionExpiry;
     final expiring = expiry != null && expiry.difference(reference).inDays <= 3;
     return MembershipPassSummary(
