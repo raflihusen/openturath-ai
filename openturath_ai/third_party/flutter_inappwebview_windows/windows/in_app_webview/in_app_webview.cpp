@@ -253,9 +253,15 @@ namespace flutter_inappwebview_plugin
     failedLog(webView->CallDevToolsProtocolMethod(L"Page.getFrameTree", L"{}", Callback<ICoreWebView2CallDevToolsProtocolMethodCompletedHandler>(
       [this](HRESULT errorCode, LPCWSTR returnObjectAsJson)
       {
-        if (succeededOrLog(errorCode)) {
-          auto treeJson = nlohmann::json::parse(wide_to_utf8(returnObjectAsJson));
-          pageFrameId_ = treeJson["frameTree"]["frame"]["id"].get<std::string>();
+        if (succeededOrLog(errorCode) && returnObjectAsJson != nullptr) {
+          try {
+            auto treeJson = nlohmann::json::parse(wide_to_utf8(returnObjectAsJson));
+            if (treeJson.is_object() && treeJson.contains("frameTree") && treeJson["frameTree"].is_object() &&
+                treeJson["frameTree"].contains("frame") && treeJson["frameTree"]["frame"].is_object() &&
+                treeJson["frameTree"]["frame"].contains("id") && treeJson["frameTree"]["frame"]["id"].is_string()) {
+              pageFrameId_ = treeJson["frameTree"]["frame"]["id"].get<std::string>();
+            }
+          } catch (...) {}
         }
         return S_OK;
       }
@@ -619,8 +625,13 @@ namespace flutter_inappwebview_plugin
         }
 
         wil::unique_cotaskmem_string json;
-        if (succeededOrLog(args->get_WebMessageAsJson(&json))) {
-          auto message = nlohmann::json::parse(wide_to_utf8(json.get()));
+        if (succeededOrLog(args->get_WebMessageAsJson(&json)) && json.get() != nullptr) {
+          nlohmann::json message;
+          try {
+            message = nlohmann::json::parse(wide_to_utf8(json.get()));
+          } catch (...) {
+            return S_OK;
+          }
 
           if (message.is_object() && message.contains("name") && message.at("name").is_string() && message.contains("body") && message.at("body").is_object()) {
             auto name = message.at("name").get<std::string>();
@@ -628,8 +639,8 @@ namespace flutter_inappwebview_plugin
 
             if (name.compare("callHandler") == 0 && body.contains("handlerName") && body.at("handlerName").is_string()) {
               auto handlerName = body.at("handlerName").get<std::string>();
-              auto callHandlerID = body.at("_callHandlerID").is_number_integer() ? body.at("_callHandlerID").get<int64_t>() : 0;
-              std::string handlerArgs = body.at("args").is_string() ? body.at("args").get<std::string>() : "";
+              auto callHandlerID = body.contains("_callHandlerID") && body.at("_callHandlerID").is_number_integer() ? body.at("_callHandlerID").get<int64_t>() : 0;
+              std::string handlerArgs = body.contains("args") && body.at("args").is_string() ? body.at("args").get<std::string>() : "";
 
               auto callback = std::make_unique<WebViewChannelDelegate::CallJsHandlerCallback>();
               callback->defaultBehaviour = [this, callHandlerID](const std::optional<const flutter::EncodableValue*> response)
@@ -1230,19 +1241,28 @@ namespace flutter_inappwebview_plugin
           [this, completionHandler](HRESULT errorCode, LPCWSTR returnObjectAsJson)
           {
             nlohmann::json result;
-            if (succeededOrLog(errorCode)) {
-              nlohmann::json json = nlohmann::json::parse(wide_to_utf8(returnObjectAsJson));
-              result = json["result"].contains("value") ? json["result"]["value"] : nlohmann::json{};
-              if (json.contains("exceptionDetails")) {
-                nlohmann::json exceptionDetails = json["exceptionDetails"];
-                auto errorMessage = exceptionDetails.contains("exception") && exceptionDetails["exception"].contains("value")
-                  ? exceptionDetails["exception"]["value"].dump() :
-                  (result["value"].is_null() ? exceptionDetails["text"].get<std::string>() : result["value"].dump());
-                result = nlohmann::json{};
-                debugLog(exceptionDetails.dump());
-                if (channelDelegate) {
-                  channelDelegate->onConsoleMessage(errorMessage, 3);
+            if (succeededOrLog(errorCode) && returnObjectAsJson != nullptr) {
+              try {
+                nlohmann::json json = nlohmann::json::parse(wide_to_utf8(returnObjectAsJson));
+                result = (json.is_object() && json.contains("result") && json["result"].is_object() && json["result"].contains("value"))
+                  ? json["result"]["value"] : nlohmann::json{};
+                if (json.is_object() && json.contains("exceptionDetails") && json["exceptionDetails"].is_object()) {
+                  nlohmann::json exceptionDetails = json["exceptionDetails"];
+                  std::string errorMessage = "JavaScript evaluation error";
+                  if (exceptionDetails.contains("exception") && exceptionDetails["exception"].is_object() && exceptionDetails["exception"].contains("value")) {
+                    errorMessage = exceptionDetails["exception"]["value"].dump();
+                  }
+                  else if (exceptionDetails.contains("text") && exceptionDetails["text"].is_string()) {
+                    errorMessage = exceptionDetails["text"].get<std::string>();
+                  }
+                  result = nlohmann::json{};
+                  debugLog(exceptionDetails.dump());
+                  if (channelDelegate) {
+                    channelDelegate->onConsoleMessage(errorMessage, 3);
+                  }
                 }
+              } catch (...) {
+                result = nlohmann::json{};
               }
             }
             if (completionHandler) {
@@ -1300,20 +1320,32 @@ namespace flutter_inappwebview_plugin
               {"value", nlohmann::json{}},
               {"error", nlohmann::json{}}
             };
-            if (succeededOrLog(errorCode)) {
-              nlohmann::json json = nlohmann::json::parse(wide_to_utf8(returnObjectAsJson));
-              result["value"] = json["result"].contains("value") ? json["result"]["value"] : nlohmann::json{};
-              if (json.contains("exceptionDetails")) {
-                nlohmann::json exceptionDetails = json["exceptionDetails"];
-                auto errorMessage = exceptionDetails.contains("exception") && exceptionDetails["exception"].contains("value")
-                  ? exceptionDetails["exception"]["value"].dump() :
-                  (result["value"].is_null() ? exceptionDetails["text"].get<std::string>() : result["value"].dump());
-                result["value"] = nlohmann::json{};
-                result["error"] = errorMessage;
-                debugLog(exceptionDetails.dump());
-                if (channelDelegate) {
-                  channelDelegate->onConsoleMessage(errorMessage, 3);
+            if (succeededOrLog(errorCode) && returnObjectAsJson != nullptr) {
+              try {
+                nlohmann::json json = nlohmann::json::parse(wide_to_utf8(returnObjectAsJson));
+                result["value"] = (json.is_object() && json.contains("result") && json["result"].is_object() && json["result"].contains("value"))
+                  ? json["result"]["value"] : nlohmann::json{};
+                if (json.is_object() && json.contains("exceptionDetails") && json["exceptionDetails"].is_object()) {
+                  nlohmann::json exceptionDetails = json["exceptionDetails"];
+                  std::string errorMessage = "Async JavaScript evaluation error";
+                  if (exceptionDetails.contains("exception") && exceptionDetails["exception"].is_object() && exceptionDetails["exception"].contains("value")) {
+                    errorMessage = exceptionDetails["exception"]["value"].dump();
+                  }
+                  else if (!result["value"].is_null()) {
+                    errorMessage = result["value"].dump();
+                  }
+                  else if (exceptionDetails.contains("text") && exceptionDetails["text"].is_string()) {
+                    errorMessage = exceptionDetails["text"].get<std::string>();
+                  }
+                  result["value"] = nlohmann::json{};
+                  result["error"] = errorMessage;
+                  debugLog(exceptionDetails.dump());
+                  if (channelDelegate) {
+                    channelDelegate->onConsoleMessage(errorMessage, 3);
+                  }
                 }
+              } catch (...) {
+                result["value"] = nlohmann::json{};
               }
             }
             if (completionHandler) {

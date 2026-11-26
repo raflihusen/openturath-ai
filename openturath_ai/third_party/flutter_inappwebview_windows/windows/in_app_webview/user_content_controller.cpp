@@ -30,22 +30,33 @@ namespace flutter_inappwebview_plugin
             ICoreWebView2DevToolsProtocolEventReceivedEventArgs* args) -> HRESULT
           {
             wil::unique_cotaskmem_string json;
-            if (succeededOrLog(args->get_ParameterObjectAsJson(&json))) {
-              nlohmann::json context = nlohmann::json::parse(wide_to_utf8(json.get()))["context"];
-              auto id = context["id"].get<int>();
-              auto name = context["name"].get<std::string>();
-              nlohmann::json auxData = context["auxData"];
-              auto isDefault = auxData["isDefault"].get<bool>();
-              auto frameId = auxData["frameId"].get<std::string>();
-              if (string_equals(webView_->pageFrameId(), frameId)) {
-                if (isDefault) {
-                  contentWorlds_.insert_or_assign(ContentWorld::page()->name, id);
+            if (succeededOrLog(args->get_ParameterObjectAsJson(&json)) && json.get() != nullptr) {
+              try {
+                nlohmann::json parsed = nlohmann::json::parse(wide_to_utf8(json.get()));
+                if (parsed.is_object() && parsed.contains("context") && parsed["context"].is_object()) {
+                  nlohmann::json& context = parsed["context"];
+                  if (context.contains("id") && context["id"].is_number_integer() &&
+                      context.contains("name") && context["name"].is_string() &&
+                      context.contains("auxData") && context["auxData"].is_object()) {
+                    auto id = context["id"].get<int>();
+                    auto name = context["name"].get<std::string>();
+                    nlohmann::json& auxData = context["auxData"];
+                    auto isDefault = auxData.contains("isDefault") && auxData["isDefault"].is_boolean() ? auxData["isDefault"].get<bool>() : false;
+                    auto frameId = auxData.contains("frameId") && auxData["frameId"].is_string() ? auxData["frameId"].get<std::string>() : std::string{};
+                    if (webView_ && string_equals(webView_->pageFrameId(), frameId)) {
+                      if (isDefault) {
+                        contentWorlds_.insert_or_assign(ContentWorld::page()->name, id);
+                      }
+                      else {
+                        contentWorlds_.insert_or_assign(name, id);
+                        addPluginScriptsIfRequired(std::make_shared<ContentWorld>(name));
+                      }
+                    }
+                  }
                 }
-                else {
-                  contentWorlds_.insert_or_assign(name, id);
-                  addPluginScriptsIfRequired(std::make_shared<ContentWorld>(name));
-                }
-              }
+              } catch (const std::exception& e) {
+                debugLog(std::string("UserContentController executionContextCreated JSON error: ") + e.what());
+              } catch (...) {}
             }
 
             return S_OK;
@@ -317,9 +328,22 @@ namespace flutter_inappwebview_plugin
         [this, completionHandler, worldName](HRESULT errorCode, LPCWSTR returnObjectAsJson)
         {
           if (succeededOrLog(errorCode) && completionHandler) {
-            auto id = nlohmann::json::parse(wide_to_utf8(returnObjectAsJson))["executionContextId"].get<int>();
-            addPluginScriptsIfRequired(std::make_shared<ContentWorld>(worldName));
+            int id = -1;
+            if (returnObjectAsJson != nullptr) {
+              try {
+                auto parsed = nlohmann::json::parse(wide_to_utf8(returnObjectAsJson));
+                if (parsed.is_object() && parsed.contains("executionContextId") && parsed["executionContextId"].is_number_integer()) {
+                  id = parsed["executionContextId"].get<int>();
+                }
+              } catch (...) {}
+            }
+            if (id >= 0) {
+              addPluginScriptsIfRequired(std::make_shared<ContentWorld>(worldName));
+            }
             completionHandler(id);
+          }
+          else if (completionHandler) {
+            completionHandler(-1);
           }
           return S_OK;
         }
@@ -339,6 +363,7 @@ namespace flutter_inappwebview_plugin
       if (completionHandler) {
         completionHandler(userScript->id);
       }
+      return;
     }
 
     std::string source = userScript->source;
@@ -360,9 +385,13 @@ namespace flutter_inappwebview_plugin
     auto hr = webView_->webView->CallDevToolsProtocolMethod(L"Page.addScriptToEvaluateOnNewDocument", utf8_to_wide(parameters.dump()).c_str(), Callback<ICoreWebView2CallDevToolsProtocolMethodCompletedHandler>(
       [userScript, completionHandler](HRESULT errorCode, LPCWSTR returnObjectAsJson)
       {
-        if (succeededOrLog(errorCode)) {
-          nlohmann::json json = nlohmann::json::parse(wide_to_utf8(returnObjectAsJson));
-          userScript->id = json["identifier"].get<std::string>();
+        if (succeededOrLog(errorCode) && returnObjectAsJson != nullptr) {
+          try {
+            nlohmann::json json = nlohmann::json::parse(wide_to_utf8(returnObjectAsJson));
+            if (json.is_object() && json.contains("identifier") && json["identifier"].is_string()) {
+              userScript->id = json["identifier"].get<std::string>();
+            }
+          } catch (...) {}
         }
         if (completionHandler) {
           completionHandler(userScript->id);

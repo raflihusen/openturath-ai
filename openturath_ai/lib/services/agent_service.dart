@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../core/app_config.dart';
 import '../core/constants.dart';
+import '../core/firestore_public_doc.dart';
 import '../core/localization.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -162,16 +163,31 @@ class AgentService {
 
             // 2. Fallback ke Firestore app_config/agents bila VPS offline
             if (ids == null || ids.isEmpty) {
-              final db = firestore ??
-                  (Firebase.apps.isNotEmpty ? FirebaseFirestore.instance : null);
-              if (db != null) {
-                final doc = await db
-                    .collection('app_config')
-                    .doc('agents')
-                    .get(const GetOptions(source: Source.serverAndCache));
-                final raw = doc.data()?['active_agent_ids'];
-                if (doc.exists && raw is List) {
+              if (firestore == null &&
+                  FirestorePublicDoc.preferRestOnCurrentPlatform) {
+                final restData = await FirestorePublicDoc.fetch(
+                  'app_config',
+                  'agents',
+                  timeout: const Duration(seconds: 3),
+                );
+                final raw = restData?['active_agent_ids'];
+                if (raw is List) {
                   ids = raw.whereType<String>().toSet();
+                }
+              } else {
+                final db = firestore ??
+                    (Firebase.apps.isNotEmpty
+                        ? FirebaseFirestore.instance
+                        : null);
+                if (db != null) {
+                  final doc = await db
+                      .collection('app_config')
+                      .doc('agents')
+                      .get(const GetOptions(source: Source.serverAndCache));
+                  final raw = doc.data()?['active_agent_ids'];
+                  if (doc.exists && raw is List) {
+                    ids = raw.whereType<String>().toSet();
+                  }
                 }
               }
             }

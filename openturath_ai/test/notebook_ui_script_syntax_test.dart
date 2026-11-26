@@ -279,4 +279,22 @@ void notebookSkinTests() {
     expect(notebookSkinScript.contains('MESSAGE_CONTAINER_SEL'), isTrue);
     expect(notebookSkinScript.contains(':has('), isFalse);
   });
+
+  test(
+      'dismissPopups menangani Welcome to NotebookLM (EN/ID/AR) termasuk tombol Okay dan kaki ToS tanpa menyentuh dialog bahasa/hapus',
+      () {
+    final start = notebookUiScript.indexOf('function dismissPopups()');
+    final end = notebookUiScript.indexOf('function removeLegacySpacers()', start);
+    expect(start, greaterThan(0));
+    expect(end, greaterThan(start));
+    final body = notebookUiScript.substring(start, end);
+    expect(body.contains('welcome to notebooklm'), isTrue);
+    expect(body.contains("'okay'"), isTrue);
+    expect(body.contains('cleanButtonLabel'), isTrue);
+    expect(body.contains('configure-user-settings'), isTrue);
+    expect(body.contains('hasUncheckedRequiredConsent'), isTrue);
+    expect(body.contains('cdk-global-scrollblock'), isTrue);
+    expect(body.contains(r'\u062d\u0633\u0646\u064b\u0627'), isTrue);
+    expect(body.contains(r'\u0645\u0631\u062d\u0628\u064b\u0627'), isTrue);
+  });
 }

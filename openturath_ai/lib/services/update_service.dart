@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path/path.dart' as p;
 import '../core/app_config.dart';
+import '../core/firestore_public_doc.dart';
 import '../core/platform_release.dart';
 import '../core/localization.dart';
 import 'desktop_update_installer.dart';
@@ -178,11 +179,14 @@ class UpdateService extends ChangeNotifier {
                   .then((info) => int.tryParse(info.buildNumber) ?? 0))
           .timeout(const Duration(seconds: 15));
       final data = await (_manifestLoader?.call() ??
-              FirebaseFirestore.instance
-                  .collection('app_config')
-                  .doc('version')
-                  .get()
-                  .then((doc) => doc.data()))
+              (FirestorePublicDoc.preferRestOnCurrentPlatform
+                  ? FirestorePublicDoc.fetch('app_config', 'version',
+                      timeout: const Duration(seconds: 15))
+                  : FirebaseFirestore.instance
+                      .collection('app_config')
+                      .doc('version')
+                      .get()
+                      .then((doc) => doc.data())))
           .timeout(const Duration(seconds: 20));
       final release = data == null
           ? null

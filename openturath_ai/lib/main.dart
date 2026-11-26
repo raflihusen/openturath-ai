@@ -10,6 +10,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter/services.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'core/theme.dart';
 import 'core/routes.dart';
@@ -99,6 +100,17 @@ Future<void> main() async {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     ).timeout(const Duration(seconds: 30));
+    // Windows C++ SDK LevelDB persistence di %LOCALAPPDATA%\firestore rentan
+    // korup/terkunci dan memicu forced close native (0xC0000409 / SIGABRT)
+    // tanpa bisa ditangkap Dart. Gunakan memori saja di Windows sebelum
+    // operasi Firestore pertama dijalankan.
+    if (!kIsWeb && defaultTargetPlatform == TargetPlatform.windows) {
+      try {
+        FirebaseFirestore.instance.settings = const Settings(
+          persistenceEnabled: false,
+        );
+      } catch (_) {}
+    }
     // ── Inisialisasi Silent Telemetry ──
     TelemetryService.instance.init();
     unawaited(AuthFailureReporter.loadAppVersion());
@@ -185,6 +197,13 @@ class _InitializationFailureAppState extends State<InitializationFailureApp> {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
+    if (!kIsWeb && defaultTargetPlatform == TargetPlatform.windows) {
+      try {
+        FirebaseFirestore.instance.settings = const Settings(
+          persistenceEnabled: false,
+        );
+      } catch (_) {}
+    }
   }
 
   @override

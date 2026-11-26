@@ -3,6 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 
 import '../core/app_config.dart';
+import '../core/firestore_public_doc.dart';
 
 /// Saklar fitur jarak jauh dari dokumen Firestore `app_config/features`.
 ///
@@ -134,6 +135,18 @@ class FeatureFlagsService {
       return _current;
     }
     try {
+      if (firestore == null && FirestorePublicDoc.preferRestOnCurrentPlatform) {
+        final restData = await FirestorePublicDoc.fetch(
+          'app_config',
+          'features',
+          timeout: const Duration(seconds: 3),
+        );
+        if (restData != null) {
+          _lastFetch = now;
+          _apply(FeatureFlags.parse(restData));
+        }
+        return _current;
+      }
       final db = firestore ??
           (Firebase.apps.isNotEmpty ? FirebaseFirestore.instance : null);
       if (db == null) return _current;

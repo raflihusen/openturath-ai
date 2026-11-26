@@ -100,7 +100,8 @@ namespace flutter_inappwebview_plugin
 
   void CookieManager::setCookie(WebViewEnvironment* webViewEnvironment, const flutter::EncodableMap& map, std::function<void(const bool&)> completionHandler) const
   {
-    if (!plugin || !plugin->webViewEnvironmentManager) {
+    auto webView = webViewEnvironment ? webViewEnvironment->getWebView() : nullptr;
+    if (!plugin || !plugin->webViewEnvironmentManager || !webView) {
       if (completionHandler) {
         completionHandler(false);
       }
@@ -144,7 +145,7 @@ namespace flutter_inappwebview_plugin
       parameters["sameSite"] = sameSite.value();
     }
 
-    auto hr = webViewEnvironment->getWebView()->CallDevToolsProtocolMethod(L"Network.setCookie", utf8_to_wide(parameters.dump()).c_str(), Callback<ICoreWebView2CallDevToolsProtocolMethodCompletedHandler>(
+    auto hr = webView->CallDevToolsProtocolMethod(L"Network.setCookie", utf8_to_wide(parameters.dump()).c_str(), Callback<ICoreWebView2CallDevToolsProtocolMethodCompletedHandler>(
       [completionHandler](HRESULT errorCode, LPCWSTR returnObjectAsJson)
       {
         if (completionHandler) {
@@ -161,7 +162,8 @@ namespace flutter_inappwebview_plugin
 
   void CookieManager::getCookie(WebViewEnvironment* webViewEnvironment, const std::string& url, const std::string& name, std::function<void(const flutter::EncodableValue&)> completionHandler) const
   {
-    if (!plugin || !plugin->webViewEnvironmentManager) {
+    auto webView = webViewEnvironment ? webViewEnvironment->getWebView() : nullptr;
+    if (!plugin || !plugin->webViewEnvironmentManager || !webView) {
       if (completionHandler) {
         completionHandler(make_fl_value());
       }
@@ -172,28 +174,44 @@ namespace flutter_inappwebview_plugin
       {"urls", std::vector<std::string>{url}}
     };
 
-    auto hr = webViewEnvironment->getWebView()->CallDevToolsProtocolMethod(L"Network.getCookies", utf8_to_wide(parameters.dump()).c_str(), Callback<ICoreWebView2CallDevToolsProtocolMethodCompletedHandler>(
+    auto hr = webView->CallDevToolsProtocolMethod(L"Network.getCookies", utf8_to_wide(parameters.dump()).c_str(), Callback<ICoreWebView2CallDevToolsProtocolMethodCompletedHandler>(
       [completionHandler, name](HRESULT errorCode, LPCWSTR returnObjectAsJson)
       {
-        if (succeededOrLog(errorCode)) {
-          nlohmann::json json = nlohmann::json::parse(wide_to_utf8(returnObjectAsJson));
-          auto jsonCookies = json["cookies"].get<std::vector<nlohmann::json>>();
-          for (auto& jsonCookie : jsonCookies) {
-            auto cookieName = jsonCookie["name"].get<std::string>();
-            if (string_equals(name, cookieName)) {
-              completionHandler(flutter::EncodableMap{
-                {"name", cookieName},
-                {"value", jsonCookie["value"].get<std::string>()},
-                {"domain", jsonCookie["domain"].get<std::string>()},
-                {"path", jsonCookie["path"].get<std::string>()},
-                {"expiresDate", jsonCookie["expires"].get<int64_t>()},
-                {"isHttpOnly", jsonCookie["httpOnly"].get<bool>()},
-                {"isSecure", jsonCookie["secure"].get<bool>()},
-                {"isSessionOnly", jsonCookie["session"].get<bool>()},
-                {"sameSite", jsonCookie.contains("sameSite") ? jsonCookie["sameSite"].get<std::string>() : make_fl_value()}
-                });
-              return S_OK;
+        if (succeededOrLog(errorCode) && returnObjectAsJson != nullptr) {
+          try {
+            nlohmann::json json = nlohmann::json::parse(wide_to_utf8(returnObjectAsJson));
+            if (json.is_object() && json.contains("cookies") && json["cookies"].is_array()) {
+              for (auto& jsonCookie : json["cookies"]) {
+                if (!jsonCookie.is_object() || !jsonCookie.contains("name") || !jsonCookie["name"].is_string()) {
+                  continue;
+                }
+                auto cookieName = jsonCookie["name"].get<std::string>();
+                if (string_equals(name, cookieName)) {
+                  int64_t expiresVal = (jsonCookie.contains("expires") && jsonCookie["expires"].is_number())
+                    ? static_cast<int64_t>(jsonCookie["expires"].get<double>()) : -1;
+                  flutter::EncodableValue sameSiteVal = (jsonCookie.contains("sameSite") && jsonCookie["sameSite"].is_string())
+                    ? flutter::EncodableValue(jsonCookie["sameSite"].get<std::string>()) : make_fl_value();
+                  if (completionHandler) {
+                    completionHandler(flutter::EncodableMap{
+                      {"name", cookieName},
+                      {"value", jsonCookie.contains("value") && jsonCookie["value"].is_string() ? jsonCookie["value"].get<std::string>() : std::string{}},
+                      {"domain", jsonCookie.contains("domain") && jsonCookie["domain"].is_string() ? jsonCookie["domain"].get<std::string>() : std::string{}},
+                      {"path", jsonCookie.contains("path") && jsonCookie["path"].is_string() ? jsonCookie["path"].get<std::string>() : std::string{}},
+                      {"expiresDate", expiresVal},
+                      {"isHttpOnly", jsonCookie.contains("httpOnly") && jsonCookie["httpOnly"].is_boolean() ? jsonCookie["httpOnly"].get<bool>() : false},
+                      {"isSecure", jsonCookie.contains("secure") && jsonCookie["secure"].is_boolean() ? jsonCookie["secure"].get<bool>() : false},
+                      {"isSessionOnly", jsonCookie.contains("session") && jsonCookie["session"].is_boolean() ? jsonCookie["session"].get<bool>() : false},
+                      {"sameSite", sameSiteVal}
+                      });
+                  }
+                  return S_OK;
+                }
+              }
             }
+          } catch (const std::exception& e) {
+            debugLog(std::string("CookieManager::getCookie JSON error: ") + e.what());
+          } catch (...) {
+            debugLog("CookieManager::getCookie unknown error");
           }
         }
         if (completionHandler) {
@@ -210,7 +228,8 @@ namespace flutter_inappwebview_plugin
 
   void CookieManager::getCookies(WebViewEnvironment* webViewEnvironment, const std::string& url, std::function<void(const flutter::EncodableList&)> completionHandler) const
   {
-    if (!plugin || !plugin->webViewEnvironmentManager) {
+    auto webView = webViewEnvironment ? webViewEnvironment->getWebView() : nullptr;
+    if (!plugin || !plugin->webViewEnvironmentManager || !webView) {
       if (completionHandler) {
         completionHandler({});
       }
@@ -221,25 +240,39 @@ namespace flutter_inappwebview_plugin
       {"urls", std::vector<std::string>{url}}
     };
 
-    auto hr = webViewEnvironment->getWebView()->CallDevToolsProtocolMethod(L"Network.getCookies", utf8_to_wide(parameters.dump()).c_str(), Callback<ICoreWebView2CallDevToolsProtocolMethodCompletedHandler>(
+    auto hr = webView->CallDevToolsProtocolMethod(L"Network.getCookies", utf8_to_wide(parameters.dump()).c_str(), Callback<ICoreWebView2CallDevToolsProtocolMethodCompletedHandler>(
       [completionHandler](HRESULT errorCode, LPCWSTR returnObjectAsJson)
       {
         std::vector<flutter::EncodableValue> cookies = {};
-        if (succeededOrLog(errorCode)) {
-          nlohmann::json json = nlohmann::json::parse(wide_to_utf8(returnObjectAsJson));
-          auto jsonCookies = json["cookies"].get<std::vector<nlohmann::json>>();
-          for (auto& jsonCookie : jsonCookies) {
-            cookies.push_back(flutter::EncodableMap{
-              {"name", jsonCookie["name"].get<std::string>()},
-              {"value", jsonCookie["value"].get<std::string>()},
-              {"domain", jsonCookie["domain"].get<std::string>()},
-              {"path", jsonCookie["path"].get<std::string>()},
-              {"expiresDate", jsonCookie["expires"].get<int64_t>()},
-              {"isHttpOnly", jsonCookie["httpOnly"].get<bool>()},
-              {"isSecure", jsonCookie["secure"].get<bool>()},
-              {"isSessionOnly", jsonCookie["session"].get<bool>()},
-              {"sameSite", jsonCookie.contains("sameSite") ? jsonCookie["sameSite"].get<std::string>() : make_fl_value()}
-              });
+        if (succeededOrLog(errorCode) && returnObjectAsJson != nullptr) {
+          try {
+            nlohmann::json json = nlohmann::json::parse(wide_to_utf8(returnObjectAsJson));
+            if (json.is_object() && json.contains("cookies") && json["cookies"].is_array()) {
+              for (auto& jsonCookie : json["cookies"]) {
+                if (!jsonCookie.is_object() || !jsonCookie.contains("name") || !jsonCookie["name"].is_string()) {
+                  continue;
+                }
+                int64_t expiresVal = (jsonCookie.contains("expires") && jsonCookie["expires"].is_number())
+                  ? static_cast<int64_t>(jsonCookie["expires"].get<double>()) : -1;
+                flutter::EncodableValue sameSiteVal = (jsonCookie.contains("sameSite") && jsonCookie["sameSite"].is_string())
+                  ? flutter::EncodableValue(jsonCookie["sameSite"].get<std::string>()) : make_fl_value();
+                cookies.push_back(flutter::EncodableMap{
+                  {"name", jsonCookie["name"].get<std::string>()},
+                  {"value", jsonCookie.contains("value") && jsonCookie["value"].is_string() ? jsonCookie["value"].get<std::string>() : std::string{}},
+                  {"domain", jsonCookie.contains("domain") && jsonCookie["domain"].is_string() ? jsonCookie["domain"].get<std::string>() : std::string{}},
+                  {"path", jsonCookie.contains("path") && jsonCookie["path"].is_string() ? jsonCookie["path"].get<std::string>() : std::string{}},
+                  {"expiresDate", expiresVal},
+                  {"isHttpOnly", jsonCookie.contains("httpOnly") && jsonCookie["httpOnly"].is_boolean() ? jsonCookie["httpOnly"].get<bool>() : false},
+                  {"isSecure", jsonCookie.contains("secure") && jsonCookie["secure"].is_boolean() ? jsonCookie["secure"].get<bool>() : false},
+                  {"isSessionOnly", jsonCookie.contains("session") && jsonCookie["session"].is_boolean() ? jsonCookie["session"].get<bool>() : false},
+                  {"sameSite", sameSiteVal}
+                  });
+              }
+            }
+          } catch (const std::exception& e) {
+            debugLog(std::string("CookieManager::getCookies JSON error: ") + e.what());
+          } catch (...) {
+            debugLog("CookieManager::getCookies unknown error");
           }
         }
         if (completionHandler) {
@@ -256,7 +289,8 @@ namespace flutter_inappwebview_plugin
 
   void CookieManager::deleteCookie(WebViewEnvironment* webViewEnvironment, const std::string& url, const std::string& name, const std::string& path, const std::optional<std::string>& domain, std::function<void(const bool&)> completionHandler) const
   {
-    if (!plugin || !plugin->webViewEnvironmentManager) {
+    auto webView = webViewEnvironment ? webViewEnvironment->getWebView() : nullptr;
+    if (!plugin || !plugin->webViewEnvironmentManager || !webView) {
       if (completionHandler) {
         completionHandler(false);
       }
@@ -272,7 +306,7 @@ namespace flutter_inappwebview_plugin
       parameters["domain"] = domain.value();
     }
 
-    auto hr = webViewEnvironment->getWebView()->CallDevToolsProtocolMethod(L"Network.deleteCookies", utf8_to_wide(parameters.dump()).c_str(), Callback<ICoreWebView2CallDevToolsProtocolMethodCompletedHandler>(
+    auto hr = webView->CallDevToolsProtocolMethod(L"Network.deleteCookies", utf8_to_wide(parameters.dump()).c_str(), Callback<ICoreWebView2CallDevToolsProtocolMethodCompletedHandler>(
       [completionHandler](HRESULT errorCode, LPCWSTR returnObjectAsJson)
       {
         if (completionHandler) {
@@ -289,7 +323,8 @@ namespace flutter_inappwebview_plugin
 
   void CookieManager::deleteCookies(WebViewEnvironment* webViewEnvironment, const std::string& url, const std::string& path, const std::optional<std::string>& domain, std::function<void(const bool&)> completionHandler) const
   {
-    if (!plugin || !plugin->webViewEnvironmentManager) {
+    auto webView = webViewEnvironment ? webViewEnvironment->getWebView() : nullptr;
+    if (!plugin || !plugin->webViewEnvironmentManager || !webView) {
       if (completionHandler) {
         completionHandler(false);
       }
@@ -298,6 +333,12 @@ namespace flutter_inappwebview_plugin
 
     getCookies(webViewEnvironment, url, [this, webViewEnvironment, url, path, domain, completionHandler](const flutter::EncodableList& cookies)
       {
+        if (cookies.empty()) {
+          if (completionHandler) {
+            completionHandler(true);
+          }
+          return;
+        }
         auto callbacksComplete = std::make_shared<CallbacksComplete<bool>>(
           [completionHandler](const std::vector<bool>& values)
           {
@@ -319,14 +360,15 @@ namespace flutter_inappwebview_plugin
 
   void CookieManager::deleteAllCookies(WebViewEnvironment* webViewEnvironment, std::function<void(const bool&)> completionHandler) const
   {
-    if (!plugin || !plugin->webViewEnvironmentManager) {
+    auto webView = webViewEnvironment ? webViewEnvironment->getWebView() : nullptr;
+    if (!plugin || !plugin->webViewEnvironmentManager || !webView) {
       if (completionHandler) {
         completionHandler(false);
       }
       return;
     }
 
-    auto hr = webViewEnvironment->getWebView()->CallDevToolsProtocolMethod(L"Network.clearBrowserCookies", L"{}", Callback<ICoreWebView2CallDevToolsProtocolMethodCompletedHandler>(
+    auto hr = webView->CallDevToolsProtocolMethod(L"Network.clearBrowserCookies", L"{}", Callback<ICoreWebView2CallDevToolsProtocolMethodCompletedHandler>(
       [completionHandler](HRESULT errorCode, LPCWSTR returnObjectAsJson)
       {
         if (completionHandler) {

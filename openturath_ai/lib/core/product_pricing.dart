@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'firestore_public_doc.dart';
 import 'localization.dart';
 
 /// Harga perdana resmi. Nilai Rupiah berupa integer, tanpa perhitungan float.
@@ -445,28 +446,38 @@ class ProductPricingService {
             // agar tombol pembayaran Arab tetap bisa diaktifkan OTA dari salah satu sumber.
             if (arabicCfg == null) {
               try {
-                final db = firestore ??
-                    (Firebase.apps.isNotEmpty
-                        ? FirebaseFirestore.instance
-                        : null);
-                if (db != null) {
-                  final doc = await db
-                      .collection('app_config')
-                      .doc('pricing')
-                      .get(GetOptions(
-                          source: forceRefresh
-                              ? Source.server
-                              : Source.serverAndCache))
-                      .timeout(const Duration(seconds: 2));
-                  if (doc.exists && doc.data() != null) {
-                    final fsData = doc.data()!;
-                    final fsArabicCfg = ArabicPaymentConfig.fromMap(
-                        fsData['arabicPayment'] ?? fsData['arabic_payment']);
-                    if (fsArabicCfg != null) {
-                      ProductPricing.updateOffers(
-                        arabicPaymentConfig: fsArabicCfg,
-                      );
-                    }
+                Map<String, dynamic>? fsData;
+                if (firestore == null &&
+                    FirestorePublicDoc.preferRestOnCurrentPlatform) {
+                  fsData = await FirestorePublicDoc.fetch(
+                    'app_config',
+                    'pricing',
+                    timeout: const Duration(seconds: 2),
+                  );
+                } else {
+                  final db = firestore ??
+                      (Firebase.apps.isNotEmpty
+                          ? FirebaseFirestore.instance
+                          : null);
+                  if (db != null) {
+                    final doc = await db
+                        .collection('app_config')
+                        .doc('pricing')
+                        .get(GetOptions(
+                            source: forceRefresh
+                                ? Source.server
+                                : Source.serverAndCache))
+                        .timeout(const Duration(seconds: 2));
+                    if (doc.exists) fsData = doc.data();
+                  }
+                }
+                if (fsData != null) {
+                  final fsArabicCfg = ArabicPaymentConfig.fromMap(
+                      fsData['arabicPayment'] ?? fsData['arabic_payment']);
+                  if (fsArabicCfg != null) {
+                    ProductPricing.updateOffers(
+                      arabicPaymentConfig: fsArabicCfg,
+                    );
                   }
                 }
               } catch (_) {}
@@ -486,19 +497,28 @@ class ProductPricingService {
 
     // 2. Fallback Sekunder: Firestore app_config/pricing
     try {
-      final db = firestore ??
-          (Firebase.apps.isNotEmpty ? FirebaseFirestore.instance : null);
-      if (db == null) return false;
+      Map<String, dynamic>? data;
+      if (firestore == null && FirestorePublicDoc.preferRestOnCurrentPlatform) {
+        data = await FirestorePublicDoc.fetch(
+          'app_config',
+          'pricing',
+          timeout: const Duration(seconds: 3),
+        );
+      } else {
+        final db = firestore ??
+            (Firebase.apps.isNotEmpty ? FirebaseFirestore.instance : null);
+        if (db == null) return false;
 
-      final doc = await db
-          .collection('app_config')
-          .doc('pricing')
-          .get(GetOptions(
-              source: forceRefresh ? Source.server : Source.serverAndCache))
-          .timeout(const Duration(seconds: 3));
+        final doc = await db
+            .collection('app_config')
+            .doc('pricing')
+            .get(GetOptions(
+                source: forceRefresh ? Source.server : Source.serverAndCache))
+            .timeout(const Duration(seconds: 3));
+        if (doc.exists) data = doc.data();
+      }
 
-      if (doc.exists && doc.data() != null) {
-        final data = doc.data()!;
+      if (data != null) {
         final revision = data['revision'] as String?;
         final arabicCfg = ArabicPaymentConfig.fromMap(
             data['arabicPayment'] ?? data['arabic_payment']);

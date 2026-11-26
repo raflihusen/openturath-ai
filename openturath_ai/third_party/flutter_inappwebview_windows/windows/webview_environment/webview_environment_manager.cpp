@@ -76,24 +76,46 @@ namespace flutter_inappwebview_plugin
 
   void WebViewEnvironmentManager::createOrGetDefaultWebViewEnvironment(const std::function<void(WebViewEnvironment*)> completionHandler)
   {
-    if (defaultEnvironment_) {
+    if (defaultEnvironment_ && defaultEnvironmentReady_ && defaultEnvironment_->getWebView()) {
       if (completionHandler) {
         completionHandler(defaultEnvironment_.get());
       }
       return;
     }
 
+    if (completionHandler) {
+      defaultEnvironmentPendingCallbacks_.push_back(completionHandler);
+    }
+
+    if (defaultEnvironmentCreating_) {
+      return;
+    }
+
+    defaultEnvironmentCreating_ = true;
+    defaultEnvironmentReady_ = false;
     defaultEnvironment_ = std::make_unique<WebViewEnvironment>(plugin, "-1");
-    defaultEnvironment_->create(nullptr, [this, completionHandler](HRESULT errorCode)
+    defaultEnvironment_->create(nullptr, [this](HRESULT errorCode)
       {
-        if (succeededOrLog(errorCode)) {
-          if (completionHandler) {
-            completionHandler(defaultEnvironment_.get());
+        defaultEnvironmentCreating_ = false;
+        auto callbacks = std::move(defaultEnvironmentPendingCallbacks_);
+        defaultEnvironmentPendingCallbacks_.clear();
+
+        if (succeededOrLog(errorCode) && defaultEnvironment_ && defaultEnvironment_->getWebView()) {
+          defaultEnvironmentReady_ = true;
+          for (auto& cb : callbacks) {
+            if (cb) {
+              cb(defaultEnvironment_.get());
+            }
           }
         }
-        else if (completionHandler) {
+        else {
+          defaultEnvironmentReady_ = false;
           defaultEnvironment_ = nullptr;
-          completionHandler(nullptr);
+          for (auto& cb : callbacks) {
+            if (cb) {
+              cb(nullptr);
+            }
+          }
         }
       });
   }

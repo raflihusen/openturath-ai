@@ -699,14 +699,20 @@ const _notebookCleanupScript = r'''
       .rendered-markdown { max-width: 720px; margin-inline: auto; }
       .rendered-markdown p, .rendered-markdown li { unicode-bidi: plaintext; }
 
-      /* Sembunyikan dialog / pop-up selamat datang dan intro Gemini Notebook */
+      /* Sembunyikan dialog / pop-up selamat datang, onboarding pengguna baru, dan intro NotebookLM */
       app-welcome-dialog, app-onboarding-dialog,
-      .welcome-dialog, .onboarding-dialog,
+      welcome-dialog, onboarding-dialog, ftue-dialog, app-ftue-dialog,
+      whats-new-dialog, app-whats-new-dialog, app-welcome-banner,
+      .welcome-dialog, .onboarding-dialog, .whats-new-dialog, .ftue-dialog,
       [class*="welcome-dialog" i], [class*="onboarding-dialog" i],
+      [class*="welcome-modal" i], [class*="onboarding-modal" i],
+      [class*="whats-new-dialog" i], [class*="ftue-dialog" i],
+      [class*="welcome-banner" i], [class*="coachmark" i], [class*="tour-popover" i],
       [class*="feature-dialog" i], [class*="announcement-dialog" i] {
         display: none !important;
         opacity: 0 !important;
         pointer-events: none !important;
+        visibility: hidden !important;
       }
     `;
   }
@@ -1005,72 +1011,178 @@ const _notebookCleanupScript = r'''
   function dismissPopups() {
     try {
       const dialogs = document.querySelectorAll(
-        'mat-dialog-container, .mat-mdc-dialog-container, [role="dialog"], [aria-modal="true"], .cdk-overlay-pane, app-welcome-dialog, app-onboarding-dialog'
+        'mat-dialog-container, .mat-mdc-dialog-container, [role="dialog"], [role="alertdialog"], [aria-modal="true"], .cdk-overlay-pane, app-welcome-dialog, app-onboarding-dialog, welcome-dialog, onboarding-dialog, ftue-dialog, app-ftue-dialog, whats-new-dialog, app-whats-new-dialog, app-welcome-banner, [class*="welcome-dialog" i], [class*="onboarding-dialog" i], [class*="whats-new" i], [class*="coachmark" i]'
       );
+
+      const cleanButtonLabel = btn => {
+        try {
+          const clone = btn.cloneNode(true);
+          clone.querySelectorAll('mat-icon, .mat-icon, .google-symbols, svg').forEach(n => n.remove());
+          const inner = (clone.innerText || clone.textContent || '').replace(/\s+/g, ' ').trim();
+          if (inner) return inner.toLowerCase();
+        } catch (_) {}
+        return (btn.getAttribute('aria-label') || btn.innerText || btn.textContent || '').replace(/\s+/g, ' ').trim().toLowerCase();
+      };
+
+      const DISMISS_LABELS = new Set([
+        'ok', 'okay', 'oke', 'baik', 'got it', 'mengerti', 'saya mengerti', 'paham', 'understood',
+        'close', 'tutup', 'dismiss', 'skip', 'lewati', 'not now', 'nanti', 'lain kali',
+        'no thanks', 'tidak, terima kasih', 'lanjutkan', 'lanjut', 'continue',
+        'mulai', 'mulai sekarang', 'get started', 'start', 'next', 'berikutnya', 'done', 'selesai',
+        '\u062d\u0633\u0646\u064b\u0627', '\u062d\u0633\u0646\u0627', '\u062d\u0633\u0646\u0627\u064b',
+        '\u0645\u0648\u0627\u0641\u0642', '\u0641\u0647\u0645\u062a', '\u0645\u062a\u0627\u0628\u0639\u0629',
+        '\u0627\u0633\u062a\u0645\u0631\u0627\u0631', '\u0627\u0628\u062f\u0623', '\u0627\u0644\u0628\u062f\u0621',
+        '\u062a\u062e\u0637\u064a', '\u0625\u063a\u0644\u0627\u0642', '\u0627\u063a\u0644\u0627\u0642',
+        '\u062a\u0645', '\u0627\u0644\u062a\u0627\u0644\u064a', '\u0644\u064a\u0633 \u0627\u0644\u0622\u0646',
+        '\u0644\u0627\u060c \u0634\u0643\u0631\u064b\u0627'
+      ]);
+
+      const DESTRUCTIVE_ACTION = /^(delete|hapus|clear|erase|discard|remove|buang|\u062d\u0630\u0641|\u0645\u0633\u062d|\u0625\u0632\u0627\u0644\u0629)$/i;
+      const DESTRUCTIVE_DIALOG = /\b(delete chat|delete history|delete conversation|clear chat|clear history|delete notebook|erase chat|discard)\b|(hapus riwayat|hapus obrolan|hapus percakapan|bersihkan riwayat|bersihkan obrolan)|(\u062d\u0630\u0641\s+(\u0633\u062c\u0644|\u0627\u0644\u0645\u062d\u0627\u062f\u062b\u0629|\u0627\u0644\u062f\u0631\u062f\u0634\u0629)|\u0645\u0633\u062d\s+(\u0633\u062c\u0644|\u0627\u0644\u0645\u062d\u0627\u062f\u062b\u0629|\u0627\u0644\u062f\u0631\u062f\u0634\u0629))/i;
+      const STOP_GEN_DIALOG = /(stop|hentikan|berhenti|\u0625\u064a\u0642\u0627\u0641).{0,40}(generat|respons|answer|jawab|pembuat|\u0625\u0646\u0634\u0627\u0621)/i;
 
       let foundPromoOrWelcome = false;
       dialogs.forEach(dialog => {
-        // Jangan ganggu dialog pemilihan bahasa / menu asisten yang sengaja dibuka
-        if (dialog.querySelector('[role="menu"], .mat-mdc-menu-panel, mat-radio-group, [role="radiogroup"], mat-radio-button')) {
+        // Jangan ganggu dialog pemilihan bahasa / menu asisten / pengaturan yang sengaja dibuka
+        if (dialog.matches('configure-user-settings') ||
+            dialog.querySelector('configure-user-settings, [role="menu"], .mat-mdc-menu-panel, mat-radio-group, [role="radiogroup"], mat-radio-button, mat-option, .mat-mdc-select-panel')) {
           return;
         }
 
-        const fullText = (dialog.innerText || dialog.textContent || '').trim().toLowerCase();
-        // Jangan pernah mengklik atau menyembunyikan dialog penghapusan, walau memuat kata umum seperti "info terbaru".
-        if (/delet|clear|erase|discard|hapus|bersihkan|\u062d\u0630\u0641|\u0645\u0633\u062d/i.test(fullText)) {
+        const fullText = (dialog.innerText || dialog.textContent || '').replace(/\s+/g, ' ').trim().toLowerCase();
+        if (!fullText) return;
+
+        // Jangan pernah menyentuh dialog Stop generating? (ditangani oleh notebook_skin.dart)
+        if (STOP_GEN_DIALOG.test(fullText)) {
           return;
         }
+
+        // Jangan pernah mengklik atau menyembunyikan dialog penghapusan (hapus/delete/clear).
+        const buttons = [...dialog.querySelectorAll('button, [role="button"]')];
+        const hasDestructiveBtn = buttons.some(b => DESTRUCTIVE_ACTION.test(cleanButtonLabel(b)));
+        if (hasDestructiveBtn || DESTRUCTIVE_DIALOG.test(fullText)) {
+          return;
+        }
+
+        const isWelcomeHost = dialog.matches(
+          'app-welcome-dialog, app-onboarding-dialog, welcome-dialog, onboarding-dialog, ftue-dialog, app-ftue-dialog, whats-new-dialog, app-whats-new-dialog, app-welcome-banner, [class*="welcome-dialog" i], [class*="onboarding-dialog" i], [class*="whats-new" i], [class*="coachmark" i]'
+        ) || !!dialog.querySelector('app-welcome-dialog, app-onboarding-dialog, welcome-dialog, onboarding-dialog, ftue-dialog, whats-new-dialog');
+
         const isWelcomeOrPromo =
+          isWelcomeHost ||
           fullText.includes('selamat datang') ||
+          fullText.includes('welcome to notebooklm') ||
+          fullText.includes('welcome to gemini') ||
           fullText.includes('welcome') ||
           fullText.includes('gemini notebook') ||
+          fullText.includes('\u0645\u0631\u062d\u0628\u064b\u0627') ||
+          fullText.includes('\u0645\u0631\u062d\u0628\u0627') ||
+          fullText.includes('\u0623\u0647\u0644\u064b\u0627') ||
+          fullText.includes('\u0623\u0647\u0644\u0627') ||
           fullText.includes('fleksibilitas dan kontrol') ||
           fullText.includes('flexibility and control') ||
           fullText.includes('batas diperbarui') ||
           fullText.includes('limits updated') ||
           fullText.includes('data anda dilindungi') ||
           fullText.includes('your data is protected') ||
-          fullText.includes('info terbaru');
+          fullText.includes('\u0628\u064a\u0627\u0646\u0627\u062a\u0643 \u0645\u062d\u0645\u064a\u0629') ||
+          fullText.includes('info terbaru') ||
+          fullText.includes("what's new") ||
+          fullText.includes('whats new') ||
+          fullText.includes('yang baru') ||
+          fullText.includes('fitur baru') ||
+          fullText.includes('\u0645\u0627 \u0627\u0644\u062c\u062f\u064a\u062f') ||
+          fullText.includes('introducing notebooklm') ||
+          fullText.includes('memperkenalkan notebooklm') ||
+          fullText.includes('your personalized ai') ||
+          fullText.includes('ai research assistant') ||
+          fullText.includes('asisten riset ai') ||
+          fullText.includes('notebooklm can be inaccurate') ||
+          fullText.includes('notebooklm dapat memberikan informasi yang tidak akurat') ||
+          fullText.includes('get started with notebooklm') ||
+          fullText.includes('mulai menggunakan notebooklm') ||
+          fullText.includes('try notebooklm') ||
+          fullText.includes('upgrade to notebooklm') ||
+          fullText.includes('notebooklm plus');
 
-        // Dialog persetujuan hukum / Terms of Service tidak boleh disetujui otomatis
-        if (fullText.includes('persyaratan layanan') || fullText.includes('terms of service')) {
+        if (!isWelcomeOrPromo) {
+          // Non-welcome dialog dengan kata penghapusan tetap dibiarkan aman.
+          if (/delet|clear|erase|discard|hapus|bersihkan|\u062d\u0630\u0641|\u0645\u0633\u062d/i.test(fullText)) {
+            return;
+          }
           return;
         }
 
-        if (isWelcomeOrPromo) {
-          foundPromoOrWelcome = true;
-          // Otomatis tutup dialog onboarding/selamat datang kosmetik
-          const buttons = dialog.querySelectorAll('button, [role="button"]');
-          for (const btn of buttons) {
-            const btnText = (btn.innerText || btn.textContent || btn.getAttribute('aria-label') || '').trim().toLowerCase();
-            // Hanya ikon tutup yang jelas: ikon svg apa pun bisa milik tombol lain (mis. hapus).
-            const hasCloseIcon = !!btn.querySelector('mat-icon[data-mat-icon-name="close"], mat-icon[fonticon="close"]') ||
-              /^(close|tutup|dismiss|\u0625\u063a\u0644\u0627\u0642)$/i.test((btn.getAttribute('aria-label') || '').trim());
-            if (btnText === 'oke' || btnText === 'ok' || btnText === 'mengerti' || btnText === 'got it' ||
-                btnText === 'close' || btnText === 'tutup' || btnText.includes('close') || hasCloseIcon ||
-                btnText === 'lanjutkan' || btnText === 'continue' ||
-                btnText === 'mulai' || btnText === 'get started') {
-              try { btn.click(); break; } catch (_) {}
+        // Dialog persetujuan hukum murni (berkotak centang wajib atau tanpa konteks welcome NotebookLM)
+        // tidak disetujui otomatis. Namun modal "Welcome to NotebookLM" yang hanya memuat tautan kaki
+        // Terms of Service dan tombol Okay/Oke/Got it tetap ditutup agar pengguna baru tidak terblokir.
+        const hasUncheckedRequiredConsent = !!dialog.querySelector(
+          'input[type="checkbox"]:not(:checked), mat-checkbox[aria-required="true"]:not(.mat-mdc-checkbox-checked)'
+        );
+        const mentionsLegal =
+          fullText.includes('persyaratan layanan') ||
+          fullText.includes('terms of service') ||
+          fullText.includes('\u0628\u0646\u0648\u062f \u0627\u0644\u062e\u062f\u0645\u0629');
+        const isNotebookWelcome =
+          isWelcomeHost ||
+          fullText.includes('welcome') ||
+          fullText.includes('selamat datang') ||
+          fullText.includes('\u0645\u0631\u062d\u0628') ||
+          fullText.includes('notebooklm');
+        if (mentionsLegal && (hasUncheckedRequiredConsent || !isNotebookWelcome)) {
+          return;
+        }
+
+        foundPromoOrWelcome = true;
+        // Klik tombol resmi Angular agar Google mencatat status onboarding selesai permanen.
+        const now = Date.now();
+        let clicked = false;
+        for (const btn of buttons) {
+          if (btn.disabled || btn.getAttribute('aria-disabled') === 'true') continue;
+          const btnText = cleanButtonLabel(btn);
+          const aria = (btn.getAttribute('aria-label') || '').trim().toLowerCase();
+          const closeIconNode = btn.querySelector('mat-icon, .mat-icon');
+          const closeIconName = closeIconNode
+            ? (closeIconNode.getAttribute('data-mat-icon-name') || closeIconNode.getAttribute('fonticon') || closeIconNode.textContent || '').trim().toLowerCase()
+            : '';
+          // Hanya ikon tutup eksplisit (close); jangan pernah mencocokkan elemen svg acak.
+          const hasCloseIcon =
+            closeIconName === 'close' ||
+            /^(close|tutup|dismiss|\u0625\u063a\u0644\u0627\u0642)$/i.test(aria);
+          if (DISMISS_LABELS.has(btnText) || DISMISS_LABELS.has(aria) || hasCloseIcon) {
+            if (!btn.__otDismissAt || now - btn.__otDismissAt > 1500) {
+              btn.__otDismissAt = now;
+              try { btn.click(); clicked = true; break; } catch (_) {}
+            } else {
+              clicked = true;
+              break;
             }
           }
+        }
+        if (!clicked && (!dialog.__otEscAt || now - dialog.__otEscAt > 1500)) {
+          dialog.__otEscAt = now;
+          try {
+            dialog.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', code: 'Escape', keyCode: 27, bubbles: true, cancelable: true }));
+          } catch (_) {}
+        }
 
-          dialog.style.setProperty('display', 'none', 'important');
-          dialog.style.setProperty('opacity', '0', 'important');
-          dialog.style.setProperty('pointer-events', 'none', 'important');
-          dialog.style.setProperty('visibility', 'hidden', 'important');
+        dialog.style.setProperty('display', 'none', 'important');
+        dialog.style.setProperty('opacity', '0', 'important');
+        dialog.style.setProperty('pointer-events', 'none', 'important');
+        dialog.style.setProperty('visibility', 'hidden', 'important');
 
-          const pane = dialog.closest('.cdk-overlay-pane');
-          if (pane) {
-            pane.style.setProperty('display', 'none', 'important');
-            pane.style.setProperty('opacity', '0', 'important');
-            pane.style.setProperty('pointer-events', 'none', 'important');
-          }
+        const pane = dialog.closest('.cdk-overlay-pane');
+        if (pane) {
+          pane.style.setProperty('display', 'none', 'important');
+          pane.style.setProperty('opacity', '0', 'important');
+          pane.style.setProperty('pointer-events', 'none', 'important');
         }
       });
 
       if (foundPromoOrWelcome) {
+        document.documentElement?.classList?.remove('cdk-global-scrollblock');
         document.querySelectorAll('.cdk-overlay-backdrop').forEach(bd => {
-          const activeMenu = document.querySelector('[role="menu"]:not([style*="display: none"]), .mat-mdc-menu-panel:not([style*="display: none"])');
+          const activeMenu = document.querySelector('[role="menu"]:not([style*="display: none"]), .mat-mdc-menu-panel:not([style*="display: none"]), configure-user-settings');
           if (!activeMenu) {
             bd.style.setProperty('display', 'none', 'important');
             bd.style.setProperty('opacity', '0', 'important');
@@ -1712,9 +1824,14 @@ window.otSetBackgroundPaused = function(paused) {
 };
 window.otSetSuspended = window.otSetBackgroundPaused;
 
-// Gunakan debounce 300ms dan childList saja (tanpa characterData) untuk menghemat baterai & CPU
+// Gunakan debounce 300ms untuk clean() agar hemat CPU, tetapi dismissPopups() berjalan
+// instan tanpa menunggu throttle 800ms begitu overlay/dialog muncul di DOM (anti-flash Welcome).
 const observer = new MutationObserver(() => {
-  if (_otBackgroundPaused || scheduled) return;
+  if (_otBackgroundPaused) return;
+  if (document.querySelector('mat-dialog-container, .mat-mdc-dialog-container, [role="dialog"], [aria-modal="true"], app-welcome-dialog, app-onboarding-dialog')) {
+    dismissPopups();
+  }
+  if (scheduled) return;
   scheduled = true;
   setTimeout(() => {
     scheduled = false;
@@ -1794,7 +1911,7 @@ var _otPopupCounter = 0;
 var _otPopupTimer = setInterval(function() {
   dismissPopups();
   _otPopupCounter++;
-  if (_otPopupCounter > 40) clearInterval(_otPopupTimer);
+  if (_otPopupCounter > 120) clearInterval(_otPopupTimer);
 }, 250);
 })();
 ''';

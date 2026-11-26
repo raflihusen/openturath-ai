@@ -2,8 +2,10 @@
 #define FLUTTER_INAPPWEBVIEW_PLUGIN_WEBVIEW_ENVIRONMENT_MANAGER_H_
 
 #include <flutter/method_channel.h>
+#include <functional>
 #include <map>
 #include <string>
+#include <vector>
 #include <winrt/base.h>
 
 #include "../flutter_inappwebview_windows_plugin.h"
@@ -39,6 +41,9 @@ namespace flutter_inappwebview_plugin
     static std::optional<int> compareBrowserVersions(std::string version1, std::string version2);
   private:
     std::unique_ptr<WebViewEnvironment> defaultEnvironment_;
+    bool defaultEnvironmentReady_ = false;
+    bool defaultEnvironmentCreating_ = false;
+    std::vector<std::function<void(WebViewEnvironment*)>> defaultEnvironmentPendingCallbacks_;
     WNDCLASS windowClass_ = {};
     HWND hwnd_ = nullptr;
   };
