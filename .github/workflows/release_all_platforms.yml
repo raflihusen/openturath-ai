@@ -278,9 +278,13 @@ jobs:
           if (!(Test-Path (Join-Path $target 'data/app.so'))) { throw 'Installed application data missing' }
           $setup = (Resolve-Path 'openturath_ai/build/installer_stage/OpenTurath_AI_Windows_Setup.exe').Path
           $otaTarget = Join-Path $env:RUNNER_TEMP 'openturath-ota-smoke'
+          New-Item -ItemType Directory -Force $otaTarget | Out-Null
+          Set-Content -Path (Join-Path $otaTarget 'openturath_ai.exe') -Value 'previous-version-sentinel' -Encoding ascii
           $otaProc = Start-Process -FilePath $setup -ArgumentList @('/OTAUPDATE', '/VERYSILENT', '/SUPPRESSMSGBOXES', '/NORESTART', '/SP-', "/OTADIR=`"$otaTarget`"") -Wait -PassThru
           if ($otaProc.ExitCode -ne 0) { throw "OTA wrapper install failed: $($otaProc.ExitCode)" }
-          if (!(Test-Path (Join-Path $otaTarget 'openturath_ai.exe'))) { throw 'OTA installed executable missing' }
+          $otaExe = Get-Item (Join-Path $otaTarget 'openturath_ai.exe')
+          if ($otaExe.Length -lt 1024) { throw 'OTA installed executable was not replaced' }
+          if (!(Test-Path (Join-Path $otaTarget 'data/app.so'))) { throw 'OTA installed application data missing' }
       - name: Upload Windows Setup artifact
         uses: actions/upload-artifact@v4
         with:
