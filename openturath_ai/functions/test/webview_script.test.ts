@@ -5,7 +5,11 @@ import path from 'node:path';
 import vm from 'node:vm';
 const root=process.env.AUDIT_SOURCE_ROOT || process.cwd();
 const dart=fs.readFileSync(path.join(root,'lib/widgets/agent_multi_tab_room.dart'),'utf8');
-const source=dart.match(/_turatsMasterScript = r"""([\s\S]*?)""";/)![1];
+const fontScaleCssMatch=dart.match(/_fontScaleCssJsExpression = r"""([\s\S]*?)""";/);
+const rawSource=dart.match(/_turatsMasterScript = r"""([\s\S]*?)\n\s*""";/)![1];
+const source=fontScaleCssMatch
+  ? rawSource.replace(/"""\s*\+\s*_fontScaleCssJsExpression\s*\+\s*r"""/g,()=>fontScaleCssMatch[1])
+  : rawSource;
 function page(hostname='notebooklm.google.com', paragraphs: any[]=[]){
   const styles=new Map<string,any>();
   const appendChild=(el: any)=>styles.set(el.id,el);
