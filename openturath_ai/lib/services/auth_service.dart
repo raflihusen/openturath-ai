@@ -6,12 +6,10 @@ import 'package:flutter/services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import '../models/user_model.dart';
 import '../core/constants.dart';
-import '../core/firestore_public_doc.dart';
 import 'agent_service.dart';
 import 'agent_session_manager.dart';
 import 'session_user_stream.dart';
@@ -47,7 +45,6 @@ class AuthService {
         serverClientId:
             '255541559800-jcip3mf8umtscgf5jm8khflm4u83rmcj.apps.googleusercontent.com',
       );
-  late final FirebaseFirestore _db = FirebaseFirestore.instance;
 
   // Cached persistent userStream to prevent memory leak and listener churn (F10)
   Stream<UserModel?>? _cachedUserStream;
@@ -232,15 +229,38 @@ class AuthService {
     if (_providedAuth == null && Firebase.apps.isEmpty) return null;
     final user = _auth.currentUser;
     if (user != null && !user.isAnonymous) {
-      return _userCache[user.uid] ??
-          UserModel(
-            uid: user.uid,
-            name: user.displayName ?? 'Pengguna',
-            email: user.email ?? '',
-            photoUrl: user.photoURL ?? '',
-            plan: AppConstants.planTrial,
-            questionsUsed: 0,
-          );
+      final email = (user.email ?? '').trim().toLowerCase();
+      final cached = _userCache[user.uid] ??
+          (email.isNotEmpty ? _userCache['web_$email'] : null);
+      if (cached != null) {
+        return cached.uid == user.uid
+            ? cached
+            : UserModel(
+                uid: user.uid,
+                name: cached.name.isNotEmpty
+                    ? cached.name
+                    : (user.displayName ?? 'Pengguna'),
+                email: email.isNotEmpty ? email : cached.email,
+                photoUrl: cached.photoUrl.isNotEmpty
+                    ? cached.photoUrl
+                    : (user.photoURL ?? ''),
+                plan: cached.plan,
+                questionsUsed: cached.questionsUsed,
+                subscriptionExpiry: cached.subscriptionExpiry,
+                entitlements: cached.entitlements,
+                isVip: cached.isVip,
+              );
+      }
+      final isVip = UserModel.isVipEmail(email);
+      return UserModel(
+        uid: user.uid,
+        name: user.displayName ?? 'Pengguna',
+        email: user.email ?? '',
+        photoUrl: user.photoURL ?? '',
+        plan: isVip ? 'vip' : AppConstants.planTrial,
+        questionsUsed: 0,
+        isVip: isVip,
+      );
     }
     return null;
   }
@@ -532,74 +552,51 @@ class AuthService {
     }
   }
 
-  // ── Helper Resolusi Profil User Firestore ──────────────────────
+  // ── Helper Resolusi Profil User (100% Mandiri VPS + Cache Lokal) ──
   Future<UserModel?> _resolveOrCreateFirebaseUser(
     User firebaseUser, {
     String? fallbackName,
     String? fallbackEmail,
     required bool Function() isCurrent,
   }) async {
-    // Firestore rules cap the stored name at 120 characters.
     final rawName = firebaseUser.displayName ?? fallbackName ?? 'Pengguna';
     final effectiveName =
         rawName.length > 120 ? rawName.substring(0, 120) : rawName;
-    final effectiveEmail = firebaseUser.email ?? fallbackEmail ?? '';
+    final effectiveEmail =
+        (firebaseUser.email ?? fallbackEmail ?? '').trim().toLowerCase();
     final photoUrl = firebaseUser.photoURL ?? '';
 
     try {
-      // Di Windows, hindari C++ Firestore SDK (rawan crash LevelDB/thread).
-      // Gunakan cache lokal + sinkronisasi otoritatif VPS.
-      if (FirestorePublicDoc.preferRestOnCurrentPlatform) {
-        final cached = await _getCachedUser(firebaseUser.uid)
-            .timeout(const Duration(seconds: 2), onTimeout: () => null);
-        if (!isCurrent()) return null;
-        final resolved = cached ??
-            UserModel(
-              uid: firebaseUser.uid,
-              name: effectiveName,
-              email: effectiveEmail,
-              photoUrl: photoUrl,
-              plan: UserModel.isVipEmail(effectiveEmail)
-                  ? 'vip'
-                  : AppConstants.planTrial,
-              questionsUsed: 0,
-              isVip: UserModel.isVipEmail(effectiveEmail),
-            );
-        await _cacheUserLocally(resolved, isCurrent: isCurrent);
-        if (effectiveEmail.isNotEmpty) {
-          unawaited(syncUserStatusWithVps(effectiveEmail));
-        }
-        return isCurrent() ? resolved : null;
-      }
-      final docRef =
-          _db.collection(AppConstants.colUsers).doc(firebaseUser.uid);
-      final doc = await docRef.get().timeout(const Duration(seconds: 4));
+      final webCached = effectiveEmail.isNotEmpty
+          ? (_userCache['web_$effectiveEmail'] ??
+              await _getCachedUser('web_$effectiveEmail')
+                  .timeout(const Duration(seconds: 2), onTimeout: () => null))
+          : null;
+      final cached = await _getCachedUser(firebaseUser.uid)
+              .timeout(const Duration(seconds: 2), onTimeout: () => null) ??
+          webCached;
       if (!isCurrent()) return null;
-      if (!doc.exists) {
-        final newUser = UserModel(
-          uid: firebaseUser.uid,
-          name: effectiveName,
-          email: effectiveEmail,
-          photoUrl: photoUrl,
-          plan: AppConstants.planTrial,
-          questionsUsed: 0,
-        );
-        await docRef.set({
-          'name': newUser.name,
-          'email': newUser.email,
-          'photo_url': newUser.photoUrl,
-          'plan': newUser.plan,
-          'questions_used': newUser.questionsUsed,
-          'subscription_expiry': null,
-        }).timeout(const Duration(seconds: 4));
-        if (!isCurrent()) return null;
-        await _cacheUserLocally(newUser, isCurrent: isCurrent);
-        return isCurrent() ? newUser : null;
-      } else {
-        final userModel = UserModel.fromFirestore(doc);
-        await _cacheUserLocally(userModel, isCurrent: isCurrent);
-        return isCurrent() ? userModel : null;
+      final isVip = UserModel.isVipEmail(effectiveEmail);
+      final resolved = UserModel(
+        uid: firebaseUser.uid,
+        name: cached != null && cached.name.isNotEmpty
+            ? cached.name
+            : effectiveName,
+        email: effectiveEmail,
+        photoUrl: cached != null && cached.photoUrl.isNotEmpty
+            ? cached.photoUrl
+            : photoUrl,
+        plan: isVip ? 'vip' : (cached?.plan ?? AppConstants.planTrial),
+        questionsUsed: cached?.questionsUsed ?? 0,
+        subscriptionExpiry: cached?.subscriptionExpiry,
+        entitlements: cached?.entitlements ?? const {},
+        isVip: isVip || (cached?.isVip ?? false),
+      );
+      await _cacheUserLocally(resolved, isCurrent: isCurrent);
+      if (effectiveEmail.isNotEmpty) {
+        unawaited(syncUserStatusWithVps(effectiveEmail));
       }
+      return isCurrent() ? resolved : null;
     } catch (_) {
       if (!isCurrent()) return null;
       final cached = await _getCachedUser(firebaseUser.uid)
@@ -607,67 +604,59 @@ class AuthService {
       if (!isCurrent()) return null;
       if (cached != null) return cached;
 
-      final fallback = UserModel(
+      final isVip = UserModel.isVipEmail(effectiveEmail);
+      return UserModel(
         uid: firebaseUser.uid,
         name: effectiveName,
         email: effectiveEmail,
         photoUrl: photoUrl,
-        plan: AppConstants.planTrial,
+        plan: isVip ? 'vip' : AppConstants.planTrial,
         questionsUsed: 0,
+        isVip: isVip,
       );
-      return fallback;
     }
   }
 
-  // ── Get Current UserModel from Firestore ───────────────────────
+  // ── Get Current UserModel (100% Otoritas VPS + Cache Lokal) ───
   Future<UserModel?> getCurrentUserModel() async {
     final user = currentUser;
     if (previewUser != null) return previewUser;
     if (user == null || user.isAnonymous) return null;
+    final email = (user.email ?? '').trim().toLowerCase();
     try {
-      if (FirestorePublicDoc.preferRestOnCurrentPlatform) {
-        final email = (user.email ?? '').trim().toLowerCase();
-        if (email.isNotEmpty) {
-          await syncUserStatusWithVps(email)
-              .timeout(const Duration(seconds: 4), onTimeout: () {});
-        }
-        final webMatch = email.isNotEmpty ? _userCache['web_$email'] : null;
-        final cached = webMatch ?? await _getCachedUser(user.uid);
-        if (currentUser?.uid != user.uid) return null;
-        if (cached != null) return cached;
+      if (email.isNotEmpty) {
+        await syncUserStatusWithVps(email)
+            .timeout(const Duration(seconds: 4), onTimeout: () {});
+      }
+      final webMatch = email.isNotEmpty
+          ? (_userCache['web_$email'] ?? await _getCachedUser('web_$email'))
+          : null;
+      final cached = await _getCachedUser(user.uid) ?? webMatch;
+      if (currentUser?.uid != user.uid) return null;
+      if (cached != null) {
+        if (cached.uid == user.uid) return cached;
         return UserModel(
           uid: user.uid,
-          name: user.displayName ?? 'Pengguna',
-          email: user.email ?? '',
-          photoUrl: user.photoURL ?? '',
-          plan: UserModel.isVipEmail(email) ? 'vip' : AppConstants.planTrial,
-          questionsUsed: 0,
-          isVip: UserModel.isVipEmail(email),
+          name: user.displayName ?? cached.name,
+          email: email.isNotEmpty ? email : cached.email,
+          photoUrl: user.photoURL ?? cached.photoUrl,
+          plan: cached.plan,
+          questionsUsed: cached.questionsUsed,
+          subscriptionExpiry: cached.subscriptionExpiry,
+          entitlements: cached.entitlements,
+          isVip: cached.isVip,
         );
       }
-      final doc = await _db
-          .collection(AppConstants.colUsers)
-          .doc(user.uid)
-          .get()
-          .timeout(const Duration(seconds: 4));
-      if (currentUser?.uid != user.uid) return null;
-      if (!doc.exists) {
-        final fallback = UserModel(
-          uid: user.uid,
-          name: user.displayName ?? 'Pengguna',
-          email: user.email ?? '',
-          photoUrl: user.photoURL ?? '',
-          plan: AppConstants.planTrial,
-          questionsUsed: 0,
-        );
-        return fallback;
-      }
-      final userModel = UserModel.fromFirestore(doc);
-      await _cacheUserLocally(userModel,
-          isCurrent: () => currentUser?.uid == user.uid);
-      return currentUser?.uid == user.uid ? userModel : null;
+      return UserModel(
+        uid: user.uid,
+        name: user.displayName ?? 'Pengguna',
+        email: user.email ?? '',
+        photoUrl: user.photoURL ?? '',
+        plan: UserModel.isVipEmail(email) ? 'vip' : AppConstants.planTrial,
+        questionsUsed: 0,
+        isVip: UserModel.isVipEmail(email),
+      );
     } catch (_) {
-      // Pertahankan snapshot terakhir jika ada (F41)
       final cached = await _getCachedUser(user.uid);
       if (currentUser?.uid != user.uid) return null;
       if (cached != null) return cached;
@@ -677,8 +666,9 @@ class AuthService {
         name: user.displayName ?? 'Pengguna',
         email: user.email ?? '',
         photoUrl: user.photoURL ?? '',
-        plan: AppConstants.planTrial,
+        plan: UserModel.isVipEmail(email) ? 'vip' : AppConstants.planTrial,
         questionsUsed: 0,
+        isVip: UserModel.isVipEmail(email),
       );
     }
   }
@@ -723,34 +713,38 @@ class AuthService {
         auth: _sessionUidStream,
         cached: _getCachedUser,
         watch: (uid) {
-          if (uid.startsWith('web_') ||
-              FirestorePublicDoc.preferRestOnCurrentPlatform) {
-            final cleanEmail = uid.startsWith('web_')
-                ? uid.substring(4).trim().toLowerCase()
-                : (currentUser?.email ??
-                        cachedCurrentUser?.email ??
-                        _activeWebUserEmail ??
-                        '')
-                    .trim()
-                    .toLowerCase();
-            return _webUserUpdates.stream.where((u) =>
-                u.uid == uid ||
-                (cleanEmail.isNotEmpty &&
-                    u.email.trim().toLowerCase() == cleanEmail));
+          final fbUser = (_providedAuth != null || Firebase.apps.isNotEmpty)
+              ? _auth.currentUser
+              : null;
+          final cleanEmail = uid.startsWith('web_')
+              ? uid.substring(4).trim().toLowerCase()
+              : (fbUser?.uid == uid
+                      ? fbUser?.email
+                      : (_userCache[uid]?.email ?? _activeWebUserEmail))
+                  ?.trim()
+                  .toLowerCase() ??
+                  '';
+          if (cleanEmail.isNotEmpty && !uid.startsWith('web_')) {
+            unawaited(syncUserStatusWithVps(cleanEmail));
           }
-          return _db
-              .collection(AppConstants.colUsers)
-              .doc(uid)
-              .snapshots()
-              .map((doc) {
-            if (!doc.exists) return null;
-            final user = UserModel.fromFirestore(doc);
-            if (currentUser?.uid == uid) {
-              unawaited(_cacheUserLocally(user,
-                  isCurrent: () => currentUser?.uid == uid));
-            }
-            return user;
-          });
+          return _webUserUpdates.stream
+              .where((u) =>
+                  u.uid == uid ||
+                  (cleanEmail.isNotEmpty &&
+                      u.email.trim().toLowerCase() == cleanEmail))
+              .map((u) => u.uid == uid
+                  ? u
+                  : UserModel(
+                      uid: uid,
+                      name: u.name,
+                      email: u.email,
+                      photoUrl: u.photoUrl,
+                      plan: u.plan,
+                      questionsUsed: u.questionsUsed,
+                      subscriptionExpiry: u.subscriptionExpiry,
+                      entitlements: u.entitlements,
+                      isVip: u.isVip,
+                    ));
         },
       );
 
@@ -903,16 +897,30 @@ class AuthService {
                 ? (cleanAgentId.isNotEmpty ? cleanAgentId : 'tholib_1m')
                 : (isAll ? 'all_ai' : 'trial'));
 
+    User? fbUser;
+    try {
+      if (Firebase.apps.isNotEmpty) {
+        fbUser = FirebaseAuth.instance.currentUser;
+      }
+    } catch (_) {}
+    final fbMatchesEmail = fbUser != null &&
+        !fbUser.isAnonymous &&
+        (fbUser.email ?? '').trim().toLowerCase() == cleanEmail;
+
     final prevUid = _activeWebUser?.uid;
-    final existingUid = (_activeWebUser != null &&
-            _activeWebUser!.email.trim().toLowerCase() == cleanEmail)
-        ? _activeWebUser!.uid
-        : 'web_$cleanEmail';
+    final existingUid = fbMatchesEmail
+        ? fbUser.uid
+        : (_activeWebUser != null &&
+                _activeWebUser!.email.trim().toLowerCase() == cleanEmail)
+            ? _activeWebUser!.uid
+            : 'web_$cleanEmail';
     final existingName = (_activeWebUser != null &&
             _activeWebUser!.email.trim().toLowerCase() == cleanEmail &&
             _activeWebUser!.name.isNotEmpty)
         ? _activeWebUser!.name
-        : cleanEmail.split('@').first;
+        : (fbMatchesEmail && (fbUser.displayName ?? '').isNotEmpty
+            ? fbUser.displayName!
+            : cleanEmail.split('@').first);
     DateTime? maxActiveExpiry = expiry;
     for (final ent in entMap.values) {
       if (ent.isActive &&
@@ -927,7 +935,9 @@ class AuthService {
       uid: existingUid,
       name: existingName,
       email: cleanEmail,
-      photoUrl: _activeWebUser?.photoUrl ?? '',
+      photoUrl: _activeWebUser?.photoUrl.isNotEmpty == true
+          ? _activeWebUser!.photoUrl
+          : (fbMatchesEmail ? (fbUser.photoURL ?? '') : ''),
       plan: effectivePlan,
       questionsUsed: _activeWebUser?.questionsUsed ?? 0,
       subscriptionExpiry: maxActiveExpiry,
@@ -939,6 +949,9 @@ class AuthService {
     _activeWebUserEmail = cleanEmail;
     _userCache[user.uid] = user;
     _userCache['web_$cleanEmail'] = user;
+    if (fbMatchesEmail && fbUser.uid != user.uid) {
+      _userCache[fbUser.uid] = user;
+    }
     await _cacheUserLocally(user, isCurrent: () => true);
     if (prevUid != user.uid) {
       _sessionUidController.add(user.uid);
@@ -947,8 +960,11 @@ class AuthService {
 
     try {
       final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('openturath_cached_user_web_$cleanEmail',
-          jsonEncode(user.toJsonMap()));
+      final encoded = jsonEncode(user.toJsonMap());
+      await prefs.setString('openturath_cached_user_web_$cleanEmail', encoded);
+      if (fbMatchesEmail && fbUser.uid != 'web_$cleanEmail') {
+        await prefs.setString('openturath_cached_user_${fbUser.uid}', encoded);
+      }
     } catch (_) {}
   }
 
@@ -963,22 +979,38 @@ class AuthService {
             (u) => u.email.trim().toLowerCase() == cleanEmail && u.isVip);
     if (isVip) return; // Sakral Rule 5: Hak prerogatif VIP tidak pernah dicabut
 
+    User? fbUser;
+    try {
+      if (Firebase.apps.isNotEmpty) {
+        fbUser = FirebaseAuth.instance.currentUser;
+      }
+    } catch (_) {}
+    final fbMatchesEmail = fbUser != null &&
+        !fbUser.isAnonymous &&
+        (fbUser.email ?? '').trim().toLowerCase() == cleanEmail;
+
     final prevUid = _activeWebUser?.uid;
-    final existingUid = (_activeWebUser != null &&
-            _activeWebUser!.email.trim().toLowerCase() == cleanEmail)
-        ? _activeWebUser!.uid
-        : 'web_$cleanEmail';
+    final existingUid = fbMatchesEmail
+        ? fbUser.uid
+        : (_activeWebUser != null &&
+                _activeWebUser!.email.trim().toLowerCase() == cleanEmail)
+            ? _activeWebUser!.uid
+            : 'web_$cleanEmail';
     final existingName = (_activeWebUser != null &&
             _activeWebUser!.email.trim().toLowerCase() == cleanEmail &&
             _activeWebUser!.name.isNotEmpty)
         ? _activeWebUser!.name
-        : cleanEmail.split('@').first;
+        : (fbMatchesEmail && (fbUser.displayName ?? '').isNotEmpty
+            ? fbUser.displayName!
+            : cleanEmail.split('@').first);
 
     final user = UserModel(
       uid: existingUid,
       name: existingName,
       email: cleanEmail,
-      photoUrl: _activeWebUser?.photoUrl ?? '',
+      photoUrl: _activeWebUser?.photoUrl.isNotEmpty == true
+          ? _activeWebUser!.photoUrl
+          : (fbMatchesEmail ? (fbUser.photoURL ?? '') : ''),
       plan: AppConstants.planTrial,
       questionsUsed: _activeWebUser?.questionsUsed ?? 0,
       subscriptionExpiry: null,
@@ -990,6 +1022,9 @@ class AuthService {
     _activeWebUserEmail = cleanEmail;
     _userCache[user.uid] = user;
     _userCache['web_$cleanEmail'] = user;
+    if (fbMatchesEmail && fbUser.uid != user.uid) {
+      _userCache[fbUser.uid] = user;
+    }
     await AgentService.clearAssignedUrlCache(cleanEmail);
     await _cacheUserLocally(user, isCurrent: () => true);
     if (prevUid != user.uid) {
@@ -1042,114 +1077,132 @@ class AuthService {
       if (res.statusCode == 200) {
         final data = jsonDecode(res.body);
         if (data is Map && data['success'] == true) {
-          final rawProvReady = data['provisioningReady'];
-          final rawPendingShares = data['pendingShareCount'];
-          if (rawProvReady is bool) {
-            _lastVpsProvisioningReady = rawProvReady;
-          } else if (rawPendingShares is num) {
-            _lastVpsProvisioningReady = rawPendingShares.toInt() <= 0;
-          } else {
-            _lastVpsProvisioningReady = null;
-          }
-          final hasActive = data['hasActiveAccess'] == true;
-          final isVip =
-              data['isVip'] == true || UserModel.isVipEmail(cleanEmail);
-          final expiryStr = data['expiryIso']?.toString();
-          final expiry =
-              expiryStr != null ? DateTime.tryParse(expiryStr) : null;
-          final planTitle = data['serviceTitle']?.toString();
-          final rawPlan = (data['plan']?.toString() ?? '').trim().toLowerCase();
-
-          final rawEnt = data['entitlements'];
-          Map<String, ModuleEntitlement>? granularEntitlements;
-          if (rawEnt is Map && rawEnt.isNotEmpty) {
-            granularEntitlements = <String, ModuleEntitlement>{};
-            rawEnt.forEach((key, val) {
-              if (val is Map) {
-                final p = val['plan']?.toString() ?? 'tholib_1m';
-                final st = val['status']?.toString() ?? 'active';
-                final expStr = val['expiry']?.toString();
-                final exp = expStr != null ? DateTime.tryParse(expStr) : null;
-                final startStr = val['startsAt']?.toString();
-                final startedAt =
-                    startStr != null ? DateTime.tryParse(startStr) : null;
-                final kind = val['kind']?.toString() ?? 'payment';
-                final src = val['source']?.toString();
-
-                granularEntitlements![key.toString()] = ModuleEntitlement(
-                  plan: p,
-                  status: st,
-                  expiry: exp,
-                  startedAt: startedAt,
-                  sourceTransactionId: src,
-                  paymentStatus: kind == 'payment' ? 'paid' : 'none',
-                );
-              }
-            });
-          }
-
-          final hasPaid = granularEntitlements?.values
-                  .any((e) => e.paymentStatus == 'paid') ??
-              false;
-
-          String resolvedPlan = rawPlan;
-          if (resolvedPlan.isEmpty &&
-              granularEntitlements != null &&
-              granularEntitlements.isNotEmpty) {
-            final activeEnts = Map<String, ModuleEntitlement>.fromEntries(
-              granularEntitlements.entries
-                  .where((e) => e.value.isActive && e.value.isPremium),
-            );
-            if (activeEnts.containsKey('all_access') ||
-                activeEnts.containsKey('all_ai')) {
-              resolvedPlan = 'all_ai';
-            } else if (activeEnts.containsKey('all_specialists') ||
-                activeEnts.containsKey('all_disciplines')) {
-              resolvedPlan = 'all_specialists';
-            } else if (activeEnts.isNotEmpty) {
-              resolvedPlan = activeEnts.keys.first;
-            }
-          }
-
-          if (isVip) {
-            await applyActiveGrant(
-              cleanEmail,
-              expiry: expiry,
-              planTitle: planTitle,
-              agentId: resolvedPlan.isNotEmpty ? resolvedPlan : null,
-              customEntitlements: granularEntitlements,
-              isPaidSubscription: hasPaid,
-              replaceEntitlements: granularEntitlements != null,
-              isVipOverride: true,
-            );
-          } else if (hasActive) {
-            final hasValidGranular = granularEntitlements != null &&
-                granularEntitlements.values
-                    .any((e) => e.isActive && e.isPremium);
-            if ((expiry != null && expiry.isAfter(DateTime.now())) ||
-                hasValidGranular) {
-              await applyActiveGrant(
-                cleanEmail,
-                expiry: expiry,
-                planTitle: planTitle,
-                agentId: (resolvedPlan == 'all_ai' ||
-                        resolvedPlan == 'all_access')
-                    ? 'all_ai'
-                    : (resolvedPlan == 'all_specialists' ||
-                            resolvedPlan == 'all_disciplines')
-                        ? 'all_specialists'
-                        : (resolvedPlan.isNotEmpty ? resolvedPlan : null),
-                customEntitlements: granularEntitlements,
-                isPaidSubscription: hasPaid,
-                replaceEntitlements: granularEntitlements != null,
-              );
-            }
-          } else {
-            await revokeActiveGrant(cleanEmail);
-          }
+          await applyVpsUserStatusPayload(
+            cleanEmail,
+            Map<String, dynamic>.from(data),
+          );
         }
       }
     } catch (_) {}
+  }
+
+  /// Menerapkan respons otoritatif `/api/user-status` dari VPS ke state & cache lokal.
+  @visibleForTesting
+  static Future<void> applyVpsUserStatusPayload(
+    String email,
+    Map<String, dynamic> data, {
+    DateTime? now,
+  }) async {
+    final cleanEmail = email.trim().toLowerCase();
+    if (cleanEmail.isEmpty) return;
+
+    final rawProvReady = data['provisioningReady'];
+    final rawPendingShares = data['pendingShareCount'];
+    if (rawProvReady is bool) {
+      _lastVpsProvisioningReady = rawProvReady;
+    } else if (rawPendingShares is num) {
+      _lastVpsProvisioningReady = rawPendingShares.toInt() <= 0;
+    } else {
+      _lastVpsProvisioningReady = null;
+    }
+
+    final hasActive = data['hasActiveAccess'] == true;
+    final isVip = data['isVip'] == true || UserModel.isVipEmail(cleanEmail);
+    final expiryStr = data['expiryIso']?.toString();
+    final expiry = expiryStr != null ? DateTime.tryParse(expiryStr) : null;
+    final planTitle = data['serviceTitle']?.toString();
+    final rawPlan = (data['plan']?.toString() ?? '').trim().toLowerCase();
+    final forceReplace = data['replaceEntitlements'] == true;
+
+    final rawEnt = data['entitlements'];
+    Map<String, ModuleEntitlement>? granularEntitlements;
+    if (rawEnt is Map) {
+      granularEntitlements = <String, ModuleEntitlement>{};
+      rawEnt.forEach((key, val) {
+        if (val is Map) {
+          final p = val['plan']?.toString() ?? 'tholib_1m';
+          final st = val['status']?.toString() ?? 'active';
+          final expStr = val['expiry']?.toString();
+          final exp = expStr != null ? DateTime.tryParse(expStr) : null;
+          final startStr = val['startsAt']?.toString();
+          final startedAt =
+              startStr != null ? DateTime.tryParse(startStr) : null;
+          final kind = val['kind']?.toString() ?? 'payment';
+          final src = val['source']?.toString();
+
+          granularEntitlements![key.toString()] = ModuleEntitlement(
+            plan: p,
+            status: st,
+            expiry: exp,
+            startedAt: startedAt,
+            sourceTransactionId: src,
+            paymentStatus: kind == 'payment' ? 'paid' : 'none',
+          );
+        }
+      });
+    }
+
+    final hasPaid =
+        granularEntitlements?.values.any((e) => e.paymentStatus == 'paid') ??
+            false;
+
+    String resolvedPlan = rawPlan;
+    if (resolvedPlan.isEmpty &&
+        granularEntitlements != null &&
+        granularEntitlements.isNotEmpty) {
+      final activeEnts = Map<String, ModuleEntitlement>.fromEntries(
+        granularEntitlements.entries
+            .where((e) => e.value.isActive && e.value.isPremium),
+      );
+      if (activeEnts.containsKey('all_access') ||
+          activeEnts.containsKey('all_ai')) {
+        resolvedPlan = 'all_ai';
+      } else if (activeEnts.containsKey('all_specialists') ||
+          activeEnts.containsKey('all_disciplines')) {
+        resolvedPlan = 'all_specialists';
+      } else if (activeEnts.isNotEmpty) {
+        resolvedPlan = activeEnts.keys.first;
+      }
+    }
+
+    final shouldReplace = forceReplace || granularEntitlements != null;
+    final refNow = now ?? DateTime.now();
+
+    if (isVip) {
+      await applyActiveGrant(
+        cleanEmail,
+        expiry: expiry,
+        planTitle: planTitle,
+        agentId: resolvedPlan.isNotEmpty ? resolvedPlan : null,
+        customEntitlements: granularEntitlements,
+        isPaidSubscription: hasPaid,
+        replaceEntitlements: shouldReplace,
+        isVipOverride: true,
+      );
+    } else if (hasActive) {
+      final hasValidGranular = granularEntitlements != null &&
+          granularEntitlements.values.any((e) => e.isActive && e.isPremium);
+      if ((expiry != null && expiry.isAfter(refNow)) || hasValidGranular) {
+        await applyActiveGrant(
+          cleanEmail,
+          expiry: expiry,
+          planTitle: planTitle,
+          agentId: (resolvedPlan == 'all_ai' || resolvedPlan == 'all_access')
+              ? 'all_ai'
+              : (resolvedPlan == 'all_specialists' ||
+                      resolvedPlan == 'all_disciplines')
+                  ? 'all_specialists'
+                  : (resolvedPlan.isNotEmpty ? resolvedPlan : null),
+          customEntitlements: granularEntitlements,
+          isPaidSubscription: hasPaid,
+          replaceEntitlements: shouldReplace,
+        );
+      } else if (forceReplace) {
+        await revokeActiveGrant(cleanEmail);
+      }
+    } else {
+      await revokeActiveGrant(cleanEmail);
+    }
   }
 
   /// Mempertahankan owner yang sudah diverifikasi oleh alur koneksi Google.
