@@ -1,5 +1,4 @@
-/* OpenTurath Manuskrip: slider before/after, naskah ditulis, kalkulator, form pesan.
-   Berkas eksternal karena CSP produksi melarang skrip sebaris. */
+/* OpenTurath Manuskrip: slider before/after, kanvas latar hero (dengan tombol jeda), kalkulator, dan form pesan. */
 (function () {
   'use strict';
   var d = document, root = d.documentElement;
@@ -83,12 +82,11 @@
       e.preventDefault(); interacted = true; stop(); setPos(n);
     });
 
-    [imgScan].forEach(function (im) { if (im.complete) layout(); else im.addEventListener('load', layout); });
+    if (imgScan.complete) layout(); else imgScan.addEventListener('load', layout);
     if (window.ResizeObserver) new ResizeObserver(layout).observe(ba); else addEventListener('resize', layout);
     ba.style.setProperty('--ar', String(AR));
     setPos(50); layout();
 
-    // Petunjuk sekali saja, saat pertama terlihat: garis bergeser sedikit.
     if (!still && window.IntersectionObserver) {
       var io = new IntersectionObserver(function (es) {
         if (!es[0].isIntersecting) return; io.disconnect();
@@ -101,33 +99,24 @@
     }
   })();
 
-  /* ================= LATAR HERO: ARTEFAK NASKAH ================= */
-  // Dua lapis. Lapis bawah (#dots-bg, digambar sekali): baris coretan tipis yang sejajar dan beberapa sapuan pena besar.
-  // Lapis atas (#dots, bergerak): lembar penuh coretan tangan rapi, lembar bergaris, dan sapuan pena lepas yang melayang
-  // pelan. Abstrak tetapi teratur: tanpa bintang atau medali. Palet mengikuti tema (putih/hitam, abu pudar di gelap).
-  // Bagian tengah dipudarkan lewat CSS agar teks tetap terbaca.
+  /* ================= LATAR HERO: LEMBARAN NASKAH ABSTRAK ================= */
   (function () {
     var cv = $('#dots'); if (!cv) return;
     var ctx = cv.getContext('2d'); if (!ctx) return;
+    var pauseBtn = $('#motion-toggle');
     var bgc = d.createElement('canvas'); bgc.id = 'dots-bg'; bgc.setAttribute('aria-hidden', 'true');
     cv.parentNode.insertBefore(bgc, cv);
-    var WORDS = ('العلم هذا شريف ولا شيء أشرف منه وقال الله تعالى ثلث بأهل العلم والإنسان يمتثل الأوامر ويجتنب النواهي ' +
-      'إذا جاء في المذاكرة شيء من سير السلف فاكتبوه إذا ما انتفعتم به أنتم انتفع به غيركم دونوا سير سلفهم ' +
-      'تفوت كرامات الرجال شواردا إذا لم تقيدها علينا الدفاتر وهذا أوان الشروع في المقصود فأقول قال سيدي رضي الله عنه').split(' ');
-    var W = 0, H = 0, dpr = 1, light = true, pal = null, sheets = [], raf = 0, last = 0, running = false, visible = true, simT = 0;
+
+    var W = 0, H = 0, dpr = 1, pal = null, sheets = [], raf = 0, last = 0, running = false, visible = true, userPaused = false, simT = 0;
     var rnd = (function (seed) { return function () { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; }; })(1369);
     var TAU = Math.PI * 2;
 
-    function isLight() {
-      var t = root.getAttribute('data-theme');
-      if (t === 'light') return true; if (t === 'dark') return false;
-      return !matchMedia('(prefers-color-scheme: dark)').matches;
-    }
     function palette() {
-      light = isLight();
-      pal = light
-        ? { p0: '#FFFFFF', p1: '#ECECEC', edge: 'rgba(24,24,27,0.38)', ink: 'rgba(24,24,27,0.6)', gold: 'rgba(24,24,27,0.55)', goldFill: 'rgba(24,24,27,0.07)', line: 'rgba(0,0,0,0.07)', shadow: 'rgba(0,0,0,0.25)', shade: '0,0,0' }
-        : { p0: 'rgba(255,255,255,0.05)', p1: 'rgba(255,255,255,0.03)', edge: 'rgba(255,255,255,0.14)', ink: 'rgba(250,250,250,0.24)', gold: 'rgba(250,250,250,0.22)', goldFill: 'rgba(255,255,255,0.05)', line: 'rgba(255,255,255,0.06)', shadow: 'transparent', shade: '0,0,0' };
+      pal = {
+        p0: '#FFFFFF', p1: '#ECECEC', edge: 'rgba(24,24,27,0.34)',
+        ink: 'rgba(24,24,27,0.52)', line: 'rgba(0,0,0,0.06)',
+        shadow: 'rgba(0,0,0,0.2)', shade: '0,0,0'
+      };
     }
     function rrect(g, x, y, w, h, r) {
       g.beginPath(); g.moveTo(x + r, y); g.arcTo(x + w, y, x + w, y + h, r); g.arcTo(x + w, y + h, x, y + h, r); g.arcTo(x, y + h, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath();
@@ -136,7 +125,6 @@
       var pg = g.createLinearGradient(x, y, x + w, y + h); pg.addColorStop(0, pal.p0); pg.addColorStop(1, pal.p1);
       rrect(g, x, y, w, h, Math.min(w, h) * 0.05); g.fillStyle = pg; g.fill(); g.lineWidth = 1.2; g.strokeStyle = pal.edge; g.stroke();
     }
-    // Satu baris coretan tangan: kata-kata gelombang kecil dari kanan ke kiri, amplitudo dan jarak teratur.
     function scribbleLine(g, x0, x1, y, amp) {
       var x = x1;
       g.beginPath();
@@ -153,11 +141,10 @@
     function scribbleBlock(g, x, y, w, h, gap) {
       g.strokeStyle = pal.ink; g.lineWidth = 1.3; g.lineCap = 'round'; g.lineJoin = 'round';
       for (var yy = y + gap; yy < y + h; yy += gap) {
-        var right = x + w, left = x + (rnd() < 0.3 ? rnd() * w * 0.22 : 0); // sesekali baris pendek, selebihnya rata
+        var right = x + w, left = x + (rnd() < 0.3 ? rnd() * w * 0.22 : 0);
         scribbleLine(g, left, right, yy, gap * 0.2);
       }
     }
-    // Sapuan pena meruncing: bentuk terisi di sepanjang kurva kuadrat dengan lebar sinus.
     function swoosh(g, x1, y1, x2, y2, bend, wmax) {
       var mx = (x1 + x2) / 2 - (y2 - y1) * bend, my = (y1 + y2) / 2 + (x2 - x1) * bend, L = [], R = [], n = 28;
       for (var i = 0; i <= n; i++) {
@@ -172,30 +159,28 @@
       for (i = n; i >= 0; i--) g.lineTo(R[i][0], R[i][1]);
       g.closePath(); g.fill();
     }
-    // Satu artefak. Mengembalikan kanvas berbantalan (untuk bayangan yang sudah dipanggang) dan ukuran logisnya.
     function sprite(kind, w, h) {
-      var pad = light ? 26 : 4, q = Math.max(0.5, dpr * 0.55), tw = w + pad * 2, th = h + pad * 2;
+      var pad = 26, q = Math.max(0.5, dpr * 0.55), tw = w + pad * 2, th = h + pad * 2;
       var c = d.createElement('canvas'); c.width = Math.ceil(tw * q); c.height = Math.ceil(th * q);
       var g = c.getContext('2d'); g.setTransform(q, 0, 0, q, 0, 0); g.translate(pad, pad);
-      if (light && kind !== 'strokes') { g.shadowColor = pal.shadow; g.shadowBlur = 16; g.shadowOffsetY = 8; }
-      if (kind === 'page') { // lembar penuh coretan rapi
+      if (kind !== 'strokes') { g.shadowColor = pal.shadow; g.shadowBlur = 16; g.shadowOffsetY = 8; }
+      if (kind === 'page') {
         paper(g, 0, 0, w, h); g.shadowColor = 'transparent';
         scribbleBlock(g, w * 0.1, w * 0.08, w * 0.8, h - w * 0.16, w / 9);
-      } else if (kind === 'ruled') { // lembar bergaris dengan satu coretan judul dan garis bawah
+      } else if (kind === 'ruled') {
         paper(g, 0, 0, w, h); g.shadowColor = 'transparent';
         g.strokeStyle = pal.line; g.lineWidth = 1;
         for (var yy = w * 0.34; yy < h - w * 0.1; yy += w / 8) { g.beginPath(); g.moveTo(w * 0.1, yy); g.lineTo(w * 0.9, yy); g.stroke(); }
         g.strokeStyle = pal.ink; g.lineWidth = 1.8; g.lineCap = 'round'; scribbleLine(g, w * 0.3, w * 0.9, w * 0.2, w * 0.045);
         g.fillStyle = pal.ink; swoosh(g, w * 0.28, w * 0.27, w * 0.9, w * 0.27, 0.0, 3);
         scribbleBlock(g, w * 0.1, w * 0.3, w * 0.8, h - w * 0.42, w / 8);
-      } else { // 'strokes': sapuan pena lepas tanpa kertas, sudut dan jarak teratur
+      } else {
         g.fillStyle = pal.ink;
         var k = 4, sp = h / (k + 1);
         for (var i = 1; i <= k; i++) swoosh(g, w * 0.06, sp * i, w * 0.94, sp * i - w * 0.05, 0.16 * (i % 2 ? 1 : -1), 2.4 + (i % 3) * 1.1);
       }
       return { img: c, w: w, h: h, tw: tw, th: th, pad: pad };
     }
-    // Lapis tetap: baris-baris coretan sangat tipis yang sejajar dan teratur, ditambah beberapa sapuan besar.
     function backdrop() {
       bgc.width = Math.round(W * dpr); bgc.height = Math.round(H * dpr);
       var g = bgc.getContext('2d'); g.setTransform(dpr, 0, 0, dpr, 0, 0); g.clearRect(0, 0, W, H);
@@ -214,7 +199,7 @@
       dpr = Math.min(1.5, window.devicePixelRatio || 1);
       cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
       backdrop();
-      var n = W < 600 ? 7 : 12, kinds = ['page', 'page', 'page', 'ruled', 'ruled', 'strokes'];
+      var n = W < 600 ? 6 : 10, kinds = ['page', 'page', 'page', 'ruled', 'ruled', 'strokes'];
       sheets = [];
       for (var i = 0; i < n; i++) {
         var kind = kinds[Math.floor(rnd() * kinds.length)], depth = 0.45 + rnd() * 0.75;
@@ -226,7 +211,7 @@
           rot: (rnd() - 0.5) * 0.9, vr: (rnd() - 0.5) * 0.035, flip: rnd() * TAU, vf: 0.12 + rnd() * 0.18
         });
       }
-      sheets.sort(function (a, b) { return a.depth - b.depth; }); // yang jauh digambar dulu
+      sheets.sort(function (a, b) { return a.depth - b.depth; });
     }
     function drawAt(t) {
       ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.clearRect(0, 0, cv.width, cv.height);
@@ -234,13 +219,13 @@
         var p = sheets[i], S = p.s, span = H + S.h * 2;
         var y = ((p.y0 + p.vy * t + S.h) % span + span) % span - S.h;
         var x = p.x0 + p.vx * t + Math.sin(t * 0.25 + i) * 14 * p.depth;
-        var sx = 0.78 + 0.22 * Math.cos(p.flip + t * p.vf); // lembar seperti perlahan dibalik
-        ctx.globalAlpha = clamp(0.3 + p.depth * 0.4, 0, 0.8);
+        var sx = 0.78 + 0.22 * Math.cos(p.flip + t * p.vf);
+        ctx.globalAlpha = clamp(0.26 + p.depth * 0.34, 0, 0.7);
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
         ctx.translate(((x % (W + S.w)) + W + S.w) % (W + S.w) - S.w / 2, y);
         ctx.rotate(p.rot + p.vr * t); ctx.scale(sx, 1);
         ctx.drawImage(S.img, -S.tw / 2, -S.th / 2, S.tw, S.th);
-        var sh = (1 - sx) * (light ? 1.3 : 0.9); // sisi yang miring lebih gelap: kesan lengkung
+        var sh = (1 - sx) * 1.2;
         if (sh > 0.02 && p.kind !== 'strokes') {
           ctx.fillStyle = 'rgba(' + pal.shade + ',' + sh + ')'; ctx.fillRect(-S.w / 2, -S.h / 2, S.w, S.h);
         }
@@ -251,56 +236,141 @@
       if (!last) last = now;
       simT += Math.min(0.05, (now - last) / 1000); last = now;
       drawAt(simT);
-      if (running && visible) raf = requestAnimationFrame(frame);
+      if (running && visible && !userPaused) raf = requestAnimationFrame(frame);
     }
-    function start() { if (running || still) return; running = true; last = 0; raf = requestAnimationFrame(frame); }
+    function start() { if (running || still || userPaused) return; running = true; last = 0; raf = requestAnimationFrame(frame); }
     function pause() { running = false; cancelAnimationFrame(raf); }
-    function draw() { build(); if (still) drawAt(40); else start(); }
+    function draw() { build(); if (still || userPaused) drawAt(simT || 40); else start(); }
 
-    var go = function () { draw(); };
-    if (d.fonts && d.fonts.load) d.fonts.load('32px "OT Naskh"', 'العلم').then(go, go); else go();
-    if (!still && window.IntersectionObserver) new IntersectionObserver(function (es) { visible = es[0].isIntersecting; if (visible) { running = false; start(); } else pause(); }).observe(cv);
-    d.addEventListener('visibilitychange', function () { if (d.hidden) pause(); else if (visible && !still) { running = false; start(); } });
+    if (pauseBtn) {
+      if (still) {
+        pauseBtn.hidden = true;
+      } else {
+        pauseBtn.addEventListener('click', function () {
+          userPaused = !userPaused;
+          pauseBtn.setAttribute('aria-pressed', String(userPaused));
+          pauseBtn.textContent = userPaused ? 'Putar latar' : 'Jeda latar';
+          if (userPaused) pause(); else { running = false; start(); }
+        });
+      }
+    }
+
+    draw();
+    if (!still && window.IntersectionObserver) {
+      new IntersectionObserver(function (es) {
+        visible = es[0].isIntersecting;
+        if (visible && !userPaused) { running = false; start(); } else pause();
+      }).observe(cv);
+    }
+    d.addEventListener('visibilitychange', function () {
+      if (d.hidden) pause(); else if (visible && !still && !userPaused) { running = false; start(); }
+    });
     var rt; addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(function () { pause(); draw(); }, 150); });
-    var retheme = function () { pause(); draw(); };
-    new MutationObserver(retheme).observe(root, { attributes: true, attributeFilter: ['data-theme'] });
-    var mq = matchMedia('(prefers-color-scheme: dark)'); if (mq.addEventListener) mq.addEventListener('change', retheme);
   })();
 
-  /* ================= KALKULATOR ================= */
+  /* ================= KALKULATOR + JEMBATAN KE FORM ================= */
   (function () {
     var pages = $('#c-pages'); if (!pages) return;
-    var words = $('#c-words'), plus = $('#c-plus'), total = $('#c-total'), formula = $('#c-formula'), max = $('#c-max');
+    var words = $('#c-words'), plus = $('#c-plus'), total = $('#c-total'), formula = $('#c-formula'), max = $('#c-max'), applyBtn = $('#calc-apply');
     var rp = function (n) { return 'Rp ' + Math.round(n).toLocaleString('id-ID'); };
-    function calc() {
+    function state() {
       var p = Math.max(0, parseFloat(pages.value) || 0), w = Math.max(0, parseFloat(words.value) || 0);
-      var rate = parseInt(($('input[name=c-type]:checked') || {}).value || '20', 10) + (plus.checked ? 10 : 0);
+      var checked = $('input[name=c-type]:checked');
+      var baseRate = parseInt((checked && checked.value) || '20', 10);
+      var rate = baseRate + (plus.checked ? 10 : 0);
       var kata = p * w, sum = kata * rate;
-      total.textContent = rp(sum);
-      formula.textContent = p.toLocaleString('id-ID') + ' × ' + w.toLocaleString('id-ID') + ' = ' +
-        kata.toLocaleString('id-ID') + ' kata × ' + rp(rate);
-      max.textContent = 'Tagihan akhir tidak melebihi ' + rp(sum * 1.1) + ' (perkiraan + 10%).';
+      return { p: p, w: w, baseRate: baseRate, plus: plus.checked, rate: rate, kata: kata, sum: sum };
+    }
+    function calc() {
+      var s = state();
+      total.textContent = rp(s.sum);
+      formula.textContent = s.p.toLocaleString('id-ID') + ' × ' + s.w.toLocaleString('id-ID') + ' = ' +
+        s.kata.toLocaleString('id-ID') + ' kata × ' + rp(s.rate);
+      max.textContent = 'Tagihan akhir tidak melebihi ' + rp(s.sum * 1.1) + ' (perkiraan + 10%).';
     }
     $$('#calc input').forEach(function (i) { i.addEventListener('input', calc); i.addEventListener('change', calc); });
+    if (applyBtn) {
+      applyBtn.addEventListener('click', function () {
+        var s = state(), f = $('#order');
+        if (!f) return;
+        if (f.elements.jenis) f.elements.jenis.value = s.baseRate === 30 ? 'Tulisan tangan' : 'Cetak';
+        if (f.elements.halaman && s.p > 0) f.elements.halaman.value = String(Math.round(s.p));
+        if (f.elements.catatan) {
+          var paket = (s.baseRate === 30 ? 'Tulisan tangan' : 'Cetak') + (s.plus ? ' + Paket Lengkap' : '');
+          f.elements.catatan.value = 'Perkiraan dari kalkulator: ' + Math.round(s.p) + ' halaman (~' + Math.round(s.w) + ' kata/hal.), paket ' + paket + ', kisaran ' + rp(s.sum) + '.';
+        }
+        var target = $('#pesan');
+        if (target) target.scrollIntoView({ behavior: still ? 'auto' : 'smooth' });
+        if (f.elements.nama) setTimeout(function () { f.elements.nama.focus(); }, still ? 0 : 400);
+      });
+    }
     calc();
   })();
 
-  /* ================= FORM PESAN ================= */
+  /* ================= FORM PESAN + VALIDASI AKSESIBEL + SALIN ================= */
   (function () {
     var f = $('#order'); if (!f) return;
-    var note = $('#order-note');
+    var note = $('#order-note'), copyBtn = $('#order-copy');
+    var v = function (n) { return (f.elements[n] && f.elements[n].value || '').trim(); };
+    function buildBody() {
+      return [
+        'Nama: ' + (v('nama') || '-'),
+        'Email: ' + (v('email') || '-'),
+        'Jenis naskah: ' + (v('jenis') || '-'),
+        'Perkiraan jumlah halaman: ' + (v('halaman') || '-'),
+        'Catatan atau pertanyaan: ' + (v('catatan') || '-'),
+        '',
+        'Saya menyatakan berhak memproses naskah ini dan menyetujui ketentuan OpenTurath.',
+        '',
+        '(Lampirkan 3 halaman contoh dalam format JPG/PNG/PDF atau tautan Google Drive.)'
+      ].join('\n');
+    }
+    function validateForm() {
+      var fields = [f.elements.nama, f.elements.email, f.elements.izin];
+      var firstInvalid = null;
+      fields.forEach(function (el) {
+        if (!el) return;
+        var ok = el.checkValidity();
+        el.setAttribute('aria-invalid', String(!ok));
+        if (!ok && !firstInvalid) firstInvalid = el;
+      });
+      if (firstInvalid) {
+        note.className = 'small form-status is-error';
+        note.textContent = 'Mohon lengkapi nama, alamat email yang valid, dan centang persetujuan hak proses naskah terlebih dahulu.';
+        firstInvalid.focus();
+        return false;
+      }
+      note.className = 'small form-status';
+      return true;
+    }
+    ['input', 'change'].forEach(function (ev) {
+      f.addEventListener(ev, function (e) {
+        if (e.target && e.target.getAttribute('aria-invalid') === 'true' && e.target.checkValidity()) {
+          e.target.setAttribute('aria-invalid', 'false');
+        }
+      });
+    });
     f.addEventListener('submit', function (e) {
       e.preventDefault();
-      if (!f.checkValidity()) { f.reportValidity(); return; }
-      var v = function (n) { return (f.elements[n] && f.elements[n].value || '').trim(); };
-      var body = [
-        'Nama: ' + v('nama'), 'Email: ' + v('email'), 'Jenis naskah: ' + v('jenis'),
-        'Perkiraan halaman: ' + (v('halaman') || '-'), 'Catatan: ' + (v('catatan') || '-'), '',
-        'Saya berhak memproses naskah ini dan menyetujui ketentuan.', '',
-        '(Lampirkan 3 halaman contoh pada email ini.)'
-      ].join('\n');
-      location.href = 'mailto:support@openturath.id?subject=' + encodeURIComponent('Uji 3 halaman: OpenTurath Manuskrip') + '&body=' + encodeURIComponent(body);
-      note.textContent = 'Email terbuka. Lampirkan 3 halaman naskah lalu kirim. Bila email tidak terbuka, tulis langsung ke support@openturath.id.';
+      if (!validateForm()) return;
+      var body = buildBody();
+      location.href = 'mailto:support@openturath.id?subject=' + encodeURIComponent('Uji 3 halaman gratis: OpenTurath Manuskrip') + '&body=' + encodeURIComponent(body);
+      note.textContent = 'Aplikasi email Anda dibuka. Lampirkan 3 halaman contoh lalu kirim. Jika tidak terbuka, klik "Salin isi formulir" lalu kirim manual ke support@openturath.id atau DM @openturath.id.';
     });
+    if (copyBtn) {
+      copyBtn.addEventListener('click', function () {
+        if (!validateForm()) return;
+        var text = 'Kepada: support@openturath.id\nSubjek: Uji 3 halaman gratis: OpenTurath Manuskrip\n\n' + buildBody();
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(function () {
+            note.textContent = 'Isi formulir berhasil disalin. Tempelkan ke email (support@openturath.id) atau DM Instagram @openturath.id bersama 3 halaman contoh Anda.';
+          }, function () {
+            note.textContent = 'Gagal menyalin otomatis. Silakan kirim langsung ke support@openturath.id atau DM @openturath.id.';
+          });
+        } else {
+          note.textContent = 'Browser tidak mendukung salin otomatis. Silakan kirim langsung ke support@openturath.id atau DM @openturath.id.';
+        }
+      });
+    }
   })();
 })();

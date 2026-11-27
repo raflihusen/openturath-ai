@@ -1,8 +1,8 @@
 /* OpenTurath V7 — bahasa desain terinspirasi antigravity.google, dalam palet monokrom OpenTurath.
    Properti logis dipakai agar RTL (Arab) siap. */
 @font-face{font-family:"Google Sans Flex";font-style:normal;font-weight:400 600;font-display:swap;src:url("../fonts/googlesansflex.woff2") format("woff2")}
-@font-face{font-family:"OT Naskh";src:url("../fonts/ScheherazadeNew-Regular.ttf") format("truetype");font-weight:400;font-display:swap}
-@font-face{font-family:"OT Naskh";src:url("../fonts/ScheherazadeNew-Bold.ttf") format("truetype");font-weight:700;font-display:swap}
+@font-face{font-family:"OT Naskh";src:url("../fonts/scheherazade-new-arabic-400-normal.woff2") format("woff2");font-weight:400;font-display:swap}
+@font-face{font-family:"OT Naskh";src:url("../fonts/scheherazade-new-arabic-700-normal.woff2") format("woff2");font-weight:700;font-display:swap}
 
 :root{
   --surface:#FFFFFF; --surface-dim:#E9EBF0; --container:#EEF0F5; --container-low:#E4E8EF; --container-high:#D9DEE8; --container-highest:#CDD3DF;

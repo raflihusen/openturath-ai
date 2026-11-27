@@ -3,21 +3,91 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>OpenTurath Manuskrip: ketik ulang naskah Arab tulisan tangan</title>
-<meta name="description" content="Berhenti mengetik ulang naskah Arab dengan tangan. AI khusus naskah tulisan tangan: ayat, syair, dan catatan kaki ditata, bagian tak terbaca ditandai, formatting Word gratis. Coba 3 halaman dan konsultasi gratis.">
+<title>OpenTurath Manuskrip: salin ulang naskah Arab tulisan tangan ke teks digital</title>
+<meta name="description" content="Tak perlu lagi mengetik ulang naskah Arab secara manual. AI khusus manuskrip Arab: ayat, syair dua syatr, dan catatan kaki ditata rapi, bagian buram ditandai, gratis formatting Word. Coba 3 halaman dan konsultasi gratis.">
 <meta name="theme-color" content="#FFFFFF">
 <meta property="og:title" content="OpenTurath Manuskrip: setia pada naskah">
-<meta property="og:description" content="Naskah tulisan tangan, jadi teks Arab yang rapi. Satu kitab 400 halaman dalam sekitar dua jam pada kitab uji kami.">
+<meta property="og:description" content="Ubah foto naskah Arab tulisan tangan menjadi teks digital yang rapi dan siap disunting. Satu kitab uji 400 halaman selesai dalam sekitar dua jam.">
 <meta property="og:type" content="website">
+<meta property="og:url" content="https://manuskrip.openturath.id/">
+<meta property="og:locale" content="id_ID">
 <meta property="og:image" content="https://manuskrip.openturath.id/assets/img/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Perbandingan naskah Arab tulisan tangan dan hasil transkripsi rapi OpenTurath Manuskrip">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="canonical" href="https://manuskrip.openturath.id/">
+<link rel="icon" href="assets/mark.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/img/og.png">
+<link rel="preload" href="assets/fonts/googlesansflex.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="assets/css/site.css">
 <link rel="stylesheet" href="assets/css/m.css">
-<link rel="icon" href="assets/mark.svg" type="image/svg+xml">
-<link rel="preload" href="assets/fonts/googlesansflex.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="assets/img/scan-p7.webp" as="image" type="image/webp">
-<script src="assets/js/boot.js"></script>
+<script src="assets/js/boot.js" defer></script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Service",
+      "name": "OpenTurath Manuskrip",
+      "serviceType": "Transkripsi dan Digitalisasi Manuskrip Arab",
+      "url": "https://manuskrip.openturath.id/",
+      "provider": {
+        "@type": "Organization",
+        "name": "OpenTurath",
+        "url": "https://openturath.id/",
+        "email": "support@openturath.id"
+      },
+      "areaServed": "ID",
+      "offers": [
+        {
+          "@type": "Offer",
+          "name": "Transkripsi Naskah Cetak",
+          "price": "20",
+          "priceCurrency": "IDR",
+          "unitText": "per kata"
+        },
+        {
+          "@type": "Offer",
+          "name": "Transkripsi Tulisan Tangan",
+          "price": "30",
+          "priceCurrency": "IDR",
+          "unitText": "per kata"
+        }
+      ]
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Apakah isi naskah diubah?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Tidak. Isi dan ejaan naskah disalin dengan setia apa adanya. Tambahan penataan hanya mencakup harakat, nama surat, dan nomor ayat Al-Qur'an, serta catatan kaki bila Anda memilih Paket Lengkap."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Bagaimana dengan bagian yang buram atau rusak?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Bagian yang tidak terbaca ditandai di tempatnya, tidak dikarang, dan tidak ikut ditagih."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Apakah aman untuk naskah wakaf atau milik pribadi?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Naskah Anda tidak dipublikasikan, tidak digunakan untuk melatih model AI, dan seluruh berkas dihapus 30 hari setelah hasil dikirim atau lebih cepat atas permintaan Anda."
+          }
+        }
+      ]
+    }
+  ]
+}
+</script>
 </head>
 <body>
 <a class="skip" href="#main">Lewati ke konten</a>
@@ -28,14 +98,14 @@
     <a href="#demo">Hasil</a><a href="#bukti">Bukti</a><a href="#harga">Harga</a><a href="#faq">Tanya jawab</a>
   </nav>
   <div class="hactions">
-    <button class="iconbtn theme-btn" aria-label="Ganti tema terang atau gelap"><span class="sun"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></span><span class="moon"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg></span></button>
-    <a class="btn primary sm hideS" href="#pesan">Kirim 3 halaman, gratis</a>
-    <button class="iconbtn menu-btn" aria-label="Buka menu" aria-expanded="false"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M4 8h16M4 16h16"/></svg></button>
+    <a class="btn primary sm hideS" href="#pesan">Coba 3 halaman gratis</a>
+    <button class="iconbtn menu-btn" type="button" aria-label="Buka menu" aria-expanded="false" aria-controls="sheet"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M4 8h16M4 16h16"/></svg></button>
   </div>
 </div></header>
-<div class="sheet" id="sheet">
+
+<div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-label="Menu navigasi">
   <a class="l" href="#demo">Hasil</a><a class="l" href="#bukti">Bukti</a><a class="l" href="#harga">Harga</a><a class="l" href="#faq">Tanya jawab</a>
-  <a class="btn primary" href="#pesan">Kirim 3 halaman, gratis</a>
+  <a class="btn primary" href="#pesan">Coba 3 halaman gratis</a>
 </div>
 
 <main id="main">
@@ -43,33 +113,37 @@
 <!-- 1. HERO -->
 <section class="welcome hero-m" id="hero">
   <canvas id="dots" aria-hidden="true"></canvas>
-  <p class="eyebrow-brand rv">OpenTurath AI for Manuscripts</p>
-  <h1 class="hero hero-wide rv d1"><span class="tl">Berhenti mengetik ulang</span> <span class="tl">naskah Arab dengan tangan.</span><span class="hero-sub">AI khusus naskah tulisan tangan.</span></h1>
-  <p class="lede rv d2">Mengetik ulang memakan berminggu-minggu, sedangkan OCR biasa berantakan pada tulisan tangan. Foto naskah Anda: AI kami menyalinnya apa adanya, menata ayat, syair, dan catatan kaki, lalu menandai bagian yang tak terbaca alih-alih menebaknya. Formatting Word gratis.</p>
-  <div class="cta-row rv d3"><a class="btn primary" href="#pesan">Kirim 3 halaman, gratis</a><a class="btn tonal" href="#demo">Geser untuk melihat</a></div>
+  <h1 class="hero hero-wide"><span class="tl">Tak perlu lagi mengetik ulang</span> <span class="tl">naskah Arab secara manual.</span><span class="hero-sub">AI khusus untuk membaca dan menyalin manuskrip Arab.</span></h1>
+  <p class="lede">Mengetik manual memakan waktu berminggu-minggu, sedangkan OCR biasa sering berantakan saat membaca tulisan tangan. Cukup kirim foto atau pindaian naskah Anda: AI kami menyalinnya dengan setia, menata ayat, syair, dan catatan kaki, serta menandai bagian yang buram tanpa mengarangnya. Sudah termasuk formatting Word standar secara gratis.</p>
+  <div class="cta-row"><a class="btn primary" href="#pesan">Coba 3 halaman gratis</a><a class="btn tonal" href="#demo">Lihat perbandingan hasil</a></div>
+  <button class="motion-btn" id="motion-toggle" type="button" aria-pressed="false">Jeda latar</button>
 </section>
 
 <!-- 2. DEMO GESER -->
 <section class="sec" id="demo"><div class="wrap">
-  <div class="sec-head rv center"><div class="kicker">Lihat sendiri</div><h2>Dari goresan pena ke teks yang rapi.</h2><p class="lead">Geser garis ke kiri dan kanan. Kiri adalah naskah aslinya, kanan adalah hasilnya.</p></div>
+  <div class="sec-head rv center"><div class="kicker">Lihat sendiri</div><h2>Dari goresan pena ke teks digital yang rapi.</h2><p class="lead">Geser garis pemisah ke kiri atau kanan. Sisi kiri adalah pindaian naskah asli, sisi kanan adalah hasil salinannya.</p></div>
   <div class="ba-wrap rv">
     <div class="ba" id="ba">
-      <div class="ba-layer ba-after" lang="ar" dir="rtl" role="img" aria-label="Hasil: teks Arab yang sudah ditata dari halaman yang sama">
+      <div class="ba-layer ba-after" lang="ar" dir="rtl" aria-label="Hasil teks Arab yang sudah ditata dari halaman yang sama">
         <div class="txt">
-          <p>شكر نعمة البصر. وقال أيضا رضي الله عنه: إذا جاء في المذاكرة شيء من سير السلف فاكتبوه، لا تتساهلون، إذا ما انتفعتم به أنتم انتفع به غيركم، لا تقعون رتوش، وقد وصفوكم بالرثاثة سلفكم في عدم نقلكم سير سلفكم، بخلاف أهل اليمن وغيرهم تراهم دونوا سير سلفهم. وقد قيل:</p>
+          <p>شكر نعمة البصر. وقال أيضا رضي الله عنه: إذا جاء في المذاكرة شيء من سير السلف فاكتبوه، لا تستسهلون، إذا ما انتفعتم به أنتم انتفع به غيركم، لا تقعون رتوش<sup class="fn">(١)</sup>، وقد وصفوكم بالرثاثة سلفكم في عدم نقلكم سير سلفكم، بخلاف أهل اليمن وغيرهم تراهم دونوا سير سلفهم. وقد قيل:</p>
           <div class="vs"><span>تموت الخبايا في الزوايا وما لها</span><span>من الناس بين الناس في الناس ذاكر</span></div>
           <div class="vs"><span>تفوت كرامات الرجال شواردا</span><span>إذا لم تقيدها علينا الدفاتر</span></div>
           <p class="end">اهـ.<br>وهذا أوان الشروع في المقصود فأقول:</p>
-          <h4>قال سيدي رضي الله عنه في مدرس الرباط في شهر رجب سنة ١٣٦٩هـ</h4>
+          <p class="hd">قال سيدي رضي الله عنه في مدرس<sup class="fn">(٢)</sup> الرباط في شهر رجب سنة ١٣٦٩هـ</p>
           <p>العلم هذا شريف ولا شيء أشرف منه، قال الله تعالى: ﴿شَهِدَ اللَّهُ أَنَّهُ لَا إِلَٰهَ إِلَّا هُوَ وَالْمَلَائِكَةُ وَأُولُو الْعِلْمِ﴾ [آل عمران: ١٨]، ثلث بأهل العلم، وقال تعالى: ﴿قُلْ هَلْ يَسْتَوِي الَّذِينَ يَعْلَمُونَ وَالَّذِينَ لَا يَعْلَمُونَ﴾ [الزمر: ٩]، والإنسان يمتثل الأوامر ويجتنب النواهي، وقد قال تعالى: ﴿أَمْ يَحْسَبُونَ أَنَّا لَا نَسْمَعُ سِرَّهُمْ وَنَجْوَاهُمْ بَلَىٰ وَرُسُلُنَا لَدَيْهِمْ يَكْتُبُونَ﴾ [الزخرف: ٨٠]، وقال تعالى: ﴿يَوْمَئِذٍ تُعْرَضُونَ لَا تَخْفَىٰ مِنْكُمْ خَافِيَةٌ﴾ [الحاقة: ١٨]، وقال</p>
+          <div class="fns">
+            <p>(١) رتوش: جمع رتش، تعبير حضرمي دارج بمعنى الإهمال أو عدم المبالاة.</p>
+            <p>(٢) مدرس الرباط: مجلس التدريس والمذاكرة العلمية في الرباط.</p>
+          </div>
         </div>
       </div>
-      <div class="ba-layer ba-before"><img id="img-scan" src="assets/img/scan-p7.webp" alt="Naskah asli: halaman tulisan tangan yang sama sebelum diproses" draggable="false"></div>
+      <div class="ba-layer ba-before"><img id="img-scan" src="assets/img/scan-p7.webp" width="1858" height="2568" decoding="async" alt="Naskah asli: halaman 3 kitab Kasyf al-Hijab tulisan tangan sebelum diproses" draggable="false"></div>
       <span class="ba-label l" aria-hidden="true">Naskah asli</span>
       <span class="ba-label r" aria-hidden="true">Hasil</span>
       <div class="ba-handle" id="ba-handle" role="slider" tabindex="0" aria-label="Geser untuk membandingkan naskah asli dan hasil" aria-orientation="horizontal" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50" aria-valuetext="Naskah asli 50 persen"><span class="knob"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 7l-5 5 5 5M15 7l5 5-5 5"/></svg></span></div>
     </div>
-    <p class="ba-cap small">Kitab <span lang="ar" dir="rtl">كشف الحجاب</span>, halaman 3 naskah. Teks hasil ditampilkan apa adanya.</p>
+    <p class="ba-cap small">Kitab <span lang="ar" dir="rtl">كشف الحجاب</span>, halaman 3 naskah. Menampilkan penataan ayat berharakat, bait syair dua syatr sejajar, dan contoh catatan kaki (paket Lengkap).</p>
   </div>
 </div></section>
 
@@ -77,203 +151,214 @@
 <section class="sec sec-tight"><div class="wrap">
   <ul class="facts rv">
     <li><b>±2 jam</b><span>untuk satu kitab uji 400 halaman</span></li>
-    <li><b>Ayat, hadis, syair</b><span>ditata, bait dua syatr sejajar</span></li>
-    <li><b>Catatan kaki</b><span>arti kata dan istilah di bawah halaman</span></li>
-    <li><b>Word, PDF, teks</b><span>formatting standar gratis</span></li>
+    <li><b>Ayat, hadis, syair</b><span>ditata rapi, bait dua syatr sejajar</span></li>
+    <li><b>Catatan kaki</b><span>penjelasan kata dan istilah di bawah halaman</span></li>
+    <li><b>Word, PDF, teks</b><span>formatting standar sudah termasuk gratis</span></li>
   </ul>
 </div></section>
 
 <!-- 4. AI KHUSUS -->
 <section class="sec band" id="ai-khusus"><div class="wrap">
   <div class="cols2">
-    <div class="rv"><div class="kicker">AI khusus naskah</div><h2>Bukan chatbot yang disuruh membaca gambar.</h2><p class="lead">Kami merancang alur AI khusus untuk naskah Arab, dengan aturan kerja yang ketat. Tujuannya satu: hasil yang setia pada naskah.</p></div>
+    <div class="rv"><div class="kicker">AI khusus manuskrip</div><h2>Bukan chatbot umum yang sekadar membaca gambar.</h2><p class="lead">Kami merancang alur kerja AI khusus untuk naskah Arab dengan kaidah yang ketat. Tujuannya satu: menghasilkan salinan yang setia pada naskah asli.</p></div>
     <ol class="rules rv d1">
-      <li><b>Menyalin apa adanya.</b> Isi dan ejaan naskah tidak diubah, kata tidak ditebak.</li>
-      <li><b>Menandai yang tak terbaca.</b> Bagian yang buram atau rusak ditandai di tempatnya, tidak dikarang.</li>
-      <li><b>Menata.</b> Ayat diberi harakat, nama surat, dan nomor ayat sebagai tambahan. Hadis dan syair ditata, bait syair dua syatr sejajar.</li>
-      <li><b>Mencatat keadaan naskah.</b> Halaman yang terduplikasi, hilang, atau salah nomor dilaporkan (paket Lengkap).</li>
+      <li><b>Menyalin dengan setia.</b> Isi dan susunan kalimat naskah dipertahankan; kata yang meragukan tidak ditebak sendiri.</li>
+      <li><b>Menandai bagian yang buram.</b> Bagian yang pudar atau rusak diberi tanda khusus di tempatnya, bukan dikarang.</li>
+      <li><b>Menata struktur teks.</b> Ayat Al-Qur'an diberi harakat lengkap dengan nama surat dan nomor ayat. Hadis dan bait syair dua syatr ditata sejajar.</li>
+      <li><b>Mencatat kondisi naskah.</b> Halaman yang terduplikasi, terlewat, atau salah nomor dilaporkan secara terpisah (paket Lengkap).</li>
     </ol>
   </div>
 </div></section>
 
 <!-- 5. YANG ADA DI HASIL -->
 <section class="sec" id="hasil"><div class="wrap">
-  <div class="sec-head rv"><div class="kicker">Isi hasil</div><h2>Bukan sekadar huruf. Halaman yang siap dibaca.</h2></div>
+  <div class="sec-head rv"><div class="kicker">Isi hasil</div><h2>Bukan sekadar deretan huruf, melainkan halaman yang siap dibaca.</h2></div>
   <div class="pillars four">
-    <div class="pillar rv"><h3>Ayat</h3><p>Dengan harakat, nama surat, dan nomor ayat.</p></div>
-    <div class="pillar rv d1"><h3>Syair</h3><p>Bait ditata dua syatr sejajar, seperti di cetakan.</p></div>
-    <div class="pillar rv d2"><h3>Catatan kaki</h3><p>Arti kata dan istilah dijelaskan di bawah halaman.</p></div>
-    <div class="pillar rv d3"><h3>Deskripsi naskah</h3><p>Halaman terduplikasi, hilang, atau salah nomor dilaporkan.</p></div>
+    <div class="pillar rv"><h3>Ayat Al-Qur'an</h3><p>Dilengkapi harakat, nama surat, dan nomor ayat.</p></div>
+    <div class="pillar rv d1"><h3>Bait syair</h3><p>Ditata dua syatr sejajar sebagaimana lazimnya kitab cetak.</p></div>
+    <div class="pillar rv d2"><h3>Catatan kaki</h3><p>Penjelasan kosakata dan istilah ditempatkan rapi di bawah halaman.</p></div>
+    <div class="pillar rv d3"><h3>Deskripsi naskah</h3><p>Halaman terduplikasi, hilang, atau salah nomor dicatat dan dilaporkan.</p></div>
   </div>
-  <p class="small rv" style="margin-top:20px">Ayat, catatan kaki, dan deskripsi adalah tambahan penyusun berbantuan AI. Isi naskah tidak diubah.</p>
+  <p class="small rv mt-20">Penambahan harakat ayat, catatan kaki, dan deskripsi adalah pelengkap penyusunan berbantuan AI. Isi asli naskah tidak diubah.</p>
 </div></section>
 
 <!-- 6. BUKTI TERUKUR -->
 <section class="sec sec-alt" id="bukti"><div class="wrap">
-  <div class="sec-head rv"><div class="kicker">Bukti terukur</div><h2>Kami tidak meminta Anda percaya. Kami mengukur.</h2><p class="lead">Cara ujinya bisa diperiksa orang lain: 45 halaman dipilih acak dari kitab uji 400 halaman, dibagi tiga kelompok (cetak, tulisan tangan bersih, halaman sulit). Dua pemeriksa mandiri mengoreksi hasilnya huruf demi huruf. Angkanya kami umumkan di sini begitu selesai, apa pun hasilnya.</p></div>
+  <div class="sec-head rv"><div class="kicker">Bukti terukur</div><h2>Kami tidak sekadar mengklaim. Kami mengujinya.</h2><p class="lead">Metode ujinya terbuka untuk diperiksa siapa saja: 45 halaman dipilih acak dari kitab uji 400 halaman dalam tiga kelompok (cetak, tulisan tangan bersih, dan halaman sulit). Dua pemeriksa mandiri mengoreksi hasilnya huruf demi huruf, lalu angkanya kami umumkan di sini apa adanya.</p></div>
   <div class="metrics">
-    <div class="metric rv"><span class="chip">Menunggu uji</span><h3>Akurasi huruf</h3><p>Berapa persen huruf yang tepat, tanpa menghitung harakat.</p></div>
-    <div class="metric rv d1"><span class="chip">Menunggu uji</span><h3>Akurasi kata</h3><p>Berapa persen kata yang utuh dan benar.</p></div>
-    <div class="metric rv d2"><span class="chip">Menunggu uji</span><h3>Akurasi harakat</h3><p>Dipisah: harakat di dalam kata dan harakat akhir kata.</p></div>
-    <div class="metric rv d3"><span class="chip">Menunggu uji</span><h3>Urutan baca</h3><p>Apakah teks utama dan catatan pinggir tidak tercampur.</p></div>
+    <div class="metric rv"><span class="chip">Menunggu uji</span><h3>Akurasi huruf</h3><p>Persentase huruf yang tepat tanpa menghitung harakat.</p></div>
+    <div class="metric rv d1"><span class="chip">Menunggu uji</span><h3>Akurasi kata</h3><p>Persentase kata yang tersalin utuh dan benar.</p></div>
+    <div class="metric rv d2"><span class="chip">Menunggu uji</span><h3>Akurasi harakat</h3><p>Diukur terpisah antara harakat di dalam kata dan harakat akhir.</p></div>
+    <div class="metric rv d3"><span class="chip">Menunggu uji</span><h3>Urutan baca</h3><p>Memastikan teks utama dan catatan pinggir tidak tertukar.</p></div>
   </div>
-  <p class="small rv" style="margin-top:20px">Sampai angka itu terbit, yang bisa kami buktikan adalah demo di atas dan contoh hasil yang dapat Anda unduh. Suara pelanggan akan kami tampilkan hanya bila ada kutipan asli dengan izin.</p>
+  <p class="small rv mt-20">Selama hasil uji formal belum terbit, Anda dapat menilai langsung lewat demo perbandingan di atas dan layanan uji coba 3 halaman gratis dari naskah Anda sendiri. Testimoni hanya kami tampilkan bila ada kutipan asli dengan izin.</p>
 </div></section>
 
 <!-- 7. CARA KERJA -->
 <section class="sec" id="cara"><div class="wrap">
-  <div class="sec-head rv"><div class="kicker">Cara kerja</div><h2>Empat langkah.</h2></div>
+  <div class="sec-head rv"><div class="kicker">Cara kerja</div><h2>Empat langkah sederhana.</h2></div>
   <div class="steps4">
-    <div class="rv"><div class="n">01</div><h3>Kirim 3 halaman</h3><p>Gratis, tanpa kewajiban, dan konsultasi gratis. Lampirkan lewat email.</p></div>
-    <div class="rv d1"><div class="n">02</div><h3>Terima perkiraan</h3><p>Harga dan waktu, dihitung dari kata pada contoh Anda.</p></div>
-    <div class="rv d2"><div class="n">03</div><h3>Naskah dikerjakan</h3><p>Anda tahu kapan selesai sebelum kami mulai.</p></div>
-    <div class="rv d3"><div class="n">04</div><h3>Terima hasil</h3><p>Word, PDF, dan teks polos.</p></div>
+    <div class="rv"><div class="n">01</div><h3>Kirim 3 halaman contoh</h3><p>Gratis tanpa kewajiban, termasuk konsultasi. Kirim foto JPG/PNG, PDF, atau tautan Google Drive.</p></div>
+    <div class="rv d1"><div class="n">02</div><h3>Terima perkiraan biaya</h3><p>Estimasi biaya dan durasi pengerjaan dihitung dari kepadatan kata pada contoh Anda.</p></div>
+    <div class="rv d2"><div class="n">03</div><h3>Naskah mulai dikerjakan</h3><p>Anda mengetahui jadwal selesai secara jelas sebelum pengerjaan dimulai.</p></div>
+    <div class="rv d3"><div class="n">04</div><h3>Terima berkas siap sunting</h3><p>Hasil dikirim dalam format Word (.docx), PDF, dan teks polos UTF-8.</p></div>
   </div>
 </div></section>
 
 <!-- 8. HARGA -->
 <section class="sec sec-alt" id="harga"><div class="wrap">
-  <div class="sec-head rv"><div class="kicker">Harga</div><h2>Lihat dulu harga pasar, baru harga kami.</h2><p class="lead">Satu kitab 400 halaman, dibandingkan dengan jasa pengetikan Arab lain di Indonesia.</p></div>
+  <div class="sec-head rv"><div class="kicker">Harga</div><h2>Bandingkan dulu dengan harga pasar.</h2><p class="lead">Simulasi biaya satu kitab 400 halaman dibandingkan dengan jasa pengetikan Arab lain di Indonesia.</p></div>
 
   <div class="rules-fair rv">
-    <p class="small">Harga pasar Indonesia untuk pengetikan ulang teks Arab, dicek 29 Oktober 2026. Satuan "halaman" tiap penyedia berbeda, jadi angka di bawah adalah perkiraan, bukan perbandingan persis.</p>
+    <p class="small">Data harga pasar pengetikan Arab di Indonesia dicek pada 29 Oktober 2026. Karena ukuran halaman tiap penyedia berbeda, angka di bawah adalah kisaran perbandingan, bukan hitungan mutlak.</p>
   </div>
   <div class="cmp price rv" role="region" aria-label="Perbandingan harga" tabindex="0">
     <table>
-      <thead><tr><th></th><th>Tarif per halaman</th><th>Kitab 400 halaman</th><th>Catatan</th></tr></thead>
+      <thead><tr><th>Layanan</th><th>Tarif per halaman</th><th>Kitab 400 halaman</th><th>Catatan</th></tr></thead>
       <tbody>
-        <tr><th scope="row">Pengetik lepas (Fastwork)</th><td>Rp 2.000, atau Rp 2.500 dengan harakat</td><td>Rp 800.000 sampai Rp 1.000.000</td><td>Minimal 16 sampai 20 halaman. Tarif untuk teks cetak; tulisan tangan tidak dicantumkan. Formatting tidak disebut.</td></tr>
-        <tr><th scope="row">Jasa ketik profesional (5 hari)</th><td>Rp 10.000, harakat +Rp 3.000</td><td>Rp 4.000.000, dengan harakat Rp 5.200.000</td><td>Tenggat 5 hari untuk dokumen biasa; kitab 400 halaman umumnya perlu penawaran sendiri.</td></tr>
-        <tr><th scope="row">Jasa ketik profesional (1 hari)</th><td>Rp 25.000, harakat +Rp 3.000</td><td>Rp 10.000.000, dengan harakat Rp 11.200.000</td><td>Tarif tercepat. Kemampuan membaca tulisan tangan tidak dicantumkan.</td></tr>
-        <tr class="us"><th scope="row">OpenTurath Manuskrip</th><td>Rp 20 per kata cetak, Rp 30 per kata tulisan tangan (setara Rp 5.000 dan Rp 7.500 per halaman 250 kata)</td><td>Rp 2.000.000 cetak, Rp 3.000.000 tulisan tangan</td><td>Formatting Word gratis. Tiga halaman pertama gratis. Konsultasi gratis. Tagihan akhir tidak melebihi perkiraan + 10%.</td></tr>
+        <tr><th scope="row">Pengetik lepas (Fastwork)</th><td>Rp 2.000, atau Rp 2.500 dengan harakat</td><td>Rp 800.000 sampai Rp 1.000.000</td><td>Minimal 16–20 halaman. Umumnya untuk teks cetak; kemampuan membaca manuskrip tulisan tangan dan formatting tidak dicantumkan.</td></tr>
+        <tr><th scope="row">Jasa ketik profesional (5 hari)</th><td>Rp 10.000, harakat +Rp 3.000</td><td>Rp 4.000.000 (dengan harakat Rp 5.200.000)</td><td>Tenggat 5 hari untuk dokumen umum; kitab 400 halaman biasanya memerlukan penawaran dan waktu khusus.</td></tr>
+        <tr><th scope="row">Jasa ketik profesional (1 hari)</th><td>Rp 25.000, harakat +Rp 3.000</td><td>Rp 10.000.000 (dengan harakat Rp 11.200.000)</td><td>Tarif kilat. Kemampuan membaca manuskrip tulisan tangan tidak dicantumkan.</td></tr>
+        <tr class="us"><th scope="row">OpenTurath Manuskrip</th><td>Rp 20/kata cetak, Rp 30/kata tulisan tangan (setara Rp 5.000 dan Rp 7.500 per 250 kata)</td><td>Rp 2.000.000 cetak, Rp 3.000.000 tulisan tangan</td><td>Gratis formatting Word standar, gratis uji coba 3 halaman pertama, gratis konsultasi, dan plafon tagihan maksimal perkiraan + 10%.</td></tr>
       </tbody>
     </table>
   </div>
-  <p class="small rv">Sumber: <a href="https://jagoketik.com/jasa-pengetikan-bahasa-arab/" rel="noopener">Jagoketik</a>, <a href="https://adikom.biz.id/jasa-pengetikan-bahasa-arab-murah-dan-bergaransi/" rel="noopener">Adikom</a>, <a href="https://fastwork.id/user/nafiah/typing-94270220" rel="noopener">Fastwork</a>. Pengetik lepas bisa lebih murah di atas kertas. Selisih kami ada pada tulisan tangan, ketepatan syair dan ayat, serta formatting yang sudah termasuk.</p>
+  <p class="small rv src-links mt-12">Sumber acuan tarif: <a href="https://jagoketik.com/jasa-pengetikan-bahasa-arab/" target="_blank" rel="noopener noreferrer">Jagoketik</a> dan <a href="https://fastwork.id/user/nafiah/typing-94270220" target="_blank" rel="noopener noreferrer">Fastwork</a>. Pengetik lepas memang bisa lebih murah di atas kertas; nilai tambah kami ada pada pembacaan tulisan tangan, ketepatan ayat dan syair, serta formatting yang sudah termasuk.</p>
 
-  <div class="rules-fair rv" style="margin-top:40px">
-    <h3>Yang Anda dapat untuk harga itu</h3>
-    <p class="small">Tanda centang berarti ada. Tanda "–" berarti tidak dicantumkan pada layanan yang kami periksa, atau umumnya tidak tersedia.</p>
+  <div class="rules-fair rv mt-40">
+    <h3>Perbandingan fitur layanan</h3>
+    <p class="small">Perbandingan objektif berdasarkan informasi layanan yang umum tersedia di pasar.</p>
   </div>
   <div class="cmp matrix rv" role="region" aria-label="Perbandingan fitur" tabindex="0">
     <table>
-      <thead><tr><th></th><th>Jasa ketik</th><th>OCR gratis</th><th>OpenTurath Manuskrip</th></tr></thead>
+      <thead><tr><th>Fitur</th><th>Jasa ketik manual</th><th>OCR gratis</th><th>OpenTurath Manuskrip</th></tr></thead>
       <tbody>
-        <tr><th scope="row">Membaca tulisan tangan</th><td><span class="no" aria-hidden="true">–</span><span class="sr">Tidak dicantumkan</span></td><td><span class="no" aria-hidden="true">–</span><span class="sr">Tidak dicantumkan</span></td><td class="usc"><span class="yes"><span class="sr">Ya</span></span></td></tr>
-        <tr><th scope="row">AI khusus naskah Arab</th><td><span class="no" aria-hidden="true">–</span><span class="sr">Tidak dicantumkan</span></td><td><span class="no" aria-hidden="true">–</span><span class="sr">Tidak dicantumkan</span></td><td class="usc"><span class="yes"><span class="sr">Ya</span></span></td></tr>
-        <tr><th scope="row">Bagian tak terbaca ditandai, tidak ditebak</th><td><span class="no" aria-hidden="true">–</span><span class="sr">Tidak dicantumkan</span></td><td><span class="no" aria-hidden="true">–</span><span class="sr">Tidak dicantumkan</span></td><td class="usc"><span class="yes"><span class="sr">Ya</span></span></td></tr>
-        <tr><th scope="row">Ayat berharakat, dengan nama surat dan nomor ayat</th><td><span class="paid">Harakat berbayar tambahan</span></td><td><span class="no" aria-hidden="true">–</span><span class="sr">Tidak dicantumkan</span></td><td class="usc"><span class="yes"><span class="sr">Ya</span></span></td></tr>
-        <tr><th scope="row">Syair ditata, bait dua syatr sejajar</th><td><span class="no" aria-hidden="true">–</span><span class="sr">Tidak dicantumkan</span></td><td><span class="no" aria-hidden="true">–</span><span class="sr">Tidak dicantumkan</span></td><td class="usc"><span class="yes"><span class="sr">Ya</span></span></td></tr>
-        <tr><th scope="row">Catatan kaki penjelas</th><td><span class="no" aria-hidden="true">–</span><span class="sr">Tidak dicantumkan</span></td><td><span class="no" aria-hidden="true">–</span><span class="sr">Tidak dicantumkan</span></td><td class="usc"><span class="yes"><span class="sr">Ya</span></span> <small class="chip">paket Lengkap</small></td></tr>
-        <tr><th scope="row">Deskripsi naskah: halaman terduplikasi, hilang, salah nomor</th><td><span class="no" aria-hidden="true">–</span><span class="sr">Tidak dicantumkan</span></td><td><span class="no" aria-hidden="true">–</span><span class="sr">Tidak dicantumkan</span></td><td class="usc"><span class="yes"><span class="sr">Ya</span></span> <small class="chip">paket Lengkap</small></td></tr>
-        <tr><th scope="row">Formatting Word standar gratis</th><td><span class="no" aria-hidden="true">–</span><span class="sr">Tidak dicantumkan</span></td><td><span class="no" aria-hidden="true">–</span><span class="sr">Tidak dicantumkan</span></td><td class="usc"><span class="yes"><span class="sr">Ya</span></span></td></tr>
-        <tr><th scope="row">Hasil Word, PDF, dan teks polos</th><td><span class="no" aria-hidden="true">–</span><span class="sr">Tidak dicantumkan</span></td><td><span class="no" aria-hidden="true">–</span><span class="sr">Tidak dicantumkan</span></td><td class="usc"><span class="yes"><span class="sr">Ya</span></span></td></tr>
-        <tr><th scope="row">Tagihan tidak melebihi perkiraan + 10%</th><td><span class="no" aria-hidden="true">–</span><span class="sr">Tidak dicantumkan</span></td><td><span class="no" aria-hidden="true">–</span><span class="sr">Tidak dicantumkan</span></td><td class="usc"><span class="yes"><span class="sr">Ya</span></span></td></tr>
-        <tr><th scope="row">Tiga halaman pertama gratis</th><td><span class="no" aria-hidden="true">–</span><span class="sr">Tidak dicantumkan</span></td><td><span class="no" aria-hidden="true">–</span><span class="sr">Tidak dicantumkan</span></td><td class="usc"><span class="yes"><span class="sr">Ya</span></span></td></tr>
-        <tr><th scope="row">Konsultasi gratis</th><td><span class="no" aria-hidden="true">–</span><span class="sr">Tidak dicantumkan</span></td><td><span class="no" aria-hidden="true">–</span><span class="sr">Tidak dicantumkan</span></td><td class="usc"><span class="yes"><span class="sr">Ya</span></span></td></tr>
-        <tr><th scope="row">Perjanjian kerahasiaan bila diminta</th><td><span class="no" aria-hidden="true">–</span><span class="sr">Tidak dicantumkan</span></td><td><span class="no" aria-hidden="true">–</span><span class="sr">Tidak dicantumkan</span></td><td class="usc"><span class="yes"><span class="sr">Ya</span></span></td></tr>
-        <tr><th scope="row">Kuitansi resmi untuk laporan hibah</th><td><span class="no" aria-hidden="true">–</span><span class="sr">Tidak dicantumkan</span></td><td><span class="no" aria-hidden="true">–</span><span class="sr">Tidak dicantumkan</span></td><td class="usc"><span class="yes"><span class="sr">Ya</span></span></td></tr>
+        <tr><th scope="row">Membaca manuskrip tulisan tangan</th><td><span class="paid">Tergantung pengetik</span></td><td><span class="no" aria-hidden="true">–</span><span class="sr">Umumnya tidak memadai</span></td><td class="usc"><span class="yes"><span class="sr">Ya</span></span></td></tr>
+        <tr><th scope="row">AI khusus naskah dan kaidah Arab</th><td><span class="no" aria-hidden="true">–</span><span class="sr">Tidak</span></td><td><span class="no" aria-hidden="true">–</span><span class="sr">Tidak</span></td><td class="usc"><span class="yes"><span class="sr">Ya</span></span></td></tr>
+        <tr><th scope="row">Bagian tak terbaca ditandai tanpa ditebak</th><td><span class="paid">Tergantung kesepakatan</span></td><td><span class="no" aria-hidden="true">–</span><span class="sr">Tidak</span></td><td class="usc"><span class="yes"><span class="sr">Ya</span></span></td></tr>
+        <tr><th scope="row">Ayat berharakat dengan nama surat dan nomor ayat</th><td><span class="paid">Harakat berbayar tambahan</span></td><td><span class="no" aria-hidden="true">–</span><span class="sr">Tidak</span></td><td class="usc"><span class="yes"><span class="sr">Ya</span></span></td></tr>
+        <tr><th scope="row">Bait syair ditata dua syatr sejajar</th><td><span class="paid">Biasanya biaya tambahan</span></td><td><span class="no" aria-hidden="true">–</span><span class="sr">Tidak</span></td><td class="usc"><span class="yes"><span class="sr">Ya</span></span></td></tr>
+        <tr><th scope="row">Catatan kaki penjelas kosakata dan istilah</th><td><span class="no" aria-hidden="true">–</span><span class="sr">Tidak termasuk</span></td><td><span class="no" aria-hidden="true">–</span><span class="sr">Tidak</span></td><td class="usc"><span class="yes"><span class="sr">Ya</span></span> <small class="chip">paket Lengkap</small></td></tr>
+        <tr><th scope="row">Deskripsi naskah (duplikasi, hilang, salah nomor)</th><td><span class="no" aria-hidden="true">–</span><span class="sr">Tidak termasuk</span></td><td><span class="no" aria-hidden="true">–</span><span class="sr">Tidak</span></td><td class="usc"><span class="yes"><span class="sr">Ya</span></span> <small class="chip">paket Lengkap</small></td></tr>
+        <tr><th scope="row">Formatting Word standar gratis</th><td><span class="paid">Bervariasi</span></td><td><span class="no" aria-hidden="true">–</span><span class="sr">Tidak</span></td><td class="usc"><span class="yes"><span class="sr">Ya</span></span></td></tr>
+        <tr><th scope="row">Berkas Word, PDF, dan teks polos UTF-8</th><td><span class="paid">Umumnya Word/PDF</span></td><td><span class="paid">Teks polos saja</span></td><td class="usc"><span class="yes"><span class="sr">Ya</span></span></td></tr>
+        <tr><th scope="row">Jaminan plafon tagihan maksimal perkiraan + 10%</th><td><span class="no" aria-hidden="true">–</span><span class="sr">Tidak dicantumkan</span></td><td><span class="no" aria-hidden="true">–</span><span class="sr">Tidak berlaku</span></td><td class="usc"><span class="yes"><span class="sr">Ya</span></span></td></tr>
+        <tr><th scope="row">Uji coba 3 halaman pertama gratis</th><td><span class="no" aria-hidden="true">–</span><span class="sr">Jarang tersedia</span></td><td><span class="paid">Gratis terbatas</span></td><td class="usc"><span class="yes"><span class="sr">Ya</span></span></td></tr>
+        <tr><th scope="row">Konsultasi naskah gratis</th><td><span class="paid">Bervariasi</span></td><td><span class="no" aria-hidden="true">–</span><span class="sr">Tidak ada</span></td><td class="usc"><span class="yes"><span class="sr">Ya</span></span></td></tr>
+        <tr><th scope="row">Perjanjian kerahasiaan (NDA) bila diminta</th><td><span class="paid">Tergantung penyedia</span></td><td><span class="no" aria-hidden="true">–</span><span class="sr">Tidak ada</span></td><td class="usc"><span class="yes"><span class="sr">Ya</span></span></td></tr>
+        <tr><th scope="row">Kuitansi resmi untuk laporan hibah</th><td><span class="paid">Tergantung penyedia</span></td><td><span class="no" aria-hidden="true">–</span><span class="sr">Tidak ada</span></td><td class="usc"><span class="yes"><span class="sr">Ya</span></span></td></tr>
       </tbody>
     </table>
   </div>
 
-  <div class="sec-head rv" style="margin-top:64px"><h2>Harga kami, dihitung per kata.</h2><p class="lead">Satu halaman standar adalah 250 kata, jadi Rp 5.000 per halaman standar sama dengan Rp 20 per kata.</p></div>
+  <div class="sec-head rv mt-64"><h2>Transparan: dihitung per kata.</h2><p class="lead">Satu halaman standar berisi 250 kata, sehingga Rp 5.000 per halaman standar setara dengan Rp 20 per kata.</p></div>
   <div class="plans">
-    <article class="plan rv"><h3>Cetak</h3><p class="price"><b>Rp 20</b><span>per kata (Rp 5.000 per 250 kata)</span></p><ul class="tick"><li>Transkripsi naskah cetak</li><li>Formatting Word standar, gratis</li><li>Hasil: Word, PDF, teks polos</li></ul></article>
-    <article class="plan rv d1"><h3>Tulisan tangan</h3><p class="price"><b>Rp 30</b><span>per kata (Rp 7.500 per 250 kata)</span></p><ul class="tick"><li>Transkripsi tulisan tangan</li><li>Formatting Word standar, gratis</li><li>Bagian tak terbaca ditandai, tidak ditagih</li></ul></article>
-    <article class="plan rv d2"><h3>Lengkap</h3><p class="price"><b>+ Rp 10</b><span>per kata (Rp 2.500 per 250 kata)</span></p><ul class="tick"><li>Deskripsi naskah</li><li>Catatan kaki penjelas</li><li>Ditambahkan ke paket Cetak atau Tulisan tangan</li></ul></article>
+    <article class="plan rv"><span class="plan-tag">Layanan utama</span><h3>Naskah cetak</h3><p class="price"><b>Rp 20</b><span>per kata (Rp 5.000 per 250 kata)</span></p><ul class="tick"><li>Transkripsi kitab atau naskah cetak</li><li>Formatting Word standar gratis</li><li>Berkas hasil: Word, PDF, dan teks polos</li></ul></article>
+    <article class="plan rv d1"><span class="plan-tag">Layanan utama</span><h3>Tulisan tangan</h3><p class="price"><b>Rp 30</b><span>per kata (Rp 7.500 per 250 kata)</span></p><ul class="tick"><li>Transkripsi manuskrip tulisan tangan</li><li>Formatting Word standar gratis</li><li>Bagian tak terbaca ditandai dan tidak ditagih</li></ul></article>
+    <article class="plan addon rv d2"><span class="plan-tag">Opsi tambahan (add-on)</span><h3>Paket Lengkap</h3><p class="price"><b>+ Rp 10</b><span>per kata (+ Rp 2.500 per 250 kata)</span></p><ul class="tick"><li>Laporan deskripsi kondisi naskah</li><li>Catatan kaki penjelas kata dan istilah</li><li>Ditambahkan ke layanan Naskah cetak atau Tulisan tangan</li></ul></article>
   </div>
-  <p class="small rv" style="margin-top:18px">Layout khusus (ukuran buku, InDesign, siap cetak) ditawarkan terpisah. Formatting standar adalah dokumen Word yang rapi dan siap disunting.</p>
+  <p class="small rv mt-18">Tata letak khusus siap cetak (ukuran buku tertentu atau InDesign) ditawarkan terpisah. Formatting standar adalah dokumen Word yang rapi dan siap disunting.</p>
 
   <div class="calc rv" id="calc">
-    <h3>Perkiraan harga</h3>
+    <h3>Simulasi perkiraan biaya</h3>
     <div class="calc-grid">
-      <label>Jumlah halaman<input id="c-pages" type="number" min="1" step="1" value="400" inputmode="numeric"></label>
-      <label>Rata-rata kata per halaman<input id="c-words" type="number" min="20" step="10" value="250" inputmode="numeric"></label>
+      <label for="c-pages">Jumlah halaman<input id="c-pages" type="number" min="1" step="1" value="400" inputmode="numeric"></label>
+      <label for="c-words">Rata-rata kata per halaman<input id="c-words" type="number" min="20" step="10" value="250" inputmode="numeric"></label>
       <fieldset><legend>Jenis naskah</legend>
-        <label class="radio"><input type="radio" name="c-type" value="20" checked> Cetak</label>
+        <label class="radio"><input type="radio" name="c-type" value="20" checked> Naskah cetak</label>
         <label class="radio"><input type="radio" name="c-type" value="30"> Tulisan tangan</label>
       </fieldset>
-      <label class="radio check"><input id="c-plus" type="checkbox"> Paket Lengkap (deskripsi + catatan kaki)</label>
+      <label class="radio check"><input id="c-plus" type="checkbox"> Tambah Paket Lengkap (deskripsi + catatan kaki)</label>
     </div>
     <div class="calc-out" aria-live="polite">
-      <p class="calc-total" id="c-total">Rp 2.000.000</p>
-      <p class="small" id="c-formula">400 × 250 = 100.000 kata × Rp 20</p>
-      <p class="small" id="c-max">Tagihan akhir tidak melebihi Rp 2.200.000 (perkiraan + 10%).</p>
+      <div>
+        <p class="calc-total" id="c-total">Rp 2.000.000</p>
+        <p class="small" id="c-formula">400 × 250 = 100.000 kata × Rp 20</p>
+        <p class="small" id="c-max">Tagihan akhir tidak melebihi Rp 2.200.000 (perkiraan + 10%).</p>
+      </div>
+      <button class="btn primary" id="calc-apply" type="button">Gunakan perkiraan ini</button>
     </div>
   </div>
 
-  <div class="why-head rv"><div class="kicker">Mengapa per kata</div><h3>Satuan yang bisa Anda hitung sendiri.</h3></div>
+  <div class="why-head rv"><div class="kicker">Mengapa per kata</div><h3>Satuan yang adil dan bisa Anda periksa sendiri.</h3></div>
   <div class="why">
-    <article class="rv"><span class="n">01</span><h4>Halaman tidak adil</h4><p>Halaman yang renggang dan yang padat isinya jauh berbeda. Huruf terlalu halus untuk Anda periksa sendiri. Kata adalah satuan yang bisa Anda hitung sendiri di Word, dari file yang kami kirim.</p></article>
-    <article class="rv d1"><span class="n">02</span><h4>Yang dihitung</h4><p>Kata pada teks hasil. Harakat tidak menambah hitungan. Nomor halaman, header, footer berulang, halaman kosong, dan sampul tidak dihitung. Catatan pinggir dihitung.</p></article>
-    <article class="rv d2"><span class="n">03</span><h4>Yang tidak terbaca</h4><p>Bagian yang tidak terbaca ditandai dan tidak ditagih. Salah tulis dari pihak kami diperbaiki tanpa biaya.</p></article>
-    <article class="rv"><span class="n">04</span><h4>Perkiraan dan batasnya</h4><p>Perkiraan dibuat dari tiga halaman contoh. Tagihan akhir mengikuti jumlah kata sebenarnya, sehingga bila kata lebih sedikit, tagihan lebih kecil. Tagihan tidak pernah melebihi perkiraan lebih dari 10%.</p></article>
-    <article class="rv d1 free"><span class="n">05</span><h4>Gratis</h4><p>Tiga halaman pertama gratis, satu kali per orang. Konsultasi gratis.</p></article>
+    <article class="rv"><span class="n">01</span><h4>Hitungan halaman tidak adil</h4><p>Kepadatan teks antarhalaman sangat berbeda. Satuan kata jauh lebih objektif karena dapat Anda cek sendiri menggunakan fitur hitung kata di Microsoft Word.</p></article>
+    <article class="rv d1"><span class="n">02</span><h4>Apa saja yang dihitung</h4><p>Hanya kata pada teks hasil. Harakat tidak menambah hitungan. Nomor halaman, header, footer berulang, halaman kosong, dan sampul tidak dihitung. Catatan pinggir dihitung.</p></article>
+    <article class="rv d2"><span class="n">03</span><h4>Bagian yang tak terbaca</h4><p>Bagian yang buram atau rusak ditandai dan tidak ditagih. Kesalahan ketik dari pihak kami diperbaiki tanpa biaya tambahan.</p></article>
+    <article class="rv"><span class="n">04</span><h4>Perkiraan dan plafon biaya</h4><p>Estimasi dihitung dari 3 halaman contoh. Tagihan akhir mengikuti jumlah kata aktual: jika lebih sedikit, tagihan ikut turun; jika lebih padat, tidak pernah melebihi perkiraan + 10%.</p></article>
+    <article class="rv d1 free"><span class="n">05</span><h4>Uji coba gratis</h4><p>Tiga halaman pertama gratis (satu kali per pengguna), lengkap dengan konsultasi gratis.</p></article>
   </div>
-</div>
 </div></section>
 
 <!-- 9. LEMBAGA -->
 <section class="sec" id="lembaga"><div class="wrap">
   <div class="cols2">
-    <div class="rv"><div class="kicker">Untuk lembaga dan peneliti</div><h2>Kuitansi, volume, kerahasiaan.</h2></div>
-    <div class="rv d1"><p class="lead">Kuitansi resmi untuk laporan pertanggungjawaban hibah, harga khusus untuk volume besar, dan perjanjian kerahasiaan bila naskah Anda sensitif. Sebutkan kebutuhan Anda di formulir di bawah.</p><p><a class="btn tonal" href="#pesan">Minta penawaran lembaga</a></p></div>
+    <div class="rv"><div class="kicker">Untuk lembaga dan peneliti</div><h2>Kuitansi resmi, volume besar, dan kerahasiaan.</h2></div>
+    <div class="rv d1"><p class="lead">Tersedia kuitansi resmi untuk laporan pertanggungjawaban hibah, penawaran khusus untuk proyek volume besar, serta perjanjian kerahasiaan (NDA) untuk naskah sensitif. Sampaikan kebutuhan Anda melalui formulir di bawah.</p><p class="mt-20"><a class="btn tonal" href="#pesan">Minta penawaran lembaga</a></p></div>
   </div>
 </div></section>
 
-<!-- 11. BATAS LAYANAN -->
+<!-- 10. BATAS LAYANAN -->
 <section class="sec" id="batas"><div class="wrap">
   <div class="cols2">
-    <div class="rv"><div class="kicker">Batas layanan</div><h2>Yang Anda terima, dan yang tetap di tangan Anda.</h2></div>
+    <div class="rv"><div class="kicker">Batas layanan</div><h2>Yang kami kerjakan, dan yang tetap di tangan Anda.</h2></div>
     <div class="rv d1">
       <h3 class="sub">Yang Anda terima</h3>
-      <p>Teks naskah yang setia, tertata, dalam file yang bisa disunting.</p>
+      <p>Salinan teks naskah yang setia dan tertata rapi dalam berkas digital yang siap disunting.</p>
       <h3 class="sub">Yang tetap di tangan Anda</h3>
-      <p>Tahqiq, muqabalah, penilaian isi, dan keputusan menerbitkan. Catatan kaki dan deskripsi adalah catatan penyusun berbantuan AI, bukan keputusan ilmiah. Hasil ini bukan tashih resmi.</p>
+      <p>Tahqiq, muqabalah, penilaian ilmiah, dan keputusan penerbitan. Catatan kaki maupun deskripsi naskah bersifat bantuan penyusunan berbasis AI, bukan keputusan ilmiah atau tashih resmi.</p>
     </div>
   </div>
 </div></section>
 
-<!-- 12. PRIVASI -->
+<!-- 11. PRIVASI -->
 <section class="sec sec-tight sec-alt" id="privasi"><div class="wrap">
   <div class="cols2">
     <div class="rv"><h2>Naskah Anda tetap milik Anda.</h2></div>
-    <div class="rv d1"><p>Kami tidak mempublikasikan naskah Anda. File dihapus 30 hari setelah hasil dikirim, atau lebih cepat bila Anda minta. Pastikan Anda berhak memproses naskah yang dikirim, terutama bila naskah itu milik pihak lain, wakaf, atau masih dilindungi hak cipta.</p><p class="small">Karya ulama yang wafat lebih dari 70 tahun lalu pada umumnya telah menjadi milik umum, tetapi tata letak dan catatan penyunting edisi modern masih dilindungi. Ketentuan lengkap ada di situs <a href="https://openturath.id/id/hak-cipta">OpenTurath</a>.</p></div>
+    <div class="rv d1"><p>Kami tidak mempublikasikan naskah Anda, tidak membagikannya kepada pihak lain, dan tidak menggunakannya untuk melatih model AI. Seluruh berkas dihapus 30 hari setelah hasil dikirim, atau lebih cepat atas permintaan Anda. Pastikan Anda memiliki hak untuk memproses naskah tersebut, terutama bila menyangkut milik pihak lain, wakaf, atau edisi berhak cipta.</p><p class="small mt-12">Karya ulama yang wafat lebih dari 70 tahun lalu umumnya telah masuk ranah publik, tetapi tata letak dan catatan penyunting edisi modern tetap dilindungi. Ketentuan lengkap tersedia di halaman <a class="inline-link" href="https://openturath.id/id/hak-cipta">Hak cipta OpenTurath</a>.</p></div>
   </div>
 </div></section>
 
-<!-- 13. FAQ -->
+<!-- 12. FAQ -->
 <section class="sec" id="faq"><div class="wrap">
   <div class="sec-head rv"><div class="kicker">Tanya jawab</div><h2>Yang sering ditanyakan.</h2></div>
   <div class="faq rv">
-    <details><summary><span>Apakah isi naskah diubah?</span><span class="pm" aria-hidden="true"></span></summary><div class="a">Tidak. Isi dan ejaan naskah disalin apa adanya. Yang ditambahkan hanyalah penataan: ayat diberi harakat, nama surat, dan nomor ayat.</div></details>
-    <details><summary><span>Bagaimana dengan bagian yang buram atau rusak?</span><span class="pm" aria-hidden="true"></span></summary><div class="a">Ditandai di tempatnya, tidak ditebak, dan tidak ditagih.</div></details>
-    <details><summary><span>Jenis tulisan apa yang bisa dikerjakan?</span><span class="pm" aria-hidden="true"></span></summary><div class="a">Contoh yang kami tunjukkan adalah tulisan tangan satu kitab bertarikh 1369 H. Jenis tulisan lain kami uji lewat 3 halaman gratis, lalu kami sampaikan apa adanya apakah hasilnya layak.</div></details>
-    <details><summary><span>Bisa untuk naskah Pegon atau Jawi?</span><span class="pm" aria-hidden="true"></span></summary><div class="a">Belum kami nyatakan didukung. Kirim 3 halaman, kami uji, dan kami beri tahu hasilnya dengan jujur sebelum Anda membayar apa pun.</div></details>
-    <details><summary><span>Apakah konsultasi dikenakan biaya?</span><span class="pm" aria-hidden="true"></span></summary><div class="a">Tidak, konsultasi gratis. Tanyakan jenis naskah, perkiraan biaya. Tulis lewat formulir di bawah atau ke support@openturath.id.</div></details>
-    <details><summary><span>Berapa lama pengerjaannya?</span><span class="pm" aria-hidden="true"></span></summary><div class="a">Perkiraan waktu diberikan bersama penawaran. Pada kitab uji 400 halaman, prosesnya sekitar dua jam. Naskah Anda bisa lebih cepat atau lebih lama, tergantung kondisi dan antrean.</div></details>
-    <details><summary><span>File apa yang saya terima?</span><span class="pm" aria-hidden="true"></span></summary><div class="a">Word (.docx), PDF, dan teks polos UTF-8. Untuk mencari dan menyunting, gunakan Word atau teks polos. Menyalin teks Arab dari PDF kadang menghasilkan urutan huruf yang terbalik.</div></details>
-    <details><summary><span>Bagaimana cara membayar?</span><span class="pm" aria-hidden="true"></span></summary><div class="a">Transfer bank atau QRIS, setelah Anda menyetujui perkiraan. Untuk pesanan di atas 100 halaman, 50% dibayar di muka dan sisanya saat hasil dikirim. Kuitansi tersedia atas permintaan.</div></details>
-    <details><summary><span>Apakah aman untuk naskah wakaf atau milik pribadi?</span><span class="pm" aria-hidden="true"></span></summary><div class="a">Naskah tidak dipublikasikan dan dihapus 30 hari setelah hasil dikirim. Bila perlu perjanjian kerahasiaan, sebutkan di formulir.</div></details>
+    <details><summary><span>Apakah isi naskah diubah?</span><span class="pm" aria-hidden="true"></span></summary><div class="a">Tidak. Isi dan ejaan naskah disalin dengan setia apa adanya. Tambahan penataan hanya mencakup harakat, nama surat, dan nomor ayat Al-Qur'an, serta catatan kaki bila Anda memilih Paket Lengkap.</div></details>
+    <details><summary><span>Bagaimana dengan bagian yang buram atau rusak?</span><span class="pm" aria-hidden="true"></span></summary><div class="a">Bagian tersebut diberi tanda khusus di tempatnya, tidak ditebak atau dikarang, dan tidak masuk dalam hitungan tagihan.</div></details>
+    <details><summary><span>Jenis tulisan tangan apa saja yang bisa dikerjakan?</span><span class="pm" aria-hidden="true"></span></summary><div class="a">Contoh pada halaman ini berasal dari kitab tulisan tangan bertarikh 1369 H. Untuk gaya khat atau kondisi naskah lain, kami uji lebih dulu lewat 3 halaman gratis, lalu kami sampaikan secara jujur apakah hasilnya layak dilanjutkan.</div></details>
+    <details><summary><span>Apakah bisa untuk naskah Pegon atau Jawi?</span><span class="pm" aria-hidden="true"></span></summary><div class="a">Saat ini belum kami nyatakan didukung secara penuh. Silakan kirim 3 halaman contoh agar kami uji dulu dan sampaikan hasilnya secara terbuka sebelum Anda membayar apa pun.</div></details>
+    <details><summary><span>Format berkas apa yang perlu dikirim?</span><span class="pm" aria-hidden="true"></span></summary><div class="a">Anda dapat mengirim foto beresolusi jelas (JPG/PNG), berkas pindaian PDF, atau tautan Google Drive yang dapat diakses.</div></details>
+    <details><summary><span>Apakah konsultasi dikenakan biaya?</span><span class="pm" aria-hidden="true"></span></summary><div class="a">Tidak, konsultasi sepenuhnya gratis. Anda bebas menanyakan jenis naskah maupun perkiraan biaya lewat formulir di bawah, email ke support@openturath.id, atau DM Instagram @openturath.id.</div></details>
+    <details><summary><span>Berapa lama waktu pengerjaannya?</span><span class="pm" aria-hidden="true"></span></summary><div class="a">Estimasi waktu disampaikan bersama penawaran biaya. Pada kitab uji 400 halaman, prosesnya sekitar dua jam. Durasi untuk naskah Anda dapat lebih cepat atau lebih lama bergantung kondisi tulisan dan antrean.</div></details>
+    <details><summary><span>Berkas apa saja yang akan saya terima?</span><span class="pm" aria-hidden="true"></span></summary><div class="a">Anda menerima berkas Word (.docx), PDF, dan teks polos UTF-8. Untuk keperluan pencarian dan penyuntingan, gunakan berkas Word atau teks polos, karena menyalin teks Arab langsung dari PDF kerap membuat urutan huruf terbalik.</div></details>
+    <details><summary><span>Bagaimana mekanisme pembayarannya?</span><span class="pm" aria-hidden="true"></span></summary><div class="a">Pembayaran dilakukan via transfer bank atau QRIS setelah Anda menyetujui estimasi biaya. Untuk pesanan di atas 100 halaman, DP 50% dibayar di muka dan pelunasan saat hasil dikirim. Kuitansi resmi tersedia atas permintaan.</div></details>
+    <details><summary><span>Apakah aman untuk naskah wakaf atau koleksi pribadi?</span><span class="pm" aria-hidden="true"></span></summary><div class="a">Ya. Naskah tidak dipublikasikan, tidak dipakai melatih model AI, dan seluruh file dihapus 30 hari setelah hasil dikirim. Jika memerlukan perjanjian kerahasiaan (NDA), cukup sebutkan di formulir.</div></details>
   </div>
 </div></section>
 
-<!-- 14. FORM PESAN -->
+<!-- 13. FORM PESAN -->
 <section class="sec band" id="pesan"><div class="wrap">
   <div class="cols2">
-    <div class="rv"><div class="kicker">Mulai</div><h2>Punya naskah untuk dicoba?</h2><p class="lead">Kirim 3 halaman, gratis. Konsultasi juga gratis: tanyakan jenis naskah Anda, perkiraan biaya. Isi formulir ini, lalu lampirkan fotonya pada email yang terbuka.</p></div>
+    <div class="rv">
+      <div class="kicker">Mulai sekarang</div>
+      <h2>Punya naskah yang ingin dicoba?</h2>
+      <p class="lead">Coba 3 halaman pertama secara gratis, termasuk konsultasi. Isi formulir ini, lalu lampirkan foto (JPG/PNG), pindaian PDF, atau tautan Google Drive naskah Anda.</p>
+      <p class="alt-contact">Memakai webmail atau lebih nyaman lewat media sosial? Klik <strong>Salin isi formulir</strong> lalu kirim manual ke <a href="mailto:support@openturath.id">support@openturath.id</a> atau DM Instagram <a href="https://instagram.com/openturath.id" target="_blank" rel="noopener noreferrer">@openturath.id</a>.</p>
+    </div>
     <form class="order rv d1" id="order" novalidate>
-      <label>Nama<input name="nama" type="text" autocomplete="name" required></label>
-      <label>Email<input name="email" type="email" autocomplete="email" required></label>
-      <label>Jenis naskah
-        <select name="jenis"><option>Cetak</option><option>Tulisan tangan</option><option>Belum tahu</option><option>Pegon atau Jawi</option></select>
+      <label for="f-nama">Nama<input id="f-nama" name="nama" type="text" autocomplete="name" required></label>
+      <label for="f-email">Email<input id="f-email" name="email" type="email" autocomplete="email" required></label>
+      <label for="f-jenis">Jenis naskah
+        <select id="f-jenis" name="jenis"><option>Cetak</option><option>Tulisan tangan</option><option>Belum tahu</option><option>Pegon atau Jawi</option></select>
       </label>
-      <label>Perkiraan jumlah halaman<input name="halaman" type="number" min="1" inputmode="numeric"></label>
-      <label>Catatan atau pertanyaan untuk konsultasi<textarea name="catatan" rows="3"></textarea></label>
-      <label class="radio check"><input name="izin" type="checkbox" required><span>Saya berhak memproses naskah ini dan menyetujui <a href="https://openturath.id/id/ketentuan">ketentuan</a>.</span></label>
-      <button class="btn primary" type="submit">Buka email untuk dikirim</button>
-      <p class="small" id="order-note" role="status"></p>
+      <label for="f-halaman">Perkiraan jumlah halaman<input id="f-halaman" name="halaman" type="number" min="1" inputmode="numeric"></label>
+      <label for="f-catatan">Catatan atau pertanyaan konsultasi<textarea id="f-catatan" name="catatan" rows="3"></textarea></label>
+      <label class="radio check"><input name="izin" type="checkbox" required><span>Saya berhak memproses naskah ini dan menyetujui <a href="https://openturath.id/id/ketentuan">ketentuan layanan</a>.</span></label>
+      <div class="order-actions">
+        <button class="btn primary" type="submit">Kirim lewat email</button>
+        <button class="btn inv-o" id="order-copy" type="button">Salin isi formulir</button>
+      </div>
+      <p class="small form-status" id="order-note" role="status" aria-live="polite"></p>
     </form>
   </div>
 </div></section>
@@ -282,10 +367,10 @@
 
 <footer class="site"><div class="wrap">
   <div class="fgrid">
-    <div class="fbrand"><a class="wordmark" href="./"><span>OpenTurath</span><span class="wm-sub">Manuskrip</span></a><p class="small" style="margin-top:12px">Setia pada naskah.</p></div>
-    <div><h4>Layanan</h4><ul><li><a href="#harga">Harga</a></li><li><a href="#cara">Cara kerja</a></li><li><a href="#bukti">Bukti terukur</a></li></ul></div>
-    <div><h4>Bantuan</h4><ul><li><a href="#faq">Tanya jawab</a></li><li><a href="mailto:support@openturath.id">support@openturath.id</a></li><li><a href="https://openturath.id/id/ketentuan">Ketentuan</a></li><li><a href="https://openturath.id/id/privasi">Privasi</a></li><li><a href="https://openturath.id/id/hak-cipta">Hak cipta</a></li></ul></div>
-    <div><h4>OpenTurath</h4><ul><li><a href="https://openturath.id/id">Beranda</a></li><li><a href="https://openturath.id/id/unduh">OpenTurath AI</a></li><li><a href="https://openturath.id/id/tentang">Tentang</a></li></ul></div>
+    <div class="fbrand"><a class="wordmark" href="./"><span>OpenTurath</span><span class="wm-sub">Manuskrip</span></a><p class="small mt-12">Setia pada naskah.</p></div>
+    <div><h2 class="fh">Layanan</h2><ul><li><a href="#harga">Harga</a></li><li><a href="#cara">Cara kerja</a></li><li><a href="#bukti">Bukti terukur</a></li></ul></div>
+    <div><h2 class="fh">Bantuan</h2><ul><li><a href="#faq">Tanya jawab</a></li><li><a href="mailto:support@openturath.id"><bdi class="ltr">support@openturath.id</bdi></a></li><li><a href="https://instagram.com/openturath.id" target="_blank" rel="noopener noreferrer">@openturath.id</a></li><li><a href="https://openturath.id/id/ketentuan">Ketentuan</a></li><li><a href="https://openturath.id/id/privasi">Privasi</a></li><li><a href="https://openturath.id/id/hak-cipta">Hak cipta</a></li></ul></div>
+    <div><h2 class="fh">OpenTurath</h2><ul><li><a href="https://openturath.id/id">Beranda</a></li><li><a href="https://openturath.id/id/unduh">OpenTurath AI</a></li><li><a href="https://openturath.id/id/tentang">Tentang</a></li></ul></div>
   </div>
   <div class="fbar"><span>&copy; OpenTurath Manuskrip</span><span>manuskrip.openturath.id</span></div>
 </div></footer>
