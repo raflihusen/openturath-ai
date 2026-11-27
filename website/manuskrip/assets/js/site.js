@@ -1,4 +1,4 @@
-/* OpenTurath Manuskrip — peningkatan progresif ringan (menu ponsel + focus trap, scroll reveal non-blocking, progress bar). */
+/* OpenTurath Manuskrip — peningkatan progresif: menu ponsel + focus trap, animasi ketik bertahap (non-blocking), scroll reveal, dan progress bar. */
 (function () {
   'use strict';
   var d = document, root = d.documentElement;
@@ -9,8 +9,9 @@
   var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   var nofx = /[?&]nofx=1/.test(location.search) || root.classList.contains('nofx');
   if (nofx) root.classList.add('nofx');
+  var still = reduce || nofx;
 
-  /* menu ponsel + focus trap */
+  /* ================= MENU PONSEL + FOCUS TRAP ================= */
   var mb = $('.menu-btn'), sheet = $('#sheet');
   var setMenu = function (open) {
     if (!mb || !sheet) return;
@@ -46,34 +47,133 @@
     addEventListener('resize', function () { if (innerWidth > 1120 && sheet.classList.contains('open')) setMenu(false); });
   }
 
-  /* scroll reveal non-blocking: tidak pernah menahan konten saat klik anchor */
+  /* ================= ANIMASI KETIK BERTAHAP & SCROLL REVEAL ================= */
   var rv = $$('.rv');
-  if ('IntersectionObserver' in window && !reduce && !nofx) {
-    var io = new IntersectionObserver(function (es) {
+  if (!still && 'IntersectionObserver' in window) {
+    root.classList.add('typing');
+
+    var prep = function (el) {
+      if (el._ch) return el._ch;
+      el.setAttribute('aria-label', el.textContent.replace(/\s+/g, ' ').trim());
+      var chars = [];
+      var walk = function (node) {
+        Array.prototype.slice.call(node.childNodes).forEach(function (n) {
+          if (n.nodeType === 3) {
+            var frag = d.createDocumentFragment(), parts = n.nodeValue.split(/(\s+)/);
+            parts.forEach(function (p) {
+              if (!p) return;
+              if (/^\s+$/.test(p)) { frag.appendChild(d.createTextNode(p)); return; }
+              var w = d.createElement('span');
+              w.setAttribute('aria-hidden', 'true');
+              w.style.whiteSpace = 'nowrap';
+              Array.prototype.forEach.call(p, function (c) {
+                var s = d.createElement('span');
+                s.className = 'ch';
+                s.textContent = c;
+                w.appendChild(s);
+                chars.push(s);
+              });
+              frag.appendChild(w);
+            });
+            node.replaceChild(frag, n);
+          } else if (n.nodeType === 1) {
+            walk(n);
+          }
+        });
+      };
+      walk(el);
+      el._ch = chars;
+      return chars;
+    };
+
+    var type = function (el, ms, stepChars, cb) {
+      if (el._typed) { if (cb) cb(); return; }
+      el._typed = true;
+      var chars = prep(el), i = 0;
+      var per = Math.max(8, Math.min(ms, 1200 / Math.max(1, chars.length)));
+      var tick = function () {
+        for (var k = 0; k < stepChars && i < chars.length; k++) chars[i++].classList.add('on');
+        if (i < chars.length) setTimeout(tick, per);
+        else if (cb) cb();
+      };
+      tick();
+    };
+
+    /* 1. Koreografi Hero bertahap (mulai cepat ~120ms agar tidak terasa menunggu lama) */
+    var hero = $('#hero');
+    if (hero) {
+      var h1 = $('h1.hero', hero);
+      var lede = $('.lede', hero);
+      var cta = $('.cta-row', hero);
+      var mbtn = $('#motion-toggle', hero);
+      if (h1) prep(h1);
+      if (lede) prep(lede);
+
+      setTimeout(function () {
+        if (h1) {
+          h1.classList.add('in');
+          type(h1, 22, 2, function () {
+            if (lede) {
+              lede.classList.add('in');
+              type(lede, 11, 3, function () {
+                if (cta) cta.classList.add('in');
+                setTimeout(function () { if (mbtn) mbtn.classList.add('in'); }, 180);
+              });
+            } else {
+              if (cta) cta.classList.add('in');
+              if (mbtn) mbtn.classList.add('in');
+            }
+          });
+        }
+      }, 120);
+    }
+
+    /* 2. Judul tiap seksi diketik saat masuk layar, lalu .lead muncul perlahan */
+    var secHeads = $$('.sec-head h2, section.sec > .wrap > .cols2 h2');
+    secHeads.forEach(function (h) { prep(h); });
+    var hio = new IntersectionObserver(function (es) {
       es.forEach(function (e) {
         if (!e.isIntersecting) return;
-        io.unobserve(e.target);
+        hio.unobserve(e.target);
+        var h = e.target, box = h.closest('.sec-head');
+        type(h, 20, 2, function () { if (box) box.classList.add('typed'); });
+      });
+    }, { threshold: 0.25, rootMargin: '0px 0px -6% 0px' });
+    secHeads.forEach(function (h) { hio.observe(h); });
+
+    /* 3. Elemen .rv muncul bertahap (non-blocking: tidak pernah tertahan oleh animasi hero) */
+    var rvIo = new IntersectionObserver(function (es) {
+      es.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        rvIo.unobserve(e.target);
         e.target.classList.add('in');
       });
-    }, { rootMargin: '0px 0px -4% 0px', threshold: 0.02 });
+    }, { rootMargin: '0px 0px -5% 0px', threshold: 0.04 });
     rv.forEach(function (n) {
-      if (n.closest('.welcome')) { n.classList.add('in'); return; }
-      io.observe(n);
+      if (n.closest('.welcome')) return;
+      rvIo.observe(n);
     });
-    /* Pastikan semua elemen di sekitar target langsung muncul saat lompat via hash */
-    var revealNearHash = function () {
-      var h = location.hash && $(location.hash);
-      if (!h) return;
-      $$('.rv', h).forEach(function (el) { el.classList.add('in'); io.unobserve(el); });
+
+    /* Saat pengguna klik menu anchor (#harga, #demo, dll.), pastikan seksi tujuan langsung mulai muncul */
+    var revealTarget = function () {
+      var hash = location.hash;
+      if (!hash) return;
+      var sec = $(hash);
+      if (!sec) return;
+      $$('.rv', sec).forEach(function (el) { el.classList.add('in'); rvIo.unobserve(el); });
+      $$('.sec-head h2, .cols2 h2', sec).forEach(function (h) {
+        var box = h.closest('.sec-head');
+        type(h, 16, 3, function () { if (box) box.classList.add('typed'); });
+      });
     };
-    addEventListener('hashchange', revealNearHash);
-    if (location.hash) revealNearHash();
+    addEventListener('hashchange', revealTarget);
+    if (location.hash) revealTarget();
   } else {
     rv.forEach(function (n) { n.classList.add('in'); });
   }
 
-  /* sorotan halus mengikuti kursor pada kartu */
-  if (matchMedia('(pointer: fine)').matches && !reduce && !nofx) {
+  /* ================= SOROTAN HALUS KURSOR PADA KARTU ================= */
+  if (matchMedia('(pointer: fine)').matches && !still) {
     d.addEventListener('pointermove', function (e) {
       var c = e.target.closest && e.target.closest('.pillar');
       if (!c) return;
@@ -83,7 +183,7 @@
     }, { passive: true });
   }
 
-  /* garis kemajuan gulir */
+  /* ================= GARIS KEMAJUAN GULIR ================= */
   if (!nofx) {
     var bar = d.createElement('div');
     bar.className = 'progress';
