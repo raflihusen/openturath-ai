@@ -50,4 +50,21 @@ void main() {
       expect(NotebookNavigation.allowed(Uri.parse(url)), isFalse, reason: url);
     }
   });
+
+  test('YouTube video links stay outside signInFlow while accounts.youtube.com stays allowed for auth', () {
+    expect(
+      NotebookNavigation.signInFlow(Uri.parse('https://accounts.youtube.com/accounts/SetSID')),
+      isTrue,
+    );
+    for (final videoUrl in [
+      'https://www.youtube.com/watch?v=VAjMypi4X7c',
+      'https://m.youtube.com/watch?v=VAjMypi4X7c',
+      'https://youtube.com/shorts/VAjMypi4X7c',
+      'https://youtu.be/VAjMypi4X7c',
+    ]) {
+      final uri = Uri.parse(videoUrl);
+      expect(NotebookNavigation.signInFlow(uri), isFalse, reason: videoUrl);
+      expect(NotebookNavigation.allowed(uri), isFalse, reason: videoUrl);
+    }
+  });
 }

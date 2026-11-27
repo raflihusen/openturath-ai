@@ -48,7 +48,7 @@ class NotebookNavigation {
         host.endsWith('.google.co.id') ||
         host.endsWith('.gstatic.com') ||
         host.endsWith('.googleusercontent.com') ||
-        host.endsWith('.youtube.com') ||
+        host == 'accounts.youtube.com' ||
         host.endsWith('.googleapis.com') ||
         host.endsWith('.recaptcha.net') ||
         RegExp(r'^accounts\.google\.[a-z.]{2,6}$').hasMatch(host);

@@ -297,4 +297,15 @@ void notebookSkinTests() {
     expect(body.contains(r'\u062d\u0633\u0646\u064b\u0627'), isTrue);
     expect(body.contains(r'\u0645\u0631\u062d\u0628\u064b\u0627'), isTrue);
   });
+
+  test(
+      'deteksi ibarah full-Arab, metadata video, dan normalisasi link YouTube berspasi terpasang tanpa :has()',
+      () {
+    expect(notebookUiScript.contains('function normalizeYouTubeUrls'), isTrue);
+    expect(notebookSkinScript.contains('function isStandaloneArabicQuote'), isTrue);
+    expect(notebookSkinScript.contains('const IBARAH_META_LINE ='), isTrue);
+    expect(notebookSkinScript.contains('function linkifyYouTubeInCard'), isTrue);
+    expect(notebookSkinScript.contains('a.ot-yt-link'), isTrue);
+    expect(notebookSkinScript.contains(':has('), isFalse);
+  });
 }

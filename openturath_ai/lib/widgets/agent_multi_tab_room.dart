@@ -2293,12 +2293,22 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
             onCreateWindow: (controller, createWindowAction) async {
               final targetUrl = createWindowAction.request.url;
               if (targetUrl != null &&
-                  !NotebookNavigation.isUpsellDestination(targetUrl.uriValue) &&
-                  (NotebookNavigation.signInFlow(targetUrl.uriValue) ||
-                      NotebookNavigation.allowed(targetUrl.uriValue))) {
-                await controller.loadUrl(
-                    urlRequest: URLRequest(url: targetUrl));
-                return false;
+                  !NotebookNavigation.isUpsellDestination(targetUrl.uriValue)) {
+                if (NotebookNavigation.signInFlow(targetUrl.uriValue) ||
+                    NotebookNavigation.allowed(targetUrl.uriValue)) {
+                  await controller.loadUrl(
+                      urlRequest: URLRequest(url: targetUrl));
+                  return false;
+                }
+                final scheme = targetUrl.scheme.toLowerCase();
+                if (scheme == 'http' || scheme == 'https') {
+                  try {
+                    if (await canLaunchUrl(targetUrl.uriValue)) {
+                      await launchUrl(targetUrl.uriValue,
+                          mode: LaunchMode.externalApplication);
+                    }
+                  } catch (_) {}
+                }
               }
               return false;
             },
@@ -2846,7 +2856,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
                   host.endsWith('.googleusercontent.com') ||
                   host.endsWith('.googleapis.com') ||
                   host.endsWith('.recaptcha.net') ||
-                  host.endsWith('.youtube.com');
+                  host == 'accounts.youtube.com';
 
               if (isGoogleEcosystem ||
                   NotebookNavigation.signInFlow(uri.uriValue) ||

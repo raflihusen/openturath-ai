@@ -209,11 +209,23 @@ const notebookSkinScript = r'''
     }
     html body .to-user-message-card-content::after { display: none !important; }
     html body .to-user-message-card-content .message-text-content,
-    html body .to-user-message-card-content .paragraph:not(.ot-ibarah):not(.ot-rtl-block),
-    html body .to-user-message-card-content .paragraph:not(.ot-ibarah):not(.ot-rtl-block) span,
-    html body .to-user-message-card-content p:not(.ot-ibarah):not(.ot-rtl-block),
-    html body .to-user-message-card-content li:not(.ot-ibarah):not(.ot-rtl-block) {
+    html body .to-user-message-card-content.ot-dir-ltr .paragraph:not(.ot-ibarah):not(.ot-rtl-block),
+    html body .to-user-message-card-content.ot-dir-ltr .paragraph:not(.ot-ibarah):not(.ot-rtl-block) span,
+    html body .to-user-message-card-content.ot-dir-ltr p:not(.ot-ibarah):not(.ot-rtl-block),
+    html body .to-user-message-card-content.ot-dir-ltr li:not(.ot-ibarah):not(.ot-rtl-block) {
       font-family: var(--ot-sans) !important;
+      color: var(--ot-ink) !important;
+    }
+    html body .to-user-message-card-content.ot-dir-rtl .paragraph:not(.ot-mode),
+    html body .to-user-message-card-content.ot-dir-rtl .paragraph:not(.ot-mode) :where(span:not(.mat-icon):not(.mdc-button__label):not([class*="citation" i]), b, strong, i, em, u),
+    html body .to-user-message-card-content.ot-dir-rtl p,
+    html body .to-user-message-card-content.ot-dir-rtl p :where(span:not(.mat-icon):not(.mdc-button__label):not([class*="citation" i]), b, strong, i, em, u),
+    html body .to-user-message-card-content.ot-dir-rtl li:not(.ot-mode),
+    html body .to-user-message-card-content.ot-dir-rtl li:not(.ot-mode) > :where(span:not(.mat-icon):not(.mdc-button__label):not([class*="citation" i]), b, strong, i, em, u) {
+      font-family: var(--ot-arabic) !important;
+      line-height: 1.92 !important;
+      letter-spacing: 0 !important;
+      font-synthesis: none !important;
       color: var(--ot-ink) !important;
     }
     html body .to-user-message-card-content .paragraph:not(.table-paragraph):not(.ot-mode),
@@ -361,6 +373,21 @@ const notebookSkinScript = r'''
       font-size: inherit !important;
       line-height: inherit !important;
       font-synthesis: none !important;
+    }
+    html body .to-user-message-card-content a.ot-yt-link,
+    html body .to-user-message-card-content .ot-ibarah a.ot-yt-link,
+    html body .to-user-message-card-content.ot-dir-rtl a.ot-yt-link {
+      direction: ltr !important;
+      unicode-bidi: isolate !important;
+      display: inline-block !important;
+      font-family: var(--ot-sans) !important;
+      font-size: calc(var(--ot-font-size, 15px) * 0.92) !important;
+      line-height: 1.5 !important;
+      color: var(--ot-ink) !important;
+      text-decoration: underline !important;
+      text-decoration-color: var(--ot-line-strong) !important;
+      text-underline-offset: 3px !important;
+      word-break: break-all !important;
     }
     html body .to-user-message-card-content .ot-ibarah::before,
     html body .to-user-message-card-content .ot-ibarah::after {
@@ -896,18 +923,30 @@ const notebookSkinScript = r'''
       }
     });
 
-    // 1. Deteksi bahasa utama kartu (LTR vs RTL) yang kebal harakat & kebal kutipan ibarah panjang.
-    //    Menghitung KATA prosa non-kutipan (membuang «...», ﴿...﴾, "..." Arab, dan referensi kitab dalam kurung),
-    //    serta mempertimbangkan bahasa pertanyaan pasangan di atasnya bila prosa pembuka sangat singkat.
+    // 1. Deteksi bahasa utama kartu (LTR vs RTL) yang kebal harakat, URL YouTube berspasi,
+    //    ID video, label Mode, dan kutipan ibarah panjang.
     const AR_WORD = /[\u0621-\u063A\u0641-\u064A\u0671-\u06D3]{2,}/g;
     const LAT_WORD = /[A-Za-z]{2,}/g;
     const LATIN_PROSE_HINT = /\b(artinya|arti\/intisari|intisari|terjemahan|kesimpulan|penjelasan|dalil|rujukan|ibarah|jawaban|mazhab|hukumnya|berikut|conclusion|meaning|translation|summary)\b/i;
     const ASKED_ARABIC = /(?:bahasa\s+arab|in\s+arabic|بالعربية|باللغة\s+العربية)/i;
     const QUOTED_ARABIC_ANY = /(?:«[^»]*[\u0621-\u064A]{3,}[^»]*»|﴿[^﴾]*[\u0621-\u064A]{3,}[^﴾]*﴾|["“][^"”]*[\u0621-\u064A]{8,}[^"”]*["”])/g;
-    const STARTS_QUOTED_ARABIC = /^(?:[-–•]\s*)?(?:«([^»]+)»|﴿([^﴾]+)﴾|["“]([^"”]+)["”])/;
+    const STARTS_QUOTED_ARABIC = /^(?:(?:[-–•]|[0-9٠-٩]+[\.\-\)]|[أ-ي][\.\-\)])\s*)?(?:«([^»]+)»|﴿([^﴾]+)﴾|["“]([^"”]+)["”])/;
     const TRANS_PREFIX = /^\s*(?:Arti\s*\/\s*Intisari|Artinya|Arti|Intisari|Terjemahan|Terjemah|Makna|Maksud|Meaning|Translation)\s*[:：]/i;
     const TRANS_INLINE = /(?:\n|\s+)(?=(?:Arti\s*\/\s*Intisari|Artinya|Arti|Intisari|Terjemahan|Terjemah|Makna|Maksud|Meaning|Translation)\s*[:：])/i;
-    const KITAB_REF = /(?:\([^)]*[\u0621-\u064A][^)]*(?:[٠-٩0-9]|ص|ج|سورة|آية|حديث)[^)]*\)|(?:ج\s*[٠-٩0-9]+|ص\s*[٠-٩0-9]+|[٠-٩0-9]+\s*\/\s*[٠-٩0-9]+))/;
+    const IBARAH_META_LINE = /^\s*(?:(?:محاضرة|المحاضرة|درس|الدرس|معر[ّ]?ف\s+الفيديو|الرابط|رابط\s+الفيديو|المصدر|المرجع|الكتاب|الجزء|الصفحة|القناة|الشيخ|المتحدث|فيديو)\s*[:：]|\([^)]*[\u0621-\u064A][^)]*\)\s*$)/;
+    const VIDEO_ID_META_RE = /معر[ّ]?ف\s+الفيديو\s*[:：]\s*[A-Za-z0-9_-]{6,}/g;
+    const MODE_LINE_RE = /^\s*[▸▶►▷]?\s*Mode\s*:\s*.+$/gim;
+    const GENERIC_URL_RE = /https?:\/\/\S+/gi;
+    const YT_FALLBACK_RE = /(^|[^\w./@-])((?:https?[ \t\u00A0\u200B-\u200F\uFEFF]*:[ \t\u00A0\u200B-\u200F\uFEFF]*\/[ \t\u00A0\u200B-\u200F\uFEFF]*\/[ \t\u00A0\u200B-\u200F\uFEFF]*)?(?:(?:(?:www|m|music)[ \t\u00A0\u200B-\u200F\uFEFF]*\.[ \t\u00A0\u200B-\u200F\uFEFF]*)?youtube[ \t\u00A0\u200B-\u200F\uFEFF]*\.[ \t\u00A0\u200B-\u200F\uFEFF]*com|youtu[ \t\u00A0\u200B-\u200F\uFEFF]*\.[ \t\u00A0\u200B-\u200F\uFEFF]*be)(?:[ \t\u00A0\u200B-\u200F\uFEFF]*\/[ \t\u00A0\u200B-\u200F\uFEFF]*[A-Za-z0-9_~%!$&'*+,;=:@.?#\-]+)+)/gi;
+    const YT_HOSTS = new Set(['youtu.be', 'youtube.com', 'www.youtube.com', 'm.youtube.com', 'music.youtube.com']);
+
+    function stripNoiseForLangDetect(txt) {
+      return (txt || '')
+        .replace(YT_FALLBACK_RE, '$1 ')
+        .replace(GENERIC_URL_RE, ' ')
+        .replace(VIDEO_ID_META_RE, ' ')
+        .replace(MODE_LINE_RE, ' ');
+    }
 
     function pairedQuestionCard(answerCard) {
       const pair = answerCard.closest('.chat-message-pair, chat-turn, app-chat-turn');
@@ -935,24 +974,31 @@ const notebookSkinScript = r'''
       }
       if (card.__otDirLen === cTxt.length) return;
       card.__otDirLen = cTxt.length;
+      const cleanedTxt = stripNoiseForLangDetect(cTxt);
       const proseTxt = isAnswer
-        ? cTxt.replace(QUOTED_ARABIC_ANY, ' ').replace(/\([^)]*[\u0621-\u064A][^)]*\)/g, ' ')
-        : cTxt;
+        ? cleanedTxt.replace(QUOTED_ARABIC_ANY, ' ').replace(/\([^)]*[\u0621-\u064A][^)]*\)/g, ' ')
+        : cleanedTxt;
       const arWords = (proseTxt.match(AR_WORD) || []).length;
       const latWords = (proseTxt.match(LAT_WORD) || []).length;
       const totalWords = arWords + latWords;
       if (totalWords === 0) return;
+      const arWordRatio = arWords / totalWords;
       let isCardRtl;
       if (isAnswer) {
-        const hasLatinHint = LATIN_PROSE_HINT.test(proseTxt) && latWords >= 2;
-        const strongLatinProse = latWords >= 12 && (latWords / totalWords) >= 0.30;
-        const qCard = pairedQuestionCard(card);
-        const qTxt = qCard ? (qCard.textContent || '') : '';
-        const pairedLtrQuestion = !!(qCard && qCard.__otIsRtl === false && !ASKED_ARABIC.test(qTxt));
-        const shortLtrLead = pairedLtrQuestion && latWords >= 2;
-        isCardRtl = !hasLatinHint && !strongLatinProse && !shortLtrLead && arWords >= 6 && (arWords / totalWords) >= 0.72;
+        const strongArabicProse = arWords >= 18 && arWordRatio >= 0.78;
+        if (strongArabicProse) {
+          isCardRtl = true;
+        } else {
+          const hasLatinHint = LATIN_PROSE_HINT.test(proseTxt) && latWords >= 2;
+          const strongLatinProse = latWords >= 12 && (latWords / totalWords) >= 0.30;
+          const qCard = pairedQuestionCard(card);
+          const qTxt = qCard ? (qCard.textContent || '') : '';
+          const pairedLtrQuestion = !!(qCard && qCard.__otIsRtl === false && !ASKED_ARABIC.test(qTxt));
+          const shortLtrLead = pairedLtrQuestion && latWords >= 2 && arWords < 14;
+          isCardRtl = !hasLatinHint && !strongLatinProse && !shortLtrLead && arWords >= 6 && arWordRatio >= 0.72;
+        }
       } else {
-        isCardRtl = arWords >= 2 && (arWords / totalWords) >= 0.55;
+        isCardRtl = arWords >= 2 && arWordRatio >= 0.55;
       }
       card.__otIsRtl = isCardRtl;
       card.setAttribute('dir', isCardRtl ? 'rtl' : 'ltr');
@@ -973,8 +1019,8 @@ const notebookSkinScript = r'''
 
     function isIbarahSegment(txt) {
       const trimmed = (txt || '').trim();
-      if (!trimmed) return false;
-      // Kutipan Arab eksplisit di awal baris («...», ﴿...﴾, "...") selalu ibarah meski sumber (...) di belakangnya berhuruf Latin
+      if (!trimmed || TRANS_PREFIX.test(trimmed)) return false;
+      // Kutipan Arab eksplisit di awal baris (termasuk bernomor ٦. «...» / 1. «...») selalu ibarah
       const qMatch = STARTS_QUOTED_ARABIC.exec(trimmed);
       if (qMatch) {
         const inner = qMatch[1] || qMatch[2] || qMatch[3] || '';
@@ -982,26 +1028,66 @@ const notebookSkinScript = r'''
         const innerLa = (inner.match(LAT) || []).length;
         if (innerAr >= 10 && innerAr > innerLa * 2) return true;
       }
-      const ar = (trimmed.match(AR) || []).length;
-      const la = (trimmed.match(LAT) || []).length;
+      const cleaned = stripNoiseForLangDetect(trimmed);
+      const ar = (cleaned.match(AR) || []).length;
+      const la = (cleaned.match(LAT) || []).length;
       const total = ar + la;
       const arRatio = total > 0 ? ar / total : 0;
-      const looksLikeHeading = trimmed.length < 24 || /^[أ-ي0-9١-٩]+[\.\-\)]\s+/.test(trimmed);
-      const hasQuoteMarks = (/[«»﴿﴾]/.test(trimmed) || /["“][^"”]*[\u0621-\u064A]{8,}[^"”]*["”]/.test(trimmed)) && ar >= 10 && arRatio >= 0.45;
-      const hasKitabRef = KITAB_REF.test(trimmed) && ar >= 12 && arRatio >= 0.45;
-      const isSubstantialArabic = !looksLikeHeading && ar >= 22 && arRatio >= 0.62;
-      return hasQuoteMarks || hasKitabRef || isSubstantialArabic;
+      const hasExplicitQuoteDelims = /[«»﴿﴾]/.test(trimmed);
+      const looksLikeHeading = trimmed.length < 24 || (trimmed.length < 60 && /^[أ-ي0-9١-٩]+[\.\-\)]\s+/.test(trimmed) && !hasExplicitQuoteDelims);
+      const hasQuoteMarks = (hasExplicitQuoteDelims || /["“][^"”]*[\u0621-\u064A]{10,}[^"”]*["”]/.test(trimmed)) && ar >= 12 && arRatio >= 0.55;
+      const isSubstantialArabic = !looksLikeHeading && ar >= 24 && arRatio >= 0.70;
+      return hasQuoteMarks || isSubstantialArabic;
     }
 
-    // 3. Pemisah segmen universal untuk blok gabungan (ibarah Arab + Artinya/Arti/Intisari atau lead-in + ibarah).
+    // Di kartu full-Arab, hanya kutipan nash/matan utuh yang berdiri sendiri (blockquote atau >=72% isi Arab diapit kutipan)
+    // yang diberi kotak .ot-ibarah — prosa Arab yang sekadar menyebut «judul kitab» atau "istilah" tetap polos mengalir.
+    function isStandaloneArabicQuote(el, trimmed) {
+      if (!trimmed) return false;
+      if (el.tagName === 'BLOCKQUOTE' || !!el.closest('blockquote')) return true;
+      const bodyLines = trimmed.split('\n').filter(line => !IBARAH_META_LINE.test(line.trim()));
+      const body = bodyLines.join(' ').replace(/\([^)]*[\u0621-\u064A][^)]*\)\s*$/g, '').trim();
+      if (!body) return false;
+      const bodyAr = (body.match(AR) || []).length;
+      if (bodyAr < 16) return false;
+      const quoteRe = /«([^»]+)»|﴿([^﴾]+)﴾|["“]([^"”]+)["”]/g;
+      let quotedAr = 0;
+      let m;
+      while ((m = quoteRe.exec(body)) !== null) {
+        const inner = m[1] || m[2] || m[3] || '';
+        quotedAr += (inner.match(AR) || []).length;
+      }
+      return quotedAr >= 16 && (quotedAr / bodyAr) >= 0.72;
+    }
+
+    function isTransparentSpan(node) {
+      if (!node || node.nodeType !== 1 || node.tagName !== 'SPAN') return false;
+      if (node.getAttribute('role') || node.getAttribute('aria-label')) return false;
+      const cls = typeof node.className === 'string' ? node.className : '';
+      if (/citation|mat-icon|mdc-button|ot-yt-link|ot-ibarah/i.test(cls)) return false;
+      if (node.querySelector('button, [role="button"], [class*="citation" i], mat-icon, table, ul, ol')) return false;
+      return true;
+    }
+
+    function flattenInlineNodes(root) {
+      const out = [];
+      for (const child of Array.from(root.childNodes)) {
+        if (isTransparentSpan(child)) {
+          out.push(...flattenInlineNodes(child));
+        } else {
+          out.push(child);
+        }
+      }
+      return out;
+    }
+
+    // 3. Pemisah segmen universal untuk blok gabungan:
+    //    - Pengantar LTR ("Teks penjelasan...:") + Ibarah Arab + Metadata Arab (محاضرة / معرف الفيديو / الرابط)
+    //    - Ibarah Arab (termasuk bernomor ٦. «...») + Arti/Intisari / Artinya (prosa LTR)
     //    Hanya dijalankan pada jawaban yang sudah selesai streaming (done) agar tidak mengganggu Angular.
     function splitBlockSegments(el) {
       if (el.dataset.otSplit === '1' || el.querySelector('.ot-ibarah, .ot-ibarah-trans, ul, ol, table')) return false;
-      let container = el;
-      while (container.childNodes.length === 1 && container.firstChild.nodeType === 1 && container.firstChild.tagName === 'SPAN') {
-        container = container.firstChild;
-      }
-      const rawNodes = Array.from(container.childNodes);
+      const rawNodes = flattenInlineNodes(el);
       if (!rawNodes.length) return false;
 
       const segments = [];
@@ -1011,9 +1097,49 @@ const notebookSkinScript = r'''
         if (txt) segments.push({ nodes: current, text: txt });
         current = [];
       };
+      const pushTextWithSplits = textVal => {
+        if (!textVal) return;
+        const lines = textVal.split(/\r?\n/);
+        for (let i = 0; i < lines.length; i++) {
+          if (i > 0) pushCurrent();
+          let part = lines[i];
+          if (!part) continue;
+          // Pisahkan bila ada pengantar Latin berakhiran ':' diikuti langsung kutipan Arab « / ﴿ pada baris yang sama
+          const leadQuoteIdx = part.search(/(?<=[:：]\s*)(?=(?:(?:[0-9٠-٩]+[\.\-\)]\s*)?[«﴿]))/);
+          if (leadQuoteIdx > 0) {
+            const head = part.slice(0, leadQuoteIdx);
+            const tail = part.slice(leadQuoteIdx);
+            if ((head.match(LAT) || []).length >= 4 && (tail.match(AR) || []).length >= 8) {
+              current.push(document.createTextNode(head));
+              pushCurrent();
+              part = tail;
+            }
+          }
+          if (current.length > 0 && TRANS_PREFIX.test(part)) {
+            pushCurrent();
+            current.push(document.createTextNode(part));
+            continue;
+          }
+          if (TRANS_INLINE.test(part)) {
+            const m = TRANS_INLINE.exec(part);
+            if (m && m.index > 0) {
+              current.push(document.createTextNode(part.slice(0, m.index)));
+              pushCurrent();
+              current.push(document.createTextNode(part.slice(m.index)));
+              continue;
+            }
+          }
+          current.push(document.createTextNode(part));
+        }
+      };
+
       for (const n of rawNodes) {
         if (n.nodeType === 1 && n.tagName === 'BR') {
           pushCurrent();
+          continue;
+        }
+        if (n.nodeType === 3) {
+          pushTextWithSplits(n.textContent || '');
           continue;
         }
         const nTxt = n.textContent || '';
@@ -1021,16 +1147,6 @@ const notebookSkinScript = r'''
           pushCurrent();
           current.push(n);
           continue;
-        }
-        if (n.nodeType === 3 && TRANS_INLINE.test(nTxt)) {
-          const m = TRANS_INLINE.exec(nTxt);
-          if (m && m.index > 0) {
-            const tail = n.splitText(m.index);
-            current.push(n);
-            pushCurrent();
-            current.push(tail);
-            continue;
-          }
         }
         current.push(n);
       }
@@ -1041,6 +1157,17 @@ const notebookSkinScript = r'''
         ...seg,
         kind: isIbarahSegment(seg.text) ? 'ibarah' : 'prose',
       }));
+      // Metadata Arab tepat di bawah kutipan ibarah (محاضرة / معرف الفيديو / الرابط / (كتاب...))
+      // tetap menyatu di dalam kotak .ot-ibarah agar tidak terlempar keluar sebagai LTR.
+      for (let i = 1; i < classified.length; i++) {
+        if (classified[i].kind === 'prose' &&
+            classified[i - 1].kind === 'ibarah' &&
+            !TRANS_PREFIX.test(classified[i].text) &&
+            IBARAH_META_LINE.test(classified[i].text)) {
+          classified[i].kind = 'ibarah';
+        }
+      }
+
       const hasIbarah = classified.some(s => s.kind === 'ibarah');
       const hasProse = classified.some(s => s.kind === 'prose');
       if (!hasIbarah || !hasProse) return false;
@@ -1074,6 +1201,168 @@ const notebookSkinScript = r'''
       return true;
     }
 
+    // 4. Normalisasi cerdas tautan YouTube berspasi di DOM setelah jawaban selesai streaming (cardDone).
+    //    Menghapus spasi sebelum/sesudah '/' (mis. "youtu.be / VAjMypi4X7c") dan menjadikannya
+    //    <a class="ot-yt-link" dir="ltr" href="https://..."> agar bisa diklik & disalin dengan benar.
+    function parseYouTubeCandidate(raw) {
+      if (typeof window.__otNormalizeYouTubeUrlCandidate === 'function') {
+        return window.__otNormalizeYouTubeUrlCandidate(raw);
+      }
+      if (!raw) return null;
+      let body = raw;
+      let trailing = '';
+      while (body.length > 0 && /[.,;:!?)'"»”\]،؛]$/.test(body)) {
+        trailing = body.slice(-1) + trailing;
+        body = body.slice(0, -1);
+      }
+      const compact = body.replace(/[ \t\u00A0\u200B-\u200F\uFEFF]+/g, '');
+      const withScheme = /^https?:\/\//i.test(compact) ? compact : 'https://' + compact;
+      try {
+        const parsed = new URL(withScheme);
+        if (!YT_HOSTS.has(parsed.hostname.toLowerCase()) || !parsed.pathname || parsed.pathname === '/') return null;
+        return { url: parsed.toString(), trailing };
+      } catch (_) {
+        return null;
+      }
+    }
+
+    function makeYouTubeAnchor(url) {
+      const a = document.createElement('a');
+      a.className = 'ot-yt-link';
+      a.setAttribute('dir', 'ltr');
+      a.setAttribute('href', url);
+      a.setAttribute('target', '_blank');
+      a.setAttribute('rel', 'noopener noreferrer');
+      a.textContent = url;
+      return a;
+    }
+
+    function mergeBrokenYouTubeAnchors(blk) {
+      blk.querySelectorAll('a').forEach(a => {
+        if (a.classList.contains('ot-yt-link')) return;
+        const href = (a.getAttribute('href') || '').trim();
+        const aTxt = (a.textContent || '').trim();
+        let isYtAnchor = false;
+        try {
+          const u = new URL(/^https?:\/\//i.test(href) ? href : 'https://' + href);
+          isYtAnchor = YT_HOSTS.has(u.hostname.toLowerCase());
+        } catch (_) {}
+        if (!isYtAnchor && !/youtu\.?be|youtube\.com/i.test(aTxt)) return;
+
+        // Jika tautan terputus di spasi sebelum '/' (mis. <a>youtu.be</a> diikuti " / VAjMypi4X7c")
+        const next = a.nextSibling;
+        if (next && (next.nodeType === 3 || isTransparentSpan(next))) {
+          const nextTxt = next.textContent || '';
+          const m = /^([ \t\u00A0\u200B-\u200F\uFEFF]*\/[ \t\u00A0\u200B-\u200F\uFEFF]*[A-Za-z0-9_~%!$&'*+,;=:@.?#\-]+(?:[ \t\u00A0\u200B-\u200F\uFEFF]*\/[ \t\u00A0\u200B-\u200F\uFEFF]*[A-Za-z0-9_~%!$&'*+,;=:@.?#\-]+)*)([\s\S]*)$/.exec(nextTxt);
+          if (m) {
+            const parsed = parseYouTubeCandidate(aTxt + m[1]);
+            if (parsed) {
+              const cleanA = makeYouTubeAnchor(parsed.url);
+              const rest = parsed.trailing + (m[2] || '');
+              a.replaceWith(cleanA);
+              if (rest) {
+                next.replaceWith(document.createTextNode(rest));
+              } else {
+                next.remove();
+              }
+              return;
+            }
+          }
+        }
+        // Tautan YouTube yang sudah utuh: pastikan bergaya .ot-yt-link LTR & buka eksternal
+        if (isYtAnchor) {
+          const parsed = parseYouTubeCandidate(href || aTxt);
+          if (parsed) {
+            a.classList.add('ot-yt-link');
+            a.setAttribute('dir', 'ltr');
+            a.setAttribute('href', parsed.url);
+            a.setAttribute('target', '_blank');
+            a.setAttribute('rel', 'noopener noreferrer');
+          }
+        }
+      });
+    }
+
+    function mergeSplitPlainSpansForYouTube(blk) {
+      // Gabungkan <span> polos berdampingan bila Angular memecah satu URL YouTube lintas node
+      const children = Array.from(blk.childNodes);
+      for (let i = 0; i < children.length; i++) {
+        const cur = children[i];
+        if (cur.nodeType === 3 || isTransparentSpan(cur)) {
+          let j = i;
+          let combined = '';
+          while (j < children.length && (children[j].nodeType === 3 || isTransparentSpan(children[j]))) {
+            combined += children[j].textContent || '';
+            j++;
+          }
+          if (j - i > 1 && /youtu/i.test(combined)) {
+            const re = new RegExp(YT_FALLBACK_RE.source, 'gi');
+            if (re.test(combined)) {
+              const merged = document.createTextNode(combined);
+              blk.insertBefore(merged, children[i]);
+              for (let k = i; k < j; k++) children[k].remove();
+            }
+          }
+          i = j - 1;
+        }
+      }
+    }
+
+    function linkifyTextNodeYouTube(textNode) {
+      const val = textNode.textContent || '';
+      if (!/youtu/i.test(val)) return;
+      const re = new RegExp((window.__otYouTubeSpacedRegex || YT_FALLBACK_RE).source, 'gi');
+      let match;
+      let lastIdx = 0;
+      let changed = false;
+      const frag = document.createDocumentFragment();
+      while ((match = re.exec(val)) !== null) {
+        const full = match[0];
+        const prefix = match[1] || '';
+        const rawUrl = match[2] || '';
+        const parsed = parseYouTubeCandidate(rawUrl);
+        if (!parsed) continue;
+        const start = match.index;
+        if (start > lastIdx) frag.appendChild(document.createTextNode(val.slice(lastIdx, start)));
+        if (prefix) frag.appendChild(document.createTextNode(prefix));
+        frag.appendChild(makeYouTubeAnchor(parsed.url));
+        if (parsed.trailing) frag.appendChild(document.createTextNode(parsed.trailing));
+        lastIdx = start + full.length;
+        changed = true;
+      }
+      if (!changed) return;
+      if (lastIdx < val.length) frag.appendChild(document.createTextNode(val.slice(lastIdx)));
+      if (textNode.parentNode) textNode.parentNode.replaceChild(frag, textNode);
+    }
+
+    function linkifyYouTubeInCard(card) {
+      if (!card) return;
+      const blocks = card.querySelectorAll('.ot-ibarah, .ot-ibarah-trans, .paragraph:not(.ot-ibarah-host), p:not(.ot-ibarah-host), li:not(.ot-ibarah-host), blockquote, td, th');
+      blocks.forEach(blk => {
+        if (blk.closest('thinking-chain-view, .thinking-chain')) return;
+        const txt = blk.textContent || '';
+        if (!/youtu/i.test(txt)) return;
+        if (blk.__otYtLen === txt.length) return;
+        mergeBrokenYouTubeAnchors(blk);
+        mergeSplitPlainSpansForYouTube(blk);
+        const textNodes = [];
+        const walk = node => {
+          for (const ch of Array.from(node.childNodes)) {
+            if (ch.nodeType === 3) {
+              textNodes.push(ch);
+            } else if (ch.nodeType === 1) {
+              const tag = ch.tagName;
+              if (tag === 'A' || tag === 'BUTTON' || tag === 'CODE' || tag === 'PRE' || tag === 'SCRIPT' || tag === 'STYLE') continue;
+              walk(ch);
+            }
+          }
+        };
+        walk(blk);
+        textNodes.forEach(linkifyTextNodeYouTube);
+        blk.__otYtLen = (blk.textContent || '').length;
+      });
+    }
+
     // Tangani <li> yang memiliki teks ibarah langsung di awal lalu diikuti sub-list <ul>/<ol>
     function wrapLeadingIbarahInList(li) {
       if (li.dataset.otLeadWrapped === '1' || li.querySelector(':scope > .ot-ibarah, :scope > .paragraph, :scope > p')) return;
@@ -1105,8 +1394,9 @@ const notebookSkinScript = r'''
       el.__otStateKey = stateKey;
 
       const trimmed = text.trim();
-      const ar = (trimmed.match(AR) || []).length;
-      const la = (trimmed.match(LAT) || []).length;
+      const cleaned = stripNoiseForLangDetect(trimmed);
+      const ar = (cleaned.match(AR) || []).length;
+      const la = (cleaned.match(LAT) || []).length;
       const total = ar + la;
       const arRatio = total > 0 ? ar / total : 0;
       const hasListChild = !!el.querySelector('ul, ol, li');
@@ -1117,11 +1407,12 @@ const notebookSkinScript = r'''
           el.setAttribute('dir', 'ltr');
           return;
         }
-        // Saat jawaban selesai streaming, pisahkan segmen gabungan (ibarah Arab + Artinya/prosa LTR)
-        if (cardDone && !hasListChild && !isTableCell && ar >= 10 && la >= 8 && splitBlockSegments(el)) {
+        // Saat jawaban selesai streaming, pisahkan segmen gabungan (pengantar LTR + ibarah Arab + metadata / Artinya)
+        if (cardDone && !hasListChild && !isTableCell && ar >= 10 && la >= 6 && splitBlockSegments(el)) {
           return;
         }
-        const ibarah = !hasListChild && !isTableCell && isIbarahSegment(trimmed);
+        const isBlockquoteArabic = (el.tagName === 'BLOCKQUOTE' || !!el.closest('blockquote')) && ar >= 10 && arRatio >= 0.55;
+        const ibarah = !hasListChild && !isTableCell && (isBlockquoteArabic || isIbarahSegment(trimmed));
         const isArabicTableCell = isTableCell && (ar >= 3 && arRatio >= 0.5);
         const isArabicBlock = !hasListChild && ((!isTableCell && (ibarah || (ar >= 8 && arRatio >= 0.58))) || isArabicTableCell);
 
@@ -1158,9 +1449,9 @@ const notebookSkinScript = r'''
         }
         toggle(el, 'ot-rtl-block', false);
         toggle(el, 'ot-ltr-block', false);
-        // Di kartu full-Arab, hanya kutipan eksplisit «...», ﴿...﴾, atau "..." Arab yang diberi aksen kotak halus
-        const explicitQuote = !hasListChild && !isTableCell && (/[«»﴿﴾]/.test(trimmed) || /["“][^"”]*[\u0621-\u064A]{10,}[^"”]*["”]/.test(trimmed)) && ar >= 14;
-        toggle(el, 'ot-ibarah', explicitQuote);
+        // Di kartu full-Arab, hanya kutipan nash/matan utuh berdiri sendiri yang diberi kotak .ot-ibarah
+        const standaloneQuote = !hasListChild && !isTableCell && isStandaloneArabicQuote(el, trimmed);
+        toggle(el, 'ot-ibarah', standaloneQuote);
       }
 
       let section = false;
@@ -1189,7 +1480,7 @@ const notebookSkinScript = r'''
       const cardDone = !!box.querySelector('chat-actions, .chat-actions');
       const card = box.querySelector('.to-user-message-card-content');
       const isWholeArabicCard = !!(card && card.__otIsRtl);
-      box.querySelectorAll('.to-user-message-card-content .paragraph, .to-user-message-card-content p').forEach(el => processBlock(el, cardDone));
+      box.querySelectorAll('.to-user-message-card-content .paragraph, .to-user-message-card-content p, .to-user-message-card-content blockquote').forEach(el => processBlock(el, cardDone));
       box.querySelectorAll('.to-user-message-card-content li').forEach(li => {
         if (!li.querySelector('.paragraph, p, ul, ol')) {
           processBlock(li, cardDone);
@@ -1197,6 +1488,9 @@ const notebookSkinScript = r'''
           wrapLeadingIbarahInList(li);
         }
       });
+      if (cardDone && card) {
+        linkifyYouTubeInCard(card);
+      }
     });
   }
 

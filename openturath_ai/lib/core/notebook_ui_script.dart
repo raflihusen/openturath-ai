@@ -24,6 +24,39 @@ const _notebookCleanupScript = r'''
   const MESSAGE_GUARD = 'chat-message, .chat-message, .model-message, .user-message, .from-user-container, .to-user-container, .from-user-message-card-content, .to-user-message-card-content, [role="article"], .rendered-markdown, app-chat-response, app-chat-query, app-chat-prompt, app-chat-turn, chat-turn, [data-message-author-role]';
   const visible = el => !!el && el.getClientRects().length > 0 && getComputedStyle(el).visibility !== 'hidden' && getComputedStyle(el).display !== 'none';
   const text = el => (el?.innerText || el?.textContent || '').trim();
+  const YT_ALLOWED_HOSTS = new Set(['youtu.be', 'youtube.com', 'www.youtube.com', 'm.youtube.com', 'music.youtube.com']);
+  const YT_SPACED_RE = /(^|[^\w./@-])((?:https?[ \t\u00A0\u200B-\u200F\uFEFF]*:[ \t\u00A0\u200B-\u200F\uFEFF]*\/[ \t\u00A0\u200B-\u200F\uFEFF]*\/[ \t\u00A0\u200B-\u200F\uFEFF]*)?(?:(?:(?:www|m|music)[ \t\u00A0\u200B-\u200F\uFEFF]*\.[ \t\u00A0\u200B-\u200F\uFEFF]*)?youtube[ \t\u00A0\u200B-\u200F\uFEFF]*\.[ \t\u00A0\u200B-\u200F\uFEFF]*com|youtu[ \t\u00A0\u200B-\u200F\uFEFF]*\.[ \t\u00A0\u200B-\u200F\uFEFF]*be)(?:[ \t\u00A0\u200B-\u200F\uFEFF]*\/[ \t\u00A0\u200B-\u200F\uFEFF]*[A-Za-z0-9_~%!$&'*+,;=:@.?#\-]+)+)/gi;
+  function normalizeYouTubeUrlCandidate(raw) {
+    if (!raw) return null;
+    let body = raw;
+    let trailing = '';
+    while (body.length > 0 && /[.,;:!?)'"»”\]،؛]$/.test(body)) {
+      trailing = body.slice(-1) + trailing;
+      body = body.slice(0, -1);
+    }
+    const compact = body.replace(/[ \t\u00A0\u200B-\u200F\uFEFF]+/g, '');
+    const withScheme = /^https?:\/\//i.test(compact) ? compact : 'https://' + compact;
+    try {
+      const parsed = new URL(withScheme);
+      const host = parsed.hostname.toLowerCase();
+      if (!YT_ALLOWED_HOSTS.has(host)) return null;
+      if (!parsed.pathname || parsed.pathname === '/') return null;
+      return { url: parsed.toString(), trailing };
+    } catch (_) {
+      return null;
+    }
+  }
+  function normalizeYouTubeUrls(str) {
+    if (typeof str !== 'string' || !/youtu/i.test(str)) return str;
+    return str.replace(YT_SPACED_RE, (full, prefix, rawUrl) => {
+      const res = normalizeYouTubeUrlCandidate(rawUrl);
+      if (!res) return full;
+      return prefix + res.url + res.trailing;
+    });
+  }
+  window.__otNormalizeYouTubeUrls = normalizeYouTubeUrls;
+  window.__otNormalizeYouTubeUrlCandidate = normalizeYouTubeUrlCandidate;
+  window.__otYouTubeSpacedRegex = YT_SPACED_RE;
   function answerText(el) {
     if (!el) return '';
     const content = el.querySelector?.('.to-user-message-card-content, .message-text-content, .rendered-markdown');
@@ -40,7 +73,7 @@ const _notebookCleanupScript = r'''
     });
     let res = (clone.textContent || '').replace(/[ \t]+\n/g, '\n').replace(/\n{3,}/g, '\n\n').trim();
     if (!res) res = (target.innerText || target.textContent || '').trim();
-    return res;
+    return normalizeYouTubeUrls(res);
   }
   function latest() {
     let answers = [...document.querySelectorAll(answerSelector)].filter(visible);
@@ -140,9 +173,16 @@ const _notebookCleanupScript = r'''
   document.addEventListener('copy', event => {
     var sel = (window.getSelection ? window.getSelection().toString() : '').trim();
     if (sel) {
-      sendCopy(sel);
+      var cleaned = normalizeYouTubeUrls(sel);
+      if (cleaned !== sel && event.clipboardData) {
+        try {
+          event.clipboardData.setData('text/plain', cleaned);
+          event.preventDefault();
+        } catch (_) {}
+      }
+      sendCopy(cleaned);
     } else if (Date.now() < copyUntil && selectedAnswer) {
-      sendCopy(selectedAnswer);
+      sendCopy(normalizeYouTubeUrls(selectedAnswer));
     }
   });
   function syncTheme(isDark) {
